@@ -1,11 +1,14 @@
+import { type } from "os"
+import { title } from "process"
+
 export default {
   name: 'post',
-  title: 'Post',
+  title: 'Artículo',
   type: 'document',
   fields: [
     {
       name: 'title',
-      title: 'Title',
+      title: 'Título',
       type: 'string',
     },
     {
@@ -19,17 +22,47 @@ export default {
     },
     {
       name: 'author',
-      title: 'Author',
+      title: 'Autor/a',
       type: 'reference',
       to: {type: 'author'},
     },
     {
+      name: 'originalLink',
+      title: 'Link Original',
+      type: 'string',
+    },
+    {
       name: 'mainImage',
-      title: 'Main image',
+      title: 'Imagen de portada',
       type: 'image',
       options: {
         hotspot: true,
       },
+    },
+    {
+      name: 'forewords',
+      title: 'Prólogo(s)',
+      type: 'array',
+      of: [
+        {
+          name: 'foreword',
+          title: 'Prólogo',
+          type: 'object',
+          fields: [
+            {
+              name: 'fwText',
+              title: 'Texto del prólogo',
+              type: 'string',
+            },
+            {
+              name: 'fwAuthor',
+              title: 'Referencia del prólogo',
+              description: 'Referencia del origen del prólogo',
+              type: 'string',
+            },
+          ],
+        },
+      ],
     },
     {
       name: 'categories',
@@ -39,14 +72,19 @@ export default {
     },
     {
       name: 'publishedAt',
-      title: 'Published at',
-      type: 'datetime',
+      title: 'Fecha de liberacion',
+      type: 'date',
     },
     {
       name: 'body',
-      title: 'Body',
+      title: 'Cuerpo del cuento',
       type: 'blockContent',
     },
+    {
+      name: 'review',
+      title: 'Reseña',
+      type: 'blockContent',
+    }
   ],
 
   preview: {

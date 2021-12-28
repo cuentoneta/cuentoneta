@@ -1,42 +1,30 @@
 export default {
   name: 'author',
-  title: 'Author',
+  title: 'Autor/a',
   type: 'document',
   fields: [
     {
       name: 'name',
-      title: 'Name',
+      title: 'Nombre',
       type: 'string',
     },
     {
-      name: 'slug',
-      title: 'Slug',
-      type: 'slug',
-      options: {
-        source: 'name',
-        maxLength: 96,
-      },
-    },
-    {
       name: 'image',
-      title: 'Image',
+      title: 'Foto',
       type: 'image',
       options: {
         hotspot: true,
       },
     },
     {
+      name: 'country',
+      title: 'Nacionalidad',
+      type: 'image',
+    },
+    {
       name: 'bio',
-      title: 'Bio',
-      type: 'array',
-      of: [
-        {
-          title: 'Block',
-          type: 'block',
-          styles: [{title: 'Normal', value: 'normal'}],
-          lists: [],
-        },
-      ],
+      title: 'Biografía',
+      type: 'blockContent',
     },
   ],
   preview: {
