@@ -1,8 +1,8 @@
 {
   "name": "cuentoneta",
-  "version": "0.0.0",
-  "description": "Ionic Conference App",
-  "author": "Ramiro Olivencia, Juan Blas Tschopp <ramiro@olivencia.com.ar>",
+  "version": "1.0.0",
+  "description": "Lectura colectiva de cuentos y relatos breves en el verano de 2022",
+  "author": "Ramiro Olivencia <ramiro@olivencia.com.ar>",
   "license": "Apache-2.0",
   "scripts": {
     "ng": "ng",
