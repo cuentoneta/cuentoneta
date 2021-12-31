@@ -12,7 +12,14 @@
 <ion-content>
   <ion-list>
     <ion-item *ngFor="let story of storyList" (click)="navigateToStory(story.id)">
-      <ion-label>Día {{story.day}}: {{story.title}}, de {{story.author.name}}</ion-label>
+      <ion-avatar slot="start">
+        <img [src]="story.author.imgString" />
+      </ion-avatar>
+      <ion-label>
+        <h2>{{story.title}}</h2>
+        <h3> de {{story.author.name}}</h3>
+        <p>Día {{story.day}}/31</p>
+      </ion-label>
     </ion-item>
 
   </ion-list>
