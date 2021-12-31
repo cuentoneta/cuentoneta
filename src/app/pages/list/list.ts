@@ -1,4 +1,7 @@
 import { Component, OnInit } from "@angular/core";
+import { StoryService } from "../../providers/story.service";
+import { StoryModel } from "../../models/story.model";
+import {Router} from "@angular/router";
 
 @Component({
   selector: "page-list",
@@ -6,6 +9,15 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./list.scss"],
 })
 export class ListPage implements OnInit {
-  constructor() {}
-  ngOnInit() {}
+  public storyList: StoryModel[] = [];
+
+  constructor(private router: Router,private storyService: StoryService) {}
+
+  ngOnInit() {
+    this.storyService.getAll().subscribe((result) => (this.storyList = result));
+  }
+
+  public navigateToStory(id: number){
+    this.router.navigate([`/story/${id}`]);
+  }
 }

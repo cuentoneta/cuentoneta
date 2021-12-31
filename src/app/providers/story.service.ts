@@ -12,6 +12,7 @@ export class StoryService {
         name: "Horacio Quiroga",
         nationality: "Uruguay",
         biography: [],
+        imgString: 'https://cloudfront-us-east-1.images.arcpublishing.com/infobae/RD4B5FA2EZECNBZ6UXMRQOL66A.jpg'
       },
       title: "A La Deriva",
       day: 1,
@@ -111,6 +112,10 @@ export class StoryService {
       ],
     },
   ];
+
+  getAll() {
+    return of(this.stories);
+  }
 
   get(day: number): Observable<StoryModel> {
     return of(this.stories.filter((story) => story.day === day).pop());
