@@ -112,6 +112,10 @@ export class StoryService {
     },
   ];
 
+  getAll() {
+    return of(this.stories);
+  }
+
   get(day: number): Observable<StoryModel> {
     return of(this.stories.filter((story) => story.day === day).pop());
   }

@@ -27,7 +27,7 @@ export class AppComponent {
     {
       title: "Lista de Cuentos",
       url: "/list",
-      icon: "bookmarks",
+      icon: "calendar",
     },
   ];
 
