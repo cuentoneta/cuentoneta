@@ -5,7 +5,7 @@ import { SchedulePage } from './schedule';
 
 const routes: Routes = [
   {
-    path: '',
+    path: ':day',
     component: SchedulePage
   }
 ];

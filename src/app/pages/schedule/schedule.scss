@@ -33,3 +33,22 @@ $categories: (
     padding-left: 10px;
   }
 }
+
+.container{
+  ion-title{
+    font-size: 28px;
+    &.title-small{
+      font-size: 20px;
+    }
+  }
+}
+
+.text-prologues{
+  max-width: 768px;
+}
+.text-content{
+  max-width: 768px;
+  p {
+    line-height: 1.5rem;
+  }
+}

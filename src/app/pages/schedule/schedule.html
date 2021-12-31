@@ -1,86 +1,64 @@
 <ion-header translucent="true">
   <ion-toolbar>
-    <ion-buttons *ngIf="!showSearchbar" slot="start">
+    <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
+      <ion-button (click)="navigateBack()" *ngIf="showBackButton">
+        <ion-icon name="caret-back-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
-    <ion-segment *ngIf="ios" [(ngModel)]="segment" (ionChange)="updateSchedule()">
-      <ion-segment-button value="all">
-        All
-      </ion-segment-button>
-      <ion-segment-button value="favorites">
-        Favorites
-      </ion-segment-button>
-    </ion-segment>
-    <ion-title *ngIf="!ios && !showSearchbar">Schedule</ion-title>
-    <ion-searchbar *ngIf="showSearchbar" showCancelButton="always" [(ngModel)]="queryText" (ionChange)="updateSchedule()" (ionCancel)="showSearchbar = false" placeholder="Search"></ion-searchbar>
+    <div class="ion-text-center">
+      <ion-title *ngIf="story">La Cuentoneta: Día {{story.id}}</ion-title>
+    </div>
     <ion-buttons slot="end">
-      <ion-button *ngIf="!ios && !showSearchbar" (click)="showSearchbar = true">
-        <ion-icon slot="icon-only" name="search"></ion-icon>
-      </ion-button>
-      <ion-button *ngIf="!showSearchbar" (click)="presentFilter()">
-        <span *ngIf="ios">Filter</span>
-        <span *ngIf="!ios">
-          <ion-icon slot="icon-only" name="options"></ion-icon>
-        </span>
+      <ion-button  (click)="navigateForward()" *ngIf="showForwardButton">
+        <ion-icon name="caret-forward-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
-  <ion-toolbar *ngIf="!ios">
-    <ion-segment [(ngModel)]="segment" (ionChange)="updateSchedule()">
-      <ion-segment-button value="all">
-        All
-      </ion-segment-button>
-      <ion-segment-button value="favorites">
-        Favorites
-      </ion-segment-button>
-    </ion-segment>
-  </ion-toolbar>
+  <ion-progress-bar [value]="progress"></ion-progress-bar>
 </ion-header>
 
-<ion-content fullscreen="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Schedule</ion-title>
-    </ion-toolbar>
-    <ion-toolbar>
-      <ion-searchbar [(ngModel)]="queryText" (ionChange)="updateSchedule()" placeholder="Search"></ion-searchbar>
-    </ion-toolbar>
-  </ion-header>
+<ion-content id="ion-text-content" fullscreen="true" [scrollEvents]="true" (ionScroll)="doSomething($event)">
 
-  <ion-list #scheduleList [hidden]="shownSessions === 0">
-    <ion-item-group *ngFor="let group of groups" [hidden]="group.hide">
-      <ion-item-divider sticky>
-        <ion-label>
-          {{group.time}}
-        </ion-label>
-      </ion-item-divider>
+<div class="container ion-justify-content-center">
 
-      <ion-item-sliding *ngFor="let session of group.sessions" #slidingItem [attr.track]="session.tracks[0] | lowercase"
-        [hidden]="session.hide">
-        <ion-item routerLink="/app/tabs/schedule/session/{{session.id}}">
-          <ion-label>
-            <h3>{{session.name}}</h3>
-            <p>
-              {{session.timeStart}} &mdash; {{session.timeEnd}}: {{session.location}}
-            </p>
-          </ion-label>
-        </ion-item>
-        <ion-item-options>
-          <ion-item-option color="favorite" (click)="addFavorite(slidingItem, session)" *ngIf="segment === 'all'">
-            Favorite
-          </ion-item-option>
-          <ion-item-option color="danger" (click)="removeFavorite(slidingItem, session, 'Remove Favorite')"
-            *ngIf="segment === 'favorites'">
-            Remove
-          </ion-item-option>
-        </ion-item-options>
-      </ion-item-sliding>
-    </ion-item-group>
-  </ion-list>
+  <ion-grid class="ion-text-center ion-padding">
+    <ion-row>
+      <ion-col>
+        <ion-title>{{story.title}}</ion-title>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-title size="small">por {{story.author.name}}</ion-title>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
-  <ion-list-header [hidden]="shownSessions > 0">
-    No Sessions Found
-  </ion-list-header>
+  <ion-grid class="text-prologues ion-padding" *ngIf="story.prologues.length">
+    <ion-row class="ion-padding-bottom" *ngFor="let prologue of story.prologues">
+      <ion-col size="4" size-md="6">
+      </ion-col>
+      <ion-col size="8" size-md="6">
+        <div class="text-prologue ion-text-justify">
+          {{prologue.text}}
+          <br>
+          <span class="reference"><i>{{prologue.reference}}</i></span>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-grid class="text-content ion-text-justify ion-padding">
+    <ion-row>
+      <ion-col>
+        <p *ngFor="let paragraph of story.paragraphs">
+          {{paragraph}}
+        </p>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</div>
 
   <ion-fab slot="fixed" vertical="bottom" horizontal="end" #fab>
     <ion-fab-button>
