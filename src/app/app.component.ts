@@ -23,8 +23,8 @@ export class AppComponent implements OnInit {
 
   appPages = [
     {
-      title: 'Schedule',
-      url: '/app/tabs/schedule',
+      title: 'Cuentos',
+      url: '/',
       icon: 'calendar'
     },
 
@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
   settingsPages = [
     {
       title: 'Acerca de...',
-      url: '/app/tabs/about',
+      url: '/about',
       icon: 'information-circle'
     }
   ];
