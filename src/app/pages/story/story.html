@@ -1,82 +1,101 @@
 <ion-header translucent="true">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-      <ion-button (click)="navigateBack()" [hidden]="!showBackButton">
-        <ion-icon name="caret-back-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <div class="ion-text-center">
-      <ion-title *ngIf="story">La Cuentoneta: Día {{story.id}}</ion-title>
-    </div>
-    <ion-buttons slot="end">
-      <ion-button  (click)="navigateForward()" [hidden]="!showForwardButton">
-        <ion-icon name="caret-forward-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-  <ion-progress-bar [value]="progress"></ion-progress-bar>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+            <ion-button (click)="navigateBack()" [hidden]="!showBackButton">
+                <ion-icon name="caret-back-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <div class="ion-text-center">
+            <ion-title *ngIf="story">La Cuentoneta: Día {{story.id}}</ion-title>
+        </div>
+        <ion-buttons slot="end">
+            <ion-button (click)="navigateForward()" [hidden]="!showForwardButton">
+                <ion-icon name="caret-forward-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+    <ion-progress-bar [value]="progress"></ion-progress-bar>
 </ion-header>
 
 <ion-content id="ion-text-content" fullscreen="true" [scrollEvents]="true" (ionScroll)="onScroll($event)">
+    <div class="container ion-justify-content-center">
+        <ion-grid class="ion-text-center ion-padding">
+            <ion-row>
+                <ion-col>
+                    <ion-title>{{story.title}}</ion-title>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col>
+                    <ion-title size="small">por {{story.author.name}}</ion-title>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
 
-<div class="container ion-justify-content-center">
+        <ion-grid class="text-prologues ion-padding" *ngIf="story.prologues.length">
+            <ion-row class="ion-padding-bottom" *ngFor="let prologue of story.prologues">
+                <ion-col size="4" size-md="6"> </ion-col>
+                <ion-col size="8" size-md="6">
+                    <div class="text-prologue ion-text-justify">
+                        {{prologue.text}}
+                        <br />
+                        <span class="reference"><i>{{prologue.reference}}</i></span>
+                    </div>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
 
-  <ion-grid class="ion-text-center ion-padding">
-    <ion-row>
-      <ion-col>
-        <ion-title>{{story.title}}</ion-title>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col>
-        <ion-title size="small">por {{story.author.name}}</ion-title>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+        <ion-grid class="text-content ion-text-justify ion-padding">
+            <ion-row>
+                <ion-col>
+                    <p *ngFor="let paragraph of story.paragraphs">{{paragraph}}</p>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
 
-  <ion-grid class="text-prologues ion-padding" *ngIf="story.prologues.length">
-    <ion-row class="ion-padding-bottom" *ngFor="let prologue of story.prologues">
-      <ion-col size="4" size-md="6">
-      </ion-col>
-      <ion-col size="8" size-md="6">
-        <div class="text-prologue ion-text-justify">
-          {{prologue.text}}
-          <br>
-          <span class="reference"><i>{{prologue.reference}}</i></span>
-        </div>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+        <ion-card id="bottom-notes">
+            <ion-card-header id="bio-header" class="ion-justify-content-between ion-align-items-center">
+                <ion-avatar>
+                    <img [src]="story.author.imgString" />
+                </ion-avatar>
+                <div>
+                    <ion-card-subtitle>Información del autor</ion-card-subtitle>
+                    <ion-card-title>{{story.author.name}}</ion-card-title>
+                </div>
+                <div><img class="country-flag" [src]="story.author.nationality" /></div>
+            </ion-card-header>
+            <div class="ion-text-justify">
+                <ion-card-content id="bio-content"> {{story.author.biography}} </ion-card-content>
+                <ion-card-content id="story-summary">
+                    {{story.summary}}
+                    <ion-button class="ion-margin-top" (click)="openBio(story.author.fullBioUrl)" expand="full"
+                        >Leer biografía completa</ion-button
+                    ></ion-card-content
+                >
+            </div>
+        </ion-card>
+    </div>
 
-  <ion-grid class="text-content ion-text-justify ion-padding">
-    <ion-row>
-      <ion-col>
-        <p *ngFor="let paragraph of story.paragraphs">
-          {{paragraph}}
-        </p>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-</div>
+    <!-- TODO: Implementar BIO para compartir -->
 
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end" #fab>
-    <ion-fab-button>
-      <ion-icon name="share-social"></ion-icon>
-    </ion-fab-button>
-    <ion-fab-list side="top">
-      <ion-fab-button color="vimeo" (click)="openSocial('Vimeo', fab)">
-        <ion-icon name="logo-vimeo"></ion-icon>
-      </ion-fab-button>
-      <ion-fab-button color="instagram" (click)="openSocial('Instagram', fab)">
-        <ion-icon name="logo-instagram"></ion-icon>
-      </ion-fab-button>
-      <ion-fab-button color="twitter" (click)="openSocial('Twitter', fab)">
-        <ion-icon name="logo-twitter"></ion-icon>
-      </ion-fab-button>
-      <ion-fab-button color="facebook" (click)="openSocial('Facebook', fab)">
-        <ion-icon name="logo-facebook"></ion-icon>
-      </ion-fab-button>
-    </ion-fab-list>
-  </ion-fab>
+    <!--    <ion-fab slot="fixed" vertical="bottom" horizontal="end" #fab>-->
+    <!--        <ion-fab-button>-->
+    <!--            <ion-icon name="share-social"></ion-icon>-->
+    <!--        </ion-fab-button>-->
+    <!--        <ion-fab-list side="top">-->
+    <!--            <ion-fab-button color="vimeo" (click)="openSocial('Vimeo', fab)">-->
+    <!--                <ion-icon name="logo-vimeo"></ion-icon>-->
+    <!--            </ion-fab-button>-->
+    <!--            <ion-fab-button color="instagram" (click)="openSocial('Instagram', fab)">-->
+    <!--                <ion-icon name="logo-instagram"></ion-icon>-->
+    <!--            </ion-fab-button>-->
+    <!--            <ion-fab-button color="twitter" (click)="openSocial('Twitter', fab)">-->
+    <!--                <ion-icon name="logo-twitter"></ion-icon>-->
+    <!--            </ion-fab-button>-->
+    <!--            <ion-fab-button color="facebook" (click)="openSocial('Facebook', fab)">-->
+    <!--                <ion-icon name="logo-facebook"></ion-icon>-->
+    <!--            </ion-fab-button>-->
+    <!--        </ion-fab-list>-->
+    <!--    </ion-fab>-->
 </ion-content>
