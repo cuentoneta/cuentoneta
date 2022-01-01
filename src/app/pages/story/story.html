@@ -52,29 +52,30 @@
                     <p *ngFor="let paragraph of story.paragraphs">{{paragraph}}</p>
                 </ion-col>
             </ion-row>
+            <ion-row>
+                <ion-card id="bottom-notes">
+                    <ion-card-header id="bio-header" class="ion-justify-content-between ion-align-items-center">
+                        <ion-avatar>
+                            <img [src]="story.author.imgString" />
+                        </ion-avatar>
+                        <div>
+                            <ion-card-subtitle>Información del autor</ion-card-subtitle>
+                            <ion-card-title>{{story.author.name}}</ion-card-title>
+                        </div>
+                        <div><img class="country-flag" [src]="story.author.nationality" /></div>
+                    </ion-card-header>
+                    <div class="ion-text-justify">
+                        <ion-card-content id="bio-content"> {{story.author.biography}} </ion-card-content>
+                        <ion-card-content id="story-summary">
+                            {{story.summary}}
+                            <ion-button class="ion-margin-top" (click)="openBio(story.author.fullBioUrl)" expand="full"
+                                >Leer biografía completa</ion-button
+                            ></ion-card-content
+                        >
+                    </div>
+                </ion-card>
+            </ion-row>
         </ion-grid>
-
-        <ion-card id="bottom-notes">
-            <ion-card-header id="bio-header" class="ion-justify-content-between ion-align-items-center">
-                <ion-avatar>
-                    <img [src]="story.author.imgString" />
-                </ion-avatar>
-                <div>
-                    <ion-card-subtitle>Información del autor</ion-card-subtitle>
-                    <ion-card-title>{{story.author.name}}</ion-card-title>
-                </div>
-                <div><img class="country-flag" [src]="story.author.nationality" /></div>
-            </ion-card-header>
-            <div class="ion-text-justify">
-                <ion-card-content id="bio-content"> {{story.author.biography}} </ion-card-content>
-                <ion-card-content id="story-summary">
-                    {{story.summary}}
-                    <ion-button class="ion-margin-top" (click)="openBio(story.author.fullBioUrl)" expand="full"
-                        >Leer biografía completa</ion-button
-                    ></ion-card-content
-                >
-            </div>
-        </ion-card>
     </div>
 
     <!-- TODO: Implementar BIO para compartir -->
