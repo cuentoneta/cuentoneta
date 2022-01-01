@@ -5,8 +5,7 @@ import { MenuController, Platform } from "@ionic/angular";
 
 import { SplashScreen } from "@ionic-native/splash-screen/ngx";
 import { StatusBar } from "@ionic-native/status-bar/ngx";
-
-import { Storage } from "@ionic/storage";
+import { SettingsService } from "./providers/settings.service";
 
 @Component({
   selector: "app-root",
@@ -39,7 +38,7 @@ export class AppComponent {
   ];
 
   loggedIn = false;
-  dark = false;
+  public darkMode = false;
 
   constructor(
     private menu: MenuController,
@@ -47,7 +46,7 @@ export class AppComponent {
     private router: Router,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
-    private storage: Storage
+    private settingsService: SettingsService
   ) {
     this.initializeApp();
   }
@@ -56,6 +55,13 @@ export class AppComponent {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+      this.settingsService.darkMode$.subscribe(
+        (value) => (this.darkMode = value)
+      );
     });
+  }
+
+  public async onModeChange(event: CustomEvent) {
+    this.settingsService.setDarkModeSettings(event.detail.checked);
   }
 }
