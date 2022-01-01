@@ -10,11 +10,11 @@ import { StoryService } from "../../providers/story.service";
 import { StoryModel } from "../../models/story.model";
 
 @Component({
-  selector: "page-schedule",
-  templateUrl: "schedule.html",
-  styleUrls: ["./schedule.scss"],
+  selector: "page-story",
+  templateUrl: "story.html",
+  styleUrls: ["./story.scss"],
 })
-export class SchedulePage implements OnInit {
+export class StoryPage implements OnInit {
   public currentStoryId = 1;
   public story: StoryModel;
   public showBackButton: boolean = true;
