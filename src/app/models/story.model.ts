@@ -19,4 +19,5 @@ export interface Author {
   imgString: string;
   nationality: string;
   biography: string[];
+  fullBioUrl: string;
 }
