@@ -24,7 +24,6 @@
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
 
-
 /*
  * App CSS
  * ----------------------------------------------------------------------------
@@ -34,10 +33,29 @@
 
 @import "./app/app.scss";
 
-@import '~swiper/scss';
-@import '~@ionic/angular/css/ionic-swiper';
+@import "~swiper/scss";
+@import "~@ionic/angular/css/ionic-swiper";
 
 // placed here instead of tutorial.scss due to slide els not getting ng scoping attribute
 .swiper-slide {
   display: block;
+}
+
+@font-face {
+  font-family: "PTSerif-Bold";
+  src: url("assets/fonts/PTSerif-Bold.ttf");
+}
+@font-face {
+  font-family: "PTSerif-Regular";
+  src: url("assets/fonts/PTSerif-Regular.ttf");
+}
+
+@font-face {
+  font-family: "PTSerif-Italic";
+  src: url("assets/fonts/PTSerif-Italic.ttf");
+}
+
+@font-face {
+  font-family: "PTSerif-BoldItalic";
+  src: url("assets/fonts/PTSerif-BoldItalic.ttf");
 }
