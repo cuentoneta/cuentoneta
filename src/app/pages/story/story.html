@@ -2,7 +2,7 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
-      <ion-button (click)="navigateBack()" *ngIf="showBackButton">
+      <ion-button (click)="navigateBack()" [hidden]="!showBackButton">
         <ion-icon name="caret-back-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -10,7 +10,7 @@
       <ion-title *ngIf="story">La Cuentoneta: Día {{story.id}}</ion-title>
     </div>
     <ion-buttons slot="end">
-      <ion-button  (click)="navigateForward()" *ngIf="showForwardButton">
+      <ion-button  (click)="navigateForward()" [hidden]="!showForwardButton">
         <ion-icon name="caret-forward-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -18,7 +18,7 @@
   <ion-progress-bar [value]="progress"></ion-progress-bar>
 </ion-header>
 
-<ion-content id="ion-text-content" fullscreen="true" [scrollEvents]="true" (ionScroll)="doSomething($event)">
+<ion-content id="ion-text-content" fullscreen="true" [scrollEvents]="true" (ionScroll)="onScroll($event)">
 
 <div class="container ion-justify-content-center">
 

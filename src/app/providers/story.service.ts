@@ -10,9 +10,11 @@ export class StoryService {
       author: {
         id: 1,
         name: "Horacio Quiroga",
-        nationality: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Flag_of_Uruguay.svg/2560px-Flag_of_Uruguay.svg.png",
+        nationality:
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Flag_of_Uruguay.svg/2560px-Flag_of_Uruguay.svg.png",
         biography: [],
-        imgString: 'https://cloudfront-us-east-1.images.arcpublishing.com/infobae/RD4B5FA2EZECNBZ6UXMRQOL66A.jpg'
+        imgString:
+          "https://cloudfront-us-east-1.images.arcpublishing.com/infobae/RD4B5FA2EZECNBZ6UXMRQOL66A.jpg",
       },
       title: "A La Deriva",
       day: 1,
@@ -112,6 +114,10 @@ export class StoryService {
       ],
     },
   ];
+
+  getCount(): number {
+    return this.stories.length;
+  }
 
   getAll() {
     return of(this.stories);
