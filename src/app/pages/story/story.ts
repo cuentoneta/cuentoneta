@@ -1,5 +1,5 @@
-import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
+import { Component, OnChanges, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 import {
   Config,
   IonRouterOutlet,
@@ -23,6 +23,7 @@ export class StoryPage implements OnInit {
 
   constructor(
     public loadingCtrl: LoadingController,
+    private route: ActivatedRoute,
     public router: Router,
     public routerOutlet: IonRouterOutlet,
     public toastCtrl: ToastController,
@@ -31,16 +32,22 @@ export class StoryPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.storyService.get(1).subscribe((result) => {
-      this.story = result;
+    this.route.data.subscribe((result) => {
+      this.story = result.story;
+      this.handleBackButtonVisibility();
+      this.handleForwardButtonVisibility();
     });
   }
 
-  public navigateBack() {}
+  public navigateBack() {
+    this.router.navigate([`/story/${this.story.id - 1}`]);
+  }
 
-  public navigateForward() {}
+  public navigateForward() {
+    this.router.navigate([`/story/${this.story.id + 1}`]);
+  }
 
-  public async doSomething(event) {
+  public async onScroll(event) {
     const elem = document.getElementById("ion-text-content");
 
     // the ion content has its own associated scrollElement
@@ -63,5 +70,12 @@ export class StoryPage implements OnInit {
     await loading.present();
     await loading.onWillDismiss();
     fab.close();
+  }
+
+  private handleBackButtonVisibility() {
+    this.showBackButton = this.story.id !== 1;
+  }
+  private handleForwardButtonVisibility() {
+    this.showForwardButton = this.story.id !== this.storyService.getCount();
   }
 }
