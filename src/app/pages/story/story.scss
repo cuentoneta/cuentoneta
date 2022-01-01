@@ -24,31 +24,39 @@ $categories: (
   workshop: #69bb7b,
   food: #3bc7c4,
   documentation: #b16be3,
-  navigation: #6600cc
+  navigation: #6600cc,
 );
 
 @each $track, $value in map-remove($categories) {
-  ion-item-sliding[track='#{$track}'] ion-label {
+  ion-item-sliding[track="#{$track}"] ion-label {
     border-left: 2px solid $value;
     padding-left: 10px;
   }
 }
 
-.container{
-  ion-title{
-    font-size: 28px;
-    &.title-small{
+.container {
+  ion-title {
+    font-family: "PTSerif-Bold";
+    font-size: 32px;
+    &.title-small {
+      font-family: "PTSerif-Regular";
       font-size: 20px;
     }
   }
 }
 
-.text-prologues{
+.text-prologues {
   max-width: 768px;
+  font-family: "PTSerif-Regular";
+  .reference {
+    font-family: "PTSerif-Italic";
+  }
 }
-.text-content{
+.text-content {
+  font-family: "PTSerif-Regular";
   max-width: 768px;
   p {
+    font-size: 20px;
     line-height: 1.5rem;
   }
 }
