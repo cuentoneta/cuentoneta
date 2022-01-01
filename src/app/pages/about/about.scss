@@ -1,87 +1,63 @@
-ion-toolbar {
-  position: absolute;
-
-  top: 0;
-  left: 0;
-  right: 0;
-
-  --background: transparent;
-  --color: white;
-}
-
-ion-toolbar ion-button,
-ion-toolbar ion-back-button,
-ion-toolbar ion-menu-button {
-  --color: white;
+ion-icon {
+    width: 24px;
+    height: 24px;
 }
 
 .about-header {
-  position: relative;
+    position: relative;
 
-  width: 100%;
-  height: 30%;
+    width: 100%;
+    height: 30%;
 }
 
 .about-header .about-image {
-  position: absolute;
+    position: absolute;
 
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
 
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
 
-  opacity: 0;
+    opacity: 0;
 
-  transition: opacity 500ms ease-in-out;
-}
-
-.about-header .madison {
-  background-image: url(/assets/img/about/madison.jpg);
-}
-.about-header .austin {
-  background-image: url(/assets/img/about/austin.jpg);
-}
-.about-header .chicago {
-  background-image: url(/assets/img/about/chicago.jpg);
-}
-.about-header .seattle {
-  background-image: url(/assets/img/about/seattle.jpg);
+    transition: opacity 500ms ease-in-out;
+    background-image: url(https://inhabitat.com/wp-content/blogs.dir/1/files/2013/08/Tell-a-Story-Book-Van-lead.jpg);
 }
 
 .about-info {
-  position: absolute;
-  margin-top: -10px;
-  border-radius: 10px;
-  background: var(--ion-background-color, #fff);
+    position: absolute;
+    margin-top: -10px;
+    border-radius: 10px;
+    background: var(--ion-background-color, #fff);
 }
 
 .about-info h3 {
-  margin-top: 0;
+    margin-top: 0;
 }
 
 .about-info ion-list {
-  padding-top: 0;
+    padding-top: 0;
 }
 
 .about-info p {
-  line-height: 130%;
+    line-height: 130%;
 
-  color: var(--ion-color-dark);
+    color: var(--ion-color-dark);
 }
 
 .about-info ion-icon {
-  margin-inline-end: 32px;
+    margin-inline-end: 32px;
 }
 
 #date-input-popover {
-  --offset-y: -var(--ion-safe-area-bottom);
+    --offset-y: -var(--ion-safe-area-bottom);
 
-  --max-width: 90%;
-  --width: 336px;
+    --max-width: 90%;
+    --width: 336px;
 }
 
 /*
@@ -89,9 +65,9 @@ ion-toolbar ion-menu-button {
  */
 
 .ios .about-info {
-  --ion-padding: 19px;
+    --ion-padding: 19px;
 }
 
 .ios .about-info h3 {
-  font-weight: 700;
+    font-weight: 700;
 }
