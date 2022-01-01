@@ -1,49 +1,54 @@
 <ion-app [class.dark-theme]="dark">
   <ion-split-pane contentId="main-content">
-
     <ion-menu contentId="main-content">
       <ion-content>
         <ion-list lines="none">
-          <ion-list-header>
-            Cuentos
-          </ion-list-header>
-          <ion-menu-toggle autoHide="false" *ngFor="let p of appPages; let i = index">
-            <ion-item [routerLink]="p.url" routerLinkActive="selected" routerDirection="root" detail="false">
-              <ion-icon slot="start" [name]="p.icon + '-outline'"></ion-icon>
+          <ion-list-header> Cuentos </ion-list-header>
+          <ion-menu-toggle
+            autoHide="false"
+            *ngFor="let page of appPages; let i = index"
+          >
+            <ion-item
+              [routerLink]="page.url"
+              routerLinkActive="selected"
+              routerDirection="root"
+              detail="false"
+            >
+              <ion-icon slot="start" [name]="page.icon + '-outline'"></ion-icon>
               <ion-label>
-                {{p.title}}
+                {{ page.title }}
               </ion-label>
             </ion-item>
           </ion-menu-toggle>
         </ion-list>
 
         <ion-list lines="none">
-          <ion-list-header>
-            Configuración
-          </ion-list-header>
-          <ion-menu-toggle autoHide="false" *ngFor="let p of settingsPages; let i = index">
-            <ion-item [routerLink]="p.url" routerLinkActive="selected" routerDirection="root" detail="false">
+          <ion-list-header> Configuración </ion-list-header>
+          <ion-menu-toggle
+            autoHide="false"
+            *ngFor="let p of settingsPages; let i = index"
+          >
+            <ion-item
+              [routerLink]="p.url"
+              routerLinkActive="selected"
+              routerDirection="root"
+              detail="false"
+            >
               <ion-icon slot="start" [name]="p.icon + '-outline'"></ion-icon>
               <ion-label>
-                {{p.title}}
+                {{ p.title }}
               </ion-label>
             </ion-item>
-
           </ion-menu-toggle>
           <ion-item>
             <ion-icon slot="start" name="moon-outline"></ion-icon>
-            <ion-label>
-              Modo Oscuro
-            </ion-label>
+            <ion-label> Modo Oscuro </ion-label>
             <ion-toggle [(ngModel)]="dark"></ion-toggle>
           </ion-item>
         </ion-list>
-
       </ion-content>
     </ion-menu>
 
     <ion-router-outlet id="main-content"></ion-router-outlet>
-
   </ion-split-pane>
-
 </ion-app>

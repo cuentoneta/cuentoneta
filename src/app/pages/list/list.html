@@ -4,23 +4,30 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <div class="ion-text-center">
-      <ion-title>La Cuentoneta: Lista Completa</ion-title>
+      <ion-title>La Cuentoneta: Lista de Cuentos</ion-title>
     </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-list>
-    <ion-item *ngFor="let story of storyList" (click)="navigateToStory(story.id)">
+    <ion-item
+      *ngFor="let story of storyList"
+      (click)="navigateToStory(story.id)"
+    >
       <ion-avatar slot="start">
         <img [src]="story.author.imgString" />
       </ion-avatar>
       <ion-label>
         <h2>{{story.title}}</h2>
-        <h3> de {{story.author.name}}</h3>
+        <h3>
+          por {{story.author.name}}<img
+            class="nationality-flag"
+            [src]="story.author.nationality"
+          />
+        </h3>
         <p>Día {{story.day}}/31</p>
       </ion-label>
     </ion-item>
-
   </ion-list>
 </ion-content>
