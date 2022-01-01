@@ -92,7 +92,7 @@ export class StoryService {
           "fuerzas para mover la mano, contaba con la caída del rocío para reponerse del todo. \n" +
           "Calculó que antes de tres horas estaría en Tacurú-Pucú. \n" +
           "El bienestar avanzaba, y con él una somnolencia llena de recuerdos. No sentía ya \n" +
-          "nada ni en la pierna ni en el vientre. ¿Viviría aún su compadre Gaona en TacurúPucú? Acaso viera también a su ex patrón mister Dougald, y al recibidor del \n" +
+          "nada ni en la pierna ni en el vientre. ¿Viviría aún su compadre Gaona en Tacurú-Pucú? Acaso viera también a su ex patrón mister Dougald, y al recibidor del \n" +
           "obraje",
         "¿Llegaría pronto? El cielo, al poniente, se abría ahora en pantalla de oro, y el río se \n" +
           "había coloreado también. Desde la costa paraguaya, ya entenebrecida, el monte \n" +
