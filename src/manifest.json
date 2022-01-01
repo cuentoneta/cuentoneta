@@ -1,11 +1,11 @@
 {
-  "name": "Ionic Conference",
-  "short_name": "Ionic Conference",
+  "name": "La Cuentoneta",
+  "short_name": "La Cuentoneta",
   "start_url": "index.html",
   "display": "standalone",
   "icons": [
     {
-      "src": "assets/img/appicon.png",
+      "src": "assets/img/logo.png",
       "sizes": "512x512",
       "type": "image/png"
     }
