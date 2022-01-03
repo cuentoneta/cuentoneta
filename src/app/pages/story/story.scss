@@ -55,6 +55,12 @@ $categories: (
 .text-content {
     font-family: 'PTSerif-Regular';
     max-width: 768px;
+
+    .text-italics {
+        font-family: 'PTSerif-Italic';
+    }
+    .text-bold {
+    }
     p {
         font-size: 20px;
         line-height: 1.5rem;

@@ -23,7 +23,7 @@
         <ion-grid class="ion-text-center ion-padding">
             <ion-row>
                 <ion-col>
-                    <ion-title>{{story.title}}</ion-title>
+                    <ion-title><div class="ion-text-wrap">{{story.title}}</div></ion-title>
                 </ion-col>
             </ion-row>
             <ion-row>
@@ -49,7 +49,12 @@
         <ion-grid class="text-content ion-text-justify ion-padding">
             <ion-row>
                 <ion-col>
-                    <p *ngFor="let paragraph of story.paragraphs">{{paragraph}}</p>
+                    <p
+                        *ngFor="let paragraph of story.paragraphs"
+                        [ngClass]="{'text-italics': paragraph['italics'], 'text-bold': paragraph['bold']}"
+                    >
+                        {{paragraph.text}}
+                    </p>
                 </ion-col>
             </ion-row>
             <ion-row>
