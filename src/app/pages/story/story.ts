@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Config, IonRouterOutlet, LoadingController, ToastController } from '@ionic/angular';
 import { StoryService } from '../../providers/story.service';

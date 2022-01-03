@@ -35,13 +35,14 @@ $categories: (
 }
 
 .container {
-    ion-title {
+    .text-title {
         font-family: 'PTSerif-Bold';
         font-size: 24px;
-        &.title-small {
-            font-family: 'PTSerif-Regular';
-            font-size: 20px;
-        }
+    }
+    .text-title-small {
+        font-family: 'PTSerif-Regular';
+        font-size: 20px;
+        margin: 0;
     }
 }
 
@@ -55,6 +56,12 @@ $categories: (
 .text-content {
     font-family: 'PTSerif-Regular';
     max-width: 768px;
+
+    .text-italics {
+        font-family: 'PTSerif-Italic';
+    }
+    .text-bold {
+    }
     p {
         font-size: 20px;
         line-height: 1.5rem;
@@ -72,7 +79,7 @@ $categories: (
             width: 80px;
         }
         .country-flag {
-            height: 40px;
+            height: 28px;
         }
     }
 }
