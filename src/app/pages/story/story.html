@@ -23,12 +23,12 @@
         <ion-grid class="ion-text-center ion-padding">
             <ion-row>
                 <ion-col>
-                    <ion-title><div class="ion-text-wrap">{{story.title}}</div></ion-title>
+                    <h1><div class="text-title ion-text-wrap">{{story.title}}</div></h1>
                 </ion-col>
             </ion-row>
             <ion-row>
                 <ion-col>
-                    <ion-title size="small">por {{story.author.name}}</ion-title>
+                    <h2 class="text-title-small">por {{story.author.name}}</h2>
                 </ion-col>
             </ion-row>
         </ion-grid>
@@ -64,7 +64,7 @@
                             <img [src]="story.author.imgString" />
                         </ion-avatar>
                         <div>
-                            <ion-card-subtitle>Información del autor</ion-card-subtitle>
+                            <ion-card-subtitle>Autor</ion-card-subtitle>
                             <ion-card-title>{{story.author.name}}</ion-card-title>
                         </div>
                         <div><img class="country-flag" [src]="story.author.nationality" /></div>

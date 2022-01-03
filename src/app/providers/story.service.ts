@@ -22,7 +22,7 @@ export class StoryService {
             day: 3,
             prologues: [],
             summary: [
-                '"Algunas Peculiaridades de los Ojos" (título original "The Eyes Have It") fue publicada en 1953 en la revista "Science Fiction Stories". Fiel a su estilo, y añadiendo cuotas de paranoia y humor, en este cuento Dick juega con la perecepción tanto del lector como la de los personajes; relatando en este caso una lucha psicológica del protagonista — quien realmente está convencido que los extraterrestres están entre nosotros.',
+                '"Algunas Peculiaridades de los Ojos" (título original "The Eyes Have It") fue publicada en 1953 en la revista "Science Fiction Stories". Fiel a su estilo, y añadiendo cuotas de paranoia y humor, en este cuento Dick juega con la perecepción tanto del lector como la de los personajes, relatando en este caso una lucha psicológica del protagonista — quien realmente está convencido que los extraterrestres están entre nosotros.',
             ],
             paragraphs: [
                 {
