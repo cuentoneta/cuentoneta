@@ -35,6 +35,14 @@ export class AppComponent {
         },
     ];
 
+    public externalLinks = [
+        {
+            title: 'Canal de Telegram',
+            url: 'https://t.me/LaCuentoneta',
+            icon: 'paper-plane',
+        },
+    ];
+
     public darkMode = false;
 
     constructor(
