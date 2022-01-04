@@ -29,14 +29,17 @@ export class AppComponent {
 
     public settingsPages = [
         {
-            title: 'Canal de Telegram',
-            url: 'https://t.me/LaCuentoneta',
-            icon: 'paper-plane',
-        },
-        {
             title: 'Acerca de...',
             url: '/about',
             icon: 'information-circle',
+        },
+    ];
+
+    public externalLinks = [
+        {
+            title: 'Canal de Telegram',
+            url: 'https://t.me/LaCuentoneta',
+            icon: 'paper-plane',
         },
     ];
 
