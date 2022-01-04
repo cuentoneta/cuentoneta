@@ -29,9 +29,21 @@
             *ngFor="let p of settingsPages; let i = index"
           >
             <ion-item
+              *ngIf="!(p.url.includes('http://') || p.url.includes('https://'))"
               [routerLink]="p.url"
               routerLinkActive="selected"
               routerDirection="root"
+              href={{ p.href }}
+              detail="false"
+            >
+              <ion-icon slot="start" [name]="p.icon + '-outline'"></ion-icon>
+              <ion-label>
+                {{ p.title }}
+              </ion-label>
+            </ion-item>
+            <ion-item
+              *ngIf="p.url.includes('http://') || p.url.includes('https://')"
+              href="{{p.url}}"
               detail="false"
             >
               <ion-icon slot="start" [name]="p.icon + '-outline'"></ion-icon>
