@@ -6,6 +6,237 @@ import { Observable, of } from 'rxjs';
 export class StoryService {
     private stories: StoryModel[] = [
         {
+            id: 4,
+            author: {
+                id: 4,
+                name: 'Edgar Allan Poe',
+                nationality:
+                    'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Flag_of_the_United_States.svg/200px-Flag_of_the_United_States.svg.png',
+                biography: [
+                    '(Boston, 1809 - Baltimore, 1849). Edgar Allan Poe fue un escritor y poeta estadounidense, reconocido universalmente como uno de los maestros del relato corto. \n' +
+                        'Muchos de sus más famosos cuentos, como "El Corazón Delator", "El Retrato Oval" y "El Gato Negro", entre otros, se encuentran dentro del género del terror.' +
+                        'Influyó en la obra y el estilo de algunos de los más reconocidos escritores, entre quienes podemos mencionar a Dostyevski, Borges, Cortázar y H.P Lovecraft.',
+                ],
+                fullBioUrl: 'https://www.biografias.es/famosos/edgar-allan-poe.html',
+                imgString: 'https://algundiaenalgunaparte.files.wordpress.com/2009/01/poe_edgar_allan.jpg',
+            },
+            title: 'La Máscara de la Muerte Roja',
+            day: 4,
+            prologues: [],
+            summary: [
+                '"La Máscara de la Muerte Roja" (título original "The Mask of the Red Death") fue publicado en 1842 en la revista Graham’s Lady’s and Gentleman’s Magazine. Siguiendo la tradición de la ficción gótica, usualmente se analiza a este cuento como una alegoría de la inevitabilidad de la muerte. Fue adaptada en versión cinematográfica por Roger Corman en 1964, con Vincent Price en el papel protagónico.',
+            ],
+            paragraphs: [
+                {
+                    text:
+                        'La «Muerte Roja» había devastado el país durante largo tiempo. Jamás una peste había \n' +
+                        'sido tan fatal y tan espantosa. La sangre era su encarnación y su sello: el rojo y el horror de \n' +
+                        'la sangre. Comenzaba con agudos dolores, un vértigo repentino, y luego los poros \n' +
+                        'sangraban y sobrevenía la muerte. Las manchas escarlata en el cuerpo y la cara de la \n' +
+                        'víctima eran el bando de la peste, que la aislaba de toda ayuda y de toda simpatía. Y la \n' +
+                        'invasión, progreso y fin de la enfermedad se cumplían en media hora.',
+                },
+                {
+                    text:
+                        'Pero el príncipe Próspero era feliz, intrépido y sagaz. Cuando sus dominios quedaron \n' +
+                        'semidespoblados llamó a su lado a mil robustos y desaprensivos amigos de entre los \n' +
+                        'caballeros y damas de su corte, y se retiró con ellos al seguro encierro de una de sus abadías \n' +
+                        'fortificadas. Era ésta de amplia y magnífica construcción y había sido creada por el \n' +
+                        'excéntrico aunque majestuoso gusto del príncipe. Una sólida y altísima muralla la \n' +
+                        'circundaba. Las puertas de la muralla eran de hierro. Una vez adentro, los cortesanos \n' +
+                        'trajeron fraguas y pesados martillos y soldaron los cerrojos. Habían resuelto no dejar \n' +
+                        'ninguna vía de ingreso o de salida a los súbitos impulsos de la desesperación o del frenesí. \n' +
+                        'La abadía estaba ampliamente aprovisionada. Con precauciones semejantes, los cortesanos \n' +
+                        'podían desafiar el contagio. Que el mundo exterior se las arreglara por su cuenta; \n' +
+                        'entretanto, era una locura afligirse o meditar. El príncipe había reunido todo lo necesario \n' +
+                        'para los placeres. Había bufones, improvisadores, bailarines y músicos; había hermosura y \n' +
+                        'vino. Todo eso y la seguridad estaban del lado de adentro. Afuera estaba la Muerte Roja.',
+                },
+                {
+                    text:
+                        'Al cumplirse el quinto o sexto mes de su reclusión, y cuando la peste hacía los más \n' +
+                        'terribles estragos, el príncipe Próspero ofreció a sus mil amigos un baile de máscaras de la \n' +
+                        'más insólita magnificencia.',
+                },
+                {
+                    text:
+                        'Aquella mascarada era un cuadro voluptuoso, pero permítanme que antes les describa \n' +
+                        'los salones donde se celebraba. Eran siete —una serie imperial de estancias—. En la \n' +
+                        'mayoría de los palacios, la sucesión de salones forma una larga galería en línea recta, pues \n' +
+                        'las dobles puertas se abren hasta adosarse a las paredes, permitiendo que la vista alcance la \n' +
+                        'totalidad de la galería. Pero aquí se trataba de algo muy distinto, como cabía esperar del \n' +
+                        'amor del príncipe por lo extraño. Las estancias se hallaban dispuestas con tal irregularidad \n' +
+                        'que la visión no podía abarcar más de una a la vez. Cada veinte o treinta yardas había un \n' +
+                        'brusco recodo, y en cada uno nacía un nuevo efecto. A derecha e izquierda en mitad de la \n' +
+                        'pared, una alta y estrecha ventana gótica daba a un corredor cerrado que seguía el contorno \n' +
+                        'de la serie de salones. Las ventanas tenían vitrales cuya coloración variaba con el tono \n' +
+                        'dominante de la decoración del aposento. Si, por ejemplo, la cámara de la extremidad \n' +
+                        'oriental tenía tapicerías azules, vívidamente azules eran sus ventanas. La segunda estancia \n' +
+                        'ostentaba tapicerías y ornamentos purpúreos, y aquí los vitrales eran púrpura. La tercera era \n' +
+                        'enteramente verde, y lo mismo los cristales. La cuarta había sido decorada e iluminada con \n' +
+                        'tono naranja; la quinta, con blanco; la sexta, con violeta. El séptimo aposento aparecía \n' +
+                        'completamente cubierto de colgaduras de terciopelo negro, que abarcaban el techo y las \n' +
+                        'paredes, cayendo en pesados pliegues sobre una alfombra del mismo material y tonalidad. \n' +
+                        'Pero en esta cámara el color de las ventanas no correspondía a la decoración. Los cristales \n' +
+                        'eran escarlata, tenían un profundo color de sangre.',
+                },
+                {
+                    text:
+                        'A pesar de la profusión de ornamentos de oro que aparecían aquí y allá o colgaban de \n' +
+                        'los techos, en aquellas siete estancias no había lámparas ni candelabros. Las cámaras no \n' +
+                        'estaban iluminadas con bujías o arañas. Pero en los corredores paralelos a la galería, y \n' +
+                        'opuestos a cada ventana, se alzaban pesados trípodes que sostenían un ígneo brasero, cuyos \n' +
+                        'rayos proyectábanse a través de los cristales teñidos e iluminaban brillantemente cada \n' +
+                        'estancia. Producían en esa forma multitud de resplandores tan vivos como fantásticos. Pero \n' +
+                        'en la cámara del poniente, la cámara negra, el fuego que, a través de los cristales de color \n' +
+                        'de sangre, se derramaba sobre las sombrías colgaduras, producía un efecto terriblemente \n' +
+                        'siniestro, y daba una coloración tan extraña a los rostros de quienes penetraban en ella, que \n' +
+                        'pocos eran lo bastante audaces para poner allí los pies.',
+                },
+                {
+                    text:
+                        'En este aposento, contra la pared del poniente, se apoyaba un gigantesco reloj de \n' +
+                        'ébano. Su péndulo se balanceaba con un resonar sordo, pesado, monótono; y cuando el \n' +
+                        'minutero había completado su circuito y la hora iba a sonar, de las entrañas de bronce del \n' +
+                        'mecanismo nacía un tañido claro y resonante, lleno de música; mas su tono y su énfasis \n' +
+                        'eran tales que, a cada hora, los músicos de la orquesta se veían obligados a interrumpir \n' +
+                        'momentáneamente su ejecución para escuchar el sonido, y las parejas danzantes cesaban \n' +
+                        'por fuerza sus evoluciones; durante un momento, en aquella alegre sociedad reinaba el \n' +
+                        'desconcierto; y, mientras aún resonaban los tañidos del reloj, era posible observar que los \n' +
+                        'más atolondrados palidecían y los de más edad y reflexión se pasaban la mano por la frente, \n' +
+                        'como si se entregaran a una confusa meditación o a un ensueño. Pero apenas los ecos \n' +
+                        'cesaban del todo, livianas risas nacían en la asamblea; los músicos se miraban entre sí, \n' +
+                        'como sonriendo de su insensata nerviosidad, mientras se prometían en voz baja que el \n' +
+                        'siguiente tañido del reloj no provocaría en ellos una emoción semejante. Mas, al cabo de \n' +
+                        'sesenta minutos (que abarcan tres mil seiscientos segundos del Tiempo que huye), el reloj \n' +
+                        'daba otra vez la hora, y otra vez nacían el desconcierto, el temblor y la meditación.',
+                },
+                {
+                    text:
+                        'Pese a ello, la fiesta era alegre y magnífica. El príncipe tenía gustos singulares. Sus ojos \n' +
+                        'se mostraban especialmente sensibles a los colores y sus efectos. Desdeñaba los caprichos \n' +
+                        'de la mera moda. Sus planes eran audaces y ardientes, sus concepciones brillaban con \n' +
+                        'bárbaro esplendor. Algunos podrían haber creído que estaba loco. Sus cortesanos sentían \n' +
+                        'que no era así. Era necesario oírlo, verlo y tocarlo para tener la seguridad de que no lo \n' +
+                        'estaba',
+                },
+                {
+                    text:
+                        'El príncipe se había ocupado personalmente de gran parte de la decoración de las siete \n' +
+                        'salas destinadas a la gran fiesta, y su gusto había guiado la elección de los disfraces. \n' +
+                        'Grotescos eran éstos, a no dudarlo. Reinaba en ellos el brillo, el esplendor, lo picante y lo \n' +
+                        'fantasmagórico —mucho de eso que más tarde habría de encontrarse en Hernani—. \n' +
+                        'Veíanse figuras de arabesco, con siluetas y atuendos incongruentes; veíanse fantasías \n' +
+                        'delirantes, como las que aman los maniacos. Abundaba allí lo hermoso, lo extraño, lo \n' +
+                        'licencioso, y no faltaba lo terrible y lo repelente. En verdad, en aquellas siete cámaras se \n' +
+                        'movía, de un lado a otro, una multitud de sueños. Y aquellos sueños se contorsionaban en \n' +
+                        'todas partes, cambiando de color al pasar por los aposentos, y haciendo que la extraña \n' +
+                        'música de la orquesta pareciera el eco de sus pasos.',
+                },
+                {
+                    text:
+                        'Mas otra vez tañe el reloj que se alza en el aposento de terciopelo. Por un momento \n' +
+                        'todo queda inmóvil; todo es silencio, salvo la voz del reloj. Los sueños están helados, \n' +
+                        'rígidos en sus posturas. Pero los ecos del tañido se pierden —apenas han durado un \n' +
+                        'instante—, y una risa ligera, a medias sofocada, flota tras ellos en su fuga. Otra vez crece la \n' +
+                        'música, viven los sueños, contorsionándose de aquí para allá con más alegría que nunca \n' +
+                        'coloreándose al pasar ante las ventanas, por las cuales irrumpen los rayos de los trípodes. \n' +
+                        'Mas en la cámara que da al oeste ninguna máscara se aventura, pues la noche avanza y una \n' +
+                        'luz más roja se filtra por los cristales de color de sangre; aterradora es la tiniebla de las \n' +
+                        'colgaduras negras; y, para aquel cuyo pie se pose en la sombría alfombra, brota del reloj de \n' +
+                        'ébano un ahogado resonar mucho más solemne que los que alcanzan a oír las máscaras \n' +
+                        'entregadas a la lejana alegría de las otras estancias.',
+                },
+                {
+                    text:
+                        'Congregábase densa multitud en estas últimas, donde afiebradamente latía el corazón \n' +
+                        'de la vida. Continuaba la fiesta en su torbellino hasta el momento en que comenzaron a \n' +
+                        'oírse los tañidos del reloj anunciando la medianoche. Calló entonces la música, como ya he \n' +
+                        'dicho, y las evoluciones de los que bailaban se interrumpieron; y como antes, se produjo en \n' +
+                        'todo una cesación angustiosa. Mas esta vez el reloj debía tañer doce campanadas, y quizá \n' +
+                        'por eso ocurrió que los pensamientos invadieron en mayor número las meditaciones de \n' +
+                        'aquellos que reflexionaban entre la multitud entregada a la fiesta. Y quizá también por eso \n' +
+                        'ocurrió que, antes de que los últimos ecos del carillón se hubieran hundido en el silencio, \n' +
+                        'muchos de los concurrentes tuvieron tiempo para advertir la presencia de una figura \n' +
+                        'enmascarada que hasta entonces no había llamado la atención de nadie. Y, habiendo corrido \n' +
+                        'en un susurro la noticia de aquella nueva presencia, alzóse al final un rumor que expresaba \n' +
+                        'desaprobación, sorpresa y, finalmente, espanto, horror y repugnancia.',
+                },
+                {
+                    text:
+                        'En una asamblea de fantasmas como la que acabo de describir es de imaginar que una \n' +
+                        'aparición ordinaria no hubiera provocado semejante conmoción. El desenfreno de aquella \n' +
+                        'mascarada no tenía límites, pero la figura en cuestión lo ultrapasaba e iba, incluso, más allá \n' +
+                        'de lo que el liberal criterio del príncipe toleraba. En el corazón de los más temerarios hay \n' +
+                        'cuerdas que no pueden tocarse sin emoción. Aun el más relajado de los seres, para quien la \n' +
+                        'vida y la muerte son igualmente un juego, sabe que hay cosas con las cuales no se puede \n' +
+                        'jugar. Los concurrentes parecían sentir en lo más hondo que el traje y la apariencia del \n' +
+                        'desconocido no revelaban ni ingenio ni decoro. Su figura, alta y flaca, estaba envuelta de la \n' +
+                        'cabeza a los pies en una mortaja. La máscara que ocultaba el rostro se parecía de tal manera \n' +
+                        'al semblante de un cadáver ya rígido, que el escrutinio más detallado se habría visto en \n' +
+                        'dificultades para descubrir el engaño. Cierto; aquella frenética concurrencia podía tolerar, si \n' +
+                        'no aprobar, semejante disfraz. Pero el enmascarado se había atrevido a asumir las \n' +
+                        'apariencias de la Muerte Roja. Su mortaja estaba salpicada de sangre, y su amplia frente, \n' +
+                        'así como el rostro, aparecían manchados por el horror escarlata.',
+                },
+                {
+                    text:
+                        'Cuando los ojos del príncipe Próspero cayeron sobre la espectral imagen (que ahora, \n' +
+                        'con un movimiento lento y solemne como para dar relieve a su papel, se paseaba entre los \n' +
+                        'bailarines), convulsionóse en el primer momento con un estremecimiento de terror o de \n' +
+                        'disgusto; pero, al punto, su frente enrojeció de rabia.',
+                },
+                {
+                    text:
+                        '—¿Quién se atreve —preguntó, con voz ronca, a los cortesanos que lo rodeaban—, \n' +
+                        'quién se atreve a insultarnos con esta burla blasfematoria? ¡Apoderaos de él y \n' +
+                        'desenmascaradlo, para que sepamos a quién vamos a ahorcar al alba en las almenas!',
+                },
+                {
+                    text:
+                        'Al pronunciar estas palabras, el príncipe Próspero se hallaba en el aposento del este, el \n' +
+                        'aposento azul. Sus acentos resonaron alta y claramente en las siete estancias, pues el\n' +
+                        'príncipe era hombre osado y robusto, y la música acababa de cesar a una señal de su mano.',
+                },
+                {
+                    text:
+                        'Con un grupo de pálidos cortesanos a su lado hallábase el príncipe en el aposento azul. \n' +
+                        'Apenas hubo hablado, los presentes hicieron un movimiento en dirección al intruso, quien, \n' +
+                        'en ese instante, se hallaba a su alcance y se acercaba al príncipe con paso sereno y \n' +
+                        'deliberado. Mas la indecible aprensión que la insana apariencia del enmascarado había \n' +
+                        'producido en los cortesanos impidió que nadie alzara la mano para detenerlo; y así, sin \n' +
+                        'impedimentos, pasó éste a una yarda del príncipe, y, mientras la vasta concurrencia \n' +
+                        'retrocedía en un solo impulso hasta pegarse a las paredes, siguió andando \n' +
+                        'ininterrumpidamente, pero con el mismo solemne y mesurado paso que desde el principio \n' +
+                        'lo había distinguido. Y de la cámara azul pasó a la púrpura, de la púrpura a la verde, de la \n' +
+                        'verde a la anaranjada, desde ésta a la blanca y de allí a la violeta antes de que nadie se \n' +
+                        'hubiera decidido a detenerlo. Mas entonces el príncipe Próspero, enloquecido por la rabia y \n' +
+                        'la vergüenza de su momentánea cobardía, se lanzó a la carrera a través de los seis \n' +
+                        'aposentos, sin que nadie lo siguiera por el mortal terror que a todos paralizaba. Puñal en \n' +
+                        'mano, acercóse impetuosamente hasta llegar a tres o cuatro pasos de la figura, que seguía \n' +
+                        'alejándose, cuando ésta, al alcanzar el extremo del aposento de terciopelo, se volvió de \n' +
+                        'golpe y enfrentó a su perseguidor. Oyóse un agudo grito, mientras el puñal caía \n' +
+                        'resplandeciente sobre la negra alfombra y el príncipe Próspero se desplomaba muerto.',
+                },
+                {
+                    text:
+                        'Reuniendo el terrible coraje de la desesperación, numerosas máscaras se lanzaron al \n' +
+                        'aposento negro; pero, al apoderarse del desconocido, cuya alta figura permanecía erecta e \n' +
+                        'inmóvil a la sombra del reloj de ébano, retrocedieron con inexpresable horror al descubrir \n' +
+                        'que el sudario y la máscara cadavérica que con tanta rudeza habían aferrado no contenían \n' +
+                        'ninguna forma tangible.',
+                },
+                {
+                    text:
+                        'Y entonces reconocieron la presencia de la Muerte Roja. Había venido como un ladrón \n' +
+                        'en la noche. Y uno por uno cayeron los convidados en las salas de orgía manchadas de \n' +
+                        'sangre, y cada uno murió en la desesperada actitud de su caída. Y la vida del reloj de ébano \n' +
+                        'se apagó con la del último de aquellos alegres seres. Y las llamas de los trípodes expiraron. \n' +
+                        'Y las tinieblas, y la corrupción, y la Muerte Roja lo dominaron todo.\n',
+                },
+            ],
+        },
+        {
             id: 3,
             author: {
                 id: 3,
