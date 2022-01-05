@@ -13,7 +13,7 @@ export class StoryService {
                 nationality:
                     'https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Flag_of_Mexico.png/1200px-Flag_of_Mexico.png',
                 biography: [
-                    '(París, 1932). Elena Poniatowska es una escritora, periodista y activista mexicana nacida en Francia. Ha escrito en diversos géneros, y destaca de su obra el firme compromiso con la historia contemporánea, lo cual se evidencia en trabajos como "La noche de Tlatelolco", una colección de recuentos sobre la masacre en la Plaza de Tlatelolco durante el 2 de octubre de 1968. Su obra tiene una marcada orientación social y política . Recibió, en 2013, el Premio Cervantes.',
+                    '(París, 1932). Elena Poniatowska es una escritora, periodista y activista mexicana nacida en Francia. Ha escrito en diversos géneros, y destaca de su obra el firme compromiso con la historia contemporánea, lo cual se evidencia en trabajos como "La noche de Tlatelolco", una colección de recuentos sobre la masacre en la Plaza de Tlatelolco durante el 2 de octubre de 1968. Recibió, en 2013, el Premio Cervantes.',
                 ],
                 fullBioUrl: '',
                 imgString: 'https://www.elsiglodedurango.com.mx/m/i/2016/01/483213.jpeg',
