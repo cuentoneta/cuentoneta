@@ -6,6 +6,44 @@ import { Observable, of } from 'rxjs';
 export class StoryService {
     private stories: StoryModel[] = [
         {
+            id: 5,
+            author: {
+                id: 5,
+                name: 'Elena Poniatowska',
+                nationality:
+                    'https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Flag_of_Mexico.png/1200px-Flag_of_Mexico.png',
+                biography: [
+                    '(París, 1932). Elena Poniatowska es una escritora, periodista y activista mexicana nacida en Francia. Ha escrito en diversos géneros, y destaca de su obra el firme compromiso con la historia contemporánea, lo cual se evidencia en trabajos como "La noche de Tlatelolco", una colección de recuentos sobre la masacre en la Plaza de Tlatelolco durante el 2 de octubre de 1968. Su obra tiene una marcada orientación social y política . Recibió, en 2013, el Premio Cervantes.',
+                ],
+                fullBioUrl: '',
+                imgString: 'https://www.elsiglodedurango.com.mx/m/i/2016/01/483213.jpeg',
+            },
+            title: 'El Recado',
+            day: 5,
+            prologues: [],
+            summary: [
+                '"El Recado" fue publicado en 1979 como parte de "De Noche Vienes", una colección de 16 cuentos. ' +
+                    'Contando de breves cinco párrafos y una original narrativa, el cuento describe nos narra un quiebre y un cambio desde la paciente y sacrificada espera hacia la independencia emocional de la protagonista frente a quien, muy probablemente, ya no vendrá. ',
+            ],
+            paragraphs: [
+                {
+                    text: 'Vine Martín, y no estás. Me he sentado en el peldaño de tu casa, recargada en tu puerta y pienso que en algún lugar de la ciudad, por una onda que cruza el aire, debes intuir que aquí estoy. Es este tu pedacito de jardín; tu mimosa se inclina hacia afuera y los niños al pasar le arrancan las ramas más accesibles… En la tierra, sembradas alrededor del muro, muy rectilíneas y serias veo unas flores que tienen hojas como espadas. Son azul marino, parecen soldados. Son muy graves, muy honestas. Tú también eres un soldado. Marchas por la vida, uno, dos, uno, dos… Todo tu jardín es sólido, es como tú, tiene una reciedumbre que inspira confianza.',
+                },
+                {
+                    text: 'Aquí estoy contra el muro de tu casa, así como estoy a veces contra el muro de tu espalda. El sol da también contra el vidrio de tus ventanas y poco a poco se debilita porque ya es tarde. El cielo enrojecido ha calentado tu madreselva y su olor se vuelve aún más penetrante. Es el atardecer. El día va a decaer. Tu vecina pasa. No sé si me habrá visto. Va a regar su pedazo de jardín. Recuerdo que ella te trae una sopa cuando estás enfermo y que su hija te pone inyecciones… Pienso en ti muy despacio, com si te dibujara dentro de mí y quedaras allí grabado. Quisiera tener la certeza de que te voy a ver mañana y pasado mañana y siempre en una cadena ininterrumpida de días; que podré mirarte lentamente aunque ya me sé cada rinconcito de tu rostro; que nada entre nosotros ha sido provisional o un accidente.',
+                },
+                {
+                    text: 'Estoy inclinada ante una hoja de papel y te escribo todo esto y pienso que ahora, en alguna cuadra donde camines apresurado, decidido como sueles hacerlo, en alguna de esas calles por donde te imagino siempre: Donceles y Cinco de Febrero o Venustiano Carranza, en alguna de esas banquetas grises y monocordes rotas sólo por el remolino de gente que va a tomar el camión, has de saber dentro de tí que te espero. Vine nada más a decirte que te quiero y como no estás te lo escribo. Ya casi no puedo escribir porque ya se fue el sol y no sé bien a bien lo que te pongo. Afuera pasan más niños, corriendo. Y una señora con una olla advierte irritada: “No me sacudas la mano porque voy a tirar la leche…” Y dejo este lápiz, Martín, y dejo la hoja rayada y dejo que mis brazos cuelguen inútilmente a lo largo de mi cuerpo y te espero. Pienso que te hubiera querido abrazar. A veces quisiera ser más vieja porque la juventud lleva en sí, la imperiosa, la implacable necesidad de relacionarlo todo con el amor.',
+                },
+                {
+                    text: 'Ladra un perro; ladra agresivamente. Creo que es hora de irme. Dentro de poco vendrá la vecina a prender la luz de tu casa; ella tiene llave y encenderá el foco de la recámara que da hacia afuera porque en esta colonia asaltan mucho, roban mucho. A los pobres les roban mucho; los pobres se roban entre sí… Sabes, desde mi infancia me he sentado así a esperar, siempre fui dócil, porque te esperaba. Sé que todas las mujeres aguardan. Aguardan la vida futura, todas esas imágenes forjadas en la soledad, todo ese bosque que camina hacia ellas; toda esa inmensa promesa que es el hombre; una granada que de pronto se abre y muestra sus granos rojos, lustrosos; una granada como una boca pulposa de mil gajos. Más tarde esas horas vividas en la imaginación, hechas horas reales, tendrán que cobrar peso y tamaño y crudeza. Todos estamos –oh mi amor– tan llenos de retratos interiores, tan llenos de paisajes no vividos.',
+                },
+                {
+                    text: 'Ha caído la noche y ya y casi no veo lo que estoy borroneando en la hoja rayada. Ya no percibo las letras. Allí donde no le entiendas en los espacios blancos, en los huecos, pon: “Te quiero…” No sé si voy a echar esta hoja debajo de la puerta, no sé. Me has dado un tal respeto de ti mismo… Quizá ahora que me vaya, sólo pase a pedirle a la vecina que te dé el recado: que te diga que vine.',
+                },
+            ],
+        },
+        {
             id: 4,
             author: {
                 id: 4,
