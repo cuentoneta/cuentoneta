@@ -1,15 +1,17 @@
-import { type } from "os"
-import { title } from "process"
-
 export default {
-  name: 'post',
-  title: 'Artículo',
+  name: 'story',
+  title: 'Cuento',
   type: 'document',
   fields: [
     {
       name: 'title',
       title: 'Título',
       type: 'string',
+    },
+    {
+      name: 'day',
+      title: 'Día',
+      type: 'number',
     },
     {
       name: 'slug',
@@ -30,14 +32,6 @@ export default {
       name: 'originalLink',
       title: 'Link Original',
       type: 'string',
-    },
-    {
-      name: 'mainImage',
-      title: 'Imagen de portada',
-      type: 'image',
-      options: {
-        hotspot: true,
-      },
     },
     {
       name: 'forewords',

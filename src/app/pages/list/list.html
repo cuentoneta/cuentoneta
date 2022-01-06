@@ -13,10 +13,10 @@
   <ion-list>
     <ion-item
       *ngFor="let story of storyList"
-      (click)="navigateToStory(story.id)"
+      (click)="navigateToStory(story.day)"
     >
       <ion-avatar slot="start">
-        <img [src]="story.author.imgString" />
+        <img [src]="story.author.imageUrl" />
       </ion-avatar>
       <ion-label>
         <h2>{{story.title}}</h2>

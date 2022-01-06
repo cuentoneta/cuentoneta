@@ -7,7 +7,7 @@
             </ion-button>
         </ion-buttons>
         <div class="ion-text-center">
-            <ion-title *ngIf="story">La Cuentoneta: Día {{story.id}}</ion-title>
+            <ion-title *ngIf="story">La Cuentoneta: Día {{story.day}}</ion-title>
         </div>
         <ion-buttons slot="end">
             <ion-button (click)="navigateForward()" [hidden]="!showForwardButton">
@@ -33,7 +33,7 @@
             </ion-row>
         </ion-grid>
 
-        <ion-grid class="text-prologues ion-padding" *ngIf="story.prologues.length">
+        <ion-grid class="text-prologues ion-padding" *ngIf="story.prologues && story.prologues.length">
             <ion-row class="ion-padding-bottom" *ngFor="let prologue of story.prologues">
                 <ion-col size="4" size-md="6"> </ion-col>
                 <ion-col size="8" size-md="6">
@@ -61,7 +61,7 @@
                 <ion-card id="bottom-notes">
                     <ion-card-header id="bio-header" class="ion-justify-content-between ion-align-items-center">
                         <ion-avatar>
-                            <img [src]="story.author.imgString" />
+                            <img [src]="story.author.imageUrl" />
                         </ion-avatar>
                         <div>
                             <ion-card-subtitle>Autor</ion-card-subtitle>
