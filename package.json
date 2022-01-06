@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "ng": "ng",
-    "start": "nodemon app/server.js",
+    "start": "nodemon server.js",
     "build": "ng build --configuration production",
     "test": "ng test",
     "lint": "ng lint",
