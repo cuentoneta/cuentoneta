@@ -15,7 +15,7 @@ const routes: Routes = [
     // TODO: Issue #37 - La navegación a story debe ser en base al cuento del día actual
     {
         path: '**',
-        redirectTo: '5',
+        redirectTo: '6',
         pathMatch: 'full',
     },
 ];

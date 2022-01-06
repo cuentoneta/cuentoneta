@@ -19,7 +19,7 @@ async function getAuthors() {
 }
 
 async function getById(id) {
-    const query = `*[_type == 'story' && day == ${id}]{title, day, originalLink, forewords, categories, publishedAt, body, review, author->}`;
+    const query = `*[_type == 'story' && day == ${id}]{title, day, originalLink, forewords, categories, publishedAt, body, review, forewords, author->}`;
     const result = await sanityConnector.client.fetch(query, {});
 
     let story = result.length ? result.pop() : null;
@@ -30,6 +30,7 @@ async function getById(id) {
             summary: story.review,
             paragraphs: mapBodyToParagraphs(story.body),
             author: mapAuthor(story.author),
+            prologues: mapPrologues(story.forewords),
         };
     }
 
@@ -48,4 +49,8 @@ function mapAuthor(authorDTO) {
 
 function mapBodyToParagraphs(story) {
     return story;
+}
+
+function mapPrologues(prologuesDTO) {
+    return prologuesDTO.map(x => ({reference: x.fwAuthor, text: x.fwText}));
 }
