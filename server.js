@@ -4,15 +4,15 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const errorHandler = require('server/_helpers/error-handler');
+const errorHandler = require('app/server/_helpers/error-handler');
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
 const https = require('https');
 
 const options = {
-    key: fs.readFileSync('server/_certificates/cert.key'),
-    cert: fs.readFileSync('server/_certificates/cert.pem'),
+    key: fs.readFileSync('app/server/_certificates/cert.key'),
+    cert: fs.readFileSync('app/server/_certificates/cert.pem'),
 };
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -25,7 +25,7 @@ app.use(errorHandler);
 // Serve only the static files form the www directory
 app.use(express.static('./www'));
 
-const apiRoutes = [{ path: '/story', controller: './server/controllers/story.controller' }];
+const apiRoutes = [{ path: '/story', controller: './app/server/controllers/story.controller' }];
 
 // api routes
 for (const route of apiRoutes) {
