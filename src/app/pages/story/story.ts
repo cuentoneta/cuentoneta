@@ -29,6 +29,7 @@ export class StoryPage implements OnInit {
     ngOnInit() {
         this.route.data.subscribe((result) => {
             this.story = result.story;
+            // TODO: #60 Cambiar por parsing vía librerías de Sanity
             this.story.paragraphs = result.story.paragraphs.map((x) => this.storyService.parseParagraph(x));
             this.story.summary = result.story.summary.map((x) => this.storyService.parseSummary(x)).pop();
             this.handleForwardButtonVisibility();
