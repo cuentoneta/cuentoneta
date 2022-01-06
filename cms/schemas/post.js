@@ -2,7 +2,7 @@ import { type } from "os"
 import { title } from "process"
 
 export default {
-  name: 'post',
+  name: 'story',
   title: 'Artículo',
   type: 'document',
   fields: [
@@ -10,6 +10,11 @@ export default {
       name: 'title',
       title: 'Título',
       type: 'string',
+    },
+    {
+      name: 'day',
+      title: 'Día',
+      type: 'number',
     },
     {
       name: 'slug',
