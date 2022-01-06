@@ -10,6 +10,6 @@ export class StoryResolver implements Resolve<StoryModel> {
     resolve(route: ActivatedRouteSnapshot): Observable<StoryModel> {
         const dayAsString = route.paramMap.get('day');
         const day = dayAsString ? parseInt(dayAsString, 10) : 0;
-        return this.storyService.get(day);
+        return this.storyService.getStoryFromHttp(day);
     }
 }

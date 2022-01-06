@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { StoryModel } from '../models/story.model';
 import { Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class StoryService {
@@ -670,6 +672,16 @@ export class StoryService {
             ],
         },
     ];
+
+    constructor(private http: HttpClient) {}
+
+    getStoryFromHttp(id: number): Observable<any> {
+        return this.http.get<StoryModel[]>(`${environment.apiUrl}/story/${id}`);
+    }
+
+    getAuthors(): Observable<any> {
+        return this.http.get<StoryModel[]>(`${environment.apiUrl}/story/authors`);
+    }
 
     getCount(): number {
         return this.stories.length;

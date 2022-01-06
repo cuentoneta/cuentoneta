@@ -24,7 +24,7 @@ export default {
         {
             name: 'bio',
             title: 'Biografía',
-            type: 'blockContent',
+            type: 'string',
         },
         {
             name: 'fullBioUrl',

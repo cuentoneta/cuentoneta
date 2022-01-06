@@ -1,9 +1,6 @@
-import { type } from "os"
-import { title } from "process"
-
 export default {
   name: 'story',
-  title: 'Artículo',
+  title: 'Cuento',
   type: 'document',
   fields: [
     {
@@ -35,14 +32,6 @@ export default {
       name: 'originalLink',
       title: 'Link Original',
       type: 'string',
-    },
-    {
-      name: 'mainImage',
-      title: 'Imagen de portada',
-      type: 'image',
-      options: {
-        hotspot: true,
-      },
     },
     {
       name: 'forewords',

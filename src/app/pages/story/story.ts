@@ -29,7 +29,6 @@ export class StoryPage implements OnInit {
     ngOnInit() {
         this.route.data.subscribe((result) => {
             this.story = result.story;
-            this.handleBackButtonVisibility();
             this.handleForwardButtonVisibility();
         });
     }
