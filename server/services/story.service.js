@@ -25,7 +25,12 @@ async function getById(id) {
     let story = result.length ? result.pop() : null;
 
     if (story) {
-        story = { ...story, paragraphs: mapBodyToParagraphs(story.body), author: mapAuthor(story.author) };
+        story = {
+            ...story,
+            summary: story.review,
+            paragraphs: mapBodyToParagraphs(story.body),
+            author: mapAuthor(story.author),
+        };
     }
 
     return story;
@@ -33,7 +38,7 @@ async function getById(id) {
 
 function mapAuthor(authorDTO) {
     return {
-        bio: authorDTO.bio,
+        biography: authorDTO.bio,
         nationality: urlFor(authorDTO.country).url(),
         fullBioUrl: authorDTO.fullBioUrl,
         imageUrl: urlFor(authorDTO.image).url(),

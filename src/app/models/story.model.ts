@@ -21,8 +21,8 @@ export interface Prologue {
 export interface Author {
     id: number;
     name: string;
-    imgString: string;
+    imageUrl: string;
     nationality: string;
-    biography: string[];
+    biography: string;
     fullBioUrl: string;
 }
