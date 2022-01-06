@@ -7,7 +7,7 @@
             </ion-button>
         </ion-buttons>
         <div class="ion-text-center">
-            <ion-title *ngIf="story">La Cuentoneta: Día {{story.id}}</ion-title>
+            <ion-title *ngIf="story">La Cuentoneta: Día {{story.day}}</ion-title>
         </div>
         <ion-buttons slot="end">
             <ion-button (click)="navigateForward()" [hidden]="!showForwardButton">
