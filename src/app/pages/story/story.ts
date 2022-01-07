@@ -33,6 +33,7 @@ export class StoryPage implements OnInit {
             this.story.prologues = result.story.prologues;
             this.story.paragraphs = result.story.paragraphs.map((x) => this.storyService.parseParagraph(x));
             this.story.summary = result.story.summary.map((x) => this.storyService.parseSummary(x)).pop();
+            this.handleBackButtonVisibility();
             this.handleForwardButtonVisibility();
         });
     }
@@ -76,9 +77,9 @@ export class StoryPage implements OnInit {
     }
 
     private handleBackButtonVisibility() {
-        this.showBackButton = this.story.id !== 1;
+        this.showBackButton = this.story.day !== 1;
     }
     private handleForwardButtonVisibility() {
-        this.showForwardButton = this.story.id !== this.storyService.getCount();
+        this.showForwardButton = this.story.day !== this.storyService.getCount();
     }
 }
