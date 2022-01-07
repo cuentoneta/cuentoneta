@@ -52,5 +52,5 @@ function mapBodyToParagraphs(story) {
 }
 
 function mapPrologues(prologuesDTO) {
-    return prologuesDTO.map(x => ({reference: x.fwAuthor, text: x.fwText}));
+    return prologuesDTO ? prologuesDTO.map(x => ({reference: x.fwAuthor, text: x.fwText})) : [];
 }

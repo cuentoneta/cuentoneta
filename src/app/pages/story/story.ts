@@ -38,11 +38,11 @@ export class StoryPage implements OnInit {
     }
 
     public navigateBack() {
-        this.router.navigate([`/story/${this.story.id - 1}`]);
+        this.router.navigate([`/story/${this.story.day - 1}`]);
     }
 
     public navigateForward() {
-        this.router.navigate([`/story/${this.story.id + 1}`]);
+        this.router.navigate([`/story/${this.story.day + 1}`]);
     }
 
     public async onScroll(event) {
