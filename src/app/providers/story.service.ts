@@ -18,7 +18,7 @@ export class StoryService {
 
     // TODO: #37 Agregar cuenta en base a los datos existentes en Sanity
     getCount(): number {
-        return 5;
+        return 6;
     }
 
     // TODO: #60 Cambiar por parsing vía librerías de Sanity
