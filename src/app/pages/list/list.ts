@@ -19,7 +19,7 @@ export class ListPage implements OnInit {
         });
     }
 
-    public navigateToStory(id: number) {
-        this.router.navigate([`/story/${id}`]);
+    public navigateToStory(day: number) {
+        this.router.navigate([`/story/${day}`]);
     }
 }

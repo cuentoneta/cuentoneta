@@ -1,5 +1,4 @@
 const result = require('dotenv').config();
-const _ = require('lodash');
 
 let environment;
 

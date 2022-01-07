@@ -30,6 +30,7 @@ export class StoryPage implements OnInit {
         this.route.data.subscribe((result) => {
             this.story = result.story;
             // TODO: #60 Cambiar por parsing vía librerías de Sanity
+            this.story.prologues = result.story.prologues;
             this.story.paragraphs = result.story.paragraphs.map((x) => this.storyService.parseParagraph(x));
             this.story.summary = result.story.summary.map((x) => this.storyService.parseSummary(x)).pop();
             this.handleForwardButtonVisibility();
@@ -37,11 +38,11 @@ export class StoryPage implements OnInit {
     }
 
     public navigateBack() {
-        this.router.navigate([`/story/${this.story.id - 1}`]);
+        this.router.navigate([`/story/${this.story.day - 1}`]);
     }
 
     public navigateForward() {
-        this.router.navigate([`/story/${this.story.id + 1}`]);
+        this.router.navigate([`/story/${this.story.day + 1}`]);
     }
 
     public async onScroll(event) {
