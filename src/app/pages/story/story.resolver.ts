@@ -9,7 +9,8 @@ export class StoryResolver implements Resolve<StoryModel> {
     constructor(private storyService: StoryService) {}
     resolve(route: ActivatedRouteSnapshot): Observable<StoryModel> {
         const dayAsString = route.paramMap.get('day');
-        const day = dayAsString ? parseInt(dayAsString, 10) : 0;
+        // Si el parámetro "day" es nulo, se asigna el valor del count de historias, para obtener la última vigente
+        const day = dayAsString ? parseInt(dayAsString, 10) : this.storyService.count;
         return this.storyService.get(day);
     }
 }
