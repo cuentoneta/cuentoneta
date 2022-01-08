@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Paragraph, StoryModel } from '../models/story.model';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 
@@ -18,7 +18,7 @@ export class StoryService {
 
     // TODO: #37 Agregar cuenta en base a los datos existentes en Sanity
     getCount(): number {
-        return 6;
+        return 7;
     }
 
     // TODO: #60 Cambiar por parsing vía librerías de Sanity
