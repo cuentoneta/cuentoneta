@@ -18,7 +18,7 @@ const routes: Routes = [
 
     {
         path: '',
-        redirectTo: 'story/6',
+        redirectTo: 'story/7',
         pathMatch: 'full',
     },
 ];
