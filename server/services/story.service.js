@@ -10,6 +10,7 @@ function urlFor(source) {
 module.exports = {
     getAuthors,
     getById,
+    getCount,
 };
 
 async function getAuthors() {
@@ -37,6 +38,12 @@ async function getById(id) {
     return story;
 }
 
+async function getCount() {
+    const query = `count(*[_type == 'story'])`;
+    const result = await sanityConnector.client.fetch(query, {});
+    return result;
+}
+
 function mapAuthor(authorDTO) {
     return {
         biography: authorDTO.bio,
@@ -52,5 +59,5 @@ function mapBodyToParagraphs(story) {
 }
 
 function mapPrologues(prologuesDTO) {
-    return prologuesDTO ? prologuesDTO.map(x => ({reference: x.fwAuthor, text: x.fwText})) : [];
+    return prologuesDTO ? prologuesDTO.map((x) => ({ reference: x.fwAuthor, text: x.fwText })) : [];
 }

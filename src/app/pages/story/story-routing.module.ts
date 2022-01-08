@@ -12,10 +12,18 @@ const routes: Routes = [
             story: StoryResolver,
         },
     },
-    // TODO: Issue #37 - La navegación a story debe ser en base al cuento del día actual
+    // Si no se provee el día de la historia deseada, con el parámetro :day siendo null
+    // el resolver se encarga de obtener la historia del último día vigente
+    {
+        path: '',
+        component: StoryPage,
+        resolve: {
+            story: StoryResolver,
+        },
+    },
     {
         path: '**',
-        redirectTo: '7',
+        redirectTo: '',
         pathMatch: 'full',
     },
 ];

@@ -80,6 +80,6 @@ export class StoryPage implements OnInit {
         this.showBackButton = this.story.day !== 1;
     }
     private handleForwardButtonVisibility() {
-        this.showForwardButton = this.story.day !== this.storyService.getCount();
+        this.showForwardButton = this.story.day !== this.storyService.count;
     }
 }

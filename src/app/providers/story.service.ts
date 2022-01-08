@@ -6,6 +6,12 @@ import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class StoryService {
+    get count(): number {
+        return this._count;
+    }
+
+    private _count: number = 0;
+
     constructor(private http: HttpClient) {}
 
     get(day: number): Observable<StoryModel> {
@@ -16,9 +22,8 @@ export class StoryService {
         return this.http.get<StoryModel[]>(`${environment.apiUrl}/story/authors`);
     }
 
-    // TODO: #37 Agregar cuenta en base a los datos existentes en Sanity
-    getCount(): number {
-        return 7;
+    public async setCount() {
+        this._count = await this.http.get<number>(`${environment.apiUrl}/story/count`).toPromise();
     }
 
     // TODO: #60 Cambiar por parsing vía librerías de Sanity

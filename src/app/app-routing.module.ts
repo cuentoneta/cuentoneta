@@ -14,11 +14,9 @@ const routes: Routes = [
         path: 'about',
         loadChildren: () => import('./pages/about/about.module').then((m) => m.AboutModule),
     },
-    // TODO: Issue #37 - La navegación a story debe ser en base al cuento del día actual
-
     {
         path: '',
-        redirectTo: 'story/7',
+        redirectTo: 'story',
         pathMatch: 'full',
     },
 ];
