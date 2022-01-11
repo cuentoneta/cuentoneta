@@ -25,7 +25,7 @@ app.use(errorHandler);
 // Serve only the static files form the www directory
 app.use(express.static('./www'));
 
-const apiRoutes = [{ path: '/story', controller: './server/controllers/story.controller' }];
+const apiRoutes = [{ path: '/api/story', controller: './server/controllers/story.controller' }];
 
 // api routes
 for (const route of apiRoutes) {
