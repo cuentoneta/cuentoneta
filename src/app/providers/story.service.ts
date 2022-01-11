@@ -15,15 +15,15 @@ export class StoryService {
     constructor(private http: HttpClient) {}
 
     get(day: number): Observable<StoryModel> {
-        return this.http.get<StoryModel>(`${environment.apiUrl}/story/${day}`);
+        return this.http.get<StoryModel>(`${environment.apiUrl}/api/story/${day}`);
     }
 
     getAuthors(): Observable<any> {
-        return this.http.get<StoryModel[]>(`${environment.apiUrl}/story/authors`);
+        return this.http.get<StoryModel[]>(`${environment.apiUrl}/api/story/authors`);
     }
 
     public async setCount() {
-        this._count = await this.http.get<number>(`${environment.apiUrl}/story/count`).toPromise();
+        this._count = await this.http.get<number>(`${environment.apiUrl}/api/story/count`).toPromise();
     }
 
     // TODO: #60 Cambiar por parsing vía librerías de Sanity
