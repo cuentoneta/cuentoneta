@@ -7,6 +7,8 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { SettingsService } from './providers/settings.service';
 
+import { OneSignalService } from 'onesignal-ngx';
+
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
@@ -51,9 +53,13 @@ export class AppComponent {
         private router: Router,
         private splashScreen: SplashScreen,
         private statusBar: StatusBar,
-        private settingsService: SettingsService
+        private settingsService: SettingsService,
+        private oneSignal: OneSignalService
     ) {
         this.initializeApp();
+        this.oneSignal.init({
+          appId: '8f97e6b0-5139-4391-ac63-f752358de3b3',
+        });
     }
 
     initializeApp() {
