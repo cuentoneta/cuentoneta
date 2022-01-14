@@ -50,6 +50,12 @@
                         <ion-label> Modo Oscuro </ion-label>
                         <ion-toggle [ngModel]="darkMode" (ionChange)="onModeChange($event)"></ion-toggle>
                     </ion-item>
+                    <ion-menu-toggle autoHide="false">
+                        <ion-button (click)="subscribeAlert()">
+                            <ion-icon slot="start" name="notifications-outline"></ion-icon>
+                            <ion-label> Suscribirse a Actualizaciones </ion-label>
+                        </ion-button>
+                    </ion-menu-toggle>
                 </ion-list>
             </ion-content>
         </ion-menu>

@@ -58,7 +58,7 @@ export class AppComponent {
     ) {
         this.initializeApp();
         this.oneSignal.init({
-          appId: '8f97e6b0-5139-4391-ac63-f752358de3b3',
+            appId: '8f97e6b0-5139-4391-ac63-f752358de3b3',
         });
     }
 
@@ -72,5 +72,9 @@ export class AppComponent {
 
     public async onModeChange(event: CustomEvent) {
         this.settingsService.setDarkModeSettings(event.detail.checked);
+    }
+
+    public subscribeAlert() {
+        this.oneSignal.showNativePrompt();
     }
 }
