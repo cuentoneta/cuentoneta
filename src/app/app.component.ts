@@ -75,6 +75,6 @@ export class AppComponent {
     }
 
     public subscribeAlert() {
-        this.oneSignal.showNativePrompt();
+        this.oneSignal.registerForPushNotifications();
     }
 }
