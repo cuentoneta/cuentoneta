@@ -15,6 +15,10 @@ const routes: Routes = [
         loadChildren: () => import('./pages/about/about.module').then((m) => m.AboutModule),
     },
     {
+        path: 'subscription',
+        loadChildren: () => import('./pages/subscription/subscription.module').then((m) => m.SubscriptionModule),
+    },
+    {
         path: '',
         redirectTo: 'story',
         pathMatch: 'full',

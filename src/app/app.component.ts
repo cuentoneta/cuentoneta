@@ -35,6 +35,11 @@ export class AppComponent {
             url: '/about',
             icon: 'information-circle',
         },
+        {
+            title: 'Suscribirme a Actualizaciones',
+            url: '/subscription',
+            icon: 'notifications',
+        },
     ];
 
     public externalLinks = [
@@ -63,8 +68,8 @@ export class AppComponent {
         });
     }
 
-    initializeApp() {
-        this.platform.ready().then(() => {
+    public initializeApp() {
+        this.platform.ready().then(async () => {
             this.statusBar.styleDefault();
             this.splashScreen.hide();
             this.settingsService.darkMode$.subscribe((value) => (this.darkMode = value));
@@ -73,12 +78,5 @@ export class AppComponent {
 
     public async onModeChange(event: CustomEvent) {
         this.settingsService.setDarkModeSettings(event.detail.checked);
-    }
-
-    public async subscribeAlert() {
-        const notificationsEnabled = await this.oneSignal.isPushNotificationsEnabled();
-        if (!notificationsEnabled) {
-            await this.oneSignal.showSlidedownPrompt();
-        }
     }
 }
