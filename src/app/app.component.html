@@ -45,23 +45,17 @@
                             </ion-item>
                         </ion-menu-toggle>
                     </ng-container>
+                    <ion-menu-toggle autoHide="false">
+                        <ion-item autoHide="false" (click)="subscribeAlert()">
+                            <ion-icon slot="start" name="notifications-outline"></ion-icon>
+                            <ion-label> Suscribirse a Actualizaciones </ion-label>
+                        </ion-item>
+                    </ion-menu-toggle>
                     <ion-item>
                         <ion-icon slot="start" name="moon-outline"></ion-icon>
                         <ion-label> Modo Oscuro </ion-label>
                         <ion-toggle [(ngModel)]="darkMode" (ionChange)="onModeChange($event)"></ion-toggle>
                     </ion-item>
-                    <ion-menu-toggle autoHide="false">
-                        <ion-button (click)="subscribeAlert()">
-                            <ion-icon slot="start" name="notifications-outline"></ion-icon>
-                            <ion-label> Suscribirse a SUBS </ion-label>
-                        </ion-button>
-                    </ion-menu-toggle>
-                    <ion-menu-toggle autoHide="false">
-                        <ion-button (click)="registerForPush()">
-                            <ion-icon slot="start" name="notifications-outline"></ion-icon>
-                            <ion-label> Suscribirse a PUSH </ion-label>
-                        </ion-button>
-                    </ion-menu-toggle>
                 </ion-list>
             </ion-content>
         </ion-menu>

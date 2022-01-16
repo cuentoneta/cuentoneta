@@ -99,8 +99,4 @@ export class AppComponent {
     public subscribeAlert() {
         this.oneSignal.showSlidedownPrompt();
     }
-
-    public registerForPush() {
-        this.oneSignal.registerForPushNotifications();
-    }
 }
