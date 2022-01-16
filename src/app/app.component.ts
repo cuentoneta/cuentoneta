@@ -36,7 +36,7 @@ export class AppComponent {
             icon: 'information-circle',
         },
         {
-            title: 'Suscribirme a Actualizaciones',
+            title: 'Suscripción',
             url: '/subscription',
             icon: 'notifications',
         },
