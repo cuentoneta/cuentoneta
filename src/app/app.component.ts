@@ -58,29 +58,8 @@ export class AppComponent {
     ) {
         this.initializeApp();
         this.oneSignal.init({
+            allowLocalhostAsSecureOrigin: true,
             appId: '8f97e6b0-5139-4391-ac63-f752358de3b3',
-            promptOptions: {
-                slidedown: {
-                    prompts: [
-                        {
-                            type: 'push', // current types are "push" & "category"
-                            autoPrompt: true,
-                            text: {
-                                /* limited to 90 characters */
-                                actionMessage: "We'd like to show you notifications for the latest news and updates.",
-                                /* acceptButton limited to 15 characters */
-                                acceptButton: 'Allow',
-                                /* cancelButton limited to 15 characters */
-                                cancelButton: 'Cancel',
-                            },
-                            delay: {
-                                pageViews: 1,
-                                timeDelay: 20,
-                            },
-                        },
-                    ],
-                },
-            },
         });
     }
 
@@ -96,7 +75,10 @@ export class AppComponent {
         this.settingsService.setDarkModeSettings(event.detail.checked);
     }
 
-    public subscribeAlert() {
-        this.oneSignal.showSlidedownPrompt();
+    public async subscribeAlert() {
+        const notificationsEnabled = await this.oneSignal.isPushNotificationsEnabled();
+        if (!notificationsEnabled) {
+            await this.oneSignal.showSlidedownPrompt();
+        }
     }
 }
