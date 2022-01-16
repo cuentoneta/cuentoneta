@@ -59,6 +59,28 @@ export class AppComponent {
         this.initializeApp();
         this.oneSignal.init({
             appId: '8f97e6b0-5139-4391-ac63-f752358de3b3',
+            promptOptions: {
+                slidedown: {
+                    prompts: [
+                        {
+                            type: 'push', // current types are "push" & "category"
+                            autoPrompt: true,
+                            text: {
+                                /* limited to 90 characters */
+                                actionMessage: "We'd like to show you notifications for the latest news and updates.",
+                                /* acceptButton limited to 15 characters */
+                                acceptButton: 'Allow',
+                                /* cancelButton limited to 15 characters */
+                                cancelButton: 'Cancel',
+                            },
+                            delay: {
+                                pageViews: 1,
+                                timeDelay: 20,
+                            },
+                        },
+                    ],
+                },
+            },
         });
     }
 
@@ -75,7 +97,7 @@ export class AppComponent {
     }
 
     public subscribeAlert() {
-        this.oneSignal.showNativePrompt();
+        this.oneSignal.showSlidedownPrompt();
     }
 
     public registerForPush() {
