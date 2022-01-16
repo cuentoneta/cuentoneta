@@ -1,3 +1,10 @@
+### Créditos a autores de medios
+
+// TODO: Completar esta sección
+
+- Dominik S por ícono de megáfono: https://www.pngitem.com/middle/ihhTThJ_announce-icon-png-white-png-download-announce-white/
+- Tell a Story por imagen de minivan con libros: https://cronicasdeimarie.com/2017/03/09/librerias-fantasticas-del-mundo-libros-sobre-ruedas/ 
+
 # Ionic Angular Conference Application
 
 This application is purely a kitchen-sink demo of the Ionic Framework and Angular.
