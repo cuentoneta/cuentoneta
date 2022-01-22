@@ -41,6 +41,11 @@ export class AppComponent {
             url: '/subscription',
             icon: 'notifications',
         },
+        {
+            title: 'DMCA',
+            url: '/dmca',
+            icon: 'document-lock',
+        },
     ];
 
     public externalLinks = [

@@ -19,6 +19,10 @@ const routes: Routes = [
         loadChildren: () => import('./pages/subscription/subscription.module').then((m) => m.SubscriptionModule),
     },
     {
+        path: 'dmca',
+        loadChildren: () => import('./pages/dmca/dmca.module').then((m) => m.DmcaModule),
+    },
+    {
         path: '',
         redirectTo: 'story',
         pathMatch: 'full',

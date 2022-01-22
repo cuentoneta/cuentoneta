@@ -4,6 +4,7 @@ const service = require('../services/story.service');
 
 router.get('/count', getCount);
 router.get('/authors', getAuthors);
+router.get('/original-links', getOriginalLinks);
 router.get('/:id', getById);
 
 module.exports = router;
@@ -25,6 +26,13 @@ function getById(req, res, next) {
 function getCount(req, res, next) {
     return service
         .getCount()
+        .then((result) => res.json(result))
+        .catch((err) => next(err));
+}
+
+function getOriginalLinks(req, res, next) {
+    return service
+        .getOriginalLinks()
         .then((result) => res.json(result))
         .catch((err) => next(err));
 }
