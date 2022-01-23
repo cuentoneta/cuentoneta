@@ -8,6 +8,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { SettingsService } from './providers/settings.service';
 
 import { OneSignalService } from 'onesignal-ngx';
+import { PushNotificationsService } from './providers/push-notifications.service';
 
 @Component({
     selector: 'app-root',
@@ -54,17 +55,18 @@ export class AppComponent {
 
     constructor(
         private menu: MenuController,
+        private oneSignal: OneSignalService,
         private platform: Platform,
+        private pushNotificationsService: PushNotificationsService,
         private router: Router,
         private splashScreen: SplashScreen,
         private statusBar: StatusBar,
-        private settingsService: SettingsService,
-        private oneSignal: OneSignalService
+        private settingsService: SettingsService
     ) {
         this.initializeApp();
         this.oneSignal.init({
             allowLocalhostAsSecureOrigin: true,
-            appId: '8f97e6b0-5139-4391-ac63-f752358de3b3',
+            appId: this.pushNotificationsService.appId,
         });
     }
 
