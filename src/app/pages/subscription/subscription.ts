@@ -20,8 +20,7 @@ export class SubscriptionPage implements OnInit, OnDestroy {
         this.subscriptionStatusLoaded = true;
 
         this.subscriptionStatusSubscription = interval(1000).subscribe(async () => {
-            const value = await this.oneSignalService.isPushNotificationsEnabled();
-            this.isSubscriptionActive = value;
+            this.isSubscriptionActive = await this.oneSignalService.isPushNotificationsEnabled();
         });
     }
 
