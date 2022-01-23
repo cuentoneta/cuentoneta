@@ -12,7 +12,7 @@ if (!('error' in result)) {
     };
 } else {
     environment = {
-        oneSignalAppId: result.parsed.ONESIGNAL_APP_ID,
+        oneSignalAppId: process.env.ONESIGNAL_APP_ID,
         sanity: {
             projectId: process.env.SANITY_PROJECT_ID,
             dataset: process.env.SANITY_DATASET,
