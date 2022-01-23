@@ -14,6 +14,7 @@ import { environment } from '../environments/environment';
 import { FormsModule } from '@angular/forms';
 import { StoryService } from './providers/story.service';
 import { SettingsService } from './providers/settings.service';
+import { PushNotificationsService } from './providers/push-notifications.service';
 
 @NgModule({
     imports: [
@@ -31,11 +32,19 @@ import { SettingsService } from './providers/settings.service';
     providers: [
         {
             provide: APP_INITIALIZER,
+            useFactory: (pushNotificationsService: PushNotificationsService) => () =>
+                pushNotificationsService.assignAppId(),
+            deps: [PushNotificationsService],
+            multi: true,
+        },
+        {
+            provide: APP_INITIALIZER,
             useFactory: (storyService: StoryService) => () => storyService.setCount(),
             deps: [StoryService],
             multi: true,
         },
         InAppBrowser,
+        PushNotificationsService,
         SettingsService,
         SplashScreen,
         StatusBar,

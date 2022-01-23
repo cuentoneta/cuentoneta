@@ -8,6 +8,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { SettingsService } from './providers/settings.service';
 
 import { OneSignalService } from 'onesignal-ngx';
+import { PushNotificationsService } from './providers/push-notifications.service';
 
 @Component({
     selector: 'app-root',
@@ -35,6 +36,11 @@ export class AppComponent {
             url: '/about',
             icon: 'information-circle',
         },
+        {
+            title: 'Suscripción',
+            url: '/subscription',
+            icon: 'notifications',
+        },
     ];
 
     public externalLinks = [
@@ -49,21 +55,23 @@ export class AppComponent {
 
     constructor(
         private menu: MenuController,
+        private oneSignal: OneSignalService,
         private platform: Platform,
+        private pushNotificationsService: PushNotificationsService,
         private router: Router,
         private splashScreen: SplashScreen,
         private statusBar: StatusBar,
-        private settingsService: SettingsService,
-        private oneSignal: OneSignalService
+        private settingsService: SettingsService
     ) {
         this.initializeApp();
         this.oneSignal.init({
-          appId: '8f97e6b0-5139-4391-ac63-f752358de3b3',
+            allowLocalhostAsSecureOrigin: true,
+            appId: this.pushNotificationsService.appId,
         });
     }
 
-    initializeApp() {
-        this.platform.ready().then(() => {
+    public initializeApp() {
+        this.platform.ready().then(async () => {
             this.statusBar.styleDefault();
             this.splashScreen.hide();
             this.settingsService.darkMode$.subscribe((value) => (this.darkMode = value));
