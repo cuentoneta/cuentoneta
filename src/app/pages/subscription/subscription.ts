@@ -1,7 +1,6 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
-import { OneSignalService } from 'onesignal-ngx';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ToastController } from '@ionic/angular';
-import { interval, Subscription } from 'rxjs';
+import { OneSignal } from 'onesignal-ngx';
 
 @Component({
     selector: 'page-subscription',
@@ -12,7 +11,7 @@ export class SubscriptionPage implements OnInit, AfterViewInit {
     public isSubscriptionActive: boolean = false;
     public subscriptionStatusLoaded: boolean = false;
 
-    constructor(public oneSignalService: OneSignalService, public toastController: ToastController) {}
+    constructor(public oneSignalService: OneSignal, public toastController: ToastController) {}
 
     async ngOnInit() {
         this.subscriptionStatusLoaded = true;
