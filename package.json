@@ -7,8 +7,8 @@
     "scripts": {
         "ng": "ng",
         "start": "nodemon server.js",
-        "build": "ng build --configuration production && node copy-build-assets.js",
-        "build-local": "ng build && node copy-build-assets.js",
+        "build-production": "ng build --configuration production && node copy-build-assets.js",
+        "build": "ng build && node copy-build-assets.js",
         "build-watch": "ng build --watch",
         "test": "ng test",
         "lint": "ng lint",
