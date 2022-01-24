@@ -18,7 +18,7 @@
     <ion-progress-bar [value]="progress"></ion-progress-bar>
 </ion-header>
 
-<ion-content id="ion-text-content" fullscreen="true" [scrollEvents]="true" (ionScroll)="onScroll($event)">
+<ion-content id="ion-text-content" #content fullscreen="true" [scrollEvents]="true" (ionScroll)="onScroll($event)">
     <div class="container ion-justify-content-center">
         <ion-grid class="ion-text-center ion-padding">
             <ion-row>

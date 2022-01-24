@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Config, IonRouterOutlet, LoadingController, ToastController } from '@ionic/angular';
+import { Config, IonContent, IonRouterOutlet, LoadingController, ToastController } from '@ionic/angular';
 import { StoryService } from '../../providers/story.service';
 import { StoryModel } from '../../models/story.model';
 
@@ -9,7 +9,9 @@ import { StoryModel } from '../../models/story.model';
     templateUrl: 'story.html',
     styleUrls: ['./story.scss'],
 })
-export class StoryPage implements OnInit {
+export class StoryPage implements OnInit, AfterViewInit {
+    @ViewChild('content') content: IonContent;
+
     public currentStoryId = 1;
     public story: StoryModel;
     public showBackButton: boolean = true;
@@ -38,12 +40,25 @@ export class StoryPage implements OnInit {
         });
     }
 
+    ngAfterViewInit() {
+        this.resetScroll();
+    }
+
+    private resetScroll() {
+        this.content.scrollToTop();
+        this.progress = '0%';
+    }
+
     public navigateBack() {
-        this.router.navigate([`/story/${this.story.day - 1}`]);
+        this.router.navigate([`/story/${this.story.day - 1}`]).then((result) => {
+            this.resetScroll();
+        });
     }
 
     public navigateForward() {
-        this.router.navigate([`/story/${this.story.day + 1}`]);
+        this.router.navigate([`/story/${this.story.day + 1}`]).then((result) => {
+            this.resetScroll();
+        });
     }
 
     public async onScroll(event) {
