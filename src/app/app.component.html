@@ -35,6 +35,11 @@
                             </ion-label>
                         </ion-item>
                     </ion-menu-toggle>
+                    <ion-item>
+                        <ion-icon slot="start" name="moon-outline"></ion-icon>
+                        <ion-label> Modo Oscuro </ion-label>
+                        <ion-toggle [(ngModel)]="darkMode" (ionChange)="onModeChange($event)"></ion-toggle>
+                    </ion-item>
                     <ng-container *ngFor="let p of externalLinks">
                         <ion-menu-toggle autoHide="false">
                             <ion-item href="{{ p.url }}" detail="false" target="_blank">
@@ -45,11 +50,6 @@
                             </ion-item>
                         </ion-menu-toggle>
                     </ng-container>
-                    <ion-item>
-                        <ion-icon slot="start" name="moon-outline"></ion-icon>
-                        <ion-label> Modo Oscuro </ion-label>
-                        <ion-toggle [(ngModel)]="darkMode" (ionChange)="onModeChange($event)"></ion-toggle>
-                    </ion-item>
                 </ion-list>
             </ion-content>
         </ion-menu>
