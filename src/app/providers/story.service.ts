@@ -14,12 +14,16 @@ export class StoryService {
 
     constructor(private http: HttpClient) {}
 
-    get(day: number): Observable<StoryModel> {
+    public get(day: number): Observable<StoryModel> {
         return this.http.get<StoryModel>(`${environment.apiUrl}/api/story/${day}`);
     }
 
-    getAuthors(): Observable<any> {
+    public getAuthors(): Observable<StoryModel[]> {
         return this.http.get<StoryModel[]>(`${environment.apiUrl}/api/story/authors`);
+    }
+
+    public getOriginalLinks(): Observable<any> {
+        return this.http.get<StoryModel[]>(`${environment.apiUrl}/api/story/original-links`);
     }
 
     public async setCount() {
@@ -27,12 +31,12 @@ export class StoryService {
     }
 
     // TODO: #60 Cambiar por parsing vía librerías de Sanity
-    parseParagraph(block): Paragraph {
+    public parseParagraph(block): Paragraph {
         return { text: block.children[0].text, italics: block.children[0].marks.includes('em') };
     }
 
     // TODO: #60 Cambiar por parsing vía librerías de Sanity
-    parseSummary(block): string {
+    public parseSummary(block): string {
         return block.children[0].text;
     }
 }

@@ -11,6 +11,7 @@ module.exports = {
     getAuthors,
     getById,
     getCount,
+    getOriginalLinks,
 };
 
 async function getAuthors() {
@@ -40,6 +41,12 @@ async function getById(id) {
 
 async function getCount() {
     const query = `count(*[_type == 'story'])`;
+    const result = await sanityConnector.client.fetch(query, {});
+    return result;
+}
+
+async function getOriginalLinks() {
+    const query = `*[_type == 'story'] | order(day desc) {title, day, author->, originalLink}`;
     const result = await sanityConnector.client.fetch(query, {});
     return result;
 }
