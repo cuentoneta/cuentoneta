@@ -7,7 +7,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { SettingsService } from './providers/settings.service';
 
-import { OneSignalService } from 'onesignal-ngx';
+import { OneSignal } from 'onesignal-ngx';
 import { PushNotificationsService } from './providers/push-notifications.service';
 
 @Component({
@@ -55,7 +55,7 @@ export class AppComponent {
 
     constructor(
         private menu: MenuController,
-        private oneSignal: OneSignalService,
+        private oneSignal: OneSignal,
         private platform: Platform,
         private pushNotificationsService: PushNotificationsService,
         private router: Router,

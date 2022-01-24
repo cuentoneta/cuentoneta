@@ -1,43 +1,38 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { OneSignalService } from 'onesignal-ngx';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ToastController } from '@ionic/angular';
-import { interval, Subscription } from 'rxjs';
+import { OneSignal } from 'onesignal-ngx';
 
 @Component({
     selector: 'page-subscription',
     templateUrl: 'subscription.html',
     styleUrls: ['./subscription.scss'],
 })
-export class SubscriptionPage implements OnInit, OnDestroy {
+export class SubscriptionPage implements OnInit, AfterViewInit {
     public isSubscriptionActive: boolean = false;
     public subscriptionStatusLoaded: boolean = false;
 
-    private subscriptionStatusSubscription: Subscription;
-
-    constructor(public oneSignalService: OneSignalService, public toastController: ToastController) {}
+    constructor(public oneSignalService: OneSignal, public toastController: ToastController) {}
 
     async ngOnInit() {
         this.subscriptionStatusLoaded = true;
-
-        this.subscriptionStatusSubscription = interval(1000).subscribe(async () => {
-            this.isSubscriptionActive = await this.oneSignalService.isPushNotificationsEnabled();
-        });
     }
 
-    ngOnDestroy() {
-        this.subscriptionStatusSubscription.unsubscribe();
+    async ngAfterViewInit() {
+        this.checkNotificationStatus();
     }
 
     public async enableSubscription() {
         if (!this.isSubscriptionActive) {
             await this.oneSignalService.showSlidedownPrompt();
             await this.oneSignalService.setSubscription(true);
+            await this.checkNotificationStatus();
         }
     }
 
     public async disableSubscription() {
         if (this.isSubscriptionActive) {
             await this.oneSignalService.setSubscription(false);
+            await this.checkNotificationStatus();
             this.presentToast('Te desuscribiste exitosamente de las actualizaciones de La Cuentoneta.');
         }
     }
@@ -48,5 +43,9 @@ export class SubscriptionPage implements OnInit, OnDestroy {
             duration: 2000,
         });
         toast.present();
+    }
+
+    private async checkNotificationStatus() {
+        this.isSubscriptionActive = await this.oneSignalService.isPushNotificationsEnabled();
     }
 }
