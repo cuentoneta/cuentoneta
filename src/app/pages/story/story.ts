@@ -76,16 +76,36 @@ export class StoryPage implements OnInit, AfterViewInit {
         this.progress = percentage + '%';
     }
 
-    // TODO: Implementar FAB para compartir
-    // async openSocial(network: string, fab: HTMLIonFabElement) {
-    //     const loading = await this.loadingCtrl.create({
-    //         message: `Posting to ${network}`,
-    //         duration: Math.random() * 1000 + 500,
-    //     });
-    //     await loading.present();
-    //     await loading.onWillDismiss();
-    //     fab.close();
-    // }
+    async openSocial(network: string, fab: HTMLIonFabElement) {
+        const loading = await this.loadingCtrl.create({
+            message: `Compartiendo en ${network}`,
+            duration: Math.random() * 1000 + 500,
+        });
+        await loading.present();
+        await loading.onWillDismiss();
+
+        if (network === 'Facebook') {
+            window.open(
+                'https://www.facebook.com/share.php?u=' +
+                    encodeURIComponent(`https://cuentosdeverano.ar`) +
+                    '&quote=¡Hola! Te invito a sumarte a la lectura colectiva %23CuentosDeVerano. Por cada día del verano 2022, compartimos la lectura de un cuento, historia o relato breve. %0a%0aIngresá desde este link:',
+                'facebook-share-dialog',
+                'width=626,height=436'
+            );
+            return false;
+        }
+        if (network === 'Whatsapp') {
+            window.open(
+                'whatsapp://send?text=¡Hola! Te invito a sumarte a la lectura colectiva %23CuentosDeVerano. Por cada día del verano 2022, compartimos la lectura de un cuento, historia o relato breve. %0a%0aIngresá desde: https%3A%2F%2Fcuentosdeverano.ar',
+                '_blank'
+            );
+        }
+        if (network === 'Twitter') {
+            window.open('https://twitter.com/intent/tweet?&text=¡Hola! Te invito a sumarte a la lectura colectiva %23CuentosDeVerano. Por cada día del verano 2022, compartimos la lectura de un cuento, historia o relato breve. %0a%0aIngresá desde: https%3A%2F%2Fcuentosdeverano.ar');
+        }
+
+        fab.close();
+    }
 
     public openBio(bioUrl: string) {
         window.open(bioUrl, '_blank');
