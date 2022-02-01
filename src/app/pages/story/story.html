@@ -85,23 +85,20 @@
 
     <!-- TODO: Implementar BIO para compartir -->
 
-    <!--    <ion-fab slot="fixed" vertical="bottom" horizontal="end" #fab>-->
-    <!--        <ion-fab-button>-->
-    <!--            <ion-icon name="share-social"></ion-icon>-->
-    <!--        </ion-fab-button>-->
-    <!--        <ion-fab-list side="top">-->
-    <!--            <ion-fab-button color="vimeo" (click)="openSocial('Vimeo', fab)">-->
-    <!--                <ion-icon name="logo-vimeo"></ion-icon>-->
-    <!--            </ion-fab-button>-->
-    <!--            <ion-fab-button color="instagram" (click)="openSocial('Instagram', fab)">-->
-    <!--                <ion-icon name="logo-instagram"></ion-icon>-->
-    <!--            </ion-fab-button>-->
-    <!--            <ion-fab-button color="twitter" (click)="openSocial('Twitter', fab)">-->
-    <!--                <ion-icon name="logo-twitter"></ion-icon>-->
-    <!--            </ion-fab-button>-->
-    <!--            <ion-fab-button color="facebook" (click)="openSocial('Facebook', fab)">-->
-    <!--                <ion-icon name="logo-facebook"></ion-icon>-->
-    <!--            </ion-fab-button>-->
-    <!--        </ion-fab-list>-->
-    <!--    </ion-fab>-->
+    <ion-fab slot="fixed" vertical="bottom" horizontal="end" #fab>
+        <ion-fab-button>
+            <ion-icon name="share-social"></ion-icon>
+        </ion-fab-button>
+        <ion-fab-list side="top">
+            <ion-fab-button color="twitter" (click)="openSocial('Twitter', fab)">
+                <ion-icon name="logo-twitter"></ion-icon>
+            </ion-fab-button>
+            <ion-fab-button color="facebook" (click)="openSocial('Facebook', fab)">
+                <ion-icon name="logo-facebook"></ion-icon>
+            </ion-fab-button>
+            <ion-fab-button color="favorite" (click)="openSocial('Whatsapp', fab)">
+                <ion-icon name="logo-whatsapp"></ion-icon>
+            </ion-fab-button>
+        </ion-fab-list>
+    </ion-fab>
 </ion-content>
