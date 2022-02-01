@@ -16,17 +16,18 @@
       (click)="navigateToStory(story.day)"
     >
       <ion-avatar slot="start">
-        <img [src]="story.author.imageUrl" />
+        <img [src]="story.author.imageUrl" alt="Imagen del autor del cuento"/>
       </ion-avatar>
       <ion-label>
         <h2>{{story.title}}</h2>
         <h3>
           por {{story.author.name}}<img
+          alt="Imagen de la bandera de nacionalidad del autor del cuento"
             class="nationality-flag"
             [src]="story.author.nationality"
           />
         </h3>
-        <p>Día {{story.day}}/31</p>
+        <p>Día {{story.day}}</p>
       </ion-label>
     </ion-item>
   </ion-list>
