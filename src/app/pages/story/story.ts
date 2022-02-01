@@ -76,7 +76,6 @@ export class StoryPage implements OnInit, AfterViewInit {
         this.progress = percentage + '%';
     }
 
-    // TODO: Implementar FAB para compartir
     async openSocial(network: string, fab: HTMLIonFabElement) {
         const loading = await this.loadingCtrl.create({
             message: `Compartiendo en ${network}`,
