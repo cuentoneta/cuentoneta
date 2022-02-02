@@ -7,7 +7,12 @@
             </ion-button>
         </ion-buttons>
         <div class="ion-text-center">
-            <ion-title *ngIf="story">La Cuentoneta: Día {{story.day}}</ion-title>
+            <ng-container *ngIf="story">
+                <ion-title>
+                    <div class="ion-hide-md-down">La Cuentoneta: Día {{story.day}}</div>
+                    <div class="ion-hide-md-up">Día {{story.day}}</div>
+                </ion-title>
+            </ng-container>
         </div>
         <ion-buttons slot="end">
             <ion-button (click)="navigateForward()" [hidden]="!showForwardButton">
@@ -19,7 +24,7 @@
 </ion-header>
 
 <ion-content id="ion-text-content" #content fullscreen="true" [scrollEvents]="true" (ionScroll)="onScroll($event)">
-    <div class="container ion-justify-content-center">
+    <div class="container ion-justify-content-center" [hidden]="!displayStory">
         <ion-grid class="ion-text-center ion-padding">
             <ion-row>
                 <ion-col>
@@ -29,6 +34,11 @@
             <ion-row>
                 <ion-col>
                     <h2 class="text-title-small">por {{story.author.name}}</h2>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col>
+                    <h6 class="text-reading-time">~ {{approximateReadingTime}} min.</h6>
                 </ion-col>
             </ion-row>
         </ion-grid>
