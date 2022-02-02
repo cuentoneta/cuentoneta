@@ -17,6 +17,8 @@ export class StoryPage implements OnInit, AfterViewInit {
     public showBackButton: boolean = true;
     public showForwardButton: boolean = true;
     public progress: string = '0%';
+    public approximateReadingTime: number = 0;
+    public displayStory = false;
 
     constructor(
         public loadingCtrl: LoadingController,
@@ -37,6 +39,8 @@ export class StoryPage implements OnInit, AfterViewInit {
             this.story.summary = result.story.summary.map((x) => this.storyService.parseSummary(x)).pop();
             this.handleBackButtonVisibility();
             this.handleForwardButtonVisibility();
+            this.calculateApproximateReadingTime();
+            this.displayStory = true;
         });
     }
 
@@ -59,6 +63,14 @@ export class StoryPage implements OnInit, AfterViewInit {
         this.router.navigate([`/story/${this.story.day + 1}`]).then((result) => {
             this.resetScroll();
         });
+    }
+
+    public calculateApproximateReadingTime() {
+        const accumulator = (previous, current) => previous + current;
+        const wordCount = this.story.paragraphs
+            .map((paragraph) => paragraph.text.split(' ').length)
+            .reduce(accumulator);
+        this.approximateReadingTime = Math.ceil(wordCount / 200);
     }
 
     public async onScroll(event) {
@@ -101,7 +113,9 @@ export class StoryPage implements OnInit, AfterViewInit {
             );
         }
         if (network === 'Twitter') {
-            window.open('https://twitter.com/intent/tweet?&text=¡Hola! Te invito a sumarte a la lectura colectiva %23CuentosDeVerano. Por cada día del verano 2022, compartimos la lectura de un cuento, historia o relato breve. %0a%0aIngresá desde: https%3A%2F%2Fcuentosdeverano.ar');
+            window.open(
+                'https://twitter.com/intent/tweet?&text=¡Hola! Te invito a sumarte a la lectura colectiva %23CuentosDeVerano. Por cada día del verano 2022, compartimos la lectura de un cuento, historia o relato breve. %0a%0aIngresá desde: https%3A%2F%2Fcuentosdeverano.ar'
+            );
         }
 
         fab.close();
