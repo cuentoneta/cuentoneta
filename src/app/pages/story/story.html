@@ -7,7 +7,12 @@
             </ion-button>
         </ion-buttons>
         <div class="ion-text-center">
-            <ion-title *ngIf="story">La Cuentoneta: Día {{story.day}}</ion-title>
+            <ng-container *ngIf="story">
+                <ion-title>
+                    <div class="ion-hide-md-down">La Cuentoneta: Día {{story.day}}</div>
+                    <div class="ion-hide-md-up">Día {{story.day}}</div>
+                </ion-title>
+            </ng-container>
         </div>
         <ion-buttons slot="end">
             <ion-button (click)="navigateForward()" [hidden]="!showForwardButton">
