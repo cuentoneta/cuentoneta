@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Paragraph, StoryModel } from '../models/story.model';
+import { StoryModel } from '../models/story.model';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
@@ -30,13 +30,38 @@ export class StoryService {
         this._count = await this.http.get<number>(`${environment.apiUrl}/api/story/count`).toPromise();
     }
 
-    // TODO: #60 Cambiar por parsing vía librerías de Sanity
-    public parseParagraph(block): Paragraph {
-        return { text: block.children[0].text, italics: block.children[0].marks.includes('em') };
+    public load(story): StoryModel {
+        return {
+            ...story,
+            prologues: story.prologues,
+            paragraphs: story.paragraphs.map((x) => this.parseParagraph(x)),
+            summary: story.summary.map((x) => this.parseSummary(x)).pop(),
+        };
     }
 
-    // TODO: #60 Cambiar por parsing vía librerías de Sanity
+    public parseParagraph(block): string {
+        let paragraph = '';
+        block.children.forEach((x) => {
+            let part = x.text;
+            if (x.marks.includes('em')) {
+                part = this.addEmphasis(part);
+            }
+            if (x.marks.includes('strong')) {
+                part = this.addStrong(part);
+            }
+            paragraph = paragraph.concat(part);
+        });
+        return paragraph;
+    }
     public parseSummary(block): string {
         return block.children[0].text;
+    }
+
+    private addEmphasis(text: string): string {
+        return `<i>${text}</i>`;
+    }
+
+    private addStrong(text: string): string {
+        return `<strong>${text}</strong>`;
     }
 }

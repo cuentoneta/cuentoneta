@@ -59,12 +59,7 @@
         <ion-grid class="text-content ion-text-justify ion-padding">
             <ion-row>
                 <ion-col>
-                    <p
-                        *ngFor="let paragraph of story.paragraphs"
-                        [ngClass]="{'text-italics': paragraph['italics'], 'text-bold': paragraph['bold']}"
-                    >
-                        {{paragraph.text}}
-                    </p>
+                    <p *ngFor="let paragraph of story.paragraphs" [innerHTML]="paragraph"></p>
                 </ion-col>
             </ion-row>
             <ion-row>
@@ -92,8 +87,6 @@
             </ion-row>
         </ion-grid>
     </div>
-
-    <!-- TODO: Implementar BIO para compartir -->
 
     <ion-fab slot="fixed" vertical="bottom" horizontal="end" #fab>
         <ion-fab-button>
