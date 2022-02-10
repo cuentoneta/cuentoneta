@@ -32,11 +32,7 @@ export class StoryPage implements OnInit, AfterViewInit {
 
     ngOnInit() {
         this.route.data.subscribe((result) => {
-            this.story = result.story;
-            // TODO: #60 Cambiar por parsing vía librerías de Sanity
-            this.story.prologues = result.story.prologues;
-            this.story.paragraphs = result.story.paragraphs.map((x) => this.storyService.parseParagraph(x));
-            this.story.summary = result.story.summary.map((x) => this.storyService.parseSummary(x)).pop();
+            this.story = this.storyService.load(result.story);
             this.handleBackButtonVisibility();
             this.handleForwardButtonVisibility();
             this.calculateApproximateReadingTime();
@@ -67,9 +63,7 @@ export class StoryPage implements OnInit, AfterViewInit {
 
     public calculateApproximateReadingTime() {
         const accumulator = (previous, current) => previous + current;
-        const wordCount = this.story.paragraphs
-            .map((paragraph) => paragraph.text.split(' ').length)
-            .reduce(accumulator);
+        const wordCount = this.story.paragraphs.map((paragraph) => paragraph.split(' ').length).reduce(accumulator);
         this.approximateReadingTime = Math.ceil(wordCount / 200);
     }
 

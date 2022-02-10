@@ -5,14 +5,9 @@ export interface StoryModel {
     day: number;
     prologues: Prologue[];
     summary: string[];
-    paragraphs: Paragraph[];
+    paragraphs: string[];
 }
 
-export interface Paragraph {
-    text: string;
-    bold?: boolean;
-    italics?: boolean;
-}
 export interface Prologue {
     text: string;
     reference: string;
