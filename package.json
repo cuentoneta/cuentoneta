@@ -13,7 +13,8 @@
         "lint": "ng lint",
         "e2e": "ng e2e",
         "postinstall": "webdriver-manager update --standalone false --gecko false",
-        "build-serve": "npm run-script build && npm run-script start"
+        "build-serve": "npm run-script build && npm run-script start",
+        "vercel": "vercel dev"
     },
     "repository": {
         "type": "git",

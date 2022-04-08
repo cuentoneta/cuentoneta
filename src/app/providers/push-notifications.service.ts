@@ -9,6 +9,6 @@ export class PushNotificationsService {
     constructor(private http: HttpClient) {}
 
     public async assignAppId() {
-        this.appId = await this.http.get<string>(`${environment.apiUrl}/api/push-notifications/getAppId`).toPromise();
+        this.appId = await this.http.get<string>(`${environment.apiUrl}/api/push-notifications/get-app-id`).toPromise();
     }
 }
