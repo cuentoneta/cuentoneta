@@ -54,9 +54,9 @@ sanity start
 
 ## Autores
 ### Aplicación
-* Ramiro Olivencia - Programación
-* Juan Blas Tschopp - Programación
-* Candela Godoy - QA
+* [Ramiro Olivencia](https://www.linkedin.com/in/rolivencia/) - Diseño y programación
+* [Juan Blas Tschopp](https://www.linkedin.com/in/jbtschopp/) - Diseño y programación
+* [Candela Godoy](https://www.linkedin.com/in/candelagodoy/) - QA
 
 ### Idea
 * Facundo Kaufmann - Idea original
