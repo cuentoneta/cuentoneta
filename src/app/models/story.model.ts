@@ -1,7 +1,7 @@
 import { Author } from './author.model';
 import { Prologue } from './prologue.model';
 
-export interface StoryModel {
+export interface Story {
     id: number;
     author: Author;
     title: string;
