@@ -52,7 +52,7 @@
         "dotenv": "^10.0.0",
         "express": "^4.17.2",
         "nodemon": "^2.0.15",
-        "onesignal-ngx": "^1.0.0-beta6",
+        "onesignal-ngx": "^1.0.2",
         "rootpath": "^0.1.2",
         "rxjs": "^6.5.4",
         "sw-toolbox": "3.6.0",
