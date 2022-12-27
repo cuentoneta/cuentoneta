@@ -1,6 +1,6 @@
-import { mapAuthor, mapBodyToParagraphs, mapPrologues } from '../../functions';
+import { mapAuthor, mapBodyToParagraphs, mapPrologues } from '../functions';
 
-const sanityConnector = require('../../_helpers/sanity-connector');
+const sanityConnector = require('../_helpers/sanity-connector');
 
 /**
  * Obtiene las últimas cinco historias almacenadas en Sanity
@@ -9,8 +9,9 @@ const sanityConnector = require('../../_helpers/sanity-connector');
  * @returns {Promise<null>}
  */
 export default async function getLatest(req, res) {
-    const { edition } = req.query;
-    const query = `*[_type == 'story' && edition == '${edition}'] | order(day desc)[0...5]{title, day, originalLink, forewords, categories, publishedAt, body, review, forewords, author->}`;
+    const { edition, amount } = req.query;
+    const query = `*[_type == 'story' && edition == '${edition}'] | order(day desc)[0...${amount}]
+                    {title, day, originalLink, forewords, categories, publishedAt, body, review, forewords, author->}`;
     const result = await sanityConnector.client.fetch(query, {});
 
     if (!result) {
