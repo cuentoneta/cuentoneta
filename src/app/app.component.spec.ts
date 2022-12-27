@@ -1,61 +1,32 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { Router } from '@angular/router';
-import { SwUpdate } from '@angular/service-worker';
-import { TestBed, waitForAsync } from '@angular/core/testing';
-
-import { MenuController, Platform } from '@ionic/angular';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { IonicStorageModule } from '@ionic/storage';
+import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { NxWelcomeComponent } from './nx-welcome.component';
 
 describe('AppComponent', () => {
-  let menuSpy,
-    routerSpy,
-    statusBarSpy,
-    splashScreenSpy,
-    swUpdateSpy,
-    platformReadySpy,
-    platformSpy,
-    app,
-    fixture;
-
-  beforeEach(waitForAsync(() => {
-    menuSpy = jasmine.createSpyObj('MenuController', ['toggle', 'enable']);
-    routerSpy = jasmine.createSpyObj('Router', ['navigateByUrl']);
-    statusBarSpy = jasmine.createSpyObj('StatusBar', ['styleDefault']);
-    splashScreenSpy = jasmine.createSpyObj('SplashScreen', ['hide']);
-    swUpdateSpy = jasmine.createSpyObj('SwUpdate', ['available', 'activateUpdate']);
-    platformReadySpy = Promise.resolve();
-    platformSpy = jasmine.createSpyObj('Platform', { ready: platformReadySpy });
-
-    TestBed.configureTestingModule({
-      declarations: [AppComponent],
-      imports: [IonicStorageModule.forRoot()],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      providers: [
-        { provide: MenuController, useValue: menuSpy },
-        { provide: Router, useValue: routerSpy },
-        { provide: StatusBar, useValue: statusBarSpy },
-        { provide: SplashScreen, useValue: splashScreenSpy },
-        { provide: SwUpdate, useValue: swUpdateSpy },
-        { provide: Platform, useValue: platformSpy }
-      ]
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [AppComponent, NxWelcomeComponent],
     }).compileComponents();
-  }));
-  beforeEach(() => {
-    fixture = TestBed.createComponent(AppComponent);
-    app = fixture.debugElement.componentInstance;
   });
 
   it('should create the app', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
 
-  it('should initialize the app', async () => {
-    expect(platformSpy.ready).toHaveBeenCalled();
-    await platformReadySpy;
-    expect(statusBarSpy.styleDefault).toHaveBeenCalled();
-    expect(splashScreenSpy.hide).toHaveBeenCalled();
+  it(`should have as title 'cuentoneta'`, () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app.title).toEqual('cuentoneta');
+  });
+
+  it('should render title', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('h1')?.textContent).toContain(
+      'Welcome cuentoneta'
+    );
   });
 });

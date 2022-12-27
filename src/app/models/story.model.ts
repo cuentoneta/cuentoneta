@@ -1,23 +1,12 @@
-export interface StoryModel {
+import { Author } from './author.model';
+import { Prologue } from './prologue.model';
+
+export interface Story {
     id: number;
     author: Author;
     title: string;
     day: number;
     prologues: Prologue[];
-    summary: string[];
+    summary: string;
     paragraphs: string[];
-}
-
-export interface Prologue {
-    text: string;
-    reference: string;
-}
-
-export interface Author {
-    id: number;
-    name: string;
-    imageUrl: string;
-    nationality: string;
-    biography: string;
-    fullBioUrl: string;
 }
