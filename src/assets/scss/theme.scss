@@ -1,0 +1,74 @@
+// Font weights
+$font-weight-headings-extra-bold: 800;
+$font-weight-headings-bold: 700;
+$font-weight-headings-semibold: 600;
+$font-weight-headings-medium: 500;
+$font-weight-headings-regular: 400;
+
+$font-weight-body-bold: 700;
+$font-weight-body-semibold: 600;
+$font-weight-body-regular: 400;
+
+// Colors
+$primary-100: #fbe4df;
+$primary-200: #fbe4df;
+$primary-300: #debda7;
+$primary-400: #c99571;
+$primary-500: #b05d30;
+
+$gray-50: #fafafa;
+$gray-100: #f4f4f5;
+$gray-200: #e4e4e7;
+$gray-300: #d4d4d8;
+$gray-400: #a2a2ab;
+$gray-500: #707079;
+$gray-600: #52525b;
+$gray-700: #3f3f46;
+$gray-800: #27272a;
+$gray-900: #18181b;
+
+$interactive-500: #226dc3;
+
+// Border radius
+$rounded: 4px;
+$rounded-lg: 8px;
+$rounded-xl: 12px;
+$rounded-full: 50%;
+
+body {
+    font-family: 'Source Serif Pro', sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Inter', sans-serif;
+}
+
+h1 {
+    font-size: 36px;
+    line-height: 40px;
+    letter-spacing: 0;
+    font-weight: $font-weight-headings-bold;
+
+    &.emphasis {
+        font-weight: $font-weight-headings-extra-bold;
+    }
+}
+
+h2 {
+    font-size: 30px;
+    font-weight: $font-weight-headings-bold;
+    line-height: 36px;
+    letter-spacing: 0;
+}
+
+h3 {
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: 0;
+    font-weight: $font-weight-headings-bold;
+}
