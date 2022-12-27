@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { StoryModel } from '../models/story.model';
+import { Story } from '../models/story.model';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class StoryService {
@@ -13,23 +13,28 @@ export class StoryService {
 
     constructor(private http: HttpClient) {}
 
-    public get(day: number): Observable<StoryModel> {
-        return this.http.get<StoryModel>(`api/story/${day}`);
+    public get(day: number): Observable<Story> {
+        return this.http.get<Story>(`api/story/${day}`);
     }
 
-    public getAuthors(): Observable<StoryModel[]> {
-        return this.http.get<StoryModel[]>(`api/story/authors`);
+    public getAuthors(): Observable<Story[]> {
+        return this.http.get<Story[]>(`api/story/authors`);
     }
 
     public getOriginalLinks(): Observable<any> {
-        return this.http.get<StoryModel[]>(`api/story/original-links`);
+        return this.http.get<Story[]>(`api/story/original-links`);
     }
 
     public async setCount() {
         this._count = (await this.http.get<number>(`api/story/count`).toPromise()) ?? 0;
     }
 
-    public load(story: any): StoryModel {
+    public getLatest(edition: string, amount: number = 5): Observable<Story[]> {
+        const params = new HttpParams().set('edition', edition).set('amount', amount);
+        return this.http.get<Story[]>(`api/story/latest`, { params });
+    }
+
+    public load(story: any): Story {
         return {
             ...story,
             prologues: story.prologues ?? [],
