@@ -20,6 +20,6 @@ export class ListPage implements OnInit {
     }
 
     public navigateToStory(day: number) {
-        this.router.navigate([`/story/${day}`]);
+        this.router.navigate([`/story/${day}/2021`]);
     }
 }
