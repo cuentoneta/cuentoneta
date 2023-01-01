@@ -321,3 +321,9 @@ h3 {
     letter-spacing: 0;
     font-weight: $inter-font-weight-bold;
 }
+
+body {
+    background-color: $gray-100;
+    margin: auto;
+    width: 1280px;
+}
