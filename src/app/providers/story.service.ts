@@ -18,6 +18,10 @@ export class StoryService {
         return this.http.get<StoryModel>(`${environment.apiUrl}/api/story/${day}`);
     }
 
+    public latest(): Observable<StoryModel> {
+        return this.http.get<StoryModel>(`${environment.apiUrl}/api/story/latest`);
+    }
+
     public getAuthors(): Observable<StoryModel[]> {
         return this.http.get<StoryModel[]>(`${environment.apiUrl}/api/story/authors`);
     }
