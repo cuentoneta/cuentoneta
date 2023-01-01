@@ -279,6 +279,9 @@ $max-sm-width: 639px;
 
 body {
     font-family: $source-serif-pro-font-family;
+    background-color: $gray-100;
+    margin: auto;
+    width: 1280px;
 }
 
 h1,
@@ -320,10 +323,4 @@ h3 {
     line-height: 32px;
     letter-spacing: 0;
     font-weight: $inter-font-weight-bold;
-}
-
-body {
-    background-color: $gray-100;
-    margin: auto;
-    width: 1280px;
 }
