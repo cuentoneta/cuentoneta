@@ -1,11 +1,7 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { MenuController, Platform } from '@ionic/angular';
-
 import { SettingsService } from './providers/settings.service';
-
-import { OneSignal } from 'onesignal-ngx';
 
 @Component({
     selector: 'app-root',
@@ -21,8 +17,8 @@ export class AppComponent {
             icon: 'book',
         },
         {
-            title: 'Lista de Cuentos',
-            url: '/list',
+            title: 'Cuentos 2022',
+            url: '/list-2022',
             icon: 'calendar',
         },
     ];
@@ -57,7 +53,6 @@ export class AppComponent {
 
     constructor(
         private menu: MenuController,
-        private oneSignal: OneSignal,
         private platform: Platform,
         private router: Router,
         private settingsService: SettingsService
