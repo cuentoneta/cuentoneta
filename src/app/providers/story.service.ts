@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { StoryModel } from '../models/story.model';
 import { Observable } from 'rxjs';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -14,8 +14,9 @@ export class StoryService {
 
     constructor(private http: HttpClient) {}
 
-    public get(day: number): Observable<StoryModel> {
-        return this.http.get<StoryModel>(`${environment.apiUrl}/api/story/${day}`);
+    public get(day: number, edition: number | string): Observable<StoryModel> {
+        const params = new HttpParams().set('day', day).set('edition', edition);
+        return this.http.get<StoryModel>(`${environment.apiUrl}/api/story`, { params });
     }
 
     public latest(): Observable<StoryModel> {
@@ -23,17 +24,17 @@ export class StoryService {
     }
 
     public getAuthors(edition: string | number): Observable<StoryModel[]> {
-      const params = new HttpParams().set('edition', edition).set('edition', edition);
-
-      return this.http.get<StoryModel[]>(`${environment.apiUrl}/api/story/authors`, { params });
+        const params = new HttpParams().set('edition', edition);
+        return this.http.get<StoryModel[]>(`${environment.apiUrl}/api/story/authors`, { params });
     }
 
     public getOriginalLinks(): Observable<any> {
         return this.http.get<StoryModel[]>(`${environment.apiUrl}/api/story/original-links`);
     }
 
-    public async setCount() {
-        this._count = await this.http.get<number>(`${environment.apiUrl}/api/story/count`).toPromise();
+    public getCount(edition: string | number): Observable<number> {
+        const params = new HttpParams().set('edition', edition);
+        return this.http.get<number>(`${environment.apiUrl}/api/story/count`, { params });
     }
 
     public load(story): StoryModel {

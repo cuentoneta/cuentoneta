@@ -6,7 +6,7 @@ import { StoryResolver } from './story.resolver';
 
 const routes: Routes = [
     {
-        path: ':day',
+        path: ':day/:edition',
         component: StoryPage,
         resolve: {
             story: StoryResolver,
