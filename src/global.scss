@@ -32,15 +32,8 @@
  */
 
 @import "./app/app.scss";
-@import "~swiper/scss";
-@import "~@ionic/angular/css/ionic-swiper";
 @import '~@ionic/angular/css/display.css';
 
-
-// placed here instead of tutorial.scss due to slide els not getting ng scoping attribute
-.swiper-slide {
-  display: block;
-}
 
 @font-face {
   font-family: "PTSerif-Bold";

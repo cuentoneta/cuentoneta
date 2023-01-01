@@ -8,7 +8,6 @@ import { StoryPageRoutingModule } from './story-routing.module';
 
 @NgModule({
     imports: [CommonModule, FormsModule, IonicModule, StoryPageRoutingModule],
-    declarations: [StoryPage],
-    entryComponents: [],
+    declarations: [StoryPage]
 })
 export class StoryModule {}

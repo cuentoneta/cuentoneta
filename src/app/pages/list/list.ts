@@ -14,12 +14,12 @@ export class ListPage implements OnInit {
     constructor(private router: Router, private storyService: StoryService) {}
 
     ngOnInit() {
-        this.storyService.getAuthors().subscribe((result) => {
+        this.storyService.getAuthors(2021).subscribe((result) => {
             this.storyList = result;
         });
     }
 
     public navigateToStory(day: number) {
-        this.router.navigate([`/story/${day}`]);
+        this.router.navigate([`/story/${day}/2021`]);
     }
 }

@@ -7,16 +7,12 @@ const routes: Routes = [
         loadChildren: () => import('./pages/story/story.module').then((m) => m.StoryModule),
     },
     {
-        path: 'list',
+        path: 'list-2022',
         loadChildren: () => import('./pages/list/list.module').then((m) => m.ListModule),
     },
     {
         path: 'about',
         loadChildren: () => import('./pages/about/about.module').then((m) => m.AboutModule),
-    },
-    {
-        path: 'subscription',
-        loadChildren: () => import('./pages/subscription/subscription.module').then((m) => m.SubscriptionModule),
     },
     {
         path: 'dmca',
