@@ -20,12 +20,6 @@ import { SettingsService } from './providers/settings.service';
     ],
     declarations: [AppComponent],
     providers: [
-        {
-            provide: APP_INITIALIZER,
-            useFactory: (storyService: StoryService) => () => storyService.setCount(),
-            deps: [StoryService],
-            multi: true,
-        },
         SettingsService,
         StoryService,
     ],
