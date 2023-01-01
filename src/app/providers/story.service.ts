@@ -10,6 +10,10 @@ export class StoryService {
         return this._count;
     }
 
+    set count(value) {
+        this._count = value;
+    }
+
     private _count: number = 0;
 
     constructor(private http: HttpClient) {}
