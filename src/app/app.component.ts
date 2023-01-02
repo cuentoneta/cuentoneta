@@ -30,11 +30,6 @@ export class AppComponent {
             icon: 'information-circle',
         },
         {
-            title: 'Suscripción',
-            url: '/subscription',
-            icon: 'notifications',
-        },
-        {
             title: 'DMCA',
             url: '/dmca',
             icon: 'document-lock',
