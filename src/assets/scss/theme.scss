@@ -1,0 +1,326 @@
+// Font families
+$inter-font-family: 'Inter', sans-serif;
+$source-serif-pro-font-family: 'Source Serif Pro', sans-serif;
+
+// Font weights
+$inter-font-weight-extra-bold: 800;
+$inter-font-weight-bold: 700;
+$inter-font-weight-semibold: 600;
+$inter-font-weight-medium: 500;
+$inter-font-weight-regular: 400;
+
+$source-serif-pro-font-weight-regular: 400;
+
+// Colors
+$primary-100: #fbe4df;
+$primary-200: #fbe4df;
+$primary-300: #debda7;
+$primary-400: #c99571;
+$primary-500: #b05d30;
+
+$gray-50: #fafafa;
+$gray-100: #f4f4f5;
+$gray-200: #e4e4e7;
+$gray-300: #d4d4d8;
+$gray-400: #a2a2ab;
+$gray-500: #707079;
+$gray-600: #52525b;
+$gray-700: #3f3f46;
+$gray-800: #27272a;
+$gray-900: #18181b;
+
+$interactive-500: #226dc3;
+
+// Border radius
+$rounded: 4px;
+$rounded-lg: 8px;
+$rounded-xl: 12px;
+$rounded-full: 50%;
+
+$letter-spacing: 0px;
+
+// Font size mixins
+
+// region Inter font sizing mixins
+@mixin inter-body-xl {
+    font-family: $inter-font-family;
+    font-size: 20px;
+    line-height: 28px;
+    letter-spacing: $letter-spacing;
+}
+
+@mixin inter-body-lg {
+    font-family: $inter-font-family;
+    font-size: 18px;
+    line-height: 28px;
+    letter-spacing: $letter-spacing;
+}
+
+@mixin inter-body-base {
+    font-family: $inter-font-family;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: $letter-spacing;
+}
+
+@mixin inter-body-sm {
+    font-family: $inter-font-family;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: $letter-spacing;
+}
+
+@mixin inter-body-xs {
+    font-family: $inter-font-family;
+    font-size: 12px;
+    line-height: 18px;
+    letter-spacing: $letter-spacing;
+}
+
+@mixin inter-body-caption {
+    font-family: $inter-font-family;
+    font-size: 10px;
+    line-height: 16px;
+    letter-spacing: $letter-spacing;
+}
+// endregion
+// region Source Serif Pro font size mixins
+@mixin source-serif-pro-body-xl {
+    font-family: $source-serif-pro-font-family;
+    font-size: 20px;
+    line-height: 28px;
+    letter-spacing: $letter-spacing;
+}
+@mixin source-serif-pro-body-lg {
+    font-family: $source-serif-pro-font-family;
+    font-size: 18px;
+    line-height: 28px;
+    letter-spacing: $letter-spacing;
+}
+
+@mixin source-serif-pro-body-base {
+    font-family: $source-serif-pro-font-family;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: $letter-spacing;
+}
+
+@mixin source-serif-pro-body-sm {
+    font-family: $source-serif-pro-font-family;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: $letter-spacing;
+}
+// endregion
+
+// Body font size & weight mixins
+
+// region Inter Body
+@mixin inter-body-xl-bold {
+    @include inter-body-xl;
+    font-weight: $inter-font-weight-bold;
+}
+
+@mixin inter-body-xl-semibold {
+    @include inter-body-xl;
+    font-weight: $inter-font-weight-semibold;
+}
+
+@mixin inter-body-xl-medium {
+    @include inter-body-xl;
+    font-weight: $inter-font-weight-medium;
+}
+
+@mixin inter-body-lg-semibold {
+    @include inter-body-lg;
+    font-weight: $inter-font-weight-semibold;
+}
+
+@mixin inter-body-lg-medium {
+    @include inter-body-lg;
+    font-weight: $inter-font-weight-medium;
+}
+
+@mixin inter-body-lg-regular {
+    @include inter-body-regular;
+    font-weight: $inter-font-weight-regular;
+}
+
+@mixin inter-body-base-semibold {
+    @include inter-body-base;
+    font-weight: $inter-font-weight-semibold;
+}
+
+@mixin inter-body-base-medium {
+    @include inter-body-base;
+    font-weight: $inter-font-weight-medium;
+}
+
+@mixin inter-body-base-regular {
+    @include inter-body-base;
+    font-weight: $inter-font-weight-regular;
+}
+
+@mixin inter-body-sm-bold {
+    @include inter-body-sm;
+    font-weight: $inter-font-weight-bold;
+}
+
+@mixin inter-body-sm-semibold {
+    @include inter-body-sm;
+    font-weight: $inter-font-weight-semibold;
+}
+
+@mixin inter-body-sm-medium {
+    @include inter-body-sm;
+    font-weight: $inter-font-weight-medium;
+}
+
+@mixin inter-body-sm-regular {
+    @include inter-body-sm;
+    font-weight: $inter-font-weight-regular;
+}
+
+@mixin inter-body-xs-bold {
+    @include inter-body-xs;
+    font-weight: $inter-font-weight-bold;
+}
+
+@mixin inter-body-xs-semibold {
+    @include inter-body-xs;
+    font-weight: $inter-font-weight-semibold;
+}
+
+@mixin inter-body-xs-medium {
+    @include inter-body-xs;
+    font-weight: $inter-font-weight-medium;
+}
+
+@mixin inter-body-caption-bold {
+    @include inter-body-caption;
+    font-weight: $inter-font-weight-bold;
+}
+
+// endregion
+// region Source Serif Pro Body
+@mixin source-serif-pro-body-xl-regular {
+    @include source-serif-pro-body-xl;
+    font-weight: $source-serif-pro-font-weight-regular;
+}
+
+@mixin source-serif-pro-body-lg-regular {
+    @include source-serif-pro-body-lg;
+    font-weight: $source-serif-pro-font-weight-regular;
+}
+
+@mixin source-serif-pro-body-lg-italic-regular {
+    @include source-serif-pro-body-lg;
+    font-weight: $source-serif-pro-font-weight-regular;
+    font-style: italic;
+}
+
+@mixin source-serif-pro-body-base-regular {
+    @include source-serif-pro-body-base;
+    font-weight: $source-serif-pro-font-weight-regular;
+}
+
+@mixin source-serif-pro-body-base-italic-regular {
+    @include source-serif-pro-body-base;
+    font-weight: $source-serif-pro-font-weight-regular;
+    font-style: italic;
+}
+
+@mixin source-serif-pro-body-sm-regular {
+    @include source-serif-pro-body-sm;
+    font-weight: $source-serif-pro-font-weight-regular;
+}
+
+// endregion
+
+// region Spacing
+$spacing-1: 0.25rem;
+$spacing-2: 0.5rem;
+$spacing-3: 0.75rem;
+$spacing-4: 1rem;
+$spacing-5: 1.25rem;
+$spacing-6: 1.5rem;
+$spacing-7: 1.75rem;
+$spacing-8: 2rem;
+$spacing-10: 2.5rem;
+$spacing-12: 3rem;
+$spacing-14: 3.5rem;
+$spacing-16: 4rem;
+$spacing-20: 5rem;
+$spacing-24: 6rem;
+$spacing-28: 7rem;
+$spacing-32: 8rem;
+$spacing-36: 9rem;
+$spacing-40: 10rem;
+$spacing-44: 11rem;
+$spacing-48: 12rem;
+$spacing-52: 13rem;
+// endregion
+
+// region Shadows & Elevations
+
+$box-shadow-card: 0px 0px 8px rgba(63, 63, 70, 0.08);
+$box-shadow-card-hover: 0px 12px 16px rgba(63, 63, 70, 0.12);
+
+// endregion
+
+// region Grid viewports
+$min-lg-width: 1280px;
+$max-lg-width: 1279px;
+$min-md-width: 1024px;
+$max-md-width: 1023px;
+$min-sm-width: 640px;
+$max-sm-width: 639px;
+// endregion
+
+body {
+    font-family: $source-serif-pro-font-family;
+    background-color: $gray-100;
+    margin: auto;
+    width: 1280px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: $inter-font-family;
+}
+
+h1 {
+    font-size: 36px;
+    line-height: 40px;
+    letter-spacing: 0;
+    font-weight: $inter-font-weight-bold;
+
+    &.emphasis {
+        font-weight: $inter-font-weight-extra-bold;
+    }
+
+    .display {
+        font-size: 60px;
+        line-height: 60px;
+        letter-spacing: $letter-spacing;
+        font-weight: $inter-font-weight-extra-bold;
+    }
+}
+
+h2 {
+    font-size: 30px;
+    font-weight: $inter-font-weight-bold;
+    line-height: 36px;
+    letter-spacing: 0;
+}
+
+h3 {
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: 0;
+    font-weight: $inter-font-weight-bold;
+}
