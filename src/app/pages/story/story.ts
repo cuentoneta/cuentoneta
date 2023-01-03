@@ -1,25 +1,27 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Config, IonContent, IonRouterOutlet, LoadingController, ToastController } from '@ionic/angular';
 import { StoryService } from '../../providers/story.service';
 import { StoryModel } from '../../models/story.model';
 import { map, switchMap, tap } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 
 @Component({
     selector: 'page-story',
     templateUrl: 'story.html',
     styleUrls: ['./story.scss'],
 })
-export class StoryPage implements OnInit, AfterViewInit {
+export class StoryPage implements OnInit, OnDestroy, AfterViewInit {
     @ViewChild('content') content: IonContent;
 
-    public story$: Observable<StoryModel> = of();
+    public story: StoryModel;
     public showBackButton: boolean = true;
     public showForwardButton: boolean = true;
     public progress: string = '0%';
     public approximateReadingTime: number = 0;
     public displayStory = false;
+
+    private storySubscription: Subscription;
 
     constructor(
         public loadingCtrl: LoadingController,
@@ -33,28 +35,36 @@ export class StoryPage implements OnInit, AfterViewInit {
         this.load();
     }
 
+    ngOnDestroy(): void {
+        this.storySubscription.unsubscribe();
+    }
+
     private load() {
-        this.story$ = this.route.params.pipe(
-            tap(() => {
-                this.displayStory = false;
-            }),
-            switchMap(({ day, edition }) => {
-                return this.storyService.getCount(edition ?? 2022).pipe(
-                    switchMap((count) => {
-                        // Asigna cantidad de cuentos de la edición correspondiente
-                        this.storyService.count = count;
-                        return day && edition ? this.storyService.get(day, edition) : this.storyService.latest();
-                    })
-                );
-            }),
-            map((story) => this.storyService.load(story)),
-            tap((story) => {
-                this.handleBackButtonVisibility(story);
-                this.handleForwardButtonVisibility(story);
-                this.calculateApproximateReadingTime(story);
-                this.displayStory = true;
-            })
-        );
+        this.storySubscription = this.route.params
+            .pipe(
+                tap(() => {
+                    this.displayStory = false;
+                }),
+                switchMap(({ day, edition }) => {
+                    return this.storyService.getCount(edition ?? 2022).pipe(
+                        switchMap((count) => {
+                            // Asigna cantidad de cuentos de la edición correspondiente
+                            this.storyService.count = count;
+                            return day && edition ? this.storyService.get(day, edition) : this.storyService.latest();
+                        })
+                    );
+                }),
+                map((story) => this.storyService.load(story)),
+                tap((story) => {
+                    this.handleBackButtonVisibility(story);
+                    this.handleForwardButtonVisibility(story);
+                    this.calculateApproximateReadingTime(story);
+                    this.displayStory = true;
+                })
+            )
+            .subscribe((result) => {
+                this.story = result;
+            });
     }
 
     ngAfterViewInit() {

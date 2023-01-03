@@ -2,7 +2,7 @@
     <ion-toolbar>
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
-            <ng-container *ngIf="story$ | async as story">
+            <ng-container *ngIf="story">
                 <ion-button (click)="navigateBack(story)" [hidden]="!showBackButton">
                     <ion-icon name="caret-back-outline"></ion-icon>
                 </ion-button>
@@ -12,15 +12,15 @@
             <ion-title>
                 <div class="ion-hide-md-down">
                     La Cuentoneta
-                    <ng-container *ngIf="story$ | async as story">: Día {{story.day}}</ng-container>
+                    <ng-container *ngIf=story>: Día {{story.day}}</ng-container>
                 </div>
-                <ng-container *ngIf="story$ | async as story">
+                <ng-container *ngIf="story">
                     <div class="ion-hide-md-up">Día {{story.day}}</div>
                 </ng-container>
             </ion-title>
         </div>
         <ion-buttons slot="end">
-            <ng-container *ngIf="story$ | async as story">
+            <ng-container *ngIf="story">
                 <ion-button (click)="navigateForward(story)" [hidden]="!showForwardButton">
                     <ion-icon name="caret-forward-outline"></ion-icon>
                 </ion-button>
@@ -35,7 +35,7 @@
     <div class="ion-padding spinner-container" *ngIf="!displayStory">
         <ion-spinner name="dots"></ion-spinner>
     </div>
-    <ng-container *ngIf="story$ | async as story">
+    <ng-container *ngIf="story">
         <div class="container ion-justify-content-center">
             <ion-grid class="ion-text-center ion-padding">
                 <ion-row>
