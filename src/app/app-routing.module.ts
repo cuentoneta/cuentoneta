@@ -7,7 +7,7 @@ const routes: Routes = [
         loadChildren: () => import('./pages/story/story.module').then((m) => m.StoryModule),
     },
     {
-        path: 'list-2022',
+        path: 'list',
         loadChildren: () => import('./pages/list/list.module').then((m) => m.ListModule),
     },
     {
@@ -26,7 +26,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes)],
+    imports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' })],
     exports: [RouterModule],
 })
 export class AppRoutingModule {}

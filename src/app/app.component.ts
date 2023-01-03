@@ -17,8 +17,13 @@ export class AppComponent {
             icon: 'book',
         },
         {
+            title: 'Cuentos 2023',
+            url: '/list/2022',
+            icon: 'calendar',
+        },
+        {
             title: 'Cuentos 2022',
-            url: '/list-2022',
+            url: '/list/2021',
             icon: 'calendar',
         },
     ];

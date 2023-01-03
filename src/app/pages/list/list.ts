@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { StoryService } from '../../providers/story.service';
 import { StoryModel } from '../../models/story.model';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { switchMap, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 
 @Component({
     selector: 'page-list',
@@ -9,17 +11,25 @@ import { Router } from '@angular/router';
     styleUrls: ['./list.scss'],
 })
 export class ListPage implements OnInit {
-    public storyList: StoryModel[] = [];
+    public isLoading: boolean = false;
+    public storyList$: Observable<StoryModel[]> = of();
 
-    constructor(private router: Router, private storyService: StoryService) {}
+    constructor(private route: ActivatedRoute, private router: Router, private storyService: StoryService) {}
 
     ngOnInit() {
-        this.storyService.getAuthors(2021).subscribe((result) => {
-            this.storyList = result;
-        });
+        this.storyList$ = this.route.params.pipe(
+            tap(() => {
+                this.isLoading = true;
+            }),
+            switchMap(({ edition }) => this.storyService.getAuthors(edition)),
+            tap(() => {
+                this.isLoading = false;
+            })
+        );
     }
 
     public navigateToStory(day: number) {
-        this.router.navigate([`/story/${day}/2021`]);
+        const edition = this.route.snapshot.paramMap.get('edition');
+        this.router.navigate([`/story/${day}/${edition}`]);
     }
 }
