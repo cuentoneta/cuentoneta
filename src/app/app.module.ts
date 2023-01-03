@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { IonicModule } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage-angular';
@@ -19,10 +19,7 @@ import { SettingsService } from './providers/settings.service';
         IonicStorageModule.forRoot(),
     ],
     declarations: [AppComponent],
-    providers: [
-        SettingsService,
-        StoryService,
-    ],
+    providers: [SettingsService, StoryService],
     bootstrap: [AppComponent],
 })
 export class AppModule {}
