@@ -10,10 +10,10 @@
 </ion-header>
 
 <ion-content>
+    <div class="ion-padding spinner-container" *ngIf="isLoading">
+        <ion-spinner name="dots"></ion-spinner>
+    </div>
     <ng-container *ngIf="(storyList$ | async) as storyList">
-        <div class="ion-padding spinner-container" *ngIf="isLoading">
-            <ion-spinner name="dots"></ion-spinner>
-        </div>
         <ng-container *ngIf="!isLoading">
             <ion-list>
                 <ion-item *ngFor="let story of storyList" (click)="navigateToStory(story.day)">

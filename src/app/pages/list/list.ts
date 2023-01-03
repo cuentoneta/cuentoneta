@@ -11,7 +11,7 @@ import { Observable, of } from 'rxjs';
     styleUrls: ['./list.scss'],
 })
 export class ListPage implements OnInit {
-    public isLoading: boolean = false;
+    public isLoading: boolean = true;
     public storyList$: Observable<StoryModel[]> = of();
 
     constructor(private route: ActivatedRoute, private router: Router, private storyService: StoryService) {}
