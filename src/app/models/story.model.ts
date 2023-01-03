@@ -6,6 +6,7 @@ export interface StoryModel {
     prologues: Prologue[];
     summary: string[];
     paragraphs: string[];
+    edition: string;
 }
 
 export interface Prologue {

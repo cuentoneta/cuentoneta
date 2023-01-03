@@ -77,13 +77,13 @@ export class StoryPage implements OnInit, OnDestroy, AfterViewInit {
     }
 
     public navigateBack(story) {
-        this.router.navigate([`/story/${story.day - 1}`]).then((result) => {
+        this.router.navigate([`/story/${story.day - 1}/${story.edition}`]).then((result) => {
             this.resetScroll();
         });
     }
 
     public navigateForward(story) {
-        this.router.navigate([`/story/${story.day + 1}`]).then((result) => {
+        this.router.navigate([`/story/${story.day + 1}/${story.edition}`]).then((result) => {
             this.resetScroll();
         });
     }

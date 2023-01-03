@@ -10,7 +10,7 @@ const sanityConnector = require('../_helpers/sanity-connector');
  */
 export default async function getLatest(req, res) {
   const query = `*[_type == 'story' && edition == '2022'] | order(day desc)[0...1]
-                    {title, day, originalLink, forewords, categories, publishedAt, body, review, forewords, author->}`;
+                    {title, edition, day, originalLink, forewords, categories, publishedAt, body, review, forewords, author->}`;
   const result = await sanityConnector.client.fetch(query, {});
 
   if (!result) {
