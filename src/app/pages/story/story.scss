@@ -87,3 +87,13 @@ $categories: (
         }
     }
 }
+
+.spinner-container {
+  width: 100%;
+  text-align: center;
+
+  > ion-spinner {
+    width: 64px;
+    height: 64px;
+  }
+}

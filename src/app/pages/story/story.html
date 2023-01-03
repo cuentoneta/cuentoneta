@@ -2,91 +2,109 @@
     <ion-toolbar>
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
-            <ion-button (click)="navigateBack()" [hidden]="!showBackButton">
-                <ion-icon name="caret-back-outline"></ion-icon>
-            </ion-button>
+            <ng-container *ngIf="story$ | async as story">
+                <ion-button (click)="navigateBack(story)" [hidden]="!showBackButton">
+                    <ion-icon name="caret-back-outline"></ion-icon>
+                </ion-button>
+            </ng-container>
         </ion-buttons>
         <div class="ion-text-center">
-            <ng-container *ngIf="story">
-                <ion-title>
-                    <div class="ion-hide-md-down">La Cuentoneta: Día {{story.day}}</div>
+            <ion-title>
+                <div class="ion-hide-md-down">
+                    La Cuentoneta
+                    <ng-container *ngIf="story$ | async as story">: Día {{story.day}}</ng-container>
+                </div>
+                <ng-container *ngIf="story$ | async as story">
                     <div class="ion-hide-md-up">Día {{story.day}}</div>
-                </ion-title>
-            </ng-container>
+                </ng-container>
+            </ion-title>
         </div>
         <ion-buttons slot="end">
-            <ion-button (click)="navigateForward()" [hidden]="!showForwardButton">
-                <ion-icon name="caret-forward-outline"></ion-icon>
-            </ion-button>
+            <ng-container *ngIf="story$ | async as story">
+                <ion-button (click)="navigateForward(story)" [hidden]="!showForwardButton">
+                    <ion-icon name="caret-forward-outline"></ion-icon>
+                </ion-button>
+            </ng-container>
         </ion-buttons>
     </ion-toolbar>
+
     <ion-progress-bar [value]="progress"></ion-progress-bar>
 </ion-header>
 
 <ion-content id="ion-text-content" #content fullscreen="true" [scrollEvents]="true" (ionScroll)="onScroll($event)">
-    <div class="container ion-justify-content-center" [hidden]="!displayStory">
-        <ion-grid class="ion-text-center ion-padding">
-            <ion-row>
-                <ion-col>
-                    <h1><div class="text-title ion-text-wrap">{{story.title}}</div></h1>
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col>
-                    <h2 class="text-title-small">por {{story.author.name}}</h2>
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col>
-                    <h6 class="text-reading-time">~ {{approximateReadingTime}} min.</h6>
-                </ion-col>
-            </ion-row>
-        </ion-grid>
-
-        <ion-grid class="text-prologues ion-padding" *ngIf="story.prologues && story.prologues.length">
-            <ion-row *ngFor="let prologue of story.prologues">
-                <ion-col size="4" size-md="6"> </ion-col>
-                <ion-col size="8" size-md="6">
-                    <div class="text-prologue ion-text-justify">
-                        {{prologue.text}}
-                        <br />
-                        <span class="reference"><i>{{prologue.reference}}</i></span>
-                    </div>
-                </ion-col>
-            </ion-row>
-        </ion-grid>
-
-        <ion-grid class="text-content ion-text-justify ion-padding">
-            <ion-row>
-                <ion-col>
-                    <p *ngFor="let paragraph of story.paragraphs" [innerHTML]="paragraph"></p>
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-card id="bottom-notes">
-                    <ion-card-header id="bio-header" class="ion-justify-content-between ion-align-items-center">
-                        <ion-avatar>
-                            <img [src]="story.author.imageUrl" />
-                        </ion-avatar>
-                        <div>
-                            <ion-card-subtitle>Autor</ion-card-subtitle>
-                            <ion-card-title>{{story.author.name}}</ion-card-title>
-                        </div>
-                        <div><img class="country-flag" [src]="story.author.nationality" /></div>
-                    </ion-card-header>
-                    <div class="ion-text-justify">
-                        <ion-card-content id="bio-content"> {{story.author.biography}} </ion-card-content>
-                        <ion-card-content id="story-summary">
-                            {{story.summary}}
-                            <ion-button class="ion-margin-top" (click)="openBio(story.author.fullBioUrl)" expand="full"
-                                >Leer biografía completa</ion-button
-                            ></ion-card-content
-                        >
-                    </div>
-                </ion-card>
-            </ion-row>
-        </ion-grid>
+    <div class="ion-padding spinner-container" *ngIf="!displayStory">
+        <ion-spinner name="dots"></ion-spinner>
     </div>
+    <ng-container *ngIf="story$ | async as story">
+        <div class="container ion-justify-content-center">
+            <ion-grid class="ion-text-center ion-padding">
+                <ion-row>
+                    <ion-col>
+                        <h1>
+                            <div class="text-title ion-text-wrap">{{story.title}}</div>
+                        </h1>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>
+                        <h2 class="text-title-small">por {{story.author.name}}</h2>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>
+                        <h6 class="text-reading-time">~ {{approximateReadingTime}} min.</h6>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+
+            <ion-grid class="text-prologues ion-padding" *ngIf="story.prologues && story.prologues.length">
+                <ion-row *ngFor="let prologue of story.prologues">
+                    <ion-col size="4" size-md="6"></ion-col>
+                    <ion-col size="8" size-md="6">
+                        <div class="text-prologue ion-text-justify">
+                            {{prologue.text}}
+                            <br />
+                            <span class="reference"><i>{{prologue.reference}}</i></span>
+                        </div>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+
+            <ion-grid class="text-content ion-text-justify ion-padding">
+                <ion-row>
+                    <ion-col>
+                        <p *ngFor="let paragraph of story.paragraphs" [innerHTML]="paragraph"></p>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-card id="bottom-notes">
+                        <ion-card-header id="bio-header" class="ion-justify-content-between ion-align-items-center">
+                            <ion-avatar>
+                                <img [src]="story.author.imageUrl" />
+                            </ion-avatar>
+                            <div>
+                                <ion-card-subtitle>Autor</ion-card-subtitle>
+                                <ion-card-title>{{story.author.name}}</ion-card-title>
+                            </div>
+                            <div><img class="country-flag" [src]="story.author.nationality" /></div>
+                        </ion-card-header>
+                        <div class="ion-text-justify">
+                            <ion-card-content id="bio-content"> {{story.author.biography}} </ion-card-content>
+                            <ion-card-content id="story-summary">
+                                {{story.summary}}
+                                <ion-button
+                                    class="ion-margin-top"
+                                    (click)="openBio(story.author.fullBioUrl)"
+                                    expand="full"
+                                    >Leer biografía completa
+                                </ion-button>
+                            </ion-card-content>
+                        </div>
+                    </ion-card>
+                </ion-row>
+            </ion-grid>
+        </div>
+    </ng-container>
 
     <ion-fab slot="fixed" vertical="bottom" horizontal="end" #fab>
         <ion-fab-button>

@@ -18,7 +18,7 @@ export class StoryService {
 
     constructor(private http: HttpClient) {}
 
-    public get(day: number, edition: number | string): Observable<StoryModel> {
+    public get(day: number | string, edition: number | string): Observable<StoryModel> {
         const params = new HttpParams().set('day', day).set('edition', edition);
         return this.http.get<StoryModel>(`${environment.apiUrl}/api/story`, { params });
     }

@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Config, IonContent, IonRouterOutlet, LoadingController, ToastController } from '@ionic/angular';
 import { StoryService } from '../../providers/story.service';
 import { StoryModel } from '../../models/story.model';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 
 @Component({
     selector: 'page-story',
@@ -12,8 +14,7 @@ import { StoryModel } from '../../models/story.model';
 export class StoryPage implements OnInit, AfterViewInit {
     @ViewChild('content') content: IonContent;
 
-    public currentStoryId = 1;
-    public story: StoryModel;
+    public story$: Observable<StoryModel> = of();
     public showBackButton: boolean = true;
     public showForwardButton: boolean = true;
     public progress: string = '0%';
@@ -24,20 +25,36 @@ export class StoryPage implements OnInit, AfterViewInit {
         public loadingCtrl: LoadingController,
         private route: ActivatedRoute,
         public router: Router,
-        public routerOutlet: IonRouterOutlet,
-        public toastCtrl: ToastController,
         public config: Config,
         public storyService: StoryService
     ) {}
 
     ngOnInit() {
-        this.route.data.subscribe((result) => {
-            this.story = this.storyService.load(result.story);
-            this.handleBackButtonVisibility();
-            this.handleForwardButtonVisibility();
-            this.calculateApproximateReadingTime();
-            this.displayStory = true;
-        });
+        this.load();
+    }
+
+    private load() {
+        this.story$ = this.route.params.pipe(
+            tap(() => {
+                this.displayStory = false;
+            }),
+            switchMap(({ day, edition }) => {
+                return this.storyService.getCount(edition ?? 2022).pipe(
+                    switchMap((count) => {
+                        // Asigna cantidad de cuentos de la edición correspondiente
+                        this.storyService.count = count;
+                        return day && edition ? this.storyService.get(day, edition) : this.storyService.latest();
+                    })
+                );
+            }),
+            map((story) => this.storyService.load(story)),
+            tap((story) => {
+                this.handleBackButtonVisibility(story);
+                this.handleForwardButtonVisibility(story);
+                this.calculateApproximateReadingTime(story);
+                this.displayStory = true;
+            })
+        );
     }
 
     ngAfterViewInit() {
@@ -49,21 +66,21 @@ export class StoryPage implements OnInit, AfterViewInit {
         this.progress = '0%';
     }
 
-    public navigateBack() {
-        this.router.navigate([`/story/${this.story.day - 1}`]).then((result) => {
+    public navigateBack(story) {
+        this.router.navigate([`/story/${story.day - 1}`]).then((result) => {
             this.resetScroll();
         });
     }
 
-    public navigateForward() {
-        this.router.navigate([`/story/${this.story.day + 1}`]).then((result) => {
+    public navigateForward(story) {
+        this.router.navigate([`/story/${story.day + 1}`]).then((result) => {
             this.resetScroll();
         });
     }
 
-    public calculateApproximateReadingTime() {
+    public calculateApproximateReadingTime(story) {
         const accumulator = (previous, current) => previous + current;
-        const wordCount = this.story.paragraphs.map((paragraph) => paragraph.split(' ').length).reduce(accumulator);
+        const wordCount = story.paragraphs.map((paragraph) => paragraph.split(' ').length).reduce(accumulator);
         this.approximateReadingTime = Math.ceil(wordCount / 200);
     }
 
@@ -119,10 +136,10 @@ export class StoryPage implements OnInit, AfterViewInit {
         window.open(bioUrl, '_blank');
     }
 
-    private handleBackButtonVisibility() {
-        this.showBackButton = this.story.day !== 1;
+    private handleBackButtonVisibility(story: StoryModel) {
+        this.showBackButton = story.day !== 1;
     }
-    private handleForwardButtonVisibility() {
-        this.showForwardButton = this.story.day !== this.storyService.count;
+    private handleForwardButtonVisibility(story: StoryModel) {
+        this.showForwardButton = story.day !== this.storyService.count;
     }
 }
