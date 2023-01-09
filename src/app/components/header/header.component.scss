@@ -1,0 +1,38 @@
+@import 'src/assets/scss/theme.scss';
+
+:host {
+    header {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        height: 80px;
+
+        > * {
+            display: flex;
+        }
+
+        section {
+            &.logo {
+                img {
+                    margin-right: 12px;
+                }
+            }
+
+            &.navigation {
+                @include inter-body-sm-semibold;
+                li:hover {
+                    color: $interactive-500;
+                }
+            }
+        }
+
+        ul {
+            display: flex;
+            li {
+                &:not(last-child) {
+                    margin-right: 48px;
+                }
+            }
+        }
+    }
+}
