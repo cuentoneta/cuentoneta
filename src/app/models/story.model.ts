@@ -10,4 +10,17 @@ export interface Story {
     summary: string;
     paragraphs: string[];
     publishedAt: string;
+    approximateReadingTime: number
+}
+
+// ToDo: Agregar tipo BlockContent para tratar datos de texto que vienen desde Sanity (#114)
+export interface StoryDTO {
+    id: number;
+    author: Author;
+    title: string;
+    day: number;
+    prologues: any[];
+    summary: any[];
+    paragraphs: any[];
+    publishedAt: string;
 }

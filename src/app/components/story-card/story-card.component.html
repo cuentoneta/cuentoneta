@@ -11,8 +11,7 @@
             <h1 class="card-title">{{ story.title }}</h1>
             <p class="content">{{ story.paragraphs[0] }}</p>
         </main>
-        <!-- ToDo: Obtener tiempo de lectura -->
-        <label class="reading-time">5 minutos</label>
+        <label class="reading-time">{{story.approximateReadingTime}} minutos</label>
         <hr />
         <footer class="author-info flex flex-row items-center">
             <img class="author-image" width="40" height="40" [ngSrc]="story.author.imageUrl" />
