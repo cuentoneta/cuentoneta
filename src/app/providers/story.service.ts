@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Story } from '../models/story.model';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
@@ -31,10 +31,12 @@ export class StoryService {
 
     public getLatest(edition: string, amount: number = 5): Observable<Story[]> {
         const params = new HttpParams().set('edition', edition).set('amount', amount);
-        return this.http.get<Story[]>(`api/story/latest`, { params });
+        return this.http
+            .get<Story[]>(`api/story/latest`, { params })
+            .pipe(map((stories) => stories.map((story) => this.parseCardContent(story))));
     }
 
-    public load(story: any): Story {
+    public parseCardContent(story: any): Story {
         return {
             ...story,
             prologues: story.prologues ?? [],
@@ -57,6 +59,7 @@ export class StoryService {
         });
         return paragraph;
     }
+
     public parseSummary(block: any): string {
         return block.children[0].text;
     }
