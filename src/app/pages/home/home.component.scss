@@ -1,0 +1,57 @@
+@import 'src/assets/scss/theme.scss';
+
+main {
+    margin: auto;
+    width: 1240px;
+}
+
+.hero {
+    height: 652px;
+    .text {
+        width: 550px;
+    }
+}
+
+.title {
+    margin-bottom: $spacing-5;
+}
+.subtitle {
+    color: $gray-600;
+}
+
+$cards-grid-gap: $spacing-8;
+
+.stories-card-container {
+    display: grid;
+    grid-gap: $cards-grid-gap;
+    grid-template-columns: repeat(6, 1fr);
+
+    @media screen and (min-width: 1280px) {
+        &.highlight-first-row {
+            > *:first-child, > *:nth-child(2){
+                grid-column: auto / span 3;
+            }
+        }
+
+        > * {
+            grid-column: auto / span 2;
+        }
+    }
+
+    @media screen and (max-width: 1279px) {
+        > * {
+            grid-column: auto / span 6;
+        }
+    }
+
+}
+
+
+
+.newest-stories-container {
+    margin-bottom: $spacing-15;
+}
+
+.past-stories {
+    margin-top: $cards-grid-gap;
+}

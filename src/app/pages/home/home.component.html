@@ -1,1 +1,32 @@
-<p>home works!</p>
+<main>
+    <section class="hero flex justify-between items-center">
+        <div class="text">
+            <h1 class="title display">Cuentos cortos para leer durante el verano</h1>
+            <h3 class="subtitle">
+                Te presentamos diversos cuentos para que puedas leer durante tus días libres y que conozcas nuevos
+                autores para aumentar tu biblioteca de conocimientos.
+            </h3>
+        </div>
+        <div>
+            <img [src]="'./assets/svg/illustration.svg'" />
+        </div>
+    </section>
+
+    <ng-container *ngIf="$latestStories | async as latestStories">
+        <section class="stories-card-container newest-stories-container highlight-first-row">
+            <ng-container *ngFor="let story of latestStories">
+                <cuentoneta-story-card [story]="story"></cuentoneta-story-card>
+            </ng-container>
+        </section>
+    </ng-container>
+
+    <h2>Cuentos Edición 2022</h2>
+
+    <ng-container *ngIf="$oldStories | async as $oldStories">
+        <section class="stories-card-container past-stories">
+            <ng-container *ngFor="let story of $oldStories">
+                <cuentoneta-story-card [story]="story"></cuentoneta-story-card>
+            </ng-container>
+        </section>
+    </ng-container>
+</main>
