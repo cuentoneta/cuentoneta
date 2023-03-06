@@ -2,14 +2,15 @@
     <ng-container *ngIf="!!story; else skeleton">
         <header class="card-header">
             <label class="date"
-                ><div class="rect"></div>
+            ><div class="rect"></div>
                 Día {{ story.day }} - {{ story.publishedAt }}
             </label>
             <div class="badge-new"><label>NUEVO</label></div>
         </header>
         <main>
             <h1 class="card-title">{{ story.title }}</h1>
-            <p class="content">{{ story.paragraphs[0] }}</p>
+            <!-- ToDo: Optimizar payload tratado para mostrar el resumen de cada tarjeta (#115)-->
+            <p class="content" [innerHTML]="(story.paragraphs[0] + ' ' + story.paragraphs[1])"></p>
         </main>
         <label class="reading-time">{{story.approximateReadingTime}} minutos</label>
         <hr />
