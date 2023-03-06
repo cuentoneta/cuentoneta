@@ -1,27 +1,34 @@
-<article *ngIf="story">
-    <header class="card-header">
-        <label class="date"
-            ><div class="rect"></div>
-            Día {{ story.day }} - {{ story.publishedAt }}
-        </label>
-        <div class="badge-new"><label>NUEVO</label></div>
-    </header>
-    <main>
-        <h1 class="card-title">{{ story.title }}</h1>
-        <p class="content">{{ story.paragraphs[0] }}</p>
-    </main>
-    <label class="reading-time">5 minutos</label>
-    <hr />
-    <footer class="author-info flex flex-row items-center">
-        <img class="author-image" width="40" height="40" [ngSrc]="story.author.imageUrl" />
-        <div>
-            <label class="author-name">{{ story.author.name }}</label>
-            <ng-container *ngIf="story.author.nationality as nationality">
-                <div class="flex items-center">
-                    <img class="flag" width="20" height="15" [ngSrc]="nationality.flag" />
-                    <label class="country">{{ nationality.country }}</label>
-                </div>
-            </ng-container>
-        </div>
-    </footer>
+<article>
+    <ng-container *ngIf="!!story; else skeleton">
+        <header class="card-header">
+            <label class="date"
+                ><div class="rect"></div>
+                Día {{ story.day }} - {{ story.publishedAt }}
+            </label>
+            <div class="badge-new"><label>NUEVO</label></div>
+        </header>
+        <main>
+            <h1 class="card-title">{{ story.title }}</h1>
+            <p class="content">{{ story.paragraphs[0] }}</p>
+        </main>
+        <!-- ToDo: Obtener tiempo de lectura -->
+        <label class="reading-time">5 minutos</label>
+        <hr />
+        <footer class="author-info flex flex-row items-center">
+            <img class="author-image" width="40" height="40" [ngSrc]="story.author.imageUrl" />
+            <div>
+                <label class="author-name">{{ story.author.name }}</label>
+                <ng-container *ngIf="story.author.nationality as nationality">
+                    <div class="flex items-center">
+                        <img class="flag" width="20" height="15" [ngSrc]="nationality.flag" />
+                        <label class="country">{{ nationality.country }}</label>
+                    </div>
+                </ng-container>
+            </div>
+        </footer>
+    </ng-container>
 </article>
+
+<ng-template #skeleton>
+    <ngx-skeleton-loader count="6" appearance="line"></ngx-skeleton-loader>
+</ng-template>

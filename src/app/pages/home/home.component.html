@@ -12,21 +12,17 @@
         </div>
     </section>
 
-    <ng-container *ngIf="$latestStories | async as latestStories">
-        <section class="stories-card-container newest-stories-container highlight-first-row">
-            <ng-container *ngFor="let story of latestStories">
-                <cuentoneta-story-card [story]="story"></cuentoneta-story-card>
-            </ng-container>
-        </section>
-    </ng-container>
+    <section class="stories-card-container newest-stories-container highlight-first-row">
+        <ng-container *ngFor="let story of latestStories">
+            <cuentoneta-story-card [story]="story"></cuentoneta-story-card>
+        </ng-container>
+    </section>
 
     <h2>Cuentos Edición 2022</h2>
 
-    <ng-container *ngIf="$oldStories | async as $oldStories">
-        <section class="stories-card-container past-stories">
-            <ng-container *ngFor="let story of $oldStories">
-                <cuentoneta-story-card [story]="story"></cuentoneta-story-card>
-            </ng-container>
-        </section>
-    </ng-container>
+    <section class="stories-card-container past-stories">
+        <ng-container *ngFor="let story of oldStories">
+            <cuentoneta-story-card [story]="story"></cuentoneta-story-card>
+        </ng-container>
+    </section>
 </main>

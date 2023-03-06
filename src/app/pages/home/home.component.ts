@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { StoryService } from '../../providers/story.service';
-import { Observable, of } from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
 import { Story } from '../../models/story.model';
 
 @Component({
@@ -10,15 +10,18 @@ import { Story } from '../../models/story.model';
 })
 export class HomeComponent implements OnInit {
 
-    topStoriesAmount = 5;
-    storiesAmount = 6;
-    $latestStories: Observable<Story[]> = of([]);
-    $oldStories: Observable<Story[]> = of([]);
+    latestStories: Story[] = Array(5);
+    oldStories: Story[] = Array(6);
 
     constructor(private storyService: StoryService) {}
 
     ngOnInit(): void {
-        this.$latestStories = this.storyService.getLatest('2022', this.topStoriesAmount)
-        this.$oldStories = this.storyService.getLatest('2021', this.storiesAmount)
+        combineLatest([
+            this.storyService.getLatest('2022', this.latestStories.length),
+            this.storyService.getLatest('2021', this.oldStories.length),
+        ]).subscribe(([topStories, oldStories]) => {
+            this.latestStories = topStories;
+            this.oldStories = oldStories;
+        });
     }
 }
