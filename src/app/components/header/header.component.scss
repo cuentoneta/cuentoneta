@@ -2,13 +2,11 @@
 
 :host {
     header {
-        align-items: center;
-        display: flex;
-        justify-content: space-between;
         height: 80px;
 
-        > * {
-            display: flex;
+        .container {
+            margin: auto;
+            max-width: 1240px;
         }
 
         section {
@@ -27,10 +25,9 @@
         }
 
         ul {
-            display: flex;
             li {
-                &:not(last-child) {
-                    margin-right: 48px;
+                &:not(:last-child) {
+                    margin-right: $spacing-12;
                 }
             }
         }

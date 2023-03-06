@@ -5,13 +5,20 @@ const builder = imageUrlBuilder(sanityConnector.client);
 module.exports = { mapAuthor, mapBodyToParagraphs, mapPrologues, urlFor };
 
 function mapAuthor(authorDTO) {
-    return {
+    const obj = {
+        id: authorDTO._id,
         biography: authorDTO.bio,
-        nationality: urlFor(authorDTO.country).url(),
+        nationality: authorDTO.nationality,
         fullBioUrl: authorDTO.fullBioUrl,
         imageUrl: urlFor(authorDTO.image).url(),
         name: authorDTO.name,
     };
+
+    if (authorDTO.nationality?.country && authorDTO.nationality?.flag) {
+        obj.nationality = { country: authorDTO.nationality?.country, flag: urlFor(authorDTO.nationality?.flag)?.url() };
+    }
+
+    return obj;
 }
 
 function mapBodyToParagraphs(story) {

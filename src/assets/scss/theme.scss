@@ -142,7 +142,7 @@ $letter-spacing: 0px;
 }
 
 @mixin inter-body-lg-regular {
-    @include inter-body-regular;
+    @include inter-body-lg;
     font-weight: $inter-font-weight-regular;
 }
 
@@ -238,6 +238,11 @@ $letter-spacing: 0px;
 // endregion
 
 // region Spacing
+
+// La unidad de medida para cada variable de spacing debe ser
+// multiplicada por 4 para obtener la magnitud en píxels.
+// Así, spacing-5 -> 20px, spacing-32 -> 128px, etc.
+
 $spacing-1: 0.25rem;
 $spacing-2: 0.5rem;
 $spacing-3: 0.75rem;
@@ -249,6 +254,7 @@ $spacing-8: 2rem;
 $spacing-10: 2.5rem;
 $spacing-12: 3rem;
 $spacing-14: 3.5rem;
+$spacing-15: 3.75rem;
 $spacing-16: 4rem;
 $spacing-20: 5rem;
 $spacing-24: 6rem;
@@ -280,8 +286,6 @@ $max-sm-width: 639px;
 body {
     font-family: $source-serif-pro-font-family;
     background-color: $gray-100;
-    margin: auto;
-    width: 1280px;
 }
 
 h1,
@@ -303,7 +307,7 @@ h1 {
         font-weight: $inter-font-weight-extra-bold;
     }
 
-    .display {
+    &.display {
         font-size: 60px;
         line-height: 60px;
         letter-spacing: $letter-spacing;

@@ -1,0 +1,90 @@
+@import 'src/assets/scss/theme.scss';
+
+:host {
+  background-color: $gray-50;
+  border: 1px solid $primary-300;
+  border-radius: $rounded-lg;
+  box-shadow: $box-shadow-card;
+  padding: $spacing-8;
+
+  article {
+    display: flex;
+    flex-direction: column;
+    row-gap: $spacing-4;
+  }
+
+  .card-title{
+    margin-bottom: $spacing-1;
+    @include inter-body-xl-bold;
+  }
+
+  .card-header{
+    display:flex;
+    justify-content: space-between;
+
+    .date {
+      align-items: center;
+      color: $primary-500;
+      display: flex;
+      @include inter-body-sm-bold;
+
+      .rect {
+        background-color: $primary-500;
+        height: 12px;
+        margin-right: $spacing-2;
+        width: 2px;
+      }
+    }
+
+    .badge-new {
+      align-items: center;
+      background-color: $primary-200;
+      border-radius: $spacing-1;
+      display: flex;
+      label {
+        margin: $spacing-1 $spacing-4;
+        @include inter-body-xs-bold;
+      }
+    }
+  }
+
+  .content {
+    overflow: hidden;
+    text-overflow:ellipsis;
+    position: relative;
+    text-align: justify;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    max-height: 72px;
+
+    @include source-serif-pro-body-base;
+  }
+
+  .reading-time {
+    @include inter-body-xs-medium;
+    font-weight: 600;
+    color: $gray-600;
+  }
+
+  .author-info{
+    .author-image {
+      border-radius: $spacing-1;
+      height: $spacing-10;
+      width: $spacing-10;
+      margin-right: $spacing-3;
+    }
+    .author-name {
+      @include inter-body-base-semibold;
+    }
+    .flag {
+      height: 15px;
+      width: 20px;
+    }
+    .country {
+      color: $gray-500;
+      margin-left: $spacing-2;
+      @include inter-body-sm-semibold;
+    }
+  }
+}
