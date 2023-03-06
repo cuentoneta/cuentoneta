@@ -6,6 +6,7 @@ module.exports = { mapAuthor, mapBodyToParagraphs, mapPrologues, urlFor };
 
 function mapAuthor(authorDTO) {
     const obj = {
+        id: authorDTO._id,
         biography: authorDTO.bio,
         nationality: authorDTO.nationality,
         fullBioUrl: authorDTO.fullBioUrl,
