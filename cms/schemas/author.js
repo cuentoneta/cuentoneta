@@ -16,10 +16,12 @@ export default {
                 hotspot: true,
             },
         },
+
         {
-            name: 'country',
+            name: 'nationality',
             title: 'Nacionalidad',
-            type: 'image',
+            type: 'reference',
+            to: { type: 'nationality' },
         },
         {
             name: 'bio',
