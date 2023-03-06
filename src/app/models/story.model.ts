@@ -9,4 +9,5 @@ export interface Story {
     prologues: Prologue[];
     summary: string;
     paragraphs: string[];
+    publishedAt: string;
 }
