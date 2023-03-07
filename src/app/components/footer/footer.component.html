@@ -1,32 +1,35 @@
 <footer>
-    <div class="container flex items-center justify-between h-full">
-        <section class="logo flex">
+    <div class="container items-center justify-between h-full">
+        <section class="logo">
             <img src="./assets/svg/logo.svg" />
         </section>
-        <div class="flex">
-            <section class="navigation mr-16">
-                <nav>
-                    <ul class="flex">
-                        <li><a routerLink="/list/2022">Cuentos 2023</a></li>
-                        <li><a routerLink="/list/2021">Cuentos 2022</a></li>
-                        <li><a routerLink="/about">Nosotros</a></li>
-                        <li><a routerLink="/dmca">DMCA</a></li>
-                    </ul>
-                </nav>
-            </section>
-            <section class="social">
-                <nav>
-                    <ul class="flex">
-                        <li>
-                            <a href=""><img [src]="'assets/svg/twitter.svg'" /></a>
-                        </li>
-                        <li>
-                            <a href=""><img [src]="'assets/svg/instagram.svg'" /></a>
-                        </li>
-                        <li><a href="mailto:info@cuentoneta.ar">Mail</a></li>
-                    </ul>
-                </nav>
-            </section>
-        </div>
+        <section class="navigation">
+            <nav>
+                <ul class="flex justify-between lg:justify-center">
+                    <li><a routerLink="/list/2022">Cuentos 2023</a></li>
+                    <li><a routerLink="/list/2021">Cuentos 2022</a></li>
+                    <li><a routerLink="/about">Nosotros</a></li>
+                    <li><a routerLink="/dmca">DMCA</a></li>
+                </ul>
+            </nav>
+        </section>
+        <section class="social">
+            <nav>
+                <ul class="flex">
+                    <li>
+                        <a href=""><img [src]="'assets/svg/twitter.svg'" /></a>
+                    </li>
+                    <li>
+                        <a href=""><img [src]="'assets/svg/instagram.svg'" /></a>
+                    </li>
+                    <li>
+                        <a href=""><img [src]="'assets/svg/whatsapp.svg'" /></a>
+                    </li>
+                    <li>
+                        <a href=""><img [src]="'assets/svg/facebook.svg'" /></a>
+                    </li>
+                </ul>
+            </nav>
+        </section>
     </div>
 </footer>
