@@ -242,6 +242,11 @@ $letter-spacing: 0px;
 // La unidad de medida para cada variable de spacing debe ser
 // multiplicada por 4 para obtener la magnitud en píxels.
 // Así, spacing-5 -> 20px, spacing-32 -> 128px, etc.
+//
+// 0.25 rem, o 4px para un tamaño base de fuente de texto de 16px,
+// es la unidad atómica de spacing para el proyecto.
+//
+// Info en MDN: https://developer.mozilla.org/es/docs/Learn/CSS/Building_blocks/Values_and_units
 
 $spacing-1: 0.25rem;
 $spacing-2: 0.5rem;
@@ -276,11 +281,11 @@ $box-shadow-card-hover: 0px 12px 16px rgba(63, 63, 70, 0.12);
 
 // region Grid viewports
 $min-lg-width: 1280px;
-$max-lg-width: 1279px;
+$max-md-width: 1279px;
 $min-md-width: 1024px;
-$max-md-width: 1023px;
+$max-sm-width: 1023px;
 $min-sm-width: 640px;
-$max-sm-width: 639px;
+$max-xs-width: 639px;
 // endregion
 
 body {
