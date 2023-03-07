@@ -2,13 +2,35 @@
 
 main {
     margin: auto;
-    width: 1240px;
+
+    @media screen and (max-width: $max-md-width) {
+        margin: 0 20px;
+    }
+
+    @media screen and (min-width: $min-lg-width) {
+        width: 1240px;
+    }
 }
 
 .hero {
-    height: 652px;
-    .text {
-        width: 550px;
+    display: grid;
+
+    @media screen and (max-width: $max-md-width) {
+        grid-template-columns: 1fr;
+        grid-gap: $spacing-16;
+        margin-bottom: $spacing-16;
+    }
+
+    @media screen and (min-width: $min-lg-width) {
+        grid-template-columns: repeat(2, 1fr);
+
+        height: 652px;
+        .text {
+            width: 550px;
+        }
+        .featured-image {
+            margin-left: auto;
+        }
     }
 }
 
@@ -26,9 +48,10 @@ $cards-grid-gap: $spacing-8;
     grid-gap: $cards-grid-gap;
     grid-template-columns: repeat(6, 1fr);
 
-    @media screen and (min-width: 1280px) {
+    @media screen and (min-width: $min-lg-width) {
         &.highlight-first-row {
-            > *:first-child, > *:nth-child(2){
+            > *:first-child,
+            > *:nth-child(2) {
                 grid-column: auto / span 3;
             }
         }
@@ -38,15 +61,12 @@ $cards-grid-gap: $spacing-8;
         }
     }
 
-    @media screen and (max-width: 1279px) {
+    @media screen and (max-width: $max-md-width) {
         > * {
             grid-column: auto / span 6;
         }
     }
-
 }
-
-
 
 .newest-stories-container {
     margin-bottom: $spacing-15;

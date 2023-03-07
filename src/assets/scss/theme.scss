@@ -308,11 +308,7 @@ h1 {
     letter-spacing: 0;
     font-weight: $inter-font-weight-bold;
 
-    &.emphasis {
-        font-weight: $inter-font-weight-extra-bold;
-    }
-
-    &.display {
+    @media screen and (min-width: $min-lg-width) {
         font-size: 60px;
         line-height: 60px;
         letter-spacing: $letter-spacing;
@@ -328,8 +324,14 @@ h2 {
 }
 
 h3 {
-    font-size: 24px;
-    line-height: 32px;
-    letter-spacing: 0;
-    font-weight: $inter-font-weight-bold;
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: $inter-font-weight-medium;
+
+    @media screen and (min-width: $min-lg-width) {
+        font-size: 24px;
+        line-height: 32px;
+        font-weight: $inter-font-weight-bold;
+        letter-spacing: 0;
+    }
 }
