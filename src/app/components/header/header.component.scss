@@ -2,7 +2,11 @@
 
 :host {
     header {
-        height: 80px;
+        @media screen and (max-width: $max-md-width) {
+            margin: 0 $spacing-5;
+        }
+
+        height: $spacing-20;
 
         .container {
             margin: auto;
@@ -12,11 +16,24 @@
         section {
             &.logo {
                 img {
-                    margin-right: 12px;
+                    margin-right: $spacing-3;
                 }
             }
 
             &.navigation {
+                nav {
+                    @media screen and (max-width: $max-xs-width) {
+                        > ul {
+                            display: none;
+                        }
+                    }
+                    @media screen and (min-width: $min-sm-width) {
+                        div {
+                            display: none;
+                        }
+                    }
+                }
+
                 @include inter-body-sm-semibold;
                 li:hover {
                     color: $interactive-500;

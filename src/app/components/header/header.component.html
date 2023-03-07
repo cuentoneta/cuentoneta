@@ -1,7 +1,7 @@
 <header class="flex items-center">
     <div class="container flex items-center justify-between">
         <section class="logo flex">
-            <img src="./assets/svg/logo.svg" />
+            <img [ngSrc]="'./assets/svg/logo.svg'" width="59" height="32" alt="Imagen logo de 'La Cuentoneta'" />
             <h3><strong>La Cuentoneta</strong></h3>
         </section>
         <section class="navigation">
@@ -12,6 +12,9 @@
                     <li><a routerLink="/about">Nosotros</a></li>
                     <li><a routerLink="/dmca">DMCA</a></li>
                 </ul>
+                <div class="menu-container">
+                    <img [ngSrc]="'./assets/svg/menu.svg'" width="24" height="24" alt="Ícono de menú de hamburguesa de 'La Cuentoneta'" />
+                </div>
             </nav>
         </section>
     </div>
