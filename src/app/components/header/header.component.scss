@@ -2,6 +2,10 @@
 
 :host {
     header {
+        @media screen and (max-width: $max-md-width) {
+            margin: 0 20px;
+        }
+
         height: 80px;
 
         .container {
@@ -17,6 +21,19 @@
             }
 
             &.navigation {
+                nav {
+                    @media screen and (max-width: $max-xs-width) {
+                        > ul {
+                            display: none;
+                        }
+                    }
+                    @media screen and (min-width: $min-sm-width) {
+                        div {
+                            display: none;
+                        }
+                    }
+                }
+
                 @include inter-body-sm-semibold;
                 li:hover {
                     color: $interactive-500;

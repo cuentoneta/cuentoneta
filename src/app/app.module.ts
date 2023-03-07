@@ -13,10 +13,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { StoryService } from './providers/story.service';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
+import {NgOptimizedImage} from "@angular/common";
 
 @NgModule({
     declarations: [AppComponent, HeaderComponent, FooterComponent],
-    imports: [BrowserModule, HttpClientModule, AppRoutingModule],
+    imports: [BrowserModule, HttpClientModule, AppRoutingModule, NgOptimizedImage],
     providers: [StoryService],
     bootstrap: [AppComponent],
 })
