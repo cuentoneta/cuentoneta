@@ -3,10 +3,10 @@
 :host {
     header {
         @media screen and (max-width: $max-md-width) {
-            margin: 0 20px;
+            margin: 0 $spacing-5;
         }
 
-        height: 80px;
+        height: $spacing-20;
 
         .container {
             margin: auto;
@@ -16,7 +16,7 @@
         section {
             &.logo {
                 img {
-                    margin-right: 12px;
+                    margin-right: $spacing-3;
                 }
             }
 
