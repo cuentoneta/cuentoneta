@@ -1,4 +1,4 @@
-# Cuentoneta
+# La Cuentoneta
 
 <a href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
 
@@ -19,3 +19,9 @@ Run `npx nx connect-to-nx-cloud` to enable [remote caching](https://nx.app) and 
 ## Further help
 
 Visit the [Nx Documentation](https://nx.dev) to learn more.
+
+// ToDo: Escribir nuevo README.md
+
+## Licencias y créditos
+* Banderas de nacionalidades diseñadas por [Flagpedia](https://flagpedia.net/), disponibles para uso en el dominio público.
+* Bandera de Florencia, disponible en el dominio público, tomada desde [Wikimedia](https://en.wikipedia.org/wiki/Flag_of_Florence#/media/File:Flag_of_Florence.svg), y subida a la plataforma por [Kanchelskis](https://commons.wikimedia.org/wiki/User:Kanchelskis).
