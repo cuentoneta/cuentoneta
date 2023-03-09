@@ -13,8 +13,13 @@ export class StoryService {
 
     constructor(private http: HttpClient) {}
 
+    //ToDo: ¿Es necesario este método ahora?
     public get(day: number): Observable<Story> {
         return this.http.get<Story>(`api/story/${day}`);
+    }
+
+    public getById(id: number|string): Observable<Story> {
+        return this.http.get<Story>(`api/story/${id}`);
     }
 
     public getAuthors(): Observable<Story[]> {
