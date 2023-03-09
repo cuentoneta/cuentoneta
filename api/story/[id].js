@@ -4,20 +4,14 @@ const sanityConnector = require('../_helpers/sanity-connector');
 
 export default async function getById(req, res) {
     const { id } = req.query;
-    const query = `*[_type == 'story' && day == ${id}]{title, day, originalLink, forewords, categories, publishedAt, body, review, forewords, author->}`;
-    const result = await sanityConnector.client.fetch(query, {});
+    const query = `*[_type == 'story' && _id == '${id}']{title, day, originalLink, forewords, categories, publishedAt, body, review, forewords, author->}[0]`;
+    const story = await sanityConnector.client.fetch(query, {});
 
-    let story = result.length ? result.pop() : null;
-
-    if (story) {
-        story = {
-            ...story,
-            summary: story.review,
-            paragraphs: mapBodyToParagraphs(story.body),
-            author: mapAuthor(story.author),
-            prologues: mapPrologues(story.forewords),
-        };
-    }
-
-    res.json(story);
+    res.json({
+        ...story,
+        summary: story.review,
+        paragraphs: mapBodyToParagraphs(story.body),
+        author: mapAuthor(story.author),
+        prologues: mapPrologues(story.forewords),
+    });
 }

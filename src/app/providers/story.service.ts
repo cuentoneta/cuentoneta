@@ -17,6 +17,10 @@ export class StoryService {
         return this.http.get<Story>(`api/story/${day}`);
     }
 
+    public getById(id: number|string): Observable<Story> {
+        return this.http.get<Story>(`api/story/${id}`);
+    }
+
     public getAuthors(): Observable<Story[]> {
         return this.http.get<Story[]>(`api/story/authors`);
     }
