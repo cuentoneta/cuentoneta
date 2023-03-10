@@ -4,7 +4,7 @@ const sanityConnector = require('../_helpers/sanity-connector');
 
 export default async function getById(req, res) {
     const { id } = req.query;
-    const query = `*[_type == 'story' && _id == '${id}']{title, day, originalLink, forewords, categories, publishedAt, body, review, forewords, author->}[0]`;
+    const query = `*[_type == 'story' && _id == '${id}']{title, day, originalLink, forewords, categories, publishedAt, body, review, forewords, 'author': author-> { ..., nationality-> }}[0]`;
     const story = await sanityConnector.client.fetch(query, {});
 
     res.json({
