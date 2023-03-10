@@ -1,1 +1,15 @@
-<p>story works!</p>
+<ng-container *ngIf="story$ | async as story">
+    <h1>{{ story.title }}</h1>
+    <ng-container *ngFor="let paragraph of story.paragraphs"
+        ><p>{{ paragraph }}</p></ng-container
+    >
+    <ng-container *ngIf="story.author.biography">
+        <img width="20" height="15" [ngSrc]="story.author.nationality.flag" />
+        <p>{{ story.author.nationality.country }}</p>
+        <p>{{ story.author.name }}</p>
+        <p>{{ story.author.biography }}</p>
+    </ng-container>
+    <ng-container *ngIf="story.summary">
+        <p>{{ story.summary }}</p>
+    </ng-container>
+</ng-container>

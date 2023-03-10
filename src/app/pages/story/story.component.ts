@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { switchMap } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
 import { StoryService } from '../../providers/story.service';
+import { Story } from '../../models/story.model';
 
 @Component({
     selector: 'cuentoneta-story',
@@ -9,9 +10,8 @@ import { StoryService } from '../../providers/story.service';
     styleUrls: ['./story.component.scss'],
 })
 export class StoryComponent {
+    story$: Observable<Story> | undefined;
     constructor(private activatedRoute: ActivatedRoute, private storyService: StoryService) {
-        activatedRoute.queryParams.pipe(switchMap(({ id }) => this.storyService.getById(id))).subscribe((story) => {
-            console.log(story);
-        });
+        this.story$ = activatedRoute.queryParams.pipe(switchMap(({ id }) => this.storyService.getById(id)));
     }
 }
