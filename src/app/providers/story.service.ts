@@ -19,7 +19,7 @@ export class StoryService {
     }
 
     public getById(id: number|string): Observable<Story> {
-        return this.http.get<Story>(`api/story/${id}`);
+        return this.http.get<StoryDTO>(`api/story/${id}`).pipe(map(story => this.parseCardContent(story)));
     }
 
     public getAuthors(): Observable<Story[]> {
