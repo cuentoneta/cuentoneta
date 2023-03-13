@@ -307,13 +307,6 @@ h1 {
     line-height: 40px;
     letter-spacing: 0;
     font-weight: $inter-font-weight-bold;
-
-    @media screen and (min-width: $min-lg-width) {
-        font-size: 60px;
-        line-height: 60px;
-        letter-spacing: $letter-spacing;
-        font-weight: $inter-font-weight-extra-bold;
-    }
 }
 
 h2 {
@@ -334,4 +327,10 @@ h3 {
         font-weight: $inter-font-weight-bold;
         letter-spacing: 0;
     }
+}
+
+@mixin card {
+    background-color: $gray-50;
+    border-radius: $rounded-lg;
+    box-shadow: $box-shadow-card;
 }
