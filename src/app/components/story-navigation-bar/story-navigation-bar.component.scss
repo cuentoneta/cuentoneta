@@ -7,6 +7,7 @@
 section {
     @include card;
     background-color: $gray-200;
+    border-radius: $rounded-xl;
 
     header, footer {
         @include card-spacing;

@@ -65,7 +65,7 @@
     color: $gray-600;
   }
 
-  .author-info{
+  .author-info {
     .author-image {
       border-radius: $spacing-1;
       height: $spacing-10;
@@ -76,6 +76,7 @@
       @include inter-body-base-semibold;
     }
     .flag {
+      border-radius: $rounded;
       height: 15px;
       width: 20px;
     }
