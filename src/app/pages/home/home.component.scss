@@ -23,8 +23,14 @@ main {
 
     @media screen and (min-width: $min-lg-width) {
         grid-template-columns: repeat(2, 1fr);
-
         height: 652px;
+
+        h1 {
+            font-size: 60px;
+            line-height: 60px;
+            letter-spacing: $letter-spacing;
+            font-weight: $inter-font-weight-extra-bold;
+        }
         .text {
             width: 550px;
         }
@@ -47,6 +53,10 @@ $cards-grid-gap: $spacing-8;
     display: grid;
     grid-gap: $cards-grid-gap;
     grid-template-columns: repeat(6, 1fr);
+
+    &:hover {
+        cursor: pointer;
+    }
 
     @media screen and (min-width: $min-lg-width) {
         &.highlight-first-row {

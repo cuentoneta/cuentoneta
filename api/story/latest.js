@@ -12,6 +12,7 @@ export default async function getLatest(req, res) {
     const { edition, amount } = req.query;
     const query = `*[_type == 'story' && edition == '${edition}'] | order(day desc)[0...${amount}]
                     { 
+                        _id,
                         title, 
                         day, 
                         originalLink, 
@@ -31,6 +32,7 @@ export default async function getLatest(req, res) {
 
     let stories = result.map((story) => ({
         ...story,
+        id: story._id,
         summary: story.review,
         paragraphs: mapBodyToParagraphs(story.body),
         author: mapAuthor(story.author),

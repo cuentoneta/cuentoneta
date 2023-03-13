@@ -1,0 +1,36 @@
+<aside *ngIf="storyList$ | async as storyList">
+    <cuentoneta-story-navigation-bar [storyList]="storyList"></cuentoneta-story-navigation-bar>
+</aside>
+<main>
+    <article>
+        <ng-container *ngIf="story$ | async as story">
+            <header>
+                <h1 class="title">{{ story.title }}</h1>
+                <p class="subtitle">{{ story.author.name }}</p>
+                <p class="reading-time">{{ story.approximateReadingTime }} minutos de lectura</p>
+            </header>
+
+            <section class="prologues" *ngIf="!!story.prologues && story.prologues.length > 0">
+                <ng-container *ngFor="let prologue of story.prologues">
+                    <p class="prologue flex items-center">
+                        <span></span>
+                        {{ prologue.text }}&nbsp;<em *ngIf="prologue.reference">{{ prologue.reference }}</em>
+                    </p>
+                </ng-container>
+            </section>
+
+            <section class="content">
+                <ng-container *ngFor="let paragraph of story.paragraphs">
+                    <p [innerHTML]="paragraph"></p>
+                </ng-container>
+            </section>
+
+            <footer *ngIf="story.author.biography">
+                <cuentoneta-bio-summary-card
+                    [author]="story.author"
+                    [summary]="story.summary"
+                ></cuentoneta-bio-summary-card>
+            </footer>
+        </ng-container>
+    </article>
+</main>

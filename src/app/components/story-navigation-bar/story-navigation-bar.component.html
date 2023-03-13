@@ -1,0 +1,20 @@
+<section>
+    <header>
+        <h3 class="story-list-title">{{ storyList.title }}</h3>
+    </header>
+    <ng-container *ngFor="let story of storyList.stories">
+        <a [routerLink]="['/story']" [queryParams]="{ id: story?.id, list: storyList.title }">
+            <article>
+                <cuentoneta-story-edition-date-label
+                    class="edition-and-label"
+                    [story]="story"
+                ></cuentoneta-story-edition-date-label>
+                <h4 class="title">{{ story.title }}</h4>
+                <h5 class="author">{{ story.author.name }}</h5>
+            </article>
+        </a>
+    </ng-container>
+    <footer>
+        <h3 class="story-list-title">Ver más...</h3>
+    </footer>
+</section>

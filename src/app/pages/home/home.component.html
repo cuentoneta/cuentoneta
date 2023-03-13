@@ -14,7 +14,7 @@
 
     <section class="stories-card-container newest-stories-container highlight-first-row">
         <ng-container *ngFor="let story of latestStories">
-            <cuentoneta-story-card [story]="story"></cuentoneta-story-card>
+            <cuentoneta-story-card [routerLink]="['/story']" [queryParams]="{ id: story?.id, list: '2022' }" [story]="story"></cuentoneta-story-card>
         </ng-container>
     </section>
 
@@ -22,7 +22,7 @@
 
     <section class="stories-card-container past-stories">
         <ng-container *ngFor="let story of oldStories">
-            <cuentoneta-story-card [story]="story"></cuentoneta-story-card>
+            <cuentoneta-story-card [routerLink]="['/story']" [queryParams]="{ id: story?.id, list: '2021' }" [story]="story"></cuentoneta-story-card>
         </ng-container>
     </section>
 </main>

@@ -10,7 +10,12 @@ export interface Story {
     summary: string;
     paragraphs: string[];
     publishedAt: string;
-    approximateReadingTime: number
+    approximateReadingTime: number;
+}
+
+export interface StoryList {
+    title: string;
+    stories: Story[];
 }
 
 // ToDo: Agregar tipo BlockContent para tratar datos de texto que vienen desde Sanity (#114)

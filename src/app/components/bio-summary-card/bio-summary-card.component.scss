@@ -1,0 +1,47 @@
+@import 'src/assets/scss/theme.scss';
+
+.container {
+    border: 1px solid $gray-200;
+    background-color: $gray-100;
+    border-radius: $rounded;
+    padding: $spacing-6;
+
+    .author-info {
+        display: grid;
+        grid-template-columns: $spacing-16 1fr $spacing-32;
+        column-gap: $spacing-4;
+        margin-bottom: $spacing-8;
+
+        .author-image {
+            border-radius: $rounded-md;
+        }
+
+        .author-name {
+            @include inter-body-lg-semibold;
+        }
+        .author-nationality {
+            @include inter-body-base-medium;
+            color: $gray-700;
+            .flag {
+                border-radius: $rounded;
+                height: 15px;
+                width: 20px;
+            }
+        }
+
+        .author-bio-link {
+            @include inter-body-base-semibold;
+            color: $interactive-500;
+        }
+    }
+
+    .bio-and-summary {
+        p {
+            @include inter-body-base-regular;
+            color: $gray-700;
+            &:not(:last-child) {
+                margin-bottom: $spacing-8;
+            }
+        }
+    }
+}
