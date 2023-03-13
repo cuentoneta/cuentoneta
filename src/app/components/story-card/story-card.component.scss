@@ -1,10 +1,8 @@
 @import 'src/assets/scss/theme.scss';
 
 :host {
-  background-color: $gray-50;
+  @include card;
   border: 1px solid $primary-300;
-  border-radius: $rounded-lg;
-  box-shadow: $box-shadow-card;
   padding: $spacing-8;
 
   article {
