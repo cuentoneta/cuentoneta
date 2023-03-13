@@ -15,7 +15,7 @@
         <label class="reading-time">{{story.approximateReadingTime}} minutos</label>
         <hr />
         <footer class="author-info flex flex-row items-center">
-            <img class="author-image" width="40" height="40" [ngSrc]="story.author.imageUrl" />
+            <img class="author-image" [alt]="'Retrato de ' + story.author.name" width="40" height="40" [ngSrc]="story.author.imageUrl" />
             <div>
                 <label class="author-name">{{ story.author.name }}</label>
                 <ng-container *ngIf="story.author.nationality as nationality">
