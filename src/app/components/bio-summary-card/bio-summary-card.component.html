@@ -1,0 +1,26 @@
+<div class="container">
+    <section class="author-info">
+        <img width="64" height="64" [ngSrc]="author.imageUrl" />
+        <div class="flex flex-col justify-center">
+            <p class="author-name">{{ author.name }}</p>
+            <div class="author-nationality flex items-center gap-2">
+                <img width="20" height="15" [alt]="'Retrato de ' + author.name" [ngSrc]="author.nationality.flag" />
+                <span>{{ author.nationality.country }}</span>
+            </div>
+        </div>
+        <a [href]="author.fullBioUrl" target="_blank" class="author-bio-link flex items-start justify-end gap-3">
+            Wikipedia
+            <img
+                [ngSrc]="'./assets/svg/external-link.svg'"
+                width="20"
+                height="20"
+                alt="Imagen que representa un link externo"
+        /></a>
+    </section>
+    <section class="bio-and-summary">
+        <p>{{ author.biography }}</p>
+        <ng-container *ngIf="summary">
+            <p>{{ summary }}</p>
+        </ng-container>
+    </section>
+</div>
