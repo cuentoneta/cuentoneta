@@ -1,15 +1,39 @@
-<ng-container *ngIf="story$ | async as story">
-    <h1>{{ story.title }}</h1>
-    <ng-container *ngFor="let paragraph of story.paragraphs"
-        ><p>{{ paragraph }}</p></ng-container
-    >
-    <ng-container *ngIf="story.author.biography">
-        <img width="20" height="15" [ngSrc]="story.author.nationality.flag" />
-        <p>{{ story.author.nationality.country }}</p>
-        <p>{{ story.author.name }}</p>
-        <p>{{ story.author.biography }}</p>
-    </ng-container>
-    <ng-container *ngIf="story.summary">
-        <p>{{ story.summary }}</p>
-    </ng-container>
-</ng-container>
+<aside></aside>
+<main>
+    <article>
+        <ng-container *ngIf="story$ | async as story">
+            <header>
+                <h1 class="title">{{ story.title }}</h1>
+                <p class="subtitle">{{ story.author.name }}</p>
+                <p class="reading-time">{{ story.approximateReadingTime }} minutos de lectura</p>
+            </header>
+
+            <section class="prologues" *ngIf="!!story.prologues && story.prologues.length > 0">
+                <ng-container *ngFor="let prologue of story.prologues">
+                    <p class="prologue flex items-center">
+                        <span></span>
+                        {{ prologue.text }}&nbsp;<em *ngIf="prologue.reference">{{ prologue.reference }}</em>
+                    </p>
+                </ng-container>
+            </section>
+
+            <section class="content">
+                <ng-container *ngFor="let paragraph of story.paragraphs">
+                    <p [innerHTML]="paragraph"></p>
+                </ng-container>
+            </section>
+
+            <footer>
+                <ng-container *ngIf="story.author.biography">
+                    <img width="20" height="15" [ngSrc]="story.author.nationality.flag" />
+                    <p>{{ story.author.nationality.country }}</p>
+                    <p>{{ story.author.name }}</p>
+                    <p>{{ story.author.biography }}</p>
+                </ng-container>
+                <ng-container *ngIf="story.summary">
+                    <p>{{ story.summary }}</p>
+                </ng-container>
+            </footer>
+        </ng-container>
+    </article>
+</main>
