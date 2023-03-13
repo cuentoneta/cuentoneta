@@ -23,16 +23,22 @@
                 </ng-container>
             </section>
 
-            <footer>
-                <ng-container *ngIf="story.author.biography">
-                    <img width="20" height="15" [ngSrc]="story.author.nationality.flag" />
-                    <p>{{ story.author.nationality.country }}</p>
-                    <p>{{ story.author.name }}</p>
+            <footer *ngIf="story.author.biography">
+                <section class="author-info">
+                    <img width="64" height="64" [ngSrc]="story.author.imageUrl" />
+                    <div>
+                        <p>{{ story.author.name }}</p>
+                        <img width="20" height="15" [ngSrc]="story.author.nationality.flag" />
+                        <span>{{ story.author.nationality.country }}</span>
+                    </div>
+                    <p>Wikipedia</p>
+                </section>
+                <section class="bio-and-summary">
                     <p>{{ story.author.biography }}</p>
-                </ng-container>
-                <ng-container *ngIf="story.summary">
-                    <p>{{ story.summary }}</p>
-                </ng-container>
+                    <ng-container *ngIf="story.summary">
+                        <p>{{ story.summary }}</p>
+                    </ng-container>
+                </section>
             </footer>
         </ng-container>
     </article>

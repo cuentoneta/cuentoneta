@@ -49,5 +49,24 @@
                 margin-bottom: $spacing-8;
             }
         }
+
+        footer {
+            background-color: $gray-100;
+            border-radius: $rounded;
+            padding: $spacing-6;
+
+            .author-info {
+                display: grid;
+                grid-template-columns: 64px 1fr 100px;
+                column-gap: $spacing-4;
+                margin-bottom: $spacing-8;
+            }
+
+            .bio-and-summary {
+                p:not(:last-child) {
+                    margin-bottom: $spacing-8;
+                }
+            }
+        }
     }
 }
