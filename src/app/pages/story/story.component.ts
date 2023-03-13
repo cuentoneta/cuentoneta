@@ -11,7 +11,10 @@ import { Story } from '../../models/story.model';
 })
 export class StoryComponent {
     story$: Observable<Story> | undefined;
+    storyList$: Observable<Story[]> | undefined;
     constructor(private activatedRoute: ActivatedRoute, private storyService: StoryService) {
         this.story$ = activatedRoute.queryParams.pipe(switchMap(({ id }) => this.storyService.getById(id)));
+        // ToDo: Parametrizar StoryList
+        this.storyList$ = activatedRoute.queryParams.pipe(switchMap(({ id }) => this.storyService.getLatest('2021', 10)));
     }
 }

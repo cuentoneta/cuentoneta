@@ -1,4 +1,6 @@
-<aside></aside>
+<aside *ngIf="storyList$ | async as storyList">
+    <cuentoneta-story-navigation-bar [storyList]="storyList"></cuentoneta-story-navigation-bar>
+</aside>
 <main>
     <article>
         <ng-container *ngIf="story$ | async as story">

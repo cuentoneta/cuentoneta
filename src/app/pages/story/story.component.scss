@@ -11,11 +11,15 @@
     @media screen and (min-width: $min-lg-width) {
         margin-top: $spacing-28;
         width: 1240px;
-        grid-template-columns: 0.5fr 1fr;
+
+        // ToDo: Chequear ancho de sidebar
+        grid-template-columns: 286px 1fr;
+        column-gap: $spacing-8;
     }
 
     article {
         @include card;
+        border-radius: $rounded-xl;
         padding: $spacing-15;
 
         header {
