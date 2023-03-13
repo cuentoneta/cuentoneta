@@ -1,6 +1,6 @@
 <div class="container">
     <section class="author-info">
-        <img width="64" height="64" [ngSrc]="author.imageUrl" />
+        <img [alt]="'Retrato de ' + author.name" width="64" height="64" [ngSrc]="author.imageUrl" />
         <div class="flex flex-col justify-center">
             <p class="author-name">{{ author.name }}</p>
             <div class="author-nationality flex items-center gap-2">
