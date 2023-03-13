@@ -1,11 +1,7 @@
 <article>
     <ng-container *ngIf="!!story; else skeleton">
         <header class="card-header">
-            <label class="date"
-            ><div class="rect"></div>
-                Día {{ story.day }} - {{ story.publishedAt }}
-            </label>
-            <div class="badge-new"><label>NUEVO</label></div>
+            <cuentoneta-story-edition-date-label [story]="story"></cuentoneta-story-edition-date-label>
         </header>
         <section>
             <h1 class="card-title">{{ story.title }}</h1>

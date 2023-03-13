@@ -1,11 +1,11 @@
 <section>
     <header>
-        <h3 class="story-list-title">Edición 2022</h3>
+        <h3 class="story-list-title">Edición 2023</h3>
     </header>
     <ng-container *ngFor="let story of storyList">
         <a [routerLink]="['/story']" [queryParams]="{ id: story?.id }">
             <article>
-                <p>Entrega {{ story.day }}</p>
+                <cuentoneta-story-edition-date-label class="edition-and-label" [story]="story"></cuentoneta-story-edition-date-label>
                 <h4 class="title">{{ story.title }}</h4>
                 <h5 class="author">{{ story.author.name }}</h5>
             </article>

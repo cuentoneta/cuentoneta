@@ -9,15 +9,14 @@ section {
     background-color: $gray-200;
     border-radius: $rounded-xl;
 
-    header, footer {
+    header,
+    footer {
         @include card-spacing;
         background-color: $gray-50;
         .story-list-title {
             @include inter-body-xl-bold;
         }
     }
-
-
 
     display: grid;
     grid-template-columns: 1fr;
@@ -26,6 +25,10 @@ section {
     article {
         @include card-spacing;
         background-color: $gray-50;
+
+        .edition-and-label {
+            margin-bottom: $spacing-2;
+        }
         .title {
             @include inter-body-sm-bold;
             margin-bottom: $spacing-2;
