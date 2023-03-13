@@ -1,1 +1,17 @@
-<p>story-navigation-bar works!</p>
+<section>
+    <header>
+        <h3 class="story-list-title">Edición 2022</h3>
+    </header>
+    <ng-container *ngFor="let story of storyList">
+        <a [routerLink]="['/story']" [queryParams]="{ id: story?.id }">
+            <article>
+                <p>Entrega {{ story.day }}</p>
+                <h4 class="title">{{ story.title }}</h4>
+                <h5 class="author">{{ story.author.name }}</h5>
+            </article>
+        </a>
+    </ng-container>
+    <footer>
+        <h3 class="story-list-title">Ver más...</h3>
+    </footer>
+</section>
