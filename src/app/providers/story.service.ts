@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Story, StoryDTO } from '../models/story.model';
 import { map, Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { StoryList, StoryListDTO } from '../models/storylist.model';
 
 @Injectable({ providedIn: 'root' })
 export class StoryService {
@@ -18,8 +19,8 @@ export class StoryService {
         return this.http.get<Story>(`api/story/${day}`);
     }
 
-    public getById(id: number|string): Observable<Story> {
-        return this.http.get<StoryDTO>(`api/story/${id}`).pipe(map(story => this.parseCardContent(story)));
+    public getById(id: number | string): Observable<Story> {
+        return this.http.get<StoryDTO>(`api/story/${id}`).pipe(map((story) => this.parseCardContent(story)));
     }
 
     public getAuthors(): Observable<Story[]> {
@@ -34,11 +35,14 @@ export class StoryService {
         this._count = (await this.http.get<number>(`api/story/count`).toPromise()) ?? 0;
     }
 
-    public getLatest(edition: string, amount: number = 5): Observable<Story[]> {
-        const params = new HttpParams().set('edition', edition).set('amount', amount);
-        return this.http
-            .get<StoryDTO[]>(`api/story/latest`, { params })
-            .pipe(map((stories) => stories.map((story) => this.parseCardContent(story))));
+    public getLatest(slug: string, amount: number = 5): Observable<StoryList> {
+        const params = new HttpParams().set('slug', slug).set('amount', amount);
+        return this.http.get<StoryListDTO>(`api/story/latest`, { params }).pipe(
+            map((storyList) => ({
+                ...storyList,
+                stories: storyList.stories.map((story: StoryDTO) => this.parseCardContent(story)),
+            }))
+        );
     }
 
     public parseCardContent(story: StoryDTO): Story {
