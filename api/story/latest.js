@@ -15,6 +15,9 @@ export default async function getLatest(req, res) {
                         _id,
                         'slug': slug.current,
                         title,
+                        description,
+                        language,
+                        editionPrefix,
                         'stories': stories[]->{
                             _id,
                             title,
