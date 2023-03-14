@@ -13,11 +13,6 @@ export interface Story {
     approximateReadingTime: number;
 }
 
-export interface StoryList {
-    title: string;
-    stories: Story[];
-}
-
 // ToDo: Agregar tipo BlockContent para tratar datos de texto que vienen desde Sanity (#114)
 export interface StoryDTO {
     id: number;
