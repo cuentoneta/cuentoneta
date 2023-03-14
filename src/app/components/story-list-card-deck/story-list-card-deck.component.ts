@@ -19,7 +19,7 @@ export class StoryListCardDeckComponent implements OnInit {
     @Input() displayTitle: boolean = true;
     @Input() displayDates: boolean = false;
 
-    dummyList: any[] = [];
+    dummyList: null[] = [];
 
     ngOnInit() {
         this.dummyList = Array(this.number);
