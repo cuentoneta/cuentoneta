@@ -1,9 +1,9 @@
-<aside *ngIf="storylist$ | async as storyList">
-    <cuentoneta-story-navigation-bar [storyList]="storyList"></cuentoneta-story-navigation-bar>
+<aside>
+    <cuentoneta-story-navigation-bar [storyList]="storylist"></cuentoneta-story-navigation-bar>
 </aside>
 <main>
     <article>
-        <ng-container *ngIf="story$ | async as story">
+        <ng-container *ngIf="!!story">
             <header>
                 <h1 class="title">{{ story.title }}</h1>
                 <p class="subtitle">{{ story.author.name }}</p>
@@ -25,7 +25,7 @@
                 </ng-container>
             </section>
 
-            <footer *ngIf="story.author.biography">
+            <footer *ngIf="story?.author?.biography">
                 <cuentoneta-bio-summary-card
                     [author]="story.author"
                     [summary]="story.summary"

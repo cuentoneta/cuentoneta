@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { StoryService } from '../../providers/story.service';
-import { combineLatest } from 'rxjs';
+import { combineLatest, first } from 'rxjs';
 import { StoryList } from '../../models/storylist.model';
 
 @Component({
@@ -18,9 +18,11 @@ export class HomeComponent implements OnInit {
         combineLatest([
             this.storyService.getLatest('fec-english-sessions', 5),
             this.storyService.getLatest('verano-2022', 6),
-        ]).subscribe(([topStories, oldStories]) => {
-            this.latestStories = topStories;
-            this.oldStories = oldStories;
-        });
+        ])
+            .pipe(first())
+            .subscribe(([topStories, oldStories]) => {
+                this.latestStories = topStories;
+                this.oldStories = oldStories;
+            });
     }
 }
