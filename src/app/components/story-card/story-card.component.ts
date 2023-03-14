@@ -7,5 +7,6 @@ import { Story } from '../../models/story.model';
     styleUrls: ['./story-card.component.scss'],
 })
 export class StoryCardComponent {
+    @Input() editionPrefix: string | undefined;
     @Input() story: Story | undefined;
 }

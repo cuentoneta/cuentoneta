@@ -7,5 +7,5 @@ import { StoryList } from '../../models/storylist.model';
     styleUrls: ['./story-navigation-bar.component.scss'],
 })
 export class StoryNavigationBarComponent {
-    @Input() storyList: StoryList = { title: '', slug: '', stories: [] };
+    @Input() storyList: StoryList = { title: '', slug: '', stories: [], editionPrefix: 'Edición' };
 }

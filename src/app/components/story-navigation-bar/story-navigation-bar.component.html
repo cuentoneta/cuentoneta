@@ -6,8 +6,7 @@
         <a [routerLink]="['/story']" [queryParams]="{ id: story?.id, list: storyList.slug }">
             <article>
                 <cuentoneta-story-edition-date-label
-                    class="edition-and-label"
-                    [story]="story"
+                        [label]="storyList.editionPrefix + ' ' + story.day + ' - ' + story.publishedAt"
                 ></cuentoneta-story-edition-date-label>
                 <h4 class="title">{{ story.title }}</h4>
                 <h5 class="author">{{ story.author.name }}</h5>
