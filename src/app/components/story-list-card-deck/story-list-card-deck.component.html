@@ -18,6 +18,7 @@
     </ng-container>
     <ng-container *ngFor="let story of storylist?.stories">
         <cuentoneta-story-card
+            [displayDate]="displayDates"
             [editionPrefix]="storylist?.editionPrefix"
             [routerLink]="['/story']"
             [queryParams]="{ id: story?.id, list: storylist?.slug }"

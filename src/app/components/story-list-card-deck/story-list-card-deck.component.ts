@@ -17,6 +17,7 @@ export class StoryListCardDeckComponent implements OnInit {
     @Input() storylist: StoryList | undefined;
     @Input() highlightFirstRow: boolean = false;
     @Input() displayTitle: boolean = true;
+    @Input() displayDates: boolean = false;
 
     dummyList: any[] = [];
 
