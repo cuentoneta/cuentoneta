@@ -47,41 +47,11 @@ main {
     color: $gray-600;
 }
 
-$cards-grid-gap: $spacing-8;
-
-.stories-card-container {
-    display: grid;
-    grid-gap: $cards-grid-gap;
-    grid-template-columns: repeat(6, 1fr);
-
-    &:hover {
-        cursor: pointer;
-    }
-
-    @media screen and (min-width: $min-lg-width) {
-        &.highlight-first-row {
-            > *:first-child,
-            > *:nth-child(2) {
-                grid-column: auto / span 3;
-            }
-        }
-
-        > * {
-            grid-column: auto / span 2;
+.card-decks {
+    > * {
+        display: block;
+        &:not(:last-child) {
+            margin-bottom: $spacing-15;
         }
     }
-
-    @media screen and (max-width: $max-md-width) {
-        > * {
-            grid-column: auto / span 6;
-        }
-    }
-}
-
-.newest-stories-container {
-    margin-bottom: $spacing-15;
-}
-
-.past-stories {
-    margin-top: $cards-grid-gap;
 }

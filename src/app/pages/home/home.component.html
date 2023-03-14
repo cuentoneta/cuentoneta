@@ -1,10 +1,10 @@
 <main>
     <section class="hero flex justify-between items-center">
         <div class="text">
-            <h1 class="title">Cuentos cortos para leer durante el verano</h1>
+            <h1 class="title">Historias para disfrutar, compartir y aprender</h1>
             <h3 class="subtitle">
-                Te presentamos diversos cuentos para que puedas leer durante tus días libres y que conozcas nuevos
-                autores para aumentar tu biblioteca de conocimientos.
+                Una iniciativa que busca fomentar y hacer accesible la lectura digital, publicando relatos breves en
+                nuestras <em>storylists</em> temáticas. ¡Subite a La Cuentoneta!
             </h3>
         </div>
         <div class="featured-image">
@@ -12,17 +12,16 @@
         </div>
     </section>
 
-    <section class="stories-card-container newest-stories-container highlight-first-row">
-        <ng-container *ngFor="let story of latestStories">
-            <cuentoneta-story-card [routerLink]="['/story']" [queryParams]="{ id: story?.id, list: '2022' }" [story]="story"></cuentoneta-story-card>
-        </ng-container>
-    </section>
+    <section class="card-decks">
+        <cuentoneta-story-list-card-deck
+            [storylist]="latestStories"
+            [highlightFirstRow]="true"
+            [displayTitle]="true"
+        ></cuentoneta-story-list-card-deck>
 
-    <h2>Cuentos Edición 2022</h2>
-
-    <section class="stories-card-container past-stories">
-        <ng-container *ngFor="let story of oldStories">
-            <cuentoneta-story-card [routerLink]="['/story']" [queryParams]="{ id: story?.id, list: '2021' }" [story]="story"></cuentoneta-story-card>
-        </ng-container>
+        <cuentoneta-story-list-card-deck
+            [storylist]="oldStories"
+            [displayTitle]="true"
+        ></cuentoneta-story-list-card-deck>
     </section>
 </main>
