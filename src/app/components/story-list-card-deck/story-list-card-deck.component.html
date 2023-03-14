@@ -1,8 +1,21 @@
 <ng-container *ngIf="displayTitle">
     <h2>{{ storylist?.title }}</h2>
+    <ngx-skeleton-loader
+        *ngIf="!storylist?.title"
+        count="1"
+        appearance="line"
+        [theme]="{
+            'height.px': 30,
+            width: '40%',
+            'background-color': 'black'
+        }"
+    ></ngx-skeleton-loader>
 </ng-container>
 
 <div class="stories-card-container" [ngClass]="{ 'highlight-first-row': highlightFirstRow }">
+    <ng-container *ngIf="!storylist">
+        <cuentoneta-story-card *ngFor="let skeleton of dummyList"></cuentoneta-story-card>
+    </ng-container>
     <ng-container *ngFor="let story of storylist?.stories">
         <cuentoneta-story-card
             [editionPrefix]="storylist?.editionPrefix"
