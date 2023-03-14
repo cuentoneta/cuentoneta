@@ -1,0 +1,14 @@
+<ng-container *ngIf="displayTitle">
+    <h2>{{ storylist?.title }}</h2>
+</ng-container>
+
+<div class="stories-card-container" [ngClass]="{ 'highlight-first-row': highlightFirstRow }">
+    <ng-container *ngFor="let story of storylist?.stories">
+        <cuentoneta-story-card
+            [editionPrefix]="storylist?.editionPrefix"
+            [routerLink]="['/story']"
+            [queryParams]="{ id: story?.id, list: storylist?.slug }"
+            [story]="story"
+        ></cuentoneta-story-card>
+    </ng-container>
+</div>
