@@ -3,6 +3,7 @@ import { Story, StoryDTO } from './story.model';
 interface StorylistBase {
     title: string;
     slug: string;
+    editionPrefix: string;
     description?: string[];
     language?: string;
     imageUrl?: string;
