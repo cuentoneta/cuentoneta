@@ -13,6 +13,8 @@ import { StoryList } from '../../models/storylist.model';
 export class StoryComponent {
     story: Story | undefined;
     storylist: StoryList | undefined;
+
+    dummyList = Array(10)
     constructor(private activatedRoute: ActivatedRoute, private storyService: StoryService) {
         combineLatest([
             activatedRoute.queryParams.pipe(switchMap(({ id }) => this.storyService.getById(id))),
