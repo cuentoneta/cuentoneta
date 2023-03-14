@@ -1,6 +1,6 @@
-<label class="date" *ngIf="!!story"
+<label class="date" *ngIf="!!label"
     ><div class="rect"></div>
-    Día {{ story.day }} - {{ story.publishedAt }}
+    {{label}}
 </label>
 <!--ToDo: Extraer badge a nuevo componente-->
 <div class="badge-new" *ngIf="markAsNew"><label>NUEVO</label></div>

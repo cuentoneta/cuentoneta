@@ -10,6 +10,7 @@ import category from './category'
 import story from './story'
 import author from './author'
 import country from './country'
+import storyList from "./storylist";
 
 // Then we give our schema to the builder and provide the result to Sanity
 export default createSchema({
@@ -21,6 +22,7 @@ export default createSchema({
     // The following are document types which will appear
     // in the studio.
     story,
+    storyList,
     author,
     category,
     country,

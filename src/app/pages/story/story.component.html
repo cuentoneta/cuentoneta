@@ -1,15 +1,17 @@
-<aside *ngIf="storyList$ | async as storyList">
-    <cuentoneta-story-navigation-bar [storyList]="storyList"></cuentoneta-story-navigation-bar>
+<aside>
+    <cuentoneta-story-navigation-bar [storyList]="storylist"></cuentoneta-story-navigation-bar>
 </aside>
 <main>
     <article>
-        <ng-container *ngIf="story$ | async as story">
-            <header>
-                <h1 class="title">{{ story.title }}</h1>
+        <header>
+            <ng-container *ngIf="!!story; else titleSkeleton"
+                ><h1 class="title">{{ story.title }}</h1>
                 <p class="subtitle">{{ story.author.name }}</p>
                 <p class="reading-time">{{ story.approximateReadingTime }} minutos de lectura</p>
-            </header>
+            </ng-container>
+        </header>
 
+        <ng-container *ngIf="!!story">
             <section class="prologues" *ngIf="!!story.prologues && story.prologues.length > 0">
                 <ng-container *ngFor="let prologue of story.prologues">
                     <p class="prologue flex items-center">
@@ -18,19 +20,61 @@
                     </p>
                 </ng-container>
             </section>
+        </ng-container>
 
-            <section class="content">
+        <section class="content">
+            <ng-container *ngIf="!!story; else contentSkeleton">
                 <ng-container *ngFor="let paragraph of story.paragraphs">
                     <p [innerHTML]="paragraph"></p>
                 </ng-container>
-            </section>
+            </ng-container>
+        </section>
 
-            <footer *ngIf="story.author.biography">
+        <footer>
+            <ng-container *ngIf="!!story">
                 <cuentoneta-bio-summary-card
+                    *ngIf="story?.author?.biography"
                     [author]="story.author"
                     [summary]="story.summary"
                 ></cuentoneta-bio-summary-card>
-            </footer>
-        </ng-container>
+            </ng-container>
+        </footer>
     </article>
 </main>
+
+<ng-template #titleSkeleton>
+    <ngx-skeleton-loader
+        count="1"
+        appearance="line"
+        [theme]="{
+            'height.px': 36,
+            'background-color': 'black',
+            width: '50%'
+        }"
+    ></ngx-skeleton-loader>
+    <ngx-skeleton-loader
+        count="1"
+        appearance="line"
+        [theme]="{
+            'height.px': 20,
+            'background-color': 'black',
+            width: '25%'
+        }"
+    ></ngx-skeleton-loader>
+    <ngx-skeleton-loader
+        count="1"
+        appearance="line"
+        [theme]="{
+            'height.px': 16,
+            'background-color': '#52525b',
+            width: '20%'
+        }"
+    ></ngx-skeleton-loader>
+</ng-template>
+<ng-template #contentSkeleton>
+    <div class="mb-5" *ngFor="let skeleton of dummyList">
+        <ngx-skeleton-loader></ngx-skeleton-loader>
+        <ngx-skeleton-loader></ngx-skeleton-loader>
+        <ngx-skeleton-loader></ngx-skeleton-loader>
+    </div>
+</ng-template>

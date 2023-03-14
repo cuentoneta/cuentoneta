@@ -4,19 +4,6 @@ export default {
     type: 'document',
     fields: [
         {
-            name: 'edition',
-            title: 'Edición',
-            type: 'string',
-            options: {
-                list: [
-                    { title: '2022', value: '2022' },
-                    { title: '2021', value: '2021' },
-                ],
-            },
-            initialValue: '2022',
-            validation: (Rule) => Rule.required(),
-        },
-        {
             name: 'title',
             title: 'Título',
             type: 'string',

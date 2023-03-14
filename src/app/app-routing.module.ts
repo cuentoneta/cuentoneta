@@ -7,8 +7,8 @@ const routes: Routes = [
         loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
     },
     {
-      path: 'story',
-      loadChildren: () => import('./pages/story/story.module').then((m) => m.StoryModule),
+        path: 'story',
+        loadChildren: () => import('./pages/story/story.module').then((m) => m.StoryModule),
     },
     // {
     //   path: 'list',
@@ -30,7 +30,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' })],
+    imports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload', scrollPositionRestoration: 'enabled' })],
     exports: [RouterModule],
 })
 export class AppRoutingModule {}

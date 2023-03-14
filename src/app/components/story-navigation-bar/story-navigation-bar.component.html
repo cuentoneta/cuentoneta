@@ -1,20 +1,44 @@
 <section>
     <header>
-        <h3 class="story-list-title">{{ storyList.title }}</h3>
+        <ng-container *ngIf="storyList && storyList.title; else titleSkeleton"
+            ><h3 class="story-list-title">{{ storyList.title }}</h3></ng-container
+        >
     </header>
-    <ng-container *ngFor="let story of storyList.stories">
-        <a [routerLink]="['/story']" [queryParams]="{ id: story?.id, list: storyList.title }">
-            <article>
-                <cuentoneta-story-edition-date-label
-                    class="edition-and-label"
-                    [story]="story"
-                ></cuentoneta-story-edition-date-label>
-                <h4 class="title">{{ story.title }}</h4>
-                <h5 class="author">{{ story.author.name }}</h5>
-            </article>
-        </a>
+
+    <ng-container *ngIf="!!storyList; else bodySkeleton">
+        <ng-container *ngFor="let story of storyList.stories">
+            <a [routerLink]="['/story']" [queryParams]="{ id: story.id, list: storyList.slug }">
+                <article>
+                    <cuentoneta-story-edition-date-label
+                        class="edition-and-label"
+                        [label]="getEditionLabel(story)"
+                    ></cuentoneta-story-edition-date-label>
+                    <h4 class="title">{{ story.title }}</h4>
+                    <h5 class="author">{{ story.author.name }}</h5>
+                </article>
+            </a>
+        </ng-container>
     </ng-container>
-    <footer>
+
+    <!--    ToDo: Implementar navegación para visualizar lista completa-->
+    <footer *ngIf="storyList && storyList.stories.length > 10">
         <h3 class="story-list-title">Ver más...</h3>
     </footer>
 </section>
+
+<ng-template #titleSkeleton>
+    <ngx-skeleton-loader
+        count="2"
+        appearance="line"
+        [theme]="{
+            'height.px': 15,
+            'background-color': 'black'
+        }"
+    ></ngx-skeleton-loader>
+</ng-template>
+
+<ng-template #bodySkeleton>
+    <article *ngFor="let skeleton of dummyList">
+        <ngx-skeleton-loader count="2" appearance="line"></ngx-skeleton-loader>
+    </article>
+</ng-template>

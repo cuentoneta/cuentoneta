@@ -16,7 +16,6 @@ export default {
                 hotspot: true,
             },
         },
-
         {
             name: 'nationality',
             title: 'Nacionalidad',
@@ -26,7 +25,7 @@ export default {
         {
             name: 'bio',
             title: 'Biografía',
-            type: 'string',
+            type: 'text',
         },
         {
             name: 'fullBioUrl',

@@ -1,5 +1,9 @@
 @import 'src/assets/scss/theme.scss';
 
+ngx-skeleton-loader {
+    display: block;
+}
+
 :host {
     display: grid;
     margin: auto;

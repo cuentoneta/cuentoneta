@@ -1,0 +1,36 @@
+@import 'src/assets/scss/theme.scss';
+
+$cards-grid-gap: $spacing-8;
+
+.stories-card-container {
+  display: grid;
+  grid-gap: $cards-grid-gap;
+  grid-template-columns: repeat(6, 1fr);
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  @media screen and (min-width: $min-lg-width) {
+    &.highlight-first-row {
+      > *:first-child,
+      > *:nth-child(2) {
+        grid-column: auto / span 3;
+      }
+    }
+
+    > * {
+      grid-column: auto / span 2;
+    }
+  }
+
+  @media screen and (max-width: $max-md-width) {
+    > * {
+      grid-column: auto / span 6;
+    }
+  }
+}
+
+h2 + .stories-card-container {
+  margin-top: $cards-grid-gap;
+}

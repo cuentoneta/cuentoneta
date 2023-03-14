@@ -1,17 +1,23 @@
 <article>
     <ng-container *ngIf="!!story; else skeleton">
         <header class="card-header">
-            <cuentoneta-story-edition-date-label [story]="story"></cuentoneta-story-edition-date-label>
+            <cuentoneta-story-edition-date-label [label]="editionLabel"></cuentoneta-story-edition-date-label>
         </header>
         <section>
             <h1 class="card-title">{{ story.title }}</h1>
             <!-- ToDo: Optimizar payload tratado para mostrar el resumen de cada tarjeta (#115)-->
-            <p class="content" [innerHTML]="(story.paragraphs[0] + ' ' + story.paragraphs[1])"></p>
+            <p class="content" [innerHTML]="story.paragraphs[0] + ' ' + story.paragraphs[1]"></p>
         </section>
-        <label class="reading-time">{{story.approximateReadingTime}} minutos</label>
+        <label class="reading-time">{{ story.approximateReadingTime }} minutos</label>
         <hr />
         <footer class="author-info flex flex-row items-center">
-            <img class="author-image" [alt]="'Retrato de ' + story.author.name" width="40" height="40" [ngSrc]="story.author.imageUrl" />
+            <img
+                class="author-image"
+                [alt]="'Retrato de ' + story.author.name"
+                width="40"
+                height="40"
+                [ngSrc]="story.author.imageUrl"
+            />
             <div>
                 <label class="author-name">{{ story.author.name }}</label>
                 <ng-container *ngIf="story.author.nationality as nationality">
