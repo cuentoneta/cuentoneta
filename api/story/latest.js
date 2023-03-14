@@ -9,35 +9,44 @@ const sanityConnector = require('../_helpers/sanity-connector');
  * @returns {Promise<null>}
  */
 export default async function getLatest(req, res) {
-    const { edition, amount } = req.query;
-    const query = `*[_type == 'story' && edition == '${edition}'] | order(day desc)[0...${amount}]
+    const { slug, amount } = req.query;
+    const query = `*[_type == 'storylist' && slug.current == '${slug}'][0]
                     { 
                         _id,
-                        title, 
-                        day, 
-                        originalLink, 
-                        forewords, 
-                        categories, 
-                        publishedAt, 
-                        body, 
-                        review, 
-                        forewords, 
-                        'author': author-> { ..., nationality-> }
+                        'slug': slug.current,
+                        title,
+                        'stories': stories[]->{
+                            _id,
+                            title,
+                            day,
+                            originalLink,
+                            forewords,
+                            categories,
+                            publishedAt,
+                            body,
+                            review,
+                            forewords,
+                            'author': author-> { ..., nationality-> }
+                        } | order(day desc)[0...${amount}]
                     }`;
+
     const result = await sanityConnector.client.fetch(query, {});
 
     if (!result) {
         return null;
     }
 
-    let stories = result.map((story) => ({
-        ...story,
-        id: story._id,
-        summary: story.review,
-        paragraphs: mapBodyToParagraphs(story.body),
-        author: mapAuthor(story.author),
-        prologues: mapPrologues(story.forewords),
-    }));
+    let storylist = {
+        ...result,
+        stories: result.stories.map((story) => ({
+            ...story,
+            id: story._id,
+            summary: story.review,
+            paragraphs: mapBodyToParagraphs(story.body),
+            author: mapAuthor(story.author),
+            prologues: mapPrologues(story.forewords),
+        })),
+    };
 
-    res.json(stories);
+    res.json(storylist);
 }
