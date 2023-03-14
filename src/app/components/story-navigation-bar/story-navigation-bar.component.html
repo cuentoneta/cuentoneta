@@ -3,7 +3,7 @@
         <h3 class="story-list-title">{{ storyList.title }}</h3>
     </header>
     <ng-container *ngFor="let story of storyList.stories">
-        <a [routerLink]="['/story']" [queryParams]="{ id: story?.id, list: storyList.title }">
+        <a [routerLink]="['/story']" [queryParams]="{ id: story?.id, list: storyList.slug }">
             <article>
                 <cuentoneta-story-edition-date-label
                     class="edition-and-label"

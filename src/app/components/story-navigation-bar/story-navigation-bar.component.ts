@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { StoryList } from '../../models/story.model';
+import { StoryList } from '../../models/storylist.model';
 
 @Component({
     selector: 'cuentoneta-story-navigation-bar',
@@ -7,5 +7,5 @@ import { StoryList } from '../../models/story.model';
     styleUrls: ['./story-navigation-bar.component.scss'],
 })
 export class StoryNavigationBarComponent {
-    @Input() storyList: StoryList = { title: '', stories: [] };
+    @Input() storyList: StoryList = { title: '', slug: '', stories: [] };
 }
