@@ -8,7 +8,27 @@
 
     .author-info {
         display: grid;
-        grid-template-columns: $spacing-16 1fr $spacing-32;
+
+        @media screen and (max-width: $max-sm-width) {
+            grid-template-columns: [col] $spacing-16 [col] 1fr;
+            grid-template-rows: [row] auto [row] auto;
+
+            .author-image {
+                grid-column: col / span 1;
+                grid-row: row;
+            }
+
+            .author-bio-link {
+                grid-column: col / span 2;
+                grid-row: row 2;
+                justify-content: center;
+            }
+        }
+
+        @media screen and (min-width: $min-md-width) {
+            grid-template-columns: $spacing-16 1fr $spacing-32;
+        }
+
         column-gap: $spacing-4;
         margin-bottom: $spacing-8;
 
