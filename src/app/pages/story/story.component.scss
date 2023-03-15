@@ -5,14 +5,18 @@ ngx-skeleton-loader {
 }
 
 :host {
-    display: grid;
-    margin: auto;
 
     @media screen and (max-width: $max-md-width) {
-        grid-template-columns: 1fr;
+        display: block;
+        aside {
+            display: none;
+        }
     }
 
     @media screen and (min-width: $min-lg-width) {
+        display: grid;
+        margin-left: auto;
+        margin-right: auto;
         margin-top: $spacing-28;
         width: 1240px;
 
@@ -22,9 +26,15 @@ ngx-skeleton-loader {
     }
 
     article {
-        @include card;
-        border-radius: $rounded-xl;
-        padding: $spacing-15;
+        background-color: $gray-50;
+        padding: $spacing-5;
+
+
+        @media screen and (min-width: $min-lg-width) {
+            border-radius: $rounded-xl;
+            box-shadow: $box-shadow-card;
+            padding: $spacing-15;
+        }
 
         header {
             margin-bottom: $spacing-10;
