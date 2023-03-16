@@ -21,7 +21,7 @@
             [displayDate]="displayDates"
             [editionPrefix]="storylist?.editionPrefix"
             [routerLink]="['/story']"
-            [queryParams]="{ id: story?.id, list: storylist?.slug }"
+            [queryParams]="{ slug: story?.slug, list: storylist?.slug }"
             [story]="story"
         ></cuentoneta-story-card>
     </ng-container>

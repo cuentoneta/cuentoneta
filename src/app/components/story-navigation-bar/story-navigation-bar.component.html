@@ -7,7 +7,7 @@
 
     <ng-container *ngIf="!!storyList; else bodySkeleton">
         <ng-container *ngFor="let story of storyList.stories">
-            <a [routerLink]="['/story']" [queryParams]="{ id: story.id, list: storyList.slug }">
+            <a [routerLink]="['/story']" [queryParams]="{ slug: story.slug, list: storyList.slug }">
                 <article>
                     <cuentoneta-story-edition-date-label
                         class="edition-and-label"
