@@ -1,0 +1,8 @@
+@import 'src/assets/scss/theme.scss';
+
+:host {
+    display: block;
+    @media screen and (min-width: $min-lg-width) {
+        margin-top: $spacing-28;
+    }
+}
