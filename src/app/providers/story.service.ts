@@ -23,6 +23,10 @@ export class StoryService {
         return this.http.get<StoryDTO>(`api/story/${id}`).pipe(map((story) => this.parseCardContent(story)));
     }
 
+    public getBySlug(slug: string): Observable<Story> {
+        return this.http.get<StoryDTO>(`api/story/${slug}`).pipe(map((story) => this.parseCardContent(story)));
+    }
+
     public getAuthors(): Observable<Story[]> {
         return this.http.get<Story[]>(`api/story/authors`);
     }
