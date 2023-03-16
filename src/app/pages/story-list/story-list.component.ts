@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { StoryService } from '../../providers/story.service';
-import { Subscription, switchMap, take, tap } from 'rxjs';
+import { Subscription, switchMap } from 'rxjs';
 import { StoryList } from '../../models/storylist.model';
 
 @Component({

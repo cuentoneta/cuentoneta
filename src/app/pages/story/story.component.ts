@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest, first, Subscription, switchMap } from 'rxjs';
+import { combineLatest, Subscription, switchMap } from 'rxjs';
 import { StoryService } from '../../providers/story.service';
 import { Story } from '../../models/story.model';
 import { StoryList } from '../../models/storylist.model';
@@ -19,7 +19,12 @@ export class StoryComponent implements OnDestroy {
 
     constructor(private activatedRoute: ActivatedRoute, private storyService: StoryService) {
         this.subscription = combineLatest([
-            activatedRoute.queryParams.pipe(switchMap(({ slug }) => this.storyService.getBySlug(slug))),
+            activatedRoute.queryParams.pipe(
+                switchMap(({ slug }) => {
+                    this.story = undefined;
+                    return this.storyService.getBySlug(slug);
+                })
+            ),
             activatedRoute.queryParams.pipe(switchMap(({ list }) => this.storyService.getLatest(list, 10))),
         ]).subscribe(([story, storylist]) => {
             this.story = story;
