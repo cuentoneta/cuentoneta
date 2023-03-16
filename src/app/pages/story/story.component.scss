@@ -15,10 +15,7 @@ ngx-skeleton-loader {
 
     @media screen and (min-width: $min-lg-width) {
         display: grid;
-        margin-left: auto;
-        margin-right: auto;
         margin-top: $spacing-28;
-        width: 1240px;
 
         // ToDo: Chequear ancho de sidebar
         grid-template-columns: 286px 1fr;

@@ -1,3 +1,13 @@
+@import 'src/assets/scss/theme.scss';
+
 .main-container {
-  min-height: 100vh;
+    min-height: 100vh;
+    margin: auto;
+
+    @media screen and (min-width: $min-lg-width) {
+        width: 1240px;
+    }
+    @media screen and (max-width: $max-md-width) {
+        margin: 0 20px;
+    }
 }
