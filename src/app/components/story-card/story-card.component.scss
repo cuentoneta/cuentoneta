@@ -3,6 +3,7 @@
 :host {
   @include card;
   border: 1px solid $primary-300;
+  display: block;
   padding: $spacing-8;
 
   article {
