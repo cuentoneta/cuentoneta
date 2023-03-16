@@ -19,7 +19,7 @@ export class StoryComponent implements OnDestroy {
 
     constructor(private activatedRoute: ActivatedRoute, private storyService: StoryService) {
         this.subscription = combineLatest([
-            activatedRoute.queryParams.pipe(switchMap(({ id }) => this.storyService.getById(id))),
+            activatedRoute.queryParams.pipe(switchMap(({ slug }) => this.storyService.getBySlug(slug))),
             activatedRoute.queryParams.pipe(switchMap(({ list }) => this.storyService.getLatest(list, 10))),
         ]).subscribe(([story, storylist]) => {
             this.story = story;

@@ -17,12 +17,13 @@
         <cuentoneta-story-card *ngFor="let skeleton of dummyList"></cuentoneta-story-card>
     </ng-container>
     <ng-container *ngFor="let story of storylist?.stories">
-        <cuentoneta-story-card
-            [displayDate]="displayDates"
-            [editionPrefix]="storylist?.editionPrefix"
-            [routerLink]="['/story']"
-            [queryParams]="{ id: story?.id, list: storylist?.slug }"
-            [story]="story"
-        ></cuentoneta-story-card>
+        <a [routerLink]="['/story']"
+           [queryParams]="{ slug: story?.slug, list: storylist?.slug }">
+            <cuentoneta-story-card
+                    [displayDate]="displayDates"
+                    [editionPrefix]="storylist?.editionPrefix"
+                    [story]="story"
+            ></cuentoneta-story-card>
+        </a>
     </ng-container>
 </div>
