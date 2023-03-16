@@ -20,6 +20,7 @@ export default async function getLatest(req, res) {
                         editionPrefix,
                         'stories': stories[]->{
                             _id,
+                            'slug': slug.current,
                             title,
                             day,
                             originalLink,
