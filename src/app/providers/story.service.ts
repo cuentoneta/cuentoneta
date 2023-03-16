@@ -26,7 +26,7 @@ export class StoryService {
         return this.http.get<Story[]>(`api/story/original-links`);
     }
 
-    // ToDo: Obtener últimas listas desde API
+    // ToDo: Obtener listas de navs desde API
     public getNavLists(): Pick<StoryList, 'slug' | 'title'>[] {
         return [
             { slug: 'fec-english-sessions', title: 'FEC English Sessions' },
