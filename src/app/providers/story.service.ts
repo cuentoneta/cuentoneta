@@ -17,12 +17,21 @@ export class StoryService {
         return this.http.get<StoryDTO>(`api/story/${slug}`).pipe(map((story) => this.parseCardContent(story)));
     }
 
+    // ToDo: Rediseñar funcionamiento del endpoint de autores.
     public getAuthors(): Observable<Story[]> {
         return this.http.get<Story[]>(`api/story/authors`);
     }
 
     public getOriginalLinks(): Observable<any> {
         return this.http.get<Story[]>(`api/story/original-links`);
+    }
+
+    // ToDo: Obtener últimas listas desde API
+    public getNavLists(): Pick<StoryList, 'slug' | 'title'>[] {
+        return [
+            { slug: 'fec-english-sessions', title: 'FEC English Sessions' },
+            { slug: 'verano-2022', title: 'Cuentos Verano 2022' },
+        ];
     }
 
     public getLatest(slug: string, amount: number = 5): Observable<StoryList> {

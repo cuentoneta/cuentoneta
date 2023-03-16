@@ -9,8 +9,9 @@
         <section class="navigation">
             <nav>
                 <ul class="flex">
-                    <li><a routerLink="/list/2022">Cuentos 2023</a></li>
-                    <li><a routerLink="/list/2021">Cuentos 2022</a></li>
+                    <ng-container *ngFor="let list of lists">
+                        <li><a [routerLink]="'/list/' + list.slug">{{list.title}}</a></li>
+                    </ng-container>
                     <li><a routerLink="/about">Nosotros</a></li>
                     <li><a routerLink="/dmca">DMCA</a></li>
                 </ul>
