@@ -5,6 +5,7 @@ export interface Story {
     id: number;
     author: Author;
     title: string;
+    slug: string;
     day: number;
     prologues: Prologue[];
     summary: string;
@@ -18,6 +19,7 @@ export interface StoryDTO {
     id: number;
     author: Author;
     title: string;
+    slug: string;
     day: number;
     prologues: any[];
     summary: any[];
