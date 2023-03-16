@@ -13,16 +13,6 @@ export class StoryService {
     private _count = 0;
 
     constructor(private http: HttpClient) {}
-
-    //ToDo: ¿Es necesario este método ahora?
-    public get(day: number): Observable<Story> {
-        return this.http.get<Story>(`api/story/${day}`);
-    }
-
-    public getById(id: number | string): Observable<Story> {
-        return this.http.get<StoryDTO>(`api/story/${id}`).pipe(map((story) => this.parseCardContent(story)));
-    }
-
     public getBySlug(slug: string): Observable<Story> {
         return this.http.get<StoryDTO>(`api/story/${slug}`).pipe(map((story) => this.parseCardContent(story)));
     }
@@ -33,10 +23,6 @@ export class StoryService {
 
     public getOriginalLinks(): Observable<any> {
         return this.http.get<Story[]>(`api/story/original-links`);
-    }
-
-    public async setCount() {
-        this._count = (await this.http.get<number>(`api/story/count`).toPromise()) ?? 0;
     }
 
     public getLatest(slug: string, amount: number = 5): Observable<StoryList> {
