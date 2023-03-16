@@ -10,10 +10,10 @@ const routes: Routes = [
         path: 'story',
         loadChildren: () => import('./pages/story/story.module').then((m) => m.StoryModule),
     },
-    // {
-    //   path: 'list',
-    //   loadChildren: () => import('./pages/list/list.module').then((m) => m.ListModule),
-    // },
+    {
+      path: 'story-list',
+      loadChildren: () => import('./pages/story-list/story-list.module').then((m) => m.StoryListModule),
+    },
     // {
     //   path: 'about',
     //   loadChildren: () => import('./pages/about/about.module').then((m) => m.AboutModule),
