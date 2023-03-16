@@ -13,20 +13,11 @@ export class StoryService {
     private _count = 0;
 
     constructor(private http: HttpClient) {}
-
-    //ToDo: ¿Es necesario este método ahora?
-    public get(day: number): Observable<Story> {
-        return this.http.get<Story>(`api/story/${day}`);
-    }
-
-    public getById(id: number | string): Observable<Story> {
-        return this.http.get<StoryDTO>(`api/story/${id}`).pipe(map((story) => this.parseCardContent(story)));
-    }
-
     public getBySlug(slug: string): Observable<Story> {
         return this.http.get<StoryDTO>(`api/story/${slug}`).pipe(map((story) => this.parseCardContent(story)));
     }
 
+    // ToDo: Rediseñar funcionamiento del endpoint de autores.
     public getAuthors(): Observable<Story[]> {
         return this.http.get<Story[]>(`api/story/authors`);
     }
@@ -35,8 +26,12 @@ export class StoryService {
         return this.http.get<Story[]>(`api/story/original-links`);
     }
 
-    public async setCount() {
-        this._count = (await this.http.get<number>(`api/story/count`).toPromise()) ?? 0;
+    // ToDo: Obtener listas de navs desde API
+    public getNavLists(): Pick<StoryList, 'slug' | 'title'>[] {
+        return [
+            { slug: 'fec-english-sessions', title: 'FEC English Sessions' },
+            { slug: 'verano-2022', title: 'Cuentos Verano 2022' },
+        ];
     }
 
     public getLatest(slug: string, amount: number = 5): Observable<StoryList> {
