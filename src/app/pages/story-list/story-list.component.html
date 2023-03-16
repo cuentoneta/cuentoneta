@@ -1,1 +1,3 @@
-<p>story-list works!</p>
+<main *ngIf="storyList$ | async as storyList">
+    <cuentoneta-story-list-card-deck [storylist]="storyList"></cuentoneta-story-list-card-deck>
+</main>
