@@ -27,7 +27,7 @@ export default async function getLatest(req, res) {
                             forewords,
                             categories,
                             publishedAt,
-                            body,
+                            body[0...2],
                             review,
                             forewords,
                             'author': author-> { ..., nationality-> }
