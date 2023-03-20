@@ -69,7 +69,6 @@ section {
     }
 
     &.menu {
-        display: none;
         @media screen and (min-width: $min-lg-width) {
             display: none;
         }
