@@ -32,14 +32,6 @@ header {
         grid-column: col / span 2;
         grid-row: row 2;
     }
-
-    ul {
-        li {
-            &:not(:last-child) {
-                margin-right: $spacing-12;
-            }
-        }
-    }
 }
 
 section {
@@ -51,6 +43,16 @@ section {
 
     &.navigation {
         nav {
+            @media screen and (min-width: $min-lg-width) {
+                ul {
+                    li {
+                        &:not(:last-child) {
+                            margin-right: $spacing-12;
+                        }
+                    }
+                }
+            }
+
             @media screen and (max-width: $max-xs-width) {
                 > ul {
                     display: none;
@@ -65,8 +67,16 @@ section {
     }
 
     &.menu {
-        @media screen and (min-width: $min-lg-width) {
-            display: none;
+        margin-bottom: $spacing-8;
+
+        > ul {
+            li {
+                @include inter-body-lg-semibold;
+                height: $spacing-12;
+                border-bottom: 2px solid $gray-200;
+                display: flex;
+                align-items: center;
+            }
         }
     }
 }
