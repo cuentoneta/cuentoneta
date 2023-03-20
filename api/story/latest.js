@@ -30,6 +30,7 @@ export default async function getLatest(req, res) {
                             body[0...2],
                             review,
                             forewords,
+                            approximateReadingTime,
                             'author': author-> { ..., nationality-> }
                         } | order(day desc)[0...${amount}]
                     }`;

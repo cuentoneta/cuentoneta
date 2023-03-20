@@ -39,6 +39,33 @@ export default {
             validation: (Rule) => Rule.required(),
         },
         {
+            name: 'approximateReadingTime',
+            title: 'Tiempo de lectura aproximado',
+            type: 'computedNumber',
+            readOnly: true,
+            options: {
+                buttonText: 'Recalcular',
+                documentQuerySelection: `
+                    "blockContentParagraphs": *[_type == 'story' && _id == ^._id][0]{ body }
+                `,
+                reduceQueryResult: (result: {
+                    draft?: { blockContentParagraphs: { body } };
+                    published: { blockContentParagraphs: { body } };
+                }) => {
+                    const textBody = result.draft
+                        ? result.draft.blockContentParagraphs.body
+                        : result.published.blockContentParagraphs.body;
+
+                    const plainTextParagraphs = textBody.map((x) => x.children[0].text);
+                    const wordCount = plainTextParagraphs
+                        .map((paragraph) => paragraph.split(' ').length)
+                        .reduce((previous, current) => previous + current);
+
+                    return Math.ceil(wordCount / 200);
+                },
+            },
+        },
+        {
             name: 'forewords',
             title: 'Prólogo(s)',
             type: 'array',
@@ -95,14 +122,14 @@ export default {
             edition: 'edition',
             author: 'author.name',
             media: 'mainImage',
-            day: 'day'
+            day: 'day',
         },
         prepare(selection) {
             const { title, author, edition, day } = selection;
             return {
                 title: `${day} - ${title}`,
                 subtitle: `por ${author} | ${edition}`,
-            }
+            };
         },
     },
 };
