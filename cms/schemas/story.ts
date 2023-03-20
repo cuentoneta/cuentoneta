@@ -119,16 +119,14 @@ export default {
     preview: {
         select: {
             title: 'title',
-            edition: 'edition',
             author: 'author.name',
             media: 'mainImage',
-            day: 'day',
         },
         prepare(selection) {
-            const { title, author, edition, day } = selection;
+            const { title, author } = selection;
             return {
-                title: `${day} - ${title}`,
-                subtitle: `por ${author} | ${edition}`,
+                title: `${title}`,
+                subtitle: `por ${author}`,
             };
         },
     },
