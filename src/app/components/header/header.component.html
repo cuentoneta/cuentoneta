@@ -9,13 +9,7 @@
     <section class="navigation flex items-center justify-end">
         <nav>
             <ul class="flex">
-                <ng-container *ngFor="let list of lists">
-                    <li>
-                        <a [routerLink]="'/story-list'" [queryParams]="{ slug: list.slug }">{{ list.title }}</a>
-                    </li>
-                </ng-container>
-                <li><a routerLink="/about">Nosotros</a></li>
-                <li><a routerLink="/dmca">DMCA</a></li>
+                <ng-container *ngTemplateOutlet="navigationLinks"></ng-container>
             </ul>
             <div class="menu-toggler" (click)="onMenuTogglerClicked($event)">
                 <img
@@ -29,18 +23,18 @@
     </section>
 
     <section class="menu" *ngIf="displayMenu">
-        <ng-container *ngTemplateOutlet="navigationLinks"></ng-container>
+        <ul>
+            <ng-container *ngTemplateOutlet="navigationLinks"></ng-container>
+        </ul>
     </section>
 </header>
 
 <ng-template #navigationLinks>
-    <ul>
-        <ng-container *ngFor="let list of lists">
-            <li>
-                <a [routerLink]="'/story-list'" [queryParams]="{ slug: list.slug }">{{ list.title }}</a>
-            </li>
-        </ng-container>
-        <li><a routerLink="/about">Nosotros</a></li>
-        <li><a routerLink="/dmca">DMCA</a></li>
-    </ul>
+    <ng-container *ngFor="let list of lists">
+        <li>
+            <a [routerLink]="'/story-list'" [queryParams]="{ slug: list.slug }">{{ list.title }}</a>
+        </li>
+    </ng-container>
+    <li><a routerLink="/about">Nosotros</a></li>
+    <li><a routerLink="/dmca">DMCA</a></li>
 </ng-template>
