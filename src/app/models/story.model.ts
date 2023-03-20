@@ -25,4 +25,5 @@ export interface StoryDTO {
     summary: any[];
     paragraphs: any[];
     publishedAt: string;
+    approximateReadingTime: number;
 }

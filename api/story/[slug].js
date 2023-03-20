@@ -15,6 +15,7 @@ export default async function getBySlug(req, res) {
                               body, 
                               review, 
                               forewords, 
+                              approximateReadingTime,
                               'author': author-> { ..., nationality-> }
                           }[0]`;
     const story = await sanityConnector.client.fetch(query, {});

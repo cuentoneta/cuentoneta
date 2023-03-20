@@ -45,7 +45,7 @@ export class StoryService {
     }
 
     public parseCardContent(story: StoryDTO): Story {
-        const result: Omit<Story, 'approximateReadingTime'> = {
+        return {
             ...story,
             prologues: story.prologues ?? [],
             paragraphs: story?.paragraphs?.map((x: string) => this.parseParagraph(x)) ?? [],
@@ -55,8 +55,6 @@ export class StoryService {
                 biography: this.parseParagraph(story.author.biography),
             },
         };
-
-        return { ...result, approximateReadingTime: this.calculateApproximateReadingTime(result) };
     }
 
     public parseParagraph(block: any): string {
@@ -86,12 +84,5 @@ export class StoryService {
 
     private addStrong(text: string): string {
         return `<strong>${text}</strong>`;
-    }
-
-    private calculateApproximateReadingTime(story: Omit<Story, 'approximateReadingTime'>): number {
-        const wordCount = story.paragraphs
-            .map((paragraph) => paragraph.split(' ').length)
-            .reduce((previous, current) => previous + current);
-        return Math.ceil(wordCount / 200);
     }
 }
