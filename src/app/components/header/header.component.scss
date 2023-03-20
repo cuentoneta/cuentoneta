@@ -1,15 +1,34 @@
 @import 'src/assets/scss/theme.scss';
 
 header {
+    display: grid;
+    grid-template-columns: repeat(2, [col] 1fr);
+    height: $spacing-20;
+    margin: auto;
+    max-width: $max-container-width;
+
+    @media screen and (max-width: $min-lg-width) {
+        grid-template-rows: repeat(1, [row] auto);
+    }
+    @media screen and (max-width: $max-md-width) {
+        grid-template-rows: repeat(2, [row] auto);
+    }
+
     @media screen and (max-width: $max-md-width) {
         margin: 0 $spacing-5;
     }
 
-    height: $spacing-20;
+    .logo {
+        grid-column: col 1 / span 1;
+    }
 
-    .container {
-        margin: auto;
-        max-width: $max-container-width;
+    .navigation {
+        grid-column: col 2 / span 1;
+    }
+
+    .menu {
+        grid-column: col / span 2;
+        grid-row: row 2;
     }
 
     ul {
