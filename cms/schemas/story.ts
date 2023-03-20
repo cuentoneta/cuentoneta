@@ -45,9 +45,25 @@ export default {
             readOnly: true,
             options: {
                 buttonText: 'Recalcular',
+                // "numberOfParagraphs": *[references(^._id, body->)]
                 documentQuerySelection: `
-                    "numberOfParagraphs": count(*[references(^._id)]{ body })
+                    "blockContentParagraphs": *[_type == 'story' && _id == ^._id][0]{ body }
                 `,
+                reduceQueryResult: (result: {
+                    draft?: { blockContentParagraphs: { body } };
+                    published: { blockContentParagraphs: { body } };
+                }) => {
+                    const textBody = result.draft
+                        ? result.draft.blockContentParagraphs.body
+                        : result.published.blockContentParagraphs.body;
+
+                    const plainTextParagraphs = textBody.map((x) => x.children[0].text);
+                    const wordCount = plainTextParagraphs
+                        .map((paragraph) => paragraph.split(' ').length)
+                        .reduce((previous, current) => previous + current);
+
+                    return Math.ceil(wordCount / 200);
+                },
             },
         },
         {
