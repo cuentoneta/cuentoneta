@@ -67,6 +67,10 @@ section {
     }
 
     &.menu {
+        @media screen and (min-width: $min-md-width) {
+            display: none;
+        }
+
         margin-bottom: $spacing-8;
 
         > ul {
