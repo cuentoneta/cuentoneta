@@ -9,8 +9,13 @@ import { StoryList } from '../../models/storylist.model';
 })
 export class HeaderComponent {
     lists: Pick<StoryList, 'title' | 'slug'>[] = [];
+    displayMenu: boolean = false;
     constructor() {
         const storyService = inject(StoryService);
         this.lists = storyService.getNavLists();
+    }
+
+    onMenuTogglerClicked(event: MouseEvent) {
+        this.displayMenu = !this.displayMenu;
     }
 }

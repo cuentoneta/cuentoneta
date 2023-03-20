@@ -1,52 +1,89 @@
 @import 'src/assets/scss/theme.scss';
 
-:host {
-    header {
-        @media screen and (max-width: $max-md-width) {
-            margin: 0 $spacing-5;
+header {
+    display: grid;
+    min-height: $spacing-20;
+    max-width: $max-container-width;
+    margin: auto;
+
+    @media screen and (min-width: $min-md-width) {
+        grid-template-columns: repeat(2, [col] 1fr);
+        grid-template-rows: [row] $spacing-20;
+    }
+
+    @media screen and (max-width: $max-sm-width) {
+        grid-template-columns: [col] 1fr [col] 24px;
+        grid-template-rows: [row] $spacing-20 [row] 1fr;
+    }
+
+    @media screen and (max-width: $max-md-width) {
+        margin: 0 $spacing-5;
+    }
+
+    .logo {
+        grid-column: col 1 / span 1;
+    }
+
+    .navigation {
+        grid-column: col 2 / span 1;
+    }
+
+    .menu {
+        grid-column: col / span 2;
+        grid-row: row 2;
+    }
+}
+
+section {
+    &.logo {
+        img {
+            margin-right: $spacing-3;
         }
+    }
 
-        height: $spacing-20;
-
-        .container {
-            margin: auto;
-            max-width: 1240px;
-        }
-
-        section {
-            &.logo {
-                img {
-                    margin-right: $spacing-3;
+    &.navigation {
+        nav {
+            @media screen and (min-width: $min-md-width) {
+                ul {
+                    li {
+                        &:not(:last-child) {
+                            margin-right: $spacing-12;
+                        }
+                    }
                 }
             }
 
-            &.navigation {
-                nav {
-                    @media screen and (max-width: $max-xs-width) {
-                        > ul {
-                            display: none;
-                        }
-                    }
-                    @media screen and (min-width: $min-sm-width) {
-                        div {
-                            display: none;
-                        }
-                    }
+            @media screen and (max-width: $max-sm-width) {
+                > ul {
+                    display: none;
                 }
-
-                @include inter-body-sm-semibold;
-                li:hover {
-                    color: $interactive-500;
+            }
+            @media screen and (min-width: $min-md-width) {
+                .menu-toggler {
+                    display: none;
                 }
             }
         }
+    }
 
-        ul {
+    &.menu {
+        margin-bottom: $spacing-8;
+
+        > ul {
             li {
-                &:not(:last-child) {
-                    margin-right: $spacing-12;
-                }
+                @include inter-body-lg-semibold;
+                height: $spacing-12;
+                border-bottom: 2px solid $gray-200;
+                display: flex;
+                align-items: center;
             }
         }
+    }
+}
+
+ul {
+    @include inter-body-sm-semibold;
+    li:hover {
+        color: $interactive-500;
     }
 }
