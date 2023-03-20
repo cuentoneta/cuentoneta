@@ -1,10 +1,10 @@
 {
   "name": "cuentoneta",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "package.json",
-  "author": "Juan Blas Tschopp <jbtschopp@gmail.com>",
+  "author": "Ramiro Olivencia <ramiro@olivencia.com.ar>",
   "license": "UNLICENSED",
   "scripts": {
     "start": "sanity start",
