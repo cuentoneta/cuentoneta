@@ -6,10 +6,11 @@ header {
     max-width: $max-container-width;
     margin: auto;
 
-    @media screen and (max-width: $min-lg-width) {
+    @media screen and (min-width: $min-lg-width) {
         grid-template-columns: repeat(2, [col] 1fr);
         grid-template-rows: [row] $spacing-20;
     }
+
     @media screen and (max-width: $max-md-width) {
         grid-template-columns: [col] 1fr [col] 24px;
         grid-template-rows: [row] $spacing-20 [row] 1fr;
@@ -61,16 +62,18 @@ section {
                 }
             }
         }
-
-        @include inter-body-sm-semibold;
-        li:hover {
-            color: $interactive-500;
-        }
     }
 
     &.menu {
         @media screen and (min-width: $min-lg-width) {
             display: none;
         }
+    }
+}
+
+ul {
+    @include inter-body-sm-semibold;
+    li:hover {
+        color: $interactive-500;
     }
 }
