@@ -39,6 +39,18 @@ export default {
             validation: (Rule) => Rule.required(),
         },
         {
+            name: 'approximateReadingTime',
+            title: 'Tiempo de lectura aproximado',
+            type: 'computedNumber',
+            readOnly: true,
+            options: {
+                buttonText: 'Recalcular',
+                documentQuerySelection: `
+                    "numberOfParagraphs": count(*[references(^._id)]{ body })
+                `,
+            },
+        },
+        {
             name: 'forewords',
             title: 'Prólogo(s)',
             type: 'array',
@@ -95,14 +107,14 @@ export default {
             edition: 'edition',
             author: 'author.name',
             media: 'mainImage',
-            day: 'day'
+            day: 'day',
         },
         prepare(selection) {
             const { title, author, edition, day } = selection;
             return {
                 title: `${day} - ${title}`,
                 subtitle: `por ${author} | ${edition}`,
-            }
+            };
         },
     },
 };
