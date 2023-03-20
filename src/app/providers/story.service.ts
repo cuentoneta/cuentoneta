@@ -49,7 +49,11 @@ export class StoryService {
             ...story,
             prologues: story.prologues ?? [],
             paragraphs: story?.paragraphs?.map((x: string) => this.parseParagraph(x)) ?? [],
-            summary: story?.summary?.map((x: string) => this.parseSummary(x))?.pop() ?? '',
+            summary: story?.summary?.map((x: string) => this.parseParagraph(x))?.pop() ?? '',
+            author: {
+                ...story.author,
+                biography: this.parseParagraph(story.author.biography),
+            },
         };
 
         return { ...result, approximateReadingTime: this.calculateApproximateReadingTime(result) };
@@ -57,6 +61,12 @@ export class StoryService {
 
     public parseParagraph(block: any): string {
         let paragraph = '';
+
+        // Condición de escape en caso de que se pase como parámetro un string plano en vez de un blockContent
+        if (typeof block === 'string') {
+            return block;
+        }
+
         block.children.forEach((x: any) => {
             let part = x.text;
             if (x.marks.includes('em')) {
@@ -68,10 +78,6 @@ export class StoryService {
             paragraph = paragraph.concat(part);
         });
         return paragraph;
-    }
-
-    public parseSummary(block: any): string {
-        return block.children[0].text;
     }
 
     private addEmphasis(text: string): string {
