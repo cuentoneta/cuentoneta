@@ -2,16 +2,17 @@
 
 header {
     display: grid;
-    grid-template-columns: repeat(2, [col] 1fr);
-    height: $spacing-20;
-    margin: auto;
+    min-height: $spacing-20;
     max-width: $max-container-width;
+    margin: auto;
 
     @media screen and (max-width: $min-lg-width) {
-        grid-template-rows: repeat(1, [row] auto);
+        grid-template-columns: repeat(2, [col] 1fr);
+        grid-template-rows: [row] $spacing-20;
     }
     @media screen and (max-width: $max-md-width) {
-        grid-template-rows: repeat(2, [row] auto);
+        grid-template-columns: [col] 1fr [col] 24px;
+        grid-template-rows: [row] $spacing-20 [row] 1fr;
     }
 
     @media screen and (max-width: $max-md-width) {
@@ -68,6 +69,7 @@ section {
     }
 
     &.menu {
+        display: none;
         @media screen and (min-width: $min-lg-width) {
             display: none;
         }
