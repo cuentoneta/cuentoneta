@@ -31,7 +31,7 @@
 
 <ng-template #navigationLinks>
     <ng-container *ngFor="let list of lists">
-        <li>
+        <li (click)="onMenuTogglerClicked($event)">
             <a [routerLink]="'/story-list'" [queryParams]="{ slug: list.slug }">{{ list.title }}</a>
         </li>
     </ng-container>
