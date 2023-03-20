@@ -1,8 +1,12 @@
 <div class="container">
     <section class="author-info">
-        <img class="author-image" [alt]="'Retrato de ' + author.name" width="64" height="64" [src]="author.imageUrl" />
-        <!--        ToDo: Solucionar problema de carga y usar ngOptimizedImage-->
-        <!--        <img class="author-image" [alt]="'Retrato de ' + author.name" width="64" height="64" [ngSrc]="author.imageUrl" />-->
+        <img
+            class="author-image"
+            [alt]="'Retrato de ' + author.name"
+            width="64"
+            height="64"
+            [ngSrc]="author.imageUrl"
+        />
         <div class="flex flex-col justify-center">
             <p class="author-name">{{ author.name }}</p>
             <div class="author-nationality flex items-center gap-2">
@@ -28,7 +32,7 @@
     <section class="bio-and-summary">
         <p>{{ author.biography }}</p>
         <ng-container *ngIf="summary">
-            <p>{{ summary }}</p>
+            <p [innerHTML]="summary"></p>
         </ng-container>
     </section>
 </div>
