@@ -45,7 +45,6 @@ export default {
             readOnly: true,
             options: {
                 buttonText: 'Recalcular',
-                // "numberOfParagraphs": *[references(^._id, body->)]
                 documentQuerySelection: `
                     "blockContentParagraphs": *[_type == 'story' && _id == ^._id][0]{ body }
                 `,
