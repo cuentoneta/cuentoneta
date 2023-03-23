@@ -6,11 +6,7 @@
         <section class="navigation">
             <nav>
                 <ul class="flex justify-between lg:justify-center">
-                    <ng-container *ngFor="let list of lists">
-                        <li>
-                            <a [routerLink]="'/story-list'" [queryParams]="{ slug: list.slug }">{{ list.title }}</a>
-                        </li>
-                    </ng-container>
+                    <li><a routerLink="/">Inicio</a></li>
                     <li><a routerLink="/about">Nosotros</a></li>
                     <li><a routerLink="/dmca">DMCA</a></li>
                 </ul>

@@ -13,6 +13,7 @@
             </ul>
             <div class="menu-toggler" (click)="onMenuTogglerClicked($event)">
                 <img
+                    [alt]="'Imagen del menú móvil del sitio'"
                     [ngSrc]="'./assets/svg/menu.svg'"
                     width="24"
                     height="24"
@@ -36,5 +37,4 @@
         </li>
     </ng-container>
     <li><a routerLink="/about">Nosotros</a></li>
-    <li><a routerLink="/dmca">DMCA</a></li>
 </ng-template>
