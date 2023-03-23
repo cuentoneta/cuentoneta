@@ -5,7 +5,7 @@
             [alt]="'Retrato de ' + author.name"
             width="64"
             height="64"
-            [ngSrc]="author.imageUrl"
+            [ngSrc]="author.imageUrl + '?h=64&w=64'"
         />
         <div class="flex flex-col justify-center">
             <p class="author-name">{{ author.name }}</p>
@@ -15,7 +15,7 @@
                     width="20"
                     height="15"
                     [alt]="'Retrato de ' + author.name"
-                    [ngSrc]="author.nationality.flag"
+                    [ngSrc]="author.nationality.flag + '?w=20&h=15'"
                 />
                 <span>{{ author.nationality.country }}</span>
             </div>

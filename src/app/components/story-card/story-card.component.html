@@ -16,13 +16,13 @@
                 [alt]="'Retrato de ' + story.author.name"
                 width="40"
                 height="40"
-                [ngSrc]="story.author.imageUrl"
+                [ngSrc]="story.author.imageUrl + '?h=40&w=40'"
             />
             <div>
                 <label class="author-name">{{ story.author.name }}</label>
                 <ng-container *ngIf="story.author.nationality as nationality">
                     <div class="flex items-center">
-                        <img class="flag" width="20" height="15" [ngSrc]="nationality.flag" />
+                        <img class="flag" width="20" height="15" [ngSrc]="nationality.flag + '?w=20&h=15'" />
                         <label class="country">{{ nationality.country }}</label>
                     </div>
                 </ng-container>
