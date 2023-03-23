@@ -13,16 +13,22 @@
         <footer class="author-info flex flex-row items-center">
             <img
                 class="author-image"
-                [alt]="'Retrato de ' + story.author.name"
                 width="40"
                 height="40"
+                [alt]="'Retrato de ' + story.author.name"
                 [ngSrc]="story.author.imageUrl + '?h=40&w=40'"
             />
             <div>
                 <label class="author-name">{{ story.author.name }}</label>
                 <ng-container *ngIf="story.author.nationality as nationality">
                     <div class="flex items-center">
-                        <img class="flag" width="20" height="15" [ngSrc]="nationality.flag + '?w=20&h=15'" />
+                        <img
+                            class="flag"
+                            width="20"
+                            height="15"
+                            [alt]="'Bandera de ' + nationality.country"
+                            [ngSrc]="nationality.flag + '?w=20&h=15'"
+                        />
                         <label class="country">{{ nationality.country }}</label>
                     </div>
                 </ng-container>
