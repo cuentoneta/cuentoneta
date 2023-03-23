@@ -1,6 +1,7 @@
-import { mapAuthor, mapBodyToParagraphs, mapPrologues } from '../functions';
-
-const sanityConnector = require('../_helpers/sanity-connector');
+import { mapAuthor, mapPrologues } from '../functions';
+import { client } from '../_helpers/sanity-connector';
+import { VercelRequest, VercelResponse } from '@vercel/node';
+import { StoryDAO } from '../_models/story-dao.model';
 
 /**
  * Obtiene las últimas cinco historias almacenadas en Sanity
@@ -8,7 +9,7 @@ const sanityConnector = require('../_helpers/sanity-connector');
  * @param res
  * @returns {Promise<null>}
  */
-export default async function getLatest(req, res) {
+export default async function get(req: VercelRequest, res: VercelResponse) {
     const { slug, amount } = req.query;
     const query = `*[_type == 'storylist' && slug.current == '${slug}'][0]
                     { 
@@ -35,19 +36,19 @@ export default async function getLatest(req, res) {
                         } | order(day desc)[0...${amount}]
                     }`;
 
-    const result = await sanityConnector.client.fetch(query, {});
+    const result = await client.fetch(query, {});
 
     if (!result) {
-        return null;
+        res.json(null);
     }
 
-    let storylist = {
+    const storylist = {
         ...result,
-        stories: result.stories.map((story) => ({
+        stories: result.stories.map((story: StoryDAO) => ({
             ...story,
             id: story._id,
             summary: story.review,
-            paragraphs: mapBodyToParagraphs(story.body),
+            paragraphs: story.body,
             author: mapAuthor(story.author),
             prologues: mapPrologues(story.forewords),
         })),
