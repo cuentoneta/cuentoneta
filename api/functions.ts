@@ -2,9 +2,7 @@ import { client } from './_helpers/sanity-connector';
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { AuthorDAO } from './_models/author-dao.model';
 import { ForewordDAO } from './_models/story-dao.model';
-
 import imageUrlBuilder from '@sanity/image-url';
-const builder = imageUrlBuilder(client);
 
 export function mapAuthor(authorDAO: AuthorDAO) {
     const result = {
@@ -31,5 +29,5 @@ export function mapPrologues(prologuesDTO: ForewordDAO[]) {
 }
 
 export function urlFor(source: SanityImageSource) {
-    return builder.image(source);
+    return imageUrlBuilder(client).image(source);
 }
