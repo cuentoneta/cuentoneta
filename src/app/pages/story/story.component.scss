@@ -5,7 +5,6 @@ ngx-skeleton-loader {
 }
 
 :host {
-
     @media screen and (max-width: $max-md-width) {
         display: block;
         aside {
@@ -21,59 +20,63 @@ ngx-skeleton-loader {
         grid-template-columns: 286px 1fr;
         column-gap: $spacing-8;
     }
+}
 
-    article {
-        background-color: $gray-50;
-        padding: $spacing-5;
+article {
+    background-color: $gray-50;
+    padding: $spacing-5;
 
+    @media screen and (max-width: $max-sm-width) {
+        margin-left: -$spacing-5;
+        margin-right: -$spacing-5;
+    }
 
-        @media screen and (min-width: $min-lg-width) {
-            border-radius: $rounded-xl;
-            box-shadow: $box-shadow-card;
-            padding: $spacing-15;
+    @media screen and (min-width: $min-md-width) {
+        border-radius: $rounded-xl;
+        box-shadow: $box-shadow-card;
+        padding: $spacing-15;
+    }
+
+    header {
+        margin-bottom: $spacing-10;
+
+        .title {
+            margin-bottom: $spacing-2;
         }
 
-        header {
-            margin-bottom: $spacing-10;
-
-            .title {
-                margin-bottom: $spacing-2;
-            }
-
-            .subtitle {
-                @include inter-body-xl;
-                margin-bottom: $spacing-2;
-            }
-
-            .reading-time {
-                @include inter-body-base-medium;
-                color: $gray-600;
-            }
+        .subtitle {
+            @include inter-body-xl;
+            margin-bottom: $spacing-2;
         }
 
-        .prologues {
-            margin-bottom: $spacing-10;
-            span {
-                border-left: 3px solid $primary-500;
-                margin-right: $spacing-4;
-                height: $spacing-5;
-            }
-            .prologue {
-                @include source-serif-pro-body-lg;
-                color: $gray-700;
-                line-height: 28px;
-            }
+        .reading-time {
+            @include inter-body-base-medium;
+            color: $gray-600;
         }
+    }
 
-        .content {
-            p {
-                @include source-serif-pro-body-xl;
-                line-height: $spacing-8;
-                margin-bottom: $spacing-8;
-            }
+    .prologues {
+        margin-bottom: $spacing-10;
+        span {
+            border-left: 3px solid $primary-500;
+            margin-right: $spacing-4;
+            height: $spacing-5;
         }
+        .prologue {
+            @include source-serif-pro-body-lg;
+            color: $gray-700;
+            line-height: 28px;
+        }
+    }
 
-        footer {
+    .content {
+        p {
+            @include source-serif-pro-body-xl;
+            line-height: $spacing-8;
+            margin-bottom: $spacing-8;
         }
+    }
+
+    footer {
     }
 }
