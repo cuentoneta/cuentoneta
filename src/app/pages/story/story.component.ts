@@ -23,16 +23,15 @@ export class StoryComponent {
         const destroyedDirective = inject(DestroyedDirective);
         const storyService = inject(StoryService);
 
-        combineLatest([
-            activatedRoute.queryParams.pipe(
-                switchMap(({ slug }) => {
+        activatedRoute.queryParams
+            .pipe(
+                switchMap(({ slug, list }) => {
                     this.story = undefined;
-                    return storyService.getBySlug(slug);
-                })
-            ),
-            activatedRoute.queryParams.pipe(switchMap(({ list }) => storyService.getLatest(list, 10))),
-        ])
-            .pipe(takeUntil(destroyedDirective.destroyed$))
+                    this.storylist = undefined;
+                    return combineLatest([storyService.getBySlug(slug), storyService.getLatest(list, 10)]);
+                }),
+                takeUntil(destroyedDirective.destroyed$)
+            )
             .subscribe(([story, storylist]) => {
                 this.story = story;
                 this.storylist = storylist;
