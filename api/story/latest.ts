@@ -33,7 +33,7 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
                             forewords,
                             approximateReadingTime,
                             'author': author-> { ..., nationality-> }
-                        } | [${(-amount)-1}..-1]
+                        } | [${(-amount)}..-1]
                     }`;
 
     const result = await client.fetch(query, {});
