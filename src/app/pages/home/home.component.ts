@@ -11,8 +11,8 @@ import { DestroyedDirective } from '../../directives/destroyed.directive';
     hostDirectives: [DestroyedDirective],
 })
 export class HomeComponent {
-    latestStories: StoryList | undefined;
-    oldStories: StoryList | undefined;
+    latestStories!: StoryList;
+    oldStories!: StoryList;
 
     constructor() {
         const destroyedDirective = inject(DestroyedDirective);

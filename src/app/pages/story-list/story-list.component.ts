@@ -1,7 +1,7 @@
-import { Component, inject, OnDestroy } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { StoryService } from '../../providers/story.service';
-import { Subscription, switchMap, takeUntil } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs';
 import { StoryList } from '../../models/storylist.model';
 import { DestroyedDirective } from '../../directives/destroyed.directive';
 
@@ -12,7 +12,8 @@ import { DestroyedDirective } from '../../directives/destroyed.directive';
     hostDirectives: [DestroyedDirective],
 })
 export class StoryListComponent {
-    storyList: StoryList | undefined;
+    storyList!: StoryList;
+
     constructor() {
         const activatedRoute = inject(ActivatedRoute);
         const destroyedDirective = inject(DestroyedDirective);
@@ -22,7 +23,6 @@ export class StoryListComponent {
             .pipe(
                 // ToDo: Rediseñar signature del método para poder traer todas las historias y luego hacer fetch vía scroll/ver más
                 switchMap(({ slug }) => {
-                    this.storyList = undefined;
                     return storyService.getLatest(slug, 60);
                 }),
                 takeUntil(destroyedDirective.destroyed$)
