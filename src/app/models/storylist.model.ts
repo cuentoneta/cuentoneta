@@ -4,6 +4,7 @@ interface StorylistBase {
     title: string;
     slug: string;
     editionPrefix: string;
+    count: number;
     description?: string[];
     language?: string;
     imageUrl?: string;
