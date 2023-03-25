@@ -19,11 +19,11 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
                         description,
                         language,
                         editionPrefix,
+                        'count': count(stories[]),
                         'stories': stories[]->{
                             _id,
                             'slug': slug.current,
                             title,
-                            day,
                             originalLink,
                             forewords,
                             categories,
@@ -33,7 +33,7 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
                             forewords,
                             approximateReadingTime,
                             'author': author-> { ..., nationality-> }
-                        } | order(day desc)[0...${amount}]
+                        } | [${(-amount)-1}..-1]
                     }`;
 
     const result = await client.fetch(query, {});
@@ -51,7 +51,7 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
             paragraphs: story.body,
             author: mapAuthor(story.author),
             prologues: mapPrologues(story.forewords),
-        })),
+        })).reverse(),
     };
 
     res.json(storylist);
