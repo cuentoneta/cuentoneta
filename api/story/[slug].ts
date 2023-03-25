@@ -7,7 +7,6 @@ export default async function getBySlug(req: VercelRequest, res: VercelResponse)
     const query = `*[_type == 'story' && slug.current == '${slug}']
                           {
                               title, 
-                              day, 
                               originalLink, 
                               forewords, 
                               categories, 

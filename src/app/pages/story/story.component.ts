@@ -1,6 +1,6 @@
-import { Component, inject, OnDestroy } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest, Subscription, switchMap, takeUntil } from 'rxjs';
+import { combineLatest, switchMap, takeUntil } from 'rxjs';
 import { StoryService } from '../../providers/story.service';
 import { Story } from '../../models/story.model';
 import { StoryList } from '../../models/storylist.model';
@@ -13,8 +13,8 @@ import { DestroyedDirective } from '../../directives/destroyed.directive';
     hostDirectives: [DestroyedDirective],
 })
 export class StoryComponent {
-    story: Story | undefined;
-    storylist: StoryList | undefined;
+    story!: Story;
+    storylist!: StoryList;
 
     dummyList = Array(10);
 
@@ -26,8 +26,6 @@ export class StoryComponent {
         activatedRoute.queryParams
             .pipe(
                 switchMap(({ slug, list }) => {
-                    this.story = undefined;
-                    this.storylist = undefined;
                     return combineLatest([storyService.getBySlug(slug), storyService.getLatest(list, 10)]);
                 }),
                 takeUntil(destroyedDirective.destroyed$)

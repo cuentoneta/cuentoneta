@@ -6,12 +6,12 @@
     </header>
 
     <ng-container *ngIf="!!storyList; else bodySkeleton">
-        <ng-container *ngFor="let story of storyList.stories">
+        <ng-container *ngFor="let story of storyList.stories; let editionIndex = index">
             <a [routerLink]="['/story']" [queryParams]="{ slug: story.slug, list: storyList.slug }">
                 <article>
                     <cuentoneta-story-edition-date-label
                         class="edition-and-label"
-                        [label]="getEditionLabel(story)"
+                        [label]="getEditionLabel(story, storyList.count - editionIndex)"
                     ></cuentoneta-story-edition-date-label>
                     <h4 class="title">{{ story.title }}</h4>
                     <h5 class="author">{{ story.author.name }}</h5>

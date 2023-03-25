@@ -13,17 +13,21 @@
 </ng-container>
 
 <div class="stories-card-container" [ngClass]="{ 'highlight-first-row': highlightFirstRow }">
-    <ng-container *ngIf="!storylist">
+    <ng-container *ngIf="!storylist; else storylistTemplate">
         <cuentoneta-story-card *ngFor="let skeleton of dummyList"></cuentoneta-story-card>
     </ng-container>
-    <ng-container *ngFor="let story of storylist?.stories">
+</div>
+
+<ng-template #storylistTemplate>
+    <ng-container *ngFor="let story of storylist?.stories; let editionIndex = index">
         <a [routerLink]="['/story']"
            [queryParams]="{ slug: story?.slug, list: storylist?.slug }">
             <cuentoneta-story-card
                     [displayDate]="displayDates"
                     [editionPrefix]="storylist?.editionPrefix"
                     [story]="story"
+                    [editionIndex]="(storylist.count - editionIndex)"
             ></cuentoneta-story-card>
         </a>
     </ng-container>
-</div>
+</ng-template>

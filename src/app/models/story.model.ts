@@ -6,7 +6,6 @@ export interface Story {
     author: Author;
     title: string;
     slug: string;
-    day: number;
     prologues: Prologue[];
     summary: string;
     paragraphs: string[];
@@ -20,7 +19,6 @@ export interface StoryDTO {
     author: Author;
     title: string;
     slug: string;
-    day: number;
     prologues: any[];
     summary: any[];
     paragraphs: any[];

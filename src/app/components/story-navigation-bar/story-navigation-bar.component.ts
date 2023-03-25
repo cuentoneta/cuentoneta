@@ -8,12 +8,12 @@ import { Story } from '../../models/story.model';
     styleUrls: ['./story-navigation-bar.component.scss'],
 })
 export class StoryNavigationBarComponent {
-    @Input() storyList: StoryList | undefined = { title: '', slug: '', stories: [], editionPrefix: 'Edición' };
+    @Input() storyList!: StoryList;
 
     dummyList: null[] = Array(10);
 
     // ToDo: Separar card de cada cuento de la lista en su propio componente, para evitar usar un método en el template
-    getEditionLabel(story: Story): string {
-        return `${this.storyList?.editionPrefix} ${story.day} - ${story.publishedAt}`;
+    getEditionLabel(story: Story, editionIndex: number = 0): string {
+        return `${this.storyList?.editionPrefix} ${editionIndex} - ${story.publishedAt}`;
     }
 }
