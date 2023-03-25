@@ -31,7 +31,7 @@ article {
         margin-right: -$spacing-5;
     }
 
-    @media screen and (min-width: $min-lg-width) {
+    @media screen and (min-width: $min-md-width) {
         border-radius: $rounded-xl;
         box-shadow: $box-shadow-card;
         padding: $spacing-15;
