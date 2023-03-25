@@ -11,12 +11,13 @@ export class StoryCardComponent implements OnInit {
     @Input() editionSuffix: string | undefined;
     @Input() displayDate: boolean = false;
     @Input() story: Story | undefined;
+    @Input() editionIndex: number = 0;
 
     editionLabel: string = '';
 
     ngOnInit() {
-        this.editionLabel = this.editionPrefix + ' ' + this.story?.day + ' - ' + this.story?.publishedAt;
-        this.editionLabel = `${this.editionPrefix} ${this.story?.day} ${
+        this.editionLabel = this.editionPrefix + ' ' + this.editionIndex + ' - ' + this.story?.publishedAt;
+        this.editionLabel = `${this.editionPrefix} ${this.editionIndex} ${
             this.displayDate ? ' - ' + this.story?.publishedAt : ''
         }${this.editionSuffix ? ' | ' + this.editionSuffix : ''}`;
     }
