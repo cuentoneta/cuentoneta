@@ -1,7 +1,7 @@
-import { client } from './_helpers/sanity-connector';
+import { client } from '../_helpers/sanity-connector';
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
-import { AuthorDAO } from './_models/author-dao.model';
-import { ForewordDAO } from './_models/story-dao.model';
+import { AuthorDAO } from '../_models/author-dao.model';
+import { ForewordDAO } from '../_models/story-dao.model';
 import imageUrlBuilder from '@sanity/image-url';
 
 export function mapAuthor(authorDAO: AuthorDAO) {

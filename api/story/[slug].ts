@@ -1,4 +1,4 @@
-import { mapAuthor, mapPrologues } from '../functions';
+import { mapAuthor, mapPrologues } from '../_utils/functions';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { client } from '../_helpers/sanity-connector';
 
