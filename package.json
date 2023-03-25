@@ -23,6 +23,7 @@
     "@sanity/client": "^3.4.1",
     "@sanity/image-url": "^1.0.2",
     "@vercel/node": "^2.9.14",
+    "dotenv": "^16.0.3",
     "ngx-skeleton-loader": "^7.0.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
@@ -63,4 +64,3 @@
     "typescript": "4.9.5"
   }
 }
-
