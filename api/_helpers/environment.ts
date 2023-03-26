@@ -7,9 +7,9 @@ if (!!result && !('error' in result)) {
         oneSignalAppId: result['ONESIGNAL_APP_ID'],
         production: false,
         sanity: {
-            projectId: result['SANITY_PROJECT_ID'],
-            dataset: result['SANITY_DATASET'],
-            token: result['SANITY_TOKEN'],
+            projectId: result['SANITY_PROJECT_ID'] as string,
+            dataset: result['SANITY_DATASET'] as string,
+            token: result['SANITY_TOKEN'] as string,
         },
     };
 } else {
@@ -19,7 +19,7 @@ if (!!result && !('error' in result)) {
         sanity: {
             projectId: process.env['SANITY_PROJECT_ID'] as string,
             dataset: process.env['SANITY_DATASET'] as string,
-            token: process.env['SANITY_TOKEN'],
+            token: process.env['SANITY_TOKEN'] as string,
         },
     };
 }
