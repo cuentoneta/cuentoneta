@@ -1,7 +1,7 @@
 <ng-container *ngIf="displayTitle">
-    <h2>{{ storylist?.title }}</h2>
+    <h2>{{ storylist.title }}</h2>
     <ngx-skeleton-loader
-        *ngIf="!storylist?.title"
+        *ngIf="!storylist.title"
         count="1"
         appearance="line"
         [theme]="{
@@ -19,12 +19,12 @@
 </div>
 
 <ng-template #storylistTemplate>
-    <ng-container *ngFor="let story of storylist?.stories; let editionIndex = index">
+    <ng-container *ngFor="let story of storylist.stories; let editionIndex = index">
         <a [routerLink]="['/story']"
-           [queryParams]="{ slug: story?.slug, list: storylist?.slug }">
+           [queryParams]="{ slug: story?.slug, list: storylist.slug }">
             <cuentoneta-story-card
                     [displayDate]="displayDates"
-                    [editionPrefix]="storylist?.editionPrefix"
+                    [editionPrefix]="storylist.editionPrefix"
                     [story]="story"
                     [editionIndex]="(storylist.count - editionIndex)"
             ></cuentoneta-story-card>
