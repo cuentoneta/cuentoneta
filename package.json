@@ -5,6 +5,7 @@
   "scripts": {
     "start": "nx serve",
     "config": "ts-node ./scripts/set-environment.ts",
+    "postinstall": "npm run config",
     "build": "nx build",
     "test": "nx test",
     "sanity:dev": "cd cms && sanity dev",
