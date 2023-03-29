@@ -14,7 +14,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 })
 export class StoryListCardDeckComponent implements OnInit {
     @Input() number: number = 6;
-    @Input() storylist!: StoryList;
+    @Input() storylist: StoryList | undefined;
     @Input() highlightFirstRow: boolean = false;
     @Input() displayTitle: boolean = true;
     @Input() displayDates: boolean = false;
