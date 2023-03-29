@@ -11,7 +11,7 @@
  */
 
 // ToDo: Migrar a imports
-const { writeFile } = require('fs');
+const { writeFile, existsSync, mkdirSync } = require('fs');
 const { argv } = require('yargs');
 
 // Leer variables de entorno desde .env
@@ -22,7 +22,8 @@ require('dotenv').config();
 const environment = argv.environment;
 const isProduction = environment === 'prod';
 
-const targetPath = `./src/app/environments/environment.ts`;
+const dirPath: string = `src/app/environments`;
+const targetPath = `${dirPath}/environment.ts`;
 
 // Accede a las variables de entorno y genera un string
 // correspondiente al objeto environment que utilizará Angular
@@ -32,6 +33,11 @@ export const environment = {
    contentConfig: ${process.env['CUENTONETA_CONTENT']}
 };
 `;
+
+// En caso de que no exista el directorio environments, se lo crea
+if (!existsSync('dirPath')) {
+    mkdirSync(dirPath);
+}
 
 // Escribe el contenido en el archivo correspondiente environment.ts
 writeFile(targetPath, environmentFileContent, { flag: 'wx+' }, function (err: any) {
