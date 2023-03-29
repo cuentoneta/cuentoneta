@@ -18,17 +18,15 @@
     </section>
 
     <section class="card-decks">
-        <cuentoneta-story-list-card-deck
-            [storylist]="latestStories"
-            [highlightFirstRow]="true"
-            [displayTitle]="true"
-            [number]="5"
-        ></cuentoneta-story-list-card-deck>
-
-        <cuentoneta-story-list-card-deck
-            [storylist]="oldStories"
-            [displayDates]="true"
-            [displayTitle]="true"
-        ></cuentoneta-story-list-card-deck>
+        <ng-container *ngIf="!!storylistCardDecks && storylistCardDecks.length">
+            <ng-container *ngFor="let storylistDeck of storylistCardDecks">
+                <cuentoneta-story-list-card-deck
+                    [storylist]="storylistDeck.storylist"
+                    [highlightFirstRow]="storylistDeck.highlightFirstRow"
+                    [displayTitle]="true"
+                    [number]="storylistDeck.amount"
+                ></cuentoneta-story-list-card-deck>
+            </ng-container>
+        </ng-container>
     </section>
 </main>

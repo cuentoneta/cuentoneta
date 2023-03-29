@@ -1,8 +1,13 @@
+// Core
 import { Component, inject } from '@angular/core';
-import { StoryService } from '../../providers/story.service';
-import { combineLatest, takeUntil } from 'rxjs';
-import { StoryList } from '../../models/storylist.model';
+import { takeUntil } from 'rxjs';
+
+// Interfaces
+import { ContentService } from '../../providers/content.service';
+
+// Directives
 import { DestroyedDirective } from '../../directives/destroyed.directive';
+import { StorylistCardDeck } from '../../models/content.model';
 
 @Component({
     selector: 'cuentoneta-home',
@@ -11,18 +16,25 @@ import { DestroyedDirective } from '../../directives/destroyed.directive';
     hostDirectives: [DestroyedDirective],
 })
 export class HomeComponent {
-    latestStories!: StoryList;
-    oldStories!: StoryList;
+    storylistCardDecks!: StorylistCardDeck[];
+
+    // Services
+    private contentService = inject(ContentService);
+    private destroyedDirective = inject(DestroyedDirective);
 
     constructor() {
-        const destroyedDirective = inject(DestroyedDirective);
-        const storyService = inject(StoryService);
+        // Asignación inicial para dibujar skeletons
+        this.storylistCardDecks = this.contentService.contentConfig.storylistDeckConfigs;
+        // Posteriormente se cargan los decks con las historias, según la configuración de contenido
+        this.loadStorylistDecks();
+    }
 
-        combineLatest([storyService.getLatest('fec-english-sessions', 5), storyService.getLatest('verano-2022', 6)])
-            .pipe(takeUntil(destroyedDirective.destroyed$))
-            .subscribe(([topStories, oldStories]) => {
-                this.latestStories = topStories;
-                this.oldStories = oldStories;
+    private loadStorylistDecks() {
+        this.contentService
+            .fetchStorylistDecks()
+            .pipe(takeUntil(this.destroyedDirective.destroyed$))
+            .subscribe((result) => {
+                this.storylistCardDecks = result;
             });
     }
 }
