@@ -1,5 +1,8 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+# environment config de Angular
+/src/app/environments/*
+
 # env variables
 .env
 # compiled output
