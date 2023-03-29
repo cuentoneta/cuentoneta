@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { StoryService } from '../../providers/story.service';
 import { StoryList } from '../../models/storylist.model';
+import { ContentService } from '../../providers/content.service';
 
 @Component({
     selector: 'cuentoneta-header',
@@ -11,8 +11,8 @@ export class HeaderComponent {
     lists: Pick<StoryList, 'title' | 'slug'>[] = [];
     displayMenu: boolean = false;
     constructor() {
-        const storyService = inject(StoryService);
-        this.lists = storyService.getNavLists();
+        const contentService = inject(ContentService);
+        this.lists = contentService.getNavLists();
     }
 
     onMenuTogglerClicked(event: MouseEvent) {

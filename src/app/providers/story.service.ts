@@ -6,11 +6,6 @@ import { StoryList, StoryListDTO } from '../models/storylist.model';
 
 @Injectable({ providedIn: 'root' })
 export class StoryService {
-    get count(): number {
-        return this._count;
-    }
-
-    private _count = 0;
 
     constructor(private http: HttpClient) {}
     public getBySlug(slug: string): Observable<Story> {
@@ -22,16 +17,9 @@ export class StoryService {
         return this.http.get<Story[]>(`api/story/authors`);
     }
 
+    // ToDo: Rediseñar funcionamiento del endpoint de links originales.
     public getOriginalLinks(): Observable<any> {
         return this.http.get<Story[]>(`api/story/original-links`);
-    }
-
-    // ToDo: Obtener listas de navs desde API
-    public getNavLists(): Pick<StoryList, 'slug' | 'title'>[] {
-        return [
-            { slug: 'fec-english-sessions', title: 'FEC English Sessions' },
-            { slug: 'verano-2022', title: 'Cuentos Verano 2022' },
-        ];
     }
 
     public getLatest(slug: string, amount: number = 5): Observable<StoryList> {
@@ -44,7 +32,7 @@ export class StoryService {
         );
     }
 
-    public parseCardContent(story: StoryDTO): Story {
+    private parseCardContent(story: StoryDTO): Story {
         return {
             ...story,
             prologues: story.prologues ?? [],
@@ -57,7 +45,7 @@ export class StoryService {
         };
     }
 
-    public parseParagraph(block: any): string {
+    private parseParagraph(block: any): string {
         let paragraph = '';
 
         // Condición de escape en caso de que se pase como parámetro un string plano en vez de un blockContent
