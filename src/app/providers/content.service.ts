@@ -1,13 +1,36 @@
-import { Injectable } from '@angular/core';
+// Core
+import { inject, Injectable } from '@angular/core';
+import { combineLatest, map, Observable, tap } from 'rxjs';
+
+// Interfaces
+import { ContentConfig, StorylistCardDeck } from '../models/content.model';
 import { StoryList } from '../models/storylist.model';
-import {Observable, of} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+
+// Providers
+import { StoryService } from './story.service';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ContentService {
-    constructor(private http: HttpClient) {}
+    private _contentConfig!: ContentConfig;
+
+    // Services
+    private httpClient = inject(HttpClient);
+    private storyService = inject(StoryService);
+
+    get contentConfig(): ContentConfig {
+        return this._contentConfig;
+    }
+
+    public fetchContentConfig(): Observable<ContentConfig> {
+        return this.httpClient.get<ContentConfig>('api/content-config').pipe(
+            tap((contentConfig) => {
+                this._contentConfig = contentConfig;
+            })
+        );
+    }
 
     // ToDo: Obtener listas de navs desde API
     public getNavLists(): Pick<StoryList, 'slug' | 'title'>[] {
@@ -17,32 +40,28 @@ export class ContentService {
         ];
     }
 
-    public getStorylists(): Observable<LandingPageContent> {
-        return of({
-            storylists: [
-                {
-                    title: 'Otoño 2023',
-                    slug: 'otono-2023',
-                    highlightFirstRow: true,
-                    amount: 5,
-                },
-                {
-                    title: 'Cuentos Verano 2022',
-                    slug: 'verano-2022',
-                    highlightFirstRow: false,
-                    amount: 6,
-                },
-                {
-                    title: 'FEC English Sessions Short Stories',
-                    slug: 'fec-english-sessions',
-                    highlightFirstRow: true,
-                    amount: 5,
-                },
-            ],
-        });
+    /**
+     * En base a la configuración de contenido disponible, hace fetch de la lista de
+     * storylists referenciada en los objetos de configuración, para luego generar
+     * un array de objetos compuestos de tipo StorylistCardDeck, los cuales contienen
+     * la configuración y la correspondiente información para renderizar un deck de
+     * cards de cada storylist.
+     */
+    public fetchStorylistDecks(): Observable<StorylistCardDeck[]> {
+        const configs = this.contentConfig.storylistDeckConfigs;
+        return combineLatest(
+            [...configs].map((storylist) => this.storyService.getLatest(storylist.slug, storylist.amount))
+        ).pipe(
+            map((storylists) =>
+                configs.map(
+                    (storylistConfig): StorylistCardDeck => ({
+                        ...storylistConfig,
+                        storylist: storylists
+                            .filter((storylist) => storylist.slug === storylistConfig.slug)
+                            .pop() as StoryList,
+                    })
+                )
+            )
+        );
     }
-}
-
-export interface LandingPageContent {
-    storylists: any;
 }
