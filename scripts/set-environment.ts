@@ -34,7 +34,7 @@ export const environment = {
 `;
 
 // Escribe el contenido en el archivo correspondiente environment.ts
-writeFile(targetPath, environmentFileContent, function (err: any) {
+writeFile(targetPath, environmentFileContent, { flag: 'w+' }, function (err: any) {
     if (err) {
         console.log(err);
         return;
