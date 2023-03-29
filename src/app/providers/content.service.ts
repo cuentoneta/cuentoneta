@@ -1,6 +1,6 @@
 // Core
 import { inject, Injectable } from '@angular/core';
-import { combineLatest, map, Observable, tap } from 'rxjs';
+import { combineLatest, map, Observable, of, tap } from 'rxjs';
 
 // Interfaces
 import { ContentConfig, StorylistCardDeck } from '../models/content.model';
@@ -9,6 +9,7 @@ import { StoryList } from '../models/storylist.model';
 // Providers
 import { StoryService } from './story.service';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../environments/environment';
 
 @Injectable({
     providedIn: 'root',
@@ -25,7 +26,7 @@ export class ContentService {
     }
 
     public fetchContentConfig(): Observable<ContentConfig> {
-        return this.httpClient.get<ContentConfig>('api/content-config').pipe(
+        return of(environment.contentConfig).pipe(
             tap((contentConfig) => {
                 this._contentConfig = contentConfig;
             })

@@ -16,7 +16,7 @@ import { StorylistCardDeck } from '../../models/content.model';
     hostDirectives: [DestroyedDirective],
 })
 export class HomeComponent {
-    storylistCardDecks!: StorylistCardDeck[];
+    storylistCardDecks: StorylistCardDeck[] = [];
 
     // Services
     private contentService = inject(ContentService);
