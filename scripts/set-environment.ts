@@ -22,7 +22,7 @@ require('dotenv').config();
 const environment = argv.environment;
 const isProduction = environment === 'prod';
 
-const targetPath = `src/app/environments/environment.ts`;
+const targetPath = `./src/app/environments/environment.ts`;
 
 // Accede a las variables de entorno y genera un string
 // correspondiente al objeto environment que utilizará Angular
