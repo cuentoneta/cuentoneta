@@ -35,7 +35,7 @@ export const environment = {
 `;
 
 // En caso de que no exista el directorio environments, se lo crea
-if (!existsSync('dirPath')) {
+if (!existsSync(dirPath)) {
     mkdirSync(dirPath);
 }
 
