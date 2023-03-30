@@ -8,11 +8,12 @@ import { LaunchIcon, RobotIcon } from '@sanity/icons';
 import { deskTool } from 'sanity/desk';
 import { visionTool } from '@sanity/vision';
 import { sanityComputedField } from 'sanity-plugin-computed-field';
+import { crossDatasetDuplicator } from '@sanity/cross-dataset-duplicator';
 
 export default defineConfig([
     {
         name: 'production-workspace',
-        title: 'La Cuentoneta',
+        title: 'PROD - La Cuentoneta',
         basePath: '/production',
         icon: LaunchIcon,
         projectId: process.env.SANITY_STUDIO_PROJECT_ID,
@@ -22,6 +23,11 @@ export default defineConfig([
                 structure: deskStructure,
             }),
             sanityComputedField(),
+            crossDatasetDuplicator({
+                types: ['story', 'storylist', 'author', 'nationality'],
+                tool: true,
+                follow: []
+            })
         ],
         schema: {
             types: schemas,
@@ -29,7 +35,7 @@ export default defineConfig([
     },
     {
         name: 'dev-workspace',
-        title: 'La Cuentoneta',
+        title: 'DEV - La Cuentoneta',
         basePath: '/development',
         icon: RobotIcon,
         projectId: process.env.SANITY_STUDIO_PROJECT_ID,
