@@ -10,9 +10,9 @@ if (!!result && !('error' in result)) {
         production: false,
         contentConfig: JSON.parse(result['CUENTONETA_CONTENT']),
         sanity: {
-            projectId: result['SANITY_PROJECT_ID'] as string,
-            dataset: result['SANITY_DATASET'] as string,
-            token: result['SANITY_TOKEN'] as string,
+            projectId: result['SANITY_STUDIO_PROJECT_ID'] as string,
+            dataset: result['SANITY_STUDIO_DATASET'] as string,
+            token: result['SANITY_STUDIO_TOKEN'] as string,
         },
     };
 } else {
@@ -21,9 +21,9 @@ if (!!result && !('error' in result)) {
         production: true,
         contentConfig: JSON.parse(process.env['CUENTONETA_CONTENT']),
         sanity: {
-            projectId: process.env['SANITY_PROJECT_ID'] as string,
-            dataset: process.env['SANITY_DATASET'] as string,
-            token: process.env['SANITY_TOKEN'] as string,
+            projectId: process.env['SANITY_STUDIO_PROJECT_ID'] as string,
+            dataset: process.env['SANITY_STUDIO_DATASET'] as string,
+            token: process.env['SANITY_STUDIO_TOKEN'] as string,
         },
     };
 }
