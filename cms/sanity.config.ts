@@ -15,7 +15,7 @@ export default defineConfig([
         title: 'La Cuentoneta',
         basePath: '/production',
         icon: LaunchIcon,
-        projectId: 's4dbqkc5',
+        projectId: process.env.SANITY_STUDIO_PROJECT_ID,
         dataset: 'production',
         plugins: [
             deskTool({
@@ -32,7 +32,7 @@ export default defineConfig([
         title: 'La Cuentoneta',
         basePath: '/development',
         icon: RobotIcon,
-        projectId: 's4dbqkc5',
+        projectId: process.env.SANITY_STUDIO_PROJECT_ID,
         dataset: 'development',
         plugins: [
             deskTool({
