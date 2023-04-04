@@ -44,11 +44,5 @@ export default {
                 hotspot: true,
             },
         },
-        {
-            name: 'stories',
-            title: 'Historias',
-            type: 'array',
-            of: [{ type: 'reference', to: { type: 'story' } }],
-        },
     ],
 };
