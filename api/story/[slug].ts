@@ -10,7 +10,6 @@ export default async function getBySlug(req: VercelRequest, res: VercelResponse)
                               originalLink, 
                               forewords, 
                               categories, 
-                              publishedAt, 
                               body, 
                               review, 
                               forewords, 
