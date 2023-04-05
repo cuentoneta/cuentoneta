@@ -21,3 +21,7 @@ export interface StoryDTO extends StoryBase {
     summary: any[];
     paragraphs: any[];
 }
+
+export interface StoryCard extends Story {
+    author: Omit<Author, 'biography'>;
+}
