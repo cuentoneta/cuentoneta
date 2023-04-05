@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Story } from '../../models/story.model';
+import { Publication } from '../../models/storylist.model';
 
 @Component({
     selector: 'cuentoneta-story-card',
@@ -10,15 +11,15 @@ export class StoryCardComponent implements OnInit {
     @Input() editionPrefix: string | undefined;
     @Input() editionSuffix: string | undefined;
     @Input() displayDate: boolean = false;
-    @Input() story: Story | undefined;
+    @Input() publication: Publication<Story> | undefined;
     @Input() editionIndex: number = 0;
 
     editionLabel: string = '';
 
     ngOnInit() {
-        this.editionLabel = this.editionPrefix + ' ' + this.editionIndex + ' - ' + this.story?.publishedAt;
+        this.editionLabel = this.editionPrefix + ' ' + this.editionIndex + ' - ' + this.publication?.publishingDate;
         this.editionLabel = `${this.editionPrefix} ${this.editionIndex} ${
-            this.displayDate ? ' - ' + this.story?.publishedAt : ''
+            this.displayDate ? ' - ' + this.publication?.publishingDate : ''
         }${this.editionSuffix ? ' | ' + this.editionSuffix : ''}`;
     }
 }

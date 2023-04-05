@@ -6,22 +6,22 @@
     </header>
 
     <ng-container *ngIf="!!storyList; else bodySkeleton">
-        <ng-container *ngFor="let story of storyList.stories; let editionIndex = index">
-            <a [routerLink]="['/story']" [queryParams]="{ slug: story.slug, list: storyList.slug }">
+        <ng-container *ngFor="let publication of storyList.publications; let editionIndex = index">
+            <a [routerLink]="['/story']" [queryParams]="{ slug: publication.story.slug, list: storyList.slug }">
                 <article>
                     <cuentoneta-story-edition-date-label
                         class="edition-and-label"
-                        [label]="getEditionLabel(story, storyList.count - editionIndex)"
+                        [label]="getEditionLabel(publication, storyList.count - editionIndex)"
                     ></cuentoneta-story-edition-date-label>
-                    <h4 class="title">{{ story.title }}</h4>
-                    <h5 class="author">{{ story.author.name }}</h5>
+                    <h4 class="title">{{ publication.story.title }}</h4>
+                    <h5 class="author">{{ publication.story.author.name }}</h5>
                 </article>
             </a>
         </ng-container>
     </ng-container>
 
     <!--    ToDo: Implementar navegación para visualizar lista completa-->
-    <footer *ngIf="storyList && storyList.stories.length > 10">
+    <footer *ngIf="storyList && storyList.publications.length > 10">
         <h3 class="story-list-title">Ver más...</h3>
     </footer>
 </section>

@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { StoryList } from '../../models/storylist.model';
+import { Publication, StoryList } from '../../models/storylist.model';
 import { Story } from '../../models/story.model';
 
 @Component({
@@ -13,7 +13,9 @@ export class StoryNavigationBarComponent {
     dummyList: null[] = Array(10);
 
     // ToDo: Separar card de cada cuento de la lista en su propio componente, para evitar usar un método en el template
-    getEditionLabel(story: Story, editionIndex: number = 0): string {
-        return `${this.storyList?.editionPrefix} ${editionIndex} - ${story.publishedAt}`;
+    getEditionLabel(publication: Publication<Story>, editionIndex: number = 0): string {
+        return `${this.storyList?.editionPrefix} ${editionIndex} ${
+            publication.publishingDate ? ' - ' + publication.publishingDate : ''
+        }`;
     }
 }

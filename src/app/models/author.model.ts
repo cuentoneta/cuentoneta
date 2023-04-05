@@ -3,7 +3,7 @@ export interface Author {
     name: string;
     imageUrl: string;
     nationality: AuthorNationality;
-    biography: string;
+    biography?: string;
     fullBioUrl: string;
 }
 
