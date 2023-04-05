@@ -32,7 +32,7 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
                             review,
                             forewords,
                             approximateReadingTime,
-                            'author': author-> { ..., nationality-> }
+                            'author': author-> { name, image, nationality-> }
                         } | [${(-amount)}..-1]
                     }`;
 
