@@ -1,4 +1,4 @@
-import { Story, StoryDTO } from './story.model';
+import { Story, StoryBase, StoryDTO } from './story.model';
 
 interface StorylistBase {
     title: string;
@@ -10,8 +10,15 @@ interface StorylistBase {
     imageUrl?: string;
 }
 export interface StoryList extends StorylistBase {
-    stories: Story[];
+    publications: Publication<Story>[];
 }
 export interface StoryListDTO extends StorylistBase {
-    stories: StoryDTO[];
+    publications: Publication<StoryDTO>[];
+}
+
+export interface Publication<T extends StoryBase> {
+    order: number;
+    published: boolean;
+    publishingDate?: string;
+    story: T;
 }
