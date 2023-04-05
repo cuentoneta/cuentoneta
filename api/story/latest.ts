@@ -60,7 +60,5 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
         })),
     };
 
-    console.log(storylist)
-
     res.json(storylist);
 }
