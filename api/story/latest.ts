@@ -1,7 +1,6 @@
 import { mapAuthor, mapPrologues } from '../_utils/functions';
 import { client } from '../_helpers/sanity-connector';
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { StoryDAO } from '../_models/story-dao.model';
 
 /**
  * Obtiene las últimas cinco historias almacenadas en Sanity
@@ -19,21 +18,26 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
                         description,
                         language,
                         editionPrefix,
-                        'count': count(stories[]),
-                        'stories': stories[]->{
-                            _id,
-                            'slug': slug.current,
-                            title,
-                            originalLink,
-                            forewords,
-                            categories,
-                            publishedAt,
-                            body[0...2],
-                            review,
-                            forewords,
-                            approximateReadingTime,
-                            'author': author-> { name, image, nationality-> }
-                        } | [${(-amount)}..-1]
+                        'count': count(*[ _type == 'publication' && storylist._ref == ^._id ]),
+                        'publications': *[ _type == 'publication' && storylist._ref == ^._id ] | order(order desc){
+                            order,
+                            publishingDate,
+                            published,
+                            'story': story->{
+                                _id,
+                                'slug': slug.current,
+                                title,
+                                originalLink,
+                                forewords,
+                                categories,
+                                publishedAt,
+                                body[0...2],
+                                review,
+                                forewords,
+                                approximateReadingTime,
+                                'author': author-> { name, image, nationality-> }
+                            }
+                        }[0..${amount}]
                     }`;
 
     const result = await client.fetch(query, {});
@@ -44,15 +48,19 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
 
     const storylist = {
         ...result,
-        stories: result.stories.map((story: StoryDAO) => ({
-            ...story,
-            id: story._id,
-            summary: story.review,
-            paragraphs: story.body,
-            author: mapAuthor(story.author),
-            prologues: mapPrologues(story.forewords),
-        })).reverse(),
+        publications: result.publications.map((publication: any) => ({
+            ...publication,
+            story: {
+                ...publication.story,
+                summary: publication.story.review,
+                paragraphs: publication.story.body,
+                author: mapAuthor(publication.story.author),
+                prologues: mapPrologues(publication.story.forewords),
+            },
+        })),
     };
+
+    console.log(storylist)
 
     res.json(storylist);
 }
