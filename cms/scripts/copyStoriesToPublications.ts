@@ -5,19 +5,20 @@
 import { client } from '../../api/_helpers/sanity-connector';
 import dayjs = require('dayjs');
 
-const fetchStorylists = () => client.fetch(`*[_type == 'storylist' && slug.current == 'verano-2022']`);
+// const fetchStorylists = () => client.fetch(`*[_type == 'storylist' && slug.current == 'verano-2022']`);
+const fetchStorylists = () => client.fetch(`*[_type == 'storylist' && slug.current == 'fec-english-sessions']`);
 
 const buildCommits = (storylist, stories) => {
-
     // console.log(stories);
 
     const date = dayjs('2022-01-01');
+    // const date = dayjs('2022-01-22');
 
     return stories.map((story, index) => {
         return {
             _id: `publication--${storylist._id}--${story._ref}`,
             _type: 'publication',
-            order: index+1,
+            order: index + 1,
             story: { _key: story._key, _ref: story._ref, _type: 'reference' },
             storylist: { _key: storylist._key, _ref: storylist._id, _type: 'reference' },
             // published: true,
