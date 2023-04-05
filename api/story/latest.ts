@@ -10,6 +10,8 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
  */
 export default async function get(req: VercelRequest, res: VercelResponse) {
     const { slug, amount } = req.query;
+    const limit = parseInt(amount as string) - 1;
+
     const query = `*[_type == 'storylist' && slug.current == '${slug}'][0]
                     { 
                         _id,
@@ -37,7 +39,7 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
                                 approximateReadingTime,
                                 'author': author-> { name, image, nationality-> }
                             }
-                        }[0..${amount}]
+                        }[0..${limit}]
                     }`;
 
     const result = await client.fetch(query, {});
