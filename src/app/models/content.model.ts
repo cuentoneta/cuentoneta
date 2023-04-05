@@ -9,6 +9,7 @@ export interface StorylistDeckConfig {
     slug: string;
     highlightFirstRow: boolean;
     amount: number;
+    displayDates: boolean;
 }
 
 export interface StorylistCardDeck extends StorylistDeckConfig {
