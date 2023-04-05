@@ -33,7 +33,6 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
                                 originalLink,
                                 forewords,
                                 categories,
-                                publishedAt,
                                 body[0...2],
                                 review,
                                 forewords,

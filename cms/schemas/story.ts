@@ -85,12 +85,6 @@ export default {
             ],
         },
         {
-            name: 'publishedAt',
-            title: 'Fecha de liberacion',
-            type: 'date',
-            validation: (Rule) => Rule.required(),
-        },
-        {
             name: 'body',
             title: 'Cuerpo del cuento',
             type: 'blockContent',
