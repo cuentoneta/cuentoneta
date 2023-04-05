@@ -1,27 +1,23 @@
 import { Author } from './author.model';
 import { Prologue } from './prologue.model';
 
-export interface Story {
+export interface StoryBase {
     id: number;
-    author: Author;
     title: string;
     slug: string;
+    approximateReadingTime: number;
+    author: Author;
+}
+
+export interface Story extends StoryBase {
     prologues: Prologue[];
     summary: string;
     paragraphs: string[];
-    publishedAt: string;
-    approximateReadingTime: number;
 }
 
 // ToDo: Agregar tipo BlockContent para tratar datos de texto que vienen desde Sanity (#114)
-export interface StoryDTO {
-    id: number;
-    author: Author;
-    title: string;
-    slug: string;
+export interface StoryDTO extends StoryBase {
     prologues: any[];
     summary: any[];
     paragraphs: any[];
-    publishedAt: string;
-    approximateReadingTime: number;
 }
