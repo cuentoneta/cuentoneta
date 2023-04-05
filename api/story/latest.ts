@@ -19,6 +19,7 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
                         title,
                         description,
                         language,
+                        displayDates,
                         editionPrefix,
                         'count': count(*[ _type == 'publication' && storylist._ref == ^._id ]),
                         'publications': *[ _type == 'publication' && storylist._ref == ^._id ] | order(order desc){

@@ -29,6 +29,12 @@ export default {
             type: 'string',
         },
         {
+            name: 'displayDates',
+            title: 'Mostrar fechas',
+            type: 'boolean',
+            initialValue: false,
+        },
+        {
             name: 'editionPrefix',
             title: 'Prefijo de edición',
             description:
