@@ -22,12 +22,12 @@
 
 <ng-template #storylistTemplate>
     <ng-container *ngIf="!!storylist">
-        <ng-container *ngFor="let story of storylist.stories; let editionIndex = index">
-            <a [routerLink]="['/story']" [queryParams]="{ slug: story?.slug, list: storylist.slug }">
+        <ng-container *ngFor="let publication of storylist.publications; let editionIndex = index">
+            <a [routerLink]="['/story']" [queryParams]="{ slug: publication.story.slug, list: storylist.slug }">
                 <cuentoneta-story-card
                     [displayDate]="displayDates"
                     [editionPrefix]="storylist.editionPrefix"
-                    [story]="story"
+                    [publication]="publication"
                     [editionIndex]="storylist.count - editionIndex"
                 ></cuentoneta-story-card>
             </a>

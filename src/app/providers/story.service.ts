@@ -1,15 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Story, StoryDTO } from '../models/story.model';
+import { Story, StoryCard, StoryDTO } from '../models/story.model';
 import { map, Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { StoryList, StoryListDTO } from '../models/storylist.model';
+import { Publication, StoryList, StoryListDTO } from '../models/storylist.model';
 
 @Injectable({ providedIn: 'root' })
 export class StoryService {
-
     constructor(private http: HttpClient) {}
     public getBySlug(slug: string): Observable<Story> {
-        return this.http.get<StoryDTO>(`api/story/${slug}`).pipe(map((story) => this.parseCardContent(story)));
+        return this.http.get<StoryDTO>(`api/story/${slug}`).pipe(map((story) => this.parseStoryContent(story)));
     }
 
     // ToDo: Rediseñar funcionamiento del endpoint de autores.
@@ -27,12 +26,24 @@ export class StoryService {
         return this.http.get<StoryListDTO>(`api/story/latest`, { params }).pipe(
             map((storyList) => ({
                 ...storyList,
-                stories: storyList.stories.map((story: StoryDTO) => this.parseCardContent(story)),
+                publications: storyList.publications.map((publication) => ({
+                    ...publication,
+                    story: this.parseStoryCardContent(publication.story),
+                })) as Publication<StoryCard>[],
             }))
         );
     }
 
-    private parseCardContent(story: StoryDTO): Story {
+    private parseStoryCardContent(story: StoryDTO): StoryCard {
+        return {
+            ...story,
+            prologues: story.prologues ?? [],
+            paragraphs: story?.paragraphs?.map((x: string) => this.parseParagraph(x)) ?? [],
+            summary: story?.summary?.map((x: string) => this.parseParagraph(x))?.pop() ?? '',
+        };
+    }
+
+    private parseStoryContent(story: StoryDTO): Story {
         return {
             ...story,
             prologues: story.prologues ?? [],
