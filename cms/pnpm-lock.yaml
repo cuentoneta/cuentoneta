@@ -4,6 +4,7 @@ specifiers:
   '@sanity/cross-dataset-duplicator': ^1.0.0
   '@sanity/icons': ^2.2.2
   '@sanity/vision': ^3.8.1
+  dayjs: ^1.11.7
   prop-types: ^15.8.1
   react: ^18.2.0
   react-dom: ^18.2.0
@@ -16,6 +17,7 @@ dependencies:
   '@sanity/cross-dataset-duplicator': 1.0.0_in4ddu4pccfjfvcv3vb3fvanua
   '@sanity/icons': 2.2.2_react@18.2.0
   '@sanity/vision': 3.8.1_naxdq4ftv6hnbklxoymdh4kece
+  dayjs: 1.11.7
   prop-types: 15.8.1
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -2062,6 +2064,10 @@ packages:
 
   /date-now/1.0.1:
     resolution: {integrity: sha512-yiizelQCqYLUEVT4zqYihOW6Ird7Qyc6fD3Pv5xGxk4+Jz0rsB1dMN2KyNV6jgOHYh5K+sPGCSOknQN4Upa3pg==}
+    dev: false
+
+  /dayjs/1.11.7:
+    resolution: {integrity: sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==}
     dev: false
 
   /debounce/1.0.0:
