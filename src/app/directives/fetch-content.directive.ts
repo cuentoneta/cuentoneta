@@ -22,7 +22,7 @@ export class FetchContentDirective<T> {
 
     /**
      * @description
-     * Desde un observable con parámetros, se utiliza una función operadora de tipo
+     * Desde un observable con parámetros de routing, se utiliza una función operadora de tipo
      * OperatorFunction<Params, T> para traer contenido de una fuente y mostrar un
      * indicador de carga a lo largo de la llamada.
      * @param params$
