@@ -1,9 +1,16 @@
+// Core
 import { Component, Input, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
+
+// Modules
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonModule } from '@angular/common';
 import { StoryCardModule } from '../story-card/story-card.module';
-import { RouterLink } from '@angular/router';
+
+// Models
 import { StoryList } from '../../models/storylist.model';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+
+
 
 @Component({
     selector: 'cuentoneta-story-list-card-deck',
@@ -15,9 +22,9 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 export class StoryListCardDeckComponent implements OnInit {
     @Input() number: number = 6;
     @Input() storylist: StoryList | undefined;
+    @Input() isLoading: boolean = false; // Utilizado para mostrar/ocultar skeletons
     @Input() highlightFirstRow: boolean = false;
     @Input() displayTitle: boolean = true;
-    @Input() displayDates: boolean = false;
 
     dummyList: null[] = [];
 

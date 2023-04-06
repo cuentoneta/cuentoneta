@@ -3,7 +3,7 @@
 </ng-container>
 
 <div class="stories-card-container" [ngClass]="{ 'highlight-first-row': highlightFirstRow }">
-    <ng-container *ngIf="!storylist; else storylistTemplate">
+    <ng-container *ngIf="!storylist || isLoading; else storylistTemplate">
         <cuentoneta-story-card *ngFor="let skeleton of dummyList"></cuentoneta-story-card>
     </ng-container>
 </div>
@@ -25,7 +25,7 @@
         <ng-container *ngFor="let publication of storylist.publications; let editionIndex = index">
             <a [routerLink]="['/story']" [queryParams]="{ slug: publication.story.slug, list: storylist.slug }">
                 <cuentoneta-story-card
-                    [displayDate]="displayDates"
+                    [displayDate]="storylist.displayDates"
                     [editionPrefix]="storylist.editionPrefix"
                     [publication]="publication"
                     [editionIndex]="storylist.count - editionIndex"
