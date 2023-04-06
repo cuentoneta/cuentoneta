@@ -31,13 +31,11 @@ export class StoryListComponent {
         this.fetchContentDirective
             .fetchContentWithSourceParams$(
                 activatedRoute.queryParams,
-                pipe(
-                    switchMap(({ slug }) => {
-                        return storyService.getLatest(slug, 60);
-                    }),
-                    takeUntil(destroyedDirective.destroyed$)
-                )
+                switchMap(({ slug }) => {
+                    return storyService.getLatest(slug, 60);
+                })
             )
+            .pipe(takeUntil(destroyedDirective.destroyed$))
             .subscribe((storyList) => {
                 this.storyList = storyList;
             });
