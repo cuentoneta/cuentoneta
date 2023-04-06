@@ -4,14 +4,14 @@
 <main>
     <article>
         <header>
-            <ng-container *ngIf="!!story; else titleSkeleton"
+            <ng-container *ngIf="!!story && !fetchContentDirective.isLoading; else titleSkeleton"
                 ><h1 class="title">{{ story.title }}</h1>
                 <p class="subtitle">{{ story.author.name }}</p>
                 <p class="reading-time">{{ story.approximateReadingTime }} minutos de lectura</p>
             </ng-container>
         </header>
 
-        <ng-container *ngIf="!!story">
+        <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
             <section class="prologues" *ngIf="!!story.prologues && story.prologues.length > 0">
                 <ng-container *ngFor="let prologue of story.prologues">
                     <p class="prologue flex items-center">
@@ -23,7 +23,7 @@
         </ng-container>
 
         <section class="content">
-            <ng-container *ngIf="!!story; else contentSkeleton">
+            <ng-container *ngIf="!!story && !fetchContentDirective.isLoading; else contentSkeleton">
                 <ng-container *ngFor="let paragraph of story.paragraphs">
                     <p [innerHTML]="paragraph"></p>
                 </ng-container>
@@ -31,7 +31,7 @@
         </section>
 
         <footer>
-            <ng-container *ngIf="!!story">
+            <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
                 <cuentoneta-bio-summary-card
                     *ngIf="story?.author?.biography"
                     [author]="story.author"
