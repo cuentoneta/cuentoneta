@@ -63,7 +63,7 @@
   <ng-container *ngIf="!animation">
     <header class="card-header">
       <cuentoneta-story-edition-date-label
-        [label]="'Próximo Cuento'"
+        [label]="displayDate ? editionLabel : 'Próximamente'"
       ></cuentoneta-story-edition-date-label>
     </header>
   </ng-container>
