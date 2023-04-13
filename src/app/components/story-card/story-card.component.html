@@ -1,44 +1,172 @@
 <article>
-    <ng-container *ngIf="!!publication; else skeleton">
-        <ng-container *ngIf="publication.story as story">
-            <header class="card-header">
-                <cuentoneta-story-edition-date-label [label]="editionLabel"></cuentoneta-story-edition-date-label>
-            </header>
-            <section>
-                <h1 class="card-title">{{ story.title }}</h1>
-                <!-- ToDo: Optimizar payload tratado para mostrar el resumen de cada tarjeta (#115)-->
-                <p class="content" [innerHTML]="story.paragraphs[0] + ' ' + story.paragraphs[1]"></p>
-            </section>
-            <label class="reading-time">{{ story.approximateReadingTime }} minutos</label>
-            <hr/>
-            <footer class="author-info flex flex-row items-center">
-                <img
-                        class="author-image"
-                        width="40"
-                        height="40"
-                        [alt]="'Retrato de ' + story.author.name"
-                        [ngSrc]="story.author.imageUrl + '?h=40&w=40'"
-                />
-                <div>
-                    <label class="author-name">{{ story.author.name }}</label>
-                    <ng-container *ngIf="story.author.nationality as nationality">
-                        <div class="flex items-center">
-                            <img
-                                    class="flag"
-                                    width="20"
-                                    height="15"
-                                    [alt]="'Bandera de ' + nationality.country"
-                                    [ngSrc]="nationality.flag + '?w=20&h=15'"
-                            />
-                            <label class="country">{{ nationality.country }}</label>
-                        </div>
-                    </ng-container>
-                </div>
-            </footer>
-        </ng-container>
+  <ng-container *ngIf="!!publication && publication.published; else skeleton">
+    <ng-container *ngIf="publication.story as story">
+      <header class="card-header">
+        <cuentoneta-story-edition-date-label
+          [label]="editionLabel"
+        ></cuentoneta-story-edition-date-label>
+      </header>
+      <section>
+        <h1 class="card-title">{{ story.title }}</h1>
+        <!-- ToDo: Optimizar payload tratado para mostrar el resumen de cada tarjeta (#115)-->
+        <p
+          class="content"
+          [innerHTML]="story.paragraphs[0] + ' ' + story.paragraphs[1]"
+        ></p>
+      </section>
+      <label class="reading-time"
+        >{{ story.approximateReadingTime }} minutos</label
+      >
+      <hr />
+      <footer class="author-info flex flex-row items-center">
+        <img
+          class="author-image"
+          width="40"
+          height="40"
+          [alt]="'Retrato de ' + story.author.name"
+          [ngSrc]="story.author.imageUrl + '?h=40&w=40'"
+        />
+        <div>
+          <label class="author-name">{{ story.author.name }}</label>
+          <ng-container *ngIf="story.author.nationality as nationality">
+            <div class="flex items-center">
+              <img
+                class="flag"
+                width="20"
+                height="15"
+                [alt]="'Bandera de ' + nationality.country"
+                [ngSrc]="nationality.flag + '?w=20&h=15'"
+              />
+              <label class="country">{{ nationality.country }}</label>
+            </div>
+          </ng-container>
+        </div>
+      </footer>
     </ng-container>
+  </ng-container>
 </article>
 
 <ng-template #skeleton>
-    <ngx-skeleton-loader count="6" appearance="line"></ngx-skeleton-loader>
+  <ng-container *ngIf="!publication">
+    <ng-container
+      *ngTemplateOutlet="storyCardSkeleton; context: { animation: 'progress' }"
+    ></ng-container>
+  </ng-container>
+  <ng-container *ngIf="!!publication && !publication.published">
+    <ng-container
+      *ngTemplateOutlet="storyCardSkeleton; context: { animation: false }"
+    ></ng-container>
+  </ng-container>
+</ng-template>
+
+<ng-template #storyCardSkeleton let-animation="animation">
+  <ng-container *ngIf="!animation">
+    <header class="card-header">
+      <cuentoneta-story-edition-date-label
+        [label]="'Próximo Cuento'"
+      ></cuentoneta-story-edition-date-label>
+    </header>
+  </ng-container>
+  <ng-container *ngIf="!!animation">
+    <ngx-skeleton-loader
+      count="1"
+      appearance="line"
+      [animation]="animation"
+      [theme]="{
+        height: '20px',
+        'margin-bottom': 0,
+        width: '140px'
+      }"
+    ></ngx-skeleton-loader>
+  </ng-container>
+
+  <div>
+    <ngx-skeleton-loader
+      count="1"
+      appearance="line"
+      [animation]="animation"
+      [theme]="{
+        'background-color': '#D4D4D8',
+        height: '20px',
+        'margin-bottom': '8px',
+        'margin-top': '4px',
+        width: '260px'
+      }"
+    ></ngx-skeleton-loader>
+    <ngx-skeleton-loader
+      count="3"
+      appearance="line"
+      [animation]="animation"
+      [theme]="{
+        height: '16px',
+        'margin-bottom': '4px',
+        'margin-top': '4px'
+      }"
+    ></ngx-skeleton-loader>
+  </div>
+  <ngx-skeleton-loader
+    count="1"
+    appearance="line"
+    [animation]="animation"
+    [theme]="{
+      height: '12px',
+      'margin-bottom': '3px',
+      'margin-top': '3px',
+      width: '60px'
+    }"
+  ></ngx-skeleton-loader>
+  <hr />
+  <div class="flex">
+    <ngx-skeleton-loader
+      count="1"
+      appearance="line"
+      [animation]="animation"
+      [theme]="{
+        'background-color': '#D4D4D8',
+        height: '40px',
+        'margin-bottom': '2px',
+        'margin-top': '2px',
+        'margin-right': '12px',
+        width: '40px'
+      }"
+    ></ngx-skeleton-loader>
+    <div>
+      <ngx-skeleton-loader
+        count="1"
+        appearance="line"
+        [animation]="animation"
+        [theme]="{
+          height: '17px',
+          'margin-top': '2px',
+          'margin-bottom': '4px',
+          width: '140px'
+        }"
+      ></ngx-skeleton-loader>
+      <div class="flex">
+        <ngx-skeleton-loader
+          count="1"
+          appearance="line"
+          [animation]="animation"
+          [theme]="{
+            height: '15px',
+            margin: 0,
+            'margin-right': '8px',
+            'margin-top': '2px',
+            width: '20px'
+          }"
+        ></ngx-skeleton-loader>
+        <ngx-skeleton-loader
+          count="1"
+          appearance="line"
+          [animation]="animation"
+          [theme]="{
+            height: '15px',
+            margin: 0,
+            'margin-top': '2px',
+            width: '50px'
+          }"
+        ></ngx-skeleton-loader>
+      </div>
+    </div>
+  </div>
 </ng-template>
