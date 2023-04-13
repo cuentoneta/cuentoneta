@@ -1,0 +1,7 @@
+@import 'src/assets/scss/theme.scss';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  row-gap: $spacing-4;
+}
