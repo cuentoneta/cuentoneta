@@ -21,6 +21,7 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
                         language,
                         displayDates,
                         editionPrefix,
+                        comingNextLabel,
                         'count': count(*[ _type == 'publication' && storylist._ref == ^._id ]),
                         'publications': *[ _type == 'publication' && storylist._ref == ^._id ] | order(order desc){
                             order,

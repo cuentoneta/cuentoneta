@@ -6,6 +6,7 @@ interface StorylistBase {
     displayDates: boolean;
     editionPrefix: string;
     count: number;
+    comingNextLabel: string;
     description?: string[];
     language?: string;
     imageUrl?: string;
