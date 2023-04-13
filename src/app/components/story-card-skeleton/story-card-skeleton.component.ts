@@ -15,4 +15,5 @@ export class StoryCardSkeletonComponent {
     false;
   @Input() displayDate: boolean = false;
   @Input() editionLabel: string = '';
+  @Input() comingNextLabel: string = 'Próximamente';
 }

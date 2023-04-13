@@ -50,15 +50,14 @@
   <ng-container *ngIf="!publication">
     <cuentoneta-story-card-skeleton
       [animation]="'progress'"
-      [displayDate]="false"
-      [editionLabel]="'abc'"
     ></cuentoneta-story-card-skeleton>
   </ng-container>
   <ng-container *ngIf="!!publication && !publication.published">
     <cuentoneta-story-card-skeleton
-            [animation]="false"
-            [displayDate]="false"
-            [editionLabel]="'abc'"
+      [animation]="false"
+      [displayDate]="false"
+      [editionLabel]="editionLabel"
+      [comingNextLabel]="comingNextLabel"
     ></cuentoneta-story-card-skeleton>
   </ng-container>
 </ng-template>

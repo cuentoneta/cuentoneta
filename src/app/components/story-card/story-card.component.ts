@@ -15,6 +15,7 @@ dayjs.locale('es');
 export class StoryCardComponent implements OnInit {
   @Input() editionPrefix: string | undefined;
   @Input() editionSuffix: string | undefined;
+  @Input() comingNextLabel: string = '';
   @Input() displayDate: boolean = false;
   @Input() publication: Publication<Story> | undefined;
   @Input() editionIndex: number = 0;
@@ -22,11 +23,15 @@ export class StoryCardComponent implements OnInit {
   editionLabel: string = '';
 
   ngOnInit() {
+    const dateFormat = dayjs(this.publication?.publishingDate).format(
+      'DD [de] MMMM, YYYY'
+    );
+
     this.editionLabel = `${this.editionPrefix} ${this.editionIndex} ${
-      this.displayDate
-        ? ' - ' +
-          dayjs(this.publication?.publishingDate).format('DD [de] MMMM, YYYY')
-        : ''
+      this.displayDate ? ' - ' + dateFormat : ''
     }${this.editionSuffix ? ' | ' + this.editionSuffix : ''}`;
+    this.comingNextLabel = this.displayDate
+      ? `${this.comingNextLabel} ${dateFormat}`
+      : this.comingNextLabel;
   }
 }
