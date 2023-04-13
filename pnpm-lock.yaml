@@ -39,6 +39,7 @@ specifiers:
   '@vercel/node': ^2.9.14
   autoprefixer: ^10.4.0
   cypress: ^11.0.0
+  dayjs: ^1.11.7
   dotenv: ^16.0.3
   eslint: ~8.15.0
   eslint-config-prettier: 8.1.0
@@ -73,6 +74,7 @@ dependencies:
   '@sanity/client': 3.4.1
   '@sanity/image-url': 1.0.2
   '@vercel/node': 2.10.0
+  dayjs: 1.11.7
   dotenv: 16.0.3
   ngx-skeleton-loader: 7.0.0_imy7u4geyz7xpmd5teaprpnfzi
   rxjs: 7.5.7
