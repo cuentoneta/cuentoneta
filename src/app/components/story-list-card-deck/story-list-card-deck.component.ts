@@ -9,26 +9,26 @@ import { StoryCardModule } from '../story-card/story-card.module';
 
 // Models
 import { StoryList } from '../../models/storylist.model';
-
-
+import { APP_ROUTE_TREE } from '../../app-routing.module';
 
 @Component({
-    selector: 'cuentoneta-story-list-card-deck',
-    standalone: true,
-    imports: [CommonModule, StoryCardModule, RouterLink, NgxSkeletonLoaderModule],
-    templateUrl: './story-list-card-deck.component.html',
-    styleUrls: ['./story-list-card-deck.component.scss'],
+  selector: 'cuentoneta-story-list-card-deck',
+  standalone: true,
+  imports: [CommonModule, StoryCardModule, RouterLink, NgxSkeletonLoaderModule],
+  templateUrl: './story-list-card-deck.component.html',
+  styleUrls: ['./story-list-card-deck.component.scss'],
 })
 export class StoryListCardDeckComponent implements OnInit {
-    @Input() number: number = 6;
-    @Input() storylist: StoryList | undefined;
-    @Input() isLoading: boolean = false; // Utilizado para mostrar/ocultar skeletons
-    @Input() highlightFirstRow: boolean = false;
-    @Input() displayTitle: boolean = true;
+  @Input() number: number = 6;
+  @Input() storylist: StoryList | undefined;
+  @Input() isLoading: boolean = false; // Utilizado para mostrar/ocultar skeletons
+  @Input() highlightFirstRow: boolean = false;
+  @Input() displayTitle: boolean = true;
 
-    dummyList: null[] = [];
+  dummyList: null[] = [];
+  readonly appRouteTree = APP_ROUTE_TREE;
 
-    ngOnInit() {
-        this.dummyList = Array(this.number);
-    }
+  ngOnInit() {
+    this.dummyList = Array(this.number);
+  }
 }
