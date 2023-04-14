@@ -7,8 +7,9 @@ $cards-grid-gap: $spacing-8;
   grid-gap: $cards-grid-gap;
   grid-template-columns: repeat(6, 1fr);
 
-  &:hover {
-    cursor: pointer;
+  a.disabled {
+    cursor: unset;
+    pointer-events: none;
   }
 
   @media screen and (min-width: $min-lg-width) {
@@ -39,7 +40,7 @@ $cards-grid-gap: $spacing-8;
   margin-top: $cards-grid-gap;
 }
 
-.navigation-link{
+.navigation-link {
   @include inter-body-xl-bold;
   color: $interactive-500;
 }
