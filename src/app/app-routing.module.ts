@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-export const APP_ROUTE_TREE = {
+export const APP_ROUTE_TREE: { [key: string]: string } = {
   HOME: 'home',
   STORY: 'story',
   STORYLIST: 'story-list',
@@ -9,17 +9,17 @@ export const APP_ROUTE_TREE = {
 
 const routes: Routes = [
   {
-    path: APP_ROUTE_TREE.HOME,
+    path: APP_ROUTE_TREE['HOME'],
     loadChildren: () =>
       import('./pages/home/home.module').then((m) => m.HomeModule),
   },
   {
-    path: APP_ROUTE_TREE.STORY,
+    path: APP_ROUTE_TREE['STORY'],
     loadChildren: () =>
       import('./pages/story/story.module').then((m) => m.StoryModule),
   },
   {
-    path: APP_ROUTE_TREE.STORYLIST,
+    path: APP_ROUTE_TREE['STORYLIST'],
     loadChildren: () =>
       import('./pages/story-list/story-list.module').then(
         (m) => m.StoryListModule
