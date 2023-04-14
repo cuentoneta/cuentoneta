@@ -39,7 +39,7 @@
   <ng-container *ngFor="let list of lists">
     <li (click)="onMenuTogglerClicked($event)">
       <a
-        [routerLink]="['/' + appRouteTree.STORYLIST]"
+        [routerLink]="['/' + appRouteTree['STORYLIST']]"
         [queryParams]="{ slug: list.slug }"
         >{{ list.title }}</a
       >
