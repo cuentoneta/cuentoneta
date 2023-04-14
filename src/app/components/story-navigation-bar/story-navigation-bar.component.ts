@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Publication, StoryList } from '../../models/storylist.model';
 import { Story } from '../../models/story.model';
+import { APP_ROUTE_TREE } from '../../app-routing.module';
 
 @Component({
     selector: 'cuentoneta-story-navigation-bar',
@@ -10,6 +11,7 @@ import { Story } from '../../models/story.model';
 export class StoryNavigationBarComponent {
     @Input() storyList!: StoryList;
 
+    readonly appRouteTree = APP_ROUTE_TREE;
     dummyList: null[] = Array(10);
 
     // ToDo: Separar card de cada cuento de la lista en su propio componente, para evitar usar un método en el template

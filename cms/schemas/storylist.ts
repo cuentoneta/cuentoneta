@@ -35,6 +35,14 @@ export default {
             initialValue: false,
         },
         {
+            name: 'comingNextLabel',
+            title: 'Etiqueta de "Próximo"',
+            description:
+                'Etiqueta que se mostrará en una publicación programada dentro de una storylist pero que aún no ha sido publicada.',
+            type: 'string',
+            validation: (Rule) => Rule.required(),
+        },
+        {
             name: 'editionPrefix',
             title: 'Prefijo de edición',
             description:
@@ -51,4 +59,7 @@ export default {
             },
         },
     ],
+    initialValue: {
+        comingNextLabel: 'Próximamente'
+    }
 };

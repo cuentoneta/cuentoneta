@@ -1,45 +1,66 @@
 <ng-container *ngIf="displayTitle && !!storylist; else titleSkeletonTemplate">
-    <h2>{{ storylist.title }}</h2>
+  <h2>{{ storylist.title }}</h2>
 </ng-container>
 
-<div class="stories-card-container" [ngClass]="{ 'highlight-first-row': highlightFirstRow }">
-    <ng-container *ngIf="!storylist; else storylistTemplate">
-        <cuentoneta-story-card *ngFor="let skeleton of dummyList"></cuentoneta-story-card>
-    </ng-container>
+<div
+  class="stories-card-container"
+  [ngClass]="{ 'highlight-first-row': highlightFirstRow }"
+>
+  <ng-container *ngIf="!storylist || isLoading; else storylistTemplate">
+    <cuentoneta-story-card
+      *ngFor="let skeleton of dummyList"
+    ></cuentoneta-story-card>
+  </ng-container>
 </div>
 
 <ng-template #titleSkeletonTemplate>
-    <ngx-skeleton-loader
-        count="1"
-        appearance="line"
-        [theme]="{
-            'height.px': 30,
-            width: '40%',
-            'background-color': 'black'
-        }"
-    ></ngx-skeleton-loader>
+  <ngx-skeleton-loader
+    count="1"
+    appearance="line"
+    [theme]="{
+      'height.px': 30,
+      width: '40%',
+      'background-color': '#D4D4D8'
+    }"
+  ></ngx-skeleton-loader>
 </ng-template>
 
 <ng-template #storylistTemplate>
-    <ng-container *ngIf="!!storylist">
-        <ng-container *ngFor="let publication of storylist.publications; let editionIndex = index">
-            <a [routerLink]="['/story']" [queryParams]="{ slug: publication.story.slug, list: storylist.slug }">
-                <cuentoneta-story-card
-                    [displayDate]="displayDates"
-                    [editionPrefix]="storylist.editionPrefix"
-                    [publication]="publication"
-                    [editionIndex]="storylist.count - editionIndex"
-                ></cuentoneta-story-card>
-            </a>
-        </ng-container>
-        <ng-container *ngIf="storylist.count > 6 || (storylist.count > 5 && highlightFirstRow)">
-            <a
-                [routerLink]="['/story-list']"
-                [queryParams]="{ slug: storylist.slug }"
-                class="navigation-link text-right"
-            >
-                Ver Storylist
-            </a>
-        </ng-container>
+  <ng-container *ngIf="!!storylist">
+    <ng-container
+      *ngFor="
+        let publication of storylist.publications;
+        let editionIndex = index
+      "
+    >
+      <a
+        [class.disabled]="!publication || !publication.published"
+        [routerLink]="
+          !!publication && publication.published
+            ? ['/' + appRouteTree['STORY']]
+            : null
+        "
+        [queryParams]="{ slug: publication.story.slug, list: storylist.slug }"
+      >
+        <cuentoneta-story-card
+          [displayDate]="storylist.displayDates"
+          [editionPrefix]="storylist.editionPrefix"
+          [publication]="publication"
+          [editionIndex]="storylist.count - editionIndex"
+          [comingNextLabel]="storylist.comingNextLabel"
+        ></cuentoneta-story-card>
+      </a>
     </ng-container>
+    <ng-container
+      *ngIf="storylist.count > 6 || (storylist.count > 5 && highlightFirstRow)"
+    >
+      <a
+        [routerLink]="['/' + appRouteTree['STORYLIST']]"
+        [queryParams]="{ slug: storylist.slug }"
+        class="navigation-link text-right"
+      >
+        Ver Storylist
+      </a>
+    </ng-container>
+  </ng-container>
 </ng-template>

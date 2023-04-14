@@ -6,3 +6,8 @@
 @import 'src/assets/scss/theme';
 
 /* You can add global styles to this file, and also import other style files */
+
+ngx-skeleton-loader {
+  display: block;
+  line-height: 0;
+}

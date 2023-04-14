@@ -1,40 +1,49 @@
 <header>
-    <section class="logo flex items-center">
-        <a href="/" class="flex">
-            <img [ngSrc]="'./assets/svg/logo.svg'" width="59" height="32" alt="Imagen logo de 'La Cuentoneta'" />
-            <h3><strong>La Cuentoneta</strong></h3>
-        </a>
-    </section>
+  <section class="logo flex items-center">
+    <a href="/" class="flex">
+      <img
+        [ngSrc]="'./assets/svg/logo.svg'"
+        width="59"
+        height="32"
+        alt="Imagen logo de 'La Cuentoneta'"
+      />
+      <h3><strong>La Cuentoneta</strong></h3>
+    </a>
+  </section>
 
-    <section class="navigation flex items-center justify-end">
-        <nav>
-            <ul class="flex">
-                <ng-container *ngTemplateOutlet="navigationLinks"></ng-container>
-            </ul>
-            <div class="menu-toggler" (click)="onMenuTogglerClicked($event)">
-                <img
-                    [alt]="'Imagen del menú móvil del sitio'"
-                    [ngSrc]="'./assets/svg/menu.svg'"
-                    width="24"
-                    height="24"
-                    alt="Ícono de menú de hamburguesa de 'La Cuentoneta'"
-                />
-            </div>
-        </nav>
-    </section>
+  <section class="navigation flex items-center justify-end">
+    <nav>
+      <ul class="flex">
+        <ng-container *ngTemplateOutlet="navigationLinks"></ng-container>
+      </ul>
+      <div class="menu-toggler" (click)="onMenuTogglerClicked($event)">
+        <img
+          [alt]="'Imagen del menú móvil del sitio'"
+          [ngSrc]="'./assets/svg/menu.svg'"
+          width="24"
+          height="24"
+          alt="Ícono de menú de hamburguesa de 'La Cuentoneta'"
+        />
+      </div>
+    </nav>
+  </section>
 
-    <section class="menu" *ngIf="displayMenu">
-        <ul>
-            <ng-container *ngTemplateOutlet="navigationLinks"></ng-container>
-        </ul>
-    </section>
+  <section class="menu" *ngIf="displayMenu">
+    <ul>
+      <ng-container *ngTemplateOutlet="navigationLinks"></ng-container>
+    </ul>
+  </section>
 </header>
 
 <ng-template #navigationLinks>
-    <ng-container *ngFor="let list of lists">
-        <li (click)="onMenuTogglerClicked($event)">
-            <a [routerLink]="'/story-list'" [queryParams]="{ slug: list.slug }">{{ list.title }}</a>
-        </li>
-    </ng-container>
-    <li><a routerLink="/about">Nosotros</a></li>
+  <ng-container *ngFor="let list of lists">
+    <li (click)="onMenuTogglerClicked($event)">
+      <a
+        [routerLink]="['/' + appRouteTree['STORYLIST']]"
+        [queryParams]="{ slug: list.slug }"
+        >{{ list.title }}</a
+      >
+    </li>
+  </ng-container>
+  <li><a routerLink="/about">Nosotros</a></li>
 </ng-template>

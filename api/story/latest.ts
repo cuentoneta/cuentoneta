@@ -9,10 +9,10 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
  * @returns {Promise<null>}
  */
 export default async function get(req: VercelRequest, res: VercelResponse) {
-    const { slug, amount } = req.query;
-    const limit = parseInt(amount as string) - 1;
+  const { slug, amount } = req.query;
+  const limit = parseInt(amount as string) - 1;
 
-    const query = `*[_type == 'storylist' && slug.current == '${slug}'][0]
+  const query = `*[_type == 'storylist' && slug.current == '${slug}'][0]
                     { 
                         _id,
                         'slug': slug.current,
@@ -21,6 +21,7 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
                         language,
                         displayDates,
                         editionPrefix,
+                        comingNextLabel,
                         'count': count(*[ _type == 'publication' && storylist._ref == ^._id ]),
                         'publications': *[ _type == 'publication' && storylist._ref == ^._id ] | order(order desc){
                             order,
@@ -42,25 +43,28 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
                         }[0..${limit}]
                     }`;
 
-    const result = await client.fetch(query, {});
+  const result = await client.fetch(query, {});
 
-    if (!result) {
-        res.json(null);
-    }
+  if (!result) {
+    res.json(null);
+  }
 
-    const storylist = {
-        ...result,
-        publications: result.publications.map((publication: any) => ({
-            ...publication,
-            story: {
-                ...publication.story,
-                summary: publication.story.review,
-                paragraphs: publication.story.body,
-                author: mapAuthor(publication.story.author),
-                prologues: mapPrologues(publication.story.forewords),
-            },
-        })),
-    };
+  const storylist = {
+    ...result,
+    publications: result.publications.map((publication: any) => {
+      const { review, body, forewords, author, ...story } = publication.story;
+      return {
+        ...publication,
+        story: {
+          ...story,
+          summary: review,
+          paragraphs: body,
+          author: mapAuthor(author),
+          prologues: mapPrologues(forewords),
+        },
+      };
+    }),
+  };
 
-    res.json(storylist);
+  res.json(storylist);
 }
