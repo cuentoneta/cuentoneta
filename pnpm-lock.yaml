@@ -36,7 +36,7 @@ specifiers:
   '@types/node': 16.11.7
   '@typescript-eslint/eslint-plugin': ^5.36.1
   '@typescript-eslint/parser': ^5.36.1
-  '@vercel/node': ^2.9.14
+  '@vercel/node': ^2.10.3
   autoprefixer: ^10.4.0
   cypress: ^11.0.0
   dayjs: ^1.11.7
@@ -73,7 +73,7 @@ dependencies:
   '@nrwl/angular': 15.9.2_4f5i5ca2tcvk7w7ycw4gm6t7u4
   '@sanity/client': 3.4.1
   '@sanity/image-url': 1.0.2
-  '@vercel/node': 2.10.0
+  '@vercel/node': 2.10.3
   dayjs: 1.11.7
   dotenv: 16.0.3
   ngx-skeleton-loader: 7.0.0_imy7u4geyz7xpmd5teaprpnfzi
@@ -608,7 +608,7 @@ packages:
     dependencies:
       '@ampproject/remapping': 2.2.0
       '@babel/code-frame': 7.18.6
-      '@babel/generator': 7.20.14
+      '@babel/generator': 7.21.3
       '@babel/helper-compilation-targets': 7.20.7_@babel+core@7.20.12
       '@babel/helper-module-transforms': 7.21.2
       '@babel/helpers': 7.21.0
@@ -7224,11 +7224,14 @@ packages:
   /@types/eslint/8.21.3:
     resolution: {integrity: sha512-fa7GkppZVEByMWGbTtE5MbmXWJTVbrjjaS8K6uQj+XtuuUv1fsuPAxhygfqLmsb/Ufb3CV8deFCpiMfAgi00Sw==}
     dependencies:
-      '@types/estree': 0.0.51
+      '@types/estree': 1.0.0
       '@types/json-schema': 7.0.11
 
   /@types/estree/0.0.51:
     resolution: {integrity: sha512-CuPgU6f3eT/XgKKPqKd/gLZV1Xmvf1a2R5POBOGQa6uv82xpls89HU5zKeVoyR8XzHd1RGNOlQlvUe3CFkjWNQ==}
+
+  /@types/estree/1.0.0:
+    resolution: {integrity: sha512-WulqXMDUTYAXCjZnk6JtIHPigp55cVtDgDrO2gHRwhyJto21+1zbVCtOYB2L1F9w4qCQ0rOGWBnBe0FNTiEJIQ==}
 
   /@types/express-serve-static-core/4.17.33:
     resolution: {integrity: sha512-TPBqmR/HRYI3eC2E5hmiivIzv+bidAfXofM+sbonAGvyDhySGw9/PQZFt2BLOrjUUR++4eJVpx6KnLQK1Fk9tA==}
@@ -7720,22 +7723,22 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: true
 
-  /@vercel/build-utils/6.5.0:
-    resolution: {integrity: sha512-DMM2YY2/cZ6UWME/JBoHkXu0b2NRNDuVlHN+zPyL+QldLsFi1NnAKFdj8vHmhlgJvF4ba9ZAEe8ZA7w+XihELQ==}
+  /@vercel/build-utils/6.7.1:
+    resolution: {integrity: sha512-Ecc9oQBSVwk1suENcRcj1L6gQrUt4+0XA9oPFxrUpoFEk04lP/ZV3qAQPk+ex08N+vfUulYdqb+cmVTnwqsmqw==}
     dev: false
 
-  /@vercel/node-bridge/3.1.14:
-    resolution: {integrity: sha512-TAbo0rwBenmWywcEup+5lZgr6ILPPq55P33JRX+oJJuTxYib0NqVj47gEvLTxaj3MoJFgp0iDlC9A0uAf4ykxQ==}
+  /@vercel/node-bridge/4.0.1:
+    resolution: {integrity: sha512-XEfKfnLGzlIBpad7eGNPql1HnMhoSTv9q3uDNC4axdaAC/kI5yvl8kXjuCPAXYvpbJnVQPpcSUC5/r5ap8F3jA==}
     dev: false
 
-  /@vercel/node/2.10.0:
-    resolution: {integrity: sha512-MSdfKPct0KIuz2NBHmmI44FKvA3CAehm+Miu5qMA2Aj29vQw2/7yf3bR4L3gUluLFZvg5xRg6jMG+3XRRrmA8g==}
+  /@vercel/node/2.10.3:
+    resolution: {integrity: sha512-R6YwD7YTV4OPEjXnthTP2Zn96ZF2TAjmBhGKfYC9ZuqlmFzSxqyuHn+RUSkknkKBO46b4OzaNdi5XVnAdJizLA==}
     dependencies:
       '@edge-runtime/vm': 2.0.0
       '@types/node': 14.18.33
-      '@vercel/build-utils': 6.5.0
-      '@vercel/node-bridge': 3.1.14
-      '@vercel/static-config': 2.0.14
+      '@vercel/build-utils': 6.7.1
+      '@vercel/node-bridge': 4.0.1
+      '@vercel/static-config': 2.0.15
       edge-runtime: 2.0.0
       esbuild: 0.14.47
       exit-hook: 2.2.1
@@ -7748,8 +7751,8 @@ packages:
       - encoding
     dev: false
 
-  /@vercel/static-config/2.0.14:
-    resolution: {integrity: sha512-Ih0H/V8geRjsNpvD73dphV+y0Pe21RXIJEUW/XI0y7ZrYzLbYQt4AAIvsgfDqcQNm4xEizh3sEXArPWEp18bdQ==}
+  /@vercel/static-config/2.0.15:
+    resolution: {integrity: sha512-A/N3ZGiOOMql9JArwBTIfhFngFtmVC7ndKQKp0FoFq8MO79AS5qBBtdpILS5QA71M5v+9CPjVkHxN6QweU55Xg==}
     dependencies:
       ajv: 8.6.3
       json-schema-to-ts: 1.6.4
