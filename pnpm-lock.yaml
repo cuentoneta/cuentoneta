@@ -34,6 +34,9 @@ dependencies:
   '@sanity/image-url':
     specifier: ^1.0.2
     version: 1.0.2
+  '@types/yargs':
+    specifier: ^17.0.24
+    version: 17.0.24
   '@vercel/node':
     specifier: ^2.10.3
     version: 2.10.3
@@ -180,6 +183,9 @@ devDependencies:
   webpack:
     specifier: ^5.64.0
     version: 5.76.3
+  yargs:
+    specifier: ^17.7.1
+    version: 17.7.1
 
 packages:
 
@@ -3731,7 +3737,7 @@ packages:
       '@types/istanbul-lib-coverage': 2.0.4
       '@types/istanbul-reports': 3.0.1
       '@types/node': 16.11.7
-      '@types/yargs': 17.0.23
+      '@types/yargs': 17.0.24
       chalk: 4.1.2
 
   /@jest/types@29.5.0:
@@ -3742,7 +3748,7 @@ packages:
       '@types/istanbul-lib-coverage': 2.0.4
       '@types/istanbul-reports': 3.0.1
       '@types/node': 16.11.7
-      '@types/yargs': 17.0.23
+      '@types/yargs': 17.0.24
       chalk: 4.1.2
     dev: true
 
@@ -6179,8 +6185,8 @@ packages:
       '@types/yargs-parser': 21.0.0
     dev: true
 
-  /@types/yargs@17.0.23:
-    resolution: {integrity: sha512-yuogunc04OnzGQCrfHx+Kk883Q4X0aSwmYZhKjI21m+SVYzjIbrWl8dOOwSv5hf2Um2pdCOXWo9isteZTNXUZQ==}
+  /@types/yargs@17.0.24:
+    resolution: {integrity: sha512-6i0aC7jV6QzQB8ne1joVZ0eSFIstHsCrobmOtghM11yGlH0j43FKL2UhWdELkyps0zuf7qVTUVCCR+tgSlyLLw==}
     dependencies:
       '@types/yargs-parser': 21.0.0
 
