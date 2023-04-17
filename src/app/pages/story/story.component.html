@@ -1,80 +1,103 @@
 <aside>
-    <cuentoneta-story-navigation-bar [storyList]="storylist"></cuentoneta-story-navigation-bar>
+  <cuentoneta-story-navigation-bar
+    [storyList]="storylist"
+  ></cuentoneta-story-navigation-bar>
 </aside>
 <main>
-    <article>
-        <header>
-            <ng-container *ngIf="!!story && !fetchContentDirective.isLoading; else titleSkeleton"
-                ><h1 class="title">{{ story.title }}</h1>
-                <p class="subtitle">{{ story.author.name }}</p>
-                <p class="reading-time">{{ story.approximateReadingTime }} minutos de lectura</p>
-            </ng-container>
-        </header>
-
-        <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
-            <section class="prologues" *ngIf="!!story.prologues && story.prologues.length > 0">
-                <ng-container *ngFor="let prologue of story.prologues">
-                    <p class="prologue flex items-center">
-                        <span></span>
-                        {{ prologue.text }}&nbsp;<em *ngIf="prologue.reference">{{ prologue.reference }}</em>
-                    </p>
-                </ng-container>
-            </section>
+  <article class="flex justify-between">
+    <div class="story-container">
+      <header>
+        <ng-container
+          *ngIf="
+            !!story && !fetchContentDirective.isLoading;
+            else titleSkeleton
+          "
+          ><h1 class="title">{{ story.title }}</h1>
+          <p class="subtitle">{{ story.author.name }}</p>
+          <p class="reading-time">
+            {{ story.approximateReadingTime }} minutos de lectura
+          </p>
         </ng-container>
+      </header>
 
-        <section class="content">
-            <ng-container *ngIf="!!story && !fetchContentDirective.isLoading; else contentSkeleton">
-                <ng-container *ngFor="let paragraph of story.paragraphs">
-                    <p [innerHTML]="paragraph"></p>
-                </ng-container>
-            </ng-container>
+      <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
+        <section
+          class="prologues"
+          *ngIf="!!story.prologues && story.prologues.length > 0"
+        >
+          <ng-container *ngFor="let prologue of story.prologues">
+            <p class="prologue flex items-center">
+              <span></span>
+              {{ prologue.text }}&nbsp;<em *ngIf="prologue.reference">{{
+                prologue.reference
+              }}</em>
+            </p>
+          </ng-container>
         </section>
+      </ng-container>
 
-        <footer>
-            <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
-                <cuentoneta-bio-summary-card
-                    *ngIf="story?.author?.biography"
-                    [author]="story.author"
-                    [summary]="story.summary"
-                ></cuentoneta-bio-summary-card>
-            </ng-container>
-        </footer>
-    </article>
+      <section class="content">
+        <ng-container
+          *ngIf="
+            !!story && !fetchContentDirective.isLoading;
+            else contentSkeleton
+          "
+        >
+          <ng-container *ngFor="let paragraph of story.paragraphs">
+            <p [innerHTML]="paragraph"></p>
+          </ng-container>
+        </ng-container>
+      </section>
+
+      <footer>
+        <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
+          <cuentoneta-bio-summary-card
+            *ngIf="story?.author?.biography"
+            [author]="story.author"
+            [summary]="story.summary"
+          ></cuentoneta-bio-summary-card>
+        </ng-container>
+      </footer>
+    </div>
+    <div class="share-content-container">
+      <cuentoneta-share-content></cuentoneta-share-content>
+    </div>
+  </article>
 </main>
 
 <ng-template #titleSkeleton>
-    <ngx-skeleton-loader
-        count="1"
-        appearance="line"
-        [theme]="{
-            'height.px': 36,
-            'background-color': '#D4D4D8',
-            width: '50%'
-        }"
-    ></ngx-skeleton-loader>
-    <ngx-skeleton-loader
-        count="1"
-        appearance="line"
-        [theme]="{
-            'height.px': 20,
-            'background-color': '#D4D4D8',
-            width: '25%'
-        }"
-    ></ngx-skeleton-loader>
-    <ngx-skeleton-loader
-        count="1"
-        appearance="line"
-        [theme]="{
-            'height.px': 16,
-            'background-color': '#D4D4D8',
-            width: '20%'
-        }"
-    ></ngx-skeleton-loader>
+  <ngx-skeleton-loader
+    count="1"
+    appearance="line"
+    [theme]="{
+      'height.px': 36,
+      'background-color': '#D4D4D8',
+      width: '50%'
+    }"
+  ></ngx-skeleton-loader>
+  <ngx-skeleton-loader
+    count="1"
+    appearance="line"
+    [theme]="{
+      'height.px': 20,
+      'background-color': '#D4D4D8',
+      width: '25%'
+    }"
+  ></ngx-skeleton-loader>
+  <ngx-skeleton-loader
+    count="1"
+    appearance="line"
+    [theme]="{
+      'height.px': 16,
+      'background-color': '#D4D4D8',
+      width: '20%'
+    }"
+  ></ngx-skeleton-loader>
 </ng-template>
 <ng-template #contentSkeleton>
-    <div class="mb-5" *ngFor="let skeleton of dummyList">
-        <ngx-skeleton-loader></ngx-skeleton-loader>
-        <ngx-skeleton-loader></ngx-skeleton-loader>
-        <ngx-skeleton-loader></ngx-skeleton-loader>
-    </div>
+  <div class="mb-5" *ngFor="let skeleton of dummyList">
+    <ngx-skeleton-loader></ngx-skeleton-loader>
+    <ngx-skeleton-loader></ngx-skeleton-loader>
+    <ngx-skeleton-loader></ngx-skeleton-loader>
+  </div>
 </ng-template>

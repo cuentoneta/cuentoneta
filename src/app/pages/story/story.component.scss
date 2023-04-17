@@ -23,60 +23,63 @@ ngx-skeleton-loader {
 }
 
 article {
-    background-color: $gray-50;
-    padding: $spacing-5;
+  background-color: $gray-50;
+  padding: $spacing-5;
+  .story-container {
+    max-width: 654px;
+  }
 
-    @media screen and (max-width: $max-sm-width) {
-        margin-left: -$spacing-5;
-        margin-right: -$spacing-5;
+  @media screen and (max-width: $max-sm-width) {
+    margin-left: -$spacing-5;
+    margin-right: -$spacing-5;
+  }
+
+  @media screen and (min-width: $min-md-width) {
+    border-radius: $rounded-xl;
+    box-shadow: $box-shadow-card;
+    padding: $spacing-15;
+  }
+
+  header {
+    margin-bottom: $spacing-10;
+
+    .title {
+      margin-bottom: $spacing-2;
     }
 
-    @media screen and (min-width: $min-md-width) {
-        border-radius: $rounded-xl;
-        box-shadow: $box-shadow-card;
-        padding: $spacing-15;
+    .subtitle {
+      @include inter-body-xl;
+      margin-bottom: $spacing-2;
     }
 
-    header {
-        margin-bottom: $spacing-10;
-
-        .title {
-            margin-bottom: $spacing-2;
-        }
-
-        .subtitle {
-            @include inter-body-xl;
-            margin-bottom: $spacing-2;
-        }
-
-        .reading-time {
-            @include inter-body-base-medium;
-            color: $gray-600;
-        }
+    .reading-time {
+      @include inter-body-base-medium;
+      color: $gray-600;
     }
+  }
 
-    .prologues {
-        margin-bottom: $spacing-10;
-        span {
-            border-left: 3px solid $primary-500;
-            margin-right: $spacing-4;
-            height: $spacing-5;
-        }
-        .prologue {
-            @include source-serif-pro-body-lg;
-            color: $gray-700;
-            line-height: 28px;
-        }
+  .prologues {
+    margin-bottom: $spacing-10;
+    span {
+      border-left: 3px solid $primary-500;
+      margin-right: $spacing-4;
+      height: $spacing-5;
     }
+    .prologue {
+      @include source-serif-pro-body-lg;
+      color: $gray-700;
+      line-height: 28px;
+    }
+  }
 
-    .content {
-        p {
-            @include source-serif-pro-body-xl;
-            line-height: $spacing-8;
-            margin-bottom: $spacing-8;
-        }
+  .content {
+    p {
+      @include source-serif-pro-body-xl;
+      line-height: $spacing-8;
+      margin-bottom: $spacing-8;
     }
+  }
 
-    footer {
-    }
+  footer {
+  }
 }
