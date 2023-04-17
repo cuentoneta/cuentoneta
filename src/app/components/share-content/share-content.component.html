@@ -1,1 +1,15 @@
-<p>share-content works!</p>
+<section class="p-3 flex flex-col flex-1">
+  <ng-container *ngFor="let platform of platforms">
+    <button
+      class="flex items-center justify-center"
+      (click)="onShareToPlatformClicked($event, platform)"
+    >
+      <img
+        [alt]="'Compartir en ' + platform.name"
+        [ngSrc]="'assets/svg/' + platform.logo + '.svg'"
+        [height]="24"
+        [width]="24"
+      />
+    </button>
+  </ng-container>
+</section>

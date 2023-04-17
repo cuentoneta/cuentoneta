@@ -1,0 +1,19 @@
+@import 'src/assets/scss/theme.scss';
+
+section {
+  width: 76px;
+  button {
+    border: 1px solid $gray-200;
+    border-radius: 100%;
+    background-color: $gray-100;
+    &:not(:last-child) {
+      margin-bottom: 24px;
+    }
+  }
+
+  img {
+    margin: 12px;
+    width: 24px;
+    height: 24px;
+  }
+}
