@@ -2,7 +2,6 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, switchMap, takeUntil } from 'rxjs';
-import { Meta, Title } from '@angular/platform-browser';
 
 // Models
 import { Story } from '../../models/story.model';
@@ -14,12 +13,17 @@ import { StoryService } from '../../providers/story.service';
 // Directives
 import { DestroyedDirective } from '../../directives/destroyed.directive';
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
+import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 @Component({
   selector: 'cuentoneta-story',
   templateUrl: './story.component.html',
   styleUrls: ['./story.component.scss'],
-  hostDirectives: [DestroyedDirective, FetchContentDirective],
+  hostDirectives: [
+    DestroyedDirective,
+    FetchContentDirective,
+    MetaTagsDirective,
+  ],
 })
 export class StoryComponent {
   fetchContentDirective = inject(FetchContentDirective<[Story, StoryList]>);
@@ -32,9 +36,8 @@ export class StoryComponent {
   constructor() {
     const activatedRoute = inject(ActivatedRoute);
     const destroyedDirective = inject(DestroyedDirective);
+    const metaTagsDirective = inject(MetaTagsDirective);
     const storyService = inject(StoryService);
-    const metaTagService = inject(Meta);
-    const titleService = inject(Title);
 
     this.fetchContentDirective
       .fetchContentWithSourceParams$(
@@ -50,25 +53,12 @@ export class StoryComponent {
       .subscribe(([story, storylist]) => {
         this.story = story;
         this.storylist = storylist;
-        titleService.setTitle(
+        metaTagsDirective.setTitle(
           `${story.title}, de ${story.author.name} - La Cuentoneta`
         );
-        metaTagService.updateTag({
-          name: 'twitter:title',
-          content: `"${story.title}", de ${story.author.name} - La Cuentoneta`,
-        });
-        metaTagService.updateTag({
-          name: 'twitter:description',
-          content: `"${story.title}", de ${story.author.name}. Parte de la colección "${storylist.title}" en La Cuentoneta`,
-        });
-        metaTagService.updateTag({
-          property: 'og:title',
-          content: `"${story.title}", de ${story.author.name} - La Cuentoneta`,
-        });
-        metaTagService.updateTag({
-          property: 'og:description',
-          content: `"${story.title}", de ${story.author.name}. Parte de la colección "${storylist.title}" en La Cuentoneta`,
-        });
+        metaTagsDirective.setDescription(
+          `"${story.title}", de ${story.author.name}. Parte de la colección "${storylist.title}" en La Cuentoneta`
+        );
       });
   }
 }
