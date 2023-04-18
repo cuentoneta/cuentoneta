@@ -45,9 +45,9 @@ export class StoryListComponent {
       .pipe(takeUntil(destroyedDirective.destroyed$))
       .subscribe((storylist) => {
         this.storyList = storylist;
-        metaTagsDirective.setTitle(`${storylist.title} en La Cuentoneta`);
+        metaTagsDirective.setTitle(`"${storylist.title}" en La Cuentoneta`);
         metaTagsDirective.setDescription(
-          `Colección "${storylist.title}", una storylist en La Cuentoneta`
+          `Colección "${storylist.title}", una storylist en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`
         );
       });
   }

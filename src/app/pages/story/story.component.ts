@@ -54,10 +54,10 @@ export class StoryComponent {
         this.story = story;
         this.storylist = storylist;
         metaTagsDirective.setTitle(
-          `${story.title}, de ${story.author.name} - La Cuentoneta`
+          `${story.title}, de ${story.author.name} en La Cuentoneta`
         );
         metaTagsDirective.setDescription(
-          `"${story.title}", de ${story.author.name}. Parte de la colección "${storylist.title}" en La Cuentoneta`
+          `"${story.title}", de ${story.author.name}. Parte de la colección "${storylist.title}" en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`
         );
       });
   }
