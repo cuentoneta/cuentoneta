@@ -67,7 +67,7 @@ export class StoryComponent {
         });
         metaTagService.updateTag({
           property: 'og:description',
-          content: `"${story.title}", de ${story.author.name}. parte de la colección "${storylist.title}" en La Cuentoneta`,
+          content: `"${story.title}", de ${story.author.name}. Parte de la colección "${storylist.title}" en La Cuentoneta`,
         });
       });
   }
