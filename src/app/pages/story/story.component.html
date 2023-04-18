@@ -60,7 +60,13 @@
       </footer>
     </div>
     <div class="share-content-container">
-      <cuentoneta-share-content></cuentoneta-share-content>
+      <ng-container *ngIf="!!story && !!storylist">
+        <cuentoneta-share-content
+          [params]="{ slug: story.slug, list: storylist.slug }"
+          [route]="appRouteTree['STORY']"
+          [message]="shareMessage"
+        ></cuentoneta-share-content>
+      </ng-container>
     </div>
   </article>
 </main>
