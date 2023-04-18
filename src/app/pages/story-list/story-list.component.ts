@@ -1,7 +1,8 @@
 // Core
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { pipe, switchMap, takeUntil } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs';
+import { Meta, Title } from '@angular/platform-browser';
 
 // Models
 import { StoryList } from '../../models/storylist.model';
@@ -27,6 +28,8 @@ export class StoryListComponent {
         const activatedRoute = inject(ActivatedRoute);
         const destroyedDirective = inject(DestroyedDirective);
         const storyService = inject(StoryService);
+        const metaTagService = inject(Meta);
+        const titleService = inject(Title);
 
         this.fetchContentDirective
             .fetchContentWithSourceParams$(
@@ -36,8 +39,27 @@ export class StoryListComponent {
                 })
             )
             .pipe(takeUntil(destroyedDirective.destroyed$))
-            .subscribe((storyList) => {
-                this.storyList = storyList;
+            .subscribe((storylist) => {
+                this.storyList = storylist;
+                titleService.setTitle(
+                    `${storylist.title} - La Cuentoneta`
+                );
+                metaTagService.updateTag({
+                    name: 'twitter:title',
+                    content: `"${storylist.title} en La Cuentoneta"`,
+                });
+                metaTagService.updateTag({
+                    name: 'twitter:description',
+                    content: `Colección "${storylist.title}", una storylist en La Cuentoneta`,
+                });
+                metaTagService.updateTag({
+                    property: 'og:title',
+                    content: `"${storylist.title} en La Cuentoneta"`,
+                });
+                metaTagService.updateTag({
+                    property: 'og:description',
+                    content: `Colección "${storylist.title}", una storylist en La Cuentoneta`,
+                });
             });
     }
 }
