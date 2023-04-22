@@ -2,6 +2,7 @@
   <ng-container *ngFor="let platform of platforms">
     <button
       class="flex items-center justify-center"
+      [title]="'Compartir en ' + platform.name"
       (click)="onShareToPlatformClicked($event, platform)"
     >
       <img
