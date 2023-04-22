@@ -5,14 +5,8 @@ ngx-skeleton-loader {
 }
 
 :host {
-    @media screen and (max-width: $max-md-width) {
-        display: block;
-        aside {
-            display: none;
-        }
-    }
 
-    @media screen and (min-width: $min-lg-width) {
+    @media screen and (min-width: $min-md-width) {
         display: grid;
         margin-top: $spacing-28;
 
@@ -37,21 +31,10 @@ article {
     padding: $spacing-15;
   }
 
-  .share-content-container {
-    float: right;
-    margin: 0 0 $spacing-12 $spacing-12;
-  }
 
   header {
-    margin-bottom: $spacing-10;
-
-    .title {
-      margin-bottom: $spacing-2;
-    }
-
     .subtitle {
       @include inter-body-xl;
-      margin-bottom: $spacing-2;
     }
 
     .reading-time {
