@@ -25,9 +25,6 @@ ngx-skeleton-loader {
 article {
   background-color: $gray-50;
   padding: $spacing-5;
-  .story-container {
-    max-width: 654px;
-  }
 
   @media screen and (max-width: $max-sm-width) {
     margin-left: -$spacing-5;
@@ -38,6 +35,11 @@ article {
     border-radius: $rounded-xl;
     box-shadow: $box-shadow-card;
     padding: $spacing-15;
+  }
+
+  .share-content-container {
+    float: right;
+    margin: 0 0 $spacing-12 $spacing-12;
   }
 
   header {

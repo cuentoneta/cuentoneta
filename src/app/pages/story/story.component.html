@@ -4,57 +4,8 @@
   ></cuentoneta-story-navigation-bar>
 </aside>
 <main>
-  <article class="flex justify-between">
-    <div class="story-container">
-      <header>
-        <ng-container
-          *ngIf="
-            !!story && !fetchContentDirective.isLoading;
-            else titleSkeleton
-          "
-          ><h1 class="title">{{ story.title }}</h1>
-          <p class="subtitle">{{ story.author.name }}</p>
-          <p class="reading-time">
-            {{ story.approximateReadingTime }} minutos de lectura
-          </p>
-        </ng-container>
-      </header>
-
-        <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
-            <section class="prologues flex" *ngIf="!!story.prologues && story.prologues.length > 0">
-                <ng-container *ngFor="let prologue of story.prologues">
-                    <div class="bar"></div>
-                    <p class="prologue flex items-center">
-                        {{ prologue.text }}&nbsp;<em *ngIf="prologue.reference">{{ prologue.reference }}</em>
-                    </p>
-                </ng-container>
-            </section>
-        </ng-container>
-
-      <section class="content">
-        <ng-container
-          *ngIf="
-            !!story && !fetchContentDirective.isLoading;
-            else contentSkeleton
-          "
-        >
-          <ng-container *ngFor="let paragraph of story.paragraphs">
-            <p [innerHTML]="paragraph"></p>
-          </ng-container>
-        </ng-container>
-      </section>
-
-      <footer>
-        <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
-          <cuentoneta-bio-summary-card
-            *ngIf="story?.author?.biography"
-            [author]="story.author"
-            [summary]="story.summary"
-          ></cuentoneta-bio-summary-card>
-        </ng-container>
-      </footer>
-    </div>
-    <div class="share-content-container">
+  <article>
+    <aside class="share-content-container">
       <ng-container *ngIf="!!story && !!storylist">
         <cuentoneta-share-content
           [params]="{ slug: story.slug, list: storylist.slug }"
@@ -62,7 +13,57 @@
           [message]="shareMessage"
         ></cuentoneta-share-content>
       </ng-container>
-    </div>
+    </aside>
+
+    <header>
+      <ng-container
+        *ngIf="!!story && !fetchContentDirective.isLoading; else titleSkeleton"
+        ><h1 class="title">{{ story.title }}</h1>
+        <p class="subtitle">{{ story.author.name }}</p>
+        <p class="reading-time">
+          {{ story.approximateReadingTime }} minutos de lectura
+        </p>
+      </ng-container>
+    </header>
+
+    <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
+      <section
+        class="prologues flex"
+        *ngIf="!!story.prologues && story.prologues.length > 0"
+      >
+        <ng-container *ngFor="let prologue of story.prologues">
+          <div class="bar"></div>
+          <p class="prologue flex items-center">
+            {{ prologue.text }}&nbsp;<em *ngIf="prologue.reference">{{
+              prologue.reference
+            }}</em>
+          </p>
+        </ng-container>
+      </section>
+    </ng-container>
+
+    <section class="content">
+      <ng-container
+        *ngIf="
+          !!story && !fetchContentDirective.isLoading;
+          else contentSkeleton
+        "
+      >
+        <ng-container *ngFor="let paragraph of story.paragraphs">
+          <p [innerHTML]="paragraph"></p>
+        </ng-container>
+      </ng-container>
+    </section>
+
+    <footer>
+      <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
+        <cuentoneta-bio-summary-card
+          *ngIf="story?.author?.biography"
+          [author]="story.author"
+          [summary]="story.summary"
+        ></cuentoneta-bio-summary-card>
+      </ng-container>
+    </footer>
   </article>
 </main>
 
