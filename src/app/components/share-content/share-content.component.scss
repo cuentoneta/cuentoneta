@@ -1,19 +1,23 @@
 @import 'src/assets/scss/theme.scss';
 
 section {
-  width: 76px;
   button {
     border: 1px solid $gray-200;
     border-radius: 100%;
     background-color: $gray-100;
+    height: $spacing-12;
+    width: $spacing-12;
     &:not(:last-child) {
-      margin-bottom: 24px;
+      margin-right: $spacing-6;
+    }
+    &:hover{
+      background-color: $gray-200;
     }
   }
 
   img {
-    margin: 12px;
-    width: 24px;
-    height: 24px;
+    margin: $spacing-3;
+    width: $spacing-6;
+    height: $spacing-6;
   }
 }
