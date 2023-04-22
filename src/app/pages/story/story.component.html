@@ -20,21 +20,16 @@
         </ng-container>
       </header>
 
-      <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
-        <section
-          class="prologues"
-          *ngIf="!!story.prologues && story.prologues.length > 0"
-        >
-          <ng-container *ngFor="let prologue of story.prologues">
-            <p class="prologue flex items-center">
-              <span></span>
-              {{ prologue.text }}&nbsp;<em *ngIf="prologue.reference">{{
-                prologue.reference
-              }}</em>
-            </p>
-          </ng-container>
-        </section>
-      </ng-container>
+        <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
+            <section class="prologues flex" *ngIf="!!story.prologues && story.prologues.length > 0">
+                <ng-container *ngFor="let prologue of story.prologues">
+                    <div class="bar"></div>
+                    <p class="prologue flex items-center">
+                        {{ prologue.text }}&nbsp;<em *ngIf="prologue.reference">{{ prologue.reference }}</em>
+                    </p>
+                </ng-container>
+            </section>
+        </ng-container>
 
       <section class="content">
         <ng-container

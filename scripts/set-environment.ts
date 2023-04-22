@@ -10,12 +10,19 @@
  * Autor: @rolivencia
  */
 
-// ToDo: Migrar a imports
-const { writeFile, existsSync, mkdirSync } = require('fs');
-const { argv } = require('yargs');
+import { writeFile, existsSync, mkdirSync } from 'fs';
+import yargs from 'yargs/yargs';
+import * as dotenv from 'dotenv';
+import ErrnoException = NodeJS.ErrnoException;
 
 // Leer variables de entorno desde .env
-require('dotenv').config();
+dotenv.config();
+
+const argv = yargs(process.argv.slice(2))
+  .options({
+    environment: { type: 'string', default: 'dev' },
+  })
+  .parseSync();
 
 // Lee la línea de comandos pasada con yargs
 // -- environment: nombre del entorno donde se ejecuta el script
@@ -36,15 +43,19 @@ export const environment = {
 
 // En caso de que no exista el directorio environments, se lo crea
 if (!existsSync(dirPath)) {
-    mkdirSync(dirPath);
+  mkdirSync(dirPath);
 }
 
 // Escribe el contenido en el archivo correspondiente environment.ts
-writeFile(targetPath, environmentFileContent, { flag: 'wx+' }, function (err: any) {
+writeFile(
+  targetPath,
+  environmentFileContent,
+  { flag: 'w' },
+  function (err: ErrnoException | null) {
     if (err) {
-        console.log(err);
-        return;
+      console.log(err);
+      return;
     }
-
-    console.log(`Wrote variables to ${targetPath}`);
-});
+    console.log(`Variables de entorno escritas en ${targetPath}`);
+  }
+);

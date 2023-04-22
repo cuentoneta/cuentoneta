@@ -60,10 +60,10 @@ article {
 
   .prologues {
     margin-bottom: $spacing-10;
-    span {
+    .bar {
       border-left: 3px solid $primary-500;
       margin-right: $spacing-4;
-      height: $spacing-5;
+
     }
     .prologue {
       @include source-serif-pro-body-lg;
