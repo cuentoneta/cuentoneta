@@ -120,7 +120,7 @@ class TwitterPlatform implements SharingPlatform {
       url: encodeURIComponent(
         `${environment.website}/${appRoute}?${urlParams}`
       ),
-      text: message,
+      text: message + '%0a%0a',
     };
 
     const serializedApiQueryParams = Object.keys(queryParams).map(
