@@ -91,7 +91,7 @@ class WhatsappPlatform implements SharingPlatform {
   ): string {
     const sharedUrl = `${environment.website}/${appRoute}?${urlParams}`;
     const queryParams: { [key: string]: string } = {
-      text: `${message}:%20${sharedUrl}`,
+      text: `${message}%0a%0a${sharedUrl}`,
     };
 
     const serializedApiQueryParams = Object.keys(queryParams).map(
