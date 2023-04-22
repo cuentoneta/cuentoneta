@@ -34,6 +34,7 @@ export class StoryComponent {
   storylist!: StoryList;
 
   dummyList = Array(10);
+  shareContentParams: { [key: string]: string } = {}
   shareMessage: string = '';
 
   constructor() {
@@ -62,6 +63,7 @@ export class StoryComponent {
         metaTagsDirective.setDescription(
           `"${story.title}", de ${story.author.name}. Parte de la colección "${storylist.title}" en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`
         );
+        this.shareContentParams = { slug: story.slug, list: storylist.slug };
         this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos de la colección "${storylist.title}" en este link:`;
       });
   }
