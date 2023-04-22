@@ -15,6 +15,15 @@ section {
     }
   }
 
+  ngx-skeleton-loader {
+    div {
+      margin: 0;
+    }
+    &:not(:last-child) {
+      margin-right: $spacing-6;
+    }
+  }
+
   img {
     margin: $spacing-3;
     width: $spacing-6;

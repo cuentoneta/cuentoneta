@@ -1,18 +1,20 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { environment } from '../../environments/environment';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
   selector: 'cuentoneta-share-content',
   standalone: true,
-  imports: [CommonModule, NgOptimizedImage],
+  imports: [ CommonModule, NgOptimizedImage, NgxSkeletonLoaderModule ],
   templateUrl: './share-content.component.html',
   styleUrls: ['./share-content.component.scss'],
 })
 export class ShareContentComponent {
   @Input() route: string = '';
-  @Input() params: { [p: string]: string } = {};
+  @Input() params: { [key: string]: string } = {};
   @Input() message: string = '';
+  @Input() isLoading: boolean = false;
 
   platforms: SharingPlatform[] = [
     new FacebookPlatform(),
