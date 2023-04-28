@@ -1,80 +1,111 @@
-<aside>
-    <cuentoneta-story-navigation-bar [storyList]="storylist"></cuentoneta-story-navigation-bar>
+<aside class="hidden md:block">
+  <cuentoneta-story-navigation-bar
+          [storyList]="storylist"
+  ></cuentoneta-story-navigation-bar>
 </aside>
 <main>
-    <article>
-        <header>
-            <ng-container *ngIf="!!story && !fetchContentDirective.isLoading; else titleSkeleton"
-                ><h1 class="title">{{ story.title }}</h1>
-                <p class="subtitle">{{ story.author.name }}</p>
-                <p class="reading-time">{{ story.approximateReadingTime }} minutos de lectura</p>
-            </ng-container>
-        </header>
-
-        <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
-            <section class="prologues flex" *ngIf="!!story.prologues && story.prologues.length > 0">
-                <ng-container *ngFor="let prologue of story.prologues">
-                    <div class="bar"></div>
-                    <p class="prologue flex items-center">
-                        {{ prologue.text }}&nbsp;<em *ngIf="prologue.reference">{{ prologue.reference }}</em>
-                    </p>
-                </ng-container>
-            </section>
+  <article>
+    <header class="flex flex-col-reverse sm:block mb-6 sm:mb-10">
+      <aside class="sm:float-right mt-6 sm:ml-12 sm:mb-12 sm:mt-0">
+        <cuentoneta-share-content
+                [isLoading]="!story"
+                [params]="shareContentParams"
+                [route]="appRouteTree['STORY']"
+                [message]="shareMessage"
+        ></cuentoneta-share-content>
+      </aside>
+      <div>
+        <ng-container
+                *ngIf="
+            !!story && !fetchContentDirective.isLoading;
+            else titleSkeleton
+          "
+        >
+          <h1 class="title mb-2">{{ story.title }}</h1>
+          <p class="subtitle mb-2">{{ story.author.name }}</p>
+          <p class="reading-time">
+            {{ story.approximateReadingTime }} minutos de lectura
+          </p>
         </ng-container>
+      </div>
+    </header>
 
-        <section class="content">
-            <ng-container *ngIf="!!story && !fetchContentDirective.isLoading; else contentSkeleton">
-                <ng-container *ngFor="let paragraph of story.paragraphs">
-                    <p [innerHTML]="paragraph"></p>
-                </ng-container>
-            </ng-container>
-        </section>
+    <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
+      <section
+              class="prologues flex"
+              *ngIf="!!story.prologues && story.prologues.length > 0"
+      >
+        <ng-container *ngFor="let prologue of story.prologues">
+          <div class="bar"></div>
+          <p class="prologue flex flex-col md:flex-row md:items-center">
+            {{ prologue.text }}&nbsp;<em
+                  class="self-end"
+                  *ngIf="prologue.reference"
+          >{{ prologue.reference }}</em
+          >
+          </p>
+        </ng-container>
+      </section>
+    </ng-container>
 
-        <footer>
-            <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
-                <cuentoneta-bio-summary-card
-                    *ngIf="story?.author?.biography"
-                    [author]="story.author"
-                    [summary]="story.summary"
-                ></cuentoneta-bio-summary-card>
-            </ng-container>
-        </footer>
-    </article>
+    <section class="content">
+      <ng-container
+              *ngIf="
+          !!story && !fetchContentDirective.isLoading;
+          else contentSkeleton
+        "
+      >
+        <ng-container *ngFor="let paragraph of story.paragraphs">
+          <p [innerHTML]="paragraph"></p>
+        </ng-container>
+      </ng-container>
+    </section>
+
+    <footer>
+      <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
+        <cuentoneta-bio-summary-card
+                *ngIf="story?.author?.biography"
+                [author]="story.author"
+                [summary]="story.summary"
+        ></cuentoneta-bio-summary-card>
+      </ng-container>
+    </footer>
+  </article>
 </main>
 
 <ng-template #titleSkeleton>
-    <ngx-skeleton-loader
-        count="1"
-        appearance="line"
-        [theme]="{
-            'height.px': 36,
-            'background-color': '#D4D4D8',
-            width: '50%'
-        }"
-    ></ngx-skeleton-loader>
-    <ngx-skeleton-loader
-        count="1"
-        appearance="line"
-        [theme]="{
-            'height.px': 20,
-            'background-color': '#D4D4D8',
-            width: '25%'
-        }"
-    ></ngx-skeleton-loader>
-    <ngx-skeleton-loader
-        count="1"
-        appearance="line"
-        [theme]="{
-            'height.px': 16,
-            'background-color': '#D4D4D8',
-            width: '20%'
-        }"
-    ></ngx-skeleton-loader>
+  <ngx-skeleton-loader
+          count="1"
+          appearance="line"
+          [theme]="{
+      'height.px': 36,
+      'background-color': '#D4D4D8',
+      width: '50%'
+    }"
+  ></ngx-skeleton-loader>
+  <ngx-skeleton-loader
+          count="1"
+          appearance="line"
+          [theme]="{
+      'height.px': 20,
+      'background-color': '#D4D4D8',
+      width: '25%'
+    }"
+  ></ngx-skeleton-loader>
+  <ngx-skeleton-loader
+          count="1"
+          appearance="line"
+          [theme]="{
+      'height.px': 16,
+      'background-color': '#D4D4D8',
+      width: '20%'
+    }"
+  ></ngx-skeleton-loader>
 </ng-template>
 <ng-template #contentSkeleton>
-    <div class="mb-5" *ngFor="let skeleton of dummyList">
-        <ngx-skeleton-loader></ngx-skeleton-loader>
-        <ngx-skeleton-loader></ngx-skeleton-loader>
-        <ngx-skeleton-loader></ngx-skeleton-loader>
-    </div>
+  <div class="mb-5" *ngFor="let skeleton of dummyList">
+    <ngx-skeleton-loader></ngx-skeleton-loader>
+    <ngx-skeleton-loader></ngx-skeleton-loader>
+    <ngx-skeleton-loader></ngx-skeleton-loader>
+  </div>
 </ng-template>

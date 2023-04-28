@@ -14,6 +14,7 @@ import { StoryService } from '../../providers/story.service';
 import { DestroyedDirective } from '../../directives/destroyed.directive';
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { APP_ROUTE_TREE } from '../../app-routing.module';
 
 @Component({
   selector: 'cuentoneta-story',
@@ -26,12 +27,15 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
   ],
 })
 export class StoryComponent {
+  readonly appRouteTree = APP_ROUTE_TREE;
   fetchContentDirective = inject(FetchContentDirective<[Story, StoryList]>);
 
   story!: Story;
   storylist!: StoryList;
 
   dummyList = Array(10);
+  shareContentParams: { [key: string]: string } = {}
+  shareMessage: string = '';
 
   constructor() {
     const activatedRoute = inject(ActivatedRoute);
@@ -59,6 +63,8 @@ export class StoryComponent {
         metaTagsDirective.setDescription(
           `"${story.title}", de ${story.author.name}. Parte de la colección "${storylist.title}" en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`
         );
+        this.shareContentParams = { slug: story.slug, list: storylist.slug };
+        this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos de la colección "${storylist.title}" en este link:`;
       });
   }
 }

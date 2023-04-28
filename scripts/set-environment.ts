@@ -37,7 +37,8 @@ const targetPath = `${dirPath}/environment.ts`;
 const environmentFileContent = `
 export const environment = {
    production: ${isProduction},
-   contentConfig: ${process.env['CUENTONETA_CONTENT']}
+   contentConfig: ${process.env['CUENTONETA_CONTENT']},
+   website: "${process.env['CUENTONETA_WEBSITE']}"
 };
 `;
 

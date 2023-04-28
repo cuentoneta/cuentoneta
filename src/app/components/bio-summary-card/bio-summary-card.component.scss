@@ -1,6 +1,6 @@
 @import 'src/assets/scss/theme.scss';
 
-.container {
+.bio-card-container {
     border: 1px solid $gray-200;
     background-color: $gray-100;
     border-radius: $rounded;
@@ -9,23 +9,23 @@
     .author-info {
         display: grid;
 
-        @media screen and (max-width: $max-sm-width) {
+        @media screen and (max-width: $max-xs-width) {
             grid-template-columns: [col] $spacing-16 [col] 1fr;
             grid-template-rows: [row] auto [row] auto;
 
             .author-image {
                 grid-column: col / span 1;
-                grid-row: row;
+                grid-row: row / span 2;
             }
 
             .author-bio-link {
-                grid-column: col / span 2;
+                grid-column: col 2 / span 1;
                 grid-row: row 2;
                 justify-content: center;
             }
         }
 
-        @media screen and (min-width: $min-md-width) {
+        @media screen and (min-width: $min-sm-width) {
             grid-template-columns: $spacing-16 1fr $spacing-32;
         }
 
