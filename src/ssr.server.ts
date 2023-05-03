@@ -23,7 +23,7 @@ export function app(): express.Express {
     server.set('views', distFolder);
 
     // TODO: implement data requests securely
-    server.get('/api/**', (req: any, res: any) => {
+    server.get('/api/**', (req, res) => {
         res.status(404).send('data requests are not yet supported');
     });
 
@@ -33,7 +33,7 @@ export function app(): express.Express {
     }));
 
     // All regular routes use the Universal engine
-    server.get('*', (req: any, res: any) => {
+    server.get('*', (req, res) => {
         res.render(indexHtml, { req, providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }] });
     });
 
