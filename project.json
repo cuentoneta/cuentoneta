@@ -1,113 +1,170 @@
 {
-    "name": "cuentoneta",
-    "$schema": "node_modules/nx/schemas/project-schema.json",
-    "projectType": "application",
-    "sourceRoot": "./src",
-    "prefix": "cuentoneta",
-    "targets": {
-        "build": {
-            "executor": "@angular-devkit/build-angular:browser",
-            "outputs": ["{options.outputPath}"],
-            "options": {
-                "outputPath": "dist/cuentoneta",
-                "index": "./src/index.html",
-                "main": "./src/main.ts",
-                "polyfills": ["zone.js"],
-                "tsConfig": "./tsconfig.app.json",
-                "inlineStyleLanguage": "scss",
-                "assets": ["./src/favicon.ico", "./src/assets"],
-                "styles": ["./src/styles.scss"],
-                "scripts": []
+  "name": "cuentoneta",
+  "$schema": "node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "./src",
+  "prefix": "cuentoneta",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/cuentoneta/browser",
+        "index": "./src/index.html",
+        "main": "./src/main.ts",
+        "polyfills": [
+          "zone.js"
+        ],
+        "tsConfig": "./tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          "./src/favicon.ico",
+          "./src/assets"
+        ],
+        "styles": [
+          "./src/styles.scss"
+        ],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
             },
-            "configurations": {
-                "production": {
-                    "budgets": [
-                        {
-                            "type": "initial",
-                            "maximumWarning": "500kb",
-                            "maximumError": "1mb"
-                        },
-                        {
-                            "type": "anyComponentStyle",
-                            "maximumWarning": "2kb",
-                            "maximumError": "4kb"
-                        }
-                    ],
-                    "outputHashing": "all"
-                },
-                "development": {
-                    "buildOptimizer": false,
-                    "optimization": false,
-                    "vendorChunk": true,
-                    "extractLicenses": false,
-                    "sourceMap": true,
-                    "namedChunks": true
-                }
-            },
-            "defaultConfiguration": "production"
-        },
-        "serve": {
-            "executor": "@angular-devkit/build-angular:dev-server",
-            "configurations": {
-                "production": {
-                    "browserTarget": "cuentoneta:build:production"
-                },
-                "development": {
-                    "browserTarget": "cuentoneta:build:development"
-                }
-            },
-            "defaultConfiguration": "development"
-        },
-        "extract-i18n": {
-            "executor": "@angular-devkit/build-angular:extract-i18n",
-            "options": {
-                "browserTarget": "cuentoneta:build"
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
             }
+          ],
+          "outputHashing": "all"
         },
-        "lint": {
-            "executor": "@nrwl/linter:eslint",
-            "outputs": ["{options.outputFile}"],
-            "options": {
-                "lintFilePatterns": ["./src/**/*.ts", "./src/**/*.html"]
-            }
-        },
-        "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
-            "options": {
-                "jestConfig": "jest.config.ts",
-                "passWithNoTests": true
-            }
-        },
-        "storybook": {
-            "executor": "@storybook/angular:start-storybook",
-            "options": {
-                "port": 4400,
-                "configDir": "./.storybook",
-                "browserTarget": "cuentoneta:build",
-                "compodoc": false
-            },
-            "configurations": {
-                "ci": {
-                    "quiet": true
-                }
-            }
-        },
-        "build-storybook": {
-            "executor": "@storybook/angular:build-storybook",
-            "outputs": ["{options.outputDir}"],
-            "options": {
-                "outputDir": "dist/storybook/cuentoneta",
-                "configDir": "./.storybook",
-                "browserTarget": "cuentoneta:build",
-                "compodoc": false
-            },
-            "configurations": {
-                "ci": {
-                    "quiet": true
-                }
-            }
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
         }
+      },
+      "defaultConfiguration": "production"
     },
-    "tags": []
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "cuentoneta:build:production"
+        },
+        "development": {
+          "browserTarget": "cuentoneta:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "cuentoneta:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "./src/**/*.ts",
+          "./src/**/*.html"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+      "options": {
+        "jestConfig": "jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "storybook": {
+      "executor": "@storybook/angular:start-storybook",
+      "options": {
+        "port": 4400,
+        "configDir": "./.storybook",
+        "browserTarget": "cuentoneta:build",
+        "compodoc": false
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "executor": "@storybook/angular:build-storybook",
+      "outputs": [
+        "{options.outputDir}"
+      ],
+      "options": {
+        "outputDir": "dist/storybook/cuentoneta",
+        "configDir": "./.storybook",
+        "browserTarget": "cuentoneta:build",
+        "compodoc": false
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "server": {
+      "executor": "@angular-devkit/build-angular:server",
+      "options": {
+        "outputPath": "dist/cuentoneta/server",
+        "main": "src/ssr.server.ts",
+        "tsConfig": "tsconfig.server.json"
+      },
+      "configurations": {
+        "production": {
+          "outputHashing": "media",
+          "fileReplacements": [
+            {
+              "replace": "src/environments/environment.ts",
+              "with": "src/environments/environment.prod.ts"
+            }
+          ]
+        },
+        "development": {
+          "optimization": false,
+          "sourceMap": true,
+          "extractLicenses": false
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve-ssr": {
+      "executor": "@nguniversal/builders:ssr-dev-server",
+      "configurations": {
+        "development": {
+          "browserTarget": "cuentoneta:build:development",
+          "serverTarget": "cuentoneta:server:development"
+        },
+        "production": {
+          "browserTarget": "cuentoneta:build:production",
+          "serverTarget": "cuentoneta:server:production"
+        }
+      },
+      "defaultConfiguration": "development"
+    }
+  },
+  "tags": []
 }
