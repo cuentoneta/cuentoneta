@@ -1,4 +1,4 @@
-const { createGlobPatternsForDependencies } = require('@nrwl/angular/tailwind');
+const { createGlobPatternsForDependencies } = require('@nx/angular/tailwind');
 const { join } = require('path');
 
 /** @type {import('tailwindcss').Config} */
@@ -9,10 +9,10 @@ module.exports = {
   ],
   theme: {
     screens: {
-        sm: '640px',
-        md: '1024px',
-        lg: '1280px',
-        xl: '1536px'
+      sm: '640px',
+      md: '1024px',
+      lg: '1280px',
+      xl: '1536px',
     },
     extend: {},
   },
