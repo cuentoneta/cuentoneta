@@ -18,7 +18,7 @@ import { ContentService } from './providers/content.service';
 
 @NgModule({
     declarations: [AppComponent, HeaderComponent, FooterComponent],
-    imports: [BrowserModule, HttpClientModule, AppRoutingModule, NgOptimizedImage],
+    imports: [BrowserModule.withServerTransition({ appId: 'serverApp' }), HttpClientModule, AppRoutingModule, NgOptimizedImage],
     providers: [
         ContentService,
         StoryService,
