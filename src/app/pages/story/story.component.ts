@@ -38,34 +38,36 @@ export class StoryComponent implements OnInit {
   shareContentParams: { [key: string]: string } = {};
   shareMessage: string = '';
 
+  private activatedRoute = inject(ActivatedRoute);
+  private destroyedDirective = inject(DestroyedDirective);
+  private metaTagsDirective = inject(MetaTagsDirective);
+  private storyService = inject(StoryService);
+
   constructor() {}
 
   async ngOnInit(): Promise<void> {
-    const activatedRoute = inject(ActivatedRoute);
-    const destroyedDirective = inject(DestroyedDirective);
-    const metaTagsDirective = inject(MetaTagsDirective);
-    const storyService = inject(StoryService);
+
 
     const fetchData$: Observable<[Story, StoryList]> =
       this.fetchContentDirective
         .fetchContentWithSourceParams$(
-          activatedRoute.queryParams,
+          this.activatedRoute.queryParams,
           switchMap(({ slug, list }) =>
             combineLatest([
-              storyService.getBySlug(slug),
-              storyService.getLatest(list, 10),
+              this.storyService.getBySlug(slug),
+              this.storyService.getLatest(list, 10),
             ])
           )
         )
-        .pipe(takeUntil(destroyedDirective.destroyed$));
+        .pipe(takeUntil(this.destroyedDirective.destroyed$));
 
     const [story, storylist] = await waitFor(fetchData$);
     this.story = story;
     this.storylist = storylist;
-    metaTagsDirective.setTitle(
+    this.metaTagsDirective.setTitle(
       `${story.title}, de ${story.author.name} en La Cuentoneta`
     );
-    metaTagsDirective.setDescription(
+    this.metaTagsDirective.setDescription(
       `"${story.title}", de ${story.author.name}. Parte de la colección "${storylist.title}" en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`
     );
     this.shareContentParams = { slug: story.slug, list: storylist.slug };
