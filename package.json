@@ -10,7 +10,7 @@
         "test": "nx test",
         "sanity:dev": "cd cms && sanity dev",
         "vercel:dev": "vercel dev",
-        "vercel-build": "nx run cuentoneta:serve-ssr"
+        "vercel-build": "nx run cuentoneta:server:production"
     },
     "private": true,
     "dependencies": {
