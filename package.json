@@ -62,7 +62,7 @@
         "@storybook/core-server": "^6.5.15",
         "@storybook/manager-webpack5": "^6.5.15",
         "@types/jest": "29.4.4",
-        "@types/node": "16.11.7",
+        "@types/node": "18.16.3",
         "@typescript-eslint/eslint-plugin": "^5.36.1",
         "@typescript-eslint/parser": "^5.36.1",
         "autoprefixer": "^10.4.0",
