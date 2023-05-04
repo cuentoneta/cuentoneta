@@ -1,7 +1,7 @@
 import 'zone.js/node';
 
 import { ngExpressEngine } from '@nguniversal/express-engine';
-import * as express from 'express';
+import express from 'express';
 import { join } from 'path';
 
 import { AppServerModule } from './main.server';
