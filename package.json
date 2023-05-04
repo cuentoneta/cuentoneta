@@ -2,6 +2,11 @@
   "name": "cuentoneta",
   "version": "2.0.0",
   "license": "MIT",
+  "browser": {
+    "fs": false,
+    "path": false,
+    "os": false
+  },
   "scripts": {
     "start": "nx serve",
     "config": "ts-node ./scripts/set-environment.ts",
