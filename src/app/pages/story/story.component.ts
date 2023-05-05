@@ -50,7 +50,7 @@ export class StoryComponent implements OnInit {
 
     if (isPlatformServer(this.platformId)) {
       this.macroTaskWrapperService.wrapMacroTaskObservable(
-        'MyComponent.ngOnInit',
+        'StoryComponent.ngOnInit',
         this.fetchData$()
       );
       // If any tasks have started outside of the component use this:
