@@ -14,6 +14,8 @@ import { DestroyedDirective } from '../../directives/destroyed.directive';
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 import { isPlatformBrowser } from '@angular/common';
+import { MacroTaskWrapperService } from '../../providers/macro-task-wrapper.service';
+import { Story } from '../../models/story.model';
 
 @Component({
   selector: 'cuentoneta-story-list',
@@ -31,31 +33,47 @@ export class StoryListComponent {
 
   constructor() {
     const platformId = inject(PLATFORM_ID);
-
-    if(!isPlatformBrowser(platformId)) {
-      return;
-    }
-
     const activatedRoute = inject(ActivatedRoute);
     const destroyedDirective = inject(DestroyedDirective);
     const metaTagsDirective = inject(MetaTagsDirective);
+    const macroTaskWrapperService = inject(MacroTaskWrapperService);
 
     const storyService = inject(StoryService);
 
-    this.fetchContentDirective
+    const fetchObservable$ = this.fetchContentDirective
       .fetchContentWithSourceParams$(
         activatedRoute.queryParams,
         switchMap(({ slug }) => {
           return storyService.getLatest(slug, 60);
         })
       )
-      .pipe(takeUntil(destroyedDirective.destroyed$))
-      .subscribe((storylist) => {
+      .pipe(takeUntil(destroyedDirective.destroyed$));
+
+    if (!isPlatformBrowser(platformId)) {
+      macroTaskWrapperService
+        .wrapMacroTaskObservable<StoryList>(
+          'StoryListComponent.fetchData',
+          fetchObservable$,
+          null,
+          'first-emit'
+        )
+        .subscribe((storylist) => {
+          this.storyList = storylist;
+          metaTagsDirective.setTitle(`"${storylist.title}" en La Cuentoneta`);
+          metaTagsDirective.setDescription(
+            `Colección "${storylist.title}", una storylist en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`
+          );
+        });
+    }
+
+    if (isPlatformBrowser(platformId)) {
+      fetchObservable$.subscribe((storylist) => {
         this.storyList = storylist;
         metaTagsDirective.setTitle(`"${storylist.title}" en La Cuentoneta`);
         metaTagsDirective.setDescription(
           `Colección "${storylist.title}", una storylist en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`
         );
       });
+    }
   }
 }
