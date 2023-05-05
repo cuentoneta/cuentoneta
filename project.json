@@ -146,7 +146,7 @@
       "options": {
         "browserTarget": "cuentoneta:build",
         "serverTarget": "cuentoneta:server",
-        "routes": ["/", "/story", "/story-list"]
+        "routes": ["/", "/home","/story", "/story-list"]
       },
       "configurations": {
         "development": {
