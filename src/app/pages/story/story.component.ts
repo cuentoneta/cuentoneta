@@ -1,7 +1,7 @@
 // Core
 import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest, switchMap, takeUntil } from 'rxjs';
+import { combineLatest, Observable, switchMap, takeUntil } from 'rxjs';
 
 // Models
 import { Story } from '../../models/story.model';
@@ -47,16 +47,16 @@ export class StoryComponent implements OnInit {
   private macroTaskWrapperService = inject(MacroTaskWrapperService);
 
   ngOnInit() {
+    let obs$: Observable<[Story, StoryList]> = this.fetchData$();
     if (isPlatformServer(this.platformId)) {
-      this.macroTaskWrapperService.wrapMacroTaskObservable(
-        'StoryComponent.ngOnInit',
-        this.fetchData$()
-      );
+      obs$ = this.macroTaskWrapperService.wrapMacroTaskObservable<
+        [Story, StoryList]
+      >('StoryComponent.ngOnInit', this.fetchData$());
       // If any tasks have started outside of the component use this:
       this.macroTaskWrapperService.awaitMacroTasks$('StoryComponent.ngOnInit');
     }
 
-    this.fetchData$().subscribe((result) => this.assignResult(result));
+    obs$.subscribe((result) => this.assignResult(result));
   }
 
   private assignResult([story, storylist]: [Story, StoryList]) {
