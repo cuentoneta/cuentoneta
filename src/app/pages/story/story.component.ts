@@ -1,7 +1,7 @@
 // Core
 import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest, Observable, switchMap, takeUntil } from 'rxjs';
+import { combineLatest, switchMap, takeUntil } from 'rxjs';
 
 // Models
 import { Story } from '../../models/story.model';
@@ -15,7 +15,6 @@ import { DestroyedDirective } from '../../directives/destroyed.directive';
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 import { APP_ROUTE_TREE } from '../../app-routing.module';
-import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { MacroTaskWrapperService } from '../../providers/macro-task-wrapper.service';
 
 @Component({
@@ -39,7 +38,6 @@ export class StoryComponent implements OnInit {
   shareContentParams: { [key: string]: string } = {};
   shareMessage: string = '';
 
-  private platformId = inject(PLATFORM_ID);
   private activatedRoute = inject(ActivatedRoute);
   private destroyedDirective = inject(DestroyedDirective);
   private metaTagsDirective = inject(MetaTagsDirective);
@@ -47,16 +45,13 @@ export class StoryComponent implements OnInit {
   private macroTaskWrapperService = inject(MacroTaskWrapperService);
 
   ngOnInit() {
-    let obs$: Observable<[Story, StoryList]> = this.fetchData$();
-    if (isPlatformServer(this.platformId)) {
-      obs$ = this.macroTaskWrapperService.wrapMacroTaskObservable<
-        [Story, StoryList]
-      >('StoryComponent.ngOnInit', this.fetchData$());
-      // If any tasks have started outside of the component use this:
-      this.macroTaskWrapperService.awaitMacroTasks$('StoryComponent.ngOnInit');
-    }
 
-    obs$.subscribe((result) => this.assignResult(result));
+    this.macroTaskWrapperService
+      .wrapMacroTaskObservable<[Story, StoryList]>(
+        'StoryComponent.ngOnInit',
+        this.fetchData$()
+      )
+      .subscribe((result) => this.assignResult(result));
   }
 
   private assignResult([story, storylist]: [Story, StoryList]) {
