@@ -47,28 +47,29 @@ export class StoryComponent implements OnInit {
   private macroTaskWrapperService = inject(MacroTaskWrapperService);
 
   ngOnInit() {
-
     if (isPlatformServer(this.platformId)) {
       this.macroTaskWrapperService.wrapMacroTaskObservable(
         'StoryComponent.ngOnInit',
         this.fetchData$()
       );
       // If any tasks have started outside of the component use this:
-      this.macroTaskWrapperService.awaitMacroTasks('StoryComponent.ngOnInit');
+      this.macroTaskWrapperService.awaitMacroTasks$('StoryComponent.ngOnInit');
     }
 
-    this.fetchData$().subscribe(([story, storylist]) => {
-      this.story = story;
-      this.storylist = storylist;
-      this.metaTagsDirective.setTitle(
-        `${story.title}, de ${story.author.name} en La Cuentoneta`
-      );
-      this.metaTagsDirective.setDescription(
-        `"${story.title}", de ${story.author.name}. Parte de la colección "${storylist.title}" en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`
-      );
-      this.shareContentParams = { slug: story.slug, list: storylist.slug };
-      this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos de la colección "${storylist.title}" en este link:`;
-    });
+    this.fetchData$().subscribe((result) => this.assignResult(result));
+  }
+
+  private assignResult([story, storylist]: [Story, StoryList]) {
+    this.story = story;
+    this.storylist = storylist;
+    this.metaTagsDirective.setTitle(
+      `${story.title}, de ${story.author.name} en La Cuentoneta`
+    );
+    this.metaTagsDirective.setDescription(
+      `"${story.title}", de ${story.author.name}. Parte de la colección "${storylist.title}" en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`
+    );
+    this.shareContentParams = { slug: story.slug, list: storylist.slug };
+    this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos de la colección "${storylist.title}" en este link:`;
   }
 
   private fetchData$() {
