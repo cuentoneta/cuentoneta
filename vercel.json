@@ -7,7 +7,7 @@
   ],
   "functions": {
     "api/index.js": {
-      "includeFiles": "dist/cuentoneta/browser/**"
+      "includeFiles": ["dist/cuentoneta/browser/**", "dist/cuentoneta/server/**"]
     }
   }
 }
