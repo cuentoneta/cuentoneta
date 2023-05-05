@@ -1,5 +1,5 @@
 // Core
-import { Component, inject } from '@angular/core';
+import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, switchMap, takeUntil } from 'rxjs';
 
@@ -15,7 +15,7 @@ import { DestroyedDirective } from '../../directives/destroyed.directive';
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 import { APP_ROUTE_TREE } from '../../app-routing.module';
-import { waitFor } from '../../functions/ssr.functions';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'cuentoneta-story',
@@ -35,43 +35,43 @@ export class StoryComponent {
   storylist!: StoryList;
 
   dummyList = Array(10);
-  shareContentParams: { [key: string]: string } = {};
+  shareContentParams: { [key: string]: string } = {}
   shareMessage: string = '';
 
-  private prom: any;
-  private metaTagsDirective = inject(MetaTagsDirective);
-
   constructor() {
+    const platformId = inject(PLATFORM_ID);
+
+    if(!isPlatformBrowser(platformId)) {
+      return;
+    }
+
     const activatedRoute = inject(ActivatedRoute);
     const destroyedDirective = inject(DestroyedDirective);
+    const metaTagsDirective = inject(MetaTagsDirective);
     const storyService = inject(StoryService);
 
-    const fetchData$ = this.fetchContentDirective
-      .fetchContentWithSourceParams$(
-        activatedRoute.queryParams,
-        switchMap(({ slug, list }) =>
-          combineLatest([
-            storyService.getBySlug(slug),
-            storyService.getLatest(list, 10),
-          ])
+    this.fetchContentDirective
+        .fetchContentWithSourceParams$(
+            activatedRoute.queryParams,
+            switchMap(({ slug, list }) =>
+                combineLatest([
+                  storyService.getBySlug(slug),
+                  storyService.getLatest(list, 10),
+                ])
+            )
         )
-      )
-      .pipe(takeUntil(destroyedDirective.destroyed$));
-
-    this.prom = waitFor(fetchData$);
-  }
-
-  async ngOnInit() {
-    const [story, storylist] = await this.prom;
-    this.story = story;
-    this.storylist = storylist;
-    this.metaTagsDirective.setTitle(
-      `${story.title}, de ${story.author.name} en La Cuentoneta`
-    );
-    this.metaTagsDirective.setDescription(
-      `"${story.title}", de ${story.author.name}. Parte de la colección "${storylist.title}" en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`
-    );
-    this.shareContentParams = { slug: story.slug, list: storylist.slug };
-    this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos de la colección "${storylist.title}" en este link:`;
+        .pipe(takeUntil(destroyedDirective.destroyed$))
+        .subscribe(([story, storylist]) => {
+          this.story = story;
+          this.storylist = storylist;
+          metaTagsDirective.setTitle(
+              `${story.title}, de ${story.author.name} en La Cuentoneta`
+          );
+          metaTagsDirective.setDescription(
+              `"${story.title}", de ${story.author.name}. Parte de la colección "${storylist.title}" en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`
+          );
+          this.shareContentParams = { slug: story.slug, list: storylist.slug };
+          this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos de la colección "${storylist.title}" en este link:`;
+        });
   }
 }

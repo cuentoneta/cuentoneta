@@ -1,5 +1,5 @@
 // Core
-import { Component, inject } from '@angular/core';
+import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap, takeUntil } from 'rxjs';
 
@@ -13,6 +13,7 @@ import { StoryService } from '../../providers/story.service';
 import { DestroyedDirective } from '../../directives/destroyed.directive';
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'cuentoneta-story-list',
@@ -29,6 +30,12 @@ export class StoryListComponent {
   storyList!: StoryList | undefined;
 
   constructor() {
+    const platformId = inject(PLATFORM_ID);
+
+    if(!isPlatformBrowser(platformId)) {
+      return;
+    }
+
     const activatedRoute = inject(ActivatedRoute);
     const destroyedDirective = inject(DestroyedDirective);
     const metaTagsDirective = inject(MetaTagsDirective);

@@ -1,5 +1,5 @@
 // Core
-import { Component, inject } from '@angular/core';
+import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { takeUntil } from 'rxjs';
 
 // Services
@@ -11,6 +11,7 @@ import { StorylistCardDeck } from '../../models/content.model';
 // Directives
 import { DestroyedDirective } from '../../directives/destroyed.directive';
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
     selector: 'cuentoneta-home',
@@ -29,6 +30,12 @@ export class HomeComponent {
     constructor() {
         // Asignación inicial para dibujar skeletons
         this.storylistCardDecks = this.contentService.contentConfig.storylistDeckConfigs;
+
+        const platformId = inject(PLATFORM_ID);
+        if(!isPlatformBrowser(platformId)) {
+            return;
+        }
+
         // Posteriormente se cargan los decks con las historias, según la configuración de contenido
         this.loadStorylistDecks();
     }
