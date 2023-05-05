@@ -37,9 +37,10 @@
         [class.disabled]="!publication || !publication.published"
         [routerLink]="
           !!publication && publication.published
-            ? ['/', appRouteTree['STORY'], publication.story.slug, storylist.slug]
+            ? ['/', appRouteTree['STORY']]
             : null
         "
+        [queryParams]="{ slug: publication.story.slug, list: storylist.slug }"
       >
         <cuentoneta-story-card
           [displayDate]="storylist.displayDates"

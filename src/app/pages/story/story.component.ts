@@ -49,7 +49,7 @@ export class StoryComponent {
 
     const fetchObservable$ = this.fetchContentDirective
       .fetchContentWithSourceParams$(
-        activatedRoute.params,
+        activatedRoute.queryParams,
         switchMap(({ slug, list }) =>
           combineLatest([
             storyService.getBySlug(slug),
