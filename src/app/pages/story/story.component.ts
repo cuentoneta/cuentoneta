@@ -1,7 +1,7 @@
 // Core
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest, Observable, switchMap, takeUntil } from 'rxjs';
+import { combineLatest, switchMap, takeUntil } from 'rxjs';
 
 // Models
 import { Story } from '../../models/story.model';
@@ -27,7 +27,7 @@ import { waitFor } from '../../functions/ssr.functions';
     MetaTagsDirective,
   ],
 })
-export class StoryComponent implements OnInit {
+export class StoryComponent {
   readonly appRouteTree = APP_ROUTE_TREE;
   fetchContentDirective = inject(FetchContentDirective<[Story, StoryList]>);
 
@@ -38,30 +38,31 @@ export class StoryComponent implements OnInit {
   shareContentParams: { [key: string]: string } = {};
   shareMessage: string = '';
 
-  private activatedRoute = inject(ActivatedRoute);
-  private destroyedDirective = inject(DestroyedDirective);
+  private prom: any;
   private metaTagsDirective = inject(MetaTagsDirective);
-  private storyService = inject(StoryService);
 
-  constructor() {}
+  constructor() {
+    const activatedRoute = inject(ActivatedRoute);
+    const destroyedDirective = inject(DestroyedDirective);
+    const storyService = inject(StoryService);
 
-  async ngOnInit(): Promise<void> {
-
-
-    const fetchData$: Observable<[Story, StoryList]> =
-      this.fetchContentDirective
-        .fetchContentWithSourceParams$(
-          this.activatedRoute.queryParams,
-          switchMap(({ slug, list }) =>
-            combineLatest([
-              this.storyService.getBySlug(slug),
-              this.storyService.getLatest(list, 10),
-            ])
-          )
+    const fetchData$ = this.fetchContentDirective
+      .fetchContentWithSourceParams$(
+        activatedRoute.queryParams,
+        switchMap(({ slug, list }) =>
+          combineLatest([
+            storyService.getBySlug(slug),
+            storyService.getLatest(list, 10),
+          ])
         )
-        .pipe(takeUntil(this.destroyedDirective.destroyed$));
+      )
+      .pipe(takeUntil(destroyedDirective.destroyed$));
 
-    const [story, storylist] = await waitFor(fetchData$);
+    this.prom = waitFor(fetchData$);
+  }
+
+  async ngOnInit() {
+    const [story, storylist] = await this.prom;
     this.story = story;
     this.storylist = storylist;
     this.metaTagsDirective.setTitle(
@@ -71,6 +72,6 @@ export class StoryComponent implements OnInit {
       `"${story.title}", de ${story.author.name}. Parte de la colección "${storylist.title}" en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`
     );
     this.shareContentParams = { slug: story.slug, list: storylist.slug };
-    this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos de ${storylist.title} en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`;
+    this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos de la colección "${storylist.title}" en este link:`;
   }
 }
