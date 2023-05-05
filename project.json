@@ -140,6 +140,25 @@
         }
       },
       "defaultConfiguration": "development"
+    },
+    "prerender": {
+      "executor": "@nguniversal/builders:prerender",
+      "options": {
+        "browserTarget": "cuentoneta:build",
+        "serverTarget": "cuentoneta:server",
+        "routes": ["/", "/story", "/story-list"]
+      },
+      "configurations": {
+        "development": {
+          "browserTarget": "cuentoneta:build:development",
+          "serverTarget": "cuentoneta:server:development"
+        },
+        "production": {
+          "browserTarget": "cuentoneta:build:production",
+          "serverTarget": "cuentoneta:server:production"
+        }
+      },
+      "defaultConfiguration": "production"
     }
   },
   "tags": []
