@@ -16,7 +16,7 @@ import { FetchContentDirective } from '../../directives/fetch-content.directive'
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 import { APP_ROUTE_TREE } from '../../app-routing.module';
 import { MacroTaskWrapperService } from '../../providers/macro-task-wrapper.service';
-import { isPlatformBrowser, isPlatformServer } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'cuentoneta-story',
@@ -59,7 +59,7 @@ export class StoryComponent {
       )
       .pipe(takeUntil(destroyedDirective.destroyed$));
 
-    if (isPlatformServer(platformId)) {
+    if (!isPlatformBrowser(platformId)) {
       macroTaskWrapperService
         .wrapMacroTaskObservable<[Story, StoryList]>(
           'StoryComponent.fetchData',
