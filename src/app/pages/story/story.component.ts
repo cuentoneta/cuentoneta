@@ -1,7 +1,7 @@
 // Core
 import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest, switchMap, takeUntil } from 'rxjs';
+import { combineLatest, first, interval, switchMap, takeUntil } from 'rxjs';
 
 // Models
 import { Story } from '../../models/story.model';
@@ -61,23 +61,20 @@ export class StoryComponent {
 
     if (!isPlatformBrowser(platformId)) {
       macroTaskWrapperService
-        .wrapMacroTaskObservable<[Story, StoryList]>(
+        .wrapMacroTaskObservable<any>(
           'StoryComponent.fetchData',
-          fetchObservable$,
+          interval(2000).pipe(first()),
           null,
           'first-emit'
         )
-        .subscribe(([story, storylist]) => {
-          this.story = story;
-          this.storylist = storylist;
+        .subscribe(() => {
+
           metaTagsDirective.setTitle(
-            `${story.title}, de ${story.author.name} en La Cuentoneta`
+            `Title has changed!`
           );
           metaTagsDirective.setDescription(
-            `"${story.title}", de ${story.author.name}. Parte de la colección "${storylist.title}" en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`
+            `Description has changed!`
           );
-          this.shareContentParams = { slug: story.slug, list: storylist.slug };
-          this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos de la colección "${storylist.title}" en este link:`;
         });
     }
 
