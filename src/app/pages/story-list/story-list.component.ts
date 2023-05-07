@@ -36,9 +36,8 @@ export class StoryListComponent {
     const activatedRoute = inject(ActivatedRoute);
     const destroyedDirective = inject(DestroyedDirective);
     const metaTagsDirective = inject(MetaTagsDirective);
-    const macroTaskWrapperService = inject(MacroTaskWrapperService);
-
     const storyService = inject(StoryService);
+    const macroTaskWrapperService = inject(MacroTaskWrapperService);
 
     const fetchObservable$ = this.fetchContentDirective
       .fetchContentWithSourceParams$(
