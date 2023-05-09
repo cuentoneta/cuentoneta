@@ -1,6 +1,7 @@
 // Core
-import { Component, inject } from '@angular/core';
+import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { takeUntil } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
 
 // Services
 import { ContentService } from '../../providers/content.service';
@@ -29,7 +30,13 @@ export class HomeComponent {
     constructor() {
         // Asignación inicial para dibujar skeletons
         this.storylistCardDecks = this.contentService.contentConfig.storylistDeckConfigs;
-        // Posteriormente se cargan los decks con las historias, según la configuración de contenido
+
+        const platformId = inject(PLATFORM_ID);
+        if(!isPlatformBrowser(platformId)) {
+            return;
+        }
+
+        // En cliente-side, posteriormente, se cargan los decks con las historias, según la configuración de contenido
         this.loadStorylistDecks();
     }
 

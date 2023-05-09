@@ -28,7 +28,7 @@ export class FetchContentDirective<T> {
      * @param params$
      * @param operatorFunction$
      */
-    public fetchContentWithSourceParams$(
+    public fetchContentWithSourceParams$<T>(
         params$: Observable<Params>,
         operatorFunction$: OperatorFunction<Params, T>
     ): Observable<T> {
