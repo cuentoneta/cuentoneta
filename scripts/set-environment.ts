@@ -34,12 +34,13 @@ const targetPath = `${dirPath}/environment.ts`;
 
 // Accede a las variables de entorno y genera un string
 // correspondiente al objeto environment que utilizará Angular
+
 const environmentFileContent = `
 export const environment = {
    production: ${isProduction},
    contentConfig: ${process.env['CUENTONETA_CONTENT']},
    website: "${process.env['CUENTONETA_WEBSITE']}",
-   apiUrl: "${process.env['VERCEL_URL'] ? process.env['VERCEL_URL'] + '/' : ''}"
+   apiUrl: "${process.env['VERCEL_URL'] ? `https://${process.env['VERCEL_URL']}/` : ''}"
 };
 `;
 
