@@ -11,36 +11,44 @@
  */
 
 import { writeFile, existsSync, mkdirSync } from 'fs';
-import yargs from 'yargs/yargs';
 import * as dotenv from 'dotenv';
 import ErrnoException = NodeJS.ErrnoException;
+
+// Tipo que describe los diferentes tipos de ambientes en los que puede ejecutarse el presente script
+type TEnvironmentType = 'development' | 'preview' | 'staging' | 'production';
 
 // Leer variables de entorno desde .env
 dotenv.config();
 
-const argv = yargs(process.argv.slice(2))
-  .options({
-    environment: { type: 'string', default: 'dev' },
-  })
-  .parseSync();
-
-// Lee la línea de comandos pasada con yargs
-// -- environment: nombre del entorno donde se ejecuta el script
-const environment = argv.environment;
-const isProduction = environment === 'prod';
-
 const dirPath: string = `src/app/environments`;
 const targetPath = `${dirPath}/environment.ts`;
+const environment: TEnvironmentType =
+  (process.env['VERCEL_ENV'] as TEnvironmentType) ?? 'development';
+
+// Genera una ruta absoluta a la API en función del ambiente
+const generateApiUrl = (environment: TEnvironmentType): string => {
+  let url = '';
+
+  // Lectura de la variable de entorno de Vercel para deployments de preview
+  if (environment === 'preview' || environment === 'staging') {
+    url = `https://${process.env['VERCEL_URL']}/` as string;
+  }
+
+  if (environment === 'production') {
+    url = process.env['CUENTONETA_WEBSITE'] as string;
+  }
+
+  return url;
+};
 
 // Accede a las variables de entorno y genera un string
 // correspondiente al objeto environment que utilizará Angular
-
 const environmentFileContent = `
 export const environment = {
-   production: ${isProduction},
+   environment: "${environment}",
    contentConfig: ${process.env['CUENTONETA_CONTENT']},
    website: "${process.env['CUENTONETA_WEBSITE']}",
-   apiUrl: "${process.env['VERCEL_URL'] ? `https://${process.env['VERCEL_URL']}/` : ''}"
+   apiUrl: "${generateApiUrl(environment)}"
 };
 `;
 
