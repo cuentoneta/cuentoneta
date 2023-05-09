@@ -6,7 +6,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 // Environment
 import { environment } from '../environments/environment';
 
-// Modelos
+// Models
 import { Story, StoryCard, StoryDTO } from '../models/story.model';
 import {
   Publication,
