@@ -1,13 +1,18 @@
+// Core
 import { Injectable } from '@angular/core';
-import { Story, StoryCard, StoryDTO } from '../models/story.model';
 import { map, Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
+
+// Environment
+import { environment } from '../environments/environment';
+
+// Modelos
+import { Story, StoryCard, StoryDTO } from '../models/story.model';
 import {
   Publication,
   StoryList,
   StoryListDTO,
 } from '../models/storylist.model';
-import { environment } from '../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class StoryService {

@@ -39,7 +39,7 @@ export const environment = {
    production: ${isProduction},
    contentConfig: ${process.env['CUENTONETA_CONTENT']},
    website: "${process.env['CUENTONETA_WEBSITE']}",
-   apiUrl: "${process.env['CUENTONETA_API_URL'] ?? ''}"
+   apiUrl: "${process.env['VERCEL_URL'] ?? ''}"
 };
 `;
 
