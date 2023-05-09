@@ -1,7 +1,13 @@
+// Core
 import { Injectable } from '@angular/core';
-import { Story, StoryCard, StoryDTO } from '../models/story.model';
 import { map, Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
+
+// Environment
+import { environment } from '../environments/environment';
+
+// Modelos
+import { Story, StoryCard, StoryDTO } from '../models/story.model';
 import {
   Publication,
   StoryList,
@@ -10,35 +16,38 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class StoryService {
+  private readonly prefix = `${environment.apiUrl}api/story`;
   constructor(private http: HttpClient) {}
   public getBySlug(slug: string): Observable<Story> {
     const params = new HttpParams().set('slug', slug);
     return this.http
-      .get<StoryDTO>(`api/story/read`, { params })
+      .get<StoryDTO>(`${this.prefix}/read`, { params })
       .pipe(map((story) => this.parseStoryContent(story)));
   }
 
   // ToDo: Rediseñar funcionamiento del endpoint de autores.
   public getAuthors(): Observable<Story[]> {
-    return this.http.get<Story[]>(`api/story/authors`);
+    return this.http.get<Story[]>(`${this.prefix}/authors`);
   }
 
   // ToDo: Rediseñar funcionamiento del endpoint de links originales.
   public getOriginalLinks(): Observable<any> {
-    return this.http.get<Story[]>(`api/story/original-links`);
+    return this.http.get<Story[]>(`${this.prefix}/original-links`);
   }
 
   public getLatest(slug: string, amount: number = 5): Observable<StoryList> {
     const params = new HttpParams().set('slug', slug).set('amount', amount);
-    return this.http.get<StoryListDTO>(`api/story/latest`, { params }).pipe(
-      map((storyList) => ({
-        ...storyList,
-        publications: storyList.publications.map((publication) => ({
-          ...publication,
-          story: this.parseStoryCardContent(publication.story),
-        })) as Publication<StoryCard>[],
-      }))
-    );
+    return this.http
+      .get<StoryListDTO>(`${this.prefix}/latest`, { params })
+      .pipe(
+        map((storyList) => ({
+          ...storyList,
+          publications: storyList.publications.map((publication) => ({
+            ...publication,
+            story: this.parseStoryCardContent(publication.story),
+          })) as Publication<StoryCard>[],
+        }))
+      );
   }
 
   private parseStoryCardContent(story: StoryDTO): StoryCard {
