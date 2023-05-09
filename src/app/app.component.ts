@@ -11,7 +11,7 @@ export class AppComponent {
   constructor() {
     // Importa y configura el paquete de analytics de Vercel
     inject({
-      mode: environment.production ? 'production' : 'development',
+      mode: environment.environment === 'production' ? 'production' : 'development',
     });
   }
 }
