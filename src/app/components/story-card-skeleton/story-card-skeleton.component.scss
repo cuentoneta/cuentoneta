@@ -3,5 +3,10 @@
 :host {
   display: flex;
   flex-direction: column;
-  row-gap: $spacing-4;
+  @media (max-width: $max-xs-width) {
+    row-gap: $spacing-2;
+  }
+  @media (min-width: $min-md-width) {
+    row-gap: $spacing-4;
+  }
 }

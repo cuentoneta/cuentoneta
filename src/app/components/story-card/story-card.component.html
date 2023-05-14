@@ -1,4 +1,4 @@
-<article>
+<article class="p-5 md:p-8 flex gap-2 md:gap-4">
   <ng-container *ngIf="!!publication && publication.published; else skeleton">
     <ng-container *ngIf="publication.story as story">
       <header class="card-header">
@@ -10,7 +10,7 @@
         <h1 class="card-title">{{ story.title }}</h1>
         <!-- ToDo: Optimizar payload tratado para mostrar el resumen de cada tarjeta (#115)-->
         <p
-          class="content"
+          class="content "
           [innerHTML]="story.paragraphs[0] + ' ' + story.paragraphs[1]"
         ></p>
       </section>

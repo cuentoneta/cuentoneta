@@ -8,7 +8,14 @@
     align-items: center;
     color: $primary-500;
     display: flex;
-    @include inter-body-sm-bold;
+
+    @media(max-width: $max-xs-width){
+      @include inter-body-xs-bold;
+    }
+
+    @media(min-width: $min-md-width){
+      @include inter-body-sm-bold;
+    }
 
     .rect {
       background-color: $primary-500;
