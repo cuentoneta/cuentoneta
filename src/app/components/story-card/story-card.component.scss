@@ -12,6 +12,9 @@
 
   .card-title {
     margin-bottom: $spacing-1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
     @include inter-body-xl-bold;
   }
 
