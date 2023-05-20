@@ -41,11 +41,23 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 ## Tech Stack
 ## Correr el proyecto localmente
 ## Contribuyentes
+### Desarrolladores
 <a href="https://github.com/rolivencia/cuentoneta/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=rolivencia/cuentoneta" />
 </a>
 
 Gráfico generado vía [contrib.rocks](https://contrib.rocks).
+
+### Diseño UX/UI
+* Maxi Cris
+
+### Selección, Transcripción y Curación de contenido
+* Patricio Decoud
+* Juan Balmaceda
+* Facundo Kaufmann
+* Candela Godoy
+* Analía Ale
+
 ## Patrocinadores
 ¿Te interesa patrocinar o promocionar este proyecto? ¡Comunícate con nosotros!
 ## Staff
