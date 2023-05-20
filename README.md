@@ -23,7 +23,7 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 - [Accesibilidad](#accesibilidad)
 - [Tech Stack](#tech-stack)
 - [Correr el proyecto localmente](#correr-el-proyecto-localmente)
-- [Contribuidores](#contribuidores)
+- [Contribuyentes](#contribuyentes)
 - [Patrocinadores](#patrocinadores)
 - [Staff](#staff)
 - [Licencias](#licencias)
@@ -40,8 +40,22 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 ## Accesibilidad
 ## Tech Stack
 ## Correr el proyecto localmente
-## Contribuidores
+## Contribuyentes
+<a href="https://github.com/rolivencia/cuentoneta/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=rolivencia/cuentoneta" />
+</a>
+
+Gráfico generado vía [contrib.rocks](https://contrib.rocks).
 ## Patrocinadores
+¿Te interesa patrocinar o promocionar este proyecto? ¡Comunícate con nosotros!
 ## Staff
+_Desarrollo y administración del repositorio_
+
+**Ramiro Olivencia ([@rolivencia](https://github.com/rolivencia))**
+
+_Diseño UX/UI_
+
+**Maxi Cris ([@maxicris](https://github.com/maxicris))**
+
 ## Licencias
 ## Links de interés
