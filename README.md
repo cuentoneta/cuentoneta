@@ -1,6 +1,10 @@
-# La Cuentoneta
-
-![image](https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832)
+<div align="center" width="100%">
+    <h1>La Cuentoneta</h1>
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
+        <img width="33%" alt="Juguetear" src="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
+    </picture>
+</div>
 
 **La Cuentoneta** es un proyecto abierto y sin fines de lucro que busca generar un espacio comunitario para difundir literatura en formato de relatos breves, gestado originalmente por un grupo de amigues residentes de la ciudad de **Santa Fe, Argentina 🇦🇷** .
 
