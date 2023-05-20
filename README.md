@@ -2,7 +2,7 @@
     <h1>La Cuentoneta</h1>
     <picture>
         <source media="(prefers-color-scheme: dark)" srcset="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-        <img width="33%" alt="Juguetear" src="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
+        <img width="33%" alt="La Cuentoneta" src="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
     </picture>
 </div>
 
@@ -70,4 +70,32 @@ _Diseño UX/UI_
 **Maxi Cris ([@maxicris](https://github.com/maxicris))**
 
 ## Licencias
+Este repositorio y el contenido de la web de La Cuentoneta se publican bajo licencia [Atribución-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)][doc-lic].
+
 ## Links de interés
+- [La Cuentoneta][web]
+- [FrontendCafé](https://frontend.cafe/)
+
+<!-- Listado de enlaces de referencia, mantenerlos actualizados en cada archivo -->
+<!-- Enlaces a las paginas web del proyecto -->
+[web]: https://cuentoneta.ar
+[web-staging]: https://cuentoneta-staging.vercel.app
+[web-storybook]: https://storybook-cuentoneta.vercel.app
+
+<!-- Enlaces a archivos de documentación (propios al repositorio)  -->
+[doc-code_of_conduct]: CODE_OF_CONDUCT.md
+[doc-contributing]: CONTRIBUTING.md
+[doc-replicate]: REPLICATE.md
+[doc-mmv]: MVV.md
+[doc-lic]: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+
+<!-- Enlaces a Discord -->
+[dc-channel]: https://discord.com/channels/594363964499165194/1035685740409012244
+[dc-fec]: https://discord.com/invite/frontendcafe
+
+<!-- Enlaces al repositorio en Github -->
+[gh-issues]: https://github.com/rolivencia/cuentoneta/issues
+
+<!-- Recursos y otros -->
+[email]: mailto:ramiro@olivencia.com.ar
+[figma]: https://www.figma.com/file/BIlQ6U3eh3M8vtYQt3vLNW/La-Cuentoneta-v2
