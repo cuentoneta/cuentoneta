@@ -15,6 +15,7 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 ## Índice de Contenidos
 - [Cómo contribuir](#cómo-contribuir)
 - [Misión, Visión y Valores](#misión-visión-y-valores)
+- [Hoja de Ruta](#hoja-de-ruta)
 - [Comunidad](#comunidad)
 - [Requerimientos](#requerimientos)
 - [Despliegues](#despliegues)
@@ -31,6 +32,7 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 
 ## Cómo contribuir
 ## Misión, Visión y Valores
+## Hoja de Ruta
 ## Comunidad
 ## Requerimientos
 ## Despliegues
