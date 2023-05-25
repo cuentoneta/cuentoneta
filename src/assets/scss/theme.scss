@@ -12,24 +12,24 @@ $inter-font-weight-regular: 400;
 $source-serif-pro-font-weight-regular: 400;
 
 // Colors
-$primary-100: #fbe4df;
-$primary-200: #fbe4df;
-$primary-300: #debda7;
-$primary-400: #c99571;
-$primary-500: #b05d30;
+$primary-100: hsl(11, 78%, 93%);
+$primary-200: hsl(11, 78%, 93%);
+$primary-300: hsl(24, 45%, 76%);
+$primary-400: hsl(25, 45%, 62%);
+$primary-500: hsl(21, 57%, 44%);
 
-$gray-50: #fafafa;
-$gray-100: #f4f4f5;
-$gray-200: #e4e4e7;
-$gray-300: #d4d4d8;
-$gray-400: #a2a2ab;
-$gray-500: #707079;
-$gray-600: #52525b;
-$gray-700: #3f3f46;
-$gray-800: #27272a;
-$gray-900: #18181b;
+$gray-50: hsl(0, 0%, 98%);
+$gray-100: hsl(240, 5%, 96%);
+$gray-200: hsl(240, 6%, 90%);
+$gray-300: hsl(240, 5%, 84%);
+$gray-400: hsl(240, 5%, 65%);
+$gray-500: hsl(240, 4%, 46%);
+$gray-600: hsl(240, 5%, 34%);
+$gray-700: hsl(240, 5%, 26%);
+$gray-800: hsl(240, 4%, 16%);
+$gray-900: hsl(240, 6%, 10%);
 
-$interactive-500: #226dc3;
+$interactive-500: hsl(212, 70%, 45%);
 
 // Border radius
 $rounded: 4px;
@@ -45,42 +45,42 @@ $letter-spacing: 0px;
 // region Inter font sizing mixins
 @mixin inter-body-xl {
     font-family: $inter-font-family;
-    font-size: 20px;
+    font-size: 1.25rem;
     line-height: 28px;
     letter-spacing: $letter-spacing;
 }
 
 @mixin inter-body-lg {
     font-family: $inter-font-family;
-    font-size: 18px;
+    font-size: 1.125rem;
     line-height: 28px;
     letter-spacing: $letter-spacing;
 }
 
 @mixin inter-body-base {
     font-family: $inter-font-family;
-    font-size: 16px;
+    font-size: 1rem;
     line-height: 24px;
     letter-spacing: $letter-spacing;
 }
 
 @mixin inter-body-sm {
     font-family: $inter-font-family;
-    font-size: 14px;
+    font-size: 0.875rem;
     line-height: 20px;
     letter-spacing: $letter-spacing;
 }
 
 @mixin inter-body-xs {
     font-family: $inter-font-family;
-    font-size: 12px;
+    font-size: 0.75rem;
     line-height: 18px;
     letter-spacing: $letter-spacing;
 }
 
 @mixin inter-body-caption {
     font-family: $inter-font-family;
-    font-size: 10px;
+    font-size: 0.625rem;
     line-height: 16px;
     letter-spacing: $letter-spacing;
 }
@@ -88,27 +88,27 @@ $letter-spacing: 0px;
 // region Source Serif Pro font size mixins
 @mixin source-serif-pro-body-xl {
     font-family: $source-serif-pro-font-family;
-    font-size: 20px;
+    font-size: 1.25rem;
     line-height: 28px;
     letter-spacing: $letter-spacing;
 }
 @mixin source-serif-pro-body-lg {
     font-family: $source-serif-pro-font-family;
-    font-size: 18px;
+    font-size: 1.125rem;
     line-height: 28px;
     letter-spacing: $letter-spacing;
 }
 
 @mixin source-serif-pro-body-base {
     font-family: $source-serif-pro-font-family;
-    font-size: 16px;
+    font-size: 1rem;
     line-height: 24px;
     letter-spacing: $letter-spacing;
 }
 
 @mixin source-serif-pro-body-sm {
     font-family: $source-serif-pro-font-family;
-    font-size: 14px;
+    font-size: 0.875rem;
     line-height: 20px;
     letter-spacing: $letter-spacing;
 }
@@ -249,29 +249,29 @@ $letter-spacing: 0px;
 //
 // Info en MDN: https://developer.mozilla.org/es/docs/Learn/CSS/Building_blocks/Values_and_units
 
-$spacing-1: 0.25rem;
-$spacing-2: 0.5rem;
-$spacing-3: 0.75rem;
-$spacing-4: 1rem;
-$spacing-5: 1.25rem;
-$spacing-6: 1.5rem;
-$spacing-7: 1.75rem;
-$spacing-8: 2rem;
-$spacing-10: 2.5rem;
-$spacing-12: 3rem;
-$spacing-14: 3.5rem;
-$spacing-15: 3.75rem;
-$spacing-16: 4rem;
-$spacing-18: 4.5rem;
-$spacing-20: 5rem;
-$spacing-24: 6rem;
-$spacing-28: 7rem;
-$spacing-32: 8rem;
-$spacing-36: 9rem;
-$spacing-40: 10rem;
-$spacing-44: 11rem;
-$spacing-48: 12rem;
-$spacing-52: 13rem;
+$spacing-1: 4px;
+$spacing-2: 8px;
+$spacing-3: 12px;
+$spacing-4: 16px;
+$spacing-5: 20px;
+$spacing-6: 24px;
+$spacing-7: 28px;
+$spacing-8: 32px;
+$spacing-10: 40px;
+$spacing-12: 48px;
+$spacing-14: 56px;
+$spacing-15: 60px;
+$spacing-16: 64px;
+$spacing-18: 72px;
+$spacing-20: 80px;
+$spacing-24: 96px;
+$spacing-28: 112px;
+$spacing-32: 128px;
+$spacing-36: 144px;
+$spacing-40: 160px;
+$spacing-44: 176px;
+$spacing-48: 192px;
+$spacing-52: 208px;
 // endregion
 
 // region Shadows & Elevations
