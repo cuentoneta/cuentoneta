@@ -61,7 +61,7 @@ Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. E
 Gráfico generado vía [contrib.rocks](https://contrib.rocks).
 
 ### Diseño UX/UI
-* Maxi Cris
+**Maxi Cris ([@maxicris](https://github.com/maxicris))**
 
 ### Selección, Transcripción y Curación de contenido
 * Patricio Decoud
@@ -69,6 +69,7 @@ Gráfico generado vía [contrib.rocks](https://contrib.rocks).
 * Facundo Kaufmann
 * Candela Godoy
 * Analía Ale
+* Brahian Pereyra ([@brahianpdev](https://github.com/brahianpdev))
 
 ## Patrocinadores
 ¿Te interesa patrocinar o promocionar este proyecto? ¡Comunícate con nosotros!
