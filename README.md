@@ -33,7 +33,19 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 ## Cómo contribuir
 ## Misión, Visión y Valores
 ## Hoja de Ruta
+
 ## Comunidad
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/78808163/198993731-299e973d-8f3b-4a6c-a445-b2b77e0b3286.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/78808163/228854353-cbd1f9b2-68a3-4cf0-851c-d2c49b3eb85c.svg">
+  <img alt="logo-frontendcafe" src="https://user-images.githubusercontent.com/78808163/198993731-299e973d-8f3b-4a6c-a445-b2b77e0b3286.svg">
+</picture>
+
+Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. Es requerido unirte a nuestro [server][dc-fec] y buscar el canal [#cuentoneta][dc-channel]. Ahí vas a poder compartir dudas e ideas del proyecto. El código de conducta de este proyecto es extensible también a tu participación en el server de FrontendCafé en Discord.
+
+---
+
 ## Requerimientos
 ## Despliegues
 ## Diseño de interfaz (UI/UX)
@@ -90,7 +102,7 @@ Este repositorio y el contenido de la web de La Cuentoneta se publican bajo lice
 [doc-lic]: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
 
 <!-- Enlaces a Discord -->
-[dc-channel]: https://discord.com/channels/594363964499165194/1035685740409012244
+[dc-channel]: https://discord.com/channels/594363964499165194/1109220285841944586
 [dc-fec]: https://discord.com/invite/frontendcafe
 
 <!-- Enlaces al repositorio en Github -->
