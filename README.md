@@ -42,13 +42,20 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
   <img alt="logo-frontendcafe" src="https://user-images.githubusercontent.com/78808163/198993731-299e973d-8f3b-4a6c-a445-b2b77e0b3286.svg">
 </picture>
 
-Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. Es requerido unirte a nuestro [server][dc-fec] y buscar el canal [#cuentoneta][dc-channel]. Ahí vas a poder compartir dudas e ideas del proyecto. El código de conducta de este proyecto es extensible también a tu participación en el server de FrontendCafé en Discord.
+Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. Es requerido unirte a nuestro [server][dc-fec] y buscar el canal [#🚐 | la-cuentoneta][dc-channel]. Ahí vas a poder compartir dudas e ideas del proyecto. El código de conducta de este proyecto es extensible también a tu participación en el server de FrontendCafé en Discord.
 
 ---
 
 ## Requerimientos
 ## Despliegues
 ## Diseño de interfaz (UI/UX)
+
+El diseño de interfaz de usuario de La Cuentoneta ha sido desarrollado por [Maxi Cris](https://maxicris.com/).  
+Puedes acceder a [**este enlace**][figma] para ver los diseño de la web y todos los recursos gráficos del proyecto.
+
+> 💡 Cualquier duda, feedback o sugerencia podés compartirla en el canal [#🚐 | la-cuentoneta][dc-channel] del server de [FrontendCafé][dc-fec] en Discord.
+
+---
 ## Accesibilidad
 ## Tech Stack
 ## Correr el proyecto localmente
