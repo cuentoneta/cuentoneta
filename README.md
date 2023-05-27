@@ -94,6 +94,10 @@ El tech stack actualmente utilizado para el desarrollo de La Cuentoneta es:
 > 💡 No hace falta tener mucho conocimiento en el tech stack para poder contribuir en el desarrollo. Si tienes ganas de aprender, ¡te invitamos a sumarte!
 
 ## Correr el proyecto localmente
+
+
+
+
 ## Contribuyentes
 ### Desarrolladores
 <a href="https://github.com/rolivencia/cuentoneta/graphs/contributors">
@@ -103,7 +107,10 @@ El tech stack actualmente utilizado para el desarrollo de La Cuentoneta es:
 Gráfico generado vía [contrib.rocks](https://contrib.rocks).
 
 ### Diseño UX/UI
-**Maxi Cris ([@maxicris](https://github.com/maxicris))**
+Maxi Cris (**[@maxicris](https://github.com/maxicris)**)
+
+### Escritura de textos
+* Sofía Abramovich
 
 ### Selección, Transcripción y Curación de contenido
 * Patricio Decoud
@@ -111,18 +118,18 @@ Gráfico generado vía [contrib.rocks](https://contrib.rocks).
 * Facundo Kaufmann
 * Candela Godoy
 * Analía Ale
-* Brahian Pereyra ([@brahianpdev](https://github.com/brahianpdev))
+* Brahian Pereyra (**[@brahianpdev](https://github.com/brahianpdev)**)
 
 ## Patrocinadores
 ¿Te interesa patrocinar o promocionar este proyecto? ¡Comunícate con nosotros!
 ## Staff
 _Desarrollo y administración del repositorio_
 
-**Ramiro Olivencia ([@rolivencia](https://github.com/rolivencia))**
+Ramiro Olivencia (**[@rolivencia](https://github.com/rolivencia)**)
 
 _Diseño UX/UI_
 
-**Maxi Cris ([@maxicris](https://github.com/maxicris))**
+Maxi Cris (**[@maxicris](https://github.com/maxicris)**)
 
 ## Licencias
 Este repositorio y el contenido de la web de La Cuentoneta se publican bajo licencia [Atribución-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)][doc-lic].
