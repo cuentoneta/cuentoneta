@@ -34,6 +34,8 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 ## Misión, Visión y Valores
 ## Hoja de Ruta
 
+Podés acceder a la hoja de ruta (roadmap) del proyecto en [este enlace][doc-roadmap]. Allí podrás visualizar, a gran escala, los planes para las próximas características y storylists a agregar a La Cuentoneta.
+
 ## Comunidad
 
 <picture>
@@ -42,7 +44,7 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
   <img alt="logo-frontendcafe" src="https://user-images.githubusercontent.com/78808163/198993731-299e973d-8f3b-4a6c-a445-b2b77e0b3286.svg">
 </picture>
 
-Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. Es requerido unirte a nuestro [server][dc-fec] y buscar el canal [#🚐 | la-cuentoneta][dc-channel]. Ahí vas a poder compartir dudas e ideas del proyecto. El código de conducta de este proyecto es extensible también a tu participación en el server de FrontendCafé en Discord.
+Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. Es requerido unirte a nuestro [server][dc-fec] y buscar el canal [#🚐 | la-cuentoneta][dc-channel]. Allí vas a poder consultar dudas, realizar propuestas y compartir ideas para el proyecto proyecto. El código de conducta de este proyecto es extensible también a tu participación en el server de FrontendCafé en Discord.
 
 ---
 
@@ -50,6 +52,8 @@ Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. E
 
 - Tener instalada una versión de [Node](https://nodejs.org/es/) superior a `v16.16.0`, idealmente la última versión LTS.
 - Instalar `pnpm`, un gestor de paquetes alternativo para Node: `npm install -g pnpm`. Se recomienda la versión `8.2.0` o superior.
+- Instalar `nx`, un CLI para desarrollo de monorepos: `pnpm install -g nx`. Se recomienda la versión `16.0.3` o superior.
+- Instalar `vercel`, un CLI para despliegues en Vercel: `pnpm install -g vercel`. Se recomienda la versión `28.10.0` o superior.
 - Tener un editor de texto o IDE ([Visual Studio Code](https://code.visualstudio.com/), [Vim](https://www.vim.org/), etc.)
 - Tener una cuenta en [GitHub](https://docs.github.com/es/get-started/signing-up-for-github/signing-up-for-a-new-github-account)
 - Leer y seguir [Código de Conducta][doc-code_of_conduct]
