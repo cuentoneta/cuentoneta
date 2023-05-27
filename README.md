@@ -77,6 +77,8 @@ El tech stack actualmente utilizado para el desarrollo de La Cuentoneta es:
 - **<a href="https://pnpm.io/es/">pnpm</a>** como gestor de paquetes
 - **<a href="https://nx.dev/angular">Nx</a>** como gestor de monorepo y task runner
 
+Junto con Nx, el proyecto cuenta con ESLint y Prettier ya configuradas como dependencias.
+
 #### Para el desarrollo de la plataforma web
 - **<a href="https://angular.io/">Angular 16</a>** como framework de frontend
 - **<a href="https://angular.io/guide/universal">Angular Universal</a>** para Server-Side rendering
