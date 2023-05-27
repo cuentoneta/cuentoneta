@@ -111,8 +111,30 @@ Junto con Nx, el proyecto cuenta con ESLint y Prettier ya configuradas como depe
 
 ## Correr el proyecto localmente
 
+### Instalación
+Ubícate en la carpeta donde deseas instalar el proyecto y clona el repositorio ejecutando:
 
+```bash
+git clone https://github.com/rolivencia/cuentoneta.git
+cd cuentoneta
+```
 
+Posteriormente ejecutá el siguiente comando para instalar todas las dependencias listadas en el archivo [`package.json`](package.json).
+```bash
+pnpm install
+```
+
+### Correr el entorno de desarrollo localmente
+Una vez hechos los pasos de instalación ejecutá el siguiente comando:
+```bash
+pnpm run vercel:dev
+```
+Se iniciara el servidor de desarrollo, visitá [http://localhost:3000](http://localhost:3000) en tu navegador para ver la aplicación.
+
+Para ejecutar el entorno de desarrollo de Sanity Studio, ejecutá el siguiente comando, posándote en el directorio `cms`:
+```bash
+pnpm run dev
+```
 
 ## Contribuyentes
 ### Desarrolladores
@@ -165,8 +187,9 @@ Este repositorio y el contenido de la web de La Cuentoneta se publican bajo lice
 
 <!-- Enlaces a archivos de documentación (propios al repositorio)  -->
 [doc-code_of_conduct]: CODE_OF_CONDUCT.md
+[doc-changelog]: CHANGELOG.md
 [doc-contributing]: CONTRIBUTING.md
-[doc-replicate]: REPLICATE.md
+[doc-roadmap]: ROADMAP.md
 [doc-mmv]: MVV.md
 [doc-lic]: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
 
