@@ -47,6 +47,14 @@ Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. E
 ---
 
 ## Requerimientos
+
+- Tener instalada una versión de [Node](https://nodejs.org/es/) superior a `v16.16.0`, idealmente la última versión LTS.
+- Instalar `pnpm`, un gestor de paquetes alternativo para Node: `npm install -g pnpm`. Se recomienda la versión `8.2.0` o superior.
+- Tener un editor de texto o IDE ([Visual Studio Code](https://code.visualstudio.com/), [Vim](https://www.vim.org/), etc.)
+- Tener una cuenta en [GitHub](https://docs.github.com/es/get-started/signing-up-for-github/signing-up-for-a-new-github-account)
+- Leer y seguir [Código de Conducta][doc-code_of_conduct]
+- Unirte a [FrontendCafé][dc-fec] en Discord
+
 ## Despliegues
 
 - **Web | Producción:** [https://cuentoneta.ar/](https://cuentoneta.ar/)
