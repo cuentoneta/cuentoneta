@@ -31,10 +31,28 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 --- 
 
 ## Cómo contribuir
+
+Para realizar contribuciones a La Cuentoneta, podés hacerlo mediante cuatro vías, no excluyentes entre sí. Una vez sumes tu granito de arena para mejorar y hacer crecer a este proyecto, te incluiremos en la sección de [contribuyentes](#contribuyentes) y te agradeceremos públicamente por tu aporte. Podrás, además, portar el badge `Cuentoneta 🚐` en el servidor de Discord de FrontendCafé.
+
+### 🖥️ Contribuyendo código
+Si sos desarrolladora o desarrollador, podés contribuir al proyecto mediante la creación de issues, pull requests, revisando código, etc. Para ello, te recomendamos leer la [guía de contribución][doc-contributing] para que puedas familiarizarte con el proyecto y sus convenciones.
+
+### 💡 Sugiriendo nuevas funcionalidades
+Si tenés una idea para una nueva funcionalidad, podés comunicarte con el equipo de desarrollo vía el [Discord de FrontendCafé][dc-channel] y que en comunidad veamos la viabilidad de la idea. También podés crear un issue en este repositorio para que podamos discutirlo y agregarlo a la hoja de ruta del proyecto.
+
+### 🎨 Diseño UX/UI
+Si tenés habilidades en diseño UX/UI, podés contribuir al proyecto asistiendo en la creación de wireframes, mockups, y prototipos para mejorar características existentes de la plataforma y contribuir en la gestación de nuevas funcionalidades.
+
+### 📜 Contenidos
+Podés sugerir contenido para sumar a La Cuentoneta, en forma de cuentos, poemas, ensayos o temáticas para nuevas storylists. El contenido puede ser escritura propia o de terceros, con previos permisos de publicación o disponibilidad de acceso a este contenido en la web abierta. Estamos trabajando para, a futuro, ir en busca de autores y autoras de cuentos y poemas de autoría original que deseen publicar sus obras en La Cuentoneta.
+
 ## Misión, Visión y Valores
+
+La misión, la visión y los valores de La Cuentoneta nos proporcionan el marco de referencia para la toma de decisiones y el desarrollo de las acciones del proyecto a largo plazo. Pueden consultarse los MMVs encuentran en [este enlace][doc-mvv].
+
 ## Hoja de Ruta
 
-Podés acceder a la hoja de ruta (roadmap) del proyecto en [este enlace][doc-roadmap]. Allí podrás visualizar, a gran escala, los planes para las próximas características y storylists a agregar a La Cuentoneta.
+Podés acceder a la hoja de ruta (roadmap) del proyecto en [este enlace][doc-roadmap]. Allí podrás visualizar, a gran escala, los planes para las próximas características de las futuras versiones de la plataforma más las storylists a agregar a La Cuentoneta.
 
 ## Comunidad
 
@@ -194,7 +212,7 @@ Este repositorio y el contenido de la web de La Cuentoneta se publican bajo lice
 [doc-changelog]: CHANGELOG.md
 [doc-contributing]: CONTRIBUTING.md
 [doc-roadmap]: ROADMAP.md
-[doc-mmv]: MVV.md
+[doc-mvv]: MVV.md
 [doc-lic]: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
 
 <!-- Enlaces a Discord -->
