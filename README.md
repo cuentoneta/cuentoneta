@@ -58,6 +58,29 @@ Puedes acceder a [**este enlace**][figma] para ver los diseño de la web y todos
 ---
 ## Accesibilidad
 ## Tech Stack
+
+El tech stack actualmente utilizado para el desarrollo de La Cuentoneta es:
+
+#### Para la gestión de la base de código del proyecto
+- **<a href="https://pnpm.io/es/">pnpm</a>** como gestor de paquetes
+- **<a href="https://nx.dev/angular">Nx</a>** como gestor de monorepo y task runner
+
+#### Para el desarrollo de la plataforma web
+- **<a href="https://angular.io/">Angular 16</a>** como framework de frontend
+- **<a href="https://angular.io/guide/universal">Angular Universal</a>** para Server-Side rendering
+- **<a href="https://www.typescriptlang.org/">TypeScript</a>**
+- **<a href="https://tailwindcss.com/docs/installation">Tailwind CSS</a>**
+- **<a href="https://storybook.js.org/docs/react/get-started/introduction">Storybook</a>** como herramienta de desarrollo de componentes.
+
+#### Para la gestión del contenido
+- **<a href="https://www.sanity.io/docs">Sanity</a>** para persistencia de información de cuentos, autores y storylists.
+
+#### Para pruebas unitarias y de integración
+- **<a href="https://jestjs.io/docs/getting-started">Jest</a>** como framework de testing unitario
+- **<a href="https://www.cypress.io/">Cypress</a>** como framework de testing end-to-end
+
+> 💡 No hace falta tener mucho conocimiento en el tech stack para poder contribuir en el desarrollo. Si tienes ganas de aprender, ¡te invitamos a sumarte!
+
 ## Correr el proyecto localmente
 ## Contribuyentes
 ### Desarrolladores
