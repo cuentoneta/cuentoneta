@@ -48,6 +48,12 @@ Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. E
 
 ## Requerimientos
 ## Despliegues
+
+- **Web | Producción:** [https://cuentoneta.ar/](https://cuentoneta.ar/)
+- **Web | Staging:** (próximamente)
+- **Storybook:** (próximamente)
+- **Sanity Studio:** (próximamente)
+
 ## Diseño de interfaz (UI/UX)
 
 El diseño de interfaz de usuario de La Cuentoneta ha sido desarrollado por [Maxi Cris](https://maxicris.com/).  
