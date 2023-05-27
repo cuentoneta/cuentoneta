@@ -62,6 +62,8 @@ Puedes acceder a [**este enlace**][figma] para ver los diseño de la web y todos
 El tech stack actualmente utilizado para el desarrollo de La Cuentoneta es:
 
 #### Para la gestión de la base de código del proyecto
+- **<a href="https://git-scm.com/">Git</a>** como herramienta de control de versiones
+- **<a href="https://https://github.com">GitHub</a>** como host de la base de código
 - **<a href="https://pnpm.io/es/">pnpm</a>** como gestor de paquetes
 - **<a href="https://nx.dev/angular">Nx</a>** como gestor de monorepo y task runner
 
