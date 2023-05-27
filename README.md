@@ -57,6 +57,16 @@ Puedes acceder a [**este enlace**][figma] para ver los diseño de la web y todos
 
 ---
 ## Accesibilidad
+
+Quienes llevamos adelante este proyecto asumimos un compromiso a hacer todo lo posible por garantizar la accesibilidad digital en el uso de la plataforma, lo cual abarca e incluye a brindar facilidad de acceso para personas con discapacidades. 
+Para lograrlo, uno de los objetivos del proyecto es la mejora continua de la experiencia de usuario y el logro de aplicación de estándares de accesibilidad.
+
+Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos para que les diseñadores y desarrolladores mejoren la accesibilidad para las personas con discapacidades. Éste define tres niveles de conformidad: Nivel A, Nivel AA y Nivel AAA.
+
+**En una primera etapa, los requerimientos a la hora de contribuir con este proyecto buscan cumplir los requisitos [WCAG 2.1 nivel A][wcag].**
+
+> 💡 Si encontrás barreras de accesibilidad en la web de La Cuentoneta, podés informarlo enviando un email a [contacto@cuentoneta.ar][email] o abriendo un issue. Para hacerlo, necesitás leer la documentación sobre [cómo contribuir][doc-contributing].
+
 ## Tech Stack
 
 El tech stack actualmente utilizado para el desarrollo de La Cuentoneta es:
@@ -142,5 +152,6 @@ Este repositorio y el contenido de la web de La Cuentoneta se publican bajo lice
 [gh-issues]: https://github.com/rolivencia/cuentoneta/issues
 
 <!-- Recursos y otros -->
-[email]: mailto:ramiro@olivencia.com.ar
+[email]: mailto:contacto@cuentoneta.ar
 [figma]: https://www.figma.com/file/BIlQ6U3eh3M8vtYQt3vLNW/La-Cuentoneta-v2
+[wcag]: https://www.w3.org/WAI/standards-guidelines/wcag/es
