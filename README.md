@@ -130,12 +130,15 @@ Este repositorio y el contenido de la web de La Cuentoneta se publican bajo lice
 ## Links de interés
 - [La Cuentoneta][web]
 - [FrontendCafé](https://frontend.cafe/)
+- El presente documento toma como modelo el README.md del proyecto [Juguetear][github-juguetear], otra iniciativa en la que participa [FrontendCafé][web-fec]. 
 
 <!-- Listado de enlaces de referencia, mantenerlos actualizados en cada archivo -->
 <!-- Enlaces a las paginas web del proyecto -->
 [web]: https://cuentoneta.ar
 [web-staging]: https://cuentoneta-staging.vercel.app
 [web-storybook]: https://storybook-cuentoneta.vercel.app
+[web-fec]: https://frontend.cafe/
+[github-juguetear]: https://github.com/Juguetear/juguetear-web
 
 <!-- Enlaces a archivos de documentación (propios al repositorio)  -->
 [doc-code_of_conduct]: CODE_OF_CONDUCT.md
