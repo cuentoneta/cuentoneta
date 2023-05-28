@@ -51,16 +51,5 @@
         ></cuentoneta-story-card>
       </a>
     </ng-container>
-    <ng-container
-      *ngIf="storylist.count > 6 || (storylist.count > 5 && highlightFirstRow)"
-    >
-      <a
-        [routerLink]="['/' + appRouteTree['STORYLIST']]"
-        [queryParams]="{ slug: storylist.slug }"
-        class="navigation-link text-right"
-      >
-        Ver Storylist
-      </a>
-    </ng-container>
   </ng-container>
 </ng-template>

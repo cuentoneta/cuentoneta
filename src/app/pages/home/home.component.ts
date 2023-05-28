@@ -12,6 +12,7 @@ import { StorylistCardDeck } from '../../models/content.model';
 // Directives
 import { DestroyedDirective } from '../../directives/destroyed.directive';
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
+import { APP_ROUTE_TREE } from '../../app-routing.module';
 
 @Component({
     selector: 'cuentoneta-home',
@@ -20,6 +21,8 @@ import { FetchContentDirective } from '../../directives/fetch-content.directive'
     hostDirectives: [DestroyedDirective, FetchContentDirective],
 })
 export class HomeComponent {
+    readonly appRouteTree = APP_ROUTE_TREE;
+
     storylistCardDecks: StorylistCardDeck[] = [];
 
     // Services
@@ -48,4 +51,6 @@ export class HomeComponent {
                 this.storylistCardDecks = result;
             });
     }
+
+    protected readonly APP_ROUTE_TREE = APP_ROUTE_TREE;
 }
