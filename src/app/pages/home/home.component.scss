@@ -43,3 +43,8 @@
         }
     }
 }
+
+.navigation-link {
+    @include inter-body-xl-bold;
+    color: $interactive-500;
+}
