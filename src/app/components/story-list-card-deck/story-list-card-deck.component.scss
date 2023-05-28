@@ -23,10 +23,6 @@ $cards-grid-gap: $spacing-8;
     > * {
       grid-column: auto / span 2;
     }
-
-    .navigation-link {
-      grid-column: auto / span 6;
-    }
   }
 
   @media screen and (max-width: $max-md-width) {
@@ -38,9 +34,4 @@ $cards-grid-gap: $spacing-8;
 
 * + .stories-card-container {
   margin-top: $cards-grid-gap;
-}
-
-.navigation-link {
-  @include inter-body-xl-bold;
-  color: $interactive-500;
 }

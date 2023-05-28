@@ -27,6 +27,17 @@
                     [number]="storylistDeck.amount"
                     [isLoading]="fetchContentDirective.isLoading"
                 ></cuentoneta-story-list-card-deck>
+                <ng-container
+                        *ngIf="!!storylistDeck.storylist && (storylistDeck.storylist.count > 6 || (storylistDeck.storylist.count > 5 && storylistDeck.highlightFirstRow))"
+                >
+                    <a
+                            [routerLink]="['/' + appRouteTree['STORYLIST']]"
+                            [queryParams]="{ slug: storylistDeck.storylist.slug }"
+                            class="navigation-link text-right"
+                    >
+                        Ver Storylist
+                    </a>
+                </ng-container>
             </ng-container>
         </ng-container>
     </section>
