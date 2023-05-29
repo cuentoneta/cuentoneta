@@ -1,4 +1,5 @@
 import { Story, StoryBase, StoryDTO } from './story.model';
+import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
 interface StorylistBase {
     title: string;
@@ -9,7 +10,8 @@ interface StorylistBase {
     comingNextLabel: string;
     description?: string[];
     language?: string;
-    imageUrl?: string;
+    featuredImage?: SanityImageSource;
+    images?: StorylistImage[]
 }
 export interface StoryList extends StorylistBase {
     publications: Publication<Story>[];
@@ -23,4 +25,9 @@ export interface Publication<T extends StoryBase> {
     published: boolean;
     publishingDate?: string;
     story: T;
+}
+
+export interface StorylistImage {
+    slug: string;
+    url: SanityImageSource;
 }
