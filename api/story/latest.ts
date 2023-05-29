@@ -9,7 +9,7 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
  * @returns {Promise<null>}
  */
 export default async function get(req: VercelRequest, res: VercelResponse) {
-  const { slug, amount } = req.query;
+  const { slug, amount, ordering = 'asc' } = req.query;
   const limit = parseInt(amount as string) - 1;
 
   const query = `*[_type == 'storylist' && slug.current == '${slug}'][0]
@@ -23,7 +23,7 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
                         editionPrefix,
                         comingNextLabel,
                         'count': count(*[ _type == 'publication' && storylist._ref == ^._id ]),
-                        'publications': *[ _type == 'publication' && storylist._ref == ^._id ] | order(order desc){
+                        'publications': *[ _type == 'publication' && storylist._ref == ^._id ] | order(order ${ordering}){
                             order,
                             publishingDate,
                             published,
