@@ -1,9 +1,12 @@
-import { mapAuthor, mapPrologues } from '../_utils/functions';
+import { mapAuthor, mapPrologues, urlFor } from '../_utils/functions';
 import { client } from '../_helpers/sanity-connector';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 
 /**
- * Obtiene las últimas cinco historias almacenadas en Sanity
+ * Obtiene las N historias correspondientes a una Storylist, según el orden pasado como parámetro.
+ * slug -> Slug de la storylist
+ * amount -> Cantidad de historias retornadas en la propiedad publications
+ * ordering -> Orden en el que se retornarán las stories dentro de la propiedad publications. Default: orden ascendente.
  * @param req
  * @param res
  * @returns {Promise<null>}
@@ -22,6 +25,8 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
                         displayDates,
                         editionPrefix,
                         comingNextLabel,
+                        featuredImage,
+                        images,
                         'count': count(*[ _type == 'publication' && storylist._ref == ^._id ]),
                         'publications': *[ _type == 'publication' && storylist._ref == ^._id ] | order(order ${ordering}){
                             order,
@@ -51,6 +56,15 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
 
   const storylist = {
     ...result,
+    featuredImage: !result.featuredImage
+      ? undefined
+      : urlFor(result.featuredImage).url(),
+    images: !result.images
+      ? []
+      : result.images.map((image) => ({
+          slug: image.slug.current,
+          url: urlFor(image.source).url(),
+        })),
     publications: result.publications.map((publication: any) => {
       const { review, body, forewords, author, ...story } = publication.story;
       return {
