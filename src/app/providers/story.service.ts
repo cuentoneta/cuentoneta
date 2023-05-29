@@ -35,8 +35,15 @@ export class StoryService {
     return this.http.get<Story[]>(`${this.prefix}/original-links`);
   }
 
-  public getLatest(slug: string, amount: number = 5): Observable<StoryList> {
-    const params = new HttpParams().set('slug', slug).set('amount', amount);
+  public getLatest(
+    slug: string,
+    amount: number = 5,
+    ordering: 'asc' | 'desc' = 'asc'
+  ): Observable<StoryList> {
+    const params = new HttpParams()
+      .set('slug', slug)
+      .set('amount', amount)
+      .set('ordering', ordering);
     return this.http
       .get<StoryListDTO>(`${this.prefix}/latest`, { params })
       .pipe(
