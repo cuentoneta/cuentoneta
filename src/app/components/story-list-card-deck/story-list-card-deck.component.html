@@ -27,12 +27,7 @@
 
 <ng-template #storylistTemplate>
   <ng-container *ngIf="!!storylist">
-    <ng-container
-      *ngFor="
-        let publication of storylist.publications;
-        let editionIndex = index
-      "
-    >
+    <ng-container *ngFor="let publication of storylist.publications">
       <a
         [class.disabled]="!publication || !publication.published"
         [routerLink]="
@@ -46,7 +41,7 @@
           [displayDate]="storylist.displayDates"
           [editionPrefix]="storylist.editionPrefix"
           [publication]="publication"
-          [editionIndex]="storylist.count - editionIndex"
+          [editionIndex]="publication.order"
           [comingNextLabel]="storylist.comingNextLabel"
         ></cuentoneta-story-card>
       </a>
