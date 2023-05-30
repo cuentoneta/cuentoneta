@@ -1,34 +1,118 @@
-<ng-container *ngIf="displayTitle && !!storylist; else titleSkeletonTemplate">
-  <h2>{{ storylist.title }}</h2>
-</ng-container>
-
 <div
   class="stories-card-container"
-  [ngClass]="{ 'highlight-first-row': highlightFirstRow }"
+  [ngStyle]="{
+    'grid-template-columns': storylist?.gridConfig?.gridTemplateColumns
+  }"
 >
-  <ng-container *ngIf="!storylist || isLoading; else storylistTemplate">
-    <cuentoneta-story-card
-      *ngFor="let skeleton of dummyList"
-    ></cuentoneta-story-card>
-  </ng-container>
+  <ng-container *ngTemplateOutlet="storylistTemplate"> </ng-container>
 </div>
 
-<ng-template #titleSkeletonTemplate>
-  <ngx-skeleton-loader
-    count="1"
-    appearance="line"
-    [theme]="{
-      'height.px': 30,
-      width: '40%',
-      'background-color': '#D4D4D8'
-    }"
-  ></ngx-skeleton-loader>
+<ng-template #storylistTemplate>
+  <!-- Renderizado de título y descripción -->
+  <ng-container *ngIf="displayTitle">
+    <ng-container *ngIf="!!storylist; else titleSkeletonTemplate">
+      <div
+        class="story-card-container title-container"
+        [ngStyle]="{
+            order: storylist.gridConfig?.titlePlacement?.order,
+            'grid-column-start': storylist.gridConfig?.titlePlacement?.startCol,
+            'grid-column-end': storylist.gridConfig?.titlePlacement?.endCol,
+          }"
+      >
+        <h1 class="title">{{ storylist.title }}</h1>
+        <h3 class="subtitle">{{ storylist.description }}</h3>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <!-- Renderizado de imágenes alusivas -->
+  <ng-container *ngIf="!!storylist?.images">
+    <div
+      *ngFor="let image of storylist?.images"
+      class="story-card-container"
+      [ngStyle]="imagesCardConfig[image.slug]"
+    >
+      <img [src]="image.url" />
+    </div>
+  </ng-container>
+
+  <!-- Renderizado de tarjetas de stories -->
+  <ng-container
+    *ngTemplateOutlet="
+      storylist?.publications ? publicationsTemplate : skeletonsTemplate
+    "
+  >
+  </ng-container>
 </ng-template>
 
-<ng-template #storylistTemplate>
+<ng-template #titleSkeletonTemplate>
+  <div
+    class="story-card-container title-container"
+    [ngStyle]="{
+            order: skeletonConfig?.titlePlacement?.order,
+            'grid-column-start': skeletonConfig?.titlePlacement?.startCol,
+            'grid-column-end': skeletonConfig?.titlePlacement?.endCol,
+          }"
+  >
+    <ngx-skeleton-loader
+      count="1"
+      appearance="line"
+      [theme]="{
+        'margin-bottom.px': 20,
+        'height.px': 40,
+        width: '100%',
+        'background-color': '#D4D4D8'
+      }"
+    ></ngx-skeleton-loader>
+    <ngx-skeleton-loader
+      count="3"
+      appearance="line"
+      [theme]="{
+        'margin-bottom.px': 10,
+        'height.px': 20,
+        width: '100%',
+        'background-color': '#D4D4D8'
+      }"
+    ></ngx-skeleton-loader>
+  </div>
+</ng-template>
+
+<ng-template #skeletonsTemplate>
+  <ng-container *ngFor="let skeleton of skeletonConfig?.cardsPlacement">
+    <ng-container *ngIf="!!skeleton.slug">
+      <cuentoneta-story-card
+        [ngStyle]="{
+          'order': skeleton?.order,
+          'grid-column-start': skeleton?.startCol,
+          'grid-column-end': skeleton?.endCol,
+          }"
+      ></cuentoneta-story-card>
+    </ng-container>
+    <ng-container *ngIf="!!skeleton.imageSlug">
+      <ngx-skeleton-loader
+        count="1"
+        appearance="line"
+        [ngStyle]="{
+          'order': skeleton?.order,
+          'grid-column-start': skeleton?.startCol,
+          'grid-column-end': skeleton?.endCol,
+          }"
+        [theme]="{
+          'height': '100%',
+          width: '100%',
+          'background-color': '#D4D4D8'
+        }"
+      ></ngx-skeleton-loader>
+    </ng-container>
+  </ng-container>
+</ng-template>
+
+<ng-template #publicationsTemplate>
   <ng-container *ngIf="!!storylist">
     <ng-container *ngFor="let publication of storylist.publications">
       <a
+        class="story-card-container"
+        [ngStyle]="storiesCardConfig[publication.story.slug]"
         [class.disabled]="!publication || !publication.published"
         [routerLink]="
           !!publication && publication.published

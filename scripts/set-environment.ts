@@ -10,6 +10,9 @@
  * Autor: @rolivencia
  */
 
+// Importar cliente de Sanity
+import { client } from '../api/_helpers/sanity-connector';
+
 import { writeFile, existsSync, mkdirSync } from 'fs';
 import * as dotenv from 'dotenv';
 import ErrnoException = NodeJS.ErrnoException;
@@ -41,32 +44,68 @@ const generateApiUrl = (environment: TEnvironmentType): string => {
   return url;
 };
 
-// Accede a las variables de entorno y genera un string
-// correspondiente al objeto environment que utilizará Angular
-const environmentFileContent = `
-export const environment = {
-   environment: "${environment}",
-   contentConfig: ${process.env['CUENTONETA_CONTENT']},
-   website: "${process.env['CUENTONETA_WEBSITE']}",
-   apiUrl: "${generateApiUrl(environment)}"
-};
+// Obtiene la vista de preview para generar skeletons
+const fetchStorylistsPreviewDeckConfig = () =>
+  client.fetch(
+    `*[_type == 'storylist']
+                    { 
+                        'slug': slug.current,
+                        'title': title,
+                        'ordering': previewGridConfig.ordering,
+                        'orderInLandingPage': previewGridConfig.landingPageOrder,
+                        'gridTemplateColumns': previewGridConfig.gridTemplateColumns,
+                        'titlePlacement': previewGridConfig.titlePlacement,
+                        'cardsPlacement': previewGridConfig.cardsPlacement[]
+                        {
+                              'order': order,
+                              'slug': @.publication->story->slug.current,
+                              'startCol': startCol,
+                              'image': image,
+                              'imageSlug': imageSlug.current,
+                              'endCol': endCol,
+                              'startRow': startRow,
+                              'endRow': endRow,
+                        }
+                    } | order (orderInLandingPage asc)`
+  );
+
+fetchStorylistsPreviewDeckConfig().then((storylists) => {
+  // Accede a las variables de entorno y genera un string
+  // correspondiente al objeto environment que utilizará Angular
+  const environmentFileContent = `
+    export const environment = {
+       environment: "${environment}",
+       contentConfig: ${JSON.stringify(
+         storylists
+           .filter((storylist: any) => !!storylist.cardsPlacement)
+           .map((storylist: any) => ({
+             ...storylist,
+             amount:
+               storylist.cardsPlacement.filter((card: any) => !!card.slug)
+                 .length,
+           }))
+       )},
+       website: "${process.env['CUENTONETA_WEBSITE']}",
+       apiUrl: "${generateApiUrl(environment)}"
+    };
 `;
 
-// En caso de que no exista el directorio environments, se lo crea
-if (!existsSync(dirPath)) {
-  mkdirSync(dirPath);
-}
-
-// Escribe el contenido en el archivo correspondiente environment.ts
-writeFile(
-  targetPath,
-  environmentFileContent,
-  { flag: 'w' },
-  function (err: ErrnoException | null) {
-    if (err) {
-      console.log(err);
-      return;
-    }
-    console.log(`Variables de entorno escritas en ${targetPath}`);
+  // En caso de que no exista el directorio environments, se lo crea
+  if (!existsSync(dirPath)) {
+    mkdirSync(dirPath);
   }
-);
+
+  // Escribe el contenido en el archivo correspondiente environment.ts
+  writeFile(
+    targetPath,
+    environmentFileContent,
+    { flag: 'w' },
+    function (err: ErrnoException | null) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log(`Variables de entorno escritas en ${targetPath}`);
+    }
+  );
+});

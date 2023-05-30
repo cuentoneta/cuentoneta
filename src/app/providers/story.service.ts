@@ -35,29 +35,7 @@ export class StoryService {
     return this.http.get<Story[]>(`${this.prefix}/original-links`);
   }
 
-  public getLatest(
-    slug: string,
-    amount: number = 5,
-    ordering: 'asc' | 'desc' = 'asc'
-  ): Observable<StoryList> {
-    const params = new HttpParams()
-      .set('slug', slug)
-      .set('amount', amount)
-      .set('ordering', ordering);
-    return this.http
-      .get<StoryListDTO>(`${this.prefix}/latest`, { params })
-      .pipe(
-        map((storyList) => ({
-          ...storyList,
-          publications: storyList.publications.map((publication) => ({
-            ...publication,
-            story: this.parseStoryCardContent(publication.story),
-          })) as Publication<StoryCard>[],
-        }))
-      );
-  }
-
-  private parseStoryCardContent(story: StoryDTO): StoryCard {
+  public parseStoryCardContent(story: StoryDTO): StoryCard {
     return {
       ...story,
       prologues: story.prologues ?? [],

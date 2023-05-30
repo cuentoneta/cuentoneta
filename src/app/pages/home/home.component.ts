@@ -32,7 +32,7 @@ export class HomeComponent {
 
     constructor() {
         // Asignación inicial para dibujar skeletons
-        this.storylistCardDecks = this.contentService.contentConfig.storylistDeckConfigs;
+        this.storylistCardDecks = this.contentService.contentConfig;
 
         const platformId = inject(PLATFORM_ID);
         if(!isPlatformBrowser(platformId)) {
