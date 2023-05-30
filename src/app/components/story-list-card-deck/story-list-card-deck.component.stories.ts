@@ -333,7 +333,6 @@ export const FullyLoaded = {
   args: {
     number: 5,
     isLoading: false,
-    highlightFirstRow: true,
     displayTitle: true,
     storylist: fullyLoadedStorylist,
   },
@@ -346,7 +345,6 @@ export const UpcomingStories = {
   args: {
     number: 5,
     isLoading: false,
-    highlightFirstRow: true,
     displayTitle: true,
     storylist: upcomingStoriesStorylist,
   },

@@ -1,14 +1,13 @@
-import { StoryList } from './storylist.model';
-
-export interface ContentConfig {
-    storylistDeckConfigs: StorylistDeckConfig[];
-}
+import { GridItemPlacementConfig, StoryList } from './storylist.model';
 
 export interface StorylistDeckConfig {
     title: string;
     slug: string;
-    highlightFirstRow: boolean;
+    ordering: 'asc' | 'desc' | undefined;
+    gridTemplateColumns: string;
     amount: number;
+    titlePlacement: GridItemPlacementConfig,
+    cardsPlacement: GridItemPlacementConfig[];
 }
 
 export interface StorylistCardDeck extends StorylistDeckConfig {

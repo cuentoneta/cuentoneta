@@ -1,44 +1,45 @@
 <main>
-    <section class="hero flex justify-between items-center">
-        <div class="text">
-            <h1 class="title">Historias para disfrutar, compartir y aprender</h1>
-            <h3 class="subtitle">
-                Una iniciativa que busca fomentar y hacer accesible la lectura digital, publicando relatos breves en
-                nuestras <em>storylists</em> temáticas. ¡Subite a La Cuentoneta!
-            </h3>
-        </div>
-        <div class="featured-image">
-            <img
-                width="506"
-                height="400"
-                [alt]=""
-                [ngSrc]="'./assets/svg/illustration.svg'"
-            />
-        </div>
-    </section>
+  <section class="hero flex justify-between items-center">
+    <div class="text">
+      <h1 class="title">Historias para disfrutar, compartir y aprender</h1>
+      <h3 class="subtitle">
+        Una iniciativa que busca fomentar y hacer accesible la lectura digital,
+        publicando relatos breves en nuestras <em>storylists</em> temáticas.
+        ¡Subite a La Cuentoneta!
+      </h3>
+    </div>
+    <div class="featured-image">
+      <img
+        width="506"
+        height="400"
+        [alt]=""
+        [ngSrc]="'./assets/svg/illustration.svg'"
+      />
+    </div>
+  </section>
 
-    <section class="card-decks">
-        <ng-container *ngIf="!!storylistCardDecks && storylistCardDecks.length">
-            <ng-container *ngFor="let storylistDeck of storylistCardDecks">
-                <cuentoneta-story-list-card-deck
-                    [storylist]="storylistDeck.storylist"
-                    [highlightFirstRow]="storylistDeck.highlightFirstRow"
-                    [displayTitle]="true"
-                    [number]="storylistDeck.amount"
-                    [isLoading]="fetchContentDirective.isLoading"
-                ></cuentoneta-story-list-card-deck>
-                <ng-container
-                        *ngIf="!!storylistDeck.storylist && (storylistDeck.storylist.count > 6 || (storylistDeck.storylist.count > 5 && storylistDeck.highlightFirstRow))"
-                >
-                    <a
-                            [routerLink]="['/' + appRouteTree['STORYLIST']]"
-                            [queryParams]="{ slug: storylistDeck.storylist.slug }"
-                            class="navigation-link text-right"
-                    >
-                        Ver Storylist
-                    </a>
-                </ng-container>
-            </ng-container>
+  <section class="card-decks">
+    <ng-container *ngIf="!!storylistCardDecks && storylistCardDecks.length">
+      <ng-container *ngFor="let storylistDeck of storylistCardDecks">
+        <cuentoneta-story-list-card-deck
+          class="mb-3"
+          [storylist]="storylistDeck.storylist"
+          [displayTitle]="true"
+          [number]="storylistDeck.amount"
+          [isLoading]="fetchContentDirective.isLoading"
+          [displayFeaturedImage]="true"
+          [skeletonConfig]="storylistDeck"
+        ></cuentoneta-story-list-card-deck>
+        <ng-container *ngIf="!!storylistDeck.storylist">
+          <a
+                  [routerLink]="['/' + appRouteTree['STORYLIST']]"
+                  [queryParams]="{ slug: storylistDeck.storylist.slug }"
+                  class="navigation-link text-right"
+          >
+            Ver Storylist
+          </a>
         </ng-container>
-    </section>
+      </ng-container>
+    </ng-container>
+  </section>
 </main>

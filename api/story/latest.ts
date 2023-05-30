@@ -26,7 +26,36 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
                         editionPrefix,
                         comingNextLabel,
                         featuredImage,
-                        images,
+                        'gridConfig': { 
+                          'gridTemplateColumns': gridConfig.gridTemplateColumns,
+                          'titlePlacement': gridConfig.titlePlacement,
+                          'cardsPlacement': gridConfig.cardsPlacement[]
+                          {
+                              'order': order,
+                              'slug': @.publication->story->slug.current,
+                              'startCol': startCol,
+                              'image': image,
+                              'imageSlug': imageSlug.current,
+                              'endCol': endCol,
+                              'startRow': startRow,
+                              'endRow': endRow,
+                          }
+                        },
+                        'previewGridConfig': { 
+                          'gridTemplateColumns': previewGridConfig.gridTemplateColumns,
+                          'titlePlacement': previewGridConfig.titlePlacement,
+                          'cardsPlacement': previewGridConfig.cardsPlacement[]
+                          {
+                              'order': order,
+                              'slug': @.publication->story->slug.current,
+                              'startCol': startCol,
+                              'image': image,
+                              'imageSlug': imageSlug.current,
+                              'endCol': endCol,
+                              'startRow': startRow,
+                              'endRow': endRow,
+                          }
+                        },
                         'count': count(*[ _type == 'publication' && storylist._ref == ^._id ]),
                         'publications': *[ _type == 'publication' && storylist._ref == ^._id ] | order(order ${ordering}){
                             order,
@@ -39,7 +68,7 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
                                 originalLink,
                                 forewords,
                                 categories,
-                                body[0...2],
+                                body[0...3],
                                 review,
                                 forewords,
                                 approximateReadingTime,
@@ -54,17 +83,33 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
     res.json(null);
   }
 
+  const previewImages =
+    result.previewGridConfig.cardsPlacement?.filter((config) => !!config.imageSlug) ??
+    [];
+
+  const storyListImages =
+    result.gridConfig.cardsPlacement?.filter((config) => !!config.imageSlug) ??
+    [];
+
   const storylist = {
     ...result,
     featuredImage: !result.featuredImage
       ? undefined
       : urlFor(result.featuredImage).url(),
-    images: !result.images
-      ? []
-      : result.images.map((image) => ({
-          slug: image.slug.current,
-          url: urlFor(image.source).url(),
-        })),
+    images:
+      storyListImages.length === 0
+        ? []
+        : storyListImages.map((card) => ({
+            slug: card.imageSlug,
+            url: urlFor(card.image).url(),
+          })),
+    previewImages:
+        previewImages.length === 0
+        ? []
+        : previewImages.map((card) => ({
+            slug: card.imageSlug,
+            url: urlFor(card.image).url(),
+          })),
     publications: result.publications.map((publication: any) => {
       const { review, body, forewords, author, ...story } = publication.story;
       return {

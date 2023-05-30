@@ -13,6 +13,7 @@ import { StoryList } from '../../models/storylist.model';
 
 // Services
 import { MacroTaskWrapperService } from '../../providers/macro-task-wrapper.service';
+import { StorylistService } from '../../storylist.service';
 import { StoryService } from '../../providers/story.service';
 
 // Directives
@@ -46,6 +47,7 @@ export class StoryComponent {
     const activatedRoute = inject(ActivatedRoute);
     const destroyedDirective = inject(DestroyedDirective);
     const metaTagsDirective = inject(MetaTagsDirective);
+    const storylistService = inject(StorylistService);
     const storyService = inject(StoryService);
     const macroTaskWrapperService = inject(MacroTaskWrapperService);
 
@@ -55,7 +57,7 @@ export class StoryComponent {
         switchMap(({ slug, list }) =>
           combineLatest([
             storyService.getBySlug(slug),
-            storyService.getLatest(list, 10),
+            storylistService.get(list, 10),
           ])
         )
       )
