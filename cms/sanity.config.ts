@@ -46,6 +46,11 @@ export default defineConfig([
             }),
             sanityComputedField(),
             visionTool(),
+            crossDatasetDuplicator({
+                types: ['story', 'storylist', 'author', 'nationality'],
+                tool: true,
+                follow: []
+            })
         ],
         schema: {
             types: schemas,
