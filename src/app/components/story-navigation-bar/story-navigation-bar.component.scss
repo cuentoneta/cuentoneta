@@ -10,9 +10,6 @@ section {
     border-radius: $rounded-xl;
 
     .header {
-        &:hover .tooltip {
-            visibility: visible;
-        }
         position: relative;
         .tooltip {
             visibility: hidden;
@@ -39,6 +36,10 @@ section {
                 top: 35%;
             }
         }
+    }
+
+    .header:hover .tooltip {
+        visibility: visible;
     }
 
 
