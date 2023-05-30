@@ -1,8 +1,11 @@
 <section>
-  <header>
-    <ng-container *ngIf="storyList && storyList.title; else titleSkeleton"
-      ><h3 class="story-list-title">{{ storyList.title }}</h3></ng-container
-    >
+  <header class="header">
+    <ng-container *ngIf="storyList && storyList.title; else titleSkeleton">
+      <a href="#">
+        <h3 class="story-list-title">{{ storyList.title }}</h3>
+      </a>
+      <span class="tooltip">Ver lista completa</span>
+    </ng-container>
   </header>
 
   <ng-container *ngIf="!!storyList; else bodySkeleton">

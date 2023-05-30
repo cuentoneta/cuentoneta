@@ -9,6 +9,39 @@ section {
     background-color: $gray-200;
     border-radius: $rounded-xl;
 
+    .header {
+        &:hover .tooltip {
+            visibility: visible;
+        }
+        position: relative;
+        .tooltip {
+            visibility: hidden;
+            position: absolute;
+            z-index: 2;
+            color: white;
+            padding: 10px 15px;
+            background-color: black;
+            border-radius: 10px;
+            left: 106%;
+            top: 1rem;
+            width: 10.5rem;
+            text-align: center;
+            font-size: 1rem;
+
+            &::before {
+                content: "";
+                position: absolute;
+                background-color: black;
+                transform: rotate(45deg);
+                padding: 5px;
+                z-index: 1;
+                left: -2%;
+                top: 35%;
+            }
+        }
+    }
+
+
     header,
     footer {
         @include card-spacing;
