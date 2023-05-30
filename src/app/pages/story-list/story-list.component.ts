@@ -1,13 +1,15 @@
 // Core
 import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { map, Observable, switchMap, takeUntil } from 'rxjs';
+import { Observable, switchMap, takeUntil, tap } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 
 // Models
 import { StoryList } from '../../models/storylist.model';
+import { StorylistGridSkeletonConfig } from '../../models/content.model';
 
 // Services
+import { ContentService } from '../../providers/content.service';
 import { MacroTaskWrapperService } from '../../providers/macro-task-wrapper.service';
 import { StorylistService } from '../../storylist.service';
 
@@ -29,6 +31,7 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 export class StoryListComponent {
   fetchContentDirective = inject(FetchContentDirective<StoryList>);
   storylist!: StoryList | undefined;
+  skeletonConfig: StorylistGridSkeletonConfig | undefined;
 
   constructor() {
     const platformId = inject(PLATFORM_ID);
@@ -37,13 +40,25 @@ export class StoryListComponent {
     const metaTagsDirective = inject(MetaTagsDirective);
     const storylistService = inject(StorylistService);
     const macroTaskWrapperService = inject(MacroTaskWrapperService);
+    const contentService = inject(ContentService);
 
-    const fetchObservable$: Observable<StoryList> = this.fetchContentDirective
-      .fetchContentWithSourceParams$<StoryList>(
-        activatedRoute.queryParams,
-        switchMap(({ slug }) => storylistService.get(slug, 60, 'asc'))
-      )
-      .pipe(takeUntil(destroyedDirective.destroyed$));
+    const fetchObservable$: Observable<StoryList> =
+      activatedRoute.queryParams.pipe(
+        tap(({ slug }) => {
+          this.storylist = undefined;
+          this.skeletonConfig = contentService.contentConfig.find(
+            (config) =>
+              config.slug === activatedRoute.snapshot.queryParams['slug']
+          )?.gridSkeletonConfig;
+        }),
+        switchMap(() =>
+          this.fetchContentDirective.fetchContentWithSourceParams$<StoryList>(
+            activatedRoute.queryParams,
+            switchMap(({ slug }) => storylistService.get(slug, 60, 'asc'))
+          )
+        ),
+        takeUntil(destroyedDirective.destroyed$)
+      );
 
     // TODO: Mover discriminación entre client-side y server-side a directiva
     // En base a si la plataforma es browser o server, utiliza el wrapper de macro tasks en el segundo caso

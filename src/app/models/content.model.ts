@@ -4,12 +4,17 @@ export interface StorylistDeckConfig {
     title: string;
     slug: string;
     ordering: 'asc' | 'desc' | undefined;
-    gridTemplateColumns: string;
     amount: number;
-    titlePlacement: GridItemPlacementConfig,
-    cardsPlacement: GridItemPlacementConfig[];
+    previewGridSkeletonConfig: StorylistGridSkeletonConfig;
+    gridSkeletonConfig: StorylistGridSkeletonConfig;
 }
 
 export interface StorylistCardDeck extends StorylistDeckConfig {
     storylist?: StoryList;
+}
+
+export interface StorylistGridSkeletonConfig {
+    gridTemplateColumns: string;
+    titlePlacement: GridItemPlacementConfig,
+    cardsPlacement: GridItemPlacementConfig[];
 }
