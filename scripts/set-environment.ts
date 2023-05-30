@@ -13,6 +13,10 @@
 // Importar cliente de Sanity
 import { client } from '../api/_helpers/sanity-connector';
 
+// Interfaces
+import { StorylistDeckConfig } from '../src/app/models/content.model';
+
+// NodeJS & env
 import { writeFile, existsSync, mkdirSync } from 'fs';
 import * as dotenv from 'dotenv';
 import ErrnoException = NodeJS.ErrnoException;
@@ -53,10 +57,10 @@ const fetchStorylistsPreviewDeckConfig = () =>
                         'title': title,
                         'ordering': previewGridConfig.ordering,
                         'orderInLandingPage': previewGridConfig.landingPageOrder,
-                        'gridTemplateColumns': previewGridConfig.gridTemplateColumns,
-                        'titlePlacement': previewGridConfig.titlePlacement,
-                        'cardsPlacement': previewGridConfig.cardsPlacement[]
-                        {
+                        'previewGridSkeletonConfig': {
+                            'gridTemplateColumns': previewGridConfig.gridTemplateColumns,
+                            'titlePlacement': previewGridConfig.titlePlacement,
+                            'cardsPlacement': previewGridConfig.cardsPlacement[] {
                               'order': order,
                               'slug': @.publication->story->slug.current,
                               'startCol': startCol,
@@ -65,11 +69,27 @@ const fetchStorylistsPreviewDeckConfig = () =>
                               'endCol': endCol,
                               'startRow': startRow,
                               'endRow': endRow,
+                            }
+                        },
+                        'gridSkeletonConfig': {
+                            'gridTemplateColumns': gridConfig.gridTemplateColumns,
+                            'titlePlacement': gridConfig.titlePlacement,
+                            'cardsPlacement': gridConfig.cardsPlacement[] {
+                              'order': order,
+                              'slug': @.publication->story->slug.current,
+                              'startCol': startCol,
+                              'image': image,
+                              'imageSlug': imageSlug.current,
+                              'endCol': endCol,
+                              'startRow': startRow,
+                              'endRow': endRow,
+                            }
                         }
                     } | order (orderInLandingPage asc)`
   );
 
-fetchStorylistsPreviewDeckConfig().then((storylists) => {
+fetchStorylistsPreviewDeckConfig().then((storylists: StorylistDeckConfig[]) => {
+  console.log(storylists);
   // Accede a las variables de entorno y genera un string
   // correspondiente al objeto environment que utilizará Angular
   const environmentFileContent = `
@@ -77,12 +97,15 @@ fetchStorylistsPreviewDeckConfig().then((storylists) => {
        environment: "${environment}",
        contentConfig: ${JSON.stringify(
          storylists
-           .filter((storylist: any) => !!storylist.cardsPlacement)
+           .filter(
+             (storylist: any) =>
+               !!storylist.previewGridSkeletonConfig.cardsPlacement
+           )
            .map((storylist: any) => ({
              ...storylist,
-             amount:
-               storylist.cardsPlacement.filter((card: any) => !!card.slug)
-                 .length,
+             amount: storylist.previewGridSkeletonConfig.cardsPlacement.filter(
+               (card: any) => !!card.slug
+             ).length,
            }))
        )},
        website: "${process.env['CUENTONETA_WEBSITE']}",

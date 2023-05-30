@@ -28,7 +28,7 @@
           [number]="storylistDeck.amount"
           [isLoading]="fetchContentDirective.isLoading"
           [displayFeaturedImage]="true"
-          [skeletonConfig]="storylistDeck"
+          [skeletonConfig]="storylistDeck.previewGridSkeletonConfig"
         ></cuentoneta-story-list-card-deck>
         <ng-container *ngIf="!!storylistDeck.storylist">
           <a

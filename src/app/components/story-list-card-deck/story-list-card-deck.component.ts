@@ -19,7 +19,7 @@ import {
   StoryList,
 } from '../../models/storylist.model';
 import { APP_ROUTE_TREE } from '../../app-routing.module';
-import {StorylistDeckConfig} from "../../models/content.model";
+import { StorylistGridSkeletonConfig } from "../../models/content.model";
 
 @Component({
   selector: 'cuentoneta-story-list-card-deck',
@@ -34,7 +34,7 @@ export class StoryListCardDeckComponent implements OnInit, OnChanges {
   @Input() isLoading: boolean = false; // Utilizado para mostrar/ocultar skeletons
   @Input() displayTitle: boolean = true;
   @Input() displayFeaturedImage: boolean = false;
-  @Input() skeletonConfig: StorylistDeckConfig | undefined
+  @Input() skeletonConfig: StorylistGridSkeletonConfig | undefined
 
   dummyList: null[] = [];
   imagesCardConfig: { [key: string]: CardDeckCSSGridConfig } = {};
