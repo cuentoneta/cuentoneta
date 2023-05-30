@@ -37,8 +37,8 @@ export class StoryListCardDeckComponent implements OnInit, OnChanges {
   @Input() skeletonConfig: StorylistDeckConfig | undefined
 
   dummyList: null[] = [];
-  imagesCardConfig: { [key: string]: CSSGridConfig } = {};
-  storiesCardConfig: { [key: string]: CSSGridConfig } = {};
+  imagesCardConfig: { [key: string]: CardDeckCSSGridConfig } = {};
+  storiesCardConfig: { [key: string]: CardDeckCSSGridConfig } = {};
   readonly appRouteTree = APP_ROUTE_TREE;
 
   ngOnInit() {
@@ -82,7 +82,7 @@ export class StoryListCardDeckComponent implements OnInit, OnChanges {
     }
   }
 
-  private generateCardConfig(slug: string): CSSGridConfig {
+  private generateCardConfig(slug: string): CardDeckCSSGridConfig {
     const storyCardConfig = this.storylist?.gridConfig?.cardsPlacement?.find(
       (card) => [card.slug, card.imageSlug].includes(slug)
     );
@@ -94,7 +94,7 @@ export class StoryListCardDeckComponent implements OnInit, OnChanges {
   }
 }
 
-export interface CSSGridConfig {
+interface CardDeckCSSGridConfig {
   order: number;
   'grid-column-start': string | number;
   'grid-column-end': string | number;
