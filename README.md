@@ -35,10 +35,10 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 Para realizar contribuciones a La Cuentoneta, podés hacerlo mediante cuatro vías, no excluyentes entre sí. Una vez sumes tu granito de arena para mejorar y hacer crecer a este proyecto, te incluiremos en la sección de [contribuyentes](#contribuyentes) y te agradeceremos públicamente por tu aporte. Podrás, además, portar el badge `Cuentoneta 🚐` en el servidor de [Discord de FrontendCafé][dc-channel].
 
 ### 📣 Difundiendo
-Si te gusta el proyecto, podés ayudarnos difundiéndolo en tus redes sociales, compartiendo los contenidos que publicamos, y recomendándolo a otras personas. Llegar cada vez a más personas hará que podamos mejorar la plataforma, hacerla más accesible y descubrir qué funcionalidades nuevas desarrollar a futuro. La Cuentoneta tiene cuentasoficiales en [Facebook][facebook-cuentoneta], [Instagram][instagram-cuentoneta] y [Twitter][https://twitter.com/cuentoneta].
+Si te gusta el proyecto, podés ayudarnos difundiéndolo en tus redes sociales, compartiendo los contenidos que publicamos, y recomendándolo a otras personas. Llegar cada vez a más personas hará que podamos mejorar la plataforma, hacerla más accesible y descubrir qué funcionalidades nuevas desarrollar a futuro. La Cuentoneta tiene cuentasoficiales en [Facebook][facebook-cuentoneta], [Instagram][instagram-cuentoneta] y [Twitter][twitter-cuentoneta].
 
 ### 💡 Sugiriendo nuevas funcionalidades
-Si tenés una idea para una nueva funcionalidad, podés comunicarte con el equipo de desarrollo vía el [Discord de FrontendCafé][dc-channel] y que en comunidad veamos la viabilidad de la idea. También podés [crear un issue][[gh-issues] en este repositorio para que podamos discutirlo y agregarlo a la hoja de ruta del proyecto.
+Si tenés una idea para una nueva funcionalidad, podés comunicarte con el equipo de desarrollo vía el [Discord de FrontendCafé][dc-channel] y que en comunidad veamos la viabilidad de la idea. También podés [crear un issue][gh-issues] en este repositorio para que podamos discutirlo y agregarlo a la hoja de ruta del proyecto.
 
 ### 📜 Contenidos
 Podés sugerir contenido para sumar a la plataforma, sea en forma de cuentos, poemas, ensayos o temáticas para nuevas storylists. El contenido puede ser escritura propia o de terceros, con previos permisos de publicación o disponibilidad de acceso a este contenido en la web abierta.
