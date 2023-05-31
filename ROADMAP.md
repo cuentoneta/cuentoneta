@@ -18,7 +18,7 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 - Apertura a la [comunidad de FrontendCafé][dc-fec] para la colaboración en el desarrollo de la plataforma. 
 - Creación de las redes sociales de "La Cuentoneta" ([Instagram][instagram-cuentoneta], [Twitter][twitter-cuentoneta], [Facebook][facebook-cuentoneta]) para fomentar la participación del público general en la plataforma.
 
-### `Hito: Lanzamiento al público de la versión 2.0 de La Cuentoneta (2023/05/29)`
+### `Hito: Lanzamiento al público de la versión 2.0 de La Cuentoneta (2023/05/31)`
 
 ## Junio de 2023
 
@@ -41,7 +41,7 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 ## Diciembre de 2023
 
-- Preparación de la lista "Cuentos de Verano 2023" en la plataforma.
+- Preparación de la lista "Cuentos de Verano 2024" en la plataforma.
 
 ## Febrero de 2024
 
