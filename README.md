@@ -192,7 +192,7 @@ pnpm run dev
 ### Desarrolladores
 
 - Ramiro Olivencia (**[@rolivencia](https://github.com/rolivencia)**)
-- Erik Giovani (**[@erikgiovani](https://github.com/ErikGIovani)**)
+- Erik Giovani (**[@erikgiovani](https://github.com/erikgiovani)**)
 - Juan Blas Tschopp (**[@juanblas09](https://github.com/juanblas09)**)
 
 ### Diseño UX/UI
