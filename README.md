@@ -7,7 +7,7 @@
 </div>
 
 ---
-**La Cuentoneta** es un proyecto abierto y sin fines de lucro que busca generar un espacio comunitario para difundir escritos en literatura breve, gestado originalmente por un grupo de amigues residentes de la ciudad de **Santa Fe, Argentina 🇦🇷** .
+**La Cuentoneta** es un proyecto abierto y sin fines de lucro que busca generar un espacio comunitario para difundir escritos en literatura breve, gestado originalmente por un grupo de amigas y amigos residentes de la ciudad de **Santa Fe, Argentina** <img class="inline" width="20px" height="15px" src="https://github.com/rolivencia/cuentoneta/blob/master/resources/flags/ar.png"/>.
 
 La misión de **La Cuentoneta** es construir colectivamente una plataforma accesible, amigable y gamificada que sea útil para fomentar, compartir y disfrutar la lectura digital. Buscamos lograrlo a través de la publicación de relatos breves en storylists temáticas, emulando las playlists que utilizan plataformas de audio como Spotify y de video como YouTube.
 
@@ -31,11 +31,7 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 --- 
 
 ## Cómo contribuir
-
-Para realizar contribuciones a La Cuentoneta, podés hacerlo mediante cuatro vías, no excluyentes entre sí. Una vez sumes tu granito de arena para mejorar y hacer crecer a este proyecto, te incluiremos en la sección de [contribuyentes](#contribuyentes) y te agradeceremos públicamente por tu aporte. Podrás, además, portar el badge `Cuentoneta 🚐` en el servidor de Discord de FrontendCafé.
-
-### 🖥️ Contribuyendo código
-Si sos desarrolladora o desarrollador, podés contribuir al proyecto mediante la creación de issues, pull requests, revisando código, etc. Para ello, te recomendamos leer la [guía de contribución][doc-contributing] para que puedas familiarizarte con el proyecto y sus convenciones.
+Para sumar tu granito de arena al desarrollo de La Cuentoneta podés hacerlo mediante cuatro vías, no excluyentes entre sí. Como agradecimiento por tu aporte te agregaremos a la sección de [contribuyentes](#contribuyentes) y podrás, además, portar el badge `Cuentoneta 🚐` en el servidor de Discord de FrontendCafé.
 
 ### 💡 Sugiriendo nuevas funcionalidades
 Si tenés una idea para una nueva funcionalidad, podés comunicarte con el equipo de desarrollo vía el [Discord de FrontendCafé][dc-channel] y que en comunidad veamos la viabilidad de la idea. También podés crear un issue en este repositorio para que podamos discutirlo y agregarlo a la hoja de ruta del proyecto.
@@ -43,9 +39,12 @@ Si tenés una idea para una nueva funcionalidad, podés comunicarte con el equip
 ### 🎨 Diseño UX/UI
 Si tenés habilidades en diseño UX/UI, podés contribuir al proyecto asistiendo en la creación de wireframes, mockups, y prototipos para mejorar características existentes de la plataforma y contribuir en la gestación de nuevas funcionalidades.
 
-### 📜 Contenidos
-Podés sugerir contenido para sumar a La Cuentoneta, en forma de cuentos, poemas, ensayos o temáticas para nuevas storylists. El contenido puede ser escritura propia o de terceros, con previos permisos de publicación o disponibilidad de acceso a este contenido en la web abierta. Estamos trabajando para, a futuro, ir en busca de autores y autoras de cuentos y poemas de autoría original que deseen publicar sus obras en La Cuentoneta.
+### 🖥️ Programando
+Si sos desarrolladora o desarrollador, podés contribuir al proyecto mediante la creación de issues, pull requests, revisando código, etc. Para ello, te recomendamos leer la [guía de contribución][doc-contributing] para que puedas familiarizarte con el proyecto y sus convenciones.
 
+### 📜 Contenidos
+    Podés sugerir contenido para sumar a la plataforma. Puede ser en forma decuentos, poemas, ensayos o temáticas para nuevas storylists. El contenido puede ser escritura propia o de terceros, con previos permisos de publicación o disponibilidad de acceso a este contenido en la web abierta. Estamos trabajando para, a futuro, ir en busca de autores y autoras de cuentos y poemas de autoría original que deseen publicar sus obras en La Cuentoneta, como así también de personas que deseen leer cuentos para publicarlos en versión audiolibro.
+    
 ## Misión, Visión y Valores
 
 La misión, la visión y los valores de La Cuentoneta nos proporcionan el marco de referencia para la toma de decisiones y el desarrollo de las acciones del proyecto a largo plazo. Pueden consultarse los MMVs encuentran en [este enlace][doc-mvv].
