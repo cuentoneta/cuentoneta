@@ -8,7 +8,7 @@
 
 ---
 
-**La Cuentoneta** es un proyecto abierto y sin fines de lucro que busca generar un espacio comunitario para difundir escritos en literatura breve. Esta iniciativa fue gestada originalmente por un grupo de amigues residentes de la ciudad de Santa Fe, Argentina durante los últimos días de diciembre de 2021.
+**La Cuentoneta** es un proyecto abierto y sin fines de lucro que busca generar un espacio comunitario para difundir escritos en literatura breve. Esta iniciativa fue gestada originalmente por un grupo de amigas y amigos residentes de la ciudad de Santa Fe, Argentina durante los últimos días de diciembre de 2021.
 
 La misión de **La Cuentoneta** es construir colectivamente una plataforma accesible, amigable y gamificada que sea útil para fomentar, compartir y disfrutar la lectura digital. Buscamos lograrlo a través de la publicación de escritos breves en _storylists_ temáticas, emulando las playlists que utilizan plataformas de audio como Spotify y de video como YouTube; intentando resignificar el formato de antología de relatos breves.
 
@@ -116,7 +116,7 @@ Puedes acceder a [**este enlace**][figma] para ver los diseño de la web y todos
 Quienes llevamos adelante este proyecto asumimos un compromiso a hacer todo lo posible por garantizar la accesibilidad digital en el uso de la plataforma, lo cual abarca e incluye a brindar facilidad de acceso para personas con discapacidades.
 Para lograrlo, uno de los objetivos del proyecto es la mejora continua de la experiencia de usuario y el logro de aplicación de estándares de accesibilidad.
 
-Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos para que les diseñadores y desarrolladores mejoren la accesibilidad para las personas con discapacidades. Éste define tres niveles de conformidad: Nivel A, Nivel AA y Nivel AAA.
+Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos para que diseñadores y desarrolladores mejoren la accesibilidad para las personas con discapacidades. Éste define tres niveles de conformidad: Nivel A, Nivel AA y Nivel AAA.
 
 **En una primera etapa, los requerimientos a la hora de contribuir con este proyecto buscan cumplir los requisitos [WCAG 2.1 nivel A][wcag].**
 
