@@ -17,7 +17,7 @@ export class StoryNavigationBarComponent {
     // ToDo: Separar card de cada cuento de la lista en su propio componente, para evitar usar un método en el template
     getEditionLabel(publication: Publication<Story>, editionIndex: number = 0): string {
         return `${this.storyList?.editionPrefix} ${editionIndex} ${
-            publication.publishingDate ? ' - ' + publication.publishingDate : ''
+            this.storyList.displayDates ? ' - ' + publication.publishingDate : ''
         }`;
     }
 }
