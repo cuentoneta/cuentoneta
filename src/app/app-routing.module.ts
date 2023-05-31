@@ -25,10 +25,11 @@ const routes: Routes = [
         (m) => m.StoryListModule
       ),
   },
-  // {
-  //   path: 'about',
-  //   loadChildren: () => import('./pages/about/about.module').then((m) => m.AboutModule),
-  // },
+  {
+    path: 'about',
+    loadComponent: () =>
+      import('./pages/about/about.component').then((m) => m.AboutComponent),
+  },
   // {
   //   path: 'dmca',
   //   loadChildren: () => import('./pages/dmca/dmca.module').then((m) => m.DmcaModule),

@@ -36,14 +36,6 @@
 </header>
 
 <ng-template #navigationLinks>
-  <ng-container *ngFor="let list of lists">
-    <li (click)="onMenuTogglerClicked($event)">
-      <a
-        [routerLink]="['/' + appRouteTree['STORYLIST']]"
-        [queryParams]="{ slug: list.slug }"
-        >{{ list.title }}</a
-      >
-    </li>
-  </ng-container>
+  <li><a routerLink="/home">Inicio</a></li>
   <li><a routerLink="/about">Nosotros</a></li>
 </ng-template>
