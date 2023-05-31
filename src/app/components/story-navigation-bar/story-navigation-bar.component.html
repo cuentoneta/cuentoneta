@@ -9,7 +9,6 @@
     <ng-container
       *ngFor="
         let publication of storyList.publications;
-        let editionIndex = index
       "
     >
       <a
@@ -20,7 +19,7 @@
           <cuentoneta-story-edition-date-label
             class="edition-and-label"
             [label]="
-              getEditionLabel(publication, storyList.count - editionIndex)
+              getEditionLabel(publication, publication.order)
             "
           ></cuentoneta-story-edition-date-label>
           <h4 class="title">{{ publication.story.title }}</h4>
