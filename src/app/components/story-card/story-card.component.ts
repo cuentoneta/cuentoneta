@@ -21,6 +21,7 @@ export class StoryCardComponent implements OnInit {
   @Input() editionIndex: number = 0;
 
   editionLabel: string = '';
+  previewText: string = '';
 
   ngOnInit() {
     const dateFormat = dayjs(this.publication?.publishingDate).format(
@@ -33,5 +34,7 @@ export class StoryCardComponent implements OnInit {
     this.comingNextLabel = this.displayDate
       ? `${this.comingNextLabel} ${dateFormat}`
       : this.comingNextLabel;
+
+    this.previewText = this.publication?.story.paragraphs.join(' ') ?? '';
   }
 }

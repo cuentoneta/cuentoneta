@@ -8,10 +8,9 @@
       </header>
       <section>
         <h1 class="card-title">{{ story.title }}</h1>
-        <!-- ToDo: Optimizar payload tratado para mostrar el resumen de cada tarjeta (#115)-->
         <p
           class="content "
-          [innerHTML]="story.paragraphs[0] + ' ' + story.paragraphs[1]"
+          [innerHTML]="previewText"
         ></p>
       </section>
       <label class="reading-time"
