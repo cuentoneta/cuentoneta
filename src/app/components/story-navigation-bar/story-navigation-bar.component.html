@@ -1,7 +1,11 @@
 <section>
   <header>
     <ng-container *ngIf="storyList && storyList.title; else titleSkeleton"
-      ><h3 class="story-list-title">{{ storyList.title }}</h3></ng-container
+      ><a
+        [routerLink]="'/' + appRouteTree['STORYLIST']"
+        [queryParams]="{ slug: storyList.slug }"
+        ><h3 class="story-list-title">{{ storyList.title }}</h3></a
+      ></ng-container
     >
   </header>
 
