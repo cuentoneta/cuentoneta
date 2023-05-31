@@ -43,9 +43,6 @@ dependencies:
   '@types/express':
     specifier: ^4.17.17
     version: 4.17.17
-  '@types/yargs':
-    specifier: ^17.0.24
-    version: 17.0.24
   '@vercel/analytics':
     specifier: ^1.0.0
     version: 1.0.0(react@18.2.0)
@@ -207,9 +204,6 @@ devDependencies:
   webpack:
     specifier: ^5.64.0
     version: 5.76.3(esbuild@0.17.13)
-  yargs:
-    specifier: ^17.7.1
-    version: 17.7.1
 
 packages:
 
