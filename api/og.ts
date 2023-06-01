@@ -8,9 +8,16 @@ import type { ReactNode } from 'react';
 import Logo from './_utils/Logo';
 
 export default async function get(req: VercelRequest, res: VercelResponse) {
-  const { author, title, rrss } = req.query;
-  const text: string =
-    !author || !title ? 'La Cuentoneta' : `${title} - ${author}`;
+  const {author, title, rrss, storylist} = req.query;
+  let text: string;
+
+  if (storylist) {
+    text = String(storylist)
+  }else if (author && title){
+    text = `${title} - ${author}`
+  }else {
+    text = "La Cuentoneta"
+  }
 
   let width: number;
   let height: number;
