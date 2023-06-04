@@ -1,8 +1,9 @@
 // Core
 import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest, switchMap, takeUntil } from 'rxjs';
+import { combineLatest, switchMap } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // Router
 import { APP_ROUTE_TREE } from '../../app-routing.module';
@@ -17,7 +18,6 @@ import { StorylistService } from '../../storylist.service';
 import { StoryService } from '../../providers/story.service';
 
 // Directives
-import { DestroyedDirective } from '../../directives/destroyed.directive';
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
@@ -26,7 +26,6 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
   templateUrl: './story.component.html',
   styleUrls: ['./story.component.scss'],
   hostDirectives: [
-    DestroyedDirective,
     FetchContentDirective,
     MetaTagsDirective,
   ],
@@ -45,7 +44,6 @@ export class StoryComponent {
   constructor() {
     const platformId = inject(PLATFORM_ID);
     const activatedRoute = inject(ActivatedRoute);
-    const destroyedDirective = inject(DestroyedDirective);
     const metaTagsDirective = inject(MetaTagsDirective);
     const storylistService = inject(StorylistService);
     const storyService = inject(StoryService);
@@ -61,7 +59,7 @@ export class StoryComponent {
           ])
         )
       )
-      .pipe(takeUntil(destroyedDirective.destroyed$));
+      .pipe(takeUntilDestroyed());
 
     const content$ = isPlatformBrowser(platformId)
       ? fetchObservable$
