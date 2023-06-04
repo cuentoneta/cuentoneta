@@ -1,8 +1,9 @@
 // Core
 import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, switchMap, takeUntil, tap } from 'rxjs';
+import { Observable, switchMap, tap } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // Models
 import { StoryList } from '../../models/storylist.model';
@@ -14,7 +15,6 @@ import { MacroTaskWrapperService } from '../../providers/macro-task-wrapper.serv
 import { StorylistService } from '../../storylist.service';
 
 // Directives
-import { DestroyedDirective } from '../../directives/destroyed.directive';
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
@@ -23,7 +23,6 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
   templateUrl: './story-list.component.html',
   styleUrls: ['./story-list.component.scss'],
   hostDirectives: [
-    DestroyedDirective,
     FetchContentDirective,
     MetaTagsDirective,
   ],
@@ -36,7 +35,6 @@ export class StoryListComponent {
   constructor() {
     const platformId = inject(PLATFORM_ID);
     const activatedRoute = inject(ActivatedRoute);
-    const destroyedDirective = inject(DestroyedDirective);
     const metaTagsDirective = inject(MetaTagsDirective);
     const storylistService = inject(StorylistService);
     const macroTaskWrapperService = inject(MacroTaskWrapperService);
@@ -57,7 +55,7 @@ export class StoryListComponent {
             switchMap(({ slug }) => storylistService.get(slug, 60, 'asc'))
           )
         ),
-        takeUntil(destroyedDirective.destroyed$)
+        takeUntilDestroyed()
       );
 
     // TODO: Mover discriminación entre client-side y server-side a directiva
