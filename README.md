@@ -98,7 +98,7 @@ Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. E
 ## Despliegues
 
 - **Web | Producción:** [https://cuentoneta.ar/](https://cuentoneta.ar/)
-- **Web | Staging:** (próximamente)
+- **Web | Staging:** [https://staging.cuentoneta.ar](https://staging.cuentoneta.ar)
 - **Storybook:** (próximamente)
 - **Sanity Studio:** (próximamente)
 
