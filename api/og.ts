@@ -2,12 +2,12 @@ import { html } from 'satori-html';
 import satori from 'satori';
 import { readFileSync } from 'fs';
 
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { Request, Response } from 'express';
 import type { ReactNode } from 'react';
 
 import Logo from './_utils/Logo';
 
-export default async function get(req: VercelRequest, res: VercelResponse) {
+export default async function get(req: Request, res: Response) {
   const {author, title, rrss, storylist} = req.query;
   let text: string;
 
@@ -58,6 +58,6 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
     ],
   });
 
-  res.setHeader('Content-Type', 'image/svg+xml');
+  res.set('Content-Type', 'image/svg+xml');
   res.send(svg);
 }
