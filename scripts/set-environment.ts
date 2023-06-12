@@ -11,7 +11,7 @@
  */
 
 // Importar cliente de Sanity
-import { client } from '../api/_helpers/sanity-connector';
+import { client } from '../src/api/_helpers/sanity-connector';
 
 // Interfaces
 import { StorylistDeckConfig } from '../src/app/models/content.model';
@@ -89,7 +89,6 @@ const fetchStorylistsPreviewDeckConfig = () =>
   );
 
 fetchStorylistsPreviewDeckConfig().then((storylists: StorylistDeckConfig[]) => {
-  console.log(storylists);
   // Accede a las variables de entorno y genera un string
   // correspondiente al objeto environment que utilizará Angular
   const environmentFileContent = `
