@@ -11,7 +11,7 @@
  */
 
 // Importar cliente de Sanity
-import { client } from '../api/_helpers/sanity-connector';
+import { client } from '../src/api/_helpers/sanity-connector';
 
 // Interfaces
 import { StorylistDeckConfig } from '../src/app/models/content.model';
