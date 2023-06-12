@@ -89,7 +89,6 @@ Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. E
 - Tener instalada una versión de [Node](https://nodejs.org/es/) superior a `v16.16.0`, idealmente la última versión LTS.
 - Instalar `pnpm`, un gestor de paquetes alternativo para Node: `npm install -g pnpm`. Se recomienda la versión `8.2.0` o superior.
 - Instalar `nx`, un CLI para desarrollo de monorepos: `pnpm install -g nx`. Se recomienda la versión `16.0.3` o superior.
-- Instalar `vercel`, un CLI para despliegues en Vercel: `pnpm install -g vercel`. Se recomienda la versión `28.10.0` o superior.
 - Tener un editor de texto o IDE ([Visual Studio Code](https://code.visualstudio.com/), [Vim](https://www.vim.org/), etc.)
 - Tener una cuenta en [GitHub](https://docs.github.com/es/get-started/signing-up-for-github/signing-up-for-a-new-github-account)
 - Leer y seguir [Código de Conducta][doc-code_of_conduct]
@@ -176,10 +175,10 @@ pnpm install
 Una vez hechos los pasos de instalación ejecutá el siguiente comando:
 
 ```bash
-pnpm run vercel:dev
+pnpm run dev
 ```
 
-Se iniciara el servidor de desarrollo, visitá [http://localhost:3000](http://localhost:3000) en tu navegador para ver la aplicación.
+Se iniciara el servidor de desarrollo, visitá [http://localhost:4200](http://localhost:4200) en tu navegador para ver la aplicación.
 
 Para ejecutar el entorno de desarrollo de Sanity Studio, ejecutá el siguiente comando, posándote en el directorio `cms`:
 
