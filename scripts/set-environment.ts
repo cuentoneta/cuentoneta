@@ -89,7 +89,6 @@ const fetchStorylistsPreviewDeckConfig = () =>
   );
 
 fetchStorylistsPreviewDeckConfig().then((storylists: StorylistDeckConfig[]) => {
-  console.log(storylists);
   // Accede a las variables de entorno y genera un string
   // correspondiente al objeto environment que utilizará Angular
   const environmentFileContent = `
