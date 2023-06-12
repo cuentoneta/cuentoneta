@@ -4,13 +4,13 @@
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
+    "dev": "nx run cuentoneta:serve-ssr:development",
     "build": "nx run cuentoneta:server:production && nx run cuentoneta:build:production",
     "config": "ts-node ./scripts/set-environment.ts",
     "postinstall": "npm run config",
     "build:server:dev": "nx run cuentoneta:server:production --watch",
     "test": "nx test",
-    "sanity:dev": "cd cms && sanity dev",
-    "vercel:dev": "vercel dev"
+    "sanity:dev": "cd cms && sanity dev"
   },
   "private": true,
   "dependencies": {
