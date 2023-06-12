@@ -164,6 +164,14 @@ git clone https://github.com/rolivencia/cuentoneta.git
 cd cuentoneta
 ```
 
+Deberás luego crear un archivo `.env` en la raíz del proyecto con las siguientes variables de entorno:
+
+```bash
+SANITY_STUDIO_DATASET=development
+SANITY_STUDIO_PROJECT_ID=s4dbqkc5
+CUENTONETA_WEBSITE=https://cuentoneta.ar/
+```
+
 Posteriormente ejecutá el siguiente comando para instalar todas las dependencias listadas en el archivo [`package.json`](package.json).
 
 ```bash
