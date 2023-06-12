@@ -1,17 +1,35 @@
-import { mapAuthor, mapPrologues, urlFor } from '../_utils/functions';
-import { client } from '../_helpers/sanity-connector';
-import { VercelRequest, VercelResponse } from '@vercel/node';
+import { client } from './_helpers/sanity-connector';
+import { mapAuthor, mapPrologues, urlFor } from './_utils/functions';
 
-/**
- * Obtiene las N historias correspondientes a una Storylist, según el orden pasado como parámetro.
- * slug -> Slug de la storylist
- * amount -> Cantidad de historias retornadas en la propiedad publications
- * ordering -> Orden en el que se retornarán las stories dentro de la propiedad publications. Default: orden ascendente.
- * @param req
- * @param res
- * @returns {Promise<null>}
- */
-export default async function get(req: VercelRequest, res: VercelResponse) {
+async function fetchForRead(req: any, res: any) {
+  {
+    const { slug } = req.query;
+    const query = `*[_type == 'story' && slug.current == '${slug}']
+                          {
+                              'slug':slug.current,
+                              title, 
+                              originalLink, 
+                              forewords, 
+                              categories, 
+                              body, 
+                              review, 
+                              forewords, 
+                              approximateReadingTime,
+                              'author': author-> { ..., nationality-> }
+                          }[0]`;
+    const story = await client.fetch(query, {});
+
+    res.json({
+      ...story,
+      summary: story.review,
+      paragraphs: story.body,
+      author: mapAuthor(story.author),
+      prologues: mapPrologues(story.forewords),
+    });
+  }
+}
+
+async function fetchLatest(req: any, res: any) {
   const { slug, amount, ordering = 'asc' } = req.query;
   const limit = parseInt(amount as string) - 1;
 
@@ -84,12 +102,14 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
   }
 
   const previewImages =
-    result.previewGridConfig.cardsPlacement?.filter((config) => !!config.imageSlug) ??
-    [];
+    result.previewGridConfig.cardsPlacement?.filter(
+      (config: any) => !!config.imageSlug
+    ) ?? [];
 
   const storyListImages =
-    result.gridConfig.cardsPlacement?.filter((config) => !!config.imageSlug) ??
-    [];
+    result.gridConfig.cardsPlacement?.filter(
+      (config: any) => !!config.imageSlug
+    ) ?? [];
 
   const storylist = {
     ...result,
@@ -99,14 +119,14 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
     images:
       storyListImages.length === 0
         ? []
-        : storyListImages.map((card) => ({
+        : storyListImages.map((card: any) => ({
             slug: card.imageSlug,
             url: urlFor(card.image).url(),
           })),
     previewImages:
-        previewImages.length === 0
+      previewImages.length === 0
         ? []
-        : previewImages.map((card) => ({
+        : previewImages.map((card: any) => ({
             slug: card.imageSlug,
             url: urlFor(card.image).url(),
           })),
@@ -127,3 +147,5 @@ export default async function get(req: VercelRequest, res: VercelResponse) {
 
   res.json(storylist);
 }
+
+export {fetchForRead, fetchLatest}
