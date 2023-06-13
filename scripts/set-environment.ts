@@ -85,7 +85,7 @@ const fetchStorylistsPreviewDeckConfig = () =>
                               'endRow': endRow,
                             }
                         }
-                    } | order (orderInLandingPage asc)`
+                    } | order(orderInLandingPage asc)`
   );
 
 fetchStorylistsPreviewDeckConfig().then((storylists: StorylistDeckConfig[]) => {
