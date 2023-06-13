@@ -3,7 +3,10 @@ import { inject, Injectable } from '@angular/core';
 import { combineLatest, map, Observable, of, tap } from 'rxjs';
 
 // Interfaces
-import { StorylistCardDeck, StorylistDeckConfig } from '../models/content.model';
+import {
+  StorylistCardDeck,
+  StorylistDeckConfig,
+} from '../models/content.model';
 import { StoryList } from '../models/storylist.model';
 
 // Providers
@@ -51,21 +54,7 @@ export class ContentService {
     const configs = this.contentConfig;
     return combineLatest(
       [...configs].map((storylistDeckConfig) =>
-        this.storyListService
-          .get(
-            storylistDeckConfig.slug,
-            storylistDeckConfig.amount,
-              storylistDeckConfig.ordering ?? 'desc'
-          )
-          .pipe(
-            map(
-              (storylist: StoryList): StoryList => ({
-                ...storylist,
-                  images: storylist.previewImages,
-                  gridConfig: storylist.previewGridConfig
-              })
-            )
-          )
+        this.storyListService.getPreview(storylistDeckConfig.slug)
       )
     ).pipe(
       map((storylists) =>
