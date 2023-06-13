@@ -70,7 +70,7 @@ async function fetchPreview(req: express.Request, res: express.Response) {
       ...result.gridConfig,
       cardsPlacement: result.gridConfig.cardsPlacement.map(
         (placement: any) => {
-          const { publication, ...other } = placement;
+          const { publication, image, ...other } = placement;
           return other;
         }
       ),
