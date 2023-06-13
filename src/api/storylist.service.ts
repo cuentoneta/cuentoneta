@@ -123,39 +123,39 @@ async function fetchStorylist(req: any, res: any) {
                         comingNextLabel,
                         featuredImage,
                         'gridConfig': { 
-                          'gridTemplateColumns': gridConfig.gridTemplateColumns,
-                          'titlePlacement': gridConfig.titlePlacement,
-                          'cardsPlacement': gridConfig.cardsPlacement[]
-                          {
-                              'order': order,
-                              'slug': @.publication->story->slug.current,
-                              'startCol': startCol,
-                              'image': image,
-                              'imageSlug': imageSlug.current,
-                              'endCol': endCol,
-                              'startRow': startRow,
-                              'endRow': endRow,
+                            'gridTemplateColumns': gridConfig.gridTemplateColumns,
+                            'titlePlacement': gridConfig.titlePlacement,
+                            'cardsPlacement': gridConfig.cardsPlacement[]
+                            {
+                                'order': order,
+                                'slug': @.publication->story->slug.current,
+                                'startCol': startCol,
+                                'image': image,
+                                'imageSlug': imageSlug.current,
+                                'endCol': endCol,
+                                'startRow': startRow,
+                                'endRow': endRow,
+                                'publication': *[ _type == 'publication' && storylist._ref == ^.^._id && story->slug.current == ^.publication->story->slug.current][0]{
+                                    order,
+                                    publishingDate,
+                                    published,
+                                    'story': story->{
+                                        _id,
+                                        'slug': slug.current,
+                                        title,
+                                        originalLink,
+                                        forewords,
+                                        categories,
+                                        body[0...3],
+                                        review,
+                                        forewords,
+                                        approximateReadingTime,
+                                        'author': author-> { name, image, nationality-> }
+                                    }
+                                }
                           }
                         },
-                        'count': count(*[ _type == 'publication' && storylist._ref == ^._id ]),
-                        'publications': *[ _type == 'publication' && storylist._ref == ^._id ] | order(order ${ordering}){
-                            order,
-                            publishingDate,
-                            published,
-                            'story': story->{
-                                _id,
-                                'slug': slug.current,
-                                title,
-                                originalLink,
-                                forewords,
-                                categories,
-                                body[0...3],
-                                review,
-                                forewords,
-                                approximateReadingTime,
-                                'author': author-> { name, image, nationality-> }
-                            }
-                        }[0..${limit}]
+                        'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])
                     }`;
 
   const result = await client.fetch(query, {});
@@ -181,19 +181,23 @@ async function fetchStorylist(req: any, res: any) {
             slug: card.imageSlug,
             url: urlFor(card.image).url(),
           })),
-    publications: result.publications.map((publication: any) => {
-      const { review, body, forewords, author, ...story } = publication.story;
-      return {
-        ...publication,
-        story: {
-          ...story,
-          summary: review,
-          paragraphs: body,
-          author: mapAuthor(author),
-          prologues: mapPrologues(forewords),
-        },
-      };
-    }),
+    // Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
+    publications: result.gridConfig.cardsPlacement
+        .filter((cardPlacement: any) => !!cardPlacement.publication)
+        .map((cardPlacement: any) => cardPlacement.publication)
+        .map((publication: any) => {
+          const { review, body, forewords, author, ...story } = publication.story;
+          return {
+            ...publication,
+            story: {
+              ...story,
+              summary: review,
+              paragraphs: body,
+              author: mapAuthor(author),
+              prologues: mapPrologues(forewords),
+            },
+          };
+        }),
   };
 
   res.json(storylist);
