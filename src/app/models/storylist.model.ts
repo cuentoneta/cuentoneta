@@ -45,11 +45,12 @@ export interface StorylistGridConfig {
 }
 
 export interface GridItemPlacementConfig {
-  slug?: string;
-  imageSlug?: string;
   order: number;
-  startCol?: number | string;
-  endCol?: number | string;
-  startRow?: number | string;
-  endRow?: number | string;
+  // ToDo: Adaptar estos tipos a la última versión de API de Sanity
+  slug?: string | null;
+  imageSlug?: string | null;
+  startCol?: number | string | null;
+  endCol?: number | string | null;
+  startRow?: number | string | null;
+  endRow?: number | string | null;
 }

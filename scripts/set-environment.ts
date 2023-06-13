@@ -64,7 +64,6 @@ const fetchStorylistsPreviewDeckConfig = () =>
                               'order': order,
                               'slug': @.publication->story->slug.current,
                               'startCol': startCol,
-                              'image': image,
                               'imageSlug': imageSlug.current,
                               'endCol': endCol,
                               'startRow': startRow,
@@ -78,14 +77,13 @@ const fetchStorylistsPreviewDeckConfig = () =>
                               'order': order,
                               'slug': @.publication->story->slug.current,
                               'startCol': startCol,
-                              'image': image,
                               'imageSlug': imageSlug.current,
                               'endCol': endCol,
                               'startRow': startRow,
                               'endRow': endRow,
                             }
                         }
-                    } | order (orderInLandingPage asc)`
+                    } | order(orderInLandingPage asc)`
   );
 
 fetchStorylistsPreviewDeckConfig().then((storylists: StorylistDeckConfig[]) => {
