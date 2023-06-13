@@ -1,12 +1,10 @@
 <section>
   <header>
-    <ng-container *ngIf="storyList && storyList.title; else titleSkeleton"
-      ><a
-        [routerLink]="'/' + appRouteTree['STORYLIST']"
-        [queryParams]="{ slug: storyList.slug }"
-        ><h3 class="story-list-title">{{ storyList.title }}</h3></a
-      ></ng-container
-    >
+    <ng-container *ngIf="storyList && storyList.title; else titleSkeleton">
+      <a [routerLink]="'/' + appRouteTree['STORYLIST']" [queryParams]="{ slug: storyList.slug }">
+        <h3 class="story-list-title">{{ storyList.title }}</h3>
+      </a>
+    </ng-container>
   </header>
 
   <ng-container *ngIf="!!storyList; else bodySkeleton">
@@ -37,9 +35,13 @@
     </ng-container>
   </ng-container>
 
-  <!--    ToDo: Implementar navegación para visualizar lista completa-->
+  <!-- ToDo: #288 - Generar abstracción para evitar repetir lógica presente en el header (ver líneas 2 - 9)-->
   <footer *ngIf="storyList && storyList.publications.length > 10">
-    <h3 class="story-list-title">Ver más...</h3>
+    <ng-container *ngIf="storyList; else titleSkeleton">
+      <a [routerLink]="'/' + appRouteTree['STORYLIST']" [queryParams]="{ slug: storyList.slug }">
+        <h3 class="story-list-title">Ver más...</h3>
+      </a>
+    </ng-container>
   </footer>
 </section>
 
