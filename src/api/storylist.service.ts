@@ -16,38 +16,38 @@ async function fetchPreview(req: express.Request, res: express.Response) {
                         editionPrefix,
                         comingNextLabel,
                         featuredImage,
-                        'previewGridConfig': { 
-                          'gridTemplateColumns': previewGridConfig.gridTemplateColumns,
-                          'titlePlacement': previewGridConfig.titlePlacement,
-                          'cardsPlacement': previewGridConfig.cardsPlacement[]
-                          {
-                              'order': order,
-                              'slug': @.publication->story->slug.current,
-                              'startCol': startCol,
-                              'image': image,
-                              'imageSlug': imageSlug.current,
-                              'endCol': endCol,
-                              'startRow': startRow,
-                              'endRow': endRow,
-                              'publication': *[ _type == 'publication' && storylist._ref == ^._id ]{
-                                order,
-                                publishingDate,
-                                published,
-                                'story': story->{
-                                  _id,
-                                  'slug': slug.current,
-                                  title,
-                                  originalLink,
-                                  forewords,
-                                  categories,
-                                  body[0...3],
-                                  review,
-                                  forewords,
-                                  approximateReadingTime,
-                                  'author': author-> { name, image, nationality-> }
+                        'gridConfig': { 
+                            'gridTemplateColumns': previewGridConfig.gridTemplateColumns,
+                            'titlePlacement': previewGridConfig.titlePlacement,
+                            'cardsPlacement': previewGridConfig.cardsPlacement[]
+                                {
+                                    'order': order,
+                                    'slug': @.publication->story->slug.current,
+                                    'startCol': startCol,
+                                    'image': image,
+                                    'imageSlug': imageSlug.current,
+                                    'endCol': endCol,
+                                    'startRow': startRow,
+                                    'endRow': endRow,
+                                    'publication': *[ _type == 'publication' && storylist._ref == ^.^._id && story->slug.current == ^.publication->story->slug.current][0]{
+                                        order,
+                                        publishingDate,
+                                        published,
+                                        'story': story->{
+                                            _id,
+                                            'slug': slug.current,
+                                            title,
+                                            originalLink,
+                                            forewords,
+                                            categories,
+                                            body[0...3],
+                                            review,
+                                            forewords,
+                                            approximateReadingTime,
+                                            'author': author-> { name, image, nationality-> }
+                                        }
                                 }
-                              }
-                          }
+                            }
                         },
                         'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])
                     }`;
@@ -59,35 +59,50 @@ async function fetchPreview(req: express.Request, res: express.Response) {
   }
 
   const previewImages =
-    result.previewGridConfig.cardsPlacement?.filter(
+    result.gridConfig.cardsPlacement?.filter(
       (config: any) => !!config.imageSlug
     ) ?? [];
 
   const storylist = {
     ...result,
+    // Elimina elementos publication traídos en la consulta a Sanity del objeto grid config
+    gridConfig: {
+      ...result.gridConfig,
+      cardsPlacement: result.gridConfig.cardsPlacement.map(
+        (placement: any) => {
+          const { publication, ...other } = placement;
+          return other;
+        }
+      ),
+    },
     featuredImage: !result.featuredImage
       ? undefined
       : urlFor(result.featuredImage).url(),
-    previewImages:
+    images:
       previewImages.length === 0
         ? []
         : previewImages.map((card: any) => ({
             slug: card.imageSlug,
             url: urlFor(card.image).url(),
           })),
-    // publications: result.publications.map((publication: any) => {
-    //   const { review, body, forewords, author, ...story } = publication.story;
-    //   return {
-    //     ...publication,
-    //     story: {
-    //       ...story,
-    //       summary: review,
-    //       paragraphs: body,
-    //       author: mapAuthor(author),
-    //       prologues: mapPrologues(forewords),
-    //     },
-    //   };
-    // }),
+
+    // Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
+    publications: result.gridConfig.cardsPlacement
+      .filter((cardPlacement: any) => !!cardPlacement.publication)
+      .map((cardPlacement: any) => cardPlacement.publication)
+      .map((publication: any) => {
+        const { review, body, forewords, author, ...story } = publication.story;
+        return {
+          ...publication,
+          story: {
+            ...story,
+            summary: review,
+            paragraphs: body,
+            author: mapAuthor(author),
+            prologues: mapPrologues(forewords),
+          },
+        };
+      }),
   };
 
   res.json(storylist);
@@ -111,21 +126,6 @@ async function fetchStorylist(req: any, res: any) {
                           'gridTemplateColumns': gridConfig.gridTemplateColumns,
                           'titlePlacement': gridConfig.titlePlacement,
                           'cardsPlacement': gridConfig.cardsPlacement[]
-                          {
-                              'order': order,
-                              'slug': @.publication->story->slug.current,
-                              'startCol': startCol,
-                              'image': image,
-                              'imageSlug': imageSlug.current,
-                              'endCol': endCol,
-                              'startRow': startRow,
-                              'endRow': endRow,
-                          }
-                        },
-                        'previewGridConfig': { 
-                          'gridTemplateColumns': previewGridConfig.gridTemplateColumns,
-                          'titlePlacement': previewGridConfig.titlePlacement,
-                          'cardsPlacement': previewGridConfig.cardsPlacement[]
                           {
                               'order': order,
                               'slug': @.publication->story->slug.current,
@@ -164,11 +164,6 @@ async function fetchStorylist(req: any, res: any) {
     res.json(null);
   }
 
-  const previewImages =
-    result.previewGridConfig.cardsPlacement?.filter(
-      (config: any) => !!config.imageSlug
-    ) ?? [];
-
   const storyListImages =
     result.gridConfig.cardsPlacement?.filter(
       (config: any) => !!config.imageSlug
@@ -183,13 +178,6 @@ async function fetchStorylist(req: any, res: any) {
       storyListImages.length === 0
         ? []
         : storyListImages.map((card: any) => ({
-            slug: card.imageSlug,
-            url: urlFor(card.image).url(),
-          })),
-    previewImages:
-      previewImages.length === 0
-        ? []
-        : previewImages.map((card: any) => ({
             slug: card.imageSlug,
             url: urlFor(card.image).url(),
           })),
