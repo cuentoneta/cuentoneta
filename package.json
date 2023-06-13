@@ -5,6 +5,7 @@
   "scripts": {
     "start": "nx serve",
     "dev": "nx run cuentoneta:serve-ssr:development",
+    "storybook": "nx run cuentoneta:storybook",
     "build": "nx run cuentoneta:server:production && nx run cuentoneta:build:production",
     "config": "ts-node ./scripts/set-environment.ts",
     "postinstall": "npm run config",
@@ -56,6 +57,7 @@
     "@nx/storybook": "16.0.3",
     "@nx/workspace": "16.0.3",
     "@storybook/addon-essentials": "7.0.8",
+    "@storybook/addon-styling": "^1.3.0",
     "@storybook/angular": "7.0.8",
     "@storybook/core-server": "7.0.8",
     "@types/jest": "29.4.4",
