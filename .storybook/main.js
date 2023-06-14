@@ -1,13 +1,24 @@
 module.exports = {
   stories: ['../src/app/**/*.stories.mdx', '../src/app/**/*.stories.@(js|jsx|ts|tsx)'],
-  addons: ['@storybook/addon-essentials'],
+  addons: [
+    '@storybook/addon-essentials',
+    {
+      name: "@storybook/addon-styling",
+      options: {
+        postCss: true,
+      }
+    }
+  ],
   framework: {
     name: '@storybook/angular',
     options: {}
   },
   docs: {
     autodocs: true
-  }
+  },
+  staticDirs: [
+    "../src/assets"
+  ]
 };
 
 // To customize your webpack configuration you can use the webpackFinal field.
