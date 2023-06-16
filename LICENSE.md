@@ -1,4 +1,4 @@
-Attribution-ShareAlike 4.0 International
+Attribution-NonCommercial-ShareAlike 4.0 International
 
 =======================================================================
 
@@ -54,7 +54,7 @@ exhaustive, and do not form part of our licenses.
 
 =======================================================================
 
-Creative Commons Attribution-ShareAlike 4.0 International Public
+Attribution-NonCommercial-ShareAlike 4.0 International Public
 License
 
 By exercising the Licensed Rights (defined below), You accept and agree
@@ -67,18 +67,25 @@ such rights in consideration of benefits the Licensor receives from
 making the Licensed Material available under these terms and
 conditions.
 
+By exercising the Licensed Rights (defined below), You accept and agree
+to be bound by the terms and conditions of this Creative Commons
+Attribution-NonCommercial-ShareAlike 4.0 International Public License ("Public
+License").To the extent this Public License may be interpreted as a
+contract, You are granted the Licensed Rights in consideration of 
+Your acceptance of these terms and conditions, and the Licensor grants 
+You such rights in consideration of benefits the Licensor receives from making 
+the Licensed Material available under these terms and conditions.
+
 
 Section 1 -- Definitions.
 
-  a. Adapted Material means material subject to Copyright and Similar
-     Rights that is derived from or based upon the Licensed Material
-     and in which the Licensed Material is translated, altered,
-     arranged, transformed, or otherwise modified in a manner requiring
-     permission under the Copyright and Similar Rights held by the
-     Licensor. For purposes of this Public License, where the Licensed
-     Material is a musical work, performance, or sound recording,
-     Adapted Material is always produced where the Licensed Material is
-     synched in timed relation with a moving image.
+  a. Adapted Material means material subject to Copyright and Similar Rights
+  that is derived from or based upon the Licensed Material and in which the Licensed Material
+  is translated, altered, arranged, transformed, or otherwise modified in a manner requiring
+  permission under the Copyright and Similar Rights held by the Licensor. For purposes of this 
+  Public License, where the Licensed Material is a musical work, performance, or sound recording, 
+  Adapted Material is always produced where the Licensed Material is synched in timed relation 
+  with a moving image.
 
   b. Adapter's License means the license You apply to Your Copyright
      and Similar Rights in Your contributions to Adapted Material in
@@ -108,7 +115,7 @@ Section 1 -- Definitions.
 
   g. License Elements means the license attributes listed in the name
      of a Creative Commons Public License. The License Elements of this
-     Public License are Attribution and ShareAlike.
+     Public License are Attribution, NonCommercial, and ShareAlike.
 
   h. Licensed Material means the artistic or literary work, database,
      or other material to which the Licensor applied this Public
@@ -295,9 +302,9 @@ Section 4 -- Sui Generis Database Rights.
 Where the Licensed Rights include Sui Generis Database Rights that
 apply to Your use of the Licensed Material:
 
-  a. for the avoidance of doubt, Section 2(a)(1) grants You the right
-     to extract, reuse, reproduce, and Share all or a substantial
-     portion of the contents of the database;
+  a. for the avoidance of doubt, Section 2(a)(1) grants  You the right 
+     to extract, reuse, reproduce, and Share all or a substantial portion of 
+     the contents of the database for NonCommercial purposes only;
 
   b. if You include all or a substantial portion of the database
      contents in a database in which You have Sui Generis Database
