@@ -86,7 +86,7 @@
           'grid-column-start': skeleton?.startCol,
           'grid-column-end': skeleton?.endCol,
           }"
-      ></cuentoneta-story-card>
+      />
     </ng-container>
     <ng-container *ngIf="!!skeleton.imageSlug">
       <ngx-skeleton-loader
@@ -127,7 +127,7 @@
           [publication]="publication"
           [editionIndex]="publication.order"
           [comingNextLabel]="storylist.comingNextLabel"
-        ></cuentoneta-story-card>
+        />
       </a>
     </ng-container>
   </ng-container>

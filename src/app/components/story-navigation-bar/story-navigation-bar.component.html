@@ -23,7 +23,7 @@
                 ? getEditionLabel(publication, publication.order)
                 : storyList.comingNextLabel
             "
-          ></cuentoneta-story-edition-date-label>
+          />
           <ng-container *ngIf="publication.published; else comingNext"
             ><h4 class="title">{{ publication.story.title }}</h4>
             <h5 class="author">
