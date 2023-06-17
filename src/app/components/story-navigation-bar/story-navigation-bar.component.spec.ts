@@ -1,16 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { StoryNavigationBarComponent } from './story-navigation-bar.component';
+import { Component } from '@angular/core';
 
 describe('StoryNavigationBarComponent', () => {
     let component: StoryNavigationBarComponent;
     let fixture: ComponentFixture<StoryNavigationBarComponent>;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            declarations: [StoryNavigationBarComponent],
-        }).compileComponents();
+    @Component({
+        imports: [StoryNavigationBarComponent],
+        standalone: true
+    })
 
+    class StoryNavigationBarComponent { }
+
+    beforeEach(async () => {
         fixture = TestBed.createComponent(StoryNavigationBarComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();

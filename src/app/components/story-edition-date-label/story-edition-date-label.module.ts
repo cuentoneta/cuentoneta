@@ -3,8 +3,7 @@ import { CommonModule } from '@angular/common';
 import { StoryEditionDateLabelComponent } from './story-edition-date-label.component';
 
 @NgModule({
-    declarations: [StoryEditionDateLabelComponent],
-    imports: [CommonModule],
+    imports: [CommonModule, StoryEditionDateLabelComponent],
     exports: [
         StoryEditionDateLabelComponent
     ]

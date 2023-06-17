@@ -1,16 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { StoryEditionDateLabelComponent } from './story-edition-date-label.component';
+import { Component } from '@angular/core';
 
 describe('StoryEditionDateLabelComponent', () => {
     let component: StoryEditionDateLabelComponent;
     let fixture: ComponentFixture<StoryEditionDateLabelComponent>;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            declarations: [StoryEditionDateLabelComponent],
-        }).compileComponents();
+    @Component({
+        imports: [StoryEditionDateLabelComponent],
+        standalone: true
+    })
 
+    class StoryEditionDateLabelComponent { }
+
+    beforeEach(async () => {
         fixture = TestBed.createComponent(StoryEditionDateLabelComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();

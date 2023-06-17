@@ -5,12 +5,22 @@ import { Publication } from '../../models/storylist.model';
 // dayjs
 require('dayjs/locale/es');
 import dayjs from 'dayjs';
+import { StoryCardSkeletonComponent } from '../story-card-skeleton/story-card-skeleton.component';
+import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
+import { NgIf, NgOptimizedImage } from '@angular/common';
 dayjs.locale('es');
 
 @Component({
-  selector: 'cuentoneta-story-card',
-  templateUrl: './story-card.component.html',
-  styleUrls: ['./story-card.component.scss'],
+    selector: 'cuentoneta-story-card',
+    templateUrl: './story-card.component.html',
+    styleUrls: ['./story-card.component.scss'],
+    standalone: true,
+    imports: [
+        NgIf,
+        StoryEditionDateLabelComponent,
+        NgOptimizedImage,
+        StoryCardSkeletonComponent,
+    ],
 })
 export class StoryCardComponent implements OnInit {
   @Input() editionPrefix: string | undefined;

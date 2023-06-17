@@ -1,16 +1,18 @@
+import { Component } from "@angular/core";
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { BioSummaryCardComponent } from './bio-summary-card.component';
 
 describe('BioSummaryCardComponent', () => {
     let component: BioSummaryCardComponent;
     let fixture: ComponentFixture<BioSummaryCardComponent>;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            declarations: [BioSummaryCardComponent],
-        }).compileComponents();
+    @Component({
+        imports: [BioSummaryCardComponent],
+        standalone: true
+    })
 
+    class BioSummaryCardComponent { }
+
+    beforeEach(async () => {
         fixture = TestBed.createComponent(BioSummaryCardComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();

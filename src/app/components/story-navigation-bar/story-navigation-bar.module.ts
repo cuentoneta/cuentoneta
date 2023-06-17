@@ -6,8 +6,7 @@ import { StoryEditionDateLabelModule } from '../story-edition-date-label/story-e
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @NgModule({
-    declarations: [StoryNavigationBarComponent],
-    imports: [CommonModule, RouterLink, StoryEditionDateLabelModule, NgxSkeletonLoaderModule],
+    imports: [CommonModule, RouterLink, StoryEditionDateLabelModule, NgxSkeletonLoaderModule, StoryNavigationBarComponent],
     exports: [StoryNavigationBarComponent],
 })
 export class StoryNavigationBarModule {}

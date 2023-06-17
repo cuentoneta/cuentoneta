@@ -3,8 +3,7 @@ import {CommonModule, NgOptimizedImage} from '@angular/common';
 import { BioSummaryCardComponent } from './bio-summary-card.component';
 
 @NgModule({
-    declarations: [BioSummaryCardComponent],
-  imports: [CommonModule, NgOptimizedImage],
+    imports: [CommonModule, NgOptimizedImage, BioSummaryCardComponent],
     exports: [BioSummaryCardComponent],
 })
 export class BioSummaryCardModule {}

@@ -1,16 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { StoryComponent } from './story.component';
+import { Component } from '@angular/core';
 
 describe('StoryComponent', () => {
     let component: StoryComponent;
     let fixture: ComponentFixture<StoryComponent>;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            declarations: [StoryComponent],
-        }).compileComponents();
+    @Component({
+        imports: [StoryComponent],
+        standalone: true
+    })
 
+    class StoryComponent { }
+
+    beforeEach(async () => {
         fixture = TestBed.createComponent(StoryComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();

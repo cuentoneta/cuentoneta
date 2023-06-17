@@ -6,8 +6,7 @@ import { StoryEditionDateLabelModule } from '../story-edition-date-label/story-e
 import { StoryCardSkeletonComponent } from '../story-card-skeleton/story-card-skeleton.component';
 
 @NgModule({
-    declarations: [StoryCardComponent],
     exports: [StoryCardComponent],
-    imports: [ CommonModule, NgOptimizedImage, NgxSkeletonLoaderModule, StoryEditionDateLabelModule, StoryCardSkeletonComponent ],
+    imports: [CommonModule, NgOptimizedImage, NgxSkeletonLoaderModule, StoryEditionDateLabelModule, StoryCardSkeletonComponent, StoryCardComponent],
 })
 export class StoryCardModule {}
