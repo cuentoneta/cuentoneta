@@ -5,17 +5,6 @@ main {
   display: block;
   background-color: $gray-50;
   padding: $spacing-5;
-
-  @media screen and (max-width: $max-sm-width) {
-    margin-left: -$spacing-5;
-    margin-right: -$spacing-5;
-  }
-
-  @media screen and (min-width: $min-md-width) {
-    border-radius: $rounded-xl;
-    box-shadow: $box-shadow-card;
-    padding: $spacing-15;
-  }
 }
 
 .title {
