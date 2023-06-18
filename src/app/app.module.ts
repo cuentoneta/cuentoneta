@@ -17,12 +17,14 @@ import { StoryService } from './providers/story.service';
 import { ContentService } from './providers/content.service';
 
 @NgModule({
-  declarations: [AppComponent, HeaderComponent, FooterComponent],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
     NgOptimizedImage,
+    HeaderComponent,
+    FooterComponent
   ],
   providers: [
     ContentService,
@@ -38,4 +40,4 @@ import { ContentService } from './providers/content.service';
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

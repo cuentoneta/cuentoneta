@@ -11,7 +11,6 @@ import { RouterLink } from '@angular/router';
 // Modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonModule } from '@angular/common';
-import { StoryCardModule } from '../story-card/story-card.module';
 
 // Models
 import {
@@ -20,11 +19,17 @@ import {
 } from '../../models/storylist.model';
 import { APP_ROUTE_TREE } from '../../app-routing.module';
 import { StorylistGridSkeletonConfig } from "../../models/content.model";
+import { StoryCardComponent } from '../story-card/story-card.component';
 
 @Component({
   selector: 'cuentoneta-story-list-card-deck',
   standalone: true,
-  imports: [CommonModule, StoryCardModule, RouterLink, NgxSkeletonLoaderModule],
+  imports: [
+    CommonModule, 
+    NgxSkeletonLoaderModule,
+    RouterLink, 
+    StoryCardComponent,
+  ],
   templateUrl: './story-list-card-deck.component.html',
   styleUrls: ['./story-list-card-deck.component.scss'],
 })

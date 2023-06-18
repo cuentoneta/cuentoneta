@@ -4,8 +4,8 @@ import { Publication } from '../../models/storylist.model';
 import { Story } from '../../models/story.model';
 import { NgOptimizedImage } from '@angular/common';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { StoryEditionDateLabelModule } from '../story-edition-date-label/story-edition-date-label.module';
 import { StoryCardSkeletonComponent } from '../story-card-skeleton/story-card-skeleton.component';
+import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 
 export default {
   title: 'StoryCardComponent',
@@ -16,7 +16,7 @@ export default {
         NgOptimizedImage,
         NgxSkeletonLoaderModule,
         StoryCardSkeletonComponent,
-        StoryEditionDateLabelModule,
+        StoryEditionDateLabelComponent,
       ],
     }),
   ],
