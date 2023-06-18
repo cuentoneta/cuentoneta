@@ -13,8 +13,8 @@ import { StoryNavigationBarComponent } from 'src/app/components/story-navigation
   imports: [
     CommonModule,
     StoryRoutingModule,
-    NgxSkeletonLoaderModule,
     NgOptimizedImage,
+    NgxSkeletonLoaderModule,
     StoryNavigationBarComponent,
     BioSummaryCardComponent,
     ShareContentComponent,
