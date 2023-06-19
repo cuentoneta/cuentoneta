@@ -11,3 +11,82 @@ ngx-skeleton-loader {
   display: block;
   line-height: 0;
 }
+
+.tooltip-container {
+  @include inter-body-xs-medium;
+  font-weight: 600;
+  color: $gray-600;
+  padding: 8px;
+  border-radius: $rounded;
+  text-align: center;
+  z-index: 100;
+  position: fixed;
+  color: white;
+  width: auto;
+  background: #000000;
+  box-sizing: border-box;
+  opacity: 0;
+  transform: translate(-50%, -30%);
+  animation: tooltip-slide 0.18s ease-out 0.5s;
+  animation-fill-mode: forwards;
+  pointer-events: none;
+}
+
+.tooltip-container::before {
+  content: "";
+  position: absolute;
+  transform: rotate(45deg);
+  background-color: #000000;
+  padding: 5px;
+  z-index: 99;
+}
+
+.top {
+  top: -40px;
+  left: -50%;
+}
+
+.top::before {
+  top: 80%;
+  left: 45%;
+}
+
+.bottom {
+  top: 25px;
+  left: -50%;
+}
+.bottom::before {
+  top: -5%;
+  left: 45%;
+}
+
+.left {
+  top: -8px;
+  right: 120%;
+}
+
+.left::before {
+  top: 35%;
+  left: 94%;
+}
+
+.right {
+  top: -8px;
+  left: 120%;
+}
+
+.right::before {
+  top: 35%;
+  left: -2%;
+}
+
+@keyframes tooltip-slide {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -30%);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
