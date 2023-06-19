@@ -201,6 +201,9 @@ pnpm run dev
 - Ramiro Olivencia (**[@rolivencia](https://github.com/rolivencia)**)
 - Erik Giovani (**[@erikgiovani](https://github.com/erikgiovani)**)
 - Juan Blas Tschopp (**[@juanblas09](https://github.com/juanblas09)**)
+- Diego Franchina (**[@soydiego](https://github.com/SoyDiego)**)
+- Juan Rodriguez (**[@juanrodriguez](https://github.com/jitrodriguez)**)
+- Jimer Espinoza (**[@jimersamuel](https://github.com/JimerSamuel)**)
 
 ### Diseño UX/UI
 
