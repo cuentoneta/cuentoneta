@@ -3,6 +3,7 @@ import { Storylist } from '../../models/storylist.model';
 import { ContentService } from '../../providers/content.service';
 import { APP_ROUTE_TREE } from '../../app-routing.module';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'cuentoneta-header',
@@ -11,6 +12,7 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     NgOptimizedImage
   ]
 })

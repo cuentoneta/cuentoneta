@@ -1,7 +1,7 @@
 // Core
 import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
 
 // Services
 import { ContentService } from '../../providers/content.service';
@@ -12,11 +12,22 @@ import { StorylistCardDeck } from '../../models/content.model';
 // Directives
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { APP_ROUTE_TREE } from '../../app-routing.module';
+import { StoryCardComponent } from 'src/app/components/story-card/story-card.component';
+import { StorylistCardDeckComponent } from 'src/app/components/storylist-card-deck/storylist-card-deck.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'cuentoneta-home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
+    standalone: true,
+    imports: [
+        CommonModule,
+        NgOptimizedImage,
+        StoryCardComponent,
+        StorylistCardDeckComponent,
+        RouterModule
+    ],
     hostDirectives: [FetchContentDirective],
 })
 export class HomeComponent {
@@ -33,7 +44,7 @@ export class HomeComponent {
         this.storylistCardDecks = this.contentService.contentConfig;
 
         const platformId = inject(PLATFORM_ID);
-        if(!isPlatformBrowser(platformId)) {
+        if (!isPlatformBrowser(platformId)) {
             return;
         }
 

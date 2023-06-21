@@ -2,7 +2,7 @@
 import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, switchMap, tap } from 'rxjs';
-import { isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // Models
@@ -17,11 +17,19 @@ import { StorylistService } from '../../storylist.service';
 // Directives
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { StorylistCardDeckComponent } from 'src/app/components/storylist-card-deck/storylist-card-deck.component';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
   selector: 'cuentoneta-storylist',
   templateUrl: './storylist.component.html',
   styleUrls: ['./storylist.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    StorylistCardDeckComponent,
+    NgxSkeletonLoaderModule,
+  ],
   hostDirectives: [
     FetchContentDirective,
     MetaTagsDirective,
@@ -63,11 +71,11 @@ export class StorylistComponent {
     const storylist$ = isPlatformBrowser(platformId)
       ? fetchObservable$
       : macroTaskWrapperService.wrapMacroTaskObservable<Storylist>(
-          'StorylistComponent.fetchData',
-          fetchObservable$,
-          null,
-          'first-emit'
-        );
+        'StorylistComponent.fetchData',
+        fetchObservable$,
+        null,
+        'first-emit'
+      );
 
     storylist$.subscribe((storylist) => {
       this.storylist = storylist;
