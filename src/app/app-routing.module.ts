@@ -11,20 +11,18 @@ export const APP_ROUTE_TREE: { [key: string]: string } = {
 const routes: Routes = [
   {
     path: APP_ROUTE_TREE['HOME'],
-    loadChildren: () =>
-      import('./pages/home/home.module').then((m) => m.HomeModule),
+    loadComponent: () =>
+      import('./pages/home/home.component').then((m) => m.HomeComponent),
   },
   {
     path: APP_ROUTE_TREE['STORY'],
-    loadChildren: () =>
-      import('./pages/story/story.module').then((m) => m.StoryModule),
+    loadComponent: () =>
+      import('./pages/story/story.component').then((m) => m.StoryComponent),
   },
   {
     path: APP_ROUTE_TREE['STORYLIST'],
-    loadChildren: () =>
-      import('./pages/storylist/storylist.module').then(
-        (m) => m.StorylistModule
-      ),
+    loadComponent: () =>
+      import('./pages/storylist/storylist.component').then((m) => m.StorylistComponent),
   },
   {
     path: APP_ROUTE_TREE['STORY-LIST'],
@@ -55,4 +53,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
