@@ -3,11 +3,16 @@ import { CommonModule } from '@angular/common';
 
 import { StoryListRoutingModule } from './story-list-routing.module';
 import { StoryListComponent } from './story-list.component';
-import {StoryListCardDeckComponent} from "../../components/story-list-card-deck/story-list-card-deck.component";
+import { StorylistCardDeckComponent } from '../../components/story-list-card-deck/storylist-card-deck.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @NgModule({
-    declarations: [StoryListComponent],
-    imports: [ CommonModule, StoryListRoutingModule, StoryListCardDeckComponent, NgxSkeletonLoaderModule ],
+  declarations: [StoryListComponent],
+  imports: [
+    CommonModule,
+    StoryListRoutingModule,
+    StorylistCardDeckComponent,
+    NgxSkeletonLoaderModule,
+  ],
 })
 export class StorylistModule {}

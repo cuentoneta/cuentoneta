@@ -1,5 +1,5 @@
 import { Meta, moduleMetadata } from '@storybook/angular';
-import { StoryListCardDeckComponent } from './story-list-card-deck.component';
+import { StorylistCardDeckComponent } from './storylist-card-deck.component';
 import { RouterModule } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
 
@@ -312,7 +312,7 @@ const upcomingStoriesStorylist = {
 
 export default {
   title: 'StoryListCardDeckComponent',
-  component: StoryListCardDeckComponent,
+  component: StorylistCardDeckComponent,
   decorators: [
     moduleMetadata({
       imports: [RouterModule.forRoot([])],
@@ -324,10 +324,10 @@ export default {
       ],
     }),
   ],
-} as Meta<StoryListCardDeckComponent>;
+} as Meta<StorylistCardDeckComponent>;
 
 export const FullyLoaded = {
-  render: (args: StoryListCardDeckComponent) => ({
+  render: (args: StorylistCardDeckComponent) => ({
     props: args,
   }),
   args: {
@@ -339,7 +339,7 @@ export const FullyLoaded = {
 };
 
 export const UpcomingStories = {
-  render: (args: StoryListCardDeckComponent) => ({
+  render: (args: StorylistCardDeckComponent) => ({
     props: args,
   }),
   args: {

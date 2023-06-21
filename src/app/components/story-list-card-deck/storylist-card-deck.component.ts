@@ -30,10 +30,10 @@ import { StoryCardComponent } from '../story-card/story-card.component';
     RouterLink,
     StoryCardComponent,
   ],
-  templateUrl: './story-list-card-deck.component.html',
-  styleUrls: ['./story-list-card-deck.component.scss'],
+  templateUrl: './storylist-card-deck.component.html',
+  styleUrls: ['./storylist-card-deck.component.scss'],
 })
-export class StoryListCardDeckComponent implements OnInit, OnChanges {
+export class StorylistCardDeckComponent implements OnInit, OnChanges {
   @Input() number: number = 6;
   @Input() storylist: Storylist | undefined;
   @Input() isLoading: boolean = false; // Utilizado para mostrar/ocultar skeletons
