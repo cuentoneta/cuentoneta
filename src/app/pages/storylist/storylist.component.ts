@@ -60,7 +60,7 @@ export class StorylistComponent {
 
     // TODO: Mover discriminación entre client-side y server-side a directiva
     // En base a si la plataforma es browser o server, utiliza el wrapper de macro tasks en el segundo caso
-    const storyList$ = isPlatformBrowser(platformId)
+    const storylist$ = isPlatformBrowser(platformId)
       ? fetchObservable$
       : macroTaskWrapperService.wrapMacroTaskObservable<Storylist>(
           'StorylistComponent.fetchData',
@@ -69,7 +69,7 @@ export class StorylistComponent {
           'first-emit'
         );
 
-    storyList$.subscribe((storylist) => {
+    storylist$.subscribe((storylist) => {
       this.storylist = storylist;
       metaTagsDirective.setTitle(`"${storylist.title}" en La Cuentoneta`);
       metaTagsDirective.setDescription(
