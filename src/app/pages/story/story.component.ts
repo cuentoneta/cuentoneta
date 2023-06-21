@@ -10,7 +10,7 @@ import { APP_ROUTE_TREE } from '../../app-routing.module';
 
 // Models
 import { Story } from '../../models/story.model';
-import { StoryList } from '../../models/storylist.model';
+import { Storylist } from '../../models/storylist.model';
 
 // Services
 import { MacroTaskWrapperService } from '../../providers/macro-task-wrapper.service';
@@ -32,10 +32,10 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 })
 export class StoryComponent {
   readonly appRouteTree = APP_ROUTE_TREE;
-  fetchContentDirective = inject(FetchContentDirective<[Story, StoryList]>);
+  fetchContentDirective = inject(FetchContentDirective<[Story, Storylist]>);
 
   story!: Story;
-  storylist!: StoryList;
+  storylist!: Storylist;
 
   dummyList = Array(10);
   shareContentParams: { [key: string]: string } = {};
@@ -63,7 +63,7 @@ export class StoryComponent {
 
     const content$ = isPlatformBrowser(platformId)
       ? fetchObservable$
-      : macroTaskWrapperService.wrapMacroTaskObservable<[Story, StoryList]>(
+      : macroTaskWrapperService.wrapMacroTaskObservable<[Story, Storylist]>(
           'StoryComponent.fetchData',
           fetchObservable$,
           null,

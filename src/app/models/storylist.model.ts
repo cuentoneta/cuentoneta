@@ -23,7 +23,7 @@ interface StorylistBase {
   previewGridConfig?: StorylistGridConfig;
 }
 
-export interface StoryList extends StorylistBase {
+export interface Storylist extends StorylistBase {
   publications: Publication<Story>[];
 }
 

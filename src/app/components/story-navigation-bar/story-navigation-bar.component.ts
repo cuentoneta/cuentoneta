@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Publication, StoryList } from '../../models/storylist.model';
+import { Publication, Storylist } from '../../models/storylist.model';
 import { Story } from '../../models/story.model';
 import { APP_ROUTE_TREE } from '../../app-routing.module';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -23,7 +23,7 @@ import { NgIf, NgFor, CommonModule } from '@angular/common';
     ],
 })
 export class StoryNavigationBarComponent {
-    @Input() storyList!: StoryList;
+    @Input() storyList!: Storylist;
 
     readonly appRouteTree = APP_ROUTE_TREE;
     dummyList: null[] = Array(10);

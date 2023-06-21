@@ -6,7 +6,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // Models
-import { StoryList } from '../../models/storylist.model';
+import { Storylist } from '../../models/storylist.model';
 import { StorylistGridSkeletonConfig } from '../../models/content.model';
 
 // Services
@@ -28,8 +28,8 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
   ],
 })
 export class StoryListComponent {
-  fetchContentDirective = inject(FetchContentDirective<StoryList>);
-  storylist!: StoryList | undefined;
+  fetchContentDirective = inject(FetchContentDirective<Storylist>);
+  storylist!: Storylist | undefined;
   skeletonConfig: StorylistGridSkeletonConfig | undefined;
 
   constructor() {
@@ -40,7 +40,7 @@ export class StoryListComponent {
     const macroTaskWrapperService = inject(MacroTaskWrapperService);
     const contentService = inject(ContentService);
 
-    const fetchObservable$: Observable<StoryList> =
+    const fetchObservable$: Observable<Storylist> =
       activatedRoute.queryParams.pipe(
         tap(({ slug }) => {
           this.storylist = undefined;
@@ -50,7 +50,7 @@ export class StoryListComponent {
           )?.gridSkeletonConfig;
         }),
         switchMap(() =>
-          this.fetchContentDirective.fetchContentWithSourceParams$<StoryList>(
+          this.fetchContentDirective.fetchContentWithSourceParams$<Storylist>(
             activatedRoute.queryParams,
             switchMap(({ slug }) => storylistService.get(slug, 60, 'asc'))
           )
@@ -62,7 +62,7 @@ export class StoryListComponent {
     // En base a si la plataforma es browser o server, utiliza el wrapper de macro tasks en el segundo caso
     const storyList$ = isPlatformBrowser(platformId)
       ? fetchObservable$
-      : macroTaskWrapperService.wrapMacroTaskObservable<StoryList>(
+      : macroTaskWrapperService.wrapMacroTaskObservable<Storylist>(
           'StoryListComponent.fetchData',
           fetchObservable$,
           null,
