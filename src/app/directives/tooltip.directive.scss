@@ -1,8 +1,7 @@
 .tooltip-container {
   @include inter-body-xs-medium;
-  font-weight: 600;
-  color: $gray-600;
-  padding: 8px;
+  font-weight: $inter-font-weight-semibold;
+  padding: $spacing-2;
   border-radius: $rounded;
   text-align: center;
   z-index: 100;
