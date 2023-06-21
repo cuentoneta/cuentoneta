@@ -15,27 +15,27 @@ import { CommonModule } from '@angular/common';
 // Models
 import {
   GridItemPlacementConfig,
-  StoryList,
+  Storylist,
 } from '../../models/storylist.model';
 import { APP_ROUTE_TREE } from '../../app-routing.module';
 import { StorylistGridSkeletonConfig } from "../../models/content.model";
 import { StoryCardComponent } from '../story-card/story-card.component';
 
 @Component({
-  selector: 'cuentoneta-story-list-card-deck',
+  selector: 'cuentoneta-storylist-card-deck',
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
     NgxSkeletonLoaderModule,
-    RouterLink, 
+    RouterLink,
     StoryCardComponent,
   ],
-  templateUrl: './story-list-card-deck.component.html',
-  styleUrls: ['./story-list-card-deck.component.scss'],
+  templateUrl: './storylist-card-deck.component.html',
+  styleUrls: ['./storylist-card-deck.component.scss'],
 })
-export class StoryListCardDeckComponent implements OnInit, OnChanges {
+export class StorylistCardDeckComponent implements OnInit, OnChanges {
   @Input() number: number = 6;
-  @Input() storylist: StoryList | undefined;
+  @Input() storylist: Storylist | undefined;
   @Input() isLoading: boolean = false; // Utilizado para mostrar/ocultar skeletons
   @Input() displayTitle: boolean = true;
   @Input() displayFeaturedImage: boolean = false;

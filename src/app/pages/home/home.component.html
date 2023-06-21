@@ -21,7 +21,7 @@
   <section class="card-decks">
     <ng-container *ngIf="!!storylistCardDecks && storylistCardDecks.length">
       <ng-container *ngFor="let storylistDeck of storylistCardDecks">
-        <cuentoneta-story-list-card-deck
+        <cuentoneta-storylist-card-deck
           class="mb-3"
           [storylist]="storylistDeck.storylist"
           [displayTitle]="true"

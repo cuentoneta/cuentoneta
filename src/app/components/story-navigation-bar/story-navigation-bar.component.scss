@@ -13,7 +13,7 @@ section {
     footer {
         @include card-spacing;
         background-color: $gray-50;
-        .story-list-title {
+        .storylist-title {
             @include inter-body-xl-bold;
             &:hover {
                 color: $interactive-500;

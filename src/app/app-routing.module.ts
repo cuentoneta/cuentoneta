@@ -4,7 +4,8 @@ import { RouterModule, Routes } from '@angular/router';
 export const APP_ROUTE_TREE: { [key: string]: string } = {
   HOME: 'home',
   STORY: 'story',
-  STORYLIST: 'story-list',
+  STORYLIST: 'storylist',
+  'STORY-LIST': 'story-list', // Ruta definida por cuestiones de retrocompatibilidad. Redirecciona a /storylist - RO | 2023-06-21
 };
 
 const routes: Routes = [
@@ -21,9 +22,13 @@ const routes: Routes = [
   {
     path: APP_ROUTE_TREE['STORYLIST'],
     loadChildren: () =>
-      import('./pages/story-list/story-list.module').then(
-        (m) => m.StoryListModule
+      import('./pages/storylist/storylist.module').then(
+        (m) => m.StorylistModule
       ),
+  },
+  {
+    path: APP_ROUTE_TREE['STORY-LIST'],
+    redirectTo: APP_ROUTE_TREE['STORYLIST'],
   },
   {
     path: 'about',
