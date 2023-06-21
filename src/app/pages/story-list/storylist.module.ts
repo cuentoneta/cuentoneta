@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { StoryListRoutingModule } from './story-list-routing.module';
+import { StorylistRoutingModule } from './storylist-routing.module';
 import { StoryListComponent } from './story-list.component';
 import { StorylistCardDeckComponent } from '../../components/story-list-card-deck/storylist-card-deck.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -10,7 +10,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
   declarations: [StoryListComponent],
   imports: [
     CommonModule,
-    StoryListRoutingModule,
+    StorylistRoutingModule,
     StorylistCardDeckComponent,
     NgxSkeletonLoaderModule,
   ],
