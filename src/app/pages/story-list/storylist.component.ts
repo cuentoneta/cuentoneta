@@ -20,14 +20,14 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 @Component({
   selector: 'cuentoneta-story-list',
-  templateUrl: './story-list.component.html',
-  styleUrls: ['./story-list.component.scss'],
+  templateUrl: './storylist.component.html',
+  styleUrls: ['./storylist.component.scss'],
   hostDirectives: [
     FetchContentDirective,
     MetaTagsDirective,
   ],
 })
-export class StoryListComponent {
+export class StorylistComponent {
   fetchContentDirective = inject(FetchContentDirective<Storylist>);
   storylist!: Storylist | undefined;
   skeletonConfig: StorylistGridSkeletonConfig | undefined;
