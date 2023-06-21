@@ -21,8 +21,8 @@ const routes: Routes = [
   {
     path: APP_ROUTE_TREE['STORYLIST'],
     loadChildren: () =>
-      import('./pages/story-list/story-list.module').then(
-        (m) => m.StoryListModule
+      import('./pages/story-list/storylist.module').then(
+        (m) => m.StorylistModule
       ),
   },
   {

@@ -10,4 +10,4 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
     declarations: [StoryListComponent],
     imports: [ CommonModule, StoryListRoutingModule, StoryListCardDeckComponent, NgxSkeletonLoaderModule ],
 })
-export class StoryListModule {}
+export class StorylistModule {}
