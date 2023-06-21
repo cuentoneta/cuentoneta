@@ -9,7 +9,7 @@ import { Params } from '@angular/router';
  * la llamada async a la fuente.
  * @example
  * // Path: src\app\pages\home\home.component.ts
- * // Path: src\app\pages\story-list\story-list.component.ts
+ * // Path: src\app\pages\storylist\story-list.component.ts
  *
  */
 
