@@ -22,7 +22,7 @@ import { StorylistGridSkeletonConfig } from "../../models/content.model";
 import { StoryCardComponent } from '../story-card/story-card.component';
 
 @Component({
-  selector: 'cuentoneta-story-list-card-deck',
+  selector: 'cuentoneta-storylist-card-deck',
   standalone: true,
   imports: [
     CommonModule,
