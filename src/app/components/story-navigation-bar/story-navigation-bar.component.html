@@ -1,19 +1,19 @@
 <section>
   <header>
-    <ng-container *ngIf="storyList && storyList.title; else titleSkeleton">
-      <a [routerLink]="'/' + appRouteTree['STORYLIST']" [queryParams]="{ slug: storyList.slug }">
-        <h3 class="storylist-title">{{ storyList.title }}</h3>
+    <ng-container *ngIf="storylist && storylist.title; else titleSkeleton">
+      <a [routerLink]="'/' + appRouteTree['STORYLIST']" [queryParams]="{ slug: storylist.slug }">
+        <h3 class="storylist-title">{{ storylist.title }}</h3>
       </a>
     </ng-container>
   </header>
 
-  <ng-container *ngIf="!!storyList; else bodySkeleton">
-    <ng-container *ngFor="let publication of storyList.publications">
+  <ng-container *ngIf="!!storylist; else bodySkeleton">
+    <ng-container *ngFor="let publication of storylist.publications">
       <a
         [routerLink]="
           publication.published ? ['/' + appRouteTree['STORY']] : null
         "
-        [queryParams]="{ slug: publication.story.slug, list: storyList.slug }"
+        [queryParams]="{ slug: publication.story.slug, list: storylist.slug }"
       >
         <article>
           <cuentoneta-story-edition-date-label
@@ -21,7 +21,7 @@
             [label]="
               publication.published
                 ? getEditionLabel(publication, publication.order)
-                : storyList.comingNextLabel
+                : storylist.comingNextLabel
             "
           />
           <ng-container *ngIf="publication.published; else comingNext"
@@ -36,9 +36,9 @@
   </ng-container>
 
   <!-- ToDo: #288 - Generar abstracción para evitar repetir lógica presente en el header (ver líneas 2 - 9)-->
-  <footer *ngIf="storyList && storyList.publications.length > 10">
-    <ng-container *ngIf="storyList; else titleSkeleton">
-      <a [routerLink]="'/' + appRouteTree['STORYLIST']" [queryParams]="{ slug: storyList.slug }">
+  <footer *ngIf="storylist && storylist.publications.length > 10">
+    <ng-container *ngIf="storylist; else titleSkeleton">
+      <a [routerLink]="'/' + appRouteTree['STORYLIST']" [queryParams]="{ slug: storylist.slug }">
         <h3 class="storylist-title">Ver más...</h3>
       </a>
     </ng-container>

@@ -23,14 +23,14 @@ import { NgIf, NgFor, CommonModule } from '@angular/common';
     ],
 })
 export class StoryNavigationBarComponent {
-    @Input() storyList!: Storylist;
+    @Input() storylist!: Storylist;
 
     readonly appRouteTree = APP_ROUTE_TREE;
     dummyList: null[] = Array(10);
 
     // ToDo: Separar card de cada cuento de la lista en su propio componente, para evitar usar un método en el template
     getEditionLabel(publication: Publication<Story>, editionIndex: number = 0): string {
-        return `${this.storyList?.editionPrefix} ${editionIndex} ${this.storyList.displayDates ? ' - ' + publication.publishingDate : ''
+        return `${this.storylist?.editionPrefix} ${editionIndex} ${this.storylist.displayDates ? ' - ' + publication.publishingDate : ''
             }`;
     }
 }
