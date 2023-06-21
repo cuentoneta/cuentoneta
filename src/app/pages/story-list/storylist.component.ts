@@ -63,7 +63,7 @@ export class StorylistComponent {
     const storyList$ = isPlatformBrowser(platformId)
       ? fetchObservable$
       : macroTaskWrapperService.wrapMacroTaskObservable<Storylist>(
-          'StoryListComponent.fetchData',
+          'StorylistComponent.fetchData',
           fetchObservable$,
           null,
           'first-emit'

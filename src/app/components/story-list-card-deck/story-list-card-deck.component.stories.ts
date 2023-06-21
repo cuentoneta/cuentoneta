@@ -311,7 +311,7 @@ const upcomingStoriesStorylist = {
 };
 
 export default {
-  title: 'StoryListCardDeckComponent',
+  title: 'StorylistCardDeckComponent',
   component: StorylistCardDeckComponent,
   decorators: [
     moduleMetadata({
