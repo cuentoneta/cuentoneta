@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { Publication, Storylist, StoryListDTO } from './models/storylist.model';
+import { Publication, Storylist, StorylistDTO } from './models/storylist.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { StoryCard } from './models/story.model';
 import { environment } from './environments/environment';
@@ -24,7 +24,7 @@ export class StorylistService {
       .set('amount', amount)
       .set('ordering', ordering);
     return this.http
-      .get<StoryListDTO>(`${this.prefix}`, { params })
+      .get<StorylistDTO>(`${this.prefix}`, { params })
       .pipe(
         map((storyList) => ({
           ...storyList,
@@ -39,7 +39,7 @@ export class StorylistService {
   public getPreview(slug: string): Observable<Storylist> {
     const params = new HttpParams().set('slug', slug);
       return this.http
-          .get<StoryListDTO>(`${this.prefix}/preview`, { params })
+          .get<StorylistDTO>(`${this.prefix}/preview`, { params })
           .pipe(
               map((storyList) => ({
                   ...storyList,

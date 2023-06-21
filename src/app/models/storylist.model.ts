@@ -27,7 +27,7 @@ export interface Storylist extends StorylistBase {
   publications: Publication<Story>[];
 }
 
-export interface StoryListDTO extends StorylistBase {
+export interface StorylistDTO extends StorylistBase {
   publications: Publication<StoryDTO>[];
 }
 
