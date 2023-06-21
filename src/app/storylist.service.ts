@@ -41,9 +41,9 @@ export class StorylistService {
       return this.http
           .get<StorylistDTO>(`${this.prefix}/preview`, { params })
           .pipe(
-              map((storyList) => ({
-                  ...storyList,
-                  publications: storyList.publications.map((publication) => ({
+              map((storylist) => ({
+                  ...storylist,
+                  publications: storylist.publications.map((publication) => ({
                       ...publication,
                       story: this.storyService.parseStoryCardContent(publication.story),
                   })) as Publication<StoryCard>[],
