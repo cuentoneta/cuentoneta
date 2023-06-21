@@ -20,7 +20,7 @@ export class ContentService {
   private _contentConfig!: StorylistDeckConfig[];
 
   // Services
-  private storyListService = inject(StorylistService);
+  private storylistService = inject(StorylistService);
 
   get contentConfig(): StorylistDeckConfig[] {
     return this._contentConfig;
@@ -54,7 +54,7 @@ export class ContentService {
     const configs = this.contentConfig;
     return combineLatest(
       [...configs].map((storylistDeckConfig) =>
-        this.storyListService.getPreview(storylistDeckConfig.slug)
+        this.storylistService.getPreview(storylistDeckConfig.slug)
       )
     ).pipe(
       map((storylists) =>
