@@ -2,7 +2,7 @@
   <header>
     <ng-container *ngIf="storyList && storyList.title; else titleSkeleton">
       <a [routerLink]="'/' + appRouteTree['STORYLIST']" [queryParams]="{ slug: storyList.slug }">
-        <h3 class="story-list-title">{{ storyList.title }}</h3>
+        <h3 class="storylist-title">{{ storyList.title }}</h3>
       </a>
     </ng-container>
   </header>
@@ -39,7 +39,7 @@
   <footer *ngIf="storyList && storyList.publications.length > 10">
     <ng-container *ngIf="storyList; else titleSkeleton">
       <a [routerLink]="'/' + appRouteTree['STORYLIST']" [queryParams]="{ slug: storyList.slug }">
-        <h3 class="story-list-title">Ver más...</h3>
+        <h3 class="storylist-title">Ver más...</h3>
       </a>
     </ng-container>
   </footer>
