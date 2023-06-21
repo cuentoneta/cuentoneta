@@ -19,7 +19,7 @@ import { FetchContentDirective } from '../../directives/fetch-content.directive'
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 @Component({
-  selector: 'cuentoneta-story-list',
+  selector: 'cuentoneta-storylist',
   templateUrl: './storylist.component.html',
   styleUrls: ['./storylist.component.scss'],
   hostDirectives: [
