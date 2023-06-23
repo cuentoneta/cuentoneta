@@ -1,4 +1,4 @@
-name:  Reportar un problema/error
+name:  🦟 Reportar un problema/error
 description: Reportar un problema que ayude a mejorar el proyecto.
 labels: ["🛠 goal: Fix","🚦 status: Sin asignar"]
 body:
@@ -7,7 +7,7 @@ body:
   attributes:
     label: ¿Existe un problema similar reportado?
     description: Por favor, comprueba si existe un problema similar reportado antes de crear uno nuevo.
-    options: 
+    options:
       - label: Existe un problema similar
       - label: Es un problema completamente nuevo
   validations:
