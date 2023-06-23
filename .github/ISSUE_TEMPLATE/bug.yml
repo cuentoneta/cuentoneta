@@ -7,6 +7,9 @@ body:
   attributes:
     label: ¿Existe un problema similar reportado?
     description: Por favor, comprueba si existe un problema similar reportado antes de crear uno nuevo.
+    options: 
+      - Existe un problema similar
+      - Es un problema completamente nuevo
   validations:
     required: true
 - type: textarea
