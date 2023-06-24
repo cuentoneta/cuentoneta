@@ -7,7 +7,6 @@ import { environment } from './environments/environment';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  title = 'cuentoneta';
   constructor() {
     // Importa y configura el paquete de analytics de Vercel
     inject({

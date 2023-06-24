@@ -1,21 +1,11 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {render} from '@testing-library/angular';
+
 import { StoryCardSkeletonComponent } from './story-card-skeleton.component';
 
 describe('StoryCardSkeletonComponent', () => {
-  let component: StoryCardSkeletonComponent;
-  let fixture: ComponentFixture<StoryCardSkeletonComponent>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [StoryCardSkeletonComponent],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(StoryCardSkeletonComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
+   it('should create', async() => {
+    const component = await render(StoryCardSkeletonComponent);
+    
     expect(component).toBeTruthy();
   });
 });

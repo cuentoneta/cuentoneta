@@ -1,22 +1,25 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {render} from '@testing-library/angular';
 
 import { BioSummaryCardComponent } from './bio-summary-card.component';
+import { Author } from 'src/app/models/author.model';
+
+const mockAuthor: Author = {
+    id: 0,
+    name: "Poe",
+    imageUrl: "mockUrl",
+    nationality:{
+        country: "Baltimore", 
+        flag: "USA"
+    },
+    fullBioUrl: "mockUrl"
+};
 
 describe('BioSummaryCardComponent', () => {
-    let component: BioSummaryCardComponent;
-    let fixture: ComponentFixture<BioSummaryCardComponent>;
+    it('should create', async () => {
+        const component = await render(BioSummaryCardComponent, {
+            componentProperties: {author: mockAuthor},
+        });
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            declarations: [BioSummaryCardComponent],
-        }).compileComponents();
-
-        fixture = TestBed.createComponent(BioSummaryCardComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
-
-    it('should create', () => {
         expect(component).toBeTruthy();
     });
 });
