@@ -2,8 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-@import 'src/assets/scss/reset';
-@import 'src/assets/scss/theme';
+@import 'assets/scss/reset';
+@import 'assets/scss/theme';
 @import 'src/app/directives/tooltip.directive.scss';
 /* You can add global styles to this file, and also import other style files */
 
