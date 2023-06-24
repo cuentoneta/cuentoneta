@@ -45,7 +45,7 @@
     "@angular-eslint/eslint-plugin": "16.0.3",
     "@angular-eslint/eslint-plugin-template": "16.0.3",
     "@angular-eslint/template-parser": "16.0.3",
-    "@angular/cli": "16.0.0",
+    "@angular/cli": "~16.1.0",
     "@angular/compiler-cli": "16.1.2",
     "@angular/language-service": "16.1.2",
     "@nguniversal/builders": "16.1.0",
@@ -89,4 +89,3 @@
     "webpack": "^5.64.0"
   }
 }
-
