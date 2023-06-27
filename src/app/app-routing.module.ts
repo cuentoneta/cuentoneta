@@ -33,10 +33,11 @@ const routes: Routes = [
     loadComponent: () =>
       import('./pages/about/about.component').then((m) => m.AboutComponent),
   },
-  // {
-  //   path: 'dmca',
-  //   loadChildren: () => import('./pages/dmca/dmca.module').then((m) => m.DmcaModule),
-  // },
+  {
+    path: 'dmca',
+    loadComponent: () => 
+    import('./pages/dmca/dmca.component').then((m) => m.DmcaComponent),
+  },
   {
     path: '',
     redirectTo: 'home',
