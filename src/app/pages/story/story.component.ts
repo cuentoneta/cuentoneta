@@ -2,7 +2,7 @@
 import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, switchMap } from 'rxjs';
-import { isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // Router
@@ -10,7 +10,7 @@ import { APP_ROUTE_TREE } from '../../app-routing.module';
 
 // Models
 import { Story } from '../../models/story.model';
-import { StoryList } from '../../models/storylist.model';
+import { Storylist } from '../../models/storylist.model';
 
 // Services
 import { MacroTaskWrapperService } from '../../providers/macro-task-wrapper.service';
@@ -20,11 +20,24 @@ import { StoryService } from '../../providers/story.service';
 // Directives
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { StoryNavigationBarComponent } from 'src/app/components/story-navigation-bar/story-navigation-bar.component';
+import { BioSummaryCardComponent } from 'src/app/components/bio-summary-card/bio-summary-card.component';
+import { ShareContentComponent } from 'src/app/components/share-content/share-content.component';
 
 @Component({
   selector: 'cuentoneta-story',
   templateUrl: './story.component.html',
   styleUrls: ['./story.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    NgOptimizedImage,
+    NgxSkeletonLoaderModule,
+    StoryNavigationBarComponent,
+    BioSummaryCardComponent,
+    ShareContentComponent
+  ],
   hostDirectives: [
     FetchContentDirective,
     MetaTagsDirective,
@@ -32,10 +45,10 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 })
 export class StoryComponent {
   readonly appRouteTree = APP_ROUTE_TREE;
-  fetchContentDirective = inject(FetchContentDirective<[Story, StoryList]>);
+  fetchContentDirective = inject(FetchContentDirective<[Story, Storylist]>);
 
   story!: Story;
-  storylist!: StoryList;
+  storylist!: Storylist;
 
   dummyList = Array(10);
   shareContentParams: { [key: string]: string } = {};
@@ -63,12 +76,12 @@ export class StoryComponent {
 
     const content$ = isPlatformBrowser(platformId)
       ? fetchObservable$
-      : macroTaskWrapperService.wrapMacroTaskObservable<[Story, StoryList]>(
-          'StoryComponent.fetchData',
-          fetchObservable$,
-          null,
-          'first-emit'
-        );
+      : macroTaskWrapperService.wrapMacroTaskObservable<[Story, Storylist]>(
+        'StoryComponent.fetchData',
+        fetchObservable$,
+        null,
+        'first-emit'
+      );
 
     content$.subscribe(([story, storylist]) => {
       this.story = story;

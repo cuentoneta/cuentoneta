@@ -7,7 +7,7 @@ import {
   StorylistCardDeck,
   StorylistDeckConfig,
 } from '../models/content.model';
-import { StoryList } from '../models/storylist.model';
+import { Storylist } from '../models/storylist.model';
 
 // Providers
 import { environment } from '../environments/environment';
@@ -20,7 +20,7 @@ export class ContentService {
   private _contentConfig!: StorylistDeckConfig[];
 
   // Services
-  private storyListService = inject(StorylistService);
+  private storylistService = inject(StorylistService);
 
   get contentConfig(): StorylistDeckConfig[] {
     return this._contentConfig;
@@ -35,7 +35,7 @@ export class ContentService {
   }
 
   // ToDo: Obtener listas de navs desde API
-  public getNavLists(): Pick<StoryList, 'slug' | 'title'>[] {
+  public getNavLists(): Pick<Storylist, 'slug' | 'title'>[] {
     return [
       { slug: 'otono-2023', title: 'Cuentos de Otoño' },
       { slug: 'fec-english-sessions', title: 'FEC English Sessions' },
@@ -54,7 +54,7 @@ export class ContentService {
     const configs = this.contentConfig;
     return combineLatest(
       [...configs].map((storylistDeckConfig) =>
-        this.storyListService.getPreview(storylistDeckConfig.slug)
+        this.storylistService.getPreview(storylistDeckConfig.slug)
       )
     ).pipe(
       map((storylists) =>
@@ -63,7 +63,7 @@ export class ContentService {
             ...contentConfig,
             storylist: storylists
               .filter((storylist) => storylist.slug === contentConfig.slug)
-              .pop() as StoryList,
+              .pop() as Storylist,
           })
         )
       )

@@ -1,0 +1,61 @@
+name:  🦟 Reportar un problema/error
+description: Reportar un problema que ayude a mejorar el proyecto.
+labels: ["🦟 bug"]
+body:
+- type: checkboxes
+  id: check-issue-exists
+  attributes:
+    label: ¿Existe un problema similar reportado?
+    description: Por favor, comprueba si existe un problema similar reportado antes de crear uno nuevo.
+    options:
+      - label: Existe un problema similar
+      - label: Es un problema completamente nuevo
+  validations:
+    required: true
+- type: textarea
+  id: description
+  attributes:
+    label: Descripción del problema
+    description: Describe el problema de forma clara y concisa.
+    placeholder: |
+      Por ejemplo: "Cuando hago '...' ocurre '...'"
+  validations:
+    required: true
+- type: textarea
+  id: steps
+  attributes:
+    label: Pasos para reproducir el problema
+    description: Describe los necesarios pasos para reproducir el problema.
+    placeholder: |
+      1. Ir a '...'
+      2. Click en '....'
+      3. Scroll down hasta '....'
+      4. Ver error
+  validations:
+    required: true
+- type: textarea
+  id: expected-behavior
+  attributes:
+    label: Comportamiento esperado
+    description: Describe el comportamiento que esperabas ver.
+    placeholder: |
+      Por ejemplo: "Debería ocurrir '...'"
+  validations:
+    required: false
+- type: textarea
+  id: screenshots
+  attributes:
+    label: Capturas de pantalla
+    description: Si es posible, añade capturas de pantalla para ayudar a explicar el problema.
+  validations:
+    required: false
+- type: textarea
+  id: additional-info
+  attributes:
+    label: Información adicional / Recursos
+    description: Añade cualquier otra información sobre el problema aquí.
+    placeholder: |
+      - ¿Has encontrado alguna solución?
+      - ¿Has encontrado algún recurso que pueda ayudar a resolver el problema?
+  validations:
+    required: false

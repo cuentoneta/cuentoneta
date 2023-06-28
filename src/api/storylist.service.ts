@@ -164,7 +164,7 @@ async function fetchStorylist(req: any, res: any) {
     res.json(null);
   }
 
-  const storyListImages =
+  const storylistImages =
     result.gridConfig.cardsPlacement?.filter(
       (config: any) => !!config.imageSlug
     ) ?? [];
@@ -175,9 +175,9 @@ async function fetchStorylist(req: any, res: any) {
       ? undefined
       : urlFor(result.featuredImage).url(),
     images:
-      storyListImages.length === 0
+      storylistImages.length === 0
         ? []
-        : storyListImages.map((card: any) => ({
+        : storylistImages.map((card: any) => ({
             slug: card.imageSlug,
             url: urlFor(card.image).url(),
           })),

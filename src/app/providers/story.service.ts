@@ -8,11 +8,6 @@ import { environment } from '../environments/environment';
 
 // Models
 import { Story, StoryCard, StoryDTO } from '../models/story.model';
-import {
-  Publication,
-  StoryList,
-  StoryListDTO,
-} from '../models/storylist.model';
 
 @Injectable({ providedIn: 'root' })
 export class StoryService {

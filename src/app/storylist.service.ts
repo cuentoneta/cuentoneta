@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { Publication, StoryList, StoryListDTO } from './models/storylist.model';
+import { Publication, Storylist, StorylistDTO } from './models/storylist.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { StoryCard } from './models/story.model';
 import { environment } from './environments/environment';
@@ -18,17 +18,17 @@ export class StorylistService {
     slug: string,
     amount: number = 5,
     ordering: 'asc' | 'desc' = 'asc'
-  ): Observable<StoryList> {
+  ): Observable<Storylist> {
     const params = new HttpParams()
       .set('slug', slug)
       .set('amount', amount)
       .set('ordering', ordering);
     return this.http
-      .get<StoryListDTO>(`${this.prefix}`, { params })
+      .get<StorylistDTO>(`${this.prefix}`, { params })
       .pipe(
-        map((storyList) => ({
-          ...storyList,
-          publications: storyList.publications.map((publication) => ({
+        map((storylist) => ({
+          ...storylist,
+          publications: storylist.publications.map((publication) => ({
             ...publication,
             story: this.storyService.parseStoryCardContent(publication.story),
           })) as Publication<StoryCard>[],
@@ -36,14 +36,14 @@ export class StorylistService {
       );
   }
 
-  public getPreview(slug: string): Observable<StoryList> {
+  public getPreview(slug: string): Observable<Storylist> {
     const params = new HttpParams().set('slug', slug);
       return this.http
-          .get<StoryListDTO>(`${this.prefix}/preview`, { params })
+          .get<StorylistDTO>(`${this.prefix}/preview`, { params })
           .pipe(
-              map((storyList) => ({
-                  ...storyList,
-                  publications: storyList.publications.map((publication) => ({
+              map((storylist) => ({
+                  ...storylist,
+                  publications: storylist.publications.map((publication) => ({
                       ...publication,
                       story: this.storyService.parseStoryCardContent(publication.story),
                   })) as Publication<StoryCard>[],

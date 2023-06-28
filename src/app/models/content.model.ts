@@ -1,4 +1,4 @@
-import { GridItemPlacementConfig, StoryList } from './storylist.model';
+import { GridItemPlacementConfig, Storylist } from './storylist.model';
 
 export interface StorylistDeckConfig {
     title: string;
@@ -10,7 +10,7 @@ export interface StorylistDeckConfig {
 }
 
 export interface StorylistCardDeck extends StorylistDeckConfig {
-    storylist?: StoryList;
+    storylist?: Storylist;
 }
 
 export interface StorylistGridSkeletonConfig {

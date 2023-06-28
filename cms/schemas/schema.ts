@@ -6,7 +6,7 @@ import blockContent from './blockContent';
 import story from './story';
 import author from './author';
 import country from './country';
-import storyList from './storylist';
+import storylist from './storylist';
 import publication from './publication';
 
 export default [
@@ -15,7 +15,7 @@ export default [
     // { type: 'typename' } in other document schemas
     story,
     publication,
-    storyList,
+    storylist,
     author,
     country,
     blockContent,
