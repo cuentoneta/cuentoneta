@@ -7,6 +7,7 @@ export interface StoryBase {
     slug: string;
     approximateReadingTime: number;
     author: Author;
+    originalLink: string;
 }
 
 export interface Story extends StoryBase {
