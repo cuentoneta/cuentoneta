@@ -102,9 +102,10 @@ import { CommonModule } from '@angular/common';
       <section class="mb-8">
         <h2 class="subtitle">Original Sources</h2>
         <p class="ion-text-justify">
-          Here the original sources from where each story is taken are provided,
-          in order to prove that La Cuentoneta only act as a platform on which
-          already existing content is reproduced
+          In order to demonstrate that La Cuentoneta solely serves as a platform
+          for reproducing existing content, each non-original asset sourced from
+          external contributors and other platforms includes a prominently
+          displayed and easily accessible link to its original source.
         </p>
       </section>
     </main>
