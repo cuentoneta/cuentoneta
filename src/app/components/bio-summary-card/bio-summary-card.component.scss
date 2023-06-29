@@ -6,22 +6,34 @@
     border-radius: $rounded;
     padding: $spacing-6;
 
-    .author-info {
+    .author {
         display: grid;
 
         @media screen and (max-width: $max-xs-width) {
-            grid-template-columns: [col] $spacing-16 [col] 1fr;
+            grid-template-columns: [col] $spacing-16 [col] 1fr [col] 1fr [col] $spacing-16 ;
             grid-template-rows: [row] auto [row] auto;
+            row-gap: $spacing-4;
 
             .author-image {
                 grid-column: col / span 1;
-                grid-row: row / span 2;
+                grid-row: row / span 1;
             }
 
-            .author-bio-link, .summary-link {
-                grid-column: col 2 / span 1;
+            .author-info {
+                grid-column: col 2 / span 3;
+                grid-row: row / span 1;
+            }
+
+            .author-bio-link{
+                grid-column: col 1 / span 2;
                 grid-row: row 2;
-                justify-content: center;
+                justify-content: left;
+            }
+
+            .summary-link{
+                grid-column: col 3 / span 2;
+                grid-row: row 2;
+                justify-content: left;
             }
         }
 
@@ -30,7 +42,6 @@
         }
 
         column-gap: $spacing-4;
-        margin-bottom: $spacing-8;
 
         .author-image {
             border-radius: $rounded-md;
