@@ -97,18 +97,5 @@
       order to prove that La Cuentoneta and Cuentos de Verano only act as a
       platform on which already existing content is reproduced
     </p>
-
-    <section class="mb-3 mt-3">
-      <h3>Stories List</h3>
-      <ng-container *ngFor="let link of linksList">
-        <p>
-          <strong>{{ link.day }}:</strong> {{ link.title }}, by {{ link.author.name }}
-        </p>
-        <p>
-          Retrieved from:
-          <a [href]="link.originalLink">{{ link.originalLink }}</a>
-        </p>
-      </ng-container>
-    </section>
   </section>
 </main>
