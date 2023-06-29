@@ -18,7 +18,7 @@
                 grid-row: row / span 2;
             }
 
-            .author-bio-link {
+            .author-bio-link, .summary-link {
                 grid-column: col 2 / span 1;
                 grid-row: row 2;
                 justify-content: center;
@@ -26,7 +26,7 @@
         }
 
         @media screen and (min-width: $min-sm-width) {
-            grid-template-columns: $spacing-16 1fr $spacing-32;
+            grid-template-columns: $spacing-16 1fr $spacing-36 $spacing-32;
         }
 
         column-gap: $spacing-4;
@@ -49,7 +49,7 @@
             }
         }
 
-        .author-bio-link {
+        .author-bio-link, .summary-link {
             @include inter-body-base-semibold;
             color: $interactive-500;
         }

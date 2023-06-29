@@ -1,5 +1,5 @@
 <div class="bio-card-container">
-    <section class="author-info">
+    <section class="author-info" *ngIf="story.author as author">
         <img
             class="author-image"
             width="64"
@@ -20,6 +20,14 @@
                 <span>{{ author.nationality.country }}</span>
             </div>
         </div>
+        <a [href]="story.originalLink" target="_blank" class="summary-link flex items-start justify-end gap-3">
+            Link Original
+            <img
+                [ngSrc]="'./assets/svg/external-link.svg'"
+                width="20"
+                height="20"
+                alt="Imagen que representa un link externo"
+        /></a>
         <a [href]="author.fullBioUrl" target="_blank" class="author-bio-link flex items-start justify-end gap-3">
             Biografía
             <img
@@ -29,9 +37,9 @@
                 alt="Imagen que representa un link externo"
         /></a>
     </section>
-    <section class="bio-and-summary">
+    <section class="bio-and-summary" *ngIf="story.author as author">
         <p>{{ author.biography }}</p>
-        <ng-container *ngIf="summary">
+        <ng-container *ngIf="story.summary as summary">
             <p [innerHTML]="summary"></p>
         </ng-container>
     </section>
