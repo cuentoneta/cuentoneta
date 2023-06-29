@@ -101,7 +101,7 @@ import { CommonModule } from '@angular/common';
 
       <section class="mb-8">
         <h2 class="subtitle">Original Sources</h2>
-        <p class="ion-text-justify">
+        <p>
           In order to demonstrate that La Cuentoneta solely serves as a platform
           for reproducing existing content, each non-original asset sourced from
           external contributors and other platforms includes a prominently
