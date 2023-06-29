@@ -20,7 +20,10 @@
         "noImplicitOverride": true,
         "noPropertyAccessFromIndexSignature": true,
         "noImplicitReturns": true,
-        "noFallthroughCasesInSwitch": true
+        "noFallthroughCasesInSwitch": true,
+        "paths": {
+            "@models/*": ["src/app/models/*"]
+        },
     },
     "files": [],
     "include": [],
