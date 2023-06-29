@@ -1,37 +1,49 @@
 <div class="bio-card-container">
-    <section class="author-info">
+    <section class="author mb-4 sm:mb-8" *ngIf="story.author as author">
         <img
-            class="author-image"
-            width="64"
-            height="64"
-            [alt]="'Retrato de ' + author.name"
-            [ngSrc]="author.imageUrl + '?h=64&w=64'"
+                class="author-image"
+                width="64"
+                height="64"
+                [alt]="'Retrato de ' + author.name"
+                [ngSrc]="author.imageUrl + '?h=64&w=64'"
         />
-        <div class="flex flex-col justify-center">
+        <div class="author-info flex flex-col justify-center">
             <p class="author-name">{{ author.name }}</p>
             <div class="author-nationality flex items-center gap-2">
                 <img
-                    class="flag"
-                    width="20"
-                    height="15"
-                    [alt]="'Bandera de ' + author.nationality.country"
-                    [ngSrc]="author.nationality.flag + '?w=20&h=15'"
+                        class="flag"
+                        width="20"
+                        height="15"
+                        [alt]="'Bandera de ' + author.nationality.country"
+                        [ngSrc]="author.nationality.flag + '?w=20&h=15'"
                 />
                 <span>{{ author.nationality.country }}</span>
             </div>
         </div>
-        <a [href]="author.fullBioUrl" target="_blank" class="author-bio-link flex items-start justify-end gap-3">
-            Biografía
-            <img
-                [ngSrc]="'./assets/svg/external-link.svg'"
-                width="20"
-                height="20"
-                alt="Imagen que representa un link externo"
-        /></a>
+        <ng-container  *ngIf="!!author.fullBioUrl" >
+            <a [href]="author.fullBioUrl" target="_blank" class="author-bio-link flex items-start justify-end gap-3">
+                Biografía
+                <img
+                        [ngSrc]="'./assets/svg/external-link.svg'"
+                        width="20"
+                        height="20"
+                        alt="Imagen que representa un link externo"
+                /></a>
+        </ng-container>
+        <ng-container *ngIf="!!story.originalLink" >
+            <a [href]="story.originalLink" target="_blank" class="summary-link flex items-start justify-end gap-3">
+                Recurso Original
+                <img
+                        [ngSrc]="'./assets/svg/external-link.svg'"
+                        width="20"
+                        height="20"
+                        alt="Imagen que representa un link externo"
+                /></a>
+        </ng-container>
     </section>
-    <section class="bio-and-summary">
+    <section class="bio-and-summary" *ngIf="story.author as author">
         <p>{{ author.biography }}</p>
-        <ng-container *ngIf="summary">
+        <ng-container *ngIf="story.summary as summary">
             <p [innerHTML]="summary"></p>
         </ng-container>
     </section>

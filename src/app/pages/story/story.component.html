@@ -63,11 +63,7 @@
 
     <footer>
       <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
-        <cuentoneta-bio-summary-card
-                *ngIf="story?.author?.biography"
-                [author]="story.author"
-                [summary]="story.summary"
-        />
+        <cuentoneta-bio-summary-card [story]="story"/>
       </ng-container>
     </footer>
   </article>
