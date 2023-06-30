@@ -26,6 +26,12 @@ section {
     grid-row-gap: 2px;
 
     article {
+
+        &.selected {
+            border-left: 4px solid $primary-400;
+            background-color: $primary-100;
+        }
+
         @include card-spacing;
         background-color: $gray-50;
 

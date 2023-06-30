@@ -9,8 +9,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { APP_ROUTE_TREE } from '../../app-routing.module';
 
 // Models
-import { Story } from '../../models/story.model';
-import { Storylist } from '../../models/storylist.model';
+import { Story } from '@models/story.model';
+import { Storylist } from '@models/storylist.model';
 
 // Services
 import { MacroTaskWrapperService } from '../../providers/macro-task-wrapper.service';
@@ -86,6 +86,7 @@ export class StoryComponent {
     content$.subscribe(([story, storylist]) => {
       this.story = story;
       this.storylist = storylist;
+
       metaTagsDirective.setTitle(
         `${story.title}, de ${story.author.name} en La Cuentoneta`
       );

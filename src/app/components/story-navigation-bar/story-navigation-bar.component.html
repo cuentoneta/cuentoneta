@@ -1,21 +1,24 @@
 <section>
   <header>
     <ng-container *ngIf="storylist && storylist.title; else titleSkeleton">
-      <a [routerLink]="'/' + appRouteTree['STORYLIST']" [queryParams]="{ slug: storylist.slug }">
+      <a
+        [routerLink]="'/' + appRouteTree['STORYLIST']"
+        [queryParams]="{ slug: storylist.slug }"
+      >
         <h3 class="storylist-title">{{ storylist.title }}</h3>
       </a>
     </ng-container>
   </header>
 
   <ng-container *ngIf="!!storylist; else bodySkeleton">
-    <ng-container *ngFor="let publication of storylist.publications">
+    <ng-container *ngFor="let publication of displayedPublications">
       <a
         [routerLink]="
           publication.published ? ['/' + appRouteTree['STORY']] : null
         "
         [queryParams]="{ slug: publication.story.slug, list: storylist.slug }"
       >
-        <article>
+        <article [ngClass]="{ 'selected': selectedStorySlug === publication.story.slug }">
           <cuentoneta-story-edition-date-label
             class="edition-and-label"
             [label]="
@@ -36,9 +39,12 @@
   </ng-container>
 
   <!-- ToDo: #288 - Generar abstracción para evitar repetir lógica presente en el header (ver líneas 2 - 9)-->
-  <footer *ngIf="storylist && storylist.publications.length > 10">
+  <footer *ngIf="storylist && storylist.publications.length >= 10">
     <ng-container *ngIf="storylist; else titleSkeleton">
-      <a [routerLink]="'/' + appRouteTree['STORYLIST']" [queryParams]="{ slug: storylist.slug }">
+      <a
+        [routerLink]="'/' + appRouteTree['STORYLIST']"
+        [queryParams]="{ slug: storylist.slug }"
+      >
         <h3 class="storylist-title">Ver más...</h3>
       </a>
     </ng-container>
