@@ -1,22 +1,10 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { render } from '@testing-library/angular';
 
 import { StorylistCardDeckComponent } from './storylist-card-deck.component';
 
 describe('StorylistCardDeckComponent', () => {
-    let component: StorylistCardDeckComponent;
-    let fixture: ComponentFixture<StorylistCardDeckComponent>;
-
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            imports: [StorylistCardDeckComponent],
-        }).compileComponents();
-
-        fixture = TestBed.createComponent(StorylistCardDeckComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
-
-    it('should create', () => {
+    it('should create', async() => {
+        const component = await render(StorylistCardDeckComponent)
         expect(component).toBeTruthy();
     });
 });
