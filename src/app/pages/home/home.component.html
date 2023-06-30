@@ -23,6 +23,7 @@
       <ng-container *ngFor="let storylistDeck of storylistCardDecks">
         <cuentoneta-storylist-card-deck
           class="mb-3"
+          [canNavigateToStorylist]="true"
           [storylist]="storylistDeck.storylist"
           [displayTitle]="true"
           [number]="storylistDeck.amount"

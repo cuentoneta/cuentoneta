@@ -37,6 +37,7 @@ export class StorylistCardDeckComponent implements OnInit, OnChanges {
   @Input() number: number = 6;
   @Input() storylist: Storylist | undefined;
   @Input() isLoading: boolean = false; // Utilizado para mostrar/ocultar skeletons
+  @Input() canNavigateToStorylist: boolean = false;
   @Input() displayTitle: boolean = true;
   @Input() displayFeaturedImage: boolean = false;
   @Input() skeletonConfig: StorylistGridSkeletonConfig | undefined

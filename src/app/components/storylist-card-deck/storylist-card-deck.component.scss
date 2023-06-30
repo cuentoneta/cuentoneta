@@ -4,6 +4,10 @@ $cards-grid-gap: $spacing-8;
 
 .title {
   margin-bottom: $spacing-5;
+
+  > .nav-link:hover {
+    color: $interactive-500;
+  }
 }
 
 .subtitle{
