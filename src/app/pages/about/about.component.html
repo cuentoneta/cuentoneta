@@ -153,24 +153,9 @@
     <section class="mb-3">
       <h3>Programación</h3>
       <ul>
-        <li>
-          Erik Giovani (<a [href]="'https://github.com/erikgiovani'"
-            >@erikgiovani</a
-          >)
-        </li>
-        <li>
-          Juan Blas Tschopp (<a [href]="'https://twitter.com/juanblas09'"
-            >@juanblas09</a
-          >)
-        </li>
-        <li>
-          Diego Franchina (<a [href]="'https://github.com/SoyDiego'"
-            >@SoyDiego</a
-          >)
-        </li>
-        <li>
-          Jimer Espinoza (<a [href]="'https://twitter.com/JimerSamuel'"
-            >@JimerSamuel</a
+        <li *ngFor="let programmer of programmers">
+          {{programmer.name}} (<a href="{{programmer.url}}"
+            >{{programmer.username}}</a
           >)
         </li>
       </ul>

@@ -20,4 +20,42 @@ export class AboutComponent {
     FIGMA: 'https://www.figma.com/file/BIlQ6U3eh3M8vtYQt3vLNW/La-Cuentoneta-v2',
     GITHUB_CONTRIBUTORS: 'https://github.com/rolivencia/cuentoneta/tree/master#contribuyentes'
   };
+
+  readonly programmers = [
+    {
+      name: "Erik Giovani",
+      url: "https://github.com/erikgiovani",
+      username: "@ErikGiovani"
+    },
+    {
+      name: "Juan Blas Tschopp",
+      url: "https://twitter.com/juanblas09",
+      username: "@juanblas09"
+    },
+    {
+      name: "Diego Franchina",
+      url: "https://github.com/SoyDiego",
+      username: "@SoyDiego"
+    },
+    {
+      name: "Jimer Espinoza",
+      url: "https://twitter.com/JimerSamuel",
+      username: "@JimerSamuel"
+    },
+    {
+      name: "Soledad Sasia",
+      url: "https://github.com/SoleSasia",
+      username: "@SoleSasia"
+    },
+    {
+      name: "Wilson Lasso",
+      url: "https://github.com/wilago",
+      username: "@wilago"
+    },
+    {
+      name: "Gustavo Petruzzi",
+      url: "https://github.com/gustavoPetruzzi",
+      username: "@gustavoPetruzzi"
+    }
+  ]
 }
