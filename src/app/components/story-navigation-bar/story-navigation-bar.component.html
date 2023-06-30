@@ -11,7 +11,7 @@
   </header>
 
   <ng-container *ngIf="!!storylist; else bodySkeleton">
-    <ng-container *ngFor="let publication of storylist.publications">
+    <ng-container *ngFor="let publication of displayedPublications">
       <a
         [routerLink]="
           publication.published ? ['/' + appRouteTree['STORY']] : null
@@ -39,7 +39,7 @@
   </ng-container>
 
   <!-- ToDo: #288 - Generar abstracción para evitar repetir lógica presente en el header (ver líneas 2 - 9)-->
-  <footer *ngIf="storylist && storylist.publications.length > 10">
+  <footer *ngIf="storylist && storylist.publications.length >= 10">
     <ng-container *ngIf="storylist; else titleSkeleton">
       <a
         [routerLink]="'/' + appRouteTree['STORYLIST']"
