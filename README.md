@@ -18,7 +18,7 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 
 - [Cómo contribuir](#cómo-contribuir)
 - [Misión, Visión y Valores](#misión-visión-y-valores)
-- [Hoja de Ruta](#hoja-de-ruta)
+- [Hoja de ruta](#hoja-de-ruta)
 - [Comunidad](#comunidad)
 - [Requerimientos](#requerimientos)
 - [Despliegues](#despliegues)
@@ -36,39 +36,13 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 
 ## Cómo contribuir
 
-Podés sumar tu granito de arena al desarrollo de La Cuentoneta de varias formas, algunas de las cuales se describen a continuación. Como agradecimiento por tu aporte te incluiremos en la sección de [contribuyentes](#contribuyentes) y podrás, además, portar el badge `Cuentoneta 🚐` en el servidor de [Discord de FrontendCafé][dc-channel].
-
-### 📢 Difundiendo
-
-Si te gusta el proyecto, podés ayudarnos difundiéndolo en tus redes sociales, compartiendo los contenidos que publicamos, y recomendándolo a otras personas. Llegar cada vez a más personas hará que podamos mejorar la plataforma y descubrir qué funcionalidades nuevas son más necesarias a futuro. La Cuentoneta tiene cuentas oficiales en [Facebook][facebook-cuentoneta], [Instagram][instagram-cuentoneta] y [Twitter][twitter-cuentoneta].
-
-### 💡 Sugiriendo nuevas funcionalidades
-
-Si tenés una idea para una nueva funcionalidad, podés comunicarte con el equipo de desarrollo vía el [Discord de FrontendCafé][dc-channel] o vía mail a [contacto@cuentoneta.ar][email] para ponernos en contacto y discutir tu propuesta.
-
-También podés [crear un issue][gh-issues] en este repositorio para que podamos discutirlo y agregarlo a la hoja de ruta del proyecto.
-
-### 📜 Contenidos
-
-Podés sugerir contenido para sumar a la plataforma, sea en forma de cuentos, poemas, ensayos o temáticas para nuevas storylists. El contenido puede ser escritura propia o de terceros, con previos permisos de publicación o disponibilidad de acceso a este contenido en la web abierta.
-
-Estamos trabajando para, a futuro, ir en busca de autores y autoras de cuentos y poemas de autoría original que deseen publicar sus obras en La Cuentoneta.
-
-### 🎨 Diseño UX/UI
-
-Si tenés habilidades en diseño UX/UI, podés contribuir al proyecto asistiendo en la creación de wireframes, mockups, y prototipos para mejorar características existentes de la plataforma y contribuir en la gestación de nuevas funcionalidades.
-
-Podés acceder a [este enlace de Figma][figma] para ver los diseños de la web y todos los recursos gráficos del proyecto.
-
-### 🖥️ Contribuyendo código
-
-Si sos desarrolladora o desarrollador, podés contribuir al proyecto mediante la creación de issues, pull requests, revisando código y más en este repositorio. Para ello, te recomendamos leer la [guía de contribución][doc-contributing] para que puedas familiarizarte con el proyecto y sus convenciones.
+Si deseas contribuir a La Cuentoneta, te recomendamos leer la [guía de contribución][doc-contributing] para que puedas entender cómo puedes hacerlo. Allí vas a encontrar información sobre cómo reportar errores, cómo proponer nuevas características, sugerir o sumar nuevos contenidos y cómo contribuir con código al proyecto.
 
 ## Misión, Visión y Valores
 
 La misión, la visión y los valores de La Cuentoneta nos proporcionan el marco de referencia para la toma de decisiones y el desarrollo de las acciones del proyecto a largo plazo. Pueden consultarse los MMVs encuentran en [este enlace][doc-mvv].
 
-## Hoja de Ruta
+## Hoja de ruta
 
 Podés acceder a la hoja de ruta (roadmap) del proyecto en [este enlace][doc-roadmap]. Allí podrás visualizar, a gran escala, los planes para las próximas características de las futuras versiones de la plataforma más las storylists a agregar a La Cuentoneta.
 
