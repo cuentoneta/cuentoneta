@@ -26,9 +26,7 @@ También puede visualizarse la [lista de issues creados](https://github.com/roli
 
 ## Tipos de Contribuciones
 
-Podés sumar tu granito de arena al desarrollo de La Cuentoneta de varias formas, algunas de las cuales se 
-describen a continuación. Como agradecimiento por tu aporte te incluiremos en la sección de [contribuyentes]
-[contribuyentes] de La Cuentoneta.
+Podés sumar tu granito de arena al desarrollo de La Cuentoneta de varias formas, algunas de las cuales se describen a continuación. Como agradecimiento por tu aporte te incluiremos en la sección de [contribuyentes][contribuyentes] del sitio web y podrás, además, portar el badge `Cuentoneta 🚐` en el servidor de [Discord de FrontendCafé][dc-channel].
 
 ### 📢 Difundiendo
 
