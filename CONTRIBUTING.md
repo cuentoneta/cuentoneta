@@ -27,6 +27,8 @@ También puede visualizarse la [lista de issues creados](https://github.com/roli
 
 Puedes sumar tu granito de arena al desarrollo de La Cuentoneta de varias formas, algunas de las cuales se describen a continuación. Como agradecimiento por tu aporte te incluiremos en la sección de [contribuyentes][contribuyentes] del sitio web y podrás, además, portar el badge `Cuentoneta 🚐` en el servidor de [Discord de FrontendCafé][dc-channel].
 
+Si tienes cualquier tipo de dudas respecto de cómo contribuir al proyecto, no dudes en escribirnos a nuestro canal en el [Discord de FrontendCafé][dc-channel] o vía mail a [contacto@cuentoneta.ar][email] para ponernos en contacto y discutir tu propuesta.
+
 ### 📢 Difundiendo
 
 Si te gusta el proyecto, puedes ayudarnos difundiéndolo en tus redes sociales, compartiendo los contenidos que publicamos, y recomendándolo a otras personas. 
@@ -45,10 +47,7 @@ En caso de encontrar un error o problema en la plataforma, puedes [crear un issu
 
 ### 💡 Sugiriendo nuevas funcionalidades
 
-Si tenés una idea para una nueva funcionalidad, puedes comunicarte con el equipo de desarrollo vía el [Discord de FrontendCafé][dc-channel] o vía mail 
-a [contacto@cuentoneta.ar][email] para ponernos en contacto y discutir tu propuesta.
-
-También puedes [crear un issue][crear-issue-cuentoneta] en este repositorio para que podamos discutirlo y agregarlo a la hoja de ruta del proyecto, sumando un issue de tipo [_propuesta de nueva funcionalidad_][feature-request-template].
+Para proponer una nueva funcionalidad o característica, puedes sumarla en este repositorio para que podamos discutirla y agregarla a la hoja de ruta del proyecto, sumando un issue de tipo [_propuesta de nueva funcionalidad_][feature-request-template].
 
 ### 🎨 Diseño UX/UI
 
@@ -58,10 +57,9 @@ Puedes acceder a [este enlace de Figma][figma] para ver los diseños de la web y
 
 ### 🖥️ Contribuyendo código
 
-Si eres desarrolladora o desarrollador, puedes contribuir al proyecto mediante la creación de issues, pull requests, revisando código y más en este repositorio. Para ello, te recomendamos leer la [guía de contribución][doc-contributing] para que puedas familiarizarte con el proyecto y sus convenciones.
+Si eres desarrolladora o desarrollador, puedes contribuir al proyecto mediante la creación de issues, pull requests, revisando código y más en este repositorio. Para ello, te recomendamos leer la sección [guía de contribución de código][doc-contributing] para que puedas familiarizarte con el proyecto y sus convenciones.
 
 > ⚠️ Recordá, antes de contribuir, que es **requerido** que seas parte del [**servidor de FrontendCafé**][dc-fec] en Discord.
-
 
 <!-- Links a Github issues y a issue templates -->
 [github-issues-tutorial]: https://docs.github.com/es/issues/tracking-your-work-with-issues/creating-an-issue
