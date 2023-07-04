@@ -16,16 +16,11 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 
 ## Índice de Contenidos
 
+- [Hoja de ruta](#hoja-de-ruta)
 - [Cómo contribuir](#cómo-contribuir)
 - [Misión, Visión y Valores](#misión-visión-y-valores)
-- [Hoja de ruta](#hoja-de-ruta)
 - [Comunidad](#comunidad)
-- [Requerimientos](#requerimientos)
-- [Despliegues](#despliegues)
-- [Diseño de interfaz (UI/UX)](#diseño-de-interfaz-uiux)
 - [Accesibilidad](#accesibilidad)
-- [Tech Stack](#tech-stack)
-- [Correr el proyecto localmente](#correr-el-proyecto-localmente)
 - [Contribuyentes](#contribuyentes)
 - [Patrocinadores](#patrocinadores)
 - [Staff](#staff)
@@ -34,17 +29,19 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 
 ---
 
+## Hoja de ruta
+
+Puedes acceder a la hoja de ruta (roadmap) del proyecto en [este enlace][doc-roadmap]. Allí podrás visualizar los planes de las futuras versiones de la plataforma más las storylists a agregar a La Cuentoneta.
+
 ## Cómo contribuir
 
-Si deseas contribuir a La Cuentoneta, te recomendamos leer la [guía de contribución][doc-contributing] para que puedas entender cómo puedes hacerlo. Allí vas a encontrar información sobre cómo reportar errores, cómo proponer nuevas características, sugerir o sumar nuevos contenidos y cómo contribuir con código al proyecto.
+Si deseas contribuir a La Cuentoneta te recomendamos leer la [guía de contribución][doc-contributing] para que puedas entender cómo puedes hacerlo. Allí encontrarás información sobre cómo reportar errores, proponer nuevas características, sugerir o sumar nuevos contenidos y cómo contribuir con código al proyecto.
+
+En caso que seas desarrolladora o desarrollador, encontrarás en ese documento información sobre todos los aspectos técnicos del proyecto, incluyendo cómo instalar el proyecto localmente para que puedas probarlo y realizar tus contribuciones de código.
 
 ## Misión, Visión y Valores
 
 La misión, la visión y los valores de La Cuentoneta nos proporcionan el marco de referencia para la toma de decisiones y el desarrollo de las acciones del proyecto a largo plazo. Pueden consultarse los MMVs encuentran en [este enlace][doc-mvv].
-
-## Hoja de ruta
-
-Podés acceder a la hoja de ruta (roadmap) del proyecto en [este enlace][doc-roadmap]. Allí podrás visualizar, a gran escala, los planes para las próximas características de las futuras versiones de la plataforma más las storylists a agregar a La Cuentoneta.
 
 ## Comunidad
 
@@ -55,32 +52,6 @@ Podés acceder a la hoja de ruta (roadmap) del proyecto en [este enlace][doc-roa
 </picture>
 
 Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. Es requerido unirte a nuestro [server][dc-fec] y buscar el canal [#🚐 | la-cuentoneta][dc-channel]. Allí vas a poder escribir consultas, realizar propuestas y compartir ideas para el proyecto. El código de conducta de este proyecto es extensible también a tu participación en el server de [FrontendCafé en Discord][dc-fec].
-
----
-
-## Requerimientos
-
-- Tener instalada una versión de [Node](https://nodejs.org/es/) superior a `v16.16.0`, idealmente la última versión LTS.
-- Instalar `pnpm`, un gestor de paquetes alternativo para Node: `npm install -g pnpm`. Se recomienda la versión `8.2.0` o superior.
-- Instalar `nx`, un CLI para desarrollo de monorepos: `pnpm install -g nx`. Se recomienda la versión `16.0.3` o superior.
-- Tener un editor de texto o IDE ([Visual Studio Code](https://code.visualstudio.com/), [Vim](https://www.vim.org/), etc.)
-- Tener una cuenta en [GitHub](https://docs.github.com/es/get-started/signing-up-for-github/signing-up-for-a-new-github-account)
-- Leer y seguir [Código de Conducta][doc-code_of_conduct]
-- Unirte a [FrontendCafé][dc-fec] en Discord
-
-## Despliegues
-
-- **Web | Producción:** [https://cuentoneta.ar/](https://cuentoneta.ar/)
-- **Web | Staging:** (próximamente)
-- **Storybook:** (próximamente)
-- **Sanity Studio:** (próximamente)
-
-## Diseño de interfaz (UI/UX)
-
-El diseño de interfaz de usuario de La Cuentoneta ha sido desarrollado por [Maxi Cris](https://maxicris.com/).  
-Puedes acceder a [**este enlace**][figma] para ver los diseño de la web y todos los recursos gráficos del proyecto.
-
-> 💡 Cualquier duda, feedback o sugerencia podés compartirla en el canal [#🚐 | la-cuentoneta][dc-channel] del server de [FrontendCafé][dc-fec] en Discord.
 
 ---
 
@@ -95,78 +66,7 @@ Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos 
 
 > 💡 Si encontrás barreras de accesibilidad en la web de La Cuentoneta, podés informarlo enviando un email a [contacto@cuentoneta.ar][email] o abriendo un issue. Para hacerlo, necesitás leer la documentación sobre [cómo contribuir][doc-contributing].
 
-## Tech Stack
-
-El tech stack actualmente utilizado para el desarrollo de La Cuentoneta es:
-
-#### Para la gestión de la base de código del proyecto
-
-- **<a href="https://git-scm.com/">Git</a>** como herramienta de control de versiones
-- **<a href="https://https://github.com">GitHub</a>** como host de la base de código
-- **<a href="https://pnpm.io/es/">pnpm</a>** como gestor de paquetes
-- **<a href="https://nx.dev/angular">Nx</a>** como gestor de monorepo y task runner
-
-Junto con Nx, el proyecto cuenta con ESLint y Prettier ya configuradas como dependencias.
-
-#### Para el desarrollo de la plataforma web
-
-- **<a href="https://angular.io/">Angular 16</a>** como framework de frontend
-- **<a href="https://angular.io/guide/universal">Angular Universal</a>** para Server-Side rendering
-- **<a href="https://www.typescriptlang.org/">TypeScript</a>**
-- **<a href="https://tailwindcss.com/docs/installation">Tailwind CSS</a>**
-- **<a href="https://storybook.js.org/docs/react/get-started/introduction">Storybook</a>** como herramienta de desarrollo de componentes.
-
-#### Para la gestión del contenido
-
-- **<a href="https://www.sanity.io/docs">Sanity</a>** para persistencia de información de cuentos, autores y storylists.
-
-#### Para pruebas unitarias y de integración
-
-- **<a href="https://jestjs.io/docs/getting-started">Jest</a>** como framework de testing unitario
-- **<a href="https://www.cypress.io/">Cypress</a>** como framework de testing end-to-end
-
-> 💡 No hace falta tener mucho conocimiento en el tech stack para poder contribuir en el desarrollo. Si tienes ganas de aprender, ¡te invitamos a sumarte!
-
-## Correr el proyecto localmente
-
-### Instalación
-
-Ubícate en la carpeta donde deseas instalar el proyecto y clona el repositorio ejecutando:
-
-```bash
-git clone https://github.com/rolivencia/cuentoneta.git
-cd cuentoneta
-```
-
-Deberás luego crear un archivo `.env` en la raíz del proyecto con las siguientes variables de entorno:
-
-```bash
-SANITY_STUDIO_DATASET=development
-SANITY_STUDIO_PROJECT_ID=s4dbqkc5
-CUENTONETA_WEBSITE=https://cuentoneta.ar/
-```
-
-Posteriormente ejecutá el siguiente comando para instalar todas las dependencias listadas en el archivo [`package.json`](package.json).
-
-```bash
-pnpm install
-```
-
-### Correr el entorno de desarrollo localmente
-
-Una vez hechos los pasos de instalación ejecutá el siguiente comando:
-
-```bash
-pnpm run dev
-```
-
-Se iniciara el servidor de desarrollo, visitá [http://localhost:4200](http://localhost:4200) en tu navegador para ver la aplicación.
-
-Para ejecutar el entorno de desarrollo de Sanity Studio, ejecutá el siguiente comando, posándote en el directorio `cms`:
-
-```bash
-pnpm run dev
-```
+---
 
 ## Contribuyentes
 
@@ -195,9 +95,13 @@ pnpm run dev
 - Analía Ale
 - Brahian Pereyra (**[@brahianpdev](https://github.com/brahianpdev)**)
 
+---
+
 ## Patrocinadores
 
 ¿Te interesa patrocinar o promocionar este proyecto? ¡Comunicate con nosotros!
+
+---
 
 ## Staff
 
@@ -209,15 +113,19 @@ _Diseño UX/UI_
 
 Maxi Cris (**[@maxicris](https://github.com/maxicris)**)
 
+---
+
 ## Licencias
 
 Este repositorio y el contenido de la web de La Cuentoneta se publican bajo licencia [Atribución-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)][doc-lic].
+
+---
 
 ## Links de interés
 
 - [La Cuentoneta][web]
 - [FrontendCafé](https://frontend.cafe/)
-- El presente documento toma como modelo el README.md del proyecto [Juguetear][github-juguetear], otra iniciativa en la que participa [FrontendCafé][web-fec].
+- El presente documento toma como modelo el README.md del proyecto [Juguetear][github-juguetear], otra iniciativa en la que también participa [FrontendCafé][web-fec].
 
 <!-- Listado de enlaces de referencia, mantenerlos actualizados en cada archivo -->
 <!-- Enlaces a las paginas web del proyecto -->
