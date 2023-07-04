@@ -19,14 +19,13 @@ sugerencia de contenidos para sumar a la plataforma.
 
 En la [sección de creación de nuevos issues][crear-issue-cuentoneta] del proyecto pueden agregarse nuevos issues en base a las plantillas que el equipo ha definido. 
 
-También puede visualizarse la [lista de issues creados](https://github.com/rolivencia/cuentoneta/issues). Esta lista se mantiene en constante mantenimiento por parte de quienes contribuyen a La Cuentoneta, filtrando, clasificando y detallando lo escrito en cada uno de los issues en los que se trabajará a futuro. 
+También puede visualizarse la [lista de issues creados](https://github.com/rolivencia/cuentoneta/issues). Esta lista se actualiza y cura por parte de quienes contribuyen a La Cuentoneta, filtrando, clasificando y detallando lo escrito en cada uno de los issues en los que se trabajará a futuro. 
 
 > 💡 Si tienes alguna consulta, puedes hacerla en nuestro canal [**#🚐 | la-cuentoneta**][dc-channel] en Discord.
 
-
 ## Tipos de Contribuciones
 
-Podés sumar tu granito de arena al desarrollo de La Cuentoneta de varias formas, algunas de las cuales se describen a continuación. Como agradecimiento por tu aporte te incluiremos en la sección de [contribuyentes][contribuyentes] del sitio web y podrás, además, portar el badge `Cuentoneta 🚐` en el servidor de [Discord de FrontendCafé][dc-channel].
+Puedes sumar tu granito de arena al desarrollo de La Cuentoneta de varias formas, algunas de las cuales se describen a continuación. Como agradecimiento por tu aporte te incluiremos en la sección de [contribuyentes][contribuyentes] del sitio web y podrás, además, portar el badge `Cuentoneta 🚐` en el servidor de [Discord de FrontendCafé][dc-channel].
 
 ### 📢 Difundiendo
 
@@ -34,24 +33,26 @@ Si te gusta el proyecto, puedes ayudarnos difundiéndolo en tus redes sociales, 
 Llegar cada vez a más personas hará que podamos mejorar la plataforma y descubrir qué funcionalidades nuevas son más necesarias a futuro. 
 La Cuentoneta tiene cuentas oficiales en [Facebook][facebook-cuentoneta], [Instagram][instagram-cuentoneta] y [Twitter][twitter-cuentoneta].
 
+### 📜 Contenidos
+
+Puedes sugerir contenido para sumar a la plataforma, sea en forma de cuentos, poemas, ensayos o temáticas para nuevas storylists.
+El contenido puede ser escritura propia o de terceros, con previos permisos de publicación o disponibilidad de acceso a este contenido en la web abierta.
+
+Estamos trabajando para, a futuro, ir en busca de autores y autoras de cuentos y poemas de autoría original que deseen publicar sus obras en La Cuentoneta.
+
+### 🦟 Reportando problemas y/o errores
+En caso de encontrar un error o problema en la plataforma, puedes [crear un issue][crear-issue-cuentoneta] en este repositorio para que podamos arreglarlo cuanto antes y solucionar el problema. Para ello, puedes puees sumar un issue del tipo [_reportar un problema/error_][bug-report-template].
+
 ### 💡 Sugiriendo nuevas funcionalidades
 
 Si tenés una idea para una nueva funcionalidad, puedes comunicarte con el equipo de desarrollo vía el [Discord de FrontendCafé][dc-channel] o vía mail 
 a [contacto@cuentoneta.ar][email] para ponernos en contacto y discutir tu propuesta.
 
-También puedes [crear un issue][crear-issue-cuentoneta] en este repositorio para que podamos discutirlo y agregarlo a la hoja de ruta del proyecto.
-
-### 📜 Contenidos
-
-Puedes sugerir contenido para sumar a la plataforma, sea en forma de cuentos, poemas, ensayos o temáticas para nuevas storylists. 
-El contenido puede ser escritura propia o de terceros, con previos permisos de publicación o disponibilidad de acceso a este contenido en la web abierta.
-
-Estamos trabajando para, a futuro, ir en busca de autores y autoras de cuentos y poemas de autoría original que deseen publicar sus obras en La Cuentoneta.
+También puedes [crear un issue][crear-issue-cuentoneta] en este repositorio para que podamos discutirlo y agregarlo a la hoja de ruta del proyecto, sumando un issue de tipo [_propuesta de nueva funcionalidad_][feature-request-template].
 
 ### 🎨 Diseño UX/UI
 
-Si tienes habilidades en diseño UX/UI, podés contribuir al proyecto asistiendo en la creación de wireframes, mockups, y prototipos para mejorar 
-características existentes de la plataforma y contribuir en la gestación de nuevas funcionalidades.
+Si tienes habilidades en diseño UX/UI, podés contribuir al proyecto asistiendo en la creación de wireframes, mockups, y prototipos para mejorar características existentes de la plataforma y contribuir en la gestación de nuevas funcionalidades.
 
 Puedes acceder a [este enlace de Figma][figma] para ver los diseños de la web y todos los recursos gráficos del proyecto.
 
@@ -65,6 +66,8 @@ Si eres desarrolladora o desarrollador, puedes contribuir al proyecto mediante l
 <!-- Links a Github issues y a issue templates -->
 [github-issues-tutorial]: https://docs.github.com/es/issues/tracking-your-work-with-issues/creating-an-issue
 [crear-issue-cuentoneta]: https://github.com/rolivencia/cuentoneta/issues/new/choose
+[feature-request-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%8F%8E%EF%B8%8F+mejora&projects=&template=feature.yml
+[bug-report-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%A6%9F+bug&projects=&template=bug_report.yml
 
 <!-- Enlaces a Discord -->
 
