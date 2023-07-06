@@ -119,10 +119,22 @@ Junto con Nx, el proyecto cuenta con ESLint y Prettier ya configuradas como depe
 
 ### Clonar el repositorio
 
-Ubícate en la carpeta donde deseas instalar el proyecto y clona el repositorio ejecutando:
+#### Paso 1: _Forkear_ el repositorio
+
+Para poder trabajar localmente en el proyecto, y luego contribuir tus cambios, deberás realizar un fork del repositorio desde Github y clonarlo en tu computadora.
+
+El fork del repositorio se realiza desde el botón `Fork` en la esquina superior derecha de la página del repositorio en Github. Una vez clickeado el botón, podrás visualizar la siguiente pantalla.
+
+![img.png](img.png)
+
+Luego de pulsar el botón `Create fork`, se creará una copia del repositorio en tu cuenta de Github, desde la que podrás trabajar localmente en el proyecto, generar tus commits y posteriormente crear pull requests al repositorio original.
+
+#### Paso 2: Clonar el repositorio
+
+Luego de hacer fork del repositorio, debes clonar el repositorio en tu computadora:
 
 ```bash
-git clone https://github.com/rolivencia/cuentoneta.git
+git clone https://github.com/<tu_nombre_de_usuario_en_github>/cuentoneta.git
 cd cuentoneta
 ```
 
@@ -140,7 +152,7 @@ Posteriormente ejecuta el siguiente comando para instalar todas las dependencias
 pnpm install
 ```
 
-### Correr el entorno de desarrollo localmente
+#### Paso 3: Correr el entorno de desarrollo localmente
 
 Una vez hechos los pasos de instalación ejecutá el siguiente comando:
 
