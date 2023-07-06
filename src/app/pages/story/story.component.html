@@ -1,6 +1,7 @@
 <aside class="hidden md:block">
   <cuentoneta-story-navigation-bar
-          [storyList]="storylist"
+          [selectedStorySlug]="story?.slug ?? ''"
+          [storylist]="storylist"
   ></cuentoneta-story-navigation-bar>
 </aside>
 <main>
@@ -8,11 +9,11 @@
     <header class="flex flex-col-reverse sm:block mb-6 sm:mb-10">
       <aside class="sm:float-right mt-6 sm:ml-12 sm:mb-12 sm:mt-0">
         <cuentoneta-share-content
-                [isLoading]="!story"
+                [isLoading]="fetchContentDirective.isLoading"
                 [params]="shareContentParams"
                 [route]="appRouteTree['STORY']"
                 [message]="shareMessage"
-        ></cuentoneta-share-content>
+        />
       </aside>
       <div>
         <ng-container
@@ -23,9 +24,9 @@
         >
           <h1 class="title mb-2">{{ story.title }}</h1>
           <p class="subtitle mb-2">{{ story.author.name }}</p>
-          <p class="reading-time">
+          <time class="reading-time">
             {{ story.approximateReadingTime }} minutos de lectura
-          </p>
+          </time>
         </ng-container>
       </div>
     </header>
@@ -63,11 +64,7 @@
 
     <footer>
       <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
-        <cuentoneta-bio-summary-card
-                *ngIf="story?.author?.biography"
-                [author]="story.author"
-                [summary]="story.summary"
-        ></cuentoneta-bio-summary-card>
+        <cuentoneta-bio-summary-card [story]="story"/>
       </ng-container>
     </footer>
   </article>

@@ -2,11 +2,11 @@
 import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, switchMap, tap } from 'rxjs';
-import { isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // Models
-import { StoryList } from '../../models/storylist.model';
+import { Storylist } from '../../models/storylist.model';
 import { StorylistGridSkeletonConfig } from '../../models/content.model';
 
 // Services
@@ -17,19 +17,27 @@ import { StorylistService } from '../../storylist.service';
 // Directives
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { StorylistCardDeckComponent } from 'src/app/components/storylist-card-deck/storylist-card-deck.component';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
-  selector: 'cuentoneta-story-list',
-  templateUrl: './story-list.component.html',
-  styleUrls: ['./story-list.component.scss'],
+  selector: 'cuentoneta-storylist',
+  templateUrl: './storylist.component.html',
+  styleUrls: ['./storylist.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    StorylistCardDeckComponent,
+    NgxSkeletonLoaderModule,
+  ],
   hostDirectives: [
     FetchContentDirective,
     MetaTagsDirective,
   ],
 })
-export class StoryListComponent {
-  fetchContentDirective = inject(FetchContentDirective<StoryList>);
-  storylist!: StoryList | undefined;
+export class StorylistComponent {
+  fetchContentDirective = inject(FetchContentDirective<Storylist>);
+  storylist!: Storylist | undefined;
   skeletonConfig: StorylistGridSkeletonConfig | undefined;
 
   constructor() {
@@ -40,7 +48,7 @@ export class StoryListComponent {
     const macroTaskWrapperService = inject(MacroTaskWrapperService);
     const contentService = inject(ContentService);
 
-    const fetchObservable$: Observable<StoryList> =
+    const fetchObservable$: Observable<Storylist> =
       activatedRoute.queryParams.pipe(
         tap(({ slug }) => {
           this.storylist = undefined;
@@ -50,7 +58,7 @@ export class StoryListComponent {
           )?.gridSkeletonConfig;
         }),
         switchMap(() =>
-          this.fetchContentDirective.fetchContentWithSourceParams$<StoryList>(
+          this.fetchContentDirective.fetchContentWithSourceParams$<Storylist>(
             activatedRoute.queryParams,
             switchMap(({ slug }) => storylistService.get(slug, 60, 'asc'))
           )
@@ -60,16 +68,16 @@ export class StoryListComponent {
 
     // TODO: Mover discriminación entre client-side y server-side a directiva
     // En base a si la plataforma es browser o server, utiliza el wrapper de macro tasks en el segundo caso
-    const storyList$ = isPlatformBrowser(platformId)
+    const storylist$ = isPlatformBrowser(platformId)
       ? fetchObservable$
-      : macroTaskWrapperService.wrapMacroTaskObservable<StoryList>(
-          'StoryListComponent.fetchData',
-          fetchObservable$,
-          null,
-          'first-emit'
-        );
+      : macroTaskWrapperService.wrapMacroTaskObservable<Storylist>(
+        'StorylistComponent.fetchData',
+        fetchObservable$,
+        null,
+        'first-emit'
+      );
 
-    storyList$.subscribe((storylist) => {
+    storylist$.subscribe((storylist) => {
       this.storylist = storylist;
       metaTagsDirective.setTitle(`"${storylist.title}" en La Cuentoneta`);
       metaTagsDirective.setDescription(

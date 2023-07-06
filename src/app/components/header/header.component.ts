@@ -1,16 +1,24 @@
 import { Component, inject } from '@angular/core';
-import { StoryList } from '../../models/storylist.model';
+import { Storylist } from '../../models/storylist.model';
 import { ContentService } from '../../providers/content.service';
 import { APP_ROUTE_TREE } from '../../app-routing.module';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'cuentoneta-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterModule,
+    NgOptimizedImage
+  ]
 })
 export class HeaderComponent {
   readonly appRouteTree = APP_ROUTE_TREE;
-  lists: Pick<StoryList, 'title' | 'slug'>[] = [];
+  lists: Pick<Storylist, 'title' | 'slug'>[] = [];
   displayMenu: boolean = false;
   constructor() {
     const contentService = inject(ContentService);

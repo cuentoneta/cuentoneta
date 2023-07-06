@@ -30,7 +30,6 @@ export default {
             name: 'originalLink',
             title: 'Link Original',
             type: 'string',
-            validation: (Rule) => Rule.required(),
         },
         {
             name: 'approximateReadingTime',

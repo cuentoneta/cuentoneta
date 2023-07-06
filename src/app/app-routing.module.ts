@@ -4,36 +4,40 @@ import { RouterModule, Routes } from '@angular/router';
 export const APP_ROUTE_TREE: { [key: string]: string } = {
   HOME: 'home',
   STORY: 'story',
-  STORYLIST: 'story-list',
+  STORYLIST: 'storylist',
+  'STORY-LIST': 'story-list', // Ruta definida por cuestiones de retrocompatibilidad. Redirecciona a /storylist - RO | 2023-06-21
 };
 
 const routes: Routes = [
   {
     path: APP_ROUTE_TREE['HOME'],
-    loadChildren: () =>
-      import('./pages/home/home.module').then((m) => m.HomeModule),
+    loadComponent: () =>
+      import('./pages/home/home.component').then((m) => m.HomeComponent),
   },
   {
     path: APP_ROUTE_TREE['STORY'],
-    loadChildren: () =>
-      import('./pages/story/story.module').then((m) => m.StoryModule),
+    loadComponent: () =>
+      import('./pages/story/story.component').then((m) => m.StoryComponent),
   },
   {
     path: APP_ROUTE_TREE['STORYLIST'],
-    loadChildren: () =>
-      import('./pages/story-list/story-list.module').then(
-        (m) => m.StoryListModule
-      ),
+    loadComponent: () =>
+      import('./pages/storylist/storylist.component').then((m) => m.StorylistComponent),
+  },
+  {
+    path: APP_ROUTE_TREE['STORY-LIST'],
+    redirectTo: APP_ROUTE_TREE['STORYLIST'],
   },
   {
     path: 'about',
     loadComponent: () =>
       import('./pages/about/about.component').then((m) => m.AboutComponent),
   },
-  // {
-  //   path: 'dmca',
-  //   loadChildren: () => import('./pages/dmca/dmca.module').then((m) => m.DmcaModule),
-  // },
+  {
+    path: 'dmca',
+    loadComponent: () => 
+    import('./pages/dmca/dmca.component').then((m) => m.DmcaComponent),
+  },
   {
     path: '',
     redirectTo: 'home',
@@ -50,4 +54,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

@@ -6,7 +6,7 @@
   "prefix": "cuentoneta",
   "targets": {
     "build": {
-      "executor": "@angular-devkit/build-angular:browser",
+      "executor": "@angular-devkit/build-angular:browser-esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/cuentoneta/browser",
@@ -85,7 +85,8 @@
         "port": 4400,
         "configDir": "./.storybook",
         "browserTarget": "cuentoneta:build",
-        "compodoc": false
+        "compodoc": false,
+        "styles": ["./src/assets/scss/fonts.scss","./src/styles.scss"]
       },
       "configurations": {
         "ci": {

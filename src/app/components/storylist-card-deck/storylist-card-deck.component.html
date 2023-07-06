@@ -19,7 +19,16 @@
             'grid-column-end': storylist.gridConfig?.titlePlacement?.endCol,
           }"
       >
-        <h1 class="title">{{ storylist.title }}</h1>
+        <h1 class="title">
+          <a
+            [ngClass]="{ 'nav-link': canNavigateToStorylist }"
+            [routerLink]="
+              canNavigateToStorylist ? '/' + appRouteTree['STORYLIST'] : null
+            "
+            [queryParams]="{ slug: storylist.slug }"
+            >{{ storylist.title }}</a
+          >
+        </h1>
         <h3 class="subtitle">{{ storylist.description }}</h3>
       </div>
     </ng-container>
@@ -86,7 +95,7 @@
           'grid-column-start': skeleton?.startCol,
           'grid-column-end': skeleton?.endCol,
           }"
-      ></cuentoneta-story-card>
+      />
     </ng-container>
     <ng-container *ngIf="!!skeleton.imageSlug">
       <ngx-skeleton-loader
@@ -98,7 +107,7 @@
           'grid-column-end': skeleton?.endCol,
           }"
         [theme]="{
-          'height': '100%',
+          height: '100%',
           width: '100%',
           'background-color': '#D4D4D8'
         }"
@@ -127,7 +136,7 @@
           [publication]="publication"
           [editionIndex]="publication.order"
           [comingNextLabel]="storylist.comingNextLabel"
-        ></cuentoneta-story-card>
+        />
       </a>
     </ng-container>
   </ng-container>
