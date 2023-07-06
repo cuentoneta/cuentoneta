@@ -73,7 +73,7 @@ class FacebookPlatform implements SharingPlatform {
     message: string
   ): string {
     const url = encodeURIComponent(
-      `${environment.website}/${appRoute}?${urlParams}`
+      `${environment.website}${appRoute}?${urlParams}`
     );
     return `${this.platformApiUrl}?u=${url}`;
   }
@@ -91,7 +91,7 @@ class WhatsappPlatform implements SharingPlatform {
     urlParams: string,
     message: string
   ): string {
-    const sharedUrl = encodeURIComponent(`${environment.website}/${appRoute}?${urlParams}`);
+    const sharedUrl = encodeURIComponent(`${environment.website}${appRoute}?${urlParams}`);
     const queryParams: { [key: string]: string } = {
       text: `${message}%0a%0a${sharedUrl}`,
     };
@@ -120,7 +120,7 @@ class TwitterPlatform implements SharingPlatform {
   ): string {
     const queryParams: { [key: string]: string } = {
       url: encodeURIComponent(
-        `${environment.website}/${appRoute}?${urlParams}`
+        `${environment.website}${appRoute}?${urlParams}`
       ),
       text: message + '%0a%0a',
     };
