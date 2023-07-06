@@ -1,22 +1,16 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { render, screen } from '@testing-library/angular';
 import { HeaderComponent } from './header.component';
+import { ContentService } from 'src/app/providers/content.service';
+import { provideMock } from '@testing-library/angular/jest-utils';
 
-describe('HeaderComponent', () => {
-    let component: HeaderComponent;
-    let fixture: ComponentFixture<HeaderComponent>;
-
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            declarations: [HeaderComponent],
-        }).compileComponents();
-
-        fixture = TestBed.createComponent(HeaderComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
+describe('HeadercComponent', () => {
+  test('should render Header component', async () => {
+    await render(HeaderComponent, {
+      componentProviders: [provideMock(ContentService)]
     });
-
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+    expect(screen).toBeTruthy();
+    expect(screen.getByAltText(/Cuentoneta/)).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Inicio' })).toHaveProperty('href', expect.stringMatching(/home/))
+    expect(screen.getByRole('link', { name: 'Nosotros' })).toHaveProperty('href', expect.stringMatching(/about/));
+  });
 });
