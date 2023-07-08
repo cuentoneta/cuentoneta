@@ -133,7 +133,8 @@
       "configurations": {
         "development": {
           "browserTarget": "cuentoneta:build:development",
-          "serverTarget": "cuentoneta:server:development"
+          "serverTarget": "cuentoneta:server:development",
+          "open": true
         },
         "production": {
           "browserTarget": "cuentoneta:build:production",
