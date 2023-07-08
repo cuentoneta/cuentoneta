@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { routes } from './app.routes';
+import { appRoutes } from './app.routes';
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, {
-      // onSameUrlNavigation: 'reload',
+    RouterModule.forRoot(appRoutes, {
+      onSameUrlNavigation: 'reload',
       scrollPositionRestoration: 'enabled',
     }),
   ],

@@ -7,7 +7,7 @@ export const APP_ROUTE_TREE: { [key: string]: string } = {
     'STORY-LIST': 'story-list', // Ruta definida por cuestiones de retrocompatibilidad. Redirecciona a /storylist - RO | 2023-06-21
 };
 
-export const routes: Routes = [
+export const appRoutes: Routes = [
     {
         path: APP_ROUTE_TREE['HOME'],
         loadComponent: () =>
