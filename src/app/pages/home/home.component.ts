@@ -7,11 +7,11 @@ import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/comm
 import { ContentService } from '../../providers/content.service';
 
 // Models
-import { StorylistCardDeck } from '../../models/content.model';
+import { StorylistCardDeck } from '@models/content.model';
 
 // Directives
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
-import { APP_ROUTE_TREE } from '../../app-routing.module';
+import { APP_ROUTE_TREE } from '../../app.routes';
 import { StoryCardComponent } from 'src/app/components/story-card/story-card.component';
 import { StorylistCardDeckComponent } from 'src/app/components/storylist-card-deck/storylist-card-deck.component';
 import { RouterModule } from '@angular/router';

@@ -1,13 +1,14 @@
 // Angular Universal core
 import 'zone.js/node';
 import { ngExpressEngine } from '@nguniversal/express-engine';
-import { AppServerModule } from './main.server';
 import { APP_BASE_HREF } from '@angular/common';
 
 // Utilidades de NodeJS & Express
 import express from 'express';
 import { existsSync } from 'fs';
 import { join } from 'path';
+
+import bootstrap from './main.server';
 
 // API routes
 import routes from './api/routes';
@@ -23,9 +24,9 @@ export function app(): express.Express {
   // Our Universal express-engine (found @ https://github.com/angular/universal/tree/master/modules/express-engine)
   server.engine(
     'html',
-    ngExpressEngine({
-      bootstrap: AppServerModule,
-    })
+      ngExpressEngine({
+        bootstrap,
+      })
   );
 
   server.set('view engine', 'html');
@@ -75,4 +76,4 @@ if (moduleFilename === __filename || moduleFilename.includes('iisnode')) {
   run();
 }
 
-export * from './main.server';
+export default bootstrap;
