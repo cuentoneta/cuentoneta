@@ -12,6 +12,7 @@ import { appRoutes } from './app.routes';
 import { ContentService } from './providers/content.service';
 import { StoryService } from './providers/story.service';
 import { HttpClientModule } from '@angular/common/http';
+import { provideClientHydration } from '@angular/platform-browser';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,6 +26,7 @@ export const appConfig: ApplicationConfig = {
       deps: [ContentService],
       multi: true,
     },
+    provideClientHydration(),
     provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
     importProvidersFrom(HttpClientModule),
   ],
