@@ -6,7 +6,7 @@ import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/comm
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // Router
-import { APP_ROUTE_TREE } from '../../app-routing.module';
+import { APP_ROUTE_TREE } from '../../app.routes';
 
 // Models
 import { Story } from '@models/story.model';
