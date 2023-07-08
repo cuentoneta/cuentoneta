@@ -16,9 +16,9 @@ import { CommonModule } from '@angular/common';
 import {
   GridItemPlacementConfig,
   Storylist,
-} from '../../models/storylist.model';
-import { APP_ROUTE_TREE } from '../../app-routing.module';
-import { StorylistGridSkeletonConfig } from "../../models/content.model";
+} from '@models/storylist.model';
+import { APP_ROUTE_TREE } from '../../app.routes';
+import { StorylistGridSkeletonConfig } from "@models/content.model";
 import { StoryCardComponent } from '../story-card/story-card.component';
 
 @Component({

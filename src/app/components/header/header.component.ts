@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
-import { Storylist } from '../../models/storylist.model';
+import { Storylist } from '@models/storylist.model';
 import { ContentService } from '../../providers/content.service';
-import { APP_ROUTE_TREE } from '../../app-routing.module';
+import { APP_ROUTE_TREE } from '../../app.routes';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
