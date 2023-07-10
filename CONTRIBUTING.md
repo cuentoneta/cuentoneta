@@ -173,7 +173,7 @@ pnpm run dev
 Los ambientes de despliegue de La Cuentoneta son los siguientes:
 
 - **Web | Producción:** [https://cuentoneta.ar/](https://cuentoneta.ar/)
-- **Web | Staging:** (próximamente)
+- **Web | Staging:** [https://staging.cuentoneta.ar](https://staging.cuentoneta.ar)
 - **Storybook:** (próximamente)
 - **Sanity Studio | Development:** (próximamente)
 <!-- Links a Github issues y a issue templates -->
