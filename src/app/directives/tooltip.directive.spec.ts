@@ -32,12 +32,9 @@ describe('TooltipDirective', () => {
       componentImports: [TooltipDirective]
     });
     const hostComponent = screen.getByText(/Host component/);
+
     fireEvent.mouseEnter(hostComponent);
-
-
-    // await waitFor(() => {
-      expect(screen.getByText('Tooltip test')).toBeTruthy();
-    // });
+    expect(screen.getByText('Tooltip test')).toBeTruthy();
 
     fireEvent.mouseLeave(hostComponent);
     expect(screen.queryByText('Tooltip test')).not.toBeTruthy();
