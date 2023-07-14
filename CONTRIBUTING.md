@@ -10,22 +10,20 @@
 
 # ¿Cómo contribuir a La Cuentoneta?
 
-En este documento encontrarás disponible información sobre cómo contribuir al desarrollo y la generación de 
+En este documento encontrarás disponible información sobre cómo contribuir al desarrollo y la generación de
 contenido de La Cuentoneta.
 
-Utilizamos [Github Issues][github-issues-tutorial] para llevar adelante el seguimiento de reportes de bugs 
-(_bug reports_), la propuesta de nuevas funcionalidades y mejoras (_feature requests_) y la contribución y 
+Utilizamos [Github Issues][github-issues-tutorial] para llevar adelante el seguimiento de reportes de bugs
+(_bug reports_), la propuesta de nuevas funcionalidades y mejoras (_feature requests_) y la contribución y
 sugerencia de contenidos para sumar a la plataforma.
 
-En la [sección de creación de nuevos issues][crear-issue-cuentoneta] del proyecto pueden agregarse nuevos issues en base a las plantillas que el equipo ha definido. 
+En la [sección de creación de nuevos issues][crear-issue-cuentoneta] del proyecto pueden agregarse nuevos issues en base a las plantillas que el equipo ha definido.
 
-También puede visualizarse la [lista de issues creados](https://github.com/rolivencia/cuentoneta/issues). Esta lista se actualiza y cura por parte de quienes contribuyen a La Cuentoneta, filtrando, clasificando y detallando lo escrito en cada uno de los issues en los que se trabajará a futuro. 
+También puede visualizarse la [lista de issues creados](https://github.com/rolivencia/cuentoneta/issues). Esta lista se actualiza y cura por parte de quienes contribuyen a La Cuentoneta, filtrando, clasificando y detallando lo escrito en cada uno de los issues en los que se trabajará a futuro.
 
 > 💡 Si tienes alguna consulta, puedes hacerla en nuestro canal [**#🚐 | la-cuentoneta**][dc-channel] en Discord.
->
 
 > ⚠️ Recordá, antes de contribuir, que es **requerido** que seas parte del [**servidor de FrontendCafé**][dc-fec] en Discord.
->
 
 ## Tipos de Contribuciones
 
@@ -35,8 +33,8 @@ Si tienes cualquier tipo de dudas respecto de cómo contribuir al proyecto, no d
 
 ### 📢 Difundiendo
 
-Si te gusta el proyecto, puedes ayudarnos difundiéndolo en tus redes sociales, compartiendo los contenidos que publicamos, y recomendándolo a otras personas. 
-Llegar cada vez a más personas hará que podamos mejorar la plataforma y descubrir qué funcionalidades nuevas son más necesarias a futuro. 
+Si te gusta el proyecto, puedes ayudarnos difundiéndolo en tus redes sociales, compartiendo los contenidos que publicamos, y recomendándolo a otras personas.
+Llegar cada vez a más personas hará que podamos mejorar la plataforma y descubrir qué funcionalidades nuevas son más necesarias a futuro.
 La Cuentoneta tiene cuentas oficiales en [Facebook][facebook-cuentoneta], [Instagram][instagram-cuentoneta] y [Twitter][twitter-cuentoneta].
 
 ### 📜 Contenidos
@@ -47,6 +45,7 @@ El contenido puede ser escritura propia o de terceros, con previos permisos de p
 Estamos trabajando para, a futuro, ir en busca de autores y autoras de cuentos y poemas de autoría original que deseen publicar sus obras en La Cuentoneta.
 
 ### 🦟 Reportando problemas y/o errores
+
 En caso de encontrar un error o problema en la plataforma, puedes [crear un issue][crear-issue-cuentoneta] en este repositorio para que podamos arreglarlo cuanto antes y solucionar el problema. Para ello, puedes puees sumar un issue del tipo [_reportar un problema/error_][bug-report-template].
 
 ### 💡 Sugiriendo nuevas funcionalidades
@@ -63,14 +62,14 @@ El diseño original de interfaz de usuario de La Cuentoneta ha sido desarrollado
 
 Si eres desarrolladora o desarrollador, puedes contribuir al proyecto mediante la creación de issues, pull requests, revisando código y más en este repositorio. Para ello, te recomendamos leer la sección [guía de contribución de código][doc-contributing] para que puedas familiarizarte con el proyecto y sus convenciones.
 
-
 ## Aspectos técnicos y guía de contribución de código
 
 En esta sección encontrarás información sobre todo lo que respecta al aspecto técnico de desarrollo de software de La Cuentoneta. Se incluye información sobre:
 
-* El tech stack utilizado para el desarrollo de la plataforma web.
-* Instrucciones sobre cómo instalar una versión local del proyecto
-* La especificación de alto nivel del proceso de desarrollo de software adoptado por el equipo, el cual incluye procedimientos y convenciones.
+- El tech stack utilizado para el desarrollo de la plataforma web.
+- Instrucciones sobre cómo instalar una versión local del proyecto
+- La especificación de alto nivel del proceso de desarrollo de software adoptado por el equipo, el cual incluye procedimientos y convenciones.
+
 ---
 
 ### Tech Stack
@@ -106,7 +105,9 @@ Junto con Nx, el proyecto cuenta con ESLint y Prettier ya configuradas como depe
 > 💡 No hace falta tener mucho conocimiento en el tech stack para poder contribuir en el desarrollo. Si tienes ganas de aprender, ¡te invitamos a sumarte!
 
 ---
+
 ### Requerimientos
+
 - Tener instalada una versión de [Node](https://nodejs.org/es/) igual o superior a `v18.15.0`, idealmente la última versión LTS.
 - Instalar `pnpm`, un gestor de paquetes alternativo para Node: `npm install -g pnpm`. Se recomienda la versión `8.2.0` o superior.
 - Instalar `nx`, un CLI para desarrollo de monorepos: `pnpm install -g nx`. Se recomienda la versión `16.4.0` o superior.
@@ -167,6 +168,49 @@ Para ejecutar el entorno de desarrollo de Sanity Studio, ejecutá el siguiente c
 ```bash
 pnpm run dev
 ```
+----
+### Correr localmente Sanity Studio
+Para gestionar el contenido de La Cuentoneta utilizamos [Sanity Studio](https://www.sanity.io/docs/sanity-studio). Puedes ejecutar localmente en tu computadora el entorno de desarrollo de Sanity Studio, en modo sólo lectura, siguiendo los siguientes pasos:
+
+#### Paso 1: Instalar dependencias
+
+Ejecutá el siguiente comando, posándote en el directorio `/cms`:
+
+```bash
+pnpm install
+```
+
+#### Paso 2: Configurar archivo .env
+
+Deberás agregar un archivo `.env` en la carpeta `/cms`.
+
+El contenido del archivo `.env` deberá ser el siguiente:
+```
+SANITY_STUDIO_DATASET=development
+SANITY_STUDIO_PROJECT_ID=s4dbqkc5
+```
+
+#### Paso 3: Ejecutar el entorno de desarrollo
+
+En el mismo directorio, ejecutá el siguiente comando:
+
+```bash
+pnpm sanity dev
+```
+
+#### Paso 4: Credenciales
+
+La primera vez que ejecutes el entorno de desarrollo de Sanity Studio, se te pedirá que ingreses tus credenciales de acceso. Deberás elegir la opción `Email` y luego ingresar las siguientes credenciales:
+
+```
+Usuario: dev@cuentoneta.ar
+Password: CuentonetaFec2023!
+```
+
+#### Paso 5: ¡Listo!
+Luego de ingresar las credenciales, se abrirá una pestaña en tu navegador con el entorno de desarrollo de Sanity Studio en la URL: https://localhost:3333
+
+---
 
 ### Despliegues
 
@@ -176,17 +220,16 @@ Los ambientes de despliegue de La Cuentoneta son los siguientes:
 - **Web | Staging:** [https://staging.cuentoneta.ar](https://staging.cuentoneta.ar)
 - **Storybook:** (próximamente)
 - **Sanity Studio | Development:** (próximamente)
-<!-- Links a Github issues y a issue templates -->
-[github-issues-tutorial]: https://docs.github.com/es/issues/tracking-your-work-with-issues/creating-an-issue
-[crear-issue-cuentoneta]: https://github.com/rolivencia/cuentoneta/issues/new/choose
-[feature-request-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%8F%8E%EF%B8%8F+mejora&projects=&template=feature.yml
-[bug-report-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%A6%9F+bug&projects=&template=bug_report.yml
+  <!-- Links a Github issues y a issue templates -->
+  [github-issues-tutorial]: https://docs.github.com/es/issues/tracking-your-work-with-issues/creating-an-issue
+  [crear-issue-cuentoneta]: https://github.com/rolivencia/cuentoneta/issues/new/choose
+  [feature-request-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%8F%8E%EF%B8%8F+mejora&projects=&template=feature.yml
+  [bug-report-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%A6%9F+bug&projects=&template=bug_report.yml
 
 <!-- Enlaces a Discord -->
 
 [dc-channel]: https://discord.com/channels/594363964499165194/1109220285841944586
 [dc-fec]: https://discord.com/invite/frontendcafe
-
 [contribuyentes]: https://www.cuentoneta.ar/about#people
 
 <!-- Recursos y otros -->
