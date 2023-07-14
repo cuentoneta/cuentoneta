@@ -170,7 +170,7 @@ pnpm run dev
 ```
 ----
 ### Correr localmente Sanity Studio
-Para gestionar el contenido de La Cuentoneta utilizamos [Sanity Studio](https://www.sanity.io/docs/sanity-studio). Puedes ejecutar localmente en tu computadora el entorno de desarrollo de Sanity Studio siguiendo los siguientes pasos:
+Para gestionar el contenido de La Cuentoneta utilizamos [Sanity Studio](https://www.sanity.io/docs/sanity-studio). Puedes ejecutar localmente en tu computadora el entorno de desarrollo de Sanity Studio, en modo sólo lectura, siguiendo los siguientes pasos:
 
 #### Paso 1: Instalar dependencias
 
