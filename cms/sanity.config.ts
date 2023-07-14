@@ -17,6 +17,7 @@ export default defineConfig([
         basePath: '/production',
         icon: LaunchIcon,
         projectId: process.env.SANITY_STUDIO_PROJECT_ID,
+        token: process.env.SANITY_STUDIO_API_TOKEN,
         dataset: 'production',
         plugins: [
             deskTool({
