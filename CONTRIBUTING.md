@@ -180,7 +180,17 @@ Ejecutá el siguiente comando, posándote en el directorio `/cms`:
 pnpm install
 ```
 
-#### Paso 2: Ejecutar el entorno de desarrollo
+#### Paso 2: Configurar archivo .env
+
+Deberás agregar un archivo `.env` en la carpeta `/cms`.
+
+El contenido del archivo `.env` deberá ser el siguiente:
+```
+SANITY_STUDIO_DATASET=development
+SANITY_STUDIO_PROJECT_ID=s4dbqkc5
+```
+
+#### Paso 3: Ejecutar el entorno de desarrollo
 
 En el mismo directorio, ejecutá el siguiente comando:
 
@@ -188,7 +198,7 @@ En el mismo directorio, ejecutá el siguiente comando:
 pnpm sanity dev
 ```
 
-#### Paso 3: Credenciales
+#### Paso 4: Credenciales
 
 La primera vez que ejecutes el entorno de desarrollo de Sanity Studio, se te pedirá que ingreses tus credenciales de acceso. Deberás elegir la opción `Email` y luego ingresar las siguientes credenciales:
 
@@ -197,7 +207,7 @@ Usuario: dev@cuentoneta.ar
 Password: CuentonetaFec2023!
 ```
 
-#### Paso 4: ¡Listo!
+#### Paso 5: ¡Listo!
 Luego de ingresar las credenciales, se abrirá una pestaña en tu navegador con el entorno de desarrollo de Sanity Studio en la URL: https://localhost:3333
 
 ---
