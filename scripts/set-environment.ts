@@ -43,7 +43,7 @@ const generateApiUrl = (
   }
   // Lectura de la variable de entorno de Vercel para deployments de preview
   else if (environment === 'preview') {
-    url = `https://${process.env['VERCEL_URL']}` as string;
+    url = `https://${process.env['VERCEL_URL']}/` as string;
   }
 
   return url;
@@ -116,7 +116,7 @@ fetchStorylistsPreviewDeckConfig().then((storylists: StorylistDeckConfig[]) => {
            }))
        )},
        website: "${process.env['CUENTONETA_WEBSITE']}",
-       apiUrl: "${apiUrl}}"
+       apiUrl: "${apiUrl}"
     };
 `;
 
