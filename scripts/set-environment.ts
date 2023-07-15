@@ -53,7 +53,7 @@ const generateApiUrl = (
 const environment: TEnvironmentType =
   (process.env['VERCEL_ENV'] as TEnvironmentType) ?? 'development';
 
-const branchUrl: string = process.env['VERCEL_BRANCH_URL'];
+const branchUrl: string = process.env['VERCEL_BRANCH_URL'] as string;
 const stagingBranchUrl = 'cuentoneta-git-develop-rolivencia.vercel.app';
 
 const apiUrl = generateApiUrl(environment, branchUrl);
