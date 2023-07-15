@@ -36,5 +36,5 @@
       "rules": {}
     }
   ],
-  "extends": "plugin:storybook/recommended"
+  "extends": ["plugin:storybook/recommended"]
 }
