@@ -32,6 +32,9 @@ const targetPath = `${dirPath}/environment.ts`;
 const environment: TEnvironmentType =
   (process.env['VERCEL_ENV'] as TEnvironmentType) ?? 'development';
 
+console.log('VERCEL_ENV', process.env['VERCEL_ENV']);
+console.log('VERCEL_BRANCH_URL', process.env['VERCEL_BRANCH_URL']);
+
 // Genera una ruta absoluta a la API en función del ambiente
 const generateApiUrl = (environment: TEnvironmentType): string => {
   let url = '';
