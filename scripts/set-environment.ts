@@ -32,20 +32,23 @@ const targetPath = `${dirPath}/environment.ts`;
 const environment: TEnvironmentType =
   (process.env['VERCEL_ENV'] as TEnvironmentType) ?? 'development';
 
-console.log('VERCEL_ENV', process.env['VERCEL_ENV']);
-console.log('VERCEL_BRANCH_URL', process.env['VERCEL_BRANCH_URL']);
+const branchUrl: string = process.env['VERCEL_BRANCH_URL'];
+const stagingBranchUrl = 'cuentoneta-git-develop-rolivencia.vercel.app';
 
 // Genera una ruta absoluta a la API en función del ambiente
-const generateApiUrl = (environment: TEnvironmentType): string => {
+const generateApiUrl = (
+  environment: TEnvironmentType,
+  branchUrl: string
+): string => {
   let url = '';
 
-  // Lectura de la variable de entorno de Vercel para deployments de preview
-  if (environment === 'preview' || environment === 'staging') {
-    url = `https://${process.env['VERCEL_URL']}/` as string;
-  }
-
-  if (environment === 'production') {
+  // Asigna URL en base a variables de entorno para producción y staging (preview develop)
+  if (environment === 'production' || branchUrl === stagingBranchUrl) {
     url = process.env['CUENTONETA_WEBSITE'] as string;
+  }
+  // Lectura de la variable de entorno de Vercel para deployments de preview
+  else if (environment === 'preview') {
+    url = `https://${process.env['VERCEL_URL']}/` as string;
   }
 
   return url;
@@ -109,7 +112,7 @@ fetchStorylistsPreviewDeckConfig().then((storylists: StorylistDeckConfig[]) => {
            }))
        )},
        website: "${process.env['CUENTONETA_WEBSITE']}",
-       apiUrl: "${generateApiUrl(environment)}"
+       apiUrl: "${generateApiUrl(environment, branchUrl)}"
     };
 `;
 
@@ -129,6 +132,14 @@ fetchStorylistsPreviewDeckConfig().then((storylists: StorylistDeckConfig[]) => {
         return;
       }
       console.log(`Variables de entorno escritas en ${targetPath}`);
+      console.log(
+        'Ambiente de Vercel - VERCEL_ENV = ',
+        process.env['VERCEL_ENV']
+      );
+      console.log(
+        'URL de branch de Vercel - VERCEL_BRANCH_URL = ',
+        process.env['VERCEL_BRANCH_URL']
+      );
     }
   );
 });
