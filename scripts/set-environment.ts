@@ -29,11 +29,6 @@ dotenv.config();
 
 const dirPath: string = `src/app/environments`;
 const targetPath = `${dirPath}/environment.ts`;
-const environment: TEnvironmentType =
-  (process.env['VERCEL_ENV'] as TEnvironmentType) ?? 'development';
-
-const branchUrl: string = process.env['VERCEL_BRANCH_URL'];
-const stagingBranchUrl = 'cuentoneta-git-develop-rolivencia.vercel.app';
 
 // Genera una ruta absoluta a la API en función del ambiente
 const generateApiUrl = (
@@ -53,6 +48,15 @@ const generateApiUrl = (
 
   return url;
 };
+
+// Constantes para generar el archivo de environment
+const environment: TEnvironmentType =
+  (process.env['VERCEL_ENV'] as TEnvironmentType) ?? 'development';
+
+const branchUrl: string = process.env['VERCEL_BRANCH_URL'];
+const stagingBranchUrl = 'cuentoneta-git-develop-rolivencia.vercel.app';
+
+const apiUrl = generateApiUrl(environment, branchUrl);
 
 // Obtiene la vista de preview para generar skeletons
 const fetchStorylistsPreviewDeckConfig = () =>
@@ -112,7 +116,7 @@ fetchStorylistsPreviewDeckConfig().then((storylists: StorylistDeckConfig[]) => {
            }))
        )},
        website: "${process.env['CUENTONETA_WEBSITE']}",
-       apiUrl: "${generateApiUrl(environment, branchUrl)}"
+       apiUrl: "${apiUrl}}"
     };
 `;
 
@@ -140,6 +144,7 @@ fetchStorylistsPreviewDeckConfig().then((storylists: StorylistDeckConfig[]) => {
         'URL de branch de Vercel - VERCEL_BRANCH_URL = ',
         process.env['VERCEL_BRANCH_URL']
       );
+      console.log('URL de API = ', apiUrl);
     }
   );
 });
