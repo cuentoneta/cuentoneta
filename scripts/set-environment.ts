@@ -27,7 +27,7 @@ type TEnvironmentType = 'development' | 'preview' | 'staging' | 'production';
 // Leer variables de entorno desde .env
 dotenv.config();
 
-const dirPath: string = `src/app/environments`;
+const dirPath = `src/app/environments`;
 const targetPath = `${dirPath}/environment.ts`;
 
 // Genera una ruta absoluta a la API en función del ambiente
