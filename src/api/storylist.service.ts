@@ -38,6 +38,7 @@ async function fetchPreview(req: express.Request, res: express.Response) {
                                             'slug': slug.current,
                                             title,
                                             originalLink,
+                                            videoUrl,
                                             forewords,
                                             categories,
                                             body[0...3],
