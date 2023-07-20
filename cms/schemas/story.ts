@@ -32,6 +32,11 @@ export default {
             type: 'string',
         },
         {
+            name: 'videoUrl',
+            title: 'URL del video con lectura/recitado del cuento',
+            type: 'url',
+        },
+        {
             name: 'approximateReadingTime',
             title: 'Tiempo de lectura aproximado',
             type: 'computedNumber',
