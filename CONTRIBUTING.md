@@ -204,7 +204,7 @@ La primera vez que ejecutes el entorno de desarrollo de Sanity Studio, se te ped
 
 ```
 Usuario: dev@cuentoneta.ar
-Password: CuentonetaFec2023!
+Password: CuentonetaFec2023#
 ```
 
 #### Paso 5: ¡Listo!
