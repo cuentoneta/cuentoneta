@@ -1,5 +1,5 @@
 import { client } from './_helpers/sanity-connector';
-import { mapAuthor, mapPrologues, urlFor } from './_utils/functions';
+import { mapAuthor, mapPrologues } from './_utils/functions';
 
 async function fetchForRead(req: any, res: any) {
   {
@@ -9,6 +9,7 @@ async function fetchForRead(req: any, res: any) {
                               'slug':slug.current,
                               title, 
                               originalLink, 
+                              videoUrl,
                               forewords, 
                               categories, 
                               body, 
