@@ -8,6 +8,7 @@ export interface StoryBase {
     approximateReadingTime: number;
     author: Author;
     originalLink?: string;
+    videoUrl?: string;
 }
 
 export interface Story extends StoryBase {
