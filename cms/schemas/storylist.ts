@@ -44,7 +44,7 @@ const gridConfigfields = [
   {
     name: 'cardsPlacement',
     description:
-      'Posiciones de las tarjetas y las imágenes alusivas de la storylist, con su orden de renderizado y extensión en columnas y filas dentro del layout de CSS Grid ',
+      'Posiciones de las tarjetas y las imágenes alusivas de la storylist, con su orden de renderizado y extensión en columnas y filas dentro del layout de CSS Grid',
     type: 'array',
     of: [
       {
@@ -110,6 +110,18 @@ const gridConfigfields = [
               source: 'title',
               maxLength: 96,
             },
+          },
+          {
+            name: 'publishingOrder',
+            title: 'Orden de publicación',
+            description: 'Número ordinal de publicación dentro de la storylist para el cuento',
+            type: 'number',
+          },
+          {
+            name: 'publishingDate',
+            title: 'Fecha de publicación',
+            description: 'Fecha en la cual el cuento se publicó o publicará en la storylist',
+            type: 'date',
           },
           ...gridItemFields,
         ],
