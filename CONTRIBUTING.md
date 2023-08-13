@@ -61,7 +61,7 @@ El diseño original de interfaz de usuario de La Cuentoneta ha sido desarrollado
 
 ### 🖥️ Contribuyendo código
 
-Si eres desarrolladora o desarrollador, puedes contribuir al proyecto mediante la creación de issues, pull requests, revisando código y más en este repositorio. Para ello, te recomendamos leer la sección [guía de contribución de código][doc-contributing] para que puedas familiarizarte con el proyecto y sus convenciones.
+Si eres desarrolladora o desarrollador, puedes contribuir al proyecto mediante la creación de issues, pull requests, revisando código y más en este repositorio. Para ello, te recomendamos leer la sección [guía de contribución de código](#aspectos-técnicos-y-guía-de-contribución-de-código) para que puedas familiarizarte con el proyecto y sus convenciones.
 
 
 ## Aspectos técnicos y guía de contribución de código
