@@ -16,6 +16,8 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 - Apertura a la [comunidad de FrontendCafé][dc-fec] para la colaboración en el desarrollo de la plataforma. 
 - Creación de las redes sociales de "La Cuentoneta" ([Instagram][instagram-cuentoneta], [Twitter][twitter-cuentoneta], [Facebook][facebook-cuentoneta]) para fomentar la participación del público general en la plataforma.
+- Adaptación de la storylist Cuentos de Verano 2022 a la nueva plataforma, rebautizándola como
+    "[La Cuentontoneta 1.0][storylist-verano-2022]".
 
 ### `Hito: Lanzamiento al público de la versión 2.0 de La Cuentoneta (2023/05/31)`
 
@@ -60,6 +62,7 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 <!-- Listado de enlaces de referencia, mantenerlos actualizados en cada archivo -->
 [web]: https://cuentoneta.ar
+[storylist-verano-2022]: https://www.cuentoneta.ar/storylist?slug=verano-2022
 [storylist-otoño-2023]: https://www.cuentoneta.ar/storylist?slug=otono-2023
 [storylist-fec-english-sessions]: https://www.cuentoneta.ar/storylist?slug=fec-english-sessions
 [dc-fec]: https://discord.com/invite/frontendcafe
