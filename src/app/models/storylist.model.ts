@@ -32,7 +32,7 @@ export interface StorylistDTO extends StorylistBase {
 }
 
 export interface Publication<T extends StoryBase> {
-  order: number;
+  publishingOrder: number;
   published: boolean;
   publishingDate?: string;
   story: T;
