@@ -1,11 +1,10 @@
 /**
- * Script para generar el archivo de environment utilizado por Angular.
- * Este script debe ejecutarse como paso previo a la compilación de la aplicación
- * (build step).
+ * Este script fue utilizado el día 13/08/2023 para eliminar la dependencia del schema 'publication' respecto de los
+ * schemas 'story' y 'storylist'. Este script reasigna el atributo 'publication' dentro de gridConfig.cardsPlacement
+ * y previewGridConfig.cardsPlacement a un objeto que contiene una referencia directa a un registro del schema 'story' y
+ * reasigna las demás propiedades antes existentes en 'publication' a dicho objeto.
  *
- * Para mejorar los tiempos de carga del paint inicial de la aplicación, la con-
- * figuración de contenido se obtiene desde las variables de entorno y se deposita
- * en el archivo de environment.ts, el cual es compilado junto con la aplicación.
+ * migrateBatch() es la función principal que ejecuta el script, la cual llama a todas las demás.
  *
  * Autor: @rolivencia
  */
@@ -21,7 +20,7 @@ import * as dotenv from 'dotenv';
 // Leer variables de entorno desde .env
 dotenv.config();
 
-// Obtiene la vista de preview para generar skeletons
+// Obtiene los datos de las grid configs de todas las storylists
 const fetchStorylists = () =>
   client.fetch(
     `*[_type == 'storylist'] 
@@ -41,6 +40,8 @@ const fetchStorylists = () =>
       }
     }`
   );
+
+// Construye los patches para cada storylist, con la información a reasignar dentro del atributo publication
 const buildPatches = (storylist) => {
   const { previewGridConfig, gridConfig } = storylist;
 
