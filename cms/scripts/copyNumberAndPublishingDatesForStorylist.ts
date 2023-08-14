@@ -46,18 +46,22 @@ const buildPatches = (storylist) => {
 
   gridConfig.cardsPlacement = gridConfig.cardsPlacement.map((card) => ({
     ...card,
-    publication: null,
-    story: card?.publication?.story,
-    publishingOrder: card?.publication?.order,
-    publishingDate: card?.publication?.publishingDate,
+    publication: {
+      story: card?.publication?.story,
+      published: card?.publication?.published,
+      publishingOrder: card?.publication?.order,
+      publishingDate: card?.publication?.publishingDate,
+    },
   }));
   previewGridConfig.cardsPlacement = previewGridConfig.cardsPlacement.map(
     (card) => ({
       ...card,
-      publication: undefined,
-      story: card?.publication?.story,
-      publishingOrder: card?.publication?.order,
-      publishingDate: card?.publication?.publishingDate,
+      publication: {
+        story: card?.publication?.story,
+        published: card?.publication?.published,
+        publishingOrder: card?.publication?.order,
+        publishingDate: card?.publication?.publishingDate,
+      },
     })
   );
 
