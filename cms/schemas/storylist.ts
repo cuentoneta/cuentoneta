@@ -55,7 +55,7 @@ const gridConfigfields = [
         preview: {
           select: {
             order: 'order',
-            storyTitle: 'story.title',
+            storyTitle: 'publication.title',
             image: 'image',
             imageSlug: 'imageSlug.current',
             startCol: 'startCol',
@@ -77,8 +77,8 @@ const gridConfigfields = [
         },
         fields: [
           {
-            name: 'story',
-            title: 'Cuento',
+            name: 'publication',
+            title: 'Publicación de Cuento/Texto/Historia dentro de la storylist',
             type: 'reference',
             to: [{ type: 'story' }],
             options: {
@@ -110,6 +110,15 @@ const gridConfigfields = [
               source: 'title',
               maxLength: 96,
             },
+          },
+          {
+            name: 'published',
+            title: '¿Publicado?',
+            description:
+                'Determina si la publicación fue o no liberada. Si el valor es false, la publicación no se mostrará como parte de la Storylist',
+            type: 'boolean',
+            validation: (Rule) => Rule.required(),
+            initialValue: false,
           },
           {
             name: 'publishingOrder',
