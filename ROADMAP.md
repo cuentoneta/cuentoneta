@@ -20,8 +20,8 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 ### `Hito: Lanzamiento al público de la versión 2.0 de La Cuentoneta (2023/05/31)`
 
 ## Junio de 2023
-- Lanzamiento de la storylist "Ver Storylist
-  FEC English Sessions Short Stories", una storylist en constante actualización con cuentos cortos en inglés para practicar el idioma en el grupo de estudio de FrontendCafé.
+- Lanzamiento de la storylist
+  "[FEC English Sessions Short Stories][storylist-fec-english-sessions]", una storylist en constante actualización con cuentos cortos en inglés para practicar el idioma en el grupo de estudio de FrontendCafé.
 
 ## Julio de 2023
 - Lanzamiento del ciclo "[Cuentos de Otoño 2023][storylist-otoño-2023]".
@@ -61,6 +61,7 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 <!-- Listado de enlaces de referencia, mantenerlos actualizados en cada archivo -->
 [web]: https://cuentoneta.ar
 [storylist-otoño-2023]: https://www.cuentoneta.ar/storylist?slug=otono-2023
+[storylist-fec-english-sessions]: https://www.cuentoneta.ar/storylist?slug=fec-english-sessions
 [dc-fec]: https://discord.com/invite/frontendcafe
 [instagram-cuentoneta]: https://instagram.com/cuentoneta
 [twitter-cuentoneta]: https://twitter.com/cuentoneta
