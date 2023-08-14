@@ -72,7 +72,7 @@ const fetchStorylistsPreviewDeckConfig = () =>
                             'titlePlacement': previewGridConfig.titlePlacement,
                             'cardsPlacement': previewGridConfig.cardsPlacement[] {
                               'order': order,
-                              'slug': @.publication->story->slug.current,
+                              'slug': @.publication.story->slug.current,
                               'startCol': startCol,
                               'imageSlug': imageSlug.current,
                               'endCol': endCol,
@@ -85,7 +85,7 @@ const fetchStorylistsPreviewDeckConfig = () =>
                             'titlePlacement': gridConfig.titlePlacement,
                             'cardsPlacement': gridConfig.cardsPlacement[] {
                               'order': order,
-                              'slug': @.publication->story->slug.current,
+                              'slug': @.publication.story->slug.current,
                               'startCol': startCol,
                               'imageSlug': imageSlug.current,
                               'endCol': endCol,
