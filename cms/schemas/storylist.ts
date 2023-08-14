@@ -2,6 +2,7 @@ const gridItemFields = [
   {
     name: 'order',
     title: 'Orden',
+    description: 'Orden utilizado internamente por CSS Grid para renderizar el elemento',
     type: 'number',
     validation: (Rule) => Rule.required(),
   },
@@ -54,7 +55,7 @@ const gridConfigfields = [
         preview: {
           select: {
             order: 'order',
-            storyTitle: 'publication.story.title',
+            storyTitle: 'story.title',
             image: 'image',
             imageSlug: 'imageSlug.current',
             startCol: 'startCol',
@@ -76,18 +77,17 @@ const gridConfigfields = [
         },
         fields: [
           {
-            name: 'publication',
-            title: 'Elemento',
+            name: 'story',
+            title: 'Cuento',
             type: 'reference',
-            to: [{ type: 'publication' }],
+            to: [{ type: 'story' }],
             options: {
               filter: ({ document }) => {
                 return {
-                  filter: 'storylist._ref == $_id',
                   params: {
                     _id: document._id.startsWith('drafts.')
-                      ? document._id.split('drafts.')[1]
-                      : document._id,
+                        ? document._id.split('drafts.')[1]
+                        : document._id,
                   },
                 };
               },
