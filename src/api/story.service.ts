@@ -10,6 +10,7 @@ async function fetchForRead(req: any, res: any) {
                               title, 
                               originalLink, 
                               videoUrl,
+                              badLanguage,
                               forewords, 
                               categories, 
                               body, 

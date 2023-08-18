@@ -39,6 +39,7 @@ async function fetchPreview(req: express.Request, res: express.Response) {
                                             title,
                                             originalLink,
                                             videoUrl,
+                                            badLanguage,
                                             forewords,
                                             categories,
                                             body[0...3],
