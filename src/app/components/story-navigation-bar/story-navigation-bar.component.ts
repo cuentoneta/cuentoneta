@@ -1,4 +1,13 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+  Renderer2,
+} from '@angular/core';
 import { Publication, Storylist } from '@models/storylist.model';
 import { Story } from '@models/story.model';
 import { APP_ROUTE_TREE } from '../../app.routes';
@@ -22,13 +31,99 @@ import { NgIf, NgFor, CommonModule } from '@angular/common';
     StoryNavigationBarComponent,
   ],
 })
-export class StoryNavigationBarComponent implements OnChanges {
+export class StoryNavigationBarComponent implements OnChanges, AfterViewInit {
   @Input() displayedPublications: Publication<Story>[] = [];
   @Input() selectedStorySlug: string = '';
   @Input() storylist!: Storylist;
 
+  @ViewChild('prevButton') prevButton!: ElementRef<HTMLButtonElement>;
+  @ViewChild('nextButton') nextButton!: ElementRef<HTMLButtonElement>;
+  @ViewChild('slider') slider!: ElementRef<HTMLDivElement>;
+  @ViewChild('sliderInner') sliderInner!: ElementRef<HTMLDivElement>;
+
   readonly appRouteTree = APP_ROUTE_TREE;
   dummyList: null[] = Array(10);
+
+  constructor(private renderer: Renderer2) {}
+
+  elementsInView: number = 10;
+  childrenHeight!: number;
+  childrensLenght!: number;
+  totalHeight!: number;
+
+  index!: number;
+
+  indexLength!: number;
+  totalHeightElementsInView!: number;
+
+  ngAfterViewInit() {
+    this.childrenHeight =
+      this.renderer.selectRootElement(this.sliderInner.nativeElement)
+        .children[0].offsetHeight + 2;
+    this.childrensLenght = this.renderer.selectRootElement(
+      this.sliderInner.nativeElement
+    ).childElementCount;
+    this.totalHeight =
+      this.childrenHeight *
+      this.renderer.selectRootElement(this.sliderInner.nativeElement)
+        .childElementCount;
+
+    this.renderer.setStyle(
+      this.slider.nativeElement,
+      'height',
+      `${this.childrenHeight * this.elementsInView}px`
+    );
+
+    this.index = 0;
+    this.indexLength =
+      this.childrenHeight * (this.childrensLenght - this.elementsInView);
+    this.totalHeightElementsInView = this.elementsInView * this.childrenHeight;
+
+    // Si hay menos elementos que en elementsInView no aparecen los botones.
+    if (this.childrensLenght <= this.elementsInView) {
+      this.renderer.setStyle(this.prevButton.nativeElement, 'display', 'none');
+      this.renderer.setStyle(this.nextButton.nativeElement, 'display', 'none');
+    } else {
+      this.renderer.setStyle(this.prevButton.nativeElement, 'display', 'none');
+    }
+  }
+
+  // Anteriores elemetos
+  prev() {
+    if (this.index <= this.totalHeightElementsInView) {
+      this.index = 0;
+      this.renderer.setStyle(this.prevButton.nativeElement, 'display', 'none');
+      this.renderer.setStyle(this.nextButton.nativeElement, 'display', 'block');
+    } else {
+      this.index -= this.childrenHeight * this.elementsInView;
+      this.renderer.setStyle(this.nextButton.nativeElement, 'display', 'block');
+    }
+    this.renderer.setStyle(
+      this.sliderInner.nativeElement,
+      'transform',
+      `translateY(-${this.index}px)`
+    );
+  }
+
+  // Siguientes elementos
+  next() {
+    if (
+      this.index + this.childrenHeight * this.elementsInView >=
+      this.totalHeight - this.totalHeightElementsInView
+    ) {
+      this.index = this.indexLength;
+      this.renderer.setStyle(this.nextButton.nativeElement, 'display', 'none');
+      this.renderer.setStyle(this.prevButton.nativeElement, 'display', 'block');
+    } else {
+      this.index += this.childrenHeight * this.elementsInView;
+      this.renderer.setStyle(this.prevButton.nativeElement, 'display', 'block');
+    }
+    this.renderer.setStyle(
+      this.sliderInner.nativeElement,
+      'transform',
+      `translateY(-${this.index}px)`
+    );
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     const storylist: Storylist = changes['storylist'].currentValue;
