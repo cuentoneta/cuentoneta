@@ -24,12 +24,14 @@
         >
           <h1 class="title mb-2">{{ story.title }}</h1>
           <p class="subtitle mb-2">{{ story.author.name }}</p>
-          <ng-container *ngIf="!!story.badLanguage"
-            ><p>* El cuento contiene lenguaje adulto</p></ng-container
-          >
           <time class="reading-time">
             {{ story.approximateReadingTime }} minutos de lectura
           </time>
+          <ng-container *ngIf="!!story.badLanguage"
+            ><p class="date">
+              * El cuento contiene lenguaje adulto
+            </p></ng-container
+          >
         </ng-container>
       </div>
     </header>

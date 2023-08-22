@@ -41,6 +41,14 @@ article {
       @include inter-body-base-medium;
       color: $gray-600;
     }
+  
+    .date {
+      @include inter-body-base-semibold;
+      align-items: center;
+      color: $primary-500;
+      display: flex;
+      margin-top: $spacing-2;
+    }  
   }
 
   .prologues {
