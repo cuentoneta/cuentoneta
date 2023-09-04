@@ -38,7 +38,7 @@
           </div>
         </div>
         <ng-container *ngIf="!!story.videoUrl"
-          ><div>
+          ><div [title]="'Contiene material audiovisual'">
             <img [alt]="'Contiene video'" src="assets/svg/video.svg"/></div
         ></ng-container>
       </footer>
