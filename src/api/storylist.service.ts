@@ -46,6 +46,7 @@ async function fetchPreview(req: express.Request, res: express.Response) {
                                             review,
                                             forewords,
                                             approximateReadingTime,
+                                            videoUrl,
                                             'author': author-> { name, image, nationality-> }
                                         }
                                     }
@@ -152,6 +153,7 @@ async function fetchStorylist(req: any, res: any) {
                                         review,
                                         forewords,
                                         approximateReadingTime,
+                                        videoUrl,
                                         'author': author-> { name, image, nationality-> }
                                     }
                                 }
