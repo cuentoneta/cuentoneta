@@ -27,6 +27,11 @@
           <time class="reading-time">
             {{ story.approximateReadingTime }} minutos de lectura
           </time>
+          <ng-container *ngIf="!!story.badLanguage"
+            ><p class="date">
+              * Contiene lenguaje adulto
+            </p></ng-container
+          >
         </ng-container>
       </div>
     </header>

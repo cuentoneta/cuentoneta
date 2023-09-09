@@ -11,7 +11,7 @@ import { Storylist } from '../models/storylist.model';
 
 // Providers
 import { environment } from '../environments/environment';
-import { StorylistService } from '../storylist.service';
+import { StorylistService } from './storylist.service';
 
 @Injectable({
   providedIn: 'root',

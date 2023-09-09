@@ -9,6 +9,7 @@ export interface StoryBase {
     author: Author;
     originalLink?: string;
     videoUrl?: string;
+    badLanguage?: boolean;
 }
 
 export interface Story extends StoryBase {

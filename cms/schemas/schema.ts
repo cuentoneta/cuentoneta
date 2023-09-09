@@ -7,14 +7,12 @@ import story from './story';
 import author from './author';
 import country from './country';
 import storylist from './storylist';
-import publication from './publication';
 
 export default [
     // The following are document types which will appear in the studio.
     // When added to this list, object types can be used as
     // { type: 'typename' } in other document schemas
     story,
-    publication,
     storylist,
     author,
     country,

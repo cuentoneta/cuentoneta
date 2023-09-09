@@ -2,7 +2,10 @@
 // Este script fue utilizado el 25/03/2023 para eliminar el campo day de los documentos de tipo Story en Sanity CMS.
 // Queda aquí a modo de ejemplo para saber cómo proceder a la hora de escribir otro script de migración a futuro.
 
-import { client } from '../../api/_helpers/sanity-connector';
+// Importar cliente de Sanity
+import { client } from '../../src/api/_helpers/sanity-connector';
+
+// Dayjs para utilizar en el formateo de fechas
 import dayjs = require('dayjs');
 
 // const fetchStorylists = () => client.fetch(`*[_type == 'storylist' && slug.current == 'verano-2022']`);

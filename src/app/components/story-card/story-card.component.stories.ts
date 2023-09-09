@@ -23,7 +23,7 @@ export default {
 } as Meta<StoryCardComponent>;
 
 const publication: Publication<Story> = {
-  order: 60,
+  publishingOrder: 60,
   published: true,
   publishingDate: '2022-03-01',
   story: {

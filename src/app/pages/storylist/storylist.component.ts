@@ -12,7 +12,7 @@ import { StorylistGridSkeletonConfig } from '../../models/content.model';
 // Services
 import { ContentService } from '../../providers/content.service';
 import { MacroTaskWrapperService } from '../../providers/macro-task-wrapper.service';
-import { StorylistService } from '../../storylist.service';
+import { StorylistService } from '../../providers/storylist.service';
 
 // Directives
 import { FetchContentDirective } from '../../directives/fetch-content.directive';

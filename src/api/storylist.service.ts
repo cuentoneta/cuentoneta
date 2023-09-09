@@ -22,33 +22,35 @@ async function fetchPreview(req: express.Request, res: express.Response) {
                             'cardsPlacement': previewGridConfig.cardsPlacement[]
                                 {
                                     'order': order,
-                                    'slug': @.publication->story->slug.current,
+                                    'slug': publication.story->slug.current,
                                     'startCol': startCol,
                                     'image': image,
                                     'imageSlug': imageSlug.current,
                                     'endCol': endCol,
                                     'startRow': startRow,
                                     'endRow': endRow,
-                                    'publication': *[ _type == 'publication' && storylist._ref == ^.^._id && story->slug.current == ^.publication->story->slug.current][0]{
-                                        order,
-                                        publishingDate,
-                                        published,
-                                        'story': story->{
+                                    'publication': {
+                                        'publishingOrder': publication.publishingOrder,
+                                        'publishingDate': publication.publishingDate,
+                                        'published': publication.published,
+                                        'story': publication.story->{
                                             _id,
                                             'slug': slug.current,
                                             title,
                                             originalLink,
                                             videoUrl,
+                                            badLanguage,
                                             forewords,
                                             categories,
                                             body[0...3],
                                             review,
                                             forewords,
                                             approximateReadingTime,
+                                            videoUrl,
                                             'author': author-> { name, image, nationality-> }
                                         }
+                                    }
                                 }
-                            }
                         },
                         'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])
                     }`;
@@ -89,7 +91,7 @@ async function fetchPreview(req: express.Request, res: express.Response) {
 
     // Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
     publications: result.gridConfig.cardsPlacement
-      .filter((cardPlacement: any) => !!cardPlacement.publication)
+      .filter((cardPlacement: any) => !!cardPlacement.publication && !!cardPlacement.publication.story)
       .map((cardPlacement: any) => cardPlacement.publication)
       .map((publication: any) => {
         const { review, body, forewords, author, ...story } = publication.story;
@@ -129,18 +131,18 @@ async function fetchStorylist(req: any, res: any) {
                             'cardsPlacement': gridConfig.cardsPlacement[]
                             {
                                 'order': order,
-                                'slug': @.publication->story->slug.current,
+                                'slug': publication.story->slug.current,
                                 'startCol': startCol,
                                 'image': image,
                                 'imageSlug': imageSlug.current,
                                 'endCol': endCol,
                                 'startRow': startRow,
                                 'endRow': endRow,
-                                'publication': *[ _type == 'publication' && storylist._ref == ^.^._id && story->slug.current == ^.publication->story->slug.current][0]{
-                                    order,
-                                    publishingDate,
-                                    published,
-                                    'story': story->{
+                                'publication': {
+                                     'publishingOrder': publication.publishingOrder,
+                                     'publishingDate': publication.publishingDate,
+                                     'published': publication.published,
+                                    'story': publication.story->{
                                         _id,
                                         'slug': slug.current,
                                         title,
@@ -151,6 +153,7 @@ async function fetchStorylist(req: any, res: any) {
                                         review,
                                         forewords,
                                         approximateReadingTime,
+                                        videoUrl,
                                         'author': author-> { name, image, nationality-> }
                                     }
                                 }
@@ -184,7 +187,7 @@ async function fetchStorylist(req: any, res: any) {
           })),
     // Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
     publications: result.gridConfig.cardsPlacement
-        .filter((cardPlacement: any) => !!cardPlacement.publication)
+        .filter((cardPlacement: any) => !!cardPlacement.publication && !!cardPlacement.publication.story)
         .map((cardPlacement: any) => cardPlacement.publication)
         .map((publication: any) => {
           const { review, body, forewords, author, ...story } = publication.story;
