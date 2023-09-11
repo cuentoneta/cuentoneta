@@ -7,6 +7,7 @@ import {
   ElementRef,
   AfterViewInit,
   Renderer2,
+  inject,
 } from '@angular/core';
 import { Publication, Storylist } from '@models/storylist.model';
 import { Story } from '@models/story.model';
@@ -44,7 +45,7 @@ export class StoryNavigationBarComponent implements OnChanges, AfterViewInit {
   readonly appRouteTree = APP_ROUTE_TREE;
   dummyList: null[] = Array(10);
 
-  constructor(private renderer: Renderer2) {}
+  private renderer = inject(Renderer2);
 
   elementsInView: number = 10;
   childrenHeight!: number;
