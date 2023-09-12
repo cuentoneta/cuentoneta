@@ -27,7 +27,8 @@
             "style": "kebab-case"
           }
         ],
-        "@typescript-eslint/no-inferrable-types": 0
+        "@typescript-eslint/no-inferrable-types": 0,
+        "no-extra-boolean-cast": "off"
       }
     },
     {
