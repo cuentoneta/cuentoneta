@@ -179,17 +179,10 @@ export class StoryNavigationBarComponent implements OnChanges, AfterViewInit {
    * @private
    */
   private loadCarousel() {
-    const sliderRootElement = this.renderer.selectRootElement(
-      this.sliderInner.nativeElement
-    );
-    this.childrenHeight = sliderRootElement.children[0].offsetHeight + 2;
-    this.childrensLenght = this.renderer.selectRootElement(
-      this.sliderInner.nativeElement
-    ).childElementCount;
-    this.totalHeight =
-      this.childrenHeight *
-      this.renderer.selectRootElement(this.sliderInner.nativeElement)
-        .childElementCount;
+    const sliderRootElement = this.sliderInner.nativeElement;
+    this.childrenHeight = (sliderRootElement.children[0] as HTMLElement).offsetHeight + 2;
+    this.childrensLenght = sliderRootElement.childElementCount;
+    this.totalHeight = this.childrenHeight * sliderRootElement.childElementCount;
 
     this.renderer.setStyle(
       this.slider.nativeElement,
