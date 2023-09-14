@@ -218,7 +218,7 @@ Los ambientes de despliegue de La Cuentoneta son los siguientes:
 
 - **Web | Producción:** [https://cuentoneta.ar/](https://cuentoneta.ar/)
 - **Web | Staging:** [https://staging.cuentoneta.ar](https://staging.cuentoneta.ar)
-- **Storybook:** (próximamente)
+- **Storybook:** [https://cuentoneta-storybook.vercel.app/](https://cuentoneta-storybook.vercel.app/)
 - **Sanity Studio | Development:** (próximamente)
   <!-- Links a Github issues y a issue templates -->
   [github-issues-tutorial]: https://docs.github.com/es/issues/tracking-your-work-with-issues/creating-an-issue
