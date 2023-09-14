@@ -74,6 +74,7 @@ Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos 
 
 - Ramiro Olivencia (**[@rolivencia](https://github.com/rolivencia)**)
 - Erik Giovani (**[@erikgiovani](https://github.com/erikgiovani)**)
+- Soledad Sasia (**[@SoleSasia](https://github.com/SoleSasia)**)
 - Juan Blas Tschopp (**[@juanblas09](https://github.com/juanblas09)**)
 - Diego Franchina (**[@soydiego](https://github.com/SoyDiego)**)
 - Jimer Espinoza (**[@jimersamuel](https://github.com/JimerSamuel)**)
