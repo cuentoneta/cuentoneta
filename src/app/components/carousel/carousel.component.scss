@@ -1,0 +1,61 @@
+@import 'src/assets/scss/theme.scss';
+
+@mixin card-spacing {
+  padding: $spacing-5 $spacing-7;
+}
+
+section {
+  @include card;
+  background-color: $gray-200;
+  border-radius: $rounded-xl;
+
+  header,
+  button,
+  footer {
+    @include card-spacing;
+    background-color: $gray-50;
+    .storylist-title {
+      @include inter-body-xl-bold;
+      &:hover {
+        color: $interactive-500;
+      }
+    }
+  }
+
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-row-gap: 2px;
+
+  .slider {
+    overflow: hidden;
+  }
+
+  .slider--inner {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    transition: all 0.3s ease-in;
+    gap: 2px;
+  }
+
+  article {
+    &.selected {
+      border-left: 4px solid $primary-400;
+      background-color: $primary-100;
+    }
+
+    @include card-spacing;
+    background-color: $gray-50;
+
+    .edition-and-label {
+      margin-bottom: $spacing-2;
+    }
+    .title {
+      @include inter-body-sm-bold;
+      margin-bottom: $spacing-2;
+    }
+    .author {
+      @include inter-body-sm-regular;
+    }
+  }
+}
