@@ -11,6 +11,7 @@
     "config": "ts-node ./scripts/set-environment.ts",
     "postinstall": "npm run config",
     "test": "nx test",
+    "test:watch": "nx test --watch",
     "sanity:dev": "cd cms && sanity dev"
   },
   "private": true,
