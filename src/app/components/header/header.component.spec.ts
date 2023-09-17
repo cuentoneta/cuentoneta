@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/angular';
+import { render, RenderResult, screen } from '@testing-library/angular';
 import { HeaderComponent } from './header.component';
 import { ContentService } from 'src/app/providers/content.service';
 import { provideMock } from '@testing-library/angular/jest-utils';
@@ -7,8 +7,11 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 describe('HeaderComponent', () => {
-  test('should render Header component', async () => {
-    const component = await render(HeaderComponent, {
+
+  let component: RenderResult<HeaderComponent, HeaderComponent>;
+
+  beforeEach(async () => {
+    component = await render(HeaderComponent, {
       componentImports: [
         CommonModule,
         NgOptimizedImage,
@@ -17,7 +20,9 @@ describe('HeaderComponent', () => {
       ],
       componentProviders: [provideMock(ContentService)],
     });
+  })
 
+  test('should render Header component', async () => {
     expect(component).toBeTruthy();
     expect(screen.getByAltText(/Cuentoneta/)).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Inicio' })).toHaveProperty('href', expect.stringMatching(/home/))
