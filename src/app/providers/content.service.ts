@@ -6,8 +6,8 @@ import { combineLatest, map, Observable, of, tap } from 'rxjs';
 import {
   StorylistCardDeck,
   StorylistDeckConfig,
-} from '../models/content.model';
-import { Storylist } from '../models/storylist.model';
+} from '@models/content.model';
+import { Storylist } from '@models/storylist.model';
 
 // Providers
 import { environment } from '../environments/environment';
@@ -17,7 +17,7 @@ import { StorylistService } from './storylist.service';
   providedIn: 'root',
 })
 export class ContentService {
-  private _contentConfig!: StorylistDeckConfig[];
+  private _contentConfig: StorylistDeckConfig[] = [];
 
   // Services
   private storylistService = inject(StorylistService);
