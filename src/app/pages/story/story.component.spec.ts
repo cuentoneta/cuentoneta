@@ -2,8 +2,6 @@ import { StoryComponent } from './story.component';
 import { render, RenderResult } from '@testing-library/angular';
 import { CommonModule, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { StoryNavigationBarComponent } from '../../components/story-navigation-bar/story-navigation-bar.component';
-import { BioSummaryCardComponent } from '../../components/bio-summary-card/bio-summary-card.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Component, Input } from '@angular/core';
 import { Storylist } from '@models/storylist.model';
