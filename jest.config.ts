@@ -3,14 +3,15 @@ export default {
   displayName: 'cuentoneta',
   preset: './jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json',
-      stringifyContentPathRegex: '\\.(html|svg)$',
-    },
-  },
   coverageDirectory: './coverage/cuentoneta',
   transform: {
+    '\\.(html|svg)$': [
+      'ts-jest',
+      {
+        tsConfig: '<rootDir>/tsconfig.spec.json',
+        stringifyContentPathRegex: '\\.(html|svg)$',
+      },
+    ],
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },
   transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
