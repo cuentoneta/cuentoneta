@@ -1,0 +1,21 @@
+name:  📜 Proponer el agregado de contenido a La Cuentoneta
+description: Proponer el agregado de un nuevo texto en particular (sea un cuento, poema, ensayo, etc.) o una temática para generar una nueva storylist
+labels: ["📜 contenido"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Descripción
+      description: Detalla el nuevo contenido a agregar a La Cuentoneta. Puede ser un texto de elaboración propia, una propuesta de temática para una storylist o la mención a un cuento que te gustaría esté disponible en La Cuentoneta.
+      placeholder: |
+        Por ejemplo: "Agregar el cuento 'El Marajá de San Telmo' en la próxima storylist de La Cuentoneta, escrito por Rolando Gativideo", o "Agregar una storylist relacionada al género de la ciencia ficción. Propongo también considerar el cuento 'En los Confines del Sistema Solar', de Rolando Gativideo".
+    validations:
+      required: true
+  - type: textarea
+    id: resources
+    attributes:
+      label: Recursos
+      description: Una lista de uno o más recursos relacionados al contenido propuesto.
+      placeholder: |
+        * [Link para descargar el texto de El Marajá de San Telmo](https://www.recurso1.com)
+        * [Biografía de Rolando Gativideo](https://www.recurso2.com)
