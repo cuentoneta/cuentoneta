@@ -1,20 +1,19 @@
 import {
   Component,
   AfterViewInit,
-  OnChanges,
   ElementRef,
-  SimpleChanges,
   inject,
   Renderer2,
   Input,
   ViewChild,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+
 import { Publication, Storylist } from '@models/storylist.model';
 import { Story } from '@models/story.model';
 import { APP_ROUTE_TREE } from 'src/app/app.routes';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { RouterLink } from '@angular/router';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 import { StoryNavigationBarComponent } from '../story-navigation-bar/story-navigation-bar.component';
 
@@ -33,7 +32,7 @@ import { StoryNavigationBarComponent } from '../story-navigation-bar/story-navig
   templateUrl: './carousel.component.html',
   styleUrls: ['./carousel.component.scss'],
 })
-export class CarouselComponent implements OnChanges, AfterViewInit {
+export class CarouselComponent implements AfterViewInit {
   @Input() displayedPublications: Publication<Story>[] = [];
   @Input() selectedStorySlug: string = '';
   @Input() storylist!: Storylist;
@@ -57,13 +56,6 @@ export class CarouselComponent implements OnChanges, AfterViewInit {
 
   indexLength!: number;
   totalHeightElementsInView!: number;
-
-  ngOnChanges(changes: SimpleChanges) {
-    const storylist: Storylist = changes['storylist'].currentValue;
-    if (!!storylist) {
-      this.sliceDisplayedPublications(storylist.publications);
-    }
-  }
 
   ngAfterViewInit() {
     this.loadCarousel();

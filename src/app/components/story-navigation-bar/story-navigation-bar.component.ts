@@ -9,13 +9,15 @@ import {
   Renderer2,
   inject,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { NgIf, NgFor, CommonModule } from '@angular/common';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+
 import { Publication, Storylist } from '@models/storylist.model';
 import { Story } from '@models/story.model';
 import { APP_ROUTE_TREE } from '../../app.routes';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
-import { RouterLink } from '@angular/router';
-import { NgIf, NgFor, CommonModule } from '@angular/common';
+import { CarouselComponent } from '../carousel/carousel.component';
 
 @Component({
   selector: 'cuentoneta-story-navigation-bar',
@@ -30,6 +32,7 @@ import { NgIf, NgFor, CommonModule } from '@angular/common';
     RouterLink,
     StoryEditionDateLabelComponent,
     StoryNavigationBarComponent,
+    CarouselComponent,
   ],
 })
 export class StoryNavigationBarComponent implements OnChanges, AfterViewInit {
@@ -140,7 +143,6 @@ export class StoryNavigationBarComponent implements OnChanges, AfterViewInit {
         : lowerIndex,
       lowerIndex === 0 ? numberOfDisplayedPublications : upperIndex
     );
-
   }
 
   // ToDo: Separar card de cada cuento de la lista en su propio componente, para evitar usar un método en el template
@@ -180,9 +182,11 @@ export class StoryNavigationBarComponent implements OnChanges, AfterViewInit {
    */
   private loadCarousel() {
     const sliderRootElement = this.sliderInner.nativeElement;
-    this.childrenHeight = (sliderRootElement.children[0] as HTMLElement).offsetHeight + 2;
+    this.childrenHeight =
+      (sliderRootElement.children[0] as HTMLElement).offsetHeight + 2;
     this.childrensLenght = sliderRootElement.childElementCount;
-    this.totalHeight = this.childrenHeight * sliderRootElement.childElementCount;
+    this.totalHeight =
+      this.childrenHeight * sliderRootElement.childElementCount;
 
     this.renderer.setStyle(
       this.slider.nativeElement,
