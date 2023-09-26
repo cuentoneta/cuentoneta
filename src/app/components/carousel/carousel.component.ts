@@ -1,28 +1,24 @@
 import {
   Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ViewChild,
-  ElementRef,
   AfterViewInit,
-  Renderer2,
+  ElementRef,
   inject,
+  Renderer2,
+  Input,
+  ViewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NgIf, NgFor, CommonModule } from '@angular/common';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 import { Publication, Storylist } from '@models/storylist.model';
 import { Story } from '@models/story.model';
-import { APP_ROUTE_TREE } from '../../app.routes';
+import { APP_ROUTE_TREE } from 'src/app/app.routes';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
-import { CarouselComponent } from '../carousel/carousel.component';
+import { StoryNavigationBarComponent } from '../story-navigation-bar/story-navigation-bar.component';
 
 @Component({
-  selector: 'cuentoneta-story-navigation-bar',
-  templateUrl: './story-navigation-bar.component.html',
-  styleUrls: ['./story-navigation-bar.component.scss'],
+  selector: 'cuentoneta-carousel',
   standalone: true,
   imports: [
     CommonModule,
@@ -32,10 +28,11 @@ import { CarouselComponent } from '../carousel/carousel.component';
     RouterLink,
     StoryEditionDateLabelComponent,
     StoryNavigationBarComponent,
-    CarouselComponent,
   ],
+  templateUrl: './carousel.component.html',
+  styleUrls: ['./carousel.component.scss'],
 })
-export class StoryNavigationBarComponent implements OnChanges, AfterViewInit {
+export class CarouselComponent implements AfterViewInit {
   @Input() displayedPublications: Publication<Story>[] = [];
   @Input() selectedStorySlug: string = '';
   @Input() storylist!: Storylist;
@@ -59,13 +56,6 @@ export class StoryNavigationBarComponent implements OnChanges, AfterViewInit {
 
   indexLength!: number;
   totalHeightElementsInView!: number;
-
-  ngOnChanges(changes: SimpleChanges) {
-    const storylist: Storylist = changes['storylist'].currentValue;
-    if (!!storylist) {
-      this.sliceDisplayedPublications(storylist.publications);
-    }
-  }
 
   ngAfterViewInit() {
     this.loadCarousel();

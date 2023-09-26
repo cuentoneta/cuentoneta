@@ -1,0 +1,67 @@
+<button class="button--top" (click)="prev()" #prevButton>Anteriores</button>
+
+<ng-container *ngIf="!!storylist; else bodySkeleton">
+  <div class="slider" #slider>
+    <div class="slider--inner" #sliderInner>
+      <ng-container *ngFor="let publication of displayedPublications">
+        <a
+          [routerLink]="
+            publication.published ? ['/' + appRouteTree['STORY']] : null
+          "
+          [queryParams]="{
+            slug: publication.story.slug,
+            list: storylist.slug
+          }"
+        >
+          <article
+            [ngClass]="{
+              selected: selectedStorySlug === publication.story.slug
+            }"
+          >
+            <cuentoneta-story-edition-date-label
+              class="edition-and-label"
+              [label]="
+                publication.published
+                  ? getEditionLabel(publication, publication.publishingOrder)
+                  : storylist.comingNextLabel
+              "
+            />
+            <ng-container *ngIf="publication.published; else comingNext"
+              ><h4 class="title">{{ publication.story.title }}</h4>
+              <h5 class="author">
+                {{ publication.story.author.name }}
+              </h5></ng-container
+            >
+          </article>
+        </a>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>
+
+<button class="button--bottom" (click)="next()" #nextButton>Siguientes</button>
+
+<ng-template #comingNext>
+  <ngx-skeleton-loader
+    count="2"
+    appearance="line"
+    animation="false"
+  ></ngx-skeleton-loader>
+</ng-template>
+
+<ng-template #titleSkeleton>
+  <ngx-skeleton-loader
+    count="2"
+    appearance="line"
+    [theme]="{
+      'height.px': 15,
+      'background-color': '#D4D4D8'
+    }"
+  ></ngx-skeleton-loader>
+</ng-template>
+
+<ng-template #bodySkeleton>
+  <article *ngFor="let skeleton of dummyList">
+    <ngx-skeleton-loader count="2" appearance="line"></ngx-skeleton-loader>
+  </article>
+</ng-template>
