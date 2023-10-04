@@ -1,8 +1,8 @@
 <button class="button--top" (click)="prev()" #prevButton>Anteriores</button>
 
-<ng-container *ngIf="!!storylist; else bodySkeleton">
-  <div class="slider" #slider>
-    <div class="slider--inner" #sliderInner>
+<div class="slider" #slider>
+  <div class="slider--inner" #sliderInner>
+    <ng-container *ngIf="!!storylist; else bodySkeleton">
       <ng-container *ngFor="let publication of displayedPublications">
         <a
           [routerLink]="
@@ -35,9 +35,9 @@
           </article>
         </a>
       </ng-container>
-    </div>
+    </ng-container>
   </div>
-</ng-container>
+</div>
 
 <button class="button--bottom" (click)="next()" #nextButton>Siguientes</button>
 
@@ -62,6 +62,19 @@
 
 <ng-template #bodySkeleton>
   <article *ngFor="let skeleton of dummyList">
-    <ngx-skeleton-loader count="2" appearance="line"></ngx-skeleton-loader>
+    <ngx-skeleton-loader
+      count="1"
+      appearance="line"
+      [theme]="{
+        'height.px': 14,
+        'width.px': 80,
+        'background-color': '#D4D4D8'
+      }"
+    ></ngx-skeleton-loader>
+    <ngx-skeleton-loader
+      count="2"
+      appearance="line"
+      [theme]="{ 'height.px': 16 }"
+    ></ngx-skeleton-loader>
   </article>
 </ng-template>
