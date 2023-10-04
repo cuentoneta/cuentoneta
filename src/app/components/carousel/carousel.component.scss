@@ -8,10 +8,6 @@
   margin-bottom: 2px;
 }
 
-.button--bottom {
-  margin-top: 2px;
-}
-
 button {
   width: 100%;
   @include card-spacing;
@@ -37,6 +33,8 @@ button {
 }
 
 article {
+  width: 286px;
+
   &.selected {
     border-left: 4px solid $primary-400;
     background-color: $primary-100;
@@ -51,6 +49,9 @@ article {
   .title {
     @include inter-body-sm-bold;
     margin-bottom: $spacing-2;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
   }
   .author {
     @include inter-body-sm-regular;
