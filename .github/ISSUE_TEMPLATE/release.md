@@ -13,6 +13,7 @@ assignees: ''
 - [ ] Agregar contribuyentes a la versión en codebase.
 - [ ] Actualizar versión en package.json.
 - [ ] Sanity: Clonar entorno DEV a PROD, para copiar cambios en schema.
+- [ ] Generar release desde GitHub.
 
 `(Agregar otras tareas particulares de la versión, en caso de que sea necesario)`
 
