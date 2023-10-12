@@ -1,11 +1,12 @@
-<div
+<article
   class="stories-card-container"
+  [attr.aria-busy]="!storylist"
   [ngStyle]="{
     'grid-template-columns': storylist?.gridConfig?.gridTemplateColumns
   }"
 >
   <ng-container *ngTemplateOutlet="storylistTemplate"> </ng-container>
-</div>
+</article>
 
 <ng-template #storylistTemplate>
   <!-- Renderizado de título y descripción -->
@@ -134,7 +135,7 @@
           [displayDate]="storylist.displayDates"
           [editionPrefix]="storylist.editionPrefix"
           [publication]="publication"
-          [editionIndex]="publication.order"
+          [editionIndex]="publication.publishingOrder"
           [comingNextLabel]="storylist.comingNextLabel"
         />
       </a>

@@ -1,5 +1,5 @@
 <section>
-  <header>
+  <header [attr.aria-busy]="!storylist">
     <ng-container *ngIf="storylist && storylist.title; else titleSkeleton">
       <a
         [routerLink]="'/' + appRouteTree['STORYLIST']"
@@ -23,7 +23,7 @@
             class="edition-and-label"
             [label]="
               publication.published
-                ? getEditionLabel(publication, publication.order)
+                ? getEditionLabel(publication, publication.publishingOrder)
                 : storylist.comingNextLabel
             "
           />
@@ -71,7 +71,7 @@
 </ng-template>
 
 <ng-template #bodySkeleton>
-  <article *ngFor="let skeleton of dummyList">
+  <article [attr.aria-busy]="true" *ngFor="let skeleton of dummyList">
     <ngx-skeleton-loader count="2" appearance="line"></ngx-skeleton-loader>
   </article>
 </ng-template>

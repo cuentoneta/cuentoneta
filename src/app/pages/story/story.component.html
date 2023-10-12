@@ -1,7 +1,7 @@
 <aside class="hidden md:block">
   <cuentoneta-story-navigation-bar
-          [selectedStorySlug]="story?.slug ?? ''"
-          [storylist]="storylist"
+    [selectedStorySlug]="story?.slug ?? ''"
+    [storylist]="storylist"
   ></cuentoneta-story-navigation-bar>
 </aside>
 <main>
@@ -9,15 +9,15 @@
     <header class="flex flex-col-reverse sm:block mb-6 sm:mb-10">
       <aside class="sm:float-right mt-6 sm:ml-12 sm:mb-12 sm:mt-0">
         <cuentoneta-share-content
-                [isLoading]="fetchContentDirective.isLoading"
-                [params]="shareContentParams"
-                [route]="appRouteTree['STORY']"
-                [message]="shareMessage"
+          [isLoading]="fetchContentDirective.isLoading"
+          [params]="shareContentParams"
+          [route]="appRouteTree['STORY']"
+          [message]="shareMessage"
         />
       </aside>
       <div>
         <ng-container
-                *ngIf="
+          *ngIf="
             !!story && !fetchContentDirective.isLoading;
             else titleSkeleton
           "
@@ -27,23 +27,39 @@
           <time class="reading-time">
             {{ story.approximateReadingTime }} minutos de lectura
           </time>
+          <ng-container *ngIf="!!story.badLanguage"
+            ><p class="date">
+              * Contiene lenguaje adulto
+            </p></ng-container
+          >
         </ng-container>
       </div>
     </header>
+    <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
+      <iframe
+        *ngIf="story.videoUrl != null"
+        class="video mb-6 sm:mb-10"
+        [src]="sanitizerUrl(story.videoUrl)"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+    </ng-container>
 
     <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
       <section
-              class="prologues flex"
-              *ngIf="!!story.prologues && story.prologues.length > 0"
+        class="prologues flex"
+        *ngIf="!!story.prologues && story.prologues.length > 0"
       >
         <ng-container *ngFor="let prologue of story.prologues">
           <div class="bar"></div>
           <p class="prologue flex flex-col md:flex-row md:items-center">
             {{ prologue.text }}&nbsp;<em
-                  class="self-end"
-                  *ngIf="prologue.reference"
-          >{{ prologue.reference }}</em
-          >
+              class="self-end"
+              *ngIf="prologue.reference"
+              >{{ prologue.reference }}</em
+            >
           </p>
         </ng-container>
       </section>
@@ -51,7 +67,7 @@
 
     <section class="content">
       <ng-container
-              *ngIf="
+        *ngIf="
           !!story && !fetchContentDirective.isLoading;
           else contentSkeleton
         "
@@ -64,7 +80,7 @@
 
     <footer>
       <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
-        <cuentoneta-bio-summary-card [story]="story"/>
+        <cuentoneta-bio-summary-card [story]="story" />
       </ng-container>
     </footer>
   </article>
@@ -72,27 +88,27 @@
 
 <ng-template #titleSkeleton>
   <ngx-skeleton-loader
-          count="1"
-          appearance="line"
-          [theme]="{
+    count="1"
+    appearance="line"
+    [theme]="{
       'height.px': 36,
       'background-color': '#D4D4D8',
       width: '50%'
     }"
   ></ngx-skeleton-loader>
   <ngx-skeleton-loader
-          count="1"
-          appearance="line"
-          [theme]="{
+    count="1"
+    appearance="line"
+    [theme]="{
       'height.px': 20,
       'background-color': '#D4D4D8',
       width: '25%'
     }"
   ></ngx-skeleton-loader>
   <ngx-skeleton-loader
-          count="1"
-          appearance="line"
-          [theme]="{
+    count="1"
+    appearance="line"
+    [theme]="{
       'height.px': 16,
       'background-color': '#D4D4D8',
       width: '20%'

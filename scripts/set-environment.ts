@@ -27,26 +27,36 @@ type TEnvironmentType = 'development' | 'preview' | 'staging' | 'production';
 // Leer variables de entorno desde .env
 dotenv.config();
 
-const dirPath: string = `src/app/environments`;
+const dirPath = `src/app/environments`;
 const targetPath = `${dirPath}/environment.ts`;
-const environment: TEnvironmentType =
-  (process.env['VERCEL_ENV'] as TEnvironmentType) ?? 'development';
 
 // Genera una ruta absoluta a la API en función del ambiente
-const generateApiUrl = (environment: TEnvironmentType): string => {
+const generateApiUrl = (
+  environment: TEnvironmentType,
+  branchUrl: string
+): string => {
   let url = '';
 
-  // Lectura de la variable de entorno de Vercel para deployments de preview
-  if (environment === 'preview' || environment === 'staging') {
-    url = `https://${process.env['VERCEL_URL']}/` as string;
-  }
-
-  if (environment === 'production') {
+  // Asigna URL en base a variables de entorno para producción y staging (preview develop)
+  if (environment === 'production' || branchUrl === stagingBranchUrl) {
     url = process.env['CUENTONETA_WEBSITE'] as string;
+  }
+  // Lectura de la variable de entorno de Vercel para deployments de preview
+  else if (environment === 'preview') {
+    url = `https://${process.env['VERCEL_URL']}/` as string;
   }
 
   return url;
 };
+
+// Constantes para generar el archivo de environment
+const environment: TEnvironmentType =
+  (process.env['VERCEL_ENV'] as TEnvironmentType) ?? 'development';
+
+const branchUrl: string = process.env['VERCEL_BRANCH_URL'] as string;
+const stagingBranchUrl = 'cuentoneta-git-develop-rolivencia.vercel.app';
+
+const apiUrl = generateApiUrl(environment, branchUrl);
 
 // Obtiene la vista de preview para generar skeletons
 const fetchStorylistsPreviewDeckConfig = () =>
@@ -62,7 +72,7 @@ const fetchStorylistsPreviewDeckConfig = () =>
                             'titlePlacement': previewGridConfig.titlePlacement,
                             'cardsPlacement': previewGridConfig.cardsPlacement[] {
                               'order': order,
-                              'slug': @.publication->story->slug.current,
+                              'slug': @.publication.story->slug.current,
                               'startCol': startCol,
                               'imageSlug': imageSlug.current,
                               'endCol': endCol,
@@ -75,7 +85,7 @@ const fetchStorylistsPreviewDeckConfig = () =>
                             'titlePlacement': gridConfig.titlePlacement,
                             'cardsPlacement': gridConfig.cardsPlacement[] {
                               'order': order,
-                              'slug': @.publication->story->slug.current,
+                              'slug': @.publication.story->slug.current,
                               'startCol': startCol,
                               'imageSlug': imageSlug.current,
                               'endCol': endCol,
@@ -106,7 +116,7 @@ fetchStorylistsPreviewDeckConfig().then((storylists: StorylistDeckConfig[]) => {
            }))
        )},
        website: "${process.env['CUENTONETA_WEBSITE']}",
-       apiUrl: "${generateApiUrl(environment)}"
+       apiUrl: "${apiUrl}"
     };
 `;
 
@@ -126,6 +136,15 @@ fetchStorylistsPreviewDeckConfig().then((storylists: StorylistDeckConfig[]) => {
         return;
       }
       console.log(`Variables de entorno escritas en ${targetPath}`);
+      console.log(
+        'Ambiente de Vercel - VERCEL_ENV = ',
+        process.env['VERCEL_ENV']
+      );
+      console.log(
+        'URL de branch de Vercel - VERCEL_BRANCH_URL = ',
+        process.env['VERCEL_BRANCH_URL']
+      );
+      console.log('URL de API = ', apiUrl);
     }
   );
 });

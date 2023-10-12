@@ -73,7 +73,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": ["{workspaceRoot}/coverage}"],
       "options": {
         "jestConfig": "jest.config.ts",
         "passWithNoTests": true
@@ -133,7 +133,8 @@
       "configurations": {
         "development": {
           "browserTarget": "cuentoneta:build:development",
-          "serverTarget": "cuentoneta:server:development"
+          "serverTarget": "cuentoneta:server:development",
+          "open": true
         },
         "production": {
           "browserTarget": "cuentoneta:build:production",
