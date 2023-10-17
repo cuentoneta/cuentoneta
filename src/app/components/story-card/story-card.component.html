@@ -1,4 +1,4 @@
-<article class="p-5 md:p-8 flex gap-2 md:gap-4">
+<article class="p-5 md:p-8 flex gap-2 md:gap-4" [attr.aria-busy]="!publication">
   <ng-container *ngIf="!!publication && publication.published; else skeleton">
     <ng-container *ngIf="publication.story as story">
       <header class="card-header">
