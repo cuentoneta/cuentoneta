@@ -2,44 +2,45 @@
   <ng-container *ngIf="!!publication && publication.published; else skeleton">
     <ng-container *ngIf="publication.story as story">
       <header class="card-header">
-        <cuentoneta-story-edition-date-label
-          [label]="editionLabel"
-        />
+        <cuentoneta-story-edition-date-label [label]="editionLabel" />
       </header>
       <section>
-        <h2 class="card-title">{{ story.title }}</h2>
-        <p
-          class="content "
-          [innerHTML]="previewText"
-        ></p>
+        <h1 class="card-title">{{ story.title }}</h1>
+        <p class="content" [innerHTML]="previewText"></p>
       </section>
       <time class="reading-time">
         {{ story.approximateReadingTime }} minutos de lectura
       </time>
       <hr />
-      <footer class="author-info flex flex-row items-center">
-        <img
-          class="author-image"
-          width="40"
-          height="40"
-          [alt]="'Retrato de ' + story.author.name"
-          [ngSrc]="story.author.imageUrl + '?h=40&w=40'"
-        />
-        <div>
-          <label class="author-name">{{ story.author.name }}</label>
-          <ng-container *ngIf="story.author.nationality as nationality">
-            <div class="flex items-center">
-              <img
-                class="flag"
-                width="20"
-                height="15"
-                [alt]="'Bandera de ' + nationality.country"
-                [ngSrc]="nationality.flag + '?w=20&h=15'"
-              />
-              <label class="country">{{ nationality.country }}</label>
-            </div>
-          </ng-container>
+      <footer class="flex flex-row items-center justify-between">
+        <div class="author-info flex flex-row items-center">
+          <img
+            class="author-image"
+            width="40"
+            height="40"
+            [alt]="'Retrato de ' + story.author.name"
+            [ngSrc]="story.author.imageUrl + '?h=40&w=40'"
+          />
+          <div>
+            <label class="author-name">{{ story.author.name }}</label>
+            <ng-container *ngIf="story.author.nationality as nationality">
+              <div class="flex items-center">
+                <img
+                  class="flag"
+                  width="20"
+                  height="15"
+                  [alt]="'Bandera de ' + nationality.country"
+                  [ngSrc]="nationality.flag + '?w=20&h=15'"
+                />
+                <label class="country">{{ nationality.country }}</label>
+              </div>
+            </ng-container>
+          </div>
         </div>
+        <ng-container *ngIf="!!story.videoUrl"
+          ><div [title]="'Contiene material audiovisual'">
+            <img [alt]="'Contiene video'" src="assets/svg/video.svg"/></div
+        ></ng-container>
       </footer>
     </ng-container>
   </ng-container>
