@@ -37,7 +37,7 @@
     </header>
     <ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
       <iframe
-        *ngIf="story.videoUrl != null"
+        *ngIf="!!story.videoUrl"
         class="video mb-6 sm:mb-10"
         [src]="sanitizerUrl(story.videoUrl)"
         title="YouTube video player"
