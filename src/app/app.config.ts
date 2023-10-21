@@ -7,6 +7,7 @@ import {
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
+  withInMemoryScrolling,
 } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { ContentService } from './providers/content.service';
@@ -27,7 +28,11 @@ export const appConfig: ApplicationConfig = {
       multi: true,
     },
     provideClientHydration(),
-    provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
+    provideRouter(
+      appRoutes,
+      withEnabledBlockingInitialNavigation(),
+      withInMemoryScrolling({ scrollPositionRestoration: 'enabled' })
+    ),
     importProvidersFrom(HttpClientModule),
   ],
 };
