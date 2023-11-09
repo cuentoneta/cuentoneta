@@ -50,10 +50,10 @@
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
         "production": {
-          "browserTarget": "cuentoneta:build:production"
+          "buildTarget": "cuentoneta:build:production"
         },
         "development": {
-          "browserTarget": "cuentoneta:build:development"
+          "buildTarget": "cuentoneta:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -61,7 +61,7 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "cuentoneta:build"
+        "buildTarget": "cuentoneta:build"
       }
     },
     "lint": {
@@ -75,8 +75,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage}"],
       "options": {
-        "jestConfig": "jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "jest.config.ts"
       }
     },
     "storybook": {
@@ -86,7 +85,7 @@
         "configDir": "./.storybook",
         "browserTarget": "cuentoneta:build",
         "compodoc": false,
-        "styles": ["./src/assets/scss/fonts.scss","./src/styles.scss"]
+        "styles": ["./src/assets/scss/fonts.scss", "./src/styles.scss"]
       },
       "configurations": {
         "ci": {
@@ -129,7 +128,7 @@
       "defaultConfiguration": "production"
     },
     "serve-ssr": {
-      "executor": "@nguniversal/builders:ssr-dev-server",
+      "executor": "@angular-devkit/build-angular:ssr-dev-server",
       "configurations": {
         "development": {
           "browserTarget": "cuentoneta:build:development",
