@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
         <p>
           If you require any more information or have any questions about our
           site's disclaimer, please feel free to contact us by email at
-          contacto@cuentoneta.ar.
+          contacto&#64;cuentoneta.ar.
         </p>
       </section>
 
