@@ -2,7 +2,6 @@ import {
   APP_ID,
   APP_INITIALIZER,
   ApplicationConfig,
-  importProvidersFrom,
 } from '@angular/core';
 import {
   provideRouter,
@@ -12,7 +11,10 @@ import {
 import { appRoutes } from './app.routes';
 import { ContentService } from './providers/content.service';
 import { StoryService } from './providers/story.service';
-import { HttpClientModule } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withFetch,
+} from '@angular/common/http';
 import { provideClientHydration } from '@angular/platform-browser';
 
 export const appConfig: ApplicationConfig = {
@@ -33,6 +35,6 @@ export const appConfig: ApplicationConfig = {
       withEnabledBlockingInitialNavigation(),
       withInMemoryScrolling({ scrollPositionRestoration: 'enabled' })
     ),
-    importProvidersFrom(HttpClientModule),
+    provideHttpClient(withFetch())
   ],
 };
