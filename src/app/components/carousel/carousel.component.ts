@@ -1,28 +1,25 @@
 import {
   Component,
+  ElementRef,
+  inject,
   Input,
   OnChanges,
+  Renderer2,
   SimpleChanges,
   ViewChild,
-  ElementRef,
-  AfterViewInit,
-  Renderer2,
-  inject,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NgIf, NgFor, CommonModule } from '@angular/common';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 import { Publication, Storylist } from '@models/storylist.model';
 import { Story } from '@models/story.model';
-import { APP_ROUTE_TREE } from '../../app.routes';
+import { APP_ROUTE_TREE } from 'src/app/app.routes';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
-import { CarouselComponent } from '../carousel/carousel.component';
+import { StoryNavigationBarComponent } from '../story-navigation-bar/story-navigation-bar.component';
 
 @Component({
-  selector: 'cuentoneta-story-navigation-bar',
-  templateUrl: './story-navigation-bar.component.html',
-  styleUrls: ['./story-navigation-bar.component.scss'],
+  selector: 'cuentoneta-carousel',
   standalone: true,
   imports: [
     CommonModule,
@@ -32,10 +29,11 @@ import { CarouselComponent } from '../carousel/carousel.component';
     RouterLink,
     StoryEditionDateLabelComponent,
     StoryNavigationBarComponent,
-    CarouselComponent,
   ],
+  templateUrl: './carousel.component.html',
+  styleUrls: ['./carousel.component.scss'],
 })
-export class StoryNavigationBarComponent implements OnChanges, AfterViewInit {
+export class CarouselComponent implements OnChanges {
   @Input() displayedPublications: Publication<Story>[] = [];
   @Input() selectedStorySlug: string = '';
   @Input() storylist!: Storylist;
@@ -52,7 +50,7 @@ export class StoryNavigationBarComponent implements OnChanges, AfterViewInit {
 
   elementsInView: number = 10;
   childrenHeight!: number;
-  childrensLenght!: number;
+  childrenLength!: number;
   totalHeight!: number;
 
   index!: number;
@@ -61,14 +59,9 @@ export class StoryNavigationBarComponent implements OnChanges, AfterViewInit {
   totalHeightElementsInView!: number;
 
   ngOnChanges(changes: SimpleChanges) {
-    const storylist: Storylist = changes['storylist'].currentValue;
-    if (!!storylist) {
-      this.sliceDisplayedPublications(storylist.publications);
+    if (changes['storylist']) {
+      this.loadCarousel();
     }
-  }
-
-  ngAfterViewInit() {
-    this.loadCarousel();
   }
 
   // Anteriores elementos
@@ -110,41 +103,6 @@ export class StoryNavigationBarComponent implements OnChanges, AfterViewInit {
     );
   }
 
-  /**
-   * Este método se encarga de mostrar la lista de publicaciones de la navbar en base a la story actualmente en vista.
-   * Si la storylist tiene más de 10 publicaciones, se muestran las 10 publicaciones más cercanas a la story actualmente
-   * en vista tomando las 5 publicaciones anteriores y las 5 siguientes en el caso por defecto y ajustando los límites en
-   * caso de que la story actualmente en vista sea una de las primeras o de las últimas.
-   * @author Ramiro Olivencia <ramiro@olivencia.com.ar>
-   */
-  sliceDisplayedPublications(publications: Publication<Story>[]): void {
-    const numberOfDisplayedPublications = 10;
-
-    if (this.storylist.publications.length <= numberOfDisplayedPublications) {
-      this.displayedPublications = this.storylist.publications;
-      return;
-    }
-
-    const selectedStoryIndex = this.getSelectedStoryIndex(publications);
-
-    const lowerIndex =
-      selectedStoryIndex - numberOfDisplayedPublications / 2 < 0
-        ? 0
-        : selectedStoryIndex - numberOfDisplayedPublications / 2;
-    const upperIndex =
-      selectedStoryIndex + numberOfDisplayedPublications / 2 >
-      publications.length
-        ? publications.length
-        : selectedStoryIndex + numberOfDisplayedPublications / 2;
-
-    this.displayedPublications = this.storylist.publications.slice(
-      upperIndex === publications.length
-        ? publications.length - numberOfDisplayedPublications
-        : lowerIndex,
-      lowerIndex === 0 ? numberOfDisplayedPublications : upperIndex
-    );
-  }
-
   // ToDo: Separar card de cada cuento de la lista en su propio componente, para evitar usar un método en el template
   getEditionLabel(
     publication: Publication<Story>,
@@ -181,10 +139,18 @@ export class StoryNavigationBarComponent implements OnChanges, AfterViewInit {
    * @private
    */
   private loadCarousel() {
+    if (!this.sliderInner) {
+      return;
+    }
     const sliderRootElement = this.sliderInner.nativeElement;
-    this.childrenHeight =
-      (sliderRootElement.children[0] as HTMLElement).offsetHeight + 2;
-    this.childrensLenght = sliderRootElement.childElementCount;
+
+    this.childrenHeight = Math.max(
+        ...Array.from(sliderRootElement.children).map(
+            (child) => (child as HTMLElement).offsetHeight
+        )
+    ) + 2;
+
+    this.childrenLength = this.storylist.publications.length;
     this.totalHeight =
       this.childrenHeight * sliderRootElement.childElementCount;
 
@@ -196,11 +162,11 @@ export class StoryNavigationBarComponent implements OnChanges, AfterViewInit {
 
     this.index = 0;
     this.indexLength =
-      this.childrenHeight * (this.childrensLenght - this.elementsInView);
+      this.childrenHeight * (this.childrenLength - this.elementsInView);
     this.totalHeightElementsInView = this.elementsInView * this.childrenHeight;
 
     // Si hay menos elementos que en elementsInView no aparecen los botones.
-    if (this.childrensLenght <= this.elementsInView) {
+    if (this.childrenLength <= this.elementsInView) {
       this.setButtonDisplay(this.prevButton, 'none');
       this.setButtonDisplay(this.nextButton, 'none');
     } else {
