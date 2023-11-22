@@ -1,14 +1,15 @@
+// Imports de Tailwind
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+// Imports de estilos globales
 @import 'assets/scss/reset';
 @import 'assets/scss/theme';
+@import 'assets/scss/transitions';
 @import 'src/app/directives/tooltip.directive.scss';
-/* You can add global styles to this file, and also import other style files */
 
-// Font imports
-
+// Imports de fuentes
 @font-face {
   font-family: 'Inter';
   src: url('assets/fonts/inter.woff2');
