@@ -14,7 +14,7 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 <details>
     <summary><h1>Hitos Pasados</h1></summary>
-    
+
 ## Mayo de 2023
 - Apertura a la [comunidad de FrontendCafé][dc-fec] para la colaboración en el desarrollo de la plataforma. 
 - Creación de las redes sociales de "La Cuentoneta" ([Instagram][instagram-cuentoneta], [Twitter][twitter-cuentoneta], [Facebook][facebook-cuentoneta]) para fomentar la participación del público general en la plataforma.
@@ -30,32 +30,37 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 - Lanzamiento del ciclo "[Cuentos de Otoño 2023][storylist-otoño-2023]".
 ### `Hito: Lanzamiento al público de la versión 2.1 de La Cuentoneta (2023/07/06)`
 
-</details>
-
-
-
 ## Octubre de 2023
 - Preparación de la storylist "Cuentos de Primavera", una colección de 15 cuentos de autoras latinoamericanas.
 - Preparación del ciclo "Cuentos de Terror de Alberto Laiseca" mediante la publicación de los videos del ciclo televisivo transmitido en el canal "iSat" de la década del 2000. Cada cuento de la storylist estará acompañados de contenido multimedia en la plataforma. Esta storylist hará las veces de conmemoración del mes de Noche de Brujas, publicando originalmente un cuento por día durante todo el mes de octubre y se extenderá para cubrir paulatinamente todas las emisiones del ciclo original.
 - ### `Hito: Lanzamiento al público de la versión 2.2 de La Cuentoneta (planificado para el 2023/10/16)`
 
 ## Noviembre de 2023
-- Desarrollo de las funcionalidades de registro e inicio de sesión de usuarios, que permitirán marcar historias como "leídas", dejar puntuaciones y comentarios en cada relato y storylist.
-- Preparación de un newsletter quincenal al que los usuarios podrán suscribirse para recibir novedades de La Cuentoneta por correo electrónico.
-- Búsqueda de community manager y diseñadores gráficos para trabajar en las futuras características del sitio web.
-- Exploración de material de autoras y autores locales para incluirlos en una edición especial de la plataforma.
-- Implementación de la funcionalidad "¿Cuánto tiempo tenés para leer hoy?" que permitirá filtrar los relatos según su tiempo estimado de lectura.
-- Invitación abierta a autoras y autores santafesinos para participar en la storylist "Plumas Santafesinas", recopilando relatos breves y poemas de autoría provincial.
+- Preparación de la storylist "Ensayos Latinoamericanos", en colaboración con la comunidad **[Tertulia Literaria](https://discord.gg/tertulia-literaria-795704695485235231)**.
+- Actualizaciones de herramientas y tecnologías utilizadas en el desarrollo de la plataforma: soporte para Angular 
+  17 y Nx 17.
+- ### `Hito: Lanzamiento al público de la versión 2.2.2 de La Cuentoneta (planificado para el 2023/11/23)`
+</details>
 
 ## Diciembre de 2023
 - Preparación de la lista "Cuentos de Verano 2024" en la plataforma.
+- Apertura del concurso de escritura _III Certamen Extraordinario de Escritura_, a cargo de la comunidad **[Taller de 
+  Escritura Creativa](https://discord.gg/YJDQCsBmyv)**.
+- Búsqueda de community manager y diseñadores gráficos para trabajar en las futuras características del sitio web.
+
+## Enero de 2024
+- Preparación de un newsletter quincenal al que los usuarios podrán suscribirse para recibir novedades de La Cuentoneta por correo electrónico.
+- Implementación de la funcionalidad "¿Cuánto tiempo tenés para leer hoy?" que permitirá filtrar los relatos según su tiempo estimado de lectura.
+- Invitación abierta a autoras y autores santafesinos para participar en la storylist "Plumas Santafesinas", recopilando relatos breves y poemas de autoría provincial.
 
 ## Febrero de 2024
 - Publicación de las listas "Cuentos para el Bicentenario" en la plataforma, originalmente publicadas por el Ministerio de Educación de la Nación en 2015.
 - Inclusión de niveles educativos inicial, primario y secundario en las listas.
 
 ## Marzo de 2024
+- Desarrollo de las funcionalidades de registro e inicio de sesión de usuarios, que permitirán marcar historias como "leídas", dejar puntuaciones y comentarios en cada relato y storylist.
 - Publicación de la lista "Cuentos por la Memoria" en conmemoración del Día por la Memoria, la Verdad y la Justicia, celebrado el 24 de marzo.
+- Exploración de material de autoras y autores locales para incluirlos en una edición especial de la plataforma.
 
 ## Abril de 2024
 - Lanzamiento de la edición "Cuentos por Malvinas" para conmemorar el 41° aniversario del "Día del Veterano y de los Caídos en la Guerra de Malvinas".
