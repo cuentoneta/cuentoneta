@@ -14,7 +14,7 @@ export interface StoryBase {
 
 export interface Story extends StoryBase {
     prologues: Prologue[];
-    summary: string;
+    summary: string[];
     paragraphs: string[];
 }
 
