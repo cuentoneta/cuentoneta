@@ -1,6 +1,6 @@
 {
   "name": "cuentoneta",
-  "version": "2.2.0",
+  "version": "2.2.2",
   "license": "MIT",
   "scripts": {
     "start": "nx run cuentoneta:server:production",
