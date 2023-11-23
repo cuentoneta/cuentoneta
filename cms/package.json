@@ -5,7 +5,7 @@
   "description": "",
   "main": "package.json",
   "author": "Ramiro Olivencia <ramiro@olivencia.com.ar>",
-  "license": "UNLICENSED",
+  "license": "CC BY-NC-SA 4.0",
   "scripts": {
     "start": "sanity start",
     "build": "sanity build",

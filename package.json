@@ -1,7 +1,7 @@
 {
   "name": "cuentoneta",
   "version": "2.2.2",
-  "license": "MIT",
+  "license": "CC BY-NC-SA 4.0",
   "scripts": {
     "start": "nx run cuentoneta:server:production",
     "dev": "nx run cuentoneta:serve-ssr:development",
