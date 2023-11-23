@@ -1,38 +1,94 @@
 {
   "migrations": [
     {
-      "cli": "nx",
-      "version": "16.8.0-beta.3",
-      "description": "Escape $ in env variables",
-      "implementation": "./src/migrations/update-16-8-0/escape-dollar-sign-env-variables",
-      "package": "nx",
-      "name": "16.8.0-escape-dollar-sign-env"
-    },
-    {
-      "version": "16.8.0",
-      "description": "update-16-8-0-add-ignored-files",
-      "implementation": "./src/migrations/update-16-8-0-add-ignored-files/update-16-8-0-add-ignored-files",
+      "version": "17.1.0-beta.1",
+      "description": "Updates for @typescript-utils/utils v6.9.1+",
+      "implementation": "./src/migrations/update-17-1-0/update-typescript-eslint",
       "package": "@nx/linter",
-      "name": "update-16-8-0-add-ignored-files"
+      "name": "update-typescript-eslint"
+    },
+    {
+      "version": "17.1.0-beta.2",
+      "description": "Move jest executor options to nx.json targetDefaults",
+      "implementation": "./src/migrations/update-17-1-0/move-options-to-target-defaults",
+      "package": "@nx/jest",
+      "name": "move-options-to-target-defaults"
     },
     {
       "cli": "nx",
-      "version": "16.8.0-beta.4",
-      "description": "Update to Cypress v13. Most noteable change is video recording is off by default. This migration will only update if the workspace is already on Cypress v12. https://docs.cypress.io/guides/references/migration-guide#Migrating-to-Cypress-130",
-      "implementation": "./src/migrations/update-16-8-0/cypress-13",
-      "package": "@nx/cypress",
-      "name": "update-16-8-0-cypress-13"
-    },
-    {
-      "cli": "nx",
-      "version": "16.7.0-beta.6",
+      "version": "17.1.0-beta.5",
       "requires": {
-        "@angular/core": ">=16.2.0"
+        "@angular/core": ">=17.0.0"
       },
-      "description": "Update the @angular/cli package version to ~16.2.0.",
-      "factory": "./src/migrations/update-16-7-0/update-angular-cli",
+      "description": "Update the @angular/cli package version to ~17.0.0.",
+      "factory": "./src/migrations/update-17-1-0/update-angular-cli",
       "package": "@nx/angular",
-      "name": "update-angular-cli-version-16-2-0"
+      "name": "update-angular-cli-version-17-0-0"
+    },
+    {
+      "cli": "nx",
+      "version": "17.1.0-beta.5",
+      "requires": {
+        "@angular/core": ">=17.0.0"
+      },
+      "description": "Rename 'browserTarget' to 'buildTarget'.",
+      "factory": "./src/migrations/update-17-1-0/browser-target-to-build-target",
+      "package": "@nx/angular",
+      "name": "rename-browser-target-to-build-target"
+    },
+    {
+      "cli": "nx",
+      "version": "17.1.0-beta.5",
+      "requires": {
+        "@angular/core": ">=17.0.0"
+      },
+      "description": "Replace usages of '@nguniversal/builders' with '@angular-devkit/build-angular'.",
+      "factory": "./src/migrations/update-17-1-0/replace-nguniversal-builders",
+      "package": "@nx/angular",
+      "name": "replace-nguniversal-builders"
+    },
+    {
+      "cli": "nx",
+      "version": "17.1.0-beta.5",
+      "requires": {
+        "@angular/core": ">=17.0.0"
+      },
+      "description": "Replace usages of '@nguniversal/' packages with '@angular/ssr'.",
+      "factory": "./src/migrations/update-17-1-0/replace-nguniversal-engines",
+      "package": "@nx/angular",
+      "name": "replace-nguniversal-engines"
+    },
+    {
+      "cli": "nx",
+      "version": "17.1.0-beta.5",
+      "requires": {
+        "@angular/core": ">=17.0.0"
+      },
+      "description": "Replace the deep imports from 'zone.js/dist/zone' and 'zone.js/dist/zone-testing' with 'zone.js' and 'zone.js/testing'.",
+      "factory": "./src/migrations/update-17-1-0/update-zone-js-deep-import",
+      "package": "@nx/angular",
+      "name": "update-zone-js-deep-import"
+    },
+    {
+      "version": "17.0.0",
+      "description": "Angular v17 introduces a new control flow syntax that uses the @ and } characters. This migration replaces the existing usages with their corresponding HTML entities.",
+      "factory": "./migrations/block-template-entities/bundle",
+      "package": "@angular/core",
+      "name": "block-template-entities"
+    },
+    {
+      "version": "17.0.0",
+      "description": "CompilerOption.useJit and CompilerOption.missingTranslation are unused under Ivy. This migration removes their usage",
+      "factory": "./migrations/compiler-options/bundle",
+      "package": "@angular/core",
+      "name": "migration-v17-compiler-options"
+    },
+    {
+      "version": "17.0.0",
+      "description": "Updates `TransferState`, `makeStateKey`, `StateKey` imports from `@angular/platform-browser` to `@angular/core`.",
+      "factory": "./migrations/transfer-state/bundle",
+      "package": "@angular/core",
+      "name": "migration-transfer-state"
     }
   ]
 }

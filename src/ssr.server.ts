@@ -1,13 +1,10 @@
-// Angular Universal core
 import 'zone.js/node';
-import { ngExpressEngine } from '@nguniversal/express-engine';
+
 import { APP_BASE_HREF } from '@angular/common';
-
-// Utilidades de NodeJS & Express
+import { CommonEngine } from '@angular/ssr';
 import express from 'express';
-import { existsSync } from 'fs';
-import { join } from 'path';
-
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import bootstrap from './main.server';
 
 // API routes
@@ -18,19 +15,18 @@ export function app(): express.Express {
   const server = express();
   const distFolder = join(process.cwd(), 'dist/cuentoneta/browser');
   const indexHtml = existsSync(join(distFolder, 'index.original.html'))
-    ? 'index.original.html'
-    : 'index.html';
+    ? join(distFolder, 'index.original.html')
+    : join(distFolder, 'index.html');
 
-  // Our Universal express-engine (found @ https://github.com/angular/universal/tree/master/modules/express-engine)
-  server.engine(
-    'html',
-      ngExpressEngine({
-        bootstrap,
-      })
-  );
+  const commonEngine = new CommonEngine();
 
   server.set('view engine', 'html');
   server.set('views', distFolder);
+
+    // Registra las routes utilizadas por la API
+    for (const route of routes) {
+        server.use(`/api${route.path}`, route.controller);
+    }
 
   // Serve static files from /browser
   server.get(
@@ -40,23 +36,26 @@ export function app(): express.Express {
     })
   );
 
-  // Registra las routes utilizadas por la API
-  for (const route of routes) {
-    server.use(`/api${route.path}`, route.controller);
-  }
+  // All regular routes use the Angular engine
+  server.get('*', (req, res, next) => {
+    const { protocol, originalUrl, baseUrl, headers } = req;
 
-  // All regular routes use the Universal engine
-  server.get('*', (req, res) => {
-    res.render(indexHtml, {
-      req,
-      providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }],
-    });
+    commonEngine
+      .render({
+        bootstrap,
+        documentFilePath: indexHtml,
+        url: `${protocol}://${headers.host}${originalUrl}`,
+        publicPath: distFolder,
+        providers: [{ provide: APP_BASE_HREF, useValue: baseUrl }],
+      })
+      .then((html) => res.send(html))
+      .catch((err) => next(err));
   });
 
   return server;
 }
 
-function run() {
+function run(): void {
   const port = process.env['PORT'] || 4000;
 
   // Start up the Node server

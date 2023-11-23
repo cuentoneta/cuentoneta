@@ -42,9 +42,11 @@
         </ng-container>
     </section>
     <section class="bio-and-summary" *ngIf="story.author as author">
-        <p>{{ author.biography }}</p>
-        <ng-container *ngIf="story.summary as summary">
-            <p [innerHTML]="summary"></p>
+        <ng-container *ngFor="let paragraph of author.biography">
+            <p [innerHTML]="paragraph"></p>
+        </ng-container>
+        <ng-container *ngFor="let paragraph of story.summary">
+            <p [innerHTML]="paragraph"></p>
         </ng-container>
     </section>
 </div>

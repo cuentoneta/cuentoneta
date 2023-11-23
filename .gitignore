@@ -43,5 +43,7 @@ testem.log
 .DS_Store
 Thumbs.db
 
+# Tools & frameworks
 .angular
+.nx
 .vercel

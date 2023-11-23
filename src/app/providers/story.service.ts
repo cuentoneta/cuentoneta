@@ -37,7 +37,7 @@ export class StoryService {
       paragraphs:
         story?.paragraphs?.map((x: string) => this.parseParagraph(x)) ?? [],
       summary:
-        story?.summary?.map((x: string) => this.parseParagraph(x))?.pop() ?? '',
+        story?.summary?.map((x: string) => this.parseParagraph(x)) ?? [],
     };
   }
 
@@ -48,10 +48,10 @@ export class StoryService {
       paragraphs:
         story?.paragraphs?.map((x: string) => this.parseParagraph(x)) ?? [],
       summary:
-        story?.summary?.map((x: string) => this.parseParagraph(x))?.pop() ?? '',
+        story?.summary?.map((x: string) => this.parseParagraph(x)) ?? [],
       author: {
         ...story.author,
-        biography: this.parseParagraph(story.author.biography),
+        biography: story.author.biography?.map(x => this.parseParagraph(x)) ?? [],
       },
     };
   }
