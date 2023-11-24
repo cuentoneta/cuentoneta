@@ -55,6 +55,7 @@ export default {
           draft?: { blockContentParagraphs: { body } };
           published: { blockContentParagraphs: { body } };
         }) => {
+          // Esta función se encarga de calcular el tiempo de lectura aproximado para cada cuento.
           const textBody = result.draft
             ? result.draft.blockContentParagraphs.body
             : result.published.blockContentParagraphs.body;
@@ -64,7 +65,7 @@ export default {
             .map((paragraph) => paragraph.split(' ').length)
             .reduce((previous, current) => previous + current);
 
-          return Math.ceil(wordCount / 200);
+          return Math.ceil(wordCount / 180); // 180 = palabras por minuto
         },
       },
     },
