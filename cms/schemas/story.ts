@@ -1,3 +1,5 @@
+import { supportedLanguages } from '../utils/localization';
+
 export default {
   name: 'story',
   title: 'Cuento',
@@ -18,6 +20,18 @@ export default {
         maxLength: 96,
       },
       validation: (Rule) => Rule.required(),
+    },
+    {
+      name: 'language',
+      title: 'Idioma',
+      type: 'string',
+      options: {
+        list: supportedLanguages.map((lang) => ({
+          title: lang.title,
+          value: lang.id,
+        })),
+        layout: 'radio',
+      },
     },
     {
       name: 'author',
@@ -55,7 +69,6 @@ export default {
           draft?: { blockContentParagraphs: { body } };
           published: { blockContentParagraphs: { body } };
         }) => {
-          // Esta función se encarga de calcular el tiempo de lectura aproximado para cada cuento.
           const textBody = result.draft
             ? result.draft.blockContentParagraphs.body
             : result.published.blockContentParagraphs.body;
@@ -65,7 +78,7 @@ export default {
             .map((paragraph) => paragraph.split(' ').length)
             .reduce((previous, current) => previous + current);
 
-          return Math.ceil(wordCount / 180); // 180 = palabras por minuto
+          return Math.ceil(wordCount / 200);
         },
       },
     },
@@ -107,7 +120,9 @@ export default {
       validation: (Rule) => Rule.required(),
     },
   ],
-
+  initialValue: {
+    language: 'es',
+  },
   preview: {
     select: {
       title: 'title',
