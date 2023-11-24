@@ -21,12 +21,14 @@ async function fetchForRead(req: any, res: any) {
                           }[0]`;
     const story = await client.fetch(query, {});
 
+    const { body, review, author, forewords, ...properties } = story;
+
     res.json({
-      ...story,
-      summary: story.review,
-      paragraphs: story.body,
-      author: mapAuthor(story.author),
-      prologues: mapPrologues(story.forewords),
+      ...properties,
+      author: mapAuthor(author),
+      prologues: mapPrologues(forewords),
+      paragraphs: body,
+      summary: review,
     });
   }
 }

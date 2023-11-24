@@ -7,7 +7,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../environments/environment';
 
 // Models
-import { Story, StoryCard, StoryDTO } from '../models/story.model';
+import { Story, StoryCard, StoryDTO } from '@models/story.model';
+import {BlockContent} from "@models/block-content.model";
 
 @Injectable({ providedIn: 'root' })
 export class StoryService {
@@ -35,9 +36,9 @@ export class StoryService {
       ...story,
       prologues: story.prologues ?? [],
       paragraphs:
-        story?.paragraphs?.map((x: string) => this.parseParagraph(x)) ?? [],
+        story?.paragraphs?.map((x: BlockContent) => this.parseParagraph(x)) ?? [],
       summary:
-        story?.summary?.map((x: string) => this.parseParagraph(x)) ?? [],
+        story?.summary?.map((x: BlockContent) => this.parseParagraph(x)) ?? [],
     };
   }
 
@@ -46,9 +47,9 @@ export class StoryService {
       ...story,
       prologues: story.prologues ?? [],
       paragraphs:
-        story?.paragraphs?.map((x: string) => this.parseParagraph(x)) ?? [],
+        story?.paragraphs?.map((x: BlockContent) => this.parseParagraph(x)) ?? [],
       summary:
-        story?.summary?.map((x: string) => this.parseParagraph(x)) ?? [],
+        story?.summary?.map((x: BlockContent) => this.parseParagraph(x)) ?? [],
       author: {
         ...story.author,
         biography: story.author.biography?.map(x => this.parseParagraph(x)) ?? [],
@@ -56,7 +57,7 @@ export class StoryService {
     };
   }
 
-  private parseParagraph(block: any): string {
+  private parseParagraph(block: BlockContent | string): string {
     let paragraph = '';
 
     // Condición de escape en caso de que se pase como parámetro un string plano en vez de un blockContent
