@@ -1,5 +1,5 @@
 import { Author } from './author.model';
-import { Prologue } from './prologue.model';
+import { Prologue, PrologueDTO } from './prologue.model';
 import { BlockContent } from '@models/block-content.model';
 
 export interface StoryBase {
@@ -21,7 +21,7 @@ export interface Story extends StoryBase {
 }
 
 export interface StoryDTO extends StoryBase {
-  prologues: any[];
+  prologues: PrologueDTO[];
   summary: BlockContent[];
   paragraphs: BlockContent[];
 }
