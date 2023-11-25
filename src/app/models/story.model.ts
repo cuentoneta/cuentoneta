@@ -11,6 +11,7 @@ export interface StoryBase {
   originalLink?: string;
   videoUrl?: string;
   badLanguage?: boolean;
+  language: string;
 }
 
 export interface Story extends StoryBase {
