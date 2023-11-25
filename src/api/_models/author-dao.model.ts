@@ -1,10 +1,11 @@
-import {SanityImageSource} from '@sanity/image-url/lib/types/types';
+import { SanityImageSource } from '@sanity/image-url/lib/types/types';
+import { BlockContent } from '@models/block-content.model';
 
 export interface AuthorDAO {
-    _id: string;
-    bio: string;
-    nationality: { country: string; flag: SanityImageSource };
-    fullBioUrl: string;
-    image: SanityImageSource;
-    name: string;
+  id: string;
+  biography?: BlockContent;
+  nationality: { country: string; flag: SanityImageSource };
+  fullBioUrl: string;
+  imageUrl: SanityImageSource;
+  name: string;
 }
