@@ -8,8 +8,6 @@ router.get('/read', read);
 
 export default router;
 
-
-
 function read(
   req: express.Request,
   res: express.Response,
