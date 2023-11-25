@@ -1,13 +1,20 @@
+// Conexión a Sanity
 import { client } from './_helpers/sanity-connector';
+
+// Utilidades
 import { mapAuthor, mapPrologues } from './_utils/functions';
 
-async function fetchForRead(req: any, res: any) {
+// Modelos
+import { StoryDTO } from '@models/story.model';
+
+async function fetchForRead(req: any, res: any): Promise<StoryDTO> {
   {
     const { slug } = req.query;
     const query = `*[_type == 'story' && slug.current == '${slug}']
                           {
                               'slug':slug.current,
                               title, 
+                              language,
                               originalLink, 
                               videoUrl,
                               badLanguage,
@@ -23,16 +30,14 @@ async function fetchForRead(req: any, res: any) {
 
     const { body, review, author, forewords, ...properties } = story;
 
-    res.json({
+    return {
       ...properties,
-      author: mapAuthor(author),
+      author: mapAuthor(author, properties.language),
       prologues: mapPrologues(forewords),
       paragraphs: body,
       summary: review,
-    });
+    };
   }
 }
 
-
-
-export { fetchForRead }
+export { fetchForRead };
