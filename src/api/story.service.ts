@@ -8,6 +8,7 @@ async function fetchForRead(req: any, res: any) {
                           {
                               'slug':slug.current,
                               title, 
+                              language,
                               originalLink, 
                               videoUrl,
                               badLanguage,
@@ -25,7 +26,7 @@ async function fetchForRead(req: any, res: any) {
 
     res.json({
       ...properties,
-      author: mapAuthor(author),
+      author: mapAuthor(author, properties.language),
       prologues: mapPrologues(forewords),
       paragraphs: body,
       summary: review,
