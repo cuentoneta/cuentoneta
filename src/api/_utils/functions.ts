@@ -1,11 +1,11 @@
 import { client } from '../_helpers/sanity-connector';
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
-import { AuthorDAO } from '../_models/author-dto';
+import { AuthorDTO } from '../_models/author-dto';
 import { ForewordDAO } from '../_models/story-dao.model';
 import imageUrlBuilder from '@sanity/image-url';
 import { baseLanguage } from '../../../cms/utils/localization';
 
-export function mapAuthor(rawAuthorData: any, language?: string): AuthorDAO {
+export function mapAuthor(rawAuthorData: any, language?: string): AuthorDTO {
   return {
     id: rawAuthorData._id,
     nationality: {

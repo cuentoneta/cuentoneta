@@ -1,8 +1,8 @@
-import { AuthorDAO } from './author-dto';
+import { AuthorDTO } from './author-dto';
 
 export interface StoryDAO {
   _id: string;
-  author: AuthorDAO;
+  author: AuthorDTO;
   forewords: ForewordDAO[];
   review: string;
   body: any[];
