@@ -1,7 +1,7 @@
 import { client } from '../_helpers/sanity-connector';
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { AuthorDTO } from '../_models/author-dto';
-import { ForewordDAO } from '../_models/story-dao.model';
+import { ForewordDTO } from '../_models/story-dao.model';
 import imageUrlBuilder from '@sanity/image-url';
 import { baseLanguage } from '../../../cms/utils/localization';
 
@@ -21,7 +21,7 @@ export function mapAuthor(rawAuthorData: any, language?: string): AuthorDTO {
   };
 }
 
-export function mapPrologues(prologuesDTO: ForewordDAO[]) {
+export function mapPrologues(prologuesDTO: ForewordDTO[]) {
   return prologuesDTO
     ? prologuesDTO.map((x) => ({ reference: x.fwAuthor, text: x.fwText }))
     : [];
