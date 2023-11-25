@@ -26,11 +26,6 @@ export default {
       to: { type: 'nationality' },
     },
     {
-      name: 'bio',
-      title: 'Biografía',
-      type: 'blockContent',
-    },
-    {
       name: 'biography',
       title: 'Biografía',
       type: 'object',
