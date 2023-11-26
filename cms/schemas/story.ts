@@ -1,3 +1,5 @@
+import { supportedLanguages } from '../utils/localization';
+
 export default {
   name: 'story',
   title: 'Cuento',
@@ -18,6 +20,18 @@ export default {
         maxLength: 96,
       },
       validation: (Rule) => Rule.required(),
+    },
+    {
+      name: 'language',
+      title: 'Idioma',
+      type: 'string',
+      options: {
+        list: supportedLanguages.map((lang) => ({
+          title: lang.title,
+          value: lang.id,
+        })),
+        layout: 'radio',
+      },
     },
     {
       name: 'author',
@@ -106,7 +120,9 @@ export default {
       validation: (Rule) => Rule.required(),
     },
   ],
-
+  initialValue: {
+    language: 'es',
+  },
   preview: {
     select: {
       title: 'title',
