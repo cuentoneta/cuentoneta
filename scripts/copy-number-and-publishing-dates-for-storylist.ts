@@ -10,7 +10,7 @@
  */
 
 // Importar cliente de Sanity
-import { client } from '../../src/api/_helpers/sanity-connector';
+import { client } from '../src/api/_helpers/sanity-connector';
 
 // NodeJS & env
 import * as dotenv from 'dotenv';

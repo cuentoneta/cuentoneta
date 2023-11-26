@@ -3,7 +3,7 @@
 // Queda aquí a modo de ejemplo para saber cómo proceder a la hora de escribir otro script de migración a futuro.
 
 // Importar cliente de Sanity
-import { client } from '../../src/api/_helpers/sanity-connector';
+import { client } from '../src/api/_helpers/sanity-connector';
 
 const fetchStories = () =>
     client.fetch(`
