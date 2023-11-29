@@ -2,7 +2,11 @@
 import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, switchMap } from 'rxjs';
-import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
+import {
+  CommonModule,
+  isPlatformBrowser,
+  NgOptimizedImage,
+} from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // Router
@@ -25,6 +29,7 @@ import { StoryNavigationBarComponent } from 'src/app/components/story-navigation
 import { BioSummaryCardComponent } from 'src/app/components/bio-summary-card/bio-summary-card.component';
 import { ShareContentComponent } from 'src/app/components/share-content/share-content.component';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ScrollprogressDirective } from 'src/app/directives/scrollprogress.directive';
 
 @Component({
   selector: 'cuentoneta-story',
@@ -37,12 +42,10 @@ import { DomSanitizer } from '@angular/platform-browser';
     NgxSkeletonLoaderModule,
     StoryNavigationBarComponent,
     BioSummaryCardComponent,
-    ShareContentComponent
+    ShareContentComponent,
+    ScrollprogressDirective,
   ],
-  hostDirectives: [
-    FetchContentDirective, 
-    MetaTagsDirective,
-  ],
+  hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
 export class StoryComponent {
   readonly appRouteTree = APP_ROUTE_TREE;
