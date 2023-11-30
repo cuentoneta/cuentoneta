@@ -87,7 +87,7 @@ Junto con Nx, el proyecto cuenta con ESLint y Prettier ya configuradas como depe
 
 #### Para el desarrollo de la plataforma web
 
-- **<a href="https://angular.io/">Angular 16</a>** como framework de frontend
+- **<a href="https://angular.io/">Angular 17</a>** como framework de frontend
 - **<a href="https://angular.io/guide/universal">Angular Universal</a>** para Server-Side rendering
 - **<a href="https://www.typescriptlang.org/">TypeScript</a>**
 - **<a href="https://tailwindcss.com/docs/installation">Tailwind CSS</a>**
@@ -110,7 +110,7 @@ Junto con Nx, el proyecto cuenta con ESLint y Prettier ya configuradas como depe
 
 - Tener instalada una versión de [Node](https://nodejs.org/es/) igual o superior a `v18.15.0`, idealmente la última versión LTS.
 - Instalar `pnpm`, un gestor de paquetes alternativo para Node: `npm install -g pnpm`. Se recomienda la versión `8.2.0` o superior.
-- Instalar `nx`, un CLI para desarrollo de monorepos: `pnpm install -g nx`. Se recomienda la versión `16.4.0` o superior.
+- Instalar `nx`, un CLI para desarrollo de monorepos: `pnpm install -g nx`. Se recomienda la versión `17.1.0` o superior.
 - Tener un editor de texto o IDE ([Visual Studio Code](https://code.visualstudio.com/), [Vim](https://www.vim.org/), [WebStorm](https://www.jetbrains.com/es-es/webstorm/), etc.)
 - Tener una cuenta en [GitHub](https://docs.github.com/es/get-started/signing-up-for-github/signing-up-for-a-new-github-account)
 - Leer y seguir [Código de Conducta][doc-code_of_conduct].
