@@ -126,7 +126,7 @@ Para poder trabajar localmente en el proyecto, y luego contribuir tus cambios, d
 
 El fork del repositorio se realiza desde el botón `Fork` en la esquina superior derecha de la página del repositorio en Github. Una vez clickeado el botón, podrás visualizar la siguiente pantalla.
 
-![image](https://github.com/rolivencia/cuentoneta/assets/32349705/9cef7034-ddf7-4ee3-934c-684c4e698386)
+![image](https://github.com/cuentoneta/cuentoneta/assets/32349705/3f7ff9cf-6b06-4265-a940-a455f6cd753a)
 
 Luego de pulsar el botón `Create fork`, se creará una copia del repositorio en tu cuenta de Github, desde la que podrás trabajar localmente en el proyecto, generar tus commits y posteriormente crear pull requests al repositorio original.
 
