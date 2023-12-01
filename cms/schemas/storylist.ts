@@ -1,3 +1,5 @@
+import { supportedLanguages } from '../utils/localization';
+
 const gridItemFields = [
   {
     name: 'order',
@@ -6,6 +8,18 @@ const gridItemFields = [
       'Orden utilizado internamente por CSS Grid para renderizar el elemento',
     type: 'number',
     validation: (Rule) => Rule.required(),
+  },
+  {
+    name: 'language',
+    title: 'Idioma',
+    type: 'string',
+    options: {
+      list: supportedLanguages.map((lang) => ({
+        title: lang.title,
+        value: lang.id,
+      })),
+      layout: 'radio',
+    },
   },
   {
     name: 'startCol',
