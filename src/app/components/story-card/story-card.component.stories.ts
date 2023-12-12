@@ -28,6 +28,7 @@ const publication: Publication<Story> = {
   publishingDate: '2022-03-01',
   story: {
     id: 1,
+    language: 'Español',
     approximateReadingTime: 4,
     author: {
       id: 1,
@@ -42,8 +43,10 @@ const publication: Publication<Story> = {
     },
     slug: 'mascaras',
     title: 'Máscaras',
-    summary:
+    summary: [
       '"Máscaras" está incluido en el volumen "Bar del Infierno", publicado en 2005. La acción de la obra se sucede en un bar del cual no es posible salir, dado que en el universo del libro el afuera no existe. En este escenario, El Narrador de Historias, protagonista principal de esta narración enmarcada, procede a contar una variedad de relatos ubicados en distintos lugares y distintas épocas.',
+      '"Máscaras" está incluido en el volumen "Bar del Infierno", publicado en 2005. La acción de la obra se sucede en un bar del cual no es posible salir, dado que en el universo del libro el afuera no existe. En este escenario, El Narrador de Historias, protagonista principal de esta narración enmarcada, procede a contar una variedad de relatos ubicados en distintos lugares y distintas épocas.',
+    ],
     paragraphs: [
       'Según cuentan algunos, el corso de la avenida La Plata, en Santos Lugares, era utilizado frecuentemente por ángeles y demonios cuando tenían que cumplir alguna misión terrestre. Solía decirse también que entre todas las máscaras del corso, una era el diablo. Los hechiceros de Lourdes y Villa Lynch aprovechaban aquellas jornadas para suscribir convenios de toda clase con los poderes de las tinieblas. Tras las caretas espeluznantes se ocultaba el verdadero horror de las caras del mal.',
       'Los hombres sensibles de Flores solían pasearse por allí tratando de reconocer el sello de las legiones, o bien gritando frases ingeniosas en el oído de las muchachas. Cada vez que sospechaban el carácter sobrenatural de algún enmascarado, comenzaban a acosarlo tratando de provocar alguna reacción reveladora.',
