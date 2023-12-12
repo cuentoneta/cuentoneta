@@ -7,7 +7,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../environments/environment';
 
 // Models
-import { Story, StoryCard, StoryDTO } from '@models/story.model';
+import { Paragraph, Story, StoryCard, StoryDTO } from '@models/story.model';
 import { Block, BlockContent } from '@models/block-content.model';
 
 @Injectable({ providedIn: 'root' })
@@ -60,11 +60,14 @@ export class StoryService {
     };
   }
 
-  private parseParagraph(block: BlockContent): string {
+  private parseParagraph(block: BlockContent): Paragraph {
     let paragraph = '';
+    let classes: string[] = [];
 
     block.children.forEach((x: Block) => {
       let part = x.text;
+
+      // Comprobación de estilos de texto y aplicación de la transformación correspondiente
       if (x.marks?.includes('em')) {
         part = this.addItalics(part);
       }
@@ -73,15 +76,18 @@ export class StoryService {
         part = this.addBold(part);
       }
 
-      if (x.text?.includes('***')) {
-        part = this.addCentered(part);
-      }
-
+      // Transformación de salto de línea en texto dentro del mismo párrafo
       part = part.replaceAll('\n', '<br/>');
+
+      // Asignación de clases para modificar estilos del texto
+      // TODO: Utilizar mark particular en BlockContent para centrar cualquier tipo de texto a futuro
+      if (x.text?.includes('***')) {
+        classes = classes.concat(['text-center']);
+      }
 
       paragraph = paragraph.concat(part);
     });
-    return paragraph;
+    return { classes: classes.join(' '), text: paragraph };
   }
 
   private addItalics(text: string): string {
@@ -90,9 +96,5 @@ export class StoryService {
 
   private addBold(text: string): string {
     return `<b>${text}</b>`;
-  }
-
-  private addCentered(text: string): string {
-    return `<p class="text-center">${text}</p>`;
   }
 }
