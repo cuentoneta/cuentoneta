@@ -1,4 +1,4 @@
-import { Author } from './author.model';
+import { Author, AuthorDTO } from './author.model';
 import { Prologue, PrologueDTO } from './prologue.model';
 import { BlockContent } from '@models/block-content.model';
 
@@ -7,7 +7,6 @@ export interface StoryBase {
   title: string;
   slug: string;
   approximateReadingTime: number;
-  author: Author;
   originalLink?: string;
   videoUrl?: string;
   badLanguage?: boolean;
@@ -15,12 +14,14 @@ export interface StoryBase {
 }
 
 export interface Story extends StoryBase {
+  author: Author;
   prologues: Prologue[];
   summary: string[];
   paragraphs: string[];
 }
 
 export interface StoryDTO extends StoryBase {
+  author: AuthorDTO;
   prologues: PrologueDTO[];
   summary: BlockContent[];
   paragraphs: BlockContent[];
