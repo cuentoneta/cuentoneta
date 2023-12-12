@@ -73,7 +73,7 @@
         "
       >
         <ng-container *ngFor="let paragraph of story.paragraphs">
-          <p [innerHTML]="paragraph"></p>
+          <p [innerHTML]="paragraph.text" [ngClass]="paragraph.classes"></p>
         </ng-container>
       </ng-container>
     </section>
