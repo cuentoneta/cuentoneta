@@ -66,10 +66,15 @@ export class StoryService {
     block.children.forEach((x: Block) => {
       let part = x.text;
       if (x.marks?.includes('em')) {
-        part = this.addItalic(part);
+        part = this.addItalics(part);
       }
+
       if (x.marks?.includes('strong')) {
         part = this.addBold(part);
+      }
+
+      if (x.text?.includes('***')) {
+        part = this.addCentered(part);
       }
 
       part = part.replaceAll('\n', '<br/>');
@@ -79,11 +84,15 @@ export class StoryService {
     return paragraph;
   }
 
-  private addItalic(text: string): string {
+  private addItalics(text: string): string {
     return `<i>${text}</i>`;
   }
 
   private addBold(text: string): string {
     return `<b>${text}</b>`;
+  }
+
+  private addCentered(text: string): string {
+    return `<p class="text-center">${text}</p>`;
   }
 }
