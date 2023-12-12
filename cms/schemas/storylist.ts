@@ -10,18 +10,6 @@ const gridItemFields = [
     validation: (Rule) => Rule.required(),
   },
   {
-    name: 'language',
-    title: 'Idioma',
-    type: 'string',
-    options: {
-      list: supportedLanguages.map((lang) => ({
-        title: lang.title,
-        value: lang.id,
-      })),
-      layout: 'radio',
-    },
-  },
-  {
     name: 'startCol',
     title: 'Columna inicial en CSS Grid',
     type: 'string',
@@ -197,6 +185,13 @@ export default {
       name: 'language',
       title: 'Idioma',
       type: 'string',
+      options: {
+        list: supportedLanguages.map((lang) => ({
+          title: lang.title,
+          value: lang.id,
+        })),
+        layout: 'radio',
+      },
       validation: (Rule) => Rule.required(),
     },
     {
