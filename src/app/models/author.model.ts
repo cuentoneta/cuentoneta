@@ -1,4 +1,5 @@
 import { BlockContent } from '@models/block-content.model';
+import { Paragraph } from '@models/story.model'
 
 interface AuthorBase {
   id: number;
@@ -9,7 +10,7 @@ interface AuthorBase {
 }
 
 export interface Author extends AuthorBase {
-  biography?: string[];
+  biography?: Paragraph[];
 }
 
 export interface AuthorDTO extends AuthorBase {

@@ -16,8 +16,8 @@ export interface StoryBase {
 export interface Story extends StoryBase {
   author: Author;
   prologues: Prologue[];
-  summary: string[];
-  paragraphs: string[];
+  summary: Paragraph[];
+  paragraphs: Paragraph[];
 }
 
 export interface StoryDTO extends StoryBase {
@@ -25,6 +25,11 @@ export interface StoryDTO extends StoryBase {
   prologues: PrologueDTO[];
   summary: BlockContent[];
   paragraphs: BlockContent[];
+}
+
+export interface Paragraph {
+  classes: string
+  text: string
 }
 
 export interface StoryCard extends Story {

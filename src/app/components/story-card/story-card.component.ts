@@ -47,6 +47,6 @@ export class StoryCardComponent implements OnInit {
       ? `${this.comingNextLabel} ${dateFormat}`
       : this.comingNextLabel;
 
-    this.previewText = this.publication?.story.paragraphs.join(' ') ?? '';
+    this.previewText = this.publication?.story.paragraphs.map(paragraph => paragraph.text).join(' ') ?? '';
   }
 }

@@ -7,7 +7,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../environments/environment';
 
 // Models
-import { Story, StoryCard, StoryDTO } from '@models/story.model';
+import { Paragraph, Story, StoryCard, StoryDTO } from '@models/story.model';
 import { Block, BlockContent } from '@models/block-content.model';
 
 @Injectable({ providedIn: 'root' })
@@ -60,30 +60,41 @@ export class StoryService {
     };
   }
 
-  private parseParagraph(block: BlockContent): string {
+  private parseParagraph(block: BlockContent): Paragraph {
     let paragraph = '';
+    let classes: string[] = [];
 
     block.children.forEach((x: Block) => {
       let part = x.text;
+
+      // Comprobación de estilos de texto y aplicación de la transformación correspondiente
       if (x.marks?.includes('em')) {
-        part = this.addEmphasis(part);
-      }
-      if (x.marks?.includes('strong')) {
-        part = this.addStrong(part);
+        part = this.addItalics(part);
       }
 
+      if (x.marks?.includes('strong')) {
+        part = this.addBold(part);
+      }
+
+      // Transformación de salto de línea en texto dentro del mismo párrafo
       part = part.replaceAll('\n', '<br/>');
+
+      // Asignación de clases para modificar estilos del texto
+      // TODO: Utilizar mark particular en BlockContent para centrar cualquier tipo de texto a futuro
+      if (x.text?.includes('***')) {
+        classes = classes.concat(['text-center']);
+      }
 
       paragraph = paragraph.concat(part);
     });
-    return paragraph;
+    return { classes: classes.join(' '), text: paragraph };
   }
 
-  private addEmphasis(text: string): string {
+  private addItalics(text: string): string {
     return `<i>${text}</i>`;
   }
 
-  private addStrong(text: string): string {
-    return `<strong>${text}</strong>`;
+  private addBold(text: string): string {
+    return `<b>${text}</b>`;
   }
 }
