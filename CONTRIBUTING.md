@@ -25,6 +25,8 @@ También puede visualizarse la [lista de issues creados](https://github.com/roli
 
 > ⚠️ Recordá, antes de contribuir, que es **requerido** que seas parte del [**servidor de FrontendCafé**][dc-fec] en Discord.
 
+> 🤓 Para visualizar los ítems de trabajo recomendados para iniciarte en tus contribuciones a La Cuentoneta, podés dirigirte a la [página de contribución del proyecto](https://github.com/cuentoneta/cuentoneta/contribute).
+
 ## Tipos de Contribuciones
 
 Puedes sumar tu granito de arena al desarrollo de La Cuentoneta de varias formas, algunas de las cuales se describen a continuación. Como agradecimiento por tu aporte te incluiremos en la sección de [contribuyentes][contribuyentes] del sitio web y podrás, además, portar el badge `Cuentoneta 🚐` en el servidor de [Discord de FrontendCafé][dc-channel].
