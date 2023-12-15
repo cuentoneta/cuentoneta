@@ -12,7 +12,7 @@
         {{ story.approximateReadingTime }} minutos de lectura
       </time>
       <hr />
-      <footer class="flex flex-row justify-between">
+      <footer class="flex flex-row justify-between items-center">
         <div class="author-info flex flex-row items-center">
           <img
             class="author-image"
@@ -39,7 +39,7 @@
         </div>
         <ng-container *ngIf="!!story.videoUrl"><div
             [title]="'Contiene material audiovisual'"
-            class="formats-info flex items-center justify-center"
+            class="formats-info"
           >
             <img class="video" [alt]="'Contiene video'" src="assets/svg/video.svg" /></div>
         </ng-container>
