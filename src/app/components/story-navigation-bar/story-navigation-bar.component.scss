@@ -1,49 +1,50 @@
 @import 'src/assets/scss/theme.scss';
 
 @mixin card-spacing {
-    padding: $spacing-5 $spacing-7;
+  padding: $spacing-5 $spacing-7;
 }
 
 section {
-    @include card;
-    background-color: $gray-200;
-    border-radius: $rounded-xl;
+  @include card;
+  background-color: $gray-200;
+  border-radius: $rounded-xl;
 
-    header,
-    footer {
-        @include card-spacing;
-        background-color: $gray-50;
-        .storylist-title {
-            @include inter-body-xl-bold;
-            &:hover {
-                color: $interactive-500;
-            }
-        }
+  header,
+  footer {
+    @include card-spacing;
+    background-color: $gray-50;
+    .storylist-title {
+      @include inter-body-xl-bold;
+      &:hover {
+        color: $interactive-500;
+      }
+    }
+  }
+
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-row-gap: 2px;
+
+  article {
+    &.selected {
+      border-left: 4px solid $primary-400;
+      background-color: $primary-100;
     }
 
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-row-gap: 2px;
+    @include card-spacing;
+    background-color: $gray-50;
 
-    article {
-
-        &.selected {
-            border-left: 4px solid $primary-400;
-            background-color: $primary-100;
-        }
-
-        @include card-spacing;
-        background-color: $gray-50;
-
-        .edition-and-label {
-            margin-bottom: $spacing-2;
-        }
-        .title {
-            @include inter-body-sm-bold;
-            margin-bottom: $spacing-2;
-        }
-        .author {
-            @include inter-body-sm-regular;
-        }
+    .title {
+      @include inter-body-sm-bold;
+      margin-bottom: $spacing-2;
     }
+    .author {
+      @include inter-body-sm-regular;
+    }
+  }
+
+  .formats-info {
+    height: 20px;
+    width: 20px;
+  }
 }

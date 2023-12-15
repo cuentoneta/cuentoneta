@@ -30,9 +30,21 @@
       />
       @if(publication.published){
       <h4 class="title">{{ publication.story.title }}</h4>
-      <h5 class="author">
-        {{ publication.story.author.name }}
-      </h5>
+      <div class="flex items-center justify-between">
+        <h5 class="author">
+          {{ publication.story.author.name }}
+        </h5>
+        @if(!!publication.story.videoUrl){
+        <div [title]="'Contiene material audiovisual'" class="formats-info">
+          <img
+            class="video"
+            [alt]="'Contiene video'"
+            src="assets/svg/video.svg"
+          />
+        </div>
+        }
+      </div>
+
       } @else{
       <ngx-skeleton-loader
         count="2"
