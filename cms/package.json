@@ -25,6 +25,7 @@
     "react-is": "^18.2.0",
     "sanity": "^3.8.1",
     "sanity-plugin-computed-field": "^2.0.1",
+    "sanity-plugin-icon-picker": "^3.2.2",
     "styled-components": "^5.3.9"
   }
 }
