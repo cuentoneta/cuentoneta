@@ -7,6 +7,7 @@ import story from './story';
 import author from './author';
 import country from './country';
 import storylist from './storylist';
+import tag from './tag'
 
 export default [
     // The following are document types which will appear in the studio.
@@ -17,4 +18,5 @@ export default [
     author,
     country,
     blockContent,
+    tag
 ];

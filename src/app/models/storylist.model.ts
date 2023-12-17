@@ -1,5 +1,6 @@
 import { Story, StoryBase, StoryDTO } from './story.model';
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
+import { Tag } from '@models/tag.model';
 
 interface StorylistBase {
   title: string;
@@ -11,6 +12,7 @@ interface StorylistBase {
   description?: string[];
   language?: string;
   featuredImage?: SanityImageSource;
+  tags?: Tag[];
   images?: {
     slug: string;
     url: SanityImageSource;

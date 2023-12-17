@@ -1,10 +1,12 @@
 // Localization
 import { supportedLanguages } from '../utils/localization';
+import { UsersIcon } from '@sanity/icons'
 
 export default {
   name: 'author',
   title: 'Autor/a',
   type: 'document',
+  icon: UsersIcon,
   fields: [
     {
       name: 'name',
