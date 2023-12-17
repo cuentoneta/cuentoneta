@@ -1,0 +1,10 @@
+@use 'src/assets/scss/theme.scss';
+
+:host {
+  display: flex;
+  background-color: theme.$primary-200;
+  padding: 2px 18px;
+  border-radius: theme.$rounded;
+  text-transform: uppercase;
+  @include theme.inter-body-caption-bold;
+}
