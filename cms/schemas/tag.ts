@@ -26,6 +26,7 @@ export default {
       name: 'title',
       title: 'Título',
       type: 'string',
+      validation: (Rule) => Rule.required(),
     },
     {
       name: 'slug',
@@ -41,6 +42,7 @@ export default {
       name: 'description',
       title: 'Descripción',
       type: 'string',
+      validation: (Rule) => Rule.required(),
     },
     {
       name: 'icon',
