@@ -15,6 +15,12 @@ async function fetchPreview(req: express.Request, res: express.Response) {
                         displayDates,
                         editionPrefix,
                         comingNextLabel,
+                        'tags': tags[] -> {
+                            title, 
+                            'slug': slug.current, 
+                            description, 
+                            'icon': {'name': icon.name, 'provider': icon.provider, 'svg': icon.svg}
+                        },
                         featuredImage,
                         'gridConfig': { 
                             'gridTemplateColumns': previewGridConfig.gridTemplateColumns,
@@ -125,7 +131,13 @@ async function fetchStorylist(req: any, res: any) {
                         editionPrefix,
                         comingNextLabel,
                         featuredImage,
-                        'gridConfig': { 
+                        'tags': tags[] -> {
+                            title, 
+                            'slug': slug.current, 
+                            description, 
+                            'icon': {'name': icon.name, 'provider': icon.provider, 'svg': icon.svg}
+                        },
+                        'gridConfig': {
                             'gridTemplateColumns': gridConfig.gridTemplateColumns,
                             'titlePlacement': gridConfig.titlePlacement,
                             'cardsPlacement': gridConfig.cardsPlacement[]

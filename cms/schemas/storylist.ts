@@ -1,4 +1,5 @@
 import { supportedLanguages } from '../utils/localization';
+import { DashboardIcon } from '@sanity/icons';
 
 const gridItemFields = [
   {
@@ -160,6 +161,7 @@ export default {
   name: 'storylist',
   title: 'Storylists',
   type: 'document',
+  icon: DashboardIcon,
   fields: [
     {
       name: 'title',
@@ -223,6 +225,19 @@ export default {
       options: {
         hotspot: true,
       },
+    },
+    {
+      name: 'tags',
+      title: 'Etiquetas',
+      type: 'array',
+      of: [
+        {
+          name: 'tag',
+          title: 'Etiqueta',
+          type: 'reference',
+          to: [{ type: 'tag' }],
+        },
+      ],
     },
     {
       name: 'gridConfig',
