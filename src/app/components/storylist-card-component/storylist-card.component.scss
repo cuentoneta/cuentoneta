@@ -1,0 +1,37 @@
+@use 'src/assets/scss/theme.scss';
+
+$max-width: 602px;
+$image-max-height: 240px;
+
+:host {
+  @include theme.card;
+  max-width: $max-width;
+  display: block;
+
+  header {
+    max-width: $max-width;
+    max-height: $image-max-height;
+
+    img {
+      border-top-left-radius: theme.$rounded-lg;
+      border-top-right-radius: theme.$rounded-lg;
+      max-height: $image-max-height;
+      object-fit: cover;
+    }
+  }
+
+  article {
+    border: 1px solid theme.$primary-300;
+  }
+
+  .card-title {
+    margin-bottom: theme.$spacing-1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .subtitle {
+    color: theme.$gray-600;
+  }
+}
