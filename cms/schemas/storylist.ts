@@ -227,6 +227,19 @@ export default {
       },
     },
     {
+      name: 'tags',
+      title: 'Etiquetas',
+      type: 'array',
+      of: [
+        {
+          name: 'tag',
+          title: 'Etiqueta',
+          type: 'reference',
+          to: [{ type: 'tag' }],
+        },
+      ],
+    },
+    {
       name: 'gridConfig',
       title:
         'Configuración de vista completa de Storylist en layout de CSS Grid',
