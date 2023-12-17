@@ -1,4 +1,5 @@
 import { supportedLanguages } from '../utils/localization';
+import { DashboardIcon } from '@sanity/icons';
 
 const gridItemFields = [
   {
@@ -160,6 +161,7 @@ export default {
   name: 'storylist',
   title: 'Storylists',
   type: 'document',
+  icon: DashboardIcon,
   fields: [
     {
       name: 'title',
