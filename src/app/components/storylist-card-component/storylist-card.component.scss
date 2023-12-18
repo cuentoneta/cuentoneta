@@ -1,7 +1,7 @@
 @use 'src/assets/scss/theme.scss';
 
 $max-width: 602px;
-$image-max-height: 240px;
+$image-height: 240px;
 
 :host {
   @include theme.card;
@@ -10,22 +10,43 @@ $image-max-height: 240px;
 
   header {
     max-width: $max-width;
-    max-height: $image-max-height;
+    height: $image-height;
 
     img {
       border-top-left-radius: theme.$rounded-lg;
       border-top-right-radius: theme.$rounded-lg;
-      max-height: $image-max-height;
+      height: $image-height;
       object-fit: cover;
     }
   }
 
   article {
+    .navigation-link {
+      &:hover {
+        .card-title {
+          color: theme.$interactive-500;
+
+        }
+      }
+    }
+
+    header, section {
+      cursor: pointer;
+    }
+    section {
+      border: 1px solid theme.$primary-300;
+      border-bottom: none;
+    }
+  }
+
+  footer {
     border: 1px solid theme.$primary-300;
+    border-top: none;
+    border-bottom-left-radius: theme.$rounded-lg;
+    border-bottom-right-radius: theme.$rounded-lg;
   }
 
   .card-title {
-    margin-bottom: theme.$spacing-1;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
