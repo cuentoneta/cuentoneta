@@ -1,7 +1,6 @@
 import { Meta, moduleMetadata } from '@storybook/angular';
 import { StorylistCardDeckComponent } from './storylist-card-deck.component';
-import { RouterModule } from '@angular/router';
-import { APP_BASE_HREF } from '@angular/common';
+import { RouterTestingModule } from '@angular/router/testing';
 
 const fullyLoadedStorylist = {
   _id: 'de027057-130b-473d-a4f7-f561c878feeb',
@@ -315,13 +314,7 @@ export default {
   component: StorylistCardDeckComponent,
   decorators: [
     moduleMetadata({
-      imports: [RouterModule.forRoot([])],
-      providers: [
-        {
-          provide: APP_BASE_HREF,
-          useValue: '/',
-        },
-      ],
+      imports: [RouterTestingModule],
     }),
   ],
 } as Meta<StorylistCardDeckComponent>;
