@@ -56,3 +56,7 @@ export interface GridItemPlacementConfig {
   startRow?: number | string | null;
   endRow?: number | string | null;
 }
+
+export interface StorylistCard extends Storylist {
+
+}

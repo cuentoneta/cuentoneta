@@ -1,5 +1,6 @@
 // Core
 import {
+  ChangeDetectionStrategy,
   Component,
   Input,
   OnChanges,
@@ -32,6 +33,7 @@ import { StoryCardComponent } from '../story-card/story-card.component';
   ],
   templateUrl: './storylist-card-deck.component.html',
   styleUrls: ['./storylist-card-deck.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StorylistCardDeckComponent implements OnInit, OnChanges {
   @Input() number: number = 6;
