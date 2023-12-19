@@ -22,17 +22,17 @@ export const Primary: Story = {
   }),
   args: {
     storylist: {
+      slug: 'verano-2022',
+      count: 60,
+      displayDates: true,
       title: 'Cuentoneta 1.0',
+      editionPrefix: 'Día',
+      comingNextLabel: 'Próximamente',
       description: [
         'La colección “Cuentos de Verano” de la primera versión de La Cuentoneta: una selección de textos publicados diariamente entre el Año Nuevo y el Martes de Carnaval de 2022',
       ],
-      publications: [],
-      images: [
-        {
-          slug: 'image-1',
-          url: 'https://cdn.sanity.io/images/s4dbqkc5/production/445f726810d3b0e39216db61fa40d663aaea3aa4-627x509.png',
-        },
-      ],
+      featuredImage:
+        'https://cdn.sanity.io/images/s4dbqkc5/production/445f726810d3b0e39216db61fa40d663aaea3aa4-627x509.png',
       tags: [
         {
           title: 'Curaduría',
@@ -53,20 +53,21 @@ export const Loading: Story = {
   render: (args: StorylistCardComponent) => ({
     props: args,
   }),
-  args: {
-  },
+  args: {},
 };
 
 export const Layout = {
   render: (args: StoryCardComponent) => ({
     props: args,
-    styles: [`
+    styles: [
+      `
             .grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             grid-gap: 1rem;
             }
-        `],
+        `,
+    ],
     template: `
       <div class="grid gap-4">
           <cuentoneta-storylist-card [storylist]="storylist1">
@@ -78,17 +79,17 @@ export const Layout = {
   }),
   args: {
     storylist1: {
+      slug: 'verano-2022',
+      count: 60,
+      displayDates: true,
       title: 'Cuentoneta 1.0',
+      editionPrefix: 'Día',
+      comingNextLabel: 'Próximamente',
       description: [
         'La colección “Cuentos de Verano” de la primera versión de La Cuentoneta: una selección de textos publicados diariamente entre el Año Nuevo y el Martes de Carnaval de 2022',
       ],
-      publications: [],
-      images: [
-        {
-          slug: 'image-1',
-          url: 'https://cdn.sanity.io/images/s4dbqkc5/production/445f726810d3b0e39216db61fa40d663aaea3aa4-627x509.png',
-        },
-      ],
+      featuredImage:
+        'https://cdn.sanity.io/images/s4dbqkc5/production/445f726810d3b0e39216db61fa40d663aaea3aa4-627x509.png',
       tags: [
         {
           title: 'Curaduría',
@@ -103,17 +104,17 @@ export const Layout = {
       ],
     },
     storylist2: {
+      slug: 'fec-english-sessions',
+      count: 13,
+      displayDates: false,
       title: 'FEC English Sessions',
+      editionPrefix: '',
+      comingNextLabel: 'Próximamente',
       description: [
         'Material para uso del English Study Group de FrontendCafé. Mediante estas historias disparamos charlas y practicamos nuestro reading en las sesiones virtuales de los Martes y Jueves.',
       ],
       publications: [],
-      images: [
-        {
-          slug: 'image-1',
-          url: 'https://cdn.sanity.io/images/s4dbqkc5/development/f6be445b251ce65a33721605303069659997bfbf-602x240.jpg?w=2000&fit=max&auto=format',
-        },
-      ],
+      featuredImage: 'https://cdn.sanity.io/images/s4dbqkc5/development/f6be445b251ce65a33721605303069659997bfbf-602x240.jpg?w=2000&fit=max&auto=format',
       tags: [
         {
           title: 'Colaborativa',
