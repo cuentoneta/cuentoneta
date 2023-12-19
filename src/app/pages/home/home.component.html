@@ -33,13 +33,22 @@
         />
         <ng-container *ngIf="!!storylistDeck.storylist">
           <a
-                  [routerLink]="['/' + appRouteTree['STORYLIST']]"
-                  [queryParams]="{ slug: storylistDeck.storylist.slug }"
-                  class="navigation-link text-right"
+            [routerLink]="['/' + appRouteTree['STORYLIST']]"
+            [queryParams]="{ slug: storylistDeck.storylist.slug }"
+            class="navigation-link text-right"
           >
             Ver Storylist
           </a>
         </ng-container>
+      </ng-container>
+    </ng-container>
+  </section>
+
+  <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <ng-container *ngIf="!!storylistCardDecks && storylistCardDecks.length">
+      <ng-container *ngFor="let storylistDeck of storylistCardDecks">
+        <cuentoneta-storylist-card [storylist]="storylistDeck!.storylist!">
+        </cuentoneta-storylist-card>
       </ng-container>
     </ng-container>
   </section>
