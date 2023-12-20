@@ -49,9 +49,9 @@ export class ContentService {
   /**
    * En base a la configuración de contenido disponible, hace fetch de la lista de
    * storylists referenciada en los objetos de configuración, para luego generar
-   * un array de objetos compuestos de tipo StorylistCardDeck, los cuales contienen
-   * la configuración y la correspondiente información para renderizar un deck de
-   * cards de cada storylist.
+   * una tupa de arrays de objetos compuestos de tipo StorylistCardDeck, los cuales
+   * contienen la configuración y la correspondiente información para renderizar
+   * los decks de previews y cards de cada storylist.
    */
   public fetchStorylistDecks(): Observable<[StorylistCardDeck[], StorylistCardDeck[]]> {
     const previewConfigs = this.contentConfig.previews;
@@ -91,31 +91,5 @@ export class ContentService {
         ]);
       })
     ) as Observable<[StorylistCardDeck[], StorylistCardDeck[]]>;
-  }
-
-  /**
-   * De forma similar a fetchStorylistDecks(), este método se encarga de obtener la
-   * lista de storylists referenciada en los objetos de configuración para mostrar
-   * la información de las mismas en cards en la landing page.
-   */
-  public fetchStorylistCards(): Observable<StorylistCardDeck[]> {
-    const cardConfigs = this.contentConfig.cards;
-
-    return combineLatest(
-      [...cardConfigs].map((config) =>
-        this.storylistService.getPreview(config.slug)
-      )
-    ).pipe(
-      map((storylists) =>
-        cardConfigs.map(
-          (contentConfig): StorylistCardDeck => ({
-            ...contentConfig,
-            storylist: storylists
-              .filter((storylist) => storylist.slug === contentConfig.slug)
-              .pop() as Storylist,
-          })
-        )
-      )
-    );
   }
 }
