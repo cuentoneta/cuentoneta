@@ -26,7 +26,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
       >
         <header>
           <img
-            [ngSrc]="storylist?.images?.[0]?.url ?? ''"
+            [ngSrc]="storylist.featuredImage ?? ''"
             width="602"
             height="240"
           />
@@ -38,10 +38,11 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
         </section>
       </div>
       <footer class="flex justify-end pt-4 px-5 pb-5">
-        @if (storylist?.tags?.length > 0) { @for (tag of storylist?.tags;track
-        tag.slug) {
-        <cuentoneta-badge [tag]="tag" [showIcon]="true" class="ml-3" />
-        } }
+        @if (storylist.tags.length > 0) { 
+          @for (tag of storylist?.tags; track tag.slug) {
+            <cuentoneta-badge [tag]="tag" [showIcon]="true" class="ml-3" />
+          } 
+        }
       </footer>
     </article>
     } @else {
@@ -122,7 +123,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StorylistCardComponent {
-  @Input() storylist: Partial<StorylistCard> | null = null;
+  @Input() storylist: StorylistCard | null = null;
 
   protected readonly appRouteTree = APP_ROUTE_TREE;
 }

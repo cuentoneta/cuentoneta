@@ -12,7 +12,7 @@ interface StorylistBase {
   description?: string[];
   language?: string;
   featuredImage?: SanityImageSource;
-  tags?: Tag[];
+  tags: Tag[];
   images?: {
     slug: string;
     url: SanityImageSource;
@@ -24,6 +24,8 @@ interface StorylistBase {
   gridConfig?: StorylistGridConfig;
   previewGridConfig?: StorylistGridConfig;
 }
+
+export type StorylistCard = Omit<StorylistBase, 'images' | 'previewImages' | 'gridConfig' | 'previewGridConfig'>
 
 export interface Storylist extends StorylistBase {
   publications: Publication<Story>[];
@@ -55,8 +57,4 @@ export interface GridItemPlacementConfig {
   endCol?: number | string | null;
   startRow?: number | string | null;
   endRow?: number | string | null;
-}
-
-export interface StorylistCard extends Storylist {
-
 }
