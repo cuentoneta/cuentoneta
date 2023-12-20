@@ -76,6 +76,19 @@ const fetchStorylistsPreviewDeckConfig = () => {
             'startRow': startRow,
             'endRow': endRow,
             }
+        },
+        'gridSkeletonConfig': {
+            'gridTemplateColumns': gridConfig.gridTemplateColumns,
+            'titlePlacement': gridConfig.titlePlacement,
+            'cardsPlacement': gridConfig.cardsPlacement[] {
+            'order': order,
+            'slug': @.publication.story->slug.current,
+            'startCol': startCol,
+            'imageSlug': imageSlug.current,
+            'endCol': endCol,
+            'startRow': startRow,
+            'endRow': endRow,
+            }
         }
   }`;
 
