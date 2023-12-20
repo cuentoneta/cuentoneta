@@ -1,6 +1,6 @@
 // Core
 import { inject, Injectable } from '@angular/core';
-import { combineLatest, map, Observable, of, tap } from 'rxjs';
+import { combineLatest, map, Observable, of, switchMap, tap } from 'rxjs';
 
 // Interfaces
 import { StorylistCardDeck, StorylistDeckConfig } from '@models/content.model';
@@ -53,25 +53,44 @@ export class ContentService {
    * la configuración y la correspondiente información para renderizar un deck de
    * cards de cada storylist.
    */
-  public fetchStorylistDecks(): Observable<StorylistCardDeck[]> {
+  public fetchStorylistDecks(): Observable<[StorylistCardDeck[], StorylistCardDeck[]]> {
     const previewConfigs = this.contentConfig.previews;
+    const cardConfigs = this.contentConfig.cards;
 
-    return combineLatest(
+    const previewConfigs$ = combineLatest(
       [...previewConfigs].map((config) =>
         this.storylistService.getPreview(config.slug)
       )
-    ).pipe(
-      map((storylists) =>
-        previewConfigs.map(
-          (contentConfig): StorylistCardDeck => ({
-            ...contentConfig,
-            storylist: storylists
-              .filter((storylist) => storylist.slug === contentConfig.slug)
-              .pop() as Storylist,
-          })
-        )
+    );
+
+    const cardConfigs$ = combineLatest(
+      [...cardConfigs].map((config) =>
+        this.storylistService.getPreview(config.slug)
       )
     );
+
+    return combineLatest([previewConfigs$, cardConfigs$]).pipe(
+      switchMap(([previews, cards]) => {
+        return of([
+          previewConfigs.map(
+            (contentConfig): StorylistCardDeck => ({
+              ...contentConfig,
+              storylist: previews
+                .filter((storylist) => storylist.slug === contentConfig.slug)
+                .pop() as Storylist,
+            })
+          ),
+          cardConfigs.map(
+            (contentConfig): StorylistCardDeck => ({
+              ...contentConfig,
+              storylist: cards
+                .filter((storylist) => storylist.slug === contentConfig.slug)
+                .pop() as Storylist,
+            })
+          ),
+        ]);
+      })
+    ) as Observable<[StorylistCardDeck[], StorylistCardDeck[]]>;
   }
 
   /**
