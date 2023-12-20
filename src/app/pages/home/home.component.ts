@@ -39,7 +39,8 @@ import { StorylistCardComponent } from '../../components/storylist-card-componen
 export class HomeComponent {
   readonly appRouteTree = APP_ROUTE_TREE;
 
-  storylistCardDecks: StorylistCardDeck[] = [];
+  cards: StorylistCardDeck[] = [];
+  previews: StorylistCardDeck[] = [];
 
   // Services
   public fetchContentDirective = inject(
@@ -49,7 +50,8 @@ export class HomeComponent {
 
   constructor() {
     // Asignación inicial para dibujar skeletons
-    this.storylistCardDecks = this.contentService.contentConfig;
+    this.cards = this.contentService.contentConfig.cards;
+    this.previews = this.contentService.contentConfig.previews;
 
     const platformId = inject(PLATFORM_ID);
     if (!isPlatformBrowser(platformId)) {
@@ -62,10 +64,13 @@ export class HomeComponent {
 
   private loadStorylistDecks() {
     this.fetchContentDirective
-      .fetchContent$(this.contentService.fetchStorylistDecks())
+      .fetchContent$<[StorylistCardDeck[], StorylistCardDeck[]]>(
+        this.contentService.fetchStorylistDecks()
+      )
       .pipe(takeUntilDestroyed())
-      .subscribe((result) => {
-        this.storylistCardDecks = result;
+      .subscribe(([previews, cards]) => {
+        this.previews = previews;
+        this.cards = cards;
       });
   }
 }

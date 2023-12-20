@@ -38,7 +38,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
         </section>
       </div>
       <footer class="flex justify-end pt-4 px-5 pb-5">
-        @if (storylist.tags.length > 0) { 
+        @if (!!storylist.tags && storylist.tags.length > 0) { 
           @for (tag of storylist?.tags; track tag.slug) {
             <cuentoneta-badge [tag]="tag" [showIcon]="true" class="ml-3" />
           } 
@@ -123,7 +123,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StorylistCardComponent {
-  @Input() storylist: StorylistCard | null = null;
+  @Input() storylist: StorylistCard | undefined;
 
   protected readonly appRouteTree = APP_ROUTE_TREE;
 }
