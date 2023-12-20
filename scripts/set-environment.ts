@@ -60,7 +60,7 @@ const apiUrl = generateApiUrl(environment, branchUrl);
 
 // Obtiene la vista de preview para generar skeletons
 const fetchStorylistsPreviewDeckConfig = () => {
-  const previewsSubQuery = `{
+  const subQuery = `{
         'slug': slug.current,
         'title': title,
         'ordering': previewGridConfig.ordering,
@@ -92,14 +92,10 @@ const fetchStorylistsPreviewDeckConfig = () => {
         }
   }`;
 
-  const cardsSubQuery = `{
-        'slug': slug.current,
-  }`;
-
   return client.fetch(
     `*[_type == 'landingPage'] {
-            'previews': previews[]-> ${previewsSubQuery},
-            'cards': cards[]-> ${cardsSubQuery}
+            'previews': previews[]-> ${subQuery},
+            'cards': cards[]-> ${subQuery}
           }[0]`
   );
 };
