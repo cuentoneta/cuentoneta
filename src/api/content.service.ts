@@ -18,7 +18,3 @@ export async function fetchLandingPageContent(
 
   return res.json(result);
 }
-
-module.exports = {
-  fetchLandingPageContent,
-};
