@@ -6,6 +6,12 @@ footer {
     background-color: white;
     border-top: 1px solid $primary-500;
 
+    .social img {
+        width: 20px;
+        height: 20px;
+        max-width: unset;
+    }
+
     @media screen and (max-width: $max-xs-width) {
         padding: $spacing-8 $spacing-5;
     }
