@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { Story } from '../../models/story.model';
 import { Publication } from '../../models/storylist.model';
 
@@ -24,6 +24,7 @@ dayjs.locale('es');
     StoryCardSkeletonComponent,
     StoryEditionDateLabelComponent
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StoryCardComponent implements OnInit {
   @Input() editionPrefix: string | undefined;
@@ -47,6 +48,6 @@ export class StoryCardComponent implements OnInit {
       ? `${this.comingNextLabel} ${dateFormat}`
       : this.comingNextLabel;
 
-    this.previewText = this.publication?.story.paragraphs.join(' ') ?? '';
+    this.previewText = this.publication?.story.paragraphs.map(paragraph => paragraph.text).join(' ') ?? '';
   }
 }

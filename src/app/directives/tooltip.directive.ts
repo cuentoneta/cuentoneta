@@ -26,16 +26,16 @@ export class TooltipDirective implements OnDestroy {
       y = this.el.nativeElement.getBoundingClientRect().top + this.el.nativeElement.offsetHeight + 6;
     }else if (this.position === "top"){
       x = this.el.nativeElement.getBoundingClientRect().left + this.el.nativeElement.offsetWidth / 2;
-      y = this.el.nativeElement.getBoundingClientRect().top - this.el.nativeElement.offsetHeight + 28;
+      y = this.el.nativeElement.getBoundingClientRect().top - this.el.nativeElement.offsetHeight - 28;
     }else if (this.position === "right"){
       x = this.el.nativeElement.getBoundingClientRect().left + this.el.nativeElement.offsetWidth + (3 * this.text.length);
       y = this.el.nativeElement.getBoundingClientRect().top + this.el.nativeElement.offsetHeight / 2 - 13;
     }else if (this.position === "left"){
-      // Todo: Modificar para el lado izquierdo 
+      // Todo: Modificar para el lado izquierdo
       x = this.el.nativeElement.getBoundingClientRect().left + this.el.nativeElement.offsetWidth - (3 * this.text.length);
       y = this.el.nativeElement.getBoundingClientRect().top + this.el.nativeElement.offsetHeight / 2 - 13;
     }
-    
+
     this.createTooltipPopup(x, y);
   }
 

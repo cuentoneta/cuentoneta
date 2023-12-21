@@ -1,9 +1,11 @@
 import { supportedLanguages } from '../utils/localization';
+import { DocumentTextIcon } from '@sanity/icons';
 
 export default {
   name: 'story',
   title: 'Cuento',
   type: 'document',
+  icon: DocumentTextIcon,
   fields: [
     {
       name: 'title',

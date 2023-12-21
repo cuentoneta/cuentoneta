@@ -1,63 +1,81 @@
 <section>
   <header [attr.aria-busy]="!storylist">
-    <ng-container *ngIf="storylist && storylist.title; else titleSkeleton">
-      <a
-        [routerLink]="'/' + appRouteTree['STORYLIST']"
-        [queryParams]="{ slug: storylist.slug }"
-      >
-        <h3 class="storylist-title">{{ storylist.title }}</h3>
-      </a>
-    </ng-container>
+    @if(!!storylist && storylist.title){
+    <a
+      [routerLink]="'/' + appRouteTree['STORYLIST']"
+      [queryParams]="{ slug: storylist.slug }"
+    >
+      <h3 class="storylist-title">{{ storylist.title }}</h3>
+    </a>
+    } @else {
+    <ng-container *ngTemplateOutlet="titleSkeleton"></ng-container>
+    }
   </header>
 
-  <ng-container *ngIf="!!storylist; else bodySkeleton">
-    <ng-container *ngFor="let publication of displayedPublications">
-      <a
-        [routerLink]="
-          publication.published ? ['/' + appRouteTree['STORY']] : null
+  @if(!!storylist){ @for(publication of displayedPublications; track $index){
+  <a
+    [routerLink]="publication.published ? ['/' + appRouteTree['STORY']] : null"
+    [queryParams]="{ slug: publication.story.slug, list: storylist.slug }"
+  >
+    <article
+      [ngClass]="{ selected: selectedStorySlug === publication.story.slug }"
+    >
+      <cuentoneta-story-edition-date-label
+        class="edition-and-label"
+        [label]="
+          publication.published
+            ? getEditionLabel(publication, publication.publishingOrder)
+            : storylist.comingNextLabel
         "
-        [queryParams]="{ slug: publication.story.slug, list: storylist.slug }"
-      >
-        <article [ngClass]="{ 'selected': selectedStorySlug === publication.story.slug }">
-          <cuentoneta-story-edition-date-label
-            class="edition-and-label"
-            [label]="
-              publication.published
-                ? getEditionLabel(publication, publication.publishingOrder)
-                : storylist.comingNextLabel
-            "
+      />
+      @if(publication.published){
+      <h4 class="title">{{ publication.story.title }}</h4>
+      <div class="flex items-center justify-between">
+        <h5 class="author">
+          {{ publication.story.author.name }}
+        </h5>
+        @if(!!publication.story.videoUrl){
+        <div [title]="'Contiene material audiovisual'" class="formats-info">
+          <img
+            class="video"
+            [alt]="'Contiene video'"
+            src="assets/svg/video.svg"
           />
-          <ng-container *ngIf="publication.published; else comingNext"
-            ><h4 class="title">{{ publication.story.title }}</h4>
-            <h5 class="author">
-              {{ publication.story.author.name }}
-            </h5></ng-container
-          >
-        </article>
-      </a>
-    </ng-container>
-  </ng-container>
+        </div>
+        }
+      </div>
+
+      } @else{
+      <ngx-skeleton-loader
+        count="2"
+        appearance="line"
+        animation="false"
+      ></ngx-skeleton-loader>
+      }
+    </article>
+  </a>
+  } } @else { @for(skeleton of dummyList; track $index){
+  <article [attr.aria-busy]="true">
+    <ngx-skeleton-loader count="2" appearance="line"></ngx-skeleton-loader>
+  </article>
+  } }
 
   <!-- ToDo: #288 - Generar abstracción para evitar repetir lógica presente en el header (ver líneas 2 - 9)-->
-  <footer *ngIf="storylist && storylist.publications.length >= 10">
-    <ng-container *ngIf="storylist; else titleSkeleton">
-      <a
-        [routerLink]="'/' + appRouteTree['STORYLIST']"
-        [queryParams]="{ slug: storylist.slug }"
-      >
-        <h3 class="storylist-title">Ver más...</h3>
-      </a>
-    </ng-container>
+  @if(!!storylist && storylist.publications.length >= 10) {
+  <footer>
+    @if(storylist){
+    <a
+      [routerLink]="'/' + appRouteTree['STORYLIST']"
+      [queryParams]="{ slug: storylist.slug }"
+    >
+      <h3 class="storylist-title">Ver más...</h3>
+    </a>
+    } @else {
+    <ng-container *ngTemplateOutlet="titleSkeleton"></ng-container>
+    }
   </footer>
+  }
 </section>
-
-<ng-template #comingNext>
-  <ngx-skeleton-loader
-    count="2"
-    appearance="line"
-    animation="false"
-  ></ngx-skeleton-loader>
-</ng-template>
 
 <ng-template #titleSkeleton>
   <ngx-skeleton-loader
@@ -68,10 +86,4 @@
       'background-color': '#D4D4D8'
     }"
   ></ngx-skeleton-loader>
-</ng-template>
-
-<ng-template #bodySkeleton>
-  <article [attr.aria-busy]="true" *ngFor="let skeleton of dummyList">
-    <ngx-skeleton-loader count="2" appearance="line"></ngx-skeleton-loader>
-  </article>
 </ng-template>

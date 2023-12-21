@@ -39,6 +39,8 @@ Si deseas contribuir a La Cuentoneta te recomendamos leer la [guía de contribuc
 
 En caso que seas desarrolladora o desarrollador, encontrarás en ese documento información sobre todos los aspectos técnicos del proyecto, incluyendo cómo instalar el proyecto localmente para que puedas probarlo y realizar tus contribuciones de código.
 
+Si deseás visualizar los ítems de trabajo para principiantes en el proyecto, podés dirigirte a la [página de contribución del proyecto](https://github.com/cuentoneta/cuentoneta/contribute).
+
 ## Misión, Visión y Valores
 
 La misión, la visión y los valores de La Cuentoneta nos proporcionan el marco de referencia para la toma de decisiones y el desarrollo de las acciones del proyecto a largo plazo. Pueden consultarse los MMVs encuentran en [este enlace][doc-mvv].

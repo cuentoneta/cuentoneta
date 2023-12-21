@@ -47,6 +47,7 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 - Apertura del concurso de escritura _III Certamen Extraordinario de Escritura_, a cargo de la comunidad **[Taller de 
   Escritura Creativa](https://discord.gg/YJDQCsBmyv)**.
 - Búsqueda de community manager y diseñadores gráficos para trabajar en las futuras características del sitio web.
+- ### `Hito: Lanzamiento al público de la versión 2.3 de La Cuentoneta (planificado para el 2023/12/21)`
 
 ## Enero de 2024
 - Preparación de un newsletter quincenal al que los usuarios podrán suscribirse para recibir novedades de La Cuentoneta por correo electrónico.

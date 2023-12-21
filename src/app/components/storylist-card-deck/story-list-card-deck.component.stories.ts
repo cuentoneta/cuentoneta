@@ -1,7 +1,6 @@
 import { Meta, moduleMetadata } from '@storybook/angular';
 import { StorylistCardDeckComponent } from './storylist-card-deck.component';
-import { RouterModule } from '@angular/router';
-import { APP_BASE_HREF } from '@angular/common';
+import { RouterTestingModule } from '@angular/router/testing';
 
 const fullyLoadedStorylist = {
   _id: 'de027057-130b-473d-a4f7-f561c878feeb',
@@ -109,7 +108,7 @@ const fullyLoadedStorylist = {
         summary:
           '"Las Fresas" fue forma parte de la colección "Cuentos a Ninon", una obra temprana de Zola originalmente publicada en 1864. Mediante un estilo naturalista, el autor narra en esta breve historia la tendencia de los jóvenes a despreocuparse de ciertos detalles cuando están enamorados, instalando el bosque como el lugar ideal de los protagonistas como su espacio privado y usando como la frescura como el rasgo común y compartido entre el bosque, las fresas y los amantes mismos.',
         paragraphs: [
-          '<strong>I.</strong>',
+          '<b>I.<b>',
           'Una mañana de junio, al abrir la ventana, recibí en el rostro un soplo de aire fresco. Durante la noche había habido una fuerte tormenta. El cielo parecía como nuevo, de un azul tierno, lavado por el chaparrón hasta en sus más pequeños rincones. Los tejados, los árboles cuyas altas ramas percibía por entre las chimeneas, estaban aún empapados de lluvia, y aquel trozo de horizonte sonreía bajo un sol pálido. De los jardines cercanos subía un agradable olor a tierra mojada.',
         ],
         author: {
@@ -262,7 +261,7 @@ const upcomingStoriesStorylist = {
         summary:
           '"Las Fresas" fue forma parte de la colección "Cuentos a Ninon", una obra temprana de Zola originalmente publicada en 1864. Mediante un estilo naturalista, el autor narra en esta breve historia la tendencia de los jóvenes a despreocuparse de ciertos detalles cuando están enamorados, instalando el bosque como el lugar ideal de los protagonistas como su espacio privado y usando como la frescura como el rasgo común y compartido entre el bosque, las fresas y los amantes mismos.',
         paragraphs: [
-          '<strong>I.</strong>',
+          '<b>I.<b>',
           'Una mañana de junio, al abrir la ventana, recibí en el rostro un soplo de aire fresco. Durante la noche había habido una fuerte tormenta. El cielo parecía como nuevo, de un azul tierno, lavado por el chaparrón hasta en sus más pequeños rincones. Los tejados, los árboles cuyas altas ramas percibía por entre las chimeneas, estaban aún empapados de lluvia, y aquel trozo de horizonte sonreía bajo un sol pálido. De los jardines cercanos subía un agradable olor a tierra mojada.',
         ],
         author: {
@@ -315,13 +314,7 @@ export default {
   component: StorylistCardDeckComponent,
   decorators: [
     moduleMetadata({
-      imports: [RouterModule.forRoot([])],
-      providers: [
-        {
-          provide: APP_BASE_HREF,
-          useValue: '/',
-        },
-      ],
+      imports: [RouterTestingModule],
     }),
   ],
 } as Meta<StorylistCardDeckComponent>;
