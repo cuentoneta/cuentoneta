@@ -17,8 +17,8 @@ export class StoryService {
   public getBySlug(slug: string): Observable<Story> {
     const params = new HttpParams().set('slug', slug);
     return this.http
-      .get<StoryDTO>(`${this.prefix}/read`, { params })
-      .pipe(map((story) => this.parseStoryContent(story)));
+        .get<StoryDTO>(`${this.prefix}/read`, { params })
+        .pipe(map((story) => this.parseStoryContent(story)));
   }
 
   public parseStoryCardContent(story: StoryDTO): StoryCard {
@@ -26,10 +26,10 @@ export class StoryService {
       ...story,
       prologues: story.prologues ?? [],
       paragraphs:
-        story?.paragraphs?.map((x: BlockContent) => this.parseParagraph(x)) ??
-        [],
+          story?.paragraphs?.map((x: BlockContent) => this.parseParagraph(x)) ??
+          [],
       summary:
-        story?.summary?.map((x: BlockContent) => this.parseParagraph(x)) ?? [],
+          story?.summary?.map((x: BlockContent) => this.parseParagraph(x)) ?? [],
     };
   }
 
@@ -38,14 +38,14 @@ export class StoryService {
       ...story,
       prologues: story.prologues ?? [],
       paragraphs:
-        story?.paragraphs?.map((x: BlockContent) => this.parseParagraph(x)) ??
-        [],
+          story?.paragraphs?.map((x: BlockContent) => this.parseParagraph(x)) ??
+          [],
       summary:
-        story?.summary?.map((x: BlockContent) => this.parseParagraph(x)) ?? [],
+          story?.summary?.map((x: BlockContent) => this.parseParagraph(x)) ?? [],
       author: {
         ...story.author,
         biography:
-          story.author.biography?.map((x) => this.parseParagraph(x)) ?? [],
+            story.author.biography?.map((x) => this.parseParagraph(x)) ?? [],
       },
     };
   }
@@ -54,16 +54,16 @@ export class StoryService {
     let paragraph = '';
     let classes: string[] = [];
 
+    block.markDefs
+
     block.children.forEach((x: Block) => {
-      let part = x.text;
+      let part = '';
 
-      // Comprobación de estilos de texto y aplicación de la transformación correspondiente
-      if (x.marks?.includes('em')) {
-        part = this.addItalics(part);
-      }
+      part = this.parseBlockMarks(x)
 
-      if (x.marks?.includes('strong')) {
-        part = this.addBold(part);
+      // Comprueba si el bloque actual debe ser un enlace
+      if(block.markDefs?.find(m => m._key === x.marks?.[0])){
+        part = `<a href="">${part}</a>`
       }
 
       // Transformación de salto de línea en texto dentro del mismo párrafo
@@ -78,6 +78,21 @@ export class StoryService {
       paragraph = paragraph.concat(part);
     });
     return { classes: classes.join(' '), text: paragraph };
+  }
+
+  private parseBlockMarks(block: Block): string {
+    let part = block.text;
+
+    // Comprobación de estilos de texto y aplicación de la transformación correspondiente
+    if (block.marks?.includes('em')) {
+      part = this.addItalics(part);
+    }
+
+    if (block.marks?.includes('strong')) {
+      part = this.addBold(part);
+    }
+
+    return part
   }
 
   private addItalics(text: string): string {
