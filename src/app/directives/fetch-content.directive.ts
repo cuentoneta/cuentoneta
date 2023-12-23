@@ -45,7 +45,7 @@ export class FetchContentDirective<T> {
      * al realizar la llamada async a la fuente y luego de terminada ésta.
      * @param source$
      */
-    public fetchContent$(source$: Observable<T>): Observable<T> {
+    public fetchContent$<T>(source$: Observable<T>): Observable<T> {
         this.isLoading = true;
         return source$.pipe(tap(() => (this.isLoading = false)));
     }

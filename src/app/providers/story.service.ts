@@ -8,7 +8,7 @@ import { environment } from '../environments/environment';
 
 // Models
 import { Paragraph, Story, StoryCard, StoryDTO } from '@models/story.model';
-import { Block, BlockContent } from '@models/block-content.model';
+import { Block, BlockContent, MarkDef } from '@models/block-content.model';
 
 @Injectable({ providedIn: 'root' })
 export class StoryService {
@@ -19,16 +19,6 @@ export class StoryService {
     return this.http
       .get<StoryDTO>(`${this.prefix}/read`, { params })
       .pipe(map((story) => this.parseStoryContent(story)));
-  }
-
-  // ToDo: Rediseñar funcionamiento del endpoint de autores.
-  public getAuthors(): Observable<Story[]> {
-    return this.http.get<Story[]>(`${this.prefix}/authors`);
-  }
-
-  // ToDo: Rediseñar funcionamiento del endpoint de links originales.
-  public getOriginalLinks(): Observable<Story[]> {
-    return this.http.get<Story[]>(`${this.prefix}/original-links`);
   }
 
   public parseStoryCardContent(story: StoryDTO): StoryCard {
@@ -60,28 +50,28 @@ export class StoryService {
     };
   }
 
-  private parseParagraph(block: BlockContent): Paragraph {
+  private parseParagraph(blockContent: BlockContent): Paragraph {
     let paragraph = '';
     let classes: string[] = [];
 
-    block.children.forEach((x: Block) => {
-      let part = x.text;
+    blockContent.markDefs;
 
-      // Comprobación de estilos de texto y aplicación de la transformación correspondiente
-      if (x.marks?.includes('em')) {
-        part = this.addItalics(part);
-      }
+    blockContent.children.forEach((block: Block) => {
+      let part = block.text;
 
-      if (x.marks?.includes('strong')) {
-        part = this.addBold(part);
-      }
+      part = this.parseBlockTextStyleMarks(block, part);
+      part = this.parseBlockTextMarkDefs(
+        part,
+        block.marks ?? [],
+        blockContent.markDefs ?? []
+      );
 
       // Transformación de salto de línea en texto dentro del mismo párrafo
       part = part.replaceAll('\n', '<br/>');
 
       // Asignación de clases para modificar estilos del texto
       // TODO: Utilizar mark particular en BlockContent para centrar cualquier tipo de texto a futuro
-      if (x.text?.includes('***')) {
+      if (block.text?.includes('***')) {
         classes = classes.concat(['text-center']);
       }
 
@@ -90,11 +80,66 @@ export class StoryService {
     return { classes: classes.join(' '), text: paragraph };
   }
 
+  /**
+   * Método encargado de procesar los estilos estáticos de texto soportados por Sanity
+   * Genera tags HTML para los estilos de texto en negrita e itálica
+   * // TODO: Soportar los restantes estilos de texto del tipo BlockContent en Sanity
+   * @param block
+   * @param part
+   * @private
+   */
+  private parseBlockTextStyleMarks(block: Block, part: string = ''): string {
+    const marks = block.marks ?? [];
+
+    if(block.marks?.length === 0) return part;
+
+    marks.forEach((mark) => {
+      switch (mark) {
+        case 'em':
+          part = this.addItalics(part);
+          break;
+        case 'strong':
+          part = this.addBold(part);
+          break;
+        default:
+          break;
+      }
+    });
+
+    return part;
+  }
+
+  private parseBlockTextMarkDefs(
+      text: string,
+      marks: string[],
+      markDefs: MarkDef[]
+  ): string {
+    if (markDefs.length === 0 || marks.length === 0) return text;
+
+    markDefs.forEach((markDef) => {
+      if (marks.includes(markDef._key)) {
+        switch (markDef._type) {
+          case 'link':
+            text = this.addUrlLink(text, markDef.href);
+            break;
+          default:
+            break;
+        }
+      }
+    });
+
+    return text;
+  }
+
   private addItalics(text: string): string {
     return `<i>${text}</i>`;
   }
 
   private addBold(text: string): string {
     return `<b>${text}</b>`;
+  }
+
+  private addUrlLink(text: string, url: string): string {
+    return `<a href="${url}">${text}</a>`;
   }
 }

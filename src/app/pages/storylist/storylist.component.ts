@@ -52,7 +52,8 @@ export class StorylistComponent {
       activatedRoute.queryParams.pipe(
         tap(({ slug }) => {
           this.storylist = undefined;
-          this.skeletonConfig = contentService.contentConfig.find(
+          const decks = [...contentService.contentConfig.cards, ...contentService.contentConfig.previews]
+          this.skeletonConfig = decks.find(
             (config) =>
               config.slug === activatedRoute.snapshot.queryParams['slug']
           )?.gridSkeletonConfig;
