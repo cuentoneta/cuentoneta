@@ -21,16 +21,6 @@ export class StoryService {
       .pipe(map((story) => this.parseStoryContent(story)));
   }
 
-  // ToDo: Rediseñar funcionamiento del endpoint de autores.
-  public getAuthors(): Observable<Story[]> {
-    return this.http.get<Story[]>(`${this.prefix}/authors`);
-  }
-
-  // ToDo: Rediseñar funcionamiento del endpoint de links originales.
-  public getOriginalLinks(): Observable<Story[]> {
-    return this.http.get<Story[]>(`${this.prefix}/original-links`);
-  }
-
   public parseStoryCardContent(story: StoryDTO): StoryCard {
     return {
       ...story,
