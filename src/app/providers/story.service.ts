@@ -8,7 +8,7 @@ import { environment } from '../environments/environment';
 
 // Models
 import { Paragraph, Story, StoryCard, StoryDTO } from '@models/story.model';
-import { Block, BlockContent } from '@models/block-content.model';
+import { Block, BlockContent, MarkDef } from '@models/block-content.model';
 
 @Injectable({ providedIn: 'root' })
 export class StoryService {
@@ -17,8 +17,8 @@ export class StoryService {
   public getBySlug(slug: string): Observable<Story> {
     const params = new HttpParams().set('slug', slug);
     return this.http
-        .get<StoryDTO>(`${this.prefix}/read`, { params })
-        .pipe(map((story) => this.parseStoryContent(story)));
+      .get<StoryDTO>(`${this.prefix}/read`, { params })
+      .pipe(map((story) => this.parseStoryContent(story)));
   }
 
   public parseStoryCardContent(story: StoryDTO): StoryCard {
@@ -26,10 +26,10 @@ export class StoryService {
       ...story,
       prologues: story.prologues ?? [],
       paragraphs:
-          story?.paragraphs?.map((x: BlockContent) => this.parseParagraph(x)) ??
-          [],
+        story?.paragraphs?.map((x: BlockContent) => this.parseParagraph(x)) ??
+        [],
       summary:
-          story?.summary?.map((x: BlockContent) => this.parseParagraph(x)) ?? [],
+        story?.summary?.map((x: BlockContent) => this.parseParagraph(x)) ?? [],
     };
   }
 
@@ -38,40 +38,35 @@ export class StoryService {
       ...story,
       prologues: story.prologues ?? [],
       paragraphs:
-          story?.paragraphs?.map((x: BlockContent) => this.parseParagraph(x)) ??
-          [],
+        story?.paragraphs?.map((x: BlockContent) => this.parseParagraph(x)) ??
+        [],
       summary:
-          story?.summary?.map((x: BlockContent) => this.parseParagraph(x)) ?? [],
+        story?.summary?.map((x: BlockContent) => this.parseParagraph(x)) ?? [],
       author: {
         ...story.author,
         biography:
-            story.author.biography?.map((x) => this.parseParagraph(x)) ?? [],
+          story.author.biography?.map((x) => this.parseParagraph(x)) ?? [],
       },
     };
   }
 
-  private parseParagraph(block: BlockContent): Paragraph {
+  private parseParagraph(blockContent: BlockContent): Paragraph {
     let paragraph = '';
     let classes: string[] = [];
 
-    block.markDefs
+    blockContent.markDefs;
 
-    block.children.forEach((x: Block) => {
+    blockContent.children.forEach((block: Block) => {
       let part = '';
 
-      part = this.parseBlockMarks(x)
-
-      // Comprueba si el bloque actual debe ser un enlace
-      if(block.markDefs?.find(m => m._key === x.marks?.[0])){
-        part = `<a href="">${part}</a>`
-      }
+      part = this.parseBlockTextStyleMarks(block);
 
       // Transformación de salto de línea en texto dentro del mismo párrafo
       part = part.replaceAll('\n', '<br/>');
 
       // Asignación de clases para modificar estilos del texto
       // TODO: Utilizar mark particular en BlockContent para centrar cualquier tipo de texto a futuro
-      if (x.text?.includes('***')) {
+      if (block.text?.includes('***')) {
         classes = classes.concat(['text-center']);
       }
 
@@ -80,19 +75,37 @@ export class StoryService {
     return { classes: classes.join(' '), text: paragraph };
   }
 
-  private parseBlockMarks(block: Block): string {
+  /**
+   * Método encargado de procesar los estilos estáticos de texto soportados por Sanity
+   * Genera tags HTML para los estilos de texto en negrita e itálica
+   * // TODO: Soportar los restantes estilos de texto del tipo BlockContent en Sanity
+   * @param block
+   * @private
+   */
+  private parseBlockTextStyleMarks(block: Block): string {
     let part = block.text;
+    const marks = block.marks ?? [];
 
-    // Comprobación de estilos de texto y aplicación de la transformación correspondiente
-    if (block.marks?.includes('em')) {
-      part = this.addItalics(part);
-    }
 
-    if (block.marks?.includes('strong')) {
-      part = this.addBold(part);
-    }
+    marks.forEach((mark) => {
+      switch (mark) {
+        case 'em':
+          part = this.addItalics(part);
+          break;
+        case 'strong':
+          part = this.addBold(part);
+          break;
+        default:
+          break;
+      }
+    });
 
-    return part
+    return part;
+  }
+
+  private parseMarkDefs(markDefs: MarkDef[], part: string): string {
+    if (markDefs.length === 0) return part;
+    return part;
   }
 
   private addItalics(text: string): string {
@@ -101,5 +114,9 @@ export class StoryService {
 
   private addBold(text: string): string {
     return `<b>${text}</b>`;
+  }
+
+  private addUrlLink(text: string, url: string): string {
+    return `<a href="${url}">${text}</a>`;
   }
 }
