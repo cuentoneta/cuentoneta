@@ -57,9 +57,14 @@ export class StoryService {
     blockContent.markDefs;
 
     blockContent.children.forEach((block: Block) => {
-      let part = '';
+      let part = block.text;
 
-      part = this.parseBlockTextStyleMarks(block);
+      part = this.parseBlockTextStyleMarks(block, part);
+      part = this.parseBlockTextMarkDefs(
+        part,
+        block.marks ?? [],
+        blockContent.markDefs ?? []
+      );
 
       // Transformación de salto de línea en texto dentro del mismo párrafo
       part = part.replaceAll('\n', '<br/>');
@@ -80,12 +85,13 @@ export class StoryService {
    * Genera tags HTML para los estilos de texto en negrita e itálica
    * // TODO: Soportar los restantes estilos de texto del tipo BlockContent en Sanity
    * @param block
+   * @param part
    * @private
    */
-  private parseBlockTextStyleMarks(block: Block): string {
-    let part = block.text;
+  private parseBlockTextStyleMarks(block: Block, part: string = ''): string {
     const marks = block.marks ?? [];
 
+    if(block.marks?.length === 0) return part;
 
     marks.forEach((mark) => {
       switch (mark) {
@@ -103,9 +109,26 @@ export class StoryService {
     return part;
   }
 
-  private parseMarkDefs(markDefs: MarkDef[], part: string): string {
-    if (markDefs.length === 0) return part;
-    return part;
+  private parseBlockTextMarkDefs(
+      text: string,
+      marks: string[],
+      markDefs: MarkDef[]
+  ): string {
+    if (markDefs.length === 0 || marks.length === 0) return text;
+
+    markDefs.forEach((markDef) => {
+      if (marks.includes(markDef._key)) {
+        switch (markDef._type) {
+          case 'link':
+            text = this.addUrlLink(text, markDef.href);
+            break;
+          default:
+            break;
+        }
+      }
+    });
+
+    return text;
   }
 
   private addItalics(text: string): string {
