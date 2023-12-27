@@ -1,4 +1,4 @@
-.tooltip-container {
+@mixin tooltip-container {
   @include inter-body-xs-medium;
   font-weight: $inter-font-weight-semibold;
   padding: $spacing-2;
