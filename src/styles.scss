@@ -4,10 +4,10 @@
 @tailwind utilities;
 
 // Imports de estilos globales
-@import 'assets/scss/reset';
-@import 'assets/scss/theme';
-@import 'assets/scss/transitions';
-@import 'src/app/directives/tooltip.directive.scss';
+@use 'assets/scss/reset';
+@use 'assets/scss/theme';
+@use 'assets/scss/transitions';
+@use 'src/app/directives/tooltip.directive.scss';
 
 // Imports de fuentes
 @font-face {

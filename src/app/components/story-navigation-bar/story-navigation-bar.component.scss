@@ -1,4 +1,4 @@
-@import 'src/assets/scss/theme.scss';
+@use 'src/assets/scss/theme.scss';
 
 @mixin card-spacing {
   padding: $spacing-5 $spacing-7;
