@@ -1,4 +1,4 @@
-@import 'src/assets/scss/theme.scss';
+@use 'src/assets/scss/theme.scss' as *;
 
 main {
   @include card;

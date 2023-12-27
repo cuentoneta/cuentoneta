@@ -1,13 +1,14 @@
+// Imports de estilos globales
+@use 'assets/scss/reset' as *;
+@use 'assets/scss/theme' as *;
+@use 'assets/scss/transitions' as *;
+@use 'src/app/directives/tooltip.directive.scss' as *;
+
 // Imports de Tailwind
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-// Imports de estilos globales
-@import 'assets/scss/reset';
-@import 'assets/scss/theme';
-@import 'assets/scss/transitions';
-@import 'src/app/directives/tooltip.directive.scss';
 
 // Imports de fuentes
 @font-face {
