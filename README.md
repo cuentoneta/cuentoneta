@@ -27,8 +27,6 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 - [Licencias](#licencias)
 - [Links de interés](#links-de-interés)
 
----
-
 ## Hoja de ruta
 
 Puedes acceder a la hoja de ruta (roadmap) del proyecto en [este enlace][doc-roadmap]. Allí podrás visualizar los planes de las futuras versiones de la plataforma más las storylists a agregar a La Cuentoneta.
@@ -54,6 +52,17 @@ La misión, la visión y los valores de La Cuentoneta nos proporcionan el marco 
 </picture>
 
 Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. Es requerido unirte a nuestro [server][dc-fec] y buscar el canal [#🚐 | la-cuentoneta][dc-channel]. Allí vas a poder escribir consultas, realizar propuestas y compartir ideas para el proyecto. El código de conducta de este proyecto es extensible también a tu participación en el server de [FrontendCafé en Discord][dc-fec].
+
+
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://forgoodfirstissue.github.com/for-good-first-issue.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/cuentoneta/cuentoneta/assets/32349705/786d9201-e449-49a6-b9e2-ebf5f9281abc">
+  <img alt="logo-frontendcafe" src="https://github.com/cuentoneta/cuentoneta/assets/32349705/786d9201-e449-49a6-b9e2-ebf5f9281abc">
+</picture>
+
+La Cuentoneta también es parte de [For Good First Issue](https://forgoodfirstissue.github.com/), una iniciativa que busca generar una lista curada de proyectos open-source con foco en desarrollos del tipo [Bienes Públicos Digitales (DPGs, Digital Public Goods)
+](https://digitalpublicgoods.net/digital-public-goods/), los cuales además se encuentran disponibles para colaboración abierta.
 
 ---
 
