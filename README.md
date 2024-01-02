@@ -55,6 +55,15 @@ La misión, la visión y los valores de La Cuentoneta nos proporcionan el marco 
 
 Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. Es requerido unirte a nuestro [server][dc-fec] y buscar el canal [#🚐 | la-cuentoneta][dc-channel]. Allí vas a poder escribir consultas, realizar propuestas y compartir ideas para el proyecto. El código de conducta de este proyecto es extensible también a tu participación en el server de [FrontendCafé en Discord][dc-fec].
 
+
+
+<picture>
+  <img alt="logo-frontendcafe" src="https://forgoodfirstissue.github.com/for-good-first-issue.svg">
+</picture>
+
+La Cuentoneta también es parte de [For Good First Issue](https://forgoodfirstissue.github.com/), una iniciativa que busca generar una lista curada de proyectos open-source con foco en desarrollos del tipo [Bienes Públicos Digitales (DPGs, Digital Public Goods)
+](https://digitalpublicgoods.net/digital-public-goods/), los cuales además se encuentran disponibles para colaboración abierta.
+
 ---
 
 ## Accesibilidad
