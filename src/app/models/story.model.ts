@@ -23,7 +23,7 @@ export interface Story extends StoryBase {
 export interface StoryDTO extends StoryBase {
   author: AuthorDTO;
   prologues: PrologueDTO[];
-  summary?: BlockContent[];
+  summary: BlockContent[];
   paragraphs: BlockContent[];
 }
 

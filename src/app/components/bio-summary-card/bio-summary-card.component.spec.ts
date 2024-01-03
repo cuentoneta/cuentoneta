@@ -22,14 +22,13 @@ const mockStory: Story = {
     approximateReadingTime: 5,
     author: mockAuthor,
     originalLink: 'https://gativideo.com/historia-de-la-pelicula',
-    language: 'es',
     videoUrl: 'https://gativideo.com/video.mp4',
     badLanguage: false,
     prologues: [],
-    summary: [{classes: '', text: 'Arranca con "Fanfare for the Common Man" y la próxima canción es "Silhouette" de Kenny G.',}],
+    summary: 'Arranca con "Fanfare for the Common Man" y la próxima canción es "Silhouette" de Kenny G.',
     paragraphs: [
-        { classes: '', text: 'El presente Video-Cassette se vende para uso personal o doméstico exclusivamente, todos los demás derechos quedan reservados' },
-        { classes: '', text: 'Cualquier divulgación total o parcial de la obra, sea a través de copias, edición, adición, exhibición, difusión y/o emisión de difusión queda expresamente prohibida.' }
+        'El presente Video-Cassette se vende para uso personal o doméstico exclusivamente, todos los demás derechos quedan reservados',
+        'Cualquier divulgación total o parcial de la obra, sea a través de copias, edición, adición, exhibición, difusión y/o emisión de difusión queda expresamente prohibida.'
     ]
 }
 
