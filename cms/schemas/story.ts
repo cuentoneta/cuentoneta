@@ -119,7 +119,6 @@ export default {
       name: 'review',
       title: 'Reseña',
       type: 'blockContent',
-      validation: (Rule) => Rule.required(),
     },
   ],
   initialValue: {
