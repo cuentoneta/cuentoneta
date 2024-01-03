@@ -110,6 +110,7 @@ Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos 
 - Brahian Pereyra (**[@brahianpdev](https://github.com/brahianpdev)**)
 - Luis Omar Sánchez Díaz (**[@luisthepower](https://www.instagram.com/luisthepower/)**)
 - Karla Nevárez (**[kanemu36@gmail.com](mailto:kanemu36@gmail.com)**)
+- Sebastián Mansilla
 
 ---
 
