@@ -12,6 +12,8 @@ describe('BadgeComponent', () => {
 
     fixture = TestBed.createComponent(BadgeComponent);
     component = fixture.componentInstance;
+    component.tag = { title: 'test', description: 'test', icon: { svg: 'test.svg', provider: 'md', name: 'test' }, slug: 'test' }
+    component.showIcon = true
     fixture.detectChanges();
   });
 
