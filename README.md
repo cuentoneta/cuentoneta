@@ -98,7 +98,7 @@ Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos 
 ### Escritura de textos
 
 - Sofía Abramovich
-- Mariana Erro (**[@marianerro](https://twitter.com/MarianaErro)**)
+- Marian Erro (**[@marianerro](https://twitter.com/MarianaErro)**)
 - Elk A. (**[@A-Elkkk-o-k](https://www.wattpad.com/user/A-Elkkk-o-k)**)
 
 ### Selección, Transcripción y Curación de contenido
