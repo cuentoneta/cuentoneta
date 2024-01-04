@@ -48,6 +48,11 @@ export class AboutComponent {
       username: "@SoleSasia"
     },
     {
+      name: "Mia Ramos",
+      url: "https://github.com/MiaFate",
+      username: "@MiaFate"
+    },
+    {
       name: "Wilson Lasso",
       url: "https://github.com/wilago",
       username: "@wilago"
