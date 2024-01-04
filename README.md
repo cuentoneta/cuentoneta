@@ -111,6 +111,8 @@ Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos 
 - Luis Omar Sánchez Díaz (**[@luisthepower](https://www.instagram.com/luisthepower/)**)
 - Karla Nevárez (**[kanemu36@gmail.com](mailto:kanemu36@gmail.com)**)
 - Sebastián Mansilla
+- Lolo Diaz (**[@estre.sadx](https://instagram.com/estre.sadx)**)
+- Nicolás Contrera (**[@nicontrera1](https://twitter.com/nicontrera1)**)
 
 ---
 
