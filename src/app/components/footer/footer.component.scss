@@ -1,4 +1,4 @@
-@import 'src/assets/scss/theme.scss';
+@use 'src/assets/scss/theme.scss' as *;
 
 footer {
     margin-top: 120px;

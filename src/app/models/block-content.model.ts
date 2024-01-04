@@ -14,14 +14,14 @@ export interface BlockContent {
 }
 
 export interface Block {
-    _type: 'span';
+    _type: string;
     _key: string;
     text: string;
     marks?: string[];
 }
 
 export interface MarkDef {
-    _type: 'link';
+    _type: string;
     _key: string;
     href: string;
 }

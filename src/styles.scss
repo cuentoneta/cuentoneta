@@ -1,13 +1,14 @@
+// Imports de estilos globales
+@use 'assets/scss/reset' as *;
+@use 'assets/scss/theme' as *;
+@use 'assets/scss/transitions' as *;
+@use 'src/app/directives/tooltip.directive.scss' as *;
+
 // Imports de Tailwind
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-// Imports de estilos globales
-@import 'assets/scss/reset';
-@import 'assets/scss/theme';
-@import 'assets/scss/transitions';
-@import 'src/app/directives/tooltip.directive.scss';
 
 // Imports de fuentes
 @font-face {
@@ -27,4 +28,28 @@ ngx-skeleton-loader {
 
 * {
   //outline: 1px solid red;
+}
+
+/**
+  Sección de estilos globales aplicados a componentes
+
+  Para aplicar estilos a un componente en específico, por fuera de la ViewEncapsulation de Angular, debe
+  declararse el selector del componente en el selector de la regla CSS y, posteriormente, anidar los estilos
+  que se deseen aplicar al mismo.
+
+  Los casos de aplicación para reglas CSS globales son:
+  - Aplicar estilos a un componente que no se puede modificar (por ejemplo, un componente de un paquete externo).
+  - Aplicar estilos a HTML generado dinámicamente e inyectado en la vista mediante atributos InnerHTML o OuterHTML.
+ */
+
+cuentoneta-bio-summary-card {
+  .bio-and-summary p {
+    a {
+      color: $interactive-500;
+      text-decoration: underline;
+      &:hover {
+        color: $interactive-600;
+      }
+    }
+  }
 }

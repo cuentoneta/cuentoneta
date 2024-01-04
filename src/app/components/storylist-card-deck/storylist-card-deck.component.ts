@@ -14,12 +14,9 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonModule } from '@angular/common';
 
 // Models
-import {
-  GridItemPlacementConfig,
-  Storylist,
-} from '@models/storylist.model';
+import { GridItemPlacementConfig, Storylist } from '@models/storylist.model';
 import { APP_ROUTE_TREE } from '../../app.routes';
-import { StorylistGridSkeletonConfig } from "@models/content.model";
+import { StorylistGridSkeletonConfig } from '@models/content.model';
 import { StoryCardComponent } from '../story-card/story-card.component';
 
 @Component({
@@ -42,7 +39,7 @@ export class StorylistCardDeckComponent implements OnInit, OnChanges {
   @Input() canNavigateToStorylist: boolean = false;
   @Input() displayTitle: boolean = true;
   @Input() displayFeaturedImage: boolean = false;
-  @Input() skeletonConfig: StorylistGridSkeletonConfig | undefined
+  @Input() skeletonConfig: StorylistGridSkeletonConfig | undefined;
 
   dummyList: null[] = [];
   imagesCardConfig: { [key: string]: CardDeckCSSGridConfig } = {};
@@ -71,7 +68,7 @@ export class StorylistCardDeckComponent implements OnInit, OnChanges {
       }));
     for (const config of parsedConfigs) {
       const { slug, ...other } = config;
-      this.imagesCardConfig[config.slug!] = other;
+      this.imagesCardConfig[slug!] = other;
     }
   }
 
@@ -86,7 +83,7 @@ export class StorylistCardDeckComponent implements OnInit, OnChanges {
       }));
     for (const config of parsedConfigs) {
       const { slug, ...other } = config;
-      this.storiesCardConfig[config.slug!] = other;
+      this.storiesCardConfig[slug!] = other;
     }
   }
 
@@ -95,7 +92,7 @@ export class StorylistCardDeckComponent implements OnInit, OnChanges {
       (card) => [card.slug, card.imageSlug].includes(slug)
     );
     return {
-      order: storyCardConfig?.order! ?? 2,
+      order: storyCardConfig?.order ?? 2,
       'grid-column-start': storyCardConfig?.startCol ?? 'auto',
       'grid-column-end': storyCardConfig?.endCol ?? 'span 4',
     };

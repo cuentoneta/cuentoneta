@@ -44,27 +44,33 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 ## Diciembre de 2023
 - Preparación de la lista "Cuentos de Verano 2024" en la plataforma.
-- Apertura del concurso de escritura _III Certamen Extraordinario de Escritura_, a cargo de la comunidad **[Taller de 
-  Escritura Creativa](https://discord.gg/YJDQCsBmyv)**.
-- Búsqueda de community manager y diseñadores gráficos para trabajar en las futuras características del sitio web.
-- ### `Hito: Lanzamiento al público de la versión 2.3 de La Cuentoneta (planificado para el 2023/12/21)`
+- Rediseño de la landing page, incluyendo storylists en formato tarjeta.
+- ### `Hito: Lanzamiento al público de la versión 2.3.0 de La Cuentoneta (planificado para el 2023/12/21)`
 
 ## Enero de 2024
-- Preparación de un newsletter quincenal al que los usuarios podrán suscribirse para recibir novedades de La Cuentoneta por correo electrónico.
-- Implementación de la funcionalidad "¿Cuánto tiempo tenés para leer hoy?" que permitirá filtrar los relatos según su tiempo estimado de lectura.
-- Invitación abierta a autoras y autores santafesinos para participar en la storylist "Plumas Santafesinas", recopilando relatos breves y poemas de autoría provincial.
+- Apertura del primer concurso de escritura en La Cuentoneta, el _III Certamen Extraordinario de Escritura_, a cargo de la comunidad **[Taller de
+  Escritura Creativa](https://discord.gg/YJDQCsBmyv)**.
+- Búsqueda de community manager y diseñadores gráficos para trabajar en las futuras características del sitio web.
+
+- ### `Hito: Lanzamiento al público de la versión 2.3.1 de La Cuentoneta (lanzada el 2024/01/04)`
 
 ## Febrero de 2024
+- Desarrollo de las funcionalidades de registro e inicio de sesión de usuarios, que permitirán marcar historias como "leídas", dejar puntuaciones y comentarios en cada relato y storylist.
 - Publicación de las listas "Cuentos para el Bicentenario" en la plataforma, originalmente publicadas por el Ministerio de Educación de la Nación en 2015.
-- Inclusión de niveles educativos inicial, primario y secundario en las listas.
 
 ## Marzo de 2024
-- Desarrollo de las funcionalidades de registro e inicio de sesión de usuarios, que permitirán marcar historias como "leídas", dejar puntuaciones y comentarios en cada relato y storylist.
+
 - Publicación de la lista "Cuentos por la Memoria" en conmemoración del Día por la Memoria, la Verdad y la Justicia, celebrado el 24 de marzo.
 - Exploración de material de autoras y autores locales para incluirlos en una edición especial de la plataforma.
+- Preparación de un newsletter quincenal al que los usuarios podrán suscribirse para recibir novedades de La Cuentoneta por correo electrónico.
+- Implementación de la funcionalidad "¿Cuánto tiempo tenés para leer hoy?" que permitirá filtrar los relatos según su tiempo estimado de lectura.
+
 
 ## Abril de 2024
 - Lanzamiento de la edición "Cuentos por Malvinas" para conmemorar el 41° aniversario del "Día del Veterano y de los Caídos en la Guerra de Malvinas".
+- Inclusión de niveles educativos inicial, primario y secundario en las listas.
+- Invitación abierta a autoras y autores santafesinos para participar en la storylist "Plumas Santafesinas", recopilando relatos breves y poemas de autoría provincial.
+
 
 ## Mayo de 2024
 - Planificación del módulo "Elige tu propia lectura" donde se asignará a cada usuario un desafío de lectura personalizado, generando una storylist adaptada a sus preferencias. Fecha tentativa de lanzamiento en agosto de 2024.
