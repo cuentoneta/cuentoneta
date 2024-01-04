@@ -89,6 +89,7 @@ Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos 
 - Juan Blas Tschopp (**[@juanblas09](https://github.com/juanblas09)**)
 - Diego Franchina (**[@soydiego](https://github.com/SoyDiego)**)
 - Jimer Espinoza (**[@jimersamuel](https://github.com/JimerSamuel)**)
+- Mia Ramos (**[@MiaPurpleFate](https://twitter.com.com/MiaPurpleFate)**)
 
 ### Diseño UX/UI
 
