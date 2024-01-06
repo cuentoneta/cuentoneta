@@ -1,12 +1,5 @@
 @use 'src/assets/scss/theme.scss' as theme;
 
-.title {
-  margin-bottom: theme.$spacing-5;
-}
-.subtitle {
-  color: theme.$gray-600;
-}
-
 .card-decks {
   > .navigation-link:not(:last-child) {
     margin-bottom: theme.$spacing-16;
