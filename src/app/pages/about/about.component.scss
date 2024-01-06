@@ -1,5 +1,27 @@
 @use 'src/assets/scss/theme.scss' as theme;
 
+.hero {
+
+  @apply grid mb-16;
+  @apply grid-cols-1 gap-4;
+  @apply lg:grid-cols-2 lg:gap-0;
+
+  @media screen and (min-width: theme.$min-lg-width) {
+    h1 {
+      font-size: 3.75rem;
+      line-height: 60px;
+      letter-spacing: theme.$letter-spacing;
+      font-weight: theme.$inter-font-weight-extra-bold;
+    }
+    .text {
+      width: 550px;
+    }
+    .featured-image {
+      margin-left: auto;
+    }
+  }
+}
+
 .content {
   @include theme.card;
   display: block;
@@ -18,17 +40,9 @@
   }
 }
 
-.title {
-  margin-bottom: theme.$spacing-5;
-}
-
 .subtitle {
   color: theme.$gray-600;
   margin-bottom: theme.$spacing-5;
-}
-
-h3 {
-  margin-bottom: theme.$spacing-3;
 }
 
 p,
