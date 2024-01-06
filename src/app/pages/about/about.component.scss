@@ -1,39 +1,39 @@
-@use 'src/assets/scss/theme.scss' as *;
+@use 'src/assets/scss/theme.scss' as theme;
 
-main {
-  @include card;
+.content {
+  @include theme.card;
   display: block;
-  background-color: $gray-50;
-  padding: $spacing-5;
+  background-color: theme.$gray-50;
+  padding: theme.$spacing-5;
 
-  @media screen and (max-width: $max-sm-width) {
-    margin-left: -$spacing-5;
-    margin-right: -$spacing-5;
+  @media screen and (max-width: theme.$max-sm-width) {
+    margin-left: -(theme.$spacing-5);
+    margin-right: -(theme.$spacing-5);
   }
 
-  @media screen and (min-width: $min-md-width) {
-    border-radius: $rounded-xl;
-    box-shadow: $box-shadow-card;
-    padding: $spacing-15;
+  @media screen and (min-width: theme.$min-md-width) {
+    border-radius: theme.$rounded-xl;
+    box-shadow: theme.$box-shadow-card;
+    padding: theme.$spacing-15;
   }
 }
 
 .title {
-  margin-bottom: $spacing-5;
+  margin-bottom: theme.$spacing-5;
 }
 
 .subtitle {
-  color: $gray-600;
-  margin-bottom: $spacing-5;
+  color: theme.$gray-600;
+  margin-bottom: theme.$spacing-5;
 }
 
 h3 {
-  margin-bottom: $spacing-3;
+  margin-bottom: theme.$spacing-3;
 }
 
 p,
 li {
-  @include inter-body-base-regular;
+  @include theme.inter-body-base-regular;
 }
 
 a {
