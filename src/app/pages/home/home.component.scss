@@ -1,53 +1,25 @@
-@use 'src/assets/scss/theme.scss' as *;
-
-.hero {
-  display: grid;
-
-  @media screen and (max-width: $max-md-width) {
-    grid-template-columns: 1fr;
-    grid-gap: $spacing-16;
-    margin-bottom: $spacing-16;
-  }
-
-  @media screen and (min-width: $min-lg-width) {
-    grid-template-columns: repeat(2, 1fr);
-    height: 652px;
-
-    h1 {
-      font-size: 3.75rem;
-      line-height: 60px;
-      letter-spacing: $letter-spacing;
-      font-weight: $inter-font-weight-extra-bold;
-    }
-    .text {
-      width: 550px;
-    }
-    .featured-image {
-      margin-left: auto;
-    }
-  }
-}
+@use 'src/assets/scss/theme.scss' as theme;
 
 .title {
-  margin-bottom: $spacing-5;
+  margin-bottom: theme.$spacing-5;
 }
 .subtitle {
-  color: $gray-600;
+  color: theme.$gray-600;
 }
 
 .card-decks {
   > .navigation-link:not(:last-child) {
-    margin-bottom: $spacing-16;
+    margin-bottom: theme.$spacing-16;
   }
   > * {
     display: block;
     &:not(:last-child) {
-      margin-bottom: $spacing-4;
+      margin-bottom: theme.$spacing-4;
     }
   }
 }
 
 .navigation-link {
-  @include inter-body-xl-bold;
-  color: $interactive-500;
+  @include theme.inter-body-xl-bold;
+  color: theme.$interactive-500;
 }
