@@ -13,7 +13,9 @@ function read(
   res: express.Response,
   next: express.NextFunction
 ) {
-  fetchForRead(req, res)
+
+  const { slug } = req.query;
+  fetchForRead(slug as string)
     .then((result) => res.json(result))
     .catch((err) => next(err));
 }
