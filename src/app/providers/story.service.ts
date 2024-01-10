@@ -9,6 +9,7 @@ import { environment } from '../environments/environment';
 // Models
 import { Paragraph, Story, StoryCard, StoryDTO } from '@models/story.model';
 import { Block, BlockContent, MarkDef } from '@models/block-content.model';
+import { Media, MediaTypes, SpaceRecording } from '@models/media.model'
 
 @Injectable({ providedIn: 'root' })
 export class StoryService {
@@ -30,6 +31,7 @@ export class StoryService {
         [],
       summary:
         story?.summary?.map((x: BlockContent) => this.parseParagraph(x)) ?? [],
+      media: story.media.map((x) => this.mediaTypesAdapter(x))
     };
   }
 
@@ -47,6 +49,7 @@ export class StoryService {
         biography:
           story.author.biography?.map((x) => this.parseParagraph(x)) ?? [],
       },
+      media: story.media.map((x) => this.mediaTypesAdapter(x))
     };
   }
 
@@ -141,5 +144,19 @@ export class StoryService {
 
   private addUrlLink(text: string, url: string): string {
     return `<a href="${url}">${text}</a>`;
+  }
+
+  /**
+   * Adaptador utilizado para mappear los distintos tipos de media que
+   * pueden existir en la plataforma a su tipo específico.
+   * @param media
+   * @private
+   */
+  private mediaTypesAdapter(media: Media): MediaTypes {
+    if(media.type === 'spaceRecording'){
+      return media as SpaceRecording
+    } else{
+      throw new Error(`El tipo ${media.type} no está soportado.`);
+    }
   }
 }
