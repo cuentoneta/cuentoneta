@@ -1,24 +1,6 @@
 <main>
-  <section class="hero flex justify-between items-center">
-    <div class="text">
-      <h1 class="title">Historias para disfrutar, compartir y aprender</h1>
-      <h3 class="subtitle">
-        Una iniciativa que busca fomentar y hacer accesible la lectura digital,
-        publicando relatos breves en nuestras <em>storylists</em> temáticas.
-        ¡Subite a La Cuentoneta!
-      </h3>
-    </div>
-    <div class="featured-image">
-      <img
-        width="506"
-        height="400"
-        alt=""
-        [ngSrc]="'./assets/svg/illustration.svg'"
-      />
-    </div>
-  </section>
 
-  <section class="card-decks mb-16">
+  <section class="card-decks mt-16 mb-16">
     <ng-container *ngIf="!!previews && previews.length">
       <ng-container *ngFor="let storylistDeck of previews">
         <cuentoneta-storylist-card-deck

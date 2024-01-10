@@ -30,6 +30,13 @@ dotenv.config();
 const dirPath = `src/app/environments`;
 const targetPath = `${dirPath}/environment.ts`;
 
+// Constantes para generar el archivo de environment
+const environment: TEnvironmentType =
+    (process.env['VERCEL_ENV'] as TEnvironmentType) ?? 'development';
+
+const branchUrl: string = process.env['VERCEL_BRANCH_URL'] as string;
+const stagingBranchUrl = 'cuentoneta-git-develop-cuentoneta.vercel.app';
+
 // Genera una ruta absoluta a la API en función del ambiente
 const generateApiUrl = (
   environment: TEnvironmentType,
@@ -38,6 +45,7 @@ const generateApiUrl = (
   let url = '';
 
   // Asigna URL en base a variables de entorno para producción y staging (preview develop)
+  // El lado derecho de la comparación es utilizado para deployments de staging
   if (environment === 'production' || branchUrl === stagingBranchUrl) {
     url = process.env['CUENTONETA_WEBSITE'] as string;
   }
@@ -48,13 +56,6 @@ const generateApiUrl = (
 
   return url;
 };
-
-// Constantes para generar el archivo de environment
-const environment: TEnvironmentType =
-  (process.env['VERCEL_ENV'] as TEnvironmentType) ?? 'development';
-
-const branchUrl: string = process.env['VERCEL_BRANCH_URL'] as string;
-const stagingBranchUrl = 'cuentoneta-git-develop-rolivencia.vercel.app';
 
 const apiUrl = generateApiUrl(environment, branchUrl);
 

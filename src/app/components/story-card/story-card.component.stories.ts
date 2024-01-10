@@ -43,6 +43,7 @@ const publication: Publication<Story> = {
     },
     slug: 'mascaras',
     title: 'Máscaras',
+    media: [],
     summary: [
       {
         classes: '',
