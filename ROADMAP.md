@@ -40,19 +40,27 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 - Actualizaciones de herramientas y tecnologías utilizadas en el desarrollo de la plataforma: soporte para Angular 
   17 y Nx 17.
 - ### `Hito: Lanzamiento al público de la versión 2.2.2 de La Cuentoneta (planificado para el 2023/11/23)`
-</details>
 
 ## Diciembre de 2023
 - Preparación de la lista "Cuentos de Verano 2024" en la plataforma.
 - Rediseño de la landing page, incluyendo storylists en formato tarjeta.
 - ### `Hito: Lanzamiento al público de la versión 2.3.0 de La Cuentoneta (planificado para el 2023/12/21)`
+- 
+</details>
 
 ## Enero de 2024
-- Apertura del primer concurso de escritura en La Cuentoneta, el _III Certamen Extraordinario de Escritura_, a cargo de la comunidad **[Taller de
-  Escritura Creativa](https://discord.gg/YJDQCsBmyv)**.
+
 - Búsqueda de community manager y diseñadores gráficos para trabajar en las futuras características del sitio web.
+- Agregado de mejoras en textos de reseñas y biografías de autores, soportando links y formato en negritas e itálicas.
 
 - ### `Hito: Lanzamiento al público de la versión 2.3.1 de La Cuentoneta (lanzada el 2024/01/04)`
+
+- Agregado soporte para visualización de grabaciones de Spaces de X en vista de historia.
+
+- ### `Hito: Lanzamiento al público de la versión 2.3.2 de La Cuentoneta (lanzada el 2024/01/10)`
+
+- Apertura del primer concurso de escritura en La Cuentoneta, el _III Certamen Extraordinario de Escritura_, a cargo de la comunidad **[Taller de
+  Escritura Creativa](https://discord.gg/YJDQCsBmyv)**.
 
 ## Febrero de 2024
 - Desarrollo de las funcionalidades de registro e inicio de sesión de usuarios, que permitirán marcar historias como "leídas", dejar puntuaciones y comentarios en cada relato y storylist.
