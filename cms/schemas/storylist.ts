@@ -59,6 +59,7 @@ const gridConfigfields = [
         preview: {
           select: {
             order: 'order',
+            publicationOrder: 'publication.publishingOrder',
             storyTitle: 'publication.story.title',
             image: 'image',
             imageSlug: 'imageSlug.current',
@@ -66,7 +67,7 @@ const gridConfigfields = [
             endCol: 'endCol',
           },
           prepare(selection) {
-            const { order, storyTitle, image, imageSlug, startCol, endCol } =
+            const { order, publicationOrder, storyTitle, image, imageSlug, startCol, endCol } =
               selection;
 
             // Preview para stories en grid
@@ -74,7 +75,8 @@ const gridConfigfields = [
 
             // Preview para imágenes en grid
             return {
-              title: `${order} | ${title} | [${startCol}, ${endCol}]`,
+              title: `${order} | ${title} | ${endCol}`,
+              subtitle: `Orden en lista: ${publicationOrder}`,
               media: image ?? undefined,
             };
           },
