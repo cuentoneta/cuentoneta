@@ -30,29 +30,34 @@ dotenv.config();
 const dirPath = `src/app/environments`;
 const targetPath = `${dirPath}/environment.ts`;
 
+// Constantes para generar el archivo de environment
+const environment: TEnvironmentType =
+    (process.env['VERCEL_ENV'] as TEnvironmentType) ?? 'development';
+
+const branchUrl: string = process.env['VERCEL_BRANCH_URL'] as string;
+const stagingBranchUrl = 'cuentoneta-git-develop-cuentoneta.vercel.app';
+
 // Genera una ruta absoluta a la API en función del ambiente
 const generateApiUrl = (
   environment: TEnvironmentType,
+  branchUrl: string
 ): string => {
   let url = '';
 
-  // Lectura de la variable de entorno de Vercel para deployments de preview
-  if (environment === 'preview') {
-    url = `https://${process.env['VERCEL_URL']}/` as string;
-  }
   // Asigna URL en base a variables de entorno para producción y staging (preview develop)
-  else{
-      url = process.env['CUENTONETA_WEBSITE'] as string;
+  // El lado derecho de la comparación es utilizado para deployments de staging
+  if (environment === 'production' || branchUrl === stagingBranchUrl) {
+    url = process.env['CUENTONETA_WEBSITE'] as string;
+  }
+  // Lectura de la variable de entorno de Vercel para deployments de preview
+  else if (environment === 'preview') {
+    url = `https://${process.env['VERCEL_URL']}/` as string;
   }
 
   return url;
 };
 
-// Constantes para generar el archivo de environment
-const environment: TEnvironmentType =
-  (process.env['VERCEL_ENV'] as TEnvironmentType) ?? 'development';
-
-const apiUrl = generateApiUrl(environment);
+const apiUrl = generateApiUrl(environment, branchUrl);
 
 // Obtiene la vista de preview para generar skeletons
 const fetchStorylistsPreviewDeckConfig = () => {
