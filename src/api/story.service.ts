@@ -30,13 +30,13 @@ async function fetchForRead(slug: string): Promise<StoryDTO> {
                           }[0]`;
 		const story = await client.fetch(query, {});
 
-		const { body, review, author, forewords, ...properties } = story;
+		const { body, review, author, forewords, mediaSources, ...properties } = story;
 
-		// TODO: Proveer tipos para tratamiento de contenido multimedia
+		// TODO: #537 - Proveer tipos para tratamiento de contenido multimedia
 		const media: any[] = [];
-		if (!!story['mediaSources']) {
+		if (mediaSources) {
 			for (const mediaSource of story['mediaSources']) {
-				if (mediaSource._type === 'spacesRecording') {
+				if (mediaSource._type === 'spaceRecording') {
 					media.push(await getTweetData(mediaSource));
 				}
 			}
