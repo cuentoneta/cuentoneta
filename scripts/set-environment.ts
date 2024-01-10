@@ -33,17 +33,16 @@ const targetPath = `${dirPath}/environment.ts`;
 // Genera una ruta absoluta a la API en función del ambiente
 const generateApiUrl = (
   environment: TEnvironmentType,
-  branchUrl: string
 ): string => {
   let url = '';
 
-  // Asigna URL en base a variables de entorno para producción y staging (preview develop)
-  if (environment === 'production' || branchUrl === stagingBranchUrl) {
-    url = process.env['CUENTONETA_WEBSITE'] as string;
-  }
   // Lectura de la variable de entorno de Vercel para deployments de preview
-  else if (environment === 'preview') {
+  if (environment === 'preview') {
     url = `https://${process.env['VERCEL_URL']}/` as string;
+  }
+  // Asigna URL en base a variables de entorno para producción y staging (preview develop)
+  else{
+      url = process.env['CUENTONETA_WEBSITE'] as string;
   }
 
   return url;
@@ -53,10 +52,7 @@ const generateApiUrl = (
 const environment: TEnvironmentType =
   (process.env['VERCEL_ENV'] as TEnvironmentType) ?? 'development';
 
-const branchUrl: string = process.env['VERCEL_BRANCH_URL'] as string;
-const stagingBranchUrl = 'cuentoneta-git-develop-rolivencia.vercel.app';
-
-const apiUrl = generateApiUrl(environment, branchUrl);
+const apiUrl = generateApiUrl(environment);
 
 // Obtiene la vista de preview para generar skeletons
 const fetchStorylistsPreviewDeckConfig = () => {
