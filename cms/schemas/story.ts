@@ -1,7 +1,7 @@
 import { supportedLanguages } from '../utils/localization';
 import { DocumentTextIcon, TwitterIcon } from '@sanity/icons';
 
-const spacesRecordingMedia = {
+const spaceRecordingMedia = {
 	name: 'spaceRecording',
 	title: 'Grabación de Spaces de X',
 	type: 'object',
@@ -99,7 +99,7 @@ export default {
 			title: 'Información de recursos multimedia asociados a la historia en otras plataformas web',
 			type: 'array',
 			of: [
-				spacesRecordingMedia
+				spaceRecordingMedia
 			],
 		},
 		{
