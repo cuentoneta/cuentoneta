@@ -38,7 +38,7 @@ const spacesRecordingMedia = {
 		{
 			name: 'duration',
 			title: 'Duración del space',
-			type: 'url',
+			type: 'string',
 		},
 	],
 }
