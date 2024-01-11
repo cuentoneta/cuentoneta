@@ -41,7 +41,7 @@ const spaceRecordingMedia = {
 			type: 'string',
 		},
 	],
-}
+};
 
 export default {
 	name: 'story',
@@ -98,9 +98,7 @@ export default {
 			name: 'mediaSources',
 			title: 'Información de recursos multimedia asociados a la historia en otras plataformas web',
 			type: 'array',
-			of: [
-				spaceRecordingMedia
-			],
+			of: [spaceRecordingMedia],
 		},
 		{
 			name: 'badLanguage',
@@ -133,6 +131,31 @@ export default {
 					return Math.ceil(wordCount / 200);
 				},
 			},
+		},
+		{
+			name: 'epigraphs',
+			title: 'Epígrafes',
+			type: 'array',
+			of: [
+				{
+					name: 'epigraph',
+					title: 'Epígrafe',
+					type: 'object',
+					fields: [
+						{
+							name: 'epigraphText',
+							title: 'Texto del epígrafe',
+							type: 'blockContent',
+						},
+						{
+							name: 'epigraphAuthor',
+							title: 'Referencia del epígrafe',
+							description: 'Referencia del origen del epígrafe',
+							type: 'string',
+						},
+					],
+				},
+			],
 		},
 		{
 			name: 'forewords',
