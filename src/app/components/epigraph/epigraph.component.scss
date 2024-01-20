@@ -1,0 +1,24 @@
+@use 'src/assets/scss/theme.scss' as theme;
+
+:host {
+	display: flex;
+	margin-bottom: theme.$spacing-10;
+	.bar {
+		border-left: 3px solid theme.$primary-500;
+		margin-right: theme.$spacing-4;
+	}
+	.prologue {
+		@apply flex flex-wrap flex-col items-end justify-end flex-1;
+		@include theme.source-serif-pro-body-lg;
+		color: theme.$gray-700;
+		line-height: 28px;
+
+		.text {
+			@apply self-baseline;
+		}
+
+		.reference {
+			@apply text-end;
+		}
+	}
+}
