@@ -52,17 +52,7 @@ article {
   }
 
   .prologues {
-    margin-bottom: $spacing-10;
-    .bar {
-      border-left: 3px solid $primary-500;
-      margin-right: $spacing-4;
-
-    }
-    .prologue {
-      @include source-serif-pro-body-lg;
-      color: $gray-700;
-      line-height: 28px;
-    }
+    @apply flex flex-col gap-10 mb-10;
   }
 
   .content {

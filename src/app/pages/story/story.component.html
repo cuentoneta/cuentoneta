@@ -80,16 +80,10 @@
 
 		@if (!!story && !fetchContentDirective.isLoading) {
 			@if (!!story.prologues && story.prologues.length > 0) {
-				<section class="prologues flex">
-					<ng-container *ngFor="let prologue of story.prologues">
-						<div class="bar"></div>
-						<p class="prologue flex flex-col md:flex-row md:items-center">
-							{{ prologue.text }}&nbsp;
-							@if (prologue.reference) {
-								<em class="self-end">{{ prologue.reference }}</em>
-							}
-						</p>
-					</ng-container>
+				<section class="prologues">
+					@for (prologue of story.prologues; track $index) {
+						<cuentoneta-story-epigraph [prologue]="prologue"></cuentoneta-story-epigraph>
+					}
 				</section>
 			}
 		}
