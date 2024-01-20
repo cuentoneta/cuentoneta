@@ -1,8 +1,7 @@
 @use 'src/assets/scss/theme.scss' as theme;
 
 :host {
-	display: flex;
-	margin-bottom: theme.$spacing-10;
+	@apply flex;
 	.bar {
 		border-left: 3px solid theme.$primary-500;
 		margin-right: theme.$spacing-4;
