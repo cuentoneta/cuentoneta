@@ -26,12 +26,11 @@ import { FetchContentDirective } from '../../directives/fetch-content.directive'
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 // Components
-import { StoryNavigationBarComponent } from 'src/app/components/story-navigation-bar/story-navigation-bar.component';
-import { BioSummaryCardComponent } from 'src/app/components/bio-summary-card/bio-summary-card.component';
-import { ShareContentComponent } from 'src/app/components/share-content/share-content.component';
-import {
-	SpaceRecordingWidgetComponent
-} from '../../components/space-recording-widget/space-recording-widget.component'
+import { StoryNavigationBarComponent } from '../../components/story-navigation-bar/story-navigation-bar.component';
+import { BioSummaryCardComponent } from '../../components/bio-summary-card/bio-summary-card.component';
+import { ShareContentComponent } from '../../components/share-content/share-content.component';
+import { SpaceRecordingWidgetComponent } from '../../components/space-recording-widget/space-recording-widget.component';
+import { EpigraphComponent } from '../../components/epigraph/epigraph.component';
 
 @Component({
 	selector: 'cuentoneta-story',
@@ -46,6 +45,7 @@ import {
 		BioSummaryCardComponent,
 		ShareContentComponent,
 		SpaceRecordingWidgetComponent,
+		EpigraphComponent,
 	],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
