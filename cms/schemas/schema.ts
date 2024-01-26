@@ -9,16 +9,18 @@ import landingPage from './landingPage';
 import story from './story';
 import storylist from './storylist';
 import tag from './tag';
+import resourceType from './resourceType';
 
 export default [
-  // The following are document types which will appear in the studio.
-  // When added to this list, object types can be used as
-  // { type: 'typename' } in other document schemas
-  landingPage,
-  storylist,
-  story,
-  author,
-  blockContent,
-  country,
-  tag,
+	// The following are document types which will appear in the studio.
+	// When added to this list, object types can be used as
+	// { type: 'typename' } in other document schemas
+	landingPage,
+	storylist,
+	story,
+	author,
+	blockContent,
+	country,
+	resourceType,
+	tag,
 ];
