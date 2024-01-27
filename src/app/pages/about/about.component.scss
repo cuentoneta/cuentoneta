@@ -1,39 +1,53 @@
-@import 'src/assets/scss/theme.scss';
+@use 'src/assets/scss/theme.scss' as theme;
 
-main {
-  @include card;
-  display: block;
-  background-color: $gray-50;
-  padding: $spacing-5;
+.hero {
 
-  @media screen and (max-width: $max-sm-width) {
-    margin-left: -$spacing-5;
-    margin-right: -$spacing-5;
-  }
+  @apply grid mb-16;
+  @apply grid-cols-1 gap-4;
+  @apply lg:grid-cols-2 lg:gap-0;
 
-  @media screen and (min-width: $min-md-width) {
-    border-radius: $rounded-xl;
-    box-shadow: $box-shadow-card;
-    padding: $spacing-15;
+  @media screen and (min-width: theme.$min-lg-width) {
+    h1 {
+      font-size: 3.75rem;
+      line-height: 60px;
+      letter-spacing: theme.$letter-spacing;
+      font-weight: theme.$inter-font-weight-extra-bold;
+    }
+    .text {
+      width: 550px;
+    }
+    .featured-image {
+      margin-left: auto;
+    }
   }
 }
 
-.title {
-  margin-bottom: $spacing-5;
+.content {
+  @include theme.card;
+  display: block;
+  background-color: theme.$gray-50;
+  padding: theme.$spacing-5;
+
+  @media screen and (max-width: theme.$max-sm-width) {
+    margin-left: -(theme.$spacing-5);
+    margin-right: -(theme.$spacing-5);
+  }
+
+  @media screen and (min-width: theme.$min-md-width) {
+    border-radius: theme.$rounded-xl;
+    box-shadow: theme.$box-shadow-card;
+    padding: theme.$spacing-15;
+  }
 }
 
 .subtitle {
-  color: $gray-600;
-  margin-bottom: $spacing-5;
-}
-
-h3 {
-  margin-bottom: $spacing-3;
+  color: theme.$gray-600;
+  margin-bottom: theme.$spacing-5;
 }
 
 p,
 li {
-  @include inter-body-base-regular;
+  @include theme.inter-body-base-regular;
 }
 
 a {

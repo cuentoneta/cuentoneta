@@ -1,46 +1,47 @@
 <main>
-  <section class="hero flex justify-between items-center">
-    <div class="text">
-      <h1 class="title">Historias para disfrutar, compartir y aprender</h1>
-      <h3 class="subtitle">
-        Una iniciativa que busca fomentar y hacer accesible la lectura digital,
-        publicando relatos breves en nuestras <em>storylists</em> temáticas.
-        ¡Subite a La Cuentoneta!
-      </h3>
-    </div>
-    <div class="featured-image">
-      <img
-        width="506"
-        height="400"
-        alt=""
-        [ngSrc]="'./assets/svg/illustration.svg'"
-      />
-    </div>
-  </section>
+	<section class="card-decks mt-16 mb-16">
+		@if (!!previews && previews.length) {
+			<ng-container *ngFor="let storylistDeck of previews">
+				<cuentoneta-storylist-card-deck
+					[canNavigateToStorylist]="true"
+					[storylist]="storylistDeck.storylist"
+					[displayTitle]="true"
+					[number]="storylistDeck.amount"
+					[isLoading]="fetchContentDirective.isLoading"
+					[displayFeaturedImage]="true"
+					[skeletonConfig]="storylistDeck.previewGridSkeletonConfig"
+					class="mb-3"
+				/>
 
-  <section class="card-decks">
-    <ng-container *ngIf="!!storylistCardDecks && storylistCardDecks.length">
-      <ng-container *ngFor="let storylistDeck of storylistCardDecks">
-        <cuentoneta-storylist-card-deck
-          class="mb-3"
-          [canNavigateToStorylist]="true"
-          [storylist]="storylistDeck.storylist"
-          [displayTitle]="true"
-          [number]="storylistDeck.amount"
-          [isLoading]="fetchContentDirective.isLoading"
-          [displayFeaturedImage]="true"
-          [skeletonConfig]="storylistDeck.previewGridSkeletonConfig"
-        />
-        <ng-container *ngIf="!!storylistDeck.storylist">
-          <a
-                  [routerLink]="['/' + appRouteTree['STORYLIST']]"
-                  [queryParams]="{ slug: storylistDeck.storylist.slug }"
-                  class="navigation-link text-right"
-          >
-            Ver Storylist
-          </a>
-        </ng-container>
-      </ng-container>
-    </ng-container>
-  </section>
+				@if (!!storylistDeck.storylist) {
+					<a
+						[routerLink]="['/' + appRouteTree['STORYLIST']]"
+						[queryParams]="{ slug: storylistDeck.storylist.slug }"
+						class="navigation-link text-right"
+					>
+						Ver Storylist
+					</a>
+				}
+			</ng-container>
+		}
+	</section>
+
+	<div class="flex content-between items-center mb-4">
+		<hr class="flex-grow" />
+		<h2 class="mx-8">¿Buscás otras lecturas?</h2>
+		<hr class="flex-grow" />
+	</div>
+	<div class="flex justify-center mb-8">
+		<h3 class="subtitle">
+			En este apartado podrás encontrar todas las storylists publicadas hasta el momento en La Cuentoneta
+		</h3>
+	</div>
+
+	<section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+		@if (!!cards && cards.length) {
+			<ng-container *ngFor="let deck of cards">
+				<cuentoneta-storylist-card [storylist]="deck.storylist"> </cuentoneta-storylist-card>
+			</ng-container>
+		}
+	</section>
 </main>

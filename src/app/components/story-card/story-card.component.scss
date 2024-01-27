@@ -1,4 +1,4 @@
-@import 'src/assets/scss/theme.scss';
+@use 'src/assets/scss/theme.scss' as *;
 
 :host {
   @include card;
@@ -64,9 +64,7 @@
   }
 
   .formats-info {
-    .video {
-      margin-left: 2px;
-      margin-top: 2px;
-    }
+    height: 24px;
+    width: 24px;
   }
 }

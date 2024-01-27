@@ -1,110 +1,109 @@
-<ng-container *ngIf="!animation">
-  <header class="card-header">
-    <cuentoneta-story-edition-date-label
-      [label]="displayDate ? editionLabel : comingNextLabel"
-    />
-  </header>
-</ng-container>
-<ng-container *ngIf="!!animation">
-  <ngx-skeleton-loader
-    count="1"
-    appearance="line"
-    [animation]="animation"
-    [theme]="{
-      height: '20px',
-      'margin-bottom': 0,
-      width: '140px'
-    }"
-  ></ngx-skeleton-loader>
-</ng-container>
+@if (!animation) {
+	<header class="card-header">
+		<cuentoneta-story-edition-date-label [label]="displayDate ? editionLabel : comingNextLabel" />
+	</header>
+}
+
+@if (!!animation) {
+	<ngx-skeleton-loader
+		[animation]="animation"
+		[theme]="{
+			height: '20px',
+			'margin-bottom': 0,
+			width: '140px'
+		}"
+		count="1"
+		appearance="line"
+	></ngx-skeleton-loader>
+}
 
 <div>
-  <ngx-skeleton-loader
-    count="1"
-    appearance="line"
-    [animation]="animation"
-    [theme]="{
-      'background-color': '#D4D4D8',
-      height: '20px',
-      'margin-bottom': '8px',
-      'margin-top': '4px',
-      width: '260px'
-    }"
-  ></ngx-skeleton-loader>
-  <ngx-skeleton-loader
-    class="hidden md:block"
-    count="3"
-    appearance="line"
-    [animation]="animation"
-    [theme]="{
-      height: '16px',
-      'margin-bottom': '4px',
-      'margin-top': '4px'
-    }"
-  ></ngx-skeleton-loader>
+	<ngx-skeleton-loader
+		[animation]="animation"
+		[theme]="{
+			'background-color': '#D4D4D8',
+			height: '20px',
+			'margin-bottom': '8px',
+			'margin-top': '4px',
+			width: '260px'
+		}"
+		count="1"
+		appearance="line"
+	></ngx-skeleton-loader>
+	<ngx-skeleton-loader
+		[animation]="animation"
+		[theme]="{
+			height: '16px',
+			'margin-bottom': '4px',
+			'margin-top': '4px'
+		}"
+		class="hidden md:block"
+		count="3"
+		appearance="line"
+	></ngx-skeleton-loader>
 </div>
 <ngx-skeleton-loader
-  count="1"
-  appearance="line"
-  [animation]="animation"
-  [theme]="{
-    height: '12px',
-    'margin-bottom': '3px',
-    'margin-top': '3px',
-    width: '60px'
-  }"
+	[animation]="animation"
+	[theme]="{
+		height: '12px',
+		'margin-bottom': '3px',
+		'margin-top': '3px',
+		width: '60px'
+	}"
+	count="1"
+	appearance="line"
 ></ngx-skeleton-loader>
 <hr />
 <div class="flex">
-  <ngx-skeleton-loader
-    count="1"
-    appearance="line"
-    [animation]="animation"
-    [theme]="{
-      'background-color': '#D4D4D8',
-      height: '40px',
-      'margin-bottom': '2px',
-      'margin-top': '2px',
-      'margin-right': '12px',
-      width: '40px'
-    }"
-  ></ngx-skeleton-loader>
-  <div>
-    <ngx-skeleton-loader
-      count="1"
-      appearance="line"
-      [animation]="animation"
-      [theme]="{
-        height: '17px',
-        'margin-top': '2px',
-        'margin-bottom': '4px',
-        width: '140px'
-      }"
-    ></ngx-skeleton-loader>
-    <div class="flex">
-      <ngx-skeleton-loader
-        count="1"
-        appearance="line"
-        [animation]="animation"
-        [theme]="{
-          height: '15px',
-          margin: 0,
-          'margin-right': '8px',
-          'margin-top': '2px',
-          width: '20px'
-        }"
-      ></ngx-skeleton-loader>
-      <ngx-skeleton-loader
-        count="1"
-        appearance="line"
-        [animation]="animation"
-        [theme]="{
-          height: '15px',
-          margin: 0,
-          'margin-top': '2px',
-          width: '50px'
-        }"
-      ></ngx-skeleton-loader>
-    </div>
-  </div>
+	<ngx-skeleton-loader
+		[animation]="animation"
+		[theme]="{
+			'background-color': '#D4D4D8',
+			height: '40px',
+			'margin-bottom': '2px',
+			'margin-top': '2px',
+			'margin-right': '12px',
+			width: '40px'
+		}"
+		count="1"
+		appearance="line"
+	></ngx-skeleton-loader>
+	<div>
+		<ngx-skeleton-loader
+			[animation]="animation"
+			[theme]="{
+				height: '17px',
+				'margin-top': '2px',
+				'margin-bottom': '4px',
+				width: '140px'
+			}"
+			count="1"
+			appearance="line"
+		></ngx-skeleton-loader>
+		<div class="flex">
+			<ngx-skeleton-loader
+				[animation]="animation"
+				[theme]="{
+					height: '15px',
+					margin: 0,
+					'margin-right': '8px',
+					'margin-top': '2px',
+					width: '20px'
+				}"
+				count="1"
+				appearance="line"
+			></ngx-skeleton-loader>
+			<ngx-skeleton-loader
+				[animation]="animation"
+				[theme]="{
+					height: '15px',
+					margin: 0,
+					'margin-top': '2px',
+					width: '50px'
+				}"
+				count="1"
+				appearance="line"
+			></ngx-skeleton-loader>
+		</div>
+	</div>
 </div>

@@ -27,8 +27,6 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 - [Licencias](#licencias)
 - [Links de interés](#links-de-interés)
 
----
-
 ## Hoja de ruta
 
 Puedes acceder a la hoja de ruta (roadmap) del proyecto en [este enlace][doc-roadmap]. Allí podrás visualizar los planes de las futuras versiones de la plataforma más las storylists a agregar a La Cuentoneta.
@@ -38,6 +36,8 @@ Puedes acceder a la hoja de ruta (roadmap) del proyecto en [este enlace][doc-roa
 Si deseas contribuir a La Cuentoneta te recomendamos leer la [guía de contribución][doc-contributing] para que puedas entender cómo puedes hacerlo. Allí encontrarás información sobre cómo reportar errores, proponer nuevas características, sugerir o sumar nuevos contenidos y cómo contribuir con código al proyecto.
 
 En caso que seas desarrolladora o desarrollador, encontrarás en ese documento información sobre todos los aspectos técnicos del proyecto, incluyendo cómo instalar el proyecto localmente para que puedas probarlo y realizar tus contribuciones de código.
+
+Si deseás visualizar los ítems de trabajo para principiantes en el proyecto, podés dirigirte a la [página de contribución del proyecto](https://github.com/cuentoneta/cuentoneta/contribute).
 
 ## Misión, Visión y Valores
 
@@ -52,6 +52,17 @@ La misión, la visión y los valores de La Cuentoneta nos proporcionan el marco 
 </picture>
 
 Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. Es requerido unirte a nuestro [server][dc-fec] y buscar el canal [#🚐 | la-cuentoneta][dc-channel]. Allí vas a poder escribir consultas, realizar propuestas y compartir ideas para el proyecto. El código de conducta de este proyecto es extensible también a tu participación en el server de [FrontendCafé en Discord][dc-fec].
+
+
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://forgoodfirstissue.github.com/for-good-first-issue.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/cuentoneta/cuentoneta/assets/32349705/786d9201-e449-49a6-b9e2-ebf5f9281abc">
+  <img alt="logo-frontendcafe" src="https://github.com/cuentoneta/cuentoneta/assets/32349705/786d9201-e449-49a6-b9e2-ebf5f9281abc">
+</picture>
+
+La Cuentoneta también es parte de [For Good First Issue](https://forgoodfirstissue.github.com/), una iniciativa que busca generar una lista curada de proyectos open-source con foco en desarrollos del tipo [Bienes Públicos Digitales (DPGs, Digital Public Goods)
+](https://digitalpublicgoods.net/digital-public-goods/), los cuales además se encuentran disponibles para colaboración abierta.
 
 ---
 
@@ -78,6 +89,7 @@ Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos 
 - Juan Blas Tschopp (**[@juanblas09](https://github.com/juanblas09)**)
 - Diego Franchina (**[@soydiego](https://github.com/SoyDiego)**)
 - Jimer Espinoza (**[@jimersamuel](https://github.com/JimerSamuel)**)
+- Mia Ramos (**[@MiaPurpleFate](https://twitter.com.com/MiaPurpleFate)**)
 
 ### Diseño UX/UI
 
@@ -86,6 +98,8 @@ Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos 
 ### Escritura de textos
 
 - Sofía Abramovich
+- Marian Erro (**[@marianerro](https://twitter.com/MarianaErro)**)
+- Elk A. (**[@A-Elkkk-o-k](https://www.wattpad.com/user/A-Elkkk-o-k)**)
 
 ### Selección, Transcripción y Curación de contenido
 
@@ -95,6 +109,12 @@ Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos 
 - Candela Godoy (**[@napsiex](https://twitter.com/napsiex)**)
 - Analía Ale
 - Brahian Pereyra (**[@brahianpdev](https://github.com/brahianpdev)**)
+- Juan Romero (**[@juanr0mer0](https://twitter.com/juanr0mer0)**)
+- Luis Omar Sánchez Díaz (**[@luisthepower](https://www.instagram.com/luisthepower/)**)
+- Karla Nevárez (**[kanemu36@gmail.com](mailto:kanemu36@gmail.com)**)
+- Sebastián Mansilla
+- Lolo Diaz (**[@estre.sadx](https://instagram.com/estre.sadx)**)
+- Nicolás Contrera (**[@nicontrera1](https://twitter.com/nicontrera1)**)
 
 ---
 

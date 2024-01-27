@@ -1,31 +1,29 @@
 <section class="flex flex-row flex-1">
-  <ng-container *ngFor="let platform of platforms">
-    <ng-container *ngIf="!isLoading; else buttonSkeleton">
-      <button
-        class="flex items-center justify-center"
-        [title]="'Compartir en ' + platform.name"
-        (click)="onShareToPlatformClicked($event, platform)"
-      >
-        <img
-          [alt]="'Compartir en ' + platform.name"
-          [ngSrc]="'assets/svg/' + platform.logo + '.svg'"
-          [height]="24"
-          [width]="24"
-        />
-      </button>
-    </ng-container>
-  </ng-container>
+	<ng-container *ngFor="let platform of platforms">
+		@if (!isLoading) {
+			<button
+				(click)="onShareToPlatformClicked($event, platform)"
+				[title]="'Compartir en ' + platform.name"
+				class="flex items-center justify-center"
+			>
+				<img
+					[alt]="'Compartir en ' + platform.name"
+					[ngSrc]="'assets/svg/' + platform.logo + '.svg'"
+					[height]="24"
+					[width]="24"
+				/>
+			</button>
+		} @else {
+			<ngx-skeleton-loader
+				[theme]="{
+					'height.px': 48,
+					'width.px': 48,
+					'margin.px': 0,
+					'background-color': '#D4D4D8'
+				}"
+				count="1"
+				appearance="circle"
+			></ngx-skeleton-loader>
+		}
+	</ng-container>
 </section>
-
-<ng-template #buttonSkeleton>
-  <ngx-skeleton-loader
-    count="1"
-    appearance="circle"
-    [theme]="{
-      'height.px': 48,
-      'width.px': 48,
-      'margin.px': 0,
-      'background-color': '#D4D4D8'
-    }"
-  ></ngx-skeleton-loader>
-</ng-template>

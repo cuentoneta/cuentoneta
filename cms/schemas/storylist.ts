@@ -1,3 +1,6 @@
+import { supportedLanguages } from '../utils/localization';
+import { DashboardIcon } from '@sanity/icons';
+
 const gridItemFields = [
   {
     name: 'order',
@@ -56,6 +59,7 @@ const gridConfigfields = [
         preview: {
           select: {
             order: 'order',
+            publicationOrder: 'publication.publishingOrder',
             storyTitle: 'publication.story.title',
             image: 'image',
             imageSlug: 'imageSlug.current',
@@ -63,7 +67,7 @@ const gridConfigfields = [
             endCol: 'endCol',
           },
           prepare(selection) {
-            const { order, storyTitle, image, imageSlug, startCol, endCol } =
+            const { order, publicationOrder, storyTitle, image, imageSlug, startCol, endCol } =
               selection;
 
             // Preview para stories en grid
@@ -71,7 +75,8 @@ const gridConfigfields = [
 
             // Preview para imágenes en grid
             return {
-              title: `${order} | ${title} | [${startCol}, ${endCol}]`,
+              title: `${order} | ${title} | ${endCol}`,
+              subtitle: `Orden en lista: ${publicationOrder}`,
               media: image ?? undefined,
             };
           },
@@ -158,6 +163,7 @@ export default {
   name: 'storylist',
   title: 'Storylists',
   type: 'document',
+  icon: DashboardIcon,
   fields: [
     {
       name: 'title',
@@ -183,6 +189,13 @@ export default {
       name: 'language',
       title: 'Idioma',
       type: 'string',
+      options: {
+        list: supportedLanguages.map((lang) => ({
+          title: lang.title,
+          value: lang.id,
+        })),
+        layout: 'radio',
+      },
       validation: (Rule) => Rule.required(),
     },
     {
@@ -214,6 +227,19 @@ export default {
       options: {
         hotspot: true,
       },
+    },
+    {
+      name: 'tags',
+      title: 'Etiquetas',
+      type: 'array',
+      of: [
+        {
+          name: 'tag',
+          title: 'Etiqueta',
+          type: 'reference',
+          to: [{ type: 'tag' }],
+        },
+      ],
     },
     {
       name: 'gridConfig',
