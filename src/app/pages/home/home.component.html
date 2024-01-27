@@ -40,7 +40,7 @@
 	<section class="grid grid-cols-1 justify-items-center lg:grid-cols-2 gap-8">
 		@if (!!cards && cards.length) {
 			<ng-container *ngFor="let deck of cards">
-				<cuentoneta-storylist-card [storylist]="deck.storylist"> </cuentoneta-storylist-card>
+				<cuentoneta-storylist-card class="w-full" [storylist]="deck.storylist"> </cuentoneta-storylist-card>
 			</ng-container>
 		}
 	</section>
