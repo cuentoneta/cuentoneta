@@ -32,12 +32,12 @@
 		<hr class="flex-grow" />
 	</div>
 	<div class="flex justify-center mb-8">
-		<h3 class="subtitle">
+		<h3 class="subtitle text-center">
 			En este apartado podrás encontrar todas las storylists publicadas hasta el momento en La Cuentoneta
 		</h3>
 	</div>
 
-	<section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+	<section class="grid grid-cols-1 justify-items-center lg:grid-cols-2 gap-8">
 		@if (!!cards && cards.length) {
 			<ng-container *ngFor="let deck of cards">
 				<cuentoneta-storylist-card [storylist]="deck.storylist"> </cuentoneta-storylist-card>
