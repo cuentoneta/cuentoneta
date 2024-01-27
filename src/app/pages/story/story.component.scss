@@ -4,6 +4,10 @@ ngx-skeleton-loader {
     display: block;
 }
 
+@keyframes scrollbar {
+  to {width: 100%;}
+}
+
 .progress-container {
   width: 100%;
   height: 8px;
@@ -20,6 +24,8 @@ ngx-skeleton-loader {
   transition-timing-function: ease-out;
   transition: width .5s;
   height: 100%;
+  animation: scrollbar linear;
+  animation-timeline: scroll(root);
 }
 
 :host {

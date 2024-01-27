@@ -29,7 +29,6 @@ import { StoryNavigationBarComponent } from 'src/app/components/story-navigation
 import { BioSummaryCardComponent } from 'src/app/components/bio-summary-card/bio-summary-card.component';
 import { ShareContentComponent } from 'src/app/components/share-content/share-content.component';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ScrollprogressDirective } from 'src/app/directives/scrollprogress.directive';
 
 @Component({
   selector: 'cuentoneta-story',
@@ -43,7 +42,6 @@ import { ScrollprogressDirective } from 'src/app/directives/scrollprogress.direc
     StoryNavigationBarComponent,
     BioSummaryCardComponent,
     ShareContentComponent,
-    ScrollprogressDirective,
   ],
   hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
