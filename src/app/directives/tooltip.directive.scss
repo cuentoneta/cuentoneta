@@ -1,4 +1,4 @@
-@use 'src/assets/scss/theme' as theme;
+@use 'src/assets/scss/theme.scss' as theme;
 
 .tooltip-container {
   @include theme.inter-body-xs-medium;
