@@ -31,7 +31,7 @@ const publication: Publication<Story> = {
     language: 'Español',
     approximateReadingTime: 4,
     author: {
-      id: 1,
+      id: '1',
       fullBioUrl: '',
       nationality: {
         country: 'Argentina',
