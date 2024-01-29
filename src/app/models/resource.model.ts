@@ -1,6 +1,6 @@
 export interface Resource {
     title: string;
-    url: URL;
+    url: string;
     resourceType: ResourceType;
 }
 
