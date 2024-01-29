@@ -1,8 +1,10 @@
-@mixin tooltip-container {
-  @include inter-body-xs-medium;
-  font-weight: $inter-font-weight-semibold;
-  padding: $spacing-2;
-  border-radius: $rounded;
+@use 'src/assets/scss/theme' as theme;
+
+.tooltip-container {
+  @include theme.inter-body-xs-medium;
+  font-weight: theme.$inter-font-weight-semibold;
+  padding: theme.$spacing-2;
+  border-radius: theme.$rounded;
   text-align: center;
   z-index: 100;
   position: fixed;
@@ -15,6 +17,7 @@
   animation: tooltip-slide 0.18s ease-out 0.5s;
   animation-fill-mode: forwards;
   pointer-events: none;
+
 }
 
 .tooltip-container::before {
