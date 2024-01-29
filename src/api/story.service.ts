@@ -26,7 +26,23 @@ async function fetchForRead(slug: string): Promise<StoryDTO> {
                               forewords, 
                               approximateReadingTime,
                               mediaSources,
-                              'author': author-> { ..., nationality-> }
+                              'author': author-> {
+                              	..., 
+                              	nationality->, 
+                              	resources[]{ 
+                              	title, 
+                              	url, 
+                              	resourceType->{ 
+                              		title, 
+                              		description, 
+                              		'icon': { 
+                              			'name': icon.name, 
+                              			'svg': icon.svg, 
+                              			'provider': icon.provider 
+                              			} 
+                              		} 
+                              	} 
+                              }
                           }[0]`;
 		const story = await client.fetch(query, {});
 
