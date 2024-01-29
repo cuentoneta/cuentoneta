@@ -1,43 +1,7 @@
 // Localization
 import { supportedLanguages } from '../utils/localization';
 import { UsersIcon } from '@sanity/icons';
-import { preview } from 'sanity-plugin-icon-picker';
-
-const resource = {
-	name: 'resource',
-	title: 'Recurso',
-	type: 'object',
-	preview: {
-		select: {
-			title: 'resourceType.title',
-			icon: 'resourceType.icon',
-		},
-		prepare(selection) {
-			return {
-				title: selection.title,
-				media: preview(selection.icon),
-			};
-		},
-	},
-	fields: [
-		{
-			name: 'title',
-			title: 'Título',
-			type: 'string',
-		},
-		{
-			name: 'url',
-			title: 'URL',
-			type: 'string',
-		},
-		{
-			name: 'resourceType',
-			title: 'Tipo de recurso',
-			type: 'reference',
-			to: { type: 'resourceType' },
-		},
-	],
-};
+import { resource } from './resourceType';
 
 export default {
 	name: 'author',
