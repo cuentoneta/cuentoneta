@@ -1,11 +1,16 @@
+// Conector a Sanity
 import { client } from '../_helpers/sanity-connector';
+
+// Tipos de Sanity
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
-import imageUrlBuilder from '@sanity/image-url';
-import { baseLanguage } from '../../../cms/utils/localization';
 import { ImageUrlBuilder } from '@sanity/image-url/lib/types/builder';
 
+// Sanity utils
+import imageUrlBuilder from '@sanity/image-url';
+import { baseLanguage } from '../../../cms/utils/localization';
+
 // Modelos
-import { AuthorDTO } from '../_models/author-dto';
+import { AuthorDTO } from '@models/author.model';
 import { PrologueDTO } from '@models/prologue.model';
 
 export function mapAuthor(rawAuthorData: any, language?: string): AuthorDTO {
@@ -16,6 +21,7 @@ export function mapAuthor(rawAuthorData: any, language?: string): AuthorDTO {
       flag: urlFor(rawAuthorData.nationality?.flag)?.url(),
     },
     fullBioUrl: rawAuthorData.fullBioUrl,
+    resources: rawAuthorData.resources,
     imageUrl: urlFor(rawAuthorData.image).url(),
     name: rawAuthorData.name,
     biography: rawAuthorData.biography
