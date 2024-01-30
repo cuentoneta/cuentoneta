@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { inject } from '@vercel/analytics';
+import { injectSpeedInsights } from '@vercel/speed-insights';
 import { environment } from './environments/environment';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { HeaderComponent } from './components/header/header.component';
@@ -19,12 +20,16 @@ import { RouterModule } from '@angular/router';
     RouterModule,
   ],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   constructor() {
-    // Importa y configura el paquete de analytics de Vercel
+    // Import and configure the Vercel analytics package
     inject({
-      mode:
-        environment.environment === 'production' ? 'production' : 'development',
+      mode: environment.environment === 'production' ? 'production' : 'development',
     });
+  }
+
+  ngOnInit(): void {
+    // Call injectSpeedInsights here to ensure it runs on the client side
+    injectSpeedInsights();
   }
 }
