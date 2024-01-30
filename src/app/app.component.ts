@@ -22,14 +22,14 @@ import { RouterModule } from '@angular/router';
 })
 export class AppComponent implements OnInit {
   constructor() {
-    // Import and configure the Vercel analytics package
+    // Importa y configura el paquete de analytics de Vercel.
     inject({
       mode: environment.environment === 'production' ? 'production' : 'development',
     });
   }
 
   ngOnInit(): void {
-    // Call injectSpeedInsights here to ensure it runs on the client side
+    // Invoca a injectSpeedInsights aquí para asegurarse de que se ejecute en el lado del cliente.
     injectSpeedInsights();
   }
 }
