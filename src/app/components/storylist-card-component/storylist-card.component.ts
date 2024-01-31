@@ -29,6 +29,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
             [ngSrc]="storylist.featuredImage ?? ''"
             width="602"
             height="240"
+            alt=""
           />
         </header>
         <section class="flex flex-col gap-4 pt-5 px-4">
