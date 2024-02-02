@@ -5,7 +5,7 @@ import { Resource } from '@models/resource.model';
 interface AuthorBase {
 	id: string;
 	name: string;
-	imageUrl: string;
+	imageUrl?: string;
 	resources?: Resource[];
 	nationality: AuthorNationality;
 }
