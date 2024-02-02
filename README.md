@@ -90,6 +90,12 @@ Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos 
 - Diego Franchina (**[@soydiego](https://github.com/SoyDiego)**)
 - Jimer Espinoza (**[@jimersamuel](https://github.com/JimerSamuel)**)
 - Mia Ramos (**[@MiaPurpleFate](https://twitter.com.com/MiaPurpleFate)**)
+- Wilson Lasso (**[@wilago](https://github.com/wilago)**)
+- Gustavo Petruzzi (**[@gustavoPetruzzi](https://github.com/gustavoPetruzzi)**)
+- Juan Romero (**[@Addin](https://github.com/Addin)**)
+- Alexis Martínez (**[@AlexRGB2](https://github.com/AlexRGB2)**)
+- John Angel (**[@Jeangel](https://github.com/Jeangel)**)
+- Luciano Aieta (**[@lgaieta](https://github.com/lgaieta)**)
 
 ### Diseño UX/UI
 
