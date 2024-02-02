@@ -45,8 +45,6 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 - Preparación de la lista "Cuentos de Verano 2024" en la plataforma.
 - Rediseño de la landing page, incluyendo storylists en formato tarjeta.
 - ### `Hito: Lanzamiento al público de la versión 2.3.0 de La Cuentoneta (planificado para el 2023/12/21)`
-- 
-</details>
 
 ## Enero de 2024
 
@@ -58,8 +56,7 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 - Agregado soporte para visualización de grabaciones de Spaces de X en vista de historia.
 
 - ### `Hito: Lanzamiento al público de la versión 2.3.2 de La Cuentoneta (lanzada el 2024/01/10)`
-
-
+</details>
 
 ## Febrero de 2024
 
