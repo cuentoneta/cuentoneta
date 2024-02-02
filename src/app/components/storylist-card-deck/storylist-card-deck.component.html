@@ -1,142 +1,128 @@
 <article
-  class="stories-card-container"
-  [attr.aria-busy]="!storylist"
-  [ngStyle]="{
-    'grid-template-columns': storylist?.gridConfig?.gridTemplateColumns
-  }"
+	[attr.aria-busy]="!storylist"
+	[ngStyle]="{
+		'grid-template-columns': storylist?.gridConfig?.gridTemplateColumns
+	}"
+	class="stories-card-container"
 >
-  <ng-container *ngTemplateOutlet="storylistTemplate"> </ng-container>
+	<ng-container *ngTemplateOutlet="storylistTemplate"> </ng-container>
 </article>
 
 <ng-template #storylistTemplate>
-  <!-- Renderizado de título y descripción -->
-  @if(displayTitle) {
-      @if(!!storylist) {
-          <div
-            class="story-card-container title-container"
-            [ngStyle]="{
-                    order: storylist.gridConfig?.titlePlacement?.order,
-                    'grid-column-start': storylist.gridConfig?.titlePlacement?.startCol,
-                    'grid-column-end': storylist.gridConfig?.titlePlacement?.endCol,
-                  }"
-          >
-            <h1 class="title">
-              <a
-                [ngClass]="{ 'nav-link': canNavigateToStorylist }"
-                [routerLink]="
-                  canNavigateToStorylist ? '/' + appRouteTree['STORYLIST'] : null
-                "
-                [queryParams]="{ slug: storylist.slug }"
-                >{{ storylist.title }}</a
-              >
-            </h1>
-            <h3 class="subtitle">{{ storylist.description }}</h3>
-          </div>
-    } @else {
-      <div
-        class="story-card-container title-container"
-        [ngStyle]="{
-                order: skeletonConfig?.titlePlacement?.order,
-                'grid-column-start': skeletonConfig?.titlePlacement?.startCol,
-                'grid-column-end': skeletonConfig?.titlePlacement?.endCol,
-              }"
-      >
-        <ngx-skeleton-loader
-          [theme]="{
-            'margin-bottom.px': 20,
-            'height.px': 40,
-            width: '100%',
-            'background-color': '#D4D4D8'
-          }"
-          count="1"
-          appearance="line"
-        ></ngx-skeleton-loader>
-        <ngx-skeleton-loader
-          [theme]="{
-            'margin-bottom.px': 10,
-            'height.px': 20,
-            width: '100%',
-            'background-color': '#D4D4D8'
-          }"
-          count="3"
-          appearance="line"
-        ></ngx-skeleton-loader>
-      </div>
-    }
-  }
+	<!-- Renderizado de título y descripción -->
+	@if (displayTitle) {
+		@if (!!storylist) {
+			<div
+				[lang]="storylist.language"
+				[ngStyle]="{
+					order: storylist.gridConfig?.titlePlacement?.order,
+					'grid-column-start': storylist.gridConfig?.titlePlacement?.startCol,
+					'grid-column-end': storylist.gridConfig?.titlePlacement?.endCol
+				}"
+				class="story-card-container title-container"
+			>
+				<h1 class="title">
+					<a
+						[ngClass]="{ 'nav-link': canNavigateToStorylist }"
+						[routerLink]="canNavigateToStorylist ? '/' + appRouteTree['STORYLIST'] : null"
+						[queryParams]="{ slug: storylist.slug }"
+						>{{ storylist.title }}</a
+					>
+				</h1>
+				<h3 class="subtitle">{{ storylist.description }}</h3>
+			</div>
+		} @else {
+			<div
+				[ngStyle]="{
+					order: skeletonConfig?.titlePlacement?.order,
+					'grid-column-start': skeletonConfig?.titlePlacement?.startCol,
+					'grid-column-end': skeletonConfig?.titlePlacement?.endCol
+				}"
+				class="story-card-container title-container"
+			>
+				<ngx-skeleton-loader
+					[theme]="{
+						'margin-bottom.px': 20,
+						'height.px': 40,
+						width: '100%',
+						'background-color': '#D4D4D8'
+					}"
+					count="1"
+					appearance="line"
+				></ngx-skeleton-loader>
+				<ngx-skeleton-loader
+					[theme]="{
+						'margin-bottom.px': 10,
+						'height.px': 20,
+						width: '100%',
+						'background-color': '#D4D4D8'
+					}"
+					count="3"
+					appearance="line"
+				></ngx-skeleton-loader>
+			</div>
+		}
+	}
 
-  <!-- Renderizado de imágenes alusivas -->
-  @if(!!storylist?.images){
-  <div
-    class="story-card-container"
-    *ngFor="let image of storylist?.images"
-    [ngStyle]="imagesCardConfig[image.slug]"
-  >
-    <img [src]="image.url" alt="" />
-  </div>
-  }
+	<!-- Renderizado de imágenes alusivas -->
+	@if (!!storylist?.images) {
+		<div [ngStyle]="imagesCardConfig[image.slug]" *ngFor="let image of storylist?.images" class="story-card-container">
+			<img [src]="image.url" alt="" />
+		</div>
+	}
 
-  <!-- Renderizado de tarjetas de stories -->
-  <ng-container
-    *ngTemplateOutlet="
-      storylist?.publications ? publicationsTemplate : skeletonsTemplate
-    "
-  >
-  </ng-container>
+	<!-- Renderizado de tarjetas de stories -->
+	<ng-container *ngTemplateOutlet="storylist?.publications ? publicationsTemplate : skeletonsTemplate"> </ng-container>
 </ng-template>
 
 <ng-template #skeletonsTemplate>
-  @for(skeleton of skeletonConfig?.cardsPlacement; track $index) {
-      @if(!!skeleton.slug) {
-          <cuentoneta-story-card
-            [ngStyle]="{
-                  'order': skeleton?.order,
-                  'grid-column-start': skeleton?.startCol,
-                  'grid-column-end': skeleton?.endCol,
-                  }"
-          />
-      }
-      @if(!!skeleton.imageSlug) {
-          <ngx-skeleton-loader
-            [ngStyle]="{
-                  'order': skeleton?.order,
-                  'grid-column-start': skeleton?.startCol,
-                  'grid-column-end': skeleton?.endCol,
-                  }"
-            [theme]="{
-              height: '100%',
-              width: '100%',
-              'background-color': '#D4D4D8'
-            }"
-            count="1"
-            appearance="line"
-          ></ngx-skeleton-loader>
-      }
-  }
+	@for (skeleton of skeletonConfig?.cardsPlacement; track $index) {
+		@if (!!skeleton.slug) {
+			<cuentoneta-story-card
+				[ngStyle]="{
+					order: skeleton?.order,
+					'grid-column-start': skeleton?.startCol,
+					'grid-column-end': skeleton?.endCol
+				}"
+			/>
+		}
+		@if (!!skeleton.imageSlug) {
+			<ngx-skeleton-loader
+				[ngStyle]="{
+					order: skeleton?.order,
+					'grid-column-start': skeleton?.startCol,
+					'grid-column-end': skeleton?.endCol
+				}"
+				[theme]="{
+					height: '100%',
+					width: '100%',
+					'background-color': '#D4D4D8'
+				}"
+				count="1"
+				appearance="line"
+			></ngx-skeleton-loader>
+		}
+	}
 </ng-template>
 
 <ng-template #publicationsTemplate>
-  @if(!!storylist) {
-      @for(publication of storylist.publications; track $index) {
-          <a
-            class="story-card-container"
-            [ngStyle]="storiesCardConfig[publication.story.slug]"
-            [class.disabled]="!publication || !publication.published"
-            [routerLink]="
-              !!publication && publication.published
-                ? ['/', appRouteTree['STORY']]
-                : null
-            "
-            [queryParams]="{ slug: publication.story.slug, list: storylist.slug }"
-          >
-            <cuentoneta-story-card
-              [displayDate]="storylist.displayDates"
-              [editionPrefix]="storylist.editionPrefix"
-              [publication]="publication"
-              [editionIndex]="publication.publishingOrder"
-              [comingNextLabel]="storylist.comingNextLabel"
-            />
-          </a>
-      }
-  }
+	@if (!!storylist) {
+		@for (publication of storylist.publications; track $index) {
+			<a
+				[ngStyle]="storiesCardConfig[publication.story.slug]"
+				[class.disabled]="!publication || !publication.published"
+				[routerLink]="!!publication && publication.published ? ['/', appRouteTree['STORY']] : null"
+				[queryParams]="{ slug: publication.story.slug, list: storylist.slug }"
+				class="story-card-container"
+			>
+				<cuentoneta-story-card
+					[displayDate]="storylist.displayDates"
+					[editionPrefix]="storylist.editionPrefix"
+					[publication]="publication"
+					[editionIndex]="publication.publishingOrder"
+					[comingNextLabel]="storylist.comingNextLabel"
+				/>
+			</a>
+		}
+	}
 </ng-template>
