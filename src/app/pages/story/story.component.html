@@ -58,7 +58,7 @@
 
 		<!--TODO: #538: Incluir nuevo componente para incluir dinámicamente todos los tipos multimedia derivados-->
 		@if (!!story && !fetchContentDirective.isLoading) {
-			@for (media of story?.media; track $index) {
+			@for (media of story.media; track $index) {
 				@if (media.type === 'spaceRecording') {
 					<cuentoneta-space-recording-widget [media]="media" class="block mb-10"></cuentoneta-space-recording-widget>
 				}

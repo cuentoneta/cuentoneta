@@ -25,6 +25,7 @@ export default defineConfig([
         structure: deskStructure,
       }),
       sanityComputedField(),
+      visionTool(),
       crossDatasetDuplicator({
         types: ['story', 'storylist', 'author', 'nationality'],
         tool: true,

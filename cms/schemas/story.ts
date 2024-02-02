@@ -1,5 +1,6 @@
 import { supportedLanguages } from '../utils/localization';
 import { DocumentTextIcon, TwitterIcon } from '@sanity/icons';
+import { resource } from './resourceType';
 
 const spaceRecordingMedia = {
 	name: 'spaceRecording',
@@ -85,11 +86,6 @@ export default {
 			validation: (Rule) => Rule.required(),
 		},
 		{
-			name: 'originalLink',
-			title: 'Link Original',
-			type: 'string',
-		},
-		{
 			name: 'videoUrl',
 			title: 'URL del video con lectura/recitado del cuento',
 			type: 'url',
@@ -99,6 +95,12 @@ export default {
 			title: 'Información de recursos multimedia asociados a la historia en otras plataformas web',
 			type: 'array',
 			of: [spaceRecordingMedia],
+		},
+		{
+			name: 'resources',
+			title: 'Recursos web asociados a la story y su contenido',
+			type: 'array',
+			of: [resource],
 		},
 		{
 			name: 'badLanguage',
