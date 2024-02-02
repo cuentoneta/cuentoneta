@@ -59,17 +59,27 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 - ### `Hito: Lanzamiento al público de la versión 2.3.2 de La Cuentoneta (lanzada el 2024/01/10)`
 
-- Apertura del primer concurso de escritura en La Cuentoneta, el _III Certamen Extraordinario de Escritura_, a cargo de la comunidad **[Taller de
-  Escritura Creativa](https://discord.gg/YJDQCsBmyv)**.
+
 
 ## Febrero de 2024
+
+- Agregado soporte para enlace de múltiples recursos web y multimedia a la plataforma
+- Migración de tags *ngIf a sintaxis de control de flujo de Angular 17.
+- Mejoras en infraestructura de SCSS vía TailwindCSS.
+- Corrección y flexibilidad en el estilizado de epígrafes.
+- Agregado de Speed Insights de Vercel a la plataforma.
+- Actualización de schemas y modelos para mayor flexibilidad en relaciones entre entidades.
+- ### `Hito: Lanzamiento al público de la versión 2.3.3 de La Cuentoneta (lanzada el 2024/02/02)`
+
+- Preparación de la plataforma para alojar el primer concurso de escritura en La Cuentoneta, el _III Certamen Extraordinario de Escritura_, a cargo de la comunidad **[Taller de
+  Escritura Creativa](https://discord.gg/YJDQCsBmyv)**.
+- Exploración de material de autoras y autores locales para incluirlos en una edición especial de la plataforma.
+
+## Marzo de 2024
 - Desarrollo de las funcionalidades de registro e inicio de sesión de usuarios, que permitirán marcar historias como "leídas", dejar puntuaciones y comentarios en cada relato y storylist.
 - Publicación de las listas "Cuentos para el Bicentenario" en la plataforma, originalmente publicadas por el Ministerio de Educación de la Nación en 2015.
 
-## Marzo de 2024
-
 - Publicación de la lista "Cuentos por la Memoria" en conmemoración del Día por la Memoria, la Verdad y la Justicia, celebrado el 24 de marzo.
-- Exploración de material de autoras y autores locales para incluirlos en una edición especial de la plataforma.
 - Preparación de un newsletter quincenal al que los usuarios podrán suscribirse para recibir novedades de La Cuentoneta por correo electrónico.
 - Implementación de la funcionalidad "¿Cuánto tiempo tenés para leer hoy?" que permitirá filtrar los relatos según su tiempo estimado de lectura.
 
