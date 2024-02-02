@@ -30,7 +30,12 @@ import { BadgeComponent } from '../badge/badge.component';
 					class="navigation-link"
 				>
 					<header>
-						<img [ngSrc]="storylist.featuredImage ?? ''" width="602" height="240" />
+          <img
+            [ngSrc]="storylist.featuredImage ?? ''"
+            width="602"
+            height="240"
+            alt=""
+          />
 					</header>
 					<section class="flex flex-col gap-4 pt-5 px-4">
 						<h1 class="card-title">{{ storylist?.title }}</h1>
