@@ -4,7 +4,7 @@ import { makeid } from './script.utils'
 
 const fetchDocuments = () =>
     client.fetch(
-        `*[_type == 'author' && resources == null] { _id, _rev, fullBioUrl }[0...100]`
+        `*[_type == 'author' && fullBioUrl != null] { _id, _rev, fullBioUrl }[0...100]`
     );
 const fetchResourceType = () =>
     client.fetch(
