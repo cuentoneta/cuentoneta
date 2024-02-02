@@ -12,7 +12,8 @@ import { StoryDTO } from '@models/story.model';
 async function fetchForRead(slug: string): Promise<StoryDTO> {
 	{
 
-		const subq: string = `                              	resources[]{ 
+		const resourcesSubQuery: string = `                              	
+								resources[]{ 
                               	title, 
                               	url, 
                               	resourceType->{ 
@@ -40,11 +41,11 @@ async function fetchForRead(slug: string): Promise<StoryDTO> {
                               forewords, 
                               approximateReadingTime,
                               mediaSources,
-                              ${subq},
+                              ${resourcesSubQuery},
                               'author': author-> {
                               	..., 
                               	nationality->, 
-								${subq}
+								${resourcesSubQuery}
                               }
                           }[0]`;
 		const story = await client.fetch(query, {});
