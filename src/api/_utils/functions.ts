@@ -21,17 +21,7 @@ export function mapAuthor(rawAuthorData: any, language?: string): AuthorDTO {
 			flag: urlFor(rawAuthorData.nationality?.flag)?.url(),
 		},
 		fullBioUrl: rawAuthorData.fullBioUrl,
-		resources:
-			rawAuthorData.resources?.map((resource: any) => ({
-				...resource,
-				resourceType: {
-					...resource.resourceType,
-					icon: {
-						...resource.resourceType.icon,
-						svg: `data:image/svg+xml,${resource.resourceType.icon.svg}`,
-					},
-				},
-			})) ?? [],
+		resources: mapResources(rawAuthorData.resources),
 		imageUrl: urlFor(rawAuthorData.image).url(),
 		name: rawAuthorData.name,
 		biography: rawAuthorData.biography ? rawAuthorData.biography[language || baseLanguage!.id] : undefined,
@@ -49,4 +39,19 @@ export function mapPrologues(rawProloguesData: any): PrologueDTO[] {
 
 export function urlFor(source: SanityImageSource): ImageUrlBuilder {
 	return imageUrlBuilder(client).image(source);
+}
+
+export function mapResources(resources: any[]) {
+	return (
+		resources?.map((resource: any) => ({
+			...resource,
+			resourceType: {
+				...resource.resourceType,
+				icon: {
+					...resource.resourceType.icon,
+					svg: `data:image/svg+xml,${resource.resourceType.icon.svg}`,
+				},
+			},
+		})) ?? []
+	);
 }
