@@ -61,6 +61,26 @@ export class AboutComponent {
       name: "Gustavo Petruzzi",
       url: "https://github.com/gustavoPetruzzi",
       username: "@gustavoPetruzzi"
+    },
+    {
+      name: "Juan Romero",
+      url: "https://github.com/Addin",
+      username: "@Addin"
+    },
+    {
+      name: "Alexis Martínez",
+      url: "https://github.com/AlexRGB2",
+      username: "@AlexRGB2"
+    },
+    {
+      name: "John Angel",
+      url: "https://github.com/Jeangel",
+      username: "@Jeangel"
+    },
+    {
+      name: "Luciano Aieta",
+      url: "https://github.com/lgaieta",
+      username: "@lgaieta"
     }
   ]
 }
