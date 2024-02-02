@@ -86,11 +86,6 @@ export default {
 			validation: (Rule) => Rule.required(),
 		},
 		{
-			name: 'originalLink',
-			title: 'Link Original',
-			type: 'string',
-		},
-		{
 			name: 'videoUrl',
 			title: 'URL del video con lectura/recitado del cuento',
 			type: 'url',
