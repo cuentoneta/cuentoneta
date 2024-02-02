@@ -24,7 +24,7 @@ const buildPatches = (docs: any[], resourceRefKey: string) =>
                             _type: 'reference',
                             _ref: resourceRefKey,
                         },
-                        title: 'Artículo del autor en Wikipedia',
+                        title: 'Enlace a recurso original',
                         url: doc.originalLink,
                     },
                 ],
@@ -63,7 +63,7 @@ const migrateNextBatch = async (): Promise<any> => {
     );
     const transaction = createTransaction(patches);
     await commitTransaction(transaction);
-    return migrateNextBatch();
+    // return migrateNextBatch();
 };
 
 migrateNextBatch().catch((err) => {
