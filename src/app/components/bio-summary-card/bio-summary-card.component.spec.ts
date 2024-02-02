@@ -12,7 +12,6 @@ const mockAuthor: Author = {
     country: 'Argentina',
     flag: 'AR',
   },
-  fullBioUrl: 'https://gativideo.com',
 };
 
 const mockStory: Story = {
@@ -21,7 +20,6 @@ const mockStory: Story = {
     slug: 'el-maraja-de-san-telmo',
     approximateReadingTime: 5,
     author: mockAuthor,
-    originalLink: 'https://gativideo.com/historia-de-la-pelicula',
     language: 'es',
     videoUrl: 'https://gativideo.com/video.mp4',
     badLanguage: false,

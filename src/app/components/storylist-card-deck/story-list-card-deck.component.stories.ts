@@ -15,8 +15,6 @@ const fullyLoadedStorylist = {
       story: {
         _id: 'f69c7593-9c3d-4dae-a29c-2de4bf899935',
         approximateReadingTime: 4,
-        originalLink:
-          'https://leerporquesi-1007.blogspot.com/2013/06/dolina-alejandro-mascaras.html',
         slug: 'mascaras',
         title: 'Máscaras',
         summary:
@@ -44,8 +42,6 @@ const fullyLoadedStorylist = {
       story: {
         _id: 'd3e73851-32f9-4924-82a3-702588acd4d3',
         approximateReadingTime: 4,
-        originalLink:
-          'https://www.eternacadencia.com.ar/blog/libreria/lecturas/item/ajedrez.html',
         slug: 'ajedrez',
         title: 'Ajedrez',
         summary:
@@ -73,8 +69,6 @@ const fullyLoadedStorylist = {
       story: {
         _id: '39459afd-062b-4a8b-a6a6-89dde299a324',
         approximateReadingTime: 14,
-        originalLink:
-          'https://www.estacionlibro.com.ar/cuentos/la-terrible-venganza-un-cuento-de-gogol/',
         slug: 'la-terrible-venganza',
         title: 'La Terrible Venganza',
         summary:
@@ -102,7 +96,6 @@ const fullyLoadedStorylist = {
       story: {
         _id: '380c0624-4dbb-4ae4-bd18-995d076c9251',
         approximateReadingTime: 5,
-        originalLink: 'https://ciudadseva.com/texto/las-fresas/',
         slug: 'las-fresas',
         title: 'Las Fresas',
         summary:
@@ -130,7 +123,6 @@ const fullyLoadedStorylist = {
       story: {
         _id: '96951ae3-3910-426e-9d3b-fa3eb42027bb',
         approximateReadingTime: 8,
-        originalLink: 'https://ciudadseva.com/texto/la-casa-de-la-agonia/',
         slug: 'la-casa-de-la-agonia',
         title: 'La Casa de la Agonía',
         summary:
@@ -168,8 +160,6 @@ const upcomingStoriesStorylist = {
       story: {
         _id: 'f69c7593-9c3d-4dae-a29c-2de4bf899935',
         approximateReadingTime: 4,
-        originalLink:
-          'https://leerporquesi-1007.blogspot.com/2013/06/dolina-alejandro-mascaras.html',
         slug: 'mascaras',
         title: 'Máscaras',
         summary:
@@ -197,8 +187,7 @@ const upcomingStoriesStorylist = {
       story: {
         _id: 'd3e73851-32f9-4924-82a3-702588acd4d3',
         approximateReadingTime: 4,
-        originalLink:
-          'https://www.eternacadencia.com.ar/blog/libreria/lecturas/item/ajedrez.html',
+
         slug: 'ajedrez',
         title: 'Ajedrez',
         summary:
@@ -226,8 +215,6 @@ const upcomingStoriesStorylist = {
       story: {
         _id: '39459afd-062b-4a8b-a6a6-89dde299a324',
         approximateReadingTime: 14,
-        originalLink:
-          'https://www.estacionlibro.com.ar/cuentos/la-terrible-venganza-un-cuento-de-gogol/',
         slug: 'la-terrible-venganza',
         title: 'La Terrible Venganza',
         summary:
@@ -255,7 +242,6 @@ const upcomingStoriesStorylist = {
       story: {
         _id: '380c0624-4dbb-4ae4-bd18-995d076c9251',
         approximateReadingTime: 5,
-        originalLink: 'https://ciudadseva.com/texto/las-fresas/',
         slug: 'las-fresas',
         title: 'Las Fresas',
         summary:
@@ -283,7 +269,6 @@ const upcomingStoriesStorylist = {
       story: {
         _id: '96951ae3-3910-426e-9d3b-fa3eb42027bb',
         approximateReadingTime: 8,
-        originalLink: 'https://ciudadseva.com/texto/la-casa-de-la-agonia/',
         slug: 'la-casa-de-la-agonia',
         title: 'La Casa de la Agonía',
         summary:
