@@ -20,7 +20,6 @@ export function mapAuthor(rawAuthorData: any, language?: string): AuthorDTO {
 			country: rawAuthorData.nationality?.country,
 			flag: urlFor(rawAuthorData.nationality?.flag)?.url(),
 		},
-		fullBioUrl: rawAuthorData.fullBioUrl,
 		resources: mapResources(rawAuthorData.resources),
 		imageUrl: urlFor(rawAuthorData.image).url(),
 		name: rawAuthorData.name,

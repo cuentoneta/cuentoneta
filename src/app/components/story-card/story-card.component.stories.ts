@@ -32,7 +32,6 @@ const publication: Publication<Story> = {
     approximateReadingTime: 4,
     author: {
       id: '1',
-      fullBioUrl: '',
       nationality: {
         country: 'Argentina',
         flag: 'https://cdn.sanity.io/images/s4dbqkc5/production/ee6f30199738f983516909a0d6330301573a62f6-32x20.png',
