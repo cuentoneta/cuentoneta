@@ -16,96 +16,96 @@
 				/>
 			</aside>
 			<div>
-				<ng-container *ngIf="!!story && !fetchContentDirective.isLoading; else titleSkeleton">
-					<h1 class="title mb-2">{{ story.title }}</h1>
-					<p class="subtitle mb-2">{{ story.author.name }}</p>
+				@if (!!story && !fetchContentDirective.isLoading) {
+					<h1 class="title mb-2" [lang]="story.language">{{ story.title }}</h1>
+					<p class="subtitle mb-2" [lang]="story.language">{{ story.author.name }}</p>
 					<time class="reading-time"> {{ story.approximateReadingTime }} minutos de lectura </time>
-					<ng-container *ngIf="!!story.badLanguage"><p class="date">* Contiene lenguaje adulto</p></ng-container>
-				</ng-container>
+
+					@if (!!story.badLanguage) {
+						<p class="date">* Contiene lenguaje adulto</p>
+					}
+				} @else {
+					<ngx-skeleton-loader
+						[theme]="{
+							'height.px': 36,
+							'background-color': '#D4D4D8',
+							width: '50%'
+						}"
+						count="1"
+						appearance="line"
+					></ngx-skeleton-loader>
+					<ngx-skeleton-loader
+						[theme]="{
+							'height.px': 20,
+							'background-color': '#D4D4D8',
+							width: '25%'
+						}"
+						count="1"
+						appearance="line"
+					></ngx-skeleton-loader>
+					<ngx-skeleton-loader
+						[theme]="{
+							'height.px': 16,
+							'background-color': '#D4D4D8',
+							width: '20%'
+						}"
+						count="1"
+						appearance="line"
+					></ngx-skeleton-loader>
+				}
 			</div>
 		</header>
 
-        <!--TODO: #538: Incluir nuevo componente para incluir dinámicamente todos los tipos multimedia derivados-->
-		@if(!!story && !fetchContentDirective.isLoading){
-            @for (media of story?.media; track $index) {
-                @if (media.type === 'spaceRecording') {
-                    <cuentoneta-space-recording-widget [media]="media" class="block mb-10"></cuentoneta-space-recording-widget>
-                }
-            }
-        }
+		<!--TODO: #538: Incluir nuevo componente para incluir dinámicamente todos los tipos multimedia derivados-->
+		@if (!!story && !fetchContentDirective.isLoading) {
+			@for (media of story.media; track $index) {
+				@if (media.type === 'spaceRecording') {
+					<cuentoneta-space-recording-widget [media]="media" class="block mb-10"></cuentoneta-space-recording-widget>
+				}
+			}
+		}
 
-		<ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
-			<iframe
-				[src]="sanitizerUrl(story.videoUrl)"
-				*ngIf="!!story.videoUrl"
-				class="video mb-6 sm:mb-10"
-				title="YouTube video player"
-				frameborder="0"
-				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-				allowfullscreen
-			></iframe>
-		</ng-container>
+		@if (!!story && !fetchContentDirective.isLoading) {
+			@if (!!story.videoUrl) {
+				<iframe
+					[src]="sanitizerUrl(story.videoUrl)"
+					class="video mb-6 sm:mb-10"
+					title="YouTube video player"
+					frameborder="0"
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+					allowfullscreen
+				></iframe>
+			}
+		}
 
-		<ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
-			<section *ngIf="!!story.prologues && story.prologues.length > 0" class="prologues flex">
-				<ng-container *ngFor="let prologue of story.prologues">
-					<div class="bar"></div>
-					<p class="prologue flex flex-col md:flex-row md:items-center">
-						{{ prologue.text }}&nbsp;<em *ngIf="prologue.reference" class="self-end">{{ prologue.reference }}</em>
-					</p>
-				</ng-container>
-			</section>
-		</ng-container>
+		@if (!!story && !fetchContentDirective.isLoading) {
+			@if (!!story.prologues && story.prologues.length > 0) {
+				<section class="prologues">
+					@for (prologue of story.prologues; track $index) {
+						<cuentoneta-story-epigraph [prologue]="prologue"></cuentoneta-story-epigraph>
+					}
+				</section>
+			}
+		}
 
-		<section class="content">
-			<ng-container *ngIf="!!story && !fetchContentDirective.isLoading; else contentSkeleton">
+		<section class="content" [lang]="story.language">
+			@if (!!story && !fetchContentDirective.isLoading) {
 				<ng-container *ngFor="let paragraph of story.paragraphs">
 					<p [innerHTML]="paragraph.text" [ngClass]="paragraph.classes"></p>
 				</ng-container>
-			</ng-container>
+			} @else {
+				<div *ngFor="let skeleton of dummyList" class="mb-5">
+					<ngx-skeleton-loader></ngx-skeleton-loader>
+					<ngx-skeleton-loader></ngx-skeleton-loader>
+					<ngx-skeleton-loader></ngx-skeleton-loader>
+				</div>
+			}
 		</section>
 
 		<footer>
-			<ng-container *ngIf="!!story && !fetchContentDirective.isLoading">
+			@if (!!story && !fetchContentDirective.isLoading) {
 				<cuentoneta-bio-summary-card [story]="story" />
-			</ng-container>
+			}
 		</footer>
 	</article>
 </main>
-
-<ng-template #titleSkeleton>
-	<ngx-skeleton-loader
-		[theme]="{
-			'height.px': 36,
-			'background-color': '#D4D4D8',
-			width: '50%'
-		}"
-		count="1"
-		appearance="line"
-	></ngx-skeleton-loader>
-	<ngx-skeleton-loader
-		[theme]="{
-			'height.px': 20,
-			'background-color': '#D4D4D8',
-			width: '25%'
-		}"
-		count="1"
-		appearance="line"
-	></ngx-skeleton-loader>
-	<ngx-skeleton-loader
-		[theme]="{
-			'height.px': 16,
-			'background-color': '#D4D4D8',
-			width: '20%'
-		}"
-		count="1"
-		appearance="line"
-	></ngx-skeleton-loader>
-</ng-template>
-<ng-template #contentSkeleton>
-	<div *ngFor="let skeleton of dummyList" class="mb-5">
-		<ngx-skeleton-loader></ngx-skeleton-loader>
-		<ngx-skeleton-loader></ngx-skeleton-loader>
-		<ngx-skeleton-loader></ngx-skeleton-loader>
-	</div>
-</ng-template>

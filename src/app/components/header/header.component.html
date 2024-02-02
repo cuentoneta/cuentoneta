@@ -28,11 +28,13 @@
     </nav>
   </section>
 
-  <section class="menu" *ngIf="displayMenu">
-    <ul>
-      <ng-container *ngTemplateOutlet="navigationLinks"></ng-container>
-    </ul>
-  </section>
+  @if (displayMenu) {
+    <section class="menu">
+      <ul>
+        <ng-container *ngTemplateOutlet="navigationLinks"></ng-container>
+      </ul>
+    </section>
+  }
 </header>
 
 <ng-template #navigationLinks>

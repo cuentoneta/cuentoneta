@@ -1,6 +1,10 @@
-<span class="date" *ngIf="!!label"
-    ><div class="rect"></div>
+@if(!!label){
+<span class="date">
+    <div class="rect"></div>
     {{label}}
 </span>
+}
 <!--ToDo: Extraer badge a nuevo componente-->
-<div class="badge-new" *ngIf="markAsNew"><label>NUEVO</label></div>
+@if(markAsNew){
+<div class="badge-new"><label>NUEVO</label></div>
+}

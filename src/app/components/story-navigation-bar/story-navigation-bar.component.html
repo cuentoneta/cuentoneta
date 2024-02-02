@@ -1,89 +1,76 @@
 <section>
-  <header [attr.aria-busy]="!storylist">
-    @if(!!storylist && storylist.title){
-    <a
-      [routerLink]="'/' + appRouteTree['STORYLIST']"
-      [queryParams]="{ slug: storylist.slug }"
-    >
-      <h3 class="storylist-title">{{ storylist.title }}</h3>
-    </a>
-    } @else {
-    <ng-container *ngTemplateOutlet="titleSkeleton"></ng-container>
-    }
-  </header>
+	<header [attr.aria-busy]="!storylist" [lang]="storylist.language">
+		@if (!!storylist && storylist.title) {
+			<a [routerLink]="'/' + appRouteTree['STORYLIST']" [queryParams]="{ slug: storylist.slug }">
+				<h3 class="storylist-title">{{ storylist.title }}</h3>
+			</a>
+		} @else {
+			<ng-container *ngTemplateOutlet="titleSkeleton"></ng-container>
+		}
+	</header>
 
-  @if(!!storylist){ @for(publication of displayedPublications; track $index){
-  <a
-    [routerLink]="publication.published ? ['/' + appRouteTree['STORY']] : null"
-    [queryParams]="{ slug: publication.story.slug, list: storylist.slug }"
-  >
-    <article
-      [ngClass]="{ selected: selectedStorySlug === publication.story.slug }"
-    >
-      <cuentoneta-story-edition-date-label
-        class="edition-and-label"
-        [label]="
-          publication.published
-            ? getEditionLabel(publication, publication.publishingOrder)
-            : storylist.comingNextLabel
-        "
-      />
-      @if(publication.published){
-      <h4 class="title">{{ publication.story.title }}</h4>
-      <div class="flex items-center justify-between">
-        <h5 class="author">
-          {{ publication.story.author.name }}
-        </h5>
-        @if(!!publication.story.videoUrl){
-        <div [title]="'Contiene material audiovisual'" class="formats-info">
-          <img
-            class="video"
-            [alt]="'Contiene video'"
-            src="assets/svg/video.svg"
-          />
-        </div>
-        }
-      </div>
+	@if (!!storylist) {
+		@for (publication of displayedPublications; track $index) {
+			<a
+				[routerLink]="publication.published ? ['/' + appRouteTree['STORY']] : null"
+				[queryParams]="{ slug: publication.story.slug, list: storylist.slug }"
+			>
+				<article [ngClass]="{ selected: selectedStorySlug === publication.story.slug }">
+					<cuentoneta-story-edition-date-label
+						[label]="
+							publication.published
+								? getEditionLabel(publication, publication.publishingOrder)
+								: storylist.comingNextLabel
+						"
+						class="edition-and-label"
+					/>
+					@if (publication.published) {
+						<h4 class="title">{{ publication.story.title }}</h4>
+						<div class="flex items-center justify-between">
+							<h5 class="author">
+								{{ publication.story.author.name }}
+							</h5>
+							@if (!!publication.story.videoUrl) {
+								<div [title]="'Contiene material audiovisual'" class="formats-info">
+									<img [alt]="'Contiene video'" class="video" src="assets/svg/video.svg" />
+								</div>
+							}
+						</div>
+					} @else {
+						<ngx-skeleton-loader count="2" appearance="line" animation="false"></ngx-skeleton-loader>
+					}
+				</article>
+			</a>
+		}
+	} @else {
+		@for (skeleton of dummyList; track $index) {
+			<article [attr.aria-busy]="true">
+				<ngx-skeleton-loader count="2" appearance="line"></ngx-skeleton-loader>
+			</article>
+		}
+	}
 
-      } @else{
-      <ngx-skeleton-loader
-        count="2"
-        appearance="line"
-        animation="false"
-      ></ngx-skeleton-loader>
-      }
-    </article>
-  </a>
-  } } @else { @for(skeleton of dummyList; track $index){
-  <article [attr.aria-busy]="true">
-    <ngx-skeleton-loader count="2" appearance="line"></ngx-skeleton-loader>
-  </article>
-  } }
-
-  <!-- ToDo: #288 - Generar abstracción para evitar repetir lógica presente en el header (ver líneas 2 - 9)-->
-  @if(!!storylist && storylist.publications.length >= 10) {
-  <footer>
-    @if(storylist){
-    <a
-      [routerLink]="'/' + appRouteTree['STORYLIST']"
-      [queryParams]="{ slug: storylist.slug }"
-    >
-      <h3 class="storylist-title">Ver más...</h3>
-    </a>
-    } @else {
-    <ng-container *ngTemplateOutlet="titleSkeleton"></ng-container>
-    }
-  </footer>
-  }
+	<!-- ToDo: #288 - Generar abstracción para evitar repetir lógica presente en el header (ver líneas 2 - 9)-->
+	@if (!!storylist && storylist.publications.length >= 10) {
+		<footer>
+			@if (storylist) {
+				<a [routerLink]="'/' + appRouteTree['STORYLIST']" [queryParams]="{ slug: storylist.slug }">
+					<h3 class="storylist-title">Ver más...</h3>
+				</a>
+			} @else {
+				<ng-container *ngTemplateOutlet="titleSkeleton"></ng-container>
+			}
+		</footer>
+	}
 </section>
 
 <ng-template #titleSkeleton>
-  <ngx-skeleton-loader
-    count="2"
-    appearance="line"
-    [theme]="{
-      'height.px': 15,
-      'background-color': '#D4D4D8'
-    }"
-  ></ngx-skeleton-loader>
+	<ngx-skeleton-loader
+		[theme]="{
+			'height.px': 15,
+			'background-color': '#D4D4D8'
+		}"
+		count="2"
+		appearance="line"
+	></ngx-skeleton-loader>
 </ng-template>

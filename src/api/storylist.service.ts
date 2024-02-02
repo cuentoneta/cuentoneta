@@ -43,7 +43,6 @@ async function fetchPreview(req: express.Request, res: express.Response) {
                                             _id,
                                             'slug': slug.current,
                                             title,
-                                            originalLink,
                                             videoUrl,
                                             badLanguage,
                                             forewords,
@@ -53,6 +52,7 @@ async function fetchPreview(req: express.Request, res: express.Response) {
                                             forewords,
                                             approximateReadingTime,
                                             videoUrl,
+                                            language,
                                             'author': author-> { name, image, nationality-> }
                                         }
                                     }
@@ -158,7 +158,6 @@ async function fetchStorylist(req: any, res: any) {
                                         _id,
                                         'slug': slug.current,
                                         title,
-                                        originalLink,
                                         forewords,
                                         categories,
                                         body[0...3],
@@ -166,6 +165,7 @@ async function fetchStorylist(req: any, res: any) {
                                         forewords,
                                         approximateReadingTime,
                                         videoUrl,
+                                        language,
                                         'author': author-> { name, image, nationality-> }
                                     }
                                 }

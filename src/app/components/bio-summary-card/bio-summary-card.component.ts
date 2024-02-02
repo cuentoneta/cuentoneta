@@ -1,21 +1,27 @@
 // Core
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NgOptimizedImage, NgIf, CommonModule } from '@angular/common';
 
 // Modelos
 import { Story } from '@models/story.model';
 
+// Componentes
+import { ResourceComponent } from '../resource/resource.component';
+import { Resource } from '@models/resource.model';
+
 @Component({
-    selector: 'cuentoneta-bio-summary-card',
-    templateUrl: './bio-summary-card.component.html',
-    styleUrls: ['./bio-summary-card.component.scss'],
-    standalone: true,
-    imports: [
-        CommonModule,
-        NgOptimizedImage,
-        NgIf
-    ],
+	selector: 'cuentoneta-bio-summary-card',
+	templateUrl: './bio-summary-card.component.html',
+	styleUrls: ['./bio-summary-card.component.scss'],
+	standalone: true,
+	imports: [CommonModule, NgOptimizedImage, NgIf, ResourceComponent],
 })
-export class BioSummaryCardComponent {
-    @Input({required: true}) story!: Story;
+export class BioSummaryCardComponent implements OnInit {
+	@Input({ required: true }) story!: Story;
+
+	public resources: Resource[] = [];
+
+	ngOnInit() {
+		this.resources = [...(this.story.resources ?? []), ...(this.story.author.resources ?? [])];
+	}
 }

@@ -10,9 +10,14 @@
         display: grid;
 
         @media screen and (max-width: $max-xs-width) {
-            grid-template-columns: [col] $spacing-16 [col] 1fr [col] 1fr [col] $spacing-16 ;
-            grid-template-rows: [row] auto [row] auto;
+            grid-template-columns: [col] $spacing-16 [col] 1fr;
+            grid-template-rows: [row] auto;
             row-gap: $spacing-4;
+
+            .resources {
+                grid-column-start: 1;
+                grid-column-end: 3;
+            }
 
             .author-image {
                 grid-column: col / span 1;
@@ -38,7 +43,7 @@
         }
 
         @media screen and (min-width: $min-sm-width) {
-            grid-template-columns: $spacing-16 1fr $spacing-36 $spacing-32;
+            grid-template-columns: $spacing-16 1fr 1fr;
         }
 
         column-gap: $spacing-4;

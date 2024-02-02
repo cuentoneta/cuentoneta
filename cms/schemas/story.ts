@@ -1,5 +1,6 @@
 import { supportedLanguages } from '../utils/localization';
 import { DocumentTextIcon, TwitterIcon } from '@sanity/icons';
+import { resource } from './resourceType';
 
 const spaceRecordingMedia = {
 	name: 'spaceRecording',
@@ -41,7 +42,7 @@ const spaceRecordingMedia = {
 			type: 'string',
 		},
 	],
-}
+};
 
 export default {
 	name: 'story',
@@ -85,11 +86,6 @@ export default {
 			validation: (Rule) => Rule.required(),
 		},
 		{
-			name: 'originalLink',
-			title: 'Link Original',
-			type: 'string',
-		},
-		{
 			name: 'videoUrl',
 			title: 'URL del video con lectura/recitado del cuento',
 			type: 'url',
@@ -98,9 +94,13 @@ export default {
 			name: 'mediaSources',
 			title: 'Información de recursos multimedia asociados a la historia en otras plataformas web',
 			type: 'array',
-			of: [
-				spaceRecordingMedia
-			],
+			of: [spaceRecordingMedia],
+		},
+		{
+			name: 'resources',
+			title: 'Recursos web asociados a la story y su contenido',
+			type: 'array',
+			of: [resource],
 		},
 		{
 			name: 'badLanguage',
@@ -133,6 +133,31 @@ export default {
 					return Math.ceil(wordCount / 200);
 				},
 			},
+		},
+		{
+			name: 'epigraphs',
+			title: 'Epígrafes',
+			type: 'array',
+			of: [
+				{
+					name: 'epigraph',
+					title: 'Epígrafe',
+					type: 'object',
+					fields: [
+						{
+							name: 'epigraphText',
+							title: 'Texto del epígrafe',
+							type: 'blockContent',
+						},
+						{
+							name: 'epigraphAuthor',
+							title: 'Referencia del epígrafe',
+							description: 'Referencia del origen del epígrafe',
+							type: 'string',
+						},
+					],
+				},
+			],
 		},
 		{
 			name: 'forewords',
