@@ -23,7 +23,7 @@
 			</div>
 
 			@if (resources.length > 0) {
-				<div class="resources flex justify-end gap-4">
+				<div class="resources flex justify-start sm:justify-end gap-4">
 					@for (resource of resources; track $index) {
 						<cuentoneta-resource [resource]="resource"></cuentoneta-resource>
 					}
