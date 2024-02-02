@@ -4,7 +4,7 @@ import { makeid } from './script.utils'
 
 const fetchDocuments = () =>
     client.fetch(
-        `*[_type == 'author' && fullBioUrl != null] { _id, _rev, fullBioUrl }[0...100]`
+        `*[_type == 'author' && fullBioUrl != null] { _id, _rev, name, fullBioUrl }[0...2]`
     );
 const fetchResourceType = () =>
     client.fetch(
@@ -24,7 +24,7 @@ const buildPatches = (docs: any[], resourceRefKey: string) =>
                             _type: 'reference',
                             _ref: resourceRefKey,
                         },
-                        title: 'Artículo del autor en Wikipedia',
+                        title: `Artículo de ${doc.name} en Wikipedia`,
                         url: doc.fullBioUrl,
                     },
                 ],
@@ -49,6 +49,7 @@ const migrateNextBatch = async (): Promise<any> => {
     const documents = (await fetchDocuments());
     console.log(resourceRefKey)
     console.log(documents)
+    return
     const patches = buildPatches(documents, resourceRefKey);
     console.log(patches)
     if (patches.length === 0) {
