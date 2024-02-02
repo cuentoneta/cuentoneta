@@ -17,8 +17,8 @@
 			</aside>
 			<div>
 				@if (!!story && !fetchContentDirective.isLoading) {
-					<h1 class="title mb-2">{{ story.title }}</h1>
-					<p class="subtitle mb-2">{{ story.author.name }}</p>
+					<h1 class="title mb-2" [lang]="story.language">{{ story.title }}</h1>
+					<p class="subtitle mb-2" [lang]="story.language">{{ story.author.name }}</p>
 					<time class="reading-time"> {{ story.approximateReadingTime }} minutos de lectura </time>
 
 					@if (!!story.badLanguage) {
@@ -88,7 +88,7 @@
 			}
 		}
 
-		<section class="content">
+		<section class="content" [lang]="story.language">
 			@if (!!story && !fetchContentDirective.isLoading) {
 				<ng-container *ngFor="let paragraph of story.paragraphs">
 					<p [innerHTML]="paragraph.text" [ngClass]="paragraph.classes"></p>
