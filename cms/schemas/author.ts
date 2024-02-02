@@ -48,11 +48,6 @@ export default {
 			})),
 		},
 		{
-			name: 'fullBioUrl',
-			title: 'Link Biografía Completa',
-			type: 'url',
-		},
-		{
 			name: 'resources',
 			title: 'Recursos asociados al perfil del autor',
 			type: 'array',

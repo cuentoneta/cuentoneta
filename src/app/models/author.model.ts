@@ -6,7 +6,6 @@ interface AuthorBase {
 	id: string;
 	name: string;
 	imageUrl: string;
-	fullBioUrl: string;
 	resources?: Resource[];
 	nationality: AuthorNationality;
 }
