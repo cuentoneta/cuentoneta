@@ -11,7 +11,6 @@ import { StoryDTO } from '@models/story.model';
 
 async function fetchForRead(slug: string): Promise<StoryDTO> {
 	{
-
 		const resourcesSubQuery: string = `                              	
 								resources[]{ 
                               	title, 
