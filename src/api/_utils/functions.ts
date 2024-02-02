@@ -21,7 +21,7 @@ export function mapAuthor(rawAuthorData: any, language?: string): AuthorDTO {
 			flag: urlFor(rawAuthorData.nationality?.flag)?.url(),
 		},
 		resources: mapResources(rawAuthorData.resources),
-		imageUrl: urlFor(rawAuthorData.image).url(),
+		imageUrl: rawAuthorData.image ? urlFor(rawAuthorData.image).url() : undefined,
 		name: rawAuthorData.name,
 		biography: rawAuthorData.biography ? rawAuthorData.biography[language || baseLanguage!.id] : undefined,
 	};
