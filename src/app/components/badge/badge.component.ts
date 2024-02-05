@@ -16,8 +16,8 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
   hostDirectives: [TooltipDirective],
   imports: [BypassHtmlSanitizerPipe, CommonModule, NgOptimizedImage],
   template: `<span class="flex items-center gap-1">
-    @if (showIcon && !!tag?.icon?.svg) {
-    <div [outerHTML]="tag?.icon?.svg ?? '' | bypassHtmlSanitizer"></div>
+    @if (showIcon && !!tag.icon?.svg) {
+    <div [outerHTML]="tag.icon?.svg ?? '' | bypassHtmlSanitizer"></div>
     }
     {{ tag.title }}
   </span> `,

@@ -14,7 +14,7 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 	template: `
 		<a [href]="resource.url" target="_blank" class="flex items-center justify-center">
 			<img
-				[src]="resource?.resourceType?.icon?.svg ?? ''"
+				[ngSrc]="resource.resourceType.icon?.svg ?? ''"
 				[height]="24"
 				[width]="24"
 				[alt]="resource.resourceType.title"
