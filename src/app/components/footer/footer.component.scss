@@ -1,4 +1,5 @@
 @use 'src/assets/scss/theme.scss' as *;
+@use 'src/assets/scss/breakpoints.scss';
 
 footer {
     margin-top: 120px;
@@ -12,10 +13,10 @@ footer {
         max-width: unset;
     }
 
-    @media screen and (max-width: $max-xs-width) {
+    @media screen and (max-width: breakpoints.$max-xs-width) {
         padding: $spacing-8 $spacing-5;
     }
-    @media screen and (min-width: $min-sm-width) {
+    @media screen and (min-width: breakpoints.$min-sm-width) {
         height: 98px;
     }
 }
@@ -25,17 +26,17 @@ footer {
     max-width: 1240px;
     display: grid;
 
-    @media screen and (max-width: $max-sm-width) {
+    @media screen and (max-width: breakpoints.$max-sm-width) {
         grid-template-columns: 1fr;
         grid-gap: $spacing-6;
     }
 
-    @media screen and (min-width: $min-sm-width) and (max-width: $max-md-width) {
+    @media screen and (min-width: breakpoints.$min-sm-width) and (max-width: breakpoints.$max-md-width) {
         grid-template-columns: 0.15fr 1fr 0.4fr;
         margin: 0 $spacing-5;
     }
 
-    @media screen and (min-width: $min-lg-width) {
+    @media screen and (min-width: breakpoints.$min-lg-width) {
         grid-template-columns: 0.25fr 1fr 0.25fr;
         margin: auto;
     }
@@ -49,19 +50,19 @@ section {
         }
 
         li {
-            @media screen and (max-width: $max-xs-width) {
+            @media screen and (max-width: breakpoints.$max-xs-width) {
                 @include inter-body-xs-bold;
             }
 
             &:not(:last-child) {
-                @media screen and (max-width: $max-xs-width) {
+                @media screen and (max-width: breakpoints.$max-xs-width) {
                     margin-right: $spacing-3;
                     @include inter-body-xs-bold;
                 }
-                @media screen and (min-width: $min-sm-width) and (max-width: $max-md-width) {
+                @media screen and (min-width: breakpoints.$min-sm-width) and (max-width: breakpoints.$max-md-width) {
                     margin-right: $spacing-8;
                 }
-                @media screen and (min-width: $min-lg-width) {
+                @media screen and (min-width: breakpoints.$min-lg-width) {
                     margin-right: $spacing-12;
                 }
             }
@@ -69,16 +70,16 @@ section {
     }
 
     &.social {
-        @media screen and (min-width: $min-sm-width) {
+        @media screen and (min-width: breakpoints.$min-sm-width) {
             margin-left: auto;
         }
 
         li {
             &:not(:last-child) {
-                @media screen and (max-width: $max-md-width) {
+                @media screen and (max-width: breakpoints.$max-md-width) {
                     margin-right: $spacing-8;
                 }
-                @media screen and (min-width: $min-sm-width) {
+                @media screen and (min-width: breakpoints.$min-sm-width) {
                     margin-right: $spacing-6;
                 }
             }

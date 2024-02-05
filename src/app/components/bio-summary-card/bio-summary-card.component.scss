@@ -1,4 +1,5 @@
 @use 'src/assets/scss/theme.scss' as *;
+@use 'src/assets/scss/breakpoints.scss';
 
 .bio-card-container {
     border: 1px solid $gray-200;
@@ -9,7 +10,7 @@
     .author {
         display: grid;
 
-        @media screen and (max-width: $max-xs-width) {
+        @media screen and (max-width: breakpoints.$max-xs-width) {
             grid-template-columns: [col] $spacing-16 [col] 1fr;
             grid-template-rows: [row] auto;
             row-gap: $spacing-4;
@@ -42,7 +43,7 @@
             }
         }
 
-        @media screen and (min-width: $min-sm-width) {
+        @media screen and (min-width: breakpoints.$min-sm-width) {
             grid-template-columns: $spacing-16 1fr 1fr;
         }
 

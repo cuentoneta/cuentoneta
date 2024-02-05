@@ -1,13 +1,13 @@
-@use 'src/assets/scss/theme.scss' as *;
+@use 'src/assets/scss/breakpoints.scss' ;
 
 .main-container {
     min-height: 100vh;
     margin: auto;
 
-    @media screen and (min-width: $min-lg-width) {
+    @media screen and (min-width: breakpoints.$min-lg-width) {
         width: 1240px;
     }
-    @media screen and (max-width: $max-md-width) {
+    @media screen and (max-width: breakpoints.$max-md-width) {
         margin: 0 20px;
     }
 }

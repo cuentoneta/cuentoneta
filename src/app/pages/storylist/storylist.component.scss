@@ -1,8 +1,9 @@
 @use 'src/assets/scss/theme.scss' as *;
+@use 'src/assets/scss/breakpoints.scss';
 
 :host {
     display: block;
-    @media screen and (min-width: $min-lg-width) {
+    @media screen and (min-width: breakpoints.$min-lg-width) {
         margin-top: $spacing-28;
     }
 }
