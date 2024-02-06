@@ -26,7 +26,7 @@ import { BadgeComponent } from '../badge/badge.component';
 			@if (!!storylist) {
 				<div
 					[routerLink]="['/' + appRouteTree['STORYLIST']]"
-					[queryParams]="{ slug: storylist?.slug }"
+					[queryParams]="{ slug: storylist.slug }"
 					class="navigation-link"
 				>
 					<header>
@@ -38,14 +38,14 @@ import { BadgeComponent } from '../badge/badge.component';
           />
 					</header>
 					<section class="flex flex-col gap-4 pt-5 px-4">
-						<h1 class="card-title">{{ storylist?.title }}</h1>
-						<p class="description">{{ storylist?.description }}</p>
+						<h1 class="card-title">{{ storylist.title }}</h1>
+						<p class="description">{{ storylist.description }}</p>
 						<hr />
 					</section>
 				</div>
 				<footer class="flex justify-end pt-4 px-5 pb-5">
 					@if (!!storylist.tags && storylist.tags.length > 0) {
-						@for (tag of storylist?.tags; track tag.slug) {
+						@for (tag of storylist.tags; track tag.slug) {
 							<cuentoneta-badge [tag]="tag" [showIcon]="true" class="ml-3" />
 						}
 					}

@@ -1,7 +1,7 @@
 @use 'src/assets/scss/theme.scss';
 
-$left-gradient-color: hsl(230, 100, 50);
-$right-gradient-color: hsl(260, 100, 60);
+$left-gradient-color: hsl(230, 100 * 1%, 50 * 1%);
+$right-gradient-color: hsl(260, 100 * 1%, 60 * 1%);
 
 :host {
 	font-family: sans-serif;
@@ -33,7 +33,7 @@ $right-gradient-color: hsl(260, 100, 60);
 			padding: 2px 4px;
 			font-size: 13px;
 			line-height: 16px;
-			background-color: hsla(0, 0, 100, 0.3);
+			background-color: hsla(0, 0 * 1%, 100 * 1%, 0.3);
 		}
 	}
 
