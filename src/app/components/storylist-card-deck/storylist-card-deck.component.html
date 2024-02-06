@@ -66,9 +66,11 @@
 
 	<!-- Renderizado de imágenes alusivas -->
 	@if (!!storylist?.images) {
-		<div [ngStyle]="imagesCardConfig[image.slug]" *ngFor="let image of storylist?.images" class="story-card-container">
-			<img [src]="image.url" alt="" />
-		</div>
+		@for (image of storylist?.images; track $index) {
+			<div [ngStyle]="imagesCardConfig[image.slug]" class="story-card-container">
+				<img [src]="image.url" alt="" />
+			</div>
+		}
 	}
 
 	<!-- Renderizado de tarjetas de stories -->
