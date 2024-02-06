@@ -1,4 +1,5 @@
-@use 'src/assets/scss/theme.scss' as theme;
+@use 'src/assets/scss/theme.scss';
+@use 'src/assets/scss/breakpoints.scss';
 
 .hero {
 
@@ -6,7 +7,7 @@
   @apply grid-cols-1 gap-4;
   @apply lg:grid-cols-2 lg:gap-0;
 
-  @media screen and (min-width: theme.$min-lg-width) {
+  @media screen and (min-width: breakpoints.$min-lg-width) {
     h1 {
       font-size: 3.75rem;
       line-height: 60px;
@@ -28,12 +29,12 @@
   background-color: theme.$gray-50;
   padding: theme.$spacing-5;
 
-  @media screen and (max-width: theme.$max-sm-width) {
+  @media screen and (max-width: breakpoints.$max-sm-width) {
     margin-left: -(theme.$spacing-5);
     margin-right: -(theme.$spacing-5);
   }
 
-  @media screen and (min-width: theme.$min-md-width) {
+  @media screen and (min-width: breakpoints.$min-md-width) {
     border-radius: theme.$rounded-xl;
     box-shadow: theme.$box-shadow-card;
     padding: theme.$spacing-15;

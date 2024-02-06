@@ -1,4 +1,5 @@
 @use 'src/assets/scss/theme.scss' as *;
+@use 'src/assets/scss/breakpoints.scss';
 
 :host {
   display:flex;
@@ -9,11 +10,11 @@
     color: $primary-500;
     display: flex;
 
-    @media(max-width: $max-xs-width){
+    @media(max-width: breakpoints.$max-xs-width){
       @include inter-body-xs-bold;
     }
 
-    @media(min-width: $min-md-width){
+    @media(min-width: breakpoints.$min-md-width){
       @include inter-body-sm-bold;
     }
 

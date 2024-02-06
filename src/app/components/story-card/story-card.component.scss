@@ -1,4 +1,5 @@
 @use 'src/assets/scss/theme.scss' as *;
+@use 'src/assets/scss/breakpoints.scss';
 
 :host {
   @include card;
@@ -19,10 +20,10 @@
   }
 
   .content {
-    @media (max-width: $max-xs-width) {
+    @media (max-width: breakpoints.$max-xs-width) {
       display: none;
     }
-    @media (min-width: $min-sm-width) {
+    @media (min-width: breakpoints.$min-sm-width) {
       @include source-serif-pro-body-base;
       display: -webkit-box !important;
       overflow: hidden;
