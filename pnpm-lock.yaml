@@ -36,7 +36,7 @@ dependencies:
     specifier: 17.1.2
     version: 17.1.2(@angular/common@17.1.2)(@angular/core@17.1.2)
   '@angular/youtube-player':
-    specifier: ^17.1.2
+    specifier: 17.1.2
     version: 17.1.2(@angular/common@17.1.2)(@angular/core@17.1.2)(rxjs@7.5.7)
   '@nx/angular':
     specifier: 18.0.1
