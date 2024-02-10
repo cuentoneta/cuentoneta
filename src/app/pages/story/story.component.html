@@ -67,7 +67,7 @@
 
 		@if (!!story && !fetchContentDirective.isLoading) {
 			@if (!!story.videoUrl) {
-				<youtube-player [videoId]="story.videoUrl.split('/')[4]" placeholderImageQuality="low" />
+				<youtube-player [videoId]="story.videoUrl" placeholderImageQuality="low" />
 			}
 		}
 
