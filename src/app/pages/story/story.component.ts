@@ -65,7 +65,7 @@ export class StoryComponent {
 		const videoUrl = new URL('story.videoUrl');
 		return {
 			...story,
-			videoUrl: videoUrl.pathname.slice(1),
+			videoUrl: videoUrl.pathname.split('/')[2],
 		};
 	}
 
