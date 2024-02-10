@@ -62,11 +62,15 @@ export class StoryComponent {
 	shareMessage: string = '';
 
 	storyWithTransformedvideoUrl(story: Story) {
-		const videoUrl = new URL('story.videoUrl');
-		return {
-			...story,
-			videoUrl: videoUrl.pathname.split('/')[2],
-		};
+		if (story.videoUrl) {
+			const videoUrl = new URL(story.videoUrl);
+			return {
+				...story,
+				videoUrl: videoUrl.pathname.split('/')[2],
+			};
+		}
+
+		return story;
 	}
 
 	constructor() {
