@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { combineLatest, switchMap } from 'rxjs';
 import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DomSanitizer } from '@angular/platform-browser';
+import { YouTubePlayer } from '@angular/youtube-player';
 
 // 3rd Party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -46,6 +46,7 @@ import { EpigraphComponent } from '../../components/epigraph/epigraph.component'
 		ShareContentComponent,
 		SpaceRecordingWidgetComponent,
 		EpigraphComponent,
+		YouTubePlayer,
 	],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
@@ -59,8 +60,6 @@ export class StoryComponent {
 	dummyList = Array(10);
 	shareContentParams: { [key: string]: string } = {};
 	shareMessage: string = '';
-
-	private sanitizer: DomSanitizer = inject(DomSanitizer);
 
 	constructor() {
 		const platformId = inject(PLATFORM_ID);
@@ -97,13 +96,5 @@ export class StoryComponent {
 			this.shareContentParams = { slug: story.slug, list: storylist.slug };
 			this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos de la colección "${storylist.title}" en este link:`;
 		});
-	}
-
-	sanitizerUrl(url: string) {
-		if (url) {
-			return this.sanitizer.bypassSecurityTrustResourceUrl(url);
-		} else {
-			return undefined;
-		}
 	}
 }

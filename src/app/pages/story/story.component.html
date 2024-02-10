@@ -17,8 +17,8 @@
 			</aside>
 			<div>
 				@if (!!story && !fetchContentDirective.isLoading) {
-					<h1 class="title mb-2" [lang]="story.language">{{ story.title }}</h1>
-					<p class="subtitle mb-2" [lang]="story.language">{{ story.author.name }}</p>
+					<h1 [lang]="story.language" class="title mb-2">{{ story.title }}</h1>
+					<p [lang]="story.language" class="subtitle mb-2">{{ story.author.name }}</p>
 					<time class="reading-time"> {{ story.approximateReadingTime }} minutos de lectura </time>
 
 					@if (!!story.badLanguage) {
@@ -67,14 +67,7 @@
 
 		@if (!!story && !fetchContentDirective.isLoading) {
 			@if (!!story.videoUrl) {
-				<iframe
-					[src]="sanitizerUrl(story.videoUrl)"
-					class="video mb-6 sm:mb-10"
-					title="YouTube video player"
-					frameborder="0"
-					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-					allowfullscreen
-				></iframe>
+				<youtube-player [videoId]="story.videoUrl.split('/')[4]" placeholderImageQuality="low" />
 			}
 		}
 
@@ -88,7 +81,7 @@
 			}
 		}
 
-		<section class="content" [lang]="story.language">
+		<section [lang]="story.language" class="content">
 			@if (!!story && !fetchContentDirective.isLoading) {
 				<ng-container *ngFor="let paragraph of story.paragraphs">
 					<p [innerHTML]="paragraph.text" [ngClass]="paragraph.classes"></p>
