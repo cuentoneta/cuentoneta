@@ -222,7 +222,7 @@ Los ambientes de despliegue de La Cuentoneta son los siguientes:
 - **Web | Staging:** [https://staging.cuentoneta.ar](https://staging.cuentoneta.ar)
 - **Storybook:** [https://cuentoneta-storybook.vercel.app/](https://cuentoneta-storybook.vercel.app/)
 - **Sanity Studio | Development:** (próximamente)
-  <!-- Links a GitHub issues y a issue templates -->
+  <!-- Links a GitHub Issues y a issue templates -->
   [github-issues-tutorial]: https://docs.github.com/es/issues/tracking-your-work-with-issues/creating-an-issue
   [crear-issue-cuentoneta]: https://github.com/rolivencia/cuentoneta/issues/new/choose
   [feature-request-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%8F%8E%EF%B8%8F+mejora&projects=&template=feature.yml
