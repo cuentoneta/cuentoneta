@@ -49,7 +49,7 @@ $letter-spacing: 0px;
 @mixin inter-body-xl {
     font-family: $inter-font-family;
     font-size: 1.25rem;
-    line-height: 28px;
+    line-height: 30px;
     letter-spacing: $letter-spacing;
 }
 
@@ -70,7 +70,7 @@ $letter-spacing: 0px;
 @mixin inter-body-sm {
     font-family: $inter-font-family;
     font-size: 0.875rem;
-    line-height: 20px;
+    line-height: 22px;
     letter-spacing: $letter-spacing;
 }
 
@@ -92,7 +92,7 @@ $letter-spacing: 0px;
 @mixin source-serif-pro-body-xl {
     font-family: $source-serif-pro-font-family;
     font-size: 1.25rem;
-    line-height: 28px;
+    line-height: 30px;
     letter-spacing: $letter-spacing;
 }
 @mixin source-serif-pro-body-lg {
@@ -112,7 +112,7 @@ $letter-spacing: 0px;
 @mixin source-serif-pro-body-sm {
     font-family: $source-serif-pro-font-family;
     font-size: 0.875rem;
-    line-height: 20px;
+    line-height: 22px;
     letter-spacing: $letter-spacing;
 }
 // endregion
@@ -302,7 +302,7 @@ h6 {
 
 h1 {
     font-size: 36px;
-    line-height: 40px;
+    line-height: 54px;
     letter-spacing: 0;
     font-weight: $inter-font-weight-bold;
 }
@@ -310,18 +310,18 @@ h1 {
 h2 {
     font-size: 30px;
     font-weight: $inter-font-weight-bold;
-    line-height: 36px;
+    line-height: 46px;
     letter-spacing: 0;
 }
 
 h3 {
     font-size: 20px;
-    line-height: 28px;
+    line-height: 30px;
     font-weight: $inter-font-weight-medium;
 
     @media screen and (min-width: breakpoints.$min-lg-width) {
         font-size: 24px;
-        line-height: 32px;
+        line-height: 36px;
         font-weight: $inter-font-weight-bold;
         letter-spacing: 0;
     }
