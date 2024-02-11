@@ -13,7 +13,7 @@
 En este documento encontrarás disponible información sobre cómo contribuir al desarrollo y la generación de
 contenido de La Cuentoneta.
 
-Utilizamos [Github Issues][github-issues-tutorial] para llevar adelante el seguimiento de reportes de bugs
+Utilizamos [GitHub Issues][github-issues-tutorial] para llevar adelante el seguimiento de reportes de bugs
 (_bug reports_), la propuesta de nuevas funcionalidades y mejoras (_feature requests_) y la contribución y
 sugerencia de contenidos para sumar a la plataforma.
 
@@ -113,9 +113,9 @@ Junto con Nx, el proyecto cuenta con ESLint y Prettier ya configuradas como depe
 - Tener instalada una versión de [Node](https://nodejs.org/es/) igual o superior a `v18.15.0`, idealmente la última versión LTS.
 - Instalar `pnpm`, un gestor de paquetes alternativo para Node: `npm install -g pnpm`. Se recomienda la versión `8.2.0` o superior.
 - Instalar `nx`, un CLI para desarrollo de monorepos: `pnpm install -g nx`. Se recomienda la versión `17.1.0` o superior.
-- Tener un editor de texto o IDE ([Visual Studio Code](https://code.visualstudio.com/), [Vim](https://www.vim.org/), [WebStorm](https://www.jetbrains.com/es-es/webstorm/), etc.)
-- Tener una cuenta en [GitHub](https://docs.github.com/es/get-started/signing-up-for-github/signing-up-for-a-new-github-account)
-- Leer y seguir [Código de Conducta][doc-code_of_conduct].
+- Tener un editor de texto o IDE ([Visual Studio Code](https://code.visualstudio.com/), [Vim](https://www.vim.org/), [WebStorm](https://www.jetbrains.com/es-es/webstorm/), etc).
+- Tener una cuenta en [GitHub](https://docs.github.com/es/get-started/signing-up-for-github/signing-up-for-a-new-github-account).
+- Leer y seguir el [código de conducta][doc-code_of_conduct].
 - Unirte a [FrontendCafé][dc-fec] en Discord.
 
 ---
@@ -124,13 +124,13 @@ Junto con Nx, el proyecto cuenta con ESLint y Prettier ya configuradas como depe
 
 #### Paso 1: _Forkear_ el repositorio
 
-Para poder trabajar localmente en el proyecto, y luego contribuir tus cambios, deberás realizar un fork del repositorio desde Github y clonarlo en tu computadora.
+Para poder trabajar localmente en el proyecto, y luego contribuir tus cambios, deberás realizar un fork del repositorio desde GitHub y clonarlo en tu computadora.
 
-El fork del repositorio se realiza desde el botón `Fork` en la esquina superior derecha de la página del repositorio en Github. Una vez clickeado el botón, podrás visualizar la siguiente pantalla.
+El fork del repositorio se realiza desde el botón `Fork` en la esquina superior derecha de la página del repositorio en GitHub. Una vez clickeado el botón, podrás visualizar la siguiente pantalla.
 
 ![image](https://github.com/cuentoneta/cuentoneta/assets/32349705/3f7ff9cf-6b06-4265-a940-a455f6cd753a)
 
-Luego de pulsar el botón `Create fork`, se creará una copia del repositorio en tu cuenta de Github, desde la que podrás trabajar localmente en el proyecto, generar tus commits y posteriormente crear pull requests al repositorio original.
+Luego de pulsar el botón `Create fork`, se creará una copia del repositorio en tu cuenta de GitHub, desde la que podrás trabajar localmente en el proyecto, generar tus commits y posteriormente crear pull requests al repositorio original.
 
 #### Paso 2: Clonar el repositorio
 
@@ -222,11 +222,12 @@ Los ambientes de despliegue de La Cuentoneta son los siguientes:
 - **Web | Staging:** [https://staging.cuentoneta.ar](https://staging.cuentoneta.ar)
 - **Storybook:** [https://cuentoneta-storybook.vercel.app/](https://cuentoneta-storybook.vercel.app/)
 - **Sanity Studio | Development:** (próximamente)
-  <!-- Links a Github issues y a issue templates -->
+  <!-- Links a GitHub issues y a issue templates -->
   [github-issues-tutorial]: https://docs.github.com/es/issues/tracking-your-work-with-issues/creating-an-issue
   [crear-issue-cuentoneta]: https://github.com/rolivencia/cuentoneta/issues/new/choose
   [feature-request-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%8F%8E%EF%B8%8F+mejora&projects=&template=feature.yml
   [bug-report-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%A6%9F+bug&projects=&template=bug_report.yml
+  [doc-code_of_conduct]: https://github.com/cuentoneta/cuentoneta/blob/develop/CODE_OF_CONDUCT.md 
 
 <!-- Enlaces a Discord -->
 
