@@ -39,7 +39,7 @@ export class StoryCardComponent implements OnInit {
 	private datePipe = inject(DatePipe);
 
 	ngOnInit() {
-		const dateFormat = this.datePipe.transform(this.publication?.publishingDate, 'dd MMMM, yyyy');
+		const dateFormat = this.datePipe.transform(this.publication?.publishingDate, `dd 'de' MMMM, YYYY`);
 		this.editionLabel = `${this.editionPrefix} ${this.editionIndex} ${this.displayDate ? ' - ' + dateFormat : ''}${
 			this.editionSuffix ? ' | ' + this.editionSuffix : ''
 		}`;
