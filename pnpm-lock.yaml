@@ -56,9 +56,6 @@ dependencies:
   '@vercel/speed-insights':
     specifier: ^1.0.9
     version: 1.0.9(react@18.2.0)
-  dayjs:
-    specifier: ^1.11.7
-    version: 1.11.7
   dotenv:
     specifier: ^16.0.3
     version: 16.0.3
