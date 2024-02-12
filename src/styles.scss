@@ -26,10 +26,6 @@ ngx-skeleton-loader {
   line-height: 0;
 }
 
-* {
-  //outline: 1px solid red;
-}
-
 /**
   Sección de estilos globales aplicados a componentes
 
@@ -41,6 +37,16 @@ ngx-skeleton-loader {
   - Aplicar estilos a un componente que no se puede modificar (por ejemplo, un componente de un paquete externo).
   - Aplicar estilos a HTML generado dinámicamente e inyectado en la vista mediante atributos InnerHTML o OuterHTML.
  */
+
+ youtube-player {
+  .youtube-player-placeholder {
+    @apply mb-6 w-full aspect-video rounded-xl sm:mb-10  #{!important};
+  }
+
+  div iframe {
+    @apply mb-6 w-full aspect-video rounded-xl sm:mb-10 #{!important};
+  }
+ }
 
 cuentoneta-bio-summary-card {
   .bio-and-summary p {

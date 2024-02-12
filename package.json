@@ -26,6 +26,7 @@
 		"@angular/platform-server": "17.1.2",
 		"@angular/router": "17.1.2",
 		"@angular/ssr": "17.1.2",
+		"@angular/youtube-player": "17.1.2",
 		"@nx/angular": "18.0.1",
 		"@sanity/client": "^3.4.1",
 		"@sanity/image-url": "^1.0.2",
