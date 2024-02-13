@@ -2,7 +2,11 @@
 import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, switchMap } from 'rxjs';
-import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
+import {
+  CommonModule,
+  isPlatformBrowser,
+  NgOptimizedImage,
+} from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { YouTubePlayer } from '@angular/youtube-player';
 
