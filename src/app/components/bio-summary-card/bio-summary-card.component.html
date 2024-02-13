@@ -30,13 +30,14 @@
 				</div>
 			}
 		</section>
-		<section class="bio-and-summary" [lang]="story.language">
-			<ng-container *ngFor="let paragraph of story.author.biography">
-				<p [innerHTML]="paragraph.text" [ngClass]="paragraph.classes"></p>
-			</ng-container>
-			<ng-container *ngFor="let paragraph of story.summary">
-				<p [innerHTML]="paragraph.text" [ngClass]="paragraph.classes"></p>
-			</ng-container>
-		</section>
-	}
+        <section class="bio-and-summary" [lang]="story.language">
+            @for (paragraph of story.author.biography; track $index) {
+                <p [innerHTML]="paragraph.text" [ngClass]="paragraph.classes"></p>
+            }
+            @for (paragraph of story.summary; track $index) {
+                <p [innerHTML]="paragraph.text" [ngClass]="paragraph.classes"></p>
+            }
+        </section>
+
+    }
 </div>
