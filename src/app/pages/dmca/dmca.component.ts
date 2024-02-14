@@ -76,7 +76,7 @@ import { CommonModule } from '@angular/common';
 					>). The reproduction of the material that is made available in the platform is only for educational and
 					not-for-profit purposes, and is not intended to infringe any of the mentioned laws. If you believe that your
 					rights have been infringed, please contact us at
-					<a href="contacto&#64;cuentoneta.ar">contacto&#64;cuentoneta.ar</a>.
+					<a href="mailto:contacto@cuentoneta.ar">contacto&#64;cuentoneta.ar</a>.
 				</p>
 			</section>
 
