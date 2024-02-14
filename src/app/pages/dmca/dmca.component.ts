@@ -65,8 +65,9 @@ import { CommonModule } from '@angular/common';
 					written, faxed or emailed notification to the following Designated Agent: Attn: DMCA Office Contact Us :
 					http://www.watchdogsecurity.online
 				</p>
+				<br />
 				<p>
-					Under Argentinian law, the material that is visualized in this website is protected by the intellectual
+					Under argentinian law, the material that is visualized in this website is protected by the intellectual
 					property law (<a href="https://servicios.infoleg.gob.ar/infolegInternet/anexos/40000-44999/42755/norma.htm"
 						>Ley 11.723</a
 					>) and the law of privacy (<a
@@ -74,7 +75,8 @@ import { CommonModule } from '@angular/common';
 						>Ley 25.326</a
 					>). The reproduction of the material that is made available in the platform is only for educational and
 					not-for-profit purposes, and is not intended to infringe any of the mentioned laws. If you believe that your
-					rights have been infringed, please contact us at contacto&#64;cuentoneta.ar.
+					rights have been infringed, please contact us at
+					<a href="contacto&#64;cuentoneta.ar">contacto&#64;cuentoneta.ar</a>.
 				</p>
 			</section>
 
