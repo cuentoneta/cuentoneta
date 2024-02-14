@@ -21,69 +21,58 @@ import { StorylistCardDeckComponent } from 'src/app/components/storylist-card-de
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
-  selector: 'cuentoneta-storylist',
-  templateUrl: './storylist.component.html',
-  styleUrls: ['./storylist.component.scss'],
-  standalone: true,
-  imports: [
-    CommonModule,
-    StorylistCardDeckComponent,
-    NgxSkeletonLoaderModule,
-  ],
-  hostDirectives: [
-    FetchContentDirective,
-    MetaTagsDirective,
-  ],
+	selector: 'cuentoneta-storylist',
+	templateUrl: './storylist.component.html',
+	standalone: true,
+	imports: [CommonModule, StorylistCardDeckComponent, NgxSkeletonLoaderModule],
+	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
 export class StorylistComponent {
-  fetchContentDirective = inject(FetchContentDirective<Storylist>);
-  storylist!: Storylist | undefined;
-  skeletonConfig: StorylistGridSkeletonConfig | undefined;
+	fetchContentDirective = inject(FetchContentDirective<Storylist>);
+	storylist!: Storylist | undefined;
+	skeletonConfig: StorylistGridSkeletonConfig | undefined;
 
-  constructor() {
-    const platformId = inject(PLATFORM_ID);
-    const activatedRoute = inject(ActivatedRoute);
-    const metaTagsDirective = inject(MetaTagsDirective);
-    const storylistService = inject(StorylistService);
-    const macroTaskWrapperService = inject(MacroTaskWrapperService);
-    const contentService = inject(ContentService);
+	constructor() {
+		const platformId = inject(PLATFORM_ID);
+		const activatedRoute = inject(ActivatedRoute);
+		const metaTagsDirective = inject(MetaTagsDirective);
+		const storylistService = inject(StorylistService);
+		const macroTaskWrapperService = inject(MacroTaskWrapperService);
+		const contentService = inject(ContentService);
 
-    const fetchObservable$: Observable<Storylist> =
-      activatedRoute.queryParams.pipe(
-        tap(({ slug }) => {
-          this.storylist = undefined;
-          const decks = [...contentService.contentConfig.cards, ...contentService.contentConfig.previews]
-          this.skeletonConfig = decks.find(
-            (config) =>
-              config.slug === activatedRoute.snapshot.queryParams['slug']
-          )?.gridSkeletonConfig;
-        }),
-        switchMap(() =>
-          this.fetchContentDirective.fetchContentWithSourceParams$<Storylist>(
-            activatedRoute.queryParams,
-            switchMap(({ slug }) => storylistService.get(slug, 60, 'asc'))
-          )
-        ),
-        takeUntilDestroyed()
-      );
+		const fetchObservable$: Observable<Storylist> = activatedRoute.queryParams.pipe(
+			tap(({ slug }) => {
+				this.storylist = undefined;
+				const decks = [...contentService.contentConfig.cards, ...contentService.contentConfig.previews];
+				this.skeletonConfig = decks.find((config) => config.slug === activatedRoute.snapshot.queryParams['slug'])
+					?.gridSkeletonConfig;
+			}),
+			switchMap(() =>
+				this.fetchContentDirective.fetchContentWithSourceParams$<Storylist>(
+					activatedRoute.queryParams,
+					switchMap(({ slug }) => storylistService.get(slug, 60, 'asc')),
+				),
+			),
+			takeUntilDestroyed(),
+		);
 
-    // TODO: Mover discriminación entre client-side y server-side a directiva
-    // En base a si la plataforma es browser o server, utiliza el wrapper de macro tasks en el segundo caso
-    const storylist$ = isPlatformBrowser(platformId)
-      ? fetchObservable$
-      : macroTaskWrapperService.wrapMacroTaskObservable<Storylist>(
-        'StorylistComponent.fetchData',
-        fetchObservable$,
-        null,
-        'first-emit'
-      );
+		// TODO: Mover discriminación entre client-side y server-side a directiva
+		// En base a si la plataforma es browser o server, utiliza el wrapper de macro tasks en el segundo caso
+		const storylist$ = isPlatformBrowser(platformId)
+			? fetchObservable$
+			: macroTaskWrapperService.wrapMacroTaskObservable<Storylist>(
+					'StorylistComponent.fetchData',
+					fetchObservable$,
+					null,
+					'first-emit',
+				);
 
-    storylist$.subscribe((storylist) => {
-      this.storylist = storylist;
-      metaTagsDirective.setTitle(`"${storylist.title}" en La Cuentoneta`);
-      metaTagsDirective.setDescription(
-        `Colección "${storylist.title}", una storylist en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`
-      );
-    });
-  }
+		storylist$.subscribe((storylist) => {
+			this.storylist = storylist;
+			metaTagsDirective.setTitle(`"${storylist.title}" en La Cuentoneta`);
+			metaTagsDirective.setDescription(
+				`Colección "${storylist.title}", una storylist en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
+			);
+		});
+	}
 }
