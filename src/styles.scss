@@ -21,32 +21,6 @@
   src: url('assets/fonts/source-serif-pro.woff2');
 }
 
-// Font size mixins
-
-// region Inter font sizing mixins
-.inter-body-base {
-  @apply font-inter text-base tracking-normal;
-}
-
-.inter-body-xl {
-  @apply font-inter text-xl tracking-normal;
-}
-
-.inter-body-base-medium {
-  @apply inter-body-base font-medium;
-}
-
-.inter-body-base-semibold {
-  @apply inter-body-base font-semibold;
-}
-// endregion
-
-// region Source Serif Pro font size mixins
-.source-serif-pro-body-xl {
-  @apply font-source-serift text-xl tracking-normal;
-}
-// endregion
-
 /**
   Sección de estilos globales aplicados a componentes
 

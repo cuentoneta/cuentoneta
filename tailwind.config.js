@@ -19,7 +19,7 @@ module.exports = {
 		extend: {
 			fontFamily: {
 				inter: ['Inter', 'sans-serif'],
-				'source-serift': ['Source Serif Pro', 'sans-serif'],
+				'source-serif': ['Source Serif Pro', 'sans-serif'],
 			},
 			spacing: {
 				15: '60px',
