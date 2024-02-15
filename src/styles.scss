@@ -21,10 +21,31 @@
   src: url('assets/fonts/source-serif-pro.woff2');
 }
 
-ngx-skeleton-loader {
-  display: block;
-  line-height: 0;
+// Font size mixins
+
+// region Inter font sizing mixins
+.inter-body-base {
+  @apply font-inter text-base tracking-normal;
 }
+
+.inter-body-xl {
+  @apply font-inter text-xl tracking-normal;
+}
+
+.inter-body-base-medium {
+  @apply inter-body-base font-medium;
+}
+
+.inter-body-base-semibold {
+  @apply inter-body-base font-semibold;
+}
+// endregion
+
+// region Source Serif Pro font size mixins
+.source-serif-pro-body-xl {
+  @apply font-source-serift text-xl tracking-normal;
+}
+// endregion
 
 /**
   Sección de estilos globales aplicados a componentes
@@ -36,9 +57,14 @@ ngx-skeleton-loader {
   Los casos de aplicación para reglas CSS globales son:
   - Aplicar estilos a un componente que no se puede modificar (por ejemplo, un componente de un paquete externo).
   - Aplicar estilos a HTML generado dinámicamente e inyectado en la vista mediante atributos InnerHTML o OuterHTML.
- */
+*/
 
- youtube-player {
+ngx-skeleton-loader {
+  display: block;
+  line-height: 0;
+}
+
+youtube-player {
   .youtube-player-placeholder {
     @apply mb-6 w-full aspect-video rounded-xl sm:mb-10  #{!important};
   }
@@ -46,7 +72,7 @@ ngx-skeleton-loader {
   div iframe {
     @apply mb-6 w-full aspect-video rounded-xl sm:mb-10 #{!important};
   }
- }
+}
 
 cuentoneta-bio-summary-card {
   .bio-and-summary p {
