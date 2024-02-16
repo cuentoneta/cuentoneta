@@ -18,14 +18,10 @@ import { StorylistDeckConfig } from '../src/app/models/content.model';
 
 // NodeJS & env
 import { writeFile, existsSync, mkdirSync } from 'fs';
-import * as dotenv from 'dotenv';
 import ErrnoException = NodeJS.ErrnoException;
 
 // Tipo que describe los diferentes tipos de ambientes en los que puede ejecutarse el presente script
 type TEnvironmentType = 'development' | 'preview' | 'staging' | 'production';
-
-// Leer variables de entorno desde .env
-dotenv.config();
 
 const dirPath = `src/app/environments`;
 const targetPath = `${dirPath}/environment.ts`;
