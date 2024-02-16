@@ -17,7 +17,8 @@
 		"postinstall": "pnpm run config:dev",
 		"test": "nx test",
 		"test:watch": "nx test --watch",
-		"sanity:dev": "cd cms && sanity dev"
+		"sanity:dev": "cd cms && sanity dev",
+		"vercel-install": "pnpm install --ignore-scripts --production=true && pnpm run config:production"
 	},
 	"private": true,
 	"dependencies": {
