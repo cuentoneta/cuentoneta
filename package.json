@@ -11,7 +11,7 @@
 		"storybook": "nx run cuentoneta:storybook",
 		"storybook:build": "nx run cuentoneta:build-storybook",
 		"build": "nx run cuentoneta:build:production",
-		"install": "pnpm i && pnpm run config:dev",
+		"install:dev": "pnpm i && pnpm run config:dev",
 		"install:production": "pnpm i && pnpm run config:production",
 		"config:dev": "node -r ts-node/register --env-file=.env ./scripts/set-environment.ts",
 		"config:production": "ts-node ./scripts/set-environment.ts",
