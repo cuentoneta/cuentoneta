@@ -41,10 +41,12 @@ ngx-skeleton-loader {
  youtube-player {
   .youtube-player-placeholder {
     @apply mb-6 w-full aspect-video rounded-xl sm:mb-10  #{!important};
+    height: unset !important;
   }
 
   div iframe {
     @apply mb-6 w-full aspect-video rounded-xl sm:mb-10 #{!important};
+    height: unset !important;
   }
  }
 

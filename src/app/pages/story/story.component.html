@@ -81,21 +81,22 @@
 			}
 		}
 
-		<section [lang]="story.language" class="content">
-			@if (!!story && !fetchContentDirective.isLoading) {
-				<ng-container *ngFor="let paragraph of story.paragraphs">
-					<p [innerHTML]="paragraph.text" [ngClass]="paragraph.classes"></p>
-				</ng-container>
-			} @else {
-				<div *ngFor="let skeleton of dummyList" class="mb-5">
-					<ngx-skeleton-loader></ngx-skeleton-loader>
-					<ngx-skeleton-loader></ngx-skeleton-loader>
-					<ngx-skeleton-loader></ngx-skeleton-loader>
-				</div>
-			}
-		</section>
-
-		<footer>
+        <section [lang]="story.language" class="content">
+            @if (!!story && !fetchContentDirective.isLoading) {
+                @for (paragraph of story.paragraphs; track $index) {
+                    <p [innerHTML]="paragraph.text" [ngClass]="paragraph.classes"></p>
+                }
+            } @else {
+                @for (skeleton of dummyList; track $index) {
+                    <div class="mb-5">
+                        <ngx-skeleton-loader></ngx-skeleton-loader>
+                        <ngx-skeleton-loader></ngx-skeleton-loader>
+                        <ngx-skeleton-loader></ngx-skeleton-loader>
+                    </div>
+                }
+            }
+        </section>
+        <footer>
 			@if (!!story && !fetchContentDirective.isLoading) {
 				<cuentoneta-bio-summary-card [story]="story" />
 			}
