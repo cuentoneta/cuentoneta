@@ -11,10 +11,10 @@
 		"storybook": "nx run cuentoneta:storybook",
 		"storybook:build": "nx run cuentoneta:build-storybook",
 		"build": "nx run cuentoneta:build:production",
-		"install:dev": "pnpm i && pnpm run config:dev",
-		"install:production": "pnpm i && pnpm run config:production",
+		"install:production": "pnpm install --ignore-scripts && pnpm run config:production",
 		"config:dev": "node -r ts-node/register --env-file=.env ./scripts/set-environment.ts",
 		"config:production": "ts-node ./scripts/set-environment.ts",
+		"postinstall": "pnpm run config:dev",
 		"test": "nx test",
 		"test:watch": "nx test --watch",
 		"sanity:dev": "cd cms && sanity dev"
