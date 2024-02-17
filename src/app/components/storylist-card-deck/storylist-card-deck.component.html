@@ -113,8 +113,11 @@
 			<a
 				[ngStyle]="storiesCardConfig[publication.story.slug]"
 				[class.disabled]="!publication || !publication.published"
-				[routerLink]="!!publication && publication.published ? ['/', appRouteTree['STORY']] : null"
-				[queryParams]="{ slug: publication.story.slug, list: storylist.slug }"
+				[routerLink]="
+					!!publication && publication.published
+						? ['/', appRouteTree['STORY'], storylist.slug, publication.story.slug]
+						: null
+				"
 				class="story-card-container"
 			>
 				<cuentoneta-story-card
