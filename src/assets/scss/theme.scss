@@ -43,6 +43,32 @@ $rounded-full: 50%;
 
 $letter-spacing: 0px;
 
+// Font size mixins to tailwind class
+
+// region Inter font sizing mixins to tailwind class
+.inter-body-base {
+    @apply font-inter text-base tracking-normal;
+}
+  
+.inter-body-xl {
+    @apply font-inter text-xl tracking-normal;
+}
+  
+.inter-body-base-medium {
+    @apply inter-body-base font-medium;
+}
+  
+.inter-body-base-semibold {
+    @apply inter-body-base font-semibold;
+}
+// endregion
+  
+// region Source Serif Pro font mixins to tailwind class
+.source-serif-pro-body-xl {
+    @apply font-source-serif text-xl tracking-normal;
+}
+// endregion
+
 // Font size mixins
 
 // region Inter font sizing mixins
