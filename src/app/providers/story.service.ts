@@ -59,7 +59,7 @@ export class StoryService {
   }
 
   private parseAvatarImageUrl(imageUrl: string | undefined): string {
-    return imageUrl ?? 'assets/img/default-avatar.jpg';
+    return imageUrl ?? 'assets/img/default-avatar.webp';
   }
 
   private parseParagraph(blockContent: BlockContent): Paragraph {
