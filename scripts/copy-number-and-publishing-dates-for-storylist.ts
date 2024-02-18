@@ -12,12 +12,6 @@
 // Importar cliente de Sanity
 import { client } from '../src/api/_helpers/sanity-connector';
 
-// NodeJS & env
-import * as dotenv from 'dotenv';
-
-// Leer variables de entorno desde .env
-dotenv.config();
-
 // Obtiene los datos de las grid configs de todas las storylists
 const fetchStorylists = () =>
   client.fetch(
