@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { redirectToOldStoryUrlsGuard } from './guards/redirectToOldStoryUrls.guard';
 
 export const APP_ROUTE_TREE: { [key: string]: string } = {
 	HOME: 'home',
@@ -15,6 +16,11 @@ export const appRoutes: Routes = [
 	{
 		path: `${APP_ROUTE_TREE['STORY']}/:slug/:list`,
 		loadComponent: () => import('./pages/story/story.component').then((m) => m.StoryComponent),
+	},
+	{
+		path: `${APP_ROUTE_TREE['STORY']}`,
+		loadComponent: () => import('./pages/story/story.component').then((m) => m.StoryComponent),
+		canActivate: [redirectToOldStoryUrlsGuard],
 	},
 	{
 		path: `${APP_ROUTE_TREE['STORYLIST']}/:slug`,
