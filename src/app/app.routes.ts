@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
+
+// Guards
 import { redirectQueryParamsBasedStoryUrlsGuard } from './guards/redirect-query-params-based-story-urls.guard';
+import { redirectQueryParamsBasedStorylistUrlsGuard } from './guards/redirect-query-params-based-storylist-urls.guard';
 
 export const APP_ROUTE_TREE: { [key: string]: string } = {
 	HOME: 'home',
@@ -25,6 +28,11 @@ export const appRoutes: Routes = [
 	{
 		path: `${APP_ROUTE_TREE['STORYLIST']}/:slug`,
 		loadComponent: () => import('./pages/storylist/storylist.component').then((m) => m.StorylistComponent),
+	},
+	{
+		path: `${APP_ROUTE_TREE['STORYLIST']}`,
+		loadComponent: () => import('./pages/storylist/storylist.component').then((m) => m.StorylistComponent),
+		canActivate: [redirectQueryParamsBasedStorylistUrlsGuard],
 	},
 	{
 		path: `${APP_ROUTE_TREE['STORY-LIST']}/:slug`,
