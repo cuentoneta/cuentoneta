@@ -35,10 +35,6 @@ export const appRoutes: Routes = [
 		canActivate: [redirectQueryParamsBasedStorylistUrlsGuard],
 	},
 	{
-		path: `${APP_ROUTE_TREE['STORY-LIST']}/:slug`,
-		redirectTo: `${APP_ROUTE_TREE['STORYLIST']}/:slug`,
-	},
-	{
 		path: 'about',
 		loadComponent: () => import('./pages/about/about.component').then((m) => m.AboutComponent),
 	},
