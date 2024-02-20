@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { redirectToOldStoryUrlsGuard } from './guards/redirect-to-old-story-urls.guard';
+import { redirectQueryParamsBasedStoryUrlsGuard } from './guards/redirect-query-params-based-story-urls.guard';
 
 export const APP_ROUTE_TREE: { [key: string]: string } = {
 	HOME: 'home',
@@ -20,7 +20,7 @@ export const appRoutes: Routes = [
 	{
 		path: `${APP_ROUTE_TREE['STORY']}`, // Ruta definida por cuestiones de retrocompatibilidad. Redirecciona de '/story' con queryParams a params
 		loadComponent: () => import('./pages/story/story.component').then((m) => m.StoryComponent),
-		canActivate: [redirectToOldStoryUrlsGuard],
+		canActivate: [redirectQueryParamsBasedStoryUrlsGuard],
 	},
 	{
 		path: `${APP_ROUTE_TREE['STORYLIST']}/:slug`,
