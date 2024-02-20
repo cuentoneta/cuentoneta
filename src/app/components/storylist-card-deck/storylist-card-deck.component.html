@@ -24,8 +24,7 @@
 				<h1 class="title">
 					<a
 						[ngClass]="{ 'nav-link': canNavigateToStorylist }"
-						[routerLink]="canNavigateToStorylist ? '/' + appRouteTree['STORYLIST'] : null"
-						[queryParams]="{ slug: storylist.slug }"
+						[routerLink]="canNavigateToStorylist ? '/' + appRouteTree['STORYLIST'] + '/' + storylist.slug : null"
 						>{{ storylist.title }}</a
 					>
 				</h1>
@@ -115,7 +114,7 @@
 				[class.disabled]="!publication || !publication.published"
 				[routerLink]="
 					!!publication && publication.published
-						? ['/', appRouteTree['STORY'], storylist.slug, publication.story.slug]
+						? ['/', appRouteTree['STORY'], publication.story.slug, storylist.slug]
 						: null
 				"
 				class="story-card-container"

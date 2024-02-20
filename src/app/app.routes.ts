@@ -13,7 +13,7 @@ export const appRoutes: Routes = [
 		loadComponent: () => import('./pages/home/home.component').then((m) => m.HomeComponent),
 	},
 	{
-		path: `${APP_ROUTE_TREE['STORY']}/:list/:slug`,
+		path: `${APP_ROUTE_TREE['STORY']}/:slug/:list`,
 		loadComponent: () => import('./pages/story/story.component').then((m) => m.StoryComponent),
 	},
 	{

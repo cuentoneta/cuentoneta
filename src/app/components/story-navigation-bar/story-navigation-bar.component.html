@@ -1,7 +1,7 @@
 <section>
 	<header [attr.aria-busy]="!storylist" [lang]="storylist.language">
 		@if (!!storylist && storylist.title) {
-			<a [routerLink]="'/' + appRouteTree['STORYLIST']" [queryParams]="{ slug: storylist.slug }">
+			<a [routerLink]="'/' + appRouteTree['STORYLIST'] + '/' + storylist.slug">
 				<h3 class="storylist-title">{{ storylist.title }}</h3>
 			</a>
 		} @else {
@@ -12,8 +12,9 @@
 	@if (!!storylist) {
 		@for (publication of displayedPublications; track $index) {
 			<a
-				[routerLink]="publication.published ? ['/' + appRouteTree['STORY']] : null"
-				[queryParams]="{ slug: publication.story.slug, list: storylist.slug }"
+				[routerLink]="
+					publication.published ? ['/' + appRouteTree['STORY'], publication.story.slug, storylist.slug] : null
+				"
 			>
 				<article [ngClass]="{ selected: selectedStorySlug === publication.story.slug }">
 					<cuentoneta-story-edition-date-label
@@ -54,7 +55,7 @@
 	@if (!!storylist && storylist.publications.length >= 10) {
 		<footer>
 			@if (storylist) {
-				<a [routerLink]="'/' + appRouteTree['STORYLIST']" [queryParams]="{ slug: storylist.slug }">
+				<a [routerLink]="'/' + appRouteTree['STORYLIST'] + '/' + storylist.slug">
 					<h3 class="storylist-title">Ver más...</h3>
 				</a>
 			} @else {
