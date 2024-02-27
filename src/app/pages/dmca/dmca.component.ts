@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 	standalone: true,
 	imports: [CommonModule],
 	template: `
-		<main class="p-5 -mx-5 md:p-15 md:mx-0 md:rounded-3 lg:mt-28">
+		<main class="bg-gray-50 -mx-5 p-5 shadow-lg md:mx-0 md:p-15 md:rounded-xl lg:mt-28">
 			<h1 class="mb-5">Disclaimer for La Cuentoneta</h1>
 
 			<section class="mb-8">
@@ -51,8 +51,9 @@ import { CommonModule } from '@angular/common';
 				<p>
 					If you believe that your copyrighted work has been copied in a way that constitutes copyright infringement and
 					is accessible on this site, you may notify our copyright agent, as set forth in the
-					<a class="underline" href="https://www.copyright.gov/legislation/dmca.pdf">Digital Millennium Copyright Act of 1998 (DMCA)</a>.
-					For your complaint to be valid under the DMCA, you must provide the following information when providing
+					<a class="underline" href="https://www.copyright.gov/legislation/dmca.pdf"
+						>Digital Millennium Copyright Act of 1998 (DMCA)</a
+					>. For your complaint to be valid under the DMCA, you must provide the following information when providing
 					notice of the claimed copyright infringement: A physical or electronic signature of a person authorized to act
 					on behalf of the copyright owner Identification of the copyrighted work claimed to have been infringed
 					Identification of the material that is claimed to be infringing or to be the subject of the infringing
@@ -68,9 +69,12 @@ import { CommonModule } from '@angular/common';
 				<br />
 				<p>
 					Under argentinian law, the material that is visualized in this website is protected by the intellectual
-					property law (<a class="underline" href="https://servicios.infoleg.gob.ar/infolegInternet/anexos/40000-44999/42755/norma.htm"
+					property law (<a
+						class="underline"
+						href="https://servicios.infoleg.gob.ar/infolegInternet/anexos/40000-44999/42755/norma.htm"
 						>Ley 11.723</a
-					>) and the law of privacy (<a class="underline"
+					>) and the law of privacy (<a
+						class="underline"
 						href="https://servicios.infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/texact.htm"
 						>Ley 25.326</a
 					>). The reproduction of the material that is made available in the platform is only for educational and
@@ -102,6 +106,15 @@ import { CommonModule } from '@angular/common';
 			</section>
 		</main>
 	`,
-	styleUrls: ['./dmca.component.scss'],
+	styles: [
+		`
+			@use 'src/assets/scss/theme.scss' as theme;
+
+			p,
+			li {
+				@include theme.inter-body-base-regular;
+			}
+		`,
+	],
 })
 export class DmcaComponent {}
