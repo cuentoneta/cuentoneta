@@ -6,8 +6,8 @@ import { CommonModule } from '@angular/common';
 	standalone: true,
 	imports: [CommonModule],
 	template: `
-		<main class="lg:mt-28">
-			<h1 class="title">Disclaimer for La Cuentoneta</h1>
+		<main class="bg-gray-50 p-5 -mx-5 md:p-15 md:mx-0 lg:mt-28">
+			<h1 class="mb-5">Disclaimer for La Cuentoneta</h1>
 
 			<section class="mb-8">
 				<p>
@@ -17,7 +17,7 @@ import { CommonModule } from '@angular/common';
 			</section>
 
 			<section class="mb-8">
-				<h2 class="subtitle">Disclaimers for <em>La Cuentoneta</em></h2>
+				<h2 class="mb-5 text-gray-600">Disclaimers for <em>La Cuentoneta</em></h2>
 				<p>
 					All the information on this website - cuentoneta.ar - is published in good faith and for general information
 					purpose only. La Cuentoneta does not make any warranties about the completeness, reliability and accuracy of
@@ -81,19 +81,19 @@ import { CommonModule } from '@angular/common';
 			</section>
 
 			<section class="mb-8">
-				<h2 class="subtitle">Consent</h2>
+				<h2 class="mb-5 text-gray-600">Consent</h2>
 				<p>By using our website, you hereby consent to our disclaimer and agree to its terms.</p>
 			</section>
 
 			<section class="mb-8">
-				<h2 class="subtitle">Update</h2>
+				<h2 class="mb-5 text-gray-600">Update</h2>
 				<p>
 					Should we update, amend or make any changes to this document, those changes will be prominently posted here.
 				</p>
 			</section>
 
 			<section class="mb-8">
-				<h2 class="subtitle">Original Sources</h2>
+				<h2 class="mb-5 text-gray-600">Original Sources</h2>
 				<p>
 					In order to demonstrate that La Cuentoneta solely serves as a platform for reproducing existing content, each
 					non-original asset sourced from external contributors and other platforms includes a prominently displayed and
