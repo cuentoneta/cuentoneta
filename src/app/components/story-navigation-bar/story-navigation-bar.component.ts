@@ -19,7 +19,6 @@ import { NgIf, NgFor, CommonModule } from '@angular/common';
     NgFor,
     RouterLink,
     StoryEditionDateLabelComponent,
-    StoryNavigationBarComponent,
   ],
 })
 export class StoryNavigationBarComponent implements OnChanges {
