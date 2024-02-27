@@ -13,6 +13,7 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 	imports: [CommonModule, NgOptimizedImage, NgxSkeletonLoaderModule],
 	template: `
 		<a [href]="resource.url" target="_blank" class="flex items-center justify-center">
+			<!-- No utilizar ngSrc para este elemento de imagen, dado que se carga dinámicamente desde un campo en formato base64 -->
 			<img
 				[src]="resource.resourceType.icon?.svg ?? ''"
 				[height]="24"
