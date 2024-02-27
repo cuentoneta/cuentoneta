@@ -8,7 +8,6 @@ export const APP_ROUTE_TREE: { [key: string]: string } = {
 	HOME: 'home',
 	STORY: 'story',
 	STORYLIST: 'storylist',
-	'STORY-LIST': 'story-list', // Ruta definida por cuestiones de retrocompatibilidad. Redirecciona a /storylist - RO | 2023-06-21
 };
 
 export const appRoutes: Routes = [
