@@ -5,7 +5,6 @@ main {
     @include card;
 
     @media screen and (min-width: breakpoints.$min-md-width) {
-      border-radius: $rounded-xl;
       box-shadow: $box-shadow-card;
     }
 }

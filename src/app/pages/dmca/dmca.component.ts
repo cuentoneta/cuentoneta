@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 	standalone: true,
 	imports: [CommonModule],
 	template: `
-		<main class="p-5 -mx-5 md:p-15 md:mx-0 lg:mt-28">
+		<main class="p-5 -mx-5 md:p-15 md:mx-0 md:rounded-3 lg:mt-28">
 			<h1 class="mb-5">Disclaimer for La Cuentoneta</h1>
 
 			<section class="mb-8">
