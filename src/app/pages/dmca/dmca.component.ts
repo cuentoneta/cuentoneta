@@ -51,7 +51,7 @@ import { CommonModule } from '@angular/common';
 				<p>
 					If you believe that your copyrighted work has been copied in a way that constitutes copyright infringement and
 					is accessible on this site, you may notify our copyright agent, as set forth in the
-					<a href="https://www.copyright.gov/legislation/dmca.pdf">Digital Millennium Copyright Act of 1998 (DMCA)</a>.
+					<a class="underline" href="https://www.copyright.gov/legislation/dmca.pdf">Digital Millennium Copyright Act of 1998 (DMCA)</a>.
 					For your complaint to be valid under the DMCA, you must provide the following information when providing
 					notice of the claimed copyright infringement: A physical or electronic signature of a person authorized to act
 					on behalf of the copyright owner Identification of the copyrighted work claimed to have been infringed
@@ -68,15 +68,15 @@ import { CommonModule } from '@angular/common';
 				<br />
 				<p>
 					Under argentinian law, the material that is visualized in this website is protected by the intellectual
-					property law (<a href="https://servicios.infoleg.gob.ar/infolegInternet/anexos/40000-44999/42755/norma.htm"
+					property law (<a class="underline" href="https://servicios.infoleg.gob.ar/infolegInternet/anexos/40000-44999/42755/norma.htm"
 						>Ley 11.723</a
-					>) and the law of privacy (<a
+					>) and the law of privacy (<a class="underline"
 						href="https://servicios.infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/texact.htm"
 						>Ley 25.326</a
 					>). The reproduction of the material that is made available in the platform is only for educational and
 					not-for-profit purposes, and is not intended to infringe any of the mentioned laws. If you believe that your
 					rights have been infringed, please contact us at
-					<a href="mailto:contacto@cuentoneta.ar">contacto&#64;cuentoneta.ar</a>.
+					<a class="underline" href="mailto:contacto@cuentoneta.ar">contacto&#64;cuentoneta.ar</a>.
 				</p>
 			</section>
 
