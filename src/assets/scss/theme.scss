@@ -53,6 +53,10 @@ $letter-spacing: 0px;
 .inter-body-xl {
     @apply font-inter text-xl tracking-normal;
 }
+
+.inter-body-base-regular {
+    @apply inter-body-base font-normal;
+}
   
 .inter-body-base-medium {
     @apply inter-body-base font-medium;
@@ -311,7 +315,6 @@ $box-shadow-card-hover: 0px 12px 16px rgba(63, 63, 70, 0.12);
 // endregion
 
 
-
 body {
     font-family: $source-serif-pro-font-family;
     background-color: $gray-100;
@@ -324,6 +327,14 @@ h4,
 h5,
 h6 {
     font-family: $inter-font-family;
+}
+
+.h1 {
+    @apply text-4xl font-bold tracking-normal;
+}
+
+.h2 {
+    @apply text-3xl font-bold tracking-normal;
 }
 
 h1 {
