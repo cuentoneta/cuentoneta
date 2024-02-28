@@ -54,8 +54,9 @@ export class StoryComponent {
 	readonly appRouteTree = APP_ROUTE_TREE;
 	fetchContentDirective = inject(FetchContentDirective<[Story, Storylist]>);
 
-	story!: Story;
-	storylist!: Storylist;
+	// Valores undefined necesarios para poder determinar cuándo mostrar skeletons o la información de story y storylist en el template
+	story: Story | undefined;
+	storylist: Storylist | undefined;
 
 	dummyList = Array(10);
 	shareContentParams: { [key: string]: string } = {};

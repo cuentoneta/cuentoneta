@@ -23,8 +23,8 @@ import { NgIf, NgFor, CommonModule } from '@angular/common';
 })
 export class StoryNavigationBarComponent implements OnChanges {
   @Input() displayedPublications: Publication<Story>[] = [];
-  @Input() selectedStorySlug: string = '';
-  @Input() storylist!: Storylist;
+  @Input() selectedStorySlug: string | undefined;
+  @Input() storylist: Storylist | undefined;
 
   readonly appRouteTree = APP_ROUTE_TREE;
   dummyList: null[] = Array(10);
@@ -32,7 +32,7 @@ export class StoryNavigationBarComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     const storylist: Storylist = changes['storylist'].currentValue;
     if (!!storylist) {
-      this.sliceDisplayedPublications(storylist.publications);
+      this.sliceDisplayedPublications(storylist);
     }
   }
 
@@ -43,15 +43,15 @@ export class StoryNavigationBarComponent implements OnChanges {
    * caso de que la story actualmente en vista sea una de las primeras o de las últimas.
    * @author Ramiro Olivencia <ramiro@olivencia.com.ar>
    */
-  sliceDisplayedPublications(publications: Publication<Story>[]): void {
+  sliceDisplayedPublications(storylist: Storylist): void {
     const numberOfDisplayedPublications = 10;
 
-    if (this.storylist.publications.length <= numberOfDisplayedPublications) {
-      this.displayedPublications = this.storylist.publications;
+    if (storylist.publications.length <= numberOfDisplayedPublications) {
+      this.displayedPublications = storylist.publications;
       return;
     }
 
-    const selectedStoryIndex = publications.findIndex(
+    const selectedStoryIndex = storylist.publications.findIndex(
       (publication) => publication.story.slug === this.selectedStorySlug
     );
 
@@ -61,13 +61,13 @@ export class StoryNavigationBarComponent implements OnChanges {
         : selectedStoryIndex - numberOfDisplayedPublications / 2;
     const upperIndex =
       selectedStoryIndex + numberOfDisplayedPublications / 2 >
-      publications.length
-        ? publications.length
+      storylist.publications.length
+        ? storylist.publications.length
         : selectedStoryIndex + numberOfDisplayedPublications / 2;
 
-    this.displayedPublications = this.storylist.publications.slice(
-      upperIndex === publications.length
-        ? publications.length - numberOfDisplayedPublications
+    this.displayedPublications = storylist.publications.slice(
+      upperIndex === storylist.publications.length
+        ? storylist.publications.length - numberOfDisplayedPublications
         : lowerIndex,
       lowerIndex === 0 ? numberOfDisplayedPublications : upperIndex
     );
@@ -79,7 +79,7 @@ export class StoryNavigationBarComponent implements OnChanges {
     editionIndex: number = 0
   ): string {
     return `${this.storylist?.editionPrefix} ${editionIndex} ${
-      this.storylist.displayDates ? ' - ' + publication.publishingDate : ''
+      this.storylist?.displayDates ? ' - ' + publication.publishingDate : ''
     }`;
   }
 }
