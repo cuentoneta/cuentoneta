@@ -68,6 +68,10 @@ $letter-spacing: 0px;
 // endregion
   
 // region Source Serif Pro font mixins to tailwind class
+.source-serif-pro-body-lg {
+    @apply font-source-serif text-lg tracking-normal;
+}
+
 .source-serif-pro-body-xl {
     @apply font-source-serif text-xl tracking-normal;
 }
