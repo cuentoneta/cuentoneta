@@ -17,7 +17,11 @@ import { Prologue } from '@models/prologue.model';
 			</div>
 		</div>
 	`,
-	styleUrl: './epigraph.component.scss',
+	styles: `
+		:host {
+			@apply flex;
+		}
+	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EpigraphComponent {
