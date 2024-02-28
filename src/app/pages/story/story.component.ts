@@ -83,7 +83,7 @@ export class StoryComponent {
 
 		const fetchObservable$ = this.fetchContentDirective
 			.fetchContentWithSourceParams$(
-				activatedRoute.queryParams,
+				activatedRoute.params,
 				switchMap(({ slug, list }) => combineLatest([storyService.getBySlug(slug), storylistService.get(list, 10)])),
 			)
 			.pipe(takeUntilDestroyed());

@@ -40,16 +40,16 @@ export class StorylistComponent {
 		const macroTaskWrapperService = inject(MacroTaskWrapperService);
 		const contentService = inject(ContentService);
 
-		const fetchObservable$: Observable<Storylist> = activatedRoute.queryParams.pipe(
+		const fetchObservable$: Observable<Storylist> = activatedRoute.params.pipe(
 			tap(({ slug }) => {
 				this.storylist = undefined;
 				const decks = [...contentService.contentConfig.cards, ...contentService.contentConfig.previews];
-				this.skeletonConfig = decks.find((config) => config.slug === activatedRoute.snapshot.queryParams['slug'])
+				this.skeletonConfig = decks.find((config) => config.slug === activatedRoute.snapshot.params['slug'])
 					?.gridSkeletonConfig;
 			}),
 			switchMap(() =>
 				this.fetchContentDirective.fetchContentWithSourceParams$<Storylist>(
-					activatedRoute.queryParams,
+					activatedRoute.params,
 					switchMap(({ slug }) => storylistService.get(slug, 60, 'asc')),
 				),
 			),

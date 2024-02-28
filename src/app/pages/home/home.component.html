@@ -15,8 +15,7 @@
 
 				@if (!!storylistDeck.storylist) {
 					<a
-						[routerLink]="['/' + appRouteTree['STORYLIST']]"
-						[queryParams]="{ slug: storylistDeck.storylist.slug }"
+						[routerLink]="['/' + appRouteTree['STORYLIST'], storylistDeck.storylist.slug]"
 						class="navigation-link text-right"
 					>
 						Ver Storylist
@@ -40,7 +39,7 @@
 	<section class="grid grid-cols-1 justify-items-center lg:grid-cols-2 gap-8">
 		@if (!!cards && cards.length) {
 			<ng-container *ngFor="let deck of cards">
-				<cuentoneta-storylist-card class="w-full" [storylist]="deck.storylist"> </cuentoneta-storylist-card>
+				<cuentoneta-storylist-card [storylist]="deck.storylist" class="w-full"> </cuentoneta-storylist-card>
 			</ng-container>
 		}
 	</section>
