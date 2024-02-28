@@ -84,7 +84,7 @@
 		}
 
 		@if (!!story && !fetchContentDirective.isLoading) {
-			<section [lang]="story?.language">
+			<section [lang]="story.language">
 				@for (paragraph of story.paragraphs; track $index) {
 					<p
 						[innerHTML]="paragraph.text"
