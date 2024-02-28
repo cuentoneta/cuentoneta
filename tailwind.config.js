@@ -9,12 +9,16 @@ module.exports = {
 			'primary-500': 'hsl(21, 57%, 44%)',
 			'gray-50': 'hsl(0, 0%, 98%)',
 			'gray-600': 'hsl(240, 5%, 34%)',
+			'gray-700': 'hsl(240, 5%, 26%)',
 		},
 		screens: {
 			sm: '640px',
 			md: '1024px',
 			lg: '1280px',
 			xl: '1536px',
+		},
+		borderWidth: {
+			3: '3px',
 		},
 		extend: {
 			fontFamily: {

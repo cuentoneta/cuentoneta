@@ -7,17 +7,21 @@ import { Prologue } from '@models/prologue.model';
 	standalone: true,
 	imports: [CommonModule],
 	template: `
-		<div class="bar"></div>
-		<div class="prologue">
-			<p class="text">{{ prologue.text }}&nbsp;</p>
-			<div class="reference">
+		<div class="border-l-3 border-solid border-primary-500 mr-4"></div>
+		<div class="flex flex-wrap flex-col items-end justify-end flex-1 source-serif-pro-body-lg text-gray-700">
+			<p class="self-baseline">{{ prologue.text }}&nbsp;</p>
+			<div class="text-end">
 				@if (prologue.reference) {
 					<em>{{ prologue.reference }}</em>
 				}
 			</div>
 		</div>
 	`,
-	styleUrl: './epigraph.component.scss',
+	styles: `
+		:host {
+			@apply flex;
+		}
+	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EpigraphComponent {
