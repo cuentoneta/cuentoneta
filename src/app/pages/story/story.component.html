@@ -65,15 +65,10 @@
 					<cuentoneta-space-recording-widget [media]="media" class="block mb-10"></cuentoneta-space-recording-widget>
 				}
 			}
-		}
-
-		@if (!!story && !fetchContentDirective.isLoading) {
 			@if (!!story.videoUrl) {
 				<youtube-player [videoId]="story.videoUrl" placeholderImageQuality="low" />
 			}
-		}
 
-		@if (!!story && !fetchContentDirective.isLoading) {
 			@if (!!story.prologues && story.prologues.length > 0) {
 				<section class="flex flex-col gap-10 mb-10">
 					@for (prologue of story.prologues; track $index) {
