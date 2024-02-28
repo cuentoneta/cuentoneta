@@ -1,5 +1,5 @@
 <section>
-	<header [attr.aria-busy]="!storylist" [lang]="storylist.language">
+	<header [attr.aria-busy]="!storylist" [lang]="storylist?.language">
 		@if (!!storylist && storylist.title) {
 			<a [routerLink]="'/' + appRouteTree['STORYLIST'] + '/' + storylist.slug">
 				<h3 class="storylist-title">{{ storylist.title }}</h3>

@@ -1,6 +1,6 @@
 <aside class="hidden md:block">
 	<cuentoneta-story-navigation-bar
-		[selectedStorySlug]="story.slug"
+		[selectedStorySlug]="story?.slug"
 		[storylist]="storylist"
 	></cuentoneta-story-navigation-bar>
 </aside>
@@ -83,24 +83,25 @@
 			}
 		}
 
-		<section [lang]="story.language">
-			@if (!!story && !fetchContentDirective.isLoading) {
+		@if (!!story && !fetchContentDirective.isLoading) {
+			<section [lang]="story?.language">
 				@for (paragraph of story.paragraphs; track $index) {
 					<p
 						[innerHTML]="paragraph.text"
 						[ngClass]="['source-serif-pro-body-xl', paragraph.classes, 'mb-8', 'leading-8']"
 					></p>
 				}
-			} @else {
-				@for (skeleton of dummyList; track $index) {
-					<div class="mb-5">
-						<ngx-skeleton-loader></ngx-skeleton-loader>
-						<ngx-skeleton-loader></ngx-skeleton-loader>
-						<ngx-skeleton-loader></ngx-skeleton-loader>
-					</div>
-				}
+			</section>
+		} @else {
+			@for (skeleton of dummyList; track $index) {
+				<div class="mb-5">
+					<ngx-skeleton-loader></ngx-skeleton-loader>
+					<ngx-skeleton-loader></ngx-skeleton-loader>
+					<ngx-skeleton-loader></ngx-skeleton-loader>
+				</div>
 			}
-		</section>
+		}
+
 		<footer>
 			@if (!!story && !fetchContentDirective.isLoading) {
 				<cuentoneta-bio-summary-card [story]="story" />
