@@ -3,27 +3,10 @@
 
 .content {
 	@include theme.card;
-	display: block;
-	background-color: theme.$gray-50;
-	padding: theme.$spacing-5;
-
-	@media screen and (max-width: breakpoints.$max-sm-width) {
-		margin-left: -(theme.$spacing-5);
-		margin-right: -(theme.$spacing-5);
-	}
 
 	@media screen and (min-width: breakpoints.$min-md-width) {
 		border-radius: theme.$rounded-xl;
 		box-shadow: theme.$box-shadow-card;
 		padding: theme.$spacing-15;
 	}
-}
-
-p,
-li {
-	@include theme.inter-body-base-regular;
-}
-
-a {
-	text-decoration: underline;
 }
