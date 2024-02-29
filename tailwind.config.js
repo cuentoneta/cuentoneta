@@ -8,6 +8,8 @@ module.exports = {
 		colors: {
 			'primary-500': 'hsl(21, 57%, 44%)',
 			'gray-50': 'hsl(0, 0%, 98%)',
+			'gray-100': 'hsl(240, 5%, 96%)',
+			'gray-200': 'hsl(240, 6%, 90%)',
 			'gray-600': 'hsl(240, 5%, 34%)',
 			'gray-700': 'hsl(240, 5%, 26%)',
 		},
@@ -18,6 +20,7 @@ module.exports = {
 			xl: '1536px',
 		},
 		borderWidth: {
+			1: '1px',
 			3: '3px',
 		},
 		extend: {
