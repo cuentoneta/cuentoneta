@@ -21,6 +21,9 @@ module.exports = {
 			3: '3px',
 		},
 		extend: {
+			boxShadow: {
+				'lg': '0px 0px 8px rgba(63, 63, 70, 0.08)'
+			},
 			fontFamily: {
 				inter: ['Inter', 'sans-serif'],
 				'source-serif': ['Source Serif Pro', 'sans-serif'],
