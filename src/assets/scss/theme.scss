@@ -368,6 +368,10 @@ h3, .h3 {
     }
 }
 
+.hero h1 {
+    @apply mb-5 lg:text-6xl lg:font-extrabold;
+}
+
 @mixin card {
     background-color: $gray-50;
     border-radius: $rounded-lg;
