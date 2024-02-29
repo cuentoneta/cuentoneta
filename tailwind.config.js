@@ -20,6 +20,7 @@ module.exports = {
 			xl: '1536px',
 		},
 		borderWidth: {
+			1: '1px',
 			3: '3px',
 		},
 		extend: {

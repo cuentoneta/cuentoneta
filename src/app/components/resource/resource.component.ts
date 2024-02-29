@@ -15,7 +15,7 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 		<a
 			[href]="resource.url"
 			target="_blank"
-			class="bg-gray-100 hover:bg-gray-200 border border-solid border-gray-200 w-12 h-12 rounded-full flex items-center justify-center"
+			class="bg-gray-100 border-1 border-solid border-gray-200 w-12 h-12 rounded-full flex items-center justify-center hover:bg-gray-200"
 		>
 			<!-- No utilizar ngSrc para este elemento de imagen, dado que se carga dinámicamente desde un campo en formato base64 -->
 			<img
@@ -26,6 +26,11 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 				class="m-3 w-6 h-6"
 			/>
 		</a>
+	`,
+	styles: `
+		:host {
+			@apply flex items-center justify-center;
+		}
 	`,
 })
 export class ResourceComponent implements OnInit {
