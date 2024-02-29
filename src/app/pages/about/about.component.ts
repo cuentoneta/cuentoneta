@@ -6,16 +6,6 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 	standalone: true,
 	imports: [CommonModule, NgOptimizedImage],
 	templateUrl: './about.component.html',
-	styleUrls: ['./about.component.scss'],
-	styles: [
-		`
-			@use 'src/assets/scss/theme.scss';
-
-			.hero h1 {
-				@apply mb-5 lg:text-6xl lg:font-extrabold;
-			}
-		`,
-	],
 })
 export class AboutComponent {
 	readonly links = {
