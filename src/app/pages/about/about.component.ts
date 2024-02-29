@@ -9,6 +9,8 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 	styleUrls: ['./about.component.scss'],
 	styles: [
 		`
+			@use 'src/assets/scss/theme.scss';
+
 			.hero h1 {
 				@apply mb-5 lg:text-6xl lg:font-extrabold;
 			}

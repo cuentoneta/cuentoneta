@@ -1,12 +1,1 @@
 @use 'src/assets/scss/theme.scss';
-@use 'src/assets/scss/breakpoints.scss';
-
-.content {
-	@include theme.card;
-
-	@media screen and (min-width: breakpoints.$min-md-width) {
-		border-radius: theme.$rounded-xl;
-		box-shadow: theme.$box-shadow-card;
-		padding: theme.$spacing-15;
-	}
-}
