@@ -25,7 +25,7 @@ module.exports = {
 		},
 		extend: {
 			boxShadow: {
-				'lg': '0px 0px 8px rgba(63, 63, 70, 0.08)'
+				lg: '0px 0px 8px rgba(63, 63, 70, 0.08)',
 			},
 			fontFamily: {
 				inter: ['Inter', 'sans-serif'],
@@ -33,6 +33,9 @@ module.exports = {
 			},
 			spacing: {
 				15: '60px',
+			},
+			gridTemplateRows: {
+				'3-auto': 'repeat(3, auto)',
 			},
 		},
 	},
