@@ -24,18 +24,9 @@ import { BadgeComponent } from '../badge/badge.component';
 	template: `
 		<article>
 			@if (!!storylist) {
-				<div
-					[routerLink]="['/' + appRouteTree['STORYLIST']]"
-					[queryParams]="{ slug: storylist.slug }"
-					class="navigation-link"
-				>
+				<div [routerLink]="['/' + appRouteTree['STORYLIST'], storylist.slug]" class="navigation-link">
 					<header>
-          <img
-            [ngSrc]="storylist.featuredImage ?? ''"
-            width="602"
-            height="240"
-            alt=""
-          />
+						<img [ngSrc]="storylist.featuredImage ?? ''" width="602" height="240" alt="" />
 					</header>
 					<section class="flex flex-col gap-4 pt-5 px-4">
 						<h1 class="card-title">{{ storylist.title }}</h1>

@@ -21,15 +21,6 @@
   src: url('assets/fonts/source-serif-pro.woff2');
 }
 
-ngx-skeleton-loader {
-  display: block;
-  line-height: 0;
-}
-
-* {
-  //outline: 1px solid red;
-}
-
 /**
   Sección de estilos globales aplicados a componentes
 
@@ -40,7 +31,24 @@ ngx-skeleton-loader {
   Los casos de aplicación para reglas CSS globales son:
   - Aplicar estilos a un componente que no se puede modificar (por ejemplo, un componente de un paquete externo).
   - Aplicar estilos a HTML generado dinámicamente e inyectado en la vista mediante atributos InnerHTML o OuterHTML.
- */
+*/
+
+ngx-skeleton-loader {
+  display: block;
+  line-height: 0;
+}
+
+youtube-player {
+  .youtube-player-placeholder {
+    @apply mb-6 w-full aspect-video rounded-xl sm:mb-10  #{!important};
+    height: unset !important;
+  }
+
+  div iframe {
+    @apply mb-6 w-full aspect-video rounded-xl sm:mb-10 #{!important};
+    height: unset !important;
+  }
+}
 
 cuentoneta-bio-summary-card {
   .bio-and-summary p {
