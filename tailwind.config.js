@@ -6,6 +6,7 @@ module.exports = {
 	content: [join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}'), ...createGlobPatternsForDependencies(__dirname)],
 	theme: {
 		colors: {
+			white: '#fff',
 			'primary-500': 'hsl(21, 57%, 44%)',
 			'gray-50': 'hsl(0, 0%, 98%)',
 			'gray-100': 'hsl(240, 5%, 96%)',

@@ -18,9 +18,7 @@ import { SpaceRecording } from '@models/media.model';
 							height="24"
 						/>
 						<div class="font-bold">{{ media.data.tweetBy.fullName }}</div>
-						<span class="badge text-sm py-0.5 px-1 rounded bg-[hsla(0, 0 * 1%, 100 * 1%, 0.3)] flex items-center"
-							>Anfitrión</span
-						>
+						<span class="text-sm py-0.5 px-1 rounded bg-[#fff4] flex items-center">Anfitrión</span>
 					</div>
 					<div class="space-recording-data gap-2.5 hidden md:flex">
 						<div class="font-bold">{{ media.data.createdAt | date: 'MMMM d, YYYY' }}</div>
