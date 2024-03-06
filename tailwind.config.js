@@ -6,6 +6,7 @@ module.exports = {
 	content: [join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}'), ...createGlobPatternsForDependencies(__dirname)],
 	theme: {
 		colors: {
+			white: '#fff',
 			'primary-500': 'hsl(21, 57%, 44%)',
 			'gray-50': 'hsl(0, 0%, 98%)',
 			'gray-100': 'hsl(240, 5%, 96%)',
@@ -25,7 +26,7 @@ module.exports = {
 		},
 		extend: {
 			boxShadow: {
-				'lg': '0px 0px 8px rgba(63, 63, 70, 0.08)'
+				lg: '0px 0px 8px rgba(63, 63, 70, 0.08)',
 			},
 			fontFamily: {
 				inter: ['Inter', 'sans-serif'],
@@ -33,6 +34,9 @@ module.exports = {
 			},
 			spacing: {
 				15: '60px',
+			},
+			gridTemplateRows: {
+				'3-auto': 'repeat(3, auto)',
 			},
 		},
 	},
