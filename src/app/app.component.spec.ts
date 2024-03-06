@@ -1,5 +1,5 @@
 import { AppComponent } from './app.component';
-import { render } from '@testing-library/angular';
+import {render, RenderResult} from '@testing-library/angular';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
 import { provideMock } from '@testing-library/angular/jest-utils';
@@ -8,7 +8,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 
 describe('AppComponent', () => {
-  let component: AppComponent;
+  let component: RenderResult<AppComponent, AppComponent>;
 
   beforeEach(async () => {
     component = await render(AppComponent, {

@@ -1,29 +1,29 @@
 <section class="flex flex-row flex-1">
-	<ng-container *ngFor="let platform of platforms">
-		@if (!isLoading) {
-			<button
-				(click)="onShareToPlatformClicked($event, platform)"
-				[title]="'Compartir en ' + platform.name"
-				class="flex items-center justify-center"
-			>
-				<img
-					[alt]="'Compartir en ' + platform.name"
-					[ngSrc]="'assets/svg/' + platform.logo + '.svg'"
-					[height]="24"
-					[width]="24"
-				/>
-			</button>
-		} @else {
-			<ngx-skeleton-loader
-				[theme]="{
-					'height.px': 48,
-					'width.px': 48,
-					'margin.px': 0,
-					'background-color': '#D4D4D8'
-				}"
-				count="1"
-				appearance="circle"
-			></ngx-skeleton-loader>
-		}
-	</ng-container>
+    @for (platform of platforms; track $index) {
+        @if (!isLoading) {
+            <button
+                    (click)="onShareToPlatformClicked($event, platform)"
+                    [title]="'Compartir en ' + platform.name"
+                    class="flex items-center justify-center"
+            >
+                <img
+                        [alt]="'Compartir en ' + platform.name"
+                        [ngSrc]="'assets/svg/' + platform.logo + '.svg'"
+                        [height]="24"
+                        [width]="24"
+                />
+            </button>
+        } @else {
+            <ngx-skeleton-loader
+                    [theme]="{
+                    'height.px': 48,
+                    'width.px': 48,
+                    'margin.px': 0,
+                    'background-color': '#D4D4D8'
+                }"
+                    count="1"
+                    appearance="circle"
+            ></ngx-skeleton-loader>
+        }
+    }
 </section>

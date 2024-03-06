@@ -15,8 +15,7 @@
 
 				@if (!!storylistDeck.storylist) {
 					<a
-						[routerLink]="['/' + appRouteTree['STORYLIST']]"
-						[queryParams]="{ slug: storylistDeck.storylist.slug }"
+						[routerLink]="['/' + appRouteTree['STORYLIST'], storylistDeck.storylist.slug]"
 						class="navigation-link text-right"
 					>
 						Ver Storylist
@@ -42,6 +41,7 @@
 			@for (deck of cards; track $index) {
 				<cuentoneta-storylist-card [storylist]="deck.storylist" class="w-full"> </cuentoneta-storylist-card>
 			}
+
 		}
 	</section>
 </main>

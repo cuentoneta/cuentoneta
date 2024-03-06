@@ -5,7 +5,7 @@
 	></cuentoneta-story-navigation-bar>
 </aside>
 <main>
-	<article>
+	<article class="bg-gray-50 p-5 md:p-15 md:rounded-xl">
 		<header class="flex flex-col-reverse sm:block mb-6 sm:mb-10">
 			<aside class="sm:float-right mt-6 sm:ml-12 sm:mb-12 sm:mt-0">
 				<cuentoneta-share-content
@@ -17,12 +17,14 @@
 			</aside>
 			<div>
 				@if (!!story && !fetchContentDirective.isLoading) {
-					<h1 class="title mb-2" [lang]="story.language">{{ story.title }}</h1>
-					<p class="subtitle mb-2" [lang]="story.language">{{ story.author.name }}</p>
-					<time class="reading-time"> {{ story.approximateReadingTime }} minutos de lectura </time>
+					<h1 [lang]="story.language" class="title mb-2">{{ story.title }}</h1>
+					<p [lang]="story.language" class="inter-body-xl mb-2">{{ story.author.name }}</p>
+					<time class="inter-body-base-medium text-gray-600">
+						{{ story.approximateReadingTime }} minutos de lectura
+					</time>
 
 					@if (!!story.badLanguage) {
-						<p class="date">* Contiene lenguaje adulto</p>
+						<p class="inter-body-base-semibold flex items-center mt-2 text-primary-500">* Contiene lenguaje adulto</p>
 					}
 				} @else {
 					<ngx-skeleton-loader
@@ -67,20 +69,13 @@
 
 		@if (!!story && !fetchContentDirective.isLoading) {
 			@if (!!story.videoUrl) {
-				<iframe
-					[src]="sanitizerUrl(story.videoUrl)"
-					class="video mb-6 sm:mb-10"
-					title="YouTube video player"
-					frameborder="0"
-					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-					allowfullscreen
-				></iframe>
+				<youtube-player [videoId]="story.videoUrl" placeholderImageQuality="low" />
 			}
 		}
 
 		@if (!!story && !fetchContentDirective.isLoading) {
 			@if (!!story.prologues && story.prologues.length > 0) {
-				<section class="prologues">
+				<section class="flex flex-col gap-10 mb-10">
 					@for (prologue of story.prologues; track $index) {
 						<cuentoneta-story-epigraph [prologue]="prologue"></cuentoneta-story-epigraph>
 					}
@@ -88,20 +83,24 @@
 			}
 		}
 
-		<section class="content" [lang]="story.language">
+		<section [lang]="story.language">
 			@if (!!story && !fetchContentDirective.isLoading) {
-				<ng-container *ngFor="let paragraph of story.paragraphs">
-					<p [innerHTML]="paragraph.text" [ngClass]="paragraph.classes"></p>
-				</ng-container>
+				@for (paragraph of story.paragraphs; track $index) {
+					<p
+						[innerHTML]="paragraph.text"
+						[ngClass]="['source-serif-pro-body-xl', paragraph.classes, 'mb-8', 'leading-8']"
+					></p>
+				}
 			} @else {
-				<div *ngFor="let skeleton of dummyList" class="mb-5">
-					<ngx-skeleton-loader></ngx-skeleton-loader>
-					<ngx-skeleton-loader></ngx-skeleton-loader>
-					<ngx-skeleton-loader></ngx-skeleton-loader>
-				</div>
+				@for (skeleton of dummyList; track $index) {
+					<div class="mb-5">
+						<ngx-skeleton-loader></ngx-skeleton-loader>
+						<ngx-skeleton-loader></ngx-skeleton-loader>
+						<ngx-skeleton-loader></ngx-skeleton-loader>
+					</div>
+				}
 			}
 		</section>
-
 		<footer>
 			@if (!!story && !fetchContentDirective.isLoading) {
 				<cuentoneta-bio-summary-card [story]="story" />
