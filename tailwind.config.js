@@ -13,6 +13,8 @@ module.exports = {
 			'gray-200': 'hsl(240, 6%, 90%)',
 			'gray-600': 'hsl(240, 5%, 34%)',
 			'gray-700': 'hsl(240, 5%, 26%)',
+			'interactive-500': 'hsl(212, 70%, 45%)',
+			'interactive-600': 'hsl(212, 70%, 35%)',
 		},
 		screens: {
 			sm: '640px',
@@ -34,6 +36,9 @@ module.exports = {
 			},
 			spacing: {
 				15: '60px',
+			},
+			lineHeight: {
+				0: 0,
 			},
 			gridTemplateRows: {
 				'3-auto': 'repeat(3, auto)',
