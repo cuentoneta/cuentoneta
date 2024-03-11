@@ -7,10 +7,12 @@ module.exports = {
 	theme: {
 		colors: {
 			white: '#fff',
+			'primary-300': 'hsl(24, 45%, 76%)',
 			'primary-500': 'hsl(21, 57%, 44%)',
 			'gray-50': 'hsl(0, 0%, 98%)',
 			'gray-100': 'hsl(240, 5%, 96%)',
 			'gray-200': 'hsl(240, 6%, 90%)',
+			'gray-500': 'hsl(240, 4%, 46%)',
 			'gray-600': 'hsl(240, 5%, 34%)',
 			'gray-700': 'hsl(240, 5%, 26%)',
 			'interactive-500': 'hsl(212, 70%, 45%)',
@@ -36,6 +38,7 @@ module.exports = {
 			},
 			spacing: {
 				15: '60px',
+				18: '72px',
 			},
 			lineHeight: {
 				0: 0,
