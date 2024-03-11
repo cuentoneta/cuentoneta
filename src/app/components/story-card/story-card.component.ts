@@ -12,11 +12,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 @Component({
 	selector: 'cuentoneta-story-card',
 	templateUrl: './story-card.component.html',
-	styles: `
-		:host {
-  			@apply card border-1 border-solid border-primary-300 block;
-		}
-	`,
+	styleUrls: ['./story-card.component.scss'],
 	standalone: true,
 	imports: [
 		CommonModule,
