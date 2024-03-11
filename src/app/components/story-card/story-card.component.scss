@@ -2,6 +2,6 @@
 
 :host {
     @include theme.card;
-    border: 1px solid $primary-300;
+    border: 1px solid theme.$primary-300;
     display: block;
 }
