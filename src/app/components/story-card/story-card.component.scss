@@ -1,3 +1,7 @@
+@use 'src/assets/scss/theme.scss';
+
 :host {
-    @apply card border-1 border-solid border-primary-300 block;
+    @include theme.card;
+    border: 1px solid $primary-300;
+    display: block;
 }
