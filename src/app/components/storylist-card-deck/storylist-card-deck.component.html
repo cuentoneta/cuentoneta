@@ -112,12 +112,14 @@
 			<a
 				[ngStyle]="storiesCardConfig[publication.story.slug]"
 				[class.disabled]="!publication || !publication.published"
-				[routerLink]="
+				[attr.href]="
 					!!publication && publication.published
 						? ['/', appRouteTree['STORY'], publication.story.slug, storylist.slug]
 						: null
 				"
 				class="story-card-container"
+			    [routerLink]="['/', appRouteTree['STORY'], publication.story.slug, storylist.slug]"
+
 			>
 				<cuentoneta-story-card
 					[displayDate]="storylist.displayDates"
