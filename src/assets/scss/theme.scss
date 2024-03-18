@@ -82,6 +82,10 @@ $letter-spacing: 0px;
 	@apply inter-body-lg font-bold;
 }
 
+.inter-body-xl-bold {
+    @apply inter-body-xl font-bold;
+}
+
 .inter-body-base-semibold {
 	@apply inter-body-base font-semibold;
 }
