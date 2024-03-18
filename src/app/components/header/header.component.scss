@@ -2,79 +2,54 @@
 @use 'src/assets/scss/breakpoints.scss';
 
 header {
-    @apply grid min-h-20 m-auto;
-    max-width: breakpoints.$max-container-width;
+	@apply grid;
+    @apply mx-5 my-0 md:m-auto;
+	@apply min-h-20 max-w-screen-lg;
 
-    @media screen and (min-width: breakpoints.$min-md-width) {
-        grid-template-columns: repeat(2, [col] 1fr);
-        grid-template-rows: [row] theme.$spacing-20;
-    }
-
-    @media screen and (max-width: breakpoints.$max-sm-width) {
-        grid-template-columns: [col] 1fr [col] 24px;
-        grid-template-rows: [row] theme.$spacing-20 [row] 1fr;
-    }
-
-    @media screen and (max-width: breakpoints.$max-md-width) {
-        margin: 0 theme.$spacing-5;
-    }
+	// Layout de grid para vistas md y superiores
+	@apply grid-cols-[1fr_theme(spacing.6)] grid-rows-[theme(spacing.20)_1fr];
+	// Layout de grid para vistas sm y menores
+	@apply md:grid-cols-2 md:grid-rows-1;
 }
 
 section {
-    &.logo {
-        img {
-            margin-right: theme.$spacing-3;
-        }
-    }
+	&.navigation {
+		nav {
+			@media screen and (min-width: breakpoints.$min-md-width) {
+				ul {
+					li {
+						&:not(:last-child) {
+							margin-right: theme.$spacing-12;
+						}
+					}
+				}
+			}
+		}
+	}
 
-    &.navigation {
-        nav {
-            @media screen and (min-width: breakpoints.$min-md-width) {
-                ul {
-                    li {
-                        &:not(:last-child) {
-                            margin-right: theme.$spacing-12;
-                        }
-                    }
-                }
-            }
-
-            @media screen and (max-width: breakpoints.$max-sm-width) {
-                > ul {
-                    display: none;
-                }
-            }
-            @media screen and (min-width: breakpoints.$min-md-width) {
-                .menu-toggler {
-                    display: none;
-                }
-            }
-        }
-    }
-
-    &.menu {
-        > ul {
-            li {
-                @include theme.inter-body-lg-semibold;
-                height: theme.$spacing-12;
-                border-bottom: 2px solid theme.$gray-200;
-                display: flex;
-                align-items: center;
-            }
-        }
-    }
+	&.menu {
+		> ul {
+			li {
+				@include theme.inter-body-lg-semibold;
+				height: theme.$spacing-12;
+				border-bottom: 2px solid theme.$gray-200;
+				display: flex;
+				align-items: center;
+			}
+		}
+	}
 }
 
 ul {
-    @include theme.inter-body-sm-semibold;
-    li:hover {
-        color: theme.$interactive-500;
-    }
+	@include theme.inter-body-sm-semibold;
+	li:hover {
+		color: theme.$interactive-500;
+	}
 }
 
 h1 {
-    font-size: 1.125rem;
-    line-height: 1.375rem;
-    letter-spacing: 0;
-    font-weight: theme.$inter-font-weight-bold;
+	font-size: 1.125rem;
+	line-height: 1.375rem;
+	letter-spacing: 0;
+	font-weight: theme.$inter-font-weight-bold;
 }
