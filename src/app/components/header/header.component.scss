@@ -1,24 +1,24 @@
-@use 'src/assets/scss/theme.scss' as *;
+@use 'src/assets/scss/theme.scss' as theme;
 @use 'src/assets/scss/breakpoints.scss';
 
 header {
     display: grid;
-    min-height: $spacing-20;
+    min-height: theme.$spacing-20;
     max-width: breakpoints.$max-container-width;
     margin: auto;
 
     @media screen and (min-width: breakpoints.$min-md-width) {
         grid-template-columns: repeat(2, [col] 1fr);
-        grid-template-rows: [row] $spacing-20;
+        grid-template-rows: [row] theme.$spacing-20;
     }
 
     @media screen and (max-width: breakpoints.$max-sm-width) {
         grid-template-columns: [col] 1fr [col] 24px;
-        grid-template-rows: [row] $spacing-20 [row] 1fr;
+        grid-template-rows: [row] theme.$spacing-20 [row] 1fr;
     }
 
     @media screen and (max-width: breakpoints.$max-md-width) {
-        margin: 0 $spacing-5;
+        margin: 0 theme.$spacing-5;
     }
 
     .logo {
@@ -38,7 +38,7 @@ header {
 section {
     &.logo {
         img {
-            margin-right: $spacing-3;
+            margin-right: theme.$spacing-3;
         }
     }
 
@@ -48,7 +48,7 @@ section {
                 ul {
                     li {
                         &:not(:last-child) {
-                            margin-right: $spacing-12;
+                            margin-right: theme.$spacing-12;
                         }
                     }
                 }
@@ -72,13 +72,13 @@ section {
             display: none;
         }
 
-        margin-bottom: $spacing-8;
+        margin-bottom: theme.$spacing-8;
 
         > ul {
             li {
-                @include inter-body-lg-semibold;
-                height: $spacing-12;
-                border-bottom: 2px solid $gray-200;
+                @include theme.inter-body-lg-semibold;
+                height: theme.$spacing-12;
+                border-bottom: 2px solid theme.$gray-200;
                 display: flex;
                 align-items: center;
             }
@@ -87,9 +87,9 @@ section {
 }
 
 ul {
-    @include inter-body-sm-semibold;
+    @include theme.inter-body-sm-semibold;
     li:hover {
-        color: $interactive-500;
+        color: theme.$interactive-500;
     }
 }
 
@@ -97,5 +97,5 @@ h1 {
     font-size: 1.125rem;
     line-height: 1.375rem;
     letter-spacing: 0;
-    font-weight: $inter-font-weight-bold;
+    font-weight: theme.$inter-font-weight-bold;
 }
