@@ -5,14 +5,8 @@
     margin-bottom: theme.$spacing-16;
   }
   > * {
-    display: block;
     &:not(:last-child) {
       margin-bottom: theme.$spacing-4;
     }
   }
-}
-
-.navigation-link {
-  @include theme.inter-body-xl-bold;
-  color: theme.$interactive-500;
 }

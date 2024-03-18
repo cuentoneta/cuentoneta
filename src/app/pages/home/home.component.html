@@ -10,13 +10,13 @@
 					[isLoading]="fetchContentDirective.isLoading"
 					[displayFeaturedImage]="true"
 					[skeletonConfig]="storylistDeck.previewGridSkeletonConfig"
-					class="mb-3"
+					class="block mb-3"
 				/>
 
 				@if (!!storylistDeck.storylist) {
 					<a
 						[routerLink]="['/' + appRouteTree['STORYLIST'], storylistDeck.storylist.slug]"
-						class="navigation-link text-right"
+						class="navigation-link block text-right inter-body-xl-bold text-interactive-500 hover:text-interactive-600"
 					>
 						Ver Storylist
 					</a>
@@ -41,7 +41,6 @@
 			@for (deck of cards; track $index) {
 				<cuentoneta-storylist-card [storylist]="deck.storylist" class="w-full"> </cuentoneta-storylist-card>
 			}
-
 		}
 	</section>
 </main>
