@@ -11,7 +11,6 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   selector: 'cuentoneta-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
   imports: [
     CommonModule,
     FooterComponent,
