@@ -1,7 +1,7 @@
 <main>
 	<section class="card-decks mt-16 mb-16">
 		@if (!!previews && previews.length) {
-			<ng-container *ngFor="let storylistDeck of previews">
+			@for (storylistDeck of previews; track storylistDeck.slug) {
 				<cuentoneta-storylist-card-deck
 					[canNavigateToStorylist]="true"
 					[storylist]="storylistDeck.storylist"
@@ -21,7 +21,7 @@
 						Ver Storylist
 					</a>
 				}
-			</ng-container>
+			}
 		}
 	</section>
 
@@ -38,9 +38,10 @@
 
 	<section class="grid grid-cols-1 justify-items-center lg:grid-cols-2 gap-8">
 		@if (!!cards && cards.length) {
-			<ng-container *ngFor="let deck of cards">
+			@for (deck of cards; track $index) {
 				<cuentoneta-storylist-card [storylist]="deck.storylist" class="w-full"> </cuentoneta-storylist-card>
-			</ng-container>
+			}
+
 		}
 	</section>
 </main>

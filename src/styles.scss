@@ -34,8 +34,7 @@
 */
 
 ngx-skeleton-loader {
-  display: block;
-  line-height: 0;
+  @apply block leading-0;
 }
 
 youtube-player {
@@ -53,11 +52,7 @@ youtube-player {
 cuentoneta-bio-summary-card {
   .bio-and-summary p {
     a {
-      color: $interactive-500;
-      text-decoration: underline;
-      &:hover {
-        color: $interactive-600;
-      }
+      @apply underline text-interactive-500 hover:text-interactive-600;
     }
   }
 }
