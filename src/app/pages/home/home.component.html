@@ -10,13 +10,13 @@
 					[isLoading]="fetchContentDirective.isLoading"
 					[displayFeaturedImage]="true"
 					[skeletonConfig]="storylistDeck.previewGridSkeletonConfig"
-					class="block mb-3"
+					class="block mb-4 last:mb-0"
 				/>
 
 				@if (!!storylistDeck.storylist) {
 					<a
 						[routerLink]="['/' + appRouteTree['STORYLIST'], storylistDeck.storylist.slug]"
-						class="navigation-link block text-right inter-body-xl-bold text-interactive-500 hover:text-interactive-600"
+						class="navigation-link mb-16 last:mb-0 block text-right inter-body-xl-bold text-interactive-500 hover:text-interactive-600"
 					>
 						Ver Storylist
 					</a>
