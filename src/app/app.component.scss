@@ -4,9 +4,8 @@
     min-height: 100vh;
     margin: auto;
 
-    @media screen and (min-width: breakpoints.$min-lg-width) {
-        width: 1240px;
-    }
+    @apply md:max-w-screen-lg;
+
     @media screen and (max-width: breakpoints.$max-md-width) {
         margin: 0 20px;
     }
