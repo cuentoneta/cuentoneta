@@ -51,7 +51,19 @@ import { RouterModule } from '@angular/router';
 			}
 		</header>
 	`,
-	styleUrls: ['./header.component.scss'],
+	styles: `
+		header {
+			@apply grid;
+			@apply mx-5 my-0 md:m-auto;
+			@apply min-h-20 max-w-screen-lg;
+			
+			/*Layout de grid para vistas md y superiores */
+			@apply grid-cols- [ 1 fr_theme(spacing .6) ] grid-rows- [ theme(spacing .20) _1fr ];
+			
+			/*Layout de grid para vistas sm y menores */
+			@apply md: grid-cols-2 md: grid-rows-1;
+		}
+	`,
 	standalone: true,
 	imports: [CommonModule, RouterModule, NgOptimizedImage],
 })
