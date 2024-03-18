@@ -2,14 +2,18 @@
 	<section class="logo flex items-center">
 		<a routerLink="/home" class="flex">
 			<img [ngSrc]="'./assets/svg/logo.svg'" class="mr-3" width="59" height="32" alt="Logo de 'La Cuentoneta'" />
-			<h1 class="flex items-center">La Cuentoneta</h1>
+			<h1 class="flex items-center inter-body-lg-bold">La Cuentoneta</h1>
 		</a>
 	</section>
 
 	<section class="navigation flex items-center justify-end">
 		<nav>
 			<ul class="flex hidden md:flex">
-				<ng-container *ngTemplateOutlet="navigationLinks"></ng-container>
+				@for (navLink of navLinks; track $index) {
+					<li class="md:ml-12 inter-body-sm-semibold hover:text-interactive-500">
+						<a [routerLink]="navLink.route">{{ navLink.title }}</a>
+					</li>
+				}
 			</ul>
 			<div (click)="onMenuTogglerClicked($event)" class="md:hidden">
 				<img
@@ -24,15 +28,16 @@
 	</section>
 
 	@if (displayMenu) {
-		<section class="menu grid-cols-2 grid-rows-2 mb-8 block md:hidden">
+		<section class="grid-cols-2 grid-rows-2 mb-8 block md:hidden">
 			<ul>
-				<ng-container *ngTemplateOutlet="navigationLinks"></ng-container>
+				@for (navLink of navLinks; track $index) {
+					<li
+						class="flex items-center h-12 border-gray-200 border-b-2 inter-body-lg-semibold hover:text-interactive-500"
+					>
+						<a [routerLink]="navLink.route">{{ navLink.title }}</a>
+					</li>
+				}
 			</ul>
 		</section>
 	}
 </header>
-
-<ng-template #navigationLinks>
-	<li><a routerLink="/home">Inicio</a></li>
-	<li><a routerLink="/about">Nosotros</a></li>
-</ng-template>
