@@ -2,10 +2,8 @@
 @use 'src/assets/scss/breakpoints.scss';
 
 header {
-    display: grid;
-    min-height: theme.$spacing-20;
+    @apply grid min-h-20 m-auto;
     max-width: breakpoints.$max-container-width;
-    margin: auto;
 
     @media screen and (min-width: breakpoints.$min-md-width) {
         grid-template-columns: repeat(2, [col] 1fr);
@@ -19,11 +17,6 @@ header {
 
     @media screen and (max-width: breakpoints.$max-md-width) {
         margin: 0 theme.$spacing-5;
-    }
-
-    .menu {
-        grid-column: col / span 2;
-        grid-row: row 2;
     }
 }
 
@@ -60,12 +53,6 @@ section {
     }
 
     &.menu {
-        @media screen and (min-width: breakpoints.$min-md-width) {
-            display: none;
-        }
-
-        margin-bottom: theme.$spacing-8;
-
         > ul {
             li {
                 @include theme.inter-body-lg-semibold;
