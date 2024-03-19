@@ -39,7 +39,7 @@
 	<section class="grid grid-cols-1 justify-items-center lg:grid-cols-2 gap-8">
 		@if (!!cards && cards.length) {
 			@for (deck of cards; track $index) {
-				<cuentoneta-storylist-card [storylist]="deck.storylist" class="w-full"> </cuentoneta-storylist-card>
+				<cuentoneta-storylist-card [storylist]="deck.storylist" class="card w-full"> </cuentoneta-storylist-card>
 			}
 		}
 	</section>
