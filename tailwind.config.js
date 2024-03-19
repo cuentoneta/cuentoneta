@@ -7,8 +7,10 @@ module.exports = {
 	theme: {
 		colors: {
 			white: '#fff',
+			'primary-100': 'hsl(9, 70%, 96%)',
 			'primary-200': 'hsl(11, 78%, 93%)',
 			'primary-300': 'hsl(24, 45%, 76%)',
+			'primary-400': 'hsl(25, 45%, 62%)',
 			'primary-500': 'hsl(21, 57%, 44%)',
 			'gray-50': 'hsl(0, 0%, 98%)',
 			'gray-100': 'hsl(240, 5%, 96%)',
@@ -35,6 +37,7 @@ module.exports = {
 			1: '1px',
 			2: '2px',
 			3: '3px',
+			4: '4px',
 		},
 		extend: {
 			boxShadow: {
