@@ -69,6 +69,10 @@
 		@apply inter-body-xs font-bold;
 	}
 
+	.inter-body-sm-regular {
+		@apply inter-body-sm font-normal;
+	}
+
 	.inter-body-sm-semibold {
 		@apply inter-body-sm font-semibold;
 	}
