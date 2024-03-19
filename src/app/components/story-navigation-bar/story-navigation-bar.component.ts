@@ -10,7 +10,6 @@ import { NgIf, NgFor, CommonModule } from '@angular/common';
 @Component({
   selector: 'cuentoneta-story-navigation-bar',
   templateUrl: './story-navigation-bar.component.html',
-  styleUrls: ['./story-navigation-bar.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
