@@ -68,8 +68,13 @@
 	.inter-body-xs-bold {
 		@apply inter-body-xs font-bold;
 	}
+
 	.inter-body-sm-semibold {
 		@apply inter-body-sm font-semibold;
+	}
+
+	.inter-body-sm-bold {
+		@apply inter-body-sm font-bold;
 	}
 
 	.inter-body-lg-semibold {
