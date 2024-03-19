@@ -141,10 +141,12 @@
 			<section class="mb-3">
 				<h3>Programación</h3>
 				<ul>
-					<li class="inter-body-base-regular" *ngFor="let programmer of programmers">
-						{{ programmer.name }} (<a class="underline"href="{{ programmer.url }}">{{ programmer.username }}</a
-						>)
-					</li>
+					@for (programmer of programmers; track programmer.name) {
+						<li class="inter-body-base-regular">
+							{{ programmer.name }} (<a class="underline"href="{{ programmer.url }}">{{ programmer.username }}</a
+							>)
+						</li>
+					}
 				</ul>
 			</section>
 
