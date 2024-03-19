@@ -3,6 +3,9 @@ const { join } = require('path');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+	purge: {
+		enabled: true,
+	},
 	content: [join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}'), ...createGlobPatternsForDependencies(__dirname)],
 	theme: {
 		colors: {
@@ -11,8 +14,13 @@ module.exports = {
 			'gray-50': 'hsl(0, 0%, 98%)',
 			'gray-100': 'hsl(240, 5%, 96%)',
 			'gray-200': 'hsl(240, 6%, 90%)',
+			'gray-300': 'hsl(240, 5%, 84%)',
+			'gray-400': 'hsl(240, 5%, 65%)',
+			'gray-500': 'hsl(240, 4%, 46%)',
 			'gray-600': 'hsl(240, 5%, 34%)',
 			'gray-700': 'hsl(240, 5%, 26%)',
+			'gray-800': 'hsl(240, 5%, 20%)',
+			'gray-900': 'hsl(240, 5%, 14%)',
 			'interactive-500': 'hsl(212, 70%, 45%)',
 			'interactive-600': 'hsl(212, 70%, 35%)',
 		},
