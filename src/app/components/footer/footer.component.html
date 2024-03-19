@@ -6,52 +6,30 @@
 		<section class="navigation">
 			<nav>
 				<ul class="flex justify-left lg:justify-center inter-body-sm-semibold">
-					<li class="hover:text-interactive-500"><a routerLink="/">Inicio</a></li>
-					<li class="hover:text-interactive-500"><a routerLink="/about">Nosotros</a></li>
-					<li class="hover:text-interactive-500"><a routerLink="/dmca">DMCA</a></li>
+					@for (link of navLinks; track $index) {
+						<li class="hover:text-interactive-500">
+							<a routerLink="{{ link.path }}">{{ link.label }}</a>
+						</li>
+					}
 				</ul>
 			</nav>
 		</section>
 		<section class="social">
 			<nav>
 				<ul class="flex items-center">
-					<li>
-						<a
-							aria-label="Canal de Whatsapp de 'La Cuentoneta'"
-							href="https://whatsapp.com/channel/0029VaC3aCSJuyAGTU2tC02F"
-							><img
-								[ngSrc]="'assets/svg/whatsapp.svg'"
-								class="w-[20px] h-[20px] max-w-[20px]"
-								width="20"
-								height="20"
-								alt="Logo de Whatsapp"
-						/></a>
-					</li>
-					<li>
-						<a aria-label="Twitter de 'La Cuentoneta'" href="https://twitter.com/cuentoneta"
-							><img [ngSrc]="'assets/svg/twitter.svg'" class="w-[20px] h-[20px] max-w-[20px]" width="20" height="20" alt="Logo de Twitter"
-						/></a>
-					</li>
-					<li>
-						<a aria-label="Instagram de 'La Cuentoneta'" href="https://www.instagram.com/cuentoneta/"
-							><img [ngSrc]="'assets/svg/instagram.svg'" class="w-[20px] h-[20px] max-w-[20px]" width="20" height="20" alt="Logo de Instagram"
-						/></a>
-					</li>
-					<li>
-						<a aria-label="Facebook de 'La Cuentoneta'" href="https://www.facebook.com/lacuentoneta"
-							><img [ngSrc]="'assets/svg/facebook.svg'" class="w-[20px] h-[20px] max-w-[20px]" width="20" height="20" alt="Logo de Facebook"
-						/></a>
-					</li>
-					<li>
-						<a aria-label="Github de 'La Cuentoneta'" href="https://github.com/cuentoneta/cuentoneta"
-							><img [ngSrc]="'assets/svg/github.svg'" class="w-[20px] h-[20px] max-w-[20px]" width="20" height="20" alt="Logo de Github"
-						/></a>
-					</li>
-					<li class="flex items-center">
-						<a aria-label="Email de 'La Cuentoneta'" href="mailto:contacto@cuentoneta.ar"
-							><img [ngSrc]="'assets/svg/email.svg'" class="w-[20px] h-[20px] max-w-[20px]" width="20" height="20" alt="Logo de Email"
-						/></a>
-					</li>
+					@for (link of socialLinks; track $index) {
+						<li class="flex items-center">
+							<a [attr.aria-label]="link.ariaLabel" [href]="link.url">
+								<img
+									[alt]="link.alt"
+									[ngSrc]="link.imageUrl!"
+									class="w-[20px] h-[20px] max-w-[20px]"
+									width="20"
+									height="20"
+								/>
+							</a>
+						</li>
+					}
 				</ul>
 			</nav>
 		</section>
