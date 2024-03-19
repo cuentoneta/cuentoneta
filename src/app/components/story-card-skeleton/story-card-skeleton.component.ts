@@ -4,19 +4,19 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 
 @Component({
-  selector: 'cuentoneta-story-card-skeleton',
-  standalone: true,
-  imports: [
-    CommonModule, 
-    NgxSkeletonLoaderModule, StoryEditionDateLabelComponent
-  ],
-  templateUrl: './story-card-skeleton.component.html',
-  styleUrls: ['./story-card-skeleton.component.scss'],
+	selector: 'cuentoneta-story-card-skeleton',
+	standalone: true,
+	imports: [CommonModule, NgxSkeletonLoaderModule, StoryEditionDateLabelComponent],
+	templateUrl: './story-card-skeleton.component.html',
+	styles: `
+    :host {
+      @apply flex flex-col gap-2 md:gap-4;
+    }
+  `,
 })
 export class StoryCardSkeletonComponent {
-  @Input() animation: 'progress' | 'progress-dark' | 'pulse' | 'false' | false =
-    false;
-  @Input() displayDate: boolean = false;
-  @Input() editionLabel: string = '';
-  @Input() comingNextLabel: string = 'Próximamente';
+	@Input() animation: 'progress' | 'progress-dark' | 'pulse' | 'false' | false = false;
+	@Input() displayDate: boolean = false;
+	@Input() editionLabel: string = '';
+	@Input() comingNextLabel: string = 'Próximamente';
 }
