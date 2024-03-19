@@ -22,6 +22,7 @@ module.exports = {
 			'interactive-600': 'hsl(212, 70%, 35%)',
 		},
 		screens: {
+			xs: '0px',
 			sm: '640px',
 			md: '1024px',
 			lg: '1280px',
