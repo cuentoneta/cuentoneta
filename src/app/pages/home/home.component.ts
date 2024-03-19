@@ -24,7 +24,6 @@ import { StorylistCardComponent } from '../../components/storylist-card-componen
 @Component({
   selector: 'cuentoneta-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
   standalone: true,
   imports: [
     CommonModule,

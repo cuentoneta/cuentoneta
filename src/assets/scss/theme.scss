@@ -47,11 +47,19 @@ $letter-spacing: 0px;
 
 // region Inter font sizing mixins to tailwind class
 .inter-body-base {
-    @apply font-inter text-base tracking-normal;
+	@apply font-inter text-base tracking-normal;
+}
+
+.inter-body-sm {
+	@apply font-inter text-sm tracking-normal;
+}
+
+.inter-body-lg {
+	@apply font-inter text-lg tracking-normal;
 }
 
 .inter-body-xl {
-    @apply font-inter text-xl tracking-normal;
+	@apply font-inter text-xl tracking-normal;
 }
 
 .inter-body-xl-bold {
@@ -59,15 +67,31 @@ $letter-spacing: 0px;
 }
 
 .inter-body-base-regular {
-    @apply inter-body-base font-normal;
+	@apply inter-body-base font-normal;
 }
 
 .inter-body-base-medium {
-    @apply inter-body-base font-medium;
+	@apply inter-body-base font-medium;
+}
+
+.inter-body-sm-semibold {
+	@apply inter-body-sm font-semibold;
+}
+
+.inter-body-lg-semibold {
+	@apply inter-body-lg font-semibold;
+}
+
+.inter-body-lg-bold {
+	@apply inter-body-lg font-bold;
+}
+
+.inter-body-xl-bold {
+    @apply inter-body-xl font-bold;
 }
 
 .inter-body-base-semibold {
-    @apply inter-body-base font-semibold;
+	@apply inter-body-base font-semibold;
 }
 
 .inter-body-xs {
@@ -93,11 +117,11 @@ $letter-spacing: 0px;
 }
 
 .source-serif-pro-body-lg {
-    @apply font-source-serif text-lg tracking-normal;
+	@apply font-source-serif text-lg tracking-normal;
 }
 
 .source-serif-pro-body-xl {
-    @apply font-source-serif text-xl tracking-normal;
+	@apply font-source-serif text-xl tracking-normal;
 }
 // endregion
 
@@ -105,73 +129,73 @@ $letter-spacing: 0px;
 
 // region Inter font sizing mixins
 @mixin inter-body-xl {
-    font-family: $inter-font-family;
-    font-size: 1.25rem;
-    line-height: 30px;
-    letter-spacing: $letter-spacing;
+	font-family: $inter-font-family;
+	font-size: 1.25rem;
+	line-height: 30px;
+	letter-spacing: $letter-spacing;
 }
 
 @mixin inter-body-lg {
-    font-family: $inter-font-family;
-    font-size: 1.125rem;
-    line-height: 28px;
-    letter-spacing: $letter-spacing;
+	font-family: $inter-font-family;
+	font-size: 1.125rem;
+	line-height: 28px;
+	letter-spacing: $letter-spacing;
 }
 
 @mixin inter-body-base {
-    font-family: $inter-font-family;
-    font-size: 1rem;
-    line-height: 24px;
-    letter-spacing: $letter-spacing;
+	font-family: $inter-font-family;
+	font-size: 1rem;
+	line-height: 24px;
+	letter-spacing: $letter-spacing;
 }
 
 @mixin inter-body-sm {
-    font-family: $inter-font-family;
-    font-size: 0.875rem;
-    line-height: 22px;
-    letter-spacing: $letter-spacing;
+	font-family: $inter-font-family;
+	font-size: 0.875rem;
+	line-height: 22px;
+	letter-spacing: $letter-spacing;
 }
 
 @mixin inter-body-xs {
-    font-family: $inter-font-family;
-    font-size: 0.75rem;
-    line-height: 18px;
-    letter-spacing: $letter-spacing;
+	font-family: $inter-font-family;
+	font-size: 0.75rem;
+	line-height: 18px;
+	letter-spacing: $letter-spacing;
 }
 
 @mixin inter-body-caption {
-    font-family: $inter-font-family;
-    font-size: 0.625rem;
-    line-height: 16px;
-    letter-spacing: $letter-spacing;
+	font-family: $inter-font-family;
+	font-size: 0.625rem;
+	line-height: 16px;
+	letter-spacing: $letter-spacing;
 }
 // endregion
 // region Source Serif Pro font size mixins
 @mixin source-serif-pro-body-xl {
-    font-family: $source-serif-pro-font-family;
-    font-size: 1.25rem;
-    line-height: 30px;
-    letter-spacing: $letter-spacing;
+	font-family: $source-serif-pro-font-family;
+	font-size: 1.25rem;
+	line-height: 30px;
+	letter-spacing: $letter-spacing;
 }
 @mixin source-serif-pro-body-lg {
-    font-family: $source-serif-pro-font-family;
-    font-size: 1.125rem;
-    line-height: 28px;
-    letter-spacing: $letter-spacing;
+	font-family: $source-serif-pro-font-family;
+	font-size: 1.125rem;
+	line-height: 28px;
+	letter-spacing: $letter-spacing;
 }
 
 @mixin source-serif-pro-body-base {
-    font-family: $source-serif-pro-font-family;
-    font-size: 1rem;
-    line-height: 24px;
-    letter-spacing: $letter-spacing;
+	font-family: $source-serif-pro-font-family;
+	font-size: 1rem;
+	line-height: 24px;
+	letter-spacing: $letter-spacing;
 }
 
 @mixin source-serif-pro-body-sm {
-    font-family: $source-serif-pro-font-family;
-    font-size: 0.875rem;
-    line-height: 22px;
-    letter-spacing: $letter-spacing;
+	font-family: $source-serif-pro-font-family;
+	font-size: 0.875rem;
+	line-height: 22px;
+	letter-spacing: $letter-spacing;
 }
 // endregion
 
@@ -179,122 +203,122 @@ $letter-spacing: 0px;
 
 // region Inter Body
 @mixin inter-body-xl-bold {
-    @include inter-body-xl;
-    font-weight: $inter-font-weight-bold;
+	@include inter-body-xl;
+	font-weight: $inter-font-weight-bold;
 }
 
 @mixin inter-body-xl-semibold {
-    @include inter-body-xl;
-    font-weight: $inter-font-weight-semibold;
+	@include inter-body-xl;
+	font-weight: $inter-font-weight-semibold;
 }
 
 @mixin inter-body-xl-medium {
-    @include inter-body-xl;
-    font-weight: $inter-font-weight-medium;
+	@include inter-body-xl;
+	font-weight: $inter-font-weight-medium;
 }
 
 @mixin inter-body-lg-semibold {
-    @include inter-body-lg;
-    font-weight: $inter-font-weight-semibold;
+	@include inter-body-lg;
+	font-weight: $inter-font-weight-semibold;
 }
 
 @mixin inter-body-lg-medium {
-    @include inter-body-lg;
-    font-weight: $inter-font-weight-medium;
+	@include inter-body-lg;
+	font-weight: $inter-font-weight-medium;
 }
 
 @mixin inter-body-lg-regular {
-    @include inter-body-lg;
-    font-weight: $inter-font-weight-regular;
+	@include inter-body-lg;
+	font-weight: $inter-font-weight-regular;
 }
 
 @mixin inter-body-base-semibold {
-    @include inter-body-base;
-    font-weight: $inter-font-weight-semibold;
+	@include inter-body-base;
+	font-weight: $inter-font-weight-semibold;
 }
 
 @mixin inter-body-base-medium {
-    @include inter-body-base;
-    font-weight: $inter-font-weight-medium;
+	@include inter-body-base;
+	font-weight: $inter-font-weight-medium;
 }
 
 @mixin inter-body-base-regular {
-    @include inter-body-base;
-    font-weight: $inter-font-weight-regular;
+	@include inter-body-base;
+	font-weight: $inter-font-weight-regular;
 }
 
 @mixin inter-body-sm-bold {
-    @include inter-body-sm;
-    font-weight: $inter-font-weight-bold;
+	@include inter-body-sm;
+	font-weight: $inter-font-weight-bold;
 }
 
 @mixin inter-body-sm-semibold {
-    @include inter-body-sm;
-    font-weight: $inter-font-weight-semibold;
+	@include inter-body-sm;
+	font-weight: $inter-font-weight-semibold;
 }
 
 @mixin inter-body-sm-medium {
-    @include inter-body-sm;
-    font-weight: $inter-font-weight-medium;
+	@include inter-body-sm;
+	font-weight: $inter-font-weight-medium;
 }
 
 @mixin inter-body-sm-regular {
-    @include inter-body-sm;
-    font-weight: $inter-font-weight-regular;
+	@include inter-body-sm;
+	font-weight: $inter-font-weight-regular;
 }
 
 @mixin inter-body-xs-bold {
-    @include inter-body-xs;
-    font-weight: $inter-font-weight-bold;
+	@include inter-body-xs;
+	font-weight: $inter-font-weight-bold;
 }
 
 @mixin inter-body-xs-semibold {
-    @include inter-body-xs;
-    font-weight: $inter-font-weight-semibold;
+	@include inter-body-xs;
+	font-weight: $inter-font-weight-semibold;
 }
 
 @mixin inter-body-xs-medium {
-    @include inter-body-xs;
-    font-weight: $inter-font-weight-medium;
+	@include inter-body-xs;
+	font-weight: $inter-font-weight-medium;
 }
 
 @mixin inter-body-caption-bold {
-    @include inter-body-caption;
-    font-weight: $inter-font-weight-bold;
+	@include inter-body-caption;
+	font-weight: $inter-font-weight-bold;
 }
 
 // endregion
 // region Source Serif Pro Body
 @mixin source-serif-pro-body-xl-regular {
-    @include source-serif-pro-body-xl;
-    font-weight: $source-serif-pro-font-weight-regular;
+	@include source-serif-pro-body-xl;
+	font-weight: $source-serif-pro-font-weight-regular;
 }
 
 @mixin source-serif-pro-body-lg-regular {
-    @include source-serif-pro-body-lg;
-    font-weight: $source-serif-pro-font-weight-regular;
+	@include source-serif-pro-body-lg;
+	font-weight: $source-serif-pro-font-weight-regular;
 }
 
 @mixin source-serif-pro-body-lg-italic-regular {
-    @include source-serif-pro-body-lg;
-    font-weight: $source-serif-pro-font-weight-regular;
-    font-style: italic;
+	@include source-serif-pro-body-lg;
+	font-weight: $source-serif-pro-font-weight-regular;
+	font-style: italic;
 }
 
 @mixin source-serif-pro-body-base-regular {
-    @include source-serif-pro-body-base;
-    font-weight: $source-serif-pro-font-weight-regular;
+	@include source-serif-pro-body-base;
+	font-weight: $source-serif-pro-font-weight-regular;
 }
 
 @mixin source-serif-pro-body-base-italic-regular {
-    @include source-serif-pro-body-base;
-    font-weight: $source-serif-pro-font-weight-regular;
-    font-style: italic;
+	@include source-serif-pro-body-base;
+	font-weight: $source-serif-pro-font-weight-regular;
+	font-style: italic;
 }
 
 @mixin source-serif-pro-body-sm-regular {
-    @include source-serif-pro-body-sm;
-    font-weight: $source-serif-pro-font-weight-regular;
+	@include source-serif-pro-body-sm;
+	font-weight: $source-serif-pro-font-weight-regular;
 }
 
 // endregion
@@ -342,10 +366,9 @@ $box-shadow-card-hover: 0px 12px 16px rgba(63, 63, 70, 0.12);
 
 // endregion
 
-
 body {
-    font-family: $source-serif-pro-font-family;
-    background-color: $gray-100;
+	font-family: $source-serif-pro-font-family;
+	background-color: $gray-100;
 }
 
 h1,
@@ -354,51 +377,51 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: $inter-font-family;
+	font-family: $inter-font-family;
 }
 
 .h1 {
-    @apply text-4xl font-bold tracking-normal;
+	@apply text-4xl font-bold tracking-normal;
 }
 
 .h2 {
-    @apply text-3xl font-bold tracking-normal;
+	@apply text-3xl font-bold tracking-normal;
 }
 
 h1 {
-    font-size: 36px;
-    line-height: 40px;
-    letter-spacing: 0;
-    font-weight: $inter-font-weight-bold;
+	font-size: 36px;
+	line-height: 40px;
+	letter-spacing: 0;
+	font-weight: $inter-font-weight-bold;
 }
 
 h2 {
-    font-size: 30px;
-    font-weight: $inter-font-weight-bold;
-    line-height: 36px;
-    letter-spacing: 0;
+	font-size: 30px;
+	font-weight: $inter-font-weight-bold;
+	line-height: 36px;
+	letter-spacing: 0;
 }
 
-h3, .h3 {
-    font-size: 20px;
-    line-height: 28px;
-    font-weight: $inter-font-weight-medium;
+h3,
+.h3 {
+	font-size: 20px;
+	line-height: 28px;
+	font-weight: $inter-font-weight-medium;
 
-    @media screen and (min-width: breakpoints.$min-lg-width) {
-        font-size: 24px;
-        line-height: 32px;
-        font-weight: $inter-font-weight-bold;
-        letter-spacing: 0;
-    }
+	@media screen and (min-width: breakpoints.$min-lg-width) {
+		font-size: 24px;
+		line-height: 32px;
+		font-weight: $inter-font-weight-bold;
+		letter-spacing: 0;
+	}
 }
 
 .hero h1 {
-    @apply mb-5 lg:text-6xl lg:font-extrabold;
+	@apply mb-5 lg:text-6xl lg:font-extrabold;
 }
 
 @mixin card {
-    background-color: $gray-50;
-    border-radius: $rounded-lg;
-    box-shadow: $box-shadow-card;
+	background-color: $gray-50;
+	border-radius: $rounded-lg;
+	box-shadow: $box-shadow-card;
 }
-
