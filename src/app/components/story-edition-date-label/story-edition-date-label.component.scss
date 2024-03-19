@@ -1,39 +1,4 @@
-@use 'src/assets/scss/theme.scss' as *;
-@use 'src/assets/scss/breakpoints.scss';
-
 :host {
-  display:flex;
-  justify-content: space-between;
-
-  .date {
-    align-items: center;
-    color: $primary-500;
-    display: flex;
-
-    @media(max-width: breakpoints.$max-xs-width){
-      @include inter-body-xs-bold;
-    }
-
-    @media(min-width: breakpoints.$min-md-width){
-      @include inter-body-sm-bold;
-    }
-
-    .rect {
-      background-color: $primary-500;
-      height: 12px;
-      margin-right: $spacing-2;
-      width: 2px;
-    }
-  }
-
-  .badge-new {
-    align-items: center;
-    background-color: $primary-200;
-    border-radius: $spacing-1;
-    display: flex;
-    label {
-      margin: $spacing-1 $spacing-4;
-      @include inter-body-xs-bold;
-    }
-  }
+	display: flex;
+	justify-content: space-between;
 }
