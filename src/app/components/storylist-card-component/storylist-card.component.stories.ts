@@ -70,9 +70,9 @@ export const Layout = {
     ],
     template: `
       <div class="grid gap-4">
-          <cuentoneta-storylist-card [storylist]="storylist1">
+          <cuentoneta-storylist-card class="card" [storylist]="storylist1">
           </cuentoneta-storylist-card>
-          <cuentoneta-storylist-card [storylist]="storylist2">
+          <cuentoneta-storylist-card class="card" [storylist]="storylist2">
           </cuentoneta-storylist-card>
     </div>
 `,
