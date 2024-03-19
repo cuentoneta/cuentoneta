@@ -2,7 +2,7 @@
 	<header [attr.aria-busy]="!storylist" [lang]="storylist.language" class="bg-gray-50 py-5 px-7">
 		@if (!!storylist && storylist.title) {
 			<a [routerLink]="'/' + appRouteTree['STORYLIST'] + '/' + storylist.slug">
-				<h3 class="h3">{{ storylist.title }}</h3>
+				<h3 class="h3 hover:text-interactive-500">{{ storylist.title }}</h3>
 			</a>
 		} @else {
 			<ng-container *ngTemplateOutlet="titleSkeleton"></ng-container>
