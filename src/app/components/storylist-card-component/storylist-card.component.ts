@@ -119,7 +119,7 @@ import { BadgeComponent } from '../badge/badge.component';
 	`,
 	styles: `
 	:host {
-		@apply card block max-w-[602px];
+		@apply block max-w-[602px];
 	}
 	`
 })
