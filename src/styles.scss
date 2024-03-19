@@ -20,12 +20,14 @@
 	src: url('assets/fonts/source-serif-pro.woff2');
 }
 
-// Clases de tipografías, según el sistema de diseño
-@layer utilities {
+@layer components {
 	.card {
 		@apply bg-gray-50 rounded-lg shadow-lg;
 	}
+}
 
+// Clases de tipografías, según el sistema de diseño
+@layer utilities {
 	// region Inter font sizing mixins to tailwind class
 	.inter-body-base {
 		@apply font-inter text-base tracking-normal;
