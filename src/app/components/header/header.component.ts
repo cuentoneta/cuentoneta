@@ -3,6 +3,7 @@ import { Storylist } from '@models/storylist.model';
 import { ContentService } from '../../providers/content.service';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { InternalLink } from '@models/link.model'
 
 @Component({
 	selector: 'cuentoneta-header',
@@ -20,7 +21,7 @@ import { RouterModule } from '@angular/router';
 					<ul class="flex hidden md:flex">
 						@for (navLink of navLinks; track $index) {
 							<li class="md:ml-12 inter-body-sm-semibold hover:text-interactive-500">
-								<a [routerLink]="navLink.route">{{ navLink.title }}</a>
+								<a [routerLink]="navLink.path">{{ navLink.label }}</a>
 							</li>
 						}
 					</ul>
@@ -43,7 +44,7 @@ import { RouterModule } from '@angular/router';
 							<li
 								class="flex items-center h-12 border-gray-200 border-b-2 inter-body-lg-semibold hover:text-interactive-500"
 							>
-								<a [routerLink]="navLink.route">{{ navLink.title }}</a>
+								<a [routerLink]="navLink.path">{{ navLink.label }}</a>
 							</li>
 						}
 					</ul>
@@ -68,9 +69,9 @@ import { RouterModule } from '@angular/router';
 	imports: [CommonModule, RouterModule, NgOptimizedImage],
 })
 export class HeaderComponent {
-	readonly navLinks: { title: string; route: string }[] = [
-		{ title: 'Inicio', route: '/home' },
-		{ title: 'Nosotros', route: '/about' },
+	readonly navLinks: InternalLink[] = [
+		{ label: 'Inicio', path: '/home' },
+		{ label: 'Nosotros', path: '/about' },
 	];
 	lists: Pick<Storylist, 'title' | 'slug'>[] = [];
 	displayMenu: boolean = false;
