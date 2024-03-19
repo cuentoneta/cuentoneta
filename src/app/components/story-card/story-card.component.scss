@@ -1,7 +1,0 @@
-@use 'src/assets/scss/theme.scss';
-
-:host {
-    @include theme.card;
-    border: 1px solid theme.$primary-300;
-    display: block;
-}
