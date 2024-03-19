@@ -5,7 +5,45 @@ import { InternalLink, UrlLink } from '@models/link.model';
 
 @Component({
 	selector: 'cuentoneta-footer',
-	templateUrl: './footer.component.html',
+	template: `
+		<footer class="">
+			<div class="container grid items-center justify-between h-full max-w-screen-lg">
+				<section class="logo">
+					<img [ngSrc]="'./assets/svg/logo.svg'" width="49" height="26" alt="Logo de 'La Cuentoneta'" />
+				</section>
+				<section class="navigation">
+					<nav>
+						<ul class="flex justify-left lg:justify-center inter-body-sm-semibold">
+							@for (link of navLinks; track $index) {
+								<li class="hover:text-interactive-500">
+									<a routerLink="{{ link.path }}">{{ link.label }}</a>
+								</li>
+							}
+						</ul>
+					</nav>
+				</section>
+				<section class="social">
+					<nav>
+						<ul class="flex items-center">
+							@for (link of socialLinks; track $index) {
+								<li class="flex items-center">
+									<a [attr.aria-label]="link.ariaLabel" [href]="link.url">
+										<img
+											[alt]="link.alt"
+											[ngSrc]="link.imageUrl!"
+											class="w-[20px] h-[20px] max-w-[20px]"
+											width="20"
+											height="20"
+										/>
+									</a>
+								</li>
+							}
+						</ul>
+					</nav>
+				</section>
+			</div>
+		</footer>
+	`,
 	styleUrls: ['./footer.component.scss'],
 	standalone: true,
 	imports: [RouterModule, NgOptimizedImage],
