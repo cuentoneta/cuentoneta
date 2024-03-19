@@ -15,7 +15,7 @@
 				}"
 				class="story-card-container xs:max-sm:!order-1 xs:max-sm:col-span-2"
 			>
-				<h1 class="mb-5">
+				<h1 class="h1 mb-5">
 					<a
 						[ngClass]="{ 'hover:text-interactive-500': canNavigateToStorylist }"
 						[routerLink]="canNavigateToStorylist ? '/' + appRouteTree['STORYLIST'] + '/' + storylist.slug : null"
@@ -23,7 +23,7 @@
 						>{{ storylist.title }}</a
 					>
 				</h1>
-				<h3 class="subtitle text-gray-600">{{ storylist.description }}</h3>
+				<h3 class="h3 subtitle text-gray-600">{{ storylist.description }}</h3>
 			</div>
 		} @else {
 			<div
