@@ -2,7 +2,7 @@
 	<header [attr.aria-busy]="!storylist" [lang]="storylist.language" class="bg-gray-50 py-5 px-7">
 		@if (!!storylist && storylist.title) {
 			<a [routerLink]="'/' + appRouteTree['STORYLIST'] + '/' + storylist.slug">
-				<h3 class="storylist-title">{{ storylist.title }}</h3>
+				<h3 class="h3">{{ storylist.title }}</h3>
 			</a>
 		} @else {
 			<ng-container *ngTemplateOutlet="titleSkeleton"></ng-container>
@@ -16,14 +16,18 @@
 					publication.published ? ['/' + appRouteTree['STORY'], publication.story.slug, storylist.slug] : null
 				"
 			>
-				<article [ngClass]="{ 'border-solid border-primary-400 border-l-4 bg-primary-100': selectedStorySlug === publication.story.slug }" class="py-5 px-7 bg-gray-50">
+				<article
+					[ngClass]="{
+						'border-solid border-primary-400 border-l-4 bg-primary-100': selectedStorySlug === publication.story.slug
+					}"
+					class="py-5 px-7 bg-gray-50"
+				>
 					<cuentoneta-story-edition-date-label
 						[label]="
 							publication.published
 								? getEditionLabel(publication, publication.publishingOrder)
 								: storylist.comingNextLabel
 						"
-						class="edition-and-label"
 					/>
 					@if (publication.published) {
 						<h4 class="inter-body-sm-bold mb-2">{{ publication.story.title }}</h4>
@@ -56,7 +60,7 @@
 		<footer class="bg-gray-50 py-5 px-7">
 			@if (storylist) {
 				<a [routerLink]="'/' + appRouteTree['STORYLIST'] + '/' + storylist.slug">
-					<h3 class="storylist-title inter-body-xl-bold hover:text-interactive-500">Ver más...</h3>
+					<h3 class="h3 inter-body-xl-bold hover:text-interactive-500">Ver más...</h3>
 				</a>
 			} @else {
 				<ng-container *ngTemplateOutlet="titleSkeleton"></ng-container>
