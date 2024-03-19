@@ -51,5 +51,5 @@ module.exports = {
 			},
 		},
 	},
-	plugins: [],
+	plugins: [{ cssnano: {} }],
 };
