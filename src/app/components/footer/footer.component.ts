@@ -15,7 +15,7 @@ import { InternalLink, UrlLink } from '@models/link.model';
 					<nav>
 						<ul class="flex justify-left lg:justify-center inter-body-sm-semibold">
 							@for (link of navLinks; track $index) {
-								<li class="hover:text-interactive-500">
+								<li class="hover:text-interactive-500 max-sm:inter-body-xs-bold">
 									<a routerLink="{{ link.path }}">{{ link.label }}</a>
 								</li>
 							}
@@ -57,8 +57,6 @@ import { InternalLink, UrlLink } from '@models/link.model';
 
 		.navigation {
 			li {
-				@apply max-sm:inter-body-xs-bold;
-
 				&:not(:last-child) {
 					@apply mr-8 lg:mr-12;
 				}
