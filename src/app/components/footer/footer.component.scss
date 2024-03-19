@@ -1,54 +1,30 @@
-@use 'src/assets/scss/theme.scss' as *;
-@use 'src/assets/scss/breakpoints.scss';
+@use 'src/assets/scss/theme.scss' as theme;
 
 footer {
 	@apply mt-[120px] w-full border-t-1 border-solid border-primary-500 bg-white max-sm:py-8 max-sm:px-5 sm:h-[98px];
 }
 
 .container {
-	@apply max-sm:columns-1 gap-6;
-
+	@apply columns-1 gap-6;
 	@apply sm:grid-cols-[0.15fr_1fr_0.5fr] sm:my-0 sm:mx-5;
-
 	@apply lg:grid-cols-[0.25fr_1fr_0.25fr] lg:m-auto;
 }
 
-section {
-	&.navigation {
-		li {
-			@media screen and (max-width: breakpoints.$max-xs-width) {
-				@include inter-body-xs-bold;
-			}
-
-			&:not(:last-child) {
-				@media screen and (max-width: breakpoints.$max-xs-width) {
-					margin-right: $spacing-3;
-					@include inter-body-xs-bold;
-				}
-				@media screen and (min-width: breakpoints.$min-sm-width) and (max-width: breakpoints.$max-md-width) {
-					margin-right: $spacing-8;
-				}
-				@media screen and (min-width: breakpoints.$min-lg-width) {
-					margin-right: $spacing-12;
-				}
-			}
+.navigation {
+	li {
+		@apply max-sm:inter-body-xs-bold;
+		&:not(:last-child) {
+			@apply mr-8 lg:mr-12;
 		}
 	}
+}
 
-	&.social {
-		@media screen and (min-width: breakpoints.$min-sm-width) {
-			margin-left: auto;
-		}
+.social {
+	@apply sm:ml-auto;
 
-		li {
-			&:not(:last-child) {
-				@media screen and (max-width: breakpoints.$max-md-width) {
-					margin-right: $spacing-8;
-				}
-				@media screen and (min-width: breakpoints.$min-sm-width) {
-					margin-right: $spacing-6;
-				}
-			}
+	li {
+		&:not(:last-child) {
+			@apply mr-8 sm:mr-6 md:mr-8;
 		}
 	}
 }
