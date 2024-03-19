@@ -1,8 +1,8 @@
-<section>
-	<header [attr.aria-busy]="!storylist" [lang]="storylist.language">
+<section class="grid grid-cols-1 gap-y-0.5 bg-gray-200 rounded-xl shadow-lg">
+	<header [attr.aria-busy]="!storylist" [lang]="storylist.language" class="bg-gray-50 py-5 px-7">
 		@if (!!storylist && storylist.title) {
 			<a [routerLink]="'/' + appRouteTree['STORYLIST'] + '/' + storylist.slug">
-				<h3 class="storylist-title">{{ storylist.title }}</h3>
+				<h3 class="h3 hover:text-interactive-500">{{ storylist.title }}</h3>
 			</a>
 		} @else {
 			<ng-container *ngTemplateOutlet="titleSkeleton"></ng-container>
@@ -16,23 +16,27 @@
 					publication.published ? ['/' + appRouteTree['STORY'], publication.story.slug, storylist.slug] : null
 				"
 			>
-				<article [ngClass]="{ selected: selectedStorySlug === publication.story.slug }">
+				<article
+					[ngClass]="{
+						'border-solid border-primary-400 border-l-4 bg-primary-100': selectedStorySlug === publication.story.slug
+					}"
+					class="py-5 px-7 bg-gray-50"
+				>
 					<cuentoneta-story-edition-date-label
 						[label]="
 							publication.published
 								? getEditionLabel(publication, publication.publishingOrder)
 								: storylist.comingNextLabel
 						"
-						class="edition-and-label"
 					/>
 					@if (publication.published) {
-						<h4 class="title">{{ publication.story.title }}</h4>
+						<h4 class="inter-body-sm-bold mb-2">{{ publication.story.title }}</h4>
 						<div class="flex items-center justify-between">
-							<h5 class="author">
+							<h5 class="inter-body-sm-regular">
 								{{ publication.story.author.name }}
 							</h5>
 							@if (!!publication.story.videoUrl) {
-								<div [title]="'Contiene material audiovisual'" class="formats-info">
+								<div [title]="'Contiene material audiovisual'" class="h-5 w-5">
 									<img [alt]="'Contiene video'" class="video" src="assets/svg/video.svg" />
 								</div>
 							}
@@ -53,10 +57,10 @@
 
 	<!-- ToDo: #288 - Generar abstracción para evitar repetir lógica presente en el header (ver líneas 2 - 9)-->
 	@if (!!storylist && storylist.publications.length >= 10) {
-		<footer>
+		<footer class="bg-gray-50 py-5 px-7">
 			@if (storylist) {
 				<a [routerLink]="'/' + appRouteTree['STORYLIST'] + '/' + storylist.slug">
-					<h3 class="storylist-title">Ver más...</h3>
+					<h3 class="h3 inter-body-xl-bold hover:text-interactive-500">Ver más...</h3>
 				</a>
 			} @else {
 				<ng-container *ngTemplateOutlet="titleSkeleton"></ng-container>
