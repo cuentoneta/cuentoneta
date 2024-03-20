@@ -49,7 +49,7 @@
 		}
 	} @else {
 		@for (skeleton of dummyList; track $index) {
-			<article [attr.aria-busy]="true">
+			<article class="py-5 px-7 bg-gray-50" [attr.aria-busy]="true">
 				<ngx-skeleton-loader count="2" appearance="line"></ngx-skeleton-loader>
 			</article>
 		}
