@@ -90,11 +90,6 @@ $letter-spacing: 0px;
 	font-weight: $inter-font-weight-regular;
 }
 
-@mixin inter-body-xs-bold {
-	@include inter-body-xs;
-	font-weight: $inter-font-weight-bold;
-}
-
 @mixin inter-body-xs-medium {
 	@include inter-body-xs;
 	font-weight: $inter-font-weight-medium;
