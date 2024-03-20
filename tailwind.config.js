@@ -48,6 +48,7 @@ module.exports = {
 				'source-serif': ['Source Serif Pro', 'sans-serif'],
 			},
 			spacing: {
+				4.5: '18px',
 				15: '60px',
 				18: '72px',
 			},
