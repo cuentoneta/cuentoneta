@@ -26,6 +26,9 @@ module.exports = {
 			'interactive-500': 'hsl(212, 70%, 45%)',
 			'interactive-600': 'hsl(212, 70%, 35%)',
 		},
+		content: {
+			blank: '""',
+		},
 		screens: {
 			xs: '0px',
 			sm: '640px',
@@ -52,6 +55,8 @@ module.exports = {
 				4.5: '18px',
 				15: '60px',
 				18: '72px',
+				'1/2': '50%',
+				'5/4': '120%',
 			},
 			lineHeight: {
 				0: 0,
