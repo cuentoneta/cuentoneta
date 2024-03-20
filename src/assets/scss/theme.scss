@@ -3,16 +3,11 @@ $inter-font-family: 'Inter', sans-serif;
 $source-serif-pro-font-family: 'Source Serif Pro', sans-serif;
 
 // Font weights
-$inter-font-weight-bold: 700;
 $inter-font-weight-semibold: 600;
 $inter-font-weight-medium: 500;
 $inter-font-weight-regular: 400;
 
-$source-serif-pro-font-weight-regular: 400;
-
 // Colors
-$primary-200: hsl(11, 78%, 93%);
-
 $gray-100: hsl(240, 5%, 96%);
 $gray-200: hsl(240, 6%, 90%);
 $gray-700: hsl(240, 5%, 26%);
@@ -28,13 +23,6 @@ $letter-spacing: 0px;
 // Font size mixins
 
 // region Inter font sizing mixins
-@mixin inter-body-xl {
-	font-family: $inter-font-family;
-	font-size: 1.25rem;
-	line-height: 30px;
-	letter-spacing: $letter-spacing;
-}
-
 @mixin inter-body-lg {
 	font-family: $inter-font-family;
 	font-size: 1.125rem;
@@ -49,13 +37,6 @@ $letter-spacing: 0px;
 	letter-spacing: $letter-spacing;
 }
 
-@mixin inter-body-sm {
-	font-family: $inter-font-family;
-	font-size: 0.875rem;
-	line-height: 22px;
-	letter-spacing: $letter-spacing;
-}
-
 @mixin inter-body-xs {
 	font-family: $inter-font-family;
 	font-size: 0.75rem;
@@ -67,10 +48,6 @@ $letter-spacing: 0px;
 // Body font size & weight mixins
 
 // region Inter Body
-@mixin inter-body-xl-bold {
-	@include inter-body-xl;
-	font-weight: $inter-font-weight-bold;
-}
 
 @mixin inter-body-lg-semibold {
 	@include inter-body-lg;
@@ -92,16 +69,6 @@ $letter-spacing: 0px;
 	font-weight: $inter-font-weight-regular;
 }
 
-@mixin inter-body-sm-bold {
-	@include inter-body-sm;
-	font-weight: $inter-font-weight-bold;
-}
-
-@mixin inter-body-xs-bold {
-	@include inter-body-xs;
-	font-weight: $inter-font-weight-bold;
-}
-
 @mixin inter-body-xs-medium {
 	@include inter-body-xs;
 	font-weight: $inter-font-weight-medium;
@@ -121,19 +88,15 @@ $letter-spacing: 0px;
 // Info en MDN: https://developer.mozilla.org/es/docs/Learn/CSS/Building_blocks/Values_and_units
 
 $spacing-1: 4px;
-$spacing-2: 8px;
 $spacing-4: 16px;
-$spacing-5: 20px;
 $spacing-6: 24px;
-$spacing-7: 28px;
 $spacing-8: 32px;
 $spacing-16: 64px;
-$spacing-28: 112px;
 // endregion
 
 // region Shadows & Elevations
 
-$box-shadow-card: 0px 0px 8px rgba(63, 63, 70, 0.08);
+// TODO: Incorporar sombras de hover a config de Tailwind
 $box-shadow-card-hover: 0px 12px 16px rgba(63, 63, 70, 0.12);
 
 // endregion
@@ -170,8 +133,4 @@ h3,
 
 .hero h1 {
 	@apply mb-5 lg:text-6xl lg:font-extrabold;
-}
-
-@mixin card {
-	@apply bg-gray-50 rounded-lg shadow-lg;
 }

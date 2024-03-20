@@ -28,7 +28,7 @@ import { BadgeComponent } from '../badge/badge.component';
 						<img [ngSrc]="storylist.featuredImage ?? ''" width="602" height="240" class="rounded-t-lg h-[240px] object-cover" alt="" />
 					</header>
 					<section class="flex flex-col gap-4 pt-5 px-4 border-solid border-1 border-y-0 border-primary-300">
-						<h1 class="whitespace-nowrap overflow-hidden text-ellipsis cursor-pointer hover:text-interactive-500">{{ storylist.title }}</h1>
+						<h1 class="h1 whitespace-nowrap overflow-hidden text-ellipsis cursor-pointer hover:text-interactive-500">{{ storylist.title }}</h1>
 						<p class="min-h-9">{{ storylist.description }}</p>
 						<hr class="text-gray-300" />
 					</section>

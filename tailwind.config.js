@@ -7,6 +7,7 @@ module.exports = {
 	theme: {
 		colors: {
 			white: '#fff',
+			black: '#000',
 			'primary-100': 'hsl(9, 70%, 96%)',
 			'primary-200': 'hsl(11, 78%, 93%)',
 			'primary-300': 'hsl(24, 45%, 76%)',
@@ -24,6 +25,9 @@ module.exports = {
 			'gray-900': 'hsl(240, 5%, 14%)',
 			'interactive-500': 'hsl(212, 70%, 45%)',
 			'interactive-600': 'hsl(212, 70%, 35%)',
+		},
+		content: {
+			blank: '""',
 		},
 		screens: {
 			xs: '0px',
@@ -49,8 +53,11 @@ module.exports = {
 				'source-serif': ['Source Serif Pro', 'sans-serif'],
 			},
 			spacing: {
+				4.5: '18px',
 				15: '60px',
 				18: '72px',
+				'1/2': '50%',
+				'5/4': '120%',
 			},
 			lineHeight: {
 				0: 0,
