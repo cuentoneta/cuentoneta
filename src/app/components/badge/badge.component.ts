@@ -11,7 +11,7 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 	hostDirectives: [TooltipDirective],
 	imports: [BypassHtmlSanitizerPipe, CommonModule, NgOptimizedImage, SvgIconComponent],
 	template: `
-		<span class="flex items-center gap-1">
+		<span class="flex items-center gap-1 inter-body-xs-bold">
 			@if (showIcon && !!tag.icon) {
 				<cuentoneta-svg-icon [svg]="tag.icon.svg" />
 			}
@@ -20,7 +20,7 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 	`,
 	styles: `
 		:host {
-			@apply flex bg-primary-200 py-0.5 px-4.5 rounded uppercase inter-body-xs-bold hover:cursor-default;
+			@apply flex bg-primary-200 py-0.5 px-4.5 rounded uppercase hover:cursor-default;
 		}
     `,
 })
