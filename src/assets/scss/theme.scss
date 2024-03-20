@@ -8,8 +8,6 @@ $inter-font-weight-semibold: 600;
 $inter-font-weight-medium: 500;
 $inter-font-weight-regular: 400;
 
-$source-serif-pro-font-weight-regular: 400;
-
 // Colors
 $primary-200: hsl(11, 78%, 93%);
 
@@ -92,11 +90,6 @@ $letter-spacing: 0px;
 	font-weight: $inter-font-weight-regular;
 }
 
-@mixin inter-body-sm-bold {
-	@include inter-body-sm;
-	font-weight: $inter-font-weight-bold;
-}
-
 @mixin inter-body-xs-bold {
 	@include inter-body-xs;
 	font-weight: $inter-font-weight-bold;
@@ -123,17 +116,14 @@ $letter-spacing: 0px;
 $spacing-1: 4px;
 $spacing-2: 8px;
 $spacing-4: 16px;
-$spacing-5: 20px;
 $spacing-6: 24px;
-$spacing-7: 28px;
 $spacing-8: 32px;
 $spacing-16: 64px;
-$spacing-28: 112px;
 // endregion
 
 // region Shadows & Elevations
 
-$box-shadow-card: 0px 0px 8px rgba(63, 63, 70, 0.08);
+// TODO: Incorporar sombras de hover a config de Tailwind
 $box-shadow-card-hover: 0px 12px 16px rgba(63, 63, 70, 0.12);
 
 // endregion

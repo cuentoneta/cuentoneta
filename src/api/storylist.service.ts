@@ -178,6 +178,7 @@ async function fetchStorylist(req: any, res: any) {
 
   if (!result) {
     res.json(null);
+    return;
   }
 
   const storylistImages =
