@@ -10,12 +10,14 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 	standalone: true,
 	hostDirectives: [TooltipDirective],
 	imports: [BypassHtmlSanitizerPipe, CommonModule, NgOptimizedImage, SvgIconComponent],
-	template: `<span class="flex items-center gap-1">
-		@if (showIcon && !!tag.icon) {
-			<cuentoneta-svg-icon [svg]="tag.icon.svg" />
-		}
-		{{ tag.title }}
-	</span> `,
+	template: `
+		<span class="flex items-center gap-1">
+			@if (showIcon && !!tag.icon) {
+				<cuentoneta-svg-icon [svg]="tag.icon.svg" />
+			}
+			{{ tag.title }}
+		</span>
+	`,
 	styles: `
 		:host {
 			@apply flex bg-primary-200 py-0.5 px-4.5 rounded uppercase inter-body-xs-bold hover:cursor-default;
