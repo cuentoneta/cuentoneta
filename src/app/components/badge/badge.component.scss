@@ -1,22 +1,3 @@
-@use 'src/assets/scss/theme.scss';
-
-cuentoneta-badge {
-  display: flex;
-  background-color: theme.$primary-200;
-  padding: 2px 18px;
-  border-radius: theme.$rounded;
-  text-transform: uppercase;
-  @include theme.inter-body-xs-bold;
-
-  &:hover {
-    cursor: default;
-  }
-
-  // Se usa !important para sobreescribir estilos de tamaño defecto de íconos SVG
-  span {
-    svg {
-      width: 16px !important;
-      height: 16px !important;
-    }
-  }
+:host {
+	@apply flex bg-primary-200 py-0.5 px-4.5 rounded uppercase inter-body-xs-bold hover:cursor-default;
 }
