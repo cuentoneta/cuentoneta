@@ -42,6 +42,7 @@ module.exports = {
 		extend: {
 			boxShadow: {
 				lg: '0px 0px 8px rgba(63, 63, 70, 0.08)',
+				'lg-hover': '0px 12px 16px rgba(63, 63, 70, 0.12)',
 			},
 			fontFamily: {
 				inter: ['Inter', 'sans-serif'],

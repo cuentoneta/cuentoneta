@@ -21,7 +21,7 @@ import { BadgeComponent } from '../badge/badge.component';
 	imports: [CommonModule, NgOptimizedImage, BadgeComponent, RouterLink, NgxSkeletonLoaderModule],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `
-		<article>
+		<article class="shadow-lg hover:shadow-lg-hover">
 			@if (!!storylist) {
 				<div [routerLink]="['/' + appRouteTree['STORYLIST'], storylist.slug]" class="navigation-link">
 					<header class="max-w-[602px] h-[240px] cursor-pointer">
