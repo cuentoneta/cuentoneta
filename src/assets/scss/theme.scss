@@ -8,8 +8,6 @@ $inter-font-weight-semibold: 600;
 $inter-font-weight-medium: 500;
 $inter-font-weight-regular: 400;
 
-$source-serif-pro-font-weight-regular: 400;
-
 // Colors
 $primary-200: hsl(11, 78%, 93%);
 
@@ -90,11 +88,6 @@ $letter-spacing: 0px;
 @mixin inter-body-base-regular {
 	@include inter-body-base;
 	font-weight: $inter-font-weight-regular;
-}
-
-@mixin inter-body-sm-bold {
-	@include inter-body-sm;
-	font-weight: $inter-font-weight-bold;
 }
 
 @mixin inter-body-xs-bold {
