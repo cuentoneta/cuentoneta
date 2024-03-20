@@ -57,8 +57,8 @@ export class StoryComponent {
 	readonly appRouteTree = APP_ROUTE_TREE;
 	fetchContentDirective = inject(FetchContentDirective<[Story, Storylist]>);
 
-	story!: Story;
-	storylist!: Storylist;
+	story: Story | undefined;
+	storylist: Storylist | undefined;
 
 	dummyList = Array(10);
 	shareContentParams: { [key: string]: string } = {};

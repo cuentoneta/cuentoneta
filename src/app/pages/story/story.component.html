@@ -1,6 +1,6 @@
 <aside class="hidden md:block">
 	<cuentoneta-story-navigation-bar
-		[selectedStorySlug]="story.slug"
+		[selectedStorySlug]="story?.slug ?? ''"
 		[storylist]="storylist"
 	></cuentoneta-story-navigation-bar>
 </aside>
@@ -83,7 +83,7 @@
 			}
 		}
 
-		<section [lang]="story.language">
+		<section [lang]="story?.language">
 			@if (!!story && !fetchContentDirective.isLoading) {
 				@for (paragraph of story.paragraphs; track $index) {
 					<p
