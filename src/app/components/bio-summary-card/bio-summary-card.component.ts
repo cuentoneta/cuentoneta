@@ -12,7 +12,6 @@ import { Resource } from '@models/resource.model';
 @Component({
 	selector: 'cuentoneta-bio-summary-card',
 	templateUrl: './bio-summary-card.component.html',
-	styleUrls: ['./bio-summary-card.component.scss'],
 	standalone: true,
 	imports: [CommonModule, NgOptimizedImage, NgIf, ResourceComponent],
 })
