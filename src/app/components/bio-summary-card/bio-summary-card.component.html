@@ -1,16 +1,16 @@
 <div class="border-1 border-solid border-gray-200 bg-gray-100 p-6 rounded">
 	@if (story.author) {
-		<section class="author grid mb-4 sm:mb-8 gap-4 grid-cols-[64px_1fr] sm:grid-cols-[64px_1fr_1fr]">
+		<section class="grid mb-4 sm:mb-8 gap-4 grid-cols-[64px_1fr] sm:grid-cols-[64px_1fr_1fr]">
 			<img
 				[alt]="'Retrato de ' + story.author.name"
 				[ngSrc]="story.author.imageUrl + '?h=64&w=64'"
-				class="author-image rounded-md"
+				class="rounded-md"
 				width="64"
 				height="64"
 			/>
-			<div class="author-info flex flex-col justify-center">
+			<div class="flex flex-col justify-center">
 				<p class="inter-body-lg-semibold">{{ story.author.name }}</p>
-				<div class="author-nationality flex items-center gap-2 inter-body-base-medium text-gray-700">
+				<div class="flex items-center gap-2 inter-body-base-medium text-gray-700">
 					<img
 						[alt]="'Bandera de ' + story.author.nationality.country"
 						[ngSrc]="story.author.nationality.flag + '?w=20&h=15'"
@@ -23,7 +23,7 @@
 			</div>
 
 			@if (resources.length > 0) {
-				<div class="resources flex justify-start sm:justify-end gap-4 xs-max:col-start-1 xs-max:col-end-3">
+				<div class="flex justify-start sm:justify-end gap-4 xs-max:col-start-1 xs-max:col-end-3">
 					@for (resource of resources; track $index) {
 						<cuentoneta-resource [resource]="resource"></cuentoneta-resource>
 					}
