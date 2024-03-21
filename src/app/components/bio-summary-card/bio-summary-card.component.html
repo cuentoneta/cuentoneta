@@ -1,20 +1,20 @@
-<div class="bio-card-container">
+<div class="bio-card-container border-1 border-solid border-gray-200 bg-gray-100 p-6 rounded">
 	@if (story.author) {
-		<section class="author mb-4 sm:mb-8">
+		<section class="author grid mb-4 sm:mb-8 gap-x-4">
 			<img
 				[alt]="'Retrato de ' + story.author.name"
 				[ngSrc]="story.author.imageUrl + '?h=64&w=64'"
-				class="author-image"
+				class="rounded-md"
 				width="64"
 				height="64"
 			/>
 			<div class="author-info flex flex-col justify-center">
-				<p class="author-name">{{ story.author.name }}</p>
-				<div class="author-nationality flex items-center gap-2">
+				<p class="inter-body-lg-semibold">{{ story.author.name }}</p>
+				<div class="author-nationality flex items-center gap-2 inter-body-base-medium text-gray-700">
 					<img
 						[alt]="'Bandera de ' + story.author.nationality.country"
 						[ngSrc]="story.author.nationality.flag + '?w=20&h=15'"
-						class="flag"
+						class="rounded w-[20px] h-[15px]"
 						width="20"
 						height="15"
 					/>
@@ -30,12 +30,12 @@
 				</div>
 			}
 		</section>
-        <section class="bio-and-summary" [lang]="story.language">
+        <section class="inter-body-base-regular text-gray-700" [lang]="story.language">
             @for (paragraph of story.author.biography; track $index) {
-                <p [innerHTML]="paragraph.text" [ngClass]="paragraph.classes"></p>
+                <p class="last:mb-0 mb-8" [innerHTML]="paragraph.text" [ngClass]="paragraph.classes"></p>
             }
             @for (paragraph of story.summary; track $index) {
-                <p [innerHTML]="paragraph.text" [ngClass]="paragraph.classes"></p>
+                <p class="last:mb-0 mb-8" [innerHTML]="paragraph.text" [ngClass]="paragraph.classes"></p>
             }
         </section>
 

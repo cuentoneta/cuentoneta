@@ -1,84 +1,38 @@
-@use 'src/assets/scss/theme.scss' as *;
 @use 'src/assets/scss/breakpoints.scss';
 
-.bio-card-container {
-    border: 1px solid $gray-200;
-    background-color: $gray-100;
-    border-radius: $rounded;
-    padding: $spacing-6;
+.author {
+	@media screen and (max-width: breakpoints.$max-xs-width) {
+		grid-template-rows: [row] auto;
 
-    .author {
-        display: grid;
+		.resources {
+			grid-column-start: 1;
+			grid-column-end: 3;
+		}
 
-        @media screen and (max-width: breakpoints.$max-xs-width) {
-            grid-template-columns: [col] $spacing-16 [col] 1fr;
-            grid-template-rows: [row] auto;
-            row-gap: $spacing-4;
+		.author-image {
+			grid-column: col / span 1;
+			grid-row: row / span 1;
+		}
 
-            .resources {
-                grid-column-start: 1;
-                grid-column-end: 3;
-            }
+		.author-info {
+			grid-column: col 2 / span 3;
+			grid-row: row / span 1;
+		}
 
-            .author-image {
-                grid-column: col / span 1;
-                grid-row: row / span 1;
-            }
+		.author-bio-link {
+			grid-column: col 1 / span 2;
+			grid-row: row 2;
+			justify-content: left;
+		}
 
-            .author-info {
-                grid-column: col 2 / span 3;
-                grid-row: row / span 1;
-            }
+		.summary-link {
+			grid-column: col 3 / span 2;
+			grid-row: row 2;
+			justify-content: left;
+		}
+	}
 
-            .author-bio-link{
-                grid-column: col 1 / span 2;
-                grid-row: row 2;
-                justify-content: left;
-            }
+	@apply max-xs:grid-cols-[64px_1fr] max-xs:gap-y-4;
 
-            .summary-link{
-                grid-column: col 3 / span 2;
-                grid-row: row 2;
-                justify-content: left;
-            }
-        }
-
-        @media screen and (min-width: breakpoints.$min-sm-width) {
-            grid-template-columns: $spacing-16 1fr 1fr;
-        }
-
-        column-gap: $spacing-4;
-
-        .author-image {
-            border-radius: $rounded-md;
-        }
-
-        .author-name {
-            @include inter-body-lg-semibold;
-        }
-        .author-nationality {
-            @include inter-body-base-medium;
-            color: $gray-700;
-            .flag {
-                border-radius: $rounded;
-                height: 15px;
-                width: 20px;
-            }
-        }
-
-        .author-bio-link, .summary-link {
-            @include inter-body-base-semibold;
-            color: $interactive-500;
-        }
-    }
-
-    .bio-and-summary {
-        p {
-            @include inter-body-base-regular;
-            color: $gray-700;
-            &:not(:last-child) {
-                margin-bottom: $spacing-8;
-            }
-        }
-    }
+	@apply sm:grid-cols-[64px_1fr_1fr];
 }
