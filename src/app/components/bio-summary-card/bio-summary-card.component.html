@@ -1,10 +1,10 @@
-<div class="bio-card-container border-1 border-solid border-gray-200 bg-gray-100 p-6 rounded">
+<div class="border-1 border-solid border-gray-200 bg-gray-100 p-6 rounded">
 	@if (story.author) {
-		<section class="author grid mb-4 sm:mb-8 gap-x-4">
+		<section class="author grid mb-4 sm:mb-8 gap-4 grid-cols-[64px_1fr] sm:grid-cols-[64px_1fr_1fr]">
 			<img
 				[alt]="'Retrato de ' + story.author.name"
 				[ngSrc]="story.author.imageUrl + '?h=64&w=64'"
-				class="rounded-md"
+				class="author-image rounded-md"
 				width="64"
 				height="64"
 			/>
@@ -23,7 +23,7 @@
 			</div>
 
 			@if (resources.length > 0) {
-				<div class="resources flex justify-start sm:justify-end gap-4">
+				<div class="resources flex justify-start sm:justify-end gap-4 xs-max:col-start-1 xs-max:col-end-3">
 					@for (resource of resources; track $index) {
 						<cuentoneta-resource [resource]="resource"></cuentoneta-resource>
 					}
@@ -32,10 +32,10 @@
 		</section>
         <section class="inter-body-base-regular text-gray-700" [lang]="story.language">
             @for (paragraph of story.author.biography; track $index) {
-                <p class="last:mb-0 mb-8" [innerHTML]="paragraph.text" [ngClass]="paragraph.classes"></p>
+                <p class="last:mb-0 mb-4" [innerHTML]="paragraph.text" [ngClass]="paragraph.classes"></p>
             }
             @for (paragraph of story.summary; track $index) {
-                <p class="last:mb-0 mb-8" [innerHTML]="paragraph.text" [ngClass]="paragraph.classes"></p>
+                <p class="last:mb-0 mb-4" [innerHTML]="paragraph.text" [ngClass]="paragraph.classes"></p>
             }
         </section>
 
