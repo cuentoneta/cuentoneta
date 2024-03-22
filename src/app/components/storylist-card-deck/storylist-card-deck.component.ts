@@ -29,7 +29,6 @@ import { StoryCardComponent } from '../story-card/story-card.component';
     StoryCardComponent,
   ],
   templateUrl: './storylist-card-deck.component.html',
-  styleUrls: ['./storylist-card-deck.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StorylistCardDeckComponent implements OnInit, OnChanges {

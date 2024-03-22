@@ -1,28 +1,28 @@
 <main class="lg:mt-16">
-	<section class="hero">
-		<div class="text">
-			<h1 class="title mb-5">Historias para disfrutar, compartir y aprender</h1>
-			<h3 class="subtitle">
+	<section class="grid mb-16 grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-0">
+		<div class="lg:w-[550px]">
+			<h1 class="h1 mb-5 lg:text-6xl lg:font-extrabold">Historias para disfrutar, compartir y aprender</h1>
+			<h3 class="h3 mb-5 text-gray-600">
 				Una iniciativa que busca fomentar y hacer accesible la lectura digital, publicando literatura breves en nuestras
 				<em>storylists</em> temáticas. ¡Subite a La Cuentoneta!
 			</h3>
 		</div>
-		<div class="featured-image">
+		<div class="ml-auto">
 			<img [ngSrc]="'./assets/svg/illustration.svg'" width="506" height="400" alt="" />
 		</div>
 	</section>
 
-	<section class="content">
+	<section class="block bg-gray-50 p-5 -mx-5 sm:mx-0 rounded-lg md:rounded-xl md:p-15 shadow-lg">
 		<!-- Sección de presentación del proyecto -->
 		<section id="presentation" class="mb-8">
-			<h2 class="subtitle">Sobre <em>La Cuentoneta</em></h2>
-			<p>
+			<h2 class="h2 mb-5 text-gray-600">Sobre <em>La Cuentoneta</em></h2>
+			<p class="inter-body-base-regular">
 				<strong>La Cuentoneta</strong> es un proyecto abierto y sin fines de lucro que busca generar un espacio
 				comunitario para difundir escritos en literatura breve. Esta iniciativa fue gestada originalmente por un grupo
 				de amigas y amigos residentes de la ciudad de Santa Fe, Argentina durante los últimos días de diciembre de 2021.
 			</p>
 			<br />
-			<p>
+			<p class="inter-body-base-regular">
 				Nuestra misión es construir colectivamente una plataforma accesible, amigable y gamificada que sea útil para
 				fomentar, compartir y disfrutar la lectura digital. Buscamos lograrlo a través de la publicación de escritos
 				breves en storylists temáticas, emulando las playlists que utilizan plataformas de audio como Spotify y de video
@@ -32,51 +32,51 @@
 
 		<!-- Sección sobre Contribuciones -->
 		<section id="contributors" class="mb-8">
-			<h2 class="subtitle">¿Cómo puedo Contribuir?</h2>
-			<p>
+			<h2 class="h2 mb-5 text-gray-600">¿Cómo puedo Contribuir?</h2>
+			<p class="inter-body-base-regular">
 				Podés sumar tu granito de arena al desarrollo de La Cuentoneta de varias formas, algunas de las cuales se
 				describen a continuación. Como agradecimiento por tu aporte te agregaremos a la sección de
-				<a [href]="links.GITHUB_CONTRIBUTORS">contribuyentes</a> y podrás, además, portar el badge
-				<strong>Cuentoneta 🚐</strong> en el servidor de <a [href]="links.DISCORD_CHANNEL">Discord de FrontendCafé</a>.
+				<a class="underline" [href]="links.GITHUB_CONTRIBUTORS">contribuyentes</a> y podrás, además, portar el badge
+				<strong>Cuentoneta 🚐</strong> en el servidor de <a class="underline"[href]="links.DISCORD_CHANNEL">Discord de FrontendCafé</a>.
 			</p>
 
 			<section class="mb-3 mt-3">
 				<h3>📢 Difundiendo</h3>
-				<p>
+				<p class="inter-body-base-regular">
 					Si te gusta el proyecto, podés ayudarnos difundiéndolo en tus redes sociales, compartiendo los contenidos que
 					publicamos, y recomendándolo a otras personas. Llegar cada vez a más personas hará que podamos mejorar la
 					plataforma y descubrir qué funcionalidades nuevas son más necesarias a futuro. La Cuentoneta tiene cuentas
 					oficiales en
-					<a [href]="links.FACEBOOK">Facebook</a>, <a [href]="links.INSTAGRAM">Instagram</a> y
-					<a [href]="links.TWITTER">Twitter</a>
+					<a class="underline"[href]="links.FACEBOOK">Facebook</a>, <a class="underline"[href]="links.INSTAGRAM">Instagram</a> y
+					<a class="underline"[href]="links.TWITTER">Twitter</a>
 				</p>
 			</section>
 
 			<section class="mb-3">
 				<h3>💡 Sugiriendo correcciones y nuevas funcionalidades</h3>
-				<p>
+				<p class="inter-body-base-regular">
 					Si tenés una idea para una nueva funcionalidad o realizar alguna corrección o mejora , podés comunicarte con
 					el equipo de desarrollo vía el
-					<a [href]="links.DISCORD_CHANNEL">Discord de FrontendCafé</a>
+					<a class="underline"[href]="links.DISCORD_CHANNEL">Discord de FrontendCafé</a>
 					o vía mail a
-					<a href="mailto:contacto@cuentoneta.ar">contacto&#64;cuentoneta.ar</a>
+					<a class="underline"href="mailto:contacto@cuentoneta.ar">contacto&#64;cuentoneta.ar</a>
 					para ponernos en contacto y discutir tu propuesta.
 				</p>
 			</section>
 
 			<section class="mb-3">
 				<h3>📜 Sumando contenidos</h3>
-				<p>
+				<p class="inter-body-base-regular">
 					Podés sugerir contenido para sumar a la plataforma, sea en forma de cuentos, poemas, ensayos o temáticas para
 					nuevas storylists. El contenido puede ser escritura propia o de terceros, con previos permisos de publicación
 					o disponibilidad de acceso a este contenido en la web abierta.
 				</p>
-				<p>
+				<p class="inter-body-base-regular">
 					Estamos trabajando para, a futuro, ir en busca de autores y autoras de cuentos y poemas de autoría original
 					que deseen publicar sus obras en La Cuentoneta, como así también de personas que deseen leer cuentos para
 					publicarlos en versión audiolibro.
 				</p>
-				<p>
+				<p class="inter-body-base-regular">
 					En caso de que decidas aportar un escrito o relato de tu autoría, también incluiremos tu perfil de autor en la
 					plataforma.
 				</p>
@@ -84,24 +84,24 @@
 
 			<section class="mb-3">
 				<h3>🎨 Diseño UX/UI</h3>
-				<p>
+				<p class="inter-body-base-regular">
 					Si tenés habilidades en diseño UX/UI, podés contribuir al proyecto asistiendo en la creación de wireframes,
 					mockups, y prototipos para mejorar características existentes de la plataforma y contribuir en la gestación de
 					nuevas funcionalidades.
 				</p>
-				<p>
-					Podés acceder a <a [href]="links.FIGMA">este enlace de Figma</a> para ver los diseño de la web y todos los
+				<p class="inter-body-base-regular">
+					Podés acceder a <a class="underline"[href]="links.FIGMA">este enlace de Figma</a> para ver los diseño de la web y todos los
 					recursos gráficos del proyecto.
 				</p>
 			</section>
 
 			<section class="mb-3">
 				<h3>🖥️ Programando</h3>
-				<p>
+				<p class="inter-body-base-regular">
 					Si sos desarrolladora o desarrollador, podés contribuir al proyecto mediante la creación de issues, pull
 					requests, revisando código, y más en nuestro
-					<a [href]="links.GITHUB_REPO">repositorio de Github</a>. Para ello, te recomendamos leer la
-					<a [href]="links.CONTRIBUTING">guía de contribución</a> para que puedas familiarizarte con el proyecto y sus
+					<a class="underline"[href]="links.GITHUB_REPO">repositorio de Github</a>. Para ello, te recomendamos leer la
+					<a class="underline"[href]="links.CONTRIBUTING">guía de contribución</a> para que puedas familiarizarte con el proyecto y sus
 					convenciones.
 				</p>
 			</section>
@@ -109,80 +109,82 @@
 
 		<!-- Sección "Comunidad" -->
 		<section id="community" class="mb-8">
-			<h2 class="subtitle">Comunidad</h2>
+			<h2 class="h2 mb-5 text-gray-600">Comunidad</h2>
 			<img
 				alt="logo-frontendcafe"
 				src="https://user-images.githubusercontent.com/78808163/228854353-cbd1f9b2-68a3-4cf0-851c-d2c49b3eb85c.svg"
 			/>
-			<p>
+			<p class="inter-body-base-regular">
 				Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. Es requerido unirte a nuestro
 				server y buscar el canal
-				<code><a [href]="links.DISCORD_CHANNEL">#🚐 | la-cuentoneta</a></code
+				<code><a class="underline"[href]="links.DISCORD_CHANNEL">#🚐 | la-cuentoneta</a></code
 				>. Allí vas a poder escribir consultas, realizar propuestas y compartir ideas para el proyecto. El código de
 				conducta de este proyecto es extensible también a tu participación en el server de
-				<a [href]="links.DISCORD_SERVER">FrontendCafé en Discord</a>.
+				<a class="underline"[href]="links.DISCORD_SERVER">FrontendCafé en Discord</a>.
 			</p>
 		</section>
 
 		<!-- Sección de staff y contribuyentes del proyecto -->
 		<section id="people" class="mb-8">
-			<h2 class="subtitle">Hacemos <em>La Cuentoneta</em></h2>
+			<h2 class="h2 mb-5 text-gray-600">Hacemos <em>La Cuentoneta</em></h2>
 
 			<section class="mb-3">
 				<h3>Staff</h3>
 				<ul>
-					<li>
-						Ramiro Olivencia - <em>Líder de Proyecto</em> (<a [href]="'https://twitter.com/rolivenc'">&#64;rolivenc</a>)
+					<li class="inter-body-base-regular">
+						Ramiro Olivencia - <em>Líder de Proyecto</em> (<a class="underline"[href]="'https://twitter.com/rolivenc'">&#64;rolivenc</a>)
 					</li>
-					<li>Maxi Cris - <em>Diseño UX/UI</em> (<a [href]="'https://twitter.com/_maxicris'">&#64;maxicris</a>)</li>
+					<li class="inter-body-base-regular">Maxi Cris - <em>Diseño UX/UI</em> (<a class="underline"[href]="'https://twitter.com/_maxicris'">&#64;maxicris</a>)</li>
 				</ul>
 			</section>
 
 			<section class="mb-3">
 				<h3>Programación</h3>
 				<ul>
-					<li *ngFor="let programmer of programmers">
-						{{ programmer.name }} (<a href="{{ programmer.url }}">{{ programmer.username }}</a
-						>)
-					</li>
+					@for (programmer of programmers; track programmer.name) {
+						<li class="inter-body-base-regular">
+							{{ programmer.name }} (<a class="underline"href="{{ programmer.url }}">{{ programmer.username }}</a
+							>)
+						</li>
+					}
 				</ul>
 			</section>
 
 			<section class="mb-3">
 				<h3>Generación de contenido</h3>
 				<ul>
-					<li>
-						Sofía Abramovich (<a [href]="'https://twitter.com/__sofiaabigail'">&#64;__sofiaabigail</a>) - Autora de
+					<li class="inter-body-base-regular">
+						Sofía Abramovich (<a class="underline"[href]="'https://twitter.com/__sofiaabigail'">&#64;__sofiaabigail</a>) - Autora de
 						<i>Instrucciones para leer en Otoño </i>
 					</li>
-					<li>
-						Marian Erro (<a [href]="'https://twitter.com/MarianaErro'">&#64;marianerro</a>) - Autoría de
+					<li class="inter-body-base-regular">
+						Marian Erro (<a class="underline"[href]="'https://twitter.com/MarianaErro'">&#64;marianerro</a>) - Autoría de
 						<i>Verano en Naón</i>
 					</li>
-					<li>
-						Ladrón de Säbado (<a [href]="'https://twitter.com/ladrondesabado'">&#64;ladrondesabado</a>) - Propuesta y
+					<li class="inter-body-base-regular">
+						Ladrón de Säbado (<a class="underline"[href]="'https://twitter.com/ladrondesabado'">&#64;ladrondesabado</a>) - Propuesta y
 						organización de los Spaces <i>Desde el Sótano de la Casa de la Calle Garay</i>, con lecturas y análisis de
 						cuentos de Borges.
 					</li>
-					<li>Elk A. (<a [href]="'https://www.wattpad.com/user/A-Elkkk-o-k'">&#64;A-Elkkk-o-k</a>) - Autoría de</li>
+					<li class="inter-body-base-regular">Elk A. (<a class="underline"[href]="'https://www.wattpad.com/user/A-Elkkk-o-k'">&#64;A-Elkkk-o-k</a>) - Autoría de</li>
 				</ul>
 			</section>
 
 			<section class="mb-3">
 				<h3>Selección, transcripción y curación de contenido</h3>
 				<ul>
-					<li>Patricio Decoud (<a [href]="'https://twitter.com/arroba_pato'">&#64;arrobapato</a>)</li>
-					<li>Juan Balmaceda (<a [href]="'https://twitter.com/balm4ceda'">&#64;balm4ceda</a>)</li>
-					<li>Facundo Kaufmann (<a [href]="'https://twitter.com/facukaufmann'">&#64;facukaufmann</a>)</li>
-					<li>Candela Godoy (<a [href]="'https://twitter.com/napsiex'">&#64;napsiex</a>)</li>
-					<li>Analía Ale (<a [href]="'https://www.linkedin.com/in/anal%C3%ADa-ale-5673a6204/'">&#64;analía-ale</a>)</li>
-					<li>Brahian Pereyra (<a [href]="'https://twitter.com/brahianpdev'">&#64;brahianpdev</a>)</li>
-					<li>Juan Romero (<a [href]="'https://www.linkedin.com/in/juanr0mer0'">&#64;juanr0mer0</a>)</li>
-					<li>Luis Omar Sánchez Díaz (<a [href]="'https://www.instagram.com/luisthepower/'">&#64;luisthepower</a>)</li>
-					<li>Karla Nevárez (<a [href]="'mailto:kanemu36@gmail.com'">kanemu36&#64;gmail.com</a>)</li>
-					<li>Sebastián Mansilla</li>
-					<li>Lolo Díaz (<a [href]="'https://instagram.com/estre.sadx'">&#64;estre.sadx</a>)</li>
-					<li>Nicolás Contrera (<a [href]="'https://twitter.com/nicontrera1'">&#64;nicontrera1</a>)</li>
+					<li class="inter-body-base-regular">Patricio Decoud (<a class="underline"[href]="'https://twitter.com/arroba_pato'">&#64;arrobapato</a>)</li>
+					<li class="inter-body-base-regular">Juan Balmaceda (<a class="underline"[href]="'https://twitter.com/balm4ceda'">&#64;balm4ceda</a>)</li>
+					<li class="inter-body-base-regular">Facundo Kaufmann (<a class="underline"[href]="'https://twitter.com/facukaufmann'">&#64;facukaufmann</a>)</li>
+					<li class="inter-body-base-regular">Candela Godoy (<a class="underline"[href]="'https://twitter.com/napsiex'">&#64;napsiex</a>)</li>
+					<li class="inter-body-base-regular">Analía Ale (<a class="underline"[href]="'https://www.linkedin.com/in/anal%C3%ADa-ale-5673a6204/'">&#64;analía-ale</a>)</li>
+					<li class="inter-body-base-regular">Brahian Pereyra (<a class="underline"[href]="'https://twitter.com/brahianpdev'">&#64;brahianpdev</a>)</li>
+					<li class="inter-body-base-regular">Juan Romero (<a class="underline"[href]="'https://www.linkedin.com/in/juanr0mer0'">&#64;juanr0mer0</a>)</li>
+					<li class="inter-body-base-regular">Luis Omar Sánchez Díaz (<a class="underline"[href]="'https://www.instagram.com/luisthepower/'">&#64;luisthepower</a>)</li>
+					<li class="inter-body-base-regular">Karla Nevárez (<a class="underline"[href]="'mailto:kanemu36@gmail.com'">kanemu36&#64;gmail.com</a>)</li>
+					<li class="inter-body-base-regular">Sebastián Mansilla</li>
+					<li class="inter-body-base-regular">Lolo Díaz (<a class="underline"[href]="'https://instagram.com/estre.sadx'">&#64;estre.sadx</a>)</li>
+					<li class="inter-body-base-regular">Nicolás Contrera (<a class="underline"[href]="'https://twitter.com/nicontrera1'">&#64;nicontrera1</a>)</li>
 				</ul>
 			</section>
 		</section>

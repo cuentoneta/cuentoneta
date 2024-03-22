@@ -32,7 +32,7 @@ export const Primary: Story = {
         'La colección “Cuentos de Verano” de la primera versión de La Cuentoneta: una selección de textos publicados diariamente entre el Año Nuevo y el Martes de Carnaval de 2022',
       ],
       featuredImage:
-        'https://cdn.sanity.io/images/s4dbqkc5/production/445f726810d3b0e39216db61fa40d663aaea3aa4-627x509.png',
+        'https://cdn.sanity.io/images/s4dbqkc5/production/d1a7fc995e0a4d640c9d8e98fb56f56f209f3d89-392x318.webp',
       tags: [
         {
           title: 'Curaduría',
@@ -70,9 +70,9 @@ export const Layout = {
     ],
     template: `
       <div class="grid gap-4">
-          <cuentoneta-storylist-card [storylist]="storylist1">
+          <cuentoneta-storylist-card class="card" [storylist]="storylist1">
           </cuentoneta-storylist-card>
-          <cuentoneta-storylist-card [storylist]="storylist2">
+          <cuentoneta-storylist-card class="card" [storylist]="storylist2">
           </cuentoneta-storylist-card>
     </div>
 `,
@@ -89,7 +89,7 @@ export const Layout = {
         'La colección “Cuentos de Verano” de la primera versión de La Cuentoneta: una selección de textos publicados diariamente entre el Año Nuevo y el Martes de Carnaval de 2022',
       ],
       featuredImage:
-        'https://cdn.sanity.io/images/s4dbqkc5/production/445f726810d3b0e39216db61fa40d663aaea3aa4-627x509.png',
+        'https://cdn.sanity.io/images/s4dbqkc5/production/d1a7fc995e0a4d640c9d8e98fb56f56f209f3d89-392x318.webp',
       tags: [
         {
           title: 'Curaduría',

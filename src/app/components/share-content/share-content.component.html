@@ -1,16 +1,17 @@
 <section class="flex flex-row flex-1">
-	<ng-container *ngFor="let platform of platforms">
+	@for (platform of platforms; track $index) {
 		@if (!isLoading) {
 			<button
 				(click)="onShareToPlatformClicked($event, platform)"
 				[title]="'Compartir en ' + platform.name"
-				class="flex items-center justify-center"
+				class="flex items-center justify-center border-1 border-solid border-gray-200 rounded-full w-12 h-12 bg-gray-100 hover:bg-gray-200"
 			>
 				<img
 					[alt]="'Compartir en ' + platform.name"
 					[ngSrc]="'assets/svg/' + platform.logo + '.svg'"
 					[height]="24"
 					[width]="24"
+					class="m-3 w-6 h-6"
 				/>
 			</button>
 		} @else {
@@ -25,5 +26,5 @@
 				appearance="circle"
 			></ngx-skeleton-loader>
 		}
-	</ng-container>
+	}
 </section>

@@ -1,80 +1,65 @@
-@use 'src/assets/scss/theme.scss' as theme;
-
 .tooltip-container {
-  @include theme.inter-body-xs-medium;
-  font-weight: theme.$inter-font-weight-semibold;
-  padding: theme.$spacing-2;
-  border-radius: theme.$rounded;
-  text-align: center;
-  z-index: 100;
-  position: fixed;
-  color: white;
-  width: auto;
-  background: #000000;
-  box-sizing: border-box;
-  opacity: 0;
-  transform: translate(-50%, -30%);
-  animation: tooltip-slide 0.18s ease-out 0.5s;
-  animation-fill-mode: forwards;
-  pointer-events: none;
-
-}
-
-.tooltip-container::before {
-  content: "";
-  position: absolute;
-  transform: rotate(45deg);
-  background-color: #000000;
-  padding: 5px;
-  z-index: 99;
+	// Layout
+	@apply fixed box-border z-50;
+	// Texto
+	@apply inter-body-xs-semibold text-center text-white bg-black opacity-0;
+	// Spacing
+	@apply p-2 rounded w-auto;
+	// Interactividad
+	@apply pointer-events-none;
+	// Transformaciones
+	@apply translate-x-1/2 translate-y-1/2;
+	&::before {
+		@apply bg-black p-1;
+		@apply z-40 absolute rotate-45;
+		@apply content-blank;
+	}
 }
 
 .top {
-  top: -40px;
-  left: -50%;
-}
-
-.top::before {
-  top: 80%;
-  left: 45%;
+	@apply -top-[40px] -left-1/2;
+	&::before {
+		top: 80%;
+		left: 45%;
+	}
 }
 
 .bottom {
-  top: 25px;
-  left: -50%;
-}
-.bottom::before {
-  top: -5%;
-  left: 45%;
+	@apply top-[25px] -left-1/2;
+	&::before {
+		top: -5%;
+		left: 45%;
+	}
 }
 
 .left {
-  top: -8px;
-  right: 120%;
-}
-
-.left::before {
-  top: 35%;
-  left: 94%;
+	@apply -top-2 end-5/4;
+	&::before {
+		top: 35%;
+		left: 94%;
+	}
 }
 
 .right {
-  top: -8px;
-  left: 120%;
+	@apply -top-2 end-5/4;
+	&::before {
+		top: 35%;
+		left: -2%;
+	}
 }
 
-.right::before {
-  top: 35%;
-  left: -2%;
+// Animaciones
+.tooltip-container {
+	animation: tooltip-slide 0.18s ease-out 0.5s;
+	animation-fill-mode: forwards;
 }
-
 @keyframes tooltip-slide {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -30%);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
+	0% {
+		opacity: 0;
+		transform: translate(-50%, -30%);
+	}
+	100% {
+		opacity: 1;
+		transform: translate(-50%, 0);
+	}
 }

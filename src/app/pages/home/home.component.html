@@ -1,7 +1,7 @@
 <main>
 	<section class="card-decks mt-16 mb-16">
 		@if (!!previews && previews.length) {
-			<ng-container *ngFor="let storylistDeck of previews">
+			@for (storylistDeck of previews; track storylistDeck.slug) {
 				<cuentoneta-storylist-card-deck
 					[canNavigateToStorylist]="true"
 					[storylist]="storylistDeck.storylist"
@@ -10,38 +10,37 @@
 					[isLoading]="fetchContentDirective.isLoading"
 					[displayFeaturedImage]="true"
 					[skeletonConfig]="storylistDeck.previewGridSkeletonConfig"
-					class="mb-3"
+					class="block mb-4 last:mb-0"
 				/>
 
 				@if (!!storylistDeck.storylist) {
 					<a
-						[routerLink]="['/' + appRouteTree['STORYLIST']]"
-						[queryParams]="{ slug: storylistDeck.storylist.slug }"
-						class="navigation-link text-right"
+						[routerLink]="['/' + appRouteTree['STORYLIST'], storylistDeck.storylist.slug]"
+						class="navigation-link mb-16 last:mb-0 block text-right inter-body-xl-bold text-interactive-500 hover:text-interactive-600"
 					>
 						Ver Storylist
 					</a>
 				}
-			</ng-container>
+			}
 		}
 	</section>
 
 	<div class="flex content-between items-center mb-4">
 		<hr class="flex-grow" />
-		<h2 class="mx-8 text-center">¿Buscás otras lecturas?</h2>
+		<h2 class="h2 mx-8 text-center">¿Buscás otras lecturas?</h2>
 		<hr class="flex-grow" />
 	</div>
 	<div class="flex justify-center mb-8">
-		<h3 class="subtitle text-center">
+		<h3 class="h3 subtitle text-center">
 			En este apartado podrás encontrar todas las storylists publicadas hasta el momento en La Cuentoneta
 		</h3>
 	</div>
 
 	<section class="grid grid-cols-1 justify-items-center lg:grid-cols-2 gap-8">
 		@if (!!cards && cards.length) {
-			<ng-container *ngFor="let deck of cards">
-				<cuentoneta-storylist-card class="w-full" [storylist]="deck.storylist"> </cuentoneta-storylist-card>
-			</ng-container>
+			@for (deck of cards; track $index) {
+				<cuentoneta-storylist-card [storylist]="deck.storylist" class="card w-full"> </cuentoneta-storylist-card>
+			}
 		}
 	</section>
 </main>

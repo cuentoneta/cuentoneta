@@ -1,0 +1,81 @@
+// Clases de tipografías, según el sistema de diseño
+@layer utilities {
+	// region Inter font sizing mixins to tailwind class
+	.inter-body-base {
+		@apply font-inter text-base tracking-normal;
+	}
+
+	.inter-body-xs {
+		@apply font-inter text-xs tracking-normal;
+	}
+
+	.inter-body-sm {
+		@apply font-inter text-sm tracking-normal;
+	}
+
+	.inter-body-lg {
+		@apply font-inter text-lg tracking-normal;
+	}
+
+	.inter-body-xl {
+		@apply font-inter text-xl tracking-normal;
+	}
+
+	.inter-body-base-regular {
+		@apply inter-body-base font-normal;
+	}
+
+	.inter-body-base-medium {
+		@apply inter-body-base font-medium;
+	}
+
+	.inter-body-xs-medium {
+		@apply inter-body-xs font-medium;
+	}
+
+	.inter-body-xs-semibold {
+		@apply inter-body-xs font-semibold;
+	}
+
+	.inter-body-xs-bold {
+		@apply inter-body-xs font-bold;
+	}
+
+	.inter-body-sm-regular {
+		@apply inter-body-sm font-normal;
+	}
+
+	.inter-body-sm-semibold {
+		@apply inter-body-sm font-semibold;
+	}
+
+	.inter-body-sm-bold {
+		@apply inter-body-sm font-bold;
+	}
+
+	.inter-body-lg-semibold {
+		@apply inter-body-lg font-semibold;
+	}
+
+	.inter-body-lg-bold {
+		@apply inter-body-lg font-bold;
+	}
+
+	.inter-body-xl-bold {
+		@apply inter-body-xl font-bold;
+	}
+
+	.inter-body-base-semibold {
+		@apply inter-body-base font-semibold;
+	}
+	// endregion
+	// region Source Serif Pro font mixins to tailwind class
+	.source-serif-pro-body-lg {
+		@apply font-source-serif text-lg tracking-normal;
+	}
+
+	.source-serif-pro-body-xl {
+		@apply font-source-serif text-xl tracking-normal;
+	}
+	// endregion
+}

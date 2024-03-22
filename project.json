@@ -38,7 +38,6 @@
         "development": {
           "buildOptimizer": false,
           "optimization": false,
-          "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true
@@ -85,7 +84,7 @@
         "configDir": "./.storybook",
         "browserTarget": "cuentoneta:build",
         "compodoc": false,
-        "styles": ["./src/assets/scss/fonts.scss", "./src/styles.scss"]
+        "styles": ["./src/styles.scss"]
       },
       "configurations": {
         "ci": {

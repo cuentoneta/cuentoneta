@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { combineLatest, switchMap } from 'rxjs';
 import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DomSanitizer } from '@angular/platform-browser';
+import { YouTubePlayer } from '@angular/youtube-player';
 
 // 3rd Party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -35,7 +35,10 @@ import { EpigraphComponent } from '../../components/epigraph/epigraph.component'
 @Component({
 	selector: 'cuentoneta-story',
 	templateUrl: './story.component.html',
-	styleUrls: ['./story.component.scss'],
+	styles: `
+		:host {
+			@apply md:grid md:mt-28 gap-x-8 md:grid-cols-[286px_1fr];
+		}`,
 	standalone: true,
 	imports: [
 		CommonModule,
@@ -46,6 +49,7 @@ import { EpigraphComponent } from '../../components/epigraph/epigraph.component'
 		ShareContentComponent,
 		SpaceRecordingWidgetComponent,
 		EpigraphComponent,
+		YouTubePlayer,
 	],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
@@ -53,14 +57,24 @@ export class StoryComponent {
 	readonly appRouteTree = APP_ROUTE_TREE;
 	fetchContentDirective = inject(FetchContentDirective<[Story, Storylist]>);
 
-	story!: Story;
-	storylist!: Storylist;
+	story: Story | undefined;
+	storylist: Storylist | undefined;
 
 	dummyList = Array(10);
 	shareContentParams: { [key: string]: string } = {};
 	shareMessage: string = '';
 
-	private sanitizer: DomSanitizer = inject(DomSanitizer);
+	storyWithTransformedvideoUrl(story: Story) {
+		if (story.videoUrl) {
+			const videoUrl = new URL(story.videoUrl);
+			return {
+				...story,
+				videoUrl: videoUrl.pathname.split('/')[2],
+			};
+		}
+
+		return story;
+	}
 
 	constructor() {
 		const platformId = inject(PLATFORM_ID);
@@ -72,7 +86,7 @@ export class StoryComponent {
 
 		const fetchObservable$ = this.fetchContentDirective
 			.fetchContentWithSourceParams$(
-				activatedRoute.queryParams,
+				activatedRoute.params,
 				switchMap(({ slug, list }) => combineLatest([storyService.getBySlug(slug), storylistService.get(list, 10)])),
 			)
 			.pipe(takeUntilDestroyed());
@@ -87,7 +101,7 @@ export class StoryComponent {
 				);
 
 		content$.subscribe(([story, storylist]) => {
-			this.story = story;
+			this.story = this.storyWithTransformedvideoUrl(story);
 			this.storylist = storylist;
 
 			metaTagsDirective.setTitle(`${story.title}, de ${story.author.name} en La Cuentoneta`);
@@ -97,13 +111,5 @@ export class StoryComponent {
 			this.shareContentParams = { slug: story.slug, list: storylist.slug };
 			this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos de la colección "${storylist.title}" en este link:`;
 		});
-	}
-
-	sanitizerUrl(url: string) {
-		if (url) {
-			return this.sanitizer.bypassSecurityTrustResourceUrl(url);
-		} else {
-			return undefined;
-		}
 	}
 }
