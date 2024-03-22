@@ -71,6 +71,7 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 - Migración de las tags *ngFor a sintaxis de control de flujo de Angular 17 (@for)
 - Implementación de estilos basados en TailwindCSS para todos los componentes de la aplicación.
+- Actualización del workspace a Nx 18.0.0 y de la aplicación a Angular 17.1.2
 - Publicación de la lista "Cuentos por la Memoria" en conmemoración del Día por la Memoria, la Verdad y la Justicia, celebrado el 24 de marzo.
 - ### `Hito: Lanzamiento al público de la versión 2.3.4 de La Cuentoneta (lanzada el 2024/03/22)`
 
