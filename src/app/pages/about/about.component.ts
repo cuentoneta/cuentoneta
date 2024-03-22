@@ -81,5 +81,20 @@ export class AboutComponent {
 			url: 'https://github.com/lgaieta',
 			username: '@lgaieta',
 		},
+		{
+			name: 'Nito Crespo',
+			url: 'https://github.com/Nito-Crespi',
+			username: '@Nito-Crespi',
+		},
+		{
+			name: 'Abraham Borja',
+			url: 'https://github.com/Aborja-dev',
+			username: '@Aborja-dev',
+		},
+		{
+			name: 'Silvia Trujillano',
+			url: 'https://github.com/7SilviaT',
+			username: '@7SilviaT',
+		},
 	];
 }
