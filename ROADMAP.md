@@ -56,10 +56,8 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 - Agregado soporte para visualización de grabaciones de Spaces de X en vista de historia.
 
 - ### `Hito: Lanzamiento al público de la versión 2.3.2 de La Cuentoneta (lanzada el 2024/01/10)`
-</details>
 
-## Febrero de 2024
-
+- ## Febrero de 2024
 - Agregado soporte para enlace de múltiples recursos web y multimedia a la plataforma
 - Migración de tags *ngIf a sintaxis de control de flujo de Angular 17.
 - Mejoras en infraestructura de SCSS vía TailwindCSS.
@@ -67,28 +65,30 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 - Agregado de Speed Insights de Vercel a la plataforma.
 - Actualización de schemas y modelos para mayor flexibilidad en relaciones entre entidades.
 - ### `Hito: Lanzamiento al público de la versión 2.3.3 de La Cuentoneta (lanzada el 2024/02/02)`
-
-- Preparación de la plataforma para alojar el primer concurso de escritura en La Cuentoneta, el _III Certamen Extraordinario de Escritura_, a cargo de la comunidad **[Taller de
-  Escritura Creativa](https://discord.gg/YJDQCsBmyv)**.
-- Exploración de material de autoras y autores locales para incluirlos en una edición especial de la plataforma.
+</details>
 
 ## Marzo de 2024
-- Desarrollo de las funcionalidades de registro e inicio de sesión de usuarios, que permitirán marcar historias como "leídas", dejar puntuaciones y comentarios en cada relato y storylist.
-- Publicación de las listas "Cuentos para el Bicentenario" en la plataforma, originalmente publicadas por el Ministerio de Educación de la Nación en 2015.
 
+- Migración de las tags *ngFor a sintaxis de control de flujo de Angular 17 (@for)
+- Implementación de estilos basados en TailwindCSS para todos los componentes de la aplicación.
 - Publicación de la lista "Cuentos por la Memoria" en conmemoración del Día por la Memoria, la Verdad y la Justicia, celebrado el 24 de marzo.
-- Preparación de un newsletter quincenal al que los usuarios podrán suscribirse para recibir novedades de La Cuentoneta por correo electrónico.
-- Implementación de la funcionalidad "¿Cuánto tiempo tenés para leer hoy?" que permitirá filtrar los relatos según su tiempo estimado de lectura.
-
+- ### `Hito: Lanzamiento al público de la versión 2.3.4 de La Cuentoneta (lanzada el 2024/03/22)`
 
 ## Abril de 2024
+- Preparación de la plataforma para alojar el primer concurso de escritura en La Cuentoneta, el _III Certamen Extraordinario de Escritura_, a cargo de la comunidad **[Taller de
+  Escritura Creativa](https://discord.gg/YJDQCsBmyv)**.
 - Lanzamiento de la edición "Cuentos por Malvinas" para conmemorar el 41° aniversario del "Día del Veterano y de los Caídos en la Guerra de Malvinas".
-- Inclusión de niveles educativos inicial, primario y secundario en las listas.
+- Exploración de material de autoras y autores locales para incluirlos en una edición especial de la plataforma.
+- Publicación de las listas "Cuentos para el Bicentenario" en la plataforma, originalmente publicadas por el Ministerio de Educación de la Nación en 2015.
 - Invitación abierta a autoras y autores santafesinos para participar en la storylist "Plumas Santafesinas", recopilando relatos breves y poemas de autoría provincial.
 
 
 ## Mayo de 2024
 - Planificación del módulo "Elige tu propia lectura" donde se asignará a cada usuario un desafío de lectura personalizado, generando una storylist adaptada a sus preferencias. Fecha tentativa de lanzamiento en agosto de 2024.
+- Inclusión de niveles educativos inicial, primario y secundario en las listas.
+- Preparación de un newsletter quincenal al que los usuarios podrán suscribirse para recibir novedades de La Cuentoneta por correo electrónico.
+- Implementación de la funcionalidad "¿Cuánto tiempo tenés para leer hoy?" que permitirá filtrar los relatos según su tiempo estimado de lectura.
+- Desarrollo de las funcionalidades de registro e inicio de sesión de usuarios, que permitirán marcar historias como "leídas", dejar puntuaciones y comentarios en cada relato y storylist.
 
 <!-- Listado de enlaces de referencia, mantenerlos actualizados en cada archivo -->
 [web]: https://cuentoneta.ar
