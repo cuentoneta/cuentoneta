@@ -24,7 +24,7 @@ async function fetchForRead(slug: string): Promise<StoryDTO> {
                               			'provider': icon.provider 
                               			} 
                               		} 
-                              	} `
+                              	} `;
 
 		const query = groq`*[_type == 'story' && slug.current == '${slug}']
                           {
@@ -57,6 +57,12 @@ async function fetchForRead(slug: string): Promise<StoryDTO> {
 			for (const mediaSource of story['mediaSources']) {
 				if (mediaSource._type === 'spaceRecording') {
 					media.push(await getTweetData(mediaSource));
+				} else {
+					media.push({
+						title: mediaSource.title,
+						type: mediaSource._type,
+						url: mediaSource.url,
+					});
 				}
 			}
 		}
