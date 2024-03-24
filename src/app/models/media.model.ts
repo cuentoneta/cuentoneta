@@ -22,6 +22,8 @@ export interface SpaceRecording extends Media {
 	data: ITweet & { duration: string };
 }
 
+export type AudioRecording = Omit<Media, 'data'>;
+
 // TODO: #537 - Proveer tipo para tratamiendo de contenido multimedia de videos de YouTube
-export type MediaTypes = SpaceRecording;
-export type MediaTypeKey = 'spaceRecording';
+export type MediaTypes = SpaceRecording | AudioRecording;
+export type MediaTypeKey = 'spaceRecording' | 'audioRecording';
