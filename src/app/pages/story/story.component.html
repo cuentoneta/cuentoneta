@@ -60,19 +60,23 @@
 
 		<!--TODO: #538: Incluir nuevo componente para incluir dinámicamente todos los tipos multimedia derivados-->
 		@if (!!story && !fetchContentDirective.isLoading) {
-			@for (media of story.media; track $index) {
-				@if (media.type === 'spaceRecording') {
-					<cuentoneta-space-recording-widget [media]="media" class="block mb-10"></cuentoneta-space-recording-widget>
+			@if (!!story.media) {
+				@defer {
+					<cuentoneta-media-resource [mediaResources]="story.media"></cuentoneta-media-resource>
 				}
 			}
 			@if (!!story.videoUrl) {
-				<youtube-player [videoId]="story.videoUrl" placeholderImageQuality="low" />
+				@defer {
+					<youtube-player [videoId]="story.videoUrl" placeholderImageQuality="low" />
+				}
 			}
 
 			@if (!!story.prologues && story.prologues.length > 0) {
 				<section class="flex flex-col gap-10 mb-10">
 					@for (prologue of story.prologues; track $index) {
-						<cuentoneta-story-epigraph [prologue]="prologue"></cuentoneta-story-epigraph>
+						@defer {
+							<cuentoneta-story-epigraph [prologue]="prologue"></cuentoneta-story-epigraph>
+						}
 					}
 				</section>
 			}
