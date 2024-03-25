@@ -35,7 +35,10 @@ import { EpigraphComponent } from '../../components/epigraph/epigraph.component'
 @Component({
 	selector: 'cuentoneta-story',
 	templateUrl: './story.component.html',
-	styleUrls: ['./story.component.scss'],
+	styles: `
+		:host {
+			@apply md:grid md:mt-28 gap-x-8 md:grid-cols-[286px_1fr];
+		}`,
 	standalone: true,
 	imports: [
 		CommonModule,

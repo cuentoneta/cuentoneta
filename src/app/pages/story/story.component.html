@@ -1,11 +1,11 @@
 <aside class="hidden md:block">
 	<cuentoneta-story-navigation-bar
-		[selectedStorySlug]="story?.slug"
+		[selectedStorySlug]="story?.slug ?? ''"
 		[storylist]="storylist"
 	></cuentoneta-story-navigation-bar>
 </aside>
 <main>
-	<article class="bg-gray-50 p-5 md:p-15 md:rounded-xl">
+	<article class="bg-gray-50 p-5 md:p-15 md:rounded-xl md:shadow-lg">
 		<header class="flex flex-col-reverse sm:block mb-6 sm:mb-10">
 			<aside class="sm:float-right mt-6 sm:ml-12 sm:mb-12 sm:mt-0">
 				<cuentoneta-share-content
@@ -17,7 +17,7 @@
 			</aside>
 			<div>
 				@if (!!story && !fetchContentDirective.isLoading) {
-					<h1 [lang]="story.language" class="title mb-2">{{ story.title }}</h1>
+					<h1 [lang]="story.language" class="h1 mb-2">{{ story.title }}</h1>
 					<p [lang]="story.language" class="inter-body-xl mb-2">{{ story.author.name }}</p>
 					<time class="inter-body-base-medium text-gray-600">
 						{{ story.approximateReadingTime }} minutos de lectura

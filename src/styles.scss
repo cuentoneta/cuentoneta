@@ -1,5 +1,6 @@
 // Imports de estilos globales
 @use 'assets/scss/reset' as *;
+@use 'assets/scss/typography' as *;
 @use 'assets/scss/theme' as *;
 @use 'assets/scss/transitions' as *;
 @use 'src/app/directives/tooltip.directive.scss' as *;
@@ -9,16 +10,21 @@
 @tailwind components;
 @tailwind utilities;
 
-
 // Imports de fuentes
 @font-face {
-  font-family: 'Inter';
-  src: url('assets/fonts/inter.woff2');
+	font-family: 'Inter';
+	src: url('assets/fonts/inter.woff2');
 }
 
 @font-face {
-  font-family: 'Source Serif Pro';
-  src: url('assets/fonts/source-serif-pro.woff2');
+	font-family: 'Source Serif Pro';
+	src: url('assets/fonts/source-serif-pro.woff2');
+}
+
+@layer components {
+	.card {
+		@apply bg-gray-50 rounded-lg shadow-lg;
+	}
 }
 
 /**
@@ -34,25 +40,25 @@
 */
 
 ngx-skeleton-loader {
-  @apply block leading-0;
+	@apply block leading-0;
 }
 
 youtube-player {
-  .youtube-player-placeholder {
-    @apply mb-6 w-full aspect-video rounded-xl sm:mb-10  #{!important};
-    height: unset !important;
-  }
+	.youtube-player-placeholder {
+		@apply mb-6 w-full aspect-video rounded-xl sm:mb-10  #{!important};
+		height: unset !important;
+	}
 
-  div iframe {
-    @apply mb-6 w-full aspect-video rounded-xl sm:mb-10 #{!important};
-    height: unset !important;
-  }
+	div iframe {
+		@apply mb-6 w-full aspect-video rounded-xl sm:mb-10 #{!important};
+		height: unset !important;
+	}
 }
 
 cuentoneta-bio-summary-card {
-  .bio-and-summary p {
-    a {
-      @apply underline text-interactive-500 hover:text-interactive-600;
-    }
-  }
+	.bio-and-summary p {
+		a {
+			@apply underline text-interactive-500 hover:text-interactive-600;
+		}
+	}
 }

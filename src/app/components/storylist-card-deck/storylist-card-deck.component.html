@@ -1,10 +1,4 @@
-<article
-	[attr.aria-busy]="!storylist"
-	[ngStyle]="{
-		'grid-template-columns': storylist?.gridConfig?.gridTemplateColumns
-	}"
-	class="stories-card-container"
->
+<article [attr.aria-busy]="!storylist" class="stories-card-container grid gap-y-5 grid-cols-1 md:grid-cols-12 md:gap-8">
 	<ng-container *ngTemplateOutlet="storylistTemplate"> </ng-container>
 </article>
 
@@ -19,16 +13,17 @@
 					'grid-column-start': storylist.gridConfig?.titlePlacement?.startCol,
 					'grid-column-end': storylist.gridConfig?.titlePlacement?.endCol
 				}"
-				class="story-card-container title-container"
+				class="story-card-container xs:max-sm:!order-1 xs:max-sm:col-span-2"
 			>
-				<h1 class="title">
+				<h1 class="h1 mb-5">
 					<a
-						[ngClass]="{ 'nav-link': canNavigateToStorylist }"
+						[ngClass]="{ 'hover:text-interactive-500': canNavigateToStorylist }"
 						[routerLink]="canNavigateToStorylist ? '/' + appRouteTree['STORYLIST'] + '/' + storylist.slug : null"
+						class="disabled:cursor-default disabled:pointer-events-none"
 						>{{ storylist.title }}</a
 					>
 				</h1>
-				<h3 class="subtitle">{{ storylist.description }}</h3>
+				<h3 class="h3 subtitle text-gray-600">{{ storylist.description }}</h3>
 			</div>
 		} @else {
 			<div
@@ -37,7 +32,7 @@
 					'grid-column-start': skeletonConfig?.titlePlacement?.startCol,
 					'grid-column-end': skeletonConfig?.titlePlacement?.endCol
 				}"
-				class="story-card-container title-container"
+				class="story-card-container xs:max-sm:!order-1 xs:max-sm:col-span-2"
 			>
 				<ngx-skeleton-loader
 					[theme]="{
@@ -67,7 +62,7 @@
 	@if (!!storylist?.images) {
 		@for (image of storylist?.images; track $index) {
 			<div [ngStyle]="imagesCardConfig[image.slug]" class="story-card-container">
-				<img [src]="image.url" alt="" />
+				<img [src]="image.url" class="rounded-lg" alt="" />
 			</div>
 		}
 	}
