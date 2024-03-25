@@ -7,7 +7,7 @@ import { AudioRecording, MediaTypes } from '@models/media.model';
 	standalone: true,
 	imports: [CommonModule],
 	template: ` <audio [src]="media().url" controls class="block mb-2 w-full"></audio>
-		<label class="inter-body-caption-bold">{{ media().title }}</label>`,
+		<label class="inter-body-xs-medium text-primary-500">{{ media().title }}</label>`,
 	styles: ``,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
