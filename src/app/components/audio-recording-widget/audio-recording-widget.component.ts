@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AudioRecording, MediaTypes } from '@models/media.model';
 
@@ -9,6 +9,7 @@ import { AudioRecording, MediaTypes } from '@models/media.model';
 	template: ` <audio [src]="media().url" controls class="block mb-2 w-full"></audio>
 		<label class="inter-body-caption-bold">{{ media().title }}</label>`,
 	styles: ``,
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AudioRecordingWidgetComponent {
 	media = input.required({
