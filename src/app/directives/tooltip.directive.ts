@@ -44,7 +44,7 @@ export class TooltipDirective implements OnDestroy {
   }
 
   private createTooltipPopup(x: number, y: number) {
-    let popup = document.createElement('p');
+    const popup = document.createElement('p');
     popup.innerHTML = this.text;
     popup.classList.add("tooltip-container");
     popup.classList.add(this.position);

@@ -1,7 +1,7 @@
 <main class="lg:mt-16">
 	<section class="grid mb-16 grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-0">
-		<div class="hero lg:w-[550px]">
-			<h1>Historias para disfrutar, compartir y aprender</h1>
+		<div class="lg:w-[550px]">
+			<h1 class="h1 mb-5 lg:text-6xl lg:font-extrabold">Historias para disfrutar, compartir y aprender</h1>
 			<h3 class="h3 mb-5 text-gray-600">
 				Una iniciativa que busca fomentar y hacer accesible la lectura digital, publicando literatura breves en nuestras
 				<em>storylists</em> temáticas. ¡Subite a La Cuentoneta!
@@ -141,10 +141,12 @@
 			<section class="mb-3">
 				<h3>Programación</h3>
 				<ul>
-					<li class="inter-body-base-regular" *ngFor="let programmer of programmers">
-						{{ programmer.name }} (<a class="underline"href="{{ programmer.url }}">{{ programmer.username }}</a
-						>)
-					</li>
+					@for (programmer of programmers; track programmer.name) {
+						<li class="inter-body-base-regular">
+							{{ programmer.name }} (<a class="underline"href="{{ programmer.url }}">{{ programmer.username }}</a
+							>)
+						</li>
+					}
 				</ul>
 			</section>
 

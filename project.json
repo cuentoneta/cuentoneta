@@ -83,7 +83,7 @@
 				"configDir": "./.storybook",
 				"browserTarget": "cuentoneta:build",
 				"compodoc": false,
-				"styles": ["./src/assets/scss/fonts.scss", "./src/styles.scss"]
+        "styles": ["./src/styles.scss"]
 			},
 			"configurations": {
 				"ci": {
