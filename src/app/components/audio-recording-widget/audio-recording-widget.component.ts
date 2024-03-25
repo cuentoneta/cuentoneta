@@ -1,0 +1,17 @@
+import { Component, input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { AudioRecording, MediaTypes } from '@models/media.model';
+
+@Component({
+	selector: 'cuentoneta-audio-recording-widget',
+	standalone: true,
+	imports: [CommonModule],
+	template: ` <audio [src]="media().url" controls class="block mb-2 w-full"></audio>
+		<label class="inter-body-caption-bold">{{ media().title }}</label>`,
+	styles: ``,
+})
+export class AudioRecordingWidgetComponent {
+	media = input.required({
+		transform: (media: MediaTypes) => media as AudioRecording,
+	});
+}
