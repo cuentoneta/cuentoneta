@@ -1,4 +1,4 @@
-import { Component, effect, input} from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { MediaTypes, SpaceRecording } from '@models/media.model';
 
@@ -43,6 +43,7 @@ import { MediaTypes, SpaceRecording } from '@models/media.model';
 			background-image: linear-gradient(60deg, hsl(230, 100 * 1%, 50 * 1%) -15%, hsl(260, 100 * 1%, 60 * 1%) 100%);
 		}
 	`,
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpaceRecordingWidgetComponent {
 	media = input.required({
@@ -51,9 +52,9 @@ export class SpaceRecordingWidgetComponent {
 
 	public spaceUrl: string = '';
 
-	constructor(){
+	constructor() {
 		effect(() => {
 			this.spaceUrl = this.media().data.entities.urls[0];
-		})
+		});
 	}
 }
