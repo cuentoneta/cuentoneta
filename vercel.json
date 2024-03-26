@@ -1,14 +1,12 @@
 {
-  "version": 2,
-  "public": true,
-  "name": "cuentoneta",
-  "installCommand": "pnpm install --ignore-scripts --production=true && pnpm run config:production",
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/api" }
-  ],
-  "functions": {
-    "api/index.js": {
-      "includeFiles": "dist/cuentoneta/browser/**"
-    }
-  }
+	"version": 2,
+	"public": true,
+	"name": "cuentoneta",
+	"installCommand": "pnpm install --ignore-scripts && pnpm run config:production",
+	"rewrites": [{ "source": "/(.*)", "destination": "/api" }],
+	"functions": {
+		"api/index.js": {
+			"includeFiles": "dist/cuentoneta/browser/**"
+		}
+	}
 }
