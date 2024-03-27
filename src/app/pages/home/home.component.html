@@ -2,18 +2,16 @@
 	<section class="card-decks mt-16 mb-16">
 		@if (!!previews && previews.length) {
 			@for (storylistDeck of previews; track storylistDeck.slug) {
-				@defer {
-					<cuentoneta-storylist-card-deck
-						[canNavigateToStorylist]="true"
-						[storylist]="storylistDeck.storylist"
-						[displayTitle]="true"
-						[number]="storylistDeck.amount"
-						[isLoading]="fetchContentDirective.isLoading"
-						[displayFeaturedImage]="true"
-						[skeletonConfig]="storylistDeck.previewGridSkeletonConfig"
-						class="block mb-4 last:mb-0"
-					/>
-				}
+				<cuentoneta-storylist-card-deck
+					[canNavigateToStorylist]="true"
+					[storylist]="storylistDeck.storylist"
+					[displayTitle]="true"
+					[number]="storylistDeck.amount"
+					[isLoading]="fetchContentDirective.isLoading"
+					[displayFeaturedImage]="true"
+					[skeletonConfig]="storylistDeck.previewGridSkeletonConfig"
+					class="block mb-4 last:mb-0"
+				/>
 
 				@if (!!storylistDeck.storylist) {
 					<a
@@ -41,9 +39,7 @@
 	<section class="grid grid-cols-1 justify-items-center lg:grid-cols-2 gap-8">
 		@if (!!cards && cards.length) {
 			@for (deck of cards; track $index) {
-				@defer {
-					<cuentoneta-storylist-card [storylist]="deck.storylist" class="card w-full"> </cuentoneta-storylist-card>
-				}
+				<cuentoneta-storylist-card [storylist]="deck.storylist" class="card w-full"> </cuentoneta-storylist-card>
 			}
 		}
 	</section>
