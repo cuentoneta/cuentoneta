@@ -3,8 +3,7 @@ import { client } from './_helpers/sanity-connector';
 import groq from 'groq';
 
 // Utilidades
-import { getTweetData } from './_utils/twitter-api';
-import { mapAuthor, mapPrologues, mapResources } from './_utils/functions';
+import { mapAuthor, mapMediaSources, mapPrologues, mapResources } from './_utils/functions';
 
 // Modelos
 import { StoryDTO } from '@models/story.model';
@@ -51,25 +50,9 @@ async function fetchForRead(slug: string): Promise<StoryDTO> {
 
 		const { body, review, author, forewords, mediaSources, ...properties } = story;
 
-		// TODO: #537 - Proveer tipos para tratamiento de contenido multimedia
-		const media: any[] = [];
-		if (mediaSources) {
-			for (const mediaSource of story['mediaSources']) {
-				if (mediaSource._type === 'spaceRecording') {
-					media.push(await getTweetData(mediaSource));
-				} else {
-					media.push({
-						title: mediaSource.title,
-						type: mediaSource._type,
-						url: mediaSource.url,
-					});
-				}
-			}
-		}
-
 		return {
 			...properties,
-			media: media,
+			media: await mapMediaSources(mediaSources),
 			author: mapAuthor(author, properties.language),
 			prologues: mapPrologues(forewords),
 			resources: mapResources(properties.resources),
