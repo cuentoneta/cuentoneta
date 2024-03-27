@@ -75,12 +75,6 @@ export async function mapMediaSources(mediaSources: MediaSchemaObject[]): Promis
 		}
 		if (mediaSource._type === 'audioRecording') {
 			media.push(getAudioRecordingData(mediaSource as AudioRecordingSchemaObject));
-		} else {
-			media.push({
-				title: mediaSource.title,
-				type: mediaSource._type,
-				icon: mediaSource.icon,
-			});
 		}
 	}
 	return media;
