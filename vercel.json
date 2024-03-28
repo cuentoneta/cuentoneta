@@ -2,6 +2,7 @@
 	"version": 2,
 	"public": true,
 	"name": "cuentoneta",
+	"buildCommand": "pnpm run build",
 	"installCommand": "pnpm install --ignore-scripts && pnpm run config:production",
 	"rewrites": [{ "source": "/(.*)", "destination": "/api" }],
 	"functions": {
