@@ -24,7 +24,7 @@ export class StoryNavigationBarComponent implements OnChanges {
 	ngOnChanges(changes: SimpleChanges) {
 		const storylist: Storylist = changes['storylist'].currentValue;
 		if (!!storylist) {
-      this.sliceDisplayedPublications(storylist);
+			this.sliceDisplayedPublications(storylist.publications);
 		}
 	}
 
@@ -42,8 +42,8 @@ export class StoryNavigationBarComponent implements OnChanges {
 
 		const numberOfDisplayedPublications = 10;
 
-    if (storylist.publications.length <= numberOfDisplayedPublications) {
-      this.displayedPublications = storylist.publications;
+		if (publications.length <= numberOfDisplayedPublications) {
+			this.displayedPublications = publications;
 			return;
 		}
 
@@ -73,7 +73,7 @@ export class StoryNavigationBarComponent implements OnChanges {
 		}
 
 		return `${this.storylist?.editionPrefix} ${editionIndex} ${
-      this.storylist?.displayDates ? ' - ' + publication.publishingDate : ''
+			this.storylist?.displayDates ? ' - ' + publication.publishingDate : ''
 		}`;
 	}
 }
