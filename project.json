@@ -6,12 +6,12 @@
 	"prefix": "cuentoneta",
 	"targets": {
 		"build": {
-			"executor": "@angular-devkit/build-angular:browser-esbuild",
+			"executor": "@angular-devkit/build-angular:application",
 			"outputs": ["{options.outputPath}"],
 			"options": {
-				"outputPath": "dist/cuentoneta/browser",
+				"outputPath": "dist/cuentoneta/",
 				"index": "./src/index.html",
-				"main": "./src/main.ts",
+				"browser": "./src/main.ts",
 				"polyfills": ["zone.js"],
 				"tsConfig": "./tsconfig.app.json",
 				"inlineStyleLanguage": "scss",
@@ -83,7 +83,7 @@
 				"configDir": "./.storybook",
 				"browserTarget": "cuentoneta:build",
 				"compodoc": false,
-				"styles": ["./src/styles.scss"]
+        "styles": ["./src/styles.scss"]
 			},
 			"configurations": {
 				"ci": {
