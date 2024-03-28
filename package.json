@@ -6,13 +6,12 @@
 		"node": ">=20.11.0 <21.0.0"
 	},
 	"scripts": {
-		"postinstall": "node -r ts-node/register --env-file=.env ./scripts/set-environment.ts",
 		"start": "nx run cuentoneta:server:production",
-		"dev": "nx run cuentoneta:serve-ssr:development",
+		"dev": "pnpm run config:dev && nx run cuentoneta:serve-ssr:development",
 		"storybook": "nx run cuentoneta:storybook",
 		"storybook:build": "nx run cuentoneta:build-storybook",
 		"build": "nx run cuentoneta:build:production",
-		"install:production": "pnpm i && pnpm run config:production",
+		"config:dev": "node -r ts-node/register --env-file=.env ./scripts/set-environment.ts",
 		"config:production": "ts-node ./scripts/set-environment.ts",
 		"test": "nx test",
 		"test:watch": "nx test --watch",
