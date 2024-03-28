@@ -1,2 +1,2 @@
-const server = require('../dist/cuentoneta/server/main.server');
+const server = require('../dist/cuentoneta/server/main.server.mjs');
 module.exports = server.app();
