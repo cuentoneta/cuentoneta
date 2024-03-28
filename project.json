@@ -108,21 +108,6 @@
 					"quiet": true
 				}
 			}
-		},
-		"serve-ssr": {
-			"executor": "@angular-devkit/build-angular:ssr-dev-server",
-			"configurations": {
-				"development": {
-					"browserTarget": "cuentoneta:build:development",
-					"serverTarget": "cuentoneta:server:development",
-					"open": true
-				},
-				"production": {
-					"browserTarget": "cuentoneta:build:production",
-					"serverTarget": "cuentoneta:server:production"
-				}
-			},
-			"defaultConfiguration": "development"
 		}
 	},
 	"tags": []
