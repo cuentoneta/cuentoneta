@@ -2,6 +2,7 @@
   "version": 2,
   "public": true,
   "name": "cuentoneta",
+  "devCommand": "node dist/cuentoneta/server/server.mjs",
   "rewrites": [
     { "source": "/(.*)", "destination": "/api" }
   ],
