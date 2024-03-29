@@ -90,6 +90,18 @@
 					"quiet": true
 				}
 			}
+		},
+		"serve": {
+			"executor": "@angular-devkit/build-angular:dev-server",
+			"configurations": {
+				"production": {
+					"buildTarget": "cuentoneta:build:production"
+				},
+				"development": {
+					"buildTarget": "cuentoneta:build:development"
+				}
+			},
+			"defaultConfiguration": "development"
 		}
 	},
 	"tags": []
