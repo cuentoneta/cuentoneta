@@ -68,6 +68,10 @@ function run(): void {
 	const server = app();
 	server.listen(port, () => {
 		console.log(`Node Express server listening on http://localhost:${port}`);
+
+		if (port === 4000) {
+			console.log(`Angular client runs at http://localhost:4200`);
+		}
 	});
 }
 
