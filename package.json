@@ -7,7 +7,7 @@
 	},
 	"scripts": {
 		"postinstall": "ts-node ./scripts/install-config.ts",
-		"dev": "nx run-many --target=build:watch,serve:frontend,serve:backend --parallel --max-parallel=3",
+		"dev": "concurrently -p --names=\"Server build,Frontend app,Server app\" --prefix-colors=\"yellow,red,green\" \"pnpm run build:watch\" \"pnpm run serve:frontend\" \"pnpm run serve:backend\"\n",
 		"serve:frontend": "nx run cuentoneta:serve:development",
 		"serve:backend": "nodemon -r ts-node/register --env-file=.env dist/cuentoneta/server/server.mjs",
 		"build": "nx run cuentoneta:build:production --skip-nx-cache",
@@ -80,6 +80,7 @@
 		"@typescript-eslint/parser": "6.13.2",
 		"autoprefixer": "^10.4.18",
 		"browser-sync": "^3.0.2",
+		"concurrently": "^8.2.2",
 		"cypress": "^11.0.0",
 		"eslint": "8.48.0",
 		"eslint-config-prettier": "9.0.0",
