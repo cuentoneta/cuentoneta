@@ -2,7 +2,7 @@
 	"version": 2,
 	"public": true,
 	"name": "cuentoneta",
-	"installCommand": "pnpm install --ignore-scripts && pnpm run config:production",
+	"installCommand": "pnpm install --ignore-scripts",
 	"rewrites": [{ "source": "/(.*)", "destination": "/api" }],
 	"functions": {
 		"api/index.js": {
