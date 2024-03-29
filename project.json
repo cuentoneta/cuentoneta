@@ -16,6 +16,7 @@
 				"tsConfig": "./tsconfig.app.json",
 				"inlineStyleLanguage": "scss",
 				"assets": ["./src/favicon.ico", "./src/assets"],
+				"server": "./src/main.server.ts",
 				"styles": ["./src/styles.scss"],
 				"scripts": []
 			},
@@ -33,34 +34,18 @@
 							"maximumError": "4kb"
 						}
 					],
+					"ssr": { "entry": "./src/ssr.server.ts" },
 					"outputHashing": "all"
 				},
 				"development": {
 					"optimization": false,
 					"extractLicenses": false,
 					"sourceMap": true,
-					"namedChunks": true
+					"namedChunks": true,
+					"ssr": { "entry": "./src/ssr.server.ts" }
 				}
 			},
 			"defaultConfiguration": "production"
-		},
-		"serve": {
-			"executor": "@angular-devkit/build-angular:dev-server",
-			"configurations": {
-				"production": {
-					"buildTarget": "cuentoneta:build:production"
-				},
-				"development": {
-					"buildTarget": "cuentoneta:build:development"
-				}
-			},
-			"defaultConfiguration": "development"
-		},
-		"extract-i18n": {
-			"executor": "@angular-devkit/build-angular:extract-i18n",
-			"options": {
-				"buildTarget": "cuentoneta:build"
-			}
 		},
 		"lint": {
 			"executor": "@nx/linter:eslint",
@@ -83,7 +68,7 @@
 				"configDir": "./.storybook",
 				"browserTarget": "cuentoneta:build",
 				"compodoc": false,
-        "styles": ["./src/styles.scss"]
+				"styles": ["./src/styles.scss"]
 			},
 			"configurations": {
 				"ci": {
@@ -105,40 +90,6 @@
 					"quiet": true
 				}
 			}
-		},
-		"server": {
-			"executor": "@angular-devkit/build-angular:server",
-			"options": {
-				"outputPath": "dist/cuentoneta/server",
-				"main": "src/ssr.server.ts",
-				"tsConfig": "tsconfig.server.json"
-			},
-			"configurations": {
-				"production": {
-					"outputHashing": "media"
-				},
-				"development": {
-					"optimization": false,
-					"sourceMap": true,
-					"extractLicenses": false
-				}
-			},
-			"defaultConfiguration": "production"
-		},
-		"serve-ssr": {
-			"executor": "@angular-devkit/build-angular:ssr-dev-server",
-			"configurations": {
-				"development": {
-					"browserTarget": "cuentoneta:build:development",
-					"serverTarget": "cuentoneta:server:development",
-					"open": true
-				},
-				"production": {
-					"browserTarget": "cuentoneta:build:production",
-					"serverTarget": "cuentoneta:server:production"
-				}
-			},
-			"defaultConfiguration": "development"
 		}
 	},
 	"tags": []
