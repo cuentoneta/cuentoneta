@@ -3,8 +3,8 @@ import { execSync } from 'child_process';
 // Define scripts de npm a ejecutar
 const environment = process.env['NODE_ENV'] ?? 'development';
 
-const devConfigScript = "node -r ts-node/register --env-file=.env ./scripts/set-environment.ts";
-const prodConfigScript = "ts-node ./scripts/set-environment.ts";
+const devConfigScript = "pnpm run config:dev";
+const prodConfigScript = "pnpm run config:production";
 
 console.log(`Ejecutando script de configuración en ambiente ${environment}...`);
 

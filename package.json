@@ -10,6 +10,8 @@
 		"dev": "node -r ts-node/register --env-file=.env dist/cuentoneta/server/server.mjs",
 		"build": "nx run cuentoneta:build:production",
 		"watch": "nx run cuentoneta:build:production --watch",
+		"config:dev": "node -r ts-node/register --env-file=.env ./scripts/set-environment.ts",
+		"config:production": "ts-node ./scripts/set-environment.ts",
 		"storybook": "nx run cuentoneta:storybook",
 		"storybook:build": "nx run cuentoneta:build-storybook",
 		"test": "nx test",
