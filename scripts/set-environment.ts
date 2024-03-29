@@ -19,9 +19,7 @@ import { StorylistDeckConfig } from '../src/app/models/content.model';
 // NodeJS & env
 import { writeFile, existsSync, mkdirSync } from 'fs';
 import ErrnoException = NodeJS.ErrnoException;
-
-// Tipo que describe los diferentes tipos de ambientes en los que puede ejecutarse el presente script
-type TEnvironmentType = 'development' | 'preview' | 'staging' | 'production';
+import { TEnvironmentType } from './vercel-environments.model'
 
 const dirPath = `src/app/environments`;
 const targetPath = `${dirPath}/environment.ts`;
