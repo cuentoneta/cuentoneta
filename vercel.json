@@ -2,8 +2,8 @@
   "version": 2,
   "public": true,
   "name": "cuentoneta",
-  "installCommand": "pnpm install --ignore-scripts",
-  "devCommand": "node -r ts-node/register --env-file=.env dist/cuentoneta/server/server.mjs",
+  "installCommand": "pnpm install",
+  "devCommand": "pnpm run dev",
   "rewrites": [
     { "source": "/(.*)", "destination": "/api" }
   ],
