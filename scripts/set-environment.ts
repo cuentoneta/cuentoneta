@@ -36,7 +36,7 @@ const generateApiUrl = (
   environment: TEnvironmentType,
   branchUrl: string
 ): string => {
-  let url = '';
+  let url = 'http://localhost:4000/';
 
   // Asigna URL en base a variables de entorno para producción y staging (preview develop)
   // El lado derecho de la comparación es utilizado para deployments de staging
