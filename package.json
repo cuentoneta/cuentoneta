@@ -6,13 +6,12 @@
 		"node": ">=20.11.0 <21.0.0"
 	},
 	"scripts": {
-		"dev": "node -r ts-node/register --env-file=.env dist/cuentoneta/server/server.mjs",
+		"postinstall": "node -r ts-node/register --env-file=.env ./scripts/install-config.ts",
+		"dev": " node -r ts-node/register --env-file=.env dist/cuentoneta/server/server.mjs",
 		"build": "nx run cuentoneta:build:production",
 		"watch": "nx run cuentoneta:build:production --watch",
 		"storybook": "nx run cuentoneta:storybook",
 		"storybook:build": "nx run cuentoneta:build-storybook",
-		"config:dev": "node -r ts-node/register --env-file=.env ./scripts/set-environment.ts",
-		"config:production": "ts-node ./scripts/set-environment.ts",
 		"test": "nx test",
 		"test:watch": "nx test --watch",
 		"sanity:dev": "cd cms && sanity dev"
