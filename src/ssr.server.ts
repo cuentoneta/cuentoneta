@@ -3,12 +3,21 @@ import { CommonEngine } from '@angular/ssr';
 import express from 'express';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
-import bootstrap from './main.server'
-import routes from './api/routes'
+import bootstrap from './main.server';
+import cors from 'cors';
+import routes from './api/routes';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
 	const server = express();
+
+	// Habilita CORS en ambiente development
+	server.use(
+		cors({
+			origin: 'http://localhost:4200',
+		}),
+	);
+
 	const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 	const browserDistFolder = resolve(serverDistFolder, '../browser');
 	const indexHtml = join(serverDistFolder, 'index.server.html');
@@ -26,9 +35,12 @@ export function app(): express.Express {
 	// Example Express Rest API endpoints
 	// server.get('/api/**', (req, res) => { });
 	// Serve static files from /browser
-	server.get('*.*', express.static(browserDistFolder, {
-		maxAge: '1y'
-	}));
+	server.get(
+		'*.*',
+		express.static(browserDistFolder, {
+			maxAge: '1y',
+		}),
+	);
 
 	// All regular routes use the Angular engine
 	server.get('*', (req, res, next) => {
