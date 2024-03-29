@@ -6,8 +6,8 @@
 		"node": ">=20.11.0 <21.0.0"
 	},
 	"scripts": {
-		"postinstall": "ts-node ./scripts/install-config.ts",
-		"dev": " node -r ts-node/register --env-file=.env dist/cuentoneta/server/server.mjs",
+		"postinstall": "node -r ts-node/register ./scripts/install-config.ts",
+		"dev": "node -r ts-node/register --env-file=.env dist/cuentoneta/server/server.mjs",
 		"build": "nx run cuentoneta:build:production",
 		"watch": "nx run cuentoneta:build:production --watch",
 		"storybook": "nx run cuentoneta:storybook",
