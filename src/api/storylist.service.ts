@@ -1,11 +1,11 @@
 import express from 'express';
 import { client } from './_helpers/sanity-connector';
-import { mapAuthor, mapPrologues, urlFor } from './_utils/functions';
+import { mapAuthor, mapMediaSources, mapPrologues, urlFor } from './_utils/functions';
 
 async function fetchPreview(req: express.Request, res: express.Response) {
-  const { slug } = req.query;
+	const { slug } = req.query;
 
-  const query = `*[_type == 'storylist' && slug.current == '${slug}'][0]
+	const query = `*[_type == 'storylist' && slug.current == '${slug}'][0]
                     { 
                         _id,
                         'slug': slug.current,
@@ -53,6 +53,7 @@ async function fetchPreview(req: express.Request, res: express.Response) {
                                             approximateReadingTime,
                                             videoUrl,
                                             language,
+                                            mediaSources,
                                             'author': author-> { name, image, nationality-> }
                                         }
                                     }
@@ -61,66 +62,59 @@ async function fetchPreview(req: express.Request, res: express.Response) {
                         'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])
                     }`;
 
-  const result = await client.fetch(query, {});
+	const result = await client.fetch(query, {});
 
-  if (!result) {
-    res.json(null);
-  }
+	if (!result) {
+		res.json(null);
+	}
 
-  const previewImages =
-    result.gridConfig.cardsPlacement?.filter(
-      (config: any) => !!config.imageSlug
-    ) ?? [];
+	const previewImages = result.gridConfig.cardsPlacement?.filter((config: any) => !!config.imageSlug) ?? [];
 
-  const storylist = {
-    ...result,
-    // Elimina elementos publication traídos en la consulta a Sanity del objeto grid config
-    gridConfig: {
-      ...result.gridConfig,
-      cardsPlacement: result.gridConfig.cardsPlacement.map(
-        (placement: any) => {
-          const { publication, image, ...other } = placement;
-          return other;
-        }
-      ),
-    },
-    featuredImage: !result.featuredImage
-      ? undefined
-      : urlFor(result.featuredImage).url(),
-    images:
-      previewImages.length === 0
-        ? []
-        : previewImages.map((card: any) => ({
-            slug: card.imageSlug,
-            url: urlFor(card.image).url(),
-          })),
+	const storylist = {
+		...result,
+		// Elimina elementos publication traídos en la consulta a Sanity del objeto grid config
+		gridConfig: {
+			...result.gridConfig,
+			cardsPlacement: result.gridConfig.cardsPlacement.map((placement: any) => {
+				const { publication, image, ...other } = placement;
+				return other;
+			}),
+		},
+		featuredImage: !result.featuredImage ? undefined : urlFor(result.featuredImage).url(),
+		images:
+			previewImages.length === 0
+				? []
+				: previewImages.map((card: any) => ({
+						slug: card.imageSlug,
+						url: urlFor(card.image).url(),
+					})),
 
-    // Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
-    publications: result.gridConfig.cardsPlacement
-      .filter((cardPlacement: any) => !!cardPlacement.publication && !!cardPlacement.publication.story)
-      .map((cardPlacement: any) => cardPlacement.publication)
-      .map((publication: any) => {
-        const { review, body, forewords, author, ...story } = publication.story;
-        return {
-          ...publication,
-          story: {
-            ...story,
-            summary: review,
-            paragraphs: body,
-            author: mapAuthor(author),
-            prologues: mapPrologues(forewords),
-          },
-        };
-      }),
-  };
+		// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
+		publications: result.gridConfig.cardsPlacement
+			.filter((cardPlacement: any) => !!cardPlacement.publication && !!cardPlacement.publication.story)
+			.map((cardPlacement: any) => cardPlacement.publication)
+			.map((publication: any) => {
+				const { review, body, forewords, author, ...story } = publication.story;
+				return {
+					...publication,
+					story: {
+						...story,
+						summary: review,
+						paragraphs: body,
+						author: mapAuthor(author),
+						prologues: mapPrologues(forewords),
+					},
+				};
+			}),
+	};
 
-  res.json(storylist);
+	res.json(storylist);
 }
 async function fetchStorylist(req: any, res: any) {
-  const { slug, amount, ordering = 'asc' } = req.query;
-  const limit = parseInt(amount as string) - 1;
+	const { slug, amount, ordering = 'asc' } = req.query;
+	const limit = parseInt(amount as string) - 1;
 
-  const query = `*[_type == 'storylist' && slug.current == '${slug}'][0]
+	const query = `*[_type == 'storylist' && slug.current == '${slug}'][0]
                     { 
                         _id,
                         'slug': slug.current,
@@ -166,6 +160,7 @@ async function fetchStorylist(req: any, res: any) {
                                         approximateReadingTime,
                                         videoUrl,
                                         language,
+                                        mediaSources,
                                         'author': author-> { name, image, nationality-> }
                                     }
                                 }
@@ -174,50 +169,50 @@ async function fetchStorylist(req: any, res: any) {
                         'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])
                     }`;
 
-  const result = await client.fetch(query, {});
+	const result = await client.fetch(query, {});
 
-  if (!result) {
-    res.json(null);
-    return;
-  }
+	if (!result) {
+		res.json(null);
+		return;
+	}
 
-  const storylistImages =
-    result.gridConfig.cardsPlacement?.filter(
-      (config: any) => !!config.imageSlug
-    ) ?? [];
+	const storylistImages = result.gridConfig.cardsPlacement?.filter((config: any) => !!config.imageSlug) ?? [];
 
-  const storylist = {
-    ...result,
-    featuredImage: !result.featuredImage
-      ? undefined
-      : urlFor(result.featuredImage).url(),
-    images:
-      storylistImages.length === 0
-        ? []
-        : storylistImages.map((card: any) => ({
-            slug: card.imageSlug,
-            url: urlFor(card.image).url(),
-          })),
-    // Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
-    publications: result.gridConfig.cardsPlacement
-        .filter((cardPlacement: any) => !!cardPlacement.publication && !!cardPlacement.publication.story)
-        .map((cardPlacement: any) => cardPlacement.publication)
-        .map((publication: any) => {
-          const { review, body, forewords, author, ...story } = publication.story;
-          return {
-            ...publication,
-            story: {
-              ...story,
-              summary: review,
-              paragraphs: body,
-              author: mapAuthor(author),
-              prologues: mapPrologues(forewords),
-            },
-          };
-        }),
-  };
+	const rawPublications = result.gridConfig.cardsPlacement
+		.filter((cardPlacement: any) => !!cardPlacement.publication && !!cardPlacement.publication.story)
+		.map((cardPlacement: any) => cardPlacement.publication);
+	const publications = [];
 
-  res.json(storylist);
+	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
+	for (const publication of rawPublications) {
+		const { review, body, forewords, author, mediaSources, ...story } = publication.story;
+		publications.push({
+			...publication,
+			story: {
+				...story,
+				media: mediaSources ? await mapMediaSources(mediaSources) : undefined,
+				summary: review,
+				paragraphs: body,
+				author: mapAuthor(author),
+				prologues: mapPrologues(forewords),
+			},
+		});
+	}
+
+	const storylist = {
+		...result,
+		featuredImage: !result.featuredImage ? undefined : urlFor(result.featuredImage).url(),
+		images:
+			storylistImages.length === 0
+				? []
+				: storylistImages.map((card: any) => ({
+						slug: card.imageSlug,
+						url: urlFor(card.image).url(),
+					})),
+		publications: publications
+	};
+
+	res.json(storylist);
 }
 
 export { fetchPreview, fetchStorylist };
