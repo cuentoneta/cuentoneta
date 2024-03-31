@@ -67,10 +67,10 @@ function run(): void {
 	// Start up the Node server
 	const server = app();
 	server.listen(port, () => {
-		console.log(`Node Express server listening on http://localhost:${port}`);
+		console.log(`Aplicación en modo Server-Side Rendering corriendo en http://localhost:${port}`);
 
 		if (port === 4000) {
-			console.log(`Angular client runs at http://localhost:4200`);
+			console.log(`Aplicación en modo Client-Side Rendering corriendo en  http://localhost:4200`);
 		}
 	});
 }
