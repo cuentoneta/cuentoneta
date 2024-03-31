@@ -29,8 +29,8 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 import { StoryNavigationBarComponent } from '../../components/story-navigation-bar/story-navigation-bar.component';
 import { BioSummaryCardComponent } from '../../components/bio-summary-card/bio-summary-card.component';
 import { ShareContentComponent } from '../../components/share-content/share-content.component';
-import { SpaceRecordingWidgetComponent } from '../../components/space-recording-widget/space-recording-widget.component';
 import { EpigraphComponent } from '../../components/epigraph/epigraph.component';
+import { MediaResourceComponent } from '../../components/media-resource/media-resource.component'
 
 @Component({
 	selector: 'cuentoneta-story',
@@ -47,9 +47,9 @@ import { EpigraphComponent } from '../../components/epigraph/epigraph.component'
 		StoryNavigationBarComponent,
 		BioSummaryCardComponent,
 		ShareContentComponent,
-		SpaceRecordingWidgetComponent,
 		EpigraphComponent,
 		YouTubePlayer,
+		MediaResourceComponent,
 	],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
@@ -57,6 +57,7 @@ export class StoryComponent {
 	readonly appRouteTree = APP_ROUTE_TREE;
 	fetchContentDirective = inject(FetchContentDirective<[Story, Storylist]>);
 
+	// Valores undefined necesarios para poder determinar cuándo mostrar skeletons o la información de story y storylist en el template
 	story: Story | undefined;
 	storylist: Storylist | undefined;
 

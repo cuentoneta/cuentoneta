@@ -1,5 +1,5 @@
 import { supportedLanguages } from '../utils/localization';
-import { DocumentTextIcon, TwitterIcon } from '@sanity/icons';
+import { DocumentTextIcon, PlayIcon, TwitterIcon } from '@sanity/icons';
 import { resource } from './resourceType';
 
 const spaceRecordingMedia = {
@@ -40,6 +40,38 @@ const spaceRecordingMedia = {
 			name: 'duration',
 			title: 'Duración del space',
 			type: 'string',
+		},
+	],
+};
+
+const audioRecording = {
+	name: 'audioRecording',
+	title: 'Grabación de audio con el relato del texto',
+	type: 'object',
+	icon: PlayIcon,
+	previews: {
+		select: {
+			title: 'title',
+			url: 'spaceUrl',
+		},
+		prepare(selection) {
+			const { title, url } = selection;
+			return {
+				title: `${title}`,
+				subtitle: ` URL Grabación: ${url}`,
+			};
+		},
+	},
+	fields: [
+		{
+			name: 'title',
+			title: 'Título asignado a la grabación de audio',
+			type: 'string',
+		},
+		{
+			name: 'url',
+			title: 'URL del archivo de audio (mp3, wav, etc.)',
+			type: 'url',
 		},
 	],
 };
@@ -94,7 +126,7 @@ export default {
 			name: 'mediaSources',
 			title: 'Información de recursos multimedia asociados a la historia en otras plataformas web',
 			type: 'array',
-			of: [spaceRecordingMedia],
+			of: [audioRecording, spaceRecordingMedia],
 		},
 		{
 			name: 'resources',

@@ -152,7 +152,7 @@ CUENTONETA_WEBSITE=https://cuentoneta.ar/
 Posteriormente ejecuta el siguiente comando para instalar todas las dependencias listadas en el archivo [`package.json`](package.json).
 
 ```bash
-pnpm install
+pnpm run install:dev
 ```
 
 #### Paso 3: Correr el entorno de desarrollo localmente
@@ -211,6 +211,8 @@ Password: CuentonetaFec2023#
 
 #### Paso 5: ¡Listo!
 Luego de ingresar las credenciales, se abrirá una pestaña en tu navegador con el entorno de desarrollo de Sanity Studio en la URL: https://localhost:3333
+
+Acceder con este usuario te permitirá crear y editar documentos en el entorno de desarrollo de Sanity Studio con el rol de _Contributor_, el cual tiene permisos para crear y editar documentos, pero no para publicarlos.
 
 ---
 

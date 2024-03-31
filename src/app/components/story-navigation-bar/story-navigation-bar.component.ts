@@ -42,8 +42,8 @@ export class StoryNavigationBarComponent implements OnChanges {
 
 		const numberOfDisplayedPublications = 10;
 
-		if (this.storylist.publications.length <= numberOfDisplayedPublications) {
-			this.displayedPublications = this.storylist.publications;
+		if (publications.length <= numberOfDisplayedPublications) {
+			this.displayedPublications = publications;
 			return;
 		}
 
@@ -73,7 +73,7 @@ export class StoryNavigationBarComponent implements OnChanges {
 		}
 
 		return `${this.storylist?.editionPrefix} ${editionIndex} ${
-			this.storylist.displayDates ? ' - ' + publication.publishingDate : ''
+			this.storylist?.displayDates ? ' - ' + publication.publishingDate : ''
 		}`;
 	}
 }

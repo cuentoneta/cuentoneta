@@ -18,14 +18,8 @@ import { StorylistDeckConfig } from '../src/app/models/content.model';
 
 // NodeJS & env
 import { writeFile, existsSync, mkdirSync } from 'fs';
-import * as dotenv from 'dotenv';
 import ErrnoException = NodeJS.ErrnoException;
-
-// Tipo que describe los diferentes tipos de ambientes en los que puede ejecutarse el presente script
-type TEnvironmentType = 'development' | 'preview' | 'staging' | 'production';
-
-// Leer variables de entorno desde .env
-dotenv.config();
+import { TEnvironmentType } from './vercel-environments.model'
 
 const dirPath = `src/app/environments`;
 const targetPath = `${dirPath}/environment.ts`;
@@ -42,7 +36,7 @@ const generateApiUrl = (
   environment: TEnvironmentType,
   branchUrl: string
 ): string => {
-  let url = '';
+  let url = 'http://localhost:4000/';
 
   // Asigna URL en base a variables de entorno para producción y staging (preview develop)
   // El lado derecho de la comparación es utilizado para deployments de staging

@@ -1,19 +1,23 @@
 <aside class="hidden md:block">
-	<cuentoneta-story-navigation-bar
+	@defer {
+		<cuentoneta-story-navigation-bar
 		[selectedStorySlug]="story?.slug ?? ''"
-		[storylist]="storylist"
-	></cuentoneta-story-navigation-bar>
+			[storylist]="storylist"
+		></cuentoneta-story-navigation-bar>
+	}
 </aside>
 <main>
 	<article class="bg-gray-50 p-5 md:p-15 md:rounded-xl md:shadow-lg">
 		<header class="flex flex-col-reverse sm:block mb-6 sm:mb-10">
 			<aside class="sm:float-right mt-6 sm:ml-12 sm:mb-12 sm:mt-0">
-				<cuentoneta-share-content
-					[isLoading]="fetchContentDirective.isLoading"
-					[params]="shareContentParams"
-					[route]="appRouteTree['STORY']"
-					[message]="shareMessage"
-				/>
+				@defer {
+					<cuentoneta-share-content
+						[isLoading]="fetchContentDirective.isLoading"
+						[params]="shareContentParams"
+						[route]="appRouteTree['STORY']"
+						[message]="shareMessage"
+					/>
+				}
 			</aside>
 			<div>
 				@if (!!story && !fetchContentDirective.isLoading) {
@@ -60,50 +64,52 @@
 
 		<!--TODO: #538: Incluir nuevo componente para incluir dinámicamente todos los tipos multimedia derivados-->
 		@if (!!story && !fetchContentDirective.isLoading) {
-			@for (media of story.media; track $index) {
-				@if (media.type === 'spaceRecording') {
-					<cuentoneta-space-recording-widget [media]="media" class="block mb-10"></cuentoneta-space-recording-widget>
+			@if (!!story.media) {
+				@defer {
+					<cuentoneta-media-resource [mediaResources]="story.media"></cuentoneta-media-resource>
 				}
 			}
-		}
-
-		@if (!!story && !fetchContentDirective.isLoading) {
 			@if (!!story.videoUrl) {
-				<youtube-player [videoId]="story.videoUrl" placeholderImageQuality="low" />
+				@defer {
+					<youtube-player [videoId]="story.videoUrl" placeholderImageQuality="low" />
+				}
 			}
-		}
 
-		@if (!!story && !fetchContentDirective.isLoading) {
 			@if (!!story.prologues && story.prologues.length > 0) {
 				<section class="flex flex-col gap-10 mb-10">
 					@for (prologue of story.prologues; track $index) {
-						<cuentoneta-story-epigraph [prologue]="prologue"></cuentoneta-story-epigraph>
+						@defer {
+							<cuentoneta-story-epigraph [prologue]="prologue"></cuentoneta-story-epigraph>
+						}
 					}
 				</section>
 			}
 		}
 
-		<section [lang]="story?.language">
-			@if (!!story && !fetchContentDirective.isLoading) {
+		@if (!!story && !fetchContentDirective.isLoading) {
+			<section [lang]="story.language">
 				@for (paragraph of story.paragraphs; track $index) {
 					<p
 						[innerHTML]="paragraph.text"
 						[ngClass]="['source-serif-pro-body-xl', paragraph.classes, 'mb-8', 'leading-8']"
 					></p>
 				}
-			} @else {
-				@for (skeleton of dummyList; track $index) {
-					<div class="mb-5">
-						<ngx-skeleton-loader></ngx-skeleton-loader>
-						<ngx-skeleton-loader></ngx-skeleton-loader>
-						<ngx-skeleton-loader></ngx-skeleton-loader>
-					</div>
-				}
+			</section>
+		} @else {
+			@for (skeleton of dummyList; track $index) {
+				<div class="mb-5">
+					<ngx-skeleton-loader></ngx-skeleton-loader>
+					<ngx-skeleton-loader></ngx-skeleton-loader>
+					<ngx-skeleton-loader></ngx-skeleton-loader>
+				</div>
 			}
-		</section>
+		}
+
 		<footer>
 			@if (!!story && !fetchContentDirective.isLoading) {
-				<cuentoneta-bio-summary-card [story]="story" />
+				@defer {
+					<cuentoneta-bio-summary-card [story]="story" />
+				}
 			}
 		</footer>
 	</article>
