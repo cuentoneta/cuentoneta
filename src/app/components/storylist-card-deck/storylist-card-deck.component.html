@@ -13,7 +13,7 @@
 					'grid-column-start': storylist.gridConfig?.titlePlacement?.startCol,
 					'grid-column-end': storylist.gridConfig?.titlePlacement?.endCol
 				}"
-				class="story-card-container xs:max-sm:!order-1 xs:max-sm:col-span-2"
+				class="xs:max-sm:!order-1 xs:max-md:!col-span-1"
 			>
 				<h1 class="h1 mb-5">
 					<a
@@ -32,7 +32,7 @@
 					'grid-column-start': skeletonConfig?.titlePlacement?.startCol,
 					'grid-column-end': skeletonConfig?.titlePlacement?.endCol
 				}"
-				class="story-card-container xs:max-sm:!order-1 xs:max-sm:col-span-2"
+				class="xs:max-sm:!order-1 xs:max-md:col-span-1"
 			>
 				<ngx-skeleton-loader
 					[theme]="{
@@ -61,7 +61,7 @@
 	<!-- Renderizado de imágenes alusivas -->
 	@if (!!storylist?.images) {
 		@for (image of storylist?.images; track $index) {
-			<div [ngStyle]="imagesCardConfig[image.slug]" class="story-card-container">
+			<div [ngStyle]="imagesCardConfig[image.slug]" class="xs:max-md:!col-span-1">
 				<img [src]="image.url" class="rounded-lg" alt="" />
 			</div>
 		}
@@ -80,6 +80,7 @@
 					'grid-column-start': skeleton?.startCol,
 					'grid-column-end': skeleton?.endCol
 				}"
+				class="xs:max-md:!col-span-1"
 			/>
 		}
 		@if (!!skeleton.imageSlug) {
@@ -94,6 +95,7 @@
 					width: '100%',
 					'background-color': '#D4D4D8'
 				}"
+				class="xs:max-md:!col-span-1"
 				count="1"
 				appearance="line"
 			></ngx-skeleton-loader>
@@ -112,7 +114,7 @@
 						? ['/', appRouteTree['STORY'], publication.story.slug, storylist.slug]
 						: null
 				"
-				class="story-card-container"
+				class="xs:max-md:!col-span-1"
 			>
 				<cuentoneta-story-card
 					[displayDate]="storylist.displayDates"
