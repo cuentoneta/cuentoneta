@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Publication, Storylist } from '@models/storylist.model';
-import { Story } from '@models/story.model';
+import { Story, StoryCard } from '@models/story.model';
 import { APP_ROUTE_TREE } from '../../app.routes';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
@@ -14,7 +14,7 @@ import { NgIf, NgFor, CommonModule } from '@angular/common';
 	imports: [CommonModule, NgxSkeletonLoaderModule, NgIf, NgFor, RouterLink, StoryEditionDateLabelComponent],
 })
 export class StoryNavigationBarComponent implements OnChanges {
-	@Input() displayedPublications: Publication<Story>[] = [];
+	@Input() displayedPublications: Publication<StoryCard>[] = [];
 	@Input() selectedStorySlug: string = '';
 	@Input() storylist: Storylist | undefined;
 
@@ -35,7 +35,7 @@ export class StoryNavigationBarComponent implements OnChanges {
 	 * caso de que la story actualmente en vista sea una de las primeras o de las últimas.
 	 * @author Ramiro Olivencia <ramiro@olivencia.com.ar>
 	 */
-	sliceDisplayedPublications(publications: Publication<Story>[]): void {
+	sliceDisplayedPublications(publications: Publication<StoryCard>[]): void {
 		if (!this.storylist) {
 			return;
 		}
@@ -67,7 +67,7 @@ export class StoryNavigationBarComponent implements OnChanges {
 	}
 
 	// ToDo: Separar card de cada cuento de la lista en su propio componente, para evitar usar un método en el template
-	getEditionLabel(publication: Publication<Story>, editionIndex: number = 0): string {
+	getEditionLabel(publication: Publication<StoryCard>, editionIndex: number = 0): string {
 		if (!this.storylist) {
 			return '';
 		}
