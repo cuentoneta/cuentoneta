@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
 
 // Modelos
-import { Story } from '@models/story.model';
+import { StoryCard } from '@models/story.model';
 import { Publication } from '@models/storylist.model';
 
 import { StoryCardSkeletonComponent } from '../story-card-skeleton/story-card-skeleton.component';
@@ -29,7 +29,7 @@ export class StoryCardComponent implements OnInit {
 	@Input() editionSuffix: string | undefined;
 	@Input() comingNextLabel: string = '';
 	@Input() displayDate: boolean = false;
-	@Input() publication: Publication<Story> | undefined;
+	@Input() publication: Publication<StoryCard> | undefined;
 	@Input() editionIndex: number = 0;
 
 	editionLabel: string = '';

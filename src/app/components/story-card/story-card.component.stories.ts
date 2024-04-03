@@ -13,7 +13,7 @@ registerLocaleData(localeEs);
 
 // Modelos
 import { Publication } from '@models/storylist.model';
-import { Story } from '@models/story.model';
+import { Story, StoryCard } from '@models/story.model';
 
 export default {
 	title: 'StoryCardComponent',
@@ -26,7 +26,7 @@ export default {
 	],
 } as Meta<StoryCardComponent>;
 
-const publication: Publication<Story> = {
+const publication: Publication<StoryCard> = {
 	publishingOrder: 60,
 	published: true,
 	publishingDate: '2022-03-01',
