@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MarkDef } from '@models/block-content.model';
 
@@ -51,7 +51,7 @@ import { MarkDef } from '@models/block-content.model';
 				}
 			}
 		}`,
-	styles: ``,
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PortableTextMarksSerializerComponent {
 	text = input.required({
