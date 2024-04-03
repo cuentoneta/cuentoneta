@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BlockContent, MarkDef } from '@models/block-content.model';
+import { BlockContent } from '@models/block-content.model';
 import { PortableTextMarksSerializerComponent } from '../portable-text-styles-marks-serializer/portable-text-marks-serializer.component';
 
 @Component({
@@ -20,7 +20,6 @@ import { PortableTextMarksSerializerComponent } from '../portable-text-styles-ma
 			</p>
 		}
 	`,
-	styles: ``,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PortableTextParserComponent {
