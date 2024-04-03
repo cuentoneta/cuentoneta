@@ -40,7 +40,7 @@ export class StoryService {
 		return {
 			...story,
 			prologues: story.prologues ?? [],
-			paragraphs: story?.paragraphs?.map((x: BlockContent) => this.parseParagraph(x)) ?? [],
+			paragraphs: story?.paragraphs ?? [],
 			summary: story?.summary?.map((x: BlockContent) => this.parseParagraph(x)) ?? [],
 			author: {
 				...story.author,
