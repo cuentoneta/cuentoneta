@@ -13,13 +13,14 @@ export interface StoryBase {
 	badLanguage?: boolean;
 	language: string;
 	resources?: Resource[]
+	paragraphs: unknown
 }
 
 export interface Story extends StoryBase {
 	author: Author;
 	prologues: Prologue[];
 	summary: Paragraph[];
-	paragraphs: Paragraph[];
+	paragraphs: BlockContent[];
 	media: MediaTypes[];
 }
 
@@ -36,6 +37,10 @@ export interface Paragraph {
 	text: string;
 }
 
-export interface StoryCard extends Story {
+export interface StoryCard extends StoryBase {
 	author: Omit<Author, 'biography'>;
+	prologues: Prologue[];
+	summary: Paragraph[];
+	paragraphs: Paragraph[];
+	media: MediaTypes[];
 }
