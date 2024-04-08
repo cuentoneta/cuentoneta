@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@sanity/cli':
+    specifier: ^3.36.4
+    version: 3.36.4
   '@sanity/cross-dataset-duplicator':
     specifier: ^1.2.4
     version: 1.2.4(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)(sanity@3.35.0)
@@ -1794,6 +1797,7 @@ packages:
 
   /@emotion/memoize@0.7.4:
     resolution: {integrity: sha512-Ja/Vfqe3HpuzRsG1oBtWTHk2PGZ7GR+2Vz5iYGelAw8dx32K0y7PjVuxK6z1nMpZOqAFsRUPCkK1YjJ56qJlgw==}
+    requiresBuild: true
     dev: false
     optional: true
 
@@ -2603,6 +2607,30 @@ packages:
       - supports-color
     dev: false
 
+  /@sanity/cli@3.36.4:
+    resolution: {integrity: sha512-RFxrDECVh3LuCvaTknMR1zE3JSSPNO0Bieg69SQpe88+OJykKsMY6JyX0TCZTZ4mefQwLGMfiTZVhxyD/D38kw==}
+    engines: {node: '>=18'}
+    hasBin: true
+    dependencies:
+      '@babel/traverse': 7.24.1
+      '@sanity/codegen': 3.36.4
+      '@sanity/telemetry': 0.7.7
+      '@sanity/util': 3.36.4
+      chalk: 4.1.2
+      decompress: 4.2.1
+      esbuild: 0.20.2
+      esbuild-register: 3.4.2(esbuild@0.20.2)
+      get-it: 8.4.18
+      golden-fleece: 1.0.9
+      groq-js: 1.7.0
+      node-machine-id: 1.1.12
+      pkg-dir: 5.0.0
+      semver: 7.5.4
+      validate-npm-package-name: 3.0.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /@sanity/client@6.15.7:
     resolution: {integrity: sha512-WplOC9jSsqAUcIRm0Agpo38fQRLcYA0SA8yclmsr6lG84Q3uE27ZtyBPvd5+Hx5zzM8mRgdkhZ7yXR/EVGQkhA==}
     engines: {node: '>=14.18'}
@@ -2630,6 +2658,28 @@ packages:
       debug: 4.3.4(supports-color@5.5.0)
       globby: 10.0.2
       groq-js: 1.5.0
+      json5: 2.2.3
+      tsconfig-paths: 4.2.0
+      zod: 3.22.4
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /@sanity/codegen@3.36.4:
+    resolution: {integrity: sha512-D7JEb/93RjYlY70CAtAIhYPG+6KWc2yBYRqW3RiNZi3c6FcC9C5YweT04QlmoaQeskjxj6JjB2SOp/AgHjEeYg==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@babel/core': 7.24.1
+      '@babel/generator': 7.24.1
+      '@babel/preset-env': 7.24.1(@babel/core@7.24.1)
+      '@babel/preset-react': 7.24.1(@babel/core@7.24.1)
+      '@babel/preset-typescript': 7.24.1(@babel/core@7.24.1)
+      '@babel/register': 7.23.7(@babel/core@7.24.1)
+      '@babel/traverse': 7.24.1
+      '@babel/types': 7.24.0
+      debug: 4.3.4(supports-color@5.5.0)
+      globby: 10.0.2
+      groq-js: 1.7.0
       json5: 2.2.3
       tsconfig-paths: 4.2.0
       zod: 3.22.4
@@ -2952,6 +3002,15 @@ packages:
       - supports-color
     dev: false
 
+  /@sanity/types@3.36.4:
+    resolution: {integrity: sha512-UJ6Zrs258mvODOwvV2wIQ0XdhCiqi24OuRObPFYALeE0oVtWWHuSsljPhQ2rt1VHLTVdVHcvace4MvNM7lIraQ==}
+    dependencies:
+      '@sanity/client': 6.15.7
+      '@types/react': 18.0.31
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /@sanity/ui@1.3.0(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)(styled-components@5.3.9):
     resolution: {integrity: sha512-70ciBIxBW2Fp7nsCBK9Ahqv9djLjErl//G40zSR+Gqqeu+W80dlZ5HY/h2yRlKtFVTwuFEH86eUIe5q1PCSzDw==}
     engines: {node: '>=14.0.0'}
@@ -3021,6 +3080,19 @@ packages:
     dependencies:
       '@sanity/client': 6.15.7
       '@sanity/types': 3.35.0
+      get-random-values-esm: 1.0.2
+      moment: 2.29.4
+      rxjs: 7.8.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /@sanity/util@3.36.4:
+    resolution: {integrity: sha512-KoFjk+fHHLJ7Of9MGyYN1MjszvepTHb12qT240HG2DbTJkbDXK+C+Df55+MyRJYPoZuoDVEmKajoaP+GxeLHPA==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@sanity/client': 6.15.7
+      '@sanity/types': 3.36.4
       get-random-values-esm: 1.0.2
       moment: 2.29.4
       rxjs: 7.8.1
@@ -4880,6 +4952,24 @@ packages:
       - supports-color
     dev: false
 
+  /get-it@8.4.18:
+    resolution: {integrity: sha512-cOrL+qRSix45onwUNEO/ITrtuh2cvJT+vCFG2qahC/dFBC2z03LxLTwAZ33VPptoytBJN4Ht0AdnYCDBUm/M+Q==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      debug: 4.3.4(supports-color@5.5.0)
+      decompress-response: 7.0.0
+      follow-redirects: 1.15.6(debug@4.3.4)
+      into-stream: 6.0.0
+      is-plain-object: 5.0.0
+      is-retry-allowed: 2.2.0
+      is-stream: 2.0.1
+      parse-headers: 2.0.5
+      progress-stream: 2.0.0
+      tunnel-agent: 0.6.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /get-random-values-esm@1.0.2:
     resolution: {integrity: sha512-HMSDTgj1HPFAuZG0FqxzHbYt5JeEGDUeT9r1RLXhS6RZQS8rLRjokgjZ0Pd28CN0lhXlRwfH6eviZqZEJ2kIoA==}
     dependencies:
@@ -5029,6 +5119,15 @@ packages:
 
   /groq-js@1.5.0:
     resolution: {integrity: sha512-wqfbPow5y6qjbVDZkwnBhVZd+TgbqGs9mWIHdB8cdXnqzo5ftqWHJhlr4MVaWDjoUo7hF4YW9m5lF8o5WlNQ2w==}
+    engines: {node: '>= 14'}
+    dependencies:
+      debug: 4.3.4(supports-color@5.5.0)
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /groq-js@1.7.0:
+    resolution: {integrity: sha512-K+yhiPIBW7gkPYKCdqGB6xnC7qkxf4Kuweh/tDNlOgP2fzLEtSI/XWqLDDGfHRUutdYCFXuOUgbIwDbtyyLACg==}
     engines: {node: '>= 14'}
     dependencies:
       debug: 4.3.4(supports-color@5.5.0)
