@@ -37,10 +37,6 @@ export interface Paragraph {
 	text: string;
 }
 
-export interface StoryCard extends StoryBase {
+export interface StoryCard extends Story {
 	author: Omit<Author, 'biography'>;
-	prologues: Prologue[];
-	summary: Paragraph[];
-	paragraphs: Paragraph[];
-	media: MediaTypes[];
 }
