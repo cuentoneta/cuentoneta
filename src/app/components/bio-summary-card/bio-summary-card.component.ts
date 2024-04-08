@@ -3,11 +3,12 @@ import { Component, Input, OnInit } from '@angular/core';
 import { NgOptimizedImage, NgIf, CommonModule } from '@angular/common';
 
 // Modelos
+import { Resource } from '@models/resource.model';
 import { Story } from '@models/story.model';
 
 // Componentes
 import { ResourceComponent } from '../resource/resource.component';
-import { Resource } from '@models/resource.model';
+import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 
 @Component({
 	selector: 'cuentoneta-bio-summary-card',
@@ -45,18 +46,23 @@ import { Resource } from '@models/resource.model';
 					}
 				</section>
 				<section [lang]="story.language" class="inter-body-base-regular text-gray-700">
-					@for (paragraph of story.author.biography; track $index) {
-						<p [innerHTML]="paragraph.text" [ngClass]="paragraph.classes" class="last:mb-0 mb-4"></p>
+					@if (!!story.author.biography) {
+						<cuentoneta-portable-text-parser
+							[paragraphs]="story.author.biography"
+							class="hidden sm:source-serif-pro-body-base sm:text-ellipsis sm:relative sm:text-justify sm:min-h-18 sm:line-clamp-3"
+						></cuentoneta-portable-text-parser>
 					}
-					@for (paragraph of story.summary; track $index) {
-						<p [innerHTML]="paragraph.text" [ngClass]="paragraph.classes" class="last:mb-0 mb-4"></p>
-					}
+
+					<cuentoneta-portable-text-parser
+						[paragraphs]="story.summary"
+						class="hidden sm:source-serif-pro-body-base sm:text-ellipsis sm:relative sm:text-justify sm:min-h-18 sm:line-clamp-3"
+					></cuentoneta-portable-text-parser>
 				</section>
 			}
 		</div>
 	`,
 	standalone: true,
-	imports: [CommonModule, NgOptimizedImage, NgIf, ResourceComponent],
+	imports: [CommonModule, NgOptimizedImage, NgIf, ResourceComponent, PortableTextParserComponent],
 })
 export class BioSummaryCardComponent implements OnInit {
 	@Input({ required: true }) story!: Story;
