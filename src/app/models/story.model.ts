@@ -13,13 +13,14 @@ export interface StoryBase {
 	badLanguage?: boolean;
 	language: string;
 	resources?: Resource[]
+	paragraphs: unknown
 }
 
 export interface Story extends StoryBase {
 	author: Author;
 	prologues: Prologue[];
-	summary: Paragraph[];
-	paragraphs: Paragraph[];
+	summary: BlockContent[];
+	paragraphs: BlockContent[];
 	media: MediaTypes[];
 }
 
@@ -29,11 +30,6 @@ export interface StoryDTO extends StoryBase {
 	summary?: BlockContent[];
 	paragraphs: BlockContent[];
 	media: Media[];
-}
-
-export interface Paragraph {
-	classes: string;
-	text: string;
 }
 
 export interface StoryCard extends Story {

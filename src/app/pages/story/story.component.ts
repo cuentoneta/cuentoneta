@@ -31,6 +31,7 @@ import { BioSummaryCardComponent } from '../../components/bio-summary-card/bio-s
 import { ShareContentComponent } from '../../components/share-content/share-content.component';
 import { EpigraphComponent } from '../../components/epigraph/epigraph.component';
 import { MediaResourceComponent } from '../../components/media-resource/media-resource.component'
+import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component'
 
 @Component({
 	selector: 'cuentoneta-story',
@@ -50,6 +51,7 @@ import { MediaResourceComponent } from '../../components/media-resource/media-re
 		EpigraphComponent,
 		YouTubePlayer,
 		MediaResourceComponent,
+		PortableTextParserComponent,
 	],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })

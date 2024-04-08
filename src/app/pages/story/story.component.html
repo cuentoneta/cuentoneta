@@ -1,7 +1,7 @@
 <aside class="hidden md:block">
 	@defer {
 		<cuentoneta-story-navigation-bar
-		[selectedStorySlug]="story?.slug ?? ''"
+			[selectedStorySlug]="story?.slug ?? ''"
 			[storylist]="storylist"
 		></cuentoneta-story-navigation-bar>
 	}
@@ -88,12 +88,10 @@
 
 		@if (!!story && !fetchContentDirective.isLoading) {
 			<section [lang]="story.language">
-				@for (paragraph of story.paragraphs; track $index) {
-					<p
-						[innerHTML]="paragraph.text"
-						[ngClass]="['source-serif-pro-body-xl', paragraph.classes, 'mb-8', 'leading-8']"
-					></p>
-				}
+				<cuentoneta-portable-text-parser
+                    [classes]="'source-serif-pro-body-xl mb-8 leading-8'"
+					[paragraphs]="story.paragraphs"
+				></cuentoneta-portable-text-parser>
 			</section>
 		} @else {
 			@for (skeleton of dummyList; track $index) {

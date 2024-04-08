@@ -9,10 +9,11 @@
 			</header>
 			<section [lang]="story.language">
 				<h1 class="mb-1 text-ellipsis overflow-hidden whitespace-nowrap inter-body-xl-bold">{{ story.title }}</h1>
-				<p
-					[innerHTML]="previewText"
-					class="hidden sm:source-serif-pro-body-base sm:text-ellipsis sm:relative sm:text-justify sm:min-h-18 sm:line-clamp-3"
-				></p>
+                <cuentoneta-portable-text-parser
+                        class="hidden sm:source-serif-pro-body-base sm:text-ellipsis sm:relative sm:text-justify sm:min-h-18 sm:line-clamp-3"
+                        [type]="'span'"
+                        [paragraphs]="story.paragraphs"
+                ></cuentoneta-portable-text-parser>
 			</section>
 			<time class="font-semibold text-gray-600 inter-body-xs-semibold">
 				{{ story.approximateReadingTime }} minutos de lectura
