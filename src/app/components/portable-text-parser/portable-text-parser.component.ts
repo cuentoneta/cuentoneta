@@ -39,12 +39,13 @@ import { PortableTextMarksSerializerComponent } from '../portable-text-styles-ma
 export class PortableTextParserComponent {
 	paragraphs = input.required<BlockContent[]>();
 	type = input<'paragraph' | 'span'>('paragraph');
+	classes = input<string>('classes');
 
 	appendClasses(paragraph: BlockContent): string {
 		const blocks = paragraph.children;
 		const includeSeparators = blocks.filter((block) => block.text.includes('***')).length > 0;
 
-		let classes = '';
+		let classes = this.classes();
 
 		if (includeSeparators) {
 			classes = `text-center ${classes}`;
