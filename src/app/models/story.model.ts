@@ -32,11 +32,6 @@ export interface StoryDTO extends StoryBase {
 	media: Media[];
 }
 
-export interface Paragraph {
-	classes: string;
-	text: string;
-}
-
 export interface StoryCard extends Story {
 	author: Omit<Author, 'biography'>;
 }
