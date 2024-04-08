@@ -49,13 +49,13 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 					@if (!!story.author.biography) {
 						<cuentoneta-portable-text-parser
 							[paragraphs]="story.author.biography"
-							class="hidden sm:source-serif-pro-body-base sm:text-ellipsis sm:relative sm:text-justify sm:min-h-18 sm:line-clamp-3"
+							[classes]="'mb-4'"
 						></cuentoneta-portable-text-parser>
 					}
 
 					<cuentoneta-portable-text-parser
 						[paragraphs]="story.summary"
-						class="hidden sm:source-serif-pro-body-base sm:text-ellipsis sm:relative sm:text-justify sm:min-h-18 sm:line-clamp-3"
+						[classes]="'mb-4 last:mb-0'"
 					></cuentoneta-portable-text-parser>
 				</section>
 			}

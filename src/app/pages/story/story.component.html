@@ -89,7 +89,7 @@
 		@if (!!story && !fetchContentDirective.isLoading) {
 			<section [lang]="story.language">
 				<cuentoneta-portable-text-parser
-					class="source-serif-pro-body-xl mb-8 leading-8"
+                    [classes]="'source-serif-pro-body-xl mb-8 leading-8'"
 					[paragraphs]="story.paragraphs"
 				></cuentoneta-portable-text-parser>
 			</section>
