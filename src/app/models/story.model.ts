@@ -19,7 +19,7 @@ export interface StoryBase {
 export interface Story extends StoryBase {
 	author: Author;
 	prologues: Prologue[];
-	summary: Paragraph[];
+	summary: BlockContent[];
 	paragraphs: BlockContent[];
 	media: MediaTypes[];
 }
