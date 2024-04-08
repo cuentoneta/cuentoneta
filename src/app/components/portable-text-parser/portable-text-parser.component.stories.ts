@@ -13,11 +13,12 @@ export const Primary = {
 		props: args,
 		template: `
       <div class="grid grid-cols-3 gap-4">
-          <cuentoneta-portable-text-parser [paragraphs]="paragraphs"/>
+          <cuentoneta-portable-text-parser [classes]="classes" [paragraphs]="paragraphs"/>
     </div>
 `,
 	}),
 	args: {
+		classes: 'source-serif-pro-body-xl mb-8 last:mb-0',
 		paragraphs: [
 			{
 				"_type": "block",
@@ -318,11 +319,12 @@ export const Summary = {
 		props: args,
 		template: `
       <div class="grid grid-cols-3 gap-4">
-          <cuentoneta-portable-text-parser [paragraphs]="paragraphs"/>
+          <cuentoneta-portable-text-parser [classes]="classes" [paragraphs]="paragraphs"/>
     </div>
 `,
 	}),
 	args: {
+		classes: 'mb-4 last:mb-0',
 		paragraphs: [
 			{
 				"children": [
