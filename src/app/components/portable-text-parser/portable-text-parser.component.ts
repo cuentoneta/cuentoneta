@@ -8,22 +8,37 @@ import { PortableTextMarksSerializerComponent } from '../portable-text-styles-ma
 	standalone: true,
 	imports: [CommonModule, PortableTextMarksSerializerComponent],
 	template: `
-		@for (paragraph of paragraphs(); track $index) {
-			<p [ngClass]="appendClasses(paragraph)" class="source-serif-pro-body-xl mb-8 leading-8">
-				@for (block of paragraph.children; track $index) {
-					<cuentoneta-portable-text-marks-serializer
-						[text]="block.text"
-						[marks]="block.marks ?? []"
-						[markDefs]="paragraph.markDefs ?? []"
-					></cuentoneta-portable-text-marks-serializer>
-				}
-			</p>
+		@if (type() === 'paragraph') {
+			@for (paragraph of paragraphs(); track $index) {
+				<p [ngClass]="appendClasses(paragraph)">
+					@for (block of paragraph.children; track $index) {
+						<cuentoneta-portable-text-marks-serializer
+							[text]="block.text"
+							[marks]="block.marks ?? []"
+							[markDefs]="paragraph.markDefs ?? []"
+						></cuentoneta-portable-text-marks-serializer>
+					}
+				</p>
+			}
+		} @else if (type() === 'span') {
+			@for (paragraph of paragraphs(); track $index) {
+				<span [ngClass]="appendClasses(paragraph)">
+					@for (block of paragraph.children; track $index) {
+						<cuentoneta-portable-text-marks-serializer
+							[text]="block.text"
+							[marks]="block.marks ?? []"
+							[markDefs]="paragraph.markDefs ?? []"
+						></cuentoneta-portable-text-marks-serializer>
+					}
+				</span>
+			}
 		}
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PortableTextParserComponent {
 	paragraphs = input.required<BlockContent[]>();
+	type = input<'paragraph' | 'span'>('paragraph');
 
 	appendClasses(paragraph: BlockContent): string {
 		const blocks = paragraph.children;
