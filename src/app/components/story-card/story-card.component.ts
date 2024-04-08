@@ -8,6 +8,7 @@ import { StoryCardSkeletonComponent } from '../story-card-skeleton/story-card-sk
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 import { CommonModule, DatePipe, NgIf, NgOptimizedImage } from '@angular/common';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component'
 
 @Component({
 	selector: 'cuentoneta-story-card',
@@ -20,6 +21,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 		NgOptimizedImage,
 		StoryCardSkeletonComponent,
 		StoryEditionDateLabelComponent,
+		PortableTextParserComponent,
 	],
 	providers: [DatePipe],
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,7 +35,6 @@ export class StoryCardComponent implements OnInit {
 	@Input() editionIndex: number = 0;
 
 	editionLabel: string = '';
-	previewText: string = '';
 
 	private datePipe = inject(DatePipe);
 
@@ -43,7 +44,5 @@ export class StoryCardComponent implements OnInit {
 			this.editionSuffix ? ' | ' + this.editionSuffix : ''
 		}`;
 		this.comingNextLabel = this.displayDate ? `${this.comingNextLabel} ${dateFormat}` : this.comingNextLabel;
-
-		this.previewText = this.publication?.story.paragraphs.map((paragraph) => paragraph.text).join(' ') ?? '';
 	}
 }
