@@ -2,11 +2,12 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BlockContent } from '@models/block-content.model';
 import { PortableTextMarksSerializerComponent } from '../portable-text-styles-marks-serializer/portable-text-marks-serializer.component';
+import { ParagraphTemplateDirective } from './paragraph-template.directive';
 
 @Component({
 	selector: 'cuentoneta-portable-text-parser',
 	standalone: true,
-	imports: [CommonModule, PortableTextMarksSerializerComponent],
+	imports: [CommonModule, PortableTextMarksSerializerComponent, ParagraphTemplateDirective],
 	template: `
 		@if (type() === 'paragraph') {
 			@for (paragraph of paragraphs(); track $index) {
@@ -22,7 +23,7 @@ import { PortableTextMarksSerializerComponent } from '../portable-text-styles-ma
 			}
 		}
 
-		<ng-template #serializer let-paragraph>
+		<ng-template #serializer cuentonetaParagraphTemplateGuard let-paragraph>
 			@for (block of paragraph.children; track $index) {
 				<cuentoneta-portable-text-marks-serializer
 					[text]="block.text"
