@@ -11,28 +11,26 @@ import { PortableTextMarksSerializerComponent } from '../portable-text-styles-ma
 		@if (type() === 'paragraph') {
 			@for (paragraph of paragraphs(); track $index) {
 				<p [ngClass]="appendClasses(paragraph)">
-					@for (block of paragraph.children; track $index) {
-						<cuentoneta-portable-text-marks-serializer
-							[text]="block.text"
-							[marks]="block.marks ?? []"
-							[markDefs]="paragraph.markDefs ?? []"
-						></cuentoneta-portable-text-marks-serializer>
-					}
+					<ng-container *ngTemplateOutlet="serializer; context: { $implicit: paragraph }"></ng-container>
 				</p>
 			}
 		} @else if (type() === 'span') {
 			@for (paragraph of paragraphs(); track $index) {
 				<span [ngClass]="appendClasses(paragraph)">
-					@for (block of paragraph.children; track $index) {
-						<cuentoneta-portable-text-marks-serializer
-							[text]="block.text"
-							[marks]="block.marks ?? []"
-							[markDefs]="paragraph.markDefs ?? []"
-						></cuentoneta-portable-text-marks-serializer>
-					}
+					<ng-container *ngTemplateOutlet="serializer; context: { $implicit: paragraph }"></ng-container>
 				</span>
 			}
 		}
+
+		<ng-template #serializer let-paragraph>
+			@for (block of paragraph.children; track $index) {
+				<cuentoneta-portable-text-marks-serializer
+					[text]="block.text"
+					[marks]="block.marks ?? []"
+					[markDefs]="paragraph.markDefs ?? []"
+				></cuentoneta-portable-text-marks-serializer>
+			}
+		</ng-template>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
