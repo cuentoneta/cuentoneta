@@ -152,7 +152,12 @@ CUENTONETA_WEBSITE=https://cuentoneta.ar/
 Posteriormente ejecuta el siguiente comando para instalar todas las dependencias listadas en el archivo [`package.json`](package.json).
 
 ```bash
-pnpm run install:dev
+pnpm install
+```
+
+O bien, su versión corta.
+```bash
+pnpm i
 ```
 
 #### Paso 3: Correr el entorno de desarrollo localmente
