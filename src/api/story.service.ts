@@ -8,23 +8,12 @@ import { mapAuthorForStory, mapMediaSources, mapPrologues, mapResources } from '
 // Modelos
 import { StoryDTO } from '@models/story.model';
 
+// Subqueries
+import { authorForStory } from './_queries/author.query';
+import { resourcesSubQuery } from './_queries/resources.query';
+
 async function fetchForRead(slug: string): Promise<StoryDTO> {
 	{
-		const resourcesSubQuery: string = `                              	
-								resources[]{ 
-                              	title, 
-                              	url, 
-                              	resourceType->{ 
-                              		title, 
-                              		description, 
-                              		'icon': { 
-                              			'name': icon.name, 
-                              			'svg': icon.svg, 
-                              			'provider': icon.provider 
-                              			} 
-                              		} 
-                              	} `;
-
 		const query = groq`*[_type == 'story' && slug.current == '${slug}']
                           {
                               'slug': slug.current,
@@ -40,11 +29,7 @@ async function fetchForRead(slug: string): Promise<StoryDTO> {
                               approximateReadingTime,
                               mediaSources,
                               ${resourcesSubQuery},
-                              'author': author-> {
-                              	..., 
-                              	nationality->, 
-								${resourcesSubQuery}
-                              }
+							  ${authorForStory}
                           }[0]`;
 		const story = await client.fetch(query, {});
 
