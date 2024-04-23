@@ -151,7 +151,7 @@ async function fetchStorylist(req: any, res: any) {
                                      'publishingOrder': publication.publishingOrder,
                                      'publishingDate': publication.publishingDate,
                                      'published': publication.published,
-                                    'story': publication.story->{
+                                     'story': publication.story->{
                                         _id,
                                         'slug': slug.current,
                                         title,
@@ -167,7 +167,7 @@ async function fetchStorylist(req: any, res: any) {
                                         ${authorForStoryCard}
                                     }
                                 }
-                          }
+                          	}
                         },
                         'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])
                     }`;
