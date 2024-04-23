@@ -3,6 +3,7 @@ import { Resource } from '@models/resource.model';
 
 interface AuthorBase {
 	id: string;
+	slug: string;
 	name: string;
 	imageUrl?: string;
 	resources?: Resource[];
