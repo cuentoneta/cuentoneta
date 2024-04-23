@@ -2,7 +2,6 @@ import { BlockContent } from '@models/block-content.model';
 import { Resource } from '@models/resource.model';
 
 interface AuthorBase {
-	id: string;
 	slug: string;
 	name: string;
 	imageUrl?: string;
