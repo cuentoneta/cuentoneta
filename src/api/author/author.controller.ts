@@ -4,12 +4,12 @@ import * as authorService from './author.service';
 const router = express.Router();
 
 // Routes
-router.get('/', getBySlug);
+router.get('/:slug', getBySlug);
 
 export default router;
 
 function getBySlug(req: express.Request, res: express.Response, next: express.NextFunction) {
-	const { slug } = req.query;
+	const { slug } = req.params;
 
 	authorService
 		.getBySlug(slug as string)
