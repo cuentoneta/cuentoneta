@@ -1,6 +1,6 @@
 /**
- * Script utilizado para actualizar el campo approximateReadingTime de todos los documentos de tipo story,
- * ajustando así el tiempo de lectura aproximado para cada historia de la plataforma
+ * Script utilizado para la generación programática de slugs de autores
+ * en base al campo name de los documentos de tipo author
  *
  * */
 import { client } from '../src/api/_helpers/sanity-connector';
