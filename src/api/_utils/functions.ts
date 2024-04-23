@@ -21,6 +21,20 @@ import {
 	SpaceRecordingSchemaObject,
 } from '@models/media.model';
 
+export function mapAuthor(rawAuthorData: any, language?: string): AuthorDTO {
+	return {
+		slug: rawAuthorData.slug.current,
+		nationality: {
+			country: rawAuthorData.nationality?.country,
+			flag: urlFor(rawAuthorData.nationality?.flag)?.url(),
+		},
+		resources: mapResources(rawAuthorData.resources),
+		imageUrl: rawAuthorData.image ? urlFor(rawAuthorData.image).url() : undefined,
+		name: rawAuthorData.name,
+		biography: rawAuthorData.biography,
+	};
+}
+
 export function mapAuthorForStory(rawAuthorData: any, language?: string): AuthorDTO {
 	return {
 		slug: rawAuthorData.slug.current,
