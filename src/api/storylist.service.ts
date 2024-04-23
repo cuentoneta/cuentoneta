@@ -1,6 +1,9 @@
 import express from 'express';
 import { client } from './_helpers/sanity-connector';
-import { mapAuthor, mapMediaSources, mapPrologues, urlFor } from './_utils/functions';
+import { mapAuthorForStory, mapMediaSources, mapPrologues, urlFor } from './_utils/functions';
+
+// Subqueries
+import { authorForStoryCard } from './_queries/author.query';
 
 async function fetchPreview(req: express.Request, res: express.Response) {
 	const { slug } = req.query;
@@ -54,7 +57,7 @@ async function fetchPreview(req: express.Request, res: express.Response) {
                                             videoUrl,
                                             language,
                                             mediaSources,
-                                            'author': author-> { name, image, nationality-> }
+                                        	${authorForStoryCard}
                                         }
                                     }
                                 }
@@ -101,7 +104,7 @@ async function fetchPreview(req: express.Request, res: express.Response) {
 						...story,
 						summary: review,
 						paragraphs: body,
-						author: mapAuthor(author),
+						author: mapAuthorForStory(author),
 						prologues: mapPrologues(forewords),
 					},
 				};
@@ -148,7 +151,7 @@ async function fetchStorylist(req: any, res: any) {
                                      'publishingOrder': publication.publishingOrder,
                                      'publishingDate': publication.publishingDate,
                                      'published': publication.published,
-                                    'story': publication.story->{
+                                     'story': publication.story->{
                                         _id,
                                         'slug': slug.current,
                                         title,
@@ -161,10 +164,10 @@ async function fetchStorylist(req: any, res: any) {
                                         videoUrl,
                                         language,
                                         mediaSources,
-                                        'author': author-> { name, image, nationality-> }
+                                        ${authorForStoryCard}
                                     }
                                 }
-                          }
+                          	}
                         },
                         'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])
                     }`;
@@ -193,7 +196,7 @@ async function fetchStorylist(req: any, res: any) {
 				media: mediaSources ? await mapMediaSources(mediaSources) : undefined,
 				summary: review,
 				paragraphs: body,
-				author: mapAuthor(author),
+				author: mapAuthorForStory(author),
 				prologues: mapPrologues(forewords),
 			},
 		});

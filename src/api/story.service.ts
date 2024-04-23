@@ -3,29 +3,53 @@ import { client } from './_helpers/sanity-connector';
 import groq from 'groq';
 
 // Utilidades
-import { mapAuthor, mapMediaSources, mapPrologues, mapResources } from './_utils/functions';
+import { mapAuthorForStory, mapMediaSources, mapPrologues, mapResources } from './_utils/functions';
 
 // Modelos
 import { StoryDTO } from '@models/story.model';
 
-async function fetchForRead(slug: string): Promise<StoryDTO> {
-	{
-		const resourcesSubQuery: string = `                              	
-								resources[]{ 
-                              	title, 
-                              	url, 
-                              	resourceType->{ 
-                              		title, 
-                              		description, 
-                              		'icon': { 
-                              			'name': icon.name, 
-                              			'svg': icon.svg, 
-                              			'provider': icon.provider 
-                              			} 
-                              		} 
-                              	} `;
+// Subqueries
+import { authorForStory } from './_queries/author.query';
+import { resourcesSubQuery } from './_queries/resources.query';
 
-		const query = groq`*[_type == 'story' && slug.current == '${slug}']
+export async function fetchByAuthorSlug(slug: string): Promise<StoryDTO[]> {
+	const query = groq`*[_type == 'story' && author->slug.current == '${slug}']
+						  {
+							  'slug': slug.current,
+							  title, 
+							  language,
+							  videoUrl,
+							  badLanguage,
+							  forewords, 
+							  categories, 
+							  body[0...2], 
+							  approximateReadingTime,
+							  mediaSources,
+							  ${resourcesSubQuery},
+						  }`;
+
+	const result = await client.fetch(query, {});
+	const stories = [];
+
+	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
+	for (const story of result) {
+		const { body, review, author, forewords, mediaSources, ...properties } = story;
+
+		stories.push({
+			...properties,
+			media: await mapMediaSources(mediaSources),
+			prologues: mapPrologues(forewords),
+			resources: mapResources(properties.resources),
+			paragraphs: body,
+			summary: review,
+		});
+	}
+
+	return stories;
+}
+
+export async function fetchForRead(slug: string): Promise<StoryDTO> {
+	const query = groq`*[_type == 'story' && slug.current == '${slug}']
                           {
                               'slug': slug.current,
                               title, 
@@ -40,26 +64,19 @@ async function fetchForRead(slug: string): Promise<StoryDTO> {
                               approximateReadingTime,
                               mediaSources,
                               ${resourcesSubQuery},
-                              'author': author-> {
-                              	..., 
-                              	nationality->, 
-								${resourcesSubQuery}
-                              }
+							  ${authorForStory}
                           }[0]`;
-		const story = await client.fetch(query, {});
+	const story = await client.fetch(query, {});
 
-		const { body, review, author, forewords, mediaSources, ...properties } = story;
+	const { body, review, author, forewords, mediaSources, ...properties } = story;
 
-		return {
-			...properties,
-			media: await mapMediaSources(mediaSources),
-			author: mapAuthor(author, properties.language),
-			prologues: mapPrologues(forewords),
-			resources: mapResources(properties.resources),
-			paragraphs: body,
-			summary: review,
-		};
-	}
+	return {
+		...properties,
+		media: await mapMediaSources(mediaSources),
+		author: mapAuthorForStory(author, properties.language),
+		prologues: mapPrologues(forewords),
+		resources: mapResources(properties.resources),
+		paragraphs: body,
+		summary: review,
+	};
 }
-
-export { fetchForRead };
