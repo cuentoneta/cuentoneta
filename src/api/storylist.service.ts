@@ -54,7 +54,7 @@ async function fetchPreview(req: express.Request, res: express.Response) {
                                             videoUrl,
                                             language,
                                             mediaSources,
-                                            'author': author-> { name, image, nationality-> }
+                                            'author': author-> { name, slug, image, nationality-> }
                                         }
                                     }
                                 }
@@ -161,7 +161,7 @@ async function fetchStorylist(req: any, res: any) {
                                         videoUrl,
                                         language,
                                         mediaSources,
-                                        'author': author-> { name, image, nationality-> }
+                                        'author': author-> { name, slug, image, nationality-> }
                                     }
                                 }
                           }

@@ -23,8 +23,7 @@ import {
 
 export function mapAuthorForStory(rawAuthorData: any, language?: string): AuthorDTO {
 	return {
-		id: rawAuthorData._id,
-		slug: rawAuthorData.slug,
+		slug: rawAuthorData.slug.current,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
 			flag: urlFor(rawAuthorData.nationality?.flag)?.url(),
