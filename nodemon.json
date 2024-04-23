@@ -1,4 +1,0 @@
-{
-  "restartable": "rs",
-  "watch": ["dist/cuentoneta/server"]
-}
