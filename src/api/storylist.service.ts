@@ -1,6 +1,6 @@
 import express from 'express';
 import { client } from './_helpers/sanity-connector';
-import { mapAuthor, mapMediaSources, mapPrologues, urlFor } from './_utils/functions';
+import { mapAuthorForStory, mapMediaSources, mapPrologues, urlFor } from './_utils/functions';
 
 async function fetchPreview(req: express.Request, res: express.Response) {
 	const { slug } = req.query;
@@ -101,7 +101,7 @@ async function fetchPreview(req: express.Request, res: express.Response) {
 						...story,
 						summary: review,
 						paragraphs: body,
-						author: mapAuthor(author),
+						author: mapAuthorForStory(author),
 						prologues: mapPrologues(forewords),
 					},
 				};
@@ -193,7 +193,7 @@ async function fetchStorylist(req: any, res: any) {
 				media: mediaSources ? await mapMediaSources(mediaSources) : undefined,
 				summary: review,
 				paragraphs: body,
-				author: mapAuthor(author),
+				author: mapAuthorForStory(author),
 				prologues: mapPrologues(forewords),
 			},
 		});

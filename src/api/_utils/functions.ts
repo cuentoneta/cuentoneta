@@ -18,13 +18,13 @@ import {
 	AudioRecordingSchemaObject,
 	Media,
 	MediaSchemaObject,
-	SpaceRecording,
 	SpaceRecordingSchemaObject,
 } from '@models/media.model';
 
-export function mapAuthor(rawAuthorData: any, language?: string): AuthorDTO {
+export function mapAuthorForStory(rawAuthorData: any, language?: string): AuthorDTO {
 	return {
 		id: rawAuthorData._id,
+		slug: rawAuthorData.slug,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
 			flag: urlFor(rawAuthorData.nationality?.flag)?.url(),

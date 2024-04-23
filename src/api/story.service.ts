@@ -3,7 +3,7 @@ import { client } from './_helpers/sanity-connector';
 import groq from 'groq';
 
 // Utilidades
-import { mapAuthor, mapMediaSources, mapPrologues, mapResources } from './_utils/functions';
+import { mapAuthorForStory, mapMediaSources, mapPrologues, mapResources } from './_utils/functions';
 
 // Modelos
 import { StoryDTO } from '@models/story.model';
@@ -53,7 +53,7 @@ async function fetchForRead(slug: string): Promise<StoryDTO> {
 		return {
 			...properties,
 			media: await mapMediaSources(mediaSources),
-			author: mapAuthor(author, properties.language),
+			author: mapAuthorForStory(author, properties.language),
 			prologues: mapPrologues(forewords),
 			resources: mapResources(properties.resources),
 			paragraphs: body,
