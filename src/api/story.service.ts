@@ -31,7 +31,6 @@ export async function fetchByAuthorSlug(slug: string): Promise<StoryDTO[]> {
 	const result = await client.fetch(query, {});
 	const stories = [];
 
-	console.log(result);
 	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
 	for (const story of result) {
 		const { body, review, author, forewords, mediaSources, ...properties } = story;
