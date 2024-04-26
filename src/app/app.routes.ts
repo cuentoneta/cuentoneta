@@ -8,6 +8,7 @@ export const APP_ROUTE_TREE: { [key: string]: string } = {
 	HOME: 'home',
 	STORY: 'story',
 	STORYLIST: 'storylist',
+	AUTHOR: 'author',
 };
 
 export const appRoutes: Routes = [
@@ -32,6 +33,10 @@ export const appRoutes: Routes = [
 		path: `${APP_ROUTE_TREE['STORYLIST']}`,
 		loadComponent: () => import('./pages/storylist/storylist.component').then((m) => m.StorylistComponent),
 		canActivate: [redirectQueryParamsBasedStorylistUrlsGuard],
+	},
+	{
+		path: `${APP_ROUTE_TREE['AUTHOR']}/:slug`,
+		loadComponent: () => import('./pages/author/author.component').then((c) => c.AuthorComponent),
 	},
 	{
 		path: 'about',

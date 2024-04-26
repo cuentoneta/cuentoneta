@@ -1,5 +1,5 @@
 // Core
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
@@ -13,7 +13,8 @@ import { AudioRecording, Media, MediaTypes, SpaceRecording } from '@models/media
 @Injectable({ providedIn: 'root' })
 export class StoryService {
 	private readonly prefix = `${environment.apiUrl}api/story`;
-	constructor(private http: HttpClient) {}
+	private http = inject(HttpClient);
+
 	public getBySlug(slug: string): Observable<Story> {
 		const params = new HttpParams().set('slug', slug);
 		return this.http
@@ -21,18 +22,28 @@ export class StoryService {
 			.pipe(map((story) => this.parseStoryContent(story)));
 	}
 
+	public getByAuthorSlug(slug: string): Observable<StoryCard[]> {
+		return this.http
+			.get<StoryDTO[]>(`${this.prefix}/author/${slug}`)
+			.pipe(map((stories) => stories.map((story) => this.parseStoryCardContent(story))));
+	}
+
 	public parseStoryCardContent(story: StoryDTO): StoryCard {
-		return {
+		const card = {
 			...story,
-			author: {
-				...story.author,
-				imageUrl: this.parseAvatarImageUrl(story.author.imageUrl),
-			},
 			prologues: story.prologues ?? [],
 			paragraphs: story?.paragraphs ?? [],
 			summary: story?.summary ?? [],
 			media: story.media?.map((x) => this.mediaTypesAdapter(x)) ?? [],
 		};
+
+		if (story.author) {
+			card.author = {
+				...story.author,
+				imageUrl: this.parseAvatarImageUrl(story.author.imageUrl),
+			};
+		}
+		return card;
 	}
 
 	private parseStoryContent(story: StoryDTO): Story {
