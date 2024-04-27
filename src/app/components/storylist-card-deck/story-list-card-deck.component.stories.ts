@@ -32,7 +32,7 @@ const fullyLoadedStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/c91d9010f27d5078ef787cb231395042b66db2cd-400x400.jpg',
           name: 'Alejandro Dolina',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
     {
@@ -59,7 +59,7 @@ const fullyLoadedStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/a40ec40510c92f6553bc1da10d7bc9bffc859b35-340x340.jpg',
           name: 'Kjell Askildsen',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
     {
@@ -86,7 +86,7 @@ const fullyLoadedStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/b2670eebece01f8f8636f16f0cbdfc5f1da02bc3-300x287.jpg',
           name: 'Nikolai Gógol',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
     {
@@ -113,7 +113,7 @@ const fullyLoadedStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/354a4a60eebcf20984cd6ff07576b7a32deed162-340x313.jpg',
           name: 'Émile Zola',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
     {
@@ -140,7 +140,7 @@ const fullyLoadedStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/0af12a6a33d2c7e0b7f47e2eb7f157bcc0178eea-340x322.jpg',
           name: 'Luigi Pirandello',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
   ],
@@ -177,7 +177,7 @@ const upcomingStoriesStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/c91d9010f27d5078ef787cb231395042b66db2cd-400x400.jpg',
           name: 'Alejandro Dolina',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
     {
@@ -205,7 +205,7 @@ const upcomingStoriesStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/a40ec40510c92f6553bc1da10d7bc9bffc859b35-340x340.jpg',
           name: 'Kjell Askildsen',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
     {
@@ -232,7 +232,7 @@ const upcomingStoriesStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/b2670eebece01f8f8636f16f0cbdfc5f1da02bc3-300x287.jpg',
           name: 'Nikolai Gógol',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
     {
@@ -259,7 +259,7 @@ const upcomingStoriesStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/354a4a60eebcf20984cd6ff07576b7a32deed162-340x313.jpg',
           name: 'Émile Zola',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
     {
@@ -286,7 +286,7 @@ const upcomingStoriesStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/0af12a6a33d2c7e0b7f47e2eb7f157bcc0178eea-340x322.jpg',
           name: 'Luigi Pirandello',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
   ],

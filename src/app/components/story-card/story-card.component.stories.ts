@@ -124,7 +124,7 @@ const publication: Publication<StoryCard> = {
 				_key: '90005bcd4cee',
 			},
 		],
-		prologues: [],
+		epigraphs: [],
 	},
 };
 

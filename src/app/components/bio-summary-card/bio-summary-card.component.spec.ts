@@ -23,7 +23,7 @@ const mockStory: Story = {
     language: 'es',
     videoUrl: 'https://gativideo.com/video.mp4',
     badLanguage: false,
-    prologues: [],
+    epigraphs: [],
     media: [],
     summary: [{classes: '', text: 'Arranca con "Fanfare for the Common Man" y la próxima canción es "Silhouette" de Kenny G.',}],
     paragraphs: [
