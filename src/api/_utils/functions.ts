@@ -11,7 +11,6 @@ import { baseLanguage } from '../../../cms/utils/localization';
 
 // Modelos
 import { AuthorDTO } from '@models/author.model';
-import { PrologueDTO } from '@models/prologue.model';
 import { getTweetData } from './twitter-api';
 import {
 	AudioRecording,
