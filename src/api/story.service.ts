@@ -3,7 +3,7 @@ import { client } from './_helpers/sanity-connector';
 import groq from 'groq';
 
 // Utilidades
-import { mapAuthorForStory, mapMediaSources, mapPrologues, mapResources } from './_utils/functions';
+import { mapAuthorForStory, mapMediaSources, mapResources } from './_utils/functions';
 
 // Modelos
 import { StoryDTO } from '@models/story.model';
@@ -20,7 +20,6 @@ export async function fetchByAuthorSlug(slug: string): Promise<StoryDTO[]> {
 							  language,
 							  videoUrl,
 							  badLanguage,
-							  forewords, 
 							  categories, 
 							  body[0...2], 
 							  approximateReadingTime,
@@ -33,12 +32,11 @@ export async function fetchByAuthorSlug(slug: string): Promise<StoryDTO[]> {
 
 	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
 	for (const story of result) {
-		const { body, review, author, forewords, mediaSources, ...properties } = story;
+		const { body, review, author, mediaSources, ...properties } = story;
 
 		stories.push({
 			...properties,
 			media: await mapMediaSources(mediaSources),
-			prologues: mapPrologues(forewords),
 			resources: mapResources(properties.resources),
 			paragraphs: body,
 			summary: review,
@@ -56,11 +54,10 @@ export async function fetchForRead(slug: string): Promise<StoryDTO> {
                               language,
                               videoUrl,
                               badLanguage,
-                              forewords, 
+                              epigraphs,
                               categories, 
                               body, 
                               review, 
-                              forewords, 
                               approximateReadingTime,
                               mediaSources,
                               ${resourcesSubQuery},
@@ -68,13 +65,12 @@ export async function fetchForRead(slug: string): Promise<StoryDTO> {
                           }[0]`;
 	const story = await client.fetch(query, {});
 
-	const { body, review, author, forewords, mediaSources, ...properties } = story;
+	const { body, review, author, mediaSources, ...properties } = story;
 
 	return {
 		...properties,
 		media: await mapMediaSources(mediaSources),
 		author: mapAuthorForStory(author, properties.language),
-		prologues: mapPrologues(forewords),
 		resources: mapResources(properties.resources),
 		paragraphs: body,
 		summary: review,

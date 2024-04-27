@@ -144,7 +144,7 @@ export const Primary = {
 					},
 				],
 			},
-			prologues: [],
+			epigraphs: [],
 			paragraphs: [],
 			summary: [
 				{

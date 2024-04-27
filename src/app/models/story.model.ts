@@ -1,8 +1,8 @@
 import { Author, AuthorDTO } from './author.model';
-import { Prologue, PrologueDTO } from './prologue.model';
 import { BlockContent } from '@models/block-content.model';
-import { Media, MediaTypes } from '@models/media.model'
-import { Resource } from '@models/resource.model'
+import { Media, MediaTypes } from '@models/media.model';
+import { Resource } from '@models/resource.model';
+import { Epigraph, EpigraphDTO } from '@models/epigraph.model';
 
 export interface StoryBase {
 	id: number;
@@ -12,13 +12,13 @@ export interface StoryBase {
 	videoUrl?: string;
 	badLanguage?: boolean;
 	language: string;
-	resources?: Resource[]
-	paragraphs: unknown
+	resources?: Resource[];
+	paragraphs: unknown;
 }
 
 export interface Story extends StoryBase {
 	author: Author;
-	prologues: Prologue[];
+	epigraphs: Epigraph[];
 	summary: BlockContent[];
 	paragraphs: BlockContent[];
 	media: MediaTypes[];
@@ -26,12 +26,14 @@ export interface Story extends StoryBase {
 
 export interface StoryDTO extends StoryBase {
 	author: AuthorDTO;
-	prologues: PrologueDTO[];
+	epigraphs: EpigraphDTO[];
 	summary?: BlockContent[];
 	paragraphs: BlockContent[];
 	media: Media[];
 }
 
-export interface StoryCard extends Story {
+export interface StoryCard extends StoryBase {
 	author: Omit<Author, 'biography'>;
+	paragraphs: BlockContent[];
+	media: MediaTypes[];
 }

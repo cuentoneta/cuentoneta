@@ -28,9 +28,7 @@ export class StoryService {
 				...story.author,
 				imageUrl: this.parseAvatarImageUrl(story.author.imageUrl),
 			},
-			prologues: story.prologues ?? [],
 			paragraphs: story?.paragraphs ?? [],
-			summary: story?.summary ?? [],
 			media: story.media?.map((x) => this.mediaTypesAdapter(x)) ?? [],
 		};
 	}
@@ -38,7 +36,7 @@ export class StoryService {
 	private parseStoryContent(story: StoryDTO): Story {
 		return {
 			...story,
-			prologues: story.prologues ?? [],
+			epigraphs: story.epigraphs ?? [],
 			paragraphs: story?.paragraphs ?? [],
 			summary: story?.summary ?? [],
 			author: {
