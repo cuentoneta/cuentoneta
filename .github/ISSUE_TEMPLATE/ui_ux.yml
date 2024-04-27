@@ -19,5 +19,6 @@ body:
       placeholder: |
         * [Link a nuevos wireframes](https://www.recurso1.com)
         * [Link a scan para cambiar ubicación de elementos gráficos en vista de lectura](https://www.recurso2.com)
-      validations:
-        required: true
+    validations:
+      required: true
+
