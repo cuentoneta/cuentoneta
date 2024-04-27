@@ -1,5 +1,6 @@
 import { supportedLanguages } from '../utils/localization';
-import { DocumentTextIcon, TwitterIcon } from '@sanity/icons';
+import { DocumentTextIcon, PlayIcon, TwitterIcon } from '@sanity/icons';
+import { resource } from './resourceType';
 
 const spaceRecordingMedia = {
 	name: 'spaceRecording',
@@ -39,6 +40,38 @@ const spaceRecordingMedia = {
 			name: 'duration',
 			title: 'Duración del space',
 			type: 'string',
+		},
+	],
+};
+
+const audioRecording = {
+	name: 'audioRecording',
+	title: 'Grabación de audio con el relato del texto',
+	type: 'object',
+	icon: PlayIcon,
+	previews: {
+		select: {
+			title: 'title',
+			url: 'spaceUrl',
+		},
+		prepare(selection) {
+			const { title, url } = selection;
+			return {
+				title: `${title}`,
+				subtitle: ` URL Grabación: ${url}`,
+			};
+		},
+	},
+	fields: [
+		{
+			name: 'title',
+			title: 'Título asignado a la grabación de audio',
+			type: 'string',
+		},
+		{
+			name: 'url',
+			title: 'URL del archivo de audio (mp3, wav, etc.)',
+			type: 'url',
 		},
 	],
 };
@@ -85,11 +118,6 @@ export default {
 			validation: (Rule) => Rule.required(),
 		},
 		{
-			name: 'originalLink',
-			title: 'Link Original',
-			type: 'string',
-		},
-		{
 			name: 'videoUrl',
 			title: 'URL del video con lectura/recitado del cuento',
 			type: 'url',
@@ -98,7 +126,13 @@ export default {
 			name: 'mediaSources',
 			title: 'Información de recursos multimedia asociados a la historia en otras plataformas web',
 			type: 'array',
-			of: [spaceRecordingMedia],
+			of: [audioRecording, spaceRecordingMedia],
+		},
+		{
+			name: 'resources',
+			title: 'Recursos web asociados a la story y su contenido',
+			type: 'array',
+			of: [resource],
 		},
 		{
 			name: 'badLanguage',
@@ -143,39 +177,14 @@ export default {
 					type: 'object',
 					fields: [
 						{
-							name: 'epigraphText',
+							name: 'text',
 							title: 'Texto del epígrafe',
 							type: 'blockContent',
 						},
 						{
-							name: 'epigraphAuthor',
+							name: 'reference',
 							title: 'Referencia del epígrafe',
 							description: 'Referencia del origen del epígrafe',
-							type: 'string',
-						},
-					],
-				},
-			],
-		},
-		{
-			name: 'forewords',
-			title: 'Prólogo(s)',
-			type: 'array',
-			of: [
-				{
-					name: 'foreword',
-					title: 'Prólogo',
-					type: 'object',
-					fields: [
-						{
-							name: 'fwText',
-							title: 'Texto del prólogo',
-							type: 'string',
-						},
-						{
-							name: 'fwAuthor',
-							title: 'Referencia del prólogo',
-							description: 'Referencia del origen del prólogo',
 							type: 'string',
 						},
 					],

@@ -266,11 +266,6 @@ export default {
             ],
           },
         },
-        {
-          name: 'landingPageOrder',
-          title: 'Orden en landing page',
-          type: 'number',
-        },
       ],
     },
   ],

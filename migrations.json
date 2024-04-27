@@ -1,19 +1,22 @@
 {
   "migrations": [
     {
-      "version": "17.2.0-beta.0",
-      "description": "Simplify eslintFilePatterns",
-      "implementation": "./src/migrations/update-17-2-0/simplify-eslint-patterns",
-      "package": "@nx/linter",
-      "name": "simplify-eslint-patterns"
+      "cli": "nx",
+      "version": "18.2.0-beta.0",
+      "requires": {
+        "@angular/core": ">=17.3.0"
+      },
+      "description": "Update the @angular/cli package version to ~17.3.0.",
+      "factory": "./src/migrations/update-18-2-0/update-angular-cli",
+      "package": "@nx/angular",
+      "name": "update-angular-cli-version-17-3-0"
     },
     {
-      "cli": "nx",
-      "version": "17.2.0-beta.2",
-      "description": "Rename '@nx/angular:webpack-dev-server' executor to '@nx/angular:dev-server'",
-      "factory": "./src/migrations/update-17-2-0/rename-webpack-dev-server",
-      "package": "@nx/angular",
-      "name": "rename-webpack-dev-server-executor"
+      "version": "17.3.0",
+      "description": "Updates two-way bindings that have an invalid expression to use the longform expression instead.",
+      "factory": "./migrations/invalid-two-way-bindings/bundle",
+      "package": "@angular/core",
+      "name": "invalid-two-way-bindings"
     }
   ]
 }

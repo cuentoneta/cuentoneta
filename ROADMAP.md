@@ -45,8 +45,6 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 - Preparación de la lista "Cuentos de Verano 2024" en la plataforma.
 - Rediseño de la landing page, incluyendo storylists en formato tarjeta.
 - ### `Hito: Lanzamiento al público de la versión 2.3.0 de La Cuentoneta (planificado para el 2023/12/21)`
-- 
-</details>
 
 ## Enero de 2024
 
@@ -59,29 +57,47 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 - ### `Hito: Lanzamiento al público de la versión 2.3.2 de La Cuentoneta (lanzada el 2024/01/10)`
 
-- Apertura del primer concurso de escritura en La Cuentoneta, el _III Certamen Extraordinario de Escritura_, a cargo de la comunidad **[Taller de
-  Escritura Creativa](https://discord.gg/YJDQCsBmyv)**.
-
-## Febrero de 2024
-- Desarrollo de las funcionalidades de registro e inicio de sesión de usuarios, que permitirán marcar historias como "leídas", dejar puntuaciones y comentarios en cada relato y storylist.
-- Publicación de las listas "Cuentos para el Bicentenario" en la plataforma, originalmente publicadas por el Ministerio de Educación de la Nación en 2015.
+- ## Febrero de 2024
+- Agregado soporte para enlace de múltiples recursos web y multimedia a la plataforma
+- Migración de tags *ngIf a sintaxis de control de flujo de Angular 17.
+- Mejoras en infraestructura de SCSS vía TailwindCSS.
+- Corrección y flexibilidad en el estilizado de epígrafes.
+- Agregado de Speed Insights de Vercel a la plataforma.
+- Actualización de schemas y modelos para mayor flexibilidad en relaciones entre entidades.
+- ### `Hito: Lanzamiento al público de la versión 2.3.3 de La Cuentoneta (lanzada el 2024/02/02)`
+</details>
 
 ## Marzo de 2024
 
-- Publicación de la lista "Cuentos por la Memoria" en conmemoración del Día por la Memoria, la Verdad y la Justicia, celebrado el 24 de marzo.
-- Exploración de material de autoras y autores locales para incluirlos en una edición especial de la plataforma.
-- Preparación de un newsletter quincenal al que los usuarios podrán suscribirse para recibir novedades de La Cuentoneta por correo electrónico.
-- Implementación de la funcionalidad "¿Cuánto tiempo tenés para leer hoy?" que permitirá filtrar los relatos según su tiempo estimado de lectura.
-
+- Migración de las tags *ngFor a sintaxis de control de flujo de Angular 17 (@for)
+- Implementación de estilos basados en TailwindCSS para todos los componentes de la aplicación.
+- Actualización del workspace a Nx 18.0.0 y de la aplicación a Angular 17.1.2
+- ### `Hito: Lanzamiento al público de la versión 2.3.4 de La Cuentoneta (lanzada el 2024/03/22)`
+- Actualización del workspace a Nx 18.1.0 y de la aplicación a Angular 17.2.4
+- Inclusión de recursos multimedia en formato audio
+- Actualización de NodeJS a versión 20.11.1, eliminando la dependencia con dotenv.
+- Aplicada nueva estrategia basada en esbuild y el builder application para compilación del proyecto.
+- Solucionado problema con hot reload en modo dev.
+- Reemplazo de queryParams por params en las rutas de la aplicación.
+- Agregado ícono de stories con spaces de X para componente `StoryCardComponent`.
+- ### `Hito: Lanzamiento al público de la versión 2.4.0 de La Cuentoneta (lanzada el 2024/03/30)`
 
 ## Abril de 2024
+- Publicación de la lista "Cuentos por la Memoria" en conmemoración del Día por la Memoria, la Verdad y la Justicia, celebrado el 24 de marzo.
+- Preparación de la plataforma para alojar el primer concurso de escritura en La Cuentoneta, el _III Certamen Extraordinario de Escritura_, a cargo de la comunidad **[Taller de
+  Escritura Creativa](https://discord.gg/YJDQCsBmyv)**.
 - Lanzamiento de la edición "Cuentos por Malvinas" para conmemorar el 41° aniversario del "Día del Veterano y de los Caídos en la Guerra de Malvinas".
-- Inclusión de niveles educativos inicial, primario y secundario en las listas.
-- Invitación abierta a autoras y autores santafesinos para participar en la storylist "Plumas Santafesinas", recopilando relatos breves y poemas de autoría provincial.
 
 
 ## Mayo de 2024
+- Exploración de material de autoras y autores locales para incluirlos en una edición especial de la plataforma.
+- Invitación abierta a autoras y autores santafesinos para participar en la storylist "Plumas Santafesinas", recopilando relatos breves y poemas de autoría provincial.
+- Publicación de las listas "Cuentos para el Bicentenario" en la plataforma, originalmente publicadas por el Ministerio de Educación de la Nación en 2015.
 - Planificación del módulo "Elige tu propia lectura" donde se asignará a cada usuario un desafío de lectura personalizado, generando una storylist adaptada a sus preferencias. Fecha tentativa de lanzamiento en agosto de 2024.
+- Inclusión de niveles educativos inicial, primario y secundario en las listas.
+- Preparación de un newsletter quincenal al que los usuarios podrán suscribirse para recibir novedades de La Cuentoneta por correo electrónico.
+- Implementación de la funcionalidad "¿Cuánto tiempo tenés para leer hoy?" que permitirá filtrar los relatos según su tiempo estimado de lectura.
+- Desarrollo de las funcionalidades de registro e inicio de sesión de usuarios, que permitirán marcar historias como "leídas", dejar puntuaciones y comentarios en cada relato y storylist.
 
 <!-- Listado de enlaces de referencia, mantenerlos actualizados en cada archivo -->
 [web]: https://cuentoneta.ar

@@ -1,63 +1,81 @@
-<article class="p-5 md:p-8 flex gap-2 md:gap-4" [attr.aria-busy]="!publication">
-  <ng-container *ngIf="!!publication && publication.published; else skeleton">
-    <ng-container *ngIf="publication.story as story">
-      <header class="card-header">
-        <cuentoneta-story-edition-date-label [label]="editionLabel" />
-      </header>
-      <section>
-        <h1 class="card-title">{{ story.title }}</h1>
-        <p class="content" [innerHTML]="previewText"></p>
-      </section>
-      <time class="reading-time">
-        {{ story.approximateReadingTime }} minutos de lectura
-      </time>
-      <hr />
-      <footer class="flex flex-row justify-between items-center">
-        <div class="author-info flex flex-row items-center">
-          <img
-            class="author-image"
-            width="40"
-            height="40"
-            [alt]="'Retrato de ' + story.author.name"
-            [ngSrc]="story.author.imageUrl + '?h=40&w=40'"
-          />
-          <div>
-            <label class="author-name">{{ story.author.name }}</label>
-            <ng-container *ngIf="story.author.nationality as nationality">
-              <div class="flex items-center">
-                <img
-                  class="flag"
-                  width="20"
-                  height="15"
-                  [alt]="'Bandera de ' + nationality.country"
-                  [ngSrc]="nationality.flag + '?w=20&h=15'"
-                />
-                <label class="country">{{ nationality.country }}</label>
-              </div>
-            </ng-container>
-          </div>
-        </div>
-        <ng-container *ngIf="!!story.videoUrl"><div
-            [title]="'Contiene material audiovisual'"
-            class="formats-info"
-          >
-            <img class="video" [alt]="'Contiene video'" src="assets/svg/video.svg" /></div>
-        </ng-container>
-      </footer>
-    </ng-container>
-  </ng-container>
+<article
+	[attr.aria-busy]="!publication"
+	class="card border-primary-300 border-solid border-1 p-5 md:p-8 flex flex-col gap-2 md:gap-4 shadow-lg hover:shadow-lg-hover"
+>
+	@if (!!publication && publication.published) {
+		@if (publication.story; as story) {
+			<header [lang]="story.language" class="card-header">
+				<cuentoneta-story-edition-date-label [label]="editionLabel" />
+			</header>
+			<section [lang]="story.language">
+				<h1 class="mb-1 text-ellipsis overflow-hidden whitespace-nowrap inter-body-xl-bold">{{ story.title }}</h1>
+                <cuentoneta-portable-text-parser
+                        class="hidden sm:source-serif-pro-body-base sm:text-ellipsis sm:relative sm:text-justify sm:min-h-18 sm:line-clamp-3"
+                        [type]="'span'"
+                        [paragraphs]="story.paragraphs"
+                ></cuentoneta-portable-text-parser>
+			</section>
+			<time class="font-semibold text-gray-600 inter-body-xs-semibold">
+				{{ story.approximateReadingTime }} minutos de lectura
+			</time>
+			<hr class="text-gray-300" />
+			<footer class="flex flex-row justify-between items-center">
+				<div class="flex flex-row items-center">
+					<img
+						[alt]="'Retrato de ' + story.author.name"
+						[ngSrc]="story.author.imageUrl + '?h=40&w=40'"
+						class="rounded w-10 h-10 mr-3"
+						width="40"
+						height="40"
+					/>
+					<div>
+						<label class="inter-body-base-semibold">{{ story.author.name }}</label>
+						@if (story.author.nationality; as nationality) {
+							<div class="flex items-center">
+								<img
+									[alt]="'Bandera de ' + nationality.country"
+									[ngSrc]="nationality.flag + '?w=20&h=15'"
+									class="w-[20px] h-[15px] rounded"
+									width="20"
+									height="15"
+								/>
+								<label class="text-gray-500 ml-2 inter-body-sm-semibold">{{ nationality.country }}</label>
+							</div>
+						}
+					</div>
+				</div>
+				@if (!!story.videoUrl) {
+					<div [title]="'Contiene material audiovisual'" class="w-6 h-6">
+						<img [alt]="'Contiene video'" class="video" src="assets/svg/video.svg" />
+					</div>
+				}
+				@for (mediaResource of story.media; track $index) {
+					@switch (mediaResource.type) {
+						@case ('audioRecording') {
+							<div [title]="'Contiene material en formato audio'" class="w-6 h-6">
+								<img [alt]="'Contiene audio'" src="assets/svg/speaker.svg" />
+							</div>
+						}
+						@case ('spaceRecording') {
+							<div [title]="'Contiene material en formato Spaces de X'" class="w-6 h-6">
+								<img [alt]="'Contiene link a Spaces'" src="assets/svg/twitter.svg" />
+							</div>
+						}
+					}
+				}
+			</footer>
+		}
+	} @else {
+		@if (!publication) {
+			<cuentoneta-story-card-skeleton [animation]="'progress'" />
+		}
+		@if (!!publication && !publication.published) {
+			<cuentoneta-story-card-skeleton
+				[animation]="false"
+				[displayDate]="false"
+				[editionLabel]="editionLabel"
+				[comingNextLabel]="comingNextLabel"
+			/>
+		}
+	}
 </article>
-
-<ng-template #skeleton>
-  <ng-container *ngIf="!publication">
-    <cuentoneta-story-card-skeleton [animation]="'progress'" />
-  </ng-container>
-  <ng-container *ngIf="!!publication && !publication.published">
-    <cuentoneta-story-card-skeleton
-      [animation]="false"
-      [displayDate]="false"
-      [editionLabel]="editionLabel"
-      [comingNextLabel]="comingNextLabel"
-    />
-  </ng-container>
-</ng-template>

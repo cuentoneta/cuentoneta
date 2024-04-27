@@ -53,8 +53,6 @@ La misión, la visión y los valores de La Cuentoneta nos proporcionan el marco 
 
 Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. Es requerido unirte a nuestro [server][dc-fec] y buscar el canal [#🚐 | la-cuentoneta][dc-channel]. Allí vas a poder escribir consultas, realizar propuestas y compartir ideas para el proyecto. El código de conducta de este proyecto es extensible también a tu participación en el server de [FrontendCafé en Discord][dc-fec].
 
-
-
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://forgoodfirstissue.github.com/for-good-first-issue.svg">
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/cuentoneta/cuentoneta/assets/32349705/786d9201-e449-49a6-b9e2-ebf5f9281abc">
@@ -63,6 +61,12 @@ Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. E
 
 La Cuentoneta también es parte de [For Good First Issue](https://forgoodfirstissue.github.com/), una iniciativa que busca generar una lista curada de proyectos open-source con foco en desarrollos del tipo [Bienes Públicos Digitales (DPGs, Digital Public Goods)
 ](https://digitalpublicgoods.net/digital-public-goods/), los cuales además se encuentran disponibles para colaboración abierta.
+
+<picture>
+    <img height="96" width="96" alt="logo-tertulia-literaria" src="https://github.com/cuentoneta/cuentoneta/assets/32349705/7ca8a3d3-ed76-4785-a6ef-f3f7498b94c3">
+</picture>
+
+La comunidad [Tertulia Literaria](https://discord.gg/tertulia-literaria-795704695485235231), enfocada a compartir conocimiento, lecturas y en general la grata convivencia, colabora activamente con la selección de historias, la generación de iniciativas y la confección de storylists en La Cuentoneta.
 
 ---
 
@@ -90,6 +94,12 @@ Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos 
 - Diego Franchina (**[@soydiego](https://github.com/SoyDiego)**)
 - Jimer Espinoza (**[@jimersamuel](https://github.com/JimerSamuel)**)
 - Mia Ramos (**[@MiaPurpleFate](https://twitter.com.com/MiaPurpleFate)**)
+- Wilson Lasso (**[@wilago](https://github.com/wilago)**)
+- Gustavo Petruzzi (**[@gustavoPetruzzi](https://github.com/gustavoPetruzzi)**)
+- Juan Romero (**[@Addin](https://github.com/Addin)**)
+- Alexis Martínez (**[@AlexRGB2](https://github.com/AlexRGB2)**)
+- John Angel (**[@Jeangel](https://github.com/Jeangel)**)
+- Luciano Aieta (**[@lgaieta](https://github.com/lgaieta)**)
 
 ### Diseño UX/UI
 

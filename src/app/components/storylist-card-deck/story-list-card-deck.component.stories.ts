@@ -15,8 +15,6 @@ const fullyLoadedStorylist = {
       story: {
         _id: 'f69c7593-9c3d-4dae-a29c-2de4bf899935',
         approximateReadingTime: 4,
-        originalLink:
-          'https://leerporquesi-1007.blogspot.com/2013/06/dolina-alejandro-mascaras.html',
         slug: 'mascaras',
         title: 'Máscaras',
         summary:
@@ -34,7 +32,7 @@ const fullyLoadedStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/c91d9010f27d5078ef787cb231395042b66db2cd-400x400.jpg',
           name: 'Alejandro Dolina',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
     {
@@ -44,8 +42,6 @@ const fullyLoadedStorylist = {
       story: {
         _id: 'd3e73851-32f9-4924-82a3-702588acd4d3',
         approximateReadingTime: 4,
-        originalLink:
-          'https://www.eternacadencia.com.ar/blog/libreria/lecturas/item/ajedrez.html',
         slug: 'ajedrez',
         title: 'Ajedrez',
         summary:
@@ -63,7 +59,7 @@ const fullyLoadedStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/a40ec40510c92f6553bc1da10d7bc9bffc859b35-340x340.jpg',
           name: 'Kjell Askildsen',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
     {
@@ -73,8 +69,6 @@ const fullyLoadedStorylist = {
       story: {
         _id: '39459afd-062b-4a8b-a6a6-89dde299a324',
         approximateReadingTime: 14,
-        originalLink:
-          'https://www.estacionlibro.com.ar/cuentos/la-terrible-venganza-un-cuento-de-gogol/',
         slug: 'la-terrible-venganza',
         title: 'La Terrible Venganza',
         summary:
@@ -92,7 +86,7 @@ const fullyLoadedStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/b2670eebece01f8f8636f16f0cbdfc5f1da02bc3-300x287.jpg',
           name: 'Nikolai Gógol',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
     {
@@ -102,7 +96,6 @@ const fullyLoadedStorylist = {
       story: {
         _id: '380c0624-4dbb-4ae4-bd18-995d076c9251',
         approximateReadingTime: 5,
-        originalLink: 'https://ciudadseva.com/texto/las-fresas/',
         slug: 'las-fresas',
         title: 'Las Fresas',
         summary:
@@ -120,7 +113,7 @@ const fullyLoadedStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/354a4a60eebcf20984cd6ff07576b7a32deed162-340x313.jpg',
           name: 'Émile Zola',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
     {
@@ -130,7 +123,6 @@ const fullyLoadedStorylist = {
       story: {
         _id: '96951ae3-3910-426e-9d3b-fa3eb42027bb',
         approximateReadingTime: 8,
-        originalLink: 'https://ciudadseva.com/texto/la-casa-de-la-agonia/',
         slug: 'la-casa-de-la-agonia',
         title: 'La Casa de la Agonía',
         summary:
@@ -148,7 +140,7 @@ const fullyLoadedStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/0af12a6a33d2c7e0b7f47e2eb7f157bcc0178eea-340x322.jpg',
           name: 'Luigi Pirandello',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
   ],
@@ -168,8 +160,6 @@ const upcomingStoriesStorylist = {
       story: {
         _id: 'f69c7593-9c3d-4dae-a29c-2de4bf899935',
         approximateReadingTime: 4,
-        originalLink:
-          'https://leerporquesi-1007.blogspot.com/2013/06/dolina-alejandro-mascaras.html',
         slug: 'mascaras',
         title: 'Máscaras',
         summary:
@@ -187,7 +177,7 @@ const upcomingStoriesStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/c91d9010f27d5078ef787cb231395042b66db2cd-400x400.jpg',
           name: 'Alejandro Dolina',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
     {
@@ -197,8 +187,7 @@ const upcomingStoriesStorylist = {
       story: {
         _id: 'd3e73851-32f9-4924-82a3-702588acd4d3',
         approximateReadingTime: 4,
-        originalLink:
-          'https://www.eternacadencia.com.ar/blog/libreria/lecturas/item/ajedrez.html',
+
         slug: 'ajedrez',
         title: 'Ajedrez',
         summary:
@@ -216,7 +205,7 @@ const upcomingStoriesStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/a40ec40510c92f6553bc1da10d7bc9bffc859b35-340x340.jpg',
           name: 'Kjell Askildsen',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
     {
@@ -226,8 +215,6 @@ const upcomingStoriesStorylist = {
       story: {
         _id: '39459afd-062b-4a8b-a6a6-89dde299a324',
         approximateReadingTime: 14,
-        originalLink:
-          'https://www.estacionlibro.com.ar/cuentos/la-terrible-venganza-un-cuento-de-gogol/',
         slug: 'la-terrible-venganza',
         title: 'La Terrible Venganza',
         summary:
@@ -245,7 +232,7 @@ const upcomingStoriesStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/b2670eebece01f8f8636f16f0cbdfc5f1da02bc3-300x287.jpg',
           name: 'Nikolai Gógol',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
     {
@@ -255,7 +242,6 @@ const upcomingStoriesStorylist = {
       story: {
         _id: '380c0624-4dbb-4ae4-bd18-995d076c9251',
         approximateReadingTime: 5,
-        originalLink: 'https://ciudadseva.com/texto/las-fresas/',
         slug: 'las-fresas',
         title: 'Las Fresas',
         summary:
@@ -273,7 +259,7 @@ const upcomingStoriesStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/354a4a60eebcf20984cd6ff07576b7a32deed162-340x313.jpg',
           name: 'Émile Zola',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
     {
@@ -283,7 +269,6 @@ const upcomingStoriesStorylist = {
       story: {
         _id: '96951ae3-3910-426e-9d3b-fa3eb42027bb',
         approximateReadingTime: 8,
-        originalLink: 'https://ciudadseva.com/texto/la-casa-de-la-agonia/',
         slug: 'la-casa-de-la-agonia',
         title: 'La Casa de la Agonía',
         summary:
@@ -301,7 +286,7 @@ const upcomingStoriesStorylist = {
             'https://cdn.sanity.io/images/s4dbqkc5/production/0af12a6a33d2c7e0b7f47e2eb7f157bcc0178eea-340x322.jpg',
           name: 'Luigi Pirandello',
         },
-        prologues: [],
+        epigraphs: [],
       },
     },
   ],

@@ -36,6 +36,11 @@ export default {
         decorators: [
           {title: 'Strong', value: 'strong'},
           {title: 'Emphasis', value: 'em'},
+          {
+            title: 'Highlight',
+            value: 'highlight',
+            icon: () => 'H'
+          }
         ],
         // Annotations can be any object structure – e.g. a link or a footnote.
         annotations: [

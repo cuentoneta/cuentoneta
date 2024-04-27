@@ -3,7 +3,7 @@ import { GridItemPlacementConfig, Storylist } from './storylist.model';
 export interface StorylistDeckConfig {
     title: string;
     slug: string;
-    ordering: 'asc' | 'desc' | undefined;
+    ordering: 'asc' | 'desc' | undefined | null;
     amount: number;
     previewGridSkeletonConfig: StorylistGridSkeletonConfig;
     gridSkeletonConfig: StorylistGridSkeletonConfig;

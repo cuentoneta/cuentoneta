@@ -5,14 +5,13 @@ import { Author } from 'src/app/models/author.model';
 import { Story } from '@models/story.model';
 
 const mockAuthor: Author = {
-  id: 0,
+  id: '0',
   name: 'Estudios Gativideo',
   imageUrl: 'https://gativideo.com/image.png',
   nationality: {
     country: 'Argentina',
     flag: 'AR',
   },
-  fullBioUrl: 'https://gativideo.com',
 };
 
 const mockStory: Story = {
@@ -21,11 +20,11 @@ const mockStory: Story = {
     slug: 'el-maraja-de-san-telmo',
     approximateReadingTime: 5,
     author: mockAuthor,
-    originalLink: 'https://gativideo.com/historia-de-la-pelicula',
     language: 'es',
     videoUrl: 'https://gativideo.com/video.mp4',
     badLanguage: false,
-    prologues: [],
+    epigraphs: [],
+    media: [],
     summary: [{classes: '', text: 'Arranca con "Fanfare for the Common Man" y la próxima canción es "Silhouette" de Kenny G.',}],
     paragraphs: [
         { classes: '', text: 'El presente Video-Cassette se vende para uso personal o doméstico exclusivamente, todos los demás derechos quedan reservados' },
