@@ -177,39 +177,14 @@ export default {
 					type: 'object',
 					fields: [
 						{
-							name: 'epigraphText',
+							name: 'text',
 							title: 'Texto del epígrafe',
 							type: 'blockContent',
 						},
 						{
-							name: 'epigraphAuthor',
+							name: 'reference',
 							title: 'Referencia del epígrafe',
 							description: 'Referencia del origen del epígrafe',
-							type: 'string',
-						},
-					],
-				},
-			],
-		},
-		{
-			name: 'forewords',
-			title: 'Prólogo(s)',
-			type: 'array',
-			of: [
-				{
-					name: 'foreword',
-					title: 'Prólogo',
-					type: 'object',
-					fields: [
-						{
-							name: 'fwText',
-							title: 'Texto del prólogo',
-							type: 'string',
-						},
-						{
-							name: 'fwAuthor',
-							title: 'Referencia del prólogo',
-							description: 'Referencia del origen del prólogo',
 							type: 'string',
 						},
 					],
