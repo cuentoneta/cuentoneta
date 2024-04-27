@@ -49,15 +49,6 @@ export function mapAuthorForStory(rawAuthorData: any, language?: string): Author
 	};
 }
 
-export function mapPrologues(rawProloguesData: any): PrologueDTO[] {
-	return rawProloguesData
-		? rawProloguesData.map((x: { fwAuthor: any; fwText: any }) => ({
-				reference: x.fwAuthor,
-				text: x.fwText,
-			}))
-		: [];
-}
-
 export function urlFor(source: SanityImageSource): ImageUrlBuilder {
 	return imageUrlBuilder(client).image(source);
 }
