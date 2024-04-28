@@ -45,15 +45,7 @@ import { PortableTextParserComponent } from '../../components/portable-text-pars
 			to {width: 100%;}
 		}
 
-		.progress-container {
-			@apply bg-primary-100 w-full h-2;
-			overflow: hidden;
-			position: sticky;
-			top: 0;
-		}
-
 		.progress-bar {
-			@apply bg-primary-400 h-full w-0;
 			transition-timing-function: ease-out;
 			transition: width .5s;
 			animation: scrollbar linear;
