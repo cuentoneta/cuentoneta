@@ -1,5 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MediaResourceComponent } from './media-resource.component';
+import { MediaTypes } from '@models/media.model';
+
+const inputMock: MediaTypes[] = [];
 
 describe('MediaResourceComponent', () => {
 	let component: MediaResourceComponent;
@@ -12,6 +15,7 @@ describe('MediaResourceComponent', () => {
 
 		fixture = TestBed.createComponent(MediaResourceComponent);
 		component = fixture.componentInstance;
+		fixture.componentRef.setInput('mediaResources', inputMock);
 		fixture.detectChanges();
 	});
 
