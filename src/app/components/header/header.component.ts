@@ -21,7 +21,7 @@ import { InternalLink } from '@models/link.model';
 					<ul class="flex hidden md:flex">
 						@for (navLink of navLinks; track $index) {
 							<li class="inter-body-sm-semibold hover:text-interactive-500 md:ml-12">
-								<a [routerLink]="navLink.path" [attr.aria-hidden]="navLink.label === Inicio">{{ navLink.label }}</a>
+								<a [routerLink]="navLink.path" [attr.aria-hidden]="navLink.label === 'Inicio'">{{ navLink.label }}</a>
 							</li>
 						}
 					</ul>
@@ -44,7 +44,7 @@ import { InternalLink } from '@models/link.model';
 							<li
 								class="inter-body-lg-semibold flex h-12 items-center border-b-2 border-gray-200 hover:text-interactive-500"
 							>
-								<a [routerLink]="navLink.path" [attr.aria-hidden]="navLink.label === Inicio">{{ navLink.label }}</a>
+								<a [routerLink]="navLink.path" [attr.aria-hidden]="navLink.label === 'Inicio'">{{ navLink.label }}</a>
 							</li>
 						}
 					</ul>
