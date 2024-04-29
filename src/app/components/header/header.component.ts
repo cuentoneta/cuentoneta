@@ -3,7 +3,7 @@ import { Storylist } from '@models/storylist.model';
 import { ContentService } from '../../providers/content.service';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { InternalLink } from '@models/link.model'
+import { InternalLink } from '@models/link.model';
 
 @Component({
 	selector: 'cuentoneta-header',
@@ -12,7 +12,7 @@ import { InternalLink } from '@models/link.model'
 			<section class="logo flex items-center">
 				<a routerLink="/home" class="flex">
 					<img [ngSrc]="'./assets/svg/logo.svg'" class="mr-3" width="59" height="32" alt="Logo de 'La Cuentoneta'" />
-					<h1 class="flex items-center inter-body-lg-bold">La Cuentoneta</h1>
+					<h1 class="inter-body-lg-bold flex items-center">La Cuentoneta</h1>
 				</a>
 			</section>
 
@@ -20,8 +20,8 @@ import { InternalLink } from '@models/link.model'
 				<nav>
 					<ul class="flex hidden md:flex">
 						@for (navLink of navLinks; track $index) {
-							<li class="md:ml-12 inter-body-sm-semibold hover:text-interactive-500">
-								<a [routerLink]="navLink.path">{{ navLink.label }}</a>
+							<li class="inter-body-sm-semibold hover:text-interactive-500 md:ml-12">
+								<a [routerLink]="navLink.path" [attr.aria-hidden]="navLink.label === Inicio">{{ navLink.label }}</a>
 							</li>
 						}
 					</ul>
@@ -38,13 +38,13 @@ import { InternalLink } from '@models/link.model'
 			</section>
 
 			@if (displayMenu) {
-				<section class="grid-cols-2 grid-rows-2 mb-8 block md:hidden">
+				<section class="mb-8 block grid-cols-2 grid-rows-2 md:hidden">
 					<ul>
 						@for (navLink of navLinks; track $index) {
 							<li
-								class="flex items-center h-12 border-gray-200 border-b-2 inter-body-lg-semibold hover:text-interactive-500"
+								class="inter-body-lg-semibold flex h-12 items-center border-b-2 border-gray-200 hover:text-interactive-500"
 							>
-								<a [routerLink]="navLink.path">{{ navLink.label }}</a>
+								<a [routerLink]="navLink.path" [attr.aria-hidden]="navLink.label === Inicio">{{ navLink.label }}</a>
 							</li>
 						}
 					</ul>
