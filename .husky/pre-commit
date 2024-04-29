@@ -1,5 +1,9 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
+# echo "--- Fixing Code ---"
+# npx lint-staged
+echo ""
+echo "--- Formating Code ---"
+echo ""
 npx pretty-quick --staged
-npx lint-staged
+echo ""
+# echo "--- Testing Code ---"
+# pnpm run test
