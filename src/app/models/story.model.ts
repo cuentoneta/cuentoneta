@@ -9,7 +9,6 @@ export interface StoryBase {
 	title: string;
 	slug: string;
 	approximateReadingTime: number;
-	videoUrl?: string;
 	badLanguage?: boolean;
 	language: string;
 	resources?: Resource[];

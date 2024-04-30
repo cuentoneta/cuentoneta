@@ -79,18 +79,6 @@ export class StoryComponent {
 	shareContentParams: { [key: string]: string } = {};
 	shareMessage: string = '';
 
-	storyWithTransformedvideoUrl(story: Story) {
-		if (story.videoUrl) {
-			const videoUrl = new URL(story.videoUrl);
-			return {
-				...story,
-				videoUrl: videoUrl.pathname.split('/')[2],
-			};
-		}
-
-		return story;
-	}
-
 	constructor() {
 		const platformId = inject(PLATFORM_ID);
 		const activatedRoute = inject(ActivatedRoute);
@@ -116,7 +104,6 @@ export class StoryComponent {
 				);
 
 		content$.subscribe(([story, storylist]) => {
-			this.story = this.storyWithTransformedvideoUrl(story);
 			this.storylist = storylist;
 
 			metaTagsDirective.setTitle(`${story.title}, de ${story.author.name} en La Cuentoneta`);

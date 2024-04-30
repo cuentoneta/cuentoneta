@@ -16,7 +16,6 @@ export const Primary = {
 			approximateReadingTime: 9,
 			language: 'es',
 			title: 'Los Reyes Magos, los Hombres Sensibles y los Refutadores de Leyendas',
-			videoUrl: null,
 			categories: null,
 			resources: [
 				{

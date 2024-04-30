@@ -155,11 +155,6 @@ export default {
 			validation: (Rule) => Rule.required(),
 		},
 		{
-			name: 'videoUrl',
-			title: 'URL del video con lectura/recitado del cuento',
-			type: 'url',
-		},
-		{
 			name: 'mediaSources',
 			title: 'Información de recursos multimedia asociados a la historia en otras plataformas web',
 			type: 'array',

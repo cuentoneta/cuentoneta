@@ -74,11 +74,6 @@
 					<cuentoneta-media-resource [mediaResources]="story.media"></cuentoneta-media-resource>
 				}
 			}
-			@if (!!story.videoUrl) {
-				@defer {
-					<youtube-player [videoId]="story.videoUrl" placeholderImageQuality="low" />
-				}
-			}
 
 			@if (!!story.epigraphs && story.epigraphs.length > 0) {
 				<section class="mb-10 flex flex-col gap-10">

@@ -45,13 +45,11 @@ async function fetchPreview(req: express.Request, res: express.Response) {
                                             _id,
                                             'slug': slug.current,
                                             title,
-                                            videoUrl,
                                             badLanguage,
                                             categories,
                                             body[0...3],
                                             review,
                                             approximateReadingTime,
-                                            videoUrl,
                                             language,
                                             mediaSources,
                                         	${authorForStoryCard}
@@ -155,7 +153,6 @@ async function fetchStorylist(req: any, res: any) {
                                         body[0...3],
                                         review,
                                         approximateReadingTime,
-                                        videoUrl,
                                         language,
                                         mediaSources,
                                         ${authorForStoryCard}
