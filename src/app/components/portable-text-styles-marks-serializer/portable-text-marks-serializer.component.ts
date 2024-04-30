@@ -9,7 +9,7 @@ import { MarkDef } from '@models/block-content.model';
 	template: ` <!-- Caso base: no se aplica ningún estilo y se interpola la cadena de texto -->
 		@if (marks().length === 0) {
 			<!-- Chequeo de saltos de línea -->
-			@for (portion of text(); let index = $index; track: index) {
+			@for (portion of text(); let index = $index; track index) {
 				{{ portion }}
 				@if (index !== text().length - 1) {
 					<br />
