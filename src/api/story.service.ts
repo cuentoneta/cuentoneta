@@ -7,7 +7,7 @@ import { mapAuthorForStory, mapResources } from './_utils/functions';
 
 // Modelos
 import { StoryDTO } from '@models/story.model';
-import { mapMediaSources } from './_utils/media-sources.functions'
+import { mapMediaSources } from './_utils/media-sources.functions';
 
 // Subqueries
 import { authorForStory } from './_queries/author.query';

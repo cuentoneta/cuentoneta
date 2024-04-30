@@ -18,9 +18,10 @@ type MediaTypeWidgetComponents =
 		<ng-container *ngComponentOutlet="media.component; inputs: media.inputs"></ng-container>
 	}`,
 	styles: `
-	:host{
-		@apply block w-full mb-10;
-	}`,
+		:host {
+			@apply mb-10 block w-full;
+		}
+	`,
 })
 export class MediaResourceComponent {
 	mediaResources = input.required({

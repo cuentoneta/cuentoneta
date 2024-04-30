@@ -38,16 +38,18 @@ import { PortableTextParserComponent } from '../../components/portable-text-pars
 	templateUrl: './story.component.html',
 	styles: `
 		:host {
-			@apply md:grid md:mt-28 gap-x-8 md:grid-cols-[286px_1fr];
+			@apply gap-x-8 md:mt-28 md:grid md:grid-cols-[286px_1fr];
 		}
 
 		@keyframes scrollbar {
-			to {width: 100%;}
+			to {
+				width: 100%;
+			}
 		}
 
 		.progress-bar {
 			transition-timing-function: ease-out;
-			transition: width .5s;
+			transition: width 0.5s;
 			animation: scrollbar linear;
 			animation-timeline: scroll(root);
 		}

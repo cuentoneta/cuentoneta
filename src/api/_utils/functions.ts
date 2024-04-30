@@ -12,7 +12,6 @@ import { baseLanguage } from '../../../cms/utils/localization';
 // Modelos
 import { AuthorDTO } from '@models/author.model';
 
-
 export function mapAuthor(rawAuthorData: any, language?: string): AuthorDTO {
 	return {
 		slug: rawAuthorData.slug.current,

@@ -38,7 +38,7 @@ import { SpaceRecording } from '@models/media.model';
 		:host {
 			font-family: sans-serif;
 		}
-		
+
 		.spaces-card {
 			background-image: linear-gradient(60deg, hsl(230, 100 * 1%, 50 * 1%) -15%, hsl(260, 100 * 1%, 60 * 1%) 100%);
 		}
