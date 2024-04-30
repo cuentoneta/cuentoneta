@@ -11,12 +11,12 @@ import { RouterModule } from '@angular/router';
 	standalone: true,
 	selector: 'cuentoneta-root',
 	template: `
-      <cuentoneta-header />
-		<div class="my-0 mx-5 md:m-auto min-h-screen md:max-w-screen-lg">
+		<cuentoneta-header />
+		<div class="mx-5 my-0 min-h-screen md:m-auto md:max-w-screen-lg">
 			<router-outlet />
 		</div>
-      <cuentoneta-footer />
-    `,
+		<cuentoneta-footer />
+	`,
 	imports: [CommonModule, FooterComponent, HeaderComponent, NgOptimizedImage, RouterModule],
 })
 export class AppComponent implements OnInit {

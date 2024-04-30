@@ -1,6 +1,6 @@
-name:  🎨 Proponer mejoras en UI/UX
+name: 🎨 Proponer mejoras en UI/UX
 description: Proponer mejoras en el diseño y la usabilidad de la plataforma
-labels: ["🎨 ui-ux"]
+labels: ['🎨 ui-ux']
 body:
   - type: textarea
     id: description
@@ -19,4 +19,3 @@ body:
       placeholder: |
         * [Link a nuevos wireframes](https://www.recurso1.com)
         * [Link a scan para cambiar ubicación de elementos gráficos en vista de lectura](https://www.recurso2.com)
-

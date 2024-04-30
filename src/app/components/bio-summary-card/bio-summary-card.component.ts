@@ -13,9 +13,9 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 @Component({
 	selector: 'cuentoneta-bio-summary-card',
 	template: `
-		<div class="border-1 border-solid border-gray-200 bg-gray-100 p-6 rounded">
+		<div class="rounded border-1 border-solid border-gray-200 bg-gray-100 p-6">
 			@if (story.author) {
-				<section class="grid mb-4 sm:mb-8 gap-4 grid-cols-[64px_1fr] sm:grid-cols-[64px_1fr_1fr]">
+				<section class="mb-4 grid grid-cols-[64px_1fr] gap-4 sm:mb-8 sm:grid-cols-[64px_1fr_1fr]">
 					<img
 						[alt]="'Retrato de ' + story.author.name"
 						[ngSrc]="story.author.imageUrl + '?h=64&w=64'"
@@ -25,11 +25,11 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 					/>
 					<div class="flex flex-col justify-center">
 						<p class="inter-body-lg-semibold">{{ story.author.name }}</p>
-						<div class="flex items-center gap-2 inter-body-base-medium text-gray-700">
+						<div class="inter-body-base-medium flex items-center gap-2 text-gray-700">
 							<img
 								[alt]="'Bandera de ' + story.author.nationality.country"
 								[ngSrc]="story.author.nationality.flag + '?w=20&h=15'"
-								class="rounded w-[20px] h-[15px]"
+								class="h-[15px] w-[20px] rounded"
 								width="20"
 								height="15"
 							/>
@@ -38,7 +38,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 					</div>
 
 					@if (resources.length > 0) {
-						<div class="flex justify-start sm:justify-end gap-4 xs-max:col-start-1 xs-max:col-end-3">
+						<div class="xs-max:col-start-1 xs-max:col-end-3 flex justify-start gap-4 sm:justify-end">
 							@for (resource of resources; track $index) {
 								<cuentoneta-resource [resource]="resource"></cuentoneta-resource>
 							}

@@ -25,15 +25,16 @@ Al ejercer los Derechos Licenciados (definidos a continuación), Usted acepta y 
 7.  Los **Elementos de la Licencia** son los atributos que figuran en el nombre de la Licencia Pública de Creative Commons. Los Elementos de la Licencia de esta Licencia Pública son Atribución/Reconocimiento, NoComercial y CompartirIgual.
 8.  **Material Licenciado** es obra artística o literaria, base de datos o cualquier otro material al cual el Licenciante aplicó esta Licencia Pública.
 9.  **Derechos Licenciados** son derechos otorgados a Usted bajo los términos y condiciones de esta Licencia Pública, los cuales se limitan a todos los Derechos de Autor y Derechos Similares que apliquen al uso del Material Licenciado y que el Licenciante tiene potestad legal para licenciar.
-10.  **Licenciante** es el individuo(s) o la entidad(es) que concede derechos bajo esta Licencia Pública.
-11.  **NoComercial**, a los efectos de esta licencia, es que no se encuentre principalmente destinado o dirigido a obtener una ventaja comercial o una compensación monetaria. Para los propósitos de esta Licencia Pública, el intercambio de Material Licenciado por otro material sujeto a Derechos de Autor y Derechos Similares a través de mecanismos de intercambio de archivos digitales o de medios similares, se considerará como NoComercial siempre que no haya pago de una compensación monetaria en relación con el intercambio.
-12.  **Compartir** significa proporcionar material al público por cualquier medio o procedimiento que requiera permiso conforme a los Derechos Licenciados, tales como la reproducción, exhibición pública, presentación pública, distribución, difusión, comunicación o importación, así como también su puesta a disposición, incluyendo formas en que el público pueda acceder al material desde un lugar y momento elegido individualmente por ellos.
-13.  **Derechos "Sui Generis" sobre Bases de Datos** son aquellos derechos diferentes a los derechos de autor, resultantes de la Directiva 96/9/EC del Parlamento Europeo y del Consejo, de 11 de marzo de 1996 sobre la protección jurídica de las bases de datos, en sus versiones modificadas y/o posteriores, así como otros derechos esencialmente equivalentes en cualquier otra parte del mundo.
-14.  **Usted** es el individuo o la entidad que ejerce los Derechos Licenciados en esta Licencia Pública. La palabra **Su** tiene un significado equivalente.
+10. **Licenciante** es el individuo(s) o la entidad(es) que concede derechos bajo esta Licencia Pública.
+11. **NoComercial**, a los efectos de esta licencia, es que no se encuentre principalmente destinado o dirigido a obtener una ventaja comercial o una compensación monetaria. Para los propósitos de esta Licencia Pública, el intercambio de Material Licenciado por otro material sujeto a Derechos de Autor y Derechos Similares a través de mecanismos de intercambio de archivos digitales o de medios similares, se considerará como NoComercial siempre que no haya pago de una compensación monetaria en relación con el intercambio.
+12. **Compartir** significa proporcionar material al público por cualquier medio o procedimiento que requiera permiso conforme a los Derechos Licenciados, tales como la reproducción, exhibición pública, presentación pública, distribución, difusión, comunicación o importación, así como también su puesta a disposición, incluyendo formas en que el público pueda acceder al material desde un lugar y momento elegido individualmente por ellos.
+13. **Derechos "Sui Generis" sobre Bases de Datos** son aquellos derechos diferentes a los derechos de autor, resultantes de la Directiva 96/9/EC del Parlamento Europeo y del Consejo, de 11 de marzo de 1996 sobre la protección jurídica de las bases de datos, en sus versiones modificadas y/o posteriores, así como otros derechos esencialmente equivalentes en cualquier otra parte del mundo.
+14. **Usted** es el individuo o la entidad que ejerce los Derechos Licenciados en esta Licencia Pública. La palabra **Su** tiene un significado equivalente.
 
 **Sección 2 – Ámbito de Aplicación.**
 
 1.  **Otorgamiento de la licencia**.
+
     1.  Sujeto a los términos y condiciones de esta Licencia Pública, el Licenciante le otorga a Usted una licencia de carácter global, gratuita, no transferible a terceros, no exclusiva e irrevocable para ejercer los Derechos Licenciados sobre el Material Licenciado para:
         1.  reproducir y Compartir el Material Licenciado, en su totalidad o en parte, solamente para fines NoComerciales; y
         2.  producir, reproducir y Compartir Material Adaptado solamente para fines NoComerciales.
@@ -41,14 +42,15 @@ Al ejercer los Derechos Licenciados (definidos a continuación), Usted acepta y 
     3.  Vigencia. La vigencia de esta Licencia Pública está especificada en la sección [6(a)](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.es#s6a).
     4.  Medios y formatos; modificaciones técnicas permitidas. El Licenciante le autoriza a Usted a ejercer los Derechos Licenciados en todos los medios y formatos, actualmente conocidos o por crearse en el futuro, y a realizar las modificaciones técnicas necesarias para ello. El Licenciante renuncia y/o se compromete a no hacer valer cualquier derecho o potestad para prohibirle a Usted realizar las modificaciones técnicas necesarias para ejercer los Derechos Licenciados, incluyendo las modificaciones técnicas necesarias para eludir las Medidas Tecnológicas Efectivas. A los efectos de esta Licencia Pública, la mera realización de modificaciones autorizadas por esta sección [2(a)(4)](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.es#s2a4) nunca produce Material Adaptado.
     5.  Receptores posteriores.
-        
+
         1.  Oferta del Licenciante – Material Licenciado. Cada receptor de Material Licenciado recibe automáticamente una oferta del Licenciante para ejercer los Derechos Licenciados bajo los términos y condiciones de esta Licencia Pública.
         2.  Oferta adicional por parte del Licenciante – Material Adaptado. Cada receptor del Material Adaptado por Usted recibe automáticamente una oferta del Licenciante para ejercer los Derechos Licenciados en el Material Adaptado bajo las condiciones de la Licencia del Adaptador que Usted aplique.
         3.  Sin restricciones a receptores posteriores. Usted no puede ofrecer o imponer ningún término ni condición diferente o adicional, ni puede aplicar ninguna Medida Tecnológica Efectiva al Material Licenciado si haciéndolo restringe el ejercicio de los Derechos Licenciados a cualquier receptor del Material Licenciado.
-        
+
     6.  Sin endoso. Nada de lo contenido en esta Licencia Pública constituye o puede interpretarse como un permiso para afirmar o implicar que Usted, o que Su uso del Material Licenciado, está conectado, patrocinado, respaldado o reconocido con estatus oficial por el Licenciante u otros designados para recibir la Atribución/Reconocimiento según lo dispuesto en la sección [3(a)(1)(A)(i)](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.es#s3a1Ai).
+
 2.  **Otros derechos**.
-    
+
     1.  Los derechos morales, tales como el derecho a la integridad, no están comprendidos bajo esta Licencia Pública ni tampoco los derechos de publicidad y privacidad ni otros derechos personales similares. Sin embargo, en la medida de lo posible, el Licenciante renuncia y/o se compromete a no hacer valer ninguno de estos derechos que ostenta como Licenciante, limitándose a lo necesario para que Usted pueda ejercer los Derechos Licenciados, pero no de otra manera.
     2.  Los derechos de patentes y marcas no son objeto de esta Licencia Pública.
     3.  En la medida de lo posible, el Licenciante renuncia al derecho de cobrarle regalías a Usted por el ejercicio de los Derechos Licenciados, ya sea directamente o a través de una entidad de gestión colectiva bajo cualquier esquema de licenciamiento voluntario, renunciable o no renunciable. En todos los demás casos, el Licenciante se reserva expresamente cualquier derecho de cobrar esas regalías, incluidos aquellos casos en los que el Material Licenciado sea utilizado para fines distintos a los NoComerciales.
@@ -58,9 +60,9 @@ Al ejercer los Derechos Licenciados (definidos a continuación), Usted acepta y 
 Su ejercicio de los Derechos Licenciados está expresamente sujeto a las condiciones siguientes.
 
 1.  **Atribución/Reconocimiento**.
-    
+
     1.  Si Usted comparte el Material Licenciado (incluyendo en forma modificada), Usted debe:
-        
+
         1.  Conservar lo siguiente si es facilitado por el Licenciante con el Material Licenciado:
             1.  identificación del creador o los creadores del Material Licenciado y de cualquier otra persona designada para recibir Atribución/Reconocimiento, de cualquier manera razonable solicitada por el Licenciante (incluyendo por seudónimo si este ha sido designado);
             2.  un aviso sobre derecho de autor;
@@ -69,12 +71,14 @@ Su ejercicio de los Derechos Licenciados está expresamente sujeto a las condici
             5.  un URI o un hipervínculo al Material Licenciado en la medida razonablemente posible;
         2.  Indicar si Usted modificó el Material Licenciado y conservar una indicación de las modificaciones anteriores; e
         3.  Indicar que el Material Licenciado está bajo esta Licencia Pública e incluir el texto, el URI o el hipervínculo a esta Licencia Pública.
+
     2.  Usted puede satisfacer las condiciones de la sección [3(a)(1)](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.es#s3a1) de cualquier forma razonable según el medio, las maneras y el contexto en los cuales Usted Comparta el Material Licenciado. Por ejemplo, puede ser razonable satisfacer las condiciones facilitando un URI o un hipervínculo a un recurso que incluya la información requerida.
     3.  Bajo requerimiento del Licenciante, Usted debe eliminar cualquier información requerida por la sección [3(a)(1)(A)](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.es#s3a1A) en la medida razonablemente posible.
+
 2.  **CompartirIgual**.
-    
+
     Además de las condiciones de la sección [3(a)](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.es#s3a), si Usted Comparte Material Adaptado producido por Usted, también aplican las condiciones siguientes.
-    
+
     1.  La Licencia del Adaptador que Usted aplique debe ser una licencia de Creative Commons con los mismos Elementos de la Licencia, ya sea de esta versión o una posterior, o una Licencia Compatible con la BY-NC-SA.
     2.  Usted debe incluir el texto, el URI o el hipervínculo a la Licencia del Adaptador que aplique. Usted puede satisfacer esta condición de cualquier forma razonable según el medio, las maneras y el contexto en los cuales Usted Comparta el Material Adaptado.
     3.  Usted no puede ofrecer o imponer ningún término o condición adicional o diferente, o aplicar ninguna Medida Tecnológica Efectiva al Material Adaptado que restrinja el ejercicio de los derechos concedidos en virtud de la Licencia de Adaptador que Usted aplique.
@@ -100,11 +104,12 @@ Para evitar dudas, esta sección [4](https://creativecommons.org/licenses/by-nc-
 
 1.  Esta Licencia Pública tiene una vigencia de aplicación igual al plazo de protección de los Derechos de Autor y Derechos Similares licenciados aquí. Sin embargo, si Usted incumple las condiciones de esta Licencia Pública, los derechos que se le conceden mediante esta Licencia Pública terminan automáticamente.
 2.  En aquellos casos en que Su derecho a utilizar el Material Licenciado se haya terminado conforme a la sección [6(a)](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.es#s6a), este será restablecido:
-    
+
     1.  automáticamente a partir de la fecha en que la violación sea subsanada, siempre y cuando esta se subsane dentro de los 30 días siguientes a partir de Su descubrimiento de la violación; o
     2.  tras el restablecimiento expreso por parte del Licenciante.
-    
+
     Para evitar dudas, esta sección [6(b)](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.es#s6b) no afecta ningún derecho que pueda tener el Licenciante a buscar resarcimiento por Sus violaciones de esta Licencia Pública.
+
 3.  Para evitar dudas, el Licenciante también puede ofrecer el Material Licenciado bajo términos o condiciones diferentes, o dejar de distribuir el Material Licenciado en cualquier momento; sin embargo, hacer esto no pondrá fin a esta Licencia Pública.
 4.  Las secciones [1](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.es#s1), [5](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.es#s5), [6](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.es#s6), [7](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.es#s7), y [8](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.es#s8) permanecerán vigentes a la terminación de esta Licencia Pública.
 
@@ -153,15 +158,16 @@ By exercising the Licensed Rights (defined below), You accept and agree to be bo
 7.  **License Elements** means the license attributes listed in the name of a Creative Commons Public License. The License Elements of this Public License are Attribution, NonCommercial, and ShareAlike.
 8.  **Licensed Material** means the artistic or literary work, database, or other material to which the Licensor applied this Public License.
 9.  **Licensed Rights** means the rights granted to You subject to the terms and conditions of this Public License, which are limited to all Copyright and Similar Rights that apply to Your use of the Licensed Material and that the Licensor has authority to license.
-10.  **Licensor** means the individual(s) or entity(ies) granting rights under this Public License.
-11.  **NonCommercial** means not primarily intended for or directed towards commercial advantage or monetary compensation. For purposes of this Public License, the exchange of the Licensed Material for other material subject to Copyright and Similar Rights by digital file-sharing or similar means is NonCommercial provided there is no payment of monetary compensation in connection with the exchange.
-12.  **Share** means to provide material to the public by any means or process that requires permission under the Licensed Rights, such as reproduction, public display, public performance, distribution, dissemination, communication, or importation, and to make material available to the public including in ways that members of the public may access the material from a place and at a time individually chosen by them.
-13.  **Sui Generis Database Rights** means rights other than copyright resulting from Directive 96/9/EC of the European Parliament and of the Council of 11 March 1996 on the legal protection of databases, as amended and/or succeeded, as well as other essentially equivalent rights anywhere in the world.
-14.  **You** means the individual or entity exercising the Licensed Rights under this Public License. **Your** has a corresponding meaning.
+10. **Licensor** means the individual(s) or entity(ies) granting rights under this Public License.
+11. **NonCommercial** means not primarily intended for or directed towards commercial advantage or monetary compensation. For purposes of this Public License, the exchange of the Licensed Material for other material subject to Copyright and Similar Rights by digital file-sharing or similar means is NonCommercial provided there is no payment of monetary compensation in connection with the exchange.
+12. **Share** means to provide material to the public by any means or process that requires permission under the Licensed Rights, such as reproduction, public display, public performance, distribution, dissemination, communication, or importation, and to make material available to the public including in ways that members of the public may access the material from a place and at a time individually chosen by them.
+13. **Sui Generis Database Rights** means rights other than copyright resulting from Directive 96/9/EC of the European Parliament and of the Council of 11 March 1996 on the legal protection of databases, as amended and/or succeeded, as well as other essentially equivalent rights anywhere in the world.
+14. **You** means the individual or entity exercising the Licensed Rights under this Public License. **Your** has a corresponding meaning.
 
 **Section 2 – Scope.**
 
 1.  **License grant**.
+
     1.  Subject to the terms and conditions of this Public License, the Licensor hereby grants You a worldwide, royalty-free, non-sublicensable, non-exclusive, irrevocable license to exercise the Licensed Rights in the Licensed Material to:
         1.  reproduce and Share the Licensed Material, in whole or in part, for NonCommercial purposes only; and
         2.  produce, reproduce, and Share Adapted Material for NonCommercial purposes only.
@@ -169,14 +175,15 @@ By exercising the Licensed Rights (defined below), You accept and agree to be bo
     3.  Term. The term of this Public License is specified in Section [6(a)](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode#s6a).
     4.  Media and formats; technical modifications allowed. The Licensor authorizes You to exercise the Licensed Rights in all media and formats whether now known or hereafter created, and to make technical modifications necessary to do so. The Licensor waives and/or agrees not to assert any right or authority to forbid You from making technical modifications necessary to exercise the Licensed Rights, including technical modifications necessary to circumvent Effective Technological Measures. For purposes of this Public License, simply making modifications authorized by this Section [2(a)(4)](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode#s2a4) never produces Adapted Material.
     5.  Downstream recipients.
-        
+
         1.  Offer from the Licensor – Licensed Material. Every recipient of the Licensed Material automatically receives an offer from the Licensor to exercise the Licensed Rights under the terms and conditions of this Public License.
         2.  Additional offer from the Licensor – Adapted Material. Every recipient of Adapted Material from You automatically receives an offer from the Licensor to exercise the Licensed Rights in the Adapted Material under the conditions of the Adapter’s License You apply.
         3.  No downstream restrictions. You may not offer or impose any additional or different terms or conditions on, or apply any Effective Technological Measures to, the Licensed Material if doing so restricts exercise of the Licensed Rights by any recipient of the Licensed Material.
-        
+
     6.  No endorsement. Nothing in this Public License constitutes or may be construed as permission to assert or imply that You are, or that Your use of the Licensed Material is, connected with, or sponsored, endorsed, or granted official status by, the Licensor or others designated to receive attribution as provided in Section [3(a)(1)(A)(i)](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode#s3a1Ai).
+
 2.  **Other rights**.
-    
+
     1.  Moral rights, such as the right of integrity, are not licensed under this Public License, nor are publicity, privacy, and/or other similar personality rights; however, to the extent possible, the Licensor waives and/or agrees not to assert any such rights held by the Licensor to the limited extent necessary to allow You to exercise the Licensed Rights, but not otherwise.
     2.  Patent and trademark rights are not licensed under this Public License.
     3.  To the extent possible, the Licensor waives any right to collect royalties from You for the exercise of the Licensed Rights, whether directly or through a collecting society under any voluntary or waivable statutory or compulsory licensing scheme. In all other cases the Licensor expressly reserves any right to collect such royalties, including when the Licensed Material is used other than for NonCommercial purposes.
@@ -186,9 +193,9 @@ By exercising the Licensed Rights (defined below), You accept and agree to be bo
 Your exercise of the Licensed Rights is expressly made subject to the following conditions.
 
 1.  **Attribution**.
-    
+
     1.  If You Share the Licensed Material (including in modified form), You must:
-        
+
         1.  retain the following if it is supplied by the Licensor with the Licensed Material:
             1.  identification of the creator(s) of the Licensed Material and any others designated to receive attribution, in any reasonable manner requested by the Licensor (including by pseudonym if designated);
             2.  a copyright notice;
@@ -197,12 +204,14 @@ Your exercise of the Licensed Rights is expressly made subject to the following 
             5.  a URI or hyperlink to the Licensed Material to the extent reasonably practicable;
         2.  indicate if You modified the Licensed Material and retain an indication of any previous modifications; and
         3.  indicate the Licensed Material is licensed under this Public License, and include the text of, or the URI or hyperlink to, this Public License.
+
     2.  You may satisfy the conditions in Section [3(a)(1)](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode#s3a1) in any reasonable manner based on the medium, means, and context in which You Share the Licensed Material. For example, it may be reasonable to satisfy the conditions by providing a URI or hyperlink to a resource that includes the required information.
     3.  If requested by the Licensor, You must remove any of the information required by Section [3(a)(1)(A)](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode#s3a1A) to the extent reasonably practicable.
+
 2.  **ShareAlike**.
-    
+
     In addition to the conditions in Section [3(a)](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode#s3a), if You Share Adapted Material You produce, the following conditions also apply.
-    
+
     1.  The Adapter’s License You apply must be a Creative Commons license with the same License Elements, this version or later, or a BY-NC-SA Compatible License.
     2.  You must include the text of, or the URI or hyperlink to, the Adapter's License You apply. You may satisfy this condition in any reasonable manner based on the medium, means, and context in which You Share Adapted Material.
     3.  You may not offer or impose any additional or different terms or conditions on, or apply any Effective Technological Measures to, Adapted Material that restrict exercise of the rights granted under the Adapter's License You apply.
@@ -228,11 +237,12 @@ For the avoidance of doubt, this Section [4](https://creativecommons.org/license
 
 1.  This Public License applies for the term of the Copyright and Similar Rights licensed here. However, if You fail to comply with this Public License, then Your rights under this Public License terminate automatically.
 2.  Where Your right to use the Licensed Material has terminated under Section [6(a)](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode#s6a), it reinstates:
-    
+
     1.  automatically as of the date the violation is cured, provided it is cured within 30 days of Your discovery of the violation; or
     2.  upon express reinstatement by the Licensor.
-    
+
     For the avoidance of doubt, this Section [6(b)](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode#s6b) does not affect any right the Licensor may have to seek remedies for Your violations of this Public License.
+
 3.  For the avoidance of doubt, the Licensor may also offer the Licensed Material under separate terms or conditions or stop distributing the Licensed Material at any time; however, doing so will not terminate this Public License.
 4.  Sections [1](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode#s1), [5](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode#s5), [6](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode#s6), [7](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode#s7), and [8](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode#s8) survive termination of this Public License.
 
@@ -251,4 +261,3 @@ For the avoidance of doubt, this Section [4](https://creativecommons.org/license
 Creative Commons is not a party to its public licenses. Notwithstanding, Creative Commons may elect to apply one of its public licenses to material it publishes and in those instances will be considered the “Licensor.” The text of the Creative Commons public licenses is dedicated to the public domain under the [CC0 Public Domain Dedication](https://creativecommons.org/publicdomain/zero/1.0/legalcode). Except for the limited purpose of indicating that material is shared under a Creative Commons public license or as otherwise permitted by the Creative Commons policies published at [creativecommons.org/policies](https://creativecommons.org/policies), Creative Commons does not authorize the use of the trademark “Creative Commons” or any other trademark or logo of Creative Commons without its prior written consent including, without limitation, in connection with any unauthorized modifications to any of its public licenses or any other arrangements, understandings, or agreements concerning use of licensed material. For the avoidance of doubt, this paragraph does not form part of the public licenses.
 
 Creative Commons may be contacted at [creativecommons.org](https://creativecommons.org/).
-

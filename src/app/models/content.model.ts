@@ -1,20 +1,20 @@
 import { GridItemPlacementConfig, Storylist } from './storylist.model';
 
 export interface StorylistDeckConfig {
-    title: string;
-    slug: string;
-    ordering: 'asc' | 'desc' | undefined | null;
-    amount: number;
-    previewGridSkeletonConfig: StorylistGridSkeletonConfig;
-    gridSkeletonConfig: StorylistGridSkeletonConfig;
+	title: string;
+	slug: string;
+	ordering: 'asc' | 'desc' | undefined | null;
+	amount: number;
+	previewGridSkeletonConfig: StorylistGridSkeletonConfig;
+	gridSkeletonConfig: StorylistGridSkeletonConfig;
 }
 
 export interface StorylistCardDeck extends StorylistDeckConfig {
-    storylist?: Storylist;
+	storylist?: Storylist;
 }
 
 export interface StorylistGridSkeletonConfig {
-    gridTemplateColumns: string;
-    titlePlacement: GridItemPlacementConfig,
-    cardsPlacement: GridItemPlacementConfig[];
+	gridTemplateColumns: string;
+	titlePlacement: GridItemPlacementConfig;
+	cardsPlacement: GridItemPlacementConfig[];
 }

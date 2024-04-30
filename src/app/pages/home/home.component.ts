@@ -1,11 +1,7 @@
 // Core
 import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  CommonModule,
-  isPlatformBrowser,
-  NgOptimizedImage,
-} from '@angular/common';
+import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
 
 // Services
 import { ContentService } from '../../providers/content.service';
@@ -22,54 +18,50 @@ import { RouterModule } from '@angular/router';
 import { StorylistCardComponent } from '../../components/storylist-card-component/storylist-card.component';
 
 @Component({
-  selector: 'cuentoneta-home',
-  templateUrl: './home.component.html',
-  standalone: true,
-  imports: [
-    CommonModule,
-    NgOptimizedImage,
-    StoryCardComponent,
-    StorylistCardDeckComponent,
-    RouterModule,
-    StorylistCardComponent,
-  ],
-  hostDirectives: [FetchContentDirective],
+	selector: 'cuentoneta-home',
+	templateUrl: './home.component.html',
+	standalone: true,
+	imports: [
+		CommonModule,
+		NgOptimizedImage,
+		StoryCardComponent,
+		StorylistCardDeckComponent,
+		RouterModule,
+		StorylistCardComponent,
+	],
+	hostDirectives: [FetchContentDirective],
 })
 export class HomeComponent {
-  readonly appRouteTree = APP_ROUTE_TREE;
+	readonly appRouteTree = APP_ROUTE_TREE;
 
-  cards: StorylistCardDeck[] = [];
-  previews: StorylistCardDeck[] = [];
+	cards: StorylistCardDeck[] = [];
+	previews: StorylistCardDeck[] = [];
 
-  // Services
-  public fetchContentDirective = inject(
-    FetchContentDirective<StorylistCardDeck[]>
-  );
-  private contentService = inject(ContentService);
+	// Services
+	public fetchContentDirective = inject(FetchContentDirective<StorylistCardDeck[]>);
+	private contentService = inject(ContentService);
 
-  constructor() {
-    // Asignación inicial para dibujar skeletons
-    this.cards = this.contentService.contentConfig.cards;
-    this.previews = this.contentService.contentConfig.previews;
+	constructor() {
+		// Asignación inicial para dibujar skeletons
+		this.cards = this.contentService.contentConfig.cards;
+		this.previews = this.contentService.contentConfig.previews;
 
-    const platformId = inject(PLATFORM_ID);
-    if (!isPlatformBrowser(platformId)) {
-      return;
-    }
+		const platformId = inject(PLATFORM_ID);
+		if (!isPlatformBrowser(platformId)) {
+			return;
+		}
 
-    // En cliente-side, posteriormente, se cargan los decks con las historias, según la configuración de contenido
-    this.loadStorylistDecks();
-  }
+		// En cliente-side, posteriormente, se cargan los decks con las historias, según la configuración de contenido
+		this.loadStorylistDecks();
+	}
 
-  private loadStorylistDecks() {
-    this.fetchContentDirective
-      .fetchContent$<[StorylistCardDeck[], StorylistCardDeck[]]>(
-        this.contentService.fetchStorylistDecks()
-      )
-      .pipe(takeUntilDestroyed())
-      .subscribe(([previews, cards]) => {
-        this.previews = previews;
-        this.cards = cards;
-      });
-  }
+	private loadStorylistDecks() {
+		this.fetchContentDirective
+			.fetchContent$<[StorylistCardDeck[], StorylistCardDeck[]]>(this.contentService.fetchStorylistDecks())
+			.pipe(takeUntilDestroyed())
+			.subscribe(([previews, cards]) => {
+				this.previews = previews;
+				this.cards = cards;
+			});
+	}
 }
