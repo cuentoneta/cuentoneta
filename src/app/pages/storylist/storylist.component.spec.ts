@@ -12,40 +12,37 @@ import { Storylist } from '@models/storylist.model';
 import { StorylistGridSkeletonConfig } from '@models/content.model';
 
 describe('StorylistComponent', () => {
-  let componentRender: RenderResult<StorylistComponent, StorylistComponent>;
+	let componentRender: RenderResult<StorylistComponent, StorylistComponent>;
 
-  beforeEach(async () => {
-    componentRender = await render(StorylistComponent, {
-      componentImports: [
-        CommonModule,
-        HttpClientTestingModule,
-        MockStorylistCardDeckComponent,
-        NgxSkeletonLoaderModule,
-        RouterTestingModule,
-      ],
-      componentProviders: [
-        provideMock(FetchContentDirective),
-        provideMock(MetaTagsDirective),
-      ],
-    });
-  });
+	beforeEach(async () => {
+		componentRender = await render(StorylistComponent, {
+			componentImports: [
+				CommonModule,
+				HttpClientTestingModule,
+				MockStorylistCardDeckComponent,
+				NgxSkeletonLoaderModule,
+				RouterTestingModule,
+			],
+			componentProviders: [provideMock(FetchContentDirective), provideMock(MetaTagsDirective)],
+		});
+	});
 
-  it('should create', () => {
-    expect(componentRender).toBeTruthy();
-  });
+	it('should create', () => {
+		expect(componentRender).toBeTruthy();
+	});
 });
 
 @Component({
-  standalone: true,
-  selector: 'cuentoneta-storylist-card-deck:not(p)',
-  template: '',
+	standalone: true,
+	selector: 'cuentoneta-storylist-card-deck:not(p)',
+	template: '',
 })
 class MockStorylistCardDeckComponent {
-  @Input() number: number = 6;
-  @Input() storylist: Storylist | undefined;
-  @Input() isLoading: boolean = false;
-  @Input() canNavigateToStorylist: boolean = false;
-  @Input() displayTitle: boolean = true;
-  @Input() displayFeaturedImage: boolean = false;
-  @Input() skeletonConfig: StorylistGridSkeletonConfig | undefined;
+	@Input() number: number = 6;
+	@Input() storylist: Storylist | undefined;
+	@Input() isLoading: boolean = false;
+	@Input() canNavigateToStorylist: boolean = false;
+	@Input() displayTitle: boolean = true;
+	@Input() displayFeaturedImage: boolean = false;
+	@Input() skeletonConfig: StorylistGridSkeletonConfig | undefined;
 }

@@ -30,10 +30,10 @@ export default {
 			type: 'image',
 			initialValue: {
 				asset: {
-				  _type: 'reference',
-				  _ref: 'image-76250a3cd5acc91a1013e2acd1f97df69b33825c-360x360-jpg'
-				}
-			  },
+					_type: 'reference',
+					_ref: 'image-76250a3cd5acc91a1013e2acd1f97df69b33825c-360x360-jpg',
+				},
+			},
 			options: {
 				hotspot: true,
 			},

@@ -1,8 +1,40 @@
 import { supportedLanguages } from '../utils/localization';
-import { DocumentTextIcon, PlayIcon, TwitterIcon } from '@sanity/icons';
+import { DocumentTextIcon, DocumentVideoIcon, PlayIcon, TwitterIcon } from '@sanity/icons';
 import { resource } from './resourceType';
 
-const spaceRecordingMedia = {
+const audioRecording = {
+	name: 'audioRecording',
+	title: 'Grabación de audio con el relato del texto',
+	type: 'object',
+	icon: PlayIcon,
+	previews: {
+		select: {
+			title: 'title',
+			url: 'spaceUrl',
+		},
+		prepare(selection) {
+			const { title, url } = selection;
+			return {
+				title: `${title}`,
+				subtitle: ` URL Grabación: ${url}`,
+			};
+		},
+	},
+	fields: [
+		{
+			name: 'title',
+			title: 'Título asignado a la grabación de audio',
+			type: 'string',
+		},
+		{
+			name: 'url',
+			title: 'URL del archivo de audio (mp3, wav, etc.)',
+			type: 'url',
+		},
+	],
+};
+
+const spaceRecording = {
 	name: 'spaceRecording',
 	title: 'Grabación de Spaces de X',
 	type: 'object',
@@ -44,34 +76,39 @@ const spaceRecordingMedia = {
 	],
 };
 
-const audioRecording = {
-	name: 'audioRecording',
-	title: 'Grabación de audio con el relato del texto',
+const youtubeVideo = {
+	name: 'youTubeVideo',
+	title: 'Video de YouTube',
 	type: 'object',
-	icon: PlayIcon,
+	icon: DocumentVideoIcon,
 	previews: {
 		select: {
 			title: 'title',
-			url: 'spaceUrl',
+			url: 'url',
 		},
 		prepare(selection) {
 			const { title, url } = selection;
 			return {
 				title: `${title}`,
-				subtitle: ` URL Grabación: ${url}`,
+				subtitle: `URL Video: ${url}`,
 			};
 		},
 	},
 	fields: [
 		{
 			name: 'title',
-			title: 'Título asignado a la grabación de audio',
+			title: 'Título del video',
 			type: 'string',
 		},
 		{
-			name: 'url',
-			title: 'URL del archivo de audio (mp3, wav, etc.)',
-			type: 'url',
+			name: 'description',
+			title: 'Descripción del video',
+			type: 'blockContent',
+		},
+		{
+			name: 'videoId',
+			title: 'ID del video de YouTube',
+			type: 'string',
 		},
 	],
 };
@@ -118,15 +155,10 @@ export default {
 			validation: (Rule) => Rule.required(),
 		},
 		{
-			name: 'videoUrl',
-			title: 'URL del video con lectura/recitado del cuento',
-			type: 'url',
-		},
-		{
 			name: 'mediaSources',
 			title: 'Información de recursos multimedia asociados a la historia en otras plataformas web',
 			type: 'array',
-			of: [audioRecording, spaceRecordingMedia],
+			of: [audioRecording, spaceRecording, youtubeVideo],
 		},
 		{
 			name: 'resources',
@@ -177,39 +209,14 @@ export default {
 					type: 'object',
 					fields: [
 						{
-							name: 'epigraphText',
+							name: 'text',
 							title: 'Texto del epígrafe',
 							type: 'blockContent',
 						},
 						{
-							name: 'epigraphAuthor',
+							name: 'reference',
 							title: 'Referencia del epígrafe',
 							description: 'Referencia del origen del epígrafe',
-							type: 'string',
-						},
-					],
-				},
-			],
-		},
-		{
-			name: 'forewords',
-			title: 'Prólogo(s)',
-			type: 'array',
-			of: [
-				{
-					name: 'foreword',
-					title: 'Prólogo',
-					type: 'object',
-					fields: [
-						{
-							name: 'fwText',
-							title: 'Texto del prólogo',
-							type: 'string',
-						},
-						{
-							name: 'fwAuthor',
-							title: 'Referencia del prólogo',
-							description: 'Referencia del origen del prólogo',
 							type: 'string',
 						},
 					],
@@ -246,5 +253,3 @@ export default {
 		},
 	},
 };
-
-

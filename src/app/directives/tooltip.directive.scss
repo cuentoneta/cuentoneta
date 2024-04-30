@@ -1,23 +1,23 @@
 .tooltip-container {
 	// Layout
-	@apply fixed box-border z-50;
+	@apply fixed z-50 box-border;
 	// Texto
-	@apply inter-body-xs-semibold text-center text-white bg-black opacity-0;
+	@apply inter-body-xs-semibold bg-black text-center text-white opacity-0;
 	// Spacing
-	@apply p-2 rounded w-auto;
+	@apply w-auto rounded p-2;
 	// Interactividad
 	@apply pointer-events-none;
 	// Transformaciones
 	@apply translate-x-1/2 translate-y-1/2;
 	&::before {
 		@apply bg-black p-1;
-		@apply z-40 absolute rotate-45;
+		@apply absolute z-40 rotate-45;
 		@apply content-blank;
 	}
 }
 
 .top {
-	@apply -top-[40px] -left-1/2;
+	@apply -left-1/2 -top-[40px];
 	&::before {
 		top: 80%;
 		left: 45%;
@@ -25,7 +25,7 @@
 }
 
 .bottom {
-	@apply top-[25px] -left-1/2;
+	@apply -left-1/2 top-[25px];
 	&::before {
 		top: -5%;
 		left: 45%;

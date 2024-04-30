@@ -30,16 +30,30 @@ import { StoryNavigationBarComponent } from '../../components/story-navigation-b
 import { BioSummaryCardComponent } from '../../components/bio-summary-card/bio-summary-card.component';
 import { ShareContentComponent } from '../../components/share-content/share-content.component';
 import { EpigraphComponent } from '../../components/epigraph/epigraph.component';
-import { MediaResourceComponent } from '../../components/media-resource/media-resource.component'
-import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component'
+import { MediaResourceComponent } from '../../components/media-resource/media-resource.component';
+import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
 
 @Component({
 	selector: 'cuentoneta-story',
 	templateUrl: './story.component.html',
 	styles: `
 		:host {
-			@apply md:grid md:mt-28 gap-x-8 md:grid-cols-[286px_1fr];
-		}`,
+			@apply gap-x-8 md:mt-28 md:grid md:grid-cols-[286px_1fr];
+		}
+
+		@keyframes scrollbar {
+			to {
+				width: 100%;
+			}
+		}
+
+		.progress-bar {
+			transition-timing-function: ease-out;
+			transition: width 0.5s;
+			animation: scrollbar linear;
+			animation-timeline: scroll(root);
+		}
+	`,
 	standalone: true,
 	imports: [
 		CommonModule,
@@ -67,18 +81,6 @@ export class StoryComponent {
 	shareContentParams: { [key: string]: string } = {};
 	shareMessage: string = '';
 
-	storyWithTransformedvideoUrl(story: Story) {
-		if (story.videoUrl) {
-			const videoUrl = new URL(story.videoUrl);
-			return {
-				...story,
-				videoUrl: videoUrl.pathname.split('/')[2],
-			};
-		}
-
-		return story;
-	}
-
 	constructor() {
 		const platformId = inject(PLATFORM_ID);
 		const activatedRoute = inject(ActivatedRoute);
@@ -104,7 +106,7 @@ export class StoryComponent {
 				);
 
 		content$.subscribe(([story, storylist]) => {
-			this.story = this.storyWithTransformedvideoUrl(story);
+			this.story = story;
 			this.storylist = storylist;
 
 			metaTagsDirective.setTitle(`${story.title}, de ${story.author.name} en La Cuentoneta`);

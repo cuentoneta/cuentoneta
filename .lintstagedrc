@@ -1,3 +1,0 @@
-{
-  "*.{js,json.css,scss,md,ts,html}": ["eslint"]
-}

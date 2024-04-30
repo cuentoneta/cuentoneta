@@ -1,8 +1,7 @@
 import express from 'express';
 import { client } from './_helpers/sanity-connector';
-import { mapAuthorForStory, mapMediaSources, mapPrologues, urlFor } from './_utils/functions';
-
-// Subqueries
+import { mapAuthorForStory, urlFor } from './_utils/functions';
+import { mapMediaSources } from './_utils/media-sources.functions';
 import { authorForStoryCard } from './_queries/author.query';
 
 async function fetchPreview(req: express.Request, res: express.Response) {
@@ -46,15 +45,11 @@ async function fetchPreview(req: express.Request, res: express.Response) {
                                             _id,
                                             'slug': slug.current,
                                             title,
-                                            videoUrl,
                                             badLanguage,
-                                            forewords,
                                             categories,
                                             body[0...3],
                                             review,
-                                            forewords,
                                             approximateReadingTime,
-                                            videoUrl,
                                             language,
                                             mediaSources,
                                         	${authorForStoryCard}
@@ -97,7 +92,7 @@ async function fetchPreview(req: express.Request, res: express.Response) {
 			.filter((cardPlacement: any) => !!cardPlacement.publication && !!cardPlacement.publication.story)
 			.map((cardPlacement: any) => cardPlacement.publication)
 			.map((publication: any) => {
-				const { review, body, forewords, author, ...story } = publication.story;
+				const { review, body, author, ...story } = publication.story;
 				return {
 					...publication,
 					story: {
@@ -105,7 +100,6 @@ async function fetchPreview(req: express.Request, res: express.Response) {
 						summary: review,
 						paragraphs: body,
 						author: mapAuthorForStory(author),
-						prologues: mapPrologues(forewords),
 					},
 				};
 			}),
@@ -155,13 +149,10 @@ async function fetchStorylist(req: any, res: any) {
                                         _id,
                                         'slug': slug.current,
                                         title,
-                                        forewords,
                                         categories,
                                         body[0...3],
                                         review,
-                                        forewords,
                                         approximateReadingTime,
-                                        videoUrl,
                                         language,
                                         mediaSources,
                                         ${authorForStoryCard}
@@ -188,7 +179,7 @@ async function fetchStorylist(req: any, res: any) {
 
 	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
 	for (const publication of rawPublications) {
-		const { review, body, forewords, author, mediaSources, ...story } = publication.story;
+		const { review, body, author, mediaSources, ...story } = publication.story;
 		publications.push({
 			...publication,
 			story: {
@@ -197,7 +188,6 @@ async function fetchStorylist(req: any, res: any) {
 				summary: review,
 				paragraphs: body,
 				author: mapAuthorForStory(author),
-				prologues: mapPrologues(forewords),
 			},
 		});
 	}
@@ -212,7 +202,7 @@ async function fetchStorylist(req: any, res: any) {
 						slug: card.imageSlug,
 						url: urlFor(card.image).url(),
 					})),
-		publications: publications
+		publications: publications,
 	};
 
 	res.json(storylist);

@@ -5,52 +5,43 @@
  * */
 import { client } from '../src/api/_helpers/sanity-connector';
 
-const newReadingTimeFormula = (wordCount: number) =>
-  Math.ceil((wordCount * 200) / 180);
+const newReadingTimeFormula = (wordCount: number) => Math.ceil((wordCount * 200) / 180);
 
-const fetchDocuments = () =>
-  client.fetch(
-    `*[_type == 'story' && language == null] {_id, _rev}`
-  );
+const fetchDocuments = () => client.fetch(`*[_type == 'story' && language == null] {_id, _rev}`);
 
 const buildPatches = (docs: any[]) =>
-  docs.map((doc) => ({
-    id: doc._id,
-    patch: {
-      set: {
-        language: 'es',
-      },
-      ifRevisionID: doc._rev,
-    },
-  }));
+	docs.map((doc) => ({
+		id: doc._id,
+		patch: {
+			set: {
+				language: 'es',
+			},
+			ifRevisionID: doc._rev,
+		},
+	}));
 
 const createTransaction = (patches: any) =>
-  patches.reduce(
-    (tx: any, patch: any) => tx.patch(patch.id, patch.patch),
-    client.transaction()
-  );
+	patches.reduce((tx: any, patch: any) => tx.patch(patch.id, patch.patch), client.transaction());
 
 const commitTransaction = (tx: any) => tx.commit();
 
 const migrateNextBatch = async (): Promise<any> => {
-  const documents = await fetchDocuments()
-  const patches = buildPatches(documents);
-  if (patches.length === 0) {
-    console.log('No more documents to migrate!');
-    return null;
-  }
-  console.log(
-    `Migrating batch:\n %s`,
-    patches
-      .map((patch) => `${patch.id} => ${JSON.stringify(patch.patch)}`)
-      .join('\n')
-  );
-  const transaction = createTransaction(patches);
-  await commitTransaction(transaction);
-  return migrateNextBatch();
+	const documents = await fetchDocuments();
+	const patches = buildPatches(documents);
+	if (patches.length === 0) {
+		console.log('No more documents to migrate!');
+		return null;
+	}
+	console.log(
+		`Migrating batch:\n %s`,
+		patches.map((patch) => `${patch.id} => ${JSON.stringify(patch.patch)}`).join('\n'),
+	);
+	const transaction = createTransaction(patches);
+	await commitTransaction(transaction);
+	return migrateNextBatch();
 };
 
 migrateNextBatch().catch((err) => {
-  console.error(err);
-  process.exit(1);
+	console.error(err);
+	process.exit(1);
 });
