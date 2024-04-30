@@ -2,6 +2,38 @@ import { supportedLanguages } from '../utils/localization';
 import { DocumentTextIcon, DocumentVideoIcon, PlayIcon, TwitterIcon } from '@sanity/icons';
 import { resource } from './resourceType';
 
+const audioRecording = {
+	name: 'audioRecording',
+	title: 'Grabación de audio con el relato del texto',
+	type: 'object',
+	icon: PlayIcon,
+	previews: {
+		select: {
+			title: 'title',
+			url: 'spaceUrl',
+		},
+		prepare(selection) {
+			const { title, url } = selection;
+			return {
+				title: `${title}`,
+				subtitle: ` URL Grabación: ${url}`,
+			};
+		},
+	},
+	fields: [
+		{
+			name: 'title',
+			title: 'Título asignado a la grabación de audio',
+			type: 'string',
+		},
+		{
+			name: 'url',
+			title: 'URL del archivo de audio (mp3, wav, etc.)',
+			type: 'url',
+		},
+	],
+};
+
 const spaceRecording = {
 	name: 'spaceRecording',
 	title: 'Grabación de Spaces de X',
@@ -44,40 +76,8 @@ const spaceRecording = {
 	],
 };
 
-const audioRecording = {
-	name: 'audioRecording',
-	title: 'Grabación de audio con el relato del texto',
-	type: 'object',
-	icon: PlayIcon,
-	previews: {
-		select: {
-			title: 'title',
-			url: 'spaceUrl',
-		},
-		prepare(selection) {
-			const { title, url } = selection;
-			return {
-				title: `${title}`,
-				subtitle: ` URL Grabación: ${url}`,
-			};
-		},
-	},
-	fields: [
-		{
-			name: 'title',
-			title: 'Título asignado a la grabación de audio',
-			type: 'string',
-		},
-		{
-			name: 'url',
-			title: 'URL del archivo de audio (mp3, wav, etc.)',
-			type: 'url',
-		},
-	],
-};
-
 const youtubeVideo = {
-	name: 'youtubeVideo',
+	name: 'youTubeVideo',
 	title: 'Video de YouTube',
 	type: 'object',
 	icon: DocumentVideoIcon,
@@ -106,9 +106,9 @@ const youtubeVideo = {
 			type: 'blockContent',
 		},
 		{
-			name: 'url',
-			title: 'URL del video de YouTube',
-			type: 'url',
+			name: 'videoId',
+			title: 'ID del video de YouTube',
+			type: 'string',
 		},
 	],
 };
