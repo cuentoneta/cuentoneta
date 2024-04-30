@@ -2,7 +2,7 @@ import { supportedLanguages } from '../utils/localization';
 import { DocumentTextIcon, DocumentVideoIcon, PlayIcon, TwitterIcon } from '@sanity/icons';
 import { resource } from './resourceType';
 
-const spaceRecordingMedia = {
+const spaceRecording = {
 	name: 'spaceRecording',
 	title: 'Grabación de Spaces de X',
 	type: 'object',
@@ -163,7 +163,7 @@ export default {
 			name: 'mediaSources',
 			title: 'Información de recursos multimedia asociados a la historia en otras plataformas web',
 			type: 'array',
-			of: [audioRecording, spaceRecordingMedia, youtubeVideo],
+			of: [audioRecording, spaceRecording, youtubeVideo],
 		},
 		{
 			name: 'resources',
