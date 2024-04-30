@@ -1,3 +1,0 @@
-{
-	"*.{ts, html}": ["nx lint --uncommitted --fix=true"]
-}
