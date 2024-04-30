@@ -20,9 +20,9 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 	`,
 	styles: `
 		:host {
-			@apply flex bg-primary-200 py-0.5 px-4.5 rounded uppercase hover:cursor-default;
+			@apply flex rounded bg-primary-200 px-4.5 py-0.5 uppercase hover:cursor-default;
 		}
-    `,
+	`,
 })
 export class BadgeComponent implements OnInit {
 	@Input({ required: true }) tag!: Tag;

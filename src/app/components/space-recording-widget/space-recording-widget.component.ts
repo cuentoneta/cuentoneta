@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, effect, input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { MediaTypes, SpaceRecording } from '@models/media.model';
+import { SpaceRecording } from '@models/media.model';
 
 @Component({
 	selector: 'cuentoneta-space-recording-widget',
@@ -38,7 +38,7 @@ import { MediaTypes, SpaceRecording } from '@models/media.model';
 		:host {
 			font-family: sans-serif;
 		}
-		
+
 		.spaces-card {
 			background-image: linear-gradient(60deg, hsl(230, 100 * 1%, 50 * 1%) -15%, hsl(260, 100 * 1%, 60 * 1%) 100%);
 		}
@@ -46,9 +46,7 @@ import { MediaTypes, SpaceRecording } from '@models/media.model';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpaceRecordingWidgetComponent {
-	media = input.required({
-		transform: (media: MediaTypes) => media as SpaceRecording,
-	});
+	media = input.required<SpaceRecording>();
 
 	public spaceUrl: string = '';
 

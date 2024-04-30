@@ -18,11 +18,11 @@ import { CommonModule, NgIf } from '@angular/common';
 		}
 	`,
 	styles: `
-        :host {
-            display: flex;
-            justify-content: space-between;
-        }
-    `,
+		:host {
+			display: flex;
+			justify-content: space-between;
+		}
+	`,
 	standalone: true,
 	imports: [CommonModule, NgIf],
 })

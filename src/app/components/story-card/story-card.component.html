@@ -44,11 +44,6 @@
 						}
 					</div>
 				</div>
-				@if (!!story.videoUrl) {
-					<div [title]="'Contiene material audiovisual'" class="h-6 w-6">
-						<img [alt]="'Contiene video'" class="video" src="assets/svg/video.svg" />
-					</div>
-				}
 				@for (mediaResource of story.media; track $index) {
 					@switch (mediaResource.type) {
 						@case ('audioRecording') {
@@ -59,6 +54,11 @@
 						@case ('spaceRecording') {
 							<div [title]="'Contiene material en formato Spaces de X'" class="h-6 w-6">
 								<img [alt]="'Contiene link a Spaces'" src="assets/svg/twitter.svg" />
+							</div>
+						}
+						@case ('youTubeVideo') {
+							<div [title]="'Contiene material audiovisual'" class="h-6 w-6">
+								<img [alt]="'Contiene video'" class="video" src="assets/svg/video.svg" />
 							</div>
 						}
 					}

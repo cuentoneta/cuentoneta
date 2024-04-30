@@ -11,14 +11,6 @@ import { baseLanguage } from '../../../cms/utils/localization';
 
 // Modelos
 import { AuthorDTO } from '@models/author.model';
-import { getTweetData } from './twitter-api';
-import {
-	AudioRecording,
-	AudioRecordingSchemaObject,
-	Media,
-	MediaSchemaObject,
-	SpaceRecordingSchemaObject,
-} from '@models/media.model';
 
 export function mapAuthor(rawAuthorData: any, language?: string): AuthorDTO {
 	return {
@@ -65,31 +57,4 @@ export function mapResources(resources: any[]) {
 			},
 		})) ?? []
 	);
-}
-
-// TODO: #537 - Proveer tipos para tratamiento de contenido multimedia
-export async function mapMediaSources(mediaSources: MediaSchemaObject[]): Promise<Media[]> {
-	if (!mediaSources) return [];
-
-	const media: Media[] = [];
-	for (const mediaSource of mediaSources) {
-		if (mediaSource._type === 'spaceRecording') {
-			media.push(await getTweetData(mediaSource as SpaceRecordingSchemaObject));
-		}
-		if (mediaSource._type === 'audioRecording') {
-			media.push(getAudioRecordingData(mediaSource as AudioRecordingSchemaObject));
-		}
-	}
-	return media;
-}
-
-export function getAudioRecordingData(mediaSource: AudioRecordingSchemaObject): AudioRecording {
-	return {
-		title: mediaSource.title,
-		type: mediaSource._type,
-		icon: mediaSource.icon,
-		data: {
-			url: mediaSource.url,
-		},
-	};
 }

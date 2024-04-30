@@ -46,13 +46,13 @@ import { InternalLink, UrlLink } from '@models/link.model';
 	`,
 	styles: `
 		footer {
-			@apply mt-[120px] w-full border-t-1 border-solid border-primary-500 bg-white max-sm:py-8 max-sm:px-5 sm:h-[98px];
+			@apply mt-[120px] w-full border-t-1 border-solid border-primary-500 bg-white max-sm:px-5 max-sm:py-8 sm:h-[98px];
 		}
 
 		.container {
 			@apply columns-1 gap-6;
-			@apply sm:grid-cols-[0.15fr_1fr_0.5fr] sm:my-0 sm:mx-5;
-			@apply lg:grid-cols-[0.25fr_1fr_0.25fr] lg:m-auto;
+			@apply sm:mx-5 sm:my-0 sm:grid-cols-[0.15fr_1fr_0.5fr];
+			@apply lg:m-auto lg:grid-cols-[0.25fr_1fr_0.25fr];
 		}
 
 		.navigation {

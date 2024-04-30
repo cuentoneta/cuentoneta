@@ -3,10 +3,11 @@ import { client } from './_helpers/sanity-connector';
 import groq from 'groq';
 
 // Utilidades
-import { mapAuthorForStory, mapMediaSources, mapResources } from './_utils/functions';
+import { mapAuthorForStory, mapResources } from './_utils/functions';
 
 // Modelos
 import { StoryDTO } from '@models/story.model';
+import { mapMediaSources } from './_utils/media-sources.functions';
 
 // Subqueries
 import { authorForStory } from './_queries/author.query';
@@ -18,7 +19,6 @@ export async function fetchByAuthorSlug(slug: string): Promise<StoryDTO[]> {
 							  'slug': slug.current,
 							  title, 
 							  language,
-							  videoUrl,
 							  badLanguage,
 							  categories, 
 							  body[0...2], 
@@ -52,7 +52,6 @@ export async function fetchForRead(slug: string): Promise<StoryDTO> {
                               'slug': slug.current,
                               title, 
                               language,
-                              videoUrl,
                               badLanguage,
                               epigraphs,
                               categories, 

@@ -21,7 +21,6 @@ const mockStory: Story = {
 	approximateReadingTime: 5,
 	author: mockAuthor,
 	language: 'es',
-	videoUrl: 'https://gativideo.com/video.mp4',
 	badLanguage: false,
 	epigraphs: [],
 	media: [],

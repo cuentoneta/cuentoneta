@@ -1,8 +1,7 @@
 import express from 'express';
 import { client } from './_helpers/sanity-connector';
-import { mapAuthorForStory, mapMediaSources, urlFor } from './_utils/functions';
-
-// Subqueries
+import { mapAuthorForStory, urlFor } from './_utils/functions';
+import { mapMediaSources } from './_utils/media-sources.functions';
 import { authorForStoryCard } from './_queries/author.query';
 
 async function fetchPreview(req: express.Request, res: express.Response) {
@@ -46,13 +45,11 @@ async function fetchPreview(req: express.Request, res: express.Response) {
                                             _id,
                                             'slug': slug.current,
                                             title,
-                                            videoUrl,
                                             badLanguage,
                                             categories,
                                             body[0...3],
                                             review,
                                             approximateReadingTime,
-                                            videoUrl,
                                             language,
                                             mediaSources,
                                         	${authorForStoryCard}
@@ -156,7 +153,6 @@ async function fetchStorylist(req: any, res: any) {
                                         body[0...3],
                                         review,
                                         approximateReadingTime,
-                                        videoUrl,
                                         language,
                                         mediaSources,
                                         ${authorForStoryCard}

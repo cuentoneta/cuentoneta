@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AudioRecording, MediaTypes } from '@models/media.model';
+import { AudioRecording } from '@models/media.model';
 
 @Component({
 	selector: 'cuentoneta-audio-recording-widget',
@@ -12,7 +12,5 @@ import { AudioRecording, MediaTypes } from '@models/media.model';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AudioRecordingWidgetComponent {
-	media = input.required({
-		transform: (media: MediaTypes) => media as AudioRecording,
-	});
+	media = input.required<AudioRecording>();
 }

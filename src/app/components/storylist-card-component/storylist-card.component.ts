@@ -124,9 +124,9 @@ import { BadgeComponent } from '../badge/badge.component';
 		</article>
 	`,
 	styles: `
-	:host {
-		@apply block max-w-[602px];
-	}
+		:host {
+			@apply block max-w-[602px];
+		}
 	`,
 })
 export class StorylistCardComponent {

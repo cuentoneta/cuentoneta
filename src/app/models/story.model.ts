@@ -1,6 +1,6 @@
 import { Author, AuthorDTO } from './author.model';
 import { BlockContent } from '@models/block-content.model';
-import { Media, MediaTypes } from '@models/media.model';
+import { Media } from '@models/media.model';
 import { Resource } from '@models/resource.model';
 import { Epigraph, EpigraphDTO } from '@models/epigraph.model';
 
@@ -9,11 +9,11 @@ export interface StoryBase {
 	title: string;
 	slug: string;
 	approximateReadingTime: number;
-	videoUrl?: string;
 	badLanguage?: boolean;
 	language: string;
 	resources?: Resource[];
 	paragraphs: unknown;
+	media: Media[];
 }
 
 export interface Story extends StoryBase {
@@ -21,7 +21,6 @@ export interface Story extends StoryBase {
 	epigraphs: Epigraph[];
 	summary: BlockContent[];
 	paragraphs: BlockContent[];
-	media: MediaTypes[];
 }
 
 export interface StoryDTO extends StoryBase {
@@ -29,11 +28,9 @@ export interface StoryDTO extends StoryBase {
 	epigraphs: EpigraphDTO[];
 	summary?: BlockContent[];
 	paragraphs: BlockContent[];
-	media: Media[];
 }
 
 export interface StoryCard extends StoryBase {
 	author: Omit<Author, 'biography'>;
 	paragraphs: BlockContent[];
-	media: MediaTypes[];
 }
