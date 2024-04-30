@@ -206,7 +206,7 @@ async function fetchStorylist(req: any, res: any) {
 						slug: card.imageSlug,
 						url: urlFor(card.image).url(),
 					})),
-		publications: publications
+		publications: publications,
 	};
 
 	res.json(storylist);

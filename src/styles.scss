@@ -23,7 +23,7 @@
 
 @layer components {
 	.card {
-		@apply bg-gray-50 rounded-lg shadow-lg;
+		@apply rounded-lg bg-gray-50 shadow-lg;
 	}
 }
 
@@ -45,12 +45,12 @@ ngx-skeleton-loader {
 
 youtube-player {
 	.youtube-player-placeholder {
-		@apply mb-6 w-full aspect-video rounded-xl sm:mb-10  #{!important};
+		@apply mb-6 aspect-video w-full rounded-xl sm:mb-10  #{!important};
 		height: unset !important;
 	}
 
 	div iframe {
-		@apply mb-6 w-full aspect-video rounded-xl sm:mb-10 #{!important};
+		@apply mb-6 aspect-video w-full rounded-xl sm:mb-10 #{!important};
 		height: unset !important;
 	}
 }
@@ -58,7 +58,7 @@ youtube-player {
 cuentoneta-bio-summary-card {
 	.bio-and-summary p {
 		a {
-			@apply underline text-interactive-500 hover:text-interactive-600;
+			@apply text-interactive-500 underline hover:text-interactive-600;
 		}
 	}
 }

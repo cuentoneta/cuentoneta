@@ -4,10 +4,10 @@ about: Checklist para generar la release de un hito de La Cuentoneta
 title: ''
 labels: "\U0001F4BC gestión"
 assignees: ''
-
 ---
 
 ## Tareas
+
 - [ ] Listar todos los issues agregados a la release.
 - [ ] Ajustar roadmap.
 - [ ] Agregar contribuyentes a la versión en codebase.
@@ -18,5 +18,6 @@ assignees: ''
 `(Agregar otras tareas particulares de la versión, en caso de que sea necesario)`
 
 ## Criterios de aceptación
+
 - [ ] Verificar que no reste ningún issue por ser resuelto en el hito.
 - [ ] Tener todas las tareas adjuntas en la descripción completadas.

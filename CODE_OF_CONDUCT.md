@@ -39,4 +39,5 @@ en el [Código de Conducta de la comunidad de FrontendCafé][dc-fec-coc] sirve c
 
 <!-- Listado de enlaces de referencia, mantenerlos actualizados en cada archivo -->
 <!-- Enlaces a las paginas web del proyecto -->
+
 [dc-fec-coc]: https://discord.com/channels/594363964499165194/748183026244255824

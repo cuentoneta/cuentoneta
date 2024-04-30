@@ -156,6 +156,7 @@ pnpm install
 ```
 
 O bien, su versión corta.
+
 ```bash
 pnpm i
 ```
@@ -175,8 +176,11 @@ Para ejecutar el entorno de desarrollo de Sanity Studio, ejecutá el siguiente c
 ```bash
 pnpm run dev
 ```
-----
+
+---
+
 ### Correr localmente Sanity Studio
+
 Para gestionar el contenido de La Cuentoneta utilizamos [Sanity Studio](https://www.sanity.io/docs/sanity-studio). Puedes ejecutar localmente en tu computadora el entorno de desarrollo de Sanity Studio, en modo sólo lectura, siguiendo los siguientes pasos:
 
 #### Paso 1: Instalar dependencias
@@ -192,6 +196,7 @@ pnpm install
 Deberás agregar un archivo `.env` en la carpeta `/cms`.
 
 El contenido del archivo `.env` deberá ser el siguiente:
+
 ```
 SANITY_STUDIO_DATASET=development
 SANITY_STUDIO_PROJECT_ID=s4dbqkc5
@@ -215,6 +220,7 @@ Password: CuentonetaFec2023#
 ```
 
 #### Paso 5: ¡Listo!
+
 Luego de ingresar las credenciales, se abrirá una pestaña en tu navegador con el entorno de desarrollo de Sanity Studio en la URL: https://localhost:3333
 
 Acceder con este usuario te permitirá crear y editar documentos en el entorno de desarrollo de Sanity Studio con el rol de _Contributor_, el cual tiene permisos para crear y editar documentos, pero no para publicarlos.
@@ -234,7 +240,7 @@ Los ambientes de despliegue de La Cuentoneta son los siguientes:
   [crear-issue-cuentoneta]: https://github.com/rolivencia/cuentoneta/issues/new/choose
   [feature-request-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%8F%8E%EF%B8%8F+mejora&projects=&template=feature.yml
   [bug-report-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%A6%9F+bug&projects=&template=bug_report.yml
-  [doc-code_of_conduct]: https://github.com/cuentoneta/cuentoneta/blob/develop/CODE_OF_CONDUCT.md 
+  [doc-code_of_conduct]: https://github.com/cuentoneta/cuentoneta/blob/develop/CODE_OF_CONDUCT.md
 
 <!-- Enlaces a Discord -->
 

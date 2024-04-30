@@ -6,7 +6,7 @@ import { AudioRecording, MediaTypes } from '@models/media.model';
 	selector: 'cuentoneta-audio-recording-widget',
 	standalone: true,
 	imports: [CommonModule],
-	template: ` <audio [src]="media().data.url" controls class="block mb-2 w-full"></audio>
+	template: ` <audio [src]="media().data.url" controls class="mb-2 block w-full"></audio>
 		<label class="inter-body-xs-medium text-primary-500">{{ media().title }}</label>`,
 	styles: ``,
 	changeDetection: ChangeDetectionStrategy.OnPush,

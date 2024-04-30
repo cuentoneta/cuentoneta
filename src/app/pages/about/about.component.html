@@ -1,5 +1,5 @@
 <main class="lg:mt-16">
-	<section class="grid mb-16 grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-0">
+	<section class="mb-16 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-0">
 		<div class="lg:w-[550px]">
 			<h1 class="h1 mb-5 lg:text-6xl lg:font-extrabold">Historias para disfrutar, compartir y aprender</h1>
 			<h3 class="h3 mb-5 text-gray-600">
@@ -12,7 +12,7 @@
 		</div>
 	</section>
 
-	<section class="block bg-gray-50 p-5 -mx-5 sm:mx-0 rounded-lg md:rounded-xl md:p-15 shadow-lg">
+	<section class="-mx-5 block rounded-lg bg-gray-50 p-5 shadow-lg sm:mx-0 md:rounded-xl md:p-15">
 		<!-- Sección de presentación del proyecto -->
 		<section id="presentation" class="mb-8">
 			<h2 class="h2 mb-5 text-gray-600">Sobre <em>La Cuentoneta</em></h2>
@@ -36,8 +36,9 @@
 			<p class="inter-body-base-regular">
 				Podés sumar tu granito de arena al desarrollo de La Cuentoneta de varias formas, algunas de las cuales se
 				describen a continuación. Como agradecimiento por tu aporte te agregaremos a la sección de
-				<a class="underline" [href]="links.GITHUB_CONTRIBUTORS">contribuyentes</a> y podrás, además, portar el badge
-				<strong>Cuentoneta 🚐</strong> en el servidor de <a class="underline"[href]="links.DISCORD_CHANNEL">Discord de FrontendCafé</a>.
+				<a [href]="links.GITHUB_CONTRIBUTORS" class="underline">contribuyentes</a> y podrás, además, portar el badge
+				<strong>Cuentoneta 🚐</strong> en el servidor de
+				<a [href]="links.DISCORD_CHANNEL" class="underline">Discord de FrontendCafé</a>.
 			</p>
 
 			<section class="mb-3 mt-3">
@@ -47,8 +48,9 @@
 					publicamos, y recomendándolo a otras personas. Llegar cada vez a más personas hará que podamos mejorar la
 					plataforma y descubrir qué funcionalidades nuevas son más necesarias a futuro. La Cuentoneta tiene cuentas
 					oficiales en
-					<a class="underline"[href]="links.FACEBOOK">Facebook</a>, <a class="underline"[href]="links.INSTAGRAM">Instagram</a> y
-					<a class="underline"[href]="links.TWITTER">Twitter</a>
+					<a [href]="links.FACEBOOK" class="underline">Facebook</a>,
+					<a [href]="links.INSTAGRAM" class="underline">Instagram</a> y
+					<a [href]="links.TWITTER" class="underline">Twitter</a>
 				</p>
 			</section>
 
@@ -57,9 +59,9 @@
 				<p class="inter-body-base-regular">
 					Si tenés una idea para una nueva funcionalidad o realizar alguna corrección o mejora , podés comunicarte con
 					el equipo de desarrollo vía el
-					<a class="underline"[href]="links.DISCORD_CHANNEL">Discord de FrontendCafé</a>
+					<a [href]="links.DISCORD_CHANNEL" class="underline">Discord de FrontendCafé</a>
 					o vía mail a
-					<a class="underline"href="mailto:contacto@cuentoneta.ar">contacto&#64;cuentoneta.ar</a>
+					<a class="underline" href="mailto:contacto@cuentoneta.ar">contacto&#64;cuentoneta.ar</a>
 					para ponernos en contacto y discutir tu propuesta.
 				</p>
 			</section>
@@ -90,8 +92,8 @@
 					nuevas funcionalidades.
 				</p>
 				<p class="inter-body-base-regular">
-					Podés acceder a <a class="underline"[href]="links.FIGMA">este enlace de Figma</a> para ver los diseño de la web y todos los
-					recursos gráficos del proyecto.
+					Podés acceder a <a [href]="links.FIGMA" class="underline">este enlace de Figma</a> para ver los diseño de la
+					web y todos los recursos gráficos del proyecto.
 				</p>
 			</section>
 
@@ -100,9 +102,9 @@
 				<p class="inter-body-base-regular">
 					Si sos desarrolladora o desarrollador, podés contribuir al proyecto mediante la creación de issues, pull
 					requests, revisando código, y más en nuestro
-					<a class="underline"[href]="links.GITHUB_REPO">repositorio de Github</a>. Para ello, te recomendamos leer la
-					<a class="underline"[href]="links.CONTRIBUTING">guía de contribución</a> para que puedas familiarizarte con el proyecto y sus
-					convenciones.
+					<a [href]="links.GITHUB_REPO" class="underline">repositorio de Github</a>. Para ello, te recomendamos leer la
+					<a [href]="links.CONTRIBUTING" class="underline">guía de contribución</a> para que puedas familiarizarte con
+					el proyecto y sus convenciones.
 				</p>
 			</section>
 		</section>
@@ -117,10 +119,10 @@
 			<p class="inter-body-base-regular">
 				Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. Es requerido unirte a nuestro
 				server y buscar el canal
-				<code><a class="underline"[href]="links.DISCORD_CHANNEL">#🚐 | la-cuentoneta</a></code
+				<code><a [href]="links.DISCORD_CHANNEL" class="underline">#🚐 | la-cuentoneta</a></code
 				>. Allí vas a poder escribir consultas, realizar propuestas y compartir ideas para el proyecto. El código de
 				conducta de este proyecto es extensible también a tu participación en el server de
-				<a class="underline"[href]="links.DISCORD_SERVER">FrontendCafé en Discord</a>.
+				<a [href]="links.DISCORD_SERVER" class="underline">FrontendCafé en Discord</a>.
 			</p>
 		</section>
 
@@ -132,9 +134,15 @@
 				<h3>Staff</h3>
 				<ul>
 					<li class="inter-body-base-regular">
-						Ramiro Olivencia - <em>Líder de Proyecto</em> (<a class="underline"[href]="'https://twitter.com/rolivenc'">&#64;rolivenc</a>)
+						Ramiro Olivencia - <em>Líder de Proyecto</em> (<a [href]="'https://twitter.com/rolivenc'" class="underline"
+							>&#64;rolivenc</a
+						>)
 					</li>
-					<li class="inter-body-base-regular">Maxi Cris - <em>Diseño UX/UI</em> (<a class="underline"[href]="'https://twitter.com/_maxicris'">&#64;maxicris</a>)</li>
+					<li class="inter-body-base-regular">
+						Maxi Cris - <em>Diseño UX/UI</em> (<a [href]="'https://twitter.com/_maxicris'" class="underline"
+							>&#64;maxicris</a
+						>)
+					</li>
 				</ul>
 			</section>
 
@@ -143,7 +151,7 @@
 				<ul>
 					@for (programmer of programmers; track programmer.name) {
 						<li class="inter-body-base-regular">
-							{{ programmer.name }} (<a class="underline"href="{{ programmer.url }}">{{ programmer.username }}</a
+							{{ programmer.name }} (<a class="underline" href="{{ programmer.url }}">{{ programmer.username }}</a
 							>)
 						</li>
 					}
@@ -154,37 +162,68 @@
 				<h3>Generación de contenido</h3>
 				<ul>
 					<li class="inter-body-base-regular">
-						Sofía Abramovich (<a class="underline"[href]="'https://twitter.com/__sofiaabigail'">&#64;__sofiaabigail</a>) - Autora de
+						Sofía Abramovich (<a [href]="'https://twitter.com/__sofiaabigail'" class="underline">&#64;__sofiaabigail</a
+						>) - Autora de
 						<i>Instrucciones para leer en Otoño </i>
 					</li>
 					<li class="inter-body-base-regular">
-						Marian Erro (<a class="underline"[href]="'https://twitter.com/MarianaErro'">&#64;marianerro</a>) - Autoría de
+						Marian Erro (<a [href]="'https://twitter.com/MarianaErro'" class="underline">&#64;marianerro</a>) - Autoría
+						de
 						<i>Verano en Naón</i>
 					</li>
 					<li class="inter-body-base-regular">
-						Ladrón de Säbado (<a class="underline"[href]="'https://twitter.com/ladrondesabado'">&#64;ladrondesabado</a>) - Propuesta y
-						organización de los Spaces <i>Desde el Sótano de la Casa de la Calle Garay</i>, con lecturas y análisis de
-						cuentos de Borges.
+						Ladrón de Säbado (<a [href]="'https://twitter.com/ladrondesabado'" class="underline">&#64;ladrondesabado</a
+						>) - Propuesta y organización de los Spaces <i>Desde el Sótano de la Casa de la Calle Garay</i>, con
+						lecturas y análisis de cuentos de Borges.
 					</li>
-					<li class="inter-body-base-regular">Elk A. (<a class="underline"[href]="'https://www.wattpad.com/user/A-Elkkk-o-k'">&#64;A-Elkkk-o-k</a>) - Autoría de</li>
+					<li class="inter-body-base-regular">
+						Elk A. (<a [href]="'https://www.wattpad.com/user/A-Elkkk-o-k'" class="underline">&#64;A-Elkkk-o-k</a>) -
+						Autoría de
+					</li>
 				</ul>
 			</section>
 
 			<section class="mb-3">
 				<h3>Selección, transcripción y curación de contenido</h3>
 				<ul>
-					<li class="inter-body-base-regular">Patricio Decoud (<a class="underline"[href]="'https://twitter.com/arroba_pato'">&#64;arrobapato</a>)</li>
-					<li class="inter-body-base-regular">Juan Balmaceda (<a class="underline"[href]="'https://twitter.com/balm4ceda'">&#64;balm4ceda</a>)</li>
-					<li class="inter-body-base-regular">Facundo Kaufmann (<a class="underline"[href]="'https://twitter.com/facukaufmann'">&#64;facukaufmann</a>)</li>
-					<li class="inter-body-base-regular">Candela Godoy (<a class="underline"[href]="'https://twitter.com/napsiex'">&#64;napsiex</a>)</li>
-					<li class="inter-body-base-regular">Analía Ale (<a class="underline"[href]="'https://www.linkedin.com/in/anal%C3%ADa-ale-5673a6204/'">&#64;analía-ale</a>)</li>
-					<li class="inter-body-base-regular">Brahian Pereyra (<a class="underline"[href]="'https://twitter.com/brahianpdev'">&#64;brahianpdev</a>)</li>
-					<li class="inter-body-base-regular">Juan Romero (<a class="underline"[href]="'https://www.linkedin.com/in/juanr0mer0'">&#64;juanr0mer0</a>)</li>
-					<li class="inter-body-base-regular">Luis Omar Sánchez Díaz (<a class="underline"[href]="'https://www.instagram.com/luisthepower/'">&#64;luisthepower</a>)</li>
-					<li class="inter-body-base-regular">Karla Nevárez (<a class="underline"[href]="'mailto:kanemu36@gmail.com'">kanemu36&#64;gmail.com</a>)</li>
+					<li class="inter-body-base-regular">
+						Patricio Decoud (<a [href]="'https://twitter.com/arroba_pato'" class="underline">&#64;arrobapato</a>)
+					</li>
+					<li class="inter-body-base-regular">
+						Juan Balmaceda (<a [href]="'https://twitter.com/balm4ceda'" class="underline">&#64;balm4ceda</a>)
+					</li>
+					<li class="inter-body-base-regular">
+						Facundo Kaufmann (<a [href]="'https://twitter.com/facukaufmann'" class="underline">&#64;facukaufmann</a>)
+					</li>
+					<li class="inter-body-base-regular">
+						Candela Godoy (<a [href]="'https://twitter.com/napsiex'" class="underline">&#64;napsiex</a>)
+					</li>
+					<li class="inter-body-base-regular">
+						Analía Ale (<a [href]="'https://www.linkedin.com/in/anal%C3%ADa-ale-5673a6204/'" class="underline"
+							>&#64;analía-ale</a
+						>)
+					</li>
+					<li class="inter-body-base-regular">
+						Brahian Pereyra (<a [href]="'https://twitter.com/brahianpdev'" class="underline">&#64;brahianpdev</a>)
+					</li>
+					<li class="inter-body-base-regular">
+						Juan Romero (<a [href]="'https://www.linkedin.com/in/juanr0mer0'" class="underline">&#64;juanr0mer0</a>)
+					</li>
+					<li class="inter-body-base-regular">
+						Luis Omar Sánchez Díaz (<a [href]="'https://www.instagram.com/luisthepower/'" class="underline"
+							>&#64;luisthepower</a
+						>)
+					</li>
+					<li class="inter-body-base-regular">
+						Karla Nevárez (<a [href]="'mailto:kanemu36@gmail.com'" class="underline">kanemu36&#64;gmail.com</a>)
+					</li>
 					<li class="inter-body-base-regular">Sebastián Mansilla</li>
-					<li class="inter-body-base-regular">Lolo Díaz (<a class="underline"[href]="'https://instagram.com/estre.sadx'">&#64;estre.sadx</a>)</li>
-					<li class="inter-body-base-regular">Nicolás Contrera (<a class="underline"[href]="'https://twitter.com/nicontrera1'">&#64;nicontrera1</a>)</li>
+					<li class="inter-body-base-regular">
+						Lolo Díaz (<a [href]="'https://instagram.com/estre.sadx'" class="underline">&#64;estre.sadx</a>)
+					</li>
+					<li class="inter-body-base-regular">
+						Nicolás Contrera (<a [href]="'https://twitter.com/nicontrera1'" class="underline">&#64;nicontrera1</a>)
+					</li>
 				</ul>
 			</section>
 		</section>

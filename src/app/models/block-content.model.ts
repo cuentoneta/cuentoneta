@@ -6,22 +6,22 @@
  */
 
 export interface BlockContent {
-    _type: 'block';
-    _key: string;
-    children: Block[];
-    markDefs?: MarkDef[];
-    style?: string;
+	_type: 'block';
+	_key: string;
+	children: Block[];
+	markDefs?: MarkDef[];
+	style?: string;
 }
 
 export interface Block {
-    _type: string;
-    _key: string;
-    text: string;
-    marks?: string[];
+	_type: string;
+	_key: string;
+	text: string;
+	marks?: string[];
 }
 
 export interface MarkDef {
-    _type: string;
-    _key: string;
-    href: string;
+	_type: string;
+	_key: string;
+	href: string;
 }

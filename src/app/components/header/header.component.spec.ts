@@ -7,25 +7,19 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 describe('HeaderComponent', () => {
+	let component: RenderResult<HeaderComponent, HeaderComponent>;
 
-  let component: RenderResult<HeaderComponent, HeaderComponent>;
+	beforeEach(async () => {
+		component = await render(HeaderComponent, {
+			componentImports: [CommonModule, NgOptimizedImage, RouterTestingModule, HttpClientTestingModule],
+			componentProviders: [provideMock(ContentService)],
+		});
+	});
 
-  beforeEach(async () => {
-    component = await render(HeaderComponent, {
-      componentImports: [
-        CommonModule,
-        NgOptimizedImage,
-        RouterTestingModule,
-        HttpClientTestingModule,
-      ],
-      componentProviders: [provideMock(ContentService)],
-    });
-  })
-
-  test('should render Header component', async () => {
-    expect(component).toBeTruthy();
-    expect(screen.getByAltText(/Cuentoneta/)).toBeTruthy();
-    expect(screen.getByRole('link', { name: 'Inicio' })).toHaveProperty('href', expect.stringMatching(/home/))
-    expect(screen.getByRole('link', { name: 'Nosotros' })).toHaveProperty('href', expect.stringMatching(/about/));
-  });
+	test('should render Header component', async () => {
+		expect(component).toBeTruthy();
+		expect(screen.getByAltText(/Cuentoneta/)).toBeTruthy();
+		expect(screen.getByRole('link', { name: 'Inicio' })).toHaveProperty('href', expect.stringMatching(/home/));
+		expect(screen.getByRole('link', { name: 'Nosotros' })).toHaveProperty('href', expect.stringMatching(/about/));
+	});
 });

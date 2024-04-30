@@ -4,19 +4,19 @@ import { ContentService } from '../../providers/content.service';
 import { HttpClientModule } from '@angular/common/http';
 
 export default {
-  title: 'HeaderComponent',
-  component: HeaderComponent,
-  decorators: [
-    moduleMetadata({
-      imports: [HttpClientModule],
-      providers: [ContentService],
-    }),
-  ],
+	title: 'HeaderComponent',
+	component: HeaderComponent,
+	decorators: [
+		moduleMetadata({
+			imports: [HttpClientModule],
+			providers: [ContentService],
+		}),
+	],
 } as Meta<HeaderComponent>;
 
 export const Primary = {
-  render: (args: HeaderComponent) => ({
-    props: args,
-  }),
-  args: {},
+	render: (args: HeaderComponent) => ({
+		props: args,
+	}),
+	args: {},
 };
