@@ -11,11 +11,25 @@ import { baseLanguage } from '../../../cms/utils/localization';
 
 // Modelos
 import { AuthorDTO } from '@models/author.model';
-import { PrologueDTO } from '@models/prologue.model';
+
 
 export function mapAuthor(rawAuthorData: any, language?: string): AuthorDTO {
 	return {
-		id: rawAuthorData._id,
+		slug: rawAuthorData.slug.current,
+		nationality: {
+			country: rawAuthorData.nationality?.country,
+			flag: urlFor(rawAuthorData.nationality?.flag)?.url(),
+		},
+		resources: mapResources(rawAuthorData.resources),
+		imageUrl: rawAuthorData.image ? urlFor(rawAuthorData.image).url() : undefined,
+		name: rawAuthorData.name,
+		biography: rawAuthorData.biography,
+	};
+}
+
+export function mapAuthorForStory(rawAuthorData: any, language?: string): AuthorDTO {
+	return {
+		slug: rawAuthorData.slug.current,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
 			flag: urlFor(rawAuthorData.nationality?.flag)?.url(),
@@ -25,15 +39,6 @@ export function mapAuthor(rawAuthorData: any, language?: string): AuthorDTO {
 		name: rawAuthorData.name,
 		biography: rawAuthorData.biography ? rawAuthorData.biography[language || baseLanguage!.id] : undefined,
 	};
-}
-
-export function mapPrologues(rawProloguesData: any): PrologueDTO[] {
-	return rawProloguesData
-		? rawProloguesData.map((x: { fwAuthor: any; fwText: any }) => ({
-				reference: x.fwAuthor,
-				text: x.fwText,
-			}))
-		: [];
 }
 
 export function urlFor(source: SanityImageSource): ImageUrlBuilder {

@@ -1,18 +1,22 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, Input, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Prologue } from '@models/prologue.model';
+import { Epigraph } from '@models/epigraph.model';
+import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 
 @Component({
 	selector: 'cuentoneta-story-epigraph',
 	standalone: true,
-	imports: [CommonModule],
+	imports: [CommonModule, PortableTextParserComponent],
 	template: `
-		<div class="border-l-3 border-solid border-primary-500 mr-4"></div>
-		<div class="flex flex-wrap flex-col items-end justify-end flex-1 source-serif-pro-body-lg text-gray-700">
-			<p class="self-baseline">{{ prologue.text }}&nbsp;</p>
+		<div class="mr-4 border-l-3 border-solid border-primary-500"></div>
+		<div class="source-serif-pro-body-lg flex flex-1 flex-col flex-wrap items-end justify-end text-gray-700">
+			<cuentoneta-portable-text-parser
+				[classes]="'self-baseline'"
+				[paragraphs]="epigraph().text"
+			></cuentoneta-portable-text-parser>
 			<div class="text-end">
-				@if (prologue.reference) {
-					<em>{{ prologue.reference }}</em>
+				@if (epigraph().reference) {
+					<em>{{ epigraph().reference }}</em>
 				}
 			</div>
 		</div>
@@ -25,5 +29,5 @@ import { Prologue } from '@models/prologue.model';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EpigraphComponent {
-	@Input({ required: true }) prologue!: Prologue;
+	epigraph = input.required<Epigraph>();
 }

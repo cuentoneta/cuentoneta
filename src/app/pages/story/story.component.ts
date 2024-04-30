@@ -30,8 +30,8 @@ import { StoryNavigationBarComponent } from '../../components/story-navigation-b
 import { BioSummaryCardComponent } from '../../components/bio-summary-card/bio-summary-card.component';
 import { ShareContentComponent } from '../../components/share-content/share-content.component';
 import { EpigraphComponent } from '../../components/epigraph/epigraph.component';
-import { MediaResourceComponent } from '../../components/media-resource/media-resource.component'
-import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component'
+import { MediaResourceComponent } from '../../components/media-resource/media-resource.component';
+import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
 
 @Component({
 	selector: 'cuentoneta-story',
@@ -39,7 +39,19 @@ import { PortableTextParserComponent } from '../../components/portable-text-pars
 	styles: `
 		:host {
 			@apply md:grid md:mt-28 gap-x-8 md:grid-cols-[286px_1fr];
-		}`,
+		}
+
+		@keyframes scrollbar {
+			to {width: 100%;}
+		}
+
+		.progress-bar {
+			transition-timing-function: ease-out;
+			transition: width .5s;
+			animation: scrollbar linear;
+			animation-timeline: scroll(root);
+		}
+	`,
 	standalone: true,
 	imports: [
 		CommonModule,

@@ -6,10 +6,11 @@
     "node": ">=20.11.0 <21.0.0"
   },
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "postinstall": "ts-node ./scripts/install-config.ts",
     "dev": "concurrently -p --names=\"Server build,Frontend app,Server app\" --prefix-colors=\"yellow,red,green\" \"pnpm run build:watch\" \"pnpm run serve:frontend\" \"pnpm run serve:backend\"\n",
     "serve:frontend": "nx run cuentoneta:serve:development",
-    "serve:backend": "nodemon -r ts-node/register --env-file=.env dist/cuentoneta/server/server.mjs",
+    "serve:backend": "node -r ts-node/register --watch-path=./dist/cuentoneta/server --env-file=.env dist/cuentoneta/server/server.mjs",
     "build": "nx run cuentoneta:build:production --skip-nx-cache",
     "build:watch": "nx run cuentoneta:build:production --skip-nx-cache --watch",
     "config:dev": "node -r ts-node/register --env-file=.env ./scripts/set-environment.ts",
@@ -45,7 +46,6 @@
     "express": "^4.18.2",
     "groq": "^3.23.4",
     "ngx-skeleton-loader": "^7.0.0",
-    "nodemon": "^3.1.0",
     "rettiwt-api": "^2.4.2",
     "rxjs": "~7.5.0",
     "satori": "^0.10.1",
@@ -72,7 +72,7 @@
     "@storybook/addon-styling": "^1.3.0",
     "@storybook/angular": "7.5.3",
     "@storybook/core-server": "7.5.3",
-    "@testing-library/angular": "^14.1.1",
+    "@testing-library/angular": "^16.0.0",
     "@types/jest": "29.4.4",
     "@types/node": "^18.16.9",
     "@types/react": "^18.2.11",
@@ -97,9 +97,11 @@
     "postcss": "8.4.36",
     "prettier": "^3.1.1",
     "prettier-plugin-organize-attributes": "^1.0.0",
+    "prettier-plugin-tailwindcss": "^0.5.14",
     "pretty-quick": "^3.1.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "slugify": "^1.6.6",
     "storybook": "7.0.8",
     "tailwindcss": "^3.4.1",
     "ts-jest": "29.1.0",
@@ -108,4 +110,3 @@
     "webpack": "^5.64.0"
   }
 }
-
