@@ -29,7 +29,6 @@ export interface YouTubeVideo extends Media {
 	data: { description: string; videoId: string };
 }
 
-// TODO: #537 - Proveer tipo para tratamiendo de contenido multimedia de videos de YouTube
 export type MediaTypes = AudioRecording | SpaceRecording | YouTubeVideo;
 export type MediaTypeKey = 'spaceRecording' | 'audioRecording' | 'youTubeVideo';
 
