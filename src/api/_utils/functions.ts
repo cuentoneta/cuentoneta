@@ -20,6 +20,7 @@ import {
 	MediaSchemaObject,
 	SpaceRecording,
 	SpaceRecordingSchemaObject,
+	YoutubeVideoSchemaObject,
 } from '@models/media.model';
 
 export function mapAuthor(rawAuthorData: any, language?: string): AuthorDTO {
@@ -64,17 +65,19 @@ export function mapResources(resources: any[]) {
 	);
 }
 
-// TODO: #537 - Proveer tipos para tratamiento de contenido multimedia
 export async function mapMediaSources(mediaSources: MediaSchemaObject[]): Promise<Media[]> {
 	if (!mediaSources) return [];
 
 	const media: Media[] = [];
 	for (const mediaSource of mediaSources) {
+		if (mediaSource._type === 'audioRecording') {
+			media.push(getAudioRecordingData(mediaSource as AudioRecordingSchemaObject));
+		}
 		if (mediaSource._type === 'spaceRecording') {
 			media.push(await getTweetData(mediaSource as SpaceRecordingSchemaObject));
 		}
-		if (mediaSource._type === 'audioRecording') {
-			media.push(getAudioRecordingData(mediaSource as AudioRecordingSchemaObject));
+		if (mediaSource._type === 'youtubeRecording') {
+			media.push(getYoutubeVideoData(mediaSource as YoutubeVideoSchemaObject));
 		}
 	}
 	return media;
@@ -86,6 +89,18 @@ export function getAudioRecordingData(mediaSource: AudioRecordingSchemaObject): 
 		type: mediaSource._type,
 		icon: mediaSource.icon,
 		data: {
+			url: mediaSource.url,
+		},
+	};
+}
+
+export function getYoutubeVideoData(mediaSource: YoutubeVideoSchemaObject) {
+	return {
+		title: mediaSource.title,
+		type: mediaSource._type,
+		icon: mediaSource.icon,
+		data: {
+			description: mediaSource.description,
 			url: mediaSource.url,
 		},
 	};

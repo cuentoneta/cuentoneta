@@ -17,17 +17,21 @@ export interface Media {
 	data?: unknown;
 }
 
-export interface SpaceRecording extends Media {
-	data: ITweet & { duration: string };
-}
-
 export interface AudioRecording extends Media {
 	data: { url: string };
 }
 
+export interface SpaceRecording extends Media {
+	data: ITweet & { duration: string };
+}
+
+export interface YouTubeRecording extends Media {
+	data: { description: string; url: string };
+}
+
 // TODO: #537 - Proveer tipo para tratamiendo de contenido multimedia de videos de YouTube
-export type MediaTypes = SpaceRecording | AudioRecording;
-export type MediaTypeKey = 'spaceRecording' | 'audioRecording';
+export type MediaTypes = AudioRecording | SpaceRecording | YouTubeRecording;
+export type MediaTypeKey = 'spaceRecording' | 'audioRecording' | 'youtubeRecording';
 
 /**
  * Interfaces utilizadas por backend para definir los tipos de contenido multimedia
@@ -46,5 +50,10 @@ export interface SpaceRecordingSchemaObject extends MediaSchemaObject {
 }
 
 export interface AudioRecordingSchemaObject extends MediaSchemaObject {
+	url: string;
+}
+
+export interface YoutubeVideoSchemaObject extends MediaSchemaObject {
+	description: string;
 	url: string;
 }
