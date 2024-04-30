@@ -98,7 +98,7 @@ const youtubeVideo = {
 		{
 			name: 'title',
 			title: 'Título del video',
-			type: 'title',
+			type: 'string',
 		},
 		{
 			name: 'description',
