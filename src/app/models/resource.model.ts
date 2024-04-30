@@ -1,4 +1,4 @@
-import { Icon } from '@models/icon.model'
+import { Icon } from '@models/icon.model';
 
 export interface Resource {
 	title: string;

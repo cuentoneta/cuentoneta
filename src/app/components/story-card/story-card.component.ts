@@ -8,7 +8,7 @@ import { StoryCardSkeletonComponent } from '../story-card-skeleton/story-card-sk
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 import { CommonModule, DatePipe, NgIf, NgOptimizedImage } from '@angular/common';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component'
+import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 
 @Component({
 	selector: 'cuentoneta-story-card',

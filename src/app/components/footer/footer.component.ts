@@ -7,15 +7,15 @@ import { InternalLink, UrlLink } from '@models/link.model';
 	selector: 'cuentoneta-footer',
 	template: `
 		<footer class="">
-			<div class="container grid items-center justify-between h-full max-w-screen-lg">
+			<div class="container grid h-full max-w-screen-lg items-center justify-between">
 				<section class="logo">
 					<img [ngSrc]="'./assets/svg/logo.svg'" width="49" height="26" alt="Logo de 'La Cuentoneta'" />
 				</section>
 				<section class="navigation">
 					<nav>
-						<ul class="flex justify-left lg:justify-center inter-body-sm-semibold">
+						<ul class="justify-left inter-body-sm-semibold flex lg:justify-center">
 							@for (link of navLinks; track $index) {
-								<li class="hover:text-interactive-500 max-sm:inter-body-xs-bold">
+								<li class="max-sm:inter-body-xs-bold hover:text-interactive-500">
 									<a routerLink="{{ link.path }}">{{ link.label }}</a>
 								</li>
 							}
@@ -31,7 +31,7 @@ import { InternalLink, UrlLink } from '@models/link.model';
 										<img
 											[alt]="link.alt"
 											[ngSrc]="link.imageUrl!"
-											class="w-[20px] h-[20px] max-w-[20px]"
+											class="h-[20px] w-[20px] max-w-[20px]"
 											width="20"
 											height="20"
 										/>

@@ -5,15 +5,15 @@ import { CommonModule, NgIf } from '@angular/common';
 	selector: 'cuentoneta-story-edition-date-label[label]',
 	template: `
 		@if (!!label) {
-			<span class="flex items-center text-primary-500 max-sm:inter-body-xs-bold sm:inter-body-sm-bold">
-				<div class="bg-primary-500 mr-2 h-[12px] w-[2px]"></div>
+			<span class="max-sm:inter-body-xs-bold sm:inter-body-sm-bold flex items-center text-primary-500">
+				<div class="mr-2 h-[12px] w-[2px] bg-primary-500"></div>
 				{{ label }}
 			</span>
 		}
 		<!--ToDo: Extraer badge a nuevo componente-->
 		@if (markAsNew) {
-			<div class="flex items-center bg-primary-200 rounded">
-				<label class="inter-body-xs-bold my-1 mx-4">NUEVO</label>
+			<div class="flex items-center rounded bg-primary-200">
+				<label class="inter-body-xs-bold mx-4 my-1">NUEVO</label>
 			</div>
 		}
 	`,

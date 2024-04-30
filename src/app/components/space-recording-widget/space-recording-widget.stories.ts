@@ -1,7 +1,7 @@
 import { Meta, moduleMetadata } from '@storybook/angular';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { SpaceRecordingWidgetComponent } from './space-recording-widget.component';
-import { Media } from '@models/media.model'
+import { Media } from '@models/media.model';
 
 export default {
 	title: 'SpaceRecordingWidgetComponent',

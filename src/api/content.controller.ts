@@ -7,12 +7,8 @@ router.get('/landing-page', getLandingPageContent);
 
 export default router;
 
-function getLandingPageContent(
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
-) {
-  fetchLandingPageContent(req, res)
-    .then((result) => res.json(result))
-    .catch((err) => next(err));
+function getLandingPageContent(req: express.Request, res: express.Response, next: express.NextFunction) {
+	fetchLandingPageContent(req, res)
+		.then((result) => res.json(result))
+		.catch((err) => next(err));
 }

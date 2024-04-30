@@ -11,7 +11,7 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 	hostDirectives: [TooltipDirective],
 	imports: [BypassHtmlSanitizerPipe, CommonModule, NgOptimizedImage, SvgIconComponent],
 	template: `
-		<span class="flex items-center gap-1 inter-body-xs-bold">
+		<span class="inter-body-xs-bold flex items-center gap-1">
 			@if (showIcon && !!tag.icon) {
 				<cuentoneta-svg-icon [svg]="tag.icon.svg" />
 			}

@@ -6,40 +6,40 @@
 import { client } from '../src/api/_helpers/sanity-connector';
 
 const fetchStories = () =>
-    client.fetch(`
+	client.fetch(`
   *[_type == 'story']
 `);
 
 const buildPatches = (stories) =>
-    stories.map((story) => ({
-        id: story._id,
-        patch: {
-            unset: ['day'],
-            ifRevisionID: story._rev,
-        },
-    }));
+	stories.map((story) => ({
+		id: story._id,
+		patch: {
+			unset: ['day'],
+			ifRevisionID: story._rev,
+		},
+	}));
 
 const createTransaction = (patches) =>
-    patches.reduce((tx, patch) => tx.patch(patch.id, patch.patch), client.transaction());
+	patches.reduce((tx, patch) => tx.patch(patch.id, patch.patch), client.transaction());
 
 const commitTransaction = (tx) => tx.commit();
 
 const migrateBatch = async () => {
-    const stories = await fetchStories();
-    const patches = buildPatches(stories);
-    if (patches.length === 0) {
-        console.log('No hay documentos para migrar!');
-        return null;
-    }
-    console.log(
-        `Migrando batch:\n %s`,
-        patches.map((patch) => `${patch.id} => ${JSON.stringify(patch.patch)}`).join('\n')
-    );
-    const transaction = createTransaction(patches);
-    await commitTransaction(transaction);
+	const stories = await fetchStories();
+	const patches = buildPatches(stories);
+	if (patches.length === 0) {
+		console.log('No hay documentos para migrar!');
+		return null;
+	}
+	console.log(
+		`Migrando batch:\n %s`,
+		patches.map((patch) => `${patch.id} => ${JSON.stringify(patch.patch)}`).join('\n'),
+	);
+	const transaction = createTransaction(patches);
+	await commitTransaction(transaction);
 };
 
 migrateBatch().catch((err) => {
-    console.error(err);
-    process.exit(1);
+	console.error(err);
+	process.exit(1);
 });

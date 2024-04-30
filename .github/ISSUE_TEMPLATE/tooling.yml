@@ -1,6 +1,6 @@
-name:  🛠️ Proponer agregado de una nueva herramienta
+name: 🛠️ Proponer agregado de una nueva herramienta
 description: Proponer el agregado de una nueva librería, dependencia o herramienta al proyecto
-labels: ["🛠️ tooling"]
+labels: ['🛠️ tooling']
 body:
   - type: textarea
     id: description
@@ -19,4 +19,3 @@ body:
       placeholder: |
         * [Herramienta 1](https://www.npmjs.com/dependencia-1)
         * [Tutorial de instalación de Herramienta 1](https://www.medium.com/tutorial-instalacion-herramienta-1)
-

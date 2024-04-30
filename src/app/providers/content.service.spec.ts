@@ -4,18 +4,18 @@ import { ContentService } from './content.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('ContentService', () => {
-  let service: ContentService;
+	let service: ContentService;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule]
-    })
-    TestBed.runInInjectionContext(() => {
-      service = TestBed.inject(ContentService);
-    });
-  });
+	beforeEach(() => {
+		TestBed.configureTestingModule({
+			imports: [HttpClientTestingModule],
+		});
+		TestBed.runInInjectionContext(() => {
+			service = TestBed.inject(ContentService);
+		});
+	});
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
+	it('should be created', () => {
+		expect(service).toBeTruthy();
+	});
 });
