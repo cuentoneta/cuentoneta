@@ -104,6 +104,7 @@ export class StoryComponent {
 				);
 
 		content$.subscribe(([story, storylist]) => {
+			this.story = story;
 			this.storylist = storylist;
 
 			metaTagsDirective.setTitle(`${story.title}, de ${story.author.name} en La Cuentoneta`);
