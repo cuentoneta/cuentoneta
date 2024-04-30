@@ -45,7 +45,7 @@ export function getYoutubeVideoData(mediaSource: YoutubeVideoSchemaObject) {
         icon: mediaSource.icon,
         data: {
             description: mediaSource.description,
-            url: mediaSource.url,
+            videoId: mediaSource.videoId,
         },
     };
 }
