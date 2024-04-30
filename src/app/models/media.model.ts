@@ -26,7 +26,7 @@ export interface SpaceRecording extends Media {
 }
 
 export interface YouTubeVideo extends Media {
-	data: { description: string; url: string };
+	data: { description: string; videoId: string };
 }
 
 // TODO: #537 - Proveer tipo para tratamiendo de contenido multimedia de videos de YouTube
@@ -55,5 +55,5 @@ export interface AudioRecordingSchemaObject extends MediaSchemaObject {
 
 export interface YoutubeVideoSchemaObject extends MediaSchemaObject {
 	description: string;
-	url: string;
+	videoId: string;
 }
