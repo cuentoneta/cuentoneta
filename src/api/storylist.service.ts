@@ -1,6 +1,7 @@
 import express from 'express';
 import { client } from './_helpers/sanity-connector';
-import { mapAuthor, mapMediaSources, mapPrologues, urlFor } from './_utils/functions';
+import { mapAuthor, mapPrologues, urlFor } from './_utils/functions';
+import { mapMediaSources } from './_utils/media-sources.functions';
 
 async function fetchPreview(req: express.Request, res: express.Response) {
 	const { slug } = req.query;
@@ -209,7 +210,7 @@ async function fetchStorylist(req: any, res: any) {
 						slug: card.imageSlug,
 						url: urlFor(card.image).url(),
 					})),
-		publications: publications
+		publications: publications,
 	};
 
 	res.json(storylist);

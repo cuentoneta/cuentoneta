@@ -3,10 +3,11 @@ import { client } from './_helpers/sanity-connector';
 import groq from 'groq';
 
 // Utilidades
-import { mapAuthor, mapMediaSources, mapPrologues, mapResources } from './_utils/functions';
+import { mapAuthor, mapPrologues, mapResources } from './_utils/functions';
 
 // Modelos
 import { StoryDTO } from '@models/story.model';
+import { mapMediaSources } from './_utils/media-sources.functions'
 
 async function fetchForRead(slug: string): Promise<StoryDTO> {
 	{
