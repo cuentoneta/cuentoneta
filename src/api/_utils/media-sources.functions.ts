@@ -20,7 +20,7 @@ export async function mapMediaSources(mediaSources: MediaSchemaObject[]): Promis
         if (mediaSource._type === 'spaceRecording') {
             media.push(await getTweetData(mediaSource as SpaceRecordingSchemaObject));
         }
-        if (mediaSource._type === 'youtubeRecording') {
+        if (mediaSource._type === 'youTubeVideo') {
             media.push(getYoutubeVideoData(mediaSource as YoutubeVideoSchemaObject));
         }
     }
