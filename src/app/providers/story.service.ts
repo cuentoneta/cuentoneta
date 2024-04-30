@@ -8,7 +8,7 @@ import { environment } from '../environments/environment';
 
 // Models
 import { Story, StoryCard, StoryDTO } from '@models/story.model';
-import { AudioRecording, Media, MediaTypes, SpaceRecording } from '@models/media.model';
+import { AudioRecording, Media, MediaTypes, SpaceRecording, YouTubeVideo } from '@models/media.model';
 
 @Injectable({ providedIn: 'root' })
 export class StoryService {
@@ -66,6 +66,9 @@ export class StoryService {
 		}
 		if (media.type === 'audioRecording') {
 			return media as AudioRecording;
+		}
+		if (media.type === 'youTubeVideo') {
+			return media as YouTubeVideo;
 		} else {
 			throw new Error(`El tipo ${media.type} no está soportado.`);
 		}
