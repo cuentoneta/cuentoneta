@@ -8,7 +8,6 @@ import { environment } from '../environments/environment';
 
 // Models
 import { Story, StoryCard, StoryDTO } from '@models/story.model';
-import { AudioRecording, Media, MediaTypes, SpaceRecording, YouTubeVideo } from '@models/media.model';
 
 @Injectable({ providedIn: 'root' })
 export class StoryService {
@@ -29,7 +28,7 @@ export class StoryService {
 				imageUrl: this.parseAvatarImageUrl(story.author.imageUrl),
 			},
 			paragraphs: story?.paragraphs ?? [],
-			media: story.media?.map((x) => this.mediaTypesAdapter(x)) ?? [],
+			media: story.media ?? [],
 		};
 	}
 
@@ -44,31 +43,11 @@ export class StoryService {
 				imageUrl: this.parseAvatarImageUrl(story.author.imageUrl),
 				biography: story.author.biography ?? [],
 			},
-			media: story.media?.map((x) => this.mediaTypesAdapter(x)) ?? [],
+			media: story.media ?? [],
 		};
 	}
 
 	private parseAvatarImageUrl(imageUrl: string | undefined): string {
 		return imageUrl ?? 'assets/img/default-avatar.jpg';
-	}
-
-	/**
-	 * Adaptador utilizado para mappear los distintos tipos de media que
-	 * pueden existir en la plataforma a su tipo específico.
-	 * @param media
-	 * @private
-	 */
-	private mediaTypesAdapter(media: Media): MediaTypes {
-		if (media.type === 'spaceRecording') {
-			return media as SpaceRecording;
-		}
-		if (media.type === 'audioRecording') {
-			return media as AudioRecording;
-		}
-		if (media.type === 'youTubeVideo') {
-			return media as YouTubeVideo;
-		} else {
-			throw new Error(`El tipo ${media.type} no está soportado.`);
-		}
 	}
 }
