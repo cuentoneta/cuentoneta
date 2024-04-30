@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, effect, input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { MediaTypes, SpaceRecording } from '@models/media.model';
+import { SpaceRecording } from '@models/media.model';
 
 @Component({
 	selector: 'cuentoneta-space-recording-widget',
@@ -8,27 +8,27 @@ import { MediaTypes, SpaceRecording } from '@models/media.model';
 	imports: [CommonModule, NgOptimizedImage],
 	template: `
 		<a [href]="spaceUrl" target="_blank">
-			<section class="spaces-card grid grid-rows-3-auto inter-body-base text-white rounded-lg p-4">
-				<div class="text-base flex items-center justify-between">
+			<section class="spaces-card inter-body-base grid grid-rows-3-auto rounded-lg p-4 text-white">
+				<div class="flex items-center justify-between text-base">
 					<div class="spaces-host flex gap-2.5">
 						<img
 							[ngSrc]="media().data.tweetBy.profileImage"
-							class="rounded-full border-white border-1 border-solid"
+							class="rounded-full border-1 border-solid border-white"
 							width="24"
 							height="24"
 						/>
 						<div class="font-bold">{{ media().data.tweetBy.fullName }}</div>
-						<span class="text-sm py-0.5 px-1 rounded bg-[#fff4] flex items-center">Anfitrión</span>
+						<span class="flex items-center rounded bg-[#fff4] px-1 py-0.5 text-sm">Anfitrión</span>
 					</div>
-					<div class="space-recording-data gap-2.5 hidden md:flex">
+					<div class="space-recording-data hidden gap-2.5 md:flex">
 						<div class="font-bold">{{ media().data.createdAt | date: 'MMMM d, YYYY' }}</div>
 						<div class="spaces-duration">{{ media().data.duration }}</div>
 					</div>
 				</div>
-				<h3 class="text-white font-semibold text-xl my-4">
+				<h3 class="my-4 text-xl font-semibold text-white">
 					{{ media().title }}
 				</h3>
-				<div class="no-underline font-bold text-base text-center p-2.5 rounded-3xl bg-[#fff4] hover:bg-[#1114]">
+				<div class="rounded-3xl bg-[#fff4] p-2.5 text-center text-base font-bold no-underline hover:bg-[#1114]">
 					Reproducir Grabación en X
 				</div>
 			</section>
@@ -46,9 +46,7 @@ import { MediaTypes, SpaceRecording } from '@models/media.model';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpaceRecordingWidgetComponent {
-	media = input.required({
-		transform: (media: MediaTypes) => media as SpaceRecording,
-	});
+	media = input.required<SpaceRecording>();
 
 	public spaceUrl: string = '';
 
