@@ -2,6 +2,7 @@ import express from 'express';
 import { client } from './_helpers/sanity-connector';
 import { mapAuthorForStory, urlFor } from './_utils/functions';
 import { mapMediaSources } from './_utils/media-sources.functions';
+import { authorForStoryCard } from './_queries/author.query'
 
 async function fetchPreview(req: express.Request, res: express.Response) {
 	const { slug } = req.query;
