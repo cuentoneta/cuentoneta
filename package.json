@@ -95,7 +95,7 @@
 		"nx": "18.2.3",
 		"nx-cloud": "18.0.0",
 		"postcss": "8.4.36",
-		"prettier": "^3.1.1",
+		"prettier": "^3.2.5",
 		"prettier-plugin-organize-attributes": "^1.0.0",
 		"prettier-plugin-tailwindcss": "^0.5.14",
 		"pretty-quick": "^4.0.0",
