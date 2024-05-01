@@ -223,7 +223,7 @@ Password: CuentonetaFec2023#
 
 Luego de ingresar las credenciales, se abrirá una pestaña en tu navegador con el entorno de desarrollo de Sanity Studio en la URL: https://localhost:3333
 
-Acceder con este usuario te permitirá crear y editar documentos en el entorno de desarrollo de Sanity Studio con el rol de _Contributor_, el cual tiene permisos para crear y editar documentos, pero no para publicarlos.
+Acceder con este usuario te permitirá crear y editar documentos en el entorno de desarrollo de Sanity Studio con el rol de _Contributor_, el cual tiene permisos para crear y editar documentos, pero no para publicarlos. De esta manera podrás introducir modificaciones locales en los schemas de Sanity y agregar documentos en formato draft para evaluar tus cambios.
 
 ---
 
@@ -234,7 +234,7 @@ Los ambientes de despliegue de La Cuentoneta son los siguientes:
 - **Web | Producción:** [https://cuentoneta.ar/](https://cuentoneta.ar/)
 - **Web | Staging:** [https://staging.cuentoneta.ar](https://staging.cuentoneta.ar)
 - **Storybook:** [https://cuentoneta-storybook.vercel.app/](https://cuentoneta-storybook.vercel.app/)
-- **Sanity Studio | Development:** (próximamente)
+- **Sanity Studio:** https://cuentoneta.sanity.studio/
   <!-- Links a GitHub Issues y a issue templates -->
   [github-issues-tutorial]: https://docs.github.com/es/issues/tracking-your-work-with-issues/creating-an-issue
   [crear-issue-cuentoneta]: https://github.com/rolivencia/cuentoneta/issues/new/choose
