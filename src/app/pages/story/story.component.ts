@@ -40,19 +40,6 @@ import { PortableTextParserComponent } from '../../components/portable-text-pars
 		:host {
 			@apply gap-x-8 md:mt-28 md:grid md:grid-cols-[286px_1fr];
 		}
-
-		@keyframes scrollbar {
-			to {
-				width: 100%;
-			}
-		}
-
-		.progress-bar {
-			transition-timing-function: ease-out;
-			transition: width 0.5s;
-			animation: scrollbar linear;
-			animation-timeline: scroll(root);
-		}
 	`,
 	standalone: true,
 	imports: [
