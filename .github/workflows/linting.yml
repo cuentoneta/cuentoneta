@@ -25,12 +25,12 @@ jobs:
         run: curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
 
       - name: Add node version repository
-        run: echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.11 nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
+        run: echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
 
       - name: Update repositories
         run: sudo apt update
 
-      - name: Install node 20.11
+      - name: Install node 20.x
         run: sudo apt install nodejs
 
       - name: Install dependencies
