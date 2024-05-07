@@ -62,7 +62,7 @@ import { InternalLink } from '@models/link.model';
 			}
 		</header>
 
-		<div class="sticky top-0 mb-2 h-2 w-full max-w-screen-lg overflow-hidden bg-primary-100">
+		<div class="sticky top-0 mb-2 h-2 w-full max-w-screen-lg overflow-hidden bg-gray-100">
 			<div class="progress-bar h-full w-0 bg-primary-400"></div>
 		</div>
 	`,
