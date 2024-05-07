@@ -62,13 +62,13 @@ import { InternalLink } from '@models/link.model';
 			}
 		</header>
 
-		<div class="sticky top-0 mb-2 h-2 w-full overflow-hidden bg-primary-100">
+		<div class="sticky top-0 mb-2 h-2 w-full max-w-screen-lg overflow-hidden bg-primary-100">
 			<div class="progress-bar h-full w-0 bg-primary-400"></div>
 		</div>
 	`,
 	styles: `
 		:host {
-			@apply fixed top-0 z-10 flex w-full flex-col bg-gray-100;
+			@apply sticky top-0 z-10 flex w-full flex-col items-center bg-gray-100;
 		}
 
 		header {
