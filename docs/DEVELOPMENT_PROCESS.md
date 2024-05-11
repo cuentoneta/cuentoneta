@@ -26,6 +26,16 @@ Dada la naturaleza del proyecto, es importante que tengas en consideración que:
 - Antes de proponer mejoras te familiarices con el proceso de desarrollo en su estado actual y en las herramientas que utilizamos.
 - Tengas en cuenta que la disponibilidad de tiempo y recursos de quienes contribuyen al proyecto puede variar, no estando ningún contribuyente dedicado a tiempo completo al proyecto. Volveremos sobre este punto luego.
 
+## Prácticas de Desarrollo
+
+### Desarrollo en Ramas
+
+Se utiliza el modelo de ramas `master` y `develop` para el desarrollo del proyecto. Las ramas de `feature` y `bugfix` se utilizan para el desarrollo de nuevas funcionalidades y corrección de errores, respectivamente.
+
+- La rama `master` es la rama principal del proyecto, donde se encuentra el código estable y listo para producción.
+- La rama `develop` es la rama de desarrollo, donde se integran los cambios de las diversas ramas `feature` y `bugfix` para su revisión y pruebas.
+- **Contribución mediante Pull Requests**: Se utilizan Pull Requests para la revisión de código y la integración de cambios en la rama `develop`.
+
 ---
 
 [dc-channel]: https://discord.com/channels/594363964499165194/1109220285841944586
