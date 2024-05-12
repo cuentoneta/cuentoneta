@@ -12,29 +12,53 @@
 
 ¡Te damos la bienvenida! Ya que estás leyendo esta sección, te agradecemos querer involucrarte en el proyecto y conocer en profundidad cómo nos organizamos para su desarrollo.
 
-Las prácticas de nuestro proceso de desarrollo, más las herramientas utilizadas para la gestión del mismo, están abiertos a propuestas para mejoras, cambios y reemplazos. En caso de que desees aportar sugerencias o propuestas de mejorar el proceso de desarrollo, puedes hacerla el canal **[**#🚐 | la-cuentoneta**][dc-channel]** en Discord o en sumar un issue de tipo **[💼 Proponer mejoras en la Gestión o el Proceso de Desarrollo del Proyecto](https://github.com/cuentoneta/cuentoneta/issues/new/choose)**.
+Las prácticas de nuestro proceso de desarrollo, más las herramientas utilizadas para la gestión del mismo, están
+abiertas a propuestas para mejoras, cambios y reemplazos. En caso de que desees aportar sugerencias o propuestas de mejorar el proceso de desarrollo, puedes hacerla el canal **[**#🚐 | la-cuentoneta**][dc-channel]** en Discord o en sumar un issue de tipo **[💼 Proponer mejoras en la Gestión o el Proceso de Desarrollo del Proyecto](https://github.com/cuentoneta/cuentoneta/issues/new/choose)**.
 
-## Consideraciones Iniciales
+## Consideraciones Generales
 
-La Cuentoneta es un proyecto abierto tanto en el código como en su gestión, siendo pública y de libre acceso toda la información relacionada a su desarrollo, estando esto en línea con el [Código de Conducta](doc-code_of_conduct) y la declaración de [Misión, Visión y Valores](doc-mmv).
+La Cuentoneta es un proyecto abierto tanto en el código como en su gestión, siendo pública y de libre acceso toda la
+información relacionada a su desarrollo y encontrándose la misma en línea con el [Código de Conducta](doc-code_of_conduct) y la declaración de [Misión, Visión y Valores](doc-mmv).
 
 Dada la naturaleza del proyecto, es importante que tengas en consideración que:
 
-- Procuramos simplicidad en la organización del proyecto y en la gestión del desarrollo.
+- Procuramos simplicidad en la organización del proyecto y en la gestión del desarrollo, intentando incorporar
+  herramientas y prácticas que permitan una experiencia de desarrollo (DX) óptima.
 - El proyecto tiene objetivos claros, definidos y de largo plazo, por lo que es importante que las propuestas de mejoras o cambios en el proceso de desarrollo estén alineadas con los objetivos del proyecto.
 - Existen herramientas más o menos arraigadas al proyecto, algunas de las cuales es complejo reemplazar. Para aquellas que revistan un cambio significativo, se deberá evaluar su impacto y viabilidad.
 - Antes de proponer mejoras te familiarices con el proceso de desarrollo en su estado actual y en las herramientas que utilizamos.
-- Tengas en cuenta que la disponibilidad de tiempo y recursos de quienes contribuyen al proyecto puede variar, no estando ningún contribuyente dedicado a tiempo completo al proyecto. Volveremos sobre este punto luego.
+- Tengas en cuenta que la disponibilidad de tiempo y recursos de quienes contribuyen al proyecto puede variar, sin
+  dedicación a tiempo completo por parte de ninguno de los contribuyentes. Volveremos sobre este punto luego.
 
-## Prácticas de Desarrollo
+## Pautas de Desarrollo
 
-### Desarrollo en Ramas
+### Control de versiones
 
-Se utiliza el modelo de ramas `master` y `develop` para el desarrollo del proyecto. Las ramas de `feature` y `bugfix` se utilizan para el desarrollo de nuevas funcionalidades y corrección de errores, respectivamente.
+El proyecto utiliza git como herramienta de control de versiones y Github para alojar el código fuente y gestionar
+el versionado y las contribuciones de código. Dentro del repositorio se hace uso de dos ramas particulares para el
+desarrollo del
+proyecto:
+`master` y `develop`,
+agregando ramas de trabajo adicionales para la implementación de nuevas funcionalidades y corrección de errores,
+generándose
+nuevas ramas por cada incidencia trabajada, sea esta incidencia de naturaleza de mejora, corrección de errores,
+documentación u otra naturaleza.
 
-- La rama `master` es la rama principal del proyecto, donde se encuentra el código estable y listo para producción.
-- La rama `develop` es la rama de desarrollo, donde se integran los cambios de las diversas ramas `feature` y `bugfix` para su revisión y pruebas.
-- **Contribución mediante Pull Requests**: Se utilizan Pull Requests para la revisión de código y la integración de cambios en la rama `develop`.
+#### Consideraciones
+
+- El proyecto posee una organización en Github donde se encuentran los repositorios del proyecto, siendo todos estos
+  repositorios públicos y de libre acceso.
+- La rama `master` es la rama principal del proyecto. En ella se integran los cambios que hacen a las versiones estables del proyecto y a partir de la cual se despliega el ambiente de producción.
+- La rama `develop` es la rama de desarrollo, donde se integran los cambios de las ramas de trabajo y a partir de la
+  cual se despliega el ambiente de _staging_.
+- Las contribuciones de código al proyecto se realizan mediante **pull requests** enviadas por medio de Github, las cuales permiten las _code reviews_ por parte de los mantenedores del proyecto y la posterior integración de estos cambios en la rama `develop`.
+- Las ramas de trabajo se nomenclan de la siguiente manera: `<numero-de-incidencia>-<nombre-de-la-funcionalidad>`.
+  Por ejemplo: `469-implementar-nuevo-componente-story-card-component`. Para facilidad de la generación de las ramas
+  de trabajo, se recomienda hacer uso de la generación de ramas a partir de las incidencias de Github.
+- Todos los commits deben ser nomenclados de la siguiente manera: `[#numero-de-incidencia] <mensaje-del-commit>`.
+  Por ejemplo: `[#469] Crear componente StoryCardComponent`.
+- Las ramas de trabajo se crean a partir de la rama `develop` y se eliminan una vez integrados los cambios en la rama `develop`.
+- Las ramas de trabajo deben ser actualizadas con la rama `develop` antes de solicitar la integración de los cambios en la rama `develop`.
 
 ---
 
@@ -43,5 +67,5 @@ Se utiliza el modelo de ramas `master` y `develop` para el desarrollo del proyec
 [crear-issue-cuentoneta]: https://github.com/rolivencia/cuentoneta/issues/new/choose
 [feature-request-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%8F%8E%EF%B8%8F+mejora&projects=&template=feature.yml
 [bug-report-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%A6%9F+bug&projects=&template=bug_report.yml
-[doc-code_of_conduct]: https://github.com/cuentoneta/cuentoneta/blob/develop/CODE_OF_CONDUCT.md
+[doc-]: https://github.com/cuentoneta/cuentoneta/blob/develop/CODE_OF_CONDUCT.md
 [doc-mvv]: https://github.com/cuentoneta/cuentoneta/blob/develop/MVV.md
