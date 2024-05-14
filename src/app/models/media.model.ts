@@ -1,4 +1,4 @@
-import { ITweet } from 'rettiwt-api';
+import { Tweet } from 'rettiwt-api';
 
 /**
  * Modelos relacionados a los distintos tipos de contenido multimedia que se
@@ -22,7 +22,7 @@ export interface AudioRecording extends Media {
 }
 
 export interface SpaceRecording extends Media {
-	data: ITweet & { duration: string };
+	data: Tweet & { duration: string };
 }
 
 export interface YouTubeVideo extends Media {
