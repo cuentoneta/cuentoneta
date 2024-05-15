@@ -23,7 +23,7 @@ jobs:
         run: pnpm install --ignore-scripts
 
       - name: Install nx
-        run: sudo npm install -g nx @nx/nx-linux-x64-gnu
+        run: sudo pnpm add -g nx
 
       - name: Run Tests
         run: nx test --skip-nx-cache
