@@ -19,11 +19,8 @@ jobs:
           node-version: 20.11
           cache: 'pnpm'
 
-      - name: Install nx globally
-        run: sudo npm install -g nx @nx/nx-linux-x64-gnu
-
       - name: Install dependencies
         run: pnpm install --ignore-scripts
 
       - name: Run Linter
-        run: nx lint --skip-nx-cache
+        run: npx nx lint --skip-nx-cache
