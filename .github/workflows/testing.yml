@@ -1,29 +1,26 @@
 name: Testing CI
 
-on: [pull_request]
+on:
+  pull_request:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20.11]
+    runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v3
+      - uses: actions/checkout@v4.1.4
+      - uses: pnpm/action-setup@v4.0.0
         with:
-          version: 8
+          version: 9.1.1
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - name: Use Node.js 20.11
+        uses: actions/setup-node@v4.0.2
         with:
-          node-version: ${{ matrix.node_version }}
+          node-version: 20.11
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --ignore-scripts
 
-      - name: Run tests
-        run: pnpm run test
+      - name: Run Tests
+        run: npx nx test --skip-nx-cache
