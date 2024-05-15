@@ -35,9 +35,14 @@ Puedes acceder a la hoja de ruta (roadmap) del proyecto en [este enlace][doc-roa
 
 Si deseas contribuir a La Cuentoneta te recomendamos leer la [guía de contribución][doc-contributing] para que puedas entender cómo puedes hacerlo. Allí encontrarás información sobre cómo reportar errores, proponer nuevas características, sugerir o sumar nuevos contenidos y cómo contribuir con código al proyecto.
 
-En caso que seas desarrolladora o desarrollador, encontrarás en ese documento información sobre todos los aspectos técnicos del proyecto, incluyendo cómo instalar el proyecto localmente para que puedas probarlo y realizar tus contribuciones de código.
+En caso que seas desarrolladora o desarrollador, encontrarás en ese documento información sobre todos los aspectos
+técnicos del proyecto, incluyendo cómo instalar el proyecto localmente para que puedas probarlo y realizar tus
+contribuciones de código. También puedes acceder a la [documentación del proceso de desarrollo]
+(doc-development-process) para interiorizarte sobre cómo gestionamos el desarrollo del
+proyecto y decidimos sobre los aspectos prácticos y las herramientas que utilizamos para el mismo.
 
-Si deseás visualizar los ítems de trabajo para principiantes en el proyecto, podés dirigirte a la [página de contribución del proyecto](https://github.com/cuentoneta/cuentoneta/contribute).
+Si deseas visualizar los ítems de trabajo para principiantes en el proyecto, podés dirigirte a la [página de
+contribución del proyecto](https://github.com/cuentoneta/cuentoneta/contribute).
 
 ## Misión, Visión y Valores
 
@@ -175,6 +180,7 @@ Este repositorio y el contenido de la web de La Cuentoneta se publican bajo lice
 [doc-roadmap]: ROADMAP.md
 [doc-mvv]: MVV.md
 [doc-lic]: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+[doc-development-process]: DEVELOPMENT_PROCESS.md
 
 <!-- Enlaces a Discord -->
 
