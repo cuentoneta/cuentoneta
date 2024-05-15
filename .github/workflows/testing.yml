@@ -22,8 +22,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install --ignore-scripts
 
-      - name: Install nx
-        run: sudo npm install -g nx
-
       - name: Run Tests
-        run: nx test --skip-nx-cache
+        run: npx nx test --skip-nx-cache

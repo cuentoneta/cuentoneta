@@ -22,8 +22,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install --ignore-scripts
 
-      - name: Install nx
-        run: sudo npm install -g nx @nx/nx-linux-x64-gnu @nx/nx-linux-x64-musl
-
       - name: Run Linter
-        run: nx lint --skip-nx-cache
+        run: npx nx lint --skip-nx-cache
