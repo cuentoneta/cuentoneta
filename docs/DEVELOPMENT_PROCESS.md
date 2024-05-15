@@ -34,19 +34,11 @@ Dada la naturaleza del proyecto, es importante que tengas en consideración que:
 
 ### Control de versiones
 
-El proyecto utiliza git como herramienta de control de versiones y Github para alojar el código fuente y gestionar
-el versionado y las contribuciones de código. Dentro del repositorio se hace uso de dos ramas particulares para el
-desarrollo del
-proyecto:
-`master` y `develop`,
-agregando ramas de trabajo adicionales para la implementación de nuevas funcionalidades y corrección de errores,
-generándose
-nuevas ramas por cada incidencia trabajada, sea esta incidencia de naturaleza de mejora, corrección de errores,
-documentación u otra naturaleza.
+El proyecto utiliza [git](https://git-scm.com) como herramienta de control de versiones y Github para alojar el código fuente y gestionar el versionado y las contribuciones de código. Dentro del repositorio se hace uso de dos ramas particulares para el desarrollo del proyecto:`master` y `develop`, agregando ramas de trabajo adicionales para la implementación de nuevas funcionalidades y corrección de errores, generándose nuevas ramas por cada incidencia trabajada, sea esta incidencia de naturaleza de mejora, corrección de errores, documentación u otra naturaleza.
 
 #### Consideraciones
 
-- El proyecto posee una organización en Github donde se encuentran los repositorios del proyecto, siendo todos estos
+- El proyecto posee una [organización en Github](https://github.com/cuentoneta) donde se encuentran los repositorios del proyecto, siendo todos estos
   repositorios públicos y de libre acceso.
 - La rama `master` es la rama principal del proyecto. En ella se integran los cambios que hacen a las versiones estables del proyecto y a partir de la cual se despliega el ambiente de producción.
 - La rama `develop` es la rama de desarrollo, donde se integran los cambios de las ramas de trabajo y a partir de la
@@ -59,6 +51,10 @@ documentación u otra naturaleza.
   Por ejemplo: `[#469] Crear componente StoryCardComponent`.
 - Las ramas de trabajo se crean a partir de la rama `develop` y se eliminan una vez integrados los cambios en la rama `develop`.
 - Las ramas de trabajo deben ser actualizadas con la rama `develop` antes de solicitar la integración de los cambios en la rama `develop`.
+
+### Gestión de versiones
+
+### Gestión de incidencias
 
 ---
 
