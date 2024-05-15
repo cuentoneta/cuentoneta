@@ -19,11 +19,11 @@ jobs:
           node-version: 20.11
           cache: 'pnpm'
 
+      - name: Install nx globally
+        run: sudo npm install -g nx
+
       - name: Install dependencies
         run: pnpm install --ignore-scripts
-
-      - name: Install nx
-        run: sudo pnpm add -g nx
 
       - name: Run Tests
         run: nx test --skip-nx-cache
