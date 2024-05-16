@@ -54,7 +54,30 @@ El proyecto utiliza [git](https://git-scm.com) como herramienta de control de ve
 
 ### Gestión de versiones
 
+Se desplegarán nuevas versiones de producción del proyecto siguiendo el [versionado semántico](https://semver.org/), donde se incrementará la versión de acuerdo a los siguientes criterios:
+
+- **Parche**: Incremento de la versión cuando se realizan correcciones de errores.
+- **Menor**: Incremento de la versión cuando se agregan nuevas funcionalidades de forma retrocompatible.
+- **Mayor**: Incremento de la versión cuando se realizan cambios que no son retrocompatibles.
+
+El lanzamiento de una nueva versión viene acompañado de la actualización de la documentación y la generación de un _tag_ en un commit específico del repositorio de Github, el cual señala el punto de lanzamiento de la nueva versión.
+
+Para la generación de los _tags_ de versionado se utilizará la siguiente nomenclatura: `vX.Y.Z`, donde `X` es el número de versión mayor, `Y` el número de versión menor y `Z` el número de versión de parche.
+
+El trabajo asociado a una versión particular se encuentra agrupado en un _[hito (milestone)](https://github.com/cuentoneta/cuentoneta/milestones)_ de Github, el cual contiene las incidencias y las ramas de trabajo que se encuentran en desarrollo asociadas a la versión.
+
+Para dar por cerrado un _hito_ debe cumplirse con los siguientes criterios:
+
+- Todas las incidencias asociadas al _hito_ deben encontrarse cerradas.
+- Todas las ramas de trabajo asociadas al _hito_ deben haber sido integradas en la rama `develop`.
+- La documentación asociada al _hito_ debe encontrarse actualizada.
+- La versión debe haber sido lanzada y el _tag_ correspondiente creado.
+- El _hito_ debe encontrarse marcado como cerrado en Github.
+- Debe crearse un último issue de tipo `💼 Preparar lanzamiento de una nueva versión`, el cual oficia de checklist para el lanzamiento de la nueva versión y detalla todos estos pasos.
+
 ### Gestión de incidencias
+
+[... POR COMPLETAR]
 
 ---
 
