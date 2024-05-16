@@ -56,7 +56,7 @@ El proyecto utiliza [git](https://git-scm.com) como herramienta de control de ve
 
 Se desplegarán nuevas versiones de producción del proyecto siguiendo el [versionado semántico](https://semver.org/), donde se incrementará la versión de acuerdo a los siguientes criterios:
 
-- **Parche**: Incremento de la versión cuando se realizan correcciones de errores.
+- **Parche**: Incremento de la versión cuando se realizan correcciones de errores, agregados de documentación o modificaciones que alteran sólo la experiencia de desarrollo (DX) del proyecto.
 - **Menor**: Incremento de la versión cuando se agregan nuevas funcionalidades de forma retrocompatible.
 - **Mayor**: Incremento de la versión cuando se realizan cambios que no son retrocompatibles.
 
