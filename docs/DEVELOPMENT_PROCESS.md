@@ -47,8 +47,9 @@ El proyecto utiliza [git](https://git-scm.com) como herramienta de control de ve
 - Las ramas de trabajo se nomenclan de la siguiente manera: `<numero-de-incidencia>-<nombre-de-la-funcionalidad>`.
   Por ejemplo: `469-implementar-nuevo-componente-story-card-component`. Para facilidad de la generación de las ramas
   de trabajo, se recomienda hacer uso de la generación de ramas a partir de las incidencias de Github.
-- Todos los commits deben ser nomenclados de la siguiente manera: `[#numero-de-incidencia] <mensaje-del-commit>`.
-  Por ejemplo: `[#469] Crear componente StoryCardComponent`.
+- Todos los commits deben ser nomenclados de la siguiente manera, referenciando el commit de manera navegable desde
+  la interfaz de Github: `[#numero-de-incidencia] - 
+<mensaje-del-commit>`. Por ejemplo: `[#469] - Crear componente StoryCardComponent`.
 - Las ramas de trabajo se crean a partir de la rama `develop` y se eliminan una vez integrados los cambios en la rama `develop`.
 - Las ramas de trabajo deben ser actualizadas con la rama `develop` antes de solicitar la integración de los cambios en la rama `develop`.
 
