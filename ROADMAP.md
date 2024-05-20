@@ -114,6 +114,9 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 [storylist-otoño-2023]: https://www.cuentoneta.ar/storylist?slug=otono-2023
 [storylist-fec-english-sessions]: https://www.cuentoneta.ar/storylist?slug=fec-english-sessions
 [dc-fec]: https://discord.com/invite/frontendcafe
+
+<!-- Enlaces a Redes Sociales -->
+
 [instagram-cuentoneta]: https://instagram.com/cuentoneta
 [twitter-cuentoneta]: https://twitter.com/cuentoneta
-[facebook-cuentoneta]: https://facebook.com/lacuentoneta
+[facebook-cuentoneta]: https://facebook.com/cuentoneta

@@ -172,7 +172,7 @@ Este repositorio y el contenido de la web de La Cuentoneta se publican bajo lice
 [web-fec]: https://frontend.cafe/
 [github-juguetear]: https://github.com/Juguetear/juguetear-web
 
-<!-- Enlaces a archivos de documentación (propios al repositorio)  -->
+<!-- Enlaces a otros documentos  -->
 
 [doc-code_of_conduct]: CODE_OF_CONDUCT.md
 [doc-changelog]: CHANGELOG.md
@@ -196,6 +196,9 @@ Este repositorio y el contenido de la web de La Cuentoneta se publican bajo lice
 [email]: mailto:contacto@cuentoneta.ar
 [figma]: https://www.figma.com/file/BIlQ6U3eh3M8vtYQt3vLNW/La-Cuentoneta-v2
 [wcag]: https://www.w3.org/WAI/standards-guidelines/wcag/es
+
+<!-- Enlaces a Redes Sociales -->
+
 [instagram-cuentoneta]: https://instagram.com/cuentoneta
 [twitter-cuentoneta]: https://twitter.com/cuentoneta
-[facebook-cuentoneta]: https://facebook.com/lacuentoneta
+[facebook-cuentoneta]: https://facebook.com/cuentoneta
