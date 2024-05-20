@@ -106,7 +106,7 @@ export class FooterComponent {
 			imageUrl: './assets/svg/instagram.svg',
 		},
 		{
-			url: 'https://www.facebook.com/lacuentoneta',
+			url: 'https://www.facebook.com/cuentoneta',
 			label: 'Facebook',
 			ariaLabel: `Página de Facebook de 'La Cuentoneta'`,
 			alt: 'Ícono de Facebook',
