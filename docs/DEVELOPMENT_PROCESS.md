@@ -78,7 +78,28 @@ Para dar por cerrado un _hito_ debe cumplirse con los siguientes criterios:
 
 ### Gestión de incidencias
 
-[... POR COMPLETAR]
+La gestión de incidencias, también referidas como issues, tickets o ítems de trabajo, se realiza a través de Github,
+utilizando la sección _Issues_ del repositorio del proyecto. Cualquier persona, miembro del equipo o externa al
+mismo, puede abrir una incidencia en el proyecto, teniendo que obligadamente elegir un tipo de incidencia y
+completar un formulario con la información necesaria para completar la carga.
+
+Luego de creada la incidencia, el equipo de desarrollo procederá a realizar un análisis y _triaging_ de la misma.
+Luego se procederá a evaluar la prioridad y la complejidad de la incidencia, siendo ésta luego asignada a un
+colaborador, interno o externo, para su resolución.
+
+Aquellas incidencias que requieran trabajo de desarrollo estarán asociadas a una o más ramas de trabajo, las cuales se
+recomienda sean creadas a partir de la incidencia en la interfaz de Github, siguiendo los lineamientos de la sección
+[Gestión de versiones](#gestión-de-versiones). Dentro de las ramas creadas se realizará el trabajo de desarrollo,
+solicitando posteriormente la integración de los cambios en la rama `develop` mediante un _pull request_.
+
+#### Etiquetas
+
+Las incidencias se clasifican utilizando etiquetas, las cuales permiten identificar rápidamente el tipo de
+incidencia según su naturaleza, área de interés, complejidad y prioridad. Algunas etiquetas son asignadas a las
+incidencias en
+base a
+la plantilla seleccionada al momento de su creación, mientras que otras son asignadas por los gestores del proyecto
+a la hora de realizar el _triaging_ y análisis de la incidencia.
 
 ---
 
