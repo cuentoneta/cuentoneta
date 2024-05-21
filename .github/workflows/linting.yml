@@ -1,4 +1,4 @@
-name: Testing CI
+name: Linting CI
 
 on:
   pull_request:
@@ -22,5 +22,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install --ignore-scripts
 
-      - name: Run Tests
-        run: npx nx test --skip-nx-cache
+      - name: Run Linter
+        run: npx nx lint --skip-nx-cache

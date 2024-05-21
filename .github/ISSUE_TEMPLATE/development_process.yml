@@ -1,0 +1,21 @@
+name: 💼 Proponer mejoras en la Gestión o el Proceso de Desarrollo del Proyecto
+description: Proponer modificaciones en la gestión y/o el proceso de desarrollo del proyecto La Cuentoneta
+labels: ['💼 gestión']
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Descripción
+      description: Detalla propuesta de mejora para la gestión del proyecto La Cuentoneta. Recordá incluir en esta sección el motivo por el cual considerás que la mejora propuesta es necesaria, tomando en consideración lo detallado en nuestro documento de Proceso de Desarrollo.
+      placeholder: |
+        Por ejemplo: "Agregar nuevo label para identificar issues", "Modificar issue template para el tipo de issue ***", "Cambiar gestión de versionado de issues del proyecto", "Cambios en metodología de desarrollo" etc.
+    validations:
+      required: true
+  - type: textarea
+    id: resources
+    attributes:
+      label: Recursos
+      description: Una lista de uno o más recursos relacionados a la o las mejoras propuestas.
+      placeholder: |
+        * [Artículo sobre cómo mejorar el proceso de desarrollo de un proyecto Open Source](https://www.recurso1.com)
+        * [Artículo sobre cómo optimizar la categorización de los issues en tu proyecto](https://www.recurso2.com)

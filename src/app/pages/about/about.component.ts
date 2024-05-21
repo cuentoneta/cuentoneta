@@ -11,7 +11,7 @@ export class AboutComponent {
 	readonly links = {
 		CONTRIBUTING: 'https://github.com/rolivencia/cuentoneta/blob/master/CONTRIBUTING.md',
 		GITHUB_REPO: 'https://github.com/rolivencia/cuentoneta',
-		FACEBOOK: 'https://facebook.com/lacuentoneta',
+		FACEBOOK: 'https://facebook.com/cuentoneta',
 		INSTAGRAM: 'https://instagram.com/cuentoneta',
 		TWITTER: 'https://twitter.com/cuentoneta',
 		DISCORD_CHANNEL: 'https://discord.com/channels/594363964499165194/1109220285841944586',
