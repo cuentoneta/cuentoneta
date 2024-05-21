@@ -91,11 +91,11 @@ import { InternalLink } from '@models/link.model';
 
 		@keyframes navbar {
 			from {
-				display: none;
+				display: block;
 			}
 
 			to {
-				display: block;
+				display: none;
 			}
 		}
 
@@ -108,7 +108,7 @@ import { InternalLink } from '@models/link.model';
 
 		.show-hidde {
 			transition-timing-function: ease-out;
-			transition: width 0.5s;
+			transition: all 0.5s;
 			animation: navbar linear;
 			animation-timeline: scroll(root);
 		}
