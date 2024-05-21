@@ -38,7 +38,10 @@ import { PortableTextParserComponent } from '../../components/portable-text-pars
 	templateUrl: './story.component.html',
 	styles: `
 		:host {
-			@apply gap-x-8 md:mt-28 md:grid md:grid-cols-[286px_1fr];
+			@apply grid gap-x-8 md:mt-28 md:grid-cols-[286px_1fr];
+
+			// Se remueve el margen horizontal para viewports xs y sm, aprovechando el espacio en dispositivos móviles
+			@apply -mx-5 md:mx-0;
 		}
 
 		@keyframes scrollbar {
