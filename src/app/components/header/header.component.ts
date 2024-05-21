@@ -8,7 +8,7 @@ import { InternalLink } from '@models/link.model';
 @Component({
 	selector: 'cuentoneta-header',
 	template: `
-		<header>
+		<header class="show-hidde">
 			<section class="logo flex items-center">
 				<a routerLink="/home" class="flex">
 					<img [ngSrc]="'./assets/svg/logo.svg'" class="mr-3" width="59" height="32" alt="Logo de 'La Cuentoneta'" />
@@ -89,10 +89,27 @@ import { InternalLink } from '@models/link.model';
 			}
 		}
 
+		@keyframes navbar {
+			from {
+				display: none;
+			}
+
+			to {
+				display: block;
+			}
+		}
+
 		.progress-bar {
 			transition-timing-function: ease-out;
 			transition: width 0.5s;
 			animation: scrollbar linear;
+			animation-timeline: scroll(root);
+		}
+
+		.show-hidde {
+			transition-timing-function: ease-out;
+			transition: width 0.5s;
+			animation: navbar linear;
 			animation-timeline: scroll(root);
 		}
 	`,
