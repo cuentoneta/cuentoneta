@@ -84,15 +84,9 @@ import { HideOnScrollDirective } from 'src/app/directives/hide-on-scroll.directi
 			@apply md:grid-cols-2 md:grid-rows-1;
 		}
 
-		@keyframes hide {
-			to {
-				display: none;
-				opacity: 0;
-			}
-		}
-
 		.nav-hidden {
-			animation: hide 0.3s ease-in-ou;
+			display: none;
+			transition: all 0.3s ease-in-out;
 		}
 
 		@keyframes scrollbar {
