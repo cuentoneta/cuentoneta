@@ -27,7 +27,13 @@
 			<div>
 				@if (!!story && !fetchContentDirective.isLoading) {
 					<h1 [lang]="story.language" class="h1 mb-2">{{ story.title }}</h1>
-					<p [lang]="story.language" class="inter-body-xl mb-2">{{ story.author.name }}</p>
+					<a
+						[lang]="story.language"
+						[routerLink]="['/', appRouteTree['AUTHOR'], story.author.slug]"
+						class="inter-body-xl mb-2 block"
+					>
+						{{ story.author.name }}
+					</a>
 					<time class="inter-body-base-medium text-gray-600">
 						{{ story.approximateReadingTime }} minutos de lectura
 					</time>

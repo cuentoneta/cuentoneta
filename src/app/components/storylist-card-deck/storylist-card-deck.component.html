@@ -106,14 +106,9 @@
 <ng-template #publicationsTemplate>
 	@if (!!storylist) {
 		@for (publication of storylist.publications; track $index) {
-			<a
+			<div
 				[ngStyle]="storiesCardConfig[publication.story.slug]"
 				[class.disabled]="!publication || !publication.published"
-				[routerLink]="
-					!!publication && publication.published
-						? ['/', appRouteTree['STORY'], publication.story.slug, storylist.slug]
-						: null
-				"
 				class="xs:max-md:!col-span-1"
 			>
 				<cuentoneta-publication-card
@@ -123,7 +118,7 @@
 					[editionIndex]="publication.publishingOrder"
 					[comingNextLabel]="storylist.comingNextLabel"
 				/>
-			</a>
+			</div>
 		}
 	}
 </ng-template>
