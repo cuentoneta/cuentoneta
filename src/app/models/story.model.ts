@@ -12,25 +12,23 @@ export interface StoryBase {
 	badLanguage?: boolean;
 	language: string;
 	resources?: Resource[];
-	paragraphs: unknown;
+	paragraphs: BlockContent[];
 	media: Media[];
+	originalPublication: string;
 }
 
 export interface Story extends StoryBase {
 	author: Author;
 	epigraphs: Epigraph[];
 	summary: BlockContent[];
-	paragraphs: BlockContent[];
 }
 
 export interface StoryDTO extends StoryBase {
 	author: AuthorDTO;
 	epigraphs: EpigraphDTO[];
 	summary?: BlockContent[];
-	paragraphs: BlockContent[];
 }
 
 export interface StoryCard extends StoryBase {
 	author: Omit<Author, 'biography'>;
-	paragraphs: BlockContent[];
 }

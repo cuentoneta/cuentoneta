@@ -30,12 +30,9 @@ export class StoryService {
 	public parseStoryCardContent(story: StoryDTO): StoryCard {
 		const card = {
 			...story,
-			author: {
-				...story.author,
-				imageUrl: this.parseAvatarImageUrl(story.author.imageUrl),
-			},
 			paragraphs: story?.paragraphs ?? [],
 			media: story.media ?? [],
+			originalPublication: story.originalPublication ?? [],
 		};
 
 		if (story.author) {

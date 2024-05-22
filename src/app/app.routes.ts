@@ -21,6 +21,10 @@ export const appRoutes: Routes = [
 		loadComponent: () => import('./pages/story/story.component').then((m) => m.StoryComponent),
 	},
 	{
+		path: `${APP_ROUTE_TREE['STORY']}/:slug`,
+		loadComponent: () => import('./pages/story/story.component').then((m) => m.StoryComponent),
+	},
+	{
 		path: `${APP_ROUTE_TREE['STORY']}`, // Ruta definida por cuestiones de retrocompatibilidad. Redirecciona de '/story' con queryParams a params
 		loadComponent: () => import('./pages/story/story.component').then((m) => m.StoryComponent),
 		canActivate: [redirectQueryParamsBasedStoryUrlsGuard],

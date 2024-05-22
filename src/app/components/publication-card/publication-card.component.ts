@@ -36,16 +36,7 @@ import { StoryCardContentComponent } from '../story-card-content/story-card-cont
 		}
 	</article>`,
 	standalone: true,
-	imports: [
-		CommonModule,
-		NgxSkeletonLoaderModule,
-		NgIf,
-		NgOptimizedImage,
-		StoryCardSkeletonComponent,
-		StoryEditionDateLabelComponent,
-		PortableTextParserComponent,
-		StoryCardContentComponent,
-	],
+	imports: [CommonModule, NgxSkeletonLoaderModule, NgIf, StoryCardSkeletonComponent, StoryCardContentComponent],
 	providers: [DatePipe],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })

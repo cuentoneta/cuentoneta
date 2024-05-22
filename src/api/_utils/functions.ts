@@ -20,9 +20,9 @@ export function mapAuthor(rawAuthorData: any, language?: string): AuthorDTO {
 			flag: urlFor(rawAuthorData.nationality?.flag)?.url(),
 		},
 		resources: mapResources(rawAuthorData.resources),
-		imageUrl: rawAuthorData.image ? urlFor(rawAuthorData.image).url() : undefined,
+		imageUrl: rawAuthorData.image ? urlFor(rawAuthorData.image).url() : '',
 		name: rawAuthorData.name,
-		biography: rawAuthorData.biography,
+		biography: rawAuthorData.biography ? rawAuthorData.biography[language || baseLanguage!.id] : undefined,
 	};
 }
 
@@ -34,7 +34,7 @@ export function mapAuthorForStory(rawAuthorData: any, language?: string): Author
 			flag: urlFor(rawAuthorData.nationality?.flag)?.url(),
 		},
 		resources: mapResources(rawAuthorData.resources),
-		imageUrl: rawAuthorData.image ? urlFor(rawAuthorData.image).url() : undefined,
+		imageUrl: rawAuthorData.image ? urlFor(rawAuthorData.image).url() : '',
 		name: rawAuthorData.name,
 		biography: rawAuthorData.biography ? rawAuthorData.biography[language || baseLanguage!.id] : undefined,
 	};
