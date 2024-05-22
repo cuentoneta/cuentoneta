@@ -10,7 +10,6 @@ import { HideOnScrollDirective } from 'src/app/directives/hide-on-scroll.directi
 	selector: 'cuentoneta-header',
 	template: `
 		<header [classNameWhenHidden]="'nav-hidden'" cuentonetaHideOnScroll>
-			>
 			<section class="logo flex items-center">
 				<a routerLink="/home" class="flex">
 					<img [ngSrc]="'./assets/svg/logo.svg'" class="mr-3" width="59" height="32" alt="Logo de 'La Cuentoneta'" />
