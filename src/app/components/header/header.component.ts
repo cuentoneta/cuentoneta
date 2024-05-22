@@ -85,7 +85,7 @@ import { HideOnScrollDirective } from 'src/app/directives/hide-on-scroll.directi
 		}
 
 		.nav-hidden {
-			transform: translateY(-100%);
+			display: none;
 			transition: transform 0.3s ease-in-out;
 		}
 
