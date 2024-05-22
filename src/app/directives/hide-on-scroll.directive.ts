@@ -16,6 +16,7 @@ import { isPlatformServer } from '@angular/common';
 
 @Directive({
 	selector: '[cuentonetaHideOnScroll]',
+	standalone: true,
 })
 export class HideOnScrollDirective implements AfterViewInit, OnDestroy {
 	/**
