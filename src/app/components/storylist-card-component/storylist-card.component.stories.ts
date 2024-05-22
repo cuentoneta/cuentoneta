@@ -2,7 +2,7 @@ import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { StorylistCardComponent } from './storylist-card.component';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
-import { StoryCardComponent } from '../story-card/story-card.component';
+import { PublicationCardComponent } from '../publication-card/publication-card.component';
 
 const meta: Meta<StorylistCardComponent> = {
 	component: StorylistCardComponent,
@@ -57,7 +57,7 @@ export const Loading: Story = {
 };
 
 export const Layout = {
-	render: (args: StoryCardComponent) => ({
+	render: (args: PublicationCardComponent) => ({
 		props: args,
 		styles: [
 			`
