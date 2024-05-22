@@ -74,7 +74,7 @@
 <ng-template #skeletonsTemplate>
 	@for (skeleton of skeletonConfig?.cardsPlacement; track $index) {
 		@if (!!skeleton.slug) {
-			<cuentoneta-story-card
+			<cuentoneta-publication-card
 				[ngStyle]="{
 					order: skeleton?.order,
 					'grid-column-start': skeleton?.startCol,
@@ -116,7 +116,7 @@
 				"
 				class="xs:max-md:!col-span-1"
 			>
-				<cuentoneta-story-card
+				<cuentoneta-publication-card
 					[displayDate]="storylist.displayDates"
 					[editionPrefix]="storylist.editionPrefix"
 					[publication]="publication"

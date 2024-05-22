@@ -22,7 +22,7 @@ describe('HomeComponent', () => {
 				NgForOf,
 				NgIf,
 				NgOptimizedImage,
-				MockStoryCardComponent,
+				MockPublicationCardComponent,
 				MockStorylistCardDeckComponent,
 				RouterTestingModule,
 			],
@@ -40,10 +40,10 @@ describe('HomeComponent', () => {
 
 @Component({
 	standalone: true,
-	selector: 'cuentoneta-story-card:not(p):not(a)',
+	selector: 'cuentoneta-publication-card:not(p):not(a)',
 	template: '<div></div>',
 })
-class MockStoryCardComponent {
+class MockPublicationCardComponent {
 	@Input() editionPrefix: string | undefined;
 	@Input() editionSuffix: string | undefined;
 	@Input() comingNextLabel: string = '';
@@ -55,7 +55,7 @@ class MockStoryCardComponent {
 @Component({
 	standalone: true,
 	selector: 'cuentoneta-storylist-card-deck:not(p)',
-	imports: [MockStoryCardComponent],
+	imports: [MockPublicationCardComponent],
 	template: '',
 })
 class MockStorylistCardDeckComponent {
