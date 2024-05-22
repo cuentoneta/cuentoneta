@@ -126,7 +126,7 @@ export class HideOnScrollDirective implements AfterViewInit, OnDestroy {
 	}
 
 	ngOnDestroy(): void {
-		this.unsubscribeNotifier.next();
+		// this.unsubscribeNotifier.next();
 		this.unsubscribeNotifier.complete();
 	}
 
