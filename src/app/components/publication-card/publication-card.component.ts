@@ -9,10 +9,32 @@ import { StoryEditionDateLabelComponent } from '../story-edition-date-label/stor
 import { CommonModule, DatePipe, NgIf, NgOptimizedImage } from '@angular/common';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
+import { StoryCardContentComponent } from '../story-card-content/story-card-content.component';
 
 @Component({
 	selector: 'cuentoneta-publication-card',
-	templateUrl: './publication-card.component.html',
+	template: ` <article
+		[attr.aria-busy]="!publication"
+		class="card border-1 border-solid border-primary-300 p-5 shadow-lg hover:shadow-lg-hover md:p-8"
+	>
+		@if (!!publication && publication.published) {
+			@if (publication.story; as story) {
+				<cuentoneta-story-card-content [story]="story" [headerText]="editionLabel"></cuentoneta-story-card-content>
+			}
+		} @else {
+			@if (!publication) {
+				<cuentoneta-story-card-skeleton [animation]="'progress'" />
+			}
+			@if (!!publication && !publication.published) {
+				<cuentoneta-story-card-skeleton
+					[animation]="false"
+					[displayDate]="false"
+					[editionLabel]="editionLabel"
+					[comingNextLabel]="comingNextLabel"
+				/>
+			}
+		}
+	</article>`,
 	standalone: true,
 	imports: [
 		CommonModule,
@@ -22,6 +44,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 		StoryCardSkeletonComponent,
 		StoryEditionDateLabelComponent,
 		PortableTextParserComponent,
+		StoryCardContentComponent,
 	],
 	providers: [DatePipe],
 	changeDetection: ChangeDetectionStrategy.OnPush,
