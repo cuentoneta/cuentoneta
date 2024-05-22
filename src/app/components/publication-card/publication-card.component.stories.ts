@@ -1,5 +1,5 @@
 import { Meta, moduleMetadata } from '@storybook/angular';
-import { StoryCardComponent } from './story-card.component';
+import { PublicationCardComponent } from './publication-card.component';
 
 import { DatePipe, NgOptimizedImage, registerLocaleData } from '@angular/common';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -13,18 +13,18 @@ registerLocaleData(localeEs);
 
 // Modelos
 import { Publication } from '@models/storylist.model';
-import { Story, StoryCard } from '@models/story.model';
+import { StoryCard } from '@models/story.model';
 
 export default {
-	title: 'StoryCardComponent',
-	component: StoryCardComponent,
+	title: 'PublicationCardComponent',
+	component: PublicationCardComponent,
 	decorators: [
 		moduleMetadata({
 			imports: [NgOptimizedImage, NgxSkeletonLoaderModule, StoryCardSkeletonComponent, StoryEditionDateLabelComponent],
 			providers: [DatePipe, { provide: LOCALE_ID, useValue: 'es-419' }],
 		}),
 	],
-} as Meta<StoryCardComponent>;
+} as Meta<PublicationCardComponent>;
 
 const publication: Publication<StoryCard> = {
 	publishingOrder: 60,
@@ -35,7 +35,7 @@ const publication: Publication<StoryCard> = {
 		language: 'Español',
 		approximateReadingTime: 4,
 		author: {
-			id: '1',
+			slug: 'Alejandro Dolina',
 			nationality: {
 				country: 'Argentina',
 				flag: 'https://cdn.sanity.io/images/s4dbqkc5/production/ee6f30199738f983516909a0d6330301573a62f6-32x20.png',
@@ -46,40 +46,6 @@ const publication: Publication<StoryCard> = {
 		slug: 'mascaras',
 		title: 'Máscaras',
 		media: [],
-		summary: [
-			{
-				_key: '7eddf102184a',
-				markDefs: [],
-				children: [
-					{
-						_type: 'span',
-						marks: ['strong', 'em'],
-						text: 'Máscaras',
-						_key: 'f043f548f8c4',
-					},
-					{
-						_type: 'span',
-						marks: [],
-						text: ' está incluido en el volumen ',
-						_key: '7b11663f0e03',
-					},
-					{
-						text: 'Bar del Infierno',
-						_key: '3ddad9aa76c3',
-						_type: 'span',
-						marks: ['em'],
-					},
-					{
-						_type: 'span',
-						marks: [],
-						text: ', publicado en 2005. La acción de la obra se sucede en un bar del cual no es posible salir, dado que en el universo del libro el afuera no existe. En este escenario, El Narrador de Historias, protagonista principal de esta narración enmarcada, procede a contar una variedad de relatos ubicados en distintos lugares y distintas épocas.',
-						_key: 'afc1b9c43d8c',
-					},
-				],
-				_type: 'block',
-				style: 'normal',
-			},
-		],
 		paragraphs: [
 			{
 				style: 'normal',
@@ -124,36 +90,35 @@ const publication: Publication<StoryCard> = {
 				_key: '90005bcd4cee',
 			},
 		],
-		epigraphs: [],
 	},
 };
 
 export const Historia = {
-	render: (args: StoryCardComponent) => ({
+	render: (args: PublicationCardComponent) => ({
 		props: args,
 		template: `
       <div class="grid grid-cols-3 gap-4">
-          <cuentoneta-story-card
+          <cuentoneta-publication-card
               [editionPrefix]="editionPrefix" 
               [editionSuffix]="editionSuffix" 
               [displayDate]="displayDate" 
               [editionIndex]="editionIndex" 
               [publication]="publication1">
-          </cuentoneta-story-card>
-          <cuentoneta-story-card
+          </cuentoneta-publication-card>
+          <cuentoneta-publication-card
               [editionPrefix]="editionPrefix" 
               [editionSuffix]="editionSuffix" 
               [displayDate]="displayDate" 
               [editionIndex]="editionIndex" 
               [publication]="publication2">
-          </cuentoneta-story-card>
-          <cuentoneta-story-card
+          </cuentoneta-publication-card>
+          <cuentoneta-publication-card
               [editionPrefix]="editionPrefix" 
               [editionSuffix]="editionSuffix" 
               [displayDate]="displayDate" 
               [editionIndex]="editionIndex" 
               [publication]="publication3">
-          </cuentoneta-story-card>
+          </cuentoneta-publication-card>
     </div>
 `,
 	}),
@@ -169,7 +134,7 @@ export const Historia = {
 };
 
 export const Cargando = {
-	render: (args: StoryCardComponent) => ({
+	render: (args: PublicationCardComponent) => ({
 		props: args,
 	}),
 	args: {

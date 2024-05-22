@@ -86,7 +86,7 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 - Aplicada nueva estrategia basada en esbuild y el builder application para compilación del proyecto.
 - Solucionado problema con hot reload en modo dev.
 - Reemplazo de queryParams por params en las rutas de la aplicación.
-- Agregado ícono de stories con spaces de X para componente `StoryCardComponent`.
+- Agregado ícono de stories con spaces de X para componente `PublicationCardComponent`.
 - ### `Hito: Lanzamiento al público de la versión 2.4.0 de La Cuentoneta (lanzada el 2024/03/30)`
 
 ## Abril de 2024

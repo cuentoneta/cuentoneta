@@ -11,8 +11,8 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 
 @Component({
-	selector: 'cuentoneta-story-card',
-	templateUrl: './story-card.component.html',
+	selector: 'cuentoneta-publication-card',
+	templateUrl: './publication-card.component.html',
 	standalone: true,
 	imports: [
 		CommonModule,
@@ -26,7 +26,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	providers: [DatePipe],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StoryCardComponent implements OnInit {
+export class PublicationCardComponent implements OnInit {
 	@Input() editionPrefix: string | undefined;
 	@Input() editionSuffix: string | undefined;
 	@Input() comingNextLabel: string = '';
