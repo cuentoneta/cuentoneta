@@ -91,15 +91,42 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 ## Abril de 2024
 
-- Publicación de la lista "Cuentos por la Memoria" en conmemoración del Día por la Memoria, la Verdad y la Justicia, celebrado el 24 de marzo.
-- Preparación de la plataforma para alojar el primer concurso de escritura en La Cuentoneta, el _III Certamen Extraordinario de Escritura_, a cargo de la comunidad **[Taller de
-  Escritura Creativa](https://discord.gg/YJDQCsBmyv)**.
 - Lanzamiento de la edición "Cuentos por Malvinas" para conmemorar el 41° aniversario del "Día del Veterano y de los Caídos en la Guerra de Malvinas".
 
 ## Mayo de 2024
 
-- Exploración de material de autoras y autores locales para incluirlos en una edición especial de la plataforma.
+- Actualización de documentación y creación de la guía completa de desarrollo de la plataforma.
+- Evaluación de métricas utilizando Microsoft Clarity.
+- Agregado soporte de epígrafes multilínea en la plataforma.
+- Reintroducción de barra de progreso en la vista de lectura.
+- Introducción de nuevo parser para visualización de Portable Text.
+- Manejo de videos de YouTube como un recurso multimedia, eliminando lógica previa dedicada.
+- Agregado de slugs para autores y modelos relacionados.
+- Actualización de Angular a versión 17.3.3.
+- Ajustes de márgenes en viewports mobile.
+- Implementación de Github Actions para CI/CD.
+- Otros ajustes menores en accesibilidad y DX.
+
+### Hito: Lanzamiento al público de la versión [2.4.1](https://github.com/cuentoneta/cuentoneta/releases/tag/2.4.1) de La Cuentoneta (lanzada el 2024/05/22)
+
+## Junio de 2024
+
+- Actualización a Angular 18 y Nx 19.1.
 - Invitación abierta a autoras y autores santafesinos para participar en la storylist "Plumas Santafesinas", recopilando relatos breves y poemas de autoría provincial.
+- Creación de storylist invernal, con colaboración de comunidades.
+- Implementación de una nueva sección "Pluma de la Semana", destacando un autor o autora diferente cada semana en la
+  landing page.
+- Mejoras en storylists y landing page, en base a diseños nuevos de UX.
+
+## Julio de 2024
+
+- Preparación de la plataforma para alojar el primer concurso de escritura en La Cuentoneta, el _III Certamen
+  Extraordinario de Escritura_, a cargo de la comunidad **[Tertulia Literaria](https://discord.gg/tertulia-literaria-795704695485235231)**.
+
+## Futuros
+
+- Preparación de la lista "Cuentos por la Memoria" en conmemoración del Día por la Memoria, la Verdad y la Justicia, celebrado el 24 de marzo.
+- Exploración de material de autoras y autores locales para incluirlos en una edición especial de la plataforma.
 - Publicación de las listas "Cuentos para el Bicentenario" en la plataforma, originalmente publicadas por el Ministerio de Educación de la Nación en 2015.
 - Planificación del módulo "Elige tu propia lectura" donde se asignará a cada usuario un desafío de lectura personalizado, generando una storylist adaptada a sus preferencias. Fecha tentativa de lanzamiento en agosto de 2024.
 - Inclusión de niveles educativos inicial, primario y secundario en las listas.
