@@ -4,11 +4,13 @@ import { ContentService } from '../../providers/content.service';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { InternalLink } from '@models/link.model';
+import { HideOnScrollDirective } from 'src/app/directives/hide-on-scroll.directive';
 
 @Component({
 	selector: 'cuentoneta-header',
 	template: `
-		<header>
+		<header [classNameWhenHidden]="'nav-hidden'" cuentonetaHideOnScroll>
+			>
 			<section class="logo flex items-center">
 				<a routerLink="/home" class="flex">
 					<img [ngSrc]="'./assets/svg/logo.svg'" class="mr-3" width="59" height="32" alt="Logo de 'La Cuentoneta'" />
@@ -83,6 +85,11 @@ import { InternalLink } from '@models/link.model';
 			@apply md:grid-cols-2 md:grid-rows-1;
 		}
 
+		.nav-hidden {
+			transform: translateY(-100%);
+			transition: transform 0.3s ease-in-out;
+		}
+
 		@keyframes scrollbar {
 			to {
 				width: 100%;
@@ -97,7 +104,7 @@ import { InternalLink } from '@models/link.model';
 		}
 	`,
 	standalone: true,
-	imports: [CommonModule, RouterModule, NgOptimizedImage],
+	imports: [CommonModule, RouterModule, NgOptimizedImage, HideOnScrollDirective],
 })
 export class HeaderComponent {
 	readonly navLinks: InternalLink[] = [
