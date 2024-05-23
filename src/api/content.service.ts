@@ -1,17 +1,17 @@
+// Sanity Client
 import { client } from './_helpers/sanity-connector';
-import express from 'express';
 
-export async function fetchLandingPageContent(req: express.Request, res: express.Response) {
+// Queries
+import { storylistPreviewQuery } from './_queries/storylist.query';
+
+export async function fetchLandingPageContent() {
 	const query = `*[_type == 'landingPage'] {
-            'previews': previews[]->,
-            'cards': cards[]->
+            'previews': previews[]-> ${storylistPreviewQuery},
+            'cards': cards[]-> ${storylistPreviewQuery}
         }[0]`;
 
 	const result = await client.fetch(query, {});
 
-	if (!result) {
-		res.json(null);
-	}
-
-	return res.json(result);
+	// TODO: Generar tipos correctos de respuestas
+	return { previews: result.previews, cards: result.cards };
 }
