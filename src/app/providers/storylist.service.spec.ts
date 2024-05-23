@@ -4,18 +4,18 @@ import { StorylistService } from './storylist.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('StorylistService', () => {
-  let service: StorylistService;
+	let service: StorylistService;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule]
-    })
-    TestBed.runInInjectionContext(() => {
-      service = TestBed.inject(StorylistService);
-    });
-  });
+	beforeEach(() => {
+		TestBed.configureTestingModule({
+			imports: [HttpClientTestingModule],
+		});
+		TestBed.runInInjectionContext(() => {
+			service = TestBed.inject(StorylistService);
+		});
+	});
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
+	it('should be created', () => {
+		expect(service).toBeTruthy();
+	});
 });

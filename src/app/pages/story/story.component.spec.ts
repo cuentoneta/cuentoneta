@@ -8,56 +8,56 @@ import { Storylist } from '@models/storylist.model';
 import { Story } from '@models/story.model';
 
 describe('StoryComponent', () => {
-  let component: RenderResult<StoryComponent, StoryComponent>;
+	let component: RenderResult<StoryComponent, StoryComponent>;
 
-  beforeEach(async () => {
-    component = await render(StoryComponent, {
-      componentImports: [
-        CommonModule,
-        HttpClientTestingModule,
-        NgForOf,
-        NgIf,
-        NgOptimizedImage,
-        NgxSkeletonLoaderModule,
-        MockBioSummaryCardComponent,
-        MockShareContentComponent,
-        MockStoryNavigationBarComponent
-      ],
-    });
-  });
+	beforeEach(async () => {
+		component = await render(StoryComponent, {
+			componentImports: [
+				CommonModule,
+				HttpClientTestingModule,
+				NgForOf,
+				NgIf,
+				NgOptimizedImage,
+				NgxSkeletonLoaderModule,
+				MockBioSummaryCardComponent,
+				MockShareContentComponent,
+				MockStoryNavigationBarComponent,
+			],
+		});
+	});
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+	it('should create', () => {
+		expect(component).toBeTruthy();
+	});
 });
 
 @Component({
-  standalone: true,
-  selector: 'cuentoneta-share-content:not(p)',
-  template: '',
+	standalone: true,
+	selector: 'cuentoneta-share-content:not(p)',
+	template: '',
 })
 class MockShareContentComponent {
-  @Input() route: string = '';
-  @Input() params: { [key: string]: string } = {};
-  @Input() message: string = '';
-  @Input() isLoading: boolean = false;}
-
-@Component({
-  standalone: true,
-  selector: 'cuentoneta-bio-summary-card:not(p)',
-  template: '',
-})
-class MockBioSummaryCardComponent {
-  @Input({required: true}) story!: Story;
+	@Input() route: string = '';
+	@Input() params: { [key: string]: string } = {};
+	@Input() message: string = '';
+	@Input() isLoading: boolean = false;
 }
 
 @Component({
-  standalone: true,
-  selector: 'cuentoneta-story-navigation-bar:not(p)',
-  template: '',
+	standalone: true,
+	selector: 'cuentoneta-bio-summary-card:not(p)',
+	template: '',
+})
+class MockBioSummaryCardComponent {
+	@Input({ required: true }) story!: Story;
+}
+
+@Component({
+	standalone: true,
+	selector: 'cuentoneta-story-navigation-bar:not(p)',
+	template: '',
 })
 class MockStoryNavigationBarComponent {
-  @Input() selectedStorySlug: string = ''
-  @Input() storylist!: Storylist
-
+	@Input() selectedStorySlug: string = '';
+	@Input() storylist!: Storylist;
 }

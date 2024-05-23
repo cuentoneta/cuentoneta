@@ -11,7 +11,7 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 	hostDirectives: [TooltipDirective],
 	imports: [BypassHtmlSanitizerPipe, CommonModule, NgOptimizedImage, SvgIconComponent],
 	template: `
-		<span class="flex items-center gap-1 inter-body-xs-bold">
+		<span class="inter-body-xs-bold flex items-center gap-1">
 			@if (showIcon && !!tag.icon) {
 				<cuentoneta-svg-icon [svg]="tag.icon.svg" />
 			}
@@ -20,9 +20,9 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 	`,
 	styles: `
 		:host {
-			@apply flex bg-primary-200 py-0.5 px-4.5 rounded uppercase hover:cursor-default;
+			@apply flex rounded bg-primary-200 px-4.5 py-0.5 uppercase hover:cursor-default;
 		}
-    `,
+	`,
 })
 export class BadgeComponent implements OnInit {
 	@Input({ required: true }) tag!: Tag;

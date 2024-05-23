@@ -13,8 +13,8 @@
 En este documento encontrarás disponible información sobre cómo contribuir al desarrollo y la generación de
 contenido de La Cuentoneta.
 
-Utilizamos [GitHub Issues][github-issues-tutorial] para llevar adelante el seguimiento de reportes de bugs
-(_bug reports_), la propuesta de nuevas funcionalidades y mejoras (_feature requests_) y la contribución y
+Utilizamos [GitHub Issues][github-issues-tutorial] para, por medio de las creación de incidencias, llevar adelante
+el seguimiento de reportes de bugs (_bug reports_), la propuesta de nuevas funcionalidades y mejoras (_feature requests_) y la contribución y
 sugerencia de contenidos para sumar a la plataforma.
 
 En la [sección de creación de nuevos issues][crear-issue-cuentoneta] del proyecto pueden agregarse nuevos issues en base a las plantillas que el equipo ha definido.
@@ -22,8 +22,6 @@ En la [sección de creación de nuevos issues][crear-issue-cuentoneta] del proye
 También puede visualizarse la [lista de issues creados](https://github.com/rolivencia/cuentoneta/issues). Esta lista se actualiza y cura por parte de quienes contribuyen a La Cuentoneta, filtrando, clasificando y detallando lo escrito en cada uno de los issues en los que se trabajará a futuro.
 
 > 💡 Si tienes alguna consulta, puedes hacerla en nuestro canal [**#🚐 | la-cuentoneta**][dc-channel] en Discord.
-
-> ⚠️ Recordá, antes de contribuir, que es **requerido** que seas parte del [**servidor de FrontendCafé**][dc-fec] en Discord.
 
 > 🤓 Para visualizar los ítems de trabajo recomendados para iniciarte en tus contribuciones a La Cuentoneta, podés dirigirte a la [página de contribución del proyecto](https://github.com/cuentoneta/cuentoneta/contribute).
 
@@ -62,186 +60,38 @@ El diseño original de interfaz de usuario de La Cuentoneta ha sido desarrollado
 
 ### 🖥️ Contribuyendo código
 
-Si eres desarrolladora o desarrollador, puedes contribuir al proyecto mediante la creación de issues, pull requests, revisando código y más en este repositorio. Para ello, te recomendamos leer la sección [guía de contribución de código](#aspectos-técnicos-y-guía-de-contribución-de-código) para que puedas familiarizarte con el proyecto y sus convenciones.
-
-## Aspectos técnicos y guía de contribución de código
-
-En esta sección encontrarás información sobre todo lo que respecta al aspecto técnico de desarrollo de software de La Cuentoneta. Se incluye información sobre:
-
-- El tech stack utilizado para el desarrollo de la plataforma web.
-- Instrucciones sobre cómo instalar una versión local del proyecto
-- La especificación de alto nivel del proceso de desarrollo de software adoptado por el equipo, el cual incluye procedimientos y convenciones.
-
----
-
-### Tech Stack
-
-El tech stack actualmente utilizado para el desarrollo de La Cuentoneta es:
-
-#### Para la gestión de la base de código del proyecto
-
-- **<a href="https://git-scm.com/">Git</a>** como herramienta de control de versiones
-- **<a href="https://https://github.com">GitHub</a>** como host de la base de código
-- **<a href="https://pnpm.io/es/">pnpm</a>** como gestor de paquetes
-- **<a href="https://nx.dev/angular">Nx</a>** como gestor de monorepo y task runner
-
-Junto con Nx, el proyecto cuenta con ESLint y Prettier ya configuradas como dependencias.
-
-#### Para el desarrollo de la plataforma web
-
-- **<a href="https://angular.io/">Angular 17</a>** como framework de frontend
-- **<a href="https://angular.io/guide/universal">Angular Universal</a>** para Server-Side rendering
-- **<a href="https://www.typescriptlang.org/">TypeScript</a>**
-- **<a href="https://tailwindcss.com/docs/installation">Tailwind CSS</a>**
-- **<a href="https://storybook.js.org/docs/react/get-started/introduction">Storybook</a>** como herramienta de desarrollo de componentes.
-
-#### Para la gestión del contenido
-
-- **<a href="https://www.sanity.io/docs">Sanity</a>** para persistencia de información de cuentos, autores y storylists.
-
-#### Para pruebas unitarias y de integración
-
-- **<a href="https://jestjs.io/docs/getting-started">Jest</a>** como framework de testing unitario
-- **<a href="https://www.cypress.io/">Cypress</a>** como framework de testing end-to-end
+Si eres desarrolladora o desarrollador, puedes contribuir al proyecto mediante la creación de issues, pull requests, revisando código y más en este repositorio. Para ello, te recomendamos leer el documento [guía de desarrollo][doc-guia-de-desarrollo] para que puedas instalar localmente el proyecto, familiarizarte con él y aprender sobre sus convenciones.
 
 > 💡 No hace falta tener mucho conocimiento en el tech stack para poder contribuir en el desarrollo. Si tienes ganas de aprender, ¡te invitamos a sumarte!
 
 ---
 
-### Requerimientos
+<!-- Enlaces a GitHub Issues y a issue templates -->
 
-- Tener instalada una versión de [Node](https://nodejs.org/es/) igual o superior a `v18.15.0`, idealmente la última versión LTS.
-- Instalar `pnpm`, un gestor de paquetes alternativo para Node: `npm install -g pnpm`. Se recomienda la versión `8.2.0` o superior.
-- Instalar `nx`, un CLI para desarrollo de monorepos: `pnpm install -g nx`. Se recomienda la versión `17.1.0` o superior.
-- Tener un editor de texto o IDE ([Visual Studio Code](https://code.visualstudio.com/), [Vim](https://www.vim.org/), [WebStorm](https://www.jetbrains.com/es-es/webstorm/), etc).
-- Tener una cuenta en [GitHub](https://docs.github.com/es/get-started/signing-up-for-github/signing-up-for-a-new-github-account).
-- Leer y seguir el [código de conducta][doc-code_of_conduct].
-- Unirte a [FrontendCafé][dc-fec] en Discord.
+[github-issues-tutorial]: https://docs.github.com/es/issues/tracking-your-work-with-issues/creating-an-issue
+[crear-issue-cuentoneta]: https://github.com/rolivencia/cuentoneta/issues/new/choose
+[feature-request-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%8F%8E%EF%B8%8F+mejora&projects=&template=feature.yml
+[bug-report-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%A6%9F+bug&projects=&template=bug_report.yml
 
----
+<!-- Enlaces a otros documentos -->
 
-### Clonar el repositorio
-
-#### Paso 1: _Forkear_ el repositorio
-
-Para poder trabajar localmente en el proyecto, y luego contribuir tus cambios, deberás realizar un fork del repositorio desde GitHub y clonarlo en tu computadora.
-
-El fork del repositorio se realiza desde el botón `Fork` en la esquina superior derecha de la página del repositorio en GitHub. Una vez clickeado el botón, podrás visualizar la siguiente pantalla.
-
-![image](https://github.com/cuentoneta/cuentoneta/assets/32349705/3f7ff9cf-6b06-4265-a940-a455f6cd753a)
-
-Luego de pulsar el botón `Create fork`, se creará una copia del repositorio en tu cuenta de GitHub, desde la que podrás trabajar localmente en el proyecto, generar tus commits y posteriormente crear pull requests al repositorio original.
-
-#### Paso 2: Clonar el repositorio
-
-Luego de hacer fork del repositorio, debes clonar el repositorio en tu computadora:
-
-```bash
-git clone https://github.com/<tu_nombre_de_usuario_en_github>/cuentoneta.git
-cd cuentoneta
-```
-
-Deberás luego crear un archivo `.env` en la raíz del proyecto con las siguientes variables de entorno:
-
-```bash
-SANITY_STUDIO_DATASET=development
-SANITY_STUDIO_PROJECT_ID=s4dbqkc5
-CUENTONETA_WEBSITE=https://cuentoneta.ar/
-```
-
-Posteriormente ejecuta el siguiente comando para instalar todas las dependencias listadas en el archivo [`package.json`](package.json).
-
-```bash
-pnpm run install:dev
-```
-
-#### Paso 3: Correr el entorno de desarrollo localmente
-
-Una vez hechos los pasos de instalación ejecutá el siguiente comando:
-
-```bash
-pnpm run dev
-```
-
-Se iniciara el servidor de desarrollo, visitá [http://localhost:4200](http://localhost:4200) en tu navegador para ver la aplicación.
-
-Para ejecutar el entorno de desarrollo de Sanity Studio, ejecutá el siguiente comando, posándote en el directorio `cms`:
-
-```bash
-pnpm run dev
-```
-----
-### Correr localmente Sanity Studio
-Para gestionar el contenido de La Cuentoneta utilizamos [Sanity Studio](https://www.sanity.io/docs/sanity-studio). Puedes ejecutar localmente en tu computadora el entorno de desarrollo de Sanity Studio, en modo sólo lectura, siguiendo los siguientes pasos:
-
-#### Paso 1: Instalar dependencias
-
-Ejecutá el siguiente comando, posándote en el directorio `/cms`:
-
-```bash
-pnpm install
-```
-
-#### Paso 2: Configurar archivo .env
-
-Deberás agregar un archivo `.env` en la carpeta `/cms`.
-
-El contenido del archivo `.env` deberá ser el siguiente:
-```
-SANITY_STUDIO_DATASET=development
-SANITY_STUDIO_PROJECT_ID=s4dbqkc5
-```
-
-#### Paso 3: Ejecutar el entorno de desarrollo
-
-En el mismo directorio, ejecutá el siguiente comando:
-
-```bash
-pnpm sanity dev
-```
-
-#### Paso 4: Credenciales
-
-La primera vez que ejecutes el entorno de desarrollo de Sanity Studio, se te pedirá que ingreses tus credenciales de acceso. Deberás elegir la opción `Email` y luego ingresar las siguientes credenciales:
-
-```
-Usuario: dev@cuentoneta.ar
-Password: CuentonetaFec2023#
-```
-
-#### Paso 5: ¡Listo!
-Luego de ingresar las credenciales, se abrirá una pestaña en tu navegador con el entorno de desarrollo de Sanity Studio en la URL: https://localhost:3333
-
-Acceder con este usuario te permitirá crear y editar documentos en el entorno de desarrollo de Sanity Studio con el rol de _Contributor_, el cual tiene permisos para crear y editar documentos, pero no para publicarlos.
-
----
-
-### Despliegues
-
-Los ambientes de despliegue de La Cuentoneta son los siguientes:
-
-- **Web | Producción:** [https://cuentoneta.ar/](https://cuentoneta.ar/)
-- **Web | Staging:** [https://staging.cuentoneta.ar](https://staging.cuentoneta.ar)
-- **Storybook:** [https://cuentoneta-storybook.vercel.app/](https://cuentoneta-storybook.vercel.app/)
-- **Sanity Studio | Development:** (próximamente)
-  <!-- Links a GitHub Issues y a issue templates -->
-  [github-issues-tutorial]: https://docs.github.com/es/issues/tracking-your-work-with-issues/creating-an-issue
-  [crear-issue-cuentoneta]: https://github.com/rolivencia/cuentoneta/issues/new/choose
-  [feature-request-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%8F%8E%EF%B8%8F+mejora&projects=&template=feature.yml
-  [bug-report-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%A6%9F+bug&projects=&template=bug_report.yml
-  [doc-code_of_conduct]: https://github.com/cuentoneta/cuentoneta/blob/develop/CODE_OF_CONDUCT.md 
+[doc-code_of_conduct]: https://github.com/cuentoneta/cuentoneta/blob/develop/CODE_OF_CONDUCT.md
+[doc-guia-de-desarrollo]: https://github.com/cuentoneta/cuentoneta/blob/develop/DEVELOPMENT_GUIDE.md
 
 <!-- Enlaces a Discord -->
 
 [dc-channel]: https://discord.com/channels/594363964499165194/1109220285841944586
 [dc-fec]: https://discord.com/invite/frontendcafe
-[contribuyentes]: https://www.cuentoneta.ar/about#people
 
 <!-- Recursos y otros -->
 
+[contribuyentes]: https://www.cuentoneta.ar/about#people
 [email]: mailto:contacto@cuentoneta.ar
 [figma]: https://www.figma.com/file/BIlQ6U3eh3M8vtYQt3vLNW/La-Cuentoneta-v2
 [wcag]: https://www.w3.org/WAI/standards-guidelines/wcag/es
+
+<!-- Enlaces a Redes Sociales -->
+
 [instagram-cuentoneta]: https://instagram.com/cuentoneta
 [twitter-cuentoneta]: https://twitter.com/cuentoneta
-[facebook-cuentoneta]: https://facebook.com/lacuentoneta
+[facebook-cuentoneta]: https://facebook.com/cuentoneta

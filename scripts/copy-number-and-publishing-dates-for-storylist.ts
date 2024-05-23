@@ -14,8 +14,8 @@ import { client } from '../src/api/_helpers/sanity-connector';
 
 // Obtiene los datos de las grid configs de todas las storylists
 const fetchStorylists = () =>
-  client.fetch(
-    `*[_type == 'storylist'] 
+	client.fetch(
+		`*[_type == 'storylist'] 
     {
       _id,
       'previewGridConfig': {
@@ -30,84 +30,75 @@ const fetchStorylists = () =>
           'publication': @.publication->
         }
       }
-    }`
-  );
+    }`,
+	);
 
 // Construye los patches para cada storylist, con la información a reasignar dentro del atributo publication
 const buildPatches = (storylist) => {
-  const { previewGridConfig, gridConfig } = storylist;
+	const { previewGridConfig, gridConfig } = storylist;
 
-  gridConfig.cardsPlacement = gridConfig.cardsPlacement.map((card) => ({
-    ...card,
-    publication: {
-      story: card?.publication?.story,
-      published: card?.publication?.published,
-      publishingOrder: card?.publication?.order,
-      publishingDate: card?.publication?.publishingDate,
-    },
-  }));
-  previewGridConfig.cardsPlacement = previewGridConfig.cardsPlacement.map(
-    (card) => ({
-      ...card,
-      publication: {
-        story: card?.publication?.story,
-        published: card?.publication?.published,
-        publishingOrder: card?.publication?.order,
-        publishingDate: card?.publication?.publishingDate,
-      },
-    })
-  );
+	gridConfig.cardsPlacement = gridConfig.cardsPlacement.map((card) => ({
+		...card,
+		publication: {
+			story: card?.publication?.story,
+			published: card?.publication?.published,
+			publishingOrder: card?.publication?.order,
+			publishingDate: card?.publication?.publishingDate,
+		},
+	}));
+	previewGridConfig.cardsPlacement = previewGridConfig.cardsPlacement.map((card) => ({
+		...card,
+		publication: {
+			story: card?.publication?.story,
+			published: card?.publication?.published,
+			publishingOrder: card?.publication?.order,
+			publishingDate: card?.publication?.publishingDate,
+		},
+	}));
 
-  return {
-    patch: {
-      id: storylist._id,
-      set: {
-        'previewGridConfig.cardsPlacement': previewGridConfig.cardsPlacement,
-        'gridConfig.cardsPlacement': gridConfig.cardsPlacement,
-      },
-    },
-  };
+	return {
+		patch: {
+			id: storylist._id,
+			set: {
+				'previewGridConfig.cardsPlacement': previewGridConfig.cardsPlacement,
+				'gridConfig.cardsPlacement': gridConfig.cardsPlacement,
+			},
+		},
+	};
 };
 
 const createTransaction = (patches) =>
-  patches.reduce(
-    (tx, patch) => tx.patch(patch.id, patch.patch),
-    client.transaction()
-  );
+	patches.reduce((tx, patch) => tx.patch(patch.id, patch.patch), client.transaction());
 
 const commitTransaction = (tx) => tx.commit();
 
 const migrateBatch = async () => {
-  const storylists = await fetchStorylists();
-  let commits = [];
+	const storylists = await fetchStorylists();
+	let commits = [];
 
-  for (const storylist of storylists) {
-    const { slug, title, previewGridConfig, gridConfig } = storylist;
+	for (const storylist of storylists) {
+		const { slug, title, previewGridConfig, gridConfig } = storylist;
 
-    const previewStoryReferences = previewGridConfig.cardsPlacement?.filter(
-      (card) => !!card.slug
-    );
-    const gridStoryReferences = gridConfig.cardsPlacement?.filter(
-      (card) => !!card.slug
-    );
+		const previewStoryReferences = previewGridConfig.cardsPlacement?.filter((card) => !!card.slug);
+		const gridStoryReferences = gridConfig.cardsPlacement?.filter((card) => !!card.slug);
 
-    if (!previewStoryReferences || !gridStoryReferences) {
-      continue;
-    }
+		if (!previewStoryReferences || !gridStoryReferences) {
+			continue;
+		}
 
-    commits = commits.concat(buildPatches(storylist));
-  }
+		commits = commits.concat(buildPatches(storylist));
+	}
 
-  if (commits.length === 0) {
-    console.log('No hay documentos para migrar!');
-    return null;
-  }
+	if (commits.length === 0) {
+		console.log('No hay documentos para migrar!');
+		return null;
+	}
 
-  const transaction = createTransaction(commits);
-  await commitTransaction(transaction);
+	const transaction = createTransaction(commits);
+	await commitTransaction(transaction);
 };
 
 migrateBatch().catch((err) => {
-  console.error(err);
-  process.exit(1);
+	console.error(err);
+	process.exit(1);
 });

@@ -35,9 +35,14 @@ Puedes acceder a la hoja de ruta (roadmap) del proyecto en [este enlace][doc-roa
 
 Si deseas contribuir a La Cuentoneta te recomendamos leer la [guía de contribución][doc-contributing] para que puedas entender cómo puedes hacerlo. Allí encontrarás información sobre cómo reportar errores, proponer nuevas características, sugerir o sumar nuevos contenidos y cómo contribuir con código al proyecto.
 
-En caso que seas desarrolladora o desarrollador, encontrarás en ese documento información sobre todos los aspectos técnicos del proyecto, incluyendo cómo instalar el proyecto localmente para que puedas probarlo y realizar tus contribuciones de código.
+En caso que seas desarrolladora o desarrollador, encontrarás en ese documento información sobre todos los aspectos
+técnicos del proyecto, incluyendo cómo instalar el proyecto localmente para que puedas probarlo y realizar tus
+contribuciones de código. También puedes acceder a la [documentación del proceso de desarrollo]
+[doc-guia-de-desarrollo] para interiorizarte sobre cómo gestionamos el desarrollo del
+proyecto y decidimos sobre los aspectos prácticos y las herramientas que utilizamos para el mismo.
 
-Si deseás visualizar los ítems de trabajo para principiantes en el proyecto, podés dirigirte a la [página de contribución del proyecto](https://github.com/cuentoneta/cuentoneta/contribute).
+Si deseas visualizar los ítems de trabajo para principiantes en el proyecto, podés dirigirte a la [página de
+contribución del proyecto](https://github.com/cuentoneta/cuentoneta/contribute).
 
 ## Misión, Visión y Valores
 
@@ -53,8 +58,6 @@ La misión, la visión y los valores de La Cuentoneta nos proporcionan el marco 
 
 Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. Es requerido unirte a nuestro [server][dc-fec] y buscar el canal [#🚐 | la-cuentoneta][dc-channel]. Allí vas a poder escribir consultas, realizar propuestas y compartir ideas para el proyecto. El código de conducta de este proyecto es extensible también a tu participación en el server de [FrontendCafé en Discord][dc-fec].
 
-
-
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://forgoodfirstissue.github.com/for-good-first-issue.svg">
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/cuentoneta/cuentoneta/assets/32349705/786d9201-e449-49a6-b9e2-ebf5f9281abc">
@@ -63,6 +66,12 @@ Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. E
 
 La Cuentoneta también es parte de [For Good First Issue](https://forgoodfirstissue.github.com/), una iniciativa que busca generar una lista curada de proyectos open-source con foco en desarrollos del tipo [Bienes Públicos Digitales (DPGs, Digital Public Goods)
 ](https://digitalpublicgoods.net/digital-public-goods/), los cuales además se encuentran disponibles para colaboración abierta.
+
+<picture>
+    <img height="96" width="96" alt="logo-tertulia-literaria" src="https://github.com/cuentoneta/cuentoneta/assets/32349705/7ca8a3d3-ed76-4785-a6ef-f3f7498b94c3">
+</picture>
+
+La comunidad [Tertulia Literaria](https://discord.gg/tertulia-literaria-795704695485235231), enfocada a compartir conocimiento, lecturas y en general la grata convivencia, colabora activamente con la selección de historias, la generación de iniciativas y la confección de storylists en La Cuentoneta.
 
 ---
 
@@ -163,7 +172,7 @@ Este repositorio y el contenido de la web de La Cuentoneta se publican bajo lice
 [web-fec]: https://frontend.cafe/
 [github-juguetear]: https://github.com/Juguetear/juguetear-web
 
-<!-- Enlaces a archivos de documentación (propios al repositorio)  -->
+<!-- Enlaces a otros documentos  -->
 
 [doc-code_of_conduct]: CODE_OF_CONDUCT.md
 [doc-changelog]: CHANGELOG.md
@@ -171,6 +180,7 @@ Este repositorio y el contenido de la web de La Cuentoneta se publican bajo lice
 [doc-roadmap]: ROADMAP.md
 [doc-mvv]: MVV.md
 [doc-lic]: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+[doc-guia-de-desarrollo]: https://github.com/cuentoneta/cuentoneta/blob/develop/DEVELOPMENT_GUIDE.md
 
 <!-- Enlaces a Discord -->
 
@@ -186,6 +196,9 @@ Este repositorio y el contenido de la web de La Cuentoneta se publican bajo lice
 [email]: mailto:contacto@cuentoneta.ar
 [figma]: https://www.figma.com/file/BIlQ6U3eh3M8vtYQt3vLNW/La-Cuentoneta-v2
 [wcag]: https://www.w3.org/WAI/standards-guidelines/wcag/es
+
+<!-- Enlaces a Redes Sociales -->
+
 [instagram-cuentoneta]: https://instagram.com/cuentoneta
 [twitter-cuentoneta]: https://twitter.com/cuentoneta
-[facebook-cuentoneta]: https://facebook.com/lacuentoneta
+[facebook-cuentoneta]: https://facebook.com/cuentoneta

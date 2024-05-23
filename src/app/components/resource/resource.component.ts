@@ -15,7 +15,7 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 		<a
 			[href]="resource.url"
 			target="_blank"
-			class="bg-gray-100 border-1 border-solid border-gray-200 w-12 h-12 rounded-full flex items-center justify-center hover:bg-gray-200"
+			class="flex h-12 w-12 items-center justify-center rounded-full border-1 border-solid border-gray-200 bg-gray-100 hover:bg-gray-200"
 		>
 			<!-- No utilizar ngSrc para este elemento de imagen, dado que se carga dinámicamente desde un campo en formato base64 -->
 			<img
@@ -23,7 +23,7 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 				[height]="24"
 				[width]="24"
 				[alt]="resource.resourceType.title"
-				class="m-3 w-6 h-6"
+				class="m-3 h-6 w-6"
 			/>
 		</a>
 	`,

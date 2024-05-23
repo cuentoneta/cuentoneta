@@ -1,7 +1,7 @@
 import { Meta, moduleMetadata } from '@storybook/angular';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { SpaceRecordingWidgetComponent } from './space-recording-widget.component';
-import { Media } from '@models/media.model'
+import { Media } from '@models/media.model';
 
 export default {
 	title: 'SpaceRecordingWidgetComponent',
@@ -15,8 +15,8 @@ export default {
 
 const media: Media = {
 	title: 'En Algún Lugar de Tlön: Encuentro #1',
-	url: 'https://twitter.com/ladrondesabado/status/1736920785162240151',
 	type: 'spaceRecording',
+	icon: '',
 	data: {
 		id: '1736920785162240151',
 		createdAt: 'Tue Dec 19 01:26:00 +0000 2023',

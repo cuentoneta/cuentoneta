@@ -3,18 +3,19 @@ import { Component, Input, OnInit } from '@angular/core';
 import { NgOptimizedImage, NgIf, CommonModule } from '@angular/common';
 
 // Modelos
+import { Resource } from '@models/resource.model';
 import { Story } from '@models/story.model';
 
 // Componentes
 import { ResourceComponent } from '../resource/resource.component';
-import { Resource } from '@models/resource.model';
+import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 
 @Component({
 	selector: 'cuentoneta-bio-summary-card',
 	template: `
-		<div class="border-1 border-solid border-gray-200 bg-gray-100 p-6 rounded">
+		<div class="rounded border-1 border-solid border-gray-200 bg-gray-100 p-6">
 			@if (story.author) {
-				<section class="grid mb-4 sm:mb-8 gap-4 grid-cols-[64px_1fr] sm:grid-cols-[64px_1fr_1fr]">
+				<section class="mb-4 grid grid-cols-[64px_1fr] gap-4 sm:mb-8 sm:grid-cols-[64px_1fr_1fr]">
 					<img
 						[alt]="'Retrato de ' + story.author.name"
 						[ngSrc]="story.author.imageUrl + '?h=64&w=64'"
@@ -24,11 +25,11 @@ import { Resource } from '@models/resource.model';
 					/>
 					<div class="flex flex-col justify-center">
 						<p class="inter-body-lg-semibold">{{ story.author.name }}</p>
-						<div class="flex items-center gap-2 inter-body-base-medium text-gray-700">
+						<div class="inter-body-base-medium flex items-center gap-2 text-gray-700">
 							<img
 								[alt]="'Bandera de ' + story.author.nationality.country"
 								[ngSrc]="story.author.nationality.flag + '?w=20&h=15'"
-								class="rounded w-[20px] h-[15px]"
+								class="h-[15px] w-[20px] rounded"
 								width="20"
 								height="15"
 							/>
@@ -37,7 +38,7 @@ import { Resource } from '@models/resource.model';
 					</div>
 
 					@if (resources.length > 0) {
-						<div class="flex justify-start sm:justify-end gap-4 xs-max:col-start-1 xs-max:col-end-3">
+						<div class="xs-max:col-start-1 xs-max:col-end-3 flex justify-start gap-4 sm:justify-end">
 							@for (resource of resources; track $index) {
 								<cuentoneta-resource [resource]="resource"></cuentoneta-resource>
 							}
@@ -45,18 +46,23 @@ import { Resource } from '@models/resource.model';
 					}
 				</section>
 				<section [lang]="story.language" class="inter-body-base-regular text-gray-700">
-					@for (paragraph of story.author.biography; track $index) {
-						<p [innerHTML]="paragraph.text" [ngClass]="paragraph.classes" class="last:mb-0 mb-4"></p>
+					@if (!!story.author.biography) {
+						<cuentoneta-portable-text-parser
+							[paragraphs]="story.author.biography"
+							[classes]="'mb-4'"
+						></cuentoneta-portable-text-parser>
 					}
-					@for (paragraph of story.summary; track $index) {
-						<p [innerHTML]="paragraph.text" [ngClass]="paragraph.classes" class="last:mb-0 mb-4"></p>
-					}
+
+					<cuentoneta-portable-text-parser
+						[paragraphs]="story.summary"
+						[classes]="'mb-4 last:mb-0'"
+					></cuentoneta-portable-text-parser>
 				</section>
 			}
 		</div>
 	`,
 	standalone: true,
-	imports: [CommonModule, NgOptimizedImage, NgIf, ResourceComponent],
+	imports: [CommonModule, NgOptimizedImage, NgIf, ResourceComponent, PortableTextParserComponent],
 })
 export class BioSummaryCardComponent implements OnInit {
 	@Input({ required: true }) story!: Story;

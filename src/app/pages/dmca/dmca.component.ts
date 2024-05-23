@@ -6,13 +6,13 @@ import { CommonModule } from '@angular/common';
 	standalone: true,
 	imports: [CommonModule],
 	template: `
-		<main class="bg-gray-50 mx-5 p-5 shadow-lg md:mx-0 md:p-15 md:rounded-xl lg:mt-28">
+		<main class="mx-5 bg-gray-50 p-5 shadow-lg md:mx-0 md:rounded-xl md:p-15 lg:mt-28">
 			<h1 class="h1 mb-5">Disclaimer for La Cuentoneta</h1>
 
 			<section class="mb-8">
 				<p class="inter-body-base-regular">
-                    If you require any more information or have any questions about our site's disclaimer, please feel free to
-                    contact us by email at contacto&#64;cuentoneta.ar.
+					If you require any more information or have any questions about our site's disclaimer, please feel free to
+					contact us by email at contacto&#64;cuentoneta.ar.
 				</p>
 			</section>
 

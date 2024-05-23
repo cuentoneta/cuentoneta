@@ -17,6 +17,9 @@
 				"inlineStyleLanguage": "scss",
 				"assets": ["./src/favicon.ico", "./src/assets"],
 				"server": "./src/main.server.ts",
+				"prerender": {
+					"discoverRoutes": true
+				},
 				"styles": ["./src/styles.scss"],
 				"scripts": []
 			},

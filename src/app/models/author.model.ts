@@ -1,9 +1,8 @@
 import { BlockContent } from '@models/block-content.model';
-import { Paragraph } from '@models/story.model';
 import { Resource } from '@models/resource.model';
 
 interface AuthorBase {
-	id: string;
+	slug: string;
 	name: string;
 	imageUrl?: string;
 	resources?: Resource[];
@@ -11,7 +10,7 @@ interface AuthorBase {
 }
 
 export interface Author extends AuthorBase {
-	biography?: Paragraph[];
+	biography?: BlockContent[];
 }
 
 export interface AuthorDTO extends AuthorBase {

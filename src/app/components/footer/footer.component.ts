@@ -7,15 +7,15 @@ import { InternalLink, UrlLink } from '@models/link.model';
 	selector: 'cuentoneta-footer',
 	template: `
 		<footer class="">
-			<div class="container grid items-center justify-between h-full max-w-screen-lg">
+			<div class="container grid h-full max-w-screen-lg items-center justify-between">
 				<section class="logo">
 					<img [ngSrc]="'./assets/svg/logo.svg'" width="49" height="26" alt="Logo de 'La Cuentoneta'" />
 				</section>
 				<section class="navigation">
 					<nav>
-						<ul class="flex justify-left lg:justify-center inter-body-sm-semibold">
+						<ul class="justify-left inter-body-sm-semibold flex lg:justify-center">
 							@for (link of navLinks; track $index) {
-								<li class="hover:text-interactive-500 max-sm:inter-body-xs-bold">
+								<li class="max-sm:inter-body-xs-bold hover:text-interactive-500">
 									<a routerLink="{{ link.path }}">{{ link.label }}</a>
 								</li>
 							}
@@ -31,7 +31,7 @@ import { InternalLink, UrlLink } from '@models/link.model';
 										<img
 											[alt]="link.alt"
 											[ngSrc]="link.imageUrl!"
-											class="w-[20px] h-[20px] max-w-[20px]"
+											class="h-[20px] w-[20px] max-w-[20px]"
 											width="20"
 											height="20"
 										/>
@@ -46,13 +46,13 @@ import { InternalLink, UrlLink } from '@models/link.model';
 	`,
 	styles: `
 		footer {
-			@apply mt-[120px] w-full border-t-1 border-solid border-primary-500 bg-white max-sm:py-8 max-sm:px-5 sm:h-[98px];
+			@apply mt-[120px] w-full border-t-1 border-solid border-primary-500 bg-white max-sm:px-5 max-sm:py-8 sm:h-[98px];
 		}
 
 		.container {
 			@apply columns-1 gap-6;
-			@apply sm:grid-cols-[0.15fr_1fr_0.5fr] sm:my-0 sm:mx-5;
-			@apply lg:grid-cols-[0.25fr_1fr_0.25fr] lg:m-auto;
+			@apply sm:mx-5 sm:my-0 sm:grid-cols-[0.15fr_1fr_0.5fr];
+			@apply lg:m-auto lg:grid-cols-[0.25fr_1fr_0.25fr];
 		}
 
 		.navigation {
@@ -106,7 +106,7 @@ export class FooterComponent {
 			imageUrl: './assets/svg/instagram.svg',
 		},
 		{
-			url: 'https://www.facebook.com/lacuentoneta',
+			url: 'https://www.facebook.com/cuentoneta',
 			label: 'Facebook',
 			ariaLabel: `Página de Facebook de 'La Cuentoneta'`,
 			alt: 'Ícono de Facebook',

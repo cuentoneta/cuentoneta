@@ -1,4 +1,4 @@
-<article [attr.aria-busy]="!storylist" class="stories-card-container grid gap-y-5 grid-cols-1 md:grid-cols-12 md:gap-8">
+<article [attr.aria-busy]="!storylist" class="stories-card-container grid grid-cols-1 gap-y-5 md:grid-cols-12 md:gap-8">
 	<ng-container *ngTemplateOutlet="storylistTemplate"> </ng-container>
 </article>
 
@@ -13,13 +13,13 @@
 					'grid-column-start': storylist.gridConfig?.titlePlacement?.startCol,
 					'grid-column-end': storylist.gridConfig?.titlePlacement?.endCol
 				}"
-				class="xs:max-sm:!order-1 xs:max-md:!col-span-1"
+				class="xs:max-md:!col-span-1 xs:max-sm:!order-1"
 			>
 				<h1 class="h1 mb-5">
 					<a
 						[ngClass]="{ 'hover:text-interactive-500': canNavigateToStorylist }"
 						[routerLink]="canNavigateToStorylist ? '/' + appRouteTree['STORYLIST'] + '/' + storylist.slug : null"
-						class="disabled:cursor-default disabled:pointer-events-none"
+						class="disabled:pointer-events-none disabled:cursor-default"
 						>{{ storylist.title }}</a
 					>
 				</h1>
@@ -32,7 +32,7 @@
 					'grid-column-start': skeletonConfig?.titlePlacement?.startCol,
 					'grid-column-end': skeletonConfig?.titlePlacement?.endCol
 				}"
-				class="xs:max-sm:!order-1 xs:max-md:col-span-1"
+				class="xs:max-md:col-span-1 xs:max-sm:!order-1"
 			>
 				<ngx-skeleton-loader
 					[theme]="{
@@ -74,7 +74,7 @@
 <ng-template #skeletonsTemplate>
 	@for (skeleton of skeletonConfig?.cardsPlacement; track $index) {
 		@if (!!skeleton.slug) {
-			<cuentoneta-story-card
+			<cuentoneta-publication-card
 				[ngStyle]="{
 					order: skeleton?.order,
 					'grid-column-start': skeleton?.startCol,
@@ -116,7 +116,7 @@
 				"
 				class="xs:max-md:!col-span-1"
 			>
-				<cuentoneta-story-card
+				<cuentoneta-publication-card
 					[displayDate]="storylist.displayDates"
 					[editionPrefix]="storylist.editionPrefix"
 					[publication]="publication"
