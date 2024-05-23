@@ -83,7 +83,7 @@ export async function mapStorylist(result: any) {
 		});
 	}
 
-	const storylist = {
+	return {
 		...result,
 		featuredImage: !result.featuredImage ? undefined : urlFor(result.featuredImage).url(),
 		images:

@@ -54,7 +54,8 @@ export const storylistPreviewQuery = `
                     }
 `;
 
-export const storylistQuery = `{ 
+export const storylistQuery = `
+{ 
                         _id,
                         'slug': slug.current,
                         title,
@@ -103,4 +104,5 @@ export const storylistQuery = `{
                           	}
                         },
                         'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])
+                }
 `;
