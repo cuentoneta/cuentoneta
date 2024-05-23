@@ -7,6 +7,7 @@ import { StoryCardComponent } from '../../components/story-card/story-card.compo
 import { AuthorService } from '../../providers/author.service';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
 import { ResourceComponent } from '../../components/resource/resource.component';
+import { Title } from '@angular/platform-browser';
 
 @Component({
 	selector: 'cuentoneta-author',
@@ -45,9 +46,7 @@ import { ResourceComponent } from '../../components/resource/resource.component'
 		<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-8">
 			@if (stories$ | async; as stories) {
 				@for (story of stories; track $index) {
-					<a [routerLink]="['/story', story.slug]">
-						<cuentoneta-story-card [story]="story"></cuentoneta-story-card>
-					</a>
+					<cuentoneta-story-card [story]="story"></cuentoneta-story-card>
 				}
 			}
 		</section>
@@ -58,11 +57,15 @@ export class AuthorComponent {
 	private activatedRoute = inject(ActivatedRoute);
 	private authorService = inject(AuthorService);
 	private storyService = inject(StoryService);
+	private title = inject(Title);
 
 	author$ = this.activatedRoute.params.pipe(switchMap(({ slug }) => this.authorService.getBySlug(slug)));
 	stories$ = this.activatedRoute.params.pipe(switchMap(({ slug }) => this.storyService.getByAuthorSlug(slug)));
 
 	constructor() {
+		this.author$.subscribe((author) => {
+			this.title.setTitle(`${author.name} - Autor en La Cuentoneta`);
+		});
 		this.stories$.subscribe((stories) => console.log(stories));
 	}
 }
