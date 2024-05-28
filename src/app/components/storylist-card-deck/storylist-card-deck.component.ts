@@ -1,5 +1,5 @@
 // Core
-import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 // Modules
@@ -11,6 +11,7 @@ import { GridItemPlacementConfig, Storylist } from '@models/storylist.model';
 import { APP_ROUTE_TREE } from '../../app.routes';
 import { StorylistGridSkeletonConfig } from '@models/content.model';
 import { PublicationCardComponent } from '../publication-card/publication-card.component';
+import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-storylist-card-deck',
@@ -32,6 +33,9 @@ export class StorylistCardDeckComponent implements OnInit, OnChanges {
 	imagesCardConfig: { [key: string]: CardDeckCSSGridConfig } = {};
 	storiesCardConfig: { [key: string]: CardDeckCSSGridConfig } = {};
 	readonly appRouteTree = APP_ROUTE_TREE;
+
+	private themeService = inject(ThemeService);
+	skeletonColor = this.themeService.pickColor('zinc', 300);
 
 	ngOnInit() {
 		this.dummyList = Array(this.number);
