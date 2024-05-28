@@ -20,7 +20,7 @@ interface LandingPageContent {
 })
 export class ContentService {
 	private readonly prefix = `${environment.apiUrl}api/content`;
-	private _contentConfig: LandingPageContent = { cards: [], previews: [] };
+	private _contentConfig = environment.contentConfig as LandingPageContent;
 
 	// Services
 	private http = inject(HttpClient);
@@ -31,14 +31,6 @@ export class ContentService {
 
 	public getLandingPageContent(): Observable<{ cards: Storylist[]; previews: Storylist[] }> {
 		return this.http.get<{ cards: Storylist[]; previews: Storylist[] }>(`${this.prefix}/landing-page`);
-	}
-
-	public fetchContentConfig(): Observable<LandingPageContent> {
-		return of(environment.contentConfig as LandingPageContent).pipe(
-			tap((contentConfig) => {
-				this._contentConfig = contentConfig;
-			}),
-		);
 	}
 
 	// ToDo: Obtener listas de navs desde API
