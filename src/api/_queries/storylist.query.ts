@@ -1,4 +1,5 @@
 import { authorForStoryCard } from './author.query';
+import { storyPreviewCommonFields } from './story.query';
 
 const tags = `
     'tags': tags[] -> {
@@ -40,16 +41,7 @@ const gridConfig = (config: 'previewGridConfig' | 'gridConfig') => `
             'publishingDate': publication.publishingDate,
             'published': publication.published,
             'story': publication.story->{
-                _id,
-                'slug': slug.current,
-                title,
-                badLanguage,
-                categories,
-                body[0...3],
-                review,
-                approximateReadingTime,
-                language,
-                mediaSources,
+                ${storyPreviewCommonFields}
             	${authorForStoryCard}
             }
         }
