@@ -1,13 +1,17 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 
 // Tailwind
 import colors from 'tailwindcss/colors';
 import { DefaultColors } from 'tailwindcss/types/generated/colors';
+import { Meta } from '@angular/platform-browser';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class ThemeService {
+	private meta = inject(Meta);
+	private platform = inject(PLATFORM_ID);
+
 	pickColor(color: keyof DefaultColors, scale: number = 50) {
 		if (!colors[color]) {
 			throw new Error(`Color ${color} not found in Tailwind CSS config!`);
@@ -20,5 +24,9 @@ export class ThemeService {
 
 		// @ts-expect-error - En este punto tanto el color como la escala han sido validados
 		return colors[color][scale.toString()].toUpperCase();
+	}
+
+	addThemeColorTag() {
+		this.meta.addTag({ name: 'theme-color', content: 'hsl(21, 57%, 44%)' });
 	}
 }
