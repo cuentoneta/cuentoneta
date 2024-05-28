@@ -68,7 +68,7 @@ import { ThemeService } from '../../providers/theme.service';
 				<section class="flex flex-col gap-4 px-4 pt-5">
 					<ngx-skeleton-loader
 						[theme]="{
-							'background-color': '#D4D4D8',
+							'background-color': skeletonColor,
 							height: '40px',
 							'margin-bottom': 0,
 							width: '100%'
