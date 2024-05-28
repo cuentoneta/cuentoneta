@@ -26,14 +26,14 @@ export async function fetchByAuthorSlug(slug: string): Promise<StoryDTO[]> {
 							  approximateReadingTime,
 							  mediaSources,
 							  ${resourcesSubQuery},
-						  }`;
+						  } | order(title asc)`;
 
 	const result = await client.fetch(query, {});
 	const stories = [];
 
 	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
 	for (const story of result) {
-		const { body, review, author, mediaSources, ...properties } = story;
+		const { body, review, mediaSources, ...properties } = story;
 
 		stories.push({
 			...properties,
