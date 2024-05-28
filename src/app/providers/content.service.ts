@@ -51,8 +51,7 @@ export class ContentService {
 	}
 
 	/**
-	 * En base a la configuración de contenido disponible, hace fetch de la lista de
-	 * storylists referenciada en los objetos de configuración, para luego generar
+	 * Hace fetch de la configuración de landing page desde el origen de datos y genera
 	 * una tupla de arrays de objetos compuestos de tipo StorylistCardDeck, los cuales
 	 * contienen la configuración y la correspondiente información para renderizar
 	 * los decks de previews y cards de cada storylist.
