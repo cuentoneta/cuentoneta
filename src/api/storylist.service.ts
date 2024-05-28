@@ -1,15 +1,16 @@
-// Connector
+// Conector de Sanity
 import { client } from './_helpers/sanity-connector';
 
-// Functions
+// Interfaces
+import { StorylistDTO } from '@models/storylist.model';
+
+// Funciones
 import { mapStorylist } from './_utils/functions';
 
 // Queries
 import { storylistPreviewQuery, storylistQuery } from './_queries/storylist.query';
 
-async function fetchPreview(slug: string) {
-	console.log(slug);
-
+async function fetchPreview(slug: string): Promise<StorylistDTO> {
 	const query = `*[_type == 'storylist' && slug.current == '${slug}'][0]${storylistPreviewQuery}`;
 	const result = await client.fetch(query, {});
 
@@ -29,7 +30,7 @@ async function fetchStorylist({
 	amount: string;
 	limit: number;
 	ordering: string;
-}) {
+}): Promise<StorylistDTO> {
 	const query = `*[_type == 'storylist' && slug.current == '${slug}'][0]${storylistQuery}`;
 	const result = await client.fetch(query, {});
 
