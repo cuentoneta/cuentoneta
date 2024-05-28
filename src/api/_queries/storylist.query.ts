@@ -10,7 +10,6 @@ const tags = `
 `;
 
 const commonFields = `
-    _id,
     'slug': slug.current,
     title,
     description,
