@@ -1,8 +1,8 @@
-const { createGlobPatternsForDependencies } = require('@nx/angular/tailwind');
-const { join } = require('path');
+import { createGlobPatternsForDependencies } from '@nx/angular/tailwind';
+import { join } from 'path';
+import { Config } from 'tailwindcss/types/config';
 
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
 	content: [join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}'), ...createGlobPatternsForDependencies(__dirname)],
 	theme: {
 		colors: {
@@ -25,6 +25,7 @@ module.exports = {
 			'gray-900': 'hsl(240, 5%, 14%)',
 			'interactive-500': 'hsl(212, 70%, 45%)',
 			'interactive-600': 'hsl(212, 70%, 35%)',
+			'zinc-300': '#d4d4d8', // Utilizado formato hexadecimal por limitaciones de ngx-skeleton-loader
 		},
 		content: {
 			blank: '""',
@@ -60,12 +61,12 @@ module.exports = {
 				'5/4': '120%',
 			},
 			lineHeight: {
-				0: 0,
+				0: '0',
 			},
 			gridTemplateRows: {
 				'3-auto': 'repeat(3, auto)',
 			},
 		},
 	},
-	plugins: [{ cssnano: {} }],
-};
+	plugins: [],
+} satisfies Config;
