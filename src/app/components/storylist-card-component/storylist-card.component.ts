@@ -1,5 +1,5 @@
 // Angular Core
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 // Router
@@ -14,6 +14,7 @@ import { StorylistCard } from '@models/storylist.model';
 
 // Componentes
 import { BadgeComponent } from '../badge/badge.component';
+import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-storylist-card',
@@ -100,7 +101,7 @@ import { BadgeComponent } from '../badge/badge.component';
 				<footer class="flex justify-end rounded-b-lg px-5 pb-5 pt-4">
 					<ngx-skeleton-loader
 						[theme]="{
-							'background-color': '#D4D4D8',
+							'background-color': skeletonColor,
 							height: '22px',
 							'margin-bottom': 0,
 							width: '80px'
@@ -110,7 +111,7 @@ import { BadgeComponent } from '../badge/badge.component';
 					></ngx-skeleton-loader>
 					<ngx-skeleton-loader
 						[theme]="{
-							'background-color': '#D4D4D8',
+							'background-color': skeletonColor,
 							height: '22px',
 							'margin-left': '16px',
 							'margin-bottom': 0,
@@ -133,4 +134,7 @@ export class StorylistCardComponent {
 	@Input() storylist: StorylistCard | undefined;
 
 	protected readonly appRouteTree = APP_ROUTE_TREE;
+
+	private themeService = inject(ThemeService);
+	skeletonColor = this.themeService.pickColor('zinc', 300);
 }
