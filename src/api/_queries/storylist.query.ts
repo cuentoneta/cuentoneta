@@ -1,6 +1,6 @@
 import { authorForStoryCard } from './author.query';
 
-const storylistTagsQuery = `
+const tags = `
     'tags': tags[] -> {
         title, 
         'slug': slug.current, 
@@ -9,7 +9,20 @@ const storylistTagsQuery = `
     }
 `;
 
-const gridConfigQuery = (config: 'previewGridConfig' | 'gridConfig') => `
+const commonFields = `
+    _id,
+    'slug': slug.current,
+    title,
+    description,
+    language,
+    displayDates,
+    editionPrefix,
+    comingNextLabel,
+    featuredImage,
+    ${tags}
+`;
+
+const gridConfig = (config: 'previewGridConfig' | 'gridConfig') => `
 'gridConfig': { 
     'gridTemplateColumns': ${config}.gridTemplateColumns,
     'titlePlacement': ${config}.titlePlacement,
@@ -47,50 +60,23 @@ const gridConfigQuery = (config: 'previewGridConfig' | 'gridConfig') => `
 
 export const storylistCardQuery = `
 { 
-    _id,
-    'slug': slug.current,
-    title,
-    description,
-    language,
-    displayDates,
-    editionPrefix,
-    comingNextLabel,
-    ${storylistTagsQuery},
-    featuredImage,
+    ${commonFields},
     'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])
 }
 `;
 
 export const storylistPreviewQuery = `
 { 
-    _id,
-    'slug': slug.current,
-    title,
-    description,
-    language,
-    displayDates,
-    editionPrefix,
-    comingNextLabel,
-    ${storylistTagsQuery},
-    featuredImage,
-    ${gridConfigQuery('previewGridConfig')},
+    ${commonFields},
+    ${gridConfig('previewGridConfig')},
     'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])
     }
 `;
 
 export const storylistQuery = `
 { 
-    _id,
-    'slug': slug.current,
-    title,
-    description,
-    language,
-    displayDates,
-    editionPrefix,
-    comingNextLabel,
-    featuredImage,
-    ${storylistTagsQuery},
-    ${gridConfigQuery('gridConfig')},
+    ${commonFields},
+    ${gridConfig('gridConfig')},
     'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])
 }
 `;
