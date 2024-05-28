@@ -2,7 +2,7 @@
 import { client } from './_helpers/sanity-connector';
 
 // Functions
-import { mapStorylist, mapStorylistPreview } from './_utils/functions';
+import { mapStorylist } from './_utils/functions';
 
 // Queries
 import { storylistPreviewQuery, storylistQuery } from './_queries/storylist.query';
@@ -17,7 +17,7 @@ async function fetchPreview(slug: string) {
 		throw new Error('Storylist not found');
 	}
 
-	return mapStorylistPreview(result);
+	return mapStorylist(result);
 }
 async function fetchStorylist({
 	slug,
