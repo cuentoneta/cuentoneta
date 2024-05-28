@@ -20,13 +20,12 @@ interface LandingPageContent {
 })
 export class ContentService {
 	private readonly prefix = `${environment.apiUrl}api/content`;
-	private _contentConfig = environment.contentConfig as LandingPageContent;
 
 	// Services
 	private http = inject(HttpClient);
 
 	get contentConfig(): LandingPageContent {
-		return this._contentConfig;
+		return environment.contentConfig as LandingPageContent;
 	}
 
 	public getLandingPageContent(): Observable<{ cards: Storylist[]; previews: Storylist[] }> {
