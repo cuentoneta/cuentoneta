@@ -1,6 +1,6 @@
 // Core
 import { inject, Injectable } from '@angular/core';
-import { map, Observable, of, tap } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 // Interfaces
 import { StorylistCardDeck, StorylistDeckConfig } from '@models/content.model';
