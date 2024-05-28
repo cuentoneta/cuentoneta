@@ -32,6 +32,7 @@ import { ShareContentComponent } from '../../components/share-content/share-cont
 import { EpigraphComponent } from '../../components/epigraph/epigraph.component';
 import { MediaResourceComponent } from '../../components/media-resource/media-resource.component';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
+import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-story',
@@ -83,6 +84,9 @@ export class StoryComponent {
 	dummyList = Array(10);
 	shareContentParams: { [key: string]: string } = {};
 	shareMessage: string = '';
+
+	private themeService = inject(ThemeService);
+	skeletonColor = this.themeService.pickColor('zinc', 300);
 
 	constructor() {
 		const platformId = inject(PLATFORM_ID);

@@ -1,31 +1,33 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { environment } from '../../environments/environment';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-share-content',
 	standalone: true,
 	imports: [CommonModule, NgOptimizedImage, NgxSkeletonLoaderModule],
+	providers: [ThemeService],
 	templateUrl: './share-content.component.html',
 	styles: `
-    section {
-      button {
-        &:not(:last-child) {
-          @apply mr-6;
-        }
-      }
+		section {
+			button {
+				&:not(:last-child) {
+					@apply mr-6;
+				}
+			}
 
-      ngx-skeleton-loader {
-        div {
-          @apply m-0;
-        }
-        &:not(:last-child) {
-          @apply mr-6;
-        }
-      }
-    }
-  `,
+			ngx-skeleton-loader {
+				div {
+					@apply m-0;
+				}
+				&:not(:last-child) {
+					@apply mr-6;
+				}
+			}
+		}
+	`,
 })
 export class ShareContentComponent {
 	@Input() route: string = '';
@@ -48,6 +50,9 @@ export class ShareContentComponent {
 		//   url: 'copy',
 		// },
 	];
+
+	private themeService = inject(ThemeService);
+	skeletonColor = this.themeService.pickColor('zinc', 300);
 
 	onShareToPlatformClicked(event: MouseEvent | KeyboardEvent, platform: SharingPlatform) {
 		const urlParams = Object.keys(this.params)
