@@ -10,13 +10,16 @@ router.get('/preview', getPreview);
 export default router;
 
 function get(req: express.Request, res: express.Response, next: express.NextFunction) {
-	fetchStorylist(req, res)
+	const { slug, amount, ordering = 'asc' } = req.query;
+	const limit = parseInt(amount as string) - 1;
+	fetchStorylist({ slug: slug as string, amount: amount as string, limit, ordering: ordering as string })
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
 }
 
 function getPreview(req: express.Request, res: express.Response, next: express.NextFunction) {
-	fetchPreview(req, res)
+	const { slug } = req.query;
+	fetchPreview(slug as string)
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
 }

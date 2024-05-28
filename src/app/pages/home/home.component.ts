@@ -57,9 +57,11 @@ export class HomeComponent {
 
 	private loadStorylistDecks() {
 		this.fetchContentDirective
-			.fetchContent$<[StorylistCardDeck[], StorylistCardDeck[]]>(this.contentService.fetchStorylistDecks())
+			.fetchContent$<{ previews: StorylistCardDeck[]; cards: StorylistCardDeck[] }>(
+				this.contentService.fetchStorylistDecks(),
+			)
 			.pipe(takeUntilDestroyed())
-			.subscribe(([previews, cards]) => {
+			.subscribe(({ previews, cards }) => {
 				this.previews = previews;
 				this.cards = cards;
 			});

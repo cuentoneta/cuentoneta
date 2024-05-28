@@ -22,12 +22,6 @@ export const appConfig: ApplicationConfig = {
 		ContentService,
 		StoryService,
 		{ provide: APP_ID, useValue: 'serverApp' },
-		{
-			provide: APP_INITIALIZER,
-			useFactory: (contentService: ContentService) => () => contentService.fetchContentConfig(),
-			deps: [ContentService],
-			multi: true,
-		},
 		{ provide: LOCALE_ID, useValue: 'es-419' },
 		provideClientHydration(),
 		provideRouter(
