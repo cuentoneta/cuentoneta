@@ -18,7 +18,7 @@ import { storyCommonFields, storyPreviewCommonFields } from '../_queries/story.q
 import { StoryByAuthorSlugArgs } from './interfaces';
 
 export async function fetchByAuthorSlug(args: StoryByAuthorSlugArgs): Promise<StoryDTO[]> {
-	const slice = `${args.offset * args.limit}...${(args.offset + 1) * args.limit - 1}`;
+	const slice = `${args.offset * args.limit}...${(args.offset + 1) * args.limit}`;
 	const query = groq`*[_type == 'story' && author->slug.current == '${args.slug}'][${slice}]
 						  {
 							${storyPreviewCommonFields}
