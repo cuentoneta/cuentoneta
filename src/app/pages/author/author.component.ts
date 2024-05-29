@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { StoryService } from '../../providers/story.service';
-import { switchMap } from 'rxjs';
+import { combineLatest, switchMap } from 'rxjs';
 import { StoryCardComponent } from '../../components/story-card/story-card.component';
 import { AuthorService } from '../../providers/author.service';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
@@ -60,7 +60,9 @@ export class AuthorComponent {
 	private title = inject(Title);
 
 	author$ = this.activatedRoute.params.pipe(switchMap(({ slug }) => this.authorService.getBySlug(slug)));
-	stories$ = this.activatedRoute.params.pipe(switchMap(({ slug }) => this.storyService.getByAuthorSlug(slug)));
+	stories$ = combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams]).pipe(
+		switchMap(([{ slug }, { limit, offset }]) => this.storyService.getByAuthorSlug(slug, offset, limit)),
+	);
 
 	constructor() {
 		this.author$.subscribe((author) => {

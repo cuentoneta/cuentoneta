@@ -21,9 +21,10 @@ export class StoryService {
 			.pipe(map((story) => this.parseStoryContent(story)));
 	}
 
-	public getByAuthorSlug(slug: string): Observable<StoryCard[]> {
+	public getByAuthorSlug(slug: string, offset: number = 0, limit: number = 20): Observable<StoryCard[]> {
+		const params = new HttpParams().set('offset', offset).append('limit', limit);
 		return this.http
-			.get<StoryDTO[]>(`${this.prefix}/author/${slug}`)
+			.get<StoryDTO[]>(`${this.prefix}/author/${slug}`, { params })
 			.pipe(map((stories) => stories.map((story) => this.parseStoryCardContent(story))));
 	}
 
