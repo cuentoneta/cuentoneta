@@ -1,21 +1,25 @@
 // Conexión a Sanity
-import { client } from './_helpers/sanity-connector';
+import { client } from '../_helpers/sanity-connector';
 import groq from 'groq';
 
 // Utilidades
-import { mapAuthorForStory, mapResources } from './_utils/functions';
+import { mapAuthorForStory, mapResources } from '../_utils/functions';
 
 // Modelos
 import { StoryDTO } from '@models/story.model';
-import { mapMediaSources } from './_utils/media-sources.functions';
+import { mapMediaSources } from '../_utils/media-sources.functions';
 
 // Subqueries
-import { authorForStory } from './_queries/author.query';
-import { resourcesSubQuery } from './_queries/resources.query';
-import { storyCommonFields, storyPreviewCommonFields } from './_queries/story.query';
+import { authorForStory } from '../_queries/author.query';
+import { resourcesSubQuery } from '../_queries/resources.query';
+import { storyCommonFields, storyPreviewCommonFields } from '../_queries/story.query';
 
-export async function fetchByAuthorSlug(slug: string): Promise<StoryDTO[]> {
-	const query = groq`*[_type == 'story' && author->slug.current == '${slug}']
+// Interfaces
+import { StoryByAuthorSlugArgs } from './interfaces';
+
+export async function fetchByAuthorSlug(args: StoryByAuthorSlugArgs): Promise<StoryDTO[]> {
+	const slice = `${args.offset * args.limit}...${(args.offset + 1) * args.limit}`;
+	const query = groq`*[_type == 'story' && author->slug.current == '${args.slug}'][${slice}]
 						  {
 							${storyPreviewCommonFields}
 							${resourcesSubQuery},
