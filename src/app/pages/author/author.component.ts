@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { StoryService } from '../../providers/story.service';
-import { combineLatest, switchMap } from 'rxjs';
+import { combineLatest, switchMap, tap } from 'rxjs';
 import { StoryCardComponent } from '../../components/story-card/story-card.component';
 import { AuthorService } from '../../providers/author.service';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
@@ -59,15 +59,11 @@ export class AuthorComponent {
 	private storyService = inject(StoryService);
 	private title = inject(Title);
 
-	author$ = this.activatedRoute.params.pipe(switchMap(({ slug }) => this.authorService.getBySlug(slug)));
+	author$ = this.activatedRoute.params.pipe(
+		switchMap(({ slug }) => this.authorService.getBySlug(slug)),
+		tap((author) => this.title.setTitle(`${author.name} - Autor en La Cuentoneta`)),
+	);
 	stories$ = combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams]).pipe(
 		switchMap(([{ slug }, { limit, offset }]) => this.storyService.getByAuthorSlug(slug, offset, limit)),
 	);
-
-	constructor() {
-		this.author$.subscribe((author) => {
-			this.title.setTitle(`${author.name} - Autor en La Cuentoneta`);
-		});
-		this.stories$.subscribe((stories) => console.log(stories));
-	}
 }
