@@ -41,7 +41,7 @@ const gridConfig = (config: 'previewGridConfig' | 'gridConfig') => `
             'publishingDate': publication.publishingDate,
             'published': publication.published,
             'story': publication.story->{
-                ${storyPreviewCommonFields}
+                ${storyPreviewCommonFields},
             	${authorForStoryCard}
             }
         }
