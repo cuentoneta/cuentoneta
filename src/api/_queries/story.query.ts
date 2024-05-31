@@ -6,7 +6,7 @@ export const storyPreviewCommonFields: string = `
     categories,
     body[0...3],
     approximateReadingTime,
-    mediaSources,
+    mediaSources
 `;
 
 export const storyCommonFields: string = `
@@ -20,5 +20,5 @@ export const storyCommonFields: string = `
     review, 
     originalPublication,
     approximateReadingTime,
-    mediaSources,
+    mediaSources
 `;
