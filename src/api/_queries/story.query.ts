@@ -5,6 +5,7 @@ export const storyPreviewCommonFields: string = `
     badLanguage,
     categories,
     body[0...3],
+    originalPublication,
     approximateReadingTime,
     mediaSources
 `;
