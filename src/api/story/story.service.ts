@@ -21,7 +21,7 @@ export async function fetchByAuthorSlug(args: StoryByAuthorSlugArgs): Promise<St
 	const slice = `${args.offset * args.limit}...${(args.offset + 1) * args.limit}`;
 	const query = groq`*[_type == 'story' && author->slug.current == '${args.slug}'][${slice}]
 						  {
-							${storyPreviewCommonFields}
+							${storyPreviewCommonFields},
 							${resourcesSubQuery},
 						  } | order(title asc)`;
 
