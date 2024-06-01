@@ -6,9 +6,10 @@
 	"prefix": "cuentoneta",
 	"targets": {
 		"build": {
-			"executor": "@angular-devkit/build-angular:application",
+			"executor": "@nx/angular:application",
 			"outputs": ["{options.outputPath}"],
 			"options": {
+				"clearScreen": true,
 				"outputPath": "dist/cuentoneta/",
 				"index": "./src/index.html",
 				"browser": "./src/main.ts",
@@ -95,7 +96,7 @@
 			}
 		},
 		"serve": {
-			"executor": "@angular-devkit/build-angular:dev-server",
+			"executor": "@nx/angular:dev-server",
 			"configurations": {
 				"production": {
 					"buildTarget": "cuentoneta:build:production"
