@@ -32,4 +32,4 @@ export interface StoryCard extends StoryBase {
 	author: Omit<Author, 'biography'>;
 }
 
-export type StoryTeaser = Omit<StoryBase, 'paragraphs' | 'media'>;
+export type StoryTeaser = Omit<StoryBase, 'paragraphs' | 'resources'>;
