@@ -6,12 +6,21 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 import { RouterLink } from '@angular/router';
 import { NgIf, NgFor, CommonModule } from '@angular/common';
+import { MediaResourceTagsComponent } from '../media-resource-tags/media-resource-tags.component';
 
 @Component({
 	selector: 'cuentoneta-story-navigation-bar',
 	templateUrl: './story-navigation-bar.component.html',
 	standalone: true,
-	imports: [CommonModule, NgxSkeletonLoaderModule, NgIf, NgFor, RouterLink, StoryEditionDateLabelComponent],
+	imports: [
+		CommonModule,
+		NgxSkeletonLoaderModule,
+		NgIf,
+		NgFor,
+		RouterLink,
+		StoryEditionDateLabelComponent,
+		MediaResourceTagsComponent,
+	],
 })
 export class StoryNavigationBarComponent implements OnChanges {
 	@Input() displayedPublications: Publication<StoryCard>[] = [];
