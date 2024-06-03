@@ -5,7 +5,6 @@ import { Resource } from '@models/resource.model';
 import { Epigraph, EpigraphDTO } from '@models/epigraph.model';
 
 export interface StoryBase {
-	id: number;
 	title: string;
 	slug: string;
 	approximateReadingTime: number;
@@ -32,3 +31,5 @@ export interface StoryDTO extends StoryBase {
 export interface StoryCard extends StoryBase {
 	author: Omit<Author, 'biography'>;
 }
+
+export type StoryTeaser = Omit<StoryBase, 'paragraphs' | 'media'>;
