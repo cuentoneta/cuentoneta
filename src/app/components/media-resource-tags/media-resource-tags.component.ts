@@ -25,7 +25,6 @@ import { Media } from '@models/media.model';
 			}
 		}
 	}`,
-	styles: ``,
 })
 export class MediaResourceTagsComponent {
 	resources = input<Media[]>([]);
