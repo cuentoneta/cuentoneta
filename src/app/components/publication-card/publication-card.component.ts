@@ -9,6 +9,7 @@ import { StoryEditionDateLabelComponent } from '../story-edition-date-label/stor
 import { CommonModule, DatePipe, NgIf, NgOptimizedImage } from '@angular/common';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
+import { MediaResourceTagsComponent } from '../media-resource-tags/media-resource-tags.component';
 
 @Component({
 	selector: 'cuentoneta-publication-card',
@@ -22,6 +23,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 		StoryCardSkeletonComponent,
 		StoryEditionDateLabelComponent,
 		PortableTextParserComponent,
+		MediaResourceTagsComponent,
 	],
 	providers: [DatePipe],
 	changeDetection: ChangeDetectionStrategy.OnPush,

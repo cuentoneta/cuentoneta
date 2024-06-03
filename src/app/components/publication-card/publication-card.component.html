@@ -44,25 +44,7 @@
 						}
 					</div>
 				</div>
-				@for (mediaResource of story.media; track $index) {
-					@switch (mediaResource.type) {
-						@case ('audioRecording') {
-							<div [title]="'Contiene material en formato audio'" class="h-6 w-6">
-								<img [alt]="'Contiene audio'" src="assets/svg/waveform.svg" />
-							</div>
-						}
-						@case ('spaceRecording') {
-							<div [title]="'Contiene material en formato Spaces de X'" class="h-6 w-6">
-								<img [alt]="'Contiene link a Spaces'" src="assets/svg/twitter.svg" />
-							</div>
-						}
-						@case ('youTubeVideo') {
-							<div [title]="'Contiene material audiovisual'" class="h-6 w-6">
-								<img [alt]="'Contiene video'" class="video" src="assets/svg/video.svg" />
-							</div>
-						}
-					}
-				}
+				<cuentoneta-media-resource-tags [resources]="story.media" />
 			</footer>
 		}
 	} @else {
