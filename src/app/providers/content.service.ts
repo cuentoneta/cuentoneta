@@ -4,11 +4,12 @@ import { map, Observable } from 'rxjs';
 
 // Interfaces
 import { StorylistCardDeck, StorylistDeckConfig } from '@models/content.model';
-import { Storylist } from '@models/storylist.model';
+import { Storylist, StorylistDTO } from '@models/storylist.model';
 
 // Providers
 import { environment } from '../environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { StorylistService } from './storylist.service';
 
 interface LandingPageContent {
 	cards: StorylistDeckConfig[];
@@ -23,13 +24,19 @@ export class ContentService {
 
 	// Services
 	private http = inject(HttpClient);
+	private storylistService = inject(StorylistService);
 
 	get contentConfig(): LandingPageContent {
 		return environment.contentConfig as LandingPageContent;
 	}
 
 	public getLandingPageContent(): Observable<{ cards: Storylist[]; previews: Storylist[] }> {
-		return this.http.get<{ cards: Storylist[]; previews: Storylist[] }>(`${this.prefix}/landing-page`);
+		return this.http.get<{ cards: StorylistDTO[]; previews: StorylistDTO[] }>(`${this.prefix}/landing-page`).pipe(
+			map((content) => ({
+				cards: content.cards.map((cards) => this.storylistService.mapStorylist(cards)),
+				previews: content.previews.map((preview) => this.storylistService.mapStorylist(preview)),
+			})),
+		);
 	}
 
 	// ToDo: Obtener listas de navs desde API
