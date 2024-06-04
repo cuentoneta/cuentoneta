@@ -31,7 +31,7 @@ import { RouterLink } from '@angular/router';
 				class="bg-gray-50 px-7 py-5"
 			>
 				<cuentoneta-story-edition-date-label
-					[label]="publication().published ? getEditionLabel(publication()) : storylist().comingNextLabel"
+					[label]="publication().published ? publication().editionLabel : storylist().comingNextLabel"
 				/>
 				@if (publication().published) {
 					<h4 class="inter-body-sm-bold mb-2">{{ publication().story.title }}</h4>
@@ -53,15 +53,4 @@ export class NavigablePublicationTeaserComponent {
 	selected = input<boolean>();
 	storylist = input.required<Storylist>();
 	protected readonly appRouteTree = APP_ROUTE_TREE;
-
-	// ToDo: Separar card de cada cuento de la lista en su propio componente, para evitar usar un método en el template
-	getEditionLabel(publication: Publication<StoryCard>): string {
-		if (!this.storylist) {
-			return '';
-		}
-
-		return `${this.storylist()?.editionPrefix} ${this.publication().publishingOrder} ${
-			this.storylist()?.displayDates ? ' - ' + publication.publishingDate : ''
-		}`;
-	}
 }
