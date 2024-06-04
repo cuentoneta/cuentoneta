@@ -4,17 +4,13 @@ import { map, Observable } from 'rxjs';
 
 // Interfaces
 import { StorylistCardDeck, StorylistDeckConfig } from '@models/content.model';
-import { Storylist, StorylistDTO } from '@models/storylist.model';
+import { LandingPageContent } from '@models/landing-page-content.model';
 
+import { Storylist, StorylistDTO } from '@models/storylist.model';
 // Providers
 import { environment } from '../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { StorylistService } from './storylist.service';
-
-interface LandingPageContent {
-	cards: StorylistDeckConfig[];
-	previews: StorylistDeckConfig[];
-}
 
 @Injectable({
 	providedIn: 'root',
@@ -26,12 +22,12 @@ export class ContentService {
 	private http = inject(HttpClient);
 	private storylistService = inject(StorylistService);
 
-	get contentConfig(): LandingPageContent {
-		return environment.contentConfig as LandingPageContent;
+	get contentConfig(): LandingPageContent<StorylistDeckConfig> {
+		return environment.contentConfig as LandingPageContent<StorylistDeckConfig>;
 	}
 
-	public getLandingPageContent(): Observable<{ cards: Storylist[]; previews: Storylist[] }> {
-		return this.http.get<{ cards: StorylistDTO[]; previews: StorylistDTO[] }>(`${this.prefix}/landing-page`).pipe(
+	public getLandingPageContent(): Observable<LandingPageContent<Storylist>> {
+		return this.http.get<LandingPageContent<StorylistDTO>>(`${this.prefix}/landing-page`).pipe(
 			map((content) => ({
 				cards: content.cards.map((cards) => this.storylistService.mapStorylist(cards)),
 				previews: content.previews.map((preview) => this.storylistService.mapStorylist(preview)),
@@ -54,7 +50,7 @@ export class ContentService {
 	 * contienen la configuración y la correspondiente información para renderizar
 	 * los decks de previews y cards de cada storylist.
 	 */
-	public fetchStorylistDecks(): Observable<{ previews: StorylistCardDeck[]; cards: StorylistCardDeck[] }> {
+	public fetchStorylistDecks(): Observable<LandingPageContent<StorylistCardDeck>> {
 		const previewConfigs = this.contentConfig.previews;
 		const cardConfigs = this.contentConfig.cards;
 		const landingConfig$ = this.getLandingPageContent();
