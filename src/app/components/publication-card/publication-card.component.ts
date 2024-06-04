@@ -29,22 +29,15 @@ import { MediaResourceTagsComponent } from '../media-resource-tags/media-resourc
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PublicationCardComponent implements OnInit {
-	@Input() editionPrefix: string | undefined;
-	@Input() editionSuffix: string | undefined;
 	@Input() comingNextLabel: string = '';
 	@Input() displayDate: boolean = false;
 	@Input() publication: Publication<StoryCard> | undefined;
-	@Input() editionIndex: number = 0;
-
-	editionLabel: string = '';
 
 	private datePipe = inject(DatePipe);
 
 	ngOnInit() {
 		const dateFormat = this.datePipe.transform(this.publication?.publishingDate, `dd 'de' MMMM, YYYY`);
-		this.editionLabel = `${this.editionPrefix} ${this.editionIndex} ${this.displayDate ? ' - ' + dateFormat : ''}${
-			this.editionSuffix ? ' | ' + this.editionSuffix : ''
-		}`;
+
 		this.comingNextLabel = this.displayDate ? `${this.comingNextLabel} ${dateFormat}` : this.comingNextLabel;
 	}
 }

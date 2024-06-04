@@ -11,37 +11,11 @@
 
 	@if (!!storylist) {
 		@for (publication of displayedPublications; track $index) {
-			<a
-				[routerLink]="
-					publication.published ? ['/' + appRouteTree['STORY'], publication.story.slug, storylist.slug] : null
-				"
-			>
-				<article
-					[ngClass]="{
-						'border-l-4 border-solid border-primary-400 bg-primary-100': selectedStorySlug === publication.story.slug
-					}"
-					class="bg-gray-50 px-7 py-5"
-				>
-					<cuentoneta-story-edition-date-label
-						[label]="
-							publication.published
-								? getEditionLabel(publication, publication.publishingOrder)
-								: storylist.comingNextLabel
-						"
-					/>
-					@if (publication.published) {
-						<h4 class="inter-body-sm-bold mb-2">{{ publication.story.title }}</h4>
-						<div class="flex items-center justify-between">
-							<h5 class="inter-body-sm-regular">
-								{{ publication.story.author.name }}
-							</h5>
-							<cuentoneta-media-resource-tags [resources]="publication.story.media" />
-						</div>
-					} @else {
-						<ngx-skeleton-loader count="2" appearance="line" animation="false"></ngx-skeleton-loader>
-					}
-				</article>
-			</a>
+			<cuentoneta-navigable-publication-teaser
+				[publication]="publication"
+				[selected]="selectedStorySlug === publication.story.slug"
+				[storylist]="storylist"
+			/>
 		}
 	} @else {
 		@for (skeleton of dummyList; track $index) {

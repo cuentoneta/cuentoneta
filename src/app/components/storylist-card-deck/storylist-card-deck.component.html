@@ -116,13 +116,7 @@
 				"
 				class="xs:max-md:!col-span-1"
 			>
-				<cuentoneta-publication-card
-					[displayDate]="storylist.displayDates"
-					[editionPrefix]="storylist.editionPrefix"
-					[publication]="publication"
-					[editionIndex]="publication.publishingOrder"
-					[comingNextLabel]="storylist.comingNextLabel"
-				/>
+				<cuentoneta-publication-card [publication]="publication" [comingNextLabel]="storylist.comingNextLabel" />
 			</a>
 		}
 	}

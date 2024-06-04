@@ -1,12 +1,13 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Publication, Storylist } from '@models/storylist.model';
-import { Story, StoryCard } from '@models/story.model';
+import { StoryCard } from '@models/story.model';
 import { APP_ROUTE_TREE } from '../../app.routes';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 import { RouterLink } from '@angular/router';
 import { NgIf, NgFor, CommonModule } from '@angular/common';
 import { MediaResourceTagsComponent } from '../media-resource-tags/media-resource-tags.component';
+import { NavigablePublicationTeaserComponent } from '../navigable-publication-teaser/navigable-publication-teaser.component';
 
 @Component({
 	selector: 'cuentoneta-story-navigation-bar',
@@ -20,6 +21,7 @@ import { MediaResourceTagsComponent } from '../media-resource-tags/media-resourc
 		RouterLink,
 		StoryEditionDateLabelComponent,
 		MediaResourceTagsComponent,
+		NavigablePublicationTeaserComponent,
 	],
 })
 export class StoryNavigationBarComponent implements OnChanges {
@@ -73,16 +75,5 @@ export class StoryNavigationBarComponent implements OnChanges {
 			upperIndex === publications.length ? publications.length - numberOfDisplayedPublications : lowerIndex,
 			lowerIndex === 0 ? numberOfDisplayedPublications : upperIndex,
 		);
-	}
-
-	// ToDo: Separar card de cada cuento de la lista en su propio componente, para evitar usar un método en el template
-	getEditionLabel(publication: Publication<StoryCard>, editionIndex: number = 0): string {
-		if (!this.storylist) {
-			return '';
-		}
-
-		return `${this.storylist?.editionPrefix} ${editionIndex} ${
-			this.storylist?.displayDates ? ' - ' + publication.publishingDate : ''
-		}`;
 	}
 }

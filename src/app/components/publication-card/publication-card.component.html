@@ -5,7 +5,7 @@
 	@if (!!publication && publication.published) {
 		@if (publication.story; as story) {
 			<header [lang]="story.language" class="card-header">
-				<cuentoneta-story-edition-date-label [label]="editionLabel" />
+				<cuentoneta-story-edition-date-label [label]="publication.editionLabel" />
 			</header>
 			<section [lang]="story.language">
 				<h1 class="inter-body-xl-bold mb-1 overflow-hidden text-ellipsis whitespace-nowrap">{{ story.title }}</h1>
@@ -55,7 +55,7 @@
 			<cuentoneta-story-card-skeleton
 				[animation]="false"
 				[displayDate]="false"
-				[editionLabel]="editionLabel"
+				[editionLabel]="publication.editionLabel"
 				[comingNextLabel]="comingNextLabel"
 			/>
 		}

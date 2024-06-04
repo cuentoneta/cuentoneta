@@ -16,27 +16,33 @@ export class StorylistService {
 
 	public get(slug: string, amount: number = 5, ordering: 'asc' | 'desc' = 'asc'): Observable<Storylist> {
 		const params = new HttpParams().set('slug', slug).set('amount', amount).set('ordering', ordering);
-		return this.http.get<StorylistDTO>(`${this.prefix}`, { params }).pipe(
-			map((storylist) => ({
-				...storylist,
-				publications: (storylist?.publications ?? []).map((publication) => ({
-					...publication,
-					story: this.storyService.parseStoryCardContent(publication.story),
-				})) as Publication<StoryCard>[],
-			})),
-		);
+		return this.http
+			.get<StorylistDTO>(`${this.prefix}`, { params })
+			.pipe(map((storylist) => this.mapStorylist(storylist)));
 	}
 
-	public getPreview(slug: string): Observable<Storylist> {
-		const params = new HttpParams().set('slug', slug);
-		return this.http.get<StorylistDTO>(`${this.prefix}/preview`, { params }).pipe(
-			map((storylist) => ({
-				...storylist,
-				publications: storylist.publications.map((publication) => ({
-					...publication,
-					story: this.storyService.parseStoryCardContent(publication.story),
-				})) as Publication<StoryCard>[],
-			})),
-		);
+	public mapStorylist(storylist: StorylistDTO): Storylist {
+		return {
+			...storylist,
+			publications: (storylist?.publications ?? []).map((publication) => ({
+				...publication,
+				editionLabel: this.mapEditionLabel(publication, storylist),
+				story: this.storyService.parseStoryCardContent(publication.story),
+			})) as Publication<StoryCard>[],
+		};
+	}
+
+	private mapEditionLabel(publication: Publication<StoryCard>, storylist: Storylist): string {
+		if (!storylist) {
+			return '';
+		}
+
+		let result = `${storylist.editionPrefix} ${publication.publishingOrder}`;
+
+		if (storylist.displayDates) {
+			result = result.concat(` - ${publication.publishingDate}`);
+		}
+
+		return result;
 	}
 }
