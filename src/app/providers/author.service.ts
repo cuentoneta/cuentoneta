@@ -18,6 +18,5 @@ export class AuthorService {
 
 	public getBySlug(slug: string): Observable<Author> {
 		return this.http.get<Author>(`${this.prefix}/${slug}`);
-		// .pipe(map((story) => this.parseStoryContent(story)));
 	}
 }
