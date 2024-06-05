@@ -113,7 +113,12 @@
 				class="xs:max-md:!col-span-1"
 			>
 				@if (publication) {
-					<cuentoneta-publication-card [publication]="publication" />
+					<cuentoneta-publication-card
+						[publication]="publication"
+						[navigationRoute]="
+							router.createUrlTree(['/', this.appRouteTree['STORY'], publication.story.slug, storylist.slug])
+						"
+					/>
 				} @else {
 					<cuentoneta-story-card-skeleton [animation]="'progress'" />
 				}

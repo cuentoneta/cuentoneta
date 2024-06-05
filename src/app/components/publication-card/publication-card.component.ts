@@ -1,8 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-// Constantes
-import { APP_ROUTE_TREE } from '../../app.routes';
 
 // Modelos
 import { StoryCard } from '@models/story.model';
@@ -13,7 +10,7 @@ import { StoryCardSkeletonComponent } from '../story-card-skeleton/story-card-sk
 import { StoryCardContentComponent } from '../story-card-content/story-card-content.component';
 
 // Providers
-import { Router } from '@angular/router';
+import { UrlTree } from '@angular/router';
 
 @Component({
 	selector: 'cuentoneta-publication-card',
@@ -25,7 +22,7 @@ import { Router } from '@angular/router';
 				<cuentoneta-story-card-content
 					[story]="publication().story"
 					[headerText]="publication().editionLabel"
-					[navigationLink]="navigationLink()"
+					[navigationLink]="navigationRoute()"
 				/>
 			} @else {
 				<cuentoneta-story-card-skeleton
@@ -43,10 +40,5 @@ import { Router } from '@angular/router';
 })
 export class PublicationCardComponent {
 	publication = input.required<Publication<StoryCard>>();
-	navigationLink = computed(() =>
-		this.router.createUrlTree(['/', this.appRouteTree['STORY'], this.publication().story.slug]),
-	);
-
-	private readonly appRouteTree = APP_ROUTE_TREE;
-	private router = inject(Router);
+	navigationRoute = input.required<UrlTree>();
 }
