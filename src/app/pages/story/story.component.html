@@ -1,9 +1,10 @@
 <aside class="hidden md:block">
 	@defer {
-		<cuentoneta-story-navigation-bar
-			[selectedStorySlug]="story?.slug ?? ''"
-			[storylist]="storylist"
-		></cuentoneta-story-navigation-bar>
+		<cuentoneta-story-navigation-bar>
+			<cuentoneta-storylist-navigation-frame
+				[selectedStorySlug]="story?.slug ?? ''"
+			></cuentoneta-storylist-navigation-frame>
+		</cuentoneta-story-navigation-bar>
 	}
 </aside>
 

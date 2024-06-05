@@ -1,7 +1,7 @@
 // Core
 import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { combineLatest, switchMap } from 'rxjs';
+import { combineLatest, delay, switchMap } from 'rxjs';
 import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { YouTubePlayer } from '@angular/youtube-player';
@@ -33,6 +33,7 @@ import { EpigraphComponent } from '../../components/epigraph/epigraph.component'
 import { MediaResourceComponent } from '../../components/media-resource/media-resource.component';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
 import { ThemeService } from '../../providers/theme.service';
+import { StorylistNavigationFrameComponent } from '../../components/storylist-navigation-frame/storylist-navigation-frame.component';
 
 @Component({
 	selector: 'cuentoneta-story',
@@ -71,6 +72,7 @@ import { ThemeService } from '../../providers/theme.service';
 		MediaResourceComponent,
 		PortableTextParserComponent,
 		RouterLink,
+		StorylistNavigationFrameComponent,
 	],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })

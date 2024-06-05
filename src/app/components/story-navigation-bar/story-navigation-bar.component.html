@@ -1,42 +1,26 @@
 <section class="grid grid-cols-1 gap-y-0.5 rounded-xl bg-gray-200 shadow-lg">
-	<header [attr.aria-busy]="!storylist" [lang]="storylist?.language" class="bg-gray-50 px-7 py-5">
-		@if (!!storylist && storylist.title) {
-			<a [routerLink]="'/' + appRouteTree['STORYLIST'] + '/' + storylist.slug">
-				<h3 class="h3 hover:text-interactive-500">{{ storylist.title }}</h3>
+	<header [attr.aria-busy]="isLoading" class="bg-gray-50 px-7 py-5">
+		@if (config.headerTitle) {
+			<a [routerLink]="config.navigationRoute.toString()">
+				<h3 class="h3 hover:text-interactive-500">{{ config.headerTitle }}</h3>
 			</a>
 		} @else {
 			<ng-container *ngTemplateOutlet="titleSkeleton"></ng-container>
 		}
 	</header>
 
-	@if (!!storylist) {
-		@for (publication of displayedPublications; track $index) {
-			<cuentoneta-navigable-publication-teaser
-				[publication]="publication"
-				[selected]="selectedStorySlug === publication.story.slug"
-				[storylist]="storylist"
-			/>
-		}
-	} @else {
-		@for (skeleton of dummyList; track $index) {
-			<article [attr.aria-busy]="true" class="bg-gray-50 px-7 py-5">
-				<ngx-skeleton-loader count="2" appearance="line"></ngx-skeleton-loader>
-			</article>
-		}
-	}
+	<ng-content></ng-content>
 
-	<!-- ToDo: #288 - Generar abstracción para evitar repetir lógica presente en el header (ver líneas 2 - 9)-->
-	@if (!!storylist && storylist.publications.length >= 10) {
-		<footer class="bg-gray-50 px-7 py-5">
-			@if (storylist) {
-				<a [routerLink]="'/' + appRouteTree['STORYLIST'] + '/' + storylist.slug">
-					<h3 class="h3 inter-body-xl-bold hover:text-interactive-500">Ver más...</h3>
-				</a>
-			} @else {
-				<ng-container *ngTemplateOutlet="titleSkeleton"></ng-container>
-			}
-		</footer>
-	}
+	<footer class="bg-gray-50 px-7 py-5">
+		@if (!isLoading && config.showFooter) {
+			<a [routerLink]="config.navigationRoute.toString()">
+				<h3 class="h3 inter-body-xl-bold hover:text-interactive-500">Ver más...</h3>
+			</a>
+		}
+		@if (isLoading) {
+			<ng-container *ngTemplateOutlet="titleSkeleton"></ng-container>
+		}
+	</footer>
 </section>
 
 <ng-template #titleSkeleton>
