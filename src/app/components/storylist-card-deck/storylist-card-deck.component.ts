@@ -12,11 +12,12 @@ import { APP_ROUTE_TREE } from '../../app.routes';
 import { StorylistGridSkeletonConfig } from '@models/content.model';
 import { PublicationCardComponent } from '../publication-card/publication-card.component';
 import { ThemeService } from '../../providers/theme.service';
+import { StoryCardSkeletonComponent } from '../story-card-skeleton/story-card-skeleton.component';
 
 @Component({
 	selector: 'cuentoneta-storylist-card-deck',
 	standalone: true,
-	imports: [CommonModule, NgxSkeletonLoaderModule, RouterLink, PublicationCardComponent],
+	imports: [CommonModule, NgxSkeletonLoaderModule, RouterLink, PublicationCardComponent, StoryCardSkeletonComponent],
 	templateUrl: './storylist-card-deck.component.html',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })

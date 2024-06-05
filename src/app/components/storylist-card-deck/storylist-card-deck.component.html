@@ -74,7 +74,7 @@
 <ng-template #skeletonsTemplate>
 	@for (skeleton of skeletonConfig?.cardsPlacement; track $index) {
 		@if (!!skeleton.slug) {
-			<cuentoneta-publication-card
+			<cuentoneta-story-card-skeleton
 				[ngStyle]="{
 					order: skeleton?.order,
 					'grid-column-start': skeleton?.startCol,
@@ -109,9 +109,18 @@
 			<div
 				[ngStyle]="storiesCardConfig[publication.story.slug]"
 				[class.disabled]="!publication || !publication.published"
+				[attr.aria-busy]="!publication"
 				class="xs:max-md:!col-span-1"
 			>
-				<cuentoneta-publication-card [publication]="publication" [comingNextLabel]="storylist.comingNextLabel" />
+				@if (publication) {
+					<cuentoneta-publication-card
+						[publication]="publication"
+						[displayDate]="storylist.displayDates"
+						[comingNextLabel]="storylist.comingNextLabel"
+					/>
+				} @else {
+					<cuentoneta-story-card-skeleton [animation]="'progress'" />
+				}
 			</div>
 		}
 	}
