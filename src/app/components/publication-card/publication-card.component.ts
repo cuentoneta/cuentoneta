@@ -1,17 +1,18 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+// Constantes
+import { APP_ROUTE_TREE } from '../../app.routes';
 
 // Modelos
 import { StoryCard } from '@models/story.model';
 import { Publication } from '@models/storylist.model';
 
+// Componentes
 import { StoryCardSkeletonComponent } from '../story-card-skeleton/story-card-skeleton.component';
-import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
-import { CommonModule, DatePipe, NgIf, NgOptimizedImage } from '@angular/common';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
-import { MediaResourceTagsComponent } from '../media-resource-tags/media-resource-tags.component';
 import { StoryCardContentComponent } from '../story-card-content/story-card-content.component';
-import { APP_ROUTE_TREE } from '../../app.routes';
+
+// Providers
 import { Router } from '@angular/router';
 
 @Component({
@@ -31,41 +32,21 @@ import { Router } from '@angular/router';
 					[animation]="false"
 					[displayDate]="false"
 					[editionLabel]="publication().editionLabel"
-					[comingNextLabel]="comingNextLabel()"
+					[comingNextLabel]="publication().comingNextLabel"
 				/>
 			}
 		</article>
 	`,
 	standalone: true,
-	imports: [
-		CommonModule,
-		NgxSkeletonLoaderModule,
-		NgIf,
-		NgOptimizedImage,
-		StoryCardSkeletonComponent,
-		StoryEditionDateLabelComponent,
-		PortableTextParserComponent,
-		MediaResourceTagsComponent,
-		StoryCardContentComponent,
-	],
-	providers: [DatePipe],
+	imports: [CommonModule, StoryCardSkeletonComponent, StoryCardContentComponent],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PublicationCardComponent {
-	displayDate = input<boolean>(false);
 	publication = input.required<Publication<StoryCard>>();
-	comingNextLabel = input('', {
-		transform: (value: string): string => {
-			const dateFormat = this.datePipe.transform(this.publication()?.publishingDate, `dd 'de' MMMM, YYYY`);
-			return this.displayDate() ? `${value} ${dateFormat}` : value;
-		},
-	});
-
 	navigationLink = computed(() =>
 		this.router.createUrlTree(['/', this.appRouteTree['STORY'], this.publication().story.slug]),
 	);
 
 	private readonly appRouteTree = APP_ROUTE_TREE;
-	private datePipe = inject(DatePipe);
 	private router = inject(Router);
 }

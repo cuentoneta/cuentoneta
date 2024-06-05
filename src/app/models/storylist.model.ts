@@ -38,6 +38,7 @@ export interface StorylistDTO extends StorylistBase {
 export interface Publication<T extends StoryBase> {
 	publishingOrder: number;
 	editionLabel: string;
+	comingNextLabel: string;
 	published: boolean;
 	publishingDate?: string;
 	story: T;

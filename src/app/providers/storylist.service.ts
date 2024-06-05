@@ -5,12 +5,16 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { StoryCard } from '@models/story.model';
 import { environment } from '../environments/environment';
 import { StoryService } from './story.service';
+import { DatePipe } from '@angular/common';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class StorylistService {
 	private readonly prefix = `${environment.apiUrl}api/storylist`;
+
+	// Providers
+	private datePipe = inject(DatePipe);
 	private http = inject(HttpClient);
 	private storyService = inject(StoryService);
 
@@ -27,20 +31,29 @@ export class StorylistService {
 			publications: (storylist?.publications ?? []).map((publication) => ({
 				...publication,
 				editionLabel: this.mapEditionLabel(publication, storylist),
+				comingNextLabel: this.mapComingNextLabel(publication, storylist),
 				story: this.storyService.parseStoryCardContent(publication.story),
 			})) as Publication<StoryCard>[],
 		};
 	}
 
 	private mapEditionLabel(publication: Publication<StoryCard>, storylist: Storylist): string {
-		if (!storylist) {
-			return '';
-		}
-
 		let result = `${storylist.editionPrefix} ${publication.publishingOrder}`;
 
 		if (storylist.displayDates) {
-			result = result.concat(` - ${publication.publishingDate}`);
+			const formattedDate = this.datePipe.transform(publication.publishingDate, `dd 'de' MMMM, YYYY`);
+			result = result.concat(` - ${formattedDate}`);
+		}
+
+		return result;
+	}
+
+	private mapComingNextLabel(publication: Publication<StoryCard>, storylist: Storylist): string {
+		let result = `${storylist.comingNextLabel}`;
+
+		if (storylist.displayDates) {
+			const formattedDate = this.datePipe.transform(publication.publishingDate, `dd 'de' MMMM, YYYY`);
+			result = result.concat(` - ${formattedDate}`);
 		}
 
 		return result;

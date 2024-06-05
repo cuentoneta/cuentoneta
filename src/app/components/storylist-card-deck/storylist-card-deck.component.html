@@ -113,11 +113,7 @@
 				class="xs:max-md:!col-span-1"
 			>
 				@if (publication) {
-					<cuentoneta-publication-card
-						[publication]="publication"
-						[displayDate]="storylist.displayDates"
-						[comingNextLabel]="storylist.comingNextLabel"
-					/>
+					<cuentoneta-publication-card [publication]="publication" />
 				} @else {
 					<cuentoneta-story-card-skeleton [animation]="'progress'" />
 				}

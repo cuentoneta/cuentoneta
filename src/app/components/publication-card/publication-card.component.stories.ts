@@ -27,6 +27,7 @@ export default {
 } as Meta<PublicationCardComponent>;
 
 const publication: Publication<StoryCard> = {
+	comingNextLabel: '',
 	publishingOrder: 60,
 	published: true,
 	publishingDate: '2022-03-01',
