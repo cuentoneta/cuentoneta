@@ -4,10 +4,10 @@ import { Publication, Storylist } from '@models/storylist.model';
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { Story, StoryCard } from '@models/story.model';
 import { APP_ROUTE_TREE } from '../../app.routes';
-import { ActivatedRoute, Router, UrlTree } from '@angular/router';
+import { ActivatedRoute, Params, Router, UrlTree } from '@angular/router';
 import { StorylistService } from '../../providers/storylist.service';
 import { MacroTaskWrapperService } from '../../providers/macro-task-wrapper.service';
-import { switchMap, tap } from 'rxjs';
+import { combineLatest, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigablePublicationTeaserComponent } from '../navigable-publication-teaser/navigable-publication-teaser.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -63,26 +63,28 @@ export class StorylistNavigationFrameComponent {
 		const storylistService = inject(StorylistService);
 		const macroTaskWrapperService = inject(MacroTaskWrapperService);
 
-		const fetchObservable$ = this.fetchContentDirective
-			.fetchContentWithSourceParams$(
-				activatedRoute.params,
-				switchMap(({ slug, list }) => storylistService.get(list, 9)),
-			)
-			.pipe(
-				tap(() => this.isLoading.emit(true)),
-				takeUntilDestroyed(),
-			);
+		const paramsObservable$ = activatedRoute.params;
+
+		const queryParamsObservable$ = this.fetchContentDirective.fetchContentWithSourceParams$(
+			activatedRoute.queryParams,
+			switchMap(({ navigation, slug }) => storylistService.get(slug, 9)),
+		);
+
+		const fetchObservable$ = combineLatest([paramsObservable$, queryParamsObservable$]).pipe(
+			tap(() => this.isLoading.emit(true)),
+			takeUntilDestroyed(),
+		);
 
 		const content$ = isPlatformBrowser(platformId)
 			? fetchObservable$
-			: macroTaskWrapperService.wrapMacroTaskObservable<Storylist>(
+			: macroTaskWrapperService.wrapMacroTaskObservable<[Params, Storylist]>(
 					'StorylistNavigationFrameComponent.fetchData',
 					fetchObservable$,
 					null,
 					'first-emit',
 				);
 
-		content$.subscribe((storylist) => {
+		content$.subscribe(([_, storylist]) => {
 			this.storylist = storylist;
 			this.sliceDisplayedPublications(storylist.publications);
 			this.loaded.emit({

@@ -1,10 +1,10 @@
-import { Component, input } from '@angular/core';
+import { Component, effect, input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import { StoryCard } from '@models/story.model';
 import { APP_ROUTE_TREE } from '../../app.routes';
-import { RouterLink, UrlTree } from '@angular/router';
+import { PRIMARY_OUTLET, RouterLink, UrlTree } from '@angular/router';
 
 @Component({
 	selector: 'cuentoneta-story-card-content',
@@ -32,7 +32,11 @@ import { RouterLink, UrlTree } from '@angular/router';
 				}
 			}
 		</ng-template>
-		<a [routerLink]="navigationLink()?.toString()" class="mb-2 flex flex-col gap-2 md:mb-4 md:gap-4">
+		<a
+			[routerLink]="['/', appRouteTree['STORY'], story().slug]"
+			[queryParams]="navigationLink()?.queryParams"
+			class="mb-2 flex flex-col gap-2 md:mb-4 md:gap-4"
+		>
 			<header [lang]="story().language" class="card-header">
 				@if (headerText()) {
 					<cuentoneta-story-edition-date-label [label]="headerText()" />

@@ -116,7 +116,12 @@
 					<cuentoneta-publication-card
 						[publication]="publication"
 						[navigationRoute]="
-							router.createUrlTree(['/', this.appRouteTree['STORY'], publication.story.slug, storylist.slug])
+							router.createUrlTree(['/', this.appRouteTree['STORY'], publication.story.slug], {
+								queryParams: {
+									navigation: 'storylist',
+									slug: storylist.slug
+								}
+							})
 						"
 					/>
 				} @else {
