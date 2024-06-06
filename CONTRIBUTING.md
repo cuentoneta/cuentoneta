@@ -76,7 +76,7 @@ Si eres desarrolladora o desarrollador, puedes contribuir al proyecto mediante l
 <!-- Enlaces a otros documentos -->
 
 [doc-code_of_conduct]: https://github.com/cuentoneta/cuentoneta/blob/develop/CODE_OF_CONDUCT.md
-[doc-guia-de-desarrollo]: https://github.com/cuentoneta/cuentoneta/blob/develop/DEVELOPMENT_GUIDE.md
+[doc-guia-de-desarrollo]: https://github.com/cuentoneta/cuentoneta/blob/develop/docs/DEVELOPMENT_GUIDE.md
 
 <!-- Enlaces a Discord -->
 
