@@ -4,7 +4,7 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 // Router
 import { RouterLink } from '@angular/router';
-import { APP_ROUTE_TREE } from '../../app.routes';
+import { AppRoutes } from '../../app.routes';
 
 // Módulos
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -24,7 +24,7 @@ import { ThemeService } from '../../providers/theme.service';
 	template: `
 		<article class="shadow-lg hover:shadow-lg-hover">
 			@if (!!storylist) {
-				<div [routerLink]="['/' + appRouteTree['STORYLIST'], storylist.slug]" class="navigation-link">
+				<div [routerLink]="['/' + appRoutes.StoryList, storylist.slug]" class="navigation-link">
 					<header class="h-[240px] max-w-[602px] cursor-pointer">
 						<img
 							[ngSrc]="storylist.featuredImage ?? ''"
@@ -133,7 +133,7 @@ import { ThemeService } from '../../providers/theme.service';
 export class StorylistCardComponent {
 	@Input() storylist: StorylistCard | undefined;
 
-	protected readonly appRouteTree = APP_ROUTE_TREE;
+	protected readonly appRoutes = AppRoutes;
 
 	private themeService = inject(ThemeService);
 	skeletonColor = this.themeService.pickColor('zinc', 300);

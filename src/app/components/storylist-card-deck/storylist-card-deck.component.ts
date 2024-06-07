@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 
 // Models
 import { GridItemPlacementConfig, Storylist } from '@models/storylist.model';
-import { APP_ROUTE_TREE } from '../../app.routes';
+import { AppRoutes } from '../../app.routes';
 import { StorylistGridSkeletonConfig } from '@models/content.model';
 import { PublicationCardComponent } from '../publication-card/publication-card.component';
 import { ThemeService } from '../../providers/theme.service';
@@ -32,7 +32,7 @@ export class StorylistCardDeckComponent implements OnInit, OnChanges {
 	dummyList: null[] = [];
 	imagesCardConfig: { [key: string]: CardDeckCSSGridConfig } = {};
 	storiesCardConfig: { [key: string]: CardDeckCSSGridConfig } = {};
-	readonly appRouteTree = APP_ROUTE_TREE;
+	readonly appRoutes = AppRoutes;
 
 	private themeService = inject(ThemeService);
 	skeletonColor = this.themeService.pickColor('zinc', 300);
