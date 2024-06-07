@@ -11,7 +11,7 @@ import { StorylistCardDeck } from '@models/content.model';
 
 // Directives
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
-import { APP_ROUTE_TREE } from '../../app.routes';
+import { AppRoutes } from '../../app.routes';
 import { PublicationCardComponent } from '../../components/publication-card/publication-card.component';
 import { StorylistCardDeckComponent } from 'src/app/components/storylist-card-deck/storylist-card-deck.component';
 import { RouterModule } from '@angular/router';
@@ -32,7 +32,7 @@ import { StorylistCardComponent } from '../../components/storylist-card-componen
 	hostDirectives: [FetchContentDirective],
 })
 export class HomeComponent {
-	readonly appRouteTree = APP_ROUTE_TREE;
+	readonly appRoutes = AppRoutes;
 
 	cards: StorylistCardDeck[] = [];
 	previews: StorylistCardDeck[] = [];

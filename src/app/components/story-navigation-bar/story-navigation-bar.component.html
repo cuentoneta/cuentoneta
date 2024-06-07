@@ -1,7 +1,7 @@
 <section class="grid grid-cols-1 gap-y-0.5 rounded-xl bg-gray-200 shadow-lg">
 	<header [attr.aria-busy]="!storylist" [lang]="storylist?.language" class="bg-gray-50 px-7 py-5">
 		@if (!!storylist && storylist.title) {
-			<a [routerLink]="'/' + appRouteTree['STORYLIST'] + '/' + storylist.slug">
+			<a [routerLink]="'/' + appRoutes.StoryList + '/' + storylist.slug">
 				<h3 class="h3 hover:text-interactive-500">{{ storylist.title }}</h3>
 			</a>
 		} @else {
@@ -29,7 +29,7 @@
 	@if (!!storylist && storylist.publications.length >= 10) {
 		<footer class="bg-gray-50 px-7 py-5">
 			@if (storylist) {
-				<a [routerLink]="'/' + appRouteTree['STORYLIST'] + '/' + storylist.slug">
+				<a [routerLink]="'/' + appRoutes.StoryList + '/' + storylist.slug">
 					<h3 class="h3 inter-body-xl-bold hover:text-interactive-500">Ver más...</h3>
 				</a>
 			} @else {

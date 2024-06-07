@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Publication, Storylist } from '@models/storylist.model';
 import { StoryCard } from '@models/story.model';
-import { APP_ROUTE_TREE } from '../../app.routes';
+import { AppRoutes } from '../../app.routes';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 import { RouterLink } from '@angular/router';
@@ -29,7 +29,7 @@ export class StoryNavigationBarComponent implements OnChanges {
 	@Input() selectedStorySlug: string = '';
 	@Input() storylist: Storylist | undefined;
 
-	readonly appRouteTree = APP_ROUTE_TREE;
+	readonly appRoutes = AppRoutes;
 	dummyList: null[] = Array(10);
 
 	ngOnChanges(changes: SimpleChanges) {

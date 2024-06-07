@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { APP_ROUTE_TREE } from '../../app.routes';
+import { AppRoutes } from '../../app.routes';
 import { MediaResourceTagsComponent } from '../media-resource-tags/media-resource-tags.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
@@ -21,7 +21,7 @@ import { RouterLink } from '@angular/router';
 	template: `
 		<a
 			[routerLink]="
-				publication().published ? ['/' + appRouteTree['STORY'], publication().story.slug, storylist().slug] : null
+				publication().published ? ['/' + appRoutes.Story, publication().story.slug, storylist().slug] : null
 			"
 		>
 			<article
@@ -52,5 +52,5 @@ export class NavigablePublicationTeaserComponent {
 	publication = input.required<Publication<StoryCard>>();
 	selected = input<boolean>();
 	storylist = input.required<Storylist>();
-	protected readonly appRouteTree = APP_ROUTE_TREE;
+	protected readonly appRoutes = AppRoutes;
 }
