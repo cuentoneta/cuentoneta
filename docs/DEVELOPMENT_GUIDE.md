@@ -231,7 +231,7 @@ El proyecto utiliza [git](https://git-scm.com) como herramienta de control de ve
 ### Consideraciones al contribuir al repositorio
 
 - En caso de que seas un colaborador externo debes escribir un mensaje en la issue en el que desees trabajar, a fin de que te pueda ser asignado.
-- Aplica también para colaboradores externos la necesidad de realizar un _fork_ del repositorio y envíes tus cambios mediante un _pull request_ desde tu _fork_ al repositorio principal, generando el fork tal como se detalla
+- Aplica también para colaboradores externos la necesidad de realizar un _fork_ del repositorio para así posteriormente envar tus cambios mediante un _pull request_ desde tu _fork_ al repositorio principal. Para generar un _fork_, sigue los pasos detallados en la sección [Clonar el repositorio](#clonar-el-repositorio).
 - En caso de que seas un colaborador externo, debes de dejar un mensaje en el issue que quieras tomar para que te lo puedan asignar, después es necesario que realices un _fork_ del repositorio y envíes tus
   cambios mediante un _pull request_ desde tu _fork_ al repositorio principal, generando el fork tal como se detalla
   en la sección previa [Clonar el repositorio](#clonar-el-repositorio).
