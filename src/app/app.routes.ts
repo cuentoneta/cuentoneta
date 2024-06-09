@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 // Guards
 import { redirectQueryParamsBasedStoryUrlsGuard } from './guards/redirect-query-params-based-story-urls.guard';
 import { redirectQueryParamsBasedStorylistUrlsGuard } from './guards/redirect-query-params-based-storylist-urls.guard';
+import { redirectParamsForStorylistInStoryRouteGuard } from './guards/redirect-params-for-storylist-in-story-route.guard';
 
 export enum AppRoutes {
 	Home = 'home',
@@ -19,8 +20,13 @@ export const appRoutes: Routes = [
 		loadComponent: () => import('./pages/home/home.component').then((m) => m.HomeComponent),
 	},
 	{
+		path: `${AppRoutes.Story}/:slug`,
+		loadComponent: () => import('./pages/story/story.component').then((m) => m.StoryComponent),
+	},
+	{
 		path: `${AppRoutes.Story}/:slug/:list`,
 		loadComponent: () => import('./pages/story/story.component').then((m) => m.StoryComponent),
+		canActivate: [redirectParamsForStorylistInStoryRouteGuard],
 	},
 	{
 		path: `${AppRoutes.Story}`, // Ruta definida por cuestiones de retrocompatibilidad. Redirecciona de '/story' con queryParams a params
