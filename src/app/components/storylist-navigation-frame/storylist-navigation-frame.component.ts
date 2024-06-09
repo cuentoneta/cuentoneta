@@ -3,7 +3,6 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Publication, Storylist } from '@models/storylist.model';
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { Story, StoryCard } from '@models/story.model';
-import { APP_ROUTE_TREE } from '../../app.routes';
 import { ActivatedRoute, Params, Router, UrlTree } from '@angular/router';
 import { StorylistService } from '../../providers/storylist.service';
 import { MacroTaskWrapperService } from '../../providers/macro-task-wrapper.service';
@@ -11,6 +10,7 @@ import { combineLatest, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigablePublicationTeaserComponent } from '../navigable-publication-teaser/navigable-publication-teaser.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { AppRoutes } from '../../app.routes';
 
 export type NavigationBarConfig = {
 	headerTitle: string;
@@ -53,7 +53,7 @@ export class StorylistNavigationFrameComponent {
 	displayedPublications: Publication<StoryCard>[] = [];
 	dummyList: null[] = Array(9);
 	fetchContentDirective = inject(FetchContentDirective<[Story, Storylist]>);
-	readonly appRouteTree = APP_ROUTE_TREE;
+	readonly appRoutes = AppRoutes;
 	storylist: Storylist | undefined;
 
 	constructor() {
@@ -90,7 +90,7 @@ export class StorylistNavigationFrameComponent {
 			this.loaded.emit({
 				headerTitle: storylist.title,
 				footerTitle: 'Ver más...',
-				navigationRoute: router.createUrlTree(['/' + this.appRouteTree['STORYLIST'] + '/' + storylist.slug]),
+				navigationRoute: router.createUrlTree(['/' + this.appRoutes.StoryList + '/' + storylist.slug]),
 				showFooter: true,
 			});
 			this.isLoading.emit(false);

@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { StoryCard } from '@models/story.model';
 import { StoryCardContentComponent } from '../story-card-content/story-card-content.component';
 import { StoryCardSkeletonComponent } from '../story-card-skeleton/story-card-skeleton.component';
-import { APP_ROUTE_TREE } from '../../app.routes';
 import { Router } from '@angular/router';
+import { AppRoutes } from '../../app.routes';
 
 @Component({
 	selector: 'cuentoneta-story-card',
@@ -24,8 +24,8 @@ import { Router } from '@angular/router';
 export class StoryCardComponent {
 	story = input.required<StoryCard>();
 	headerText = computed(() => this.story().originalPublication ?? '');
-	navigationLink = computed(() => this.router.createUrlTree(['/', this.appRouteTree['STORY'], this.story().slug]));
+	navigationLink = computed(() => this.router.createUrlTree(['/', this.appRoutes.Story, this.story().slug]));
 
-	private readonly appRouteTree = APP_ROUTE_TREE;
+	private readonly appRoutes = AppRoutes;
 	private router = inject(Router);
 }

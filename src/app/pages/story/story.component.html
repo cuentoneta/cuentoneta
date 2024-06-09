@@ -30,7 +30,7 @@
 					<h1 [lang]="story.language" class="h1 mb-2">{{ story.title }}</h1>
 					<a
 						[lang]="story.language"
-						[routerLink]="['/', appRouteTree['AUTHOR'], story.author.slug]"
+						[routerLink]="['/', appRoutes.Author, story.author.slug]"
 						class="inter-body-xl mb-2 block"
 					>
 						{{ story.author.name }}

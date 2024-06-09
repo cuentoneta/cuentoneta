@@ -3,8 +3,8 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import { StoryCard } from '@models/story.model';
-import { APP_ROUTE_TREE } from '../../app.routes';
 import { PRIMARY_OUTLET, RouterLink, UrlTree } from '@angular/router';
+import { AppRoutes } from '../../app.routes';
 
 @Component({
 	selector: 'cuentoneta-story-card-content',
@@ -33,7 +33,7 @@ import { PRIMARY_OUTLET, RouterLink, UrlTree } from '@angular/router';
 			}
 		</ng-template>
 		<a
-			[routerLink]="['/', appRouteTree['STORY'], story().slug]"
+			[routerLink]="['/', appRoutes.Story, story().slug]"
 			[queryParams]="navigationLink()?.queryParams"
 			class="mb-2 flex flex-col gap-2 md:mb-4 md:gap-4"
 		>
@@ -66,7 +66,7 @@ import { PRIMARY_OUTLET, RouterLink, UrlTree } from '@angular/router';
 				<hr class="text-gray-300" />
 				<footer class="flex flex-row items-center justify-between">
 					<a
-						[routerLink]="['/', appRouteTree['AUTHOR'], story().author.slug]"
+						[routerLink]="['/', appRoutes.Author, story().author.slug]"
 						class="flex flex-row items-center hover:cursor-pointer"
 					>
 						<img
@@ -103,5 +103,5 @@ export class StoryCardContentComponent {
 	headerText = input<string>();
 	navigationLink = input<UrlTree>();
 
-	protected readonly appRouteTree = APP_ROUTE_TREE;
+	protected readonly appRoutes = AppRoutes;
 }

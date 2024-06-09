@@ -8,6 +8,7 @@ export enum AppRoutes {
 	Home = 'home',
 	Story = 'story',
 	StoryList = 'storylist',
+	Author = 'author',
 	About = 'about',
 	Dmca = 'dmca',
 }
