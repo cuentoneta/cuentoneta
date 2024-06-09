@@ -4,55 +4,48 @@ import { Routes } from '@angular/router';
 import { redirectQueryParamsBasedStoryUrlsGuard } from './guards/redirect-query-params-based-story-urls.guard';
 import { redirectQueryParamsBasedStorylistUrlsGuard } from './guards/redirect-query-params-based-storylist-urls.guard';
 
-export const APP_ROUTE_TREE: { [key: string]: string } = {
-	HOME: 'home',
-	STORY: 'story',
-	STORYLIST: 'storylist',
-	AUTHOR: 'author',
-};
+export enum AppRoutes {
+	Home = 'home',
+	Story = 'story',
+	StoryList = 'storylist',
+	About = 'about',
+	Dmca = 'dmca',
+}
 
 export const appRoutes: Routes = [
 	{
-		path: APP_ROUTE_TREE['HOME'],
+		path: AppRoutes.Home,
 		loadComponent: () => import('./pages/home/home.component').then((m) => m.HomeComponent),
 	},
 	{
-		path: `${APP_ROUTE_TREE['STORY']}/:slug/:list`,
+		path: `${AppRoutes.Story}/:slug/:list`,
 		loadComponent: () => import('./pages/story/story.component').then((m) => m.StoryComponent),
 	},
 	{
-		path: `${APP_ROUTE_TREE['STORY']}/:slug`,
-		loadComponent: () => import('./pages/story/story.component').then((m) => m.StoryComponent),
-	},
-	{
-		path: `${APP_ROUTE_TREE['STORY']}`, // Ruta definida por cuestiones de retrocompatibilidad. Redirecciona de '/story' con queryParams a params
+		path: `${AppRoutes.Story}`, // Ruta definida por cuestiones de retrocompatibilidad. Redirecciona de '/story' con queryParams a params
 		loadComponent: () => import('./pages/story/story.component').then((m) => m.StoryComponent),
 		canActivate: [redirectQueryParamsBasedStoryUrlsGuard],
 	},
 	{
-		path: `${APP_ROUTE_TREE['STORYLIST']}/:slug`,
+		path: `${AppRoutes.StoryList}/:slug`,
 		loadComponent: () => import('./pages/storylist/storylist.component').then((m) => m.StorylistComponent),
 	},
 	{
-		path: `${APP_ROUTE_TREE['STORYLIST']}`,
+		path: `${AppRoutes.StoryList}`,
 		loadComponent: () => import('./pages/storylist/storylist.component').then((m) => m.StorylistComponent),
 		canActivate: [redirectQueryParamsBasedStorylistUrlsGuard],
 	},
 	{
-		path: `${APP_ROUTE_TREE['AUTHOR']}/:slug`,
-		loadComponent: () => import('./pages/author/author.component').then((c) => c.AuthorComponent),
-	},
-	{
-		path: 'about',
+		path: AppRoutes.About,
 		loadComponent: () => import('./pages/about/about.component').then((m) => m.AboutComponent),
 	},
 	{
-		path: 'dmca',
+		path: AppRoutes.Dmca,
 		loadComponent: () => import('./pages/dmca/dmca.component').then((m) => m.DmcaComponent),
 	},
 	{
 		path: '',
-		redirectTo: 'home',
+		redirectTo: AppRoutes.Home,
 		pathMatch: 'full',
 	},
 ];

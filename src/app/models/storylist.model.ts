@@ -1,4 +1,4 @@
-import { Story, StoryBase, StoryCard, StoryDTO } from './story.model';
+import { StoryBase, StoryCard, StoryDTO } from './story.model';
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { Tag } from '@models/tag.model';
 

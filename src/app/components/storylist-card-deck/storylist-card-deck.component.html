@@ -18,7 +18,7 @@
 				<h1 class="h1 mb-5">
 					<a
 						[ngClass]="{ 'hover:text-interactive-500': canNavigateToStorylist }"
-						[routerLink]="canNavigateToStorylist ? '/' + appRouteTree['STORYLIST'] + '/' + storylist.slug : null"
+						[routerLink]="canNavigateToStorylist ? '/' + appRoutes.StoryList + '/' + storylist.slug : null"
 						class="disabled:pointer-events-none disabled:cursor-default"
 						>{{ storylist.title }}</a
 					>

@@ -10,7 +10,7 @@ import { YouTubePlayer } from '@angular/youtube-player';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Router
-import { APP_ROUTE_TREE } from '../../app.routes';
+import { AppRoutes } from '../../app.routes';
 
 // Models
 import { Story } from '@models/story.model';
@@ -77,7 +77,7 @@ import { StorylistNavigationFrameComponent } from '../../components/storylist-na
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
 export class StoryComponent {
-	readonly appRouteTree = APP_ROUTE_TREE;
+	readonly appRoutes = AppRoutes;
 	fetchContentDirective = inject(FetchContentDirective<[Story, Storylist]>);
 
 	// Valores undefined necesarios para poder determinar cuándo mostrar skeletons o la información de story y storylist en el template

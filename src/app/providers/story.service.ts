@@ -8,23 +8,22 @@ import { environment } from '../environments/environment';
 
 // Models
 import { Story, StoryCard, StoryDTO } from '@models/story.model';
+import { ApiUrl, Endpoints } from './endpoints';
 
 @Injectable({ providedIn: 'root' })
 export class StoryService {
-	private readonly prefix = `${environment.apiUrl}api/story`;
-	private http = inject(HttpClient);
-
+	private readonly url: ApiUrl = `${environment.apiUrl}${Endpoints.Story}`;
+	constructor(private http: HttpClient) {}
 	public getBySlug(slug: string): Observable<Story> {
 		const params = new HttpParams().set('slug', slug);
-		return this.http
-			.get<StoryDTO>(`${this.prefix}/read`, { params })
-			.pipe(map((story) => this.parseStoryContent(story)));
+
+		return this.http.get<StoryDTO>(this.url, { params }).pipe(map((story) => this.parseStoryContent(story)));
 	}
 
 	public getByAuthorSlug(slug: string, offset: number = 0, limit: number = 20): Observable<StoryCard[]> {
 		const params = new HttpParams().set('offset', offset).append('limit', limit);
 		return this.http
-			.get<StoryDTO[]>(`${this.prefix}/author/${slug}`, { params })
+			.get<StoryDTO[]>(`${this.url}/author/${slug}`, { params })
 			.pipe(map((stories) => stories.map((story) => this.parseStoryCardContent(story))));
 	}
 
