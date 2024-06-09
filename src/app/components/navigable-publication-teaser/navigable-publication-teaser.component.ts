@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppRoutes } from '../../app.routes';
 import { MediaResourceTagsComponent } from '../media-resource-tags/media-resource-tags.component';
@@ -6,7 +6,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 import { StoryCard } from '@models/story.model';
 import { Publication, Storylist } from '@models/storylist.model';
-import { Router, RouterLink, UrlTree } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 @Component({
 	selector: 'cuentoneta-navigable-publication-teaser',
@@ -20,11 +20,9 @@ import { Router, RouterLink, UrlTree } from '@angular/router';
 	],
 	template: `
 		<a
-			[routerLink]="publication().published ? ['/' + appRoutes.Story, publication().story.slug] : null"
-			[queryParams]="{
-				navigation: 'storylist',
-				slug: this.storylist().slug
-			}"
+			[routerLink]="
+				publication().published ? ['/' + appRoutes.Story, publication().story.slug, storylist().slug] : null
+			"
 		>
 			<article
 				[ngClass]="{
@@ -54,6 +52,5 @@ export class NavigablePublicationTeaserComponent {
 	publication = input.required<Publication<StoryCard>>();
 	selected = input<boolean>();
 	storylist = input.required<Storylist>();
-
 	protected readonly appRoutes = AppRoutes;
 }
