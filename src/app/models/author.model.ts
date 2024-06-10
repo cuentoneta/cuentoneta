@@ -4,7 +4,7 @@ import { Resource } from '@models/resource.model';
 interface AuthorBase {
 	slug: string;
 	name: string;
-	imageUrl?: string;
+	imageUrl: string;
 	resources?: Resource[];
 	nationality: AuthorNationality;
 }
