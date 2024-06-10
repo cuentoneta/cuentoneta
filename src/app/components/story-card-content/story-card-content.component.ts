@@ -3,7 +3,7 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import { StoryCard } from '@models/story.model';
-import { PRIMARY_OUTLET, RouterLink, UrlTree } from '@angular/router';
+import { RouterLink, UrlTree } from '@angular/router';
 import { AppRoutes } from '../../app.routes';
 
 @Component({
