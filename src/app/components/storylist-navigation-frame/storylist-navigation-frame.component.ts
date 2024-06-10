@@ -74,28 +74,26 @@ export class StorylistNavigationFrameComponent {
 		const storylistService = inject(StorylistService);
 		const macroTaskWrapperService = inject(MacroTaskWrapperService);
 
-		const paramsObservable$ = activatedRoute.params;
-
-		const queryParamsObservable$ = this.fetchContentDirective.fetchContentWithSourceParams$(
-			activatedRoute.queryParams,
-			switchMap(({ navigation, slug }) => storylistService.get(slug, 9)),
-		);
-
-		const fetchObservable$ = combineLatest([paramsObservable$, queryParamsObservable$]).pipe(
-			tap(() => this.isLoading.emit(true)),
-			takeUntilDestroyed(),
-		);
+		const fetchObservable$ = this.fetchContentDirective
+			.fetchContentWithSourceParams$(
+				activatedRoute.queryParams,
+				switchMap(({ slug }) => storylistService.get(slug, 9)),
+			)
+			.pipe(
+				tap(() => this.isLoading.emit(true)),
+				takeUntilDestroyed(),
+			);
 
 		const content$ = isPlatformBrowser(platformId)
 			? fetchObservable$
-			: macroTaskWrapperService.wrapMacroTaskObservable<[Params, Storylist]>(
+			: macroTaskWrapperService.wrapMacroTaskObservable<Storylist>(
 					'StorylistNavigationFrameComponent.fetchData',
 					fetchObservable$,
 					null,
 					'first-emit',
 				);
 
-		content$.subscribe(([_, storylist]) => {
+		content$.subscribe((storylist) => {
 			this.storylist = storylist;
 			this.sliceDisplayedPublications(storylist.publications);
 			this.loaded.emit({
