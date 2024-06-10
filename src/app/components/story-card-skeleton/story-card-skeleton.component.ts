@@ -19,7 +19,7 @@ export class StoryCardSkeletonComponent {
 	@Input() animation: 'progress' | 'progress-dark' | 'pulse' | 'false' | false = false;
 	@Input() displayDate: boolean = false;
 	@Input() editionLabel: string = '';
-	@Input() comingNextLabel: string = 'Próximamente';
+	@Input() comingNextLabel: string = '';
 
 	private themeService = inject(ThemeService);
 	skeletonColor = this.themeService.pickColor('zinc', 300);

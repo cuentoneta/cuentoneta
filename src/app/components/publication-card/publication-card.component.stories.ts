@@ -27,11 +27,13 @@ export default {
 } as Meta<PublicationCardComponent>;
 
 const publication: Publication<StoryCard> = {
+	comingNextLabel: '',
 	publishingOrder: 60,
 	published: true,
 	publishingDate: '2022-03-01',
+	editionLabel: 'Cuento #4',
 	story: {
-		id: 1,
+		originalPublication: 'Bar del Infierno (2005)',
 		language: 'Español',
 		approximateReadingTime: 4,
 		author: {
