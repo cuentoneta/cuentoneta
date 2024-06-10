@@ -1,14 +1,16 @@
 import { Directive, ElementRef, HostListener, Input, OnDestroy } from '@angular/core';
+import { computePosition, flip, shift, arrow, offset } from '@floating-ui/dom';
 
 @Directive({
-	selector: '[tooltip]',
+	selector: '[cuentonetaTooltip]',
 	standalone: true,
 })
 export class TooltipDirective implements OnDestroy {
 	@Input() text!: string; // Texto para el Tooltip
-	@Input() position!: string; // Posición del tooltip
+	@Input() position!: 'top' | 'right' | 'bottom' | 'left'; // Posición del tooltip
+	@Input() offset: number = 6; // Offset del tooltip respecto al elemento
 
-	private myPopup: any;
+	private myPopup: HTMLElement | null = null;
 
 	constructor(private el: ElementRef) {}
 
@@ -19,25 +21,7 @@ export class TooltipDirective implements OnDestroy {
 	}
 
 	@HostListener('mouseenter') onMouseEnter() {
-		let x;
-		let y;
-
-		if (this.position === 'bottom') {
-			x = this.el.nativeElement.getBoundingClientRect().left + this.el.nativeElement.offsetWidth / 2;
-			y = this.el.nativeElement.getBoundingClientRect().top + this.el.nativeElement.offsetHeight + 6;
-		} else if (this.position === 'top') {
-			x = this.el.nativeElement.getBoundingClientRect().left + this.el.nativeElement.offsetWidth / 2;
-			y = this.el.nativeElement.getBoundingClientRect().top - this.el.nativeElement.offsetHeight - 28;
-		} else if (this.position === 'right') {
-			x = this.el.nativeElement.getBoundingClientRect().left + this.el.nativeElement.offsetWidth + 3 * this.text.length;
-			y = this.el.nativeElement.getBoundingClientRect().top + this.el.nativeElement.offsetHeight / 2 - 13;
-		} else if (this.position === 'left') {
-			// Todo: Modificar para el lado izquierdo
-			x = this.el.nativeElement.getBoundingClientRect().left + this.el.nativeElement.offsetWidth - 3 * this.text.length;
-			y = this.el.nativeElement.getBoundingClientRect().top + this.el.nativeElement.offsetHeight / 2 - 13;
-		}
-
-		this.createTooltipPopup(x, y);
+		this.createTooltipPopup();
 	}
 
 	@HostListener('mouseleave') onMouseLeave() {
@@ -46,13 +30,35 @@ export class TooltipDirective implements OnDestroy {
 		}
 	}
 
-	private createTooltipPopup(x: number, y: number) {
+	private createTooltipPopup() {
 		const popup = document.createElement('p');
 		popup.innerHTML = this.text;
 		popup.classList.add('tooltip-container');
-		popup.classList.add(this.position);
-		popup.style.top = y.toString() + 'px';
-		popup.style.left = x.toString() + 'px';
+
+		const arrowElem = document.createElement('span');
+		arrowElem.classList.add('tooltip-arrow');
+
+		popup.appendChild(arrowElem);
+
+		computePosition(this.el.nativeElement, popup, {
+			placement: this.position,
+			middleware: [flip(), shift({ padding: 5 }), arrow({ element: arrowElem }), offset(this.offset)],
+		}).then(({ x, y, middlewareData }) => {
+			Object.assign(popup.style, { top: `${y}px`, left: `${x}px` });
+
+			if (middlewareData.arrow) {
+				const { x: arrowX, y: arrowY } = middlewareData.arrow;
+				const staticSide = { top: 'bottom', right: 'left', bottom: 'top', left: 'right' }[this.position];
+
+				Object.assign(arrowElem.style, {
+					left: arrowX != null ? `${arrowX}px` : '',
+					top: arrowY != null ? `${arrowY}px` : '',
+					bottom: '',
+					[staticSide]: '-4px',
+				});
+			}
+		});
+
 		document.body.appendChild(popup);
 		this.myPopup = popup;
 	}
