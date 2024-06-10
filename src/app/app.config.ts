@@ -10,7 +10,7 @@ import { appRoutes } from './app.routes';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideClientHydration } from '@angular/platform-browser';
 import localeEs from '@angular/common/locales/es-419';
-import { registerLocaleData } from '@angular/common';
+import { DatePipe, registerLocaleData } from '@angular/common';
 
 // Providers
 import { ThemeService } from './providers/theme.service';
@@ -19,6 +19,7 @@ registerLocaleData(localeEs);
 
 export const appConfig: ApplicationConfig = {
 	providers: [
+		DatePipe,
 		{ provide: APP_ID, useValue: 'serverApp' },
 		{
 			provide: APP_INITIALIZER,
