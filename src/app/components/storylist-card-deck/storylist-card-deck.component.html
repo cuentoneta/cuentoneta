@@ -74,7 +74,7 @@
 <ng-template #skeletonsTemplate>
 	@for (skeleton of skeletonConfig?.cardsPlacement; track $index) {
 		@if (!!skeleton.slug) {
-			<cuentoneta-publication-card
+			<cuentoneta-story-card-skeleton
 				[ngStyle]="{
 					order: skeleton?.order,
 					'grid-column-start': skeleton?.startCol,
@@ -106,15 +106,28 @@
 <ng-template #publicationsTemplate>
 	@if (!!storylist) {
 		@for (publication of storylist.publications; track $index) {
-			<a
+			<div
 				[ngStyle]="storiesCardConfig[publication.story.slug]"
 				[class.disabled]="!publication || !publication.published"
-				[routerLink]="!!publication && publication.published ? ['/', appRoutes.Story, publication.story.slug] : null"
-				[queryParams]="{ navigation: 'storylist', slug: storylist.slug }"
+				[attr.aria-busy]="!publication"
 				class="xs:max-md:!col-span-1"
 			>
-				<cuentoneta-publication-card [publication]="publication" [comingNextLabel]="storylist.comingNextLabel" />
-			</a>
+				@if (publication) {
+					<cuentoneta-publication-card
+						[publication]="publication"
+						[navigationRoute]="
+							router.createUrlTree(['/', this.appRoutes.Story, publication.story.slug], {
+								queryParams: {
+									navigation: 'storylist',
+									slug: storylist.slug
+								}
+							})
+						"
+					/>
+				} @else {
+					<cuentoneta-story-card-skeleton [animation]="'progress'" />
+				}
+			</div>
 		}
 	}
 </ng-template>
