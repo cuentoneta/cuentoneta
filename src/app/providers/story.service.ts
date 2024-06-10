@@ -18,7 +18,7 @@ export class StoryService {
 	public getBySlug(slug: string): Observable<Story> {
 		const params = new HttpParams().set('slug', slug);
 
-		return this.http.get<StoryDTO>(this.url, { params }).pipe(map((story) => this.parseStoryContent(story)));
+		return this.http.get<StoryDTO>(`${this.url}/read`, { params }).pipe(map((story) => this.parseStoryContent(story)));
 	}
 
 	public getByAuthorSlug(slug: string, offset: number = 0, limit: number = 20): Observable<StoryCard[]> {

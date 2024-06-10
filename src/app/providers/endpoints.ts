@@ -1,6 +1,6 @@
 export enum Endpoints {
 	Author = 'api/author',
-	Story = 'api/story/read',
+	Story = 'api/story',
 	StoryList = 'api/storylist',
 }
 
