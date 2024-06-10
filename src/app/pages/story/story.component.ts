@@ -33,6 +33,7 @@ import { MediaResourceComponent } from '../../components/media-resource/media-re
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
 import { ThemeService } from '../../providers/theme.service';
 import { StorylistNavigationFrameComponent } from '../../components/storylist-navigation-frame/storylist-navigation-frame.component';
+import { AuthorNavigationFrameComponent } from '../../components/author-navigation-frame/author-navigation-frame.component';
 
 @Component({
 	selector: 'cuentoneta-story',
@@ -72,6 +73,7 @@ import { StorylistNavigationFrameComponent } from '../../components/storylist-na
 		PortableTextParserComponent,
 		RouterLink,
 		StorylistNavigationFrameComponent,
+		AuthorNavigationFrameComponent,
 	],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
