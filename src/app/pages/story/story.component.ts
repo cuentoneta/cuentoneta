@@ -1,7 +1,7 @@
 // Core
 import { Component, inject, PLATFORM_ID } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { combineLatest, switchMap } from 'rxjs';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { switchMap } from 'rxjs';
 import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { YouTubePlayer } from '@angular/youtube-player';
@@ -18,7 +18,6 @@ import { Storylist } from '@models/storylist.model';
 
 // Services
 import { MacroTaskWrapperService } from '../../providers/macro-task-wrapper.service';
-import { StorylistService } from '../../providers/storylist.service';
 import { StoryService } from '../../providers/story.service';
 
 // Directives
@@ -33,6 +32,7 @@ import { EpigraphComponent } from '../../components/epigraph/epigraph.component'
 import { MediaResourceComponent } from '../../components/media-resource/media-resource.component';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
 import { ThemeService } from '../../providers/theme.service';
+import { StorylistNavigationFrameComponent } from '../../components/storylist-navigation-frame/storylist-navigation-frame.component';
 
 @Component({
 	selector: 'cuentoneta-story',
@@ -70,6 +70,8 @@ import { ThemeService } from '../../providers/theme.service';
 		YouTubePlayer,
 		MediaResourceComponent,
 		PortableTextParserComponent,
+		RouterLink,
+		StorylistNavigationFrameComponent,
 	],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
@@ -92,36 +94,34 @@ export class StoryComponent {
 		const platformId = inject(PLATFORM_ID);
 		const activatedRoute = inject(ActivatedRoute);
 		const metaTagsDirective = inject(MetaTagsDirective);
-		const storylistService = inject(StorylistService);
 		const storyService = inject(StoryService);
 		const macroTaskWrapperService = inject(MacroTaskWrapperService);
 
 		const fetchObservable$ = this.fetchContentDirective
 			.fetchContentWithSourceParams$(
 				activatedRoute.params,
-				switchMap(({ slug, list }) => combineLatest([storyService.getBySlug(slug), storylistService.get(list, 10)])),
+				switchMap(({ slug }) => storyService.getBySlug(slug)),
 			)
 			.pipe(takeUntilDestroyed());
 
 		const content$ = isPlatformBrowser(platformId)
 			? fetchObservable$
-			: macroTaskWrapperService.wrapMacroTaskObservable<[Story, Storylist]>(
+			: macroTaskWrapperService.wrapMacroTaskObservable<Story>(
 					'StoryComponent.fetchData',
 					fetchObservable$,
 					null,
 					'first-emit',
 				);
 
-		content$.subscribe(([story, storylist]) => {
+		content$.subscribe((story) => {
 			this.story = story;
-			this.storylist = storylist;
 
 			metaTagsDirective.setTitle(`${story.title}, de ${story.author.name} en La Cuentoneta`);
 			metaTagsDirective.setDescription(
-				`"${story.title}", de ${story.author.name}. Parte de la colección "${storylist.title}" en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
+				`"${story.title}", de ${story.author.name} en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
 			);
-			this.shareContentParams = { slug: story.slug, list: storylist.slug };
-			this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos de la colección "${storylist.title}" en este link:`;
+			this.shareContentParams = { slug: story.slug };
+			this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`;
 		});
 	}
 }
