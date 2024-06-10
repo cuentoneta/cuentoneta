@@ -24,6 +24,10 @@ export class MetaTagsDirective {
 
 	setDescription(content: string) {
 		this.metaTagService.updateTag({
+			name: 'description',
+			content: content,
+		});
+		this.metaTagService.updateTag({
 			name: 'twitter:description',
 			content: content,
 		});
