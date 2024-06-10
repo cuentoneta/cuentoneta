@@ -1,7 +1,7 @@
 // Core
 import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { combineLatest, delay, switchMap } from 'rxjs';
+import { switchMap } from 'rxjs';
 import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { YouTubePlayer } from '@angular/youtube-player';
@@ -18,7 +18,6 @@ import { Storylist } from '@models/storylist.model';
 
 // Services
 import { MacroTaskWrapperService } from '../../providers/macro-task-wrapper.service';
-import { StorylistService } from '../../providers/storylist.service';
 import { StoryService } from '../../providers/story.service';
 
 // Directives

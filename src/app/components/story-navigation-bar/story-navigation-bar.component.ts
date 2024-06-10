@@ -15,16 +15,15 @@ import { combineLatest } from 'rxjs';
 	imports: [CommonModule, NgxSkeletonLoaderModule, RouterLink],
 })
 export class StoryNavigationBarComponent implements AfterViewInit {
-	isLoading = false;
+	@ContentChildren(StorylistNavigationFrameComponent) frames: QueryList<StorylistNavigationFrameComponent> | undefined;
 
+	isLoading = false;
 	config: NavigationBarConfig = {
 		headerTitle: '',
 		footerTitle: '',
 		navigationRoute: '',
 		showFooter: false,
 	};
-
-	@ContentChildren(StorylistNavigationFrameComponent) frames: QueryList<StorylistNavigationFrameComponent> | undefined;
 
 	ngAfterViewInit() {
 		this.frames?.forEach((frame) => {
