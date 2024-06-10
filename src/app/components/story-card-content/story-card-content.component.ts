@@ -76,8 +76,8 @@ import { AppRoutes } from '../../app.routes';
 							width="40"
 							height="40"
 						/>
-						<div>
-							<label class="inter-body-base-semibold">{{ story().author.name }}</label>
+						<div class="block hover:!cursor-pointer">
+							<label class="inter-body-base-semibold hover:!cursor-pointer">{{ story().author.name }}</label>
 							@if (story().author.nationality; as nationality) {
 								<div class="flex items-center">
 									<img
@@ -87,7 +87,9 @@ import { AppRoutes } from '../../app.routes';
 										width="20"
 										height="15"
 									/>
-									<label class="inter-body-sm-semibold ml-2 text-gray-500">{{ nationality.country }}</label>
+									<label class="inter-body-sm-semibold ml-2 text-gray-500 hover:!cursor-pointer">{{
+										nationality.country
+									}}</label>
 								</div>
 							}
 						</div>
