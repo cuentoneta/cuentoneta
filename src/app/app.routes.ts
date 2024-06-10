@@ -9,6 +9,7 @@ export enum AppRoutes {
 	Home = 'home',
 	Story = 'story',
 	StoryList = 'storylist',
+	Author = 'author',
 	About = 'about',
 	Dmca = 'dmca',
 }
@@ -17,6 +18,10 @@ export const appRoutes: Routes = [
 	{
 		path: AppRoutes.Home,
 		loadComponent: () => import('./pages/home/home.component').then((m) => m.HomeComponent),
+	},
+	{
+		path: `${AppRoutes.Author}/:slug`,
+		loadComponent: () => import('./pages/author/author.component').then((m) => m.AuthorComponent),
 	},
 	{
 		path: `${AppRoutes.Story}/:slug`,
