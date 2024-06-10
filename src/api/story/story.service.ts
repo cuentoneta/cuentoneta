@@ -15,9 +15,9 @@ import { resourcesSubQuery } from '../_queries/resources.query';
 import { storyCommonFields, storyPreviewCommonFields } from '../_queries/story.query';
 
 // Interfaces
-import { StoryByAuthorSlugArgs } from './interfaces';
+import { StoriesByAuthorSlugArgs } from '../interfaces/sanity';
 
-export async function fetchByAuthorSlug(args: StoryByAuthorSlugArgs): Promise<StoryBase[]> {
+export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryDTO[]> {
 	const slice = `${args.offset * args.limit}...${(args.offset + 1) * args.limit}`;
 	const query = groq`*[_type == 'story' && author->slug.current == '${args.slug}'][${slice}]
 						  {
@@ -44,7 +44,7 @@ export async function fetchByAuthorSlug(args: StoryByAuthorSlugArgs): Promise<St
 	return stories;
 }
 
-export async function fetchForRead(slug: string): Promise<Story> {
+export async function fetchBySlug(slug: string): Promise<StoryDTO> {
 	const query = groq`*[_type == 'story' && slug.current == '${slug}']
                           {
 							${storyCommonFields},

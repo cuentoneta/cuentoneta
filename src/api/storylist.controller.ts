@@ -4,12 +4,12 @@ import { fetchPreview, fetchStorylist } from './storylist.service';
 const router = express.Router();
 
 // Routes
-router.get('/', get);
+router.get('/', getBySlug);
 router.get('/preview', getPreview);
 
 export default router;
 
-function get(req: express.Request, res: express.Response, next: express.NextFunction) {
+function getBySlug(req: express.Request, res: express.Response, next: express.NextFunction) {
 	const { slug, amount, ordering = 'asc' } = req.query;
 	const limit = parseInt(amount as string) - 1;
 	fetchStorylist({ slug: slug as string, amount: amount as string, limit, ordering: ordering as string })

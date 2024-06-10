@@ -1,27 +1,27 @@
 import express from 'express';
 import * as storyService from './story.service';
-import { StoryByAuthorSlugArgs } from './interfaces';
+import { StoriesByAuthorSlugArgs } from '../interfaces/sanity';
 
 const router = express.Router();
 
 // Routes
-router.get('/read', storyBySlug);
-router.get('/author/:slug', storiesByAuthorSlug);
+router.get('/read', getBySlug);
+router.get('/author/:slug', getStoriesByAuthorSlug);
 
 export default router;
 
-function storyBySlug(req: express.Request, res: express.Response, next: express.NextFunction) {
+function getBySlug(req: express.Request, res: express.Response, next: express.NextFunction) {
 	const { slug } = req.query;
 	storyService
-		.fetchForRead(slug as string)
+		.fetchBySlug(slug as string)
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
 }
 
-function storiesByAuthorSlug(req: express.Request, res: express.Response, next: express.NextFunction) {
+function getStoriesByAuthorSlug(req: express.Request, res: express.Response, next: express.NextFunction) {
 	const { slug } = req.params;
 	const { limit, offset } = req.query;
-	const args: StoryByAuthorSlugArgs = {
+	const args: StoriesByAuthorSlugArgs = {
 		slug: slug as string,
 		limit: parseInt((limit ?? '0') as string),
 		offset: parseInt((offset ?? '0') as string),
