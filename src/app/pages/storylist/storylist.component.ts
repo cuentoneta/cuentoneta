@@ -5,9 +5,12 @@ import { switchMap, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
+// 3rd party modules
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+
 // Models
-import { Storylist } from '../../models/storylist.model';
-import { StorylistGridSkeletonConfig } from '../../models/content.model';
+import { Storylist } from '@models/storylist.model';
+import { StorylistGridSkeletonConfig } from '@models/content.model';
 
 // Services
 import { ContentService } from '../../providers/content.service';
@@ -16,8 +19,9 @@ import { StorylistService } from '../../providers/storylist.service';
 // Directives
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+
+// Componentes
 import { StorylistCardDeckComponent } from 'src/app/components/storylist-card-deck/storylist-card-deck.component';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
 	selector: 'cuentoneta-storylist',
