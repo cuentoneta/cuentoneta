@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavigationFrameComponent } from '@models/navigation-frame.component';
 import { AppRoutes } from '../../app.routes';
@@ -6,7 +6,6 @@ import { StoryCard } from '@models/story.model';
 import { StoryService } from '../../providers/story.service';
 import { switchMap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NavigationBarConfig } from '../storylist-navigation-frame/storylist-navigation-frame.component';
 
 @Component({
 	selector: 'cuentoneta-author-navigation-frame',

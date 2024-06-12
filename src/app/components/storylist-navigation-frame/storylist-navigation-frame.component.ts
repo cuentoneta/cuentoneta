@@ -1,26 +1,23 @@
-import { Component, EventEmitter, inject, Input, Output, PLATFORM_ID } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { combineLatest, switchMap, tap } from 'rxjs';
+import { Component, inject, input, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { switchMap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Params, Router, UrlTree } from '@angular/router';
-
-// Directives
-import { FetchContentDirective } from '../../directives/fetch-content.directive';
+import { UrlTree } from '@angular/router';
 
 // Componentes
 import { NavigablePublicationTeaserComponent } from '../navigable-publication-teaser/navigable-publication-teaser.component';
 
 // Providers
 import { StorylistService } from '../../providers/storylist.service';
-import { MacroTaskWrapperService } from '../../providers/macro-task-wrapper.service';
 
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 // Models
-import { Story, StoryCard } from '@models/story.model';
+import { StoryCard } from '@models/story.model';
 import { Publication, Storylist } from '@models/storylist.model';
 
 // Routes
 import { AppRoutes } from '../../app.routes';
+import { NavigationFrameComponent } from '@models/navigation-frame.component';
 
 export type NavigationBarConfig = {
 	headerTitle: string;
@@ -37,7 +34,7 @@ export type NavigationBarConfig = {
 			@for (publication of displayedPublications; track $index) {
 				<cuentoneta-navigable-publication-teaser
 					[publication]="publication"
-					[selected]="selectedStorySlug === publication.story.slug"
+					[selected]="selectedStorySlug() === publication.story.slug"
 					[storylist]="storylist"
 				/>
 			}
@@ -54,55 +51,33 @@ export type NavigationBarConfig = {
 		}
 	`,
 })
-export class StorylistNavigationFrameComponent {
-	@Input() selectedStorySlug: string = '';
-
-	@Output() isLoading = new EventEmitter<boolean>();
-	@Output() loaded = new EventEmitter<NavigationBarConfig>();
-
+export class StorylistNavigationFrameComponent extends NavigationFrameComponent {
 	readonly appRoutes = AppRoutes;
 
 	displayedPublications: Publication<StoryCard>[] = [];
 	dummyList: null[] = Array(9);
-	fetchContentDirective = inject(FetchContentDirective<[Story, Storylist]>);
 	storylist: Storylist | undefined;
 
 	constructor() {
-		const router = inject(Router);
-		const platformId = inject(PLATFORM_ID);
-		const activatedRoute = inject(ActivatedRoute);
+		super();
+
 		const storylistService = inject(StorylistService);
-		const macroTaskWrapperService = inject(MacroTaskWrapperService);
 
-		const fetchObservable$ = this.fetchContentDirective
-			.fetchContentWithSourceParams$(
-				activatedRoute.queryParams,
-				switchMap(({ slug }) => storylistService.get(slug, 9)),
+		const content$ = this.fetchContentDirective
+			.fetchContent$<Storylist>(
+				this.activatedRoute.queryParams.pipe(switchMap(({ slug }) => storylistService.get(slug, 9))),
 			)
-			.pipe(
-				tap(() => this.isLoading.emit(true)),
-				takeUntilDestroyed(),
-			);
-
-		const content$ = isPlatformBrowser(platformId)
-			? fetchObservable$
-			: macroTaskWrapperService.wrapMacroTaskObservable<Storylist>(
-					'StorylistNavigationFrameComponent.fetchData',
-					fetchObservable$,
-					null,
-					'first-emit',
-				);
+			.pipe(takeUntilDestroyed());
 
 		content$.subscribe((storylist) => {
 			this.storylist = storylist;
 			this.sliceDisplayedPublications(storylist.publications);
-			this.loaded.emit({
+			this.config.set({
 				headerTitle: storylist.title,
 				footerTitle: 'Ver más...',
-				navigationRoute: router.createUrlTree([this.appRoutes.StoryList, storylist.slug]),
+				navigationRoute: this.router.createUrlTree([this.appRoutes.StoryList, storylist.slug]),
 				showFooter: true,
 			});
-			this.isLoading.emit(false);
 		});
 	}
 
@@ -126,7 +101,7 @@ export class StorylistNavigationFrameComponent {
 		}
 
 		const selectedStoryIndex = publications.findIndex(
-			(publication) => publication.story.slug === this.selectedStorySlug,
+			(publication) => publication.story.slug === this.selectedStorySlug(),
 		);
 
 		const lowerIndex =
