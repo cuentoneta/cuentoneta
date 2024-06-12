@@ -1,8 +1,8 @@
 // Core
-import { Component, inject, PLATFORM_ID } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { switchMap } from 'rxjs';
-import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { YouTubePlayer } from '@angular/youtube-player';
 
@@ -17,7 +17,6 @@ import { Story } from '@models/story.model';
 import { Storylist } from '@models/storylist.model';
 
 // Services
-import { MacroTaskWrapperService } from '../../providers/macro-task-wrapper.service';
 import { StoryService } from '../../providers/story.service';
 
 // Directives
@@ -79,7 +78,7 @@ import { AuthorNavigationFrameComponent } from '../../components/author-navigati
 })
 export class StoryComponent {
 	readonly appRoutes = AppRoutes;
-	fetchContentDirective = inject(FetchContentDirective<[Story, Storylist]>);
+	fetchContentDirective = inject(FetchContentDirective);
 
 	// Valores undefined necesarios para poder determinar cuándo mostrar skeletons o la información de story y storylist en el template
 	story: Story | undefined;
@@ -93,27 +92,13 @@ export class StoryComponent {
 	skeletonColor = this.themeService.pickColor('zinc', 300);
 
 	constructor() {
-		const platformId = inject(PLATFORM_ID);
 		const activatedRoute = inject(ActivatedRoute);
 		const metaTagsDirective = inject(MetaTagsDirective);
 		const storyService = inject(StoryService);
-		const macroTaskWrapperService = inject(MacroTaskWrapperService);
 
-		const fetchObservable$ = this.fetchContentDirective
-			.fetchContentWithSourceParams$(
-				activatedRoute.params,
-				switchMap(({ slug }) => storyService.getBySlug(slug)),
-			)
+		const content$ = this.fetchContentDirective
+			.fetchContent$<Story>(activatedRoute.params.pipe(switchMap(({ slug }) => storyService.getBySlug(slug))))
 			.pipe(takeUntilDestroyed());
-
-		const content$ = isPlatformBrowser(platformId)
-			? fetchObservable$
-			: macroTaskWrapperService.wrapMacroTaskObservable<Story>(
-					'StoryComponent.fetchData',
-					fetchObservable$,
-					null,
-					'first-emit',
-				);
 
 		content$.subscribe((story) => {
 			this.story = story;

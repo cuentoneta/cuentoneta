@@ -28,7 +28,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
 export class StorylistComponent {
-	fetchContentDirective = inject(FetchContentDirective<Storylist>);
+	fetchContentDirective = inject(FetchContentDirective);
 	storylist!: Storylist | undefined;
 	skeletonConfig: StorylistGridSkeletonConfig | undefined;
 
@@ -41,16 +41,16 @@ export class StorylistComponent {
 		const contentService = inject(ContentService);
 
 		const fetchObservable$: Observable<Storylist> = activatedRoute.params.pipe(
-			tap(({ slug }) => {
+			tap(() => {
 				this.storylist = undefined;
 				const decks = [...contentService.contentConfig.cards, ...contentService.contentConfig.previews];
-				this.skeletonConfig = decks.find((config) => config.slug === activatedRoute.snapshot.params['slug'])
-					?.gridSkeletonConfig;
+				this.skeletonConfig = decks.find(
+					(config) => config.slug === activatedRoute.snapshot.params['slug'],
+				)?.gridSkeletonConfig;
 			}),
 			switchMap(() =>
-				this.fetchContentDirective.fetchContentWithSourceParams$<Storylist>(
-					activatedRoute.params,
-					switchMap(({ slug }) => storylistService.get(slug, 60, 'asc')),
+				this.fetchContentDirective.fetchContent$<Storylist>(
+					activatedRoute.params.pipe(switchMap(({ slug }) => storylistService.get(slug, 60, 'asc'))),
 				),
 			),
 			takeUntilDestroyed(),

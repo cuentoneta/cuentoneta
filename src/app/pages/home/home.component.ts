@@ -38,7 +38,7 @@ export class HomeComponent {
 	previews: StorylistCardDeck[] = [];
 
 	// Services
-	public fetchContentDirective = inject(FetchContentDirective<StorylistCardDeck[]>);
+	public fetchContentDirective = inject(FetchContentDirective);
 	private contentService = inject(ContentService);
 
 	constructor() {
