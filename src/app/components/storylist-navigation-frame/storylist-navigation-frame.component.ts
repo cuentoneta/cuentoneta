@@ -1,8 +1,8 @@
-import { Component, EventEmitter, inject, Input, Output, PLATFORM_ID } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { combineLatest, switchMap, tap } from 'rxjs';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Params, Router, UrlTree } from '@angular/router';
+import { ActivatedRoute, Router, UrlTree } from '@angular/router';
 
 // Directives
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
@@ -12,11 +12,10 @@ import { NavigablePublicationTeaserComponent } from '../navigable-publication-te
 
 // Providers
 import { StorylistService } from '../../providers/storylist.service';
-import { MacroTaskWrapperService } from '../../providers/macro-task-wrapper.service';
 
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 // Models
-import { Story, StoryCard } from '@models/story.model';
+import { StoryCard } from '@models/story.model';
 import { Publication, Storylist } from '@models/storylist.model';
 
 // Routes
@@ -64,46 +63,31 @@ export class StorylistNavigationFrameComponent {
 
 	displayedPublications: Publication<StoryCard>[] = [];
 	dummyList: null[] = Array(9);
-	fetchContentDirective = inject(FetchContentDirective<[Story, Storylist]>);
+	fetchContentDirective = inject(FetchContentDirective);
 	storylist: Storylist | undefined;
 
 	constructor() {
 		const router = inject(Router);
-		const platformId = inject(PLATFORM_ID);
 		const activatedRoute = inject(ActivatedRoute);
 		const storylistService = inject(StorylistService);
-		const macroTaskWrapperService = inject(MacroTaskWrapperService);
 
-		const fetchObservable$ = this.fetchContentDirective
-			.fetchContentWithSourceParams$(
-				activatedRoute.queryParams,
-				switchMap(({ slug }) => storylistService.get(slug, 9)),
-			)
+		activatedRoute.queryParams
 			.pipe(
 				tap(() => this.isLoading.emit(true)),
 				takeUntilDestroyed(),
-			);
-
-		const content$ = isPlatformBrowser(platformId)
-			? fetchObservable$
-			: macroTaskWrapperService.wrapMacroTaskObservable<Storylist>(
-					'StorylistNavigationFrameComponent.fetchData',
-					fetchObservable$,
-					null,
-					'first-emit',
-				);
-
-		content$.subscribe((storylist) => {
-			this.storylist = storylist;
-			this.sliceDisplayedPublications(storylist.publications);
-			this.loaded.emit({
-				headerTitle: storylist.title,
-				footerTitle: 'Ver más...',
-				navigationRoute: router.createUrlTree([this.appRoutes.StoryList, storylist.slug]),
-				showFooter: true,
+				switchMap(({ slug }) => this.fetchContentDirective.fetchContent$<Storylist>(storylistService.get(slug, 9))),
+			)
+			.subscribe((storylist) => {
+				this.storylist = storylist;
+				this.sliceDisplayedPublications(storylist.publications);
+				this.loaded.emit({
+					headerTitle: storylist.title,
+					footerTitle: 'Ver más...',
+					navigationRoute: router.createUrlTree([this.appRoutes.StoryList, storylist.slug]),
+					showFooter: true,
+				});
+				this.isLoading.emit(false);
 			});
-			this.isLoading.emit(false);
-		});
 	}
 
 	/**
