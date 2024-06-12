@@ -96,19 +96,20 @@ export class StoryComponent {
 		const metaTagsDirective = inject(MetaTagsDirective);
 		const storyService = inject(StoryService);
 
-		const content$ = this.fetchContentDirective
-			.fetchContent$<Story>(activatedRoute.params.pipe(switchMap(({ slug }) => storyService.getBySlug(slug))))
-			.pipe(takeUntilDestroyed());
+		activatedRoute.params
+			.pipe(
+				takeUntilDestroyed(),
+				switchMap(({ slug }) => this.fetchContentDirective.fetchContent$<Story>(storyService.getBySlug(slug))),
+			)
+			.subscribe((story) => {
+				this.story = story;
 
-		content$.subscribe((story) => {
-			this.story = story;
-
-			metaTagsDirective.setTitle(`${story.title}, de ${story.author.name} en La Cuentoneta`);
-			metaTagsDirective.setDescription(
-				`"${story.title}", de ${story.author.name} en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
-			);
-			this.shareContentParams = { slug: story.slug };
-			this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`;
-		});
+				metaTagsDirective.setTitle(`${story.title}, de ${story.author.name} en La Cuentoneta`);
+				metaTagsDirective.setDescription(
+					`"${story.title}", de ${story.author.name} en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
+				);
+				this.shareContentParams = { slug: story.slug };
+				this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`;
+			});
 	}
 }
