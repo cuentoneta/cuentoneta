@@ -63,22 +63,21 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 
 		const storylistService = inject(StorylistService);
 
-		const content$ = this.fetchContentDirective
-			.fetchContent$<Storylist>(
-				this.activatedRoute.queryParams.pipe(switchMap(({ slug }) => storylistService.get(slug, 9))),
+		this.activatedRoute.queryParams
+			.pipe(
+				takeUntilDestroyed(),
+				switchMap(({ slug }) => this.fetchContentDirective.fetchContent$<Storylist>(storylistService.get(slug, 9))),
 			)
-			.pipe(takeUntilDestroyed());
-
-		content$.subscribe((storylist) => {
-			this.storylist = storylist;
-			this.sliceDisplayedPublications(storylist.publications);
-			this.config.set({
-				headerTitle: storylist.title,
-				footerTitle: 'Ver más...',
-				navigationRoute: this.router.createUrlTree([this.appRoutes.StoryList, storylist.slug]),
-				showFooter: true,
+			.subscribe((storylist) => {
+				this.storylist = storylist;
+				this.sliceDisplayedPublications(storylist.publications);
+				this.config.set({
+					headerTitle: storylist.title,
+					footerTitle: 'Ver más...',
+					navigationRoute: this.router.createUrlTree([this.appRoutes.StoryList, storylist.slug]),
+					showFooter: true,
+				});
 			});
-		});
 	}
 
 	/**
