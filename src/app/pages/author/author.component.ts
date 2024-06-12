@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink, UrlTree } from '@angular/router';
 import { StoryService } from '../../providers/story.service';
-import { combineLatest, map, Observable, of, switchMap, tap } from 'rxjs';
+import { combineLatest, map, of, switchMap, tap } from 'rxjs';
 import { StoryCardComponent } from '../../components/story-card/story-card.component';
 import { AuthorService } from '../../providers/author.service';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
@@ -59,6 +59,7 @@ import { AppRoutes } from '../../app.routes';
 export class AuthorComponent {
 	private readonly appRoutes = AppRoutes;
 
+	// Providers
 	private activatedRoute = inject(ActivatedRoute);
 	private authorService = inject(AuthorService);
 	private storyService = inject(StoryService);
