@@ -8,6 +8,10 @@ import { AuthorService } from '../../providers/author.service';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
 import { ResourceComponent } from '../../components/resource/resource.component';
 import { Title } from '@angular/platform-browser';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Story, StoryCard } from '@models/story.model';
+import { FetchContentDirective } from '../../directives/fetch-content.directive';
+import { Author } from '@models/author.model';
 
 @Component({
 	selector: 'cuentoneta-author',
@@ -20,6 +24,7 @@ import { Title } from '@angular/platform-browser';
 		ResourceComponent,
 		RouterLink,
 	],
+	hostDirectives: [FetchContentDirective],
 	template: ` <main>
 		<article class="grid grid-cols-1 gap-8">
 			<section class="flex flex-col items-center gap-4">
@@ -55,16 +60,24 @@ import { Title } from '@angular/platform-browser';
 	</main>`,
 })
 export class AuthorComponent {
+	// Providers
 	private activatedRoute = inject(ActivatedRoute);
 	private authorService = inject(AuthorService);
 	private storyService = inject(StoryService);
 	private title = inject(Title);
 
+	// Directives
+	private fetchContentDirective = inject(FetchContentDirective);
+
 	author$ = this.activatedRoute.params.pipe(
-		switchMap(({ slug }) => this.authorService.getBySlug(slug)),
+		takeUntilDestroyed(),
+		switchMap(({ slug }) => this.fetchContentDirective.fetchContent$<Author>(this.authorService.getBySlug(slug))),
 		tap((author) => this.title.setTitle(`${author.name} - Autor en La Cuentoneta`)),
 	);
 	stories$ = combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams]).pipe(
-		switchMap(([{ slug }, { limit, offset }]) => this.storyService.getByAuthorSlug(slug, offset, limit)),
+		takeUntilDestroyed(),
+		switchMap(([{ slug }, { limit, offset }]) =>
+			this.fetchContentDirective.fetchContent$<StoryCard[]>(this.storyService.getByAuthorSlug(slug, offset, limit)),
+		),
 	);
 }

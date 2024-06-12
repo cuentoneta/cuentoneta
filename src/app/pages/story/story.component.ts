@@ -1,8 +1,8 @@
 // Core
-import { Component, inject, PLATFORM_ID } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { switchMap } from 'rxjs';
-import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { YouTubePlayer } from '@angular/youtube-player';
 
@@ -14,11 +14,10 @@ import { AppRoutes } from '../../app.routes';
 
 // Models
 import { Story } from '@models/story.model';
-import { Storylist } from '@models/storylist.model';
 
 // Services
-import { MacroTaskWrapperService } from '../../providers/macro-task-wrapper.service';
 import { StoryService } from '../../providers/story.service';
+import { ThemeService } from '../../providers/theme.service';
 
 // Directives
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
@@ -31,7 +30,6 @@ import { ShareContentComponent } from '../../components/share-content/share-cont
 import { EpigraphComponent } from '../../components/epigraph/epigraph.component';
 import { MediaResourceComponent } from '../../components/media-resource/media-resource.component';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
-import { ThemeService } from '../../providers/theme.service';
 import { StorylistNavigationFrameComponent } from '../../components/storylist-navigation-frame/storylist-navigation-frame.component';
 
 @Component({
@@ -77,11 +75,10 @@ import { StorylistNavigationFrameComponent } from '../../components/storylist-na
 })
 export class StoryComponent {
 	readonly appRoutes = AppRoutes;
-	fetchContentDirective = inject(FetchContentDirective<[Story, Storylist]>);
+	fetchContentDirective = inject(FetchContentDirective);
 
 	// Valores undefined necesarios para poder determinar cuándo mostrar skeletons o la información de story y storylist en el template
 	story: Story | undefined;
-	storylist: Storylist | undefined;
 
 	dummyList = Array(10);
 	shareContentParams: { [key: string]: string } = {};
@@ -91,37 +88,24 @@ export class StoryComponent {
 	skeletonColor = this.themeService.pickColor('zinc', 300);
 
 	constructor() {
-		const platformId = inject(PLATFORM_ID);
 		const activatedRoute = inject(ActivatedRoute);
 		const metaTagsDirective = inject(MetaTagsDirective);
 		const storyService = inject(StoryService);
-		const macroTaskWrapperService = inject(MacroTaskWrapperService);
 
-		const fetchObservable$ = this.fetchContentDirective
-			.fetchContentWithSourceParams$(
-				activatedRoute.params,
-				switchMap(({ slug }) => storyService.getBySlug(slug)),
+		activatedRoute.params
+			.pipe(
+				takeUntilDestroyed(),
+				switchMap(({ slug }) => this.fetchContentDirective.fetchContent$<Story>(storyService.getBySlug(slug))),
 			)
-			.pipe(takeUntilDestroyed());
+			.subscribe((story) => {
+				this.story = story;
 
-		const content$ = isPlatformBrowser(platformId)
-			? fetchObservable$
-			: macroTaskWrapperService.wrapMacroTaskObservable<Story>(
-					'StoryComponent.fetchData',
-					fetchObservable$,
-					null,
-					'first-emit',
+				metaTagsDirective.setTitle(`${story.title}, de ${story.author.name} en La Cuentoneta`);
+				metaTagsDirective.setDescription(
+					`"${story.title}", de ${story.author.name} en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
 				);
-
-		content$.subscribe((story) => {
-			this.story = story;
-
-			metaTagsDirective.setTitle(`${story.title}, de ${story.author.name} en La Cuentoneta`);
-			metaTagsDirective.setDescription(
-				`"${story.title}", de ${story.author.name} en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
-			);
-			this.shareContentParams = { slug: story.slug };
-			this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`;
-		});
+				this.shareContentParams = { slug: story.slug };
+				this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`;
+			});
 	}
 }
