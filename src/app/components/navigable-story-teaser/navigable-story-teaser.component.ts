@@ -21,7 +21,7 @@ import { RouterLink } from '@angular/router';
 		@if (story()) {
 			<a
 				[routerLink]="['/', appRoutes.Story, story().slug]"
-				[queryParams]="{ navigation: 'author', slug: authorSlug() }"
+				[queryParams]="{ navigation: 'author', navigationSlug: authorSlug() }"
 			>
 				<article
 					[ngClass]="{

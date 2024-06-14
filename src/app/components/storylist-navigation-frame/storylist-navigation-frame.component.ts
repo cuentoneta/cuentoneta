@@ -66,7 +66,9 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 		this.activatedRoute.queryParams
 			.pipe(
 				takeUntilDestroyed(),
-				switchMap(({ slug }) => this.fetchContentDirective.fetchContent$<Storylist>(storylistService.get(slug, 9))),
+				switchMap(({ navigationSlug }) =>
+					this.fetchContentDirective.fetchContent$<Storylist>(storylistService.get(navigationSlug, 9)),
+				),
 			)
 			.subscribe((storylist) => {
 				this.storylist = storylist;

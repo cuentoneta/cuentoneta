@@ -79,7 +79,7 @@ export class AuthorComponent {
 			return stories.map((story) => ({
 				...story,
 				navigationRoute: this.router.createUrlTree(['/', this.appRoutes.Story, story.slug], {
-					queryParams: { navigation: 'author', slug: slug },
+					queryParams: { navigation: 'author', navigationSlug: slug },
 				}),
 			})) as (StoryCard & { navigationRoute: UrlTree })[];
 		}),

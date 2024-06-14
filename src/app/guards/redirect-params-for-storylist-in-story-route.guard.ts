@@ -9,7 +9,7 @@ export const redirectParamsForStorylistInStoryRouteGuard = (activatedRoute: Acti
 	return router.createUrlTree([appRoutes.Story, activatedRoute.params['slug']], {
 		queryParams: {
 			navigation: 'storylist',
-			slug: activatedRoute.params['list'],
+			navigationSlug: activatedRoute.params['list'],
 		},
 	});
 };

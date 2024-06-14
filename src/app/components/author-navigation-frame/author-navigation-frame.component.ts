@@ -50,9 +50,9 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 		this.activatedRoute.queryParams
 			.pipe(
 				takeUntilDestroyed(),
-				switchMap(({ slug }) => {
-					this.authorSlug = slug;
-					return this.fetchContentDirective.fetchContent$<StoryCard[]>(storyService.getByAuthorSlug(slug));
+				switchMap(({ navigationSlug }) => {
+					this.authorSlug = navigationSlug;
+					return this.fetchContentDirective.fetchContent$<StoryCard[]>(storyService.getByAuthorSlug(navigationSlug));
 				}),
 			)
 			.subscribe((stories) => {
