@@ -9,7 +9,7 @@ import { mapStorylist } from './_utils/functions';
 
 // Queries
 import { storylistPreviewQuery, storylistQuery } from './_queries/storylist.query';
-import { StoryListBySlugArgs } from './interfaces/sanity';
+import { StoryListBySlugArgs } from './interfaces/queryArgs';
 
 async function fetchPreview(slug: string): Promise<StorylistDTO> {
 	const query = `*[_type == 'storylist' && slug.current == '${slug}'][0]${storylistPreviewQuery}`;

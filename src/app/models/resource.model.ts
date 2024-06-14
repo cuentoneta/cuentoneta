@@ -8,7 +8,7 @@ export interface Resource {
 
 export interface ResourceType {
 	title: string;
-	slug: string;
+	slug?: string;
 	description: string;
 	icon?: Icon;
 }

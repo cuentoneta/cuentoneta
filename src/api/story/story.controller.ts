@@ -1,6 +1,6 @@
 import express from 'express';
 import * as storyService from './story.service';
-import { StoriesByAuthorSlugArgs } from '../interfaces/sanity';
+import { StoriesByAuthorSlugArgs } from '../interfaces/queryArgs';
 
 const router = express.Router();
 

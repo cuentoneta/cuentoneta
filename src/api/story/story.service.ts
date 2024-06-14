@@ -12,32 +12,30 @@ import { mapMediaSources } from '../_utils/media-sources.functions';
 // Subqueries
 import { authorForStory } from '../_queries/author.query';
 import { resourcesSubQuery } from '../_queries/resources.query';
-import { storyCommonFields, storyPreviewCommonFields } from '../_queries/story.query';
+import { storiesByAuthorSlugQuery, storyCommonFields } from '../_queries/story.query';
 
 // Interfaces
-import { StoriesByAuthorSlugArgs } from '../interfaces/sanity';
+import { StoriesByAuthorSlugArgs } from '../interfaces/queryArgs';
+import { StoriesByAuthorSlugQueryResult } from '../sanity/types';
 
 export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryDTO[]> {
 	const slice = `${args.offset * args.limit}...${(args.offset + 1) * args.limit}`;
-	const query = groq`*[_type == 'story' && author->slug.current == '${args.slug}'][${slice}]
-						  {
-							${storyPreviewCommonFields},
-							${resourcesSubQuery},
-						  } | order(title asc)`;
 
-	const result = await client.fetch(query, {});
+	const result: StoriesByAuthorSlugQueryResult = await client.fetch(storiesByAuthorSlugQuery, {
+		slug: args.slug,
+		slice: slice,
+	});
 	const stories = [];
 
 	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
 	for (const story of result) {
-		const { body, review, mediaSources, ...properties } = story;
+		const { body, mediaSources, resources, ...properties } = story;
 
 		stories.push({
 			...properties,
 			media: await mapMediaSources(mediaSources),
-			resources: mapResources(properties.resources),
+			resources: mapResources(resources),
 			paragraphs: body,
-			summary: review,
 		});
 	}
 
@@ -51,6 +49,7 @@ export async function fetchBySlug(slug: string): Promise<StoryDTO> {
                             ${resourcesSubQuery},
 							${authorForStory}
                           }[0]`;
+
 	const story = await client.fetch(query, {});
 
 	const { body, review, author, mediaSources, ...properties } = story;

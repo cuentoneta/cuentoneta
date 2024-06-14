@@ -14,6 +14,7 @@ import { AuthorDTO } from '@models/author.model';
 import { mapMediaSources } from './media-sources.functions';
 import { StorylistDTO } from '@models/storylist.model';
 import { Story, StoryPreview } from '@models/story.model';
+import { Resource } from '@models/resource.model';
 
 export function mapAuthor(rawAuthorData: any, language?: string): AuthorDTO {
 	return {
@@ -47,16 +48,18 @@ export function urlFor(source: SanityImageSource): ImageUrlBuilder {
 	return imageUrlBuilder(client).image(source);
 }
 
-export function mapResources(resources: any[]) {
+export function mapResources(resources: Resource[] | null) {
 	return (
-		resources?.map((resource: any) => ({
+		resources?.map((resource: Resource) => ({
 			...resource,
 			resourceType: {
 				...resource.resourceType,
-				icon: {
-					...resource.resourceType.icon,
-					svg: `data:image/svg+xml,${resource.resourceType.icon.svg}`,
-				},
+				icon: resource.resourceType.icon
+					? {
+							...resource.resourceType.icon,
+							svg: resource.resourceType.icon ? `data:image/svg+xml,${resource.resourceType.icon.svg}` : '',
+						}
+					: undefined,
 			},
 		})) ?? []
 	);
