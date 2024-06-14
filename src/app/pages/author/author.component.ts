@@ -1,17 +1,15 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, UrlTree } from '@angular/router';
 import { StoryService } from '../../providers/story.service';
-import { combineLatest, switchMap, tap } from 'rxjs';
+import { combineLatest, map, of, switchMap, tap } from 'rxjs';
 import { StoryCardComponent } from '../../components/story-card/story-card.component';
 import { AuthorService } from '../../providers/author.service';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
 import { ResourceComponent } from '../../components/resource/resource.component';
 import { Title } from '@angular/platform-browser';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Story, StoryCard } from '@models/story.model';
-import { FetchContentDirective } from '../../directives/fetch-content.directive';
-import { Author } from '@models/author.model';
+import { StoryCard } from '@models/story.model';
+import { AppRoutes } from '../../app.routes';
 
 @Component({
 	selector: 'cuentoneta-author',
@@ -24,7 +22,6 @@ import { Author } from '@models/author.model';
 		ResourceComponent,
 		RouterLink,
 	],
-	hostDirectives: [FetchContentDirective],
 	template: ` <main>
 		<article class="grid grid-cols-1 gap-8">
 			<section class="flex flex-col items-center gap-4">
@@ -52,7 +49,7 @@ import { Author } from '@models/author.model';
 			<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-8">
 				@if (stories$ | async; as stories) {
 					@for (story of stories; track $index) {
-						<cuentoneta-story-card [story]="story"></cuentoneta-story-card>
+						<cuentoneta-story-card [story]="story" [navigationRoute]="story.navigationRoute"></cuentoneta-story-card>
 					}
 				}
 			</section>
@@ -60,24 +57,31 @@ import { Author } from '@models/author.model';
 	</main>`,
 })
 export class AuthorComponent {
+	private readonly appRoutes = AppRoutes;
+
 	// Providers
 	private activatedRoute = inject(ActivatedRoute);
 	private authorService = inject(AuthorService);
 	private storyService = inject(StoryService);
+	private router = inject(Router);
 	private title = inject(Title);
 
-	// Directives
-	private fetchContentDirective = inject(FetchContentDirective);
-
 	author$ = this.activatedRoute.params.pipe(
-		takeUntilDestroyed(),
-		switchMap(({ slug }) => this.fetchContentDirective.fetchContent$<Author>(this.authorService.getBySlug(slug))),
+		switchMap(({ slug }) => this.authorService.getBySlug(slug)),
 		tap((author) => this.title.setTitle(`${author.name} - Autor en La Cuentoneta`)),
 	);
+
 	stories$ = combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams]).pipe(
-		takeUntilDestroyed(),
 		switchMap(([{ slug }, { limit, offset }]) =>
-			this.fetchContentDirective.fetchContent$<StoryCard[]>(this.storyService.getByAuthorSlug(slug, offset, limit)),
+			combineLatest([of(slug as string), this.storyService.getByAuthorSlug(slug, offset, limit)]),
 		),
+		map(([slug, stories]) => {
+			return stories.map((story) => ({
+				...story,
+				navigationRoute: this.router.createUrlTree(['/', this.appRoutes.Story, story.slug], {
+					queryParams: { navigation: 'author', navigationSlug: slug },
+				}),
+			})) as (StoryCard & { navigationRoute: UrlTree })[];
+		}),
 	);
 }

@@ -30,7 +30,6 @@ import { ShareContentComponent } from '../../components/share-content/share-cont
 import { EpigraphComponent } from '../../components/epigraph/epigraph.component';
 import { MediaResourceComponent } from '../../components/media-resource/media-resource.component';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
-import { StorylistNavigationFrameComponent } from '../../components/storylist-navigation-frame/storylist-navigation-frame.component';
 
 @Component({
 	selector: 'cuentoneta-story',
@@ -58,18 +57,17 @@ import { StorylistNavigationFrameComponent } from '../../components/storylist-na
 	`,
 	standalone: true,
 	imports: [
+		BioSummaryCardComponent,
 		CommonModule,
+		EpigraphComponent,
+		MediaResourceComponent,
 		NgOptimizedImage,
 		NgxSkeletonLoaderModule,
-		StoryNavigationBarComponent,
-		BioSummaryCardComponent,
-		ShareContentComponent,
-		EpigraphComponent,
-		YouTubePlayer,
-		MediaResourceComponent,
 		PortableTextParserComponent,
 		RouterLink,
-		StorylistNavigationFrameComponent,
+		ShareContentComponent,
+		StoryNavigationBarComponent,
+		YouTubePlayer,
 	],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })

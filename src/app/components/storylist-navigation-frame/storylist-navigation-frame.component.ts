@@ -1,11 +1,8 @@
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { switchMap, tap } from 'rxjs';
+import { switchMap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router, UrlTree } from '@angular/router';
-
-// Directives
-import { FetchContentDirective } from '../../directives/fetch-content.directive';
+import { UrlTree } from '@angular/router';
 
 // Componentes
 import { NavigablePublicationTeaserComponent } from '../navigable-publication-teaser/navigable-publication-teaser.component';
@@ -20,6 +17,7 @@ import { Publication, Storylist } from '@models/storylist.model';
 
 // Routes
 import { AppRoutes } from '../../app.routes';
+import { NavigationFrameComponent } from '@models/navigation-frame.component';
 
 export type NavigationBarConfig = {
 	headerTitle: string;
@@ -36,7 +34,7 @@ export type NavigationBarConfig = {
 			@for (publication of displayedPublications; track $index) {
 				<cuentoneta-navigable-publication-teaser
 					[publication]="publication"
-					[selected]="selectedStorySlug === publication.story.slug"
+					[selected]="selectedStorySlug() === publication.story.slug"
 					[storylist]="storylist"
 				/>
 			}
@@ -53,40 +51,34 @@ export type NavigationBarConfig = {
 		}
 	`,
 })
-export class StorylistNavigationFrameComponent {
-	@Input() selectedStorySlug: string = '';
-
-	@Output() isLoading = new EventEmitter<boolean>();
-	@Output() loaded = new EventEmitter<NavigationBarConfig>();
-
+export class StorylistNavigationFrameComponent extends NavigationFrameComponent {
 	readonly appRoutes = AppRoutes;
 
 	displayedPublications: Publication<StoryCard>[] = [];
 	dummyList: null[] = Array(9);
-	fetchContentDirective = inject(FetchContentDirective);
 	storylist: Storylist | undefined;
 
 	constructor() {
-		const router = inject(Router);
-		const activatedRoute = inject(ActivatedRoute);
+		super();
+
 		const storylistService = inject(StorylistService);
 
-		activatedRoute.queryParams
+		this.activatedRoute.queryParams
 			.pipe(
-				tap(() => this.isLoading.emit(true)),
 				takeUntilDestroyed(),
-				switchMap(({ slug }) => this.fetchContentDirective.fetchContent$<Storylist>(storylistService.get(slug, 9))),
+				switchMap(({ navigationSlug }) =>
+					this.fetchContentDirective.fetchContent$<Storylist>(storylistService.get(navigationSlug, 9)),
+				),
 			)
 			.subscribe((storylist) => {
 				this.storylist = storylist;
 				this.sliceDisplayedPublications(storylist.publications);
-				this.loaded.emit({
+				this.config.set({
 					headerTitle: storylist.title,
 					footerTitle: 'Ver más...',
-					navigationRoute: router.createUrlTree([this.appRoutes.StoryList, storylist.slug]),
+					navigationRoute: this.router.createUrlTree([this.appRoutes.StoryList, storylist.slug]),
 					showFooter: true,
 				});
-				this.isLoading.emit(false);
 			});
 	}
 
@@ -110,7 +102,7 @@ export class StorylistNavigationFrameComponent {
 		}
 
 		const selectedStoryIndex = publications.findIndex(
-			(publication) => publication.story.slug === this.selectedStorySlug,
+			(publication) => publication.story.slug === this.selectedStorySlug(),
 		);
 
 		const lowerIndex =

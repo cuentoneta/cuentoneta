@@ -21,7 +21,7 @@ import { RouterLink } from '@angular/router';
 	template: `
 		<a
 			[routerLink]="publication().published ? ['/', appRoutes.Story, publication().story.slug] : null"
-			[queryParams]="{ navigation: 'storylist', slug: storylist().slug }"
+			[queryParams]="{ navigation: 'storylist', navigationSlug: storylist().slug }"
 		>
 			<article
 				[ngClass]="{
