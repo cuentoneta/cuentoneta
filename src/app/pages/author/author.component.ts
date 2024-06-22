@@ -7,9 +7,10 @@ import { StoryCardComponent } from '../../components/story-card/story-card.compo
 import { AuthorService } from '../../providers/author.service';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
 import { ResourceComponent } from '../../components/resource/resource.component';
-import { Title } from '@angular/platform-browser';
 import { StoryCard } from '@models/story.model';
 import { AppRoutes } from '../../app.routes';
+import { Author } from '@models/author.model';
+import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 @Component({
 	selector: 'cuentoneta-author',
@@ -22,6 +23,7 @@ import { AppRoutes } from '../../app.routes';
 		ResourceComponent,
 		RouterLink,
 	],
+	hostDirectives: [MetaTagsDirective],
 	template: ` <main>
 		<article class="grid grid-cols-1 gap-8">
 			<section class="flex flex-col items-center gap-4">
@@ -62,13 +64,13 @@ export class AuthorComponent {
 	// Providers
 	private activatedRoute = inject(ActivatedRoute);
 	private authorService = inject(AuthorService);
+	private metaTagsDirective = inject(MetaTagsDirective);
 	private storyService = inject(StoryService);
 	private router = inject(Router);
-	private title = inject(Title);
 
 	author$ = this.activatedRoute.params.pipe(
 		switchMap(({ slug }) => this.authorService.getBySlug(slug)),
-		tap((author) => this.title.setTitle(`${author.name} - Autor en La Cuentoneta`)),
+		tap((author) => this.updateMetaTags(author)),
 	);
 
 	stories$ = combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams]).pipe(
@@ -84,4 +86,9 @@ export class AuthorComponent {
 			})) as (StoryCard & { navigationRoute: UrlTree })[];
 		}),
 	);
+
+	private updateMetaTags(author: Author) {
+		this.metaTagsDirective.setTitle(`${author.name}`);
+		this.metaTagsDirective.setDescription(`Perfil y obras de ${author.name} para leer en La Cuentoneta.`);
+	}
 }
