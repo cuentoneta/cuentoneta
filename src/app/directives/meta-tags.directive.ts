@@ -11,8 +11,8 @@ export class MetaTagsDirective {
 	private platformId = inject(PLATFORM_ID);
 	private titleService = inject(Title);
 
-	setTitle(title: string) {
-		const platformTitle = isPlatformBrowser(this.platformId) ? `${title} | La Cuentoneta` : title;
+	setTitle(title: string, addPrefix: boolean = true) {
+		const platformTitle = isPlatformBrowser(this.platformId) && addPrefix ? `${title} | La Cuentoneta` : title;
 		this.titleService.setTitle(`${platformTitle}`);
 		this.metaTagService.updateTag({
 			name: 'twitter:title',
@@ -38,5 +38,14 @@ export class MetaTagsDirective {
 			property: 'og:description',
 			content: content,
 		});
+	}
+
+	setDefault() {
+		this.setTitle('La Cuentoneta', false);
+		this.setDefaultDescription();
+	}
+
+	setDefaultDescription() {
+		this.setDescription('Una iniciativa que busca fomentar y hacer accesible la lectura digital.');
 	}
 }
