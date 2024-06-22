@@ -1,5 +1,6 @@
-import { Directive, inject } from '@angular/core';
+import { Directive, inject, PLATFORM_ID } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
+import { isPlatformBrowser } from '@angular/common';
 
 @Directive({
 	selector: '[cuentonetaMetaTags]',
@@ -7,10 +8,12 @@ import { Meta, Title } from '@angular/platform-browser';
 })
 export class MetaTagsDirective {
 	private metaTagService = inject(Meta);
+	private platformId = inject(PLATFORM_ID);
 	private titleService = inject(Title);
 
 	setTitle(title: string) {
-		this.titleService.setTitle(`${title} | La Cuentoneta`);
+		const platformTitle = isPlatformBrowser(this.platformId) ? `${title} | La Cuentoneta` : title;
+		this.titleService.setTitle(`${platformTitle}`);
 		this.metaTagService.updateTag({
 			name: 'twitter:title',
 			content: title,
