@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 @Component({
 	selector: 'cuentoneta-about',
 	standalone: true,
 	imports: [CommonModule, NgOptimizedImage],
+	hostDirectives: [MetaTagsDirective],
 	templateUrl: './about.component.html',
 })
 export class AboutComponent {
@@ -97,4 +99,10 @@ export class AboutComponent {
 			username: '@7SilviaT',
 		},
 	];
+
+	private metaTagsDirective = inject(MetaTagsDirective);
+	constructor() {
+		this.metaTagsDirective.setTitle('Nosotros');
+		this.metaTagsDirective.setDefaultDescription();
+	}
 }
