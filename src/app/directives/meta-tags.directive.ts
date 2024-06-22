@@ -10,7 +10,7 @@ export class MetaTagsDirective {
 	private titleService = inject(Title);
 
 	setTitle(title: string) {
-		this.titleService.setTitle(title);
+		this.titleService.setTitle(`${title} | La Cuentoneta`);
 		this.metaTagService.updateTag({
 			name: 'twitter:title',
 			content: title,
