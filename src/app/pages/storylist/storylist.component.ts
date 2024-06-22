@@ -57,9 +57,9 @@ export class StorylistComponent {
 			)
 			.subscribe((storylist) => {
 				this.storylist = storylist;
-				metaTagsDirective.setTitle(`"${storylist.title}" en La Cuentoneta`);
+				metaTagsDirective.setTitle(`${storylist.title}`);
 				metaTagsDirective.setDescription(
-					`Colección "${storylist.title}", una storylist en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
+					`Una storylist en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
 				);
 			});
 	}

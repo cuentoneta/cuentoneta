@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 @Component({
 	selector: 'cuentoneta-dmca',
 	standalone: true,
 	imports: [CommonModule],
+	hostDirectives: [MetaTagsDirective],
 	template: `
 		<main class="mx-5 bg-gray-50 p-5 shadow-lg md:mx-0 md:rounded-xl md:p-15 lg:mt-28">
 			<h1 class="h1 mb-5">Disclaimer for La Cuentoneta</h1>
@@ -109,4 +111,10 @@ import { CommonModule } from '@angular/common';
 		</main>
 	`,
 })
-export class DmcaComponent {}
+export class DmcaComponent {
+	private metaTagsDirective = inject(MetaTagsDirective);
+	constructor() {
+		this.metaTagsDirective.setTitle('DMCA');
+		this.metaTagsDirective.setDefaultDescription();
+	}
+}
