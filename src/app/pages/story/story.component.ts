@@ -98,9 +98,9 @@ export class StoryComponent {
 			.subscribe((story) => {
 				this.story = story;
 
-				metaTagsDirective.setTitle(`${story.title}, de ${story.author.name} en La Cuentoneta`);
+				metaTagsDirective.setTitle(`${story.title} - ${story.author.name}`);
 				metaTagsDirective.setDescription(
-					`"${story.title}", de ${story.author.name} en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
+					`Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
 				);
 				this.shareContentParams = { slug: story.slug };
 				this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`;
