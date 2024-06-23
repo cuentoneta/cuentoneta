@@ -18,6 +18,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { StoryCardSkeletonComponent } from '../../components/story-card-skeleton/story-card-skeleton.component';
 import { ThemeService } from '../../providers/theme.service';
 import { RepeatPipe } from '../../pipes/repeat.pipe';
+import { AuthorSkeletonComponent } from './author-skeleton.component';
 
 @Component({
 	selector: 'cuentoneta-author',
@@ -32,6 +33,7 @@ import { RepeatPipe } from '../../pipes/repeat.pipe';
 		NgxSkeletonLoaderModule,
 		StoryCardSkeletonComponent,
 		RepeatPipe,
+		AuthorSkeletonComponent,
 	],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 	template: `
@@ -62,77 +64,10 @@ import { RepeatPipe } from '../../pipes/repeat.pipe';
 						}
 					</section>
 				} @else {
-					<ng-container *ngTemplateOutlet="authorSkeleton"></ng-container>
-					<ng-container *ngTemplateOutlet="cardsSkeleton"></ng-container>
+					<cuentoneta-author-skeleton />
 				}
 			</article>
 		</main>
-
-		<ng-template #authorSkeleton>
-			<section class="flex flex-col items-center justify-center gap-4">
-				<ngx-skeleton-loader
-					[theme]="{
-						'height.px': 192,
-						'width.px': 192,
-						'background-color': skeletonColor
-					}"
-					count="1"
-					appearance="line"
-				></ngx-skeleton-loader>
-				<div class="flex items-center gap-4">
-					<ngx-skeleton-loader
-						[theme]="{
-							'height.px': 40,
-							'width.px': 320,
-							'margin.px': 0,
-							'background-color': skeletonColor
-						}"
-						count="1"
-						appearance="line"
-					></ngx-skeleton-loader>
-					<ngx-skeleton-loader
-						[theme]="{
-							'height.px': 40,
-							'width.px': 40,
-							'margin.px': 0,
-							'background-color': skeletonColor
-						}"
-						count="1"
-						appearance="line"
-					></ngx-skeleton-loader>
-				</div>
-				<div class="flex justify-start gap-4 sm:justify-end">
-					@for (item of 3 | repeat; track $index) {
-						<ngx-skeleton-loader
-							[theme]="{
-								'height.px': 48,
-								'width.px': 48,
-								'margin.px': 0,
-								'background-color': skeletonColor
-							}"
-							count="1"
-							appearance="circle"
-						></ngx-skeleton-loader>
-					}
-				</div>
-				<ngx-skeleton-loader
-					[theme]="{
-						'height.px': 20,
-						'width.px': 768,
-						'background-color': skeletonColor
-					}"
-					class="max-width-[960px] flex flex-col"
-					count="6"
-				></ngx-skeleton-loader>
-			</section>
-		</ng-template>
-		<ng-template #cardsSkeleton>
-			<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-8">
-				@for (item of 6 | repeat; track $index) {
-					<cuentoneta-story-card-skeleton [animation]="'progress'" [displayFooter]="false" />
-				}
-			</section>
-		</ng-template>
 	`,
 })
 export class AuthorComponent {
@@ -143,13 +78,10 @@ export class AuthorComponent {
 	private authorService = inject(AuthorService);
 	private storyService = inject(StoryService);
 	private router = inject(Router);
-	private themeService = inject(ThemeService);
 
 	// Directives
 	private metaTagsDirective = inject(MetaTagsDirective);
 	public fetchContentDirective = inject(FetchContentDirective);
-
-	skeletonColor = this.themeService.pickColor('zinc', 300);
 
 	author$ = this.activatedRoute.params.pipe(
 		switchMap(({ slug }) => this.authorService.getBySlug(slug)),
