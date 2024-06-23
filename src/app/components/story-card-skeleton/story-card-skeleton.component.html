@@ -55,58 +55,60 @@
 		count="1"
 		appearance="line"
 	></ngx-skeleton-loader>
-	<hr class="text-gray-300" />
-	<div class="flex">
-		<ngx-skeleton-loader
-			[animation]="animation"
-			[theme]="{
-				'background-color': skeletonColor,
-				height: '40px',
-				'margin-bottom': '2px',
-				'margin-top': '2px',
-				'margin-right': '12px',
-				width: '40px'
-			}"
-			count="1"
-			appearance="line"
-		></ngx-skeleton-loader>
-		<div>
+	@if (displayFooter) {
+		<hr class="text-gray-300" />
+		<div class="flex">
 			<ngx-skeleton-loader
 				[animation]="animation"
 				[theme]="{
-					height: '17px',
+					'background-color': skeletonColor,
+					height: '40px',
+					'margin-bottom': '2px',
 					'margin-top': '2px',
-					'margin-bottom': '4px',
-					width: '140px'
+					'margin-right': '12px',
+					width: '40px'
 				}"
 				count="1"
 				appearance="line"
 			></ngx-skeleton-loader>
-			<div class="flex">
+			<div>
 				<ngx-skeleton-loader
 					[animation]="animation"
 					[theme]="{
-						height: '15px',
-						margin: 0,
-						'margin-right': '8px',
+						height: '17px',
 						'margin-top': '2px',
-						width: '20px'
+						'margin-bottom': '4px',
+						width: '140px'
 					}"
 					count="1"
 					appearance="line"
 				></ngx-skeleton-loader>
-				<ngx-skeleton-loader
-					[animation]="animation"
-					[theme]="{
-						height: '15px',
-						margin: 0,
-						'margin-top': '2px',
-						width: '50px'
-					}"
-					count="1"
-					appearance="line"
-				></ngx-skeleton-loader>
+				<div class="flex">
+					<ngx-skeleton-loader
+						[animation]="animation"
+						[theme]="{
+							height: '15px',
+							margin: 0,
+							'margin-right': '8px',
+							'margin-top': '2px',
+							width: '20px'
+						}"
+						count="1"
+						appearance="line"
+					></ngx-skeleton-loader>
+					<ngx-skeleton-loader
+						[animation]="animation"
+						[theme]="{
+							height: '15px',
+							margin: 0,
+							'margin-top': '2px',
+							width: '50px'
+						}"
+						count="1"
+						appearance="line"
+					></ngx-skeleton-loader>
+				</div>
 			</div>
 		</div>
-	</div>
+	}
 </article>
