@@ -20,6 +20,7 @@ export class StoryCardSkeletonComponent {
 	@Input() displayDate: boolean = false;
 	@Input() editionLabel: string = '';
 	@Input() comingNextLabel: string = '';
+	@Input() displayFooter: boolean = true;
 
 	private themeService = inject(ThemeService);
 	skeletonColor = this.themeService.pickColor('zinc', 300);
