@@ -4,7 +4,6 @@ import { Publication, Storylist, StorylistDTO } from '@models/storylist.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { StoryPreview } from '@models/story.model';
 import { environment } from '../environments/environment';
-import { StoryService } from './story.service';
 import { ApiUrl, Endpoints } from './endpoints';
 import { DatePipe } from '@angular/common';
 

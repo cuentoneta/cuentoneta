@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { AppRoutes } from '../../app.routes';
 
 // Models
-import { StoryBase, StoryPreview } from '@models/story.model';
+import { StoryBase } from '@models/story.model';
 
 // Providers
 import { StoryService } from '../../providers/story.service';
