@@ -17,7 +17,6 @@ export class StorylistService {
 	// Providers
 	private datePipe = inject(DatePipe);
 	private http = inject(HttpClient);
-	private storyService = inject(StoryService);
 
 	public get(slug: string, amount: number = 5, ordering: 'asc' | 'desc' = 'asc'): Observable<Storylist> {
 		const params = new HttpParams().set('slug', slug).set('amount', amount).set('ordering', ordering);
@@ -31,7 +30,6 @@ export class StorylistService {
 				...publication,
 				editionLabel: this.mapEditionLabel(publication, storylist),
 				comingNextLabel: this.mapComingNextLabel(publication, storylist),
-				story: this.storyService.parseStoryCardContent(publication.story),
 			})) as Publication<StoryPreview>[],
 		};
 	}

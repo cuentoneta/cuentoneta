@@ -7,7 +7,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../environments/environment';
 
 // Models
-import { Story, StoryBase, StoryPreview } from '@models/story.model';
+import { Story, StoryBase } from '@models/story.model';
 import { ApiUrl, Endpoints } from './endpoints';
 
 @Injectable({ providedIn: 'root' })
@@ -17,41 +17,11 @@ export class StoryService {
 
 	public getBySlug(slug: string): Observable<Story> {
 		const params = new HttpParams().set('slug', slug);
-		return this.http.get<Story>(`${this.url}/read`, { params }).pipe(map((story) => this.parseStoryContent(story)));
+		return this.http.get<Story>(`${this.url}/read`, { params });
 	}
 
 	public getByAuthorSlug(slug: string, offset: number = 0, limit: number = 20): Observable<StoryBase[]> {
 		const params = new HttpParams().set('offset', offset).append('limit', limit);
 		return this.http.get<StoryBase[]>(`${this.url}/author/${slug}`, { params });
-	}
-
-	public parseStoryCardContent(story: StoryPreview): StoryPreview {
-		const card = {
-			...story,
-			paragraphs: story?.paragraphs ?? [],
-			media: story.media ?? [],
-			originalPublication: story.originalPublication ?? '',
-		};
-
-		if (story.author) {
-			card.author = {
-				...story.author,
-			};
-		}
-		return card;
-	}
-
-	private parseStoryContent(story: Story): Story {
-		return {
-			...story,
-			epigraphs: story.epigraphs ?? [],
-			paragraphs: story?.paragraphs ?? [],
-			summary: story?.summary ?? [],
-			author: {
-				...story.author,
-				biography: story.author.biography ?? [],
-			},
-			media: story.media ?? [],
-		};
 	}
 }
