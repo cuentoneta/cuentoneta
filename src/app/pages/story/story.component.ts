@@ -10,19 +10,19 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { injectParams } from 'ngxtension/inject-params';
 
 // Router
-
 import { AppRoutes } from '../../app.routes';
-// Models
 
+// Models
 import { Story } from '@models/story.model';
+
 // Services
 import { StoryService } from '../../providers/story.service';
-
 import { ThemeService } from '../../providers/theme.service';
+
 // Directives
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
-
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+
 // Components
 import { StoryNavigationBarComponent } from '../../components/story-navigation-bar/story-navigation-bar.component';
 import { BioSummaryCardComponent } from '../../components/bio-summary-card/bio-summary-card.component';
