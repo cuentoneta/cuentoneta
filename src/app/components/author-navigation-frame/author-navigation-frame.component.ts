@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { AppRoutes } from '../../app.routes';
 
 // Models
-import { StoryCard } from '@models/story.model';
+import { StoryBase } from '@models/story.model';
 
 // Providers
 import { StoryService } from '../../providers/story.service';
@@ -37,7 +37,7 @@ import { NavigableStoryTeaserComponent } from '../navigable-story-teaser/navigab
 	`,
 })
 export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
-	stories: StoryCard[] = [];
+	stories: StoryBase[] = [];
 	authorSlug: string = '';
 
 	readonly appRoutes = AppRoutes;
@@ -52,7 +52,7 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 				takeUntilDestroyed(),
 				switchMap(({ navigationSlug }) => {
 					this.authorSlug = navigationSlug;
-					return this.fetchContentDirective.fetchContent$<StoryCard[]>(storyService.getByAuthorSlug(navigationSlug));
+					return this.fetchContentDirective.fetchContent$<StoryBase[]>(storyService.getByAuthorSlug(navigationSlug));
 				}),
 			)
 			.subscribe((stories) => {

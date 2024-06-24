@@ -2,12 +2,12 @@ import { Component, inject } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink, UrlTree } from '@angular/router';
 import { StoryService } from '../../providers/story.service';
-import { combineLatest, delay, map, of, switchMap, tap } from 'rxjs';
+import { combineLatest, map, of, switchMap, tap } from 'rxjs';
 import { StoryCardComponent } from '../../components/story-card/story-card.component';
 import { AuthorService } from '../../providers/author.service';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
 import { ResourceComponent } from '../../components/resource/resource.component';
-import { StoryCard } from '@models/story.model';
+import { StoryPreview } from '@models/story.model';
 import { AppRoutes } from '../../app.routes';
 import { Author } from '@models/author.model';
 
@@ -16,7 +16,6 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { StoryCardSkeletonComponent } from '../../components/story-card-skeleton/story-card-skeleton.component';
-import { ThemeService } from '../../providers/theme.service';
 import { RepeatPipe } from '../../pipes/repeat.pipe';
 import { AuthorSkeletonComponent } from './author-skeleton.component';
 
@@ -98,7 +97,7 @@ export class AuthorComponent {
 				navigationRoute: this.router.createUrlTree(['/', this.appRoutes.Story, story.slug], {
 					queryParams: { navigation: 'author', navigationSlug: slug },
 				}),
-			})) as (StoryCard & { navigationRoute: UrlTree })[];
+			})) as (StoryPreview & { navigationRoute: UrlTree })[];
 		}),
 	);
 

@@ -1,6 +1,6 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StoryCard } from '@models/story.model';
+import { StoryPreview } from '@models/story.model';
 import { StoryCardContentComponent } from '../story-card-content/story-card-content.component';
 import { StoryCardSkeletonComponent } from '../story-card-skeleton/story-card-skeleton.component';
 import { Router, UrlTree } from '@angular/router';
@@ -18,7 +18,7 @@ import { AppRoutes } from '../../app.routes';
 	styles: ``,
 })
 export class StoryCardComponent {
-	story = input.required<StoryCard>();
+	story = input.required<StoryPreview>();
 	headerText = computed(() => this.story().originalPublication ?? '');
 	navigationRoute = input<UrlTree>();
 	computedRoute = computed(() => {

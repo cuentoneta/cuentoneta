@@ -1,8 +1,8 @@
-import { Component, effect, input } from '@angular/core';
+import { Component, computed, effect, input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
-import { StoryCard } from '@models/story.model';
+import { StoryPreview } from '@models/story.model';
 import { RouterLink, UrlTree } from '@angular/router';
 import { AppRoutes } from '../../app.routes';
 
@@ -71,7 +71,7 @@ import { AppRoutes } from '../../app.routes';
 					>
 						<img
 							[alt]="'Retrato de ' + story().author.name"
-							[ngSrc]="story().author.imageUrl + '?h=40&w=40'"
+							[ngSrc]="authorImageUrl()"
 							class="mr-3 h-10 w-10 rounded"
 							width="40"
 							height="40"
@@ -82,7 +82,7 @@ import { AppRoutes } from '../../app.routes';
 								<div class="flex items-center">
 									<img
 										[alt]="'Bandera de ' + nationality.country"
-										[ngSrc]="nationality.flag + '?w=20&h=15'"
+										[ngSrc]="nationality.flag"
 										class="h-[15px] w-[20px] rounded"
 										width="20"
 										height="15"
@@ -101,9 +101,11 @@ import { AppRoutes } from '../../app.routes';
 	`,
 })
 export class StoryCardContentComponent {
-	story = input.required<StoryCard>();
+	story = input.required<StoryPreview>();
 	headerText = input<string>();
 	navigationLink = input<UrlTree>();
+
+	authorImageUrl = computed(() => this.story().author.imageUrl ?? 'assets/img/default-avatar.jpg');
 
 	protected readonly appRoutes = AppRoutes;
 }

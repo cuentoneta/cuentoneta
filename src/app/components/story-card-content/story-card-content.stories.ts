@@ -8,7 +8,7 @@ import localeEs from '@angular/common/locales/es-419';
 registerLocaleData(localeEs);
 
 // Modelos
-import { StoryCard } from '@models/story.model';
+import { StoryPreview } from '@models/story.model';
 import { StoryCardContentComponent } from './story-card-content.component';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import { provideRouter, RouterLink } from '@angular/router';
@@ -31,7 +31,7 @@ export default {
 	],
 } as Meta<StoryCardContentComponent>;
 
-const story: StoryCard = {
+const story: StoryPreview = {
 	originalPublication: 'Bar del Infierno (2005)',
 	language: 'Español',
 	approximateReadingTime: 4,
