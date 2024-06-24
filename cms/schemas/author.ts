@@ -13,6 +13,7 @@ export default {
 			name: 'name',
 			title: 'Nombre',
 			type: 'string',
+			validation: (Rule) => Rule.required(),
 		},
 		{
 			name: 'slug',
@@ -37,12 +38,14 @@ export default {
 			options: {
 				hotspot: true,
 			},
+			validation: (Rule) => Rule.required(),
 		},
 		{
 			name: 'nationality',
 			title: 'Nacionalidad',
 			type: 'reference',
 			to: { type: 'nationality' },
+			validation: (Rule) => Rule.required(),
 		},
 		{
 			name: 'biography',
