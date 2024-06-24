@@ -1,16 +1,12 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { switchMap } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UrlTree } from '@angular/router';
 
-// Componentes
-import { NavigablePublicationTeaserComponent } from '../navigable-publication-teaser/navigable-publication-teaser.component';
-
-// Providers
-import { StorylistService } from '../../providers/storylist.service';
-
+// 3rd party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { injectQueryParams } from 'ngxtension/inject-query-params';
+import { injectParams } from 'ngxtension/inject-params';
+
 // Models
 import { StoryPreview } from '@models/story.model';
 import { Publication, Storylist } from '@models/storylist.model';
@@ -18,6 +14,12 @@ import { Publication, Storylist } from '@models/storylist.model';
 // Routes
 import { AppRoutes } from '../../app.routes';
 import { NavigationFrameComponent } from '@models/navigation-frame.component';
+
+// Services
+import { StorylistService } from '../../providers/storylist.service';
+
+// Componentes
+import { NavigablePublicationTeaserComponent } from '../navigable-publication-teaser/navigable-publication-teaser.component';
 
 export type NavigationBarConfig = {
 	headerTitle: string;
@@ -52,7 +54,13 @@ export type NavigationBarConfig = {
 	`,
 })
 export class StorylistNavigationFrameComponent extends NavigationFrameComponent {
+	// Routes
 	readonly appRoutes = AppRoutes;
+
+	// Providers
+	params = injectParams();
+	queryParams = injectQueryParams();
+	private storylistService = inject(StorylistService);
 
 	displayedPublications: Publication<StoryPreview>[] = [];
 	dummyList: null[] = Array(9);
@@ -61,16 +69,13 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	constructor() {
 		super();
 
-		const storylistService = inject(StorylistService);
+		effect((cleanUp) => {
+			if (!this.params() || !this.queryParams()) {
+				return;
+			}
+			const { navigationSlug } = this.queryParams();
 
-		this.activatedRoute.queryParams
-			.pipe(
-				takeUntilDestroyed(),
-				switchMap(({ navigationSlug }) =>
-					this.fetchContentDirective.fetchContent$<Storylist>(storylistService.get(navigationSlug, 9)),
-				),
-			)
-			.subscribe((storylist) => {
+			const subscription = this.storylist$(navigationSlug).subscribe((storylist) => {
 				this.storylist = storylist;
 				this.sliceDisplayedPublications(storylist.publications);
 				this.config.set({
@@ -80,6 +85,12 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 					showFooter: true,
 				});
 			});
+			cleanUp(() => subscription.unsubscribe());
+		});
+	}
+
+	private storylist$(navigationSlug: string) {
+		return this.fetchContentDirective.fetchContent$<Storylist>(this.storylistService.get(navigationSlug, 9));
 	}
 
 	/**
