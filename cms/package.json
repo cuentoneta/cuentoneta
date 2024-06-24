@@ -1,7 +1,7 @@
 {
 	"name": "cuentoneta",
 	"private": true,
-	"version": "2.4.1",
+	"version": "2.4.2",
 	"description": "",
 	"main": "package.json",
 	"author": "Ramiro Olivencia <ramiro@olivencia.com.ar>",
