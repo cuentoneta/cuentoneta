@@ -39,7 +39,6 @@ export class StoryService {
 		if (story.author) {
 			card.author = {
 				...story.author,
-				imageUrl: this.parseAvatarImageUrl(story.author.imageUrl),
 			};
 		}
 		return card;
@@ -53,14 +52,9 @@ export class StoryService {
 			summary: story?.summary ?? [],
 			author: {
 				...story.author,
-				imageUrl: this.parseAvatarImageUrl(story.author.imageUrl),
 				biography: story.author.biography ?? [],
 			},
 			media: story.media ?? [],
 		};
-	}
-
-	private parseAvatarImageUrl(imageUrl: string | undefined): string {
-		return imageUrl ?? 'assets/img/default-avatar.jpg';
 	}
 }
