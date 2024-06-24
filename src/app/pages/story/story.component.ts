@@ -1,28 +1,28 @@
 // Core
-import { Component, inject } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { switchMap } from 'rxjs';
+import { Component, effect, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { Observable, tap } from 'rxjs';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { YouTubePlayer } from '@angular/youtube-player';
 
 // 3rd Party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { injectParams } from 'ngxtension/inject-params';
 
 // Router
+
 import { AppRoutes } from '../../app.routes';
-
 // Models
-import { Story } from '@models/story.model';
 
+import { Story } from '@models/story.model';
 // Services
 import { StoryService } from '../../providers/story.service';
-import { ThemeService } from '../../providers/theme.service';
 
+import { ThemeService } from '../../providers/theme.service';
 // Directives
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
+import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 // Components
 import { StoryNavigationBarComponent } from '../../components/story-navigation-bar/story-navigation-bar.component';
 import { BioSummaryCardComponent } from '../../components/bio-summary-card/bio-summary-card.component';
@@ -72,38 +72,49 @@ import { PortableTextParserComponent } from '../../components/portable-text-pars
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
 export class StoryComponent {
+	// Routes
 	readonly appRoutes = AppRoutes;
-	fetchContentDirective = inject(FetchContentDirective);
 
-	// Valores undefined necesarios para poder determinar cuándo mostrar skeletons o la información de story y storylist en el template
-	story: Story | undefined;
+	// Providers
+	params = injectParams();
+	fetchContentDirective = inject(FetchContentDirective);
+	private storyService = inject(StoryService);
+	private themeService = inject(ThemeService);
+	private metaTagsDirective = inject(MetaTagsDirective);
 
 	dummyList = Array(10);
 	shareContentParams: { [key: string]: string } = {};
 	shareMessage: string = '';
-
-	private themeService = inject(ThemeService);
 	skeletonColor = this.themeService.pickColor('zinc', 300);
+	story: Story | undefined;
 
 	constructor() {
-		const activatedRoute = inject(ActivatedRoute);
-		const metaTagsDirective = inject(MetaTagsDirective);
-		const storyService = inject(StoryService);
-
-		activatedRoute.params
-			.pipe(
-				takeUntilDestroyed(),
-				switchMap(({ slug }) => this.fetchContentDirective.fetchContent$<Story>(storyService.getBySlug(slug))),
-			)
-			.subscribe((story) => {
+		effect((cleanUp) => {
+			const { slug } = this.params();
+			const subscription = this.story$(slug).subscribe((story) => {
 				this.story = story;
-
-				metaTagsDirective.setTitle(`${story.title} - ${story.author.name}`);
-				metaTagsDirective.setDescription(
-					`Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
-				);
-				this.shareContentParams = { slug: story.slug };
-				this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`;
+				this.updateMetaTags(story);
 			});
+			cleanUp(() => subscription.unsubscribe());
+		});
+	}
+
+	private updateMetaTags(story: Story) {
+		this.metaTagsDirective.setTitle(`${story.title} - ${story.author.name}`);
+		this.metaTagsDirective.setDescription(
+			`Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
+		);
+		this.shareContentParams = { slug: story.slug };
+		this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`;
+	}
+
+	private story$(slug: string): Observable<Story> {
+		return this.fetchContentDirective.fetchContent$<Story>(
+			this.storyService.getBySlug(slug).pipe(
+				tap((story) => {
+					this.updateMetaTags(story);
+				}),
+			),
+		);
 	}
 }
