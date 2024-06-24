@@ -9,7 +9,7 @@ export interface StoryBase {
 	approximateReadingTime: number;
 	badLanguage?: boolean;
 	language: string;
-	resources?: Resource[];
+	resources: Resource[];
 	paragraphs: BlockContent[];
 	media: Media[];
 	originalPublication: string;
