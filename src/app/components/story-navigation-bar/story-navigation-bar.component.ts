@@ -61,8 +61,8 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 	imports: [CommonModule, NgxSkeletonLoaderModule, RouterLink],
 })
 export class StoryNavigationBarComponent {
-	params = injectParams();
-	queryParams = injectQueryParams();
+	private params = injectParams();
+	private queryParams = injectQueryParams();
 
 	isLoading = false;
 

@@ -76,8 +76,8 @@ export class StoryComponent {
 	readonly appRoutes = AppRoutes;
 
 	// Providers
-	params = injectParams();
 	fetchContentDirective = inject(FetchContentDirective);
+	private params = injectParams();
 	private storyService = inject(StoryService);
 	private themeService = inject(ThemeService);
 	private metaTagsDirective = inject(MetaTagsDirective);

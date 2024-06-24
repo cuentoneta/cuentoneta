@@ -58,8 +58,8 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	readonly appRoutes = AppRoutes;
 
 	// Providers
-	params = injectParams();
-	queryParams = injectQueryParams();
+	private params = injectParams();
+	private queryParams = injectQueryParams();
 	private storylistService = inject(StorylistService);
 
 	displayedPublications: Publication<StoryPreview>[] = [];
