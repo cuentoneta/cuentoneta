@@ -56,10 +56,11 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 			const { navigationSlug } = this.queryParams();
 			const subscription = this.stories$(navigationSlug).subscribe((stories) => {
 				this.stories = stories;
+				this.authorSlug = navigationSlug;
 				this.config.set({
 					headerTitle: 'Más del autor',
 					footerTitle: 'Ver más...',
-					navigationRoute: this.router.createUrlTree([this.appRoutes.Author, this.authorSlug]),
+					navigationRoute: this.router.createUrlTree([this.appRoutes.Author, navigationSlug]),
 					showFooter: true,
 				});
 			});
