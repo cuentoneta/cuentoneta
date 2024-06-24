@@ -7,7 +7,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../environments/environment';
 
 // Models
-import { Story, StoryPreview } from '@models/story.model';
+import { Story, StoryBase, StoryPreview } from '@models/story.model';
 import { ApiUrl, Endpoints } from './endpoints';
 
 @Injectable({ providedIn: 'root' })
@@ -17,15 +17,12 @@ export class StoryService {
 
 	public getBySlug(slug: string): Observable<Story> {
 		const params = new HttpParams().set('slug', slug);
-
 		return this.http.get<Story>(`${this.url}/read`, { params }).pipe(map((story) => this.parseStoryContent(story)));
 	}
 
-	public getByAuthorSlug(slug: string, offset: number = 0, limit: number = 20): Observable<StoryPreview[]> {
+	public getByAuthorSlug(slug: string, offset: number = 0, limit: number = 20): Observable<StoryBase[]> {
 		const params = new HttpParams().set('offset', offset).append('limit', limit);
-		return this.http
-			.get<StoryPreview[]>(`${this.url}/author/${slug}`, { params })
-			.pipe(map((stories) => stories.map((story) => this.parseStoryCardContent(story))));
+		return this.http.get<StoryBase[]>(`${this.url}/author/${slug}`, { params });
 	}
 
 	public parseStoryCardContent(story: StoryPreview): StoryPreview {
