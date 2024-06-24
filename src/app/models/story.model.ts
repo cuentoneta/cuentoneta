@@ -1,8 +1,8 @@
-import { Author, AuthorDTO } from './author.model';
+import { Author } from './author.model';
 import { BlockContent } from '@models/block-content.model';
 import { Media } from '@models/media.model';
 import { Resource } from '@models/resource.model';
-import { Epigraph, EpigraphDTO } from '@models/epigraph.model';
+import { Epigraph } from '@models/epigraph.model';
 
 export interface StoryBase {
 	title: string;
@@ -20,12 +20,6 @@ export interface Story extends StoryBase {
 	author: Author;
 	epigraphs: Epigraph[];
 	summary: BlockContent[];
-}
-
-export interface StoryDTO extends StoryBase {
-	author: AuthorDTO;
-	epigraphs: EpigraphDTO[];
-	summary?: BlockContent[];
 }
 
 export interface StoryPreview extends StoryBase {

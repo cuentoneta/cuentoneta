@@ -7,7 +7,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../environments/environment';
 
 // Models
-import { Story, StoryPreview, StoryDTO } from '@models/story.model';
+import { Story, StoryPreview } from '@models/story.model';
 import { ApiUrl, Endpoints } from './endpoints';
 
 @Injectable({ providedIn: 'root' })
@@ -18,17 +18,17 @@ export class StoryService {
 	public getBySlug(slug: string): Observable<Story> {
 		const params = new HttpParams().set('slug', slug);
 
-		return this.http.get<StoryDTO>(`${this.url}/read`, { params }).pipe(map((story) => this.parseStoryContent(story)));
+		return this.http.get<Story>(`${this.url}/read`, { params }).pipe(map((story) => this.parseStoryContent(story)));
 	}
 
 	public getByAuthorSlug(slug: string, offset: number = 0, limit: number = 20): Observable<StoryPreview[]> {
 		const params = new HttpParams().set('offset', offset).append('limit', limit);
 		return this.http
-			.get<StoryDTO[]>(`${this.url}/author/${slug}`, { params })
+			.get<StoryPreview[]>(`${this.url}/author/${slug}`, { params })
 			.pipe(map((stories) => stories.map((story) => this.parseStoryCardContent(story))));
 	}
 
-	public parseStoryCardContent(story: StoryDTO): StoryPreview {
+	public parseStoryCardContent(story: StoryPreview): StoryPreview {
 		const card = {
 			...story,
 			paragraphs: story?.paragraphs ?? [],
@@ -45,7 +45,7 @@ export class StoryService {
 		return card;
 	}
 
-	private parseStoryContent(story: StoryDTO): Story {
+	private parseStoryContent(story: Story): Story {
 		return {
 			...story,
 			epigraphs: story.epigraphs ?? [],
