@@ -2,7 +2,6 @@ import { Author } from './author.model';
 import { BlockContent } from '@models/block-content.model';
 import { Media } from '@models/media.model';
 import { Resource } from '@models/resource.model';
-import { Epigraph } from '@models/epigraph.model';
 
 export interface StoryBase {
 	title: string;
@@ -14,6 +13,11 @@ export interface StoryBase {
 	paragraphs: BlockContent[];
 	media: Media[];
 	originalPublication: string;
+}
+
+export interface Epigraph {
+	text: BlockContent[];
+	reference: string;
 }
 
 export interface Story extends StoryBase {
