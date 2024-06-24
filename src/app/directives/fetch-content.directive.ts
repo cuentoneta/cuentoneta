@@ -1,6 +1,7 @@
-import { Directive } from '@angular/core';
-import { Observable, OperatorFunction, tap } from 'rxjs';
-import { Params } from '@angular/router';
+import { Directive, inject, PLATFORM_ID } from '@angular/core';
+import { Observable, tap } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
+import { MacroTaskWrapperService } from '../providers/macro-task-wrapper.service';
 
 /**
  * @description
@@ -17,27 +18,12 @@ import { Params } from '@angular/router';
 	selector: '[cuentonetaFetchContent]',
 	standalone: true,
 })
-export class FetchContentDirective<T> {
-	isLoading: boolean = false;
+export class FetchContentDirective {
+	// Providers
+	private platformId = inject(PLATFORM_ID);
+	private macroTaskWrapperService = inject(MacroTaskWrapperService);
 
-	/**
-	 * @description
-	 * Desde un observable con parámetros de routing, se utiliza una función operadora de tipo
-	 * OperatorFunction<Params, T> para traer contenido de una fuente y mostrar un
-	 * indicador de carga a lo largo de la llamada.
-	 * @param params$
-	 * @param operatorFunction$
-	 */
-	public fetchContentWithSourceParams$<T>(
-		params$: Observable<Params>,
-		operatorFunction$: OperatorFunction<Params, T>,
-	): Observable<T> {
-		return params$.pipe(
-			tap(() => (this.isLoading = true)),
-			operatorFunction$,
-			tap(() => (this.isLoading = false)),
-		);
-	}
+	isLoading: boolean = false;
 
 	/**
 	 * @description
@@ -47,6 +33,15 @@ export class FetchContentDirective<T> {
 	 */
 	public fetchContent$<T>(source$: Observable<T>): Observable<T> {
 		this.isLoading = true;
-		return source$.pipe(tap(() => (this.isLoading = false)));
+		return (
+			isPlatformBrowser(this.platformId)
+				? source$
+				: this.macroTaskWrapperService.wrapMacroTaskObservable<T>(
+						'StorylistNavigationFrameComponent.fetchData',
+						source$,
+						null,
+						'first-emit',
+					)
+		).pipe(tap(() => (this.isLoading = false)));
 	}
 }

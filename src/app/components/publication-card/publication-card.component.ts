@@ -1,48 +1,44 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 // Modelos
-import { StoryCard } from '@models/story.model';
+import { StoryPreview } from '@models/story.model';
 import { Publication } from '@models/storylist.model';
 
+// Componentes
 import { StoryCardSkeletonComponent } from '../story-card-skeleton/story-card-skeleton.component';
-import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
-import { CommonModule, DatePipe, NgIf, NgOptimizedImage } from '@angular/common';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
+import { StoryCardContentComponent } from '../story-card-content/story-card-content.component';
+
+// Providers
+import { UrlTree } from '@angular/router';
 
 @Component({
 	selector: 'cuentoneta-publication-card',
-	templateUrl: './publication-card.component.html',
+	template: `
+		<article
+			class="card flex flex-col gap-2 border-1 border-solid border-primary-300 p-5 shadow-lg hover:shadow-lg-hover md:gap-4 md:p-8"
+		>
+			@if (publication().published) {
+				<cuentoneta-story-card-content
+					[story]="publication().story"
+					[headerText]="publication().editionLabel"
+					[navigationLink]="navigationRoute()"
+				/>
+			} @else {
+				<cuentoneta-story-card-skeleton
+					[animation]="false"
+					[displayDate]="false"
+					[editionLabel]="publication().editionLabel"
+					[comingNextLabel]="publication().comingNextLabel"
+				/>
+			}
+		</article>
+	`,
 	standalone: true,
-	imports: [
-		CommonModule,
-		NgxSkeletonLoaderModule,
-		NgIf,
-		NgOptimizedImage,
-		StoryCardSkeletonComponent,
-		StoryEditionDateLabelComponent,
-		PortableTextParserComponent,
-	],
-	providers: [DatePipe],
+	imports: [CommonModule, StoryCardSkeletonComponent, StoryCardContentComponent],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PublicationCardComponent implements OnInit {
-	@Input() editionPrefix: string | undefined;
-	@Input() editionSuffix: string | undefined;
-	@Input() comingNextLabel: string = '';
-	@Input() displayDate: boolean = false;
-	@Input() publication: Publication<StoryCard> | undefined;
-	@Input() editionIndex: number = 0;
-
-	editionLabel: string = '';
-
-	private datePipe = inject(DatePipe);
-
-	ngOnInit() {
-		const dateFormat = this.datePipe.transform(this.publication?.publishingDate, `dd 'de' MMMM, YYYY`);
-		this.editionLabel = `${this.editionPrefix} ${this.editionIndex} ${this.displayDate ? ' - ' + dateFormat : ''}${
-			this.editionSuffix ? ' | ' + this.editionSuffix : ''
-		}`;
-		this.comingNextLabel = this.displayDate ? `${this.comingNextLabel} ${dateFormat}` : this.comingNextLabel;
-	}
+export class PublicationCardComponent {
+	publication = input.required<Publication<StoryPreview>>();
+	navigationRoute = input.required<UrlTree>();
 }

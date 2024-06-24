@@ -1,39 +1,37 @@
 // Core
 import { inject, Injectable } from '@angular/core';
-import { combineLatest, map, Observable, of, switchMap, tap } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 // Interfaces
 import { StorylistCardDeck, StorylistDeckConfig } from '@models/content.model';
-import { Storylist } from '@models/storylist.model';
+import { LandingPageContent } from '@models/landing-page-content.model';
 
+import { Storylist, StorylistDTO } from '@models/storylist.model';
 // Providers
 import { environment } from '../environments/environment';
+import { HttpClient } from '@angular/common/http';
 import { StorylistService } from './storylist.service';
-
-interface LandingPageContent {
-	cards: StorylistDeckConfig[];
-	previews: StorylistDeckConfig[];
-}
 
 @Injectable({
 	providedIn: 'root',
 })
 export class ContentService {
 	private readonly prefix = `${environment.apiUrl}api/content`;
-	private _contentConfig: LandingPageContent = { cards: [], previews: [] };
 
 	// Services
+	private http = inject(HttpClient);
 	private storylistService = inject(StorylistService);
 
-	get contentConfig(): LandingPageContent {
-		return this._contentConfig;
+	get contentConfig(): LandingPageContent<StorylistDeckConfig> {
+		return environment.contentConfig as LandingPageContent<StorylistDeckConfig>;
 	}
 
-	public fetchContentConfig(): Observable<LandingPageContent> {
-		return of(environment.contentConfig as LandingPageContent).pipe(
-			tap((contentConfig) => {
-				this._contentConfig = contentConfig;
-			}),
+	public getLandingPageContent(): Observable<LandingPageContent<Storylist>> {
+		return this.http.get<LandingPageContent<StorylistDTO>>(`${this.prefix}/landing-page`).pipe(
+			map((content) => ({
+				cards: content.cards.map((cards) => this.storylistService.mapStorylist(cards)),
+				previews: content.previews.map((preview) => this.storylistService.mapStorylist(preview)),
+			})),
 		);
 	}
 
@@ -47,39 +45,33 @@ export class ContentService {
 	}
 
 	/**
-	 * En base a la configuración de contenido disponible, hace fetch de la lista de
-	 * storylists referenciada en los objetos de configuración, para luego generar
-	 * una tupa de arrays de objetos compuestos de tipo StorylistCardDeck, los cuales
+	 * Hace fetch de la configuración de landing page desde el origen de datos y genera
+	 * una tupla de arrays de objetos compuestos de tipo StorylistCardDeck, los cuales
 	 * contienen la configuración y la correspondiente información para renderizar
 	 * los decks de previews y cards de cada storylist.
 	 */
-	public fetchStorylistDecks(): Observable<[StorylistCardDeck[], StorylistCardDeck[]]> {
+	public fetchStorylistDecks(): Observable<LandingPageContent<StorylistCardDeck>> {
 		const previewConfigs = this.contentConfig.previews;
 		const cardConfigs = this.contentConfig.cards;
+		const landingConfig$ = this.getLandingPageContent();
 
-		const previewConfigs$ = combineLatest(
-			[...previewConfigs].map((config) => this.storylistService.getPreview(config.slug)),
-		);
-
-		const cardConfigs$ = combineLatest([...cardConfigs].map((config) => this.storylistService.getPreview(config.slug)));
-
-		return combineLatest([previewConfigs$, cardConfigs$]).pipe(
-			switchMap(([previews, cards]) => {
-				return of([
-					previewConfigs.map(
+		return landingConfig$.pipe(
+			map(({ previews, cards }) => {
+				return {
+					previews: previewConfigs.map(
 						(contentConfig): StorylistCardDeck => ({
 							...contentConfig,
 							storylist: previews.filter((storylist) => storylist.slug === contentConfig.slug).pop() as Storylist,
 						}),
 					),
-					cardConfigs.map(
+					cards: cardConfigs.map(
 						(contentConfig): StorylistCardDeck => ({
 							...contentConfig,
 							storylist: cards.filter((storylist) => storylist.slug === contentConfig.slug).pop() as Storylist,
 						}),
 					),
-				]);
+				};
 			}),
-		) as Observable<[StorylistCardDeck[], StorylistCardDeck[]]>;
+		);
 	}
 }

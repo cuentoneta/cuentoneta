@@ -1,8 +1,8 @@
 // Core
-import { Component, inject, PLATFORM_ID } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { combineLatest, switchMap } from 'rxjs';
-import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { switchMap } from 'rxjs';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { YouTubePlayer } from '@angular/youtube-player';
 
@@ -10,16 +10,14 @@ import { YouTubePlayer } from '@angular/youtube-player';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Router
-import { APP_ROUTE_TREE } from '../../app.routes';
+import { AppRoutes } from '../../app.routes';
 
 // Models
 import { Story } from '@models/story.model';
-import { Storylist } from '@models/storylist.model';
 
 // Services
-import { MacroTaskWrapperService } from '../../providers/macro-task-wrapper.service';
-import { StorylistService } from '../../providers/storylist.service';
 import { StoryService } from '../../providers/story.service';
+import { ThemeService } from '../../providers/theme.service';
 
 // Directives
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
@@ -59,65 +57,53 @@ import { PortableTextParserComponent } from '../../components/portable-text-pars
 	`,
 	standalone: true,
 	imports: [
+		BioSummaryCardComponent,
 		CommonModule,
+		EpigraphComponent,
+		MediaResourceComponent,
 		NgOptimizedImage,
 		NgxSkeletonLoaderModule,
-		StoryNavigationBarComponent,
-		BioSummaryCardComponent,
-		ShareContentComponent,
-		EpigraphComponent,
-		YouTubePlayer,
-		MediaResourceComponent,
 		PortableTextParserComponent,
+		RouterLink,
+		ShareContentComponent,
+		StoryNavigationBarComponent,
+		YouTubePlayer,
 	],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
 export class StoryComponent {
-	readonly appRouteTree = APP_ROUTE_TREE;
-	fetchContentDirective = inject(FetchContentDirective<[Story, Storylist]>);
+	readonly appRoutes = AppRoutes;
+	fetchContentDirective = inject(FetchContentDirective);
 
 	// Valores undefined necesarios para poder determinar cuándo mostrar skeletons o la información de story y storylist en el template
 	story: Story | undefined;
-	storylist: Storylist | undefined;
 
 	dummyList = Array(10);
 	shareContentParams: { [key: string]: string } = {};
 	shareMessage: string = '';
 
+	private themeService = inject(ThemeService);
+	skeletonColor = this.themeService.pickColor('zinc', 300);
+
 	constructor() {
-		const platformId = inject(PLATFORM_ID);
 		const activatedRoute = inject(ActivatedRoute);
 		const metaTagsDirective = inject(MetaTagsDirective);
-		const storylistService = inject(StorylistService);
 		const storyService = inject(StoryService);
-		const macroTaskWrapperService = inject(MacroTaskWrapperService);
 
-		const fetchObservable$ = this.fetchContentDirective
-			.fetchContentWithSourceParams$(
-				activatedRoute.params,
-				switchMap(({ slug, list }) => combineLatest([storyService.getBySlug(slug), storylistService.get(list, 10)])),
+		activatedRoute.params
+			.pipe(
+				takeUntilDestroyed(),
+				switchMap(({ slug }) => this.fetchContentDirective.fetchContent$<Story>(storyService.getBySlug(slug))),
 			)
-			.pipe(takeUntilDestroyed());
+			.subscribe((story) => {
+				this.story = story;
 
-		const content$ = isPlatformBrowser(platformId)
-			? fetchObservable$
-			: macroTaskWrapperService.wrapMacroTaskObservable<[Story, Storylist]>(
-					'StoryComponent.fetchData',
-					fetchObservable$,
-					null,
-					'first-emit',
+				metaTagsDirective.setTitle(`${story.title} - ${story.author.name}`);
+				metaTagsDirective.setDescription(
+					`Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
 				);
-
-		content$.subscribe(([story, storylist]) => {
-			this.story = story;
-			this.storylist = storylist;
-
-			metaTagsDirective.setTitle(`${story.title}, de ${story.author.name} en La Cuentoneta`);
-			metaTagsDirective.setDescription(
-				`"${story.title}", de ${story.author.name}. Parte de la colección "${storylist.title}" en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
-			);
-			this.shareContentParams = { slug: story.slug, list: storylist.slug };
-			this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos de la colección "${storylist.title}" en este link:`;
-		});
+				this.shareContentParams = { slug: story.slug };
+				this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`;
+			});
 	}
 }

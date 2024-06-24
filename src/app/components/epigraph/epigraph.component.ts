@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, effect, Input, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Epigraph } from '@models/epigraph.model';
+import { Epigraph } from '@models/story.model';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 
 @Component({

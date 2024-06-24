@@ -112,14 +112,18 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 ## Junio de 2024
 
 - Actualización a Angular 18 y Nx 19.1.
-- Invitación abierta a autoras y autores santafesinos para participar en la storylist "Plumas Santafesinas", recopilando relatos breves y poemas de autoría provincial.
-- Creación de storylist invernal, con colaboración de comunidades.
-- Implementación de una nueva sección "Pluma de la Semana", destacando un autor o autora diferente cada semana en la
-  landing page.
-- Mejoras en storylists y landing page, en base a diseños nuevos de UX.
+- Implementación de la funcionalidad "Perfil de Autor", mediante la cual pueden visualizarse todos los relatos de un autor en la plataforma.
+- Múltiples mejoras de performance y experiencia de desarrollo interna de la plataforma.
+
+### Hito: Lanzamiento al público de la versión [2.4.2](https://github.com/cuentoneta/cuentoneta/releases/tag/2.4.2) de La Cuentoneta (lanzada el 2024/06/24)
 
 ## Julio de 2024
 
+- Creación de storylist invernal, con colaboración de comunidades.
+- Invitación abierta a autoras y autores santafesinos para participar en la storylist "Plumas Santafesinas", recopilando relatos breves y poemas de autoría provincial.
+- Implementación de una nueva sección "Pluma de la Semana", destacando un autor o autora diferente cada semana en la
+  landing page.
+- Mejoras en storylists y landing page, en base a diseños nuevos de UX.
 - Preparación de la plataforma para alojar el primer concurso de escritura en La Cuentoneta, el _III Certamen
   Extraordinario de Escritura_, a cargo de la comunidad **[Tertulia Literaria](https://discord.gg/tertulia-literaria-795704695485235231)**.
 

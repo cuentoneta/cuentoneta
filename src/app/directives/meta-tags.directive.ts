@@ -1,5 +1,6 @@
-import { Directive, inject } from '@angular/core';
+import { Directive, inject, PLATFORM_ID } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
+import { isPlatformBrowser } from '@angular/common';
 
 @Directive({
 	selector: '[cuentonetaMetaTags]',
@@ -7,10 +8,12 @@ import { Meta, Title } from '@angular/platform-browser';
 })
 export class MetaTagsDirective {
 	private metaTagService = inject(Meta);
+	private platformId = inject(PLATFORM_ID);
 	private titleService = inject(Title);
 
-	setTitle(title: string) {
-		this.titleService.setTitle(title);
+	setTitle(title: string, addPrefix: boolean = true) {
+		const platformTitle = isPlatformBrowser(this.platformId) && addPrefix ? `${title} | La Cuentoneta` : title;
+		this.titleService.setTitle(`${platformTitle}`);
 		this.metaTagService.updateTag({
 			name: 'twitter:title',
 			content: title,
@@ -24,6 +27,10 @@ export class MetaTagsDirective {
 
 	setDescription(content: string) {
 		this.metaTagService.updateTag({
+			name: 'description',
+			content: content,
+		});
+		this.metaTagService.updateTag({
 			name: 'twitter:description',
 			content: content,
 		});
@@ -31,5 +38,14 @@ export class MetaTagsDirective {
 			property: 'og:description',
 			content: content,
 		});
+	}
+
+	setDefault() {
+		this.setTitle('La Cuentoneta', false);
+		this.setDefaultDescription();
+	}
+
+	setDefaultDescription() {
+		this.setDescription('Una iniciativa que busca fomentar y hacer accesible la lectura digital.');
 	}
 }

@@ -11,11 +11,13 @@ import { StorylistCardDeck } from '@models/content.model';
 
 // Directives
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
-import { APP_ROUTE_TREE } from '../../app.routes';
+import { AppRoutes } from '../../app.routes';
 import { PublicationCardComponent } from '../../components/publication-card/publication-card.component';
 import { StorylistCardDeckComponent } from 'src/app/components/storylist-card-deck/storylist-card-deck.component';
 import { RouterModule } from '@angular/router';
 import { StorylistCardComponent } from '../../components/storylist-card-component/storylist-card.component';
+import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { Meta } from '@angular/platform-browser';
 
 @Component({
 	selector: 'cuentoneta-home',
@@ -29,22 +31,26 @@ import { StorylistCardComponent } from '../../components/storylist-card-componen
 		RouterModule,
 		StorylistCardComponent,
 	],
-	hostDirectives: [FetchContentDirective],
+	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
 export class HomeComponent {
-	readonly appRouteTree = APP_ROUTE_TREE;
+	readonly appRoutes = AppRoutes;
 
 	cards: StorylistCardDeck[] = [];
 	previews: StorylistCardDeck[] = [];
 
+	// Directives
+	public fetchContentDirective = inject(FetchContentDirective);
+	private metaTagsDirective = inject(MetaTagsDirective);
+
 	// Services
-	public fetchContentDirective = inject(FetchContentDirective<StorylistCardDeck[]>);
 	private contentService = inject(ContentService);
 
 	constructor() {
 		// Asignación inicial para dibujar skeletons
 		this.cards = this.contentService.contentConfig.cards;
 		this.previews = this.contentService.contentConfig.previews;
+		this.metaTagsDirective.setDefault();
 
 		const platformId = inject(PLATFORM_ID);
 		if (!isPlatformBrowser(platformId)) {
@@ -57,9 +63,11 @@ export class HomeComponent {
 
 	private loadStorylistDecks() {
 		this.fetchContentDirective
-			.fetchContent$<[StorylistCardDeck[], StorylistCardDeck[]]>(this.contentService.fetchStorylistDecks())
+			.fetchContent$<{ previews: StorylistCardDeck[]; cards: StorylistCardDeck[] }>(
+				this.contentService.fetchStorylistDecks(),
+			)
 			.pipe(takeUntilDestroyed())
-			.subscribe(([previews, cards]) => {
+			.subscribe(({ previews, cards }) => {
 				this.previews = previews;
 				this.cards = cards;
 			});

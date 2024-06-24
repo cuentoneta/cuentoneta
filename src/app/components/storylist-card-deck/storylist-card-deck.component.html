@@ -18,7 +18,7 @@
 				<h1 class="h1 mb-5">
 					<a
 						[ngClass]="{ 'hover:text-interactive-500': canNavigateToStorylist }"
-						[routerLink]="canNavigateToStorylist ? '/' + appRouteTree['STORYLIST'] + '/' + storylist.slug : null"
+						[routerLink]="canNavigateToStorylist ? '/' + appRoutes.StoryList + '/' + storylist.slug : null"
 						class="disabled:pointer-events-none disabled:cursor-default"
 						>{{ storylist.title }}</a
 					>
@@ -39,7 +39,7 @@
 						'margin-bottom.px': 20,
 						'height.px': 40,
 						width: '100%',
-						'background-color': '#D4D4D8'
+						'background-color': skeletonColor
 					}"
 					count="1"
 					appearance="line"
@@ -49,7 +49,7 @@
 						'margin-bottom.px': 10,
 						'height.px': 20,
 						width: '100%',
-						'background-color': '#D4D4D8'
+						'background-color': skeletonColor
 					}"
 					count="3"
 					appearance="line"
@@ -74,7 +74,7 @@
 <ng-template #skeletonsTemplate>
 	@for (skeleton of skeletonConfig?.cardsPlacement; track $index) {
 		@if (!!skeleton.slug) {
-			<cuentoneta-publication-card
+			<cuentoneta-story-card-skeleton
 				[ngStyle]="{
 					order: skeleton?.order,
 					'grid-column-start': skeleton?.startCol,
@@ -93,7 +93,7 @@
 				[theme]="{
 					height: '100%',
 					width: '100%',
-					'background-color': '#D4D4D8'
+					'background-color': skeletonColor
 				}"
 				class="xs:max-md:!col-span-1"
 				count="1"
@@ -106,24 +106,28 @@
 <ng-template #publicationsTemplate>
 	@if (!!storylist) {
 		@for (publication of storylist.publications; track $index) {
-			<a
+			<div
 				[ngStyle]="storiesCardConfig[publication.story.slug]"
 				[class.disabled]="!publication || !publication.published"
-				[routerLink]="
-					!!publication && publication.published
-						? ['/', appRouteTree['STORY'], publication.story.slug, storylist.slug]
-						: null
-				"
+				[attr.aria-busy]="!publication"
 				class="xs:max-md:!col-span-1"
 			>
-				<cuentoneta-publication-card
-					[displayDate]="storylist.displayDates"
-					[editionPrefix]="storylist.editionPrefix"
-					[publication]="publication"
-					[editionIndex]="publication.publishingOrder"
-					[comingNextLabel]="storylist.comingNextLabel"
-				/>
-			</a>
+				@if (publication) {
+					<cuentoneta-publication-card
+						[publication]="publication"
+						[navigationRoute]="
+							router.createUrlTree(['/', this.appRoutes.Story, publication.story.slug], {
+								queryParams: {
+									navigation: 'storylist',
+									navigationSlug: storylist.slug
+								}
+							})
+						"
+					/>
+				} @else {
+					<cuentoneta-story-card-skeleton [animation]="'progress'" />
+				}
+			</div>
 		}
 	}
 </ng-template>

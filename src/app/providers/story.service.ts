@@ -1,53 +1,27 @@
 // Core
-import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 // Environment
 import { environment } from '../environments/environment';
 
 // Models
-import { Story, StoryCard, StoryDTO } from '@models/story.model';
+import { Story, StoryBase } from '@models/story.model';
+import { ApiUrl, Endpoints } from './endpoints';
 
 @Injectable({ providedIn: 'root' })
 export class StoryService {
-	private readonly prefix = `${environment.apiUrl}api/story`;
-	constructor(private http: HttpClient) {}
+	private readonly url: ApiUrl = `${environment.apiUrl}${Endpoints.Story}`;
+	private http = inject(HttpClient);
+
 	public getBySlug(slug: string): Observable<Story> {
 		const params = new HttpParams().set('slug', slug);
-		return this.http
-			.get<StoryDTO>(`${this.prefix}/read`, { params })
-			.pipe(map((story) => this.parseStoryContent(story)));
+		return this.http.get<Story>(`${this.url}/read`, { params });
 	}
 
-	public parseStoryCardContent(story: StoryDTO): StoryCard {
-		return {
-			...story,
-			author: {
-				...story.author,
-				imageUrl: this.parseAvatarImageUrl(story.author.imageUrl),
-			},
-			paragraphs: story?.paragraphs ?? [],
-			media: story.media ?? [],
-		};
-	}
-
-	private parseStoryContent(story: StoryDTO): Story {
-		return {
-			...story,
-			epigraphs: story.epigraphs ?? [],
-			paragraphs: story?.paragraphs ?? [],
-			summary: story?.summary ?? [],
-			author: {
-				...story.author,
-				imageUrl: this.parseAvatarImageUrl(story.author.imageUrl),
-				biography: story.author.biography ?? [],
-			},
-			media: story.media ?? [],
-		};
-	}
-
-	private parseAvatarImageUrl(imageUrl: string | undefined): string {
-		return imageUrl ?? 'assets/img/default-avatar.jpg';
+	public getByAuthorSlug(slug: string, offset: number = 0, limit: number = 20): Observable<StoryBase[]> {
+		const params = new HttpParams().set('offset', offset).append('limit', limit);
+		return this.http.get<StoryBase[]>(`${this.url}/author/${slug}`, { params });
 	}
 }

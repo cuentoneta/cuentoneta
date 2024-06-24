@@ -1,9 +1,6 @@
 <aside class="hidden md:block">
 	@defer {
-		<cuentoneta-story-navigation-bar
-			[selectedStorySlug]="story?.slug ?? ''"
-			[storylist]="storylist"
-		></cuentoneta-story-navigation-bar>
+		<cuentoneta-story-navigation-bar />
 	}
 </aside>
 
@@ -19,7 +16,7 @@
 					<cuentoneta-share-content
 						[isLoading]="fetchContentDirective.isLoading"
 						[params]="shareContentParams"
-						[route]="appRouteTree['STORY']"
+						[route]="appRoutes.Story"
 						[message]="shareMessage"
 					/>
 				}
@@ -27,7 +24,13 @@
 			<div>
 				@if (!!story && !fetchContentDirective.isLoading) {
 					<h1 [lang]="story.language" class="h1 mb-2">{{ story.title }}</h1>
-					<p [lang]="story.language" class="inter-body-xl mb-2">{{ story.author.name }}</p>
+					<a
+						[lang]="story.language"
+						[routerLink]="['/', appRoutes.Author, story.author.slug]"
+						class="inter-body-xl mb-2 block"
+					>
+						{{ story.author.name }}
+					</a>
 					<time class="inter-body-base-medium text-gray-600">
 						{{ story.approximateReadingTime }} minutos de lectura
 					</time>
@@ -39,7 +42,7 @@
 					<ngx-skeleton-loader
 						[theme]="{
 							'height.px': 36,
-							'background-color': '#D4D4D8',
+							'background-color': skeletonColor,
 							width: '50%'
 						}"
 						count="1"
@@ -48,7 +51,7 @@
 					<ngx-skeleton-loader
 						[theme]="{
 							'height.px': 20,
-							'background-color': '#D4D4D8',
+							'background-color': skeletonColor,
 							width: '25%'
 						}"
 						count="1"
@@ -57,7 +60,7 @@
 					<ngx-skeleton-loader
 						[theme]="{
 							'height.px': 16,
-							'background-color': '#D4D4D8',
+							'background-color': skeletonColor,
 							width: '20%'
 						}"
 						count="1"

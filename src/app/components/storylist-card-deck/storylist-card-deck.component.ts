@@ -1,6 +1,6 @@
 // Core
-import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 
 // Modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -8,18 +8,20 @@ import { CommonModule } from '@angular/common';
 
 // Models
 import { GridItemPlacementConfig, Storylist } from '@models/storylist.model';
-import { APP_ROUTE_TREE } from '../../app.routes';
+import { AppRoutes } from '../../app.routes';
 import { StorylistGridSkeletonConfig } from '@models/content.model';
 import { PublicationCardComponent } from '../publication-card/publication-card.component';
+import { ThemeService } from '../../providers/theme.service';
+import { StoryCardSkeletonComponent } from '../story-card-skeleton/story-card-skeleton.component';
 
 @Component({
 	selector: 'cuentoneta-storylist-card-deck',
 	standalone: true,
-	imports: [CommonModule, NgxSkeletonLoaderModule, RouterLink, PublicationCardComponent],
+	imports: [CommonModule, NgxSkeletonLoaderModule, RouterLink, PublicationCardComponent, StoryCardSkeletonComponent],
 	templateUrl: './storylist-card-deck.component.html',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StorylistCardDeckComponent implements OnInit, OnChanges {
+export class StorylistCardDeckComponent implements OnChanges {
 	@Input() number: number = 6;
 	@Input() storylist: Storylist | undefined;
 	@Input() isLoading: boolean = false; // Utilizado para mostrar/ocultar skeletons
@@ -28,14 +30,14 @@ export class StorylistCardDeckComponent implements OnInit, OnChanges {
 	@Input() displayFeaturedImage: boolean = false;
 	@Input() skeletonConfig: StorylistGridSkeletonConfig | undefined;
 
-	dummyList: null[] = [];
+	public router = inject(Router);
+
 	imagesCardConfig: { [key: string]: CardDeckCSSGridConfig } = {};
 	storiesCardConfig: { [key: string]: CardDeckCSSGridConfig } = {};
-	readonly appRouteTree = APP_ROUTE_TREE;
+	readonly appRoutes = AppRoutes;
 
-	ngOnInit() {
-		this.dummyList = Array(this.number);
-	}
+	private themeService = inject(ThemeService);
+	skeletonColor = this.themeService.pickColor('zinc', 300);
 
 	ngOnChanges(changes: SimpleChanges) {
 		if (!!changes['storylist'] && !!changes['storylist'].currentValue) {

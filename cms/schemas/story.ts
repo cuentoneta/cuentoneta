@@ -234,6 +234,11 @@ export default {
 			title: 'Reseña',
 			type: 'blockContent',
 		},
+		{
+			name: 'originalPublication',
+			title: 'Publicación original',
+			type: 'string',
+		},
 	],
 	initialValue: {
 		language: 'es',
