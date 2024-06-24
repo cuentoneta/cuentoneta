@@ -7,7 +7,7 @@ import { StoryCardComponent } from '../../components/story-card/story-card.compo
 import { AuthorService } from '../../providers/author.service';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
 import { ResourceComponent } from '../../components/resource/resource.component';
-import { StoryCard } from '@models/story.model';
+import { StoryPreview } from '@models/story.model';
 import { AppRoutes } from '../../app.routes';
 import { Author } from '@models/author.model';
 
@@ -98,7 +98,7 @@ export class AuthorComponent {
 				navigationRoute: this.router.createUrlTree(['/', this.appRoutes.Story, story.slug], {
 					queryParams: { navigation: 'author', navigationSlug: slug },
 				}),
-			})) as (StoryCard & { navigationRoute: UrlTree })[];
+			})) as (StoryPreview & { navigationRoute: UrlTree })[];
 		}),
 	);
 

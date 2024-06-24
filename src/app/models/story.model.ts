@@ -28,6 +28,6 @@ export interface StoryDTO extends StoryBase {
 	summary?: BlockContent[];
 }
 
-export interface StoryCard extends StoryBase {
+export interface StoryPreview extends StoryBase {
 	author: Omit<Author, 'biography'>;
 }

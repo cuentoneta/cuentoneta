@@ -4,7 +4,7 @@ import { AppRoutes } from '../../app.routes';
 import { MediaResourceTagsComponent } from '../media-resource-tags/media-resource-tags.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
-import { StoryCard } from '@models/story.model';
+import { StoryPreview } from '@models/story.model';
 import { Publication, Storylist } from '@models/storylist.model';
 import { RouterLink } from '@angular/router';
 
@@ -48,7 +48,7 @@ import { RouterLink } from '@angular/router';
 	`,
 })
 export class NavigablePublicationTeaserComponent {
-	publication = input.required<Publication<StoryCard>>();
+	publication = input.required<Publication<StoryPreview>>();
 	selected = input<boolean>();
 	storylist = input.required<Storylist>();
 	protected readonly appRoutes = AppRoutes;

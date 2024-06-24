@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // Modelos
-import { StoryCard } from '@models/story.model';
+import { StoryPreview } from '@models/story.model';
 import { Publication } from '@models/storylist.model';
 
 // Componentes
@@ -39,6 +39,6 @@ import { UrlTree } from '@angular/router';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PublicationCardComponent {
-	publication = input.required<Publication<StoryCard>>();
+	publication = input.required<Publication<StoryPreview>>();
 	navigationRoute = input.required<UrlTree>();
 }

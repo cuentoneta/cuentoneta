@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StoryCard } from '@models/story.model';
+import { StoryPreview } from '@models/story.model';
 import { AppRoutes } from '../../app.routes';
 import { MediaResourceTagsComponent } from '../media-resource-tags/media-resource-tags.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -44,7 +44,7 @@ import { RouterLink } from '@angular/router';
 	`,
 })
 export class NavigableStoryTeaserComponent {
-	story = input.required<StoryCard>();
+	story = input.required<StoryPreview>();
 	selected = input<boolean>();
 	authorSlug = input.required<string>();
 	protected readonly appRoutes = AppRoutes;

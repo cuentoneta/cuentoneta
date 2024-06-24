@@ -2,7 +2,7 @@ import { Component, effect, input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
-import { StoryCard } from '@models/story.model';
+import { StoryPreview } from '@models/story.model';
 import { RouterLink, UrlTree } from '@angular/router';
 import { AppRoutes } from '../../app.routes';
 
@@ -101,7 +101,7 @@ import { AppRoutes } from '../../app.routes';
 	`,
 })
 export class StoryCardContentComponent {
-	story = input.required<StoryCard>();
+	story = input.required<StoryPreview>();
 	headerText = input<string>();
 	navigationLink = input<UrlTree>();
 

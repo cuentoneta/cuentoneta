@@ -12,7 +12,7 @@ import { StorylistService } from '../../providers/storylist.service';
 
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 // Models
-import { StoryCard } from '@models/story.model';
+import { StoryPreview } from '@models/story.model';
 import { Publication, Storylist } from '@models/storylist.model';
 
 // Routes
@@ -54,7 +54,7 @@ export type NavigationBarConfig = {
 export class StorylistNavigationFrameComponent extends NavigationFrameComponent {
 	readonly appRoutes = AppRoutes;
 
-	displayedPublications: Publication<StoryCard>[] = [];
+	displayedPublications: Publication<StoryPreview>[] = [];
 	dummyList: null[] = Array(9);
 	storylist: Storylist | undefined;
 
@@ -89,7 +89,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	 * caso de que la story actualmente en vista sea una de las primeras o de las últimas.
 	 * @author Ramiro Olivencia <ramiro@olivencia.com.ar>
 	 */
-	sliceDisplayedPublications(publications: Publication<StoryCard>[]): void {
+	sliceDisplayedPublications(publications: Publication<StoryPreview>[]): void {
 		if (!this.storylist) {
 			return;
 		}

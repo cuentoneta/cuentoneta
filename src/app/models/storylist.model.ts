@@ -1,4 +1,4 @@
-import { StoryBase, StoryCard, StoryDTO } from './story.model';
+import { StoryBase, StoryPreview, StoryDTO } from './story.model';
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { Tag } from '@models/tag.model';
 
@@ -28,7 +28,7 @@ interface StorylistBase {
 export type StorylistCard = Omit<StorylistBase, 'images' | 'previewImages' | 'gridConfig' | 'previewGridConfig'>;
 
 export interface Storylist extends StorylistBase {
-	publications: Publication<StoryCard>[];
+	publications: Publication<StoryPreview>[];
 }
 
 export interface StorylistDTO extends StorylistBase {
