@@ -1,6 +1,8 @@
 <aside class="hidden md:block">
-	@defer {
-		<cuentoneta-story-navigation-bar />
+	@if (story) {
+		@defer {
+			<cuentoneta-story-navigation-bar />
+		}
 	}
 </aside>
 
@@ -22,7 +24,7 @@
 				}
 			</aside>
 			<div>
-				@if (!!story && !fetchContentDirective.isLoading) {
+				@if (story && !fetchContentDirective.isLoading) {
 					<h1 [lang]="story.language" class="h1 mb-2">{{ story.title }}</h1>
 					<a
 						[lang]="story.language"
@@ -35,7 +37,7 @@
 						{{ story.approximateReadingTime }} minutos de lectura
 					</time>
 
-					@if (!!story.badLanguage) {
+					@if (story.badLanguage) {
 						<p class="inter-body-base-semibold mt-2 flex items-center text-primary-500">* Contiene lenguaje adulto</p>
 					}
 				} @else {
@@ -70,14 +72,14 @@
 			</div>
 		</header>
 
-		@if (!!story && !fetchContentDirective.isLoading) {
-			@if (!!story.media) {
+		@if (story && !fetchContentDirective.isLoading) {
+			@if (story.media) {
 				@defer {
 					<cuentoneta-media-resource [mediaResources]="story.media"></cuentoneta-media-resource>
 				}
 			}
 
-			@if (!!story.epigraphs && story.epigraphs.length > 0) {
+			@if (story.epigraphs && story.epigraphs.length > 0) {
 				<section class="mb-10 flex flex-col gap-10">
 					@for (epigraph of story.epigraphs; track $index) {
 						@defer {
@@ -88,7 +90,7 @@
 			}
 		}
 
-		@if (!!story && !fetchContentDirective.isLoading) {
+		@if (story && !fetchContentDirective.isLoading) {
 			<section [lang]="story.language">
 				<cuentoneta-portable-text-parser
 					[classes]="'source-serif-pro-body-xl mb-8 leading-8'"
@@ -106,7 +108,7 @@
 		}
 
 		<footer>
-			@if (!!story && !fetchContentDirective.isLoading) {
+			@if (story && !fetchContentDirective.isLoading) {
 				@defer {
 					<cuentoneta-bio-summary-card [story]="story" />
 				}

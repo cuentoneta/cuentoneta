@@ -48,6 +48,7 @@
 		"express": "^4.19.2",
 		"groq": "^3.44.0",
 		"ngx-skeleton-loader": "^9.0.0",
+		"ngxtension": "^3.5.5",
 		"rettiwt-api": "^3.0.1",
 		"rxjs": "~7.8.1",
 		"satori": "^0.10.13",

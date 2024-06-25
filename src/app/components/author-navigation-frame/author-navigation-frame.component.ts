@@ -1,8 +1,10 @@
 // Core
-import { Component, inject } from '@angular/core';
-import { switchMap } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, effect, inject } from '@angular/core';
+import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
+
+// 3rd party modules
+import { injectQueryParams } from 'ngxtension/inject-query-params';
 
 // Routing
 import { AppRoutes } from '../../app.routes';
@@ -37,32 +39,36 @@ import { NavigableStoryTeaserComponent } from '../navigable-story-teaser/navigab
 	`,
 })
 export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
-	stories: StoryBase[] = [];
-	authorSlug: string = '';
-
 	readonly appRoutes = AppRoutes;
+
+	// Providers
+	private queryParams = injectQueryParams();
+	private storyService = inject(StoryService);
+
+	stories: StoryBase[] = [];
+
+	authorSlug: string = '';
 
 	constructor() {
 		super();
 
-		const storyService = inject(StoryService);
-
-		this.activatedRoute.queryParams
-			.pipe(
-				takeUntilDestroyed(),
-				switchMap(({ navigationSlug }) => {
-					this.authorSlug = navigationSlug;
-					return this.fetchContentDirective.fetchContent$<StoryBase[]>(storyService.getByAuthorSlug(navigationSlug));
-				}),
-			)
-			.subscribe((stories) => {
+		effect((cleanUp) => {
+			const { navigationSlug } = this.queryParams();
+			const subscription = this.stories$(navigationSlug).subscribe((stories) => {
 				this.stories = stories;
+				this.authorSlug = navigationSlug;
 				this.config.set({
 					headerTitle: 'Más del autor',
 					footerTitle: 'Ver más...',
-					navigationRoute: this.router.createUrlTree([this.appRoutes.Author, this.authorSlug]),
+					navigationRoute: this.router.createUrlTree([this.appRoutes.Author, navigationSlug]),
 					showFooter: true,
 				});
 			});
+			cleanUp(() => subscription.unsubscribe());
+		});
+	}
+
+	private stories$(slug: string): Observable<StoryBase[]> {
+		return this.fetchContentDirective.fetchContent$<StoryBase[]>(this.storyService.getByAuthorSlug(slug));
 	}
 }
