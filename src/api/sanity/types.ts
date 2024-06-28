@@ -520,7 +520,7 @@ export type StoriesByAuthorSlugQueryResult = Array<{
 				title: string;
 				icon: string;
 		  }
-	> | null;
+	>;
 	resources: Array<{
 		title: string;
 		url: string;

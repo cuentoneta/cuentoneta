@@ -8,7 +8,7 @@ import {
 } from '@models/media.model';
 import { getTweetData } from './twitter-api';
 
-export async function mapMediaSources(mediaSources: MediaSchemaObject[] | null): Promise<Media[]> {
+export async function mapMediaSources(mediaSources: MediaSchemaObject[]): Promise<Media[]> {
 	if (!mediaSources) return [];
 
 	const media: Media[] = [];

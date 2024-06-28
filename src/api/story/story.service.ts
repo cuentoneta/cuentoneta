@@ -6,7 +6,7 @@ import groq from 'groq';
 import { mapAuthorForStory, mapResources, mapStoryContent } from '../_utils/functions';
 
 // Modelos
-import { Story, StoryBase } from '@models/story.model';
+import { StoryDTO } from '@models/story.model';
 import { mapMediaSources } from '../_utils/media-sources.functions';
 
 // Subqueries
