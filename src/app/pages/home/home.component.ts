@@ -3,6 +3,10 @@ import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
 
+// Routing
+import { RouterModule } from '@angular/router';
+import { AppRoutes } from '../../app.routes';
+
 // Services
 import { ContentService } from '../../providers/content.service';
 
@@ -11,13 +15,12 @@ import { StorylistCardDeck } from '@models/content.model';
 
 // Directives
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
-import { AppRoutes } from '../../app.routes';
+import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+
+// Componentes
 import { PublicationCardComponent } from '../../components/publication-card/publication-card.component';
 import { StorylistCardDeckComponent } from 'src/app/components/storylist-card-deck/storylist-card-deck.component';
-import { RouterModule } from '@angular/router';
 import { StorylistCardComponent } from '../../components/storylist-card-component/storylist-card.component';
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
-import { Meta } from '@angular/platform-browser';
 
 @Component({
 	selector: 'cuentoneta-home',
