@@ -26,12 +26,6 @@ export interface Story extends StoryBase {
 	summary: BlockContent[];
 }
 
-export interface StoryDTO extends StoryBase {
-	author?: AuthorDTO;
-	epigraphs?: Epigraph[];
-	summary?: BlockContent[];
-}
-
 export interface StoryPreview extends StoryBase {
 	author: Omit<Author, 'biography'>;
 }

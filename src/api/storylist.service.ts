@@ -21,7 +21,7 @@ async function fetchPreview(slug: string): Promise<StorylistDTO> {
 
 	return mapStorylist(result);
 }
-async function fetchStorylist(args: StoryListBySlugArgs): Promise<StorylistDTO> {
+async function fetchStorylistBySlugArgs(args: StoryListBySlugArgs): Promise<StorylistDTO> {
 	const query = `*[_type == 'storylist' && slug.current == '${args.slug}'][0]${storylistQuery}`;
 	const result = await client.fetch(query, {});
 
@@ -32,4 +32,4 @@ async function fetchStorylist(args: StoryListBySlugArgs): Promise<StorylistDTO> 
 	return mapStorylist(result);
 }
 
-export { fetchPreview, fetchStorylist };
+export { fetchPreview, fetchStorylistBySlugArgs };

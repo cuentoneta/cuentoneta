@@ -48,7 +48,7 @@ export function urlFor(source: SanityImageSource): ImageUrlBuilder {
 	return imageUrlBuilder(client).image(source);
 }
 
-export function mapResources(resources: Resource[] | null) {
+export function mapResources(resources: Resource[]) {
 	return (
 		resources?.map((resource: Resource) => ({
 			...resource,

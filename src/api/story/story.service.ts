@@ -6,7 +6,7 @@ import groq from 'groq';
 import { mapAuthorForStory, mapResources, mapStoryContent } from '../_utils/functions';
 
 // Modelos
-import { StoryDTO } from '@models/story.model';
+import { Story, StoryBase } from '@models/story.model';
 import { mapMediaSources } from '../_utils/media-sources.functions';
 
 // Subqueries
@@ -18,7 +18,7 @@ import { storiesByAuthorSlugQuery, storyCommonFields } from '../_queries/story.q
 import { StoriesByAuthorSlugArgs } from '../interfaces/queryArgs';
 import { StoriesByAuthorSlugQueryResult } from '../sanity/types';
 
-export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryDTO[]> {
+export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryBase[]> {
 	const slice = `${args.offset * args.limit}...${(args.offset + 1) * args.limit}`;
 
 	const result: StoriesByAuthorSlugQueryResult = await client.fetch(storiesByAuthorSlugQuery, {
@@ -42,7 +42,7 @@ export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<
 	return stories;
 }
 
-export async function fetchBySlug(slug: string): Promise<StoryDTO> {
+export async function fetchBySlug(slug: string): Promise<Story> {
 	const query = groq`*[_type == 'story' && slug.current == '${slug}']
                           {
 							${storyCommonFields},

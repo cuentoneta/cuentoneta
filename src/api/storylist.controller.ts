@@ -1,5 +1,5 @@
 import express from 'express';
-import { fetchPreview, fetchStorylist } from './storylist.service';
+import { fetchPreview, fetchStorylistBySlugArgs } from './storylist.service';
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ export default router;
 function getBySlug(req: express.Request, res: express.Response, next: express.NextFunction) {
 	const { slug, amount, ordering = 'asc' } = req.query;
 	const limit = parseInt(amount as string) - 1;
-	fetchStorylist({ slug: slug as string, amount: amount as string, limit, ordering: ordering as string })
+	fetchStorylistBySlugArgs({ slug: slug as string, amount: amount as string, limit, ordering: ordering as string })
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
 }
