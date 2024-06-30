@@ -42,7 +42,7 @@ export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<
 	return stories;
 }
 
-export async function fetchBySlug(slug: string): Promise<Story> {
+export async function fetchStoryBySlug(slug: string): Promise<Story> {
 	const query = groq`*[_type == 'story' && slug.current == '${slug}']
                           {
 							${storyCommonFields},

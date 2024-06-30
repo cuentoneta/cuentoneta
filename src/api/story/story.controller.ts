@@ -13,7 +13,7 @@ export default router;
 function getBySlug(req: express.Request, res: express.Response, next: express.NextFunction) {
 	const { slug } = req.query;
 	storyService
-		.fetchBySlug(slug as string)
+		.fetchStoryBySlug(slug as string)
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
 }
