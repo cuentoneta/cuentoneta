@@ -26,7 +26,7 @@ export const storyCommonFields: string = `
     mediaSources
 `;
 
-export const storiesByAuthorSlugQuery = groq`*[_type == 'story' && author->slug.current == $slug][$slice]
+export const storiesByAuthorSlugQuery = groq`*[_type == 'story' && author->slug.current == $slug][$start...$end]
 {
     'slug': slug.current,
     title,

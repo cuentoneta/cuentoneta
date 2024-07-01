@@ -19,11 +19,10 @@ import { StoriesByAuthorSlugArgs } from '../interfaces/queryArgs';
 import { StoriesByAuthorSlugQueryResult } from '../sanity/types';
 
 export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryBase[]> {
-	const slice = `${args.offset * args.limit}...${(args.offset + 1) * args.limit}`;
-
 	const result: StoriesByAuthorSlugQueryResult = await client.fetch(storiesByAuthorSlugQuery, {
 		slug: args.slug,
-		slice: slice,
+		start: args.offset * args.limit,
+		end: (args.offset + 1) * args.limit,
 	});
 	const stories = [];
 
