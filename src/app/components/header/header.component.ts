@@ -4,11 +4,12 @@ import { ContentService } from '../../providers/content.service';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { InternalLink } from '@models/link.model';
+import { HideOnScrollDirective } from 'src/app/directives/hide-on-scroll.directive';
 
 @Component({
 	selector: 'cuentoneta-header',
 	template: `
-		<header>
+		<header [classNameWhenHidden]="'nav-hidden'" cuentonetaHideOnScroll>
 			<section class="logo flex items-center">
 				<a routerLink="/home" class="flex">
 					<img [ngSrc]="'./assets/svg/logo.svg'" class="mr-3" width="59" height="32" alt="Logo de 'La Cuentoneta'" />
@@ -61,22 +62,48 @@ import { InternalLink } from '@models/link.model';
 				</section>
 			}
 		</header>
+
+		<div class="top-0 mb-2 h-1 w-full max-w-screen-lg overflow-hidden bg-gray-100">
+			<div class="progress-bar h-full w-0 bg-primary-400"></div>
+		</div>
 	`,
 	styles: `
+		:host {
+			@apply fixed top-0 z-10 flex w-full flex-col items-center bg-gray-100;
+		}
+
 		header {
 			@apply grid;
 			@apply mx-5 my-0 md:m-auto;
-			@apply min-h-20 max-w-screen-lg;
-			
+			@apply min-h-20 w-full max-w-screen-lg;
+
 			/*Layout de grid para vistas md y superiores */
 			@apply grid-cols-[1fr_theme(spacing.6)] grid-rows-[theme(spacing.20)_1fr];
-			
+
 			/*Layout de grid para vistas sm y menores */
 			@apply md:grid-cols-2 md:grid-rows-1;
 		}
+
+		.nav-hidden {
+			display: none;
+			transition: all 0.3s ease-in-out;
+		}
+
+		@keyframes scrollbar {
+			to {
+				width: 100%;
+			}
+		}
+
+		.progress-bar {
+			transition-timing-function: ease-out;
+			transition: width 0.5s;
+			animation: scrollbar linear;
+			animation-timeline: scroll(root);
+		}
 	`,
 	standalone: true,
-	imports: [CommonModule, RouterModule, NgOptimizedImage],
+	imports: [CommonModule, RouterModule, NgOptimizedImage, HideOnScrollDirective],
 })
 export class HeaderComponent {
 	readonly navLinks: InternalLink[] = [
