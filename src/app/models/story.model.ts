@@ -1,4 +1,4 @@
-import { Author, AuthorDTO } from './author.model';
+import { Author } from './author.model';
 import { BlockContent } from '@models/block-content.model';
 import { Media } from '@models/media.model';
 import { Resource } from '@models/resource.model';
