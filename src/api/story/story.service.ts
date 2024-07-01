@@ -12,45 +12,43 @@ import { mapMediaSources } from '../_utils/media-sources.functions';
 // Subqueries
 import { authorForStory } from '../_queries/author.query';
 import { resourcesSubQuery } from '../_queries/resources.query';
-import { storyCommonFields, storyPreviewCommonFields } from '../_queries/story.query';
+import { storiesByAuthorSlugQuery, storyCommonFields } from '../_queries/story.query';
 
 // Interfaces
-import { StoryByAuthorSlugArgs } from './interfaces';
+import { StoriesByAuthorSlugArgs } from '../interfaces/queryArgs';
+import { StoriesByAuthorSlugQueryResult } from '../sanity/types';
 
-export async function fetchByAuthorSlug(args: StoryByAuthorSlugArgs): Promise<StoryBase[]> {
-	const slice = `${args.offset * args.limit}...${(args.offset + 1) * args.limit}`;
-	const query = groq`*[_type == 'story' && author->slug.current == '${args.slug}'][${slice}]
-						  {
-							${storyPreviewCommonFields},
-							${resourcesSubQuery},
-						  } | order(title asc)`;
-
-	const result = await client.fetch(query, {});
+export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryBase[]> {
+	const result: StoriesByAuthorSlugQueryResult = await client.fetch(storiesByAuthorSlugQuery, {
+		slug: args.slug,
+		start: args.offset * args.limit,
+		end: (args.offset + 1) * args.limit,
+	});
 	const stories = [];
 
 	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
 	for (const story of result) {
-		const { body, review, mediaSources, ...properties } = story;
+		const { body, mediaSources, resources, ...properties } = story;
 
 		stories.push({
 			...properties,
 			media: await mapMediaSources(mediaSources),
-			resources: mapResources(properties.resources),
+			resources: mapResources(resources),
 			paragraphs: body,
-			summary: review,
 		});
 	}
 
 	return stories;
 }
 
-export async function fetchForRead(slug: string): Promise<Story> {
+export async function fetchStoryBySlug(slug: string): Promise<Story> {
 	const query = groq`*[_type == 'story' && slug.current == '${slug}']
                           {
 							${storyCommonFields},
                             ${resourcesSubQuery},
 							${authorForStory}
                           }[0]`;
+
 	const story = await client.fetch(query, {});
 
 	const { body, review, author, mediaSources, ...properties } = story;
