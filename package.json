@@ -36,7 +36,7 @@
 		"@angular/ssr": "18.0.2",
 		"@angular/youtube-player": "18.0.1",
 		"@floating-ui/dom": "^1.6.5",
-		"@nx/angular": "19.1.1",
+		"@nx/angular": "19.2.2",
 		"@sanity/client": "^3.4.1",
 		"@sanity/image-url": "^1.0.2",
 		"@types/cors": "^2.8.17",
