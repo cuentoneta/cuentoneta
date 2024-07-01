@@ -33,7 +33,7 @@
 		"@angular/platform-browser-dynamic": "18.0.1",
 		"@angular/platform-server": "18.0.1",
 		"@angular/router": "18.0.1",
-		"@angular/ssr": "18.0.2",
+		"@angular/ssr": "18.0.3",
 		"@angular/youtube-player": "18.0.1",
 		"@floating-ui/dom": "^1.6.5",
 		"@nx/angular": "19.1.1",
