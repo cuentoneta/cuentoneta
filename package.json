@@ -54,7 +54,7 @@
 		"satori": "^0.10.13",
 		"satori-html": "^0.3.2",
 		"tslib": "^2.6.2",
-		"zone.js": "0.14.6"
+		"zone.js": "0.14.7"
 	},
 	"devDependencies": {
 		"@angular-devkit/build-angular": "18.0.2",
