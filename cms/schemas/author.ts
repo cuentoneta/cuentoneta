@@ -2,8 +2,9 @@
 import { supportedLanguages } from '../utils/localization';
 import { UsersIcon } from '@sanity/icons';
 import { resource } from './resourceType';
+import { defineType } from 'sanity';
 
-export default {
+export default defineType({
 	name: 'author',
 	title: 'Autor/a',
 	type: 'document',
@@ -79,4 +80,4 @@ export default {
 			media: 'image',
 		},
 	},
-};
+});
