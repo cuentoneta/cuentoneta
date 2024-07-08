@@ -1,7 +1,8 @@
 import { LinkIcon } from '@sanity/icons';
 import { preview } from 'sanity-plugin-icon-picker';
+import { defineType } from 'sanity';
 
-export const resource = {
+export const resource = defineType({
 	name: 'resource',
 	title: 'Recurso',
 	type: 'object',
@@ -35,9 +36,9 @@ export const resource = {
 			to: { type: 'resourceType' },
 		},
 	],
-};
+});
 
-export default {
+export default defineType({
 	name: 'resourceType',
 	title: 'Tipos de Recursos',
 	type: 'document',
@@ -48,12 +49,13 @@ export default {
 			description: 'description',
 			provider: 'icon.provider',
 			name: 'icon.name',
+			options: 'icon.options',
 		},
-		prepare(selection) {
+		prepare({ title, description, provider, name, options }) {
 			return {
-				title: selection.title,
-				subtitle: selection.description,
-				media: preview(selection),
+				title: title,
+				subtitle: description,
+				media: preview({ provider, name, options }),
 			};
 		},
 	},
@@ -89,4 +91,4 @@ export default {
 			},
 		},
 	],
-};
+});
