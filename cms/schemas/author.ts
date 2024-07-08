@@ -2,7 +2,7 @@
 import { supportedLanguages } from '../utils/localization';
 import { UsersIcon } from '@sanity/icons';
 import { resource } from './resourceType';
-import { defineField, defineType } from 'sanity';
+import { defineArrayMember, defineField, defineType } from 'sanity';
 
 export default defineType({
 	name: 'author',
@@ -71,7 +71,7 @@ export default defineType({
 			name: 'resources',
 			title: 'Recursos asociados al perfil del autor',
 			type: 'array',
-			of: [resource],
+			of: [defineArrayMember(resource)],
 		}),
 	],
 	preview: {
