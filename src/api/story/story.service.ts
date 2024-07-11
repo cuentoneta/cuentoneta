@@ -1,6 +1,5 @@
 // Conexión a Sanity
 import { client } from '../_helpers/sanity-connector';
-import groq from 'groq';
 
 // Utilidades
 import { mapAuthorForStory, mapResources, mapStoryContent } from '../_utils/functions';
@@ -10,9 +9,7 @@ import { Story, StoryBase } from '@models/story.model';
 import { mapMediaSources } from '../_utils/media-sources.functions';
 
 // Subqueries
-import { authorForStory } from '../_queries/author.query';
-import { resourcesSubQuery } from '../_queries/resources.query';
-import { storiesByAuthorSlugQuery, storyCommonFields } from '../_queries/story.query';
+import { storiesByAuthorSlugQuery, storyBySlugQuery } from '../_queries/story.query';
 
 // Interfaces
 import { StoriesByAuthorSlugArgs } from '../interfaces/queryArgs';
@@ -42,14 +39,7 @@ export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<
 }
 
 export async function fetchStoryBySlug(slug: string): Promise<Story> {
-	const query = groq`*[_type == 'story' && slug.current == '${slug}']
-                          {
-							${storyCommonFields},
-                            ${resourcesSubQuery},
-							${authorForStory}
-                          }[0]`;
-
-	const story = await client.fetch(query, {});
+	const story = await client.fetch(storyBySlugQuery, { slug });
 
 	const { body, review, author, mediaSources, ...properties } = story;
 
