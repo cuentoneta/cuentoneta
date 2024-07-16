@@ -30,7 +30,7 @@ import { InternalLink } from '@models/link.model';
 							</li>
 						}
 					</ul>
-					<div (click)="onMenuTogglerClicked($event)" class="md:hidden">
+					<div (click)="onMenuTogglerClicked()" class="md:hidden">
 						<img
 							[alt]="'Imagen del menú móvil del sitio'"
 							[ngSrc]="'./assets/svg/menu.svg'"
@@ -67,10 +67,10 @@ import { InternalLink } from '@models/link.model';
 			@apply grid;
 			@apply mx-5 my-0 md:m-auto;
 			@apply min-h-20 max-w-screen-lg;
-			
+
 			/*Layout de grid para vistas md y superiores */
 			@apply grid-cols-[1fr_theme(spacing.6)] grid-rows-[theme(spacing.20)_1fr];
-			
+
 			/*Layout de grid para vistas sm y menores */
 			@apply md:grid-cols-2 md:grid-rows-1;
 		}
@@ -90,7 +90,7 @@ export class HeaderComponent {
 		this.lists = contentService.getNavLists();
 	}
 
-	onMenuTogglerClicked(event: MouseEvent) {
+	onMenuTogglerClicked() {
 		this.displayMenu = !this.displayMenu;
 	}
 }
