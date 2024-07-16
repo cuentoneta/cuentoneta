@@ -115,7 +115,6 @@ export class MacroTaskWrapperService implements OnDestroy {
 		isDoneOn?: IWaitForObservableIsDoneOn<T> | null,
 		stackTrace?: string | null,
 	): Observable<T>;
-
 	wrapMacroTask<T>(
 		/** Label the task for debugging purposes */
 		label: string,
@@ -168,11 +167,11 @@ export class MacroTaskWrapperService implements OnDestroy {
 
 		// Start timer for warning
 		let hasTakenTooLong = false;
-		let takingTooLongTimeout: any = null;
-		if (warnIfTakingTooLongThreshold! > 0 && takingTooLongTimeout == null) {
+		let takingTooLongTimeout: NodeJS.Timeout | null = null;
+		if (warnIfTakingTooLongThreshold && warnIfTakingTooLongThreshold > 0) {
 			takingTooLongTimeout = setTimeout(() => {
 				hasTakenTooLong = true;
-				clearTimeout(takingTooLongTimeout);
+				clearTimeout(takingTooLongTimeout as NodeJS.Timeout);
 				takingTooLongTimeout = null;
 				console.warn(
 					`wrapMacroTaskPromise: Promise is taking too long to complete. Longer than ${warnIfTakingTooLongThreshold}ms.`,
@@ -181,16 +180,22 @@ export class MacroTaskWrapperService implements OnDestroy {
 				if (stackTrace) {
 					console.warn('Task Stack Trace: ', stackTrace);
 				}
-			}, warnIfTakingTooLongThreshold!);
+			}, warnIfTakingTooLongThreshold);
 		}
 
 		// Start the task
 		const task: MacroTask = Zone.current.scheduleMacroTask(
 			'wrapMacroTaskPromise',
-			() => {},
+			() => {
+				return;
+			},
 			{},
-			() => {},
-			() => {},
+			() => {
+				return;
+			},
+			() => {
+				return;
+			},
 		);
 		this.macroTaskStarted();
 
