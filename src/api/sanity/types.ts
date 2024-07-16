@@ -82,16 +82,16 @@ export type Tag = {
 
 export type BlockContent = Array<
 	| {
-			children?: Array<{
+			children: Array<{
 				marks?: Array<string>;
-				text?: string;
+				text: string;
 				_type: 'span';
 				_key: string;
 			}>;
 			style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'blockquote';
 			listItem?: 'bullet';
 			markDefs?: Array<{
-				href?: string;
+				href: string;
 				_type: 'link';
 				_key: string;
 			}>;
@@ -537,3 +537,128 @@ export type StoriesByAuthorSlugQueryResult = Array<{
 		};
 	}>;
 }>;
+
+// Variable: storyBySlugQuery
+// Query: *[_type == 'story' && slug.current == $slug]{  'slug': slug.current,  title,   language,  badLanguage,  epigraphs,  categories,  body,  review,  originalPublication,  approximateReadingTime,  mediaSources,  resources[]{        title,         url,         resourceType->{             title,             description,             'icon': {                'name': icon.name,                 'svg': icon.svg,                 'provider': icon.provider                 }             }   },  'author': author-> {      slug,      name,      image,      nationality->,      biography,      resources[]{         title,         url,         resourceType->{             title,             description,             'icon': {                 'name': icon.name,                 'svg': icon.svg,                 'provider': icon.provider                 }             }         }      }}[0]
+export type StoryBySlugQueryResult = {
+	slug: string;
+	title: string;
+	language: 'en' | 'es';
+	badLanguage: boolean;
+	epigraphs: Array<{
+		text: BlockContent;
+		reference: string;
+		_type: 'epigraph';
+		_key: string;
+	}>;
+	categories: null;
+	body: BlockContent;
+	review: {
+		children: Array<{
+			marks?: Array<string>;
+			text: string;
+			_type: 'span';
+			_key: string;
+		}>;
+		style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'normal';
+		listItem?: 'bullet';
+		markDefs?: Array<{
+			href: string;
+			_type: 'link';
+			_key: string;
+		}>;
+		level?: number;
+		_type: 'block';
+		_key: string;
+	};
+	originalPublication: string;
+	approximateReadingTime: number;
+	mediaSources: Array<
+		| {
+				_id: string;
+				_type: 'audioRecording';
+				title: string;
+				icon: string;
+		  }
+		| {
+				_id: string;
+				_type: 'spaceRecording';
+				title: string;
+				icon: string;
+		  }
+		| {
+				_id: string;
+				_type: 'youTubeVideo';
+				title: string;
+				icon: string;
+		  }
+	>;
+	resources: Array<{
+		title: string;
+		url: string;
+		resourceType: {
+			title: string;
+			description: string;
+			icon:
+				| {
+						name: string;
+						svg: string;
+						provider: string;
+				  }
+				| undefined;
+		};
+	}>;
+	author: {
+		slug: Slug;
+		name: string;
+		image: {
+			asset?: {
+				_ref: string;
+				_type: 'reference';
+				_weak?: boolean;
+				[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+			};
+			hotspot?: SanityImageHotspot;
+			crop?: SanityImageCrop;
+			_type: 'image';
+		} | null;
+		nationality: {
+			_id: string;
+			_type: 'nationality';
+			_createdAt: string;
+			_updatedAt: string;
+			_rev: string;
+			country?: string;
+			flag?: {
+				asset?: {
+					_ref: string;
+					_type: 'reference';
+					_weak?: boolean;
+					[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+				};
+				hotspot?: SanityImageHotspot;
+				crop?: SanityImageCrop;
+				_type: 'image';
+			};
+		};
+		biography: {
+			es?: BlockContent;
+			en?: BlockContent;
+		};
+		resources: Array<{
+			title: string;
+			url: string;
+			resourceType: {
+				title: string;
+				description: string;
+				icon:
+					| {
+							name: string;
+							svg: string;
+							provider: string;
+					  }
+					| undefined;
+			};
+		}>;
+	};
+};

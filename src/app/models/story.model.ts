@@ -1,5 +1,5 @@
 import { Author } from './author.model';
-import { BlockContent } from '@models/block-content.model';
+import { TextBlockContent } from '@models/block-content.model';
 import { Media } from '@models/media.model';
 import { Resource } from '@models/resource.model';
 
@@ -10,20 +10,20 @@ export interface StoryBase {
 	badLanguage?: boolean;
 	language: string;
 	resources: Resource[];
-	paragraphs: BlockContent[];
+	paragraphs: TextBlockContent[];
 	media: Media[];
 	originalPublication: string;
 }
 
 export interface Epigraph {
-	text: BlockContent[];
+	text: TextBlockContent[];
 	reference: string;
 }
 
 export interface Story extends StoryBase {
 	author: Author;
 	epigraphs: Epigraph[];
-	summary: BlockContent[];
+	summary: TextBlockContent[];
 }
 
 export interface StoryPreview extends StoryBase {

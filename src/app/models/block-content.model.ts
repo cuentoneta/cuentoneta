@@ -5,12 +5,14 @@
  * A fin de hacer más robusto el manejo de los bloques de texto, se declara esta interfaz y sus dependencias.
  */
 
-export interface BlockContent {
+export interface TextBlockContent {
+	children: Block[];
+	style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'blockquote';
+	listItem?: 'bullet';
+	markDefs?: MarkDef[];
+	level?: number;
 	_type: 'block';
 	_key: string;
-	children: Block[];
-	markDefs?: MarkDef[];
-	style?: string;
 }
 
 export interface Block {
