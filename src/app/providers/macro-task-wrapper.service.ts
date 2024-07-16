@@ -115,6 +115,7 @@ export class MacroTaskWrapperService implements OnDestroy {
 		isDoneOn?: IWaitForObservableIsDoneOn<T> | null,
 		stackTrace?: string | null,
 	): Observable<T>;
+
 	wrapMacroTask<T>(
 		/** Label the task for debugging purposes */
 		label: string,
@@ -134,7 +135,7 @@ export class MacroTaskWrapperService implements OnDestroy {
 		}
 
 		// Backup type check
-		if ('then' in request && typeof (request as any).then === 'function') {
+		if ('then' in request && typeof request['then'] === 'function') {
 			return this.wrapMacroTaskPromise(label, request, warnIfTakingTooLongThreshold, stackTrace);
 		} else {
 			return this.wrapMacroTaskObservable(
