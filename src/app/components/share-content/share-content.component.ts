@@ -68,7 +68,7 @@ interface SharingPlatform {
 	platformApiUrl: string;
 	target?: string;
 	features?: string;
-	generateSharingUrl(appRoute: string, urlParams: string, message: string): string;
+	generateSharingUrl(appRoute: string, urlParams: string, message?: string): string;
 }
 
 class FacebookPlatform implements SharingPlatform {
@@ -78,7 +78,7 @@ class FacebookPlatform implements SharingPlatform {
 	target = 'facebook-share-dialog';
 	features = 'width=626,height=436';
 
-	generateSharingUrl(appRoute: string, urlParams: string, message: string): string {
+	generateSharingUrl(appRoute: string, urlParams: string): string {
 		const url = encodeURIComponent(`${environment.website}${appRoute}?${urlParams}`);
 		return `${this.platformApiUrl}?u=${url}`;
 	}
