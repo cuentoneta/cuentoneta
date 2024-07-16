@@ -278,7 +278,7 @@ export class MacroTaskWrapperService implements OnDestroy {
 
 				/** When task is null it means it hasn't been scheduled */
 				let task: MacroTask | null = null;
-				let takingTooLongTimeout: any = null;
+				let takingTooLongTimeout: NodeJS.Timeout | null = null;
 				let hasTakenTooLong = false;
 
 				/** Function to call when we have determined the request is complete */
