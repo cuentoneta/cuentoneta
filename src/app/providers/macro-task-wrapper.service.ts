@@ -332,10 +332,14 @@ export class MacroTaskWrapperService implements OnDestroy {
 							}
 
 							// Start timer for warning
-							if (warnIfTakingTooLongThreshold! > 0 && takingTooLongTimeout == null) {
+							if (
+								warnIfTakingTooLongThreshold != null &&
+								warnIfTakingTooLongThreshold > 0 &&
+								takingTooLongTimeout == null
+							) {
 								takingTooLongTimeout = setTimeout(() => {
 									hasTakenTooLong = true;
-									clearTimeout(takingTooLongTimeout);
+									clearTimeout(takingTooLongTimeout as NodeJS.Timeout);
 									takingTooLongTimeout = null;
 									console.warn(
 										`wrapMacroTaskObservable: Observable is taking too long to complete. Longer than ${warnIfTakingTooLongThreshold}ms.`,
@@ -344,7 +348,7 @@ export class MacroTaskWrapperService implements OnDestroy {
 									if (stackTrace) {
 										console.warn('Task Stack Trace: ', stackTrace);
 									}
-								}, warnIfTakingTooLongThreshold!);
+								}, warnIfTakingTooLongThreshold);
 							}
 						}),
 					)
@@ -382,7 +386,7 @@ export class MacroTaskWrapperService implements OnDestroy {
 	}
 }
 
-export type IWaitForObservableIsDoneOn<T = any> =
+export type IWaitForObservableIsDoneOn<T> =
 	| 'complete'
 	| 'first-emit'
 	| { emitCount: number }
