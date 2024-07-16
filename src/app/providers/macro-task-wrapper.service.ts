@@ -93,11 +93,9 @@ export class MacroTaskWrapperService implements OnDestroy {
 
 	awaitMacroTasksLogged(label: string, stackTrace?: string): Subscription {
 		console.error('MACRO START');
-		return this.awaitMacroTasks$(label, stackTrace).subscribe(
-			() => {},
-			() => {},
-			() => console.error('MACRO DONE'),
-		);
+		return this.awaitMacroTasks$(label, stackTrace).subscribe({
+			complete: () => console.error('MACRO DONE'),
+		});
 	}
 
 	/**
