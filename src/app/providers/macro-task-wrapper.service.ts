@@ -304,7 +304,7 @@ export class MacroTaskWrapperService implements OnDestroy {
 				/** Used if the task is cancelled */
 				const unsubSubject = new Subject();
 				function unsub() {
-					// @ts-ignore
+					// @ts-expect-error - No value is passed as a parameter for the subject
 					unsubSubject.next();
 					unsubSubject.complete();
 				}
@@ -316,9 +316,13 @@ export class MacroTaskWrapperService implements OnDestroy {
 							if (task == null) {
 								task = Zone.current.scheduleMacroTask(
 									'wrapMacroTaskObservable',
-									() => {},
+									() => {
+										return;
+									},
 									{},
-									() => {},
+									() => {
+										return;
+									},
 									unsub,
 								);
 							}
