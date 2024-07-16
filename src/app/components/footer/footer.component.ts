@@ -130,7 +130,7 @@ export class FooterComponent {
 
 	displayMenu = false;
 
-	onMenuTogglerClicked(event: Event) {
+	onMenuTogglerClicked() {
 		this.displayMenu = !this.displayMenu;
 	}
 }
