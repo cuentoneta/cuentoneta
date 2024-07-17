@@ -6,7 +6,6 @@ const meta: Meta<PortableTextParserComponent> = {
 	title: 'PortableTextParserComponent',
 };
 export default meta;
-type Story = StoryObj<PortableTextParserComponent>;
 
 export const Primary = {
 	render: (args: PortableTextParserComponent) => ({
