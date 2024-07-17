@@ -1,4 +1,4 @@
-import { Component, computed, effect, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
