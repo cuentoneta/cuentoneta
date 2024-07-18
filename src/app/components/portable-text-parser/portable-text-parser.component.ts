@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BlockContent } from '@models/block-content.model';
+import { TextBlockContent } from '@models/block-content.model';
 import { PortableTextMarksSerializerComponent } from '../portable-text-styles-marks-serializer/portable-text-marks-serializer.component';
 import { ParagraphTemplateDirective } from './paragraph-template.directive';
 
@@ -36,11 +36,11 @@ import { ParagraphTemplateDirective } from './paragraph-template.directive';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PortableTextParserComponent {
-	paragraphs = input.required<BlockContent[]>();
+	paragraphs = input.required<TextBlockContent[]>();
 	type = input<'paragraph' | 'span'>('paragraph');
 	classes = input<string>('classes');
 
-	appendClasses(paragraph: BlockContent): string {
+	appendClasses(paragraph: TextBlockContent): string {
 		const blocks = paragraph.children;
 		const includeSeparators = blocks.filter((block) => block.text.includes('***')).length > 0;
 

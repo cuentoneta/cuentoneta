@@ -1,22 +1,20 @@
 // Conexión a Sanity
 import { client } from '../_helpers/sanity-connector';
-import groq from 'groq';
 
 // Utilidades
 import { mapAuthorForStory, mapResources, mapStoryContent } from '../_utils/functions';
 
 // Modelos
-import { Story, StoryBase } from '@models/story.model';
+import { Epigraph, Story, StoryBase } from '@models/story.model';
 import { mapMediaSources } from '../_utils/media-sources.functions';
 
 // Subqueries
-import { authorForStory } from '../_queries/author.query';
-import { resourcesSubQuery } from '../_queries/resources.query';
-import { storiesByAuthorSlugQuery, storyCommonFields } from '../_queries/story.query';
+import { storiesByAuthorSlugQuery, storyBySlugQuery } from '../_queries/story.query';
 
 // Interfaces
 import { StoriesByAuthorSlugArgs } from '../interfaces/queryArgs';
-import { StoriesByAuthorSlugQueryResult } from '../sanity/types';
+import { StoriesByAuthorSlugQueryResult, StoryBySlugQueryResult } from '../sanity/types';
+import { TextBlockContent } from '@models/block-content.model';
 
 export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryBase[]> {
 	const result: StoriesByAuthorSlugQueryResult = await client.fetch(storiesByAuthorSlugQuery, {
@@ -42,23 +40,17 @@ export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<
 }
 
 export async function fetchStoryBySlug(slug: string): Promise<Story> {
-	const query = groq`*[_type == 'story' && slug.current == '${slug}']
-                          {
-							${storyCommonFields},
-                            ${resourcesSubQuery},
-							${authorForStory}
-                          }[0]`;
+	const result: StoryBySlugQueryResult = await client.fetch(storyBySlugQuery, { slug });
 
-	const story = await client.fetch(query, {});
-
-	const { body, review, author, mediaSources, ...properties } = story;
+	const { body, review, author, mediaSources, epigraphs, ...properties } = result;
 
 	return mapStoryContent({
 		...properties,
 		media: await mapMediaSources(mediaSources),
 		author: mapAuthorForStory(author, properties.language),
 		resources: mapResources(properties.resources),
-		paragraphs: body,
-		summary: review,
+		paragraphs: body as TextBlockContent[],
+		summary: [review],
+		epigraphs: epigraphs as Epigraph[],
 	});
 }

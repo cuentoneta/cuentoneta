@@ -1,4 +1,4 @@
-import { BlockContent } from '@models/block-content.model';
+import { TextBlockContent } from '@models/block-content.model';
 import { Resource } from '@models/resource.model';
 
 interface AuthorBase {
@@ -10,11 +10,11 @@ interface AuthorBase {
 }
 
 export interface Author extends AuthorBase {
-	biography?: BlockContent[];
+	biography?: TextBlockContent[];
 }
 
 export interface AuthorDTO extends AuthorBase {
-	biography?: BlockContent[];
+	biography?: TextBlockContent[];
 }
 
 export type AuthorNationality = { country: string; flag: string };

@@ -1,5 +1,5 @@
 import { Directive } from '@angular/core';
-import { BlockContent } from '@models/block-content.model';
+import { TextBlockContent } from '@models/block-content.model';
 
 @Directive({
 	selector: 'ng-template[cuentonetaParagraphTemplateGuard]',
@@ -12,5 +12,5 @@ export class ParagraphTemplateDirective {
 }
 
 interface ParagraphContext {
-	$implicit: BlockContent;
+	$implicit: TextBlockContent;
 }
