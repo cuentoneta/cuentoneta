@@ -7,8 +7,9 @@ import { mapAuthor } from '../_utils/functions';
 
 // Interfaces
 import { AuthorDTO } from '@models/author.model';
+import { AuthorBySlugQueryResult } from '../sanity/types';
 
 export async function getBySlug(slug: string): Promise<AuthorDTO> {
-	const result = await client.fetch(authorBySlugQuery, { slug });
+	const result: AuthorBySlugQueryResult = await client.fetch(authorBySlugQuery, { slug });
 	return mapAuthor(result);
 }
