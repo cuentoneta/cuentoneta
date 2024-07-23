@@ -2,16 +2,11 @@
 import { client } from './_helpers/sanity-connector';
 
 // Queries
-import { storylistCardQuery, storylistPreviewQuery } from './_queries/storylist.query';
 import { mapStorylist } from './_utils/functions';
+import { fetchLandingPageContentQuery } from './_queries/content.query';
 
 export async function fetchLandingPageContent() {
-	const query = `*[_type == 'landingPage'] {
-            'previews': previews[]-> ${storylistPreviewQuery},
-            'cards': cards[]-> ${storylistCardQuery}
-        }[0]`;
-
-	const result = await client.fetch(query, {});
+	const result = await client.fetch(fetchLandingPageContentQuery);
 	const cards = [];
 	const previews = [];
 

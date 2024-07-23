@@ -49,13 +49,6 @@ const gridConfig = (config: 'previewGridConfig' | 'gridConfig') => `
 }
 `;
 
-export const storylistCardQuery = `
-{ 
-    ${commonFields},
-    'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])
-}
-`;
-
 export const storylistPreviewQuery = `
 { 
     ${commonFields},
