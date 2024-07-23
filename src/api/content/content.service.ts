@@ -1,10 +1,10 @@
 // Sanity Client
-import { client } from './_helpers/sanity-connector';
+import { client } from '../_helpers/sanity-connector';
 
 // Queries
-import { mapStorylist } from './_utils/functions';
-import { fetchLandingPageContentQuery } from './_queries/content.query';
-import { FetchLandingPageContentQueryResult } from './sanity/types';
+import { mapStorylist } from '../_utils/functions';
+import { fetchLandingPageContentQuery } from '../_queries/content.query';
+import { FetchLandingPageContentQueryResult } from '../sanity/types';
 
 export async function fetchLandingPageContent() {
 	const result: FetchLandingPageContentQueryResult = await client.fetch(fetchLandingPageContentQuery);
