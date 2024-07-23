@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { fireEvent, render, screen } from '@testing-library/angular';
 import { TooltipDirective } from './tooltip.directive';
 
@@ -15,7 +15,7 @@ const ELEMENT_HEIGHT = 500;
 class HostComponent {
 	width = ELEMENT_WIDTH;
 	height = ELEMENT_HEIGHT;
-	@Input() position: string = 'top';
+	position = input('top');
 }
 
 describe('TooltipDirective', () => {
