@@ -662,3 +662,204 @@ export type StoryBySlugQueryResult = {
 		}>;
 	};
 };
+
+// Source: ../src/api/_queries/content.query.ts
+// Variable: fetchLandingPageContentQuery
+// Query: *[_type == 'landingPage'] {    'previews': previews[]-> {         'slug': slug.current,        title,        description,        language,        displayDates,        editionPrefix,        comingNextLabel,        featuredImage,        'tags': tags[] -> {            title,             'slug': slug.current,             description,             'icon': {'name': icon.name, 'provider': icon.provider, 'svg': icon.svg}        },        'gridConfig': {            'gridTemplateColumns': previewGridConfig.gridTemplateColumns,            'titlePlacement': previewGridConfig.titlePlacement,            'cardsPlacement': previewGridConfig.cardsPlacement[]            {                'order': order,                'slug': publication.story->slug.current,                'startCol': startCol,                'image': image,                'imageSlug': imageSlug.current,                'endCol': endCol,                'startRow': startRow,                'endRow': endRow,                'publication': {                    'publishingOrder': publication.publishingOrder,                    'publishingDate': publication.publishingDate,                    'published': publication.published,                    'story': publication.story->{                        'slug': slug.current,                        title,                        language,                        badLanguage,                        categories,                        body[0...3],                        originalPublication,                        approximateReadingTime,                        mediaSources,                        'author': author->{                            slug,                            name,                            image,                            nationality->                        }                    }                }            }        },        'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])    },    'cards': cards[]-> {         'slug': slug.current,        title,        description,        language,        displayDates,        editionPrefix,        comingNextLabel,        featuredImage,        'tags': tags[] -> {            title,             'slug': slug.current,             description,             'icon': {'name': icon.name, 'provider': icon.provider, 'svg': icon.svg}        },        'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])    }}[0]
+export type FetchLandingPageContentQueryResult = {
+	previews: Array<{
+		slug: string;
+		title: string | null;
+		description: string;
+		language: 'en' | 'es';
+		displayDates: boolean;
+		editionPrefix: string;
+		comingNextLabel: string;
+		featuredImage: {
+			asset?: {
+				_ref: string;
+				_type: 'reference';
+				_weak?: boolean;
+				[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+			};
+			hotspot?: SanityImageHotspot;
+			crop?: SanityImageCrop;
+			_type: 'image';
+		};
+		tags: Array<{
+			title: string | null;
+			slug: string | null;
+			description: string | null;
+			icon: {
+				name: string | null;
+				provider: string | null;
+				svg: string | null;
+			};
+		}>;
+		gridConfig?: {
+			gridTemplateColumns: string;
+			titlePlacement: {
+				order: number;
+				startCol?: string;
+				endCol?: string;
+				startRow?: string;
+				endRow?: string;
+			};
+			cardsPlacement: Array<{
+				order: number | null;
+				slug: string | null;
+				startCol: string | null;
+				image: {
+					asset?: {
+						_ref: string;
+						_type: 'reference';
+						_weak?: boolean;
+						[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+					};
+					hotspot?: SanityImageHotspot;
+					crop?: SanityImageCrop;
+					_type: 'image';
+				} | null;
+				imageSlug: string | null;
+				endCol: string | null;
+				startRow: string | null;
+				endRow: string | null;
+				publication: {
+					publishingOrder: number | null;
+					publishingDate: string | null;
+					published: boolean | null;
+					story: {
+						slug: string | null;
+						title: string | null;
+						language: 'en' | 'es' | null;
+						badLanguage: boolean | null;
+						categories: null;
+						body: Array<
+							| {
+									asset?: {
+										_ref: string;
+										_type: 'reference';
+										_weak?: boolean;
+										[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+									};
+									hotspot?: SanityImageHotspot;
+									crop?: SanityImageCrop;
+									_type: 'image';
+									_key: string;
+							  }
+							| {
+									children?: Array<{
+										marks?: Array<string>;
+										text?: string;
+										_type: 'span';
+										_key: string;
+									}>;
+									style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'normal';
+									listItem?: 'bullet';
+									markDefs?: Array<{
+										href?: string;
+										_type: 'link';
+										_key: string;
+									}>;
+									level?: number;
+									_type: 'block';
+									_key: string;
+							  }
+						> | null;
+						originalPublication: string | null;
+						approximateReadingTime: number | null;
+						mediaSources: Array<
+							| {
+									postId?: string;
+									title?: string;
+									spaceUrl?: string;
+									duration?: string;
+									_type: 'spaceRecording';
+									_key: string;
+							  }
+							| {
+									title?: string;
+									description?: BlockContent;
+									videoId?: string;
+									_type: 'youTubeVideo';
+									_key: string;
+							  }
+							| {
+									title?: string;
+									url?: string;
+									_type: 'audioRecording';
+									_key: string;
+							  }
+						> | null;
+						author: {
+							slug: Slug | null;
+							name: string | null;
+							image: {
+								asset?: {
+									_ref: string;
+									_type: 'reference';
+									_weak?: boolean;
+									[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+								};
+								hotspot?: SanityImageHotspot;
+								crop?: SanityImageCrop;
+								_type: 'image';
+							} | null;
+							nationality: {
+								_id: string;
+								_type: 'nationality';
+								_createdAt: string;
+								_updatedAt: string;
+								_rev: string;
+								country?: string;
+								flag?: {
+									asset?: {
+										_ref: string;
+										_type: 'reference';
+										_weak?: boolean;
+										[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+									};
+									hotspot?: SanityImageHotspot;
+									crop?: SanityImageCrop;
+									_type: 'image';
+								};
+							} | null;
+						} | null;
+					};
+				};
+			}>;
+		};
+		count: number;
+	}>;
+	cards: Array<{
+		slug: string;
+		title: string;
+		description: string;
+		language: 'en' | 'es';
+		displayDates: boolean;
+		editionPrefix: string;
+		comingNextLabel: string;
+		featuredImage: {
+			asset?: {
+				_ref: string;
+				_type: 'reference';
+				_weak?: boolean;
+				[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+			};
+			hotspot?: SanityImageHotspot;
+			crop?: SanityImageCrop;
+			_type: 'image';
+		};
+		tags: Array<{
+			title: string | null;
+			slug: string | null;
+			description: string | null;
+			icon: {
+				name: string | null;
+				provider: string | null;
+				svg: string | null;
+			};
+		}>;
+		count: number;
+	}>;
+};

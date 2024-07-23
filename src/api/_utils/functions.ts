@@ -12,7 +12,7 @@ import { baseLanguage } from '../../../cms/utils/localization';
 // Modelos
 import { AuthorDTO } from '@models/author.model';
 import { mapMediaSources } from './media-sources.functions';
-import { StorylistDTO } from '@models/storylist.model';
+import { GridItemPlacementConfig, StorylistDTO } from '@models/storylist.model';
 import { Story, StoryPreview } from '@models/story.model';
 import { Resource } from '@models/resource.model';
 
@@ -67,11 +67,13 @@ export function mapResources(resources: Resource[]) {
 
 export async function mapStorylist(result: any): Promise<StorylistDTO> {
 	const cardsPlacement = result.gridConfig?.cardsPlacement ?? [];
-	const storylistImages = cardsPlacement.filter((config: any) => !!config.imageSlug) ?? [];
+	const storylistImages = cardsPlacement.filter((config: GridItemPlacementConfig) => !!config.imageSlug) ?? [];
 
 	const rawPublications = cardsPlacement
-		.filter((cardPlacement: any) => !!cardPlacement.publication && !!cardPlacement.publication.story)
-		.map((cardPlacement: any) => cardPlacement.publication);
+		.filter(
+			(cardPlacement: GridItemPlacementConfig) => !!cardPlacement.publication && !!cardPlacement.publication.story,
+		)
+		.map((cardPlacement: GridItemPlacementConfig) => cardPlacement.publication);
 	const publications = [];
 
 	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
@@ -95,7 +97,7 @@ export async function mapStorylist(result: any): Promise<StorylistDTO> {
 		images:
 			storylistImages.length === 0
 				? []
-				: storylistImages.map((card: any) => ({
+				: storylistImages.map((card: GridItemPlacementConfig) => ({
 						slug: card.imageSlug,
 						url: urlFor(card.image).url(),
 					})),
