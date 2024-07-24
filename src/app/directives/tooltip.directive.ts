@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, input, OnDestroy, signal } from '@angular/core';
+import { Directive, ElementRef, HostListener, OnDestroy, signal } from '@angular/core';
 import { computePosition, flip, shift, arrow, offset } from '@floating-ui/dom';
 
 type TooltipPosition = 'top' | 'right' | 'bottom' | 'left';
