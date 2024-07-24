@@ -1,5 +1,5 @@
 import { CodeBlockIcon } from '@sanity/icons';
-import { defineField, defineType } from 'sanity';
+import { defineArrayMember, defineField, defineType } from 'sanity';
 
 export default defineType({
 	name: 'landingPage',
@@ -47,12 +47,12 @@ export default defineType({
 			title: 'Storylists con Vista Previa',
 			type: 'array',
 			of: [
-				{
+				defineArrayMember({
 					name: 'storylist',
 					title: 'Storylist',
 					type: 'reference',
 					to: [{ type: 'storylist' }],
-				},
+				}),
 			],
 		}),
 		defineField({
@@ -60,12 +60,12 @@ export default defineType({
 			title: 'Storylists con Tarjetas',
 			type: 'array',
 			of: [
-				{
+				defineArrayMember({
 					name: 'storylist',
 					title: 'Storylist',
 					type: 'reference',
 					to: [{ type: 'storylist' }],
-				},
+				}),
 			],
 		}),
 	],
