@@ -12,10 +12,10 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 	imports: [BypassHtmlSanitizerPipe, CommonModule, NgOptimizedImage, SvgIconComponent],
 	template: `
 		<span class="inter-body-xs-bold flex items-center gap-1">
-			@if (showIcon && !!tag.icon) {
-				<cuentoneta-svg-icon [svg]="tag.icon.svg" />
+			@if (showIcon() && !!tag().icon) {
+				<cuentoneta-svg-icon [svg]="tag().icon!.svg" />
 			}
-			{{ tag.title }}
+			{{ tag().title }}
 		</span>
 	`,
 	styles: `
