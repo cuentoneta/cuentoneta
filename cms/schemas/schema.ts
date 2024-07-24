@@ -4,7 +4,7 @@
 // We import object and document schemas
 import author from './author';
 import blockContent from './blockContent';
-import country from './country';
+import nationality from './nationality';
 import landingPage from './landingPage';
 import story from './story';
 import storylist from './storylist';
@@ -20,7 +20,7 @@ export default [
 	story,
 	author,
 	blockContent,
-	country,
+	nationality,
 	resourceType,
 	tag,
 ];
