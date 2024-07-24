@@ -1,14 +1,16 @@
-import { Directive, ElementRef, HostListener, input, OnDestroy } from '@angular/core';
+import { Directive, ElementRef, HostListener, input, OnDestroy, signal } from '@angular/core';
 import { computePosition, flip, shift, arrow, offset } from '@floating-ui/dom';
+
+type TooltipPosition = 'top' | 'right' | 'bottom' | 'left';
 
 @Directive({
 	selector: '[cuentonetaTooltip]',
 	standalone: true,
 })
 export class TooltipDirective implements OnDestroy {
-	text = input.required<string>(); // Texto para el Tooltip
-	position = input.required<'top' | 'right' | 'bottom' | 'left'>(); // Posición del tooltip
-	offset = input(6); // Offset del tooltip respecto al elemento
+	text = signal<string>(''); // Texto para el Tooltip
+	position = signal<TooltipPosition>('top'); // Posición del tooltip
+	offset = signal<number>(6); // Offset del tooltip respecto al elemento
 
 	private myPopup: HTMLElement | null = null;
 
