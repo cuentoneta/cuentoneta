@@ -1,6 +1,7 @@
 import { CodeBlockIcon } from '@sanity/icons';
+import { defineField, defineType } from 'sanity';
 
-export default {
+export default defineType({
 	name: 'landingPage',
 	title: 'Página de Inicio',
 	type: 'document',
@@ -19,13 +20,13 @@ export default {
 		},
 	},
 	fields: [
-		{
+		defineField({
 			name: 'config',
 			title: 'Configuración',
 			type: 'string',
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'slug',
 			title: 'Slug',
 			type: 'slug',
@@ -34,14 +35,14 @@ export default {
 				maxLength: 96,
 			},
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'active',
 			title: 'Activa',
 			type: 'boolean',
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'previews',
 			title: 'Storylists con Vista Previa',
 			type: 'array',
@@ -53,8 +54,8 @@ export default {
 					to: [{ type: 'storylist' }],
 				},
 			],
-		},
-		{
+		}),
+		defineField({
 			name: 'cards',
 			title: 'Storylists con Tarjetas',
 			type: 'array',
@@ -66,6 +67,6 @@ export default {
 					to: [{ type: 'storylist' }],
 				},
 			],
-		},
+		}),
 	],
-};
+});
