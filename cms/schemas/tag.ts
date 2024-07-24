@@ -1,7 +1,8 @@
 import { TagIcon } from '@sanity/icons';
 import { preview } from 'sanity-plugin-icon-picker';
+import { defineField, defineType } from 'sanity';
 
-export default {
+export default defineType({
 	name: 'tag',
 	title: 'Etiquetas',
 	type: 'document',
@@ -22,13 +23,13 @@ export default {
 		},
 	},
 	fields: [
-		{
+		defineField({
 			name: 'title',
 			title: 'Título',
 			type: 'string',
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'slug',
 			title: 'Slug',
 			type: 'slug',
@@ -37,20 +38,15 @@ export default {
 				maxLength: 96,
 			},
 			validation: (Rule) => Rule.required(),
-		},
-		{
-			name: 'description',
-			title: 'Descripción',
-			type: 'string',
-			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({ name: 'description', title: 'Descripción', type: 'string', validation: (Rule) => Rule.required() }),
+		defineField({
 			name: 'icon',
 			title: 'Icono',
 			type: 'iconPicker',
 			options: {
 				storeSvg: true,
 			},
-		},
+		}),
 	],
-};
+});
