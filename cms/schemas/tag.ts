@@ -11,14 +11,13 @@ export default defineType({
 		select: {
 			title: 'title',
 			description: 'description',
-			provider: 'icon.provider',
-			name: 'icon.name',
+			icon: 'icon',
 		},
 		prepare(selection) {
 			return {
 				title: selection.title,
 				subtitle: selection.description,
-				media: preview(selection),
+				media: preview(selection.icon),
 			};
 		},
 	},
