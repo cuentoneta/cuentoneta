@@ -15,32 +15,22 @@ import { mapMediaSources } from './media-sources.functions';
 import { GridItemPlacementConfig, StorylistDTO } from '@models/storylist.model';
 import { Story, StoryPreview } from '@models/story.model';
 import { Resource } from '@models/resource.model';
+import { AuthorBySlugQueryResult } from '../sanity/types';
+import { TextBlockContent } from '@models/block-content.model';
 
-export function mapAuthor(rawAuthorData: any, language?: string): AuthorDTO {
+export function mapAuthor(rawAuthorData: AuthorBySlugQueryResult, language?: string): AuthorDTO {
 	return {
 		slug: rawAuthorData.slug.current,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
-			flag: urlFor(rawAuthorData.nationality?.flag)?.url(),
+			flag: urlFor(rawAuthorData.nationality.flag)?.url(),
 		},
 		resources: mapResources(rawAuthorData.resources),
 		imageUrl: rawAuthorData.image ? urlFor(rawAuthorData.image).url() : '',
 		name: rawAuthorData.name,
-		biography: rawAuthorData.biography ? rawAuthorData.biography[language || baseLanguage.id] : undefined,
-	};
-}
-
-export function mapAuthorForStory(rawAuthorData: any, language?: string): AuthorDTO {
-	return {
-		slug: rawAuthorData.slug.current,
-		nationality: {
-			country: rawAuthorData.nationality?.country,
-			flag: urlFor(rawAuthorData.nationality?.flag)?.url(),
-		},
-		resources: mapResources(rawAuthorData.resources),
-		imageUrl: rawAuthorData.image ? urlFor(rawAuthorData.image).url() : '',
-		name: rawAuthorData.name,
-		biography: rawAuthorData.biography ? rawAuthorData.biography[language || baseLanguage.id] : undefined,
+		biography: rawAuthorData.biography
+			? (rawAuthorData.biography[language || baseLanguage.id] as TextBlockContent[])
+			: undefined,
 	};
 }
 
@@ -86,7 +76,7 @@ export async function mapStorylist(result: any): Promise<StorylistDTO> {
 				media: mediaSources ? await mapMediaSources(mediaSources) : undefined,
 				summary: review,
 				paragraphs: body,
-				author: mapAuthorForStory(author),
+				author: mapAuthor(author),
 			}),
 		});
 	}

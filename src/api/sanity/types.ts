@@ -453,7 +453,7 @@ export type LandingPage = {
 
 export type Slug = {
 	_type: 'slug';
-	current?: string;
+	current: string;
 	source?: string;
 };
 
@@ -621,15 +621,15 @@ export type StoryBySlugQueryResult = {
 			hotspot?: SanityImageHotspot;
 			crop?: SanityImageCrop;
 			_type: 'image';
-		} | null;
+		};
 		nationality: {
 			_id: string;
 			_type: 'nationality';
 			_createdAt: string;
 			_updatedAt: string;
 			_rev: string;
-			country?: string;
-			flag?: {
+			country: string;
+			flag: {
 				asset?: {
 					_ref: string;
 					_type: 'reference';
@@ -641,9 +641,10 @@ export type StoryBySlugQueryResult = {
 				_type: 'image';
 			};
 		};
-		biography: {
-			es?: BlockContent;
-			en?: BlockContent;
+		biography?: {
+			es: BlockContent;
+			en: BlockContent;
+			[language: string]: BlockContent;
 		};
 		resources: Array<{
 			title: string;
@@ -651,16 +652,70 @@ export type StoryBySlugQueryResult = {
 			resourceType: {
 				title: string;
 				description: string;
-				icon:
-					| {
-							name: string;
-							svg: string;
-							provider: string;
-					  }
-					| undefined;
+				icon: {
+					name: string;
+					svg: string;
+					provider: string;
+				};
 			};
 		}>;
 	};
+};
+
+// Source: ../src/api/_queries/author.query.ts
+// Variable: authorBySlugQuery
+// Query: *[_type == 'author' && slug.current == $slug][0]{    slug,    name,    image,    nationality->,    biography,    resources[]{         title,         url,         resourceType->{         	title,         	description,         	'icon': {         		'name': icon.name,         		'svg': icon.svg,         		'provider': icon.provider         		}         	}         }}
+export type AuthorBySlugQueryResult = {
+	slug: Slug;
+	name: string;
+	image: {
+		asset?: {
+			_ref: string;
+			_type: 'reference';
+			_weak?: boolean;
+			[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+		};
+		hotspot?: SanityImageHotspot;
+		crop?: SanityImageCrop;
+		_type: 'image';
+	} | null;
+	nationality: {
+		_id: string;
+		_type: 'nationality';
+		_createdAt: string;
+		_updatedAt: string;
+		_rev: string;
+		country: string;
+		flag: {
+			asset?: {
+				_ref: string;
+				_type: 'reference';
+				_weak?: boolean;
+				[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+			};
+			hotspot?: SanityImageHotspot;
+			crop?: SanityImageCrop;
+			_type: 'image';
+		};
+	};
+	biography?: {
+		es: BlockContent;
+		en: BlockContent;
+		[language: string]: BlockContent;
+	};
+	resources: Array<{
+		title: string;
+		url: string;
+		resourceType: {
+			title: string;
+			description: string;
+			icon: {
+				name: string;
+				svg: string;
+				provider: string;
+			};
+		};
+	}>;
 };
 
 // Source: ../src/api/_queries/content.query.ts
