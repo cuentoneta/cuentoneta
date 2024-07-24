@@ -39,7 +39,7 @@ export class ResourceComponent implements OnInit {
 	private tooltipDirective = inject(TooltipDirective);
 
 	ngOnInit() {
-		this.tooltipDirective.text = this.resource.title;
-		this.tooltipDirective.position = 'bottom';
+		this.tooltipDirective.text.set(this.resource.title);
+		this.tooltipDirective.position.set('bottom');
 	}
 }
