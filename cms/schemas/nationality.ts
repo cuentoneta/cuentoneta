@@ -1,20 +1,17 @@
 import { EarthGlobeIcon } from '@sanity/icons';
+import { defineField, defineType } from 'sanity';
 
-export default {
+export default defineType({
 	name: 'nationality',
 	title: 'Nacionalidad',
 	type: 'document',
 	icon: EarthGlobeIcon,
 	fields: [
-		{
-			name: 'country',
-			title: 'País',
-			type: 'string',
-		},
-		{
+		defineField({ name: 'country', title: 'País', type: 'string' }),
+		defineField({
 			name: 'flag',
 			title: 'Bandera',
 			type: 'image',
-		},
+		}),
 	],
-};
+});
