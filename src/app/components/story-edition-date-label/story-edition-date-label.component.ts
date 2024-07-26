@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 
 @Component({
@@ -27,6 +27,6 @@ import { CommonModule, NgIf } from '@angular/common';
 	imports: [CommonModule, NgIf],
 })
 export class StoryEditionDateLabelComponent {
-	@Input() label: string | undefined;
-	@Input() markAsNew: boolean = false;
+	label = input<string | undefined>();
+	markAsNew = input<boolean>(false);
 }
