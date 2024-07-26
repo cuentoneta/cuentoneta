@@ -6,7 +6,7 @@
 		"node": ">=20.11.0 <21.0.0"
 	},
 	"scripts": {
-		"preinstall": "npx only-allow pnpm && touch .env",
+		"preinstall": "npx only-allow pnpm",
 		"postinstall": "pnpm run config",
 		"dev": "concurrently -p --names=\"Server build,Frontend app,Server app\" --prefix-colors=\"yellow,red,green\" \"pnpm run build:watch\" \"pnpm run serve:frontend\" \"pnpm run serve:backend\"\n",
 		"serve:frontend": "nx run cuentoneta:serve:development",
