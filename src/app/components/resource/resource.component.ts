@@ -1,9 +1,14 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+// Core
+import { Component, inject, input, OnInit } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
+
+// Models
 import { Resource } from '@models/resource.model';
+
+// 3rd Party Modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
-// Directivas
+// Directives
 import { TooltipDirective } from '../../directives/tooltip.directive';
 
 @Component({
@@ -13,16 +18,16 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 	imports: [CommonModule, NgOptimizedImage, NgxSkeletonLoaderModule],
 	template: `
 		<a
-			[href]="resource.url"
+			[href]="resource().url"
 			target="_blank"
 			class="flex h-12 w-12 items-center justify-center rounded-full border-1 border-solid border-gray-200 bg-gray-100 hover:bg-gray-200"
 		>
 			<!-- No utilizar ngSrc para este elemento de imagen, dado que se carga dinámicamente desde un campo en formato base64 -->
 			<img
-				[src]="resource.resourceType.icon?.svg ?? ''"
+				[src]="resource().resourceType.icon?.svg ?? ''"
 				[height]="24"
 				[width]="24"
-				[alt]="resource.resourceType.title"
+				[alt]="resource().resourceType.title"
 				class="m-3 h-6 w-6"
 			/>
 		</a>
@@ -34,12 +39,12 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 	`,
 })
 export class ResourceComponent implements OnInit {
-	@Input({ required: true }) resource!: Resource;
+	resource = input.required<Resource>();
 
 	private tooltipDirective = inject(TooltipDirective);
 
 	ngOnInit() {
-		this.tooltipDirective.text.set(this.resource.title);
+		this.tooltipDirective.text.set(this.resource().title);
 		this.tooltipDirective.position.set('bottom');
 	}
 }
