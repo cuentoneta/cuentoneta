@@ -1,5 +1,6 @@
 import { supportedLanguages } from '../utils/localization';
 import { DashboardIcon } from '@sanity/icons';
+import { defineType } from 'sanity';
 
 const gridItemFields = [
 	{
@@ -152,7 +153,7 @@ const gridConfigfields = [
 	},
 ];
 
-export default {
+export default defineType({
 	name: 'storylist',
 	title: 'Storylists',
 	type: 'document',
@@ -211,7 +212,7 @@ export default {
 			description:
 				'Prefijo usado para identificar qué representa cada historia en una Storylist (día, edición, historia, etc.)',
 			type: 'string',
-			default: 'Edición',
+			initialValue: 'Edición',
 		},
 		{
 			name: 'featuredImage',
@@ -265,4 +266,4 @@ export default {
 		comingNextLabel: 'Próximamente',
 		language: 'Español',
 	},
-};
+});
