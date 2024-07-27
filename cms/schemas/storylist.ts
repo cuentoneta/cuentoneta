@@ -67,7 +67,7 @@ const gridConfigFields = [
 						endCol: 'endCol',
 					},
 					prepare(selection) {
-						const { order, publicationOrder, storyTitle, image, imageSlug, startCol, endCol } = selection;
+						const { order, publicationOrder, storyTitle, image, imageSlug, endCol } = selection;
 
 						// Preview para stories en grid
 						const title = `${image ? imageSlug : storyTitle}`;
