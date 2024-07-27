@@ -1,6 +1,7 @@
 import { supportedLanguages } from '../utils/localization';
 import { DocumentTextIcon, DocumentVideoIcon, PlayIcon, TwitterIcon } from '@sanity/icons';
 import { resource } from './resourceType';
+import { defineType } from 'sanity';
 
 const audioRecording = {
 	name: 'audioRecording',
@@ -113,7 +114,7 @@ const youtubeVideo = {
 	],
 };
 
-export default {
+export default defineType({
 	name: 'story',
 	title: 'Cuento',
 	type: 'document',
@@ -257,4 +258,4 @@ export default {
 			};
 		},
 	},
-};
+});
