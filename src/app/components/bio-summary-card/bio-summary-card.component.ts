@@ -1,5 +1,5 @@
 // Core
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, input, OnInit } from '@angular/core';
 import { NgOptimizedImage, NgIf, CommonModule } from '@angular/common';
 
 // Modelos
@@ -69,12 +69,16 @@ import { AppRoutes } from '../../app.routes';
 	imports: [CommonModule, NgOptimizedImage, NgIf, ResourceComponent, PortableTextParserComponent, RouterLink],
 })
 export class BioSummaryCardComponent implements OnInit {
-	@Input({ required: true }) story!: Story;
+	story = input<Story>();
 
 	public resources: Resource[] = [];
 	protected readonly appRoutes = AppRoutes;
 
 	ngOnInit() {
-		this.resources = [...(this.story.resources ?? []), ...(this.story.author.resources ?? [])];
+		if (this.story()) {
+			this.resources = [...(this.story()!.resources ?? []), ...(this.story()!.author.resources ?? [])];
+		} else {
+			this.resources = [];
+		}
 	}
 }
