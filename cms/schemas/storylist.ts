@@ -1,6 +1,6 @@
 import { supportedLanguages } from '../utils/localization';
 import { DashboardIcon } from '@sanity/icons';
-import { defineField, defineType } from 'sanity';
+import { defineArrayMember, defineField, defineType } from 'sanity';
 
 const gridItemFields = [
 	defineField({
@@ -52,7 +52,7 @@ const gridConfigfields = [
 			'Posiciones de las tarjetas y las imágenes alusivas de la storylist, con su orden de renderizado y extensión en columnas y filas dentro del layout de CSS Grid',
 		type: 'array',
 		of: [
-			{
+			defineArrayMember({
 				name: 'deckPreviewConfigItem',
 				title: 'Configuración de preview de Storylist',
 				type: 'object',
@@ -148,7 +148,7 @@ const gridConfigfields = [
 					startCol: 'auto',
 					endCol: 'span 4',
 				},
-			},
+			}),
 		],
 	}),
 ];
@@ -227,12 +227,12 @@ export default defineType({
 			title: 'Etiquetas',
 			type: 'array',
 			of: [
-				{
+				defineArrayMember({
 					name: 'tag',
 					title: 'Etiqueta',
 					type: 'reference',
 					to: [{ type: 'tag' }],
-				},
+				}),
 			],
 		}),
 		defineField({
