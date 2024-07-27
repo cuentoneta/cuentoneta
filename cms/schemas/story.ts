@@ -3,7 +3,7 @@ import { DocumentTextIcon, DocumentVideoIcon, PlayIcon, TwitterIcon } from '@san
 import { resource } from './resourceType';
 import { defineField, defineType } from 'sanity';
 
-const audioRecording = {
+const audioRecording = defineField({
 	name: 'audioRecording',
 	title: 'Grabación de audio con el relato del texto',
 	type: 'object',
@@ -33,9 +33,9 @@ const audioRecording = {
 			type: 'url',
 		},
 	],
-};
+});
 
-const spaceRecording = {
+const spaceRecording = defineField({
 	name: 'spaceRecording',
 	title: 'Grabación de Spaces de X',
 	type: 'object',
@@ -75,9 +75,9 @@ const spaceRecording = {
 			type: 'string',
 		},
 	],
-};
+});
 
-const youtubeVideo = {
+const youtubeVideo = defineField({
 	name: 'youTubeVideo',
 	title: 'Video de YouTube',
 	type: 'object',
@@ -112,7 +112,7 @@ const youtubeVideo = {
 			type: 'string',
 		},
 	],
-};
+});
 
 export default defineType({
 	name: 'story',
