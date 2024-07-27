@@ -7,11 +7,11 @@ import { CommonModule, NgIf } from '@angular/common';
 		@if (!!label) {
 			<span class="max-sm:inter-body-xs-bold sm:inter-body-sm-bold flex items-center text-primary-500">
 				<div class="mr-2 h-[12px] w-[2px] bg-primary-500"></div>
-				{{ label }}
+				{{ label() }}
 			</span>
 		}
 		<!--ToDo: Extraer badge a nuevo componente-->
-		@if (markAsNew) {
+		@if (markAsNew()) {
 			<div class="flex items-center rounded bg-primary-200">
 				<label class="inter-body-xs-bold mx-4 my-1">NUEVO</label>
 			</div>
