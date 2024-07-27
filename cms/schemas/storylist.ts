@@ -86,7 +86,7 @@ const gridConfigFields = [
 						title: 'Publicación de Cuento/Texto/Historia dentro de la storylist',
 						type: 'object',
 						fields: [
-							{
+							defineField({
 								name: 'story',
 								title: 'Referencia a historia',
 								type: 'reference',
@@ -101,8 +101,8 @@ const gridConfigFields = [
 									},
 									disableNew: true,
 								},
-							},
-							{
+							}),
+							defineField({
 								name: 'published',
 								title: '¿Publicado?',
 								description:
@@ -110,19 +110,19 @@ const gridConfigFields = [
 								type: 'boolean',
 								validation: (Rule) => Rule.required(),
 								initialValue: false,
-							},
-							{
+							}),
+							defineField({
 								name: 'publishingOrder',
 								title: 'Orden de publicación',
 								description: 'Número ordinal de publicación dentro de la storylist para el cuento',
 								type: 'number',
-							},
-							{
+							}),
+							defineField({
 								name: 'publishingDate',
 								title: 'Fecha de publicación',
 								description: 'Fecha en la cual el cuento se publicó o publicará en la storylist',
 								type: 'date',
-							},
+							}),
 						],
 					}),
 					defineField({
