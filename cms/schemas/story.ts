@@ -8,7 +8,7 @@ const audioRecording = defineField({
 	title: 'Grabación de audio con el relato del texto',
 	type: 'object',
 	icon: PlayIcon,
-	previews: {
+	preview: {
 		select: {
 			title: 'title',
 			url: 'spaceUrl',
@@ -40,7 +40,7 @@ const spaceRecording = defineField({
 	title: 'Grabación de Spaces de X',
 	type: 'object',
 	icon: TwitterIcon,
-	previews: {
+	preview: {
 		select: {
 			title: 'postId',
 			url: 'spaceUrl',
@@ -82,7 +82,7 @@ const youtubeVideo = defineField({
 	title: 'Video de YouTube',
 	type: 'object',
 	icon: DocumentVideoIcon,
-	previews: {
+	preview: {
 		select: {
 			title: 'title',
 			url: 'url',
