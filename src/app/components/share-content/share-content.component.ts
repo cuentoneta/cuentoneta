@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { environment } from '../../environments/environment';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -30,10 +30,10 @@ import { ThemeService } from '../../providers/theme.service';
 	`,
 })
 export class ShareContentComponent {
-	route = input<string>('');
-	params = input<{ [key: string]: string }>({});
-	message = input<string>('');
-	isLoading = input<boolean>(false);
+	@Input() route: string = '';
+	@Input() params: { [key: string]: string } = {};
+	@Input() message: string = '';
+	@Input() isLoading: boolean = false;
 
 	platforms: SharingPlatform[] = [
 		new FacebookPlatform(),
@@ -55,15 +55,10 @@ export class ShareContentComponent {
 	skeletonColor = this.themeService.pickColor('zinc', 300);
 
 	onShareToPlatformClicked(event: MouseEvent | KeyboardEvent, platform: SharingPlatform) {
-		const paramsValue = this.params();
-		const urlParams = Object.keys(paramsValue)
-			.map((key) => `${key}=${paramsValue[key]}`)
+		const urlParams = Object.keys(this.params)
+			.map((key) => `${key}=${this.params[key]}`)
 			.join('&');
-		window.open(
-			platform.generateSharingUrl(this.route(), urlParams, this.message()),
-			platform.target,
-			platform.features,
-		);
+		window.open(platform.generateSharingUrl(this.route, urlParams, this.message), platform.target, platform.features);
 	}
 }
 
