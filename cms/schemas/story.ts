@@ -1,7 +1,7 @@
 import { supportedLanguages } from '../utils/localization';
 import { DocumentTextIcon, DocumentVideoIcon, PlayIcon, TwitterIcon } from '@sanity/icons';
 import { resource } from './resourceType';
-import { defineType } from 'sanity';
+import { defineField, defineType } from 'sanity';
 
 const audioRecording = {
 	name: 'audioRecording',
@@ -120,13 +120,13 @@ export default defineType({
 	type: 'document',
 	icon: DocumentTextIcon,
 	fields: [
-		{
+		defineField({
 			name: 'title',
 			title: 'Título',
 			type: 'string',
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'slug',
 			title: 'Slug',
 			type: 'slug',
@@ -135,8 +135,8 @@ export default defineType({
 				maxLength: 96,
 			},
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'language',
 			title: 'Idioma',
 			type: 'string',
@@ -147,32 +147,32 @@ export default defineType({
 				})),
 				layout: 'radio',
 			},
-		},
-		{
+		}),
+		defineField({
 			name: 'author',
 			title: 'Autor/a',
 			type: 'reference',
 			to: { type: 'author' },
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'mediaSources',
 			title: 'Información de recursos multimedia asociados a la historia en otras plataformas web',
 			type: 'array',
 			of: [audioRecording, spaceRecording, youtubeVideo],
-		},
-		{
+		}),
+		defineField({
 			name: 'resources',
 			title: 'Recursos web asociados a la story y su contenido',
 			type: 'array',
 			of: [resource],
-		},
-		{
+		}),
+		defineField({
 			name: 'badLanguage',
 			title: '¿Contiene lenguaje adulto?',
 			type: 'boolean',
-		},
-		{
+		}),
+		defineField({
 			name: 'approximateReadingTime',
 			title: 'Tiempo de lectura aproximado',
 			type: 'computedNumber',
@@ -198,8 +198,8 @@ export default defineType({
 					return Math.ceil(wordCount / 200);
 				},
 			},
-		},
-		{
+		}),
+		defineField({
 			name: 'epigraphs',
 			title: 'Epígrafes',
 			type: 'array',
@@ -223,23 +223,23 @@ export default defineType({
 					],
 				},
 			],
-		},
-		{
+		}),
+		defineField({
 			name: 'body',
 			title: 'Cuerpo del cuento',
 			type: 'blockContent',
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'review',
 			title: 'Reseña',
 			type: 'blockContent',
-		},
-		{
+		}),
+		defineField({
 			name: 'originalPublication',
 			title: 'Publicación original',
 			type: 'string',
-		},
+		}),
 	],
 	initialValue: {
 		language: 'es',
