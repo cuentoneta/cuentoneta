@@ -27,6 +27,6 @@ import { CommonModule, NgIf } from '@angular/common';
 	imports: [CommonModule, NgIf],
 })
 export class StoryEditionDateLabelComponent {
-	label = input<string | undefined>();
+	label = input<string>();
 	markAsNew = input<boolean>(false);
 }
