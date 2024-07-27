@@ -81,7 +81,7 @@ const gridConfigfields = [
 					},
 				},
 				fields: [
-					{
+					defineField({
 						name: 'publication',
 						title: 'Publicación de Cuento/Texto/Historia dentro de la storylist',
 						type: 'object',
@@ -124,16 +124,16 @@ const gridConfigfields = [
 								type: 'date',
 							},
 						],
-					},
-					{
+					}),
+					defineField({
 						name: 'image',
 						title: 'Imagen de grid',
 						type: 'image',
 						options: {
 							hotspot: true,
 						},
-					},
-					{
+					}),
+					defineField({
 						name: 'imageSlug',
 						title: 'Slug de imagen alusiva',
 						type: 'slug',
@@ -141,7 +141,7 @@ const gridConfigfields = [
 							source: 'title',
 							maxLength: 96,
 						},
-					},
+					}),
 					...gridItemFields,
 				],
 				initialValue: {
