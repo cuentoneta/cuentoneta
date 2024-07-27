@@ -1,52 +1,52 @@
 import { supportedLanguages } from '../utils/localization';
 import { DashboardIcon } from '@sanity/icons';
-import { defineType } from 'sanity';
+import { defineField, defineType } from 'sanity';
 
 const gridItemFields = [
-	{
+	defineField({
 		name: 'order',
 		title: 'Orden',
 		description: 'Orden utilizado internamente por CSS Grid para renderizar el elemento',
 		type: 'number',
 		validation: (Rule) => Rule.required(),
-	},
-	{
+	}),
+	defineField({
 		name: 'startCol',
 		title: 'Columna inicial en CSS Grid',
 		type: 'string',
-	},
-	{
+	}),
+	defineField({
 		name: 'endCol',
 		title: 'Columna final en CSS Grid',
 		type: 'string',
-	},
-	{
+	}),
+	defineField({
 		name: 'startRow',
 		title: 'Fila inicial en CSS Grid',
 		type: 'string',
-	},
-	{
+	}),
+	defineField({
 		name: 'endRow',
 		title: 'Fila final en CSS Grid',
 		type: 'string',
-	},
+	}),
 ];
 
 const gridConfigfields = [
-	{
+	defineField({
 		name: 'gridTemplateColumns',
 		title: 'Template de columnas en CSS Grid (grid-template-columns)',
 		type: 'string',
 		description: 'Ejemplo: "repeat(3, 1fr)", "repeat(12, 1fr), etc.',
 		initialValue: 'repeat(3, 1fr)',
-	},
-	{
+	}),
+	defineField({
 		name: 'titlePlacement',
 		title: 'Posición del título',
 		type: 'object',
 		fields: [...gridItemFields],
-	},
-	{
+	}),
+	defineField({
 		name: 'cardsPlacement',
 		description:
 			'Posiciones de las tarjetas y las imágenes alusivas de la storylist, con su orden de renderizado y extensión en columnas y filas dentro del layout de CSS Grid',
@@ -150,7 +150,7 @@ const gridConfigfields = [
 				},
 			},
 		],
-	},
+	}),
 ];
 
 export default defineType({
@@ -159,12 +159,12 @@ export default defineType({
 	type: 'document',
 	icon: DashboardIcon,
 	fields: [
-		{
+		defineField({
 			name: 'title',
 			title: 'Título',
 			type: 'string',
-		},
-		{
+		}),
+		defineField({
 			name: 'slug',
 			title: 'Slug',
 			type: 'slug',
@@ -173,13 +173,13 @@ export default defineType({
 				maxLength: 96,
 			},
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'description',
 			title: 'Descripción',
 			type: 'text',
-		},
-		{
+		}),
+		defineField({
 			name: 'language',
 			title: 'Idioma',
 			type: 'string',
@@ -191,38 +191,38 @@ export default defineType({
 				layout: 'radio',
 			},
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'displayDates',
 			title: 'Mostrar fechas',
 			type: 'boolean',
 			initialValue: false,
-		},
-		{
+		}),
+		defineField({
 			name: 'comingNextLabel',
 			title: 'Etiqueta de "Próximo"',
 			description:
 				'Etiqueta que se mostrará en una publicación programada dentro de una storylist pero que aún no ha sido publicada.',
 			type: 'string',
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'editionPrefix',
 			title: 'Prefijo de edición',
 			description:
 				'Prefijo usado para identificar qué representa cada historia en una Storylist (día, edición, historia, etc.)',
 			type: 'string',
 			initialValue: 'Edición',
-		},
-		{
+		}),
+		defineField({
 			name: 'featuredImage',
 			title: 'Imagen destacada',
 			type: 'image',
 			options: {
 				hotspot: true,
 			},
-		},
-		{
+		}),
+		defineField({
 			name: 'tags',
 			title: 'Etiquetas',
 			type: 'array',
@@ -234,14 +234,14 @@ export default defineType({
 					to: [{ type: 'tag' }],
 				},
 			],
-		},
-		{
+		}),
+		defineField({
 			name: 'gridConfig',
 			title: 'Configuración de vista completa de Storylist en layout de CSS Grid',
 			type: 'object',
 			fields: [...gridConfigfields],
-		},
-		{
+		}),
+		defineField({
 			name: 'previewGridConfig',
 			title: 'Configuración de vista previa de Storylist en layout de CSS Grid',
 			type: 'object',
@@ -260,7 +260,7 @@ export default defineType({
 					},
 				},
 			],
-		},
+		}),
 	],
 	initialValue: {
 		comingNextLabel: 'Próximamente',
