@@ -32,7 +32,7 @@ const gridItemFields = [
 	}),
 ];
 
-const gridConfigfields = [
+const gridConfigFields = [
 	defineField({
 		name: 'gridTemplateColumns',
 		title: 'Template de columnas en CSS Grid (grid-template-columns)',
@@ -239,14 +239,14 @@ export default defineType({
 			name: 'gridConfig',
 			title: 'Configuración de vista completa de Storylist en layout de CSS Grid',
 			type: 'object',
-			fields: [...gridConfigfields],
+			fields: [...gridConfigFields],
 		}),
 		defineField({
 			name: 'previewGridConfig',
 			title: 'Configuración de vista previa de Storylist en layout de CSS Grid',
 			type: 'object',
 			fields: [
-				...gridConfigfields,
+				...gridConfigFields,
 				{
 					name: 'ordering',
 					title: 'Orden de publicaciones',
