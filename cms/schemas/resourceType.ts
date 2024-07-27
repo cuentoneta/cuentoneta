@@ -1,8 +1,8 @@
 import { LinkIcon } from '@sanity/icons';
 import { preview } from 'sanity-plugin-icon-picker';
-import { defineType } from 'sanity';
+import { defineField, defineType } from 'sanity';
 
-export const resource = defineType({
+export const resource = defineField({
 	name: 'resource',
 	title: 'Recurso',
 	type: 'object',
@@ -19,22 +19,22 @@ export const resource = defineType({
 		},
 	},
 	fields: [
-		{
+		defineField({
 			name: 'title',
 			title: 'Título',
 			type: 'string',
-		},
-		{
+		}),
+		defineField({
 			name: 'url',
 			title: 'URL',
 			type: 'string',
-		},
-		{
+		}),
+		defineField({
 			name: 'resourceType',
 			title: 'Tipo de recurso',
 			type: 'reference',
 			to: { type: 'resourceType' },
-		},
+		}),
 	],
 });
 
@@ -60,13 +60,13 @@ export default defineType({
 		},
 	},
 	fields: [
-		{
+		defineField({
 			name: 'title',
 			title: 'Título',
 			type: 'string',
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'slug',
 			title: 'Slug',
 			type: 'slug',
@@ -75,20 +75,20 @@ export default defineType({
 				maxLength: 96,
 			},
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'description',
 			title: 'Descripción',
 			type: 'string',
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'icon',
 			title: 'Icono',
 			type: 'iconPicker',
 			options: {
 				storeSvg: true,
 			},
-		},
+		}),
 	],
 });
