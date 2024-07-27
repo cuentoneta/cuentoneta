@@ -1,13 +1,14 @@
 import { supportedLanguages } from '../utils/localization';
 import { DocumentTextIcon, DocumentVideoIcon, PlayIcon, TwitterIcon } from '@sanity/icons';
 import { resource } from './resourceType';
+import { defineField, defineType } from 'sanity';
 
-const audioRecording = {
+const audioRecording = defineField({
 	name: 'audioRecording',
 	title: 'Grabación de audio con el relato del texto',
 	type: 'object',
 	icon: PlayIcon,
-	previews: {
+	preview: {
 		select: {
 			title: 'title',
 			url: 'spaceUrl',
@@ -32,14 +33,14 @@ const audioRecording = {
 			type: 'url',
 		},
 	],
-};
+});
 
-const spaceRecording = {
+const spaceRecording = defineField({
 	name: 'spaceRecording',
 	title: 'Grabación de Spaces de X',
 	type: 'object',
 	icon: TwitterIcon,
-	previews: {
+	preview: {
 		select: {
 			title: 'postId',
 			url: 'spaceUrl',
@@ -74,14 +75,14 @@ const spaceRecording = {
 			type: 'string',
 		},
 	],
-};
+});
 
-const youtubeVideo = {
+const youtubeVideo = defineField({
 	name: 'youTubeVideo',
 	title: 'Video de YouTube',
 	type: 'object',
 	icon: DocumentVideoIcon,
-	previews: {
+	preview: {
 		select: {
 			title: 'title',
 			url: 'url',
@@ -111,21 +112,21 @@ const youtubeVideo = {
 			type: 'string',
 		},
 	],
-};
+});
 
-export default {
+export default defineType({
 	name: 'story',
 	title: 'Cuento',
 	type: 'document',
 	icon: DocumentTextIcon,
 	fields: [
-		{
+		defineField({
 			name: 'title',
 			title: 'Título',
 			type: 'string',
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'slug',
 			title: 'Slug',
 			type: 'slug',
@@ -134,8 +135,8 @@ export default {
 				maxLength: 96,
 			},
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'language',
 			title: 'Idioma',
 			type: 'string',
@@ -146,32 +147,32 @@ export default {
 				})),
 				layout: 'radio',
 			},
-		},
-		{
+		}),
+		defineField({
 			name: 'author',
 			title: 'Autor/a',
 			type: 'reference',
 			to: { type: 'author' },
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'mediaSources',
 			title: 'Información de recursos multimedia asociados a la historia en otras plataformas web',
 			type: 'array',
 			of: [audioRecording, spaceRecording, youtubeVideo],
-		},
-		{
+		}),
+		defineField({
 			name: 'resources',
 			title: 'Recursos web asociados a la story y su contenido',
 			type: 'array',
 			of: [resource],
-		},
-		{
+		}),
+		defineField({
 			name: 'badLanguage',
 			title: '¿Contiene lenguaje adulto?',
 			type: 'boolean',
-		},
-		{
+		}),
+		defineField({
 			name: 'approximateReadingTime',
 			title: 'Tiempo de lectura aproximado',
 			type: 'computedNumber',
@@ -197,8 +198,8 @@ export default {
 					return Math.ceil(wordCount / 200);
 				},
 			},
-		},
-		{
+		}),
+		defineField({
 			name: 'epigraphs',
 			title: 'Epígrafes',
 			type: 'array',
@@ -222,23 +223,23 @@ export default {
 					],
 				},
 			],
-		},
-		{
+		}),
+		defineField({
 			name: 'body',
 			title: 'Cuerpo del cuento',
 			type: 'blockContent',
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'review',
 			title: 'Reseña',
 			type: 'blockContent',
-		},
-		{
+		}),
+		defineField({
 			name: 'originalPublication',
 			title: 'Publicación original',
 			type: 'string',
-		},
+		}),
 	],
 	initialValue: {
 		language: 'es',
@@ -257,4 +258,4 @@ export default {
 			};
 		},
 	},
-};
+});
