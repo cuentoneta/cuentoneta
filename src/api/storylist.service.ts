@@ -11,7 +11,7 @@ import { mapStorylist } from './_utils/functions';
 import { storylistPreviewQuery } from './_queries/storylist.query';
 import { StoryListBySlugArgs } from './interfaces/queryArgs';
 
-async function fetchPreview(slug: string): Promise<StorylistDTO> {
+async function fetchPreviewBySlug(slug: string): Promise<StorylistDTO> {
 	const query = `*[_type == 'storylist' && slug.current == '${slug}'][0]${storylistPreviewQuery}`;
 	const result = await client.fetch(query, {});
 
@@ -31,4 +31,4 @@ async function fetchStorylistBySlugArgs(args: StoryListBySlugArgs): Promise<Stor
 	return mapStorylist(result);
 }
 
-export { fetchPreview, fetchStorylistBySlugArgs };
+export { fetchPreviewBySlug, fetchStorylistBySlugArgs };

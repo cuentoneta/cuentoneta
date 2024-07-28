@@ -1,5 +1,5 @@
 import express from 'express';
-import { fetchPreview, fetchStorylistBySlugArgs } from './storylist.service';
+import { fetchPreviewBySlug, fetchStorylistBySlugArgs } from './storylist.service';
 
 const router = express.Router();
 
@@ -19,7 +19,7 @@ function getBySlug(req: express.Request, res: express.Response, next: express.Ne
 
 function getPreview(req: express.Request, res: express.Response, next: express.NextFunction) {
 	const { slug } = req.query;
-	fetchPreview(slug as string)
+	fetchPreviewBySlug(slug as string)
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
 }
