@@ -8,7 +8,7 @@ import { StorylistDTO } from '@models/storylist.model';
 import { mapStorylist } from './_utils/functions';
 
 // Queries
-import { storylistPreviewQuery, storylistQuery } from './_queries/storylist.query';
+import { storylistPreviewQuery } from './_queries/storylist.query';
 import { StoryListBySlugArgs } from './interfaces/queryArgs';
 
 async function fetchPreview(slug: string): Promise<StorylistDTO> {
@@ -22,8 +22,7 @@ async function fetchPreview(slug: string): Promise<StorylistDTO> {
 	return mapStorylist(result);
 }
 async function fetchStorylistBySlugArgs(args: StoryListBySlugArgs): Promise<StorylistDTO> {
-	const query = `*[_type == 'storylist' && slug.current == '${args.slug}'][0]${storylistQuery}`;
-	const result = await client.fetch(query, {});
+	const result = await client.fetch(storylistPreviewQuery, { slug: args.slug });
 
 	if (!result) {
 		throw new Error('Storylist not found');
