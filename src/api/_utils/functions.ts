@@ -25,7 +25,7 @@ export function mapAuthor(rawAuthorData: AuthorBySlugQueryResult, language?: str
 			country: rawAuthorData.nationality?.country,
 			flag: urlFor(rawAuthorData.nationality.flag)?.url(),
 		},
-		resources: mapResources(rawAuthorData.resources),
+		resources: rawAuthorData.resources ? mapResources(rawAuthorData.resources) : undefined,
 		imageUrl: rawAuthorData.image ? urlFor(rawAuthorData.image).url() : '',
 		name: rawAuthorData.name,
 		biography: rawAuthorData.biography
