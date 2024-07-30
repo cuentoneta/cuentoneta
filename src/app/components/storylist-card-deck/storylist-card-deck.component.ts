@@ -47,7 +47,7 @@ export class StorylistCardDeckComponent implements OnChanges {
 	}
 
 	private generateImagesCardConfig() {
-		const cardsPlacement: GridItemPlacementConfig[] | undefined = this.storylist!.gridConfig?.cardsPlacement;
+		const cardsPlacement: GridItemPlacementConfig[] | undefined = this.storylist?.gridConfig?.cardsPlacement;
 
 		if (!cardsPlacement) {
 			return;
