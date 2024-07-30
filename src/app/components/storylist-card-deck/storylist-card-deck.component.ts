@@ -1,5 +1,5 @@
 // Core
-import { ChangeDetectionStrategy, Component, inject, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 // Modules
