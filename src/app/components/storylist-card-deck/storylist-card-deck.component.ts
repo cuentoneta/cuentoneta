@@ -54,13 +54,16 @@ export class StorylistCardDeckComponent implements OnChanges {
 		}
 		const parsedConfigs = cardsPlacement
 			.filter((card) => !!card.imageSlug)
-			.map((card) => ({
-				slug: card.imageSlug,
-				...this.generateCardConfig(card.imageSlug!),
-			}));
+			.map((card) => {
+				return {
+					slug: card.imageSlug,
+					...this.generateCardConfig(card.imageSlug as string),
+				};
+			});
+
 		for (const config of parsedConfigs) {
 			const { slug, ...other } = config;
-			this.imagesCardConfig[slug!] = other;
+			this.imagesCardConfig[slug as string] = other;
 		}
 	}
 
@@ -73,13 +76,16 @@ export class StorylistCardDeckComponent implements OnChanges {
 
 		const parsedConfigs = cardsPlacement
 			.filter((card) => !!card.slug)
-			.map((card) => ({
-				slug: card.slug,
-				...this.generateCardConfig(card.slug!),
-			}));
+			.map((card) => {
+				return {
+					slug: card.imageSlug,
+					...this.generateCardConfig(card.slug as string),
+				};
+			});
+
 		for (const config of parsedConfigs) {
 			const { slug, ...other } = config;
-			this.storiesCardConfig[slug!] = other;
+			this.storiesCardConfig[slug as string] = other;
 		}
 	}
 
