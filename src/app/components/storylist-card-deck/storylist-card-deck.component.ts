@@ -78,7 +78,7 @@ export class StorylistCardDeckComponent implements OnChanges {
 			.filter((card) => !!card.slug)
 			.map((card) => {
 				return {
-					slug: card.imageSlug,
+					slug: card.slug,
 					...this.generateCardConfig(card.slug as string),
 				};
 			});
