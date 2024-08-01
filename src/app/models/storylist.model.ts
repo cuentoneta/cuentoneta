@@ -22,7 +22,6 @@ interface StorylistBase {
 		url: SanityImageSource;
 	}[];
 	gridConfig?: StorylistGridConfig;
-	previewGridConfig?: StorylistGridConfig;
 }
 
 export type StorylistCard = Omit<StorylistBase, 'images' | 'previewImages' | 'gridConfig' | 'previewGridConfig'>;

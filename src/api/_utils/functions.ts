@@ -10,7 +10,7 @@ import imageUrlBuilder from '@sanity/image-url';
 import { baseLanguage } from '../../../cms/utils/localization';
 
 // Modelos
-import { AuthorDTO } from '@models/author.model';
+import { Author } from '@models/author.model';
 import { mapMediaSources } from './media-sources.functions';
 import { GridItemPlacementConfig, StorylistDTO } from '@models/storylist.model';
 import { Story, StoryPreview } from '@models/story.model';
@@ -18,19 +18,19 @@ import { Resource } from '@models/resource.model';
 import { AuthorBySlugQueryResult } from '../sanity/types';
 import { TextBlockContent } from '@models/block-content.model';
 
-export function mapAuthor(rawAuthorData: AuthorBySlugQueryResult, language?: string): AuthorDTO {
+export function mapAuthor(rawAuthorData: AuthorBySlugQueryResult, language?: string): Author {
 	return {
 		slug: rawAuthorData.slug.current,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
 			flag: urlFor(rawAuthorData.nationality.flag)?.url(),
 		},
-		resources: mapResources(rawAuthorData.resources),
+		resources: rawAuthorData.resources ? mapResources(rawAuthorData.resources) : [],
 		imageUrl: rawAuthorData.image ? urlFor(rawAuthorData.image).url() : '',
 		name: rawAuthorData.name,
 		biography: rawAuthorData.biography
 			? (rawAuthorData.biography[language || baseLanguage.id] as TextBlockContent[])
-			: undefined,
+			: [],
 	};
 }
 
