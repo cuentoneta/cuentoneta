@@ -2,13 +2,13 @@
 	[attr.aria-busy]="true"
 	class="card flex flex-col gap-2 border-1 border-solid border-primary-300 p-5 shadow-lg hover:shadow-lg-hover md:gap-4 md:p-8"
 >
-	@if (comingNextLabel) {
+	@if (comingNextLabel()) {
 		<header class="card-header">
-			<cuentoneta-story-edition-date-label [label]="displayDate ? editionLabel : comingNextLabel" />
+			<cuentoneta-story-edition-date-label [label]="displayDate() ? editionLabel() : comingNextLabel()" />
 		</header>
 	} @else {
 		<ngx-skeleton-loader
-			[animation]="animation"
+			[animation]="animation()"
 			[theme]="{
 				height: '20px',
 				'margin-bottom': 0,
@@ -21,7 +21,7 @@
 
 	<div>
 		<ngx-skeleton-loader
-			[animation]="animation"
+			[animation]="animation()"
 			[theme]="{
 				'background-color': skeletonColor,
 				height: '20px',
@@ -33,7 +33,7 @@
 			appearance="line"
 		></ngx-skeleton-loader>
 		<ngx-skeleton-loader
-			[animation]="animation"
+			[animation]="animation()"
 			[theme]="{
 				height: '16px',
 				'margin-bottom': '4px',
@@ -45,7 +45,7 @@
 		></ngx-skeleton-loader>
 	</div>
 	<ngx-skeleton-loader
-		[animation]="animation"
+		[animation]="animation()"
 		[theme]="{
 			height: '12px',
 			'margin-bottom': '3px',
@@ -55,11 +55,11 @@
 		count="1"
 		appearance="line"
 	></ngx-skeleton-loader>
-	@if (displayFooter) {
+	@if (displayFooter()) {
 		<hr class="text-gray-300" />
 		<div class="flex">
 			<ngx-skeleton-loader
-				[animation]="animation"
+				[animation]="animation()"
 				[theme]="{
 					'background-color': skeletonColor,
 					height: '40px',
@@ -73,7 +73,7 @@
 			></ngx-skeleton-loader>
 			<div>
 				<ngx-skeleton-loader
-					[animation]="animation"
+					[animation]="animation()"
 					[theme]="{
 						height: '17px',
 						'margin-top': '2px',
@@ -85,7 +85,7 @@
 				></ngx-skeleton-loader>
 				<div class="flex">
 					<ngx-skeleton-loader
-						[animation]="animation"
+						[animation]="animation()"
 						[theme]="{
 							height: '15px',
 							margin: 0,
@@ -97,7 +97,7 @@
 						appearance="line"
 					></ngx-skeleton-loader>
 					<ngx-skeleton-loader
-						[animation]="animation"
+						[animation]="animation()"
 						[theme]="{
 							height: '15px',
 							margin: 0,
