@@ -1,6 +1,6 @@
 // Core
-import { Component, input, OnInit } from '@angular/core';
-import { NgOptimizedImage, NgIf, CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, input, OnInit } from '@angular/core';
+import { CommonModule, NgIf, NgOptimizedImage } from '@angular/common';
 
 // Modelos
 import { Resource } from '@models/resource.model';
@@ -67,6 +67,7 @@ import { AppRoutes } from '../../app.routes';
 	`,
 	standalone: true,
 	imports: [CommonModule, NgOptimizedImage, NgIf, ResourceComponent, PortableTextParserComponent, RouterLink],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BioSummaryCardComponent implements OnInit {
 	story = input.required<Story>();
