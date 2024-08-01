@@ -10,7 +10,7 @@ import { mapStorylist } from '../_utils/functions';
 // Queries
 import { storylistPreviewQuery, storylistQuery } from '../_queries/storylist.query';
 import { StoryListBySlugArgs } from '../interfaces/queryArgs';
-import { StorylistPreviewQueryResult } from '../sanity/types';
+import { StorylistPreviewQueryResult, StorylistQueryResult } from '../sanity/types';
 
 async function fetchPreviewBySlug(slug: string): Promise<StorylistDTO> {
 	const result: StorylistPreviewQueryResult = await client.fetch(storylistPreviewQuery, { slug });
@@ -21,8 +21,8 @@ async function fetchPreviewBySlug(slug: string): Promise<StorylistDTO> {
 
 	return mapStorylist(result);
 }
-async function fetchStorylistBySlugArgs(args: StoryListBySlugArgs): Promise<StorylistDTO> {
-	const result = await client.fetch(storylistQuery, { slug: args.slug });
+async function fetchBySlug(args: StoryListBySlugArgs): Promise<StorylistDTO> {
+	const result: StorylistQueryResult = await client.fetch(storylistQuery, { slug: args.slug });
 
 	if (!result) {
 		throw new Error('Storylist not found');
@@ -31,4 +31,4 @@ async function fetchStorylistBySlugArgs(args: StoryListBySlugArgs): Promise<Stor
 	return mapStorylist(result);
 }
 
-export { fetchPreviewBySlug, fetchStorylistBySlugArgs };
+export { fetchPreviewBySlug, fetchBySlug };
