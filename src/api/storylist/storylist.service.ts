@@ -22,8 +22,7 @@ async function fetchPreviewBySlug(slug: string): Promise<StorylistDTO> {
 	return mapStorylist(result);
 }
 async function fetchStorylistBySlugArgs(args: StoryListBySlugArgs): Promise<StorylistDTO> {
-	const query = `*[_type == 'storylist' && slug.current == '${args.slug}'][0]${storylistQuery}`;
-	const result = await client.fetch(query, {});
+	const result = await client.fetch(storylistQuery, { slug: args.slug });
 
 	if (!result) {
 		throw new Error('Storylist not found');
