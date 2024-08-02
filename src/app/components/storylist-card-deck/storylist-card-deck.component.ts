@@ -23,12 +23,12 @@ import { StoryCardSkeletonComponent } from '../story-card-skeleton/story-card-sk
 })
 export class StorylistCardDeckComponent implements OnChanges {
 	number = input<number>(6);
-	storylist = input<Storylist | undefined>();
+	storylist = input<Storylist>();
 	isLoading = input<boolean>(false); // Utilizado para mostrar/ocultar skeletons
 	canNavigateToStorylist = input<boolean>(false);
 	displayTitle = input<boolean>(true);
 	displayFeaturedImage = input<boolean>(true);
-	skeletonConfig = input<StorylistGridSkeletonConfig | undefined>();
+	skeletonConfig = input<StorylistGridSkeletonConfig>();
 
 	public router = inject(Router);
 
