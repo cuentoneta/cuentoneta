@@ -1,5 +1,5 @@
 // Core
-import { ChangeDetectionStrategy, Component, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, OnChanges, SimpleChanges } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 // Modules
@@ -22,13 +22,13 @@ import { StoryCardSkeletonComponent } from '../story-card-skeleton/story-card-sk
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StorylistCardDeckComponent implements OnChanges {
-	@Input() number: number = 6;
-	@Input() storylist: Storylist | undefined;
-	@Input() isLoading: boolean = false; // Utilizado para mostrar/ocultar skeletons
-	@Input() canNavigateToStorylist: boolean = false;
-	@Input() displayTitle: boolean = true;
-	@Input() displayFeaturedImage: boolean = false;
-	@Input() skeletonConfig: StorylistGridSkeletonConfig | undefined;
+	number = input<number>(6);
+	storylist = input<Storylist>();
+	isLoading = input<boolean>(false); // Utilizado para mostrar/ocultar skeletons
+	canNavigateToStorylist = input<boolean>(false);
+	displayTitle = input<boolean>(true);
+	displayFeaturedImage = input<boolean>(true);
+	skeletonConfig = input<StorylistGridSkeletonConfig>();
 
 	public router = inject(Router);
 
@@ -47,7 +47,7 @@ export class StorylistCardDeckComponent implements OnChanges {
 	}
 
 	private generateImagesCardConfig() {
-		const cardsPlacement: GridItemPlacementConfig[] | undefined = this.storylist?.gridConfig?.cardsPlacement;
+		const cardsPlacement: GridItemPlacementConfig[] | undefined = this.storylist()?.gridConfig?.cardsPlacement;
 
 		if (!cardsPlacement) {
 			return;
@@ -68,7 +68,7 @@ export class StorylistCardDeckComponent implements OnChanges {
 	}
 
 	private generateStoriesCardConfig() {
-		const cardsPlacement: GridItemPlacementConfig[] | undefined = this.storylist?.gridConfig?.cardsPlacement;
+		const cardsPlacement: GridItemPlacementConfig[] | undefined = this.storylist()?.gridConfig?.cardsPlacement;
 
 		if (!cardsPlacement) {
 			return;
@@ -90,7 +90,7 @@ export class StorylistCardDeckComponent implements OnChanges {
 	}
 
 	private generateCardConfig(slug: string): CardDeckCSSGridConfig {
-		const storyCardConfig = this.storylist?.gridConfig?.cardsPlacement?.find((card) =>
+		const storyCardConfig = this.storylist()?.gridConfig?.cardsPlacement?.find((card) =>
 			[card.slug, card.imageSlug].includes(slug),
 		);
 		return {
