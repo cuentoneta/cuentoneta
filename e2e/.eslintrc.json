@@ -7,6 +7,7 @@
 			"extends": ["plugin:@nx/typescript"],
 			"rules": {
 				"@typescript-eslint/no-extra-semi": "error",
+				"@typescript-eslint/no-explicit-any": "error",  
 				"no-extra-semi": "off"
 			}
 		},
@@ -15,12 +16,15 @@
 			"extends": ["plugin:@nx/javascript"],
 			"rules": {
 				"@typescript-eslint/no-extra-semi": "error",
+				"@typescript-eslint/no-explicit-any": "error",  
 				"no-extra-semi": "off"
 			}
 		},
 		{
 			"files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-			"rules": {}
+			"rules": {
+				"@typescript-eslint/no-explicit-any": "error"  
+			}
 		},
 		{
 			"files": ["src/plugins/index.js"],
