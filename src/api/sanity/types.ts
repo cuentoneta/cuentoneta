@@ -725,7 +725,7 @@ export type FetchLandingPageContentQueryResult = {
 	previews: Array<{
 		slug: string;
 		title: string;
-		description: string;
+		description: string[];
 		language: 'en' | 'es';
 		displayDates: boolean;
 		editionPrefix: string;
@@ -783,44 +783,16 @@ export type FetchLandingPageContentQueryResult = {
 					publishingOrder: number;
 					publishingDate: string;
 					published: boolean;
+					editionPrefix: string;
+					comingNextLabel: string;
+					editionLabel: string;
 					story: {
 						slug: string;
 						title: string;
 						language: 'en' | 'es';
-						badLanguage: boolean;
+						badLanguage: boolean | undefined;
 						categories: null;
-						body: Array<
-							| {
-									asset?: {
-										_ref: string;
-										_type: 'reference';
-										_weak?: boolean;
-										[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
-									};
-									hotspot?: SanityImageHotspot;
-									crop?: SanityImageCrop;
-									_type: 'image';
-									_key: string;
-							  }
-							| {
-									children?: Array<{
-										marks?: Array<string>;
-										text?: string;
-										_type: 'span';
-										_key: string;
-									}>;
-									style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'normal';
-									listItem?: 'bullet';
-									markDefs?: Array<{
-										href?: string;
-										_type: 'link';
-										_key: string;
-									}>;
-									level?: number;
-									_type: 'block';
-									_key: string;
-							  }
-						>;
+						body: BlockContent;
 						originalPublication: string;
 						approximateReadingTime: number;
 						mediaSources: Array<
@@ -886,7 +858,7 @@ export type FetchLandingPageContentQueryResult = {
 	cards: Array<{
 		slug: string;
 		title: string;
-		description: string;
+		description: string[];
 		language: 'en' | 'es';
 		displayDates: boolean;
 		editionPrefix: string;
@@ -912,6 +884,108 @@ export type FetchLandingPageContentQueryResult = {
 				svg: string;
 			};
 		}>;
+		gridConfig: {
+			gridTemplateColumns: string;
+			titlePlacement: {
+				order: number;
+				startCol?: string;
+				endCol?: string;
+				startRow?: string;
+				endRow?: string;
+			};
+			cardsPlacement: Array<{
+				order: number;
+				slug: string;
+				startCol: string;
+				image: {
+					asset?: {
+						_ref: string;
+						_type: 'reference';
+						_weak?: boolean;
+						[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+					};
+					hotspot?: SanityImageHotspot;
+					crop?: SanityImageCrop;
+					_type: 'image';
+				};
+				imageSlug: string;
+				endCol: string;
+				startRow: string;
+				endRow: string;
+				publication: {
+					publishingOrder: number;
+					publishingDate: string;
+					published: boolean;
+					editionPrefix: string;
+					comingNextLabel: string;
+					editionLabel: string;
+					story: {
+						slug: string;
+						title: string;
+						language: 'en' | 'es';
+						badLanguage: boolean | undefined;
+						categories: null;
+						body: BlockContent;
+						originalPublication: string;
+						approximateReadingTime: number;
+						mediaSources: Array<
+							| {
+									_id: string;
+									_type: 'audioRecording';
+									title: string;
+									icon: string;
+							  }
+							| {
+									_id: string;
+									_type: 'spaceRecording';
+									title: string;
+									icon: string;
+							  }
+							| {
+									_id: string;
+									_type: 'youTubeVideo';
+									title: string;
+									icon: string;
+							  }
+						>;
+						author: {
+							slug: Slug;
+							name: string;
+							image: {
+								asset?: {
+									_ref: string;
+									_type: 'reference';
+									_weak?: boolean;
+									[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+								};
+								hotspot?: SanityImageHotspot;
+								crop?: SanityImageCrop;
+								_type: 'image';
+							};
+							nationality: {
+								_id: string;
+								_type: 'nationality';
+								_createdAt: string;
+								_updatedAt: string;
+								_rev: string;
+								country: string;
+								flag: {
+									asset?: {
+										_ref: string;
+										_type: 'reference';
+										_weak?: boolean;
+										[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+									};
+									hotspot?: SanityImageHotspot;
+									crop?: SanityImageCrop;
+									_type: 'image';
+								};
+							};
+						};
+					};
+				};
+			}>;
+		};
 		count: number;
 	}>;
 };
@@ -922,7 +996,7 @@ export type FetchLandingPageContentQueryResult = {
 export type StorylistPreviewQueryResult = {
 	slug: string;
 	title: string;
-	description: string;
+	description: string[];
 	language: 'en' | 'es';
 	displayDates: boolean;
 	editionPrefix: string;
@@ -948,7 +1022,7 @@ export type StorylistPreviewQueryResult = {
 			svg: string;
 		};
 	}>;
-	gridConfig?: {
+	gridConfig: {
 		gridTemplateColumns: string;
 		titlePlacement: {
 			order: number;
@@ -980,44 +1054,16 @@ export type StorylistPreviewQueryResult = {
 				publishingOrder: number;
 				publishingDate: string;
 				published: boolean;
+				editionPrefix: string;
+				comingNextLabel: string;
+				editionLabel: string;
 				story: {
 					slug: string;
 					title: string;
 					language: 'en' | 'es';
-					badLanguage: boolean;
+					badLanguage: boolean | undefined;
 					categories: null;
-					body: Array<
-						| {
-								asset?: {
-									_ref: string;
-									_type: 'reference';
-									_weak?: boolean;
-									[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
-								};
-								hotspot?: SanityImageHotspot;
-								crop?: SanityImageCrop;
-								_type: 'image';
-								_key: string;
-						  }
-						| {
-								children?: Array<{
-									marks?: Array<string>;
-									text?: string;
-									_type: 'span';
-									_key: string;
-								}>;
-								style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'normal';
-								listItem?: 'bullet';
-								markDefs?: Array<{
-									href?: string;
-									_type: 'link';
-									_key: string;
-								}>;
-								level?: number;
-								_type: 'block';
-								_key: string;
-						  }
-					>;
+					body: BlockContent;
 					originalPublication: string;
 					approximateReadingTime: number;
 					mediaSources: Array<
@@ -1084,13 +1130,13 @@ export type StorylistPreviewQueryResult = {
 // Variable: storylistQuery
 // Query: *[_type == 'storylist' && slug.current == $slug][0]{     'slug': slug.current,    title,    description,    language,    displayDates,    editionPrefix,    comingNextLabel,    featuredImage,    'tags': tags[] -> {        title,         'slug': slug.current,         description,         'icon': {'name': icon.name, 'provider': icon.provider, 'svg': icon.svg}    },    'gridConfig': {         'gridTemplateColumns': gridConfig.gridTemplateColumns,        'titlePlacement': gridConfig.titlePlacement,        'cardsPlacement': gridConfig.cardsPlacement[]        {            'order': order,            'slug': publication.story->slug.current,            'startCol': startCol,            'image': image,            'imageSlug': imageSlug.current,            'endCol': endCol,            'startRow': startRow,            'endRow': endRow,            'publication': {                'publishingOrder': publication.publishingOrder,                'publishingDate': publication.publishingDate,                'published': publication.published,                'story': publication.story->{                    'slug': slug.current,                    title,                    language,                    badLanguage,                    categories,                    body[0...3],                    originalPublication,                    approximateReadingTime,                    mediaSources,                	'author': author-> { slug, name, image, nationality-> }                }            }        }    },    'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])}
 export type StorylistQueryResult = {
-	slug: string | null;
-	title: string | null;
-	description: string | null;
-	language: 'en' | 'es' | null;
-	displayDates: boolean | null;
-	editionPrefix: string | null;
-	comingNextLabel: string | null;
+	slug: string;
+	title: string;
+	description: string[];
+	language: 'en' | 'es';
+	displayDates: boolean;
+	editionPrefix: string;
+	comingNextLabel: string;
 	featuredImage: {
 		asset?: {
 			_ref: string;
@@ -1101,30 +1147,30 @@ export type StorylistQueryResult = {
 		hotspot?: SanityImageHotspot;
 		crop?: SanityImageCrop;
 		_type: 'image';
-	} | null;
+	};
 	tags: Array<{
-		title: string | null;
-		slug: string | null;
-		description: string | null;
+		title: string;
+		slug: string;
+		description: string;
 		icon: {
-			name: string | null;
-			provider: string | null;
-			svg: string | null;
+			name: string;
+			provider: string;
+			svg: string;
 		};
-	}> | null;
+	}>;
 	gridConfig: {
-		gridTemplateColumns: string | null;
+		gridTemplateColumns: string;
 		titlePlacement: {
-			order?: number;
+			order: number;
 			startCol?: string;
 			endCol?: string;
 			startRow?: string;
 			endRow?: string;
-		} | null;
+		};
 		cardsPlacement: Array<{
-			order: number | null;
-			slug: string | null;
-			startCol: string | null;
+			order: number;
+			slug: string;
+			startCol: string;
 			image: {
 				asset?: {
 					_ref: string;
@@ -1135,81 +1181,50 @@ export type StorylistQueryResult = {
 				hotspot?: SanityImageHotspot;
 				crop?: SanityImageCrop;
 				_type: 'image';
-			} | null;
-			imageSlug: string | null;
-			endCol: string | null;
-			startRow: string | null;
-			endRow: string | null;
+			};
+			imageSlug: string;
+			endCol: string;
+			startRow: string;
+			endRow: string;
 			publication: {
-				publishingOrder: number | null;
-				publishingDate: string | null;
-				published: boolean | null;
+				publishingOrder: number;
+				publishingDate: string;
+				published: boolean;
+				editionPrefix: string;
+				comingNextLabel: string;
+				editionLabel: string;
 				story: {
-					slug: string | null;
-					title: string | null;
-					language: 'en' | 'es' | null;
-					badLanguage: boolean | null;
+					slug: string;
+					title: string;
+					language: 'en' | 'es';
+					badLanguage: boolean | undefined;
 					categories: null;
-					body: Array<
-						| {
-								children?: Array<{
-									marks?: Array<string>;
-									text?: string;
-									_type: 'span';
-									_key: string;
-								}>;
-								style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'normal';
-								listItem?: 'bullet';
-								markDefs?: Array<{
-									href?: string;
-									_type: 'link';
-									_key: string;
-								}>;
-								level?: number;
-								_type: 'block';
-								_key: string;
-						  }
-						| {
-								asset?: {
-									_ref: string;
-									_type: 'reference';
-									_weak?: boolean;
-									[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
-								};
-								hotspot?: SanityImageHotspot;
-								crop?: SanityImageCrop;
-								_type: 'image';
-								_key: string;
-						  }
-					> | null;
-					originalPublication: string | null;
-					approximateReadingTime: number | null;
+					body: BlockContent;
+					originalPublication: string;
+					approximateReadingTime: number;
 					mediaSources: Array<
 						| {
-								title?: string;
-								url?: string;
+								_id: string;
 								_type: 'audioRecording';
-								_key: string;
+								title: string;
+								icon: string;
 						  }
 						| {
-								postId?: string;
-								title?: string;
-								spaceUrl?: string;
-								duration?: string;
+								_id: string;
 								_type: 'spaceRecording';
-								_key: string;
+								title: string;
+								icon: string;
 						  }
 						| {
-								title?: string;
-								description?: BlockContent;
-								videoId?: string;
+								_id: string;
 								_type: 'youTubeVideo';
-								_key: string;
+								title: string;
+								icon: string;
 						  }
-					> | null;
+					>;
 					author: {
-						slug: Slug | null;
-						name: string | null;
+						slug: Slug;
+						name: string;
 						image: {
 							asset?: {
 								_ref: string;
@@ -1220,15 +1235,15 @@ export type StorylistQueryResult = {
 							hotspot?: SanityImageHotspot;
 							crop?: SanityImageCrop;
 							_type: 'image';
-						} | null;
+						};
 						nationality: {
 							_id: string;
 							_type: 'nationality';
 							_createdAt: string;
 							_updatedAt: string;
 							_rev: string;
-							country?: string;
-							flag?: {
+							country: string;
+							flag: {
 								asset?: {
 									_ref: string;
 									_type: 'reference';
@@ -1239,11 +1254,11 @@ export type StorylistQueryResult = {
 								crop?: SanityImageCrop;
 								_type: 'image';
 							};
-						} | null;
-					} | null;
-				} | null;
+						};
+					};
+				};
 			};
-		}> | null;
+		}>;
 	};
 	count: number;
 };

@@ -95,6 +95,8 @@ export const storylistQuery = groq`*[_type == 'storylist' && slug.current == $sl
                 'publishingOrder': publication.publishingOrder,
                 'publishingDate': publication.publishingDate,
                 'published': publication.published,
+                'editionPrefix': publication.editionPrefix,
+                'comingNextLabel': publication.comingNextLabel
                 'story': publication.story->{
                     'slug': slug.current,
                     title,

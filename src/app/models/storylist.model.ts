@@ -45,7 +45,7 @@ export interface Publication<T extends StoryBase> {
 
 export interface StorylistGridConfig {
 	gridTemplateColumns: string;
-	titlePlacement: GridItemPlacementConfig;
+	titlePlacement: Omit<GridItemPlacementConfig, 'slug' | 'imageSLug' | 'publication' | 'image'>;
 	cardsPlacement: GridItemPlacementConfig[];
 }
 
