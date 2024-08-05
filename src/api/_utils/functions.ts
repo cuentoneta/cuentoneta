@@ -60,7 +60,7 @@ export async function mapStorylist(result: StorylistQueryResult): Promise<Storyl
 	// en GridItemPlacementConfig ya que al usar Publication<StoryPreview> el tipado espera
 	// propiedades como resources, media y paragraphs que no pedimos en la query ni usamos.
 	const cardsPlacement =
-		result.gridConfig.cardsPlacement.map((gc) => {
+		result.gridConfig?.cardsPlacement.map((gc) => {
 			return {
 				...gc,
 				publication: {
