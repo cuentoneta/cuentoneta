@@ -37,8 +37,8 @@ Si deseas contribuir a La Cuentoneta te recomendamos leer la [guía de contribuc
 
 En caso que seas desarrolladora o desarrollador, encontrarás en ese documento información sobre todos los aspectos
 técnicos del proyecto, incluyendo cómo instalar el proyecto localmente para que puedas probarlo y realizar tus
-contribuciones de código. También puedes acceder a la [documentación del proceso de desarrollo]
-[doc-guia-de-desarrollo] para interiorizarte sobre cómo gestionamos el desarrollo del
+contribuciones de código. También puedes acceder a la [documentación del proceso de desarrollo][doc-guia-de-desarrollo]
+para interiorizarte sobre cómo gestionamos el desarrollo del
 proyecto y decidimos sobre los aspectos prácticos y las herramientas que utilizamos para el mismo.
 
 Si deseas visualizar los ítems de trabajo para principiantes en el proyecto, podés dirigirte a la [página de
@@ -180,7 +180,7 @@ Este repositorio y el contenido de la web de La Cuentoneta se publican bajo lice
 [doc-roadmap]: ROADMAP.md
 [doc-mvv]: MVV.md
 [doc-lic]: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
-[doc-guia-de-desarrollo]: https://github.com/cuentoneta/cuentoneta/blob/develop/DEVELOPMENT_GUIDE.md
+[doc-guia-de-desarrollo]: https://github.com/cuentoneta/cuentoneta/blob/develop/docs/DEVELOPMENT_GUIDE.md
 
 <!-- Enlaces a Discord -->
 
