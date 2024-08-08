@@ -8,7 +8,7 @@
 			"rules": {
 				"@typescript-eslint/no-extra-semi": "error",
 				"no-extra-semi": "off",
-				"@typescript-eslint/no-explicit-any": "error"  // Added rule
+				"@typescript-eslint/no-explicit-any": "error" 
 			}
 		},
 		{
