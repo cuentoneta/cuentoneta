@@ -8,47 +8,42 @@
 
 ---
 
-**La Cuentoneta** es un proyecto abierto y sin fines de lucro que busca generar un espacio comunitario para difundir escritos en literatura breve. Esta iniciativa fue gestada originalmente por un grupo de amigas y amigos residentes de la ciudad de Santa Fe, Argentina durante los últimos días de diciembre de 2021.
+**La Cuentoneta** is a non-profit open-source project aimed at creating a community space to share short literature. This initiative was originally conceived by a group of friends from Santa Fe, Argentina during the last days of December 2021.
 
-La misión de **La Cuentoneta** es construir colectivamente una plataforma accesible, amigable y gamificada que sea útil para fomentar, compartir y disfrutar la lectura digital. Buscamos lograrlo a través de la publicación de escritos breves en _storylists_ temáticas, emulando las playlists que utilizan plataformas de audio como Spotify y de video como YouTube; intentando resignificar el formato de antología de relatos breves.
+The mission of **La Cuentoneta** is to collectively build an accessible, user-friendly, and gamified platform to promote, share, and enjoy digital reading. We aim to achieve this through the publication of short writings in thematic _storylists_, emulating the playlists used by audio platforms like Spotify and video platforms like YouTube, attempting to redefine the anthology format of short stories.
 
 ---
 
-## Índice de Contenidos
+## Table of Contents
 
-- [Hoja de ruta](#hoja-de-ruta)
-- [Cómo contribuir](#cómo-contribuir)
-- [Misión, Visión y Valores](#misión-visión-y-valores)
-- [Comunidad](#comunidad)
-- [Accesibilidad](#accesibilidad)
-- [Contribuyentes](#contribuyentes)
-- [Patrocinadores](#patrocinadores)
+- [Roadmap](#roadmap)
+- [How to Contribute](#how-to-contribute)
+- [Mission, Vision, and Values](#mission-vision-and-values)
+- [Community](#community)
+- [Accessibility](#accessibility)
+- [Contributors](#contributors)
+- [Sponsors](#sponsors)
 - [Staff](#staff)
-- [Licencias](#licencias)
-- [Links de interés](#links-de-interés)
+- [Licenses](#licenses)
+- [Useful Links](#useful-links)
 
-## Hoja de ruta
+## Roadmap
 
-Puedes acceder a la hoja de ruta (roadmap) del proyecto en [este enlace][doc-roadmap]. Allí podrás visualizar los planes de las futuras versiones de la plataforma más las storylists a agregar a La Cuentoneta.
+You can access the project's roadmap at [this link][doc-roadmap]. There you will be able to view plans for future versions of the platform and the storylists to be added to La Cuentoneta.
 
-## Cómo contribuir
+## How to Contribute
 
-Si deseas contribuir a La Cuentoneta te recomendamos leer la [guía de contribución][doc-contributing] para que puedas entender cómo puedes hacerlo. Allí encontrarás información sobre cómo reportar errores, proponer nuevas características, sugerir o sumar nuevos contenidos y cómo contribuir con código al proyecto.
+If you want to contribute to La Cuentoneta, we recommend reading the [contribution guide][doc-contributing] to understand how you can do so. There you will find information on how to report bugs, propose new features, suggest or add new content, and contribute code to the project.
 
-En caso que seas desarrolladora o desarrollador, encontrarás en ese documento información sobre todos los aspectos
-técnicos del proyecto, incluyendo cómo instalar el proyecto localmente para que puedas probarlo y realizar tus
-contribuciones de código. También puedes acceder a la [documentación del proceso de desarrollo]
-[doc-guia-de-desarrollo] para interiorizarte sobre cómo gestionamos el desarrollo del
-proyecto y decidimos sobre los aspectos prácticos y las herramientas que utilizamos para el mismo.
+If you are a developer, you will find information about all technical aspects of the project, including how to install the project locally to test it and make your code contributions. You can also access the [development process documentation][doc-guia-de-desarrollo] to learn about how we manage the project’s development and decide on practical aspects and tools used.
 
-Si deseas visualizar los ítems de trabajo para principiantes en el proyecto, podés dirigirte a la [página de
-contribución del proyecto](https://github.com/cuentoneta/cuentoneta/contribute).
+To view beginner tasks for the project, you can visit the [project contribution page](https://github.com/cuentoneta/cuentoneta/contribute).
 
-## Misión, Visión y Valores
+## Mission, Vision, and Values
 
-La misión, la visión y los valores de La Cuentoneta nos proporcionan el marco de referencia para la toma de decisiones y el desarrollo de las acciones del proyecto a largo plazo. Pueden consultarse los MMVs encuentran en [este enlace][doc-mvv].
+The mission, vision, and values of La Cuentoneta provide the framework for decision-making and long-term project actions. They can be consulted at [this link][doc-mvv].
 
-## Comunidad
+## Community
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/78808163/198993731-299e973d-8f3b-4a6c-a445-b2b77e0b3286.svg">
@@ -56,7 +51,7 @@ La misión, la visión y los valores de La Cuentoneta nos proporcionan el marco 
   <img alt="logo-frontendcafe" src="https://user-images.githubusercontent.com/78808163/198993731-299e973d-8f3b-4a6c-a445-b2b77e0b3286.svg">
 </picture>
 
-Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. Es requerido unirte a nuestro [server][dc-fec] y buscar el canal [#🚐 | la-cuentoneta][dc-channel]. Allí vas a poder escribir consultas, realizar propuestas y compartir ideas para el proyecto. El código de conducta de este proyecto es extensible también a tu participación en el server de [FrontendCafé en Discord][dc-fec].
+This project is developed with the participation and support of FrontendCafé. You are required to join our [server][dc-fec] and look for the [#🚐 | la-cuentoneta][dc-channel] channel. There you can write queries, make proposals, and share ideas for the project. The code of conduct for this project is also extended to your participation in the [FrontendCafé Discord server][dc-fec].
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://forgoodfirstissue.github.com/for-good-first-issue.svg">
@@ -64,33 +59,31 @@ Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. E
   <img alt="logo-frontendcafe" src="https://github.com/cuentoneta/cuentoneta/assets/32349705/786d9201-e449-49a6-b9e2-ebf5f9281abc">
 </picture>
 
-La Cuentoneta también es parte de [For Good First Issue](https://forgoodfirstissue.github.com/), una iniciativa que busca generar una lista curada de proyectos open-source con foco en desarrollos del tipo [Bienes Públicos Digitales (DPGs, Digital Public Goods)
-](https://digitalpublicgoods.net/digital-public-goods/), los cuales además se encuentran disponibles para colaboración abierta.
+La Cuentoneta is also part of [For Good First Issue](https://forgoodfirstissue.github.com/), an initiative that seeks to generate a curated list of open-source projects focused on [Digital Public Goods (DPGs)](https://digitalpublicgoods.net/digital-public-goods/), which are also available for open collaboration.
 
 <picture>
     <img height="96" width="96" alt="logo-tertulia-literaria" src="https://github.com/cuentoneta/cuentoneta/assets/32349705/7ca8a3d3-ed76-4785-a6ef-f3f7498b94c3">
 </picture>
 
-La comunidad [Tertulia Literaria](https://discord.gg/tertulia-literaria-795704695485235231), enfocada a compartir conocimiento, lecturas y en general la grata convivencia, colabora activamente con la selección de historias, la generación de iniciativas y la confección de storylists en La Cuentoneta.
+The [Tertulia Literaria](https://discord.gg/tertulia-literaria-795704695485235231) community, focused on sharing knowledge, readings, and pleasant social interaction, actively collaborates with the selection of stories, the generation of initiatives, and the creation of storylists in La Cuentoneta.
 
 ---
 
-## Accesibilidad
+## Accessibility
 
-Quienes llevamos adelante este proyecto asumimos un compromiso a hacer todo lo posible por garantizar la accesibilidad digital en el uso de la plataforma, lo cual abarca e incluye a brindar facilidad de acceso para personas con discapacidades.
-Para lograrlo, uno de los objetivos del proyecto es la mejora continua de la experiencia de usuario y el logro de aplicación de estándares de accesibilidad.
+We are committed to doing everything possible to ensure digital accessibility for using the platform, including providing ease of access for people with disabilities. One of the project's goals is the continuous improvement of the user experience and achieving the application of accessibility standards.
 
-Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos para que diseñadores y desarrolladores mejoren la accesibilidad para las personas con discapacidades. Éste define tres niveles de conformidad: Nivel A, Nivel AA y Nivel AAA.
+The Web Content Accessibility Guidelines (WCAG) define the requirements for designers and developers to improve accessibility for people with disabilities. These define three levels of conformance: Level A, Level AA, and Level AAA.
 
-**En una primera etapa, los requerimientos a la hora de contribuir con este proyecto buscan cumplir los requisitos [WCAG 2.1 nivel A][wcag].**
+**In the initial stage, the requirements for contributing to this project seek to meet the [WCAG 2.1 Level A][wcag] standards.**
 
-> 💡 Si encontrás barreras de accesibilidad en la web de La Cuentoneta, podés informarlo enviando un email a [contacto@cuentoneta.ar][email] o abriendo un issue. Para hacerlo, necesitás leer la documentación sobre [cómo contribuir][doc-contributing].
+> 💡 If you find accessibility barriers on the La Cuentoneta website, you can report it by sending an email to [contacto@cuentoneta.ar][email] or by opening an issue. To do so, you need to read the documentation on [how to contribute][doc-contributing].
 
 ---
 
-## Contribuyentes
+## Contributors
 
-### Desarrolladores
+### Developers
 
 - Ramiro Olivencia (**[@rolivencia](https://github.com/rolivencia)**)
 - Erik Giovani (**[@erikgiovani](https://github.com/erikgiovani)**)
@@ -98,7 +91,7 @@ Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos 
 - Juan Blas Tschopp (**[@juanblas09](https://github.com/juanblas09)**)
 - Diego Franchina (**[@soydiego](https://github.com/SoyDiego)**)
 - Jimer Espinoza (**[@jimersamuel](https://github.com/JimerSamuel)**)
-- Mia Ramos (**[@MiaPurpleFate](https://twitter.com.com/MiaPurpleFate)**)
+- Mia Ramos (**[@MiaPurpleFate](https://twitter.com/MiaPurpleFate)**)
 - Wilson Lasso (**[@wilago](https://github.com/wilago)**)
 - Gustavo Petruzzi (**[@gustavoPetruzzi](https://github.com/gustavoPetruzzi)**)
 - Juan Romero (**[@Addin](https://github.com/Addin)**)
@@ -106,17 +99,17 @@ Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos 
 - John Angel (**[@Jeangel](https://github.com/Jeangel)**)
 - Luciano Aieta (**[@lgaieta](https://github.com/lgaieta)**)
 
-### Diseño UX/UI
+### UX/UI Design
 
 - Maxi Cris (**[@maxicris](https://github.com/maxicris)**)
 
-### Escritura de textos
+### Text Writing
 
 - Sofía Abramovich
 - Marian Erro (**[@marianerro](https://twitter.com/MarianaErro)**)
 - Elk A. (**[@A-Elkkk-o-k](https://www.wattpad.com/user/A-Elkkk-o-k)**)
 
-### Selección, Transcripción y Curación de contenido
+### Content Selection, Transcription, and Curation
 
 - Patricio Decoud (**[@arroba_pato](https://twitter.com/arroba_pato)**)
 - Juan Balmaceda (**[@balm4ceda](https://twitter.com/balm4ceda)**)
@@ -133,38 +126,38 @@ Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos 
 
 ---
 
-## Patrocinadores
+## Sponsors
 
-¿Te interesa patrocinar o promocionar este proyecto? ¡Comunicate con nosotros!
+Are you interested in sponsoring or promoting this project? Contact us!
 
 ---
 
 ## Staff
 
-_Desarrollo y administración del repositorio_
+_Development and Repository Administration_
 
 Ramiro Olivencia (**[@rolivencia](https://github.com/rolivencia)**)
 
-_Diseño UX/UI_
+_UX/UI Design_
 
 Maxi Cris (**[@maxicris](https://github.com/maxicris)**)
 
 ---
 
-## Licencias
+## Licenses
 
-Este repositorio y el contenido de la web de La Cuentoneta se publican bajo licencia [Atribución-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)][doc-lic].
+This repository and the content of the La Cuentoneta website are published under the [Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)][doc-lic] license.
 
 ---
 
-## Links de interés
+## Useful Links
 
 - [La Cuentoneta][web]
 - [FrontendCafé](https://frontend.cafe/)
-- El presente documento toma como modelo el README.md del proyecto [Juguetear][github-juguetear], otra iniciativa en la que también participa [FrontendCafé][web-fec].
+- This document models its README.md after the [Juguetear][github-juguetear] project, another initiative in which [FrontendCafé][web-fec] also participates.
 
-<!-- Listado de enlaces de referencia, mantenerlos actualizados en cada archivo -->
-<!-- Enlaces a las paginas web del proyecto -->
+<!-- List of reference links, keep them updated in each file -->
+<!-- Links to the project's web pages -->
 
 [web]: https://cuentoneta.ar
 [web-staging]: https://cuentoneta-staging.vercel.app
@@ -172,32 +165,32 @@ Este repositorio y el contenido de la web de La Cuentoneta se publican bajo lice
 [web-fec]: https://frontend.cafe/
 [github-juguetear]: https://github.com/Juguetear/juguetear-web
 
-<!-- Enlaces a otros documentos  -->
+<!-- Links to other documents -->
 
 [doc-code_of_conduct]: CODE_OF_CONDUCT.md
 [doc-changelog]: CHANGELOG.md
 [doc-contributing]: CONTRIBUTING.md
 [doc-roadmap]: ROADMAP.md
 [doc-mvv]: MVV.md
-[doc-lic]: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+[doc-lic]: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en
 [doc-guia-de-desarrollo]: https://github.com/cuentoneta/cuentoneta/blob/develop/DEVELOPMENT_GUIDE.md
 
-<!-- Enlaces a Discord -->
+<!-- Links to Discord -->
 
 [dc-channel]: https://discord.com/channels/594363964499165194/1109220285841944586
 [dc-fec]: https://discord.com/invite/frontendcafe
 
-<!-- Enlaces al repositorio en Github -->
+<!-- Links to the GitHub repository -->
 
 [gh-issues]: https://github.com/rolivencia/cuentoneta/issues
 
-<!-- Recursos y otros -->
+<!-- Resources and others -->
 
 [email]: mailto:contacto@cuentoneta.ar
 [figma]: https://www.figma.com/file/BIlQ6U3eh3M8vtYQt3vLNW/La-Cuentoneta-v2
-[wcag]: https://www.w3.org/WAI/standards-guidelines/wcag/es
+[wcag]: https://www.w3.org/WAI/standards-guidelines/wcag/en
 
-<!-- Enlaces a Redes Sociales -->
+<!-- Links to Social Media -->
 
 [instagram-cuentoneta]: https://instagram.com/cuentoneta
 [twitter-cuentoneta]: https://twitter.com/cuentoneta
