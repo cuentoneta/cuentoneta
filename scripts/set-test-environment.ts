@@ -6,7 +6,7 @@
  * Autor: @rolivencia
  */
 
-// NodeJS & env
+// NodeJS
 import { existsSync, mkdirSync, writeFile } from 'fs';
 import ErrnoException = NodeJS.ErrnoException;
 
@@ -43,7 +43,5 @@ writeFile(targetPath, environmentFileContent, { flag: 'w' }, function (err: Errn
 		return;
 	}
 	console.log(`Variables de entorno escritas en ${targetPath}`);
-	console.log('Ambiente de Vercel - VERCEL_ENV = ', process.env['VERCEL_ENV']);
-	console.log('URL de branch de Vercel - VERCEL_BRANCH_URL = ', process.env['VERCEL_BRANCH_URL']);
 	console.log('URL de API = ', apiUrl);
 });
