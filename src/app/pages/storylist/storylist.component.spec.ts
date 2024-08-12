@@ -5,7 +5,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 
 // 3rd party modules
-import { render, RenderResult } from '@testing-library/angular';
+import { render } from '@testing-library/angular';
 import { provideMock } from '@testing-library/angular/jest-utils';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
@@ -21,10 +21,8 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 import { StorylistComponent } from './storylist.component';
 
 xdescribe('StorylistComponent', () => {
-	let componentRender: RenderResult<StorylistComponent, StorylistComponent>;
-
-	beforeEach(async () => {
-		componentRender = await render(StorylistComponent, {
+	const setup = async () => {
+		return await render(StorylistComponent, {
 			componentImports: [
 				CommonModule,
 				HttpClientTestingModule,
@@ -34,10 +32,11 @@ xdescribe('StorylistComponent', () => {
 			],
 			componentProviders: [provideMock(FetchContentDirective), provideMock(MetaTagsDirective)],
 		});
-	});
+	};
 
 	it('should create', () => {
-		expect(componentRender).toBeTruthy();
+		const view = setup();
+		expect(view).toBeTruthy();
 	});
 });
 
