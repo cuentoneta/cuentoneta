@@ -5,14 +5,13 @@ export default {
 	setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
 	coverageDirectory: './coverage/cuentoneta',
 	transform: {
-		'\\.(html|svg)$': [
-			'ts-jest',
+		'^.+\\.(ts|mjs|js|html)$': [
+			'jest-preset-angular',
 			{
-				tsConfig: '<rootDir>/tsconfig.spec.json',
+				tsconfig: '<rootDir>/tsconfig.spec.json',
 				stringifyContentPathRegex: '\\.(html|svg)$',
 			},
 		],
-		'^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
 	snapshotSerializers: [
@@ -20,5 +19,5 @@ export default {
 		'jest-preset-angular/build/serializers/ng-snapshot',
 		'jest-preset-angular/build/serializers/html-comment',
 	],
-	testMatch: ['**/+(*.)+(spec|test).[tj]s?(x)'],
+	testMatch: ['<rootDir>/src/**/__tests__/**/*.[jt]s?(x)', '<rootDir>/src/**/*(*.)@(spec|test).[jt]s?(x)'],
 };
