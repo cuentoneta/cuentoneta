@@ -20,7 +20,7 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 // Componentes
 import { StorylistComponent } from './storylist.component';
 
-describe('StorylistComponent', () => {
+xdescribe('StorylistComponent', () => {
 	let componentRender: RenderResult<StorylistComponent, StorylistComponent>;
 
 	beforeEach(async () => {

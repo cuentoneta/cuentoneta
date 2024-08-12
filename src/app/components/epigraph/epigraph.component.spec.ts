@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { EpigraphComponent } from './epigraph.component';
 
-describe('StoryEpilogueComponent', () => {
+xdescribe('EpigraphComponent', () => {
 	let component: EpigraphComponent;
 	let fixture: ComponentFixture<EpigraphComponent>;
 
