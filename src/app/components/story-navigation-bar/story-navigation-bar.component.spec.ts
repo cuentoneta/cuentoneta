@@ -4,8 +4,7 @@ import { render } from '@testing-library/angular';
 
 describe('StoryNavigationBarComponent', () => {
 	it('should create', async () => {
-		const component = await render(StoryNavigationBarComponent);
-
-		expect(component).toBeTruthy();
+		const view = await render(StoryNavigationBarComponent);
+		expect(view).toBeTruthy();
 	});
 });

@@ -4,8 +4,7 @@ import { PublicationCardComponent } from './publication-card.component';
 
 xdescribe('PublicationCardComponent', () => {
 	it('should create', async () => {
-		const component = await render(PublicationCardComponent);
-
-		expect(component).toBeTruthy();
+		const view = await render(PublicationCardComponent);
+		expect(view).toBeTruthy();
 	});
 });

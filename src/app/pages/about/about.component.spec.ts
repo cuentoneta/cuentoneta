@@ -4,8 +4,8 @@ import { AboutComponent } from './about.component';
 
 describe('AboutComponent', () => {
 	it('should create', async () => {
-		const component = await render(AboutComponent);
+		const view = await render(AboutComponent);
 
-		expect(component).toBeTruthy();
+		expect(view).toBeTruthy();
 	});
 });

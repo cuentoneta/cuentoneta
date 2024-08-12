@@ -4,8 +4,7 @@ import { StoryEditionDateLabelComponent } from './story-edition-date-label.compo
 
 describe('StoryEditionDateLabelComponent', () => {
 	it('should create', async () => {
-		const component = await render(StoryEditionDateLabelComponent);
-
-		expect(component).toBeTruthy();
+		const view = await render(StoryEditionDateLabelComponent);
+		expect(view).toBeTruthy();
 	});
 });
