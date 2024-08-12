@@ -55,30 +55,47 @@ export function mapResources(resources: Resource[]) {
 	);
 }
 
+export async function mapStorylistTeaser(result: StorylistQueryResult): Promise<StorylistDTO> {
+	return {
+		...result,
+		featuredImage: !result.featuredImage ? undefined : urlFor(result.featuredImage).url(),
+		images: [],
+		publications: [],
+		gridConfig: {
+			...result.gridConfig,
+			cardsPlacement: [],
+		},
+	};
+}
+
 export async function mapStorylist(result: StorylistQueryResult): Promise<StorylistDTO> {
 	// TODO: En otra issue habría que crear un tipo distinto para la propiedad publication
 	// en GridItemPlacementConfig ya que al usar Publication<StoryPreview> el tipado espera
 	// propiedades como resources, media y paragraphs que no pedimos en la query ni usamos.
-	const cardsPlacement =
-		result.gridConfig.cardsPlacement.map((gc) => {
-			return {
-				...gc,
-				publication: {
-					...gc.publication,
-					story: {
-						...gc.publication.story,
-						resources: [],
-						media: [],
-						paragraphs: [],
-						author: mapAuthor(gc.publication.story.author),
+	const cardsPlacement = result.gridConfig.cardsPlacement ?? [];
+	const publicationCards =
+		cardsPlacement
+			.filter((gc) => gc.slug)
+			.map((gc) => {
+				return {
+					...gc,
+					// TODO: Remover propiedades hardcoded al descartar gridConfig
+					startCol: 'auto',
+					endCol: 'span 6',
+					publication: {
+						...gc.publication,
+						story: {
+							...gc.publication.story,
+							resources: [],
+							media: [],
+							paragraphs: [],
+							author: mapAuthor(gc.publication.story.author),
+						},
 					},
-				},
-			};
-		}) ?? [];
+				};
+			}) ?? [];
 
-	const storylistImages = cardsPlacement.filter((config) => !!config.imageSlug) ?? [];
-
-	const rawPublications = cardsPlacement
+	const rawPublications = publicationCards
 		.filter((cardPlacement) => !!cardPlacement.publication && !!cardPlacement.publication.story)
 		.map((cardPlacement) => cardPlacement.publication);
 	const publications: Publication<StoryPreview>[] = [];
@@ -103,17 +120,11 @@ export async function mapStorylist(result: StorylistQueryResult): Promise<Storyl
 	return {
 		...result,
 		featuredImage: !result.featuredImage ? undefined : urlFor(result.featuredImage).url(),
-		images:
-			storylistImages.length === 0
-				? []
-				: storylistImages.map((card) => ({
-						slug: card.imageSlug,
-						url: urlFor(card.image).url(),
-					})),
+		images: [],
 		publications,
 		gridConfig: {
 			...result.gridConfig,
-			cardsPlacement,
+			cardsPlacement: publicationCards,
 		},
 	};
 }
