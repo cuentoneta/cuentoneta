@@ -96,7 +96,7 @@ export const storylistQuery = groq`*[_type == 'storylist' && slug.current == $sl
                 'publishingDate': publication.publishingDate,
                 'published': publication.published,
                 'editionPrefix': publication.editionPrefix,
-                'comingNextLabel': publication.comingNextLabel
+                'comingNextLabel': publication.comingNextLabel,
                 'story': publication.story->{
                     'slug': slug.current,
                     title,
@@ -113,5 +113,5 @@ export const storylistQuery = groq`*[_type == 'storylist' && slug.current == $sl
         }
     },
     'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])
-}
+    }
 `;
