@@ -1,36 +1,39 @@
-<article [attr.aria-busy]="!storylist" class="stories-card-container grid grid-cols-1 gap-y-5 md:grid-cols-12 md:gap-8">
+<article
+	[attr.aria-busy]="!storylist()"
+	class="stories-card-container grid grid-cols-1 gap-y-5 md:grid-cols-12 md:gap-8"
+>
 	<ng-container *ngTemplateOutlet="storylistTemplate"> </ng-container>
 </article>
 
 <ng-template #storylistTemplate>
 	<!-- Renderizado de título y descripción -->
-	@if (displayTitle) {
-		@if (!!storylist) {
+	@if (displayTitle()) {
+		@if (!!storylist()) {
 			<div
-				[lang]="storylist.language"
+				[lang]="storylist()?.language"
 				[ngStyle]="{
-					order: storylist.gridConfig?.titlePlacement?.order,
-					'grid-column-start': storylist.gridConfig?.titlePlacement?.startCol,
-					'grid-column-end': storylist.gridConfig?.titlePlacement?.endCol
+					order: storylist()?.gridConfig?.titlePlacement?.order,
+					'grid-column-start': storylist()?.gridConfig?.titlePlacement?.startCol,
+					'grid-column-end': storylist()?.gridConfig?.titlePlacement?.endCol
 				}"
 				class="xs:max-md:!col-span-1 xs:max-sm:!order-1"
 			>
 				<h1 class="h1 mb-5">
 					<a
-						[ngClass]="{ 'hover:text-interactive-500': canNavigateToStorylist }"
-						[routerLink]="canNavigateToStorylist ? '/' + appRoutes.StoryList + '/' + storylist.slug : null"
+						[ngClass]="{ 'hover:text-interactive-500': canNavigateToStorylist() }"
+						[routerLink]="canNavigateToStorylist() ? '/' + appRoutes.StoryList + '/' + storylist()?.slug : null"
 						class="disabled:pointer-events-none disabled:cursor-default"
-						>{{ storylist.title }}</a
+						>{{ storylist()?.title }}</a
 					>
 				</h1>
-				<h3 class="h3 subtitle text-gray-600">{{ storylist.description }}</h3>
+				<h3 class="h3 subtitle text-gray-600">{{ storylist()?.description }}</h3>
 			</div>
 		} @else {
 			<div
 				[ngStyle]="{
-					order: skeletonConfig?.titlePlacement?.order,
-					'grid-column-start': skeletonConfig?.titlePlacement?.startCol,
-					'grid-column-end': skeletonConfig?.titlePlacement?.endCol
+					order: skeletonConfig()?.titlePlacement?.order,
+					'grid-column-start': skeletonConfig()?.titlePlacement?.startCol,
+					'grid-column-end': skeletonConfig()?.titlePlacement?.endCol
 				}"
 				class="xs:max-md:col-span-1 xs:max-sm:!order-1"
 			>
@@ -59,8 +62,8 @@
 	}
 
 	<!-- Renderizado de imágenes alusivas -->
-	@if (!!storylist?.images) {
-		@for (image of storylist?.images; track $index) {
+	@if (!!storylist()?.images) {
+		@for (image of storylist()?.images; track $index) {
 			<div [ngStyle]="imagesCardConfig[image.slug]" class="xs:max-md:!col-span-1">
 				<img [src]="image.url" class="rounded-lg" alt="" />
 			</div>
@@ -68,11 +71,12 @@
 	}
 
 	<!-- Renderizado de tarjetas de stories -->
-	<ng-container *ngTemplateOutlet="storylist?.publications ? publicationsTemplate : skeletonsTemplate"> </ng-container>
+	<ng-container *ngTemplateOutlet="storylist()?.publications ? publicationsTemplate : skeletonsTemplate">
+	</ng-container>
 </ng-template>
 
 <ng-template #skeletonsTemplate>
-	@for (skeleton of skeletonConfig?.cardsPlacement; track $index) {
+	@for (skeleton of skeletonConfig()?.cardsPlacement; track $index) {
 		@if (!!skeleton.slug) {
 			<cuentoneta-story-card-skeleton
 				[ngStyle]="{
@@ -104,8 +108,8 @@
 </ng-template>
 
 <ng-template #publicationsTemplate>
-	@if (!!storylist) {
-		@for (publication of storylist.publications; track $index) {
+	@if (!!storylist()) {
+		@for (publication of storylist()?.publications; track $index) {
 			<div
 				[ngStyle]="storiesCardConfig[publication.story.slug]"
 				[class.disabled]="!publication || !publication.published"
@@ -119,7 +123,7 @@
 							router.createUrlTree(['/', this.appRoutes.Story, publication.story.slug], {
 								queryParams: {
 									navigation: 'storylist',
-									navigationSlug: storylist.slug
+									navigationSlug: storylist()?.slug
 								}
 							})
 						"

@@ -1,6 +1,6 @@
 import { Component, effect, inject, input, signal } from '@angular/core';
 import { NavigationFrameService } from '../providers/navigation-frame.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { FetchContentDirective } from '../directives/fetch-content.directive';
 import { NavigationBarConfig } from '../components/storylist-navigation-frame/storylist-navigation-frame.component';
 
@@ -14,7 +14,6 @@ export abstract class NavigationFrameComponent {
 	// Providers
 	protected fetchContentDirective = inject(FetchContentDirective);
 	protected router = inject(Router);
-	protected activatedRoute = inject(ActivatedRoute);
 	private navigationFrameService = inject(NavigationFrameService);
 
 	// Inputs

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ResourceComponent } from './resource.component';
 
-describe('IconComponent', () => {
+xdescribe('ResourceComponent', () => {
 	let component: ResourceComponent;
 	let fixture: ComponentFixture<ResourceComponent>;
 

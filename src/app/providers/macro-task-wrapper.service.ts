@@ -93,11 +93,9 @@ export class MacroTaskWrapperService implements OnDestroy {
 
 	awaitMacroTasksLogged(label: string, stackTrace?: string): Subscription {
 		console.error('MACRO START');
-		return this.awaitMacroTasks$(label, stackTrace).subscribe(
-			() => {},
-			() => {},
-			() => console.error('MACRO DONE'),
-		);
+		return this.awaitMacroTasks$(label, stackTrace).subscribe({
+			complete: () => console.error('MACRO DONE'),
+		});
 	}
 
 	/**
@@ -136,7 +134,7 @@ export class MacroTaskWrapperService implements OnDestroy {
 		}
 
 		// Backup type check
-		if ('then' in request && typeof (request as any).then === 'function') {
+		if ('then' in request && typeof request['then'] === 'function') {
 			return this.wrapMacroTaskPromise(label, request, warnIfTakingTooLongThreshold, stackTrace);
 		} else {
 			return this.wrapMacroTaskObservable(
@@ -169,11 +167,11 @@ export class MacroTaskWrapperService implements OnDestroy {
 
 		// Start timer for warning
 		let hasTakenTooLong = false;
-		let takingTooLongTimeout: any = null;
-		if (warnIfTakingTooLongThreshold! > 0 && takingTooLongTimeout == null) {
+		let takingTooLongTimeout: NodeJS.Timeout | null = null;
+		if (warnIfTakingTooLongThreshold && warnIfTakingTooLongThreshold > 0) {
 			takingTooLongTimeout = setTimeout(() => {
 				hasTakenTooLong = true;
-				clearTimeout(takingTooLongTimeout);
+				clearTimeout(takingTooLongTimeout as NodeJS.Timeout);
 				takingTooLongTimeout = null;
 				console.warn(
 					`wrapMacroTaskPromise: Promise is taking too long to complete. Longer than ${warnIfTakingTooLongThreshold}ms.`,
@@ -182,16 +180,22 @@ export class MacroTaskWrapperService implements OnDestroy {
 				if (stackTrace) {
 					console.warn('Task Stack Trace: ', stackTrace);
 				}
-			}, warnIfTakingTooLongThreshold!);
+			}, warnIfTakingTooLongThreshold);
 		}
 
 		// Start the task
 		const task: MacroTask = Zone.current.scheduleMacroTask(
 			'wrapMacroTaskPromise',
-			() => {},
+			() => {
+				return;
+			},
 			{},
-			() => {},
-			() => {},
+			() => {
+				return;
+			},
+			() => {
+				return;
+			},
 		);
 		this.macroTaskStarted();
 
@@ -274,7 +278,7 @@ export class MacroTaskWrapperService implements OnDestroy {
 
 				/** When task is null it means it hasn't been scheduled */
 				let task: MacroTask | null = null;
-				let takingTooLongTimeout: any = null;
+				let takingTooLongTimeout: NodeJS.Timeout | null = null;
 				let hasTakenTooLong = false;
 
 				/** Function to call when we have determined the request is complete */
@@ -300,7 +304,7 @@ export class MacroTaskWrapperService implements OnDestroy {
 				/** Used if the task is cancelled */
 				const unsubSubject = new Subject();
 				function unsub() {
-					// @ts-ignore
+					// @ts-expect-error - No value is passed as a parameter for the subject
 					unsubSubject.next();
 					unsubSubject.complete();
 				}
@@ -312,9 +316,13 @@ export class MacroTaskWrapperService implements OnDestroy {
 							if (task == null) {
 								task = Zone.current.scheduleMacroTask(
 									'wrapMacroTaskObservable',
-									() => {},
+									() => {
+										return;
+									},
 									{},
-									() => {},
+									() => {
+										return;
+									},
 									unsub,
 								);
 							}
@@ -324,10 +332,14 @@ export class MacroTaskWrapperService implements OnDestroy {
 							}
 
 							// Start timer for warning
-							if (warnIfTakingTooLongThreshold! > 0 && takingTooLongTimeout == null) {
+							if (
+								warnIfTakingTooLongThreshold != null &&
+								warnIfTakingTooLongThreshold > 0 &&
+								takingTooLongTimeout == null
+							) {
 								takingTooLongTimeout = setTimeout(() => {
 									hasTakenTooLong = true;
-									clearTimeout(takingTooLongTimeout);
+									clearTimeout(takingTooLongTimeout as NodeJS.Timeout);
 									takingTooLongTimeout = null;
 									console.warn(
 										`wrapMacroTaskObservable: Observable is taking too long to complete. Longer than ${warnIfTakingTooLongThreshold}ms.`,
@@ -336,7 +348,7 @@ export class MacroTaskWrapperService implements OnDestroy {
 									if (stackTrace) {
 										console.warn('Task Stack Trace: ', stackTrace);
 									}
-								}, warnIfTakingTooLongThreshold!);
+								}, warnIfTakingTooLongThreshold);
 							}
 						}),
 					)
@@ -374,7 +386,7 @@ export class MacroTaskWrapperService implements OnDestroy {
 	}
 }
 
-export type IWaitForObservableIsDoneOn<T = any> =
+export type IWaitForObservableIsDoneOn<T> =
 	| 'complete'
 	| 'first-emit'
 	| { emitCount: number }

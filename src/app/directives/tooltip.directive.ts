@@ -1,14 +1,16 @@
-import { Directive, ElementRef, HostListener, Input, OnDestroy } from '@angular/core';
+import { Directive, ElementRef, HostListener, OnDestroy, signal } from '@angular/core';
 import { computePosition, flip, shift, arrow, offset } from '@floating-ui/dom';
+
+type TooltipPosition = 'top' | 'right' | 'bottom' | 'left';
 
 @Directive({
 	selector: '[cuentonetaTooltip]',
 	standalone: true,
 })
 export class TooltipDirective implements OnDestroy {
-	@Input() text!: string; // Texto para el Tooltip
-	@Input() position!: 'top' | 'right' | 'bottom' | 'left'; // Posición del tooltip
-	@Input() offset: number = 6; // Offset del tooltip respecto al elemento
+	text = signal<string>(''); // Texto para el Tooltip
+	position = signal<TooltipPosition>('top'); // Posición del tooltip
+	offset = signal<number>(6); // Offset del tooltip respecto al elemento
 
 	private myPopup: HTMLElement | null = null;
 
@@ -32,7 +34,7 @@ export class TooltipDirective implements OnDestroy {
 
 	private createTooltipPopup() {
 		const popup = document.createElement('p');
-		popup.innerHTML = this.text;
+		popup.innerHTML = this.text();
 		popup.classList.add('tooltip-container');
 
 		const arrowElem = document.createElement('span');
@@ -41,14 +43,14 @@ export class TooltipDirective implements OnDestroy {
 		popup.appendChild(arrowElem);
 
 		computePosition(this.el.nativeElement, popup, {
-			placement: this.position,
-			middleware: [flip(), shift({ padding: 5 }), arrow({ element: arrowElem }), offset(this.offset)],
+			placement: this.position(),
+			middleware: [flip(), shift({ padding: 5 }), arrow({ element: arrowElem }), offset(this.offset())],
 		}).then(({ x, y, middlewareData }) => {
 			Object.assign(popup.style, { top: `${y}px`, left: `${x}px` });
 
 			if (middlewareData.arrow) {
 				const { x: arrowX, y: arrowY } = middlewareData.arrow;
-				const staticSide = { top: 'bottom', right: 'left', bottom: 'top', left: 'right' }[this.position];
+				const staticSide = { top: 'bottom', right: 'left', bottom: 'top', left: 'right' }[this.position()];
 
 				Object.assign(arrowElem.style, {
 					left: arrowX != null ? `${arrowX}px` : '',

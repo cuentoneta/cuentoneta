@@ -22,7 +22,6 @@ interface StorylistBase {
 		url: SanityImageSource;
 	}[];
 	gridConfig?: StorylistGridConfig;
-	previewGridConfig?: StorylistGridConfig;
 }
 
 export type StorylistCard = Omit<StorylistBase, 'images' | 'previewImages' | 'gridConfig' | 'previewGridConfig'>;
@@ -46,17 +45,18 @@ export interface Publication<T extends StoryBase> {
 
 export interface StorylistGridConfig {
 	gridTemplateColumns: string;
-	titlePlacement: GridItemPlacementConfig;
+	titlePlacement: Omit<GridItemPlacementConfig, 'slug' | 'imageSlug' | 'publication' | 'image'>;
 	cardsPlacement: GridItemPlacementConfig[];
 }
 
 export interface GridItemPlacementConfig {
-	order: number;
-	// ToDo: Adaptar estos tipos a la última versión de API de Sanity
 	slug?: string | null;
+	order: number;
 	imageSlug?: string | null;
-	startCol?: number | string | null;
-	endCol?: number | string | null;
-	startRow?: number | string | null;
-	endRow?: number | string | null;
+	startCol?: string | null;
+	endCol?: string | null;
+	startRow?: string | null;
+	endRow?: string | null;
+	publication: Publication<StoryPreview>;
+	image: SanityImageSource;
 }

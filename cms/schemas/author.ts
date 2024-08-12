@@ -2,20 +2,21 @@
 import { supportedLanguages } from '../utils/localization';
 import { UsersIcon } from '@sanity/icons';
 import { resource } from './resourceType';
+import { defineArrayMember, defineField, defineType } from 'sanity';
 
-export default {
+export default defineType({
 	name: 'author',
 	title: 'Autor/a',
 	type: 'document',
 	icon: UsersIcon,
 	fields: [
-		{
+		defineField({
 			name: 'name',
 			title: 'Nombre',
 			type: 'string',
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'slug',
 			title: 'Slug',
 			type: 'slug',
@@ -24,8 +25,8 @@ export default {
 				maxLength: 96,
 			},
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'image',
 			title: 'Foto',
 			type: 'image',
@@ -39,15 +40,15 @@ export default {
 				hotspot: true,
 			},
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'nationality',
 			title: 'Nacionalidad',
 			type: 'reference',
 			to: { type: 'nationality' },
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'biography',
 			title: 'Biografía',
 			type: 'object',
@@ -65,13 +66,13 @@ export default {
 				type: 'blockContent',
 				fieldset: lang.isDefault ? null : 'translations',
 			})),
-		},
-		{
+		}),
+		defineField({
 			name: 'resources',
 			title: 'Recursos asociados al perfil del autor',
 			type: 'array',
-			of: [resource],
-		},
+			of: [defineArrayMember(resource)],
+		}),
 	],
 	preview: {
 		select: {
@@ -79,4 +80,4 @@ export default {
 			media: 'image',
 		},
 	},
-};
+});

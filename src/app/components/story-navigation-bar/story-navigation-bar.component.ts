@@ -1,12 +1,20 @@
-import { Component, inject, Type } from '@angular/core';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+// Core
+import { Component, computed, inject, Type } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+
+// 3rd Party modules
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { injectParams } from 'ngxtension/inject-params';
+import { injectQueryParams } from 'ngxtension/inject-query-params';
+
+// Services
+import { NavigationFrameService } from '../../providers/navigation-frame.service';
+
+// Componentes
 import { StorylistNavigationFrameComponent } from '../storylist-navigation-frame/storylist-navigation-frame.component';
-import { combineLatest, Observable, of, switchMap } from 'rxjs';
 import { AuthorNavigationFrameComponent } from '../author-navigation-frame/author-navigation-frame.component';
 import { NavigationFrameComponent } from '@models/navigation-frame.component';
-import { NavigationFrameService } from '../../providers/navigation-frame.service';
 
 @Component({
 	selector: 'cuentoneta-story-navigation-bar',
@@ -22,7 +30,7 @@ import { NavigationFrameService } from '../../providers/navigation-frame.service
 				}
 			</header>
 
-			@if (frame$ | async; as frame) {
+			@if (frame(); as frame) {
 				<ng-container *ngComponentOutlet="frame.component; inputs: frame.inputs"></ng-container>
 			}
 
@@ -53,25 +61,29 @@ import { NavigationFrameService } from '../../providers/navigation-frame.service
 	imports: [CommonModule, NgxSkeletonLoaderModule, RouterLink],
 })
 export class StoryNavigationBarComponent {
+	private params = injectParams();
+	private queryParams = injectQueryParams();
+
 	isLoading = false;
 
 	// Inyección de providers
-	private activatedRoute = inject(ActivatedRoute);
 	private navigationFrameService = inject(NavigationFrameService);
 
-	frame$ = combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams]).pipe(
-		switchMap(([{ slug }, { navigation }]) => this.setNavigationFrame(slug, navigation)),
-	);
+	frame = computed(() => {
+		const { slug } = this.params();
+		const { navigation } = this.queryParams();
+		return this.setNavigationFrame(slug, navigation);
+	});
 
 	frameConfig = this.navigationFrameService.navigationBarConfig;
 
 	private setNavigationFrame(
 		slug: string,
 		navigation: 'author | storylist',
-	): Observable<{
+	): {
 		component: Type<NavigationFrameComponent> | null;
 		inputs: { selectedStorySlug: string };
-	}> {
+	} {
 		const navigationFrames = [
 			{ navigation: 'author', component: AuthorNavigationFrameComponent },
 			{ navigation: 'storylist', component: StorylistNavigationFrameComponent },
@@ -79,6 +91,6 @@ export class StoryNavigationBarComponent {
 
 		const component = navigationFrames.find((c) => c.navigation === navigation)?.component ?? null;
 
-		return of({ component, inputs: { selectedStorySlug: slug } });
+		return { component, inputs: { selectedStorySlug: slug } };
 	}
 }

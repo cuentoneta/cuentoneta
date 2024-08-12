@@ -1,6 +1,6 @@
 import { Meta, moduleMetadata } from '@storybook/angular';
 
-import { CommonModule, DatePipe, NgOptimizedImage, registerLocaleData } from '@angular/common';
+import { CommonModule, NgOptimizedImage, registerLocaleData } from '@angular/common';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 
 // Localización
@@ -11,7 +11,7 @@ registerLocaleData(localeEs);
 import { StoryPreview } from '@models/story.model';
 import { StoryCardContentComponent } from './story-card-content.component';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
-import { provideRouter, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 
 export default {
@@ -91,6 +91,7 @@ const story: StoryPreview = {
 			_key: '90005bcd4cee',
 		},
 	],
+	resources: [],
 };
 
 export const Historia = {

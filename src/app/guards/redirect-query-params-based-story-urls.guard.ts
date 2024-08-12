@@ -1,5 +1,4 @@
 import { ActivatedRouteSnapshot, Router, UrlTree } from '@angular/router';
-import { createUrlTreeFromSnapshot } from '@angular/router';
 import { inject } from '@angular/core';
 import { AppRoutes } from '../app.routes';
 

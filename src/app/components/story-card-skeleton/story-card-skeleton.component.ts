@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
@@ -14,13 +14,14 @@ import { ThemeService } from '../../providers/theme.service';
 			@apply flex flex-col gap-2 md:gap-4;
 		}
 	`,
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StoryCardSkeletonComponent {
-	@Input() animation: 'progress' | 'progress-dark' | 'pulse' | 'false' | false = false;
-	@Input() displayDate: boolean = false;
-	@Input() editionLabel: string = '';
-	@Input() comingNextLabel: string = '';
-	@Input() displayFooter: boolean = true;
+	animation = input<'progress' | 'progress-dark' | 'pulse' | 'false' | false>(false);
+	displayDate = input<boolean>(false);
+	editionLabel = input<string>('');
+	comingNextLabel = input<string>('');
+	displayFooter = input<boolean>(true);
 
 	private themeService = inject(ThemeService);
 	skeletonColor = this.themeService.pickColor('zinc', 300);

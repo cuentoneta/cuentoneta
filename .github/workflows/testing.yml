@@ -4,7 +4,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-24.04
 
     steps:
@@ -21,6 +21,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --ignore-scripts
+
+      - name: Generate testing environment file
+        run: pnpm run config-pipeline
 
       - name: Run Tests
         run: npx nx test --skip-nx-cache

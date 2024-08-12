@@ -10,36 +10,27 @@ import imageUrlBuilder from '@sanity/image-url';
 import { baseLanguage } from '../../../cms/utils/localization';
 
 // Modelos
-import { AuthorDTO } from '@models/author.model';
+import { Author } from '@models/author.model';
 import { mapMediaSources } from './media-sources.functions';
-import { StorylistDTO } from '@models/storylist.model';
+import { Publication, StorylistDTO } from '@models/storylist.model';
 import { Story, StoryPreview } from '@models/story.model';
+import { Resource } from '@models/resource.model';
+import { AuthorBySlugQueryResult, StorylistQueryResult } from '../sanity/types';
+import { TextBlockContent } from '@models/block-content.model';
 
-export function mapAuthor(rawAuthorData: any, language?: string): AuthorDTO {
+export function mapAuthor(rawAuthorData: AuthorBySlugQueryResult, language?: string): Author {
 	return {
 		slug: rawAuthorData.slug.current,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
-			flag: urlFor(rawAuthorData.nationality?.flag)?.url(),
+			flag: urlFor(rawAuthorData.nationality.flag)?.url(),
 		},
-		resources: mapResources(rawAuthorData.resources),
+		resources: rawAuthorData.resources ? mapResources(rawAuthorData.resources) : [],
 		imageUrl: rawAuthorData.image ? urlFor(rawAuthorData.image).url() : '',
 		name: rawAuthorData.name,
-		biography: rawAuthorData.biography ? rawAuthorData.biography[language || baseLanguage!.id] : undefined,
-	};
-}
-
-export function mapAuthorForStory(rawAuthorData: any, language?: string): AuthorDTO {
-	return {
-		slug: rawAuthorData.slug.current,
-		nationality: {
-			country: rawAuthorData.nationality?.country,
-			flag: urlFor(rawAuthorData.nationality?.flag)?.url(),
-		},
-		resources: mapResources(rawAuthorData.resources),
-		imageUrl: rawAuthorData.image ? urlFor(rawAuthorData.image).url() : '',
-		name: rawAuthorData.name,
-		biography: rawAuthorData.biography ? rawAuthorData.biography[language || baseLanguage!.id] : undefined,
+		biography: rawAuthorData.biography
+			? (rawAuthorData.biography[language || baseLanguage.id] as TextBlockContent[])
+			: [],
 	};
 }
 
@@ -47,41 +38,64 @@ export function urlFor(source: SanityImageSource): ImageUrlBuilder {
 	return imageUrlBuilder(client).image(source);
 }
 
-export function mapResources(resources: any[]) {
+export function mapResources(resources: Resource[]) {
 	return (
-		resources?.map((resource: any) => ({
+		resources?.map((resource: Resource) => ({
 			...resource,
 			resourceType: {
 				...resource.resourceType,
-				icon: {
-					...resource.resourceType.icon,
-					svg: `data:image/svg+xml,${resource.resourceType.icon.svg}`,
-				},
+				icon: resource.resourceType.icon
+					? {
+							...resource.resourceType.icon,
+							svg: resource.resourceType.icon ? `data:image/svg+xml,${resource.resourceType.icon.svg}` : '',
+						}
+					: undefined,
 			},
 		})) ?? []
 	);
 }
 
-export async function mapStorylist(result: any): Promise<StorylistDTO> {
-	const cardsPlacement = result.gridConfig?.cardsPlacement ?? [];
-	const storylistImages = cardsPlacement.filter((config: any) => !!config.imageSlug) ?? [];
+export async function mapStorylist(result: StorylistQueryResult): Promise<StorylistDTO> {
+	// TODO: En otra issue habría que crear un tipo distinto para la propiedad publication
+	// en GridItemPlacementConfig ya que al usar Publication<StoryPreview> el tipado espera
+	// propiedades como resources, media y paragraphs que no pedimos en la query ni usamos.
+	const cardsPlacement =
+		result.gridConfig.cardsPlacement.map((gc) => {
+			return {
+				...gc,
+				publication: {
+					...gc.publication,
+					story: {
+						...gc.publication.story,
+						resources: [],
+						media: [],
+						paragraphs: [],
+						author: mapAuthor(gc.publication.story.author),
+					},
+				},
+			};
+		}) ?? [];
+
+	const storylistImages = cardsPlacement.filter((config) => !!config.imageSlug) ?? [];
 
 	const rawPublications = cardsPlacement
-		.filter((cardPlacement: any) => !!cardPlacement.publication && !!cardPlacement.publication.story)
-		.map((cardPlacement: any) => cardPlacement.publication);
-	const publications = [];
+		.filter((cardPlacement) => !!cardPlacement.publication && !!cardPlacement.publication.story)
+		.map((cardPlacement) => cardPlacement.publication);
+	const publications: Publication<StoryPreview>[] = [];
 
 	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
 	for (const publication of rawPublications) {
-		const { review, body, author, mediaSources, ...story } = publication.story;
+		const { body, author, mediaSources, ...story } = publication.story;
 		publications.push({
 			...publication,
+			editionLabel: '',
+			comingNextLabel: '',
 			story: mapStoryPreviewContent({
 				...story,
-				media: mediaSources ? await mapMediaSources(mediaSources) : undefined,
-				summary: review,
-				paragraphs: body,
-				author: mapAuthorForStory(author),
+				media: await mapMediaSources(mediaSources),
+				paragraphs: body as TextBlockContent[],
+				author,
+				resources: [],
 			}),
 		});
 	}
@@ -92,11 +106,15 @@ export async function mapStorylist(result: any): Promise<StorylistDTO> {
 		images:
 			storylistImages.length === 0
 				? []
-				: storylistImages.map((card: any) => ({
+				: storylistImages.map((card) => ({
 						slug: card.imageSlug,
 						url: urlFor(card.image).url(),
 					})),
-		publications: publications,
+		publications,
+		gridConfig: {
+			...result.gridConfig,
+			cardsPlacement,
+		},
 	};
 }
 

@@ -1,17 +1,22 @@
-import { StoryComponent } from './story.component';
-import { render, RenderResult } from '@testing-library/angular';
+// Core
+import { Component, input } from '@angular/core';
 import { CommonModule, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Component, Input } from '@angular/core';
+
+// 3rd party modules
+import { render } from '@testing-library/angular';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+
+// Models
 import { Storylist } from '@models/storylist.model';
 import { Story } from '@models/story.model';
 
-describe('StoryComponent', () => {
-	let component: RenderResult<StoryComponent, StoryComponent>;
+// Components
+import { StoryComponent } from './story.component';
 
-	beforeEach(async () => {
-		component = await render(StoryComponent, {
+describe('StoryComponent', () => {
+	const setup = async () => {
+		return await render(StoryComponent, {
 			componentImports: [
 				CommonModule,
 				HttpClientTestingModule,
@@ -24,10 +29,11 @@ describe('StoryComponent', () => {
 				MockStoryNavigationBarComponent,
 			],
 		});
-	});
+	};
 
-	it('should create', () => {
-		expect(component).toBeTruthy();
+	it('should create', async () => {
+		const view = setup();
+		expect(view).toBeTruthy();
 	});
 });
 
@@ -37,10 +43,10 @@ describe('StoryComponent', () => {
 	template: '',
 })
 class MockShareContentComponent {
-	@Input() route: string = '';
-	@Input() params: { [key: string]: string } = {};
-	@Input() message: string = '';
-	@Input() isLoading: boolean = false;
+	route = input('');
+	params = input<{ [key: string]: string }>({});
+	message = input('');
+	isLoading = input(false);
 }
 
 @Component({
@@ -49,7 +55,7 @@ class MockShareContentComponent {
 	template: '',
 })
 class MockBioSummaryCardComponent {
-	@Input({ required: true }) story!: Story;
+	story = input.required<Story>();
 }
 
 @Component({
@@ -58,6 +64,6 @@ class MockBioSummaryCardComponent {
 	template: '',
 })
 class MockStoryNavigationBarComponent {
-	@Input() selectedStorySlug: string = '';
-	@Input() storylist!: Storylist;
+	selectedStorySlug = input('');
+	storylist = input<Storylist>();
 }

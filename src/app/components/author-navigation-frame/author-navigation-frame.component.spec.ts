@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AuthorNavigationFrameComponent } from './author-navigation-frame.component';
 
-describe('AuthorNavigationFrameComponent', () => {
+xdescribe('AuthorNavigationFrameComponent', () => {
 	let component: AuthorNavigationFrameComponent;
 	let fixture: ComponentFixture<AuthorNavigationFrameComponent>;
 

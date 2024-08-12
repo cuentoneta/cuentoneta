@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/angular';
+import type { Meta } from '@storybook/angular';
 import { PortableTextParserComponent } from './portable-text-parser.component';
 
 const meta: Meta<PortableTextParserComponent> = {
@@ -6,7 +6,6 @@ const meta: Meta<PortableTextParserComponent> = {
 	title: 'PortableTextParserComponent',
 };
 export default meta;
-type Story = StoryObj<PortableTextParserComponent>;
 
 export const Primary = {
 	render: (args: PortableTextParserComponent) => ({

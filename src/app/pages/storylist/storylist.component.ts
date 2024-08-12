@@ -1,12 +1,11 @@
 // Core
-import { Component, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { switchMap, tap } from 'rxjs';
+import { Component, effect, inject } from '@angular/core';
+import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // 3rd party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { injectParams } from 'ngxtension/inject-params';
 
 // Models
 import { Storylist } from '@models/storylist.model';
@@ -31,36 +30,34 @@ import { StorylistCardDeckComponent } from 'src/app/components/storylist-card-de
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
 export class StorylistComponent {
+	// Providers
 	fetchContentDirective = inject(FetchContentDirective);
+	private params = injectParams();
+	private metaTagsDirective = inject(MetaTagsDirective);
+	private storylistService = inject(StorylistService);
+	private contentService = inject(ContentService);
+
 	storylist!: Storylist | undefined;
 	skeletonConfig: StorylistGridSkeletonConfig | undefined;
 
 	constructor() {
-		const activatedRoute = inject(ActivatedRoute);
-		const metaTagsDirective = inject(MetaTagsDirective);
-		const storylistService = inject(StorylistService);
-		const contentService = inject(ContentService);
-
-		activatedRoute.params
-			.pipe(
-				takeUntilDestroyed(),
-				switchMap(({ slug }) =>
-					this.fetchContentDirective.fetchContent$<Storylist>(storylistService.get(slug, 60, 'asc')),
-				),
-				tap(() => {
-					this.storylist = undefined;
-					const decks = [...contentService.contentConfig.cards, ...contentService.contentConfig.previews];
-					this.skeletonConfig = decks.find(
-						(config) => config.slug === activatedRoute.snapshot.params['slug'],
-					)?.gridSkeletonConfig;
-				}),
-			)
-			.subscribe((storylist) => {
+		effect((cleanUp) => {
+			const { slug } = this.params();
+			const subscription = this.storylist$(slug).subscribe((storylist) => {
 				this.storylist = storylist;
-				metaTagsDirective.setTitle(`${storylist.title}`);
-				metaTagsDirective.setDescription(
+				this.metaTagsDirective.setTitle(`${storylist.title}`);
+				this.metaTagsDirective.setDescription(
 					`Una storylist en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
 				);
 			});
+			cleanUp(() => subscription.unsubscribe());
+		});
+	}
+
+	private storylist$(slug: string): Observable<Storylist> {
+		this.storylist = undefined;
+		const decks = [...this.contentService.contentConfig.cards, ...this.contentService.contentConfig.previews];
+		this.skeletonConfig = decks.find((config) => config.slug === slug)?.gridSkeletonConfig;
+		return this.fetchContentDirective.fetchContent$<Storylist>(this.storylistService.get(slug, 60, 'asc'));
 	}
 }
