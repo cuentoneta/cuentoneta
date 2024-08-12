@@ -117,18 +117,26 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 ### Hito: Lanzamiento al público de la versión [2.4.2](https://github.com/cuentoneta/cuentoneta/releases/tag/2.4.2) de La Cuentoneta (lanzada el 2024/06/24)
 
-## Julio de 2024
+## Agosto de 2024
 
-- Creación de storylist invernal, con colaboración de comunidades.
+- Actualización a Angular 18.1 y Nx 19.3.
+- Mejoras profundas relacionadas a la experiencia de desarrollo (DX) de la plataforma.
+  - Cobertura de tipos del 100% a lo largo y ancho del proyecto.
+  - Puesta en funcionamiento de Github Actions de linting y testing unitario en el pipeline de CI/CD del proyecto.
+  - Migración total a signals de los inputs de los componentes del proyecto.
+
+### Hito: Lanzamiento al público de la versión [2.4.3](https://github.com/cuentoneta/cuentoneta/releases/tag/2.4.2) de La Cuentoneta (lanzada el 2024/08/12)
+
+---
+
+## Futuros
+
 - Invitación abierta a autoras y autores santafesinos para participar en la storylist "Plumas Santafesinas", recopilando relatos breves y poemas de autoría provincial.
 - Implementación de una nueva sección "Pluma de la Semana", destacando un autor o autora diferente cada semana en la
   landing page.
 - Mejoras en storylists y landing page, en base a diseños nuevos de UX.
 - Preparación de la plataforma para alojar el primer concurso de escritura en La Cuentoneta, el _III Certamen
   Extraordinario de Escritura_, a cargo de la comunidad **[Tertulia Literaria](https://discord.gg/tertulia-literaria-795704695485235231)**.
-
-## Futuros
-
 - Preparación de la lista "Cuentos por la Memoria" en conmemoración del Día por la Memoria, la Verdad y la Justicia, celebrado el 24 de marzo.
 - Exploración de material de autoras y autores locales para incluirlos en una edición especial de la plataforma.
 - Publicación de las listas "Cuentos para el Bicentenario" en la plataforma, originalmente publicadas por el Ministerio de Educación de la Nación en 2015.
