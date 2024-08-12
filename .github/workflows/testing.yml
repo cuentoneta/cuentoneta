@@ -19,8 +19,8 @@ jobs:
           node-version: 20.11
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install --ignore-scripts
+      - name: Install dependencies & setup environment
+        run: pnpm install
 
       - name: Run Tests
         run: npx nx test --skip-nx-cache
