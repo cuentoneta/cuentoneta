@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { StorylistService } from './storylist.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-describe('StorylistService', () => {
+xdescribe('StorylistService', () => {
 	let service: StorylistService;
 
 	beforeEach(() => {

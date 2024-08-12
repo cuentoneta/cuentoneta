@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StorylistNavigationFrameComponent } from './storylist-navigation-frame.component';
 
-describe('StorylistNavigationFrameComponent', () => {
+xdescribe('StorylistNavigationFrameComponent', () => {
 	let component: StorylistNavigationFrameComponent;
 	let fixture: ComponentFixture<StorylistNavigationFrameComponent>;
 

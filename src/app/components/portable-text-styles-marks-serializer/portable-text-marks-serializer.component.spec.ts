@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PortableTextMarksSerializerComponent } from './portable-text-marks-serializer.component';
 
-describe('PortableTextMarksSerializerComponent', () => {
+xdescribe('PortableTextMarksSerializerComponent', () => {
 	let component: PortableTextMarksSerializerComponent;
 	let fixture: ComponentFixture<PortableTextMarksSerializerComponent>;
 

@@ -14,6 +14,7 @@
 		"build": "nx run cuentoneta:build:production --skip-nx-cache",
 		"build:watch": "nx run cuentoneta:build:production --skip-nx-cache --watch",
 		"config": "node -r ts-node/register --env-file=.env ./scripts/set-environment.ts",
+		"config-pipeline": "node -r ts-node/register ./scripts/set-test-environment.ts",
 		"storybook": "nx run cuentoneta:storybook",
 		"storybook:build": "nx run cuentoneta:build-storybook",
 		"lint": "npx nx lint --skip-nx-cache",
