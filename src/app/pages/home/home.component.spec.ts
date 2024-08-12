@@ -1,5 +1,5 @@
 import { HomeComponent } from './home.component';
-import { render, RenderResult } from '@testing-library/angular';
+import { render } from '@testing-library/angular';
 import { CommonModule, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -12,10 +12,8 @@ import { StorylistGridSkeletonConfig } from '@models/content.model';
 import { Story } from '@models/story.model';
 
 xdescribe('HomeComponent', () => {
-	let componentRender: RenderResult<HomeComponent, HomeComponent>;
-
-	beforeEach(async () => {
-		componentRender = await render(HomeComponent, {
+	const setup = async () => {
+		return await render(HomeComponent, {
 			componentImports: [
 				CommonModule,
 				HttpClientTestingModule,
@@ -31,10 +29,11 @@ xdescribe('HomeComponent', () => {
 				{ provide: FetchContentDirective, useClass: provideMock(FetchContentDirective) },
 			],
 		});
-	});
+	};
 
-	it('should create', () => {
-		expect(componentRender).toBeTruthy();
+	it('should create', async () => {
+		const view = setup();
+		expect(view).toBeTruthy();
 	});
 });
 
