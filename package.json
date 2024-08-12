@@ -42,7 +42,6 @@
 		"@sanity/image-url": "^1.0.2",
 		"@types/cors": "^2.8.17",
 		"@types/express": "^4.17.17",
-		"@vercel/analytics": "^1.0.0",
 		"@vercel/speed-insights": "^1.0.9",
 		"cors": "^2.8.5",
 		"esbuild": "0.21.4",
