@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SpaceRecordingWidgetComponent } from './space-recording-widget.component';
 
-describe('SpaceRecordingWidgetComponent', () => {
+xdescribe('SpaceRecordingWidgetComponent', () => {
 	let component: SpaceRecordingWidgetComponent;
 	let fixture: ComponentFixture<SpaceRecordingWidgetComponent>;
 

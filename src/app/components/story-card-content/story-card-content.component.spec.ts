@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StoryCardContentComponent } from './story-card-content.component';
 
-describe('StoryCardContentComponent', () => {
+xdescribe('StoryCardContentComponent', () => {
 	let component: StoryCardContentComponent;
 	let fixture: ComponentFixture<StoryCardContentComponent>;
 

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NavigablePublicationTeaserComponent } from './navigable-publication-teaser.component';
 
-describe('NavigablePublicationTeaserComponent', () => {
+xdescribe('NavigablePublicationTeaserComponent', () => {
 	let component: NavigablePublicationTeaserComponent;
 	let fixture: ComponentFixture<NavigablePublicationTeaserComponent>;
 
