@@ -4,7 +4,7 @@ import { CommonModule, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 // 3rd party modules
-import { render, RenderResult } from '@testing-library/angular';
+import { render } from '@testing-library/angular';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Models
@@ -15,10 +15,8 @@ import { Story } from '@models/story.model';
 import { StoryComponent } from './story.component';
 
 describe('StoryComponent', () => {
-	let component: RenderResult<StoryComponent, StoryComponent>;
-
-	beforeEach(async () => {
-		component = await render(StoryComponent, {
+	const setup = async () => {
+		return await render(StoryComponent, {
 			componentImports: [
 				CommonModule,
 				HttpClientTestingModule,
@@ -31,10 +29,11 @@ describe('StoryComponent', () => {
 				MockStoryNavigationBarComponent,
 			],
 		});
-	});
+	};
 
-	it('should create', () => {
-		expect(component).toBeTruthy();
+	it('should create', async () => {
+		const view = setup();
+		expect(view).toBeTruthy();
 	});
 });
 
