@@ -1,7 +1,7 @@
 ---
 name: "\U0001F4BC Preparar lanzamiento de una nueva versión"
 about: Checklist para generar la release de un hito de La Cuentoneta
-title: ''
+title: 'Generar release para versión _._._ de La Cuentoneta'
 labels: "\U0001F4BC gestión"
 assignees: ''
 ---
