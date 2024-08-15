@@ -64,6 +64,7 @@
 		"@angular/cli": "~18.1.0",
 		"@angular/compiler-cli": "18.1.2",
 		"@angular/language-service": "18.1.2",
+		"@happy-dom/jest-environment": "^14.12.3",
 		"@nx/cypress": "19.5.4",
 		"@nx/eslint-plugin": "19.5.4",
 		"@nx/jest": "19.5.4",
