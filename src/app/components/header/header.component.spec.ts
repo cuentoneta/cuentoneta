@@ -17,7 +17,7 @@ xdescribe('HeaderComponent', () => {
 	test('should render Header component', async () => {
 		const view = setup();
 		expect(view).toBeTruthy();
-		expect(screen.getByAltText(/Cuentoneta/)).toBeTruthy();
+		expect(screen.getByAltText(/Cuentoneta/)).toBeInTheDocument();
 		expect(screen.getByRole('link', { name: 'Inicio' })).toHaveProperty('href', expect.stringMatching(/home/));
 		expect(screen.getByRole('link', { name: 'Nosotros' })).toHaveProperty('href', expect.stringMatching(/about/));
 	});

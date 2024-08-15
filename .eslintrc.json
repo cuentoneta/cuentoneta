@@ -9,7 +9,8 @@
 				"plugin:@nx/typescript",
 				"plugin:@nx/angular",
 				"plugin:@angular-eslint/template/process-inline-templates",
-				"plugin:testing-library/angular"
+				"plugin:testing-library/angular",
+				"plugin:jest-dom/recommended"
 			],
 			"rules": {
 				"@angular-eslint/directive-selector": [
