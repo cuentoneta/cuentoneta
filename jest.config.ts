@@ -1,6 +1,7 @@
 /* eslint-disable */
 export default {
 	displayName: 'cuentoneta',
+	testEnvironment: '@happy-dom/jest-environment',
 	preset: './jest.preset.js',
 	setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
 	coverageDirectory: './coverage/cuentoneta',
