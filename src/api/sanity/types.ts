@@ -553,24 +553,7 @@ export type StoryBySlugQueryResult = {
 	}>;
 	categories: null;
 	body: BlockContent;
-	review: {
-		children: Array<{
-			marks?: Array<string>;
-			text: string;
-			_type: 'span';
-			_key: string;
-		}>;
-		style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'normal';
-		listItem?: 'bullet';
-		markDefs?: Array<{
-			href: string;
-			_type: 'link';
-			_key: string;
-		}>;
-		level?: number;
-		_type: 'block';
-		_key: string;
-	};
+	review: BlockContent;
 	originalPublication: string;
 	approximateReadingTime: number;
 	mediaSources: Array<
