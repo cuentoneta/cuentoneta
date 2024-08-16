@@ -78,8 +78,8 @@ dependencies:
     specifier: ^3.5.5
     version: 3.5.5(@angular/common@18.1.2)(@angular/core@18.1.2)(@swc/core@1.3.85)(rxjs@7.8.1)
   rettiwt-api:
-    specifier: ^3.0.1
-    version: 3.0.1
+    specifier: ^3.1.1
+    version: 3.1.1
   rxjs:
     specifier: ~7.8.1
     version: 7.8.1
@@ -14100,7 +14100,7 @@ packages:
     resolution:
       { integrity: sha512-fWyNdeawGam70jXSVlKl+SUNVcL6j6W79CuSIPfi6HnDUmSCH6gyUys/HrqHeA/wU0Az41rRgean494d0Jb+ww== }
     dependencies:
-      follow-redirects: 1.15.4(debug@2.6.9)
+      follow-redirects: 1.15.6
       form-data: 4.0.0
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
@@ -23095,9 +23095,9 @@ packages:
       { integrity: sha512-XQBQ3I8W1Cge0Seh+6gjj03LbmRFWuoszgK9ooCpwYIrhhoO80pfq4cUkU5DkknwfOfFteRwlZ56PYOGYyFWdg== }
     engines: { node: '>= 4' }
 
-  /rettiwt-api@3.0.1:
+  /rettiwt-api@3.1.1:
     resolution:
-      { integrity: sha512-m0BQtow9E2PN6Ace/ApoPzlOrP74ZNlEWZE2JqkRm/rka5O0sNJcbcPG4Tu/CeU/yUUbuJkT+YmKxY2Jlut9qA== }
+      { integrity: sha512-fUUIlIG1Wz2wvDNnFZciyvTdBVUVJRMwY9j8VhcnM1BMhpsQNtmJoAc1ZLg2JwRwppv/CVYQPJsSQU3JNmf7cQ== }
     hasBin: true
     dependencies:
       axios: 1.6.3
@@ -23106,7 +23106,7 @@ packages:
       commander: 11.1.0
       https-proxy-agent: 7.0.2
       rettiwt-auth: 2.1.0
-      rettiwt-core: 4.0.0
+      rettiwt-core: 4.1.1
     transitivePeerDependencies:
       - debug
       - supports-color
@@ -23126,9 +23126,9 @@ packages:
       - supports-color
     dev: false
 
-  /rettiwt-core@4.0.0:
+  /rettiwt-core@4.1.1:
     resolution:
-      { integrity: sha512-BrcOBzdzmMUl44uEGIEYj1Y7+iUu//8ZeTbZeVHOTXTdiEdWtavmVeVQOplyJlwD9hJFG8OvOGEGU6L+xsOMeA== }
+      { integrity: sha512-oPQlEwQRKlMEi6wx3ZjnbIKOFrM9VaYuX7IpsyVVsfRxSBgjqIYhonAYzX9DkpOs6ZTgr9Z9VK0kNuv7hf6AGw== }
     dependencies:
       axios: 1.6.3
       form-data: 4.0.0

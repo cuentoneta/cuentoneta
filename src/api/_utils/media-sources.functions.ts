@@ -26,6 +26,30 @@ export async function mapMediaSources(mediaSources: MediaSchemaObject[]): Promis
 	return media;
 }
 
+// TODO: Corregir estos duplicados (Bug mencionado en issue #969)
+export function mapMediaSourcesForStorylist(mediaSources: MediaSchemaObject[]): Media[] {
+	if (!mediaSources) return [];
+
+	const media: Media[] = [];
+	for (const mediaSource of mediaSources) {
+		if (mediaSource._type === 'audioRecording') {
+			media.push(getAudioRecordingData(mediaSource as AudioRecordingSchemaObject));
+		}
+		if (mediaSource._type === 'spaceRecording') {
+			media.push({
+				title: mediaSource.title,
+				type: 'spaceRecording',
+				data: {},
+				icon: mediaSource.icon,
+			});
+		}
+		if (mediaSource._type === 'youTubeVideo') {
+			media.push(getYoutubeVideoData(mediaSource as YoutubeVideoSchemaObject));
+		}
+	}
+	return media;
+}
+
 export function getAudioRecordingData(mediaSource: AudioRecordingSchemaObject): AudioRecording {
 	return {
 		title: mediaSource.title,
