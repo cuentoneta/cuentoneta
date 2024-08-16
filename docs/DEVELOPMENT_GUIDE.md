@@ -84,6 +84,17 @@ Junto con Nx, el proyecto cuenta con ESLint y Prettier ya configuradas como depe
 - **<a href="https://jestjs.io/docs/getting-started">Jest</a>** como framework de testing unitario
 - **<a href="https://www.cypress.io/">Cypress</a>** como framework de testing end-to-end
 
+### Para generación y visualización de diagramas
+
+- **<a href="https://mermaid.js.org/">Mermaid</a>** como herramienta para la generación y visualización de diagramas dentro de archivos Markdown.
+
+Para poder hacer uso de las funcionalidades de Mermaid dentro del entorno de trabajo local, es necesario contar con una extensión para el IDE o editor de texto que se esté utilizando.
+
+- En el caso de Visual Studio Code, se recomienda la extensión [Markdown Preview Mermaid Support](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid).
+- En el caso de WebStorm, se recomienda la extensión [Markdown Mermaid](https://plugins.jetbrains.com/plugin/20146-mermaid/), la cual requiere la instalación previa de la extensión [Markdown](https://plugins.jetbrains.com/plugin/7793-markdown). Para el caso de WebStorm, se detalla que ambos plugins son oficiales de Jetbrains.
+
+Para la edición y visualización online de los diagramas también puede optarse por utilizar el [Mermaid Live Editor](https://mermaid-js.github.io/mermaid-live-editor/), en el cual pueden copiarse y pegarse los diagramas disponibles en nuestro repositorio para su visualización y modificación.
+
 ---
 
 ## Instalación y configuración del entorno local
