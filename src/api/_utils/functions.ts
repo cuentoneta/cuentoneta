@@ -11,7 +11,7 @@ import { baseLanguage } from '../../../cms/utils/localization';
 
 // Modelos
 import { Author } from '@models/author.model';
-import { mapMediaSources } from './media-sources.functions';
+import { mapMediaSourcesForStorylist } from './media-sources.functions';
 import { Publication, StorylistDTO } from '@models/storylist.model';
 import { Story, StoryPreview } from '@models/story.model';
 import { Resource } from '@models/resource.model';
@@ -68,7 +68,7 @@ export async function mapStorylistTeaser(result: StorylistQueryResult): Promise<
 	};
 }
 
-export async function mapStorylist(result: StorylistQueryResult): Promise<StorylistDTO> {
+export function mapStorylist(result: StorylistQueryResult): StorylistDTO {
 	// TODO: En otra issue habría que crear un tipo distinto para la propiedad publication
 	// en GridItemPlacementConfig ya que al usar Publication<StoryPreview> el tipado espera
 	// propiedades como resources, media y paragraphs que no pedimos en la query ni usamos.
@@ -109,7 +109,7 @@ export async function mapStorylist(result: StorylistQueryResult): Promise<Storyl
 			comingNextLabel: '',
 			story: mapStoryPreviewContent({
 				...story,
-				media: await mapMediaSources(mediaSources),
+				media: mapMediaSourcesForStorylist(mediaSources),
 				paragraphs: body as TextBlockContent[],
 				author,
 				resources: [],
