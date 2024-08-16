@@ -10,6 +10,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4.1.7
       - uses: pnpm/action-setup@v4.0.0
+        with:
+          version: latest
       - name: Use Node.js 20.11
         uses: actions/setup-node@v4.0.3
         with:
