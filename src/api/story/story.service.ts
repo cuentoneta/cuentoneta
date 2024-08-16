@@ -50,7 +50,7 @@ export async function fetchStoryBySlug(slug: string): Promise<Story> {
 		author: mapAuthor(author, properties.language),
 		resources: mapResources(properties.resources),
 		paragraphs: body as TextBlockContent[],
-		summary: [review],
+		summary: review as TextBlockContent[],
 		epigraphs: epigraphs as Epigraph[],
 	});
 }
