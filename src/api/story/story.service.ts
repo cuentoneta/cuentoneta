@@ -6,7 +6,7 @@ import { mapAuthor, mapResources, mapStoryContent } from '../_utils/functions';
 
 // Modelos
 import { Epigraph, Story, StoryBase } from '@models/story.model';
-import { mapMediaSources } from '../_utils/media-sources.functions';
+import { mapMediaSources, mapMediaSourcesForStorylist } from '../_utils/media-sources.functions';
 
 // Subqueries
 import { storiesByAuthorSlugQuery, storyBySlugQuery } from '../_queries/story.query';
@@ -30,7 +30,7 @@ export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<
 
 		stories.push({
 			...properties,
-			media: await mapMediaSources(mediaSources),
+			media: mapMediaSourcesForStorylist(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: body,
 		});
