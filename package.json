@@ -44,7 +44,6 @@
 		"@types/express": "^4.17.17",
 		"@vercel/speed-insights": "^1.0.9",
 		"cors": "^2.8.5",
-		"create-stylelint": "^0.5.0",
 		"esbuild": "0.21.4",
 		"express": "^4.19.2",
 		"groq": "^3.44.0",
