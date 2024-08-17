@@ -20478,7 +20478,7 @@ snapshots:
       get-port: 5.1.1
       giget: 1.1.2
       globby: 11.1.0
-      jscodeshift: 0.14.0(@babel/preset-env@7.24.0(@babel/core@7.24.0))
+      jscodeshift: 0.14.0(@babel/preset-env@7.24.0(@babel/core@7.24.5))
       leven: 3.1.0
       prettier: 2.8.7
       prompts: 2.4.2
@@ -25589,7 +25589,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  jscodeshift@0.14.0(@babel/preset-env@7.24.0(@babel/core@7.24.0)):
+  jscodeshift@0.14.0(@babel/preset-env@7.24.0(@babel/core@7.24.5)):
     dependencies:
       '@babel/core': 7.24.5
       '@babel/parser': 7.23.9
