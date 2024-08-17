@@ -17,6 +17,12 @@ jobs:
         with:
           node-version: 20.11
           cache: 'pnpm'
-      - run: pnpm install --frozen-lockfile
+
+      - name: Run CI
+        run: pnpm install --ignore-scripts --frozen-lockfile
+
+      - name: Generate testing environment file
+        run: pnpm run config-pipeline
+
       - name: Run stylelint
         run: pnpm dlx stylelint "**/*.scss"
