@@ -123,11 +123,6 @@
 		"typescript": "5.5.4",
 		"webpack": "^5.64.0"
 	},
-	"husky": {
-		"hooks": {
-			"pre-commit": "lint-staged"
-		}
-	},
 	"lint-staged": {
 		"*.scss": [
 			"stylelint --fix"
