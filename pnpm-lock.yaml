@@ -94,9 +94,6 @@ importers:
       satori-html:
         specifier: ^0.3.2
         version: 0.3.2
-      stylelint-config-recommended:
-        specifier: ^14.0.1
-        version: 14.0.1(stylelint@16.8.2(typescript@5.5.4))
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -272,6 +269,9 @@ importers:
       stylelint:
         specifier: ^16.8.2
         version: 16.8.2(typescript@5.5.4)
+      stylelint-config-recommended:
+        specifier: ^14.0.1
+        version: 14.0.1(stylelint@16.8.2(typescript@5.5.4))
       stylelint-config-standard:
         specifier: ^36.0.1
         version: 36.0.1(stylelint@16.8.2(typescript@5.5.4))
@@ -20402,7 +20402,7 @@ snapshots:
       get-port: 5.1.1
       giget: 1.1.2
       globby: 11.1.0
-      jscodeshift: 0.14.0(@babel/preset-env@7.24.0(@babel/core@7.24.0))
+      jscodeshift: 0.14.0(@babel/preset-env@7.24.0(@babel/core@7.24.5))
       leven: 3.1.0
       prettier: 2.8.7
       prompts: 2.4.2
@@ -25493,7 +25493,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  jscodeshift@0.14.0(@babel/preset-env@7.24.0(@babel/core@7.24.0)):
+  jscodeshift@0.14.0(@babel/preset-env@7.24.0(@babel/core@7.24.5)):
     dependencies:
       '@babel/core': 7.24.5
       '@babel/parser': 7.23.9
