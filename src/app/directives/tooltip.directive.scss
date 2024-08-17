@@ -12,16 +12,14 @@
 
 	// Interactividad
 	@apply pointer-events-none;
+
+	// Animaciones
+	animation: tooltip-slide 0.18s ease-out 0.5s;
+	animation-fill-mode: forwards;
 }
 
 .tooltip-arrow {
 	@apply absolute h-2 w-2 rotate-45 bg-black;
-}
-
-// Animaciones
-.tooltip-container {
-	animation: tooltip-slide 0.18s ease-out 0.5s;
-	animation-fill-mode: forwards;
 }
 
 @keyframes tooltip-slide {
