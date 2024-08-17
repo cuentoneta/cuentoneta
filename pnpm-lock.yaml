@@ -94,6 +94,9 @@ importers:
       satori-html:
         specifier: ^0.3.2
         version: 0.3.2
+      stylelint-config-recommended:
+        specifier: ^14.0.1
+        version: 14.0.1(stylelint@16.8.2(typescript@5.5.4))
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
