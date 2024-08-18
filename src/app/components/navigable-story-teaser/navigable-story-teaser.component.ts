@@ -29,6 +29,26 @@ import { RouterLink } from '@angular/router';
 					}"
 					class="bg-gray-50 px-7 py-5"
 				>
+					<h4 class="inter-body-sm-bold mb-2">{{ story().title }}</h4>
+					<div class="flex items-center justify-between">
+						<time class="inter-body-xs-semibold font-semibold text-gray-600">
+							{{ story().approximateReadingTime }} minutos de lectura
+						</time>
+						<cuentoneta-media-resource-tags [resources]="story().media" />
+					</div>
+				</article>
+			</a>
+		} @else {
+			<a
+				[routerLink]="['/', appRoutes.Story, story().slug]"
+				[queryParams]="{ navigation: 'author', navigationSlug: authorSlug() }"
+			>
+				<article
+					[ngClass]="{
+						'border-l-4 border-solid border-primary-400 bg-primary-100': selected()
+					}"
+					class="bg-gray-50 px-7 py-5"
+				>
 					<cuentoneta-story-edition-date-label [label]="story().originalPublication" />
 
 					<h4 class="inter-body-sm-bold mb-2">{{ story().title }}</h4>
