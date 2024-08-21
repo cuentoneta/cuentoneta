@@ -102,6 +102,7 @@
 		"jest-preset-angular": "14.1.0",
 		"nx": "19.5.4",
 		"nx-cloud": "19.0.0",
+		"nx-stylelint": "^17.1.5",
 		"only-allow": "^1.2.1",
 		"postcss": "8.4.36",
 		"prettier": "^3.2.5",
