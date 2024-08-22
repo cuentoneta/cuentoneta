@@ -4,6 +4,7 @@
 	"projectType": "application",
 	"sourceRoot": "./src",
 	"prefix": "cuentoneta",
+	"tags": [],
 	"targets": {
 		"build": {
 			"executor": "@nx/angular:application",
@@ -38,7 +39,9 @@
 							"maximumError": "4kb"
 						}
 					],
-					"ssr": { "entry": "./src/ssr.server.ts" },
+					"ssr": {
+						"entry": "./src/ssr.server.ts"
+					},
 					"outputHashing": "all"
 				},
 				"development": {
@@ -46,7 +49,9 @@
 					"extractLicenses": false,
 					"sourceMap": true,
 					"namedChunks": true,
-					"ssr": { "entry": "./src/ssr.server.ts" }
+					"ssr": {
+						"entry": "./src/ssr.server.ts"
+					}
 				}
 			},
 			"defaultConfiguration": "production"
@@ -106,7 +111,13 @@
 				}
 			},
 			"defaultConfiguration": "development"
+		},
+		"stylelint": {
+			"executor": "nx-stylelint:lint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["**/*.css", "**/*.scss"]
+			}
 		}
-	},
-	"tags": []
+	}
 }
