@@ -21,7 +21,8 @@
 		"test": "nx test",
 		"test:watch": "nx test --watch",
 		"sanity:dev": "cd cms && sanity dev",
-		"prepare": "husky"
+		"prepare": "husky",
+		"stylelint": "pnpm dlx nx stylelint cuentoneta"
 	},
 	"private": true,
 	"dependencies": {
