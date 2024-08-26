@@ -30,6 +30,7 @@ export default defineType({
 			name: 'image',
 			title: 'Foto',
 			type: 'image',
+			// TODO: Mover la referencia al asset una constante
 			initialValue: {
 				asset: {
 					_type: 'reference',
@@ -52,6 +53,7 @@ export default defineType({
 			name: 'biography',
 			title: 'Biografía',
 			type: 'object',
+			validation: (Rule) => Rule.required(),
 			fieldsets: [
 				{
 					title: 'Traducciones',
