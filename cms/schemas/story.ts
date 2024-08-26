@@ -1,7 +1,7 @@
 import { supportedLanguages } from '../utils/localization';
 import { DocumentTextIcon, DocumentVideoIcon, PlayIcon, TwitterIcon } from '@sanity/icons';
 import { resource } from './resourceType';
-import { defineField, defineType } from 'sanity';
+import { defineArrayMember, defineField, defineType } from 'sanity';
 
 const audioRecording = defineField({
 	name: 'audioRecording',
@@ -147,6 +147,8 @@ export default defineType({
 				})),
 				layout: 'radio',
 			},
+			initialValue: 'es',
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'author',
@@ -159,24 +161,27 @@ export default defineType({
 			name: 'mediaSources',
 			title: 'Información de recursos multimedia asociados a la historia en otras plataformas web',
 			type: 'array',
-			of: [audioRecording, spaceRecording, youtubeVideo],
+			of: [defineArrayMember(audioRecording), defineArrayMember(spaceRecording), defineArrayMember(youtubeVideo)],
 		}),
 		defineField({
 			name: 'resources',
 			title: 'Recursos web asociados a la story y su contenido',
 			type: 'array',
-			of: [resource],
+			of: [defineArrayMember(resource)],
 		}),
 		defineField({
 			name: 'badLanguage',
 			title: '¿Contiene lenguaje adulto?',
 			type: 'boolean',
+			initialValue: false,
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'approximateReadingTime',
 			title: 'Tiempo de lectura aproximado',
 			type: 'computedNumber',
 			readOnly: true,
+			validation: (Rule) => Rule.required(),
 			options: {
 				buttonText: 'Recalcular',
 				documentQuerySelection: `
@@ -204,7 +209,7 @@ export default defineType({
 			title: 'Epígrafes',
 			type: 'array',
 			of: [
-				{
+				defineArrayMember({
 					name: 'epigraph',
 					title: 'Epígrafe',
 					type: 'object',
@@ -213,6 +218,7 @@ export default defineType({
 							name: 'text',
 							title: 'Texto del epígrafe',
 							type: 'blockContent',
+							validation: (Rule) => Rule.required(),
 						},
 						{
 							name: 'reference',
@@ -221,14 +227,13 @@ export default defineType({
 							type: 'string',
 						},
 					],
-				},
+				}),
 			],
 		}),
 		defineField({
 			name: 'body',
 			title: 'Cuerpo del cuento',
 			type: 'blockContent',
-			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'review',
@@ -239,11 +244,9 @@ export default defineType({
 			name: 'originalPublication',
 			title: 'Publicación original',
 			type: 'string',
+			validation: (Rule) => Rule.required(),
 		}),
 	],
-	initialValue: {
-		language: 'es',
-	},
 	preview: {
 		select: {
 			title: 'title',
