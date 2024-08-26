@@ -21,6 +21,8 @@
 		"test": "nx test",
 		"test:watch": "nx test --watch",
 		"sanity:dev": "cd cms && sanity dev",
+		"sanity:extract-schema": "cd cms && npx sanity schema extract --enforce-required-fields --workspace=production-workspace",
+		"sanity:run-typegen-generator": "cd cms && npx sanity typegen generate",
 		"prepare": "husky"
 	},
 	"private": true,
