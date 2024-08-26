@@ -10,12 +10,12 @@ export const storylistPreviewQuery = groq`*[_type == 'storylist' && slug.current
     editionPrefix,
     comingNextLabel,
     featuredImage,
-    'tags': tags[] -> {
+    'tags': coalesce(tags[] -> {
         title, 
         'slug': slug.current, 
         description, 
         'icon': {'name': icon.name, 'provider': icon.provider, 'svg': icon.svg}
-    },
+    }, []),
     'gridConfig': { 
     'gridTemplateColumns': previewGridConfig.gridTemplateColumns,
     'titlePlacement': previewGridConfig.titlePlacement,
@@ -42,12 +42,12 @@ export const storylistPreviewQuery = groq`*[_type == 'storylist' && slug.current
                     body[0...3],
                     originalPublication,
                     approximateReadingTime,
-                    mediaSources[]{ 
+                    'mediaSources': coalesce(mediaSources[]{
                         _id,
                         _type,
                         title, 
                         icon
-                    },
+                    }, []),
                 	'author': author->{
                         slug,
                         name,
@@ -72,12 +72,12 @@ export const storylistQuery = groq`*[_type == 'storylist' && slug.current == $sl
     editionPrefix,
     comingNextLabel,
     featuredImage,
-    'tags': tags[] -> {
+    'tags': coalesce(tags[] -> {
         title, 
         'slug': slug.current, 
         description, 
         'icon': {'name': icon.name, 'provider': icon.provider, 'svg': icon.svg}
-    },
+    }, []),
     'gridConfig': { 
         'gridTemplateColumns': gridConfig.gridTemplateColumns,
         'titlePlacement': gridConfig.titlePlacement,
@@ -106,8 +106,18 @@ export const storylistQuery = groq`*[_type == 'storylist' && slug.current == $sl
                     body[0...3],
                     originalPublication,
                     approximateReadingTime,
-                    mediaSources,
-                	'author': author-> { slug, name, image, nationality-> }
+                    'mediaSources': coalesce(mediaSources[]{
+                        _id,
+                        _type,
+                        title, 
+                        icon
+                    }, []),
+                	'author': author->{
+                        slug,
+                        name,
+                        image,
+                        nationality->
+                    }
                 }
             }
         }
