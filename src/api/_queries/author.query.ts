@@ -17,7 +17,7 @@ export const authorBySlugQuery = groq`*[_type == 'author' && slug.current == $sl
         		'name': icon.name, 
         		'svg': icon.svg, 
         		'provider': icon.provider 
-        		} 
         	} 
-        }
+        } 
+    }
 }`;
