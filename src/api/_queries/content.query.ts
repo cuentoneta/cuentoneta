@@ -2,7 +2,7 @@ import groq from 'groq';
 
 export const fetchLandingPageContentQuery = groq`*[_type == 'landingPage'] 
 {
-    'previews': previews[]-> { 
+    'previews': coalesce(previews[]-> { 
         'slug': slug.current,
         title,
         description,
@@ -55,8 +55,8 @@ export const fetchLandingPageContentQuery = groq`*[_type == 'landingPage']
             }
         },
         'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])
-    },
-    'cards': cards[]-> { 
+    }, []),
+    'cards': coalesce(cards[]-> { 
         'slug': slug.current,
         title,
         description,
@@ -72,5 +72,5 @@ export const fetchLandingPageContentQuery = groq`*[_type == 'landingPage']
             'icon': {'name': icon.name, 'provider': icon.provider, 'svg': icon.svg}
         },
         'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])
-    }
+    }, [])
 }[0]`;
