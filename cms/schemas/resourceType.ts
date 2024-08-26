@@ -23,17 +23,20 @@ export const resource = defineField({
 			name: 'title',
 			title: 'Título',
 			type: 'string',
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'url',
 			title: 'URL',
 			type: 'string',
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'resourceType',
 			title: 'Tipo de recurso',
 			type: 'reference',
 			to: { type: 'resourceType' },
+			validation: (Rule) => Rule.required(),
 		}),
 	],
 });
@@ -89,6 +92,7 @@ export default defineType({
 			options: {
 				storeSvg: true,
 			},
+			validation: (Rule) => Rule.required(),
 		}),
 	],
 });
