@@ -14,21 +14,29 @@ const gridItemFields = [
 		name: 'startCol',
 		title: 'Columna inicial en CSS Grid',
 		type: 'string',
+		initialValue: 'auto',
+		validation: (Rule) => Rule.required(),
 	}),
 	defineField({
 		name: 'endCol',
 		title: 'Columna final en CSS Grid',
 		type: 'string',
+		initialValue: 'span 6',
+		validation: (Rule) => Rule.required(),
 	}),
 	defineField({
 		name: 'startRow',
 		title: 'Fila inicial en CSS Grid',
 		type: 'string',
+		initialValue: 'auto',
+		validation: (Rule) => Rule.required(),
 	}),
 	defineField({
 		name: 'endRow',
 		title: 'Fila final en CSS Grid',
 		type: 'string',
+		initialValue: 'span 1',
+		validation: (Rule) => Rule.required(),
 	}),
 ];
 
@@ -39,6 +47,7 @@ const gridConfigFields = [
 		type: 'string',
 		description: 'Ejemplo: "repeat(3, 1fr)", "repeat(12, 1fr), etc.',
 		initialValue: 'repeat(3, 1fr)',
+		validation: (Rule) => Rule.required(),
 	}),
 	defineField({
 		name: 'titlePlacement',
@@ -116,12 +125,15 @@ const gridConfigFields = [
 								title: 'Orden de publicación',
 								description: 'Número ordinal de publicación dentro de la storylist para el cuento',
 								type: 'number',
+								validation: (Rule) => Rule.required(),
 							}),
 							defineField({
 								name: 'publishingDate',
 								title: 'Fecha de publicación',
 								description: 'Fecha en la cual el cuento se publicó o publicará en la storylist',
 								type: 'date',
+								initialValue: new Date().toISOString().slice(0, 10),
+								validation: (Rule) => Rule.required(),
 							}),
 						],
 					}),
@@ -144,10 +156,6 @@ const gridConfigFields = [
 					}),
 					...gridItemFields,
 				],
-				initialValue: {
-					startCol: 'auto',
-					endCol: 'span 4',
-				},
 			}),
 		],
 	}),
@@ -163,6 +171,7 @@ export default defineType({
 			name: 'title',
 			title: 'Título',
 			type: 'string',
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'slug',
@@ -178,6 +187,7 @@ export default defineType({
 			name: 'description',
 			title: 'Descripción',
 			type: 'text',
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'language',
@@ -190,6 +200,7 @@ export default defineType({
 				})),
 				layout: 'radio',
 			},
+			initialValue: 'es',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
@@ -197,6 +208,7 @@ export default defineType({
 			title: 'Mostrar fechas',
 			type: 'boolean',
 			initialValue: false,
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'comingNextLabel',
@@ -204,6 +216,7 @@ export default defineType({
 			description:
 				'Etiqueta que se mostrará en una publicación programada dentro de una storylist pero que aún no ha sido publicada.',
 			type: 'string',
+			initialValue: 'Próximamente',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
@@ -213,6 +226,7 @@ export default defineType({
 				'Prefijo usado para identificar qué representa cada historia en una Storylist (día, edición, historia, etc.)',
 			type: 'string',
 			initialValue: 'Edición',
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'featuredImage',
@@ -221,6 +235,7 @@ export default defineType({
 			options: {
 				hotspot: true,
 			},
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'tags',
@@ -234,6 +249,7 @@ export default defineType({
 					to: [{ type: 'tag' }],
 				}),
 			],
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'gridConfig',
@@ -262,8 +278,4 @@ export default defineType({
 			],
 		}),
 	],
-	initialValue: {
-		comingNextLabel: 'Próximamente',
-		language: 'Español',
-	},
 });
