@@ -11,12 +11,12 @@ export const fetchLandingPageContentQuery = groq`*[_type == 'landingPage']
         editionPrefix,
         comingNextLabel,
         featuredImage,
-        'tags': tags[] -> {
+        'tags': coalesce(tags[] -> {
             title, 
             'slug': slug.current, 
             description, 
             'icon': {'name': icon.name, 'provider': icon.provider, 'svg': icon.svg}
-        },
+        }, []),
         'gridConfig': {
             'gridTemplateColumns': previewGridConfig.gridTemplateColumns,
             'titlePlacement': previewGridConfig.titlePlacement,
@@ -65,12 +65,12 @@ export const fetchLandingPageContentQuery = groq`*[_type == 'landingPage']
         editionPrefix,
         comingNextLabel,
         featuredImage,
-        'tags': tags[] -> {
+        'tags': coalesce(tags[] -> {
             title, 
             'slug': slug.current, 
             description, 
             'icon': {'name': icon.name, 'provider': icon.provider, 'svg': icon.svg}
-        },
+        }, []),
         'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])
     }, [])
 }[0]`;
