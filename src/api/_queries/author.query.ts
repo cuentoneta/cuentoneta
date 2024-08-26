@@ -7,7 +7,7 @@ export const authorBySlugQuery = groq`*[_type == 'author' && slug.current == $sl
     image,
     nationality->,
     biography,
-    resources[]{ 
+    'resources': coalesce(resources[]{ 
         title, 
         url, 
         resourceType->{ 
@@ -19,5 +19,5 @@ export const authorBySlugQuery = groq`*[_type == 'author' && slug.current == $sl
         		'provider': icon.provider 
         	} 
         } 
-    }
+    }, [])
 }`;
