@@ -35,35 +35,38 @@ export const storyBySlugQuery = groq`*[_type == 'story' && slug.current == $slug
 {
   'slug': slug.current,
   title, 
-  language,
-  badLanguage,
-  epigraphs,
-  categories,
-  body,
-  review,
-  originalPublication,
+  'language': coalesce(language, 'es'),
+  'badLanguage': coalesce(badLanguage, false),
+  'epigraphs': coalesce(epigraphs[]{
+      text,
+      reference
+  }, []),
+  'categories': coalesce(categories, []),
+  'body': coalesce(body, []),
+  'review': coalesce(review, []),
+  'originalPublication': coalesce(originalPublication, ''),
   approximateReadingTime,
-  mediaSources,
-  resources[]{
-        title, 
-        url, 
-        resourceType->{ 
-            title, 
-            description, 
-            'icon': {
-                'name': icon.name, 
-                'svg': icon.svg, 
-                'provider': icon.provider 
-                } 
-            } 
-  },
+  'mediaSources': coalesce(mediaSources, []),
+  'resources': coalesce(resources[]{
+    title, 
+    url, 
+    resourceType->{ 
+      title, 
+      description,
+      'icon': {
+        'name': icon.name, 
+        'svg': icon.svg, 
+        'provider': icon.provider
+      }
+    }
+  }, []),
   'author': author-> {
       slug,
       name,
       image,
       nationality->,
       biography,
-      resources[]{ 
+      'resources': coalesce(resources[]{ 
         title, 
         url, 
         resourceType->{ 
@@ -75,6 +78,6 @@ export const storyBySlugQuery = groq`*[_type == 'story' && slug.current == $slug
                 'provider': icon.provider 
                 } 
             } 
-        }
+        }, [])
       }
 }[0]`;
