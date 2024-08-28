@@ -9,13 +9,14 @@ import landingPage from './landingPage';
 import story from './story';
 import storylist from './storylist';
 import tag from './tag';
-import resourceType from './resourceType';
+import { resourceType, resource } from './resourceType';
 import publication from './publication';
 
 export default [
 	// Tipos de propiedades
 	blockContent,
 	publication,
+	resource,
 	// Tipos de documentos
 	landingPage,
 	storylist,

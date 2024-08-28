@@ -2,7 +2,7 @@ import { LinkIcon } from '@sanity/icons';
 import { preview } from 'sanity-plugin-icon-picker';
 import { defineField, defineType } from 'sanity';
 
-export const resource = defineField({
+export const resource = defineType({
 	name: 'resource',
 	title: 'Recurso',
 	type: 'object',
@@ -41,7 +41,7 @@ export const resource = defineField({
 	],
 });
 
-export default defineType({
+export const resourceType = defineType({
 	name: 'resourceType',
 	title: 'Tipos de Recursos',
 	type: 'document',
