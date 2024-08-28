@@ -1,6 +1,7 @@
 import { StoryBase, StoryPreview } from './story.model';
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { Tag } from '@models/tag.model';
+import { TextBlockContent } from '@models/block-content.model';
 
 interface StorylistBase {
 	title: string;
@@ -9,54 +10,21 @@ interface StorylistBase {
 	editionPrefix: string;
 	count: number;
 	comingNextLabel: string;
-	description?: string[];
-	language?: string;
-	featuredImage?: SanityImageSource;
+	description: TextBlockContent[];
+	language: string;
+	featuredImage: SanityImageSource;
 	tags: Tag[];
-	images?: {
-		slug: string;
-		url: SanityImageSource;
-	}[];
-	previewImages?: {
-		slug: string;
-		url: SanityImageSource;
-	}[];
-	gridConfig?: StorylistGridConfig;
 }
 
-export type StorylistCard = Omit<StorylistBase, 'images' | 'previewImages' | 'gridConfig' | 'previewGridConfig'>;
+export type StorylistTeaser = StorylistBase;
 
 export interface Storylist extends StorylistBase {
 	publications: Publication<StoryPreview>[];
 }
 
-export interface StorylistDTO extends StorylistBase {
-	publications: Publication<StoryPreview>[];
-}
-
 export interface Publication<T extends StoryBase> {
 	publishingOrder: number;
-	editionLabel: string;
-	comingNextLabel: string;
 	published: boolean;
 	publishingDate?: string;
 	story: T;
-}
-
-export interface StorylistGridConfig {
-	gridTemplateColumns: string;
-	titlePlacement: Omit<GridItemPlacementConfig, 'slug' | 'imageSlug' | 'publication' | 'image'>;
-	cardsPlacement: GridItemPlacementConfig[];
-}
-
-export interface GridItemPlacementConfig {
-	slug?: string | null;
-	order: number;
-	imageSlug?: string | null;
-	startCol?: string | null;
-	endCol?: string | null;
-	startRow?: string | null;
-	endRow?: string | null;
-	publication: Publication<StoryPreview>;
-	image: SanityImageSource;
 }
