@@ -5,7 +5,7 @@ import {
 	SanityImageCrop,
 	SanityImageHotspot,
 } from './generated-schema-types';
-import { languageCodes, supportedLanguages } from '../../../cms/utils/localization';
+import { languageCodes } from '../../../cms/utils/localization';
 
 export type BiographySubQueryResult = {
 	es?: BlockContent;
@@ -24,6 +24,26 @@ export type ImageQueryResult = {
 	crop?: SanityImageCrop;
 	_type: 'image';
 };
+
+export type MediaResourcesSubQueryResult =
+	| Array<
+			| {
+					_type: 'audioRecording';
+					title: string;
+					url: string;
+			  }
+			| {
+					_type: 'spaceRecording';
+					title: string;
+					url: string;
+			  }
+			| {
+					_type: 'youTubeVideo';
+					title: string;
+					url: null;
+			  }
+	  >
+	| Array<never>;
 
 export type NationalitySubQueryResult = {
 	_id: string;

@@ -26,28 +26,7 @@ export type StoriesByAuthorSlugQueryResult = Array<{
 	body: BlockContent;
 	originalPublication: string | '';
 	approximateReadingTime: number;
-	mediaSources:
-		| Array<never>
-		| Array<
-				| {
-						_id: null;
-						_type: 'audioRecording';
-						title: string | null;
-						icon: null;
-				  }
-				| {
-						_id: null;
-						_type: 'spaceRecording';
-						title: string | null;
-						icon: null;
-				  }
-				| {
-						_id: null;
-						_type: 'youTubeVideo';
-						title: string | null;
-						icon: null;
-				  }
-		  >;
+	mediaSources: MediaResourcesSubQueryResult;
 	resources: ResourceSubQueryResult;
 }>;
 // Variable: storyBySlugQuery
@@ -68,28 +47,7 @@ export type StoryBySlugQueryResult = {
 	review: BlockContent;
 	originalPublication: string | '';
 	approximateReadingTime: number;
-	mediaSources:
-		| Array<never>
-		| Array<
-				| {
-						_id: null;
-						_type: 'audioRecording';
-						title: string | null;
-						icon: null;
-				  }
-				| {
-						_id: null;
-						_type: 'spaceRecording';
-						title: string | null;
-						icon: null;
-				  }
-				| {
-						_id: null;
-						_type: 'youTubeVideo';
-						title: string | null;
-						icon: null;
-				  }
-		  >;
+	mediaSources: MediaResourcesSubQueryResult;
 	resources: ResourceSubQueryResult;
 	author: {
 		slug: Slug;
@@ -145,28 +103,7 @@ export type StorylistQueryResult = {
 					body: BlockContent;
 					originalPublication: string;
 					approximateReadingTime: number;
-					mediaSources:
-						| Array<never>
-						| Array<
-								| {
-										_id: null;
-										_type: 'audioRecording';
-										title: string | null;
-										icon: null;
-								  }
-								| {
-										_id: null;
-										_type: 'spaceRecording';
-										title: string | null;
-										icon: null;
-								  }
-								| {
-										_id: null;
-										_type: 'youTubeVideo';
-										title: string | null;
-										icon: null;
-								  }
-						  >;
+					mediaSources: MediaResourcesSubQueryResult;
 					author: {
 						slug: Slug;
 						name: string;
@@ -184,6 +121,7 @@ import '@sanity/client';
 import { BlockContent, Slug } from './generated-schema-types';
 import {
 	ImageQueryResult,
+	MediaResourcesSubQueryResult,
 	NationalitySubQueryResult,
 	ResourceSubQueryResult,
 	TagsSubQueryResult,
