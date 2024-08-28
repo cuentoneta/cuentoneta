@@ -3,7 +3,7 @@ import { DocumentTextIcon, DocumentVideoIcon, PlayIcon, TwitterIcon } from '@san
 import { resource } from './resourceType';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 
-const audioRecording = defineField({
+const audioRecording = defineType({
 	name: 'audioRecording',
 	title: 'Grabación de audio con el relato del texto',
 	type: 'object',
@@ -26,16 +26,18 @@ const audioRecording = defineField({
 			name: 'title',
 			title: 'Título asignado a la grabación de audio',
 			type: 'string',
+			validation: (Rule) => Rule.required(),
 		},
 		{
 			name: 'url',
 			title: 'URL del archivo de audio (mp3, wav, etc.)',
 			type: 'url',
+			validation: (Rule) => Rule.required(),
 		},
 	],
 });
 
-const spaceRecording = defineField({
+const spaceRecording = defineType({
 	name: 'spaceRecording',
 	title: 'Grabación de Spaces de X',
 	type: 'object',
@@ -58,26 +60,30 @@ const spaceRecording = defineField({
 			name: 'postId',
 			title: 'ID de post de X',
 			type: 'string',
+			validation: (Rule) => Rule.required(),
 		},
 		{
 			name: 'title',
 			title: 'Título del Space',
 			type: 'string',
+			validation: (Rule) => Rule.required(),
 		},
 		{
-			name: 'spaceUrl',
+			name: 'url',
 			title: 'URL de la grabación del space',
 			type: 'url',
+			validation: (Rule) => Rule.required(),
 		},
 		{
 			name: 'duration',
 			title: 'Duración del space',
 			type: 'string',
+			validation: (Rule) => Rule.required(),
 		},
 	],
 });
 
-const youtubeVideo = defineField({
+const youtubeVideo = defineType({
 	name: 'youTubeVideo',
 	title: 'Video de YouTube',
 	type: 'object',
@@ -100,16 +106,19 @@ const youtubeVideo = defineField({
 			name: 'title',
 			title: 'Título del video',
 			type: 'string',
+			validation: (Rule) => Rule.required(),
 		},
 		{
 			name: 'description',
 			title: 'Descripción del video',
 			type: 'blockContent',
+			validation: (Rule) => Rule.required(),
 		},
 		{
 			name: 'videoId',
 			title: 'ID del video de YouTube',
 			type: 'string',
+			validation: (Rule) => Rule.required(),
 		},
 	],
 });
