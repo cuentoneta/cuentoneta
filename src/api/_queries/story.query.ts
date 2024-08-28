@@ -12,10 +12,9 @@ export const storiesByAuthorSlugQuery = defineQuery(`*[_type == 'story' && autho
     'originalPublication': coalesce(originalPublication, ''),
     approximateReadingTime,
     'mediaSources': coalesce(mediaSources[]{
-        _id,
         _type,
         title, 
-        icon
+        url
     }, []),
     'resources': coalesce(resources[]{ 
         title, 
@@ -45,10 +44,9 @@ export const storyBySlugQuery = defineQuery(`*[_type == 'story' && slug.current 
     'originalPublication': coalesce(originalPublication, ''),
     approximateReadingTime,
     'mediaSources': coalesce(mediaSources[]{
-        _id,
         _type,
         title, 
-        icon
+        url
     }, []),
     'resources': coalesce(resources[]{
         title, 

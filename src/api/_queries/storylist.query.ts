@@ -20,7 +20,6 @@ export const storylistTeasersQuery = defineQuery(`*[_type == 'storylist']{
     }
 `);
 
-// @sanity-typegen-ignore
 export const storylistQuery = defineQuery(`*[_type == 'storylist' && slug.current == $slug][0]
 { 
     'slug': slug.current,
@@ -51,10 +50,9 @@ export const storylistQuery = defineQuery(`*[_type == 'storylist' && slug.curren
             originalPublication,
             approximateReadingTime,
             'mediaSources': coalesce(mediaSources[]{
-                _id,
                 _type,
                 title, 
-                icon
+                url
             }, []),
             'author': author-> { slug, name, image, nationality-> }
         }
