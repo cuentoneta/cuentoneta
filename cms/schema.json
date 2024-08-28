@@ -1308,14 +1308,14 @@
 										"value": {
 											"type": "string"
 										},
-										"optional": true
+										"optional": false
 									},
 									"url": {
 										"type": "objectAttribute",
 										"value": {
 											"type": "string"
 										},
-										"optional": true
+										"optional": false
 									},
 									"_type": {
 										"type": "objectAttribute",
@@ -1345,28 +1345,28 @@
 										"value": {
 											"type": "string"
 										},
-										"optional": true
+										"optional": false
 									},
 									"title": {
 										"type": "objectAttribute",
 										"value": {
 											"type": "string"
 										},
-										"optional": true
+										"optional": false
 									},
-									"spaceUrl": {
+									"url": {
 										"type": "objectAttribute",
 										"value": {
 											"type": "string"
 										},
-										"optional": true
+										"optional": false
 									},
 									"duration": {
 										"type": "objectAttribute",
 										"value": {
 											"type": "string"
 										},
-										"optional": true
+										"optional": false
 									},
 									"_type": {
 										"type": "objectAttribute",
@@ -1396,7 +1396,7 @@
 										"value": {
 											"type": "string"
 										},
-										"optional": true
+										"optional": false
 									},
 									"description": {
 										"type": "objectAttribute",
@@ -1649,14 +1649,14 @@
 												]
 											}
 										},
-										"optional": true
+										"optional": false
 									},
 									"videoId": {
 										"type": "objectAttribute",
 										"value": {
 											"type": "string"
 										},
-										"optional": true
+										"optional": false
 									},
 									"_type": {
 										"type": "objectAttribute",
