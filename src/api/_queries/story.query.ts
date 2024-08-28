@@ -1,6 +1,7 @@
-import groq from 'groq';
+import { defineQuery } from 'groq';
 
-export const storiesByAuthorSlugQuery = groq`*[_type == 'story' && author->slug.current == $slug][$start...$end]
+// @sanity-typegen-ignore
+export const storiesByAuthorSlugQuery = defineQuery(`*[_type == 'story' && author->slug.current == $slug][$start...$end]
 {
     'slug': slug.current,
     title,
@@ -22,16 +23,13 @@ export const storiesByAuthorSlugQuery = groq`*[_type == 'story' && author->slug.
         resourceType->{ 
             title, 
             description, 
-            'icon': { 
-                'name': icon.name, 
-                'svg': icon.svg, 
-                'provider': icon.provider 
-            } 
+            icon
         } 
     }, []),
-}|order(title asc)`;
+}|order(title asc)`);
 
-export const storyBySlugQuery = groq`*[_type == 'story' && slug.current == $slug]
+// @sanity-typegen-ignore
+export const storyBySlugQuery = defineQuery(`*[_type == 'story' && slug.current == $slug]
 {
     'slug': slug.current,
     title, 
@@ -58,11 +56,7 @@ export const storyBySlugQuery = groq`*[_type == 'story' && slug.current == $slug
         resourceType->{ 
             title, 
             description,
-            'icon': {
-                'name': icon.name, 
-                'svg': icon.svg, 
-                'provider': icon.provider
-            }
+            icon
         }
     }, []),
     'author': author-> {
@@ -77,12 +71,8 @@ export const storyBySlugQuery = groq`*[_type == 'story' && slug.current == $slug
             resourceType->{ 
                 title, 
                 description, 
-                'icon': { 
-                    'name': icon.name, 
-                    'svg': icon.svg, 
-                    'provider': icon.provider 
-                } 
+                icon
             } 
         }, [])
     }
-}[0]`;
+}[0]`);
