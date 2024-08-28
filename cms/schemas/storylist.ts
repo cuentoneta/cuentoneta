@@ -1,123 +1,7 @@
 import { supportedLanguages } from '../utils/localization';
 import { DashboardIcon } from '@sanity/icons';
 import { defineArrayMember, defineField, defineType } from 'sanity';
-
-const gridItemFields = [
-	defineField({
-		name: 'order',
-		title: 'Orden',
-		description: 'Orden utilizado internamente por CSS Grid para renderizar el elemento',
-		type: 'number',
-		validation: (Rule) => Rule.required(),
-	}),
-	defineField({
-		name: 'startCol',
-		title: 'Columna inicial en CSS Grid',
-		type: 'string',
-		initialValue: 'auto',
-		validation: (Rule) => Rule.required(),
-	}),
-	defineField({
-		name: 'endCol',
-		title: 'Columna final en CSS Grid',
-		type: 'string',
-		initialValue: 'span 6',
-		validation: (Rule) => Rule.required(),
-	}),
-	defineField({
-		name: 'startRow',
-		title: 'Fila inicial en CSS Grid',
-		type: 'string',
-		initialValue: 'auto',
-		validation: (Rule) => Rule.required(),
-	}),
-	defineField({
-		name: 'endRow',
-		title: 'Fila final en CSS Grid',
-		type: 'string',
-		initialValue: 'span 1',
-		validation: (Rule) => Rule.required(),
-	}),
-];
-
-const gridConfigFields = [
-	defineField({
-		name: 'gridTemplateColumns',
-		title: 'Template de columnas en CSS Grid (grid-template-columns)',
-		type: 'string',
-		description: 'Ejemplo: "repeat(3, 1fr)", "repeat(12, 1fr), etc.',
-		initialValue: 'repeat(3, 1fr)',
-		validation: (Rule) => Rule.required(),
-	}),
-	defineField({
-		name: 'titlePlacement',
-		title: 'Posición del título',
-		type: 'object',
-		fields: [...gridItemFields],
-	}),
-	defineField({
-		name: 'cardsPlacement',
-		description:
-			'Posiciones de las tarjetas y las imágenes alusivas de la storylist, con su orden de renderizado y extensión en columnas y filas dentro del layout de CSS Grid',
-		type: 'array',
-		of: [
-			defineArrayMember({
-				name: 'deckPreviewConfigItem',
-				title: 'Configuración de preview de Storylist',
-				type: 'object',
-				preview: {
-					select: {
-						order: 'order',
-						publicationOrder: 'publication.publishingOrder',
-						storyTitle: 'publication.story.title',
-						image: 'image',
-						imageSlug: 'imageSlug.current',
-						startCol: 'startCol',
-						endCol: 'endCol',
-					},
-					prepare(selection) {
-						const { order, publicationOrder, storyTitle, image, imageSlug, endCol } = selection;
-
-						// Preview para stories en grid
-						const title = `${image ? imageSlug : storyTitle}`;
-
-						// Preview para imágenes en grid
-						return {
-							title: `${order} | ${title} | ${endCol}`,
-							subtitle: `Orden en lista: ${publicationOrder}`,
-							media: image ?? undefined,
-						};
-					},
-				},
-				fields: [
-					defineField({
-						name: 'publication',
-						title: 'Publicación de Cuento/Texto/Historia dentro de la storylist',
-						type: 'publication',
-					}),
-					defineField({
-						name: 'image',
-						title: 'Imagen de grid',
-						type: 'image',
-						options: {
-							hotspot: true,
-						},
-					}),
-					defineField({
-						name: 'imageSlug',
-						title: 'Slug de imagen alusiva',
-						type: 'slug',
-						options: {
-							source: 'title',
-							maxLength: 96,
-						},
-					}),
-					...gridItemFields,
-				],
-			}),
-		],
-	}),
-];
+import publication from './publication';
 
 export default defineType({
 	name: 'storylist',
@@ -207,33 +91,12 @@ export default defineType({
 					to: [{ type: 'tag' }],
 				}),
 			],
-			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
-			name: 'gridConfig',
-			title: 'Configuración de vista completa de Storylist en layout de CSS Grid',
-			type: 'object',
-			fields: [...gridConfigFields],
-		}),
-		defineField({
-			name: 'previewGridConfig',
-			title: 'Configuración de vista previa de Storylist en layout de CSS Grid',
-			type: 'object',
-			fields: [
-				...gridConfigFields,
-				{
-					name: 'ordering',
-					title: 'Orden de publicaciones',
-					description: 'Orden de publicaciones en vista previa de Storylist',
-					type: 'string',
-					options: {
-						list: [
-							{ title: 'Ascendente', value: 'asc' },
-							{ title: 'Descendente', value: 'desc' },
-						],
-					},
-				},
-			],
+			name: 'publications',
+			title: 'Publicaciones de Cuento/Texto/Historia dentro de la storylist',
+			type: 'array',
+			of: [defineArrayMember(publication)],
 		}),
 	],
 });
