@@ -1,10 +1,14 @@
+// Tipos de Sanity
 import {
 	BlockContent,
 	IconPicker,
 	internalGroqTypeReferenceTo,
 	SanityImageCrop,
 	SanityImageHotspot,
+	Slug,
 } from './generated-schema-types';
+
+// Localización
 import { languageCodes } from '../../../cms/utils/localization';
 
 export type BiographySubQueryResult = {
@@ -25,25 +29,29 @@ export type ImageQueryResult = {
 	_type: 'image';
 };
 
-export type MediaResourcesSubQueryResult =
-	| Array<
-			| {
-					_type: 'audioRecording';
-					title: string;
-					url: string;
-			  }
-			| {
-					_type: 'spaceRecording';
-					title: string;
-					url: string;
-			  }
-			| {
-					_type: 'youTubeVideo';
-					title: string;
-					url: null;
-			  }
-	  >
-	| Array<never>;
+export type MediaResourcesSubQueryResult = Array<
+	| {
+			url?: string;
+			title: string;
+			_type: 'audioRecording';
+			_key: string;
+	  }
+	| {
+			url?: string;
+			postId?: string;
+			duration?: string;
+			title: string;
+			_type: 'spaceRecording';
+			_key: string;
+	  }
+	| {
+			description?: BlockContent;
+			videoId?: string;
+			title: string;
+			_type: 'youTubeVideo';
+			_key: string;
+	  }
+>;
 
 export type NationalitySubQueryResult = {
 	_id: string;
@@ -54,6 +62,29 @@ export type NationalitySubQueryResult = {
 	country: string;
 	flag: ImageQueryResult;
 };
+
+export type PublicationSubQueryResult = Array<{
+	publishingOrder: number;
+	publishingDate: string;
+	published: boolean;
+	story: {
+		slug: string;
+		title: string;
+		language: 'en' | 'es';
+		badLanguage: boolean;
+		categories: null;
+		body: BlockContent;
+		originalPublication: string;
+		approximateReadingTime: number;
+		mediaSources: MediaResourcesSubQueryResult;
+		author: {
+			slug: Slug;
+			name: string;
+			image: ImageQueryResult;
+			nationality: NationalitySubQueryResult;
+		};
+	};
+}>;
 
 export type ResourceSubQueryResult =
 	| Array<{

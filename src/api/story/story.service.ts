@@ -12,12 +12,11 @@ import { mapMediaSources, mapMediaSourcesForStorylist } from '../_utils/media-so
 import { storiesByAuthorSlugQuery, storyBySlugQuery } from '../_queries/story.query';
 
 // Interfaces
-import { TextBlockContent } from '@models/block-content.model';
 import { StoriesByAuthorSlugArgs } from '../interfaces/queryArgs';
-import { StoriesByAuthorSlugQueryResult, StoryBySlugQueryResult } from '../sanity/types';
+import { BlockContent } from '../sanity/generated-schema-types';
 
 export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryBase[]> {
-	const result: StoriesByAuthorSlugQueryResult = await client.fetch(storiesByAuthorSlugQuery, {
+	const result = await client.fetch(storiesByAuthorSlugQuery, {
 		slug: args.slug,
 		start: args.offset * args.limit,
 		end: (args.offset + 1) * args.limit,
@@ -40,7 +39,7 @@ export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<
 }
 
 export async function fetchStoryBySlug(slug: string): Promise<Story> {
-	const result: StoryBySlugQueryResult = await client.fetch(storyBySlugQuery, { slug });
+	const result = await client.fetch(storyBySlugQuery, { slug });
 
 	const { body, review, author, mediaSources, epigraphs, ...properties } = result;
 
@@ -49,8 +48,8 @@ export async function fetchStoryBySlug(slug: string): Promise<Story> {
 		media: await mapMediaSources(mediaSources),
 		author: mapAuthor(author, properties.language),
 		resources: mapResources(properties.resources),
-		paragraphs: body as TextBlockContent[],
-		summary: review as TextBlockContent[],
+		paragraphs: body as BlockContent,
+		summary: review as BlockContent,
 		epigraphs: epigraphs as Epigraph[],
 	});
 }

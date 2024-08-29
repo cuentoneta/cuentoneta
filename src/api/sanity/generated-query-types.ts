@@ -89,30 +89,7 @@ export type StorylistQueryResult = {
 	comingNextLabel: string;
 	featuredImage: ImageQueryResult;
 	tags: TagsSubQueryResult;
-	publications:
-		| Array<{
-				publishingOrder: number;
-				publishingDate: string;
-				published: boolean;
-				story: {
-					slug: string;
-					title: string;
-					language: 'en' | 'es';
-					badLanguage: boolean;
-					categories: null;
-					body: BlockContent;
-					originalPublication: string;
-					approximateReadingTime: number;
-					mediaSources: MediaResourcesSubQueryResult;
-					author: {
-						slug: Slug;
-						name: string;
-						image: ImageQueryResult;
-						nationality: NationalitySubQueryResult;
-					};
-				};
-		  }>
-		| Array<never>;
+	publications: PublicationSubQueryResult;
 	count: number;
 } | null;
 
@@ -123,6 +100,7 @@ import {
 	ImageQueryResult,
 	MediaResourcesSubQueryResult,
 	NationalitySubQueryResult,
+	PublicationSubQueryResult,
 	ResourceSubQueryResult,
 	TagsSubQueryResult,
 } from './derivate-types';
