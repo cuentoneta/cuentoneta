@@ -27,10 +27,10 @@ import { baseLanguage } from '../../../cms/utils/localization';
 import { Author } from '@models/author.model';
 import { BlockContent } from '../sanity/generated-schema-types';
 import { Resource } from '@models/resource.model';
-import { Storylist, StorylistTeaser } from '@models/storylist.model';
-import { Story, StoryPreview } from '@models/story.model';
-import { Tag } from '@models/tag.model';
+import { Publication, PublicationBase, Storylist, StorylistTeaser } from '@models/storylist.model';
+import { Story, StoryBase, StoryPreview } from '@models/story.model';
 import { TextBlockContent } from '@models/block-content.model';
+import { Tag } from '@models/tag.model';
 
 export function mapAuthor(
 	rawAuthorData: Exclude<AuthorBySlugQueryResult, null>,
@@ -96,16 +96,21 @@ export function mapStorylistTeasers(result: StorylistTeasersQueryResult): Storyl
 		description: mapBlockContentToTextParagraphs(item.description),
 		tags: mapTags(item.tags),
 		featuredImage: urlFor(item.featuredImage).url(),
+		publications: [],
 	}));
 }
 
-export function mapStorylist(result: Exclude<StorylistQueryResult, null>): Storylist {
+export function mapStorylist(
+	result: Exclude<StorylistQueryResult, null>,
+): Storylist<StoryBase, PublicationBase<StoryBase>> {
 	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
-	const publications = [];
+	const publications: Publication<StoryPreview>[] = [];
 	for (const publication of result.publications) {
 		const { body, author, mediaSources, ...story } = publication.story;
 		publications.push({
 			...publication,
+			editionLabel: '',
+			comingNextLabel: result.comingNextLabel,
 			story: mapStoryPreviewContent({
 				...story,
 				author: mapAuthor({ ...author, biography: {}, resources: [] }),
