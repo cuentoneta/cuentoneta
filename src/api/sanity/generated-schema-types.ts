@@ -11,13 +11,7 @@
  * https://www.sanity.io/docs/sanity-typegen
  * ---------------------------------------------------------------------------------
  */
-import {
-	ImageQueryResult,
-	MediaResourcesSubQueryResult,
-	NationalitySubQueryResult,
-	ResourceSubQueryResult,
-	TagsSubQueryResult,
-} from './derivate-types';
+import { ImageQueryResult, MediaResourcesSubQueryResult } from './derivate-types';
 
 // Source: schema.json
 export type SanityImagePaletteSwatch = {
