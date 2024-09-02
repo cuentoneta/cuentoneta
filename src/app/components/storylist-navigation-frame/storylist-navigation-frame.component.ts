@@ -8,7 +8,6 @@ import { injectQueryParams } from 'ngxtension/inject-query-params';
 import { injectParams } from 'ngxtension/inject-params';
 
 // Models
-import { StoryPreview } from '@models/story.model';
 import { Publication, Storylist } from '@models/storylist.model';
 
 // Routes
