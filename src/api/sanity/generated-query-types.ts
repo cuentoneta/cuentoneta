@@ -1,3 +1,9 @@
+/**
+ * En este archivo se definen los tipos de queries refinados a partir de los generados por Sanity Codegen. Los tipos
+ * refinados se utilizan para simplificar la estructura de las queries generadas por Sanity Codegen mediante el uso de los
+ * tipos definidos en derivate-types.ts y generated-schema-types.ts.
+ */
+
 // Source: ../src/api/_queries/author.query.ts
 // Variable: authorBySlugQuery
 // Query: *[_type == 'author' && slug.current == $slug][0]{    slug,    name,    image,    nationality->,    biography,    'resources': coalesce(resources[]{         title,         url,         resourceType->{         	title,         	description,             icon        }     }, [])}

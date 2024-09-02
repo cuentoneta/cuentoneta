@@ -1,3 +1,9 @@
+/**
+ * En este archivo se definen los tipos de datos que se derivan de los tipos de datos básicos usados en
+ * nuestros schemas de Sanity, a fin de abordar y simplificar los tipos de datos redundantes generados por
+ * Sanity Codegen.
+ */
+
 // Tipos de Sanity
 import {
 	BlockContent,
