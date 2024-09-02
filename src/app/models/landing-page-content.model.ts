@@ -1,7 +1,6 @@
-import { Publication, Storylist, StorylistTeaser } from '@models/storylist.model';
-import { StoryPreview } from '@models/story.model';
+import { Storylist, StorylistTeaser } from '@models/storylist.model';
 
 export interface LandingPageContent {
 	cards: StorylistTeaser[];
-	previews: Storylist<StoryPreview, Publication<StoryPreview>>[];
+	previews: Storylist[];
 }

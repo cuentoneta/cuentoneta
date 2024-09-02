@@ -1,9 +1,8 @@
-import { StoryBase } from './story.model';
-import { SanityImageSource } from '@sanity/image-url/lib/types/types';
+import { StoryPreview, StoryTeaser } from './story.model';
 import { Tag } from '@models/tag.model';
 import { TextBlockContent } from '@models/block-content.model';
 
-export interface StorylistBase {
+interface StorylistBase<T> {
 	title: string;
 	slug: string;
 	displayDates: boolean;
@@ -12,28 +11,29 @@ export interface StorylistBase {
 	comingNextLabel: string;
 	description: TextBlockContent[];
 	language: string;
-	featuredImage: SanityImageSource;
+	featuredImage: string;
 	tags: Tag[];
+	publications: T[];
 }
 
-export interface StorylistTeaser extends StorylistBase {
-	featuredImage: string;
-	publications: [];
+export interface StorylistTeaser extends StorylistBase<never> {
+	publications: Array<never>;
 }
 
-export interface Storylist<T extends StoryBase, K extends PublicationBase<T>> extends StorylistBase {
-	featuredImage: string;
-	publications: K[];
+export interface Storylist extends StorylistBase<Publication> {
+	publications: Publication[];
 }
 
-export interface PublicationBase<T extends StoryBase> {
+export interface Publication {
 	publishingOrder: number;
 	published: boolean;
 	publishingDate?: string;
-	story: T;
+	story: StoryPreview;
 }
 
-export interface Publication<T extends StoryBase> extends PublicationBase<T> {
-	editionLabel: string;
-	comingNextLabel: string;
+export interface PublicationTeaser {
+	publishingOrder: number;
+	published: boolean;
+	publishingDate?: string;
+	story: StoryTeaser;
 }
