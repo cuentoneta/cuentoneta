@@ -13,6 +13,7 @@
  */
 import {
 	ImageQueryResult,
+	MediaResourcesSubQueryResult,
 	NationalitySubQueryResult,
 	ResourceSubQueryResult,
 	TagsSubQueryResult,
@@ -99,17 +100,7 @@ export type Storylist = {
 	displayDates: boolean;
 	comingNextLabel: string;
 	editionPrefix: string;
-	featuredImage: {
-		asset?: {
-			_ref: string;
-			_type: 'reference';
-			_weak?: boolean;
-			[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
-		};
-		hotspot?: SanityImageHotspot;
-		crop?: SanityImageCrop;
-		_type: 'image';
-	};
+	featuredImage: ImageQueryResult;
 	tags?: Array<{
 		_ref: string;
 		_type: 'reference';
@@ -197,29 +188,7 @@ export type Story = {
 		_weak?: boolean;
 		[internalGroqTypeReferenceTo]?: 'author';
 	};
-	mediaSources?: Array<
-		| {
-				title?: string;
-				url?: string;
-				_type: 'audioRecording';
-				_key: string;
-		  }
-		| {
-				postId?: string;
-				title?: string;
-				spaceUrl?: string;
-				duration?: string;
-				_type: 'spaceRecording';
-				_key: string;
-		  }
-		| {
-				title?: string;
-				description?: BlockContent;
-				videoId?: string;
-				_type: 'youTubeVideo';
-				_key: string;
-		  }
-	>;
+	mediaSources?: MediaResourcesSubQueryResult;
 	resources?: Array<{
 		title: string;
 		url: string;
