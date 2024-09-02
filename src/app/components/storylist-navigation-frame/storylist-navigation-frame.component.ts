@@ -62,7 +62,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	private queryParams = injectQueryParams();
 	private storylistService = inject(StorylistService);
 
-	displayedPublications: Publication<StoryPreview>[] = [];
+	displayedPublications: Publication[] = [];
 	dummyList: null[] = Array(9);
 	storylist: Storylist | undefined;
 
@@ -100,7 +100,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	 * caso de que la story actualmente en vista sea una de las primeras o de las últimas.
 	 * @author Ramiro Olivencia <ramiro@olivencia.com.ar>
 	 */
-	sliceDisplayedPublications(publications: Publication<StoryPreview>[]): void {
+	sliceDisplayedPublications(publications: Publication[]): void {
 		if (!this.storylist) {
 			return;
 		}
