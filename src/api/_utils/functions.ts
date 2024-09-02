@@ -27,8 +27,8 @@ import { baseLanguage } from '../../../cms/utils/localization';
 import { Author } from '@models/author.model';
 import { BlockContent } from '../sanity/generated-schema-types';
 import { Resource } from '@models/resource.model';
-import { Publication, PublicationBase, Storylist, StorylistTeaser } from '@models/storylist.model';
-import { Story, StoryBase, StoryPreview } from '@models/story.model';
+import { Publication, Storylist, StorylistTeaser } from '@models/storylist.model';
+import { Story, StoryPreview } from '@models/story.model';
 import { TextBlockContent } from '@models/block-content.model';
 import { Tag } from '@models/tag.model';
 
@@ -43,10 +43,10 @@ export function mapAuthor(
 		slug: rawAuthorData.slug.current,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
-			flag: urlFor(rawAuthorData.nationality.flag)?.url(),
+			flag: urlFor(rawAuthorData.nationality.flag),
 		},
 		resources: resources,
-		imageUrl: urlFor(rawAuthorData.image).url(),
+		imageUrl: urlFor(rawAuthorData.image),
 		name: rawAuthorData.name,
 		biography: biography,
 	};
@@ -56,11 +56,17 @@ export function mapAuthorBiography(
 	biography: BiographySubQueryResult,
 	language: SupportedLanguageCodes = baseLanguage.id,
 ): TextBlockContent[] {
+	if (Object.keys(biography).length === 0) {
+		return [];
+	}
 	return mapBlockContentToTextParagraphs(biography[language] as BlockContent);
 }
 
-export function urlFor(source: SanityImageSource): ImageUrlBuilder {
-	return imageUrlBuilder(client).image(source);
+export function urlFor(source: SanityImageSource): string {
+	if (!source) {
+		return '';
+	}
+	return imageUrlBuilder(client).image(source).url();
 }
 
 export function mapResources(resources: ResourceSubQueryResult): Resource[] {
@@ -72,7 +78,7 @@ export function mapResources(resources: ResourceSubQueryResult): Resource[] {
 				icon: {
 					provider: resource.resourceType.icon.provider ?? '',
 					name: resource.resourceType.icon.name ?? '',
-					svg: resource.resourceType.icon ? `data:image/svg+xml,${resource.resourceType.icon.svg}` : '',
+					svg: resource.resourceType.icon ? `${resource.resourceType.icon.svg}` : '',
 				},
 			},
 		})) ?? []
@@ -85,7 +91,7 @@ export function mapTags(tags: TagsSubQueryResult): Tag[] {
 		icon: {
 			provider: tag.icon.provider ?? '',
 			name: tag.icon.name ?? '',
-			svg: tag.icon ? `data:image/svg+xml,${tag.icon.svg}` : '',
+			svg: tag.icon ? `${tag.icon.svg}` : '',
 		},
 	}));
 }
@@ -95,22 +101,18 @@ export function mapStorylistTeasers(result: StorylistTeasersQueryResult): Storyl
 		...item,
 		description: mapBlockContentToTextParagraphs(item.description),
 		tags: mapTags(item.tags),
-		featuredImage: urlFor(item.featuredImage).url(),
+		featuredImage: urlFor(item.featuredImage),
 		publications: [],
 	}));
 }
 
-export function mapStorylist(
-	result: Exclude<StorylistQueryResult, null>,
-): Storylist<StoryBase, PublicationBase<StoryBase>> {
+export function mapStorylist(result: Exclude<StorylistQueryResult, null>): Storylist {
 	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
-	const publications: Publication<StoryPreview>[] = [];
+	const publications: Publication[] = [];
 	for (const publication of result.publications) {
 		const { body, author, mediaSources, ...story } = publication.story;
 		publications.push({
 			...publication,
-			editionLabel: '',
-			comingNextLabel: result.comingNextLabel,
 			story: mapStoryPreviewContent({
 				...story,
 				author: mapAuthor({ ...author, biography: {}, resources: [] }),
@@ -125,12 +127,12 @@ export function mapStorylist(
 		...result,
 		description: mapBlockContentToTextParagraphs(result.description),
 		tags: mapTags(result.tags),
-		featuredImage: urlFor(result.featuredImage).url(),
+		featuredImage: urlFor(result.featuredImage),
 		publications,
 	};
 }
 
-// TODO: Agregar soporte a futuro para mapear imágenes de los recursos multimedia
+// TODO: Agregar soporte a futuro para mapear imágenes dentro del cuerpo de una story
 export function mapBlockContentToTextParagraphs(content: BlockContent): TextBlockContent[] {
 	return content.filter((element) => element._type === 'block') as TextBlockContent[];
 }
