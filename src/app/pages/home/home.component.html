@@ -1,33 +1,7 @@
 <main>
-	<section class="card-decks mb-16 mt-16">
-		@if (!!previews && previews.length) {
-			@for (storylistDeck of previews; track storylistDeck.slug) {
-				<cuentoneta-storylist-card-deck
-					[canNavigateToStorylist]="true"
-					[storylist]="storylistDeck.storylist"
-					[displayTitle]="true"
-					[number]="storylistDeck.amount"
-					[isLoading]="fetchContentDirective.isLoading"
-					[displayFeaturedImage]="true"
-					[skeletonConfig]="storylistDeck.previewGridSkeletonConfig"
-					class="mb-4 block last:mb-0"
-				/>
-
-				@if (!!storylistDeck.storylist) {
-					<a
-						[routerLink]="['/' + appRoutes.StoryList, storylistDeck.storylist.slug]"
-						class="navigation-link inter-body-xl-bold mb-16 block text-right text-interactive-500 last:mb-0 hover:text-interactive-600"
-					>
-						Ver Storylist
-					</a>
-				}
-			}
-		}
-	</section>
-
 	<div class="mb-4 flex content-between items-center">
 		<hr class="flex-grow" />
-		<h2 class="h2 mx-8 text-center">¿Buscás otras lecturas?</h2>
+		<h2 class="h2 mx-8 text-center">¿Qué querés leer hoy?</h2>
 		<hr class="flex-grow" />
 	</div>
 	<div class="mb-8 flex justify-center">
@@ -38,8 +12,8 @@
 
 	<section class="grid grid-cols-1 justify-items-center gap-8 lg:grid-cols-2">
 		@if (!!cards && cards.length) {
-			@for (deck of cards; track $index) {
-				<cuentoneta-storylist-card [storylist]="deck.storylist" class="card w-full"> </cuentoneta-storylist-card>
+			@for (storylist of cards; track $index) {
+				<cuentoneta-storylist-card [storylist]="storylist" class="card w-full"> </cuentoneta-storylist-card>
 			}
 		}
 	</section>
