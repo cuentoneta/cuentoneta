@@ -4,6 +4,21 @@ export default defineType({
 	name: 'publication',
 	title: 'Publicación de Cuento/Texto/Historia dentro de la storylist',
 	type: 'object',
+	preview: {
+		select: {
+			title: 'story.title',
+			authorName: 'story.author.name',
+			published: 'published',
+			publishingDate: 'publishingDate',
+		},
+		prepare(selection) {
+			const { title, authorName, published, publishingDate } = selection;
+			return {
+				title: `${authorName} - ${title}` || 'Sin título',
+				subtitle: published ? `Publicado el ${new Date(publishingDate).toLocaleDateString()}` : 'No publicado',
+			};
+		},
+	},
 	fields: [
 		defineField({
 			name: 'story',
