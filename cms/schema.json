@@ -1354,7 +1354,7 @@
 										},
 										"optional": false
 									},
-									"url": {
+									"spaceUrl": {
 										"type": "objectAttribute",
 										"value": {
 											"type": "string"
