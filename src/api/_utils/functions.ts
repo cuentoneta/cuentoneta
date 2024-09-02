@@ -6,7 +6,6 @@ import { mapMediaSourcesForStorylist } from './media-sources.functions';
 
 // Tipos de Sanity
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
-import { ImageUrlBuilder } from '@sanity/image-url/lib/types/builder';
 import {
 	BiographySubQueryResult,
 	ResourceSubQueryResult,
