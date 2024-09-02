@@ -24,7 +24,7 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 		>
 			<!-- No utilizar ngSrc para este elemento de imagen, dado que se carga dinámicamente desde un campo en formato base64 -->
 			<img
-				[src]="resource().resourceType.icon?.svg ?? ''"
+				[src]="resource().resourceType.icon.svg"
 				[height]="24"
 				[width]="24"
 				[alt]="resource().resourceType.title"
