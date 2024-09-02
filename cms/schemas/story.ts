@@ -11,13 +11,13 @@ const audioRecording = defineType({
 	preview: {
 		select: {
 			title: 'title',
-			url: 'spaceUrl',
+			spaceUrl: 'spaceUrl',
 		},
 		prepare(selection) {
-			const { title, url } = selection;
+			const { title, spaceUrl } = selection;
 			return {
 				title: `${title}`,
-				subtitle: ` URL Grabación: ${url}`,
+				subtitle: ` URL Grabación: ${spaceUrl}`,
 			};
 		},
 	},
@@ -44,14 +44,14 @@ const spaceRecording = defineType({
 	icon: TwitterIcon,
 	preview: {
 		select: {
-			title: 'postId',
-			url: 'spaceUrl',
+			title: 'title',
+			spaceUrl: 'spaceUrl',
 		},
 		prepare(selection) {
-			const { title, url } = selection;
+			const { title, spaceUrl } = selection;
 			return {
-				title: `${title} | ID Tweet: ${'abc'} | URL Grabación: ${url}`,
-				subtitle: `${url}`,
+				title: `${title} | ID Tweet: ${'abc'} | URL Grabación: ${spaceUrl}`,
+				subtitle: `${spaceUrl}`,
 			};
 		},
 	},
@@ -69,7 +69,7 @@ const spaceRecording = defineType({
 			validation: (Rule) => Rule.required(),
 		},
 		{
-			name: 'url',
+			name: 'spaceUrl',
 			title: 'URL de la grabación del space',
 			type: 'url',
 			validation: (Rule) => Rule.required(),
