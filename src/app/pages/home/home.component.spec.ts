@@ -8,8 +8,6 @@ import { ContentService } from '../../providers/content.service';
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { Component, input } from '@angular/core';
 import { Publication, Storylist } from '@models/storylist.model';
-import { StorylistGridSkeletonConfig } from '@models/content.model';
-import { Story } from '@models/story.model';
 
 xdescribe('HomeComponent', () => {
 	const setup = async () => {
@@ -47,7 +45,7 @@ class MockPublicationCardComponent {
 	editionSuffix = input<string>();
 	comingNextLabel = input<string>();
 	displayDate = input<boolean>(false);
-	publication = input<Publication<Story>>();
+	publication = input<Publication>();
 	editionIndex = input<number>(0);
 }
 
@@ -64,5 +62,4 @@ class MockStorylistCardDeckComponent {
 	canNavigateToStorylist = input<boolean>(false);
 	displayTitle = input<boolean>(true);
 	displayFeaturedImage = input<boolean>(false);
-	skeletonConfig = input<StorylistGridSkeletonConfig>();
 }
