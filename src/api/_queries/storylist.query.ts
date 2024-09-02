@@ -49,11 +49,7 @@ export const storylistQuery = defineQuery(`*[_type == 'storylist' && slug.curren
             body[0...3],
             originalPublication,
             approximateReadingTime,
-            'mediaSources': coalesce(mediaSources[]{
-                _type,
-                title, 
-                url
-            }, []),
+            'mediaSources': coalesce(mediaSources[], []),
             'author': author-> { slug, name, image, nationality-> }
         }
     }, []),
