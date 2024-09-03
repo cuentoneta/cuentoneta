@@ -3,10 +3,6 @@
  * Este script debe ejecutarse como paso previo a la compilación de la aplicación
  * (build step).
  *
- * Para mejorar los tiempos de carga del paint inicial de la aplicación, la con-
- * figuración de contenido se obtiene desde las variables de entorno y se deposita
- * en el archivo de environment.ts, el cual es compilado junto con la aplicación.
- *
  * Autor: @rolivencia
  */
 
