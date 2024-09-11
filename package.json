@@ -18,7 +18,7 @@
 		"storybook": "nx run cuentoneta:storybook",
 		"storybook:build": "nx run cuentoneta:build-storybook",
 		"lint": "npx nx lint --skip-nx-cache",
-		"stylelint": "pnpm dlx nx stylelint cuentoneta",
+		"stylelint": "npx nx stylelint cuentoneta",
 		"test": "nx test",
 		"test:watch": "nx test --watch",
 		"sanity:dev": "cd cms && sanity dev",
