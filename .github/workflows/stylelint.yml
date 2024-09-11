@@ -1,4 +1,4 @@
-name: Stylelint
+name: Stylelint CI
 
 on:
   pull_request:
@@ -12,17 +12,15 @@ jobs:
       - uses: pnpm/action-setup@v4.0.0
         with:
           version: latest
+
       - name: Use Node.js 20.11
         uses: actions/setup-node@v4.0.3
         with:
           node-version: 20.11
           cache: 'pnpm'
 
-      - name: Run CI
-        run: pnpm install --ignore-scripts --frozen-lockfile
-
-      - name: Generate testing environment file
-        run: pnpm run config-pipeline
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts
 
       - name: Run stylelint
-        run: pnpm dlx stylelint "**/*.scss"
+        run: npx nx stylelint cuentoneta --skip-nx-cache

@@ -4,6 +4,7 @@
 	"projectType": "application",
 	"sourceRoot": "./src",
 	"prefix": "cuentoneta",
+	"tags": [],
 	"targets": {
 		"build": {
 			"executor": "@nx/angular:application",
@@ -106,7 +107,13 @@
 				}
 			},
 			"defaultConfiguration": "development"
+		},
+		"stylelint": {
+			"executor": "nx-stylelint:lint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["**/*.css", "**/*.scss"]
+			}
 		}
-	},
-	"tags": []
+	}
 }
