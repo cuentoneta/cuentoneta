@@ -30,4 +30,6 @@ Si se genera una consulta nueva en un archivo `*.query.ts` es necesario agregar 
 
 Debe tenerse en cuenta que los tipos generados pueden incluir casos donde los campos serán nulos o no definidos. Por ejemplo `slug?: string | null`. Hasta ahora recurrimos a la correción manual en casos donde tenemos completa seguridad de que el valor siempre estará definido (ni `null` ni `undefined`), buscando evitar estos casos mediante la especificación de la regla de validación `required` en los schemas de Sanity.
 
+Las queries de GROQ pueden ser nulas en caso de que no se encuentre el documento en la base de datos, lo cual debe ser validado mediante una cláusula `if` en el código de la aplicación a nivel del servicio que dispara la consulta. Pueden observarse ejemplos de esto en los servicios de `author` y `story`, en consultas que devuelven un valor único en base a una búsqueda por `slug`. En el caso de que las consultas devuelvan un array, el array será vacío -- lo cual es un comportamiento esperado y no debe ser tratado como un error o problema.
+
 Para aquellos casos en los que los campos sean de tipo array debe hacerse uso de la función `coalesce` en las consultas GROQ para evitar que el campo sea `null` y devolver, en cambio, un array vacío que pueda ser tipado mediante `Array<never>`. Puede observarse un ejemplo en la consulta `src/api/author/author.query.ts`.
