@@ -107,7 +107,7 @@ en el canal **[#🚐 | la-cuentoneta][dc-channel]** en Discord.
 
 - Tener instalada una versión de [Node](https://nodejs.org/es/) igual o superior a `v20.11.0`, idealmente la última
   versión LTS.
-- Instalar `pnpm`, un gestor de paquetes alternativo para Node: `npm install -g pnpm`. Se recomienda la versión `8.2.0` o superior.
+- Instalar `pnpm`, un gestor de paquetes alternativo para Node: `npm install -g pnpm`. Se recomienda la versión `9.8.0` o superior.
 - Instalar `nx`, un CLI para desarrollo de monorepos: `pnpm install -g nx`. Se recomienda la versión `19.0.0` o
   superior.
 - Tener un editor de texto o IDE ([Visual Studio Code](https://code.visualstudio.com/), [Vim](https://www.vim.org/), [WebStorm](https://www.jetbrains.com/es-es/webstorm/), etc).

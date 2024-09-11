@@ -1,5 +1,7 @@
 {
 	"compilerOptions": {
+		"useDefineForClassFields": true,
+		"isolatedModules": true,
 		"rootDir": ".",
 		"sourceMap": true,
 		"declaration": false,

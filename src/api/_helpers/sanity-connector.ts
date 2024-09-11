@@ -1,7 +1,7 @@
-import sanityClient, { SanityClient } from '@sanity/client';
+import { createClient, SanityClient } from '@sanity/client';
 import { environment } from './environment';
 
-export const client: SanityClient = sanityClient({
+export const client: SanityClient = createClient({
 	projectId: environment.sanity.projectId,
 	dataset: environment.sanity.dataset,
 	token: environment.sanity.token,
