@@ -158,7 +158,13 @@ O bien, su versión corta.
 pnpm i
 ```
 
-#### Paso 3: Correr el entorno de desarrollo localmente
+### Paso 3: Buildear el servidor
+
+```bash
+pnpm run build
+```
+
+#### Paso 4: Correr el entorno de desarrollo localmente
 
 Una vez hechos los pasos de instalación ejecutá el siguiente comando:
 
