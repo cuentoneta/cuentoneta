@@ -8,7 +8,7 @@
 
 # Tipado automático de consultas de Sanity (GROQ)
 
-Para generar los tipos de las consultas de Sanity debemos seguir [esta guía](https://www.sanity.io/learn/course/typescripted-content/generating-type-for-groq-query-results). El link lleva directamente al paso 5 que explica cómo generar los tipos para una query GROQ. Los pasos anteriores son de configuración y no son necesarios para el ya que ya fueron completados (el `schema.json` puede encontrarse en `cms/schema.json`, por ejemplo). Solo en caso de que agreguemos nuevas entidades o se agreguen modificaciones en los schemas de entidades existentes necesitaremos actualizarlo.
+Para generar los tipos de las consultas de Sanity debemos seguir [esta guía](https://www.sanity.io/learn/course/typescripted-content/generating-type-for-groq-query-results). Solo en caso de que agreguemos nuevas entidades o se agreguen modificaciones en los schemas de entidades existentes necesitaremos actualizar el archivo `schema.json`. En este proyecto este archivo se encuentra en el directorio `cms/schema.json`.
 
 De acuerdo a lo definido en `cms/sanity-typegen.json` los tipos generados mediante `sanity typegen generate` pueden encontrarse en `src/api/sanity/types.ts`, con los tipos generados para campos en la parte superior, sucedidos luego por los tipos generados para las queries de GROQ. Este archivo oficia como interfaz entre las consultas de Sanity y el código de los servicios de backend que disparan consultas mediante el conector a Sanity.
 
