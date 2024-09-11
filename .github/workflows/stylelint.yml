@@ -23,4 +23,4 @@ jobs:
         run: pnpm install --ignore-scripts
 
       - name: Run stylelint
-        run: npx nx stylelint cuentoneta
+        run: npx nx stylelint cuentoneta --skip-nx-cache
