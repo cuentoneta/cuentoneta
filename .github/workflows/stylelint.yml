@@ -1,0 +1,26 @@
+name: Stylelint CI
+
+on:
+  pull_request:
+
+jobs:
+  stylelint:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4.1.7
+      - uses: pnpm/action-setup@v4.0.0
+        with:
+          version: latest
+
+      - name: Use Node.js 20.11
+        uses: actions/setup-node@v4.0.3
+        with:
+          node-version: 20.11
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts
+
+      - name: Run stylelint
+        run: npx nx stylelint cuentoneta --skip-nx-cache

@@ -1,0 +1,14 @@
+{
+	"extends": ["stylelint-config-recommended", "stylelint-config-standard", "stylelint-config-standard-scss"],
+	"ignoreFiles": ["!**/*"],
+	"overrides": [
+		{
+			"files": ["**/*.css"],
+			"rules": {}
+		},
+		{
+			"files": ["**/*.scss"],
+			"rules": {}
+		}
+	]
+}
