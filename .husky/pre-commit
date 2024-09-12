@@ -2,4 +2,4 @@ echo "--- Formating Code ---"
 echo ""
 pnpm dlx pretty-quick --staged
 echo "--- Running Stylelint ---"
-pnpm dlx stylelint "**/*.{css,scss,sass}" --fix
+pnpm stylelint "**/*.{css,scss,sass}" --fix
