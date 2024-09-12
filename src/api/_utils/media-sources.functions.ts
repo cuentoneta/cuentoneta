@@ -1,3 +1,10 @@
+// 3rd party modules
+import { getTweetData } from './twitter-api';
+
+// Tipos de Sanity
+import { MediaResourcesSubQueryResult } from '../sanity/derivate-types';
+
+// Modelos
 import {
 	AudioRecording,
 	AudioRecordingSchemaObject,
@@ -6,7 +13,6 @@ import {
 	SpaceRecordingSchemaObject,
 	YoutubeVideoSchemaObject,
 } from '@models/media.model';
-import { getTweetData } from './twitter-api';
 
 export async function mapMediaSources(mediaSources: MediaSchemaObject[]): Promise<Media[]> {
 	if (!mediaSources) return [];
@@ -27,7 +33,7 @@ export async function mapMediaSources(mediaSources: MediaSchemaObject[]): Promis
 }
 
 // TODO: Corregir estos duplicados (Bug mencionado en issue #969)
-export function mapMediaSourcesForStorylist(mediaSources: MediaSchemaObject[]): Media[] {
+export function mapMediaSourcesForStorylist(mediaSources: MediaResourcesSubQueryResult): Media[] {
 	if (!mediaSources) return [];
 
 	const media: Media[] = [];
@@ -40,7 +46,7 @@ export function mapMediaSourcesForStorylist(mediaSources: MediaSchemaObject[]): 
 				title: mediaSource.title,
 				type: 'spaceRecording',
 				data: {},
-				icon: mediaSource.icon,
+				icon: '',
 			});
 		}
 		if (mediaSource._type === 'youTubeVideo') {

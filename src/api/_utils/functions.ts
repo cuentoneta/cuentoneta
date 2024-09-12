@@ -1,9 +1,22 @@
 // Conector a Sanity
 import { client } from '../_helpers/sanity-connector';
 
+// Funciones
+import { mapMediaSourcesForStorylist } from './media-sources.functions';
+
 // Tipos de Sanity
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
-import { ImageUrlBuilder } from '@sanity/image-url/lib/types/builder';
+import {
+	BiographySubQueryResult,
+	ResourceSubQueryResult,
+	SupportedLanguageCodes,
+	TagsSubQueryResult,
+} from '../sanity/derivate-types';
+import {
+	AuthorBySlugQueryResult,
+	StorylistQueryResult,
+	StorylistTeasersQueryResult,
+} from '../sanity/generated-query-types';
 
 // Sanity utils
 import imageUrlBuilder from '@sanity/image-url';
@@ -11,107 +24,99 @@ import { baseLanguage } from '../../../cms/utils/localization';
 
 // Modelos
 import { Author } from '@models/author.model';
-import { mapMediaSourcesForStorylist } from './media-sources.functions';
-import { Publication, StorylistDTO } from '@models/storylist.model';
-import { Story, StoryPreview } from '@models/story.model';
+import { BlockContent } from '../sanity/generated-schema-types';
 import { Resource } from '@models/resource.model';
-import { AuthorBySlugQueryResult, StorylistQueryResult } from '../sanity/types';
+import { Publication, Storylist, StorylistTeaser } from '@models/storylist.model';
+import { Story, StoryPreview } from '@models/story.model';
 import { TextBlockContent } from '@models/block-content.model';
+import { Tag } from '@models/tag.model';
 
-export function mapAuthor(rawAuthorData: AuthorBySlugQueryResult, language?: string): Author {
+export function mapAuthor(
+	rawAuthorData: Exclude<AuthorBySlugQueryResult, null>,
+	language: SupportedLanguageCodes = baseLanguage.id,
+): Author {
+	const resources = mapResources(rawAuthorData.resources);
+	const biography = mapAuthorBiography(rawAuthorData.biography, language);
+
 	return {
 		slug: rawAuthorData.slug.current,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
-			flag: urlFor(rawAuthorData.nationality.flag)?.url(),
+			flag: urlFor(rawAuthorData.nationality.flag),
 		},
-		resources: rawAuthorData.resources ? mapResources(rawAuthorData.resources) : [],
-		imageUrl: rawAuthorData.image ? urlFor(rawAuthorData.image).url() : '',
+		resources: resources,
+		imageUrl: urlFor(rawAuthorData.image),
 		name: rawAuthorData.name,
-		biography: rawAuthorData.biography
-			? (rawAuthorData.biography[language || baseLanguage.id] as TextBlockContent[])
-			: [],
+		biography: biography,
 	};
 }
 
-export function urlFor(source: SanityImageSource): ImageUrlBuilder {
-	return imageUrlBuilder(client).image(source);
+export function mapAuthorBiography(
+	biography: BiographySubQueryResult,
+	language: SupportedLanguageCodes = baseLanguage.id,
+): TextBlockContent[] {
+	if (Object.keys(biography).length === 0) {
+		return [];
+	}
+	return mapBlockContentToTextParagraphs(biography[language] as BlockContent);
 }
 
-export function mapResources(resources: Resource[]) {
+export function urlFor(source: SanityImageSource): string {
+	if (!source) {
+		return '';
+	}
+	return imageUrlBuilder(client).image(source).url();
+}
+
+export function mapResources(resources: ResourceSubQueryResult): Resource[] {
 	return (
-		resources?.map((resource: Resource) => ({
+		resources?.map((resource) => ({
 			...resource,
 			resourceType: {
 				...resource.resourceType,
-				icon: resource.resourceType.icon
-					? {
-							...resource.resourceType.icon,
-							svg: resource.resourceType.icon ? `data:image/svg+xml,${resource.resourceType.icon.svg}` : '',
-						}
-					: undefined,
+				icon: {
+					provider: resource.resourceType.icon.provider ?? '',
+					name: resource.resourceType.icon.name ?? '',
+					svg: resource.resourceType.icon ? `${resource.resourceType.icon.svg}` : '',
+				},
 			},
 		})) ?? []
 	);
 }
 
-export async function mapStorylistTeaser(result: StorylistQueryResult): Promise<StorylistDTO> {
-	return {
-		...result,
-		featuredImage: !result.featuredImage ? undefined : urlFor(result.featuredImage).url(),
-		images: [],
-		publications: [],
-		gridConfig: {
-			...result.gridConfig,
-			cardsPlacement: [],
+export function mapTags(tags: TagsSubQueryResult): Tag[] {
+	return tags.map((tag) => ({
+		...tag,
+		icon: {
+			provider: tag.icon.provider ?? '',
+			name: tag.icon.name ?? '',
+			svg: tag.icon ? `${tag.icon.svg}` : '',
 		},
-	};
+	}));
 }
 
-export function mapStorylist(result: StorylistQueryResult): StorylistDTO {
-	// TODO: En otra issue habría que crear un tipo distinto para la propiedad publication
-	// en GridItemPlacementConfig ya que al usar Publication<StoryPreview> el tipado espera
-	// propiedades como resources, media y paragraphs que no pedimos en la query ni usamos.
-	const cardsPlacement = result.gridConfig.cardsPlacement ?? [];
-	const publicationCards =
-		cardsPlacement
-			.filter((gc) => gc.slug)
-			.map((gc) => {
-				return {
-					...gc,
-					// TODO: Remover propiedades hardcoded al descartar gridConfig
-					startCol: 'auto',
-					endCol: 'span 6',
-					publication: {
-						...gc.publication,
-						story: {
-							...gc.publication.story,
-							resources: [],
-							media: [],
-							paragraphs: [],
-							author: mapAuthor(gc.publication.story.author),
-						},
-					},
-				};
-			}) ?? [];
+export function mapStorylistTeasers(result: StorylistTeasersQueryResult): StorylistTeaser[] {
+	return result.map((item) => ({
+		...item,
+		description: mapBlockContentToTextParagraphs(item.description),
+		tags: mapTags(item.tags),
+		featuredImage: urlFor(item.featuredImage),
+		publications: [],
+	}));
+}
 
-	const rawPublications = publicationCards
-		.filter((cardPlacement) => !!cardPlacement.publication && !!cardPlacement.publication.story)
-		.map((cardPlacement) => cardPlacement.publication);
-	const publications: Publication<StoryPreview>[] = [];
-
+export function mapStorylist(result: Exclude<StorylistQueryResult, null>): Storylist {
 	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
-	for (const publication of rawPublications) {
+	const publications: Publication[] = [];
+	for (const publication of result.publications) {
 		const { body, author, mediaSources, ...story } = publication.story;
 		publications.push({
 			...publication,
-			editionLabel: '',
-			comingNextLabel: '',
 			story: mapStoryPreviewContent({
 				...story,
+				author: mapAuthor({ ...author, biography: {}, resources: [] }),
 				media: mapMediaSourcesForStorylist(mediaSources),
-				paragraphs: body as TextBlockContent[],
-				author,
+				paragraphs: mapBlockContentToTextParagraphs(body),
 				resources: [],
 			}),
 		});
@@ -119,14 +124,16 @@ export function mapStorylist(result: StorylistQueryResult): StorylistDTO {
 
 	return {
 		...result,
-		featuredImage: !result.featuredImage ? undefined : urlFor(result.featuredImage).url(),
-		images: [],
+		description: mapBlockContentToTextParagraphs(result.description),
+		tags: mapTags(result.tags),
+		featuredImage: urlFor(result.featuredImage),
 		publications,
-		gridConfig: {
-			...result.gridConfig,
-			cardsPlacement: publicationCards,
-		},
 	};
+}
+
+// TODO: Agregar soporte a futuro para mapear imágenes dentro del cuerpo de una story
+export function mapBlockContentToTextParagraphs(content: BlockContent): TextBlockContent[] {
+	return content.filter((element) => element._type === 'block') as TextBlockContent[];
 }
 
 export function mapStoryContent(story: Story): Story {

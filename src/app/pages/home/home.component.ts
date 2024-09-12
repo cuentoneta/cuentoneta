@@ -11,7 +11,7 @@ import { AppRoutes } from '../../app.routes';
 import { ContentService } from '../../providers/content.service';
 
 // Models
-import { StorylistCardDeck } from '@models/content.model';
+import { Storylist, StorylistTeaser } from '@models/storylist.model';
 
 // Directives
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
@@ -39,8 +39,7 @@ import { StorylistCardComponent } from '../../components/storylist-card-componen
 export class HomeComponent {
 	readonly appRoutes = AppRoutes;
 
-	cards: StorylistCardDeck[] = [];
-	previews: StorylistCardDeck[] = [];
+	cards: StorylistTeaser[] = [];
 
 	// Directives
 	public fetchContentDirective = inject(FetchContentDirective);
@@ -51,8 +50,7 @@ export class HomeComponent {
 
 	constructor() {
 		// Asignación inicial para dibujar skeletons
-		this.cards = this.contentService.contentConfig.cards;
-		this.previews = this.contentService.contentConfig.previews;
+		this.cards = [];
 		this.metaTagsDirective.setDefault();
 
 		const platformId = inject(PLATFORM_ID);
@@ -66,12 +64,9 @@ export class HomeComponent {
 
 	private loadStorylistDecks() {
 		this.fetchContentDirective
-			.fetchContent$<{ previews: StorylistCardDeck[]; cards: StorylistCardDeck[] }>(
-				this.contentService.fetchStorylistDecks(),
-			)
+			.fetchContent$<{ previews: Storylist[]; cards: StorylistTeaser[] }>(this.contentService.fetchStorylistDecks())
 			.pipe(takeUntilDestroyed())
-			.subscribe(({ previews, cards }) => {
-				this.previews = previews;
+			.subscribe(({ cards }) => {
 				this.cards = cards;
 			});
 	}

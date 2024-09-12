@@ -9,5 +9,5 @@ export interface Resource {
 export interface ResourceType {
 	title: string;
 	description: string;
-	icon?: Icon;
+	icon: Icon;
 }

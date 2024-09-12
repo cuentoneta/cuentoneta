@@ -1,157 +1,7 @@
 import { supportedLanguages } from '../utils/localization';
 import { DashboardIcon } from '@sanity/icons';
 import { defineArrayMember, defineField, defineType } from 'sanity';
-
-const gridItemFields = [
-	defineField({
-		name: 'order',
-		title: 'Orden',
-		description: 'Orden utilizado internamente por CSS Grid para renderizar el elemento',
-		type: 'number',
-		validation: (Rule) => Rule.required(),
-	}),
-	defineField({
-		name: 'startCol',
-		title: 'Columna inicial en CSS Grid',
-		type: 'string',
-	}),
-	defineField({
-		name: 'endCol',
-		title: 'Columna final en CSS Grid',
-		type: 'string',
-	}),
-	defineField({
-		name: 'startRow',
-		title: 'Fila inicial en CSS Grid',
-		type: 'string',
-	}),
-	defineField({
-		name: 'endRow',
-		title: 'Fila final en CSS Grid',
-		type: 'string',
-	}),
-];
-
-const gridConfigFields = [
-	defineField({
-		name: 'gridTemplateColumns',
-		title: 'Template de columnas en CSS Grid (grid-template-columns)',
-		type: 'string',
-		description: 'Ejemplo: "repeat(3, 1fr)", "repeat(12, 1fr), etc.',
-		initialValue: 'repeat(3, 1fr)',
-	}),
-	defineField({
-		name: 'titlePlacement',
-		title: 'Posición del título',
-		type: 'object',
-		fields: [...gridItemFields],
-	}),
-	defineField({
-		name: 'cardsPlacement',
-		description:
-			'Posiciones de las tarjetas y las imágenes alusivas de la storylist, con su orden de renderizado y extensión en columnas y filas dentro del layout de CSS Grid',
-		type: 'array',
-		of: [
-			defineArrayMember({
-				name: 'deckPreviewConfigItem',
-				title: 'Configuración de preview de Storylist',
-				type: 'object',
-				preview: {
-					select: {
-						order: 'order',
-						publicationOrder: 'publication.publishingOrder',
-						storyTitle: 'publication.story.title',
-						image: 'image',
-						imageSlug: 'imageSlug.current',
-						startCol: 'startCol',
-						endCol: 'endCol',
-					},
-					prepare(selection) {
-						const { order, publicationOrder, storyTitle, image, imageSlug, endCol } = selection;
-
-						// Preview para stories en grid
-						const title = `${image ? imageSlug : storyTitle}`;
-
-						// Preview para imágenes en grid
-						return {
-							title: `${order} | ${title} | ${endCol}`,
-							subtitle: `Orden en lista: ${publicationOrder}`,
-							media: image ?? undefined,
-						};
-					},
-				},
-				fields: [
-					defineField({
-						name: 'publication',
-						title: 'Publicación de Cuento/Texto/Historia dentro de la storylist',
-						type: 'object',
-						fields: [
-							defineField({
-								name: 'story',
-								title: 'Referencia a historia',
-								type: 'reference',
-								to: [{ type: 'story' }],
-								options: {
-									filter: ({ document }) => {
-										return {
-											params: {
-												_id: document._id.startsWith('drafts.') ? document._id.split('drafts.')[1] : document._id,
-											},
-										};
-									},
-									disableNew: true,
-								},
-							}),
-							defineField({
-								name: 'published',
-								title: '¿Publicado?',
-								description:
-									'Determina si la publicación fue o no liberada. Si el valor es false, la publicación no se mostrará como parte de la Storylist',
-								type: 'boolean',
-								validation: (Rule) => Rule.required(),
-								initialValue: false,
-							}),
-							defineField({
-								name: 'publishingOrder',
-								title: 'Orden de publicación',
-								description: 'Número ordinal de publicación dentro de la storylist para el cuento',
-								type: 'number',
-							}),
-							defineField({
-								name: 'publishingDate',
-								title: 'Fecha de publicación',
-								description: 'Fecha en la cual el cuento se publicó o publicará en la storylist',
-								type: 'date',
-							}),
-						],
-					}),
-					defineField({
-						name: 'image',
-						title: 'Imagen de grid',
-						type: 'image',
-						options: {
-							hotspot: true,
-						},
-					}),
-					defineField({
-						name: 'imageSlug',
-						title: 'Slug de imagen alusiva',
-						type: 'slug',
-						options: {
-							source: 'title',
-							maxLength: 96,
-						},
-					}),
-					...gridItemFields,
-				],
-				initialValue: {
-					startCol: 'auto',
-					endCol: 'span 4',
-				},
-			}),
-		],
-	}),
-];
+import publication from './publication';
 
 export default defineType({
 	name: 'storylist',
@@ -163,6 +13,7 @@ export default defineType({
 			name: 'title',
 			title: 'Título',
 			type: 'string',
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'slug',
@@ -177,7 +28,8 @@ export default defineType({
 		defineField({
 			name: 'description',
 			title: 'Descripción',
-			type: 'text',
+			type: 'blockContent',
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'language',
@@ -190,6 +42,7 @@ export default defineType({
 				})),
 				layout: 'radio',
 			},
+			initialValue: 'es',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
@@ -197,6 +50,7 @@ export default defineType({
 			title: 'Mostrar fechas',
 			type: 'boolean',
 			initialValue: false,
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'comingNextLabel',
@@ -204,6 +58,7 @@ export default defineType({
 			description:
 				'Etiqueta que se mostrará en una publicación programada dentro de una storylist pero que aún no ha sido publicada.',
 			type: 'string',
+			initialValue: 'Próximamente',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
@@ -213,6 +68,7 @@ export default defineType({
 				'Prefijo usado para identificar qué representa cada historia en una Storylist (día, edición, historia, etc.)',
 			type: 'string',
 			initialValue: 'Edición',
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'featuredImage',
@@ -221,6 +77,7 @@ export default defineType({
 			options: {
 				hotspot: true,
 			},
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'tags',
@@ -236,34 +93,10 @@ export default defineType({
 			],
 		}),
 		defineField({
-			name: 'gridConfig',
-			title: 'Configuración de vista completa de Storylist en layout de CSS Grid',
-			type: 'object',
-			fields: [...gridConfigFields],
-		}),
-		defineField({
-			name: 'previewGridConfig',
-			title: 'Configuración de vista previa de Storylist en layout de CSS Grid',
-			type: 'object',
-			fields: [
-				...gridConfigFields,
-				{
-					name: 'ordering',
-					title: 'Orden de publicaciones',
-					description: 'Orden de publicaciones en vista previa de Storylist',
-					type: 'string',
-					options: {
-						list: [
-							{ title: 'Ascendente', value: 'asc' },
-							{ title: 'Descendente', value: 'desc' },
-						],
-					},
-				},
-			],
+			name: 'publications',
+			title: 'Publicaciones de Cuento/Texto/Historia dentro de la storylist',
+			type: 'array',
+			of: [defineArrayMember(publication)],
 		}),
 	],
-	initialValue: {
-		comingNextLabel: 'Próximamente',
-		language: 'Español',
-	},
 });

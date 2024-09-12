@@ -47,3 +47,4 @@ Thumbs.db
 .angular
 .nx
 .vercel
+/src/api/sanity/types.ts
