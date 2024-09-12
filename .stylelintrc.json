@@ -1,5 +1,15 @@
 {
 	"extends": ["stylelint-config-recommended", "stylelint-config-standard", "stylelint-config-standard-scss"],
+	"rules": {
+		"at-rule-no-unknown": [
+			true,
+			{
+				"ignoreAtRules": ["apply", "layer", "responsive", "screen", "tailwind", "variants"]
+			}
+		],
+		"declaration-block-trailing-semicolon": null,
+		"no-descending-specificity": null
+	},
 	"ignoreFiles": ["!**/*"],
 	"overrides": [
 		{
