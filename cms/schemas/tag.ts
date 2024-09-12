@@ -38,7 +38,12 @@ export default defineType({
 			},
 			validation: (Rule) => Rule.required(),
 		}),
-		defineField({ name: 'description', title: 'Descripción', type: 'string', validation: (Rule) => Rule.required() }),
+		defineField({
+			name: 'description',
+			title: 'Descripción',
+			type: 'string',
+			validation: (Rule) => Rule.required(),
+		}),
 		defineField({
 			name: 'icon',
 			title: 'Icono',
@@ -46,6 +51,7 @@ export default defineType({
 			options: {
 				storeSvg: true,
 			},
+			validation: (Rule) => Rule.required(),
 		}),
 	],
 });

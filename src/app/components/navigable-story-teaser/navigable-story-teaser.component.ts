@@ -29,7 +29,9 @@ import { RouterLink } from '@angular/router';
 					}"
 					class="bg-gray-50 px-7 py-5"
 				>
-					<cuentoneta-story-edition-date-label [label]="story().originalPublication" />
+					@if (story().originalPublication) {
+						<cuentoneta-story-edition-date-label [label]="story().originalPublication" />
+					}
 
 					<h4 class="inter-body-sm-bold mb-2">{{ story().title }}</h4>
 					<div class="flex items-center justify-between">

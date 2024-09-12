@@ -8,7 +8,6 @@ import { injectQueryParams } from 'ngxtension/inject-query-params';
 import { injectParams } from 'ngxtension/inject-params';
 
 // Models
-import { StoryPreview } from '@models/story.model';
 import { Publication, Storylist } from '@models/storylist.model';
 
 // Routes
@@ -62,7 +61,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	private queryParams = injectQueryParams();
 	private storylistService = inject(StorylistService);
 
-	displayedPublications: Publication<StoryPreview>[] = [];
+	displayedPublications: Publication[] = [];
 	dummyList: null[] = Array(9);
 	storylist: Storylist | undefined;
 
@@ -100,7 +99,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	 * caso de que la story actualmente en vista sea una de las primeras o de las últimas.
 	 * @author Ramiro Olivencia <ramiro@olivencia.com.ar>
 	 */
-	sliceDisplayedPublications(publications: Publication<StoryPreview>[]): void {
+	sliceDisplayedPublications(publications: Publication[]): void {
 		if (!this.storylist) {
 			return;
 		}

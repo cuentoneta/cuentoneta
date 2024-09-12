@@ -1,4 +1,6 @@
-export interface LandingPageContent<T> {
-	cards: T[];
-	previews: T[];
+import { Storylist, StorylistTeaser } from '@models/storylist.model';
+
+export interface LandingPageContent {
+	cards: StorylistTeaser[];
+	previews: Storylist[];
 }

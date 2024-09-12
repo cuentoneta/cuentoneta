@@ -1,62 +1,39 @@
-import { StoryBase, StoryPreview } from './story.model';
-import { SanityImageSource } from '@sanity/image-url/lib/types/types';
+import { StoryPreview, StoryTeaser } from './story.model';
 import { Tag } from '@models/tag.model';
+import { TextBlockContent } from '@models/block-content.model';
 
-interface StorylistBase {
+interface StorylistBase<T> {
 	title: string;
 	slug: string;
 	displayDates: boolean;
 	editionPrefix: string;
 	count: number;
 	comingNextLabel: string;
-	description?: string[];
-	language?: string;
-	featuredImage?: SanityImageSource;
+	description: TextBlockContent[];
+	language: string;
+	featuredImage: string;
 	tags: Tag[];
-	images?: {
-		slug: string;
-		url: SanityImageSource;
-	}[];
-	previewImages?: {
-		slug: string;
-		url: SanityImageSource;
-	}[];
-	gridConfig?: StorylistGridConfig;
+	publications: T[];
 }
 
-export type StorylistCard = Omit<StorylistBase, 'images' | 'previewImages' | 'gridConfig' | 'previewGridConfig'>;
-
-export interface Storylist extends StorylistBase {
-	publications: Publication<StoryPreview>[];
+export interface StorylistTeaser extends StorylistBase<never> {
+	publications: Array<never>;
 }
 
-export interface StorylistDTO extends StorylistBase {
-	publications: Publication<StoryPreview>[];
+export interface Storylist extends StorylistBase<Publication> {
+	publications: Publication[];
 }
 
-export interface Publication<T extends StoryBase> {
+export interface Publication {
 	publishingOrder: number;
-	editionLabel: string;
-	comingNextLabel: string;
 	published: boolean;
 	publishingDate?: string;
-	story: T;
+	story: StoryPreview;
 }
 
-export interface StorylistGridConfig {
-	gridTemplateColumns: string;
-	titlePlacement: Omit<GridItemPlacementConfig, 'slug' | 'imageSlug' | 'publication' | 'image'>;
-	cardsPlacement: GridItemPlacementConfig[];
-}
-
-export interface GridItemPlacementConfig {
-	slug?: string | null;
-	order: number;
-	imageSlug?: string | null;
-	startCol?: string | null;
-	endCol?: string | null;
-	startRow?: string | null;
-	endRow?: string | null;
-	publication: Publication<StoryPreview>;
-	image: SanityImageSource;
+export interface PublicationTeaser {
+	publishingOrder: number;
+	published: boolean;
+	publishingDate?: string;
+	story: StoryTeaser;
 }

@@ -2,8 +2,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // Modelos
-import { StoryPreview } from '@models/story.model';
-import { Publication } from '@models/storylist.model';
+import { Publication, Storylist } from '@models/storylist.model';
 
 // Componentes
 import { StoryCardSkeletonComponent } from '../story-card-skeleton/story-card-skeleton.component';
@@ -11,6 +10,10 @@ import { StoryCardContentComponent } from '../story-card-content/story-card-cont
 
 // Providers
 import { UrlTree } from '@angular/router';
+
+// Pipes
+import { MapPublicationEditionLabelPipe } from '../../pipes/map-publication-edition-label.pipe';
+import { MapPublicationComingNextLabelPipe } from '../../pipes/map-publication-coming-next-label.pipe';
 
 @Component({
 	selector: 'cuentoneta-publication-card',
@@ -21,24 +24,31 @@ import { UrlTree } from '@angular/router';
 			@if (publication().published) {
 				<cuentoneta-story-card-content
 					[story]="publication().story"
-					[headerText]="publication().editionLabel"
+					[headerText]="publication() | mapPublicationEditionLabel: storylist()"
 					[navigationLink]="navigationRoute()"
 				/>
 			} @else {
 				<cuentoneta-story-card-skeleton
 					[animation]="false"
 					[displayDate]="false"
-					[editionLabel]="publication().editionLabel"
-					[comingNextLabel]="publication().comingNextLabel"
+					[editionLabel]="publication() | mapPublicationEditionLabel: storylist()"
+					[comingNextLabel]="publication() | mapPublicationComingNextLabel: storylist()"
 				/>
 			}
 		</article>
 	`,
 	standalone: true,
-	imports: [CommonModule, StoryCardSkeletonComponent, StoryCardContentComponent],
+	imports: [
+		CommonModule,
+		StoryCardSkeletonComponent,
+		StoryCardContentComponent,
+		MapPublicationEditionLabelPipe,
+		MapPublicationComingNextLabelPipe,
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PublicationCardComponent {
-	publication = input.required<Publication<StoryPreview>>();
+	storylist = input.required<Storylist>();
+	publication = input.required<Publication>();
 	navigationRoute = input.required<UrlTree>();
 }

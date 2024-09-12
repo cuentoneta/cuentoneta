@@ -7,9 +7,13 @@ import { mapAuthor } from '../_utils/functions';
 
 // Interfaces
 import { Author } from '@models/author.model';
-import { AuthorBySlugQueryResult } from '../sanity/types';
 
 export async function getBySlug(slug: string): Promise<Author> {
-	const result: AuthorBySlugQueryResult = await client.fetch(authorBySlugQuery, { slug });
+	const result = await client.fetch(authorBySlugQuery, { slug });
+
+	if (!result) {
+		throw new Error(`Author with slug ${slug} not found`);
+	}
+
 	return mapAuthor(result);
 }

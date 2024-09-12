@@ -4,6 +4,13 @@ import { UsersIcon } from '@sanity/icons';
 import { resource } from './resourceType';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 
+const defaultAuthorImage = {
+	asset: {
+		_type: 'reference',
+		_ref: 'image-76250a3cd5acc91a1013e2acd1f97df69b33825c-360x360-jpg',
+	},
+};
+
 export default defineType({
 	name: 'author',
 	title: 'Autor/a',
@@ -30,12 +37,7 @@ export default defineType({
 			name: 'image',
 			title: 'Foto',
 			type: 'image',
-			initialValue: {
-				asset: {
-					_type: 'reference',
-					_ref: 'image-76250a3cd5acc91a1013e2acd1f97df69b33825c-360x360-jpg',
-				},
-			},
+			initialValue: defaultAuthorImage,
 			options: {
 				hotspot: true,
 			},
@@ -52,6 +54,7 @@ export default defineType({
 			name: 'biography',
 			title: 'Biografía',
 			type: 'object',
+			validation: (Rule) => Rule.required(),
 			fieldsets: [
 				{
 					title: 'Traducciones',

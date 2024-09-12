@@ -26,6 +26,10 @@ export interface Story extends StoryBase {
 	summary: TextBlockContent[];
 }
 
+export interface StoryTeaser extends StoryBase {
+	paragraphs: Array<never>;
+}
+
 export interface StoryPreview extends StoryBase {
 	author: Omit<Author, 'biography'>;
 }

@@ -12,9 +12,9 @@
 			<div
 				[lang]="storylist()?.language"
 				[ngStyle]="{
-					order: storylist()?.gridConfig?.titlePlacement?.order,
-					'grid-column-start': storylist()?.gridConfig?.titlePlacement?.startCol,
-					'grid-column-end': storylist()?.gridConfig?.titlePlacement?.endCol
+					order: 0,
+					'grid-column-start': 'auto',
+					'grid-column-end': 'span 6'
 				}"
 				class="xs:max-md:!col-span-1 xs:max-sm:!order-1"
 			>
@@ -26,14 +26,18 @@
 						>{{ storylist()?.title }}</a
 					>
 				</h1>
-				<h3 class="h3 subtitle text-gray-600">{{ storylist()?.description }}</h3>
+				<h3 class="h3 subtitle text-gray-600">
+					<cuentoneta-portable-text-parser
+						[paragraphs]="storylist()?.description ?? []"
+					></cuentoneta-portable-text-parser>
+				</h3>
 			</div>
 		} @else {
 			<div
 				[ngStyle]="{
-					order: skeletonConfig()?.titlePlacement?.order,
-					'grid-column-start': skeletonConfig()?.titlePlacement?.startCol,
-					'grid-column-end': skeletonConfig()?.titlePlacement?.endCol
+					order: 1,
+					'grid-column-start': 'auto',
+					'grid-column-end': 'span 6'
 				}"
 				class="xs:max-md:col-span-1 xs:max-sm:!order-1"
 			>
@@ -61,49 +65,21 @@
 		}
 	}
 
-	<!-- Renderizado de imágenes alusivas -->
-	@if (!!storylist()?.images) {
-		@for (image of storylist()?.images; track $index) {
-			<div [ngStyle]="imagesCardConfig[image.slug]" class="xs:max-md:!col-span-1">
-				<img [src]="image.url" class="rounded-lg" alt="" />
-			</div>
-		}
-	}
-
 	<!-- Renderizado de tarjetas de stories -->
 	<ng-container *ngTemplateOutlet="storylist()?.publications ? publicationsTemplate : skeletonsTemplate">
 	</ng-container>
 </ng-template>
 
 <ng-template #skeletonsTemplate>
-	@for (skeleton of skeletonConfig()?.cardsPlacement; track $index) {
-		@if (!!skeleton.slug) {
-			<cuentoneta-story-card-skeleton
-				[ngStyle]="{
-					order: skeleton?.order,
-					'grid-column-start': skeleton?.startCol,
-					'grid-column-end': skeleton?.endCol
-				}"
-				class="xs:max-md:!col-span-1"
-			/>
-		}
-		@if (!!skeleton.imageSlug) {
-			<ngx-skeleton-loader
-				[ngStyle]="{
-					order: skeleton?.order,
-					'grid-column-start': skeleton?.startCol,
-					'grid-column-end': skeleton?.endCol
-				}"
-				[theme]="{
-					height: '100%',
-					width: '100%',
-					'background-color': skeletonColor
-				}"
-				class="xs:max-md:!col-span-1"
-				count="1"
-				appearance="line"
-			></ngx-skeleton-loader>
-		}
+	@for (skeleton of [1, 2, 3, 4, 5, 6, 7]; track $index) {
+		<cuentoneta-story-card-skeleton
+			[ngStyle]="{
+				order: skeleton,
+				'grid-column-start': 'auto',
+				'grid-column-end': 'span 6'
+			}"
+			class="xs:max-md:!col-span-1"
+		/>
 	}
 </ng-template>
 
@@ -111,13 +87,18 @@
 	@if (!!storylist()) {
 		@for (publication of storylist()?.publications; track $index) {
 			<div
-				[ngStyle]="storiesCardConfig[publication.story.slug]"
+				[ngStyle]="{
+					order: $index,
+					'grid-column-start': 'auto',
+					'grid-column-end': 'span 6'
+				}"
 				[class.disabled]="!publication || !publication.published"
 				[attr.aria-busy]="!publication"
 				class="xs:max-md:!col-span-1"
 			>
 				@if (publication) {
 					<cuentoneta-publication-card
+						[storylist]="storylist()!"
 						[publication]="publication"
 						[navigationRoute]="
 							router.createUrlTree(['/', this.appRoutes.Story, publication.story.slug], {

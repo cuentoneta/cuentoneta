@@ -4,9 +4,9 @@ import { AppRoutes } from '../../app.routes';
 import { MediaResourceTagsComponent } from '../media-resource-tags/media-resource-tags.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
-import { StoryPreview } from '@models/story.model';
 import { Publication, Storylist } from '@models/storylist.model';
 import { RouterLink } from '@angular/router';
+import { MapPublicationEditionLabelPipe } from '../../pipes/map-publication-edition-label.pipe';
 
 @Component({
 	selector: 'cuentoneta-navigable-publication-teaser',
@@ -17,6 +17,7 @@ import { RouterLink } from '@angular/router';
 		NgxSkeletonLoaderModule,
 		StoryEditionDateLabelComponent,
 		RouterLink,
+		MapPublicationEditionLabelPipe,
 	],
 	template: `
 		<a
@@ -30,7 +31,11 @@ import { RouterLink } from '@angular/router';
 				class="bg-gray-50 px-7 py-5"
 			>
 				<cuentoneta-story-edition-date-label
-					[label]="publication().published ? publication().editionLabel : storylist().comingNextLabel"
+					[label]="
+						publication().published
+							? (publication() | mapPublicationEditionLabel: storylist())
+							: storylist().comingNextLabel
+					"
 				/>
 				@if (publication().published) {
 					<h4 class="inter-body-sm-bold mb-2">{{ publication().story.title }}</h4>
@@ -48,7 +53,7 @@ import { RouterLink } from '@angular/router';
 	`,
 })
 export class NavigablePublicationTeaserComponent {
-	publication = input.required<Publication<StoryPreview>>();
+	publication = input.required<Publication>();
 	selected = input<boolean>();
 	storylist = input.required<Storylist>();
 	protected readonly appRoutes = AppRoutes;
