@@ -18849,6 +18849,21 @@ snapshots:
       - typescript
       - verdaccio
 
+  '@nrwl/js@19.5.4(@babel/traverse@7.25.2)(@swc/core@1.3.85)(@types/node@18.16.9)(nx@19.5.4(@swc/core@1.3.85))(typescript@5.4.4)':
+    dependencies:
+      '@nx/js': 19.5.4(@babel/traverse@7.25.2)(@swc/core@1.3.85)(@types/node@18.16.9)(nx@19.5.4(@swc/core@1.3.85))(typescript@5.4.4)
+    transitivePeerDependencies:
+      - '@babel/traverse'
+      - '@swc-node/register'
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - debug
+      - nx
+      - supports-color
+      - typescript
+      - verdaccio
+
   '@nrwl/js@19.5.4(@babel/traverse@7.25.2)(@swc/core@1.3.85)(@types/node@18.16.9)(nx@19.5.4(@swc/core@1.3.85))(typescript@5.5.4)':
     dependencies:
       '@nx/js': 19.5.4(@babel/traverse@7.25.2)(@swc/core@1.3.85)(@types/node@18.16.9)(nx@19.5.4(@swc/core@1.3.85))(typescript@5.5.4)
@@ -19150,7 +19165,7 @@ snapshots:
       '@babel/preset-env': 7.24.5(@babel/core@7.24.5)
       '@babel/preset-typescript': 7.22.5(@babel/core@7.24.5)
       '@babel/runtime': 7.24.5
-      '@nrwl/js': 19.5.4(@babel/traverse@7.25.2)(@swc/core@1.3.85)(@types/node@18.16.9)(nx@19.5.4(@swc/core@1.3.85))(typescript@5.5.4)
+      '@nrwl/js': 19.5.4(@babel/traverse@7.25.2)(@swc/core@1.3.85)(@types/node@18.16.9)(nx@19.5.4(@swc/core@1.3.85))(typescript@5.4.4)
       '@nx/devkit': 19.5.4(nx@19.5.4(@swc/core@1.3.85))
       '@nx/workspace': 19.5.4(@swc/core@1.3.85)
       babel-plugin-const-enum: 1.2.0(@babel/core@7.24.5)
@@ -20320,7 +20335,7 @@ snapshots:
       get-port: 5.1.1
       giget: 1.1.2
       globby: 11.1.0
-      jscodeshift: 0.14.0(@babel/preset-env@7.24.0(@babel/core@7.24.5))
+      jscodeshift: 0.14.0(@babel/preset-env@7.24.0(@babel/core@7.24.0))
       leven: 3.1.0
       prettier: 2.8.7
       prompts: 2.4.2
@@ -25353,7 +25368,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  jscodeshift@0.14.0(@babel/preset-env@7.24.0(@babel/core@7.24.5)):
+  jscodeshift@0.14.0(@babel/preset-env@7.24.0(@babel/core@7.24.0)):
     dependencies:
       '@babel/core': 7.24.5
       '@babel/parser': 7.23.9
@@ -26660,7 +26675,7 @@ snapshots:
   postcss-calc@9.0.1(postcss@8.4.36):
     dependencies:
       postcss: 8.4.36
-      postcss-selector-parser: 6.0.11
+      postcss-selector-parser: 6.1.2
       postcss-value-parser: 4.2.0
 
   postcss-colormin@6.0.0(postcss@8.4.36):
@@ -26767,7 +26782,7 @@ snapshots:
       caniuse-api: 3.0.0
       cssnano-utils: 4.0.0(postcss@8.4.36)
       postcss: 8.4.36
-      postcss-selector-parser: 6.0.11
+      postcss-selector-parser: 6.1.2
 
   postcss-minify-font-values@6.0.0(postcss@8.4.36):
     dependencies:
@@ -26791,7 +26806,7 @@ snapshots:
   postcss-minify-selectors@6.0.0(postcss@8.4.36):
     dependencies:
       postcss: 8.4.36
-      postcss-selector-parser: 6.0.11
+      postcss-selector-parser: 6.1.2
 
   postcss-modules-extract-imports@3.0.0(postcss@8.4.36):
     dependencies:
@@ -26805,37 +26820,37 @@ snapshots:
     dependencies:
       icss-utils: 5.1.0(postcss@8.4.36)
       postcss: 8.4.36
-      postcss-selector-parser: 6.0.11
+      postcss-selector-parser: 6.1.2
       postcss-value-parser: 4.2.0
 
   postcss-modules-local-by-default@4.0.4(postcss@8.4.36):
     dependencies:
       icss-utils: 5.1.0(postcss@8.4.36)
       postcss: 8.4.36
-      postcss-selector-parser: 6.0.11
+      postcss-selector-parser: 6.1.2
       postcss-value-parser: 4.2.0
 
   postcss-modules-local-by-default@4.0.5(postcss@8.4.36):
     dependencies:
       icss-utils: 5.1.0(postcss@8.4.36)
       postcss: 8.4.36
-      postcss-selector-parser: 6.0.11
+      postcss-selector-parser: 6.1.2
       postcss-value-parser: 4.2.0
 
   postcss-modules-scope@3.0.0(postcss@8.4.36):
     dependencies:
       postcss: 8.4.36
-      postcss-selector-parser: 6.0.11
+      postcss-selector-parser: 6.1.2
 
   postcss-modules-scope@3.1.1(postcss@8.4.36):
     dependencies:
       postcss: 8.4.36
-      postcss-selector-parser: 6.0.11
+      postcss-selector-parser: 6.1.2
 
   postcss-modules-scope@3.2.0(postcss@8.4.36):
     dependencies:
       postcss: 8.4.36
-      postcss-selector-parser: 6.0.11
+      postcss-selector-parser: 6.1.2
 
   postcss-modules-values@4.0.0(postcss@8.4.36):
     dependencies:
@@ -26845,7 +26860,7 @@ snapshots:
   postcss-nested@6.0.1(postcss@8.4.36):
     dependencies:
       postcss: 8.4.36
-      postcss-selector-parser: 6.0.11
+      postcss-selector-parser: 6.1.2
 
   postcss-normalize-charset@6.0.0(postcss@8.4.36):
     dependencies:
@@ -26938,7 +26953,7 @@ snapshots:
   postcss-unique-selectors@6.0.0(postcss@8.4.36):
     dependencies:
       postcss: 8.4.36
-      postcss-selector-parser: 6.0.11
+      postcss-selector-parser: 6.1.2
 
   postcss-value-parser@4.2.0: {}
 
@@ -28043,7 +28058,7 @@ snapshots:
     dependencies:
       browserslist: 4.23.0
       postcss: 8.4.36
-      postcss-selector-parser: 6.0.11
+      postcss-selector-parser: 6.1.2
 
   stylelint-config-recommended-scss@13.1.0(postcss@8.4.36)(stylelint@15.11.0(typescript@5.5.4)):
     dependencies:
