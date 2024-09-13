@@ -1,5 +1,6 @@
 {
 	"extends": ["stylelint-config-recommended", "stylelint-config-standard", "stylelint-config-standard-scss"],
+	"plugins": ["stylelint-scss"],
 	"rules": {
 		"at-rule-no-unknown": null,
 		"scss/at-rule-no-unknown": [
@@ -21,7 +22,9 @@
 			{
 				"ignorePseudoElements": ["ng-deep"]
 			}
-		]
+		],
+		"scss/double-slash-comment-empty-line-before": null,
+		"scss/no-global-function-names": null
 	},
 	"ignoreFiles": ["!**/*", "dist/**/*"]
 }
