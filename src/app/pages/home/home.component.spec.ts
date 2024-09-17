@@ -56,10 +56,6 @@ class MockPublicationCardComponent {
 	template: '',
 })
 class MockStorylistCardDeckComponent {
-	number = input<number>(6);
 	storylist = input<Storylist>();
 	isLoading = input<boolean>(false);
-	canNavigateToStorylist = input<boolean>(false);
-	displayTitle = input<boolean>(true);
-	displayFeaturedImage = input<boolean>(false);
 }

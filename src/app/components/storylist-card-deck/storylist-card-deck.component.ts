@@ -1,6 +1,6 @@
 // Core
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
 // Modules
 import { CommonModule } from '@angular/common';
@@ -34,19 +34,14 @@ import { ThemeService } from '../../providers/theme.service';
 		NgxSkeletonLoaderModule,
 		PortableTextParserComponent,
 		PublicationCardComponent,
-		RouterLink,
 		StoryCardSkeletonComponent,
 	],
 	templateUrl: './storylist-card-deck.component.html',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StorylistCardDeckComponent {
-	number = input<number>(6);
 	storylist = input<Storylist>();
 	isLoading = input<boolean>(false); // Utilizado para mostrar/ocultar skeletons
-	canNavigateToStorylist = input<boolean>(false);
-	displayTitle = input<boolean>(true);
-	displayFeaturedImage = input<boolean>(true);
 
 	public router = inject(Router);
 	readonly appRoutes = AppRoutes;
