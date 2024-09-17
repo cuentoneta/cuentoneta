@@ -6,6 +6,7 @@ import { StoryPreview } from '@models/story.model';
 import { RouterLink, UrlTree } from '@angular/router';
 import { AppRoutes } from '../../app.routes';
 import { AuthorTeaserComponent } from '../author-teaser/author-teaser.component';
+import { MediaResourceTagsComponent } from '../media-resource-tags/media-resource-tags.component';
 
 @Component({
 	selector: 'cuentoneta-story-card-content',
@@ -17,29 +18,9 @@ import { AuthorTeaserComponent } from '../author-teaser/author-teaser.component'
 		NgOptimizedImage,
 		RouterLink,
 		AuthorTeaserComponent,
+		MediaResourceTagsComponent,
 	],
 	template: `
-		<ng-template #resources>
-			@for (mediaResource of story().media; track $index) {
-				@switch (mediaResource.type) {
-					@case ('audioRecording') {
-						<div [title]="'Contiene material en formato audio'" class="h-8 w-8">
-							<img [alt]="'Contiene audio'" src="assets/svg/waveform.svg" />
-						</div>
-					}
-					@case ('spaceRecording') {
-						<div [title]="'Contiene material en formato Spaces de X'" class="h-8 w-8">
-							<img [alt]="'Contiene link a Spaces'" src="assets/svg/twitter.svg" />
-						</div>
-					}
-					@case ('youTubeVideo') {
-						<div [title]="'Contiene material audiovisual'" class="h-8 w-8">
-							<img [alt]="'Contiene video'" class="video" src="assets/svg/video.svg" />
-						</div>
-					}
-				}
-			}
-		</ng-template>
 		<a
 			[routerLink]="['/', appRoutes.Story, story().slug]"
 			[queryParams]="navigationLink()?.queryParams"
@@ -64,7 +45,7 @@ import { AuthorTeaserComponent } from '../author-teaser/author-teaser.component'
 				</time>
 				@if (!story().author) {
 					<div>
-						<ng-container *ngTemplateOutlet="resources"></ng-container>
+						<cuentoneta-media-resource-tags [resources]="story().media" size="lg" />
 					</div>
 				}
 			</div>
@@ -74,7 +55,7 @@ import { AuthorTeaserComponent } from '../author-teaser/author-teaser.component'
 				<hr class="text-gray-300" />
 				<footer class="flex flex-row items-center justify-between">
 					<cuentoneta-author-teaser [author]="story().author" />
-					<ng-container *ngTemplateOutlet="resources"></ng-container>
+					<cuentoneta-media-resource-tags [resources]="story().media" size="lg" />
 				</footer>
 			</div>
 		}
