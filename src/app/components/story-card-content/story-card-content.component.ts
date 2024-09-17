@@ -1,15 +1,23 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import { StoryPreview } from '@models/story.model';
 import { RouterLink, UrlTree } from '@angular/router';
 import { AppRoutes } from '../../app.routes';
+import { AuthorTeaserComponent } from '../author-teaser/author-teaser.component';
 
 @Component({
 	selector: 'cuentoneta-story-card-content',
 	standalone: true,
-	imports: [CommonModule, StoryEditionDateLabelComponent, PortableTextParserComponent, NgOptimizedImage, RouterLink],
+	imports: [
+		CommonModule,
+		StoryEditionDateLabelComponent,
+		PortableTextParserComponent,
+		NgOptimizedImage,
+		RouterLink,
+		AuthorTeaserComponent,
+	],
 	template: `
 		<ng-template #resources>
 			@for (mediaResource of story().media; track $index) {
@@ -65,35 +73,7 @@ import { AppRoutes } from '../../app.routes';
 			<div class="flex flex-col gap-2 md:gap-4">
 				<hr class="text-gray-300" />
 				<footer class="flex flex-row items-center justify-between">
-					<a
-						[routerLink]="['/', appRoutes.Author, story().author.slug]"
-						class="flex flex-row items-center hover:cursor-pointer"
-					>
-						<img
-							[alt]="'Retrato de ' + story().author.name"
-							[ngSrc]="authorImageUrl()"
-							class="mr-3 h-10 w-10 rounded"
-							width="40"
-							height="40"
-						/>
-						<div class="block hover:!cursor-pointer">
-							<label class="inter-body-base-semibold hover:!cursor-pointer">{{ story().author.name }}</label>
-							@if (story().author.nationality; as nationality) {
-								<div class="flex items-center">
-									<img
-										[alt]="'Bandera de ' + nationality.country"
-										[ngSrc]="nationality.flag"
-										class="h-[15px] w-[20px] rounded"
-										width="20"
-										height="15"
-									/>
-									<label class="inter-body-sm-semibold ml-2 text-gray-500 hover:!cursor-pointer">{{
-										nationality.country
-									}}</label>
-								</div>
-							}
-						</div>
-					</a>
+					<cuentoneta-author-teaser [author]="story().author" />
 					<ng-container *ngTemplateOutlet="resources"></ng-container>
 				</footer>
 			</div>
@@ -104,8 +84,6 @@ export class StoryCardContentComponent {
 	story = input.required<StoryPreview>();
 	headerText = input<string>();
 	navigationLink = input<UrlTree>();
-
-	authorImageUrl = computed(() => this.story().author.imageUrl ?? 'assets/img/default-avatar.jpg');
 
 	protected readonly appRoutes = AppRoutes;
 }
