@@ -3,29 +3,39 @@ import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core
 import { Router, RouterLink } from '@angular/router';
 
 // Modules
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonModule } from '@angular/common';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Models
 import { Storylist } from '@models/storylist.model';
-import { AppRoutes } from '../../app.routes';
 
 // Components
 import { PublicationCardComponent } from '../publication-card/publication-card.component';
-import { ThemeService } from '../../providers/theme.service';
 import { StoryCardSkeletonComponent } from '../story-card-skeleton/story-card-skeleton.component';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
+
+// Pipes
+import { MapPublicationComingNextLabelPipe } from '../../pipes/map-publication-coming-next-label.pipe';
+import { MapPublicationEditionLabelPipe } from '../../pipes/map-publication-edition-label.pipe';
+
+// Routing
+import { AppRoutes } from '../../app.routes';
+
+// Services
+import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-storylist-card-deck',
 	standalone: true,
 	imports: [
 		CommonModule,
+		MapPublicationComingNextLabelPipe,
+		MapPublicationEditionLabelPipe,
 		NgxSkeletonLoaderModule,
-		RouterLink,
-		PublicationCardComponent,
-		StoryCardSkeletonComponent,
 		PortableTextParserComponent,
+		PublicationCardComponent,
+		RouterLink,
+		StoryCardSkeletonComponent,
 	],
 	templateUrl: './storylist-card-deck.component.html',
 	changeDetection: ChangeDetectionStrategy.OnPush,

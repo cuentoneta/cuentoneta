@@ -97,18 +97,28 @@
 				class="xs:max-md:!col-span-1"
 			>
 				@if (publication) {
-					<cuentoneta-publication-card
-						[storylist]="storylist()!"
-						[publication]="publication"
-						[navigationRoute]="
-							router.createUrlTree(['/', this.appRoutes.Story, publication.story.slug], {
-								queryParams: {
-									navigation: 'storylist',
-									navigationSlug: storylist()?.slug
-								}
-							})
-						"
-					/>
+					@if (publication.published) {
+						<cuentoneta-publication-card
+							[storylist]="storylist()!"
+							[publication]="publication"
+							[navigationRoute]="
+								router.createUrlTree(['/', this.appRoutes.Story, publication.story.slug], {
+									queryParams: {
+										navigation: 'storylist',
+										navigationSlug: storylist()?.slug
+									}
+								})
+							"
+						/>
+					} @else {
+						<cuentoneta-story-card-skeleton
+							[animation]="false"
+							[displayDate]="false"
+							[editionLabel]="publication | mapPublicationEditionLabel: storylist()!"
+							[comingNextLabel]="publication | mapPublicationComingNextLabel: storylist()!"
+							content
+						/>
+					}
 				} @else {
 					<cuentoneta-story-card-skeleton [animation]="'progress'" />
 				}
