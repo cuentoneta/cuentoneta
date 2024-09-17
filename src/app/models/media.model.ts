@@ -15,7 +15,6 @@ import { BlockContent } from '../../api/sanity/generated-schema-types';
 export interface Media {
 	title: string;
 	type: MediaTypeKey;
-	icon: string;
 	data?: unknown;
 }
 

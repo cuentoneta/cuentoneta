@@ -46,7 +46,6 @@ export function mapMediaSourcesForStorylist(mediaSources: MediaResourcesSubQuery
 				title: mediaSource.title,
 				type: 'spaceRecording',
 				data: {},
-				icon: '',
 			});
 		}
 		if (mediaSource._type === 'youTubeVideo') {
@@ -60,7 +59,6 @@ export function getAudioRecordingData(mediaSource: AudioRecordingSchemaObject): 
 	return {
 		title: mediaSource.title,
 		type: mediaSource._type,
-		icon: mediaSource.icon,
 		data: {
 			url: mediaSource.url,
 		},
@@ -71,7 +69,6 @@ export function getYoutubeVideoData(mediaSource: YoutubeVideoSchemaObject) {
 	return {
 		title: mediaSource.title,
 		type: mediaSource._type,
-		icon: mediaSource.icon,
 		data: {
 			description: mediaSource.description,
 			videoId: mediaSource.videoId,
