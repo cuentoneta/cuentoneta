@@ -92,7 +92,7 @@ export function mapResources(resources: ResourceSubQueryResult): Resource[] {
 				icon: {
 					provider: resource.resourceType.icon.provider ?? '',
 					name: resource.resourceType.icon.name ?? '',
-					svg: resource.resourceType.icon ? `${resource.resourceType.icon.svg}` : '',
+					svg: resource.resourceType.icon ? `data:image/svg+xml,${resource.resourceType.icon.svg}` : '',
 				},
 			},
 		})) ?? []
