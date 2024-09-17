@@ -5,7 +5,6 @@ import { map, Observable } from 'rxjs';
 // Interfaces
 import { LandingPageContent } from '@models/landing-page-content.model';
 
-import { Storylist } from '@models/storylist.model';
 // Providers
 import { environment } from '../environments/environment';
 import { HttpClient } from '@angular/common/http';
