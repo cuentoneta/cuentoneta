@@ -45,10 +45,6 @@ xdescribe('StorylistComponent', () => {
 	template: '',
 })
 class MockStorylistCardDeckComponent {
-	number = input(6);
 	storyList = input<Storylist>();
 	isLoading = input(false);
-	canNavigateToStorylist = input(false);
-	displayTitle = input(true);
-	displayFeaturedImage = input(false);
 }

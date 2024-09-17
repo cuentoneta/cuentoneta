@@ -309,9 +309,7 @@ export const FullyLoaded = {
 		props: args,
 	}),
 	args: {
-		number: 5,
 		isLoading: false,
-		displayTitle: true,
 		storylist: fullyLoadedStorylist,
 	},
 };
@@ -321,9 +319,7 @@ export const UpcomingStories = {
 		props: args,
 	}),
 	args: {
-		number: 5,
 		isLoading: false,
-		displayTitle: true,
 		storylist: upcomingStoriesStorylist,
 	},
 };
