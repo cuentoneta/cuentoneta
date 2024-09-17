@@ -23,7 +23,6 @@ const environmentFileContent = `
     export const environment = {
        environment: "${environment}",
        contentConfig: { 
-        previews: [],
         cards: []
        },
        website: "http://localhost:4000/",

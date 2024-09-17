@@ -45,7 +45,6 @@ const environmentFileContent = `
     export const environment = {
        environment: "${environment}",
        contentConfig: { 
-           previews: [],
            cards: []
        },
        website: "${process.env['CUENTONETA_WEBSITE']}",
