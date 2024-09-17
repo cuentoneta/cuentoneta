@@ -12,7 +12,7 @@ import { injectParams } from 'ngxtension/inject-params';
 
 // Modelos
 import { Author } from '@models/author.model';
-import { StoryPreview } from '@models/story.model';
+import { StoryTeaser } from '@models/story.model';
 
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
@@ -95,7 +95,7 @@ export class AuthorComponent {
 	public fetchContentDirective = inject(FetchContentDirective);
 
 	author: Author | undefined;
-	stories: (StoryPreview & { navigationRoute: UrlTree })[] = [];
+	stories: (StoryTeaser & { navigationRoute: UrlTree })[] = [];
 
 	constructor() {
 		effect((cleanUp) => {
@@ -128,7 +128,7 @@ export class AuthorComponent {
 		);
 	}
 
-	private stories$(slug: string): Observable<(StoryPreview & { navigationRoute: UrlTree })[]> {
+	private stories$(slug: string): Observable<(StoryTeaser & { navigationRoute: UrlTree })[]> {
 		return this.storyService.getByAuthorSlug(slug).pipe(
 			map((stories) => {
 				return stories.map((story) => ({
@@ -136,7 +136,7 @@ export class AuthorComponent {
 					navigationRoute: this.router.createUrlTree(['/', this.appRoutes.Story, story.slug], {
 						queryParams: { navigation: 'author', navigationSlug: slug },
 					}),
-				})) as (StoryPreview & { navigationRoute: UrlTree })[];
+				})) as (StoryTeaser & { navigationRoute: UrlTree })[];
 			}),
 		);
 	}
