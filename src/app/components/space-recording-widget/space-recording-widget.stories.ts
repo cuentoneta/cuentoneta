@@ -16,7 +16,6 @@ export default {
 const media: Media = {
 	title: 'En Algún Lugar de Tlön: Encuentro #1',
 	type: 'spaceRecording',
-	icon: '',
 	data: {
 		id: '1736920785162240151',
 		createdAt: 'Tue Dec 19 01:26:00 +0000 2023',

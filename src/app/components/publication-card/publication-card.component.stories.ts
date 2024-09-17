@@ -13,7 +13,7 @@ registerLocaleData(localeEs);
 
 // Modelos
 import { Publication } from '@models/storylist.model';
-import { StoryPreview } from '@models/story.model';
+import { storyPreviewMock } from '../../mocks/story.mock';
 
 export default {
 	title: 'PublicationCardComponent',
@@ -26,73 +26,11 @@ export default {
 	],
 } as Meta<PublicationCardComponent>;
 
-const publication: Publication<StoryPreview> = {
-	comingNextLabel: '',
+const publication: Publication = {
 	publishingOrder: 60,
 	published: true,
 	publishingDate: '2022-03-01',
-	editionLabel: 'Cuento #4',
-	story: {
-		originalPublication: 'Bar del Infierno (2005)',
-		language: 'Español',
-		approximateReadingTime: 4,
-		author: {
-			slug: 'Alejandro Dolina',
-			nationality: {
-				country: 'Argentina',
-				flag: 'https://cdn.sanity.io/images/s4dbqkc5/production/ee6f30199738f983516909a0d6330301573a62f6-32x20.png',
-			},
-			imageUrl: 'https://cdn.sanity.io/images/s4dbqkc5/production/c91d9010f27d5078ef787cb231395042b66db2cd-400x400.jpg',
-			name: 'Alejandro Dolina',
-		},
-		slug: 'mascaras',
-		title: 'Máscaras',
-		media: [],
-		paragraphs: [
-			{
-				style: 'normal',
-				_key: '01d31f77e38e',
-				markDefs: [],
-				children: [
-					{
-						text: 'Según cuentan algunos, el corso de la avenida La Plata, en Santos Lugares, era utilizado frecuentemente por ángeles y demonios cuando tenían que cumplir alguna misión terrestre. Solía decirse también que entre todas las máscaras del corso, una era el diablo. Los hechiceros de Lourdes y Villa Lynch aprovechaban aquellas jornadas para suscribir convenios de toda clase con los poderes de las tinieblas. Tras las caretas espeluznantes se ocultaba el verdadero horror de las caras del mal.',
-						_key: '47950aa594a0',
-						_type: 'span',
-						marks: [],
-					},
-				],
-				_type: 'block',
-			},
-			{
-				_key: '4f7a3a195535',
-				markDefs: [],
-				children: [
-					{
-						_type: 'span',
-						marks: [],
-						text: 'Los hombres sensibles de Flores solían pasearse por allí tratando de reconocer el sello de las legiones, o bien gritando frases ingeniosas en el oído de las muchachas. Cada vez que sospechaban el carácter sobrenatural de algún enmascarado, comenzaban a acosarlo tratando de provocar alguna reacción reveladora.',
-						_key: '2510774b3b10',
-					},
-				],
-				_type: 'block',
-				style: 'normal',
-			},
-			{
-				markDefs: [],
-				children: [
-					{
-						_type: 'span',
-						marks: [],
-						text: 'Nunca tuvieron suerte. Las mascaritas eran muy diestras en la ocultación de investiduras infernales o eran, lisa y llanamente, sifoneros o ferroviarios disfrazados de Mandinga.',
-						_key: 'e863deeabe34',
-					},
-				],
-				_type: 'block',
-				style: 'normal',
-				_key: '90005bcd4cee',
-			},
-		],
-	},
+	story: storyPreviewMock,
 };
 
 export const Historia = {
