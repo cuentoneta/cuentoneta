@@ -3,7 +3,7 @@ import { TextBlockContent } from '@models/block-content.model';
 import { Media } from '@models/media.model';
 import { Resource } from '@models/resource.model';
 
-export interface StoryBase {
+interface StoryBase {
 	title: string;
 	slug: string;
 	approximateReadingTime: number;
