@@ -7,7 +7,6 @@ export const storiesByAuthorSlugQuery = defineQuery(`*[_type == 'story' && autho
     title,
     'language': coalesce(language, 'es'),
     'badLanguage': coalesce(badLanguage, false),
-    'categories': coalesce(categories, []),
     'body': coalesce(body[0...3], []),
     'originalPublication': coalesce(originalPublication, ''),
     approximateReadingTime,
@@ -34,7 +33,6 @@ export const storyBySlugQuery = defineQuery(`*[_type == 'story' && slug.current 
         text,
         reference
     }, []),
-    'categories': coalesce(categories, []),
     'body': coalesce(body, []),
     'review': coalesce(review, []),
     'originalPublication': coalesce(originalPublication, ''),

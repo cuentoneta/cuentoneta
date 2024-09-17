@@ -78,19 +78,22 @@ export type PublicationSubQueryResult = Array<{
 		title: string;
 		language: 'en' | 'es';
 		badLanguage: boolean;
-		categories: Array<never>;
 		body: BlockContent;
 		originalPublication: string;
 		approximateReadingTime: number;
 		mediaSources: MediaResourcesSubQueryResult;
-		author: {
-			slug: Slug;
-			name: string;
-			image: ImageQueryResult;
-			nationality: NationalitySubQueryResult;
-		};
+		author: PublicationAuthorSubQueryResult;
 	};
 }>;
+
+export type PublicationAuthorSubQueryResult = {
+	slug: Slug;
+	name: string;
+	image: ImageQueryResult;
+	nationality: NationalitySubQueryResult;
+	biography: Array<never>;
+	resources: Array<never>;
+};
 
 export type ResourceSubQueryResult =
 	| Array<{

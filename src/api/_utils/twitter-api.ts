@@ -12,6 +12,5 @@ export async function getTweetData(mediaSource: SpaceRecordingSchemaObject): Pro
 		title: mediaSource.title,
 		type: 'spaceRecording',
 		data: { ...tweetData, duration: mediaSource.duration },
-		icon: mediaSource.icon,
 	};
 }

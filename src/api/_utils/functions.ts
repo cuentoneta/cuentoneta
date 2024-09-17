@@ -8,6 +8,7 @@ import { mapMediaSourcesForStorylist } from './media-sources.functions';
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import {
 	BiographySubQueryResult,
+	PublicationAuthorSubQueryResult,
 	ResourceSubQueryResult,
 	SupportedLanguageCodes,
 	TagsSubQueryResult,
@@ -23,7 +24,7 @@ import imageUrlBuilder from '@sanity/image-url';
 import { baseLanguage } from '../../../cms/utils/localization';
 
 // Modelos
-import { Author } from '@models/author.model';
+import { Author, AuthorTeaser } from '@models/author.model';
 import { BlockContent } from '../sanity/generated-schema-types';
 import { Resource } from '@models/resource.model';
 import { Publication, Storylist, StorylistTeaser } from '@models/storylist.model';
@@ -48,6 +49,20 @@ export function mapAuthor(
 		imageUrl: urlFor(rawAuthorData.image),
 		name: rawAuthorData.name,
 		biography: biography,
+	};
+}
+
+export function mapAuthorForStorylist(rawAuthorData: Exclude<PublicationAuthorSubQueryResult, null>): AuthorTeaser {
+	return {
+		slug: rawAuthorData.slug.current,
+		nationality: {
+			country: rawAuthorData.nationality?.country,
+			flag: urlFor(rawAuthorData.nationality.flag),
+		},
+		resources: [],
+		imageUrl: urlFor(rawAuthorData.image),
+		name: rawAuthorData.name,
+		biography: [],
 	};
 }
 
@@ -77,7 +92,7 @@ export function mapResources(resources: ResourceSubQueryResult): Resource[] {
 				icon: {
 					provider: resource.resourceType.icon.provider ?? '',
 					name: resource.resourceType.icon.name ?? '',
-					svg: resource.resourceType.icon ? `${resource.resourceType.icon.svg}` : '',
+					svg: resource.resourceType.icon ? `data:image/svg+xml,${resource.resourceType.icon.svg}` : '',
 				},
 			},
 		})) ?? []
@@ -114,7 +129,7 @@ export function mapStorylist(result: Exclude<StorylistQueryResult, null>): Story
 			...publication,
 			story: mapStoryPreviewContent({
 				...story,
-				author: mapAuthor({ ...author, biography: {}, resources: [] }),
+				author: mapAuthorForStorylist({ ...author }),
 				media: mapMediaSourcesForStorylist(mediaSources),
 				paragraphs: mapBlockContentToTextParagraphs(body),
 				resources: [],

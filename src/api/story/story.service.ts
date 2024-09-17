@@ -5,7 +5,7 @@ import { client } from '../_helpers/sanity-connector';
 import { mapAuthor, mapResources, mapStoryContent } from '../_utils/functions';
 
 // Modelos
-import { Epigraph, Story, StoryBase } from '@models/story.model';
+import { Epigraph, Story, StoryTeaser } from '@models/story.model';
 import { mapMediaSources, mapMediaSourcesForStorylist } from '../_utils/media-sources.functions';
 
 // Subqueries
@@ -15,7 +15,7 @@ import { storiesByAuthorSlugQuery, storyBySlugQuery } from '../_queries/story.qu
 import { StoriesByAuthorSlugArgs } from '../interfaces/queryArgs';
 import { BlockContent } from '../sanity/generated-schema-types';
 
-export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryBase[]> {
+export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryTeaser[]> {
 	const result = await client.fetch(storiesByAuthorSlugQuery, {
 		slug: args.slug,
 		start: args.offset * args.limit,

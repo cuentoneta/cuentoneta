@@ -1,9 +1,9 @@
-import { Author } from './author.model';
+import { Author, AuthorTeaser } from './author.model';
 import { TextBlockContent } from '@models/block-content.model';
 import { Media } from '@models/media.model';
 import { Resource } from '@models/resource.model';
 
-export interface StoryBase {
+interface StoryBase {
 	title: string;
 	slug: string;
 	approximateReadingTime: number;
@@ -31,5 +31,5 @@ export interface StoryTeaser extends StoryBase {
 }
 
 export interface StoryPreview extends StoryBase {
-	author: Omit<Author, 'biography'>;
+	author: AuthorTeaser;
 }
