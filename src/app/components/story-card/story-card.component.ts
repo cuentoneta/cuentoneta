@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { CommonModule } from '@angular/common';
 import { StoryTeaser } from '@models/story.model';
 import { StoryCardContentComponent } from '../story-card-content/story-card-content.component';
-import { StoryCardSkeletonComponent } from '../story-card-skeleton/story-card-skeleton.component';
 import { Router, UrlTree } from '@angular/router';
 import { AppRoutes } from '../../app.routes';
 import { CardComponent } from '../card/card.component';
