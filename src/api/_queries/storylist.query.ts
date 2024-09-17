@@ -46,7 +46,6 @@ export const storylistQuery = defineQuery(`*[_type == 'storylist' && slug.curren
             title,
             language,
             badLanguage,
-            'categories': coalesce(categories[], []),
             body[0...3],
             originalPublication,
             approximateReadingTime,

@@ -78,7 +78,6 @@ export type PublicationSubQueryResult = Array<{
 		title: string;
 		language: 'en' | 'es';
 		badLanguage: boolean;
-		categories: Array<never>;
 		body: BlockContent;
 		originalPublication: string;
 		approximateReadingTime: number;
