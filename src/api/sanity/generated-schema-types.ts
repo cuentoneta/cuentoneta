@@ -117,13 +117,6 @@ export type LandingPage = {
 	config: string;
 	slug: Slug;
 	active: boolean;
-	previews?: Array<{
-		_ref: string;
-		_type: 'reference';
-		_weak?: boolean;
-		_key: string;
-		[internalGroqTypeReferenceTo]?: 'storylist';
-	}>;
 	cards?: Array<{
 		_ref: string;
 		_type: 'reference';

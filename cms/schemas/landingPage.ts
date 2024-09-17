@@ -43,19 +43,6 @@ export default defineType({
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
-			name: 'previews',
-			title: 'Storylists con Vista Previa',
-			type: 'array',
-			of: [
-				defineArrayMember({
-					name: 'storylist',
-					title: 'Storylist',
-					type: 'reference',
-					to: [{ type: 'storylist' }],
-				}),
-			],
-		}),
-		defineField({
 			name: 'cards',
 			title: 'Storylists con Tarjetas',
 			type: 'array',
