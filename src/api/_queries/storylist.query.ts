@@ -51,7 +51,7 @@ export const storylistQuery = defineQuery(`*[_type == 'storylist' && slug.curren
             originalPublication,
             approximateReadingTime,
             'mediaSources': coalesce(mediaSources[], []),
-            'author': author-> { slug, name, image, nationality-> }
+            'author': author-> { slug, name, image, nationality->, 'biography': [] }
         }
     }, []),
     'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])

@@ -83,14 +83,18 @@ export type PublicationSubQueryResult = Array<{
 		originalPublication: string;
 		approximateReadingTime: number;
 		mediaSources: MediaResourcesSubQueryResult;
-		author: {
-			slug: Slug;
-			name: string;
-			image: ImageQueryResult;
-			nationality: NationalitySubQueryResult;
-		};
+		author: PublicationAuthorSubQueryResult;
 	};
 }>;
+
+export type PublicationAuthorSubQueryResult = {
+	slug: Slug;
+	name: string;
+	image: ImageQueryResult;
+	nationality: NationalitySubQueryResult;
+	biography: Array<never>;
+	resources: Array<never>;
+};
 
 export type ResourceSubQueryResult =
 	| Array<{
