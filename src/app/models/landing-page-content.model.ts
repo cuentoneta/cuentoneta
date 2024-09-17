@@ -1,6 +1,5 @@
-import { Storylist, StorylistTeaser } from '@models/storylist.model';
+import { StorylistTeaser } from '@models/storylist.model';
 
 export interface LandingPageContent {
 	cards: StorylistTeaser[];
-	previews: Storylist[];
 }

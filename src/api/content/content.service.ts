@@ -1,9 +1,9 @@
 // Queries
 import { fetchStorylistTeasers } from '../storylist/storylist.service';
+import { LandingPageContent } from '@models/landing-page-content.model';
 
-export async function fetchLandingPageContent() {
+export async function fetchLandingPageContent(): Promise<LandingPageContent> {
 	const cards = await fetchStorylistTeasers();
-	const previews: [] = [];
 
-	return { previews, cards };
+	return { cards };
 }
