@@ -68,6 +68,7 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 		});
 	}
 
+	// TODO: Issue #1010 - Cambiar los tipos a la hora de generar los endpoints correspondientes para obtener los teasers de navegación
 	private stories$(slug: string): Observable<StoryTeaser[]> {
 		return this.fetchContentDirective.fetchContent$<StoryTeaser[]>(this.storyService.getByAuthorSlug(slug));
 	}
