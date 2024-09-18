@@ -241,7 +241,7 @@ export default defineType({
 						},
 						prepare({ text, reference }) {
 							const title =
-								text.length > 0
+								text?.length > 0
 									? text
 											.map((span) => span.children)
 											.map((child) => child[0].text)
@@ -249,7 +249,7 @@ export default defineType({
 									: '';
 
 							const subtitle =
-								reference.length > 0
+								reference?.length > 0
 									? reference
 											.map((span) => span.children)
 											.map((child) => child[0].text)
@@ -257,8 +257,8 @@ export default defineType({
 									: '';
 
 							return {
-								title: title,
-								subtitle: subtitle,
+								title: title ?? '',
+								subtitle: subtitle ?? '',
 							};
 						},
 					},
