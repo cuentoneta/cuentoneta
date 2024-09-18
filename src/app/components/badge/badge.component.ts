@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, OnInit } from '@angular/core';
+import { Component, inject, input, OnInit } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Tag } from '@models/tag.model';
 import { BypassHtmlSanitizerPipe } from '../../pipes/bypass-html-sanitizer.pipe';
