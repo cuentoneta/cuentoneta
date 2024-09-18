@@ -2,7 +2,7 @@
 import { client } from '../_helpers/sanity-connector';
 
 // Funciones
-import { mapMediaSourcesForStorylist } from './media-sources.functions';
+import { mapMediaSources, mapMediaSourcesForStorylist } from './media-sources.functions';
 
 // Tipos de Sanity
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
@@ -15,6 +15,8 @@ import {
 } from '../sanity/derivate-types';
 import {
 	AuthorBySlugQueryResult,
+	StoriesByAuthorSlugQueryResult,
+	StoryBySlugQueryResult,
 	StorylistQueryResult,
 	StorylistTeasersQueryResult,
 } from '../sanity/generated-query-types';
@@ -28,7 +30,7 @@ import { Author, AuthorTeaser } from '@models/author.model';
 import { BlockContent } from '../sanity/generated-schema-types';
 import { Resource } from '@models/resource.model';
 import { Publication, Storylist, StorylistTeaser } from '@models/storylist.model';
-import { Story, StoryPreview } from '@models/story.model';
+import { Story, StoryPreview, StoryTeaser } from '@models/story.model';
 import { TextBlockContent } from '@models/block-content.model';
 import { Tag } from '@models/tag.model';
 
@@ -89,6 +91,7 @@ export function mapResources(resources: ResourceSubQueryResult): Resource[] {
 			...resource,
 			resourceType: {
 				...resource.resourceType,
+				description: mapBlockContentToTextParagraphs(resource.resourceType.description),
 				icon: {
 					provider: resource.resourceType.icon.provider ?? '',
 					name: resource.resourceType.icon.name ?? '',
@@ -102,6 +105,7 @@ export function mapResources(resources: ResourceSubQueryResult): Resource[] {
 export function mapTags(tags: TagsSubQueryResult): Tag[] {
 	return tags.map((tag) => ({
 		...tag,
+		description: mapBlockContentToTextParagraphs(tag.description),
 		icon: {
 			provider: tag.icon.provider ?? '',
 			name: tag.icon.name ?? '',
@@ -151,17 +155,18 @@ export function mapBlockContentToTextParagraphs(content: BlockContent): TextBloc
 	return content.filter((element) => element._type === 'block') as TextBlockContent[];
 }
 
-export function mapStoryContent(story: Story): Story {
+export async function mapStoryContent(result: Exclude<StoryBySlugQueryResult, null>): Promise<Story> {
 	return {
-		...story,
-		epigraphs: story.epigraphs ?? [],
-		paragraphs: story?.paragraphs ?? [],
-		summary: story?.summary ?? [],
-		author: {
-			...story.author,
-			biography: story.author.biography ?? [],
-		},
-		media: story.media ?? [],
+		...result,
+		epigraphs: result.epigraphs.map((epigraph) => ({
+			text: mapBlockContentToTextParagraphs(epigraph.text),
+			reference: mapBlockContentToTextParagraphs(epigraph.reference),
+		})),
+		paragraphs: mapBlockContentToTextParagraphs(result.body),
+		summary: mapBlockContentToTextParagraphs(result.review),
+		author: mapAuthor(result.author),
+		media: await mapMediaSources(result.mediaSources),
+		resources: mapResources(result.resources),
 	};
 }
 
@@ -179,4 +184,21 @@ export function mapStoryPreviewContent(story: StoryPreview): StoryPreview {
 		};
 	}
 	return card;
+}
+
+export function mapStoryTeaser(result: Exclude<StoriesByAuthorSlugQueryResult, null>): StoryTeaser[] {
+	const stories = [];
+
+	for (const item of result) {
+		const { mediaSources, resources, body, ...properties } = item;
+
+		stories.push({
+			...properties,
+			media: mapMediaSourcesForStorylist(mediaSources),
+			resources: mapResources(resources),
+			paragraphs: mapBlockContentToTextParagraphs(body) as [TextBlockContent, TextBlockContent, TextBlockContent],
+		});
+	}
+
+	return stories;
 }

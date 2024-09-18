@@ -17,7 +17,7 @@ interface StoryBase {
 
 export interface Epigraph {
 	text: TextBlockContent[];
-	reference: string;
+	reference: TextBlockContent[];
 }
 
 export interface Story extends StoryBase {
@@ -26,8 +26,12 @@ export interface Story extends StoryBase {
 	summary: TextBlockContent[];
 }
 
-export interface StoryTeaser extends StoryBase {
+export interface StoryNavigationTeaser extends StoryBase {
 	paragraphs: Array<never>;
+}
+
+export interface StoryTeaser extends StoryBase {
+	paragraphs: [TextBlockContent, TextBlockContent, TextBlockContent];
 }
 
 export interface StoryPreview extends StoryBase {

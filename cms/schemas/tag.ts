@@ -10,14 +10,14 @@ export default defineType({
 	preview: {
 		select: {
 			title: 'title',
-			description: 'description',
+			shortDescription: 'shortDescription',
 			icon: 'icon',
 		},
-		prepare(selection) {
+		prepare({ title, shortDescription, icon }) {
 			return {
-				title: selection.title,
-				subtitle: selection.description,
-				media: preview(selection.icon),
+				title: title,
+				subtitle: shortDescription,
+				media: preview(icon),
 			};
 		},
 	},
@@ -39,9 +39,15 @@ export default defineType({
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
+			name: 'shortDescription',
+			title: 'Descripción breve',
+			type: 'string',
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
 			name: 'description',
 			title: 'Descripción',
-			type: 'string',
+			type: 'blockContent',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({

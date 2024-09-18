@@ -13,6 +13,7 @@ export const authorBySlugQuery = defineQuery(`*[_type == 'author' && slug.curren
         url, 
         resourceType->{ 
         	title, 
+        	shortDescription,
         	description, 
             icon
         } 

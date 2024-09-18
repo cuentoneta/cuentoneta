@@ -42,25 +42,3 @@
 ngx-skeleton-loader {
 	@apply block leading-0;
 }
-
-youtube-player {
-	.youtube-player-placeholder {
-		@apply mb-6 aspect-video w-full rounded-xl sm:mb-10  #{!important};
-
-		height: unset !important;
-	}
-
-	div iframe {
-		@apply mb-6 aspect-video w-full rounded-xl sm:mb-10 #{!important};
-
-		height: unset !important;
-	}
-}
-
-cuentoneta-bio-summary-card {
-	.bio-and-summary p {
-		a {
-			@apply text-interactive-500 underline hover:text-interactive-600;
-		}
-	}
-}

@@ -11,29 +11,35 @@ const audioRecording = defineType({
 	preview: {
 		select: {
 			title: 'title',
-			spaceUrl: 'spaceUrl',
+			url: 'url',
 		},
 		prepare(selection) {
-			const { title, spaceUrl } = selection;
+			const { title, url } = selection;
 			return {
 				title: `${title}`,
-				subtitle: ` URL Grabación: ${spaceUrl}`,
+				subtitle: ` URL Grabación: ${url}`,
 			};
 		},
 	},
 	fields: [
-		{
+		defineField({
 			name: 'title',
 			title: 'Título asignado a la grabación de audio',
 			type: 'string',
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
+			name: 'description',
+			title: 'Descripción de la grabación de audio',
+			type: 'blockContent',
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
 			name: 'url',
 			title: 'URL del archivo de audio (mp3, wav, etc.)',
 			type: 'url',
 			validation: (Rule) => Rule.required(),
-		},
+		}),
 	],
 });
 
@@ -56,30 +62,36 @@ const spaceRecording = defineType({
 		},
 	},
 	fields: [
-		{
+		defineField({
 			name: 'postId',
 			title: 'ID de post de X',
 			type: 'string',
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'title',
-			title: 'Título del Space',
+			title: 'Título del space',
 			type: 'string',
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
+			name: 'description',
+			title: 'Descripción del space',
+			type: 'blockContent',
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
 			name: 'spaceUrl',
 			title: 'URL de la grabación del space',
 			type: 'url',
 			validation: (Rule) => Rule.required(),
-		},
-		{
+		}),
+		defineField({
 			name: 'duration',
 			title: 'Duración del space',
 			type: 'string',
 			validation: (Rule) => Rule.required(),
-		},
+		}),
 	],
 });
 
@@ -222,6 +234,34 @@ export default defineType({
 					name: 'epigraph',
 					title: 'Epígrafe',
 					type: 'object',
+					preview: {
+						select: {
+							text: 'text',
+							reference: 'reference',
+						},
+						prepare({ text, reference }) {
+							const title =
+								text?.length > 0
+									? text
+											.map((span) => span.children)
+											.map((child) => child[0].text)
+											.join('')
+									: '';
+
+							const subtitle =
+								reference?.length > 0
+									? reference
+											.map((span) => span.children)
+											.map((child) => child[0].text)
+											.join('')
+									: '';
+
+							return {
+								title: title ?? '',
+								subtitle: subtitle ?? '',
+							};
+						},
+					},
 					fields: [
 						{
 							name: 'text',
@@ -233,7 +273,7 @@ export default defineType({
 							name: 'reference',
 							title: 'Referencia del epígrafe',
 							description: 'Referencia del origen del epígrafe',
-							type: 'string',
+							type: 'blockContent',
 						},
 					],
 				}),

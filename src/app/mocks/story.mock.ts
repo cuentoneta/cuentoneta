@@ -8,7 +8,23 @@ export const storyMock: Story = {
 			url: 'https://biblioteca.es/el-espejo-del-tiempo',
 			resourceType: {
 				title: 'Recurso Original',
-				description: 'Recurso original de este contenido',
+				shortDescription: 'Recurso original de este contenido',
+				description: [
+					{
+						markDefs: [],
+						children: [
+							{
+								_type: 'span',
+								marks: [],
+								text: 'Recurso original de este contenido',
+								_key: 'd92a239f37e50',
+							},
+						],
+						_type: 'block',
+						style: 'normal',
+						_key: '05dc9f3aa317',
+					},
+				],
 				icon: {
 					provider: 'fa',
 					name: 'fa-medal',
@@ -27,23 +43,23 @@ export const storyMock: Story = {
 		{
 			title: 'Video',
 			type: 'youTubeVideo',
+			description: [
+				{
+					style: 'normal',
+					_key: '338be209b296',
+					markDefs: [],
+					children: [
+						{
+							text: 'Narración del cuento a cargo de Gérard Depardieu',
+							_key: '1adaad6a0f84',
+							_type: 'span',
+							marks: [],
+						},
+					],
+					_type: 'block',
+				},
+			],
 			data: {
-				description: [
-					{
-						style: 'normal',
-						_key: '338be209b296',
-						markDefs: [],
-						children: [
-							{
-								text: 'Narración del cuento a cargo de Gérard Depardieu',
-								_key: '1adaad6a0f84',
-								_type: 'span',
-								marks: [],
-							},
-						],
-						_type: 'block',
-					},
-				],
 				videoId: 'pB4GTan0y64',
 			},
 		},
@@ -285,7 +301,7 @@ export const storyMock: Story = {
 					markDefs: [],
 				},
 			],
-			reference: "L'etranger, VI",
+			reference: [],
 		},
 	],
 };
@@ -297,7 +313,23 @@ export const storyPreviewMock: StoryPreview = {
 			url: 'https://biblioteca.es/el-espejo-del-tiempo',
 			resourceType: {
 				title: 'Recurso Original',
-				description: 'Recurso original de este contenido',
+				shortDescription: 'Recurso original de este contenido',
+				description: [
+					{
+						markDefs: [],
+						children: [
+							{
+								_type: 'span',
+								marks: [],
+								text: 'Recurso original de este contenido',
+								_key: 'd92a239f37e50',
+							},
+						],
+						_type: 'block',
+						style: 'normal',
+						_key: '05dc9f3aa317',
+					},
+				],
 				icon: {
 					provider: 'fa',
 					name: 'fa-medal',
@@ -316,23 +348,23 @@ export const storyPreviewMock: StoryPreview = {
 		{
 			title: 'Video',
 			type: 'youTubeVideo',
+			description: [
+				{
+					style: 'normal',
+					_key: '338be209b296',
+					markDefs: [],
+					children: [
+						{
+							text: 'Narración del cuento a cargo de Gérard Depardieu',
+							_key: '1adaad6a0f84',
+							_type: 'span',
+							marks: [],
+						},
+					],
+					_type: 'block',
+				},
+			],
 			data: {
-				description: [
-					{
-						style: 'normal',
-						_key: '338be209b296',
-						markDefs: [],
-						children: [
-							{
-								text: 'Narración del cuento a cargo de Gérard Depardieu',
-								_key: '1adaad6a0f84',
-								_type: 'span',
-								marks: [],
-							},
-						],
-						_type: 'block',
-					},
-				],
 				videoId: 'pB4GTan0y64',
 			},
 		},
@@ -405,7 +437,23 @@ export const storyTeaserMock: StoryTeaser = {
 			url: 'https://biblioteca.es/el-espejo-del-tiempo',
 			resourceType: {
 				title: 'Recurso Original',
-				description: 'Recurso original de este contenido',
+				shortDescription: 'Recurso original de este contenido',
+				description: [
+					{
+						markDefs: [],
+						children: [
+							{
+								_type: 'span',
+								marks: [],
+								text: 'Recurso original de este contenido',
+								_key: 'd92a239f37e50',
+							},
+						],
+						_type: 'block',
+						style: 'normal',
+						_key: '05dc9f3aa317',
+					},
+				],
 				icon: {
 					provider: 'fa',
 					name: 'fa-medal',
@@ -424,26 +472,69 @@ export const storyTeaserMock: StoryTeaser = {
 		{
 			title: 'Video',
 			type: 'youTubeVideo',
+			description: [
+				{
+					style: 'normal',
+					_key: '338be209b296',
+					markDefs: [],
+					children: [
+						{
+							text: 'Narración del cuento a cargo de Gérard Depardieu',
+							_key: '1adaad6a0f84',
+							_type: 'span',
+							marks: [],
+						},
+					],
+					_type: 'block',
+				},
+			],
 			data: {
-				description: [
-					{
-						style: 'normal',
-						_key: '338be209b296',
-						markDefs: [],
-						children: [
-							{
-								text: 'Narración del cuento a cargo de Gérard Depardieu',
-								_key: '1adaad6a0f84',
-								_type: 'span',
-								marks: [],
-							},
-						],
-						_type: 'block',
-					},
-				],
 				videoId: 'pB4GTan0y64',
 			},
 		},
 	],
-	paragraphs: [],
+	paragraphs: [
+		{
+			markDefs: [],
+			children: [
+				{
+					text: 'Marie se detuvo frente al antiguo espejo de su abuela, sus dedos temblorosos rozando el marco de madera tallada. El reflejo que le devolvía la mirada no era el suyo, sino el de una joven de ojos brillantes y sonrisa despreocupada. Marie, ahora con 60 años, reconoció a su yo de 20.',
+					_key: '6203fc30fdf90',
+					_type: 'span',
+					marks: [],
+				},
+			],
+			_type: 'block',
+			style: 'normal',
+			_key: 'add385219da2',
+		},
+		{
+			children: [
+				{
+					text: '"¿Marie? ¿Estás lista?" La voz de su marido, Pierre, resonó desde el piso de abajo.',
+					_key: 'abf0ba06e2fe',
+					_type: 'span',
+					marks: [],
+				},
+			],
+			_type: 'block',
+			style: 'normal',
+			_key: 'e65b26cf79aa',
+			markDefs: [],
+		},
+		{
+			children: [
+				{
+					_type: 'span',
+					marks: [],
+					text: '"Un momento", respondió, sin apartar la vista del espejo.',
+					_key: 'de532604f30b',
+				},
+			],
+			_type: 'block',
+			style: 'normal',
+			_key: 'f496563a74c2',
+			markDefs: [],
+		},
+	],
 };

@@ -9,12 +9,13 @@ import {
 	AudioRecording,
 	AudioRecordingSchemaObject,
 	Media,
-	MediaSchemaObject,
 	SpaceRecordingSchemaObject,
+	YouTubeVideo,
 	YoutubeVideoSchemaObject,
 } from '@models/media.model';
+import { mapBlockContentToTextParagraphs } from './functions';
 
-export async function mapMediaSources(mediaSources: MediaSchemaObject[]): Promise<Media[]> {
+export async function mapMediaSources(mediaSources: MediaResourcesSubQueryResult): Promise<Media[]> {
 	if (!mediaSources) return [];
 
 	const media: Media[] = [];
@@ -32,7 +33,6 @@ export async function mapMediaSources(mediaSources: MediaSchemaObject[]): Promis
 	return media;
 }
 
-// TODO: Corregir estos duplicados (Bug mencionado en issue #969)
 export function mapMediaSourcesForStorylist(mediaSources: MediaResourcesSubQueryResult): Media[] {
 	if (!mediaSources) return [];
 
@@ -45,6 +45,7 @@ export function mapMediaSourcesForStorylist(mediaSources: MediaResourcesSubQuery
 			media.push({
 				title: mediaSource.title,
 				type: 'spaceRecording',
+				description: mapBlockContentToTextParagraphs(mediaSource.description),
 				data: {},
 			});
 		}
@@ -55,22 +56,23 @@ export function mapMediaSourcesForStorylist(mediaSources: MediaResourcesSubQuery
 	return media;
 }
 
-export function getAudioRecordingData(mediaSource: AudioRecordingSchemaObject): AudioRecording {
+function getAudioRecordingData(mediaSource: AudioRecordingSchemaObject): AudioRecording {
 	return {
 		title: mediaSource.title,
 		type: mediaSource._type,
+		description: mapBlockContentToTextParagraphs(mediaSource.description),
 		data: {
 			url: mediaSource.url,
 		},
 	};
 }
 
-export function getYoutubeVideoData(mediaSource: YoutubeVideoSchemaObject) {
+function getYoutubeVideoData(mediaSource: YoutubeVideoSchemaObject): YouTubeVideo {
 	return {
 		title: mediaSource.title,
 		type: mediaSource._type,
+		description: mapBlockContentToTextParagraphs(mediaSource.description),
 		data: {
-			description: mediaSource.description,
 			videoId: mediaSource.videoId,
 		},
 	};
