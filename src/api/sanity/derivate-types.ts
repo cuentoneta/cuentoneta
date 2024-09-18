@@ -115,7 +115,7 @@ export type TagsSubQueryResult =
 	| Array<{
 			title: string;
 			slug: string;
-			description: string;
+			description: BlockContent;
 			icon: IconPicker;
 	  }>
 	| Array<never>;

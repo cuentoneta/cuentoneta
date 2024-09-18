@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, computed, inject, input, OnInit } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Tag } from '@models/tag.model';
 import { BypassHtmlSanitizerPipe } from '../../pipes/bypass-html-sanitizer.pipe';
@@ -27,11 +27,16 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 export class BadgeComponent implements OnInit {
 	tag = input.required<Tag>();
 	showIcon = input(false);
+	description = computed(() =>
+		this.tag()
+			.description.map((description) => description.children[0].text)
+			.join(''),
+	);
 
 	private tooltipDirective = inject(TooltipDirective);
 
 	ngOnInit() {
-		this.tooltipDirective.text.set(this.tag().description);
+		this.tooltipDirective.text.set(this.description());
 		this.tooltipDirective.position.set('top');
 	}
 }

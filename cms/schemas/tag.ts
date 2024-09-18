@@ -13,11 +13,19 @@ export default defineType({
 			description: 'description',
 			icon: 'icon',
 		},
-		prepare(selection) {
+		prepare({ title, description, icon }) {
+			const subtitle =
+				description.length > 0
+					? description
+							.map((span) => span.children)
+							.map((child) => child[0].text)
+							.join('')
+					: '';
+
 			return {
-				title: selection.title,
-				subtitle: selection.description,
-				media: preview(selection.icon),
+				title: title,
+				subtitle: subtitle,
+				media: preview(icon),
 			};
 		},
 	},
@@ -41,7 +49,7 @@ export default defineType({
 		defineField({
 			name: 'description',
 			title: 'Descripción',
-			type: 'string',
+			type: 'blockContent',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({

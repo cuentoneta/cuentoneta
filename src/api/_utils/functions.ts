@@ -102,6 +102,7 @@ export function mapResources(resources: ResourceSubQueryResult): Resource[] {
 export function mapTags(tags: TagsSubQueryResult): Tag[] {
 	return tags.map((tag) => ({
 		...tag,
+		description: mapBlockContentToTextParagraphs(tag.description),
 		icon: {
 			provider: tag.icon.provider ?? '',
 			name: tag.icon.name ?? '',
