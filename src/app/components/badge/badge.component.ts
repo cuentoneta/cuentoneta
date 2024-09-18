@@ -27,16 +27,11 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 export class BadgeComponent implements OnInit {
 	tag = input.required<Tag>();
 	showIcon = input(false);
-	description = computed(() =>
-		this.tag()
-			.description.map((description) => description.children[0].text)
-			.join(''),
-	);
 
 	private tooltipDirective = inject(TooltipDirective);
 
 	ngOnInit() {
-		this.tooltipDirective.text.set(this.description());
+		this.tooltipDirective.text.set(this.tag().shortDescription);
 		this.tooltipDirective.position.set('top');
 	}
 }

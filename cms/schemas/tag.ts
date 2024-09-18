@@ -10,21 +10,13 @@ export default defineType({
 	preview: {
 		select: {
 			title: 'title',
-			description: 'description',
+			shortDescription: 'shortDescription',
 			icon: 'icon',
 		},
-		prepare({ title, description, icon }) {
-			const subtitle =
-				description.length > 0
-					? description
-							.map((span) => span.children)
-							.map((child) => child[0].text)
-							.join('')
-					: '';
-
+		prepare({ title, shortDescription, icon }) {
 			return {
 				title: title,
-				subtitle: subtitle,
+				subtitle: shortDescription,
 				media: preview(icon),
 			};
 		},
@@ -44,6 +36,12 @@ export default defineType({
 				source: 'title',
 				maxLength: 96,
 			},
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
+			name: 'shortDescription',
+			title: 'Descripción breve',
+			type: 'string',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({

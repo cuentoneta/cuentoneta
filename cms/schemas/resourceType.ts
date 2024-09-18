@@ -82,7 +82,7 @@ export const resourceType = defineType({
 		defineField({
 			name: 'description',
 			title: 'Descripción',
-			type: 'string',
+			type: 'blockContent',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
