@@ -103,7 +103,8 @@ export type ResourceSubQueryResult =
 			url: string;
 			resourceType: {
 				title: string;
-				description: string;
+				shortDescription: string;
+				description: BlockContent;
 				icon: IconPicker;
 			};
 	  }>

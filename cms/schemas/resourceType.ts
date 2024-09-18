@@ -49,15 +49,15 @@ export const resourceType = defineType({
 	preview: {
 		select: {
 			title: 'title',
-			description: 'description',
+			shortDescription: 'shortDescription',
 			provider: 'icon.provider',
 			name: 'icon.name',
 			options: 'icon.options',
 		},
-		prepare({ title, description, provider, name, options }) {
+		prepare({ title, shortDescription, provider, name, options }) {
 			return {
 				title: title,
-				subtitle: description,
+				subtitle: shortDescription,
 				media: preview({ provider, name, options }),
 			};
 		},
@@ -77,6 +77,12 @@ export const resourceType = defineType({
 				source: 'title',
 				maxLength: 96,
 			},
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
+			name: 'shortDescription',
+			title: 'Descripción breve',
+			type: 'string',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({

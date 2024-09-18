@@ -89,6 +89,7 @@ export function mapResources(resources: ResourceSubQueryResult): Resource[] {
 			...resource,
 			resourceType: {
 				...resource.resourceType,
+				description: mapBlockContentToTextParagraphs(resource.resourceType.description),
 				icon: {
 					provider: resource.resourceType.icon.provider ?? '',
 					name: resource.resourceType.icon.name ?? '',

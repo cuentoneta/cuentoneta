@@ -16,6 +16,7 @@ export const storiesByAuthorSlugQuery = defineQuery(`*[_type == 'story' && autho
         url, 
         resourceType->{ 
             title, 
+            shortDescription,
             description, 
             icon
         } 
@@ -43,6 +44,7 @@ export const storyBySlugQuery = defineQuery(`*[_type == 'story' && slug.current 
         url, 
         resourceType->{ 
             title, 
+            shortDescription,
             description,
             icon
         }
@@ -58,6 +60,7 @@ export const storyBySlugQuery = defineQuery(`*[_type == 'story' && slug.current 
             url, 
             resourceType->{ 
                 title, 
+                shortDescription,
                 description, 
                 icon
             } 
