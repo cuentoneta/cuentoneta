@@ -37,12 +37,14 @@ export type ImageQueryResult = {
 
 export type MediaResourcesSubQueryResult = Array<
 	| {
+			description: BlockContent;
 			url?: string;
 			title: string;
 			_type: 'audioRecording';
 			_key: string;
 	  }
 	| {
+			description: BlockContent;
 			url?: string;
 			postId?: string;
 			duration?: string;
@@ -51,7 +53,7 @@ export type MediaResourcesSubQueryResult = Array<
 			_key: string;
 	  }
 	| {
-			description?: BlockContent;
+			description: BlockContent;
 			videoId?: string;
 			title: string;
 			_type: 'youTubeVideo';
