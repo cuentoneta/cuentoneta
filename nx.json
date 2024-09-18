@@ -73,5 +73,13 @@
 			"style": "scss"
 		}
 	},
-	"defaultProject": "cuentoneta"
+	"defaultProject": "cuentoneta",
+	"plugins": [
+		{
+			"plugin": "@nx/eslint/plugin",
+			"options": {
+				"targetName": "eslint:lint"
+			}
+		}
+	]
 }
