@@ -32,7 +32,7 @@ export const storyBySlugQuery = defineQuery(`*[_type == 'story' && slug.current 
     'badLanguage': coalesce(badLanguage, false),
     'epigraphs': coalesce(epigraphs[]{
         text,
-        reference
+        'reference': coalesce(reference[], [])
     }, []),
     'body': coalesce(body, []),
     'review': coalesce(review, []),
