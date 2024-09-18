@@ -12,6 +12,17 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 		<label class="inter-body-xs-medium text-primary-500"
 			><cuentoneta-portable-text-parser [paragraphs]="media().description"> </cuentoneta-portable-text-parser
 		></label>`,
+	styles: `
+		::ng-deep {
+			youtube-player {
+				.youtube-player-placeholder,
+				div iframe {
+					@apply mb-2 aspect-video w-full rounded-xl  #{!important};
+					height: unset !important;
+				}
+			}
+		}
+	`,
 })
 export class YoutubeVideoWidgetComponent {
 	media = input.required<YouTubeVideo>();
