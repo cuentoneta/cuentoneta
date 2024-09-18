@@ -234,6 +234,34 @@ export default defineType({
 					name: 'epigraph',
 					title: 'Epígrafe',
 					type: 'object',
+					preview: {
+						select: {
+							text: 'text',
+							reference: 'reference',
+						},
+						prepare({ text, reference }) {
+							const title =
+								text.length > 0
+									? text
+											.map((span) => span.children)
+											.map((child) => child[0].text)
+											.join('')
+									: '';
+
+							const subtitle =
+								reference.length > 0
+									? reference
+											.map((span) => span.children)
+											.map((child) => child[0].text)
+											.join('')
+									: '';
+
+							return {
+								title: title,
+								subtitle: subtitle,
+							};
+						},
+					},
 					fields: [
 						{
 							name: 'text',
@@ -245,7 +273,7 @@ export default defineType({
 							name: 'reference',
 							title: 'Referencia del epígrafe',
 							description: 'Referencia del origen del epígrafe',
-							type: 'string',
+							type: 'blockContent',
 						},
 					],
 				}),
