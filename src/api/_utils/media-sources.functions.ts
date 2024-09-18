@@ -9,14 +9,13 @@ import {
 	AudioRecording,
 	AudioRecordingSchemaObject,
 	Media,
-	MediaSchemaObject,
 	SpaceRecordingSchemaObject,
 	YouTubeVideo,
 	YoutubeVideoSchemaObject,
 } from '@models/media.model';
 import { mapBlockContentToTextParagraphs } from './functions';
 
-export async function mapMediaSources(mediaSources: MediaSchemaObject[]): Promise<Media[]> {
+export async function mapMediaSources(mediaSources: MediaResourcesSubQueryResult): Promise<Media[]> {
 	if (!mediaSources) return [];
 
 	const media: Media[] = [];
