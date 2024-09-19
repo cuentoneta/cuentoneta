@@ -2,6 +2,7 @@
 import { getTweetData } from './twitter-api';
 
 // Tipos de Sanity
+import { StoryBySlugQueryResult, StorylistQueryResult } from '../sanity/types';
 
 // Modelos
 import {
@@ -13,9 +14,6 @@ import {
 	YoutubeVideoSchemaObject,
 } from '@models/media.model';
 import { mapBlockContentToTextParagraphs } from './functions';
-
-// Tipos de Sanity
-import { StoryBySlugQueryResult, StorylistQueryResult } from '../sanity/types';
 
 type MediaResourcesStorySubQuery = NonNullable<StoryBySlugQueryResult>['mediaSources'];
 export async function mapMediaSources(mediaSources: MediaResourcesStorySubQuery): Promise<Media[]> {
