@@ -1,6 +1,6 @@
 import { Tweet } from 'rettiwt-api';
 import { TextBlockContent } from '@models/block-content.model';
-import { BlockContent } from '../../api/sanity/generated-schema-types';
+import { BlockContent } from '../../api/sanity/types';
 
 /**
  * Modelos relacionados a los distintos tipos de contenido multimedia que se
@@ -56,6 +56,5 @@ export interface AudioRecordingSchemaObject extends MediaSchemaObject {
 }
 
 export interface YoutubeVideoSchemaObject extends MediaSchemaObject {
-	description: BlockContent;
 	videoId: string;
 }

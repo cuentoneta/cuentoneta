@@ -2,7 +2,6 @@
 import { getTweetData } from './twitter-api';
 
 // Tipos de Sanity
-import { MediaResourcesSubQueryResult } from '../sanity/derivate-types';
 
 // Modelos
 import {
@@ -15,7 +14,11 @@ import {
 } from '@models/media.model';
 import { mapBlockContentToTextParagraphs } from './functions';
 
-export async function mapMediaSources(mediaSources: MediaResourcesSubQueryResult): Promise<Media[]> {
+// Tipos de Sanity
+import { StoryBySlugQueryResult, StorylistQueryResult } from '../sanity/types';
+
+type MediaResourcesStorySubQuery = NonNullable<StoryBySlugQueryResult>['mediaSources'];
+export async function mapMediaSources(mediaSources: MediaResourcesStorySubQuery): Promise<Media[]> {
 	if (!mediaSources) return [];
 
 	const media: Media[] = [];
@@ -33,7 +36,8 @@ export async function mapMediaSources(mediaSources: MediaResourcesSubQueryResult
 	return media;
 }
 
-export function mapMediaSourcesForStorylist(mediaSources: MediaResourcesSubQueryResult): Media[] {
+type MediaResourcesStorylistSubQuery = NonNullable<StorylistQueryResult>['publications'][0]['story']['mediaSources'];
+export function mapMediaSourcesForStorylist(mediaSources: MediaResourcesStorylistSubQuery): Media[] {
 	if (!mediaSources) return [];
 
 	const media: Media[] = [];
