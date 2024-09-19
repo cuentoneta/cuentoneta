@@ -6,38 +6,28 @@ import { mapMediaSources, mapMediaSourcesForStorylist } from './media-sources.fu
 
 // Tipos de Sanity
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
-import {
-	BiographySubQueryResult,
-	PublicationAuthorSubQueryResult,
-	ResourceSubQueryResult,
-	SupportedLanguageCodes,
-	TagsSubQueryResult,
-} from '../sanity/derivate-types';
-import {
-	AuthorBySlugQueryResult,
-	StoriesByAuthorSlugQueryResult,
-	StoryBySlugQueryResult,
-	StorylistQueryResult,
-	StorylistTeasersQueryResult,
-} from '../sanity/generated-query-types';
 
 // Sanity utils
 import imageUrlBuilder from '@sanity/image-url';
-import { baseLanguage } from '../../../cms/utils/localization';
 
 // Modelos
 import { Author, AuthorTeaser } from '@models/author.model';
-import { BlockContent } from '../sanity/generated-schema-types';
+import { BlockContent, StorylistTeasersQueryResult } from '../sanity/types';
 import { Resource } from '@models/resource.model';
 import { Publication, Storylist, StorylistTeaser } from '@models/storylist.model';
 import { Story, StoryPreview, StoryTeaser } from '@models/story.model';
 import { TextBlockContent } from '@models/block-content.model';
 import { Tag } from '@models/tag.model';
 
-export function mapAuthor(
-	rawAuthorData: Exclude<AuthorBySlugQueryResult, null>,
-	language: SupportedLanguageCodes = baseLanguage.id,
-): Author {
+// Tipos de Sanity
+import {
+	AuthorBySlugQueryResult,
+	StoriesByAuthorSlugQueryResult,
+	StoryBySlugQueryResult,
+	StorylistQueryResult,
+} from '../sanity/types';
+
+export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>, language: 'es' | 'en' = 'es'): Author {
 	const resources = mapResources(rawAuthorData.resources);
 	const biography = mapAuthorBiography(rawAuthorData.biography, language);
 
@@ -54,38 +44,44 @@ export function mapAuthor(
 	};
 }
 
-export function mapAuthorForStorylist(rawAuthorData: Exclude<PublicationAuthorSubQueryResult, null>): AuthorTeaser {
+type PublicationAuthorSubQuery = NonNullable<StorylistQueryResult>['publications'][0]['story']['author'];
+export function mapAuthorForStorylist(author: PublicationAuthorSubQuery): AuthorTeaser {
 	return {
-		slug: rawAuthorData.slug.current,
+		slug: author.slug.current,
 		nationality: {
-			country: rawAuthorData.nationality?.country,
-			flag: urlFor(rawAuthorData.nationality.flag),
+			country: author.nationality?.country,
+			flag: urlFor(author.nationality.flag),
 		},
-		resources: [],
-		imageUrl: urlFor(rawAuthorData.image),
-		name: rawAuthorData.name,
+		imageUrl: urlFor(author.image),
+		name: author.name,
 		biography: [],
+		resources: [],
 	};
 }
 
-export function mapAuthorBiography(
-	biography: BiographySubQueryResult,
-	language: SupportedLanguageCodes = baseLanguage.id,
-): TextBlockContent[] {
+type BiographySubQuery = NonNullable<AuthorBySlugQueryResult>['biography'];
+export function mapAuthorBiography(biography: BiographySubQuery, language: 'es' | 'en' = 'es'): TextBlockContent[] {
 	if (Object.keys(biography).length === 0) {
 		return [];
 	}
 	return mapBlockContentToTextParagraphs(biography[language] as BlockContent);
 }
 
-export function urlFor(source: SanityImageSource): string {
+function urlFor(source: SanityImageSource): string {
 	if (!source) {
 		return '';
 	}
 	return imageUrlBuilder(client).image(source).url();
 }
 
-export function mapResources(resources: ResourceSubQueryResult): Resource[] {
+type ResourcesSubQuery = (
+	| NonNullable<AuthorBySlugQueryResult>
+	| NonNullable<StoryBySlugQueryResult>
+	| NonNullable<StoryBySlugQueryResult>['author']
+	| NonNullable<StorylistQueryResult>['publications'][0]['story']
+	| StoriesByAuthorSlugQueryResult[0]
+)['resources'];
+function mapResources(resources: ResourcesSubQuery): Resource[] {
 	return (
 		resources?.map((resource) => ({
 			...resource,
@@ -102,7 +98,8 @@ export function mapResources(resources: ResourceSubQueryResult): Resource[] {
 	);
 }
 
-export function mapTags(tags: TagsSubQueryResult): Tag[] {
+type TagsSubQuery = (StorylistTeasersQueryResult[0] | NonNullable<StorylistTeasersQueryResult>[0])['tags'];
+function mapTags(tags: TagsSubQuery): Tag[] {
 	return tags.map((tag) => ({
 		...tag,
 		description: mapBlockContentToTextParagraphs(tag.description),
@@ -124,7 +121,7 @@ export function mapStorylistTeasers(result: StorylistTeasersQueryResult): Storyl
 	}));
 }
 
-export function mapStorylist(result: Exclude<StorylistQueryResult, null>): Storylist {
+export function mapStorylist(result: NonNullable<StorylistQueryResult>): Storylist {
 	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
 	const publications: Publication[] = [];
 	for (const publication of result.publications) {
@@ -155,7 +152,7 @@ export function mapBlockContentToTextParagraphs(content: BlockContent): TextBloc
 	return content.filter((element) => element._type === 'block') as TextBlockContent[];
 }
 
-export async function mapStoryContent(result: Exclude<StoryBySlugQueryResult, null>): Promise<Story> {
+export async function mapStoryContent(result: NonNullable<StoryBySlugQueryResult>): Promise<Story> {
 	return {
 		...result,
 		epigraphs: result.epigraphs.map((epigraph) => ({
@@ -186,7 +183,7 @@ export function mapStoryPreviewContent(story: StoryPreview): StoryPreview {
 	return card;
 }
 
-export function mapStoryTeaser(result: Exclude<StoriesByAuthorSlugQueryResult, null>): StoryTeaser[] {
+export function mapStoryTeaser(result: NonNullable<StoriesByAuthorSlugQueryResult>): StoryTeaser[] {
 	const stories = [];
 
 	for (const item of result) {

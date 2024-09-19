@@ -1,6 +1,5 @@
 import { defineQuery } from 'groq';
 
-// @sanity-typegen-ignore
 export const storiesByAuthorSlugQuery = defineQuery(`*[_type == 'story' && author->slug.current == $slug][$start...$end]
 {
     'slug': slug.current,
@@ -23,7 +22,6 @@ export const storiesByAuthorSlugQuery = defineQuery(`*[_type == 'story' && autho
     }, []),
 }|order(title asc)`);
 
-// @sanity-typegen-ignore
 export const storyBySlugQuery = defineQuery(`*[_type == 'story' && slug.current == $slug]
 {
     'slug': slug.current,
