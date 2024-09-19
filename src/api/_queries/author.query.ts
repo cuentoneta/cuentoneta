@@ -1,6 +1,5 @@
 import { defineQuery } from 'groq';
 
-// @sanity-typegen-ignore
 export const authorBySlugQuery = defineQuery(`*[_type == 'author' && slug.current == $slug][0]
 {
     slug,

@@ -12,10 +12,9 @@ import { storiesByAuthorSlugQuery, storyBySlugQuery } from '../_queries/story.qu
 
 // Interfaces
 import { StoriesByAuthorSlugArgs } from '../interfaces/queryArgs';
-import { StoriesByAuthorSlugQueryResult, StoryBySlugQueryResult } from '../sanity/generated-query-types';
 
 export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryTeaser[]> {
-	const result: StoriesByAuthorSlugQueryResult = await client.fetch(storiesByAuthorSlugQuery, {
+	const result = await client.fetch(storiesByAuthorSlugQuery, {
 		slug: args.slug,
 		start: args.offset * args.limit,
 		end: (args.offset + 1) * args.limit,
@@ -25,7 +24,7 @@ export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<
 }
 
 export async function fetchStoryBySlug(slug: string): Promise<Story> {
-	const result: StoryBySlugQueryResult = await client.fetch(storyBySlugQuery, { slug });
+	const result = await client.fetch(storyBySlugQuery, { slug });
 
 	if (!result) {
 		throw new Error(`Story with slug ${slug} not found`);

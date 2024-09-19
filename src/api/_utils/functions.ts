@@ -17,7 +17,6 @@ import {
 	AuthorBySlugQueryResult,
 	StoriesByAuthorSlugQueryResult,
 	StoryBySlugQueryResult,
-	StorylistQueryResult,
 	StorylistTeasersQueryResult,
 } from '../sanity/generated-query-types';
 
@@ -33,6 +32,7 @@ import { Publication, Storylist, StorylistTeaser } from '@models/storylist.model
 import { Story, StoryPreview, StoryTeaser } from '@models/story.model';
 import { TextBlockContent } from '@models/block-content.model';
 import { Tag } from '@models/tag.model';
+import { StorylistQueryResult } from '../sanity/types';
 
 export function mapAuthor(
 	rawAuthorData: Exclude<AuthorBySlugQueryResult, null>,
