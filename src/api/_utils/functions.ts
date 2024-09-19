@@ -52,10 +52,10 @@ export function mapAuthorForStorylist(author: PublicationAuthorSubQuery): Author
 			country: author.nationality?.country,
 			flag: urlFor(author.nationality.flag),
 		},
-		resources: [],
 		imageUrl: urlFor(author.image),
 		name: author.name,
 		biography: [],
+		resources: [],
 	};
 }
 
