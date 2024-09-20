@@ -1,9 +1,9 @@
-import { render } from '@testing-library/angular';
+import { render, screen } from '@testing-library/angular';
 import { StoryCardComponent } from './story-card.component';
 import { storyPreviewMock } from '../../mocks/story.mock';
 import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 
-fdescribe('StoryCardComponent', () => {
+describe('StoryCardComponent', () => {
 	let urlTree: UrlTree;
 
 	beforeEach(() => {
@@ -19,5 +19,15 @@ fdescribe('StoryCardComponent', () => {
 			},
 		});
 		expect(container).toBeTruthy();
+	});
+	it('should display the mock story title', async () => {
+		await render(StoryCardComponent, {
+			componentInputs: {
+				story: storyPreviewMock,
+				navigationRoute: urlTree,
+			},
+		});
+		const resourceElement = screen.getByText(storyPreviewMock.title);
+		expect(resourceElement).toBeInTheDocument();
 	});
 });
