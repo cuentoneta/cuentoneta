@@ -1,21 +1,23 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { render } from '@testing-library/angular';
 import { StoryCardComponent } from './story-card.component';
+import { storyPreviewMock } from '../../mocks/story.mock';
+import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 
-xdescribe('StoryCardComponent', () => {
-	let component: StoryCardComponent;
-	let fixture: ComponentFixture<StoryCardComponent>;
+fdescribe('StoryCardComponent', () => {
+	let urlTree: UrlTree;
 
-	beforeEach(async () => {
-		await TestBed.configureTestingModule({
-			imports: [StoryCardComponent],
-		}).compileComponents();
-
-		fixture = TestBed.createComponent(StoryCardComponent);
-		component = fixture.componentInstance;
-		fixture.detectChanges();
+	beforeEach(() => {
+		const urlSerializer = new DefaultUrlSerializer();
+		urlTree = urlSerializer.parse('/story/el-espejo-del-tiempo?navigation=author&navigationSlug=francois-onoff');
 	});
 
-	it('should create', () => {
-		expect(component).toBeTruthy();
+	it('should render the component', async () => {
+		const { container } = await render(StoryCardComponent, {
+			componentInputs: {
+				story: storyPreviewMock,
+				navigationRoute: urlTree,
+			},
+		});
+		expect(container).toBeTruthy();
 	});
 });
