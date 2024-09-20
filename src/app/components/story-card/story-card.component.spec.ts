@@ -30,4 +30,14 @@ describe('StoryCardComponent', () => {
 		const resourceElement = screen.getByText(storyPreviewMock.title);
 		expect(resourceElement).toBeInTheDocument();
 	});
+	it('should display the approximate reading time', async () => {
+		await render(StoryCardComponent, {
+			componentInputs: {
+				story: storyPreviewMock,
+				navigationRoute: urlTree,
+			},
+		});
+		const readingTimeElement = screen.getByText(`${storyPreviewMock.approximateReadingTime} minutos de lectura`);
+		expect(readingTimeElement).toBeInTheDocument();
+	});
 });
