@@ -117,7 +117,6 @@ export function mapStorylistTeasers(result: StorylistTeasersQueryResult): Storyl
 		description: mapBlockContentToTextParagraphs(item.description),
 		tags: mapTags(item.tags),
 		featuredImage: urlFor(item.featuredImage),
-		publications: [],
 	}));
 }
 

@@ -16,7 +16,8 @@ export const storylistTeasersQuery = defineQuery(`*[_type == 'storylist']{
         description, 
         icon
     }, []),
-    'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])
+    'publications': [],
+    'count': coalesce(count(publications), 0)
     }
 `);
 
@@ -61,6 +62,6 @@ export const storylistQuery = defineQuery(`*[_type == 'storylist' && slug.curren
             }
         }
     }, []),
-    'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])
+    'count': coalesce(count(publications), 0)
     }
 `);
