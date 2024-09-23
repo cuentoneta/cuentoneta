@@ -125,7 +125,7 @@ export default defineType({
 						}),
 						defineField({
 							name: 'image',
-							title: 'Imagen (520px x 220px de tamaño)',
+							title: 'Imagen (540px x 220px de tamaño)',
 							type: 'image',
 							validation: (Rule) => [Rule.custom(localizedRequire), Rule.custom(campaignImageSizeValidation)],
 						}),
