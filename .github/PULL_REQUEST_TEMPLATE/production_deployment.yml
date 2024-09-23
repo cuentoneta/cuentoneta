@@ -1,0 +1,4 @@
+name: 🚢 [RELEASE] - Despliegue a producción v2.4.3
+description: Pull Request para desplegar en producción una nueva versión del proyecto
+title: '[RELEASE] - Despliegue a producción vX.Y.Z'
+base: 'master'
