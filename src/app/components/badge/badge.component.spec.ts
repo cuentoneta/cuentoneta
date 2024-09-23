@@ -1,28 +1,27 @@
-// import { ComponentFixture, TestBed } from '@angular/core/testing';
-// import { BadgeComponent } from './badge.component';
+import { render, screen } from '@testing-library/angular';
+import { BadgeComponent } from './badge.component';
+import { tagMock } from '../../mocks/tag.mocks';
 
-xdescribe('BadgeComponent', () => {
-	// let component: BadgeComponent;
-	// let fixture: ComponentFixture<BadgeComponent>;
+describe('BadgeComponent', () => {
+	it('should render the component', async () => {
+		const { container } = await render(BadgeComponent, {
+			inputs: {
+				tag: tagMock,
+				showIcon: true,
+			},
+		});
+		expect(container).toBeTruthy();
+	});
 
-	// beforeEach(async () => {
-	// 	await TestBed.configureTestingModule({
-	// 		imports: [BadgeComponent],
-	// 	}).compileComponents();
-	//
-	// 	fixture = TestBed.createComponent(BadgeComponent);
-	// 	component = fixture.componentInstance;
-	// 	component.tag = {
-	// 		title: 'test',
-	// 		description: 'test',
-	// 		icon: { svg: 'test.svg', provider: 'md', name: 'test' },
-	// 		slug: 'test',
-	// 	};
-	// 	component.showIcon = true;
-	// 	fixture.detectChanges();
-	// });
-
-	it('should create', () => {
-		// expect(component).toBeTruthy();
+	it('should display the mock badge title', async () => {
+		await render(BadgeComponent, {
+			inputs: {
+				tag: tagMock,
+				showIcon: true,
+			},
+		});
+		const resourceElement = screen.getByText(tagMock.title);
+		expect(resourceElement).toBeInTheDocument();
 	});
 });
+
