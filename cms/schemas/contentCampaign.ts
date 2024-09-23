@@ -22,8 +22,8 @@ const campaignCharLimitValidation = (blocks, context) => {
 			subtitle: 36,
 		},
 		md: {
-			title: 36,
-			subtitle: 40,
+			title: 40,
+			subtitle: 60,
 		},
 	};
 
