@@ -11,6 +11,7 @@ import storylist from './storylist';
 import tag from './tag';
 import { resourceType, resource } from './resourceType';
 import publication from './publication';
+import contentCampaign from './contentCampaign';
 
 export default [
 	// Tipos de propiedades
@@ -19,6 +20,7 @@ export default [
 	resource,
 	// Tipos de documentos
 	landingPage,
+	contentCampaign,
 	storylist,
 	story,
 	author,
