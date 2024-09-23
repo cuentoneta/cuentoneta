@@ -189,6 +189,205 @@ export type Storylist = {
 	}>;
 };
 
+export type ContentCampaign = {
+	_id: string;
+	_type: 'contentCampaign';
+	_createdAt: string;
+	_updatedAt: string;
+	_rev: string;
+	title?: string;
+	slug?: Slug;
+	description?: Array<
+		| {
+				children?: Array<{
+					marks?: Array<string>;
+					text?: string;
+					_type: 'span';
+					_key: string;
+				}>;
+				style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote';
+				listItem?: 'bullet' | 'number';
+				markDefs?: Array<{
+					href?: string;
+					_type: 'link';
+					_key: string;
+				}>;
+				level?: number;
+				_type: 'block';
+				_key: string;
+		  }
+		| {
+				asset?: {
+					_ref: string;
+					_type: 'reference';
+					_weak?: boolean;
+					[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+				};
+				hotspot?: SanityImageHotspot;
+				crop?: SanityImageCrop;
+				_type: 'image';
+				_key: string;
+		  }
+	>;
+	url?: string;
+	contents?: {
+		xs?: {
+			title?: Array<
+				| {
+						children?: Array<{
+							marks?: Array<string>;
+							text?: string;
+							_type: 'span';
+							_key: string;
+						}>;
+						style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote';
+						listItem?: 'bullet' | 'number';
+						markDefs?: Array<{
+							href?: string;
+							_type: 'link';
+							_key: string;
+						}>;
+						level?: number;
+						_type: 'block';
+						_key: string;
+				  }
+				| {
+						asset?: {
+							_ref: string;
+							_type: 'reference';
+							_weak?: boolean;
+							[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+						};
+						hotspot?: SanityImageHotspot;
+						crop?: SanityImageCrop;
+						_type: 'image';
+						_key: string;
+				  }
+			>;
+			subtitle?: Array<
+				| {
+						children?: Array<{
+							marks?: Array<string>;
+							text?: string;
+							_type: 'span';
+							_key: string;
+						}>;
+						style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote';
+						listItem?: 'bullet' | 'number';
+						markDefs?: Array<{
+							href?: string;
+							_type: 'link';
+							_key: string;
+						}>;
+						level?: number;
+						_type: 'block';
+						_key: string;
+				  }
+				| {
+						asset?: {
+							_ref: string;
+							_type: 'reference';
+							_weak?: boolean;
+							[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+						};
+						hotspot?: SanityImageHotspot;
+						crop?: SanityImageCrop;
+						_type: 'image';
+						_key: string;
+				  }
+			>;
+			image?: {
+				asset?: {
+					_ref: string;
+					_type: 'reference';
+					_weak?: boolean;
+					[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+				};
+				hotspot?: SanityImageHotspot;
+				crop?: SanityImageCrop;
+				_type: 'image';
+			};
+		};
+		md?: {
+			title?: Array<
+				| {
+						children?: Array<{
+							marks?: Array<string>;
+							text?: string;
+							_type: 'span';
+							_key: string;
+						}>;
+						style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote';
+						listItem?: 'bullet' | 'number';
+						markDefs?: Array<{
+							href?: string;
+							_type: 'link';
+							_key: string;
+						}>;
+						level?: number;
+						_type: 'block';
+						_key: string;
+				  }
+				| {
+						asset?: {
+							_ref: string;
+							_type: 'reference';
+							_weak?: boolean;
+							[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+						};
+						hotspot?: SanityImageHotspot;
+						crop?: SanityImageCrop;
+						_type: 'image';
+						_key: string;
+				  }
+			>;
+			subtitle?: Array<
+				| {
+						children?: Array<{
+							marks?: Array<string>;
+							text?: string;
+							_type: 'span';
+							_key: string;
+						}>;
+						style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote';
+						listItem?: 'bullet' | 'number';
+						markDefs?: Array<{
+							href?: string;
+							_type: 'link';
+							_key: string;
+						}>;
+						level?: number;
+						_type: 'block';
+						_key: string;
+				  }
+				| {
+						asset?: {
+							_ref: string;
+							_type: 'reference';
+							_weak?: boolean;
+							[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+						};
+						hotspot?: SanityImageHotspot;
+						crop?: SanityImageCrop;
+						_type: 'image';
+						_key: string;
+				  }
+			>;
+			image?: {
+				asset?: {
+					_ref: string;
+					_type: 'reference';
+					_weak?: boolean;
+					[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+				};
+				hotspot?: SanityImageHotspot;
+				crop?: SanityImageCrop;
+				_type: 'image';
+			};
+		};
+	};
+};
+
 export type LandingPage = {
 	_id: string;
 	_type: 'landingPage';
@@ -198,6 +397,13 @@ export type LandingPage = {
 	config: string;
 	slug: Slug;
 	active: boolean;
+	campaigns?: Array<{
+		_ref: string;
+		_type: 'reference';
+		_weak?: boolean;
+		_key: string;
+		[internalGroqTypeReferenceTo]?: 'contentCampaign';
+	}>;
 	cards?: Array<{
 		_ref: string;
 		_type: 'reference';
@@ -802,6 +1008,7 @@ export type AllSanitySchemaTypes =
 	| Geopoint
 	| Tag
 	| Storylist
+	| ContentCampaign
 	| LandingPage
 	| Resource
 	| Publication
@@ -964,6 +1171,312 @@ export type AuthorBySlugQueryResult = {
 						  }
 					>;
 					icon: IconPicker;
+				};
+		  }>
+		| Array<never>;
+} | null;
+
+// Source: ../src/api/_queries/content.query.ts
+// Variable: landingPageContentQuery
+// Query: *[_type == 'landingPage'][0]{    'cards': coalesce(cards[]->{        title,        'slug': slug.current,        description,        language,        displayDates,        editionPrefix,        comingNextLabel,        featuredImage,        'tags': coalesce(tags[] -> {            title,             'slug': slug.current,             shortDescription,            description,             icon        }, []),        'publications': [],        'count': coalesce(count(publications), 0)    },[]),    'campaigns': coalesce(campaigns[]->{        'title': coalesce(title, ''),        'slug': coalesce(slug.current, ''),        'description': coalesce(description, []),        'url': coalesce(url, ''),        'contents': {            'xs': {                'title': coalesce(contents.xs.title, []),                'subtitle': coalesce(contents.xs.subtitle, []),                'image': contents.xs.image            },            'md': {                'title': coalesce(contents.md.title, []),                'subtitle': coalesce(contents.md.subtitle, []),                'image': contents.md.image            }        }    },[]),}
+export type LandingPageContentQueryResult = {
+	cards:
+		| Array<{
+				title: string;
+				slug: string;
+				description: Array<
+					| {
+							children?: Array<{
+								marks?: Array<string>;
+								text?: string;
+								_type: 'span';
+								_key: string;
+							}>;
+							style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal';
+							listItem?: 'bullet' | 'number';
+							markDefs?: Array<{
+								href?: string;
+								_type: 'link';
+								_key: string;
+							}>;
+							level?: number;
+							_type: 'block';
+							_key: string;
+					  }
+					| {
+							asset?: {
+								_ref: string;
+								_type: 'reference';
+								_weak?: boolean;
+								[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+							};
+							hotspot?: SanityImageHotspot;
+							crop?: SanityImageCrop;
+							_type: 'image';
+							_key: string;
+					  }
+				>;
+				language: 'en' | 'es';
+				displayDates: boolean;
+				editionPrefix: string;
+				comingNextLabel: string;
+				featuredImage: {
+					asset?: {
+						_ref: string;
+						_type: 'reference';
+						_weak?: boolean;
+						[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+					};
+					hotspot?: SanityImageHotspot;
+					crop?: SanityImageCrop;
+					_type: 'image';
+				};
+				tags:
+					| Array<{
+							title: string;
+							slug: string;
+							shortDescription: string;
+							description: Array<
+								| {
+										children?: Array<{
+											marks?: Array<string>;
+											text?: string;
+											_type: 'span';
+											_key: string;
+										}>;
+										style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal';
+										listItem?: 'bullet' | 'number';
+										markDefs?: Array<{
+											href?: string;
+											_type: 'link';
+											_key: string;
+										}>;
+										level?: number;
+										_type: 'block';
+										_key: string;
+								  }
+								| {
+										asset?: {
+											_ref: string;
+											_type: 'reference';
+											_weak?: boolean;
+											[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+										};
+										hotspot?: SanityImageHotspot;
+										crop?: SanityImageCrop;
+										_type: 'image';
+										_key: string;
+								  }
+							>;
+							icon: IconPicker;
+					  }>
+					| Array<never>;
+				publications: Array<never>;
+				count: number | 0;
+		  }>
+		| Array<never>;
+	campaigns:
+		| Array<{
+				title: string | '';
+				slug: string | '';
+				description:
+					| Array<never>
+					| Array<
+							| {
+									children?: Array<{
+										marks?: Array<string>;
+										text?: string;
+										_type: 'span';
+										_key: string;
+									}>;
+									style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal';
+									listItem?: 'bullet' | 'number';
+									markDefs?: Array<{
+										href?: string;
+										_type: 'link';
+										_key: string;
+									}>;
+									level?: number;
+									_type: 'block';
+									_key: string;
+							  }
+							| {
+									asset?: {
+										_ref: string;
+										_type: 'reference';
+										_weak?: boolean;
+										[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+									};
+									hotspot?: SanityImageHotspot;
+									crop?: SanityImageCrop;
+									_type: 'image';
+									_key: string;
+							  }
+					  >;
+				url: string | '';
+				contents: {
+					xs: {
+						title:
+							| Array<never>
+							| Array<
+									| {
+											children?: Array<{
+												marks?: Array<string>;
+												text?: string;
+												_type: 'span';
+												_key: string;
+											}>;
+											style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal';
+											listItem?: 'bullet' | 'number';
+											markDefs?: Array<{
+												href?: string;
+												_type: 'link';
+												_key: string;
+											}>;
+											level?: number;
+											_type: 'block';
+											_key: string;
+									  }
+									| {
+											asset?: {
+												_ref: string;
+												_type: 'reference';
+												_weak?: boolean;
+												[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+											};
+											hotspot?: SanityImageHotspot;
+											crop?: SanityImageCrop;
+											_type: 'image';
+											_key: string;
+									  }
+							  >;
+						subtitle:
+							| Array<never>
+							| Array<
+									| {
+											children?: Array<{
+												marks?: Array<string>;
+												text?: string;
+												_type: 'span';
+												_key: string;
+											}>;
+											style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal';
+											listItem?: 'bullet' | 'number';
+											markDefs?: Array<{
+												href?: string;
+												_type: 'link';
+												_key: string;
+											}>;
+											level?: number;
+											_type: 'block';
+											_key: string;
+									  }
+									| {
+											asset?: {
+												_ref: string;
+												_type: 'reference';
+												_weak?: boolean;
+												[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+											};
+											hotspot?: SanityImageHotspot;
+											crop?: SanityImageCrop;
+											_type: 'image';
+											_key: string;
+									  }
+							  >;
+						image: {
+							asset?: {
+								_ref: string;
+								_type: 'reference';
+								_weak?: boolean;
+								[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+							};
+							hotspot?: SanityImageHotspot;
+							crop?: SanityImageCrop;
+							_type: 'image';
+						} | null;
+					};
+					md: {
+						title:
+							| Array<never>
+							| Array<
+									| {
+											children?: Array<{
+												marks?: Array<string>;
+												text?: string;
+												_type: 'span';
+												_key: string;
+											}>;
+											style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal';
+											listItem?: 'bullet' | 'number';
+											markDefs?: Array<{
+												href?: string;
+												_type: 'link';
+												_key: string;
+											}>;
+											level?: number;
+											_type: 'block';
+											_key: string;
+									  }
+									| {
+											asset?: {
+												_ref: string;
+												_type: 'reference';
+												_weak?: boolean;
+												[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+											};
+											hotspot?: SanityImageHotspot;
+											crop?: SanityImageCrop;
+											_type: 'image';
+											_key: string;
+									  }
+							  >;
+						subtitle:
+							| Array<never>
+							| Array<
+									| {
+											children?: Array<{
+												marks?: Array<string>;
+												text?: string;
+												_type: 'span';
+												_key: string;
+											}>;
+											style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal';
+											listItem?: 'bullet' | 'number';
+											markDefs?: Array<{
+												href?: string;
+												_type: 'link';
+												_key: string;
+											}>;
+											level?: number;
+											_type: 'block';
+											_key: string;
+									  }
+									| {
+											asset?: {
+												_ref: string;
+												_type: 'reference';
+												_weak?: boolean;
+												[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+											};
+											hotspot?: SanityImageHotspot;
+											crop?: SanityImageCrop;
+											_type: 'image';
+											_key: string;
+									  }
+							  >;
+						image: {
+							asset?: {
+								_ref: string;
+								_type: 'reference';
+								_weak?: boolean;
+								[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+							};
+							hotspot?: SanityImageHotspot;
+							crop?: SanityImageCrop;
+							_type: 'image';
+						} | null;
+					};
 				};
 		  }>
 		| Array<never>;
@@ -1634,7 +2147,7 @@ export type StoryBySlugQueryResult = {
 
 // Source: ../src/api/_queries/storylist.query.ts
 // Variable: storylistTeasersQuery
-// Query: *[_type == 'storylist']{     'slug': slug.current,    title,    description,    language,    displayDates,    editionPrefix,    comingNextLabel,    featuredImage,    'tags': coalesce(tags[] -> {        title,         'slug': slug.current,         shortDescription,        description,         icon    }, []),    'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])    }
+// Query: *[_type == 'storylist']{     'slug': slug.current,    title,    description,    language,    displayDates,    editionPrefix,    comingNextLabel,    featuredImage,    'tags': coalesce(tags[] -> {        title,         'slug': slug.current,         shortDescription,        description,         icon    }, []),    'publications': [],    'count': coalesce(count(publications), 0)    }
 export type StorylistTeasersQueryResult = Array<{
 	slug: string;
 	title: string;
@@ -1725,10 +2238,11 @@ export type StorylistTeasersQueryResult = Array<{
 				icon: IconPicker;
 		  }>
 		| Array<never>;
-	count: number;
+	publications: Array<never>;
+	count: number | 0;
 }>;
 // Variable: storylistQuery
-// Query: *[_type == 'storylist' && slug.current == $slug][0]{     'slug': slug.current,    title,    description,    language,    displayDates,    editionPrefix,    comingNextLabel,    featuredImage,    'tags': coalesce(tags[] -> {        title,         'slug': slug.current,         shortDescription,        description,         icon    }, []),    'publications': coalesce(publications[]{        publishingOrder,        publishingDate,        published,        'story': story->{            'slug': slug.current,            title,            language,            badLanguage,            'body': coalesce(body[0...3], []),            originalPublication,            approximateReadingTime,            'resources': [],            'mediaSources': coalesce(mediaSources[], []),            'author': author->{                 slug,                name,                image,                nationality->,                'biography': [],                'resources': [],            }        }    }, []),    'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])    }
+// Query: *[_type == 'storylist' && slug.current == $slug][0]{     'slug': slug.current,    title,    description,    language,    displayDates,    editionPrefix,    comingNextLabel,    featuredImage,    'tags': coalesce(tags[] -> {        title,         'slug': slug.current,         shortDescription,        description,         icon    }, []),    'publications': coalesce(publications[]{        publishingOrder,        publishingDate,        published,        'story': story->{            'slug': slug.current,            title,            language,            badLanguage,            'body': coalesce(body[0...3], []),            originalPublication,            approximateReadingTime,            'resources': [],            'mediaSources': coalesce(mediaSources[], []),            'author': author->{                 slug,                name,                image,                nationality->,                'biography': [],                'resources': [],            }        }    }, []),    'count': coalesce(count(publications), 0)    }
 export type StorylistQueryResult = {
 	slug: string;
 	title: string;
@@ -2025,7 +2539,7 @@ export type StorylistQueryResult = {
 				};
 		  }>
 		| Array<never>;
-	count: number;
+	count: number | 0;
 } | null;
 
 // Query TypeMap
@@ -2033,9 +2547,10 @@ import '@sanity/client';
 declare module '@sanity/client' {
 	interface SanityQueries {
 		"*[_type == 'author' && slug.current == $slug][0]\n{\n    slug,\n    name,\n    image,\n    nationality->,\n    biography,\n    'resources': coalesce(resources[]{ \n        title, \n        url, \n        resourceType->{ \n        \ttitle, \n        \tshortDescription,\n        \tdescription, \n            icon\n        } \n    }, [])\n}": AuthorBySlugQueryResult;
+		"*[_type == 'landingPage'][0]{\n    'cards': coalesce(cards[]->{\n        title,\n        'slug': slug.current,\n        description,\n        language,\n        displayDates,\n        editionPrefix,\n        comingNextLabel,\n        featuredImage,\n        'tags': coalesce(tags[] -> {\n            title, \n            'slug': slug.current, \n            shortDescription,\n            description, \n            icon\n        }, []),\n        'publications': [],\n        'count': coalesce(count(publications), 0)\n    },[]),\n    'campaigns': coalesce(campaigns[]->{\n        'title': coalesce(title, ''),\n        'slug': coalesce(slug.current, ''),\n        'description': coalesce(description, []),\n        'url': coalesce(url, ''),\n        'contents': {\n            'xs': {\n                'title': coalesce(contents.xs.title, []),\n                'subtitle': coalesce(contents.xs.subtitle, []),\n                'image': contents.xs.image\n            },\n            'md': {\n                'title': coalesce(contents.md.title, []),\n                'subtitle': coalesce(contents.md.subtitle, []),\n                'image': contents.md.image\n            }\n        }\n    },[]),\n}": LandingPageContentQueryResult;
 		"*[_type == 'story' && author->slug.current == $slug][$start...$end]\n{\n    'slug': slug.current,\n    title,\n    'language': coalesce(language, 'es'),\n    'badLanguage': coalesce(badLanguage, false),\n    'body': coalesce(body[0...3], []),\n    'originalPublication': coalesce(originalPublication, ''),\n    approximateReadingTime,\n    'mediaSources': coalesce(mediaSources[], []),\n    'resources': coalesce(resources[]{ \n        title, \n        url, \n        resourceType->{ \n            title, \n            shortDescription,\n            description, \n            icon\n        } \n    }, []),\n}|order(title asc)": StoriesByAuthorSlugQueryResult;
 		"*[_type == 'story' && slug.current == $slug]\n{\n    'slug': slug.current,\n    title, \n    'language': coalesce(language, 'es'),\n    'badLanguage': coalesce(badLanguage, false),\n    'epigraphs': coalesce(epigraphs[]{\n        text,\n        'reference': coalesce(reference[], [])\n    }, []),\n    'body': coalesce(body, []),\n    'review': coalesce(review, []),\n    'originalPublication': coalesce(originalPublication, ''),\n    approximateReadingTime,\n    'mediaSources': coalesce(mediaSources[], []),\n    'resources': coalesce(resources[]{\n        title, \n        url, \n        resourceType->{ \n            title, \n            shortDescription,\n            description,\n            icon\n        }\n    }, []),\n    'author': author-> {\n        slug,\n        name,\n        image,\n        nationality->,\n        biography,\n        'resources': coalesce(resources[]{ \n            title, \n            url, \n            resourceType->{ \n                title, \n                shortDescription,\n                description, \n                icon\n            } \n        }, [])\n    }\n}[0]": StoryBySlugQueryResult;
-		"*[_type == 'storylist']{ \n    'slug': slug.current,\n    title,\n    description,\n    language,\n    displayDates,\n    editionPrefix,\n    comingNextLabel,\n    featuredImage,\n    'tags': coalesce(tags[] -> {\n        title, \n        'slug': slug.current, \n        shortDescription,\n        description, \n        icon\n    }, []),\n    'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])\n    }\n": StorylistTeasersQueryResult;
-		"*[_type == 'storylist' && slug.current == $slug][0]\n{ \n    'slug': slug.current,\n    title,\n    description,\n    language,\n    displayDates,\n    editionPrefix,\n    comingNextLabel,\n    featuredImage,\n    'tags': coalesce(tags[] -> {\n        title, \n        'slug': slug.current, \n        shortDescription,\n        description, \n        icon\n    }, []),\n    'publications': coalesce(publications[]{\n        publishingOrder,\n        publishingDate,\n        published,\n        'story': story->{\n            'slug': slug.current,\n            title,\n            language,\n            badLanguage,\n            'body': coalesce(body[0...3], []),\n            originalPublication,\n            approximateReadingTime,\n            'resources': [],\n            'mediaSources': coalesce(mediaSources[], []),\n            'author': author->{ \n                slug,\n                name,\n                image,\n                nationality->,\n                'biography': [],\n                'resources': [],\n            }\n        }\n    }, []),\n    'count': count(*[ _type == 'publication' && storylist._ref == ^._id ])\n    }\n": StorylistQueryResult;
+		"*[_type == 'storylist']{ \n    'slug': slug.current,\n    title,\n    description,\n    language,\n    displayDates,\n    editionPrefix,\n    comingNextLabel,\n    featuredImage,\n    'tags': coalesce(tags[] -> {\n        title, \n        'slug': slug.current, \n        shortDescription,\n        description, \n        icon\n    }, []),\n    'publications': [],\n    'count': coalesce(count(publications), 0)\n    }\n": StorylistTeasersQueryResult;
+		"*[_type == 'storylist' && slug.current == $slug][0]\n{ \n    'slug': slug.current,\n    title,\n    description,\n    language,\n    displayDates,\n    editionPrefix,\n    comingNextLabel,\n    featuredImage,\n    'tags': coalesce(tags[] -> {\n        title, \n        'slug': slug.current, \n        shortDescription,\n        description, \n        icon\n    }, []),\n    'publications': coalesce(publications[]{\n        publishingOrder,\n        publishingDate,\n        published,\n        'story': story->{\n            'slug': slug.current,\n            title,\n            language,\n            badLanguage,\n            'body': coalesce(body[0...3], []),\n            originalPublication,\n            approximateReadingTime,\n            'resources': [],\n            'mediaSources': coalesce(mediaSources[], []),\n            'author': author->{ \n                slug,\n                name,\n                image,\n                nationality->,\n                'biography': [],\n                'resources': [],\n            }\n        }\n    }, []),\n    'count': coalesce(count(publications), 0)\n    }\n": StorylistQueryResult;
 	}
 }

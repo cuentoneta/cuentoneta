@@ -12,9 +12,11 @@ import imageUrlBuilder from '@sanity/image-url';
 
 // Modelos
 import { Author, AuthorTeaser } from '@models/author.model';
-import { BlockContent, StorylistTeasersQueryResult } from '../sanity/types';
-import { Resource } from '@models/resource.model';
+import { BlockContent, LandingPageContentQueryResult, StorylistTeasersQueryResult } from '../sanity/types';
+import { ContentCampaign } from '@models/content-campaign.model';
+import { LandingPageContent } from '@models/landing-page-content.model';
 import { Publication, Storylist, StorylistTeaser } from '@models/storylist.model';
+import { Resource } from '@models/resource.model';
 import { Story, StoryPreview, StoryTeaser } from '@models/story.model';
 import { TextBlockContent } from '@models/block-content.model';
 import { Tag } from '@models/tag.model';
@@ -117,7 +119,6 @@ export function mapStorylistTeasers(result: StorylistTeasersQueryResult): Storyl
 		description: mapBlockContentToTextParagraphs(item.description),
 		tags: mapTags(item.tags),
 		featuredImage: urlFor(item.featuredImage),
-		publications: [],
 	}));
 }
 
@@ -198,4 +199,41 @@ export function mapStoryTeaser(result: NonNullable<StoriesByAuthorSlugQueryResul
 	}
 
 	return stories;
+}
+
+export function mapLandingPageContent(result: NonNullable<LandingPageContentQueryResult>): LandingPageContent {
+	return {
+		cards: mapStorylistTeasers(result.cards),
+		campaigns: mapContentCampaigns(result.campaigns),
+	};
+}
+
+type ContentCampaignsSubQuery = NonNullable<LandingPageContentQueryResult>['campaigns'];
+export function mapContentCampaigns(campaigns: ContentCampaignsSubQuery): ContentCampaign[] {
+	return campaigns.map((campaign) => {
+		const xs = campaign.contents.xs;
+		const md = campaign.contents.md;
+
+		if (!xs || !md) {
+			throw new Error('Campaign content not found');
+		}
+
+		return {
+			...campaign,
+			title: campaign.title,
+			description: mapBlockContentToTextParagraphs(campaign.description),
+			contents: {
+				xs: {
+					title: mapBlockContentToTextParagraphs(xs.title),
+					subtitle: mapBlockContentToTextParagraphs(xs.subtitle),
+					imageUrl: xs.image ? urlFor(xs.image) : '',
+				},
+				md: {
+					title: mapBlockContentToTextParagraphs(md.title),
+					subtitle: mapBlockContentToTextParagraphs(md.subtitle),
+					imageUrl: md.image ? urlFor(md.image) : '',
+				},
+			},
+		};
+	});
 }
