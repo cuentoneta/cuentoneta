@@ -1,6 +1,5 @@
 // Core
 import { inject, Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
 
 // Interfaces
 import { LandingPageContent } from '@models/landing-page-content.model';
@@ -18,11 +17,7 @@ export class ContentService {
 	// Services
 	private http = inject(HttpClient);
 
-	public getLandingPageContent(): Observable<LandingPageContent> {
-		return this.http.get<LandingPageContent>(`${this.prefix}/landing-page`).pipe(
-			map(({ cards }) => ({
-				cards: cards,
-			})),
-		);
+	public getLandingPageContent() {
+		return this.http.get<LandingPageContent>(`${this.prefix}/landing-page`);
 	}
 }
