@@ -5,6 +5,9 @@ import { storyMock } from 'src/app/mocks/story.mock';
 const country = storyMock.author.nationality.country;
 const countryRegex = new RegExp(`\\b${country}\\b`, 'i');
 
+const name = storyMock.author.name;
+const nameRegex = new RegExp(`\\b${name}\\b`, 'iu');
+
 describe('BioSummaryCardComponent', () => {
 	it('should render the component', async () => {
 		const { container } = await render(BioSummaryCardComponent, {
@@ -36,5 +39,26 @@ describe('BioSummaryCardComponent', () => {
 		});
 
 		expect(countryImage).toBeInTheDocument();
+	});
+
+	it('should display the author name', async () => {
+		await render(BioSummaryCardComponent, {
+			inputs: {
+				story: storyMock,
+			},
+		});
+		const authorTeaser = screen.getByRole('link', { name: nameRegex });
+		expect(authorTeaser).toBeInTheDocument();
+	});
+
+	it('should display the country', async () => {
+		await render(BioSummaryCardComponent, {
+			inputs: {
+				story: storyMock,
+			},
+		});
+		const authorTeaser = screen.getByRole('link', { name: nameRegex });
+
+		expect(authorTeaser).toHaveTextContent(country);
 	});
 });
