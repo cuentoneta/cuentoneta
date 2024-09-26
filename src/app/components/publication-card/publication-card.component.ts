@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // Modelos
-import { Publication, Storylist } from '@models/storylist.model';
+import { Publication } from '@models/storylist.model';
 
 // Componentes
 import { AuthorTeaserComponent } from '../author-teaser/author-teaser.component';
@@ -13,17 +13,12 @@ import { StoryEditionDateLabelComponent } from '../story-edition-date-label/stor
 
 // Providers
 import { UrlTree } from '@angular/router';
-
-// Pipes
-import { MapPublicationEditionLabelPipe } from '../../pipes/map-publication-edition-label.pipe';
-import { MapPublicationComingNextLabelPipe } from '../../pipes/map-publication-coming-next-label.pipe';
-
 @Component({
 	selector: 'cuentoneta-publication-card',
 	template: `
 		<cuentoneta-card [route]="navigationRoute()" [lang]="publication().story.language">
 			<header slot="header">
-				<cuentoneta-story-edition-date-label [label]="publication() | mapPublicationEditionLabel: storylist()" />
+				<cuentoneta-story-edition-date-label [label]="editionLabel()" />
 			</header>
 			<cuentoneta-story-card-content
 				[title]="publication().story.title"
@@ -44,8 +39,6 @@ import { MapPublicationComingNextLabelPipe } from '../../pipes/map-publication-c
 		AuthorTeaserComponent,
 		CardComponent,
 		CommonModule,
-		MapPublicationComingNextLabelPipe,
-		MapPublicationEditionLabelPipe,
 		MediaResourceTagsComponent,
 		StoryCardContentComponent,
 		StoryEditionDateLabelComponent,
@@ -53,7 +46,7 @@ import { MapPublicationComingNextLabelPipe } from '../../pipes/map-publication-c
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PublicationCardComponent {
-	storylist = input.required<Storylist>();
+	editionLabel = input.required<string>();
 	publication = input.required<Publication>();
 	navigationRoute = input.required<UrlTree>();
 }
