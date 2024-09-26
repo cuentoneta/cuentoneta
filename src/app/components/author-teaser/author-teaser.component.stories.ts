@@ -19,8 +19,9 @@ export const Primary = {
 	render: (args: AuthorTeaserComponent) => ({
 		props: args,
 		template: `
-	  <div class="grid grid-cols-3 gap-4">
-		<cuentoneta-author-teaser [author]="author"></cuentoneta-author-teaser>
+	  <div class="grid grid-cols-2 gap-8">
+		<cuentoneta-author-teaser [author]="author" [variant]="'sm'"/>
+		<cuentoneta-author-teaser [author]="author" [variant]="'md'"/>
 		</div>
 		`,
 	}),
