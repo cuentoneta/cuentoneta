@@ -1,9 +1,8 @@
 // Core
-import { ChangeDetectionStrategy, Component, input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { CommonModule, NgIf, NgOptimizedImage } from '@angular/common';
 
 // Modelos
-import { Resource } from '@models/resource.model';
 import { Story } from '@models/story.model';
 
 // Componentes
@@ -19,7 +18,7 @@ import { ResourceComponent } from '../resource/resource.component';
 				<cuentoneta-author-teaser [author]="story().author" [variant]="'md'" />
 				@if (resources.length > 0) {
 					<div class="xs-max:col-start-1 xs-max:col-end-3 flex justify-start gap-4 sm:justify-end">
-						@for (resource of resources; track $index) {
+						@for (resource of resources(); track $index) {
 							<cuentoneta-resource [resource]="resource" />
 						}
 					</div>
@@ -42,13 +41,7 @@ import { ResourceComponent } from '../resource/resource.component';
 	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BioSummaryCardComponent implements OnInit {
+export class BioSummaryCardComponent {
 	story = input.required<Story>();
-
-	public resources: Resource[] = [];
-
-	ngOnInit() {
-		const story = this.story();
-		this.resources = [...(story.resources ?? []), ...(story.author.resources ?? [])];
-	}
+	resources = computed(() => [...(this.story().resources ?? []), ...(this.story().author.resources ?? [])]);
 }
