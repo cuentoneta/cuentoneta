@@ -29,9 +29,10 @@
 					<a
 						[lang]="story.language"
 						[routerLink]="['/', appRoutes.Author, story.author.slug]"
-						class="inter-body-xl mb-2 block"
+						class="inter-body-xl mb-2 block flex items-center"
 					>
 						{{ story.author.name }}
+						<span class="icon-arrow-right"></span>
 					</a>
 					<time class="inter-body-base-medium text-gray-600">
 						{{ story.approximateReadingTime }} minutos de lectura
