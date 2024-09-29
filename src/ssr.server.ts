@@ -6,6 +6,7 @@ import { dirname, join, resolve } from 'node:path';
 import bootstrap from './main.server';
 import cors from 'cors';
 import routes from './api/routes';
+import { CronJob } from 'cron';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
@@ -63,6 +64,16 @@ export function app(): express.Express {
 
 function run(): void {
 	const port = process.env['PORT'] || 4000;
+
+	const job = new CronJob(
+		'* * * * *', // cronTime
+		function () {
+			console.log('You will see this message every second');
+		}, // onTick
+		null, // onComplete
+		true, // start
+		'America/Los_Angeles', // timeZone
+	);
 
 	// Start up the Node server
 	const server = app();
