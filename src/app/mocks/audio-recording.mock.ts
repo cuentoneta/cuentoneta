@@ -9,22 +9,10 @@ export const audioRecordingMock: AudioRecording = {
 			markDefs: [],
 			children: [
 				{
-					text: 'Lectura del artículo sobre ',
+					text: 'Lectura del artículo sobre ajedrez en Wikipedia.',
 					_key: '9c6409086fe0',
 					_type: 'span',
 					marks: [],
-				},
-				{
-					_type: 'span',
-					marks: ['em'],
-					text: 'ajedrez',
-					_key: '26de23832101',
-				},
-				{
-					_type: 'span',
-					marks: [],
-					text: 'en Wikipedia.',
-					_key: '5816b3cc116b',
 				},
 			],
 			_type: 'block',
