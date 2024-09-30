@@ -7,10 +7,10 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	selector: 'cuentoneta-audio-recording-widget',
 	standalone: true,
 	imports: [CommonModule, PortableTextParserComponent],
-	template: ` <audio [src]="media().data.url" controls class="mb-2 block w-full"></audio>
-		<label class="inter-body-xs-medium text-primary-500"
-			><cuentoneta-portable-text-parser [paragraphs]="media().description" />
-		</label>`,
+	template: `
+		<audio [src]="media().data.url" controls class="mb-2 block w-full"></audio>
+		<cuentoneta-portable-text-parser [paragraphs]="media().description" class="inter-body-xs-medium text-primary-500" />
+	`,
 	styles: ``,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
