@@ -72,7 +72,7 @@ importers:
         version: 4.19.2
       groq:
         specifier: ^3.55.0
-        version: 3.56.0
+        version: 3.55.0
       ngx-owl-carousel-o:
         specifier: ^18.0.0
         version: 18.0.0(@angular/common@18.1.2(@angular/core@18.1.2(rxjs@7.8.1)(zone.js@0.14.6))(rxjs@7.8.1))(@angular/core@18.1.2(rxjs@7.8.1)(zone.js@0.14.6))(rxjs@7.8.1)
@@ -8665,9 +8665,9 @@ packages:
     resolution:
       { integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag== }
 
-  groq@3.56.0:
+  groq@3.55.0:
     resolution:
-      { integrity: sha512-r4L0U0oLkEysu5ZuB6kW9nhfXupec9NhRDRr/zzj4GuSDLgaqtDStPJu6a8G8Cp1Gc1ZOFGSTUHWEyBalKmCbQ== }
+      { integrity: sha512-oDMnjsIfEMtGfPJOMFx+6qS8fdX8YIRYbslF/VE6H77kKGOGOlrMK81diphkoiV0/xg0mS++gf9fCGbdasZIRQ== }
     engines: { node: '>=18' }
 
   gunzip-maybe@1.4.2:
@@ -24448,7 +24448,7 @@ snapshots:
 
   graphemer@1.4.0: {}
 
-  groq@3.56.0: {}
+  groq@3.55.0: {}
 
   gunzip-maybe@1.4.2:
     dependencies:
