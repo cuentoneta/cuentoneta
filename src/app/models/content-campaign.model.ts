@@ -4,7 +4,8 @@ import { TextBlockContent } from '@models/block-content.model';
  * Tipo que representa los diferentes viewports soportados por la aplicación para las campañas de contenido, a fin de
  * proveer una experiencia responsive y adaptable para su visualización.
  */
-export type ContentCampaignViewport = 'xs' | 'md';
+export const ContentCampaignViewportKeys = ['xs', 'md'];
+export type ContentCampaignViewport = (typeof ContentCampaignViewportKeys)[number];
 
 /**
  * Constante que indica, para los viewports soportados, las longitudes máximas asignables a los títulos y subtítulos
@@ -34,6 +35,12 @@ export interface ContentCampaign {
 	description: TextBlockContent[];
 	url: string;
 	contents: {
-		[key in ContentCampaignViewport]: { title: TextBlockContent[]; subtitle: TextBlockContent[]; imageUrl: string };
+		[key in ContentCampaignViewport]: {
+			title: TextBlockContent[];
+			subtitle: TextBlockContent[];
+			imageUrl: string;
+			imageWidth: number;
+			imageHeight: number;
+		};
 	};
 }
