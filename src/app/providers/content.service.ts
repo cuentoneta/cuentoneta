@@ -1,14 +1,14 @@
 // Core
 import { inject, Injectable } from '@angular/core';
-import { map, Observable, of } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 // Interfaces
-import { ContentCampaign } from '@models/content.model';
 import { LandingPageContent } from '@models/landing-page-content.model';
 
 // Providers
 import { environment } from '../environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { ContentCampaign } from '@models/content-campaign.model';
 
 @Injectable({
 	providedIn: 'root',

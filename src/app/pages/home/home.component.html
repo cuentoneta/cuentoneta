@@ -1,7 +1,7 @@
 <main>
 	@defer (on viewport) {
 		@if (slides$ | async; as slides) {
-			<cuentoneta-carousel [slides]="slides"> </cuentoneta-carousel>
+			<cuentoneta-content-campaign-carousel [slides]="slides"> </cuentoneta-content-campaign-carousel>
 		}
 	} @placeholder {
 		<ngx-skeleton-loader

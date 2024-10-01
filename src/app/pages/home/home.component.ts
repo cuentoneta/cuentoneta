@@ -24,6 +24,7 @@ import { StorylistCardDeckComponent } from 'src/app/components/storylist-card-de
 import { StorylistCardComponent } from '../../components/storylist-card-component/storylist-card.component';
 import { CarouselComponent } from '../../components/carousel/carousel.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { ContentCampaignCarouselComponent } from '../../components/content-campaign-carousel/content-campaign-carousel.component';
 
 @Component({
 	selector: 'cuentoneta-home',
@@ -38,6 +39,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 		StorylistCardComponent,
 		CarouselComponent,
 		NgxSkeletonLoaderModule,
+		ContentCampaignCarouselComponent,
 	],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
