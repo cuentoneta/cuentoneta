@@ -53,27 +53,58 @@ export const Layout = {
 	}),
 	args: {
 		storylist1: {
-			slug: 'verano-2022',
 			count: 60,
-			displayDates: true,
-			title: 'Cuentoneta 1.0',
-			editionPrefix: 'Día',
-			comingNextLabel: 'Próximamente',
+			title: 'La Cuentoneta 1.0',
 			description: [
-				'La colección “Cuentos de Verano” de la primera versión de La Cuentoneta: una selección de textos publicados diariamente entre el Año Nuevo y el Martes de Carnaval de 2022',
+				{
+					_key: '58f75b67346a',
+					markDefs: [],
+					children: [
+						{
+							_key: 'e846ec598eb60',
+							_type: 'span',
+							marks: [],
+							text: 'La colección de cuentos de la primera versión de La Cuentoneta, publicados diariamente entre el Año Nuevo y el Martes de Carnaval de 2022. Esta colección consiste de sesenta textos, todos ellos de diferentes autores.',
+						},
+					],
+					_type: 'block',
+					style: 'normal',
+				},
 			],
+			displayDates: true,
+			editionPrefix: 'Día',
 			featuredImage:
-				'https://cdn.sanity.io/images/s4dbqkc5/production/d1a7fc995e0a4d640c9d8e98fb56f56f209f3d89-392x318.webp',
+				'https://cdn.sanity.io/images/s4dbqkc5/development/d1a7fc995e0a4d640c9d8e98fb56f56f209f3d89-392x318.webp',
+			publications: [],
+			slug: 'verano-2022',
+			language: 'es',
+			comingNextLabel: 'Próximamente',
 			tags: [
 				{
-					title: 'Curaduría',
-					slug: 'curaduria',
-					description: 'Selección de textos del staff de La Cuentoneta',
+					shortDescription: 'Selección de textos a cargo del staff de La Cuentoneta.',
+					description: [
+						{
+							style: 'normal',
+							_key: '6af1079cc442',
+							markDefs: [],
+							children: [
+								{
+									_type: 'span',
+									marks: [],
+									text: 'Selección de textos a cargo del staff de La Cuentoneta.',
+									_key: '9ab33363f0570',
+								},
+							],
+							_type: 'block',
+						},
+					],
 					icon: {
-						name: 'stars',
 						provider: 'mdi',
+						name: 'stars',
 						svg: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg" style="width: 1.5em; height: 1em;"><path fill="none" d="M0 0h24v24H0z"></path><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z"></path></svg>',
 					},
+					title: 'Curaduría',
+					slug: 'curaduria',
 				},
 			],
 		},

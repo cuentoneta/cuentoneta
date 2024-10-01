@@ -18,22 +18,13 @@ import { FetchContentDirective } from '../../directives/fetch-content.directive'
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 // Componentes
-import { PublicationCardComponent } from '../../components/publication-card/publication-card.component';
-import { StorylistCardDeckComponent } from 'src/app/components/storylist-card-deck/storylist-card-deck.component';
 import { StorylistCardComponent } from '../../components/storylist-card-component/storylist-card.component';
 
 @Component({
 	selector: 'cuentoneta-home',
 	templateUrl: './home.component.html',
 	standalone: true,
-	imports: [
-		CommonModule,
-		NgOptimizedImage,
-		PublicationCardComponent,
-		StorylistCardDeckComponent,
-		RouterModule,
-		StorylistCardComponent,
-	],
+	imports: [CommonModule, NgOptimizedImage, RouterModule, StorylistCardComponent],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
 export class HomeComponent {

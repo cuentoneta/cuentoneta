@@ -14,13 +14,20 @@ registerLocaleData(localeEs);
 // Modelos
 import { Publication } from '@models/storylist.model';
 import { storyPreviewMock } from '../../mocks/story.mock';
+import { RouterTestingModule } from '@angular/router/testing';
 
 export default {
 	title: 'PublicationCardComponent',
 	component: PublicationCardComponent,
 	decorators: [
 		moduleMetadata({
-			imports: [NgOptimizedImage, NgxSkeletonLoaderModule, StoryCardSkeletonComponent, StoryEditionDateLabelComponent],
+			imports: [
+				NgOptimizedImage,
+				NgxSkeletonLoaderModule,
+				StoryCardSkeletonComponent,
+				StoryEditionDateLabelComponent,
+				RouterTestingModule,
+			],
 			providers: [DatePipe, { provide: LOCALE_ID, useValue: 'es-419' }],
 		}),
 	],
@@ -39,26 +46,11 @@ export const Historia = {
 		template: `
       <div class="grid grid-cols-3 gap-4">
           <cuentoneta-publication-card
-              [editionPrefix]="editionPrefix" 
-              [editionSuffix]="editionSuffix" 
-              [displayDate]="displayDate" 
-              [editionIndex]="editionIndex" 
-              [publication]="publication1">
+              [editionLabel]="editionPrefix" 
+              [publication]="publication1"
+              [navigationRoute]="['/']">
           </cuentoneta-publication-card>
-          <cuentoneta-publication-card
-              [editionPrefix]="editionPrefix" 
-              [editionSuffix]="editionSuffix" 
-              [displayDate]="displayDate" 
-              [editionIndex]="editionIndex" 
-              [publication]="publication2">
-          </cuentoneta-publication-card>
-          <cuentoneta-publication-card
-              [editionPrefix]="editionPrefix" 
-              [editionSuffix]="editionSuffix" 
-              [displayDate]="displayDate" 
-              [editionIndex]="editionIndex" 
-              [publication]="publication3">
-          </cuentoneta-publication-card>
+
     </div>
 `,
 	}),
