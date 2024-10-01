@@ -11,7 +11,7 @@ export type ContentCampaignViewport = (typeof ContentCampaignViewportKeys)[numbe
  * Constante que indica, para los viewports soportados, las longitudes máximas asignables a los títulos y subtítulos
  * de las campañas de contenido y las dimensiones de las imágenes asociadas a cada una de ellas.
  */
-export const imageViewportSizes = Object.freeze({
+export const viewportElementSizes = Object.freeze({
 	xs: {
 		title: 32,
 		subtitle: 36,

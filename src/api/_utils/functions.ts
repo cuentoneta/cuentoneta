@@ -17,7 +17,7 @@ import {
 	ContentCampaign,
 	ContentCampaignViewport,
 	ContentCampaignViewportKeys,
-	imageViewportSizes,
+	viewportElementSizes,
 } from '@models/content-campaign.model';
 import { LandingPageContent } from '@models/landing-page-content.model';
 import { Publication, Storylist, StorylistTeaser } from '@models/storylist.model';
@@ -231,15 +231,15 @@ export function mapContentCampaigns(campaigns: ContentCampaignsSubQuery): Conten
 					title: mapBlockContentToTextParagraphs(xs.title),
 					subtitle: mapBlockContentToTextParagraphs(xs.subtitle),
 					imageUrl: xs.image ? urlFor(xs.image) : '',
-					imageWidth: imageViewportSizes.xs.imageWidth,
-					imageHeight: imageViewportSizes.xs.imageHeight,
+					imageWidth: viewportElementSizes.xs.imageWidth,
+					imageHeight: viewportElementSizes.xs.imageHeight,
 				},
 				md: {
 					title: mapBlockContentToTextParagraphs(md.title),
 					subtitle: mapBlockContentToTextParagraphs(md.subtitle),
 					imageUrl: md.image ? urlFor(md.image) : '',
-					imageWidth: imageViewportSizes.md.imageWidth,
-					imageHeight: imageViewportSizes.md.imageHeight,
+					imageWidth: viewportElementSizes.md.imageWidth,
+					imageHeight: viewportElementSizes.md.imageHeight,
 				},
 			},
 		};

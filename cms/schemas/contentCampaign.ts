@@ -6,7 +6,7 @@ import { localizedRequire } from '../utils/validations';
 import {
 	ContentCampaignViewport,
 	ContentCampaignViewportKeys,
-	imageViewportSizes,
+	viewportElementSizes,
 } from '../../src/app/models/content-campaign.model';
 
 const imageResourcePattern = /^image-([a-f\d]+)-(\d+x\d+)-(\w+)$/;
@@ -31,7 +31,7 @@ const campaignCharLimitValidation = (blocks, context) => {
 
 	const property = context.path[context.path.length - 1];
 	const viewport = context.path[context.path.length - 2];
-	const maxChars = imageViewportSizes[viewport][property];
+	const maxChars = viewportElementSizes[viewport][property];
 
 	if (totalCharacters > maxChars) {
 		return `La longitud máxima es de ${maxChars} caracteres. Longitud actual: ${totalCharacters}`;
@@ -42,7 +42,7 @@ const campaignCharLimitValidation = (blocks, context) => {
 
 const campaignImageSizeValidation = (image, context) => {
 	const viewport = context.path[context.path.length - 2];
-	const viewportSize = imageViewportSizes[viewport];
+	const viewportSize = viewportElementSizes[viewport];
 
 	if (!image || !viewportSize) return true;
 	const { dimensions } = decodeAssetId(image.asset._ref);
@@ -72,7 +72,7 @@ const generateContent = (viewport: ContentCampaignViewport) => {
 			}),
 			defineField({
 				name: 'image',
-				title: `Imagen (${imageViewportSizes[viewport].imageWidth}px x ${imageViewportSizes[viewport].imageHeight}px de tamaño)`,
+				title: `Imagen (${viewportElementSizes[viewport].imageWidth}px x ${viewportElementSizes[viewport].imageHeight}px de tamaño)`,
 				type: 'image',
 				validation: (Rule) => [Rule.custom(localizedRequire), Rule.custom(campaignImageSizeValidation)],
 			}),
