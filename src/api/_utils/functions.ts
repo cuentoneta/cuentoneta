@@ -13,7 +13,12 @@ import imageUrlBuilder from '@sanity/image-url';
 // Modelos
 import { Author, AuthorTeaser } from '@models/author.model';
 import { BlockContent, LandingPageContentQueryResult, StorylistTeasersQueryResult } from '../sanity/types';
-import { ContentCampaign } from '@models/content-campaign.model';
+import {
+	ContentCampaign,
+	ContentCampaignViewport,
+	ContentCampaignViewportKeys,
+	imageViewportSizes,
+} from '@models/content-campaign.model';
 import { LandingPageContent } from '@models/landing-page-content.model';
 import { Publication, Storylist, StorylistTeaser } from '@models/storylist.model';
 import { Resource } from '@models/resource.model';
@@ -211,8 +216,7 @@ export function mapLandingPageContent(result: NonNullable<LandingPageContentQuer
 type ContentCampaignsSubQuery = NonNullable<LandingPageContentQueryResult>['campaigns'];
 export function mapContentCampaigns(campaigns: ContentCampaignsSubQuery): ContentCampaign[] {
 	return campaigns.map((campaign) => {
-		const xs = campaign.contents.xs;
-		const md = campaign.contents.md;
+		const { xs, md } = campaign.contents;
 
 		if (!xs || !md) {
 			throw new Error('Campaign content not found');
@@ -227,11 +231,15 @@ export function mapContentCampaigns(campaigns: ContentCampaignsSubQuery): Conten
 					title: mapBlockContentToTextParagraphs(xs.title),
 					subtitle: mapBlockContentToTextParagraphs(xs.subtitle),
 					imageUrl: xs.image ? urlFor(xs.image) : '',
+					imageWidth: imageViewportSizes.xs.imageWidth,
+					imageHeight: imageViewportSizes.xs.imageHeight,
 				},
 				md: {
 					title: mapBlockContentToTextParagraphs(md.title),
 					subtitle: mapBlockContentToTextParagraphs(md.subtitle),
 					imageUrl: md.image ? urlFor(md.image) : '',
+					imageWidth: imageViewportSizes.md.imageWidth,
+					imageHeight: imageViewportSizes.md.imageHeight,
 				},
 			},
 		};
