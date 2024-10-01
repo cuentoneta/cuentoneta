@@ -1,5 +1,5 @@
 import { ContentCampaign } from '@models/content-campaign.model';
-const contentCampaignMock: ContentCampaign[] = [
+export const contentCampaignMock: ContentCampaign[] = [
 	{
 		description: [
 			{
@@ -66,6 +66,8 @@ const contentCampaignMock: ContentCampaign[] = [
 				],
 				imageUrl:
 					'https://cdn.sanity.io/images/s4dbqkc5/development/d1954f5948a07ec4f02c9c621f664e42bbe61ce9-540x220.jpg',
+				imageWidth: 540,
+				imageHeight: 220,
 			},
 			md: {
 				title: [
@@ -108,6 +110,8 @@ const contentCampaignMock: ContentCampaign[] = [
 				],
 				imageUrl:
 					'https://cdn.sanity.io/images/s4dbqkc5/development/ec31c09f54fe53f4de213075d2e73e61805fbf4f-960x280.jpg',
+				imageWidth: 960,
+				imageHeight: 280,
 			},
 		},
 		title: 'Pluma de la Semana #1: Alejandro Dolina',
@@ -181,6 +185,8 @@ const contentCampaignMock: ContentCampaign[] = [
 				],
 				imageUrl:
 					'https://cdn.sanity.io/images/s4dbqkc5/development/611360ec02e690fc8c56d674162815690ea0b1fc-540x220.jpg',
+				imageWidth: 540,
+				imageHeight: 220,
 			},
 			md: {
 				title: [
@@ -217,6 +223,8 @@ const contentCampaignMock: ContentCampaign[] = [
 				],
 				imageUrl:
 					'https://cdn.sanity.io/images/s4dbqkc5/development/5e37e287e037a35f9034abb9da33dac68acc6517-960x280.jpg',
+				imageWidth: 960,
+				imageHeight: 280,
 			},
 		},
 	},
