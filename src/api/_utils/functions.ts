@@ -12,26 +12,23 @@ import imageUrlBuilder from '@sanity/image-url';
 
 // Modelos
 import { Author, AuthorTeaser } from '@models/author.model';
-import { BlockContent, LandingPageContentQueryResult, StorylistTeasersQueryResult } from '../sanity/types';
-import {
-	ContentCampaign,
-	ContentCampaignViewport,
-	ContentCampaignViewportKeys,
-	viewportElementSizes,
-} from '@models/content-campaign.model';
+import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
 import { LandingPageContent } from '@models/landing-page-content.model';
 import { Publication, Storylist, StorylistTeaser } from '@models/storylist.model';
 import { Resource } from '@models/resource.model';
 import { Story, StoryPreview, StoryTeaser } from '@models/story.model';
-import { TextBlockContent } from '@models/block-content.model';
 import { Tag } from '@models/tag.model';
+import { TextBlockContent } from '@models/block-content.model';
 
 // Tipos de Sanity
 import {
 	AuthorBySlugQueryResult,
+	BlockContent,
+	LandingPageContentQueryResult,
 	StoriesByAuthorSlugQueryResult,
 	StoryBySlugQueryResult,
 	StorylistQueryResult,
+	StorylistTeasersQueryResult,
 } from '../sanity/types';
 
 export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>, language: 'es' | 'en' = 'es'): Author {
