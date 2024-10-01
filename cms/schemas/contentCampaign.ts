@@ -2,6 +2,13 @@ import { defineField, defineType } from 'sanity';
 import { CalendarIcon } from '@sanity/icons';
 import { localizedRequire } from '../utils/validations';
 
+// Models
+import {
+	ContentCampaignViewport,
+	ContentCampaignViewportKeys,
+	viewportElementSizes,
+} from '../../src/app/models/content-campaign.model';
+
 const imageResourcePattern = /^image-([a-f\d]+)-(\d+x\d+)-(\w+)$/;
 
 const decodeAssetId = (id) => {
@@ -16,17 +23,6 @@ const decodeAssetId = (id) => {
 };
 
 const campaignCharLimitValidation = (blocks, context) => {
-	const limits = {
-		xs: {
-			title: 32,
-			subtitle: 36,
-		},
-		md: {
-			title: 40,
-			subtitle: 60,
-		},
-	};
-
 	if (!blocks || blocks.length === 0) return true;
 
 	const totalCharacters = blocks
@@ -35,7 +31,7 @@ const campaignCharLimitValidation = (blocks, context) => {
 
 	const property = context.path[context.path.length - 1];
 	const viewport = context.path[context.path.length - 2];
-	const maxChars = limits[viewport][property];
+	const maxChars = viewportElementSizes[viewport][property];
 
 	if (totalCharacters > maxChars) {
 		return `La longitud máxima es de ${maxChars} caracteres. Longitud actual: ${totalCharacters}`;
@@ -45,26 +41,43 @@ const campaignCharLimitValidation = (blocks, context) => {
 };
 
 const campaignImageSizeValidation = (image, context) => {
-	const viewportSizes = {
-		xs: {
-			width: 540,
-			height: 220,
-		},
-		md: {
-			width: 960,
-			height: 280,
-		},
-	};
-
 	const viewport = context.path[context.path.length - 2];
-	const viewportSize = viewportSizes[viewport];
+	const viewportSize = viewportElementSizes[viewport];
 
 	if (!image || !viewportSize) return true;
 	const { dimensions } = decodeAssetId(image.asset._ref);
 	return (
-		(dimensions.width === viewportSize.width && dimensions.height === viewportSize.height) ||
-		`La imagen debe tener un tamaño estricto de ${viewportSize.width} x ${viewportSize.height} px. El tamaño de la imagen actual es de ${dimensions.width} x ${dimensions.height} px`
+		(dimensions.width === viewportSize.imageWidth && dimensions.height === viewportSize.imageHeight) ||
+		`La imagen debe tener un tamaño estricto de ${viewportSize.imageWidth} x ${viewportSize.imageHeight} px. El tamaño de la imagen actual es de ${dimensions.width} x ${dimensions.height} px`
 	);
+};
+
+const generateContent = (viewport: ContentCampaignViewport) => {
+	return defineField({
+		name: viewport,
+		title: `Viewport ${viewport}`,
+		type: 'object',
+		fields: [
+			defineField({
+				name: 'title',
+				title: 'Título',
+				type: 'blockContent',
+				validation: (Rule) => [Rule.custom(localizedRequire), Rule.custom(campaignCharLimitValidation)],
+			}),
+			defineField({
+				name: 'subtitle',
+				title: 'Subtítulo',
+				type: 'blockContent',
+				validation: (Rule) => [Rule.custom(localizedRequire), Rule.custom(campaignCharLimitValidation)],
+			}),
+			defineField({
+				name: 'image',
+				title: `Imagen (${viewportElementSizes[viewport].imageWidth}px x ${viewportElementSizes[viewport].imageHeight}px de tamaño)`,
+				type: 'image',
+				validation: (Rule) => [Rule.custom(localizedRequire), Rule.custom(campaignImageSizeValidation)],
+			}),
+		],
+	});
 };
 
 export default defineType({
@@ -105,58 +118,7 @@ export default defineType({
 			name: 'contents',
 			title: 'Contenidos',
 			type: 'object',
-			fields: [
-				defineField({
-					name: 'xs',
-					title: 'Viewport mobile (xs, sm)',
-					type: 'object',
-					fields: [
-						defineField({
-							name: 'title',
-							title: 'Título',
-							type: 'blockContent',
-							validation: (Rule) => [Rule.custom(localizedRequire), Rule.custom(campaignCharLimitValidation)],
-						}),
-						defineField({
-							name: 'subtitle',
-							title: 'Subtítulo',
-							type: 'blockContent',
-							validation: (Rule) => [Rule.custom(localizedRequire), Rule.custom(campaignCharLimitValidation)],
-						}),
-						defineField({
-							name: 'image',
-							title: 'Imagen (540px x 220px de tamaño)',
-							type: 'image',
-							validation: (Rule) => [Rule.custom(localizedRequire), Rule.custom(campaignImageSizeValidation)],
-						}),
-					],
-				}),
-				defineField({
-					name: 'md',
-					title: 'Viewport tablet horizontal y desktop (md y superior)',
-					type: 'object',
-					fields: [
-						defineField({
-							name: 'title',
-							title: 'Título',
-							type: 'blockContent',
-							validation: (Rule) => [Rule.custom(localizedRequire), Rule.custom(campaignCharLimitValidation)],
-						}),
-						defineField({
-							name: 'subtitle',
-							title: 'Subtítulo',
-							type: 'blockContent',
-							validation: (Rule) => [Rule.custom(localizedRequire), Rule.custom(campaignCharLimitValidation)],
-						}),
-						defineField({
-							name: 'image',
-							title: 'Imagen (960px x 280px de tamaño)',
-							type: 'image',
-							validation: (Rule) => [Rule.custom(localizedRequire), Rule.custom(campaignImageSizeValidation)],
-						}),
-					],
-				}),
-			],
+			fields: [...ContentCampaignViewportKeys.map((key) => generateContent(key))],
 		}),
 	],
 });
