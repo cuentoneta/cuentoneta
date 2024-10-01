@@ -3,6 +3,9 @@ import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
 
+// 3rd party modules
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+
 // Routing
 import { RouterModule } from '@angular/router';
 import { AppRoutes } from '../../app.routes';
@@ -22,8 +25,6 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 import { PublicationCardComponent } from '../../components/publication-card/publication-card.component';
 import { StorylistCardDeckComponent } from 'src/app/components/storylist-card-deck/storylist-card-deck.component';
 import { StorylistCardComponent } from '../../components/storylist-card-component/storylist-card.component';
-import { CarouselComponent } from '../../components/carousel/carousel.component';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ContentCampaignCarouselComponent } from '../../components/content-campaign-carousel/content-campaign-carousel.component';
 
 @Component({
@@ -37,7 +38,6 @@ import { ContentCampaignCarouselComponent } from '../../components/content-campa
 		StorylistCardDeckComponent,
 		RouterModule,
 		StorylistCardComponent,
-		CarouselComponent,
 		NgxSkeletonLoaderModule,
 		ContentCampaignCarouselComponent,
 	],
