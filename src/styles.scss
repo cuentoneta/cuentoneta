@@ -6,6 +6,10 @@
 @use 'assets/scss/transitions' as *;
 @use 'src/app/directives/tooltip.directive.scss' as *;
 
+// Imports de estilos de Ngx Owl Carousel
+@import 'ngx-owl-carousel-o/lib/styles/scss/owl.carousel';
+@import 'ngx-owl-carousel-o/lib/styles/scss/owl.theme.default';
+
 // Imports de Tailwind
 @tailwind base;
 @tailwind components;

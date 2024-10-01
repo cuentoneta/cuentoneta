@@ -50,6 +50,7 @@
 		"esbuild": "0.21.4",
 		"express": "^4.19.2",
 		"groq": "^3.55.0",
+		"ngx-owl-carousel-o": "^18.0.0",
 		"ngx-skeleton-loader": "^9.0.0",
 		"ngxtension": "^3.5.5",
 		"rettiwt-api": "^3.1.1",
