@@ -1,4 +1,22 @@
 <main>
+	@defer (on viewport) {
+		@if (campaigns.length > 0) {
+			<cuentoneta-content-campaign-carousel [slides]="campaigns"> </cuentoneta-content-campaign-carousel>
+		}
+	} @placeholder {
+		<!-- TODO: Emprolijar skeletons en issues futuros relacionados al carousel -->
+		<ngx-skeleton-loader
+			[theme]="{
+				'width.px': 960,
+				'height.px': 240,
+				'background-color': skeletonColor,
+				width: '100%'
+			}"
+			count="1"
+			appearance="line"
+		></ngx-skeleton-loader>
+	}
+
 	<div class="mb-4 flex content-between items-center">
 		<hr class="flex-grow" />
 		<h2 class="h2 mx-8 text-center">¿Qué querés leer hoy?</h2>
@@ -10,11 +28,10 @@
 		</h3>
 	</div>
 
+	<!-- TODO: Reintroducir render de skeletons para cards de storylists -->
 	<section class="grid grid-cols-1 justify-items-center gap-8 lg:grid-cols-2">
-		@if (!!cards && cards.length) {
-			@for (storylist of cards; track $index) {
-				<cuentoneta-storylist-card [storylist]="storylist" class="card w-full"> </cuentoneta-storylist-card>
-			}
+		@for (storylist of cards; track storylist.slug) {
+			<cuentoneta-storylist-card [storylist]="storylist" class="card w-full"> </cuentoneta-storylist-card>
 		}
 	</section>
 </main>
