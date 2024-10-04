@@ -41,7 +41,8 @@ export class HomeComponent {
 
 	cards: StorylistTeaser[] = [];
 	campaigns: ContentCampaign[] = [];
-	skeletonColor = this.themeService.pickColor('zinc', 300);
+	skeletonBackgroundColor = this.themeService.pickColor('zinc', 200);
+	skeletonTextColor = this.themeService.pickColor('zinc', 300);
 
 	constructor() {
 		// Asignación inicial para dibujar skeletons
