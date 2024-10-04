@@ -1,24 +1,69 @@
 <main>
 	@defer (on viewport) {
-		@if (slides$ | async; as slides) {
-			<cuentoneta-content-campaign-carousel [slides]="slides"> </cuentoneta-content-campaign-carousel>
+		@if (campaigns.length > 0) {
+			<cuentoneta-content-campaign-carousel [slides]="campaigns"> </cuentoneta-content-campaign-carousel>
 		}
 	} @placeholder {
-		<ngx-skeleton-loader
-			[theme]="{
-				'width.px': 960,
-				'height.px': 240,
-				'background-color': skeletonColor,
-				width: '100%'
-			}"
-			count="1"
-			appearance="line"
-		></ngx-skeleton-loader>
+		<!-- TODO: Emprolijar skeletons en issues futuros relacionados al carousel -->
+		<div class="mx-auto max-w-[960px]">
+			<ngx-skeleton-loader
+				[theme]="{
+					'margin-top.px': 10,
+					'width.px': 192,
+					'height.px': 28,
+					'background-color': skeletonColor
+				}"
+				count="1"
+				appearance="line"
+				class="grid"
+			></ngx-skeleton-loader>
+
+			<ngx-skeleton-loader
+				[theme]="{
+					'margin-bottom.px': 10,
+					'width.px': 304,
+					'height.px': 24,
+					'background-color': skeletonColor
+				}"
+				count="1"
+				appearance="line"
+				class="grid"
+			></ngx-skeleton-loader>
+
+			<ngx-skeleton-loader
+				[theme]="{
+					'justify-self': 'center',
+					'border-radius.px': '16',
+					'margin-bottom.px': 0,
+					'width.px': 960,
+					'height.px': 240,
+					'background-color': skeletonColor
+				}"
+				count="1"
+				appearance="line"
+				class="grid"
+			></ngx-skeleton-loader>
+
+			<ngx-skeleton-loader
+				[theme]="{
+					'justify-self': 'center',
+					'border-radius.px': '16',
+					'margin-top.px': 10,
+					'margin-bottom.px': 10,
+					'width.px': 48,
+					'height.px': 10,
+					'background-color': skeletonColor
+				}"
+				count="1"
+				appearance="line"
+				class="grid"
+			></ngx-skeleton-loader>
+		</div>
 	}
 
 	<div class="mb-4 flex content-between items-center">
 		<hr class="flex-grow" />
-		<h2 class="h2 mx-8 text-center">¿Buscás otras lecturas?</h2>
+		<h2 class="h2 mx-8 text-center">¿Qué querés leer hoy?</h2>
 		<hr class="flex-grow" />
 	</div>
 	<div class="mb-8 flex justify-center">
@@ -27,11 +72,10 @@
 		</h3>
 	</div>
 
+	<!-- TODO: Reintroducir render de skeletons para cards de storylists -->
 	<section class="grid grid-cols-1 justify-items-center gap-8 lg:grid-cols-2">
-		@if (!!cards && cards.length) {
-			@for (storylist of cards; track $index) {
-				<cuentoneta-storylist-card [storylist]="storylist" class="card w-full"> </cuentoneta-storylist-card>
-			}
+		@for (storylist of cards; track storylist.slug) {
+			<cuentoneta-storylist-card [storylist]="storylist" class="card w-full"> </cuentoneta-storylist-card>
 		}
 	</section>
 </main>
