@@ -22,9 +22,6 @@ const apiUrl = 'http://localhost:4000/';
 const environmentFileContent = `
     export const environment = {
        environment: "${environment}",
-       contentConfig: { 
-        cards: []
-       },
        website: "http://localhost:4000/",
        apiUrl: "${apiUrl}"
     };

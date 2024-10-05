@@ -44,9 +44,6 @@ const apiUrl = generateApiUrl(environment, branchUrl);
 const environmentFileContent = `
     export const environment = {
        environment: "${environment}",
-       contentConfig: { 
-           cards: []
-       },
        website: "${process.env['CUENTONETA_WEBSITE']}",
        apiUrl: "${apiUrl}"
     };
