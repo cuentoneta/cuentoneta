@@ -43,6 +43,19 @@ export default defineType({
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
+			name: 'campaigns',
+			title: 'Campañas',
+			type: 'array',
+			of: [
+				defineArrayMember({
+					name: 'campaign',
+					title: 'Campaña',
+					type: 'reference',
+					to: [{ type: 'contentCampaign' }],
+				}),
+			],
+		}),
+		defineField({
 			name: 'cards',
 			title: 'Storylists con Tarjetas',
 			type: 'array',

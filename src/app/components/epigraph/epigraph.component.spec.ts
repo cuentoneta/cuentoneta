@@ -1,21 +1,22 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { render, screen } from '@testing-library/angular';
 import { EpigraphComponent } from './epigraph.component';
+import { epigraphMock } from 'src/app/mocks/epigraph-mock';
 
-xdescribe('EpigraphComponent', () => {
-	let component: EpigraphComponent;
-	let fixture: ComponentFixture<EpigraphComponent>;
+describe('EpigraphComponent', () => {
+	const setup = async () =>
+		await render(EpigraphComponent, {
+			inputs: { epigraph: epigraphMock },
+		});
 
-	beforeEach(async () => {
-		await TestBed.configureTestingModule({
-			imports: [EpigraphComponent],
-		}).compileComponents();
+	it('should render the component', async () => {
+		const { container } = await setup();
 
-		fixture = TestBed.createComponent(EpigraphComponent);
-		component = fixture.componentInstance;
-		fixture.detectChanges();
+		expect(container).toBeInTheDocument();
 	});
 
-	it('should create', () => {
-		expect(component).toBeTruthy();
+	it('should display text reference', async () => {
+		await setup();
+
+		expect(screen.getByText('El libro de las maravillas de antaño y de hace poco')).toBeInTheDocument();
 	});
 });
