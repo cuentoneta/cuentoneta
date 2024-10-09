@@ -3,19 +3,65 @@
  * Este script debe ejecutarse como paso previo a la compilación de la aplicación
  * (build step).
  *
+ * En caso de que no exista el archivo .env en la raíz del proyecto, se creará uno
+ * con las variables por defecto, las cuales se encuentran descriptas en la constante
+ * defaultEnvVariables.
+ *
  * Autor: @rolivencia
  */
 
 // NodeJS & env
-import { writeFile, existsSync, mkdirSync } from 'fs';
+import { writeFileSync, existsSync, mkdirSync, writeFile } from 'fs';
 import ErrnoException = NodeJS.ErrnoException;
 import { TEnvironmentType } from './vercel-environments.model';
-
-const dirPath = `src/app/environments`;
-const targetPath = `${dirPath}/environment.ts`;
+import { join } from 'node:path';
 
 // Constantes para generar el archivo de environment
 const environment: TEnvironmentType = (process.env['VERCEL_ENV'] as TEnvironmentType) ?? 'development';
+const dirPath = `src/app/environments`;
+const targetPath = `${dirPath}/environment.ts`;
+
+const defaultEnvVariables = {
+	SANITY_STUDIO_DATASET: 'development',
+	SANITY_STUDIO_PROJECT_ID: 's4dbqkc5',
+	CUENTONETA_WEBSITE: 'https://www.cuentoneta.ar',
+};
+
+// Crea un archivo .env con las variables por defecto si no existe
+function createAppEnvFile() {
+	const envFilePath = join(process.cwd(), '.env');
+	if (existsSync(envFilePath)) {
+		console.log('El archivo .env de la app ya existe, se saltea el paso de creación.');
+		return;
+	}
+
+	const fileContents = Object.entries(defaultEnvVariables)
+		.map(([key, value]) => `${key}=${value}`)
+		.join('\n');
+
+	writeFileSync(envFilePath, fileContents);
+	console.log('Creado archivo .env para la app con variables por defecto.');
+}
+
+function createSanityStudioEnvFile() {
+	const envFilePath = join(process.cwd(), 'cms/.env');
+	if (existsSync(envFilePath)) {
+		console.log('El archivo .env de Sanity Studio ya existe, se saltea el paso de creación.');
+		return;
+	}
+
+	const fileContents = Object.entries(defaultEnvVariables)
+		.map(([key, value]) => `${key}=${value}`)
+		.join('\n');
+
+	writeFileSync(envFilePath, fileContents);
+	console.log('Creado archivo .env para Sanity Studio con variables por defecto.');
+}
+
+if (environment === 'development') {
+	createAppEnvFile();
+	createSanityStudioEnvFile();
+}
 
 const branchUrl: string = process.env['VERCEL_BRANCH_URL'] as string;
 const stagingBranchUrl = 'cuentoneta-git-develop-cuentoneta.vercel.app';
@@ -44,9 +90,6 @@ const apiUrl = generateApiUrl(environment, branchUrl);
 const environmentFileContent = `
     export const environment = {
        environment: "${environment}",
-       contentConfig: { 
-           cards: []
-       },
        website: "${process.env['CUENTONETA_WEBSITE']}",
        apiUrl: "${apiUrl}"
     };
