@@ -3,6 +3,10 @@
  * Este script debe ejecutarse como paso previo a la compilación de la aplicación
  * (build step).
  *
+ * En caso de que no exista el archivo .env en la raíz del proyecto, se creará uno
+ * con las variables por defecto, las cuales se encuentran descriptas en la constante
+ * defaultEnvVariables.
+ *
  * Autor: @rolivencia
  */
 
