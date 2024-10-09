@@ -28,10 +28,10 @@ const defaultEnvVariables = {
 };
 
 // Crea un archivo .env con las variables por defecto si no existe
-function createEnvFile() {
+function createAppEnvFile() {
 	const envFilePath = join(process.cwd(), '.env');
 	if (existsSync(envFilePath)) {
-		console.log('El archivo .env ya existe, se saltea el paso de creación.');
+		console.log('El archivo .env de la app ya existe, se saltea el paso de creación.');
 		return;
 	}
 
@@ -40,11 +40,27 @@ function createEnvFile() {
 		.join('\n');
 
 	writeFileSync(envFilePath, fileContents);
-	console.log('Creado archivo .env con variables por defecto.');
+	console.log('Creado archivo .env para la app con variables por defecto.');
+}
+
+function createSanityStudioEnvFile() {
+	const envFilePath = join(process.cwd(), 'cms/.env');
+	if (existsSync(envFilePath)) {
+		console.log('El archivo .env de Sanity Studio ya existe, se saltea el paso de creación.');
+		return;
+	}
+
+	const fileContents = Object.entries(defaultEnvVariables)
+		.map(([key, value]) => `${key}=${value}`)
+		.join('\n');
+
+	writeFileSync(envFilePath, fileContents);
+	console.log('Creado archivo .env para Sanity Studio con variables por defecto.');
 }
 
 if (environment === 'development') {
-	createEnvFile();
+	createAppEnvFile();
+	createSanityStudioEnvFile();
 }
 
 const branchUrl: string = process.env['VERCEL_BRANCH_URL'] as string;
