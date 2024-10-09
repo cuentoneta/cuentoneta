@@ -138,15 +138,7 @@ git clone https://github.com/<tu_nombre_de_usuario_en_github>/cuentoneta.git
 cd cuentoneta
 ```
 
-Deberás luego crear un archivo `.env` en la raíz del proyecto con las siguientes variables de entorno:
-
-```bash
-SANITY_STUDIO_DATASET=development
-SANITY_STUDIO_PROJECT_ID=s4dbqkc5
-CUENTONETA_WEBSITE=https://cuentoneta.ar/
-```
-
-Posteriormente ejecuta el siguiente comando para instalar todas las dependencias listadas en el archivo [`package.json`](package.json).
+Posteriormente ejecuta el siguiente comando para instalar todas las dependencias listadas en el archivo [`package.json`](package.json). La ejecución de este comando también procederá a crear un archivo `.env`, el cual contiene las variables de entorno necesarias para el correcto funcionamiento del proyecto en el ambiente de desarrollo.
 
 ```bash
 pnpm install
@@ -158,7 +150,7 @@ O bien, su versión corta.
 pnpm i
 ```
 
-### Paso 3: Buildear el servidor
+### Paso 3: Crear un build inicial del servidor
 
 ```bash
 pnpm run build
@@ -188,24 +180,13 @@ Para gestionar el contenido de La Cuentoneta utilizamos [Sanity Studio](https://
 
 #### Paso 1: Instalar dependencias
 
-Ejecutá el siguiente comando, posándote en el directorio `/cms`:
+Ejecutá el siguiente comando, posándote en el directorio `/cms`. Este comando se encargará también de crear el archivo `.env` con las variables de entorno necesarias para el correcto funcionamiento de Sanity Studio.:
 
 ```bash
 pnpm install
 ```
 
-#### Paso 2: Configurar archivo .env
-
-Deberás agregar un archivo `.env` en la carpeta `/cms`.
-
-El contenido del archivo `.env` deberá ser el siguiente:
-
-```
-SANITY_STUDIO_DATASET=development
-SANITY_STUDIO_PROJECT_ID=s4dbqkc5
-```
-
-#### Paso 3: Ejecutar el entorno de desarrollo
+#### Paso 2: Ejecutar el entorno de desarrollo
 
 En el mismo directorio, ejecutá el siguiente comando:
 
