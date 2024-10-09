@@ -150,7 +150,7 @@ O bien, su versión corta.
 pnpm i
 ```
 
-### Paso 3: Buildear el servidor
+### Paso 3: Crear un build inicial del servidor
 
 ```bash
 pnpm run build
@@ -180,24 +180,13 @@ Para gestionar el contenido de La Cuentoneta utilizamos [Sanity Studio](https://
 
 #### Paso 1: Instalar dependencias
 
-Ejecutá el siguiente comando, posándote en el directorio `/cms`:
+Ejecutá el siguiente comando, posándote en el directorio `/cms`. Este comando se encargará también de crear el archivo `.env` con las variables de entorno necesarias para el correcto funcionamiento de Sanity Studio.:
 
 ```bash
 pnpm install
 ```
 
-#### Paso 2: Configurar archivo .env
-
-Deberás agregar un archivo `.env` en la carpeta `/cms`.
-
-El contenido del archivo `.env` deberá ser el siguiente:
-
-```
-SANITY_STUDIO_DATASET=development
-SANITY_STUDIO_PROJECT_ID=s4dbqkc5
-```
-
-#### Paso 3: Ejecutar el entorno de desarrollo
+#### Paso 2: Ejecutar el entorno de desarrollo
 
 En el mismo directorio, ejecutá el siguiente comando:
 
