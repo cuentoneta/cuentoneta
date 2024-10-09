@@ -7,15 +7,41 @@
  */
 
 // NodeJS & env
-import { writeFile, existsSync, mkdirSync } from 'fs';
+import { writeFileSync, existsSync, mkdirSync, writeFile } from 'fs';
 import ErrnoException = NodeJS.ErrnoException;
 import { TEnvironmentType } from './vercel-environments.model';
-
-const dirPath = `src/app/environments`;
-const targetPath = `${dirPath}/environment.ts`;
+import { join } from 'node:path';
 
 // Constantes para generar el archivo de environment
 const environment: TEnvironmentType = (process.env['VERCEL_ENV'] as TEnvironmentType) ?? 'development';
+const dirPath = `src/app/environments`;
+const targetPath = `${dirPath}/environment.ts`;
+
+const defaultEnvVariables = {
+	SANITY_STUDIO_DATASET: 'development',
+	SANITY_STUDIO_PROJECT_ID: 's4dbqkc5',
+	CUENTONETA_WEBSITE: 'https://www.cuentoneta.ar',
+};
+
+// Crea un archivo .env con las variables por defecto si no existe
+function createEnvFile() {
+	const envFilePath = join(process.cwd(), '.env');
+	if (existsSync(envFilePath)) {
+		console.log('El archivo .env ya existe, se saltea el paso de creación.');
+		return;
+	}
+
+	const fileContents = Object.entries(defaultEnvVariables)
+		.map(([key, value]) => `${key}=${value}`)
+		.join('\n');
+
+	writeFileSync(envFilePath, fileContents);
+	console.log('Creado archivo .env con variables por defecto.');
+}
+
+if (environment === 'development') {
+	createEnvFile();
+}
 
 const branchUrl: string = process.env['VERCEL_BRANCH_URL'] as string;
 const stagingBranchUrl = 'cuentoneta-git-develop-cuentoneta.vercel.app';
