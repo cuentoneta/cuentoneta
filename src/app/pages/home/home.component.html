@@ -1,11 +1,7 @@
 <main>
-	@if (campaigns.length > 0) {
-		@defer {
-			<cuentoneta-content-campaign-carousel [slides]="campaigns"> </cuentoneta-content-campaign-carousel>
-		} @placeholder (minimum 500ms) {
-			<cuentoneta-content-campaign-carousel-skeleton />
-		}
-	} @else {
+	@defer (when campaigns.length > 0) {
+		<cuentoneta-content-campaign-carousel [slides]="campaigns" />
+	} @placeholder (minimum 500ms) {
 		<cuentoneta-content-campaign-carousel-skeleton />
 	}
 
