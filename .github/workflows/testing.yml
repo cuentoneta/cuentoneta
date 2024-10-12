@@ -23,7 +23,7 @@ jobs:
         run: pnpm install --ignore-scripts
 
       - name: Generate testing environment file
-        run: pnpm run config-pipeline
+        run: pnpm run config
 
       - name: Run Tests
         run: npx nx test --skip-nx-cache

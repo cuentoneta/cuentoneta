@@ -1,4 +1,10 @@
 <main>
+	@defer (when campaigns.length > 0) {
+		<cuentoneta-content-campaign-carousel [slides]="campaigns" />
+	} @placeholder (minimum 500ms) {
+		<cuentoneta-content-campaign-carousel-skeleton />
+	}
+
 	<div class="mb-4 flex content-between items-center">
 		<hr class="flex-grow" />
 		<h2 class="h2 mx-8 text-center">¿Qué querés leer hoy?</h2>
@@ -11,9 +17,13 @@
 	</div>
 
 	<section class="grid grid-cols-1 justify-items-center gap-8 lg:grid-cols-2">
-		@if (!!cards && cards.length) {
-			@for (storylist of cards; track $index) {
+		@defer (when cards.length > 0) {
+			@for (storylist of cards; track storylist.slug) {
 				<cuentoneta-storylist-card [storylist]="storylist" class="card w-full"> </cuentoneta-storylist-card>
+			}
+		} @placeholder (minimum 500ms) {
+			@for (_ of [].constructor(6); track $index) {
+				<cuentoneta-storylist-card-skeleton class="card w-full" />
 			}
 		}
 	</section>

@@ -23,7 +23,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 			<owl-carousel-o [options]="options" class="mx-auto block max-w-[960px]">
 				@for (slide of slides(); track slide.slug) {
 					<ng-template carouselSlide>
-						<div class="slide mr-3">
+						<div class="slide">
 							@for (viewport of viewports; track $index) {
 								<a [routerLink]="slide.url" [ngClass]="viewportSpecificClasses[viewport]">
 									<header class="mb-3">
@@ -83,6 +83,7 @@ export class ContentCampaignCarouselComponent {
 		mouseDrag: false,
 		dots: true,
 		navSpeed: 500,
+		margin: 12,
 		responsive: {
 			0: {
 				items: 1,
