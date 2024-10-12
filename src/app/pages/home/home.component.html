@@ -16,10 +16,15 @@
 		</h3>
 	</div>
 
-	<!-- TODO: Reintroducir render de skeletons para cards de storylists -->
 	<section class="grid grid-cols-1 justify-items-center gap-8 lg:grid-cols-2">
-		@for (storylist of cards; track storylist.slug) {
-			<cuentoneta-storylist-card [storylist]="storylist" class="card w-full"> </cuentoneta-storylist-card>
+		@defer (when cards.length > 0) {
+			@for (storylist of cards; track storylist.slug) {
+				<cuentoneta-storylist-card [storylist]="storylist" class="card w-full"> </cuentoneta-storylist-card>
+			}
+		} @placeholder (minimum 500ms) {
+			@for (_ of [].constructor(6); track $index) {
+				<cuentoneta-storylist-card-skeleton class="card w-full" />
+			}
 		}
 	</section>
 </main>

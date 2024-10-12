@@ -19,6 +19,7 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 import { ContentCampaignCarouselComponent } from '../../components/content-campaign-carousel/content-campaign-carousel.component';
 import { StorylistCardComponent } from '../../components/storylist-card-component/storylist-card.component';
 import { ContentCampaignCarouselSkeletonComponent } from '../../components/content-campaign-carousel/content-campaign-carousel-skeleton.component';
+import { StorylistCardSkeletonComponent } from '../../components/storylist-card-component/storylist-card-skeleton.component';
 
 @Component({
 	selector: 'cuentoneta-home',
@@ -29,6 +30,7 @@ import { ContentCampaignCarouselSkeletonComponent } from '../../components/conte
 		ContentCampaignCarouselComponent,
 		StorylistCardComponent,
 		ContentCampaignCarouselSkeletonComponent,
+		StorylistCardSkeletonComponent,
 	],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
