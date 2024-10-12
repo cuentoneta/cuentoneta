@@ -1,20 +1,12 @@
 <main>
-	@defer (on viewport) {
-		@if (campaigns.length > 0) {
+	@if (campaigns.length > 0) {
+		@defer {
 			<cuentoneta-content-campaign-carousel [slides]="campaigns"> </cuentoneta-content-campaign-carousel>
+		} @placeholder (minimum 500ms) {
+			<cuentoneta-content-campaign-carousel-skeleton />
 		}
-	} @placeholder {
-		<!-- TODO: Emprolijar skeletons en issues futuros relacionados al carousel -->
-		<ngx-skeleton-loader
-			[theme]="{
-				'width.px': 960,
-				'height.px': 240,
-				'background-color': skeletonColor,
-				width: '100%'
-			}"
-			count="1"
-			appearance="line"
-		></ngx-skeleton-loader>
+	} @else {
+		<cuentoneta-content-campaign-carousel-skeleton />
 	}
 
 	<div class="mb-4 flex content-between items-center">
