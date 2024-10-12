@@ -7,6 +7,7 @@ import { CarouselModule } from 'ngx-owl-carousel-o';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import { contentCampaignMock } from '../../mocks/content-campaign.mock';
 import { RouterTestingModule } from '@angular/router/testing';
+import { ContentCampaignCarouselSkeletonComponent } from './content-campaign-carousel-skeleton.component';
 
 export default {
 	title: 'ContentCampaignCarouselComponent',
@@ -20,6 +21,7 @@ export default {
 				RouterTestingModule,
 				PortableTextParserComponent,
 				NoopAnimationsModule,
+				ContentCampaignCarouselSkeletonComponent,
 			],
 			providers: [ContentService],
 		}),
@@ -32,6 +34,7 @@ export const Primary = {
 		template: `
 	  <div class="block">
 		<cuentoneta-content-campaign-carousel [slides]="slides"/>
+		<cuentoneta-content-campaign-carousel-skeleton/>
 		</div>
 		`,
 	}),
