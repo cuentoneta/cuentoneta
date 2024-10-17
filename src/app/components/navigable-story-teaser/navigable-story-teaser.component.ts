@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StoryTeaser } from '@models/story.model';
 import { AppRoutes } from '../../app.routes';
@@ -29,6 +29,7 @@ import { RouterLink } from '@angular/router';
 					}"
 					class="bg-gray-50 px-7 py-5"
 				>
+					<!-- Render date label only if originalPublication exists -->
 					@if (story().originalPublication) {
 						<cuentoneta-story-edition-date-label [label]="story().originalPublication" />
 					}
@@ -46,8 +47,8 @@ import { RouterLink } from '@angular/router';
 	`,
 })
 export class NavigableStoryTeaserComponent {
-	story = input.required<StoryTeaser>();
-	selected = input<boolean>();
-	authorSlug = input.required<string>();
+	@Input() story!: StoryTeaser;
+	@Input() selected!: boolean;
+	@Input() authorSlug!: string;
 	protected readonly appRoutes = AppRoutes;
 }
