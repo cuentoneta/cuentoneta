@@ -77,7 +77,6 @@
 		"@nx/eslint-plugin": "19.8.6",
 		"@nx/jest": "19.8.6",
 		"@nx/js": "19.8.6",
-		"@nx/linter": "19.8.6",
 		"@nx/storybook": "19.8.6",
 		"@nx/workspace": "19.8.6",
 		"@storybook/addon-essentials": "^8.3.5",
