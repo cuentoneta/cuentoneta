@@ -1,5 +1,3 @@
 echo "--- Formating Code ---"
 echo ""
 pnpm pretty-quick --staged
-echo "--- Running Stylelint ---"
-pnpm stylelint "**/*.{css,scss,sass}" --fix
