@@ -16,20 +16,6 @@ const meta: Meta<StorylistCardComponent> = {
 export default meta;
 type Story = StoryObj<StorylistCardComponent>;
 
-export const Primary: Story = {
-	render: (args: StorylistCardComponent) => ({
-		props: args,
-	}),
-	args: {},
-};
-
-export const Loading: Story = {
-	render: (args: StorylistCardComponent) => ({
-		props: args,
-	}),
-	args: {},
-};
-
 export const Layout = {
 	render: (args: PublicationCardComponent) => ({
 		props: args,
