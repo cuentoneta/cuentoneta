@@ -1,7 +1,7 @@
 import { SpaceRecordingWidgetComponent } from './space-recording-widget.component';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import { render, screen } from '@testing-library/angular';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule, DatePipe, NgOptimizedImage } from '@angular/common';
 import { spaceRecordingMock } from '../../mocks/space-recording.mock';
 
 describe('SpaceRecordingWidgetComponent', () => {
@@ -31,7 +31,9 @@ describe('SpaceRecordingWidgetComponent', () => {
 
 	it('should display the recording date', async () => {
 		await setup();
-		expect(screen.getByText('March 27, 2024')).toBeInTheDocument();
+		const datePipe = new DatePipe('en-US');
+		const date = datePipe.transform(new Date(spaceRecordingMock.data.createdAt), 'MMMM d, YYYY') as string;
+		expect(screen.getByText(date)).toBeInTheDocument();
 	});
 
 	it('should display the recording duration', async () => {
