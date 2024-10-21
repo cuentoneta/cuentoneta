@@ -14,13 +14,20 @@ registerLocaleData(localeEs);
 // Modelos
 import { Publication } from '@models/storylist.model';
 import { storyPreviewMock } from '../../mocks/story.mock';
+import { RouterTestingModule } from '@angular/router/testing';
 
 export default {
 	title: 'PublicationCardComponent',
 	component: PublicationCardComponent,
 	decorators: [
 		moduleMetadata({
-			imports: [NgOptimizedImage, NgxSkeletonLoaderModule, StoryCardSkeletonComponent, StoryEditionDateLabelComponent],
+			imports: [
+				NgOptimizedImage,
+				NgxSkeletonLoaderModule,
+				StoryCardSkeletonComponent,
+				StoryEditionDateLabelComponent,
+				RouterTestingModule,
+			],
 			providers: [DatePipe, { provide: LOCALE_ID, useValue: 'es-419' }],
 		}),
 	],
@@ -33,55 +40,20 @@ const publication: Publication = {
 	story: storyPreviewMock,
 };
 
-export const Historia = {
+export const Primary = {
 	render: (args: PublicationCardComponent) => ({
 		props: args,
 		template: `
       <div class="grid grid-cols-3 gap-4">
           <cuentoneta-publication-card
-              [editionPrefix]="editionPrefix" 
-              [editionSuffix]="editionSuffix" 
-              [displayDate]="displayDate" 
-              [editionIndex]="editionIndex" 
-              [publication]="publication1">
-          </cuentoneta-publication-card>
-          <cuentoneta-publication-card
-              [editionPrefix]="editionPrefix" 
-              [editionSuffix]="editionSuffix" 
-              [displayDate]="displayDate" 
-              [editionIndex]="editionIndex" 
-              [publication]="publication2">
-          </cuentoneta-publication-card>
-          <cuentoneta-publication-card
-              [editionPrefix]="editionPrefix" 
-              [editionSuffix]="editionSuffix" 
-              [displayDate]="displayDate" 
-              [editionIndex]="editionIndex" 
-              [publication]="publication3">
-          </cuentoneta-publication-card>
+              [editionLabel]="editionLabel" 
+              [publication]="publication"
+              [navigationRoute]="['/']" />
     </div>
 `,
 	}),
 	args: {
-		editionPrefix: 'Episodio',
-		editionSuffix: '',
-		displayDate: false,
-		editionIndex: 0,
-		publication1: publication,
-		publication2: { ...publication, published: false },
-		publication3: null,
-	},
-};
-
-export const Cargando = {
-	render: (args: PublicationCardComponent) => ({
-		props: args,
-	}),
-	args: {
-		editionPrefix: 'Episodio',
-		editionSuffix: '',
-		displayDate: false,
-		editionIndex: 0,
-		publication: null,
+		editionLabel: 'Episodio #1',
+		publication: publication,
 	},
 };
