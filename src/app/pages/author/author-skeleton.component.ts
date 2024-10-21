@@ -66,7 +66,7 @@ import { ThemeService } from '../../providers/theme.service';
 				count="6"
 			></ngx-skeleton-loader>
 		</section>
-		<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-8">
+		<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
 			@for (item of 6 | repeat; track $index) {
 				<cuentoneta-story-card-skeleton [animation]="'progress'" [displayFooter]="false" />
 			}
