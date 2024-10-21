@@ -33,7 +33,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 			@if (storylist(); as storylist) {
 				<div [routerLink]="['/' + appRoutes.StoryList, storylist.slug]" class="navigation-link">
 					<section
-						class="flex max-w-[480px] flex-col gap-4 rounded-t-2xl border-1 border-b-0 border-solid border-primary-300 px-4 pt-5"
+						class="flex flex-col gap-4 rounded-t-2xl border-1 border-b-0 border-solid border-primary-300 px-4 pt-5"
 					>
 						<h1
 							class="h3 cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap font-source-serif italic hover:text-interactive-500"
