@@ -16,7 +16,7 @@
 		</h3>
 	</div>
 
-	<section class="grid grid-cols-1 justify-items-center gap-8 lg:grid-cols-2">
+	<section class="grid grid-cols-1 justify-items-center gap-8 sm:grid-cols-2">
 		@defer (when cards.length > 0) {
 			@for (storylist of cards; track storylist.slug) {
 				<cuentoneta-storylist-card [storylist]="storylist" class="card w-full"> </cuentoneta-storylist-card>
