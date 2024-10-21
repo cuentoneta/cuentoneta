@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { SpaceRecording } from '@models/media.model';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
@@ -8,7 +8,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	standalone: true,
 	imports: [CommonModule, NgOptimizedImage, PortableTextParserComponent],
 	template: `
-		<a [href]="spaceUrl" target="_blank" class="mb-2 block">
+		<a [href]="spaceUrl()" aria-label="space-recording-href" target="_blank" class="mb-2 block">
 			<section class="spaces-card inter-body-base grid grid-rows-3-auto rounded-lg p-4 text-white">
 				<div class="flex items-center justify-between text-base">
 					<div class="spaces-host flex gap-2.5">
@@ -51,12 +51,5 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 })
 export class SpaceRecordingWidgetComponent {
 	media = input.required<SpaceRecording>();
-
-	public spaceUrl: string = '';
-
-	constructor() {
-		effect(() => {
-			this.spaceUrl = this.media().data.entities.urls[0];
-		});
-	}
+	spaceUrl = computed(() => this.media().data.entities.urls[0]);
 }
