@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { SpaceRecording } from '@models/media.model';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
