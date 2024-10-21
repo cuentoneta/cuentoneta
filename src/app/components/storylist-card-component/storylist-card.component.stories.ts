@@ -1,4 +1,4 @@
-import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
+import { Meta, moduleMetadata } from '@storybook/angular';
 import { StorylistCardComponent } from './storylist-card.component';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
