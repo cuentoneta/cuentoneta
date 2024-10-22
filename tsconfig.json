@@ -17,6 +17,7 @@
 		"skipDefaultLibCheck": true,
 		"baseUrl": ".",
 		"forceConsistentCasingInFileNames": true,
+		"strictNullChecks": true,
 		"strict": true,
 		"noImplicitOverride": true,
 		"noPropertyAccessFromIndexSignature": true,
