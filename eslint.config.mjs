@@ -27,6 +27,7 @@ export default [
 			'plugin:@nx/typescript',
 			'plugin:@nx/angular',
 			'plugin:@angular-eslint/template/process-inline-templates',
+			'plugin:@stylistic/js',
 			'plugin:testing-library/angular',
 			'plugin:jest-dom/recommended',
 		)
@@ -56,8 +57,8 @@ export default [
 				},
 			],
 
+			'@stylistic/js/no-extra-semi': 'error',
 			'@typescript-eslint/no-inferrable-types': 0,
-			'@typescript-eslint/no-extra-semi': 'error',
 			'@typescript-eslint/no-unused-vars': 'error',
 			'@typescript-eslint/no-non-null-assertion': 'error',
 			'@typescript-eslint/no-explicit-any': 'error',
