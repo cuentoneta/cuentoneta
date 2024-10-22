@@ -8,19 +8,6 @@ import { ThemeService } from '../../providers/theme.service';
 	standalone: true,
 	imports: [CommonModule, NgxSkeletonLoaderModule],
 	template: `
-		<ngx-skeleton-loader
-			[animation]="'progress-dark'"
-			[theme]="{
-				'border-radius': '0',
-				'border-top-left-radius': '8px',
-				'border-top-right-radius': '8px',
-				height: '240px',
-				'margin-bottom': 0,
-				width: '100%'
-			}"
-			count="1"
-			appearance="line"
-		></ngx-skeleton-loader>
 		<section class="flex flex-col gap-4 px-4 pt-5">
 			<ngx-skeleton-loader
 				[theme]="{

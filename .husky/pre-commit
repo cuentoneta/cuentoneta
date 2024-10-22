@@ -1,4 +1,3 @@
 echo "--- Formating Code ---"
 echo ""
 pnpm pretty-quick --staged
-

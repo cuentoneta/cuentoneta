@@ -63,7 +63,7 @@
 				[attr.aria-busy]="!publication"
 				class="xs:max-md:!col-span-1 md:col-span-6"
 			>
-				@if (publication) {
+				@defer (when !!publication) {
 					@if (publication.published) {
 						<cuentoneta-publication-card
 							[editionLabel]="publication | mapPublicationEditionLabel: storylist()!"
@@ -86,7 +86,7 @@
 							content
 						/>
 					}
-				} @else {
+				} @placeholder {
 					<cuentoneta-story-card-skeleton [animation]="'progress'" />
 				}
 			</div>
