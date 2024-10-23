@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/angular';
 import { PortableTextMarksSerializerComponent } from './portable-text-marks-serializer.component';
 import { portableTextMarksSerializerMock } from 'src/app/mocks/portable-text-marks-serializer.mock';
 
-fdescribe('PortableTextMarksSerializerComponent', () => {
+describe('PortableTextMarksSerializerComponent', () => {
 	const setup = async () =>
 		await render(PortableTextMarksSerializerComponent, {
 			inputs: {
