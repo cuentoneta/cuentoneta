@@ -13,9 +13,7 @@ module.exports = {
 		name: '@storybook/angular',
 		options: {},
 	},
-	docs: {
-		autodocs: true,
-	},
+	docs: {},
 	staticDirs: ['../src/assets'],
 };
 
