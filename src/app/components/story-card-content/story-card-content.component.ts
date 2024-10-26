@@ -13,6 +13,7 @@ import { TextBlockContent } from '@models/block-content.model';
 			<cuentoneta-portable-text-parser
 				[type]="'span'"
 				[paragraphs]="body()"
+				data-testid="portable-text-parser"
 				class="sm:source-serif-pro-body-base hidden sm:relative sm:line-clamp-3 sm:min-h-18 sm:text-ellipsis sm:text-justify"
 			></cuentoneta-portable-text-parser>
 		</section>

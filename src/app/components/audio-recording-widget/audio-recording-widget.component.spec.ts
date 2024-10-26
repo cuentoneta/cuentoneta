@@ -7,7 +7,7 @@ import { AudioRecordingWidgetComponent } from './audio-recording-widget.componen
 // Mocks
 import { audioRecordingMock } from '../../mocks/audio-recording.mock';
 
-fdescribe('AudioRecordingWidgetComponent', () => {
+describe('AudioRecordingWidgetComponent', () => {
 	it('should render the component', async () => {
 		const { container } = await render(AudioRecordingWidgetComponent, {
 			inputs: { media: audioRecordingMock },
