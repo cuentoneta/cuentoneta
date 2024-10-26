@@ -1,7 +1,8 @@
 import { YouTubeVideo } from '@models/media.model';
 
-const youtubeVideoMock: YouTubeVideo = {
+export const youtubeVideoMock: YouTubeVideo = {
 	title: 'Video alusivo a la narración de "El espejo del tiempo"',
+	type: 'youTubeVideo',
 	description: [
 		{
 			markDefs: [
