@@ -5,31 +5,13 @@ export const youtubeVideoMock: YouTubeVideo = {
 	type: 'youTubeVideo',
 	description: [
 		{
-			markDefs: [
-				{
-					_type: 'link',
-					href: 'https://www.youtube.com/@gativideo',
-					_key: 'de7b21f8e43f',
-				},
-			],
+			markDefs: [],
 			children: [
 				{
 					marks: [],
-					text: 'Video alusivo a la narración de "El espejo del tiempo" en el canal de',
+					text: 'Video alusivo a la narración de "El espejo del tiempo".',
 					_key: '7d7e212de407',
 					_type: 'span',
-				},
-				{
-					_type: 'span',
-					marks: ['de7b21f8e43f'],
-					text: 'Gativideo',
-					_key: '374fb3581549',
-				},
-				{
-					text: '.',
-					_key: '83baeb531387',
-					_type: 'span',
-					marks: [],
 				},
 			],
 			_type: 'block',
