@@ -1,21 +1,21 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { render, screen } from '@testing-library/angular';
 import { YoutubeVideoWidgetComponent } from './youtube-video-widget.component';
+import { youtubeVideoMock } from '../../mocks/youtube-video.mock';
 
-xdescribe('YoutubeVideoWidgetComponent', () => {
-	let component: YoutubeVideoWidgetComponent;
-	let fixture: ComponentFixture<YoutubeVideoWidgetComponent>;
+describe('YoutubeVideoWidgetComponent', () => {
+	it('should render the component', async () => {
+		const { container } = await render(YoutubeVideoWidgetComponent, {
+			inputs: { media: youtubeVideoMock },
+		});
 
-	beforeEach(async () => {
-		await TestBed.configureTestingModule({
-			imports: [YoutubeVideoWidgetComponent],
-		}).compileComponents();
-
-		fixture = TestBed.createComponent(YoutubeVideoWidgetComponent);
-		component = fixture.componentInstance;
-		fixture.detectChanges();
+		expect(container).toBeInTheDocument();
 	});
 
-	it('should create', () => {
-		expect(component).toBeTruthy();
+	it('should display the video title', async () => {
+		await render(YoutubeVideoWidgetComponent, {
+			inputs: { media: youtubeVideoMock },
+		});
+
+		expect(screen.getByText('Video alusivo a la narración de "El espejo del tiempo".')).toBeInTheDocument();
 	});
 });
