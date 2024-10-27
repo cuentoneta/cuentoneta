@@ -164,7 +164,7 @@ export async function mapStoryContent(result: NonNullable<StoryBySlugQueryResult
 		})),
 		paragraphs: mapBlockContentToTextParagraphs(result.body),
 		summary: mapBlockContentToTextParagraphs(result.review),
-		author: mapAuthor(result.author),
+		author: mapAuthor(result.author, result.language),
 		media: await mapMediaSources(result.mediaSources),
 		resources: mapResources(result.resources),
 	};
