@@ -1,9 +1,5 @@
 <aside class="hidden md:block">
-	@if (story) {
-		@defer {
-			<cuentoneta-story-navigation-bar />
-		}
-	}
+	<cuentoneta-story-navigation-bar />
 </aside>
 
 <main>
@@ -16,7 +12,7 @@
 			<aside class="mt-6 sm:float-right sm:mb-12 sm:ml-12 sm:mt-0">
 				@defer {
 					<cuentoneta-share-content
-						[isLoading]="fetchContentDirective.isLoading"
+						[isLoading]="!story"
 						[params]="shareContentParams"
 						[route]="appRoutes.Story"
 						[message]="shareMessage"
@@ -24,7 +20,7 @@
 				}
 			</aside>
 			<div>
-				@if (story && !fetchContentDirective.isLoading) {
+				@if (story) {
 					<h1 [lang]="story.language" class="h1 mb-2">{{ story.title }}</h1>
 					<a
 						[lang]="story.language"
@@ -73,7 +69,7 @@
 			</div>
 		</header>
 
-		@if (story && !fetchContentDirective.isLoading) {
+		@if (story) {
 			@if (story.media) {
 				@defer {
 					<cuentoneta-media-resource [mediaResources]="story.media"></cuentoneta-media-resource>
@@ -91,7 +87,7 @@
 			}
 		}
 
-		@if (story && !fetchContentDirective.isLoading) {
+		@if (story) {
 			<section [lang]="story.language">
 				<cuentoneta-portable-text-parser
 					[classes]="'source-serif-pro-body-xl mb-8 leading-8'"
@@ -109,8 +105,8 @@
 		}
 
 		<footer>
-			@if (story && !fetchContentDirective.isLoading) {
-				@defer {
+			@defer (when story) {
+				@if (story) {
 					<cuentoneta-bio-summary-card [story]="story" />
 				}
 			}
