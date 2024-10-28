@@ -33,6 +33,8 @@ Para crear una campaña de contenido se requiere:
   - Una imagen de `540px x 220px` para presentar la campaña en dispositivos móviles
 - **Descripción**
   - Un cuerpo de texto que describa la campaña.
+- **Un enlace**
+  - Un enlace que redirija al contenido que se desea difundir mediante la campaña.
 
 En todos los casos donde se indican requerimientos de recursos de tipo texto es posible la inclusión de texto enriquecido, lo cual permite utilizar negritas, itálicas, emojis etc.
 
@@ -67,3 +69,7 @@ Escritorio y tablets (960px x 280px)
 ### Descripción
 
 "Recopilación de los cuentos relatados por Alberto Laiseca en el programa **_Cuentos de Terror con Alberto Laiseca_**, originalmente emitido en la señal iSAT entre 2002 y 2005."
+
+### Enlace
+
+https://www.cuentoneta.ar/storylist/cuentos-de-terror-de-alberto-laiseca
