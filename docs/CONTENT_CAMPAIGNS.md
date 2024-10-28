@@ -40,7 +40,7 @@ En todos los casos donde se indican requerimientos de recursos de tipo texto es 
 
 ### Ejemplo
 
-Una campaña de contenido incluida actualmente en La Cuentoneta es la que referencia a la storylist "Cuentos de terror con Alberto Laiseca". Esta campaña tiene la siguiente estructura, pudiendo observarse que el título es el mismo para ambos tamaños de pantalla pero los subtítulos son diferentes:
+Una campaña de contenido incluida actualmente en La Cuentoneta es la que referencia a la storylist ["Cuentos de terror con Alberto Laiseca"](https://www.cuentoneta.ar/storylist/cuentos-de-terror-de-alberto-laiseca). Esta campaña tiene la siguiente estructura, pudiendo observarse que el título es el mismo para ambos tamaños de pantalla pero los subtítulos son diferentes:
 
 #### Títulos
 
@@ -54,7 +54,15 @@ Una campaña de contenido incluida actualmente en La Cuentoneta es la que refere
 
 #### Imágenes
 
-[... ADJUNTAR IMÁGENES ...]
+Se requieren imágenes en dos tamaños, recomendándose la adaptación visual de los elementos de cada una para ajustarse a los dispositivos donde se visualizarán, tal como se muestra para este ejemplo:
+
+Móviles (540px x 220px)
+
+![611360ec02e690fc8c56d674162815690ea0b1fc-540x220](https://github.com/user-attachments/assets/eec494e9-cbf6-4d53-801b-1f3381284e6f)
+
+Escritorio y tablets (960px x 280px)
+
+![5e37e287e037a35f9034abb9da33dac68acc6517-960x280](https://github.com/user-attachments/assets/0503a976-6d82-40df-8880-604302da9d74)
 
 ### Descripción
 
