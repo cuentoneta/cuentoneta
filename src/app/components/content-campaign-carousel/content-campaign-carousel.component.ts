@@ -22,8 +22,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 
 	template: `
 		<section class="block">
-			<!-- TODO: Eliminar valor harcoded de 960px una vez actualizado el ancho máximo de pantalla -->
-			<owl-carousel-o [options]="options" class="mx-auto block max-w-[960px]">
+			<owl-carousel-o [options]="options" class="mx-auto block">
 				@for (slide of slides(); track slide.slug) {
 					<ng-template carouselSlide>
 						<div class="slide">
