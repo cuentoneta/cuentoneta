@@ -29,7 +29,7 @@ Para crear una campaña de contenido se requiere:
   - Se requiere de una descripción de máximo 36 caracteres para visualizarse en dispositivos móviles
   - Opcionalmente, puede adjuntarse otra descripción de hasta 60 caracteres para visualizars en dispositivos de escritorio y tablets
 - **Imágenes**
-  - Una imagen de estrictamente `960px x 540px` para presentar la campaña en dispositivos de escritorio y tablets
+  - Una imagen de estrictamente `960px x 280px` para presentar la campaña en dispositivos de escritorio y tablets
   - Una imagen de `540px x 220px` para presentar la campaña en dispositivos móviles
 - **Descripción**
   - Un cuerpo de texto que describa la campaña.
