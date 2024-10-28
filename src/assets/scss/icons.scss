@@ -1,0 +1,15 @@
+@mixin icon($url, $width, $height) {
+	width: $width;
+	height: $height;
+	mask-image: url($url);
+	mask-size: $width $height;
+	mask-position: center center;
+	mask-repeat: no-repeat;
+	display: block;
+
+	@apply bg-black;
+}
+
+.icon-arrow-right {
+	@include icon('../icons/icon-arrow-right.svg', 24px, 24px);
+}

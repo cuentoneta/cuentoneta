@@ -2,6 +2,7 @@ import { createGlobPatternsForDependencies } from '@nx/angular/tailwind';
 import { join } from 'path';
 import { Config } from 'tailwindcss/types/config';
 import { extendedColors } from './theme.config';
+import { screens } from './tailwind.screens';
 
 export default {
 	content: [join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}'), ...createGlobPatternsForDependencies(__dirname)],
@@ -10,13 +11,7 @@ export default {
 		content: {
 			blank: '""',
 		},
-		screens: {
-			xs: '0px',
-			sm: '640px',
-			md: '1024px',
-			lg: '1280px',
-			xl: '1536px',
-		},
+		screens: screens,
 		borderWidth: {
 			0: '0',
 			1: '1px',

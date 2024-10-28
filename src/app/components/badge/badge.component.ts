@@ -31,7 +31,7 @@ export class BadgeComponent implements OnInit {
 	private tooltipDirective = inject(TooltipDirective);
 
 	ngOnInit() {
-		this.tooltipDirective.text.set(this.tag().description);
+		this.tooltipDirective.text.set(this.tag().shortDescription);
 		this.tooltipDirective.position.set('top');
 	}
 }

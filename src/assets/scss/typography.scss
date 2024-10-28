@@ -68,6 +68,7 @@
 	.inter-body-base-semibold {
 		@apply inter-body-base font-semibold;
 	}
+
 	// endregion
 	// region Source Serif Pro font mixins to tailwind class
 	.source-serif-pro-body-lg {
@@ -77,5 +78,6 @@
 	.source-serif-pro-body-xl {
 		@apply font-source-serif text-xl tracking-normal;
 	}
+
 	// endregion
 }

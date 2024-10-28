@@ -2,43 +2,54 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // Modelos
-import { StoryPreview } from '@models/story.model';
 import { Publication } from '@models/storylist.model';
 
 // Componentes
-import { StoryCardSkeletonComponent } from '../story-card-skeleton/story-card-skeleton.component';
+import { AuthorTeaserComponent } from '../author-teaser/author-teaser.component';
+import { CardComponent } from '../card/card.component';
+import { MediaResourceTagsComponent } from '../media-resource-tags/media-resource-tags.component';
 import { StoryCardContentComponent } from '../story-card-content/story-card-content.component';
+import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 
 // Providers
 import { UrlTree } from '@angular/router';
-
 @Component({
 	selector: 'cuentoneta-publication-card',
 	template: `
-		<article
-			class="card flex flex-col gap-2 border-1 border-solid border-primary-300 p-5 shadow-lg hover:shadow-lg-hover md:gap-4 md:p-8"
-		>
-			@if (publication().published) {
-				<cuentoneta-story-card-content
-					[story]="publication().story"
-					[headerText]="publication().editionLabel"
-					[navigationLink]="navigationRoute()"
-				/>
-			} @else {
-				<cuentoneta-story-card-skeleton
-					[animation]="false"
-					[displayDate]="false"
-					[editionLabel]="publication().editionLabel"
-					[comingNextLabel]="publication().comingNextLabel"
-				/>
-			}
-		</article>
+		<cuentoneta-card [route]="navigationRoute()" [lang]="publication().story.language">
+			<header slot="header">
+				<cuentoneta-story-edition-date-label [label]="editionLabel()" />
+			</header>
+			<cuentoneta-story-card-content
+				[title]="publication().story.title"
+				[body]="publication().story.paragraphs"
+				slot="content"
+			/>
+			<div slot="footer" class="flex flex-col gap-2 md:gap-4">
+				<time class="inter-body-xs-semibold font-semibold text-gray-600">
+					{{ publication().story.approximateReadingTime }} minutos de lectura
+				</time>
+				<hr class="text-gray-300" />
+				<footer class="flex flex-row items-center justify-between">
+					<cuentoneta-author-teaser [author]="publication().story.author" />
+					<cuentoneta-media-resource-tags [resources]="publication().story.media" size="lg" />
+				</footer>
+			</div>
+		</cuentoneta-card>
 	`,
 	standalone: true,
-	imports: [CommonModule, StoryCardSkeletonComponent, StoryCardContentComponent],
+	imports: [
+		AuthorTeaserComponent,
+		CardComponent,
+		CommonModule,
+		MediaResourceTagsComponent,
+		StoryCardContentComponent,
+		StoryEditionDateLabelComponent,
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PublicationCardComponent {
-	publication = input.required<Publication<StoryPreview>>();
+	editionLabel = input.required<string>();
+	publication = input.required<Publication>();
 	navigationRoute = input.required<UrlTree>();
 }

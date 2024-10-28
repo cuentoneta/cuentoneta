@@ -1,21 +1,24 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { render, screen } from '@testing-library/angular';
 import { PortableTextMarksSerializerComponent } from './portable-text-marks-serializer.component';
+import { portableTextMarksSerializerMock } from 'src/app/mocks/portable-text-marks-serializer.mock';
 
-xdescribe('PortableTextMarksSerializerComponent', () => {
-	let component: PortableTextMarksSerializerComponent;
-	let fixture: ComponentFixture<PortableTextMarksSerializerComponent>;
+describe('PortableTextMarksSerializerComponent', () => {
+	const setup = async () =>
+		await render(PortableTextMarksSerializerComponent, {
+			inputs: {
+				text: [portableTextMarksSerializerMock],
+			},
+		});
 
-	beforeEach(async () => {
-		await TestBed.configureTestingModule({
-			imports: [PortableTextMarksSerializerComponent],
-		}).compileComponents();
+	it('should render the component', async () => {
+		const { container } = await setup();
 
-		fixture = TestBed.createComponent(PortableTextMarksSerializerComponent);
-		component = fixture.componentInstance;
-		fixture.detectChanges();
+		expect(container).toBeInTheDocument();
 	});
 
-	it('should create', () => {
-		expect(component).toBeTruthy();
+	it('should diply the text', async () => {
+		await setup();
+
+		expect(screen.getByText(portableTextMarksSerializerMock)).toBeInTheDocument();
 	});
 });

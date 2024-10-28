@@ -3,29 +3,65 @@
  * Este script debe ejecutarse como paso previo a la compilación de la aplicación
  * (build step).
  *
- * Para mejorar los tiempos de carga del paint inicial de la aplicación, la con-
- * figuración de contenido se obtiene desde las variables de entorno y se deposita
- * en el archivo de environment.ts, el cual es compilado junto con la aplicación.
+ * En caso de que no exista el archivo .env en la raíz del proyecto, se creará uno
+ * con las variables por defecto, las cuales se encuentran descriptas en la constante
+ * defaultEnvVariables.
  *
  * Autor: @rolivencia
  */
 
-// Importar cliente de Sanity
-import { client } from '../src/api/_helpers/sanity-connector';
-
-// Interfaces
-import { StorylistDeckConfig } from '../src/app/models/content.model';
-
 // NodeJS & env
-import { writeFile, existsSync, mkdirSync } from 'fs';
+import { writeFileSync, existsSync, mkdirSync, writeFile } from 'fs';
 import ErrnoException = NodeJS.ErrnoException;
 import { TEnvironmentType } from './vercel-environments.model';
-
-const dirPath = `src/app/environments`;
-const targetPath = `${dirPath}/environment.ts`;
+import { join } from 'node:path';
 
 // Constantes para generar el archivo de environment
 const environment: TEnvironmentType = (process.env['VERCEL_ENV'] as TEnvironmentType) ?? 'development';
+const dirPath = `src/app/environments`;
+const targetPath = `${dirPath}/environment.ts`;
+
+const defaultEnvVariables = {
+	SANITY_STUDIO_DATASET: 'development',
+	SANITY_STUDIO_PROJECT_ID: 's4dbqkc5',
+	CUENTONETA_WEBSITE: 'https://www.cuentoneta.ar',
+};
+
+// Crea un archivo .env con las variables por defecto si no existe
+function createAppEnvFile() {
+	const envFilePath = join(process.cwd(), '.env');
+	if (existsSync(envFilePath)) {
+		console.log('El archivo .env de la app ya existe, se saltea el paso de creación.');
+		return;
+	}
+
+	const fileContents = Object.entries(defaultEnvVariables)
+		.map(([key, value]) => `${key}=${value}`)
+		.join('\n');
+
+	writeFileSync(envFilePath, fileContents);
+	console.log('Creado archivo .env para la app con variables por defecto.');
+}
+
+function createSanityStudioEnvFile() {
+	const envFilePath = join(process.cwd(), 'cms/.env');
+	if (existsSync(envFilePath)) {
+		console.log('El archivo .env de Sanity Studio ya existe, se saltea el paso de creación.');
+		return;
+	}
+
+	const fileContents = Object.entries(defaultEnvVariables)
+		.map(([key, value]) => `${key}=${value}`)
+		.join('\n');
+
+	writeFileSync(envFilePath, fileContents);
+	console.log('Creado archivo .env para Sanity Studio con variables por defecto.');
+}
+
+if (environment === 'development') {
+	createAppEnvFile();
+	createSanityStudioEnvFile();
+}
 
 const branchUrl: string = process.env['VERCEL_BRANCH_URL'] as string;
 const stagingBranchUrl = 'cuentoneta-git-develop-cuentoneta.vercel.app';
@@ -49,91 +85,29 @@ const generateApiUrl = (environment: TEnvironmentType, branchUrl: string): strin
 
 const apiUrl = generateApiUrl(environment, branchUrl);
 
-// Obtiene la vista de preview para generar skeletons
-const fetchStorylistsPreviewDeckConfig = () => {
-	const subQuery = `{
-        'slug': slug.current,
-        'title': title,
-        'ordering': previewGridConfig.ordering,
-        'previewGridSkeletonConfig': {
-            'gridTemplateColumns': previewGridConfig.gridTemplateColumns,
-            'titlePlacement': previewGridConfig.titlePlacement,
-            'cardsPlacement': previewGridConfig.cardsPlacement[] {
-            'order': order,
-            'slug': @.publication.story->slug.current,
-            'startCol': startCol,
-            'imageSlug': imageSlug.current,
-            'endCol': endCol,
-            'startRow': startRow,
-            'endRow': endRow,
-            }
-        },
-        'gridSkeletonConfig': {
-            'gridTemplateColumns': gridConfig.gridTemplateColumns,
-            'titlePlacement': gridConfig.titlePlacement,
-            'cardsPlacement': gridConfig.cardsPlacement[] {
-            'order': order,
-            'slug': @.publication.story->slug.current,
-            'startCol': startCol,
-            'imageSlug': imageSlug.current,
-            'endCol': endCol,
-            'startRow': startRow,
-            'endRow': endRow,
-            }
-        }
-  }`;
-
-	return client.fetch(
-		`*[_type == 'landingPage'] {
-            'previews': previews[]-> ${subQuery},
-            'cards': cards[]-> ${subQuery}
-          }[0]`,
-	);
-};
-
-fetchStorylistsPreviewDeckConfig().then(
-	(landingPage: { previews: StorylistDeckConfig[]; cards: StorylistDeckConfig[] }) => {
-		// Accede a las variables de entorno y genera un string
-		// correspondiente al objeto environment que utilizará Angular
-		const environmentFileContent = `
+// Accede a las variables de entorno y genera un string
+// correspondiente al objeto environment que utilizará Angular
+const environmentFileContent = `
     export const environment = {
        environment: "${environment}",
-       contentConfig: { 
-        previews: ${JSON.stringify(
-					landingPage.previews
-						.filter((storylist: any) => !!storylist.previewGridSkeletonConfig.cardsPlacement)
-						.map((storylist: any) => ({
-							...storylist,
-							amount: storylist.previewGridSkeletonConfig.cardsPlacement.filter((card: any) => !!card.slug).length,
-						})),
-				)},
-        cards: ${JSON.stringify(
-					landingPage.cards.map((storylist: any) => ({
-						...storylist,
-						amount: storylist.gridSkeletonConfig.cardsPlacement.filter((card: any) => !!card.slug).length,
-					})),
-				)}
-       },
        website: "${process.env['CUENTONETA_WEBSITE']}",
        apiUrl: "${apiUrl}"
     };
 `;
 
-		// En caso de que no exista el directorio environments, se lo crea
-		if (!existsSync(dirPath)) {
-			mkdirSync(dirPath);
-		}
+// En caso de que no exista el directorio environments, se lo crea
+if (!existsSync(dirPath)) {
+	mkdirSync(dirPath);
+}
 
-		// Escribe el contenido en el archivo correspondiente environment.ts
-		writeFile(targetPath, environmentFileContent, { flag: 'w' }, function (err: ErrnoException | null) {
-			if (err) {
-				console.log(err);
-				return;
-			}
-			console.log(`Variables de entorno escritas en ${targetPath}`);
-			console.log('Ambiente de Vercel - VERCEL_ENV = ', process.env['VERCEL_ENV']);
-			console.log('URL de branch de Vercel - VERCEL_BRANCH_URL = ', process.env['VERCEL_BRANCH_URL']);
-			console.log('URL de API = ', apiUrl);
-		});
-	},
-);
+// Escribe el contenido en el archivo correspondiente environment.ts
+writeFile(targetPath, environmentFileContent, { flag: 'w' }, function (err: ErrnoException | null) {
+	if (err) {
+		console.log(err);
+		return;
+	}
+	console.log(`Variables de entorno escritas en ${targetPath}`);
+	console.log('Ambiente de Vercel - VERCEL_ENV = ', process.env['VERCEL_ENV']);
+	console.log('URL de branch de Vercel - VERCEL_BRANCH_URL = ', process.env['VERCEL_BRANCH_URL']);
+	console.log('URL de API = ', apiUrl);
+});

@@ -11,7 +11,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Models
 import { Storylist } from '@models/storylist.model';
-import { StorylistGridSkeletonConfig } from '@models/content.model';
 
 // Directives
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
@@ -46,11 +45,6 @@ xdescribe('StorylistComponent', () => {
 	template: '',
 })
 class MockStorylistCardDeckComponent {
-	number = input(6);
 	storyList = input<Storylist>();
 	isLoading = input(false);
-	canNavigateToStorylist = input(false);
-	displayTitle = input(true);
-	displayFeaturedImage = input(false);
-	skeletonConfig = input<StorylistGridSkeletonConfig>();
 }

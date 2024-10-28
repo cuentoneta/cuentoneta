@@ -1,23 +1,21 @@
-// Sanity Client
+// Conector de Sanity
 import { client } from '../_helpers/sanity-connector';
 
+// Modelos
+import { LandingPageContent } from '@models/landing-page-content.model';
+
 // Queries
-import { mapStorylist, mapStorylistTeaser } from '../_utils/functions';
-import { fetchLandingPageContentQuery } from '../_queries/content.query';
-import { FetchLandingPageContentQueryResult } from '../sanity/types';
+import { landingPageContentQuery } from '../_queries/content.query';
 
-export async function fetchLandingPageContent() {
-	const result: FetchLandingPageContentQueryResult = await client.fetch(fetchLandingPageContentQuery);
-	const cards = [];
-	const previews = [];
+// Utils
+import { mapLandingPageContent } from '../_utils/functions';
 
-	for (const preview of result.previews) {
-		previews.push(await mapStorylist(preview));
+export async function fetchLandingPageContent(): Promise<LandingPageContent> {
+	const result = await client.fetch(landingPageContentQuery);
+
+	if (!result) {
+		throw new Error('Landing page content not found');
 	}
 
-	for (const card of result.cards) {
-		cards.push(await mapStorylistTeaser(card));
-	}
-
-	return { previews, cards };
+	return mapLandingPageContent(result);
 }

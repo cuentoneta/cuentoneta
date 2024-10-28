@@ -1,6 +1,4 @@
-import { Component, inject } from '@angular/core';
-import { Storylist } from '@models/storylist.model';
-import { ContentService } from '../../providers/content.service';
+import { Component } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { InternalLink } from '@models/link.model';
@@ -83,12 +81,7 @@ export class HeaderComponent {
 		{ label: 'Inicio', path: '/home' },
 		{ label: 'Nosotros', path: '/about' },
 	];
-	lists: Pick<Storylist, 'title' | 'slug'>[] = [];
 	displayMenu: boolean = false;
-	constructor() {
-		const contentService = inject(ContentService);
-		this.lists = contentService.getNavLists();
-	}
 
 	onMenuTogglerClicked() {
 		this.displayMenu = !this.displayMenu;

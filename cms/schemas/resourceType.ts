@@ -2,7 +2,7 @@ import { LinkIcon } from '@sanity/icons';
 import { preview } from 'sanity-plugin-icon-picker';
 import { defineField, defineType } from 'sanity';
 
-export const resource = defineField({
+export const resource = defineType({
 	name: 'resource',
 	title: 'Recurso',
 	type: 'object',
@@ -23,22 +23,25 @@ export const resource = defineField({
 			name: 'title',
 			title: 'Título',
 			type: 'string',
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'url',
 			title: 'URL',
 			type: 'string',
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'resourceType',
 			title: 'Tipo de recurso',
 			type: 'reference',
 			to: { type: 'resourceType' },
+			validation: (Rule) => Rule.required(),
 		}),
 	],
 });
 
-export default defineType({
+export const resourceType = defineType({
 	name: 'resourceType',
 	title: 'Tipos de Recursos',
 	type: 'document',
@@ -46,15 +49,15 @@ export default defineType({
 	preview: {
 		select: {
 			title: 'title',
-			description: 'description',
+			shortDescription: 'shortDescription',
 			provider: 'icon.provider',
 			name: 'icon.name',
 			options: 'icon.options',
 		},
-		prepare({ title, description, provider, name, options }) {
+		prepare({ title, shortDescription, provider, name, options }) {
 			return {
 				title: title,
-				subtitle: description,
+				subtitle: shortDescription,
 				media: preview({ provider, name, options }),
 			};
 		},
@@ -77,9 +80,15 @@ export default defineType({
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
+			name: 'shortDescription',
+			title: 'Descripción breve',
+			type: 'string',
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
 			name: 'description',
 			title: 'Descripción',
-			type: 'string',
+			type: 'blockContent',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
@@ -89,6 +98,7 @@ export default defineType({
 			options: {
 				storeSvg: true,
 			},
+			validation: (Rule) => Rule.required(),
 		}),
 	],
 });

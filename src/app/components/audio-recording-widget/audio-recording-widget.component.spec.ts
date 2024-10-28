@@ -1,21 +1,35 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+// Testing library
+import { render, screen } from '@testing-library/angular';
+
+// Component
 import { AudioRecordingWidgetComponent } from './audio-recording-widget.component';
 
-xdescribe('AudioRecordingWidgetComponent', () => {
-	let component: AudioRecordingWidgetComponent;
-	let fixture: ComponentFixture<AudioRecordingWidgetComponent>;
+// Mocks
+import { audioRecordingMock } from '../../mocks/audio-recording.mock';
 
-	beforeEach(async () => {
-		await TestBed.configureTestingModule({
-			imports: [AudioRecordingWidgetComponent],
-		}).compileComponents();
+describe('AudioRecordingWidgetComponent', () => {
+	it('should render the component', async () => {
+		const { container } = await render(AudioRecordingWidgetComponent, {
+			inputs: { media: audioRecordingMock },
+		});
 
-		fixture = TestBed.createComponent(AudioRecordingWidgetComponent);
-		component = fixture.componentInstance;
-		fixture.detectChanges();
+		expect(container).toBeInTheDocument();
 	});
 
-	it('should create', () => {
-		expect(component).toBeTruthy();
+	it('should render the audio player', async () => {
+		await render(AudioRecordingWidgetComponent, {
+			inputs: { media: audioRecordingMock },
+		});
+
+		const audioRecordingElement = screen.getByTestId('audio-recording') as HTMLElement & { currentSrc: string };
+		expect(audioRecordingElement.currentSrc === audioRecordingMock.data.url).toBeTruthy();
+	});
+
+	it('should display the audio recording title', async () => {
+		await render(AudioRecordingWidgetComponent, {
+			inputs: { media: audioRecordingMock },
+		});
+
+		expect(screen.getByText('Lectura del artículo sobre ajedrez en Wikipedia.')).toBeInTheDocument();
 	});
 });

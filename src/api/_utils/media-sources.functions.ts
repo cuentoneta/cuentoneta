@@ -1,14 +1,22 @@
+// 3rd party modules
+import { getTweetData } from './twitter-api';
+
+// Tipos de Sanity
+import { StoryBySlugQueryResult, StorylistQueryResult } from '../sanity/types';
+
+// Modelos
 import {
 	AudioRecording,
 	AudioRecordingSchemaObject,
 	Media,
-	MediaSchemaObject,
 	SpaceRecordingSchemaObject,
+	YouTubeVideo,
 	YoutubeVideoSchemaObject,
 } from '@models/media.model';
-import { getTweetData } from './twitter-api';
+import { mapBlockContentToTextParagraphs } from './functions';
 
-export async function mapMediaSources(mediaSources: MediaSchemaObject[]): Promise<Media[]> {
+type MediaResourcesStorySubQuery = NonNullable<StoryBySlugQueryResult>['mediaSources'];
+export async function mapMediaSources(mediaSources: MediaResourcesStorySubQuery): Promise<Media[]> {
 	if (!mediaSources) return [];
 
 	const media: Media[] = [];
@@ -26,8 +34,8 @@ export async function mapMediaSources(mediaSources: MediaSchemaObject[]): Promis
 	return media;
 }
 
-// TODO: Corregir estos duplicados (Bug mencionado en issue #969)
-export function mapMediaSourcesForStorylist(mediaSources: MediaSchemaObject[]): Media[] {
+type MediaResourcesStorylistSubQuery = NonNullable<StorylistQueryResult>['publications'][0]['story']['mediaSources'];
+export function mapMediaSourcesForStorylist(mediaSources: MediaResourcesStorylistSubQuery): Media[] {
 	if (!mediaSources) return [];
 
 	const media: Media[] = [];
@@ -39,8 +47,8 @@ export function mapMediaSourcesForStorylist(mediaSources: MediaSchemaObject[]): 
 			media.push({
 				title: mediaSource.title,
 				type: 'spaceRecording',
+				description: mapBlockContentToTextParagraphs(mediaSource.description),
 				data: {},
-				icon: mediaSource.icon,
 			});
 		}
 		if (mediaSource._type === 'youTubeVideo') {
@@ -50,24 +58,23 @@ export function mapMediaSourcesForStorylist(mediaSources: MediaSchemaObject[]): 
 	return media;
 }
 
-export function getAudioRecordingData(mediaSource: AudioRecordingSchemaObject): AudioRecording {
+function getAudioRecordingData(mediaSource: AudioRecordingSchemaObject): AudioRecording {
 	return {
 		title: mediaSource.title,
 		type: mediaSource._type,
-		icon: mediaSource.icon,
+		description: mapBlockContentToTextParagraphs(mediaSource.description),
 		data: {
 			url: mediaSource.url,
 		},
 	};
 }
 
-export function getYoutubeVideoData(mediaSource: YoutubeVideoSchemaObject) {
+function getYoutubeVideoData(mediaSource: YoutubeVideoSchemaObject): YouTubeVideo {
 	return {
 		title: mediaSource.title,
 		type: mediaSource._type,
-		icon: mediaSource.icon,
+		description: mapBlockContentToTextParagraphs(mediaSource.description),
 		data: {
-			description: mediaSource.description,
 			videoId: mediaSource.videoId,
 		},
 	};

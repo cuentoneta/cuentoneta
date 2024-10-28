@@ -28,7 +28,7 @@ import { ParagraphTemplateDirective } from './paragraph-template.directive';
 				<cuentoneta-portable-text-marks-serializer
 					[text]="block.text"
 					[marks]="block.marks ?? []"
-					[markDefs]="paragraph.markDefs ?? []"
+					[markDefs]="paragraph.markDefs"
 				></cuentoneta-portable-text-marks-serializer>
 			}
 		</ng-template>

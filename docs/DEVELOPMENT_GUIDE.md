@@ -84,6 +84,17 @@ Junto con Nx, el proyecto cuenta con ESLint y Prettier ya configuradas como depe
 - **<a href="https://jestjs.io/docs/getting-started">Jest</a>** como framework de testing unitario
 - **<a href="https://www.cypress.io/">Cypress</a>** como framework de testing end-to-end
 
+### Para generación y visualización de diagramas
+
+- **<a href="https://mermaid.js.org/">Mermaid</a>** como herramienta para la generación y visualización de diagramas dentro de archivos Markdown.
+
+Para poder hacer uso de las funcionalidades de Mermaid dentro del entorno de trabajo local, es necesario contar con una extensión para el IDE o editor de texto que se esté utilizando.
+
+- En el caso de Visual Studio Code, se recomienda la extensión [Markdown Preview Mermaid Support](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid).
+- En el caso de WebStorm, se recomienda la extensión [Markdown Mermaid](https://plugins.jetbrains.com/plugin/20146-mermaid/), la cual requiere la instalación previa de la extensión [Markdown](https://plugins.jetbrains.com/plugin/7793-markdown). Para el caso de WebStorm, se detalla que ambos plugins son oficiales de Jetbrains.
+
+Para la edición y visualización online de los diagramas también puede optarse por utilizar el [Mermaid Live Editor](https://mermaid-js.github.io/mermaid-live-editor/), en el cual pueden copiarse y pegarse los diagramas disponibles en nuestro repositorio para su visualización y modificación.
+
 ---
 
 ## Instalación y configuración del entorno local
@@ -96,7 +107,7 @@ en el canal **[#🚐 | la-cuentoneta][dc-channel]** en Discord.
 
 - Tener instalada una versión de [Node](https://nodejs.org/es/) igual o superior a `v20.11.0`, idealmente la última
   versión LTS.
-- Instalar `pnpm`, un gestor de paquetes alternativo para Node: `npm install -g pnpm`. Se recomienda la versión `8.2.0` o superior.
+- Instalar `pnpm`, un gestor de paquetes alternativo para Node: `npm install -g pnpm`. Se recomienda la versión `9.8.0` o superior.
 - Instalar `nx`, un CLI para desarrollo de monorepos: `pnpm install -g nx`. Se recomienda la versión `19.0.0` o
   superior.
 - Tener un editor de texto o IDE ([Visual Studio Code](https://code.visualstudio.com/), [Vim](https://www.vim.org/), [WebStorm](https://www.jetbrains.com/es-es/webstorm/), etc).
@@ -127,15 +138,7 @@ git clone https://github.com/<tu_nombre_de_usuario_en_github>/cuentoneta.git
 cd cuentoneta
 ```
 
-Deberás luego crear un archivo `.env` en la raíz del proyecto con las siguientes variables de entorno:
-
-```bash
-SANITY_STUDIO_DATASET=development
-SANITY_STUDIO_PROJECT_ID=s4dbqkc5
-CUENTONETA_WEBSITE=https://cuentoneta.ar/
-```
-
-Posteriormente ejecuta el siguiente comando para instalar todas las dependencias listadas en el archivo [`package.json`](package.json).
+Posteriormente ejecuta el siguiente comando para instalar todas las dependencias listadas en el archivo [`package.json`](package.json). La ejecución de este comando también procederá a crear un archivo `.env`, el cual contiene las variables de entorno necesarias para el correcto funcionamiento del proyecto en el ambiente de desarrollo.
 
 ```bash
 pnpm install
@@ -147,7 +150,13 @@ O bien, su versión corta.
 pnpm i
 ```
 
-#### Paso 3: Correr el entorno de desarrollo localmente
+### Paso 3: Crear un build inicial del servidor
+
+```bash
+pnpm run build
+```
+
+#### Paso 4: Correr el entorno de desarrollo localmente
 
 Una vez hechos los pasos de instalación ejecutá el siguiente comando:
 
@@ -171,24 +180,13 @@ Para gestionar el contenido de La Cuentoneta utilizamos [Sanity Studio](https://
 
 #### Paso 1: Instalar dependencias
 
-Ejecutá el siguiente comando, posándote en el directorio `/cms`:
+Ejecutá el siguiente comando, posándote en el directorio `/cms`. Este comando se encargará también de crear el archivo `.env` con las variables de entorno necesarias para el correcto funcionamiento de Sanity Studio.:
 
 ```bash
 pnpm install
 ```
 
-#### Paso 2: Configurar archivo .env
-
-Deberás agregar un archivo `.env` en la carpeta `/cms`.
-
-El contenido del archivo `.env` deberá ser el siguiente:
-
-```
-SANITY_STUDIO_DATASET=development
-SANITY_STUDIO_PROJECT_ID=s4dbqkc5
-```
-
-#### Paso 3: Ejecutar el entorno de desarrollo
+#### Paso 2: Ejecutar el entorno de desarrollo
 
 En el mismo directorio, ejecutá el siguiente comando:
 

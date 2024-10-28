@@ -9,17 +9,21 @@ import landingPage from './landingPage';
 import story from './story';
 import storylist from './storylist';
 import tag from './tag';
-import resourceType from './resourceType';
+import { resourceType, resource } from './resourceType';
+import publication from './publication';
+import contentCampaign from './contentCampaign';
 
 export default [
-	// The following are document types which will appear in the studio.
-	// When added to this list, object types can be used as
-	// { type: 'typename' } in other document schemas
+	// Tipos de propiedades
+	blockContent,
+	publication,
+	resource,
+	// Tipos de documentos
 	landingPage,
+	contentCampaign,
 	storylist,
 	story,
 	author,
-	blockContent,
 	nationality,
 	resourceType,
 	tag,

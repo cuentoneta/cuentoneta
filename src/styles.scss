@@ -1,9 +1,14 @@
 // Imports de estilos globales
 @use 'assets/scss/reset' as *;
+@use 'assets/scss/icons' as *;
 @use 'assets/scss/typography' as *;
 @use 'assets/scss/theme' as *;
 @use 'assets/scss/transitions' as *;
 @use 'src/app/directives/tooltip.directive.scss' as *;
+
+// Imports de estilos de Ngx Owl Carousel
+@import 'ngx-owl-carousel-o/lib/styles/scss/owl.carousel';
+@import 'ngx-owl-carousel-o/lib/styles/scss/owl.theme.default';
 
 // Imports de Tailwind
 @tailwind base;
@@ -12,7 +17,7 @@
 
 // Imports de fuentes
 @font-face {
-	font-family: 'Inter';
+	font-family: Inter;
 	src: url('assets/fonts/inter.woff2');
 }
 
@@ -41,24 +46,4 @@
 
 ngx-skeleton-loader {
 	@apply block leading-0;
-}
-
-youtube-player {
-	.youtube-player-placeholder {
-		@apply mb-6 aspect-video w-full rounded-xl sm:mb-10  #{!important};
-		height: unset !important;
-	}
-
-	div iframe {
-		@apply mb-6 aspect-video w-full rounded-xl sm:mb-10 #{!important};
-		height: unset !important;
-	}
-}
-
-cuentoneta-bio-summary-card {
-	.bio-and-summary p {
-		a {
-			@apply text-interactive-500 underline hover:text-interactive-600;
-		}
-	}
 }

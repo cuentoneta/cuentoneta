@@ -1,4 +1,6 @@
 import { Tweet } from 'rettiwt-api';
+import { TextBlockContent } from '@models/block-content.model';
+import { BlockContent } from '../../api/sanity/types';
 
 /**
  * Modelos relacionados a los distintos tipos de contenido multimedia que se
@@ -12,8 +14,8 @@ import { Tweet } from 'rettiwt-api';
  */
 export interface Media {
 	title: string;
+	description: TextBlockContent[];
 	type: MediaTypeKey;
-	icon: string;
 	data?: unknown;
 }
 
@@ -26,7 +28,7 @@ export interface SpaceRecording extends Media {
 }
 
 export interface YouTubeVideo extends Media {
-	data: { description: string; videoId: string };
+	data: { videoId: string };
 }
 
 export type MediaTypes = AudioRecording | SpaceRecording | YouTubeVideo;
@@ -36,10 +38,11 @@ export type MediaTypeKey = 'spaceRecording' | 'audioRecording' | 'youTubeVideo';
  * Interfaces utilizadas por backend para definir los tipos de contenido multimedia
  */
 export interface MediaSchemaObject {
-	_id: string;
+	_key: string;
 	_type: MediaTypeKey;
 	title: string;
 	icon: string;
+	description: BlockContent;
 }
 
 export interface SpaceRecordingSchemaObject extends MediaSchemaObject {
@@ -53,6 +56,5 @@ export interface AudioRecordingSchemaObject extends MediaSchemaObject {
 }
 
 export interface YoutubeVideoSchemaObject extends MediaSchemaObject {
-	description: string;
 	videoId: string;
 }

@@ -4,6 +4,7 @@
 	"projectType": "application",
 	"sourceRoot": "./src",
 	"prefix": "cuentoneta",
+	"tags": [],
 	"targets": {
 		"build": {
 			"executor": "@nx/angular:application",
@@ -52,7 +53,7 @@
 			"defaultConfiguration": "production"
 		},
 		"lint": {
-			"executor": "@nx/linter:eslint",
+			"executor": "@nx/eslint:lint",
 			"outputs": ["{options.outputFile}"],
 			"options": {
 				"lintFilePatterns": ["./src/**/*.ts", "./src/**/*.html"]
@@ -60,7 +61,7 @@
 		},
 		"test": {
 			"executor": "@nx/jest:jest",
-			"outputs": ["{workspaceRoot}/coverage}"],
+			"outputs": [],
 			"options": {
 				"jestConfig": "jest.config.ts"
 			}
@@ -72,7 +73,8 @@
 				"configDir": "./.storybook",
 				"browserTarget": "cuentoneta:build",
 				"compodoc": false,
-				"styles": ["./src/styles.scss"]
+				"styles": ["./src/styles.scss"],
+				"assets": ["./src/favicon.ico", "./src/assets"]
 			},
 			"configurations": {
 				"ci": {
@@ -106,7 +108,13 @@
 				}
 			},
 			"defaultConfiguration": "development"
+		},
+		"stylelint": {
+			"executor": "nx-stylelint:lint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["**/*.css", "**/*.scss"]
+			}
 		}
-	},
-	"tags": []
+	}
 }

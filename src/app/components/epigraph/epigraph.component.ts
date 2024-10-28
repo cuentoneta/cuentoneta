@@ -16,7 +16,12 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 			></cuentoneta-portable-text-parser>
 			<div class="text-end">
 				@if (epigraph().reference) {
-					<em>{{ epigraph().reference }}</em>
+					<em>
+						<cuentoneta-portable-text-parser
+							[classes]="'self-baseline'"
+							[paragraphs]="epigraph().reference"
+						></cuentoneta-portable-text-parser
+					></em>
 				}
 			</div>
 		</div>

@@ -3,28 +3,31 @@
 
 	// Layout
 	@apply absolute left-0 top-0 z-50 box-border;
+
 	// Texto
 	@apply inter-body-xs-semibold bg-black text-center text-white opacity-0;
+
 	// Spacing
 	@apply w-auto rounded p-2;
+
 	// Interactividad
 	@apply pointer-events-none;
+
+	// Animaciones
+	animation: tooltip-slide 0.18s ease-out 0.5s;
+	animation-fill-mode: forwards;
 }
 
 .tooltip-arrow {
 	@apply absolute h-2 w-2 rotate-45 bg-black;
 }
 
-// Animaciones
-.tooltip-container {
-	animation: tooltip-slide 0.18s ease-out 0.5s;
-	animation-fill-mode: forwards;
-}
 @keyframes tooltip-slide {
 	0% {
 		opacity: 0;
 		transform: translateY(-0.25rem);
 	}
+
 	100% {
 		opacity: 1;
 		transform: translateY(0);
