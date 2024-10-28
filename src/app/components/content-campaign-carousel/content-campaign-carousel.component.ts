@@ -1,5 +1,5 @@
 // Core
-import { Component, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 
@@ -7,7 +7,10 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { CarouselModule, OwlOptions } from 'ngx-owl-carousel-o';
 
 // Models
-import { ContentCampaign, ContentCampaignViewport, ContentCampaignViewportKeys } from '@models/content-campaign.model';
+import { ContentCampaign, ContentCampaignViewport } from '@models/content-campaign.model';
+
+// Services
+import { ThemeService } from '../../providers/theme.service';
 
 // Components
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
@@ -24,37 +27,35 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 				@for (slide of slides(); track slide.slug) {
 					<ng-template carouselSlide>
 						<div class="slide">
-							@for (viewport of viewports; track $index) {
-								<a [routerLink]="slide.url" [ngClass]="viewportSpecificClasses[viewport]">
-									<header class="mb-3">
-										<h3 class="text-lg font-bold tracking-normal">
-											<cuentoneta-portable-text-parser
-												[paragraphs]="slide.contents[viewport].title"
-											></cuentoneta-portable-text-parser>
-										</h3>
-										<h4 class="h4 subtitle text-gray-600">
-											<cuentoneta-portable-text-parser
-												[paragraphs]="slide.contents[viewport].subtitle"
-											></cuentoneta-portable-text-parser>
-										</h4>
-									</header>
-									<img
-										[ngSrc]="slide.contents[viewport].imageUrl"
-										[width]="slide.contents[viewport].imageWidth"
-										[height]="slide.contents[viewport].imageHeight"
-										[alt]="'Imagen de la campaña de contenido ' + slide.title"
-										[ngClass]="
-											'max-w-[' +
-											slide.contents[viewport].imageWidth +
-											'px] max-h-[' +
-											slide.contents[viewport].imageHeight +
-											'px] rounded-2xl'
-										"
-										class="rounded-2xl"
-										priority
-									/>
-								</a>
-							}
+							<a [routerLink]="slide.url" [ngClass]="viewportSpecificClasses[viewport]">
+								<header class="mb-3">
+									<h3 class="text-lg font-bold tracking-normal">
+										<cuentoneta-portable-text-parser
+											[paragraphs]="slide.contents[viewport].title"
+										></cuentoneta-portable-text-parser>
+									</h3>
+									<h4 class="h4 subtitle text-gray-600">
+										<cuentoneta-portable-text-parser
+											[paragraphs]="slide.contents[viewport].subtitle"
+										></cuentoneta-portable-text-parser>
+									</h4>
+								</header>
+								<img
+									[ngSrc]="slide.contents[viewport].imageUrl"
+									[width]="slide.contents[viewport].imageWidth"
+									[height]="slide.contents[viewport].imageHeight"
+									[alt]="'Imagen de la campaña de contenido ' + slide.title"
+									[ngClass]="
+										'max-w-[' +
+										slide.contents[viewport].imageWidth +
+										'px] max-h-[' +
+										slide.contents[viewport].imageHeight +
+										'px] rounded-2xl'
+									"
+									class="rounded-2xl"
+									priority
+								/>
+							</a>
 						</div>
 					</ng-template>
 				}
@@ -63,10 +64,12 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	`,
 })
 export class ContentCampaignCarouselComponent {
+	private themeService = inject(ThemeService);
+
 	slides = input<ContentCampaign[]>([]);
 
-	// Lista de viewports soportados por el componente.
-	readonly viewports: ContentCampaignViewport[] = ContentCampaignViewportKeys;
+	// Viewport para el que debe renderizarse el contenido.
+	viewport: ContentCampaignViewport = this.themeService.viewport;
 
 	// Asigna las clases específicas de visibilidad para cada uno de los viewports soportados.
 	readonly viewportSpecificClasses: { [key in ContentCampaignViewport]: string } = {
