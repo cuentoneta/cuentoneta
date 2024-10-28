@@ -28,16 +28,16 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 						<div class="slide">
 							<a [routerLink]="slide.url" [ngClass]="viewportSpecificClasses[viewport]">
 								<header class="mb-3">
-									<h3 class="text-lg font-bold tracking-normal">
+									<h2 class="text-lg font-bold tracking-normal">
 										<cuentoneta-portable-text-parser
 											[paragraphs]="slide.contents[viewport].title"
 										></cuentoneta-portable-text-parser>
 									</h3>
-									<h4 class="h4 subtitle text-gray-600">
+									<h3 class="h4 subtitle text-gray-600">
 										<cuentoneta-portable-text-parser
 											[paragraphs]="slide.contents[viewport].subtitle"
 										></cuentoneta-portable-text-parser>
-									</h4>
+									</h3>
 								</header>
 								<img
 									[ngSrc]="slide.contents[viewport].imageUrl"
