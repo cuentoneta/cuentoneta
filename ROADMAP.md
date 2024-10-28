@@ -127,13 +127,24 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 ### Hito: Lanzamiento al público de la versión [2.4.3](https://github.com/cuentoneta/cuentoneta/releases/tag/2.4.2) de La Cuentoneta (lanzada el 2024/08/12)
 
+## Octubre de 2024
+
+- Actualización a Angular 18.2 y Nx 20.0.
+- Eliminación de grids dinámicas en favor de grids estáticas para el contenido de los decks de cards de las storylists, simplificando la estructura de los componentes y facilitando el mantenimiento y agregado de contenido a la plataforma.
+- Implementación de la funcionalidad "Campañas de Contenido", que permitirá a los administradores de la plataforma crear y publicar campañas de contenido en la landing page.
+- Mejoras en la experiencia de usuario de la plataforma, incluyendo mejoras en la navegación y en la visualización de los relatos acorde a un primer paso en la adaptación de los diseños de la v3 de la plataforma.
+- Publicación de la primera campaña de contenido en la landing page: "Pluma de la semana #1: Horacio Quiroga".
+- Incorporación de nuevos tests unitarios funcionales utilizando Angular Testing Library.
+- Actualización de Storybook a la versión 8.3.5 y ESLint a la versión 9.10.
+
+### Hito: Lanzamiento al público de la versión [2.5.0](https://github.com/cuentoneta/cuentoneta/releases/tag/2.5.0) de La Cuentoneta (lanzada el 2024/10/28)
+
 ---
 
 ## Futuros
 
 - Invitación abierta a autoras y autores santafesinos para participar en la storylist "Plumas Santafesinas", recopilando relatos breves y poemas de autoría provincial.
-- Implementación de una nueva sección "Pluma de la Semana", destacando un autor o autora diferente cada semana en la
-  landing page.
+- Agregado de secciones para comunidades y grupos de lectura, permitiendo a los usuarios crear y compartir storylists personalizadas.
 - Mejoras en storylists y landing page, en base a diseños nuevos de UX.
 - Preparación de la plataforma para alojar el primer concurso de escritura en La Cuentoneta, el _III Certamen
   Extraordinario de Escritura_, a cargo de la comunidad **[Tertulia Literaria](https://discord.gg/tertulia-literaria-795704695485235231)**.
