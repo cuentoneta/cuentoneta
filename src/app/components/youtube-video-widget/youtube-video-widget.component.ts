@@ -8,7 +8,11 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	selector: 'cuentoneta-youtube-video-widget',
 	standalone: true,
 	imports: [CommonModule, YouTubePlayer, PortableTextParserComponent],
-	template: `<youtube-player [videoId]="media().data.videoId" placeholderImageQuality="low" />
+	template: `<youtube-player
+			[videoId]="media().data.videoId"
+			data-testid="youtube-player"
+			placeholderImageQuality="low"
+		/>
 		<label class="inter-body-xs-medium text-primary-500"
 			><cuentoneta-portable-text-parser [paragraphs]="media().description"> </cuentoneta-portable-text-parser
 		></label>`,

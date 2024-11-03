@@ -66,10 +66,10 @@ import { StoryCardComponent } from '../../components/story-card/story-card.compo
 						}
 						<cuentoneta-portable-text-parser
 							[paragraphs]="author.biography!"
-							[classes]="'source-serif-pro-body-xl mb-8 leading-8 max-w-[960px]'"
+							[classes]="'source-serif-pro-body-xl mb-8 leading-8'"
 						></cuentoneta-portable-text-parser>
 					</section>
-					<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-8">
+					<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
 						@for (story of stories; track $index) {
 							<cuentoneta-story-card [story]="story" [navigationRoute]="story.navigationRoute"></cuentoneta-story-card>
 						}

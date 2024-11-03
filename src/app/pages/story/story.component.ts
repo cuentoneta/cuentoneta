@@ -90,6 +90,7 @@ export class StoryComponent {
 
 	constructor() {
 		effect((cleanUp) => {
+			this.story = undefined;
 			const { slug } = this.params();
 			const subscription = this.story$(slug).subscribe((story) => {
 				this.story = story;

@@ -26,6 +26,9 @@ import { UrlTree } from '@angular/router';
 				slot="content"
 			/>
 			<div slot="footer" class="flex flex-col gap-2 md:gap-4">
+				<time class="inter-body-xs-semibold font-semibold text-gray-600">
+					{{ publication().story.approximateReadingTime }} minutos de lectura
+				</time>
 				<hr class="text-gray-300" />
 				<footer class="flex flex-row items-center justify-between">
 					<cuentoneta-author-teaser [author]="publication().story.author" />

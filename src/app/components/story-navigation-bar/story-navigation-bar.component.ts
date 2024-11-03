@@ -20,10 +20,10 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 	selector: 'cuentoneta-story-navigation-bar',
 	template: `
 		<section class="grid grid-cols-1 gap-y-0.5 rounded-xl bg-gray-200 shadow-lg">
-			<header [attr.aria-busy]="isLoading" class="bg-gray-50 px-7 py-5">
+			<header [attr.aria-busy]="frameConfig().headerTitle" class="bg-gray-50 px-7 py-5">
 				@if (frameConfig().headerTitle) {
 					<a [routerLink]="frameConfig().navigationRoute.toString()">
-						<h3 class="h3 hover:text-interactive-500">{{ frameConfig().headerTitle }}</h3>
+						<h2 class="h3 hover:text-interactive-500">{{ frameConfig().headerTitle }}</h2>
 					</a>
 				} @else {
 					<ng-container *ngTemplateOutlet="titleSkeleton"></ng-container>
@@ -35,12 +35,11 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 			}
 
 			<footer class="bg-gray-50 px-7 py-5">
-				@if (!isLoading && frameConfig().showFooter) {
+				@if (frameConfig().showFooter) {
 					<a [routerLink]="frameConfig().navigationRoute.toString()">
 						<h3 class="h3 inter-body-xl-bold hover:text-interactive-500">Ver más...</h3>
 					</a>
-				}
-				@if (isLoading) {
+				} @else {
 					<ng-container *ngTemplateOutlet="titleSkeleton"></ng-container>
 				}
 			</footer>
@@ -63,8 +62,6 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 export class StoryNavigationBarComponent {
 	private params = injectParams();
 	private queryParams = injectQueryParams();
-
-	isLoading = false;
 
 	// Inyección de providers
 	private navigationFrameService = inject(NavigationFrameService);

@@ -1,5 +1,6 @@
 import { Story, StoryPreview, StoryTeaser } from '@models/story.model';
 import { authorMock, authorTeaserMock } from './author.mock';
+import { Publication } from '@models/storylist.model';
 
 export const storyMock: Story = {
 	resources: [
@@ -537,4 +538,11 @@ export const storyTeaserMock: StoryTeaser = {
 			markDefs: [],
 		},
 	],
+};
+
+export const publicationMock: Publication = {
+	publishingOrder: 54,
+	published: true,
+	publishingDate: '2024-10-27',
+	story: storyPreviewMock,
 };

@@ -53,7 +53,7 @@
 			"defaultConfiguration": "production"
 		},
 		"lint": {
-			"executor": "@nx/linter:eslint",
+			"executor": "@nx/eslint:lint",
 			"outputs": ["{options.outputFile}"],
 			"options": {
 				"lintFilePatterns": ["./src/**/*.ts", "./src/**/*.html"]
@@ -61,7 +61,7 @@
 		},
 		"test": {
 			"executor": "@nx/jest:jest",
-			"outputs": ["{workspaceRoot}/coverage}"],
+			"outputs": [],
 			"options": {
 				"jestConfig": "jest.config.ts"
 			}
@@ -73,7 +73,8 @@
 				"configDir": "./.storybook",
 				"browserTarget": "cuentoneta:build",
 				"compodoc": false,
-				"styles": ["./src/styles.scss"]
+				"styles": ["./src/styles.scss"],
+				"assets": ["./src/favicon.ico", "./src/assets"]
 			},
 			"configurations": {
 				"ci": {

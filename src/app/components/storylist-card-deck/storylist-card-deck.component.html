@@ -17,11 +17,11 @@
 			<h1 class="h1 mb-5">
 				{{ storylist()?.title }}
 			</h1>
-			<h3 class="h3 subtitle text-gray-600">
+			<h2 class="h3 subtitle text-gray-600">
 				<cuentoneta-portable-text-parser
 					[paragraphs]="storylist()?.description ?? []"
 				></cuentoneta-portable-text-parser>
-			</h3>
+			</h2>
 		</div>
 	} @else {
 		<div class="xs:max-md:col-span-1 md:col-span-6">

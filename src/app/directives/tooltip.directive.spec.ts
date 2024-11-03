@@ -1,35 +1,43 @@
-// import { Component, input } from '@angular/core';
-// import { fireEvent, render, screen } from '@testing-library/angular';
-// import { TooltipDirective } from './tooltip.directive';
+import { Component, inject, OnInit } from '@angular/core';
+import { render, screen } from '@testing-library/angular';
+import { TooltipDirective } from './tooltip.directive';
+import userEvent from '@testing-library/user-event';
 
-// const ELEMENT_WIDTH = 500;
-// const ELEMENT_HEIGHT = 500;
-// @Component({
-// 	template: `
-// 		<div [style.width.px]="width" [style.height.px]="height" [position]="position" tooltip text="Tooltip test">
-// 			Host component
-// 		</div>
-// 	`,
-// 	standalone: true,
-// })
-// class HostComponent {
-// 	width = ELEMENT_WIDTH;
-// 	height = ELEMENT_HEIGHT;
-// 	position = input('top');
-// }
+const ELEMENT_WIDTH = 500;
+const ELEMENT_HEIGHT = 500;
 
-xdescribe('TooltipDirective', () => {
+@Component({
+	template: `
+		<div [style.width.px]="width" [style.height.px]="height" [>
+			<p>Host component</p>
+		</div>
+	`,
+	standalone: true,
+	imports: [TooltipDirective],
+	hostDirectives: [TooltipDirective],
+})
+class HostComponent implements OnInit {
+	width = ELEMENT_WIDTH;
+	height = ELEMENT_HEIGHT;
+	private tooltipDirective = inject(TooltipDirective);
+
+	ngOnInit() {
+		this.tooltipDirective.text.set('Tooltip test');
+		this.tooltipDirective.position.set('bottom');
+	}
+}
+
+describe('TooltipDirective', () => {
 	test('Should render a tooltip when the mouse enter the Host component', async () => {
-		// await render(HostComponent, {
-		// 	componentProperties: { position: 'top' },
-		// 	componentImports: [TooltipDirective],
-		// });
-		// const hostComponent = screen.getByText(/Host component/);
-		//
-		// fireEvent.mouseEnter(hostComponent);
-		// expect(screen.getByText('Tooltip test')).toBeTruthy();
-		//
-		// fireEvent.mouseLeave(hostComponent);
-		// expect(screen.queryByText('Tooltip test')).not.toBeTruthy();
+		await render(HostComponent);
+
+		const hostComponent = screen.getByText(/Host component/);
+
+		await userEvent.hover(hostComponent);
+
+		expect(screen.getByText('Tooltip test')).toBeInTheDocument();
+
+		await userEvent.unhover(hostComponent);
+		expect(screen.queryByText('Tooltip test')).not.toBeInTheDocument();
 	});
 });

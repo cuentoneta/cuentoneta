@@ -1,37 +1,28 @@
 <main>
-	@defer (on viewport) {
-		@if (campaigns.length > 0) {
-			<cuentoneta-content-campaign-carousel [slides]="campaigns"> </cuentoneta-content-campaign-carousel>
-		}
-	} @placeholder {
-		<!-- TODO: Emprolijar skeletons en issues futuros relacionados al carousel -->
-		<ngx-skeleton-loader
-			[theme]="{
-				'width.px': 960,
-				'height.px': 240,
-				'background-color': skeletonColor,
-				width: '100%'
-			}"
-			count="1"
-			appearance="line"
-		></ngx-skeleton-loader>
+	@defer (when campaigns.length > 0) {
+		<cuentoneta-content-campaign-carousel [slides]="campaigns" />
+	} @placeholder (minimum 500ms) {
+		<cuentoneta-content-campaign-carousel-skeleton />
 	}
 
 	<div class="mb-4 flex content-between items-center">
 		<hr class="flex-grow" />
-		<h2 class="h2 mx-8 text-center">¿Qué querés leer hoy?</h2>
+		<h2 class="h3 mx-2 text-center md:mx-8">¿Qué querés leer hoy?</h2>
 		<hr class="flex-grow" />
 	</div>
 	<div class="mb-8 flex justify-center">
-		<h3 class="h3 subtitle text-center">
-			En este apartado podrás encontrar todas las storylists publicadas hasta el momento en La Cuentoneta
-		</h3>
+		<h3 class="h4 text-center">Accedé al archivo de las storylists publicadas en <b>La Cuentoneta</b></h3>
 	</div>
 
-	<!-- TODO: Reintroducir render de skeletons para cards de storylists -->
-	<section class="grid grid-cols-1 justify-items-center gap-8 lg:grid-cols-2">
-		@for (storylist of cards; track storylist.slug) {
-			<cuentoneta-storylist-card [storylist]="storylist" class="card w-full"> </cuentoneta-storylist-card>
+	<section class="grid grid-cols-1 justify-items-center gap-8 sm:grid-cols-2">
+		@defer (when cards.length > 0) {
+			@for (storylist of cards; track storylist.slug) {
+				<cuentoneta-storylist-card [storylist]="storylist" class="card w-full"> </cuentoneta-storylist-card>
+			}
+		} @placeholder (minimum 500ms) {
+			@for (_ of [].constructor(6); track $index) {
+				<cuentoneta-storylist-card-skeleton class="card w-full" />
+			}
 		}
 	</section>
 </main>

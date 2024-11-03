@@ -38,11 +38,11 @@ import { MapPublicationEditionLabelPipe } from '../../pipes/map-publication-edit
 					"
 				/>
 				@if (publication().published) {
-					<h4 class="inter-body-sm-bold mb-2">{{ publication().story.title }}</h4>
+					<h1 class="inter-body-sm-bold mb-2">{{ publication().story.title }}</h1>
 					<div class="flex items-center justify-between">
-						<h5 class="inter-body-sm-regular">
+						<h2 class="inter-body-sm-regular">
 							{{ publication().story.author.name }}
-						</h5>
+						</h2>
 						<cuentoneta-media-resource-tags [resources]="publication().story.media" />
 					</div>
 				} @else {
