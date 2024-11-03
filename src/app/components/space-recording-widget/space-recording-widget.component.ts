@@ -15,7 +15,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 						<img
 							[ngSrc]="media().data.tweetBy.profileImage"
 							class="rounded-full border-1 border-solid border-white"
-							alt=""
+							alt=" "
 							width="24"
 							height="24"
 						/>
