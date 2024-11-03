@@ -62,10 +62,6 @@ module.exports = [
 		files: ['**/*.html'],
 		rules: {
 			'@angular-eslint/template/prefer-control-flow': 'error',
-			'@angular-eslint/template/label-has-associated-control': 'off',
-			'@angular-eslint/template/alt-text': 'off',
-			'@angular-eslint/template/click-events-have-key-events': 'off',
-			'@angular-eslint/template/interactive-supports-focus': 'off',
 		},
 	},
 ];

@@ -28,7 +28,7 @@ import { InternalLink } from '@models/link.model';
 							</li>
 						}
 					</ul>
-					<div (click)="onMenuTogglerClicked()" class="md:hidden">
+					<button (click)="onMenuTogglerClicked()" class="md:hidden">
 						<img
 							[alt]="'Imagen del menú móvil del sitio'"
 							[ngSrc]="'./assets/svg/menu.svg'"
@@ -36,7 +36,7 @@ import { InternalLink } from '@models/link.model';
 							height="24"
 							alt="Ícono de menú de hamburguesa de 'La Cuentoneta'"
 						/>
-					</div>
+					</button>
 				</nav>
 			</section>
 

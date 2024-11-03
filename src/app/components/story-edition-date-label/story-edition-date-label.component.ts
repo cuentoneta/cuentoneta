@@ -13,7 +13,7 @@ import { CommonModule, NgIf } from '@angular/common';
 		<!--ToDo: Extraer badge a nuevo componente-->
 		@if (markAsNew()) {
 			<div class="flex items-center rounded bg-primary-200">
-				<label class="inter-body-xs-bold mx-4 my-1">NUEVO</label>
+				<p class="inter-body-xs-bold mx-4 my-1">NUEVO</p>
 			</div>
 		}
 	`,

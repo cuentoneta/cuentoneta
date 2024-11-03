@@ -13,9 +13,9 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 			data-testid="youtube-player"
 			placeholderImageQuality="low"
 		/>
-		<label class="inter-body-xs-medium text-primary-500"
-			><cuentoneta-portable-text-parser [paragraphs]="media().description"> </cuentoneta-portable-text-parser
-		></label>`,
+		<p class="inter-body-xs-medium text-primary-500">
+			<cuentoneta-portable-text-parser [paragraphs]="media().description"> </cuentoneta-portable-text-parser>
+		</p>`,
 	styles: `
 		::ng-deep {
 			youtube-player {
