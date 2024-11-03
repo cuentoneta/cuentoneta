@@ -52,10 +52,16 @@ import { StoryCardComponent } from '../../components/story-card/story-card.compo
 			<article class="grid grid-cols-1 gap-8">
 				@if (author) {
 					<section class="flex flex-col items-center gap-4">
-						<img [ngSrc]="author.imageUrl" class="h-[192px] rounded-xl" width="192" height="192" />
+						<img
+							[ngSrc]="author.imageUrl"
+							[alt]="'Retrato de ' + author.name"
+							class="h-[192px] rounded-xl"
+							width="192"
+							height="192"
+						/>
 						<div class="flex items-center gap-4">
 							<h1 class="h1">{{ author.name }}</h1>
-							<img [ngSrc]="author.nationality.flag" width="30" height="20" class="h-6 w-8" />
+							<img [ngSrc]="author.nationality.flag" width="30" height="20" class="h-6 w-8" alt="" />
 						</div>
 						@if (author.resources && author.resources.length > 0) {
 							<div class="flex justify-start gap-4 sm:justify-end">
