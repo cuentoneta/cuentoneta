@@ -42,21 +42,12 @@ export class HomeComponent {
 	private fetchContentDirective = inject(FetchContentDirective);
 	private metaTagsDirective = inject(MetaTagsDirective);
 
+	// Asignación inicial para dibujar skeletons
 	cards: StorylistTeaser[] = [];
 	campaigns: ContentCampaign[] = [];
 
 	constructor() {
-		// Asignación inicial para dibujar skeletons
-		this.cards = [];
 		this.metaTagsDirective.setDefault();
-
-		const platformId = inject(PLATFORM_ID);
-		if (!isPlatformBrowser(platformId)) {
-			return;
-		}
-
-		// En cliente-side, posteriormente, se cargan los decks con las historias y
-		// las campañas de contenido, según la configuración
 		this.loadLandingPageContent();
 	}
 
