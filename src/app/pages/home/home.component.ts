@@ -1,7 +1,7 @@
 // Core
-import { Component, inject, PLATFORM_ID } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 // Services
 import { ContentService } from '../../providers/content.service';
@@ -42,21 +42,12 @@ export class HomeComponent {
 	private fetchContentDirective = inject(FetchContentDirective);
 	private metaTagsDirective = inject(MetaTagsDirective);
 
+	// Asignación inicial para dibujar skeletons
 	cards: StorylistTeaser[] = [];
 	campaigns: ContentCampaign[] = [];
 
 	constructor() {
-		// Asignación inicial para dibujar skeletons
-		this.cards = [];
 		this.metaTagsDirective.setDefault();
-
-		const platformId = inject(PLATFORM_ID);
-		if (!isPlatformBrowser(platformId)) {
-			return;
-		}
-
-		// En cliente-side, posteriormente, se cargan los decks con las historias y
-		// las campañas de contenido, según la configuración
 		this.loadLandingPageContent();
 	}
 
