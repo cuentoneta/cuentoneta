@@ -1,14 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 
+// Servicios
 import { StorylistService } from './storylist.service';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-xdescribe('StorylistService', () => {
+// Proveedores
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+
+describe('StorylistService', () => {
 	let service: StorylistService;
 
 	beforeEach(() => {
 		TestBed.configureTestingModule({
-			imports: [HttpClientTestingModule],
+			providers: [provideHttpClient(), provideHttpClientTesting()],
 		});
 		TestBed.runInInjectionContext(() => {
 			service = TestBed.inject(StorylistService);
