@@ -62,29 +62,24 @@ if (environment === 'development') {
 	createSanityStudioEnvFile();
 }
 
-const branchUrl: string = process.env['VERCEL_BRANCH_URL'] as string;
-const stagingBranchUrl = 'cuentoneta-git-develop-cuentoneta.vercel.app';
-
 // Genera una ruta absoluta a la API en función del ambiente
 const generateApiUrl = (environment: TEnvironmentType): string => {
 	let url = 'http://localhost:4000/';
 
-	console.log('branchUrl', branchUrl);
-	console.log('VERCEL_URL', process.env['VERCEL_URL']);
-	console.log('VERCEL_PROJECT_PRODUCTION_URL', process.env['VERCEL_PROJECT_PRODUCTION_URL']);
+	const branchUrl: string = process.env['VERCEL_BRANCH_URL'] as string;
+	const stagingBranchUrl = 'cuentoneta-git-develop-cuentoneta.vercel.app';
 
+	// Asigna URL en base a la URL de la rama de Vercel para ambiente staging
 	if (branchUrl === stagingBranchUrl) {
-		url = `https://staging.${process.env['VERCEL_PROJECT_PRODUCTION_URL']}`;
+		url = `https://staging.cuentoneta.ar`;
 	}
-
-	// Asigna URL en base a variables de entorno para producción y staging (preview develop)
-	// El lado derecho de la comparación es utilizado para deployments de staging
-	if (environment === 'production') {
-		url = `https://${process.env['VERCEL_URL']}/` as string;
-	}
-	// Lectura de la variable de entorno de Vercel para deployments de preview
-	else if (environment === 'preview' || branchUrl === stagingBranchUrl) {
+	// Lectura de la variable de entorno de Vercel para deployments de preview fuera de staging
+	else if (environment === 'preview') {
 		url = `https://${process.env['VERCEL_PROJECT_PRODUCTION_URL']}`;
+	}
+	// Asigna URL en base a variables de entorno para producción y staging (preview develop)
+	else if (environment === 'production') {
+		url = `https://${process.env['VERCEL_URL']}/` as string;
 	}
 
 	return url;
