@@ -69,6 +69,14 @@ const stagingBranchUrl = 'cuentoneta-git-develop-cuentoneta.vercel.app';
 const generateApiUrl = (environment: TEnvironmentType): string => {
 	let url = 'http://localhost:4000/';
 
+	console.log('branchUrl', branchUrl);
+	console.log('VERCEL_URL', process.env['VERCEL_URL']);
+	console.log('VERCEL_PROJECT_PRODUCTION_URL', process.env['VERCEL_PROJECT_PRODUCTION_URL']);
+
+	if (branchUrl === stagingBranchUrl) {
+		url = `https://staging.${process.env['VERCEL_PROJECT_PRODUCTION_URL']}`;
+	}
+
 	// Asigna URL en base a variables de entorno para producción y staging (preview develop)
 	// El lado derecho de la comparación es utilizado para deployments de staging
 	if (environment === 'production') {
