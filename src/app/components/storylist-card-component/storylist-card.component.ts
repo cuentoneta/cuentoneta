@@ -31,7 +31,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	template: `
 		<article class="shadow-lg hover:shadow-lg-hover">
 			@if (storylist(); as storylist) {
-				<div [routerLink]="['/' + appRoutes.StoryList, storylist.slug]" class="navigation-link">
+				<a [routerLink]="['/' + appRoutes.StoryList, storylist.slug]" class="navigation-link">
 					<section
 						class="flex flex-col gap-4 rounded-t-2xl border-1 border-b-0 border-solid border-primary-300 px-4 pt-5"
 					>
@@ -48,21 +48,21 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 						</p>
 						<hr class="text-gray-300" />
 					</section>
-				</div>
-				<footer
-					class="flex justify-between rounded-b-2xl border-1 border-t-0 border-solid border-primary-300 px-5 pb-5 pt-4"
-				>
-					<div class="flex rounded bg-gray-200 px-4.5 py-0.5 uppercase hover:cursor-default">
-						<span class="inter-body-xs-bold flex items-center gap-1">{{ storylist.count }} historias</span>
-					</div>
-					@if (!!storylist.tags && storylist.tags.length > 0) {
-						<div class="flex">
-							@for (tag of storylist.tags; track tag.slug) {
-								<cuentoneta-badge [tag]="tag" [showIcon]="true" class="ml-3" />
-							}
+					<footer
+						class="flex justify-between rounded-b-2xl border-1 border-t-0 border-solid border-primary-300 px-5 pb-5 pt-4"
+					>
+						<div class="flex rounded bg-gray-200 px-4.5 py-0.5 uppercase hover:cursor-default">
+							<span class="inter-body-xs-bold flex items-center gap-1">{{ storylist.count }} historias</span>
 						</div>
-					}
-				</footer>
+						@if (!!storylist.tags && storylist.tags.length > 0) {
+							<div class="flex">
+								@for (tag of storylist.tags; track tag.slug) {
+									<cuentoneta-badge [tag]="tag" [showIcon]="true" class="ml-3" />
+								}
+							</div>
+						}
+					</footer>
+				</a>
 			}
 		</article>
 	`,
