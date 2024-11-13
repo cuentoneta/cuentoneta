@@ -24,7 +24,6 @@ const targetPath = `${dirPath}/environment.ts`;
 const defaultEnvVariables = {
 	SANITY_STUDIO_DATASET: 'development',
 	SANITY_STUDIO_PROJECT_ID: 's4dbqkc5',
-	CUENTONETA_WEBSITE: 'https://www.cuentoneta.ar',
 };
 
 // Crea un archivo .env con las variables por defecto si no existe
@@ -73,7 +72,7 @@ const generateApiUrl = (environment: TEnvironmentType, branchUrl: string): strin
 	// Asigna URL en base a variables de entorno para producción y staging (preview develop)
 	// El lado derecho de la comparación es utilizado para deployments de staging
 	if (environment === 'production' || branchUrl === stagingBranchUrl) {
-		url = process.env['CUENTONETA_WEBSITE'] as string;
+		url = process.env['VERCEL_PROJECT_PRODUCTION_URL'] as string;
 	}
 	// Lectura de la variable de entorno de Vercel para deployments de preview
 	else if (environment === 'preview') {
@@ -90,7 +89,7 @@ const apiUrl = generateApiUrl(environment, branchUrl);
 const environmentFileContent = `
     export const environment = {
        environment: "${environment}",
-       website: "${process.env['CUENTONETA_WEBSITE']}",
+       website: "${process.env['VERCEL_PROJECT_PRODUCTION_URL']}",
        apiUrl: "${apiUrl}"
     };
 `;
