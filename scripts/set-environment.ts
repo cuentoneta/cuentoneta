@@ -66,13 +66,13 @@ const branchUrl: string = process.env['VERCEL_BRANCH_URL'] as string;
 const stagingBranchUrl = 'cuentoneta-git-develop-cuentoneta.vercel.app';
 
 // Genera una ruta absoluta a la API en función del ambiente
-const generateApiUrl = (environment: TEnvironmentType, branchUrl: string): string => {
+const generateApiUrl = (environment: TEnvironmentType): string => {
 	let url = 'http://localhost:4000/';
 
 	// Asigna URL en base a variables de entorno para producción y staging (preview develop)
 	// El lado derecho de la comparación es utilizado para deployments de staging
 	if (environment === 'production' || branchUrl === stagingBranchUrl) {
-		url = process.env['VERCEL_PROJECT_PRODUCTION_URL'] as string;
+		url = `https://${process.env['VERCEL_PROJECT_PRODUCTION_URL']}`;
 	}
 	// Lectura de la variable de entorno de Vercel para deployments de preview
 	else if (environment === 'preview') {
@@ -82,7 +82,7 @@ const generateApiUrl = (environment: TEnvironmentType, branchUrl: string): strin
 	return url;
 };
 
-const apiUrl = generateApiUrl(environment, branchUrl);
+const apiUrl = generateApiUrl(environment);
 
 // Accede a las variables de entorno y genera un string
 // correspondiente al objeto environment que utilizará Angular
