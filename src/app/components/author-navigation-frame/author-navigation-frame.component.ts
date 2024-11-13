@@ -67,6 +67,7 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 				});
 				cleanUp(() => subscription.unsubscribe());
 			},
+			// TODO: Hacer refactor para evitar tener que utilizar este flag
 			{ allowSignalWrites: true },
 		);
 	}
