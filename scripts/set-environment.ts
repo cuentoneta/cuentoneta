@@ -71,7 +71,7 @@ const generateApiUrl = (environment: TEnvironmentType): string => {
 
 	// Asigna URL en base a la URL de la rama de Vercel para ambiente staging
 	if (branchUrl === stagingBranchUrl) {
-		url = `https://staging.cuentoneta.ar`;
+		url = `https://staging.cuentoneta.ar/`;
 	}
 	// Lectura de la variable de entorno de Vercel para deployments de preview fuera de staging
 	else if (environment === 'preview') {
