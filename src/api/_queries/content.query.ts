@@ -1,6 +1,7 @@
 import { defineQuery } from 'groq';
 
-export const landingPageContentQuery = defineQuery(`*[_type == 'landingPage'][0]{
+export const landingPageContentQuery = defineQuery(`
+*[_type == 'landingPage' && !(_id in path('drafts.**'))][0]{
     'cards': coalesce(cards[]->{
         title,
         'slug': slug.current,
