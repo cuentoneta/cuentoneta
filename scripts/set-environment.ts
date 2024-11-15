@@ -79,7 +79,7 @@ const generateApiUrl = (environment: TEnvironmentType): string => {
 	}
 	// Asigna URL en base a variables de entorno para producción y staging (preview develop)
 	else if (environment === 'production') {
-		url = `https://${process.env['VERCEL_URL']}/` as string;
+		url = `https://${process.env['VERCEL_PROJECT_PRODUCTION_URL']}/` as string;
 	}
 
 	return url;
