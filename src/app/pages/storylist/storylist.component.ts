@@ -1,7 +1,7 @@
 // Core
 import { Component, effect, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 // 3rd party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
