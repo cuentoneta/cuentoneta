@@ -1,6 +1,7 @@
 import { defineQuery } from 'groq';
 
-export const storiesByAuthorSlugQuery = defineQuery(`*[_type == 'story' && author->slug.current == $slug][$start...$end]
+export const storiesByAuthorSlugQuery = defineQuery(`
+*[_type == 'story' && author->slug.current == $slug && !(_id in path('drafts.**'))][$start...$end]
 {
     'slug': slug.current,
     title,
@@ -22,7 +23,8 @@ export const storiesByAuthorSlugQuery = defineQuery(`*[_type == 'story' && autho
     }, []),
 }|order(title asc)`);
 
-export const storyBySlugQuery = defineQuery(`*[_type == 'story' && slug.current == $slug]
+export const storyBySlugQuery = defineQuery(`
+*[_type == 'story' && slug.current == $slug && !(_id in path('drafts.**'))]
 {
     'slug': slug.current,
     title, 

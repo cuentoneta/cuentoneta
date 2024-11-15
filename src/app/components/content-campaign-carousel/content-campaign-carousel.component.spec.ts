@@ -58,7 +58,7 @@ describe('ContentCampaignCarouselComponent', () => {
 			inputs: { slides: contentCampaignMock },
 			providers: [{ provide: ThemeService, useClass: MockThemeXsViewportService }],
 		});
-		const titles = screen.getAllByRole('heading', { level: 3 });
+		const titles = screen.getAllByRole('heading', { level: 2 });
 		titles.forEach((title) => {
 			expect(title).toBeInTheDocument();
 		});
@@ -69,7 +69,7 @@ describe('ContentCampaignCarouselComponent', () => {
 			inputs: { slides: contentCampaignMock },
 			providers: [{ provide: ThemeService, useClass: MockThemeXsViewportService }],
 		});
-		const subtitles = screen.getAllByRole('heading', { level: 4 });
+		const subtitles = screen.getAllByRole('heading', { level: 3 });
 		subtitles.forEach((subtitle) => {
 			expect(subtitle).toBeInTheDocument();
 		});

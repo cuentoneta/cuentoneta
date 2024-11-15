@@ -23,7 +23,7 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 			<header [attr.aria-busy]="frameConfig().headerTitle" class="bg-gray-50 px-7 py-5">
 				@if (frameConfig().headerTitle) {
 					<a [routerLink]="frameConfig().navigationRoute.toString()">
-						<h3 class="h3 hover:text-interactive-500">{{ frameConfig().headerTitle }}</h3>
+						<h2 class="h3 hover:text-interactive-500">{{ frameConfig().headerTitle }}</h2>
 					</a>
 				} @else {
 					<ng-container *ngTemplateOutlet="titleSkeleton"></ng-container>

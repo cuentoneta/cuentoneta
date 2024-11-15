@@ -24,7 +24,6 @@ const targetPath = `${dirPath}/environment.ts`;
 const defaultEnvVariables = {
 	SANITY_STUDIO_DATASET: 'development',
 	SANITY_STUDIO_PROJECT_ID: 's4dbqkc5',
-	CUENTONETA_WEBSITE: 'https://www.cuentoneta.ar',
 };
 
 // Crea un archivo .env con las variables por defecto si no existe
@@ -63,34 +62,37 @@ if (environment === 'development') {
 	createSanityStudioEnvFile();
 }
 
-const branchUrl: string = process.env['VERCEL_BRANCH_URL'] as string;
-const stagingBranchUrl = 'cuentoneta-git-develop-cuentoneta.vercel.app';
-
 // Genera una ruta absoluta a la API en función del ambiente
-const generateApiUrl = (environment: TEnvironmentType, branchUrl: string): string => {
+const generateApiUrl = (environment: TEnvironmentType): string => {
 	let url = 'http://localhost:4000/';
 
-	// Asigna URL en base a variables de entorno para producción y staging (preview develop)
-	// El lado derecho de la comparación es utilizado para deployments de staging
-	if (environment === 'production' || branchUrl === stagingBranchUrl) {
-		url = process.env['CUENTONETA_WEBSITE'] as string;
+	const branchUrl: string = process.env['VERCEL_BRANCH_URL'] as string;
+	const stagingBranchUrl = 'cuentoneta-git-develop-cuentoneta.vercel.app';
+
+	// Asigna URL en base a la URL de la rama de Vercel para ambiente staging
+	if (branchUrl === stagingBranchUrl) {
+		url = `https://staging.cuentoneta.ar/`;
 	}
-	// Lectura de la variable de entorno de Vercel para deployments de preview
+	// Lectura de la variable de entorno de Vercel para deployments de preview fuera de staging
 	else if (environment === 'preview') {
+		url = `https://${process.env['VERCEL_BRANCH_URL']}/`;
+	}
+	// Asigna URL en base a variables de entorno para producción y staging (preview develop)
+	else if (environment === 'production') {
 		url = `https://${process.env['VERCEL_URL']}/` as string;
 	}
 
 	return url;
 };
 
-const apiUrl = generateApiUrl(environment, branchUrl);
+const apiUrl = generateApiUrl(environment);
 
 // Accede a las variables de entorno y genera un string
 // correspondiente al objeto environment que utilizará Angular
 const environmentFileContent = `
     export const environment = {
        environment: "${environment}",
-       website: "${process.env['CUENTONETA_WEBSITE']}",
+       website: "${process.env['VERCEL_PROJECT_PRODUCTION_URL']}",
        apiUrl: "${apiUrl}"
     };
 `;

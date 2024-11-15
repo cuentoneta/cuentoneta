@@ -1,21 +1,34 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { render, screen } from '@testing-library/angular';
 import { NavigableStoryTeaserComponent } from './navigable-story-teaser.component';
+import { storyTeaserMock } from 'src/app/mocks/story.mock';
 
-xdescribe('NavigableStoryTeaserComponent', () => {
-	let component: NavigableStoryTeaserComponent;
-	let fixture: ComponentFixture<NavigableStoryTeaserComponent>;
+describe('NavigableStoryTeaserComponent', () => {
+	const authorSlug = 'edgar-allan-poe';
+	const title = storyTeaserMock.title;
+	const approximateReadingTime = `${storyTeaserMock.approximateReadingTime} minutos de lectura`;
 
-	beforeEach(async () => {
-		await TestBed.configureTestingModule({
-			imports: [NavigableStoryTeaserComponent],
-		}).compileComponents();
+	const setup = async () => {
+		return await render(NavigableStoryTeaserComponent, {
+			inputs: {
+				story: storyTeaserMock,
+				selected: true,
+				authorSlug: authorSlug,
+			},
+		});
+	};
+	it('Should render the component', async () => {
+		const { container } = await setup();
 
-		fixture = TestBed.createComponent(NavigableStoryTeaserComponent);
-		component = fixture.componentInstance;
-		fixture.detectChanges();
+		expect(container).toBeInTheDocument();
 	});
 
-	it('should create', () => {
-		expect(component).toBeTruthy();
+	it('should render title and approximateReadingTime', async () => {
+		await setup();
+
+		const titleResourceElement = screen.getByText(title);
+		const readingTiemResourceElement = screen.getByText(approximateReadingTime);
+
+		expect(titleResourceElement).toBeInTheDocument();
+		expect(readingTiemResourceElement).toBeInTheDocument();
 	});
 });

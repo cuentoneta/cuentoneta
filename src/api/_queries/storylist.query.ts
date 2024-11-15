@@ -1,6 +1,7 @@
 import { defineQuery } from 'groq';
 
-export const storylistTeasersQuery = defineQuery(`*[_type == 'storylist']{ 
+export const storylistTeasersQuery = defineQuery(`
+*[_type == 'storylist' && !(_id in path('drafts.**'))]{ 
     'slug': slug.current,
     title,
     description,
@@ -21,7 +22,8 @@ export const storylistTeasersQuery = defineQuery(`*[_type == 'storylist']{
     }
 `);
 
-export const storylistQuery = defineQuery(`*[_type == 'storylist' && slug.current == $slug][0]
+export const storylistQuery = defineQuery(`
+*[_type == 'storylist' && slug.current == $slug && !(_id in path('drafts.**'))][0]
 { 
     'slug': slug.current,
     title,

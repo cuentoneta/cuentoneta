@@ -1,3 +1,58 @@
 <main class="block lg:mt-28">
-	<cuentoneta-storylist-card-deck [storylist]="storylist" [isLoading]="fetchContentDirective.isLoading" />
+	<article [attr.aria-busy]="!storylist" [lang]="storylist?.language" class="grid grid-cols-1 gap-y-8">
+		<!-- Renderizado de título y descripción -->
+		<ng-container *ngTemplateOutlet="storylistTitleTemplate"> </ng-container>
+
+		<section>
+			<!-- Renderizado de tarjetas de stories -->
+			<cuentoneta-storylist-card-deck [storylist]="storylist" [isLoading]="fetchContentDirective.isLoading" />
+		</section>
+	</article>
 </main>
+
+<ng-template #storylistTitleTemplate>
+	@if (!!storylist) {
+		<div class="grid grid-cols-1 gap-4 xs:max-md:!col-span-1 md:grid-cols-[1fr]">
+			<div class="flex items-center justify-center">
+				<img
+					[src]="storylist.featuredImage"
+					[alt]="'Imagen alusiva de la storylist ' + storylist.title"
+					class="max-h-[220px] rounded-xl"
+				/>
+			</div>
+
+			<div class="flex flex-col">
+				<h1 class="h1 mb-5 text-center">
+					{{ storylist?.title }}
+				</h1>
+				<cuentoneta-portable-text-parser
+					[paragraphs]="storylist?.description ?? []"
+					[classes]="'source-serif-pro-body-xl text-justify'"
+				></cuentoneta-portable-text-parser>
+			</div>
+		</div>
+	} @else {
+		<div class="xs:max-md:col-span-1 md:col-span-6">
+			<ngx-skeleton-loader
+				[theme]="{
+					'margin-bottom.px': 20,
+					'height.px': 40,
+					width: '100%',
+					'background-color': skeletonColor
+				}"
+				count="1"
+				appearance="line"
+			></ngx-skeleton-loader>
+			<ngx-skeleton-loader
+				[theme]="{
+					'margin-bottom.px': 10,
+					'height.px': 20,
+					width: '100%',
+					'background-color': skeletonColor
+				}"
+				count="3"
+				appearance="line"
+			></ngx-skeleton-loader>
+		</div>
+	}
+</ng-template>

@@ -1,6 +1,7 @@
 import { defineQuery } from 'groq';
 
-export const authorBySlugQuery = defineQuery(`*[_type == 'author' && slug.current == $slug][0]
+export const authorBySlugQuery = defineQuery(`
+*[_type == 'author' && slug.current == $slug && !(_id in path('drafts.**'))][0]
 {
     slug,
     name,

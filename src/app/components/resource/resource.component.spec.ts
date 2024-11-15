@@ -1,21 +1,36 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { render, screen } from '@testing-library/angular';
 import { ResourceComponent } from './resource.component';
+import { resourceMock } from 'src/app/mocks/resource.mock';
 
-xdescribe('ResourceComponent', () => {
-	let component: ResourceComponent;
-	let fixture: ComponentFixture<ResourceComponent>;
+describe('ResourceComponent', () => {
+	const regexTitle = new RegExp(resourceMock.title, 'i');
+	const url = resourceMock.url;
 
-	beforeEach(async () => {
-		await TestBed.configureTestingModule({
-			imports: [ResourceComponent],
-		}).compileComponents();
+	const setup = async () => {
+		return await render(ResourceComponent, {
+			inputs: {
+				resource: resourceMock,
+			},
+		});
+	};
 
-		fixture = TestBed.createComponent(ResourceComponent);
-		component = fixture.componentInstance;
-		fixture.detectChanges();
+	it('should render the component', async () => {
+		const { container } = await setup();
+
+		expect(container).toBeInTheDocument();
 	});
 
-	it('should create', () => {
-		expect(component).toBeTruthy();
+	it('should render title', async () => {
+		await setup();
+		const titleResourceElement = screen.getByAltText(regexTitle);
+
+		expect(titleResourceElement).toBeInTheDocument();
+	});
+
+	it('should confirm the URL of the link', async () => {
+		await setup();
+		const linkResourceElement = screen.getByRole('link');
+
+		expect(linkResourceElement).toHaveAttribute('href', url);
 	});
 });

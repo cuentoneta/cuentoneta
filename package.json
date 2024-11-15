@@ -1,6 +1,6 @@
 {
 	"name": "@cuentoneta/cuentoneta",
-	"version": "2.5.0",
+	"version": "2.5.1",
 	"license": "CC BY-NC-SA 4.0",
 	"engines": {
 		"node": ">=20.11.0 <21.0.0"
@@ -14,7 +14,7 @@
 		"build": "nx run cuentoneta:build:production --skip-nx-cache",
 		"build:watch": "nx run cuentoneta:build:production --skip-nx-cache --watch",
 		"config": "node -r ts-node/register ./scripts/set-environment.ts",
-		"delete-unused-assets": "$ node -r ts-node/register --env-file=.env ./scripts/delete-unused-assets.ts",
+		"delete-unused-assets": "node -r ts-node/register --env-file=.env ./scripts/delete-unused-assets.ts",
 		"storybook": "nx run cuentoneta:storybook",
 		"storybook:build": "nx run cuentoneta:build-storybook",
 		"lint": "npx nx lint --skip-nx-cache",
@@ -94,6 +94,7 @@
 		"@typescript-eslint/eslint-plugin": "8.11.0",
 		"@typescript-eslint/parser": "8.11.0",
 		"@typescript-eslint/utils": "^8.11.0",
+		"angular-eslint": "^18.4.0",
 		"autoprefixer": "^10.4.18",
 		"browser-sync": "^3.0.2",
 		"concurrently": "^8.2.2",

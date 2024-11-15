@@ -15,6 +15,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 						<img
 							[ngSrc]="media().data.tweetBy.profileImage"
 							class="rounded-full border-1 border-solid border-white"
+							alt=" "
 							width="24"
 							height="24"
 						/>
@@ -26,17 +27,17 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 						<div class="spaces-duration">{{ media().data.duration }}</div>
 					</div>
 				</div>
-				<h3 class="my-4 text-xl font-semibold text-white">
+				<h2 class="my-4 text-xl font-semibold text-white">
 					{{ media().title }}
-				</h3>
+				</h2>
 				<div class="rounded-3xl bg-[#fff4] p-2.5 text-center text-base font-bold no-underline hover:bg-[#1114]">
 					Reproducir Grabación en X
 				</div>
 			</section>
 		</a>
-		<label class="inter-body-xs-medium text-primary-500"
-			><cuentoneta-portable-text-parser [paragraphs]="media().description"
-		/></label>
+		<p class="inter-body-xs-medium text-primary-500">
+			<cuentoneta-portable-text-parser [paragraphs]="media().description" />
+		</p>
 	`,
 	styles: `
 		:host {

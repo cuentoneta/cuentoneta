@@ -52,20 +52,24 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 	constructor() {
 		super();
 
-		effect((cleanUp) => {
-			const { navigationSlug } = this.queryParams();
-			const subscription = this.stories$(navigationSlug).subscribe((stories) => {
-				this.stories = stories;
-				this.authorSlug = navigationSlug;
-				this.config.set({
-					headerTitle: 'Más del autor',
-					footerTitle: 'Ver más...',
-					navigationRoute: this.router.createUrlTree([this.appRoutes.Author, navigationSlug]),
-					showFooter: true,
+		effect(
+			(cleanUp) => {
+				const { navigationSlug } = this.queryParams();
+				const subscription = this.stories$(navigationSlug).subscribe((stories) => {
+					this.stories = stories;
+					this.authorSlug = navigationSlug;
+					this.config.set({
+						headerTitle: 'Más del autor',
+						footerTitle: 'Ver más...',
+						navigationRoute: this.router.createUrlTree([this.appRoutes.Author, navigationSlug]),
+						showFooter: true,
+					});
 				});
-			});
-			cleanUp(() => subscription.unsubscribe());
-		});
+				cleanUp(() => subscription.unsubscribe());
+			},
+			// TODO: Hacer refactor para evitar tener que utilizar este flag
+			{ allowSignalWrites: true },
+		);
 	}
 
 	// TODO: Issue #1010 - Cambiar los tipos a la hora de generar los endpoints correspondientes para obtener los teasers de navegación
