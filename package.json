@@ -14,7 +14,7 @@
 		"build": "nx run cuentoneta:build:production --skip-nx-cache",
 		"build:watch": "nx run cuentoneta:build:production --skip-nx-cache --watch",
 		"config": "node -r ts-node/register ./scripts/set-environment.ts",
-		"delete-unused-assets": "$ node -r ts-node/register --env-file=.env ./scripts/delete-unused-assets.ts",
+		"delete-unused-assets": "node -r ts-node/register --env-file=.env ./scripts/delete-unused-assets.ts",
 		"storybook": "nx run cuentoneta:storybook",
 		"storybook:build": "nx run cuentoneta:build-storybook",
 		"lint": "npx nx lint --skip-nx-cache",

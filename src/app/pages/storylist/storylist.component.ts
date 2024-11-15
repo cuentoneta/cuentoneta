@@ -19,12 +19,14 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 // Componentes
 import { StorylistCardDeckComponent } from 'src/app/components/storylist-card-deck/storylist-card-deck.component';
+import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
+import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-storylist',
 	templateUrl: './storylist.component.html',
 	standalone: true,
-	imports: [CommonModule, StorylistCardDeckComponent, NgxSkeletonLoaderModule],
+	imports: [CommonModule, StorylistCardDeckComponent, NgxSkeletonLoaderModule, PortableTextParserComponent],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
 export class StorylistComponent {
@@ -34,6 +36,7 @@ export class StorylistComponent {
 	private metaTagsDirective = inject(MetaTagsDirective);
 	private storylistService = inject(StorylistService);
 
+	skeletonColor = inject(ThemeService).pickColor('zinc', 300);
 	storylist!: Storylist | undefined;
 
 	constructor() {

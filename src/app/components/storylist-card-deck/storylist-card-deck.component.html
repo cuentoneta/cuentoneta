@@ -1,53 +1,5 @@
-<article
-	[attr.aria-busy]="!storylist()"
-	[lang]="storylist()?.language"
-	class="grid grid-cols-1 gap-y-5 md:grid-cols-12 md:gap-8"
->
-	<!-- Renderizado de título y descripción -->
-	<ng-container *ngTemplateOutlet="storylistTitleTemplate"> </ng-container>
-
-	<!-- Renderizado de tarjetas de stories -->
-	<ng-container *ngTemplateOutlet="storylist()?.publications ? publicationsTemplate : skeletonsTemplate">
-	</ng-container>
-</article>
-
-<ng-template #storylistTitleTemplate>
-	@if (!!storylist()) {
-		<div class="xs:max-md:!col-span-1 md:col-span-6">
-			<h1 class="h1 mb-5">
-				{{ storylist()?.title }}
-			</h1>
-			<h2 class="h3 subtitle text-gray-600">
-				<cuentoneta-portable-text-parser
-					[paragraphs]="storylist()?.description ?? []"
-				></cuentoneta-portable-text-parser>
-			</h2>
-		</div>
-	} @else {
-		<div class="xs:max-md:col-span-1 md:col-span-6">
-			<ngx-skeleton-loader
-				[theme]="{
-					'margin-bottom.px': 20,
-					'height.px': 40,
-					width: '100%',
-					'background-color': skeletonColor
-				}"
-				count="1"
-				appearance="line"
-			></ngx-skeleton-loader>
-			<ngx-skeleton-loader
-				[theme]="{
-					'margin-bottom.px': 10,
-					'height.px': 20,
-					width: '100%',
-					'background-color': skeletonColor
-				}"
-				count="3"
-				appearance="line"
-			></ngx-skeleton-loader>
-		</div>
-	}
-</ng-template>
+<!-- Renderizado de tarjetas de stories -->
+<ng-container *ngTemplateOutlet="storylist()?.publications ? publicationsTemplate : skeletonsTemplate"> </ng-container>
 
 <ng-template #skeletonsTemplate>
 	@for (skeleton of [1, 2, 3, 4, 5, 6, 7, 9, 10]; track $index) {
