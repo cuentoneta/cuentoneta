@@ -110,6 +110,7 @@ writeFile(targetPath, environmentFileContent, { flag: 'w' }, function (err: Errn
 	}
 	console.log(`Variables de entorno escritas en ${targetPath}`);
 	console.log('Ambiente de Vercel - VERCEL_ENV = ', process.env['VERCEL_ENV']);
+	console.log('Ambiente de Vercel - VERCEL_URL = ', process.env['VERCEL_URL']);
 	console.log('URL de branch de Vercel - VERCEL_BRANCH_URL = ', process.env['VERCEL_BRANCH_URL']);
 	console.log('URL de API = ', apiUrl);
 });
