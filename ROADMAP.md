@@ -139,6 +139,16 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 ### Hito: Lanzamiento al público de la versión [2.5.0](https://github.com/cuentoneta/cuentoneta/releases/tag/2.5.0) de La Cuentoneta (lanzada el 2024/10/28)
 
+- Migración comleta del proyecto y su configuración a ESLint 9.
+- Incorporación de nuevos tests unitarios funcionales utilizando Angular Testing Library.
+- Mejoras de accesibilidad en uso de tags de heading y anchors de navegación.
+- Agregado de filtraro de drafts para contenido de Sanity.
+- Creación de archivo .env para proyecto de Sanity.
+- Actualizado layout de vista /storylist
+- Agregado de las storylists "Ciudades Campos, Pueblos, Islas" y "Conspiración Cero"
+
+### Hito: Lanzamiento al público de la versión [2.5.1](https://github.com/cuentoneta/cuentoneta/releases/tag/2.5.1) de La Cuentoneta (lanzada el 2024/11/15)
+
 ---
 
 ## Futuros
