@@ -13,7 +13,8 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 	template: `
 		<span class="inter-body-xs-bold flex items-center gap-1">
 			@if (showIcon() && tag().icon; as icon) {
-				<cuentoneta-svg-icon [svg]="icon.svg" />
+				<p>{{ icon.name }}</p>
+				<img [ngSrc]="'assets/icons/badges/' + icon.name + '.svg'" alt="" width="16" height="16" />
 			}
 			{{ tag().title }}
 		</span>

@@ -22,9 +22,8 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 			target="_blank"
 			class="flex h-12 w-12 items-center justify-center rounded-full border-1 border-solid border-gray-200 bg-gray-100 hover:bg-gray-200"
 		>
-			<!-- No utilizar ngSrc para este elemento de imagen, dado que se carga dinámicamente desde un campo en formato base64 -->
 			<img
-				[src]="resource().resourceType.icon.svg"
+				[ngSrc]="'assets/icons/resources/' + resource().resourceType.icon.name + '.svg'"
 				[height]="24"
 				[width]="24"
 				[alt]="resource().resourceType.title"
