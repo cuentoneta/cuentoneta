@@ -3,13 +3,12 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Tag } from '@models/tag.model';
 import { BypassHtmlSanitizerPipe } from '../../pipes/bypass-html-sanitizer.pipe';
 import { TooltipDirective } from '../../directives/tooltip.directive';
-import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
 @Component({
 	selector: 'cuentoneta-badge',
 	standalone: true,
 	hostDirectives: [TooltipDirective],
-	imports: [BypassHtmlSanitizerPipe, CommonModule, NgOptimizedImage, SvgIconComponent],
+	imports: [BypassHtmlSanitizerPipe, CommonModule, NgOptimizedImage],
 	template: `
 		<span class="inter-body-xs-bold flex items-center gap-1">
 			@if (showIcon() && tag().icon; as icon) {
