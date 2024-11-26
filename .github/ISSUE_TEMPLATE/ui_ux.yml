@@ -1,6 +1,6 @@
 name: 🎨 Proponer mejoras en UI/UX
 description: Proponer mejoras en el diseño y la usabilidad de la plataforma
-labels: ['🎨 ui-ux']
+labels: ['🎨 ui-ux', '✍️ bosquejo']
 body:
   - type: textarea
     id: description

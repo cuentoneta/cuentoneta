@@ -1,6 +1,6 @@
 name: 📜 Proponer el agregado de contenido a La Cuentoneta
 description: Proponer el agregado de un nuevo texto en particular (sea un cuento, poema, ensayo, etc.) o una temática para generar una nueva storylist
-labels: ['📜 contenido']
+labels: ['📜 contenido', '✍️ bosquejo']
 body:
   - type: textarea
     id: description
