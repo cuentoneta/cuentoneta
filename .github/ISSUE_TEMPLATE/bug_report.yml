@@ -1,6 +1,6 @@
 name: 🦟 Reportar un problema/error
 description: Reportar un problema que ayude a mejorar el proyecto.
-labels: ['🦟 bug', '✍️ bosquejo']
+labels: ['🦟 bug']
 body:
   - type: checkboxes
     id: check-issue-exists

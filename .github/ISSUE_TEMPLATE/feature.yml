@@ -1,6 +1,6 @@
 name: 🏎️ Proponer una nueva funcionalidad
 description: Proponer el agregado de una nueva funcionalidad o característica al proyecto
-labels: ['🏎️ mejora']
+labels: ['🏎️ mejora', '✍️ bosquejo']
 body:
   - type: textarea
     id: description
