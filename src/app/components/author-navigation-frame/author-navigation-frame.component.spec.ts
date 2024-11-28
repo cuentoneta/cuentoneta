@@ -52,7 +52,7 @@ describe('AuthorNavigationFrameComponent', () => {
 				{
 					provide: StoryService,
 					useValue: {
-						getByAuthorSlug(slug: string): Observable<StoryTeaser[]> {
+						getByAuthorSlug(): Observable<StoryTeaser[]> {
 							return of([storyTeaserMock]);
 						},
 					},
