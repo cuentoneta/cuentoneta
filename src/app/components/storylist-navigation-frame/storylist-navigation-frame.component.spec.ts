@@ -13,7 +13,7 @@ import { FetchContentDirective } from '../../directives/fetch-content.directive'
 import { Storylist } from '@models/storylist.model';
 
 // Mocks
-import { storyListMock, storyTeaserMock } from '../../mocks/story.mock';
+import { storyListMock } from '../../mocks/story.mock';
 
 // Services
 import { StorylistService } from '../../providers/storylist.service';
