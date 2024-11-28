@@ -1,14 +1,26 @@
-import { AuthorNavigationFrameComponent } from './author-navigation-frame.component';
-import { render, screen } from '@testing-library/angular';
-import { FetchContentDirective } from '../../directives/fetch-content.directive';
-import { CommonModule } from '@angular/common';
-import { StoryService } from '../../providers/story.service';
-import { Observable, of } from 'rxjs';
-import { storyTeaserMock } from '../../mocks/story.mock';
-import { StoryTeaser } from '@models/story.model';
-import * as ngExtension from 'ngxtension/inject-query-params';
 import { signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Observable, of } from 'rxjs';
+
+// Components
 import { NavigableStoryTeaserComponent } from '../navigable-story-teaser/navigable-story-teaser.component';
+import { AuthorNavigationFrameComponent } from './author-navigation-frame.component';
+
+// Directives
+import { FetchContentDirective } from '../../directives/fetch-content.directive';
+
+// Models
+import { StoryTeaser } from '@models/story.model';
+
+// Mocks
+import { storyTeaserMock } from '../../mocks/story.mock';
+
+// Services
+import { StoryService } from '../../providers/story.service';
+
+// 3rd party libs
+import * as ngExtension from 'ngxtension/inject-query-params';
+import { render, screen } from '@testing-library/angular';
 
 jest.mock('ngxtension/inject-query-params', () => ({
 	__esModule: true,
