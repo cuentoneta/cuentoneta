@@ -6,7 +6,6 @@ import { StoryService } from '../../providers/story.service';
 import { Observable, of } from 'rxjs';
 import { storyTeaserMock } from '../../mocks/story.mock';
 import { StoryTeaser } from '@models/story.model';
-import { RouterTestingModule } from '@angular/router/testing';
 import * as ngExtension from 'ngxtension/inject-query-params';
 import { signal } from '@angular/core';
 import { NavigableStoryTeaserComponent } from '../navigable-story-teaser/navigable-story-teaser.component';
@@ -27,7 +26,7 @@ jest.spyOn(ngExtension, 'injectQueryParams').mockReturnValue(
 describe('AuthorNavigationFrameComponent', () => {
 	const setup = async () => {
 		return await render(AuthorNavigationFrameComponent, {
-			componentImports: [CommonModule, RouterTestingModule, NavigableStoryTeaserComponent],
+			componentImports: [CommonModule, NavigableStoryTeaserComponent],
 			inputs: {},
 			providers: [
 				{
