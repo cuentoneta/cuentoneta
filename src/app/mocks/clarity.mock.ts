@@ -1,5 +1,9 @@
 import { ClarityApiResponse } from '../../api/_utils/clarity.utils';
 
+export const fetchClarityData = async (): Promise<ClarityApiResponse> => {
+	return clarityMockResponse;
+};
+
 const clarityMockResponse: ClarityApiResponse = [
 	{
 		metricName: 'DeadClickCount',
