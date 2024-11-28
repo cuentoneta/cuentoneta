@@ -75,6 +75,6 @@ describe('StorylistNavigationFrameComponent', () => {
 		view.detectChanges();
 		expect(screen.getByText(storyListMock.publications[0].story.title)).toBeInTheDocument();
 		expect(screen.getByText(storyListMock.publications[0].story.author.name)).toBeInTheDocument();
-		expect(screen.getByText('Día 54 - 27 de Octubre, 2024')).toBeInTheDocument();
+		expect(screen.getByText('Día 54 - 27 de October, 2024')).toBeInTheDocument();
 	});
 });
