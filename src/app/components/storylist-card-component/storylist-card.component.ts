@@ -1,6 +1,6 @@
 // Core
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 // Router
 import { RouterLink } from '@angular/router';
@@ -19,14 +19,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 @Component({
 	selector: 'cuentoneta-storylist-card',
 	standalone: true,
-	imports: [
-		CommonModule,
-		NgOptimizedImage,
-		BadgeComponent,
-		RouterLink,
-		NgxSkeletonLoaderModule,
-		PortableTextParserComponent,
-	],
+	imports: [CommonModule, BadgeComponent, RouterLink, NgxSkeletonLoaderModule, PortableTextParserComponent],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `
 		<article class="shadow-lg hover:shadow-lg-hover">
