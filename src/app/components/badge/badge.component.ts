@@ -1,19 +1,17 @@
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, computed, inject, input, OnInit } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Tag } from '@models/tag.model';
-import { BypassHtmlSanitizerPipe } from '../../pipes/bypass-html-sanitizer.pipe';
 import { TooltipDirective } from '../../directives/tooltip.directive';
-import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
 @Component({
 	selector: 'cuentoneta-badge',
 	standalone: true,
 	hostDirectives: [TooltipDirective],
-	imports: [BypassHtmlSanitizerPipe, CommonModule, NgOptimizedImage, SvgIconComponent],
+	imports: [CommonModule, NgOptimizedImage],
 	template: `
 		<span class="inter-body-xs-bold flex items-center gap-1">
 			@if (showIcon() && tag().icon; as icon) {
-				<cuentoneta-svg-icon [svg]="icon.svg" />
+				<img [ngSrc]="iconUrl()" alt="" width="16" height="16" />
 			}
 			{{ tag().title }}
 		</span>
@@ -27,6 +25,13 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 export class BadgeComponent implements OnInit {
 	tag = input.required<Tag>();
 	showIcon = input(false);
+	iconUrl = computed(() => {
+		if (!this.tag().icon?.name) {
+			return '';
+		}
+
+		return `assets/icons/badges/${this.tag().icon?.name}.svg`;
+	});
 
 	private tooltipDirective = inject(TooltipDirective);
 
