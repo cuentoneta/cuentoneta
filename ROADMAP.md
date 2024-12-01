@@ -149,6 +149,13 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 ### Hito: Lanzamiento al público de la versión [2.5.1](https://github.com/cuentoneta/cuentoneta/releases/tag/2.5.1) de La Cuentoneta (lanzada el 2024/11/15)
 
+- Incorporación de nuevos tests unitarios funcionales utilizando Angular Testing Library.
+- Optimizaciones en carga de imágenes e íconos.
+- Agregado de conector a Microsoft Clarity, incluyendo implementación mock.
+- Agregado automático de tag `✍️ bosquejo` a los issue templates de Github.
+
+### Hito: Lanzamiento al público de la versión [2.5.2](https://github.com/cuentoneta/cuentoneta/releases/tag/2.5.1) de La Cuentoneta (lanzada el 2024/12/01)
+
 ---
 
 ## Futuros
