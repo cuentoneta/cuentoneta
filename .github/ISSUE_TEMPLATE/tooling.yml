@@ -1,6 +1,6 @@
 name: 🛠️ Proponer agregado de una nueva herramienta
 description: Proponer el agregado de una nueva librería, dependencia o herramienta al proyecto
-labels: ['🛠️ tooling']
+labels: ['🛠️ tooling', '✍️ bosquejo']
 body:
   - type: textarea
     id: description

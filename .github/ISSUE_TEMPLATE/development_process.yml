@@ -1,6 +1,6 @@
 name: 💼 Proponer mejoras en la Gestión o el Proceso de Desarrollo del Proyecto
 description: Proponer modificaciones en la gestión y/o el proceso de desarrollo del proyecto La Cuentoneta
-labels: ['💼 gestión']
+labels: ['💼 gestión', '✍️ bosquejo']
 body:
   - type: textarea
     id: description

@@ -95,7 +95,6 @@ function mapResources(resources: ResourcesSubQuery): Resource[] {
 				icon: {
 					provider: resource.resourceType.icon.provider ?? '',
 					name: resource.resourceType.icon.name ?? '',
-					svg: resource.resourceType.icon ? `data:image/svg+xml,${resource.resourceType.icon.svg}` : '',
 				},
 			},
 		})) ?? []
@@ -110,7 +109,6 @@ function mapTags(tags: TagsSubQuery): Tag[] {
 		icon: {
 			provider: tag.icon.provider ?? '',
 			name: tag.icon.name ?? '',
-			svg: tag.icon ? `${tag.icon.svg}` : '',
 		},
 	}));
 }

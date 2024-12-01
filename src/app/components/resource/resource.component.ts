@@ -1,5 +1,5 @@
 // Core
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, computed, inject, input, OnInit } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 // Models
@@ -22,14 +22,7 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 			target="_blank"
 			class="flex h-12 w-12 items-center justify-center rounded-full border-1 border-solid border-gray-200 bg-gray-100 hover:bg-gray-200"
 		>
-			<!-- No utilizar ngSrc para este elemento de imagen, dado que se carga dinámicamente desde un campo en formato base64 -->
-			<img
-				[src]="resource().resourceType.icon.svg"
-				[height]="24"
-				[width]="24"
-				[alt]="resource().resourceType.title"
-				class="m-3 h-6 w-6"
-			/>
+			<img [ngSrc]="iconUrl()" [height]="24" [width]="24" [alt]="resource().resourceType.title" class="m-3 h-6 w-6" />
 		</a>
 	`,
 	styles: `
@@ -40,6 +33,13 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 })
 export class ResourceComponent implements OnInit {
 	resource = input.required<Resource>();
+	iconUrl = computed(() => {
+		if (!this.resource().resourceType.icon.name) {
+			return '';
+		}
+
+		return `assets/icons/resources/${this.resource().resourceType.icon.name}.svg`;
+	});
 
 	private tooltipDirective = inject(TooltipDirective);
 
