@@ -6,7 +6,6 @@ import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-story-card-skeleton',
-	standalone: true,
 	imports: [CommonModule, NgxSkeletonLoaderModule, StoryEditionDateLabelComponent],
 	templateUrl: './story-card-skeleton.component.html',
 	styles: `

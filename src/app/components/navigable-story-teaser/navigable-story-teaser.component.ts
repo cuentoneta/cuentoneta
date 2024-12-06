@@ -9,7 +9,6 @@ import { RouterLink } from '@angular/router';
 
 @Component({
 	selector: 'cuentoneta-navigable-story-teaser',
-	standalone: true,
 	imports: [
 		CommonModule,
 		MediaResourceTagsComponent,

@@ -5,7 +5,6 @@ import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-storylist-card-skeleton',
-	standalone: true,
 	imports: [CommonModule, NgxSkeletonLoaderModule],
 	template: `
 		<section class="flex flex-col gap-4 px-4 pt-5">

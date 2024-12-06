@@ -29,7 +29,6 @@ export type NavigationBarConfig = {
 
 @Component({
 	selector: 'cuentoneta-storylist-navigation-frame',
-	standalone: true,
 	imports: [CommonModule, NavigablePublicationTeaserComponent, NgxSkeletonLoaderModule],
 	template: ` @if (!!storylist) {
 			@for (publication of displayedPublications; track $index) {

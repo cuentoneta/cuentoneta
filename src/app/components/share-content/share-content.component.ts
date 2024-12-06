@@ -6,7 +6,6 @@ import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-share-content',
-	standalone: true,
 	imports: [CommonModule, NgOptimizedImage, NgxSkeletonLoaderModule],
 	providers: [ThemeService],
 	templateUrl: './share-content.component.html',

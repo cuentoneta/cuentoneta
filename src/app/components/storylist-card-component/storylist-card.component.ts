@@ -18,7 +18,6 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 
 @Component({
 	selector: 'cuentoneta-storylist-card',
-	standalone: true,
 	imports: [CommonModule, BadgeComponent, RouterLink, NgxSkeletonLoaderModule, PortableTextParserComponent],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `

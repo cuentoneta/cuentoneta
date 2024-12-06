@@ -23,7 +23,6 @@ import { CommonModule, NgIf } from '@angular/common';
 			justify-content: space-between;
 		}
 	`,
-	standalone: true,
 	imports: [CommonModule, NgIf],
 })
 export class StoryEditionDateLabelComponent {

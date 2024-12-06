@@ -37,7 +37,6 @@ import { UrlTree } from '@angular/router';
 			</div>
 		</cuentoneta-card>
 	`,
-	standalone: true,
 	imports: [
 		AuthorTeaserComponent,
 		CardComponent,

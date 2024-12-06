@@ -13,7 +13,6 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 
 @Component({
 	selector: 'cuentoneta-resource',
-	standalone: true,
 	hostDirectives: [TooltipDirective],
 	imports: [CommonModule, NgOptimizedImage, NgxSkeletonLoaderModule],
 	template: `

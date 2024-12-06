@@ -6,7 +6,6 @@ import { FooterComponent } from './components/footer/footer.component';
 import { RouterModule } from '@angular/router';
 
 @Component({
-	standalone: true,
 	selector: 'cuentoneta-root',
 	template: `
 		<cuentoneta-header />

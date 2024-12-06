@@ -1,4 +1,4 @@
-import { APP_ID, APP_INITIALIZER, ApplicationConfig, LOCALE_ID } from '@angular/core';
+import { APP_ID, ApplicationConfig, LOCALE_ID, inject, provideAppInitializer } from '@angular/core';
 import {
 	provideRouter,
 	withEnabledBlockingInitialNavigation,
@@ -22,12 +22,13 @@ export const appConfig: ApplicationConfig = {
 	providers: [
 		DatePipe,
 		{ provide: APP_ID, useValue: 'serverApp' },
-		{
-			provide: APP_INITIALIZER,
-			useFactory: (themeService: ThemeService) => () => themeService.addThemeColorTag(),
-			deps: [ThemeService],
-			multi: true,
-		},
+		provideAppInitializer(() => {
+			const initializerFn = (
+				(themeService: ThemeService) => () =>
+					themeService.addThemeColorTag()
+			)(inject(ThemeService));
+			return initializerFn();
+		}),
 		{ provide: LOCALE_ID, useValue: 'es-419' },
 		provideClientHydration(),
 		provideAnimations(),

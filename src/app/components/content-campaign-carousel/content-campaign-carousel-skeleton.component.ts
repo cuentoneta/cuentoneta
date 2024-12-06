@@ -10,7 +10,6 @@ import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-content-campaign-carousel-skeleton',
-	standalone: true,
 	imports: [CommonModule, NgxSkeletonLoaderModule],
 	template: ` <div class="mx-auto max-w-[960px]">
 		<div class="slider">

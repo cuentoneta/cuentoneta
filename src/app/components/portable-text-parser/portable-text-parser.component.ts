@@ -6,7 +6,6 @@ import { ParagraphTemplateDirective } from './paragraph-template.directive';
 
 @Component({
 	selector: 'cuentoneta-portable-text-parser',
-	standalone: true,
 	imports: [CommonModule, PortableTextMarksSerializerComponent, ParagraphTemplateDirective],
 	template: `
 		@if (type() === 'paragraph') {

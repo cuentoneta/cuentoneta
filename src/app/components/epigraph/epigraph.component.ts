@@ -5,7 +5,6 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 
 @Component({
 	selector: 'cuentoneta-story-epigraph',
-	standalone: true,
 	imports: [CommonModule, PortableTextParserComponent],
 	template: `
 		<div class="mr-4 border-l-3 border-solid border-primary-500"></div>

@@ -17,9 +17,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 
 @Component({
 	selector: 'cuentoneta-content-campaign-carousel',
-	standalone: true,
 	imports: [CommonModule, CarouselModule, NgOptimizedImage, RouterLink, PortableTextParserComponent],
-
 	template: `
 		<section class="block">
 			<owl-carousel-o [options]="options" class="mx-auto block">

@@ -6,7 +6,6 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 
 @Component({
 	selector: 'cuentoneta-youtube-video-widget',
-	standalone: true,
 	imports: [CommonModule, YouTubePlayer, PortableTextParserComponent],
 	template: `<youtube-player
 			[videoId]="media().data.videoId"

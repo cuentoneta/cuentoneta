@@ -4,7 +4,6 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 @Component({
 	selector: 'cuentoneta-dmca',
-	standalone: true,
 	imports: [CommonModule],
 	hostDirectives: [MetaTagsDirective],
 	template: `

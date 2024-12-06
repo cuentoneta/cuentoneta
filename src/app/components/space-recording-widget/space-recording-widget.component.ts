@@ -5,7 +5,6 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 
 @Component({
 	selector: 'cuentoneta-space-recording-widget',
-	standalone: true,
 	imports: [CommonModule, NgOptimizedImage, PortableTextParserComponent],
 	template: `
 		<a [href]="spaceUrl()" aria-label="space-recording-href" target="_blank" class="mb-2 block">

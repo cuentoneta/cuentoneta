@@ -10,7 +10,6 @@ import { MapPublicationEditionLabelPipe } from '../../pipes/map-publication-edit
 
 @Component({
 	selector: 'cuentoneta-navigable-publication-teaser',
-	standalone: true,
 	imports: [
 		CommonModule,
 		MediaResourceTagsComponent,
