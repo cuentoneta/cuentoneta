@@ -6,7 +6,6 @@ import { AppRoutes } from '../../app.routes';
 
 @Component({
 	selector: 'cuentoneta-author-teaser',
-	standalone: true,
 	imports: [CommonModule, NgOptimizedImage, RouterLink],
 	template: ` <a
 		[routerLink]="['/', appRoutes.Author, author().slug]"

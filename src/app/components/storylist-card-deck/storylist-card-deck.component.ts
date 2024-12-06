@@ -25,7 +25,6 @@ import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-storylist-card-deck',
-	standalone: true,
 	imports: [
 		CommonModule,
 		MapPublicationComingNextLabelPipe,

@@ -12,7 +12,6 @@ type MediaTypeWidgetComponents =
 
 @Component({
 	selector: 'cuentoneta-media-resource',
-	standalone: true,
 	imports: [CommonModule, SpaceRecordingWidgetComponent, AudioRecordingWidgetComponent],
 	template: ` @for (media of mediaResources(); track $index) {
 		<ng-container *ngComponentOutlet="media.component; inputs: media.inputs"></ng-container>

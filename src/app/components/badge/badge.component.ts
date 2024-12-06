@@ -5,7 +5,6 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 
 @Component({
 	selector: 'cuentoneta-badge',
-	standalone: true,
 	hostDirectives: [TooltipDirective],
 	imports: [CommonModule, NgOptimizedImage],
 	template: `

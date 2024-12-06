@@ -30,7 +30,6 @@ import { ResourceComponent } from '../resource/resource.component';
 			</section>
 		</div>
 	`,
-	standalone: true,
 	imports: [AuthorTeaserComponent, CommonModule, NgOptimizedImage, ResourceComponent, PortableTextParserComponent],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })

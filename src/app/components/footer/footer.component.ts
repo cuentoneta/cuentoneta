@@ -73,7 +73,6 @@ import { InternalLink, UrlLink } from '@models/link.model';
 			}
 		}
 	`,
-	standalone: true,
 	imports: [RouterModule, NgOptimizedImage],
 })
 export class FooterComponent {

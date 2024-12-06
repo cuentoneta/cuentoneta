@@ -5,7 +5,6 @@ import { TextBlockContent } from '@models/block-content.model';
 
 @Component({
 	selector: 'cuentoneta-story-card-content',
-	standalone: true,
 	imports: [CommonModule, PortableTextParserComponent, NgOptimizedImage],
 	template: `
 		<section>

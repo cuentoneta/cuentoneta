@@ -55,7 +55,6 @@ import { PortableTextParserComponent } from '../../components/portable-text-pars
 			animation-timeline: scroll(root);
 		}
 	`,
-	standalone: true,
 	imports: [
 		BioSummaryCardComponent,
 		CommonModule,

@@ -10,7 +10,6 @@ import { MediaResourceTagsComponent } from '../media-resource-tags/media-resourc
 
 @Component({
 	selector: 'cuentoneta-story-card',
-	standalone: true,
 	template: `
 		<cuentoneta-card [route]="computedRoute()" [lang]="story().language">
 			<header slot="header">
