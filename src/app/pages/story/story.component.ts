@@ -60,13 +60,11 @@ import { PortableTextParserComponent } from '../../components/portable-text-pars
 		CommonModule,
 		EpigraphComponent,
 		MediaResourceComponent,
-		NgOptimizedImage,
 		NgxSkeletonLoaderModule,
 		PortableTextParserComponent,
 		RouterLink,
 		ShareContentComponent,
 		StoryNavigationBarComponent,
-		YouTubePlayer,
 	],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
