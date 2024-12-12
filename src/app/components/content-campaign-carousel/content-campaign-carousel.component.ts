@@ -40,7 +40,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 									</h3>
 								</header>
 								<img
-									[ngSrc]="slide.contents[viewport].imageUrl"
+									[ngSrc]="slide.contents[viewport].imageUrl + '?auto=format'"
 									[width]="slide.contents[viewport].imageWidth"
 									[height]="slide.contents[viewport].imageHeight"
 									[alt]="'Imagen de la campaña de contenido ' + slide.title"

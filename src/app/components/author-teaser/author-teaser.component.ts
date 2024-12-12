@@ -40,7 +40,7 @@ import { AppRoutes } from '../../app.routes';
 				<div class="flex items-center gap-2">
 					<img
 						[alt]="'Bandera de ' + nationality.country"
-						[ngSrc]="nationality.flag"
+						[ngSrc]="nationality.flag + '?auto=format'"
 						class="h-[15px] w-[20px] rounded"
 						width="20"
 						height="15"
@@ -66,7 +66,7 @@ export class AuthorTeaserComponent {
 	// Para un mejor scaling, a cargo del browser, se obtiene una imagen del 1.5x el tamaño final renderizado
 	authorImageUrl = computed(() =>
 		this.author().imageUrl
-			? `${this.author().imageUrl}?h=${this.imageSize() * 1.5}&w=${this.imageSize() * 1.5}`
+			? `${this.author().imageUrl}?h=${this.imageSize() * 1.5}&w=${this.imageSize() * 1.5}&auto=format`
 			: 'assets/img/default-avatar.jpg',
 	);
 
