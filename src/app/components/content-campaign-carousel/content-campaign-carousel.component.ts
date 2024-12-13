@@ -40,7 +40,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 									</h3>
 								</header>
 								<img
-									[ngSrc]="slide.contents[viewport].imageUrl + '?auto=format'"
+									[ngSrc]="sanityFormatImageUrl(slide.contents[viewport].imageUrl)"
 									[width]="slide.contents[viewport].imageWidth"
 									[height]="slide.contents[viewport].imageHeight"
 									[alt]="'Imagen de la campaña de contenido ' + slide.title"
@@ -69,6 +69,10 @@ export class ContentCampaignCarouselComponent {
 
 	// Viewport para el que debe renderizarse el contenido.
 	viewport: ContentCampaignViewport = this.themeService.viewport;
+
+	sanityFormatImageUrl(url: string) {
+		return `${url}?auto=format`;
+	}
 
 	// Asigna las clases específicas de visibilidad para cada uno de los viewports soportados.
 	readonly viewportSpecificClasses: { [key in ContentCampaignViewport]: string } = {
