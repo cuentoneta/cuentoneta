@@ -64,7 +64,7 @@ if (environment === 'development') {
 
 // Genera una ruta absoluta a la API en función del ambiente
 const generateApiUrl = (environment: TEnvironmentType): string => {
-	let url = 'http://localhost:4000/';
+	let url = '/';
 
 	const branchUrl: string = process.env['VERCEL_BRANCH_URL'] as string;
 	const stagingBranchUrl = 'cuentoneta-git-develop-cuentoneta.vercel.app';
