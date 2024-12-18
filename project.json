@@ -7,7 +7,7 @@
 	"tags": [],
 	"targets": {
 		"build": {
-			"executor": "@nx/angular:application",
+			"executor": "@angular-devkit/build-angular:application",
 			"outputs": ["{options.outputPath}"],
 			"options": {
 				"clearScreen": true,
@@ -19,11 +19,10 @@
 				"inlineStyleLanguage": "scss",
 				"assets": ["./src/favicon.ico", "./src/assets"],
 				"server": "./src/main.server.ts",
-				"prerender": {
-					"discoverRoutes": true
-				},
 				"styles": ["./src/styles.scss"],
-				"scripts": []
+				"scripts": [],
+				"ssr": { "entry": "./src/ssr.server.ts" },
+				"outputMode": "server"
 			},
 			"configurations": {
 				"production": {
@@ -39,15 +38,13 @@
 							"maximumError": "4kb"
 						}
 					],
-					"ssr": { "entry": "./src/ssr.server.ts" },
 					"outputHashing": "all"
 				},
 				"development": {
 					"optimization": false,
 					"extractLicenses": false,
 					"sourceMap": true,
-					"namedChunks": true,
-					"ssr": { "entry": "./src/ssr.server.ts" }
+					"namedChunks": true
 				}
 			},
 			"defaultConfiguration": "production"
