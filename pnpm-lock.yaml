@@ -206,9 +206,6 @@ importers:
       browser-sync:
         specifier: ^3.0.2
         version: 3.0.2
-      concurrently:
-        specifier: ^8.2.2
-        version: 8.2.2
       cypress:
         specifier: ^11.0.0
         version: 11.2.0
@@ -5607,12 +5604,6 @@ packages:
     resolution:
       { integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg== }
 
-  concurrently@8.2.2:
-    resolution:
-      { integrity: sha512-1dP4gpXFhei8IOtlXRE/T/4H88ElHgTiUzh71YUmtjTEHMSRS2Z/fgOxHSxxusGHogsRfxNq1vyAwxSC+EVyDg== }
-    engines: { node: ^14.13.0 || >=16.0.0 }
-    hasBin: true
-
   confusing-browser-globals@1.0.11:
     resolution:
       { integrity: sha512-JsPKdmh8ZkmnHxDk55FZ1TqVLvEQTvoByJZRN9jzI0UjxK/QgAmsphz7PGtqgPieQZ/CQcHWXCR7ATDNhGe+YA== }
@@ -5943,11 +5934,6 @@ packages:
     resolution:
       { integrity: sha512-Jy/tj3ldjZJo63sVAvg6LHt2mHvl4V6AgRAmNDtLdm7faqtsx+aJG42rsyCo9JCoRVKwPFzKlIPx3DIibwSIaQ== }
     engines: { node: '>=12' }
-
-  date-fns@2.30.0:
-    resolution:
-      { integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw== }
-    engines: { node: '>=0.11' }
 
   date-format@4.0.14:
     resolution:
@@ -10574,10 +10560,6 @@ packages:
     resolution:
       { integrity: sha512-l3BikUxvPOcn5E74dZiq5BGsTb5yEwhaTSzccU6t4sDOH8NWJCstKO5QT2CvtFoK6F0saL7p9xHAqHOlCPJygA== }
     engines: { node: '>= 8' }
-
-  spawn-command@0.0.2:
-    resolution:
-      { integrity: sha512-zC8zGoGkmc8J9ndvml8Xksr1Amk9qBujgbF0JAIWO7kXr43w0h/0GJNM/Vustixu+YE8N/MTrQ7N31FvHUACxQ== }
 
   spdx-correct@3.2.0:
     resolution:
@@ -17468,18 +17450,6 @@ snapshots:
 
   concat-map@0.0.1: {}
 
-  concurrently@8.2.2:
-    dependencies:
-      chalk: 4.1.2
-      date-fns: 2.30.0
-      lodash: 4.17.21
-      rxjs: 7.8.1
-      shell-quote: 1.8.1
-      spawn-command: 0.0.2
-      supports-color: 8.1.1
-      tree-kill: 1.2.2
-      yargs: 17.7.2
-
   confusing-browser-globals@1.0.11: {}
 
   connect-history-api-fallback@1.6.0: {}
@@ -17825,10 +17795,6 @@ snapshots:
       abab: 2.0.6
       whatwg-mimetype: 3.0.0
       whatwg-url: 11.0.0
-
-  date-fns@2.30.0:
-    dependencies:
-      '@babel/runtime': 7.24.7
 
   date-format@4.0.14: {}
 
@@ -22106,8 +22072,6 @@ snapshots:
   source-map@0.6.1: {}
 
   source-map@0.7.4: {}
-
-  spawn-command@0.0.2: {}
 
   spdx-correct@3.2.0:
     dependencies:
