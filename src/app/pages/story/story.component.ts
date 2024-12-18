@@ -2,8 +2,7 @@
 import { Component, effect, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Observable, tap } from 'rxjs';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { YouTubePlayer } from '@angular/youtube-player';
+import { CommonModule } from '@angular/common';
 
 // 3rd Party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
