@@ -197,7 +197,7 @@ Usuario: dev@cuentoneta.ar
 Password: CuentonetaFec2023#
 ```
 
-#### Paso 5: ¡Listo!
+#### Paso 4: ¡Listo!
 
 Luego de ingresar las credenciales, se abrirá una pestaña en tu navegador con el entorno de desarrollo de Sanity Studio en la URL: https://localhost:3333
 
