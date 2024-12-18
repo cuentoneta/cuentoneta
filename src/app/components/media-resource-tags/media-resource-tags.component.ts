@@ -4,7 +4,6 @@ import { Media } from '@models/media.model';
 
 @Component({
 	selector: 'cuentoneta-media-resource-tags',
-	standalone: true,
 	imports: [CommonModule],
 	template: ` @for (mediaResource of resources(); track $index) {
 		@switch (mediaResource.type) {

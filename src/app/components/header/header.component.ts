@@ -73,7 +73,6 @@ import { InternalLink } from '@models/link.model';
 			@apply md:grid-cols-2 md:grid-rows-1;
 		}
 	`,
-	standalone: true,
 	imports: [CommonModule, RouterModule, NgOptimizedImage],
 })
 export class HeaderComponent {

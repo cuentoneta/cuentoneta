@@ -2,8 +2,7 @@
 import { Component, effect, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Observable, tap } from 'rxjs';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { YouTubePlayer } from '@angular/youtube-player';
+import { CommonModule } from '@angular/common';
 
 // 3rd Party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -55,19 +54,16 @@ import { PortableTextParserComponent } from '../../components/portable-text-pars
 			animation-timeline: scroll(root);
 		}
 	`,
-	standalone: true,
 	imports: [
 		BioSummaryCardComponent,
 		CommonModule,
 		EpigraphComponent,
 		MediaResourceComponent,
-		NgOptimizedImage,
 		NgxSkeletonLoaderModule,
 		PortableTextParserComponent,
 		RouterLink,
 		ShareContentComponent,
 		StoryNavigationBarComponent,
-		YouTubePlayer,
 	],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })

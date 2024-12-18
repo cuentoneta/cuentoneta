@@ -7,7 +7,6 @@ import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-author-skeleton',
-	standalone: true,
 	imports: [CommonModule, RepeatPipe, StoryCardSkeletonComponent, NgxSkeletonLoaderModule],
 	template: `
 		<section class="flex flex-col items-center justify-center gap-4">

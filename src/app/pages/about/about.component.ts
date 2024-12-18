@@ -4,7 +4,6 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 @Component({
 	selector: 'cuentoneta-about',
-	standalone: true,
 	imports: [CommonModule, NgOptimizedImage],
 	hostDirectives: [MetaTagsDirective],
 	templateUrl: './about.component.html',

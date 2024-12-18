@@ -1,7 +1,7 @@
 import { Component, input, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SpaceRecordingWidgetComponent } from '../space-recording-widget/space-recording-widget.component';
 import { AudioRecording, Media, MediaTypes, SpaceRecording, YouTubeVideo } from '@models/media.model';
+import { SpaceRecordingWidgetComponent } from '../space-recording-widget/space-recording-widget.component';
 import { AudioRecordingWidgetComponent } from '../audio-recording-widget/audio-recording-widget.component';
 import { YoutubeVideoWidgetComponent } from '../youtube-video-widget/youtube-video-widget.component';
 
@@ -12,8 +12,7 @@ type MediaTypeWidgetComponents =
 
 @Component({
 	selector: 'cuentoneta-media-resource',
-	standalone: true,
-	imports: [CommonModule, SpaceRecordingWidgetComponent, AudioRecordingWidgetComponent],
+	imports: [CommonModule],
 	template: ` @for (media of mediaResources(); track $index) {
 		<ng-container *ngComponentOutlet="media.component; inputs: media.inputs"></ng-container>
 	}`,

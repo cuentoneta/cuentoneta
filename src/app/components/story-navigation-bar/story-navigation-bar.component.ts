@@ -56,7 +56,6 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 			></ngx-skeleton-loader>
 		</ng-template>
 	`,
-	standalone: true,
 	imports: [CommonModule, NgxSkeletonLoaderModule, RouterLink],
 })
 export class StoryNavigationBarComponent {

@@ -21,7 +21,6 @@ import { NavigableStoryTeaserComponent } from '../navigable-story-teaser/navigab
 
 @Component({
 	selector: 'cuentoneta-author-navigation-frame',
-	standalone: true,
 	imports: [CommonModule, NavigableStoryTeaserComponent],
 	template: `@if (stories) {
 		@for (story of stories; track $index) {
