@@ -19,7 +19,7 @@ export const serverRoutes: Array<ServerRoute> = [
 	},
 	{
 		path: 'story',
-		renderMode: RenderMode.Prerender,
+		renderMode: RenderMode.Server,
 	},
 	{
 		path: 'story/:slug',
@@ -31,7 +31,7 @@ export const serverRoutes: Array<ServerRoute> = [
 	},
 	{
 		path: 'storylist',
-		renderMode: RenderMode.Prerender,
+		renderMode: RenderMode.Server,
 	},
 	{
 		path: 'storylist/:slug',
@@ -39,6 +39,6 @@ export const serverRoutes: Array<ServerRoute> = [
 	},
 	{
 		path: '**',
-		renderMode: RenderMode.Client,
+		renderMode: RenderMode.Prerender,
 	},
 ];
