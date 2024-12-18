@@ -12,34 +12,38 @@ import routes from './api/routes';
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
 
-const app = express();
-const angularApp = new AngularNodeAppEngine();
+export function app(): express.Express {
+	const server = express();
+	const angularApp = new AngularNodeAppEngine();
 
-// Registra las routes utilizadas por la API
-for (const route of routes) {
-	app.use(`/api${route.path}`, route.controller);
+	// Registra las routes utilizadas por la API
+	for (const route of routes) {
+		server.use(`/api${route.path}`, route.controller);
+	}
+
+	/**
+	 * Serve static files from /browser
+	 */
+	server.use(
+		express.static(browserDistFolder, {
+			maxAge: '1y',
+			index: false,
+			redirect: false,
+		}),
+	);
+
+	/**
+	 * Handle all other requests by rendering the Angular application.
+	 */
+	server.use('/**', (req, res, next) => {
+		angularApp
+			.handle(req)
+			.then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
+			.catch(next);
+	});
+
+	return server;
 }
-
-/**
- * Serve static files from /browser
- */
-app.use(
-	express.static(browserDistFolder, {
-		maxAge: '1y',
-		index: false,
-		redirect: false,
-	}),
-);
-
-/**
- * Handle all other requests by rendering the Angular application.
- */
-app.use('/**', (req, res, next) => {
-	angularApp
-		.handle(req)
-		.then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
-		.catch(next);
-});
 
 /**
  * Start the server if this module is the main entry point.
@@ -47,7 +51,8 @@ app.use('/**', (req, res, next) => {
  */
 if (isMainModule(import.meta.url)) {
 	const port = process.env['PORT'] || 4000;
-	app.listen(port, () => {
+	const server = app();
+	server.listen(port, () => {
 		console.log(`Aplicación en modo Server-Side Rendering corriendo en http://localhost:${port}`);
 
 		if (port === 4000) {
@@ -59,4 +64,4 @@ if (isMainModule(import.meta.url)) {
 /**
  * The request handler used by the Angular CLI (dev-server and during build).
  */
-export const reqHandler = createNodeRequestHandler(app);
+export const reqHandler = createNodeRequestHandler(app());
