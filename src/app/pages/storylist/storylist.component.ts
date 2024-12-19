@@ -1,5 +1,5 @@
 // Core
-import { Component, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
@@ -37,6 +37,8 @@ export class StorylistComponent {
 
 	skeletonColor = inject(ThemeService).pickColor('zinc', 300);
 	storylist!: Storylist | undefined;
+
+	featuredImageUrl = computed(() => `${this.storylist?.featuredImage}?auto=format`);
 
 	constructor() {
 		effect((cleanUp) => {
