@@ -31,7 +31,6 @@ import { StoryCardComponent } from '../../components/story-card/story-card.compo
 
 @Component({
 	selector: 'cuentoneta-author',
-	standalone: true,
 	imports: [
 		CommonModule,
 		StoryCardComponent,

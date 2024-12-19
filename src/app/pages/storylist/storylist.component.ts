@@ -25,7 +25,6 @@ import { ThemeService } from '../../providers/theme.service';
 @Component({
 	selector: 'cuentoneta-storylist',
 	templateUrl: './storylist.component.html',
-	standalone: true,
 	imports: [CommonModule, StorylistCardDeckComponent, NgxSkeletonLoaderModule, PortableTextParserComponent],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })

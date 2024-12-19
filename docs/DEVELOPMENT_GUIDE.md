@@ -150,13 +150,7 @@ O bien, su versión corta.
 pnpm i
 ```
 
-### Paso 3: Crear un build inicial del servidor
-
-```bash
-pnpm run build
-```
-
-#### Paso 4: Correr el entorno de desarrollo localmente
+#### Paso 3: Correr el entorno de desarrollo localmente
 
 Una vez hechos los pasos de instalación ejecutá el siguiente comando:
 
@@ -194,7 +188,7 @@ En el mismo directorio, ejecutá el siguiente comando:
 pnpm sanity dev
 ```
 
-#### Paso 4: Credenciales
+#### Paso 3: Credenciales
 
 La primera vez que ejecutes el entorno de desarrollo de Sanity Studio, se te pedirá que ingreses tus credenciales de acceso. Deberás elegir la opción `Email` y luego ingresar las siguientes credenciales:
 
@@ -203,7 +197,7 @@ Usuario: dev@cuentoneta.ar
 Password: CuentonetaFec2023#
 ```
 
-#### Paso 5: ¡Listo!
+#### Paso 4: ¡Listo!
 
 Luego de ingresar las credenciales, se abrirá una pestaña en tu navegador con el entorno de desarrollo de Sanity Studio en la URL: https://localhost:3333
 

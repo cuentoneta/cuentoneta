@@ -1,7 +1,7 @@
 <main>
 	@defer (when campaigns.length > 0) {
 		<cuentoneta-content-campaign-carousel [slides]="campaigns" />
-	} @placeholder (minimum 500ms) {
+	} @loading (minimum 500ms) {
 		<cuentoneta-content-campaign-carousel-skeleton />
 	}
 
@@ -19,7 +19,7 @@
 			@for (storylist of cards; track storylist.slug) {
 				<cuentoneta-storylist-card [storylist]="storylist" class="card w-full"> </cuentoneta-storylist-card>
 			}
-		} @placeholder (minimum 500ms) {
+		} @loading (minimum 500ms) {
 			@for (_ of [].constructor(6); track $index) {
 				<cuentoneta-storylist-card-skeleton class="card w-full" />
 			}

@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { CommonModule, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 @Component({
 	selector: 'cuentoneta-story-edition-date-label[label]',
@@ -23,8 +23,7 @@ import { CommonModule, NgIf } from '@angular/common';
 			justify-content: space-between;
 		}
 	`,
-	standalone: true,
-	imports: [CommonModule, NgIf],
+	imports: [CommonModule],
 })
 export class StoryEditionDateLabelComponent {
 	label = input<string>();

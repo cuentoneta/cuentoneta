@@ -9,7 +9,6 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 
 @Component({
 	selector: 'cuentoneta-audio-recording-widget',
-	standalone: true,
 	imports: [CommonModule, PortableTextParserComponent],
 	template: `
 		<audio [src]="media().data.url" data-testid="audio-recording" controls class="mb-2 block w-full"></audio>

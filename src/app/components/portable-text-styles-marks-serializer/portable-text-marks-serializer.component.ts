@@ -4,7 +4,6 @@ import { MarkDef } from '@models/block-content.model';
 
 @Component({
 	selector: 'cuentoneta-portable-text-marks-serializer',
-	standalone: true,
 	imports: [CommonModule],
 	template: ` <!-- Caso base: no se aplica ningún estilo y se interpola la cadena de texto -->
 		@if (marks().length === 0) {
