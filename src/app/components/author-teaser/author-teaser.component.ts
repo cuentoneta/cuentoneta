@@ -40,7 +40,7 @@ import { AppRoutes } from '../../app.routes';
 				<div class="flex items-center gap-2">
 					<img
 						[alt]="'Bandera de ' + nationality.country"
-						[ngSrc]="autorFlagUrl()"
+						[ngSrc]="authorFlagUrl()"
 						class="h-[15px] w-[20px] rounded"
 						width="20"
 						height="15"
@@ -70,7 +70,7 @@ export class AuthorTeaserComponent {
 			: 'assets/img/default-avatar.jpg',
 	);
 
-	autorFlagUrl = computed(() => `${this.author().nationality.flag}?auto=format`);
+	authorFlagUrl = computed(() => `${this.author().nationality.flag}?auto=format`);
 
 	protected readonly appRoutes = AppRoutes;
 }
