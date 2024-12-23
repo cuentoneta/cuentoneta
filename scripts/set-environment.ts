@@ -62,8 +62,30 @@ if (environment === 'development') {
 	createSanityStudioEnvFile();
 }
 
-const apiUrl = '/';
+// Genera una ruta absoluta a la API en función del ambiente
+const generateApiUrl = (environment: TEnvironmentType): string => {
+	let url = '/';
 
+	const branchUrl: string = process.env['VERCEL_BRANCH_URL'] as string;
+	const stagingBranchUrl = 'cuentoneta-git-develop-cuentoneta.vercel.app';
+
+	// Asigna URL en base a la URL de la rama de Vercel para ambiente staging
+	if (branchUrl === stagingBranchUrl) {
+		url = `https://staging.cuentoneta.ar/`;
+	}
+	// Lectura de la variable de entorno de Vercel para deployments de preview fuera de staging
+	else if (environment === 'preview') {
+		url = `https://${process.env['VERCEL_BRANCH_URL']}/`;
+	}
+	// Asigna URL en base a variables de entorno para producción y staging (preview develop)
+	else if (environment === 'production') {
+		url = `https://${process.env['VERCEL_PROJECT_PRODUCTION_URL']}/` as string;
+	}
+
+	return url;
+};
+
+const apiUrl = generateApiUrl(environment);
 // Accede a las variables de entorno y genera un string
 // correspondiente al objeto environment que utilizará Angular
 const environmentFileContent = `

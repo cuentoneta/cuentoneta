@@ -49,19 +49,15 @@ export function app(): express.Express {
  * Start the server if this module is the main entry point.
  * The server listens on the port defined by the `PORT` environment variable, or defaults to 4000.
  */
+const server = app();
 if (isMainModule(import.meta.url)) {
 	const port = process.env['PORT'] || 4000;
-	const server = app();
 	server.listen(port, () => {
-		console.log(`Aplicación en modo Server-Side Rendering corriendo en http://localhost:${port}`);
-
-		if (port === 4000) {
-			console.log(`Aplicación en modo Client-Side Rendering corriendo en  http://localhost:4200`);
-		}
+		console.log(`Aplicación corriendo en http://localhost:${port}`);
 	});
 }
 
 /**
  * The request handler used by the Angular CLI (dev-server and during build).
  */
-export const reqHandler = createNodeRequestHandler(app());
+export const reqHandler = createNodeRequestHandler(server);
