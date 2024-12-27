@@ -1,7 +1,7 @@
 // Core
 import { Component, computed, effect, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 // 3rd party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -25,7 +25,13 @@ import { ThemeService } from '../../providers/theme.service';
 @Component({
 	selector: 'cuentoneta-storylist',
 	templateUrl: './storylist.component.html',
-	imports: [CommonModule, StorylistCardDeckComponent, NgxSkeletonLoaderModule, PortableTextParserComponent],
+	imports: [
+		CommonModule,
+		StorylistCardDeckComponent,
+		NgxSkeletonLoaderModule,
+		PortableTextParserComponent,
+		NgOptimizedImage,
+	],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
 export class StorylistComponent {
