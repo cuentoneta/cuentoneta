@@ -21,9 +21,8 @@
 					"./src/favicon.ico",
 					"./src/assets",
 					{
-						"glob": "robots.txt",
-						"input": "./",
-						"output": "/"
+						"glob": "**/*",
+						"input": "public"
 					}
 				],
 				"server": "./src/main.server.ts",

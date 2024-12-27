@@ -18,7 +18,7 @@ export function app(): express.Express {
 
 	// Registra las routes utilizadas por la API
 	for (const route of routes) {
-		server.use(`${route.path}`, route.controller);
+		server.use(`/api${route.path}`, route.controller);
 	}
 
 	/**
