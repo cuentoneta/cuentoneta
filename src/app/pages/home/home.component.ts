@@ -24,7 +24,6 @@ import { StorylistCardSkeletonComponent } from '../../components/storylist-card-
 @Component({
 	selector: 'cuentoneta-home',
 	templateUrl: './home.component.html',
-	standalone: true,
 	imports: [
 		CommonModule,
 		ContentCampaignCarouselComponent,

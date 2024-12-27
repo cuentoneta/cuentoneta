@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { injectSpeedInsights } from '@vercel/speed-insights';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { RouterModule } from '@angular/router';
 
 @Component({
-	standalone: true,
 	selector: 'cuentoneta-root',
 	template: `
 		<cuentoneta-header />
@@ -15,7 +14,7 @@ import { RouterModule } from '@angular/router';
 		</div>
 		<cuentoneta-footer />
 	`,
-	imports: [CommonModule, FooterComponent, HeaderComponent, NgOptimizedImage, RouterModule],
+	imports: [CommonModule, FooterComponent, HeaderComponent, RouterModule],
 })
 export class AppComponent implements OnInit {
 	ngOnInit(): void {

@@ -1,7 +1,7 @@
 // Core
-import { Component, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Params, Router, RouterLink, UrlTree } from '@angular/router';
+import { Params, Router, UrlTree } from '@angular/router';
 import { combineLatest, map, Observable, tap } from 'rxjs';
 
 // Routing
@@ -18,8 +18,6 @@ import { StoryTeaser } from '@models/story.model';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { StoryCardSkeletonComponent } from '../../components/story-card-skeleton/story-card-skeleton.component';
-import { RepeatPipe } from '../../pipes/repeat.pipe';
 
 // Services
 import { AuthorService } from '../../providers/author.service';
@@ -33,17 +31,13 @@ import { StoryCardComponent } from '../../components/story-card/story-card.compo
 
 @Component({
 	selector: 'cuentoneta-author',
-	standalone: true,
 	imports: [
 		CommonModule,
 		StoryCardComponent,
 		NgOptimizedImage,
 		PortableTextParserComponent,
 		ResourceComponent,
-		RouterLink,
 		NgxSkeletonLoaderModule,
-		StoryCardSkeletonComponent,
-		RepeatPipe,
 		AuthorSkeletonComponent,
 	],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
@@ -53,7 +47,7 @@ import { StoryCardComponent } from '../../components/story-card/story-card.compo
 				@if (author) {
 					<section class="flex flex-col items-center gap-4">
 						<img
-							[ngSrc]="author.imageUrl"
+							[ngSrc]="authorImageUrl()"
 							[alt]="'Retrato de ' + author.name"
 							class="h-[192px] rounded-xl"
 							width="192"
@@ -61,7 +55,7 @@ import { StoryCardComponent } from '../../components/story-card/story-card.compo
 						/>
 						<div class="flex items-center gap-4">
 							<h1 class="h1">{{ author.name }}</h1>
-							<img [ngSrc]="author.nationality.flag" width="30" height="20" class="h-6 w-8" alt="" />
+							<img [ngSrc]="authorFlagUrl()" width="30" height="20" class="h-6 w-8" alt="" />
 						</div>
 						@if (author.resources && author.resources.length > 0) {
 							<div class="flex justify-start gap-4 sm:justify-end">
@@ -102,6 +96,12 @@ export class AuthorComponent {
 
 	author: Author | undefined;
 	stories: (StoryTeaser & { navigationRoute: UrlTree })[] = [];
+
+	authorImageUrl = computed(() =>
+		this.author?.imageUrl ? `${this.author?.imageUrl}?auto=format` : 'assets/img/default-avatar.jpg',
+	);
+
+	authorFlagUrl = computed(() => `${this.author?.nationality.flag}?auto=format`);
 
 	constructor() {
 		effect((cleanUp) => {
