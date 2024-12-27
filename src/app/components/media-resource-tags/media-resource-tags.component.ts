@@ -1,25 +1,30 @@
 import { Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Media } from '@models/media.model';
 
 @Component({
 	selector: 'cuentoneta-media-resource-tags',
-	imports: [CommonModule],
+	imports: [CommonModule, NgOptimizedImage],
 	template: ` @for (mediaResource of resources(); track $index) {
 		@switch (mediaResource.type) {
 			@case ('audioRecording') {
 				<div [title]="'Contiene narraciones en audio'" [class]="size()" class="flex items-center justify-center">
-					<img [alt]="'Contiene narraciones en audio'" src="assets/svg/waveform.svg" />
+					<img [alt]="'Contiene narraciones en audio'" [ngSrc]="'assets/svg/waveform.svg'" width="24" height="24" />
 				</div>
 			}
 			@case ('spaceRecording') {
 				<div [title]="'Contiene grabaciones de Spaces de X'" [class]="size()" class="flex items-center justify-center">
-					<img [alt]="'Contiene grabaciones de Spaces de X'" src="assets/svg/twitter.svg" />
+					<img
+						[alt]="'Contiene grabaciones de Spaces de X'"
+						[ngSrc]="'assets/svg/twitter.svg'"
+						width="24"
+						height="24"
+					/>
 				</div>
 			}
 			@case ('youTubeVideo') {
 				<div [title]="'Contiene videos de YouTube'" [class]="size()" class="flex items-center justify-center">
-					<img [alt]="'Contiene videos de YouTube'" src="assets/svg/video.svg" />
+					<img [alt]="'Contiene videos de YouTube'" [ngSrc]="'assets/svg/video.svg'" width="24" height="24" />
 				</div>
 			}
 		}
