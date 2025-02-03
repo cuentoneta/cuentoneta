@@ -1,21 +1,22 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PortableTextParserComponent } from './portable-text-parser.component';
+import { render } from '@testing-library/angular';
+import { PortableTextParserService } from './portable-text-parser.service';
+import { authorMock } from '../../mocks/author.mock';
 
-xdescribe('PortableTextParserComponent', () => {
-	let component: PortableTextParserComponent;
-	let fixture: ComponentFixture<PortableTextParserComponent>;
+describe('PortableTextParserComponent', () => {
+	const setup = async () => {
+		return await render(PortableTextParserComponent, {
+			inputs: {
+				paragraphs: authorMock.biography,
+				classes: '',
+				type: 'paragraph',
+			},
+			providers: [PortableTextParserService],
+		});
+	};
 
-	beforeEach(async () => {
-		await TestBed.configureTestingModule({
-			imports: [PortableTextParserComponent],
-		}).compileComponents();
-
-		fixture = TestBed.createComponent(PortableTextParserComponent);
-		component = fixture.componentInstance;
-		fixture.detectChanges();
-	});
-
-	it('should create', () => {
-		expect(component).toBeTruthy();
+	it('should render the component', async () => {
+		const { container } = await setup();
+		expect(container).toBeInTheDocument();
 	});
 });
