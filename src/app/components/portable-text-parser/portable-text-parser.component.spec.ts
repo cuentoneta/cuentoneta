@@ -1,6 +1,5 @@
 import { PortableTextParserComponent } from './portable-text-parser.component';
 import { render, RenderResult } from '@testing-library/angular';
-import { PortableTextParserService } from './portable-text-parser.service';
 import { authorMock } from '../../mocks/author.mock';
 
 describe('PortableTextParserComponent', () => {
@@ -14,7 +13,6 @@ describe('PortableTextParserComponent', () => {
 				type: 'paragraph',
 				...options,
 			},
-			providers: [PortableTextParserService],
 		});
 	};
 
