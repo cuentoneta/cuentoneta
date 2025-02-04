@@ -67,28 +67,24 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	constructor() {
 		super();
 
-		effect(
-			(cleanUp) => {
-				if (!this.params() || !this.queryParams()) {
-					return;
-				}
-				const { navigationSlug } = this.queryParams();
+		effect((cleanUp) => {
+			if (!this.params() || !this.queryParams()) {
+				return;
+			}
+			const { navigationSlug } = this.queryParams();
 
-				const subscription = this.storylist$(navigationSlug).subscribe((storylist) => {
-					this.storylist = storylist;
-					this.sliceDisplayedPublications(storylist.publications);
-					this.config.set({
-						headerTitle: storylist.title,
-						footerTitle: 'Ver más...',
-						navigationRoute: this.router.createUrlTree([this.appRoutes.StoryList, storylist.slug]),
-						showFooter: true,
-					});
+			const subscription = this.storylist$(navigationSlug).subscribe((storylist) => {
+				this.storylist = storylist;
+				this.sliceDisplayedPublications(storylist.publications);
+				this.config.set({
+					headerTitle: storylist.title,
+					footerTitle: 'Ver más...',
+					navigationRoute: this.router.createUrlTree([this.appRoutes.StoryList, storylist.slug]),
+					showFooter: true,
 				});
-				cleanUp(() => subscription.unsubscribe());
-			},
-			// TODO: Hacer refactor para evitar tener que utilizar este flag
-			{ allowSignalWrites: true },
-		);
+			});
+			cleanUp(() => subscription.unsubscribe());
+		});
 	}
 
 	private storylist$(navigationSlug: string) {
