@@ -44,7 +44,7 @@ export class StorylistComponent {
 	skeletonColor = inject(ThemeService).pickColor('zinc', 300);
 	storylist!: Storylist | undefined;
 
-	featuredImageUrl = computed(() => `${this.storylist?.featuredImage}?auto=format`);
+	featuredImageUrl = computed(() => `${this.storylist?.featuredImage}?h=${256 * 1.5}&w=${192 * 1.5}&auto=format`);
 
 	constructor() {
 		effect((cleanUp) => {
