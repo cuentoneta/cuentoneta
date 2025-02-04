@@ -7,8 +7,8 @@
 @use 'src/app/directives/tooltip.directive.scss' as *;
 
 // Imports de estilos de Ngx Owl Carousel
-@import 'ngx-owl-carousel-o/lib/styles/scss/owl.carousel';
-@import 'ngx-owl-carousel-o/lib/styles/scss/owl.theme.default';
+@use 'ngx-owl-carousel-o/lib/styles/scss/owl.carousel' as *;
+@use 'ngx-owl-carousel-o/lib/styles/scss/owl.theme.default' as *;
 
 // Imports de Tailwind
 @tailwind base;
