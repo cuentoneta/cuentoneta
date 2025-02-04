@@ -17,11 +17,13 @@
 
 // Imports de fuentes
 @font-face {
+	font-display: swap;
 	font-family: Inter;
 	src: url('assets/fonts/inter.woff2');
 }
 
 @font-face {
+	font-display: swap;
 	font-family: 'Source Serif Pro';
 	src: url('assets/fonts/source-serif-pro.woff2');
 }
