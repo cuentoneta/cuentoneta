@@ -69,7 +69,10 @@ export class AuthorTeaserComponent {
 			: 'assets/img/default-avatar.jpg',
 	);
 
-	authorFlagUrl = computed(() => `${this.author().nationality.flag}?auto=format`);
+	authorFlagUrl = computed(
+		() => `${this.author().nationality.flag}?h=${this.flagImageSize.height}&w=${this.flagImageSize.width}&auto=format`,
+	);
 
 	protected readonly appRoutes = AppRoutes;
+	private readonly flagImageSize = { width: 32, height: 20 };
 }
