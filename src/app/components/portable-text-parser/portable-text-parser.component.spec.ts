@@ -1,14 +1,14 @@
 import { PortableTextParserComponent } from './portable-text-parser.component';
-import { render, RenderResult } from '@testing-library/angular';
-import { authorMock } from '../../mocks/author.mock';
+import { render, RenderResult, screen } from '@testing-library/angular';
+import { storyMock } from '../../mocks/story.mock';
 
 describe('PortableTextParserComponent', () => {
 	let component: RenderResult<PortableTextParserComponent>;
 
-	const setup = async (options = {}) => {
+	const setupWithParagraphs = async (options = {}) => {
 		return await render(PortableTextParserComponent, {
 			inputs: {
-				paragraphs: authorMock.biography,
+				paragraphs: storyMock.media[0].description,
 				classes: '',
 				type: 'paragraph',
 				...options,
@@ -16,38 +16,31 @@ describe('PortableTextParserComponent', () => {
 		});
 	};
 
-	beforeEach(async () => {
-		component = await setup();
-	});
-
-	it('should render the component', () => {
+	it('should render the component', async () => {
+		component = await setupWithParagraphs();
+		expect(component.container).toBeInTheDocument();
+		await component.rerender({
+			inputs: { paragraphs: storyMock.media[0].description, classes: '', type: 'span' },
+		});
 		expect(component.container).toBeInTheDocument();
 	});
 
-	it('should render paragraphs with correct HTML content', async () => {
-		const paragraphs = component.container.querySelectorAll('p');
-		expect(paragraphs.length).toBeGreaterThan(0);
-
-		component.fixture.whenRenderingDone().then(() => {
-			// Helper function to clean HTML string for comparison
-			component.detectChanges();
-
-			// Check specific paragraph content
-			expect(paragraphs[0].innerHTML).toContain('François Onoff');
-
-			// Check for formatted content
-			expect(paragraphs[1].querySelector('i')).toBeTruthy();
-			expect(paragraphs[2].querySelector('b')).toBeTruthy();
-		});
+	it('should render paragraphs', async () => {
+		await setupWithParagraphs();
+		expect(screen.getByRole('paragraph')).toBeInTheDocument();
 	});
 
-	it('should handle links correctly', () => {
-		const links = component.container.querySelectorAll('a');
-		console.log(links, links.length);
-		// Assuming there are links in your mock data
-		if (links.length > 0) {
-			expect(links[0].getAttribute('href')).not.toBe('#');
-			expect(links[0].classList.contains('underline')).toBeTruthy();
-		}
+	it('should render spans', async () => {
+		await setupWithParagraphs();
+		await component.rerender({
+			inputs: { paragraphs: storyMock.media[0].description, classes: '', type: 'span' },
+		});
+		expect(screen.getByText('Le Ble Chateau')).toBeInTheDocument();
+	});
+
+	it('should handle links correctly', async () => {
+		await setupWithParagraphs();
+		// Use Angular Testing Library functions to test the component
+		expect(screen.getByRole('link')).toBeInTheDocument();
 	});
 });

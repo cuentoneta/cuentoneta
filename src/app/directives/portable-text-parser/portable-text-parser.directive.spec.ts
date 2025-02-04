@@ -8,7 +8,7 @@ import { PortableTextDirective } from './portable-text-parser.directive';
 	imports: [PortableTextDirective],
 	template: `<article>
 		@for (paragraph of content(); track $index) {
-			<p [portableText]="paragraph" [classes]="classes()"></p>
+			<p [portableText]="paragraph" [classes]="classes()" cuentonetaPortableText></p>
 		}
 	</article>`,
 })
@@ -35,7 +35,7 @@ describe('PortableTextDirective', () => {
 		expect(component).toBeTruthy();
 	});
 
-	describe('Author biography formatting', () => {
+	describe('author biography formatting', () => {
 		it('should format author name in bold', () => {
 			component.content.set(authorMock.biography);
 			fixture.detectChanges();
@@ -51,12 +51,12 @@ describe('PortableTextDirective', () => {
 			fixture.detectChanges();
 
 			const container = fixture.nativeElement.querySelector('article');
-			const italicElements = container.querySelectorAll('i');
+			const italicElements = container.querySelectorAll('i') as HTMLElement[];
 
 			const bookTitles = ['El palacio de las nueve fronteras', 'Ecos del silencio', 'Sinfonía de sombras'];
 
 			bookTitles.forEach((title) => {
-				const found = Array.from(italicElements).some((el: any) => el.textContent.includes(title));
+				const found = Array.from(italicElements).some((el) => el.textContent?.includes(title));
 				expect(found).toBeTruthy();
 			});
 		});
@@ -65,20 +65,20 @@ describe('PortableTextDirective', () => {
 			component.content.set(authorMock.biography);
 			fixture.detectChanges();
 
-			const container = fixture.nativeElement.querySelector('article');
+			const container = fixture.nativeElement.querySelector('article') as HTMLElement;
 			expect(container.textContent).toBeTruthy();
 
 			// Verify formatting is preserved
-			if (container.textContent.includes('François Onoff')) {
+			if (container.textContent?.includes('François Onoff')) {
 				expect(container.querySelector('b')).toBeTruthy();
 			}
-			if (container.textContent.includes('El palacio de las nueve fronteras')) {
+			if (container.textContent?.includes('El palacio de las nueve fronteras')) {
 				expect(container.querySelector('i')).toBeTruthy();
 			}
 		});
 	});
 
-	describe('Story content formatting', () => {
+	describe('story content formatting', () => {
 		it('should format story title in bold and italics', () => {
 			component.content.set(storyMock.summary);
 			fixture.detectChanges();
@@ -92,14 +92,14 @@ describe('PortableTextDirective', () => {
 			component.content.set(storyMock.summary);
 			fixture.detectChanges();
 
-			const container = fixture.nativeElement.querySelector('article');
+			const container = fixture.nativeElement.querySelector('article') as HTMLElement;
 			const italicElements = container.querySelectorAll('i');
-			const collectionTitle = Array.from(italicElements).some((el: any) => el.textContent === 'Ecos del Silencio');
+			const collectionTitle = Array.from(italicElements).some((el) => el.textContent === 'Ecos del Silencio');
 			expect(collectionTitle).toBeTruthy();
 		});
 	});
 
-	describe('Media description formatting', () => {
+	describe('media description formatting', () => {
 		it('should format links correctly', () => {
 			component.content.set(storyMock.media[0].description);
 			fixture.detectChanges();
@@ -117,24 +117,47 @@ describe('PortableTextDirective', () => {
 			component.content.set(storyMock.media[0].description);
 			fixture.detectChanges();
 
-			const container = fixture.nativeElement.querySelector('article');
+			const container = fixture.nativeElement.querySelector('article') as HTMLElement;
 			const italicElements = container.querySelectorAll('i');
-			const showTitle = Array.from(italicElements).some((el: any) => el.textContent === 'Le Ble Chateau');
+			const showTitle = Array.from(italicElements).some((el) => el.textContent === 'Le Ble Chateau');
 			expect(showTitle).toBeTruthy();
+		});
+
+		it('should handle line breaks', () => {
+			component.content.set([
+				{
+					children: [
+						{
+							text: 'Line 1\nLine 2\nLine 3',
+							marks: [],
+							_type: '',
+							_key: '',
+						},
+					],
+					markDefs: [],
+					_type: 'block',
+					style: 'blockquote',
+					_key: '',
+				},
+			]);
+			fixture.detectChanges();
+
+			const container = fixture.nativeElement.querySelector('article');
+			expect(container.querySelectorAll('br').length).toEqual(2);
 		});
 	});
 
-	describe('Class handling', () => {
+	describe('class handling', () => {
 		it('should apply custom classes', () => {
 			component.classes.set('custom-class test-class');
 			fixture.detectChanges();
 
-			const container = fixture.nativeElement.querySelector('article');
+			const container = fixture.nativeElement.querySelector('article') as HTMLElement;
 			const classes = container.querySelectorAll('p');
 
-			classes.forEach((el: any) => {
-				expect(el.classList.contains('custom-class')).toBeTruthy();
-				expect(el.classList.contains('test-class')).toBeTruthy();
+			classes.forEach((el) => {
+				expect(el).toHaveClass('custom-class');
+				expect(el).toHaveClass('test-class');
 			});
 		});
 
@@ -142,55 +165,39 @@ describe('PortableTextDirective', () => {
 			component.classes.set('initial-class');
 			fixture.detectChanges();
 
-			const container = fixture.nativeElement.querySelector('article');
+			const container = fixture.nativeElement.querySelector('article') as HTMLElement;
 			const classes = container.querySelectorAll('p');
 
-			classes.forEach((el: any) => {
-				expect(el.classList.contains('initial-class')).toBeTruthy();
+			classes.forEach((el) => {
+				expect(el).toHaveClass('initial-class');
 			});
 
 			component.classes.set('updated-class');
 			fixture.detectChanges();
 
-			classes.forEach((el: any) => {
-				expect(el.classList.contains('initial-class')).toBeFalsy();
-				expect(el.classList.contains('updated-class')).toBeTruthy();
+			classes.forEach((el) => {
+				expect(el).not.toHaveClass('initial-class');
+				expect(el).toHaveClass('updated-class');
 			});
 		});
 	});
 
-	describe('Content updates', () => {
+	describe('content updates', () => {
 		it('should update content when signal changes', () => {
-			const initialParagraph = authorMock.biography;
-			const updatedParagraph = storyMock.summary;
+			const initialParagraphs = authorMock.biography;
+			const updatedParagraphs = storyMock.summary;
 
-			component.content.set(initialParagraph);
+			component.content.set(initialParagraphs);
 			fixture.detectChanges();
 
 			let container = fixture.nativeElement.querySelector('article');
-			expect(container.textContent).toContain('François Onoff');
+			expect(container).toHaveTextContent('François Onoff');
 
-			component.content.set(updatedParagraph);
+			component.content.set(updatedParagraphs);
 			fixture.detectChanges();
 
 			container = fixture.nativeElement.querySelector('article');
-			expect(container.textContent).toContain('El espejo del tiempo');
+			expect(container).toHaveTextContent('El espejo del tiempo');
 		});
-
-		// it('should handle line breaks', () => {
-		// 	component.content.set({
-		// 		children: [{ text: 'Line 1\nLine 2', marks: [] }],
-		// 		markDefs: [],
-		// 		_type: 'block',
-		// 	});
-		// 	fixture.detectChanges();
-		//
-		// 	const container = fixture.nativeElement.querySelector('article');
-		// 	expect(container.querySelector('br')).toBeTruthy();
-		//
-		// 	const textNodes = container.childNodes;
-		// 	expect(textNodes[0].textContent).toBe('Line 1');
-		// 	expect(textNodes[2].textContent).toBe('Line 2');
-		// });
 	});
 });
