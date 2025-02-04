@@ -2,7 +2,7 @@ import { Directive, ElementRef, Renderer2, effect, input, inject } from '@angula
 import { TextBlockContent } from '@models/block-content.model';
 
 @Directive({
-	selector: '[portableText]',
+	selector: '[cuentonetaPortableText]',
 	standalone: true,
 })
 export class PortableTextDirective {

@@ -9,11 +9,11 @@ import { PortableTextDirective } from '../../directives/portable-text-parser/por
 	template: `
 		@if (type() === 'paragraph') {
 			@for (paragraph of paragraphs(); track $index) {
-				<p [portableText]="paragraph" [classes]="classes()"></p>
+				<p [portableText]="paragraph" [classes]="classes()" cuentonetaPortableText></p>
 			}
 		} @else if (type() === 'span') {
 			@for (paragraph of paragraphs(); track $index) {
-				<span [portableText]="paragraph" [classes]="classes()"></span>
+				<span [portableText]="paragraph" [classes]="classes()" cuentonetaPortableText></span>
 			}
 		}
 	`,
