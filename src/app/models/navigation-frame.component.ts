@@ -21,15 +21,11 @@ export abstract class NavigationFrameComponent {
 	config = signal<NavigationBarConfig>(this.navigationFrameService.navigationBarConfig());
 
 	protected constructor() {
-		effect(
-			() => {
-				const config = this.config();
-				if (config) {
-					this.navigationFrameService.setNavigationBarConfig(config);
-				}
-			},
-			// TODO: Hacer refactor para evitar tener que utilizar este flag
-			{ allowSignalWrites: true },
-		);
+		effect(() => {
+			const config = this.config();
+			if (config) {
+				this.navigationFrameService.setNavigationBarConfig(config);
+			}
+		});
 	}
 }
