@@ -14,13 +14,13 @@
 					<cuentoneta-share-content
 						[isLoading]="!story"
 						[params]="shareContentParams"
-						[route]="appRoutes.Story"
+						[route]="sharingRoute()"
 						[message]="shareMessage"
 					/>
 				}
 			</aside>
 			<div>
-				@if (story) {
+				@if (story(); as story) {
 					<h1 [lang]="story.language" class="h1 mb-2">{{ story.title }}</h1>
 					<a
 						[lang]="story.language"
@@ -69,7 +69,7 @@
 			</div>
 		</header>
 
-		@if (story) {
+		@if (story(); as story) {
 			@if (story.media) {
 				@defer {
 					<cuentoneta-media-resource [mediaResources]="story.media"></cuentoneta-media-resource>
@@ -87,7 +87,7 @@
 			}
 		}
 
-		@if (story) {
+		@if (story(); as story) {
 			<section [lang]="story.language">
 				<cuentoneta-portable-text-parser
 					[classes]="'source-serif-pro-body-xl mb-8 leading-8'"
@@ -105,8 +105,8 @@
 		}
 
 		<footer>
-			@defer (when story) {
-				@if (story) {
+			@defer (when story()) {
+				@if (story(); as story) {
 					<cuentoneta-bio-summary-card [story]="story" />
 				}
 			}

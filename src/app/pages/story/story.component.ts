@@ -1,5 +1,5 @@
 // Core
-import { Component, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -82,14 +82,16 @@ export class StoryComponent {
 	shareContentParams: { [key: string]: string } = {};
 	shareMessage: string = '';
 	skeletonColor = this.themeService.pickColor('zinc', 300);
-	story: Story | undefined;
+
+	story = signal<Story | undefined>(undefined);
+	sharingRoute = computed(() => `${AppRoutes.Story}/${this.story()?.slug}`);
 
 	constructor() {
 		effect((cleanUp) => {
-			this.story = undefined;
+			this.story.set(undefined);
 			const { slug } = this.params();
 			const subscription = this.story$(slug).subscribe((story) => {
-				this.story = story;
+				this.story.set(story);
 				this.updateMetaTags(story);
 			});
 			cleanUp(() => subscription.unsubscribe());
@@ -101,7 +103,7 @@ export class StoryComponent {
 		this.metaTagsDirective.setDescription(
 			`Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
 		);
-		this.shareContentParams = { slug: story.slug };
+		this.shareContentParams = { navigationSlug: story.author.slug, navigation: 'author' };
 		this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`;
 	}
 
