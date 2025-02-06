@@ -29,7 +29,7 @@ export class ShareButtonComponent implements OnInit {
 	route = input<string>('');
 
 	onShareToPlatformClicked(event: MouseEvent | KeyboardEvent, platform: SharingPlatform) {
-		const urlParams = Object.keys(this.params)
+		const urlParams = Object.keys(this.params())
 			.map((key) => `${key}=${this.params()[key]}`)
 			.join('&');
 		window.open(
