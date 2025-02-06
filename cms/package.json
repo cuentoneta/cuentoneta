@@ -1,7 +1,7 @@
 {
 	"name": "@cuentoneta/cms",
 	"private": true,
-	"version": "2.5.2",
+	"version": "2.5.3",
 	"description": "",
 	"main": "package.json",
 	"author": "Ramiro Olivencia <ramiro@olivencia.com.ar>",
