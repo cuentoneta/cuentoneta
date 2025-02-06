@@ -12,22 +12,24 @@
 
 <ng-template #storylistTitleTemplate>
 	@if (!!storylist) {
-		<div class="grid grid-cols-1 gap-4 xs:max-md:!col-span-1 md:grid-cols-[1fr]">
-			<div class="flex items-center justify-center">
+		<div class="grid grid-cols-1 gap-4 xs:max-md:!col-span-1 md:grid-cols-[auto_1fr]">
+			<div class="flex justify-center md:justify-start">
 				<img
-					[src]="storylist.featuredImage"
+					[ngSrc]="featuredImageUrl()"
 					[alt]="'Imagen alusiva de la storylist ' + storylist.title"
-					class="max-h-[220px] rounded-xl"
+					class="h-[256px] rounded-xl"
+					width="192"
+					height="256"
 				/>
 			</div>
 
 			<div class="flex flex-col">
-				<h1 class="h1 mb-5 text-center">
-					{{ storylist?.title }}
+				<h1 class="h1 mb-5">
+					{{ storylist.title }}
 				</h1>
 				<cuentoneta-portable-text-parser
-					[paragraphs]="storylist?.description ?? []"
-					[classes]="'source-serif-pro-body-xl text-justify'"
+					[paragraphs]="storylist.description"
+					[classes]="'source-serif-pro-body-xl'"
 				></cuentoneta-portable-text-parser>
 			</div>
 		</div>

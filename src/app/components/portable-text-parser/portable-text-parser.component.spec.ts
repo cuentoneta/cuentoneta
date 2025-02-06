@@ -1,21 +1,46 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PortableTextParserComponent } from './portable-text-parser.component';
+import { render, RenderResult, screen } from '@testing-library/angular';
+import { storyMock } from '../../mocks/story.mock';
 
-xdescribe('PortableTextParserComponent', () => {
-	let component: PortableTextParserComponent;
-	let fixture: ComponentFixture<PortableTextParserComponent>;
+describe('PortableTextParserComponent', () => {
+	let component: RenderResult<PortableTextParserComponent>;
 
-	beforeEach(async () => {
-		await TestBed.configureTestingModule({
-			imports: [PortableTextParserComponent],
-		}).compileComponents();
+	const setupWithParagraphs = async (options = {}) => {
+		return await render(PortableTextParserComponent, {
+			inputs: {
+				paragraphs: storyMock.media[0].description,
+				classes: '',
+				type: 'paragraph',
+				...options,
+			},
+		});
+	};
 
-		fixture = TestBed.createComponent(PortableTextParserComponent);
-		component = fixture.componentInstance;
-		fixture.detectChanges();
+	it('should render the component', async () => {
+		component = await setupWithParagraphs();
+		expect(component.container).toBeInTheDocument();
+		await component.rerender({
+			inputs: { paragraphs: storyMock.media[0].description, classes: '', type: 'span' },
+		});
+		expect(component.container).toBeInTheDocument();
 	});
 
-	it('should create', () => {
-		expect(component).toBeTruthy();
+	it('should render paragraphs', async () => {
+		await setupWithParagraphs();
+		expect(screen.getByRole('paragraph')).toBeInTheDocument();
+	});
+
+	it('should render spans', async () => {
+		await setupWithParagraphs();
+		await component.rerender({
+			inputs: { paragraphs: storyMock.media[0].description, classes: '', type: 'span' },
+		});
+		expect(screen.getByText('Le Ble Chateau')).toBeInTheDocument();
+	});
+
+	it('should handle links correctly', async () => {
+		await setupWithParagraphs();
+		// Use Angular Testing Library functions to test the component
+		expect(screen.getByRole('link')).toBeInTheDocument();
 	});
 });

@@ -7,8 +7,8 @@
 @use 'src/app/directives/tooltip.directive.scss' as *;
 
 // Imports de estilos de Ngx Owl Carousel
-@import 'ngx-owl-carousel-o/lib/styles/scss/owl.carousel';
-@import 'ngx-owl-carousel-o/lib/styles/scss/owl.theme.default';
+@use 'ngx-owl-carousel-o/lib/styles/scss/owl.carousel' as *;
+@use 'ngx-owl-carousel-o/lib/styles/scss/owl.theme.default' as *;
 
 // Imports de Tailwind
 @tailwind base;
@@ -17,11 +17,13 @@
 
 // Imports de fuentes
 @font-face {
+	font-display: swap;
 	font-family: Inter;
 	src: url('assets/fonts/inter.woff2');
 }
 
 @font-face {
+	font-display: swap;
 	font-family: 'Source Serif Pro';
 	src: url('assets/fonts/source-serif-pro.woff2');
 }

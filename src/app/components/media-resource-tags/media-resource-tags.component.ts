@@ -1,41 +1,31 @@
 import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Media } from '@models/media.model';
+import { Media, MediaTypeKey } from '@models/media.model';
+import { MediaResourcePlatform, MediaResourceTagComponent } from '../media-resource-tag/media-resource-tag.component';
 
 @Component({
 	selector: 'cuentoneta-media-resource-tags',
-	standalone: true,
-	imports: [CommonModule],
+	imports: [CommonModule, MediaResourceTagComponent],
 	template: ` @for (mediaResource of resources(); track $index) {
-		@switch (mediaResource.type) {
-			@case ('audioRecording') {
-				<div [title]="'Contiene narraciones en audio'" [class]="size()" class="flex items-center justify-center">
-					<img [alt]="'Contiene narraciones en audio'" src="assets/svg/waveform.svg" />
-				</div>
-			}
-			@case ('spaceRecording') {
-				<div [title]="'Contiene grabaciones de Spaces de X'" [class]="size()" class="flex items-center justify-center">
-					<img [alt]="'Contiene grabaciones de Spaces de X'" src="assets/svg/twitter.svg" />
-				</div>
-			}
-			@case ('youTubeVideo') {
-				<div [title]="'Contiene videos de YouTube'" [class]="size()" class="flex items-center justify-center">
-					<img [alt]="'Contiene videos de YouTube'" src="assets/svg/video.svg" />
-				</div>
-			}
-		}
+		<cuentoneta-media-resource-tag [platform]="platforms[mediaResource.type]" />
 	}`,
-	styles: `
-		.md {
-			@apply h-6 w-6;
-		}
-
-		.lg {
-			@apply h-8 w-8;
-		}
-	`,
 })
 export class MediaResourceTagsComponent {
 	resources = input<Media[]>([]);
 	size = input<'md' | 'lg'>('md');
+
+	platforms: { [key in MediaTypeKey]: MediaResourcePlatform } = {
+		audioRecording: {
+			title: 'Contiene narraciones en audio',
+			icon: 'assets/svg/waveform.svg',
+		},
+		spaceRecording: {
+			title: 'Contiene grabaciones de Spaces de X',
+			icon: 'assets/svg/twitter.svg',
+		},
+		youTubeVideo: {
+			title: 'Contiene videos de YouTube',
+			icon: 'assets/svg/video.svg',
+		},
+	};
 }
