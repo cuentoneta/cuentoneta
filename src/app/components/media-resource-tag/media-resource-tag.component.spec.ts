@@ -1,21 +1,27 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MediaResourceTagComponent } from './media-resource-tag.component';
+import { render, screen } from '@testing-library/angular';
 
 describe('MediaResourceTagComponent', () => {
-	let component: MediaResourceTagComponent;
-	let fixture: ComponentFixture<MediaResourceTagComponent>;
+	const setup = async () => {
+		return await render(MediaResourceTagComponent, {
+			inputs: {
+				platform: {
+					title: 'Posee contenido multimedia',
+					icon: 'media',
+				},
+				size: 'md',
+			},
+		});
+	};
 
-	beforeEach(async () => {
-		await TestBed.configureTestingModule({
-			imports: [MediaResourceTagComponent],
-		}).compileComponents();
-
-		fixture = TestBed.createComponent(MediaResourceTagComponent);
-		component = fixture.componentInstance;
-		fixture.detectChanges();
+	it('should render the component', async () => {
+		const { container } = await setup();
+		expect(container).toBeInTheDocument();
 	});
 
-	it('should create', () => {
-		expect(component).toBeTruthy();
+	it('should render the platform icon', async () => {
+		await setup();
+		const icon = screen.getByRole('img');
+		expect(icon).toHaveAttribute('src', 'media');
 	});
 });
