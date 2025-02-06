@@ -91,7 +91,7 @@ const apiUrl = generateApiUrl(environment);
 const environmentFileContent = `
     export const environment = {
        environment: "${environment}",
-       website: "${process.env['VERCEL_PROJECT_PRODUCTION_URL']}",
+       website: "${process.env['VERCEL_PROJECT_PRODUCTION_URL'] ?? 'https://cuentoneta.ar/'}",
        apiUrl: "${apiUrl}"
     };
 `;
