@@ -139,10 +139,10 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 ### Hito: Lanzamiento al público de la versión [2.5.0](https://github.com/cuentoneta/cuentoneta/releases/tag/2.5.0) de La Cuentoneta (lanzada el 2024/10/28)
 
-- Migración comleta del proyecto y su configuración a ESLint 9.
+- Migración completa del proyecto y su configuración a ESLint 9.
 - Incorporación de nuevos tests unitarios funcionales utilizando Angular Testing Library.
 - Mejoras de accesibilidad en uso de tags de heading y anchors de navegación.
-- Agregado de filtraro de drafts para contenido de Sanity.
+- Agregado de filtrado de drafts para contenido de Sanity.
 - Creación de archivo .env para proyecto de Sanity.
 - Actualizado layout de vista /storylist
 - Agregado de las storylists "Ciudades Campos, Pueblos, Islas" y "Conspiración Cero"
@@ -154,7 +154,17 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 - Agregado de conector a Microsoft Clarity, incluyendo implementación mock.
 - Agregado automático de tag `✍️ bosquejo` a los issue templates de Github.
 
-### Hito: Lanzamiento al público de la versión [2.5.2](https://github.com/cuentoneta/cuentoneta/releases/tag/2.5.1) de La Cuentoneta (lanzada el 2024/12/01)
+### Hito: Lanzamiento al público de la versión [2.5.2](https://github.com/cuentoneta/cuentoneta/releases/tag/2.5.2) de La Cuentoneta (lanzada el 2024/12/01)
+
+- Completada la migración de tests unitarios funcionales utilizando Angular Testing Library.
+- Optimizaciones en carga de imágenes e íconos.
+- Arreglos en la generación de links del componente `ShareContentComponent`.
+- Estandarización de tooltips en la plataforma.
+- Agregado de archivo robots.txt a la plataforma para mejorar SEO.
+- Actualización de guía de desarrollo.
+- Actualización del proyecto a Angular v19.0 y Nx a versión 20.2.
+
+### Hito: Lanzamiento al público de la versión [2.5.3](https://github.com/cuentoneta/cuentoneta/releases/tag/2.5.2) de La Cuentoneta (lanzada el 2025/02/06)
 
 ---
 
