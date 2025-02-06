@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Media, MediaTypeKey } from '@models/media.model';
 import { MediaResourcePlatform, MediaResourceTagComponent } from '../media-resource-tag/media-resource-tag.component';
 
