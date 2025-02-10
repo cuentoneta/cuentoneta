@@ -85,7 +85,7 @@ type ResourcesSubQuery = (
 	| NonNullable<StorylistQueryResult>['publications'][0]['story']
 	| StoriesByAuthorSlugQueryResult[0]
 )['resources'];
-function mapResources(resources: ResourcesSubQuery): Resource[] {
+export function mapResources(resources: ResourcesSubQuery): Resource[] {
 	return (
 		resources?.map((resource) => ({
 			...resource,
