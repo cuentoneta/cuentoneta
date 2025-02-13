@@ -7,6 +7,7 @@ const router = express.Router();
 // Routes
 router.get('/read', getBySlug);
 router.get('/author/:slug', getStoriesByAuthorSlug);
+router.get('/most-read', getMostRead);
 
 export default router;
 
@@ -28,6 +29,18 @@ function getStoriesByAuthorSlug(req: express.Request, res: express.Response, nex
 	};
 	storyService
 		.fetchByAuthorSlug(args)
+		.then((result) => res.json(result))
+		.catch((err) => next(err));
+}
+
+function getMostRead(req: express.Request, res: express.Response, next: express.NextFunction) {
+	const { limit, offset, days } = req.query;
+	storyService
+		.fetchMostRead(
+			parseInt((limit ?? '6') as string),
+			parseInt((offset ?? '0') as string),
+			parseInt((days ?? '3') as string),
+		)
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
 }
