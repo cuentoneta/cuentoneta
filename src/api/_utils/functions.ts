@@ -205,7 +205,7 @@ export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlug
 	const stories = [];
 
 	for (const item of result) {
-		const { mediaSources, resources, body, ...properties } = item;
+		const { mediaSources, resources, ...properties } = item;
 
 		stories.push({
 			...properties,

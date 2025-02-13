@@ -34,13 +34,9 @@ function getStoriesByAuthorSlug(req: express.Request, res: express.Response, nex
 }
 
 function getMostRead(req: express.Request, res: express.Response, next: express.NextFunction) {
-	const { limit, offset, days } = req.query;
+	const { limit, offset } = req.query;
 	storyService
-		.fetchMostRead(
-			parseInt((limit ?? '6') as string),
-			parseInt((offset ?? '0') as string),
-			parseInt((days ?? '3') as string),
-		)
+		.fetchMostRead(parseInt((limit ?? '6') as string), parseInt((offset ?? '0') as string))
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
 }

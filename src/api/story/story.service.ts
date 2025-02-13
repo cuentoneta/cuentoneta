@@ -36,11 +36,7 @@ export async function fetchStoryBySlug(slug: string): Promise<Story> {
 	return await mapStoryContent(result);
 }
 
-export async function fetchMostRead(
-	limit: number = 6,
-	offset: number = 0,
-	days: number = 3,
-): Promise<StoryNavigationTeaser[]> {
+export async function fetchMostRead(limit: number = 6, offset: number = 0): Promise<StoryNavigationTeaser[]> {
 	const result = await contentService.fetchLandingPageContent();
 
 	if (!result) {
