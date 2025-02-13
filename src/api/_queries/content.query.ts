@@ -39,4 +39,23 @@ export const landingPageContentQuery = defineQuery(`
             }
         }
     },[]),
+    'mostRead': coalesce(mostRead[]->{
+        'slug': slug.current,
+        title,
+        language,
+        badLanguage,
+        'body': coalesce(body[0...3], []),
+        originalPublication,
+        approximateReadingTime,
+        'resources': [],
+        'mediaSources': coalesce(mediaSources[], []),
+        'author': author-> { 
+            slug,
+            name,
+            image,
+            nationality->,
+            'biography': [],
+            'resources': [],
+        }
+    },[]),
 }`);
