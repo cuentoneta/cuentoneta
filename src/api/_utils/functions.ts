@@ -16,7 +16,7 @@ import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.
 import { LandingPageContent } from '@models/landing-page-content.model';
 import { Publication, Storylist, StorylistTeaser } from '@models/storylist.model';
 import { Resource } from '@models/resource.model';
-import { Story, StoryPreview, StoryTeaser } from '@models/story.model';
+import { Story, StoryNavigationTeaser, StoryPreview, StoryTeaser } from '@models/story.model';
 import { Tag } from '@models/tag.model';
 import { TextBlockContent } from '@models/block-content.model';
 
@@ -85,7 +85,7 @@ type ResourcesSubQuery = (
 	| NonNullable<StorylistQueryResult>['publications'][0]['story']
 	| StoriesByAuthorSlugQueryResult[0]
 )['resources'];
-function mapResources(resources: ResourcesSubQuery): Resource[] {
+export function mapResources(resources: ResourcesSubQuery): Resource[] {
 	return (
 		resources?.map((resource) => ({
 			...resource,
@@ -201,10 +201,28 @@ export function mapStoryTeaser(result: NonNullable<StoriesByAuthorSlugQueryResul
 	return stories;
 }
 
+export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlugQueryResult>): StoryNavigationTeaser[] {
+	const stories = [];
+
+	for (const item of result) {
+		const { mediaSources, resources, ...properties } = item;
+
+		stories.push({
+			...properties,
+			media: mapMediaSourcesForStorylist(mediaSources),
+			resources: mapResources(resources),
+			paragraphs: [],
+		});
+	}
+
+	return stories;
+}
+
 export function mapLandingPageContent(result: NonNullable<LandingPageContentQueryResult>): LandingPageContent {
 	return {
 		cards: mapStorylistTeasers(result.cards),
 		campaigns: mapContentCampaigns(result.campaigns),
+		mostRead: mapStoryNavigationTeaser(result.mostRead),
 	};
 }
 

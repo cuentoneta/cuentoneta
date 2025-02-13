@@ -5,13 +5,16 @@ import { client } from '../_helpers/sanity-connector';
 import { mapStoryContent, mapStoryTeaser } from '../_utils/functions';
 
 // Modelos
-import { Story, StoryTeaser } from '@models/story.model';
+import { Story, StoryNavigationTeaser, StoryTeaser } from '@models/story.model';
 
 // Subqueries
 import { storiesByAuthorSlugQuery, storyBySlugQuery } from '../_queries/story.query';
 
 // Interfaces
 import { StoriesByAuthorSlugArgs } from '../interfaces/queryArgs';
+
+// Servicios
+import * as contentService from '../content/content.service';
 
 export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryTeaser[]> {
 	const result = await client.fetch(storiesByAuthorSlugQuery, {
@@ -31,4 +34,14 @@ export async function fetchStoryBySlug(slug: string): Promise<Story> {
 	}
 
 	return await mapStoryContent(result);
+}
+
+export async function fetchMostRead(limit: number = 6, offset: number = 0): Promise<StoryNavigationTeaser[]> {
+	const result = await contentService.fetchLandingPageContent();
+
+	if (!result) {
+		throw new Error(`Could not fetch most read stories`);
+	}
+
+	return result.mostRead.slice(offset, offset + limit);
 }
