@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/read', getBySlug);
 router.get('/author/:slug', getStoriesByAuthorSlug);
 router.get('/most-read', getMostRead);
-router.put('/update-most-read', updateMostRead);
+router.get('/update-most-read', updateMostRead);
 
 export default router;
 
