@@ -15,6 +15,7 @@ import { StoriesByAuthorSlugArgs } from '../interfaces/queryArgs';
 
 // Servicios
 import * as contentService from '../content/content.service';
+import { fetchClarityData } from '../_mocks/clarity.mock';
 
 export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryTeaser[]> {
 	const result = await client.fetch(storiesByAuthorSlugQuery, {
@@ -47,6 +48,9 @@ export async function fetchMostRead(limit: number = 6, offset: number = 0): Prom
 }
 
 export async function updateMostRead(): Promise<void> {
-	// TODO: Implement this method
+	// TODO: Reemplazar implementación mock de la API de Clarity
+	const mostReadStoriesSlugs = fetchClarityData();
+	console.log(mostReadStoriesSlugs);
+
 	throw new Error('Method not implemented');
 }
