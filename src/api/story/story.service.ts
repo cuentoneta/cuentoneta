@@ -45,3 +45,8 @@ export async function fetchMostRead(limit: number = 6, offset: number = 0): Prom
 
 	return result.mostRead.slice(offset, offset + limit);
 }
+
+export async function updateMostRead(): Promise<void> {
+	// TODO: Implement this method
+	throw new Error('Method not implemented');
+}

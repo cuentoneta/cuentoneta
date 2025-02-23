@@ -43,7 +43,6 @@ function getMostRead(req: express.Request, res: express.Response, next: express.
 }
 
 function updateMostRead(req: express.Request, res: express.Response, next: express.NextFunction) {
-	const { slug } = req.query;
 	storyService
 		.updateMostRead()
 		.then((result) => res.json(result))
