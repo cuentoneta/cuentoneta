@@ -4,6 +4,7 @@ import { Media } from '@models/media.model';
 import { Resource } from '@models/resource.model';
 
 interface StoryBase {
+	_id: string;
 	title: string;
 	slug: string;
 	approximateReadingTime: number;
