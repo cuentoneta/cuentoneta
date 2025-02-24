@@ -48,7 +48,7 @@ export const landingPageContentQuery = defineQuery(`
         title,
         language,
         badLanguage,
-        'body': coalesce(body[0...3], []),
+        'body': [],
         originalPublication,
         approximateReadingTime,
         'resources': [],
