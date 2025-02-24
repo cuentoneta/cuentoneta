@@ -3,6 +3,7 @@ import { defineQuery } from 'groq';
 export const storiesByAuthorSlugQuery = defineQuery(`
 *[_type == 'story' && author->slug.current == $slug && !(_id in path('drafts.**'))][$start...$end]
 {
+    _id,
     'slug': slug.current,
     title,
     'language': coalesce(language, 'es'),
@@ -26,6 +27,7 @@ export const storiesByAuthorSlugQuery = defineQuery(`
 export const storyBySlugQuery = defineQuery(`
 *[_type == 'story' && slug.current == $slug && !(_id in path('drafts.**'))]
 {
+    _id,
     'slug': slug.current,
     title, 
     'language': coalesce(language, 'es'),
@@ -50,6 +52,7 @@ export const storyBySlugQuery = defineQuery(`
         }
     }, []),
     'author': author-> {
+        _id,
         slug,
         name,
         image,
@@ -71,6 +74,7 @@ export const storyBySlugQuery = defineQuery(`
 export const storiesBySlugsQuery = defineQuery(`
 *[_type == 'story' && slug.current in $slugs && !(_id in path('drafts.**'))]
 {
+    _id,
     'slug': slug.current,
     title, 
     'language': coalesce(language, 'es'),
@@ -83,6 +87,7 @@ export const storiesBySlugsQuery = defineQuery(`
     'mediaSources': coalesce(mediaSources[], []),
     'resources': [],
     'author': author-> {
+        _id,
         slug,
         name,
         image,
