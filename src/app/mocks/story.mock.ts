@@ -4,6 +4,7 @@ import { Publication, Storylist } from '@models/storylist.model';
 import { tagMock } from './tag.mocks';
 
 export const storyMock: Story = {
+	_id: 'story-1',
 	resources: [
 		{
 			title: 'Recurso original',
@@ -338,6 +339,7 @@ export const storyMock: Story = {
 };
 
 export const storyPreviewMock: StoryPreview = {
+	_id: 'story-1',
 	resources: [
 		{
 			title: 'Recurso original',
@@ -461,6 +463,7 @@ export const storyPreviewMock: StoryPreview = {
 };
 
 export const storyTeaserMock: StoryTeaser = {
+	_id: 'story-1',
 	resources: [
 		{
 			title: 'Recurso original',
