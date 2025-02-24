@@ -57,7 +57,6 @@ export async function fetchMostRead(limit: number = 6, offset: number = 0): Prom
 }
 
 export async function updateMostRead(): Promise<LandingPageContent> {
-	// TODO: Reemplazar implementación mock de la API de Clarity
 	const popularPagesMetrics = (await fetchClarityData()).find((metric) => metric.metricName === 'PopularPages');
 	if (!popularPagesMetrics) {
 		throw new Error('Could not fetch metrics from Microsoft Clarity');
