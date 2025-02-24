@@ -58,6 +58,7 @@ export const storylistQuery = defineQuery(`
             'resources': [],
             'mediaSources': coalesce(mediaSources[], []),
             'author': author->{ 
+                _id,
                 slug,
                 name,
                 image,

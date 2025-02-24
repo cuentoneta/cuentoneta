@@ -37,6 +37,7 @@ export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>, l
 	const biography = mapAuthorBiography(rawAuthorData.biography, language);
 
 	return {
+		_id: rawAuthorData._id,
 		slug: rawAuthorData.slug.current,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
@@ -52,6 +53,7 @@ export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>, l
 type PublicationAuthorSubQuery = NonNullable<StorylistQueryResult>['publications'][0]['story']['author'];
 export function mapAuthorForStorylist(author: PublicationAuthorSubQuery): AuthorTeaser {
 	return {
+		_id: author._id,
 		slug: author.slug.current,
 		nationality: {
 			country: author.nationality?.country,
