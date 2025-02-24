@@ -1,5 +1,6 @@
 // Conexión a Sanity
 import { client } from '../_helpers/sanity-connector';
+import { environment } from '../_helpers/environment';
 
 // Utilidades
 import { mapStoryContent, mapStoryTeaser } from '../_utils/functions';
@@ -11,14 +12,13 @@ import { Story, StoryNavigationTeaser, StoryTeaser } from '@models/story.model';
 import { storiesByAuthorSlugQuery, storiesBySlugsQuery, storyBySlugQuery } from '../_queries/story.query';
 
 // Interfaces
+import { LandingPageContent } from '@models/landing-page-content.model';
 import { StoriesByAuthorSlugArgs } from '../interfaces/queryArgs';
 
 // Servicios
 import * as contentService from '../content/content.service';
-import { fetchClarityData } from '../_mocks/clarity.mock';
-import { LandingPageContent } from '@models/landing-page-content.model';
 import { fetchLandingPageContent } from '../content/content.service';
-import { environment } from '../_helpers/environment';
+import { fetchClarityData } from '../_helpers/clarity-connector';
 
 export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryTeaser[]> {
 	const result = await client.fetch(storiesByAuthorSlugQuery, {
