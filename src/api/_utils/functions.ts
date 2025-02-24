@@ -26,6 +26,7 @@ import {
 	BlockContent,
 	LandingPageContentQueryResult,
 	StoriesByAuthorSlugQueryResult,
+	StoriesBySlugsQueryResult,
 	StoryBySlugQueryResult,
 	StorylistQueryResult,
 	StorylistTeasersQueryResult,
@@ -184,7 +185,8 @@ export function mapStoryPreviewContent(story: StoryPreview): StoryPreview {
 	return card;
 }
 
-export function mapStoryTeaser(result: NonNullable<StoriesByAuthorSlugQueryResult>): StoryTeaser[] {
+export type StoryTeasersQueryResult = NonNullable<StoriesByAuthorSlugQueryResult | StoriesBySlugsQueryResult>;
+export function mapStoryTeaser(result: StoryTeasersQueryResult): StoryTeaser[] {
 	const stories = [];
 
 	for (const item of result) {
@@ -220,6 +222,7 @@ export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlug
 
 export function mapLandingPageContent(result: NonNullable<LandingPageContentQueryResult>): LandingPageContent {
 	return {
+		...result,
 		cards: mapStorylistTeasers(result.cards),
 		campaigns: mapContentCampaigns(result.campaigns),
 		mostRead: mapStoryNavigationTeaser(result.mostRead),
