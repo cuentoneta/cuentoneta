@@ -1,5 +1,6 @@
 export interface EnvironmentConfig {
 	production: boolean;
+	basePath: string;
 	sanity: {
 		token: string;
 		projectId: string;
@@ -15,6 +16,8 @@ export interface EnvironmentConfig {
 
 export const environment: EnvironmentConfig = {
 	production: true,
+	// TODO: Mover obtención de la URL base a las variables de entorno
+	basePath: 'https://www.cuentoneta.ar',
 	sanity: {
 		projectId: process.env['SANITY_STUDIO_PROJECT_ID'] as string,
 		dataset: process.env['SANITY_STUDIO_DATASET'] as string,

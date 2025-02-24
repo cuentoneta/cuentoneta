@@ -1,6 +1,7 @@
 import { Author, AuthorTeaser } from '@models/author.model';
 
 export const authorMock: Author = {
+	_id: 'author_1',
 	slug: 'francois-onoff',
 	nationality: {
 		country: 'Francia',
@@ -126,6 +127,7 @@ export const authorMock: Author = {
 	],
 };
 export const authorTeaserMock: AuthorTeaser = {
+	_id: 'author_1',
 	slug: 'francois-onoff',
 	nationality: {
 		country: 'Francia',

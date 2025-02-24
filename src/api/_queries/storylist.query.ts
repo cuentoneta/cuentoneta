@@ -2,6 +2,7 @@ import { defineQuery } from 'groq';
 
 export const storylistTeasersQuery = defineQuery(`
 *[_type == 'storylist' && !(_id in path('drafts.**'))]{ 
+    _id,
     'slug': slug.current,
     title,
     description,
@@ -25,6 +26,7 @@ export const storylistTeasersQuery = defineQuery(`
 export const storylistQuery = defineQuery(`
 *[_type == 'storylist' && slug.current == $slug && !(_id in path('drafts.**'))][0]
 { 
+    _id,
     'slug': slug.current,
     title,
     description,
@@ -45,6 +47,7 @@ export const storylistQuery = defineQuery(`
         publishingDate,
         published,
         'story': story->{
+            _id,
             'slug': slug.current,
             title,
             language,
@@ -55,6 +58,7 @@ export const storylistQuery = defineQuery(`
             'resources': [],
             'mediaSources': coalesce(mediaSources[], []),
             'author': author->{ 
+                _id,
                 slug,
                 name,
                 image,

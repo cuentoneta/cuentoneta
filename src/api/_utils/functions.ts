@@ -26,6 +26,7 @@ import {
 	BlockContent,
 	LandingPageContentQueryResult,
 	StoriesByAuthorSlugQueryResult,
+	StoriesBySlugsQueryResult,
 	StoryBySlugQueryResult,
 	StorylistQueryResult,
 	StorylistTeasersQueryResult,
@@ -36,6 +37,7 @@ export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>, l
 	const biography = mapAuthorBiography(rawAuthorData.biography, language);
 
 	return {
+		_id: rawAuthorData._id,
 		slug: rawAuthorData.slug.current,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
@@ -51,6 +53,7 @@ export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>, l
 type PublicationAuthorSubQuery = NonNullable<StorylistQueryResult>['publications'][0]['story']['author'];
 export function mapAuthorForStorylist(author: PublicationAuthorSubQuery): AuthorTeaser {
 	return {
+		_id: author._id,
 		slug: author.slug.current,
 		nationality: {
 			country: author.nationality?.country,
@@ -184,7 +187,8 @@ export function mapStoryPreviewContent(story: StoryPreview): StoryPreview {
 	return card;
 }
 
-export function mapStoryTeaser(result: NonNullable<StoriesByAuthorSlugQueryResult>): StoryTeaser[] {
+export type StoryTeasersQueryResult = NonNullable<StoriesByAuthorSlugQueryResult | StoriesBySlugsQueryResult>;
+export function mapStoryTeaser(result: StoryTeasersQueryResult): StoryTeaser[] {
 	const stories = [];
 
 	for (const item of result) {
@@ -220,6 +224,7 @@ export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlug
 
 export function mapLandingPageContent(result: NonNullable<LandingPageContentQueryResult>): LandingPageContent {
 	return {
+		...result,
 		cards: mapStorylistTeasers(result.cards),
 		campaigns: mapContentCampaigns(result.campaigns),
 		mostRead: mapStoryNavigationTeaser(result.mostRead),
