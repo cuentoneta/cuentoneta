@@ -47,6 +47,7 @@ export const storylistQuery = defineQuery(`
         publishingDate,
         published,
         'story': story->{
+            _id,
             'slug': slug.current,
             title,
             language,
