@@ -1,6 +1,7 @@
 import { StoryNavigationTeaser, StoryPreview, StoryTeaser } from './story.model';
 import { Tag } from '@models/tag.model';
 import { TextBlockContent } from '@models/block-content.model';
+import { AuthorTeaser } from '@models/author.model';
 
 interface StorylistBase<T> {
 	title: string;
@@ -18,6 +19,10 @@ interface StorylistBase<T> {
 
 export interface StorylistTeaser extends StorylistBase<never> {
 	publications: Array<never>;
+}
+
+export interface StorylistNavigationTeaser extends StorylistBase<PublicationNavigationTeaser> {
+	publications: PublicationNavigationTeaser[];
 }
 
 export interface Storylist extends StorylistBase<Publication> {
@@ -44,5 +49,5 @@ export interface PublicationNavigationTeaser {
 	publishingOrder: number;
 	published: boolean;
 	publishingDate?: string;
-	story: StoryNavigationTeaser;
+	story: StoryNavigationTeaser & { author: AuthorTeaser };
 }
