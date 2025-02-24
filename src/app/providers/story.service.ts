@@ -24,4 +24,13 @@ export class StoryService {
 		const params = new HttpParams().set('offset', offset).append('limit', limit);
 		return this.http.get<StoryTeaser[]>(`${this.url}/author/${slug}`, { params });
 	}
+
+	public getNavigationTeasersByAuthorSlug(
+		slug: string,
+		offset: number = 0,
+		limit: number = 100,
+	): Observable<StoryTeaser[]> {
+		const params = new HttpParams().set('offset', offset).append('limit', limit);
+		return this.http.get<StoryTeaser[]>(`${this.url}/author/${slug}/navigation`, { params });
+	}
 }
