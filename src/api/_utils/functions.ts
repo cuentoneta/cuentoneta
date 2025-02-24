@@ -14,7 +14,7 @@ import imageUrlBuilder from '@sanity/image-url';
 import { Author, AuthorTeaser } from '@models/author.model';
 import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
 import { LandingPageContent } from '@models/landing-page-content.model';
-import { Publication, Storylist, StorylistTeaser } from '@models/storylist.model';
+import { Publication, PublicationNavigationTeaser, Storylist, StorylistTeaser } from '@models/storylist.model';
 import { Resource } from '@models/resource.model';
 import { Story, StoryNavigationTeaser, StoryPreview, StoryTeaser } from '@models/story.model';
 import { Tag } from '@models/tag.model';
@@ -28,6 +28,7 @@ import {
 	StoriesByAuthorSlugQueryResult,
 	StoriesBySlugsQueryResult,
 	StoryBySlugQueryResult,
+	StorylistNavigationTeasersQueryResult,
 	StorylistQueryResult,
 	StorylistTeasersQueryResult,
 } from '../sanity/types';
@@ -149,6 +150,12 @@ export function mapStorylist(result: NonNullable<StorylistQueryResult>): Storyli
 		featuredImage: urlFor(result.featuredImage),
 		publications,
 	};
+}
+
+export function mapStorylistNavigationTeasers(
+	result: NonNullable<StorylistNavigationTeasersQueryResult>,
+): PublicationNavigationTeaser[] {
+	return result.publications.map((p) => ({ ...p, story: { ...p.story, paragraphs: [], media: [] } }));
 }
 
 // TODO: Agregar soporte a futuro para mapear imágenes dentro del cuerpo de una story
