@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { PublicationTeaser, Storylist, StorylistNavigationTeaser } from '@models/storylist.model';
+import { Storylist, StorylistNavigationTeaser } from '@models/storylist.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { ApiUrl, Endpoints } from './endpoints';
