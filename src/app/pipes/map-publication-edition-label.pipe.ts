@@ -3,7 +3,7 @@ import {
 	Publication,
 	PublicationNavigationTeaser,
 	Storylist,
-	StorylistNavigationTeaser,
+	StorylistPublicationsNavigationTeasers,
 } from '@models/storylist.model';
 import { DatePipe } from '@angular/common';
 
@@ -16,7 +16,7 @@ export class MapPublicationEditionLabelPipe implements PipeTransform {
 
 	transform(
 		publication: Publication | PublicationNavigationTeaser,
-		storylist: Storylist | StorylistNavigationTeaser,
+		storylist: Storylist | StorylistPublicationsNavigationTeasers,
 	): string {
 		let result = `${storylist.editionPrefix} ${publication.publishingOrder}`;
 

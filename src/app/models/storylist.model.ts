@@ -21,7 +21,7 @@ export interface StorylistTeaser extends StorylistBase<never> {
 	publications: Array<never>;
 }
 
-export interface StorylistNavigationTeaser extends StorylistBase<PublicationNavigationTeaser> {
+export interface StorylistPublicationsNavigationTeasers extends StorylistBase<PublicationNavigationTeaser> {
 	publications: PublicationNavigationTeaser[];
 }
 
@@ -36,15 +36,6 @@ export interface Publication {
 	story: StoryPreview;
 }
 
-// TODO: Puesta en uso como parte del issue #1010
-export interface PublicationTeaser {
-	publishingOrder: number;
-	published: boolean;
-	publishingDate?: string;
-	story: StoryTeaser;
-}
-
-// TODO: Puesta en uso como parte del issue #1010
 export interface PublicationNavigationTeaser {
 	publishingOrder: number;
 	published: boolean;

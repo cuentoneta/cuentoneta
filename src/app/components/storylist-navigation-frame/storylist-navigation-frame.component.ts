@@ -8,7 +8,7 @@ import { injectQueryParams } from 'ngxtension/inject-query-params';
 import { injectParams } from 'ngxtension/inject-params';
 
 // Models
-import { PublicationNavigationTeaser, StorylistNavigationTeaser } from '@models/storylist.model';
+import { PublicationNavigationTeaser, StorylistPublicationsNavigationTeasers } from '@models/storylist.model';
 
 // Routes
 import { AppRoutes } from '../../app.routes';
@@ -62,7 +62,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 
 	displayedPublications: PublicationNavigationTeaser[] = [];
 	dummyList: null[] = Array(9);
-	storylist: StorylistNavigationTeaser | undefined;
+	storylist: StorylistPublicationsNavigationTeasers | undefined;
 
 	constructor() {
 		super();
@@ -88,7 +88,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	}
 
 	private storylist$(navigationSlug: string) {
-		return this.fetchContentDirective.fetchContent$<StorylistNavigationTeaser>(
+		return this.fetchContentDirective.fetchContent$<StorylistPublicationsNavigationTeasers>(
 			this.storylistService.getStorylistNavigationTeasers(navigationSlug),
 		);
 	}

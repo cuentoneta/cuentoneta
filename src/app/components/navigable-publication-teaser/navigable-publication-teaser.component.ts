@@ -4,7 +4,7 @@ import { AppRoutes } from '../../app.routes';
 import { MediaResourceTagsComponent } from '../media-resource-tags/media-resource-tags.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
-import { PublicationNavigationTeaser, StorylistNavigationTeaser } from '@models/storylist.model';
+import { PublicationNavigationTeaser, StorylistPublicationsNavigationTeasers } from '@models/storylist.model';
 import { RouterLink } from '@angular/router';
 import { MapPublicationEditionLabelPipe } from '../../pipes/map-publication-edition-label.pipe';
 
@@ -54,6 +54,6 @@ import { MapPublicationEditionLabelPipe } from '../../pipes/map-publication-edit
 export class NavigablePublicationTeaserComponent {
 	publication = input.required<PublicationNavigationTeaser>();
 	selected = input<boolean>();
-	storylist = input.required<StorylistNavigationTeaser>();
+	storylist = input.required<StorylistPublicationsNavigationTeasers>();
 	protected readonly appRoutes = AppRoutes;
 }

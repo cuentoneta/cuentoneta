@@ -2,7 +2,7 @@
 import { client } from '../_helpers/sanity-connector';
 
 // Interfaces
-import { Storylist, StorylistNavigationTeaser, StorylistTeaser } from '@models/storylist.model';
+import { Storylist, StorylistPublicationsNavigationTeasers, StorylistTeaser } from '@models/storylist.model';
 
 // Funciones
 import { mapStorylist, mapStorylistNavigationTeasers, mapStorylistTeasers } from '../_utils/functions';
@@ -30,7 +30,7 @@ async function fetchNavigation(args: {
 	slug: string;
 	limit: number;
 	offset: number;
-}): Promise<StorylistNavigationTeaser> {
+}): Promise<StorylistPublicationsNavigationTeasers> {
 	const result = await client.fetch(storylistNavigationTeasersQuery, {
 		slug: args.slug,
 		start: args.offset * args.limit,

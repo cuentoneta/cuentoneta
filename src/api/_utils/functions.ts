@@ -14,7 +14,12 @@ import imageUrlBuilder from '@sanity/image-url';
 import { Author, AuthorTeaser } from '@models/author.model';
 import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
 import { LandingPageContent } from '@models/landing-page-content.model';
-import { Publication, Storylist, StorylistNavigationTeaser, StorylistTeaser } from '@models/storylist.model';
+import {
+	Publication,
+	Storylist,
+	StorylistPublicationsNavigationTeasers,
+	StorylistTeaser,
+} from '@models/storylist.model';
 import { Resource } from '@models/resource.model';
 import { Story, StoryNavigationTeaser, StoryPreview, StoryTeaser } from '@models/story.model';
 import { Tag } from '@models/tag.model';
@@ -154,7 +159,7 @@ export function mapStorylist(result: NonNullable<StorylistQueryResult>): Storyli
 
 export function mapStorylistNavigationTeasers(
 	result: NonNullable<StorylistNavigationTeasersQueryResult>,
-): StorylistNavigationTeaser {
+): StorylistPublicationsNavigationTeasers {
 	return {
 		...result,
 		description: mapBlockContentToTextParagraphs(result.description),

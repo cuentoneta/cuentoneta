@@ -1,4 +1,4 @@
-import { Storylist, StorylistNavigationTeaser } from '@models/storylist.model';
+import { Storylist, StorylistPublicationsNavigationTeasers } from '@models/storylist.model';
 import { tagMock } from './tag.mocks';
 import { publicationMock, publicationNavigationTeaserMock } from './story.mock';
 
@@ -32,7 +32,7 @@ export const storyListMock: Storylist = {
 	publications: [publicationMock],
 };
 
-export const storylistNavigationTeaserMock: StorylistNavigationTeaser = {
+export const storylistNavigationTeaserMock: StorylistPublicationsNavigationTeasers = {
 	title: 'La Cuentoneta 1.0"',
 	slug: 'verano-2022',
 	displayDates: true,
