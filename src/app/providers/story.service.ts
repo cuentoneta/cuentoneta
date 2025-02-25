@@ -7,7 +7,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../environments/environment';
 
 // Models
-import { Story, StoryTeaser } from '@models/story.model';
+import { Story, StoryNavigationTeaser, StoryTeaser } from '@models/story.model';
 import { ApiUrl, Endpoints } from './endpoints';
 
 @Injectable({ providedIn: 'root' })
@@ -23,5 +23,14 @@ export class StoryService {
 	public getByAuthorSlug(slug: string, offset: number = 0, limit: number = 20): Observable<StoryTeaser[]> {
 		const params = new HttpParams().set('offset', offset).append('limit', limit);
 		return this.http.get<StoryTeaser[]>(`${this.url}/author/${slug}`, { params });
+	}
+
+	public getNavigationTeasersByAuthorSlug(
+		slug: string,
+		offset: number = 0,
+		limit: number = 100,
+	): Observable<StoryNavigationTeaser[]> {
+		const params = new HttpParams().set('offset', offset).append('limit', limit);
+		return this.http.get<StoryNavigationTeaser[]>(`${this.url}/author/${slug}/navigation`, { params });
 	}
 }

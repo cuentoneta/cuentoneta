@@ -3,13 +3,18 @@ import { client } from '../_helpers/sanity-connector';
 import { environment } from '../_helpers/environment';
 
 // Utilidades
-import { mapStoryContent, mapStoryTeaser } from '../_utils/functions';
+import { mapStoryContent, mapStoryNavigationTeaser, mapStoryTeaser } from '../_utils/functions';
 
 // Modelos
 import { Story, StoryNavigationTeaser, StoryTeaser } from '@models/story.model';
 
 // Subqueries
-import { storiesByAuthorSlugQuery, storiesBySlugsQuery, storyBySlugQuery } from '../_queries/story.query';
+import {
+	storiesByAuthorSlugQuery,
+	storiesBySlugsQuery,
+	storyBySlugQuery,
+	storyNavigationTeasersByAuthorSlugQuery,
+} from '../_queries/story.query';
 
 // Interfaces
 import { LandingPageContent } from '@models/landing-page-content.model';
@@ -28,6 +33,20 @@ export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<
 	});
 
 	return mapStoryTeaser(result);
+}
+
+export async function fetchStoryNavigationTeaserByAuthorSlug(args: {
+	slug: string;
+	limit: number;
+	offset: number;
+}): Promise<StoryNavigationTeaser[]> {
+	const result = await client.fetch(storyNavigationTeasersByAuthorSlugQuery, {
+		slug: args.slug,
+		start: args.offset * args.limit,
+		end: (args.offset + 1) * args.limit,
+	});
+
+	return mapStoryNavigationTeaser(result);
 }
 
 export async function fetchStoryBySlug(slug: string): Promise<Story> {

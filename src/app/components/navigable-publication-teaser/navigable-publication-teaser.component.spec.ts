@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/angular';
 import { NavigablePublicationTeaserComponent } from './navigable-publication-teaser.component';
-import { publicationMock, storyListMock } from '../../mocks/story.mock';
+import { publicationMock, publicationNavigationTeaserMock } from '../../mocks/story.mock';
 import { DatePipe } from '@angular/common';
+import { storylistNavigationTeaserMock } from '../../mocks/storylist.mock';
 
 describe('NavigablePublicationTeaserComponent', () => {
 	const authorName = publicationMock.story.author.name;
@@ -13,9 +14,9 @@ describe('NavigablePublicationTeaserComponent', () => {
 	const setup = async () => {
 		return await render(NavigablePublicationTeaserComponent, {
 			inputs: {
-				publication: publicationMock,
+				publication: publicationNavigationTeaserMock,
 				selected: true,
-				storylist: storyListMock,
+				storylist: storylistNavigationTeaserMock,
 			},
 			providers: [DatePipe],
 		});
