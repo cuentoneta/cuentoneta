@@ -1,7 +1,6 @@
 import { Story, StoryNavigationTeaser, StoryPreview, StoryTeaser } from '@models/story.model';
 import { authorMock, authorTeaserMock } from './author.mock';
-import { Publication, PublicationNavigationTeaser, Storylist } from '@models/storylist.model';
-import { tagMock } from './tag.mocks';
+import { Publication, PublicationNavigationTeaser } from '@models/storylist.model';
 
 export const storyMock: Story = {
 	_id: 'story-1',

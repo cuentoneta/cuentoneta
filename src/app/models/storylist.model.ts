@@ -1,4 +1,4 @@
-import { StoryNavigationTeaser, StoryPreview, StoryTeaser } from './story.model';
+import { StoryNavigationTeaser, StoryPreview } from './story.model';
 import { Tag } from '@models/tag.model';
 import { TextBlockContent } from '@models/block-content.model';
 import { AuthorTeaser } from '@models/author.model';
