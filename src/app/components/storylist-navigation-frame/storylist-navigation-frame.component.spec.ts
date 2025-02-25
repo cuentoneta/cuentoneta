@@ -13,7 +13,7 @@ import { FetchContentDirective } from '../../directives/fetch-content.directive'
 import { Storylist } from '@models/storylist.model';
 
 // Mocks
-import { storyListMock } from '../../mocks/story.mock';
+import { storyListMock } from '../../mocks/storylist.mock';
 
 // Services
 import { StorylistService } from '../../providers/storylist.service';
@@ -56,7 +56,7 @@ describe('StorylistNavigationFrameComponent', () => {
 				{
 					provide: StorylistService,
 					useValue: {
-						get(): Observable<Storylist> {
+						getStorylistNavigationTeasers(): Observable<Storylist> {
 							return of(storyListMock);
 						},
 					},
