@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StoryNavigationTeaser, StoryTeaser } from '@models/story.model';
+import { StoryNavigationTeaser } from '@models/story.model';
 import { AppRoutes } from '../../app.routes';
 import { MediaResourceTagsComponent } from '../media-resource-tags/media-resource-tags.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';

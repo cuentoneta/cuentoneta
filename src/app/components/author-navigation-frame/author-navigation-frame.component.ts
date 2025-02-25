@@ -10,7 +10,7 @@ import { injectQueryParams } from 'ngxtension/inject-query-params';
 import { AppRoutes } from '../../app.routes';
 
 // Models
-import { StoryNavigationTeaser, StoryTeaser } from '@models/story.model';
+import { StoryNavigationTeaser } from '@models/story.model';
 
 // Providers
 import { StoryService } from '../../providers/story.service';
