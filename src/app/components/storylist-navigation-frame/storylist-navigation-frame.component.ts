@@ -8,7 +8,7 @@ import { injectQueryParams } from 'ngxtension/inject-query-params';
 import { injectParams } from 'ngxtension/inject-params';
 
 // Models
-import { Publication, Storylist } from '@models/storylist.model';
+import { PublicationNavigationTeaser, StorylistNavigationTeaser } from '@models/storylist.model';
 
 // Routes
 import { AppRoutes } from '../../app.routes';
@@ -60,9 +60,9 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	private queryParams = injectQueryParams();
 	private storylistService = inject(StorylistService);
 
-	displayedPublications: Publication[] = [];
+	displayedPublications: PublicationNavigationTeaser[] = [];
 	dummyList: null[] = Array(9);
-	storylist: Storylist | undefined;
+	storylist: StorylistNavigationTeaser | undefined;
 
 	constructor() {
 		super();
@@ -88,7 +88,9 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	}
 
 	private storylist$(navigationSlug: string) {
-		return this.fetchContentDirective.fetchContent$<Storylist>(this.storylistService.get(navigationSlug, 9));
+		return this.fetchContentDirective.fetchContent$<StorylistNavigationTeaser>(
+			this.storylistService.getStorylistNavigationTeasers(navigationSlug),
+		);
 	}
 
 	/**
@@ -98,7 +100,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	 * caso de que la story actualmente en vista sea una de las primeras o de las últimas.
 	 * @author Ramiro Olivencia <ramiro@olivencia.com.ar>
 	 */
-	sliceDisplayedPublications(publications: Publication[]): void {
+	sliceDisplayedPublications(publications: PublicationNavigationTeaser[]): void {
 		if (!this.storylist) {
 			return;
 		}
