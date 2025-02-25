@@ -14,7 +14,12 @@ import imageUrlBuilder from '@sanity/image-url';
 import { Author, AuthorTeaser } from '@models/author.model';
 import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
 import { LandingPageContent } from '@models/landing-page-content.model';
-import { Publication, Storylist, StorylistTeaser } from '@models/storylist.model';
+import {
+	Publication,
+	Storylist,
+	StorylistPublicationsNavigationTeasers,
+	StorylistTeaser,
+} from '@models/storylist.model';
 import { Resource } from '@models/resource.model';
 import { Story, StoryNavigationTeaser, StoryPreview, StoryTeaser } from '@models/story.model';
 import { Tag } from '@models/tag.model';
@@ -28,6 +33,7 @@ import {
 	StoriesByAuthorSlugQueryResult,
 	StoriesBySlugsQueryResult,
 	StoryBySlugQueryResult,
+	StorylistNavigationTeasersQueryResult,
 	StorylistQueryResult,
 	StorylistTeasersQueryResult,
 } from '../sanity/types';
@@ -148,6 +154,21 @@ export function mapStorylist(result: NonNullable<StorylistQueryResult>): Storyli
 		tags: mapTags(result.tags),
 		featuredImage: urlFor(result.featuredImage),
 		publications,
+	};
+}
+
+export function mapStorylistNavigationTeasers(
+	result: NonNullable<StorylistNavigationTeasersQueryResult>,
+): StorylistPublicationsNavigationTeasers {
+	return {
+		...result,
+		description: mapBlockContentToTextParagraphs(result.description),
+		tags: mapTags(result.tags),
+		featuredImage: urlFor(result.featuredImage),
+		publications: result.publications.map((p) => ({
+			...p,
+			story: { ...p.story, author: mapAuthorForStorylist(p.story.author), paragraphs: [], media: [] },
+		})),
 	};
 }
 

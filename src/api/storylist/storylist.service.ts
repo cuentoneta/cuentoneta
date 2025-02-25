@@ -2,13 +2,13 @@
 import { client } from '../_helpers/sanity-connector';
 
 // Interfaces
-import { Storylist, StorylistTeaser } from '@models/storylist.model';
+import { Storylist, StorylistPublicationsNavigationTeasers, StorylistTeaser } from '@models/storylist.model';
 
 // Funciones
-import { mapStorylist, mapStorylistTeasers } from '../_utils/functions';
+import { mapStorylist, mapStorylistNavigationTeasers, mapStorylistTeasers } from '../_utils/functions';
 
 // Queries
-import { storylistQuery, storylistTeasersQuery } from '../_queries/storylist.query';
+import { storylistNavigationTeasersQuery, storylistQuery, storylistTeasersQuery } from '../_queries/storylist.query';
 import { StoryListBySlugArgs } from '../interfaces/queryArgs';
 
 async function fetchStorylistTeasers(): Promise<StorylistTeaser[]> {
@@ -26,4 +26,22 @@ async function fetchBySlug(args: StoryListBySlugArgs): Promise<Storylist> {
 	return mapStorylist(result);
 }
 
-export { fetchStorylistTeasers, fetchBySlug };
+async function fetchNavigation(args: {
+	slug: string;
+	limit: number;
+	offset: number;
+}): Promise<StorylistPublicationsNavigationTeasers> {
+	const result = await client.fetch(storylistNavigationTeasersQuery, {
+		slug: args.slug,
+		start: args.offset * args.limit,
+		end: (args.offset + 1) * args.limit,
+	});
+
+	if (!result) {
+		throw new Error(`Storylist with slug ${args.slug} not found`);
+	}
+
+	return mapStorylistNavigationTeasers(result);
+}
+
+export { fetchStorylistTeasers, fetchBySlug, fetchNavigation };

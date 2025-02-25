@@ -10,7 +10,7 @@ import { injectQueryParams } from 'ngxtension/inject-query-params';
 import { AppRoutes } from '../../app.routes';
 
 // Models
-import { StoryTeaser } from '@models/story.model';
+import { StoryNavigationTeaser } from '@models/story.model';
 
 // Providers
 import { StoryService } from '../../providers/story.service';
@@ -44,7 +44,7 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 	private queryParams = injectQueryParams();
 	private storyService = inject(StoryService);
 
-	stories: StoryTeaser[] = [];
+	stories: StoryNavigationTeaser[] = [];
 
 	authorSlug: string = '';
 
@@ -67,8 +67,9 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 		});
 	}
 
-	// TODO: Issue #1010 - Cambiar los tipos a la hora de generar los endpoints correspondientes para obtener los teasers de navegación
-	private stories$(slug: string): Observable<StoryTeaser[]> {
-		return this.fetchContentDirective.fetchContent$<StoryTeaser[]>(this.storyService.getByAuthorSlug(slug));
+	private stories$(slug: string): Observable<StoryNavigationTeaser[]> {
+		return this.fetchContentDirective.fetchContent$<StoryNavigationTeaser[]>(
+			this.storyService.getNavigationTeasersByAuthorSlug(slug),
+		);
 	}
 }
