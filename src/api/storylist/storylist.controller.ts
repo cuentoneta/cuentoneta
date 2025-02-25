@@ -6,7 +6,7 @@ const router = express.Router();
 // Routes
 router.get('/', getBySlug);
 router.get('/teasers', getTeasers);
-router.get('/navigation/:slug', getNavigation);
+router.get('/:slug/navigation', getNavigationBySlug);
 
 export default router;
 
@@ -30,7 +30,7 @@ function getTeasers(_: express.Request, res: express.Response, next: express.Nex
  * @param res
  * @param next
  */
-function getNavigation(req: express.Request, res: express.Response, next: express.NextFunction) {
+function getNavigationBySlug(req: express.Request, res: express.Response, next: express.NextFunction) {
 	const { slug } = req.params;
 	const { limit, offset } = req.query;
 	fetchNavigation({

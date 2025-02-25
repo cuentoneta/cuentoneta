@@ -25,6 +25,6 @@ export class StorylistService {
 		offset: number = 0,
 	): Observable<StorylistNavigationTeaser> {
 		const params = new HttpParams().set('limit', limit).set('offset', offset);
-		return this.http.get<StorylistNavigationTeaser>(`${this.url}/navigation/${slug}`, { params });
+		return this.http.get<StorylistNavigationTeaser>(`${this.url}/${slug}/navigation`, { params });
 	}
 }

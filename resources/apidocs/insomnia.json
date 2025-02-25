@@ -1,7 +1,7 @@
 {
 	"_type": "export",
 	"__export_format": 4,
-	"__export_date": "2025-02-24T20:19:10.745Z",
+	"__export_date": "2025-02-25T01:35:51.522Z",
 	"__export_source": "insomnia.desktop.app:v2023.5.8",
 	"resources": [
 		{
@@ -220,21 +220,14 @@
 		{
 			"_id": "req_5ab0f9b0eb774cd382d1a4deb2e31b87",
 			"parentId": "fld_aa9cdeb4431e44c8b46f7b1e3a17156b",
-			"modified": 1740427944725,
+			"modified": 1740428761304,
 			"created": 1713843667479,
 			"url": "{{apiUrl}}/api/story/author/alejandro-dolina?offset=0&limit=20",
 			"name": "/author/:slug",
 			"description": "",
 			"method": "GET",
 			"body": {},
-			"parameters": [
-				{
-					"id": "pair_a2e072072a6343c595d133e7fefe160d",
-					"name": "slug",
-					"value": "jorge-luis-borges",
-					"description": ""
-				}
-			],
+			"parameters": [{ "id": "pair_48a00f66b6834c8fb5f9865180e7a02f", "name": "", "value": "", "description": "" }],
 			"headers": [{ "name": "User-Agent", "value": "insomnia/2023.5.8" }],
 			"authentication": {},
 			"metaSortKey": -1713844626807,
@@ -250,14 +243,17 @@
 		{
 			"_id": "req_84d5c8b4a30849319158bae39b7521e5",
 			"parentId": "fld_aa9cdeb4431e44c8b46f7b1e3a17156b",
-			"modified": 1740427932802,
+			"modified": 1740428735876,
 			"created": 1740427478433,
-			"url": "{{apiUrl}}/api/story/author/alejandro-dolina/navigation?offset=0&limit=10",
-			"name": "author/:slug/navigation",
+			"url": "{{apiUrl}}/api/story/author/alejandro-dolina/navigation",
+			"name": "/author/:slug/navigation",
 			"description": "",
 			"method": "GET",
 			"body": {},
-			"parameters": [],
+			"parameters": [
+				{ "id": "pair_eba1fc5bd5584a7fbd5c59f0281d069b", "name": "offset", "value": "0", "description": "" },
+				{ "id": "pair_5948a703a48f4ea8b8b3d405a61aab46", "name": "limite", "value": "5", "description": "" }
+			],
 			"headers": [{ "name": "User-Agent", "value": "insomnia/2023.5.8" }],
 			"authentication": {},
 			"metaSortKey": -1713844626757,
@@ -392,9 +388,9 @@
 		{
 			"_id": "req_145554aa6ac94c969b6cdcfe0a8581f2",
 			"parentId": "fld_e798d645fb784fe6a9cdeb21302fa3ef",
-			"modified": 1740428080896,
+			"modified": 1740447276517,
 			"created": 1740428080896,
-			"url": "{{apiUrl}}/api/storylist/navigation/lecturas-de-verano",
+			"url": "{{apiUrl}}/api/storylist/verano-2022/navigation/",
 			"name": "/navigation",
 			"description": "",
 			"method": "GET",
@@ -405,14 +401,14 @@
 					"name": "limit",
 					"value": "5",
 					"description": "",
-					"disabled": false
+					"disabled": true
 				},
 				{
 					"id": "pair_9b8666c1c60042f780cdc6b918e9cb20",
 					"name": "offset",
 					"value": "2",
 					"description": "",
-					"disabled": false
+					"disabled": true
 				}
 			],
 			"headers": [{ "name": "User-Agent", "value": "insomnia/2023.5.8" }],
