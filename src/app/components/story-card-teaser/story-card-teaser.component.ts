@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { StoryNavigationTeaser, StoryTeaser } from '@models/story.model';
+import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 
 @Component({
 	selector: 'cuentoneta-story-card-teaser',
@@ -32,7 +32,7 @@ import { StoryNavigationTeaser, StoryTeaser } from '@models/story.model';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StoryCardTeaserComponent {
-	story = input<any>();
+	story = input<StoryNavigationTeaserWithAuthor>();
 	order = input<number | false>(false);
 	showAuthor = input<boolean>(false);
 }
