@@ -232,15 +232,14 @@ export function mapStoryTeaser(result: StoryTeasersQueryResult): StoryTeaser[] {
 	return stories;
 }
 
-export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlugQueryResult>): any[] {
+export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlugQueryResult>): StoryNavigationTeaser[] {
 	const stories = [];
 
 	for (const item of result) {
-		const { mediaSources, resources, ...properties } = item as any;
+		const { mediaSources, resources, ...properties } = item;
 
 		stories.push({
 			...properties,
-			author: properties.author ? mapAuthorForStorylist(properties.author) : undefined,
 			media: mapMediaSourcesForStorylist(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: [],
