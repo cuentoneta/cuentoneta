@@ -28,7 +28,9 @@
 				"server": "./src/main.server.ts",
 				"styles": ["./src/styles.scss"],
 				"scripts": [],
-				"ssr": { "entry": "./src/ssr.server.ts" },
+				"ssr": {
+					"entry": "./src/ssr.server.ts"
+				},
 				"outputMode": "server"
 			},
 			"configurations": {
@@ -76,9 +78,7 @@
 				"port": 4400,
 				"configDir": "./.storybook",
 				"browserTarget": "cuentoneta:build",
-				"compodoc": false,
-				"styles": ["./src/styles.scss"],
-				"assets": ["./src/favicon.ico", "./src/assets"]
+				"compodoc": false
 			},
 			"configurations": {
 				"ci": {
@@ -118,6 +118,26 @@
 			"outputs": ["{options.outputFile}"],
 			"options": {
 				"lintFilePatterns": ["**/*.css", "**/*.scss"]
+			}
+		},
+		"test-storybook": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "test-storybook -c ./.storybook --url=http://localhost:4400"
+			}
+		},
+		"static-storybook": {
+			"executor": "@nx/web:file-server",
+			"dependsOn": ["build-storybook"],
+			"options": {
+				"buildTarget": "cuentoneta:build-storybook",
+				"staticFilePath": "dist/storybook/cuentoneta",
+				"spa": true
+			},
+			"configurations": {
+				"ci": {
+					"buildTarget": "cuentoneta:build-storybook:ci"
+				}
 			}
 		}
 	}
