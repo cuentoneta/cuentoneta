@@ -15,6 +15,11 @@ import { RouterModule } from '@angular/router';
 		<cuentoneta-footer />
 	`,
 	imports: [CommonModule, FooterComponent, HeaderComponent, RouterModule],
+	styles: `
+		:host {
+			@apply flex flex-col gap-4;
+		}
+	`,
 })
 export class AppComponent implements OnInit {
 	ngOnInit(): void {

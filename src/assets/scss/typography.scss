@@ -21,6 +21,18 @@
 		@apply font-inter text-xl tracking-normal;
 	}
 
+	.inter-heading-1 {
+		@apply font-inter text-4xl tracking-normal;
+	}
+
+	.inter-heading-2 {
+		@apply font-inter text-3xl tracking-normal;
+	}
+
+	.inter-heading-3 {
+		@apply font-inter text-2xl tracking-normal;
+	}
+
 	.inter-body-base-regular {
 		@apply inter-body-base font-normal;
 	}
@@ -67,6 +79,10 @@
 
 	.inter-body-base-semibold {
 		@apply inter-body-base font-semibold;
+	}
+
+	.inter-heading-2-semibold {
+		@apply inter-heading-2 font-semibold;
 	}
 
 	// endregion

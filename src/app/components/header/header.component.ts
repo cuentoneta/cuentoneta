@@ -61,6 +61,9 @@ import { InternalLink } from '@models/link.model';
 		</header>
 	`,
 	styles: `
+		:host {
+			@apply block border-b-1 border-gray-200;
+		}
 		header {
 			@apply grid;
 			@apply mx-5 my-0 md:m-auto;

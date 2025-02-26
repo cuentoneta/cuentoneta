@@ -1,28 +1,44 @@
-<main>
+<main class="flex flex-col gap-4 md:gap-8">
 	@defer (when campaigns.length > 0) {
 		<cuentoneta-content-campaign-carousel [slides]="campaigns" />
 	} @loading (minimum 500ms) {
 		<cuentoneta-content-campaign-carousel-skeleton />
 	}
 
-	<div class="mb-4 flex content-between items-center">
-		<hr class="flex-grow" />
-		<h2 class="h3 mx-2 text-center md:mx-8">¿Qué querés leer hoy?</h2>
-		<hr class="flex-grow" />
-	</div>
-	<div class="mb-8 flex justify-center">
-		<h3 class="h4 text-center">Accedé al archivo de las storylists publicadas en <b>La Cuentoneta</b></h3>
-	</div>
+	<section class="flex flex-col gap-6">
+		<div class="flex content-between items-center">
+			<hr class="flex-grow" />
+			<h2 class="h3 mx-2 text-center md:mx-8">Historias más leídas</h2>
+			<hr class="flex-grow" />
+		</div>
 
-	<section class="grid grid-cols-1 justify-items-center gap-8 sm:grid-cols-2">
-		@defer (when cards.length > 0) {
-			@for (storylist of cards; track storylist.slug) {
-				<cuentoneta-storylist-card [storylist]="storylist" class="card w-full"> </cuentoneta-storylist-card>
+		<section class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-8">
+			@for (story of mostRead; track $index) {
+				<cuentoneta-story-card-teaser [story]="story" [showAuthor]="true" [order]="$index + 1" />
 			}
-		} @loading (minimum 500ms) {
-			@for (_ of [].constructor(6); track $index) {
-				<cuentoneta-storylist-card-skeleton class="card w-full" />
+		</section>
+	</section>
+
+	<section class="flex flex-col gap-4">
+		<div class="flex content-between items-center">
+			<hr class="flex-grow" />
+			<h2 class="h3 mx-2 text-center md:mx-8">¿Qué querés leer hoy?</h2>
+			<hr class="flex-grow" />
+		</div>
+		<div class="mb-8 flex justify-center">
+			<h3 class="h4 text-center">Accedé al archivo de las storylists publicadas en <b>La Cuentoneta</b></h3>
+		</div>
+
+		<section class="grid grid-cols-1 justify-items-center gap-8 sm:grid-cols-2">
+			@defer (when cards.length > 0) {
+				@for (storylist of cards; track storylist.slug) {
+					<cuentoneta-storylist-card [storylist]="storylist" class="card w-full"></cuentoneta-storylist-card>
+				}
+			} @loading (minimum 500ms) {
+				@for (_ of [].constructor(6); track $index) {
+					<cuentoneta-storylist-card-skeleton class="card w-full" />
+				}
 			}
-		}
+		</section>
 	</section>
 </main>

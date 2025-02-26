@@ -20,6 +20,8 @@ import { ContentCampaignCarouselComponent } from '../../components/content-campa
 import { StorylistCardComponent } from '../../components/storylist-card-component/storylist-card.component';
 import { ContentCampaignCarouselSkeletonComponent } from '../../components/content-campaign-carousel/content-campaign-carousel-skeleton.component';
 import { StorylistCardSkeletonComponent } from '../../components/storylist-card-component/storylist-card-skeleton.component';
+import { StoryCardTeaserComponent } from '../../components/story-card-teaser/story-card-teaser.component';
+import { StoryNavigationTeaser, StoryTeaser } from '@models/story.model';
 
 @Component({
 	selector: 'cuentoneta-home',
@@ -30,6 +32,7 @@ import { StorylistCardSkeletonComponent } from '../../components/storylist-card-
 		StorylistCardComponent,
 		ContentCampaignCarouselSkeletonComponent,
 		StorylistCardSkeletonComponent,
+		StoryCardTeaserComponent,
 	],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
 })
@@ -44,6 +47,7 @@ export class HomeComponent {
 	// Asignación inicial para dibujar skeletons
 	cards: StorylistTeaser[] = [];
 	campaigns: ContentCampaign[] = [];
+	mostRead: StoryNavigationTeaser[] = [];
 
 	constructor() {
 		this.metaTagsDirective.setDefault();
@@ -54,9 +58,10 @@ export class HomeComponent {
 		this.fetchContentDirective
 			.fetchContent$<LandingPageContent>(this.contentService.getLandingPageContent())
 			.pipe(takeUntilDestroyed())
-			.subscribe(({ cards, campaigns }) => {
+			.subscribe(({ cards, campaigns, mostRead }) => {
 				this.cards = cards;
 				this.campaigns = campaigns;
+				this.mostRead = mostRead.slice(0, 6);
 			});
 	}
 }
