@@ -21,7 +21,13 @@ import {
 	StorylistTeaser,
 } from '@models/storylist.model';
 import { Resource } from '@models/resource.model';
-import { Story, StoryNavigationTeaser, StoryPreview, StoryTeaser } from '@models/story.model';
+import {
+	Story,
+	StoryNavigationTeaser,
+	StoryNavigationTeaserWithAuthor,
+	StoryPreview,
+	StoryTeaser,
+} from '@models/story.model';
 import { Tag } from '@models/tag.model';
 import { TextBlockContent } from '@models/block-content.model';
 
@@ -243,12 +249,33 @@ export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlug
 	return stories;
 }
 
+type MostReadStoriesSubQuery = NonNullable<LandingPageContentQueryResult>['mostRead'];
+export function mapStoryNavigationTeaserWithAuthor(
+	result: NonNullable<MostReadStoriesSubQuery>,
+): StoryNavigationTeaserWithAuthor[] {
+	const stories = [];
+
+	for (const item of result) {
+		const { mediaSources, resources, ...properties } = item;
+
+		stories.push({
+			...properties,
+			author: mapAuthorForStorylist(item.author),
+			media: mapMediaSourcesForStorylist(mediaSources),
+			resources: mapResources(resources),
+			paragraphs: [],
+		});
+	}
+
+	return stories;
+}
+
 export function mapLandingPageContent(result: NonNullable<LandingPageContentQueryResult>): LandingPageContent {
 	return {
 		...result,
 		cards: mapStorylistTeasers(result.cards),
 		campaigns: mapContentCampaigns(result.campaigns),
-		mostRead: mapStoryNavigationTeaser(result.mostRead),
+		mostRead: mapStoryNavigationTeaserWithAuthor(result.mostRead),
 	};
 }
 
