@@ -87,12 +87,21 @@
 
 	// endregion
 	// region Source Serif Pro font mixins to tailwind class
+
+	.source-serif-pro-heading-2 {
+		@apply font-source-serif text-3xl tracking-normal;
+	}
+
 	.source-serif-pro-body-lg {
 		@apply font-source-serif text-lg tracking-normal;
 	}
 
 	.source-serif-pro-body-xl {
 		@apply font-source-serif text-xl tracking-normal;
+	}
+
+	.source-serif-pro-heading-2-bold {
+		@apply source-serif-pro-heading-2 font-bold;
 	}
 
 	// endregion
