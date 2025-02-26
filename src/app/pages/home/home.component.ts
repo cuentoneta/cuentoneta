@@ -21,7 +21,7 @@ import { StorylistCardComponent } from '../../components/storylist-card-componen
 import { ContentCampaignCarouselSkeletonComponent } from '../../components/content-campaign-carousel/content-campaign-carousel-skeleton.component';
 import { StorylistCardSkeletonComponent } from '../../components/storylist-card-component/storylist-card-skeleton.component';
 import { StoryCardTeaserComponent } from '../../components/story-card-teaser/story-card-teaser.component';
-import { StoryNavigationTeaser, StoryNavigationTeaserWithAuthor, StoryTeaser } from '@models/story.model';
+import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 
 @Component({
 	selector: 'cuentoneta-home',

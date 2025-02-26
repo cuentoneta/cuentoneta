@@ -1,64 +1,52 @@
-<main class="block lg:mt-28">
-	<article [attr.aria-busy]="!storylist" [lang]="storylist?.language" class="grid grid-cols-1 gap-y-8">
+<main class="my-8 block md:mt-0">
+	<article
+		[attr.aria-busy]="!storylist"
+		[lang]="storylist?.language"
+		class="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16"
+	>
 		<!-- Renderizado de título y descripción -->
 		<ng-container *ngTemplateOutlet="storylistTitleTemplate"> </ng-container>
 
-		<section>
-			<!-- Renderizado de tarjetas de stories -->
-			<cuentoneta-storylist-card-deck [storylist]="storylist" [isLoading]="fetchContentDirective.isLoading" />
+		<!-- Renderizado de tarjetas de stories -->
+		<section class="min-h-96 bg-white">
+			<ol class="grid grid-cols-1 gap-6">
+				@defer (when stories().length > 0) {
+					@for (story of stories(); track $index) {
+						<cuentoneta-story-card-teaser
+							[story]="story"
+							[showAuthor]="true"
+							[order]="$index + 1"
+							[navigationParams]="{
+								navigation: 'storylist',
+								navigationSlug: storylist?.slug ?? ''
+							}"
+						/>
+					}
+				} @loading (minimum 500ms) {
+					@for (_ of [].constructor(6); track $index) {
+						<cuentoneta-story-card-teaser [showAuthor]="true" [order]="$index + 1" />
+					}
+				}
+			</ol>
 		</section>
 	</article>
 </main>
 
 <ng-template #storylistTitleTemplate>
 	@if (!!storylist) {
-        <section class="p-6 bg-white rounded-2xl border-primary-500 border-1">
-		<ol class="grid grid-cols-1 gap-x-0 gap-y-6 md:grid-cols-2">
-			@for (publication of storylist.publications; track $index) {
-				<li class="flex gap-1">
-					<span class="mr-2 text-3xl font-bold text-primary-500">
-                        @let adjustedIndex = $index + 1;
-                        @let index = adjustedIndex > 9 ? adjustedIndex : '0' + adjustedIndex;
-                        {{ index }}.
-
-                        @let story = publication.story;
-                        @let author = publication.story.author;
-                    </span>
-					<section class="flex flex-col gap-2">
-						<div class="mt-1 flex items-center gap-2">
-							<img
-								[ngSrc]="author.imageUrl"
-								class="h-[20px] w-[20px] rounded-full"
-								width="20"
-								height="20"
-							/>
-							<span class="inter-body-sm font-semibold text-gray-600">{{ author.name }}</span>
-						</div>
-						<h2 class="inter-body-xl font-bold">{{ story.title }}</h2>
-						<div class="inter-body-sm flex items-center text-gray-600 gap-2">
-                            <span>{{ story.approximateReadingTime }} minutos </span>
-                            <span class="font-black text-md">·</span>
-                            <span>Leer</span>
-						</div>
-					</section>
-				</li>
-			}
-		</ol>
-        </section>
-
-		<div class="grid grid-cols-1 gap-4 xs:max-md:!col-span-1 md:grid-cols-[auto_1fr]">
-			<div class="flex justify-center md:justify-start">
+		<div class="flex flex-col gap-4">
+			<div class="flex justify-center">
 				<img
 					[ngSrc]="featuredImageUrl()"
 					[alt]="'Imagen alusiva de la storylist ' + storylist.title"
-					class="h-[256px] rounded-xl"
-					width="192"
-					height="256"
+					class="h-[384px] rounded-xl"
+					width="256"
+					height="384"
 				/>
 			</div>
 
 			<div class="flex flex-col">
-				<h1 class="h1 mb-5">
+				<h1 class="h1 mb-5 text-center">
 					{{ storylist.title }}
 				</h1>
 				<cuentoneta-portable-text-parser

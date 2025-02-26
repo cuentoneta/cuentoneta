@@ -21,18 +21,26 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 import { StorylistCardDeckComponent } from 'src/app/components/storylist-card-deck/storylist-card-deck.component';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
 import { ThemeService } from '../../providers/theme.service';
+import { StoryCardTeaserComponent } from '../../components/story-card-teaser/story-card-teaser.component';
+import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 
 @Component({
 	selector: 'cuentoneta-storylist',
 	templateUrl: './storylist.component.html',
 	imports: [
 		CommonModule,
-		StorylistCardDeckComponent,
 		NgxSkeletonLoaderModule,
 		PortableTextParserComponent,
 		NgOptimizedImage,
+		StoryCardTeaserComponent,
 	],
 	hostDirectives: [FetchContentDirective, MetaTagsDirective],
+	styles: `
+		:host {
+			@apply flex items-center;
+			min-height: inherit;
+		}
+	`,
 })
 export class StorylistComponent {
 	// Providers
@@ -45,6 +53,11 @@ export class StorylistComponent {
 	storylist!: Storylist | undefined;
 
 	featuredImageUrl = computed(() => `${this.storylist?.featuredImage}?h=${256 * 1.5}&w=${192 * 1.5}&auto=format`);
+	stories = computed(
+		() =>
+			this.storylist?.publications.map((p) => ({ ...p.story, paragraphs: [] }) as StoryNavigationTeaserWithAuthor) ||
+			[],
+	);
 
 	constructor() {
 		effect((cleanUp) => {
