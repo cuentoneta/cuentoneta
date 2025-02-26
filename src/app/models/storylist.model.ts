@@ -1,7 +1,6 @@
-import { StoryNavigationTeaser, StoryPreview } from './story.model';
+import { StoryNavigationTeaserWithAuthor, StoryPreview } from './story.model';
 import { Tag } from '@models/tag.model';
 import { TextBlockContent } from '@models/block-content.model';
-import { AuthorTeaser } from '@models/author.model';
 
 interface StorylistBase<T> {
 	title: string;
@@ -29,6 +28,10 @@ export interface Storylist extends StorylistBase<Publication> {
 	publications: Publication[];
 }
 
+/**
+ * @deprecated Reemplazar uso por interface PublicationNavigationTeaser.
+ * TODO: Eliminar en futuras versiones, reemplazándola por una nueva interface cuya propiedad Story sea de tipo StoryTeaserWithAuthor
+ */
 export interface Publication {
 	publishingOrder: number;
 	published: boolean;
@@ -40,5 +43,5 @@ export interface PublicationNavigationTeaser {
 	publishingOrder: number;
 	published: boolean;
 	publishingDate?: string;
-	story: StoryNavigationTeaser & { author: AuthorTeaser };
+	story: StoryNavigationTeaserWithAuthor;
 }

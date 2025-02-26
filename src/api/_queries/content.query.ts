@@ -54,6 +54,7 @@ export const landingPageContentQuery = defineQuery(`
         'resources': [],
         'mediaSources': coalesce(mediaSources[], []),
         'author': author-> { 
+            _id,
             slug,
             name,
             image,
