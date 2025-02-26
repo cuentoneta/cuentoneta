@@ -17,8 +17,8 @@ import { StoryNavigationTeaser, StoryTeaser } from '@models/story.model';
 							<img [ngSrc]="story.author.imageUrl" width="24" height="24" class="h-6 w-6 rounded-full" />
 							<span class="inter-body-sm-semibold text-gray-500">{{ story.author.name }}</span>
 						</div>
-						{{ story.title }}
 					}
+					{{ story.title }}
 				</header>
 				<footer class="inter-body-xs flex gap-1 text-gray-500">
 					<span> {{ story.approximateReadingTime }} minutos de lectura </span>
