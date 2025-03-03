@@ -45,7 +45,7 @@ export class HomeComponent {
 	landingPageContent = computed(() => this.landingPageResource.value());
 	cards = computed(() => this.landingPageContent()?.cards || []);
 	campaigns = computed(() => this.landingPageContent()?.campaigns || []);
-	mostRead = computed(() => this.landingPageContent()?.mostRead || []);
+	mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
 
 	constructor() {
 		this.metaTagsDirective.setDefault();

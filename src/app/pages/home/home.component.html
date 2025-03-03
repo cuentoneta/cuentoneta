@@ -13,8 +13,8 @@
 		</div>
 
 		<section class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-8">
-			@defer (when mostRead.length > 0) {
-				@for (story of mostRead; track $index) {
+			@defer (when mostRead().length > 0) {
+				@for (story of mostRead(); track $index) {
 					<cuentoneta-story-card-teaser
 						[story]="story"
 						[showAuthor]="true"
