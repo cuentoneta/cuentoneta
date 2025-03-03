@@ -41,6 +41,7 @@ export class HomeComponent {
 		loader: () => this.contentService.getLandingPageContent(),
 	});
 
+	// Propiedades
 	landingPageContent = computed(() => this.landingPageResource.value());
 	cards = computed(() => this.landingPageContent()?.cards || []);
 	campaigns = computed(() => this.landingPageContent()?.campaigns || []);

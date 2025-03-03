@@ -90,6 +90,7 @@ export class StoryComponent {
 			),
 	});
 
+	// Propiedades
 	story = computed(() => this.storyResource.value());
 	sharingRoute = computed(() => `${AppRoutes.Story}/${this.story()?.slug}`);
 	shareContentParams = computed(() => ({ navigationSlug: this.story()?.author.slug ?? '', navigation: 'author' }));

@@ -40,8 +40,8 @@ export class StorylistComponent {
 	private metaTagsDirective = inject(MetaTagsDirective);
 	private storylistService = inject(StorylistService);
 
+	// Recursos
 	skeletonColor = inject(ThemeService).pickColor('zinc', 300);
-
 	readonly storylistResource = rxResource({
 		request: () => this.params(),
 		loader: (params) =>
@@ -52,6 +52,7 @@ export class StorylistComponent {
 			),
 	});
 
+	// Propiedades
 	featuredImageUrl = computed(() => `${this.storylist()?.featuredImage}?h=${256 * 1.5}&w=${192 * 1.5}&auto=format`);
 	storylist = computed(() => this.storylistResource.value());
 
