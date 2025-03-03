@@ -13,7 +13,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Storylist } from '@models/storylist.model';
 
 // Directives
-import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 // Componentes
@@ -29,7 +28,7 @@ xdescribe('StorylistComponent', () => {
 				NgxSkeletonLoaderModule,
 				RouterTestingModule,
 			],
-			componentProviders: [provideMock(FetchContentDirective), provideMock(MetaTagsDirective)],
+			componentProviders: [provideMock(MetaTagsDirective)],
 		});
 	};
 

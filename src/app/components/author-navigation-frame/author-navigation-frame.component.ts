@@ -1,6 +1,5 @@
 // Core
-import { Component, effect, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, computed, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // 3rd party modules
@@ -9,25 +8,23 @@ import { injectQueryParams } from 'ngxtension/inject-query-params';
 // Routing
 import { AppRoutes } from '../../app.routes';
 
-// Models
-import { StoryNavigationTeaser } from '@models/story.model';
-
 // Providers
 import { StoryService } from '../../providers/story.service';
 
 // Componentes
 import { NavigationFrameComponent } from '@models/navigation-frame.component';
 import { NavigableStoryTeaserComponent } from '../navigable-story-teaser/navigable-story-teaser.component';
+import { rxResource } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'cuentoneta-author-navigation-frame',
 	imports: [CommonModule, NavigableStoryTeaserComponent],
-	template: `@if (stories) {
+	template: `@if (stories(); as stories) {
 		@for (story of stories; track $index) {
 			<cuentoneta-navigable-story-teaser
 				[story]="story"
 				[selected]="selectedStorySlug() === story.slug"
-				[authorSlug]="authorSlug"
+				[authorSlug]="authorSlug()"
 			></cuentoneta-navigable-story-teaser>
 		}
 	}`,
@@ -44,32 +41,28 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 	private queryParams = injectQueryParams();
 	private storyService = inject(StoryService);
 
-	stories: StoryNavigationTeaser[] = [];
+	// Recursos
+	private readonly storiesResource = rxResource({
+		request: () => this.queryParams(),
+		loader: (params) => this.storyService.getNavigationTeasersByAuthorSlug(params.request['navigationSlug']),
+	});
 
-	authorSlug: string = '';
+	// Propiedades
+	stories = computed(() => this.storiesResource.value());
+	authorSlug = computed(() => this.queryParams()?.['navigationSlug'] ?? '');
 
 	constructor() {
 		super();
 
-		effect((cleanUp) => {
+		effect(() => {
 			const { navigationSlug } = this.queryParams();
-			const subscription = this.stories$(navigationSlug).subscribe((stories) => {
-				this.stories = stories;
-				this.authorSlug = navigationSlug;
-				this.config.set({
-					headerTitle: 'Más del autor',
-					footerTitle: 'Ver más...',
-					navigationRoute: this.router.createUrlTree([this.appRoutes.Author, navigationSlug]),
-					showFooter: true,
-				});
-			});
-			cleanUp(() => subscription.unsubscribe());
-		});
-	}
 
-	private stories$(slug: string): Observable<StoryNavigationTeaser[]> {
-		return this.fetchContentDirective.fetchContent$<StoryNavigationTeaser[]>(
-			this.storyService.getNavigationTeasersByAuthorSlug(slug),
-		);
+			this.config.set({
+				headerTitle: 'Más del autor',
+				footerTitle: 'Ver más...',
+				navigationRoute: this.router.createUrlTree([this.appRoutes.Author, navigationSlug]),
+				showFooter: true,
+			});
+		});
 	}
 }

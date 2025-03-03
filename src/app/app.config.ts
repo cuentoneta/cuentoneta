@@ -1,4 +1,11 @@
-import { APP_ID, ApplicationConfig, LOCALE_ID, inject, provideAppInitializer } from '@angular/core';
+import {
+	APP_ID,
+	ApplicationConfig,
+	LOCALE_ID,
+	inject,
+	provideAppInitializer,
+	provideExperimentalZonelessChangeDetection,
+} from '@angular/core';
 import {
 	provideRouter,
 	withEnabledBlockingInitialNavigation,
@@ -39,5 +46,6 @@ export const appConfig: ApplicationConfig = {
 			withViewTransitions(),
 		),
 		provideHttpClient(withFetch()),
+		provideExperimentalZonelessChangeDetection(),
 	],
 };

@@ -67,7 +67,7 @@ const generateApiUrl = (environment: TEnvironmentType): string => {
 	let url = '/';
 
 	const branchUrl: string = process.env['VERCEL_BRANCH_URL'] as string;
-	const stagingBranchUrl = 'cuentoneta-git-develop-cuentoneta.vercel.app';
+	const stagingBranchUrl = 'cuentoneta-git-develop-rolivencia-projects.vercel.app';
 
 	// Asigna URL en base a la URL de la rama de Vercel para ambiente staging
 	if (branchUrl === stagingBranchUrl) {

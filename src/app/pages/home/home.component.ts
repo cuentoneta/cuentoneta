@@ -1,18 +1,12 @@
 // Core
-import { Component, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, computed, inject } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 
 // Services
 import { ContentService } from '../../providers/content.service';
 
-// Models
-import { ContentCampaign } from '@models/content-campaign.model';
-import { LandingPageContent } from '@models/landing-page-content.model';
-import { StorylistTeaser } from '@models/storylist.model';
-
 // Directives
-import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 // Componentes
@@ -21,7 +15,6 @@ import { StorylistCardComponent } from '../../components/storylist-card-componen
 import { ContentCampaignCarouselSkeletonComponent } from '../../components/content-campaign-carousel/content-campaign-carousel-skeleton.component';
 import { StorylistCardSkeletonComponent } from '../../components/storylist-card-component/storylist-card-skeleton.component';
 import { StoryCardTeaserComponent } from '../../components/story-card-teaser/story-card-teaser.component';
-import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 
 @Component({
 	selector: 'cuentoneta-home',
@@ -34,34 +27,27 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 		StorylistCardSkeletonComponent,
 		StoryCardTeaserComponent,
 	],
-	hostDirectives: [FetchContentDirective, MetaTagsDirective],
+	hostDirectives: [MetaTagsDirective],
 })
 export class HomeComponent {
 	// Services
 	private contentService = inject(ContentService);
 
 	// Directives
-	private fetchContentDirective = inject(FetchContentDirective);
 	private metaTagsDirective = inject(MetaTagsDirective);
 
-	// Asignación inicial para dibujar skeletons
-	cards: StorylistTeaser[] = [];
-	campaigns: ContentCampaign[] = [];
-	mostRead: StoryNavigationTeaserWithAuthor[] = [];
+	// Recursos
+	readonly landingPageResource = rxResource({
+		loader: () => this.contentService.getLandingPageContent(),
+	});
+
+	// Propiedades
+	landingPageContent = computed(() => this.landingPageResource.value());
+	cards = computed(() => this.landingPageContent()?.cards || []);
+	campaigns = computed(() => this.landingPageContent()?.campaigns || []);
+	mostRead = computed(() => this.landingPageContent()?.mostRead || []);
 
 	constructor() {
 		this.metaTagsDirective.setDefault();
-		this.loadLandingPageContent();
-	}
-
-	private loadLandingPageContent() {
-		this.fetchContentDirective
-			.fetchContent$<LandingPageContent>(this.contentService.getLandingPageContent())
-			.pipe(takeUntilDestroyed())
-			.subscribe(({ cards, campaigns, mostRead }) => {
-				this.cards = cards;
-				this.campaigns = campaigns;
-				this.mostRead = mostRead.slice(0, 6);
-			});
 	}
 }

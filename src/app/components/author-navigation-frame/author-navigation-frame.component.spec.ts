@@ -6,9 +6,6 @@ import { Observable, of } from 'rxjs';
 import { NavigableStoryTeaserComponent } from '../navigable-story-teaser/navigable-story-teaser.component';
 import { AuthorNavigationFrameComponent } from './author-navigation-frame.component';
 
-// Directives
-import { FetchContentDirective } from '../../directives/fetch-content.directive';
-
 // Models
 import { StoryTeaser } from '@models/story.model';
 
@@ -41,14 +38,6 @@ describe('AuthorNavigationFrameComponent', () => {
 			componentImports: [CommonModule, NavigableStoryTeaserComponent],
 			inputs: {},
 			providers: [
-				{
-					provide: FetchContentDirective,
-					useValue: {
-						fetchContent$<T>(source$: Observable<T>): Observable<T> {
-							return source$;
-						},
-					},
-				},
 				{
 					provide: StoryService,
 					useValue: {

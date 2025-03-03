@@ -1,7 +1,7 @@
 <main class="my-8 block md:mt-0">
 	<article
-		[attr.aria-busy]="!storylist"
-		[lang]="storylist?.language"
+		[attr.aria-busy]="!storylist()"
+		[lang]="storylist()?.language"
 		class="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16"
 	>
 		<!-- Renderizado de título y descripción -->
@@ -33,7 +33,7 @@
 </main>
 
 <ng-template #storylistTitleTemplate>
-	@if (!!storylist) {
+	@if (storylist(); as storylist) {
 		<div class="flex flex-col gap-4">
 			<div class="flex justify-center">
 				<img
