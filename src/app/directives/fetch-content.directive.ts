@@ -1,7 +1,6 @@
-import { Directive, inject, PLATFORM_ID } from '@angular/core';
+import { Directive } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { isPlatformBrowser } from '@angular/common';
-import { MacroTaskWrapperService } from '../providers/macro-task-wrapper.service';
+import { pendingUntilEvent } from '@angular/core/rxjs-interop';
 
 /**
  * @description
@@ -19,10 +18,6 @@ import { MacroTaskWrapperService } from '../providers/macro-task-wrapper.service
 	standalone: true,
 })
 export class FetchContentDirective {
-	// Providers
-	private platformId = inject(PLATFORM_ID);
-	private macroTaskWrapperService = inject(MacroTaskWrapperService);
-
 	isLoading: boolean = false;
 
 	/**
@@ -33,15 +28,9 @@ export class FetchContentDirective {
 	 */
 	public fetchContent$<T>(source$: Observable<T>): Observable<T> {
 		this.isLoading = true;
-		return (
-			isPlatformBrowser(this.platformId)
-				? source$
-				: this.macroTaskWrapperService.wrapMacroTaskObservable<T>(
-						'StorylistNavigationFrameComponent.fetchData',
-						source$,
-						null,
-						'first-emit',
-					)
-		).pipe(tap(() => (this.isLoading = false)));
+		return source$.pipe(
+			pendingUntilEvent(),
+			tap(() => (this.isLoading = false)),
+		);
 	}
 }
