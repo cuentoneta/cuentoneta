@@ -5,7 +5,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { provideMock } from '@testing-library/angular/jest-utils';
 import { ContentService } from '../../providers/content.service';
-import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { Component, input } from '@angular/core';
 import { Publication, Storylist } from '@models/storylist.model';
 
@@ -22,10 +21,7 @@ xdescribe('HomeComponent', () => {
 				MockStorylistCardDeckComponent,
 				RouterTestingModule,
 			],
-			componentProviders: [
-				{ provide: ContentService, useClass: provideMock(ContentService) },
-				{ provide: FetchContentDirective, useClass: provideMock(FetchContentDirective) },
-			],
+			componentProviders: [{ provide: ContentService, useClass: provideMock(ContentService) }],
 		});
 	};
 
