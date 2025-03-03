@@ -6,9 +6,6 @@ import { Observable, of } from 'rxjs';
 import { StorylistNavigationFrameComponent } from './storylist-navigation-frame.component';
 import { NavigablePublicationTeaserComponent } from '../navigable-publication-teaser/navigable-publication-teaser.component';
 
-// Directives
-import { FetchContentDirective } from '../../directives/fetch-content.directive';
-
 // Models
 import { Storylist } from '@models/storylist.model';
 
@@ -45,14 +42,6 @@ describe('StorylistNavigationFrameComponent', () => {
 			providers: [
 				DatePipe,
 				MapPublicationEditionLabelPipe,
-				{
-					provide: FetchContentDirective,
-					useValue: {
-						fetchContent$<T>(source$: Observable<T>): Observable<T> {
-							return source$;
-						},
-					},
-				},
 				{
 					provide: StorylistService,
 					useValue: {
