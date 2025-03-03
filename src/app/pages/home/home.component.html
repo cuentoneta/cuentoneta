@@ -5,7 +5,7 @@
 		<cuentoneta-content-campaign-carousel-skeleton />
 	}
 
-	<section class="flex flex-col gap-6">
+	<section class="mb-8 flex flex-col gap-8">
 		<div class="flex content-between items-center gap-4 text-gray-500">
 			<hr class="w-6" />
 			<h2 class="h3 text-center font-source-serif italic">Historias más leídas</h2>
@@ -33,14 +33,14 @@
 		</section>
 	</section>
 
-	<section class="flex flex-col gap-4">
+	<section class="flex flex-col gap-8">
 		<div class="flex content-between items-center gap-4 text-gray-500">
 			<hr class="w-6" />
 			<h2 class="h3 font-source-serif italic">Colecciones destacadas</h2>
 			<hr class="flex-grow" />
 		</div>
 
-		<section class="grid grid-cols-1 justify-items-center gap-8 sm:grid-cols-2">
+		<section class="mb-8 grid grid-cols-1 justify-items-center gap-8 sm:grid-cols-2">
 			@defer (when cards().length > 0) {
 				@for (storylist of cards(); track storylist.slug) {
 					<cuentoneta-storylist-card [storylist]="storylist" class="card w-full"></cuentoneta-storylist-card>
