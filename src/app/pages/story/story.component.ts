@@ -1,8 +1,9 @@
 // Core
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Observable, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { rxResource } from '@angular/core/rxjs-interop';
 
 // 3rd Party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -72,48 +73,36 @@ export class StoryComponent {
 	readonly appRoutes = AppRoutes;
 
 	// Providers
-	fetchContentDirective = inject(FetchContentDirective);
 	private params = injectParams();
 	private storyService = inject(StoryService);
 	private themeService = inject(ThemeService);
-	private metaTagsDirective = inject(MetaTagsDirective);
+	private meta = inject(MetaTagsDirective);
 
 	dummyList = Array(10);
-	shareContentParams: { [key: string]: string } = {};
-	shareMessage: string = '';
 	skeletonColor = this.themeService.pickColor('zinc', 300);
 
-	story = signal<Story | undefined>(undefined);
-	sharingRoute = computed(() => `${AppRoutes.Story}/${this.story()?.slug}`);
-
-	constructor() {
-		effect((cleanUp) => {
-			this.story.set(undefined);
-			const { slug } = this.params();
-			const subscription = this.story$(slug).subscribe((story) => {
-				this.story.set(story);
-				this.updateMetaTags(story);
-			});
-			cleanUp(() => subscription.unsubscribe());
-		});
-	}
-
-	private updateMetaTags(story: Story) {
-		this.metaTagsDirective.setTitle(`${story.title} - ${story.author.name}`);
-		this.metaTagsDirective.setDescription(
-			`Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
-		);
-		this.shareContentParams = { navigationSlug: story.author.slug, navigation: 'author' };
-		this.shareMessage = `Leí "${story.title}" de ${story.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`;
-	}
-
-	private story$(slug: string): Observable<Story> {
-		return this.fetchContentDirective.fetchContent$<Story>(
-			this.storyService.getBySlug(slug).pipe(
+	readonly storyResource = rxResource({
+		request: () => this.params(),
+		loader: (params) =>
+			this.storyService.getBySlug(params.request['slug']).pipe(
 				tap((story) => {
 					this.updateMetaTags(story);
 				}),
 			),
+	});
+
+	story = computed(() => this.storyResource.value());
+	sharingRoute = computed(() => `${AppRoutes.Story}/${this.story()?.slug}`);
+	shareContentParams = computed(() => ({ navigationSlug: this.story()?.author.slug ?? '', navigation: 'author' }));
+	shareMessage = computed(
+		() =>
+			`Leí "${this.story()?.title}" de ${this.story()?.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`,
+	);
+
+	private updateMetaTags(story: Story) {
+		this.meta.setTitle(`${story.title} - ${story.author.name}`);
+		this.meta.setDescription(
+			`Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
 		);
 	}
 }
