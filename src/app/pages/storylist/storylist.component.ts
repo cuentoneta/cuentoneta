@@ -14,7 +14,6 @@ import { Storylist } from '@models/storylist.model';
 import { StorylistService } from '../../providers/storylist.service';
 
 // Directives
-import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 // Componentes
@@ -33,7 +32,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 		PortableTextParserComponent,
 		NgOptimizedImage,
 	],
-	hostDirectives: [FetchContentDirective, MetaTagsDirective],
+	hostDirectives: [MetaTagsDirective],
 })
 export class StorylistComponent {
 	// Providers

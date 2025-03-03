@@ -20,7 +20,6 @@ import { StoryService } from '../../providers/story.service';
 import { ThemeService } from '../../providers/theme.service';
 
 // Directives
-import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 // Components
@@ -66,7 +65,7 @@ import { PortableTextParserComponent } from '../../components/portable-text-pars
 		ShareContentComponent,
 		StoryNavigationBarComponent,
 	],
-	hostDirectives: [FetchContentDirective, MetaTagsDirective],
+	hostDirectives: [MetaTagsDirective],
 })
 export class StoryComponent {
 	// Routes

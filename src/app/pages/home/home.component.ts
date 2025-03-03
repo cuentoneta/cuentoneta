@@ -9,7 +9,6 @@ import { ContentService } from '../../providers/content.service';
 // Models
 
 // Directives
-import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 // Componentes
@@ -28,7 +27,7 @@ import { StorylistCardSkeletonComponent } from '../../components/storylist-card-
 		ContentCampaignCarouselSkeletonComponent,
 		StorylistCardSkeletonComponent,
 	],
-	hostDirectives: [FetchContentDirective, MetaTagsDirective],
+	hostDirectives: [MetaTagsDirective],
 })
 export class HomeComponent {
 	// Services
