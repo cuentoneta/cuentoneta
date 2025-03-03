@@ -21,6 +21,18 @@
 		@apply font-inter text-xl tracking-normal;
 	}
 
+	.inter-heading-1 {
+		@apply font-inter text-4xl tracking-normal;
+	}
+
+	.inter-heading-2 {
+		@apply font-inter text-3xl tracking-normal;
+	}
+
+	.inter-heading-3 {
+		@apply font-inter text-2xl tracking-normal;
+	}
+
 	.inter-body-base-regular {
 		@apply inter-body-base font-normal;
 	}
@@ -69,14 +81,27 @@
 		@apply inter-body-base font-semibold;
 	}
 
+	.inter-heading-2-semibold {
+		@apply inter-heading-2 font-semibold;
+	}
+
 	// endregion
 	// region Source Serif Pro font mixins to tailwind class
+
+	.source-serif-pro-heading-2 {
+		@apply font-source-serif text-3xl tracking-normal;
+	}
+
 	.source-serif-pro-body-lg {
 		@apply font-source-serif text-lg tracking-normal;
 	}
 
 	.source-serif-pro-body-xl {
 		@apply font-source-serif text-xl tracking-normal;
+	}
+
+	.source-serif-pro-heading-2-bold {
+		@apply source-serif-pro-heading-2 font-bold;
 	}
 
 	// endregion
