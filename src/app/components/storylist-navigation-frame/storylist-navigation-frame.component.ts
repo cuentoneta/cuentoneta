@@ -5,7 +5,6 @@ import { UrlTree } from '@angular/router';
 // 3rd party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { injectQueryParams } from 'ngxtension/inject-query-params';
-import { injectParams } from 'ngxtension/inject-params';
 
 // Models
 import { PublicationNavigationTeaser } from '@models/storylist.model';
