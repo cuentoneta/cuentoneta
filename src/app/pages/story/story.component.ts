@@ -78,9 +78,9 @@ export class StoryComponent {
 	private themeService = inject(ThemeService);
 	private meta = inject(MetaTagsDirective);
 
-	dummyList = Array(10);
-	skeletonColor = this.themeService.pickColor('zinc', 300);
-
+	// Recursos
+	readonly dummyList = Array(10);
+	readonly skeletonColor = this.themeService.pickColor('zinc', 300);
 	readonly storyResource = rxResource({
 		request: () => this.params(),
 		loader: (params) =>

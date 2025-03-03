@@ -1,6 +1,6 @@
 <main>
-	@defer (when campaigns.length > 0) {
-		<cuentoneta-content-campaign-carousel [slides]="campaigns" />
+	@defer (when campaigns().length > 0) {
+		<cuentoneta-content-campaign-carousel [slides]="campaigns()" />
 	} @loading (minimum 500ms) {
 		<cuentoneta-content-campaign-carousel-skeleton />
 	}
@@ -15,8 +15,8 @@
 	</div>
 
 	<section class="grid grid-cols-1 justify-items-center gap-8 sm:grid-cols-2">
-		@defer (when cards.length > 0) {
-			@for (storylist of cards; track storylist.slug) {
+		@defer (when cards().length > 0) {
+			@for (storylist of cards(); track storylist.slug) {
 				<cuentoneta-storylist-card [storylist]="storylist" class="card w-full"> </cuentoneta-storylist-card>
 			}
 		} @loading (minimum 500ms) {
