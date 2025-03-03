@@ -3,7 +3,7 @@ import { RenderMode, ServerRoute } from '@angular/ssr';
 export const serverRoutes: Array<ServerRoute> = [
 	{
 		path: 'home',
-		renderMode: RenderMode.Prerender,
+		renderMode: RenderMode.Server,
 	},
 	{
 		path: 'about',
