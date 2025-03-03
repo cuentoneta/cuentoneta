@@ -6,7 +6,7 @@ import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 // Tailwind
 import * as defaultColors from 'tailwindcss/colors';
 import { DefaultColors } from 'tailwindcss/types/generated/colors';
-import { extendedColors } from '../../../theme.config';
+import { ExtendedColors, extendedColors } from '../../../theme.config';
 import { screens } from '../../../tailwind.screens';
 
 // Models
@@ -41,6 +41,14 @@ export class ThemeService {
 
 		// @ts-expect-error - En este punto tanto el color como la escala han sido validados
 		return defaultColors[color][scale.toString()].toUpperCase();
+	}
+
+	pickThemeColor(color: ExtendedColors) {
+		if (!extendedColors[color]) {
+			throw new Error(`Color ${color} not found in Tailwind CSS config!`);
+		}
+
+		return extendedColors[color];
 	}
 
 	addThemeColorTag() {
