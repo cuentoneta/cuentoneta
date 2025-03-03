@@ -1,17 +1,17 @@
 <main class="block lg:mt-28">
-	<article [attr.aria-busy]="!storylist" [lang]="storylist?.language" class="grid grid-cols-1 gap-y-8">
+	<article [attr.aria-busy]="!storylist" [lang]="storylist()?.language" class="grid grid-cols-1 gap-y-8">
 		<!-- Renderizado de título y descripción -->
 		<ng-container *ngTemplateOutlet="storylistTitleTemplate"> </ng-container>
 
 		<section>
 			<!-- Renderizado de tarjetas de stories -->
-			<cuentoneta-storylist-card-deck [storylist]="storylist" [isLoading]="fetchContentDirective.isLoading" />
+			<cuentoneta-storylist-card-deck [storylist]="storylist()" [isLoading]="storylistResource.isLoading()" />
 		</section>
 	</article>
 </main>
 
 <ng-template #storylistTitleTemplate>
-	@if (!!storylist) {
+	@if (storylist(); as storylist) {
 		<div class="grid grid-cols-1 gap-4 xs:max-md:!col-span-1 md:grid-cols-[auto_1fr]">
 			<div class="flex justify-center md:justify-start">
 				<img
