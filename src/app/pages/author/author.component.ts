@@ -129,7 +129,6 @@ export class AuthorComponent {
 		);
 	}
 
-	// TODO: Removar este mapping para generar navigation routes
 	private stories$(slug: string): Observable<(StoryTeaser & { navigationRoute: UrlTree })[]> {
 		return this.storyService.getByAuthorSlug(slug).pipe(
 			map((stories) => {
