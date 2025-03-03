@@ -1,5 +1,5 @@
 <main class="block lg:mt-28">
-	<article [attr.aria-busy]="!storylist" [lang]="storylist()?.language" class="grid grid-cols-1 gap-y-8">
+	<article [attr.aria-busy]="!storylist()" [lang]="storylist()?.language" class="grid grid-cols-1 gap-y-8">
 		<!-- Renderizado de título y descripción -->
 		<ng-container *ngTemplateOutlet="storylistTitleTemplate"> </ng-container>
 
