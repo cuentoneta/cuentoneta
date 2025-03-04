@@ -7,6 +7,7 @@ import { environment } from './environments/environment';
 
 // Analytics
 import { injectSpeedInsights } from '@vercel/speed-insights';
+import Clarity from '@microsoft/clarity';
 
 @Component({
 	selector: 'cuentoneta-root',
@@ -27,5 +28,13 @@ export class AppComponent implements OnInit {
 
 		// Inicializa Speed Insights de Vercel
 		injectSpeedInsights();
+
+		if (!environment.clarityProjectId) {
+			return;
+		}
+
+		// Inicialización Microsoft Clarity para analytics
+		Clarity.init(environment.clarityProjectId);
+		console.log(Clarity);
 	}
 }
