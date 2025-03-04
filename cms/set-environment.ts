@@ -25,7 +25,7 @@ const environment: TEnvironmentType = (process.env['VERCEL_ENV'] as TEnvironment
 
 function createSanityStudioEnvFile() {
 	const envFilePath = join(process.cwd(), '.env');
-	console.log(envFilePath, "Path actual");
+	console.log(envFilePath, 'Path actual');
 	if (existsSync(envFilePath)) {
 		console.log('El archivo .env de Sanity Studio ya existe, se saltea el paso de creación 👻.');
 		return;
