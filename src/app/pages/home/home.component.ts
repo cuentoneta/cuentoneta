@@ -14,7 +14,7 @@ import { ContentCampaignCarouselComponent } from '../../components/content-campa
 import { StorylistCardComponent } from '../../components/storylist-card-component/storylist-card.component';
 import { ContentCampaignCarouselSkeletonComponent } from '../../components/content-campaign-carousel/content-campaign-carousel-skeleton.component';
 import { StorylistCardSkeletonComponent } from '../../components/storylist-card-component/storylist-card-skeleton.component';
-import { StoryCardTeaserComponent } from '../../components/story-card-teaser/story-card-teaser.component';
+import { MostReadStoriesCardDeckComponent } from '../../components/most-read-stories-card-deck/most-read-stories-card-deck.component';
 
 @Component({
 	selector: 'cuentoneta-home',
@@ -25,7 +25,7 @@ import { StoryCardTeaserComponent } from '../../components/story-card-teaser/sto
 		StorylistCardComponent,
 		ContentCampaignCarouselSkeletonComponent,
 		StorylistCardSkeletonComponent,
-		StoryCardTeaserComponent,
+		MostReadStoriesCardDeckComponent,
 	],
 	hostDirectives: [MetaTagsDirective],
 })

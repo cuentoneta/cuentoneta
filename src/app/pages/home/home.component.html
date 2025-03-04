@@ -1,36 +1,18 @@
 <main>
-	@defer (when campaigns().length > 0) {
-		<cuentoneta-content-campaign-carousel [slides]="campaigns()" />
-	} @loading (minimum 500ms) {
-		<cuentoneta-content-campaign-carousel-skeleton />
-	}
+	<!--
+        Las alturas fijadas para estos elementos tienen la finalidad de evitar
+        el rebote vertical que puede observarse en el momento de la carga inicial de la página
+    -->
+	<section class="h-[261.36px] md:h-[389px]">
+		@defer (when campaigns().length > 0) {
+			<cuentoneta-content-campaign-carousel [slides]="campaigns()" />
+		} @loading (minimum 500ms) {
+			<cuentoneta-content-campaign-carousel-skeleton />
+		}
+	</section>
 
-	<section class="mb-8 flex flex-col gap-8">
-		<div class="flex content-between items-center gap-4 text-gray-500">
-			<hr class="w-6" />
-			<h2 class="h3 text-center font-source-serif italic">Historias más leídas</h2>
-			<hr class="flex-grow" />
-		</div>
-
-		<section class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-8">
-			@defer (when mostRead().length > 0) {
-				@for (story of mostRead(); track $index) {
-					<cuentoneta-story-card-teaser
-						[story]="story"
-						[showAuthor]="true"
-						[order]="$index + 1"
-						[navigationParams]="{
-							navigation: 'author',
-							navigationSlug: story.author.slug
-						}"
-					/>
-				}
-			} @loading (minimum 500ms) {
-				@for (_ of [].constructor(6); track $index) {
-					<cuentoneta-story-card-teaser [showAuthor]="true" [order]="$index + 1" />
-				}
-			}
-		</section>
+	<section class="mb-8 h-[684px] md:h-[304px]">
+		<cuentoneta-most-read-stories-card-deck [stories]="mostRead()" class="flex flex-col gap-8" />
 	</section>
 
 	<section class="flex flex-col gap-8">
@@ -43,7 +25,7 @@
 		<section class="mb-8 grid grid-cols-1 justify-items-center gap-8 sm:grid-cols-2">
 			@defer (when cards().length > 0) {
 				@for (storylist of cards(); track storylist.slug) {
-					<cuentoneta-storylist-card [storylist]="storylist" class="card w-full"></cuentoneta-storylist-card>
+					<cuentoneta-storylist-card [storylist]="storylist" class="card w-full" />
 				}
 			} @loading (minimum 500ms) {
 				@for (_ of [].constructor(6); track $index) {
