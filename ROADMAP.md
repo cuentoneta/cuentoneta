@@ -166,6 +166,14 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 ### Hito: Lanzamiento al público de la versión [2.5.3](https://github.com/cuentoneta/cuentoneta/releases/tag/2.5.2) de La Cuentoneta (lanzada el 2025/02/06)
 
+- Agregada funcionalidad para visualizar historias más leídas en la landing page, con actualización diaria.
+- Agregado nuevo componente para visualizar en formato resumido y escueto la navegación a stories desde la landing page.
+- Eliminación de zone.js del proyecto, transformando la aplicación a zoneless.
+- Implementación de rxResource para operaciones de fetch en componentes del proyecto.
+- Actualización del proyecto a Angular v19.1 y Nx a versión 20.4.
+
+### Hito: Lanzamiento al público de la versión [2.6.0](https://github.com/cuentoneta/cuentoneta/releases/tag/2.6.0) de La Cuentoneta (lanzada el 2025/03/03)
+
 ---
 
 ## Futuros
