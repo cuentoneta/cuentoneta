@@ -22,8 +22,11 @@ import { DatePipe, registerLocaleData } from '@angular/common';
 // Providers
 import { ThemeService } from './providers/theme.service';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { environment } from './environments/environment';
+import Clarity from '@microsoft/clarity';
 
 registerLocaleData(localeEs);
+initClarity();
 
 export const appConfig: ApplicationConfig = {
 	providers: [
@@ -49,3 +52,17 @@ export const appConfig: ApplicationConfig = {
 		provideExperimentalZonelessChangeDetection(),
 	],
 };
+
+function initClarity() {
+	if (environment.environment !== 'production') {
+		return;
+	}
+
+	if (!environment.clarityProjectId) {
+		return;
+	}
+
+	// Inicialización Microsoft Clarity para analytics
+	Clarity.init(environment.clarityProjectId);
+	Clarity.consent();
+}

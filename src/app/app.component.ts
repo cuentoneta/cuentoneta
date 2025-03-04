@@ -6,7 +6,6 @@ import { RouterModule } from '@angular/router';
 import { environment } from './environments/environment';
 
 // Analytics
-import Clarity from '@microsoft/clarity';
 import { injectSpeedInsights } from '@vercel/speed-insights';
 
 @Component({
@@ -28,14 +27,5 @@ export class AppComponent implements OnInit {
 
 		// Inicializa Speed Insights de Vercel
 		injectSpeedInsights();
-
-		if (!environment.clarityProjectId) {
-			return;
-		}
-
-		// Inicialización Microsoft Clarity para analytics
-		Clarity.init(environment.clarityProjectId);
-		Clarity.consent();
-		console.log(Clarity);
 	}
 }
