@@ -137,12 +137,18 @@ importers:
       '@nx/js':
         specifier: 20.4.6
         version: 20.4.6(@babel/traverse@7.26.4)(@swc/core@1.3.85)(@types/node@18.16.9)(nx@20.4.6(@swc/core@1.3.85))(typescript@5.7.3)
+      '@nx/playwright':
+        specifier: 20.4.6
+        version: 20.4.6(@babel/traverse@7.26.4)(@playwright/test@1.50.1)(@swc/core@1.3.85)(@types/node@18.16.9)(@zkochan/js-yaml@0.0.7)(eslint@9.13.0(jiti@1.21.0))(nx@20.4.6(@swc/core@1.3.85))(typescript@5.7.3)
       '@nx/storybook':
         specifier: 20.4.6
         version: 20.4.6(@babel/traverse@7.26.4)(@swc/core@1.3.85)(@types/node@18.16.9)(@zkochan/js-yaml@0.0.7)(cypress@11.2.0)(eslint@9.13.0(jiti@1.21.0))(nx@20.4.6(@swc/core@1.3.85))(typescript@5.7.3)
       '@nx/workspace':
         specifier: 20.4.6
         version: 20.4.6(@swc/core@1.3.85)
+      '@playwright/test':
+        specifier: ^1.36.0
+        version: 1.50.1
       '@storybook/addon-essentials':
         specifier: 8.4.7
         version: 8.4.7(@types/react@18.2.11)(storybook@8.4.7(prettier@3.2.5))
@@ -3007,6 +3013,15 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@nx/playwright@20.4.6':
+    resolution:
+      { integrity: sha512-MFzcw9p68Z3srEXeCZCUNF++wt1ssV3JD5BDTLJB17GSISjXr7xKfadV9xX/iYOnzxN5PDqqh3OAY/Tflej41Q== }
+    peerDependencies:
+      '@playwright/test': ^1.36.0
+    peerDependenciesMeta:
+      '@playwright/test':
+        optional: true
+
   '@nx/storybook@20.4.6':
     resolution:
       { integrity: sha512-Fuhhu49mGWyLEyCwHXyOMZilyqyh7nxkjwCRS4dCKGUzYZdvFptCXjitjJhEWK2gA3/5eEJYJSnVlOof1FSA+A== }
@@ -3129,6 +3144,12 @@ packages:
     resolution:
       { integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg== }
     engines: { node: '>=14' }
+
+  '@playwright/test@1.50.1':
+    resolution:
+      { integrity: sha512-Jii3aBg+CEDpgnuDxEp/h7BimHcUTDlpEtce89xEumlJ5ef2hqepZ+PWp1DDpYC/VO9fmWVI1IlEaoI5fK9FXQ== }
+    engines: { node: '>=18' }
+    hasBin: true
 
   '@rollup/rollup-android-arm-eabi@4.30.1':
     resolution:
@@ -6639,6 +6660,12 @@ packages:
     resolution:
       { integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw== }
 
+  fsevents@2.3.2:
+    resolution:
+      { integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA== }
+    engines: { node: ^8.16.0 || ^10.6.0 || >=11.0.0 }
+    os: [darwin]
+
   fsevents@2.3.3:
     resolution:
       { integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw== }
@@ -8288,11 +8315,6 @@ packages:
       { integrity: sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg== }
     engines: { node: '>=16 || 14 >=14.17' }
 
-  minimatch@9.0.4:
-    resolution:
-      { integrity: sha512-KqWh+VchfxcMNRAJjj2tnsSJdNbHsVgnkBhTNrW7AjVo6OvLtxw8zfT9oLw1JSohlFzJ8jCoTgaoXvJ+kHt6fw== }
-    engines: { node: '>=16 || 14 >=14.17' }
-
   minimatch@9.0.5:
     resolution:
       { integrity: sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow== }
@@ -9047,6 +9069,18 @@ packages:
     resolution:
       { integrity: sha512-Ie9z/WINcxxLp27BKOCHGde4ITq9UklYKDzVo1nhk5sqGEXU3FpkwP5GM2voTGJkGd9B3Otl+Q4uwSOeSUtOBA== }
     engines: { node: '>=14.16' }
+
+  playwright-core@1.50.1:
+    resolution:
+      { integrity: sha512-ra9fsNWayuYumt+NiM069M6OkcRb1FZSK8bgi66AtpFoWkg2+y0bJSNmkFrWhMbEBbVKC/EruAHH3g0zmtwGmQ== }
+    engines: { node: '>=18' }
+    hasBin: true
+
+  playwright@1.50.1:
+    resolution:
+      { integrity: sha512-G8rwsOQJ63XG6BbKj2w5rHeavFjy5zynBA9zsJMMtBoe/Uf757oG12NXz6e6OirF7RCrTVAKFXbLmn1RbL7Qaw== }
+    engines: { node: '>=18' }
+    hasBin: true
 
   polished@4.2.2:
     resolution:
@@ -14523,6 +14557,30 @@ snapshots:
   '@nx/nx-win32-x64-msvc@20.4.6':
     optional: true
 
+  '@nx/playwright@20.4.6(@babel/traverse@7.26.4)(@playwright/test@1.50.1)(@swc/core@1.3.85)(@types/node@18.16.9)(@zkochan/js-yaml@0.0.7)(eslint@9.13.0(jiti@1.21.0))(nx@20.4.6(@swc/core@1.3.85))(typescript@5.7.3)':
+    dependencies:
+      '@nx/devkit': 20.4.6(nx@20.4.6(@swc/core@1.3.85))
+      '@nx/eslint': 20.4.6(@babel/traverse@7.26.4)(@swc/core@1.3.85)(@types/node@18.16.9)(@zkochan/js-yaml@0.0.7)(eslint@9.13.0(jiti@1.21.0))(nx@20.4.6(@swc/core@1.3.85))
+      '@nx/js': 20.4.6(@babel/traverse@7.26.4)(@swc/core@1.3.85)(@types/node@18.16.9)(nx@20.4.6(@swc/core@1.3.85))(typescript@5.7.3)
+      '@phenomnomnominal/tsquery': 5.0.1(typescript@5.7.3)
+      minimatch: 9.0.3
+      tslib: 2.8.1
+    optionalDependencies:
+      '@playwright/test': 1.50.1
+    transitivePeerDependencies:
+      - '@babel/traverse'
+      - '@swc-node/register'
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - '@zkochan/js-yaml'
+      - debug
+      - eslint
+      - nx
+      - supports-color
+      - typescript
+      - verdaccio
+
   '@nx/storybook@20.4.6(@babel/traverse@7.26.4)(@swc/core@1.3.85)(@types/node@18.16.9)(@zkochan/js-yaml@0.0.7)(cypress@11.2.0)(eslint@9.13.0(jiti@1.21.0))(nx@20.4.6(@swc/core@1.3.85))(typescript@5.7.3)':
     dependencies:
       '@nx/cypress': 20.4.6(@babel/traverse@7.26.4)(@swc/core@1.3.85)(@types/node@18.16.9)(@zkochan/js-yaml@0.0.7)(cypress@11.2.0)(eslint@9.13.0(jiti@1.21.0))(nx@20.4.6(@swc/core@1.3.85))(typescript@5.7.3)
@@ -14715,6 +14773,10 @@ snapshots:
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
+
+  '@playwright/test@1.50.1':
+    dependencies:
+      playwright: 1.50.1
 
   '@rollup/rollup-android-arm-eabi@4.30.1':
     optional: true
@@ -18037,6 +18099,9 @@ snapshots:
 
   fs.realpath@1.0.0: {}
 
+  fsevents@2.3.2:
+    optional: true
+
   fsevents@2.3.3:
     optional: true
 
@@ -18098,7 +18163,7 @@ snapshots:
     dependencies:
       foreground-child: 3.1.1
       jackspeak: 2.3.6
-      minimatch: 9.0.4
+      minimatch: 9.0.5
       minipass: 7.0.4
       path-scurry: 1.10.1
 
@@ -18106,7 +18171,7 @@ snapshots:
     dependencies:
       foreground-child: 3.1.1
       jackspeak: 3.4.3
-      minimatch: 9.0.4
+      minimatch: 9.0.5
       minipass: 7.1.2
       package-json-from-dist: 1.0.1
       path-scurry: 1.11.1
@@ -19690,10 +19755,6 @@ snapshots:
     dependencies:
       brace-expansion: 2.0.1
 
-  minimatch@9.0.4:
-    dependencies:
-      brace-expansion: 2.0.1
-
   minimatch@9.0.5:
     dependencies:
       brace-expansion: 2.0.1
@@ -20405,6 +20466,14 @@ snapshots:
   pkg-dir@7.0.0:
     dependencies:
       find-up: 6.3.0
+
+  playwright-core@1.50.1: {}
+
+  playwright@1.50.1:
+    dependencies:
+      playwright-core: 1.50.1
+    optionalDependencies:
+      fsevents: 2.3.2
 
   polished@4.2.2:
     dependencies:

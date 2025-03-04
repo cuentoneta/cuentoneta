@@ -81,6 +81,12 @@
 			"options": {
 				"targetName": "eslint:lint"
 			}
+		},
+		{
+			"plugin": "@nx/playwright/plugin",
+			"options": {
+				"targetName": "e2e"
+			}
 		}
 	]
 }
