@@ -43,7 +43,7 @@ export class PortableTextDirective {
 			const marks = (block.marks ?? []).slice(0);
 
 			// Procesar clases de alineación de texto
-			let alignmentClasses = [];
+			const alignmentClasses = [];
 			if (marks.includes('center')) {
 				alignmentClasses.push('text-center');
 			}
