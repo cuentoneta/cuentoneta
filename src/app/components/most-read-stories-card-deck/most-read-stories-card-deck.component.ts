@@ -24,11 +24,12 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 							navigation: 'author',
 							navigationSlug: story.author.slug
 						}"
+						data-testid="card"
 					/>
 				}
 			} @loading (minimum 500ms) {
 				@for (_ of [].constructor(6); track $index) {
-					<cuentoneta-story-card-teaser-skeleton [showAuthor]="true" [order]="$index + 1" />
+					<cuentoneta-story-card-teaser-skeleton [showAuthor]="true" [order]="$index + 1" data-testid="skeleton" />
 				}
 			}
 		</section>`,
