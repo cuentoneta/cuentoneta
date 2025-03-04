@@ -4,6 +4,7 @@ import { Resource } from '@models/resource.model';
 export type AuthorNationality = { country: string; flag: string };
 
 interface AuthorBase {
+	_id: string;
 	slug: string;
 	name: string;
 	imageUrl: string;

@@ -4,6 +4,7 @@ import { Media } from '@models/media.model';
 import { Resource } from '@models/resource.model';
 
 interface StoryBase {
+	_id: string;
 	title: string;
 	slug: string;
 	approximateReadingTime: number;
@@ -30,10 +31,18 @@ export interface StoryNavigationTeaser extends StoryBase {
 	paragraphs: Array<never>;
 }
 
+export interface StoryNavigationTeaserWithAuthor extends StoryBase {
+	author: AuthorTeaser;
+	paragraphs: Array<never>;
+}
+
 export interface StoryTeaser extends StoryBase {
 	paragraphs: [TextBlockContent, TextBlockContent, TextBlockContent];
 }
 
+/**
+ * @deprecated Reemplazar uso por interfaces StoryTeaser, StoryNavigationTeaser o StoryNavigationTeaserWithAuthor
+ */
 export interface StoryPreview extends StoryBase {
 	author: AuthorTeaser;
 }

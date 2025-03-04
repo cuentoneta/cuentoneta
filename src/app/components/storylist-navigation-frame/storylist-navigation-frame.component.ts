@@ -1,14 +1,13 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UrlTree } from '@angular/router';
 
 // 3rd party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { injectQueryParams } from 'ngxtension/inject-query-params';
-import { injectParams } from 'ngxtension/inject-params';
 
 // Models
-import { Publication, Storylist } from '@models/storylist.model';
+import { PublicationNavigationTeaser } from '@models/storylist.model';
 
 // Routes
 import { AppRoutes } from '../../app.routes';
@@ -19,6 +18,7 @@ import { StorylistService } from '../../providers/storylist.service';
 
 // Componentes
 import { NavigablePublicationTeaserComponent } from '../navigable-publication-teaser/navigable-publication-teaser.component';
+import { rxResource } from '@angular/core/rxjs-interop';
 
 export type NavigationBarConfig = {
 	headerTitle: string;
@@ -30,7 +30,7 @@ export type NavigationBarConfig = {
 @Component({
 	selector: 'cuentoneta-storylist-navigation-frame',
 	imports: [CommonModule, NavigablePublicationTeaserComponent, NgxSkeletonLoaderModule],
-	template: ` @if (!!storylist) {
+	template: ` @if (storylist(); as storylist) {
 			@for (publication of displayedPublications; track $index) {
 				<cuentoneta-navigable-publication-teaser
 					[publication]="publication"
@@ -56,39 +56,38 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	readonly appRoutes = AppRoutes;
 
 	// Providers
-	private params = injectParams();
 	private queryParams = injectQueryParams();
 	private storylistService = inject(StorylistService);
 
-	displayedPublications: Publication[] = [];
+	// Recursos
+	private readonly storylistResource = rxResource({
+		request: () => this.queryParams(),
+		loader: (params) => this.storylistService.getStorylistNavigationTeasers(params.request['navigationSlug']),
+	});
+
+	// Propiedades
+	displayedPublications: PublicationNavigationTeaser[] = [];
 	dummyList: null[] = Array(9);
-	storylist: Storylist | undefined;
+	storylist = computed(() => this.storylistResource.value());
 
 	constructor() {
 		super();
 
-		effect((cleanUp) => {
-			if (!this.params() || !this.queryParams()) {
+		effect(() => {
+			const storylist = this.storylist();
+
+			if (!storylist) {
 				return;
 			}
-			const { navigationSlug } = this.queryParams();
 
-			const subscription = this.storylist$(navigationSlug).subscribe((storylist) => {
-				this.storylist = storylist;
-				this.sliceDisplayedPublications(storylist.publications);
-				this.config.set({
-					headerTitle: storylist.title,
-					footerTitle: 'Ver más...',
-					navigationRoute: this.router.createUrlTree([this.appRoutes.StoryList, storylist.slug]),
-					showFooter: true,
-				});
+			this.sliceDisplayedPublications(storylist.publications);
+			this.config.set({
+				headerTitle: storylist.title,
+				footerTitle: 'Ver más...',
+				navigationRoute: this.router.createUrlTree([this.appRoutes.StoryList, storylist.slug]),
+				showFooter: true,
 			});
-			cleanUp(() => subscription.unsubscribe());
 		});
-	}
-
-	private storylist$(navigationSlug: string) {
-		return this.fetchContentDirective.fetchContent$<Storylist>(this.storylistService.get(navigationSlug, 9));
 	}
 
 	/**
@@ -98,7 +97,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	 * caso de que la story actualmente en vista sea una de las primeras o de las últimas.
 	 * @author Ramiro Olivencia <ramiro@olivencia.com.ar>
 	 */
-	sliceDisplayedPublications(publications: Publication[]): void {
+	sliceDisplayedPublications(publications: PublicationNavigationTeaser[]): void {
 		if (!this.storylist) {
 			return;
 		}
@@ -123,7 +122,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 				? publications.length
 				: Math.ceil(selectedStoryIndex + numberOfDisplayedPublications / 2);
 
-		this.displayedPublications = this.storylist.publications.slice(
+		this.displayedPublications = (this.storylist()?.publications ?? []).slice(
 			upperIndex === publications.length ? publications.length - numberOfDisplayedPublications : lowerIndex,
 			lowerIndex === 0 ? numberOfDisplayedPublications : upperIndex,
 		);

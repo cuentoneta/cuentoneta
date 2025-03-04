@@ -1,8 +1,8 @@
 // Core
-import { Component, computed, effect, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Params, Router, UrlTree } from '@angular/router';
-import { combineLatest, map, Observable, tap } from 'rxjs';
+import { Router, UrlTree } from '@angular/router';
+import { map, Observable, tap } from 'rxjs';
 
 // Routing
 import { AppRoutes } from '../../app.routes';
@@ -16,7 +16,6 @@ import { StoryTeaser } from '@models/story.model';
 
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
-import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Services
@@ -28,6 +27,7 @@ import { AuthorSkeletonComponent } from './author-skeleton.component';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
 import { ResourceComponent } from '../../components/resource/resource.component';
 import { StoryCardComponent } from '../../components/story-card/story-card.component';
+import { rxResource } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'cuentoneta-author',
@@ -40,11 +40,11 @@ import { StoryCardComponent } from '../../components/story-card/story-card.compo
 		NgxSkeletonLoaderModule,
 		AuthorSkeletonComponent,
 	],
-	hostDirectives: [FetchContentDirective, MetaTagsDirective],
+	hostDirectives: [MetaTagsDirective],
 	template: `
 		<main>
 			<article class="grid grid-cols-1 gap-8">
-				@if (author) {
+				@if (author(); as author) {
 					<section class="flex flex-col items-center gap-4">
 						<img
 							[ngSrc]="authorImageUrl()"
@@ -70,7 +70,7 @@ import { StoryCardComponent } from '../../components/story-card/story-card.compo
 						></cuentoneta-portable-text-parser>
 					</section>
 					<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-						@for (story of stories; track $index) {
+						@for (story of stories(); track $index) {
 							<cuentoneta-story-card [story]="story" [navigationRoute]="story.navigationRoute"></cuentoneta-story-card>
 						}
 					</section>
@@ -92,40 +92,34 @@ export class AuthorComponent {
 
 	// Directives
 	private metaTagsDirective = inject(MetaTagsDirective);
-	public fetchContentDirective = inject(FetchContentDirective);
 
-	author: Author | undefined;
-	stories: (StoryTeaser & { navigationRoute: UrlTree })[] = [];
+	// Recursos
+	readonly authorResource = rxResource({
+		request: () => this.params(),
+		loader: (params) =>
+			this.author$(params.request['slug']).pipe(
+				tap((author) => {
+					this.updateMetaTags(author);
+				}),
+			),
+	});
+	readonly storiesResource = rxResource({
+		request: () => this.params(),
+		loader: (params) => this.stories$(params.request['slug']),
+	});
 
+	// Propiedades
+	author = computed(() => this.authorResource.value());
+	stories = computed(() => this.storiesResource.value());
 	authorImageUrl = computed(() =>
-		this.author?.imageUrl ? `${this.author?.imageUrl}?auto=format` : 'assets/img/default-avatar.jpg',
+		this.author()?.imageUrl ? `${this.author()?.imageUrl}?auto=format` : 'assets/img/default-avatar.jpg',
 	);
-
-	authorFlagUrl = computed(() => `${this.author?.nationality.flag}?auto=format`);
-
-	constructor() {
-		effect((cleanUp) => {
-			const subscription = this.content$(this.params()).subscribe(({ author, stories }) => {
-				this.author = author;
-				this.stories = stories;
-				this.updateMetaTags(author);
-			});
-			cleanUp(() => subscription.unsubscribe());
-		});
-	}
+	authorFlagUrl = computed(() => `${this.author()?.nationality.flag}?auto=format`);
 
 	private updateMetaTags(author: Author) {
 		this.metaTagsDirective.setTitle(`${author.name}`);
 		this.metaTagsDirective.setDescription(`Perfil y obras de ${author.name} para leer en La Cuentoneta.`);
 	}
-
-	private content$(params: Params) {
-		const { slug } = params;
-		return this.fetchContentDirective.fetchContent$(
-			combineLatest({ author: this.author$(slug), stories: this.stories$(slug) }),
-		);
-	}
-
 	private author$(slug: string) {
 		return this.authorService.getBySlug(slug).pipe(
 			tap((author) => {

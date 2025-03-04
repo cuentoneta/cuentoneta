@@ -13,9 +13,9 @@
 				@defer {
 					<cuentoneta-share-content
 						[isLoading]="!story"
-						[params]="shareContentParams"
+						[params]="shareContentParams()"
 						[route]="sharingRoute()"
-						[message]="shareMessage"
+						[message]="shareMessage()"
 					/>
 				}
 			</aside>
@@ -46,7 +46,7 @@
 						}"
 						count="1"
 						appearance="line"
-					></ngx-skeleton-loader>
+					/>
 					<ngx-skeleton-loader
 						[theme]="{
 							'height.px': 20,
@@ -55,7 +55,7 @@
 						}"
 						count="1"
 						appearance="line"
-					></ngx-skeleton-loader>
+					/>
 					<ngx-skeleton-loader
 						[theme]="{
 							'height.px': 16,
@@ -64,7 +64,7 @@
 						}"
 						count="1"
 						appearance="line"
-					></ngx-skeleton-loader>
+					/>
 				}
 			</div>
 		</header>
@@ -72,7 +72,7 @@
 		@if (story(); as story) {
 			@if (story.media) {
 				@defer {
-					<cuentoneta-media-resource [mediaResources]="story.media"></cuentoneta-media-resource>
+					<cuentoneta-media-resource [mediaResources]="story.media" />
 				}
 			}
 
@@ -80,7 +80,7 @@
 				<section class="mb-10 flex flex-col gap-10">
 					@for (epigraph of story.epigraphs; track $index) {
 						@defer {
-							<cuentoneta-story-epigraph [epigraph]="epigraph"></cuentoneta-story-epigraph>
+							<cuentoneta-story-epigraph [epigraph]="epigraph" />
 						}
 					}
 				</section>
@@ -92,14 +92,14 @@
 				<cuentoneta-portable-text-parser
 					[classes]="'source-serif-pro-body-xl mb-8 leading-8'"
 					[paragraphs]="story.paragraphs"
-				></cuentoneta-portable-text-parser>
+				/>
 			</section>
 		} @else {
 			@for (skeleton of dummyList; track $index) {
 				<div class="mb-5">
-					<ngx-skeleton-loader></ngx-skeleton-loader>
-					<ngx-skeleton-loader></ngx-skeleton-loader>
-					<ngx-skeleton-loader></ngx-skeleton-loader>
+					<ngx-skeleton-loader />
+					<ngx-skeleton-loader />
+					<ngx-skeleton-loader />
 				</div>
 			}
 		}

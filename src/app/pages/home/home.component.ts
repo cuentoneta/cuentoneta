@@ -1,18 +1,12 @@
 // Core
-import { Component, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, computed, inject } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 
 // Services
 import { ContentService } from '../../providers/content.service';
 
-// Models
-import { ContentCampaign } from '@models/content-campaign.model';
-import { LandingPageContent } from '@models/landing-page-content.model';
-import { StorylistTeaser } from '@models/storylist.model';
-
 // Directives
-import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 // Componentes
@@ -20,6 +14,7 @@ import { ContentCampaignCarouselComponent } from '../../components/content-campa
 import { StorylistCardComponent } from '../../components/storylist-card-component/storylist-card.component';
 import { ContentCampaignCarouselSkeletonComponent } from '../../components/content-campaign-carousel/content-campaign-carousel-skeleton.component';
 import { StorylistCardSkeletonComponent } from '../../components/storylist-card-component/storylist-card-skeleton.component';
+import { MostReadStoriesCardDeckComponent } from '../../components/most-read-stories-card-deck/most-read-stories-card-deck.component';
 
 @Component({
 	selector: 'cuentoneta-home',
@@ -30,33 +25,29 @@ import { StorylistCardSkeletonComponent } from '../../components/storylist-card-
 		StorylistCardComponent,
 		ContentCampaignCarouselSkeletonComponent,
 		StorylistCardSkeletonComponent,
+		MostReadStoriesCardDeckComponent,
 	],
-	hostDirectives: [FetchContentDirective, MetaTagsDirective],
+	hostDirectives: [MetaTagsDirective],
 })
 export class HomeComponent {
 	// Services
 	private contentService = inject(ContentService);
 
 	// Directives
-	private fetchContentDirective = inject(FetchContentDirective);
 	private metaTagsDirective = inject(MetaTagsDirective);
 
-	// Asignación inicial para dibujar skeletons
-	cards: StorylistTeaser[] = [];
-	campaigns: ContentCampaign[] = [];
+	// Recursos
+	readonly landingPageResource = rxResource({
+		loader: () => this.contentService.getLandingPageContent(),
+	});
+
+	// Propiedades
+	landingPageContent = computed(() => this.landingPageResource.value());
+	cards = computed(() => this.landingPageContent()?.cards || []);
+	campaigns = computed(() => this.landingPageContent()?.campaigns || []);
+	mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
 
 	constructor() {
 		this.metaTagsDirective.setDefault();
-		this.loadLandingPageContent();
-	}
-
-	private loadLandingPageContent() {
-		this.fetchContentDirective
-			.fetchContent$<LandingPageContent>(this.contentService.getLandingPageContent())
-			.pipe(takeUntilDestroyed())
-			.subscribe(({ cards, campaigns }) => {
-				this.cards = cards;
-				this.campaigns = campaigns;
-			});
 	}
 }

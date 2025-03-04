@@ -1,6 +1,6 @@
 // Core
-import { Component, computed, effect, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, computed, inject } from '@angular/core';
+import { tap } from 'rxjs';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 // 3rd party modules
@@ -14,13 +14,13 @@ import { Storylist } from '@models/storylist.model';
 import { StorylistService } from '../../providers/storylist.service';
 
 // Directives
-import { FetchContentDirective } from '../../directives/fetch-content.directive';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 // Componentes
 import { StorylistCardDeckComponent } from 'src/app/components/storylist-card-deck/storylist-card-deck.component';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
 import { ThemeService } from '../../providers/theme.service';
+import { rxResource } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'cuentoneta-storylist',
@@ -32,36 +32,34 @@ import { ThemeService } from '../../providers/theme.service';
 		PortableTextParserComponent,
 		NgOptimizedImage,
 	],
-	hostDirectives: [FetchContentDirective, MetaTagsDirective],
+	hostDirectives: [MetaTagsDirective],
 })
 export class StorylistComponent {
 	// Providers
-	fetchContentDirective = inject(FetchContentDirective);
 	private params = injectParams();
 	private metaTagsDirective = inject(MetaTagsDirective);
 	private storylistService = inject(StorylistService);
 
+	// Recursos
 	skeletonColor = inject(ThemeService).pickColor('zinc', 300);
-	storylist!: Storylist | undefined;
+	readonly storylistResource = rxResource({
+		request: () => this.params(),
+		loader: (params) =>
+			this.storylistService.get(params.request['slug'], 60, 'asc').pipe(
+				tap((storylist) => {
+					this.updateMetaTags(storylist);
+				}),
+			),
+	});
 
-	featuredImageUrl = computed(() => `${this.storylist?.featuredImage}?h=${256 * 1.5}&w=${192 * 1.5}&auto=format`);
+	// Propiedades
+	featuredImageUrl = computed(() => `${this.storylist()?.featuredImage}?h=${256 * 1.5}&w=${192 * 1.5}&auto=format`);
+	storylist = computed(() => this.storylistResource.value());
 
-	constructor() {
-		effect((cleanUp) => {
-			const { slug } = this.params();
-			const subscription = this.storylist$(slug).subscribe((storylist) => {
-				this.storylist = storylist;
-				this.metaTagsDirective.setTitle(`${storylist.title}`);
-				this.metaTagsDirective.setDescription(
-					`Una storylist en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
-				);
-			});
-			cleanUp(() => subscription.unsubscribe());
-		});
-	}
-
-	private storylist$(slug: string): Observable<Storylist> {
-		this.storylist = undefined;
-		return this.fetchContentDirective.fetchContent$<Storylist>(this.storylistService.get(slug, 60, 'asc'));
+	private updateMetaTags(storylist: Storylist) {
+		this.metaTagsDirective.setTitle(`${storylist.title}`);
+		this.metaTagsDirective.setDescription(
+			`Una storylist en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
+		);
 	}
 }

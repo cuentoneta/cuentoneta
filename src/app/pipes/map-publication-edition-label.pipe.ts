@@ -1,5 +1,10 @@
 import { inject, Pipe, PipeTransform } from '@angular/core';
-import { Publication, Storylist } from '@models/storylist.model';
+import {
+	Publication,
+	PublicationNavigationTeaser,
+	Storylist,
+	StorylistPublicationsNavigationTeasers,
+} from '@models/storylist.model';
 import { DatePipe } from '@angular/common';
 
 @Pipe({
@@ -9,7 +14,10 @@ import { DatePipe } from '@angular/common';
 export class MapPublicationEditionLabelPipe implements PipeTransform {
 	private datePipe = inject(DatePipe);
 
-	transform(publication: Publication, storylist: Storylist): string {
+	transform(
+		publication: Publication | PublicationNavigationTeaser,
+		storylist: Storylist | StorylistPublicationsNavigationTeasers,
+	): string {
 		let result = `${storylist.editionPrefix} ${publication.publishingOrder}`;
 
 		if (storylist.displayDates) {

@@ -2,7 +2,9 @@ import { defineQuery } from 'groq';
 
 export const landingPageContentQuery = defineQuery(`
 *[_type == 'landingPage' && !(_id in path('drafts.**'))][0]{
+    _id,
     'cards': coalesce(cards[]->{
+        _id,
         title,
         'slug': slug.current,
         description,
@@ -22,6 +24,7 @@ export const landingPageContentQuery = defineQuery(`
         'count': coalesce(count(publications), 0)
     },[]),
     'campaigns': coalesce(campaigns[]->{
+        _id,
         'title': coalesce(title, ''),
         'slug': coalesce(slug.current, ''),
         'description': coalesce(description, []),
@@ -37,6 +40,27 @@ export const landingPageContentQuery = defineQuery(`
                 'subtitle': coalesce(contents.md.subtitle, []),
                 'image': contents.md.image
             }
+        }
+    },[]),
+    'mostRead': coalesce(mostRead[]->{
+        _id,
+        'slug': slug.current,
+        title,
+        language,
+        badLanguage,
+        'body': [],
+        originalPublication,
+        approximateReadingTime,
+        'resources': [],
+        'mediaSources': coalesce(mediaSources[], []),
+        'author': author-> { 
+            _id,
+            slug,
+            name,
+            image,
+            nationality->,
+            'biography': [],
+            'resources': [],
         }
     },[]),
 }`);

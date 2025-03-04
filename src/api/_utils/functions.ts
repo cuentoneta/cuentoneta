@@ -14,9 +14,20 @@ import imageUrlBuilder from '@sanity/image-url';
 import { Author, AuthorTeaser } from '@models/author.model';
 import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
 import { LandingPageContent } from '@models/landing-page-content.model';
-import { Publication, Storylist, StorylistTeaser } from '@models/storylist.model';
+import {
+	Publication,
+	Storylist,
+	StorylistPublicationsNavigationTeasers,
+	StorylistTeaser,
+} from '@models/storylist.model';
 import { Resource } from '@models/resource.model';
-import { Story, StoryPreview, StoryTeaser } from '@models/story.model';
+import {
+	Story,
+	StoryNavigationTeaser,
+	StoryNavigationTeaserWithAuthor,
+	StoryPreview,
+	StoryTeaser,
+} from '@models/story.model';
 import { Tag } from '@models/tag.model';
 import { TextBlockContent } from '@models/block-content.model';
 
@@ -26,7 +37,9 @@ import {
 	BlockContent,
 	LandingPageContentQueryResult,
 	StoriesByAuthorSlugQueryResult,
+	StoriesBySlugsQueryResult,
 	StoryBySlugQueryResult,
+	StorylistNavigationTeasersQueryResult,
 	StorylistQueryResult,
 	StorylistTeasersQueryResult,
 } from '../sanity/types';
@@ -36,6 +49,7 @@ export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>, l
 	const biography = mapAuthorBiography(rawAuthorData.biography, language);
 
 	return {
+		_id: rawAuthorData._id,
 		slug: rawAuthorData.slug.current,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
@@ -51,6 +65,7 @@ export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>, l
 type PublicationAuthorSubQuery = NonNullable<StorylistQueryResult>['publications'][0]['story']['author'];
 export function mapAuthorForStorylist(author: PublicationAuthorSubQuery): AuthorTeaser {
 	return {
+		_id: author._id,
 		slug: author.slug.current,
 		nationality: {
 			country: author.nationality?.country,
@@ -85,7 +100,7 @@ type ResourcesSubQuery = (
 	| NonNullable<StorylistQueryResult>['publications'][0]['story']
 	| StoriesByAuthorSlugQueryResult[0]
 )['resources'];
-function mapResources(resources: ResourcesSubQuery): Resource[] {
+export function mapResources(resources: ResourcesSubQuery): Resource[] {
 	return (
 		resources?.map((resource) => ({
 			...resource,
@@ -148,6 +163,21 @@ export function mapStorylist(result: NonNullable<StorylistQueryResult>): Storyli
 	};
 }
 
+export function mapStorylistNavigationTeasers(
+	result: NonNullable<StorylistNavigationTeasersQueryResult>,
+): StorylistPublicationsNavigationTeasers {
+	return {
+		...result,
+		description: mapBlockContentToTextParagraphs(result.description),
+		tags: mapTags(result.tags),
+		featuredImage: urlFor(result.featuredImage),
+		publications: result.publications.map((p) => ({
+			...p,
+			story: { ...p.story, author: mapAuthorForStorylist(p.story.author), paragraphs: [], media: [] },
+		})),
+	};
+}
+
 // TODO: Agregar soporte a futuro para mapear imágenes dentro del cuerpo de una story
 export function mapBlockContentToTextParagraphs(content: BlockContent): TextBlockContent[] {
 	return content.filter((element) => element._type === 'block') as TextBlockContent[];
@@ -184,7 +214,8 @@ export function mapStoryPreviewContent(story: StoryPreview): StoryPreview {
 	return card;
 }
 
-export function mapStoryTeaser(result: NonNullable<StoriesByAuthorSlugQueryResult>): StoryTeaser[] {
+export type StoryTeasersQueryResult = NonNullable<StoriesByAuthorSlugQueryResult | StoriesBySlugsQueryResult>;
+export function mapStoryTeaser(result: StoryTeasersQueryResult): StoryTeaser[] {
 	const stories = [];
 
 	for (const item of result) {
@@ -201,10 +232,50 @@ export function mapStoryTeaser(result: NonNullable<StoriesByAuthorSlugQueryResul
 	return stories;
 }
 
+export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlugQueryResult>): StoryNavigationTeaser[] {
+	const stories = [];
+
+	for (const item of result) {
+		const { mediaSources, resources, ...properties } = item;
+
+		stories.push({
+			...properties,
+			media: mapMediaSourcesForStorylist(mediaSources),
+			resources: mapResources(resources),
+			paragraphs: [],
+		});
+	}
+
+	return stories;
+}
+
+type MostReadStoriesSubQuery = NonNullable<LandingPageContentQueryResult>['mostRead'];
+export function mapStoryNavigationTeaserWithAuthor(
+	result: NonNullable<MostReadStoriesSubQuery>,
+): StoryNavigationTeaserWithAuthor[] {
+	const stories = [];
+
+	for (const item of result) {
+		const { mediaSources, resources, ...properties } = item;
+
+		stories.push({
+			...properties,
+			author: mapAuthorForStorylist(item.author),
+			media: mapMediaSourcesForStorylist(mediaSources),
+			resources: mapResources(resources),
+			paragraphs: [],
+		});
+	}
+
+	return stories;
+}
+
 export function mapLandingPageContent(result: NonNullable<LandingPageContentQueryResult>): LandingPageContent {
 	return {
+		...result,
 		cards: mapStorylistTeasers(result.cards),
 		campaigns: mapContentCampaigns(result.campaigns),
+		mostRead: mapStoryNavigationTeaserWithAuthor(result.mostRead),
 	};
 }
 
