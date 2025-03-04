@@ -10,7 +10,7 @@
 		"postinstall": "pnpm run config",
 		"dev": "nx run cuentoneta:serve:development",
 		"build": "nx run cuentoneta:build:production --skip-nx-cache",
-		"config": "node -r ts-node/register --env-file=.env ./scripts/set-environment.ts",
+		"config": "node -r ts-node/register ./scripts/set-environment.ts",
 		"delete-unused-assets": "node -r ts-node/register --env-file=.env ./scripts/delete-unused-assets.ts",
 		"storybook": "nx run cuentoneta:storybook",
 		"storybook:build": "nx run cuentoneta:build-storybook",
