@@ -2,11 +2,11 @@ import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-	selector: 'cuentoneta-story-edition-date-label[label]',
+	selector: 'cuentoneta-story-edition-date-label',
 	template: `
 		@if (!!label) {
 			<span class="max-sm:inter-body-xs-bold sm:inter-body-sm-bold flex items-center text-primary-500">
-				<div class="mr-2 h-[12px] w-[2px] bg-primary-500"></div>
+				<div class="mr-2 h-[12px] w-[2px]"></div>
 				{{ label() }}
 			</span>
 		}
@@ -26,6 +26,6 @@ import { CommonModule } from '@angular/common';
 	imports: [CommonModule],
 })
 export class StoryEditionDateLabelComponent {
-	label = input<string>();
+	label = input.required<string>();
 	markAsNew = input<boolean>(false);
 }

@@ -67,6 +67,7 @@ import { InternalLink } from '@models/link.model';
 export class HeaderComponent {
 	readonly navLinks: InternalLink[] = [
 		{ label: 'Inicio', path: '/home' },
+		{ label: 'Índice de autores', path: '/about' },
 		{ label: 'Nosotros', path: '/about' },
 	];
 	displayMenu: boolean = false;

@@ -92,6 +92,10 @@
 		@apply font-source-serif text-3xl tracking-normal;
 	}
 
+	.source-serif-pro-heading-3 {
+		@apply font-source-serif text-2xl tracking-normal;
+	}
+
 	.source-serif-pro-body-lg {
 		@apply font-source-serif text-lg tracking-normal;
 	}
@@ -102,6 +106,18 @@
 
 	.source-serif-pro-heading-2-bold {
 		@apply source-serif-pro-heading-2 font-bold;
+	}
+
+	.source-serif-pro-heading-3-bold {
+		@apply source-serif-pro-heading-3 font-bold;
+	}
+
+	.source-serif-pro-heading-3-semibold {
+		@apply source-serif-pro-heading-3 font-semibold;
+	}
+
+	.source-serif-pro-heading-3-base {
+		@apply source-serif-pro-heading-3;
 	}
 
 	// endregion

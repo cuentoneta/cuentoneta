@@ -19,6 +19,8 @@ import { StorylistService } from '../../providers/storylist.service';
 // Componentes
 import { NavigablePublicationTeaserComponent } from '../navigable-publication-teaser/navigable-publication-teaser.component';
 import { rxResource } from '@angular/core/rxjs-interop';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { featherChevronDown } from '@ng-icons/feather-icons';
 
 export type NavigationBarConfig = {
 	headerTitle: string;
@@ -29,25 +31,42 @@ export type NavigationBarConfig = {
 
 @Component({
 	selector: 'cuentoneta-storylist-navigation-frame',
-	imports: [CommonModule, NavigablePublicationTeaserComponent, NgxSkeletonLoaderModule],
-	template: ` @if (storylist(); as storylist) {
-			@for (publication of displayedPublications; track $index) {
-				<cuentoneta-navigable-publication-teaser
-					[publication]="publication"
-					[selected]="selectedStorySlug() === publication.story.slug"
-					[storylist]="storylist"
-				/>
+	imports: [CommonModule, NavigablePublicationTeaserComponent, NgxSkeletonLoaderModule, NgIcon],
+	viewProviders: [provideIcons({ featherChevronDown })],
+
+	template: ` @if (true) {
+		@if (storylist(); as storylist) {
+			@if (selectedPublication(); as selectedPublication) {
+				<button (click)="showList = !showList" class="flex items-center justify-between gap-4 pr-3 md:w-[420px]">
+					<cuentoneta-navigable-publication-teaser
+						[publication]="selectedPublication"
+						[selected]="false"
+						[storylist]="storylist"
+					/>
+					<ng-icon name="featherChevronDown" size="32px" class="text-gray-400" />
+				</button>
 			}
-		} @else {
-			@for (skeleton of dummyList; track $index) {
-				<article [attr.aria-busy]="true" class="bg-gray-50 px-7 py-5">
-					<ngx-skeleton-loader count="2" appearance="line"></ngx-skeleton-loader>
-				</article>
+			@if (showList) {
+				<div
+					class="divide fixed top-32 divide-y-1 divide-gray-200 overflow-y-scroll border-t-1 border-gray-200 bg-gray-50 shadow-lg md:h-96 md:w-[420px]"
+				>
+					@for (publication of displayedPublications; track $index) {
+						<div>
+							<cuentoneta-navigable-publication-teaser
+								(click)="showList = false"
+								[publication]="publication"
+								[selected]="selectedStorySlug() === publication.story.slug"
+								[storylist]="storylist"
+							/>
+						</div>
+					}
+				</div>
 			}
-		}`,
+		}
+	}`,
 	styles: `
 		:host {
-			@apply grid grid-cols-1 gap-y-0.5 rounded-xl bg-gray-200 shadow-lg;
+			@apply z-20 grid grid-cols-1;
 		}
 	`,
 })
@@ -66,9 +85,12 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	});
 
 	// Propiedades
+	showList = false;
 	displayedPublications: PublicationNavigationTeaser[] = [];
-	dummyList: null[] = Array(9);
 	storylist = computed(() => this.storylistResource.value());
+	selectedPublication = computed(() =>
+		this.storylist()?.publications.find((p) => p.story.slug === this.selectedStorySlug()),
+	);
 
 	constructor() {
 		super();
@@ -80,7 +102,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 				return;
 			}
 
-			this.sliceDisplayedPublications(storylist.publications);
+			this.displayedPublications = storylist.publications;
 			this.config.set({
 				headerTitle: storylist.title,
 				footerTitle: 'Ver más...',
@@ -88,43 +110,5 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 				showFooter: true,
 			});
 		});
-	}
-
-	/**
-	 * Este método se encarga de mostrar la lista de publicaciones de la navbar en base a la story actualmente en vista.
-	 * Si la storylist tiene más de 10 publicaciones, se muestran las 10 publicaciones más cercanas a la story actualmente
-	 * en vista tomando las 5 publicaciones anteriores y las 5 siguientes en el caso por defecto y ajustando los límites en
-	 * caso de que la story actualmente en vista sea una de las primeras o de las últimas.
-	 * @author Ramiro Olivencia <ramiro@olivencia.com.ar>
-	 */
-	sliceDisplayedPublications(publications: PublicationNavigationTeaser[]): void {
-		if (!this.storylist) {
-			return;
-		}
-
-		const numberOfDisplayedPublications = 9;
-
-		if (publications.length <= numberOfDisplayedPublications) {
-			this.displayedPublications = publications;
-			return;
-		}
-
-		const selectedStoryIndex = publications.findIndex(
-			(publication) => publication.story.slug === this.selectedStorySlug(),
-		);
-
-		const lowerIndex =
-			selectedStoryIndex - numberOfDisplayedPublications / 2 < 0
-				? 0
-				: selectedStoryIndex - Math.floor(numberOfDisplayedPublications / 2);
-		const upperIndex =
-			selectedStoryIndex + numberOfDisplayedPublications / 2 > publications.length
-				? publications.length
-				: Math.ceil(selectedStoryIndex + numberOfDisplayedPublications / 2);
-
-		this.displayedPublications = (this.storylist()?.publications ?? []).slice(
-			upperIndex === publications.length ? publications.length - numberOfDisplayedPublications : lowerIndex,
-			lowerIndex === 0 ? numberOfDisplayedPublications : upperIndex,
-		);
 	}
 }
