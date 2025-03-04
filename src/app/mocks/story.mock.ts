@@ -1,4 +1,10 @@
-import { Story, StoryNavigationTeaser, StoryPreview, StoryTeaser } from '@models/story.model';
+import {
+	Story,
+	StoryNavigationTeaser,
+	StoryNavigationTeaserWithAuthor,
+	StoryPreview,
+	StoryTeaser,
+} from '@models/story.model';
 import { authorMock, authorTeaserMock } from './author.mock';
 import { Publication, PublicationNavigationTeaser } from '@models/storylist.model';
 
@@ -459,6 +465,11 @@ export const storyPreviewMock: StoryPreview = {
 			],
 		},
 	],
+};
+
+export const storyNavigationTeaserWithAuthorMock: StoryNavigationTeaserWithAuthor = {
+	...storyPreviewMock,
+	paragraphs: [],
 };
 
 export const storyTeaserMock: StoryTeaser = {
