@@ -1,10 +1,10 @@
-name: Testing CI
+name: End-to-end Testing CI
 
 on:
   pull_request:
 
 jobs:
-  test:
+  e2e:
     runs-on: ubuntu-24.04
 
     steps:
