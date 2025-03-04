@@ -8,8 +8,8 @@ import { RouterModule } from '@angular/router';
 @Component({
 	selector: 'cuentoneta-root',
 	template: `
-		<cuentoneta-header />
-		<div class="inner-container mx-5 my-0 md:m-auto md:max-w-screen-md">
+		<header cuentoneta-header class="fixed top-0 z-10 min-h-16 w-full border-b-1 border-gray-200 bg-white"></header>
+		<div class="inner-container mx-5 mt-18 md:mx-auto md:mt-32 md:max-w-screen-md">
 			<router-outlet />
 		</div>
 		<cuentoneta-footer />
