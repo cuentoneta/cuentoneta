@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -6,8 +6,7 @@ import { RouterModule } from '@angular/router';
 import { environment } from './environments/environment';
 
 // Analytics
-import { injectSpeedInsights } from '@vercel/speed-insights';
-import Clarity from '@microsoft/clarity';
+import { AnalyticsService } from './providers/analytics.service';
 
 @Component({
 	selector: 'cuentoneta-root',
@@ -19,22 +18,16 @@ import Clarity from '@microsoft/clarity';
 		<cuentoneta-footer />
 	`,
 	imports: [CommonModule, FooterComponent, HeaderComponent, RouterModule],
+	providers: [AnalyticsService],
 })
 export class AppComponent implements OnInit {
-	ngOnInit(): void {
+	analytics = inject(AnalyticsService);
+
+	async ngOnInit() {
 		if (environment.environment !== 'production') {
 			return;
 		}
 
-		// Inicializa Speed Insights de Vercel
-		injectSpeedInsights();
-
-		if (!environment.clarityProjectId) {
-			return;
-		}
-
-		// Inicialización Microsoft Clarity para analytics
-		Clarity.init(environment.clarityProjectId);
-		console.log(Clarity);
+		await this.analytics.init();
 	}
 }

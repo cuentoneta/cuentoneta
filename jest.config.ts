@@ -14,9 +14,6 @@ export default {
 			},
 		],
 	},
-	moduleNameMapper: {
-		'@microsoft/clarity': '<rootDir>/src/app/mocks/clarity.mock.js',
-	},
 	transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
 	snapshotSerializers: [
 		'jest-preset-angular/build/serializers/no-ng-attributes',
