@@ -88,12 +88,21 @@ const generateApiUrl = (environment: TEnvironmentType): string => {
 const apiUrl = generateApiUrl(environment);
 // Accede a las variables de entorno y genera un string
 // correspondiente al objeto environment que utilizará Angular
+
+const exportedEnvironment = {
+	environment: `${environment ?? 'development'}`,
+	website: `${process.env['VERCEL_PROJECT_PRODUCTION_URL'] ?? 'https://cuentoneta.ar/'}`,
+	apiUrl: `${apiUrl}`,
+	clarityProjectId: '',
+};
+
+// Chequea si existe la variable de entorno para analytics de Microsoft Clarity
+if (process.env['CLARITY_PROJECT_ID']) {
+	exportedEnvironment.clarityProjectId = `${process.env['CLARITY_PROJECT_ID']}`;
+}
+
 const environmentFileContent = `
-    export const environment = {
-       environment: "${environment}",
-       website: "${process.env['VERCEL_PROJECT_PRODUCTION_URL'] ?? 'https://cuentoneta.ar/'}",
-       apiUrl: "${apiUrl}"
-    };
+    export const environment = ${JSON.stringify(exportedEnvironment)};
 `;
 
 // En caso de que no exista el directorio environments, se lo crea

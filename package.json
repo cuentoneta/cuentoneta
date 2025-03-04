@@ -37,6 +37,7 @@
 		"@angular/router": "19.1.8",
 		"@angular/youtube-player": "18.0.1",
 		"@floating-ui/dom": "^1.6.5",
+		"@microsoft/clarity": "^1.0.0",
 		"@nx/angular": "20.4.6",
 		"@sanity/client": "^6.21.3",
 		"@sanity/image-url": "^1.0.2",

@@ -7,6 +7,7 @@ export interface EnvironmentConfig {
 		dataset: string;
 	};
 	clarity: {
+		projectId: string;
 		token: string;
 	};
 	twitter: {
@@ -24,6 +25,7 @@ export const environment: EnvironmentConfig = {
 		token: process.env['SANITY_STUDIO_TOKEN'] as string,
 	},
 	clarity: {
+		projectId: process.env['CLARITY_PROJECT_ID'] as string,
 		token: process.env['CLARITY_TOKEN'] as string,
 	},
 	twitter: {
