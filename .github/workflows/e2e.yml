@@ -26,4 +26,4 @@ jobs:
         run: pnpm run config
 
       - name: Run Tests
-        run: npx nx test:e2e --skip-nx-cache
+        run: npx nx run cuentoneta:e2e-ci --skip-nx-cache
