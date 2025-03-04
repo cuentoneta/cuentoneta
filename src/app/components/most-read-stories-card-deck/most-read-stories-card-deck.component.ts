@@ -5,7 +5,7 @@ import { StoryCardTeaserSkeletonComponent } from '../story-card-teaser/story-car
 import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 
 @Component({
-	selector: '[cuentoneta-most-read-stories-card-deck]',
+	selector: 'cuentoneta-most-read-stories-card-deck',
 	imports: [CommonModule, StoryCardTeaserComponent, StoryCardTeaserSkeletonComponent],
 	template: ` <div class="flex content-between items-center gap-4 text-gray-500">
 			<hr class="w-6" />

@@ -11,11 +11,9 @@
 		}
 	</section>
 
-	<section
-		[stories]="mostRead()"
-		cuentoneta-most-read-stories-card-deck
-		class="mb-8 flex h-[684px] flex-col gap-8 md:h-[304px]"
-	></section>
+	<section class="mb-8 h-[684px] md:h-[304px]">
+		<cuentoneta-most-read-stories-card-deck [stories]="mostRead()" class="flex flex-col gap-8" />
+	</section>
 
 	<section class="flex flex-col gap-8">
 		<div class="flex content-between items-center gap-4 text-gray-500">
