@@ -44,7 +44,7 @@ import { AppRoutes } from '../../app.routes';
 				</div>
 			</article>
 		} @else {
-			<cuentoneta-story-card-teaser-skeleton [order]="order()" [showAuthor]="showAuthor()" />
+			<cuentoneta-story-card-teaser-skeleton [order]="order()" [showAuthor]="showAuthor()" data-testid="skeleton" />
 		}
 	</article> `,
 	styles: ``,
