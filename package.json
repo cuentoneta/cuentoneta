@@ -18,6 +18,7 @@
 		"stylelint": "npx nx stylelint cuentoneta --skip-nx-cache",
 		"test": "nx test --skip-nx-cache",
 		"test:watch": "nx test --watch",
+		"test:e2e": "nx run cuentoneta:e2e",
 		"sanity:dev": "cd cms && sanity dev",
 		"sanity:extract-schema": "cd cms && npx sanity schema extract --enforce-required-fields --workspace=production-workspace",
 		"sanity:run-typegen-generator": "cd cms && npx sanity typegen generate",
