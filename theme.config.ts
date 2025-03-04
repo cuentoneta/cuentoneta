@@ -20,3 +20,5 @@ export const extendedColors = {
 	'interactive-600': 'hsl(212, 70%, 35%)',
 	'zinc-300': '#d4d4d8', // Utilizado formato hexadecimal por limitaciones de ngx-skeleton-loader
 };
+
+export type ExtendedColors = keyof typeof extendedColors;
