@@ -6,8 +6,6 @@ const jestDom = require('eslint-plugin-jest-dom');
 const testingLibrary = require('eslint-plugin-testing-library');
 
 module.exports = [
-	playwright.configs['flat/recommended'],
-
 	{
 		name: 'ignores',
 		ignores: ['!**/*', '.nx', 'dist'],
@@ -20,7 +18,7 @@ module.exports = [
 	...nx.configs['flat/angular-template'],
 	{
 		name: 'testing',
-		files: ['**/?(*.)+(spec|test).ts'],
+		files: ['**/src/**/?(*.)+(spec|test).ts'],
 		plugins: {
 			'jest-dom': jestDom,
 			'testing-library': testingLibrary,
@@ -28,6 +26,16 @@ module.exports = [
 		rules: {
 			...testingLibrary.configs['flat/angular'].rules,
 			...jestDom.configs['flat/recommended'].rules,
+		},
+	},
+	{
+		name: 'playwright',
+		files: ['**/e2e/**/?(*.)+(spec|test).ts'],
+		plugins: {
+			playwright,
+		},
+		rules: {
+			...playwright.configs['flat/recommended'],
 		},
 	},
 	{
