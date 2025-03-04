@@ -1,4 +1,4 @@
-import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
+import { Meta, moduleMetadata } from '@storybook/angular';
 import { StoryCardTeaserComponent } from './story-card-teaser.component';
 import { storyNavigationTeaserMock } from '../../mocks/story.mock';
 import { authorTeaserMock } from '../../mocks/author.mock';
@@ -15,7 +15,6 @@ const meta: Meta<StoryCardTeaserComponent> = {
 	],
 };
 export default meta;
-type Story = StoryObj<StoryCardTeaserComponent>;
 
 export const Primary = {
 	render: (args: StoryCardTeaserComponent) => ({
