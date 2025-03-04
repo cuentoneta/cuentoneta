@@ -80,8 +80,8 @@ Junto con Nx, el proyecto cuenta con ESLint y Prettier ya configuradas como depe
 
 ### Para pruebas unitarias y de integración
 
-- **<a href="https://jestjs.io/docs/getting-started">Jest</a>** como framework de testing unitario
-- **<a href="https://www.cypress.io/">Cypress</a>** como framework de testing end-to-end
+- **<a href="https://jestjs.io/docs/getting-started">Jest</a>** como framework de testing unitario, utilizando <a href="https://testing-library.com/docs/angular-testing-library/intro">Angular Testing Library</a> para la escritura de tests de componentes.
+- **<a href="https://playwright.dev/">Playwright</a>** como framework de testing de integración y end-to-end
 
 ### Para generación y visualización de diagramas
 
