@@ -40,6 +40,9 @@ importers:
       '@floating-ui/dom':
         specifier: ^1.6.5
         version: 1.6.5
+      '@microsoft/clarity':
+        specifier: ^1.0.0
+        version: 1.0.0
       '@nx/angular':
         specifier: 20.4.6
         version: 20.4.6(@angular-devkit/build-angular@19.1.9(3hxbwo7ctqiq23bxkbnkqakmly))(@angular-devkit/core@19.1.9(chokidar@4.0.1))(@angular-devkit/schematics@19.1.9(chokidar@4.0.1))(@babel/traverse@7.26.4)(@rspack/core@1.1.5)(@schematics/angular@19.1.9(chokidar@4.0.1))(@swc/core@1.3.85)(@types/node@18.16.9)(@zkochan/js-yaml@0.0.7)(esbuild@0.21.4)(eslint@9.13.0(jiti@1.21.0))(html-webpack-plugin@5.5.0(webpack@5.94.0(@swc/core@1.3.85)(esbuild@0.21.4)))(nx@20.4.6(@swc/core@1.3.85))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(rxjs@7.8.1)(typescript@5.7.3)
@@ -2321,6 +2324,10 @@ packages:
     peerDependencies:
       '@types/react': '>=16'
       react: '>=16'
+
+  '@microsoft/clarity@1.0.0':
+    resolution:
+      { integrity: sha512-2QY6SmXnqRj6dWhNY8NYCN3e53j4zCFebH4wGnNhdGV1mqAsQwql2fT0w8TISxCvwwfVp8idsWLIdrRHOms1PQ== }
 
   '@module-federation/bridge-react-webpack-plugin@0.8.12':
     resolution:
@@ -13672,6 +13679,8 @@ snapshots:
       '@types/mdx': 2.0.5
       '@types/react': 18.2.11
       react: 18.2.0
+
+  '@microsoft/clarity@1.0.0': {}
 
   '@module-federation/bridge-react-webpack-plugin@0.8.12':
     dependencies:
