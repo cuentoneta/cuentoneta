@@ -6,8 +6,6 @@ import { CommonModule } from '@angular/common';
 // Services
 import { ContentService } from '../../providers/content.service';
 
-// Models
-
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
@@ -16,6 +14,7 @@ import { ContentCampaignCarouselComponent } from '../../components/content-campa
 import { StorylistCardComponent } from '../../components/storylist-card-component/storylist-card.component';
 import { ContentCampaignCarouselSkeletonComponent } from '../../components/content-campaign-carousel/content-campaign-carousel-skeleton.component';
 import { StorylistCardSkeletonComponent } from '../../components/storylist-card-component/storylist-card-skeleton.component';
+import { MostReadStoriesCardDeckComponent } from '../../components/most-read-stories-card-deck/most-read-stories-card-deck.component';
 
 @Component({
 	selector: 'cuentoneta-home',
@@ -26,6 +25,7 @@ import { StorylistCardSkeletonComponent } from '../../components/storylist-card-
 		StorylistCardComponent,
 		ContentCampaignCarouselSkeletonComponent,
 		StorylistCardSkeletonComponent,
+		MostReadStoriesCardDeckComponent,
 	],
 	hostDirectives: [MetaTagsDirective],
 })
@@ -45,6 +45,7 @@ export class HomeComponent {
 	landingPageContent = computed(() => this.landingPageResource.value());
 	cards = computed(() => this.landingPageContent()?.cards || []);
 	campaigns = computed(() => this.landingPageContent()?.campaigns || []);
+	mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
 
 	constructor() {
 		this.metaTagsDirective.setDefault();
