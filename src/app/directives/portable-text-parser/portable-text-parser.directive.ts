@@ -42,7 +42,29 @@ export class PortableTextDirective {
 			let element: HTMLElement | Text = this.renderer.createText(block.text);
 			const marks = (block.marks ?? []).slice(0);
 
-			// Procesar marks (em, string, etc.)
+			// Procesar clases de alineación de texto
+			let alignmentClasses = [];
+			if (marks.includes('center')) {
+				alignmentClasses.push('text-center');
+			}
+
+			if (marks.includes('left')) {
+				alignmentClasses.push('text-left');
+			}
+
+			if (marks.includes('right')) {
+				alignmentClasses.push('text-right');
+			}
+
+			if (marks.includes('justify')) {
+				alignmentClasses.push('text-justify');
+			}
+
+			alignmentClasses.forEach((className) => {
+				this.renderer.addClass(this.el.nativeElement, className.trim());
+			});
+
+			// Procesar marks en bloques (em, string, etc.)
 			// TODO: Agregar procesamiento de otros tipos de marks (h1, h2, highlight, tachado, subrayado, etc.)
 			if (marks.includes('em')) {
 				const emElement = this.renderer.createElement('i');
@@ -88,7 +110,11 @@ export class PortableTextDirective {
 
 	private appendClasses(paragraph: TextBlockContent, classes: string): string {
 		const blocks = paragraph.children;
+		// TODO: Buscar todos los usos de estos separadores y eliminarlos del proyecto, utilizando la alineación de texto en su lugar
 		const includeSeparators = blocks.filter((block) => block.text.includes('***')).length > 0;
+		const envio = blocks.filter((block) => block.text.includes('Envío'));
+
+		console.log(envio);
 
 		if (includeSeparators) {
 			classes = `text-center ${classes}`;
