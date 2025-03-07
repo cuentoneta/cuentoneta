@@ -67,7 +67,7 @@ import { PortableTextParserComponent } from '../../components/portable-text-pars
 	],
 	hostDirectives: [MetaTagsDirective],
 })
-export class StoryComponent {
+export default class StoryComponent {
 	// Routes
 	readonly appRoutes = AppRoutes;
 
