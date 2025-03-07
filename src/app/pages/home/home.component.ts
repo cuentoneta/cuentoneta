@@ -29,7 +29,7 @@ import { MostReadStoriesCardDeckComponent } from '../../components/most-read-sto
 	],
 	hostDirectives: [MetaTagsDirective],
 })
-export class HomeComponent {
+export default class HomeComponent {
 	// Services
 	private contentService = inject(ContentService);
 

@@ -1,6 +1,6 @@
 import { render } from '@testing-library/angular';
 
-import { AboutComponent } from './about.component';
+import AboutComponent from './about.component';
 
 describe('AboutComponent', () => {
 	it('should create', async () => {

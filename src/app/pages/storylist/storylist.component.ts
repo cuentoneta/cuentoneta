@@ -34,7 +34,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 	],
 	hostDirectives: [MetaTagsDirective],
 })
-export class StorylistComponent {
+export default class StorylistComponent {
 	// Providers
 	private params = injectParams();
 	private metaTagsDirective = inject(MetaTagsDirective);

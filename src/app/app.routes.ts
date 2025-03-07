@@ -17,42 +17,42 @@ export enum AppRoutes {
 export const appRoutes: Routes = [
 	{
 		path: AppRoutes.Home,
-		loadComponent: () => import('./pages/home/home.component').then((m) => m.HomeComponent),
+		loadComponent: () => import('./pages/home/home.component'),
 	},
 	{
 		path: `${AppRoutes.Author}/:slug`,
-		loadComponent: () => import('./pages/author/author.component').then((m) => m.AuthorComponent),
+		loadComponent: () => import('./pages/author/author.component'),
 	},
 	{
 		path: `${AppRoutes.Story}/:slug`,
-		loadComponent: () => import('./pages/story/story.component').then((m) => m.StoryComponent),
+		loadComponent: () => import('./pages/story/story.component'),
 	},
 	{
 		path: `${AppRoutes.Story}/:slug/:list`,
-		loadComponent: () => import('./pages/story/story.component').then((m) => m.StoryComponent),
+		loadComponent: () => import('./pages/story/story.component'),
 		canActivate: [redirectParamsForStorylistInStoryRouteGuard],
 	},
 	{
 		path: `${AppRoutes.Story}`, // Ruta definida por cuestiones de retrocompatibilidad. Redirecciona de '/story' con queryParams a params
-		loadComponent: () => import('./pages/story/story.component').then((m) => m.StoryComponent),
+		loadComponent: () => import('./pages/story/story.component'),
 		canActivate: [redirectQueryParamsBasedStoryUrlsGuard],
 	},
 	{
 		path: `${AppRoutes.StoryList}/:slug`,
-		loadComponent: () => import('./pages/storylist/storylist.component').then((m) => m.StorylistComponent),
+		loadComponent: () => import('./pages/storylist/storylist.component'),
 	},
 	{
 		path: `${AppRoutes.StoryList}`,
-		loadComponent: () => import('./pages/storylist/storylist.component').then((m) => m.StorylistComponent),
+		loadComponent: () => import('./pages/storylist/storylist.component'),
 		canActivate: [redirectQueryParamsBasedStorylistUrlsGuard],
 	},
 	{
 		path: AppRoutes.About,
-		loadComponent: () => import('./pages/about/about.component').then((m) => m.AboutComponent),
+		loadComponent: () => import('./pages/about/about.component'),
 	},
 	{
 		path: AppRoutes.Dmca,
-		loadComponent: () => import('./pages/dmca/dmca.component').then((m) => m.DmcaComponent),
+		loadComponent: () => import('./pages/dmca/dmca.component'),
 	},
 	{
 		path: '',
