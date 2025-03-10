@@ -1,0 +1,57 @@
+# Permite acceso a cualquier user agent, incluidos bots
+User-agent: *
+
+# Desactiva indexación de rutas de la API
+Disallow: /api/
+Disallow: /api/*
+
+# Remueve rutas estáticas de indexación
+Disallow: /dmca/
+Disallow: /about/
+
+# Previene indexación de archivos
+Disallow: /*.json$
+Disallow: /*.xml$
+Disallow: /*.txt$
+Disallow: /*.yml$
+Disallow: /*.log$
+Disallow: /*.conf$
+Disallow: /*.config$
+Disallow: /*.env$
+Disallow: /*.pdf$
+Disallow: /*.doc$
+Disallow: /*.docx$
+Disallow: /*.xls$
+Disallow: /*.xlsx$
+Disallow: /*.ppt$
+Disallow: /*.pptx$
+Disallow: /*.zip$
+Disallow: /*.tar$
+Disallow: /*.gz$
+Disallow: /*.rar$
+
+# Delay de rastreo
+Crawl-delay: 10
+
+# Reglas específicas para buscadores
+User-agent: Googlebot
+Crawl-delay: 5
+
+User-agent: bingbot
+Crawl-delay: 5
+
+User-agent: DuckDuckBot
+Crawl-delay: 5
+
+User-agent: Baiduspider
+Crawl-delay: 10
+
+# Bloquea bots maliciosos comunes
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
