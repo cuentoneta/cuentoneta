@@ -22,7 +22,7 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 		<section class="grid grid-cols-1 gap-y-0.5 rounded-xl bg-gray-200 shadow-lg">
 			<header [attr.aria-busy]="frameConfig().headerTitle" class="bg-gray-50 px-7 py-5">
 				@if (frameConfig().headerTitle) {
-					<a [routerLink]="frameConfig().navigationRoute.toString()">
+					<a [routerLink]="frameConfig().navigationRoute">
 						<h2 class="h3 hover:text-interactive-500">{{ frameConfig().headerTitle }}</h2>
 					</a>
 				} @else {
@@ -36,7 +36,7 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 
 			<footer class="bg-gray-50 px-7 py-5">
 				@if (frameConfig().showFooter) {
-					<a [routerLink]="frameConfig().navigationRoute.toString()">
+					<a [routerLink]="frameConfig().navigationRoute">
 						<h3 class="h3 inter-body-xl-bold hover:text-interactive-500">Ver más...</h3>
 					</a>
 				} @else {

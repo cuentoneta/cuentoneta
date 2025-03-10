@@ -8,7 +8,7 @@ import { InternalLink } from '@models/link.model';
 	template: `
 		<header>
 			<section class="logo flex items-center">
-				<a routerLink="/home" class="flex">
+				<a [routerLink]="['/', 'home']" class="flex">
 					<img [ngSrc]="'./assets/svg/logo.svg'" class="mr-3" width="59" height="32" alt="Logo de 'La Cuentoneta'" />
 					<h1 class="inter-body-lg-bold flex items-center">La Cuentoneta</h1>
 				</a>
