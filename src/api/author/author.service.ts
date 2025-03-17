@@ -1,12 +1,12 @@
 // Sanity
 import { client } from '../_helpers/sanity-connector';
-import { authorBySlugQuery } from '../_queries/author.query';
+import { authorBySlugQuery, authorsQuery } from '../_queries/author.query';
 
 // Funciones
-import { mapAuthor } from '../_utils/functions';
+import { mapAuthor, mapAuthorTeaser } from '../_utils/functions';
 
 // Interfaces
-import { Author } from '@models/author.model';
+import { Author, AuthorTeaser } from '@models/author.model';
 
 export async function getBySlug(slug: string): Promise<Author> {
 	const result = await client.fetch(authorBySlugQuery, { slug });
@@ -16,4 +16,10 @@ export async function getBySlug(slug: string): Promise<Author> {
 	}
 
 	return mapAuthor(result);
+}
+
+export async function getAll(): Promise<AuthorTeaser[]> {
+	const result = await client.fetch(authorsQuery);
+	const authors = result.map((author) => mapAuthorTeaser(author));
+	return authors;
 }
