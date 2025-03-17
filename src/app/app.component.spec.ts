@@ -6,12 +6,13 @@ import { provideMock } from '@testing-library/angular/jest-utils';
 import { ContentService } from './providers/content.service';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { AnalyticsService } from './providers/analytics.service';
 
 describe('AppComponent', () => {
 	const setup = async () => {
 		return await render(AppComponent, {
 			componentImports: [HeaderComponent, FooterComponent, CommonModule, NgOptimizedImage, RouterTestingModule],
-			componentProviders: [provideMock(ContentService)],
+			componentProviders: [provideMock(ContentService), provideMock(AnalyticsService)],
 		});
 	};
 

@@ -69,7 +69,8 @@
 			"executor": "@nx/jest:jest",
 			"outputs": [],
 			"options": {
-				"jestConfig": "jest.config.ts"
+				"jestConfig": "jest.config.ts",
+				"aot": true
 			}
 		},
 		"storybook": {

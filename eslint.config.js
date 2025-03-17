@@ -1,3 +1,4 @@
+const playwright = require('eslint-plugin-playwright');
 const nx = require('@nx/eslint-plugin');
 const stylisticJs = require('@stylistic/eslint-plugin-js');
 const storybook = require('eslint-plugin-storybook');
@@ -17,7 +18,7 @@ module.exports = [
 	...nx.configs['flat/angular-template'],
 	{
 		name: 'testing',
-		files: ['**/?(*.)+(spec|test).ts'],
+		files: ['**/src/**/?(*.)+(spec|test).ts'],
 		plugins: {
 			'jest-dom': jestDom,
 			'testing-library': testingLibrary,
@@ -25,6 +26,16 @@ module.exports = [
 		rules: {
 			...testingLibrary.configs['flat/angular'].rules,
 			...jestDom.configs['flat/recommended'].rules,
+		},
+	},
+	{
+		name: 'playwright',
+		files: ['**/e2e/**/?(*.)+(spec|test).ts'],
+		plugins: {
+			playwright,
+		},
+		rules: {
+			...playwright.configs['flat/recommended'],
 		},
 	},
 	{
@@ -63,5 +74,10 @@ module.exports = [
 		rules: {
 			'@angular-eslint/template/prefer-control-flow': 'error',
 		},
+	},
+	{
+		files: ['**/*.ts', '**/*.js'],
+		// Override or add rules here
+		rules: {},
 	},
 ];

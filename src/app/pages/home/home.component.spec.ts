@@ -1,4 +1,4 @@
-import { HomeComponent } from './home.component';
+import HomeComponent from './home.component';
 import { render } from '@testing-library/angular';
 import { CommonModule, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';

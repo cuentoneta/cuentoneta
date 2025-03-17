@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { injectSpeedInsights } from '@vercel/speed-insights';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { RouterModule } from '@angular/router';
+import { environment } from './environments/environment';
+
+// Analytics
+import { AnalyticsService } from './providers/analytics.service';
 
 @Component({
 	selector: 'cuentoneta-root',
@@ -15,10 +18,16 @@ import { RouterModule } from '@angular/router';
 		<cuentoneta-footer />
 	`,
 	imports: [CommonModule, FooterComponent, HeaderComponent, RouterModule],
+	providers: [AnalyticsService],
 })
 export class AppComponent implements OnInit {
-	ngOnInit(): void {
-		// Invoca a injectSpeedInsights aquí para asegurarse de que se ejecute en el lado del cliente.
-		injectSpeedInsights();
+	analytics = inject(AnalyticsService);
+
+	async ngOnInit() {
+		if (environment.environment !== 'production') {
+			return;
+		}
+
+		await this.analytics.init();
 	}
 }

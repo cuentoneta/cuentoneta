@@ -1,40 +1,45 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
+import { AppRoutes } from './app.routes';
 
 export const serverRoutes: Array<ServerRoute> = [
 	{
-		path: 'home',
+		path: AppRoutes.Home,
 		renderMode: RenderMode.Server,
 	},
 	{
-		path: 'about',
+		path: AppRoutes.Authors,
 		renderMode: RenderMode.Prerender,
 	},
 	{
-		path: 'dmca',
+		path: AppRoutes.About,
 		renderMode: RenderMode.Prerender,
 	},
 	{
-		path: 'author/:slug',
+		path: AppRoutes.Dmca,
+		renderMode: RenderMode.Prerender,
+	},
+	{
+		path: `${AppRoutes.Author}/:slug`,
 		renderMode: RenderMode.Server,
 	},
 	{
-		path: 'story',
+		path: AppRoutes.Story,
 		renderMode: RenderMode.Server,
 	},
 	{
-		path: 'story/:slug',
+		path: `${AppRoutes.Story}/:slug`,
 		renderMode: RenderMode.Server,
 	},
 	{
-		path: 'story/:slug/:list',
+		path: `${AppRoutes.Story}/:slug/:list`,
 		renderMode: RenderMode.Server,
 	},
 	{
-		path: 'storylist',
+		path: `${AppRoutes.StoryList}`,
 		renderMode: RenderMode.Server,
 	},
 	{
-		path: 'storylist/:slug',
+		path: `${AppRoutes.StoryList}/:slug`,
 		renderMode: RenderMode.Server,
 	},
 	{

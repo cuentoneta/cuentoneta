@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AuthorComponent } from './author.component';
+import AuthorComponent from './author.component';
 
 xdescribe('AuthorComponent', () => {
 	let component: AuthorComponent;

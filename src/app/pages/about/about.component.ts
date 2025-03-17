@@ -8,7 +8,7 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 	hostDirectives: [MetaTagsDirective],
 	templateUrl: './about.component.html',
 })
-export class AboutComponent {
+export default class AboutComponent {
 	readonly links = {
 		CONTRIBUTING: 'https://github.com/rolivencia/cuentoneta/blob/master/CONTRIBUTING.md',
 		GITHUB_REPO: 'https://github.com/rolivencia/cuentoneta',
@@ -106,6 +106,11 @@ export class AboutComponent {
 			name: 'Francisco Hanna',
 			url: 'https://github.com/franciscohanna92',
 			username: '@franciscohanna92',
+		},
+		{
+			name: 'Abraham Villalba',
+			url: 'https://github.com/abraham-villalba',
+			username: '@abraham-villalba',
 		},
 	];
 

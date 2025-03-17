@@ -1,7 +1,7 @@
 {
 	"_type": "export",
 	"__export_format": 4,
-	"__export_date": "2025-02-25T01:35:51.522Z",
+	"__export_date": "2025-03-17T11:01:07.202Z",
 	"__export_source": "insomnia.desktop.app:v2023.5.8",
 	"resources": [
 		{
@@ -52,7 +52,7 @@
 		{
 			"_id": "req_267b1db03b6846d9968caeb872fbaf21",
 			"parentId": "fld_253698ba99e3499b92d3e95bcd92593d",
-			"modified": 1739170814833,
+			"modified": 1741056713475,
 			"created": 1732774812182,
 			"url": "www.clarity.ms/export-data/api/v1/project-live-insights",
 			"name": "Clarity",
@@ -60,7 +60,7 @@
 			"method": "GET",
 			"body": {},
 			"parameters": [
-				{ "id": "pair_d4ce18a641f64045b3a125153cd15cc8", "name": "numOfDays", "value": "3", "description": "" }
+				{ "id": "pair_d4ce18a641f64045b3a125153cd15cc8", "name": "numOfDays", "value": "1", "description": "" }
 			],
 			"headers": [{ "name": "User-Agent", "value": "insomnia/2023.5.8" }],
 			"authentication": {
@@ -125,6 +125,41 @@
 			"_type": "request_group"
 		},
 		{
+			"_id": "req_8b1a7c546b7343aeb04f2bca6a2dfd0c",
+			"parentId": "fld_ec3d00e24fde46ef95f2daa68743f059",
+			"modified": 1742209246367,
+			"created": 1742209224515,
+			"url": "{{apiUrl}}/api/author/",
+			"name": "/",
+			"description": "",
+			"method": "GET",
+			"body": {},
+			"parameters": [],
+			"headers": [{ "name": "User-Agent", "value": "insomnia/2023.5.8" }],
+			"authentication": {},
+			"metaSortKey": -1742209224515,
+			"isPrivate": false,
+			"settingStoreCookies": true,
+			"settingSendCookies": true,
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingRebuildPath": true,
+			"settingFollowRedirects": "global",
+			"_type": "request"
+		},
+		{
+			"_id": "fld_ec3d00e24fde46ef95f2daa68743f059",
+			"parentId": "wrk_e4d7e8c59a91416289f4e29aeda7a561",
+			"modified": 1713844613694,
+			"created": 1713844613694,
+			"name": "/author",
+			"description": "",
+			"environment": {},
+			"environmentPropertyOrder": null,
+			"metaSortKey": -1713844613694,
+			"_type": "request_group"
+		},
+		{
 			"_id": "req_a3492b8be4b944d4814c58d5cb5a75ee",
 			"parentId": "fld_ec3d00e24fde46ef95f2daa68743f059",
 			"modified": 1740427988318,
@@ -146,18 +181,6 @@
 			"settingRebuildPath": true,
 			"settingFollowRedirects": "global",
 			"_type": "request"
-		},
-		{
-			"_id": "fld_ec3d00e24fde46ef95f2daa68743f059",
-			"parentId": "wrk_e4d7e8c59a91416289f4e29aeda7a561",
-			"modified": 1713844613694,
-			"created": 1713844613694,
-			"name": "/author",
-			"description": "",
-			"environment": {},
-			"environmentPropertyOrder": null,
-			"metaSortKey": -1713844613694,
-			"_type": "request_group"
 		},
 		{
 			"_id": "req_cb063c0f13854008a57ca94062b472ce",

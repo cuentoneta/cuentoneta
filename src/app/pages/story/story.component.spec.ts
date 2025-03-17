@@ -12,7 +12,7 @@ import { Storylist } from '@models/storylist.model';
 import { Story } from '@models/story.model';
 
 // Components
-import { StoryComponent } from './story.component';
+import StoryComponent from './story.component';
 
 describe('StoryComponent', () => {
 	const setup = async () => {

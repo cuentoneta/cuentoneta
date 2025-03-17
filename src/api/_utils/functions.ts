@@ -34,6 +34,7 @@ import { TextBlockContent } from '@models/block-content.model';
 // Tipos de Sanity
 import {
 	AuthorBySlugQueryResult,
+	AuthorsQueryResult,
 	BlockContent,
 	LandingPageContentQueryResult,
 	StoriesByAuthorSlugQueryResult,
@@ -43,6 +44,9 @@ import {
 	StorylistQueryResult,
 	StorylistTeasersQueryResult,
 } from '../sanity/types';
+
+// Unwrapper de tipos definidos en Array<...>
+type UnwrapArray<A> = A extends unknown[] ? UnwrapArray<A[number]> : A;
 
 export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>, language: 'es' | 'en' = 'es'): Author {
 	const resources = mapResources(rawAuthorData.resources);
@@ -61,9 +65,11 @@ export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>, l
 		biography: biography,
 	};
 }
-
-type PublicationAuthorSubQuery = NonNullable<StorylistQueryResult>['publications'][0]['story']['author'];
-export function mapAuthorForStorylist(author: PublicationAuthorSubQuery): AuthorTeaser {
+type AuthorTeaserForPublicationSubQuery = NonNullable<StorylistQueryResult>['publications'][0]['story']['author'];
+type AuthorTeaserForListSubQuery = UnwrapArray<AuthorsQueryResult>;
+export function mapAuthorTeaser(
+	author: AuthorTeaserForPublicationSubQuery | AuthorTeaserForListSubQuery,
+): AuthorTeaser {
 	return {
 		_id: author._id,
 		slug: author.slug.current,
@@ -146,7 +152,7 @@ export function mapStorylist(result: NonNullable<StorylistQueryResult>): Storyli
 			...publication,
 			story: mapStoryPreviewContent({
 				...story,
-				author: mapAuthorForStorylist({ ...author }),
+				author: mapAuthorTeaser({ ...author }),
 				media: mapMediaSourcesForStorylist(mediaSources),
 				paragraphs: mapBlockContentToTextParagraphs(body),
 				resources: [],
@@ -173,7 +179,7 @@ export function mapStorylistNavigationTeasers(
 		featuredImage: urlFor(result.featuredImage),
 		publications: result.publications.map((p) => ({
 			...p,
-			story: { ...p.story, author: mapAuthorForStorylist(p.story.author), paragraphs: [], media: [] },
+			story: { ...p.story, author: mapAuthorTeaser(p.story.author), paragraphs: [], media: [] },
 		})),
 	};
 }
@@ -260,7 +266,7 @@ export function mapStoryNavigationTeaserWithAuthor(
 
 		stories.push({
 			...properties,
-			author: mapAuthorForStorylist(item.author),
+			author: mapAuthorTeaser(item.author),
 			media: mapMediaSourcesForStorylist(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: [],

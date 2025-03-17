@@ -1,12 +1,12 @@
 {
 	"$schema": "./node_modules/nx/schemas/nx-schema.json",
 	"npmScope": "cuentoneta",
+	"useInferencePlugins": true,
 	"tasksRunnerOptions": {
 		"default": {
 			"runner": "nx-cloud",
 			"options": {
-				"cacheableOperations": ["lint", "test", "e2e", "build-storybook"],
-				"accessToken": "MWZiYmQwYTUtNzYzZS00OGY2LWIwYjYtYTAyY2RjYTczYzIyfHJlYWQtd3JpdGU="
+				"cacheableOperations": ["lint", "test", "e2e", "build-storybook"]
 			}
 		}
 	},
@@ -81,6 +81,14 @@
 			"options": {
 				"targetName": "eslint:lint"
 			}
+		},
+		{
+			"plugin": "@nx/playwright/plugin",
+			"options": {
+				"ciTargetName": "e2e-ci",
+				"targetName": "e2e"
+			}
 		}
-	]
+	],
+	"nxCloudId": "639687547a4efa4dbb11b35a"
 }

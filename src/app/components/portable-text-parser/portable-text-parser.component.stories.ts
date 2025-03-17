@@ -29,7 +29,7 @@ export const Primary = {
 						text: 'JUEVES 26, A LAS 5 DE LA TARDE',
 						_key: 'a38bb20057ac',
 						_type: 'span',
-						marks: ['em'],
+						marks: ['em', 'center'],
 					},
 				],
 			},
@@ -66,7 +66,7 @@ export const Primary = {
 				children: [
 					{
 						_type: 'span',
-						marks: [],
+						marks: ['right'],
 						text: "“on n'a pas été des lâcheson a fait ce qu'on a pu”. ",
 						_key: '4bf2b2012f88',
 					},
@@ -85,7 +85,7 @@ export const Primary = {
 						text: 'Por otra parte, mi cuarto es poco alentador. Ayer, decidida a reparar los daños que me causó la tormenta -la traidora! con lo que me gusta!- arrojé todo o sea libros, discos y cahiers al suelo a fin de ordenar ese conjunto de un modo más inteligente. Como no me animo a regalarte discos (salvo del estilo del de Salónica) me apresuro a contarte que ya se consiguen las piezas para clave de COUPERIN. La clabicembalista (!) se llama ETA HARICH SCHNEIDER. Título general: “Música para clave de Couperin”',
 						_key: '138fedf3b9b5',
 						_type: 'span',
-						marks: [],
+						marks: ['justify'],
 					},
 				],
 				_type: 'block',
