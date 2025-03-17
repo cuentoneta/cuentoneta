@@ -174,6 +174,18 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 ### Hito: Lanzamiento al público de la versión [2.6.0](https://github.com/cuentoneta/cuentoneta/releases/tag/2.6.0) de La Cuentoneta (lanzada el 2025/03/03)
 
+- Agregar alineación de texto para editor y parser de Portable Tex
+- Soporte para tests de integración y e2e con Playwright
+- Soporte para Clarity vía el paquete `@microsoft/clarity`
+- Exportar componentes como default y actualizar notación de rutas
+- Solución a problemas de indexación en Google by @rolivencia
+- Actualizar proyecto a Nx 20.5.0 y Angular 19.2.1
+- Reemplaza`provideServerRoutesConfig` con `provideServerRouting`
+- Elimina usos forzosos de strings para routerLink
+- Agregada primera versión del índice de autores, para mejorar la indexación de contenido de la web
+
+### Hito: Lanzamiento al público de la versión [2.6.1](https://github.com/cuentoneta/cuentoneta/releases/tag/2.6.1) de La Cuentoneta (lanzada el 2025/03/17)
+
 ---
 
 ## Futuros
