@@ -110,7 +110,7 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 		</main>
 	`,
 })
-export class DmcaComponent {
+export default class DmcaComponent {
 	private metaTagsDirective = inject(MetaTagsDirective);
 	constructor() {
 		this.metaTagsDirective.setTitle('DMCA');

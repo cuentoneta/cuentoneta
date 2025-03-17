@@ -16,7 +16,7 @@ import { Storylist } from '@models/storylist.model';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 // Componentes
-import { StorylistComponent } from './storylist.component';
+import StorylistComponent from './storylist.component';
 
 xdescribe('StorylistComponent', () => {
 	const setup = async () => {

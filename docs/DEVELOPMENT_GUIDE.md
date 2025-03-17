@@ -80,8 +80,8 @@ Junto con Nx, el proyecto cuenta con ESLint y Prettier ya configuradas como depe
 
 ### Para pruebas unitarias y de integración
 
-- **<a href="https://jestjs.io/docs/getting-started">Jest</a>** como framework de testing unitario
-- **<a href="https://www.cypress.io/">Cypress</a>** como framework de testing end-to-end
+- **<a href="https://jestjs.io/docs/getting-started">Jest</a>** como framework de testing unitario, utilizando <a href="https://testing-library.com/docs/angular-testing-library/intro">Angular Testing Library</a> para la escritura de tests de componentes.
+- **<a href="https://playwright.dev/">Playwright</a>** como framework de testing de integración y end-to-end
 
 ### Para generación y visualización de diagramas
 
@@ -151,7 +151,7 @@ pnpm i
 
 #### Paso 3: Correr el entorno de desarrollo localmente
 
-Una vez hechos los pasos de instalación ejecutá el siguiente comando:
+Una vez hechos los pasos de instalación ejecutá el siguiente comando para correr localmente el entorno de desarrollo del proyecto:
 
 ```bash
 pnpm run dev
@@ -164,6 +164,32 @@ Para ejecutar el entorno de desarrollo de Sanity Studio, ejecutá el siguiente c
 ```bash
 pnpm run dev
 ```
+
+#### Paso 4: Ejecución de tests
+
+El proyecto cuenta con tests unitarios y de integración/e2e, los cuales pueden ser ejecutados localmente para validar el correcto funcionamiento de la aplicación.
+
+Estos tests son ejecutados en la etapa de CI/CD, por lo cual se recomienda verificar el correcto funcionamiento de los tests localmente antes de enviar un pull request.
+
+##### Tests unitarios
+
+Para ejecutar una corrida de tests unitarios, ejecutá el siguiente comando.
+
+```bash
+pnpm run test
+```
+
+Esto iniciará una corrida de tests unitarios utilizando Jest, el cual se encargará de correr los tests unitarios de los componentes de Angular, mostrando los resultados en la consola.
+
+##### Tests de integración y e2e
+
+Para ejecutar una corrida de tests de integración/e2e, ejecutá el siguiente comando.
+
+```bash
+pnpm run test:e2e
+```
+
+Esto iniciará una corrida de tests de integración y end-to-end utilizando Playwright, mostrando los resultados en consola y generando un reporte, el cual se encontrará en la carpeta `dist/.playwright/playwright-reports` al final de la corrida.
 
 ---
 

@@ -81,7 +81,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 		</main>
 	`,
 })
-export class AuthorComponent {
+export default class AuthorComponent {
 	private readonly appRoutes = AppRoutes;
 
 	// Providers

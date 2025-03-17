@@ -42,7 +42,7 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 		}
 	`,
 })
-export class StorylistComponent {
+export default class StorylistComponent {
 	// Providers
 	private params = injectParams();
 	private metaTagsDirective = inject(MetaTagsDirective);

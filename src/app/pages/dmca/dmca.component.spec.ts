@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { DmcaComponent } from './dmca.component';
+import DmcaComponent from './dmca.component';
 
 describe('DmcaComponent', () => {
 	let component: DmcaComponent;

@@ -112,9 +112,6 @@ export class PortableTextDirective {
 		const blocks = paragraph.children;
 		// TODO: Buscar todos los usos de estos separadores y eliminarlos del proyecto, utilizando la alineación de texto en su lugar
 		const includeSeparators = blocks.filter((block) => block.text.includes('***')).length > 0;
-		const envio = blocks.filter((block) => block.text.includes('Envío'));
-
-		console.log(envio);
 
 		if (includeSeparators) {
 			classes = `text-center ${classes}`;
