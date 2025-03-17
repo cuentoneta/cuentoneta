@@ -178,9 +178,9 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 - Soporte para tests de integración y e2e con Playwright
 - Soporte para Clarity vía el paquete `@microsoft/clarity`
 - Exportar componentes como default y actualizar notación de rutas
-- Solución a problemas de indexación en Google by @rolivencia
+- Solución a problemas de indexación en Google
 - Actualizar proyecto a Nx 20.5.0 y Angular 19.2.1
-- Reemplaza`provideServerRoutesConfig` con `provideServerRouting`
+- Reemplaza `provideServerRoutesConfig` con `provideServerRouting`
 - Elimina usos forzosos de strings para routerLink
 - Agregada primera versión del índice de autores, para mejorar la indexación de contenido de la web
 
