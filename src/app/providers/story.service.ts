@@ -20,7 +20,7 @@ export class StoryService {
 		return this.http.get<Story>(`${this.url}/read`, { params });
 	}
 
-	public getByAuthorSlug(slug: string, offset: number = 0, limit: number = 20): Observable<StoryTeaser[]> {
+	public getByAuthorSlug(slug: string, offset: number = 0, limit: number = 100): Observable<StoryTeaser[]> {
 		const params = new HttpParams().set('offset', offset).append('limit', limit);
 		return this.http.get<StoryTeaser[]>(`${this.url}/author/${slug}`, { params });
 	}
