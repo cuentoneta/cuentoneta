@@ -20,3 +20,15 @@ export const authorBySlugQuery = defineQuery(`
         } 
     }, [])
 }`);
+
+export const authorsQuery = defineQuery(`
+*[_type == 'author' && !(_id in path('drafts.**'))]
+{
+    _id,
+    slug,
+    name,
+    image,
+    nationality->,
+    'biography': [],
+    'resources': []
+}|order(name asc)`);
