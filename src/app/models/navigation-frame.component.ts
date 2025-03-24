@@ -16,6 +16,7 @@ export abstract class NavigationFrameComponent {
 
 	// Inputs
 	selectedStorySlug = input<string>();
+	navigationSlug = input<string>();
 	config = signal<NavigationBarConfig>(this.navigationFrameService.navigationBarConfig());
 
 	protected constructor() {
