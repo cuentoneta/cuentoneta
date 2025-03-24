@@ -1,5 +1,5 @@
 // Core
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, OnDestroy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -69,7 +69,7 @@ import { injectQueryParams } from 'ngxtension/inject-query-params';
 	],
 	hostDirectives: [MetaTagsDirective],
 })
-export default class StoryComponent {
+export default class StoryComponent implements OnDestroy {
 	// Routes
 	readonly appRoutes = AppRoutes;
 
@@ -111,6 +111,10 @@ export default class StoryComponent {
 
 		return { navigation, navigationSlug };
 	});
+
+	ngOnDestroy() {
+		this.meta.removeCanonicalUrl();
+	}
 
 	private updateMetaTags(story: Story) {
 		this.meta.setTitle(`${story.title} - ${story.author.name}`);

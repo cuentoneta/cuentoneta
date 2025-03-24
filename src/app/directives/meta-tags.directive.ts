@@ -60,4 +60,11 @@ export class MetaTagsDirective {
 		element.setAttribute('rel', 'canonical');
 		element.setAttribute('href', url);
 	}
+
+	removeCanonicalUrl() {
+		const element = this.document.querySelector(`link[rel='canonical']`);
+		if (element) {
+			element.remove();
+		}
+	}
 }
