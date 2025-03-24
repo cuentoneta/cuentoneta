@@ -4,7 +4,6 @@ import { UrlTree } from '@angular/router';
 
 // 3rd party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { injectQueryParams } from 'ngxtension/inject-query-params';
 
 // Models
 import { PublicationNavigationTeaser } from '@models/storylist.model';
@@ -56,13 +55,12 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	readonly appRoutes = AppRoutes;
 
 	// Providers
-	private queryParams = injectQueryParams();
 	private storylistService = inject(StorylistService);
 
 	// Recursos
 	private readonly storylistResource = rxResource({
-		request: () => this.queryParams(),
-		loader: (params) => this.storylistService.getStorylistNavigationTeasers(params.request['navigationSlug']),
+		request: () => this.navigationSlug(),
+		loader: (params) => this.storylistService.getStorylistNavigationTeasers(params.request),
 	});
 
 	// Propiedades
