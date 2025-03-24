@@ -91,7 +91,7 @@ const apiUrl = generateApiUrl(environment);
 
 const exportedEnvironment = {
 	environment: `${environment ?? 'development'}`,
-	website: `${process.env['VERCEL_PROJECT_PRODUCTION_URL'] ?? 'https://cuentoneta.ar/'}`,
+	website: `${apiUrl ?? 'https://cuentoneta.ar/'}`,
 	apiUrl: `${apiUrl}`,
 	clarityProjectId: '',
 };
@@ -120,5 +120,5 @@ writeFile(targetPath, environmentFileContent, { flag: 'w' }, function (err: Errn
 	console.log('Ambiente de Vercel - VERCEL_ENV = ', process.env['VERCEL_ENV']);
 	console.log('Ambiente de Vercel - VERCEL_URL = ', process.env['VERCEL_URL']);
 	console.log('URL de branch de Vercel - VERCEL_BRANCH_URL = ', process.env['VERCEL_BRANCH_URL']);
-	console.log('URL de API = ', apiUrl);
+	console.log('URL de API y Website = ', apiUrl);
 });

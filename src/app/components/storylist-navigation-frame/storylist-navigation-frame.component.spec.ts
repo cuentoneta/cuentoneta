@@ -1,4 +1,3 @@
-import { signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Observable, of } from 'rxjs';
 
@@ -11,34 +10,24 @@ import { Storylist } from '@models/storylist.model';
 
 // Mocks
 import { storyListMock } from '../../mocks/storylist.mock';
+import { storyMock } from '../../mocks/story.mock';
 
 // Services
 import { StorylistService } from '../../providers/storylist.service';
 
 // 3rd party libs
-import * as ngExtension from 'ngxtension/inject-query-params';
 import { render, screen } from '@testing-library/angular';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { MapPublicationEditionLabelPipe } from '../../pipes/map-publication-edition-label.pipe';
-
-jest.mock('ngxtension/inject-query-params', () => ({
-	__esModule: true,
-	...jest.requireActual('ngxtension/inject-query-params'),
-}));
-
-// Add a jest mock for the injectQueryParams function
-jest.spyOn(ngExtension, 'injectQueryParams').mockReturnValue(
-	signal({
-		navigation: 'storylist',
-		navigationSlug: 'verano-2022',
-	}),
-);
 
 describe('StorylistNavigationFrameComponent', () => {
 	const setup = async () => {
 		return await render(StorylistNavigationFrameComponent, {
 			componentImports: [CommonModule, NavigablePublicationTeaserComponent, NgxSkeletonLoaderModule],
-			inputs: {},
+			inputs: {
+				selectedStorySlug: storyMock.slug,
+				navigationSlug: storyListMock.slug,
+			},
 			providers: [
 				DatePipe,
 				MapPublicationEditionLabelPipe,
