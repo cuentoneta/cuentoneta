@@ -91,7 +91,7 @@ const apiUrl = generateApiUrl(environment);
 
 const exportedEnvironment = {
 	environment: `${environment ?? 'development'}`,
-	website: `${process.env['VERCEL_PROJECT_PRODUCTION_URL'] ?? 'https://cuentoneta.ar/'}`,
+	website: `${apiUrl ?? 'https://cuentoneta.ar/'}`,
 	apiUrl: `${apiUrl}`,
 	clarityProjectId: '',
 };
