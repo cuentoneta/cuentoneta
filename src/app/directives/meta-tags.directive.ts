@@ -1,4 +1,4 @@
-import { Directive, inject, PLATFORM_ID, Renderer2 } from '@angular/core';
+import { Directive, inject, PLATFORM_ID } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 
