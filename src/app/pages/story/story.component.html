@@ -1,5 +1,11 @@
 <aside class="hidden md:block">
-	<cuentoneta-story-navigation-bar />
+	@if (navigationParams(); as navigationParams) {
+		<cuentoneta-story-navigation-bar
+			[selectedStorySlug]="story()?.slug"
+			[navigation]="navigationParams.navigation"
+			[navigationSlug]="navigationParams.navigationSlug"
+		/>
+	}
 </aside>
 
 <main>

@@ -1,5 +1,5 @@
 // Core
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, OnDestroy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -29,6 +29,8 @@ import { ShareContentComponent } from '../../components/share-content/share-cont
 import { EpigraphComponent } from '../../components/epigraph/epigraph.component';
 import { MediaResourceComponent } from '../../components/media-resource/media-resource.component';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
+import { environment } from '../../environments/environment';
+import { injectQueryParams } from 'ngxtension/inject-query-params';
 
 @Component({
 	selector: 'cuentoneta-story',
@@ -67,12 +69,13 @@ import { PortableTextParserComponent } from '../../components/portable-text-pars
 	],
 	hostDirectives: [MetaTagsDirective],
 })
-export default class StoryComponent {
+export default class StoryComponent implements OnDestroy {
 	// Routes
 	readonly appRoutes = AppRoutes;
 
 	// Providers
 	private params = injectParams();
+	private queryParams = injectQueryParams();
 	private storyService = inject(StoryService);
 	private themeService = inject(ThemeService);
 	private meta = inject(MetaTagsDirective);
@@ -98,11 +101,26 @@ export default class StoryComponent {
 		() =>
 			`Leí "${this.story()?.title}" de ${this.story()?.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`,
 	);
+	navigationParams = computed(() => {
+		let { navigation, navigationSlug } = this.queryParams();
+
+		if (!navigation && !navigationSlug) {
+			navigation = 'author';
+			navigationSlug = this.story()?.author.slug ?? '';
+		}
+
+		return { navigation, navigationSlug };
+	});
+
+	ngOnDestroy() {
+		this.meta.removeCanonicalUrl();
+	}
 
 	private updateMetaTags(story: Story) {
 		this.meta.setTitle(`${story.title} - ${story.author.name}`);
 		this.meta.setDescription(
 			`Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
 		);
+		this.meta.setCanonicalUrl(`${environment.website}${AppRoutes.Story}/${story.slug}`);
 	}
 }

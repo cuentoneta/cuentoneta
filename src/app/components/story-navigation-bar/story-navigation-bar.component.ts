@@ -1,12 +1,10 @@
 // Core
-import { Component, computed, inject, Type } from '@angular/core';
+import { Component, computed, inject, input, Type } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 // 3rd Party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { injectParams } from 'ngxtension/inject-params';
-import { injectQueryParams } from 'ngxtension/inject-query-params';
 
 // Services
 import { NavigationFrameService } from '../../providers/navigation-frame.service';
@@ -59,26 +57,28 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 	imports: [CommonModule, NgxSkeletonLoaderModule, RouterLink],
 })
 export class StoryNavigationBarComponent {
-	private params = injectParams();
-	private queryParams = injectQueryParams();
+	selectedStorySlug = input<string>();
+	navigation = input.required<'author' | 'storylist'>();
+	navigationSlug = input.required<string>();
 
 	// Inyección de providers
 	private navigationFrameService = inject(NavigationFrameService);
 
 	frame = computed(() => {
-		const { slug } = this.params();
-		const { navigation } = this.queryParams();
-		return this.setNavigationFrame(slug, navigation);
+		const storySlug = this.selectedStorySlug() ?? '';
+		const navigation = this.navigation();
+
+		return this.setNavigationFrame(storySlug, navigation);
 	});
 
 	frameConfig = this.navigationFrameService.navigationBarConfig;
 
 	private setNavigationFrame(
-		slug: string,
-		navigation: 'author | storylist',
+		storySlug: string,
+		navigation: 'author' | 'storylist',
 	): {
 		component: Type<NavigationFrameComponent> | null;
-		inputs: { selectedStorySlug: string };
+		inputs: { selectedStorySlug: string; navigationSlug: string };
 	} {
 		const navigationFrames = [
 			{ navigation: 'author', component: AuthorNavigationFrameComponent },
@@ -87,6 +87,6 @@ export class StoryNavigationBarComponent {
 
 		const component = navigationFrames.find((c) => c.navigation === navigation)?.component ?? null;
 
-		return { component, inputs: { selectedStorySlug: slug } };
+		return { component, inputs: { selectedStorySlug: storySlug, navigationSlug: this.navigationSlug() ?? '' } };
 	}
 }
