@@ -23,7 +23,19 @@ export const serverRoutes: Array<ServerRoute> = [
 		renderMode: RenderMode.Server,
 	},
 	{
+		path: AppRoutes.Story,
+		renderMode: RenderMode.Server,
+	},
+	{
 		path: `${AppRoutes.Story}/:slug`,
+		renderMode: RenderMode.Server,
+	},
+	{
+		path: `${AppRoutes.Story}/:slug/:list`,
+		renderMode: RenderMode.Server,
+	},
+	{
+		path: `${AppRoutes.StoryList}`,
 		renderMode: RenderMode.Server,
 	},
 	{
