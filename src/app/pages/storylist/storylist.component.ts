@@ -37,7 +37,7 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 	hostDirectives: [MetaTagsDirective],
 	styles: `
 		:host {
-			@apply flex items-center;
+			@apply flex h-full items-center;
 			min-height: inherit;
 		}
 	`,

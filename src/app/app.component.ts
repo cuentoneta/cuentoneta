@@ -11,17 +11,19 @@ import { AnalyticsService } from './providers/analytics.service';
 @Component({
 	selector: 'cuentoneta-root',
 	template: `
-		<header cuentoneta-header class="fixed top-0 z-10 min-h-16 w-full border-b-1 border-gray-200 bg-white"></header>
-		<div class="inner-container mx-5 mt-18 md:mx-auto md:mt-32 md:max-w-screen-md">
-			<router-outlet />
+		<header cuentoneta-header class="h-16 w-full border-b-1 border-gray-200 bg-white"></header>
+		<div class="flex w-full flex-col overflow-y-scroll">
+			<div class="mx-5 my-8 w-full flex-1 md:mx-auto md:max-w-screen-md">
+				<router-outlet />
+			</div>
+			<cuentoneta-footer />
 		</div>
-		<cuentoneta-footer />
 	`,
 	imports: [CommonModule, FooterComponent, HeaderComponent, RouterModule],
 	providers: [AnalyticsService],
 	styles: `
-		.inner-container {
-			min-height: calc(100svh - 81px - 98px);
+		:host {
+			@apply grid h-svh grid-rows-[65px_1fr] overflow-y-scroll;
 		}
 	`,
 })
