@@ -2,9 +2,6 @@
 import { Component, computed, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-// 3rd party modules
-import { injectQueryParams } from 'ngxtension/inject-query-params';
-
 // Routing
 import { AppRoutes } from '../../app.routes';
 
@@ -38,29 +35,25 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 	readonly appRoutes = AppRoutes;
 
 	// Providers
-	private queryParams = injectQueryParams();
 	private storyService = inject(StoryService);
 
 	// Recursos
 	private readonly storiesResource = rxResource({
-		request: () => this.queryParams(),
-		loader: (params) => this.storyService.getNavigationTeasersByAuthorSlug(params.request['navigationSlug']),
+		request: () => this.navigationSlug(),
+		loader: (params) => this.storyService.getNavigationTeasersByAuthorSlug(params.request),
 	});
 
 	// Propiedades
 	stories = computed(() => this.storiesResource.value());
-	authorSlug = computed(() => this.queryParams()?.['navigationSlug'] ?? '');
+	authorSlug = computed(() => this.navigationSlug() ?? '');
 
 	constructor() {
 		super();
-
 		effect(() => {
-			const { navigationSlug } = this.queryParams();
-
 			this.config.set({
 				headerTitle: 'Más del autor',
 				footerTitle: 'Ver más...',
-				navigationRoute: this.router.createUrlTree([this.appRoutes.Author, navigationSlug]),
+				navigationRoute: this.router.createUrlTree([this.appRoutes.Author, this.navigationSlug()]),
 				showFooter: true,
 			});
 		});

@@ -1,4 +1,3 @@
-import { signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable, of } from 'rxjs';
 
@@ -10,33 +9,23 @@ import { AuthorNavigationFrameComponent } from './author-navigation-frame.compon
 import { StoryTeaser } from '@models/story.model';
 
 // Mocks
-import { storyTeaserMock } from '../../mocks/story.mock';
+import { storyMock, storyTeaserMock } from '../../mocks/story.mock';
 
 // Services
 import { StoryService } from '../../providers/story.service';
 
 // 3rd party libs
-import * as ngExtension from 'ngxtension/inject-query-params';
 import { render, screen } from '@testing-library/angular';
-
-jest.mock('ngxtension/inject-query-params', () => ({
-	__esModule: true,
-	...jest.requireActual('ngxtension/inject-query-params'),
-}));
-
-// Add a jest mock for the injectQueryParams function
-jest.spyOn(ngExtension, 'injectQueryParams').mockReturnValue(
-	signal({
-		navigation: 'author',
-		navigationSlug: 'francois-onoff',
-	}),
-);
+import { authorMock } from '../../mocks/author.mock';
 
 describe('AuthorNavigationFrameComponent', () => {
 	const setup = async () => {
 		return await render(AuthorNavigationFrameComponent, {
 			componentImports: [CommonModule, NavigableStoryTeaserComponent],
-			inputs: {},
+			inputs: {
+				selectedStorySlug: storyMock.slug,
+				navigationSlug: authorMock.slug,
+			},
 			providers: [
 				{
 					provide: StoryService,

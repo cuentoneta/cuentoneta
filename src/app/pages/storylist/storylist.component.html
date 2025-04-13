@@ -35,16 +35,6 @@
 <ng-template #storylistTitleTemplate>
 	@if (storylist(); as storylist) {
 		<div class="flex flex-col gap-4">
-			<div class="flex justify-center">
-				<img
-					[ngSrc]="featuredImageUrl()"
-					[alt]="'Imagen alusiva de la storylist ' + storylist.title"
-					class="h-[384px] rounded-xl"
-					width="256"
-					height="384"
-				/>
-			</div>
-
 			<div class="flex flex-col">
 				<h1 class="h1 mb-5 text-center">
 					{{ storylist.title }}

@@ -1,0 +1,6 @@
+# Permite acceso a cualquier user agent, incluidos bots
+User-agent: *
+
+# Desactiva indexación de rutas de la API
+Disallow: /api/
+Disallow: /api/*

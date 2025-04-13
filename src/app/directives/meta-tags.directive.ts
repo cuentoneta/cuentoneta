@@ -1,12 +1,13 @@
 import { Directive, inject, PLATFORM_ID } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { isPlatformBrowser } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 
 @Directive({
 	selector: '[cuentonetaMetaTags]',
 	standalone: true,
 })
 export class MetaTagsDirective {
+	private document = inject(DOCUMENT);
 	private metaTagService = inject(Meta);
 	private platformId = inject(PLATFORM_ID);
 	private titleService = inject(Title);
@@ -47,5 +48,23 @@ export class MetaTagsDirective {
 
 	setDefaultDescription() {
 		this.setDescription('Una iniciativa que busca fomentar y hacer accesible la lectura digital.');
+	}
+
+	setCanonicalUrl(url: string) {
+		const head = this.document.getElementsByTagName('head')[0];
+		let element: HTMLLinkElement | null = this.document.querySelector(`link[rel='canonical']`) || null;
+		if (!element) {
+			element = this.document.createElement('link') as HTMLLinkElement;
+			head.appendChild(element);
+		}
+		element.setAttribute('rel', 'canonical');
+		element.setAttribute('href', url);
+	}
+
+	removeCanonicalUrl() {
+		const element = this.document.querySelector(`link[rel='canonical']`);
+		if (element) {
+			element.remove();
+		}
 	}
 }
