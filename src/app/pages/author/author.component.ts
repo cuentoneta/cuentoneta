@@ -28,22 +28,23 @@ import { PortableTextParserComponent } from '../../components/portable-text-pars
 import { ResourceComponent } from '../../components/resource/resource.component';
 import { StoryCardComponent } from '../../components/story-card/story-card.component';
 import { rxResource } from '@angular/core/rxjs-interop';
+import { StoryCardTeaserComponent } from '../../components/story-card-teaser/story-card-teaser.component';
 
 @Component({
 	selector: 'cuentoneta-author',
 	imports: [
 		CommonModule,
-		StoryCardComponent,
 		NgOptimizedImage,
 		PortableTextParserComponent,
 		ResourceComponent,
 		NgxSkeletonLoaderModule,
 		AuthorSkeletonComponent,
+		StoryCardTeaserComponent,
 	],
 	hostDirectives: [MetaTagsDirective],
 	template: `
 		<main>
-			<article class="grid grid-cols-1 gap-8">
+			<article class="grid grid-cols-2 gap-8">
 				@if (author(); as author) {
 					<section class="flex flex-col items-center gap-4">
 						<img
@@ -69,9 +70,23 @@ import { rxResource } from '@angular/core/rxjs-interop';
 							[classes]="'source-serif-pro-body-xl mb-8 leading-8'"
 						></cuentoneta-portable-text-parser>
 					</section>
-					<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-						@for (story of stories(); track $index) {
-							<cuentoneta-story-card [story]="story" [navigationRoute]="story.navigationRoute"></cuentoneta-story-card>
+					<section class="grid grid-cols-1 gap-4 sm:grid-cols-1 md:gap-8">
+						@defer (when stories().length > 0) {
+							@for (story of stories(); track $index) {
+								<cuentoneta-story-card-teaser
+									[story]="story"
+									[showAuthor]="true"
+									[order]="$index + 1"
+									[navigationParams]="{
+										navigation: 'author',
+										navigationSlug: author.slug ?? ''
+									}"
+								/>
+							}
+						} @loading (minimum 500ms) {
+							@for (_ of [].constructor(6); track $index) {
+								<cuentoneta-story-card-teaser [showAuthor]="true" [order]="$index + 1" />
+							}
 						}
 					</section>
 				} @else {
@@ -105,12 +120,12 @@ export default class AuthorComponent {
 	});
 	readonly storiesResource = rxResource({
 		request: () => this.params(),
-		loader: (params) => this.stories$(params.request['slug']),
+		loader: (params) => this.storyService.getByAuthorSlug(params.request['slug']),
 	});
 
 	// Propiedades
 	author = computed(() => this.authorResource.value());
-	stories = computed(() => this.storiesResource.value());
+	stories = computed(() => this.storiesResource.value() ?? []);
 	authorImageUrl = computed(() =>
 		this.author()?.imageUrl ? `${this.author()?.imageUrl}?auto=format` : 'assets/img/default-avatar.jpg',
 	);
@@ -124,19 +139,6 @@ export default class AuthorComponent {
 		return this.authorService.getBySlug(slug).pipe(
 			tap((author) => {
 				this.updateMetaTags(author);
-			}),
-		);
-	}
-
-	private stories$(slug: string): Observable<(StoryTeaser & { navigationRoute: UrlTree })[]> {
-		return this.storyService.getByAuthorSlug(slug).pipe(
-			map((stories) => {
-				return stories.map((story) => ({
-					...story,
-					navigationRoute: this.router.createUrlTree(['/', this.appRoutes.Story, story.slug], {
-						queryParams: { navigation: 'author', navigationSlug: slug },
-					}),
-				})) as (StoryTeaser & { navigationRoute: UrlTree })[];
 			}),
 		);
 	}

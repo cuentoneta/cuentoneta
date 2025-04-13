@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
+import { StoryNavigationTeaser, StoryNavigationTeaserWithAuthor } from '@models/story.model';
 import { RouterLink } from '@angular/router';
 import { StoryCardTeaserSkeletonComponent } from './story-card-teaser-skeleton.component';
 import { AppRoutes } from '../../app.routes';
@@ -15,7 +15,7 @@ import { AppRoutes } from '../../app.routes';
 					<span class="source-serif-pro-heading-2-bold leading-none text-primary-500">{{ formattedOrder() }}.</span>
 				}
 				<div class="flex flex-1 flex-col gap-1">
-					@if (showAuthor()) {
+					@if (showAuthor() && hasAuthor(story)) {
 						<a [routerLink]="['/', appRoutes.Author, story.author.slug]" class="flex items-center gap-2">
 							<img
 								[ngSrc]="story.author.imageUrl"
@@ -54,8 +54,9 @@ export class StoryCardTeaserComponent {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs
-	story = input<StoryNavigationTeaserWithAuthor>();
+	story = input<StoryNavigationTeaserWithAuthor | StoryNavigationTeaser>();
 	order = input<number>();
+
 	showAuthor = input<boolean>(false);
 	navigationParams = input<{ navigation: string; navigationSlug: string }>();
 
@@ -64,4 +65,8 @@ export class StoryCardTeaserComponent {
 		const order = this.order();
 		return order && order >= 10 ? order : `0${order}`;
 	});
+
+	hasAuthor(story: StoryNavigationTeaser): story is StoryNavigationTeaserWithAuthor {
+		return (story as any)['author'] !== undefined;
+	}
 }
