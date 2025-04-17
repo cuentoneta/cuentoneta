@@ -1,6 +1,6 @@
 import { SpaceRecordingWidgetComponent } from './space-recording-widget.component';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
-import { render, screen } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 import { CommonModule, DatePipe, NgOptimizedImage } from '@angular/common';
 import { spaceRecordingMock } from '../../mocks/space-recording.mock';
 
@@ -66,7 +66,7 @@ describe('SpaceRecordingWidgetComponent', () => {
 					element?.tagName.toLowerCase() === 'p' &&
 					content.includes('Space de X organizado y dirigido por ') &&
 					content.includes(' que incluye la lectura, análisis y discusión del cuento.') &&
-					Array.from(element.children).some((child) => child.textContent === '@criticocultural')
+					within(element as HTMLElement).getByText('@criticocultural') !== null
 				);
 			}),
 		).toBeInTheDocument();
