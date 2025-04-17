@@ -11,7 +11,7 @@ import { AnalyticsService } from './providers/analytics.service';
 @Component({
 	selector: 'cuentoneta-root',
 	template: `
-		<cuentoneta-header />
+		<header cuentoneta-header></header>
 		<div class="mx-5 my-0 min-h-screen md:m-auto md:max-w-screen-md">
 			<router-outlet />
 		</div>
