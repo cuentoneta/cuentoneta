@@ -8,7 +8,12 @@
 
 # 1. **Objetivo**
 
-Este documento tiene como finalidad asegurar la calidad del sitio web de cuentos "Cuentoneta". 
+Este documento tiene como finalidad asegurar la calidad del sitio web de cuentos "Cuentoneta". Esto incluye:
+
+- Funcionalidades: lectura, navegación y acceso a los cuentos.
+- Experiencia de usuario.
+- Compatibilidad multiplataforma.
+- Detectar errores o fallas antes de un lanzamiento.
 
 # 2. **Alcance del Testing**
 
@@ -16,14 +21,6 @@ Este documento tiene como finalidad asegurar la calidad del sitio web de cuentos
 
 - Navegación
 - Visualización de los cuentos
-- Secciones de comunidad
-- Registro e inicio de sesión de usuarios
-- Desafío de lecturas personalizadas
-- Inscripción a un newsletter
-- Filtros de tiempo de lectura
-- Marcar historias como leídas
-- Comentarios
-- Puntuaciones en los cuentos
 - Compatibilidad con diferentes navegadores y dispositivos móviles
 - Usabilidad y experiencia del usuario
 
@@ -40,28 +37,22 @@ Este documento tiene como finalidad asegurar la calidad del sitio web de cuentos
 ### **Testing de Compatibilidad**
 
 - Pruebas en diversos navegadores:
-    - Chrome
-    - Firefox
+  - Chrome
+  - Firefox
 - Dispositivos:
-    - Móviles
-    - Escritorios
-    - Tablets
+  - Móviles
+  - Escritorios
 
 # 4. **Criterios de Aceptación**
 
 - Los cuentos se deben mostrar de manera legible y sin errores de formato.
 - Cada cuento debe incluir un título y contenido claramente visible.
-- Cada cuento contará con un botón o ícono para permitir al usuario marcarlo como leído.
-- Puntuación en los cuentos: se deberá realizar una sola vez, de 1 a 5 estrellas.
-- El usuario podrá ingresar un tiempo disponible para leer y se le recomendará, en base a eso, un cuento.
-- El usuario podrá inscribirse a un newsletter proporcionando su correo electrónico.
 - La interfaz debe ser intuitiva y fácil de navegar.
 - El contenido debe ser responsivo para distintos dispositivos.
 - Todos los enlaces y botones deben ser funcionales y llevar al usuario a la sección correspondiente.
 - Cualquier contenido multimedia (imágenes, videos) debe cargarse correctamente y ser visibles.
 - No deben aparecer errores visibles (404, 500, etc.) al navegar por el sitio.
 - En caso de errores técnicos, se deben mostrar mensajes amigables y comprensibles para el usuario.
-- No debe haber contenido duplicado o errores gramaticales evidentes.
 
 # 5. **Plan de Pruebas**
 
