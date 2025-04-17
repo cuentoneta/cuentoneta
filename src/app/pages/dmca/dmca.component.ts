@@ -13,7 +13,8 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 			<section class="mb-8">
 				<p class="inter-body-base-regular">
 					If you require any more information or have any questions about our site's disclaimer, please feel free to
-					contact us by email at contacto&#64;cuentoneta.ar.
+					contact us by email at
+					<a class="underline" href="mailto:contacto@cuentoneta.ar">contacto&#64;cuentoneta.ar</a>.
 				</p>
 			</section>
 
