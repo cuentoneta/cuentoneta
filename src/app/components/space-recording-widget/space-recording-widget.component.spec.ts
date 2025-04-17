@@ -57,4 +57,18 @@ describe('SpaceRecordingWidgetComponent', () => {
 		const img = screen.getByRole('img');
 		expect(img).toHaveAttribute('src', spaceRecordingMock.data.tweetBy.profileImage);
 	});
+
+	it('should display the space recording description', async () => {
+		await setup();
+		expect(
+			screen.getByText((content, element) => {
+				return (
+					element?.tagName.toLowerCase() === 'p' &&
+					content.includes('Space de X organizado y dirigido por ') &&
+					content.includes(' que incluye la lectura, análisis y discusión del cuento.') &&
+					Array.from(element.children).some((child) => child.textContent === '@criticocultural')
+				);
+			}),
+		).toBeInTheDocument();
+	});
 });
