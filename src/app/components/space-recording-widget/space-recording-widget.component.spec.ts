@@ -1,6 +1,6 @@
 import { SpaceRecordingWidgetComponent } from './space-recording-widget.component';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
-import { render, screen } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 import { CommonModule, DatePipe, NgOptimizedImage } from '@angular/common';
 import { spaceRecordingMock } from '../../mocks/space-recording.mock';
 
@@ -56,5 +56,19 @@ describe('SpaceRecordingWidgetComponent', () => {
 		await setup();
 		const img = screen.getByRole('img');
 		expect(img).toHaveAttribute('src', spaceRecordingMock.data.tweetBy.profileImage);
+	});
+
+	it('should display the space recording description', async () => {
+		await setup();
+		expect(
+			screen.getByText((content, element) => {
+				return (
+					element?.tagName.toLowerCase() === 'p' &&
+					content.includes('Space de X organizado y dirigido por ') &&
+					content.includes(' que incluye la lectura, análisis y discusión del cuento.') &&
+					within(element as HTMLElement).getByText('@criticocultural') !== null
+				);
+			}),
+		).toBeInTheDocument();
 	});
 });

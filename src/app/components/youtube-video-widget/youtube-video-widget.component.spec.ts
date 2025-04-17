@@ -18,4 +18,12 @@ describe('YoutubeVideoWidgetComponent', () => {
 
 		expect(screen.getByText('Video alusivo a la narración de "El espejo del tiempo".')).toBeInTheDocument();
 	});
+
+	it('should display the YouTube video description', async () => {
+		await render(YoutubeVideoWidgetComponent, {
+			inputs: { media: youtubeVideoMock },
+		});
+
+		expect(screen.getByText('Video alusivo a la narración de "El espejo del tiempo".')).toBeInTheDocument();
+	});
 });
