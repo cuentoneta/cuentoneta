@@ -42,19 +42,6 @@ import { injectQueryParams } from 'ngxtension/inject-query-params';
 			// Se remueve el margen horizontal para viewports xs y sm, aprovechando el espacio en dispositivos móviles
 			@apply -mx-5 md:mx-0;
 		}
-
-		@keyframes scrollbar {
-			to {
-				width: 100%;
-			}
-		}
-
-		.progress-bar {
-			transition-timing-function: ease-out;
-			transition: width 0.5s;
-			animation: scrollbar linear;
-			animation-timeline: scroll(root);
-		}
 	`,
 	imports: [
 		BioSummaryCardComponent,
