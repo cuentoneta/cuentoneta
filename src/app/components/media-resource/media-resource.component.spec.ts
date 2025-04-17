@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/angular';
 import { MediaResourceComponent } from './media-resource.component';
-import { AudioRecording, Media, MediaTypes, SpaceRecording, YouTubeVideo } from '@models/media.model';
+import { AudioRecording, Media, SpaceRecording, YouTubeVideo } from '@models/media.model';
 import { AudioRecordingWidgetComponent } from '../audio-recording-widget/audio-recording-widget.component';
 import { SpaceRecordingWidgetComponent } from '../space-recording-widget/space-recording-widget.component';
 import { YoutubeVideoWidgetComponent } from '../youtube-video-widget/youtube-video-widget.component';
@@ -74,7 +74,7 @@ describe('MediaResourceComponent', () => {
 
 		await expect(
 			render(MediaResourceComponent, {
-				componentInputs: { mediaResources: unsupportedMedia as any },
+				componentInputs: { mediaResources: unsupportedMedia },
 			}),
 		).rejects.toThrow('El tipo unsupportedType no está soportado.');
 	});
