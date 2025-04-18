@@ -39,7 +39,7 @@ import { injectQueryParams } from 'ngxtension/inject-query-params';
 		:host {
 			@apply grid;
 			@apply md:grid-rows-[8px_1fr];
-			@apply gap-y-3 md:gap-y-14;
+			@apply md:gap-y-14;
 		}
 
 		.content {
