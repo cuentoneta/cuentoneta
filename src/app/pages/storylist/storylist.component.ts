@@ -1,7 +1,7 @@
 // Core
 import { Component, computed, inject } from '@angular/core';
 import { tap } from 'rxjs';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 // 3rd party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -25,13 +25,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 @Component({
 	selector: 'cuentoneta-storylist',
 	templateUrl: './storylist.component.html',
-	imports: [
-		CommonModule,
-		StorylistCardDeckComponent,
-		NgxSkeletonLoaderModule,
-		PortableTextParserComponent,
-		NgOptimizedImage,
-	],
+	imports: [CommonModule, StorylistCardDeckComponent, NgxSkeletonLoaderModule, PortableTextParserComponent],
 	hostDirectives: [MetaTagsDirective],
 })
 export default class StorylistComponent {
