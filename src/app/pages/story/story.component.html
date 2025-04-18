@@ -1,121 +1,122 @@
-<aside class="hidden md:block">
-	@if (navigationParams(); as navigationParams) {
-		<cuentoneta-story-navigation-bar
-			[selectedStorySlug]="story()?.slug"
-			[navigation]="navigationParams.navigation"
-			[navigationSlug]="navigationParams.navigationSlug"
-		/>
-	}
-</aside>
+<div class="sticky top-0 z-10 col-span-full h-2 w-full overflow-hidden bg-primary-100">
+	<div class="progress-bar h-full w-0 bg-primary-400"></div>
+</div>
 
-<main>
-	<div class="sticky top-0 mb-2 h-2 w-full overflow-hidden bg-primary-100">
-		<div class="progress-bar h-full w-0 bg-primary-400"></div>
-	</div>
-
-	<article class="bg-gray-50 p-5 md:rounded-xl md:p-15 md:shadow-lg">
-		<header class="mb-6 flex flex-col-reverse sm:mb-10 sm:block">
-			<aside class="mt-6 sm:float-right sm:mb-12 sm:ml-12 sm:mt-0">
-				@defer {
-					<cuentoneta-share-content
-						[isLoading]="!story"
-						[params]="shareContentParams()"
-						[route]="sharingRoute()"
-						[message]="shareMessage()"
-					/>
-				}
-			</aside>
-			<div>
-				@if (story(); as story) {
-					<h1 [lang]="story.language" class="h1 mb-2">{{ story.title }}</h1>
-					<a
-						[lang]="story.language"
-						[routerLink]="['/', appRoutes.Author, story.author.slug]"
-						class="inter-body-xl mb-2 block flex items-center"
-					>
-						{{ story.author.name }}
-						<span class="icon-arrow-right"></span>
-					</a>
-					<time class="inter-body-base-medium text-gray-600">
-						{{ story.approximateReadingTime }} minutos de lectura
-					</time>
-
-					@if (story.badLanguage) {
-						<p class="inter-body-base-semibold mt-2 flex items-center text-primary-500">* Contiene lenguaje adulto</p>
+<div class="content w-full">
+	<aside class="hidden md:block">
+		@if (navigationParams(); as navigationParams) {
+			<cuentoneta-story-navigation-bar
+				[selectedStorySlug]="story()?.slug"
+				[navigation]="navigationParams.navigation"
+				[navigationSlug]="navigationParams.navigationSlug"
+			/>
+		}
+	</aside>
+	<main>
+		<article class="bg-gray-50 p-5 md:rounded-xl md:p-15 md:shadow-lg">
+			<header class="mb-6 flex flex-col-reverse sm:mb-10 sm:block">
+				<aside class="mt-6 sm:float-right sm:mb-12 sm:ml-12 sm:mt-0">
+					@defer {
+						<cuentoneta-share-content
+							[isLoading]="!story"
+							[params]="shareContentParams()"
+							[route]="sharingRoute()"
+							[message]="shareMessage()"
+						/>
 					}
-				} @else {
-					<ngx-skeleton-loader
-						[theme]="{
-							'height.px': 36,
-							'background-color': skeletonColor,
-							width: '50%'
-						}"
-						count="1"
-						appearance="line"
-					/>
-					<ngx-skeleton-loader
-						[theme]="{
-							'height.px': 20,
-							'background-color': skeletonColor,
-							width: '25%'
-						}"
-						count="1"
-						appearance="line"
-					/>
-					<ngx-skeleton-loader
-						[theme]="{
-							'height.px': 16,
-							'background-color': skeletonColor,
-							width: '20%'
-						}"
-						count="1"
-						appearance="line"
-					/>
-				}
-			</div>
-		</header>
+				</aside>
+				<div>
+					@if (story(); as story) {
+						<h1 [lang]="story.language" class="h1 mb-2">{{ story.title }}</h1>
+						<a
+							[lang]="story.language"
+							[routerLink]="['/', appRoutes.Author, story.author.slug]"
+							class="inter-body-xl mb-2 block flex items-center"
+						>
+							{{ story.author.name }}
+							<span class="icon-arrow-right"></span>
+						</a>
+						<time class="inter-body-base-medium text-gray-600">
+							{{ story.approximateReadingTime }} minutos de lectura
+						</time>
 
-		@if (story(); as story) {
-			@if (story.media) {
-				@defer {
-					<cuentoneta-media-resource [mediaResources]="story.media" />
-				}
-			}
-
-			@if (story.epigraphs && story.epigraphs.length > 0) {
-				<section class="mb-10 flex flex-col gap-10">
-					@for (epigraph of story.epigraphs; track $index) {
-						@defer {
-							<cuentoneta-story-epigraph [epigraph]="epigraph" />
+						@if (story.badLanguage) {
+							<p class="inter-body-base-semibold mt-2 flex items-center text-primary-500">* Contiene lenguaje adulto</p>
 						}
+					} @else {
+						<ngx-skeleton-loader
+							[theme]="{
+								'height.px': 36,
+								'background-color': skeletonColor,
+								width: '50%'
+							}"
+							count="1"
+							appearance="line"
+						/>
+						<ngx-skeleton-loader
+							[theme]="{
+								'height.px': 20,
+								'background-color': skeletonColor,
+								width: '25%'
+							}"
+							count="1"
+							appearance="line"
+						/>
+						<ngx-skeleton-loader
+							[theme]="{
+								'height.px': 16,
+								'background-color': skeletonColor,
+								width: '20%'
+							}"
+							count="1"
+							appearance="line"
+						/>
 					}
-				</section>
-			}
-		}
-
-		@if (story(); as story) {
-			<section [lang]="story.language">
-				<cuentoneta-portable-text-parser
-					[classes]="'source-serif-pro-body-xl mb-8 leading-8'"
-					[paragraphs]="story.paragraphs"
-				/>
-			</section>
-		} @else {
-			@for (skeleton of dummyList; track $index) {
-				<div class="mb-5">
-					<ngx-skeleton-loader />
-					<ngx-skeleton-loader />
-					<ngx-skeleton-loader />
 				</div>
-			}
-		}
+			</header>
 
-		<footer>
-			@defer (when story()) {
-				@if (story(); as story) {
-					<cuentoneta-bio-summary-card [story]="story" />
+			@if (story(); as story) {
+				@if (story.media) {
+					@defer {
+						<cuentoneta-media-resource [mediaResources]="story.media" />
+					}
+				}
+
+				@if (story.epigraphs && story.epigraphs.length > 0) {
+					<section class="mb-10 flex flex-col gap-10">
+						@for (epigraph of story.epigraphs; track $index) {
+							@defer {
+								<cuentoneta-story-epigraph [epigraph]="epigraph" />
+							}
+						}
+					</section>
 				}
 			}
-		</footer>
-	</article>
-</main>
+
+			@if (story(); as story) {
+				<section [lang]="story.language">
+					<cuentoneta-portable-text-parser
+						[classes]="'source-serif-pro-body-xl mb-8 leading-8'"
+						[paragraphs]="story.paragraphs"
+					/>
+				</section>
+			} @else {
+				@for (skeleton of dummyList; track $index) {
+					<div class="mb-5">
+						<ngx-skeleton-loader />
+						<ngx-skeleton-loader />
+						<ngx-skeleton-loader />
+					</div>
+				}
+			}
+
+			<footer>
+				@defer (when story()) {
+					@if (story(); as story) {
+						<cuentoneta-bio-summary-card [story]="story" />
+					}
+				}
+			</footer>
+		</article>
+	</main>
+</div>
