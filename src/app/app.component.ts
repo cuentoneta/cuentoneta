@@ -12,9 +12,7 @@ import { AnalyticsService } from './providers/analytics.service';
 	selector: 'cuentoneta-root',
 	template: `
 		<cuentoneta-header />
-		<div class="mx-5 my-0 min-h-screen md:m-auto md:max-w-screen-md">
-			<router-outlet />
-		</div>
+		<router-outlet />
 		<cuentoneta-footer />
 	`,
 	imports: [CommonModule, FooterComponent, HeaderComponent, RouterModule],
