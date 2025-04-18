@@ -42,7 +42,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 	],
 	hostDirectives: [MetaTagsDirective],
 	template: `
-		<main>
+		<main class="content vertical-layout-spacing horizontal-layout-spacing">
 			<article class="grid grid-cols-1 gap-8">
 				@if (author(); as author) {
 					<section class="flex flex-col items-center gap-4">

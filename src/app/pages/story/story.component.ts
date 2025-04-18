@@ -37,10 +37,13 @@ import { injectQueryParams } from 'ngxtension/inject-query-params';
 	templateUrl: './story.component.html',
 	styles: `
 		:host {
-			@apply grid gap-x-8 md:mt-28 md:grid-cols-[286px_1fr];
+			@apply grid;
+			@apply md:grid-rows-[8px_1fr];
+			@apply gap-y-3 md:gap-y-14;
+		}
 
-			// Se remueve el margen horizontal para viewports xs y sm, aprovechando el espacio en dispositivos móviles
-			@apply -mx-5 md:mx-0;
+		.content {
+			@apply grid grid-cols-1 md:mx-auto md:grid-cols-[286px_1fr] md:gap-x-8;
 		}
 
 		@keyframes scrollbar {

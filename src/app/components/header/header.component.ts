@@ -61,9 +61,12 @@ import { InternalLink } from '@models/link.model';
 		</header>
 	`,
 	styles: `
+		:host {
+			@apply flex justify-center border-b-1 border-gray-200 bg-gray-50 md:m-auto;
+		}
 		header {
-			@apply grid;
-			@apply mx-5 my-0 md:m-auto;
+			@apply grid w-full;
+			@apply mx-5 my-0;
 			@apply min-h-20 max-w-screen-lg;
 
 			/*Layout de grid para vistas md y superiores */
