@@ -4,10 +4,12 @@ import { RouterLink } from '@angular/router';
 import { tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { environment } from '../../environments/environment';
 
 // 3rd Party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { injectParams } from 'ngxtension/inject-params';
+import { injectQueryParams } from 'ngxtension/inject-query-params';
 
 // Router
 import { AppRoutes } from '../../app.routes';
@@ -17,6 +19,7 @@ import { Story } from '@models/story.model';
 
 // Services
 import { StoryService } from '../../providers/story.service';
+import { LayoutService } from '../../providers/layout.service';
 import { ThemeService } from '../../providers/theme.service';
 
 // Directives
@@ -29,9 +32,7 @@ import { ShareContentComponent } from '../../components/share-content/share-cont
 import { EpigraphComponent } from '../../components/epigraph/epigraph.component';
 import { MediaResourceComponent } from '../../components/media-resource/media-resource.component';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
-import { environment } from '../../environments/environment';
-import { injectQueryParams } from 'ngxtension/inject-query-params';
-import { LayoutService } from '../../providers/layout.service';
+import { ProgressBarComponent } from '../../components/progress-bar/progress-bar.component';
 
 @Component({
 	selector: 'cuentoneta-story',
@@ -45,24 +46,6 @@ import { LayoutService } from '../../providers/layout.service';
 		.content {
 			@apply grid grid-cols-1 md:mx-auto md:grid-cols-[286px_1fr] md:gap-x-8;
 		}
-
-		.progress-bar-container {
-			@apply sticky z-10 col-span-full h-2 w-full overflow-hidden bg-primary-100;
-			transition: top 200ms ease-in-out;
-		}
-
-		@keyframes scrollbar {
-			to {
-				width: 100%;
-			}
-		}
-
-		.progress-bar {
-			transition-timing-function: ease-out;
-			transition: width 0.5s;
-			animation: scrollbar linear;
-			animation-timeline: scroll(root);
-		}
 	`,
 	imports: [
 		BioSummaryCardComponent,
@@ -74,6 +57,7 @@ import { LayoutService } from '../../providers/layout.service';
 		RouterLink,
 		ShareContentComponent,
 		StoryNavigationBarComponent,
+		ProgressBarComponent,
 	],
 	hostDirectives: [MetaTagsDirective],
 })
