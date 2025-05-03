@@ -24,7 +24,8 @@
 		"noImplicitReturns": true,
 		"noFallthroughCasesInSwitch": true,
 		"paths": {
-			"@models/*": ["src/app/models/*"]
+			"@models/*": ["src/app/models/*"],
+			"@utils/*": ["src/app/utils/*"]
 		}
 	},
 	"files": [],
