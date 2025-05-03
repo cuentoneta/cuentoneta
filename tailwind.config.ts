@@ -3,6 +3,7 @@ import { join } from 'path';
 import { Config } from 'tailwindcss/types/config';
 import { extendedColors } from './theme.config';
 import { VIEWPORT_WIDTHS_PX } from './src/app/utils/screen.utils';
+import { HEADER_HEIGHT_STRING_PX } from './src/app/utils/spacing.utils';
 
 export default {
 	content: [join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}'), ...createGlobPatternsForDependencies(__dirname)],
@@ -37,7 +38,7 @@ export default {
 				'1/2': '50%',
 				'5/4': '120%',
 				// Tamaños específicos de layouts y componentes globales de la app
-				'header-height': '80px',
+				'header-height': HEADER_HEIGHT_STRING_PX,
 			},
 			lineHeight: {
 				0: '0',
