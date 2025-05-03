@@ -2,7 +2,8 @@ import { createGlobPatternsForDependencies } from '@nx/angular/tailwind';
 import { join } from 'path';
 import { Config } from 'tailwindcss/types/config';
 import { extendedColors } from './theme.config';
-import { screens } from './tailwind.screens';
+import { VIEWPORT_WIDTHS_PX } from './src/app/utils/screen.utils';
+import { HEADER_HEIGHT_STRING_PX } from './src/app/utils/spacing.utils';
 
 export default {
 	content: [join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}'), ...createGlobPatternsForDependencies(__dirname)],
@@ -11,7 +12,7 @@ export default {
 		content: {
 			blank: '""',
 		},
-		screens: screens,
+		screens: VIEWPORT_WIDTHS_PX,
 		borderWidth: {
 			0: '0',
 			1: '1px',
@@ -30,10 +31,14 @@ export default {
 			},
 			spacing: {
 				4.5: '18px',
+				14: '56px',
 				15: '60px',
 				18: '72px',
+				25: '100px',
 				'1/2': '50%',
 				'5/4': '120%',
+				// Tamaños específicos de layouts y componentes globales de la app
+				'header-height': HEADER_HEIGHT_STRING_PX,
 			},
 			lineHeight: {
 				0: '0',

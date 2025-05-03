@@ -32,4 +32,12 @@ describe('AudioRecordingWidgetComponent', () => {
 
 		expect(screen.getByText('Lectura del artículo sobre ajedrez en Wikipedia.')).toBeInTheDocument();
 	});
+
+	it('should display the audio recording description', async () => {
+		await render(AudioRecordingWidgetComponent, {
+			inputs: { media: audioRecordingMock },
+		});
+
+		expect(screen.getByText('Lectura del artículo sobre ajedrez en Wikipedia.')).toBeInTheDocument();
+	});
 });

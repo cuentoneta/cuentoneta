@@ -8,7 +8,7 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 @Component({
 	imports: [CommonModule, RouterLink],
 	hostDirectives: [MetaTagsDirective],
-	template: `<main>
+	template: `<main class="content horizontal-layout-spacing vertical-layout-spacing">
 		<ul class="list-inside list-disc">
 			@for (author of authors(); track author.slug) {
 				<li>
