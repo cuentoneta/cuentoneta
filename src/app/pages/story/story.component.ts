@@ -1,9 +1,9 @@
 // Core
-import { Component, computed, inject, OnDestroy } from '@angular/core';
+import { Component, computed, inject, OnDestroy, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // 3rd Party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -31,6 +31,7 @@ import { MediaResourceComponent } from '../../components/media-resource/media-re
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
 import { environment } from '../../environments/environment';
 import { injectQueryParams } from 'ngxtension/inject-query-params';
+import { LayoutService } from '../../providers/layout.service';
 
 @Component({
 	selector: 'cuentoneta-story',
@@ -39,11 +40,15 @@ import { injectQueryParams } from 'ngxtension/inject-query-params';
 		:host {
 			@apply grid;
 			@apply md:grid-rows-[8px_1fr];
-			@apply md:gap-y-14;
 		}
 
 		.content {
 			@apply grid grid-cols-1 md:mx-auto md:grid-cols-[286px_1fr] md:gap-x-8;
+		}
+
+		.progress-bar-container {
+			@apply sticky z-10 col-span-full h-2 w-full overflow-hidden bg-primary-100;
+			transition: top 200ms ease-in-out;
 		}
 
 		@keyframes scrollbar {
@@ -81,7 +86,9 @@ export default class StoryComponent implements OnDestroy {
 	private queryParams = injectQueryParams();
 	private storyService = inject(StoryService);
 	private themeService = inject(ThemeService);
+	private layoutService = inject(LayoutService);
 	private meta = inject(MetaTagsDirective);
+	private isHeaderVisible$ = inject(LayoutService).isHeaderVisible$.pipe(takeUntilDestroyed());
 
 	// Recursos
 	readonly dummyList = Array(10);
@@ -114,6 +121,17 @@ export default class StoryComponent implements OnDestroy {
 
 		return { navigation, navigationSlug };
 	});
+	headerPosition = signal('top-18');
+
+	constructor() {
+		this.isHeaderVisible$.subscribe((isVisible) => {
+			if (this.layoutService.biggerThan('xs')) {
+				this.headerPosition.set('top-18');
+				return;
+			}
+			this.headerPosition.set(isVisible ? 'top-18' : 'top-0');
+		});
+	}
 
 	ngOnDestroy() {
 		this.meta.removeCanonicalUrl();
