@@ -22,6 +22,7 @@ import { DatePipe, registerLocaleData } from '@angular/common';
 // Providers
 import { ThemeService } from './providers/theme.service';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 registerLocaleData(localeEs);
 
@@ -39,6 +40,7 @@ export const appConfig: ApplicationConfig = {
 		{ provide: LOCALE_ID, useValue: 'es-419' },
 		provideClientHydration(),
 		provideAnimations(),
+		provideAnimationsAsync(),
 		provideRouter(
 			appRoutes,
 			withEnabledBlockingInitialNavigation(),

@@ -1,5 +1,5 @@
 // Core
-import { Component, inject, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 
@@ -9,11 +9,9 @@ import { CarouselModule, OwlOptions } from 'ngx-owl-carousel-o';
 // Models
 import { ContentCampaign, ContentCampaignViewport } from '@models/content-campaign.model';
 
-// Services
-import { ThemeService } from '../../providers/theme.service';
-
 // Components
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
+import { LayoutService } from '../../providers/layout.service';
 
 @Component({
 	selector: 'cuentoneta-content-campaign-carousel',
@@ -24,29 +22,29 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 				@for (slide of slides(); track slide.slug) {
 					<ng-template carouselSlide>
 						<div class="slide">
-							<a [routerLink]="slide.url" [ngClass]="viewportSpecificClasses[viewport]">
+							<a [routerLink]="slide.url" [ngClass]="viewportSpecificClasses[viewport()]">
 								<header class="mb-3">
 									<h2 class="text-lg font-bold tracking-normal">
 										<cuentoneta-portable-text-parser
-											[paragraphs]="slide.contents[viewport].title"
+											[paragraphs]="slide.contents[viewport()].title"
 										></cuentoneta-portable-text-parser>
 									</h2>
 									<h3 class="h4 subtitle text-gray-600">
 										<cuentoneta-portable-text-parser
-											[paragraphs]="slide.contents[viewport].subtitle"
+											[paragraphs]="slide.contents[viewport()].subtitle"
 										></cuentoneta-portable-text-parser>
 									</h3>
 								</header>
 								<img
-									[ngSrc]="sanityFormatImageUrl(slide.contents[viewport].imageUrl)"
-									[width]="slide.contents[viewport].imageWidth"
-									[height]="slide.contents[viewport].imageHeight"
+									[ngSrc]="sanityFormatImageUrl(slide.contents[viewport()].imageUrl)"
+									[width]="slide.contents[viewport()].imageWidth"
+									[height]="slide.contents[viewport()].imageHeight"
 									[alt]="'Imagen de la campaña de contenido ' + slide.title"
 									[ngClass]="
 										'max-w-[' +
-										slide.contents[viewport].imageWidth +
+										slide.contents[viewport()].imageWidth +
 										'px] max-h-[' +
-										slide.contents[viewport].imageHeight +
+										slide.contents[viewport()].imageHeight +
 										'px] rounded-2xl'
 									"
 									class="rounded-2xl"
@@ -61,13 +59,14 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	`,
 })
 export class ContentCampaignCarouselComponent {
-	private themeService = inject(ThemeService);
-
 	slides = input<ContentCampaign[]>([]);
 
 	// Viewport para el que debe renderizarse el contenido.
-	viewport: ContentCampaignViewport = this.themeService.viewport;
-
+	layoutService = inject(LayoutService);
+	viewport = computed(() => {
+		const isTabletOrDesktop = this.layoutService.biggerThan('xs');
+		return isTabletOrDesktop ? 'md' : 'xs';
+	});
 	sanityFormatImageUrl(url: string) {
 		return `${url}?auto=format`;
 	}
