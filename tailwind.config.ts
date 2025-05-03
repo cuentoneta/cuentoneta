@@ -2,7 +2,7 @@ import { createGlobPatternsForDependencies } from '@nx/angular/tailwind';
 import { join } from 'path';
 import { Config } from 'tailwindcss/types/config';
 import { extendedColors } from './theme.config';
-import { screens } from './tailwind.screens';
+import { VIEWPORT_WIDTHS_PX } from './src/app/utils/screen.utils';
 
 export default {
 	content: [join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}'), ...createGlobPatternsForDependencies(__dirname)],
@@ -11,7 +11,7 @@ export default {
 		content: {
 			blank: '""',
 		},
-		screens: screens,
+		screens: VIEWPORT_WIDTHS_PX,
 		borderWidth: {
 			0: '0',
 			1: '1px',
