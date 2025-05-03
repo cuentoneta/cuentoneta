@@ -105,15 +105,15 @@ export default class StoryComponent implements OnDestroy {
 
 		return { navigation, navigationSlug };
 	});
-	headerPosition = signal('top-18');
+	headerPosition = signal('top-header-height');
 
 	constructor() {
 		this.isHeaderVisible$.subscribe((isVisible) => {
 			if (this.layoutService.biggerThan('xs')) {
-				this.headerPosition.set('top-18');
+				this.headerPosition.set('top-header-height');
 				return;
 			}
-			this.headerPosition.set(isVisible ? 'top-18' : 'top-0');
+			this.headerPosition.set(isVisible ? 'top-header-height' : 'top-0');
 		});
 	}
 

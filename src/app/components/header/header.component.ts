@@ -14,7 +14,7 @@ enum VisibilityState {
 	selector: 'cuentoneta-header',
 	template: `
 		<header [@toggle]="isVisible()" class="w-100 nav-container">
-			<section class="logo flex items-center">
+			<section class="flex items-center">
 				<a [routerLink]="['/', 'home']" class="flex">
 					<img [ngSrc]="'./assets/svg/logo.svg'" class="mr-3" width="59" height="32" alt="Logo de 'La Cuentoneta'" />
 					<h1 class="inter-body-lg-bold flex items-center">La Cuentoneta</h1>
@@ -79,10 +79,10 @@ enum VisibilityState {
 			@apply border-b-1 border-gray-200;
 
 			.nav-container {
-				@apply grid h-full bg-gray-50 px-5;
+				@apply grid bg-gray-50 px-5;
 
 				/*Layout de grid para vistas md y superiores */
-				@apply grid-cols-[1fr_theme(spacing.6)] grid-rows-[theme(spacing.20)_1fr];
+				@apply grid-cols-[1fr_theme(spacing.6)] grid-rows-[theme(spacing.16)_1fr];
 
 				/*Layout de grid para vistas sm y menores */
 				@apply md:grid-cols-2 md:grid-rows-1;
