@@ -4,18 +4,21 @@ import { render, screen } from '@testing-library/angular';
 // Components
 import { ContentCampaignCarouselComponent } from './content-campaign-carousel.component';
 
-// Services
-import { ThemeService } from '../../providers/theme.service';
-
 // Mocks
 import { contentCampaignMock } from '../../mocks/content-campaign.mock';
+import { LayoutService } from '../../providers/layout.service';
 
 // Mocks ad-hoc
-class MockThemeXsViewportService {
-	viewport = 'xs';
+class MockLayoutXsViewportService {
+	biggerThan(viewport: string) {
+		return viewport !== 'xs';
+	}
 }
-class MockThemeMdViewportService {
-	viewport = 'md';
+
+class MockLayoutMdViewportService {
+	biggerThan(viewport: string) {
+		return viewport === 'xs';
+	}
 }
 
 describe('ContentCampaignCarouselComponent', () => {
@@ -36,27 +39,29 @@ describe('ContentCampaignCarouselComponent', () => {
 	it('should apply xs viewport-specific classes correctly', async () => {
 		await render(ContentCampaignCarouselComponent, {
 			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: ThemeService, useClass: MockThemeXsViewportService }],
+			providers: [{ provide: LayoutService, useClass: MockLayoutXsViewportService }],
 		});
 		const slideLinks = screen.getAllByRole('link');
 		slideLinks.forEach((link) => {
 			expect(link).toHaveClass('md:hidden');
 		});
 	});
+
 	it('should apply md viewport-specific classes correctly', async () => {
 		await render(ContentCampaignCarouselComponent, {
 			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: ThemeService, useClass: MockThemeMdViewportService }],
+			providers: [{ provide: LayoutService, useClass: MockLayoutMdViewportService }],
 		});
 		const slideLinks = screen.getAllByRole('link');
 		slideLinks.forEach((link) => {
 			expect(link).toHaveClass('max-md:hidden');
 		});
 	});
+
 	it('should render the correct title', async () => {
 		await render(ContentCampaignCarouselComponent, {
 			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: ThemeService, useClass: MockThemeXsViewportService }],
+			providers: [{ provide: LayoutService, useClass: MockLayoutXsViewportService }],
 		});
 		const titles = screen.getAllByRole('heading', { level: 2 });
 		titles.forEach((title) => {
@@ -67,7 +72,7 @@ describe('ContentCampaignCarouselComponent', () => {
 	it('should render the correct subtitle', async () => {
 		await render(ContentCampaignCarouselComponent, {
 			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: ThemeService, useClass: MockThemeXsViewportService }],
+			providers: [{ provide: LayoutService, useClass: MockLayoutXsViewportService }],
 		});
 		const subtitles = screen.getAllByRole('heading', { level: 3 });
 		subtitles.forEach((subtitle) => {
