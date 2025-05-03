@@ -36,6 +36,8 @@ export default {
 				25: '100px',
 				'1/2': '50%',
 				'5/4': '120%',
+				// Tamaños específicos de layouts y componentes globales de la app
+				'header-height': '80px',
 			},
 			lineHeight: {
 				0: '0',
