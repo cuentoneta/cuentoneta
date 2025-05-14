@@ -40,7 +40,7 @@ export type NavigationBarConfig = {
 		} @else {
 			@for (skeleton of dummyList; track $index) {
 				<article [attr.aria-busy]="true" class="bg-gray-50 px-7 py-5">
-					<ngx-skeleton-loader count="2" appearance="line"></ngx-skeleton-loader>
+					<ngx-skeleton-loader count="2" appearance="line" />
 				</article>
 			}
 		}`,

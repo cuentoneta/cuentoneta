@@ -13,7 +13,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 			placeholderImageQuality="low"
 		/>
 		<p class="inter-body-xs-medium text-primary-500">
-			<cuentoneta-portable-text-parser [paragraphs]="media().description"> </cuentoneta-portable-text-parser>
+			<cuentoneta-portable-text-parser [paragraphs]="media().description" />
 		</p>`,
 	styles: `
 		::ng-deep {

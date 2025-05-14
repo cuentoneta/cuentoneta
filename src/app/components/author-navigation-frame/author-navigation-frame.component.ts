@@ -22,7 +22,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 				[story]="story"
 				[selected]="selectedStorySlug() === story.slug"
 				[authorSlug]="authorSlug()"
-			></cuentoneta-navigable-story-teaser>
+			/>
 		}
 	}`,
 	styles: `

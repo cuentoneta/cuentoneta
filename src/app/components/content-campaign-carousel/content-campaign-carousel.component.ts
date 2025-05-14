@@ -25,14 +25,10 @@ import { LayoutService } from '../../providers/layout.service';
 							<a [routerLink]="slide.url" [ngClass]="viewportSpecificClasses[viewport()]">
 								<header class="mb-3">
 									<h2 class="text-lg font-bold tracking-normal">
-										<cuentoneta-portable-text-parser
-											[paragraphs]="slide.contents[viewport()].title"
-										></cuentoneta-portable-text-parser>
+										<cuentoneta-portable-text-parser [paragraphs]="slide.contents[viewport()].title" />
 									</h2>
 									<h3 class="h4 subtitle text-gray-600">
-										<cuentoneta-portable-text-parser
-											[paragraphs]="slide.contents[viewport()].subtitle"
-										></cuentoneta-portable-text-parser>
+										<cuentoneta-portable-text-parser [paragraphs]="slide.contents[viewport()].subtitle" />
 									</h3>
 								</header>
 								<img
