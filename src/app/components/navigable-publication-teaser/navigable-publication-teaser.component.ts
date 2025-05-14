@@ -45,7 +45,7 @@ import { MapPublicationEditionLabelPipe } from '../../pipes/map-publication-edit
 						<cuentoneta-media-resource-tags [resources]="publication().story.media" />
 					</div>
 				} @else {
-					<ngx-skeleton-loader count="2" appearance="line" animation="false"></ngx-skeleton-loader>
+					<ngx-skeleton-loader count="2" appearance="line" animation="false" />
 				}
 			</article>
 		</a>

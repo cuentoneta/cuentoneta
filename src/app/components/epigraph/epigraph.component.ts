@@ -9,18 +9,10 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	template: `
 		<div class="mr-4 border-l-3 border-solid border-primary-500"></div>
 		<div class="source-serif-pro-body-lg flex flex-1 flex-col flex-wrap items-end justify-end text-gray-700">
-			<cuentoneta-portable-text-parser
-				[classes]="'self-baseline'"
-				[paragraphs]="epigraph().text"
-			></cuentoneta-portable-text-parser>
+			<cuentoneta-portable-text-parser [classes]="'self-baseline'" [paragraphs]="epigraph().text" />
 			<div class="text-end">
 				@if (epigraph().reference) {
-					<em>
-						<cuentoneta-portable-text-parser
-							[classes]="'self-baseline'"
-							[paragraphs]="epigraph().reference"
-						></cuentoneta-portable-text-parser
-					></em>
+					<em> <cuentoneta-portable-text-parser [classes]="'self-baseline'" [paragraphs]="epigraph().reference" /></em>
 				}
 			</div>
 		</div>

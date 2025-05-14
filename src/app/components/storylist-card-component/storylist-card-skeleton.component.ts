@@ -17,7 +17,7 @@ import { ThemeService } from '../../providers/theme.service';
 				}"
 				count="1"
 				appearance="line"
-			></ngx-skeleton-loader>
+			/>
 			<div>
 				<ngx-skeleton-loader
 					[theme]="{
@@ -27,7 +27,7 @@ import { ThemeService } from '../../providers/theme.service';
 					}"
 					count="2"
 					appearance="line"
-				></ngx-skeleton-loader>
+				/>
 				<ngx-skeleton-loader
 					[theme]="{
 						height: '16px',
@@ -36,7 +36,7 @@ import { ThemeService } from '../../providers/theme.service';
 					}"
 					count="1"
 					appearance="line"
-				></ngx-skeleton-loader>
+				/>
 			</div>
 			<hr class="text-gray-300" />
 		</section>
@@ -50,7 +50,7 @@ import { ThemeService } from '../../providers/theme.service';
 				}"
 				count="1"
 				appearance="line"
-			></ngx-skeleton-loader>
+			/>
 			<ngx-skeleton-loader
 				[theme]="{
 					'background-color': skeletonColor,
@@ -61,7 +61,7 @@ import { ThemeService } from '../../providers/theme.service';
 				}"
 				count="1"
 				appearance="line"
-			></ngx-skeleton-loader>
+			/>
 		</footer>
 	`,
 })

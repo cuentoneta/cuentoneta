@@ -1,7 +1,7 @@
 <main class="content horizontal-layout-spacing vertical-layout-spacing block">
 	<article [attr.aria-busy]="!storylist()" [lang]="storylist()?.language" class="grid grid-cols-1 gap-y-8">
 		<!-- Renderizado de título y descripción -->
-		<ng-container *ngTemplateOutlet="storylistTitleTemplate"> </ng-container>
+		<ng-container *ngTemplateOutlet="storylistTitleTemplate" />
 
 		<section>
 			<!-- Renderizado de tarjetas de stories -->
@@ -17,10 +17,7 @@
 				<h1 class="h1 mb-5">
 					{{ storylist.title }}
 				</h1>
-				<cuentoneta-portable-text-parser
-					[paragraphs]="storylist.description"
-					[classes]="'source-serif-pro-body-xl'"
-				></cuentoneta-portable-text-parser>
+				<cuentoneta-portable-text-parser [paragraphs]="storylist.description" [classes]="'source-serif-pro-body-xl'" />
 			</div>
 		</div>
 	} @else {
@@ -34,7 +31,7 @@
 				}"
 				count="1"
 				appearance="line"
-			></ngx-skeleton-loader>
+			/>
 			<ngx-skeleton-loader
 				[theme]="{
 					'margin-bottom.px': 10,
@@ -44,7 +41,7 @@
 				}"
 				count="3"
 				appearance="line"
-			></ngx-skeleton-loader>
+			/>
 		</div>
 	}
 </ng-template>

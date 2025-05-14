@@ -35,7 +35,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 						<cuentoneta-portable-text-parser
 							[paragraphs]="storylist.description"
 							class="inter-body-base-regular line-clamp-4 h-24 min-h-24 text-ellipsis text-gray-600"
-						></cuentoneta-portable-text-parser>
+						/>
 						<hr class="text-gray-300" />
 					</section>
 					<footer

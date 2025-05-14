@@ -18,7 +18,7 @@ import { ThemeService } from '../../providers/theme.service';
 				}"
 				count="1"
 				appearance="line"
-			></ngx-skeleton-loader>
+			/>
 		}
 		<div class="flex flex-1 flex-col  gap-1">
 			@if (showAuthor()) {
@@ -32,7 +32,7 @@ import { ThemeService } from '../../providers/theme.service';
 						count="1"
 						appearance="circle"
 						class="flex items-center"
-					></ngx-skeleton-loader>
+					/>
 					<ngx-skeleton-loader
 						[theme]="{
 							height: '20px',
@@ -41,7 +41,7 @@ import { ThemeService } from '../../providers/theme.service';
 						class="w-full"
 						count="1"
 						appearance="line"
-					></ngx-skeleton-loader>
+					/>
 				</div>
 			}
 			<div class="flex flex-col gap-1">
@@ -54,7 +54,7 @@ import { ThemeService } from '../../providers/theme.service';
 					class="w-full"
 					count="1"
 					appearance="line"
-				></ngx-skeleton-loader>
+				/>
 				<footer class="inter-body-xs flex gap-1 text-gray-500">
 					<ngx-skeleton-loader
 						[theme]="{
@@ -64,7 +64,7 @@ import { ThemeService } from '../../providers/theme.service';
 						}"
 						count="1"
 						appearance="line"
-					></ngx-skeleton-loader>
+					/>
 					<span>•</span>
 					<ngx-skeleton-loader
 						[theme]="{
@@ -74,7 +74,7 @@ import { ThemeService } from '../../providers/theme.service';
 						}"
 						count="1"
 						appearance="line"
-					></ngx-skeleton-loader>
+					/>
 				</footer>
 			</div>
 		</div>
