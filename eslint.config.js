@@ -61,6 +61,7 @@ module.exports = [
 					style: 'kebab-case',
 				},
 			],
+			'@angular-eslint/prefer-signals': 'error',
 			'@typescript-eslint/no-inferrable-types': 0,
 			'@typescript-eslint/no-unused-vars': 'error',
 			'@typescript-eslint/no-non-null-assertion': 'error',
