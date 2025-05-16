@@ -44,6 +44,6 @@ xdescribe('StorylistComponent', () => {
 	template: '',
 })
 class MockStorylistCardDeckComponent {
-	storyList = input<Storylist>();
-	isLoading = input(false);
+	readonly storyList = input<Storylist>();
+	readonly isLoading = input(false);
 }

@@ -118,9 +118,9 @@ export class HeaderComponent {
 		{ label: 'Inicio', path: '/home' },
 		{ label: 'Nosotros', path: '/about' },
 	];
-	displayMenu = signal(false);
+	readonly displayMenu = signal(false);
 
-	isVisible = input(VisibilityState.Visible, {
+	readonly isVisible = input(VisibilityState.Visible, {
 		transform: (value) => (value ? VisibilityState.Visible : VisibilityState.Hidden),
 	});
 

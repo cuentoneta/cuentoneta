@@ -31,8 +31,8 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 	`,
 })
 export class ResourceComponent implements OnInit {
-	resource = input.required<Resource>();
-	iconUrl = computed(() => {
+	readonly resource = input.required<Resource>();
+	readonly iconUrl = computed(() => {
 		if (!this.resource().resourceType.icon.name) {
 			return '';
 		}

@@ -66,7 +66,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	// Propiedades
 	displayedPublications: PublicationNavigationTeaser[] = [];
 	dummyList: null[] = Array(9);
-	storylist = computed(() => this.storylistResource.value());
+	readonly storylist = computed(() => this.storylistResource.value());
 
 	constructor() {
 		super();

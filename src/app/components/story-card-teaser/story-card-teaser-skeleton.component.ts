@@ -84,8 +84,8 @@ import { ThemeService } from '../../providers/theme.service';
 })
 export class StoryCardTeaserSkeletonComponent {
 	// Inputs
-	order = input<number>();
-	showAuthor = input<boolean>(false);
+	readonly order = input<number>();
+	readonly showAuthor = input<boolean>(false);
 
 	// Providers
 	skeletonTextColor = inject(ThemeService).pickColor('zinc', 300);

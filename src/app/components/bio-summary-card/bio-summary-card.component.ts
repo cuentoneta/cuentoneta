@@ -34,6 +34,6 @@ import { ResourceComponent } from '../resource/resource.component';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BioSummaryCardComponent {
-	story = input.required<Story>();
-	resources = computed(() => [...(this.story().resources ?? []), ...(this.story().author.resources ?? [])]);
+	readonly story = input.required<Story>();
+	readonly resources = computed(() => [...(this.story().resources ?? []), ...(this.story().author.resources ?? [])]);
 }

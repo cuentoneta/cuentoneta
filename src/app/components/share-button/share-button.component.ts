@@ -23,10 +23,10 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 	}`,
 })
 export class ShareButtonComponent implements OnInit {
-	platform = input.required<SharingPlatform>();
-	params = input<{ [key: string]: string }>({});
-	message = input<string>('');
-	route = input<string>('');
+	readonly platform = input.required<SharingPlatform>();
+	readonly params = input<{ [key: string]: string }>({});
+	readonly message = input<string>('');
+	readonly route = input<string>('');
 
 	onShareToPlatformClicked(event: MouseEvent | KeyboardEvent, platform: SharingPlatform) {
 		const urlParams = Object.keys(this.params())

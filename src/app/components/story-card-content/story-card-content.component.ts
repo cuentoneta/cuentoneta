@@ -19,6 +19,6 @@ import { TextBlockContent } from '@models/block-content.model';
 	`,
 })
 export class StoryCardContentComponent {
-	title = input.required<string>();
-	body = input.required<TextBlockContent[]>();
+	readonly title = input.required<string>();
+	readonly body = input.required<TextBlockContent[]>();
 }

@@ -52,8 +52,8 @@ import { MapPublicationEditionLabelPipe } from '../../pipes/map-publication-edit
 	`,
 })
 export class NavigablePublicationTeaserComponent {
-	publication = input.required<PublicationNavigationTeaser>();
-	selected = input<boolean>();
-	storylist = input.required<StorylistPublicationsNavigationTeasers>();
+	readonly publication = input.required<PublicationNavigationTeaser>();
+	readonly selected = input<boolean>();
+	readonly storylist = input.required<StorylistPublicationsNavigationTeasers>();
 	protected readonly appRoutes = AppRoutes;
 }

@@ -25,8 +25,8 @@ export interface MediaResourcePlatform {
 	`,
 })
 export class MediaResourceTagComponent implements OnInit {
-	platform = input.required<MediaResourcePlatform>();
-	size = input<'md' | 'lg'>('md');
+	readonly platform = input.required<MediaResourcePlatform>();
+	readonly size = input<'md' | 'lg'>('md');
 
 	private tooltipDirective = inject(TooltipDirective);
 

@@ -16,11 +16,11 @@ import { ThemeService } from '../../providers/theme.service';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StoryCardSkeletonComponent {
-	animation = input<'progress' | 'progress-dark' | 'pulse' | 'false' | false>(false);
-	displayDate = input<boolean>(false);
-	editionLabel = input<string>('');
-	comingNextLabel = input<string>('');
-	displayFooter = input<boolean>(true);
+	readonly animation = input<'progress' | 'progress-dark' | 'pulse' | 'false' | false>(false);
+	readonly displayDate = input<boolean>(false);
+	readonly editionLabel = input<string>('');
+	readonly comingNextLabel = input<string>('');
+	readonly displayFooter = input<boolean>(true);
 
 	private themeService = inject(ThemeService);
 	skeletonColor = this.themeService.pickColor('zinc', 300);

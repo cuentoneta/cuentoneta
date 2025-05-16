@@ -50,6 +50,6 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpaceRecordingWidgetComponent {
-	media = input.required<SpaceRecording>();
-	spaceUrl = computed(() => this.media().data.entities.urls[0]);
+	readonly media = input.required<SpaceRecording>();
+	readonly spaceUrl = computed(() => this.media().data.entities.urls[0]);
 }

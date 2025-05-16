@@ -17,5 +17,5 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AudioRecordingWidgetComponent {
-	media = input.required<AudioRecording>();
+	readonly media = input.required<AudioRecording>();
 }

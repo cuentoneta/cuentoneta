@@ -38,10 +38,10 @@ import { MediaResourceTagsComponent } from '../media-resource-tags/media-resourc
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StoryCardComponent {
-	story = input.required<StoryTeaser>();
-	headerText = computed(() => this.story().originalPublication ?? '');
-	navigationRoute = input.required<UrlTree>();
-	computedRoute = computed(() => {
+	readonly story = input.required<StoryTeaser>();
+	readonly headerText = computed(() => this.story().originalPublication ?? '');
+	readonly navigationRoute = input.required<UrlTree>();
+	readonly computedRoute = computed(() => {
 		return this.navigationRoute()
 			? this.navigationRoute()
 			: this.router.createUrlTree(['/', this.appRoutes.Story, this.story().slug]);

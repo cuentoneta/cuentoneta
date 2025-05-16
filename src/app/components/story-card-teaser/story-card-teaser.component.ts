@@ -54,13 +54,13 @@ export class StoryCardTeaserComponent {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs
-	story = input<StoryNavigationTeaserWithAuthor>();
-	order = input<number>();
-	showAuthor = input<boolean>(false);
-	navigationParams = input<{ navigation: string; navigationSlug: string }>();
+	readonly story = input<StoryNavigationTeaserWithAuthor>();
+	readonly order = input<number>();
+	readonly showAuthor = input<boolean>(false);
+	readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
 
 	// Propiedades
-	formattedOrder = computed(() => {
+	readonly formattedOrder = computed(() => {
 		const order = this.order();
 		return order && order >= 10 ? order : `0${order}`;
 	});

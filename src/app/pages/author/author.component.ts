@@ -109,12 +109,12 @@ export default class AuthorComponent {
 	});
 
 	// Propiedades
-	author = computed(() => this.authorResource.value());
-	stories = computed(() => this.storiesResource.value());
-	authorImageUrl = computed(() =>
+	readonly author = computed(() => this.authorResource.value());
+	readonly stories = computed(() => this.storiesResource.value());
+	readonly authorImageUrl = computed(() =>
 		this.author()?.imageUrl ? `${this.author()?.imageUrl}?auto=format` : 'assets/img/default-avatar.jpg',
 	);
-	authorFlagUrl = computed(() => `${this.author()?.nationality.flag}?auto=format`);
+	readonly authorFlagUrl = computed(() => `${this.author()?.nationality.flag}?auto=format`);
 
 	private updateMetaTags(author: Author) {
 		this.metaTagsDirective.setTitle(`${author.name}`);

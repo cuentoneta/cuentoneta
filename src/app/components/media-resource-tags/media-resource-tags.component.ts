@@ -11,8 +11,8 @@ import { MediaResourcePlatform, MediaResourceTagComponent } from '../media-resou
 	}`,
 })
 export class MediaResourceTagsComponent {
-	resources = input<Media[]>([]);
-	size = input<'md' | 'lg'>('md');
+	readonly resources = input<Media[]>([]);
+	readonly size = input<'md' | 'lg'>('md');
 
 	platforms: { [key in MediaTypeKey]: MediaResourcePlatform } = {
 		audioRecording: {
