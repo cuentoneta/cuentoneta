@@ -18,5 +18,5 @@ import { Router, RouterLink, UrlTree } from '@angular/router';
 })
 export class CardComponent {
 	private router = inject(Router);
-	route = input<UrlTree>(this.router.createUrlTree([]));
+	readonly route = input<UrlTree>(this.router.createUrlTree([]));
 }

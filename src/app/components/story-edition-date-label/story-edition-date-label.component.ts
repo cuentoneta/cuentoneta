@@ -26,6 +26,6 @@ import { CommonModule } from '@angular/common';
 	imports: [CommonModule],
 })
 export class StoryEditionDateLabelComponent {
-	label = input<string>();
-	markAsNew = input<boolean>(false);
+	readonly label = input<string>();
+	readonly markAsNew = input<boolean>(false);
 }

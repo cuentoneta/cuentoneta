@@ -88,14 +88,17 @@ export default class StoryComponent implements OnDestroy {
 	});
 
 	// Propiedades
-	story = computed(() => this.storyResource.value());
-	sharingRoute = computed(() => `${AppRoutes.Story}/${this.story()?.slug}`);
-	shareContentParams = computed(() => ({ navigationSlug: this.story()?.author.slug ?? '', navigation: 'author' }));
-	shareMessage = computed(
+	readonly story = computed(() => this.storyResource.value());
+	readonly sharingRoute = computed(() => `${AppRoutes.Story}/${this.story()?.slug}`);
+	readonly shareContentParams = computed(() => ({
+		navigationSlug: this.story()?.author.slug ?? '',
+		navigation: 'author',
+	}));
+	readonly shareMessage = computed(
 		() =>
 			`Leí "${this.story()?.title}" de ${this.story()?.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`,
 	);
-	navigationParams = computed(() => {
+	readonly navigationParams = computed(() => {
 		let { navigation, navigationSlug } = this.queryParams();
 
 		if (!navigation && !navigationSlug) {
@@ -105,7 +108,7 @@ export default class StoryComponent implements OnDestroy {
 
 		return { navigation, navigationSlug };
 	});
-	headerPosition = signal('top-header-height');
+	readonly headerPosition = signal('top-header-height');
 
 	constructor() {
 		this.isHeaderVisible$.subscribe((isVisible) => {

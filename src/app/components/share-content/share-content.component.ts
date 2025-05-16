@@ -31,10 +31,10 @@ import { FacebookPlatform, SharingPlatform, TwitterPlatform, WhatsappPlatform } 
 	`,
 })
 export class ShareContentComponent {
-	route = input<string>('');
-	params = input<{ [key: string]: string }>({});
-	message = input<string>('');
-	isLoading = input<boolean>(false);
+	readonly route = input<string>('');
+	readonly params = input<{ [key: string]: string }>({});
+	readonly message = input<string>('');
+	readonly isLoading = input<boolean>(false);
 
 	platforms: SharingPlatform[] = [
 		new FacebookPlatform(),

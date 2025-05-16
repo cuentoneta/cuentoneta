@@ -37,12 +37,12 @@ xdescribe('HomeComponent', () => {
 	template: '<div></div>',
 })
 class MockPublicationCardComponent {
-	editionPrefix = input<string>();
-	editionSuffix = input<string>();
-	comingNextLabel = input<string>();
-	displayDate = input<boolean>(false);
-	publication = input<Publication>();
-	editionIndex = input<number>(0);
+	readonly editionPrefix = input<string>();
+	readonly editionSuffix = input<string>();
+	readonly comingNextLabel = input<string>();
+	readonly displayDate = input<boolean>(false);
+	readonly publication = input<Publication>();
+	readonly editionIndex = input<number>(0);
 }
 
 @Component({
@@ -52,6 +52,6 @@ class MockPublicationCardComponent {
 	template: '',
 })
 class MockStorylistCardDeckComponent {
-	storylist = input<Storylist>();
-	isLoading = input<boolean>(false);
+	readonly storylist = input<Storylist>();
+	readonly isLoading = input<boolean>(false);
 }

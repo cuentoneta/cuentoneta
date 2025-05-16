@@ -24,7 +24,7 @@ export class AppComponent implements OnInit {
 	private readonly analytics = inject(AnalyticsService);
 	private readonly isHeaderVisible$ = inject(LayoutService).isHeaderVisible$.pipe(takeUntilDestroyed());
 
-	isHeaderVisible = signal(true);
+	readonly isHeaderVisible = signal(true);
 
 	constructor() {
 		afterNextRender(() => {

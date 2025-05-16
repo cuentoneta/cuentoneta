@@ -57,14 +57,14 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 	imports: [CommonModule, NgxSkeletonLoaderModule, RouterLink],
 })
 export class StoryNavigationBarComponent {
-	selectedStorySlug = input<string>();
-	navigation = input.required<'author' | 'storylist'>();
-	navigationSlug = input.required<string>();
+	readonly selectedStorySlug = input<string>();
+	readonly navigation = input.required<'author' | 'storylist'>();
+	readonly navigationSlug = input.required<string>();
 
 	// Inyección de providers
 	private navigationFrameService = inject(NavigationFrameService);
 
-	frame = computed(() => {
+	readonly frame = computed(() => {
 		const storySlug = this.selectedStorySlug() ?? '';
 		const navigation = this.navigation();
 

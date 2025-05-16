@@ -42,10 +42,10 @@ export default class HomeComponent {
 	});
 
 	// Propiedades
-	landingPageContent = computed(() => this.landingPageResource.value());
-	cards = computed(() => this.landingPageContent()?.cards || []);
-	campaigns = computed(() => this.landingPageContent()?.campaigns || []);
-	mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
+	readonly landingPageContent = computed(() => this.landingPageResource.value());
+	readonly cards = computed(() => this.landingPageContent()?.cards || []);
+	readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
+	readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
 
 	constructor() {
 		this.metaTagsDirective.setDefault();

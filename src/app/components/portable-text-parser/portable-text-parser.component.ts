@@ -20,7 +20,7 @@ import { PortableTextDirective } from '../../directives/portable-text-parser/por
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PortableTextParserComponent {
-	paragraphs = input.required<TextBlockContent[]>();
-	type = input<'paragraph' | 'span'>('paragraph');
-	classes = input<string>('classes');
+	readonly paragraphs = input.required<TextBlockContent[]>();
+	readonly type = input<'paragraph' | 'span'>('paragraph');
+	readonly classes = input<string>('classes');
 }

@@ -63,6 +63,6 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	`,
 })
 export class StorylistCardComponent {
-	storylist = input<StorylistTeaser>();
+	readonly storylist = input<StorylistTeaser>();
 	protected readonly appRoutes = AppRoutes;
 }

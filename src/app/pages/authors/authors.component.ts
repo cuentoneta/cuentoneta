@@ -29,7 +29,7 @@ export default class AuthorsComponent {
 		loader: () => this.authorService.getAll(),
 	});
 
-	authors = computed(() => this.authorsResource.value() ?? []);
+	readonly authors = computed(() => this.authorsResource.value() ?? []);
 
 	constructor() {
 		this.metaTagsDirective.setTitle('Índice de Autores');

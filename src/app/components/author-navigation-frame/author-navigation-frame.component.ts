@@ -44,8 +44,8 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 	});
 
 	// Propiedades
-	stories = computed(() => this.storiesResource.value());
-	authorSlug = computed(() => this.navigationSlug() ?? '');
+	readonly stories = computed(() => this.storiesResource.value());
+	readonly authorSlug = computed(() => this.navigationSlug() ?? '');
 
 	constructor() {
 		super();

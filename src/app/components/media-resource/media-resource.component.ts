@@ -23,7 +23,7 @@ type MediaTypeWidgetComponents =
 	`,
 })
 export class MediaResourceComponent {
-	mediaResources = input.required({
+	readonly mediaResources = input.required({
 		transform: (media: Media[]) => media.map((m) => this.mediaTypesAdapter(m)),
 	});
 

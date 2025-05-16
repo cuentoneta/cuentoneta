@@ -41,5 +41,5 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MostReadStoriesCardDeckComponent {
-	stories = input<StoryNavigationTeaserWithAuthor[]>([]);
+	readonly stories = input<StoryNavigationTeaserWithAuthor[]>([]);
 }

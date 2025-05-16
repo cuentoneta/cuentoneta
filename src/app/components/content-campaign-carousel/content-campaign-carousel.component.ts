@@ -55,11 +55,11 @@ import { LayoutService } from '../../providers/layout.service';
 	`,
 })
 export class ContentCampaignCarouselComponent {
-	slides = input<ContentCampaign[]>([]);
+	readonly slides = input<ContentCampaign[]>([]);
 
 	// Viewport para el que debe renderizarse el contenido.
 	layoutService = inject(LayoutService);
-	viewport = computed(() => {
+	readonly viewport = computed(() => {
 		const isTabletOrDesktop = this.layoutService.biggerThan('xs');
 		return isTabletOrDesktop ? 'md' : 'xs';
 	});

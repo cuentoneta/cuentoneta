@@ -47,8 +47,10 @@ export default class StorylistComponent {
 	});
 
 	// Propiedades
-	featuredImageUrl = computed(() => `${this.storylist()?.featuredImage}?h=${256 * 1.5}&w=${192 * 1.5}&auto=format`);
-	storylist = computed(() => this.storylistResource.value());
+	readonly featuredImageUrl = computed(
+		() => `${this.storylist()?.featuredImage}?h=${256 * 1.5}&w=${192 * 1.5}&auto=format`,
+	);
+	readonly storylist = computed(() => this.storylistResource.value());
 
 	private updateMetaTags(storylist: Storylist) {
 		this.metaTagsDirective.setTitle(`${storylist.title}`);

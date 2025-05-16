@@ -22,9 +22,9 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 	`,
 })
 export class BadgeComponent implements OnInit {
-	tag = input.required<Tag>();
-	showIcon = input(false);
-	iconUrl = computed(() => {
+	readonly tag = input.required<Tag>();
+	readonly showIcon = input(false);
+	readonly iconUrl = computed(() => {
 		if (!this.tag().icon?.name) {
 			return '';
 		}
