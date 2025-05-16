@@ -112,7 +112,8 @@
 					"buildTarget": "cuentoneta:build:development"
 				}
 			},
-			"defaultConfiguration": "development"
+			"defaultConfiguration": "development",
+			"continuous": true
 		},
 		"stylelint": {
 			"executor": "nx-stylelint:lint",

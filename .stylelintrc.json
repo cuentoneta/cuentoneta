@@ -9,7 +9,12 @@
 				"ignoreAtRules": ["apply", "layer", "responsive", "screen", "tailwind", "variants", "use"]
 			}
 		],
-		"declaration-block-trailing-semicolon": "always",
+		"at-rule-no-deprecated": [
+			true,
+			{
+				"ignoreAtRules": ["apply", "layer", "responsive", "screen", "tailwind", "variants", "use"]
+			}
+		],
 		"no-descending-specificity": null,
 		"selector-pseudo-class-no-unknown": [
 			true,
