@@ -5242,6 +5242,20 @@
 				},
 				"optional": false
 			},
+			"bornOn": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "string"
+				},
+				"optional": true
+			},
+			"diedOn": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "string"
+				},
+				"optional": true
+			},
 			"biography": {
 				"type": "objectAttribute",
 				"value": {
