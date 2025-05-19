@@ -6,7 +6,7 @@ export interface InternalLink {
 export interface UrlLink {
 	url: string;
 	label: string;
-	ariaLabel?: string;
-	imageUrl?: string;
-	alt?: string;
+	ariaLabel: string;
+	imageUrl: string;
+	alt: string;
 }
