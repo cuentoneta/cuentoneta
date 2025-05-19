@@ -38,6 +38,7 @@
 		"@angular/youtube-player": "19.2.2",
 		"@floating-ui/dom": "^1.6.5",
 		"@microsoft/clarity": "^1.0.0",
+		"@ng-icons/core": "^31.4.0",
 		"@nx/angular": "21.0.3",
 		"@sanity/client": "^6.21.3",
 		"@sanity/image-url": "^1.0.2",
