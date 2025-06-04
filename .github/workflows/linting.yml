@@ -5,7 +5,7 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu-24.04
+    runs-on: blacksmith-4vcpu-ubuntu-2404
 
     steps:
       - uses: actions/checkout@v4.1.4
@@ -14,7 +14,7 @@ jobs:
           version: 9.1.1
 
       - name: Use Node.js 20.11
-        uses: actions/setup-node@v4.0.2
+        uses: useblacksmith/setup-node@v5
         with:
           node-version: 20.11
           cache: 'pnpm'
