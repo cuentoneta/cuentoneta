@@ -9,10 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.4
+        uses: actions/checkout@v4.2.2
 
       - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v4.0.0
+        uses: pnpm/action-setup@v4.1.0
         with:
           version: 10.12.1
 
@@ -25,14 +25,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --ignore-scripts
 
-      - name: Generate testing environment file
-        run: pnpm run config
-
       - name: Rebuild and prepare
         run: pnpm rebuild && pnpm run prepare --if-present
 
       - name: Cache node_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v4.2.3
         with:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
@@ -42,10 +39,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.4
+        uses: actions/checkout@v4.2.2
 
       - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v4.0.0
+        uses: pnpm/action-setup@v4.1.0
         with:
           version: 10.12.1
 
@@ -56,7 +53,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Restore node_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v4.2.3
         with:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
@@ -69,10 +66,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.4
+        uses: actions/checkout@v4.2.2
 
       - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v4.0.0
+        uses: pnpm/action-setup@v4.1.0
         with:
           version: 10.12.1
 
@@ -83,7 +80,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Restore node_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v4.2.3
         with:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
@@ -96,10 +93,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.4
+        uses: actions/checkout@v4.2.2
 
       - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v4.0.0
+        uses: pnpm/action-setup@v4.1.0
         with:
           version: 10.12.1
 
@@ -110,7 +107,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Restore node_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v4.2.3
         with:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
@@ -123,10 +120,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.4
+        uses: actions/checkout@v4.2.2
 
       - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v4.0.0
+        uses: pnpm/action-setup@v4.1.0
         with:
           version: 10.12.1
 
@@ -137,7 +134,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Restore node_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v4.2.3
         with:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
