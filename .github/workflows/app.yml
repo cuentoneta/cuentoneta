@@ -1,0 +1,152 @@
+name: CI
+
+on:
+  pull_request:
+
+jobs:
+  setup:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4.1.4
+      - uses: pnpm/action-setup@v4.0.0
+        with:
+          version: 9.1.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4.0.2
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts
+
+      - name: Generate testing environment file
+        run: pnpm run config
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Upload workspace
+        uses: actions/upload-artifact@v4
+        with:
+          name: workspace
+          path: |
+            .
+            !node_modules
+            !dist
+
+  test:
+    needs: setup
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4.1.4
+      - uses: pnpm/action-setup@v4.0.0
+        with:
+          version: 9.1.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4.0.2
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Download workspace
+        uses: actions/download-artifact@v4
+        with:
+          name: workspace
+          path: .
+
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts
+
+      - name: Run Tests
+        run: npx nx test --skip-nx-cache
+
+  lint:
+    needs: setup
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4.1.4
+      - uses: pnpm/action-setup@v4.0.0
+        with:
+          version: 9.1.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4.0.2
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Download workspace
+        uses: actions/download-artifact@v4
+        with:
+          name: workspace
+          path: .
+
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts
+
+      - name: Run Linter
+        run: npx nx lint --skip-nx-cache
+
+  stylelint:
+    needs: setup
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4.1.4
+      - uses: pnpm/action-setup@v4.0.0
+        with:
+          version: 9.1.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4.0.2
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Download workspace
+        uses: actions/download-artifact@v4
+        with:
+          name: workspace
+          path: .
+
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts
+
+      - name: Run stylelint
+        run: npx nx stylelint cuentoneta --skip-nx-cache
+
+  e2e:
+    needs: setup
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4.1.4
+      - uses: pnpm/action-setup@v4.0.0
+        with:
+          version: 9.1.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4.0.2
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Download workspace
+        uses: actions/download-artifact@v4
+        with:
+          name: workspace
+          path: .
+
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts
+
+      - name: Run Tests
+        run: npx nx run cuentoneta:e2e-ci --skip-nx-cache
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: dist/.playwright/playwright-report/
+          retention-days: 7
