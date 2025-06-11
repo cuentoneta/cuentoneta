@@ -19,7 +19,7 @@ jobs:
       - name: Use Node.js 22
         uses: useblacksmith/setup-node@v5.0.4
         with:
-          node-version: 22
+          node-version: 22.16.0
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -55,7 +55,7 @@ jobs:
       - name: Use Node.js 22
         uses: useblacksmith/setup-node@v5.0.4
         with:
-          node-version: 22
+          node-version: 22.16.0
           cache: 'pnpm'
 
       - name: Run Tests
@@ -79,7 +79,7 @@ jobs:
       - name: Use Node.js 22
         uses: useblacksmith/setup-node@v5.0.4
         with:
-          node-version: 22
+          node-version: 22.16.0
           cache: 'pnpm'
 
       - name: Run Linter
@@ -103,7 +103,7 @@ jobs:
       - name: Use Node.js 22
         uses: useblacksmith/setup-node@v5.0.4
         with:
-          node-version: 22
+          node-version: 22.16.0
           cache: 'pnpm'
 
       - name: Run stylelint
@@ -127,7 +127,7 @@ jobs:
       - name: Use Node.js 22
         uses: useblacksmith/setup-node@v5.0.4
         with:
-          node-version: 22
+          node-version: 22.16.0
           cache: 'pnpm'
 
       - name: Install Playwright browsers
