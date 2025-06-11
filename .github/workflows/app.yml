@@ -17,7 +17,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: useblacksmith/setup-node@v5
+        uses: useblacksmith/setup-node@v5.0.4
         with:
           node-version: 22
           cache: 'pnpm'
@@ -53,7 +53,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: useblacksmith/setup-node@v5
+        uses: useblacksmith/setup-node@v5.0.4
         with:
           node-version: 22
           cache: 'pnpm'
@@ -77,7 +77,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: useblacksmith/setup-node@v5
+        uses: useblacksmith/setup-node@v5.0.4
         with:
           node-version: 22
           cache: 'pnpm'
@@ -101,7 +101,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: useblacksmith/setup-node@v5
+        uses: useblacksmith/setup-node@v5.0.4
         with:
           node-version: 22
           cache: 'pnpm'
@@ -125,7 +125,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: useblacksmith/setup-node@v5
+        uses: useblacksmith/setup-node@v5.0.4
         with:
           node-version: 22
           cache: 'pnpm'
