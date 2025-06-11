@@ -6,7 +6,7 @@ on:
 jobs:
   setup:
     name: 'Setup and dependencies'
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
@@ -17,7 +17,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v4.4.0
+        uses: useblacksmith/setup-node@v5
         with:
           node-version: 22
           cache: 'pnpm'
@@ -40,7 +40,7 @@ jobs:
   build:
     name: 'Build application'
     needs: setup
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - name: Restore repository
         uses: actions/cache@v4.2.3
@@ -54,7 +54,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v4.4.0
+        uses: useblacksmith/setup-node@v5
         with:
           node-version: 22
           cache: 'pnpm'
@@ -64,7 +64,7 @@ jobs:
 
   test:
     needs: setup
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - name: Restore repository
         uses: actions/cache@v4.2.3
@@ -78,7 +78,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v4.4.0
+        uses: useblacksmith/setup-node@v5
         with:
           node-version: 22
           cache: 'pnpm'
@@ -88,7 +88,7 @@ jobs:
 
   lint:
     needs: setup
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - name: Restore repository
         uses: actions/cache@v4.2.3
@@ -102,7 +102,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v4.4.0
+        uses: useblacksmith/setup-node@v5
         with:
           node-version: 22
           cache: 'pnpm'
@@ -112,7 +112,7 @@ jobs:
 
   stylelint:
     needs: setup
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - name: Restore repository
         uses: actions/cache@v4.2.3
@@ -126,7 +126,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v4.4.0
+        uses: useblacksmith/setup-node@v5
         with:
           node-version: 22
           cache: 'pnpm'
@@ -136,7 +136,7 @@ jobs:
 
   e2e:
     needs: setup
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - name: Restore repository
         uses: actions/cache@v4.2.3
@@ -150,7 +150,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v4.4.0
+        uses: useblacksmith/setup-node@v5
         with:
           node-version: 22
           cache: 'pnpm'
