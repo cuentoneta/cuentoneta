@@ -25,8 +25,19 @@ jobs:
       - name: Install dependencies
         run: pnpm install --ignore-scripts
 
+      - name: Generate testing environment file
+        run: pnpm run config
+
       - name: Rebuild and prepare
         run: pnpm rebuild && pnpm run prepare --if-present
+
+      - name: Cache repository
+        uses: actions/cache@v4.2.3
+        with:
+          path: |
+            .
+            !node_modules
+          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
 
       - name: Cache node_modules
         uses: actions/cache@v4.2.3
@@ -40,6 +51,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
+
+      - name: Cache repository
+        uses: actions/cache@v4.2.3
+        with:
+          path: |
+            .
+            !node_modules
+          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
 
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
@@ -68,6 +87,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.2.2
 
+      - name: Cache repository
+        uses: actions/cache@v4.2.3
+        with:
+          path: |
+            .
+            !node_modules
+          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
+
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
         with:
@@ -95,6 +122,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.2.2
 
+      - name: Cache repository
+        uses: actions/cache@v4.2.3
+        with:
+          path: |
+            .
+            !node_modules
+          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
+
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
         with:
@@ -121,6 +156,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
+
+      - name: Cache repository
+        uses: actions/cache@v4.2.3
+        with:
+          path: |
+            .
+            !node_modules
+          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
 
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
