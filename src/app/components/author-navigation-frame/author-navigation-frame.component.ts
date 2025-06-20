@@ -1,7 +1,6 @@
 // Core
 import { Component, computed, effect, inject } from '@angular/core';
 
-
 // Routing
 import { AppRoutes } from '../../app.routes';
 
@@ -39,8 +38,8 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 
 	// Recursos
 	private readonly storiesResource = rxResource({
-		request: () => this.navigationSlug(),
-		loader: (params) => this.storyService.getNavigationTeasersByAuthorSlug(params.request),
+		params: () => this.navigationSlug(),
+		stream: ({ params: slug }) => this.storyService.getNavigationTeasersByAuthorSlug(slug),
 	});
 
 	// Propiedades

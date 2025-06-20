@@ -78,9 +78,9 @@ export default class StoryComponent implements OnDestroy {
 	readonly dummyList = Array(10);
 	readonly skeletonColor = this.themeService.pickColor('zinc', 300);
 	readonly storyResource = rxResource({
-		request: () => this.params(),
-		loader: (params) =>
-			this.storyService.getBySlug(params.request['slug']).pipe(
+		params: () => this.params(),
+		stream: ({ params }) =>
+			this.storyService.getBySlug(params['slug']).pipe(
 				tap((story) => {
 					this.updateMetaTags(story);
 				}),

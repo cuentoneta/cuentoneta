@@ -32,13 +32,13 @@ import { rxResource } from '@angular/core/rxjs-interop';
 @Component({
 	selector: 'cuentoneta-author',
 	imports: [
-    StoryCardComponent,
-    NgOptimizedImage,
-    PortableTextParserComponent,
-    ResourceComponent,
-    NgxSkeletonLoaderModule,
-    AuthorSkeletonComponent
-],
+		StoryCardComponent,
+		NgOptimizedImage,
+		PortableTextParserComponent,
+		ResourceComponent,
+		NgxSkeletonLoaderModule,
+		AuthorSkeletonComponent,
+	],
 	hostDirectives: [MetaTagsDirective],
 	template: `
 		<main class="content vertical-layout-spacing horizontal-layout-spacing">
@@ -94,17 +94,17 @@ export default class AuthorComponent {
 
 	// Recursos
 	readonly authorResource = rxResource({
-		request: () => this.params(),
-		loader: (params) =>
-			this.author$(params.request['slug']).pipe(
+		params: () => this.params(),
+		stream: ({ params }) =>
+			this.author$(params['slug']).pipe(
 				tap((author) => {
 					this.updateMetaTags(author);
 				}),
 			),
 	});
 	readonly storiesResource = rxResource({
-		request: () => this.params(),
-		loader: (params) => this.stories$(params.request['slug']),
+		params: () => this.params(),
+		stream: ({ params }) => this.stories$(params['slug']),
 	});
 
 	// Propiedades

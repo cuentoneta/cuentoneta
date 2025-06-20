@@ -26,7 +26,7 @@ export default class AuthorsComponent {
 	private metaTagsDirective = inject(MetaTagsDirective);
 
 	private authorsResource = rxResource({
-		loader: () => this.authorService.getAll(),
+		stream: () => this.authorService.getAll(),
 	});
 
 	readonly authors = computed(() => this.authorsResource.value() ?? []);

@@ -2,7 +2,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 
-
 // Services
 import { ContentService } from '../../providers/content.service';
 
@@ -20,12 +19,12 @@ import { MostReadStoriesCardDeckComponent } from '../../components/most-read-sto
 	selector: 'cuentoneta-home',
 	templateUrl: './home.component.html',
 	imports: [
-    ContentCampaignCarouselComponent,
-    StorylistCardComponent,
-    ContentCampaignCarouselSkeletonComponent,
-    StorylistCardSkeletonComponent,
-    MostReadStoriesCardDeckComponent
-],
+		ContentCampaignCarouselComponent,
+		StorylistCardComponent,
+		ContentCampaignCarouselSkeletonComponent,
+		StorylistCardSkeletonComponent,
+		MostReadStoriesCardDeckComponent,
+	],
 	hostDirectives: [MetaTagsDirective],
 })
 export default class HomeComponent {
@@ -37,7 +36,7 @@ export default class HomeComponent {
 
 	// Recursos
 	readonly landingPageResource = rxResource({
-		loader: () => this.contentService.getLandingPageContent(),
+		stream: () => this.contentService.getLandingPageContent(),
 	});
 
 	// Propiedades
