@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 // Modelos
 import { Publication } from '@models/storylist.model';
@@ -38,13 +38,12 @@ import { UrlTree } from '@angular/router';
 		</cuentoneta-card>
 	`,
 	imports: [
-		AuthorTeaserComponent,
-		CardComponent,
-		CommonModule,
-		MediaResourceTagsComponent,
-		StoryCardContentComponent,
-		StoryEditionDateLabelComponent,
-	],
+    AuthorTeaserComponent,
+    CardComponent,
+    MediaResourceTagsComponent,
+    StoryCardContentComponent,
+    StoryEditionDateLabelComponent
+],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PublicationCardComponent {

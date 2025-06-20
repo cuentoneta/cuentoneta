@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 @Component({
 	selector: 'cuentoneta-dmca',
-	imports: [CommonModule],
+	imports: [],
 	hostDirectives: [MetaTagsDirective],
 	template: `
 		<main

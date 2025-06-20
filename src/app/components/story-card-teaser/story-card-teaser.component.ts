@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 import { RouterLink } from '@angular/router';
 import { StoryCardTeaserSkeletonComponent } from './story-card-teaser-skeleton.component';
@@ -7,7 +7,7 @@ import { AppRoutes } from '../../app.routes';
 
 @Component({
 	selector: 'cuentoneta-story-card-teaser',
-	imports: [CommonModule, NgOptimizedImage, RouterLink, StoryCardTeaserSkeletonComponent],
+	imports: [NgOptimizedImage, RouterLink, StoryCardTeaserSkeletonComponent],
 	template: `<article class="flex gap-4">
 		@if (story(); as story) {
 			<article class="flex gap-4">

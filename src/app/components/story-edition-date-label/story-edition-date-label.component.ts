@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
 	selector: 'cuentoneta-story-edition-date-label[label]',
@@ -23,7 +23,7 @@ import { CommonModule } from '@angular/common';
 			justify-content: space-between;
 		}
 	`,
-	imports: [CommonModule],
+	imports: [],
 })
 export class StoryEditionDateLabelComponent {
 	readonly label = input<string>();

@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-storylist-card-skeleton',
-	imports: [CommonModule, NgxSkeletonLoaderModule],
+	imports: [NgxSkeletonLoaderModule],
 	template: `
 		<section class="flex flex-col gap-4 px-4 pt-5">
 			<ngx-skeleton-loader

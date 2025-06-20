@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 @Component({
 	selector: 'cuentoneta-about',
-	imports: [CommonModule, NgOptimizedImage],
+	imports: [NgOptimizedImage],
 	hostDirectives: [MetaTagsDirective],
 	templateUrl: './about.component.html',
 })

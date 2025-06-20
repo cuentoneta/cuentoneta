@@ -1,7 +1,7 @@
 // Core
 import { Component, computed, inject } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { CommonModule } from '@angular/common';
+
 
 // Services
 import { ContentService } from '../../providers/content.service';
@@ -20,13 +20,12 @@ import { MostReadStoriesCardDeckComponent } from '../../components/most-read-sto
 	selector: 'cuentoneta-home',
 	templateUrl: './home.component.html',
 	imports: [
-		CommonModule,
-		ContentCampaignCarouselComponent,
-		StorylistCardComponent,
-		ContentCampaignCarouselSkeletonComponent,
-		StorylistCardSkeletonComponent,
-		MostReadStoriesCardDeckComponent,
-	],
+    ContentCampaignCarouselComponent,
+    StorylistCardComponent,
+    ContentCampaignCarouselSkeletonComponent,
+    StorylistCardSkeletonComponent,
+    MostReadStoriesCardDeckComponent
+],
 	hostDirectives: [MetaTagsDirective],
 })
 export default class HomeComponent {

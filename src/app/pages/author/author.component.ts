@@ -1,6 +1,6 @@
 // Core
 import { Component, computed, inject } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { Router, UrlTree } from '@angular/router';
 import { map, Observable, tap } from 'rxjs';
 
@@ -32,14 +32,13 @@ import { rxResource } from '@angular/core/rxjs-interop';
 @Component({
 	selector: 'cuentoneta-author',
 	imports: [
-		CommonModule,
-		StoryCardComponent,
-		NgOptimizedImage,
-		PortableTextParserComponent,
-		ResourceComponent,
-		NgxSkeletonLoaderModule,
-		AuthorSkeletonComponent,
-	],
+    StoryCardComponent,
+    NgOptimizedImage,
+    PortableTextParserComponent,
+    ResourceComponent,
+    NgxSkeletonLoaderModule,
+    AuthorSkeletonComponent
+],
 	hostDirectives: [MetaTagsDirective],
 	template: `
 		<main class="content vertical-layout-spacing horizontal-layout-spacing">

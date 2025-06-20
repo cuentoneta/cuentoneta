@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-story-card-teaser-skeleton',
-	imports: [CommonModule, NgxSkeletonLoaderModule],
+	imports: [NgxSkeletonLoaderModule],
 	providers: [ThemeService],
 	template: `<article class="flex gap-4">
 		@if (order()) {

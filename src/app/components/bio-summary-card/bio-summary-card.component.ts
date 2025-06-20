@@ -1,6 +1,6 @@
 // Core
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 // Modelos
 import { Story } from '@models/story.model';
@@ -30,7 +30,7 @@ import { ResourceComponent } from '../resource/resource.component';
 			</section>
 		</div>
 	`,
-	imports: [AuthorTeaserComponent, CommonModule, ResourceComponent, PortableTextParserComponent],
+	imports: [AuthorTeaserComponent, ResourceComponent, PortableTextParserComponent],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BioSummaryCardComponent {

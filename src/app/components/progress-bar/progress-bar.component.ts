@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 // TODO: Generar barra de progresso utilizando TypeScript y lectura del DOM, para mejorar feature
 @Component({
 	selector: 'cuentoneta-progress-bar',
-	imports: [CommonModule],
+	imports: [],
 	template: ` <div class="progress-bar h-full w-0 bg-primary-400" data-testid="progress-bar"></div>`,
 	styles: `
 		:host {

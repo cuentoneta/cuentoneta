@@ -1,11 +1,11 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, input } from '@angular/core';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import { TextBlockContent } from '@models/block-content.model';
 
 @Component({
 	selector: 'cuentoneta-story-card-content',
-	imports: [CommonModule, PortableTextParserComponent],
+	imports: [PortableTextParserComponent],
 	template: `
 		<section>
 			<h1 class="inter-body-xl-bold mb-1 overflow-hidden text-ellipsis whitespace-nowrap">{{ title() }}</h1>
