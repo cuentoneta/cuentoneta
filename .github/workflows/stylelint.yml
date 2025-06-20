@@ -13,10 +13,10 @@ jobs:
         with:
           version: latest
 
-      - name: Use Node.js 20.11
+      - name: Use Node.js 22.12
         uses: actions/setup-node@v4.0.3
         with:
-          node-version: 20.11
+          node-version: 22.12
           cache: 'pnpm'
 
       - name: Install dependencies
