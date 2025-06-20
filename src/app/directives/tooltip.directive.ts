@@ -13,8 +13,7 @@ export class TooltipDirective implements OnDestroy {
 	readonly offset = signal<number>(6); // Offset del tooltip respecto al elemento
 
 	private myPopup: HTMLElement | null = null;
-
-	constructor(private el: ElementRef) {}
+	private readonly el = inject(ElementRef);
 
 	ngOnDestroy(): void {
 		if (this.myPopup) {
