@@ -4,7 +4,7 @@ import {
 	LOCALE_ID,
 	inject,
 	provideAppInitializer,
-	provideExperimentalZonelessChangeDetection,
+	provideZonelessChangeDetection,
 } from '@angular/core';
 import {
 	provideRouter,
@@ -48,6 +48,6 @@ export const appConfig: ApplicationConfig = {
 			withViewTransitions(),
 		),
 		provideHttpClient(withFetch()),
-		provideExperimentalZonelessChangeDetection(),
+		provideZonelessChangeDetection(),
 	],
 };
