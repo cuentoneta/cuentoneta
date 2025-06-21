@@ -32,7 +32,7 @@ describe('SpaceRecordingWidgetComponent', () => {
 	it('should display the recording date', async () => {
 		await setup();
 		const datePipe = new DatePipe('en-US');
-		const date = datePipe.transform(new Date(spaceRecordingMock.data.createdAt), 'MMMM d, YYYY') as string;
+		const date = datePipe.transform(new Date(spaceRecordingMock.data.createdAt), 'MMMM d, yyyy') as string;
 		expect(screen.getByText(date)).toBeInTheDocument();
 	});
 

@@ -22,7 +22,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 						<span class="flex items-center rounded bg-[#fff4] px-1 py-0.5 text-sm">Anfitrión</span>
 					</div>
 					<div class="space-recording-data hidden gap-2.5 md:flex">
-						<div class="font-bold">{{ media().data.createdAt | date: 'MMMM d, YYYY' }}</div>
+						<div class="font-bold">{{ media().data.createdAt | date: 'MMMM d, yyyy' }}</div>
 						<div class="spaces-duration">{{ media().data.duration }}</div>
 					</div>
 				</div>
