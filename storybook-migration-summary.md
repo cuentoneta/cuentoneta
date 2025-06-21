@@ -5,7 +5,7 @@
 The following command was ran to upgrade the Storybook packages:
 
 ```bash
-npx storybook@latest upgrade
+pnpx storybook@latest upgrade
 ```
 
 ## Your `.storybook/main.js|ts` files were prepared for Storybook's automigration scripts
@@ -21,7 +21,7 @@ the Storybook automigration scripts could run successfully. The changes that wer
 
 The following commands ran successfully and your Storybook configuration was successfully migrated to the latest version 7:
 
-- `npx storybook@latest automigrate --config-dir ./.storybook --renderer @storybook/angular`
+- `pnpx storybook@latest automigrate --config-dir ./.storybook --renderer @storybook/angular`
 
 Please make sure to check the results yourself and make sure that everything is working as expected.
 
@@ -48,11 +48,11 @@ You can make sure everything is working as expected by trying
 to build or serve your Storybook as you normally would.
 
 ```bash
-npx nx build-storybook project-name
+pnpx nx build-storybook project-name
 ```
 
 ```bash
-npx nx storybook project-name
+pnpx nx storybook project-name
 ```
 
 Please read the [Storybook 7.0.0 release article](https://storybook.js.org/blog/storybook-7-0/) and the

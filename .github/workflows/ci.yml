@@ -59,7 +59,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Run Tests
-        run: npx nx test --skip-nx-cache
+        run: pnpx nx test --skip-nx-cache
 
   lint:
     needs: setup
@@ -83,7 +83,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Run Linter
-        run: npx nx lint --skip-nx-cache
+        run: pnpx nx lint --skip-nx-cache
 
   stylelint:
     needs: setup
@@ -107,7 +107,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Run stylelint
-        run: npx nx stylelint cuentoneta --skip-nx-cache
+        run: pnpx nx stylelint cuentoneta --skip-nx-cache
 
   e2e:
     needs: setup
@@ -131,10 +131,10 @@ jobs:
           cache: 'pnpm'
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+        run: pnpx playwright install --with-deps
 
       - name: Run Tests
-        run: npx nx run cuentoneta:e2e-ci --skip-nx-cache
+        run: pnpx nx run cuentoneta:e2e-ci --skip-nx-cache
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
