@@ -10,11 +10,8 @@
 			"@utils/*": ["src/app/utils/*"]
 		},
 		"isolatedModules": true,
-		"importHelpers": true,
-		"skipLibCheck": true,
-		"skipDefaultLibCheck": true,
 		"baseUrl": ".",
-		"strictNullChecks": true,
+		"skipLibCheck": true,
 		"strict": true
 	},
 	"files": [],
