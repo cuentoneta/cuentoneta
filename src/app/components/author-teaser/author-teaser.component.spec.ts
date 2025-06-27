@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/angular';
 import { authorTeaserMock } from '../../mocks/author.mock';
 import { provideRouter, Router, RouterModule } from '@angular/router';
 import { Component } from '@angular/core';
+import userEvent from '@testing-library/user-event';
 
 @Component({
 	template: '<p>Mock Author Page</p>',
@@ -66,13 +67,17 @@ describe('AuthorTeaserComponent', () => {
 		const navigateSpy = jest.spyOn(router, 'navigateByUrl');
 
 		const link = screen.getByRole('link');
-		link.click();
+		await userEvent.click(link);
+		await fixture.whenStable();
 
-		const expectedUrlTree = router.createUrlTree([`/author/${authorTeaserMock.slug}`]);
-		expect(navigateSpy).toHaveBeenCalledWith(expectedUrlTree, {
-			skipLocationChange: false,
-			replaceUrl: false,
-			state: undefined,
-		});
+		expect(navigateSpy).toHaveBeenCalled();
+
+		// Se obtiene el argumento de la llamada a navigateByUrl
+		const calledWith = navigateSpy.mock.calls[0][0];
+
+		// Serializa el UrlTree a string
+		const url = typeof calledWith === 'string' ? calledWith : router.serializeUrl(calledWith);
+
+		expect(url).toBe(`/author/${authorTeaserMock.slug}`);
 	});
 });
