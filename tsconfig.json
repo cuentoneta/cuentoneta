@@ -38,5 +38,10 @@
 		"strictInputAccessModifiers": true,
 		"typeCheckHostBindings": true,
 		"strictTemplates": true
+	},
+	"ts-node": {
+		"compilerOptions": {
+			"module": "CommonJS"
+		}
 	}
 }
