@@ -1,31 +1,21 @@
 {
 	"compilerOptions": {
-		"useDefineForClassFields": true,
-		"rootDir": ".",
-		"sourceMap": true,
-		"declaration": false,
-		"moduleResolution": "node",
-		"esModuleInterop": true,
-		"emitDecoratorMetadata": true,
-		"experimentalDecorators": true,
-		"importHelpers": true,
-		"target": "ES2022",
-		"module": "ES2022",
-		"lib": ["ES2022", "dom"],
-		"skipLibCheck": true,
-		"skipDefaultLibCheck": true,
-		"baseUrl": ".",
-		"forceConsistentCasingInFileNames": true,
-		"strictNullChecks": true,
-		"strict": true,
-		"noImplicitOverride": true,
-		"noPropertyAccessFromIndexSignature": true,
-		"noImplicitReturns": true,
-		"noFallthroughCasesInSwitch": true,
+		"moduleResolution": "bundler",
+		"emitDecoratorMetadata": false,
+		"target": "es2022",
+		"module": "preserve",
+		"lib": ["es2020", "dom"],
 		"paths": {
 			"@models/*": ["src/app/models/*"],
 			"@utils/*": ["src/app/utils/*"]
-		}
+		},
+		"isolatedModules": true,
+		"importHelpers": true,
+		"skipLibCheck": true,
+		"skipDefaultLibCheck": true,
+		"baseUrl": ".",
+		"strictNullChecks": true,
+		"strict": true
 	},
 	"files": [],
 	"include": [],
@@ -49,11 +39,7 @@
 		"enableI18nLegacyMessageIdFormat": false,
 		"strictInjectionParameters": true,
 		"strictInputAccessModifiers": true,
+		"typeCheckHostBindings": true,
 		"strictTemplates": true
-	},
-	"ts-node": {
-		"compilerOptions": {
-			"module": "commonjs"
-		}
 	}
 }

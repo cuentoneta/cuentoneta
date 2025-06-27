@@ -2,9 +2,7 @@
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
 		"outDir": "./dist/out-tsc",
-		"types": ["node"],
-		"allowSyntheticDefaultImports": true,
-		"moduleResolution": "bundler"
+		"types": ["node"]
 	},
 	"files": ["src/main.ts", "src/main.server.ts", "src/ssr.server.ts"],
 	"include": ["src/**/*.d.ts"],
