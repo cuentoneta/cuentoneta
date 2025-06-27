@@ -34,6 +34,7 @@
 		"@angular/core": "20.0.5",
 		"@angular/forms": "20.0.5",
 		"@angular/platform-browser": "20.0.5",
+		"@angular/platform-browser-dynamic": "20.0.5",
 		"@angular/platform-server": "20.0.5",
 		"@angular/router": "20.0.5",
 		"@angular/ssr": "20.0.4",
