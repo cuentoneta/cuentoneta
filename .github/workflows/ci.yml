@@ -23,7 +23,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm i --force --frozen-lockfile
+        run: pnpm install --force --frozen-lockfile --ignore-scripts
 
       - name: Generate testing environment file
         run: pnpm run config
