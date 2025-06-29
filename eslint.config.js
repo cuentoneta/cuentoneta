@@ -62,6 +62,7 @@ module.exports = [
 				},
 			],
 			'@angular-eslint/prefer-signals': 'error',
+			'@angular-eslint/no-focused-tests': 'error',
 			'@typescript-eslint/no-inferrable-types': 0,
 			'@typescript-eslint/no-unused-vars': 'error',
 			'@typescript-eslint/no-non-null-assertion': 'error',
