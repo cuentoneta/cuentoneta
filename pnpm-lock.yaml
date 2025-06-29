@@ -145,19 +145,19 @@ importers:
         version: 21.2.1(@babel/traverse@7.27.4)(@playwright/test@1.53.1)(@zkochan/js-yaml@0.0.7)(eslint@9.29.0(jiti@1.21.0))(nx@21.2.1)(typescript@5.8.3)
       '@nx/storybook':
         specifier: 21.2.1
-        version: 21.2.1(@babel/traverse@7.27.4)(@zkochan/js-yaml@0.0.7)(eslint@9.29.0(jiti@1.21.0))(nx@21.2.1)(storybook@9.0.5(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3)
+        version: 21.2.1(@babel/traverse@7.27.4)(@zkochan/js-yaml@0.0.7)(eslint@9.29.0(jiti@1.21.0))(nx@21.2.1)(storybook@9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3)
       '@nx/workspace':
         specifier: 21.2.1
         version: 21.2.1
       '@playwright/test':
         specifier: ^1.53.1
         version: 1.53.1
+      '@storybook/addon-styling-webpack':
+        specifier: ^2.0.0
+        version: 2.0.0(storybook@9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2))(webpack@5.99.9(esbuild@0.25.5))
       '@storybook/angular':
         specifier: 9.0.13
-        version: 9.0.13(0142512c1fbfd6aed71f517f078f55fd)
-      '@storybook/core-server':
-        specifier: 8.6.14
-        version: 8.6.14(storybook@9.0.5(@testing-library/dom@10.4.0)(prettier@3.6.2))
+        version: 9.0.13(e9ab8d44ef7dd172bf13acd7971f6404)
       '@stylistic/eslint-plugin-js':
         specifier: ^4.4.1
         version: 4.4.1(eslint@9.29.0(jiti@1.21.0))
@@ -214,7 +214,7 @@ importers:
         version: 2.2.0(eslint@9.29.0(jiti@1.21.0))
       eslint-plugin-storybook:
         specifier: ^9.0.13
-        version: 9.0.13(eslint@9.29.0(jiti@1.21.0))(storybook@9.0.5(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3)
+        version: 9.0.13(eslint@9.29.0(jiti@1.21.0))(storybook@9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3)
       eslint-plugin-testing-library:
         specifier: ^7.5.3
         version: 7.5.3(eslint@9.29.0(jiti@1.21.0))(typescript@5.8.3)
@@ -270,8 +270,8 @@ importers:
         specifier: ^1.6.6
         version: 1.6.6
       storybook:
-        specifier: 9.0.5
-        version: 9.0.5(@testing-library/dom@10.4.0)(prettier@3.6.2)
+        specifier: 9.0.13
+        version: 9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2)
       stylelint:
         specifier: ^16.21.0
         version: 16.21.0(typescript@5.8.3)
@@ -3219,6 +3219,13 @@ packages:
     resolution:
       { integrity: sha512-+9jVqKhRSpsc591z5vX+X5Yyw+he/HCB4iQ/RYxw35CEPaY1gnsNE43nf9n9AaYjAQrTiI/mOwKUKdUs9vf7Xg== }
 
+  '@storybook/addon-styling-webpack@2.0.0':
+    resolution:
+      { integrity: sha512-N8jWhWnk3/nbL4P9zl0OEV/47P0Cxn/kPzSHjdAClyDYnqj9jI6upeLsraZgIV9Ro3QSeqeIloeXb1zMasWpOw== }
+    peerDependencies:
+      storybook: ^9.0.0
+      webpack: ^5.0.0
+
   '@storybook/angular@9.0.13':
     resolution:
       { integrity: sha512-cAlfffHGv/7F5twUK/T6QH54uotUA/AeRj9QlB8FzsM/Eqg+o0NrUOarmR3GOT+N4AOeX/a9cLkCOfuBwE/Tqg== }
@@ -3257,12 +3264,6 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
-
-  '@storybook/core-server@8.6.14':
-    resolution:
-      { integrity: sha512-kLFyabFAXnbW2NPBE+tIvSXKWydu6e7bnjcWAEGXdMA5bieoiHeU/9sGp69GhYz9S1Wt3/smZJ9tzsiJv1WXsA== }
-    peerDependencies:
-      storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
 
   '@storybook/core-webpack@9.0.13':
     resolution:
@@ -7301,10 +7302,6 @@ packages:
       { integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q== }
     hasBin: true
 
-  loupe@3.1.2:
-    resolution:
-      { integrity: sha512-23I4pFZHmAemUnz8WZXbYRSKYj801VDaNv9ETuMh7IrMc7VuVVSo+Z9iLE3ni30+U48iDWfi30d3twAXBYmnCg== }
-
   loupe@3.1.4:
     resolution:
       { integrity: sha512-wJzkKwJrheKtknCOKNEtDK4iqg/MxmZheEMtSTYvnzRdEYaZzmgH976nenp8WdJRdx5Vc1X/9MO0Oszl6ezeXg== }
@@ -9270,12 +9267,6 @@ packages:
     engines: { node: '>=10' }
     hasBin: true
 
-  semver@7.7.1:
-    resolution:
-      { integrity: sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA== }
-    engines: { node: '>=10' }
-    hasBin: true
-
   semver@7.7.2:
     resolution:
       { integrity: sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA== }
@@ -9567,9 +9558,9 @@ packages:
       { integrity: sha512-UhDfHmA92YAlNnCfhmq0VeNL5bDbiZGg7sZ2IvPsXubGkiNa9EC+tUTsjBRsYUAz87btI6/1wf4XoVvQ3uRnmQ== }
     engines: { node: '>=18' }
 
-  storybook@9.0.5:
+  storybook@9.0.13:
     resolution:
-      { integrity: sha512-4RIyN7P6R6umcgAB6jv3GSIDA0qw9iRcm3KnIR6VhLKLKlbbmDsUs/JmjLobxL5W+LB4zbCbrBcFsW7AL2MSyA== }
+      { integrity: sha512-RMCTZ24IF8cMu1Ru1vUfnsP+w/OfI6Wm/wjjXaDMoTrriuQG24AF+VL+UipEoqkmZtqoZcfwRyiOgnEWQX8akw== }
     hasBin: true
     peerDependencies:
       prettier: ^2 || ^3
@@ -14146,7 +14137,7 @@ snapshots:
       - webpack-cli
       - webpack-hot-middleware
 
-  '@nx/storybook@21.2.1(@babel/traverse@7.27.4)(@zkochan/js-yaml@0.0.7)(eslint@9.29.0(jiti@1.21.0))(nx@21.2.1)(storybook@9.0.5(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3)':
+  '@nx/storybook@21.2.1(@babel/traverse@7.27.4)(@zkochan/js-yaml@0.0.7)(eslint@9.29.0(jiti@1.21.0))(nx@21.2.1)(storybook@9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3)':
     dependencies:
       '@nx/cypress': 21.2.1(@babel/traverse@7.27.4)(@zkochan/js-yaml@0.0.7)(eslint@9.29.0(jiti@1.21.0))(nx@21.2.1)(typescript@5.8.3)
       '@nx/devkit': 21.2.1(nx@21.2.1)
@@ -14154,7 +14145,7 @@ snapshots:
       '@nx/js': 21.2.1(@babel/traverse@7.27.4)(nx@21.2.1)
       '@phenomnomnominal/tsquery': 5.0.1(typescript@5.8.3)
       semver: 7.7.2
-      storybook: 9.0.5(@testing-library/dom@10.4.0)(prettier@3.6.2)
+      storybook: 9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2)
       tslib: 2.8.1
     transitivePeerDependencies:
       - '@babel/traverse'
@@ -14553,7 +14544,12 @@ snapshots:
 
   '@socket.io/component-emitter@3.1.0': {}
 
-  '@storybook/angular@9.0.13(0142512c1fbfd6aed71f517f078f55fd)':
+  '@storybook/addon-styling-webpack@2.0.0(storybook@9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2))(webpack@5.99.9(esbuild@0.25.5))':
+    dependencies:
+      storybook: 9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2)
+      webpack: 5.99.9(esbuild@0.25.5)
+
+  '@storybook/angular@9.0.13(e9ab8d44ef7dd172bf13acd7971f6404)':
     dependencies:
       '@angular-devkit/architect': 0.2000.4(chokidar@4.0.1)
       '@angular-devkit/build-angular': 20.0.4(dc085519761c0146b56525b0b5a25311)
@@ -14565,14 +14561,14 @@ snapshots:
       '@angular/forms': 20.0.5(@angular/common@20.0.5(@angular/core@20.0.5(@angular/compiler@20.0.5)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.0.5(@angular/compiler@20.0.5)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.0.5(@angular/animations@20.0.5(@angular/common@20.0.5(@angular/core@20.0.5(@angular/compiler@20.0.5)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.0.5(@angular/compiler@20.0.5)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.0.5(@angular/core@20.0.5(@angular/compiler@20.0.5)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.0.5(@angular/compiler@20.0.5)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
       '@angular/platform-browser': 20.0.5(@angular/animations@20.0.5(@angular/common@20.0.5(@angular/core@20.0.5(@angular/compiler@20.0.5)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.0.5(@angular/compiler@20.0.5)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.0.5(@angular/core@20.0.5(@angular/compiler@20.0.5)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.0.5(@angular/compiler@20.0.5)(rxjs@7.8.2)(zone.js@0.15.0))
       '@angular/platform-browser-dynamic': 20.0.5(@angular/common@20.0.5(@angular/core@20.0.5(@angular/compiler@20.0.5)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@20.0.5)(@angular/core@20.0.5(@angular/compiler@20.0.5)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.0.5(@angular/animations@20.0.5(@angular/common@20.0.5(@angular/core@20.0.5(@angular/compiler@20.0.5)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.0.5(@angular/compiler@20.0.5)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.0.5(@angular/core@20.0.5(@angular/compiler@20.0.5)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.0.5(@angular/compiler@20.0.5)(rxjs@7.8.2)(zone.js@0.15.0)))
-      '@storybook/builder-webpack5': 9.0.13(@rspack/core@1.3.10)(esbuild@0.25.5)(storybook@9.0.5(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3)
-      '@storybook/core-webpack': 9.0.13(storybook@9.0.5(@testing-library/dom@10.4.0)(prettier@3.6.2))
+      '@storybook/builder-webpack5': 9.0.13(@rspack/core@1.3.10)(esbuild@0.25.5)(storybook@9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3)
+      '@storybook/core-webpack': 9.0.13(storybook@9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2))
       '@storybook/global': 5.0.0
       '@types/webpack-env': 1.18.0
       fd-package-json: 1.2.0
       find-up: 7.0.0
       rxjs: 7.8.2
-      storybook: 9.0.5(@testing-library/dom@10.4.0)(prettier@3.6.2)
+      storybook: 9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2)
       telejson: 8.0.0
       ts-dedent: 2.2.0
       tsconfig-paths-webpack-plugin: 4.1.0
@@ -14589,9 +14585,9 @@ snapshots:
       - uglify-js
       - webpack-cli
 
-  '@storybook/builder-webpack5@9.0.13(@rspack/core@1.3.10)(esbuild@0.25.5)(storybook@9.0.5(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3)':
+  '@storybook/builder-webpack5@9.0.13(@rspack/core@1.3.10)(esbuild@0.25.5)(storybook@9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3)':
     dependencies:
-      '@storybook/core-webpack': 9.0.13(storybook@9.0.5(@testing-library/dom@10.4.0)(prettier@3.6.2))
+      '@storybook/core-webpack': 9.0.13(storybook@9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2))
       case-sensitive-paths-webpack-plugin: 2.4.0
       cjs-module-lexer: 1.4.1
       css-loader: 6.10.0(@rspack/core@1.3.10)(webpack@5.99.9(esbuild@0.25.5))
@@ -14599,7 +14595,7 @@ snapshots:
       fork-ts-checker-webpack-plugin: 8.0.0(typescript@5.8.3)(webpack@5.99.9(esbuild@0.25.5))
       html-webpack-plugin: 5.6.3(@rspack/core@1.3.10)(webpack@5.99.9(esbuild@0.25.5))
       magic-string: 0.30.17
-      storybook: 9.0.5(@testing-library/dom@10.4.0)(prettier@3.6.2)
+      storybook: 9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2)
       style-loader: 3.3.2(webpack@5.99.9(esbuild@0.25.5))
       terser-webpack-plugin: 5.3.14(esbuild@0.25.5)(webpack@5.99.9(esbuild@0.25.5))
       ts-dedent: 2.2.0
@@ -14616,13 +14612,9 @@ snapshots:
       - uglify-js
       - webpack-cli
 
-  '@storybook/core-server@8.6.14(storybook@9.0.5(@testing-library/dom@10.4.0)(prettier@3.6.2))':
+  '@storybook/core-webpack@9.0.13(storybook@9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2))':
     dependencies:
-      storybook: 9.0.5(@testing-library/dom@10.4.0)(prettier@3.6.2)
-
-  '@storybook/core-webpack@9.0.13(storybook@9.0.5(@testing-library/dom@10.4.0)(prettier@3.6.2))':
-    dependencies:
-      storybook: 9.0.5(@testing-library/dom@10.4.0)(prettier@3.6.2)
+      storybook: 9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2)
       ts-dedent: 2.2.0
 
   '@storybook/global@5.0.0': {}
@@ -15915,7 +15907,7 @@ snapshots:
       assertion-error: 2.0.1
       check-error: 2.1.1
       deep-eql: 5.0.2
-      loupe: 3.1.2
+      loupe: 3.1.4
       pathval: 2.0.0
 
   chalk@2.4.2:
@@ -16678,7 +16670,7 @@ snapshots:
 
   esbuild-register@3.5.0(esbuild@0.25.5):
     dependencies:
-      debug: 4.4.0
+      debug: 4.4.1
       esbuild: 0.25.5
     transitivePeerDependencies:
       - supports-color
@@ -16749,11 +16741,11 @@ snapshots:
       eslint: 9.29.0(jiti@1.21.0)
       globals: 13.24.0
 
-  eslint-plugin-storybook@9.0.13(eslint@9.29.0(jiti@1.21.0))(storybook@9.0.5(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3):
+  eslint-plugin-storybook@9.0.13(eslint@9.29.0(jiti@1.21.0))(storybook@9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3):
     dependencies:
       '@typescript-eslint/utils': 8.34.1(eslint@9.29.0(jiti@1.21.0))(typescript@5.8.3)
       eslint: 9.29.0(jiti@1.21.0)
-      storybook: 9.0.5(@testing-library/dom@10.4.0)(prettier@3.6.2)
+      storybook: 9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -18610,8 +18602,6 @@ snapshots:
     dependencies:
       js-tokens: 4.0.0
 
-  loupe@3.1.2: {}
-
   loupe@3.1.4: {}
 
   lower-case@2.0.2:
@@ -20211,8 +20201,6 @@ snapshots:
 
   semver@7.6.3: {}
 
-  semver@7.7.1: {}
-
   semver@7.7.2: {}
 
   send@0.18.0:
@@ -20539,7 +20527,7 @@ snapshots:
 
   stdin-discarder@0.2.2: {}
 
-  storybook@9.0.5(@testing-library/dom@10.4.0)(prettier@3.6.2):
+  storybook@9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2):
     dependencies:
       '@storybook/global': 5.0.0
       '@testing-library/jest-dom': 6.6.3
@@ -20550,7 +20538,7 @@ snapshots:
       esbuild: 0.25.5
       esbuild-register: 3.5.0(esbuild@0.25.5)
       recast: 0.23.9
-      semver: 7.7.1
+      semver: 7.7.2
       ws: 8.18.0
     optionalDependencies:
       prettier: 3.6.2
