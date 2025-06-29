@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RepeatPipe } from '../../pipes/repeat.pipe';
 import { StoryCardSkeletonComponent } from '../../components/story-card-skeleton/story-card-skeleton.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -7,7 +7,7 @@ import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-author-skeleton',
-	imports: [CommonModule, RepeatPipe, StoryCardSkeletonComponent, NgxSkeletonLoaderModule],
+	imports: [RepeatPipe, StoryCardSkeletonComponent, NgxSkeletonLoaderModule],
 	template: `
 		<section class="flex flex-col items-center justify-center gap-4">
 			<ngx-skeleton-loader

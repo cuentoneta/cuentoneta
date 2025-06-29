@@ -1,5 +1,5 @@
 import { Component, effect, input, signal } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { InternalLink } from '@models/link.model';
 import { animate, state, style, transition, trigger } from '@angular/animations';
@@ -89,7 +89,7 @@ enum VisibilityState {
 			}
 		}
 	`,
-	imports: [CommonModule, RouterModule, NgOptimizedImage],
+	imports: [RouterModule, NgOptimizedImage],
 	animations: [
 		trigger('toggle', [
 			state(

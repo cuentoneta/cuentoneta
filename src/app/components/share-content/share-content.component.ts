@@ -1,5 +1,5 @@
 import { Component, inject, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ThemeService } from '../../providers/theme.service';
 import { ShareButtonComponent } from '../share-button/share-button.component';
@@ -7,7 +7,7 @@ import { FacebookPlatform, SharingPlatform, TwitterPlatform, WhatsappPlatform } 
 
 @Component({
 	selector: 'cuentoneta-share-content',
-	imports: [CommonModule, NgxSkeletonLoaderModule, ShareButtonComponent],
+	imports: [NgxSkeletonLoaderModule, ShareButtonComponent],
 	providers: [ThemeService],
 	template: `
 		<section class="flex flex-1 flex-row gap-6">

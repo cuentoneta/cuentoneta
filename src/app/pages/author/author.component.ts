@@ -1,6 +1,6 @@
 // Core
 import { Component, computed, inject } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { Router, UrlTree } from '@angular/router';
 import { map, Observable, tap } from 'rxjs';
 
@@ -32,7 +32,6 @@ import { rxResource } from '@angular/core/rxjs-interop';
 @Component({
 	selector: 'cuentoneta-author',
 	imports: [
-		CommonModule,
 		StoryCardComponent,
 		NgOptimizedImage,
 		PortableTextParserComponent,
@@ -95,17 +94,17 @@ export default class AuthorComponent {
 
 	// Recursos
 	readonly authorResource = rxResource({
-		request: () => this.params(),
-		loader: (params) =>
-			this.author$(params.request['slug']).pipe(
+		params: () => this.params(),
+		stream: ({ params }) =>
+			this.author$(params['slug']).pipe(
 				tap((author) => {
 					this.updateMetaTags(author);
 				}),
 			),
 	});
 	readonly storiesResource = rxResource({
-		request: () => this.params(),
-		loader: (params) => this.stories$(params.request['slug']),
+		params: () => this.params(),
+		stream: ({ params }) => this.stories$(params['slug']),
 	});
 
 	// Propiedades

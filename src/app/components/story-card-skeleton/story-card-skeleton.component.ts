@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-story-card-skeleton',
-	imports: [CommonModule, NgxSkeletonLoaderModule, StoryEditionDateLabelComponent],
+	imports: [NgxSkeletonLoaderModule, StoryEditionDateLabelComponent],
 	templateUrl: './story-card-skeleton.component.html',
 	styles: `
 		:host {

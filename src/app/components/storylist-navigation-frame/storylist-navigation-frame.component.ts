@@ -1,5 +1,5 @@
 import { Component, computed, effect, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { UrlTree } from '@angular/router';
 
 // 3rd party modules
@@ -28,7 +28,7 @@ export type NavigationBarConfig = {
 
 @Component({
 	selector: 'cuentoneta-storylist-navigation-frame',
-	imports: [CommonModule, NavigablePublicationTeaserComponent, NgxSkeletonLoaderModule],
+	imports: [NavigablePublicationTeaserComponent, NgxSkeletonLoaderModule],
 	template: ` @if (storylist(); as storylist) {
 			@for (publication of displayedPublications; track $index) {
 				<cuentoneta-navigable-publication-teaser
@@ -59,8 +59,8 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 
 	// Recursos
 	private readonly storylistResource = rxResource({
-		request: () => this.navigationSlug(),
-		loader: (params) => this.storylistService.getStorylistNavigationTeasers(params.request),
+		params: () => this.navigationSlug(),
+		stream: ({ params }) => this.storylistService.getStorylistNavigationTeasers(params),
 	});
 
 	// Propiedades

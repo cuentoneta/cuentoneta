@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, OnDestroy, signal } from '@angular/core';
+import { Directive, ElementRef, HostListener, inject, OnDestroy, signal } from '@angular/core';
 import { computePosition, flip, shift, arrow, offset } from '@floating-ui/dom';
 
 type TooltipPosition = 'top' | 'right' | 'bottom' | 'left';
@@ -13,8 +13,7 @@ export class TooltipDirective implements OnDestroy {
 	readonly offset = signal<number>(6); // Offset del tooltip respecto al elemento
 
 	private myPopup: HTMLElement | null = null;
-
-	constructor(private el: ElementRef) {}
+	private readonly el = inject(ElementRef);
 
 	ngOnDestroy(): void {
 		if (this.myPopup) {

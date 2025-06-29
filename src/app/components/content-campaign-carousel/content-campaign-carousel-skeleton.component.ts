@@ -1,6 +1,6 @@
 // Core
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 // 3rd party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -10,7 +10,7 @@ import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-content-campaign-carousel-skeleton',
-	imports: [CommonModule, NgxSkeletonLoaderModule],
+	imports: [NgxSkeletonLoaderModule],
 	template: ` <div class="mx-auto max-w-[960px]">
 		<div class="slider">
 			<header class="mb-3">

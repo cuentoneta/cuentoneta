@@ -37,9 +37,9 @@ export default class StorylistComponent {
 	// Recursos
 	skeletonColor = inject(ThemeService).pickColor('zinc', 300);
 	readonly storylistResource = rxResource({
-		request: () => this.params(),
-		loader: (params) =>
-			this.storylistService.get(params.request['slug'], 60, 'asc').pipe(
+		params: () => this.params(),
+		stream: ({ params: request }) =>
+			this.storylistService.get(request['slug'], 60, 'asc').pipe(
 				tap((storylist) => {
 					this.updateMetaTags(storylist);
 				}),

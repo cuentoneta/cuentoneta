@@ -1,10 +1,9 @@
 module.exports = {
 	stories: ['../src/app/**/*.stories.mdx', '../src/app/**/*.stories.@(js|jsx|ts|tsx)'],
+	styles: [],
 	addons: [
-		'@storybook/addon-interactions',
-		'@storybook/addon-essentials',
 		{
-			name: '@storybook/addon-styling',
+			name: '@storybook/addon-styling-webpack',
 			options: {
 				postCss: true,
 			},

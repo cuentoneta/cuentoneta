@@ -1,11 +1,11 @@
 import { Component, inject, input, OnInit } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { SharingPlatform } from '@models/sharing-platform';
 import { TooltipDirective } from '../../directives/tooltip.directive';
 
 @Component({
 	selector: 'cuentoneta-share-button',
-	imports: [CommonModule, NgOptimizedImage],
+	imports: [NgOptimizedImage],
 	hostDirectives: [TooltipDirective],
 	template: ` @if (platform(); as platform) {
 		<button

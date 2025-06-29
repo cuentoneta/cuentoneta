@@ -1,6 +1,5 @@
 // Core
 import { Component, computed, effect, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 // Routing
 import { AppRoutes } from '../../app.routes';
@@ -15,7 +14,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'cuentoneta-author-navigation-frame',
-	imports: [CommonModule, NavigableStoryTeaserComponent],
+	imports: [NavigableStoryTeaserComponent],
 	template: `@if (stories(); as stories) {
 		@for (story of stories; track $index) {
 			<cuentoneta-navigable-story-teaser
@@ -39,8 +38,8 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 
 	// Recursos
 	private readonly storiesResource = rxResource({
-		request: () => this.navigationSlug(),
-		loader: (params) => this.storyService.getNavigationTeasersByAuthorSlug(params.request),
+		params: () => this.navigationSlug(),
+		stream: ({ params: slug }) => this.storyService.getNavigationTeasersByAuthorSlug(slug),
 	});
 
 	// Propiedades

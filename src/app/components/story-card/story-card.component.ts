@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { StoryTeaser } from '@models/story.model';
 import { StoryCardContentComponent } from '../story-card-content/story-card-content.component';
 import { Router, UrlTree } from '@angular/router';
@@ -29,12 +29,11 @@ import { MediaResourceTagsComponent } from '../media-resource-tags/media-resourc
 		</cuentoneta-card>
 	`,
 	imports: [
-		CardComponent,
-		CommonModule,
-		MediaResourceTagsComponent,
-		StoryCardContentComponent,
-		StoryEditionDateLabelComponent,
-	],
+    CardComponent,
+    MediaResourceTagsComponent,
+    StoryCardContentComponent,
+    StoryEditionDateLabelComponent
+],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StoryCardComponent {
