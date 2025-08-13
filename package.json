@@ -62,7 +62,7 @@
 		"tslib": "^2.6.2"
 	},
 	"devDependencies": {
-		"@angular/cli": "20.0.4",
+		"@angular/cli": "~20.1.0",
 		"@angular/compiler-cli": "20.1.6",
 		"@angular/language-service": "20.1.6",
 		"@eslint/eslintrc": "^3.3.1",

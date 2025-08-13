@@ -13,7 +13,7 @@
 			"requires": { "jest": ">=30.0.0" },
 			"description": "Replace removed matcher aliases in Jest v30 with their corresponding matcher",
 			"implementation": "./src/migrations/update-21-3-0/replace-removed-matcher-aliases",
-			"package": "@nx/jaest",
+			"package": "@nx/jest",
 			"name": "replace-removed-matcher-aliases"
 		},
 		{
