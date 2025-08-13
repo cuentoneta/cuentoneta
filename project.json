@@ -69,7 +69,7 @@
 			"executor": "@nx/jest:jest",
 			"outputs": [],
 			"options": {
-				"jestConfig": "jest.config.ts",
+				"jestConfig": "jest.config.mts",
 				"aot": true
 			}
 		},
