@@ -4,6 +4,5 @@
 	"compilerOptions": {
 		"types": ["jest", "node"]
 	},
-	"exclude": [
-      "jest.config.mts", "src/**/*.test.ts", "src/**/*.spec.ts", "**/*.stories.ts", "**/*.stories.js"]
+	"exclude": ["jest.config.ts", "src/**/*.test.ts", "src/**/*.spec.ts", "**/*.stories.ts", "**/*.stories.js"]
 }
