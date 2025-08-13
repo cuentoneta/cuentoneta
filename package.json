@@ -47,6 +47,8 @@
 		"@nx/angular": "21.3.11",
 		"@sanity/client": "^7.6.0",
 		"@sanity/image-url": "^1.1.0",
+		"@swc-node/register": "^1.10.10",
+		"@swc/core": "^1.13.3",
 		"@types/express": "^4.17.17",
 		"@vercel/speed-insights": "^1.2.0",
 		"esbuild": "0.25.5",
@@ -105,6 +107,7 @@
 		"jest": "30.0.5",
 		"jest-environment-jsdom": "30.0.5",
 		"jest-preset-angular": "15.0.0",
+		"jest-util": "~30.0.0",
 		"nx": "21.3.11",
 		"nx-cloud": "19.1.0",
 		"nx-stylelint": "^18.0.0",
@@ -127,7 +130,6 @@
 		"ts-node": "10.9.2",
 		"typescript": "5.8.3",
 		"typescript-eslint": "^8.35.0",
-		"webpack": "5.99.9",
-		"jest-util": "~30.0.0"
+		"webpack": "5.99.9"
 	}
 }
