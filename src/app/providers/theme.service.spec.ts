@@ -30,7 +30,7 @@ describe('ThemeService', () => {
 		});
 
 		it('should throw an error if the scale does not exist', () => {
-			expect(() => service.pickColor('blue', 999)).toThrowError('Scale 999 not found in color blue!');
+			expect(() => service.pickColor('blue', 999)).toThrow('Scale 999 not found in color blue!');
 		});
 	});
 
