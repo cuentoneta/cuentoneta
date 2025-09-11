@@ -24,12 +24,12 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 						<h2 class="h3 hover:text-interactive-500">{{ frameConfig().headerTitle }}</h2>
 					</a>
 				} @else {
-					<ng-container *ngTemplateOutlet="titleSkeleton"></ng-container>
+					<ng-container *ngTemplateOutlet="titleSkeleton" />
 				}
 			</header>
 
 			@if (frame(); as frame) {
-				<ng-container *ngComponentOutlet="frame.component; inputs: frame.inputs"></ng-container>
+				<ng-container *ngComponentOutlet="frame.component; inputs: frame.inputs" />
 			}
 
 			<footer class="bg-gray-50 px-7 py-5">
@@ -38,7 +38,7 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 						<h3 class="h3 inter-body-xl-bold hover:text-interactive-500">Ver más...</h3>
 					</a>
 				} @else {
-					<ng-container *ngTemplateOutlet="titleSkeleton"></ng-container>
+					<ng-container *ngTemplateOutlet="titleSkeleton" />
 				}
 			</footer>
 		</section>
@@ -51,20 +51,20 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 				}"
 				count="2"
 				appearance="line"
-			></ngx-skeleton-loader>
+			/>
 		</ng-template>
 	`,
 	imports: [CommonModule, NgxSkeletonLoaderModule, RouterLink],
 })
 export class StoryNavigationBarComponent {
-	selectedStorySlug = input<string>();
-	navigation = input.required<'author' | 'storylist'>();
-	navigationSlug = input.required<string>();
+	readonly selectedStorySlug = input<string>();
+	readonly navigation = input.required<'author' | 'storylist'>();
+	readonly navigationSlug = input.required<string>();
 
 	// Inyección de providers
 	private navigationFrameService = inject(NavigationFrameService);
 
-	frame = computed(() => {
+	readonly frame = computed(() => {
 		const storySlug = this.selectedStorySlug() ?? '';
 		const navigation = this.navigation();
 

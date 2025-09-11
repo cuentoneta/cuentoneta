@@ -1,11 +1,11 @@
 import { Component, inject, input, OnInit } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { SharingPlatform } from '@models/sharing-platform';
 import { TooltipDirective } from '../../directives/tooltip.directive';
 
 @Component({
 	selector: 'cuentoneta-share-button',
-	imports: [CommonModule, NgOptimizedImage],
+	imports: [NgOptimizedImage],
 	hostDirectives: [TooltipDirective],
 	template: ` @if (platform(); as platform) {
 		<button
@@ -23,10 +23,10 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 	}`,
 })
 export class ShareButtonComponent implements OnInit {
-	platform = input.required<SharingPlatform>();
-	params = input<{ [key: string]: string }>({});
-	message = input<string>('');
-	route = input<string>('');
+	readonly platform = input.required<SharingPlatform>();
+	readonly params = input<{ [key: string]: string }>({});
+	readonly message = input<string>('');
+	readonly route = input<string>('');
 
 	onShareToPlatformClicked(event: MouseEvent | KeyboardEvent, platform: SharingPlatform) {
 		const urlParams = Object.keys(this.params())

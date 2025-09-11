@@ -1,6 +1,6 @@
 // Core
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 // 3rd party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -10,7 +10,7 @@ import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-content-campaign-carousel-skeleton',
-	imports: [CommonModule, NgxSkeletonLoaderModule],
+	imports: [NgxSkeletonLoaderModule],
 	template: ` <div class="mx-auto max-w-[960px]">
 		<div class="slider">
 			<header class="mb-3">
@@ -25,7 +25,7 @@ import { ThemeService } from '../../providers/theme.service';
 					count="1"
 					appearance="line"
 					class="grid"
-				></ngx-skeleton-loader>
+				/>
 
 				<ngx-skeleton-loader
 					[theme]="{
@@ -38,7 +38,7 @@ import { ThemeService } from '../../providers/theme.service';
 					count="1"
 					appearance="line"
 					class="grid"
-				></ngx-skeleton-loader>
+				/>
 			</header>
 			<ngx-skeleton-loader
 				[theme]="{
@@ -52,7 +52,7 @@ import { ThemeService } from '../../providers/theme.service';
 				count="1"
 				appearance="line"
 				class="grid aspect-[540/220] w-full object-cover md:aspect-[960/280]"
-			></ngx-skeleton-loader>
+			/>
 		</div>
 		<div class="footer mt-[10px] h-[27px]">
 			<ngx-skeleton-loader
@@ -68,7 +68,7 @@ import { ThemeService } from '../../providers/theme.service';
 				count="1"
 				appearance="line"
 				class="grid"
-			></ngx-skeleton-loader>
+			/>
 		</div>
 	</div>`,
 	styles: ``,

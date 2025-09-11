@@ -73,6 +73,8 @@ export const storyBySlugQuery = defineQuery(`
         image,
         nationality->,
         biography,
+        bornOn,
+        diedOn,
         'resources': coalesce(resources[]{ 
             title, 
             url, 
@@ -108,6 +110,8 @@ export const storiesBySlugsQuery = defineQuery(`
         image,
         nationality->,
         'biography': [],
+        bornOn,
+        diedOn,
         'resources': []
     }
 }`);

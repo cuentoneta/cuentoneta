@@ -42,8 +42,8 @@ import { ThemeService } from '../../providers/theme.service';
 	`,
 })
 export class StorylistCardDeckComponent {
-	storylist = input<Storylist>();
-	isLoading = input<boolean>(false); // Utilizado para mostrar/ocultar skeletons
+	readonly storylist = input<Storylist>();
+	readonly isLoading = input<boolean>(false); // Utilizado para mostrar/ocultar skeletons
 
 	public router = inject(Router);
 	readonly appRoutes = AppRoutes;

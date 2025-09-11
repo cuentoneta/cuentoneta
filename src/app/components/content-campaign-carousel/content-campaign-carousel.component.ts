@@ -25,14 +25,10 @@ import { LayoutService } from '../../providers/layout.service';
 							<a [routerLink]="slide.url" [ngClass]="viewportSpecificClasses[viewport()]">
 								<header class="mb-3">
 									<h2 class="text-lg font-bold tracking-normal">
-										<cuentoneta-portable-text-parser
-											[paragraphs]="slide.contents[viewport()].title"
-										></cuentoneta-portable-text-parser>
+										<cuentoneta-portable-text-parser [paragraphs]="slide.contents[viewport()].title" />
 									</h2>
 									<h3 class="h4 subtitle text-gray-600">
-										<cuentoneta-portable-text-parser
-											[paragraphs]="slide.contents[viewport()].subtitle"
-										></cuentoneta-portable-text-parser>
+										<cuentoneta-portable-text-parser [paragraphs]="slide.contents[viewport()].subtitle" />
 									</h3>
 								</header>
 								<img
@@ -59,11 +55,11 @@ import { LayoutService } from '../../providers/layout.service';
 	`,
 })
 export class ContentCampaignCarouselComponent {
-	slides = input<ContentCampaign[]>([]);
+	readonly slides = input<ContentCampaign[]>([]);
 
 	// Viewport para el que debe renderizarse el contenido.
 	layoutService = inject(LayoutService);
-	viewport = computed(() => {
+	readonly viewport = computed(() => {
 		const isTabletOrDesktop = this.layoutService.biggerThan('xs');
 		return isTabletOrDesktop ? 'md' : 'xs';
 	});

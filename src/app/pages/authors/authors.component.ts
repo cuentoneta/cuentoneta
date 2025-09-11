@@ -1,12 +1,12 @@
 import { Component, computed, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { AuthorService } from '../../providers/author.service';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 @Component({
-	imports: [CommonModule, RouterLink],
+	imports: [RouterLink],
 	hostDirectives: [MetaTagsDirective],
 	template: `<main class="content horizontal-layout-spacing vertical-layout-spacing">
 		<ul class="list-inside list-disc">
@@ -26,10 +26,10 @@ export default class AuthorsComponent {
 	private metaTagsDirective = inject(MetaTagsDirective);
 
 	private authorsResource = rxResource({
-		loader: () => this.authorService.getAll(),
+		stream: () => this.authorService.getAll(),
 	});
 
-	authors = computed(() => this.authorsResource.value() ?? []);
+	readonly authors = computed(() => this.authorsResource.value() ?? []);
 
 	constructor() {
 		this.metaTagsDirective.setTitle('Índice de Autores');

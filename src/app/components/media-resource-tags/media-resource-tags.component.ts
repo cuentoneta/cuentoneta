@@ -1,18 +1,18 @@
 import { Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Media, MediaTypeKey } from '@models/media.model';
 import { MediaResourcePlatform, MediaResourceTagComponent } from '../media-resource-tag/media-resource-tag.component';
 
 @Component({
 	selector: 'cuentoneta-media-resource-tags',
-	imports: [CommonModule, MediaResourceTagComponent],
+	imports: [MediaResourceTagComponent],
 	template: ` @for (mediaResource of resources(); track $index) {
 		<cuentoneta-media-resource-tag [platform]="platforms[mediaResource.type]" />
 	}`,
 })
 export class MediaResourceTagsComponent {
-	resources = input<Media[]>([]);
-	size = input<'md' | 'lg'>('md');
+	readonly resources = input<Media[]>([]);
+	readonly size = input<'md' | 'lg'>('md');
 
 	platforms: { [key in MediaTypeKey]: MediaResourcePlatform } = {
 		audioRecording: {

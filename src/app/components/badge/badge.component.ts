@@ -1,12 +1,12 @@
 import { Component, computed, inject, input, OnInit } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { Tag } from '@models/tag.model';
 import { TooltipDirective } from '../../directives/tooltip.directive';
 
 @Component({
 	selector: 'cuentoneta-badge',
 	hostDirectives: [TooltipDirective],
-	imports: [CommonModule, NgOptimizedImage],
+	imports: [NgOptimizedImage],
 	template: `
 		<span class="inter-body-xs-bold flex items-center gap-1">
 			@if (showIcon() && tag().icon; as icon) {
@@ -22,9 +22,9 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 	`,
 })
 export class BadgeComponent implements OnInit {
-	tag = input.required<Tag>();
-	showIcon = input(false);
-	iconUrl = computed(() => {
+	readonly tag = input.required<Tag>();
+	readonly showIcon = input(false);
+	readonly iconUrl = computed(() => {
 		if (!this.tag().icon?.name) {
 			return '';
 		}

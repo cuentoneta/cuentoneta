@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { StoryCardTeaserComponent } from '../story-card-teaser/story-card-teaser.component';
 import { StoryCardTeaserSkeletonComponent } from '../story-card-teaser/story-card-teaser-skeleton.component';
 import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 
 @Component({
 	selector: 'cuentoneta-most-read-stories-card-deck',
-	imports: [CommonModule, StoryCardTeaserComponent, StoryCardTeaserSkeletonComponent],
+	imports: [StoryCardTeaserComponent, StoryCardTeaserSkeletonComponent],
 	template: ` <div class="flex content-between items-center gap-4 text-gray-500">
 			<hr class="w-6" />
 			<h2 class="h3 text-center font-source-serif italic">Historias más leídas</h2>
@@ -41,5 +41,5 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MostReadStoriesCardDeckComponent {
-	stories = input<StoryNavigationTeaserWithAuthor[]>([]);
+	readonly stories = input<StoryNavigationTeaserWithAuthor[]>([]);
 }

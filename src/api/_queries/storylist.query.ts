@@ -58,6 +58,8 @@ export const storylistNavigationTeasersQuery = defineQuery(`
                 image,
                 nationality->,
                 'biography': [],
+                bornOn,
+                diedOn,
                 'resources': [],
             }
         }
@@ -107,6 +109,8 @@ export const storylistQuery = defineQuery(`
                 image,
                 nationality->,
                 'biography': [],
+                bornOn,
+                diedOn,
                 'resources': [],
             }
         }

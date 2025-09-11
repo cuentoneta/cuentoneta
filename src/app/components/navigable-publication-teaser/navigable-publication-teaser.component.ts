@@ -45,15 +45,15 @@ import { MapPublicationEditionLabelPipe } from '../../pipes/map-publication-edit
 						<cuentoneta-media-resource-tags [resources]="publication().story.media" />
 					</div>
 				} @else {
-					<ngx-skeleton-loader count="2" appearance="line" animation="false"></ngx-skeleton-loader>
+					<ngx-skeleton-loader count="2" appearance="line" animation="false" />
 				}
 			</article>
 		</a>
 	`,
 })
 export class NavigablePublicationTeaserComponent {
-	publication = input.required<PublicationNavigationTeaser>();
-	selected = input<boolean>();
-	storylist = input.required<StorylistPublicationsNavigationTeasers>();
+	readonly publication = input.required<PublicationNavigationTeaser>();
+	readonly selected = input<boolean>();
+	readonly storylist = input.required<StorylistPublicationsNavigationTeasers>();
 	protected readonly appRoutes = AppRoutes;
 }

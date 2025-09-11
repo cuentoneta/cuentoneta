@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { StoryTeaser } from '@models/story.model';
 import { StoryCardContentComponent } from '../story-card-content/story-card-content.component';
 import { Router, UrlTree } from '@angular/router';
@@ -29,19 +29,18 @@ import { MediaResourceTagsComponent } from '../media-resource-tags/media-resourc
 		</cuentoneta-card>
 	`,
 	imports: [
-		CardComponent,
-		CommonModule,
-		MediaResourceTagsComponent,
-		StoryCardContentComponent,
-		StoryEditionDateLabelComponent,
-	],
+    CardComponent,
+    MediaResourceTagsComponent,
+    StoryCardContentComponent,
+    StoryEditionDateLabelComponent
+],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StoryCardComponent {
-	story = input.required<StoryTeaser>();
-	headerText = computed(() => this.story().originalPublication ?? '');
-	navigationRoute = input.required<UrlTree>();
-	computedRoute = computed(() => {
+	readonly story = input.required<StoryTeaser>();
+	readonly headerText = computed(() => this.story().originalPublication ?? '');
+	readonly navigationRoute = input.required<UrlTree>();
+	readonly computedRoute = computed(() => {
 		return this.navigationRoute()
 			? this.navigationRoute()
 			: this.router.createUrlTree(['/', this.appRoutes.Story, this.story().slug]);

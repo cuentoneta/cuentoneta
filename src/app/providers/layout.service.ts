@@ -27,7 +27,7 @@ export class LayoutService {
 	private window = inject(WINDOW);
 	private platformId = inject(PLATFORM_ID);
 
-	private viewport: WritableSignal<Viewport> = signal('xl');
+	private readonly viewport: WritableSignal<Viewport> = signal('xl');
 
 	private _userHasScrolled$ = fromEvent(this.window, 'scroll').pipe(
 		takeUntilDestroyed(),

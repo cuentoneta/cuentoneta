@@ -1,6 +1,6 @@
 // Core
 import { Component, computed, inject } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { Router, UrlTree } from '@angular/router';
 import { map, Observable, tap } from 'rxjs';
 
@@ -32,7 +32,6 @@ import { rxResource } from '@angular/core/rxjs-interop';
 @Component({
 	selector: 'cuentoneta-author',
 	imports: [
-		CommonModule,
 		StoryCardComponent,
 		NgOptimizedImage,
 		PortableTextParserComponent,
@@ -60,18 +59,18 @@ import { rxResource } from '@angular/core/rxjs-interop';
 						@if (author.resources && author.resources.length > 0) {
 							<div class="flex justify-start gap-4 sm:justify-end">
 								@for (resource of author.resources; track $index) {
-									<cuentoneta-resource [resource]="resource"></cuentoneta-resource>
+									<cuentoneta-resource [resource]="resource" />
 								}
 							</div>
 						}
 						<cuentoneta-portable-text-parser
 							[paragraphs]="author.biography!"
 							[classes]="'source-serif-pro-body-xl mb-8 leading-8'"
-						></cuentoneta-portable-text-parser>
+						/>
 					</section>
 					<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
 						@for (story of stories(); track $index) {
-							<cuentoneta-story-card [story]="story" [navigationRoute]="story.navigationRoute"></cuentoneta-story-card>
+							<cuentoneta-story-card [story]="story" [navigationRoute]="story.navigationRoute" />
 						}
 					</section>
 				} @else {
@@ -95,26 +94,26 @@ export default class AuthorComponent {
 
 	// Recursos
 	readonly authorResource = rxResource({
-		request: () => this.params(),
-		loader: (params) =>
-			this.author$(params.request['slug']).pipe(
+		params: () => this.params(),
+		stream: ({ params }) =>
+			this.author$(params['slug']).pipe(
 				tap((author) => {
 					this.updateMetaTags(author);
 				}),
 			),
 	});
 	readonly storiesResource = rxResource({
-		request: () => this.params(),
-		loader: (params) => this.stories$(params.request['slug']),
+		params: () => this.params(),
+		stream: ({ params }) => this.stories$(params['slug']),
 	});
 
 	// Propiedades
-	author = computed(() => this.authorResource.value());
-	stories = computed(() => this.storiesResource.value());
-	authorImageUrl = computed(() =>
+	readonly author = computed(() => this.authorResource.value());
+	readonly stories = computed(() => this.storiesResource.value());
+	readonly authorImageUrl = computed(() =>
 		this.author()?.imageUrl ? `${this.author()?.imageUrl}?auto=format` : 'assets/img/default-avatar.jpg',
 	);
-	authorFlagUrl = computed(() => `${this.author()?.nationality.flag}?auto=format`);
+	readonly authorFlagUrl = computed(() => `${this.author()?.nationality.flag}?auto=format`);
 
 	private updateMetaTags(author: Author) {
 		this.metaTagsDirective.setTitle(`${author.name}`);

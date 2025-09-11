@@ -1,5 +1,5 @@
 import { afterNextRender, Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { RouterModule } from '@angular/router';
@@ -17,14 +17,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 		<router-outlet />
 		<cuentoneta-footer />
 	`,
-	imports: [CommonModule, FooterComponent, HeaderComponent, RouterModule],
+	imports: [FooterComponent, HeaderComponent, RouterModule],
 	providers: [AnalyticsService],
 })
 export class AppComponent implements OnInit {
 	private readonly analytics = inject(AnalyticsService);
 	private readonly isHeaderVisible$ = inject(LayoutService).isHeaderVisible$.pipe(takeUntilDestroyed());
 
-	isHeaderVisible = signal(true);
+	readonly isHeaderVisible = signal(true);
 
 	constructor() {
 		afterNextRender(() => {

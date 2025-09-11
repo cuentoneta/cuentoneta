@@ -57,19 +57,19 @@ import { AppRoutes } from '../../app.routes';
 	</a>`,
 })
 export class AuthorTeaserComponent {
-	author = input.required<Omit<Author, 'biography'>>();
-	variant = input<'sm' | 'md'>('sm');
+	readonly author = input.required<Omit<Author, 'biography'>>();
+	readonly variant = input<'sm' | 'md'>('sm');
 
-	imageSize = computed(() => (this.variant() === 'sm' ? 40 : 64));
+	readonly imageSize = computed(() => (this.variant() === 'sm' ? 40 : 64));
 
 	// Para un mejor scaling, a cargo del browser, se obtiene una imagen del 1.5x el tamaño final renderizado
-	authorImageUrl = computed(() =>
+	readonly authorImageUrl = computed(() =>
 		this.author().imageUrl
 			? `${this.author().imageUrl}?h=${this.imageSize() * 1.5}&w=${this.imageSize() * 1.5}&auto=format`
 			: 'assets/img/default-avatar.jpg',
 	);
 
-	authorFlagUrl = computed(
+	readonly authorFlagUrl = computed(
 		() => `${this.author().nationality.flag}?h=${this.flagImageSize.height}&w=${this.flagImageSize.width}&auto=format`,
 	);
 

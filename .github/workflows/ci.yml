@@ -1,0 +1,144 @@
+name: CI
+
+on:
+  pull_request:
+
+jobs:
+  setup:
+    name: 'Setup and dependencies'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
+      - name: Select pnpm as package manager
+        uses: pnpm/action-setup@v4.1.0
+        with:
+          version: 10.12.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22.12
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --force --frozen-lockfile --ignore-scripts
+
+      - name: Generate testing environment file
+        run: pnpm run config
+
+      - name: Rebuild and prepare
+        run: pnpm rebuild && pnpm run prepare --if-present
+
+      - name: Cache repository
+        uses: actions/cache@v4.2.3
+        with:
+          path: .
+          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
+
+  test:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restore repository
+        uses: actions/cache@v4.2.3
+        with:
+          path: .
+          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
+
+      - name: Select pnpm as package manager
+        uses: pnpm/action-setup@v4.1.0
+        with:
+          version: 10.12.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22.12
+          cache: 'pnpm'
+
+      - name: Run Tests
+        run: npx nx test --skip-nx-cache
+
+  lint:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restore repository
+        uses: actions/cache@v4.2.3
+        with:
+          path: .
+          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
+
+      - name: Select pnpm as package manager
+        uses: pnpm/action-setup@v4.1.0
+        with:
+          version: 10.12.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22.12
+          cache: 'pnpm'
+
+      - name: Run Linter
+        run: npx nx lint --skip-nx-cache
+
+  stylelint:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restore repository
+        uses: actions/cache@v4.2.3
+        with:
+          path: .
+          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
+
+      - name: Select pnpm as package manager
+        uses: pnpm/action-setup@v4.1.0
+        with:
+          version: 10.12.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22.12
+          cache: 'pnpm'
+
+      - name: Run stylelint
+        run: npx nx stylelint cuentoneta --skip-nx-cache
+
+  e2e:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restore repository
+        uses: actions/cache@v4.2.3
+        with:
+          path: .
+          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
+
+      - name: Select pnpm as package manager
+        uses: pnpm/action-setup@v4.1.0
+        with:
+          version: 10.12.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22.12
+          cache: 'pnpm'
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Tests
+        run: npx nx run cuentoneta:e2e-ci --skip-nx-cache
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: dist/.playwright/playwright-report/
+          retention-days: 7

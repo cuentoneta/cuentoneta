@@ -192,6 +192,12 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 ### Hito: Lanzamiento al público de la versión [2.6.2](https://github.com/cuentoneta/cuentoneta/releases/tag/2.6.2) de La Cuentoneta (lanzada el 2025/05/03)
 
+- Agregado de nuevas reglas de eslint y actualización a Angular 20.2
+- Redefinición de flujo de CI/CD en Github actions para correr tareas de forma paralela
+- Agregado de campo `birthDate` a autores, para señalar opcionalmente su fecha de nacimiento
+
+### Hito: Lanzamiento al público de la versión [2.6.3](https://github.com/cuentoneta/cuentoneta/releases/tag/2.6.3) de La Cuentoneta (lanzada el 2025/09/11)
+
 ---
 
 ## Futuros

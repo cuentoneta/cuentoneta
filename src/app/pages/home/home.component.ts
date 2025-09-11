@@ -1,7 +1,6 @@
 // Core
 import { Component, computed, inject } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { CommonModule } from '@angular/common';
 
 // Services
 import { ContentService } from '../../providers/content.service';
@@ -20,7 +19,6 @@ import { MostReadStoriesCardDeckComponent } from '../../components/most-read-sto
 	selector: 'cuentoneta-home',
 	templateUrl: './home.component.html',
 	imports: [
-		CommonModule,
 		ContentCampaignCarouselComponent,
 		StorylistCardComponent,
 		ContentCampaignCarouselSkeletonComponent,
@@ -38,14 +36,14 @@ export default class HomeComponent {
 
 	// Recursos
 	readonly landingPageResource = rxResource({
-		loader: () => this.contentService.getLandingPageContent(),
+		stream: () => this.contentService.getLandingPageContent(),
 	});
 
 	// Propiedades
-	landingPageContent = computed(() => this.landingPageResource.value());
-	cards = computed(() => this.landingPageContent()?.cards || []);
-	campaigns = computed(() => this.landingPageContent()?.campaigns || []);
-	mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
+	readonly landingPageContent = computed(() => this.landingPageResource.value());
+	readonly cards = computed(() => this.landingPageContent()?.cards || []);
+	readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
+	readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
 
 	constructor() {
 		this.metaTagsDirective.setDefault();

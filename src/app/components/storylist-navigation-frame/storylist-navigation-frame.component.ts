@@ -1,5 +1,5 @@
 import { Component, computed, effect, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { UrlTree } from '@angular/router';
 
 // 3rd party modules
@@ -28,7 +28,7 @@ export type NavigationBarConfig = {
 
 @Component({
 	selector: 'cuentoneta-storylist-navigation-frame',
-	imports: [CommonModule, NavigablePublicationTeaserComponent, NgxSkeletonLoaderModule],
+	imports: [NavigablePublicationTeaserComponent, NgxSkeletonLoaderModule],
 	template: ` @if (storylist(); as storylist) {
 			@for (publication of displayedPublications; track $index) {
 				<cuentoneta-navigable-publication-teaser
@@ -40,7 +40,7 @@ export type NavigationBarConfig = {
 		} @else {
 			@for (skeleton of dummyList; track $index) {
 				<article [attr.aria-busy]="true" class="bg-gray-50 px-7 py-5">
-					<ngx-skeleton-loader count="2" appearance="line"></ngx-skeleton-loader>
+					<ngx-skeleton-loader count="2" appearance="line" />
 				</article>
 			}
 		}`,
@@ -59,14 +59,14 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 
 	// Recursos
 	private readonly storylistResource = rxResource({
-		request: () => this.navigationSlug(),
-		loader: (params) => this.storylistService.getStorylistNavigationTeasers(params.request),
+		params: () => this.navigationSlug(),
+		stream: ({ params }) => this.storylistService.getStorylistNavigationTeasers(params),
 	});
 
 	// Propiedades
 	displayedPublications: PublicationNavigationTeaser[] = [];
 	dummyList: null[] = Array(9);
-	storylist = computed(() => this.storylistResource.value());
+	readonly storylist = computed(() => this.storylistResource.value());
 
 	constructor() {
 		super();

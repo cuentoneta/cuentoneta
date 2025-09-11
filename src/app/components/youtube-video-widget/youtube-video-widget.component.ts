@@ -1,19 +1,19 @@
 import { Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { YouTubeVideo } from '@models/media.model';
 import { YouTubePlayer } from '@angular/youtube-player';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 
 @Component({
 	selector: 'cuentoneta-youtube-video-widget',
-	imports: [CommonModule, YouTubePlayer, PortableTextParserComponent],
+	imports: [YouTubePlayer, PortableTextParserComponent],
 	template: `<youtube-player
 			[videoId]="media().data.videoId"
 			data-testid="youtube-player"
 			placeholderImageQuality="low"
 		/>
 		<p class="inter-body-xs-medium text-primary-500">
-			<cuentoneta-portable-text-parser [paragraphs]="media().description"> </cuentoneta-portable-text-parser>
+			<cuentoneta-portable-text-parser [paragraphs]="media().description" />
 		</p>`,
 	styles: `
 		::ng-deep {
@@ -28,5 +28,5 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	`,
 })
 export class YoutubeVideoWidgetComponent {
-	media = input.required<YouTubeVideo>();
+	readonly media = input.required<YouTubeVideo>();
 }

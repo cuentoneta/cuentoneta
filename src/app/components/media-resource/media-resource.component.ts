@@ -14,7 +14,7 @@ type MediaTypeWidgetComponents =
 	selector: 'cuentoneta-media-resource',
 	imports: [CommonModule],
 	template: ` @for (media of mediaResources(); track $index) {
-		<ng-container *ngComponentOutlet="media.component; inputs: media.inputs"></ng-container>
+		<ng-container *ngComponentOutlet="media.component; inputs: media.inputs" />
 	}`,
 	styles: `
 		:host {
@@ -23,7 +23,7 @@ type MediaTypeWidgetComponents =
 	`,
 })
 export class MediaResourceComponent {
-	mediaResources = input.required({
+	readonly mediaResources = input.required({
 		transform: (media: Media[]) => media.map((m) => this.mediaTypesAdapter(m)),
 	});
 

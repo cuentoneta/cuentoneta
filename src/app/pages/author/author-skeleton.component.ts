@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RepeatPipe } from '../../pipes/repeat.pipe';
 import { StoryCardSkeletonComponent } from '../../components/story-card-skeleton/story-card-skeleton.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -7,7 +7,7 @@ import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-author-skeleton',
-	imports: [CommonModule, RepeatPipe, StoryCardSkeletonComponent, NgxSkeletonLoaderModule],
+	imports: [RepeatPipe, StoryCardSkeletonComponent, NgxSkeletonLoaderModule],
 	template: `
 		<section class="flex flex-col items-center justify-center gap-4">
 			<ngx-skeleton-loader
@@ -18,7 +18,7 @@ import { ThemeService } from '../../providers/theme.service';
 				}"
 				count="1"
 				appearance="line"
-			></ngx-skeleton-loader>
+			/>
 			<div class="flex items-center gap-4">
 				<ngx-skeleton-loader
 					[theme]="{
@@ -29,7 +29,7 @@ import { ThemeService } from '../../providers/theme.service';
 					}"
 					count="1"
 					appearance="line"
-				></ngx-skeleton-loader>
+				/>
 				<ngx-skeleton-loader
 					[theme]="{
 						'height.px': 40,
@@ -39,7 +39,7 @@ import { ThemeService } from '../../providers/theme.service';
 					}"
 					count="1"
 					appearance="line"
-				></ngx-skeleton-loader>
+				/>
 			</div>
 			<div class="flex justify-start gap-4 sm:justify-end">
 				@for (item of 3 | repeat; track $index) {
@@ -52,7 +52,7 @@ import { ThemeService } from '../../providers/theme.service';
 						}"
 						count="1"
 						appearance="circle"
-					></ngx-skeleton-loader>
+					/>
 				}
 			</div>
 			<ngx-skeleton-loader
@@ -63,7 +63,7 @@ import { ThemeService } from '../../providers/theme.service';
 				}"
 				class="max-width-[960px] flex flex-col"
 				count="6"
-			></ngx-skeleton-loader>
+			/>
 		</section>
 		<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
 			@for (item of 6 | repeat; track $index) {

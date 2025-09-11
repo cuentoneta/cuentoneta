@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 import { RouterLink } from '@angular/router';
 import { StoryCardTeaserSkeletonComponent } from './story-card-teaser-skeleton.component';
@@ -7,7 +7,7 @@ import { AppRoutes } from '../../app.routes';
 
 @Component({
 	selector: 'cuentoneta-story-card-teaser',
-	imports: [CommonModule, NgOptimizedImage, RouterLink, StoryCardTeaserSkeletonComponent],
+	imports: [NgOptimizedImage, RouterLink, StoryCardTeaserSkeletonComponent],
 	template: `<article class="flex gap-4">
 		@if (story(); as story) {
 			<article class="flex gap-4">
@@ -54,13 +54,13 @@ export class StoryCardTeaserComponent {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs
-	story = input<StoryNavigationTeaserWithAuthor>();
-	order = input<number>();
-	showAuthor = input<boolean>(false);
-	navigationParams = input<{ navigation: string; navigationSlug: string }>();
+	readonly story = input<StoryNavigationTeaserWithAuthor>();
+	readonly order = input<number>();
+	readonly showAuthor = input<boolean>(false);
+	readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
 
 	// Propiedades
-	formattedOrder = computed(() => {
+	readonly formattedOrder = computed(() => {
 		const order = this.order();
 		return order && order >= 10 ? order : `0${order}`;
 	});

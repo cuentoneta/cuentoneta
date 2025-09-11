@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-storylist-card-skeleton',
-	imports: [CommonModule, NgxSkeletonLoaderModule],
+	imports: [NgxSkeletonLoaderModule],
 	template: `
 		<section class="flex flex-col gap-4 px-4 pt-5">
 			<ngx-skeleton-loader
@@ -17,7 +17,7 @@ import { ThemeService } from '../../providers/theme.service';
 				}"
 				count="1"
 				appearance="line"
-			></ngx-skeleton-loader>
+			/>
 			<div>
 				<ngx-skeleton-loader
 					[theme]="{
@@ -27,7 +27,7 @@ import { ThemeService } from '../../providers/theme.service';
 					}"
 					count="2"
 					appearance="line"
-				></ngx-skeleton-loader>
+				/>
 				<ngx-skeleton-loader
 					[theme]="{
 						height: '16px',
@@ -36,7 +36,7 @@ import { ThemeService } from '../../providers/theme.service';
 					}"
 					count="1"
 					appearance="line"
-				></ngx-skeleton-loader>
+				/>
 			</div>
 			<hr class="text-gray-300" />
 		</section>
@@ -50,7 +50,7 @@ import { ThemeService } from '../../providers/theme.service';
 				}"
 				count="1"
 				appearance="line"
-			></ngx-skeleton-loader>
+			/>
 			<ngx-skeleton-loader
 				[theme]="{
 					'background-color': skeletonColor,
@@ -61,7 +61,7 @@ import { ThemeService } from '../../providers/theme.service';
 				}"
 				count="1"
 				appearance="line"
-			></ngx-skeleton-loader>
+			/>
 		</footer>
 	`,
 })

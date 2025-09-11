@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 @Component({
 	selector: 'cuentoneta-about',
-	imports: [CommonModule, NgOptimizedImage],
+	imports: [NgOptimizedImage],
 	hostDirectives: [MetaTagsDirective],
 	templateUrl: './about.component.html',
 })
@@ -111,6 +111,11 @@ export default class AboutComponent {
 			name: 'Abraham Villalba',
 			url: 'https://github.com/abraham-villalba',
 			username: '@abraham-villalba',
+		},
+		{
+			name: 'Moisés Rodríguez',
+			url: 'https://github.com/moisesrj97',
+			username: '@moisesrj97',
 		},
 	];
 

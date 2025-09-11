@@ -1,6 +1,6 @@
 // Core
 import { Component, computed, inject, input, OnInit } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 
 // Models
 import { Resource } from '@models/resource.model';
@@ -14,7 +14,7 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 @Component({
 	selector: 'cuentoneta-resource',
 	hostDirectives: [TooltipDirective],
-	imports: [CommonModule, NgOptimizedImage, NgxSkeletonLoaderModule],
+	imports: [NgOptimizedImage, NgxSkeletonLoaderModule],
 	template: `
 		<a
 			[href]="resource().url"
@@ -31,8 +31,8 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 	`,
 })
 export class ResourceComponent implements OnInit {
-	resource = input.required<Resource>();
-	iconUrl = computed(() => {
+	readonly resource = input.required<Resource>();
+	readonly iconUrl = computed(() => {
 		if (!this.resource().resourceType.icon.name) {
 			return '';
 		}
