@@ -112,6 +112,11 @@ export default class AboutComponent {
 			url: 'https://github.com/abraham-villalba',
 			username: '@abraham-villalba',
 		},
+		{
+			name: 'Moisés Rodríguez',
+			url: 'https://github.com/moisesrj97',
+			username: '@moisesrj97',
+		},
 	];
 
 	private metaTagsDirective = inject(MetaTagsDirective);
