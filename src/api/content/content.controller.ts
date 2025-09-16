@@ -1,14 +1,12 @@
-import express from 'express';
+import { Request, Response, NextFunction, Router } from 'express';
 import { fetchLandingPageContent } from './content.service';
-const router = express.Router();
+const router = Router();
 
 // Routes
-router.get('/landing-page', getLandingPageContent);
-
-export default router;
-
-function getLandingPageContent(_: express.Request, res: express.Response, next: express.NextFunction) {
+router.get('/landing-page', (_: Request, res: Response, next: NextFunction) => {
 	fetchLandingPageContent()
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
-}
+});
+
+export default router;

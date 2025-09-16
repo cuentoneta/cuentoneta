@@ -1,6 +1,6 @@
 import { Meta, moduleMetadata } from '@storybook/angular';
 import { StoryCardTeaserComponent } from './story-card-teaser.component';
-import { storyNavigationTeaserMock } from '../../mocks/story.mock';
+import { storyNavigationTeaserMock, storyTeaserMock } from '../../mocks/story.mock';
 import { authorTeaserMock } from '../../mocks/author.mock';
 import { CommonModule } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -66,11 +66,26 @@ export const Primary = {
 			[showAuthor]="true"
 			/>
 		</div>
+		<div class="flex flex-col gap-2">
+			<span class="inter-body-base">Opción con autor, sin índice y con extracto</span>
+			<cuentoneta-story-card-teaser
+			  [story]="story"
+			  [showAuthor]="true"
+			  [showExcerpt]="true"
+			/>
+		</div>
+		<div class="flex flex-col gap-2">
+			<span class="inter-body-base">Esqueleto</span>
+			<cuentoneta-story-card-teaser
+			[showAuthor]="true"
+			[showExcerpt]="true"
+			/>
+		</div>
 	</div>
 `,
 	}),
 	args: {
-		story: { ...storyNavigationTeaserMock, author: authorTeaserMock },
+		story: { ...storyTeaserMock, author: authorTeaserMock },
 		showAuthor: false,
 		order: 1,
 	},

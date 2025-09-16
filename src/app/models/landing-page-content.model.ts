@@ -7,4 +7,5 @@ export interface LandingPageContent {
 	cards: StorylistTeaser[];
 	campaigns: ContentCampaign[];
 	mostRead: StoryNavigationTeaserWithAuthor[];
+	highlighted: StoryNavigationTeaserWithAuthor[];
 }

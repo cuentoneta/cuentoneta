@@ -4,10 +4,11 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 import { RouterLink } from '@angular/router';
 import { StoryCardTeaserSkeletonComponent } from './story-card-teaser-skeleton.component';
 import { AppRoutes } from '../../app.routes';
+import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 
 @Component({
 	selector: 'cuentoneta-story-card-teaser',
-	imports: [NgOptimizedImage, RouterLink, StoryCardTeaserSkeletonComponent],
+	imports: [NgOptimizedImage, RouterLink, StoryCardTeaserSkeletonComponent, PortableTextParserComponent],
 	template: `<article class="flex gap-4">
 		@if (story(); as story) {
 			<article class="flex gap-4">
@@ -35,6 +36,14 @@ import { AppRoutes } from '../../app.routes';
 						<header class="inter-body-xl-bold">
 							{{ story.title }}
 						</header>
+						@if (showExcerpt() && story.paragraphs.length > 0) {
+							<cuentoneta-portable-text-parser
+								[type]="'span'"
+								[paragraphs]="story.paragraphs"
+								data-testid="portable-text-parser"
+								class="sm:source-serif-pro-body-base hidden sm:relative sm:line-clamp-3 sm:min-h-18 sm:text-ellipsis sm:text-justify"
+							/>
+						}
 						<footer class="inter-body-xs flex gap-1 text-gray-500">
 							<span> {{ story.approximateReadingTime }} minutos de lectura </span>
 							<span>•</span>
@@ -57,6 +66,7 @@ export class StoryCardTeaserComponent {
 	readonly story = input<StoryNavigationTeaserWithAuthor>();
 	readonly order = input<number>();
 	readonly showAuthor = input<boolean>(false);
+	readonly showExcerpt = input<boolean>(false);
 	readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
 
 	// Propiedades

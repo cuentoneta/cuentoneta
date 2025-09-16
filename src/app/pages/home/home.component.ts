@@ -14,6 +14,7 @@ import { StorylistCardComponent } from '../../components/storylist-card-componen
 import { ContentCampaignCarouselSkeletonComponent } from '../../components/content-campaign-carousel/content-campaign-carousel-skeleton.component';
 import { StorylistCardSkeletonComponent } from '../../components/storylist-card-component/storylist-card-skeleton.component';
 import { MostReadStoriesCardDeckComponent } from '../../components/most-read-stories-card-deck/most-read-stories-card-deck.component';
+import { HighlightedStoriesCardDeckComponent } from '../../components/highlighted-stories-card-deck/highlighted-stories-card-deck.component';
 
 @Component({
 	selector: 'cuentoneta-home',
@@ -24,6 +25,7 @@ import { MostReadStoriesCardDeckComponent } from '../../components/most-read-sto
 		ContentCampaignCarouselSkeletonComponent,
 		StorylistCardSkeletonComponent,
 		MostReadStoriesCardDeckComponent,
+		HighlightedStoriesCardDeckComponent,
 	],
 	hostDirectives: [MetaTagsDirective],
 })
@@ -44,6 +46,7 @@ export default class HomeComponent {
 	readonly cards = computed(() => this.landingPageContent()?.cards || []);
 	readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
 	readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
+	readonly highlighted = computed(() => this.landingPageContent()?.highlighted || []);
 
 	constructor() {
 		this.metaTagsDirective.setDefault();
