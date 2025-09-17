@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
+import { StoryNavigationTeaserWithAuthor, StoryTeaserWithAuthor } from '@models/story.model';
 import { RouterLink } from '@angular/router';
 import { StoryCardTeaserSkeletonComponent } from './story-card-teaser-skeleton.component';
 import { AppRoutes } from '../../app.routes';
@@ -31,7 +31,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 					<a
 						[routerLink]="['/', appRoutes.Story, story.slug]"
 						[queryParams]="navigationParams()"
-						class="flex flex-col gap-1"
+						class="grid h-full grid-rows-[auto_auto_auto] gap-1"
 					>
 						<header class="inter-body-xl-bold">
 							{{ story.title }}
@@ -40,8 +40,9 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 							<cuentoneta-portable-text-parser
 								[type]="'span'"
 								[paragraphs]="story.paragraphs"
+								[class]="'sm:line-clamp-7'"
 								data-testid="portable-text-parser"
-								class="sm:source-serif-pro-body-base hidden sm:relative sm:line-clamp-3 sm:min-h-18 sm:text-ellipsis sm:text-justify"
+								class="sm:source-serif-pro-body-base hidden sm:relative sm:min-h-18 sm:text-ellipsis sm:text-justify"
 							/>
 						}
 						<footer class="inter-body-xs flex gap-1 text-gray-500">
@@ -63,11 +64,12 @@ export class StoryCardTeaserComponent {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs
-	readonly story = input<StoryNavigationTeaserWithAuthor>();
+	readonly story = input<StoryNavigationTeaserWithAuthor | StoryTeaserWithAuthor>();
 	readonly order = input<number>();
 	readonly showAuthor = input<boolean>(false);
 	readonly showExcerpt = input<boolean>(false);
 	readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
+	readonly excerptLines = input<number>(3);
 
 	// Propiedades
 	readonly formattedOrder = computed(() => {

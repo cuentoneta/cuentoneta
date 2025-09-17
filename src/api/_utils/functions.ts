@@ -27,6 +27,7 @@ import {
 	StoryNavigationTeaserWithAuthor,
 	StoryPreview,
 	StoryTeaser,
+	StoryTeaserWithAuthor,
 } from '@models/story.model';
 import { Tag } from '@models/tag.model';
 import { TextBlockContent } from '@models/block-content.model';
@@ -245,6 +246,25 @@ export function mapStoryTeaser(result: StoryTeasersQueryResult): StoryTeaser[] {
 	return stories;
 }
 
+type StoryTeaserWithAuthorSubQueryResult = NonNullable<LandingPageContentQueryResult>['highlighted'];
+export function mapStoryTeaserWithAuthor(result: StoryTeaserWithAuthorSubQueryResult): StoryTeaserWithAuthor[] {
+	const stories = [];
+
+	for (const item of result) {
+		const { mediaSources, resources, ...properties } = item;
+
+		stories.push({
+			...properties,
+			author: mapAuthorTeaser(item.author),
+			media: mapMediaSourcesForStorylist(mediaSources),
+			resources: mapResources(resources),
+			paragraphs: mapBlockContentToTextParagraphs(item.body) as [TextBlockContent, TextBlockContent, TextBlockContent],
+		});
+	}
+
+	return stories;
+}
+
 export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlugQueryResult>): StoryNavigationTeaser[] {
 	const stories = [];
 
@@ -289,7 +309,7 @@ export function mapLandingPageContent(result: NonNullable<LandingPageContentQuer
 		cards: mapStorylistTeasers(result.cards),
 		campaigns: mapContentCampaigns(result.campaigns),
 		mostRead: mapStoryNavigationTeaserWithAuthor(result.mostRead),
-		highlighted: mapStoryNavigationTeaserWithAuthor(result.highlighted),
+		highlighted: mapStoryTeaserWithAuthor(result.highlighted),
 	};
 }
 
