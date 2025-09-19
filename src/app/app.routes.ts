@@ -17,7 +17,7 @@ export enum AppRoutes {
 
 export const appRoutes: Routes = [
 	{
-		path: AppRoutes.Home,
+		path: '',
 		loadComponent: () => import('./pages/home/home.component'),
 	},
 	{
@@ -58,10 +58,5 @@ export const appRoutes: Routes = [
 	{
 		path: AppRoutes.Dmca,
 		loadComponent: () => import('./pages/dmca/dmca.component'),
-	},
-	{
-		path: '',
-		redirectTo: AppRoutes.Home,
-		pathMatch: 'full',
 	},
 ];
