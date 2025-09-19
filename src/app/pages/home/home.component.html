@@ -4,6 +4,8 @@
         el rebote vertical que puede observarse en el momento de la carga inicial de la página
     -->
 	<section class="h-[261.36px] sm:h-[389px]">
+		<cuentoneta-content-campaign-carousel-skeleton />
+
 		@if (campaigns().length > 0) {
 			<cuentoneta-content-campaign-carousel [slides]="campaigns()" />
 		} @else {
@@ -12,6 +14,8 @@
 	</section>
 
 	<section class="mb-8 h-[684px] md:h-[304px]">
+		<cuentoneta-content-campaign-carousel-skeleton />
+
 		<cuentoneta-most-read-stories-card-deck [stories]="mostRead()" class="flex flex-col gap-8" />
 	</section>
 
