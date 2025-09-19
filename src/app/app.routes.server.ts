@@ -3,7 +3,7 @@ import { AppRoutes } from './app.routes';
 
 export const serverRoutes: Array<ServerRoute> = [
 	{
-		path: AppRoutes.Home,
+		path: '',
 		renderMode: RenderMode.Server,
 	},
 	{
