@@ -1,5 +1,5 @@
 // Core
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, linkedSignal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 
 // Services
@@ -41,9 +41,9 @@ export default class HomeComponent {
 
 	// Propiedades
 	readonly landingPageContent = computed(() => this.landingPageResource.value());
-	readonly cards = computed(() => this.landingPageContent()?.cards || []);
-	readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
-	readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
+	readonly cards = linkedSignal(() => this.landingPageContent()?.cards || []);
+	readonly campaigns = linkedSignal(() => this.landingPageContent()?.campaigns || []);
+	readonly mostRead = linkedSignal(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
 
 	constructor() {
 		this.metaTagsDirective.setDefault();
