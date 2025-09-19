@@ -4,9 +4,9 @@
         el rebote vertical que puede observarse en el momento de la carga inicial de la página
     -->
 	<section class="h-[261.36px] sm:h-[389px]">
-		@defer (when campaigns().length > 0) {
+		@if (campaigns().length > 0) {
 			<cuentoneta-content-campaign-carousel [slides]="campaigns()" />
-		} @loading (minimum 500ms) {
+		} @else {
 			<cuentoneta-content-campaign-carousel-skeleton />
 		}
 	</section>
@@ -23,11 +23,11 @@
 		</div>
 
 		<section class="mb-8 grid grid-cols-1 justify-items-center gap-8 sm:grid-cols-2">
-			@defer (when cards().length > 0) {
+			@if (cards().length > 0) {
 				@for (storylist of cards(); track storylist.slug) {
 					<cuentoneta-storylist-card [storylist]="storylist" class="card w-full" />
 				}
-			} @loading (minimum 500ms) {
+			} @else {
 				@for (_ of [].constructor(6); track $index) {
 					<cuentoneta-storylist-card-skeleton class="card w-full" />
 				}

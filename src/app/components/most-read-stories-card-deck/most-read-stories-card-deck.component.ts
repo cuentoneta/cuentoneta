@@ -14,7 +14,7 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 		</div>
 
 		<section class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-8">
-			@defer (when stories().length > 0) {
+			@if (stories().length > 0) {
 				@for (story of stories(); track $index) {
 					<cuentoneta-story-card-teaser
 						[story]="story"
@@ -22,12 +22,12 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 						[order]="$index + 1"
 						[navigationParams]="{
 							navigation: 'author',
-							navigationSlug: story.author.slug
+							navigationSlug: story.author.slug,
 						}"
 						data-testid="card"
 					/>
 				}
-			} @loading (minimum 500ms) {
+			} @else {
 				@for (_ of [].constructor(6); track $index) {
 					<cuentoneta-story-card-teaser-skeleton [showAuthor]="true" [order]="$index + 1" data-testid="skeleton" />
 				}
