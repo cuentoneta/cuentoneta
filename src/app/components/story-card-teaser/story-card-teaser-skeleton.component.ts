@@ -16,13 +16,14 @@ import { ThemeService } from '../../providers/theme.service';
 					width: '40px',
 					'background-color': orderColor,
 				}"
+				data-testid="show-order"
 				count="1"
 				appearance="line"
 			/>
 		}
 		<div class="flex flex-1 flex-col gap-1">
 			@if (showAuthor()) {
-				<div class="flex items-center gap-2">
+				<div class="flex items-center gap-2" data-testid="show-author">
 					<ngx-skeleton-loader
 						[theme]="{
 							height: '24px',
@@ -58,9 +59,10 @@ import { ThemeService } from '../../providers/theme.service';
 					appearance="line"
 				/>
 				@if (showExcerpt()) {
-					<div class="flex flex-col gap-1">
+					<div class="flex flex-col gap-1" data-testid="show-excerpt">
 						@for (line of excerptArrayLines(); track $index) {
 							<ngx-skeleton-loader
+								[attr.data-testid]="'excerpt-skeleton-line-' + $index"
 								[theme]="{
 									height: '16px',
 									'margin-top': $index === 0 ? '2px' : '0px',
