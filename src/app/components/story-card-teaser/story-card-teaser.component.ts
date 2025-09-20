@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
+import { StoryNavigationTeaserWithAuthor, StoryTeaserWithAuthor } from '@models/story.model';
 import { RouterLink } from '@angular/router';
 import { StoryCardTeaserSkeletonComponent } from './story-card-teaser-skeleton.component';
 import { AppRoutes } from '../../app.routes';
+import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 
 @Component({
 	selector: 'cuentoneta-story-card-teaser',
-	imports: [NgOptimizedImage, RouterLink, StoryCardTeaserSkeletonComponent],
+	imports: [NgOptimizedImage, RouterLink, StoryCardTeaserSkeletonComponent, PortableTextParserComponent],
 	template: `<article class="flex gap-4">
 		@if (story(); as story) {
 			<article class="flex gap-4">
@@ -30,11 +31,20 @@ import { AppRoutes } from '../../app.routes';
 					<a
 						[routerLink]="['/', appRoutes.Story, story.slug]"
 						[queryParams]="navigationParams()"
-						class="flex flex-col gap-1"
+						class="grid h-full grid-rows-[auto_auto_auto] gap-1"
 					>
 						<header class="inter-body-xl-bold">
 							{{ story.title }}
 						</header>
+						@if (showExcerpt() && story.paragraphs.length > 0) {
+							<cuentoneta-portable-text-parser
+								[type]="'span'"
+								[paragraphs]="story.paragraphs"
+								[class]="'sm:line-clamp-' + excerptLines()"
+								data-testid="portable-text-parser"
+								class="sm:source-serif-pro-body-base hidden sm:relative sm:min-h-18 sm:text-ellipsis sm:text-justify"
+							/>
+						}
 						<footer class="inter-body-xs flex gap-1 text-gray-500">
 							<span> {{ story.approximateReadingTime }} minutos de lectura </span>
 							<span>•</span>
@@ -44,7 +54,13 @@ import { AppRoutes } from '../../app.routes';
 				</div>
 			</article>
 		} @else {
-			<cuentoneta-story-card-teaser-skeleton [order]="order()" [showAuthor]="showAuthor()" data-testid="skeleton" />
+			<cuentoneta-story-card-teaser-skeleton
+				[order]="order()"
+				[showAuthor]="showAuthor()"
+				[showExcerpt]="showExcerpt()"
+				[excerptLines]="excerptLines()"
+				data-testid="skeleton"
+			/>
 		}
 	</article> `,
 	styles: ``,
@@ -54,9 +70,11 @@ export class StoryCardTeaserComponent {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs
-	readonly story = input<StoryNavigationTeaserWithAuthor>();
+	readonly story = input<StoryNavigationTeaserWithAuthor | StoryTeaserWithAuthor>();
 	readonly order = input<number>();
 	readonly showAuthor = input<boolean>(false);
+	readonly showExcerpt = input<boolean>(false);
+	readonly excerptLines = input<number>(3);
 	readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
 
 	// Propiedades
