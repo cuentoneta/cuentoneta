@@ -22,7 +22,7 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 						[order]="$index + 1"
 						[navigationParams]="{
 							navigation: 'author',
-							navigationSlug: story.author.slug
+							navigationSlug: story.author.slug,
 						}"
 						data-testid="card"
 					/>
@@ -35,7 +35,7 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 		</section>`,
 	styles: `
 		:host {
-			@apply mb-8 flex flex-col gap-8;
+			@apply flex flex-col gap-8;
 		}
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
