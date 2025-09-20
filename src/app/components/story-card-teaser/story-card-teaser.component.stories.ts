@@ -1,11 +1,11 @@
 import { argsToTemplate, Meta, StoryObj } from '@storybook/angular';
 import { moduleMetadata } from '@storybook/angular';
 import { StoryCardTeaserComponent } from './story-card-teaser.component';
-import { storyNavigationTeaserMock, storyTeaserMock } from '../../mocks/story.mock';
+import { storyTeaserMock } from '../../mocks/story.mock';
 import { authorTeaserMock } from '../../mocks/author.mock';
 import { CommonModule } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
-import { StoryNavigationTeaserWithAuthor, StoryTeaserWithAuthor } from '@models/story.model';
+import { StoryTeaserWithAuthor } from '@models/story.model';
 
 const meta: Meta<StoryCardTeaserComponent> = {
 	component: StoryCardTeaserComponent,
