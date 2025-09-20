@@ -7,6 +7,12 @@ import { HEADER_HEIGHT_STRING_PX } from './src/app/utils/spacing.utils';
 
 export default {
 	content: [join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}'), ...createGlobPatternsForDependencies(__dirname)],
+	safelist: [
+		{
+			pattern: /line-clamp-(1|2|3|4|5|6|7|8|9|10)/,
+			variants: ['sm'],
+		},
+	],
 	theme: {
 		colors: extendedColors,
 		content: {
@@ -21,6 +27,15 @@ export default {
 			4: '4px',
 		},
 		extend: {
+			lineClamp: {
+				4: '4',
+				5: '5',
+				6: '6',
+				7: '7',
+				8: '8',
+				9: '9',
+				10: '10',
+			},
 			boxShadow: {
 				lg: '0px 0px 8px rgba(63, 63, 70, 0.08)',
 				'lg-hover': '0px 12px 16px rgba(63, 63, 70, 0.12)',
