@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { StoryNavigationTeaserWithAuthor, StoryTeaserWithAuthor } from '@models/story.model';
+import { StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
 import { RouterLink } from '@angular/router';
 import { StoryCardTeaserSkeletonComponent } from './story-card-teaser-skeleton.component';
 import { AppRoutes } from '../../app.routes';
@@ -16,7 +16,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 					<span class="source-serif-pro-heading-2-bold leading-none text-primary-500">{{ formattedOrder() }}.</span>
 				}
 				<div class="flex flex-1 flex-col gap-1">
-					@if (showAuthor()) {
+					@if (showAuthor() && 'author' in story) {
 						<a [routerLink]="['/', appRoutes.Author, story.author.slug]" class="flex items-center gap-2">
 							<img
 								[ngSrc]="story.author.imageUrl"
@@ -40,9 +40,9 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 							<cuentoneta-portable-text-parser
 								[type]="'span'"
 								[paragraphs]="story.paragraphs"
-								[class]="'sm:line-clamp-' + excerptLines()"
+								[class]="'line-clamp-' + excerptLines()"
 								data-testid="portable-text-parser"
-								class="sm:source-serif-pro-body-base hidden sm:relative sm:min-h-18 sm:text-ellipsis sm:text-justify"
+								class="source-serif-pro-body-base relative min-h-18 text-ellipsis text-justify"
 							/>
 						}
 						<footer class="inter-body-xs flex gap-1 text-gray-500">
@@ -70,7 +70,7 @@ export class StoryCardTeaserComponent {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs
-	readonly story = input<StoryNavigationTeaserWithAuthor | StoryTeaserWithAuthor>();
+	readonly story = input<StoryNavigationTeaserWithAuthor | StoryTeaserWithAuthor | StoryTeaser>();
 	readonly order = input<number>();
 	readonly showAuthor = input<boolean>(false);
 	readonly showExcerpt = input<boolean>(false);

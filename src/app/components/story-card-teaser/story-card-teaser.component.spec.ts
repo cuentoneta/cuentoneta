@@ -180,7 +180,7 @@ describe('StoryCardTeaserComponent', () => {
 				},
 			});
 			const excerptElement = screen.getByTestId('portable-text-parser');
-			expect(excerptElement).toHaveClass('sm:line-clamp-4');
+			expect(excerptElement).toHaveClass('line-clamp-4');
 		});
 
 		it('should not display excerpt when story has no paragraphs', async () => {
@@ -345,7 +345,7 @@ describe('StoryCardTeaserComponent', () => {
 
 			const excerptElement = screen.getByTestId('portable-text-parser');
 			expect(excerptElement).toBeInTheDocument();
-			expect(excerptElement).toHaveClass('sm:line-clamp-3');
+			expect(excerptElement).toHaveClass('line-clamp-3');
 
 			const titleElement = screen.getByText(storyWithExcerpt.title);
 			expect(titleElement).toBeInTheDocument();
