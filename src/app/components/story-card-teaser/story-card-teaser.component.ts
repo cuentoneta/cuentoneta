@@ -15,7 +15,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 				@if (order()) {
 					<span class="source-serif-pro-heading-2-bold leading-none text-primary-500">{{ formattedOrder() }}.</span>
 				}
-				<div class="flex flex-1 flex-col gap-2">
+				<div class="flex flex-1 flex-col">
 					@if (showAuthor() && 'author' in story) {
 						<a [routerLink]="['/', appRoutes.Author, story.author.slug]" class="flex items-center gap-2">
 							<img

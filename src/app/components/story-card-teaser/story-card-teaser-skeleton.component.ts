@@ -21,7 +21,7 @@ import { ThemeService } from '../../providers/theme.service';
 				appearance="line"
 			/>
 		}
-		<div class="flex flex-1 flex-col gap-1">
+		<div class="flex flex-1 flex-col">
 			@if (showAuthor()) {
 				<div class="flex items-center gap-2" data-testid="show-author">
 					<ngx-skeleton-loader
