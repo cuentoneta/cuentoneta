@@ -15,15 +15,15 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 				@if (order()) {
 					<span class="source-serif-pro-heading-2-bold leading-none text-primary-500">{{ formattedOrder() }}.</span>
 				}
-				<div class="flex flex-1 flex-col gap-1">
+				<div class="flex flex-1 flex-col gap-2">
 					@if (showAuthor() && 'author' in story) {
 						<a [routerLink]="['/', appRoutes.Author, story.author.slug]" class="flex items-center gap-2">
 							<img
 								[ngSrc]="story.author.imageUrl"
 								[alt]="'Retrato de ' + story.author.name"
-								width="24"
-								height="24"
-								class="h-6 w-6 rounded-full"
+								width="20"
+								height="20"
+								class="h-5 w-5 rounded-full"
 							/>
 							<span class="inter-body-sm-semibold text-gray-500">{{ story.author.name }}</span>
 						</a>
@@ -31,9 +31,10 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 					<a
 						[routerLink]="['/', appRoutes.Story, story.slug]"
 						[queryParams]="navigationParams()"
-						class="grid h-full grid-rows-[auto_auto_auto] gap-1"
+						[class]="showExcerpt() ? 'gap-2' : 'gap-1'"
+						class="grid h-full grid-rows-[auto_auto_auto]"
 					>
-						<header class="inter-body-xl-bold">
+						<header class="inter-heading-3-bold">
 							{{ story.title }}
 						</header>
 						@if (showExcerpt() && story.paragraphs.length > 0) {

@@ -26,9 +26,9 @@ import { ThemeService } from '../../providers/theme.service';
 				<div class="flex items-center gap-2" data-testid="show-author">
 					<ngx-skeleton-loader
 						[theme]="{
-							height: '24px',
+							height: '20px',
 							margin: 0,
-							width: '24px',
+							width: '20px',
 						}"
 						count="1"
 						appearance="circle"
@@ -49,7 +49,7 @@ import { ThemeService } from '../../providers/theme.service';
 			<div class="flex flex-col gap-1">
 				<ngx-skeleton-loader
 					[theme]="{
-						height: '28px',
+						height: '32px',
 						'margin-bottom': 0,
 						'max-width': '192px',
 						'background-color': skeletonTextColor,
