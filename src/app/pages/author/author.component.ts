@@ -101,10 +101,12 @@ export default class AuthorComponent {
 					this.updateMetaTags(author);
 				}),
 			),
+		defaultValue: undefined,
 	});
 	readonly storiesResource = rxResource({
 		params: () => this.params(),
 		stream: ({ params }) => this.stories$(params['slug']),
+		defaultValue: [],
 	});
 
 	// Propiedades

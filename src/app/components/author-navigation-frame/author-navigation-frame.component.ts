@@ -40,6 +40,7 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 	private readonly storiesResource = rxResource({
 		params: () => this.navigationSlug(),
 		stream: ({ params: slug }) => this.storyService.getNavigationTeasersByAuthorSlug(slug),
+		defaultValue: [],
 	});
 
 	// Propiedades
