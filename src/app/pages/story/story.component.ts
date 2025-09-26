@@ -85,6 +85,7 @@ export default class StoryComponent implements OnDestroy {
 					this.updateMetaTags(story);
 				}),
 			),
+		defaultValue: undefined,
 	});
 
 	// Propiedades

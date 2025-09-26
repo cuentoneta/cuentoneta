@@ -27,9 +27,10 @@ export default class AuthorsComponent {
 
 	private authorsResource = rxResource({
 		stream: () => this.authorService.getAll(),
+		defaultValue: [],
 	});
 
-	readonly authors = computed(() => this.authorsResource.value() ?? []);
+	readonly authors = computed(() => this.authorsResource.value());
 
 	constructor() {
 		this.metaTagsDirective.setTitle('Índice de Autores');

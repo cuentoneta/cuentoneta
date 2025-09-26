@@ -44,6 +44,7 @@ export default class StorylistComponent {
 					this.updateMetaTags(storylist);
 				}),
 			),
+		defaultValue: undefined,
 	});
 
 	// Propiedades
