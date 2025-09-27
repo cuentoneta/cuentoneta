@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
 import { environment } from './environments/environment';
 
 // Services
-import { AnalyticsService } from './providers/analytics.service';
+import { AnalyticsService } from './providers/analytics/analytics.service';
 import { LayoutService } from './providers/layout.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
