@@ -29,7 +29,7 @@
 				"styles": ["./src/styles.scss"],
 				"scripts": [],
 				"ssr": {
-					"entry": "./src/ssr.server.ts"
+					"entry": "./src/server.ts"
 				},
 				"outputMode": "server"
 			},
