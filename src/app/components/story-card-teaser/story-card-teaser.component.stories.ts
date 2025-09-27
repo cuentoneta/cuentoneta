@@ -18,16 +18,17 @@ const meta: Meta<StoryCardTeaserComponent> = {
 	parameters: {
 		docs: {
 			description: {
-				component: `
-					**StoryCardTeaserComponent** muestra una vista previa de historia con elementos opcionales:
-					- Contenido de historia o estado de carga esqueleto
-					- Información opcional del autor
-					- Numeración/orden opcional
-					- Extracto opcional con líneas configurables
-					- Parámetros de navegación para enrutamiento
-
-					Usa los controles interactivos en la primera historia de abajo para ver cómo se comporta el componente en ambos estados: cargado y esqueleto.
-				`,
+				component: `<div>
+					<p>El componente **StoryCardTeaserComponent** representa una vista previa de una entidad story del sistema. El componente posee inputs opcionales que permiten visualizar:</p>
+					<ul>
+						<li>Contenido de historia o estado de carga esqueleto</li>
+						<li>Información opcional del autor</li>
+						<li>Numeración/orden opcional</li>
+						<li>Extracto opcional con líneas configurables</li>
+						<li>Parámetros de navegación para enrutamiento</li>
+					</ul>
+					<p>Puedes utilizar los controles interactivos en la primera historia de abajo para ver cómo se comporta el componente en ambos estados: cargado y esqueleto.</p>
+				</div>`,
 			},
 		},
 		layout: 'padded',

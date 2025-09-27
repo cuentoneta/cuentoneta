@@ -2,6 +2,7 @@ module.exports = {
 	stories: ['../src/app/**/*.stories.mdx', '../src/app/**/*.stories.@(js|jsx|ts|tsx)'],
 	styles: [],
 	addons: [
+		'@storybook/addon-docs',
 		{
 			name: '@storybook/addon-styling-webpack',
 			options: {

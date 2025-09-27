@@ -76,6 +76,7 @@
 		"@nx/storybook": "21.5.1",
 		"@nx/workspace": "21.5.1",
 		"@playwright/test": "^1.55.0",
+		"@storybook/addon-docs": "^9.1.8",
 		"@storybook/addon-styling-webpack": "^2.0.0",
 		"@storybook/angular": "9.0.13",
 		"@stylistic/eslint-plugin": "^5.1.0",
