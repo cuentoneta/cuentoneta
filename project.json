@@ -12,7 +12,7 @@
 			"options": {
 				"clearScreen": true,
 				"outputPath": "dist/cuentoneta/",
-				"index": "./src/index.html",
+				"index": "./src/indexFile.html",
 				"browser": "./src/main.ts",
 				"polyfills": [],
 				"tsConfig": "./tsconfig.app.json",
@@ -29,7 +29,7 @@
 				"styles": ["./src/styles.scss"],
 				"scripts": [],
 				"ssr": {
-					"entry": "./src/ssr.server.ts"
+					"entry": "./src/server.ts"
 				},
 				"outputMode": "server"
 			},
