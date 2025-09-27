@@ -2,7 +2,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, input } from '@angular/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter } from '@angular/router';
 
 // 3rd party modules
 import { render } from '@testing-library/angular';
@@ -26,9 +26,8 @@ xdescribe('StorylistComponent', () => {
 				HttpClientTestingModule,
 				MockStorylistCardDeckComponent,
 				NgxSkeletonLoaderModule,
-				RouterTestingModule,
 			],
-			componentProviders: [provideMock(MetaTagsDirective)],
+			componentProviders: [provideRouter([]), provideMock(MetaTagsDirective)],
 		});
 	};
 
