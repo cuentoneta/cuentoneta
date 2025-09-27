@@ -35,7 +35,7 @@ export function app(): express.Express {
 	/**
 	 * Handle all other requests by rendering the Angular application.
 	 */
-	server.use('/**', (req, res, next) => {
+	server.use((req, res, next) => {
 		angularApp
 			.handle(req)
 			.then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
