@@ -40,6 +40,10 @@ export interface StoryTeaser extends StoryBase {
 	paragraphs: [TextBlockContent, TextBlockContent, TextBlockContent];
 }
 
+export interface StoryTeaserWithAuthor extends StoryTeaser {
+	author: AuthorTeaser;
+}
+
 /**
  * @deprecated Reemplazar uso por interfaces StoryTeaser, StoryNavigationTeaser o StoryNavigationTeaserWithAuthor
  */
