@@ -41,8 +41,8 @@ importers:
         specifier: 20.3.3
         version: 20.3.3(48a3c0528a8ad27750c31ade14532ba0)
       '@angular/youtube-player':
-        specifier: 20.1.5
-        version: 20.1.5(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
+        specifier: 20.2.5
+        version: 20.2.5(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
       '@floating-ui/dom':
         specifier: ^1.7.1
         version: 1.7.1
@@ -60,7 +60,7 @@ importers:
         version: 32.1.0
       '@nx/angular':
         specifier: 21.6.2
-        version: 21.6.2(f376bc77880809d66bd6a47f69cb41b5)
+        version: 21.6.2(305210673d33701e0d1bcbe55e1aff8c)
       '@sanity/client':
         specifier: ^7.6.0
         version: 7.6.0
@@ -108,8 +108,8 @@ importers:
         version: 2.6.2
     devDependencies:
       '@angular/cli':
-        specifier: ~20.1.0
-        version: 20.1.6(@types/node@22.17.1)(chokidar@4.0.1)
+        specifier: ~20.3.3
+        version: 20.3.3(@types/node@22.17.1)(chokidar@4.0.1)
       '@angular/compiler-cli':
         specifier: 20.3.2
         version: 20.3.2(@angular/compiler@20.3.2)(typescript@5.9.2)
@@ -157,7 +157,7 @@ importers:
         version: 2.0.0(storybook@9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2))(webpack@5.99.9(esbuild@0.25.5))
       '@storybook/angular':
         specifier: 9.0.13
-        version: 9.0.13(dc5e02502a8e0258d9148f5cc2eb7925)
+        version: 9.0.13(bb333f1e4eb218408b67b77b5bc50938)
       '@stylistic/eslint-plugin':
         specifier: ^5.1.0
         version: 5.1.0(eslint@9.35.0(jiti@1.21.7))
@@ -326,69 +326,74 @@ packages:
     resolution:
       { integrity: sha512-Ff9+ksdQQB3rMncgqDK78uLznstjyfIf2Arnh22pW8kBpLs6rpKDwgnZT46hin5Hl1WzazzK64DOrhSwYpS7bQ== }
 
-  '@algolia/client-abtesting@5.32.0':
+  '@algolia/abtesting@1.1.0':
     resolution:
-      { integrity: sha512-HG/6Eib6DnJYm/B2ijWFXr4txca/YOuA4K7AsEU0JBrOZSB+RU7oeDyNBPi3c0v0UDDqlkBqM3vBU/auwZlglA== }
+      { integrity: sha512-sEyWjw28a/9iluA37KLGu8vjxEIlb60uxznfTUmXImy7H5NvbpSO6yYgmgH5KiD7j+zTUUihiST0jEP12IoXow== }
     engines: { node: '>= 14.0.0' }
 
-  '@algolia/client-analytics@5.32.0':
+  '@algolia/client-abtesting@5.35.0':
     resolution:
-      { integrity: sha512-8Y9MLU72WFQOW3HArYv16+Wvm6eGmsqbxxM1qxtm0hvSASJbxCm+zQAZe5stqysTlcWo4BJ82KEH1PfgHbJAmQ== }
+      { integrity: sha512-uUdHxbfHdoppDVflCHMxRlj49/IllPwwQ2cQ8DLC4LXr3kY96AHBpW0dMyi6ygkn2MtFCc6BxXCzr668ZRhLBQ== }
     engines: { node: '>= 14.0.0' }
 
-  '@algolia/client-common@5.32.0':
+  '@algolia/client-analytics@5.35.0':
     resolution:
-      { integrity: sha512-w8L+rgyXMCPBKmEdOT+RfgMrF0mT6HK60vPYWLz8DBs/P7yFdGo7urn99XCJvVLMSKXrIbZ2FMZ/i50nZTXnuQ== }
+      { integrity: sha512-SunAgwa9CamLcRCPnPHx1V2uxdQwJGqb1crYrRWktWUdld0+B2KyakNEeVn5lln4VyeNtW17Ia7V7qBWyM/Skw== }
     engines: { node: '>= 14.0.0' }
 
-  '@algolia/client-insights@5.32.0':
+  '@algolia/client-common@5.35.0':
     resolution:
-      { integrity: sha512-AdWfynhUeX7jz/LTiFU3wwzJembTbdLkQIOLs4n7PyBuxZ3jz4azV1CWbIP8AjUOFmul6uXbmYza+KqyS5CzOA== }
+      { integrity: sha512-ipE0IuvHu/bg7TjT2s+187kz/E3h5ssfTtjpg1LbWMgxlgiaZIgTTbyynM7NfpSJSKsgQvCQxWjGUO51WSCu7w== }
     engines: { node: '>= 14.0.0' }
 
-  '@algolia/client-personalization@5.32.0':
+  '@algolia/client-insights@5.35.0':
     resolution:
-      { integrity: sha512-bTupJY4xzGZYI4cEQcPlSjjIEzMvv80h7zXGrXY1Y0KC/n/SLiMv84v7Uy+B6AG1Kiy9FQm2ADChBLo1uEhGtQ== }
+      { integrity: sha512-UNbCXcBpqtzUucxExwTSfAe8gknAJ485NfPN6o1ziHm6nnxx97piIbcBQ3edw823Tej2Wxu1C0xBY06KgeZ7gA== }
     engines: { node: '>= 14.0.0' }
 
-  '@algolia/client-query-suggestions@5.32.0':
+  '@algolia/client-personalization@5.35.0':
     resolution:
-      { integrity: sha512-if+YTJw1G3nDKL2omSBjQltCHUQzbaHADkcPQrGFnIGhVyHU3Dzq4g46uEv8mrL5sxL8FjiS9LvekeUlL2NRqw== }
+      { integrity: sha512-/KWjttZ6UCStt4QnWoDAJ12cKlQ+fkpMtyPmBgSS2WThJQdSV/4UWcqCUqGH7YLbwlj3JjNirCu3Y7uRTClxvA== }
     engines: { node: '>= 14.0.0' }
 
-  '@algolia/client-search@5.32.0':
+  '@algolia/client-query-suggestions@5.35.0':
     resolution:
-      { integrity: sha512-kmK5nVkKb4DSUgwbveMKe4X3xHdMsPsOVJeEzBvFJ+oS7CkBPmpfHAEq+CcmiPJs20YMv6yVtUT9yPWL5WgAhg== }
+      { integrity: sha512-8oCuJCFf/71IYyvQQC+iu4kgViTODbXDk3m7yMctEncRSRV+u2RtDVlpGGfPlJQOrAY7OONwJlSHkmbbm2Kp/w== }
     engines: { node: '>= 14.0.0' }
 
-  '@algolia/ingestion@1.32.0':
+  '@algolia/client-search@5.35.0':
     resolution:
-      { integrity: sha512-PZTqjJbx+fmPuT2ud1n4vYDSF1yrT//vOGI9HNYKNA0PM0xGUBWigf5gRivHsXa3oBnUlTyHV9j7Kqx5BHbVHQ== }
+      { integrity: sha512-FfmdHTrXhIduWyyuko1YTcGLuicVbhUyRjO3HbXE4aP655yKZgdTIfMhZ/V5VY9bHuxv/fGEh3Od1Lvv2ODNTg== }
     engines: { node: '>= 14.0.0' }
 
-  '@algolia/monitoring@1.32.0':
+  '@algolia/ingestion@1.35.0':
     resolution:
-      { integrity: sha512-kYYoOGjvNQAmHDS1v5sBj+0uEL9RzYqH/TAdq8wmcV+/22weKt/fjh+6LfiqkS1SCZFYYrwGnirrUhUM36lBIQ== }
+      { integrity: sha512-gPzACem9IL1Co8mM1LKMhzn1aSJmp+Vp434An4C0OBY4uEJRcqsLN3uLBlY+bYvFg8C8ImwM9YRiKczJXRk0XA== }
     engines: { node: '>= 14.0.0' }
 
-  '@algolia/recommend@5.32.0':
+  '@algolia/monitoring@1.35.0':
     resolution:
-      { integrity: sha512-jyIBLdskjPAL7T1g57UMfUNx+PzvYbxKslwRUKBrBA6sNEsYCFdxJAtZSLUMmw6MC98RDt4ksmEl5zVMT5bsuw== }
+      { integrity: sha512-w9MGFLB6ashI8BGcQoVt7iLgDIJNCn4OIu0Q0giE3M2ItNrssvb8C0xuwJQyTy1OFZnemG0EB1OvXhIHOvQwWw== }
     engines: { node: '>= 14.0.0' }
 
-  '@algolia/requester-browser-xhr@5.32.0':
+  '@algolia/recommend@5.35.0':
     resolution:
-      { integrity: sha512-eDp14z92Gt6JlFgiexImcWWH+Lk07s/FtxcoDaGrE4UVBgpwqOO6AfQM6dXh1pvHxlDFbMJihHc/vj3gBhPjqQ== }
+      { integrity: sha512-AhrVgaaXAb8Ue0u2nuRWwugt0dL5UmRgS9LXe0Hhz493a8KFeZVUE56RGIV3hAa6tHzmAV7eIoqcWTQvxzlJeQ== }
     engines: { node: '>= 14.0.0' }
 
-  '@algolia/requester-fetch@5.32.0':
+  '@algolia/requester-browser-xhr@5.35.0':
     resolution:
-      { integrity: sha512-rnWVglh/K75hnaLbwSc2t7gCkbq1ldbPgeIKDUiEJxZ4mlguFgcltWjzpDQ/t1LQgxk9HdIFcQfM17Hid3aQ6Q== }
+      { integrity: sha512-diY415KLJZ6x1Kbwl9u96Jsz0OstE3asjXtJ9pmk1d+5gPuQ5jQyEsgC+WmEXzlec3iuVszm8AzNYYaqw6B+Zw== }
     engines: { node: '>= 14.0.0' }
 
-  '@algolia/requester-node-http@5.32.0':
+  '@algolia/requester-fetch@5.35.0':
     resolution:
-      { integrity: sha512-LbzQ04+VLkzXY4LuOzgyjqEv/46Gwrk55PldaglMJ4i4eDXSRXGKkwJpXFwsoU+c1HMQlHIyjJBhrfsfdyRmyQ== }
+      { integrity: sha512-uydqnSmpAjrgo8bqhE9N1wgcB98psTRRQXcjc4izwMB7yRl9C8uuAQ/5YqRj04U0mMQ+fdu2fcNF6m9+Z1BzDQ== }
+    engines: { node: '>= 14.0.0' }
+
+  '@algolia/requester-node-http@5.35.0':
+    resolution:
+      { integrity: sha512-RgLX78ojYOrThJHrIiPzT4HW3yfQa0D7K+MQ81rhxqaNyNBu4F1r+72LNHYH/Z+y9I1Mrjrd/c/Ue5zfDgAEjQ== }
     engines: { node: '>= 14.0.0' }
 
   '@alloc/quick-lru@5.2.0':
@@ -400,11 +405,6 @@ packages:
     resolution:
       { integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw== }
     engines: { node: '>=6.0.0' }
-
-  '@angular-devkit/architect@0.2001.6':
-    resolution:
-      { integrity: sha512-CGFDfqPvKw1Ekuk7eSYMdhBv26LiwBrnZEUnrloC8fnuT8G+s46WMj/uH3tTcQ9MHYbhOSAHynNwpnwX71wghg== }
-    engines: { node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0' }
 
   '@angular-devkit/architect@0.2002.2':
     resolution:
@@ -510,6 +510,11 @@ packages:
       { integrity: sha512-Maj/yCkn3Qjum2kCYUOYMw8VYh/8725XN8/4cae9VllMwkN5D8jYDvX40qmfgQve2x0x6r3L8rmaIHn8227cHg== }
     engines: { node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0' }
 
+  '@angular-devkit/schematics@20.3.3':
+    resolution:
+      { integrity: sha512-LDn39BjyQLAK/DaVamLElMtI0UoCZIs4jKcMEv8PJ/nnBmrYFHVavWPggeFWMycjeXsdX34Msiml88HZWlXypw== }
+    engines: { node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0' }
+
   '@angular-eslint/builder@20.3.0':
     resolution:
       { integrity: sha512-3XpWLdh+/K4+r0ChkKW00SXWyBA7ShMpE+Pt1XUmIu4srJgGRnt8e+kC4Syi+s2t5QS7PjlwRaelB1KfSMXZ5A== }
@@ -612,9 +617,9 @@ packages:
       vitest:
         optional: true
 
-  '@angular/cli@20.1.6':
+  '@angular/cli@20.3.3':
     resolution:
-      { integrity: sha512-kqncVmYtlDYLwt4l5lFBz4uEnoheMH+teSqAAD/zaDxn41KvpoRLHiEVurQhsNP/GDHxGu+8wg0s4gX3kaFOzg== }
+      { integrity: sha512-3c8xCklJ0C0T6ETSncAoXlOYNi3x7vLT3PS56rIaQ0jtlvD4Y+RQakd3+iffVAapvh/JB27WNor8pJRThLZ/jg== }
     engines: { node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0' }
     hasBin: true
 
@@ -727,9 +732,9 @@ packages:
       '@angular/platform-server':
         optional: true
 
-  '@angular/youtube-player@20.1.5':
+  '@angular/youtube-player@20.2.5':
     resolution:
-      { integrity: sha512-vG11ZbiaFvhpJ6CZkHRi85tcjUMWMsDtYAlfRYVCHiL5LZZ6BoTz9+FWv8yJKAmNdYFyBtJ5NEPF/kKGhpTWlQ== }
+      { integrity: sha512-NuERudmmgFXkYW5xCcXMd3GdFpMyJWJcyqdQvKkTDvPOCm3brV/E0oKHHw0jHuaBZGawzuRsqOFO0aaUKj+AEw== }
     peerDependencies:
       '@angular/common': ^20.0.0 || ^21.0.0
       '@angular/core': ^20.0.0 || ^21.0.0
@@ -2106,19 +2111,14 @@ packages:
       { integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ== }
     engines: { node: '>=18.18' }
 
-  '@inquirer/checkbox@4.2.0':
+  '@inquirer/ansi@1.0.0':
     resolution:
-      { integrity: sha512-fdSw07FLJEU5vbpOPzXo5c6xmMGDzbZE2+niuDHX5N6mc6V0Ebso/q3xiHra4D73+PMsC8MJmcaZKuAAoaQsSA== }
+      { integrity: sha512-JWaTfCxI1eTmJ1BIv86vUfjVatOdxwD0DAVKYevY8SazeUUZtW+tNbsdejVO1GYE0GXJW1N1ahmiC3TFd+7wZA== }
     engines: { node: '>=18' }
-    peerDependencies:
-      '@types/node': '>=18'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
 
-  '@inquirer/confirm@5.1.13':
+  '@inquirer/checkbox@4.2.4':
     resolution:
-      { integrity: sha512-EkCtvp67ICIVVzjsquUiVSd+V5HRGOGQfsqA4E4vMWhYnB7InUL0pa0TIWt1i+OfP16Gkds8CdIu6yGZwOM1Yw== }
+      { integrity: sha512-2n9Vgf4HSciFq8ttKXk+qy+GsyTXPV1An6QAwe/8bkbbqvG4VW1I/ZY1pNu2rf+h9bdzMLPbRSfcNxkHBy/Ydw== }
     engines: { node: '>=18' }
     peerDependencies:
       '@types/node': '>=18'
@@ -2146,9 +2146,19 @@ packages:
       '@types/node':
         optional: true
 
-  '@inquirer/editor@4.2.16':
+  '@inquirer/core@10.2.2':
     resolution:
-      { integrity: sha512-iSzLjT4C6YKp2DU0fr8T7a97FnRRxMO6CushJnW5ktxLNM2iNeuyUuUA5255eOLPORoGYCrVnuDOEBdGkHGkpw== }
+      { integrity: sha512-yXq/4QUnk4sHMtmbd7irwiepjB8jXU0kkFRL4nr/aDBA2mDz13cMakEWdDwX3eSCTkk03kwcndD1zfRAIlELxA== }
+    engines: { node: '>=18' }
+    peerDependencies:
+      '@types/node': '>=18'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+
+  '@inquirer/editor@4.2.20':
+    resolution:
+      { integrity: sha512-7omh5y5bK672Q+Brk4HBbnHNowOZwrb/78IFXdrEB9PfdxL3GudQyDk8O9vQ188wj3xrEebS2M9n18BjJoI83g== }
     engines: { node: '>=18' }
     peerDependencies:
       '@types/node': '>=18'
@@ -2166,12 +2176,15 @@ packages:
       '@types/node':
         optional: true
 
-  '@inquirer/external-editor@1.0.0':
+  '@inquirer/external-editor@1.0.2':
     resolution:
-      { integrity: sha512-5v3YXc5ZMfL6OJqXPrX9csb4l7NlQA2doO1yynUjpUChT9hg4JcuBVP0RbsEJ/3SL/sxWEyFjT2W69ZhtoBWqg== }
+      { integrity: sha512-yy9cOoBnx58TlsPrIxauKIFQTiyH+0MK4e97y4sV9ERbI+zDxw7i2hxHLCIEGIE/8PPvDxGhgzIOTSOWcs6/MQ== }
     engines: { node: '>=18' }
     peerDependencies:
       '@types/node': '>=18'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
 
   '@inquirer/figures@1.0.13':
     resolution:
@@ -2208,9 +2221,9 @@ packages:
       '@types/node':
         optional: true
 
-  '@inquirer/prompts@7.6.0':
+  '@inquirer/prompts@7.8.2':
     resolution:
-      { integrity: sha512-jAhL7tyMxB3Gfwn4HIJ0yuJ5pvcB5maYUcouGcgd/ub79f9MqZ+aVnBtuFf+VC2GTkCBF+R+eo7Vi63w5VZlzw== }
+      { integrity: sha512-nqhDw2ZcAUrKNPwhjinJny903bRhI0rQhiDz1LksjeRxqa36i3l75+4iXbOy0rlDpLJGxqtgoPavQjmmyS5UJw== }
     engines: { node: '>=18' }
     peerDependencies:
       '@types/node': '>=18'
@@ -2241,21 +2254,6 @@ packages:
   '@inquirer/select@4.3.1':
     resolution:
       { integrity: sha512-Gfl/5sqOF5vS/LIrSndFgOh7jgoe0UXEizDqahFRkq5aJBLegZ6WjuMh/hVEJwlFQjyLq1z9fRtvUMkb7jM1LA== }
-    engines: { node: '>=18' }
-    peerDependencies:
-      '@types/node': '>=18'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-
-  '@inquirer/type@1.5.5':
-    resolution:
-      { integrity: sha512-MzICLu4yS7V8AA61sANROZ9vT1H3ooca5dSmI1FjZkzq7o/koMsRfQSzRtFo+F3Ao4Sf1C0bpLKejpKB/+j6MA== }
-    engines: { node: '>=18' }
-
-  '@inquirer/type@3.0.7':
-    resolution:
-      { integrity: sha512-PfunHQcjwnju84L+ycmcMKB/pTPIngjUJvfnRhKY6FKPuYXlM4aQCb/nIdTFR6BEhMjFvngzvng/vBAJMZpLSA== }
     engines: { node: '>=18' }
     peerDependencies:
       '@types/node': '>=18'
@@ -2528,12 +2526,13 @@ packages:
     resolution:
       { integrity: sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A== }
 
-  '@listr2/prompt-adapter-inquirer@2.0.22':
+  '@listr2/prompt-adapter-inquirer@3.0.1':
     resolution:
-      { integrity: sha512-hV36ZoY+xKL6pYOt1nPNnkciFkn89KZwqLhAFzJvYysAvL5uBQdiADZx/8bIDXIukzzwG0QlPYolgMzQUtKgpQ== }
-    engines: { node: '>=18.0.0' }
+      { integrity: sha512-3XFmGwm3u6ioREG+ynAQB7FoxfajgQnMhIu8wC5eo/Lsih4aKDg0VuIMGaOsYn7hJSJagSeaD4K8yfpkEoDEmA== }
+    engines: { node: '>=20.0.0' }
     peerDependencies:
       '@inquirer/prompts': '>= 3 < 8'
+      listr2: 9.0.1
 
   '@lmdb/lmdb-darwin-arm64@3.4.2':
     resolution:
@@ -2588,9 +2587,9 @@ packages:
     resolution:
       { integrity: sha512-2QY6SmXnqRj6dWhNY8NYCN3e53j4zCFebH4wGnNhdGV1mqAsQwql2fT0w8TISxCvwwfVp8idsWLIdrRHOms1PQ== }
 
-  '@modelcontextprotocol/sdk@1.13.3':
+  '@modelcontextprotocol/sdk@1.17.3':
     resolution:
-      { integrity: sha512-bGwA78F/U5G2jrnsdRkPY3IwIwZeWUEfb5o764b79lb0rJmMT76TLwKhdNZOWakOQtedYefwIR4emisEMvInKA== }
+      { integrity: sha512-JPwUKWSsbzx+DLFznf/QZ32Qa+ptfbUlHhRLrBQBAFu9iI1iYvizM4p+zhhRDceSsPutXp4z+R/HPVphlIiclg== }
     engines: { node: '>=18' }
 
   '@modern-js/node-bundle-require@2.68.2':
@@ -3627,9 +3626,9 @@ packages:
       { integrity: sha512-JHumVRxzzaZAJyOimntdukA9TjjzsJiaiq/uUBdTknMLCNvtM6KQ5OCp6W5fIdY78uyFxtQjz+MPXwK8WBIxWg== }
     engines: { node: '>=10.0.0' }
 
-  '@schematics/angular@20.1.6':
+  '@schematics/angular@20.3.3':
     resolution:
-      { integrity: sha512-1dE+GkpSZbsQxnir/S24g3+pA5sE0XOMxa4Wxhon0dxArP/gH72hsinoVaLDfcQkYOtbbTw/Q8VV41uWBI9eGg== }
+      { integrity: sha512-lqIP1pNKp8yaqd663R3graZWaTBjXH+Cl72BQl1Ghl7lFGReZJALr4GiSMiBR9r30Epklcw5TwOSi+Bs4UKmbw== }
     engines: { node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0' }
 
   '@shuding/opentype.js@1.4.0-beta.0':
@@ -4543,9 +4542,9 @@ packages:
     resolution:
       { integrity: sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g== }
 
-  algoliasearch@5.32.0:
+  algoliasearch@5.35.0:
     resolution:
-      { integrity: sha512-84xBncKNPBK8Ae89F65+SyVcOihrIbm/3N7to+GpRBHEUXGjA3ydWTMpcRW6jmFzkBQ/eqYy/y+J+NBpJWYjBg== }
+      { integrity: sha512-Y+moNhsqgLmvJdgTsO4GZNgsaDWv8AOGAaPeIeHKlDn/XunoAqYbA+XNpBd1dW8GOXAUDyxC9Rxc7AV4kpFcIg== }
     engines: { node: '>= 14.0.0' }
 
   angular-eslint@20.3.0:
@@ -6773,6 +6772,11 @@ packages:
       { integrity: sha512-sYKnA7eGln5ov8T8gnYlkSOxFJvywzEx9BueN6xo/GKO8PGiI6uK6xx+DIGe45T3bdVjLAQDQW1aicT8z8JwQg== }
     engines: { node: ^18.17.0 || >=20.5.0 }
 
+  hosted-git-info@9.0.0:
+    resolution:
+      { integrity: sha512-gEf705MZLrDPkbbhi8PnoO4ZwYgKoNL+ISZ3AjZMht2r3N5tuTwncyDi6Fv2/qDnMmZxgs0yI8WDOyR8q3G+SQ== }
+    engines: { node: ^20.17.0 || >=22.9.0 }
+
   hpack.js@2.1.6:
     resolution:
       { integrity: sha512-zJxVehUdMGIKsRaNt7apO2Gqp0BdqW5yaiGHXXmbpvxgBYVZnAql+BJb4RO5ad2MgpbZKn5G6nMnegrH1FcNYQ== }
@@ -6924,6 +6928,11 @@ packages:
   iconv-lite@0.6.3:
     resolution:
       { integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw== }
+    engines: { node: '>=0.10.0' }
+
+  iconv-lite@0.7.0:
+    resolution:
+      { integrity: sha512-cf6L2Ds3h57VVmkZe+Pn+5APsT7FpqJtEhhieDCvrE2MK5Qk9MyffgQyuxQTm6BChfeZNtcOLHp9IcWRVcIcBQ== }
     engines: { node: '>=0.10.0' }
 
   icss-utils@5.1.0:
@@ -7709,11 +7718,6 @@ packages:
       { integrity: sha512-cNOjgCnLB+FnvWWtyRTzmB3POJ+cXxTA81LoW7u8JdmhfXzriropYwpjShnz1QLLWsQwY7nIxoDmcPTwphDK9w== }
     engines: { node: ^12.20.0 || ^14.13.1 || >=16.0.0 }
 
-  listr2@8.3.3:
-    resolution:
-      { integrity: sha512-LWzX2KsqcB1wqQ4AHgYb4RsDXauQiqhjLk+6hjbaeHG4zpjjVAB6wC/gz6X0l+Du1cN3pUB5ZlrvTbhGSNnUQQ== }
-    engines: { node: '>=18.0.0' }
-
   listr2@9.0.1:
     resolution:
       { integrity: sha512-SL0JY3DaxylDuo/MecFeiC+7pedM0zia33zl0vcjgwcq1q1FWWF1To9EIauPbl8GbMCU0R2e0uJ8bZunhYKD2g== }
@@ -7826,6 +7830,11 @@ packages:
   lru-cache@10.4.3:
     resolution:
       { integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ== }
+
+  lru-cache@11.2.2:
+    resolution:
+      { integrity: sha512-F9ODfyqML2coTIsQpSkRHnLSZMtkU8Q+mSfcaIyKwy58u+8k5nvAYeiNhsyMARvzNcXJ9QfWVrcPsC9e9rAxtg== }
+    engines: { node: 20 || >=22 }
 
   lru-cache@5.1.1:
     resolution:
@@ -8150,11 +8159,6 @@ packages:
       { integrity: sha512-2eznPJP8z2BFLX50tf0LuODrpINqP1RVIm/CObbTcBRITQgmC/TjcREF1NeTBzIcR5XO/ukWo+YHOjBbFwIupg== }
     hasBin: true
 
-  mute-stream@1.0.0:
-    resolution:
-      { integrity: sha512-avsJQhyd+680gKXyG/sQc0nXaC6rBkPOfyHYcFb9+hdkqQkR9bdnkJ0AMZhke0oesPqIO+mFFJ+IdBc7mst4IA== }
-    engines: { node: ^14.17.0 || ^16.13.0 || >=18.0.0 }
-
   mute-stream@2.0.0:
     resolution:
       { integrity: sha512-WWdIxpyjEn+FhQJQQv9aQAYlHoNVdzIzUySNV1gHUPDSdZJ3yZn7pAAbQcV7B56Mvu881q9FZV+0Vx2xC44VWA== }
@@ -8337,6 +8341,11 @@ packages:
     resolution:
       { integrity: sha512-f1NpFjNI9O4VbKMOlA5QoBq/vSQPORHcTZ2feJpFkTHJ9eQkdlmZEKSjcAhxTGInC7RlEyScT9ui67NaOsjFWA== }
     engines: { node: ^18.17.0 || >=20.5.0 }
+
+  npm-package-arg@13.0.0:
+    resolution:
+      { integrity: sha512-+t2etZAGcB7TbbLHfDwooV9ppB2LhhcT6A+L9cahsf9mEUAoQ6CktLEVvEnpD0N5CkX7zJqnPGaFtoQDy9EkHQ== }
+    engines: { node: ^20.17.0 || >=22.9.0 }
 
   npm-packlist@10.0.0:
     resolution:
@@ -11227,9 +11236,9 @@ packages:
     peerDependencies:
       zod: ^3.24.1
 
-  zod@3.25.75:
+  zod@3.25.76:
     resolution:
-      { integrity: sha512-OhpzAmVzabPOL6C3A3gpAifqr9MqihV/Msx3gor2b2kviCgcb+HM9SEOpMWwwNp9MRunWnhtAKUoo0AHhjyPPg== }
+      { integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ== }
 
   zone.js@0.15.0:
     resolution:
@@ -11243,82 +11252,89 @@ snapshots:
 
   '@adobe/css-tools@4.4.0': {}
 
-  '@algolia/client-abtesting@5.32.0':
+  '@algolia/abtesting@1.1.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+      '@algolia/client-common': 5.35.0
+      '@algolia/requester-browser-xhr': 5.35.0
+      '@algolia/requester-fetch': 5.35.0
+      '@algolia/requester-node-http': 5.35.0
 
-  '@algolia/client-analytics@5.32.0':
+  '@algolia/client-abtesting@5.35.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+      '@algolia/client-common': 5.35.0
+      '@algolia/requester-browser-xhr': 5.35.0
+      '@algolia/requester-fetch': 5.35.0
+      '@algolia/requester-node-http': 5.35.0
 
-  '@algolia/client-common@5.32.0': {}
-
-  '@algolia/client-insights@5.32.0':
+  '@algolia/client-analytics@5.35.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+      '@algolia/client-common': 5.35.0
+      '@algolia/requester-browser-xhr': 5.35.0
+      '@algolia/requester-fetch': 5.35.0
+      '@algolia/requester-node-http': 5.35.0
 
-  '@algolia/client-personalization@5.32.0':
-    dependencies:
-      '@algolia/client-common': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+  '@algolia/client-common@5.35.0': {}
 
-  '@algolia/client-query-suggestions@5.32.0':
+  '@algolia/client-insights@5.35.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+      '@algolia/client-common': 5.35.0
+      '@algolia/requester-browser-xhr': 5.35.0
+      '@algolia/requester-fetch': 5.35.0
+      '@algolia/requester-node-http': 5.35.0
 
-  '@algolia/client-search@5.32.0':
+  '@algolia/client-personalization@5.35.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+      '@algolia/client-common': 5.35.0
+      '@algolia/requester-browser-xhr': 5.35.0
+      '@algolia/requester-fetch': 5.35.0
+      '@algolia/requester-node-http': 5.35.0
 
-  '@algolia/ingestion@1.32.0':
+  '@algolia/client-query-suggestions@5.35.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+      '@algolia/client-common': 5.35.0
+      '@algolia/requester-browser-xhr': 5.35.0
+      '@algolia/requester-fetch': 5.35.0
+      '@algolia/requester-node-http': 5.35.0
 
-  '@algolia/monitoring@1.32.0':
+  '@algolia/client-search@5.35.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+      '@algolia/client-common': 5.35.0
+      '@algolia/requester-browser-xhr': 5.35.0
+      '@algolia/requester-fetch': 5.35.0
+      '@algolia/requester-node-http': 5.35.0
 
-  '@algolia/recommend@5.32.0':
+  '@algolia/ingestion@1.35.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+      '@algolia/client-common': 5.35.0
+      '@algolia/requester-browser-xhr': 5.35.0
+      '@algolia/requester-fetch': 5.35.0
+      '@algolia/requester-node-http': 5.35.0
 
-  '@algolia/requester-browser-xhr@5.32.0':
+  '@algolia/monitoring@1.35.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
+      '@algolia/client-common': 5.35.0
+      '@algolia/requester-browser-xhr': 5.35.0
+      '@algolia/requester-fetch': 5.35.0
+      '@algolia/requester-node-http': 5.35.0
 
-  '@algolia/requester-fetch@5.32.0':
+  '@algolia/recommend@5.35.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
+      '@algolia/client-common': 5.35.0
+      '@algolia/requester-browser-xhr': 5.35.0
+      '@algolia/requester-fetch': 5.35.0
+      '@algolia/requester-node-http': 5.35.0
 
-  '@algolia/requester-node-http@5.32.0':
+  '@algolia/requester-browser-xhr@5.35.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
+      '@algolia/client-common': 5.35.0
+
+  '@algolia/requester-fetch@5.35.0':
+    dependencies:
+      '@algolia/client-common': 5.35.0
+
+  '@algolia/requester-node-http@5.35.0':
+    dependencies:
+      '@algolia/client-common': 5.35.0
 
   '@alloc/quick-lru@5.2.0': {}
 
@@ -11326,13 +11342,6 @@ snapshots:
     dependencies:
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
-
-  '@angular-devkit/architect@0.2001.6(chokidar@4.0.1)':
-    dependencies:
-      '@angular-devkit/core': 20.1.6(chokidar@4.0.1)
-      rxjs: 7.8.2
-    transitivePeerDependencies:
-      - chokidar
 
   '@angular-devkit/architect@0.2002.2(chokidar@4.0.1)':
     dependencies:
@@ -11484,6 +11493,16 @@ snapshots:
   '@angular-devkit/schematics@20.1.6(chokidar@4.0.1)':
     dependencies:
       '@angular-devkit/core': 20.1.6(chokidar@4.0.1)
+      jsonc-parser: 3.3.1
+      magic-string: 0.30.17
+      ora: 8.2.0
+      rxjs: 7.8.2
+    transitivePeerDependencies:
+      - chokidar
+
+  '@angular-devkit/schematics@20.3.3(chokidar@4.0.1)':
+    dependencies:
+      '@angular-devkit/core': 20.3.3(chokidar@4.0.1)
       jsonc-parser: 3.3.1
       magic-string: 0.30.17
       ora: 8.2.0
@@ -11668,27 +11687,26 @@ snapshots:
       - tsx
       - yaml
 
-  '@angular/cli@20.1.6(@types/node@22.17.1)(chokidar@4.0.1)':
+  '@angular/cli@20.3.3(@types/node@22.17.1)(chokidar@4.0.1)':
     dependencies:
-      '@angular-devkit/architect': 0.2001.6(chokidar@4.0.1)
-      '@angular-devkit/core': 20.1.6(chokidar@4.0.1)
-      '@angular-devkit/schematics': 20.1.6(chokidar@4.0.1)
-      '@inquirer/prompts': 7.6.0(@types/node@22.17.1)
-      '@listr2/prompt-adapter-inquirer': 2.0.22(@inquirer/prompts@7.6.0(@types/node@22.17.1))
-      '@modelcontextprotocol/sdk': 1.13.3
-      '@schematics/angular': 20.1.6(chokidar@4.0.1)
+      '@angular-devkit/architect': 0.2003.3(chokidar@4.0.1)
+      '@angular-devkit/core': 20.3.3(chokidar@4.0.1)
+      '@angular-devkit/schematics': 20.3.3(chokidar@4.0.1)
+      '@inquirer/prompts': 7.8.2(@types/node@22.17.1)
+      '@listr2/prompt-adapter-inquirer': 3.0.1(@inquirer/prompts@7.8.2(@types/node@22.17.1))(@types/node@22.17.1)(listr2@9.0.1)
+      '@modelcontextprotocol/sdk': 1.17.3
+      '@schematics/angular': 20.3.3(chokidar@4.0.1)
       '@yarnpkg/lockfile': 1.1.0
-      algoliasearch: 5.32.0
+      algoliasearch: 5.35.0
       ini: 5.0.0
       jsonc-parser: 3.3.1
-      listr2: 8.3.3
-      npm-package-arg: 12.0.2
-      npm-pick-manifest: 10.0.0
+      listr2: 9.0.1
+      npm-package-arg: 13.0.0
       pacote: 21.0.0
       resolve: 1.22.10
       semver: 7.7.2
       yargs: 18.0.0
-      zod: 3.25.75
+      zod: 3.25.76
     transitivePeerDependencies:
       - '@types/node'
       - bluebird
@@ -11782,7 +11800,7 @@ snapshots:
     optionalDependencies:
       '@angular/platform-server': 20.3.2(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@20.3.2)(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.2(@angular/animations@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
 
-  '@angular/youtube-player@20.1.5(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)':
+  '@angular/youtube-player@20.2.5(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)':
     dependencies:
       '@angular/common': 20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
       '@angular/core': 20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)(zone.js@0.15.0)
@@ -13009,20 +13027,15 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@inquirer/checkbox@4.2.0(@types/node@22.17.1)':
+  '@inquirer/ansi@1.0.0': {}
+
+  '@inquirer/checkbox@4.2.4(@types/node@22.17.1)':
     dependencies:
-      '@inquirer/core': 10.1.15(@types/node@22.17.1)
+      '@inquirer/ansi': 1.0.0
+      '@inquirer/core': 10.2.2(@types/node@22.17.1)
       '@inquirer/figures': 1.0.13
       '@inquirer/type': 3.0.8(@types/node@22.17.1)
-      ansi-escapes: 4.3.2
       yoctocolors-cjs: 2.1.2
-    optionalDependencies:
-      '@types/node': 22.17.1
-
-  '@inquirer/confirm@5.1.13(@types/node@22.17.1)':
-    dependencies:
-      '@inquirer/core': 10.1.15(@types/node@22.17.1)
-      '@inquirer/type': 3.0.7(@types/node@22.17.1)
     optionalDependencies:
       '@types/node': 22.17.1
 
@@ -13046,10 +13059,23 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.17.1
 
-  '@inquirer/editor@4.2.16(@types/node@22.17.1)':
+  '@inquirer/core@10.2.2(@types/node@22.17.1)':
     dependencies:
-      '@inquirer/core': 10.1.15(@types/node@22.17.1)
-      '@inquirer/external-editor': 1.0.0(@types/node@22.17.1)
+      '@inquirer/ansi': 1.0.0
+      '@inquirer/figures': 1.0.13
+      '@inquirer/type': 3.0.8(@types/node@22.17.1)
+      cli-width: 4.1.0
+      mute-stream: 2.0.0
+      signal-exit: 4.1.0
+      wrap-ansi: 6.2.0
+      yoctocolors-cjs: 2.1.2
+    optionalDependencies:
+      '@types/node': 22.17.1
+
+  '@inquirer/editor@4.2.20(@types/node@22.17.1)':
+    dependencies:
+      '@inquirer/core': 10.2.2(@types/node@22.17.1)
+      '@inquirer/external-editor': 1.0.2(@types/node@22.17.1)
       '@inquirer/type': 3.0.8(@types/node@22.17.1)
     optionalDependencies:
       '@types/node': 22.17.1
@@ -13062,11 +13088,12 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.17.1
 
-  '@inquirer/external-editor@1.0.0(@types/node@22.17.1)':
+  '@inquirer/external-editor@1.0.2(@types/node@22.17.1)':
     dependencies:
-      '@types/node': 22.17.1
       chardet: 2.1.0
-      iconv-lite: 0.6.3
+      iconv-lite: 0.7.0
+    optionalDependencies:
+      '@types/node': 22.17.1
 
   '@inquirer/figures@1.0.13': {}
 
@@ -13092,11 +13119,11 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.17.1
 
-  '@inquirer/prompts@7.6.0(@types/node@22.17.1)':
+  '@inquirer/prompts@7.8.2(@types/node@22.17.1)':
     dependencies:
-      '@inquirer/checkbox': 4.2.0(@types/node@22.17.1)
-      '@inquirer/confirm': 5.1.13(@types/node@22.17.1)
-      '@inquirer/editor': 4.2.16(@types/node@22.17.1)
+      '@inquirer/checkbox': 4.2.4(@types/node@22.17.1)
+      '@inquirer/confirm': 5.1.14(@types/node@22.17.1)
+      '@inquirer/editor': 4.2.20(@types/node@22.17.1)
       '@inquirer/expand': 4.0.17(@types/node@22.17.1)
       '@inquirer/input': 4.2.1(@types/node@22.17.1)
       '@inquirer/number': 3.0.17(@types/node@22.17.1)
@@ -13131,14 +13158,6 @@ snapshots:
       '@inquirer/type': 3.0.8(@types/node@22.17.1)
       ansi-escapes: 4.3.2
       yoctocolors-cjs: 2.1.2
-    optionalDependencies:
-      '@types/node': 22.17.1
-
-  '@inquirer/type@1.5.5':
-    dependencies:
-      mute-stream: 1.0.0
-
-  '@inquirer/type@3.0.7(@types/node@22.17.1)':
     optionalDependencies:
       '@types/node': 22.17.1
 
@@ -13482,10 +13501,13 @@ snapshots:
 
   '@leichtgewicht/ip-codec@2.0.4': {}
 
-  '@listr2/prompt-adapter-inquirer@2.0.22(@inquirer/prompts@7.6.0(@types/node@22.17.1))':
+  '@listr2/prompt-adapter-inquirer@3.0.1(@inquirer/prompts@7.8.2(@types/node@22.17.1))(@types/node@22.17.1)(listr2@9.0.1)':
     dependencies:
-      '@inquirer/prompts': 7.6.0(@types/node@22.17.1)
-      '@inquirer/type': 1.5.5
+      '@inquirer/prompts': 7.8.2(@types/node@22.17.1)
+      '@inquirer/type': 3.0.8(@types/node@22.17.1)
+      listr2: 9.0.1
+    transitivePeerDependencies:
+      - '@types/node'
 
   '@lmdb/lmdb-darwin-arm64@3.4.2':
     optional: true
@@ -13516,7 +13538,7 @@ snapshots:
 
   '@microsoft/clarity@1.0.0': {}
 
-  '@modelcontextprotocol/sdk@1.13.3':
+  '@modelcontextprotocol/sdk@1.17.3':
     dependencies:
       ajv: 6.12.6
       content-type: 1.0.5
@@ -13528,8 +13550,8 @@ snapshots:
       express-rate-limit: 7.5.1(express@5.1.0)
       pkce-challenge: 5.0.0
       raw-body: 3.0.0
-      zod: 3.25.75
-      zod-to-json-schema: 3.24.6(zod@3.25.75)
+      zod: 3.25.76
+      zod-to-json-schema: 3.24.6(zod@3.25.76)
     transitivePeerDependencies:
       - supports-color
 
@@ -14019,10 +14041,10 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@nx/angular@21.6.2(f376bc77880809d66bd6a47f69cb41b5)':
+  '@nx/angular@21.6.2(305210673d33701e0d1bcbe55e1aff8c)':
     dependencies:
       '@angular-devkit/core': 20.3.3(chokidar@4.0.1)
-      '@angular-devkit/schematics': 20.1.6(chokidar@4.0.1)
+      '@angular-devkit/schematics': 20.3.3(chokidar@4.0.1)
       '@nx/devkit': 21.6.2(nx@21.6.2)
       '@nx/eslint': 21.6.2(@babel/traverse@7.28.4)(@zkochan/js-yaml@0.0.7)(eslint@9.35.0(jiti@1.21.7))(nx@21.6.2)
       '@nx/js': 21.6.2(@babel/traverse@7.28.4)(nx@21.6.2)
@@ -14032,7 +14054,7 @@ snapshots:
       '@nx/webpack': 21.6.2(@babel/traverse@7.28.4)(@rspack/core@1.5.3(@swc/helpers@0.5.17))(esbuild@0.25.5)(html-webpack-plugin@5.6.3(@rspack/core@1.5.3(@swc/helpers@0.5.17))(webpack@5.99.9(esbuild@0.25.5)))(nx@21.6.2)(typescript@5.9.2)
       '@nx/workspace': 21.6.2
       '@phenomnomnominal/tsquery': 5.0.1(typescript@5.9.2)
-      '@schematics/angular': 20.1.6(chokidar@4.0.1)
+      '@schematics/angular': 20.3.3(chokidar@4.0.1)
       '@typescript-eslint/type-utils': 8.43.0(eslint@9.35.0(jiti@1.21.7))(typescript@5.9.2)
       enquirer: 2.3.6
       magic-string: 0.30.17
@@ -14779,10 +14801,10 @@ snapshots:
 
   '@sanity/image-url@1.1.0': {}
 
-  '@schematics/angular@20.1.6(chokidar@4.0.1)':
+  '@schematics/angular@20.3.3(chokidar@4.0.1)':
     dependencies:
-      '@angular-devkit/core': 20.1.6(chokidar@4.0.1)
-      '@angular-devkit/schematics': 20.1.6(chokidar@4.0.1)
+      '@angular-devkit/core': 20.3.3(chokidar@4.0.1)
+      '@angular-devkit/schematics': 20.3.3(chokidar@4.0.1)
       jsonc-parser: 3.3.1
     transitivePeerDependencies:
       - chokidar
@@ -14864,7 +14886,7 @@ snapshots:
       storybook: 9.0.13(@testing-library/dom@10.4.0)(prettier@3.6.2)
       webpack: 5.99.9(esbuild@0.25.5)
 
-  '@storybook/angular@9.0.13(dc5e02502a8e0258d9148f5cc2eb7925)':
+  '@storybook/angular@9.0.13(bb333f1e4eb218408b67b77b5bc50938)':
     dependencies:
       '@angular-devkit/architect': 0.2003.3(chokidar@4.0.1)
       '@angular-devkit/build-angular': 20.3.3(b0a1c1c2c47130e865bd88ab03fa43b4)
@@ -14891,7 +14913,7 @@ snapshots:
       webpack: 5.99.9(esbuild@0.25.5)
     optionalDependencies:
       '@angular/animations': 20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)(zone.js@0.15.0))
-      '@angular/cli': 20.1.6(@types/node@22.17.1)(chokidar@4.0.1)
+      '@angular/cli': 20.3.3(@types/node@22.17.1)(chokidar@4.0.1)
       zone.js: 0.15.0
     transitivePeerDependencies:
       - '@rspack/core'
@@ -15604,21 +15626,22 @@ snapshots:
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
-  algoliasearch@5.32.0:
+  algoliasearch@5.35.0:
     dependencies:
-      '@algolia/client-abtesting': 5.32.0
-      '@algolia/client-analytics': 5.32.0
-      '@algolia/client-common': 5.32.0
-      '@algolia/client-insights': 5.32.0
-      '@algolia/client-personalization': 5.32.0
-      '@algolia/client-query-suggestions': 5.32.0
-      '@algolia/client-search': 5.32.0
-      '@algolia/ingestion': 1.32.0
-      '@algolia/monitoring': 1.32.0
-      '@algolia/recommend': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+      '@algolia/abtesting': 1.1.0
+      '@algolia/client-abtesting': 5.35.0
+      '@algolia/client-analytics': 5.35.0
+      '@algolia/client-common': 5.35.0
+      '@algolia/client-insights': 5.35.0
+      '@algolia/client-personalization': 5.35.0
+      '@algolia/client-query-suggestions': 5.35.0
+      '@algolia/client-search': 5.35.0
+      '@algolia/ingestion': 1.35.0
+      '@algolia/monitoring': 1.35.0
+      '@algolia/recommend': 5.35.0
+      '@algolia/requester-browser-xhr': 5.35.0
+      '@algolia/requester-fetch': 5.35.0
+      '@algolia/requester-node-http': 5.35.0
 
   angular-eslint@20.3.0(chokidar@4.0.1)(eslint@9.35.0(jiti@1.21.7))(typescript-eslint@8.43.0(eslint@9.35.0(jiti@1.21.7))(typescript@5.9.2))(typescript@5.9.2):
     dependencies:
@@ -17661,6 +17684,10 @@ snapshots:
     dependencies:
       lru-cache: 10.4.3
 
+  hosted-git-info@9.0.0:
+    dependencies:
+      lru-cache: 11.2.2
+
   hpack.js@2.1.6:
     dependencies:
       inherits: 2.0.4
@@ -17845,6 +17872,10 @@ snapshots:
       safer-buffer: 2.1.2
 
   iconv-lite@0.6.3:
+    dependencies:
+      safer-buffer: 2.1.2
+
+  iconv-lite@0.7.0:
     dependencies:
       safer-buffer: 2.1.2
 
@@ -18682,15 +18713,6 @@ snapshots:
 
   lines-and-columns@2.0.3: {}
 
-  listr2@8.3.3:
-    dependencies:
-      cli-truncate: 4.0.0
-      colorette: 2.0.20
-      eventemitter3: 5.0.1
-      log-update: 6.1.0
-      rfdc: 1.4.1
-      wrap-ansi: 9.0.0
-
   listr2@9.0.1:
     dependencies:
       cli-truncate: 4.0.0
@@ -18796,6 +18818,8 @@ snapshots:
       tslib: 2.8.1
 
   lru-cache@10.4.3: {}
+
+  lru-cache@11.2.2: {}
 
   lru-cache@5.1.1:
     dependencies:
@@ -19029,8 +19053,6 @@ snapshots:
       dns-packet: 5.4.0
       thunky: 1.1.0
 
-  mute-stream@1.0.0: {}
-
   mute-stream@2.0.0: {}
 
   mz@2.7.0:
@@ -19170,6 +19192,13 @@ snapshots:
   npm-package-arg@12.0.2:
     dependencies:
       hosted-git-info: 8.0.2
+      proc-log: 5.0.0
+      semver: 7.7.2
+      validate-npm-package-name: 6.0.0
+
+  npm-package-arg@13.0.0:
+    dependencies:
+      hosted-git-info: 9.0.0
       proc-log: 5.0.0
       semver: 7.7.2
       validate-npm-package-name: 6.0.0
@@ -21862,11 +21891,11 @@ snapshots:
 
   yoga-wasm-web@0.3.3: {}
 
-  zod-to-json-schema@3.24.6(zod@3.25.75):
+  zod-to-json-schema@3.24.6(zod@3.25.76):
     dependencies:
-      zod: 3.25.75
+      zod: 3.25.76
 
-  zod@3.25.75: {}
+  zod@3.25.76: {}
 
   zone.js@0.15.0:
     optional: true
