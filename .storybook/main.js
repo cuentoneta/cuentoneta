@@ -15,7 +15,7 @@ module.exports = {
 		options: {},
 	},
 	docs: {},
-	staticDirs: ['../src/assets'],
+	staticDirs: [{ from: '../src/assets', to: '/assets' }],
 };
 
 // To customize your webpack configuration you can use the webpackFinal field.
