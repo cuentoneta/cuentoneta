@@ -3,15 +3,18 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Author } from '@models/author.model';
 import { RouterLink } from '@angular/router';
 import { AppRoutes } from '../../app.routes';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 
 @Component({
 	selector: 'cuentoneta-author-teaser',
-	imports: [CommonModule, NgOptimizedImage, RouterLink],
+	imports: [CommonModule, NgIcon, NgOptimizedImage, RouterLink],
+	providers: [provideIcons({ faSolidArrowRightLong })],
 	template: ` <a
 		[routerLink]="['/', appRoutes.Author, author().slug]"
 		[ngClass]="{
 			'gap-3': variant() === 'sm',
-			'gap-4': variant() === 'md'
+			'gap-4': variant() === 'md',
 		}"
 		class="flex flex-row items-center hover:cursor-pointer"
 	>
@@ -22,18 +25,18 @@ import { AppRoutes } from '../../app.routes';
 			[height]="imageSize()"
 			[ngClass]="{
 				'h-[40px] w-[40px] rounded': variant() === 'sm',
-				'h-[64px] w-[64px] rounded-md': variant() === 'md'
+				'h-[64px] w-[64px] rounded-md': variant() === 'md',
 			}"
 		/>
 		<div class="block hover:!cursor-pointer">
 			<h2
 				[ngClass]="{
 					'inter-body-base-semibold': variant() === 'sm',
-					'inter-body-lg-semibold': variant() === 'md'
+					'inter-body-lg-semibold': variant() === 'md',
 				}"
-				class="flex items-center hover:!cursor-pointer"
+				class="flex items-center gap-1 hover:!cursor-pointer"
 			>
-				{{ author().name }}<span class="icon-arrow-right"></span>
+				{{ author().name }} <ng-icon name="faSolidArrowRightLong" size="16px" />
 			</h2>
 			@if (author().nationality; as nationality) {
 				<div class="flex items-center gap-2">
@@ -47,7 +50,7 @@ import { AppRoutes } from '../../app.routes';
 					<span
 						[ngClass]="{
 							'inter-body-sm-semibold text-gray-500 hover:!cursor-pointer': variant() === 'sm',
-							'inter-body-base-medium text-gray-700': variant() === 'md'
+							'inter-body-base-medium text-gray-700': variant() === 'md',
 						}"
 						>{{ nationality.country }}</span
 					>

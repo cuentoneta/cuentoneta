@@ -2,9 +2,30 @@ import { NgOptimizedImage } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { InternalLink, UrlLink } from '@models/link.model';
+import {
+	faBrandFacebook,
+	faBrandGithub,
+	faBrandInstagram,
+	faBrandWhatsapp,
+	faBrandXTwitter,
+} from '@ng-icons/font-awesome/brands';
+import { faSolidEnvelope } from '@ng-icons/font-awesome/solid';
+import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
 
 @Component({
 	selector: 'cuentoneta-footer',
+	imports: [RouterModule, NgIcon, NgOptimizedImage],
+	providers: [
+		provideIcons({
+			faBrandWhatsapp,
+			faBrandXTwitter,
+			faBrandInstagram,
+			faBrandFacebook,
+			faBrandGithub,
+			faSolidEnvelope,
+		}),
+		provideNgIconsConfig({ size: '20px' }),
+	],
 	template: `
 		<footer class="">
 			<div class="container grid h-full max-w-screen-lg items-center justify-between">
@@ -28,13 +49,7 @@ import { InternalLink, UrlLink } from '@models/link.model';
 							@for (link of socialLinks; track $index) {
 								<li class="flex items-center">
 									<a [attr.aria-label]="link.ariaLabel" [href]="link.url">
-										<img
-											[alt]="link.alt"
-											[ngSrc]="link.imageUrl!"
-											class="h-[20px] w-[20px] max-w-[20px]"
-											width="20"
-											height="20"
-										/>
+										<ng-icon [name]="link.icon" [attr.alt]="link.alt" />
 									</a>
 								</li>
 							}
@@ -73,7 +88,6 @@ import { InternalLink, UrlLink } from '@models/link.model';
 			}
 		}
 	`,
-	imports: [RouterModule, NgOptimizedImage],
 })
 export class FooterComponent {
 	readonly navLinks: InternalLink[] = [
@@ -87,7 +101,7 @@ export class FooterComponent {
 			url: 'https://whatsapp.com/channel/0029VaC3aCSJuyAGTU2tC02F',
 			label: 'Whatsapp',
 			ariaLabel: `Canal de Whatsapp de 'La Cuentoneta'`,
-			imageUrl: './assets/svg/whatsapp.svg',
+			icon: 'faBrandWhatsapp',
 			alt: 'Ícono de Whatsapp',
 		},
 		{
@@ -95,41 +109,35 @@ export class FooterComponent {
 			label: 'X',
 			ariaLabel: `Perfil de X de 'La Cuentoneta'`,
 			alt: 'Ícono de X',
-			imageUrl: './assets/svg/twitter.svg',
+			icon: 'faBrandXTwitter',
 		},
 		{
 			url: 'https://www.instagram.com/cuentoneta',
 			label: 'Instagram',
 			ariaLabel: `Perfil de Instagram de 'La Cuentoneta'`,
 			alt: 'Ícono de Instagram',
-			imageUrl: './assets/svg/instagram.svg',
+			icon: 'faBrandInstagram',
 		},
 		{
 			url: 'https://www.facebook.com/cuentoneta',
 			label: 'Facebook',
 			ariaLabel: `Página de Facebook de 'La Cuentoneta'`,
 			alt: 'Ícono de Facebook',
-			imageUrl: './assets/svg/facebook.svg',
+			icon: 'faBrandFacebook',
 		},
 		{
 			url: 'https://github.com/cuentoneta/cuentoneta',
 			label: 'Github',
 			ariaLabel: `Repositorio de Github de 'La Cuentoneta'`,
 			alt: 'Ícono de Github',
-			imageUrl: './assets/svg/github.svg',
+			icon: 'faBrandGithub',
 		},
 		{
 			url: 'mailto:contacto@cuentoneta.ar',
 			label: 'Enviar un Correo Electrónico',
 			ariaLabel: `Email de 'La Cuentoneta'`,
 			alt: 'Ícono de sobre de carta',
-			imageUrl: './assets/svg/email.svg',
+			icon: 'faSolidEnvelope',
 		},
 	];
-
-	displayMenu = false;
-
-	onMenuTogglerClicked() {
-		this.displayMenu = !this.displayMenu;
-	}
 }
