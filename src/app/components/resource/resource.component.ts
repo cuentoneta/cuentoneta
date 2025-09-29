@@ -1,6 +1,5 @@
 // Core
 import { Component, computed, inject, input, OnInit } from '@angular/core';
-import { NgOptimizedImage } from '@angular/common';
 
 // Models
 import { Resource } from '@models/resource.model';
