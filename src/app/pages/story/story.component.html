@@ -29,10 +29,10 @@
 						<a
 							[lang]="story.language"
 							[routerLink]="['/', appRoutes.Author, story.author.slug]"
-							class="inter-body-xl mb-2 block flex items-center"
+							class="inter-body-xl mb-2 block flex items-center gap-1"
 						>
 							{{ story.author.name }}
-							<span class="icon-arrow-right"></span>
+							<ng-icon name="faSolidArrowRightLong" size="16px" />
 						</a>
 						<time class="inter-body-base-medium text-gray-600">
 							{{ story.approximateReadingTime }} minutos de lectura
@@ -46,7 +46,7 @@
 							[theme]="{
 								'height.px': 36,
 								'background-color': skeletonColor,
-								width: '50%'
+								width: '50%',
 							}"
 							count="1"
 							appearance="line"
@@ -55,7 +55,7 @@
 							[theme]="{
 								'height.px': 20,
 								'background-color': skeletonColor,
-								width: '25%'
+								width: '25%',
 							}"
 							count="1"
 							appearance="line"
@@ -64,7 +64,7 @@
 							[theme]="{
 								'height.px': 16,
 								'background-color': skeletonColor,
-								width: '20%'
+								width: '20%',
 							}"
 							count="1"
 							appearance="line"

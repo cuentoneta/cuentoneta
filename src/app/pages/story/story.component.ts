@@ -33,6 +33,8 @@ import { EpigraphComponent } from '../../components/epigraph/epigraph.component'
 import { MediaResourceComponent } from '../../components/media-resource/media-resource.component';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
 import { ProgressBarComponent } from '../../components/progress-bar/progress-bar.component';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 
 @Component({
 	selector: 'cuentoneta-story',
@@ -58,7 +60,9 @@ import { ProgressBarComponent } from '../../components/progress-bar/progress-bar
 		ShareContentComponent,
 		StoryNavigationBarComponent,
 		ProgressBarComponent,
+		NgIcon,
 	],
+	providers: [provideIcons({ faSolidArrowRightLong })],
 	hostDirectives: [MetaTagsDirective],
 })
 export default class StoryComponent implements OnDestroy {
