@@ -52,7 +52,7 @@ import { faBrandAmazon, faBrandInstagram, faBrandWikipediaW } from '@ng-icons/fo
 			class="flex h-12 w-12 items-center justify-center rounded-full border-1 border-solid border-gray-200 bg-gray-100 hover:bg-gray-200"
 		>
 			@if (iconName(); as iconName) {
-				<ng-icon [name]="iconName" size="22px" />
+				<ng-icon [name]="iconName" [attr.alt]="resource().title" size="22px" />
 			}
 		</a>
 	`,

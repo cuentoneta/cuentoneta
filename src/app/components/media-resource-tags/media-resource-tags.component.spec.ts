@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/angular';
+import { render, screen, queryAllByAttribute } from '@testing-library/angular';
 import { MediaResourceTagsComponent } from './media-resource-tags.component';
 import { MediaResourcePlatform, MediaResourceTagComponent } from '../media-resource-tag/media-resource-tag.component';
 import { CommonModule } from '@angular/common';
@@ -24,14 +24,16 @@ const mockMedia: Media[] = [
 
 describe('MediaResourceTagsComponent', () => {
 	it('should render the correct number of resource tags', async () => {
-		await render(MediaResourceTagsComponent, {
+		const { container } = await render(MediaResourceTagsComponent, {
 			imports: [CommonModule, MediaResourceTagComponent],
 			inputs: {
 				resources: mockMedia,
 			},
 		});
 
-		const resourceTags = screen.getAllByRole('img'); // Assuming each tag renders an image
+		const resourceTags = queryAllByAttribute('data-testid', container as HTMLElement, (value) =>
+			value ? /icon-/.test(value) : false,
+		);
 		expect(resourceTags.length).toBe(mockMedia.length);
 	});
 
@@ -47,9 +49,10 @@ describe('MediaResourceTagsComponent', () => {
 		const platforms = instance.platforms as { [key in MediaTypeKey]: MediaResourcePlatform };
 
 		mockMedia.forEach((media) => {
-			const platformIcon = screen.getByAltText(platforms[media.type].title);
+			const platformIcon = screen.getByLabelText(platforms[media.type].title);
 			expect(platformIcon).toBeInTheDocument();
-			expect(platformIcon).toHaveAttribute('src', platforms[media.type].icon);
+			expect(platformIcon).toHaveAttribute('aria-label', platforms[media.type].title);
+			expect(platformIcon).toHaveAttribute('data-testid', expect.stringMatching(/icon-/));
 		});
 	});
 

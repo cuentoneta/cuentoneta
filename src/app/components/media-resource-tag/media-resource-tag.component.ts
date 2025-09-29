@@ -12,7 +12,12 @@ export interface MediaResourcePlatform {
 	imports: [NgIcon],
 	hostDirectives: [TooltipDirective],
 	template: ` <div [class]="size()" class="flex items-center justify-center">
-		<ng-icon [name]="platform().icon" [size]="iconSize()" [attr.aria-label]="platform().title" />
+		<ng-icon
+			[name]="platform().icon"
+			[size]="iconSize()"
+			[attr.aria-label]="platform().title"
+			[attr.data-testid]="'icon-' + platform().icon"
+		/>
 	</div>`,
 	styles: `
 		.md {

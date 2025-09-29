@@ -49,7 +49,7 @@ import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
 							@for (link of socialLinks; track $index) {
 								<li class="flex items-center">
 									<a [attr.aria-label]="link.ariaLabel" [href]="link.url">
-										<ng-icon [name]="link.icon" />
+										<ng-icon [name]="link.icon" [attr.alt]="link.alt" />
 									</a>
 								</li>
 							}
