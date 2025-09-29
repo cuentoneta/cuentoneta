@@ -3,13 +3,13 @@ export interface Icon {
 	provider: string;
 }
 
-// TODO: Replace this interface with direct uses of ngIcons
+// TODO: #535 - Reemplazar estas interfaces por uso directo de íconos cargados de manera dinámica
 export interface IconMapper {
 	name: string;
 	ngIconsName: string;
 }
 
-// TODO: Replace this mapper with direct uses of ngIcons
+// TODO: #535 - Reemplazar estas interfaces por uso directo de íconos cargados de manera dinámica
 export const iconMappers: IconMapper[] = [
 	{
 		name: 'curaduria',
