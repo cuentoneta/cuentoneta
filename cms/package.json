@@ -29,7 +29,7 @@
 		"react-is": "^18.3.1",
 		"sanity": "^3.62.2",
 		"sanity-plugin-computed-field": "^2.0.2",
-		"sanity-plugin-icon-picker": "^3.3.0",
+		"sanity-plugin-icon-picker": "^4.0.0",
 		"styled-components": "^6.1.13"
 	},
 	"devDependencies": {
