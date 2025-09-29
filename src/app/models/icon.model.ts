@@ -88,7 +88,7 @@ export const iconMappers: IconMapper[] = [
 		ngIconsName: 'simpleBlogger',
 	},
 	{
-		name: 'mail',
+		name: 'email',
 		ngIconsName: 'faSolidEnvelope',
 	},
 	{
