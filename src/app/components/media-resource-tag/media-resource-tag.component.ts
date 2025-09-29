@@ -1,6 +1,6 @@
-import { Component, inject, input, OnInit } from '@angular/core';
-import { NgOptimizedImage } from '@angular/common';
+import { Component, computed, inject, input, OnInit } from '@angular/core';
 import { TooltipDirective } from '../../directives/tooltip.directive';
+import { NgIcon } from '@ng-icons/core';
 
 export interface MediaResourcePlatform {
 	title: string;
@@ -9,10 +9,10 @@ export interface MediaResourcePlatform {
 
 @Component({
 	selector: 'cuentoneta-media-resource-tag',
-	imports: [NgOptimizedImage],
+	imports: [NgIcon],
 	hostDirectives: [TooltipDirective],
 	template: ` <div [class]="size()" class="flex items-center justify-center">
-		<img [alt]="platform().title" [ngSrc]="platform().icon" width="24" height="24" />
+		<ng-icon [name]="platform().icon" [size]="iconSize()" [attr.aria-label]="platform().title" />
 	</div>`,
 	styles: `
 		.md {
@@ -27,6 +27,7 @@ export interface MediaResourcePlatform {
 export class MediaResourceTagComponent implements OnInit {
 	readonly platform = input.required<MediaResourcePlatform>();
 	readonly size = input<'md' | 'lg'>('md');
+	readonly iconSize = computed(() => (this.size() === 'md' ? '32px' : '24px'));
 
 	private tooltipDirective = inject(TooltipDirective);
 
