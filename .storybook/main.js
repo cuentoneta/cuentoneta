@@ -2,6 +2,7 @@ module.exports = {
 	stories: ['../src/app/**/*.stories.mdx', '../src/app/**/*.stories.@(js|jsx|ts|tsx)'],
 	styles: [],
 	addons: [
+		'@storybook/addon-docs',
 		{
 			name: '@storybook/addon-styling-webpack',
 			options: {
@@ -14,7 +15,7 @@ module.exports = {
 		options: {},
 	},
 	docs: {},
-	staticDirs: ['../src/assets'],
+	staticDirs: [{ from: '../src/assets', to: '/assets' }],
 };
 
 // To customize your webpack configuration you can use the webpackFinal field.

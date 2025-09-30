@@ -2,7 +2,7 @@ import { environment } from '../environments/environment';
 
 export interface SharingPlatform {
 	name: string;
-	logo: string;
+	icon: string;
 	platformApiUrl: string;
 	target?: string;
 	features?: string;
@@ -11,7 +11,7 @@ export interface SharingPlatform {
 
 export class FacebookPlatform implements SharingPlatform {
 	name = 'Facebook';
-	logo = 'facebook';
+	icon = 'faBrandFacebook';
 	platformApiUrl = `https://www.facebook.com/share.php`;
 	target = 'facebook-share-dialog';
 	features = 'width=626,height=436';
@@ -24,7 +24,7 @@ export class FacebookPlatform implements SharingPlatform {
 
 export class WhatsappPlatform implements SharingPlatform {
 	name = 'Whatsapp';
-	logo = 'whatsapp';
+	icon = 'faBrandWhatsapp';
 	platformApiUrl = `whatsapp://send/`;
 	target = '_blank';
 	features = '';
@@ -42,7 +42,7 @@ export class WhatsappPlatform implements SharingPlatform {
 
 export class TwitterPlatform implements SharingPlatform {
 	name = 'Twitter';
-	logo = 'twitter';
+	icon = 'faBrandXTwitter';
 	platformApiUrl = `https://twitter.com/intent/tweet`;
 	target = '_blank';
 	features = '';

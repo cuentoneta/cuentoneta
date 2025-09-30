@@ -61,6 +61,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	private readonly storylistResource = rxResource({
 		params: () => this.navigationSlug(),
 		stream: ({ params }) => this.storylistService.getStorylistNavigationTeasers(params),
+		defaultValue: undefined,
 	});
 
 	// Propiedades
