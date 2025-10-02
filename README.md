@@ -44,6 +44,35 @@ proyecto y decidimos sobre los aspectos prácticos y las herramientas que utiliz
 Si deseas visualizar los ítems de trabajo para principiantes en el proyecto, podés dirigirte a la [página de
 contribución del proyecto](https://github.com/cuentoneta/cuentoneta/contribute).
 
+### Agregar colores de TailwindCSS
+
+El proyecto importa solo los colores de Tailwind que realmente usa para optimizar el _bundle_ y evitar _warnings_ de deprecación.
+**Colores disponibles actualmente:** `zinc`, `blue`.
+**Para agregar un nuevo color:**
+
+1. Edita `src/app/providers/theme.service.ts`.
+2. Agrega el color al import:
+   ```typescript
+   import { zinc, blue, red } from 'tailwindcss/colors';
+   ```
+3. Agrega el color al registro:
+   ```typescript
+   const AVAILABLE_COLORS = {
+   	zinc,
+   	blue,
+   	red, // ← nuevo
+   } as const;
+   ```
+
+**Uso:**
+
+```typescript
+constructor(private themeService: ThemeService) {}
+
+const color = this.themeService.pickColor('red', 500);
+// Devuelve: '#EF4444'
+```
+
 ## Misión, Visión y Valores
 
 La misión, la visión y los valores de La Cuentoneta nos proporcionan el marco de referencia para la toma de decisiones y el desarrollo de las acciones del proyecto a largo plazo. Pueden consultarse los MMVs encuentran en [este enlace][doc-mvv].
