@@ -73,6 +73,7 @@ module.exports = [
 			'@stylistic/js/no-extra-semi': 'off',
 			'jest/no-focused-tests': 'error',
 			'no-barrel-files/no-barrel-files': 'error',
+			'preserve-caught-error': 'error',
 		},
 	},
 	{
