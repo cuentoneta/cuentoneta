@@ -16,6 +16,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 	selector: 'cuentoneta-author-navigation-frame',
 	imports: [NavigableStoryTeaserComponent],
 	template: `@if (stories(); as stories) {
+		abacab
 		@for (story of stories; track $index) {
 			<cuentoneta-navigable-story-teaser
 				[story]="story"
