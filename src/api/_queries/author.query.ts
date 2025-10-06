@@ -14,7 +14,8 @@ export const authorBySlugQuery = defineQuery(`
     'resources': coalesce(resources[]{ 
         title, 
         url, 
-        resourceType->{ 
+        resourceType->{
+        	'slug': slug.current,
         	title, 
         	shortDescription,
         	description, 

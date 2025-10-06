@@ -1,6 +1,5 @@
 // Core
 import { Component, computed, inject, input, OnInit } from '@angular/core';
-import { NgOptimizedImage } from '@angular/common';
 
 // Models
 import { Resource } from '@models/resource.model';
@@ -10,18 +9,51 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Directives
 import { TooltipDirective } from '../../directives/tooltip.directive';
+import { iconMappers } from '@models/icon.model';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { faSolidAddressBook, faSolidEnvelope, faSolidGlobe, faSolidMedal } from '@ng-icons/font-awesome/solid';
+import {
+	simpleBlogger,
+	simpleDiscord,
+	simpleSubstack,
+	simpleWattpad,
+	simpleWikisource,
+	simpleX,
+	simpleYoutube,
+} from '@ng-icons/simple-icons';
+import { faBrandAmazon, faBrandInstagram, faBrandWikipediaW } from '@ng-icons/font-awesome/brands';
 
 @Component({
 	selector: 'cuentoneta-resource',
 	hostDirectives: [TooltipDirective],
-	imports: [NgOptimizedImage, NgxSkeletonLoaderModule],
+	imports: [NgIcon, NgxSkeletonLoaderModule, NgIcon],
+	providers: [
+		provideIcons({
+			faBrandAmazon,
+			faBrandInstagram,
+			faBrandWikipediaW,
+			faSolidAddressBook,
+			faSolidEnvelope,
+			faSolidGlobe,
+			faSolidMedal,
+			simpleBlogger,
+			simpleDiscord,
+			simpleSubstack,
+			simpleWattpad,
+			simpleWikisource,
+			simpleYoutube,
+			simpleX,
+		}),
+	],
 	template: `
 		<a
 			[href]="resource().url"
 			target="_blank"
 			class="flex h-12 w-12 items-center justify-center rounded-full border-1 border-solid border-gray-200 bg-gray-100 hover:bg-gray-200"
 		>
-			<img [ngSrc]="iconUrl()" [height]="24" [width]="24" [alt]="resource().resourceType.title" class="m-3 h-6 w-6" />
+			@if (iconName(); as iconName) {
+				<ng-icon [name]="iconName" [attr.alt]="resource().title" size="22px" />
+			}
 		</a>
 	`,
 	styles: `
@@ -32,12 +64,11 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 })
 export class ResourceComponent implements OnInit {
 	readonly resource = input.required<Resource>();
-	readonly iconUrl = computed(() => {
-		if (!this.resource().resourceType.icon.name) {
+	readonly iconName = computed(() => {
+		if (!this.resource().resourceType.slug) {
 			return '';
 		}
-
-		return `assets/icons/resources/${this.resource().resourceType.icon.name}.svg`;
+		return iconMappers.find((resource) => resource.name === this.resource().resourceType.slug)?.ngIconsName ?? '';
 	});
 
 	private tooltipDirective = inject(TooltipDirective);

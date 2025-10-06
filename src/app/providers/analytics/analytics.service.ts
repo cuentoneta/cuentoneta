@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { injectSpeedInsights } from '@vercel/speed-insights';
-import { environment } from '../environments/environment';
+import { environment } from '../../environments/environment';
 
 @Injectable({
 	providedIn: 'root',

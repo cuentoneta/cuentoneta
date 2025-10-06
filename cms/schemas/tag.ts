@@ -55,6 +55,7 @@ export default defineType({
 			title: 'Icono',
 			type: 'iconPicker',
 			options: {
+				providers: ['fa', 'si'],
 				storeSvg: true,
 			},
 			validation: (Rule) => Rule.required(),

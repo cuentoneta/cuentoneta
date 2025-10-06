@@ -1,4 +1,4 @@
-import { Meta, moduleMetadata } from '@storybook/angular';
+import { applicationConfig, Meta, moduleMetadata } from '@storybook/angular';
 import { PublicationCardComponent } from './publication-card.component';
 
 import { DatePipe, NgOptimizedImage, registerLocaleData } from '@angular/common';
@@ -14,20 +14,17 @@ registerLocaleData(localeEs);
 // Modelos
 import { Publication } from '@models/storylist.model';
 import { storyPreviewMock } from '../../mocks/story.mock';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter } from '@angular/router';
 
 export default {
 	title: 'PublicationCardComponent',
 	component: PublicationCardComponent,
 	decorators: [
+		applicationConfig({
+			providers: [provideRouter([])],
+		}),
 		moduleMetadata({
-			imports: [
-				NgOptimizedImage,
-				NgxSkeletonLoaderModule,
-				StoryCardSkeletonComponent,
-				StoryEditionDateLabelComponent,
-				RouterTestingModule,
-			],
+			imports: [NgOptimizedImage, NgxSkeletonLoaderModule, StoryCardSkeletonComponent, StoryEditionDateLabelComponent],
 			providers: [DatePipe, { provide: LOCALE_ID, useValue: 'es-419' }],
 		}),
 	],

@@ -7,7 +7,7 @@
 		"types": ["node"]
 	},
 	"include": ["src/api/**/*.ts"],
-	"files": ["src/main.server.ts", "src/ssr.server.ts"],
+	"files": ["src/main.server.ts", "src/server.ts"],
 	"angularCompilerOptions": {
 		"entryModule": "./src/app/app.server.module#AppServerModule"
 	}

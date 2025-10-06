@@ -5,6 +5,7 @@ const storybook = require('eslint-plugin-storybook');
 const jest = require('eslint-plugin-jest');
 const jestDom = require('eslint-plugin-jest-dom');
 const testingLibrary = require('eslint-plugin-testing-library');
+const noBarrelFiles = require('eslint-plugin-no-barrel-files');
 
 module.exports = [
 	{
@@ -45,6 +46,7 @@ module.exports = [
 		plugins: {
 			'@stylistic/js': stylisticJs,
 			jest: jest,
+			'no-barrel-files': noBarrelFiles,
 		},
 		rules: {
 			'@angular-eslint/directive-selector': [
@@ -70,6 +72,8 @@ module.exports = [
 			'@typescript-eslint/no-explicit-any': 'error',
 			'@stylistic/js/no-extra-semi': 'off',
 			'jest/no-focused-tests': 'error',
+			'no-barrel-files/no-barrel-files': 'error',
+			'preserve-caught-error': 'error',
 		},
 	},
 	{

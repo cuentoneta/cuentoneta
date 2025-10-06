@@ -1,7 +1,6 @@
 // Imports de estilos globales
 @use 'assets/scss/layout' as *;
 @use 'assets/scss/reset' as *;
-@use 'assets/scss/icons' as *;
 @use 'assets/scss/typography' as *;
 @use 'assets/scss/theme' as *;
 @use 'assets/scss/transitions' as *;
@@ -18,15 +17,17 @@
 
 // Imports de fuentes
 @font-face {
-	font-display: swap;
+	font-display: block;
 	font-family: Inter;
-	src: url('assets/fonts/inter.woff2');
+	src: url('assets/fonts/inter.woff2') format('woff2');
+	font-style: normal;
 }
 
 @font-face {
-	font-display: swap;
+	font-display: block;
 	font-family: 'Source Serif Pro';
-	src: url('assets/fonts/source-serif-pro.woff2');
+	src: url('assets/fonts/source-serif-pro.woff2') format('woff2');
+	font-style: normal;
 }
 
 @layer components {

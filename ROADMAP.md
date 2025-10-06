@@ -198,6 +198,23 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 ### Hito: Lanzamiento al público de la versión [2.6.3](https://github.com/cuentoneta/cuentoneta/releases/tag/2.6.3) de La Cuentoneta (lanzada el 2025/09/11)
 
+- Dependencias y herramientas
+  - Actualización a Angular 20.3
+  - Actualización de Express a v5
+  - Agregado de regla `no-barrel-files` a eslint
+- Componentes
+  - Agregado de todas las variantes definidas en [Figma](https://www.figma.com/design/A9PdBCdmoyZrN7FKMpann8/La-Cuentoneta-v3?node-id=3233-8637&t=UxlOPYPb6BZAyXBr-0) del componente `StoryCardTeaserComponent`
+  - Estandarización de íconos utilizando `ng-icons` en reemplazo de íconos en SVG.
+
+- Cambios menores
+  - Resuelto problema de flickering en carga de landing page al cambiar configuración para ejecución del backend en Vercel
+  - Agregado de smoke tests para `AuthorSkeletonComponent` y `StoryCardSkeletonComponent`
+  - Agregado de valores por default para usos de rxResource
+  - Resolución de problemas de carga en variante Docs de las stories de Storybook
+  - Refactor de `RouterTestingModule` por `providerRoute` en stories de Storybook y tests
+
+### Hito: Lanzamiento al público de la versión [2.6.4](https://github.com/cuentoneta/cuentoneta/releases/tag/2.6.4) de La Cuentoneta (lanzada el 2025/09/29)
+
 ---
 
 ## Futuros

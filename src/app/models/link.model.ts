@@ -7,6 +7,6 @@ export interface UrlLink {
 	url: string;
 	label: string;
 	ariaLabel: string;
-	imageUrl: string;
+	icon: string;
 	alt: string;
 }

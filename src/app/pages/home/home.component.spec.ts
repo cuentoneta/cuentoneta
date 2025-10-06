@@ -1,7 +1,7 @@
 import HomeComponent from './home.component';
 import { render } from '@testing-library/angular';
 import { CommonModule, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter } from '@angular/router';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { provideMock } from '@testing-library/angular/jest-utils';
 import { ContentService } from '../../providers/content.service';
@@ -19,9 +19,8 @@ xdescribe('HomeComponent', () => {
 				NgOptimizedImage,
 				MockPublicationCardComponent,
 				MockStorylistCardDeckComponent,
-				RouterTestingModule,
 			],
-			componentProviders: [{ provide: ContentService, useClass: provideMock(ContentService) }],
+			componentProviders: [provideRouter([]), { provide: ContentService, useClass: provideMock(ContentService) }],
 		});
 	};
 

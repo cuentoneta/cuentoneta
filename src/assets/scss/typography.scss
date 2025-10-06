@@ -85,6 +85,14 @@
 		@apply inter-heading-2 font-semibold;
 	}
 
+	.inter-heading-3-semibold {
+		@apply inter-heading-3 font-semibold;
+	}
+
+	.inter-heading-3-bold {
+		@apply inter-heading-3 font-bold;
+	}
+
 	// endregion
 	// region Source Serif Pro font mixins to tailwind class
 

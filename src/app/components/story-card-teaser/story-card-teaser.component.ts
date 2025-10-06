@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { StoryNavigationTeaserWithAuthor, StoryTeaserWithAuthor } from '@models/story.model';
+import { StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
 import { RouterLink } from '@angular/router';
 import { StoryCardTeaserSkeletonComponent } from './story-card-teaser-skeleton.component';
 import { AppRoutes } from '../../app.routes';
@@ -15,15 +15,15 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 				@if (order()) {
 					<span class="source-serif-pro-heading-2-bold leading-none text-primary-500">{{ formattedOrder() }}.</span>
 				}
-				<div class="flex flex-1 flex-col gap-1">
-					@if (showAuthor()) {
+				<div class="flex flex-1 flex-col">
+					@if (showAuthor() && 'author' in story) {
 						<a [routerLink]="['/', appRoutes.Author, story.author.slug]" class="flex items-center gap-2">
 							<img
 								[ngSrc]="story.author.imageUrl"
 								[alt]="'Retrato de ' + story.author.name"
-								width="24"
-								height="24"
-								class="h-6 w-6 rounded-full"
+								width="20"
+								height="20"
+								class="h-5 w-5 rounded-full"
 							/>
 							<span class="inter-body-sm-semibold text-gray-500">{{ story.author.name }}</span>
 						</a>
@@ -31,18 +31,19 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 					<a
 						[routerLink]="['/', appRoutes.Story, story.slug]"
 						[queryParams]="navigationParams()"
-						class="grid h-full grid-rows-[auto_auto_auto] gap-1"
+						[class]="showExcerpt() ? 'gap-2' : 'gap-1'"
+						class="grid h-full grid-rows-[auto_auto_auto]"
 					>
-						<header class="inter-body-xl-bold">
+						<header class="inter-heading-3-bold">
 							{{ story.title }}
 						</header>
 						@if (showExcerpt() && story.paragraphs.length > 0) {
 							<cuentoneta-portable-text-parser
 								[type]="'span'"
 								[paragraphs]="story.paragraphs"
-								[class]="'sm:line-clamp-7'"
+								[class]="'line-clamp-' + excerptLines()"
 								data-testid="portable-text-parser"
-								class="sm:source-serif-pro-body-base hidden sm:relative sm:min-h-18 sm:text-ellipsis sm:text-justify"
+								class="source-serif-pro-body-base relative min-h-18 text-ellipsis text-justify"
 							/>
 						}
 						<footer class="inter-body-xs flex gap-1 text-gray-500">
@@ -54,7 +55,13 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 				</div>
 			</article>
 		} @else {
-			<cuentoneta-story-card-teaser-skeleton [order]="order()" [showAuthor]="showAuthor()" data-testid="skeleton" />
+			<cuentoneta-story-card-teaser-skeleton
+				[order]="order()"
+				[showAuthor]="showAuthor()"
+				[showExcerpt]="showExcerpt()"
+				[excerptLines]="excerptLines()"
+				data-testid="skeleton"
+			/>
 		}
 	</article> `,
 	styles: ``,
@@ -64,10 +71,11 @@ export class StoryCardTeaserComponent {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs
-	readonly story = input<StoryNavigationTeaserWithAuthor | StoryTeaserWithAuthor>();
+	readonly story = input<StoryNavigationTeaserWithAuthor | StoryTeaserWithAuthor | StoryTeaser>();
 	readonly order = input<number>();
 	readonly showAuthor = input<boolean>(false);
 	readonly showExcerpt = input<boolean>(false);
+	readonly excerptLines = input<number>(3);
 	readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
 	readonly excerptLines = input<number>(3);
 

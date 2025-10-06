@@ -1,11 +1,11 @@
 import { render, screen } from '@testing-library/angular';
 import { FooterComponent } from './footer.component';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter } from '@angular/router';
 
 describe('FooterComponent', () => {
 	it('should display the logo image correctly', async () => {
 		await render(FooterComponent, {
-			imports: [RouterTestingModule],
+			providers: [provideRouter([])],
 		});
 
 		const logo = screen.getByAltText("Logo de 'La Cuentoneta'");
@@ -17,7 +17,7 @@ describe('FooterComponent', () => {
 
 	it('should render navigable navLinks', async () => {
 		const view = await render(FooterComponent, {
-			imports: [RouterTestingModule],
+			providers: [provideRouter([])],
 		});
 
 		view.fixture.componentInstance.navLinks.forEach((link) => {
@@ -29,7 +29,7 @@ describe('FooterComponent', () => {
 
 	it('should display social link icons as expected', async () => {
 		const view = await render(FooterComponent, {
-			imports: [RouterTestingModule],
+			providers: [provideRouter([])],
 		});
 
 		view.fixture.componentInstance.socialLinks.forEach((link) => {

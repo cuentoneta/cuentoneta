@@ -39,6 +39,7 @@ export default class HomeComponent {
 	// Recursos
 	readonly landingPageResource = rxResource({
 		stream: () => this.contentService.getLandingPageContent(),
+		defaultValue: undefined,
 	});
 
 	// Propiedades

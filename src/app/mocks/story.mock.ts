@@ -15,6 +15,7 @@ export const storyMock: Story = {
 			title: 'Recurso original',
 			url: 'https://biblioteca.es/el-espejo-del-tiempo',
 			resourceType: {
+				slug: 'recurso-original',
 				title: 'Recurso Original',
 				shortDescription: 'Recurso original de este contenido',
 				description: [
@@ -350,6 +351,7 @@ export const storyPreviewMock: StoryPreview = {
 			title: 'Recurso original',
 			url: 'https://biblioteca.es/el-espejo-del-tiempo',
 			resourceType: {
+				slug: 'recurso-original',
 				title: 'Recurso Original',
 				shortDescription: 'Recurso original de este contenido',
 				description: [
@@ -479,6 +481,7 @@ export const storyTeaserMock: StoryTeaser = {
 			title: 'Recurso original',
 			url: 'https://biblioteca.es/el-espejo-del-tiempo',
 			resourceType: {
+				slug: 'recurso-original',
 				title: 'Recurso Original',
 				shortDescription: 'Recurso original de este contenido',
 				description: [
@@ -618,6 +621,7 @@ export const storyNavigationTeaserMock: StoryNavigationTeaser = {
 			title: 'Recurso original',
 			url: 'https://biblioteca.es/el-espejo-del-tiempo',
 			resourceType: {
+				slug: 'recurso-original',
 				title: 'Recurso Original',
 				shortDescription: 'Recurso original de este contenido',
 				description: [
