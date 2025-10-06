@@ -35,7 +35,9 @@ jobs:
         uses: actions/cache@v4.2.3
         with:
           path: .
-          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
+          key: repo-${{ github.sha }}
+          restore-keys: |
+            repo-
 
   test:
     needs: setup
@@ -45,7 +47,9 @@ jobs:
         uses: actions/cache@v4.2.3
         with:
           path: .
-          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
+          key: repo-${{ github.sha }}
+          restore-keys: |
+            repo-
 
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
@@ -69,7 +73,9 @@ jobs:
         uses: actions/cache@v4.2.3
         with:
           path: .
-          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
+          key: repo-${{ github.sha }}
+          restore-keys: |
+            repo-
 
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
@@ -93,7 +99,9 @@ jobs:
         uses: actions/cache@v4.2.3
         with:
           path: .
-          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
+          key: repo-${{ github.sha }}
+          restore-keys: |
+            repo-
 
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
@@ -117,7 +125,9 @@ jobs:
         uses: actions/cache@v4.2.3
         with:
           path: .
-          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
+          key: repo-${{ github.sha }}
+          restore-keys: |
+            repo-
 
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
