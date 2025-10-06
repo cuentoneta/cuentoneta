@@ -5,7 +5,7 @@ import { NavigationBarConfig } from '../components/storylist-navigation-frame/st
 	providedIn: 'root',
 })
 export class NavigationFrameService {
-	navigationBarConfig = signal<NavigationBarConfig>({
+	readonly navigationBarConfig = signal<NavigationBarConfig>({
 		headerTitle: '',
 		footerTitle: '',
 		navigationRoute: '',

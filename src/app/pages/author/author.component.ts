@@ -1,6 +1,6 @@
 // Core
 import { Component, computed, inject } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { Router, UrlTree } from '@angular/router';
 import { map, Observable, tap } from 'rxjs';
 
@@ -28,23 +28,21 @@ import { PortableTextParserComponent } from '../../components/portable-text-pars
 import { ResourceComponent } from '../../components/resource/resource.component';
 import { StoryCardComponent } from '../../components/story-card/story-card.component';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { StoryCardTeaserComponent } from '../../components/story-card-teaser/story-card-teaser.component';
 
 @Component({
 	selector: 'cuentoneta-author',
 	imports: [
-		CommonModule,
+		StoryCardComponent,
 		NgOptimizedImage,
 		PortableTextParserComponent,
 		ResourceComponent,
 		NgxSkeletonLoaderModule,
 		AuthorSkeletonComponent,
-		StoryCardTeaserComponent,
 	],
 	hostDirectives: [MetaTagsDirective],
 	template: `
-		<main>
-			<article class="grid grid-cols-2 gap-8">
+		<main class="content vertical-layout-spacing horizontal-layout-spacing">
+			<article class="grid grid-cols-1 gap-8">
 				@if (author(); as author) {
 					<section class="flex flex-col items-center gap-4">
 						<img
@@ -61,32 +59,18 @@ import { StoryCardTeaserComponent } from '../../components/story-card-teaser/sto
 						@if (author.resources && author.resources.length > 0) {
 							<div class="flex justify-start gap-4 sm:justify-end">
 								@for (resource of author.resources; track $index) {
-									<cuentoneta-resource [resource]="resource"></cuentoneta-resource>
+									<cuentoneta-resource [resource]="resource" />
 								}
 							</div>
 						}
 						<cuentoneta-portable-text-parser
 							[paragraphs]="author.biography!"
 							[classes]="'source-serif-pro-body-xl mb-8 leading-8'"
-						></cuentoneta-portable-text-parser>
+						/>
 					</section>
-					<section class="grid grid-cols-1 gap-4 sm:grid-cols-1 md:gap-8">
-						@defer (when stories().length > 0) {
-							@for (story of stories(); track $index) {
-								<cuentoneta-story-card-teaser
-									[story]="story"
-									[showAuthor]="true"
-									[order]="$index + 1"
-									[navigationParams]="{
-										navigation: 'author',
-										navigationSlug: author.slug ?? ''
-									}"
-								/>
-							}
-						} @loading (minimum 500ms) {
-							@for (_ of [].constructor(6); track $index) {
-								<cuentoneta-story-card-teaser [showAuthor]="true" [order]="$index + 1" />
-							}
+					<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
+						@for (story of stories(); track $index) {
+							<cuentoneta-story-card [story]="story" [navigationRoute]="story.navigationRoute" />
 						}
 					</section>
 				} @else {
@@ -110,26 +94,28 @@ export default class AuthorComponent {
 
 	// Recursos
 	readonly authorResource = rxResource({
-		request: () => this.params(),
-		loader: (params) =>
-			this.author$(params.request['slug']).pipe(
+		params: () => this.params(),
+		stream: ({ params }) =>
+			this.author$(params['slug']).pipe(
 				tap((author) => {
 					this.updateMetaTags(author);
 				}),
 			),
+		defaultValue: undefined,
 	});
 	readonly storiesResource = rxResource({
-		request: () => this.params(),
-		loader: (params) => this.storyService.getByAuthorSlug(params.request['slug']),
+		params: () => this.params(),
+		stream: ({ params }) => this.stories$(params['slug']),
+		defaultValue: [],
 	});
 
 	// Propiedades
-	author = computed(() => this.authorResource.value());
-	stories = computed(() => this.storiesResource.value() ?? []);
-	authorImageUrl = computed(() =>
+	readonly author = computed(() => this.authorResource.value());
+	readonly stories = computed(() => this.storiesResource.value());
+	readonly authorImageUrl = computed(() =>
 		this.author()?.imageUrl ? `${this.author()?.imageUrl}?auto=format` : 'assets/img/default-avatar.jpg',
 	);
-	authorFlagUrl = computed(() => `${this.author()?.nationality.flag}?auto=format`);
+	readonly authorFlagUrl = computed(() => `${this.author()?.nationality.flag}?auto=format`);
 
 	private updateMetaTags(author: Author) {
 		this.metaTagsDirective.setTitle(`${author.name}`);
@@ -139,6 +125,19 @@ export default class AuthorComponent {
 		return this.authorService.getBySlug(slug).pipe(
 			tap((author) => {
 				this.updateMetaTags(author);
+			}),
+		);
+	}
+
+	private stories$(slug: string): Observable<(StoryTeaser & { navigationRoute: UrlTree })[]> {
+		return this.storyService.getByAuthorSlug(slug).pipe(
+			map((stories) => {
+				return stories.map((story) => ({
+					...story,
+					navigationRoute: this.router.createUrlTree(['/', this.appRoutes.Story, story.slug], {
+						queryParams: { navigation: 'author', navigationSlug: slug },
+					}),
+				})) as (StoryTeaser & { navigationRoute: UrlTree })[];
 			}),
 		);
 	}

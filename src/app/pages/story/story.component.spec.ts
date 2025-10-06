@@ -43,10 +43,10 @@ describe('StoryComponent', () => {
 	template: '',
 })
 class MockShareContentComponent {
-	route = input('');
-	params = input<{ [key: string]: string }>({});
-	message = input('');
-	isLoading = input(false);
+	readonly route = input('');
+	readonly params = input<{ [key: string]: string }>({});
+	readonly message = input('');
+	readonly isLoading = input(false);
 }
 
 @Component({
@@ -55,7 +55,7 @@ class MockShareContentComponent {
 	template: '',
 })
 class MockBioSummaryCardComponent {
-	story = input.required<Story>();
+	readonly story = input.required<Story>();
 }
 
 @Component({
@@ -64,6 +64,6 @@ class MockBioSummaryCardComponent {
 	template: '',
 })
 class MockStoryNavigationBarComponent {
-	selectedStorySlug = input('');
-	storylist = input<Storylist>();
+	readonly selectedStorySlug = input('');
+	readonly storylist = input<Storylist>();
 }

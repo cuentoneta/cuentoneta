@@ -8,7 +8,7 @@ const ELEMENT_HEIGHT = 500;
 
 @Component({
 	template: `
-		<div [style.width.px]="width" [style.height.px]="height" [>
+		<div [style.width.px]="width" [style.height.px]="height">
 			<p>Host component</p>
 		</div>
 	`,

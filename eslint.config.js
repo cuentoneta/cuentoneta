@@ -1,9 +1,11 @@
 const playwright = require('eslint-plugin-playwright');
 const nx = require('@nx/eslint-plugin');
-const stylisticJs = require('@stylistic/eslint-plugin-js');
+const stylisticJs = require('@stylistic/eslint-plugin');
 const storybook = require('eslint-plugin-storybook');
+const jest = require('eslint-plugin-jest');
 const jestDom = require('eslint-plugin-jest-dom');
 const testingLibrary = require('eslint-plugin-testing-library');
+const noBarrelFiles = require('eslint-plugin-no-barrel-files');
 
 module.exports = [
 	{
@@ -43,6 +45,8 @@ module.exports = [
 		files: ['**/*.ts'],
 		plugins: {
 			'@stylistic/js': stylisticJs,
+			jest: jest,
+			'no-barrel-files': noBarrelFiles,
 		},
 		rules: {
 			'@angular-eslint/directive-selector': [
@@ -61,11 +65,15 @@ module.exports = [
 					style: 'kebab-case',
 				},
 			],
+			'@angular-eslint/prefer-signals': 'error',
 			'@typescript-eslint/no-inferrable-types': 0,
 			'@typescript-eslint/no-unused-vars': 'error',
 			'@typescript-eslint/no-non-null-assertion': 'error',
 			'@typescript-eslint/no-explicit-any': 'error',
 			'@stylistic/js/no-extra-semi': 'off',
+			'jest/no-focused-tests': 'error',
+			'no-barrel-files/no-barrel-files': 'error',
+			'preserve-caught-error': 'error',
 		},
 	},
 	{
@@ -73,6 +81,8 @@ module.exports = [
 		files: ['**/*.html'],
 		rules: {
 			'@angular-eslint/template/prefer-control-flow': 'error',
+			'@angular-eslint/template/prefer-self-closing-tags': 'error',
+			'@angular-eslint/template/prefer-ngsrc': 'error',
 		},
 	},
 	{

@@ -1,15 +1,18 @@
 import { AuthorTeaserComponent } from './author-teaser.component';
-import { Meta, moduleMetadata } from '@storybook/angular';
+import { applicationConfig, Meta, moduleMetadata } from '@storybook/angular';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { authorTeaserMock } from '../../mocks/author.mock';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter } from '@angular/router';
 
 export default {
 	title: 'AuthorTeaserComponent',
 	component: AuthorTeaserComponent,
 	decorators: [
+		applicationConfig({
+			providers: [provideRouter([])],
+		}),
 		moduleMetadata({
-			imports: [CommonModule, NgOptimizedImage, RouterTestingModule],
+			imports: [CommonModule, NgOptimizedImage],
 			providers: [],
 		}),
 	],

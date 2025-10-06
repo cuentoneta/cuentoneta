@@ -24,7 +24,7 @@ import { RouterLink } from '@angular/router';
 			>
 				<article
 					[ngClass]="{
-						'border-l-4 border-solid border-primary-400 bg-primary-100': selected()
+						'border-l-4 border-solid border-primary-400 bg-primary-100': selected(),
 					}"
 					class="bg-gray-50 px-7 py-5"
 				>
@@ -45,8 +45,8 @@ import { RouterLink } from '@angular/router';
 	`,
 })
 export class NavigableStoryTeaserComponent {
-	story = input.required<StoryNavigationTeaser>();
-	selected = input<boolean>();
-	authorSlug = input.required<string>();
+	readonly story = input.required<StoryNavigationTeaser>();
+	readonly selected = input<boolean>();
+	readonly authorSlug = input.required<string>();
 	protected readonly appRoutes = AppRoutes;
 }

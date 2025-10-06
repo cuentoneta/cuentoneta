@@ -1,18 +1,17 @@
 import { AppComponent } from './app.component';
 import { render } from '@testing-library/angular';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { RouterTestingModule } from '@angular/router/testing';
-import { provideMock } from '@testing-library/angular/jest-utils';
-import { ContentService } from './providers/content.service';
+import { NgOptimizedImage } from '@angular/common';
+import { provideRouter, RouterModule } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
-import { AnalyticsService } from './providers/analytics.service';
+import { AnalyticsService } from './providers/analytics/analytics.service';
+import { AnalyticsMockService } from './providers/analytics/analytics.mock.service';
 
 describe('AppComponent', () => {
 	const setup = async () => {
 		return await render(AppComponent, {
-			componentImports: [HeaderComponent, FooterComponent, CommonModule, NgOptimizedImage, RouterTestingModule],
-			componentProviders: [provideMock(ContentService), provideMock(AnalyticsService)],
+			componentImports: [HeaderComponent, FooterComponent, NgOptimizedImage, RouterModule],
+			providers: [provideRouter([]), { provide: AnalyticsService, useClass: AnalyticsMockService }],
 		});
 	};
 

@@ -21,7 +21,8 @@ describe('MediaResourceTagComponent', () => {
 
 	it('should render the platform icon', async () => {
 		await setup();
-		const icon = screen.getByRole('img');
-		expect(icon).toHaveAttribute('src', 'media');
+		const icon = screen.getByTestId('icon-media');
+		expect(icon).toBeInTheDocument();
+		expect(icon).toHaveAttribute('aria-label', 'Posee contenido multimedia');
 	});
 });

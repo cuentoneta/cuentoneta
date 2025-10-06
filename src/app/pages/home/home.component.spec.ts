@@ -1,7 +1,7 @@
 import HomeComponent from './home.component';
 import { render } from '@testing-library/angular';
 import { CommonModule, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter } from '@angular/router';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { provideMock } from '@testing-library/angular/jest-utils';
 import { ContentService } from '../../providers/content.service';
@@ -19,9 +19,8 @@ xdescribe('HomeComponent', () => {
 				NgOptimizedImage,
 				MockPublicationCardComponent,
 				MockStorylistCardDeckComponent,
-				RouterTestingModule,
 			],
-			componentProviders: [{ provide: ContentService, useClass: provideMock(ContentService) }],
+			componentProviders: [provideRouter([]), { provide: ContentService, useClass: provideMock(ContentService) }],
 		});
 	};
 
@@ -37,12 +36,12 @@ xdescribe('HomeComponent', () => {
 	template: '<div></div>',
 })
 class MockPublicationCardComponent {
-	editionPrefix = input<string>();
-	editionSuffix = input<string>();
-	comingNextLabel = input<string>();
-	displayDate = input<boolean>(false);
-	publication = input<Publication>();
-	editionIndex = input<number>(0);
+	readonly editionPrefix = input<string>();
+	readonly editionSuffix = input<string>();
+	readonly comingNextLabel = input<string>();
+	readonly displayDate = input<boolean>(false);
+	readonly publication = input<Publication>();
+	readonly editionIndex = input<number>(0);
 }
 
 @Component({
@@ -52,6 +51,6 @@ class MockPublicationCardComponent {
 	template: '',
 })
 class MockStorylistCardDeckComponent {
-	storylist = input<Storylist>();
-	isLoading = input<boolean>(false);
+	readonly storylist = input<Storylist>();
+	readonly isLoading = input<boolean>(false);
 }

@@ -51,6 +51,22 @@ export default defineType({
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
+			name: 'bornOn',
+			title: 'Fecha de nacimiento',
+			type: 'date',
+			options: {
+				dateFormat: 'YYYY-MM-DD',
+			},
+		}),
+		defineField({
+			name: 'diedOn',
+			title: 'Fecha de fallecimiento',
+			type: 'date',
+			options: {
+				dateFormat: 'YYYY-MM-DD',
+			},
+		}),
+		defineField({
 			name: 'biography',
 			title: 'Biografía',
 			type: 'object',

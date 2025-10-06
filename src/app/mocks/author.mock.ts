@@ -12,6 +12,7 @@ export const authorMock: Author = {
 			title: 'Artículo de François Onoff en Wikipedia',
 			url: 'https://es.wikipedia.org/wiki/Francois_Onoff',
 			resourceType: {
+				slug: 'wikipedia',
 				title: 'Wikipedia',
 				shortDescription: 'Enlace a artículo de Wikipedia',
 				description: [

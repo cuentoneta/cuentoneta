@@ -15,7 +15,8 @@ export const storiesByAuthorSlugQuery = defineQuery(`
     'resources': coalesce(resources[]{ 
         title, 
         url, 
-        resourceType->{ 
+        resourceType->{
+            'slug': slug.current,
             title, 
             shortDescription,
             description, 
@@ -59,7 +60,8 @@ export const storyBySlugQuery = defineQuery(`
     'resources': coalesce(resources[]{
         title, 
         url, 
-        resourceType->{ 
+        resourceType->{
+            'slug': slug.current,
             title, 
             shortDescription,
             description,
@@ -73,10 +75,13 @@ export const storyBySlugQuery = defineQuery(`
         image,
         nationality->,
         biography,
+        bornOn,
+        diedOn,
         'resources': coalesce(resources[]{ 
             title, 
             url, 
-            resourceType->{ 
+            resourceType->{
+                'slug': slug.current,
                 title, 
                 shortDescription,
                 description, 
@@ -108,6 +113,8 @@ export const storiesBySlugsQuery = defineQuery(`
         image,
         nationality->,
         'biography': [],
+        bornOn,
+        diedOn,
         'resources': []
     }
 }`);

@@ -1,7 +1,7 @@
-import { Meta, moduleMetadata } from '@storybook/angular';
+import { applicationConfig, Meta, moduleMetadata } from '@storybook/angular';
 import { StorylistCardComponent } from './storylist-card.component';
 import { NgOptimizedImage } from '@angular/common';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter } from '@angular/router';
 import { StorylistCardSkeletonComponent } from './storylist-card-skeleton.component';
 
 const storylist1 = {
@@ -111,8 +111,11 @@ const meta: Meta<StorylistCardComponent> = {
 	component: StorylistCardComponent,
 	title: 'StorylistCardComponent',
 	decorators: [
+		applicationConfig({
+			providers: [provideRouter([])],
+		}),
 		moduleMetadata({
-			imports: [NgOptimizedImage, RouterTestingModule, StorylistCardSkeletonComponent],
+			imports: [NgOptimizedImage, StorylistCardSkeletonComponent],
 		}),
 	],
 };

@@ -5,7 +5,7 @@ import { storyMock } from '../../mocks/story.mock';
 
 class MockSharingPlatform implements SharingPlatform {
 	name = 'MySpace';
-	logo = 'myspace';
+	icon = 'faBrandFacebook';
 	platformApiUrl = `https://www.facebook.com/share.php`;
 
 	generateSharingUrl(appRoute: string, urlParams: string): string {
@@ -31,9 +31,15 @@ describe('ShareButtonComponent', () => {
 		expect(container).toBeInTheDocument();
 	});
 
-	it('should render the platform logo', async () => {
+	it('should render the platform icon', async () => {
 		await setup();
-		const logo = screen.getByRole('img');
-		expect(logo).toHaveAttribute('src', 'assets/svg/myspace.svg');
+		const icon = screen.getByTestId('faBrandFacebook');
+		expect(icon).toBeInTheDocument();
+	});
+
+	it('should render the platform icon with the correct aria label', async () => {
+		await setup();
+		const icon = screen.getByLabelText('MySpace');
+		expect(icon).toBeInTheDocument();
 	});
 });

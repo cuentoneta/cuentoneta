@@ -13,7 +13,7 @@ export class MapPublicationComingNextLabelPipe implements PipeTransform {
 		let result = `${storylist.comingNextLabel}`;
 
 		if (storylist.displayDates) {
-			const formattedDate = this.datePipe.transform(publication.publishingDate, `dd 'de' MMMM, YYYY`);
+			const formattedDate = this.datePipe.transform(publication.publishingDate, `dd 'de' MMMM, yyyy`);
 			result = result.concat(` - ${formattedDate}`);
 		}
 

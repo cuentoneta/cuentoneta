@@ -9,8 +9,8 @@ export class PortableTextDirective {
 	private el = inject(ElementRef);
 	private renderer = inject(Renderer2);
 
-	portableText = input.required<TextBlockContent>();
-	classes = input<string>('');
+	readonly portableText = input.required<TextBlockContent>();
+	readonly classes = input<string>('');
 
 	constructor() {
 		effect(() => {

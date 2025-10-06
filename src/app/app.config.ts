@@ -4,14 +4,9 @@ import {
 	LOCALE_ID,
 	inject,
 	provideAppInitializer,
-	provideExperimentalZonelessChangeDetection,
+	provideZonelessChangeDetection,
 } from '@angular/core';
-import {
-	provideRouter,
-	withEnabledBlockingInitialNavigation,
-	withInMemoryScrolling,
-	withViewTransitions,
-} from '@angular/router';
+import { provideRouter, withInMemoryScrolling, withViewTransitions } from '@angular/router';
 import { appRoutes } from './app.routes';
 
 import { provideHttpClient, withFetch } from '@angular/common/http';
@@ -22,6 +17,7 @@ import { DatePipe, registerLocaleData } from '@angular/common';
 // Providers
 import { ThemeService } from './providers/theme.service';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 registerLocaleData(localeEs);
 
@@ -39,13 +35,9 @@ export const appConfig: ApplicationConfig = {
 		{ provide: LOCALE_ID, useValue: 'es-419' },
 		provideClientHydration(),
 		provideAnimations(),
-		provideRouter(
-			appRoutes,
-			withEnabledBlockingInitialNavigation(),
-			withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
-			withViewTransitions(),
-		),
+		provideAnimationsAsync(),
+		provideRouter(appRoutes, withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }), withViewTransitions()),
 		provideHttpClient(withFetch()),
-		provideExperimentalZonelessChangeDetection(),
+		provideZonelessChangeDetection(),
 	],
 };

@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-story-card-teaser-skeleton',
-	imports: [CommonModule, NgxSkeletonLoaderModule],
+	imports: [NgxSkeletonLoaderModule],
 	providers: [ThemeService],
 	template: `<article class="flex gap-4">
 		@if (order()) {
@@ -14,78 +14,107 @@ import { ThemeService } from '../../providers/theme.service';
 					height: '36px',
 					'margin-bottom': 0,
 					width: '40px',
-					'background-color': orderColor
+					'background-color': orderColor,
 				}"
+				data-testid="show-order"
 				count="1"
 				appearance="line"
-			></ngx-skeleton-loader>
+			/>
 		}
-		<div class="flex flex-1 flex-col  gap-1">
+		<div class="flex flex-1 flex-col">
 			@if (showAuthor()) {
-				<div class="flex items-center gap-2">
+				<div class="flex items-center gap-2" data-testid="show-author">
 					<ngx-skeleton-loader
 						[theme]="{
-							height: '24px',
+							height: '20px',
 							margin: 0,
-							width: '24px'
+							width: '20px',
 						}"
 						count="1"
 						appearance="circle"
 						class="flex items-center"
-					></ngx-skeleton-loader>
+					/>
 					<ngx-skeleton-loader
 						[theme]="{
 							height: '20px',
-							'margin-bottom': 0
+							'margin-bottom': 0,
+							'max-width': '160px',
 						}"
 						class="w-full"
 						count="1"
 						appearance="line"
-					></ngx-skeleton-loader>
+					/>
 				</div>
 			}
 			<div class="flex flex-col gap-1">
 				<ngx-skeleton-loader
 					[theme]="{
-						height: '28px',
+						height: '32px',
 						'margin-bottom': 0,
-						'background-color': skeletonTextColor
+						'max-width': '192px',
+						'background-color': skeletonTextColor,
 					}"
 					class="w-full"
 					count="1"
 					appearance="line"
-				></ngx-skeleton-loader>
+				/>
+				@if (showExcerpt()) {
+					<div class="flex flex-col gap-1" data-testid="show-excerpt">
+						@for (line of excerptArrayLines(); track $index) {
+							<ngx-skeleton-loader
+								[attr.data-testid]="'excerpt-skeleton-line-' + $index"
+								[theme]="{
+									height: '16px',
+									'margin-top': $index === 0 ? '2px' : '0px',
+									'margin-bottom': $index === excerptLines() - 1 ? '6px' : '4px',
+									width: $index === excerptLines() - 1 ? '80%' : '100%',
+								}"
+								count="1"
+								appearance="line"
+							/>
+						}
+					</div>
+				}
 				<footer class="inter-body-xs flex gap-1 text-gray-500">
 					<ngx-skeleton-loader
 						[theme]="{
 							height: '16px',
 							'margin-bottom': 0,
-							width: '120px'
+							width: '120px',
 						}"
 						count="1"
 						appearance="line"
-					></ngx-skeleton-loader>
+					/>
 					<span>•</span>
 					<ngx-skeleton-loader
 						[theme]="{
 							height: '16px',
 							'margin-bottom': 0,
-							width: '40px'
+							width: '40px',
 						}"
 						count="1"
 						appearance="line"
-					></ngx-skeleton-loader>
+					/>
 				</footer>
 			</div>
 		</div>
 	</article>`,
-	styles: ``,
+	styles: `
+		:host {
+			@apply w-full;
+		}
+	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StoryCardTeaserSkeletonComponent {
 	// Inputs
-	order = input<number>();
-	showAuthor = input<boolean>(false);
+	readonly order = input<number>();
+	readonly showAuthor = input<boolean>(false);
+	readonly showExcerpt = input<boolean>(false);
+	readonly excerptLines = input<number>(3);
+
+	// Usado de auxiliar para iterar a través de la cantidad de líneas del extracto de texto
+	readonly excerptArrayLines = computed(() => Array(this.excerptLines()).fill(0));
 
 	// Providers
 	skeletonTextColor = inject(ThemeService).pickColor('zinc', 300);

@@ -1,4 +1,4 @@
-import { Meta, moduleMetadata } from '@storybook/angular';
+import { applicationConfig, Meta, moduleMetadata } from '@storybook/angular';
 import { ContentCampaignCarouselComponent } from './content-campaign-carousel.component';
 import { ContentService } from '../../providers/content.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -6,19 +6,21 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { CarouselModule } from 'ngx-owl-carousel-o';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import { contentCampaignMock } from '../../mocks/content-campaign.mock';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter } from '@angular/router';
 import { ContentCampaignCarouselSkeletonComponent } from './content-campaign-carousel-skeleton.component';
 
 export default {
 	title: 'ContentCampaignCarouselComponent',
 	component: ContentCampaignCarouselComponent,
 	decorators: [
+		applicationConfig({
+			providers: [provideRouter([])],
+		}),
 		moduleMetadata({
 			imports: [
 				CommonModule,
 				CarouselModule,
 				NgOptimizedImage,
-				RouterTestingModule,
 				PortableTextParserComponent,
 				NoopAnimationsModule,
 				ContentCampaignCarouselSkeletonComponent,

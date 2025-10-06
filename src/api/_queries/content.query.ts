@@ -60,6 +60,8 @@ export const landingPageContentQuery = defineQuery(`
             image,
             nationality->,
             'biography': [],
+            bornOn,
+            diedOn,
             'resources': [],
         }
     },[]),

@@ -1,13 +1,15 @@
 // Core
-import { Component, computed, inject, OnDestroy } from '@angular/core';
+import { Component, computed, inject, OnDestroy, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { environment } from '../../environments/environment';
 
 // 3rd Party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { injectParams } from 'ngxtension/inject-params';
+import { injectQueryParams } from 'ngxtension/inject-query-params';
 
 // Router
 import { AppRoutes } from '../../app.routes';
@@ -17,6 +19,7 @@ import { Story } from '@models/story.model';
 
 // Services
 import { StoryService } from '../../providers/story.service';
+import { LayoutService } from '../../providers/layout.service';
 import { ThemeService } from '../../providers/theme.service';
 
 // Directives
@@ -29,31 +32,21 @@ import { ShareContentComponent } from '../../components/share-content/share-cont
 import { EpigraphComponent } from '../../components/epigraph/epigraph.component';
 import { MediaResourceComponent } from '../../components/media-resource/media-resource.component';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
-import { environment } from '../../environments/environment';
-import { injectQueryParams } from 'ngxtension/inject-query-params';
+import { ProgressBarComponent } from '../../components/progress-bar/progress-bar.component';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 
 @Component({
 	selector: 'cuentoneta-story',
 	templateUrl: './story.component.html',
 	styles: `
 		:host {
-			@apply grid gap-x-8 md:grid-cols-[286px_1fr];
-
-			// Se remueve el margen horizontal para viewports xs y sm, aprovechando el espacio en dispositivos móviles
-			@apply -mx-5 md:mx-0;
+			@apply grid;
+			@apply md:grid-rows-[8px_1fr];
 		}
 
-		@keyframes scrollbar {
-			to {
-				width: 100%;
-			}
-		}
-
-		.progress-bar {
-			transition-timing-function: ease-out;
-			transition: width 0.5s;
-			animation: scrollbar linear;
-			animation-timeline: scroll(root);
+		.content {
+			@apply grid grid-cols-1 md:mx-auto md:grid-cols-[286px_1fr] md:gap-x-8;
 		}
 	`,
 	imports: [
@@ -66,7 +59,10 @@ import { injectQueryParams } from 'ngxtension/inject-query-params';
 		RouterLink,
 		ShareContentComponent,
 		StoryNavigationBarComponent,
+		ProgressBarComponent,
+		NgIcon,
 	],
+	providers: [provideIcons({ faSolidArrowRightLong })],
 	hostDirectives: [MetaTagsDirective],
 })
 export default class StoryComponent implements OnDestroy {
@@ -78,30 +74,36 @@ export default class StoryComponent implements OnDestroy {
 	private queryParams = injectQueryParams();
 	private storyService = inject(StoryService);
 	private themeService = inject(ThemeService);
+	private layoutService = inject(LayoutService);
 	private meta = inject(MetaTagsDirective);
+	private isHeaderVisible$ = inject(LayoutService).isHeaderVisible$.pipe(takeUntilDestroyed());
 
 	// Recursos
 	readonly dummyList = Array(10);
 	readonly skeletonColor = this.themeService.pickColor('zinc', 300);
 	readonly storyResource = rxResource({
-		request: () => this.params(),
-		loader: (params) =>
-			this.storyService.getBySlug(params.request['slug']).pipe(
+		params: () => this.params(),
+		stream: ({ params }) =>
+			this.storyService.getBySlug(params['slug']).pipe(
 				tap((story) => {
 					this.updateMetaTags(story);
 				}),
 			),
+		defaultValue: undefined,
 	});
 
 	// Propiedades
-	story = computed(() => this.storyResource.value());
-	sharingRoute = computed(() => `${AppRoutes.Story}/${this.story()?.slug}`);
-	shareContentParams = computed(() => ({ navigationSlug: this.story()?.author.slug ?? '', navigation: 'author' }));
-	shareMessage = computed(
+	readonly story = computed(() => this.storyResource.value());
+	readonly sharingRoute = computed(() => `${AppRoutes.Story}/${this.story()?.slug}`);
+	readonly shareContentParams = computed(() => ({
+		navigationSlug: this.story()?.author.slug ?? '',
+		navigation: 'author',
+	}));
+	readonly shareMessage = computed(
 		() =>
 			`Leí "${this.story()?.title}" de ${this.story()?.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`,
 	);
-	navigationParams = computed(() => {
+	readonly navigationParams = computed(() => {
 		let { navigation, navigationSlug } = this.queryParams();
 
 		if (!navigation && !navigationSlug) {
@@ -111,6 +113,17 @@ export default class StoryComponent implements OnDestroy {
 
 		return { navigation, navigationSlug };
 	});
+	readonly headerPosition = signal('top-header-height');
+
+	constructor() {
+		this.isHeaderVisible$.subscribe((isVisible) => {
+			if (this.layoutService.biggerThan('xs')) {
+				this.headerPosition.set('top-header-height');
+				return;
+			}
+			this.headerPosition.set(isVisible ? 'top-header-height' : 'top-0');
+		});
+	}
 
 	ngOnDestroy() {
 		this.meta.removeCanonicalUrl();

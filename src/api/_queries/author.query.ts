@@ -9,10 +9,13 @@ export const authorBySlugQuery = defineQuery(`
     image,
     nationality->,
     biography,
+    bornOn,
+    diedOn,
     'resources': coalesce(resources[]{ 
         title, 
         url, 
-        resourceType->{ 
+        resourceType->{
+        	'slug': slug.current,
         	title, 
         	shortDescription,
         	description, 
@@ -30,5 +33,7 @@ export const authorsQuery = defineQuery(`
     image,
     nationality->,
     'biography': [],
+    bornOn,
+    diedOn,
     'resources': []
 }|order(name asc)`);

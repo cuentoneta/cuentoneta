@@ -1,13 +1,15 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 @Component({
 	selector: 'cuentoneta-dmca',
-	imports: [CommonModule],
+	imports: [],
 	hostDirectives: [MetaTagsDirective],
 	template: `
-		<main class="mx-5 bg-gray-50 p-5 shadow-lg md:mx-0 md:rounded-xl md:p-15 lg:mt-28">
+		<main
+			class="content horizontal-layout-spacing vertical-layout-spacing bg-gray-50 p-5 shadow-lg md:rounded-xl md:p-15"
+		>
 			<h1 class="h1 mb-5">Disclaimer for La Cuentoneta</h1>
 
 			<section class="mb-8">

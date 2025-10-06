@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { TextBlockContent } from '@models/block-content.model';
 import { PortableTextDirective } from '../../directives/portable-text-parser/portable-text-parser.directive';
 
 @Component({
 	selector: 'cuentoneta-portable-text-parser',
-	imports: [CommonModule, PortableTextDirective],
+	imports: [PortableTextDirective],
 	template: `
 		@if (type() === 'paragraph') {
 			@for (paragraph of paragraphs(); track $index) {
@@ -20,7 +20,7 @@ import { PortableTextDirective } from '../../directives/portable-text-parser/por
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PortableTextParserComponent {
-	paragraphs = input.required<TextBlockContent[]>();
-	type = input<'paragraph' | 'span'>('paragraph');
-	classes = input<string>('classes');
+	readonly paragraphs = input.required<TextBlockContent[]>();
+	readonly type = input<'paragraph' | 'span'>('paragraph');
+	readonly classes = input<string>('classes');
 }

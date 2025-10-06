@@ -1,24 +1,20 @@
-import { Meta, moduleMetadata } from '@storybook/angular';
+import { applicationConfig, Meta, moduleMetadata } from '@storybook/angular';
 import { BioSummaryCardComponent } from './bio-summary-card.component';
 import { storyMock } from '../../mocks/story.mock';
 import { CommonModule, NgIf, NgOptimizedImage } from '@angular/common';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import { ResourceComponent } from '../resource/resource.component';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter } from '@angular/router';
 
 export default {
 	title: 'BioSummaryCardComponent',
 	component: BioSummaryCardComponent,
 	decorators: [
+		applicationConfig({
+			providers: [provideRouter([])],
+		}),
 		moduleMetadata({
-			imports: [
-				CommonModule,
-				NgOptimizedImage,
-				NgIf,
-				ResourceComponent,
-				PortableTextParserComponent,
-				RouterTestingModule,
-			],
+			imports: [CommonModule, NgOptimizedImage, NgIf, ResourceComponent, PortableTextParserComponent],
 		}),
 	],
 } as Meta<BioSummaryCardComponent>;

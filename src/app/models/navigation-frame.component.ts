@@ -15,9 +15,9 @@ export abstract class NavigationFrameComponent {
 	private navigationFrameService = inject(NavigationFrameService);
 
 	// Inputs
-	selectedStorySlug = input<string>();
-	navigationSlug = input<string>();
-	config = signal<NavigationBarConfig>(this.navigationFrameService.navigationBarConfig());
+	readonly selectedStorySlug = input<string>();
+	readonly navigationSlug = input<string>();
+	readonly config = signal<NavigationBarConfig>(this.navigationFrameService.navigationBarConfig());
 
 	protected constructor() {
 		effect(() => {

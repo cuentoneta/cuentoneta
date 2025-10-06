@@ -1,7 +1,7 @@
 // Core
 import { Component, computed, inject } from '@angular/core';
 import { tap } from 'rxjs';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 // 3rd party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -51,18 +51,21 @@ export default class StorylistComponent {
 	// Recursos
 	skeletonColor = inject(ThemeService).pickColor('zinc', 300);
 	readonly storylistResource = rxResource({
-		request: () => this.params(),
-		loader: (params) =>
-			this.storylistService.get(params.request['slug'], 60, 'asc').pipe(
+		params: () => this.params(),
+		stream: ({ params: request }) =>
+			this.storylistService.get(request['slug'], 60, 'asc').pipe(
 				tap((storylist) => {
 					this.updateMetaTags(storylist);
 				}),
 			),
+		defaultValue: undefined,
 	});
 
 	// Propiedades
-	featuredImageUrl = computed(() => `${this.storylist()?.featuredImage}?h=${256 * 1.5}&w=${192 * 1.5}&auto=format`);
-	storylist = computed(() => this.storylistResource.value());
+	readonly featuredImageUrl = computed(
+		() => `${this.storylist()?.featuredImage}?h=${256 * 1.5}&w=${192 * 1.5}&auto=format`,
+	);
+	readonly storylist = computed(() => this.storylistResource.value());
 	stories = computed(
 		() =>
 			this.storylist()?.publications.map((p) => ({ ...p.story, paragraphs: [] }) as StoryNavigationTeaserWithAuthor) ||

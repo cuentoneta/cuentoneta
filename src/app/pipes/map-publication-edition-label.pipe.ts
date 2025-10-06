@@ -21,7 +21,7 @@ export class MapPublicationEditionLabelPipe implements PipeTransform {
 		let result = `${storylist.editionPrefix} ${publication.publishingOrder}`;
 
 		if (storylist.displayDates) {
-			const formattedDate = this.datePipe.transform(publication.publishingDate, `dd 'de' MMMM, YYYY`);
+			const formattedDate = this.datePipe.transform(publication.publishingDate, `dd 'de' MMMM, yyyy`);
 			result = result.concat(` - ${formattedDate}`);
 		}
 

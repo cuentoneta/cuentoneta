@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 // Modelos
 import { Publication } from '@models/storylist.model';
@@ -40,7 +39,6 @@ import { UrlTree } from '@angular/router';
 	imports: [
 		AuthorTeaserComponent,
 		CardComponent,
-		CommonModule,
 		MediaResourceTagsComponent,
 		StoryCardContentComponent,
 		StoryEditionDateLabelComponent,
@@ -48,7 +46,7 @@ import { UrlTree } from '@angular/router';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PublicationCardComponent {
-	editionLabel = input.required<string>();
-	publication = input.required<Publication>();
-	navigationRoute = input.required<UrlTree>();
+	readonly editionLabel = input.required<string>();
+	readonly publication = input.required<Publication>();
+	readonly navigationRoute = input.required<UrlTree>();
 }

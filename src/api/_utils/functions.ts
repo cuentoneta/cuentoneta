@@ -45,6 +45,9 @@ import {
 	StorylistTeasersQueryResult,
 } from '../sanity/types';
 
+// Tipos de datos
+import { DateString } from '@utils/date.utils';
+
 // Unwrapper de tipos definidos en Array<...>
 type UnwrapArray<A> = A extends unknown[] ? UnwrapArray<A[number]> : A;
 
@@ -63,23 +66,27 @@ export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>, l
 		imageUrl: urlFor(rawAuthorData.image),
 		name: rawAuthorData.name,
 		biography: biography,
+		bornOn: rawAuthorData.bornOn ? (rawAuthorData.bornOn as DateString) : undefined,
+		diedOn: rawAuthorData.diedOn ? (rawAuthorData.diedOn as DateString) : undefined,
 	};
 }
 type AuthorTeaserForPublicationSubQuery = NonNullable<StorylistQueryResult>['publications'][0]['story']['author'];
 type AuthorTeaserForListSubQuery = UnwrapArray<AuthorsQueryResult>;
 export function mapAuthorTeaser(
-	author: AuthorTeaserForPublicationSubQuery | AuthorTeaserForListSubQuery,
+	rawAuthorData: AuthorTeaserForPublicationSubQuery | AuthorTeaserForListSubQuery,
 ): AuthorTeaser {
 	return {
-		_id: author._id,
-		slug: author.slug.current,
+		_id: rawAuthorData._id,
+		slug: rawAuthorData.slug.current,
 		nationality: {
-			country: author.nationality?.country,
-			flag: urlFor(author.nationality.flag),
+			country: rawAuthorData.nationality?.country,
+			flag: urlFor(rawAuthorData.nationality.flag),
 		},
-		imageUrl: urlFor(author.image),
-		name: author.name,
+		imageUrl: urlFor(rawAuthorData.image),
+		name: rawAuthorData.name,
 		biography: [],
+		bornOn: rawAuthorData.bornOn ? (rawAuthorData.bornOn as DateString) : undefined,
+		diedOn: rawAuthorData.diedOn ? (rawAuthorData.diedOn as DateString) : undefined,
 		resources: [],
 	};
 }

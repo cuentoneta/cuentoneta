@@ -174,7 +174,7 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 ### Hito: Lanzamiento al público de la versión [2.6.0](https://github.com/cuentoneta/cuentoneta/releases/tag/2.6.0) de La Cuentoneta (lanzada el 2025/03/03)
 
-- Agregar alineación de texto para editor y parser de Portable Tex
+- Agregar alineación de texto para editor y parser de Portable Text
 - Soporte para tests de integración y e2e con Playwright
 - Soporte para Clarity vía el paquete `@microsoft/clarity`
 - Exportar componentes como default y actualizar notación de rutas
@@ -185,6 +185,35 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 - Agregada primera versión del índice de autores, para mejorar la indexación de contenido de la web
 
 ### Hito: Lanzamiento al público de la versión [2.6.1](https://github.com/cuentoneta/cuentoneta/releases/tag/2.6.1) de La Cuentoneta (lanzada el 2025/03/17)
+
+- Agregado de header de visualización dinámica para pantallas móviles
+- Mejora en SEO mediante el manejo de URLs canónicas
+- Actualización de Nx a versión 20.8.1
+
+### Hito: Lanzamiento al público de la versión [2.6.2](https://github.com/cuentoneta/cuentoneta/releases/tag/2.6.2) de La Cuentoneta (lanzada el 2025/05/03)
+
+- Agregado de nuevas reglas de eslint y actualización a Angular 20.2
+- Redefinición de flujo de CI/CD en Github actions para correr tareas de forma paralela
+- Agregado de campo `birthDate` a autores, para señalar opcionalmente su fecha de nacimiento
+
+### Hito: Lanzamiento al público de la versión [2.6.3](https://github.com/cuentoneta/cuentoneta/releases/tag/2.6.3) de La Cuentoneta (lanzada el 2025/09/11)
+
+- Dependencias y herramientas
+  - Actualización a Angular 20.3
+  - Actualización de Express a v5
+  - Agregado de regla `no-barrel-files` a eslint
+- Componentes
+  - Agregado de todas las variantes definidas en [Figma](https://www.figma.com/design/A9PdBCdmoyZrN7FKMpann8/La-Cuentoneta-v3?node-id=3233-8637&t=UxlOPYPb6BZAyXBr-0) del componente `StoryCardTeaserComponent`
+  - Estandarización de íconos utilizando `ng-icons` en reemplazo de íconos en SVG.
+
+- Cambios menores
+  - Resuelto problema de flickering en carga de landing page al cambiar configuración para ejecución del backend en Vercel
+  - Agregado de smoke tests para `AuthorSkeletonComponent` y `StoryCardSkeletonComponent`
+  - Agregado de valores por default para usos de rxResource
+  - Resolución de problemas de carga en variante Docs de las stories de Storybook
+  - Refactor de `RouterTestingModule` por `providerRoute` en stories de Storybook y tests
+
+### Hito: Lanzamiento al público de la versión [2.6.4](https://github.com/cuentoneta/cuentoneta/releases/tag/2.6.4) de La Cuentoneta (lanzada el 2025/09/29)
 
 ---
 
