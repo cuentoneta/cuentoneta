@@ -5,7 +5,7 @@ import Tab from './tab.component';
 import Tabs from './tabs.component';
 
 @Component({
-	selector: 'test-host',
+	selector: 'cuentoneta-test-host',
 	imports: [Tabs, Tab],
 	template: `
 		<cuentoneta-tabs [initialTabIndex]="initialTabIndex">

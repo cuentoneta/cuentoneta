@@ -35,9 +35,9 @@ import { NgTemplateOutlet } from '@angular/common';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class Tabs {
-	initialTabIndex = input<number>(0);
-	tabs = contentChildren(Tab);
-	active = linkedSignal({
+	readonly initialTabIndex = input<number>(0);
+	readonly tabs = contentChildren(Tab);
+	readonly active = linkedSignal({
 		source: this.tabs,
 		computation: (tabs) => {
 			if (tabs.length === 0) {

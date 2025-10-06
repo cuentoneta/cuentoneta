@@ -4,12 +4,12 @@ import { ChangeDetectionStrategy, Component, input, TemplateRef, viewChild } fro
 	selector: 'cuentoneta-tab',
 	imports: [],
 	template: ` <ng-template>
-		<ng-content></ng-content>
+		<ng-content />
 	</ng-template>`,
 	styles: ``,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class Tab {
-	title = input.required<string>();
-	content = viewChild.required(TemplateRef);
+	readonly title = input.required<string>();
+	readonly content = viewChild.required(TemplateRef);
 }
