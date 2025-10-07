@@ -1,14 +1,18 @@
-import { render, screen } from '@testing-library/angular';
+import { render, screen, RenderResult } from '@testing-library/angular';
 import { StorylistCardDeckComponent } from './storylist-card-deck.component';
 import { storyListMock } from '../../mocks/storylist.mock';
 import { provideRouter } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { Storylist } from '@models/storylist.model';
 
 describe('StorylistCardDeckComponent', () => {
 	const defaultProviders = [provideRouter([]), DatePipe];
 
-	const renderComponent = async (inputs = {}) => {
-		return await render(StorylistCardDeckComponent, {
+	const renderComponent = async (inputs?: {
+		storylist?: Storylist;
+		isLoading?: boolean;
+	}): Promise<RenderResult<StorylistCardDeckComponent>> => {
+		return render(StorylistCardDeckComponent, {
 			inputs,
 			providers: defaultProviders,
 		});
@@ -20,16 +24,16 @@ describe('StorylistCardDeckComponent', () => {
 	});
 
 	it('should render skeletons when loading', async () => {
-		const { container } = await renderComponent({ isLoading: true });
+		await renderComponent({ isLoading: true });
 
-		const skeletons = container.querySelectorAll('cuentoneta-story-card-skeleton');
+		const skeletons = screen.getAllByTestId('story-card-skeleton');
 		expect(skeletons.length).toBeGreaterThan(0);
 	});
 
 	it('should render publications when storylist has publications', async () => {
-		const { container } = await renderComponent({ storylist: storyListMock, isLoading: false });
+		await renderComponent({ storylist: storyListMock, isLoading: false });
 
-		const publicationCards = container.querySelectorAll('cuentoneta-publication-card');
+		const publicationCards = screen.getAllByTestId('publication-card');
 		expect(publicationCards.length).toBeGreaterThan(0);
 	});
 
@@ -44,9 +48,9 @@ describe('StorylistCardDeckComponent', () => {
 			],
 		};
 
-		const { container } = await renderComponent({ storylist: publishedStorylist, isLoading: false });
+		await renderComponent({ storylist: publishedStorylist, isLoading: false });
 
-		const publicationCard = container.querySelector('cuentoneta-publication-card');
+		const publicationCard = screen.getByTestId('publication-card');
 		expect(publicationCard).toBeInTheDocument();
 	});
 
@@ -61,9 +65,9 @@ describe('StorylistCardDeckComponent', () => {
 			],
 		};
 
-		const { container } = await renderComponent({ storylist: unpublishedStorylist, isLoading: false });
+		await renderComponent({ storylist: unpublishedStorylist, isLoading: false });
 
-		const skeletons = container.querySelectorAll('cuentoneta-story-card-skeleton');
+		const skeletons = screen.getAllByTestId('story-card-skeleton');
 		expect(skeletons.length).toBeGreaterThan(0);
 	});
 
@@ -84,9 +88,9 @@ describe('StorylistCardDeckComponent', () => {
 	});
 
 	it('should apply correct grid classes to publication containers', async () => {
-		const { container } = await renderComponent({ storylist: storyListMock, isLoading: false });
+		await renderComponent({ storylist: storyListMock, isLoading: false });
 
-		const publicationContainers = container.querySelectorAll('.xs\\:max-md\\:\\!col-span-1.md\\:col-span-6');
+		const publicationContainers = screen.getAllByTestId('publication-container');
 		expect(publicationContainers.length).toBeGreaterThan(0);
 	});
 
@@ -96,9 +100,9 @@ describe('StorylistCardDeckComponent', () => {
 			publications: [],
 		};
 
-		const { container } = await renderComponent({ storylist: emptyStorylist, isLoading: false });
+		await renderComponent({ storylist: emptyStorylist, isLoading: false });
 
-		const publicationCards = container.querySelectorAll('cuentoneta-publication-card');
+		const publicationCards = screen.queryAllByTestId('publication-card');
 		expect(publicationCards.length).toBe(0);
 	});
 });
