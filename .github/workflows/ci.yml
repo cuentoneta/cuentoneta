@@ -177,6 +177,13 @@ jobs:
 
       - name: Run build
         run: npx nx run cuentoneta:build:production --skip-nx-cache
+        env:
+          SANITY_STUDIO_DATASET: ${{ secrets.SANITY_STUDIO_DATASET }}
+          SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID }}
+          SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_STUDIO_TOKEN }}
+          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+          CLARITY_TOKEN: ${{ secrets.CLARITY_TOKEN }}
+          CLARITY_PROJECT_ID: ${{ secrets.CLARITY_PROJECT_ID }}
 
   storybook:
     needs: setup
