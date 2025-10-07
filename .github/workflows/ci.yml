@@ -176,7 +176,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Run build
-        run: nx run cuentoneta:build:production --skip-nx-cache
+        run: npx nx run cuentoneta:build:production --skip-nx-cache
 
   storybook:
     needs: setup
@@ -201,4 +201,4 @@ jobs:
           cache: 'pnpm'
 
       - name: Run Storybook build
-        run: nx run cuentoneta:build-storybook
+        run: npx nx run cuentoneta:build-storybook
