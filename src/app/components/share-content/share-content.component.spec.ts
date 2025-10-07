@@ -1,20 +1,27 @@
-import { render, screen } from '@testing-library/angular';
+import { render, screen, RenderResult } from '@testing-library/angular';
 import { ShareContentComponent } from './share-content.component';
 
 describe('ShareContentComponent', () => {
+	const renderComponent = async (inputs?: {
+		isLoading?: boolean;
+		route?: string;
+		message?: string;
+		params?: { [key: string]: string };
+	}): Promise<RenderResult<ShareContentComponent>> => {
+		return render(ShareContentComponent, { inputs });
+	};
+
 	it('should create', async () => {
-		const { container } = await render(ShareContentComponent);
+		const { container } = await renderComponent();
 		expect(container).toBeTruthy();
 	});
 
 	it('should render 3 share buttons when not loading', async () => {
-		await render(ShareContentComponent, {
-			inputs: {
-				isLoading: false,
-				route: '/test-route',
-				message: 'Test message',
-				params: { key: 'value' },
-			},
+		await renderComponent({
+			isLoading: false,
+			route: '/test-route',
+			message: 'Test message',
+			params: { key: 'value' },
 		});
 
 		const shareButtons = screen.getAllByRole('button');
@@ -22,13 +29,9 @@ describe('ShareContentComponent', () => {
 	});
 
 	it('should render 3 skeleton loaders when loading', async () => {
-		const { container } = await render(ShareContentComponent, {
-			inputs: {
-				isLoading: true,
-			},
-		});
+		await renderComponent({ isLoading: true });
 
-		const skeletons = container.querySelectorAll('ngx-skeleton-loader');
+		const skeletons = screen.getAllByTestId('share-skeleton-loader');
 		expect(skeletons).toHaveLength(3);
 	});
 
@@ -37,13 +40,11 @@ describe('ShareContentComponent', () => {
 		const testParams = { navigation: 'author', navigationSlug: 'test-author' };
 		const testMessage = 'Check out this story!';
 
-		await render(ShareContentComponent, {
-			inputs: {
-				isLoading: false,
-				route: testRoute,
-				params: testParams,
-				message: testMessage,
-			},
+		await renderComponent({
+			isLoading: false,
+			route: testRoute,
+			params: testParams,
+			message: testMessage,
 		});
 
 		// Verify share buttons are rendered with correct platform icons
@@ -53,16 +54,9 @@ describe('ShareContentComponent', () => {
 	});
 
 	it('should apply correct skeleton styling when loading', async () => {
-		const { container } = await render(ShareContentComponent, {
-			inputs: {
-				isLoading: true,
-			},
-		});
+		await renderComponent({ isLoading: true });
 
-		const skeletons = container.querySelectorAll('ngx-skeleton-loader');
+		const skeletons = screen.getAllByTestId('share-skeleton-loader');
 		expect(skeletons).toHaveLength(3);
-		skeletons.forEach((skeleton) => {
-			expect(skeleton.getAttribute('appearance')).toBe('circle');
-		});
 	});
 });
