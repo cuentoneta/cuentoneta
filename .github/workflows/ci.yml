@@ -35,7 +35,9 @@ jobs:
         uses: actions/cache@v4.2.3
         with:
           path: .
-          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
+          key: repo-${{ github.sha }}
+          restore-keys: |
+            repo-
 
   test:
     needs: setup
@@ -45,7 +47,9 @@ jobs:
         uses: actions/cache@v4.2.3
         with:
           path: .
-          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
+          key: repo-${{ github.sha }}
+          restore-keys: |
+            repo-
 
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
@@ -69,7 +73,9 @@ jobs:
         uses: actions/cache@v4.2.3
         with:
           path: .
-          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
+          key: repo-${{ github.sha }}
+          restore-keys: |
+            repo-
 
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
@@ -93,7 +99,9 @@ jobs:
         uses: actions/cache@v4.2.3
         with:
           path: .
-          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
+          key: repo-${{ github.sha }}
+          restore-keys: |
+            repo-
 
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
@@ -117,7 +125,9 @@ jobs:
         uses: actions/cache@v4.2.3
         with:
           path: .
-          key: repo-${{ runner.os }}-${{ hashFiles('**/*') }}
+          key: repo-${{ github.sha }}
+          restore-keys: |
+            repo-
 
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
@@ -142,3 +152,60 @@ jobs:
           name: playwright-report
           path: dist/.playwright/playwright-report/
           retention-days: 7
+
+  build:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restore repository
+        uses: actions/cache@v4.2.3
+        with:
+          path: .
+          key: repo-${{ github.sha }}
+          restore-keys: |
+            repo-
+      - name: Select pnpm as package manager
+        uses: pnpm/action-setup@v4.1.0
+        with:
+          version: 10.12.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22.12
+          cache: 'pnpm'
+
+      - name: Run build
+        run: npx nx run cuentoneta:build:production --skip-nx-cache
+        env:
+          SANITY_STUDIO_DATASET: ${{ secrets.SANITY_STUDIO_DATASET }}
+          SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID }}
+          SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_STUDIO_TOKEN }}
+          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+          CLARITY_TOKEN: ${{ secrets.CLARITY_TOKEN }}
+          CLARITY_PROJECT_ID: ${{ secrets.CLARITY_PROJECT_ID }}
+
+  storybook:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restore repository
+        uses: actions/cache@v4.2.3
+        with:
+          path: .
+          key: repo-${{ github.sha }}
+          restore-keys: |
+            repo-
+      - name: Select pnpm as package manager
+        uses: pnpm/action-setup@v4.1.0
+        with:
+          version: 10.12.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22.12
+          cache: 'pnpm'
+
+      - name: Run Storybook build
+        run: npx nx run cuentoneta:build-storybook --skip-nx-cache
