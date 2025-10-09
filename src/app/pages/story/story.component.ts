@@ -62,7 +62,7 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 		ProgressBarComponent,
 		NgIcon,
 	],
-	providers: [provideIcons({ faSolidArrowRightLong })],
+	providers: [provideIcons({ faSolidArrowRightLong }), LayoutService],
 	hostDirectives: [MetaTagsDirective],
 })
 export default class StoryComponent implements OnDestroy {

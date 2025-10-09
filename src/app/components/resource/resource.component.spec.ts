@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/angular';
 import { ResourceComponent } from './resource.component';
-import { resourceMock } from 'src/app/mocks/resource.mock';
+import { resourceMock } from '@mocks/resource.mock';
 
 describe('ResourceComponent', () => {
 	const regexTitle = new RegExp(resourceMock.title, 'i');

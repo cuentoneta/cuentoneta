@@ -7,7 +7,9 @@
 		"lib": ["es2020", "dom"],
 		"paths": {
 			"@models/*": ["src/app/models/*"],
-			"@utils/*": ["src/app/utils/*"]
+			"@utils/*": ["src/app/utils/*"],
+			"@mocks/*": ["src/app/mocks/*"],
+			"@components/*": ["src/app/components/*"]
 		},
 		"isolatedModules": true,
 		"baseUrl": ".",

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/angular';
 import { StoryCardContentComponent } from './story-card-content.component';
-import { storyMock } from 'src/app/mocks/story.mock';
+import { storyMock } from '@mocks/story.mock';
 
 const firstParagraph =
 	'Marie se detuvo frente al antiguo espejo de su abuela, sus dedos temblorosos rozando el marco de madera tallada. El reflejo que le devolvía la mirada no era el suyo, sino el de una joven de ojos brillantes y sonrisa despreocupada. Marie, ahora con 60 años, reconoció a su yo de 20.';
