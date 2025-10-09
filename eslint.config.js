@@ -70,6 +70,18 @@ export default [
 			'@typescript-eslint/no-unused-vars': 'error',
 			'@typescript-eslint/no-non-null-assertion': 'error',
 			'@typescript-eslint/no-explicit-any': 'error',
+			'@typescript-eslint/no-require-imports': 'error',
+			'no-restricted-syntax': [
+				'error',
+				{
+					selector: 'MemberExpression[object.name="module"][property.name="exports"]',
+					message: 'Use ES modules (export) instead of CommonJS (module.exports)',
+				},
+				{
+					selector: 'MemberExpression[object.name="exports"]',
+					message: 'Use ES modules (export) instead of CommonJS (exports)',
+				},
+			],
 			'@stylistic/js/no-extra-semi': 'off',
 			'jest/no-focused-tests': 'error',
 			'no-barrel-files/no-barrel-files': 'error',
