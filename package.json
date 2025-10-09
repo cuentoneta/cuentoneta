@@ -1,5 +1,6 @@
 {
 	"name": "@cuentoneta/cuentoneta",
+	"type": "module",
 	"version": "2.6.4",
 	"license": "CC BY-NC-SA 4.0",
 	"engines": {
