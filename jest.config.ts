@@ -21,4 +21,10 @@ export default {
 		'jest-preset-angular/build/serializers/html-comment',
 	],
 	testMatch: ['<rootDir>/src/**/__tests__/**/*.[jt]s?(x)', '<rootDir>/src/**/*(*.)@(spec|test).[jt]s?(x)'],
+	moduleNameMapper: {
+		'^@models/(.*)$': '<rootDir>/src/app/models/$1',
+		'^@utils/(.*)$': '<rootDir>/src/app/utils/$1',
+		'^@mocks/(.*)$': '<rootDir>/src/app/mocks/$1',
+		'^@components/(.*)$': '<rootDir>/src/app/components/$1',
+	},
 };
