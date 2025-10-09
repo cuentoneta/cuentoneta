@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	stories: ['../src/app/**/*.stories.mdx', '../src/app/**/*.stories.@(js|jsx|ts|tsx)'],
 	styles: [],
 	addons: [

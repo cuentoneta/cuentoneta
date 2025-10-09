@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/angular';
 import { EpigraphComponent } from './epigraph.component';
-import { epigraphMock } from 'src/app/mocks/epigraph-mock';
+import { epigraphMock } from '@mocks/epigraph-mock';
 
 describe('EpigraphComponent', () => {
 	const setup = async () =>

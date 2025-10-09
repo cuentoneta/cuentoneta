@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/angular';
 import { NavigableStoryTeaserComponent } from './navigable-story-teaser.component';
-import { storyNavigationTeaserMock, storyTeaserMock } from 'src/app/mocks/story.mock';
+import { storyNavigationTeaserMock, storyTeaserMock } from '@mocks/story.mock';
 
 describe('NavigableStoryTeaserComponent', () => {
 	const authorSlug = 'edgar-allan-poe';

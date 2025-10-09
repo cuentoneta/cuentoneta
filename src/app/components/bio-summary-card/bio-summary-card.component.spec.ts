@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/angular';
 import { BioSummaryCardComponent } from './bio-summary-card.component';
-import { storyMock } from 'src/app/mocks/story.mock';
+import { storyMock } from '@mocks/story.mock';
 
 const country = storyMock.author.nationality.country;
 const countryRegex = new RegExp(`\\b${country}\\b`, 'i');

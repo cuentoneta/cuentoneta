@@ -17,7 +17,7 @@ import { StorylistService } from '../../providers/storylist.service';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 // Componentes
-import { StorylistCardDeckComponent } from 'src/app/components/storylist-card-deck/storylist-card-deck.component';
+import { StorylistCardDeckComponent } from '@components/storylist-card-deck/storylist-card-deck.component';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
 import { ThemeService } from '../../providers/theme.service';
 import { rxResource } from '@angular/core/rxjs-interop';
