@@ -1,13 +1,13 @@
-const playwright = require('eslint-plugin-playwright');
-const nx = require('@nx/eslint-plugin');
-const stylisticJs = require('@stylistic/eslint-plugin');
-const storybook = require('eslint-plugin-storybook');
-const jest = require('eslint-plugin-jest');
-const jestDom = require('eslint-plugin-jest-dom');
-const testingLibrary = require('eslint-plugin-testing-library');
-const noBarrelFiles = require('eslint-plugin-no-barrel-files');
+import playwright from 'eslint-plugin-playwright';
+import nx from '@nx/eslint-plugin';
+import stylisticJs from '@stylistic/eslint-plugin';
+import storybook from 'eslint-plugin-storybook';
+import jest from 'eslint-plugin-jest';
+import jestDom from 'eslint-plugin-jest-dom';
+import testingLibrary from 'eslint-plugin-testing-library';
+import noBarrelFiles from 'eslint-plugin-no-barrel-files';
 
-module.exports = [
+export default [
 	{
 		name: 'ignores',
 		ignores: ['!**/*', '.nx', 'dist'],
