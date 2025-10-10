@@ -33,7 +33,12 @@ export default class AuthorsComponent {
 	readonly authors = computed(() => this.authorsResource.value());
 
 	constructor() {
+		this.updateMetaTags();
+	}
+
+	private updateMetaTags() {
 		this.metaTagsDirective.setTitle('Índice de Autores');
 		this.metaTagsDirective.setDefaultDescription();
+		this.metaTagsDirective.setRobots('noindex, follow');
 	}
 }

@@ -16,6 +16,8 @@ import { StoryTeaser } from '@models/story.model';
 
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+
+// Environment
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Services
@@ -120,6 +122,7 @@ export default class AuthorComponent {
 	private updateMetaTags(author: Author) {
 		this.metaTagsDirective.setTitle(`${author.name}`);
 		this.metaTagsDirective.setDescription(`Perfil y obras de ${author.name} para leer en La Cuentoneta.`);
+		this.metaTagsDirective.setRobots('index, follow');
 	}
 	private author$(slug: string) {
 		return this.authorService.getBySlug(slug).pipe(

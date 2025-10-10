@@ -120,8 +120,14 @@ export default class AboutComponent {
 	];
 
 	private metaTagsDirective = inject(MetaTagsDirective);
+
 	constructor() {
+		this.updateMetaTags();
+	}
+
+	private updateMetaTags() {
 		this.metaTagsDirective.setTitle('Nosotros');
 		this.metaTagsDirective.setDefaultDescription();
+		this.metaTagsDirective.setRobots('noindex, nofollow');
 	}
 }
