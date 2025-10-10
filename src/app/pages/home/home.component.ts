@@ -47,6 +47,11 @@ export default class HomeComponent {
 	readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
 
 	constructor() {
+		this.updateMetaTags();
+	}
+
+	private updateMetaTags() {
 		this.metaTagsDirective.setDefault();
+		this.metaTagsDirective.setRobots('index, follow');
 	}
 }

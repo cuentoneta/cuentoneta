@@ -58,5 +58,6 @@ export default class StorylistComponent {
 		this.metaTagsDirective.setDescription(
 			`Una storylist en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
 		);
+		this.metaTagsDirective.setRobots('index, follow');
 	}
 }

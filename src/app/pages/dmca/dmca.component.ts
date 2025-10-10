@@ -115,8 +115,14 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 })
 export default class DmcaComponent {
 	private metaTagsDirective = inject(MetaTagsDirective);
+
 	constructor() {
+		this.updateMetaTags();
+	}
+
+	private updateMetaTags() {
 		this.metaTagsDirective.setTitle('DMCA');
 		this.metaTagsDirective.setDefaultDescription();
+		this.metaTagsDirective.setRobots('noindex, nofollow');
 	}
 }
