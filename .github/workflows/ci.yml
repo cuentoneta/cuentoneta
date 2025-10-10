@@ -37,7 +37,7 @@ jobs:
           path: .
           key: repo-${{ github.sha }}
           restore-keys: |
-            repo-
+            repo-${{ github.sha }}
 
   test:
     needs: setup
@@ -49,7 +49,7 @@ jobs:
           path: .
           key: repo-${{ github.sha }}
           restore-keys: |
-            repo-
+            repo-${{ github.sha }}
 
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
@@ -75,7 +75,7 @@ jobs:
           path: .
           key: repo-${{ github.sha }}
           restore-keys: |
-            repo-
+            repo-${{ github.sha }}
 
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
@@ -101,7 +101,7 @@ jobs:
           path: .
           key: repo-${{ github.sha }}
           restore-keys: |
-            repo-
+            repo-${{ github.sha }}
 
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
@@ -127,7 +127,7 @@ jobs:
           path: .
           key: repo-${{ github.sha }}
           restore-keys: |
-            repo-
+            repo-${{ github.sha }}
 
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
@@ -163,7 +163,7 @@ jobs:
           path: .
           key: repo-${{ github.sha }}
           restore-keys: |
-            repo-
+            repo-${{ github.sha }}
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
         with:
@@ -195,7 +195,7 @@ jobs:
           path: .
           key: repo-${{ github.sha }}
           restore-keys: |
-            repo-
+            repo-${{ github.sha }}
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
         with:
