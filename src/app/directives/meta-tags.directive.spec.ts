@@ -108,7 +108,10 @@ describe('MetaTagsDirective', () => {
 
 			const linkElement = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
 			expect(linkElement).toBeTruthy();
+			expect(linkElement).toBeInstanceOf(HTMLLinkElement);
+			expect(linkElement).toHaveAttribute('rel', 'canonical');
 			expect(linkElement).toHaveAttribute('href', url);
+			expect(linkElement.parentElement).toBe(document.head);
 		});
 
 		it('should update existing canonical link element', () => {
@@ -120,7 +123,10 @@ describe('MetaTagsDirective', () => {
 
 			const linkElements = document.querySelectorAll('link[rel="canonical"]');
 			expect(linkElements.length).toBe(1);
+			expect(linkElements[0]).toBeInstanceOf(HTMLLinkElement);
+			expect(linkElements[0]).toHaveAttribute('rel', 'canonical');
 			expect(linkElements[0]).toHaveAttribute('href', updatedUrl);
+			expect(linkElements[0].parentElement).toBe(document.head);
 		});
 	});
 
