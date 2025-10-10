@@ -4,7 +4,6 @@ import { AuthorService } from '../../providers/author.service';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
-import { environment } from '../../environments/environment';
 
 @Component({
 	imports: [RouterLink],

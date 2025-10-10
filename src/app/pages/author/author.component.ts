@@ -18,7 +18,6 @@ import { StoryTeaser } from '@models/story.model';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 // Environment
-import { environment } from '../../environments/environment';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Services

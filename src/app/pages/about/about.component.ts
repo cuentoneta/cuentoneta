@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
-import { environment } from '../../environments/environment';
 
 @Component({
 	selector: 'cuentoneta-about',
