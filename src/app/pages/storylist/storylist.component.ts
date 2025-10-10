@@ -16,6 +16,9 @@ import { StorylistService } from '../../providers/storylist.service';
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
+// Environment
+import { environment } from '../../environments/environment';
+
 // Componentes
 import { StorylistCardDeckComponent } from '@components/storylist-card-deck/storylist-card-deck.component';
 import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
@@ -58,6 +61,7 @@ export default class StorylistComponent {
 		this.metaTagsDirective.setDescription(
 			`Una storylist en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
 		);
+		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/storylist/${storylist.slug}`);
 		this.metaTagsDirective.setRobots('index, follow');
 	}
 }

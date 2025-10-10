@@ -13,6 +13,9 @@ import { injectQueryParams } from 'ngxtension/inject-query-params';
 // Router
 import { AppRoutes } from '../../app.routes';
 
+// Environment
+import { environment } from '../../environments/environment';
+
 // Models
 import { Story } from '@models/story.model';
 
@@ -134,6 +137,7 @@ export default class StoryComponent implements OnDestroy {
 		this.meta.setDescription(
 			`Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
 		);
+		this.meta.setCanonicalUrl(`${environment.website}/${AppRoutes.Story}/${story.slug}`);
 		this.meta.setRobots('index, follow');
 	}
 }
