@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { environment } from '../../environments/environment';
 
 @Component({
 	selector: 'cuentoneta-about',
@@ -128,6 +129,7 @@ export default class AboutComponent {
 	private updateMetaTags() {
 		this.metaTagsDirective.setTitle('Nosotros');
 		this.metaTagsDirective.setDefaultDescription();
+		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/about`);
 		this.metaTagsDirective.setRobots('noindex, nofollow');
 	}
 }
