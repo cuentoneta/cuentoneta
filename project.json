@@ -1,5 +1,5 @@
 {
-	"name": "cuentoneta",
+	"name": "@cuentoneta/app",
 	"$schema": "node_modules/nx/schemas/project-schema.json",
 	"projectType": "application",
 	"sourceRoot": "./src",
@@ -78,7 +78,7 @@
 			"options": {
 				"port": 4400,
 				"configDir": "./.storybook",
-				"browserTarget": "cuentoneta:build",
+				"browserTarget": "@cuentoneta/app:build",
 				"compodoc": false,
 				"styles": ["./src/styles.scss"]
 			},
@@ -94,7 +94,7 @@
 			"options": {
 				"outputDir": "dist/storybook/cuentoneta",
 				"configDir": "./.storybook",
-				"browserTarget": "cuentoneta:build",
+				"browserTarget": "@cuentoneta/app:build",
 				"compodoc": false,
 				"styles": ["./src/styles.scss"]
 			},
@@ -108,10 +108,10 @@
 			"executor": "@nx/angular:dev-server",
 			"configurations": {
 				"production": {
-					"buildTarget": "cuentoneta:build:production"
+					"buildTarget": "@cuentoneta/app:build:production"
 				},
 				"development": {
-					"buildTarget": "cuentoneta:build:development"
+					"buildTarget": "@cuentoneta/app:build:development"
 				}
 			},
 			"defaultConfiguration": "development",
@@ -134,13 +134,25 @@
 			"executor": "@nx/web:file-server",
 			"dependsOn": ["build-storybook"],
 			"options": {
-				"buildTarget": "cuentoneta:build-storybook",
+				"buildTarget": "@cuentoneta/app:build-storybook",
 				"staticFilePath": "dist/storybook/cuentoneta",
 				"spa": true
 			},
 			"configurations": {
 				"ci": {
-					"buildTarget": "cuentoneta:build-storybook:ci"
+					"buildTarget": "@cuentoneta/app:build-storybook:ci"
+				}
+			}
+		},
+		"e2e": {
+			"executor": "@nx/playwright:playwright",
+			"outputs": ["{workspaceRoot}/playwright-report"],
+			"options": {
+				"config": "{projectRoot}/playwright.config.ts"
+			},
+			"configurations": {
+				"ci": {
+					"ci": true
 				}
 			}
 		}
