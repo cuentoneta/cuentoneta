@@ -115,7 +115,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Run stylelint
-        run: npx nx stylelint cuentoneta --skip-nx-cache
+        run: npx nx stylelint @cuentoneta/app --skip-nx-cache
 
   e2e:
     needs: setup
@@ -144,7 +144,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Tests
-        run: npx nx run cuentoneta:e2e-ci --skip-nx-cache
+        run: npx nx run @cuentoneta/app:e2e --skip-nx-cache
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
@@ -176,7 +176,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Run build
-        run: npx nx run cuentoneta:build:production --skip-nx-cache
+        run: npx nx run @cuentoneta/app:build:production --skip-nx-cache
         env:
           SANITY_STUDIO_DATASET: ${{ secrets.SANITY_STUDIO_DATASET }}
           SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID }}
@@ -208,4 +208,4 @@ jobs:
           cache: 'pnpm'
 
       - name: Run Storybook build
-        run: npx nx run cuentoneta:build-storybook --skip-nx-cache
+        run: npx nx run @cuentoneta/app:build-storybook --skip-nx-cache
