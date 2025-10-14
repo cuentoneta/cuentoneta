@@ -40,6 +40,9 @@ importers:
       sanity:
         specifier: ^3.62.2
         version: 3.95.0(@emotion/is-prop-valid@1.2.2)(@types/node@22.15.33)(@types/react@19.1.8)(immer@10.1.1)(jiti@2.4.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)(yaml@2.8.0)
+      sanity-plugin-bulk-actions-table:
+        specifier: ^1.0.4
+        version: 1.0.4(react@18.3.1)(sanity@3.95.0(@emotion/is-prop-valid@1.2.2)(@types/node@22.15.33)(@types/react@19.1.8)(immer@10.1.1)(jiti@2.4.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)(yaml@2.8.0))
       sanity-plugin-computed-field:
         specifier: ^2.0.2
         version: 2.0.2(@emotion/is-prop-valid@1.2.2)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(sanity@3.95.0(@emotion/is-prop-valid@1.2.2)(@types/node@22.15.33)(@types/react@19.1.8)(immer@10.1.1)(jiti@2.4.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)(yaml@2.8.0))(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
@@ -4105,6 +4108,11 @@ packages:
     resolution:
       { integrity: sha512-TM9YBvyC84ZxE3rgfefxUWiQKLilstD6k7PTGt6wfbtXF8ixIJLOL3VYyV/z+ZiPLsVxAsKAFVwWlWeb2Y8Yyw== }
 
+  lodash.get@4.4.2:
+    resolution:
+      { integrity: sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ== }
+    deprecated: This package is deprecated. Use the optional chaining (?.) operator instead.
+
   lodash.isplainobject@4.0.6:
     resolution:
       { integrity: sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA== }
@@ -4878,6 +4886,11 @@ packages:
       { integrity: sha512-Kb2dcpMsIutFw2hYrN0EhsAXOUJTd6FVMIxvNAkZCMQLVt9NGZqQczvGpYDxNWCZeCWLHUPxQIBudWzt1h7VVA== }
     engines: { node: '>=14.0.0' }
 
+  pluralize@8.0.0:
+    resolution:
+      { integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA== }
+    engines: { node: '>=4' }
+
   polished@4.3.1:
     resolution:
       { integrity: sha512-OBatVyC/N7SCW/FaDHrSd+vn0o5cS855TOmYi4OkdWUMSJCET/xip//ch8xGUvtr3i44X9LVyWwQlRMTN3pwSA== }
@@ -5009,6 +5022,12 @@ packages:
       { integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw== }
     peerDependencies:
       react: ^18.3.1
+
+  react-error-boundary@6.0.0:
+    resolution:
+      { integrity: sha512-gdlJjD7NWr0IfkPlaREN2d9uUZUlksrfOx7SX62VRerwXbMY6ftGCIZua1VG1aXFNOimhISsTq+Owp725b9SiA== }
+    peerDependencies:
+      react: '>=16.13.1'
 
   react-fast-compare@3.2.2:
     resolution:
@@ -5301,6 +5320,14 @@ packages:
   safer-buffer@2.1.2:
     resolution:
       { integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg== }
+
+  sanity-plugin-bulk-actions-table@1.0.4:
+    resolution:
+      { integrity: sha512-2LVTOE8F6HfcoJJfU20hn2q2qjJlmzvX2/4N7T2gnnZogQNznB9CbAoSaTeNyheeiBF756q9Bij/ttj02D4NrA== }
+    engines: { node: '>=18' }
+    peerDependencies:
+      react: ^18 || ^19
+      sanity: ^3
 
   sanity-plugin-computed-field@2.0.2:
     resolution:
@@ -10163,6 +10190,8 @@ snapshots:
 
   lodash.escaperegexp@4.1.2: {}
 
+  lodash.get@4.4.2: {}
+
   lodash.isplainobject@4.0.6: {}
 
   lodash.isstring@4.0.1: {}
@@ -10665,6 +10694,8 @@ snapshots:
 
   pluralize-esm@9.0.5: {}
 
+  pluralize@8.0.0: {}
+
   polished@4.3.1:
     dependencies:
       '@babel/runtime': 7.27.6
@@ -10770,6 +10801,11 @@ snapshots:
       loose-envify: 1.4.0
       react: 18.3.1
       scheduler: 0.23.2
+
+  react-error-boundary@6.0.0(react@18.3.1):
+    dependencies:
+      '@babel/runtime': 7.27.6
+      react: 18.3.1
 
   react-fast-compare@3.2.2: {}
 
@@ -11039,6 +11075,17 @@ snapshots:
   safe-buffer@5.2.1: {}
 
   safer-buffer@2.1.2: {}
+
+  sanity-plugin-bulk-actions-table@1.0.4(react@18.3.1)(sanity@3.95.0(@emotion/is-prop-valid@1.2.2)(@types/node@22.15.33)(@types/react@19.1.8)(immer@10.1.1)(jiti@2.4.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)(yaml@2.8.0)):
+    dependencies:
+      classnames: 2.5.1
+      lodash.debounce: 4.0.8
+      lodash.get: 4.4.2
+      nanoid: 5.1.5
+      pluralize: 8.0.0
+      react: 18.3.1
+      react-error-boundary: 6.0.0(react@18.3.1)
+      sanity: 3.95.0(@emotion/is-prop-valid@1.2.2)(@types/node@22.15.33)(@types/react@19.1.8)(immer@10.1.1)(jiti@2.4.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)(yaml@2.8.0)
 
   sanity-plugin-computed-field@2.0.2(@emotion/is-prop-valid@1.2.2)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(sanity@3.95.0(@emotion/is-prop-valid@1.2.2)(@types/node@22.15.33)(@types/react@19.1.8)(immer@10.1.1)(jiti@2.4.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)(yaml@2.8.0))(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
     dependencies:
