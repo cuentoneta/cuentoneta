@@ -1,0 +1,56 @@
+{
+	"name": "@cuentoneta/cms",
+	"$schema": "../node_modules/nx/schemas/project-schema.json",
+	"projectType": "application",
+	"sourceRoot": "cms",
+	"prefix": "cms",
+	"tags": ["type:sanity-cms"],
+	"targets": {
+		"dev": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "pnpm sanity dev",
+				"cwd": "cms"
+			}
+		},
+		"build": {
+			"executor": "nx:run-commands",
+			"outputs": ["{projectRoot}/dist"],
+			"options": {
+				"command": "pnpm sanity build",
+				"cwd": "cms"
+			}
+		},
+		"start": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "pnpm sanity start",
+				"cwd": "cms"
+			}
+		},
+		"deploy": {
+			"executor": "nx:run-commands",
+			"dependsOn": ["build"],
+			"options": {
+				"command": "pnpm sanity deploy",
+				"cwd": "cms"
+			}
+		},
+		"extract-schema": {
+			"executor": "nx:run-commands",
+			"outputs": ["{projectRoot}/schema.json"],
+			"options": {
+				"command": "pnpx sanity schema extract --enforce-required-fields --workspace=production",
+				"cwd": "cms"
+			}
+		},
+		"typegen": {
+			"executor": "nx:run-commands",
+			"dependsOn": ["extract-schema"],
+			"options": {
+				"command": "pnpx sanity typegen generate",
+				"cwd": "cms"
+			}
+		}
+	}
+}
