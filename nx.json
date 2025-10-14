@@ -133,14 +133,6 @@
 			"options": {
 				"targetName": "eslint:lint"
 			}
-		},
-		{
-			"plugin": "@nx/playwright/plugin",
-			"exclude": ["cms/**/*"],
-			"options": {
-				"ciTargetName": "e2e-ci",
-				"targetName": "e2e"
-			}
 		}
 	],
 	"nxCloudId": "639687547a4efa4dbb11b35a"
