@@ -126,7 +126,7 @@
 			"typeSeparator": "."
 		}
 	},
-	"defaultProject": "cuentoneta",
+	"defaultProject": "@cuentoneta/app",
 	"plugins": [
 		{
 			"plugin": "@nx/eslint/plugin",
@@ -136,6 +136,7 @@
 		},
 		{
 			"plugin": "@nx/playwright/plugin",
+			"exclude": ["cms/**/*"],
 			"options": {
 				"ciTargetName": "e2e-ci",
 				"targetName": "e2e"

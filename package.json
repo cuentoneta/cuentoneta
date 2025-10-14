@@ -1,5 +1,5 @@
 {
-	"name": "@cuentoneta/cuentoneta",
+	"name": "@cuentoneta/app",
 	"type": "module",
 	"version": "2.6.4",
 	"license": "CC BY-NC-SA 4.0",
@@ -22,7 +22,7 @@
 		"test:watch": "nx test --watch",
 		"test:e2e": "nx run cuentoneta:e2e",
 		"sanity:dev": "cd cms && sanity dev",
-		"sanity:extract-schema": "cd cms && pnpx sanity schema extract --enforce-required-fields --workspace=production-workspace",
+		"sanity:extract-schema": "cd cms && pnpx sanity schema extract --enforce-required-fields --workspace=production",
 		"sanity:run-typegen-generator": "cd cms && pnpx sanity typegen generate",
 		"prepare": "husky"
 	},
