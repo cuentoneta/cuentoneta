@@ -29,7 +29,7 @@ import { NgTemplateOutlet } from '@angular/common';
 		}`,
 	styles: `
 		:host {
-			@apply flex flex-col gap-4;
+			@apply flex flex-col gap-8;
 		}
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
