@@ -55,7 +55,11 @@
 						<cuentoneta-badge [tag]="tag" [showIcon]="true" />
 					}
 				</div>
-				<cuentoneta-portable-text-parser [paragraphs]="storylist.description" [classes]="'source-serif-pro-body-xl'" />
+				<cuentoneta-portable-text-parser
+					[paragraphs]="storylist.description"
+					[classes]="'source-serif-pro-body-xl'"
+					class="flex flex-col gap-4"
+				/>
 			</div>
 		</div>
 	} @else {
