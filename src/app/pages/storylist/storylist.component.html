@@ -3,7 +3,7 @@
 		<section>
 			<cuentoneta-tabs>
 				<cuentoneta-tab title="Historias">
-					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+					<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
 						<!-- Renderizado de tarjetas de stories -->
 						@defer (when storylistResource.isLoading()) {
 							@for (story of stories(); track $index) {
@@ -47,13 +47,14 @@
 				<h1 class="h1 mb-5">
 					{{ storylist.title }}
 				</h1>
-				@if (!!storylist.tags && storylist.tags.length > 0) {
-					<div class="mb-3 flex gap-2">
-						@for (tag of storylist.tags; track tag.slug) {
-							<cuentoneta-badge [tag]="tag" [showIcon]="true" />
-						}
+				<div class="mb-3 flex gap-2">
+					<div class="flex rounded bg-gray-200 px-4.5 py-0.5 uppercase hover:cursor-default">
+						<span class="inter-body-xs-bold flex items-center gap-1">{{ storylist.count }} historias</span>
 					</div>
-				}
+					@for (tag of storylist.tags; track tag.slug) {
+						<cuentoneta-badge [tag]="tag" [showIcon]="true" />
+					}
+				</div>
 				<cuentoneta-portable-text-parser [paragraphs]="storylist.description" [classes]="'source-serif-pro-body-xl'" />
 			</div>
 		</div>
