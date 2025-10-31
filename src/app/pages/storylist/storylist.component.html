@@ -1,11 +1,41 @@
 <main class="content horizontal-layout-spacing vertical-layout-spacing block">
 	<article [attr.aria-busy]="!storylist()" [lang]="storylist()?.language" class="grid grid-cols-1 gap-y-8">
-		<!-- Renderizado de título y descripción -->
-		<ng-container *ngTemplateOutlet="storylistTitleTemplate" />
-
 		<section>
-			<!-- Renderizado de tarjetas de stories -->
-			<cuentoneta-storylist-card-deck [storylist]="storylist()" [isLoading]="storylistResource.isLoading()" />
+			<cuentoneta-tabs>
+				<cuentoneta-tab title="Historias">
+					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+						<!-- Renderizado de tarjetas de stories -->
+						@defer (when storylistResource.isLoading()) {
+							@for (story of stories(); track $index) {
+								<cuentoneta-story-card-teaser
+									[story]="story"
+									[showAuthor]="true"
+									[order]="$index + 1"
+									[showExcerpt]="true"
+									[navigationParams]="{
+										navigation: 'author',
+										navigationSlug: story.author.slug,
+									}"
+									data-testid="card"
+								/>
+							}
+						} @loading (minimum 500ms) {
+							@for (_ of [].constructor(12); track $index) {
+								<cuentoneta-story-card-teaser-skeleton
+									[showAuthor]="true"
+									[order]="$index + 1"
+									[showExcerpt]="true"
+									data-testid="skeleton"
+								/>
+							}
+						}
+					</div>
+				</cuentoneta-tab>
+				<cuentoneta-tab title="Ficha técnica">
+					<!-- Renderizado de título y descripción -->
+					<ng-container *ngTemplateOutlet="storylistTitleTemplate" />
+				</cuentoneta-tab>
+			</cuentoneta-tabs>
 		</section>
 	</article>
 </main>
@@ -17,6 +47,13 @@
 				<h1 class="h1 mb-5">
 					{{ storylist.title }}
 				</h1>
+				@if (!!storylist.tags && storylist.tags.length > 0) {
+					<div class="mb-3 flex gap-2">
+						@for (tag of storylist.tags; track tag.slug) {
+							<cuentoneta-badge [tag]="tag" [showIcon]="true" />
+						}
+					</div>
+				}
 				<cuentoneta-portable-text-parser [paragraphs]="storylist.description" [classes]="'source-serif-pro-body-xl'" />
 			</div>
 		</div>
@@ -27,7 +64,7 @@
 					'margin-bottom.px': 20,
 					'height.px': 40,
 					width: '100%',
-					'background-color': skeletonColor
+					'background-color': skeletonColor,
 				}"
 				count="1"
 				appearance="line"
@@ -37,7 +74,7 @@
 					'margin-bottom.px': 10,
 					'height.px': 20,
 					width: '100%',
-					'background-color': skeletonColor
+					'background-color': skeletonColor,
 				}"
 				count="3"
 				appearance="line"
