@@ -1,14 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { BadgeComponent } from '@components/badge/badge.component';
-import { Tag } from '@models/tag.model';
 import { Storylist } from '@models/storylist.model';
 import { StorylistTitleSkeleton } from './storylist-title-skeleton';
-
-interface HeaderInfo {
-	title: string;
-	count: number;
-	tags: Tag[];
-}
 
 @Component({
 	selector: 'cuentoneta-storylist-title',
