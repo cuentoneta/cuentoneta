@@ -91,7 +91,6 @@
 		"@typescript-eslint/eslint-plugin": "8.43.0",
 		"@typescript-eslint/parser": "8.43.0",
 		"@typescript-eslint/utils": "8.43.0",
-		"@typescript/native-preview": "^7.0.0-dev.20251006.1",
 		"angular-eslint": "20.3.0",
 		"autoprefixer": "^10.4.21",
 		"browser-sync": "^3.0.4",
@@ -130,6 +129,7 @@
 		"ts-jest": "29.4.1",
 		"ts-node": "10.9.2",
 		"tsx": "^4.20.6",
+		"typescript": "~5.9.2",
 		"typescript-eslint": "8.43.0",
 		"webpack": "5.99.9"
 	}
