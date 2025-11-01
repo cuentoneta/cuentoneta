@@ -25,10 +25,10 @@ import { ThemeService } from '../../providers/theme.service';
 import { rxResource } from '@angular/core/rxjs-interop';
 import Tabs from '@components/tabs/tabs.component';
 import Tab from '@components/tabs/tab.component';
-import { BadgeComponent } from '@components/badge/badge.component';
 import { StoryCardTeaserComponent } from '@components/story-card-teaser/story-card-teaser.component';
 import { StoryCardTeaserSkeletonComponent } from '@components/story-card-teaser/story-card-teaser-skeleton.component';
 import { StoryTeaserWithAuthor } from '@models/story.model';
+import { StorylistTitle } from './storylist-title/storylist-title';
 
 @Component({
 	selector: 'cuentoneta-storylist',
@@ -39,9 +39,9 @@ import { StoryTeaserWithAuthor } from '@models/story.model';
 		PortableTextParserComponent,
 		Tabs,
 		Tab,
-		BadgeComponent,
 		StoryCardTeaserComponent,
 		StoryCardTeaserSkeletonComponent,
+		StorylistTitle,
 	],
 	hostDirectives: [MetaTagsDirective],
 })
