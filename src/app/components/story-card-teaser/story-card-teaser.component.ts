@@ -39,7 +39,6 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 						</header>
 						@if (showExcerpt() && story.paragraphs.length > 0) {
 							<cuentoneta-portable-text-parser
-								[type]="'span'"
 								[paragraphs]="story.paragraphs"
 								[class]="'line-clamp-' + excerptLines()"
 								data-testid="portable-text-parser"
