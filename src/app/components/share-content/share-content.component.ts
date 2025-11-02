@@ -20,8 +20,9 @@ import { FacebookPlatform, SharingPlatform, TwitterPlatform, WhatsappPlatform } 
 							'height.px': 48,
 							'width.px': 48,
 							'margin.px': 0,
-							'background-color': skeletonColor
+							'background-color': skeletonColor,
 						}"
+						data-testid="share-skeleton-loader"
 						count="1"
 						appearance="circle"
 					/>

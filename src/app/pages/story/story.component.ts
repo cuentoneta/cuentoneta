@@ -4,7 +4,6 @@ import { RouterLink } from '@angular/router';
 import { tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { environment } from '../../environments/environment';
 
 // 3rd Party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -13,6 +12,9 @@ import { injectQueryParams } from 'ngxtension/inject-query-params';
 
 // Router
 import { AppRoutes } from '../../app.routes';
+
+// Environment
+import { environment } from '../../environments/environment';
 
 // Models
 import { Story } from '@models/story.model';
@@ -62,7 +64,7 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 		ProgressBarComponent,
 		NgIcon,
 	],
-	providers: [provideIcons({ faSolidArrowRightLong })],
+	providers: [provideIcons({ faSolidArrowRightLong }), LayoutService],
 	hostDirectives: [MetaTagsDirective],
 })
 export default class StoryComponent implements OnDestroy {
@@ -127,6 +129,7 @@ export default class StoryComponent implements OnDestroy {
 
 	ngOnDestroy() {
 		this.meta.removeCanonicalUrl();
+		this.meta.removeRobots();
 	}
 
 	private updateMetaTags(story: Story) {
@@ -134,6 +137,7 @@ export default class StoryComponent implements OnDestroy {
 		this.meta.setDescription(
 			`Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
 		);
-		this.meta.setCanonicalUrl(`${environment.website}${AppRoutes.Story}/${story.slug}`);
+		this.meta.setCanonicalUrl(`${environment.website}/${AppRoutes.Story}/${story.slug}`);
+		this.meta.setRobots('index, follow');
 	}
 }

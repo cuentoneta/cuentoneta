@@ -8,6 +8,9 @@ import { ContentService } from '../../providers/content.service';
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
+// Environment
+import { environment } from '../../environments/environment';
+
 // Componentes
 import { ContentCampaignCarouselComponent } from '../../components/content-campaign-carousel/content-campaign-carousel.component';
 import { StorylistCardComponent } from '../../components/storylist-card-component/storylist-card.component';
@@ -47,6 +50,12 @@ export default class HomeComponent {
 	readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
 
 	constructor() {
+		this.updateMetaTags();
+	}
+
+	private updateMetaTags() {
 		this.metaTagsDirective.setDefault();
+		this.metaTagsDirective.setCanonicalUrl(`${environment.website}`);
+		this.metaTagsDirective.setRobots('index, follow');
 	}
 }

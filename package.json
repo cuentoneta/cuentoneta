@@ -1,6 +1,7 @@
 {
-	"name": "@cuentoneta/cuentoneta",
-	"version": "2.6.4",
+	"name": "@cuentoneta/app",
+	"type": "module",
+	"version": "2.6.5",
 	"license": "CC BY-NC-SA 4.0",
 	"engines": {
 		"node": "^20.19.0 || ^22.12.0"
@@ -9,20 +10,20 @@
 	"scripts": {
 		"preinstall": "pnpx only-allow pnpm",
 		"postinstall": "pnpm run config",
-		"dev": "nx run cuentoneta:serve:development",
-		"build": "nx run cuentoneta:build:production --skip-nx-cache",
-		"config": "node -r ts-node/register ./scripts/set-environment.ts",
-		"delete-unused-assets": "node -r ts-node/register --env-file=.env ./scripts/delete-unused-assets.ts",
-		"storybook": "nx run cuentoneta:storybook",
-		"storybook:build": "nx run cuentoneta:build-storybook",
+		"dev": "nx run @cuentoneta/app:serve:development",
+		"build": "nx run @cuentoneta/app:build:production --skip-nx-cache",
+		"config": "node --loader ts-node/esm ./scripts/set-environment.ts",
+		"delete-unused-assets": "node --import tsx --env-file=.env ./scripts/delete-unused-assets.ts",
+		"storybook": "nx run @cuentoneta/app:storybook",
+		"storybook:build": "nx run @cuentoneta/app:build-storybook",
 		"lint": "nx lint --skip-nx-cache",
-		"stylelint": "nx stylelint cuentoneta",
+		"stylelint": "nx stylelint @cuentoneta/app",
 		"test": "nx test --skip-nx-cache",
 		"test:watch": "nx test --watch",
-		"test:e2e": "nx run cuentoneta:e2e",
-		"sanity:dev": "cd cms && sanity dev",
-		"sanity:extract-schema": "cd cms && pnpx sanity schema extract --enforce-required-fields --workspace=production-workspace",
-		"sanity:run-typegen-generator": "cd cms && pnpx sanity typegen generate",
+		"test:e2e": "nx run @cuentoneta/app:e2e",
+		"sanity:dev": "nx run @cuentoneta/cms:dev",
+		"sanity:extract-schema": "nx run @cuentoneta/cms:extract-schema",
+		"sanity:run-typegen-generator": "nx run @cuentoneta/cms:typegen",
 		"prepare": "husky"
 	},
 	"private": true,
@@ -127,7 +128,8 @@
 		"tailwindcss": "^3.4.17",
 		"ts-jest": "29.4.1",
 		"ts-node": "10.9.2",
-		"typescript": "5.9.2",
+		"tsx": "^4.20.6",
+		"typescript": "~5.9.2",
 		"typescript-eslint": "8.43.0",
 		"webpack": "5.99.9"
 	}

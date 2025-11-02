@@ -67,4 +67,15 @@ export class MetaTagsDirective {
 			element.remove();
 		}
 	}
+
+	setRobots(content: 'index, follow' | 'noindex, nofollow' | 'index, nofollow' | 'noindex, follow' | 'all' | 'none') {
+		this.metaTagService.updateTag({
+			name: 'robots',
+			content: content,
+		});
+	}
+
+	removeRobots() {
+		this.metaTagService.removeTag('name="robots"');
+	}
 }

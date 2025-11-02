@@ -36,9 +36,7 @@ export interface StoryNavigationTeaserWithAuthor extends StoryBase {
 	paragraphs: Array<never>;
 }
 
-export interface StoryTeaser extends StoryBase {
-	paragraphs: [TextBlockContent, TextBlockContent, TextBlockContent];
-}
+export type StoryTeaser = StoryBase;
 
 export interface StoryTeaserWithAuthor extends StoryTeaser {
 	author: AuthorTeaser;

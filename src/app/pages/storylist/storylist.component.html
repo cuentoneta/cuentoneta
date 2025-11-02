@@ -1,47 +1,61 @@
 <main class="content horizontal-layout-spacing vertical-layout-spacing block">
 	<article [attr.aria-busy]="!storylist()" [lang]="storylist()?.language" class="grid grid-cols-1 gap-y-8">
-		<!-- Renderizado de título y descripción -->
-		<ng-container *ngTemplateOutlet="storylistTitleTemplate" />
-
+		<cuentoneta-storylist-title [storylist]="storylist()" />
 		<section>
-			<!-- Renderizado de tarjetas de stories -->
-			<cuentoneta-storylist-card-deck [storylist]="storylist()" [isLoading]="storylistResource.isLoading()" />
+			<cuentoneta-tabs>
+				<cuentoneta-tab title="Textos">
+					<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+						@defer (when storylistResource.isLoading()) {
+							@for (story of stories(); track $index) {
+								<cuentoneta-story-card-teaser
+									[story]="story"
+									[showAuthor]="true"
+									[order]="$index + 1"
+									[showExcerpt]="true"
+									[navigationParams]="{
+										navigation: 'author',
+										navigationSlug: story.author.slug,
+									}"
+									data-testid="card"
+								/>
+							}
+						} @loading (minimum 500ms) {
+							@for (_ of [].constructor(12); track $index) {
+								<cuentoneta-story-card-teaser-skeleton
+									[showAuthor]="true"
+									[order]="$index + 1"
+									[showExcerpt]="true"
+									data-testid="skeleton"
+								/>
+							}
+						}
+					</div>
+				</cuentoneta-tab>
+				<cuentoneta-tab title="Ficha técnica">
+					@if (storylist(); as storylist) {
+						<div class="flex flex-col">
+							<cuentoneta-portable-text-parser
+								[paragraphs]="storylist.description"
+								[classes]="'source-serif-pro-body-xl'"
+								class="flex flex-col gap-4"
+							/>
+						</div>
+					} @else {
+						<div class="xs:max-md:col-span-1 md:col-span-6">
+							<ngx-skeleton-loader
+								[theme]="{
+									'margin-bottom.px': 10,
+									'height.px': 20,
+									width: '100%',
+									'background-color': skeletonColor,
+								}"
+								count="10"
+								appearance="line"
+							/>
+						</div>
+					}
+				</cuentoneta-tab>
+			</cuentoneta-tabs>
 		</section>
 	</article>
 </main>
-
-<ng-template #storylistTitleTemplate>
-	@if (storylist(); as storylist) {
-		<div class="grid grid-cols-1 gap-4 xs:max-md:!col-span-1 md:grid-cols-[auto_1fr]">
-			<div class="flex flex-col">
-				<h1 class="h1 mb-5">
-					{{ storylist.title }}
-				</h1>
-				<cuentoneta-portable-text-parser [paragraphs]="storylist.description" [classes]="'source-serif-pro-body-xl'" />
-			</div>
-		</div>
-	} @else {
-		<div class="xs:max-md:col-span-1 md:col-span-6">
-			<ngx-skeleton-loader
-				[theme]="{
-					'margin-bottom.px': 20,
-					'height.px': 40,
-					width: '100%',
-					'background-color': skeletonColor
-				}"
-				count="1"
-				appearance="line"
-			/>
-			<ngx-skeleton-loader
-				[theme]="{
-					'margin-bottom.px': 10,
-					'height.px': 20,
-					width: '100%',
-					'background-color': skeletonColor
-				}"
-				count="3"
-				appearance="line"
-			/>
-		</div>
-	}
-</ng-template>
