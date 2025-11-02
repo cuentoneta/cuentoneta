@@ -215,6 +215,17 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 ### Hito: Lanzamiento al público de la versión [2.6.4](https://github.com/cuentoneta/cuentoneta/releases/tag/2.6.4) de La Cuentoneta (lanzada el 2025/09/29)
 
+- Abordaje de warnings y optimizaciones en CI/CD, Tailwind y eslint
+- Agregado de componente tabs
+- Migración completa del proyecto a ESM
+- Mejoras en SEO mediante configuración de metatags robots y canonical
+- Agregado de vista de tablas para Sanity
+- Transformación de la vista de storylist para mejorar experiencia de usuario y accesibilidad
+- Mejoras en el parser de Portable Text para manejo de listas
+- Publicación de la storylist "Misceláneas Tertulianas"
+
+### Hito: Lanzamiento al público de la versión [2.6.5](https://github.com/cuentoneta/cuentoneta/releases/tag/2.6.5) de La Cuentoneta (lanzada el 2025/11/02)
+
 ---
 
 ## Futuros
