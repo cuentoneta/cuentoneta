@@ -12,7 +12,7 @@ export const serverRoutes: Array<ServerRoute> = [
 	},
 	{
 		path: AppRoutes.About,
-		renderMode: RenderMode.Prerender,
+		renderMode: RenderMode.Server,
 	},
 	{
 		path: AppRoutes.Dmca,
