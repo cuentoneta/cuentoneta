@@ -81,5 +81,18 @@ export default defineType({
 				}),
 			],
 		}),
+		defineField({
+			name: 'latestReads',
+			title: 'Últimas novedades',
+			type: 'array',
+			of: [
+				defineArrayMember({
+					name: 'story',
+					title: 'Historia',
+					type: 'reference',
+					to: [{ type: 'story' }],
+				}),
+			],
+		}),
 	],
 });

@@ -65,4 +65,27 @@ export const landingPageContentQuery = defineQuery(`
             'resources': [],
         }
     },[]),
+    'latestReads': coalesce(latestReads[]->{
+        _id,
+        'slug': slug.current,
+        title,
+        language,
+        badLanguage,
+        'body': [],
+        originalPublication,
+        approximateReadingTime,
+        'resources': [],
+        'mediaSources': coalesce(mediaSources[], []),
+        'author': author-> { 
+            _id,
+            slug,
+            name,
+            image,
+            nationality->,
+            'biography': [],
+            bornOn,
+            diedOn,
+            'resources': [],
+        }
+    },[]),
 }`);

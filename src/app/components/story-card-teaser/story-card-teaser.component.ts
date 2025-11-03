@@ -19,7 +19,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 					@if (showAuthor() && 'author' in story) {
 						<a [routerLink]="['/', appRoutes.Author, story.author.slug]" class="flex items-center gap-2">
 							<img
-								[ngSrc]="story.author.imageUrl"
+								[ngSrc]="authorImageUrl()"
 								[alt]="'Retrato de ' + story.author.name"
 								width="20"
 								height="20"
@@ -76,6 +76,13 @@ export class StoryCardTeaserComponent {
 	readonly showExcerpt = input<boolean>(false);
 	readonly excerptLines = input<number>(3);
 	readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
+	readonly authorImageUrl = computed(() => {
+		const story = this.story();
+		if (story && 'author' in story) {
+			return `${story.author.imageUrl}?h=64&w=64`;
+		}
+		return '';
+	});
 
 	// Propiedades
 	readonly formattedOrder = computed(() => {

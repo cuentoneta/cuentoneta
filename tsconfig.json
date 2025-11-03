@@ -6,10 +6,10 @@
 		"module": "preserve",
 		"lib": ["es2020", "dom"],
 		"paths": {
-			"@models/*": ["src/app/models/*"],
-			"@utils/*": ["src/app/utils/*"],
+			"@components/*": ["src/app/components/*"],
 			"@mocks/*": ["src/app/mocks/*"],
-			"@components/*": ["src/app/components/*"]
+			"@models/*": ["src/app/models/*"],
+			"@utils/*": ["src/app/utils/*"]
 		},
 		"isolatedModules": true,
 		"baseUrl": ".",

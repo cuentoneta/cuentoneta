@@ -289,6 +289,7 @@ export function mapLandingPageContent(result: NonNullable<LandingPageContentQuer
 		cards: mapStorylistTeasers(result.cards),
 		campaigns: mapContentCampaigns(result.campaigns),
 		mostRead: mapStoryNavigationTeaserWithAuthor(result.mostRead),
+		latestReads: mapStoryNavigationTeaserWithAuthor(result.latestReads),
 	};
 }
 
