@@ -1,11 +1,10 @@
-import { Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { rxResource } from '@angular/core/rxjs-interop';
 
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 import { environment } from '../../environments/environment';
 import { ContributorService } from '../../providers/contributor.service';
-import { SORTED_AREAS } from '@models/contributor.model';
 
 @Component({
 	selector: 'cuentoneta-about',
@@ -13,6 +12,7 @@ import { SORTED_AREAS } from '@models/contributor.model';
 	hostDirectives: [MetaTagsDirective],
 	providers: [ContributorService],
 	templateUrl: './about.component.html',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class AboutComponent {
 	readonly links = {
@@ -31,22 +31,11 @@ export default class AboutComponent {
 	private contributorService = inject(ContributorService);
 
 	readonly contributorsResource = rxResource({
-		stream: () => this.contributorService.getAll(),
+		stream: () => this.contributorService.getAllByArea(),
 		defaultValue: [],
 	});
 
-	readonly contributorsPerArea = computed(() => {
-		const contributors = this.contributorsResource.value() ?? [];
-
-		return contributors.reduce((accum, value) => {
-			const area = accum.find((a) => a.area.slug === value.area.slug);
-
-			if (area) {
-				area.contributors.push(value);
-			}
-			return accum;
-		}, SORTED_AREAS);
-	});
+	readonly contributorsPerArea = computed(() => this.contributorsResource.value());
 
 	constructor() {
 		this.updateMetaTags();
