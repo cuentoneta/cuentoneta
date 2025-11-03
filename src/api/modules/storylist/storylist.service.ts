@@ -1,15 +1,15 @@
 // Conector de Sanity
-import { client } from '../_helpers/sanity-connector';
+import { client } from '../../_helpers/sanity-connector';
 
 // Interfaces
 import { Storylist, StorylistPublicationsNavigationTeasers, StorylistTeaser } from '@models/storylist.model';
 
 // Funciones
-import { mapStorylist, mapStorylistNavigationTeasers, mapStorylistTeasers } from '../_utils/functions';
+import { mapStorylist, mapStorylistNavigationTeasers, mapStorylistTeasers } from '../../_utils/functions';
 
 // Queries
-import { storylistNavigationTeasersQuery, storylistQuery, storylistTeasersQuery } from '../_queries/storylist.query';
-import { StoryListBySlugArgs } from '../interfaces/queryArgs';
+import { storylistNavigationTeasersQuery, storylistQuery, storylistTeasersQuery } from '../../_queries/storylist.query';
+import { StoryListBySlugArgs } from '../../interfaces/queryArgs';
 
 async function fetchStorylistTeasers(): Promise<StorylistTeaser[]> {
 	const result = await client.fetch(storylistTeasersQuery);

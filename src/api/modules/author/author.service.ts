@@ -1,9 +1,9 @@
 // Sanity
-import { client } from '../_helpers/sanity-connector';
-import { authorBySlugQuery, authorsQuery } from '../_queries/author.query';
+import { client } from '../../_helpers/sanity-connector';
+import { authorBySlugQuery, authorsQuery } from '../../_queries/author.query';
 
 // Funciones
-import { mapAuthor, mapAuthorTeaser } from '../_utils/functions';
+import { mapAuthor, mapAuthorTeaser } from '../../_utils/functions';
 
 // Interfaces
 import { Author, AuthorTeaser } from '@models/author.model';

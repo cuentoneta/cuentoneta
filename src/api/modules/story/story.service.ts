@@ -1,9 +1,9 @@
 // Conexión a Sanity
-import { client } from '../_helpers/sanity-connector';
-import { environment } from '../_helpers/environment';
+import { client } from '../../_helpers/sanity-connector';
+import { environment } from '../../_helpers/environment';
 
 // Utilidades
-import { mapStoryContent, mapStoryNavigationTeaser, mapStoryTeaser } from '../_utils/functions';
+import { mapStoryContent, mapStoryNavigationTeaser, mapStoryTeaser } from '../../_utils/functions';
 
 // Modelos
 import { Story, StoryNavigationTeaser, StoryTeaser } from '@models/story.model';
@@ -14,16 +14,16 @@ import {
 	storiesBySlugsQuery,
 	storyBySlugQuery,
 	storyNavigationTeasersByAuthorSlugQuery,
-} from '../_queries/story.query';
+} from '../../_queries/story.query';
 
 // Interfaces
 import { LandingPageContent } from '@models/landing-page-content.model';
-import { StoriesByAuthorSlugArgs } from '../interfaces/queryArgs';
+import { StoriesByAuthorSlugArgs } from '../../interfaces/queryArgs';
 
 // Servicios
 import * as contentService from '../content/content.service';
 import { fetchLandingPageContent } from '../content/content.service';
-import { fetchClarityData } from '../_helpers/clarity-connector';
+import { fetchClarityData } from '../../_helpers/clarity-connector';
 
 export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryTeaser[]> {
 	const result = await client.fetch(storiesByAuthorSlugQuery, {

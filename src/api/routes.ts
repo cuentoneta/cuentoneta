@@ -1,8 +1,8 @@
-import authorController from './author/author.controller';
-import contentController from './content/content.controller';
+import authorController from './modules/author/author.controller';
+import contentController from './modules/content/content.controller';
 import ogController from './og.controller';
-import storyController from './story/story.controller';
-import storylistController from './storylist/storylist.controller';
+import storyController from './modules/story/story.controller';
+import storylistController from './modules/storylist/storylist.controller';
 
 export default [
 	{
