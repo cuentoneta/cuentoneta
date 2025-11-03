@@ -1,12 +1,17 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
+import { rxResource } from '@angular/core/rxjs-interop';
+
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 import { environment } from '../../environments/environment';
+import { ContributorService } from '../../providers/contributor.service';
+import { SORTED_AREAS } from '@models/contributor.model';
 
 @Component({
 	selector: 'cuentoneta-about',
 	imports: [NgOptimizedImage],
 	hostDirectives: [MetaTagsDirective],
+	providers: [ContributorService],
 	templateUrl: './about.component.html',
 })
 export default class AboutComponent {
@@ -22,105 +27,26 @@ export default class AboutComponent {
 		GITHUB_CONTRIBUTORS: 'https://github.com/rolivencia/cuentoneta/tree/master#contribuyentes',
 	};
 
-	readonly programmers = [
-		{
-			name: 'Erik Giovani',
-			url: 'https://github.com/erikgiovani',
-			username: '@ErikGiovani',
-		},
-		{
-			name: 'Juan Blas Tschopp',
-			url: 'https://twitter.com/juanblas09',
-			username: '@juanblas09',
-		},
-		{
-			name: 'Diego Franchina',
-			url: 'https://github.com/SoyDiego',
-			username: '@SoyDiego',
-		},
-		{
-			name: 'Jimer Espinoza',
-			url: 'https://twitter.com/JimerSamuel',
-			username: '@JimerSamuel',
-		},
-		{
-			name: 'Soledad Sasia',
-			url: 'https://github.com/SoleSasia',
-			username: '@SoleSasia',
-		},
-		{
-			name: 'Mia Ramos',
-			url: 'https://github.com/MiaFate',
-			username: '@MiaFate',
-		},
-		{
-			name: 'Wilson Lasso',
-			url: 'https://github.com/wilago',
-			username: '@wilago',
-		},
-		{
-			name: 'Gustavo Petruzzi',
-			url: 'https://github.com/gustavoPetruzzi',
-			username: '@gustavoPetruzzi',
-		},
-		{
-			name: 'Juan Romero',
-			url: 'https://github.com/Addin',
-			username: '@Addin',
-		},
-		{
-			name: 'Alexis Martínez',
-			url: 'https://github.com/AlexRGB2',
-			username: '@AlexRGB2',
-		},
-		{
-			name: 'John Angel',
-			url: 'https://github.com/Jeangel',
-			username: '@Jeangel',
-		},
-		{
-			name: 'Luciano Aieta',
-			url: 'https://github.com/lgaieta',
-			username: '@lgaieta',
-		},
-		{
-			name: 'Nito Crespo',
-			url: 'https://github.com/Nito-Crespi',
-			username: '@Nito-Crespi',
-		},
-		{
-			name: 'Abraham Borja',
-			url: 'https://github.com/Aborja-dev',
-			username: '@Aborja-dev',
-		},
-		{
-			name: 'Silvia Trujillano',
-			url: 'https://github.com/7SilviaT',
-			username: '@7SilviaT',
-		},
-		{
-			name: 'Luz Ojeda',
-			url: 'https://github.com/luz-ojeda',
-			username: '@luz-ojeda',
-		},
-		{
-			name: 'Francisco Hanna',
-			url: 'https://github.com/franciscohanna92',
-			username: '@franciscohanna92',
-		},
-		{
-			name: 'Abraham Villalba',
-			url: 'https://github.com/abraham-villalba',
-			username: '@abraham-villalba',
-		},
-		{
-			name: 'Moisés Rodríguez',
-			url: 'https://github.com/moisesrj97',
-			username: '@moisesrj97',
-		},
-	];
-
 	private metaTagsDirective = inject(MetaTagsDirective);
+	private contributorService = inject(ContributorService);
+
+	readonly contributorsResource = rxResource({
+		stream: () => this.contributorService.getAll(),
+		defaultValue: [],
+	});
+
+	readonly contributorsPerArea = computed(() => {
+		const contributors = this.contributorsResource.value() ?? [];
+
+		return contributors.reduce((accum, value) => {
+			const area = accum.find((a) => a.area.slug === value.area.slug);
+
+			if (area) {
+				area.contributors.push(value);
+			}
+			return accum;
+		}, SORTED_AREAS);
+	});
 
 	constructor() {
 		this.updateMetaTags();
