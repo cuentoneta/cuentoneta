@@ -3,7 +3,7 @@ import { client } from '../../_helpers/sanity-connector';
 import { allContributorsQuery } from '../../_queries/contributor.query';
 
 // Interfaces
-import { Contributor } from '@models/contributor.model';
+import { Contributor, CONTRIBUTOR_AREA_LABELS } from '@models/contributor.model';
 
 /**
  * Obtiene todos los colaboradores ordenados alfabéticamente por nombre
@@ -15,10 +15,10 @@ export async function getAll(): Promise<Contributor[]> {
 		return [];
 	}
 
-	return result.map((contributor: any) => ({
-		slug: contributor.slug.current,
+	return result.map((contributor) => ({
+		slug: contributor.slug,
 		name: contributor.name,
-		area: contributor.area,
+		area: { slug: contributor.area, name: CONTRIBUTOR_AREA_LABELS[contributor.area] },
 		link: {
 			handle: contributor.link?.handle || undefined,
 			url: contributor.link?.url || undefined,
