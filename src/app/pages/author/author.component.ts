@@ -28,58 +28,93 @@ import { AuthorService } from '../../providers/author.service';
 import { StoryService } from '../../providers/story.service';
 
 // Componentes
-import { AuthorSkeletonComponent } from './author-skeleton.component';
-import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
-import { ResourceComponent } from '../../components/resource/resource.component';
-import { StoryCardComponent } from '../../components/story-card/story-card.component';
+import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
+import { ResourceComponent } from '@components/resource/resource.component';
 import { rxResource } from '@angular/core/rxjs-interop';
+import { StoryCardTeaserComponent } from '@components/story-card-teaser/story-card-teaser.component';
+import Tab from '@components/tabs/tab.component';
+import Tabs from '@components/tabs/tabs.component';
+import { ThemeService } from '../../providers/theme.service';
+
+// Pipes
+import { InitialsPipe } from '../../pipes/initials.pipe';
 
 @Component({
 	selector: 'cuentoneta-author',
 	imports: [
-		StoryCardComponent,
 		NgOptimizedImage,
 		PortableTextParserComponent,
-		ResourceComponent,
 		NgxSkeletonLoaderModule,
-		AuthorSkeletonComponent,
+		StoryCardTeaserComponent,
+		Tab,
+		Tabs,
+		InitialsPipe,
+		ResourceComponent,
 	],
 	hostDirectives: [MetaTagsDirective],
 	template: `
 		<main class="content vertical-layout-spacing horizontal-layout-spacing">
 			<article class="grid grid-cols-1 gap-8">
 				@if (author(); as author) {
-					<section class="flex flex-col items-center gap-4">
+					<section class="flex items-center gap-4">
 						<img
 							[ngSrc]="authorImageUrl()"
 							[alt]="'Retrato de ' + author.name"
-							class="h-[192px] rounded-xl"
-							width="192"
-							height="192"
+							class="h-[88px] rounded-xl"
+							width="88"
+							height="88"
 						/>
-						<div class="flex items-center gap-4">
-							<h1 class="h1">{{ author.name }}</h1>
-							<img [ngSrc]="authorFlagUrl()" width="30" height="20" class="h-6 w-8" alt="" />
+						<div class="flex flex-col gap-2">
+							<h1 class="inter-body-xl font-bold">
+								<span class="hidden sm:inline">{{ author.name }}</span>
+								<span class="sm:hidden">{{ author.name | initials }}</span>
+							</h1>
+							<span class="inter-body-sm flex items-center gap-2 font-medium text-gray-600">
+								<img [ngSrc]="authorFlagUrl()" width="20" height="15" class="h-[15px] w-5 rounded" alt="" />
+								{{ author.nationality.country }}
+							</span>
+
+							<div class="flex">
+								<div class="rounded bg-gray-200 px-2 py-0.5 hover:cursor-default">
+									<span class="inter-body-xs-semibold flex items-center gap-1">{{ stories().length }} historias</span>
+								</div>
+							</div>
 						</div>
-						@if (author.resources && author.resources.length > 0) {
-							<div class="flex justify-start gap-4 sm:justify-end">
-								@for (resource of author.resources; track $index) {
-									<cuentoneta-resource [resource]="resource" />
+					</section>
+
+					<cuentoneta-tabs class="w-full">
+						<cuentoneta-tab title="Biografía">
+							<div class="flex flex-col gap-4">
+								<cuentoneta-portable-text-parser
+									[paragraphs]="author.biography"
+									[classes]="'source-serif-pro-body-xl leading-8'"
+								/>
+								@if (author.resources && author.resources.length > 0) {
+									<hr class="text-gray-500" />
+									<div class="font-inter font-semibold text-gray-600">Recursos web sobre el autor:</div>
+									<div class="flex justify-start gap-4">
+										@for (resource of author.resources; track $index) {
+											<cuentoneta-resource [resource]="resource" />
+										}
+									</div>
 								}
 							</div>
-						}
-						<cuentoneta-portable-text-parser
-							[paragraphs]="author.biography!"
-							[classes]="'source-serif-pro-body-xl mb-8 leading-8'"
-						/>
-					</section>
-					<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-						@for (story of stories(); track $index) {
-							<cuentoneta-story-card [story]="story" [navigationRoute]="story.navigationRoute" />
-						}
-					</section>
-				} @else {
-					<cuentoneta-author-skeleton />
+						</cuentoneta-tab>
+						<cuentoneta-tab title="Textos">
+							<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
+								@for (story of stories(); track $index) {
+									<cuentoneta-story-card-teaser
+										[story]="story"
+										[order]="$index + 1"
+										[navigationParams]="{
+											navigation: 'author',
+											navigationSlug: author.slug,
+										}"
+									/>
+								}
+							</section>
+						</cuentoneta-tab>
+					</cuentoneta-tabs>
 				}
 			</article>
 		</main>
