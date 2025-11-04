@@ -310,6 +310,12 @@ base a
 la plantilla seleccionada al momento de su creación, mientras que otras son asignadas por los gestores del proyecto
 a la hora de realizar el _triaging_ y análisis de la incidencia.
 
+### Planes de prueba
+
+Para características que requieran pruebas de integración, sean estas manuales o implementadas mediante Playwright, se
+encuentra disponible una guía y plantilla de cómo confeccionar un plan de pruebas para una funcionalidad determinada del
+proyecto. Puede accederse al template de planes de testing [en este enlace](#doc-test-plan).
+
 ---
 
 [dc-channel]: https://discord.com/channels/594363964499165194/1109220285841944586
@@ -323,3 +329,5 @@ a la hora de realizar el _triaging_ y análisis de la incidencia.
 [doc-mvv]: https://github.com/cuentoneta/cuentoneta/blob/develop/MVV.md
 [doc-code_of_conduct]: https://github.com/cuentoneta/cuentoneta/blob/develop/CODE_OF_CONDUCT.md
 [dc-fec]: https://discord.com/invite/frontendcafe
+[doc-test-plan]: https://github.com/cuentoneta/cuentoneta/blob/develop/docs/TEST_PLAN.md
+[doc-test-template]: https://github.com/cuentoneta/cuentoneta/blob/develop/docs/TEST_TEMPLATE.md
