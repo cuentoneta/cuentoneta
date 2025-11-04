@@ -125,58 +125,62 @@ import { StoryCardTeaserSkeletonComponent } from '@components/story-card-teaser/
 				@if (author(); as author) {
 					<cuentoneta-tabs class="w-full">
 						<cuentoneta-tab title="Biografía">
-							@defer (when authorResource.hasValue()) {
-								<div class="flex flex-col gap-4">
-									<cuentoneta-portable-text-parser
-										[paragraphs]="author.biography"
-										[classes]="'source-serif-pro-body-xl leading-8'"
-									/>
-									@if (author.resources && author.resources.length > 0) {
-										<hr class="text-gray-500" />
-										<div class="font-inter font-semibold text-gray-600">Recursos web sobre el autor:</div>
-										<div class="flex justify-start gap-4">
-											@for (resource of author.resources; track $index) {
-												<cuentoneta-resource [resource]="resource" />
-											}
-										</div>
-									}
-								</div>
-							} @loading (minimum 500ms) {
-								<div class="flex flex-col gap-4">
-									<ngx-skeleton-loader
-										[theme]="{
-											'margin-bottom': '8px',
-											height: '25px',
-											width: '100%',
-											'background-color': skeletonColor,
-										}"
-										count="10"
-										appearance="line"
-									/>
-								</div>
-							}
+							<div>
+								@defer (when authorResource.hasValue()) {
+									<div class="flex flex-col gap-4">
+										<cuentoneta-portable-text-parser
+											[paragraphs]="author.biography"
+											[classes]="'source-serif-pro-body-xl leading-8'"
+										/>
+										@if (author.resources && author.resources.length > 0) {
+											<hr class="text-gray-500" />
+											<div class="font-inter font-semibold text-gray-600">Recursos web sobre el autor:</div>
+											<div class="flex justify-start gap-4">
+												@for (resource of author.resources; track $index) {
+													<cuentoneta-resource [resource]="resource" />
+												}
+											</div>
+										}
+									</div>
+								} @loading (minimum 500ms) {
+									<div class="flex flex-col gap-4">
+										<ngx-skeleton-loader
+											[theme]="{
+												'margin-bottom': '8px',
+												height: '25px',
+												width: '100%',
+												'background-color': skeletonColor,
+											}"
+											count="10"
+											appearance="line"
+										/>
+									</div>
+								}
+							</div>
 						</cuentoneta-tab>
 						<cuentoneta-tab title="Textos">
-							@defer (when storiesResource.hasValue()) {
-								<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-									@for (story of stories(); track $index) {
-										<cuentoneta-story-card-teaser
-											[story]="story"
-											[order]="$index + 1"
-											[navigationParams]="{
-												navigation: 'author',
-												navigationSlug: author.slug,
-											}"
-										/>
-									}
-								</section>
-							} @loading (minimum 500ms) {
-								<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-									@for (_ of [].constructor(12); track $index) {
-										<cuentoneta-story-card-teaser-skeleton [order]="$index + 1" data-testid="skeleton" />
-									}
-								</section>
-							}
+							<div>
+								@defer (when storiesResource.hasValue()) {
+									<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
+										@for (story of stories(); track $index) {
+											<cuentoneta-story-card-teaser
+												[story]="story"
+												[order]="$index + 1"
+												[navigationParams]="{
+													navigation: 'author',
+													navigationSlug: author.slug,
+												}"
+											/>
+										}
+									</section>
+								} @loading (minimum 500ms) {
+									<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
+										@for (_ of [].constructor(12); track $index) {
+											<cuentoneta-story-card-teaser-skeleton [order]="$index + 1" data-testid="skeleton" />
+										}
+									</section>
+								}
+							</div>
 						</cuentoneta-tab>
 					</cuentoneta-tabs>
 				}
