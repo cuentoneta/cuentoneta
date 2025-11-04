@@ -44,10 +44,12 @@ describe('InitialsPipe', () => {
 	});
 
 	it('should return empty string for null input', () => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		expect(pipe.transform(null as any)).toBe('');
 	});
 
 	it('should return empty string for undefined input', () => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		expect(pipe.transform(undefined as any)).toBe('');
 	});
 });
