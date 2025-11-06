@@ -1,4 +1,3 @@
-import { Icon } from '@models/icon.model';
 import { TextBlockContent } from '@models/block-content.model';
 
 export interface Resource {
@@ -12,5 +11,5 @@ export interface ResourceType {
 	title: string;
 	shortDescription: string;
 	description: TextBlockContent[];
-	icon: Icon;
+	icon: Record<string, string>;
 }

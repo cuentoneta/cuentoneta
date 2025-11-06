@@ -1,8 +1,9 @@
 import { environment } from '../environments/environment';
+import { faBrandFacebook, faBrandWhatsapp, faBrandXTwitter } from '@ng-icons/font-awesome/brands';
 
 export interface SharingPlatform {
 	name: string;
-	icon: string;
+	icon: Record<string, string>;
 	platformApiUrl: string;
 	target?: string;
 	features?: string;
@@ -11,7 +12,7 @@ export interface SharingPlatform {
 
 export class FacebookPlatform implements SharingPlatform {
 	name = 'Facebook';
-	icon = 'faBrandFacebook';
+	icon = { faBrandFacebook };
 	platformApiUrl = `https://www.facebook.com/share.php`;
 	target = 'facebook-share-dialog';
 	features = 'width=626,height=436';
@@ -24,7 +25,7 @@ export class FacebookPlatform implements SharingPlatform {
 
 export class WhatsappPlatform implements SharingPlatform {
 	name = 'Whatsapp';
-	icon = 'faBrandWhatsapp';
+	icon = { faBrandWhatsapp };
 	platformApiUrl = `whatsapp://send/`;
 	target = '_blank';
 	features = '';
@@ -42,7 +43,7 @@ export class WhatsappPlatform implements SharingPlatform {
 
 export class TwitterPlatform implements SharingPlatform {
 	name = 'Twitter';
-	icon = 'faBrandXTwitter';
+	icon = { faBrandXTwitter };
 	platformApiUrl = `https://twitter.com/intent/tweet`;
 	target = '_blank';
 	features = '';

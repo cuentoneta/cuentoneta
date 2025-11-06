@@ -1,4 +1,3 @@
-import { Icon } from '@models/icon.model';
 import { TextBlockContent } from '@models/block-content.model';
 
 export interface Tag {
@@ -6,5 +5,5 @@ export interface Tag {
 	slug: string;
 	shortDescription: string;
 	description: TextBlockContent[];
-	icon?: Icon;
+	icon?: Record<string, string>;
 }

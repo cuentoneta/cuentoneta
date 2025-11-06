@@ -1,30 +1,26 @@
-import { Component, computed, inject, input, OnInit } from '@angular/core';
+import {
+	Component,
+	computed,
+	createEnvironmentInjector,
+	EnvironmentInjector,
+	inject,
+	input,
+	OnInit,
+} from '@angular/core';
 import { Tag } from '@models/tag.model';
 import { TooltipDirective } from '../../directives/tooltip.directive';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { iconMappers } from '@models/icon.model';
-import {
-	faSolidBook,
-	faSolidBookBookmark,
-	faSolidGlobe,
-	faSolidPeopleGroup,
-	faSolidStar,
-	faSolidTrophy,
-} from '@ng-icons/font-awesome/solid';
+import { NgComponentOutlet } from '@angular/common';
 
 @Component({
 	selector: 'cuentoneta-badge',
 	hostDirectives: [TooltipDirective],
-	imports: [NgIcon],
-	providers: [
-		provideIcons({ faSolidBook, faSolidBookBookmark, faSolidGlobe, faSolidPeopleGroup, faSolidStar, faSolidTrophy }),
-	],
+	imports: [NgComponentOutlet],
 	template: `
 		<span class="inter-body-xs-bold flex items-center gap-1">
-			@if (showIcon() && tag().icon; as icon) {
-				@if (iconName(); as iconName) {
-					<ng-icon [name]="iconName" size="12px" />
-				}
+			@if (showIcon() && icon(); as icon) {
+				<ng-container *ngComponentOutlet="NgIcon; inputs: { name: icon.name }; injector: icon.injector" />
 			}
 			{{ tag().title }}
 		</span>
@@ -38,14 +34,26 @@ import {
 export class BadgeComponent implements OnInit {
 	readonly tag = input.required<Tag>();
 	readonly showIcon = input(false);
-	readonly iconName = computed(() => {
+	readonly icon = computed(() => {
 		if (!this.tag().slug) {
-			return '';
+			return null;
 		}
 
-		return iconMappers.find((tag) => tag.name === this.tag().slug)?.ngIconsName ?? '';
+		const foundIcon = iconMappers.find((tag) => tag.name === this.tag().slug)?.ngIconsName;
+
+		if (!foundIcon) {
+			return null;
+		}
+
+		return {
+			name: Object.keys(foundIcon)[0],
+			injector: createEnvironmentInjector([provideIcons(foundIcon)], this.injector),
+		};
 	});
 
+	readonly NgIcon = NgIcon;
+
+	private injector = inject(EnvironmentInjector);
 	private tooltipDirective = inject(TooltipDirective);
 
 	ngOnInit() {
