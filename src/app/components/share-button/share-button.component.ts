@@ -20,13 +20,11 @@ import { NgComponentOutlet } from '@angular/common';
 		<button
 			(click)="onShareToPlatformClicked($event, platform)"
 			[attr.aria-label]="platform.name"
+			[attr.data-testid]="icon()?.name"
 			class="flex h-12 w-12 items-center justify-center gap-3 rounded-full border-1 border-solid border-gray-200 bg-gray-100 hover:bg-gray-200"
 		>
 			@if (icon(); as icon) {
-				<ng-container
-					[attr.data-testid]="platform.icon"
-					*ngComponentOutlet="NgIcon; inputs: { name: icon.name, size: '24px' }; injector: icon.injector"
-				/>
+				<ng-container *ngComponentOutlet="NgIcon; inputs: { name: icon.name, size: '24px' }; injector: icon.injector" />
 			}
 		</button>
 	}`,

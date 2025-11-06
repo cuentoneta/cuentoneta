@@ -28,6 +28,7 @@ import { NgComponentOutlet } from '@angular/common';
 	template: `
 		<a
 			[href]="resource().url"
+			[attr.title]="resource().title"
 			target="_blank"
 			class="flex h-12 w-12 items-center justify-center rounded-full border-1 border-solid border-gray-200 bg-gray-100 hover:bg-gray-200"
 		>

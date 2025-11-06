@@ -22,7 +22,7 @@ describe('ResourceComponent', () => {
 
 	it('should render title', async () => {
 		await setup();
-		const titleResourceElement = screen.getByAltText(regexTitle);
+		const titleResourceElement = screen.getByTitle(regexTitle);
 
 		expect(titleResourceElement).toBeInTheDocument();
 	});
