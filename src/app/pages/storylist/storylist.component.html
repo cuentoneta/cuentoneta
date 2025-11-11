@@ -1,23 +1,29 @@
 <main class="content horizontal-layout-spacing vertical-layout-spacing block">
-	<article [attr.aria-busy]="!storylist()" [lang]="storylist()?.language" class="grid grid-cols-1 gap-y-8">
-		<cuentoneta-storylist-title [storylist]="storylist()" />
+	<article
+		[attr.aria-busy]="!storylistResource.isLoading()"
+		[lang]="storylistResource.value()?.language"
+		class="grid grid-cols-1 gap-y-8"
+	>
+		<cuentoneta-storylist-title [storylist]="storylistResource.value()" />
 		<section>
 			<cuentoneta-tabs>
 				<cuentoneta-tab title="Textos">
 					<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
-						@defer (when storylistResource.isLoading()) {
-							@for (story of stories(); track $index) {
-								<cuentoneta-story-card-teaser
-									[story]="story"
-									[showAuthor]="true"
-									[order]="$index + 1"
-									[showExcerpt]="true"
-									[navigationParams]="{
-										navigation: 'author',
-										navigationSlug: story.author.slug,
-									}"
-									data-testid="card"
-								/>
+						@defer (when storylistResource.value()) {
+							@if (storylistResource.value(); as storylist) {
+								@for (story of stories(); track $index) {
+									<cuentoneta-story-card-teaser
+										[story]="story"
+										[showAuthor]="true"
+										[order]="$index + 1"
+										[showExcerpt]="true"
+										[navigationParams]="{
+											navigation: 'storylist',
+											navigationSlug: storylist.slug,
+										}"
+										data-testid="card"
+									/>
+								}
 							}
 						} @loading (minimum 500ms) {
 							@for (_ of [].constructor(12); track $index) {
@@ -32,7 +38,7 @@
 					</div>
 				</cuentoneta-tab>
 				<cuentoneta-tab title="Ficha técnica">
-					@if (storylist(); as storylist) {
+					@if (storylistResource.value(); as storylist) {
 						<div class="flex flex-col">
 							<cuentoneta-portable-text-parser
 								[paragraphs]="storylist.description"
