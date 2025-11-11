@@ -67,11 +67,12 @@ export default class StorylistComponent {
 	// Propiedades
 	// TODO: Implementar uso de imagen alusiva/tapa de libro en la ficha técnica
 	readonly featuredImageUrl = computed(
-		() => `${this.storylist()?.featuredImage}?h=${256 * 1.5}&w=${192 * 1.5}&auto=format`,
+		() => `${this.storylistResource.value()?.featuredImage}?h=${256 * 1.5}&w=${192 * 1.5}&auto=format`,
 	);
-	readonly storylist = computed(() => this.storylistResource.value());
 	// TODO: Simplificar estructura de tipo Storylist para evitar estas transformaciones
-	readonly stories = computed(() => this.storylist()?.publications.map((p) => p.story as StoryTeaserWithAuthor) || []);
+	readonly stories = computed(
+		() => this.storylistResource.value()?.publications.map((p) => p.story as StoryTeaserWithAuthor) || [],
+	);
 
 	private updateMetaTags(storylist: Storylist) {
 		this.metaTagsDirective.setTitle(`${storylist.title}`);
