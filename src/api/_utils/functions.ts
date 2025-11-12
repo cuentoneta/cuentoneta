@@ -15,7 +15,7 @@ import { Author, AuthorTeaser } from '@models/author.model';
 import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
 import { LandingPageContent } from '@models/landing-page-content.model';
 import {
-	Publication,
+	PublicationTeaserWithAuthor,
 	Storylist,
 	StorylistPublicationsNavigationTeasers,
 	StorylistTeaser,
@@ -25,8 +25,8 @@ import {
 	Story,
 	StoryNavigationTeaser,
 	StoryNavigationTeaserWithAuthor,
-	StoryPreview,
 	StoryTeaser,
+	StoryTeaserWithAuthor,
 } from '@models/story.model';
 import { Tag } from '@models/tag.model';
 import { TextBlockContent } from '@models/block-content.model';
@@ -152,12 +152,12 @@ export function mapStorylistTeasers(result: StorylistTeasersQueryResult): Storyl
 
 export function mapStorylist(result: NonNullable<StorylistQueryResult>): Storylist {
 	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
-	const publications: Publication[] = [];
+	const publications: PublicationTeaserWithAuthor[] = [];
 	for (const publication of result.publications) {
 		const { body, author, mediaSources, ...story } = publication.story;
 		publications.push({
 			...publication,
-			story: mapStoryPreviewContent({
+			story: mapStoryTeaserWithAuthor({
 				...story,
 				author: mapAuthorTeaser({ ...author }),
 				media: mapMediaSourcesForStorylist(mediaSources),
@@ -211,20 +211,13 @@ export async function mapStoryContent(result: NonNullable<StoryBySlugQueryResult
 	};
 }
 
-export function mapStoryPreviewContent(story: StoryPreview): StoryPreview {
-	const card = {
+export function mapStoryTeaserWithAuthor(story: StoryTeaserWithAuthor): StoryTeaserWithAuthor {
+	return {
 		...story,
 		paragraphs: story?.paragraphs ?? [],
 		media: story.media ?? [],
 		originalPublication: story.originalPublication ?? '',
 	};
-
-	if (story.author) {
-		card.author = {
-			...story.author,
-		};
-	}
-	return card;
 }
 
 export type StoryTeasersQueryResult = NonNullable<StoriesByAuthorSlugQueryResult | StoriesBySlugsQueryResult>;
