@@ -41,10 +41,3 @@ export type StoryTeaser = StoryBase;
 export interface StoryTeaserWithAuthor extends StoryTeaser {
 	author: AuthorTeaser;
 }
-
-/**
- * @deprecated Reemplazar uso por interfaces StoryTeaser, StoryNavigationTeaser o StoryNavigationTeaserWithAuthor
- */
-export interface StoryPreview extends StoryBase {
-	author: AuthorTeaser;
-}

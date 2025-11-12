@@ -1,6 +1,6 @@
 import { inject, Pipe, PipeTransform } from '@angular/core';
 import {
-	Publication,
+	PublicationTeaserWithAuthor,
 	PublicationNavigationTeaser,
 	Storylist,
 	StorylistPublicationsNavigationTeasers,
@@ -15,7 +15,7 @@ export class MapPublicationEditionLabelPipe implements PipeTransform {
 	private datePipe = inject(DatePipe);
 
 	transform(
-		publication: Publication | PublicationNavigationTeaser,
+		publication: PublicationTeaserWithAuthor | PublicationNavigationTeaser,
 		storylist: Storylist | StorylistPublicationsNavigationTeasers,
 	): string {
 		let result = `${storylist.editionPrefix} ${publication.publishingOrder}`;

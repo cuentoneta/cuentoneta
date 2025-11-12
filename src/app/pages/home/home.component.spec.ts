@@ -6,7 +6,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { provideMock } from '@testing-library/angular/jest-utils';
 import { ContentService } from '../../providers/content.service';
 import { Component, input } from '@angular/core';
-import { Publication, Storylist } from '@models/storylist.model';
+import { PublicationTeaserWithAuthor, Storylist } from '@models/storylist.model';
 
 xdescribe('HomeComponent', () => {
 	const setup = async () => {
@@ -40,7 +40,7 @@ class MockPublicationCardComponent {
 	readonly editionSuffix = input<string>();
 	readonly comingNextLabel = input<string>();
 	readonly displayDate = input<boolean>(false);
-	readonly publication = input<Publication>();
+	readonly publication = input<PublicationTeaserWithAuthor>();
 	readonly editionIndex = input<number>(0);
 }
 

@@ -96,6 +96,21 @@ Para la edición y visualización online de los diagramas también puede optarse
 
 ---
 
+## Modelo de Dominio
+
+Para una comprensión profunda de la arquitectura y el diseño del modelo de dominio de La Cuentoneta, puede consultarse la documentación del [Modelo de Dominio](./DOMAIN_MODEL.md).
+
+En este documento pueden encontrarse:
+
+- Descripción de los cuatro contextos acotados (Bounded Contexts)
+- Definición detallada de agregados y raíces de agregado
+- Especificación de objetos de valor (Value Objects)
+- Lenguaje ubicuo del dominio
+- Patrones arquitectónicos implementados
+- Mejoras recomendadas para evolución futura
+
+---
+
 ## Instalación y configuración del entorno local
 
 En esta sección se detallan los pasos necesarios para instalar y configurar el entorno de desarrollo local del
