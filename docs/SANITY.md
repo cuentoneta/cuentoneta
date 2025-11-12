@@ -23,3 +23,13 @@ Debe tenerse en cuenta que los tipos generados pueden incluir casos donde los ca
 Las queries de GROQ pueden ser nulas en caso de que no se encuentre el documento en la base de datos, lo cual debe ser validado mediante una cláusula `if` en el código de la aplicación a nivel del servicio que dispara la consulta y, para su posterior procesamiento por funciones de mapeo, puede utilizarse el operador `NonNullable` para definir un tipo derivado. Pueden observarse ejemplos de esto en los servicios de `author` y `story`, en consultas que devuelven un valor único en base a una búsqueda por `slug`. En el caso de que las consultas devuelvan un array, el array será vacío -- lo cual es un comportamiento esperado y no debe ser tratado como un error o problema.
 
 Para aquellos casos en los que los campos sean de tipo array debe hacerse uso de la función `coalesce` en las consultas GROQ para evitar que el campo sea `null` y devolver, en cambio, un array vacío que pueda ser tipado mediante `Array<never>`. Puede observarse un ejemplo en la consulta `src/api/author/author.query.ts`.
+
+---
+
+## Anti-Corruption Layer y Mapeo de Dominio
+
+Los tipos generados por Sanity representan la estructura del CMS externo. Sin embargo, la aplicación define su propio modelo de dominio en `src/app/models/` que es independiente del CMS.
+
+Para comprender cómo se relacionan estos modelos y cómo se mapean los datos del CMS al modelo de dominio, consulta la sección sobre **Capa Anti-Corrupción** en el documento de [Modelo de Dominio - DDD](./DOMAIN_MODEL.md#patrón-capa-anti-corrupción-anti-corruption-layer).
+
+Este patrón asegura que los cambios en el esquema de Sanity no afecten directamente el dominio de la aplicación, manteniendo una separación clara entre la infraestructura (Sanity) y el modelo de negocio.
