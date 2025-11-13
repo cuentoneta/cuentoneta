@@ -1,9 +1,10 @@
 import { Component, input, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AudioRecording, Media, MediaTypes, SpaceRecording, YouTubeVideo } from '@models/media.model';
+import { AudioRecording, Media, MediaTypes, SpaceRecording, SpotifyAudio, YouTubeVideo } from '@models/media.model';
 import { SpaceRecordingWidgetComponent } from '../space-recording-widget/space-recording-widget.component';
 import { AudioRecordingWidgetComponent } from '../audio-recording-widget/audio-recording-widget.component';
 import { YoutubeVideoWidgetComponent } from '../youtube-video-widget/youtube-video-widget.component';
+import { SpotifyAudioWidget } from '@components/spotify-audio-widget/spotify-audio-widget';
 
 type MediaTypeWidgetComponents =
 	| AudioRecordingWidgetComponent
@@ -39,6 +40,9 @@ export class MediaResourceComponent {
 	} {
 		if (media.type === 'audioRecording') {
 			return { component: AudioRecordingWidgetComponent, inputs: { media: media as AudioRecording } };
+		}
+		if (media.type === 'spotifyAudio') {
+			return { component: SpotifyAudioWidget, inputs: { media: media as SpotifyAudio } };
 		}
 		if (media.type === 'spaceRecording') {
 			return { component: SpaceRecordingWidgetComponent, inputs: { media: media as SpaceRecording } };
