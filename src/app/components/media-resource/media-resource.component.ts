@@ -1,15 +1,23 @@
 import { Component, input, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AudioRecording, Media, MediaTypes, SpaceRecording, SpotifyAudio, YouTubeVideo } from '@models/media.model';
+import { Media, MediaTypeKey, MediaTypes } from '@models/media.model';
 import { SpaceRecordingWidgetComponent } from '../space-recording-widget/space-recording-widget.component';
 import { AudioRecordingWidgetComponent } from '../audio-recording-widget/audio-recording-widget.component';
 import { YoutubeVideoWidgetComponent } from '../youtube-video-widget/youtube-video-widget.component';
-import { SpotifyAudioWidget } from '@components/spotify-audio-widget/spotify-audio-widget';
+import { SpotifyPodcastEpisodeWidget } from '@components/spotify-audio-widget/spotify-podcast-episode-widget';
 
 type MediaTypeWidgetComponents =
 	| AudioRecordingWidgetComponent
 	| SpaceRecordingWidgetComponent
-	| YoutubeVideoWidgetComponent;
+	| YoutubeVideoWidgetComponent
+	| SpotifyPodcastEpisodeWidget;
+
+const MEDIA_WIDGET_MAP: Record<MediaTypeKey, Type<MediaTypeWidgetComponents>> = {
+	audioRecording: AudioRecordingWidgetComponent,
+	spotifyPodcastEpisode: SpotifyPodcastEpisodeWidget,
+	spaceRecording: SpaceRecordingWidgetComponent,
+	youTubeVideo: YoutubeVideoWidgetComponent,
+};
 
 @Component({
 	selector: 'cuentoneta-media-resource',
@@ -38,19 +46,10 @@ export class MediaResourceComponent {
 		component: Type<MediaTypeWidgetComponents>;
 		inputs: { media: MediaTypes };
 	} {
-		if (media.type === 'audioRecording') {
-			return { component: AudioRecordingWidgetComponent, inputs: { media: media as AudioRecording } };
-		}
-		if (media.type === 'spotifyAudio') {
-			return { component: SpotifyAudioWidget, inputs: { media: media as SpotifyAudio } };
-		}
-		if (media.type === 'spaceRecording') {
-			return { component: SpaceRecordingWidgetComponent, inputs: { media: media as SpaceRecording } };
-		}
-		if (media.type === 'youTubeVideo') {
-			return { component: YoutubeVideoWidgetComponent, inputs: { media: media as YouTubeVideo } };
-		} else {
+		const component = MEDIA_WIDGET_MAP[media.type];
+		if (!component) {
 			throw new Error(`El tipo ${media.type} no está soportado.`);
 		}
+		return { component, inputs: { media: media as MediaTypes } };
 	}
 }

@@ -46,8 +46,8 @@ export class MediaResourceTagsComponent {
 			title: 'Contiene grabaciones de Spaces de X',
 			icon: { faSolidMicrophoneLines },
 		},
-		spotifyAudio: {
-			title: 'Contiene podcasts de Spotify',
+		spotifyPodcastEpisode: {
+			title: 'Contiene episodios de podcasts de Spotify',
 			icon: { faBrandSpotify },
 		},
 		youTubeVideo: {

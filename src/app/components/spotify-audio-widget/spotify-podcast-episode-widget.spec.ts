@@ -2,23 +2,23 @@
 import { render, screen } from '@testing-library/angular';
 
 // Component
-import { SpotifyAudioWidget } from './spotify-audio-widget';
+import { SpotifyPodcastEpisodeWidget } from './spotify-podcast-episode-widget.js';
 
 // Mocks
-import { spotifyAudioMock } from '@mocks/spotify-audio.mock';
+import { spotifyPodcastEpisodeMock } from '@mocks/spotify-podcast-episode.mock.js';
 
-describe('SpotifyAudioWidget', () => {
+describe('SpotifyPodcastEpisodeWidget', () => {
 	it('should render the component', async () => {
-		const { container } = await render(SpotifyAudioWidget, {
-			inputs: { media: spotifyAudioMock },
+		const { container } = await render(SpotifyPodcastEpisodeWidget, {
+			inputs: { media: spotifyPodcastEpisodeMock },
 		});
 
 		expect(container).toBeInTheDocument();
 	});
 
 	it('should render the spotify embed iframe', async () => {
-		await render(SpotifyAudioWidget, {
-			inputs: { media: spotifyAudioMock },
+		await render(SpotifyPodcastEpisodeWidget, {
+			inputs: { media: spotifyPodcastEpisodeMock },
 		});
 
 		const spotifyEmbed = screen.getByTestId('spotify-embed') as HTMLIFrameElement;
@@ -26,8 +26,8 @@ describe('SpotifyAudioWidget', () => {
 	});
 
 	it('should convert spotify url to embed url', async () => {
-		await render(SpotifyAudioWidget, {
-			inputs: { media: spotifyAudioMock },
+		await render(SpotifyPodcastEpisodeWidget, {
+			inputs: { media: spotifyPodcastEpisodeMock },
 		});
 
 		const spotifyEmbed = screen.getByTestId('spotify-embed') as HTMLIFrameElement;
@@ -35,8 +35,8 @@ describe('SpotifyAudioWidget', () => {
 	});
 
 	it('should display the spotify audio title', async () => {
-		await render(SpotifyAudioWidget, {
-			inputs: { media: spotifyAudioMock },
+		await render(SpotifyPodcastEpisodeWidget, {
+			inputs: { media: spotifyPodcastEpisodeMock },
 		});
 
 		expect(
@@ -47,8 +47,8 @@ describe('SpotifyAudioWidget', () => {
 	});
 
 	it('should display the spotify audio description', async () => {
-		await render(SpotifyAudioWidget, {
-			inputs: { media: spotifyAudioMock },
+		await render(SpotifyPodcastEpisodeWidget, {
+			inputs: { media: spotifyPodcastEpisodeMock },
 		});
 
 		expect(

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input, inject } from '@an
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 // Models
-import { SpotifyAudio } from '@models/media.model';
+import { SpotifyPodcastEpisode } from '@models/media.model';
 
 // Components
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
@@ -26,13 +26,13 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SpotifyAudioWidget {
-	readonly media = input.required<SpotifyAudio>();
+export class SpotifyPodcastEpisodeWidget {
+	readonly media = input.required<SpotifyPodcastEpisode>();
 	private readonly sanitizer = inject(DomSanitizer);
 
 	readonly mediaUrl = computed((): SafeResourceUrl => {
 		const spotifyUrl = this.media().data.url;
-		// Convert Spotify URL to embed URL if needed
+		// Transformar URL a formato embedded en caso de que sea necesario
 		// e.g., https://open.spotify.com/episode/xxx -> https://open.spotify.com/embed/episode/xxx
 		let embedUrl = spotifyUrl;
 		if (spotifyUrl.includes('/episode/')) {

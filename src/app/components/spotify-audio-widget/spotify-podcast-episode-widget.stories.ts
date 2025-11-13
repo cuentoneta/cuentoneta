@@ -1,19 +1,19 @@
 import { Meta, moduleMetadata } from '@storybook/angular';
-import { SpotifyAudioWidget } from './spotify-audio-widget';
+import { SpotifyPodcastEpisodeWidget } from './spotify-podcast-episode-widget';
 import { Media } from '@models/media.model';
-import { spotifyAudioMock } from '@mocks/spotify-audio.mock';
+import { spotifyPodcastEpisodeMock } from '@mocks/spotify-podcast-episode.mock';
 
 export default {
-	title: 'SpotifyAudioWidgetComponent',
-	component: SpotifyAudioWidget,
+	title: 'SpotifyPodcastEpisodeWidget',
+	component: SpotifyPodcastEpisodeWidget,
 	decorators: [
 		moduleMetadata({
 			imports: [],
 		}),
 	],
-} as Meta<SpotifyAudioWidget>;
+} as Meta<SpotifyPodcastEpisodeWidget>;
 
-const media: Media = spotifyAudioMock;
+const media: Media = spotifyPodcastEpisodeMock;
 
 export const Widget = () => ({
 	props: {

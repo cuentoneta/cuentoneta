@@ -1,9 +1,9 @@
-import { SpotifyAudio } from '@models/media.model';
+import { SpotifyPodcastEpisode } from '@models/media.model';
 
-export const spotifyAudioMock: SpotifyAudio = {
+export const spotifyPodcastEpisodeMock: SpotifyPodcastEpisode = {
 	title:
 		'Narración del cuento tomada del podcast "Historias narradas para ser escuchadas", producido por la Biblioteca Pedagógica de la Ciudad de Santa Fe.',
-	type: 'spotifyAudio',
+	type: 'spotifyPodcastEpisode',
 	description: [
 		{
 			_key: '93a3b8bbeb86',
