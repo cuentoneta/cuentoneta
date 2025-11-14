@@ -37,6 +37,7 @@ import {
 	AuthorsQueryResult,
 	BlockContent,
 	LandingPageContentQueryResult,
+	RotatingContentQueryResult,
 	StoriesByAuthorSlugQueryResult,
 	StoriesBySlugsQueryResult,
 	StoryBySlugQueryResult,
@@ -255,7 +256,7 @@ export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlug
 	return stories;
 }
 
-type MostReadStoriesSubQuery = NonNullable<LandingPageContentQueryResult>['mostRead'];
+type MostReadStoriesSubQuery = NonNullable<RotatingContentQueryResult>['mostRead'];
 export function mapStoryNavigationTeaserWithAuthor(
 	result: NonNullable<MostReadStoriesSubQuery>,
 ): StoryNavigationTeaserWithAuthor[] {
@@ -276,7 +277,9 @@ export function mapStoryNavigationTeaserWithAuthor(
 	return stories;
 }
 
-export function mapLandingPageContent(result: NonNullable<LandingPageContentQueryResult>): LandingPageContent {
+export function mapLandingPageContent(
+	result: NonNullable<LandingPageContentQueryResult> & NonNullable<RotatingContentQueryResult>,
+): LandingPageContent {
 	return {
 		...result,
 		cards: mapStorylistTeasers(result.cards),
