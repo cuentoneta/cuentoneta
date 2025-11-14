@@ -2,10 +2,10 @@
 import { render, screen } from '@testing-library/angular';
 
 // Component
-import { SpotifyPodcastEpisodeWidget } from './spotify-podcast-episode-widget.js';
+import { SpotifyPodcastEpisodeWidget } from './spotify-podcast-episode-widget';
 
 // Mocks
-import { spotifyPodcastEpisodeMock } from '@mocks/spotify-podcast-episode.mock.js';
+import { spotifyPodcastEpisodeMock } from '@mocks/spotify-podcast-episode.mock';
 
 describe('SpotifyPodcastEpisodeWidget', () => {
 	it('should render the component', async () => {
@@ -41,7 +41,7 @@ describe('SpotifyPodcastEpisodeWidget', () => {
 
 		expect(
 			screen.getByText(
-				'A fascinating podcast episode exploring contemporary trends in Spanish literature and the voices shaping the literary landscape.',
+				'Narración del cuento parte del primer episodio del podcast "Historias narradas para ser escuchadas", producido por la Biblioteca Pedagógica de la Ciudad de Santa Fe.',
 			),
 		).toBeInTheDocument();
 	});
@@ -53,7 +53,7 @@ describe('SpotifyPodcastEpisodeWidget', () => {
 
 		expect(
 			screen.getByText(
-				'A fascinating podcast episode exploring contemporary trends in Spanish literature and the voices shaping the literary landscape.',
+				'Narración del cuento parte del primer episodio del podcast "Historias narradas para ser escuchadas", producido por la Biblioteca Pedagógica de la Ciudad de Santa Fe.',
 			),
 		).toBeInTheDocument();
 	});
