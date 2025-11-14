@@ -17,12 +17,12 @@ import {
 } from '../../_queries/story.query';
 
 // Interfaces
-import { LandingPageContent } from '@models/landing-page-content.model';
+import { RotatingContent } from '@models/landing-page-content.model';
 import { StoriesByAuthorSlugArgs } from '../../interfaces/queryArgs';
 
 // Servicios
 import * as contentService from '../content/content.service';
-import { fetchLandingPageContent } from '../content/content.service';
+import { fetchRotatingContent } from '../content/content.service';
 import { fetchClarityData } from '../../_helpers/clarity-connector';
 
 export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryTeaser[]> {
@@ -75,7 +75,7 @@ export async function fetchMostRead(limit: number = 6, offset: number = 0): Prom
 	return result.mostRead.slice(offset, offset + limit);
 }
 
-export async function updateMostRead(): Promise<LandingPageContent> {
+export async function updateMostRead(): Promise<RotatingContent> {
 	const popularPagesMetrics = (await fetchClarityData()).find((metric) => metric.metricName === 'PopularPages');
 	if (!popularPagesMetrics) {
 		throw new Error('Could not fetch metrics from Microsoft Clarity');
@@ -87,14 +87,14 @@ export async function updateMostRead(): Promise<LandingPageContent> {
 		.map((entry) => entry.url.split(prefix).pop() as string);
 
 	const stories = await fetchStoriesBySlugs(mostReadStoriesSlugs);
-	const landingPage = await contentService.fetchLandingPageContent();
+	const rotatingContent = await contentService.fetchRotatingContent();
 
 	// Elimina las historias marcadas como "más leídas" actuales desde landing page
-	await client.patch(landingPage._id, { unset: ['mostRead'] }).commit();
+	await client.patch(rotatingContent._id, { unset: ['mostRead'] }).commit();
 
 	// Actualiza landing page referencias a las historias marcadas como "más leídas" actuales
 	const mostReadStories = stories.map((s) => ({ _key: s._id, _type: 'story', _ref: s._id }));
-	await client.patch(landingPage._id, { set: { mostRead: mostReadStories } }).commit();
+	await client.patch(rotatingContent._id, { set: { mostRead: mostReadStories } }).commit();
 
-	return await fetchLandingPageContent();
+	return await fetchRotatingContent();
 }
