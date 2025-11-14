@@ -1,23 +1,23 @@
-import { Meta, moduleMetadata } from '@storybook/angular';
+import { Meta, StoryObj } from '@storybook/angular';
 import { YoutubeVideoWidgetComponent } from './youtube-video-widget.component';
-import { Media } from '@models/media.model';
 import { youtubeVideoMock } from '@mocks/youtube-video.mock';
 
-export default {
+const meta: Meta<YoutubeVideoWidgetComponent> = {
 	title: 'Widgets/YoutubeVideo',
 	component: YoutubeVideoWidgetComponent,
-	decorators: [
-		moduleMetadata({
-			imports: [],
-		}),
-	],
-} as Meta<YoutubeVideoWidgetComponent>;
-
-const media: Media = youtubeVideoMock;
-
-export const Widget = () => ({
-	props: {
-		media: media,
+	argTypes: {
+		media: {
+			description: 'YouTube video media object containing title, description, and video ID',
+			control: { type: 'object' },
+		},
 	},
-	template: `<cuentoneta-youtube-video-widget class="block" [media]="media"></cuentoneta-youtube-video-widget>`,
-});
+};
+
+export default meta;
+type Story = StoryObj<YoutubeVideoWidgetComponent>;
+
+export const Widget: Story = {
+	args: {
+		media: youtubeVideoMock,
+	},
+};

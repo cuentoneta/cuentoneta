@@ -1,23 +1,23 @@
-import { Meta, moduleMetadata } from '@storybook/angular';
+import { Meta, StoryObj } from '@storybook/angular';
 import { AudioRecordingWidgetComponent } from './audio-recording-widget.component';
-import { Media } from '@models/media.model';
 import { audioRecordingMock } from '@mocks/audio-recording.mock';
 
-export default {
+const meta: Meta<AudioRecordingWidgetComponent> = {
 	title: 'Widgets/AudioRecording',
 	component: AudioRecordingWidgetComponent,
-	decorators: [
-		moduleMetadata({
-			imports: [],
-		}),
-	],
-} as Meta<AudioRecordingWidgetComponent>;
-
-const media: Media = audioRecordingMock;
-
-export const Widget = () => ({
-	props: {
-		media: media,
+	argTypes: {
+		media: {
+			description: 'Audio recording media object containing title, description, and audio URL',
+			control: { type: 'object' },
+		},
 	},
-	template: `<cuentoneta-audio-recording-widget class="block" [media]="media"></cuentoneta-audio-recording-widget>`,
-});
+};
+
+export default meta;
+type Story = StoryObj<AudioRecordingWidgetComponent>;
+
+export const Widget: Story = {
+	args: {
+		media: audioRecordingMock,
+	},
+};
