@@ -4,6 +4,9 @@ export default defineType({
 	name: 'rotatingContent',
 	title: 'Contenido rotativo',
 	type: 'document',
+	options: {
+		singleton: true, // Identify this document as a singleton
+	},
 	fields: [
 		defineField({
 			name: 'name',
