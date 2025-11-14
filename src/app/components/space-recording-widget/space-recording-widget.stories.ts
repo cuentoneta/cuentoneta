@@ -4,7 +4,7 @@ import { SpaceRecordingWidgetComponent } from './space-recording-widget.componen
 import { Media } from '@models/media.model';
 
 export default {
-	title: 'SpaceRecordingWidgetComponent',
+	title: 'Widgets/SpaceRecordingWidget',
 	component: SpaceRecordingWidgetComponent,
 	decorators: [
 		moduleMetadata({

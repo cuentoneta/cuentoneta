@@ -4,7 +4,7 @@ import { Media } from '@models/media.model';
 import { spotifyPodcastEpisodeMock } from '@mocks/spotify-podcast-episode.mock';
 
 export default {
-	title: 'SpotifyPodcastEpisodeWidget',
+	title: 'Widgets/SpotifyPodcastEpisode',
 	component: SpotifyPodcastEpisodeWidget,
 	decorators: [
 		moduleMetadata({
