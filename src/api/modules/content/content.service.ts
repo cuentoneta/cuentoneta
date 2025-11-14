@@ -1,11 +1,8 @@
-// Conector de Sanity
-import { client } from '../../_helpers/sanity-connector';
+// Repository
+import * as contentRepository from './content.repository';
 
 // Modelos
 import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
-
-// Queries
-import { landingPageContentQuery, landingPageListQuery, rotatingContentQuery } from '../../_queries/content.query';
 
 // Utils
 import { addWeeks, getWeek, getYear } from 'date-fns';
@@ -17,8 +14,8 @@ export async function fetchLandingPageContent(): Promise<LandingPageContent> {
 	const year = getYear(new Date());
 
 	const slug = `${weekOfYear.toString().padStart(2, '0')}-${year}`;
-	const landingPageResult = await client.fetch(landingPageContentQuery, { slug });
-	const rotatingContentResult = await client.fetch(rotatingContentQuery);
+	const landingPageResult = await contentRepository.fetchLandingPageContent(slug);
+	const rotatingContentResult = await contentRepository.fetchRotatingContent();
 
 	if (!landingPageResult || !rotatingContentResult) {
 		throw new Error('Landing page content not found');
@@ -30,7 +27,7 @@ export async function fetchLandingPageContent(): Promise<LandingPageContent> {
 }
 
 export async function fetchRotatingContent(): Promise<RotatingContent> {
-	const result = await client.fetch(rotatingContentQuery);
+	const result = await contentRepository.fetchRotatingContent();
 
 	if (!result) {
 		throw new Error('Rotating content not found');
@@ -55,7 +52,7 @@ export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 
 		return `${weekOfYear.toString().padStart(2, '0')}-${year}`;
 	});
 
-	const result = await client.fetch(landingPageListQuery, { slugs });
+	const result = await contentRepository.fetchLandingPageList(slugs);
 
 	if (!result) {
 		throw new Error(`Could not retrieve the landing page configs for the [${slugs.join(', ')}] slugs not found.`);
@@ -67,31 +64,27 @@ export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 
 		return [];
 	}
 
-	const currentLandingPage = await client.fetch(landingPageContentQuery, { slug: currentLandingPageSlug });
+	const currentLandingPage = await contentRepository.fetchLandingPageContent(currentLandingPageSlug);
 
 	if (!currentLandingPage) {
 		throw new Error(`Landing page for the '${currentLandingPageSlug}' slug content not found`);
 	}
 
-	const notLoadedWeeks = slugs.filter((t) => !result.find((r) => r.slug === t));
+	const notLoadedWeeks = slugs.filter((t) => !result.find((r) => r.config === t));
 
-	const createdConfigs = await Promise.all(
-		notLoadedWeeks.map((weekYear) => {
-			const object = {
-				_type: 'landingPage',
-				config: weekYear,
-				slug: {
-					_type: 'slug',
-					current: slugify(weekYear),
-				},
-				campaigns: currentLandingPage.campaigns.map((c) => ({ _key: c._id, _type: 'campaign', _ref: c._id })),
-				cards: currentLandingPage.cards.map((c) => ({ _key: c._id, _type: 'storylist', _ref: c._id })),
-				latestReads: currentLandingPage.latestReads.map((c) => ({ _key: c._id, _type: 'story', _ref: c._id })),
-			};
+	const landingPageObjects = notLoadedWeeks.map((weekYear) => ({
+		_type: 'landingPage',
+		config: weekYear,
+		slug: {
+			_type: 'slug',
+			current: slugify(weekYear),
+		},
+		campaigns: currentLandingPage.campaigns.map((c) => ({ _key: c._id, _type: 'campaign', _ref: c._id })),
+		cards: currentLandingPage.cards.map((c) => ({ _key: c._id, _type: 'storylist', _ref: c._id })),
+		latestReads: currentLandingPage.latestReads.map((c) => ({ _key: c._id, _type: 'story', _ref: c._id })),
+	}));
 
-			return client.create(object);
-		}),
-	);
+	const createdConfigs = await contentRepository.createLandingPages(landingPageObjects);
 
 	return createdConfigs;
 }
