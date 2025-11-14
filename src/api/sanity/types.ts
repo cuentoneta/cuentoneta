@@ -13,6 +13,22 @@
  */
 
 // Source: schema.json
+export type RotatingContent = {
+	_id: string;
+	_type: 'rotatingContent';
+	_createdAt: string;
+	_updatedAt: string;
+	_rev: string;
+	name: string;
+	mostRead?: Array<{
+		_ref: string;
+		_type: 'reference';
+		_weak?: boolean;
+		_key: string;
+		[internalGroqTypeReferenceTo]?: 'story';
+	}>;
+};
+
 export type Tag = {
 	_id: string;
 	_type: 'tag';
@@ -1095,6 +1111,7 @@ export type SanityAssetSourceData = {
 };
 
 export type AllSanitySchemaTypes =
+	| RotatingContent
 	| Tag
 	| Storylist
 	| ContentCampaign
@@ -1324,8 +1341,230 @@ export type AuthorsQueryResult = Array<{
 }>;
 
 // Source: ../src/api/_queries/content.query.ts
+// Variable: rotatingContentQuery
+// Query: *[_type == 'rotatingContent' && _id == 'rotatingContent'][0]{    _id,    name,    'mostRead': coalesce(mostRead[]->{        _id,        'slug': slug.current,        title,        language,        badLanguage,        'body': [],        originalPublication,        approximateReadingTime,        'resources': [],        'mediaSources': coalesce(mediaSources[], []),        'author': author-> {            _id,            slug,            name,            image,            nationality->,            'biography': [],            bornOn,            diedOn,            'resources': [],        }    },[])}
+export type RotatingContentQueryResult = {
+	_id: string;
+	name: string;
+	mostRead:
+		| Array<{
+				_id: string;
+				slug: string;
+				title: string;
+				language: 'en' | 'es';
+				badLanguage: boolean;
+				body: Array<never>;
+				originalPublication: string;
+				approximateReadingTime: number;
+				resources: Array<never>;
+				mediaSources:
+					| Array<never>
+					| Array<
+							| {
+									title: string;
+									description: Array<
+										| {
+												children?: Array<{
+													marks?: Array<string>;
+													text?: string;
+													_type: 'span';
+													_key: string;
+												}>;
+												style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal';
+												listItem?: 'bullet' | 'number';
+												markDefs?: Array<{
+													href?: string;
+													_type: 'link';
+													_key: string;
+												}>;
+												level?: number;
+												_type: 'block';
+												_key: string;
+										  }
+										| {
+												asset?: {
+													_ref: string;
+													_type: 'reference';
+													_weak?: boolean;
+													[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+												};
+												media?: unknown;
+												hotspot?: SanityImageHotspot;
+												crop?: SanityImageCrop;
+												_type: 'image';
+												_key: string;
+										  }
+									>;
+									url: string;
+									_type: 'audioRecording';
+									_key: string;
+							  }
+							| {
+									postId: string;
+									title: string;
+									description: Array<
+										| {
+												children?: Array<{
+													marks?: Array<string>;
+													text?: string;
+													_type: 'span';
+													_key: string;
+												}>;
+												style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal';
+												listItem?: 'bullet' | 'number';
+												markDefs?: Array<{
+													href?: string;
+													_type: 'link';
+													_key: string;
+												}>;
+												level?: number;
+												_type: 'block';
+												_key: string;
+										  }
+										| {
+												asset?: {
+													_ref: string;
+													_type: 'reference';
+													_weak?: boolean;
+													[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+												};
+												media?: unknown;
+												hotspot?: SanityImageHotspot;
+												crop?: SanityImageCrop;
+												_type: 'image';
+												_key: string;
+										  }
+									>;
+									spaceUrl: string;
+									duration: string;
+									_type: 'spaceRecording';
+									_key: string;
+							  }
+							| {
+									title: string;
+									description: Array<
+										| {
+												children?: Array<{
+													marks?: Array<string>;
+													text?: string;
+													_type: 'span';
+													_key: string;
+												}>;
+												style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal';
+												listItem?: 'bullet' | 'number';
+												markDefs?: Array<{
+													href?: string;
+													_type: 'link';
+													_key: string;
+												}>;
+												level?: number;
+												_type: 'block';
+												_key: string;
+										  }
+										| {
+												asset?: {
+													_ref: string;
+													_type: 'reference';
+													_weak?: boolean;
+													[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+												};
+												media?: unknown;
+												hotspot?: SanityImageHotspot;
+												crop?: SanityImageCrop;
+												_type: 'image';
+												_key: string;
+										  }
+									>;
+									url: string;
+									_type: 'spotifyPodcastEpisode';
+									_key: string;
+							  }
+							| {
+									title: string;
+									description: Array<
+										| {
+												children?: Array<{
+													marks?: Array<string>;
+													text?: string;
+													_type: 'span';
+													_key: string;
+												}>;
+												style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal';
+												listItem?: 'bullet' | 'number';
+												markDefs?: Array<{
+													href?: string;
+													_type: 'link';
+													_key: string;
+												}>;
+												level?: number;
+												_type: 'block';
+												_key: string;
+										  }
+										| {
+												asset?: {
+													_ref: string;
+													_type: 'reference';
+													_weak?: boolean;
+													[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+												};
+												media?: unknown;
+												hotspot?: SanityImageHotspot;
+												crop?: SanityImageCrop;
+												_type: 'image';
+												_key: string;
+										  }
+									>;
+									videoId: string;
+									_type: 'youTubeVideo';
+									_key: string;
+							  }
+					  >;
+				author: {
+					_id: string;
+					slug: Slug;
+					name: string;
+					image: {
+						asset?: {
+							_ref: string;
+							_type: 'reference';
+							_weak?: boolean;
+							[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+						};
+						media?: unknown;
+						hotspot?: SanityImageHotspot;
+						crop?: SanityImageCrop;
+						_type: 'image';
+					};
+					nationality: {
+						_id: string;
+						_type: 'nationality';
+						_createdAt: string;
+						_updatedAt: string;
+						_rev: string;
+						country: string;
+						flag: {
+							asset?: {
+								_ref: string;
+								_type: 'reference';
+								_weak?: boolean;
+								[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+							};
+							media?: unknown;
+							hotspot?: SanityImageHotspot;
+							crop?: SanityImageCrop;
+							_type: 'image';
+						};
+					};
+					biography: Array<never>;
+					bornOn: string | null;
+					diedOn: string | null;
+					resources: Array<never>;
+				};
+		  }>
+		| Array<never>;
+} | null;
 // Variable: landingPageContentQuery
-// Query: *[_type == 'landingPage' && !(_id in path('drafts.**'))][0]{    _id,    'cards': coalesce(cards[]->{        _id,        title,        'slug': slug.current,        description,        language,        displayDates,        editionPrefix,        comingNextLabel,        featuredImage,        'tags': coalesce(tags[] -> {            title,             'slug': slug.current,             shortDescription,            description,             icon        }, []),        'publications': [],        'count': coalesce(count(publications), 0)    },[]),    'campaigns': coalesce(campaigns[]->{        _id,        'title': coalesce(title, ''),        'slug': coalesce(slug.current, ''),        'description': coalesce(description, []),        'url': coalesce(url, ''),        'contents': {            'xs': {                'title': coalesce(contents.xs.title, []),                'subtitle': coalesce(contents.xs.subtitle, []),                'image': contents.xs.image            },            'md': {                'title': coalesce(contents.md.title, []),                'subtitle': coalesce(contents.md.subtitle, []),                'image': contents.md.image            }        }    },[]),    'mostRead': coalesce(mostRead[]->{        _id,        'slug': slug.current,        title,        language,        badLanguage,        'body': [],        originalPublication,        approximateReadingTime,        'resources': [],        'mediaSources': coalesce(mediaSources[], []),        'author': author-> {             _id,            slug,            name,            image,            nationality->,            'biography': [],            bornOn,            diedOn,            'resources': [],        }    },[]),    'latestReads': coalesce(latestReads[]->{        _id,        'slug': slug.current,        title,        language,        badLanguage,        'body': [],        originalPublication,        approximateReadingTime,        'resources': [],        'mediaSources': coalesce(mediaSources[], []),        'author': author-> {             _id,            slug,            name,            image,            nationality->,            'biography': [],            bornOn,            diedOn,            'resources': [],        }    },[]),}
+// Query: *[_type == 'landingPage' && !(_id in path('drafts.**')) && config == $title][0]{    _id,    'cards': coalesce(cards[]->{        _id,        title,        'slug': slug.current,        description,        language,        displayDates,        editionPrefix,        comingNextLabel,        featuredImage,        'tags': coalesce(tags[] -> {            title,             'slug': slug.current,             shortDescription,            description,             icon        }, []),        'publications': [],        'count': coalesce(count(publications), 0)    },[]),    'campaigns': coalesce(campaigns[]->{        _id,        'title': coalesce(title, ''),        'slug': coalesce(slug.current, ''),        'description': coalesce(description, []),        'url': coalesce(url, ''),        'contents': {            'xs': {                'title': coalesce(contents.xs.title, []),                'subtitle': coalesce(contents.xs.subtitle, []),                'image': contents.xs.image            },            'md': {                'title': coalesce(contents.md.title, []),                'subtitle': coalesce(contents.md.subtitle, []),                'image': contents.md.image            }        }    },[]),    'latestReads': coalesce(latestReads[]->{        _id,        'slug': slug.current,        title,        language,        badLanguage,        'body': [],        originalPublication,        approximateReadingTime,        'resources': [],        'mediaSources': coalesce(mediaSources[], []),        'author': author-> {             _id,            slug,            name,            image,            nationality->,            'biography': [],            bornOn,            diedOn,            'resources': [],        }    },[]),}
 export type LandingPageContentQueryResult = {
 	_id: string;
 	cards:
@@ -1637,222 +1876,6 @@ export type LandingPageContentQueryResult = {
 							_type: 'image';
 						} | null;
 					};
-				};
-		  }>
-		| Array<never>;
-	mostRead:
-		| Array<{
-				_id: string;
-				slug: string;
-				title: string;
-				language: 'en' | 'es';
-				badLanguage: boolean;
-				body: Array<never>;
-				originalPublication: string;
-				approximateReadingTime: number;
-				resources: Array<never>;
-				mediaSources:
-					| Array<never>
-					| Array<
-							| {
-									title: string;
-									description: Array<
-										| {
-												children?: Array<{
-													marks?: Array<string>;
-													text?: string;
-													_type: 'span';
-													_key: string;
-												}>;
-												style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal';
-												listItem?: 'bullet' | 'number';
-												markDefs?: Array<{
-													href?: string;
-													_type: 'link';
-													_key: string;
-												}>;
-												level?: number;
-												_type: 'block';
-												_key: string;
-										  }
-										| {
-												asset?: {
-													_ref: string;
-													_type: 'reference';
-													_weak?: boolean;
-													[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
-												};
-												media?: unknown;
-												hotspot?: SanityImageHotspot;
-												crop?: SanityImageCrop;
-												_type: 'image';
-												_key: string;
-										  }
-									>;
-									url: string;
-									_type: 'audioRecording';
-									_key: string;
-							  }
-							| {
-									postId: string;
-									title: string;
-									description: Array<
-										| {
-												children?: Array<{
-													marks?: Array<string>;
-													text?: string;
-													_type: 'span';
-													_key: string;
-												}>;
-												style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal';
-												listItem?: 'bullet' | 'number';
-												markDefs?: Array<{
-													href?: string;
-													_type: 'link';
-													_key: string;
-												}>;
-												level?: number;
-												_type: 'block';
-												_key: string;
-										  }
-										| {
-												asset?: {
-													_ref: string;
-													_type: 'reference';
-													_weak?: boolean;
-													[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
-												};
-												media?: unknown;
-												hotspot?: SanityImageHotspot;
-												crop?: SanityImageCrop;
-												_type: 'image';
-												_key: string;
-										  }
-									>;
-									spaceUrl: string;
-									duration: string;
-									_type: 'spaceRecording';
-									_key: string;
-							  }
-							| {
-									title: string;
-									description: Array<
-										| {
-												children?: Array<{
-													marks?: Array<string>;
-													text?: string;
-													_type: 'span';
-													_key: string;
-												}>;
-												style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal';
-												listItem?: 'bullet' | 'number';
-												markDefs?: Array<{
-													href?: string;
-													_type: 'link';
-													_key: string;
-												}>;
-												level?: number;
-												_type: 'block';
-												_key: string;
-										  }
-										| {
-												asset?: {
-													_ref: string;
-													_type: 'reference';
-													_weak?: boolean;
-													[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
-												};
-												media?: unknown;
-												hotspot?: SanityImageHotspot;
-												crop?: SanityImageCrop;
-												_type: 'image';
-												_key: string;
-										  }
-									>;
-									url: string;
-									_type: 'spotifyPodcastEpisode';
-									_key: string;
-							  }
-							| {
-									title: string;
-									description: Array<
-										| {
-												children?: Array<{
-													marks?: Array<string>;
-													text?: string;
-													_type: 'span';
-													_key: string;
-												}>;
-												style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal';
-												listItem?: 'bullet' | 'number';
-												markDefs?: Array<{
-													href?: string;
-													_type: 'link';
-													_key: string;
-												}>;
-												level?: number;
-												_type: 'block';
-												_key: string;
-										  }
-										| {
-												asset?: {
-													_ref: string;
-													_type: 'reference';
-													_weak?: boolean;
-													[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
-												};
-												media?: unknown;
-												hotspot?: SanityImageHotspot;
-												crop?: SanityImageCrop;
-												_type: 'image';
-												_key: string;
-										  }
-									>;
-									videoId: string;
-									_type: 'youTubeVideo';
-									_key: string;
-							  }
-					  >;
-				author: {
-					_id: string;
-					slug: Slug;
-					name: string;
-					image: {
-						asset?: {
-							_ref: string;
-							_type: 'reference';
-							_weak?: boolean;
-							[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
-						};
-						media?: unknown;
-						hotspot?: SanityImageHotspot;
-						crop?: SanityImageCrop;
-						_type: 'image';
-					};
-					nationality: {
-						_id: string;
-						_type: 'nationality';
-						_createdAt: string;
-						_updatedAt: string;
-						_rev: string;
-						country: string;
-						flag: {
-							asset?: {
-								_ref: string;
-								_type: 'reference';
-								_weak?: boolean;
-								[internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
-							};
-							media?: unknown;
-							hotspot?: SanityImageHotspot;
-							crop?: SanityImageCrop;
-							_type: 'image';
-						};
-					};
-					biography: Array<never>;
-					bornOn: string | null;
-					diedOn: string | null;
-					resources: Array<never>;
 				};
 		  }>
 		| Array<never>;
@@ -3987,7 +4010,8 @@ declare module '@sanity/client' {
 	interface SanityQueries {
 		"\n*[_type == 'author' && slug.current == $slug && !(_id in path('drafts.**'))][0]\n{\n    _id,\n    slug,\n    name,\n    image,\n    nationality->,\n    biography,\n    bornOn,\n    diedOn,\n    'resources': coalesce(resources[]{ \n        title, \n        url, \n        resourceType->{\n        \t'slug': slug.current,\n        \ttitle, \n        \tshortDescription,\n        \tdescription, \n            icon\n        } \n    }, [])\n}": AuthorBySlugQueryResult;
 		"\n*[_type == 'author' && !(_id in path('drafts.**'))]\n{\n    _id,\n    slug,\n    name,\n    image,\n    nationality->,\n    'biography': [],\n    bornOn,\n    diedOn,\n    'resources': []\n}|order(name asc)": AuthorsQueryResult;
-		"\n*[_type == 'landingPage' && !(_id in path('drafts.**'))][0]{\n    _id,\n    'cards': coalesce(cards[]->{\n        _id,\n        title,\n        'slug': slug.current,\n        description,\n        language,\n        displayDates,\n        editionPrefix,\n        comingNextLabel,\n        featuredImage,\n        'tags': coalesce(tags[] -> {\n            title, \n            'slug': slug.current, \n            shortDescription,\n            description, \n            icon\n        }, []),\n        'publications': [],\n        'count': coalesce(count(publications), 0)\n    },[]),\n    'campaigns': coalesce(campaigns[]->{\n        _id,\n        'title': coalesce(title, ''),\n        'slug': coalesce(slug.current, ''),\n        'description': coalesce(description, []),\n        'url': coalesce(url, ''),\n        'contents': {\n            'xs': {\n                'title': coalesce(contents.xs.title, []),\n                'subtitle': coalesce(contents.xs.subtitle, []),\n                'image': contents.xs.image\n            },\n            'md': {\n                'title': coalesce(contents.md.title, []),\n                'subtitle': coalesce(contents.md.subtitle, []),\n                'image': contents.md.image\n            }\n        }\n    },[]),\n    'mostRead': coalesce(mostRead[]->{\n        _id,\n        'slug': slug.current,\n        title,\n        language,\n        badLanguage,\n        'body': [],\n        originalPublication,\n        approximateReadingTime,\n        'resources': [],\n        'mediaSources': coalesce(mediaSources[], []),\n        'author': author-> { \n            _id,\n            slug,\n            name,\n            image,\n            nationality->,\n            'biography': [],\n            bornOn,\n            diedOn,\n            'resources': [],\n        }\n    },[]),\n    'latestReads': coalesce(latestReads[]->{\n        _id,\n        'slug': slug.current,\n        title,\n        language,\n        badLanguage,\n        'body': [],\n        originalPublication,\n        approximateReadingTime,\n        'resources': [],\n        'mediaSources': coalesce(mediaSources[], []),\n        'author': author-> { \n            _id,\n            slug,\n            name,\n            image,\n            nationality->,\n            'biography': [],\n            bornOn,\n            diedOn,\n            'resources': [],\n        }\n    },[]),\n}": LandingPageContentQueryResult;
+		"\n*[_type == 'rotatingContent' && _id == 'rotatingContent'][0]{\n    _id,\n    name,\n    'mostRead': coalesce(mostRead[]->{\n        _id,\n        'slug': slug.current,\n        title,\n        language,\n        badLanguage,\n        'body': [],\n        originalPublication,\n        approximateReadingTime,\n        'resources': [],\n        'mediaSources': coalesce(mediaSources[], []),\n        'author': author-> {\n            _id,\n            slug,\n            name,\n            image,\n            nationality->,\n            'biography': [],\n            bornOn,\n            diedOn,\n            'resources': [],\n        }\n    },[])\n}": RotatingContentQueryResult;
+		"\n*[_type == 'landingPage' && !(_id in path('drafts.**')) && config == $title][0]{\n    _id,\n    'cards': coalesce(cards[]->{\n        _id,\n        title,\n        'slug': slug.current,\n        description,\n        language,\n        displayDates,\n        editionPrefix,\n        comingNextLabel,\n        featuredImage,\n        'tags': coalesce(tags[] -> {\n            title, \n            'slug': slug.current, \n            shortDescription,\n            description, \n            icon\n        }, []),\n        'publications': [],\n        'count': coalesce(count(publications), 0)\n    },[]),\n    'campaigns': coalesce(campaigns[]->{\n        _id,\n        'title': coalesce(title, ''),\n        'slug': coalesce(slug.current, ''),\n        'description': coalesce(description, []),\n        'url': coalesce(url, ''),\n        'contents': {\n            'xs': {\n                'title': coalesce(contents.xs.title, []),\n                'subtitle': coalesce(contents.xs.subtitle, []),\n                'image': contents.xs.image\n            },\n            'md': {\n                'title': coalesce(contents.md.title, []),\n                'subtitle': coalesce(contents.md.subtitle, []),\n                'image': contents.md.image\n            }\n        }\n    },[]),\n    'latestReads': coalesce(latestReads[]->{\n        _id,\n        'slug': slug.current,\n        title,\n        language,\n        badLanguage,\n        'body': [],\n        originalPublication,\n        approximateReadingTime,\n        'resources': [],\n        'mediaSources': coalesce(mediaSources[], []),\n        'author': author-> { \n            _id,\n            slug,\n            name,\n            image,\n            nationality->,\n            'biography': [],\n            bornOn,\n            diedOn,\n            'resources': [],\n        }\n    },[]),\n}": LandingPageContentQueryResult;
 		"\n*[_type == 'contributor' && !(_id in path('drafts.**'))]\n{\n\tname,\n\t'slug': slug.current,\n\tarea,\n\tlink {\n\t\thandle,\n\t\turl\n\t},\n\tnotes\n}|order(name asc)\n": AllContributorsQueryResult;
 		"\n*[_type == 'story' && author->slug.current == $slug && !(_id in path('drafts.**'))][$start...$end]\n{\n    _id,\n    'slug': slug.current,\n    title,\n    'language': coalesce(language, 'es'),\n    'badLanguage': coalesce(badLanguage, false),\n    'body': coalesce(body[0...3], []),\n    'originalPublication': coalesce(originalPublication, ''),\n    approximateReadingTime,\n    'mediaSources': coalesce(mediaSources[], []),\n    'resources': coalesce(resources[]{ \n        title, \n        url, \n        resourceType->{\n            'slug': slug.current,\n            title, \n            shortDescription,\n            description, \n            icon\n        } \n    }, []),\n}|order(title asc)": StoriesByAuthorSlugQueryResult;
 		"\n*[_type == 'story' && author->slug.current == $slug && !(_id in path('drafts.**'))]\n{\n    _id,\n    'slug': slug.current,\n    title,\n    'language': coalesce(language, 'es'),\n    'badLanguage': coalesce(badLanguage, false),\n    'body': [],\n    'originalPublication': coalesce(originalPublication, ''),\n    approximateReadingTime,\n    'mediaSources': coalesce(mediaSources[], []),\n    'resources': [],\n}|order(title asc)[$start...$end]": StoryNavigationTeasersByAuthorSlugQueryResult;
