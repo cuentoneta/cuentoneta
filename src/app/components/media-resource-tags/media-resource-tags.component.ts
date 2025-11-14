@@ -4,7 +4,7 @@ import { Media, MediaTypeKey } from '@models/media.model';
 import { MediaResourcePlatform, MediaResourceTagComponent } from '../media-resource-tag/media-resource-tag.component';
 import { provideIcons } from '@ng-icons/core';
 import { faSolidFileAudio, faSolidMicrophoneLines } from '@ng-icons/font-awesome/solid';
-import { faBrandYoutube } from '@ng-icons/font-awesome/brands';
+import { faBrandSpotify, faBrandYoutube } from '@ng-icons/font-awesome/brands';
 import { NgComponentOutlet } from '@angular/common';
 
 @Component({
@@ -45,6 +45,10 @@ export class MediaResourceTagsComponent {
 		spaceRecording: {
 			title: 'Contiene grabaciones de Spaces de X',
 			icon: { faSolidMicrophoneLines },
+		},
+		spotifyPodcastEpisode: {
+			title: 'Contiene episodios de podcasts de Spotify',
+			icon: { faBrandSpotify },
 		},
 		youTubeVideo: {
 			title: 'Contiene videos de YouTube',

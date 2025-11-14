@@ -65,7 +65,7 @@ describe('MediaResourceTagsComponent', () => {
 		});
 		const instance = view.fixture.componentInstance;
 		const platforms = instance.platforms as { [key in MediaTypeKey]: MediaResourcePlatform };
-		const expectedPlatforms = ['audioRecording', 'spaceRecording', 'youTubeVideo'];
+		const expectedPlatforms = ['audioRecording', 'spaceRecording', 'spotifyPodcastEpisode', 'youTubeVideo'];
 		const actualPlatforms = Object.keys(platforms) as MediaTypeKey[];
 		expect(actualPlatforms).toEqual(expectedPlatforms);
 		actualPlatforms.forEach((platform) => {

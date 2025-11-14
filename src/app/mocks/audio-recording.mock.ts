@@ -20,6 +20,6 @@ export const audioRecordingMock: AudioRecording = {
 		},
 	],
 	data: {
-		url: 'https://es.wikipedia.org/wiki/Archivo:Es-Ajedrez-article-part1.ogg',
+		url: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/Es-Ajedrez-article-part1.ogg',
 	},
 };
