@@ -4,6 +4,7 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 
 export interface LandingPageContent {
 	_id: string;
+	config: string;
 	cards: StorylistTeaser[];
 	campaigns: ContentCampaign[];
 	mostRead: StoryNavigationTeaserWithAuthor[];
