@@ -1,7 +1,36 @@
 import { defineQuery } from 'groq';
 
+export const rotatingContentQuery = defineQuery(`
+*[_type == 'rotatingContent' && _id == 'rotatingContent'][0]{
+    _id,
+    name,
+    'mostRead': coalesce(mostRead[]->{
+        _id,
+        'slug': slug.current,
+        title,
+        language,
+        badLanguage,
+        'body': [],
+        originalPublication,
+        approximateReadingTime,
+        'resources': [],
+        'mediaSources': coalesce(mediaSources[], []),
+        'author': author-> {
+            _id,
+            slug,
+            name,
+            image,
+            nationality->,
+            'biography': [],
+            bornOn,
+            diedOn,
+            'resources': [],
+        }
+    },[])
+}`);
+
 export const landingPageContentQuery = defineQuery(`
-*[_type == 'landingPage' && !(_id in path('drafts.**'))][0]{
+*[_type == 'landingPage' && !(_id in path('drafts.**')) && config == $title][0]{
     _id,
     'cards': coalesce(cards[]->{
         _id,
@@ -40,29 +69,6 @@ export const landingPageContentQuery = defineQuery(`
                 'subtitle': coalesce(contents.md.subtitle, []),
                 'image': contents.md.image
             }
-        }
-    },[]),
-    'mostRead': coalesce(mostRead[]->{
-        _id,
-        'slug': slug.current,
-        title,
-        language,
-        badLanguage,
-        'body': [],
-        originalPublication,
-        approximateReadingTime,
-        'resources': [],
-        'mediaSources': coalesce(mediaSources[], []),
-        'author': author-> { 
-            _id,
-            slug,
-            name,
-            image,
-            nationality->,
-            'biography': [],
-            bornOn,
-            diedOn,
-            'resources': [],
         }
     },[]),
     'latestReads': coalesce(latestReads[]->{
