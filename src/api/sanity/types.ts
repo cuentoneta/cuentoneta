@@ -382,13 +382,6 @@ export type LandingPage = {
 		_key: string;
 		[internalGroqTypeReferenceTo]?: 'storylist';
 	}>;
-	mostRead?: Array<{
-		_ref: string;
-		_type: 'reference';
-		_weak?: boolean;
-		_key: string;
-		[internalGroqTypeReferenceTo]?: 'story';
-	}>;
 	latestReads?: Array<{
 		_ref: string;
 		_type: 'reference';
