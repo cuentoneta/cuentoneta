@@ -36,12 +36,7 @@ export default defineType({
 			},
 			validation: (Rule) => Rule.required(),
 		}),
-		defineField({
-			name: 'active',
-			title: 'Activa',
-			type: 'boolean',
-			validation: (Rule) => Rule.required(),
-		}),
+
 		defineField({
 			name: 'campaigns',
 			title: 'Campañas',

@@ -2532,13 +2532,6 @@
 				},
 				"optional": false
 			},
-			"active": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "boolean"
-				},
-				"optional": false
-			},
 			"campaigns": {
 				"type": "objectAttribute",
 				"value": {
