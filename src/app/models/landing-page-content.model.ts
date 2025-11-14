@@ -9,3 +9,9 @@ export interface LandingPageContent {
 	mostRead: StoryNavigationTeaserWithAuthor[];
 	latestReads: StoryNavigationTeaserWithAuthor[];
 }
+
+export interface RotatingContent {
+	_id: string;
+	name: string;
+	mostRead: StoryNavigationTeaserWithAuthor[];
+}
