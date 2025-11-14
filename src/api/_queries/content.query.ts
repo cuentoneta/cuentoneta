@@ -29,9 +29,18 @@ export const rotatingContentQuery = defineQuery(`
     },[])
 }`);
 
+export const landingPageListQuery = defineQuery(`
+*[_type == 'landingPage' && !(_id in path('drafts.**')) && slug.current in $slugs]{
+		_id,
+		'slug': slug.current,
+		config,
+}`);
+
 export const landingPageContentQuery = defineQuery(`
-*[_type == 'landingPage' && !(_id in path('drafts.**')) && config == $title][0]{
+*[_type == 'landingPage' && !(_id in path('drafts.**')) && slug.current == $slug][0]{
     _id,
+    'slug': slug.current,
+    config,
     'cards': coalesce(cards[]->{
         _id,
         title,
