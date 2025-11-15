@@ -382,6 +382,8 @@ interface LandingPageContent {
 - Agregar contenido de múltiples contextos para presentación en página inicio
 - Mantener datos de lectura y estadísticas
 
+> **Nota:** Para comprender la implementación práctica de este agregado, incluyendo la generación automática de configuraciones y actualización de contenido, consulta la documentación sobre [Estrategias de Actualización de Contenido](./CONTENT_UPDATE_STRATEGIES.md).
+
 ---
 
 ## Objetos de Valor (Value Objects)
@@ -755,6 +757,7 @@ La arquitectura de La Cuentoneta sigue un modelo de capas explícito:
 - [Guía de Desarrollo](./DEVELOPMENT_GUIDE.md) - Setup y proceso de desarrollo
 - [Sanity CMS Integration](./SANITY.md) - Detalles de CMS y tipado
 - [Documentación de Arquitectura](./DEVELOPMENT_GUIDE.md#arquitectura) - Visión general técnica
+- [Estrategias de Actualización de Contenido](./CONTENT_UPDATE_STRATEGIES.md) - cron jobs y generación automática de configuraciones
 
 ### Comunidad y Aprendizaje
 

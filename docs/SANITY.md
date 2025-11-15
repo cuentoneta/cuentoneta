@@ -33,3 +33,7 @@ Los tipos generados por Sanity representan la estructura del CMS externo. Sin em
 Para comprender cómo se relacionan estos modelos y cómo se mapean los datos del CMS al modelo de dominio, consulta la sección sobre **Capa Anti-Corrupción** en el documento de [Modelo de Dominio - DDD](./DOMAIN_MODEL.md#patrón-capa-anti-corrupción-anti-corruption-layer).
 
 Este patrón asegura que los cambios en el esquema de Sanity no afecten directamente el dominio de la aplicación, manteniendo una separación clara entre la infraestructura (Sanity) y el modelo de negocio.
+
+## Actualización y generación automática de contenido
+
+Para más detalles sobre las **consultas GROQ** y **funciones de repositorio** utilizadas para actualizar contenido automáticamente en Sanity, así como la estructura y mantenimiento de documentos clave como `landingPage` y `rotatingContent`, consulta la documentación sobre [Estrategias de Actualización de Contenido](./CONTENT_UPDATE_STRATEGIES.md).

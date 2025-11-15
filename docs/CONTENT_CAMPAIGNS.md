@@ -38,6 +38,8 @@ Para crear una campaña de contenido se requiere:
 
 En todos los casos donde se indican requerimientos de recursos de tipo texto es posible la inclusión de texto enriquecido, lo cual permite utilizar negritas, itálicas, emojis etc.
 
+Para que una campaña de contenido sea visible como tal en la plataforma la misma debe, además, ser añadida a una configuración de landing page. Cuando esa configuración de landing page se encuentra activa se procede luego a la visualización de la campaña de contenido en la plataforma. Si bien no es condición necesaria para generar una campaña de contenido el que ésta se encuentre agregada a una configuración de landing page activa, sí es requerido para lograr su visualización en la plataforma en una semana dada. Para más información al respecto, debe referirse a la sección [Generación Automática de Configuraciones de Landing Pages](#generación-automática-de-configuraciones-de-landing-pages)
+
 ---
 
 ### Ejemplo
@@ -73,3 +75,11 @@ Escritorio y tablets (960px x 280px)
 ### Enlace
 
 https://www.cuentoneta.ar/storylist/cuentos-de-terror-de-alberto-laiseca
+
+---
+
+## Generación Automática de Configuraciones de Landing Pages
+
+Aunque las campañas de contenido pueden crearse y editarse manualmente en Sanity Studio, las configuraciones de landing pages que las contienen se generan automáticamente mediante cron jobs. Para comprender **cómo se generan automáticamente las configuraciones de landing pages** que albergan estas campañas, incluyendo el patrón de contenido rotativo (`rotatingContent`), consulta la documentación sobre [Estrategias de Actualización de Contenido](./CONTENT_UPDATE_STRATEGIES.md).
+
+Esto permite que los editores se enfoquen en actualizar y curar el contenido, mientras que los procesos automáticos se encargan de mantener la estructura y las configuraciones sincronizadas.
