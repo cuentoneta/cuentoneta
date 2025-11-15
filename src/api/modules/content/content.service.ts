@@ -70,8 +70,6 @@ export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 
 		throw new Error(`Latest landing page for the '${currentLandingPageSlug}' slug content not found`);
 	}
 
-	console.log(latestLandingPageConfig);
-
 	const notLoadedWeeks = slugs.filter((t) => !existingLandingPagesList.find((r) => r.config === t));
 
 	const landingPageObjects = notLoadedWeeks.map((weekYear) => {

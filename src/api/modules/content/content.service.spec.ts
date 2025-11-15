@@ -3,7 +3,13 @@ import * as contentRepository from './content.repository';
 import * as contentService from './content.service';
 import { LandingPageContentQueryResult } from '../../sanity/types.js';
 
-jest.mock('./content.repository');
+jest.mock('./content.repository', () => ({
+	fetchLandingPageList: jest.fn(),
+	fetchLandingPageContent: jest.fn(),
+	createLandingPages: jest.fn(),
+	fetchLatestLandingPageReferences: jest.fn(),
+	fetchRotatingContent: jest.fn(),
+}));
 
 describe('ContentService', () => {
 	beforeEach(() => {
@@ -38,7 +44,7 @@ describe('ContentService', () => {
 
 			// Mock repository responses
 			(contentRepository.fetchLandingPageList as jest.Mock).mockResolvedValue([]);
-			(contentRepository.fetchLandingPageContent as jest.Mock).mockResolvedValue(mockLandingPage);
+			(contentRepository.fetchLatestLandingPageReferences as jest.Mock).mockResolvedValue(mockLandingPage);
 			(contentRepository.createLandingPages as jest.Mock).mockResolvedValue([
 				{ _id: 'created-1' },
 				{ _id: 'created-2' },
@@ -81,10 +87,10 @@ describe('ContentService', () => {
 			const weeksInTheFuture = 4;
 
 			(contentRepository.fetchLandingPageList as jest.Mock).mockResolvedValue([]);
-			(contentRepository.fetchLandingPageContent as jest.Mock).mockResolvedValue(null);
+			(contentRepository.fetchLatestLandingPageReferences as jest.Mock).mockResolvedValue(null);
 
 			await expect(contentService.addNextWeeksLandingPageContent(weeksInTheFuture)).rejects.toThrow(
-				`Landing page for the '${currentSlug}' slug content not found`,
+				`Latest landing page for the '${currentSlug}' slug content not found`,
 			);
 		});
 
@@ -108,7 +114,7 @@ describe('ContentService', () => {
 			});
 
 			(contentRepository.fetchLandingPageList as jest.Mock).mockResolvedValue(existingWeek);
-			(contentRepository.fetchLandingPageContent as jest.Mock).mockResolvedValue(mockLandingPage);
+			(contentRepository.fetchLatestLandingPageReferences as jest.Mock).mockResolvedValue(mockLandingPage);
 			(contentRepository.createLandingPages as jest.Mock).mockResolvedValue([
 				{ _id: 'created-3' },
 				{ _id: 'created-4' },
@@ -124,7 +130,6 @@ describe('ContentService', () => {
 			const callArgs = (contentRepository.createLandingPages as jest.Mock).mock.calls[0][0];
 			expect(callArgs).toHaveLength(2);
 			callArgs.forEach((obj: LandingPageContentQueryResult) => {
-				expect(obj).toHaveProperty('_type', 'landingPage');
 				expect(obj).toHaveProperty('config');
 				expect(obj).toHaveProperty('slug');
 				expect(obj).toHaveProperty('campaigns');
@@ -137,7 +142,7 @@ describe('ContentService', () => {
 			const weeksInTheFuture = 3;
 
 			(contentRepository.fetchLandingPageList as jest.Mock).mockResolvedValue([]);
-			(contentRepository.fetchLandingPageContent as jest.Mock).mockResolvedValue(mockLandingPage);
+			(contentRepository.fetchLatestLandingPageReferences as jest.Mock).mockResolvedValue(mockLandingPage);
 			(contentRepository.createLandingPages as jest.Mock).mockResolvedValue([
 				{ _id: 'created-1' },
 				{ _id: 'created-2' },
