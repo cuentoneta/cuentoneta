@@ -167,8 +167,8 @@ Este repositorio y el contenido de la web de La Cuentoneta se publican bajo lice
 <!-- Enlaces a las paginas web del proyecto -->
 
 [web]: https://cuentoneta.ar
-[web-staging]: https://cuentoneta-staging.vercel.app
-[web-storybook]: https://storybook-cuentoneta.vercel.app
+[web-staging]: https://staging.cuentoneta.ar
+[web-storybook]: https://storybook.cuentoneta.ar
 [web-fec]: https://frontend.cafe/
 [github-juguetear]: https://github.com/Juguetear/juguetear-web
 

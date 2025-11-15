@@ -49,7 +49,7 @@ Los ambientes de despliegue son los siguientes:
 
 - **Web | Producción:** [https://cuentoneta.ar/](https://cuentoneta.ar/)
 - **Web | Staging:** [https://staging.cuentoneta.ar](https://staging.cuentoneta.ar)
-- **Storybook:** [https://cuentoneta-storybook.vercel.app/](https://cuentoneta-storybook.vercel.app/)
+- **Storybook:** [https://storybook.cuentoneta.ar](https://storybook.cuentoneta.ar)
 - **Sanity Studio:** https://cuentoneta.sanity.studio/
 
 ---
