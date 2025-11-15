@@ -8,6 +8,7 @@ import { LandingPageContent, RotatingContent } from '@models/landing-page-conten
 import { addWeeks, getWeek, getYear } from 'date-fns';
 import { mapLandingPageContent, mapStoryNavigationTeaserWithAuthor } from '../../_utils/functions';
 import slugify from 'slugify';
+import { fetchLatestLandingPageReferences } from './content.repository';
 
 export async function fetchLandingPageContent(): Promise<LandingPageContent> {
 	const weekOfYear = getWeek(new Date());
@@ -51,34 +52,39 @@ export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 
 		return `${weekOfYear.toString().padStart(2, '0')}-${year}`;
 	});
 
-	const result = await contentRepository.fetchLandingPageList(slugs);
+	const existingLandingPagesList = await contentRepository.fetchLandingPageList(slugs);
 
-	if (!result) {
+	if (!existingLandingPagesList) {
 		throw new Error(`Could not retrieve the landing page configs for the [${slugs.join(', ')}] slugs not found.`);
 	}
 
-	if (result.length >= weeksInTheFuture) {
+	if (existingLandingPagesList.length >= weeksInTheFuture) {
 		// En caso que el resultado de la query arroje que existan las próximas N semanas ya cargadas,
 		// procedemos a retornar una lista vacía y no hacer agregados
 		return [];
 	}
 
-	const currentLandingPage = await contentRepository.landingPageContentReferences(currentLandingPageSlug);
+	const latestLandingPageConfig = await contentRepository.fetchLatestLandingPageReferences();
 
-	if (!currentLandingPage) {
-		throw new Error(`Landing page for the '${currentLandingPageSlug}' slug content not found`);
+	if (!latestLandingPageConfig) {
+		throw new Error(`Latest landing page for the '${currentLandingPageSlug}' slug content not found`);
 	}
 
-	const notLoadedWeeks = slugs.filter((t) => !result.find((r) => r.config === t));
+	console.log(latestLandingPageConfig);
 
-	const landingPageObjects = notLoadedWeeks.map((weekYear) => ({
-		...currentLandingPage,
-		config: weekYear,
-		slug: {
-			_type: 'slug',
-			current: slugify(weekYear),
-		},
-	}));
+	const notLoadedWeeks = slugs.filter((t) => !existingLandingPagesList.find((r) => r.config === t));
+
+	const landingPageObjects = notLoadedWeeks.map((weekYear) => {
+		const { _id, ...config } = latestLandingPageConfig;
+		return {
+			...config,
+			config: weekYear,
+			slug: {
+				_type: 'slug',
+				current: slugify(weekYear),
+			},
+		};
+	});
 
 	return await contentRepository.createLandingPages(landingPageObjects);
 }

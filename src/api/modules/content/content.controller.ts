@@ -15,7 +15,9 @@ router.get('/landing-page', (_, res, next) =>
  * los documentos que luego son modificados manualmente para actualizar el contenido de la landing page desde Sanity Studio
  */
 router.get('/add-next-weeks-landing-page-content', (req, res, next) => {
-	addNextWeeksLandingPageContent()
+	const { weeksInTheFuture } = req.query;
+
+	addNextWeeksLandingPageContent(parseInt((weeksInTheFuture ?? '4') as string))
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
 });

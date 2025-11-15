@@ -4,14 +4,14 @@ import { client } from '../../_helpers/sanity-connector';
 // Queries
 import {
 	landingPageContentQuery,
-	landingPageContentReferencesQuery,
 	landingPageListQuery,
+	latestLandingPageReferencesQuery,
 	rotatingContentQuery,
 } from '../../_queries/content.query';
 import {
 	LandingPageContentQueryResult,
-	LandingPageContentReferencesQueryResult,
 	LandingPageListQueryResult,
+	LatestLandingPageReferencesQueryResult,
 	RotatingContentQueryResult,
 } from '../../sanity/types';
 
@@ -25,8 +25,8 @@ export async function fetchLandingPageContent(slug: string): Promise<LandingPage
 /**
  * Fetches the landing page content references for a specific week/year configuration
  */
-export async function landingPageContentReferences(slug: string): Promise<LandingPageContentReferencesQueryResult> {
-	return client.fetch(landingPageContentReferencesQuery, { slug });
+export async function fetchLatestLandingPageReferences(): Promise<LatestLandingPageReferencesQueryResult> {
+	return client.fetch(latestLandingPageReferencesQuery);
 }
 
 /**
