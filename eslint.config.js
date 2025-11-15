@@ -67,7 +67,13 @@ export default [
 			],
 			'@angular-eslint/prefer-signals': 'error',
 			'@typescript-eslint/no-inferrable-types': 0,
-			'@typescript-eslint/no-unused-vars': 'error',
+			'@typescript-eslint/no-unused-vars': [
+				'error',
+				{
+					argsIgnorePattern: '^_',
+					varsIgnorePattern: '^_',
+				},
+			],
 			'@typescript-eslint/no-non-null-assertion': 'error',
 			'@typescript-eslint/no-explicit-any': 'error',
 			'@typescript-eslint/no-require-imports': 'error',
