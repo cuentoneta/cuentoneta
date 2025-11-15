@@ -1,14 +1,23 @@
 import express from 'express';
-import { fetchLandingPageContent } from './content.service';
+import { addNextWeeksLandingPageContent, fetchLandingPageContent } from './content.service';
 const router = express.Router();
-
-// Routes
-router.get('/landing-page', getLandingPageContent);
 
 export default router;
 
-function getLandingPageContent(_: express.Request, res: express.Response, next: express.NextFunction) {
+router.get('/landing-page', (_, res, next) =>
 	fetchLandingPageContent()
 		.then((result) => res.json(result))
+		.catch((err) => next(err)),
+);
+
+/**
+ * Endpoint encargado de agregar instancias de documentos landingPage para las próximas semanas, a fin de generar automáticamente
+ * los documentos que luego son modificados manualmente para actualizar el contenido de la landing page desde Sanity Studio
+ */
+router.get('/add-next-weeks-landing-page-content', (req, res, next) => {
+	const { weeksInTheFuture } = req.query;
+
+	addNextWeeksLandingPageContent(parseInt((weeksInTheFuture ?? '4') as string))
+		.then((result) => res.json(result))
 		.catch((err) => next(err));
-}
+});

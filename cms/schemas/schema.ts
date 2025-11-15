@@ -13,6 +13,7 @@ import { resourceType, resource } from './resourceType';
 import publication from './publication';
 import contentCampaign from './contentCampaign';
 import contributors from './contributor';
+import rotatingContent from './rotatingContent';
 
 export default [
 	// Tipos de propiedades
@@ -29,4 +30,6 @@ export default [
 	nationality,
 	resourceType,
 	tag,
+	// Singletons
+	rotatingContent,
 ];

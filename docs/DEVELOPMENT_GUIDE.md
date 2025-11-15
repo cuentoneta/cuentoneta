@@ -49,7 +49,7 @@ Los ambientes de despliegue son los siguientes:
 
 - **Web | Producción:** [https://cuentoneta.ar/](https://cuentoneta.ar/)
 - **Web | Staging:** [https://staging.cuentoneta.ar](https://staging.cuentoneta.ar)
-- **Storybook:** [https://cuentoneta-storybook.vercel.app/](https://cuentoneta-storybook.vercel.app/)
+- **Storybook:** [https://storybook.cuentoneta.ar](https://storybook.cuentoneta.ar)
 - **Sanity Studio:** https://cuentoneta.sanity.studio/
 
 ---
@@ -108,6 +108,8 @@ En este documento pueden encontrarse:
 - Lenguaje ubicuo del dominio
 - Patrones arquitectónicos implementados
 - Mejoras recomendadas para evolución futura
+
+Para comprender **la estrategia de actualización de contenido** a través de procesos automáticos, incluyendo la generación de landing pages y actualización de contenido rotativo mediante cron jobs, consulta la documentación sobre [Estrategias de Actualización de Contenido](./CONTENT_UPDATE_STRATEGIES.md).
 
 ---
 

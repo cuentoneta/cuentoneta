@@ -1,8 +1,58 @@
 import { defineQuery } from 'groq';
 
-export const landingPageContentQuery = defineQuery(`
-*[_type == 'landingPage' && !(_id in path('drafts.**'))][0]{
+export const rotatingContentQuery = defineQuery(`
+*[_type == 'rotatingContent' && _id == 'rotatingContent'][0]{
     _id,
+    name,
+    'mostRead': coalesce(mostRead[]->{
+        _id,
+        'slug': slug.current,
+        title,
+        language,
+        badLanguage,
+        'body': [],
+        originalPublication,
+        approximateReadingTime,
+        'resources': [],
+        'mediaSources': coalesce(mediaSources[], []),
+        'author': author-> {
+            _id,
+            slug,
+            name,
+            image,
+            nationality->,
+            'biography': [],
+            bornOn,
+            diedOn,
+            'resources': [],
+        }
+    },[])
+}`);
+
+export const landingPageListQuery = defineQuery(`
+*[_type == 'landingPage' && !(_id in path('drafts.**')) && slug.current in $slugs]{
+		_id,
+		'slug': slug.current,
+		config,
+}`);
+
+export const latestLandingPageReferencesQuery = defineQuery(`
+*[_type == 'landingPage' && !(_id in path('drafts.**'))]{
+    _id,
+    _type,
+    'slug': slug.current,
+    config,
+    'cards': coalesce(cards[],[]),
+    'campaigns': coalesce(campaigns[],[]),
+    'latestReads': coalesce(latestReads,[]),
+} | order(_createdAt desc)[0]
+`);
+
+export const landingPageContentQuery = defineQuery(`
+*[_type == 'landingPage' && !(_id in path('drafts.**')) && slug.current == $slug][0]{
+    _id,
+    'slug': slug.current,
+    config,
     'cards': coalesce(cards[]->{
         _id,
         title,
@@ -40,29 +90,6 @@ export const landingPageContentQuery = defineQuery(`
                 'subtitle': coalesce(contents.md.subtitle, []),
                 'image': contents.md.image
             }
-        }
-    },[]),
-    'mostRead': coalesce(mostRead[]->{
-        _id,
-        'slug': slug.current,
-        title,
-        language,
-        badLanguage,
-        'body': [],
-        originalPublication,
-        approximateReadingTime,
-        'resources': [],
-        'mediaSources': coalesce(mediaSources[], []),
-        'author': author-> { 
-            _id,
-            slug,
-            name,
-            image,
-            nationality->,
-            'biography': [],
-            bornOn,
-            diedOn,
-            'resources': [],
         }
     },[]),
     'latestReads': coalesce(latestReads[]->{
