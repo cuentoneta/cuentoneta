@@ -2,9 +2,15 @@
 import { client } from '../../_helpers/sanity-connector';
 
 // Queries
-import { landingPageContentQuery, landingPageListQuery, rotatingContentQuery } from '../../_queries/content.query';
+import {
+	landingPageContentQuery,
+	landingPageContentReferencesQuery,
+	landingPageListQuery,
+	rotatingContentQuery,
+} from '../../_queries/content.query';
 import {
 	LandingPageContentQueryResult,
+	LandingPageContentReferencesQueryResult,
 	LandingPageListQueryResult,
 	RotatingContentQueryResult,
 } from '../../sanity/types';
@@ -14,6 +20,13 @@ import {
  */
 export async function fetchLandingPageContent(slug: string): Promise<LandingPageContentQueryResult> {
 	return client.fetch(landingPageContentQuery, { slug });
+}
+
+/**
+ * Fetches the landing page content references for a specific week/year configuration
+ */
+export async function landingPageContentReferences(slug: string): Promise<LandingPageContentReferencesQueryResult> {
+	return client.fetch(landingPageContentReferencesQuery, { slug });
 }
 
 /**
@@ -33,6 +46,7 @@ export async function fetchRotatingContent(): Promise<RotatingContentQueryResult
 /**
  * Creates multiple landing page documents in parallel
  */
+
 export async function createLandingPages(
 	landingPageObjects: Array<{
 		_type: string;
@@ -42,6 +56,6 @@ export async function createLandingPages(
 		cards: Array<{ _key: string; _type: string; _ref: string }>;
 		latestReads: Array<{ _key: string; _type: string; _ref: string }>;
 	}>,
-): Promise<any[]> {
+) {
 	return Promise.all(landingPageObjects.map((object) => client.create(object)));
 }

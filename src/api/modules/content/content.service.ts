@@ -8,6 +8,7 @@ import { LandingPageContent, RotatingContent } from '@models/landing-page-conten
 import { addWeeks, getWeek, getYear } from 'date-fns';
 import { mapLandingPageContent, mapStoryNavigationTeaserWithAuthor } from '../../_utils/functions';
 import slugify from 'slugify';
+import { landingPageContentReferences } from './content.repository';
 
 export async function fetchLandingPageContent(): Promise<LandingPageContent> {
 	const weekOfYear = getWeek(new Date());
@@ -36,8 +37,7 @@ export async function fetchRotatingContent(): Promise<RotatingContent> {
 	return { ...result, mostRead: mapStoryNavigationTeaserWithAuthor(result.mostRead) };
 }
 
-// export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 4): Promise<LandingPageContent[]> {
-export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 4): Promise<any> {
+export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 4) {
 	// Obtiene información para generar slug de la configuración contenido de landing page activo (MM-YYYY)
 	const currentDate = new Date();
 	const currentWeekOfYear = getWeek(currentDate);
@@ -45,7 +45,7 @@ export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 
 	const currentLandingPageSlug = `${currentWeekOfYear.toString().padStart(2, '0')}-${year}`;
 
 	// Obtiene los nombres de los documentos de contenido de la landing page, obteniendo en formato MM-YYYY las próximas 'weeksIntheFuture' semanas
-	const slugs = Array.from({ length: weeksInTheFuture }, (_) => '').map((w, index) => {
+	const slugs = Array.from({ length: weeksInTheFuture }, () => '').map((_, index) => {
 		const date = addWeeks(currentDate, index + 1); // Se obtiene una semana futura en base a correr la fecha actual una semana
 		const weekOfYear = getWeek(date);
 		const year = getYear(date);
@@ -64,7 +64,7 @@ export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 
 		return [];
 	}
 
-	const currentLandingPage = await contentRepository.fetchLandingPageContent(currentLandingPageSlug);
+	const currentLandingPage = await contentRepository.landingPageContentReferences(currentLandingPageSlug);
 
 	if (!currentLandingPage) {
 		throw new Error(`Landing page for the '${currentLandingPageSlug}' slug content not found`);
@@ -73,18 +73,13 @@ export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 
 	const notLoadedWeeks = slugs.filter((t) => !result.find((r) => r.config === t));
 
 	const landingPageObjects = notLoadedWeeks.map((weekYear) => ({
-		_type: 'landingPage',
+		...currentLandingPage,
 		config: weekYear,
 		slug: {
 			_type: 'slug',
 			current: slugify(weekYear),
 		},
-		campaigns: currentLandingPage.campaigns.map((c) => ({ _key: c._id, _type: 'campaign', _ref: c._id })),
-		cards: currentLandingPage.cards.map((c) => ({ _key: c._id, _type: 'storylist', _ref: c._id })),
-		latestReads: currentLandingPage.latestReads.map((c) => ({ _key: c._id, _type: 'story', _ref: c._id })),
 	}));
 
-	const createdConfigs = await contentRepository.createLandingPages(landingPageObjects);
-
-	return createdConfigs;
+	return await contentRepository.createLandingPages(landingPageObjects);
 }

@@ -36,6 +36,17 @@ export const landingPageListQuery = defineQuery(`
 		config,
 }`);
 
+export const landingPageContentReferencesQuery = defineQuery(`
+*[_type == 'landingPage' && !(_id in path('drafts.**')) && slug.current == $slug][0]{
+    _id,
+    _type,
+    'slug': slug.current,
+    config,
+    'cards': coalesce(cards[],[]),
+    'campaigns': coalesce(campaigns[],[]),
+    'latestReads': coalesce(latestReads,[]),
+}`);
+
 export const landingPageContentQuery = defineQuery(`
 *[_type == 'landingPage' && !(_id in path('drafts.**')) && slug.current == $slug][0]{
     _id,
