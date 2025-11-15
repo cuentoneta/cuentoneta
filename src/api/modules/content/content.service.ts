@@ -8,7 +8,6 @@ import { LandingPageContent, RotatingContent } from '@models/landing-page-conten
 import { addWeeks, getWeek, getYear } from 'date-fns';
 import { mapLandingPageContent, mapStoryNavigationTeaserWithAuthor } from '../../_utils/functions';
 import slugify from 'slugify';
-import { landingPageContentReferences } from './content.repository';
 
 export async function fetchLandingPageContent(): Promise<LandingPageContent> {
 	const weekOfYear = getWeek(new Date());
