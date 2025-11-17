@@ -13,7 +13,14 @@ import { FacebookPlatform, SharingPlatform, TwitterPlatform, WhatsappPlatform } 
 		<section class="flex flex-1 flex-row gap-6">
 			@for (platform of platforms; track $index) {
 				@if (!isLoading()) {
-					<cuentoneta-share-button [platform]="platform" [params]="params()" [message]="message()" [route]="route()" />
+					<cuentoneta-share-button
+						[platform]="platform"
+						[params]="params()"
+						[message]="message()"
+						[route]="route()"
+						[tooltip]="getShareTooltip(platform)"
+						[tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"
+					/>
 				} @else {
 					<ngx-skeleton-loader
 						[theme]="{
@@ -54,4 +61,8 @@ export class ShareContentComponent {
 	];
 
 	skeletonColor = inject(ThemeService).pickColor('zinc', 300);
+
+	public getShareTooltip(platform: SharingPlatform): string {
+		return `Compartir en ${platform.name}`;
+	}
 }

@@ -8,14 +8,12 @@ import {
 	OnInit,
 } from '@angular/core';
 import { SharingPlatform } from '@models/sharing-platform';
-import { TooltipDirective } from '../../directives/tooltip.directive';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { NgComponentOutlet } from '@angular/common';
 
 @Component({
 	selector: 'cuentoneta-share-button',
 	imports: [NgComponentOutlet],
-	hostDirectives: [TooltipDirective],
 	template: ` @if (platform(); as platform) {
 		<button
 			(click)="onShareToPlatformClicked($event, platform)"
@@ -29,7 +27,7 @@ import { NgComponentOutlet } from '@angular/common';
 		</button>
 	}`,
 })
-export class ShareButtonComponent implements OnInit {
+export class ShareButtonComponent {
 	readonly platform = input.required<SharingPlatform>();
 	readonly params = input<{ [key: string]: string }>({});
 	readonly message = input<string>('');
@@ -37,7 +35,6 @@ export class ShareButtonComponent implements OnInit {
 
 	readonly NgIcon = NgIcon;
 
-	private tooltipDirective = inject(TooltipDirective);
 	private injector = inject(EnvironmentInjector);
 
 	readonly icon = computed(() => {
@@ -62,10 +59,5 @@ export class ShareButtonComponent implements OnInit {
 			platform.target,
 			platform.features,
 		);
-	}
-
-	ngOnInit() {
-		this.tooltipDirective.text.set('Compartir en ' + this.platform().name);
-		this.tooltipDirective.position.set('bottom');
 	}
 }
