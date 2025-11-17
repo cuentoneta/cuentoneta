@@ -39,6 +39,7 @@ import Tabs from '@components/tabs/tabs.component';
 import { InitialsPipe } from '../../pipes/initials.pipe';
 import { ThemeService } from '../../providers/theme.service';
 import { StoryCardTeaserSkeletonComponent } from '@components/story-card-teaser/story-card-teaser-skeleton.component';
+import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 
 @Component({
 	selector: 'cuentoneta-author',
@@ -53,6 +54,7 @@ import { StoryCardTeaserSkeletonComponent } from '@components/story-card-teaser/
 		ResourceComponent,
 		NgxSkeletonLoaderComponent,
 		StoryCardTeaserSkeletonComponent,
+		A11yTooltipModule,
 	],
 	hostDirectives: [MetaTagsDirective],
 	changeDetection: ChangeDetectionStrategy.OnPush,

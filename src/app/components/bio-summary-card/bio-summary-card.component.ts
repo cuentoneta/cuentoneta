@@ -8,6 +8,7 @@ import { Story } from '@models/story.model';
 import { AuthorTeaserComponent } from '../author-teaser/author-teaser.component';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import { ResourceComponent } from '../resource/resource.component';
+import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 
 @Component({
 	selector: 'cuentoneta-bio-summary-card',
@@ -33,7 +34,7 @@ import { ResourceComponent } from '../resource/resource.component';
 			</section>
 		</div>
 	`,
-	imports: [AuthorTeaserComponent, ResourceComponent, PortableTextParserComponent],
+	imports: [AuthorTeaserComponent, ResourceComponent, PortableTextParserComponent, A11yTooltipModule],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BioSummaryCardComponent {

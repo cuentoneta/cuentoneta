@@ -11,10 +11,11 @@ import { Tag } from '@models/tag.model';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { iconMappers } from '@models/icon.model';
 import { NgComponentOutlet } from '@angular/common';
+import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 
 @Component({
 	selector: 'cuentoneta-badge',
-	imports: [NgComponentOutlet],
+	imports: [NgComponentOutlet, A11yTooltipModule],
 	template: `
 		<span class="inter-body-xs-bold flex items-center gap-1">
 			@if (showIcon() && icon(); as icon) {
