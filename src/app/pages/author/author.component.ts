@@ -137,7 +137,11 @@ import { StoryCardTeaserSkeletonComponent } from '@components/story-card-teaser/
 											<div class="font-inter font-semibold text-gray-600">Recursos web sobre el autor:</div>
 											<div class="flex justify-start gap-4">
 												@for (resource of author.resources; track $index) {
-													<cuentoneta-resource [resource]="resource" />
+													<cuentoneta-resource
+														[resource]="resource"
+														[tooltip]="resource.title"
+														[tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"
+													/>
 												}
 											</div>
 										}

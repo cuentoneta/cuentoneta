@@ -16,14 +16,12 @@ import { Resource } from '@models/resource.model';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Directives
-import { TooltipDirective } from '../../directives/tooltip.directive';
 import { iconMappers } from '@models/icon.model';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { NgComponentOutlet } from '@angular/common';
 
 @Component({
 	selector: 'cuentoneta-resource',
-	hostDirectives: [TooltipDirective],
 	imports: [NgxSkeletonLoaderModule, NgComponentOutlet],
 	template: `
 		<a
@@ -43,7 +41,7 @@ import { NgComponentOutlet } from '@angular/common';
 		}
 	`,
 })
-export class ResourceComponent implements OnInit {
+export class ResourceComponent {
 	readonly resource = input.required<Resource>();
 	readonly icon = computed(() => {
 		if (!this.resource()?.resourceType?.slug) {
@@ -63,10 +61,4 @@ export class ResourceComponent implements OnInit {
 	readonly NgIcon = NgIcon;
 
 	private injector = inject(EnvironmentInjector);
-	private tooltipDirective = inject(TooltipDirective);
-
-	ngOnInit() {
-		this.tooltipDirective.text.set(this.resource().title);
-		this.tooltipDirective.position.set('bottom');
-	}
 }

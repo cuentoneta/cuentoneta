@@ -1,7 +1,6 @@
 // Core
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-
 // Modelos
 import { Story } from '@models/story.model';
 
@@ -19,7 +18,11 @@ import { ResourceComponent } from '../resource/resource.component';
 				@if (resources.length > 0) {
 					<div class="xs-max:col-start-1 xs-max:col-end-3 flex justify-start gap-4 sm:justify-end">
 						@for (resource of resources(); track $index) {
-							<cuentoneta-resource [resource]="resource" />
+							<cuentoneta-resource
+								[resource]="resource"
+								[tooltip]="resource.title"
+								[tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"
+							/>
 						}
 					</div>
 				}
