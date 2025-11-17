@@ -43,9 +43,6 @@ importers:
       '@angular/youtube-player':
         specifier: 20.2.5
         version: 20.2.5(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
-      '@floating-ui/dom':
-        specifier: ^1.7.1
-        version: 1.7.1
       '@microsoft/clarity':
         specifier: ^1.0.0
         version: 1.0.0
@@ -2071,18 +2068,6 @@ packages:
     resolution:
       { integrity: sha512-Z5kJ+wU3oA7MMIqVR9tyZRtjYPr4OC004Q4Rw7pgOKUOKkJfZ3O24nz3WYfGRpMDNmcOi3TwQOmgm7B7Tpii0w== }
     engines: { node: ^18.18.0 || ^20.9.0 || >=21.1.0 }
-
-  '@floating-ui/core@1.7.1':
-    resolution:
-      { integrity: sha512-azI0DrjMMfIug/ExbBaeDVJXcY0a7EPvPjb2xAJPa4HeimBX+Z18HK8QQR3jb6356SnDDdxx+hinMLcJEDdOjw== }
-
-  '@floating-ui/dom@1.7.1':
-    resolution:
-      { integrity: sha512-cwsmW/zyw5ltYTUeeYJ60CnQuPqmGwuGVhG9w0PRaRKkAyi38BT5CKrpIbb+jtahSwUl04cWzSx9ZOIxeS6RsQ== }
-
-  '@floating-ui/utils@0.2.9':
-    resolution:
-      { integrity: sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg== }
 
   '@happy-dom/jest-environment@18.0.1':
     resolution:
@@ -13014,17 +12999,6 @@ snapshots:
     dependencies:
       '@eslint/core': 0.15.2
       levn: 0.4.1
-
-  '@floating-ui/core@1.7.1':
-    dependencies:
-      '@floating-ui/utils': 0.2.9
-
-  '@floating-ui/dom@1.7.1':
-    dependencies:
-      '@floating-ui/core': 1.7.1
-      '@floating-ui/utils': 0.2.9
-
-  '@floating-ui/utils@0.2.9': {}
 
   '@happy-dom/jest-environment@18.0.1':
     dependencies:

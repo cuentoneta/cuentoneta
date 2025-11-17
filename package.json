@@ -40,7 +40,6 @@
 		"@angular/router": "20.3.2",
 		"@angular/ssr": "20.3.3",
 		"@angular/youtube-player": "20.2.5",
-		"@floating-ui/dom": "^1.7.1",
 		"@microsoft/clarity": "^1.0.0",
 		"@ng-icons/core": "^32.1.0",
 		"@ng-icons/font-awesome": "^32.1.0",
