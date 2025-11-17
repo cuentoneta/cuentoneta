@@ -20,7 +20,7 @@ import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 						[message]="message()"
 						[route]="route()"
 						[tooltip]="getShareTooltip(platform)"
-						[tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"
+						[tooltipConfig]="{ asLabel: true }"
 					/>
 				} @else {
 					<ngx-skeleton-loader

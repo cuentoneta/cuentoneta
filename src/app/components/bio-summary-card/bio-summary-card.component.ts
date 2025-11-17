@@ -22,7 +22,7 @@ import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 							<cuentoneta-resource
 								[resource]="resource"
 								[tooltip]="resource.title"
-								[tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"
+								[tooltipConfig]="{ asLabel: true }"
 							/>
 						}
 					</div>

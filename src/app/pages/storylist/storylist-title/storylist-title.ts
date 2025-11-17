@@ -22,7 +22,7 @@ import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 							[tag]="tag"
 							[showIcon]="true"
 							[tooltip]="tag.shortDescription"
-							[tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"
+							[tooltipConfig]="{ asLabel: true }"
 						/>
 					}
 				</div>
