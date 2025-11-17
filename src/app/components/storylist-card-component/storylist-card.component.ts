@@ -1,7 +1,6 @@
 // Core
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-
 // Router
 import { RouterLink } from '@angular/router';
 import { AppRoutes } from '../../app.routes';
@@ -47,7 +46,13 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 						@if (!!storylist.tags && storylist.tags.length > 0) {
 							<div class="flex">
 								@for (tag of storylist.tags; track tag.slug) {
-									<cuentoneta-badge [tag]="tag" [showIcon]="true" class="ml-3" />
+									<cuentoneta-badge
+										[tag]="tag"
+										[showIcon]="true"
+										[tooltip]="tag.shortDescription"
+										[tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"
+										class="ml-3"
+									/>
 								}
 							</div>
 						}

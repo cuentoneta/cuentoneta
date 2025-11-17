@@ -8,14 +8,12 @@ import {
 	OnInit,
 } from '@angular/core';
 import { Tag } from '@models/tag.model';
-import { TooltipDirective } from '../../directives/tooltip.directive';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { iconMappers } from '@models/icon.model';
 import { NgComponentOutlet } from '@angular/common';
 
 @Component({
 	selector: 'cuentoneta-badge',
-	hostDirectives: [TooltipDirective],
 	imports: [NgComponentOutlet],
 	template: `
 		<span class="inter-body-xs-bold flex items-center gap-1">
@@ -31,7 +29,7 @@ import { NgComponentOutlet } from '@angular/common';
 		}
 	`,
 })
-export class BadgeComponent implements OnInit {
+export class BadgeComponent {
 	readonly tag = input.required<Tag>();
 	readonly showIcon = input(false);
 	readonly icon = computed(() => {
@@ -54,10 +52,4 @@ export class BadgeComponent implements OnInit {
 	readonly NgIcon = NgIcon;
 
 	private injector = inject(EnvironmentInjector);
-	private tooltipDirective = inject(TooltipDirective);
-
-	ngOnInit() {
-		this.tooltipDirective.text.set(this.tag().shortDescription);
-		this.tooltipDirective.position.set('top');
-	}
 }

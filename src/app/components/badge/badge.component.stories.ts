@@ -182,12 +182,12 @@ export const AllBadgesWithoutIcons: Story = {
 	render: () => ({
 		template: `
 			<div class="flex flex-wrap gap-2">
-				<cuentoneta-badge [tag]="bookTag" [showIcon]="false" />
-				<cuentoneta-badge [tag]="bookmarksTag" [showIcon]="false" />
-				<cuentoneta-badge [tag]="trophyTag" [showIcon]="false" />
-				<cuentoneta-badge [tag]="languageTag" [showIcon]="false" />
-				<cuentoneta-badge [tag]="peopleTag" [showIcon]="false" />
-				<cuentoneta-badge [tag]="starsTag" [showIcon]="false" />
+				<cuentoneta-badge [tag]="bookTag" [showIcon]="false" [tooltip]="tag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
+				<cuentoneta-badge [tag]="bookmarksTag" [showIcon]="false" [tooltip]="tag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
+				<cuentoneta-badge [tag]="trophyTag" [showIcon]="false" [tooltip]="tag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
+				<cuentoneta-badge [tag]="languageTag" [showIcon]="false" [tooltip]="tag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
+				<cuentoneta-badge [tag]="peopleTag" [showIcon]="false" [tooltip]="tag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
+				<cuentoneta-badge [tag]="starsTag" [showIcon]="false" [tooltip]="tag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
 			</div>
 		`,
 		props: {
@@ -208,32 +208,32 @@ export const ComparisonShowcase: Story = {
 				<div>
 					<h3 class="mb-2 text-lg font-semibold">Con Íconos</h3>
 					<div class="flex flex-wrap gap-2">
-						<cuentoneta-badge [tag]="bookTag" [showIcon]="true" />
-						<cuentoneta-badge [tag]="bookmarksTag" [showIcon]="true" />
-						<cuentoneta-badge [tag]="trophyTag" [showIcon]="true" />
-						<cuentoneta-badge [tag]="languageTag" [showIcon]="true" />
-						<cuentoneta-badge [tag]="peopleTag" [showIcon]="true" />
-						<cuentoneta-badge [tag]="starsTag" [showIcon]="true" />
+						<cuentoneta-badge [tag]="bookTag" [showIcon]="true" [tooltip]="bookTag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
+						<cuentoneta-badge [tag]="bookmarksTag" [showIcon]="true" [tooltip]="bookmarksTag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
+						<cuentoneta-badge [tag]="trophyTag" [showIcon]="true" [tooltip]="trophyTag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
+						<cuentoneta-badge [tag]="languageTag" [showIcon]="true" [tooltip]="languageTag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
+						<cuentoneta-badge [tag]="peopleTag" [showIcon]="true" [tooltip]="peopleTag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
+						<cuentoneta-badge [tag]="starsTag" [showIcon]="true" [tooltip]="starsTag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
 					</div>
 				</div>
 				
 				<div>
 					<h3 class="mb-2 text-lg font-semibold">Sin Íconos</h3>
 					<div class="flex flex-wrap gap-2">
-						<cuentoneta-badge [tag]="bookTag" [showIcon]="false" />
-						<cuentoneta-badge [tag]="bookmarksTag" [showIcon]="false" />
-						<cuentoneta-badge [tag]="trophyTag" [showIcon]="false" />
-						<cuentoneta-badge [tag]="languageTag" [showIcon]="false" />
-						<cuentoneta-badge [tag]="peopleTag" [showIcon]="false" />
-						<cuentoneta-badge [tag]="starsTag" [showIcon]="false" />
+						<cuentoneta-badge [tag]="bookTag" [showIcon]="false" [tooltip]="bookTag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
+						<cuentoneta-badge [tag]="bookmarksTag" [showIcon]="false" [tooltip]="bookmarksTag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
+						<cuentoneta-badge [tag]="trophyTag" [showIcon]="false" [tooltip]="trophyTag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
+						<cuentoneta-badge [tag]="languageTag" [showIcon]="false" [tooltip]="languageTag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
+						<cuentoneta-badge [tag]="peopleTag" [showIcon]="false" [tooltip]="peopleTag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
+						<cuentoneta-badge [tag]="starsTag" [showIcon]="false" [tooltip]="starsTag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
 					</div>
 				</div>
 				
 				<div>
 					<h3 class="mb-2 text-lg font-semibold">Sin Datos de Ícono</h3>
 					<div class="flex flex-wrap gap-2">
-						<cuentoneta-badge [tag]="noIconTag" [showIcon]="false" />
-						<cuentoneta-badge [tag]="noIconTag" [showIcon]="true" />
+						<cuentoneta-badge [tag]="noIconTag" [showIcon]="false" [tooltip]="noIconTag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
+						<cuentoneta-badge [tag]="noIconTag" [showIcon]="true" [tooltip]="noIconTag.shortDescription"  [tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"/>
 					</div>
 				</div>
 			</div>

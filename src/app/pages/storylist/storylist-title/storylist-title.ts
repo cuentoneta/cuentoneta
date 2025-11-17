@@ -17,7 +17,12 @@ import { StorylistTitleSkeleton } from './storylist-title-skeleton';
 						<span class="inter-body-xs-bold flex items-center gap-1">{{ storylist()?.count }} textos</span>
 					</div>
 					@for (tag of storylist()?.tags; track tag.slug) {
-						<cuentoneta-badge [tag]="tag" [showIcon]="true" />
+						<cuentoneta-badge
+							[tag]="tag"
+							[showIcon]="true"
+							[tooltip]="tag.shortDescription"
+							[tooltipConfig]="{ asLabel: true, useBootstrapStyles: true }"
+						/>
 					}
 				</div>
 			</div>
