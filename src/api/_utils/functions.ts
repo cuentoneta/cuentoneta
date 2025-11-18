@@ -58,7 +58,7 @@ export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>, l
 
 	return {
 		_id: rawAuthorData._id,
-		slug: rawAuthorData.slug.current,
+		slug: rawAuthorData.slug,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
 			flag: urlFor(rawAuthorData.nationality.flag),
@@ -78,7 +78,7 @@ export function mapAuthorTeaser(
 ): AuthorTeaser {
 	return {
 		_id: rawAuthorData._id,
-		slug: rawAuthorData.slug.current,
+		slug: rawAuthorData.slug,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
 			flag: urlFor(rawAuthorData.nationality.flag),

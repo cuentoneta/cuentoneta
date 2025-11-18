@@ -53,7 +53,7 @@ export const storylistNavigationTeasersQuery = defineQuery(`
             'mediaSources': coalesce(mediaSources[], []),
             'author': author->{ 
                 _id,
-                slug,
+                'slug': slug.current,
                 name,
                 image,
                 nationality->,
@@ -104,7 +104,7 @@ export const storylistQuery = defineQuery(`
             'mediaSources': coalesce(mediaSources[], []),
             'author': author->{ 
                 _id,
-                slug,
+                'slug': slug.current,
                 name,
                 image,
                 nationality->,

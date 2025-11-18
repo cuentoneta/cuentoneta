@@ -17,7 +17,7 @@ export const rotatingContentQuery = defineQuery(`
         'mediaSources': coalesce(mediaSources[], []),
         'author': author-> {
             _id,
-            slug,
+            'slug': slug.current,
             name,
             image,
             nationality->,
@@ -105,7 +105,7 @@ export const landingPageContentQuery = defineQuery(`
         'mediaSources': coalesce(mediaSources[], []),
         'author': author-> { 
             _id,
-            slug,
+            'slug': slug.current,
             name,
             image,
             nationality->,
