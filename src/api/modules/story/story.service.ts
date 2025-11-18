@@ -15,7 +15,6 @@ import {
 	mapStoryNavigationTeaser,
 	mapStoryTeaser,
 	mapStoryTeaserWithAuthor,
-	mapMediaSourcesForStorylist,
 } from '../../_utils/functions';
 
 // Modelos
@@ -29,6 +28,7 @@ import { StoriesByAuthorSlugArgs } from '../../interfaces/queryArgs';
 import * as contentService from '../content/content.service';
 import { fetchRotatingContent } from '../content/content.service';
 import { fetchClarityData } from '../../_helpers/clarity-connector';
+import { mapMediaSourcesForStorylist } from '../../_utils/media-sources.functions';
 
 export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryTeaser[]> {
 	const result = await storyRepository.fetchByAuthorSlug(
