@@ -47,13 +47,7 @@ import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 						@if (!!storylist.tags && storylist.tags.length > 0) {
 							<div class="flex">
 								@for (tag of storylist.tags; track tag.slug) {
-									<cuentoneta-badge
-										[tag]="tag"
-										[showIcon]="true"
-										[tooltip]="tag.shortDescription"
-										[tooltipConfig]="{ asLabel: true }"
-										class="ml-3"
-									/>
+									<cuentoneta-badge [tag]="tag" [showIcon]="true" [tooltip]="tag.shortDescription" class="ml-3" />
 								}
 							</div>
 						}

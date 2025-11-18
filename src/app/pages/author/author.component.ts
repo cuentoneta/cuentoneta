@@ -39,7 +39,6 @@ import Tabs from '@components/tabs/tabs.component';
 import { InitialsPipe } from '../../pipes/initials.pipe';
 import { ThemeService } from '../../providers/theme.service';
 import { StoryCardTeaserSkeletonComponent } from '@components/story-card-teaser/story-card-teaser-skeleton.component';
-import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 
 @Component({
 	selector: 'cuentoneta-author',
@@ -54,7 +53,6 @@ import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 		ResourceComponent,
 		NgxSkeletonLoaderComponent,
 		StoryCardTeaserSkeletonComponent,
-		A11yTooltipModule,
 	],
 	hostDirectives: [MetaTagsDirective],
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -139,11 +137,7 @@ import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 											<div class="font-inter font-semibold text-gray-600">Recursos web sobre el autor:</div>
 											<div class="flex justify-start gap-4">
 												@for (resource of author.resources; track $index) {
-													<cuentoneta-resource
-														[resource]="resource"
-														[tooltip]="resource.title"
-														[tooltipConfig]="{ asLabel: true }"
-													/>
+													<cuentoneta-resource [resource]="resource" />
 												}
 											</div>
 										}

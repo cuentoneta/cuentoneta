@@ -1,6 +1,5 @@
 import { render, screen, RenderResult } from '@testing-library/angular';
 import { ShareContentComponent } from './share-content.component';
-import { FacebookPlatform, SharingPlatform } from '@models/sharing-platform';
 
 describe('ShareContentComponent', () => {
 	const renderComponent = async (inputs?: {
@@ -59,13 +58,5 @@ describe('ShareContentComponent', () => {
 
 		const skeletons = screen.getAllByTestId('share-skeleton-loader');
 		expect(skeletons).toHaveLength(3);
-	});
-
-	it('should correctly format the share tooltip message via getShareTooltip method', () => {
-		const component = new ShareContentComponent();
-		const facebookPlatform: SharingPlatform = new FacebookPlatform();
-		const tooltipMessage = component.getShareTooltip(facebookPlatform);
-
-		expect(tooltipMessage).toBe('Compartir en Facebook');
 	});
 });

@@ -4,24 +4,16 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ThemeService } from '../../providers/theme.service';
 import { ShareButtonComponent } from '../share-button/share-button.component';
 import { FacebookPlatform, SharingPlatform, TwitterPlatform, WhatsappPlatform } from '@models/sharing-platform';
-import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 
 @Component({
 	selector: 'cuentoneta-share-content',
-	imports: [NgxSkeletonLoaderModule, ShareButtonComponent, A11yTooltipModule],
+	imports: [NgxSkeletonLoaderModule, ShareButtonComponent],
 	providers: [ThemeService],
 	template: `
 		<section class="flex flex-1 flex-row gap-6">
 			@for (platform of platforms; track $index) {
 				@if (!isLoading()) {
-					<cuentoneta-share-button
-						[platform]="platform"
-						[params]="params()"
-						[message]="message()"
-						[route]="route()"
-						[tooltip]="getShareTooltip(platform)"
-						[tooltipConfig]="{ asLabel: true }"
-					/>
+					<cuentoneta-share-button [platform]="platform" [params]="params()" [message]="message()" [route]="route()" />
 				} @else {
 					<ngx-skeleton-loader
 						[theme]="{
@@ -62,8 +54,4 @@ export class ShareContentComponent {
 	];
 
 	skeletonColor = inject(ThemeService).pickColor('zinc', 300);
-
-	getShareTooltip(platform: SharingPlatform): string {
-		return `Compartir en ${platform.name}`;
-	}
 }

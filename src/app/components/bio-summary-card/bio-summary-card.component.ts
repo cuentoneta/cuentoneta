@@ -8,7 +8,6 @@ import { Story } from '@models/story.model';
 import { AuthorTeaserComponent } from '../author-teaser/author-teaser.component';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import { ResourceComponent } from '../resource/resource.component';
-import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 
 @Component({
 	selector: 'cuentoneta-bio-summary-card',
@@ -19,11 +18,7 @@ import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 				@if (resources.length > 0) {
 					<div class="xs-max:col-start-1 xs-max:col-end-3 flex justify-start gap-4 sm:justify-end">
 						@for (resource of resources(); track $index) {
-							<cuentoneta-resource
-								[resource]="resource"
-								[tooltip]="resource.title"
-								[tooltipConfig]="{ asLabel: true }"
-							/>
+							<cuentoneta-resource [resource]="resource" />
 						}
 					</div>
 				}
@@ -34,7 +29,7 @@ import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 			</section>
 		</div>
 	`,
-	imports: [AuthorTeaserComponent, ResourceComponent, PortableTextParserComponent, A11yTooltipModule],
+	imports: [AuthorTeaserComponent, ResourceComponent, PortableTextParserComponent],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BioSummaryCardComponent {

@@ -1,7 +1,16 @@
 import { render, screen } from '@testing-library/angular';
 import { ResourceComponent } from './resource.component';
 import { resourceMock } from '@mocks/resource.mock';
+import { TestBed } from '@angular/core/testing';
+import { MockA11yTooltipModule } from '../../mocks/test/a11y-tooltip-module.mock';
 
+const setupTestBed = (testbed: any) => {
+	(testbed as typeof TestBed).configureTestingModule({}).overrideComponent(ResourceComponent, {
+		set: {
+			imports: [MockA11yTooltipModule],
+		},
+	});
+};
 describe('ResourceComponent', () => {
 	const regexTitle = new RegExp(resourceMock.title, 'i');
 	const url = resourceMock.url;
@@ -11,6 +20,7 @@ describe('ResourceComponent', () => {
 			inputs: {
 				resource: resourceMock,
 			},
+			configureTestBed: setupTestBed,
 		});
 	};
 

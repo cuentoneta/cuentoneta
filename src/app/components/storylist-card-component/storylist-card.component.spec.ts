@@ -29,3 +29,18 @@ describe('StorylistCardComponent', () => {
 		expect(component).toBeTruthy();
 	});
 });
+
+describe('StorylistCardComponent', () => {
+	let component: StorylistCardComponent;
+	let fixture: ComponentFixture<StorylistCardComponent>;
+
+	beforeEach(async () => {
+		fixture = TestBed.createComponent(StorylistCardComponent);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+	});
+
+	it('should create', () => {
+		expect(component).toBeTruthy();
+	});
+});

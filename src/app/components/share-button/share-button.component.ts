@@ -10,13 +10,15 @@ import {
 import { SharingPlatform } from '@models/sharing-platform';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { NgComponentOutlet } from '@angular/common';
+import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 
 @Component({
 	selector: 'cuentoneta-share-button',
-	imports: [NgComponentOutlet],
+	imports: [NgComponentOutlet, A11yTooltipModule],
 	template: ` @if (platform(); as platform) {
 		<button
 			(click)="onShareToPlatformClicked($event, platform)"
+			[tooltip]="getShareTooltip(platform)"
 			[attr.aria-label]="platform.name"
 			[attr.data-testid]="icon()?.name"
 			class="flex h-12 w-12 items-center justify-center gap-3 rounded-full border-1 border-solid border-gray-200 bg-gray-100 hover:bg-gray-200"
@@ -59,5 +61,9 @@ export class ShareButtonComponent {
 			platform.target,
 			platform.features,
 		);
+	}
+
+	getShareTooltip(platform: SharingPlatform): string {
+		return `Compartir en ${platform.name}`;
 	}
 }
