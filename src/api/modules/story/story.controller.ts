@@ -5,11 +5,20 @@ import { StoriesByAuthorSlugArgs } from '../../interfaces/queryArgs';
 const router = express.Router();
 
 // Routes
+router.get('/', getAllStories);
 router.get('/read', getBySlug);
 router.get('/author/:slug', getStoriesByAuthorSlug);
 router.get('/author/:slug/navigation', getStoryNavigationTeaserByAuthorSlug);
 
 export default router;
+
+function getAllStories(req: express.Request, res: express.Response, next: express.NextFunction) {
+	const { limit, offset } = req.query;
+	storyService
+		.fetchAllStories(parseInt((limit ?? '100') as string), parseInt((offset ?? '0') as string))
+		.then((result) => res.json(result))
+		.catch((err) => next(err));
+}
 
 function getBySlug(req: express.Request, res: express.Response, next: express.NextFunction) {
 	const { slug } = req.query;
