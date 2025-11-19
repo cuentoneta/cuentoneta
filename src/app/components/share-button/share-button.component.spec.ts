@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/angular';
 import { SharingPlatform } from '@models/sharing-platform';
 import { storyMock } from '../../mocks/story.mock';
 import { faBrandFacebook } from '@ng-icons/font-awesome/brands';
+import { TestBed } from '@angular/core/testing';
+import { MockA11yTooltipModule } from '@mocks/external-libs/a11y-tooltip-module.mock';
 
 class MockSharingPlatform implements SharingPlatform {
 	name = 'MySpace';
@@ -15,6 +17,14 @@ class MockSharingPlatform implements SharingPlatform {
 	}
 }
 
+const setupTestBed = (testbed: TestBed) => {
+	(testbed as typeof TestBed).configureTestingModule({}).overrideComponent(ShareButtonComponent, {
+		set: {
+			imports: [MockA11yTooltipModule],
+		},
+	});
+};
+
 describe('ShareButtonComponent', () => {
 	const setup = async () => {
 		return await render(ShareButtonComponent, {
@@ -24,6 +34,7 @@ describe('ShareButtonComponent', () => {
 				message: 'Leí esta historia y me pareció interesante',
 				route: `/stories/${storyMock.slug}`,
 			},
+			configureTestBed: setupTestBed,
 		});
 	};
 

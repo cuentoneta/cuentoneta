@@ -2,9 +2,9 @@ import { render, screen } from '@testing-library/angular';
 import { ResourceComponent } from './resource.component';
 import { resourceMock } from '@mocks/resource.mock';
 import { TestBed } from '@angular/core/testing';
-import { MockA11yTooltipModule } from '../../mocks/test/a11y-tooltip-module.mock';
+import { MockA11yTooltipModule } from '../../mocks/external-libs/a11y-tooltip-module.mock';
 
-const setupTestBed = (testbed: any) => {
+const setupTestBed = (testbed: TestBed) => {
 	(testbed as typeof TestBed).configureTestingModule({}).overrideComponent(ResourceComponent, {
 		set: {
 			imports: [MockA11yTooltipModule],

@@ -1,11 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StorylistCardComponent } from './storylist-card.component';
-import { NgModule } from '@angular/core';
-@NgModule({
-	declarations: [],
-	exports: [],
-})
-class MockA11yTooltipModule {}
+import { MockA11yTooltipModule } from '@mocks/external-libs/a11y-tooltip-module.mock';
 
 describe('StorylistCardComponent', () => {
 	let component: StorylistCardComponent;
@@ -20,21 +15,6 @@ describe('StorylistCardComponent', () => {
 			})
 			.compileComponents();
 
-		fixture = TestBed.createComponent(StorylistCardComponent);
-		component = fixture.componentInstance;
-		fixture.detectChanges();
-	});
-
-	it('should create', () => {
-		expect(component).toBeTruthy();
-	});
-});
-
-describe('StorylistCardComponent', () => {
-	let component: StorylistCardComponent;
-	let fixture: ComponentFixture<StorylistCardComponent>;
-
-	beforeEach(async () => {
 		fixture = TestBed.createComponent(StorylistCardComponent);
 		component = fixture.componentInstance;
 		fixture.detectChanges();
