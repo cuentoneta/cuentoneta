@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/directive-selector */
 import { Directive, input, NgModule } from '@angular/core';
 
 @Directive({

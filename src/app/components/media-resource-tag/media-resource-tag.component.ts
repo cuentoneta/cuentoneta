@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, OnInit } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
 
 export interface MediaResourcePlatform {

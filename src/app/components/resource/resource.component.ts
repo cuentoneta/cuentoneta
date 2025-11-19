@@ -1,13 +1,5 @@
 // Core
-import {
-	Component,
-	computed,
-	createEnvironmentInjector,
-	EnvironmentInjector,
-	inject,
-	input,
-	OnInit,
-} from '@angular/core';
+import { Component, computed, createEnvironmentInjector, EnvironmentInjector, inject, input } from '@angular/core';
 
 // Models
 import { Resource } from '@models/resource.model';
@@ -19,17 +11,11 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { iconMappers } from '@models/icon.model';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { NgComponentOutlet } from '@angular/common';
-import { A11yTooltipModule, provideA11yTooltip } from '@a11y-ngx/tooltip';
+import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 
 @Component({
 	selector: 'cuentoneta-resource',
 	imports: [NgxSkeletonLoaderModule, NgComponentOutlet, A11yTooltipModule],
-	providers: [
-		provideA11yTooltip({
-			offsetSize: 10,
-			safeSpace: { top: 65, left: 50 },
-		}),
-	],
 	template: `
 		<a
 			[tooltip]="resource().title"

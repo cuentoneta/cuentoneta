@@ -1,12 +1,4 @@
-import {
-	Component,
-	computed,
-	createEnvironmentInjector,
-	EnvironmentInjector,
-	inject,
-	input,
-	OnInit,
-} from '@angular/core';
+import { Component, computed, createEnvironmentInjector, EnvironmentInjector, inject, input } from '@angular/core';
 import { SharingPlatform } from '@models/sharing-platform';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { NgComponentOutlet } from '@angular/common';
