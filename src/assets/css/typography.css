@@ -1,4 +1,5 @@
 /* Clases de tipografías, según el sistema de diseño */
+
 /* region Inter font sizing mixins to tailwind class */
 .inter-body-base {
 	@apply font-inter text-base tracking-normal;

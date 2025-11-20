@@ -11,6 +11,7 @@
 @tailwind utilities;
 
 /* Imports de fuentes */
+
 /*
     Las tipografías específicas se encuentran declaradas en typography.css, el cual se importa directamente en project.json en la configuración
     del compilador de Angular
