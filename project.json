@@ -16,7 +16,7 @@
 				"browser": "./src/main.ts",
 				"polyfills": [],
 				"tsConfig": "./tsconfig.app.json",
-				"inlineStyleLanguage": "scss",
+				"inlineStyleLanguage": "css",
 				"assets": [
 					"./src/favicon.ico",
 					"./src/assets",
@@ -26,7 +26,11 @@
 					}
 				],
 				"server": "./src/main.server.ts",
-				"styles": ["./src/styles.scss"],
+				"styles": [
+					"node_modules/ngx-owl-carousel-o/lib/styles/prebuilt-themes/owl.carousel.min.css",
+					"node_modules/ngx-owl-carousel-o/lib/styles/prebuilt-themes/owl.theme.default.min.css",
+					"./src/styles.css"
+				],
 				"scripts": [],
 				"ssr": {
 					"entry": "./src/server.ts"
@@ -80,7 +84,11 @@
 				"configDir": "./.storybook",
 				"browserTarget": "@cuentoneta/app:build",
 				"compodoc": false,
-				"styles": ["./src/styles.scss"]
+				"styles": [
+					"node_modules/ngx-owl-carousel-o/lib/styles/prebuilt-themes/owl.carousel.min.css",
+					"node_modules/ngx-owl-carousel-o/lib/styles/prebuilt-themes/owl.theme.default.min.css",
+					"./src/styles.css"
+				]
 			},
 			"configurations": {
 				"ci": {
@@ -96,7 +104,11 @@
 				"configDir": "./.storybook",
 				"browserTarget": "@cuentoneta/app:build",
 				"compodoc": false,
-				"styles": ["./src/styles.scss"]
+				"styles": [
+					"node_modules/ngx-owl-carousel-o/lib/styles/prebuilt-themes/owl.carousel.min.css",
+					"node_modules/ngx-owl-carousel-o/lib/styles/prebuilt-themes/owl.theme.default.min.css",
+					"./src/styles.css"
+				]
 			},
 			"configurations": {
 				"ci": {
@@ -121,7 +133,7 @@
 			"executor": "nx-stylelint:lint",
 			"outputs": ["{options.outputFile}"],
 			"options": {
-				"lintFilePatterns": ["**/*.css", "**/*.scss"]
+				"lintFilePatterns": ["**/*.css"]
 			}
 		},
 		"test-storybook": {

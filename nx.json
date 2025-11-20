@@ -61,7 +61,7 @@
 	},
 	"generators": {
 		"@nx/angular:application": {
-			"style": "scss",
+			"style": "css",
 			"linter": "eslint",
 			"unitTestRunner": "jest",
 			"e2eTestRunner": "cypress"
@@ -71,7 +71,7 @@
 			"unitTestRunner": "jest"
 		},
 		"@nx/angular:component": {
-			"style": "scss",
+			"style": "css",
 			"type": "component"
 		},
 		"@schematics/angular:component": {
