@@ -1,0 +1,46 @@
+/* Reset de CSS */
+@import url('assets/css/reset.css');
+@import url('assets/css/layout.css');
+@import url('assets/css/theme.css');
+@import url('assets/css/transitions.css');
+@import url('app/directives/tooltip.directive.css');
+
+/* Imports de Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Imports de fuentes */
+/*
+    Las tipografías específicas se encuentran declaradas en typography.css, el cual se importa directamente en project.json en la configuración
+    del compilador de Angular
+*/
+@font-face {
+	font-display: block;
+	font-family: Inter;
+	src: url('assets/fonts/inter.woff2') format('woff2');
+	font-style: normal;
+}
+
+@font-face {
+	font-display: block;
+	font-family: 'Source Serif Pro';
+	src: url('assets/fonts/source-serif-pro.woff2') format('woff2');
+	font-style: normal;
+}
+
+/**
+  Sección de estilos globales aplicados a componentes
+
+  Para aplicar estilos a un componente en específico, por fuera de la ViewEncapsulation de Angular, debe
+  declararse el selector del componente en el selector de la regla CSS y, posteriormente, anidar los estilos
+  que se deseen aplicar al mismo.
+
+  Los casos de aplicación para reglas CSS globales son:
+  - Aplicar estilos a un componente que no se puede modificar (por ejemplo, un componente de un paquete externo).
+  - Aplicar estilos a HTML generado dinámicamente e inyectado en la vista mediante atributos InnerHTML o OuterHTML.
+*/
+
+ngx-skeleton-loader {
+	@apply block leading-0;
+}
