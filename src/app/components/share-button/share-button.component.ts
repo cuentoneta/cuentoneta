@@ -11,7 +11,7 @@ import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 		<button
 			(click)="onShareToPlatformClicked($event, platform)"
 			[tooltip]="getShareTooltip(platform)"
-			[attr.aria-label]="platform.name"
+			[tooltipConfig]="{ asLabel: true }"
 			[attr.data-testid]="icon()?.name"
 			class="flex h-12 w-12 items-center justify-center gap-3 rounded-full border-1 border-solid border-gray-200 bg-gray-100 hover:bg-gray-200"
 		>

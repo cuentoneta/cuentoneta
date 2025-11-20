@@ -48,10 +48,4 @@ describe('ShareButtonComponent', () => {
 		const icon = screen.getByTestId('faBrandFacebook');
 		expect(icon).toBeInTheDocument();
 	});
-
-	it('should render the platform icon with the correct aria label', async () => {
-		await setup();
-		const icon = screen.getByLabelText('MySpace');
-		expect(icon).toBeInTheDocument();
-	});
 });

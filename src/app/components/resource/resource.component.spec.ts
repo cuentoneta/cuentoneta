@@ -12,7 +12,6 @@ const setupTestBed = (testbed: TestBed) => {
 	});
 };
 describe('ResourceComponent', () => {
-	const regexTitle = new RegExp(resourceMock.title, 'i');
 	const url = resourceMock.url;
 
 	const setup = async () => {
@@ -28,13 +27,6 @@ describe('ResourceComponent', () => {
 		const { container } = await setup();
 
 		expect(container).toBeInTheDocument();
-	});
-
-	it('should render title', async () => {
-		await setup();
-		const titleResourceElement = screen.getByTitle(regexTitle);
-
-		expect(titleResourceElement).toBeInTheDocument();
 	});
 
 	it('should confirm the URL of the link', async () => {

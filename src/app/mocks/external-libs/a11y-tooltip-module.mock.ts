@@ -7,6 +7,7 @@ import { Directive, input, NgModule } from '@angular/core';
 })
 export class MockTooltipDirective {
 	readonly tooltip = input<string | null>(null);
+	readonly tooltipConfig = input<{ asLabel: boolean } | null>(null);
 }
 
 @NgModule({
