@@ -1,0 +1,117 @@
+/* Clases de tipografías, según el sistema de diseño */
+/* region Inter font sizing mixins to tailwind class */
+.inter-body-base {
+	@apply font-inter text-base tracking-normal;
+}
+
+.inter-body-xs {
+	@apply font-inter text-xs tracking-normal;
+
+	line-height: 18px;
+}
+
+.inter-body-sm {
+	@apply font-inter text-sm tracking-normal;
+}
+
+.inter-body-lg {
+	@apply font-inter text-lg tracking-normal;
+}
+
+.inter-body-xl {
+	@apply font-inter text-xl tracking-normal;
+}
+
+.inter-heading-1 {
+	@apply font-inter text-4xl tracking-normal;
+}
+
+.inter-heading-2 {
+	@apply font-inter text-3xl tracking-normal;
+}
+
+.inter-heading-3 {
+	@apply font-inter text-2xl tracking-normal;
+}
+
+.inter-body-base-regular {
+	@apply inter-body-base font-normal;
+}
+
+.inter-body-base-medium {
+	@apply inter-body-base font-medium;
+}
+
+.inter-body-xs-medium {
+	@apply inter-body-xs font-medium;
+}
+
+.inter-body-xs-semibold {
+	@apply inter-body-xs font-semibold;
+}
+
+.inter-body-xs-bold {
+	@apply inter-body-xs font-bold;
+}
+
+.inter-body-sm-regular {
+	@apply inter-body-sm font-normal;
+}
+
+.inter-body-sm-semibold {
+	@apply inter-body-sm font-semibold;
+}
+
+.inter-body-sm-bold {
+	@apply inter-body-sm font-bold;
+}
+
+.inter-body-lg-semibold {
+	@apply inter-body-lg font-semibold;
+}
+
+.inter-body-lg-bold {
+	@apply inter-body-lg font-bold;
+}
+
+.inter-body-xl-bold {
+	@apply inter-body-xl font-bold;
+}
+
+.inter-body-base-semibold {
+	@apply inter-body-base font-semibold;
+}
+
+.inter-heading-2-semibold {
+	@apply inter-heading-2 font-semibold;
+}
+
+.inter-heading-3-semibold {
+	@apply inter-heading-3 font-semibold;
+}
+
+.inter-heading-3-bold {
+	@apply inter-heading-3 font-bold;
+}
+
+/* endregion */
+
+/* region Source Serif Pro font mixins to tailwind class */
+
+.source-serif-pro-heading-2 {
+	@apply font-source-serif text-3xl tracking-normal;
+}
+
+.source-serif-pro-body-lg {
+	@apply font-source-serif text-lg tracking-normal;
+}
+
+.source-serif-pro-body-xl {
+	@apply font-source-serif text-xl tracking-normal;
+}
+
+.source-serif-pro-heading-2-bold {
+	@apply source-serif-pro-heading-2 font-bold;
+}
+
+/* endregion */
