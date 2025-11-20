@@ -29,7 +29,8 @@
 				"styles": [
 					"node_modules/ngx-owl-carousel-o/lib/styles/prebuilt-themes/owl.carousel.min.css",
 					"node_modules/ngx-owl-carousel-o/lib/styles/prebuilt-themes/owl.theme.default.min.css",
-					"./src/styles.css"
+					"./src/styles.css",
+					"./src/assets/css/typography.css"
 				],
 				"scripts": [],
 				"ssr": {
@@ -87,7 +88,8 @@
 				"styles": [
 					"node_modules/ngx-owl-carousel-o/lib/styles/prebuilt-themes/owl.carousel.min.css",
 					"node_modules/ngx-owl-carousel-o/lib/styles/prebuilt-themes/owl.theme.default.min.css",
-					"./src/styles.css"
+					"./src/styles.css",
+					"./src/assets/css/typography.css"
 				]
 			},
 			"configurations": {
@@ -107,7 +109,8 @@
 				"styles": [
 					"node_modules/ngx-owl-carousel-o/lib/styles/prebuilt-themes/owl.carousel.min.css",
 					"node_modules/ngx-owl-carousel-o/lib/styles/prebuilt-themes/owl.theme.default.min.css",
-					"./src/styles.css"
+					"./src/styles.css",
+					"./src/assets/css/typography.css"
 				]
 			},
 			"configurations": {
