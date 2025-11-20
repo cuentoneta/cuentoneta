@@ -1,7 +1,6 @@
 // Core
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-
 // Router
 import { RouterLink } from '@angular/router';
 import { AppRoutes } from '../../app.routes';
@@ -58,6 +57,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	`,
 	styles: `
 		:host {
+			@apply rounded-lg bg-gray-50 shadow-lg;
 			@apply block rounded-2xl;
 		}
 	`,

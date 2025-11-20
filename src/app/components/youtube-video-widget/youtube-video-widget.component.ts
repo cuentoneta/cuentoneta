@@ -20,7 +20,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 			youtube-player {
 				.youtube-player-placeholder,
 				div iframe {
-					@apply mb-2 aspect-video w-full rounded-xl  #{!important};
+					@apply mb-2 aspect-video w-full rounded-xl !important;
 					height: unset !important;
 				}
 			}

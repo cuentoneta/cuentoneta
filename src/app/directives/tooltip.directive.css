@@ -1,21 +1,24 @@
 .tooltip-container {
 	--tooltip-arrow-size: 0.45rem;
 
-	// Layout
+	/* Layout */
 	@apply absolute left-0 top-0 z-50 box-border;
 
-	// Texto
-	@apply inter-body-xs-semibold bg-black text-center text-white opacity-0;
+	/* Texto - inter-body-xs-semibold expanded */
+	@apply bg-black text-center font-inter text-xs font-semibold tracking-normal text-white opacity-0;
 
-	// Spacing
+	/* Spacing */
 	@apply w-auto rounded p-2;
 
-	// Interactividad
+	/* Interactividad */
 	@apply pointer-events-none;
 
-	// Animaciones
+	/* Animaciones */
 	animation: tooltip-slide 0.18s ease-out 0.5s;
 	animation-fill-mode: forwards;
+
+	/* inter-body-xs specific */
+	line-height: 18px;
 }
 
 .tooltip-arrow {
