@@ -3,7 +3,7 @@
 }
 
 .vertical-layout-spacing {
-	@apply mt-25 md:mt-36;
+	@apply mt-24 md:mt-36;
 }
 
 .horizontal-layout-spacing {
