@@ -9,13 +9,12 @@ import { CarouselModule, OwlOptions } from 'ngx-owl-carousel-o';
 // Models
 import { ContentCampaign, ContentCampaignViewport } from '@models/content-campaign.model';
 
-// Components
-import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
+// Services
 import { LayoutService } from '../../providers/layout.service';
 
 @Component({
 	selector: 'cuentoneta-content-campaign-carousel',
-	imports: [CommonModule, CarouselModule, NgOptimizedImage, RouterLink, PortableTextParserComponent],
+	imports: [CommonModule, CarouselModule, NgOptimizedImage, RouterLink],
 	template: `
 		<section class="block">
 			<owl-carousel-o [options]="options" class="mx-auto block">
@@ -23,14 +22,6 @@ import { LayoutService } from '../../providers/layout.service';
 					<ng-template carouselSlide>
 						<div class="slide">
 							<a [routerLink]="slide.url" [ngClass]="viewportSpecificClasses[viewport()]">
-								<header class="mb-3">
-									<h2 class="text-lg font-bold tracking-normal">
-										<cuentoneta-portable-text-parser [paragraphs]="slide.contents[viewport()].title" />
-									</h2>
-									<h3 class="h4 subtitle text-gray-600">
-										<cuentoneta-portable-text-parser [paragraphs]="slide.contents[viewport()].subtitle" />
-									</h3>
-								</header>
 								<img
 									[ngSrc]="sanityFormatImageUrl(slide.contents[viewport()].imageUrl)"
 									[width]="slide.contents[viewport()].imageWidth"
