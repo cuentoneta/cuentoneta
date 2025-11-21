@@ -2,13 +2,13 @@
 	--tooltip-arrow-size: 0.45rem;
 
 	/* Layout */
-	@apply absolute left-0 top-0 z-50 box-border;
+	@apply absolute top-0 left-0 z-50 box-border;
 
 	/* Texto - inter-body-xs-semibold expanded */
-	@apply bg-black text-center font-inter text-xs font-semibold tracking-normal text-white opacity-0;
+	@apply font-inter bg-black text-center text-xs font-semibold tracking-normal text-white opacity-0;
 
 	/* Spacing */
-	@apply w-auto rounded p-2;
+	@apply w-auto rounded-sm p-2;
 
 	/* Interactividad */
 	@apply pointer-events-none;

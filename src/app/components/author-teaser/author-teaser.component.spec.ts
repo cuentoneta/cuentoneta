@@ -52,7 +52,7 @@ describe('AuthorTeaserComponent', () => {
 	test('should apply correct styles for "sm" variant', async () => {
 		await setup('sm');
 		const img = screen.getByAltText(`Retrato de ${authorTeaserMock.name}`);
-		expect(img).toHaveClass('h-[40px] w-[40px] rounded');
+		expect(img).toHaveClass('h-[40px] w-[40px] rounded-sm');
 	});
 
 	test('should apply correct styles for "md" variant', async () => {

@@ -28,7 +28,7 @@ import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
 	],
 	template: `
 		<footer class="">
-			<div class="container grid h-full max-w-screen-lg items-center justify-between">
+			<div class="container grid h-full max-w-(--breakpoint-lg) items-center justify-between">
 				<section class="logo">
 					<img [ngSrc]="'./assets/svg/logo.svg'" width="49" height="26" alt="Logo de 'La Cuentoneta'" />
 				</section>
@@ -61,7 +61,7 @@ import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
 	`,
 	styles: `
 		footer {
-			@apply mt-[120px] w-full border-t-1 border-solid border-primary-500 bg-white max-sm:px-5 max-sm:py-8 sm:h-[98px];
+			@apply border-primary-500 mt-[120px] w-full border-t-1 border-solid bg-white max-sm:px-5 max-sm:py-8 sm:h-[98px];
 		}
 
 		.container {

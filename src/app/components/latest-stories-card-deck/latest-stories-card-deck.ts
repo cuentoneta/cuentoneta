@@ -9,8 +9,8 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 	imports: [StoryCardTeaserComponent, StoryCardTeaserSkeletonComponent],
 	template: ` <div class="flex content-between items-center gap-4 text-gray-500">
 			<hr class="w-6" />
-			<h2 class="h3 text-center font-source-serif italic">Últimas novedades</h2>
-			<hr class="flex-grow" />
+			<h2 class="h3 font-source-serif text-center italic">Últimas novedades</h2>
+			<hr class="grow" />
 		</div>
 
 		<section class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-8">

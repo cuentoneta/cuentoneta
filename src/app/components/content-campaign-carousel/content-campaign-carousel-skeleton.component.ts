@@ -1,7 +1,6 @@
 // Core
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
-
 // 3rd party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
@@ -20,7 +19,7 @@ import { ThemeService } from '../../providers/theme.service';
 						'margin-bottom.px': 5,
 						'width.px': 192,
 						'height.px': 18,
-						'background-color': skeletonTextColor
+						'background-color': skeletonTextColor,
 					}"
 					count="1"
 					appearance="line"
@@ -33,7 +32,7 @@ import { ThemeService } from '../../providers/theme.service';
 						'margin-bottom.px': 4,
 						'width.px': 304,
 						'height.px': 16,
-						'background-color': skeletonTextColor
+						'background-color': skeletonTextColor,
 					}"
 					count="1"
 					appearance="line"
@@ -47,11 +46,11 @@ import { ThemeService } from '../../providers/theme.service';
 					'margin-bottom.px': 0,
 					height: '100%',
 					width: '100%',
-					'background-color': skeletonBackgroundColor
+					'background-color': skeletonBackgroundColor,
 				}"
 				count="1"
 				appearance="line"
-				class="grid aspect-[540/220] w-full object-cover md:aspect-[960/280]"
+				class="grid aspect-540/220 w-full object-cover md:aspect-960/280"
 			/>
 		</div>
 		<div class="footer mt-[10px] h-[27px]">
@@ -63,7 +62,7 @@ import { ThemeService } from '../../providers/theme.service';
 					'margin-bottom.px': 5,
 					'width.px': 48,
 					'height.px': 10,
-					'background-color': skeletonTextColor
+					'background-color': skeletonTextColor,
 				}"
 				count="1"
 				appearance="line"

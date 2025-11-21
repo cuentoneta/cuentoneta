@@ -24,17 +24,17 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 			[width]="imageSize()"
 			[height]="imageSize()"
 			[ngClass]="{
-				'h-[40px] w-[40px] rounded': variant() === 'sm',
+				'h-[40px] w-[40px] rounded-sm': variant() === 'sm',
 				'h-[64px] w-[64px] rounded-md': variant() === 'md',
 			}"
 		/>
-		<div class="block hover:!cursor-pointer">
+		<div class="block hover:cursor-pointer!">
 			<h2
 				[ngClass]="{
 					'inter-body-base-semibold': variant() === 'sm',
 					'inter-body-lg-semibold': variant() === 'md',
 				}"
-				class="flex items-center gap-1 hover:!cursor-pointer"
+				class="flex items-center gap-1 hover:cursor-pointer!"
 			>
 				{{ author().name }} <ng-icon name="faSolidArrowRightLong" size="16px" />
 			</h2>
@@ -43,13 +43,13 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 					<img
 						[alt]="'Bandera de ' + nationality.country"
 						[ngSrc]="authorFlagUrl()"
-						class="h-[15px] w-[20px] rounded"
+						class="h-[15px] w-[20px] rounded-sm"
 						width="20"
 						height="15"
 					/>
 					<span
 						[ngClass]="{
-							'inter-body-sm-semibold text-gray-500 hover:!cursor-pointer': variant() === 'sm',
+							'inter-body-sm-semibold text-gray-500 hover:cursor-pointer!': variant() === 'sm',
 							'inter-body-base-medium text-gray-700': variant() === 'md',
 						}"
 						>{{ nationality.country }}</span

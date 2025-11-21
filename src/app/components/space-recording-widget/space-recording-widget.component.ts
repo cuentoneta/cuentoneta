@@ -8,7 +8,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	imports: [CommonModule, NgOptimizedImage, PortableTextParserComponent],
 	template: `
 		<a [href]="spaceUrl()" aria-label="space-recording-href" target="_blank" class="mb-2 block">
-			<section class="spaces-card inter-body-base grid grid-rows-3-auto rounded-lg p-4 text-white">
+			<section class="spaces-card inter-body-base grid-rows-3-auto grid rounded-lg p-4 text-white">
 				<div class="flex items-center justify-between text-base">
 					<div class="spaces-host flex gap-2.5">
 						<img
@@ -19,7 +19,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 							height="24"
 						/>
 						<div class="font-bold">{{ media().data.tweetBy.fullName }}</div>
-						<span class="flex items-center rounded bg-[#fff4] px-1 py-0.5 text-sm">Anfitrión</span>
+						<span class="flex items-center rounded-sm bg-[#fff4] px-1 py-0.5 text-sm">Anfitrión</span>
 					</div>
 					<div class="space-recording-data hidden gap-2.5 md:flex">
 						<div class="font-bold">{{ media().data.createdAt | date: 'MMMM d, yyyy' }}</div>

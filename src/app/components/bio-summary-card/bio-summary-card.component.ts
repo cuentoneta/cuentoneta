@@ -1,7 +1,6 @@
 // Core
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-
 // Modelos
 import { Story } from '@models/story.model';
 
@@ -13,7 +12,7 @@ import { ResourceComponent } from '../resource/resource.component';
 @Component({
 	selector: 'cuentoneta-bio-summary-card',
 	template: `
-		<div class="rounded border-1 border-solid border-gray-200 bg-gray-100 p-6">
+		<div class="rounded-sm border-1 border-solid border-gray-200 bg-gray-100 p-6">
 			<section class="mb-4 grid grid-cols-[1fr] gap-4 sm:mb-8 sm:grid-cols-[auto_1fr]">
 				<cuentoneta-author-teaser [author]="story().author" [variant]="'md'" />
 				@if (resources.length > 0) {

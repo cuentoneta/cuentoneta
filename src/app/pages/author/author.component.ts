@@ -75,12 +75,12 @@ import { StoryCardTeaserSkeletonComponent } from '@components/story-card-teaser/
 									<span class="sm:hidden">{{ author.name | initials }}</span>
 								</h1>
 								<span class="inter-body-sm flex items-center gap-2 font-medium text-gray-600">
-									<img [ngSrc]="authorFlagUrl()" width="20" height="15" class="h-[15px] w-5 rounded" alt="" />
+									<img [ngSrc]="authorFlagUrl()" width="20" height="15" class="h-[15px] w-5 rounded-sm" alt="" />
 									{{ author.nationality.country }}
 								</span>
 
 								<div class="flex">
-									<div class="rounded bg-gray-200 px-2 py-0.5 hover:cursor-default">
+									<div class="rounded-sm bg-gray-200 px-2 py-0.5 hover:cursor-default">
 										<span class="inter-body-xs-semibold flex items-center gap-1">{{ stories().length }} historias</span>
 									</div>
 								</div>

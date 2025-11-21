@@ -13,7 +13,7 @@ enum VisibilityState {
 @Component({
 	selector: 'cuentoneta-header',
 	template: `
-		<header [@toggle]="isVisible()" class="w-100 nav-container">
+		<header [@toggle]="isVisible()" class="nav-container w-100">
 			<section class="flex items-center">
 				<a [routerLink]="['/', 'home']" class="flex">
 					<img [ngSrc]="'./assets/svg/logo.svg'" class="mr-3" width="59" height="32" alt="Logo de 'La Cuentoneta'" />
@@ -50,7 +50,7 @@ enum VisibilityState {
 				<ul>
 					@for (navLink of navLinks; track $index) {
 						<li
-							class="inter-body-lg-semibold flex h-12 items-center border-b-2 border-gray-200 px-5 hover:text-interactive-500"
+							class="inter-body-lg-semibold hover:text-interactive-500 flex h-12 items-center border-b-2 border-gray-200 px-5"
 						>
 							<a
 								(click)="onMenuTogglerClicked()"
@@ -82,7 +82,7 @@ enum VisibilityState {
 				@apply grid bg-gray-50 px-5;
 
 				/*Layout de grid para vistas md y superiores */
-				@apply grid-cols-[1fr_theme(spacing.6)] grid-rows-[theme(spacing.16)_1fr];
+				@apply grid-cols-[1fr_--spacing(6)] grid-rows-[theme(spacing.16)_1fr];
 
 				/*Layout de grid para vistas sm y menores */
 				@apply md:grid-cols-2 md:grid-rows-1;

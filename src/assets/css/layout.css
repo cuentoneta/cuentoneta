@@ -1,5 +1,5 @@
 .content {
-	@apply my-0 min-h-screen md:m-auto md:max-w-screen-md;
+	@apply my-0 min-h-screen md:m-auto md:max-w-(--breakpoint-md);
 }
 
 .vertical-layout-spacing {
