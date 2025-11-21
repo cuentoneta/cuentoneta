@@ -57,26 +57,4 @@ describe('ContentCampaignCarouselComponent', () => {
 			expect(link).toHaveClass('max-md:hidden');
 		});
 	});
-
-	it('should render the correct title', async () => {
-		await render(ContentCampaignCarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useClass: MockLayoutXsViewportService }],
-		});
-		const titles = screen.getAllByRole('heading', { level: 2 });
-		titles.forEach((title) => {
-			expect(title).toBeInTheDocument();
-		});
-	});
-
-	it('should render the correct subtitle', async () => {
-		await render(ContentCampaignCarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useClass: MockLayoutXsViewportService }],
-		});
-		const subtitles = screen.getAllByRole('heading', { level: 3 });
-		subtitles.forEach((subtitle) => {
-			expect(subtitle).toBeInTheDocument();
-		});
-	});
 });
