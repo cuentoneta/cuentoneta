@@ -28,7 +28,7 @@
 	},
 	"private": true,
 	"dependencies": {
-		"@a11y-ngx/tooltip": "^1.0.5",
+		"@a11y-ngx/tooltip": "^1.0.6",
 		"@angular-devkit/build-angular": "20.3.3",
 		"@angular/animations": "20.3.2",
 		"@angular/common": "20.3.2",
