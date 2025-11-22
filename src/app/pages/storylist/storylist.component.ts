@@ -12,6 +12,7 @@ import { Storylist } from '@models/storylist.model';
 
 // Services
 import { StorylistService } from '../../providers/storylist.service';
+import { ThemeService } from '../../providers/theme.service';
 
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
@@ -21,14 +22,13 @@ import { environment } from '../../environments/environment';
 
 // Componentes
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
-import { ThemeService } from '../../providers/theme.service';
 import { rxResource } from '@angular/core/rxjs-interop';
 import Tabs from '@components/tabs/tabs.component';
 import Tab from '@components/tabs/tab.component';
+import { StorylistTitle } from './storylist-title/storylist-title';
 import { StoryCardTeaserComponent } from '@components/story-card-teaser/story-card-teaser.component';
 import { StoryCardTeaserSkeletonComponent } from '@components/story-card-teaser/story-card-teaser-skeleton.component';
 import { StoryTeaserWithAuthor } from '@models/story.model';
-import { StorylistTitle } from './storylist-title/storylist-title';
 
 @Component({
 	selector: 'cuentoneta-storylist',
@@ -81,5 +81,6 @@ export default class StorylistComponent {
 		);
 		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/storylist/${storylist.slug}`);
 		this.metaTagsDirective.setRobots('index, follow');
+		this.metaTagsDirective.setKeywords(['literatura', 'poemas', 'cuentos', 'textos', storylist.title.toLowerCase()]);
 	}
 }

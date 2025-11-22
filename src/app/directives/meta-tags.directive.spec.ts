@@ -225,4 +225,117 @@ describe('MetaTagsDirective', () => {
 			expect(metaSpy).toHaveBeenCalledWith('name="robots"');
 		});
 	});
+
+	describe('setKeywords', () => {
+		it('should set keywords meta tag with comma-separated string', () => {
+			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const keywords = 'literatura, cuentos, lectura';
+
+			directive.setKeywords(keywords);
+
+			expect(metaSpy).toHaveBeenCalledWith({
+				name: 'keywords',
+				content: keywords,
+			});
+		});
+
+		it('should set keywords meta tag with array of keywords', () => {
+			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const keywordsArray = ['literatura', 'cuentos', 'lectura'];
+			const expectedContent = 'literatura, cuentos, lectura';
+
+			directive.setKeywords(keywordsArray);
+
+			expect(metaSpy).toHaveBeenCalledWith({
+				name: 'keywords',
+				content: expectedContent,
+			});
+		});
+
+		it('should handle array with single keyword', () => {
+			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const keywordsArray = ['literatura'];
+
+			directive.setKeywords(keywordsArray);
+
+			expect(metaSpy).toHaveBeenCalledWith({
+				name: 'keywords',
+				content: 'literatura',
+			});
+		});
+
+		it('should handle empty string', () => {
+			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const keywords = '';
+
+			directive.setKeywords(keywords);
+
+			expect(metaSpy).toHaveBeenCalledWith({
+				name: 'keywords',
+				content: '',
+			});
+		});
+
+		it('should handle empty array', () => {
+			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const keywordsArray: string[] = [];
+
+			directive.setKeywords(keywordsArray);
+
+			expect(metaSpy).toHaveBeenCalledWith({
+				name: 'keywords',
+				content: '',
+			});
+		});
+
+		it('should handle keywords with special characters', () => {
+			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const keywords = 'José, María, niños & niñas';
+
+			directive.setKeywords(keywords);
+
+			expect(metaSpy).toHaveBeenCalledWith({
+				name: 'keywords',
+				content: keywords,
+			});
+		});
+
+		it('should handle multiple keywords with spaces in array', () => {
+			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const keywordsArray = ['literatura digital', 'lectores jóvenes', 'cuentos cortos'];
+			const expectedContent = 'literatura digital, lectores jóvenes, cuentos cortos';
+
+			directive.setKeywords(keywordsArray);
+
+			expect(metaSpy).toHaveBeenCalledWith({
+				name: 'keywords',
+				content: expectedContent,
+			});
+		});
+	});
+
+	describe('removeKeywords', () => {
+		it('should remove keywords meta tag', () => {
+			const metaSpy = jest.spyOn(metaService, 'removeTag');
+
+			directive.removeKeywords();
+
+			expect(metaSpy).toHaveBeenCalledWith('name="keywords"');
+		});
+
+		it('should not throw error when removing keywords', () => {
+			expect(() => directive.removeKeywords()).not.toThrow();
+		});
+
+		it('should remove keywords after they were set', () => {
+			const updateSpy = jest.spyOn(metaService, 'updateTag');
+			const removeSpy = jest.spyOn(metaService, 'removeTag');
+
+			directive.setKeywords(['prueba', 'palabras clave']);
+			directive.removeKeywords();
+
+			expect(updateSpy).toHaveBeenCalled();
+			expect(removeSpy).toHaveBeenCalledWith('name="keywords"');
+		});
+	});
 });
