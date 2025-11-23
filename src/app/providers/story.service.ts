@@ -1,28 +1,23 @@
 // Core
-import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { HttpClient, HttpParams } from '@angular/common/http';
-
-// Environment
-import { environment } from '../environments/environment';
+import { Injectable } from '@angular/core';
+import { from, Observable } from 'rxjs';
 
 // Models
 import { Story, StoryNavigationTeaser, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
-import { ApiUrl, Endpoints } from './endpoints';
+
+// tRPC
+import { getTRPCClient } from './trpc';
 
 @Injectable({ providedIn: 'root' })
 export class StoryService {
-	private readonly url: ApiUrl = `${environment.apiUrl}${Endpoints.Story}`;
-	private http = inject(HttpClient);
+	private trpc = getTRPCClient();
 
 	public getBySlug(slug: string): Observable<Story> {
-		const params = new HttpParams().set('slug', slug);
-		return this.http.get<Story>(`${this.url}/read`, { params });
+		return from(this.trpc.story.getBySlug.query({ slug }));
 	}
 
 	public getByAuthorSlug(slug: string, offset: number = 0, limit: number = 100): Observable<StoryTeaser[]> {
-		const params = new HttpParams().set('offset', offset).append('limit', limit);
-		return this.http.get<StoryTeaser[]>(`${this.url}/author/${slug}`, { params });
+		return from(this.trpc.story.getByAuthorSlug.query({ slug, offset, limit }));
 	}
 
 	public getNavigationTeasersByAuthorSlug(
@@ -30,12 +25,10 @@ export class StoryService {
 		offset: number = 0,
 		limit: number = 100,
 	): Observable<StoryNavigationTeaser[]> {
-		const params = new HttpParams().set('offset', offset).append('limit', limit);
-		return this.http.get<StoryNavigationTeaser[]>(`${this.url}/author/${slug}/navigation`, { params });
+		return from(this.trpc.story.getNavigationByAuthorSlug.query({ slug, offset, limit }));
 	}
 
 	public get(offset: number = 0, limit: number = 100): Observable<StoryTeaserWithAuthor[]> {
-		const params = new HttpParams().set('offset', offset).append('limit', limit);
-		return this.http.get<StoryTeaserWithAuthor[]>(this.url, { params });
+		return from(this.trpc.story.getAll.query({ offset, limit }));
 	}
 }

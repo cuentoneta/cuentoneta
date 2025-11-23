@@ -1,23 +1,20 @@
 // Core
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { from, Observable } from 'rxjs';
 
-// Interfaces
+// Models
 import { LandingPageContent } from '@models/landing-page-content.model';
 
-// Providers
-import { environment } from '../environments/environment';
-import { HttpClient } from '@angular/common/http';
+// tRPC
+import { getTRPCClient } from './trpc';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class ContentService {
-	private readonly prefix = `${environment.apiUrl}api/content`;
+	private trpc = getTRPCClient();
 
-	// Services
-	private http = inject(HttpClient);
-
-	public getLandingPageContent() {
-		return this.http.get<LandingPageContent>(`${this.prefix}/landing-page`);
+	public getLandingPageContent(): Observable<LandingPageContent> {
+		return from(this.trpc.content.getLandingPageContent.query());
 	}
 }

@@ -7,6 +7,9 @@ import {
 import express from 'express';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import * as trpcExpress from '@trpc/server/adapters/express';
+import { appRouter } from './api/trpc/root';
+import { createContext } from './api/trpc/trpc';
 import routes from './api/routes';
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
@@ -15,7 +18,16 @@ const browserDistFolder = resolve(serverDistFolder, '../browser');
 export const app = express();
 const angularApp = new AngularNodeAppEngine();
 
-// Registra las routes utilizadas por la API
+// Mount tRPC
+app.use(
+	'/trpc',
+	trpcExpress.createExpressMiddleware({
+		router: appRouter,
+		createContext,
+	}),
+);
+
+// Registra las routes utilizadas por la API (legacy REST endpoints)
 for (const route of routes) {
 	app.use(`/api${route.path}`, route.controller);
 }
