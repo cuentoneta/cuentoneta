@@ -67,6 +67,12 @@ importers:
       '@sanity/image-url':
         specifier: ^1.1.0
         version: 1.1.0
+      '@trpc/client':
+        specifier: ^11.7.2
+        version: 11.7.2(@trpc/server@11.7.2(typescript@5.9.2))(typescript@5.9.2)
+      '@trpc/server':
+        specifier: ^11.7.2
+        version: 11.7.2(typescript@5.9.2)
       '@types/express':
         specifier: ^5.0.3
         version: 5.0.3
@@ -106,6 +112,9 @@ importers:
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
+      zod:
+        specifier: ^4.1.12
+        version: 4.1.12
     devDependencies:
       '@angular/cli':
         specifier: ~20.3.3
@@ -3817,6 +3826,19 @@ packages:
     engines: { node: '>=12', npm: '>=6' }
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
+
+  '@trpc/client@11.7.2':
+    resolution:
+      { integrity: sha512-OQxqUMfpDvjcszo9dbnqWQXnW2L5IbrKSz2H7l8s+mVM3EvYw7ztQ/gjFIN3iy0NcamiQfd4eE6qjcb9Lm+63A== }
+    peerDependencies:
+      '@trpc/server': 11.7.2
+      typescript: '>=5.7.2'
+
+  '@trpc/server@11.7.2':
+    resolution:
+      { integrity: sha512-AgB26PXY69sckherIhCacKLY49rxE2XP5h38vr/KMZTbLCL1p8IuIoKPjALTcugC2kbyQ7Lbqo2JDVfRSmPmfQ== }
+    peerDependencies:
+      typescript: '>=5.7.2'
 
   '@trysound/sax@0.2.0':
     resolution:
@@ -11240,6 +11262,10 @@ packages:
     resolution:
       { integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ== }
 
+  zod@4.1.12:
+    resolution:
+      { integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ== }
+
   zone.js@0.15.0:
     resolution:
       { integrity: sha512-9oxn0IIjbCZkJ67L+LkhYWRyAy7axphb3VgE2MBDlOqnmHMPWGYMxJxBYFueFq/JGY2GMwS0rU+UCLunEmy5UA== }
@@ -15020,6 +15046,15 @@ snapshots:
   '@testing-library/user-event@14.6.1(@testing-library/dom@10.4.0)':
     dependencies:
       '@testing-library/dom': 10.4.0
+
+  '@trpc/client@11.7.2(@trpc/server@11.7.2(typescript@5.9.2))(typescript@5.9.2)':
+    dependencies:
+      '@trpc/server': 11.7.2(typescript@5.9.2)
+      typescript: 5.9.2
+
+  '@trpc/server@11.7.2(typescript@5.9.2)':
+    dependencies:
+      typescript: 5.9.2
 
   '@trysound/sax@0.2.0': {}
 
@@ -21919,6 +21954,8 @@ snapshots:
       zod: 3.25.76
 
   zod@3.25.76: {}
+
+  zod@4.1.12: {}
 
   zone.js@0.15.0:
     optional: true

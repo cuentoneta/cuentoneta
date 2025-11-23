@@ -48,6 +48,8 @@
 		"@nx/angular": "21.6.2",
 		"@sanity/client": "^7.6.0",
 		"@sanity/image-url": "^1.1.0",
+		"@trpc/client": "^11.7.2",
+		"@trpc/server": "^11.7.2",
 		"@types/express": "^5.0.3",
 		"date-fns": "^4.1.0",
 		"esbuild": "0.25.5",
@@ -60,7 +62,8 @@
 		"rxjs": "~7.8.1",
 		"satori": "^0.10.13",
 		"satori-html": "^0.3.2",
-		"tslib": "^2.6.2"
+		"tslib": "^2.6.2",
+		"zod": "^4.1.12"
 	},
 	"devDependencies": {
 		"@angular/cli": "~20.3.3",
