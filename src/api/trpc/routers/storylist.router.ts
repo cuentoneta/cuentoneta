@@ -12,7 +12,7 @@ export const storylistRouter = router({
 			z.object({
 				slug: z.string(),
 				limit: z.number().default(10),
-				amount: z.string().default('5'),
+				offset: z.number().default(0),
 				ordering: z.string().default('asc'),
 			}),
 		)

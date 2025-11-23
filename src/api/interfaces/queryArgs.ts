@@ -8,6 +8,6 @@ export interface StoriesByAuthorSlugArgs extends SanityQueryArgs {
 }
 
 export interface StoryListBySlugArgs extends SanityQueryArgs {
-	amount: string;
+	offset: number;
 	ordering: string;
 }

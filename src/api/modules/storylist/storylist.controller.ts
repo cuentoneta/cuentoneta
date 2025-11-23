@@ -11,9 +11,13 @@ router.get('/:slug/navigation', getNavigationBySlug);
 export default router;
 
 function getBySlug(req: express.Request, res: express.Response, next: express.NextFunction) {
-	const { slug, amount, ordering = 'asc' } = req.query;
-	const limit = parseInt(amount as string) - 1;
-	fetchBySlug({ slug: slug as string, amount: amount as string, limit, ordering: ordering as string })
+	const { slug, offset, limit, ordering = 'asc' } = req.query;
+	fetchBySlug({
+		slug: slug as string,
+		offset: parseInt(offset as string),
+		limit: parseInt(limit as string),
+		ordering: ordering as string,
+	})
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
 }

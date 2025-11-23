@@ -11,8 +11,8 @@ import { getTRPCClient } from './trpc';
 export class StorylistService {
 	private trpc = getTRPCClient();
 
-	public get(slug: string, amount: number = 5, ordering: 'asc' | 'desc' = 'asc'): Observable<Storylist> {
-		return from(this.trpc.storylist.getBySlug.query({ slug, amount, ordering, limit: 10 }));
+	public get(slug: string, offset: number = 0, ordering: 'asc' | 'desc' = 'asc'): Observable<Storylist> {
+		return from(this.trpc.storylist.getBySlug.query({ slug, offset, ordering, limit: 10 }));
 	}
 
 	public getStorylistNavigationTeasers(
