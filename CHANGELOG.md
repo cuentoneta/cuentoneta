@@ -12,7 +12,7 @@
 
 Esta bitácora de cambios detalla los hitos principales en el desarrollo de La Cuentoneta, más la lista de características y contenido deseable futuro para el desarrollo de la plataforma. Cabe mencionar que este cronograma es flexible y podrían agregarse otros hitos adicionales según las oportunidades que surjan durante el avance del proyecto, debido a su naturaleza abierta y colaborativa.
 
-## Versión 2.7.0 (2025-11-23)
+## Versión 2.7.0 (2025-11-24)
 
 Esta versión trae aparejados cambios estructurales, entre las cuales se incluyen la creación de las primeras iteraciones de una variedad de módulos y la eliminación de gran cantidad de información estática, a lo cual se agregan la expansión del soporte multimedia de la plataforma, ajustes en las características orientadas a SEO y, especialmente, en la capacidad de la plataforma para llevar adelante la actualización programada de contenido.
 
