@@ -57,16 +57,21 @@ Se pueden utilizar plantillas para dicha estructura.<br>
 - Criterios de aceptación
 - Recursos
 - Métricas
+
 ### 4.5 Riesgos
 Puede incluir acciones en caso de retrasos o problemas técnicos.
+
 ### 4.6 Roles y responsabilidades
 Esto sirve para que cada persona del equipo sepa qué tareas va a realizar y clarificar roles: QA Manual, QA Automation, Leads, etc.
+
 # 5. Cronograma
 - Fechas de inicio y fin para cada tipo de prueba.
 - Revisiones del progreso.
+
 # 6. Criterios de evaluación
 - ¿Cuándo inician las pruebas, ambientes, entregables? 
 - ¿Cuándo finalizan las pruebas?
+
 # 7. Considerar la automatización
 - Evaluar casos repetitivos y adecuados para ser automatizados.
 
