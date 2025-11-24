@@ -10,6 +10,8 @@ import {
 	AudioRecordingSchemaObject,
 	Media,
 	SpaceRecordingSchemaObject,
+	SpotifyPodcasteEpisodeSchemaObject,
+	SpotifyPodcastEpisode,
 	YouTubeVideo,
 	YoutubeVideoSchemaObject,
 } from '@models/media.model';
@@ -26,6 +28,9 @@ export async function mapMediaSources(mediaSources: MediaResourcesStorySubQuery)
 		}
 		if (mediaSource._type === 'spaceRecording') {
 			media.push(await getTweetData(mediaSource as SpaceRecordingSchemaObject));
+		}
+		if (mediaSource._type === 'spotifyPodcastEpisode') {
+			media.push(getSpotifyPodcastEpisodeData(mediaSource as SpotifyPodcasteEpisodeSchemaObject));
 		}
 		if (mediaSource._type === 'youTubeVideo') {
 			media.push(getYoutubeVideoData(mediaSource as YoutubeVideoSchemaObject));
@@ -50,6 +55,9 @@ export function mapMediaSourcesForStorylist(mediaSources: MediaResourcesStorylis
 				description: mapBlockContentToTextParagraphs(mediaSource.description),
 				data: {},
 			});
+		}
+		if (mediaSource._type === 'spotifyPodcastEpisode') {
+			media.push(getSpotifyPodcastEpisodeData(mediaSource as SpotifyPodcasteEpisodeSchemaObject));
 		}
 		if (mediaSource._type === 'youTubeVideo') {
 			media.push(getYoutubeVideoData(mediaSource as YoutubeVideoSchemaObject));
@@ -76,6 +84,17 @@ function getYoutubeVideoData(mediaSource: YoutubeVideoSchemaObject): YouTubeVide
 		description: mapBlockContentToTextParagraphs(mediaSource.description),
 		data: {
 			videoId: mediaSource.videoId,
+		},
+	};
+}
+
+function getSpotifyPodcastEpisodeData(mediaSource: SpotifyPodcasteEpisodeSchemaObject): SpotifyPodcastEpisode {
+	return {
+		title: mediaSource.title,
+		type: mediaSource._type,
+		description: mapBlockContentToTextParagraphs(mediaSource.description),
+		data: {
+			url: mediaSource.url,
 		},
 	};
 }

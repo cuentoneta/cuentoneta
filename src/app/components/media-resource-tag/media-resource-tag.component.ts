@@ -4,7 +4,7 @@ import { NgIcon } from '@ng-icons/core';
 
 export interface MediaResourcePlatform {
 	title: string;
-	icon: string;
+	icon: Record<string, string>;
 }
 
 @Component({
@@ -13,7 +13,7 @@ export interface MediaResourcePlatform {
 	hostDirectives: [TooltipDirective],
 	template: ` <div [class]="size()" class="flex items-center justify-center">
 		<ng-icon
-			[name]="platform().icon"
+			[name]="iconName()"
 			[size]="iconSize()"
 			[attr.aria-label]="platform().title"
 			[attr.data-testid]="'icon-' + platform().icon"
@@ -33,6 +33,11 @@ export class MediaResourceTagComponent implements OnInit {
 	readonly platform = input.required<MediaResourcePlatform>();
 	readonly size = input<'md' | 'lg'>('md');
 	readonly iconSize = computed(() => (this.size() === 'md' ? '32px' : '24px'));
+
+	readonly iconName = computed(() => {
+		const icon = this.platform().icon;
+		return Object.keys(icon)[0]; // Get the key name
+	});
 
 	private tooltipDirective = inject(TooltipDirective);
 

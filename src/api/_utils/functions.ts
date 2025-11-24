@@ -15,7 +15,7 @@ import { Author, AuthorTeaser } from '@models/author.model';
 import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
 import { LandingPageContent } from '@models/landing-page-content.model';
 import {
-	Publication,
+	PublicationTeaserWithAuthor,
 	Storylist,
 	StorylistPublicationsNavigationTeasers,
 	StorylistTeaser,
@@ -25,8 +25,8 @@ import {
 	Story,
 	StoryNavigationTeaser,
 	StoryNavigationTeaserWithAuthor,
-	StoryPreview,
 	StoryTeaser,
+	StoryTeaserWithAuthor,
 } from '@models/story.model';
 import { Tag } from '@models/tag.model';
 import { TextBlockContent } from '@models/block-content.model';
@@ -37,6 +37,7 @@ import {
 	AuthorsQueryResult,
 	BlockContent,
 	LandingPageContentQueryResult,
+	RotatingContentQueryResult,
 	StoriesByAuthorSlugQueryResult,
 	StoriesBySlugsQueryResult,
 	StoryBySlugQueryResult,
@@ -57,7 +58,7 @@ export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>, l
 
 	return {
 		_id: rawAuthorData._id,
-		slug: rawAuthorData.slug.current,
+		slug: rawAuthorData.slug,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
 			flag: urlFor(rawAuthorData.nationality.flag),
@@ -77,7 +78,7 @@ export function mapAuthorTeaser(
 ): AuthorTeaser {
 	return {
 		_id: rawAuthorData._id,
-		slug: rawAuthorData.slug.current,
+		slug: rawAuthorData.slug,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
 			flag: urlFor(rawAuthorData.nationality.flag),
@@ -152,12 +153,12 @@ export function mapStorylistTeasers(result: StorylistTeasersQueryResult): Storyl
 
 export function mapStorylist(result: NonNullable<StorylistQueryResult>): Storylist {
 	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
-	const publications: Publication[] = [];
+	const publications: PublicationTeaserWithAuthor[] = [];
 	for (const publication of result.publications) {
 		const { body, author, mediaSources, ...story } = publication.story;
 		publications.push({
 			...publication,
-			story: mapStoryPreviewContent({
+			story: mapStoryTeaserWithAuthor({
 				...story,
 				author: mapAuthorTeaser({ ...author }),
 				media: mapMediaSourcesForStorylist(mediaSources),
@@ -211,20 +212,13 @@ export async function mapStoryContent(result: NonNullable<StoryBySlugQueryResult
 	};
 }
 
-export function mapStoryPreviewContent(story: StoryPreview): StoryPreview {
-	const card = {
+export function mapStoryTeaserWithAuthor(story: StoryTeaserWithAuthor): StoryTeaserWithAuthor {
+	return {
 		...story,
 		paragraphs: story?.paragraphs ?? [],
 		media: story.media ?? [],
 		originalPublication: story.originalPublication ?? '',
 	};
-
-	if (story.author) {
-		card.author = {
-			...story.author,
-		};
-	}
-	return card;
 }
 
 export type StoryTeasersQueryResult = NonNullable<StoriesByAuthorSlugQueryResult | StoriesBySlugsQueryResult>;
@@ -262,7 +256,7 @@ export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlug
 	return stories;
 }
 
-type MostReadStoriesSubQuery = NonNullable<LandingPageContentQueryResult>['mostRead'];
+type MostReadStoriesSubQuery = NonNullable<RotatingContentQueryResult>['mostRead'];
 export function mapStoryNavigationTeaserWithAuthor(
 	result: NonNullable<MostReadStoriesSubQuery>,
 ): StoryNavigationTeaserWithAuthor[] {
@@ -283,12 +277,15 @@ export function mapStoryNavigationTeaserWithAuthor(
 	return stories;
 }
 
-export function mapLandingPageContent(result: NonNullable<LandingPageContentQueryResult>): LandingPageContent {
+export function mapLandingPageContent(
+	result: NonNullable<LandingPageContentQueryResult> & NonNullable<RotatingContentQueryResult>,
+): LandingPageContent {
 	return {
 		...result,
 		cards: mapStorylistTeasers(result.cards),
 		campaigns: mapContentCampaigns(result.campaigns),
 		mostRead: mapStoryNavigationTeaserWithAuthor(result.mostRead),
+		latestReads: mapStoryNavigationTeaserWithAuthor(result.latestReads),
 	};
 }
 
@@ -307,15 +304,11 @@ export function mapContentCampaigns(campaigns: ContentCampaignsSubQuery): Conten
 			description: mapBlockContentToTextParagraphs(campaign.description),
 			contents: {
 				xs: {
-					title: mapBlockContentToTextParagraphs(xs.title),
-					subtitle: mapBlockContentToTextParagraphs(xs.subtitle),
 					imageUrl: xs.image ? urlFor(xs.image) : '',
 					imageWidth: viewportElementSizes.xs.imageWidth,
 					imageHeight: viewportElementSizes.xs.imageHeight,
 				},
 				md: {
-					title: mapBlockContentToTextParagraphs(md.title),
-					subtitle: mapBlockContentToTextParagraphs(md.subtitle),
 					imageUrl: md.image ? urlFor(md.image) : '',
 					imageWidth: viewportElementSizes.md.imageWidth,
 					imageHeight: viewportElementSizes.md.imageHeight,

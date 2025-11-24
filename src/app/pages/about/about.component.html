@@ -132,102 +132,25 @@
 		<section id="people" class="mb-8">
 			<h2 class="h2 mb-5 text-gray-600">Hacemos <em>La Cuentoneta</em></h2>
 
-			<section class="mb-3">
-				<h3 class="h3">Staff</h3>
-				<ul>
-					<li class="inter-body-base-regular">
-						Ramiro Olivencia - <em>Líder de Proyecto</em> (<a [href]="'https://twitter.com/rolivenc'" class="underline"
-							>&#64;rolivenc</a
-						>)
-					</li>
-					<li class="inter-body-base-regular">
-						Maxi Cris - <em>Diseño UX/UI</em> (<a [href]="'https://twitter.com/_maxicris'" class="underline"
-							>&#64;maxicris</a
-						>)
-					</li>
-				</ul>
-			</section>
-
-			<section class="mb-3">
-				<h3 class="h3">Programación</h3>
-				<ul>
-					@for (programmer of programmers; track programmer.name) {
-						<li class="inter-body-base-regular">
-							{{ programmer.name }} (<a class="underline" href="{{ programmer.url }}">{{ programmer.username }}</a
-							>)
-						</li>
-					}
-				</ul>
-			</section>
-
-			<section class="mb-3">
-				<h3 class="h3">Generación de contenido</h3>
-				<ul>
-					<li class="inter-body-base-regular">
-						Sofía Abramovich (<a [href]="'https://twitter.com/__sofiaabigail'" class="underline">&#64;__sofiaabigail</a
-						>) - Autora de
-						<i>Instrucciones para leer en Otoño </i>
-					</li>
-					<li class="inter-body-base-regular">
-						Marian Erro (<a [href]="'https://twitter.com/MarianaErro'" class="underline">&#64;marianerro</a>) - Autoría
-						de
-						<i>Verano en Naón</i>
-					</li>
-					<li class="inter-body-base-regular">
-						Ladrón de Säbado (<a [href]="'https://twitter.com/ladrondesabado'" class="underline">&#64;ladrondesabado</a
-						>) - Propuesta y organización de los Spaces <i>Desde el Sótano de la Casa de la Calle Garay</i>, con
-						lecturas y análisis de cuentos de Borges.
-					</li>
-					<li class="inter-body-base-regular">
-						Elk A. (<a [href]="'https://www.wattpad.com/user/A-Elkkk-o-k'" class="underline">&#64;A-Elkkk-o-k</a>) -
-						Autoría de
-					</li>
-				</ul>
-			</section>
-
-			<section class="mb-3">
-				<h3 class="h3">Selección, transcripción y curación de contenido</h3>
-				<ul>
-					<li class="inter-body-base-regular">
-						Patricio Decoud (<a [href]="'https://twitter.com/arroba_pato'" class="underline">&#64;arrobapato</a>)
-					</li>
-					<li class="inter-body-base-regular">
-						Juan Balmaceda (<a [href]="'https://twitter.com/balm4ceda'" class="underline">&#64;balm4ceda</a>)
-					</li>
-					<li class="inter-body-base-regular">
-						Facundo Kaufmann (<a [href]="'https://twitter.com/facukaufmann'" class="underline">&#64;facukaufmann</a>)
-					</li>
-					<li class="inter-body-base-regular">
-						Candela Godoy (<a [href]="'https://twitter.com/napsiex'" class="underline">&#64;napsiex</a>)
-					</li>
-					<li class="inter-body-base-regular">
-						Analía Ale (<a [href]="'https://www.linkedin.com/in/anal%C3%ADa-ale-5673a6204/'" class="underline"
-							>&#64;analía-ale</a
-						>)
-					</li>
-					<li class="inter-body-base-regular">
-						Brahian Pereyra (<a [href]="'https://twitter.com/brahianpdev'" class="underline">&#64;brahianpdev</a>)
-					</li>
-					<li class="inter-body-base-regular">
-						Juan Romero (<a [href]="'https://www.linkedin.com/in/juanr0mer0'" class="underline">&#64;juanr0mer0</a>)
-					</li>
-					<li class="inter-body-base-regular">
-						Luis Omar Sánchez Díaz (<a [href]="'https://www.instagram.com/luisthepower/'" class="underline"
-							>&#64;luisthepower</a
-						>)
-					</li>
-					<li class="inter-body-base-regular">
-						Karla Nevárez (<a [href]="'mailto:kanemu36@gmail.com'" class="underline">kanemu36&#64;gmail.com</a>)
-					</li>
-					<li class="inter-body-base-regular">Sebastián Mansilla</li>
-					<li class="inter-body-base-regular">
-						Lolo Díaz (<a [href]="'https://instagram.com/estre.sadx'" class="underline">&#64;estre.sadx</a>)
-					</li>
-					<li class="inter-body-base-regular">
-						Nicolás Contrera (<a [href]="'https://twitter.com/nicontrera1'" class="underline">&#64;nicontrera1</a>)
-					</li>
-				</ul>
-			</section>
+			@for (area of contributorsPerArea(); track $index) {
+				<section class="mb-3">
+					<h3 class="h3">{{ area.area.name }}</h3>
+					<ul>
+						@for (contributor of area.contributors; track contributor.slug) {
+							<li class="inter-body-base-regular">
+								{{ contributor.name }}
+								@if (contributor.link.url) {
+									(<a class="underline" href="{{ contributor.link.url }}">{{ contributor.link.handle }}</a
+									>)
+								}
+								@if (contributor.notes) {
+									- {{ contributor.notes }}
+								}
+							</li>
+						}
+					</ul>
+				</section>
+			}
 		</section>
 	</section>
 </main>

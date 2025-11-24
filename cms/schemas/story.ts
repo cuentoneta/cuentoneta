@@ -43,6 +43,47 @@ const audioRecording = defineType({
 	],
 });
 
+const spotifyPodcastEpisode = defineType({
+	name: 'spotifyPodcastEpisode',
+	title: 'Episodio de podcast de Spotify',
+	type: 'object',
+	icon: PlayIcon,
+	preview: {
+		select: {
+			title: 'title',
+			url: 'url',
+		},
+		prepare(selection) {
+			const { title, url } = selection;
+			return {
+				title: `${title}`,
+				subtitle: `URL del podcast: ${url}`,
+			};
+		},
+	},
+	fields: [
+		defineField({
+			name: 'title',
+			title: 'Título asignado al episodio del podcast',
+			type: 'string',
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
+			name: 'description',
+			title: 'Descripción del episodio del podcast',
+			type: 'blockContent',
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
+			name: 'url',
+			title:
+				'URL del episodio del podcast (formato https://open.spotify.com/episode/3nRxeRnDvYkhegmyRqDhh0 o bien https://open.spotify.com/embed/episode/3nRxeRnDvYkhegmyRqDhh0)',
+			type: 'url',
+			validation: (Rule) => Rule.required(),
+		}),
+	],
+});
+
 const spaceRecording = defineType({
 	name: 'spaceRecording',
 	title: 'Grabación de Spaces de X',
@@ -182,7 +223,12 @@ export default defineType({
 			name: 'mediaSources',
 			title: 'Información de recursos multimedia asociados a la historia en otras plataformas web',
 			type: 'array',
-			of: [defineArrayMember(audioRecording), defineArrayMember(spaceRecording), defineArrayMember(youtubeVideo)],
+			of: [
+				defineArrayMember(audioRecording),
+				defineArrayMember(spaceRecording),
+				defineArrayMember(youtubeVideo),
+				defineArrayMember(spotifyPodcastEpisode),
+			],
 		}),
 		defineField({
 			name: 'resources',

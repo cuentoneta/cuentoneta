@@ -70,9 +70,9 @@ importers:
       '@types/express':
         specifier: ^5.0.3
         version: 5.0.3
-      '@vercel/speed-insights':
-        specifier: ^1.2.0
-        version: 1.2.0(react@18.2.0)
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
       esbuild:
         specifier: 0.25.5
         version: 0.25.5
@@ -290,9 +290,6 @@ importers:
       stylelint-config-standard:
         specifier: ^39.0.0
         version: 39.0.0(stylelint@16.24.0(typescript@5.9.2))
-      stylelint-config-standard-scss:
-        specifier: ^15.0.1
-        version: 15.0.1(postcss@8.5.6)(stylelint@16.24.0(typescript@5.9.2))
       tailwindcss:
         specifier: ^3.4.17
         version: 3.4.17(ts-node@10.9.2(@types/node@22.17.1)(typescript@5.9.2))
@@ -4319,30 +4316,6 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@vercel/speed-insights@1.2.0':
-    resolution:
-      { integrity: sha512-y9GVzrUJ2xmgtQlzFP2KhVRoCglwfRQgjyfY607aU0hh0Un6d0OUyrJkjuAlsV18qR4zfoFPs/BiIj9YDS6Wzw== }
-    peerDependencies:
-      '@sveltejs/kit': ^1 || ^2
-      next: '>= 13'
-      react: ^18 || ^19 || ^19.0.0-rc
-      svelte: '>= 4'
-      vue: ^3
-      vue-router: ^4
-    peerDependenciesMeta:
-      '@sveltejs/kit':
-        optional: true
-      next:
-        optional: true
-      react:
-        optional: true
-      svelte:
-        optional: true
-      vue:
-        optional: true
-      vue-router:
-        optional: true
-
   '@vitejs/plugin-basic-ssl@2.1.0':
     resolution:
       { integrity: sha512-dOxxrhgyDIEUADhb/8OlV9JIqYLgos03YorAueTIeOUskLJSEsfwCByjbu98ctXitUN3znXKp0bYD/WHSudCeA== }
@@ -5569,6 +5542,10 @@ packages:
     resolution:
       { integrity: sha512-ZYP5VBHshaDAiVZxjbRVcFJpc+4xGgT0bK3vzy1HLN8jTO975HEbuYzZJcHoQEY5K1a0z8YayJkyVETa08eNTg== }
     engines: { node: '>=18' }
+
+  date-fns@4.1.0:
+    resolution:
+      { integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg== }
 
   date-format@4.0.14:
     resolution:
@@ -15463,10 +15440,6 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.11.1':
     optional: true
 
-  '@vercel/speed-insights@1.2.0(react@18.2.0)':
-    optionalDependencies:
-      react: 18.2.0
-
   '@vitejs/plugin-basic-ssl@2.1.0(vite@7.1.5(@types/node@22.17.1)(jiti@1.21.7)(less@4.4.0)(sass-embedded@1.85.1)(sass@1.90.0)(stylus@0.64.0)(terser@5.43.1)(tsx@4.20.6)(yaml@2.7.0))':
     dependencies:
       vite: 7.1.5(@types/node@22.17.1)(jiti@1.21.7)(less@4.4.0)(sass-embedded@1.85.1)(sass@1.90.0)(stylus@0.64.0)(terser@5.43.1)(tsx@4.20.6)(yaml@2.7.0)
@@ -16625,6 +16598,8 @@ snapshots:
     dependencies:
       whatwg-mimetype: 4.0.0
       whatwg-url: 14.2.0
+
+  date-fns@4.1.0: {}
 
   date-format@4.0.14: {}
 
@@ -18646,7 +18621,8 @@ snapshots:
 
   klona@2.0.6: {}
 
-  known-css-properties@0.36.0: {}
+  known-css-properties@0.36.0:
+    optional: true
 
   known-css-properties@0.37.0: {}
 
@@ -18905,7 +18881,8 @@ snapshots:
 
   mdn-data@2.12.2: {}
 
-  mdn-data@2.21.0: {}
+  mdn-data@2.21.0:
+    optional: true
 
   media-typer@0.3.0: {}
 
@@ -19854,6 +19831,7 @@ snapshots:
   postcss-scss@4.0.9(postcss@8.5.6):
     dependencies:
       postcss: 8.5.6
+    optional: true
 
   postcss-selector-parser@6.1.2:
     dependencies:
@@ -20869,10 +20847,12 @@ snapshots:
       stylelint-scss: 6.12.0(stylelint@16.24.0(typescript@5.9.2))
     optionalDependencies:
       postcss: 8.5.6
+    optional: true
 
   stylelint-config-recommended@16.0.0(stylelint@16.24.0(typescript@5.9.2)):
     dependencies:
       stylelint: 16.24.0(typescript@5.9.2)
+    optional: true
 
   stylelint-config-recommended@17.0.0(stylelint@16.24.0(typescript@5.9.2)):
     dependencies:
@@ -20885,11 +20865,13 @@ snapshots:
       stylelint-config-standard: 38.0.0(stylelint@16.24.0(typescript@5.9.2))
     optionalDependencies:
       postcss: 8.5.6
+    optional: true
 
   stylelint-config-standard@38.0.0(stylelint@16.24.0(typescript@5.9.2)):
     dependencies:
       stylelint: 16.24.0(typescript@5.9.2)
       stylelint-config-recommended: 16.0.0(stylelint@16.24.0(typescript@5.9.2))
+    optional: true
 
   stylelint-config-standard@39.0.0(stylelint@16.24.0(typescript@5.9.2)):
     dependencies:
@@ -20907,6 +20889,7 @@ snapshots:
       postcss-selector-parser: 7.1.0
       postcss-value-parser: 4.2.0
       stylelint: 16.24.0(typescript@5.9.2)
+    optional: true
 
   stylelint@16.24.0(typescript@5.9.2):
     dependencies:

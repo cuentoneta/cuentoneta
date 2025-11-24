@@ -31,8 +31,12 @@ export interface YouTubeVideo extends Media {
 	data: { videoId: string };
 }
 
-export type MediaTypes = AudioRecording | SpaceRecording | YouTubeVideo;
-export type MediaTypeKey = 'spaceRecording' | 'audioRecording' | 'youTubeVideo';
+export interface SpotifyPodcastEpisode extends Media {
+	data: { url: string };
+}
+
+export type MediaTypes = AudioRecording | SpaceRecording | YouTubeVideo | SpotifyPodcastEpisode;
+export type MediaTypeKey = 'spaceRecording' | 'audioRecording' | 'youTubeVideo' | 'spotifyPodcastEpisode';
 
 /**
  * Interfaces utilizadas por backend para definir los tipos de contenido multimedia
@@ -52,6 +56,10 @@ export interface SpaceRecordingSchemaObject extends MediaSchemaObject {
 }
 
 export interface AudioRecordingSchemaObject extends MediaSchemaObject {
+	url: string;
+}
+
+export interface SpotifyPodcasteEpisodeSchemaObject extends MediaSchemaObject {
 	url: string;
 }
 

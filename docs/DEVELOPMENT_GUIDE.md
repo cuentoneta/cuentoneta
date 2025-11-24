@@ -49,7 +49,7 @@ Los ambientes de despliegue son los siguientes:
 
 - **Web | Producción:** [https://cuentoneta.ar/](https://cuentoneta.ar/)
 - **Web | Staging:** [https://staging.cuentoneta.ar](https://staging.cuentoneta.ar)
-- **Storybook:** [https://cuentoneta-storybook.vercel.app/](https://cuentoneta-storybook.vercel.app/)
+- **Storybook:** [https://storybook.cuentoneta.ar](https://storybook.cuentoneta.ar)
 - **Sanity Studio:** https://cuentoneta.sanity.studio/
 
 ---
@@ -93,6 +93,23 @@ Para poder hacer uso de las funcionalidades de Mermaid dentro del entorno de tra
 - En el caso de WebStorm, se recomienda la extensión [Markdown Mermaid](https://plugins.jetbrains.com/plugin/20146-mermaid/), la cual requiere la instalación previa de la extensión [Markdown](https://plugins.jetbrains.com/plugin/7793-markdown). Para el caso de WebStorm, se detalla que ambos plugins son oficiales de Jetbrains.
 
 Para la edición y visualización online de los diagramas también puede optarse por utilizar el [Mermaid Live Editor](https://mermaid-js.github.io/mermaid-live-editor/), en el cual pueden copiarse y pegarse los diagramas disponibles en nuestro repositorio para su visualización y modificación.
+
+---
+
+## Modelo de Dominio
+
+Para una comprensión profunda de la arquitectura y el diseño del modelo de dominio de La Cuentoneta, puede consultarse la documentación del [Modelo de Dominio](./DOMAIN_MODEL.md).
+
+En este documento pueden encontrarse:
+
+- Descripción de los cuatro contextos acotados (Bounded Contexts)
+- Definición detallada de agregados y raíces de agregado
+- Especificación de objetos de valor (Value Objects)
+- Lenguaje ubicuo del dominio
+- Patrones arquitectónicos implementados
+- Mejoras recomendadas para evolución futura
+
+Para comprender **la estrategia de actualización de contenido** a través de procesos automáticos, incluyendo la generación de landing pages y actualización de contenido rotativo mediante cron jobs, consulta la documentación sobre [Estrategias de Actualización de Contenido](./CONTENT_UPDATE_STRATEGIES.md).
 
 ---
 
@@ -310,6 +327,12 @@ base a
 la plantilla seleccionada al momento de su creación, mientras que otras son asignadas por los gestores del proyecto
 a la hora de realizar el _triaging_ y análisis de la incidencia.
 
+### Planes de prueba
+
+Para características que requieran pruebas de integración, sean estas manuales o implementadas mediante Playwright, se
+encuentra disponible una guía y plantilla de cómo confeccionar un plan de pruebas para una funcionalidad determinada del
+proyecto. Puede accederse al template de planes de testing [en este enlace](#doc-test-plan).
+
 ---
 
 [dc-channel]: https://discord.com/channels/594363964499165194/1109220285841944586
@@ -323,3 +346,5 @@ a la hora de realizar el _triaging_ y análisis de la incidencia.
 [doc-mvv]: https://github.com/cuentoneta/cuentoneta/blob/develop/MVV.md
 [doc-code_of_conduct]: https://github.com/cuentoneta/cuentoneta/blob/develop/CODE_OF_CONDUCT.md
 [dc-fec]: https://discord.com/invite/frontendcafe
+[doc-test-plan]: https://github.com/cuentoneta/cuentoneta/blob/develop/docs/TEST_PLAN.md
+[doc-test-template]: https://github.com/cuentoneta/cuentoneta/blob/develop/docs/TEST_TEMPLATE.md

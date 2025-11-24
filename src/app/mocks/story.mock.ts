@@ -2,11 +2,11 @@ import {
 	Story,
 	StoryNavigationTeaser,
 	StoryNavigationTeaserWithAuthor,
-	StoryPreview,
 	StoryTeaser,
+	StoryTeaserWithAuthor,
 } from '@models/story.model';
 import { authorMock, authorTeaserMock } from './author.mock';
-import { Publication, PublicationNavigationTeaser } from '@models/storylist.model';
+import { PublicationTeaserWithAuthor, PublicationNavigationTeaser } from '@models/storylist.model';
 
 export const storyMock: Story = {
 	_id: 'story-1',
@@ -344,7 +344,7 @@ export const storyMock: Story = {
 	],
 };
 
-export const storyPreviewMock: StoryPreview = {
+export const storyTeaserWithAuthorMock: StoryTeaserWithAuthor = {
 	_id: 'story-1',
 	resources: [
 		{
@@ -470,7 +470,7 @@ export const storyPreviewMock: StoryPreview = {
 };
 
 export const storyNavigationTeaserWithAuthorMock: StoryNavigationTeaserWithAuthor = {
-	...storyPreviewMock,
+	...storyTeaserWithAuthorMock,
 	paragraphs: [],
 };
 
@@ -657,11 +657,11 @@ export const storyNavigationTeaserMock: StoryNavigationTeaser = {
 	slug: 'el-espejo-del-tiempo',
 };
 
-export const publicationMock: Publication = {
+export const publicationMock: PublicationTeaserWithAuthor = {
 	publishingOrder: 54,
 	published: true,
 	publishingDate: '2024-10-27',
-	story: storyPreviewMock,
+	story: storyTeaserWithAuthorMock,
 };
 
 export const publicationNavigationTeaserMock: PublicationNavigationTeaser = {

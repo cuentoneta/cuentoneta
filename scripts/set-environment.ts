@@ -17,7 +17,7 @@ import { TEnvironmentType } from './vercel-environments.model';
 import { join } from 'node:path';
 
 // Constantes para generar el archivo de environment
-const environment: TEnvironmentType = (process.env['VERCEL_ENV'] as TEnvironmentType) ?? 'development';
+const environment: TEnvironmentType = (process.env['VERCEL_TARGET_ENV'] as TEnvironmentType) ?? 'development';
 const dirPath = `src/app/environments`;
 const targetPath = `${dirPath}/environment.ts`;
 
@@ -66,11 +66,8 @@ if (environment === 'development') {
 const generateApiUrl = (environment: TEnvironmentType): string => {
 	let url = '/';
 
-	const branchUrl: string = process.env['VERCEL_BRANCH_URL'] as string;
-	const stagingBranchUrl = 'cuentoneta-git-develop-rolivencia-projects.vercel.app';
-
 	// Asigna URL en base a la URL de la rama de Vercel para ambiente staging
-	if (branchUrl === stagingBranchUrl) {
+	if (environment === 'staging') {
 		url = `https://staging.cuentoneta.ar/`;
 	}
 	// Lectura de la variable de entorno de Vercel para deployments de preview fuera de staging
@@ -117,7 +114,7 @@ writeFile(targetPath, environmentFileContent, { flag: 'w' }, function (err: Errn
 		return;
 	}
 	console.log(`Variables de entorno escritas en ${targetPath}`);
-	console.log('Ambiente de Vercel - VERCEL_ENV = ', process.env['VERCEL_ENV']);
+	console.log('Ambiente de Vercel - VERCEL_TARGET_ENV = ', process.env['VERCEL_TARGET_ENV']);
 	console.log('Ambiente de Vercel - VERCEL_URL = ', process.env['VERCEL_URL']);
 	console.log('URL de branch de Vercel - VERCEL_BRANCH_URL = ', process.env['VERCEL_BRANCH_URL']);
 	console.log('URL de API y Website = ', apiUrl);

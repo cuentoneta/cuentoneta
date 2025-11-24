@@ -32,82 +32,12 @@ export const contentCampaignMock: ContentCampaign[] = [
 		url: '../author/alejandro-dolina',
 		contents: {
 			xs: {
-				title: [
-					{
-						markDefs: [],
-						children: [
-							{
-								_type: 'span',
-								marks: [],
-								text: 'Desde el barrio de Flores...',
-								_key: 'cc8a98d050de0',
-							},
-						],
-						_type: 'block',
-						style: 'normal',
-						_key: 'b12e042c1a31',
-					},
-				],
-				subtitle: [
-					{
-						_type: 'block',
-						style: 'normal',
-						_key: 'baac3bcc7c08',
-						markDefs: [],
-						children: [
-							{
-								_type: 'span',
-								marks: [],
-								text: '... la primer entrega de este ciclo',
-								_key: '924292fa7c290',
-							},
-						],
-					},
-				],
 				imageUrl:
 					'https://cdn.sanity.io/images/s4dbqkc5/development/d1954f5948a07ec4f02c9c621f664e42bbe61ce9-540x220.jpg',
 				imageWidth: 540,
 				imageHeight: 220,
 			},
 			md: {
-				title: [
-					{
-						_key: '9de26f2cc5e0',
-						markDefs: [],
-						children: [
-							{
-								_type: 'span',
-								marks: [],
-								text: 'Desde el barrio de Flores...',
-								_key: 'f594b7f75e840',
-							},
-						],
-						_type: 'block',
-						style: 'normal',
-					},
-				],
-				subtitle: [
-					{
-						_key: '0ef423b069c2',
-						markDefs: [],
-						children: [
-							{
-								text: '... la entrega #1 del ciclo ',
-								_key: '473f38357e750',
-								_type: 'span',
-								marks: [],
-							},
-							{
-								_key: 'cf112a622e8c',
-								_type: 'span',
-								marks: ['em', 'strong'],
-								text: 'Pluma de la semana',
-							},
-						],
-						_type: 'block',
-						style: 'normal',
-					},
-				],
 				imageUrl:
 					'https://cdn.sanity.io/images/s4dbqkc5/development/ec31c09f54fe53f4de213075d2e73e61805fbf4f-960x280.jpg',
 				imageWidth: 960,
@@ -151,76 +81,12 @@ export const contentCampaignMock: ContentCampaign[] = [
 		url: '../storylist/cuentos-de-terror-de-alberto-laiseca',
 		contents: {
 			xs: {
-				title: [
-					{
-						markDefs: [],
-						children: [
-							{
-								_type: 'span',
-								marks: [],
-								text: 'Los cuentos de iSAT...',
-								_key: '4fd9c32a66da0',
-							},
-						],
-						_type: 'block',
-						style: 'normal',
-						_key: 'fd0769af1592',
-					},
-				],
-				subtitle: [
-					{
-						_key: '2f0236fc48e6',
-						markDefs: [],
-						children: [
-							{
-								_type: 'span',
-								marks: [],
-								text: '...recopilados en texto y video',
-								_key: 'd41720abdbd90',
-							},
-						],
-						_type: 'block',
-						style: 'normal',
-					},
-				],
 				imageUrl:
 					'https://cdn.sanity.io/images/s4dbqkc5/development/611360ec02e690fc8c56d674162815690ea0b1fc-540x220.jpg',
 				imageWidth: 540,
 				imageHeight: 220,
 			},
 			md: {
-				title: [
-					{
-						markDefs: [],
-						children: [
-							{
-								text: 'Los cuentos de iSAT...',
-								_key: '5db36a4ee5620',
-								_type: 'span',
-								marks: [],
-							},
-						],
-						_type: 'block',
-						style: 'normal',
-						_key: 'e3561466ffbe',
-					},
-				],
-				subtitle: [
-					{
-						_key: '6799282866a4',
-						markDefs: [],
-						children: [
-							{
-								_type: 'span',
-								marks: [],
-								text: '... en texto y video con narración de Alberto Laiseca',
-								_key: '74b7ce0ce36c0',
-							},
-						],
-						_type: 'block',
-						style: 'normal',
-					},
-				],
 				imageUrl:
 					'https://cdn.sanity.io/images/s4dbqkc5/development/5e37e287e037a35f9034abb9da33dac68acc6517-960x280.jpg',
 				imageWidth: 960,

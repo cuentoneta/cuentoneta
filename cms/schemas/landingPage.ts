@@ -36,12 +36,7 @@ export default defineType({
 			},
 			validation: (Rule) => Rule.required(),
 		}),
-		defineField({
-			name: 'active',
-			title: 'Activa',
-			type: 'boolean',
-			validation: (Rule) => Rule.required(),
-		}),
+
 		defineField({
 			name: 'campaigns',
 			title: 'Campañas',
@@ -69,8 +64,8 @@ export default defineType({
 			],
 		}),
 		defineField({
-			name: 'mostRead',
-			title: 'Lo más leído',
+			name: 'latestReads',
+			title: 'Últimas novedades',
 			type: 'array',
 			of: [
 				defineArrayMember({

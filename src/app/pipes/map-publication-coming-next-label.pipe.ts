@@ -1,5 +1,5 @@
 import { inject, Pipe, PipeTransform } from '@angular/core';
-import { Publication, Storylist } from '@models/storylist.model';
+import { PublicationTeaserWithAuthor, Storylist } from '@models/storylist.model';
 import { DatePipe } from '@angular/common';
 
 @Pipe({
@@ -9,7 +9,7 @@ import { DatePipe } from '@angular/common';
 export class MapPublicationComingNextLabelPipe implements PipeTransform {
 	private datePipe = inject(DatePipe);
 
-	transform(publication: Publication, storylist: Storylist): string {
+	transform(publication: PublicationTeaserWithAuthor, storylist: Storylist): string {
 		let result = `${storylist.comingNextLabel}`;
 
 		if (storylist.displayDates) {

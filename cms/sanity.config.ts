@@ -9,6 +9,7 @@ import { structureTool } from 'sanity/structure';
 import { visionTool } from '@sanity/vision';
 import { sanityComputedField } from 'sanity-plugin-computed-field';
 import { iconPicker } from 'sanity-plugin-icon-picker';
+import { singletonTools } from 'sanity-plugin-singleton-management';
 
 export default defineConfig([
 	{
@@ -28,6 +29,7 @@ export default defineConfig([
 			sanityComputedField(),
 			visionTool(),
 			iconPicker(),
+			singletonTools(),
 		],
 		schema: {
 			types: schemas,

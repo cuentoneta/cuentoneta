@@ -1,5 +1,5 @@
 // Core
-import { Component, computed, inject, OnDestroy, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -28,13 +28,13 @@ import { ThemeService } from '../../providers/theme.service';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 // Components
-import { StoryNavigationBarComponent } from '../../components/story-navigation-bar/story-navigation-bar.component';
-import { BioSummaryCardComponent } from '../../components/bio-summary-card/bio-summary-card.component';
-import { ShareContentComponent } from '../../components/share-content/share-content.component';
-import { EpigraphComponent } from '../../components/epigraph/epigraph.component';
-import { MediaResourceComponent } from '../../components/media-resource/media-resource.component';
-import { PortableTextParserComponent } from '../../components/portable-text-parser/portable-text-parser.component';
-import { ProgressBarComponent } from '../../components/progress-bar/progress-bar.component';
+import { StoryNavigationBarComponent } from '@components/story-navigation-bar/story-navigation-bar.component';
+import { BioSummaryCardComponent } from '@components/bio-summary-card/bio-summary-card.component';
+import { ShareContentComponent } from '@components/share-content/share-content.component';
+import { EpigraphComponent } from '@components/epigraph/epigraph.component';
+import { MediaResourceComponent } from '@components/media-resource/media-resource.component';
+import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
+import { ProgressBarComponent } from '@components/progress-bar/progress-bar.component';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 
@@ -67,7 +67,7 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 	providers: [provideIcons({ faSolidArrowRightLong }), LayoutService],
 	hostDirectives: [MetaTagsDirective],
 })
-export default class StoryComponent implements OnDestroy {
+export default class StoryComponent {
 	// Routes
 	readonly appRoutes = AppRoutes;
 
@@ -77,7 +77,7 @@ export default class StoryComponent implements OnDestroy {
 	private storyService = inject(StoryService);
 	private themeService = inject(ThemeService);
 	private layoutService = inject(LayoutService);
-	private meta = inject(MetaTagsDirective);
+	private metaTagsDirective = inject(MetaTagsDirective);
 	private isHeaderVisible$ = inject(LayoutService).isHeaderVisible$.pipe(takeUntilDestroyed());
 
 	// Recursos
@@ -127,17 +127,19 @@ export default class StoryComponent implements OnDestroy {
 		});
 	}
 
-	ngOnDestroy() {
-		this.meta.removeCanonicalUrl();
-		this.meta.removeRobots();
-	}
-
 	private updateMetaTags(story: Story) {
-		this.meta.setTitle(`${story.title} - ${story.author.name}`);
-		this.meta.setDescription(
+		this.metaTagsDirective.setTitle(`${story.title} - ${story.author.name}`);
+		this.metaTagsDirective.setDescription(
 			`Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
 		);
-		this.meta.setCanonicalUrl(`${environment.website}/${AppRoutes.Story}/${story.slug}`);
-		this.meta.setRobots('index, follow');
+		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/${AppRoutes.Story}/${story.slug}`);
+		this.metaTagsDirective.setRobots('index, follow');
+		this.metaTagsDirective.setKeywords([
+			'literatura',
+			'poemas',
+			'cuentos',
+			story.title.toLowerCase(),
+			story.author.name.toLowerCase(),
+		]);
 	}
 }

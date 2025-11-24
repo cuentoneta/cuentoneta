@@ -4,7 +4,7 @@ import { Component, input } from '@angular/core';
 	selector: 'cuentoneta-story-edition-date-label[label]',
 	template: `
 		@if (!!label) {
-			<span class="max-sm:inter-body-xs-bold sm:inter-body-sm-bold flex items-center text-primary-500">
+			<span class="inter-body-sm-bold flex items-center text-primary-500">
 				<div class="mr-2 h-[12px] w-[2px] bg-primary-500" data-testid="visual-indicator"></div>
 				{{ label() }}
 			</span>
@@ -22,7 +22,6 @@ import { Component, input } from '@angular/core';
 			justify-content: space-between;
 		}
 	`,
-	imports: [],
 })
 export class StoryEditionDateLabelComponent {
 	readonly label = input<string>();

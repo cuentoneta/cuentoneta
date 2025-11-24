@@ -70,7 +70,7 @@ export const storyBySlugQuery = defineQuery(`
     }, []),
     'author': author-> {
         _id,
-        slug,
+        'slug': slug.current,
         name,
         image,
         nationality->,
@@ -96,7 +96,7 @@ export const storiesBySlugsQuery = defineQuery(`
 {
     _id,
     'slug': slug.current,
-    title, 
+    title,
     'language': coalesce(language, 'es'),
     'badLanguage': coalesce(badLanguage, false),
     'epigraphs': [],
@@ -108,7 +108,7 @@ export const storiesBySlugsQuery = defineQuery(`
     'resources': [],
     'author': author-> {
         _id,
-        slug,
+        'slug': slug.current,
         name,
         image,
         nationality->,
@@ -118,3 +118,31 @@ export const storiesBySlugsQuery = defineQuery(`
         'resources': []
     }
 }`);
+
+export const allStoriesQuery = defineQuery(`
+*[_type == 'story' && !(_id in path('drafts.**'))]
+[$start...$end]
+{
+    _id,
+    'slug': slug.current,
+    title,
+    'language': coalesce(language, 'es'),
+    'badLanguage': coalesce(badLanguage, false),
+    'body': [],
+    'review': [],
+    'originalPublication': coalesce(originalPublication, ''),
+    approximateReadingTime,
+    'mediaSources': coalesce(mediaSources[], []),
+    'resources': [],
+    'author': author-> {
+        _id,
+        'slug': slug.current,
+        name,
+        image,
+        nationality->,
+        'biography': [],
+        bornOn,
+        diedOn,
+        'resources': []
+    }
+}|order(title asc)`);

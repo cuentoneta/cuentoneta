@@ -12,7 +12,7 @@ export const serverRoutes: Array<ServerRoute> = [
 	},
 	{
 		path: AppRoutes.About,
-		renderMode: RenderMode.Prerender,
+		renderMode: RenderMode.Server,
 	},
 	{
 		path: AppRoutes.Dmca,
@@ -24,14 +24,10 @@ export const serverRoutes: Array<ServerRoute> = [
 	},
 	{
 		path: AppRoutes.Story,
-		renderMode: RenderMode.Server,
+		renderMode: RenderMode.Prerender,
 	},
 	{
 		path: `${AppRoutes.Story}/:slug`,
-		renderMode: RenderMode.Server,
-	},
-	{
-		path: `${AppRoutes.Story}/:slug/:list`,
 		renderMode: RenderMode.Server,
 	},
 	{

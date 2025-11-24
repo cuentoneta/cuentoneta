@@ -4,7 +4,7 @@ export const authorBySlugQuery = defineQuery(`
 *[_type == 'author' && slug.current == $slug && !(_id in path('drafts.**'))][0]
 {
     _id,
-    slug,
+    'slug': slug.current,
     name,
     image,
     nationality->,
@@ -28,7 +28,7 @@ export const authorsQuery = defineQuery(`
 *[_type == 'author' && !(_id in path('drafts.**'))]
 {
     _id,
-    slug,
+    'slug': slug.current,
     name,
     image,
     nationality->,

@@ -1,3 +1,27 @@
+import {
+	faSolidAddressBook,
+	faSolidBook,
+	faSolidBookBookmark,
+	faSolidEnvelope,
+	faSolidGlobe,
+	faSolidMedal,
+	faSolidMicrophoneLines,
+	faSolidPeopleGroup,
+	faSolidPlay,
+	faSolidStar,
+	faSolidTrophy,
+} from '@ng-icons/font-awesome/solid';
+import {
+	simpleBlogger,
+	simpleDiscord,
+	simpleSubstack,
+	simpleWattpad,
+	simpleWikisource,
+	simpleX,
+	simpleYoutube,
+} from '@ng-icons/simple-icons';
+import { faBrandAmazon, faBrandInstagram, faBrandWikipediaW } from '@ng-icons/font-awesome/brands';
+
 export interface Icon {
 	name: string;
 	provider: string;
@@ -6,101 +30,101 @@ export interface Icon {
 // TODO: #535 - Reemplazar estas interfaces por uso directo de íconos cargados de manera dinámica
 export interface IconMapper {
 	name: string;
-	ngIconsName: string;
+	ngIconsName: Record<string, string>;
 }
 
 // TODO: #535 - Reemplazar estas interfaces por uso directo de íconos cargados de manera dinámica
 export const iconMappers: IconMapper[] = [
 	{
 		name: 'curaduria',
-		ngIconsName: 'faSolidStar',
+		ngIconsName: { faSolidStar },
 	},
 	{
 		name: 'x-spaces',
-		ngIconsName: 'faSolidMicrophoneLines',
+		ngIconsName: { faSolidMicrophoneLines },
 	},
 	{
 		name: 'ingles',
-		ngIconsName: 'faSolidGlobe',
+		ngIconsName: { faSolidGlobe },
 	},
 	{
 		name: 'certamen',
-		ngIconsName: 'faSolidTrophy',
+		ngIconsName: { faSolidTrophy },
 	},
 	{
 		name: 'colaborativa',
-		ngIconsName: 'faSolidPeopleGroup',
+		ngIconsName: { faSolidPeopleGroup },
 	},
 	{
 		name: 'antologia',
-		ngIconsName: 'faSolidBookBookmark',
+		ngIconsName: { faSolidBookBookmark },
 	},
 	{
 		name: 'tertulia-literaria',
-		ngIconsName: 'faSolidBook',
+		ngIconsName: { faSolidBook },
 	},
 	{
 		name: 'video',
-		ngIconsName: 'faSolidPlay',
+		ngIconsName: { faSolidPlay },
 	},
 	{
 		name: 'wattpad',
-		ngIconsName: 'simpleWattpad',
+		ngIconsName: { simpleWattpad },
 	},
 	{
 		name: 'wikipedia',
-		ngIconsName: 'faBrandWikipediaW',
+		ngIconsName: { faBrandWikipediaW },
 	},
 	{
 		name: 'recurso-original',
-		ngIconsName: 'faSolidMedal',
+		ngIconsName: { faSolidMedal },
 	},
 	{
 		name: 'sitio-web',
-		ngIconsName: 'faSolidGlobe',
+		ngIconsName: { faSolidGlobe },
 	},
 	{
 		name: 'web-personal',
-		ngIconsName: 'faSolidGlobe',
+		ngIconsName: { faSolidGlobe },
 	},
 	{
 		name: 'biografia-del-autor-en-sitio-web',
-		ngIconsName: 'faSolidAddressBook',
+		ngIconsName: { faSolidAddressBook },
 	},
 	{
 		name: 'instagram',
-		ngIconsName: 'faBrandInstagram',
+		ngIconsName: { faBrandInstagram },
 	},
 	{
 		name: 'wikisource',
-		ngIconsName: 'simpleWikisource',
+		ngIconsName: { simpleWikisource },
 	},
 	{
 		name: 'discord',
-		ngIconsName: 'simpleDiscord',
+		ngIconsName: { simpleDiscord },
 	},
 	{
 		name: 'substack',
-		ngIconsName: 'simpleSubstack',
+		ngIconsName: { simpleSubstack },
 	},
 	{
 		name: 'blogspot',
-		ngIconsName: 'simpleBlogger',
+		ngIconsName: { simpleBlogger },
 	},
 	{
 		name: 'email',
-		ngIconsName: 'faSolidEnvelope',
+		ngIconsName: { faSolidEnvelope },
 	},
 	{
 		name: 'amazon',
-		ngIconsName: 'faBrandAmazon',
+		ngIconsName: { faBrandAmazon },
 	},
 	{
 		name: 'youtube',
-		ngIconsName: 'simpleYoutube',
+		ngIconsName: { simpleYoutube },
 	},
 	{
 		name: 'x',
-		ngIconsName: 'simpleX',
+		ngIconsName: { simpleX },
 	},
 ];

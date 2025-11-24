@@ -1,0 +1,11 @@
+.content {
+	@apply my-0 min-h-screen md:m-auto md:max-w-screen-md;
+}
+
+.vertical-layout-spacing {
+	@apply mt-24 md:mt-36;
+}
+
+.horizontal-layout-spacing {
+	@apply mx-5 md:mx-auto;
+}
