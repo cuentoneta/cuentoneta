@@ -10,9 +10,7 @@
 
 # Bitácora de cambios (changelog)
 
-Esta bitácora de cambios detalla los hitos principales en el desarrollo de La Cuentoneta, más la lista de características y contenido deseable futuro
-
-para el desarrollo de la plataforma de La Cuentoneta. Cabe mencionar que este cronograma es flexible y podrían agregarse otros hitos adicionales según las oportunidades que surjan durante el avance del proyecto, debido a su naturaleza abierta y colaborativa.
+Esta bitácora de cambios detalla los hitos principales en el desarrollo de La Cuentoneta, más la lista de características y contenido deseable futuro para el desarrollo de la plataforma. Cabe mencionar que este cronograma es flexible y podrían agregarse otros hitos adicionales según las oportunidades que surjan durante el avance del proyecto, debido a su naturaleza abierta y colaborativa.
 
 ## Versión 2.7.0 (2025-11-23)
 

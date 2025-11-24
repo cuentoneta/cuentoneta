@@ -23,7 +23,6 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 - [Accesibilidad](#accesibilidad)
 - [Staff](#staff)
 - [Patrocinadores](#patrocinadores)
-- [Staff](#staff)
 - [Licencias](#licencias)
 - [Links de interés](#links-de-interés)
 
@@ -88,17 +87,6 @@ Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos 
 
 ---
 
-## Equipo
-
-- Ramiro Olivencia - Programación y dirección del proyecto (**[@rolivencia](https://github.com/rolivencia)**)
-- Maxi Cris - Diseño UX/UI(**[@maxicris](https://github.com/maxicris)**)
-
-La lista completa de contribuyentes al proyecto se encuentra disponible en la sección ["Nosotros"](https://cuentoneta.ar/about) de la web de La Cuentoneta.
-
-El aporte de cada una de las personas se detalla, además, en la documentación de cada una de las [versiones lanzadas](https://github.com/cuentoneta/cuentoneta/releases) del proyecto.
-
----
-
 ## Patrocinadores
 
 ¿Te interesa patrocinar o promocionar este proyecto? ¡Comunicate con nosotros!
@@ -107,13 +95,17 @@ El aporte de cada una de las personas se detalla, además, en la documentación 
 
 ## Staff
 
-_Desarrollo y administración del repositorio_
+_Líder de Desarrollo y administrador principal del repositorio_
 
 Ramiro Olivencia (**[@rolivencia](https://github.com/rolivencia)**)
 
-_Diseño UX/UI_
+_Líder de Diseño UX/UI_
 
 Maxi Cris (**[@maxicris](https://github.com/maxicris)**)
+
+La lista completa de contribuyentes al proyecto se encuentra disponible en la sección ["Nosotros"](https://cuentoneta.ar/about) de la web de La Cuentoneta.
+
+El aporte de cada una de las personas se detalla, además, en la documentación de cada una de las [versiones lanzadas](https://github.com/cuentoneta/cuentoneta/releases) del proyecto.
 
 ---
 
