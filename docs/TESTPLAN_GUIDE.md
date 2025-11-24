@@ -8,6 +8,11 @@
 
 ---
 
+# Guía de Testing
+¡Te damos la bienvenida! En esta sección encontrarás cómo escribir correctamente un test plan para documentar el inicio de la fase de pruebas del desarrollo y conocer cómo trabajamos en el proyecto. Además, encontrarás fuentes útiles que te aninamos a investigar.
+
+En caso de que desees aportar sugerencias, ya sea de mejora de este documento o propuestas, podes hacerlo desde el canal **[**#🚐 | la-cuentoneta**][dc-channel]** en Discord o en sumar un issue de tipo **[💼 Proponer mejoras en la Gestión o el Proceso de Desarrollo del Proyecto](https://github.com/cuentoneta/cuentoneta/issues/new/choose)**.
+
 # 1. ¿Qué es un Test Plan?
 Test Plan, o plan de pruebas en español, es un documento que describe estrategias, alcance, enfoque y recursos para llevar a cabo el proceso de pruebas en un proyecto de desarrollo de software o de sistemas.
 
