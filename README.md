@@ -27,9 +27,9 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 - [Licencias](#licencias)
 - [Links de interés](#links-de-interés)
 
-## Hoja de ruta
+## Bitácora de cambios
 
-Puedes acceder a la hoja de ruta (roadmap) del proyecto en [este enlace][doc-roadmap]. Allí podrás visualizar los planes de las futuras versiones de la plataforma más las storylists a agregar a La Cuentoneta.
+Puedes acceder a bitácora de cambios (changelog) del proyecto en [este enlace][doc-changelog]. Allí podrás visualizar los cambios que trae aparejados cada versión de la plataforma más los planes de las futuras versiones de La Cuentoneta.
 
 ## Cómo contribuir
 
@@ -177,7 +177,7 @@ Este repositorio y el contenido de la web de La Cuentoneta se publican bajo lice
 [doc-code_of_conduct]: CODE_OF_CONDUCT.md
 [doc-changelog]: CHANGELOG.md
 [doc-contributing]: CONTRIBUTING.md
-[doc-roadmap]: ROADMAP.md
+[doc-changelog]: CHANGELOG.md
 [doc-mvv]: MVV.md
 [doc-lic]: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
 [doc-guia-de-desarrollo]: https://github.com/cuentoneta/cuentoneta/blob/develop/docs/DEVELOPMENT_GUIDE.md

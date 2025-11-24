@@ -9,7 +9,7 @@ assignees: ''
 ## Tareas
 
 - [ ] Listar todos los issues agregados a la release.
-- [ ] Ajustar roadmap.
+- [ ] Ajustar changelog.
 - [ ] Agregar contribuyentes a la versión en codebase.
 - [ ] Actualizar versión en package.json.
 - [ ] Sanity: Clonar entorno DEV a PROD, para copiar cambios en schema.

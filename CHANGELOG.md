@@ -8,9 +8,11 @@
 
 ---
 
-# Hoja de Ruta (Roadmap)
+# Bitácora de cambios (changelog)
 
-Este roadmap detalla los hitos principales para el desarrollo de la plataforma de La Cuentoneta. Cabe mencionar que este cronograma es flexible y podrían agregarse otros hitos adicionales según las oportunidades que surjan durante el avance del proyecto, debido a su naturaleza abierta y colaborativa.
+Esta bitácora de cambios detalla los hitos principales en el desarrollo de La Cuentoneta, más la lista de características y contenido deseable futuro
+
+para el desarrollo de la plataforma de La Cuentoneta. Cabe mencionar que este cronograma es flexible y podrían agregarse otros hitos adicionales según las oportunidades que surjan durante el avance del proyecto, debido a su naturaleza abierta y colaborativa.
 
 <details>
     <summary><h1>Hitos Pasados</h1></summary>
@@ -277,24 +279,6 @@ Esta versión trae aparejados cambios estructurales, entre las cuales se incluye
 - [#1356] - Corrige `navigationSlug` para navegación desde vista de storylist
 
 ### Hito: Lanzamiento al público de la versión [2.7.0](https://github.com/cuentoneta/cuentoneta/releases/tag/2.6.5) de La Cuentoneta (lanzada el 2025/11/23)
-
----
-
-## Futuros
-
-- Invitación abierta a autoras y autores santafesinos para participar en la storylist "Plumas Santafesinas", recopilando relatos breves y poemas de autoría provincial.
-- Agregado de secciones para comunidades y grupos de lectura, permitiendo a los usuarios crear y compartir storylists personalizadas.
-- Mejoras en storylists y landing page, en base a diseños nuevos de UX.
-- Preparación de la plataforma para alojar el primer concurso de escritura en La Cuentoneta, el _III Certamen
-  Extraordinario de Escritura_, a cargo de la comunidad **[Tertulia Literaria](https://discord.gg/tertulia-literaria-795704695485235231)**.
-- Preparación de la lista "Cuentos por la Memoria" en conmemoración del Día por la Memoria, la Verdad y la Justicia, celebrado el 24 de marzo.
-- Exploración de material de autoras y autores locales para incluirlos en una edición especial de la plataforma.
-- Publicación de las listas "Cuentos para el Bicentenario" en la plataforma, originalmente publicadas por el Ministerio de Educación de la Nación en 2015.
-- Planificación del módulo "Elige tu propia lectura" donde se asignará a cada usuario un desafío de lectura personalizado, generando una storylist adaptada a sus preferencias. Fecha tentativa de lanzamiento en agosto de 2024.
-- Inclusión de niveles educativos inicial, primario y secundario en las listas.
-- Preparación de un newsletter quincenal al que los usuarios podrán suscribirse para recibir novedades de La Cuentoneta por correo electrónico.
-- Implementación de la funcionalidad "¿Cuánto tiempo tenés para leer hoy?" que permitirá filtrar los relatos según su tiempo estimado de lectura.
-- Desarrollo de las funcionalidades de registro e inicio de sesión de usuarios, que permitirán marcar historias como "leídas", dejar puntuaciones y comentarios en cada relato y storylist.
 
 <!-- Listado de enlaces de referencia, mantenerlos actualizados en cada archivo -->
 
