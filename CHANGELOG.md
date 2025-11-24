@@ -40,7 +40,7 @@ Ver el changelog completo en [2.7.0](https://github.com/cuentoneta/cuentoneta/re
 
 - [#1366] - Introducción de keywords en vistas de detalles de Story, Storylist y Author
 
-* [#1367] - Agregado de la V1 de la lista de stories, a manera de módulo interno. Si bien la navegación hacia el mismo se encuentra oculta, puede navegarse hacia la ruta `/stories` para ver la lista completa de stories y alimentar, así, a la indexación de los buscadores.
+- [#1367] - Agregado de la V1 de la lista de stories, a manera de módulo interno. Si bien la navegación hacia el mismo se encuentra oculta, puede navegarse hacia la ruta `/stories` para ver la lista completa de stories y alimentar, así, a la indexación de los buscadores.
 
 #### Testing y gestión de calidad
 
@@ -282,9 +282,9 @@ Ver el changelog completo en [2.4.1](https://github.com/cuentoneta/cuentoneta/re
 <!-- Listado de enlaces de referencia, mantenerlos actualizados en cada archivo -->
 
 [web]: https://cuentoneta.ar
-[storylist-verano-2022]: https://www.cuentoneta.ar/storylist?slug=verano-2022
-[storylist-otoño-2023]: https://www.cuentoneta.ar/storylist?slug=otono-2023
-[storylist-fec-english-sessions]: https://www.cuentoneta.ar/storylist?slug=fec-english-sessions
+[storylist-verano-2022]: https://www.cuentoneta.ar/storylist/verano-2022
+[storylist-otoño-2023]: https://www.cuentoneta.ar/storylist/otono-2023
+[storylist-fec-english-sessions]: https://www.cuentoneta.ar/storylist/fec-english-sessions
 [dc-fec]: https://discord.com/invite/frontendcafe
 
 <!-- Enlaces a Redes Sociales -->
