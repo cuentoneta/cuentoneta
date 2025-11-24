@@ -226,6 +226,52 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 
 ### Hito: Lanzamiento al público de la versión [2.6.5](https://github.com/cuentoneta/cuentoneta/releases/tag/2.6.5) de La Cuentoneta (lanzada el 2025/11/02)
 
+## Versión 2.7.0
+
+Esta versión trae aparejados cambios estructurales, entre las cuales se incluyen la creación de las primeras iteraciones de una variedad de módulos y la eliminación de gran cantidad de información estática, a lo cual se agregan la expansión del soporte multimedia de la plataforma, ajustes en las características orientadas a SEO y, especialmente, en la capacidad de la plataforma para llevar adelante la actualización programada de contenido.
+
+### Cambios
+
+#### Visualización, gestión y actualización del contenido
+
+- [#1176] - Agregado de la V1 del módulo Últimas novedades, permitiendo visualizar historias seleccionadas, a manera de novedad, en la landing page.
+- [#455] - Listado de colaboradores en `/about` de forma programática, declarando los colaboradores en el nuevo schema `contributor` de Sanity Studio.
+- [#914] - Definir estrategias de actualización de contenido
+
+* [#1274] - Agregado de la V2 del Perfil de autor, a fin de poder separar la visualización de las stories de un autor con su biografía.
+
+#### Imágenes y multimedia
+
+- [#1373] - Agregado de nuevas imágenes y textos en carousel de la landing page
+- [#1215] - Agregado de la Reproducción de contenido desde Spotify
+
+#### SEO
+
+- [#1366] - Introducción de keywords en vistas de detalles de Story, Storylist y Author
+
+* [#1367] - Agregado de la V1 de la lista de stories, a manera de módulo interno. Si bien la navegación hacia el mismo se encuentra oculta, puede navegarse hacia la ruta `/stories` para ver la lista completa de stories y alimentar, así, a la indexación de los buscadores.
+
+#### Testing y gestión de calidad
+
+- [#1344] - Creación del archivo de plantilla de pruebas
+
+#### Documentación y especificaciones
+
+- [#912] - Agregada la especificación inicial del módulo `comunidades`
+- [#831] - Agregar documentación sobre modelos de dominio
+
+#### Mejoras en tooling e infraestructura
+
+- [HF] - Remueve Vercel Speed Insights del proyecto
+- [#1370] - Migración del proyecto desde SCSS a CSS nativo by @rolivencia in https://github.com/cuentoneta/cuentoneta/pull/1372
+- [#1304] - Inyección dinámica de íconos
+
+#### Resolución de errores
+
+- [#1356] - Corrige `navigationSlug` para navegación desde vista de storylist
+
+### Hito: Lanzamiento al público de la versión [2.7.0](https://github.com/cuentoneta/cuentoneta/releases/tag/2.6.5) de La Cuentoneta (lanzada el 2025/11/23)
+
 ---
 
 ## Futuros
