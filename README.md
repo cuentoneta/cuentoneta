@@ -21,7 +21,7 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 - [Misión, Visión y Valores](#misión-visión-y-valores)
 - [Comunidad](#comunidad)
 - [Accesibilidad](#accesibilidad)
-- [Contribuyentes](#contribuyentes)
+- [Staff](#staff)
 - [Patrocinadores](#patrocinadores)
 - [Staff](#staff)
 - [Licencias](#licencias)
@@ -88,48 +88,14 @@ Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos 
 
 ---
 
-## Contribuyentes
+## Equipo
 
-### Desarrolladores
+- Ramiro Olivencia - Programación y dirección del proyecto (**[@rolivencia](https://github.com/rolivencia)**)
+- Maxi Cris - Diseño UX/UI(**[@maxicris](https://github.com/maxicris)**)
 
-- Ramiro Olivencia (**[@rolivencia](https://github.com/rolivencia)**)
-- Erik Giovani (**[@erikgiovani](https://github.com/erikgiovani)**)
-- Soledad Sasia (**[@SoleSasia](https://github.com/SoleSasia)**)
-- Juan Blas Tschopp (**[@juanblas09](https://github.com/juanblas09)**)
-- Diego Franchina (**[@soydiego](https://github.com/SoyDiego)**)
-- Jimer Espinoza (**[@jimersamuel](https://github.com/JimerSamuel)**)
-- Mia Ramos (**[@MiaPurpleFate](https://twitter.com.com/MiaPurpleFate)**)
-- Wilson Lasso (**[@wilago](https://github.com/wilago)**)
-- Gustavo Petruzzi (**[@gustavoPetruzzi](https://github.com/gustavoPetruzzi)**)
-- Juan Romero (**[@Addin](https://github.com/Addin)**)
-- Alexis Martínez (**[@AlexRGB2](https://github.com/AlexRGB2)**)
-- John Angel (**[@Jeangel](https://github.com/Jeangel)**)
-- Luciano Aieta (**[@lgaieta](https://github.com/lgaieta)**)
+La lista completa de contribuyentes al proyecto se encuentra disponible en la sección ["Nosotros"](https://cuentoneta.ar/about) de la web de La Cuentoneta.
 
-### Diseño UX/UI
-
-- Maxi Cris (**[@maxicris](https://github.com/maxicris)**)
-
-### Escritura de textos
-
-- Sofía Abramovich
-- Marian Erro (**[@marianerro](https://twitter.com/MarianaErro)**)
-- Elk A. (**[@A-Elkkk-o-k](https://www.wattpad.com/user/A-Elkkk-o-k)**)
-
-### Selección, Transcripción y Curación de contenido
-
-- Patricio Decoud (**[@arroba_pato](https://twitter.com/arroba_pato)**)
-- Juan Balmaceda (**[@balm4ceda](https://twitter.com/balm4ceda)**)
-- Facundo Kaufmann (**[@FacuKaufmann](https://twitter.com/FacuKaufmann)**)
-- Candela Godoy (**[@napsiex](https://twitter.com/napsiex)**)
-- Analía Ale
-- Brahian Pereyra (**[@brahianpdev](https://github.com/brahianpdev)**)
-- Juan Romero (**[@juanr0mer0](https://twitter.com/juanr0mer0)**)
-- Luis Omar Sánchez Díaz (**[@luisthepower](https://www.instagram.com/luisthepower/)**)
-- Karla Nevárez (**[kanemu36@gmail.com](mailto:kanemu36@gmail.com)**)
-- Sebastián Mansilla
-- Lolo Diaz (**[@estre.sadx](https://instagram.com/estre.sadx)**)
-- Nicolás Contrera (**[@nicontrera1](https://twitter.com/nicontrera1)**)
+El aporte de cada una de las personas se detalla, además, en la documentación de cada una de las [versiones lanzadas](https://github.com/cuentoneta/cuentoneta/releases) del proyecto.
 
 ---
 
