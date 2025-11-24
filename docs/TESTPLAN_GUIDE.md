@@ -11,7 +11,7 @@
 # Guía de Testing
 ¡Te damos la bienvenida! En esta sección encontrarás cómo escribir correctamente un test plan para documentar el inicio de la fase de pruebas del desarrollo y conocer cómo trabajamos en el proyecto. Además, encontrarás fuentes útiles que te aninamos a investigar.
 
-En caso de que desees aportar sugerencias, ya sea de mejora de este documento o propuestas, podes hacerlo desde el canal **[**#🚐 | la-cuentoneta**][dc-channel]** en Discord o en sumar un issue de tipo **[💼 Proponer mejoras en la Gestión o el Proceso de Desarrollo del Proyecto](https://github.com/cuentoneta/cuentoneta/issues/new/choose)**.
+En caso de que desees aportar sugerencias, ya sea de mejora de este documento o propuestas, podes hacerlo en el canal **[#🚐 | la-cuentoneta][dc-channel]** en Discord o en sumar un issue de tipo **[💼 Proponer mejoras en la Gestión o el Proceso de Desarrollo del Proyecto](https://github.com/cuentoneta/cuentoneta/issues/new/choose)**.
 
 # 1. ¿Qué es un Test Plan?
 Test Plan, o plan de pruebas en español, es un documento que describe estrategias, alcance, enfoque y recursos para llevar a cabo el proceso de pruebas en un proyecto de desarrollo de software o de sistemas.
@@ -30,13 +30,13 @@ Principalmente, su objetivo es garantizar la calidad, rendimiento y buscar que d
 
 # 3. Estructura de un Test Plan
 Por lo general, un Test Plan debe incluir:
-- <b><u>Una introducción:</u></b> puede ser una breve descripción y objetivos del proyecto o sistema a probar.
-- <b><u>Alcance del test plan:</u></b> qué funcionalidades o módulos se probarán y cuáles no.  
-- <b><u>Estrategias de prueba:</u></b> incluye tipos de pruebas (unitarias, funcionales, integración, regresión, estrés, etc), herramientas a utilizar (Selenium, Jira, Postman, etc) y niveles de las pruebas.
-- <b><u>Criterios de aceptación:</b></u> condiciones que deben cumplirse.
-- <b><u>Casos de pruebas:</b></u> descripción y diseño de los test cases.
-- <b><u>Gestión de riesgos.</b></u>
-- <b><u>Recursos:</u></b> tales como las responsabilidades (QA Automation, QA Manual, QA Engineer) y la infraestructura.
+- **Una introducción:** puede ser una breve descripción y objetivos del proyecto o sistema a probar.
+- **Alcance del test plan:** qué funcionalidades o módulos se probarán y cuáles no.  
+- **Estrategias de prueba:** incluye tipos de pruebas (unitarias, funcionales, integración, regresión, estrés, etc), herramientas a utilizar (Selenium, Jira, Postman, etc) y niveles de las pruebas.
+- **Criterios de aceptación:** condiciones que deben cumplirse.
+- **Casos de pruebas:** descripción y diseño de los test cases.
+- **Gestión de riesgos.**
+- **Recursos:** tales como las responsabilidades (QA Automation, QA Manual, QA Engineer) y la infraestructura.
 
 # 4. Estrategias
 ### 4.1 Entender los requisitos del proyecto
@@ -75,10 +75,22 @@ Esto sirve para que cada persona del equipo sepa qué tareas va a realizar y cla
 # 7. Considerar la automatización
 - Evaluar casos repetitivos y adecuados para ser automatizados.
 
-# Nota:
-Los test plans varian dependiendo del proyecto, ya que cada uno tiene sus propias características, objetivos, requisitos y desafíos. Aunque existe una estructura general que se suele utilizar, el contenido del mismo y enfoque cambian según las necesidades del proyecto. 
+# 8. Herramientas del Proyecto
+En La Cuentoneta utilizamos:
+- **[Jest](https://jestjs.io/)**: Testing unitario
+- **[Playwright](https://playwright.dev/)**: Testing e2e
+- **[GitHub Issues](https://github.com/cuentoneta/cuentoneta/issues)**: Tracking de bugs
 
-Sim embargo, tener una estructura estándar ayuda a mantener una consistencia y nos aseguramos que no se pasen por alto aspectos claves, aunque los proyectos puedan ser diferentes.
+Para más información, consulta la [Guía de Desarrollo](./DEVELOPMENT_GUIDE.md).
+
+# Nota:
+Los test plans varían dependiendo del proyecto, ya que cada uno tiene sus propias características, objetivos, requisitos y desafíos. Aunque existe una estructura general que se suele utilizar, el contenido del mismo y enfoque cambian según las necesidades del proyecto. 
+
+Sin embargo, tener una estructura estándar ayuda a mantener una consistencia y nos aseguramos que no se pasen por alto aspectos claves, aunque los proyectos puedan ser diferentes.
+
+# Documentos Relacionados
+- [Plan de Pruebas del Proyecto](./qa/TEST_PLAN.md) - Ejemplo práctico de un test plan
+- [Plantilla de Casos de Prueba](./qa/TEST_TEMPLATE.md) - Template para casos de prueba manuales
 
 # Fuentes:
 - https://www.softwaretestingbureau.com/crear-un-buenplan-de-pruebas/
