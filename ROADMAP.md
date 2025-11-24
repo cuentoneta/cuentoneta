@@ -15,6 +15,12 @@ Este roadmap detalla los hitos principales para el desarrollo de la plataforma d
 <details>
     <summary><h1>Hitos Pasados</h1></summary>
 
+## Enero de 2022
+
+- Versión inicial de La Cuentoneta (rama de desarrollo disponible en `release/1.0`.
+
+### `Hito: Lanzamiento al público de la versión 2.0 de La Cuentoneta (2022/01/01)`
+
 ## Mayo de 2023
 
 - Apertura a la [comunidad de FrontendCafé][dc-fec] para la colaboración en el desarrollo de la plataforma.
