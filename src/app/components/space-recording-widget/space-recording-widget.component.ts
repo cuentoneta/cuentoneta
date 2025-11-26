@@ -44,7 +44,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 		}
 
 		.spaces-card {
-			background-image: linear-gradient(60deg, hsl(230, 100 * 1%, 50 * 1%) -15%, hsl(260, 100 * 1%, 60 * 1%) 100%);
+			background-image: linear-gradient(60deg, hsl(230, 100%, 50%) -15%, hsl(260, 100%, 60%) 100%);
 		}
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
