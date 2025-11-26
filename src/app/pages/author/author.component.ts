@@ -130,6 +130,7 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 										<cuentoneta-portable-text-parser
 											[paragraphs]="author.biography"
 											[classes]="'source-serif-pro-body-xl leading-8'"
+											class="flex flex-col gap-4"
 										/>
 										@if (author.resources && author.resources.length > 0) {
 											<hr class="text-gray-500" />
