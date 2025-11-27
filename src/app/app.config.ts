@@ -41,11 +41,12 @@ export const appConfig: ApplicationConfig = {
 		provideHttpClient(withFetch()),
 		provideZonelessChangeDetection(),
 		provideA11yTooltip({
-			forceScheme: 'dark',
 			className: 'cuentoneta-tooltip',
 			borderSize: 0,
 			padding: '8px 8px',
 			maxWidth: 'auto',
+			backgroundColor: 'black',
+			textColor: 'white',
 		}),
 	],
 };

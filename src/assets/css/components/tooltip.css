@@ -1,5 +1,4 @@
 .cuentoneta-tooltip {
 	/* Texto - inter-body-xs-semibold expanded */
-	@apply bg-black text-center font-inter text-xs font-semibold normal-case tracking-normal text-white opacity-0;
-	@apply rounded;
+	@apply text-center font-inter text-xs font-semibold normal-case tracking-normal opacity-0;
 }
