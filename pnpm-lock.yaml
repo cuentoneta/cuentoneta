@@ -8,8 +8,8 @@ importers:
   .:
     dependencies:
       '@a11y-ngx/tooltip':
-        specifier: ^1.0.6
-        version: 1.0.6(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))
+        specifier: ^1.0.7
+        version: 1.0.7(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))
       '@angular-devkit/build-angular':
         specifier: 20.3.3
         version: 20.3.3(faf51111d30acd42353d012c5a6cef7c)
@@ -316,9 +316,9 @@ importers:
         version: 5.99.9(esbuild@0.25.5)
 
 packages:
-  '@a11y-ngx/color-scheme@1.0.7':
+  '@a11y-ngx/color-scheme@1.0.8':
     resolution:
-      { integrity: sha512-0yh3+lS973XM1DISQIBuz6ahvY2VE+oqHVUDWwACnxQ9Kzzdk4ds1/dMzJtxUOXCNidRyOGddjDAnkKwfEk+nQ== }
+      { integrity: sha512-i8XVx6jvz62+8XV8DneGoNEuUR84eih37kMW3r6NLsS8CmMEBV6gRBsCLpvTuKCIQADrQo6rEe/r0y4SG/KzDA== }
     peerDependencies:
       '@angular/common': '>=12.2.0 <21.0.0'
       '@angular/core': '>=12.2.0 <21.0.0'
@@ -330,16 +330,16 @@ packages:
       '@angular/common': '>=12.2.0 <21.0.0'
       '@angular/core': '>=12.2.0 <21.0.0'
 
-  '@a11y-ngx/overlay-base@1.0.1':
+  '@a11y-ngx/overlay-base@1.0.2':
     resolution:
-      { integrity: sha512-FdGjmF57LO2SBqVdRBuGNkh3Zhk9lwsuwO15Og85RcVXdp4PDGIoDTI17Abpvp5HCqaEV3H+QJTEO3rrL5gzJQ== }
+      { integrity: sha512-aepBqMz+q6bzq1gvbLyNhMnMSYrV7R9sT2GoK/8CGEx6ziJJas1J4p8mG9vlfXczMlR8t+KnPEfb5x3VGaVZ5w== }
     peerDependencies:
       '@angular/common': '>=12.2.0 <21.0.0'
       '@angular/core': '>=12.2.0 <21.0.0'
 
-  '@a11y-ngx/overlay@1.0.3':
+  '@a11y-ngx/overlay@1.0.4':
     resolution:
-      { integrity: sha512-ODGFqEWcz91KyetUk2/RTX3n6a2IdLKkxa6V9a7YCekAIrbkqhwf+Iq2gvp+Om/FKeGtA4wQ2UQHe+J94kFQpQ== }
+      { integrity: sha512-w7GlO6dxs/v6kRPiqnn3iPI3WTgQMciFLBHi77EMrMxGFI224uCRmNpjYl0cZvI03VwMgFiU9qnY8BHARtNRlA== }
     peerDependencies:
       '@angular/common': '>=12.2.0 <21.0.0'
       '@angular/core': '>=12.2.0 <21.0.0'
@@ -358,9 +358,9 @@ packages:
       '@angular/common': '>=12.2.0 <21.0.0'
       '@angular/core': '>=12.2.0 <21.0.0'
 
-  '@a11y-ngx/tooltip@1.0.6':
+  '@a11y-ngx/tooltip@1.0.7':
     resolution:
-      { integrity: sha512-c/zZ7Rs5uM7U+B71nNHNGtb57RMWp+0B7fW/+uYo60zrVN1O/4Wle3ny78tjJtqX941jSSx5fUDkJRg8sOCMDg== }
+      { integrity: sha512-MkwtiMY6bTeLZspmc1idRyyKSWHuXSRWqJubWZ1FIqTFcULXcZ4H3A28ZOe5S0grdyId1hD6+yTTGtHx0UJ5xA== }
     peerDependencies:
       '@a11y-ngx/responsive-image-maps': '*'
       '@angular/common': '>=12.2.0 <21.0.0'
@@ -11410,7 +11410,7 @@ packages:
       { integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ== }
 
 snapshots:
-  '@a11y-ngx/color-scheme@1.0.7(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))':
+  '@a11y-ngx/color-scheme@1.0.8(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))':
     dependencies:
       '@angular/common': 20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2)
       '@angular/core': 20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)
@@ -11422,17 +11422,17 @@ snapshots:
       '@angular/core': 20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)
       tslib: 1.14.1
 
-  '@a11y-ngx/overlay-base@1.0.1(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))':
+  '@a11y-ngx/overlay-base@1.0.2(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))':
     dependencies:
       '@angular/common': 20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2)
       '@angular/core': 20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)
       tslib: 1.14.1
 
-  '@a11y-ngx/overlay@1.0.3(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))':
+  '@a11y-ngx/overlay@1.0.4(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))':
     dependencies:
-      '@a11y-ngx/color-scheme': 1.0.7(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))
+      '@a11y-ngx/color-scheme': 1.0.8(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))
       '@a11y-ngx/dom-helper': 1.1.1(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))
-      '@a11y-ngx/overlay-base': 1.0.1(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))
+      '@a11y-ngx/overlay-base': 1.0.2(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))
       '@a11y-ngx/tab-cycle': 1.0.2(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))
       '@angular/common': 20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2)
       '@angular/core': 20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)
@@ -11451,11 +11451,11 @@ snapshots:
       '@angular/core': 20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)
       tslib: 1.14.1
 
-  '@a11y-ngx/tooltip@1.0.6(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))':
+  '@a11y-ngx/tooltip@1.0.7(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))':
     dependencies:
-      '@a11y-ngx/color-scheme': 1.0.7(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))
+      '@a11y-ngx/color-scheme': 1.0.8(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))
       '@a11y-ngx/dom-helper': 1.1.1(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))
-      '@a11y-ngx/overlay': 1.0.3(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))
+      '@a11y-ngx/overlay': 1.0.4(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))
       '@a11y-ngx/sr-only': 1.0.1(@angular/common@20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))
       '@angular/common': 20.3.2(@angular/core@20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2))(rxjs@7.8.2)
       '@angular/core': 20.3.2(@angular/compiler@20.3.2)(rxjs@7.8.2)

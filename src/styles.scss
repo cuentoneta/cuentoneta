@@ -4,6 +4,7 @@
 @use 'assets/scss/typography' as *;
 @use 'assets/scss/theme' as *;
 @use 'assets/scss/transitions' as *;
+@use 'assets/scss/components/tooltip' as *;
 
 // Imports de estilos de Ngx Owl Carousel
 @use 'ngx-owl-carousel-o/lib/styles/scss/owl.carousel' as *;

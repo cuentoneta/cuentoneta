@@ -41,8 +41,10 @@ export const appConfig: ApplicationConfig = {
 		provideHttpClient(withFetch()),
 		provideZonelessChangeDetection(),
 		provideA11yTooltip({
-			offsetSize: 10,
-			safeSpace: { top: 65, left: 50 },
+			forceScheme: 'dark',
+			className: 'cuentoneta-tooltip',
+			borderSize: 0,
+			padding: '8px 8px',
 		}),
 	],
 };
