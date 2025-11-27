@@ -45,6 +45,7 @@ export const appConfig: ApplicationConfig = {
 			className: 'cuentoneta-tooltip',
 			borderSize: 0,
 			padding: '8px 8px',
+			maxWidth: 'auto',
 		}),
 	],
 };
