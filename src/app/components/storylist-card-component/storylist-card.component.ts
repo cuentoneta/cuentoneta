@@ -58,6 +58,7 @@ import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 	`,
 	styles: `
 		:host {
+			@apply rounded-lg bg-gray-50 shadow-lg;
 			@apply block rounded-2xl;
 		}
 	`,

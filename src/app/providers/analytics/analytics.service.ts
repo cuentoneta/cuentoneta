@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { injectSpeedInsights } from '@vercel/speed-insights';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -7,13 +6,6 @@ import { environment } from '../../environments/environment';
 })
 export class AnalyticsService {
 	async init() {
-		// Inicializa Speed Insights de Vercel
-		try {
-			injectSpeedInsights();
-		} catch (error) {
-			console.error('Failed to initialize Speed Insights:', error);
-		}
-
 		if (!environment.clarityProjectId) {
 			return;
 		}

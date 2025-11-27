@@ -1,21 +1,21 @@
-// Imports de estilos globales
-@use 'assets/scss/layout' as *;
-@use 'assets/scss/reset' as *;
-@use 'assets/scss/typography' as *;
-@use 'assets/scss/theme' as *;
-@use 'assets/scss/transitions' as *;
-@use 'assets/scss/components/tooltip' as *;
+/* Reset de CSS */
+@import url('assets/css/reset.css');
+@import url('assets/css/layout.css');
+@import url('assets/css/theme.css');
+@import url('assets/css/transitions.css');
+@import url('assets/css/components/tooltip.css');
 
-// Imports de estilos de Ngx Owl Carousel
-@use 'ngx-owl-carousel-o/lib/styles/scss/owl.carousel' as *;
-@use 'ngx-owl-carousel-o/lib/styles/scss/owl.theme.default' as *;
-
-// Imports de Tailwind
+/* Imports de Tailwind */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-// Imports de fuentes
+/* Imports de fuentes */
+
+/*
+    Las tipografías específicas se encuentran declaradas en typography.css, el cual se importa directamente en project.json en la configuración
+    del compilador de Angular
+*/
 @font-face {
 	font-display: block;
 	font-family: Inter;
@@ -28,12 +28,6 @@
 	font-family: 'Source Serif Pro';
 	src: url('assets/fonts/source-serif-pro.woff2') format('woff2');
 	font-style: normal;
-}
-
-@layer components {
-	.card {
-		@apply rounded-lg bg-gray-50 shadow-lg;
-	}
 }
 
 /**

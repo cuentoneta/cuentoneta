@@ -5,13 +5,20 @@ import { StoriesByAuthorSlugArgs } from '../../interfaces/queryArgs';
 const router = express.Router();
 
 // Routes
+router.get('/', getAllStories);
 router.get('/read', getBySlug);
 router.get('/author/:slug', getStoriesByAuthorSlug);
 router.get('/author/:slug/navigation', getStoryNavigationTeaserByAuthorSlug);
-router.get('/most-read', getMostRead);
-router.get('/update-most-read', updateMostRead);
 
 export default router;
+
+function getAllStories(req: express.Request, res: express.Response, next: express.NextFunction) {
+	const { limit, offset } = req.query;
+	storyService
+		.fetchAllStories(parseInt((limit ?? '100') as string), parseInt((offset ?? '0') as string))
+		.then((result) => res.json(result))
+		.catch((err) => next(err));
+}
 
 function getBySlug(req: express.Request, res: express.Response, next: express.NextFunction) {
 	const { slug } = req.query;
@@ -48,17 +55,17 @@ function getStoryNavigationTeaserByAuthorSlug(req: express.Request, res: express
 		.catch((err) => next(err));
 }
 
-function getMostRead(req: express.Request, res: express.Response, next: express.NextFunction) {
+router.get('/most-read', (req, res, next) => {
 	const { limit, offset } = req.query;
 	storyService
 		.fetchMostRead(parseInt((limit ?? '6') as string), parseInt((offset ?? '0') as string))
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
-}
+});
 
-function updateMostRead(req: express.Request, res: express.Response, next: express.NextFunction) {
+router.get('/update-most-read', (req, res, next) => {
 	storyService
 		.updateMostRead()
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
-}
+});

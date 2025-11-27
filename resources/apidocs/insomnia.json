@@ -103,7 +103,7 @@ collection:
         meta:
           id: req_9961eff52c8644a4b82b8d8a151ed2a4
           created: 1740350808508
-          modified: 1740427995620
+          modified: 1763095422796
           isPrivate: false
           description: ""
           sortKey: -1740350808508
@@ -330,6 +330,27 @@ collection:
             send: true
             store: true
           rebuildPath: true
+      - url: "{{apiUrl}}/api/content/add-next-weeks-landing-page-content"
+        name: /add-next-weeks-landing-page-content
+        meta:
+          id: req_429610f656344c56a1fd91eccff440ac
+          created: 1763128571445
+          modified: 1763128574505
+          isPrivate: false
+          description: ""
+          sortKey: -1716543109935.75
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/2023.5.8
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
   - name: 3rd party modules
     meta:
       id: fld_6ab263ea2a8a4f56840dddd83b20e3c8
@@ -380,7 +401,7 @@ collection:
         meta:
           id: req_6516888cbf4e4a89b3a9966a5cf10bec
           created: 1735306200772
-          modified: 1740427960804
+          modified: 1762967494394
           isPrivate: false
           description: ""
           sortKey: -1735306200772
@@ -414,6 +435,51 @@ collection:
           description: ""
           sortKey: -1762174641435
         method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: /og
+    meta:
+      id: fld_e7c727e207f349558f4660872c58023b
+      created: 1762967566669
+      modified: 1762967566669
+      sortKey: -1762967566669
+      description: ""
+    children:
+      - url: "{{apiUrl}}/api/og"
+        name: /
+        meta:
+          id: req_df0c73e63e6b4184a67736a5c4817ec1
+          created: 1762967571039
+          modified: 1763128502511
+          isPrivate: false
+          description: ""
+          sortKey: -1762967571039
+        method: GET
+        parameters:
+          - id: pair_1340043385a842b89220206e45785af6
+            name: author
+            value: Jorge Luis Borges
+            description: ""
+            disabled: false
+          - id: pair_6939d7a314174d1a8f9e93c181b3512b
+            name: storylist
+            value: En el sótano de la calle Garay
+            description: ""
+            disabled: false
+          - id: pair_98dc70a794c9456485dd67810a1d0f43
+            name: rrss
+            value: twitter
+            description: ""
+            disabled: false
         headers:
           - name: User-Agent
             value: insomnia/11.2.0

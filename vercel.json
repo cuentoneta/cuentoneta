@@ -14,6 +14,10 @@
 		{
 			"path": "/api/story/update-most-read",
 			"schedule": "15 3 * * *"
+		},
+		{
+			"path": "/api/story/add-next-weeks-landing-page-content",
+			"schedule": "30 3 * * 0"
 		}
 	]
 }

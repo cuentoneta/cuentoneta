@@ -37,6 +37,7 @@ import {
 	AuthorsQueryResult,
 	BlockContent,
 	LandingPageContentQueryResult,
+	RotatingContentQueryResult,
 	StoriesByAuthorSlugQueryResult,
 	StoriesBySlugsQueryResult,
 	StoryBySlugQueryResult,
@@ -57,7 +58,7 @@ export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>, l
 
 	return {
 		_id: rawAuthorData._id,
-		slug: rawAuthorData.slug.current,
+		slug: rawAuthorData.slug,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
 			flag: urlFor(rawAuthorData.nationality.flag),
@@ -77,7 +78,7 @@ export function mapAuthorTeaser(
 ): AuthorTeaser {
 	return {
 		_id: rawAuthorData._id,
-		slug: rawAuthorData.slug.current,
+		slug: rawAuthorData.slug,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
 			flag: urlFor(rawAuthorData.nationality.flag),
@@ -255,7 +256,7 @@ export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlug
 	return stories;
 }
 
-type MostReadStoriesSubQuery = NonNullable<LandingPageContentQueryResult>['mostRead'];
+type MostReadStoriesSubQuery = NonNullable<RotatingContentQueryResult>['mostRead'];
 export function mapStoryNavigationTeaserWithAuthor(
 	result: NonNullable<MostReadStoriesSubQuery>,
 ): StoryNavigationTeaserWithAuthor[] {
@@ -276,7 +277,9 @@ export function mapStoryNavigationTeaserWithAuthor(
 	return stories;
 }
 
-export function mapLandingPageContent(result: NonNullable<LandingPageContentQueryResult>): LandingPageContent {
+export function mapLandingPageContent(
+	result: NonNullable<LandingPageContentQueryResult> & NonNullable<RotatingContentQueryResult>,
+): LandingPageContent {
 	return {
 		...result,
 		cards: mapStorylistTeasers(result.cards),
@@ -301,15 +304,11 @@ export function mapContentCampaigns(campaigns: ContentCampaignsSubQuery): Conten
 			description: mapBlockContentToTextParagraphs(campaign.description),
 			contents: {
 				xs: {
-					title: mapBlockContentToTextParagraphs(xs.title),
-					subtitle: mapBlockContentToTextParagraphs(xs.subtitle),
 					imageUrl: xs.image ? urlFor(xs.image) : '',
 					imageWidth: viewportElementSizes.xs.imageWidth,
 					imageHeight: viewportElementSizes.xs.imageHeight,
 				},
 				md: {
-					title: mapBlockContentToTextParagraphs(md.title),
-					subtitle: mapBlockContentToTextParagraphs(md.subtitle),
 					imageUrl: md.image ? urlFor(md.image) : '',
 					imageWidth: viewportElementSizes.md.imageWidth,
 					imageHeight: viewportElementSizes.md.imageHeight,

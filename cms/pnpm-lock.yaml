@@ -46,6 +46,9 @@ importers:
       sanity-plugin-icon-picker:
         specifier: ^4.0.0
         version: 4.0.0(@emotion/is-prop-valid@1.2.2)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(sanity@3.95.0(@emotion/is-prop-valid@1.2.2)(@types/node@22.15.33)(@types/react@19.1.8)(immer@10.1.1)(jiti@2.4.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)(yaml@2.8.0))
+      sanity-plugin-singleton-management:
+        specifier: ^1.0.4
+        version: 1.0.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sanity@3.95.0(@emotion/is-prop-valid@1.2.2)(@types/node@22.15.33)(@types/react@19.1.8)(immer@10.1.1)(jiti@2.4.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)(yaml@2.8.0))
       styled-components:
         specifier: ^6.1.13
         version: 6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -4668,6 +4671,14 @@ packages:
       react-dom: ^18.3 || ^19
       react-is: ^18.3 || ^19
       sanity: ^3
+
+  sanity-plugin-singleton-management@1.0.4:
+    resolution:
+      { integrity: sha512-4ebCXYBHspsot24Ro6yGS6lRJxQq5yOYvhj4ZQEc2+lJtVH7kWAZjxYrdIGP3wX/JB53us+sDSfpyl/S7dFYWg== }
+    engines: { node: ^20.19.5 || ^22.21.1 || >= 24.10.0 }
+    peerDependencies:
+      react: ^18 || ^19
+      sanity: ^3 || ^4
 
   sanity@3.95.0:
     resolution:
@@ -9775,6 +9786,15 @@ snapshots:
       styled-components: 6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - '@emotion/is-prop-valid'
+
+  sanity-plugin-singleton-management@1.0.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sanity@3.95.0(@emotion/is-prop-valid@1.2.2)(@types/node@22.15.33)(@types/react@19.1.8)(immer@10.1.1)(jiti@2.4.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)(yaml@2.8.0)):
+    dependencies:
+      '@sanity/icons': 3.7.4(react@18.3.1)
+      '@sanity/incompatible-plugin': 1.0.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+      sanity: 3.95.0(@emotion/is-prop-valid@1.2.2)(@types/node@22.15.33)(@types/react@19.1.8)(immer@10.1.1)(jiti@2.4.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)(yaml@2.8.0)
+    transitivePeerDependencies:
+      - react-dom
 
   sanity@3.95.0(@emotion/is-prop-valid@1.2.2)(@types/node@22.15.33)(@types/react@19.1.8)(immer@10.1.1)(jiti@2.4.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)(yaml@2.8.0):
     dependencies:

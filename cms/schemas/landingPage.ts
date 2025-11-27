@@ -36,12 +36,7 @@ export default defineType({
 			},
 			validation: (Rule) => Rule.required(),
 		}),
-		defineField({
-			name: 'active',
-			title: 'Activa',
-			type: 'boolean',
-			validation: (Rule) => Rule.required(),
-		}),
+
 		defineField({
 			name: 'campaigns',
 			title: 'Campañas',
@@ -65,19 +60,6 @@ export default defineType({
 					title: 'Storylist',
 					type: 'reference',
 					to: [{ type: 'storylist' }],
-				}),
-			],
-		}),
-		defineField({
-			name: 'mostRead',
-			title: 'Lo más leído',
-			type: 'array',
-			of: [
-				defineArrayMember({
-					name: 'story',
-					title: 'Historia',
-					type: 'reference',
-					to: [{ type: 'story' }],
 				}),
 			],
 		}),
