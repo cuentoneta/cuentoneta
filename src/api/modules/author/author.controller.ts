@@ -1,20 +1,19 @@
-import express from 'express';
-import { getAllAuthors, getAuthorBySlug } from './author.service';
+// Express: Imports y configuración de router
+import { Request, Response, NextFunction, Router } from 'express';
 
-// Funciones de service
-
-const router = express.Router();
-
-// Routes
+const router = Router();
 export default router;
 
-router.get('/', (req, res, next) => {
+// Funciones de service
+import { getAllAuthors, getAuthorBySlug } from './author.service';
+
+router.get('/', (req: Request, res: Response, next: NextFunction) => {
 	getAllAuthors()
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
 });
 
-router.get('/:slug', (req, res, next) => {
+router.get('/:slug', (req: Request, res: Response, next: NextFunction) => {
 	const { slug } = req.params;
 	getAuthorBySlug(slug as string)
 		.then((result) => res.json(result))
