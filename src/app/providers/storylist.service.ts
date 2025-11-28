@@ -15,8 +15,8 @@ export class StorylistService {
 	private http = inject(HttpClient);
 
 	public get(slug: string, amount: number = 5, ordering: 'asc' | 'desc' = 'asc'): Observable<Storylist> {
-		const params = new HttpParams().set('slug', slug).set('amount', amount).set('ordering', ordering);
-		return this.http.get<Storylist>(this.url, { params });
+		const params = new HttpParams().set('amount', amount).set('ordering', ordering);
+		return this.http.get<Storylist>(`${this.url}/${slug}`, { params });
 	}
 
 	public getStorylistNavigationTeasers(

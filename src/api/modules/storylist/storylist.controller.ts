@@ -1,24 +1,27 @@
-import express from 'express';
+// Express: Imports y configuración de router
+import { Request, Response, NextFunction, Router } from 'express';
+
+const router = Router();
+export default router;
+
+// Funciones de service
 import {
 	getStorylistBySlug,
 	getAllStorylistTeasers,
 	getStorylistNavigationTeasersByStorylistSlug,
 } from './storylist.service';
 
-const router = express.Router();
-
-// Routes
-export default router;
-
-router.get('/', (req, res, next) => {
-	const { slug, amount, ordering = 'asc' } = req.query;
+// Controllers
+router.get('/', (req: Request, res: Response, next: NextFunction) => {
+	const { slug } = req.params;
+	const { amount, ordering = 'asc' } = req.query;
 	const limit = parseInt(amount as string) - 1;
 	getStorylistBySlug({ slug: slug as string, amount: amount as string, limit, ordering: ordering as string })
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
 });
 
-router.get('/teasers', (req, res, next) => {
+router.get('/teasers', (req: Request, res: Response, next: NextFunction) => {
 	getAllStorylistTeasers()
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
@@ -30,7 +33,7 @@ router.get('/teasers', (req, res, next) => {
  * @param res
  * @param next
  */
-router.get('/:slug/navigation', (req, res, next) => {
+router.get('/:slug/navigation', (req: Request, res: Response, next: NextFunction) => {
 	const { slug } = req.params;
 	const { limit, offset } = req.query;
 	getStorylistNavigationTeasersByStorylistSlug({
