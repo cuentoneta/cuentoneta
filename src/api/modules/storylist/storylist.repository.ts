@@ -9,27 +9,21 @@ import {
 	StorylistTeasersQueryResult,
 } from '../../sanity/types';
 
-/**
- * Fetches all storylist teasers
- */
-export async function fetchTeasers(): Promise<StorylistTeasersQueryResult> {
+export async function fetchAllStorylistTeasers(): Promise<StorylistTeasersQueryResult> {
 	return client.fetch(storylistTeasersQuery);
 }
 
-/**
- * Fetches a single storylist by slug
- */
-export async function fetchBySlug(slug: string): Promise<StorylistQueryResult> {
+export async function fetchStorylistBySlug(slug: string): Promise<StorylistQueryResult> {
 	return client.fetch(storylistQuery, { slug });
 }
 
-/**
- * Fetches storylist navigation teasers with pagination support
- */
-export async function fetchNavigation(
-	slug: string,
-	start: number,
-	end: number,
+type FetchStorylistNavigationTeasersByStorylistSlugParams = {
+	slug: string;
+	start: number;
+	end: number;
+};
+export async function fetchStorylistNavigationTeaserByStorylistSlug(
+	params: FetchStorylistNavigationTeasersByStorylistSlugParams,
 ): Promise<StorylistNavigationTeasersQueryResult> {
-	return client.fetch(storylistNavigationTeasersQuery, { slug, start, end });
+	return client.fetch(storylistNavigationTeasersQuery, params);
 }
