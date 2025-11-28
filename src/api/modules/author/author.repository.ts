@@ -4,16 +4,10 @@ import { client } from '../../_helpers/sanity-connector';
 // Queries
 import { authorBySlugQuery, authorsQuery } from '../../_queries/author.query';
 
-/**
- * Fetches a single author by slug
- */
-export async function fetchBySlug(slug: string) {
+export async function fetchAuthorBySlug(slug: string) {
 	return client.fetch(authorBySlugQuery, { slug });
 }
 
-/**
- * Fetches all authors
- */
-export async function fetchAll() {
+export async function fetchAllAuthors() {
 	return client.fetch(authorsQuery);
 }
