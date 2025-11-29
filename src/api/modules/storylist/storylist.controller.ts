@@ -12,7 +12,7 @@ import {
 } from './storylist.service';
 
 // Controllers
-router.get('/', (req: Request, res: Response, next: NextFunction) => {
+router.get('/:slug', (req: Request, res: Response, next: NextFunction) => {
 	const { slug } = req.params;
 	const { amount, ordering = 'asc' } = req.query;
 	const limit = parseInt(amount as string) - 1;
