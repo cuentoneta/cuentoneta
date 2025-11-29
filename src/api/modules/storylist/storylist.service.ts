@@ -1,23 +1,24 @@
-// Conector de Sanity
-import { client } from '../../_helpers/sanity-connector';
-
 // Interfaces
 import { Storylist, StorylistPublicationsNavigationTeasers, StorylistTeaser } from '@models/storylist.model';
 
-// Funciones
+// Funciones de mapeo
 import { mapStorylist, mapStorylistNavigationTeasers, mapStorylistTeasers } from '../../_utils/functions';
 
-// Queries
-import { storylistNavigationTeasersQuery, storylistQuery, storylistTeasersQuery } from '../../_queries/storylist.query';
+// Funciones de repository
 import { StoryListBySlugArgs } from '../../interfaces/queryArgs';
+import {
+	fetchAllStorylistTeasers,
+	fetchStorylistBySlug,
+	fetchStorylistNavigationTeaserByStorylistSlug,
+} from './storylist.repository';
 
-async function fetchStorylistTeasers(): Promise<StorylistTeaser[]> {
-	const result = await client.fetch(storylistTeasersQuery);
+export async function getAllStorylistTeasers(): Promise<StorylistTeaser[]> {
+	const result = await fetchAllStorylistTeasers();
 	return mapStorylistTeasers(result);
 }
 
-async function fetchBySlug(args: StoryListBySlugArgs): Promise<Storylist> {
-	const result = await client.fetch(storylistQuery, { slug: args.slug });
+export async function getStorylistBySlug(args: StoryListBySlugArgs): Promise<Storylist> {
+	const result = await fetchStorylistBySlug(args.slug);
 
 	if (!result) {
 		throw new Error(`Storylist with slug ${args.slug} not found`);
@@ -26,12 +27,12 @@ async function fetchBySlug(args: StoryListBySlugArgs): Promise<Storylist> {
 	return mapStorylist(result);
 }
 
-async function fetchNavigation(args: {
+export async function getStorylistNavigationTeasersByStorylistSlug(args: {
 	slug: string;
 	limit: number;
 	offset: number;
 }): Promise<StorylistPublicationsNavigationTeasers> {
-	const result = await client.fetch(storylistNavigationTeasersQuery, {
+	const result = await fetchStorylistNavigationTeaserByStorylistSlug({
 		slug: args.slug,
 		start: args.offset * args.limit,
 		end: (args.offset + 1) * args.limit,
@@ -43,5 +44,3 @@ async function fetchNavigation(args: {
 
 	return mapStorylistNavigationTeasers(result);
 }
-
-export { fetchStorylistTeasers, fetchBySlug, fetchNavigation };

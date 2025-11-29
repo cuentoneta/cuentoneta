@@ -16,8 +16,7 @@ export class StoryService {
 	private http = inject(HttpClient);
 
 	public getBySlug(slug: string): Observable<Story> {
-		const params = new HttpParams().set('slug', slug);
-		return this.http.get<Story>(`${this.url}/read`, { params });
+		return this.http.get<Story>(`${this.url}/${slug}`);
 	}
 
 	public getByAuthorSlug(slug: string, offset: number = 0, limit: number = 100): Observable<StoryTeaser[]> {

@@ -1,6 +1,6 @@
-import * as contributorRepository from './contributor.repository';
 import { Contributor } from '@models/contributor.model';
+import { fetchAllContributors } from './contributor.repository';
 
-export async function getAll(): Promise<Contributor[]> {
-	return contributorRepository.getAll();
+export async function getAllContributors(): Promise<Contributor[]> {
+	return fetchAllContributors();
 }
