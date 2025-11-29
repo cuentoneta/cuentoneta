@@ -4,7 +4,7 @@ import * as contentService from './content.service';
 import { LandingPageContentQueryResult } from '../../sanity/types.js';
 
 jest.mock('./content.repository', () => ({
-	fetchLandingPageList: jest.fn(),
+	fetchLandingPagesList: jest.fn(),
 	fetchLandingPageContent: jest.fn(),
 	createLandingPages: jest.fn(),
 	fetchLatestLandingPageReferences: jest.fn(),
