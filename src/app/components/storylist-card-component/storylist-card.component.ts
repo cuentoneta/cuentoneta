@@ -56,6 +56,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 		</article>
 	`,
 	styles: `
+		@reference "tailwindcss";
 		:host {
 			@apply rounded-lg bg-gray-50 shadow-lg;
 			@apply block rounded-2xl;

@@ -16,6 +16,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 			<cuentoneta-portable-text-parser [paragraphs]="media().description" />
 		</p>`,
 	styles: `
+		@reference "tailwindcss";
 		::ng-deep {
 			youtube-player {
 				.youtube-player-placeholder,

@@ -34,6 +34,7 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 			}
 		</section>`,
 	styles: `
+		@reference "tailwindcss";
 		:host {
 			@apply mb-8 flex flex-col gap-8;
 		}

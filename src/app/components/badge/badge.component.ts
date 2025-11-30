@@ -26,8 +26,9 @@ import { NgComponentOutlet } from '@angular/common';
 		</span>
 	`,
 	styles: `
+		@reference "tailwindcss";
 		:host {
-			@apply flex rounded bg-primary-200 px-4.5 py-0.5 uppercase hover:cursor-default;
+			@apply bg-primary-200 flex rounded px-4.5 py-0.5 uppercase hover:cursor-default;
 		}
 	`,
 })

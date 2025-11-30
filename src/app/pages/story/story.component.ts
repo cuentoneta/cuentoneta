@@ -42,6 +42,7 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 	selector: 'cuentoneta-story',
 	templateUrl: './story.component.html',
 	styles: `
+		@reference "tailwindcss";
 		:host {
 			@apply grid;
 			@apply md:grid-rows-[8px_1fr];

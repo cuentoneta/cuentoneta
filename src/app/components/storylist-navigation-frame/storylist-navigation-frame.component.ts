@@ -45,6 +45,7 @@ export type NavigationBarConfig = {
 			}
 		}`,
 	styles: `
+		@reference "tailwindcss";
 		:host {
 			@apply grid grid-cols-1 gap-y-0.5 rounded-xl bg-gray-200 shadow-lg;
 		}

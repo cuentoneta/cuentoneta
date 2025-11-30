@@ -15,7 +15,7 @@ import { NgTemplateOutlet } from '@angular/common';
 					[class]="
 						tabTitle === activeTabTitle ? 'border-primary-400 text-primary-500' : 'border-gray-200 text-gray-600'
 					"
-					class="flex h-12 items-center gap-1 border-b-2 py-3 font-inter font-semibold"
+					class="font-inter flex h-12 items-center gap-1 border-b-2 py-3 font-semibold"
 					role="tab"
 				>
 					{{ tab.title() }}
@@ -28,6 +28,7 @@ import { NgTemplateOutlet } from '@angular/common';
 			</div>
 		}`,
 	styles: `
+		@reference "tailwindcss";
 		:host {
 			@apply flex flex-col gap-8;
 		}
