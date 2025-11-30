@@ -1,9 +1,17 @@
 import { render, screen } from '@testing-library/angular';
 import { ResourceComponent } from './resource.component';
 import { resourceMock } from '@mocks/resource.mock';
+import { TestBed } from '@angular/core/testing';
+import { MockA11yTooltipModule } from '../../mocks/external-libs/a11y-tooltip-module.mock';
 
+const setupTestBed = (testbed: TestBed) => {
+	(testbed as typeof TestBed).configureTestingModule({}).overrideComponent(ResourceComponent, {
+		set: {
+			imports: [MockA11yTooltipModule],
+		},
+	});
+};
 describe('ResourceComponent', () => {
-	const regexTitle = new RegExp(resourceMock.title, 'i');
 	const url = resourceMock.url;
 
 	const setup = async () => {
@@ -11,6 +19,7 @@ describe('ResourceComponent', () => {
 			inputs: {
 				resource: resourceMock,
 			},
+			configureTestBed: setupTestBed,
 		});
 	};
 
@@ -18,13 +27,6 @@ describe('ResourceComponent', () => {
 		const { container } = await setup();
 
 		expect(container).toBeInTheDocument();
-	});
-
-	it('should render title', async () => {
-		await setup();
-		const titleResourceElement = screen.getByTitle(regexTitle);
-
-		expect(titleResourceElement).toBeInTheDocument();
 	});
 
 	it('should confirm the URL of the link', async () => {

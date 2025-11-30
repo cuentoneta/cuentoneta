@@ -3,7 +3,7 @@
 @import url('assets/css/layout.css');
 @import url('assets/css/theme.css');
 @import url('assets/css/transitions.css');
-@import url('app/directives/tooltip.directive.css');
+@import url('assets/css/components/tooltip.css');
 
 /* Imports de Tailwind */
 @tailwind base;

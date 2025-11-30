@@ -1,13 +1,5 @@
 // Core
-import {
-	Component,
-	computed,
-	createEnvironmentInjector,
-	EnvironmentInjector,
-	inject,
-	input,
-	OnInit,
-} from '@angular/core';
+import { Component, computed, createEnvironmentInjector, EnvironmentInjector, inject, input } from '@angular/core';
 
 // Models
 import { Resource } from '@models/resource.model';
@@ -16,19 +8,18 @@ import { Resource } from '@models/resource.model';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Directives
-import { TooltipDirective } from '../../directives/tooltip.directive';
 import { iconMappers } from '@models/icon.model';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { NgComponentOutlet } from '@angular/common';
+import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 
 @Component({
 	selector: 'cuentoneta-resource',
-	hostDirectives: [TooltipDirective],
-	imports: [NgxSkeletonLoaderModule, NgComponentOutlet],
+	imports: [NgxSkeletonLoaderModule, NgComponentOutlet, A11yTooltipModule],
 	template: `
 		<a
+			[tooltip]="resource().title"
 			[href]="resource().url"
-			[attr.title]="resource().title"
 			target="_blank"
 			class="flex h-12 w-12 items-center justify-center rounded-full border-1 border-solid border-gray-200 bg-gray-100 hover:bg-gray-200"
 		>
@@ -43,7 +34,7 @@ import { NgComponentOutlet } from '@angular/common';
 		}
 	`,
 })
-export class ResourceComponent implements OnInit {
+export class ResourceComponent {
 	readonly resource = input.required<Resource>();
 	readonly icon = computed(() => {
 		if (!this.resource()?.resourceType?.slug) {
@@ -63,10 +54,4 @@ export class ResourceComponent implements OnInit {
 	readonly NgIcon = NgIcon;
 
 	private injector = inject(EnvironmentInjector);
-	private tooltipDirective = inject(TooltipDirective);
-
-	ngOnInit() {
-		this.tooltipDirective.text.set(this.resource().title);
-		this.tooltipDirective.position.set('bottom');
-	}
 }

@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { BadgeComponent } from '@components/badge/badge.component';
 import { Storylist } from '@models/storylist.model';
 import { StorylistTitleSkeleton } from './storylist-title-skeleton';
+import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 
 @Component({
 	selector: 'cuentoneta-storylist-title',
-	imports: [BadgeComponent, StorylistTitleSkeleton],
+	imports: [BadgeComponent, StorylistTitleSkeleton, A11yTooltipModule],
 	template: `
 		@defer (when storylist()) {
 			<div class="flex flex-col gap-5">

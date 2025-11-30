@@ -14,10 +14,11 @@ import { StorylistTeaser } from '@models/storylist.model';
 // Components
 import { BadgeComponent } from '../badge/badge.component';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
+import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 
 @Component({
 	selector: 'cuentoneta-storylist-card',
-	imports: [BadgeComponent, RouterLink, NgxSkeletonLoaderModule, PortableTextParserComponent],
+	imports: [BadgeComponent, RouterLink, NgxSkeletonLoaderModule, PortableTextParserComponent, A11yTooltipModule],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `
 		<article class="shadow-lg hover:shadow-lg-hover">

@@ -1,29 +1,24 @@
-import {
-	Component,
-	computed,
-	createEnvironmentInjector,
-	EnvironmentInjector,
-	inject,
-	input,
-	OnInit,
-} from '@angular/core';
+import { Component, computed, createEnvironmentInjector, EnvironmentInjector, inject, input } from '@angular/core';
 import { Tag } from '@models/tag.model';
-import { TooltipDirective } from '../../directives/tooltip.directive';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { iconMappers } from '@models/icon.model';
 import { NgComponentOutlet } from '@angular/common';
+import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 
 @Component({
 	selector: 'cuentoneta-badge',
-	hostDirectives: [TooltipDirective],
-	imports: [NgComponentOutlet],
+	imports: [NgComponentOutlet, A11yTooltipModule],
 	template: `
-		<span class="inter-body-xs-bold flex items-center gap-1">
+		<button
+			[tooltip]="tag().shortDescription"
+			[tooltipConfig]="{ asLabel: true }"
+			class="bg-transparent text-current inter-body-xs-bold m-0 flex cursor-default appearance-none items-center gap-1 border-none p-0 text-left shadow-none"
+		>
 			@if (showIcon() && icon(); as icon) {
 				<ng-container *ngComponentOutlet="NgIcon; inputs: { name: icon.name }; injector: icon.injector" />
 			}
 			{{ tag().title }}
-		</span>
+		</button>
 	`,
 	styles: `
 		:host {
@@ -31,7 +26,7 @@ import { NgComponentOutlet } from '@angular/common';
 		}
 	`,
 })
-export class BadgeComponent implements OnInit {
+export class BadgeComponent {
 	readonly tag = input.required<Tag>();
 	readonly showIcon = input(false);
 	readonly icon = computed(() => {
@@ -54,10 +49,4 @@ export class BadgeComponent implements OnInit {
 	readonly NgIcon = NgIcon;
 
 	private injector = inject(EnvironmentInjector);
-	private tooltipDirective = inject(TooltipDirective);
-
-	ngOnInit() {
-		this.tooltipDirective.text.set(this.tag().shortDescription);
-		this.tooltipDirective.position.set('top');
-	}
 }
