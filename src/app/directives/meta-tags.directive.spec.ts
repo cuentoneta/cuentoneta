@@ -77,14 +77,16 @@ describe('MetaTagsDirective', () => {
 	});
 
 	describe('setDefault', () => {
-		it('should set default title and description', () => {
+		it('should set default title, description and keywords', () => {
 			const setTitleSpy = jest.spyOn(directive, 'setTitle');
 			const setDefaultDescriptionSpy = jest.spyOn(directive, 'setDefaultDescription');
+			const setDefaultKeywordsSpy = jest.spyOn(directive, 'setDefaultKeywords');
 
 			directive.setDefault();
 
 			expect(setTitleSpy).toHaveBeenCalledWith('La Cuentoneta', false);
 			expect(setDefaultDescriptionSpy).toHaveBeenCalled();
+			expect(setDefaultKeywordsSpy).toHaveBeenCalled();
 		});
 	});
 
@@ -97,6 +99,16 @@ describe('MetaTagsDirective', () => {
 			expect(setDescriptionSpy).toHaveBeenCalledWith(
 				'Una iniciativa que busca fomentar y hacer accesible la lectura digital.',
 			);
+		});
+	});
+
+	describe('setDefaultKeywords', () => {
+		it('should set default keywords', () => {
+			const setKeywordsSpy = jest.spyOn(directive, 'setKeywords');
+
+			directive.setDefaultKeywords();
+
+			expect(setKeywordsSpy).toHaveBeenCalledWith(['cuentos', 'literatura', 'poemas', 'podcast', 'narraciones']);
 		});
 	});
 
