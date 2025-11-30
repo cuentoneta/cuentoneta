@@ -1,0 +1,145 @@
+@import 'tailwindcss';
+
+/* Definir variantes responsivas (requerido en v4) */
+@variant sm (min-width: 640px);
+@variant md (min-width: 768px);
+@variant lg (min-width: 1024px);
+@variant xl (min-width: 1280px);
+@variant 2xl (min-width: 1536px);
+
+@theme {
+	/* Color palette */
+	--color-white: #fff;
+	--color-black: #000;
+	--color-primary-100: hsl(9, 70%, 96%);
+	--color-primary-200: hsl(11, 78%, 93%);
+	--color-primary-300: hsl(24, 45%, 76%);
+	--color-primary-400: hsl(25, 45%, 62%);
+	--color-primary-500: hsl(21, 57%, 44%);
+	--color-gray-50: hsl(0, 0%, 98%);
+	--color-gray-100: hsl(240, 5%, 96%);
+	--color-gray-200: hsl(240, 6%, 90%);
+	--color-gray-300: hsl(240, 5%, 84%);
+	--color-gray-400: hsl(240, 5%, 65%);
+	--color-gray-500: hsl(240, 4%, 46%);
+	--color-gray-600: hsl(240, 5%, 34%);
+	--color-gray-700: hsl(240, 5%, 26%);
+	--color-gray-800: hsl(240, 5%, 20%);
+	--color-gray-900: hsl(240, 5%, 14%);
+	--color-interactive-500: hsl(212, 70%, 45%);
+	--color-interactive-600: hsl(212, 70%, 35%);
+	--color-zinc-300: #d4d4d8;
+
+	/* Breakpoints */
+	--breakpoint-xs: 0px;
+	--breakpoint-sm: 768px;
+	--breakpoint-md: 960px;
+	--breakpoint-lg: 1280px;
+	--breakpoint-xl: 1536px;
+
+	/* Border widths */
+	--border-width-0: 0;
+	--border-width-1: 1px;
+	--border-width-2: 2px;
+	--border-width-3: 3px;
+	--border-width-4: 4px;
+
+	/* Box shadows */
+	--shadow-lg: 0px 0px 8px rgba(63, 63, 70, 0.08);
+	--shadow-lg-hover: 0px 12px 16px rgba(63, 63, 70, 0.12);
+
+	/* Font families */
+	--font-family-inter: Inter, sans-serif;
+	--font-family-source-serif: Source Serif Pro, sans-serif;
+
+	/* Spacing */
+	--spacing-4\.5: 1.125rem;
+	--spacing-14: 3.5rem;
+	--spacing-15: 3.75rem;
+	--spacing-18: 4.5rem;
+	--spacing-22: 5.5rem;
+	--spacing-25: 6.25rem;
+	--spacing-1\/2: 50%;
+	--spacing-5\/4: 120%;
+	--spacing-header-height: 64px;
+
+	/* Line height */
+	--line-height-0: 0;
+
+	/* Content */
+	--content-blank: '';
+
+	/* Grid template rows */
+	--grid-rows-3-auto: repeat(3, auto);
+}
+
+/* Safelist patterns for line-clamp */
+@utility line-clamp-1 {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 1;
+}
+
+@utility line-clamp-2 {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+
+@utility line-clamp-3 {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+}
+
+@utility line-clamp-4 {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 4;
+}
+
+@utility line-clamp-5 {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 5;
+}
+
+@utility line-clamp-6 {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 6;
+}
+
+@utility line-clamp-7 {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 7;
+}
+
+@utility line-clamp-8 {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 8;
+}
+
+@utility line-clamp-9 {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 9;
+}
+
+@utility line-clamp-10 {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 10;
+}
