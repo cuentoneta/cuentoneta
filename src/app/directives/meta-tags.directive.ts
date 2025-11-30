@@ -56,10 +56,15 @@ export class MetaTagsDirective implements OnDestroy {
 	setDefault() {
 		this.setTitle('La Cuentoneta', false);
 		this.setDefaultDescription();
+		this.setDefaultKeywords();
 	}
 
 	setDefaultDescription() {
 		this.setDescription('Una iniciativa que busca fomentar y hacer accesible la lectura digital.');
+	}
+
+	setDefaultKeywords() {
+		this.setKeywords(['cuentos', 'literatura', 'poemas', 'podcast', 'narraciones']);
 	}
 
 	setCanonicalUrl(url: string) {
