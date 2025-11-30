@@ -571,8 +571,6 @@ interface ContentCampaign {
 }
 
 interface CampaignViewportContent {
-	title: TextBlockContent[];
-	subtitle: TextBlockContent[];
 	imageUrl: string;
 	imageWidth: number;
 	imageHeight: number;

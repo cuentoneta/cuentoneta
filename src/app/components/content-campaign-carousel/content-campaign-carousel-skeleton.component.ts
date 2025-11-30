@@ -12,33 +12,6 @@ import { ThemeService } from '../../providers/theme.service';
 	imports: [NgxSkeletonLoaderModule],
 	template: ` <div class="mx-auto max-w-[960px]">
 		<div class="slider">
-			<header class="mb-3">
-				<ngx-skeleton-loader
-					[theme]="{
-						'margin-top.px': 5,
-						'margin-bottom.px': 5,
-						'width.px': 192,
-						'height.px': 18,
-						'background-color': skeletonTextColor,
-					}"
-					count="1"
-					appearance="line"
-					class="grid"
-				/>
-
-				<ngx-skeleton-loader
-					[theme]="{
-						'margin-top.px': 4,
-						'margin-bottom.px': 4,
-						'width.px': 304,
-						'height.px': 16,
-						'background-color': skeletonTextColor,
-					}"
-					count="1"
-					appearance="line"
-					class="grid"
-				/>
-			</header>
 			<ngx-skeleton-loader
 				[theme]="{
 					'justify-self': 'center',
@@ -50,7 +23,7 @@ import { ThemeService } from '../../providers/theme.service';
 				}"
 				count="1"
 				appearance="line"
-				class="grid aspect-540/220 w-full object-cover md:aspect-960/280"
+				class="grid aspect-[540/220] w-full object-cover md:aspect-[960/280]"
 			/>
 		</div>
 		<div class="footer mt-[10px] h-[27px]">

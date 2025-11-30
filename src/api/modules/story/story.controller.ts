@@ -1,34 +1,50 @@
-import express from 'express';
-import * as storyService from './story.service';
-import { StoriesByAuthorSlugArgs } from '../../interfaces/queryArgs';
+// Express: Imports y configuración de router
+import { Request, Response, NextFunction, Router } from 'express';
 
-const router = express.Router();
-
-// Routes
-router.get('/', getAllStories);
-router.get('/read', getBySlug);
-router.get('/author/:slug', getStoriesByAuthorSlug);
-router.get('/author/:slug/navigation', getStoryNavigationTeaserByAuthorSlug);
-
+const router = Router();
 export default router;
 
-function getAllStories(req: express.Request, res: express.Response, next: express.NextFunction) {
+import { StoriesByAuthorSlugArgs } from '../../interfaces/queryArgs';
+import {
+	getMostReadStoryNavigationTeasers,
+	getStories,
+	getStoriesByAuthorSlug,
+	getStoryBySlug,
+	getStoryNavigationTeaserByAuthorSlug,
+	updateMostReadStories,
+} from './story.service';
+
+/**
+ * Obtiene la lista completa de stories, usando paginación para la consulta
+ */
+router.get('/', (req: Request, res: Response, next: NextFunction) => {
 	const { limit, offset } = req.query;
-	storyService
-		.fetchAllStories(parseInt((limit ?? '100') as string), parseInt((offset ?? '0') as string))
+	getStories(parseInt((limit ?? '100') as string), parseInt((offset ?? '0') as string))
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
-}
+});
 
-function getBySlug(req: express.Request, res: express.Response, next: express.NextFunction) {
-	const { slug } = req.query;
-	storyService
-		.fetchStoryBySlug(slug as string)
+router.get('/most-read', (req: Request, res: Response, next: NextFunction) => {
+	const { limit, offset } = req.query;
+	getMostReadStoryNavigationTeasers(parseInt((limit ?? '6') as string), parseInt((offset ?? '0') as string))
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
-}
+});
 
-function getStoriesByAuthorSlug(req: express.Request, res: express.Response, next: express.NextFunction) {
+router.get('/update-most-read', (req: Request, res: Response, next: NextFunction) => {
+	updateMostReadStories()
+		.then((result) => res.json(result))
+		.catch((err) => next(err));
+});
+
+router.get('/:slug', (req: Request, res: Response, next: NextFunction) => {
+	const { slug } = req.params;
+	getStoryBySlug(slug as string)
+		.then((result) => res.json(result))
+		.catch((err) => next(err));
+});
+
+router.get('/author/:slug', (req: Request, res: Response, next: NextFunction) => {
 	const { slug } = req.params;
 	const { limit, offset } = req.query;
 	const args: StoriesByAuthorSlugArgs = {
@@ -36,36 +52,19 @@ function getStoriesByAuthorSlug(req: express.Request, res: express.Response, nex
 		limit: parseInt((limit ?? '100') as string),
 		offset: parseInt((offset ?? '0') as string),
 	};
-	storyService
-		.fetchByAuthorSlug(args)
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
-}
-
-function getStoryNavigationTeaserByAuthorSlug(req: express.Request, res: express.Response, next: express.NextFunction) {
-	const { slug } = req.params;
-	const { limit, offset } = req.query;
-	storyService
-		.fetchStoryNavigationTeaserByAuthorSlug({
-			slug: slug as string,
-			limit: parseInt((limit ?? '100') as string),
-			offset: parseInt((offset ?? '0') as string),
-		})
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
-}
-
-router.get('/most-read', (req, res, next) => {
-	const { limit, offset } = req.query;
-	storyService
-		.fetchMostRead(parseInt((limit ?? '6') as string), parseInt((offset ?? '0') as string))
+	getStoriesByAuthorSlug(args)
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
 });
 
-router.get('/update-most-read', (req, res, next) => {
-	storyService
-		.updateMostRead()
+router.get('/author/:slug/navigation', (req: Request, res: Response, next: NextFunction) => {
+	const { slug } = req.params;
+	const { limit, offset } = req.query;
+	getStoryNavigationTeaserByAuthorSlug({
+		slug: slug as string,
+		limit: parseInt((limit ?? '100') as string),
+		offset: parseInt((offset ?? '0') as string),
+	})
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
 });

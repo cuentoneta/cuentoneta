@@ -21,15 +21,14 @@ La misión de **La Cuentoneta** es construir colectivamente una plataforma acces
 - [Misión, Visión y Valores](#misión-visión-y-valores)
 - [Comunidad](#comunidad)
 - [Accesibilidad](#accesibilidad)
-- [Contribuyentes](#contribuyentes)
-- [Patrocinadores](#patrocinadores)
 - [Staff](#staff)
+- [Patrocinadores](#patrocinadores)
 - [Licencias](#licencias)
 - [Links de interés](#links-de-interés)
 
-## Hoja de ruta
+## Bitácora de cambios
 
-Puedes acceder a la hoja de ruta (roadmap) del proyecto en [este enlace][doc-roadmap]. Allí podrás visualizar los planes de las futuras versiones de la plataforma más las storylists a agregar a La Cuentoneta.
+Puedes acceder a bitácora de cambios (changelog) del proyecto en [este enlace][doc-changelog]. Allí podrás visualizar los cambios que trae aparejados cada versión de la plataforma más los planes de las futuras versiones de La Cuentoneta.
 
 ## Cómo contribuir
 
@@ -88,51 +87,6 @@ Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos 
 
 ---
 
-## Contribuyentes
-
-### Desarrolladores
-
-- Ramiro Olivencia (**[@rolivencia](https://github.com/rolivencia)**)
-- Erik Giovani (**[@erikgiovani](https://github.com/erikgiovani)**)
-- Soledad Sasia (**[@SoleSasia](https://github.com/SoleSasia)**)
-- Juan Blas Tschopp (**[@juanblas09](https://github.com/juanblas09)**)
-- Diego Franchina (**[@soydiego](https://github.com/SoyDiego)**)
-- Jimer Espinoza (**[@jimersamuel](https://github.com/JimerSamuel)**)
-- Mia Ramos (**[@MiaPurpleFate](https://twitter.com.com/MiaPurpleFate)**)
-- Wilson Lasso (**[@wilago](https://github.com/wilago)**)
-- Gustavo Petruzzi (**[@gustavoPetruzzi](https://github.com/gustavoPetruzzi)**)
-- Juan Romero (**[@Addin](https://github.com/Addin)**)
-- Alexis Martínez (**[@AlexRGB2](https://github.com/AlexRGB2)**)
-- John Angel (**[@Jeangel](https://github.com/Jeangel)**)
-- Luciano Aieta (**[@lgaieta](https://github.com/lgaieta)**)
-
-### Diseño UX/UI
-
-- Maxi Cris (**[@maxicris](https://github.com/maxicris)**)
-
-### Escritura de textos
-
-- Sofía Abramovich
-- Marian Erro (**[@marianerro](https://twitter.com/MarianaErro)**)
-- Elk A. (**[@A-Elkkk-o-k](https://www.wattpad.com/user/A-Elkkk-o-k)**)
-
-### Selección, Transcripción y Curación de contenido
-
-- Patricio Decoud (**[@arroba_pato](https://twitter.com/arroba_pato)**)
-- Juan Balmaceda (**[@balm4ceda](https://twitter.com/balm4ceda)**)
-- Facundo Kaufmann (**[@FacuKaufmann](https://twitter.com/FacuKaufmann)**)
-- Candela Godoy (**[@napsiex](https://twitter.com/napsiex)**)
-- Analía Ale
-- Brahian Pereyra (**[@brahianpdev](https://github.com/brahianpdev)**)
-- Juan Romero (**[@juanr0mer0](https://twitter.com/juanr0mer0)**)
-- Luis Omar Sánchez Díaz (**[@luisthepower](https://www.instagram.com/luisthepower/)**)
-- Karla Nevárez (**[kanemu36@gmail.com](mailto:kanemu36@gmail.com)**)
-- Sebastián Mansilla
-- Lolo Diaz (**[@estre.sadx](https://instagram.com/estre.sadx)**)
-- Nicolás Contrera (**[@nicontrera1](https://twitter.com/nicontrera1)**)
-
----
-
 ## Patrocinadores
 
 ¿Te interesa patrocinar o promocionar este proyecto? ¡Comunicate con nosotros!
@@ -141,13 +95,17 @@ Las Pautas de Accesibilidad para el Contenido Web (WCAG) definen los requisitos 
 
 ## Staff
 
-_Desarrollo y administración del repositorio_
+_Líder de Desarrollo y administrador principal del repositorio_
 
 Ramiro Olivencia (**[@rolivencia](https://github.com/rolivencia)**)
 
-_Diseño UX/UI_
+_Líder de Diseño UX/UI_
 
 Maxi Cris (**[@maxicris](https://github.com/maxicris)**)
+
+La lista completa de contribuyentes al proyecto se encuentra disponible en la sección ["Nosotros"](https://cuentoneta.ar/about) de la web de La Cuentoneta.
+
+El aporte de cada una de las personas se detalla, además, en la documentación de cada una de las [versiones lanzadas](https://github.com/cuentoneta/cuentoneta/releases) del proyecto.
 
 ---
 
@@ -177,7 +135,6 @@ Este repositorio y el contenido de la web de La Cuentoneta se publican bajo lice
 [doc-code_of_conduct]: CODE_OF_CONDUCT.md
 [doc-changelog]: CHANGELOG.md
 [doc-contributing]: CONTRIBUTING.md
-[doc-roadmap]: ROADMAP.md
 [doc-mvv]: MVV.md
 [doc-lic]: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
 [doc-guia-de-desarrollo]: https://github.com/cuentoneta/cuentoneta/blob/develop/docs/DEVELOPMENT_GUIDE.md

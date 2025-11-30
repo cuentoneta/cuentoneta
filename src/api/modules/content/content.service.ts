@@ -1,5 +1,11 @@
 // Repository
-import * as contentRepository from './content.repository';
+import {
+	fetchLandingPageContent,
+	fetchRotatingContent,
+	createLandingPages,
+	fetchLandingPagesList,
+	fetchLatestLandingPageReferences,
+} from './content.repository';
 
 // Modelos
 import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
@@ -9,13 +15,13 @@ import { addWeeks, getWeek, getYear } from 'date-fns';
 import { mapLandingPageContent, mapStoryNavigationTeaserWithAuthor } from '../../_utils/functions';
 import slugify from 'slugify';
 
-export async function fetchLandingPageContent(): Promise<LandingPageContent> {
+export async function getLandingPageContent(): Promise<LandingPageContent> {
 	const weekOfYear = getWeek(new Date());
 	const year = getYear(new Date());
 
 	const slug = `${weekOfYear.toString().padStart(2, '0')}-${year}`;
-	const landingPageResult = await contentRepository.fetchLandingPageContent(slug);
-	const rotatingContentResult = await contentRepository.fetchRotatingContent();
+	const landingPageResult = await fetchLandingPageContent(slug);
+	const rotatingContentResult = await fetchRotatingContent();
 
 	if (!landingPageResult || !rotatingContentResult) {
 		throw new Error('Landing page content not found');
@@ -26,8 +32,8 @@ export async function fetchLandingPageContent(): Promise<LandingPageContent> {
 	};
 }
 
-export async function fetchRotatingContent(): Promise<RotatingContent> {
-	const result = await contentRepository.fetchRotatingContent();
+export async function getRotatingContent(): Promise<RotatingContent> {
+	const result = await fetchRotatingContent();
 
 	if (!result) {
 		throw new Error('Rotating content not found');
@@ -51,7 +57,7 @@ export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 
 		return `${weekOfYear.toString().padStart(2, '0')}-${year}`;
 	});
 
-	const existingLandingPagesList = await contentRepository.fetchLandingPageList(slugs);
+	const existingLandingPagesList = await fetchLandingPagesList(slugs);
 
 	if (!existingLandingPagesList) {
 		throw new Error(`Could not retrieve the landing page configs for the [${slugs.join(', ')}] slugs not found.`);
@@ -63,7 +69,7 @@ export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 
 		return [];
 	}
 
-	const latestLandingPageConfig = await contentRepository.fetchLatestLandingPageReferences();
+	const latestLandingPageConfig = await fetchLatestLandingPageReferences();
 
 	if (!latestLandingPageConfig) {
 		throw new Error(`Latest landing page for the '${currentLandingPageSlug}' slug content not found`);
@@ -83,5 +89,5 @@ export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 
 		};
 	});
 
-	return await contentRepository.createLandingPages(landingPageObjects);
+	return await createLandingPages(landingPageObjects);
 }

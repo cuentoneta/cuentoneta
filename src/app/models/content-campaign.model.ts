@@ -13,14 +13,10 @@ export type ContentCampaignViewport = (typeof ContentCampaignViewportKeys)[numbe
  */
 export const viewportElementSizes = Object.freeze({
 	xs: {
-		title: 32,
-		subtitle: 36,
 		imageWidth: 540,
 		imageHeight: 220,
 	},
 	md: {
-		title: 40,
-		subtitle: 60,
 		imageWidth: 960,
 		imageHeight: 280,
 	},
@@ -36,8 +32,6 @@ export interface ContentCampaign {
 	url: string;
 	contents: {
 		[key in ContentCampaignViewport]: {
-			title: TextBlockContent[];
-			subtitle: TextBlockContent[];
 			imageUrl: string;
 			imageWidth: number;
 			imageHeight: number;

@@ -15,37 +15,21 @@ import {
 	RotatingContentQueryResult,
 } from '../../sanity/types';
 
-/**
- * Fetches the landing page content for a specific week/year configuration
- */
 export async function fetchLandingPageContent(slug: string): Promise<LandingPageContentQueryResult> {
 	return client.fetch(landingPageContentQuery, { slug });
 }
 
-/**
- * Fetches the landing page content references for a specific week/year configuration
- */
 export async function fetchLatestLandingPageReferences(): Promise<LatestLandingPageReferencesQueryResult> {
 	return client.fetch(latestLandingPageReferencesQuery);
 }
 
-/**
- * Fetches a list of landing page configurations that match the provided slugs
- */
-export async function fetchLandingPageList(slugs: string[]): Promise<LandingPageListQueryResult> {
+export async function fetchLandingPagesList(slugs: string[]): Promise<LandingPageListQueryResult> {
 	return client.fetch(landingPageListQuery, { slugs });
 }
 
-/**
- * Fetches the rotating content singleton document
- */
 export async function fetchRotatingContent(): Promise<RotatingContentQueryResult> {
 	return client.fetch(rotatingContentQuery);
 }
-
-/**
- * Creates multiple landing page documents in parallel
- */
 
 export async function createLandingPages(
 	landingPageObjects: Array<{
@@ -58,4 +42,18 @@ export async function createLandingPages(
 	}>,
 ) {
 	return Promise.all(landingPageObjects.map((object) => client.create(object)));
+}
+
+/**
+ * Updates the mostRead stories in the rotating content document
+ */
+export async function updateRotatingContentMostRead(
+	stories: Array<{ _key: string; _type: string; _ref: string }>,
+): Promise<void> {
+	const rotatingContent = await fetchRotatingContent();
+	if (!rotatingContent) {
+		throw new Error('Rotating content not found');
+	}
+
+	await client.patch(rotatingContent._id, { set: { mostRead: stories } }).commit();
 }

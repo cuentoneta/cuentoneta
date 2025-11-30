@@ -1,9 +1,3 @@
-// Repository
-import * as storyRepository from './story.repository';
-
-// Sanity
-import { client } from '../../_helpers/sanity-connector';
-
 // Environment
 import { environment } from '../../_helpers/environment';
 
@@ -25,27 +19,36 @@ import { RotatingContent } from '@models/landing-page-content.model';
 import { StoriesByAuthorSlugArgs } from '../../interfaces/queryArgs';
 
 // Servicios
-import * as contentService from '../content/content.service';
-import { fetchRotatingContent } from '../content/content.service';
+import { getLandingPageContent, getRotatingContent } from '../content/content.service';
 import { fetchClarityData } from '../../_helpers/clarity-connector';
+
+// Repository
+import { updateRotatingContentMostRead } from '../content/content.repository';
+
+// Funciones de mapeo
 import { mapMediaSourcesForStorylist } from '../../_utils/media-sources.functions';
 
-export async function fetchByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryTeaser[]> {
-	const result = await storyRepository.fetchByAuthorSlug(
-		args.slug,
-		args.offset * args.limit,
-		(args.offset + 1) * args.limit,
-	);
+// Funciones de repository
+import {
+	fetchNavigationTeasersByAuthorSlug,
+	fetchStories,
+	fetchStoriesByAuthorSlug,
+	fetchStoriesBySlugs,
+	fetchStoryBySlug,
+} from './story.repository';
+
+export async function getStoriesByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryTeaser[]> {
+	const result = await fetchStoriesByAuthorSlug(args.slug, args.offset * args.limit, (args.offset + 1) * args.limit);
 
 	return mapStoryTeaser(result);
 }
 
-export async function fetchStoryNavigationTeaserByAuthorSlug(args: {
+export async function getStoryNavigationTeaserByAuthorSlug(args: {
 	slug: string;
 	limit: number;
 	offset: number;
 }): Promise<StoryNavigationTeaser[]> {
-	const result = await storyRepository.fetchNavigationTeasersByAuthorSlug(
+	const result = await fetchNavigationTeasersByAuthorSlug(
 		args.slug,
 		args.offset * args.limit,
 		(args.offset + 1) * args.limit,
@@ -54,8 +57,8 @@ export async function fetchStoryNavigationTeaserByAuthorSlug(args: {
 	return mapStoryNavigationTeaser(result);
 }
 
-export async function fetchStoryBySlug(slug: string): Promise<Story> {
-	const result = await storyRepository.fetchBySlug(slug);
+export async function getStoryBySlug(slug: string): Promise<Story> {
+	const result = await fetchStoryBySlug(slug);
 
 	if (!result) {
 		throw new Error(`Story with slug ${slug} not found`);
@@ -64,26 +67,29 @@ export async function fetchStoryBySlug(slug: string): Promise<Story> {
 	return await mapStoryContent(result);
 }
 
-export async function fetchStoriesBySlugs(slugs: string[]): Promise<StoryTeaser[]> {
-	const result = await storyRepository.fetchBySlugs(slugs);
+export async function getStoriesBySlug(slugs: string[]): Promise<StoryTeaser[]> {
+	const result = await fetchStoriesBySlugs(slugs);
 
 	return mapStoryTeaser(result);
 }
 
-export async function fetchMostRead(limit: number = 6, offset: number = 0): Promise<StoryNavigationTeaser[]> {
-	const result = await contentService.fetchLandingPageContent();
+export async function getMostReadStoryNavigationTeasers(
+	limit: number = 6,
+	offset: number = 0,
+): Promise<StoryNavigationTeaser[]> {
+	const result = await getLandingPageContent();
 
 	if (!result) {
-		throw new Error(`Could not fetch most read stories`);
+		throw new Error(`Could not fetch most read stories.`);
 	}
 
 	return result.mostRead.slice(offset, offset + limit);
 }
 
-export async function updateMostRead(): Promise<RotatingContent> {
+export async function updateMostReadStories(): Promise<RotatingContent> {
 	const popularPagesMetrics = (await fetchClarityData()).find((metric) => metric.metricName === 'PopularPages');
 	if (!popularPagesMetrics) {
-		throw new Error('Could not fetch metrics from Microsoft Clarity');
+		throw new Error('Could not fetch metrics.');
 	}
 
 	const prefix = `${environment.basePath}/story/`;
@@ -91,21 +97,17 @@ export async function updateMostRead(): Promise<RotatingContent> {
 		.filter((entry) => entry.url.startsWith(prefix))
 		.map((entry) => entry.url.split(prefix).pop() as string);
 
-	const stories = await fetchStoriesBySlugs(mostReadStoriesSlugs);
-	const rotatingContent = await contentService.fetchRotatingContent();
-
-	// Elimina las historias marcadas como "más leídas" actuales desde landing page
-	await client.patch(rotatingContent._id, { unset: ['mostRead'] }).commit();
+	const stories = await getStoriesBySlug(mostReadStoriesSlugs);
 
 	// Actualiza landing page referencias a las historias marcadas como "más leídas" actuales
 	const mostReadStories = stories.map((s) => ({ _key: s._id, _type: 'story', _ref: s._id }));
-	await client.patch(rotatingContent._id, { set: { mostRead: mostReadStories } }).commit();
+	await updateRotatingContentMostRead(mostReadStories);
 
-	return await fetchRotatingContent();
+	return await getRotatingContent();
 }
 
-export async function fetchAllStories(limit: number = 100, offset: number = 0): Promise<StoryTeaserWithAuthor[]> {
-	const result = await storyRepository.fetchAll(offset * limit, (offset + 1) * limit);
+export async function getStories(limit: number = 100, offset: number = 0): Promise<StoryTeaserWithAuthor[]> {
+	const result = await fetchStories(offset * limit, (offset + 1) * limit);
 
 	return result.map((story) => {
 		const { body, author, mediaSources, ...fields } = story;

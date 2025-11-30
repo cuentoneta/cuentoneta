@@ -1,9 +1,9 @@
 <main class="content horizontal-layout-spacing vertical-layout-spacing">
 	<!--
-        Las alturas fijadas para estos elementos tienen la finalidad de evitar
+        Las alturas fijadas para los elementos hijos de <main> tienen la finalidad de evitar
         el rebote vertical que puede observarse en el momento de la carga inicial de la página
     -->
-	<section class="h-[261.36px] sm:h-[389px]">
+	<section class="h-[189.36px] sm:h-[317px]">
 		@defer (when campaigns().length > 0) {
 			<cuentoneta-content-campaign-carousel [slides]="campaigns()" />
 		} @loading (minimum 500ms) {

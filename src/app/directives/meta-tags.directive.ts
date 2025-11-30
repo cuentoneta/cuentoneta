@@ -1,4 +1,4 @@
-import { Directive, inject, PLATFORM_ID, DOCUMENT } from '@angular/core';
+import { Directive, inject, PLATFORM_ID, DOCUMENT, OnDestroy } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { isPlatformBrowser } from '@angular/common';
 
@@ -6,7 +6,7 @@ import { isPlatformBrowser } from '@angular/common';
 	selector: '[cuentonetaMetaTags]',
 	standalone: true,
 })
-export class MetaTagsDirective {
+export class MetaTagsDirective implements OnDestroy {
 	private document = inject(DOCUMENT);
 	private metaTagService = inject(Meta);
 	private platformId = inject(PLATFORM_ID);
@@ -39,6 +39,18 @@ export class MetaTagsDirective {
 			property: 'og:description',
 			content: content,
 		});
+	}
+
+	setKeywords(keywords: string | string[]) {
+		const keywordsString = Array.isArray(keywords) ? keywords.join(', ') : keywords;
+		this.metaTagService.updateTag({
+			name: 'keywords',
+			content: keywordsString,
+		});
+	}
+
+	removeKeywords() {
+		this.metaTagService.removeTag('name="keywords"');
 	}
 
 	setDefault() {
@@ -77,5 +89,11 @@ export class MetaTagsDirective {
 
 	removeRobots() {
 		this.metaTagService.removeTag('name="robots"');
+	}
+
+	ngOnDestroy() {
+		this.removeKeywords();
+		this.removeCanonicalUrl();
+		this.removeRobots();
 	}
 }

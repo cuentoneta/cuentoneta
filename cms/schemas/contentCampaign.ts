@@ -22,24 +22,6 @@ const decodeAssetId = (id) => {
 	};
 };
 
-const campaignCharLimitValidation = (blocks, context) => {
-	if (!blocks || blocks.length === 0) return true;
-
-	const totalCharacters = blocks
-		.filter((block) => block._type === 'block')
-		.reduce((acc, block) => acc + block.children.reduce((sum, child) => sum + (child.text || '').length, 0), 0);
-
-	const property = context.path[context.path.length - 1];
-	const viewport = context.path[context.path.length - 2];
-	const maxChars = viewportElementSizes[viewport][property];
-
-	if (totalCharacters > maxChars) {
-		return `La longitud máxima es de ${maxChars} caracteres. Longitud actual: ${totalCharacters}`;
-	}
-
-	return true;
-};
-
 const campaignImageSizeValidation = (image, context) => {
 	const viewport = context.path[context.path.length - 2];
 	const viewportSize = viewportElementSizes[viewport];
@@ -58,18 +40,6 @@ const generateContent = (viewport: ContentCampaignViewport) => {
 		title: `Viewport ${viewport}`,
 		type: 'object',
 		fields: [
-			defineField({
-				name: 'title',
-				title: 'Título',
-				type: 'blockContent',
-				validation: (Rule) => [Rule.custom(localizedRequire), Rule.custom(campaignCharLimitValidation)],
-			}),
-			defineField({
-				name: 'subtitle',
-				title: 'Subtítulo',
-				type: 'blockContent',
-				validation: (Rule) => [Rule.custom(localizedRequire), Rule.custom(campaignCharLimitValidation)],
-			}),
 			defineField({
 				name: 'image',
 				title: `Imagen (${viewportElementSizes[viewport].imageWidth}px x ${viewportElementSizes[viewport].imageHeight}px de tamaño)`,

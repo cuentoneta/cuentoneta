@@ -26,6 +26,7 @@ import { NgxSkeletonLoaderComponent, NgxSkeletonLoaderModule } from 'ngx-skeleto
 // Services
 import { AuthorService } from '../../providers/author.service';
 import { StoryService } from '../../providers/story.service';
+import { ThemeService } from '../../providers/theme.service';
 
 // Componentes
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
@@ -34,11 +35,10 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { StoryCardTeaserComponent } from '@components/story-card-teaser/story-card-teaser.component';
 import Tab from '@components/tabs/tab.component';
 import Tabs from '@components/tabs/tabs.component';
+import { StoryCardTeaserSkeletonComponent } from '@components/story-card-teaser/story-card-teaser-skeleton.component';
 
 // Pipes
 import { InitialsPipe } from '../../pipes/initials.pipe';
-import { ThemeService } from '../../providers/theme.service';
-import { StoryCardTeaserSkeletonComponent } from '@components/story-card-teaser/story-card-teaser-skeleton.component';
 
 @Component({
 	selector: 'cuentoneta-author',
@@ -231,6 +231,7 @@ export default class AuthorComponent {
 		this.metaTagsDirective.setDescription(`Perfil y obras de ${author.name} para leer en La Cuentoneta.`);
 		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/author/${author.slug}`);
 		this.metaTagsDirective.setRobots('index, follow');
+		this.metaTagsDirective.setKeywords(['escritor', 'poemas', 'cuentos', 'autor', author.name.toLowerCase()]);
 	}
 	private author$(slug: string) {
 		return this.authorService.getBySlug(slug).pipe(

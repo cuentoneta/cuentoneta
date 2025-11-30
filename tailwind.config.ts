@@ -44,11 +44,12 @@ export default {
 				'source-serif': ['Source Serif Pro', 'sans-serif'],
 			},
 			spacing: {
-				4.5: '18px',
-				14: '56px',
-				15: '60px',
-				18: '72px',
-				25: '100px',
+				4.5: '1.125rem',
+				14: '3.50rem',
+				15: '3.75rem',
+				18: '4.50rem',
+				22: '5.50rem',
+				25: '6.25rem',
 				'1/2': '50%',
 				'5/4': '120%',
 				// Tamaños específicos de layouts y componentes globales de la app

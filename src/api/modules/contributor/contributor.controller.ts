@@ -1,12 +1,14 @@
-import express from 'express';
-import { getAll } from './contributor.service';
+// Express: Imports y configuración de router
+import { Request, Response, NextFunction, Router } from 'express';
 
-const router = express.Router();
-
+const router = Router();
 export default router;
 
-router.get('/', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-	getAll()
+// Funciones de service
+import { getAllContributors } from './contributor.service';
+
+router.get('/', (req: Request, res: Response, next: NextFunction) => {
+	getAllContributors()
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
 });
