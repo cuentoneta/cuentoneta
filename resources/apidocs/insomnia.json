@@ -40,15 +40,15 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{apiUrl}}/api/story/read?slug=the-case-of-the-frugal-cake"
-        name: /read?=slug
+      - url: "{{apiUrl}}/api/story"
+        name: /
         meta:
           id: req_8447d99217244a37b295f827953e327d
           created: 1713844911364
-          modified: 1740428041324
+          modified: 1764346218932
           isPrivate: false
           description: ""
-          sortKey: -1713844911364
+          sortKey: -1740350808608
         method: GET
         headers:
           - name: User-Agent
@@ -149,6 +149,27 @@ collection:
             send: true
             store: true
           rebuildPath: true
+      - url: "{{apiUrl}}/api/story/the-case-of-the-frugal-cake"
+        name: /:slug
+        meta:
+          id: req_59651e54cd53481ea409704a6668ad10
+          created: 1764346193482
+          modified: 1764346206982
+          isPrivate: false
+          description: ""
+          sortKey: -1740350808558
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/2023.5.8
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
   - name: /author
     meta:
       id: fld_70dfed9f44ce45f48fd9c9c78001827a
@@ -158,11 +179,11 @@ collection:
       description: ""
     children:
       - url: "{{apiUrl}}/api/author/alejandro-dolina"
-        name: :slug
+        name: /:slug
         meta:
           id: req_954d4ca4fc2840f3b0c47b7eaa8833bb
           created: 1713638161744
-          modified: 1740427988318
+          modified: 1764429684902
           isPrivate: false
           description: ""
           sortKey: -1713844866130
@@ -207,12 +228,12 @@ collection:
       sortKey: -1686615270725
       description: ""
     children:
-      - url: "{{apiUrl}}/api/storylist"
+      - url: "{{apiUrl}}/api/storylist/verano-2022"
         name: /
         meta:
           id: req_86b127e5e2694b3e8dcbf5f95122a14d
           created: 1740426771263
-          modified: 1740428127772
+          modified: 1764346143075
           isPrivate: false
           description: ""
           sortKey: -1740426771263
@@ -228,10 +249,6 @@ collection:
             value: "2"
             description: ""
             disabled: false
-          - id: pair_8aa539b0d61143cd921aebadb9978995
-            name: slug
-            value: verano-2022
-            description: ""
         headers:
           - name: User-Agent
             value: insomnia/2023.5.8
@@ -335,11 +352,22 @@ collection:
         meta:
           id: req_429610f656344c56a1fd91eccff440ac
           created: 1763128571445
-          modified: 1763128574505
+          modified: 1763358811404
           isPrivate: false
           description: ""
           sortKey: -1716543109935.75
         method: GET
+        parameters:
+          - id: pair_09be8a614cdc4c4e9c7415e4372a4c25
+            name: weeksInTheFuture
+            value: "3"
+            description: ""
+            disabled: false
+          - id: pair_52df489424f142578456fa045b49c28b
+            name: ""
+            value: ""
+            description: ""
+            disabled: false
         headers:
           - name: User-Agent
             value: insomnia/2023.5.8

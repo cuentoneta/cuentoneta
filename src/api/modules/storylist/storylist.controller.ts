@@ -12,17 +12,17 @@ import {
 } from './storylist.service';
 
 // Controllers
+router.get('/teasers', (req: Request, res: Response, next: NextFunction) => {
+	getAllStorylistTeasers()
+		.then((result) => res.json(result))
+		.catch((err) => next(err));
+});
+
 router.get('/:slug', (req: Request, res: Response, next: NextFunction) => {
 	const { slug } = req.params;
 	const { amount, ordering = 'asc' } = req.query;
 	const limit = parseInt(amount as string) - 1;
 	getStorylistBySlug({ slug: slug as string, amount: amount as string, limit, ordering: ordering as string })
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
-});
-
-router.get('/teasers', (req: Request, res: Response, next: NextFunction) => {
-	getAllStorylistTeasers()
 		.then((result) => res.json(result))
 		.catch((err) => next(err));
 });
