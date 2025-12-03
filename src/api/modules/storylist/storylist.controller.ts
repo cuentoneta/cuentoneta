@@ -1,5 +1,11 @@
 // Hono: Imports y configuración
 import { Hono } from 'hono';
+import { z } from 'zod';
+import { zValidator } from '@hono/zod-validator';
+
+// Esquemas de zod
+import { paginationSchema, storylistQuerySchema } from './storylist.schema';
+import { slugSchema } from 'src/api/schemas/common.schemas';
 
 // Funciones de service
 import {
@@ -19,21 +25,31 @@ storylistController.get('/teasers', async (c) => {
 /**
  * Obtiene los teasers de las publicaciones de una storylist para su uso en la navegación de la misma.
  */
-storylistController.get('/:slug/navigation', async (c) => {
-	const slug = c.req.param('slug');
-	const limit = parseInt(c.req.query('limit') ?? '100');
-	const offset = parseInt(c.req.query('offset') ?? '0');
-	const result = await getStorylistNavigationTeasersByStorylistSlug({ slug, limit, offset });
-	return c.json(result);
-});
+storylistController.get(
+	'/:slug/navigation',
+	zValidator('param', slugSchema),
+	zValidator('query', paginationSchema),
+	async (c) => {
+		const { slug } = c.req.valid('param');
+		const { limit, offset } = c.req.valid('query');
 
-storylistController.get('/:slug', async (c) => {
-	const slug = c.req.param('slug');
-	const amount = c.req.query('amount');
-	const ordering = c.req.query('ordering') ?? 'asc';
-	const limit = amount ? parseInt(amount) - 1 : 0;
-	const result = await getStorylistBySlug({ slug, amount: amount ?? '0', limit, ordering });
-	return c.json(result);
-});
+		const result = await getStorylistNavigationTeasersByStorylistSlug({ slug, limit, offset });
+		return c.json(result);
+	},
+);
+
+storylistController.get(
+	'/:slug',
+	zValidator('param', slugSchema),
+	zValidator('query', storylistQuerySchema),
+	async (c) => {
+		const { slug } = c.req.valid('param');
+		const { amount, ordering } = c.req.valid('query');
+
+		const limit = amount ? parseInt(amount) - 1 : 0;
+		const result = await getStorylistBySlug({ slug, amount: amount ?? '0', limit, ordering });
+		return c.json(result);
+	},
+);
 
 export default storylistController;
