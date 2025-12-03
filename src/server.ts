@@ -1,46 +1,43 @@
+import { join } from 'node:path';
 import { AngularAppEngine, createRequestHandler } from '@angular/ssr';
 import { isMainModule } from '@angular/ssr/node';
-import { Hono } from 'hono';
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { Hono } from 'hono';
+import { requestId } from 'hono/request-id';
+import { secureHeaders } from 'hono/secure-headers';
 import apiRoutes from './api/routes';
 
-const serverDistFolder = dirname(fileURLToPath(import.meta.url));
-const browserDistFolder = resolve(serverDistFolder, '../browser');
+/**
+ * Inicializa Hono y exporta la instancia de la aplicación
+ */
+export const app = new Hono({ strict: false }).use(requestId()).use(secureHeaders());
 
-export const app = new Hono();
-
-// Register API routes with /api prefix
+// Registra rutas de API
 app.route('/api', apiRoutes);
 
-// Serve static files with cache headers
-app.use('/*', async (c, next) => {
-	await next();
-
-	// Add 1-year cache for static assets (matching Express behavior)
-	const path = c.req.path;
-	if (path.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|webp)$/)) {
-		c.header('Cache-Control', 'public, max-age=31536000, immutable');
-	}
-});
-
+/**
+ * Sirve los archivos estáticos desde el directorio /browser
+ */
 app.use(
-	'/*',
+	'*',
 	serveStatic({
-		root: browserDistFolder,
-		index: '', // Disable auto index.html
+		root: join(import.meta.dirname, '../browser'),
+		onFound: (path, c) => {
+			c.header('Cache-Control', `public, immutable, max-age=31536000`);
+		},
+		onNotFound: () => {
+			// Optionally log or handle the case where a static file is not found
+		},
 	}),
 );
 
 /**
- * Handle all other requests by rendering the Angular application.
+ * Maneja el SSR para las routes restantes utilizando el Angular App Engine
  */
-app.use('/*', async (c, next) => {
+app.use('*', async (c, next) => {
 	const angularApp = new AngularAppEngine();
 	const response = await angularApp.handle(c.req.raw);
-
 	if (response) {
 		return response;
 	}
@@ -49,23 +46,40 @@ app.use('/*', async (c, next) => {
 });
 
 /**
- * Start the server if this module is the main entry point.
- * The server listens on the port defined by the `PORT` environment variable, or defaults to 4000.
+ * Handler para Error 404: Not Found
+ */
+app.notFound((c) => {
+	return c.text('404 - Not found', 404);
+});
+
+/**
+ * Handler para Error 500: Internal Server Error
+ */
+app.onError((error, c) => {
+	console.error(`${error}`);
+	return c.text('Internal Server Error', 500);
+});
+
+/**
+ * Inicia el server si este módulo es el punto principal de entrada.
+ * El servidor escucha en el puerto definido por el valor `PORT` definido
+ * en las variables de entorno, usando 4000 como default.
  */
 if (isMainModule(import.meta.url)) {
-	const port = parseInt(process.env['PORT'] || '4000');
-	serve({ fetch: app.fetch, port }, (info) => {
-		console.log(`Aplicación corriendo en http://localhost:${info.port}`);
-	});
+	const port = Number(process.env['PORT'] || 4000);
+	serve(
+		{
+			fetch: app.fetch,
+			port,
+		},
+		(info) => {
+			console.log(`Aplicación corriendo en http://localhost:${info.port}`);
+		},
+	);
 }
 
 /**
- * Request handler used by the Angular CLI (for dev-server and during build)
- * or Vercel serverless.
+ * Request handler utilizado por Angular CLI para modos dev-server y durante build
+ * o en Firebase Cloud Functions.
  */
 export const reqHandler = createRequestHandler(app.fetch);
-
-/**
- * Export for Vercel serverless
- */
-export default app;
