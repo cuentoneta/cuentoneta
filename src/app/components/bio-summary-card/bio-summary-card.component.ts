@@ -1,7 +1,6 @@
 // Core
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-
 // Modelos
 import { Story } from '@models/story.model';
 

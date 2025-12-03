@@ -18,6 +18,7 @@ import { DatePipe, registerLocaleData } from '@angular/common';
 import { ThemeService } from './providers/theme.service';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideA11yTooltip } from '@a11y-ngx/tooltip';
 
 registerLocaleData(localeEs);
 
@@ -39,5 +40,13 @@ export const appConfig: ApplicationConfig = {
 		provideRouter(appRoutes, withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }), withViewTransitions()),
 		provideHttpClient(withFetch()),
 		provideZonelessChangeDetection(),
+		provideA11yTooltip({
+			className: 'cuentoneta-tooltip',
+			borderSize: 0,
+			padding: '8px 8px',
+			maxWidth: 'auto',
+			backgroundColor: 'black',
+			textColor: 'white',
+		}),
 	],
 };

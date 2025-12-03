@@ -182,12 +182,12 @@ export const AllBadgesWithoutIcons: Story = {
 	render: () => ({
 		template: `
 			<div class="flex flex-wrap gap-2">
-				<cuentoneta-badge [tag]="bookTag" [showIcon]="false" />
-				<cuentoneta-badge [tag]="bookmarksTag" [showIcon]="false" />
-				<cuentoneta-badge [tag]="trophyTag" [showIcon]="false" />
-				<cuentoneta-badge [tag]="languageTag" [showIcon]="false" />
-				<cuentoneta-badge [tag]="peopleTag" [showIcon]="false" />
-				<cuentoneta-badge [tag]="starsTag" [showIcon]="false" />
+				<cuentoneta-badge [tag]="bookTag" [showIcon]="false"   />
+				<cuentoneta-badge [tag]="bookmarksTag" [showIcon]="false"   />
+				<cuentoneta-badge [tag]="trophyTag" [showIcon]="false"   />
+				<cuentoneta-badge [tag]="languageTag" [showIcon]="false"   />
+				<cuentoneta-badge [tag]="peopleTag" [showIcon]="false"   />
+				<cuentoneta-badge [tag]="starsTag" [showIcon]="false"   />
 			</div>
 		`,
 		props: {

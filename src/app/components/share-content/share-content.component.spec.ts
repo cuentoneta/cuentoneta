@@ -1,6 +1,16 @@
 import { render, screen, RenderResult } from '@testing-library/angular';
 import { ShareContentComponent } from './share-content.component';
+import { TestBed } from '@angular/core/testing';
+import { ShareButtonComponent } from '@components/share-button/share-button.component';
+import { MockA11yTooltipModule } from '@mocks/external-libs/a11y-tooltip-module.mock';
 
+const setupTestBed = (testbed: TestBed) => {
+	(testbed as typeof TestBed).configureTestingModule({}).overrideComponent(ShareButtonComponent, {
+		set: {
+			imports: [MockA11yTooltipModule],
+		},
+	});
+};
 describe('ShareContentComponent', () => {
 	const renderComponent = async (inputs?: {
 		isLoading?: boolean;
@@ -8,7 +18,7 @@ describe('ShareContentComponent', () => {
 		message?: string;
 		params?: { [key: string]: string };
 	}): Promise<RenderResult<ShareContentComponent>> => {
-		return render(ShareContentComponent, { inputs });
+		return render(ShareContentComponent, { inputs, configureTestBed: setupTestBed });
 	};
 
 	it('should create', async () => {

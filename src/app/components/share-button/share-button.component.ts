@@ -1,25 +1,17 @@
-import {
-	Component,
-	computed,
-	createEnvironmentInjector,
-	EnvironmentInjector,
-	inject,
-	input,
-	OnInit,
-} from '@angular/core';
+import { Component, computed, createEnvironmentInjector, EnvironmentInjector, inject, input } from '@angular/core';
 import { SharingPlatform } from '@models/sharing-platform';
-import { TooltipDirective } from '../../directives/tooltip.directive';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { NgComponentOutlet } from '@angular/common';
+import { A11yTooltipModule } from '@a11y-ngx/tooltip';
 
 @Component({
 	selector: 'cuentoneta-share-button',
-	imports: [NgComponentOutlet],
-	hostDirectives: [TooltipDirective],
+	imports: [NgComponentOutlet, A11yTooltipModule],
 	template: ` @if (platform(); as platform) {
 		<button
 			(click)="onShareToPlatformClicked($event, platform)"
-			[attr.aria-label]="platform.name"
+			[tooltip]="getShareTooltip(platform)"
+			[tooltipConfig]="{ asLabel: true }"
 			[attr.data-testid]="icon()?.name"
 			class="flex h-12 w-12 items-center justify-center gap-3 rounded-full border-1 border-solid border-gray-200 bg-gray-100 hover:bg-gray-200"
 		>
@@ -29,7 +21,7 @@ import { NgComponentOutlet } from '@angular/common';
 		</button>
 	}`,
 })
-export class ShareButtonComponent implements OnInit {
+export class ShareButtonComponent {
 	readonly platform = input.required<SharingPlatform>();
 	readonly params = input<{ [key: string]: string }>({});
 	readonly message = input<string>('');
@@ -37,7 +29,6 @@ export class ShareButtonComponent implements OnInit {
 
 	readonly NgIcon = NgIcon;
 
-	private tooltipDirective = inject(TooltipDirective);
 	private injector = inject(EnvironmentInjector);
 
 	readonly icon = computed(() => {
@@ -64,8 +55,7 @@ export class ShareButtonComponent implements OnInit {
 		);
 	}
 
-	ngOnInit() {
-		this.tooltipDirective.text.set('Compartir en ' + this.platform().name);
-		this.tooltipDirective.position.set('bottom');
+	getShareTooltip(platform: SharingPlatform): string {
+		return `Compartir en ${platform.name}`;
 	}
 }
