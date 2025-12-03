@@ -1,44 +1,51 @@
-import {
-	AngularNodeAppEngine,
-	createNodeRequestHandler,
-	isMainModule,
-	writeResponseToNodeResponse,
-} from '@angular/ssr/node';
-import express from 'express';
+import { AngularAppEngine, createRequestHandler } from '@angular/ssr';
+import { isMainModule } from '@angular/ssr/node';
+import { Hono } from 'hono';
+import { serve } from '@hono/node-server';
+import { serveStatic } from '@hono/node-server/serve-static';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import routes from './api/routes';
+import apiRoutes from './api/routes';
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
 
-export const app = express();
-const angularApp = new AngularNodeAppEngine();
+export const app = new Hono();
 
-// Registra las routes utilizadas por la API
-for (const route of routes) {
-	app.use(`/api${route.path}`, route.controller);
-}
+// Register API routes with /api prefix
+app.route('/api', apiRoutes);
 
-/**
- * Serve static files from /browsers
- */
+// Serve static files with cache headers
+app.use('/*', async (c, next) => {
+	await next();
+
+	// Add 1-year cache for static assets (matching Express behavior)
+	const path = c.req.path;
+	if (path.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|webp)$/)) {
+		c.header('Cache-Control', 'public, max-age=31536000, immutable');
+	}
+});
+
 app.use(
-	express.static(browserDistFolder, {
-		maxAge: '1y',
-		index: false,
-		redirect: false,
+	'/*',
+	serveStatic({
+		root: browserDistFolder,
+		index: '', // Disable auto index.html
 	}),
 );
 
 /**
  * Handle all other requests by rendering the Angular application.
  */
-app.use((req, res, next) => {
-	angularApp
-		.handle(req)
-		.then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
-		.catch(next);
+app.use('/*', async (c, next) => {
+	const angularApp = new AngularAppEngine();
+	const response = await angularApp.handle(c.req.raw);
+
+	if (response) {
+		return response;
+	}
+
+	return next();
 });
 
 /**
@@ -46,13 +53,19 @@ app.use((req, res, next) => {
  * The server listens on the port defined by the `PORT` environment variable, or defaults to 4000.
  */
 if (isMainModule(import.meta.url)) {
-	const port = process.env['PORT'] || 4000;
-	app.listen(port, () => {
-		console.log(`Aplicación corriendo en http://localhost:${port}`);
+	const port = parseInt(process.env['PORT'] || '4000');
+	serve({ fetch: app.fetch, port }, (info) => {
+		console.log(`Aplicación corriendo en http://localhost:${info.port}`);
 	});
 }
 
 /**
- * The request handler used by the Angular CLI (dev-server and during build).
+ * Request handler used by the Angular CLI (for dev-server and during build)
+ * or Vercel serverless.
  */
-export const reqHandler = createNodeRequestHandler(app);
+export const reqHandler = createRequestHandler(app.fetch);
+
+/**
+ * Export for Vercel serverless
+ */
+export default app;
