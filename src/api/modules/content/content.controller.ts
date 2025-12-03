@@ -1,26 +1,24 @@
-// Express: Imports y configuración de router
-import { Request, Response, NextFunction, Router } from 'express';
-
-const router = Router();
-export default router;
+// Hono: Imports y configuración
+import { Hono } from 'hono';
 
 // Funciones de service
 import { addNextWeeksLandingPageContent, getLandingPageContent } from './content.service';
 
-router.get('/landing-page', (req: Request, res: Response, next: NextFunction) =>
-	getLandingPageContent()
-		.then((result) => res.json(result))
-		.catch((err) => next(err)),
-);
+const contentController = new Hono();
+
+contentController.get('/landing-page', async (c) => {
+	const result = await getLandingPageContent();
+	return c.json(result);
+});
 
 /**
  * Endpoint encargado de agregar instancias de documentos landingPage para las próximas semanas, a fin de generar automáticamente
  * los documentos que luego son modificados manualmente para actualizar el contenido de la landing page desde Sanity Studio
  */
-router.get('/add-next-weeks-landing-page-content', (req: Request, res: Response, next: NextFunction) => {
-	const { weeksInTheFuture } = req.query;
-
-	addNextWeeksLandingPageContent(parseInt((weeksInTheFuture ?? '4') as string))
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
+contentController.get('/add-next-weeks-landing-page-content', async (c) => {
+	const weeksInTheFuture = parseInt(c.req.query('weeksInTheFuture') ?? '4');
+	const result = await addNextWeeksLandingPageContent(weeksInTheFuture);
+	return c.json(result);
 });
+
+export default contentController;

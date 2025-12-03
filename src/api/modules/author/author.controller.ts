@@ -1,21 +1,20 @@
-// Express: Imports y configuración de router
-import { Request, Response, NextFunction, Router } from 'express';
-
-const router = Router();
-export default router;
+// Hono: Imports y configuración
+import { Hono } from 'hono';
 
 // Funciones de service
 import { getAllAuthors, getAuthorBySlug } from './author.service';
 
-router.get('/', (req: Request, res: Response, next: NextFunction) => {
-	getAllAuthors()
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
+const authorController = new Hono();
+
+authorController.get('/', async (c) => {
+	const result = await getAllAuthors();
+	return c.json(result);
 });
 
-router.get('/:slug', (req: Request, res: Response, next: NextFunction) => {
-	const { slug } = req.params;
-	getAuthorBySlug(slug as string)
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
+authorController.get('/:slug', async (c) => {
+	const slug = c.req.param('slug');
+	const result = await getAuthorBySlug(slug);
+	return c.json(result);
 });
+
+export default authorController;

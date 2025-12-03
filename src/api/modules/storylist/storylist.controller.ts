@@ -1,8 +1,5 @@
-// Express: Imports y configuración de router
-import { Request, Response, NextFunction, Router } from 'express';
-
-const router = Router();
-export default router;
+// Hono: Imports y configuración
+import { Hono } from 'hono';
 
 // Funciones de service
 import {
@@ -11,36 +8,32 @@ import {
 	getStorylistNavigationTeasersByStorylistSlug,
 } from './storylist.service';
 
-// Controllers
-router.get('/teasers', (req: Request, res: Response, next: NextFunction) => {
-	getAllStorylistTeasers()
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
-});
+const storylistController = new Hono();
 
-router.get('/:slug', (req: Request, res: Response, next: NextFunction) => {
-	const { slug } = req.params;
-	const { amount, ordering = 'asc' } = req.query;
-	const limit = parseInt(amount as string) - 1;
-	getStorylistBySlug({ slug: slug as string, amount: amount as string, limit, ordering: ordering as string })
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
+// Controllers
+storylistController.get('/teasers', async (c) => {
+	const result = await getAllStorylistTeasers();
+	return c.json(result);
 });
 
 /**
  * Obtiene los teasers de las publicaciones de una storylist para su uso en la navegación de la misma.
- * @param req
- * @param res
- * @param next
  */
-router.get('/:slug/navigation', (req: Request, res: Response, next: NextFunction) => {
-	const { slug } = req.params;
-	const { limit, offset } = req.query;
-	getStorylistNavigationTeasersByStorylistSlug({
-		slug: slug as string,
-		limit: parseInt((limit ?? '100') as string),
-		offset: parseInt((offset ?? '0') as string),
-	})
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
+storylistController.get('/:slug/navigation', async (c) => {
+	const slug = c.req.param('slug');
+	const limit = parseInt(c.req.query('limit') ?? '100');
+	const offset = parseInt(c.req.query('offset') ?? '0');
+	const result = await getStorylistNavigationTeasersByStorylistSlug({ slug, limit, offset });
+	return c.json(result);
 });
+
+storylistController.get('/:slug', async (c) => {
+	const slug = c.req.param('slug');
+	const amount = c.req.query('amount');
+	const ordering = c.req.query('ordering') ?? 'asc';
+	const limit = amount ? parseInt(amount) - 1 : 0;
+	const result = await getStorylistBySlug({ slug, amount: amount ?? '0', limit, ordering });
+	return c.json(result);
+});
+
+export default storylistController;

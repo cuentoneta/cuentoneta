@@ -1,8 +1,5 @@
-// Express: Imports y configuración de router
-import { Request, Response, NextFunction, Router } from 'express';
-
-const router = Router();
-export default router;
+// Hono: Imports y configuración
+import { Hono } from 'hono';
 
 import { StoriesByAuthorSlugArgs } from '../../interfaces/queryArgs';
 import {
@@ -14,57 +11,53 @@ import {
 	updateMostReadStories,
 } from './story.service';
 
+const storyController = new Hono();
+
+// SPECIFIC ROUTES FIRST (before /:slug wildcard)
+storyController.get('/most-read', async (c) => {
+	const limit = parseInt(c.req.query('limit') ?? '6');
+	const offset = parseInt(c.req.query('offset') ?? '0');
+	const result = await getMostReadStoryNavigationTeasers(limit, offset);
+	return c.json(result);
+});
+
+storyController.get('/update-most-read', async (c) => {
+	const result = await updateMostReadStories();
+	return c.json(result);
+});
+
+storyController.get('/author/:slug/navigation', async (c) => {
+	const slug = c.req.param('slug');
+	const limit = parseInt(c.req.query('limit') ?? '100');
+	const offset = parseInt(c.req.query('offset') ?? '0');
+	const result = await getStoryNavigationTeaserByAuthorSlug({ slug, limit, offset });
+	return c.json(result);
+});
+
+storyController.get('/author/:slug', async (c) => {
+	const slug = c.req.param('slug');
+	const limit = parseInt(c.req.query('limit') ?? '100');
+	const offset = parseInt(c.req.query('offset') ?? '0');
+	const args: StoriesByAuthorSlugArgs = { slug, limit, offset };
+	const result = await getStoriesByAuthorSlug(args);
+	return c.json(result);
+});
+
+// WILDCARD ROUTES LAST
 /**
  * Obtiene la lista completa de stories, usando paginación para la consulta
  */
-router.get('/', (req: Request, res: Response, next: NextFunction) => {
-	const { limit, offset } = req.query;
-	getStories(parseInt((limit ?? '100') as string), parseInt((offset ?? '0') as string))
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
+storyController.get('/', async (c) => {
+	const limit = parseInt(c.req.query('limit') ?? '100');
+	const offset = parseInt(c.req.query('offset') ?? '0');
+	const result = await getStories(limit, offset);
+	return c.json(result);
 });
 
-router.get('/most-read', (req: Request, res: Response, next: NextFunction) => {
-	const { limit, offset } = req.query;
-	getMostReadStoryNavigationTeasers(parseInt((limit ?? '6') as string), parseInt((offset ?? '0') as string))
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
+storyController.get('/:slug', async (c) => {
+	const slug = c.req.param('slug');
+	const result = await getStoryBySlug(slug);
+	return c.json(result);
 });
 
-router.get('/update-most-read', (req: Request, res: Response, next: NextFunction) => {
-	updateMostReadStories()
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
-});
-
-router.get('/:slug', (req: Request, res: Response, next: NextFunction) => {
-	const { slug } = req.params;
-	getStoryBySlug(slug as string)
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
-});
-
-router.get('/author/:slug', (req: Request, res: Response, next: NextFunction) => {
-	const { slug } = req.params;
-	const { limit, offset } = req.query;
-	const args: StoriesByAuthorSlugArgs = {
-		slug: slug as string,
-		limit: parseInt((limit ?? '100') as string),
-		offset: parseInt((offset ?? '0') as string),
-	};
-	getStoriesByAuthorSlug(args)
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
-});
-
-router.get('/author/:slug/navigation', (req: Request, res: Response, next: NextFunction) => {
-	const { slug } = req.params;
-	const { limit, offset } = req.query;
-	getStoryNavigationTeaserByAuthorSlug({
-		slug: slug as string,
-		limit: parseInt((limit ?? '100') as string),
-		offset: parseInt((offset ?? '0') as string),
-	})
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
-});
+export default storyController;
