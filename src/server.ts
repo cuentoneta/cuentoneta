@@ -12,6 +12,7 @@ import apiRoutes from './api/routes';
  * Inicializa Hono y exporta la instancia de la aplicación
  */
 export const app = new Hono({ strict: false }).use(requestId()).use(secureHeaders());
+const angularApp = new AngularAppEngine();
 
 // Registra rutas de API
 app.route('/api', apiRoutes);
@@ -24,10 +25,13 @@ app.use(
 	serveStatic({
 		root: join(import.meta.dirname, '../browser'),
 		onFound: (path, c) => {
-			c.header('Cache-Control', `public, immutable, max-age=31536000`);
-		},
-		onNotFound: () => {
-			// Optionally log or handle the case where a static file is not found
+			// Cache largo solo para assets con hash en el nombre
+			if (path.match(/\.[a-f0-9]{8,}\.(js|css|png|jpg|webp|woff2?)$/)) {
+				c.header('Cache-Control', 'public, immutable, max-age=31536000');
+			} else {
+				// 1 hora para otros
+				c.header('Cache-Control', 'public, max-age=3600');
+			}
 		},
 	}),
 );
@@ -36,7 +40,6 @@ app.use(
  * Maneja el SSR para las routes restantes utilizando el Angular App Engine
  */
 app.use('*', async (c, next) => {
-	const angularApp = new AngularAppEngine();
 	const response = await angularApp.handle(c.req.raw);
 	if (response) {
 		return response;
@@ -56,8 +59,10 @@ app.notFound((c) => {
  * Handler para Error 500: Internal Server Error
  */
 app.onError((error, c) => {
-	console.error(`${error}`);
-	return c.text('Internal Server Error', 500);
+	console.error('Server Error:', error);
+	const isDev = process.env['NODE_ENV'] !== 'production';
+	const message = isDev ? error.message : 'Internal Server Error';
+	return c.json({ error: message }, 500);
 });
 
 /**

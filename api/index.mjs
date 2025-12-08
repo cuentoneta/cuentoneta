@@ -1,6 +1,6 @@
 import { handle } from 'hono/vercel';
 
-const { default: app } = await import('../dist/cuentoneta/server/server.mjs');
+const { app } = await import('../dist/cuentoneta/server/server.mjs');
 const handler = handle(app);
 
 // Export the handler for all HTTP methods that Vercel uses.
