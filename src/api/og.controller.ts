@@ -1,22 +1,21 @@
 import { html } from 'satori-html';
 import satori from 'satori';
 import { readFileSync } from 'fs';
-import express from 'express';
+import { Hono } from 'hono';
 
-import type { Request, Response } from 'express';
 import type { ReactNode } from 'react';
 
 import Logo from './_utils/Logo';
 
-const router = express.Router();
+const ogController = new Hono();
 
 // Route
-router.get('/og', opengraph);
+ogController.get('/og', async (c) => {
+	const author = c.req.query('author');
+	const title = c.req.query('title');
+	const rrss = c.req.query('rrss');
+	const storylist = c.req.query('storylist');
 
-export default router;
-
-async function opengraph(req: Request, res: Response) {
-	const { author, title, rrss, storylist } = req.query;
 	let text: string;
 
 	if (storylist) {
@@ -66,6 +65,9 @@ async function opengraph(req: Request, res: Response) {
 		],
 	});
 
-	res.set('Content-Type', 'image/svg+xml');
-	res.send(svg);
-}
+	return c.body(svg, 200, {
+		'Content-Type': 'image/svg+xml',
+	});
+});
+
+export default ogController;
