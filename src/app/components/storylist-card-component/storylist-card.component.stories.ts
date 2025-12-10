@@ -29,7 +29,6 @@ const storylist1 = {
 		'https://cdn.sanity.io/images/s4dbqkc5/development/d1a7fc995e0a4d640c9d8e98fb56f56f209f3d89-392x318.webp',
 	publications: [],
 	slug: 'verano-2022',
-	language: 'es',
 	comingNextLabel: 'Próximamente',
 	tags: [
 		{

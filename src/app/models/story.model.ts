@@ -9,7 +9,6 @@ interface StoryBase {
 	slug: string;
 	approximateReadingTime: number;
 	badLanguage?: boolean;
-	language: string;
 	resources: Resource[];
 	paragraphs: TextBlockContent[];
 	media: Media[];

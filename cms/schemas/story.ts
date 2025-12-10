@@ -1,4 +1,3 @@
-import { supportedLanguages } from '../utils/localization';
 import { DocumentTextIcon, DocumentVideoIcon, PlayIcon, TwitterIcon } from '@sanity/icons';
 import { resource } from './resourceType';
 import { defineArrayMember, defineField, defineType } from 'sanity';
@@ -196,20 +195,6 @@ export default defineType({
 				source: 'title',
 				maxLength: 96,
 			},
-			validation: (Rule) => Rule.required(),
-		}),
-		defineField({
-			name: 'language',
-			title: 'Idioma',
-			type: 'string',
-			options: {
-				list: supportedLanguages.map((lang) => ({
-					title: lang.title,
-					value: lang.id,
-				})),
-				layout: 'radio',
-			},
-			initialValue: 'es',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({

@@ -1,4 +1,3 @@
-import { supportedLanguages } from '../utils/localization';
 import { DashboardIcon } from '@sanity/icons';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import publication from './publication';
@@ -29,20 +28,6 @@ export default defineType({
 			name: 'description',
 			title: 'Descripción',
 			type: 'blockContent',
-			validation: (Rule) => Rule.required(),
-		}),
-		defineField({
-			name: 'language',
-			title: 'Idioma',
-			type: 'string',
-			options: {
-				list: supportedLanguages.map((lang) => ({
-					title: lang.title,
-					value: lang.id,
-				})),
-				layout: 'radio',
-			},
-			initialValue: 'es',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({

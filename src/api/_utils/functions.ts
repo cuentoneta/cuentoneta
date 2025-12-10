@@ -52,9 +52,9 @@ import { DateString } from '@utils/date.utils';
 // Unwrapper de tipos definidos en Array<...>
 type UnwrapArray<A> = A extends unknown[] ? UnwrapArray<A[number]> : A;
 
-export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>, language: 'es' | 'en' = 'es'): Author {
+export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>): Author {
 	const resources = mapResources(rawAuthorData.resources);
-	const biography = mapAuthorBiography(rawAuthorData.biography, language);
+	const biography = mapAuthorBiography(rawAuthorData.biography);
 
 	return {
 		_id: rawAuthorData._id,
@@ -93,11 +93,11 @@ export function mapAuthorTeaser(
 }
 
 type BiographySubQuery = NonNullable<AuthorBySlugQueryResult>['biography'];
-export function mapAuthorBiography(biography: BiographySubQuery, language: 'es' | 'en' = 'es'): TextBlockContent[] {
-	if (Object.keys(biography).length === 0) {
+export function mapAuthorBiography(biography: BiographySubQuery): TextBlockContent[] {
+	if (!biography || biography.length === 0) {
 		return [];
 	}
-	return mapBlockContentToTextParagraphs(biography[language] as BlockContent);
+	return mapBlockContentToTextParagraphs(biography);
 }
 
 function urlFor(source: SanityImageSource): string {
@@ -206,7 +206,7 @@ export async function mapStoryContent(result: NonNullable<StoryBySlugQueryResult
 		})),
 		paragraphs: mapBlockContentToTextParagraphs(result.body),
 		summary: mapBlockContentToTextParagraphs(result.review),
-		author: mapAuthor(result.author, result.language),
+		author: mapAuthor(result.author),
 		media: await mapMediaSources(result.mediaSources),
 		resources: mapResources(result.resources),
 	};
