@@ -191,7 +191,7 @@ export default class AuthorComponent {
 	private readonly appRoutes = AppRoutes;
 
 	// Providers
-	readonly slug = input<string>();
+	readonly slug = input.required<string>();
 	private authorService = inject(AuthorService);
 	private storyService = inject(StoryService);
 	private router = inject(Router);

@@ -70,7 +70,7 @@ export default class StoryComponent {
 	readonly appRoutes = AppRoutes;
 
 	// Providers
-	readonly slug = input<string>();
+	readonly slug = input.required<string>();
 	readonly navigation = input<'author' | 'storylist'>('author');
 	readonly navigationSlug = input<string>();
 

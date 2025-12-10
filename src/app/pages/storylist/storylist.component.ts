@@ -46,7 +46,7 @@ import { StoryTeaserWithAuthor } from '@models/story.model';
 })
 export default class StorylistComponent {
 	// Providers
-	readonly slug = input<string>();
+	readonly slug = input.required<string>();
 	private metaTagsDirective = inject(MetaTagsDirective);
 	private storylistService = inject(StorylistService);
 
