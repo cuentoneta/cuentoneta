@@ -13,7 +13,7 @@ import { Story } from '@models/story.model';
 
 // Components
 import StoryComponent from './story.component';
-import { storyMock } from '@mocks/story.mock.js';
+import { storyMock } from '@mocks/story.mock';
 
 describe('StoryComponent', () => {
 	const setup = async () => {
