@@ -1,0 +1,24 @@
+meta {
+  name: Get stories by author
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/story/author/:slug?limit=10&offset=0
+  body: none
+  auth: none
+}
+
+params:path {
+  slug: jorge-luis-borges
+}
+
+params:query {
+  limit: 10
+  offset: 0
+}
+
+docs {
+  Get all stories by a specific author.
+}

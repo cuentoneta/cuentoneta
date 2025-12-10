@@ -1,0 +1,26 @@
+meta {
+  name: Get most read stories
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/story/most-read?limit=10&offset=0&days=7
+  body: none
+  auth: none
+}
+
+params:query {
+  limit: 10
+  offset: 0
+  days: 7
+}
+
+docs {
+  Get the most-read stories within a specified time period.
+
+  Query Parameters:
+  - limit: Number of stories to return
+  - offset: Pagination offset
+  - days: Time window in days
+}

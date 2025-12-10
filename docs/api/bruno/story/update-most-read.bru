@@ -1,0 +1,17 @@
+meta {
+  name: Update most read statistics
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/story/update-most-read
+  body: none
+  auth: none
+}
+
+docs {
+  Update the most-read stories statistics.
+
+  This is typically called by a scheduled job.
+}

@@ -1,0 +1,28 @@
+meta {
+  name: Generate OG image
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/og?title=Example&rrss=twitter
+  body: none
+  auth: none
+}
+
+params:query {
+  ~author: jorge-luis-borges
+  ~storylist: cuentos-de-terror
+  rrss: twitter
+  title: Example Title
+}
+
+docs {
+  Generate Open Graph images for social sharing.
+
+  Query Parameters:
+  - author: Author slug (optional)
+  - storylist: Storylist slug (optional)
+  - rrss: Social platform (twitter, facebook, etc.)
+  - title: Title for the image
+}

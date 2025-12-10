@@ -1,0 +1,15 @@
+meta {
+  name: Get landing page content
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/content/landing-page
+  body: none
+  auth: none
+}
+
+docs {
+  Get the content for the landing page.
+}

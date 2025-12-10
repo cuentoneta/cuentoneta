@@ -1,0 +1,28 @@
+meta {
+  name: Get storylist by slug
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/storylist/:slug?amount=10&ordering=asc
+  body: none
+  auth: none
+}
+
+params:path {
+  slug: cuentos-de-terror
+}
+
+params:query {
+  amount: 10
+  ordering: asc
+}
+
+docs {
+  Get a specific storylist with its stories.
+
+  Query Parameters:
+  - amount: Number of stories to include
+  - ordering: Sort order (asc/desc)
+}

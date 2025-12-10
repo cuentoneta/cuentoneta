@@ -1,0 +1,19 @@
+meta {
+  name: Get author by slug
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/author/:slug
+  body: none
+  auth: none
+}
+
+params:path {
+  slug: jorge-luis-borges
+}
+
+docs {
+  Get a specific author by slug identifier.
+}

@@ -1,0 +1,27 @@
+meta {
+  name: Get author story navigation
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/story/author/:slug/navigation?offset=0&limite=5
+  body: none
+  auth: none
+}
+
+params:path {
+  slug: jorge-luis-borges
+}
+
+params:query {
+  offset: 0
+  limite: 5
+  ~limit: 5
+}
+
+docs {
+  Get navigation data for stories by author.
+
+  Note: Backend uses "limite" parameter (not "limit").
+}
