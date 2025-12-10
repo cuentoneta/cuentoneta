@@ -5,58 +5,44 @@
  */
 import { client } from '../src/api/_helpers/sanity-connector';
 
-const fetchDocuments = () =>
-	client.fetch(
-		`*[_type == 'author' && biography.es != null && !(_id in path('drafts.**'))][0...25] { _id, _rev, name, biography }`,
+const runMigration = async () => {
+	console.log('='.repeat(60));
+	console.log('Starting migration: Flattening author biographies');
+	console.log('='.repeat(60));
+
+	console.log('\n--- Fetching all authors with localized biographies ---');
+
+	const documents = await client.fetch(
+		`*[_type == 'author' && biography.es != null && !(_id in path('drafts.**'))] { _id, name, biography }`,
 	);
 
-const migrateDocument = async (doc: any) => {
-	if (!doc.biography?.es) {
-		return { success: false, reason: 'No Spanish biography found' };
-	}
-
-	try {
-		// Remove the revision ID check - we're processing each document individually
-		// and the query already excludes drafts, so conflicts should be rare
-		await client.patch(doc._id).set({ biography: doc.biography.es }).commit();
-
-		return { success: true };
-	} catch (error: any) {
-		console.error(`Error migrating ${doc._id}:`, error.message);
-		return { success: false, reason: error.message };
-	}
-};
-
-const migrateNextBatch = async (): Promise<any> => {
-	const documents = await fetchDocuments();
-
 	if (documents.length === 0) {
-		console.log('No more documents to migrate!');
-		return null;
+		console.log('No authors found with localized biographies.');
+		return;
 	}
 
-	console.log(`\nMigrating batch of ${documents.length} documents...`);
+	console.log(`Found ${documents.length} authors to migrate.`);
+	console.log('Creating transaction to flatten biographies...');
 
-	let successCount = 0;
-	let skipCount = 0;
-
-	for (const doc of documents) {
-		const result = await migrateDocument(doc);
-		if (result.success) {
-			console.log(`✓ Migrated: ${doc.name} (${doc._id})`);
-			successCount++;
-		} else {
-			console.log(`⊘ Skipped: ${doc.name} (${doc._id}) - ${result.reason}`);
-			skipCount++;
+	// Build transaction with all patches
+	const transaction = documents.reduce((tx, doc) => {
+		if (doc.biography?.es) {
+			return tx.patch(doc._id, (patch) => patch.set({ biography: doc.biography.es }));
 		}
-	}
+		return tx;
+	}, client.transaction());
 
-	console.log(`\nBatch complete: ${successCount} migrated, ${skipCount} skipped`);
+	// Commit all patches at once
+	await transaction.commit();
 
-	return migrateNextBatch();
+	console.log(`✓ Successfully flattened biographies for ${documents.length} authors`);
+
+	console.log('\n' + '='.repeat(60));
+	console.log('Migration complete!');
+	console.log('='.repeat(60));
 };
 
-migrateNextBatch().catch((err) => {
+runMigration().catch((err) => {
 	console.error('\nMigration failed:', err);
 	process.exit(1);
 });
