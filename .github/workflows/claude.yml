@@ -78,7 +78,10 @@ jobs:
             Provide detailed feedback using inline comments for specific issues.
             Use top-level comments for general observations or praise.
 
-            Always have only one review per PR. If a review from you already exist, update the existing one instead of creating a new review each time a new commit is added to the PR.
+            Before publishing a new comment as part of a PR review:
+            1. Search for previous comments by the bot using: gh pr view {PR_NUMBER} --json comments
+            2. Delete old comments using: gh api -X DELETE repos/{REPO}/issues/comments/{comment_id}
+            3. Publish your new review
 
             The PR reviews for this project must ALWAYS be in Spanish.
 
