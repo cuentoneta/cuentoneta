@@ -12,7 +12,9 @@ assignees: ''
 - [ ] Ajustar changelog.
 - [ ] Agregar contribuyentes a la versión en codebase.
 - [ ] Actualizar versión en package.json.
-- [ ] Sanity: Clonar entorno DEV a PROD, para copiar cambios en schema.
+- [ ] Sanity: Exportar PROD a .zip para backup.
+- [ ] Sanity: Hacer deploy de Sanity Studio.
+- [ ] Sanity: Determinar si hay scripts de actualización de datos a ejecutar.
 - [ ] Generar release desde GitHub.
 
 `(Agregar otras tareas particulares de la versión, en caso de que sea necesario)`
