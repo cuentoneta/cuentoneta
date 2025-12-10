@@ -16,6 +16,14 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.7.1 (2025-12-10)
+
+Versión menor que trae aparejados cambios para robustecer y volver más performante el backend, reemplazar la herramienta utilizada como API client y eliminar el uso de ngxtension. Respecto de características de la plataforma, se elimina el soporte multilenguaje.
+
+### Cambios completos
+
+Ver el changelog completo en [2.7.1](https://github.com/cuentoneta/cuentoneta/releases/tag/2.7.1)
+
 ## Versión 2.7.0 (2025-11-24)
 
 Esta versión trae aparejados cambios estructurales, entre las cuales se incluyen la creación de las primeras iteraciones de una variedad de módulos y la eliminación de gran cantidad de información estática, a lo cual se agregan la expansión del soporte multimedia de la plataforma, ajustes en las características orientadas a SEO y, especialmente, en la capacidad de la plataforma para llevar adelante la actualización programada de contenido.
