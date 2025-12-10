@@ -314,6 +314,23 @@ Cada endpoint está documentado en un archivo `.bru` independiente que incluye:
 - Parámetros de ruta y query
 - Documentación del endpoint
 
+### Convenciones en Bruno
+
+#### Parámetros Opcionales
+
+Bruno utiliza el prefijo `~` para indicar parámetros opcionales en las solicitudes. Esto es útil para documentar parámetros que no son requeridos:
+
+```
+params:query {
+  ~author: jorge-luis-borges    # El ~ indica parámetro opcional
+  ~storylist: cuentos-de-terror
+  rrss: twitter                 # Parámetro requerido (sin ~)
+  title: Example Title
+}
+```
+
+En el ejemplo anterior, `author` y `storylist` son opcionales, mientras que `rrss` y `title` son requeridos.
+
 ---
 
 ## Pautas de Desarrollo
