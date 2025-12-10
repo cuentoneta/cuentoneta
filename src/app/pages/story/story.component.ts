@@ -1,5 +1,5 @@
 // Core
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -7,8 +7,6 @@ import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // 3rd Party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { injectParams } from 'ngxtension/inject-params';
-import { injectQueryParams } from 'ngxtension/inject-query-params';
 
 // Router
 import { AppRoutes } from '../../app.routes';
@@ -72,8 +70,9 @@ export default class StoryComponent {
 	readonly appRoutes = AppRoutes;
 
 	// Providers
-	private params = injectParams();
-	private queryParams = injectQueryParams();
+	slug = input<string>('');
+	navigation = input<'author' | 'storylist'>('author');
+	navigationSlug = input<string>('');
 	private storyService = inject(StoryService);
 	private themeService = inject(ThemeService);
 	private layoutService = inject(LayoutService);
@@ -84,9 +83,9 @@ export default class StoryComponent {
 	readonly dummyList = Array(10);
 	readonly skeletonColor = this.themeService.pickColor('zinc', 300);
 	readonly storyResource = rxResource({
-		params: () => this.params(),
-		stream: ({ params }) =>
-			this.storyService.getBySlug(params['slug']).pipe(
+		params: this.slug,
+		stream: ({ params: slug }) =>
+			this.storyService.getBySlug(slug).pipe(
 				tap((story) => {
 					this.updateMetaTags(story);
 				}),
@@ -106,7 +105,8 @@ export default class StoryComponent {
 			`Leí "${this.story()?.title}" de ${this.story()?.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`,
 	);
 	readonly navigationParams = computed(() => {
-		let { navigation, navigationSlug } = this.queryParams();
+		let navigation = this.navigation();
+		let navigationSlug = this.navigationSlug();
 
 		if (!navigation && !navigationSlug) {
 			navigation = 'author';
