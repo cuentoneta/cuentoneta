@@ -70,9 +70,10 @@ export default class StoryComponent {
 	readonly appRoutes = AppRoutes;
 
 	// Providers
-	slug = input<string>('');
-	navigation = input<'author' | 'storylist'>('author');
-	navigationSlug = input<string>('');
+	readonly slug = input<string>();
+	readonly navigation = input<'author' | 'storylist'>('author');
+	readonly navigationSlug = input<string>();
+
 	private storyService = inject(StoryService);
 	private themeService = inject(ThemeService);
 	private layoutService = inject(LayoutService);
@@ -84,8 +85,8 @@ export default class StoryComponent {
 	readonly skeletonColor = this.themeService.pickColor('zinc', 300);
 	readonly storyResource = rxResource({
 		params: this.slug,
-		stream: ({ params: slug }) =>
-			this.storyService.getBySlug(slug).pipe(
+		stream: ({ params }) =>
+			this.storyService.getBySlug(params).pipe(
 				tap((story) => {
 					this.updateMetaTags(story);
 				}),
@@ -105,11 +106,10 @@ export default class StoryComponent {
 			`Leí "${this.story()?.title}" de ${this.story()?.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`,
 	);
 	readonly navigationParams = computed(() => {
-		let navigation = this.navigation();
+		const navigation = this.navigation();
 		let navigationSlug = this.navigationSlug();
 
-		if (!navigation && !navigationSlug) {
-			navigation = 'author';
+		if (!navigationSlug) {
 			navigationSlug = this.story()?.author.slug ?? '';
 		}
 

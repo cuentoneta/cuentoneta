@@ -191,7 +191,7 @@ export default class AuthorComponent {
 	private readonly appRoutes = AppRoutes;
 
 	// Providers
-	slug = input<string>('');
+	readonly slug = input<string>();
 	private authorService = inject(AuthorService);
 	private storyService = inject(StoryService);
 	private router = inject(Router);
@@ -202,8 +202,8 @@ export default class AuthorComponent {
 	// Recursos
 	readonly authorResource = rxResource({
 		params: this.slug,
-		stream: ({ params: slug }) =>
-			this.author$(slug).pipe(
+		stream: ({ params }) =>
+			this.author$(params).pipe(
 				tap((author) => {
 					this.updateMetaTags(author);
 				}),
@@ -212,7 +212,7 @@ export default class AuthorComponent {
 	});
 	readonly storiesResource = rxResource({
 		params: this.slug,
-		stream: ({ params: slug }) => this.stories$(slug),
+		stream: ({ params }) => this.stories$(params),
 		defaultValue: [],
 	});
 

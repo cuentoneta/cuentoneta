@@ -46,7 +46,7 @@ import { StoryTeaserWithAuthor } from '@models/story.model';
 })
 export default class StorylistComponent {
 	// Providers
-	slug = input<string>('');
+	readonly slug = input<string>();
 	private metaTagsDirective = inject(MetaTagsDirective);
 	private storylistService = inject(StorylistService);
 
@@ -54,8 +54,8 @@ export default class StorylistComponent {
 	skeletonColor = inject(ThemeService).pickColor('zinc', 300);
 	readonly storylistResource = rxResource({
 		params: this.slug,
-		stream: ({ params: slug }) =>
-			this.storylistService.get(slug, 60, 'asc').pipe(
+		stream: ({ params }) =>
+			this.storylistService.get(params, 60, 'asc').pipe(
 				tap((storylist) => {
 					this.updateMetaTags(storylist);
 				}),
