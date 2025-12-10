@@ -1,7 +1,6 @@
 // Core
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-
 // Modelos
 import { Story } from '@models/story.model';
 
@@ -24,7 +23,7 @@ import { ResourceComponent } from '../resource/resource.component';
 					</div>
 				}
 			</section>
-			<section [lang]="story().language" class="inter-body-base-regular text-gray-700">
+			<section class="inter-body-base-regular text-gray-700">
 				<cuentoneta-portable-text-parser [paragraphs]="story().author.biography" [classes]="'mb-4'" />
 				<cuentoneta-portable-text-parser [paragraphs]="story().summary" [classes]="'mb-4 last:mb-0'" />
 			</section>
