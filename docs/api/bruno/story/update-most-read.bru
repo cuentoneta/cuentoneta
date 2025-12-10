@@ -1,0 +1,17 @@
+meta {
+  name: Update most read statistics
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/story/update-most-read
+  body: none
+  auth: none
+}
+
+docs {
+  Actualizar las estadísticas de cuentos más leídos.
+
+  Esto se llama típicamente mediante un trabajo programado.
+}

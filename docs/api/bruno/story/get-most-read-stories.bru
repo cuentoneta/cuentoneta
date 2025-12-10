@@ -1,0 +1,26 @@
+meta {
+  name: Get most read stories
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/story/most-read
+  body: none
+  auth: none
+}
+
+params:query {
+  limit: 10
+  offset: 0
+  days: 7
+}
+
+docs {
+  Obtener los cuentos más leídos dentro de un período de tiempo especificado.
+
+  Parámetros de consulta:
+  - limit: Cantidad de cuentos a retornar
+  - offset: Desplazamiento de paginación
+  - days: Ventana de tiempo en días
+}

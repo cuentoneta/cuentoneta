@@ -1,0 +1,24 @@
+meta {
+  name: Get author story navigation
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/story/author/:slug/navigation
+  body: none
+  auth: none
+}
+
+params:path {
+  slug: jorge-luis-borges
+}
+
+params:query {
+  offset: 0
+  limit: 5
+}
+
+docs {
+  Obtener datos de navegación para cuentos de un autor.
+}
