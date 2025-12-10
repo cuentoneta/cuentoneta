@@ -1,5 +1,5 @@
 // Core
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { Router, UrlTree } from '@angular/router';
 import { map, Observable, tap } from 'rxjs';
@@ -8,7 +8,6 @@ import { map, Observable, tap } from 'rxjs';
 import { AppRoutes } from '../../app.routes';
 
 // 3rd party modules
-import { injectParams } from 'ngxtension/inject-params';
 
 // Modelos
 import { Author } from '@models/author.model';
@@ -192,7 +191,7 @@ export default class AuthorComponent {
 	private readonly appRoutes = AppRoutes;
 
 	// Providers
-	private params = injectParams();
+	readonly slug = input.required<string>();
 	private authorService = inject(AuthorService);
 	private storyService = inject(StoryService);
 	private router = inject(Router);
@@ -202,9 +201,9 @@ export default class AuthorComponent {
 
 	// Recursos
 	readonly authorResource = rxResource({
-		params: () => this.params(),
+		params: this.slug,
 		stream: ({ params }) =>
-			this.author$(params['slug']).pipe(
+			this.author$(params).pipe(
 				tap((author) => {
 					this.updateMetaTags(author);
 				}),
@@ -212,8 +211,8 @@ export default class AuthorComponent {
 		defaultValue: undefined,
 	});
 	readonly storiesResource = rxResource({
-		params: () => this.params(),
-		stream: ({ params }) => this.stories$(params['slug']),
+		params: this.slug,
+		stream: ({ params }) => this.stories$(params),
 		defaultValue: [],
 	});
 

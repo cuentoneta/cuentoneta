@@ -1,11 +1,10 @@
 // Core
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
 // 3rd party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { injectParams } from 'ngxtension/inject-params';
 
 // Models
 import { Storylist } from '@models/storylist.model';
@@ -47,16 +46,16 @@ import { StoryTeaserWithAuthor } from '@models/story.model';
 })
 export default class StorylistComponent {
 	// Providers
-	private params = injectParams();
+	readonly slug = input.required<string>();
 	private metaTagsDirective = inject(MetaTagsDirective);
 	private storylistService = inject(StorylistService);
 
 	// Recursos
 	skeletonColor = inject(ThemeService).pickColor('zinc', 300);
 	readonly storylistResource = rxResource({
-		params: () => this.params(),
-		stream: ({ params: request }) =>
-			this.storylistService.get(request['slug'], 60, 'asc').pipe(
+		params: this.slug,
+		stream: ({ params }) =>
+			this.storylistService.get(params, 60, 'asc').pipe(
 				tap((storylist) => {
 					this.updateMetaTags(storylist);
 				}),
