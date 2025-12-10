@@ -40,7 +40,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 							<tr class="border-b border-gray-200">
 								<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Título</th>
 								<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Autor</th>
-								<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Idioma</th>
 								<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Tiempo de lectura</th>
 							</tr>
 						</thead>
@@ -62,9 +61,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 										>
 											{{ story.author.name }}
 										</a>
-									</td>
-									<td class="px-6 py-4 text-gray-700">
-										{{ story.language === 'es' ? 'Español' : story.language }}
 									</td>
 									<td class="px-6 py-4 text-gray-700">{{ story.approximateReadingTime }} min</td>
 								</tr>
