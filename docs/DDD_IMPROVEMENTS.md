@@ -103,9 +103,6 @@ class SanityStoryRepository implements StoryRepository {
 	private buildGroqQuery(spec: StorySpecification): string {
 		let query = '*[_type == "story"';
 
-		if (spec.language) {
-			query += ` && language == "${spec.language}"`;
-		}
 		if (spec.minReadingTime) {
 			query += ` && approximateReadingTime >= ${spec.minReadingTime}`;
 		}
@@ -521,10 +518,8 @@ Las consultas de datos actualmente se realizan con métodos específicos. Para c
 class StoryService {
 	async findBySlug(slug: string): Promise<Story | null> {}
 	async findByAuthor(authorId: string): Promise<Story[]> {}
-	async findByLanguage(language: string): Promise<Story[]> {}
-	async findByAuthorAndLanguage(authorId: string, language: string): Promise<Story[]> {}
 	async findMostRead(limit: number): Promise<Story[]> {}
-	// ¿Y si necesito: historias en español del autor X con tiempo de lectura mayor a 10 minutos?
+	// ¿Y si necesito: historias del autor X con tiempo de lectura mayor a 10 minutos?
 }
 ```
 
@@ -536,7 +531,6 @@ Crear objetos de especificación que encapsulen la lógica de filtrado:
 // 1. Definir especificación
 interface StorySpecification {
 	slug?: string;
-	language?: string;
 	authorId?: string;
 	minReadingTime?: number;
 	maxReadingTime?: number;
@@ -571,10 +565,6 @@ class SanityStoryRepository implements StoryRepository {
 		// Agregar filtros dinámicamente
 		if (spec.slug) {
 			query += ` && slug == "${spec.slug}"`;
-		}
-
-		if (spec.language) {
-			query += ` && language == "${spec.language}"`;
 		}
 
 		if (spec.authorId) {
@@ -636,7 +626,6 @@ class StoryApplicationService {
 	constructor(private storyRepository: StoryRepository) {}
 
 	async searchStories(criteria: {
-		language?: string;
 		author?: string;
 		minReadingTime?: number;
 		maxReadingTime?: number;
@@ -644,7 +633,6 @@ class StoryApplicationService {
 		pageSize?: number;
 	}): Promise<{ stories: Story[]; total: number }> {
 		const spec: StorySpecification = {
-			language: criteria.language,
 			authorId: criteria.author,
 			minReadingTime: criteria.minReadingTime,
 			maxReadingTime: criteria.maxReadingTime,
@@ -659,9 +647,8 @@ class StoryApplicationService {
 		return { stories, total };
 	}
 
-	async getMostReadStories(language?: string): Promise<Story[]> {
+	async getMostReadStories(): Promise<Story[]> {
 		const spec: StorySpecification = {
-			language,
 			sortBy: 'views',
 			limit: 10,
 		};
@@ -672,7 +659,6 @@ class StoryApplicationService {
 	// Ahora es trivial agregar nuevas búsquedas sin crear nuevos métodos
 	async getRecentSpanishLongStories(): Promise<Story[]> {
 		const spec: StorySpecification = {
-			language: 'es-419',
 			minReadingTime: 20,
 			sortBy: 'publishDate',
 			limit: 5,
@@ -709,7 +695,6 @@ class StorySpecificationValidator {
 	selector: 'app-story-search',
 	template: `
 		<form [formGroup]="filterForm">
-			<input formControlName="language" placeholder="Idioma" />
 			<input formControlName="minReadingTime" type="number" placeholder="Min lectura" />
 			<input formControlName="maxReadingTime" type="number" placeholder="Max lectura" />
 			<button (click)="search()">Buscar</button>
@@ -722,7 +707,6 @@ class StorySpecificationValidator {
 })
 export class StorySearchComponent {
 	filterForm = new FormGroup({
-		language: new FormControl(''),
 		minReadingTime: new FormControl(null),
 		maxReadingTime: new FormControl(null),
 	});
@@ -952,7 +936,6 @@ interface Story {
 	slug: Slug; // ✅ Tipo fuerte
 	title: string;
 	approximateReadingTime: ReadingTime; // ✅ Tipo fuerte
-	language: string;
 	// ... resto de propiedades
 }
 
@@ -999,7 +982,6 @@ function mapStoryFromSanity(sanityStory: SanityStorySchemaObject): Story {
 		slug: Slug.createUnsafe(sanityStory.slug), // Sanity valida, usamos unsafe
 		title: sanityStory.title,
 		approximateReadingTime: ReadingTime.create(sanityStory.approximateReadingTime),
-		language: sanityStory.language,
 		// ...
 	};
 }
@@ -1026,7 +1008,6 @@ function storyToApiResponse(story: Story): StoryApiResponse {
 		slug: story.slug.getValue(), // Convertir a string
 		title: story.title,
 		approximateReadingTime: story.approximateReadingTime.getMinutes(),
-		language: story.language,
 		// ...
 	};
 }
@@ -1077,7 +1058,6 @@ namespace StoryMapper {
 			slug: Slug.create(sanityStory.slug),
 			title: sanityStory.title,
 			approximateReadingTime: ReadingTime.create(sanityStory.approximateReadingTime),
-			language: sanityStory.language,
 			badLanguage: sanityStory.badLanguage,
 			originalPublication: sanityStory.originalPublication,
 			author: AuthorMapper.toDomain(sanityStory.author),
@@ -1095,7 +1075,6 @@ namespace StoryMapper {
 			slug: story.slug,
 			title: story.title,
 			approximateReadingTime: story.approximateReadingTime,
-			language: story.language,
 			badLanguage: story.badLanguage,
 			originalPublication: story.originalPublication,
 			author: undefined,
@@ -1125,7 +1104,6 @@ namespace StoryMapper {
 			slug: story.slug.getValue(),
 			title: story.title,
 			approximateReadingTime: story.approximateReadingTime.getMinutes(),
-			language: story.language,
 			badLanguage: story.badLanguage,
 			originalPublication: story.originalPublication,
 			author: AuthorMapper.toApiResponse(story.author),
@@ -1185,19 +1163,18 @@ namespace AuthorMapper {
 
 // 3. Mapper para Storylist
 namespace StorylistMapper {
-	export function toDomain(sanitryStorylist: SanityStorylistSchemaObject): Storylist {
+	export function toDomain(sanityStorylist: SanityStorylistSchemaObject): Storylist {
 		return {
-			title: sanitryStorylist.title,
-			slug: Slug.create(sanitryStorylist.slug),
-			language: sanitryStorylist.language,
-			displayDates: sanitryStorylist.displayDates,
-			editionPrefix: sanitryStorylist.editionPrefix,
-			comingNextLabel: sanitryStorylist.comingNextLabel,
-			count: sanitryStorylist.count,
-			description: sanitryStorylist.description,
-			featuredImage: sanitryStorylist.featuredImage,
-			tags: sanitryStorylist.tags,
-			publications: sanitryStorylist.publications.map((pub) => PublicationMapper.toDomain(pub)),
+			title: sanityStorylist.title,
+			slug: Slug.create(sanityStorylist.slug),
+			displayDates: sanityStorylist.displayDates,
+			editionPrefix: sanityStorylist.editionPrefix,
+			comingNextLabel: sanityStorylist.comingNextLabel,
+			count: sanityStorylist.count,
+			description: sanityStorylist.description,
+			featuredImage: sanityStorylist.featuredImage,
+			tags: sanityStorylist.tags,
+			publications: sanityStorylist.publications.map((pub) => PublicationMapper.toDomain(pub)),
 		};
 	}
 
@@ -1205,7 +1182,6 @@ namespace StorylistMapper {
 		return {
 			title: storylist.title,
 			slug: storylist.slug,
-			language: storylist.language,
 			displayDates: storylist.displayDates,
 			editionPrefix: storylist.editionPrefix,
 			comingNextLabel: storylist.comingNextLabel,
@@ -1221,7 +1197,6 @@ namespace StorylistMapper {
 		return {
 			title: storylist.title,
 			slug: storylist.slug.getValue(),
-			language: storylist.language,
 			displayDates: storylist.displayDates,
 			editionPrefix: storylist.editionPrefix,
 			comingNextLabel: storylist.comingNextLabel,
@@ -1401,7 +1376,6 @@ class Story {
   readonly paragraphs: TextBlockContent[];
   readonly author: Author;
   readonly approximateReadingTime: ReadingTime;
-  readonly language: string;
   readonly badLanguage?: boolean;
   readonly originalPublication: string;
   readonly epigraphs: Epigraph[];
@@ -1417,7 +1391,6 @@ class Story {
     this.paragraphs = props.paragraphs;
     this.author = props.author;
     this.approximateReadingTime = props.approximateReadingTime;
-    this.language = props.language;
     this.badLanguage = props.badLanguage;
     this.originalPublication = props.originalPublication;
     this.epigraphs = props.epigraphs;
@@ -1438,7 +1411,6 @@ class Story {
       paragraphs: props.paragraphs,
       author: props.author,
       approximateReadingTime: props.approximateReadingTime,
-      language: props.language,
       badLanguage: props.badLanguage,
       originalPublication: props.originalPublication,
       epigraphs: props.epigraphs,
@@ -1495,7 +1467,6 @@ class StoryInvariants {
     this.validateContent(props.paragraphs);
     this.validateAuthor(props.author);
     this.validateReadingTime(props.approximateReadingTime);
-    this.validateLanguage(props.language);
   }
 
   private static validateSlug(slug: Slug): void {
@@ -1529,13 +1500,6 @@ class StoryInvariants {
   private static validateReadingTime(readingTime: ReadingTime): void {
     if (!readingTime || readingTime.getMinutes() <= 0) {
       throw new Error('Invariante violada: Tiempo de lectura debe ser positivo');
-    }
-  }
-
-  private static validateLanguage(language: string): void {
-    const validLanguages = ['es-419', 'es-ES', 'en', 'pt', 'fr'];
-    if (!validLanguages.includes(language)) {
-      throw new Error(`Invariante violada: Idioma ${language} no soportado`);
     }
   }
 }
@@ -1644,7 +1608,6 @@ try {
     paragraphs: [...], // No vacío
     author: author,    // Presente
     approximateReadingTime: ReadingTime.create(20),
-    language: 'es-419',
     epigraphs: [],
     summary: [],
     resources: [],
@@ -1663,7 +1626,6 @@ try {
     paragraphs: [], // ❌ Vacío - Viola invariante
     author: author,
     approximateReadingTime: ReadingTime.create(5),
-    language: 'es-419',
     epigraphs: [],
     summary: [],
     resources: [],
@@ -1688,7 +1650,6 @@ namespace StoryMapper {
 				paragraphs: sanityStory.paragraphs,
 				author: AuthorMapper.toDomain(sanityStory.author),
 				approximateReadingTime: ReadingTime.create(sanityStory.approximateReadingTime),
-				language: sanityStory.language,
 				badLanguage: sanityStory.badLanguage,
 				originalPublication: sanityStory.originalPublication,
 				epigraphs: sanityStory.epigraphs,
@@ -1732,9 +1693,8 @@ namespace StoryMapper {
 **Ejemplo propuesto:**
 
 ```typescript
-// Especificación: Obtener historias en español publicadas después de 2023
+// Especificación: Obtener historias publicadas después de 2023
 interface StorySpecification {
-	language: 'es-419' | 'es';
 	publishedAfter?: DateString;
 	author?: string;
 	minReadingTime?: number;
@@ -1742,7 +1702,6 @@ interface StorySpecification {
 
 // Uso
 const spanishStoriesSpec: StorySpecification = {
-	language: 'es-419',
 	publishedAfter: '2023-01-01',
 };
 

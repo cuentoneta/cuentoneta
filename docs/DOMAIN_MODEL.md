@@ -153,7 +153,6 @@ interface Story {
 
 	// Metadatos
 	approximateReadingTime: number; // Minutos estimados de lectura (>= 1)
-	language: string; // Código ISO del idioma
 	badLanguage?: boolean; // Advertencia de lenguaje explícito
 	originalPublication: string; // Atribución/publicación original
 
@@ -261,7 +260,6 @@ interface Storylist {
 	slug: string; // Clave de negocio, invariante única
 
 	// Metadatos
-	language: string; // Código ISO del idioma
 	displayDates: boolean; // ¿Mostrar fechas de publicación?
 	editionPrefix: string; // Prefijo para ediciones ("Número", "Volumen", etc.)
 	comingNextLabel: string; // Etiqueta para próximas publicaciones

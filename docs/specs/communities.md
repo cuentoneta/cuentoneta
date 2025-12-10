@@ -779,7 +779,7 @@ user_roles (
 **CF.6 - Historias de Comunidad**
 
 - Mostrar historias publicadas por/bajo la iniciativa de la comunidad
-- Filtrado por: fecha, author, length, language
+- Filtrado por: fecha, author, length
 - Vista en grid/list con opción de cambio
 - Búsqueda dentro de historias de la comunidad
 
