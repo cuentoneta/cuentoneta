@@ -10,7 +10,6 @@ interface StorylistBase<T> {
 	count: number;
 	comingNextLabel: string;
 	description: TextBlockContent[];
-	language: string;
 	featuredImage: string;
 	tags: Tag[];
 	publications: T[];

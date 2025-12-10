@@ -1,0 +1,19 @@
+meta {
+  name: Get story by slug
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/story/:slug
+  body: none
+  auth: none
+}
+
+params:path {
+  slug: el-aleph
+}
+
+docs {
+  Obtener un cuento específico por su identificador slug.
+}

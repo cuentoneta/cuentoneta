@@ -1,71 +1,78 @@
-import express from 'express';
-import * as storyService from './story.service';
+// Hono: Imports y configuración
+import { Hono } from 'hono';
+import { zValidator } from '@hono/zod-validator';
+
+// Esquemas de zod
+import { mostReadStorySchema, storyControllerSchema } from './story.schema';
+import { slugSchema } from 'src/api/schemas/common.schemas';
+
 import { StoriesByAuthorSlugArgs } from '../../interfaces/queryArgs';
+import {
+	getMostReadStoryNavigationTeasers,
+	getStories,
+	getStoriesByAuthorSlug,
+	getStoryBySlug,
+	getStoryNavigationTeaserByAuthorSlug,
+	updateMostReadStories,
+} from './story.service';
 
-const router = express.Router();
+const storyController = new Hono();
 
-// Routes
-router.get('/', getAllStories);
-router.get('/read', getBySlug);
-router.get('/author/:slug', getStoriesByAuthorSlug);
-router.get('/author/:slug/navigation', getStoryNavigationTeaserByAuthorSlug);
-
-export default router;
-
-function getAllStories(req: express.Request, res: express.Response, next: express.NextFunction) {
-	const { limit, offset } = req.query;
-	storyService
-		.fetchAllStories(parseInt((limit ?? '100') as string), parseInt((offset ?? '0') as string))
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
-}
-
-function getBySlug(req: express.Request, res: express.Response, next: express.NextFunction) {
-	const { slug } = req.query;
-	storyService
-		.fetchStoryBySlug(slug as string)
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
-}
-
-function getStoriesByAuthorSlug(req: express.Request, res: express.Response, next: express.NextFunction) {
-	const { slug } = req.params;
-	const { limit, offset } = req.query;
-	const args: StoriesByAuthorSlugArgs = {
-		slug: slug as string,
-		limit: parseInt((limit ?? '100') as string),
-		offset: parseInt((offset ?? '0') as string),
-	};
-	storyService
-		.fetchByAuthorSlug(args)
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
-}
-
-function getStoryNavigationTeaserByAuthorSlug(req: express.Request, res: express.Response, next: express.NextFunction) {
-	const { slug } = req.params;
-	const { limit, offset } = req.query;
-	storyService
-		.fetchStoryNavigationTeaserByAuthorSlug({
-			slug: slug as string,
-			limit: parseInt((limit ?? '100') as string),
-			offset: parseInt((offset ?? '0') as string),
-		})
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
-}
-
-router.get('/most-read', (req, res, next) => {
-	const { limit, offset } = req.query;
-	storyService
-		.fetchMostRead(parseInt((limit ?? '6') as string), parseInt((offset ?? '0') as string))
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
+// SPECIFIC ROUTES FIRST (before /:slug wildcard)
+storyController.get('/most-read', zValidator('query', mostReadStorySchema), async (c) => {
+	const { limit, offset } = c.req.valid('query');
+	const result = await getMostReadStoryNavigationTeasers(limit, offset);
+	return c.json(result);
 });
 
-router.get('/update-most-read', (req, res, next) => {
-	storyService
-		.updateMostRead()
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
+storyController.get('/update-most-read', async (c) => {
+	const result = await updateMostReadStories();
+	return c.json(result);
 });
+
+storyController.get(
+	'/author/:slug/navigation',
+	zValidator('param', slugSchema),
+	zValidator('query', storyControllerSchema),
+	async (c) => {
+		const { slug } = c.req.valid('param');
+		const { limit, offset } = c.req.valid('query');
+
+		const result = await getStoryNavigationTeaserByAuthorSlug({ slug, limit, offset });
+		return c.json(result);
+	},
+);
+
+storyController.get(
+	'/author/:slug',
+	zValidator('param', slugSchema),
+	zValidator('query', storyControllerSchema),
+	async (c) => {
+		const { slug } = c.req.valid('param');
+		const { limit, offset } = c.req.valid('query');
+
+		const args: StoriesByAuthorSlugArgs = { slug, limit, offset };
+		const result = await getStoriesByAuthorSlug(args);
+		return c.json(result);
+	},
+);
+
+// WILDCARD ROUTES LAST
+/**
+ * Obtiene la lista completa de stories, usando paginación para la consulta
+ */
+storyController.get('/', zValidator('query', storyControllerSchema), async (c) => {
+	const { limit, offset } = c.req.valid('query');
+
+	const result = await getStories(limit, offset);
+	return c.json(result);
+});
+
+storyController.get('/:slug', zValidator('param', slugSchema), async (c) => {
+	const { slug } = c.req.valid('param');
+
+	const result = await getStoryBySlug(slug);
+	return c.json(result);
+});
+
+export default storyController;

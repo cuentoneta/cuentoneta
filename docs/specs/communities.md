@@ -779,7 +779,7 @@ user_roles (
 **CF.6 - Historias de Comunidad**
 
 - Mostrar historias publicadas por/bajo la iniciativa de la comunidad
-- Filtrado por: fecha, author, length, language
+- Filtrado por: fecha, author, length
 - Vista en grid/list con opción de cambio
 - Búsqueda dentro de historias de la comunidad
 
@@ -2767,7 +2767,7 @@ Para que las comunidades puedan gestionar su propio contenido (blog entries, eve
 - **Authentication:** JWT tokens + Refresh tokens
 - **Session Management:** HttpOnly cookies
 - **OAuth2 (opcional):** Integración con GitHub, Google
-- **Backend:** Express middleware para validación
+- **Backend:** Hono middleware para validación
 
 **Rutas de API:**
 
@@ -3358,7 +3358,7 @@ Extender `sitemap.xml` para incluir:
 ### Tecnologías
 
 - [Angular Documentation](https://angular.io/docs)
-- [Express.js Guide](https://expressjs.com/)
+- [Hono Documentation](https://hono.dev/)
 - [Sanity CMS](https://www.sanity.io/)
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
 

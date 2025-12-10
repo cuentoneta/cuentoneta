@@ -247,6 +247,92 @@ Acceder con este usuario te permitirá crear y editar documentos en el entorno d
 
 ---
 
+## Documentación de la API
+
+La API de La Cuentoneta está documentada utilizando Bruno, un cliente de API de código abierto y Git-friendly. Los archivos de la colección se encuentran en `/docs/api/bruno/`.
+
+### ¿Por qué Bruno?
+
+Bruno almacena las colecciones como archivos de texto plano (formato `.bru`) en lugar de JSON, lo que facilita:
+
+- Control de versiones con Git
+- Revisión de cambios en pull requests
+- Colaboración entre desarrolladores
+- No requiere cuenta ni login
+- Funciona completamente offline
+
+### Usando Bruno
+
+#### Paso 1: Instalar Bruno
+
+Descarga Bruno desde [https://www.usebruno.com/downloads](https://www.usebruno.com/downloads) e instala la aplicación de escritorio.
+
+#### Paso 2: Abrir la colección
+
+1. Abre Bruno
+2. Ve a File → Open Collection
+3. Selecciona la carpeta `/docs/api/bruno/`
+4. La colección se cargará automáticamente
+
+#### Paso 3: Seleccionar el ambiente
+
+En Bruno, selecciona el ambiente "development" desde el selector de ambientes en la esquina superior derecha.
+
+#### Paso 4: Iniciar el servidor
+
+Asegúrate de que el servidor de desarrollo esté corriendo:
+
+```bash
+pnpm run dev
+```
+
+#### Paso 5: Ejecutar requests
+
+Navega por la colección y ejecuta los endpoints que necesites probar. Todos los endpoints están organizados por recurso:
+
+- `/story` - Endpoints de cuentos
+- `/author` - Endpoints de autores
+- `/storylist` - Endpoints de listas de cuentos
+- `/content` - Contenido de landing page
+- `/contributor` - Información de contribuyentes
+- `/og` - Generación de imágenes Open Graph
+- `/utilities` - Endpoints de utilidad
+
+### Ejecutar requests desde CLI
+
+También puedes ejecutar los requests desde la línea de comandos usando Bruno CLI:
+
+```bash
+pnpm exec bru run --env development docs/api/bruno
+```
+
+### Estructura de la colección
+
+Cada endpoint está documentado en un archivo `.bru` independiente que incluye:
+
+- URL y método HTTP
+- Parámetros de ruta y query
+- Documentación del endpoint
+
+### Convenciones en Bruno
+
+#### Parámetros Opcionales
+
+Bruno utiliza el prefijo `~` para indicar parámetros opcionales en las solicitudes. Esto es útil para documentar parámetros que no son requeridos:
+
+```
+params:query {
+  ~author: jorge-luis-borges    # El ~ indica parámetro opcional
+  ~storylist: cuentos-de-terror
+  rrss: twitter                 # Parámetro requerido (sin ~)
+  title: Example Title
+}
+```
+
+En el ejemplo anterior, `author` y `storylist` son opcionales, mientras que `rrss` y `title` son requeridos.
+
+---
+
 ## Pautas de Desarrollo
 
 ### Control de versiones

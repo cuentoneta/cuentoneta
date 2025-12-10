@@ -1,12 +1,14 @@
-import express from 'express';
-import { getAll } from './contributor.service';
+// Hono: Imports y configuración
+import { Hono } from 'hono';
 
-const router = express.Router();
+// Funciones de service
+import { getAllContributors } from './contributor.service';
 
-export default router;
+const contributorController = new Hono();
 
-router.get('/', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-	getAll()
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
+contributorController.get('/', async (c) => {
+	const result = await getAllContributors();
+	return c.json(result);
 });
+
+export default contributorController;

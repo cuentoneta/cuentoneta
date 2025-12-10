@@ -1,9 +1,5 @@
 <main class="content horizontal-layout-spacing vertical-layout-spacing block">
-	<article
-		[attr.aria-busy]="!storylistResource.isLoading()"
-		[lang]="storylistResource.value()?.language"
-		class="grid grid-cols-1 gap-y-8"
-	>
+	<article [attr.aria-busy]="!storylistResource.isLoading()" class="grid grid-cols-1 gap-y-8">
 		<cuentoneta-storylist-title [storylist]="storylistResource.value()" />
 		<section>
 			<cuentoneta-tabs>

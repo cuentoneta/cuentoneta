@@ -1,23 +1,29 @@
-import express from 'express';
-import { addNextWeeksLandingPageContent, fetchLandingPageContent } from './content.service';
-const router = express.Router();
+// Hono: Imports y configuración
+import { Hono } from 'hono';
+import { zValidator } from '@hono/zod-validator';
 
-export default router;
+// Esquemas de zod
+import { addWeeksSchema } from './content.schema';
 
-router.get('/landing-page', (_, res, next) =>
-	fetchLandingPageContent()
-		.then((result) => res.json(result))
-		.catch((err) => next(err)),
-);
+// Funciones de service
+import { addNextWeeksLandingPageContent, getLandingPageContent } from './content.service';
+
+const contentController = new Hono();
+
+contentController.get('/landing-page', async (c) => {
+	const result = await getLandingPageContent();
+	return c.json(result);
+});
 
 /**
  * Endpoint encargado de agregar instancias de documentos landingPage para las próximas semanas, a fin de generar automáticamente
  * los documentos que luego son modificados manualmente para actualizar el contenido de la landing page desde Sanity Studio
  */
-router.get('/add-next-weeks-landing-page-content', (req, res, next) => {
-	const { weeksInTheFuture } = req.query;
 
-	addNextWeeksLandingPageContent(parseInt((weeksInTheFuture ?? '4') as string))
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
+contentController.get('/add-next-weeks-landing-page-content', zValidator('query', addWeeksSchema), async (c) => {
+	const { weeksInTheFuture } = c.req.valid('query');
+	const result = await addNextWeeksLandingPageContent(weeksInTheFuture);
+	return c.json(result);
 });
+
+export default contentController;

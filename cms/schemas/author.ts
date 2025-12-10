@@ -1,5 +1,3 @@
-// Localization
-import { supportedLanguages } from '../utils/localization';
 import { UsersIcon } from '@sanity/icons';
 import { resource } from './resourceType';
 import { defineArrayMember, defineField, defineType } from 'sanity';
@@ -69,22 +67,8 @@ export default defineType({
 		defineField({
 			name: 'biography',
 			title: 'Biografía',
-			type: 'object',
+			type: 'blockContent',
 			validation: (Rule) => Rule.required(),
-			fieldsets: [
-				{
-					title: 'Traducciones',
-					name: 'translations',
-					options: { collapsible: true },
-				},
-			],
-			// Dynamically define one field per language
-			fields: supportedLanguages.map((lang) => ({
-				title: lang.title,
-				name: lang.id,
-				type: 'blockContent',
-				fieldset: lang.isDefault ? null : 'translations',
-			})),
 		}),
 		defineField({
 			name: 'resources',

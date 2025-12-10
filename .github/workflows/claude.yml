@@ -41,10 +41,51 @@ jobs:
             actions: read
 
           # Optional: Give a custom prompt to Claude. If this is not specified, Claude will perform the instructions specified in the comment that tagged it.
-          # prompt: 'Update the pull request description to include a summary of changes.'
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            Perform a comprehensive code review with the following focus areas:
+
+            1. **Code Quality**
+               - Clean code principles and best practices
+               - Proper error handling and edge cases
+               - Code readability and maintainability
+               - Focus on using an incremental and flexible architecture
+               - Focus on reusability
+               - Strengthen the approach towards increasing the Domain Driven-Design nature of the project architecture
+
+            2. **Security**
+               - Check for potential security vulnerabilities
+               - Validate input sanitization
+               - Review authentication/authorization logic
+
+            3. **Performance**
+               - Identify potential performance bottlenecks
+               - Review database queries for efficiency
+               - Check for memory leaks or resource issues
+
+            4. **Testing**
+               - Verify adequate test coverage
+               - Review test quality and edge cases
+               - Check for missing test scenarios
+
+            5. **Documentation**
+               - Ensure code is properly documented
+               - Verify README updates for new features
+               - Check API documentation accuracy
+
+            Provide detailed feedback using inline comments for specific issues.
+            Use top-level comments for general observations or praise.
+
+            Before publishing a new comment as part of a PR review:
+            1. Search for previous comments by the bot using: gh pr view {PR_NUMBER} --json comments
+            2. Delete old comments using: gh api -X DELETE repos/{REPO}/issues/comments/{comment_id}
+            3. Publish your new review
+
+            The PR reviews for this project must ALWAYS be in Spanish.
 
           # Optional: Add claude_args to customize behavior and configuration
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://docs.claude.com/en/docs/claude-code/cli-reference for available options
           # claude_args: '--allowed-tools Bash(gh pr:*)'
-

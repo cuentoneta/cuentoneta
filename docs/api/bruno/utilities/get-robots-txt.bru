@@ -1,0 +1,15 @@
+meta {
+  name: Get robots.txt
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{apiUrl}}/robots.txt
+  body: none
+  auth: none
+}
+
+docs {
+  Obtener el archivo robots.txt para rastreadores SEO.
+}

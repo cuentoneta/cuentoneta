@@ -6,7 +6,7 @@ import {
 	provideAppInitializer,
 	provideZonelessChangeDetection,
 } from '@angular/core';
-import { provideRouter, withInMemoryScrolling, withViewTransitions } from '@angular/router';
+import { provideRouter, withInMemoryScrolling, withViewTransitions, withComponentInputBinding } from '@angular/router';
 import { appRoutes } from './app.routes';
 
 import { provideHttpClient, withFetch } from '@angular/common/http';
@@ -36,7 +36,12 @@ export const appConfig: ApplicationConfig = {
 		provideClientHydration(),
 		provideAnimations(),
 		provideAnimationsAsync(),
-		provideRouter(appRoutes, withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }), withViewTransitions()),
+		provideRouter(
+			appRoutes,
+			withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
+			withViewTransitions(),
+			withComponentInputBinding(),
+		),
 		provideHttpClient(withFetch()),
 		provideZonelessChangeDetection(),
 	],

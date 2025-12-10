@@ -1,0 +1,24 @@
+meta {
+  name: Get all stories
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/story
+  body: none
+  auth: none
+}
+
+params:query {
+  limit: 10
+  offset: 0
+}
+
+docs {
+  Listar todos los cuentos con soporte de paginación.
+
+  Parámetros de consulta:
+  - limit: Cantidad de cuentos a retornar
+  - offset: Cantidad de cuentos a omitir
+}

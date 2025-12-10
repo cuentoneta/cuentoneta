@@ -1,0 +1,22 @@
+meta {
+  name: Add next weeks landing page content
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/content/add-next-weeks-landing-page-content
+  body: none
+  auth: none
+}
+
+params:query {
+  weeksInTheFuture: 3
+}
+
+docs {
+  Agrega contenido de página de inicio para las próximas semanas.
+
+  Parámetros de consulta:
+  - weeksInTheFuture: Cantidad de semanas futuras para generar contenido
+}

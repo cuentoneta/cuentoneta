@@ -1,0 +1,15 @@
+meta {
+  name: Get all contributors
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/contributor
+  body: none
+  auth: none
+}
+
+docs {
+  Listar todos los colaboradores del proyecto.
+}

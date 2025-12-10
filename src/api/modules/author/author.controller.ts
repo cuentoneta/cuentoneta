@@ -1,26 +1,25 @@
-import express from 'express';
-import * as authorService from './author.service';
+// Hono: Imports y configuración
+import { Hono } from 'hono';
+import { zValidator } from '@hono/zod-validator';
 
-const router = express.Router();
+// Esquemas de zod
+import { slugSchema } from '../../schemas/common.schemas';
 
-// Routes
-router.get('/:slug', getBySlug);
-router.get('/', getAll);
+// Funciones de service
+import { getAllAuthors, getAuthorBySlug } from './author.service';
 
-export default router;
+const authorController = new Hono();
 
-function getBySlug(req: express.Request, res: express.Response, next: express.NextFunction) {
-	const { slug } = req.params;
+authorController.get('/', async (c) => {
+	const result = await getAllAuthors();
+	return c.json(result);
+});
 
-	authorService
-		.getBySlug(slug as string)
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
-}
+authorController.get('/:slug', zValidator('param', slugSchema), async (c) => {
+	const { slug } = c.req.valid('param');
+	const result = await getAuthorBySlug(slug);
 
-function getAll(req: express.Request, res: express.Response, next: express.NextFunction) {
-	authorService
-		.getAll()
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
-}
+	return c.json(result);
+});
+
+export default authorController;

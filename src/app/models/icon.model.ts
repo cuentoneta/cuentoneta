@@ -44,10 +44,6 @@ export const iconMappers: IconMapper[] = [
 		ngIconsName: { faSolidMicrophoneLines },
 	},
 	{
-		name: 'ingles',
-		ngIconsName: { faSolidGlobe },
-	},
-	{
 		name: 'certamen',
 		ngIconsName: { faSolidTrophy },
 	},

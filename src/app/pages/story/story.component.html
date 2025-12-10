@@ -25,9 +25,8 @@
 				</aside>
 				<div>
 					@if (story(); as story) {
-						<h1 [lang]="story.language" class="h1 mb-2">{{ story.title }}</h1>
+						<h1 class="h1 mb-2">{{ story.title }}</h1>
 						<a
-							[lang]="story.language"
 							[routerLink]="['/', appRoutes.Author, story.author.slug]"
 							class="inter-body-xl mb-2 block flex items-center gap-1"
 						>
@@ -92,7 +91,7 @@
 			}
 
 			@if (story(); as story) {
-				<section [lang]="story.language">
+				<section>
 					<cuentoneta-portable-text-parser
 						[classes]="'source-serif-pro-body-xl mb-8 leading-8'"
 						[paragraphs]="story.paragraphs"

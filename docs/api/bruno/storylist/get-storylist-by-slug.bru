@@ -1,0 +1,28 @@
+meta {
+  name: Get storylist by slug
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/storylist/:slug
+  body: none
+  auth: none
+}
+
+params:path {
+  slug: cuentos-de-terror
+}
+
+params:query {
+  amount: 10
+  ordering: asc
+}
+
+docs {
+  Obtener una lista de cuentos específica con sus historias.
+
+  Parámetros de consulta:
+  - amount: Cantidad de cuentos a incluir
+  - ordering: Orden de clasificación (asc/desc)
+}

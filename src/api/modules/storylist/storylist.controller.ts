@@ -1,43 +1,54 @@
-import express from 'express';
-import { fetchBySlug, fetchNavigation, fetchStorylistTeasers } from './storylist.service';
+// Hono: Imports y configuración
+import { Hono } from 'hono';
+import { zValidator } from '@hono/zod-validator';
 
-const router = express.Router();
+// Esquemas de zod
+import { paginationSchema, storylistQuerySchema } from './storylist.schema';
+import { slugSchema } from 'src/api/schemas/common.schemas';
 
-// Routes
-router.get('/', getBySlug);
-router.get('/teasers', getTeasers);
-router.get('/:slug/navigation', getNavigationBySlug);
+// Funciones de service
+import {
+	getStorylistBySlug,
+	getAllStorylistTeasers,
+	getStorylistNavigationTeasersByStorylistSlug,
+} from './storylist.service';
 
-export default router;
+const storylistController = new Hono();
 
-function getBySlug(req: express.Request, res: express.Response, next: express.NextFunction) {
-	const { slug, amount, ordering = 'asc' } = req.query;
-	const limit = parseInt(amount as string) - 1;
-	fetchBySlug({ slug: slug as string, amount: amount as string, limit, ordering: ordering as string })
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
-}
-
-function getTeasers(_: express.Request, res: express.Response, next: express.NextFunction) {
-	fetchStorylistTeasers()
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
-}
+// Controllers
+storylistController.get('/teasers', async (c) => {
+	const result = await getAllStorylistTeasers();
+	return c.json(result);
+});
 
 /**
  * Obtiene los teasers de las publicaciones de una storylist para su uso en la navegación de la misma.
- * @param req
- * @param res
- * @param next
  */
-function getNavigationBySlug(req: express.Request, res: express.Response, next: express.NextFunction) {
-	const { slug } = req.params;
-	const { limit, offset } = req.query;
-	fetchNavigation({
-		slug: slug as string,
-		limit: parseInt((limit ?? '100') as string),
-		offset: parseInt((offset ?? '0') as string),
-	})
-		.then((result) => res.json(result))
-		.catch((err) => next(err));
-}
+storylistController.get(
+	'/:slug/navigation',
+	zValidator('param', slugSchema),
+	zValidator('query', paginationSchema),
+	async (c) => {
+		const { slug } = c.req.valid('param');
+		const { limit, offset } = c.req.valid('query');
+
+		const result = await getStorylistNavigationTeasersByStorylistSlug({ slug, limit, offset });
+		return c.json(result);
+	},
+);
+
+storylistController.get(
+	'/:slug',
+	zValidator('param', slugSchema),
+	zValidator('query', storylistQuerySchema),
+	async (c) => {
+		const { slug } = c.req.valid('param');
+		const { amount, ordering } = c.req.valid('query');
+
+		const limit = amount ? parseInt(amount) - 1 : 0;
+		const result = await getStorylistBySlug({ slug, amount: amount ?? '0', limit, ordering });
+		return c.json(result);
+	},
+);
+
+export default storylistController;
