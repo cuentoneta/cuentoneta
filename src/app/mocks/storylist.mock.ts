@@ -25,7 +25,6 @@ export const storyListMock: Storylist = {
 			],
 		},
 	],
-	language: 'es',
 	featuredImage:
 		'https://cdn.sanity.io/images/s4dbqkc5/production/d1a7fc995e0a4d640c9d8e98fb56f56f209f3d89-392x318.webp',
 	tags: [tagMock],
@@ -55,7 +54,6 @@ export const storylistNavigationTeaserMock: StorylistPublicationsNavigationTease
 			],
 		},
 	],
-	language: 'es',
 	featuredImage:
 		'https://cdn.sanity.io/images/s4dbqkc5/production/d1a7fc995e0a4d640c9d8e98fb56f56f209f3d89-392x318.webp',
 	tags: [tagMock],
