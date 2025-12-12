@@ -9,12 +9,23 @@ import {
 	StorylistTeasersQueryResult,
 } from '../../sanity/types';
 
+// Excepciones
+import { InternalError } from '../../exceptions/exceptions';
+
 export async function fetchAllStorylistTeasers(): Promise<StorylistTeasersQueryResult> {
-	return client.fetch(storylistTeasersQuery);
+	try {
+		return await client.fetch(storylistTeasersQuery);
+	} catch {
+		throw new InternalError('Internal server error');
+	}
 }
 
 export async function fetchStorylistBySlug(slug: string): Promise<StorylistQueryResult> {
-	return client.fetch(storylistQuery, { slug });
+	try {
+		return await client.fetch(storylistQuery, { slug });
+	} catch {
+		throw new InternalError('Internal server error');
+	}
 }
 
 type FetchStorylistNavigationTeasersByStorylistSlugParams = {
@@ -22,8 +33,13 @@ type FetchStorylistNavigationTeasersByStorylistSlugParams = {
 	start: number;
 	end: number;
 };
+
 export async function fetchStorylistNavigationTeaserByStorylistSlug(
 	params: FetchStorylistNavigationTeasersByStorylistSlugParams,
 ): Promise<StorylistNavigationTeasersQueryResult> {
-	return client.fetch(storylistNavigationTeasersQuery, params);
+	try {
+		return await client.fetch(storylistNavigationTeasersQuery, params);
+	} catch {
+		throw new InternalError('Internal server error');
+	}
 }

@@ -15,6 +15,9 @@ import { addWeeks, getWeek, getYear } from 'date-fns';
 import { mapLandingPageContent, mapStoryNavigationTeaserWithAuthor } from '../../_utils/functions';
 import slugify from 'slugify';
 
+// Excepciones
+import { NotFoundError } from '../../exceptions/exceptions';
+
 export async function getLandingPageContent(): Promise<LandingPageContent> {
 	const weekOfYear = getWeek(new Date());
 	const year = getYear(new Date());
@@ -24,7 +27,7 @@ export async function getLandingPageContent(): Promise<LandingPageContent> {
 	const rotatingContentResult = await fetchRotatingContent();
 
 	if (!landingPageResult || !rotatingContentResult) {
-		throw new Error('Landing page content not found');
+		throw new NotFoundError('Landing page content not found');
 	}
 
 	return {
@@ -36,7 +39,7 @@ export async function getRotatingContent(): Promise<RotatingContent> {
 	const result = await fetchRotatingContent();
 
 	if (!result) {
-		throw new Error('Rotating content not found');
+		throw new NotFoundError('Rotating content not found');
 	}
 
 	return { ...result, mostRead: mapStoryNavigationTeaserWithAuthor(result.mostRead) };
@@ -60,7 +63,9 @@ export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 
 	const existingLandingPagesList = await fetchLandingPagesList(slugs);
 
 	if (!existingLandingPagesList) {
-		throw new Error(`Could not retrieve the landing page configs for the [${slugs.join(', ')}] slugs not found.`);
+		throw new NotFoundError(
+			`Could not retrieve the landing page configs for the [${slugs.join(', ')}] slugs not found.`,
+		);
 	}
 
 	if (existingLandingPagesList.length >= weeksInTheFuture) {
@@ -72,7 +77,7 @@ export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 
 	const latestLandingPageConfig = await fetchLatestLandingPageReferences();
 
 	if (!latestLandingPageConfig) {
-		throw new Error(`Latest landing page for the '${currentLandingPageSlug}' slug content not found`);
+		throw new NotFoundError(`Latest landing page for the '${currentLandingPageSlug}' slug content not found`);
 	}
 
 	const notLoadedWeeks = slugs.filter((t) => !existingLandingPagesList.find((r) => r.config === t));

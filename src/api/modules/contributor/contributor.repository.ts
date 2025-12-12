@@ -8,11 +8,11 @@ import { Contributor, CONTRIBUTOR_AREA_LABELS } from '@models/contributor.model'
 /**
  * Obtiene todos los colaboradores ordenados alfabéticamente por nombre
  */
-export async function fetchAllContributors(): Promise<Contributor[]> {
+export async function fetchAllContributors(): Promise<Contributor[] | null> {
 	const result = await client.fetch(allContributorsQuery);
 
 	if (!result) {
-		throw new Error('Could not fetch the list of contributors.');
+		return null;
 	}
 
 	return result.map((contributor) => ({

@@ -1,4 +1,5 @@
 // Sanity
+import { InternalError } from '../../exceptions/exceptions';
 import { client } from '../../_helpers/sanity-connector';
 
 // Queries
@@ -16,19 +17,35 @@ import {
 } from '../../sanity/types';
 
 export async function fetchLandingPageContent(slug: string): Promise<LandingPageContentQueryResult> {
-	return client.fetch(landingPageContentQuery, { slug });
+	try {
+		return await client.fetch(landingPageContentQuery, { slug });
+	} catch (err) {
+		throw new InternalError('Internal server error');
+	}
 }
 
 export async function fetchLatestLandingPageReferences(): Promise<LatestLandingPageReferencesQueryResult> {
-	return client.fetch(latestLandingPageReferencesQuery);
+	try {
+		return await client.fetch(latestLandingPageReferencesQuery);
+	} catch (err) {
+		throw new InternalError('Internal server error');
+	}
 }
 
 export async function fetchLandingPagesList(slugs: string[]): Promise<LandingPageListQueryResult> {
-	return client.fetch(landingPageListQuery, { slugs });
+	try {
+		return await client.fetch(landingPageListQuery, { slugs });
+	} catch (err) {
+		throw new InternalError('Internal server error');
+	}
 }
 
 export async function fetchRotatingContent(): Promise<RotatingContentQueryResult> {
-	return client.fetch(rotatingContentQuery);
+	try {
+		return await client.fetch(rotatingContentQuery);
+	} catch (err) {
+		throw new InternalError('Internal server error');
+	}
 }
 
 export async function createLandingPages(
@@ -41,7 +58,11 @@ export async function createLandingPages(
 		latestReads: Array<{ _key: string; _type: string; _ref: string }>;
 	}>,
 ) {
-	return Promise.all(landingPageObjects.map((object) => client.create(object)));
+	try {
+		return Promise.all(landingPageObjects.map((object) => client.create(object)));
+	} catch (err) {
+		throw new InternalError('Internal server error');
+	}
 }
 
 /**
@@ -49,11 +70,16 @@ export async function createLandingPages(
  */
 export async function updateRotatingContentMostRead(
 	stories: Array<{ _key: string; _type: string; _ref: string }>,
-): Promise<void> {
-	const rotatingContent = await fetchRotatingContent();
-	if (!rotatingContent) {
-		throw new Error('Rotating content not found');
-	}
+): Promise<void | null> {
+	try {
+		const rotatingContent = await fetchRotatingContent();
 
-	await client.patch(rotatingContent._id, { set: { mostRead: stories } }).commit();
+		if (!rotatingContent) {
+			return null;
+		}
+
+		await client.patch(rotatingContent._id, { set: { mostRead: stories } }).commit();
+	} catch (err) {
+		throw new InternalError('Internal server error');
+	}
 }

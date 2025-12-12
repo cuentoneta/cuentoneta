@@ -37,6 +37,9 @@ import {
 	fetchStoryBySlug,
 } from './story.repository';
 
+// Excepciones
+import { NotFoundError } from '../../exceptions/exceptions';
+
 export async function getStoriesByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryTeaser[]> {
 	const result = await fetchStoriesByAuthorSlug(args.slug, args.offset * args.limit, (args.offset + 1) * args.limit);
 
@@ -61,7 +64,7 @@ export async function getStoryBySlug(slug: string): Promise<Story> {
 	const result = await fetchStoryBySlug(slug);
 
 	if (!result) {
-		throw new Error(`Story with slug ${slug} not found`);
+		throw new NotFoundError(`Story with slug ${slug} not found`);
 	}
 
 	return await mapStoryContent(result);
@@ -80,7 +83,7 @@ export async function getMostReadStoryNavigationTeasers(
 	const result = await getLandingPageContent();
 
 	if (!result) {
-		throw new Error(`Could not fetch most read stories.`);
+		throw new NotFoundError(`Could not fetch most read stories.`);
 	}
 
 	return result.mostRead.slice(offset, offset + limit);
@@ -89,7 +92,7 @@ export async function getMostReadStoryNavigationTeasers(
 export async function updateMostReadStories(): Promise<RotatingContent> {
 	const popularPagesMetrics = (await fetchClarityData()).find((metric) => metric.metricName === 'PopularPages');
 	if (!popularPagesMetrics) {
-		throw new Error('Could not fetch metrics.');
+		throw new NotFoundError('Could not fetch metrics.');
 	}
 
 	const prefix = `${environment.basePath}/story/`;
@@ -101,7 +104,11 @@ export async function updateMostReadStories(): Promise<RotatingContent> {
 
 	// Actualiza landing page referencias a las historias marcadas como "más leídas" actuales
 	const mostReadStories = stories.map((s) => ({ _key: s._id, _type: 'story', _ref: s._id }));
-	await updateRotatingContentMostRead(mostReadStories);
+	const rotatingContent = await updateRotatingContentMostRead(mostReadStories);
+
+	if (!rotatingContent) {
+		throw new NotFoundError('Rotating content not found');
+	}
 
 	return await getRotatingContent();
 }
