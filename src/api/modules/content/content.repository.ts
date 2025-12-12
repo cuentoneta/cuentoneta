@@ -20,6 +20,7 @@ export async function fetchLandingPageContent(slug: string): Promise<LandingPage
 	try {
 		return await client.fetch(landingPageContentQuery, { slug });
 	} catch (err) {
+		console.log('Internal server error: ', err);
 		throw new InternalError('Internal server error');
 	}
 }
@@ -28,6 +29,7 @@ export async function fetchLatestLandingPageReferences(): Promise<LatestLandingP
 	try {
 		return await client.fetch(latestLandingPageReferencesQuery);
 	} catch (err) {
+		console.log('Internal server error: ', err);
 		throw new InternalError('Internal server error');
 	}
 }
