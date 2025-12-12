@@ -15,7 +15,8 @@ import { InternalError } from '../../exceptions/exceptions';
 export async function fetchAllStorylistTeasers(): Promise<StorylistTeasersQueryResult> {
 	try {
 		return await client.fetch(storylistTeasersQuery);
-	} catch {
+	} catch (err) {
+		console.error('Internal server error: ', err);
 		throw new InternalError('Internal server error');
 	}
 }
@@ -23,7 +24,8 @@ export async function fetchAllStorylistTeasers(): Promise<StorylistTeasersQueryR
 export async function fetchStorylistBySlug(slug: string): Promise<StorylistQueryResult> {
 	try {
 		return await client.fetch(storylistQuery, { slug });
-	} catch {
+	} catch (err) {
+		console.error('Internal server error: ', err);
 		throw new InternalError('Internal server error');
 	}
 }
@@ -39,7 +41,8 @@ export async function fetchStorylistNavigationTeaserByStorylistSlug(
 ): Promise<StorylistNavigationTeasersQueryResult> {
 	try {
 		return await client.fetch(storylistNavigationTeasersQuery, params);
-	} catch {
+	} catch (err) {
+		console.error('Internal server error: ', err);
 		throw new InternalError('Internal server error');
 	}
 }

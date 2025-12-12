@@ -36,6 +36,7 @@ export async function fetchLandingPagesList(slugs: string[]): Promise<LandingPag
 	try {
 		return await client.fetch(landingPageListQuery, { slugs });
 	} catch (err) {
+		console.error('Internal server error: ', err);
 		throw new InternalError('Internal server error');
 	}
 }
@@ -44,6 +45,7 @@ export async function fetchRotatingContent(): Promise<RotatingContentQueryResult
 	try {
 		return await client.fetch(rotatingContentQuery);
 	} catch (err) {
+		console.error('Internal server error: ', err);
 		throw new InternalError('Internal server error');
 	}
 }
@@ -61,6 +63,7 @@ export async function createLandingPages(
 	try {
 		return Promise.all(landingPageObjects.map((object) => client.create(object)));
 	} catch (err) {
+		console.error('Internal server error: ', err);
 		throw new InternalError('Internal server error');
 	}
 }
@@ -80,6 +83,7 @@ export async function updateRotatingContentMostRead(
 
 		await client.patch(rotatingContent._id, { set: { mostRead: stories } }).commit();
 	} catch (err) {
+		console.error('Internal server error: ', err);
 		throw new InternalError('Internal server error');
 	}
 }
