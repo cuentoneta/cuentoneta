@@ -16,6 +16,7 @@ assignees: ''
 - [ ] Sanity: Hacer deploy de Sanity Studio.
 - [ ] Sanity: Determinar si hay scripts de actualización de datos a ejecutar.
 - [ ] Generar release desde GitHub.
+- [ ] Chequear si deben actualizarse en la documentación del proyecto las versiones de herramientas o dependencias
 
 `(Agregar otras tareas particulares de la versión, en caso de que sea necesario)`
 
