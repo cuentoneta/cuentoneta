@@ -1,11 +1,4 @@
-import {
-	APP_ID,
-	ApplicationConfig,
-	LOCALE_ID,
-	inject,
-	provideAppInitializer,
-	provideZonelessChangeDetection,
-} from '@angular/core';
+import { APP_ID, ApplicationConfig, LOCALE_ID, inject, provideAppInitializer } from '@angular/core';
 import { provideRouter, withInMemoryScrolling, withViewTransitions, withComponentInputBinding } from '@angular/router';
 import { appRoutes } from './app.routes';
 
@@ -43,6 +36,5 @@ export const appConfig: ApplicationConfig = {
 			withComponentInputBinding(),
 		),
 		provideHttpClient(withFetch()),
-		provideZonelessChangeDetection(),
 	],
 };
