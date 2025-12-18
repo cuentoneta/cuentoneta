@@ -12,7 +12,7 @@ import { createImageUrlBuilder, SanityImageSource } from '@sanity/image-url';
 // Modelos
 import { Author, AuthorTeaser } from '@models/author.model';
 import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
-import { LandingPageContent } from '@models/landing-page-content.model';
+import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
 import {
 	PublicationTeaserWithAuthor,
 	Storylist,
@@ -277,13 +277,12 @@ export function mapStoryNavigationTeaserWithAuthor(
 }
 
 export function mapLandingPageContent(
-	result: NonNullable<LandingPageContentQueryResult> & NonNullable<RotatingContentQueryResult>,
+	result: NonNullable<LandingPageContentQueryResult> & RotatingContent,
 ): LandingPageContent {
 	return {
 		...result,
 		cards: mapStorylistTeasers(result.cards),
 		campaigns: mapContentCampaigns(result.campaigns),
-		mostRead: mapStoryNavigationTeaserWithAuthor(result.mostRead),
 		latestReads: mapStoryNavigationTeaserWithAuthor(result.latestReads),
 	};
 }
