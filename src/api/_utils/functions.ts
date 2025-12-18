@@ -5,10 +5,9 @@ import { client } from '../_helpers/sanity-connector';
 import { mapMediaSources, mapMediaSourcesForStorylist } from './media-sources.functions';
 
 // Tipos de Sanity
-import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
 // Sanity utils
-import imageUrlBuilder from '@sanity/image-url';
+import imageUrlBuilder, { SanityImageSource } from '@sanity/image-url';
 
 // Modelos
 import { Author, AuthorTeaser } from '@models/author.model';
