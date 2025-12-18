@@ -7,7 +7,7 @@ import { mapMediaSources, mapMediaSourcesForStorylist } from './media-sources.fu
 // Tipos de Sanity
 
 // Sanity utils
-import imageUrlBuilder, { SanityImageSource } from '@sanity/image-url';
+import { createImageUrlBuilder, SanityImageSource } from '@sanity/image-url';
 
 // Modelos
 import { Author, AuthorTeaser } from '@models/author.model';
@@ -103,7 +103,7 @@ function urlFor(source: SanityImageSource): string {
 	if (!source) {
 		return '';
 	}
-	return imageUrlBuilder(client).image(source).url();
+	return createImageUrlBuilder(client).image(source).url();
 }
 
 type ResourcesSubQuery = (
