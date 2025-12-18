@@ -3,15 +3,7 @@ import { dirname } from 'node:path';
 export default {
 	stories: ['../src/app/**/*.stories.mdx', '../src/app/**/*.stories.@(js|jsx|ts|tsx)'],
 	styles: [],
-	addons: [
-		getAbsolutePath('@storybook/addon-docs'),
-		{
-			name: getAbsolutePath('@storybook/addon-styling-webpack'),
-			options: {
-				postCss: true,
-			},
-		},
-	],
+	addons: [getAbsolutePath('@storybook/addon-docs')],
 	framework: {
 		name: getAbsolutePath('@storybook/angular'),
 		options: {},

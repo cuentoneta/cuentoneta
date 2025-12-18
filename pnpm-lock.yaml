@@ -155,9 +155,6 @@ importers:
       '@storybook/addon-docs':
         specifier: ^10.1.10
         version: 10.1.10(@types/react@19.2.7)(esbuild@0.27.2)(rollup@4.44.1)(storybook@10.1.10(@testing-library/dom@10.4.1)(prettier@3.7.4)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(vite@7.2.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(sass-embedded@1.85.1)(sass@1.93.2)(stylus@0.64.0)(terser@5.44.0)(tsx@4.21.0)(yaml@2.7.0))(webpack@5.104.1(esbuild@0.27.2))
-      '@storybook/addon-styling-webpack':
-        specifier: ^3.0.0
-        version: 3.0.0(storybook@10.1.10(@testing-library/dom@10.4.1)(prettier@3.7.4)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(webpack@5.104.1(esbuild@0.27.2))
       '@storybook/angular':
         specifier: 10.1.10
         version: 10.1.10(422d2319156bf059932cc6efa4115359)
@@ -197,12 +194,6 @@ importers:
       angular-eslint:
         specifier: 21.1.0
         version: 21.1.0(@angular/cli@21.0.3(@types/node@22.17.1)(chokidar@4.0.1))(chokidar@4.0.1)(eslint@9.39.2(jiti@2.6.1))(typescript-eslint@8.50.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(typescript@5.9.3)
-      autoprefixer:
-        specifier: ^10.4.23
-        version: 10.4.23(postcss@8.5.6)
-      browser-sync:
-        specifier: ^3.0.4
-        version: 3.0.4
       eslint:
         specifier: ^9.39.2
         version: 9.39.2(jiti@2.6.1)
@@ -227,24 +218,15 @@ importers:
       eslint-plugin-testing-library:
         specifier: ^7.15.1
         version: 7.15.1(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
-      html-webpack-plugin:
-        specifier: ^5.6.5
-        version: 5.6.5(@rspack/core@1.5.3(@swc/helpers@0.5.17))(webpack@5.104.1(esbuild@0.27.2))
       husky:
         specifier: ^9.1.7
         version: 9.1.7
       jest:
         specifier: 30.2.0
         version: 30.2.0(@types/node@22.17.1)(babel-plugin-macros@3.1.0)(esbuild-register@3.5.0(esbuild@0.27.2))(ts-node@10.9.2(@types/node@22.17.1)(typescript@5.9.3))
-      jest-environment-jsdom:
-        specifier: 30.2.0
-        version: 30.2.0
       jest-preset-angular:
         specifier: 16.0.0
         version: 16.0.0(91529f3e6aa35ab8ab45fe5d40e04a42)
-      jest-util:
-        specifier: ~30.2.0
-        version: 30.2.0
       nx:
         specifier: 22.3.1
         version: 22.3.1
@@ -3753,13 +3735,6 @@ packages:
       { integrity: sha512-PSJVtawnGNrEkeLJQn9TTdeqrtDij8onvmnFtfkDaFG5IaUdQaLX9ibJ4gfxYakq+BEtlCcYiWErNJcqDrDluQ== }
     peerDependencies:
       storybook: ^10.1.10
-
-  '@storybook/addon-styling-webpack@3.0.0':
-    resolution:
-      { integrity: sha512-6iI7wGf/tEt5awB8NYAWU+I/hI7PwOdoaNb5V8Z+GkhEko4nZFpXfp8jz2nMblAnx9Jsl95LfIaH9Spa0JksuQ== }
-    peerDependencies:
-      storybook: ^10.0.0 || ^10.0.0-0 || ^10.1.0-0 || ^10.2.0-0 || ^10.3.0-0
-      webpack: ^5.0.0
 
   '@storybook/angular@10.1.10':
     resolution:
@@ -14511,7 +14486,8 @@ snapshots:
     dependencies:
       '@sinonjs/commons': 3.0.1
 
-  '@socket.io/component-emitter@3.1.0': {}
+  '@socket.io/component-emitter@3.1.0':
+    optional: true
 
   '@standard-schema/spec@1.1.0': {}
 
@@ -14531,11 +14507,6 @@ snapshots:
       - rollup
       - vite
       - webpack
-
-  '@storybook/addon-styling-webpack@3.0.0(storybook@10.1.10(@testing-library/dom@10.4.1)(prettier@3.7.4)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(webpack@5.104.1(esbuild@0.27.2))':
-    dependencies:
-      storybook: 10.1.10(@testing-library/dom@10.4.1)(prettier@3.7.4)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      webpack: 5.104.1(esbuild@0.27.2)
 
   '@storybook/angular@10.1.10(422d2319156bf059932cc6efa4115359)':
     dependencies:
@@ -14748,11 +14719,13 @@ snapshots:
     dependencies:
       '@types/node': 22.17.1
 
-  '@types/cookie@0.4.1': {}
+  '@types/cookie@0.4.1':
+    optional: true
 
   '@types/cors@2.8.17':
     dependencies:
       '@types/node': 22.17.1
+    optional: true
 
   '@types/deep-eql@4.0.2': {}
 
@@ -15354,7 +15327,8 @@ snapshots:
 
   astral-regex@2.0.0: {}
 
-  async-each-series@0.1.1: {}
+  async-each-series@0.1.1:
+    optional: true
 
   async@2.6.4:
     dependencies:
@@ -15522,7 +15496,8 @@ snapshots:
 
   base64-js@1.5.1: {}
 
-  base64id@2.0.0: {}
+  base64id@2.0.0:
+    optional: true
 
   baseline-browser-mapping@2.9.9: {}
 
@@ -15609,6 +15584,7 @@ snapshots:
       etag: 1.8.1
       fresh: 0.5.2
       mitt: 1.2.0
+    optional: true
 
   browser-sync-ui@3.0.4:
     dependencies:
@@ -15623,6 +15599,7 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
+    optional: true
 
   browser-sync@3.0.4:
     dependencies:
@@ -15659,6 +15636,7 @@ snapshots:
       - debug
       - supports-color
       - utf-8-validate
+    optional: true
 
   browserslist@4.28.1:
     dependencies:
@@ -15672,7 +15650,8 @@ snapshots:
     dependencies:
       fast-json-stable-stringify: 2.1.0
 
-  bs-recipes@1.3.4: {}
+  bs-recipes@1.3.4:
+    optional: true
 
   bser@2.1.1:
     dependencies:
@@ -15919,7 +15898,8 @@ snapshots:
 
   confusing-browser-globals@1.0.11: {}
 
-  connect-history-api-fallback@1.6.0: {}
+  connect-history-api-fallback@1.6.0:
+    optional: true
 
   connect-history-api-fallback@2.0.0: {}
 
@@ -15931,6 +15911,7 @@ snapshots:
       utils-merge: 1.0.1
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   content-disposition@0.5.4:
     dependencies:
@@ -15950,7 +15931,8 @@ snapshots:
 
   cookie-signature@1.2.2: {}
 
-  cookie@0.4.2: {}
+  cookie@0.4.2:
+    optional: true
 
   cookie@0.7.1: {}
 
@@ -16230,6 +16212,7 @@ snapshots:
   debug@4.3.4:
     dependencies:
       ms: 2.1.2
+    optional: true
 
   debug@4.4.3:
     dependencies:
@@ -16297,7 +16280,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  dev-ip@1.0.1: {}
+  dev-ip@1.0.1:
+    optional: true
 
   didyoumean@1.2.2: {}
 
@@ -16379,10 +16363,12 @@ snapshots:
   easy-extender@2.3.4:
     dependencies:
       lodash: 4.17.21
+    optional: true
 
   eazy-logger@4.1.0:
     dependencies:
       chalk: 4.1.2
+    optional: true
 
   ee-first@1.1.1: {}
 
@@ -16427,8 +16413,10 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
+    optional: true
 
-  engine.io-parser@5.2.1: {}
+  engine.io-parser@5.2.1:
+    optional: true
 
   engine.io@6.5.4:
     dependencies:
@@ -16446,6 +16434,7 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
+    optional: true
 
   enhanced-resolve@5.18.3:
     dependencies:
@@ -16938,6 +16927,7 @@ snapshots:
       unpipe: 1.0.0
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   finalhandler@1.3.1:
     dependencies:
@@ -17095,6 +17085,7 @@ snapshots:
       graceful-fs: 4.2.11
       jsonfile: 3.0.1
       universalify: 0.1.2
+    optional: true
 
   fs-extra@8.1.0:
     dependencies:
@@ -17517,7 +17508,8 @@ snapshots:
   image-size@0.5.5:
     optional: true
 
-  immutable@3.8.2: {}
+  immutable@3.8.2:
+    optional: true
 
   immutable@5.0.3: {}
 
@@ -17602,6 +17594,7 @@ snapshots:
   is-number-like@1.0.8:
     dependencies:
       lodash.isfinite: 3.3.2
+    optional: true
 
   is-number@7.0.0: {}
 
@@ -17629,7 +17622,8 @@ snapshots:
 
   is-windows@1.0.2: {}
 
-  is-wsl@1.1.0: {}
+  is-wsl@1.1.0:
+    optional: true
 
   is-wsl@2.2.0:
     dependencies:
@@ -17810,6 +17804,7 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
+    optional: true
 
   jest-environment-node@30.2.0:
     dependencies:
@@ -18144,6 +18139,7 @@ snapshots:
   jsonfile@3.0.1:
     optionalDependencies:
       graceful-fs: 4.2.11
+    optional: true
 
   jsonfile@4.0.0:
     optionalDependencies:
@@ -18264,7 +18260,8 @@ snapshots:
 
   lilconfig@3.1.3: {}
 
-  limiter@1.1.5: {}
+  limiter@1.1.5:
+    optional: true
 
   linebreak@1.1.0:
     dependencies:
@@ -18329,7 +18326,8 @@ snapshots:
 
   lodash.debounce@4.0.8: {}
 
-  lodash.isfinite@3.3.2: {}
+  lodash.isfinite@3.3.2:
+    optional: true
 
   lodash.memoize@4.1.2: {}
 
@@ -18577,7 +18575,8 @@ snapshots:
     dependencies:
       minipass: 7.1.2
 
-  mitt@1.2.0: {}
+  mitt@1.2.0:
+    optional: true
 
   mkdirp@0.5.6:
     dependencies:
@@ -18593,7 +18592,8 @@ snapshots:
 
   ms@2.0.0: {}
 
-  ms@2.1.2: {}
+  ms@2.1.2:
+    optional: true
 
   ms@2.1.3: {}
 
@@ -18869,6 +18869,7 @@ snapshots:
   on-finished@2.3.0:
     dependencies:
       ee-first: 1.1.1
+    optional: true
 
   on-finished@2.4.1:
     dependencies:
@@ -18910,6 +18911,7 @@ snapshots:
   opn@5.3.0:
     dependencies:
       is-wsl: 1.1.0
+    optional: true
 
   optionator@0.9.3:
     dependencies:
@@ -19135,6 +19137,7 @@ snapshots:
     dependencies:
       async: 2.6.4
       is-number-like: 1.0.8
+    optional: true
 
   postcss-calc@9.0.1(postcss@8.5.6):
     dependencies:
@@ -19646,6 +19649,7 @@ snapshots:
       minimatch: 3.1.2
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   restore-cursor@3.1.0:
     dependencies:
@@ -19767,7 +19771,8 @@ snapshots:
     dependencies:
       queue-microtask: 1.2.3
 
-  rx@4.1.0: {}
+  rx@4.1.0:
+    optional: true
 
   rxjs@7.8.2:
     dependencies:
@@ -20025,7 +20030,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  server-destroy@1.0.1: {}
+  server-destroy@1.0.1:
+    optional: true
 
   setprototypeof@1.1.0: {}
 
@@ -20111,6 +20117,7 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+    optional: true
 
   socket.io-client@4.7.4:
     dependencies:
@@ -20122,6 +20129,7 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
+    optional: true
 
   socket.io-parser@4.2.4:
     dependencies:
@@ -20129,6 +20137,7 @@ snapshots:
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   socket.io@4.7.4:
     dependencies:
@@ -20143,6 +20152,7 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
+    optional: true
 
   sockjs@0.3.24:
     dependencies:
@@ -20251,7 +20261,8 @@ snapshots:
 
   stackframe@1.3.4: {}
 
-  statuses@1.3.1: {}
+  statuses@1.3.1:
+    optional: true
 
   statuses@1.5.0: {}
 
@@ -20286,6 +20297,7 @@ snapshots:
     dependencies:
       commander: 2.20.3
       limiter: 1.1.5
+    optional: true
 
   streamroller@3.1.5:
     dependencies:
@@ -20849,7 +20861,8 @@ snapshots:
 
   typescript@5.9.3: {}
 
-  ua-parser-js@1.0.37: {}
+  ua-parser-js@1.0.37:
+    optional: true
 
   uglify-js@3.19.3:
     optional: true
@@ -21275,7 +21288,8 @@ snapshots:
       imurmurhash: 0.1.4
       signal-exit: 4.1.0
 
-  ws@8.11.0: {}
+  ws@8.11.0:
+    optional: true
 
   ws@8.18.0: {}
 
@@ -21289,7 +21303,8 @@ snapshots:
 
   xmlchars@2.2.0: {}
 
-  xmlhttprequest-ssl@2.0.0: {}
+  xmlhttprequest-ssl@2.0.0:
+    optional: true
 
   y18n@5.0.8: {}
 
