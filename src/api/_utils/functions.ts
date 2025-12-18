@@ -5,15 +5,14 @@ import { client } from '../_helpers/sanity-connector';
 import { mapMediaSources, mapMediaSourcesForStorylist } from './media-sources.functions';
 
 // Tipos de Sanity
-import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
 // Sanity utils
-import imageUrlBuilder from '@sanity/image-url';
+import { createImageUrlBuilder, SanityImageSource } from '@sanity/image-url';
 
 // Modelos
 import { Author, AuthorTeaser } from '@models/author.model';
 import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
-import { LandingPageContent } from '@models/landing-page-content.model';
+import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
 import {
 	PublicationTeaserWithAuthor,
 	Storylist,
@@ -104,7 +103,7 @@ function urlFor(source: SanityImageSource): string {
 	if (!source) {
 		return '';
 	}
-	return imageUrlBuilder(client).image(source).url();
+	return createImageUrlBuilder(client).image(source).url();
 }
 
 type ResourcesSubQuery = (
@@ -278,13 +277,12 @@ export function mapStoryNavigationTeaserWithAuthor(
 }
 
 export function mapLandingPageContent(
-	result: NonNullable<LandingPageContentQueryResult> & NonNullable<RotatingContentQueryResult>,
+	result: NonNullable<LandingPageContentQueryResult> & RotatingContent,
 ): LandingPageContent {
 	return {
 		...result,
 		cards: mapStorylistTeasers(result.cards),
 		campaigns: mapContentCampaigns(result.campaigns),
-		mostRead: mapStoryNavigationTeaserWithAuthor(result.mostRead),
 		latestReads: mapStoryNavigationTeaserWithAuthor(result.latestReads),
 	};
 }

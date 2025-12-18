@@ -12,8 +12,9 @@ import {
 	LandingPageContentQueryResult,
 	LandingPageListQueryResult,
 	LatestLandingPageReferencesQueryResult,
-	RotatingContentQueryResult,
 } from '../../sanity/types';
+import { mapLandingPageContent, mapStoryNavigationTeaserWithAuthor } from '../../_utils/functions';
+import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
 
 export async function fetchLandingPageContent(slug: string): Promise<LandingPageContentQueryResult> {
 	return client.fetch(landingPageContentQuery, { slug });
@@ -27,8 +28,13 @@ export async function fetchLandingPagesList(slugs: string[]): Promise<LandingPag
 	return client.fetch(landingPageListQuery, { slugs });
 }
 
-export async function fetchRotatingContent(): Promise<RotatingContentQueryResult> {
-	return client.fetch(rotatingContentQuery);
+export async function fetchRotatingContent(): Promise<RotatingContent> {
+	const result = await client.fetch(rotatingContentQuery);
+	if (!result) {
+		throw new Error('Rotating content not found');
+	}
+
+	return { ...result, mostRead: mapStoryNavigationTeaserWithAuthor(result.mostRead) };
 }
 
 export async function createLandingPages(
@@ -42,6 +48,20 @@ export async function createLandingPages(
 	}>,
 ) {
 	return Promise.all(landingPageObjects.map((object) => client.create(object)));
+}
+
+// TODO: Rever estructura luego de migrar funciones de mapeo
+export async function fetchAndMapLandingPageContent(slug: string): Promise<LandingPageContent> {
+	const landingPageResult = await fetchLandingPageContent(slug);
+	const rotatingContentResult = await fetchRotatingContent();
+
+	if (!landingPageResult || !rotatingContentResult) {
+		throw new Error('Landing page content not found');
+	}
+
+	return {
+		...mapLandingPageContent({ ...landingPageResult, ...rotatingContentResult }),
+	};
 }
 
 /**

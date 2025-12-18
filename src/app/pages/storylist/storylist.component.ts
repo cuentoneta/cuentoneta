@@ -1,7 +1,6 @@
 // Core
 import { Component, computed, inject, input } from '@angular/core';
 import { tap } from 'rxjs';
-import { CommonModule } from '@angular/common';
 
 // 3rd party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -33,7 +32,6 @@ import { StoryTeaserWithAuthor } from '@models/story.model';
 	selector: 'cuentoneta-storylist',
 	templateUrl: './storylist.component.html',
 	imports: [
-		CommonModule,
 		NgxSkeletonLoaderModule,
 		PortableTextParserComponent,
 		Tabs,
