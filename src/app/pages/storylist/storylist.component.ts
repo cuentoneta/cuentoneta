@@ -43,8 +43,11 @@ import { StoryTeaserWithAuthor } from '@models/story.model';
 	hostDirectives: [MetaTagsDirective],
 })
 export default class StorylistComponent {
-	// Providers
+	// Route inputs
 	readonly slug = input.required<string>();
+	readonly activeTab = input<'stories' | 'about'>('stories');
+
+	// Providers
 	private metaTagsDirective = inject(MetaTagsDirective);
 	private storylistService = inject(StorylistService);
 
