@@ -18,7 +18,8 @@ export const storylistTeasersQuery = defineQuery(`
         icon
     }, []),
     'publications': [],
-    'count': coalesce(count(publications), 0)
+    'count': coalesce(count(publications), 0),
+    config
     }
 `);
 
@@ -61,7 +62,8 @@ export const storylistNavigationTeasersQuery = defineQuery(`
             }
         }
     }, [])[$start...$end],
-    'count': coalesce(count(publications), 0)
+    'count': coalesce(count(publications), 0),
+    config
     }
 `);
 
@@ -110,6 +112,7 @@ export const storylistQuery = defineQuery(`
             }
         }
     }, []),
-    'count': coalesce(count(publications), 0)
+    'count': coalesce(count(publications), 0),
+    config
     }
 `);
