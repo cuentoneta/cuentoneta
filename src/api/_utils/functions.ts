@@ -13,12 +13,7 @@ import { createImageUrlBuilder, SanityImageSource } from '@sanity/image-url';
 import { Author, AuthorTeaser } from '@models/author.model';
 import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
 import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
-import {
-	PublicationTeaserWithAuthor,
-	Storylist,
-	StorylistPublicationsNavigationTeasers,
-	StorylistTeaser,
-} from '@models/storylist.model';
+import { Storylist, StorylistTeaser } from '@models/storylist.model';
 import { Resource } from '@models/resource.model';
 import {
 	Story,
@@ -70,10 +65,10 @@ export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>): 
 		diedOn: rawAuthorData.diedOn ? (rawAuthorData.diedOn as DateString) : undefined,
 	};
 }
-type AuthorTeaserForPublicationSubQuery = NonNullable<StorylistQueryResult>['publications'][0]['story']['author'];
+type AuthorTeaserForStoriesSubQuery = NonNullable<StorylistQueryResult>['stories'][0]['author'];
 type AuthorTeaserForListSubQuery = UnwrapArray<AuthorsQueryResult>;
 export function mapAuthorTeaser(
-	rawAuthorData: AuthorTeaserForPublicationSubQuery | AuthorTeaserForListSubQuery,
+	rawAuthorData: AuthorTeaserForStoriesSubQuery | AuthorTeaserForListSubQuery,
 ): AuthorTeaser {
 	return {
 		_id: rawAuthorData._id,
@@ -110,7 +105,7 @@ type ResourcesSubQuery = (
 	| NonNullable<AuthorBySlugQueryResult>
 	| NonNullable<StoryBySlugQueryResult>
 	| NonNullable<StoryBySlugQueryResult>['author']
-	| NonNullable<StorylistQueryResult>['publications'][0]['story']
+	| NonNullable<StorylistQueryResult>['stories'][0]
 	| StoriesByAuthorSlugQueryResult[0]
 )['resources'];
 export function mapResources(resources: ResourcesSubQuery): Resource[] {
@@ -129,7 +124,7 @@ export function mapResources(resources: ResourcesSubQuery): Resource[] {
 	);
 }
 
-type TagsSubQuery = (StorylistTeasersQueryResult[0] | NonNullable<StorylistTeasersQueryResult>[0])['tags'];
+type TagsSubQuery = NonNullable<StorylistTeasersQueryResult>[0]['tags'];
 export function mapTags(tags: TagsSubQuery): Tag[] {
 	return tags.map((tag) => ({
 		...tag,
@@ -156,19 +151,17 @@ export function mapStorylistTeasers(result: StorylistTeasersQueryResult): Storyl
 
 export function mapStorylist(result: NonNullable<StorylistQueryResult>): Storylist {
 	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
-	const publications: PublicationTeaserWithAuthor[] = [];
-	for (const publication of result.publications) {
-		const { body, author, mediaSources, ...story } = publication.story;
-		publications.push({
-			...publication,
-			story: mapStoryTeaserWithAuthor({
+	const stories: StoryTeaserWithAuthor[] = [];
+	for (const story of result.stories) {
+		stories.push(
+			mapStoryTeaserWithAuthor({
 				...story,
-				author: mapAuthorTeaser({ ...author }),
-				media: mapMediaSourcesForStorylist(mediaSources),
-				paragraphs: mapBlockContentToTextParagraphs(body),
+				author: mapAuthorTeaser({ ...story.author }),
+				media: mapMediaSourcesForStorylist(story.mediaSources),
+				paragraphs: mapBlockContentToTextParagraphs(story.body),
 				resources: [],
 			}),
-		});
+		);
 	}
 
 	return {
@@ -180,7 +173,7 @@ export function mapStorylist(result: NonNullable<StorylistQueryResult>): Storyli
 		description: mapBlockContentToTextParagraphs(result.description),
 		tags: mapTags(result.tags),
 		featuredImage: urlFor(result.featuredImage),
-		publications,
+		stories,
 	};
 }
 
