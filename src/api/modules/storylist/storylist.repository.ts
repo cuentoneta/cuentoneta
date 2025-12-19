@@ -11,7 +11,7 @@ import {
 	mapTags,
 	urlFor,
 } from '../../_utils/functions';
-import { Storylist, StorylistPublicationsNavigationTeasers, StorylistTeaser } from '@models/storylist.model';
+import { Storylist, StorylistStoriesNavigationTeasers, StorylistTeaser } from '@models/storylist.model';
 
 export async function fetchAllStorylistTeasers(): Promise<StorylistTeaser[]> {
 	const result = await client.fetch(storylistTeasersQuery);
@@ -35,7 +35,7 @@ type FetchStorylistNavigationTeasersByStorylistSlugParams = {
 };
 export async function fetchStorylistNavigationTeaserByStorylistSlug(
 	params: FetchStorylistNavigationTeasersByStorylistSlugParams,
-): Promise<StorylistPublicationsNavigationTeasers> {
+): Promise<StorylistStoriesNavigationTeasers> {
 	const result = await client.fetch(storylistNavigationTeasersQuery, params);
 
 	if (!result) {
@@ -51,9 +51,11 @@ export async function fetchStorylistNavigationTeaserByStorylistSlug(
 		description: mapBlockContentToTextParagraphs(result.description),
 		tags: mapTags(result.tags),
 		featuredImage: urlFor(result.featuredImage),
-		publications: result.publications.map((p) => ({
-			...p,
-			story: { ...p.story, author: mapAuthorTeaser(p.story.author), paragraphs: [], media: [] },
+		stories: result.stories.map((story) => ({
+			...story,
+			author: mapAuthorTeaser(story.author),
+			paragraphs: [],
+			media: [],
 		})),
 	};
 }

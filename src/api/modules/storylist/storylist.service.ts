@@ -1,5 +1,5 @@
 // Interfaces
-import { Storylist, StorylistPublicationsNavigationTeasers, StorylistTeaser } from '@models/storylist.model';
+import { Storylist, StorylistStoriesNavigationTeasers, StorylistTeaser } from '@models/storylist.model';
 
 // Funciones de repository
 import { StoryListBySlugArgs } from '../../interfaces/queryArgs';
@@ -23,7 +23,7 @@ export async function getStorylistNavigationTeasersByStorylistSlug(args: {
 	slug: string;
 	limit: number;
 	offset: number;
-}): Promise<StorylistPublicationsNavigationTeasers> {
+}): Promise<StorylistStoriesNavigationTeasers> {
 	const result = await fetchStorylistNavigationTeaserByStorylistSlug({
 		slug: args.slug,
 		start: args.offset * args.limit,
