@@ -78,6 +78,20 @@ export default defineType({
 			],
 		}),
 		defineField({
+			name: 'config',
+			title: 'Configuración',
+			type: 'object',
+			fields: [
+				defineField({
+					name: 'showAuthors',
+					title: 'Mostrar autores',
+					description: 'Mostrar nombres de autores en los teasers de la storylist',
+					type: 'boolean',
+					initialValue: true,
+				}),
+			],
+		}),
+		defineField({
 			name: 'publications',
 			title: 'Publicaciones de Cuento/Texto/Historia dentro de la storylist',
 			type: 'array',
