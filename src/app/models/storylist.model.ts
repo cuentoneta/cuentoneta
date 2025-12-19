@@ -3,43 +3,27 @@ import { Tag } from '@models/tag.model';
 import { TextBlockContent } from '@models/block-content.model';
 
 interface StorylistBase<T> {
+	_id: string;
 	title: string;
 	slug: string;
-	displayDates: boolean;
-	editionPrefix: string;
 	count: number;
-	comingNextLabel: string;
 	description: TextBlockContent[];
 	featuredImage: string;
 	tags: Tag[];
-	publications: T[];
+	stories: T[];
 	config: {
 		showAuthors: boolean;
 	};
 }
 
 export interface StorylistTeaser extends StorylistBase<never> {
-	publications: Array<never>;
+	stories: Array<never>;
 }
 
-export interface StorylistPublicationsNavigationTeasers extends StorylistBase<PublicationNavigationTeaser> {
-	publications: PublicationNavigationTeaser[];
+export interface StorylistStoriesNavigationTeasers extends StorylistBase<StoryNavigationTeaserWithAuthor> {
+	stories: StoryNavigationTeaserWithAuthor[];
 }
 
-export interface Storylist extends StorylistBase<PublicationTeaserWithAuthor> {
-	publications: PublicationTeaserWithAuthor[];
-}
-
-export interface PublicationTeaserWithAuthor {
-	publishingOrder: number;
-	published: boolean;
-	publishingDate?: string;
-	story: StoryTeaserWithAuthor;
-}
-
-export interface PublicationNavigationTeaser {
-	publishingOrder: number;
-	published: boolean;
-	publishingDate?: string;
-	story: StoryNavigationTeaserWithAuthor;
+export interface Storylist extends StorylistBase<StoryTeaserWithAuthor> {
+	stories: StoryTeaserWithAuthor[];
 }
