@@ -106,7 +106,7 @@ export default class StoryComponent {
 			`Leí "${this.story()?.title}" de ${this.story()?.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`,
 	);
 	readonly navigationParams = computed(() => {
-		const navigation = this.navigation();
+		const navigation = this.navigation() ?? 'author';
 		let navigationSlug = this.navigationSlug();
 
 		if (!navigationSlug) {
