@@ -10,7 +10,6 @@ import story from './story';
 import storylist from './storylist';
 import tag from './tag';
 import { resourceType, resource } from './resourceType';
-import publication from './publication';
 import contentCampaign from './contentCampaign';
 import contributors from './contributor';
 import rotatingContent from './rotatingContent';
@@ -19,7 +18,6 @@ export default [
 	// Tipos de propiedades
 	blockContent,
 	contributors,
-	publication,
 	resource,
 	// Tipos de documentos
 	landingPage,

@@ -1,6 +1,5 @@
 import { DashboardIcon } from '@sanity/icons';
 import { defineArrayMember, defineField, defineType } from 'sanity';
-import publication from './publication';
 
 export default defineType({
 	name: 'storylist',
@@ -28,31 +27,6 @@ export default defineType({
 			name: 'description',
 			title: 'Descripción',
 			type: 'blockContent',
-			validation: (Rule) => Rule.required(),
-		}),
-		defineField({
-			name: 'displayDates',
-			title: 'Mostrar fechas',
-			type: 'boolean',
-			initialValue: false,
-			validation: (Rule) => Rule.required(),
-		}),
-		defineField({
-			name: 'comingNextLabel',
-			title: 'Etiqueta de "Próximo"',
-			description:
-				'Etiqueta que se mostrará en una publicación programada dentro de una storylist pero que aún no ha sido publicada.',
-			type: 'string',
-			initialValue: 'Próximamente',
-			validation: (Rule) => Rule.required(),
-		}),
-		defineField({
-			name: 'editionPrefix',
-			title: 'Prefijo de edición',
-			description:
-				'Prefijo usado para identificar qué representa cada historia en una Storylist (día, edición, historia, etc.)',
-			type: 'string',
-			initialValue: 'Edición',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
@@ -92,10 +66,15 @@ export default defineType({
 			],
 		}),
 		defineField({
-			name: 'publications',
-			title: 'Publicaciones de Cuento/Texto/Historia dentro de la storylist',
+			name: 'stories',
+			title: 'Cuentos/Textos/Historias dentro de la storylist',
 			type: 'array',
-			of: [defineArrayMember(publication)],
+			of: [
+				defineArrayMember({
+					type: 'reference',
+					to: [{ type: 'story' }],
+				}),
+			],
 		}),
 	],
 });
