@@ -1,14 +1,11 @@
 import { Storylist, StorylistPublicationsNavigationTeasers } from '@models/storylist.model';
 import { tagMock } from './tag.mocks';
-import { publicationMock, publicationNavigationTeaserMock } from './story.mock';
+import { storyNavigationTeaserWithAuthor } from './story.mock';
 
-export const storyListMock: Storylist = {
+export const storylistMock: Storylist = {
 	title: 'La Cuentoneta 1.0"',
 	slug: 'verano-2022',
-	displayDates: true,
-	editionPrefix: 'Día',
 	count: 1,
-	comingNextLabel: 'Próximamente',
 	description: [
 		{
 			_type: 'block',
@@ -31,7 +28,7 @@ export const storyListMock: Storylist = {
 	config: {
 		showAuthors: true,
 	},
-	publications: [publicationMock],
+	stories: [storyNavigationTeaserWithAuthor],
 };
 
 export const storylistNavigationTeaserMock: StorylistPublicationsNavigationTeasers = {
@@ -63,5 +60,5 @@ export const storylistNavigationTeaserMock: StorylistPublicationsNavigationTease
 	config: {
 		showAuthors: true,
 	},
-	publications: [publicationNavigationTeaserMock],
+	stories: [storyNavigationTeaserWithAuthor],
 };
