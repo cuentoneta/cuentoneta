@@ -13,6 +13,9 @@ interface StorylistBase<T> {
 	featuredImage: string;
 	tags: Tag[];
 	publications: T[];
+	config: {
+		showAuthors: boolean;
+	};
 }
 
 export interface StorylistTeaser extends StorylistBase<never> {
