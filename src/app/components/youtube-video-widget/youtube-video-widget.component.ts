@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ViewEncapsulation } from '@angular/core';
 
 import { YouTubeVideo } from '@models/media.model';
 import { YouTubePlayer } from '@angular/youtube-player';
@@ -7,6 +7,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 @Component({
 	selector: 'cuentoneta-youtube-video-widget',
 	imports: [YouTubePlayer, PortableTextParserComponent],
+	encapsulation: ViewEncapsulation.None,
 	template: `<youtube-player
 			[videoId]="media().data.videoId"
 			data-testid="youtube-player"
@@ -16,7 +17,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 			<cuentoneta-portable-text-parser [paragraphs]="media().description" />
 		</p>`,
 	styles: `
-		::ng-deep {
+		cuentoneta-youtube-video-widget {
 			youtube-player {
 				.youtube-player-placeholder,
 				div iframe {
