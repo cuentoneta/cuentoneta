@@ -26,7 +26,6 @@ import Tab from '@components/tabs/tab.component';
 import { StorylistTitle } from './storylist-title/storylist-title';
 import { StoryCardTeaserComponent } from '@components/story-card-teaser/story-card-teaser.component';
 import { StoryCardTeaserSkeletonComponent } from '@components/story-card-teaser/story-card-teaser-skeleton.component';
-import { StoryTeaserWithAuthor } from '@models/story.model';
 
 @Component({
 	selector: 'cuentoneta-storylist',
@@ -70,9 +69,7 @@ export default class StorylistComponent {
 		() => `${this.storylistResource.value()?.featuredImage}?h=${256 * 1.5}&w=${192 * 1.5}&auto=format`,
 	);
 	// TODO: Simplificar estructura de tipo Storylist para evitar estas transformaciones
-	readonly stories = computed(
-		() => this.storylistResource.value()?.publications.map((p) => p.story as StoryTeaserWithAuthor) || [],
-	);
+	readonly stories = computed(() => this.storylistResource.value()?.stories.map((story) => story) || []);
 
 	private updateMetaTags(storylist: Storylist) {
 		this.metaTagsDirective.setTitle(`${storylist.title}`);
