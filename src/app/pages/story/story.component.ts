@@ -99,7 +99,7 @@ export default class StoryComponent {
 	readonly sharingRoute = computed(() => `${AppRoutes.Story}/${this.story()?.slug}`);
 	readonly shareContentParams = computed(() => ({
 		navigationSlug: this.story()?.author.slug ?? '',
-		navigation: 'author',
+		navigation: this.navigation() ?? 'author',
 	}));
 	readonly shareMessage = computed(
 		() =>
