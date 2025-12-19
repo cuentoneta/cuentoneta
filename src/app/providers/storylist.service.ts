@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Storylist, StorylistPublicationsNavigationTeasers } from '@models/storylist.model';
+import { Storylist, StorylistStoriesNavigationTeasers } from '@models/storylist.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { ApiUrl, Endpoints } from './endpoints';
@@ -23,8 +23,8 @@ export class StorylistService {
 		slug: string,
 		limit: number = 100,
 		offset: number = 0,
-	): Observable<StorylistPublicationsNavigationTeasers> {
+	): Observable<StorylistStoriesNavigationTeasers> {
 		const params = new HttpParams().set('limit', limit).set('offset', offset);
-		return this.http.get<StorylistPublicationsNavigationTeasers>(`${this.url}/${slug}/navigation`, { params });
+		return this.http.get<StorylistStoriesNavigationTeasers>(`${this.url}/${slug}/navigation`, { params });
 	}
 }
