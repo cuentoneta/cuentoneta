@@ -57,9 +57,6 @@ export const landingPageContentQuery = defineQuery(`
         title,
         'slug': slug.current,
         description,
-        displayDates,
-        editionPrefix,
-        comingNextLabel,
         featuredImage,
         'tags': coalesce(tags[] -> {
             title,
@@ -68,8 +65,8 @@ export const landingPageContentQuery = defineQuery(`
             description,
             icon
         }, []),
-        'publications': [],
-        'count': coalesce(count(publications), 0),
+        'stories': [],
+        'count': coalesce(count(stories), 0),
 				config,
     },[]),
     'campaigns': coalesce(campaigns[]->{

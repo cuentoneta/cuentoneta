@@ -6,9 +6,6 @@ export const storylistTeasersQuery = defineQuery(`
     'slug': slug.current,
     title,
     description,
-    displayDates,
-    editionPrefix,
-    comingNextLabel,
     featuredImage,
     'tags': coalesce(tags[] -> {
         title, 
@@ -17,102 +14,86 @@ export const storylistTeasersQuery = defineQuery(`
         description, 
         icon
     }, []),
-    'publications': [],
-    'count': coalesce(count(publications), 0),
+    'stories': [],
+    'count': coalesce(count(stories), 0),
     config
     }
 `);
 
 export const storylistNavigationTeasersQuery = defineQuery(`
 *[_type == 'storylist' && slug.current == $slug && !(_id in path('drafts.**'))][0]
-{ 
-    _id,
+{
+		_id,
     'slug': slug.current,
     title,
     description,
-    displayDates,
-    editionPrefix,
-    comingNextLabel,
     featuredImage,
     'tags': [],
-    'publications': coalesce(publications[]{
-        publishingOrder,
-        publishingDate,
-        published,
-        'story': story->{
+    'stories': coalesce(stories[$start...$end]->{
+    		_id,
+        'slug': slug.current,
+        title,
+        badLanguage,
+        'body': [],
+        originalPublication,
+        approximateReadingTime,
+        'resources': [],
+        'mediaSources': coalesce(mediaSources[], []),
+        'author': author->{
             _id,
             'slug': slug.current,
-            title,
-            badLanguage,
-            'body': [],
-            originalPublication,
-            approximateReadingTime,
+            name,
+            image,
+            nationality->,
+            'biography': [],
+            bornOn,
+            diedOn,
             'resources': [],
-            'mediaSources': coalesce(mediaSources[], []),
-            'author': author->{ 
-                _id,
-                'slug': slug.current,
-                name,
-                image,
-                nationality->,
-                'biography': [],
-                bornOn,
-                diedOn,
-                'resources': [],
-            }
         }
-    }, [])[$start...$end],
-    'count': coalesce(count(publications), 0),
+    }, []),
+    'count': coalesce(count(stories), 0),
     config
     }
 `);
 
 export const storylistQuery = defineQuery(`
 *[_type == 'storylist' && slug.current == $slug && !(_id in path('drafts.**'))][0]
-{ 
+{
     _id,
     'slug': slug.current,
     title,
     description,
-    displayDates,
-    editionPrefix,
-    comingNextLabel,
     featuredImage,
     'tags': coalesce(tags[] -> {
-        title, 
-        'slug': slug.current, 
+        title,
+        'slug': slug.current,
         shortDescription,
-        description, 
+        description,
         icon
     }, []),
-    'publications': coalesce(publications[]{
-        publishingOrder,
-        publishingDate,
-        published,
-        'story': story->{
+    'stories': coalesce(stories[]->{
+        _id,
+        'slug': slug.current,
+        title,
+        badLanguage,
+        'body': coalesce(body[0...3], []),
+        originalPublication,
+        approximateReadingTime,
+        'resources': [],
+        'mediaSources': coalesce(mediaSources[], []),
+        'author': author->{
             _id,
             'slug': slug.current,
-            title,
-            badLanguage,
-            'body': coalesce(body[0...3], []),
-            originalPublication,
-            approximateReadingTime,
+            name,
+            image,
+            nationality->,
+            'biography': [],
+            bornOn,
+            diedOn,
             'resources': [],
-            'mediaSources': coalesce(mediaSources[], []),
-            'author': author->{ 
-                _id,
-                'slug': slug.current,
-                name,
-                image,
-                nationality->,
-                'biography': [],
-                bornOn,
-                diedOn,
-                'resources': [],
-            }
         }
     }, []),
-    'count': coalesce(count(publications), 0),
+    'count': coalesce(count(stories), 0),
     config
     }
 `);
