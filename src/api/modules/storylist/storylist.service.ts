@@ -1,9 +1,6 @@
 // Interfaces
 import { Storylist, StorylistPublicationsNavigationTeasers, StorylistTeaser } from '@models/storylist.model';
 
-// Funciones de mapeo
-import { mapStorylist, mapStorylistNavigationTeasers, mapStorylistTeasers } from '../../_utils/functions';
-
 // Funciones de repository
 import { StoryListBySlugArgs } from '../../interfaces/queryArgs';
 import {
@@ -14,17 +11,12 @@ import {
 
 export async function getAllStorylistTeasers(): Promise<StorylistTeaser[]> {
 	const result = await fetchAllStorylistTeasers();
-	return mapStorylistTeasers(result);
+	return result;
 }
 
 export async function getStorylistBySlug(args: StoryListBySlugArgs): Promise<Storylist> {
 	const result = await fetchStorylistBySlug(args.slug);
-
-	if (!result) {
-		throw new Error(`Storylist with slug ${args.slug} not found`);
-	}
-
-	return mapStorylist(result);
+	return result;
 }
 
 export async function getStorylistNavigationTeasersByStorylistSlug(args: {
@@ -38,9 +30,5 @@ export async function getStorylistNavigationTeasersByStorylistSlug(args: {
 		end: (args.offset + 1) * args.limit,
 	});
 
-	if (!result) {
-		throw new Error(`Storylist with slug ${args.slug} not found`);
-	}
-
-	return mapStorylistNavigationTeasers(result);
+	return result;
 }

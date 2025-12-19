@@ -99,7 +99,7 @@ export function mapAuthorBiography(biography: BiographySubQuery): TextBlockConte
 	return mapBlockContentToTextParagraphs(biography);
 }
 
-function urlFor(source: SanityImageSource): string {
+export function urlFor(source: SanityImageSource): string {
 	if (!source) {
 		return '';
 	}
@@ -130,7 +130,7 @@ export function mapResources(resources: ResourcesSubQuery): Resource[] {
 }
 
 type TagsSubQuery = (StorylistTeasersQueryResult[0] | NonNullable<StorylistTeasersQueryResult>[0])['tags'];
-function mapTags(tags: TagsSubQuery): Tag[] {
+export function mapTags(tags: TagsSubQuery): Tag[] {
 	return tags.map((tag) => ({
 		...tag,
 		description: mapBlockContentToTextParagraphs(tag.description),
@@ -144,6 +144,10 @@ function mapTags(tags: TagsSubQuery): Tag[] {
 export function mapStorylistTeasers(result: StorylistTeasersQueryResult): StorylistTeaser[] {
 	return result.map((item) => ({
 		...item,
+		config: {
+			...item.config,
+			showAuthors: item.config?.showAuthors ?? false,
+		},
 		description: mapBlockContentToTextParagraphs(item.description),
 		tags: mapTags(item.tags),
 		featuredImage: urlFor(item.featuredImage),
@@ -169,25 +173,14 @@ export function mapStorylist(result: NonNullable<StorylistQueryResult>): Storyli
 
 	return {
 		...result,
+		config: {
+			...result.config,
+			showAuthors: result.config?.showAuthors ?? false,
+		},
 		description: mapBlockContentToTextParagraphs(result.description),
 		tags: mapTags(result.tags),
 		featuredImage: urlFor(result.featuredImage),
 		publications,
-	};
-}
-
-export function mapStorylistNavigationTeasers(
-	result: NonNullable<StorylistNavigationTeasersQueryResult>,
-): StorylistPublicationsNavigationTeasers {
-	return {
-		...result,
-		description: mapBlockContentToTextParagraphs(result.description),
-		tags: mapTags(result.tags),
-		featuredImage: urlFor(result.featuredImage),
-		publications: result.publications.map((p) => ({
-			...p,
-			story: { ...p.story, author: mapAuthorTeaser(p.story.author), paragraphs: [], media: [] },
-		})),
 	};
 }
 
