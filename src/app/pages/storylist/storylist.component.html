@@ -10,7 +10,7 @@
 								@for (story of stories(); track $index) {
 									<cuentoneta-story-card-teaser
 										[story]="story"
-										[showAuthor]="true"
+										[showAuthor]="storylist.config.showAuthors"
 										[order]="$index + 1"
 										[showExcerpt]="true"
 										[navigationParams]="{
