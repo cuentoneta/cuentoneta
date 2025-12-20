@@ -68,6 +68,8 @@ export const landingPageContentQuery = defineQuery(`
         'stories': [],
         'count': coalesce(count(stories), 0),
 				config,
+				'tabs': [],
+	      'mediaSources': coalesce(mediaSources[], []),
     },[]),
     'campaigns': coalesce(campaigns[]->{
         _id,
