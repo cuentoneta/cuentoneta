@@ -1,26 +1,28 @@
 import { defineQuery } from 'groq';
 
 export const storylistTeasersQuery = defineQuery(`
-*[_type == 'storylist' && !(_id in path('drafts.**'))]{ 
+*[_type == 'storylist' && !(_id in path('drafts.**'))]{
     _id,
     'slug': slug.current,
     title,
     description,
     featuredImage,
     'tags': coalesce(tags[] -> {
-        title, 
-        'slug': slug.current, 
+        title,
+        'slug': slug.current,
         shortDescription,
-        description, 
+        description,
         icon
     }, []),
     'stories': [],
     'count': coalesce(count(stories), 0),
-    config
+    config,
+    'tabs': [],
+		'mediaSources': coalesce(mediaSources[], []),
     }
 `);
 
-export const storylistNavigationTeasersQuery = defineQuery(`
+export const storylistStoriesNavigationTeasersQuery = defineQuery(`
 *[_type == 'storylist' && slug.current == $slug && !(_id in path('drafts.**'))][0]
 {
 		_id,
@@ -52,7 +54,9 @@ export const storylistNavigationTeasersQuery = defineQuery(`
         }
     }, []),
     'count': coalesce(count(stories), 0),
-    config
+    config,
+    'tabs': [],
+		'mediaSources': [],
     }
 `);
 
@@ -94,6 +98,8 @@ export const storylistQuery = defineQuery(`
         }
     }, []),
     'count': coalesce(count(stories), 0),
-    config
+    config,
+    'tabs': coalesce(tabs[], []),
+		'mediaSources': coalesce(mediaSources[], []),
     }
 `);
