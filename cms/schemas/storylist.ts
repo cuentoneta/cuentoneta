@@ -1,5 +1,51 @@
-import { DashboardIcon } from '@sanity/icons';
+import { DashboardIcon, DocumentTextIcon } from '@sanity/icons';
 import { defineArrayMember, defineField, defineType } from 'sanity';
+import { audioRecording, spaceRecording, spotifyPodcastEpisode, youtubeVideo } from './media-sources';
+
+// Sub-schema para definir tabs programables
+// TODO: Evaluar su uso para futuros features donde se requiera contenido programable desde Sanity
+const storylistTab = defineType({
+	name: 'storylistTab',
+	title: 'Pestaña de Storylist',
+	type: 'object',
+	icon: DocumentTextIcon,
+	fields: [
+		defineField({
+			name: 'title',
+			title: 'Título de la pestaña',
+			type: 'string',
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
+			name: 'slug',
+			title: 'Slug de la pestaña',
+			type: 'slug',
+			options: {
+				source: 'title',
+				maxLength: 96,
+			},
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
+			name: 'content',
+			title: 'Contenido de la pestaña',
+			type: 'blockContent',
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
+			name: 'icon',
+			title: 'Ícono (opcional)',
+			description: 'Nombre del ícono de FontAwesome (ej: "users", "book", "info-circle")',
+			type: 'string',
+		}),
+	],
+	preview: {
+		select: {
+			title: 'title',
+			subtitle: 'slug.current',
+		},
+	},
+});
 
 export default defineType({
 	name: 'storylist',
@@ -74,6 +120,25 @@ export default defineType({
 					type: 'reference',
 					to: [{ type: 'story' }],
 				}),
+			],
+		}),
+		defineField({
+			name: 'tabs',
+			title: 'Pestañas programables',
+			description: 'Pestañas adicionales con contenido personalizado (ej: "Sobre los autores")',
+			type: 'array',
+			of: [defineArrayMember(storylistTab)],
+		}),
+		defineField({
+			name: 'mediaSources',
+			title: 'Recursos multimedia asociados a la storylist',
+			description: 'Audio, video, y otros contenidos multimedia relacionados con la colección',
+			type: 'array',
+			of: [
+				defineArrayMember(audioRecording),
+				defineArrayMember(spaceRecording),
+				defineArrayMember(youtubeVideo),
+				defineArrayMember(spotifyPodcastEpisode),
 			],
 		}),
 	],

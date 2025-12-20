@@ -1558,6 +1558,272 @@
 					}
 				},
 				"optional": true
+			},
+			"tabs": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "array",
+					"of": {
+						"type": "object",
+						"attributes": {
+							"title": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "string"
+								},
+								"optional": false
+							},
+							"slug": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "inline",
+									"name": "slug"
+								},
+								"optional": false
+							},
+							"content": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "inline",
+									"name": "blockContent"
+								},
+								"optional": false
+							},
+							"icon": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "string"
+								},
+								"optional": true
+							},
+							"_type": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "string",
+									"value": "storylistTab"
+								}
+							}
+						},
+						"rest": {
+							"type": "object",
+							"attributes": {
+								"_key": {
+									"type": "objectAttribute",
+									"value": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"optional": true
+			},
+			"mediaSources": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "array",
+					"of": {
+						"type": "union",
+						"of": [
+							{
+								"type": "object",
+								"attributes": {
+									"title": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "string"
+										},
+										"optional": false
+									},
+									"description": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "inline",
+											"name": "blockContent"
+										},
+										"optional": false
+									},
+									"url": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "string"
+										},
+										"optional": false
+									},
+									"_type": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "string",
+											"value": "audioRecording"
+										}
+									}
+								},
+								"rest": {
+									"type": "object",
+									"attributes": {
+										"_key": {
+											"type": "objectAttribute",
+											"value": {
+												"type": "string"
+											}
+										}
+									}
+								}
+							},
+							{
+								"type": "object",
+								"attributes": {
+									"postId": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "string"
+										},
+										"optional": false
+									},
+									"title": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "string"
+										},
+										"optional": false
+									},
+									"description": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "inline",
+											"name": "blockContent"
+										},
+										"optional": false
+									},
+									"spaceUrl": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "string"
+										},
+										"optional": false
+									},
+									"duration": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "string"
+										},
+										"optional": false
+									},
+									"_type": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "string",
+											"value": "spaceRecording"
+										}
+									}
+								},
+								"rest": {
+									"type": "object",
+									"attributes": {
+										"_key": {
+											"type": "objectAttribute",
+											"value": {
+												"type": "string"
+											}
+										}
+									}
+								}
+							},
+							{
+								"type": "object",
+								"attributes": {
+									"title": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "string"
+										},
+										"optional": false
+									},
+									"description": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "inline",
+											"name": "blockContent"
+										},
+										"optional": false
+									},
+									"videoId": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "string"
+										},
+										"optional": false
+									},
+									"_type": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "string",
+											"value": "youTubeVideo"
+										}
+									}
+								},
+								"rest": {
+									"type": "object",
+									"attributes": {
+										"_key": {
+											"type": "objectAttribute",
+											"value": {
+												"type": "string"
+											}
+										}
+									}
+								}
+							},
+							{
+								"type": "object",
+								"attributes": {
+									"title": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "string"
+										},
+										"optional": false
+									},
+									"description": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "inline",
+											"name": "blockContent"
+										},
+										"optional": false
+									},
+									"url": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "string"
+										},
+										"optional": false
+									},
+									"_type": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "string",
+											"value": "spotifyPodcastEpisode"
+										}
+									}
+								},
+								"rest": {
+									"type": "object",
+									"attributes": {
+										"_key": {
+											"type": "objectAttribute",
+											"value": {
+												"type": "string"
+											}
+										}
+									}
+								}
+							}
+						]
+					}
+				},
+				"optional": true
 			}
 		}
 	},
