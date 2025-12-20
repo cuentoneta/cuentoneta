@@ -39,8 +39,8 @@ export async function mapMediaSources(mediaSources: MediaResourcesStorySubQuery)
 	return media;
 }
 
-type MediaResourcesStorylistSubQuery = NonNullable<StorylistQueryResult>['stories'][0]['mediaSources'];
-export function mapMediaSourcesForStorylist(mediaSources: MediaResourcesStorylistSubQuery): Media[] {
+type MediaResourcesTeasersSubquery = NonNullable<StorylistQueryResult>['stories'][0]['mediaSources'];
+export function mapMediaSourcesTeasers(mediaSources: MediaResourcesTeasersSubquery): Media[] {
 	if (!mediaSources) return [];
 
 	const media: Media[] = [];
