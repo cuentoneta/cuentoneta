@@ -2,7 +2,7 @@
 import { client } from '../_helpers/sanity-connector';
 
 // Funciones
-import { mapMediaSources, mapMediaSourcesForStorylist } from './media-sources.functions';
+import { mapMediaSources, mapMediaSourcesTeasers } from './media-sources.functions';
 
 // Tipos de Sanity
 
@@ -13,7 +13,7 @@ import { createImageUrlBuilder, SanityImageSource } from '@sanity/image-url';
 import { Author, AuthorTeaser } from '@models/author.model';
 import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
 import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
-import { Storylist, StorylistTeaser } from '@models/storylist.model';
+import { StorylistTeaser } from '@models/storylist.model';
 import { Resource } from '@models/resource.model';
 import {
 	Story,
@@ -35,7 +35,6 @@ import {
 	StoriesByAuthorSlugQueryResult,
 	StoriesBySlugsQueryResult,
 	StoryBySlugQueryResult,
-	StorylistNavigationTeasersQueryResult,
 	StorylistQueryResult,
 	StorylistTeasersQueryResult,
 } from '../sanity/types';
@@ -136,7 +135,7 @@ export function mapTags(tags: TagsSubQuery): Tag[] {
 	}));
 }
 
-export function mapStorylistTeasers(result: StorylistTeasersQueryResult): StorylistTeaser[] {
+function mapStorylistTeasers(result: StorylistTeasersQueryResult): StorylistTeaser[] {
 	return result.map((item) => ({
 		...item,
 		config: {
@@ -146,35 +145,9 @@ export function mapStorylistTeasers(result: StorylistTeasersQueryResult): Storyl
 		description: mapBlockContentToTextParagraphs(item.description),
 		tags: mapTags(item.tags),
 		featuredImage: urlFor(item.featuredImage),
+		tabs: [],
+		media: mapMediaSourcesTeasers(item.mediaSources),
 	}));
-}
-
-export function mapStorylist(result: NonNullable<StorylistQueryResult>): Storylist {
-	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
-	const stories: StoryTeaserWithAuthor[] = [];
-	for (const story of result.stories) {
-		stories.push(
-			mapStoryTeaserWithAuthor({
-				...story,
-				author: mapAuthorTeaser({ ...story.author }),
-				media: mapMediaSourcesForStorylist(story.mediaSources),
-				paragraphs: mapBlockContentToTextParagraphs(story.body),
-				resources: [],
-			}),
-		);
-	}
-
-	return {
-		...result,
-		config: {
-			...result.config,
-			showAuthors: result.config?.showAuthors ?? false,
-		},
-		description: mapBlockContentToTextParagraphs(result.description),
-		tags: mapTags(result.tags),
-		featuredImage: urlFor(result.featuredImage),
-		stories,
-	};
 }
 
 // TODO: Agregar soporte a futuro para mapear imágenes dentro del cuerpo de una story
@@ -215,7 +188,7 @@ export function mapStoryTeaser(result: StoryTeasersQueryResult): StoryTeaser[] {
 
 		stories.push({
 			...properties,
-			media: mapMediaSourcesForStorylist(mediaSources),
+			media: mapMediaSourcesTeasers(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: mapBlockContentToTextParagraphs(body) as [TextBlockContent, TextBlockContent, TextBlockContent],
 		});
@@ -232,7 +205,7 @@ export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlug
 
 		stories.push({
 			...properties,
-			media: mapMediaSourcesForStorylist(mediaSources),
+			media: mapMediaSourcesTeasers(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: [],
 		});
@@ -253,7 +226,7 @@ export function mapStoryNavigationTeaserWithAuthor(
 		stories.push({
 			...properties,
 			author: mapAuthorTeaser(item.author),
-			media: mapMediaSourcesForStorylist(mediaSources),
+			media: mapMediaSourcesTeasers(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: [],
 		});

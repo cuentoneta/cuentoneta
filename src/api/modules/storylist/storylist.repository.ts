@@ -1,21 +1,42 @@
 // Sanity
 import { client } from '../../_helpers/sanity-connector';
 
+// Modelos
+import { Storylist, StorylistStoriesNavigationTeasers, StorylistTeaser } from '@models/storylist.model';
+import { StoryTeaserWithAuthor } from '@models/story.model';
+
 // Queries
-import { storylistNavigationTeasersQuery, storylistQuery, storylistTeasersQuery } from '../../_queries/storylist.query';
+import {
+	storylistStoriesNavigationTeasersQuery,
+	storylistQuery,
+	storylistTeasersQuery,
+} from '../../_queries/storylist.query';
+
+// Utilidades
+import { mapMediaSources, mapMediaSourcesTeasers } from '../../_utils/media-sources.functions';
 import {
 	mapAuthorTeaser,
 	mapBlockContentToTextParagraphs,
-	mapStorylist,
-	mapStorylistTeasers,
+	mapStoryTeaserWithAuthor,
 	mapTags,
 	urlFor,
 } from '../../_utils/functions';
-import { Storylist, StorylistStoriesNavigationTeasers, StorylistTeaser } from '@models/storylist.model';
 
 export async function fetchAllStorylistTeasers(): Promise<StorylistTeaser[]> {
 	const result = await client.fetch(storylistTeasersQuery);
-	return mapStorylistTeasers(result);
+
+	return result.map((item) => ({
+		...item,
+		config: {
+			...item.config,
+			showAuthors: item.config?.showAuthors ?? false,
+		},
+		description: mapBlockContentToTextParagraphs(item.description),
+		tags: mapTags(item.tags),
+		featuredImage: urlFor(item.featuredImage),
+		tabs: [],
+		media: mapMediaSourcesTeasers(item.mediaSources),
+	}));
 }
 
 export async function fetchStorylistBySlug(slug: string): Promise<Storylist> {
@@ -25,7 +46,38 @@ export async function fetchStorylistBySlug(slug: string): Promise<Storylist> {
 		throw new Error(`Storylist with slug ${slug} not found`);
 	}
 
-	return mapStorylist(result);
+	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
+	const stories: StoryTeaserWithAuthor[] = [];
+	for (const story of result.stories) {
+		stories.push(
+			mapStoryTeaserWithAuthor({
+				...story,
+				author: mapAuthorTeaser({ ...story.author }),
+				media: mapMediaSourcesTeasers(story.mediaSources),
+				paragraphs: mapBlockContentToTextParagraphs(story.body),
+				resources: [],
+			}),
+		);
+	}
+
+	return {
+		...result,
+		config: {
+			...result.config,
+			showAuthors: result.config?.showAuthors ?? false,
+		},
+		description: mapBlockContentToTextParagraphs(result.description),
+		tags: mapTags(result.tags),
+		featuredImage: urlFor(result.featuredImage),
+		stories,
+		tabs: result.tabs.map((tab) => ({
+			title: tab.title,
+			slug: tab.slug.current,
+			content: mapBlockContentToTextParagraphs(tab.content),
+			icon: tab.icon ?? undefined,
+		})),
+		media: await mapMediaSources(result.mediaSources),
+	};
 }
 
 type FetchStorylistNavigationTeasersByStorylistSlugParams = {
@@ -33,10 +85,10 @@ type FetchStorylistNavigationTeasersByStorylistSlugParams = {
 	start: number;
 	end: number;
 };
-export async function fetchStorylistNavigationTeaserByStorylistSlug(
+export async function fetchStorylistStoriesNavigationTeaserByStorylistSlug(
 	params: FetchStorylistNavigationTeasersByStorylistSlugParams,
 ): Promise<StorylistStoriesNavigationTeasers> {
-	const result = await client.fetch(storylistNavigationTeasersQuery, params);
+	const result = await client.fetch(storylistStoriesNavigationTeasersQuery, params);
 
 	if (!result) {
 		throw new Error(`Storylist with slug ${params.slug} not found`);
@@ -57,5 +109,7 @@ export async function fetchStorylistNavigationTeaserByStorylistSlug(
 			paragraphs: [],
 			media: [],
 		})),
+		tabs: [],
+		media: [],
 	};
 }

@@ -6,7 +6,7 @@ import { StoryListBySlugArgs } from '../../interfaces/queryArgs';
 import {
 	fetchAllStorylistTeasers,
 	fetchStorylistBySlug,
-	fetchStorylistNavigationTeaserByStorylistSlug,
+	fetchStorylistStoriesNavigationTeaserByStorylistSlug,
 } from './storylist.repository';
 
 export async function getAllStorylistTeasers(): Promise<StorylistTeaser[]> {
@@ -24,7 +24,7 @@ export async function getStorylistNavigationTeasersByStorylistSlug(args: {
 	limit: number;
 	offset: number;
 }): Promise<StorylistStoriesNavigationTeasers> {
-	const result = await fetchStorylistNavigationTeaserByStorylistSlug({
+	const result = await fetchStorylistStoriesNavigationTeaserByStorylistSlug({
 		slug: args.slug,
 		start: args.offset * args.limit,
 		end: (args.offset + 1) * args.limit,
