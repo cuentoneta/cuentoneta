@@ -1,24 +1,22 @@
 import { render, screen } from '@testing-library/angular';
-import { NavigablePublicationTeaserComponent } from './navigable-publication-teaser.component';
-import { publicationMock, publicationNavigationTeaserMock } from '../../mocks/story.mock';
-import { DatePipe } from '@angular/common';
-import { storylistNavigationTeaserMock } from '../../mocks/storylist.mock';
+import { NavigableStorylistStoryTeaserComponent } from './navigable-storylist-story-teaser.component';
+import { storyMock, storyNavigationTeaserWithAuthorMock } from '@mocks/story.mock';
+import { storylistNavigationTeaserMock } from '@mocks/storylistMock';
 
-describe('NavigablePublicationTeaserComponent', () => {
-	const authorName = publicationMock.story.author.name;
-	const storyTitle = publicationMock.story.title;
+describe('NavigableStorylistStoryTeaserComponent', () => {
+	const authorName = storyMock.author.name;
+	const storyTitle = storyMock.title;
 
 	const RegExpAuthorName = new RegExp(`\\b${authorName}\\b`, 'iu');
 	const RegExpStoryTitle = new RegExp(`${storyTitle}`, 'i');
 
 	const setup = async () => {
-		return await render(NavigablePublicationTeaserComponent, {
+		return await render(NavigableStorylistStoryTeaserComponent, {
 			inputs: {
-				publication: publicationNavigationTeaserMock,
+				story: storyNavigationTeaserWithAuthorMock,
 				selected: true,
 				storylist: storylistNavigationTeaserMock,
 			},
-			providers: [DatePipe],
 		});
 	};
 	it('should render the component', async () => {

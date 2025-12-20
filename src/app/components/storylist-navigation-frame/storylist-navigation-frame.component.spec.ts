@@ -3,14 +3,14 @@ import { Observable, of } from 'rxjs';
 
 // Components
 import { StorylistNavigationFrameComponent } from './storylist-navigation-frame.component';
-import { NavigablePublicationTeaserComponent } from '../navigable-publication-teaser/navigable-publication-teaser.component';
+import { NavigableStorylistStoryTeaserComponent } from '../navigable-storylist-story-teaser/navigable-storylist-story-teaser.component';
 
 // Models
 import { Storylist } from '@models/storylist.model';
 
 // Mocks
-import { storyListMock } from '../../mocks/storylist.mock';
-import { storyMock } from '../../mocks/story.mock';
+import { storylistMock } from '@mocks/storylistMock';
+import { storyMock } from '@mocks/story.mock';
 
 // Services
 import { StorylistService } from '../../providers/storylist.service';
@@ -18,24 +18,22 @@ import { StorylistService } from '../../providers/storylist.service';
 // 3rd party libs
 import { render, screen } from '@testing-library/angular';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { MapPublicationEditionLabelPipe } from '../../pipes/map-publication-edition-label.pipe';
 
 describe('StorylistNavigationFrameComponent', () => {
 	const setup = async () => {
 		return await render(StorylistNavigationFrameComponent, {
-			componentImports: [CommonModule, NavigablePublicationTeaserComponent, NgxSkeletonLoaderModule],
+			componentImports: [CommonModule, NavigableStorylistStoryTeaserComponent, NgxSkeletonLoaderModule],
 			inputs: {
 				selectedStorySlug: storyMock.slug,
-				navigationSlug: storyListMock.slug,
+				navigationSlug: storylistMock.slug,
 			},
 			providers: [
 				DatePipe,
-				MapPublicationEditionLabelPipe,
 				{
 					provide: StorylistService,
 					useValue: {
 						getStorylistNavigationTeasers(): Observable<Storylist> {
-							return of(storyListMock);
+							return of(storylistMock);
 						},
 					},
 				},
@@ -51,8 +49,7 @@ describe('StorylistNavigationFrameComponent', () => {
 	test('should render StorylistNavigationFrameComponent with stories', async () => {
 		const view = await setup();
 		view.detectChanges();
-		expect(screen.getByText(storyListMock.publications[0].story.title)).toBeInTheDocument();
-		expect(screen.getByText(storyListMock.publications[0].story.author.name)).toBeInTheDocument();
-		expect(screen.getByText('Día 54 - 27 de October, 2024')).toBeInTheDocument();
+		expect(screen.getByText(storylistMock.stories[0].title)).toBeInTheDocument();
+		expect(screen.getByText(storylistMock.stories[0].author.name)).toBeInTheDocument();
 	});
 });

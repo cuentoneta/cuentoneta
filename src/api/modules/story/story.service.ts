@@ -26,7 +26,7 @@ import { fetchClarityData } from '../../_helpers/clarity-connector';
 import { updateRotatingContentMostRead } from '../content/content.repository';
 
 // Funciones de mapeo
-import { mapMediaSourcesForStorylist } from '../../_utils/media-sources.functions';
+import { mapMediaSourcesTeasers } from '../../_utils/media-sources.functions';
 
 // Funciones de repository
 import {
@@ -115,7 +115,7 @@ export async function getStories(limit: number = 100, offset: number = 0): Promi
 		return mapStoryTeaserWithAuthor({
 			...fields,
 			author: mapAuthorTeaser(author),
-			media: mapMediaSourcesForStorylist(mediaSources),
+			media: mapMediaSourcesTeasers(mediaSources),
 			paragraphs: mapBlockContentToTextParagraphs(body),
 			resources: [],
 		});

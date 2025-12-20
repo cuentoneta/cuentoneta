@@ -122,8 +122,32 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 				}
 
 				@if (author(); as author) {
-					<cuentoneta-tabs class="w-full">
-						<cuentoneta-tab title="Biografía">
+					<cuentoneta-tabs [initialTab]="activeTab()" class="w-full">
+						<cuentoneta-tab title="Textos" name="stories">
+							<div>
+								@defer (when storiesResource.hasValue()) {
+									<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
+										@for (story of stories(); track $index) {
+											<cuentoneta-story-card-teaser
+												[story]="story"
+												[order]="$index + 1"
+												[navigationParams]="{
+													navigation: 'author',
+													navigationSlug: author.slug,
+												}"
+											/>
+										}
+									</section>
+								} @loading (minimum 500ms) {
+									<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
+										@for (_ of [].constructor(12); track $index) {
+											<cuentoneta-story-card-teaser-skeleton [order]="$index + 1" data-testid="skeleton" />
+										}
+									</section>
+								}
+							</div>
+						</cuentoneta-tab>
+						<cuentoneta-tab title="Biografía" name="about">
 							<div>
 								@defer (when authorResource.hasValue()) {
 									<div class="flex flex-col gap-4">
@@ -158,30 +182,6 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 								}
 							</div>
 						</cuentoneta-tab>
-						<cuentoneta-tab title="Textos">
-							<div>
-								@defer (when storiesResource.hasValue()) {
-									<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-										@for (story of stories(); track $index) {
-											<cuentoneta-story-card-teaser
-												[story]="story"
-												[order]="$index + 1"
-												[navigationParams]="{
-													navigation: 'author',
-													navigationSlug: author.slug,
-												}"
-											/>
-										}
-									</section>
-								} @loading (minimum 500ms) {
-									<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-										@for (_ of [].constructor(12); track $index) {
-											<cuentoneta-story-card-teaser-skeleton [order]="$index + 1" data-testid="skeleton" />
-										}
-									</section>
-								}
-							</div>
-						</cuentoneta-tab>
 					</cuentoneta-tabs>
 				}
 			</article>
@@ -191,8 +191,11 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 export default class AuthorComponent {
 	private readonly appRoutes = AppRoutes;
 
-	// Providers
+	// Route inputs
 	readonly slug = input.required<string>();
+	readonly activeTab = input<'stories' | 'about'>('stories');
+
+	// Providers
 	private authorService = inject(AuthorService);
 	private storyService = inject(StoryService);
 	private router = inject(Router);

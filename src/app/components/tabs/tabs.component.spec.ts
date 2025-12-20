@@ -8,21 +8,21 @@ import Tabs from './tabs.component';
 	selector: 'cuentoneta-test-host',
 	imports: [Tabs, Tab],
 	template: `
-		<cuentoneta-tabs [initialTabIndex]="initialTabIndex">
-			<cuentoneta-tab title="Tab 1">
+		<cuentoneta-tabs [initialTab]="initialActiveTab">
+			<cuentoneta-tab title="Tab 1" name="tab1">
 				<p>Content 1</p>
 			</cuentoneta-tab>
-			<cuentoneta-tab title="Tab 2">
+			<cuentoneta-tab title="Tab 2" name="tab2">
 				<p>Content 2</p>
 			</cuentoneta-tab>
-			<cuentoneta-tab title="Tab 3">
+			<cuentoneta-tab title="Tab 3" name="tab3">
 				<p>Content 3</p>
 			</cuentoneta-tab>
 		</cuentoneta-tabs>
 	`,
 })
 class TestHostComponent {
-	initialTabIndex = 0;
+	initialActiveTab = 'tab1';
 }
 
 describe('TabsComponent', () => {
@@ -80,7 +80,7 @@ describe('TabsComponent', () => {
 	it('should support initialTabIndex input', async () => {
 		await render(TestHostComponent, {
 			componentProperties: {
-				initialTabIndex: 1,
+				initialActiveTab: 'tab2',
 			},
 		});
 

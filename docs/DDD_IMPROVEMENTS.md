@@ -1098,6 +1098,13 @@ namespace StoryMapper {
 		};
 	}
 
+	export function toTeaserWithAuthor(story: Story): StoryTeaserWithAuthor {
+		return {
+			...this.toTeaser(story),
+			author: AuthorMapper.toTeaser(story.author),
+		};
+	}
+
 	export function toApiResponse(story: Story): StoryApiResponse {
 		return {
 			_id: story._id,
@@ -1165,72 +1172,48 @@ namespace AuthorMapper {
 namespace StorylistMapper {
 	export function toDomain(sanityStorylist: SanityStorylistSchemaObject): Storylist {
 		return {
+			_id: sanityStorylist._id,
 			title: sanityStorylist.title,
 			slug: Slug.create(sanityStorylist.slug),
-			displayDates: sanityStorylist.displayDates,
-			editionPrefix: sanityStorylist.editionPrefix,
-			comingNextLabel: sanityStorylist.comingNextLabel,
 			count: sanityStorylist.count,
 			description: sanityStorylist.description,
 			featuredImage: sanityStorylist.featuredImage,
 			tags: sanityStorylist.tags,
-			publications: sanityStorylist.publications.map((pub) => PublicationMapper.toDomain(pub)),
+			stories: sanityStorylist.stories.map((story) => StoryMapper.toTeaserWithAuthor(story)),
+			config: sanityStorylist.config,
 		};
 	}
 
 	export function toTeaser(storylist: Storylist): StorylistTeaser {
 		return {
+			_id: storylist._id,
 			title: storylist.title,
 			slug: storylist.slug,
-			displayDates: storylist.displayDates,
-			editionPrefix: storylist.editionPrefix,
-			comingNextLabel: storylist.comingNextLabel,
 			count: storylist.count,
 			description: storylist.description,
 			featuredImage: storylist.featuredImage,
 			tags: storylist.tags,
-			publications: [], // Vacío en teaser
+			stories: [], // Vacío en teaser
+			config: storylist.config,
 		};
 	}
 
 	export function toApiResponse(storylist: Storylist): StorylistApiResponse {
 		return {
+			_id: storylist._id,
 			title: storylist.title,
 			slug: storylist.slug.getValue(),
-			displayDates: storylist.displayDates,
-			editionPrefix: storylist.editionPrefix,
-			comingNextLabel: storylist.comingNextLabel,
 			count: storylist.count,
 			description: storylist.description,
 			featuredImage: storylist.featuredImage,
 			tags: storylist.tags,
-			publications: storylist.publications.map((pub) => PublicationMapper.toApiResponse(pub)),
+			stories: storylist.stories.map((story) => StoryMapper.toApiResponse(story)),
+			config: storylist.config,
 		};
 	}
 }
 
-// 4. Mapper para Publication (entidad dentro de Storylist)
-namespace PublicationMapper {
-	export function toDomain(sanityPub: SanityPublicationSchemaObject): Publication {
-		return {
-			publishingOrder: sanityPub.publishingOrder,
-			published: sanityPub.published,
-			publishingDate: sanityPub.publishingDate ? DateString.create(sanityPub.publishingDate) : undefined,
-			story: StoryMapper.toNavigationTeaserWithAuthor(StoryMapper.toDomain(sanityPub.story)),
-		};
-	}
-
-	export function toApiResponse(publication: Publication): PublicationApiResponse {
-		return {
-			publishingOrder: publication.publishingOrder,
-			published: publication.published,
-			publishingDate: publication.publishingDate?.getValue(),
-			story: StoryMapper.toApiResponse(publication.story),
-		};
-	}
-}
-
-// 5. Uso desde repositorio
+// 4. Uso desde repositorio
 class SanityStoryRepository implements StoryRepository {
 	async findBySlug(slug: string): Promise<Story | null> {
 		const result = await this.sanityClient.fetch(storyBySlugQuery(slug));
@@ -1318,6 +1301,33 @@ Serializa Story para HTTP.
 **Input:** Story
 **Output:** StoryApiResponse (JSON serializable)
 **Cambios:** Value Objects se convierten a strings
+
+# Storylist Mappings
+
+## toDomain
+
+Convierte un documento de Storylist desde Sanity a un objeto Storylist de dominio.
+
+**Input:** SanityStorylistSchemaObject
+**Output:** Storylist
+**Validaciones:** Se validan slugs
+**Cambios:** Las historias se mapean directamente (sin wrapper Publication)
+
+## toTeaser
+
+Proyecta una Storylist a una vista ligera sin historias cargadas.
+
+**Input:** Storylist
+**Output:** StorylistTeaser
+**Cambios:** `stories = []`
+
+## toApiResponse
+
+Serializa Storylist para HTTP.
+
+**Input:** Storylist
+**Output:** StorylistApiResponse (JSON serializable)
+**Cambios:** Value Objects se convierten a strings, stories se mapean a API response
 ```
 
 ### Beneficios

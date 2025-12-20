@@ -27,7 +27,7 @@ const storylist1 = {
 	editionPrefix: 'Día',
 	featuredImage:
 		'https://cdn.sanity.io/images/s4dbqkc5/development/d1a7fc995e0a4d640c9d8e98fb56f56f209f3d89-392x318.webp',
-	publications: [],
+	stories: [],
 	slug: 'verano-2022',
 	comingNextLabel: 'Próximamente',
 	tags: [
@@ -81,7 +81,7 @@ const storylist2 = {
 			style: 'normal',
 		},
 	],
-	publications: [],
+	stories: [],
 	featuredImage:
 		'https://cdn.sanity.io/images/s4dbqkc5/development/f6be445b251ce65a33721605303069659997bfbf-602x240.jpg?w=2000&fit=max&auto=format',
 	tags: [

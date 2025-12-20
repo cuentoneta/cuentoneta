@@ -2,7 +2,7 @@
 import { client } from '../_helpers/sanity-connector';
 
 // Funciones
-import { mapMediaSources, mapMediaSourcesForStorylist } from './media-sources.functions';
+import { mapMediaSources, mapMediaSourcesTeasers } from './media-sources.functions';
 
 // Tipos de Sanity
 
@@ -13,12 +13,7 @@ import { createImageUrlBuilder, SanityImageSource } from '@sanity/image-url';
 import { Author, AuthorTeaser } from '@models/author.model';
 import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
 import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
-import {
-	PublicationTeaserWithAuthor,
-	Storylist,
-	StorylistPublicationsNavigationTeasers,
-	StorylistTeaser,
-} from '@models/storylist.model';
+import { StorylistTeaser } from '@models/storylist.model';
 import { Resource } from '@models/resource.model';
 import {
 	Story,
@@ -40,7 +35,6 @@ import {
 	StoriesByAuthorSlugQueryResult,
 	StoriesBySlugsQueryResult,
 	StoryBySlugQueryResult,
-	StorylistNavigationTeasersQueryResult,
 	StorylistQueryResult,
 	StorylistTeasersQueryResult,
 } from '../sanity/types';
@@ -70,10 +64,10 @@ export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>): 
 		diedOn: rawAuthorData.diedOn ? (rawAuthorData.diedOn as DateString) : undefined,
 	};
 }
-type AuthorTeaserForPublicationSubQuery = NonNullable<StorylistQueryResult>['publications'][0]['story']['author'];
+type AuthorTeaserForStoriesSubQuery = NonNullable<StorylistQueryResult>['stories'][0]['author'];
 type AuthorTeaserForListSubQuery = UnwrapArray<AuthorsQueryResult>;
 export function mapAuthorTeaser(
-	rawAuthorData: AuthorTeaserForPublicationSubQuery | AuthorTeaserForListSubQuery,
+	rawAuthorData: AuthorTeaserForStoriesSubQuery | AuthorTeaserForListSubQuery,
 ): AuthorTeaser {
 	return {
 		_id: rawAuthorData._id,
@@ -99,7 +93,7 @@ export function mapAuthorBiography(biography: BiographySubQuery): TextBlockConte
 	return mapBlockContentToTextParagraphs(biography);
 }
 
-function urlFor(source: SanityImageSource): string {
+export function urlFor(source: SanityImageSource): string {
 	if (!source) {
 		return '';
 	}
@@ -110,7 +104,7 @@ type ResourcesSubQuery = (
 	| NonNullable<AuthorBySlugQueryResult>
 	| NonNullable<StoryBySlugQueryResult>
 	| NonNullable<StoryBySlugQueryResult>['author']
-	| NonNullable<StorylistQueryResult>['publications'][0]['story']
+	| NonNullable<StorylistQueryResult>['stories'][0]
 	| StoriesByAuthorSlugQueryResult[0]
 )['resources'];
 export function mapResources(resources: ResourcesSubQuery): Resource[] {
@@ -129,8 +123,8 @@ export function mapResources(resources: ResourcesSubQuery): Resource[] {
 	);
 }
 
-type TagsSubQuery = (StorylistTeasersQueryResult[0] | NonNullable<StorylistTeasersQueryResult>[0])['tags'];
-function mapTags(tags: TagsSubQuery): Tag[] {
+type TagsSubQuery = NonNullable<StorylistTeasersQueryResult>[0]['tags'];
+export function mapTags(tags: TagsSubQuery): Tag[] {
 	return tags.map((tag) => ({
 		...tag,
 		description: mapBlockContentToTextParagraphs(tag.description),
@@ -141,54 +135,19 @@ function mapTags(tags: TagsSubQuery): Tag[] {
 	}));
 }
 
-export function mapStorylistTeasers(result: StorylistTeasersQueryResult): StorylistTeaser[] {
+function mapStorylistTeasers(result: StorylistTeasersQueryResult): StorylistTeaser[] {
 	return result.map((item) => ({
 		...item,
+		config: {
+			...item.config,
+			showAuthors: item.config?.showAuthors ?? false,
+		},
 		description: mapBlockContentToTextParagraphs(item.description),
 		tags: mapTags(item.tags),
 		featuredImage: urlFor(item.featuredImage),
+		tabs: [],
+		media: mapMediaSourcesTeasers(item.mediaSources),
 	}));
-}
-
-export function mapStorylist(result: NonNullable<StorylistQueryResult>): Storylist {
-	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
-	const publications: PublicationTeaserWithAuthor[] = [];
-	for (const publication of result.publications) {
-		const { body, author, mediaSources, ...story } = publication.story;
-		publications.push({
-			...publication,
-			story: mapStoryTeaserWithAuthor({
-				...story,
-				author: mapAuthorTeaser({ ...author }),
-				media: mapMediaSourcesForStorylist(mediaSources),
-				paragraphs: mapBlockContentToTextParagraphs(body),
-				resources: [],
-			}),
-		});
-	}
-
-	return {
-		...result,
-		description: mapBlockContentToTextParagraphs(result.description),
-		tags: mapTags(result.tags),
-		featuredImage: urlFor(result.featuredImage),
-		publications,
-	};
-}
-
-export function mapStorylistNavigationTeasers(
-	result: NonNullable<StorylistNavigationTeasersQueryResult>,
-): StorylistPublicationsNavigationTeasers {
-	return {
-		...result,
-		description: mapBlockContentToTextParagraphs(result.description),
-		tags: mapTags(result.tags),
-		featuredImage: urlFor(result.featuredImage),
-		publications: result.publications.map((p) => ({
-			...p,
-			story: { ...p.story, author: mapAuthorTeaser(p.story.author), paragraphs: [], media: [] },
-		})),
-	};
 }
 
 // TODO: Agregar soporte a futuro para mapear imágenes dentro del cuerpo de una story
@@ -229,7 +188,7 @@ export function mapStoryTeaser(result: StoryTeasersQueryResult): StoryTeaser[] {
 
 		stories.push({
 			...properties,
-			media: mapMediaSourcesForStorylist(mediaSources),
+			media: mapMediaSourcesTeasers(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: mapBlockContentToTextParagraphs(body) as [TextBlockContent, TextBlockContent, TextBlockContent],
 		});
@@ -246,7 +205,7 @@ export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlug
 
 		stories.push({
 			...properties,
-			media: mapMediaSourcesForStorylist(mediaSources),
+			media: mapMediaSourcesTeasers(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: [],
 		});
@@ -267,7 +226,7 @@ export function mapStoryNavigationTeaserWithAuthor(
 		stories.push({
 			...properties,
 			author: mapAuthorTeaser(item.author),
-			media: mapMediaSourcesForStorylist(mediaSources),
+			media: mapMediaSourcesTeasers(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: [],
 		});
