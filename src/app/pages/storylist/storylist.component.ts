@@ -1,6 +1,7 @@
 // Core
 import { Component, computed, inject, input } from '@angular/core';
 import { tap } from 'rxjs';
+import { rxResource } from '@angular/core/rxjs-interop';
 
 // 3rd party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -20,12 +21,12 @@ import { environment } from '../../environments/environment';
 
 // Componentes
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
-import { rxResource } from '@angular/core/rxjs-interop';
 import Tabs from '@components/tabs/tabs.component';
 import Tab from '@components/tabs/tab.component';
 import { StorylistTitle } from './storylist-title/storylist-title';
 import { StoryCardTeaserComponent } from '@components/story-card-teaser/story-card-teaser.component';
 import { StoryCardTeaserSkeletonComponent } from '@components/story-card-teaser/story-card-teaser-skeleton.component';
+import { MediaResourceComponent } from '@components/media-resource/media-resource.component';
 
 @Component({
 	selector: 'cuentoneta-storylist',
@@ -38,13 +39,14 @@ import { StoryCardTeaserSkeletonComponent } from '@components/story-card-teaser/
 		StoryCardTeaserComponent,
 		StoryCardTeaserSkeletonComponent,
 		StorylistTitle,
+		MediaResourceComponent,
 	],
 	hostDirectives: [MetaTagsDirective],
 })
 export default class StorylistComponent {
 	// Route inputs
 	readonly slug = input.required<string>();
-	readonly activeTab = input<'stories' | 'about'>('stories');
+	readonly activeTab = input<'stories' | 'about' | string>('stories');
 
 	// Providers
 	private metaTagsDirective = inject(MetaTagsDirective);
@@ -70,6 +72,11 @@ export default class StorylistComponent {
 	);
 	// TODO: Simplificar estructura de tipo Storylist para evitar estas transformaciones
 	readonly stories = computed(() => this.storylistResource.value()?.stories.map((story) => story) || []);
+
+	// Computed properties for tabs and media
+	readonly tabs = computed(() => this.storylistResource.value()?.tabs || []);
+	readonly media = computed(() => this.storylistResource.value()?.media || []);
+	readonly hasMedia = computed(() => this.media().length > 0);
 
 	private updateMetaTags(storylist: Storylist) {
 		this.metaTagsDirective.setTitle(`${storylist.title}`);

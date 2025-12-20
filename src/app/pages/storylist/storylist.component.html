@@ -33,6 +33,7 @@
 						}
 					</div>
 				</cuentoneta-tab>
+
 				<cuentoneta-tab title="Ficha técnica" name="about">
 					@if (storylistResource.value(); as storylist) {
 						<div class="flex flex-col">
@@ -57,6 +58,35 @@
 						</div>
 					}
 				</cuentoneta-tab>
+
+				<!-- TODO: Implementar visualización de recursos multimedia para storylists -->
+				@if (hasMedia()) {
+					<cuentoneta-tab title="Multimedia" name="media">
+						@if (storylistResource.value()) {
+							<div class="flex flex-col gap-8">
+								<p class="text-lg text-gray-600 dark:text-gray-300">
+									Contenido multimedia relacionado con esta colección
+								</p>
+								<cuentoneta-media-resource [mediaResources]="media()" />
+							</div>
+						}
+					</cuentoneta-tab>
+				}
+
+				<!-- TODO: Implementar visualización de tabs adicionales programables para storylists -->
+				@for (tab of tabs(); track tab.slug) {
+					<cuentoneta-tab [title]="tab.title" [name]="tab.slug">
+						@if (storylistResource.value()) {
+							<div class="flex flex-col">
+								<cuentoneta-portable-text-parser
+									[paragraphs]="tab.content"
+									[classes]="'source-serif-pro-body-xl'"
+									class="flex flex-col gap-4"
+								/>
+							</div>
+						}
+					</cuentoneta-tab>
+				}
 			</cuentoneta-tabs>
 		</section>
 	</article>
