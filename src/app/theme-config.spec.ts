@@ -5,17 +5,18 @@ import { join } from 'path';
 describe('Theme Configuration', () => {
 	describe('theme-color meta tag synchronization', () => {
 		it('should match the primary-500 color from theme.config.ts', () => {
-			// Read the indexFile.html
 			const indexFilePath = join(process.cwd(), 'src', 'indexFile.html');
 			const indexFileContent = readFileSync(indexFilePath, 'utf-8');
-
-			// Extract the theme-color meta tag value using regex
 			const themeColorMatch = indexFileContent.match(/<meta\s+name="theme-color"\s+content="([^"]+)"\s*\/?>/);
 
-			expect(themeColorMatch).toBeTruthy();
-			expect(themeColorMatch?.[1]).toBeDefined();
+			if (!themeColorMatch) {
+				throw new Error('theme-color meta tag not found');
+			}
 
-			const themeColorFromMetaTag = themeColorMatch![1];
+			expect(themeColorMatch).toBeTruthy();
+			expect(themeColorMatch[1]).toBeDefined();
+
+			const themeColorFromMetaTag = themeColorMatch[1];
 			const primaryColor500 = extendedColors['primary-500'];
 
 			// Compare the values
