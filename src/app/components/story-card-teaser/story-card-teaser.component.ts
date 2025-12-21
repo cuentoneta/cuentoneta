@@ -34,7 +34,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 						[class]="showExcerpt() ? 'gap-2' : 'gap-1'"
 						class="grid h-full grid-rows-[auto_auto_auto]"
 					>
-						<header class="inter-heading-3-bold">
+						<header class="inter-heading-3-bold line-clamp-2">
 							{{ story.title }}
 						</header>
 						@if (showExcerpt() && story.paragraphs.length > 0) {
