@@ -11,7 +11,6 @@ import { Storylist } from '@models/storylist.model';
 
 // Services
 import { StorylistService } from '../../providers/storylist.service';
-import { ThemeService } from '../../providers/theme.service';
 
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
@@ -42,6 +41,11 @@ import { MediaResourceComponent } from '@components/media-resource/media-resourc
 		MediaResourceComponent,
 	],
 	hostDirectives: [MetaTagsDirective],
+	styles: `
+		:host ::ng-deep .description-skeleton .skeleton-loader {
+			@apply bg-zinc-300;
+		}
+	`,
 })
 export default class StorylistComponent {
 	// Route inputs
@@ -53,7 +57,6 @@ export default class StorylistComponent {
 	private storylistService = inject(StorylistService);
 
 	// Recursos
-	skeletonColor = inject(ThemeService).pickColor('zinc', 300);
 	readonly storylistResource = rxResource({
 		params: this.slug,
 		stream: ({ params }) =>

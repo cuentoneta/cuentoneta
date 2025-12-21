@@ -1,11 +1,8 @@
 // Core
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 // 3rd party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-
-// Services
-import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-content-campaign-carousel-skeleton',
@@ -19,11 +16,10 @@ import { ThemeService } from '../../providers/theme.service';
 					'margin-bottom.px': 0,
 					height: '100%',
 					width: '100%',
-					'background-color': skeletonBackgroundColor,
 				}"
 				count="1"
 				appearance="line"
-				class="grid aspect-[540/220] w-full object-cover md:aspect-[960/280]"
+				class="carousel-image-skeleton grid aspect-[540/220] w-full object-cover md:aspect-[960/280]"
 			/>
 		</div>
 		<div class="footer mt-[10px] h-[27px]">
@@ -35,19 +31,22 @@ import { ThemeService } from '../../providers/theme.service';
 					'margin-bottom.px': 5,
 					'width.px': 48,
 					'height.px': 10,
-					'background-color': skeletonTextColor,
 				}"
 				count="1"
 				appearance="line"
-				class="grid"
+				class="carousel-text-skeleton grid"
 			/>
 		</div>
 	</div>`,
-	styles: ``,
+	styles: `
+		:host ::ng-deep .carousel-image-skeleton .skeleton-loader {
+			@apply bg-zinc-200;
+		}
+
+		:host ::ng-deep .carousel-text-skeleton .skeleton-loader {
+			@apply bg-zinc-300;
+		}
+	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ContentCampaignCarouselSkeletonComponent {
-	private themeService = inject(ThemeService);
-	skeletonBackgroundColor = this.themeService.pickColor('zinc', 200);
-	skeletonTextColor = this.themeService.pickColor('zinc', 300);
-}
+export class ContentCampaignCarouselSkeletonComponent {}
