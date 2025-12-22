@@ -7,7 +7,7 @@ import { StoryTeaser } from '@models/story.model';
 import { storyMock, storyTeaserMock } from '../../mocks/story.mock';
 import { StorylistService } from '../../providers/storylist.service';
 import { Storylist } from '@models/storylist.model';
-import { storyListMock } from '../../mocks/storylist.mock';
+import { storylistMock } from '@mocks/storylistMock';
 import { authorMock } from '../../mocks/author.mock';
 
 describe('StoryNavigationBarComponent', () => {
@@ -37,14 +37,14 @@ describe('StoryNavigationBarComponent', () => {
 			inputs: {
 				selectedStorySlug: storyMock.slug,
 				navigation: 'storylist',
-				navigationSlug: storyListMock.slug,
+				navigationSlug: storylistMock.slug,
 			},
 			providers: [
 				{
 					provide: StorylistService,
 					useValue: {
 						getStorylistNavigationTeasers(): Observable<Storylist> {
-							return of(storyListMock);
+							return of(storylistMock);
 						},
 					},
 				},

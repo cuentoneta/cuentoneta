@@ -1,12 +1,11 @@
 // Core
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { rxResource } from '@angular/core/rxjs-interop';
 
 // Services
 import { StoryService } from '../../providers/story.service';
-import { ThemeService } from '../../providers/theme.service';
 
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
@@ -23,7 +22,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 @Component({
 	selector: 'cuentoneta-stories',
 	standalone: true,
-	imports: [CommonModule, RouterLink, NgxSkeletonLoaderModule],
+	imports: [RouterLink, NgxSkeletonLoaderModule],
 	hostDirectives: [MetaTagsDirective],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `
@@ -76,7 +75,6 @@ export default class StoriesComponent {
 	protected readonly appRoutes = AppRoutes;
 	private storyService = inject(StoryService);
 	private metaTagsDirective = inject(MetaTagsDirective);
-	skeletonColor = inject(ThemeService).pickColor('zinc', 300);
 
 	// TODO: Implementar tamaño de página variable
 	readonly storiesResource = rxResource({
@@ -98,6 +96,4 @@ export default class StoriesComponent {
 		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/${this.appRoutes.Story}`);
 		this.metaTagsDirective.setRobots('noindex, follow');
 	}
-
-	protected readonly AppRoutes = AppRoutes;
 }

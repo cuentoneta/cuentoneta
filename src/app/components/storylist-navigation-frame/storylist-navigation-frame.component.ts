@@ -1,12 +1,11 @@
 import { Component, computed, effect, inject } from '@angular/core';
-
 import { UrlTree } from '@angular/router';
 
 // 3rd party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Models
-import { PublicationNavigationTeaser } from '@models/storylist.model';
+import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 
 // Routes
 import { AppRoutes } from '../../app.routes';
@@ -16,8 +15,8 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 import { StorylistService } from '../../providers/storylist.service';
 
 // Componentes
-import { NavigablePublicationTeaserComponent } from '../navigable-publication-teaser/navigable-publication-teaser.component';
 import { rxResource } from '@angular/core/rxjs-interop';
+import { NavigableStorylistStoryTeaserComponent } from '@components/navigable-storylist-story-teaser/navigable-storylist-story-teaser.component';
 
 export type NavigationBarConfig = {
 	headerTitle: string;
@@ -28,12 +27,12 @@ export type NavigationBarConfig = {
 
 @Component({
 	selector: 'cuentoneta-storylist-navigation-frame',
-	imports: [NavigablePublicationTeaserComponent, NgxSkeletonLoaderModule],
+	imports: [NgxSkeletonLoaderModule, NavigableStorylistStoryTeaserComponent],
 	template: ` @if (storylist(); as storylist) {
-			@for (publication of displayedPublications; track $index) {
-				<cuentoneta-navigable-publication-teaser
-					[publication]="publication"
-					[selected]="selectedStorySlug() === publication.story.slug"
+			@for (story of displayedStories; track $index) {
+				<cuentoneta-navigable-storylist-story-teaser
+					[story]="story"
+					[selected]="selectedStorySlug() === story.slug"
 					[storylist]="storylist"
 				/>
 			}
@@ -65,7 +64,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	});
 
 	// Propiedades
-	displayedPublications: PublicationNavigationTeaser[] = [];
+	displayedStories: StoryNavigationTeaserWithAuthor[] = [];
 	dummyList: null[] = Array(9);
 	readonly storylist = computed(() => this.storylistResource.value());
 
@@ -79,7 +78,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 				return;
 			}
 
-			this.sliceDisplayedPublications(storylist.publications);
+			this.sliceDisplayedStories(storylist.stories);
 			this.config.set({
 				headerTitle: storylist.title,
 				footerTitle: 'Ver más...',
@@ -91,39 +90,37 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 
 	/**
 	 * Este método se encarga de mostrar la lista de publicaciones de la navbar en base a la story actualmente en vista.
-	 * Si la storylist tiene más de 10 publicaciones, se muestran las 10 publicaciones más cercanas a la story actualmente
-	 * en vista tomando las 5 publicaciones anteriores y las 5 siguientes en el caso por defecto y ajustando los límites en
+	 * Si la storylist tiene más de 10 historias, se muestran las 10 historias más cercanas a la story actualmente
+	 * en vista tomando las 5 historias anteriores y las 5 siguientes en el caso por defecto y ajustando los límites en
 	 * caso de que la story actualmente en vista sea una de las primeras o de las últimas.
 	 * @author Ramiro Olivencia <ramiro@olivencia.com.ar>
 	 */
-	sliceDisplayedPublications(publications: PublicationNavigationTeaser[]): void {
+	sliceDisplayedStories(stories: StoryNavigationTeaserWithAuthor[]): void {
 		if (!this.storylist) {
 			return;
 		}
 
-		const numberOfDisplayedPublications = 9;
+		const numberOfDisplayedStories = 9;
 
-		if (publications.length <= numberOfDisplayedPublications) {
-			this.displayedPublications = publications;
+		if (stories.length <= numberOfDisplayedStories) {
+			this.displayedStories = stories;
 			return;
 		}
 
-		const selectedStoryIndex = publications.findIndex(
-			(publication) => publication.story.slug === this.selectedStorySlug(),
-		);
+		const selectedStoryIndex = stories.findIndex((story) => story.slug === this.selectedStorySlug());
 
 		const lowerIndex =
-			selectedStoryIndex - numberOfDisplayedPublications / 2 < 0
+			selectedStoryIndex - numberOfDisplayedStories / 2 < 0
 				? 0
-				: selectedStoryIndex - Math.floor(numberOfDisplayedPublications / 2);
+				: selectedStoryIndex - Math.floor(numberOfDisplayedStories / 2);
 		const upperIndex =
-			selectedStoryIndex + numberOfDisplayedPublications / 2 > publications.length
-				? publications.length
-				: Math.ceil(selectedStoryIndex + numberOfDisplayedPublications / 2);
+			selectedStoryIndex + numberOfDisplayedStories / 2 > stories.length
+				? stories.length
+				: Math.ceil(selectedStoryIndex + numberOfDisplayedStories / 2);
 
-		this.displayedPublications = (this.storylist()?.publications ?? []).slice(
-			upperIndex === publications.length ? publications.length - numberOfDisplayedPublications : lowerIndex,
-			lowerIndex === 0 ? numberOfDisplayedPublications : upperIndex,
+		this.displayedStories = (this.storylist()?.stories ?? []).slice(
+			upperIndex === stories.length ? stories.length - numberOfDisplayedStories : lowerIndex,
+			lowerIndex === 0 ? numberOfDisplayedStories : upperIndex,
 		);
 	}
 }

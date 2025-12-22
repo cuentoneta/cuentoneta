@@ -1,10 +1,10 @@
 // Repository
 import {
-	fetchLandingPageContent,
-	fetchRotatingContent,
 	createLandingPages,
+	fetchAndMapLandingPageContent,
 	fetchLandingPagesList,
 	fetchLatestLandingPageReferences,
+	fetchRotatingContent,
 } from './content.repository';
 
 // Modelos
@@ -12,7 +12,6 @@ import { LandingPageContent, RotatingContent } from '@models/landing-page-conten
 
 // Utils
 import { addWeeks, getWeek, getYear } from 'date-fns';
-import { mapLandingPageContent, mapStoryNavigationTeaserWithAuthor } from '../../_utils/functions';
 import slugify from 'slugify';
 
 export async function getLandingPageContent(): Promise<LandingPageContent> {
@@ -20,26 +19,11 @@ export async function getLandingPageContent(): Promise<LandingPageContent> {
 	const year = getYear(new Date());
 
 	const slug = `${weekOfYear.toString().padStart(2, '0')}-${year}`;
-	const landingPageResult = await fetchLandingPageContent(slug);
-	const rotatingContentResult = await fetchRotatingContent();
-
-	if (!landingPageResult || !rotatingContentResult) {
-		throw new Error('Landing page content not found');
-	}
-
-	return {
-		...mapLandingPageContent({ ...landingPageResult, ...rotatingContentResult }),
-	};
+	return fetchAndMapLandingPageContent(slug);
 }
 
 export async function getRotatingContent(): Promise<RotatingContent> {
-	const result = await fetchRotatingContent();
-
-	if (!result) {
-		throw new Error('Rotating content not found');
-	}
-
-	return { ...result, mostRead: mapStoryNavigationTeaserWithAuthor(result.mostRead) };
+	return await fetchRotatingContent();
 }
 
 export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 4) {

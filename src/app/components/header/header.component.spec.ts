@@ -2,12 +2,13 @@ import { render, screen } from '@testing-library/angular';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterModule, provideRouter } from '@angular/router';
 import { HeaderComponent } from './header.component';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 describe('HeaderComponent', () => {
 	const setup = async () =>
 		await render(HeaderComponent, {
 			componentImports: [CommonModule, NgOptimizedImage, RouterModule],
-			providers: [provideRouter([])],
+			providers: [provideRouter([]), provideNoopAnimations()],
 		});
 
 	it('should render Header component', async () => {

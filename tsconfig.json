@@ -4,7 +4,7 @@
 		"emitDecoratorMetadata": false,
 		"target": "es2022",
 		"module": "preserve",
-		"lib": ["es2020", "dom"],
+		"lib": ["dom", "es2022"],
 		"paths": {
 			"@components/*": ["src/app/components/*"],
 			"@mocks/*": ["src/app/mocks/*"],

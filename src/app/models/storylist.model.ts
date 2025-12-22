@@ -1,42 +1,42 @@
 import { StoryNavigationTeaserWithAuthor, StoryTeaserWithAuthor } from './story.model';
 import { Tag } from '@models/tag.model';
 import { TextBlockContent } from '@models/block-content.model';
+import { Media } from '@models/media.model';
 
-interface StorylistBase<T> {
+export interface StorylistTab {
 	title: string;
 	slug: string;
-	displayDates: boolean;
-	editionPrefix: string;
+	content: TextBlockContent[];
+	icon?: string;
+}
+
+interface StorylistBase<T> {
+	_id: string;
+	title: string;
+	slug: string;
 	count: number;
-	comingNextLabel: string;
 	description: TextBlockContent[];
 	featuredImage: string;
 	tags: Tag[];
-	publications: T[];
+	stories: T[];
+	config: {
+		showAuthors: boolean;
+	};
+	tabs: StorylistTab[];
+	media: Media[];
 }
 
 export interface StorylistTeaser extends StorylistBase<never> {
-	publications: Array<never>;
+	stories: Array<never>;
+	tabs: Array<never>;
 }
 
-export interface StorylistPublicationsNavigationTeasers extends StorylistBase<PublicationNavigationTeaser> {
-	publications: PublicationNavigationTeaser[];
+export interface StorylistStoriesNavigationTeasers extends StorylistBase<StoryNavigationTeaserWithAuthor> {
+	stories: StoryNavigationTeaserWithAuthor[];
+	tabs: Array<never>;
+	media: Array<never>;
 }
 
-export interface Storylist extends StorylistBase<PublicationTeaserWithAuthor> {
-	publications: PublicationTeaserWithAuthor[];
-}
-
-export interface PublicationTeaserWithAuthor {
-	publishingOrder: number;
-	published: boolean;
-	publishingDate?: string;
-	story: StoryTeaserWithAuthor;
-}
-
-export interface PublicationNavigationTeaser {
-	publishingOrder: number;
-	published: boolean;
-	publishingDate?: string;
-	story: StoryNavigationTeaserWithAuthor;
+export interface Storylist extends StorylistBase<StoryTeaserWithAuthor> {
+	stories: StoryTeaserWithAuthor[];
 }

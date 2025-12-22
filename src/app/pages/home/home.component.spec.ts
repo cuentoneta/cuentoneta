@@ -6,7 +6,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { provideMock } from '@testing-library/angular/jest-utils';
 import { ContentService } from '../../providers/content.service';
 import { Component, input } from '@angular/core';
-import { PublicationTeaserWithAuthor, Storylist } from '@models/storylist.model';
+import { Storylist } from '@models/storylist.model';
 
 xdescribe('HomeComponent', () => {
 	const setup = async () => {
@@ -17,7 +17,6 @@ xdescribe('HomeComponent', () => {
 				NgForOf,
 				NgIf,
 				NgOptimizedImage,
-				MockPublicationCardComponent,
 				MockStorylistCardDeckComponent,
 			],
 			componentProviders: [provideRouter([]), { provide: ContentService, useClass: provideMock(ContentService) }],
@@ -32,22 +31,8 @@ xdescribe('HomeComponent', () => {
 
 @Component({
 	standalone: true,
-	selector: 'cuentoneta-publication-card:not(p):not(a)',
-	template: '<div></div>',
-})
-class MockPublicationCardComponent {
-	readonly editionPrefix = input<string>();
-	readonly editionSuffix = input<string>();
-	readonly comingNextLabel = input<string>();
-	readonly displayDate = input<boolean>(false);
-	readonly publication = input<PublicationTeaserWithAuthor>();
-	readonly editionIndex = input<number>(0);
-}
-
-@Component({
-	standalone: true,
 	selector: 'cuentoneta-storylist-card-deck:not(p)',
-	imports: [MockPublicationCardComponent],
+	imports: [],
 	template: '',
 })
 class MockStorylistCardDeckComponent {

@@ -35,7 +35,7 @@ import { NgTemplateOutlet } from '@angular/common';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class Tabs {
-	readonly initialTabIndex = input<number>(0);
+	readonly initialTab = input<string>();
 	readonly tabs = contentChildren(Tab);
 	readonly active = linkedSignal({
 		source: this.tabs,
@@ -44,12 +44,18 @@ export default class Tabs {
 				throw new Error('No tabs found');
 			}
 
-			const index = this.initialTabIndex();
-			if (index < 0 || index > tabs.length - 1) {
-				throw new Error('Initial tab index is out of bounds');
+			const name = this.initialTab();
+			if (!name) {
+				return tabs[0];
 			}
 
-			return tabs[index];
+			const found = tabs.find((tab) => tab.name() === name);
+			if (!found) {
+				console.error(`Tab with name ${name} not found, falling back to first tab`);
+				return tabs[0];
+			}
+
+			return found;
 		},
 	});
 

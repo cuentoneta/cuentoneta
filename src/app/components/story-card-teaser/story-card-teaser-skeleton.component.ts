@@ -1,12 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-story-card-teaser-skeleton',
 	imports: [NgxSkeletonLoaderModule],
-	providers: [ThemeService],
 	template: `<article class="flex gap-4">
 		@if (order()) {
 			<ngx-skeleton-loader
@@ -14,11 +12,11 @@ import { ThemeService } from '../../providers/theme.service';
 					height: '36px',
 					'margin-bottom': 0,
 					width: '40px',
-					'background-color': orderColor,
 				}"
 				data-testid="show-order"
 				count="1"
 				appearance="line"
+				class="order-skeleton"
 			/>
 		}
 		<div class="flex flex-1 flex-col">
@@ -52,9 +50,8 @@ import { ThemeService } from '../../providers/theme.service';
 						height: '32px',
 						'margin-bottom': 0,
 						'max-width': '192px',
-						'background-color': skeletonTextColor,
 					}"
-					class="w-full"
+					class="title-skeleton w-full"
 					count="1"
 					appearance="line"
 				/>
@@ -103,6 +100,14 @@ import { ThemeService } from '../../providers/theme.service';
 		:host {
 			@apply w-full;
 		}
+
+		:host ::ng-deep .order-skeleton .skeleton-loader {
+			@apply bg-primary-300;
+		}
+
+		:host ::ng-deep .title-skeleton .skeleton-loader {
+			@apply bg-zinc-300;
+		}
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -115,8 +120,4 @@ export class StoryCardTeaserSkeletonComponent {
 
 	// Usado de auxiliar para iterar a través de la cantidad de líneas del extracto de texto
 	readonly excerptArrayLines = computed(() => Array(this.excerptLines()).fill(0));
-
-	// Providers
-	skeletonTextColor = inject(ThemeService).pickColor('zinc', 300);
-	orderColor = inject(ThemeService).pickThemeColor('primary-300');
 }

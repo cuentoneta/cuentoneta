@@ -256,13 +256,11 @@ Borrador de perfil -> Publicación de perfil -> Perfil disponible para búsqueda
 ```typescript
 interface Storylist {
 	// Identidad
+	_id: string; // Identificador único (Sanity)
 	title: string; // Nombre de la colección
 	slug: string; // Clave de negocio, invariante única
 
 	// Metadatos
-	displayDates: boolean; // ¿Mostrar fechas de publicación?
-	editionPrefix: string; // Prefijo para ediciones ("Número", "Volumen", etc.)
-	comingNextLabel: string; // Etiqueta para próximas publicaciones
 	count: number; // Total de historias
 
 	// Contenido
@@ -270,29 +268,20 @@ interface Storylist {
 	featuredImage: string; // URL de imagen destacada
 	tags: Tag[]; // Etiquetas de categorización
 
+	// Configuración
+	config: {
+		showAuthors: boolean; // ¿Mostrar información de autores?
+	};
+
 	// Composición
-	publications: Publication[]; // Historias en la colección (ordenadas)
-}
-
-interface Publication {
-	// Orden y estado
-	publishingOrder: number; // Número en la secuencia
-	published: boolean; // ¿Ya fue publicada?
-	publishingDate?: string; // Fecha de publicación (formato YYYY-MM-DD)
-
-	// Referencia a historia
-	story: StoryNavigationTeaserWithAuthor;
+	stories: StoryTeaserWithAuthor[]; // Historias en la colección (ordenadas)
 }
 ```
 
 **Invariantes de Negocio:**
 
 - El slug debe ser único
-- El idioma debe ser un código ISO válido
-- `publications` siempre está ordenado por `publishingOrder`
-- `publishingOrder` comienza en 1
-- Si `published` es true, `publishingDate` debe estar definido
-- `count` debe coincidir con el número real de publicaciones
+- `count` debe coincidir con el número real de stories
 
 **Ciclo de Vida:**
 
@@ -301,13 +290,13 @@ Creación de colección → Adición de historias → Publicación de colección
 ```
 
 **Relación con Story:**
-`Publication` es una **entidad secundaria**, no una raíz de agregado. Existe solo en el contexto de `Storylist`. No tiene identidad propia fuera de su colección padre.
+Las historias se referencian directamente en el array `stories`. Cada entrada es una proyección de tipo `StoryTeaserWithAuthor`, que incluye la información esencial de la historia y su autor.
 
 **Vistas Polimórficas:**
 
-- `Storylist` - Vista completa (incluye todas las publicaciones con detalles)
-- `StorylistPublicationsNavigationTeasers` - Vista para navegación (publicaciones mínimas)
-- `StorylistTeaser` - Vista sin publicaciones
+- `Storylist` - Vista completa (incluye todas las historias con información de autor)
+- `StorylistStoriesNavigationTeasers` - Vista para navegación (historias mínimas con autor)
+- `StorylistTeaser` - Vista sin historias
 
 ---
 
@@ -592,7 +581,6 @@ El **Lenguaje Ubicuo** es el lenguaje estructurado alrededor del modelo de domin
 | **Epígrafe**             | Cita literaria que precede al texto principal                 | Catálogo de Contenido |
 | **Teaser**               | Vista reducida de una entidad para listados y navegación      | Todos                 |
 | **Colección**            | Agrupación temática u editorial de historias                  | Curación              |
-| **Publicación**          | Instancia de una historia dentro de una colección             | Curación              |
 | **Colaborador**          | Persona que contribuye al proyecto en algún rol               | Administración        |
 | **Recurso**              | Enlace externo a información complementaria                   | Catálogo de Contenido |
 | **Campaña de Contenido** | Promoción temporal de contenido con variantes responsivas     | Página de Inicio      |
@@ -774,7 +762,7 @@ La arquitectura de La Cuentoneta sigue un modelo de capas explícito:
 │  │  CATÁLOGO DE CONTENIDO  │  │ CURACIÓN Y COLECCIONES │   │
 │  │                         │  │                         │   │
 │  │  • Story                │  │  • Storylist           │   │
-│  │  • Author               │  │  • Publication         │   │
+│  │  • Author               │  │                        │   │
 │  │  • Resource             │  │                        │   │
 │  │  • Media                │  └─────────────────────────┘   │
 │  │  • Epigraph             │           ▲                     │
