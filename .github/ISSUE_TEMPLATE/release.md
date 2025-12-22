@@ -10,7 +10,6 @@ assignees: ''
 
 - [ ] Listar todos los issues agregados a la release.
 - [ ] Ajustar changelog.
-- [ ] Agregar contribuyentes a la versión en codebase.
 - [ ] Actualizar versión en package.json.
 - [ ] Sanity: Exportar PROD a .zip para backup.
 - [ ] Sanity: Hacer deploy de Sanity Studio.
