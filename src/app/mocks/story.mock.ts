@@ -6,7 +6,6 @@ import {
 	StoryTeaserWithAuthor,
 } from '@models/story.model';
 import { authorMock, authorTeaserMock } from './author.mock';
-import { PublicationTeaserWithAuthor, PublicationNavigationTeaser } from '@models/storylist.model';
 
 export const storyMock: Story = {
 	_id: 'story-1',
@@ -653,16 +652,7 @@ export const storyNavigationTeaserMock: StoryNavigationTeaser = {
 	slug: 'el-espejo-del-tiempo',
 };
 
-export const publicationMock: PublicationTeaserWithAuthor = {
-	publishingOrder: 54,
-	published: true,
-	publishingDate: '2024-10-27',
-	story: storyTeaserWithAuthorMock,
-};
-
-export const publicationNavigationTeaserMock: PublicationNavigationTeaser = {
-	publishingOrder: 54,
-	published: true,
-	publishingDate: '2024-10-27',
-	story: { ...storyNavigationTeaserMock, author: authorTeaserMock },
+export const storyNavigationTeaserWithAuthor: StoryNavigationTeaserWithAuthor = {
+	...storyNavigationTeaserMock,
+	author: authorTeaserMock,
 };

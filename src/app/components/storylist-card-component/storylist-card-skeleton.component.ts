@@ -1,7 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { ThemeService } from '../../providers/theme.service';
 
 @Component({
 	selector: 'cuentoneta-storylist-card-skeleton',
@@ -10,20 +9,20 @@ import { ThemeService } from '../../providers/theme.service';
 		<section class="flex flex-col gap-4 px-4 pt-5">
 			<ngx-skeleton-loader
 				[theme]="{
-					'background-color': skeletonColor,
 					height: '40px',
 					'margin-bottom': 0,
-					width: '100%'
+					width: '100%',
 				}"
 				count="1"
 				appearance="line"
+				class="storylist-title-skeleton"
 			/>
 			<div>
 				<ngx-skeleton-loader
 					[theme]="{
 						height: '16px',
 						'margin-bottom': '8px',
-						width: '100%'
+						width: '100%',
 					}"
 					count="2"
 					appearance="line"
@@ -32,7 +31,7 @@ import { ThemeService } from '../../providers/theme.service';
 					[theme]="{
 						height: '16px',
 						'margin-bottom': '8px',
-						width: '80%'
+						width: '80%',
 					}"
 					count="1"
 					appearance="line"
@@ -43,29 +42,32 @@ import { ThemeService } from '../../providers/theme.service';
 		<footer class="flex justify-end rounded-b-lg px-5 pb-5 pt-4">
 			<ngx-skeleton-loader
 				[theme]="{
-					'background-color': skeletonColor,
 					height: '22px',
 					'margin-bottom': 0,
-					width: '80px'
+					width: '80px',
 				}"
 				count="1"
 				appearance="line"
+				class="footer-button-skeleton"
 			/>
 			<ngx-skeleton-loader
 				[theme]="{
-					'background-color': skeletonColor,
 					height: '22px',
 					'margin-left': '16px',
 					'margin-bottom': 0,
-					width: '80px'
+					width: '80px',
 				}"
 				count="1"
 				appearance="line"
+				class="footer-button-skeleton"
 			/>
 		</footer>
 	`,
+	styles: `
+		:host ::ng-deep .storylist-title-skeleton .skeleton-loader,
+		:host ::ng-deep .footer-button-skeleton .skeleton-loader {
+			@apply bg-zinc-300;
+		}
+	`,
 })
-export class StorylistCardSkeletonComponent {
-	private themeService = inject(ThemeService);
-	skeletonColor = this.themeService.pickColor('zinc', 300);
-}
+export class StorylistCardSkeletonComponent {}

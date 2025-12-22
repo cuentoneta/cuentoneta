@@ -25,7 +25,6 @@ import { NgxSkeletonLoaderComponent, NgxSkeletonLoaderModule } from 'ngx-skeleto
 // Services
 import { AuthorService } from '../../providers/author.service';
 import { StoryService } from '../../providers/story.service';
-import { ThemeService } from '../../providers/theme.service';
 
 // Componentes
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
@@ -55,6 +54,16 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 	],
 	hostDirectives: [MetaTagsDirective],
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	styles: `
+		:host ::ng-deep .author-image-skeleton .skeleton-loader,
+		:host ::ng-deep .author-name-skeleton .skeleton-loader,
+		:host ::ng-deep .author-flag-skeleton .skeleton-loader,
+		:host ::ng-deep .author-nationality-skeleton .skeleton-loader,
+		:host ::ng-deep .author-stories-count-skeleton .skeleton-loader,
+		:host ::ng-deep .biography-skeleton .skeleton-loader {
+			@apply bg-zinc-300;
+		}
+	`,
 	template: `
 		<main class="content vertical-layout-spacing horizontal-layout-spacing">
 			<article class="grid grid-cols-1 gap-8">
@@ -89,41 +98,70 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 				} @placeholder (minimum 500ms) {
 					<section class="flex items-center gap-4">
 						<ngx-skeleton-loader
-							[theme]="{ background: skeletonColor, margin: 0 }"
+							[theme]="{ margin: 0 }"
 							count="1"
 							appearance="square"
 							size="88"
+							class="author-image-skeleton"
 						/>
 						<div class="flex flex-col gap-2">
 							<ngx-skeleton-loader
-								[theme]="{ background: skeletonColor, margin: 0, width: '160px', height: '24px' }"
+								[theme]="{ margin: 0, width: '160px', height: '24px' }"
 								count="1"
 								appearance="line"
+								class="author-name-skeleton"
 							/>
 							<span class="flex items-center gap-2">
 								<ngx-skeleton-loader
-									[theme]="{ background: skeletonColor, margin: 0, width: '20px', height: '18px' }"
+									[theme]="{ margin: 0, width: '20px', height: '18px' }"
 									count="1"
 									appearance="line"
+									class="author-flag-skeleton"
 								/>
 								<ngx-skeleton-loader
-									[theme]="{ background: skeletonColor, margin: 0, width: '100px', height: '18px' }"
+									[theme]="{ margin: 0, width: '100px', height: '18px' }"
 									count="1"
 									appearance="line"
+									class="author-nationality-skeleton"
 								/>
 							</span>
 							<ngx-skeleton-loader
-								[theme]="{ background: skeletonColor, margin: 0, width: '80px' }"
+								[theme]="{ margin: 0, width: '80px' }"
 								count="1"
 								appearance="line"
+								class="author-stories-count-skeleton"
 							/>
 						</div>
 					</section>
 				}
 
 				@if (author(); as author) {
-					<cuentoneta-tabs class="w-full">
-						<cuentoneta-tab title="Biografía">
+					<cuentoneta-tabs [initialTab]="activeTab()" class="w-full">
+						<cuentoneta-tab title="Textos" name="stories">
+							<div>
+								@defer (when storiesResource.hasValue()) {
+									<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
+										@for (story of stories(); track $index) {
+											<cuentoneta-story-card-teaser
+												[story]="story"
+												[order]="$index + 1"
+												[navigationParams]="{
+													navigation: 'author',
+													navigationSlug: author.slug,
+												}"
+											/>
+										}
+									</section>
+								} @loading (minimum 500ms) {
+									<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
+										@for (_ of [].constructor(12); track $index) {
+											<cuentoneta-story-card-teaser-skeleton [order]="$index + 1" data-testid="skeleton" />
+										}
+									</section>
+								}
+							</div>
+						</cuentoneta-tab>
+						<cuentoneta-tab title="Biografía" name="about">
 							<div>
 								@defer (when authorResource.hasValue()) {
 									<div class="flex flex-col gap-4">
@@ -149,36 +187,12 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 												'margin-bottom': '8px',
 												height: '25px',
 												width: '100%',
-												'background-color': skeletonColor,
 											}"
 											count="10"
 											appearance="line"
+											class="biography-skeleton"
 										/>
 									</div>
-								}
-							</div>
-						</cuentoneta-tab>
-						<cuentoneta-tab title="Textos">
-							<div>
-								@defer (when storiesResource.hasValue()) {
-									<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-										@for (story of stories(); track $index) {
-											<cuentoneta-story-card-teaser
-												[story]="story"
-												[order]="$index + 1"
-												[navigationParams]="{
-													navigation: 'author',
-													navigationSlug: author.slug,
-												}"
-											/>
-										}
-									</section>
-								} @loading (minimum 500ms) {
-									<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-										@for (_ of [].constructor(12); track $index) {
-											<cuentoneta-story-card-teaser-skeleton [order]="$index + 1" data-testid="skeleton" />
-										}
-									</section>
 								}
 							</div>
 						</cuentoneta-tab>
@@ -191,8 +205,11 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 export default class AuthorComponent {
 	private readonly appRoutes = AppRoutes;
 
-	// Providers
+	// Route inputs
 	readonly slug = input.required<string>();
+	readonly activeTab = input<'stories' | 'about'>('stories');
+
+	// Providers
 	private authorService = inject(AuthorService);
 	private storyService = inject(StoryService);
 	private router = inject(Router);
@@ -218,7 +235,6 @@ export default class AuthorComponent {
 	});
 
 	// Propiedades
-	skeletonColor = inject(ThemeService).pickColor('zinc', 300);
 	readonly author = computed(() => this.authorResource.value());
 	readonly stories = computed(() => this.storiesResource.value());
 	readonly authorImageUrl = computed(() =>

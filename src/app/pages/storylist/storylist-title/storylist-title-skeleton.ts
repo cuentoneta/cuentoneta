@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ThemeService } from '../../../providers/theme.service';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 
 @Component({
@@ -11,10 +10,10 @@ import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 				height: '36px',
 				width: '320px',
 				'margin-bottom': 0,
-				'background-color': skeletonColor,
 			}"
 			count="1"
 			appearance="line"
+			class="title-skeleton"
 		/>
 		<div class="flex gap-2">
 			<ngx-skeleton-loader
@@ -22,35 +21,39 @@ import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 					height: '20px',
 					width: '100px',
 					'margin-bottom': 0,
-					'background-color': skeletonColor,
 				}"
 				count="1"
 				appearance="line"
+				class="tag-skeleton"
 			/>
 			<ngx-skeleton-loader
 				[theme]="{
 					height: '20px',
 					width: '100px',
 					'margin-bottom': 0,
-					'background-color': skeletonColor,
 				}"
 				count="1"
 				appearance="line"
+				class="tag-skeleton"
 			/>
 			<ngx-skeleton-loader
 				[theme]="{
 					height: '20px',
 					width: '100px',
 					'margin-bottom': 0,
-					'background-color': skeletonColor,
 				}"
 				count="1"
 				appearance="line"
+				class="tag-skeleton"
 			/>
 		</div>
 	</div>`,
+	styles: `
+		:host ::ng-deep .title-skeleton .skeleton-loader,
+		:host ::ng-deep .tag-skeleton .skeleton-loader {
+			@apply bg-zinc-300;
+		}
+	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StorylistTitleSkeleton {
-	skeletonColor = inject(ThemeService).pickColor('zinc', 300);
-}
+export class StorylistTitleSkeleton {}

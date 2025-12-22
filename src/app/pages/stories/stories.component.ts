@@ -6,7 +6,6 @@ import { rxResource } from '@angular/core/rxjs-interop';
 
 // Services
 import { StoryService } from '../../providers/story.service';
-import { ThemeService } from '../../providers/theme.service';
 
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
@@ -76,7 +75,6 @@ export default class StoriesComponent {
 	protected readonly appRoutes = AppRoutes;
 	private storyService = inject(StoryService);
 	private metaTagsDirective = inject(MetaTagsDirective);
-	skeletonColor = inject(ThemeService).pickColor('zinc', 300);
 
 	// TODO: Implementar tamaño de página variable
 	readonly storiesResource = rxResource({

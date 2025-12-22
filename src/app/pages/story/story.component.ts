@@ -20,7 +20,6 @@ import { Story } from '@models/story.model';
 // Services
 import { StoryService } from '../../providers/story.service';
 import { LayoutService } from '../../providers/layout.service';
-import { ThemeService } from '../../providers/theme.service';
 
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
@@ -47,6 +46,12 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 
 		.content {
 			@apply grid grid-cols-1 md:mx-auto md:grid-cols-[286px_1fr] md:gap-x-8;
+		}
+
+		:host ::ng-deep .story-title-skeleton .skeleton-loader,
+		:host ::ng-deep .story-author-skeleton .skeleton-loader,
+		:host ::ng-deep .story-reading-time-skeleton .skeleton-loader {
+			@apply bg-zinc-300;
 		}
 	`,
 	imports: [
@@ -75,14 +80,12 @@ export default class StoryComponent {
 	readonly navigationSlug = input<string>();
 
 	private storyService = inject(StoryService);
-	private themeService = inject(ThemeService);
 	private layoutService = inject(LayoutService);
 	private metaTagsDirective = inject(MetaTagsDirective);
 	private isHeaderVisible$ = inject(LayoutService).isHeaderVisible$.pipe(takeUntilDestroyed());
 
 	// Recursos
 	readonly dummyList = Array(10);
-	readonly skeletonColor = this.themeService.pickColor('zinc', 300);
 	readonly storyResource = rxResource({
 		params: this.slug,
 		stream: ({ params }) =>
@@ -99,14 +102,14 @@ export default class StoryComponent {
 	readonly sharingRoute = computed(() => `${AppRoutes.Story}/${this.story()?.slug}`);
 	readonly shareContentParams = computed(() => ({
 		navigationSlug: this.story()?.author.slug ?? '',
-		navigation: 'author',
+		navigation: this.navigation() ?? 'author',
 	}));
 	readonly shareMessage = computed(
 		() =>
 			`Leí "${this.story()?.title}" de ${this.story()?.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`,
 	);
 	readonly navigationParams = computed(() => {
-		const navigation = this.navigation();
+		const navigation = this.navigation() ?? 'author';
 		let navigationSlug = this.navigationSlug();
 
 		if (!navigationSlug) {

@@ -1,41 +1,29 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { ThemeService } from '../../providers/theme.service';
 import { ShareButtonComponent } from '../share-button/share-button.component';
 import { FacebookPlatform, SharingPlatform, TwitterPlatform, WhatsappPlatform } from '@models/sharing-platform';
 
 @Component({
 	selector: 'cuentoneta-share-content',
 	imports: [NgxSkeletonLoaderModule, ShareButtonComponent],
-	providers: [ThemeService],
 	template: `
 		<section class="flex flex-1 flex-row gap-6">
 			@for (platform of platforms; track $index) {
-				@if (!isLoading()) {
-					<cuentoneta-share-button [platform]="platform" [params]="params()" [message]="message()" [route]="route()" />
-				} @else {
-					<ngx-skeleton-loader
-						[theme]="{
-							'height.px': 48,
-							'width.px': 48,
-							'margin.px': 0,
-							'background-color': skeletonColor,
-						}"
-						data-testid="share-skeleton-loader"
-						count="1"
-						appearance="circle"
-					/>
-				}
+				<cuentoneta-share-button [platform]="platform" [params]="params()" [message]="message()" [route]="route()" />
 			}
 		</section>
+	`,
+	styles: `
+		:host ::ng-deep .share-button-skeleton .skeleton-loader {
+			@apply bg-zinc-300;
+		}
 	`,
 })
 export class ShareContentComponent {
 	readonly route = input<string>('');
 	readonly params = input<{ [key: string]: string }>({});
 	readonly message = input<string>('');
-	readonly isLoading = input<boolean>(false);
 
 	platforms: SharingPlatform[] = [
 		new FacebookPlatform(),
@@ -52,6 +40,4 @@ export class ShareContentComponent {
 		//   url: 'copy',
 		// },
 	];
-
-	skeletonColor = inject(ThemeService).pickColor('zinc', 300);
 }
