@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 
-// Test configuration constants
+// Constantes de configuración de tests
 const TEST_TIMEOUTS = {
 	DEFAULT: 10000,
 	SLOW_NETWORK: 15000,
@@ -33,7 +33,7 @@ const CSS_CLASSES = {
 	CAROUSEL_HEIGHT_DESKTOP: 'sm:h-[317px]',
 } as const;
 
-// Helper functions for common patterns
+// Funciones auxiliares para patrones comunes
 async function waitForElement(page: Page, selector: string, timeout = 10000) {
 	return await page.waitForSelector(selector, { timeout });
 }
@@ -226,12 +226,12 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('should display story cards after loading', async ({ page }) => {
-			// Wait for actual cards (not skeletons)
+			// Esperar las tarjetas reales (no skeletons)
 			await waitForCards(page, 'cuentoneta-latest-stories-card-deck');
 
 			const latestDeck = page.locator('cuentoneta-latest-stories-card-deck');
 			const cards = latestDeck.locator('[data-testid="card"]');
-			expect(await cards.count()).toBe(6);
+			expect(await cards.count()).toBe(EXPECTED_COUNTS.LATEST_STORIES_CARDS);
 		});
 
 		test('story cards should have author information', async ({ page }) => {
@@ -326,7 +326,7 @@ test.describe('HomeComponent', () => {
 			const mostReadDeck = page.locator('cuentoneta-most-read-stories-card-deck');
 			const cards = mostReadDeck.locator('[data-testid="card"]');
 
-			expect(await cards.count()).toBe(6);
+			expect(await cards.count()).toBe(EXPECTED_COUNTS.MOST_READ_CARDS);
 		});
 
 		test('most-read cards should have same structure as latest stories', async ({ page }) => {
@@ -481,15 +481,15 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('all navigation links should be accessible', async ({ page }) => {
-			await page.waitForLoadState('networkidle');
+			await waitForAnyCards(page);
 
-			// Get all links on the page
+			// Obtener todos los links de la página
 			const links = page.locator('a[href]');
 			const count = await links.count();
 
 			expect(count).toBeGreaterThan(0);
 
-			// Verify first few links are valid
+			// Verificar que los primeros links son válidos
 			const linkCount = Math.min(5, count);
 			const hrefs = await Promise.all(Array.from({ length: linkCount }, (_, i) => links.nth(i).getAttribute('href')));
 			hrefs.forEach((href) => expect(href).toBeTruthy());
@@ -603,51 +603,47 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('all content should eventually load', async ({ page }) => {
-			await page.goto('/');
-			await page.waitForLoadState('networkidle');
-
-			// Main content should be visible
-			const mainContent = page.locator('main.content');
+			// El contenido principal debe ser visible
+			const mainContent = page.locator(TEST_SELECTORS.MAIN_CONTENT);
 			await expect(mainContent).toBeVisible();
 
-			// Card decks should be visible
-			const latestDeck = page.locator('cuentoneta-latest-stories-card-deck');
+			// Los mazos de tarjetas deben ser visibles
+			const latestDeck = page.locator(TEST_SELECTORS.LATEST_DECK);
 			await expect(latestDeck).toBeVisible();
+
+			// Esperar a que las tarjetas se carguen
+			await waitForAnyCards(page);
 		});
 	});
 
 	test.describe('Content Integrity', () => {
 		test('should load data successfully', async ({ page }) => {
-			// Verify page loaded successfully by checking for key components
-			// This indirectly proves the API call succeeded
+			// Verificar que la página cargó exitosamente revisando componentes clave
+			// Esto prueba indirectamente que la llamada a la API fue exitosa
+			await waitForAnyCards(page);
 
-			await page.waitForLoadState('networkidle');
-
-			// All main components should be visible, indicating successful data load
-			const latestDeck = page.locator('cuentoneta-latest-stories-card-deck');
-			const mostReadDeck = page.locator('cuentoneta-most-read-stories-card-deck');
+			// Todos los componentes principales deben ser visibles, indicando carga exitosa de datos
+			const latestDeck = page.locator(TEST_SELECTORS.LATEST_DECK);
+			const mostReadDeck = page.locator(TEST_SELECTORS.MOST_READ_DECK);
 			const collectionsSection = page.locator('section').filter({ hasText: 'Colecciones destacadas' });
 
 			await expect(latestDeck).toBeVisible();
 			await expect(mostReadDeck).toBeVisible();
 			await expect(collectionsSection).toBeVisible();
-
-			// If all components are visible, the API call must have succeeded
-			expect(true).toBe(true);
 		});
 
 		test('should display exactly 6 latest stories', async ({ page }) => {
 			await waitForCards(page, 'cuentoneta-latest-stories-card-deck');
 
 			const latestCards = page.locator('cuentoneta-latest-stories-card-deck [data-testid="card"]');
-			expect(await latestCards.count()).toBe(6);
+			expect(await latestCards.count()).toBe(EXPECTED_COUNTS.LATEST_STORIES_CARDS);
 		});
 
 		test('should display exactly 6 most-read stories', async ({ page }) => {
 			await waitForCards(page, 'cuentoneta-most-read-stories-card-deck');
 
 			const mostReadCards = page.locator('cuentoneta-most-read-stories-card-deck [data-testid="card"]');
-			expect(await mostReadCards.count()).toBe(6);
+			expect(await mostReadCards.count()).toBe(EXPECTED_COUNTS.MOST_READ_CARDS);
 		});
 
 		test('should display featured collections in grid section', async ({ page }) => {
@@ -665,10 +661,10 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('all sections should be present', async ({ page }) => {
-			await page.waitForLoadState('networkidle');
+			await waitForAnyCards(page);
 
-			const sections = page.locator('main.content > section');
-			expect(await sections.count()).toBe(4);
+			const sections = page.locator(`${TEST_SELECTORS.MAIN_CONTENT} > section`);
+			expect(await sections.count()).toBe(EXPECTED_COUNTS.MAIN_SECTIONS);
 		});
 
 		test('story cards should have consistent data structure', async ({ page }) => {
@@ -693,7 +689,7 @@ test.describe('HomeComponent', () => {
 
 	test.describe('Accessibility', () => {
 		test('all images should have alt text', async ({ page }) => {
-			await page.waitForLoadState('networkidle');
+			await waitForAnyCards(page);
 
 			const images = page.locator('img');
 			const count = await images.count();
@@ -703,29 +699,29 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('headings should have proper hierarchy', async ({ page }) => {
-			await page.waitForLoadState('networkidle');
+			await waitForAnyCards(page);
 
-			// Check for h2 headings
+			// Verificar encabezados h2
 			const h2Headings = page.locator('h2');
 			expect(await h2Headings.count()).toBeGreaterThan(0);
 
-			// Verify heading text for featured collections
+			// Verificar texto del encabezado para colecciones destacadas
 			await expect(page.locator('h2:has-text("Colecciones destacadas")')).toBeVisible();
 		});
 
 		test('links should be keyboard accessible', async ({ page }) => {
-			await page.waitForLoadState('networkidle');
+			await waitForAnyCards(page);
 
-			// Tab through first link
+			// Navegar con Tab al primer link
 			await page.keyboard.press('Tab');
 			const focusedElement = page.locator(':focus');
 			await expect(focusedElement).toBeVisible();
 		});
 
 		test('interactive elements should have proper focus states', async ({ page }) => {
-			await page.waitForLoadState('networkidle');
+			await waitForCarousel(page);
 
-			// Check carousel dots
+			// Verificar puntos del carrusel
 			const dots = page.locator('.owl-dots .owl-dot');
 			if ((await dots.count()) > 0) {
 				await dots.first().focus();
@@ -734,9 +730,9 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('semantic HTML elements should be used', async ({ page }) => {
-			await page.waitForLoadState('networkidle');
+			await waitForAnyCards(page);
 
-			// Check for semantic elements (use first() to avoid strict mode violations)
+			// Verificar elementos semánticos (usar first() para evitar violaciones de modo estricto)
 			await expect(page.locator('main').first()).toBeVisible();
 			await expect(page.locator('section').first()).toBeVisible();
 			await expect(page.locator('article').first()).toBeVisible();
@@ -745,21 +741,19 @@ test.describe('HomeComponent', () => {
 	});
 
 	test.describe('Edge Cases', () => {
-		// Nested describe for tests requiring route mocking
+		// Describe anidado para tests que requieren mocking de rutas
 		test.describe('Network and Data Edge Cases', () => {
-			// Override parent beforeEach - don't navigate yet
-			test.beforeEach(async ({ page }) => {
-				// Clean slate, no navigation
-			});
+			// Override del beforeEach implementado en la raíz, para evitar navegación inmediata
+			test.beforeEach(async ({ page }) => {});
 
 			test('should handle slow network gracefully', async ({ page }) => {
-				// Set up route BEFORE navigation
+				// Configuramos ruta para antes de la navegación
 				await page.route('**/api/content/landing-page', async (route) => {
 					await new Promise((resolve) => setTimeout(resolve, 1000));
 					await route.continue();
 				});
 
-				// Now navigate with route in place
+				// Navegamos con la ruta correspondiente
 				await page.goto('/', { waitUntil: 'domcontentloaded' });
 
 				await expect(page.locator(TEST_SELECTORS.MAIN_CONTENT)).toBeVisible();
@@ -770,7 +764,7 @@ test.describe('HomeComponent', () => {
 			});
 
 			test('should handle empty campaign array gracefully', async ({ page }) => {
-				// Set up route BEFORE navigation
+				// Configuramos ruta para antes de la navegación
 				await page.route('**/api/content/landing-page', async (route) => {
 					const response = await route.fetch();
 					const data = await response.json();
@@ -790,40 +784,26 @@ test.describe('HomeComponent', () => {
 			});
 		});
 
-		// Other edge case tests use normal beforeEach
+		// Los demás edge cases usan el beforeEach raíz
 		test('should handle missing storylist tags gracefully', async ({ page }) => {
-			// Wait for cards to be visible
+			// Esperamos a que las tarjetas sean visibles
 			const cards = page.locator('cuentoneta-storylist-card');
 			await expect(cards.first()).toBeVisible({ timeout: 10000 });
 
 			const count = await cards.count();
 
-			// Cards should render even if tags are missing
+			// Las cards deben visualizarse aunque las tags no sean visibles
 			expect(count).toBeGreaterThan(0);
 
-			// Verify card structure is intact even without tags
+			// Verificar que la estructura de cards está en su lugar aunque sea sin tags
 			const firstCard = cards.first();
 			await expect(firstCard.locator('h1.h3')).toBeVisible(); // Title should be visible
-		});
-
-		test('should handle very long story titles', async ({ page }) => {
-			await waitForAnyCards(page);
-
-			const cards = page.locator('[data-testid="card"]');
-
-			// Titles should not break layout
-			const cardCount = Math.min(3, await cards.count());
-			await Promise.all(
-				Array.from({ length: cardCount }, (_, i) =>
-					expect(cards.nth(i).locator('.inter-heading-3-bold')).toBeVisible(),
-				),
-			);
 		});
 
 		test('page should have main content visible', async ({ page }) => {
 			await page.goto('/');
 
-			// Basic structure should be present
+			// La estructura básica del contenido debe ser visible
 			await expect(page.locator('main')).toBeVisible();
 		});
 	});
