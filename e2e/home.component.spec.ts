@@ -1,5 +1,38 @@
 import { test, expect, type Page } from '@playwright/test';
 
+// Test configuration constants
+const TEST_TIMEOUTS = {
+	DEFAULT: 10000,
+	SLOW_NETWORK: 15000,
+	ELEMENT_WAIT: 10000,
+} as const;
+
+const EXPECTED_COUNTS = {
+	LATEST_STORIES_CARDS: 6,
+	MOST_READ_CARDS: 6,
+	MAIN_SECTIONS: 4,
+} as const;
+
+const TEST_SELECTORS = {
+	CAROUSEL: 'cuentoneta-content-campaign-carousel',
+	CAROUSEL_SKELETON: 'cuentoneta-content-campaign-carousel-skeleton',
+	LATEST_DECK: 'cuentoneta-latest-stories-card-deck',
+	MOST_READ_DECK: 'cuentoneta-most-read-stories-card-deck',
+	STORYLIST_CARD: 'cuentoneta-storylist-card',
+	CARD: '[data-testid="card"]',
+	SKELETON: '[data-testid="skeleton"]',
+	MAIN_CONTENT: 'main.content',
+	FIRST_SECTION: 'main > section',
+} as const;
+
+const CSS_CLASSES = {
+	STORY_TITLE: '.inter-heading-3-bold',
+	ORDER_NUMBER: '.source-serif-pro-heading-2-bold',
+	AUTHOR_NAME: '.inter-body-sm-semibold',
+	CAROUSEL_HEIGHT_MOBILE: 'h-[189.36px]',
+	CAROUSEL_HEIGHT_DESKTOP: 'sm:h-[317px]',
+} as const;
+
 // Helper functions for common patterns
 async function waitForElement(page: Page, selector: string, timeout = 10000) {
 	return await page.waitForSelector(selector, { timeout });
@@ -74,26 +107,32 @@ test.describe('HomeComponent', () => {
 
 	test.describe('Campaign Carousel Section', () => {
 		test('should render campaign carousel section', async ({ page }) => {
-			// The carousel section should exist
-			const section = page.locator('main > section').first();
+			await waitForCarousel(page);
+			const section = page.locator(TEST_SELECTORS.FIRST_SECTION).first();
 			await expect(section).toBeVisible();
 
-			// Check if carousel or skeleton is present (may not render if no campaigns)
-			const carousel = page.locator('cuentoneta-content-campaign-carousel');
-			const skeleton = page.locator('cuentoneta-content-campaign-carousel-skeleton');
+			const carousel = page.locator(TEST_SELECTORS.CAROUSEL);
+			const skeleton = page.locator(TEST_SELECTORS.CAROUSEL_SKELETON);
 
-			const carouselExists = (await carousel.count()) > 0;
-			const skeletonExists = (await skeleton.count()) > 0;
+			const carouselCount = await carousel.count();
+			const skeletonCount = await skeleton.count();
 
-			// At least the section should be there (carousel/skeleton optional based on data)
-			expect(section).toBeTruthy();
+			// At least one should be present
+			expect(carouselCount + skeletonCount).toBeGreaterThan(0);
+
+			// Document expected states
+			if (carouselCount > 0) {
+				await expect(carousel).toBeVisible();
+			} else if (skeletonCount > 0) {
+				await expect(skeleton).toBeVisible();
+			}
 		});
 
 		test('should display carousel with slides after loading', async ({ page }) => {
 			// Wait for skeleton to disappear and carousel to appear
 			await waitForCarousel(page);
 
-			const carousel = page.locator('cuentoneta-content-campaign-carousel');
+			const carousel = page.locator(TEST_SELECTORS.CAROUSEL);
 			await expect(carousel).toBeVisible();
 
 			// Check for owl-carousel container
@@ -706,47 +745,52 @@ test.describe('HomeComponent', () => {
 	});
 
 	test.describe('Edge Cases', () => {
-		test('should handle slow network gracefully', async ({ page }) => {
-			// Set up route before navigation
-			await page.route('**/api/content/landing-page', async (route) => {
-				await new Promise((resolve) => setTimeout(resolve, 1000));
-				await route.continue();
+		// Nested describe for tests requiring route mocking
+		test.describe('Network and Data Edge Cases', () => {
+			// Override parent beforeEach - don't navigate yet
+			test.beforeEach(async ({ page }) => {
+				// Clean slate, no navigation
 			});
 
-			// Now navigate (beforeEach already navigated, so we navigate again with the route)
-			await page.goto('/', { waitUntil: 'domcontentloaded' });
+			test('should handle slow network gracefully', async ({ page }) => {
+				// Set up route BEFORE navigation
+				await page.route('**/api/content/landing-page', async (route) => {
+					await new Promise((resolve) => setTimeout(resolve, 1000));
+					await route.continue();
+				});
 
-			// Main content should be visible
-			await expect(page.locator('main.content')).toBeVisible();
+				// Now navigate with route in place
+				await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-			// Wait for actual content to load (cards should appear after delay)
-			const cards = page.locator('[data-testid="card"]');
-			await expect(cards.first()).toBeVisible({ timeout: 15000 }); // Longer timeout for slow network
-		});
-
-		test('should handle empty campaign array gracefully', async ({ page }) => {
-			// Note: beforeEach already navigated, so we need to set route and navigate again
-			await page.route('**/api/content/landing-page', async (route) => {
-				const response = await route.fetch();
-				const data = await response.json();
-				data.campaigns = [];
-				await route.fulfill({ json: data });
+				await expect(page.locator(TEST_SELECTORS.MAIN_CONTENT)).toBeVisible();
+				const cards = page.locator(TEST_SELECTORS.CARD);
+				await expect(cards.first()).toBeVisible({
+					timeout: TEST_TIMEOUTS.SLOW_NETWORK,
+				});
 			});
 
-			await page.goto('/', { waitUntil: 'domcontentloaded' });
+			test('should handle empty campaign array gracefully', async ({ page }) => {
+				// Set up route BEFORE navigation
+				await page.route('**/api/content/landing-page', async (route) => {
+					const response = await route.fetch();
+					const data = await response.json();
+					data.campaigns = [];
+					await route.fulfill({ json: data });
+				});
 
-			// Verify carousel is hidden or shows no items when campaigns array is empty
-			const carousel = page.locator('cuentoneta-content-campaign-carousel');
-			const carouselItems = carousel.locator('.owl-item');
-			const itemCount = await carouselItems.count();
-			expect(itemCount).toBe(0);
+				await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-			// Verify rest of page still works - Latest Stories section should be visible
-			await expect(page.locator('cuentoneta-latest-stories-card-deck')).toBeVisible();
-			const cards = page.locator('cuentoneta-latest-stories-card-deck [data-testid="card"]');
-			await expect(cards.first()).toBeVisible();
+				const carousel = page.locator(TEST_SELECTORS.CAROUSEL);
+				const carouselItems = carousel.locator('.owl-item');
+				expect(await carouselItems.count()).toBe(0);
+
+				await expect(page.locator(TEST_SELECTORS.LATEST_DECK)).toBeVisible();
+				const cards = page.locator(`${TEST_SELECTORS.LATEST_DECK} ${TEST_SELECTORS.CARD}`);
+				await expect(cards.first()).toBeVisible();
+			});
 		});
 
+		// Other edge case tests use normal beforeEach
 		test('should handle missing storylist tags gracefully', async ({ page }) => {
 			// Wait for cards to be visible
 			const cards = page.locator('cuentoneta-storylist-card');
