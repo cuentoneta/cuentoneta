@@ -36,6 +36,29 @@ export default defineConfig([
 		},
 	},
 	{
+		name: 'staging',
+		title: 'STAG - La Cuentoneta',
+		basePath: '/staging',
+		icon: LaunchIcon,
+		projectId: process.env.SANITY_STUDIO_PROJECT_ID,
+		token: process.env.SANITY_STUDIO_API_TOKEN,
+		dataset: 'staging',
+		plugins: [
+			structureTool({
+				structure: (S, context) => {
+					return deskStructure(S, context);
+				},
+			}),
+			sanityComputedField(),
+			visionTool(),
+			iconPicker(),
+			singletonTools(),
+		],
+		schema: {
+			types: schemas,
+		},
+	},
+	{
 		name: 'development',
 		title: 'DEV - La Cuentoneta',
 		basePath: '/development',
