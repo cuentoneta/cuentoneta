@@ -197,7 +197,9 @@ export type Author = {
 	};
 	nationality: NationalityReference;
 	bornOn?: string;
+	bornOnYear?: ComputedNumber;
 	diedOn?: string;
+	diedOnYear?: ComputedNumber;
 	biography: BlockContent;
 	resources?: Array<{
 		title: string;
@@ -569,7 +571,7 @@ export declare const internalGroqTypeReferenceTo: unique symbol;
 
 // Source: ..\src\api\_queries\author.query.ts
 // Variable: authorBySlugQuery
-// Query: *[_type == 'author' && slug.current == $slug && !(_id in path('drafts.**'))][0]{    _id,    'slug': slug.current,    name,    image,    nationality->,    biography,    bornOn,    diedOn,    'resources': coalesce(resources[]{         title,         url,         resourceType->{        	'slug': slug.current,        	title,         	shortDescription,        	description,             icon        }     }, [])}
+// Query: *[_type == 'author' && slug.current == $slug && !(_id in path('drafts.**'))][0]{    _id,    'slug': slug.current,    name,    image,    nationality->,    biography,    bornOn,		bornOnYear,    diedOn,		diedOnYear,    'resources': coalesce(resources[]{        title,        url,        resourceType->{        	'slug': slug.current,        	title,        	shortDescription,        	description,            icon        }    }, [])}
 export type AuthorBySlugQueryResult = {
 	_id: string;
 	slug: string;
@@ -598,7 +600,9 @@ export type AuthorBySlugQueryResult = {
 	};
 	biography: BlockContent;
 	bornOn: string | null;
+	bornOnYear: ComputedNumber | null;
 	diedOn: string | null;
+	diedOnYear: ComputedNumber | null;
 	resources:
 		| Array<{
 				title: string;
@@ -616,7 +620,7 @@ export type AuthorBySlugQueryResult = {
 
 // Source: ..\src\api\_queries\author.query.ts
 // Variable: authorsQuery
-// Query: *[_type == 'author' && !(_id in path('drafts.**'))]{    _id,    'slug': slug.current,    name,    image,    nationality->,    'biography': [],    bornOn,    diedOn,    'resources': []}|order(name asc)
+// Query: *[_type == 'author' && !(_id in path('drafts.**'))]{    _id,    'slug': slug.current,    name,    image,    nationality->,    'biography': [],    bornOn, 		bornOnYear,    diedOn,    diedOnYear,    'resources': []}|order(name asc)
 export type AuthorsQueryResult = Array<{
 	_id: string;
 	slug: string;
@@ -645,7 +649,9 @@ export type AuthorsQueryResult = Array<{
 	};
 	biography: Array<never>;
 	bornOn: string | null;
+	bornOnYear: ComputedNumber | null;
 	diedOn: string | null;
+	diedOnYear: ComputedNumber | null;
 	resources: Array<never>;
 }>;
 
@@ -1110,7 +1116,7 @@ export type StoryNavigationTeasersByAuthorSlugQueryResult = Array<{
 
 // Source: ..\src\api\_queries\story.query.ts
 // Variable: storyBySlugQuery
-// Query: *[_type == 'story' && slug.current == $slug && !(_id in path('drafts.**'))]{    _id,    'slug': slug.current,    title,     'badLanguage': coalesce(badLanguage, false),    'epigraphs': coalesce(epigraphs[]{        text,        'reference': coalesce(reference[], [])    }, []),    'body': coalesce(body, []),    'review': coalesce(review, []),    'originalPublication': coalesce(originalPublication, ''),    approximateReadingTime,    'mediaSources': coalesce(mediaSources[], []),    'resources': coalesce(resources[]{        title,         url,         resourceType->{            'slug': slug.current,            title,             shortDescription,            description,            icon        }    }, []),    'author': author-> {        _id,        'slug': slug.current,        name,        image,        nationality->,        biography,        bornOn,        diedOn,        'resources': coalesce(resources[]{             title,             url,             resourceType->{                'slug': slug.current,                title,                 shortDescription,                description,                 icon            }         }, [])    }}[0]
+// Query: *[_type == 'story' && slug.current == $slug && !(_id in path('drafts.**'))]{    _id,    'slug': slug.current,    title,     'badLanguage': coalesce(badLanguage, false),    'epigraphs': coalesce(epigraphs[]{        text,        'reference': coalesce(reference[], [])    }, []),    'body': coalesce(body, []),    'review': coalesce(review, []),    'originalPublication': coalesce(originalPublication, ''),    approximateReadingTime,    'mediaSources': coalesce(mediaSources[], []),    'resources': coalesce(resources[]{        title,         url,         resourceType->{            'slug': slug.current,            title,             shortDescription,            description,            icon        }    }, []),    'author': author-> {        _id,        'slug': slug.current,        name,        image,        nationality->,        biography,        bornOn,        bornOnYear,        diedOn,        diedOnYear,        'resources': coalesce(resources[]{             title,             url,             resourceType->{                'slug': slug.current,                title,                 shortDescription,                description,                 icon            }         }, [])    }}[0]
 export type StoryBySlugQueryResult = {
 	_id: string;
 	slug: string;
@@ -1230,7 +1236,9 @@ export type StoryBySlugQueryResult = {
 		};
 		biography: BlockContent;
 		bornOn: string | null;
+		bornOnYear: ComputedNumber | null;
 		diedOn: string | null;
+		diedOnYear: ComputedNumber | null;
 		resources:
 			| Array<{
 					title: string;
@@ -1759,8 +1767,8 @@ export type StorylistQueryResult = {
 import '@sanity/client';
 declare module '@sanity/client' {
 	interface SanityQueries {
-		"\n*[_type == 'author' && slug.current == $slug && !(_id in path('drafts.**'))][0]\n{\n    _id,\n    'slug': slug.current,\n    name,\n    image,\n    nationality->,\n    biography,\n    bornOn,\n    diedOn,\n    'resources': coalesce(resources[]{ \n        title, \n        url, \n        resourceType->{\n        \t'slug': slug.current,\n        \ttitle, \n        \tshortDescription,\n        \tdescription, \n            icon\n        } \n    }, [])\n}": AuthorBySlugQueryResult;
-		"\n*[_type == 'author' && !(_id in path('drafts.**'))]\n{\n    _id,\n    'slug': slug.current,\n    name,\n    image,\n    nationality->,\n    'biography': [],\n    bornOn,\n    diedOn,\n    'resources': []\n}|order(name asc)": AuthorsQueryResult;
+		"\n*[_type == 'author' && slug.current == $slug && !(_id in path('drafts.**'))][0]\n{\n    _id,\n    'slug': slug.current,\n    name,\n    image,\n    nationality->,\n    biography,\n    bornOn,\n\t\tbornOnYear,\n    diedOn,\n\t\tdiedOnYear,\n    'resources': coalesce(resources[]{\n        title,\n        url,\n        resourceType->{\n        \t'slug': slug.current,\n        \ttitle,\n        \tshortDescription,\n        \tdescription,\n            icon\n        }\n    }, [])\n}": AuthorBySlugQueryResult;
+		"\n*[_type == 'author' && !(_id in path('drafts.**'))]\n{\n    _id,\n    'slug': slug.current,\n    name,\n    image,\n    nationality->,\n    'biography': [],\n    bornOn,\n \t\tbornOnYear,\n    diedOn,\n    diedOnYear,\n    'resources': []\n}|order(name asc)": AuthorsQueryResult;
 		"\n*[_type == 'rotatingContent' && _id == 'rotatingContent'][0]{\n    _id,\n    name,\n    'mostRead': coalesce(mostRead[]->{\n        _id,\n        'slug': slug.current,\n        title,\n        badLanguage,\n        'body': [],\n        originalPublication,\n        approximateReadingTime,\n        'resources': [],\n        'mediaSources': coalesce(mediaSources[], []),\n        'author': author-> {\n            _id,\n            'slug': slug.current,\n            name,\n            image,\n            nationality->,\n            'biography': [],\n            bornOn,\n            diedOn,\n            'resources': [],\n        }\n    },[])\n}": RotatingContentQueryResult;
 		"\n*[_type == 'landingPage' && !(_id in path('drafts.**')) && slug.current in $slugs]{\n\t\t_id,\n\t\t'slug': slug.current,\n\t\tconfig,\n}": LandingPageListQueryResult;
 		"\n*[_type == 'landingPage' && !(_id in path('drafts.**'))]{\n    _id,\n    _type,\n    'slug': slug.current,\n    config,\n    'cards': coalesce(cards[],[]),\n    'campaigns': coalesce(campaigns[],[]),\n    'latestReads': coalesce(latestReads,[]),\n} | order(_createdAt desc)[0]\n": LatestLandingPageReferencesQueryResult;
@@ -1768,7 +1776,7 @@ declare module '@sanity/client' {
 		"\n*[_type == 'contributor' && !(_id in path('drafts.**'))]\n{\n\tname,\n\t'slug': slug.current,\n\tarea,\n\tlink {\n\t\thandle,\n\t\turl\n\t},\n\tnotes\n}|order(name asc)\n": AllContributorsQueryResult;
 		"\n*[_type == 'story' && author->slug.current == $slug && !(_id in path('drafts.**'))][$start...$end]\n{\n    _id,\n    'slug': slug.current,\n    title,\n    'badLanguage': coalesce(badLanguage, false),\n    'body': coalesce(body[0...3], []),\n    'originalPublication': coalesce(originalPublication, ''),\n    approximateReadingTime,\n    'mediaSources': coalesce(mediaSources[], []),\n    'resources': coalesce(resources[]{ \n        title, \n        url, \n        resourceType->{\n            'slug': slug.current,\n            title, \n            shortDescription,\n            description, \n            icon\n        } \n    }, []),\n}|order(title asc)": StoriesByAuthorSlugQueryResult;
 		"\n*[_type == 'story' && author->slug.current == $slug && !(_id in path('drafts.**'))]\n{\n    _id,\n    'slug': slug.current,\n    title,\n    'badLanguage': coalesce(badLanguage, false),\n    'body': [],\n    'originalPublication': coalesce(originalPublication, ''),\n    approximateReadingTime,\n    'mediaSources': coalesce(mediaSources[], []),\n    'resources': [],\n}|order(title asc)[$start...$end]": StoryNavigationTeasersByAuthorSlugQueryResult;
-		"\n*[_type == 'story' && slug.current == $slug && !(_id in path('drafts.**'))]\n{\n    _id,\n    'slug': slug.current,\n    title, \n    'badLanguage': coalesce(badLanguage, false),\n    'epigraphs': coalesce(epigraphs[]{\n        text,\n        'reference': coalesce(reference[], [])\n    }, []),\n    'body': coalesce(body, []),\n    'review': coalesce(review, []),\n    'originalPublication': coalesce(originalPublication, ''),\n    approximateReadingTime,\n    'mediaSources': coalesce(mediaSources[], []),\n    'resources': coalesce(resources[]{\n        title, \n        url, \n        resourceType->{\n            'slug': slug.current,\n            title, \n            shortDescription,\n            description,\n            icon\n        }\n    }, []),\n    'author': author-> {\n        _id,\n        'slug': slug.current,\n        name,\n        image,\n        nationality->,\n        biography,\n        bornOn,\n        diedOn,\n        'resources': coalesce(resources[]{ \n            title, \n            url, \n            resourceType->{\n                'slug': slug.current,\n                title, \n                shortDescription,\n                description, \n                icon\n            } \n        }, [])\n    }\n}[0]": StoryBySlugQueryResult;
+		"\n*[_type == 'story' && slug.current == $slug && !(_id in path('drafts.**'))]\n{\n    _id,\n    'slug': slug.current,\n    title, \n    'badLanguage': coalesce(badLanguage, false),\n    'epigraphs': coalesce(epigraphs[]{\n        text,\n        'reference': coalesce(reference[], [])\n    }, []),\n    'body': coalesce(body, []),\n    'review': coalesce(review, []),\n    'originalPublication': coalesce(originalPublication, ''),\n    approximateReadingTime,\n    'mediaSources': coalesce(mediaSources[], []),\n    'resources': coalesce(resources[]{\n        title, \n        url, \n        resourceType->{\n            'slug': slug.current,\n            title, \n            shortDescription,\n            description,\n            icon\n        }\n    }, []),\n    'author': author-> {\n        _id,\n        'slug': slug.current,\n        name,\n        image,\n        nationality->,\n        biography,\n        bornOn,\n        bornOnYear,\n        diedOn,\n        diedOnYear,\n        'resources': coalesce(resources[]{ \n            title, \n            url, \n            resourceType->{\n                'slug': slug.current,\n                title, \n                shortDescription,\n                description, \n                icon\n            } \n        }, [])\n    }\n}[0]": StoryBySlugQueryResult;
 		"\n*[_type == 'story' && slug.current in $slugs && !(_id in path('drafts.**'))]\n{\n    _id,\n    'slug': slug.current,\n    title,\n    'badLanguage': coalesce(badLanguage, false),\n    'epigraphs': [],\n    'body': [],\n    'review': [],\n    'originalPublication': coalesce(originalPublication, ''),\n    approximateReadingTime,\n    'mediaSources': coalesce(mediaSources[], []),\n    'resources': [],\n    'author': author-> {\n        _id,\n        'slug': slug.current,\n        name,\n        image,\n        nationality->,\n        'biography': [],\n        bornOn,\n        diedOn,\n        'resources': []\n    }\n}": StoriesBySlugsQueryResult;
 		"\n*[_type == 'story' && !(_id in path('drafts.**'))]\n[$start...$end]\n{\n    _id,\n    'slug': slug.current,\n    title,\n    'badLanguage': coalesce(badLanguage, false),\n    'body': [],\n    'review': [],\n    'originalPublication': coalesce(originalPublication, ''),\n    approximateReadingTime,\n    'mediaSources': coalesce(mediaSources[], []),\n    'resources': [],\n    'author': author-> {\n        _id,\n        'slug': slug.current,\n        name,\n        image,\n        nationality->,\n        'biography': [],\n        bornOn,\n        diedOn,\n        'resources': []\n    }\n}|order(title asc)": AllStoriesQueryResult;
 		"\n*[_type == 'storylist' && !(_id in path('drafts.**'))]{\n    _id,\n    'slug': slug.current,\n    title,\n    description,\n    featuredImage,\n    'tags': coalesce(tags[] -> {\n        title,\n        'slug': slug.current,\n        shortDescription,\n        description,\n        icon\n    }, []),\n    'stories': [],\n    'count': coalesce(count(stories), 0),\n    config,\n    'tabs': [],\n\t\t'mediaSources': coalesce(mediaSources[], []),\n    }\n": StorylistTeasersQueryResult;

@@ -73,7 +73,9 @@ export const storyBySlugQuery = defineQuery(`
         nationality->,
         biography,
         bornOn,
+        bornOnYear,
         diedOn,
+        diedOnYear,
         'resources': coalesce(resources[]{ 
             title, 
             url, 
