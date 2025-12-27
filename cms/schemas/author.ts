@@ -57,11 +57,49 @@ export default defineType({
 			},
 		}),
 		defineField({
+			name: 'bornOnYear',
+			title: 'Año de nacimiento',
+			type: 'computedNumber',
+			description: 'Se calcula automáticamente desde la fecha completa. Ingrese manualmente si solo conoce el año.',
+			validation: (Rule) => Rule.min(500).max(2100).integer(),
+			readOnly: ({ document }) => !!document?.bornOn,
+			options: {
+				buttonText: 'Recalcular desde fecha',
+				documentQuerySelection: `_id, _type, bornOn`,
+				reduceQueryResult: (result: { draft?: { bornOn: string }; published: { bornOn: string } }) => {
+					const bornOn = result.draft?.bornOn || result.published?.bornOn;
+					if (bornOn) {
+						return parseInt(bornOn.split('-')[0]);
+					}
+					return null;
+				},
+			},
+		}),
+		defineField({
 			name: 'diedOn',
 			title: 'Fecha de fallecimiento',
 			type: 'date',
 			options: {
 				dateFormat: 'YYYY-MM-DD',
+			},
+		}),
+		defineField({
+			name: 'diedOnYear',
+			title: 'Año de fallecimiento',
+			type: 'computedNumber',
+			description: 'Se calcula automáticamente desde la fecha completa. Ingrese manualmente si solo conoce el año.',
+			validation: (Rule) => Rule.min(500).max(2100).integer(),
+			readOnly: ({ document }) => !!document?.diedOn,
+			options: {
+				buttonText: 'Recalcular desde fecha',
+				documentQuerySelection: `_id, _type, diedOn`,
+				reduceQueryResult: (result: { draft?: { diedOn: string }; published: { diedOn: string } }) => {
+					const diedOn = result.draft?.diedOn || result.published?.diedOn;
+					if (diedOn) {
+						return parseInt(diedOn.split('-')[0]);
+					}
+					return null;
+				},
 			},
 		}),
 		defineField({
