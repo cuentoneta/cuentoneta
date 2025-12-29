@@ -16,7 +16,7 @@ import { FacebookPlatform, SharingPlatform, TwitterPlatform, WhatsappPlatform } 
 	`,
 	styles: `
 		:host ::ng-deep .share-button-skeleton .skeleton-loader {
-			@apply bg-zinc-300;
+			@apply bg-neutral-300;
 		}
 	`,
 })

@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 	hostDirectives: [MetaTagsDirective],
 	template: `
 		<main
-			class="content horizontal-layout-spacing vertical-layout-spacing bg-gray-50 p-5 shadow-lg md:rounded-xl md:p-15"
+			class="content horizontal-layout-spacing vertical-layout-spacing bg-neutral-50 p-5 shadow-lg md:rounded-xl md:p-15"
 		>
 			<h1 class="h1 mb-5">Disclaimer for La Cuentoneta</h1>
 
@@ -22,7 +22,7 @@ import { environment } from '../../environments/environment';
 			</section>
 
 			<section class="mb-8">
-				<h2 class="h2 mb-5 text-gray-600">Disclaimers for <em>La Cuentoneta</em></h2>
+				<h2 class="h2 mb-5 text-neutral-600">Disclaimers for <em>La Cuentoneta</em></h2>
 				<p class="inter-body-base-regular">
 					All the information on this website - cuentoneta.ar - is published in good faith and for general information
 					purpose only. La Cuentoneta does not make any warranties about the completeness, reliability and accuracy of
@@ -90,21 +90,21 @@ import { environment } from '../../environments/environment';
 			</section>
 
 			<section class="mb-8">
-				<h2 class="h2 mb-5 text-gray-600">Consent</h2>
+				<h2 class="h2 mb-5 text-neutral-600">Consent</h2>
 				<p class="inter-body-base-regular">
 					By using our website, you hereby consent to our disclaimer and agree to its terms.
 				</p>
 			</section>
 
 			<section class="mb-8">
-				<h2 class="h2 mb-5 text-gray-600">Update</h2>
+				<h2 class="h2 mb-5 text-neutral-600">Update</h2>
 				<p class="inter-body-base-regular">
 					Should we update, amend or make any changes to this document, those changes will be prominently posted here.
 				</p>
 			</section>
 
 			<section class="mb-8">
-				<h2 class="h2 mb-5 text-gray-600">Original Sources</h2>
+				<h2 class="h2 mb-5 text-neutral-600">Original Sources</h2>
 				<p class="inter-body-base-regular">
 					In order to demonstrate that La Cuentoneta solely serves as a platform for reproducing existing content, each
 					non-original asset sourced from external contributors and other platforms includes a prominently displayed and

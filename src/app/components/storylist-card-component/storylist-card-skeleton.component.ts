@@ -37,7 +37,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 					appearance="line"
 				/>
 			</div>
-			<hr class="text-gray-300" />
+			<hr class="text-neutral-300" />
 		</section>
 		<footer class="flex justify-end rounded-b-lg px-5 pb-5 pt-4">
 			<ngx-skeleton-loader
@@ -66,7 +66,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 	styles: `
 		:host ::ng-deep .storylist-title-skeleton .skeleton-loader,
 		:host ::ng-deep .footer-button-skeleton .skeleton-loader {
-			@apply bg-zinc-300;
+			@apply bg-neutral-300;
 		}
 	`,
 })
