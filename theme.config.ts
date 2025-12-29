@@ -3,10 +3,6 @@ export const extendedColors = {
 	white: '#fff',
 	black: '#000',
 
-	// Sistema de colores legacy
-	'zinc-200': '#e4e4e7', // Utilizado formato hexadecimal por limitaciones de ngx-skeleton-loader
-	'zinc-300': '#d4d4d8', // Utilizado formato hexadecimal por limitaciones de ngx-skeleton-loader
-
 	// Design System v3 - Colores de marca
 	'brand-50': 'hsl(12, 60%, 97%)',
 	'brand-100': 'hsl(11, 50%, 96%)',

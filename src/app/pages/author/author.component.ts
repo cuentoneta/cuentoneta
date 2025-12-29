@@ -61,7 +61,7 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 		:host ::ng-deep .author-nationality-skeleton .skeleton-loader,
 		:host ::ng-deep .author-stories-count-skeleton .skeleton-loader,
 		:host ::ng-deep .biography-skeleton .skeleton-loader {
-			@apply bg-zinc-300;
+			@apply bg-neutral-300;
 		}
 	`,
 	template: `

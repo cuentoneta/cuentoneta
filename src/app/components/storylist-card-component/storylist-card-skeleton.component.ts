@@ -66,7 +66,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 	styles: `
 		:host ::ng-deep .storylist-title-skeleton .skeleton-loader,
 		:host ::ng-deep .footer-button-skeleton .skeleton-loader {
-			@apply bg-zinc-300;
+			@apply bg-neutral-300;
 		}
 	`,
 })
