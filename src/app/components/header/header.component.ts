@@ -24,7 +24,7 @@ enum VisibilityState {
 			<nav class="navigation flex items-center justify-end">
 				<ul class="flex hidden md:flex">
 					@for (navLink of navLinks; track $index) {
-						<li class="inter-body-sm-semibold hover:text-interactive-500 md:ml-12">
+						<li class="inter-body-sm-semibold text-neutral-900 hover:text-neutral-900/60 md:ml-12">
 							<a
 								[routerLink]="navLink.path"
 								[tabindex]="navLink.label === 'Inicio' ? -1 : 0"
@@ -46,11 +46,11 @@ enum VisibilityState {
 			</nav>
 		</header>
 		@if (displayMenu()) {
-			<nav class="block grid-cols-2 grid-rows-2 border-t-2 border-gray-200 bg-gray-50 md:hidden">
+			<nav class="block grid-cols-2 grid-rows-2 border-t-2 border-neutral-200 bg-neutral-50 md:hidden">
 				<ul>
 					@for (navLink of navLinks; track $index) {
 						<li
-							class="inter-body-lg-semibold flex h-12 items-center border-b-2 border-gray-200 px-5 hover:text-interactive-500"
+							class="inter-body-lg-semibold flex h-12 items-center border-b-2 border-neutral-200 px-5 text-neutral-900 hover:text-neutral-900/60"
 						>
 							<a
 								(click)="onMenuTogglerClicked()"
@@ -68,7 +68,7 @@ enum VisibilityState {
 				(keypress)="onMenuTogglerClicked()"
 				role="presentation"
 				tabIndex="0"
-				class="backdrop h-dvh bg-gray-500/70"
+				class="backdrop h-dvh bg-neutral-500/70"
 			></div>
 		}
 	`,
@@ -76,10 +76,10 @@ enum VisibilityState {
 		:host {
 			@apply fixed top-0 z-10 w-full items-center justify-center;
 			@apply md:m-auto;
-			@apply border-b-1 border-gray-200;
+			@apply border-b-1 border-neutral-200;
 
 			.nav-container {
-				@apply grid bg-gray-50 px-5;
+				@apply grid bg-neutral-50 px-5;
 
 				/*Layout de grid para vistas md y superiores */
 				@apply grid-cols-[1fr_theme(spacing.6)] grid-rows-[theme(spacing.16)_1fr];

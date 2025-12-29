@@ -40,11 +40,11 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 	</div>`,
 	styles: `
 		:host ::ng-deep .carousel-image-skeleton .skeleton-loader {
-			@apply bg-zinc-200;
+			@apply bg-neutral-200;
 		}
 
 		:host ::ng-deep .carousel-text-skeleton .skeleton-loader {
-			@apply bg-zinc-300;
+			@apply bg-neutral-300;
 		}
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,

@@ -13,7 +13,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 		@if (story(); as story) {
 			<article class="flex gap-4">
 				@if (order()) {
-					<span class="source-serif-pro-heading-2-bold leading-none text-primary-500">{{ formattedOrder() }}.</span>
+					<span class="source-serif-pro-heading-2-bold leading-none text-brand-500">{{ formattedOrder() }}.</span>
 				}
 				<div class="flex flex-1 flex-col">
 					@if (showAuthor() && 'author' in story) {
@@ -25,7 +25,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 								height="20"
 								class="h-5 w-5 rounded-full"
 							/>
-							<span class="inter-body-sm-semibold text-gray-500">{{ story.author.name }}</span>
+							<span class="inter-body-sm-semibold text-neutral-500">{{ story.author.name }}</span>
 						</a>
 					}
 					<a
@@ -45,7 +45,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 								class="source-serif-pro-body-base relative min-h-18 text-ellipsis text-justify"
 							/>
 						}
-						<footer class="inter-body-xs flex gap-1 text-gray-500">
+						<footer class="inter-body-xs flex gap-1 text-neutral-500">
 							<span> {{ story.approximateReadingTime }} minutos de lectura </span>
 							<span>•</span>
 							<span> Leer -> </span>

@@ -4,7 +4,7 @@ import { join } from 'path';
 
 describe('Theme Configuration', () => {
 	describe('theme-color meta tag synchronization', () => {
-		it('should match the primary-500 color from theme.config.ts', () => {
+		it('should match the brand-500 color from theme.config.ts', () => {
 			const indexFilePath = join(process.cwd(), 'src', 'indexFile.html');
 			const indexFileContent = readFileSync(indexFilePath, 'utf-8');
 			const themeColorMatch = indexFileContent.match(/<meta\s+name="theme-color"\s+content="([^"]+)"\s*\/?>/);
@@ -17,15 +17,15 @@ describe('Theme Configuration', () => {
 			expect(themeColorMatch[1]).toBeDefined();
 
 			const themeColorFromMetaTag = themeColorMatch[1];
-			const primaryColor500 = extendedColors['primary-500'];
+			const brandColor500 = extendedColors['brand-500'];
 
 			// Compare the values
-			expect(themeColorFromMetaTag).toBe(primaryColor500);
+			expect(themeColorFromMetaTag).toBe(brandColor500);
 		});
 
-		it('should have primary-500 defined in theme.config.ts', () => {
-			expect(extendedColors['primary-500']).toBeDefined();
-			expect(extendedColors['primary-500']).toBe('hsl(21, 57%, 44%)');
+		it('should have brand-500 defined in theme.config.ts', () => {
+			expect(extendedColors['brand-500']).toBeDefined();
+			expect(extendedColors['brand-500']).toBe('hsl(21, 57%, 44%)');
 		});
 	});
 });

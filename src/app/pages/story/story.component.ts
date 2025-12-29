@@ -51,7 +51,7 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 		:host ::ng-deep .story-title-skeleton .skeleton-loader,
 		:host ::ng-deep .story-author-skeleton .skeleton-loader,
 		:host ::ng-deep .story-reading-time-skeleton .skeleton-loader {
-			@apply bg-zinc-300;
+			@apply bg-neutral-300;
 		}
 	`,
 	imports: [

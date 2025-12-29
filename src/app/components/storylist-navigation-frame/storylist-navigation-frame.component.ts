@@ -38,14 +38,14 @@ export type NavigationBarConfig = {
 			}
 		} @else {
 			@for (skeleton of dummyList; track $index) {
-				<article [attr.aria-busy]="true" class="bg-gray-50 px-7 py-5">
+				<article [attr.aria-busy]="true" class="bg-neutral-50 px-7 py-5">
 					<ngx-skeleton-loader count="2" appearance="line" />
 				</article>
 			}
 		}`,
 	styles: `
 		:host {
-			@apply grid grid-cols-1 gap-y-0.5 rounded-xl bg-gray-200 shadow-lg;
+			@apply grid grid-cols-1 gap-y-0.5 rounded-xl bg-neutral-200 shadow-lg;
 		}
 	`,
 })

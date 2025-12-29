@@ -36,7 +36,7 @@ import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
 					<nav>
 						<ul class="justify-left inter-body-sm-semibold flex lg:justify-center">
 							@for (link of navLinks; track $index) {
-								<li class="max-sm:inter-body-xs-bold hover:text-interactive-500">
+								<li class="max-sm:inter-body-xs-bold text-neutral-900 hover:text-neutral-900/60">
 									<a routerLink="{{ link.path }}">{{ link.label }}</a>
 								</li>
 							}
@@ -61,7 +61,7 @@ import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
 	`,
 	styles: `
 		footer {
-			@apply mt-[120px] w-full border-t-1 border-solid border-primary-500 bg-white max-sm:px-5 max-sm:py-8 sm:h-[98px];
+			@apply mt-[120px] w-full border-t-1 border-solid border-brand-500 bg-white max-sm:px-5 max-sm:py-8 sm:h-[98px];
 		}
 
 		.container {

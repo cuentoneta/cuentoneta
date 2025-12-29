@@ -72,7 +72,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 						}
 					</div>
 				}
-				<footer class="inter-body-xs flex gap-1 text-gray-500">
+				<footer class="inter-body-xs flex gap-1 text-neutral-500">
 					<ngx-skeleton-loader
 						[theme]="{
 							height: '16px',
@@ -102,11 +102,11 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 		}
 
 		:host ::ng-deep .order-skeleton .skeleton-loader {
-			@apply bg-primary-300;
+			@apply bg-brand-300;
 		}
 
 		:host ::ng-deep .title-skeleton .skeleton-loader {
-			@apply bg-zinc-300;
+			@apply bg-neutral-300;
 		}
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,

@@ -13,7 +13,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 			data-testid="youtube-player"
 			placeholderImageQuality="low"
 		/>
-		<p class="inter-body-xs-medium text-primary-500">
+		<p class="inter-body-xs-medium text-brand-500">
 			<cuentoneta-portable-text-parser [paragraphs]="media().description" />
 		</p>`,
 	styles: `
