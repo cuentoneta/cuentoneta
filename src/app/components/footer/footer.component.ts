@@ -61,7 +61,7 @@ import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
 	`,
 	styles: `
 		footer {
-			@apply mt-[120px] w-full border-t-1 border-solid border-primary-500 bg-white max-sm:px-5 max-sm:py-8 sm:h-[98px];
+			@apply mt-[120px] w-full border-t-1 border-solid border-brand-500 bg-white max-sm:px-5 max-sm:py-8 sm:h-[98px];
 		}
 
 		.container {

@@ -12,9 +12,7 @@ import { NgTemplateOutlet } from '@angular/common';
 				<button
 					(click)="setActive(tab)"
 					[attr.aria-selected]="tabTitle === activeTabTitle"
-					[class]="
-						tabTitle === activeTabTitle ? 'border-primary-400 text-primary-500' : 'border-gray-200 text-gray-600'
-					"
+					[class]="tabTitle === activeTabTitle ? 'border-brand-400 text-brand-500' : 'border-gray-200 text-gray-600'"
 					class="flex h-12 items-center gap-1 border-b-2 py-3 font-inter font-semibold"
 					role="tab"
 				>

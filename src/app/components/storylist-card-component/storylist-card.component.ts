@@ -24,7 +24,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 			@if (storylist(); as storylist) {
 				<a [routerLink]="['/' + appRoutes.StoryList, storylist.slug]" class="navigation-link">
 					<section
-						class="flex flex-col gap-4 rounded-t-2xl border-1 border-b-0 border-solid border-primary-300 px-4 pt-5"
+						class="flex flex-col gap-4 rounded-t-2xl border-1 border-b-0 border-solid border-brand-300 px-4 pt-5"
 					>
 						<h1
 							class="h3 cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap font-source-serif italic hover:text-interactive-500"
@@ -38,7 +38,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 						<hr class="text-gray-300" />
 					</section>
 					<footer
-						class="flex justify-between rounded-b-2xl border-1 border-t-0 border-solid border-primary-300 px-5 pb-5 pt-4"
+						class="flex justify-between rounded-b-2xl border-1 border-t-0 border-solid border-brand-300 px-5 pb-5 pt-4"
 					>
 						<div class="flex rounded bg-gray-200 px-4.5 py-0.5 uppercase hover:cursor-default">
 							<span class="inter-body-xs-bold flex items-center gap-1">{{ storylist.count }} historias</span>

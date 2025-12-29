@@ -24,7 +24,7 @@ import { StorylistStoriesNavigationTeasers } from '@models/storylist.model';
 		>
 			<article
 				[ngClass]="{
-					'border-l-4 border-solid border-primary-400 bg-primary-100': selected(),
+					'border-l-4 border-solid border-brand-400 bg-brand-100': selected(),
 				}"
 				class="bg-gray-50 px-7 py-5"
 			>

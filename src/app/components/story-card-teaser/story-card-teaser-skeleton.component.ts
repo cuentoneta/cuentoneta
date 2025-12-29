@@ -102,7 +102,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 		}
 
 		:host ::ng-deep .order-skeleton .skeleton-loader {
-			@apply bg-primary-300;
+			@apply bg-brand-300;
 		}
 
 		:host ::ng-deep .title-skeleton .skeleton-loader {
