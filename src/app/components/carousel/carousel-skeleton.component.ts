@@ -1,11 +1,11 @@
-// Core
+// Núcleo
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-// 3rd party modules
+// Módulos de terceros
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
-	selector: 'cuentoneta-content-campaign-carousel-skeleton',
+	selector: 'cuentoneta-carousel-skeleton',
 	imports: [NgxSkeletonLoaderModule],
 	template: ` <div class="mx-auto max-w-[960px]">
 		<div class="slider">
@@ -49,4 +49,4 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ContentCampaignCarouselSkeletonComponent {}
+export class CarouselSkeletonComponent {}
