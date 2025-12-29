@@ -12,6 +12,8 @@ interface AuthorBase {
 	nationality: AuthorNationality;
 	bornOn?: DateString;
 	diedOn?: DateString;
+	bornOnYear?: number;
+	diedOnYear?: number;
 }
 
 export interface AuthorTeaser extends AuthorBase {

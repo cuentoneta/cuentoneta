@@ -126,6 +126,10 @@ export const authorMock: Author = {
 			_key: '59089d1c58c4',
 		},
 	],
+	bornOn: '1948-01-01',
+	bornOnYear: 1948,
+	diedOn: '1994-12-31',
+	diedOnYear: 1994,
 };
 export const authorTeaserMock: AuthorTeaser = {
 	_id: 'author_1',
@@ -138,4 +142,8 @@ export const authorTeaserMock: AuthorTeaser = {
 	imageUrl: 'https://cdn.sanity.io/images/s4dbqkc5/production/f656d95d41369adb6f7d3a7d0b20b36861fd2028-350x350.jpg',
 	name: 'François Onoff',
 	biography: [],
+	bornOn: '1948-01-01',
+	bornOnYear: 1948,
+	diedOn: '1994-12-31',
+	diedOnYear: 1994,
 };
