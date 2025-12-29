@@ -112,7 +112,9 @@ export const storiesBySlugsQuery = defineQuery(`
         nationality->,
         'biography': [],
         bornOn,
+        bornOnYear,
         diedOn,
+        diedOnYear,
         'resources': []
     }
 }`);
@@ -139,7 +141,9 @@ export const allStoriesQuery = defineQuery(`
         nationality->,
         'biography': [],
         bornOn,
+        bornOnYear,
         diedOn,
+        diedOnYear,
         'resources': []
     }
 }|order(title asc)`);

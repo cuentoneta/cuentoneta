@@ -62,6 +62,8 @@ export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>): 
 		biography: biography,
 		bornOn: rawAuthorData.bornOn ? (rawAuthorData.bornOn as DateString) : undefined,
 		diedOn: rawAuthorData.diedOn ? (rawAuthorData.diedOn as DateString) : undefined,
+		bornOnYear: rawAuthorData.bornOnYear ?? undefined,
+		diedOnYear: rawAuthorData.diedOnYear ?? undefined,
 	};
 }
 type AuthorTeaserForStoriesSubQuery = NonNullable<StorylistQueryResult>['stories'][0]['author'];
@@ -76,12 +78,14 @@ export function mapAuthorTeaser(
 			country: rawAuthorData.nationality?.country,
 			flag: urlFor(rawAuthorData.nationality.flag),
 		},
+		resources: [],
 		imageUrl: urlFor(rawAuthorData.image),
 		name: rawAuthorData.name,
 		biography: [],
 		bornOn: rawAuthorData.bornOn ? (rawAuthorData.bornOn as DateString) : undefined,
 		diedOn: rawAuthorData.diedOn ? (rawAuthorData.diedOn as DateString) : undefined,
-		resources: [],
+		bornOnYear: rawAuthorData.bornOnYear ?? undefined,
+		diedOnYear: rawAuthorData.diedOnYear ?? undefined,
 	};
 }
 
