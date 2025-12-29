@@ -21,7 +21,7 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 			<header [attr.aria-busy]="frameConfig().headerTitle" class="bg-neutral-50 px-7 py-5">
 				@if (frameConfig().headerTitle) {
 					<a [routerLink]="frameConfig().navigationRoute">
-						<h2 class="h3 hover:text-interactive-500">{{ frameConfig().headerTitle }}</h2>
+						<h2 class="h3 text-neutral-900 hover:text-neutral-900/60">{{ frameConfig().headerTitle }}</h2>
 					</a>
 				} @else {
 					<ng-container *ngTemplateOutlet="titleSkeleton" />
@@ -35,7 +35,7 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 			<footer class="bg-neutral-50 px-7 py-5">
 				@if (frameConfig().showFooter) {
 					<a [routerLink]="frameConfig().navigationRoute">
-						<h3 class="h3 inter-body-xl-bold hover:text-interactive-500">Ver más...</h3>
+						<h3 class="h3 inter-body-xl-bold text-neutral-900 hover:text-neutral-900/60">Ver más...</h3>
 					</a>
 				} @else {
 					<ng-container *ngTemplateOutlet="titleSkeleton" />

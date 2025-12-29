@@ -4,8 +4,6 @@ export const extendedColors = {
 	black: '#000',
 
 	// Sistema de colores legacy
-	'interactive-500': 'hsl(212, 70%, 45%)',
-	'interactive-600': 'hsl(212, 70%, 35%)',
 	'zinc-200': '#e4e4e7', // Utilizado formato hexadecimal por limitaciones de ngx-skeleton-loader
 	'zinc-300': '#d4d4d8', // Utilizado formato hexadecimal por limitaciones de ngx-skeleton-loader
 

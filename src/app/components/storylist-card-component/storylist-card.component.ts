@@ -27,7 +27,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 						class="flex flex-col gap-4 rounded-t-2xl border-1 border-b-0 border-solid border-brand-300 px-4 pt-5"
 					>
 						<h1
-							class="h3 cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap font-source-serif italic hover:text-interactive-500"
+							class="h3 cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap font-source-serif italic text-neutral-900 hover:text-neutral-900/60"
 						>
 							{{ storylist.title }}
 						</h1>
