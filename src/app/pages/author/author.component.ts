@@ -82,13 +82,13 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 									<span class="hidden sm:inline">{{ author.name }}</span>
 									<span class="sm:hidden">{{ author.name | initials }}</span>
 								</h1>
-								<span class="inter-body-sm flex items-center gap-2 font-medium text-gray-600">
+								<span class="inter-body-sm flex items-center gap-2 font-medium text-neutral-600">
 									<img [ngSrc]="authorFlagUrl()" width="20" height="15" class="h-[15px] w-5 rounded" alt="" />
 									{{ author.nationality.country }}
 								</span>
 
 								<div class="flex">
-									<div class="rounded bg-gray-200 px-2 py-0.5 hover:cursor-default">
+									<div class="rounded bg-neutral-200 px-2 py-0.5 hover:cursor-default">
 										<span class="inter-body-xs-semibold flex items-center gap-1">{{ stories().length }} historias</span>
 									</div>
 								</div>
@@ -171,8 +171,8 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 											class="flex flex-col gap-4"
 										/>
 										@if (author.resources && author.resources.length > 0) {
-											<hr class="text-gray-500" />
-											<div class="font-inter font-semibold text-gray-600">Recursos web sobre el autor:</div>
+											<hr class="text-neutral-500" />
+											<div class="font-inter font-semibold text-neutral-600">Recursos web sobre el autor:</div>
 											<div class="flex justify-start gap-4">
 												@for (resource of author.resources; track $index) {
 													<cuentoneta-resource [resource]="resource" />

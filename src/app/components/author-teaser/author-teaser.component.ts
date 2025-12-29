@@ -49,8 +49,8 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 					/>
 					<span
 						[ngClass]="{
-							'inter-body-sm-semibold text-gray-500 hover:!cursor-pointer': variant() === 'sm',
-							'inter-body-base-medium text-gray-700': variant() === 'md',
+							'inter-body-sm-semibold text-neutral-500 hover:!cursor-pointer': variant() === 'sm',
+							'inter-body-base-medium text-neutral-700': variant() === 'md',
 						}"
 						>{{ nationality.country }}</span
 					>

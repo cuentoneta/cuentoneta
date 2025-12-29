@@ -98,11 +98,11 @@ export const Docs: Story = {
 		template: `
 			<div class="grid grid-cols-2 gap-6">
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Estado Cargado</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Estado Cargado</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate(args)} />
 				</div>
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Estado Esqueleto</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Estado Esqueleto</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate({ ...args, story: undefined })} />
 				</div>
 			</div>
@@ -133,11 +133,11 @@ export const Default: Story = {
 		template: `
 			<div class="grid grid-cols-2 gap-6">
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Cargado</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Cargado</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate(args)} />
 				</div>
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Esqueleto</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Esqueleto</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate({ ...args, story: undefined })} />
 				</div>
 			</div>
@@ -165,11 +165,11 @@ export const WithAuthor: Story = {
 		template: `
 			<div class="grid grid-cols-2 gap-6">
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Cargado</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Cargado</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate(args)} />
 				</div>
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Esqueleto</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Esqueleto</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate({ ...args, story: undefined })} />
 				</div>
 			</div>
@@ -197,11 +197,11 @@ export const WithOrder: Story = {
 		template: `
 			<div class="grid grid-cols-2 gap-6">
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Cargado</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Cargado</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate(args)} />
 				</div>
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Esqueleto</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Esqueleto</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate({ ...args, story: undefined })} />
 				</div>
 			</div>
@@ -230,11 +230,11 @@ export const WithExcerpt: Story = {
 		template: `
 			<div class="grid grid-cols-2 gap-6">
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Cargado</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Cargado</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate(args)} />
 				</div>
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Esqueleto</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Esqueleto</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate({ ...args, story: undefined })} />
 				</div>
 			</div>
@@ -262,11 +262,11 @@ export const FullFeatured: Story = {
 		template: `
 			<div class="grid grid-cols-2 gap-6">
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Cargado</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Cargado</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate(args)} />
 				</div>
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Esqueleto</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Esqueleto</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate({ ...args, story: undefined })} />
 				</div>
 			</div>
@@ -300,15 +300,15 @@ export const ExcerptVariations: Story = {
 		template: `
 			<div class="space-y-6">
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Extracto de 1 Línea</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Extracto de 1 Línea</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate({ ...args, excerptLines: 1 })} />
 				</div>
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Extracto de 3 Líneas</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Extracto de 3 Líneas</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate({ ...args, excerptLines: 3 })} />
 				</div>
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Extracto de 5 Líneas</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Extracto de 5 Líneas</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate({ ...args, excerptLines: 5 })} />
 				</div>
 			</div>
@@ -336,27 +336,27 @@ export const AllVariants: Story = {
 		template: `
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Básico</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Básico</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate({ story: args.story })} />
 				</div>
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Cargando</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Cargando</h3>
 					<cuentoneta-story-card-teaser />
 				</div>
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Con Orden</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Con Orden</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate({ story: args.story, order: 3 })} />
 				</div>
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Con Autor</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Con Autor</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate({ story: args.story, showAuthor: true })} />
 				</div>
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Con Extracto</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Con Extracto</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate({ story: args.story, showExcerpt: true, excerptLines: 3 })} />
 				</div>
 				<div class="space-y-2">
-					<h3 class="font-semibold text-sm text-gray-600">Completo</h3>
+					<h3 class="font-semibold text-sm text-neutral-600">Completo</h3>
 					<cuentoneta-story-card-teaser ${argsToTemplate({ story: args.story, order: 7, showAuthor: true, showExcerpt: true, excerptLines: 4 })} />
 				</div>
 			</div>

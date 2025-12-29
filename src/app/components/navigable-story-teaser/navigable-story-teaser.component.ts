@@ -26,7 +26,7 @@ import { RouterLink } from '@angular/router';
 					[ngClass]="{
 						'border-l-4 border-solid border-brand-400 bg-brand-100': selected(),
 					}"
-					class="bg-gray-50 px-7 py-5"
+					class="bg-neutral-50 px-7 py-5"
 				>
 					@if (story().originalPublication) {
 						<cuentoneta-story-edition-date-label [label]="story().originalPublication" />
@@ -34,7 +34,7 @@ import { RouterLink } from '@angular/router';
 
 					<h1 class="inter-body-sm-bold mb-2">{{ story().title }}</h1>
 					<div class="flex items-center justify-between">
-						<time class="inter-body-xs-semibold font-semibold text-gray-600">
+						<time class="inter-body-xs-semibold font-semibold text-neutral-600">
 							{{ story().approximateReadingTime }} minutos de lectura
 						</time>
 						<cuentoneta-media-resource-tags [resources]="story().media" />

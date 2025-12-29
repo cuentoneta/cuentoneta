@@ -37,7 +37,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 					appearance="line"
 				/>
 			</div>
-			<hr class="text-gray-300" />
+			<hr class="text-neutral-300" />
 		</section>
 		<footer class="flex justify-end rounded-b-lg px-5 pb-5 pt-4">
 			<ngx-skeleton-loader

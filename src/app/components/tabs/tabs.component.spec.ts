@@ -73,8 +73,8 @@ describe('TabsComponent', () => {
 
 		expect(buttons[0]).toHaveClass('border-brand-400');
 		expect(buttons[0]).toHaveClass('text-brand-500');
-		expect(buttons[1]).toHaveClass('border-gray-200');
-		expect(buttons[1]).toHaveClass('text-gray-600');
+		expect(buttons[1]).toHaveClass('border-neutral-200');
+		expect(buttons[1]).toHaveClass('text-neutral-600');
 	});
 
 	it('should support initialTabIndex input', async () => {

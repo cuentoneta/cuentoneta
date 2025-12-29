@@ -5,14 +5,16 @@ import { NgTemplateOutlet } from '@angular/common';
 @Component({
 	selector: 'cuentoneta-tabs',
 	imports: [NgTemplateOutlet],
-	template: `<div role="tablist" class="inline-flex h-12 items-start gap-4 border-b-2 border-gray-200">
+	template: `<div role="tablist" class="inline-flex h-12 items-start gap-4 border-b-2 border-neutral-200">
 			@for (tab of tabs(); track $index) {
 				@let tabTitle = tab.title();
 				@let activeTabTitle = active().title();
 				<button
 					(click)="setActive(tab)"
 					[attr.aria-selected]="tabTitle === activeTabTitle"
-					[class]="tabTitle === activeTabTitle ? 'border-brand-400 text-brand-500' : 'border-gray-200 text-gray-600'"
+					[class]="
+						tabTitle === activeTabTitle ? 'border-brand-400 text-brand-500' : 'border-neutral-200 text-neutral-600'
+					"
 					class="flex h-12 items-center gap-1 border-b-2 py-3 font-inter font-semibold"
 					role="tab"
 				>

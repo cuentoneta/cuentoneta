@@ -72,7 +72,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 						}
 					</div>
 				}
-				<footer class="inter-body-xs flex gap-1 text-gray-500">
+				<footer class="inter-body-xs flex gap-1 text-neutral-500">
 					<ngx-skeleton-loader
 						[theme]="{
 							height: '16px',

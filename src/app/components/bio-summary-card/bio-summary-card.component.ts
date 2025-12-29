@@ -12,7 +12,7 @@ import { ResourceComponent } from '../resource/resource.component';
 @Component({
 	selector: 'cuentoneta-bio-summary-card',
 	template: `
-		<div class="rounded border-1 border-solid border-gray-200 bg-gray-100 p-6">
+		<div class="rounded border-1 border-solid border-neutral-200 bg-neutral-100 p-6">
 			<section class="mb-4 grid grid-cols-[1fr] gap-4 sm:mb-8 sm:grid-cols-[auto_1fr]">
 				<cuentoneta-author-teaser [author]="story().author" [variant]="'md'" />
 				@if (resources.length > 0) {
@@ -23,7 +23,7 @@ import { ResourceComponent } from '../resource/resource.component';
 					</div>
 				}
 			</section>
-			<section class="inter-body-base-regular text-gray-700">
+			<section class="inter-body-base-regular text-neutral-700">
 				<cuentoneta-portable-text-parser [paragraphs]="story().author.biography" [classes]="'mb-4'" />
 				<cuentoneta-portable-text-parser [paragraphs]="story().summary" [classes]="'mb-4 last:mb-0'" />
 			</section>

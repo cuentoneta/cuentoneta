@@ -124,7 +124,7 @@ export const Primary = {
 	render: (args: StorylistCardComponent) => ({
 		props: args,
 		template: `
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-100 p-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-neutral-100 p-4">
           <cuentoneta-storylist-card class="card" [storylist]="storylist"/>
           <cuentoneta-storylist-card-skeleton class="card w-full"/>
     </div>
@@ -139,7 +139,7 @@ export const Loaded = {
 	render: (args: StorylistCardComponent) => ({
 		props: args,
 		template: `
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-100 p-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-neutral-100 p-4">
           <cuentoneta-storylist-card class="card" [storylist]="storylist1"/>
           <cuentoneta-storylist-card class="card" [storylist]="storylist2"/>
     </div>
@@ -155,7 +155,7 @@ export const Loading = {
 	render: (args: StorylistCardComponent) => ({
 		props: args,
 		template: `
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-100 p-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-neutral-100 p-4">
           <cuentoneta-storylist-card-skeleton class="card w-full"/>
           <cuentoneta-storylist-card-skeleton class="card w-full"/>
     </div>
