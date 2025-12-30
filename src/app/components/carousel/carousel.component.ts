@@ -211,7 +211,6 @@ export class CarouselComponent {
 
 	// Señales computadas
 	readonly slideCount = computed(() => this.slides().length);
-	readonly activeSlide = computed(() => this.slides()[this.activeIndex()]);
 	readonly viewport = computed(() => {
 		const isTabletOrDesktop = this.layoutService.biggerThan('xs');
 		return isTabletOrDesktop ? 'md' : 'xs';
@@ -233,14 +232,11 @@ export class CarouselComponent {
 
 	// Flujos de eventos táctiles
 	private touchStart$ = fromEvent<TouchEvent>(this.el.nativeElement, 'touchstart').pipe(takeUntilDestroyed());
-
 	private touchMove$ = fromEvent<TouchEvent>(this.el.nativeElement, 'touchmove').pipe(
 		takeUntilDestroyed(),
 		throttleTime(16), // ~60fps, previene problemas de rendimiento
 	);
-
 	private touchEnd$ = fromEvent<TouchEvent>(this.el.nativeElement, 'touchend').pipe(takeUntilDestroyed());
-
 	private touchCancel$ = fromEvent<TouchEvent>(this.el.nativeElement, 'touchcancel').pipe(takeUntilDestroyed());
 
 	constructor() {
@@ -310,10 +306,10 @@ export class CarouselComponent {
 
 	// Métodos de manejo de gestos táctiles
 	private handleTouchStart(event: TouchEvent): void {
-		// Guardia: No interferir si está en transición
+		// Guard: No interferir si está en transición
 		if (this.isTransitioning()) return;
 
-		// Guardia: Solo procesar toques con un dedo
+		// Guard: Solo procesar toques con un dedo
 		if (event.touches.length !== 1) return;
 
 		const touch = event.touches[0];
