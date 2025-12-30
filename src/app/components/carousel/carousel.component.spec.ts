@@ -89,7 +89,7 @@ describe('CarouselComponent', () => {
 		fixture.detectChanges();
 
 		// Esperar a que se complete la transición
-		await new Promise((resolve) => setTimeout(resolve, 1300));
+		await new Promise((resolve) => setTimeout(resolve, 700));
 
 		component.prev();
 		fixture.detectChanges();
@@ -110,7 +110,7 @@ describe('CarouselComponent', () => {
 		fixture.detectChanges();
 
 		// Esperar a que se complete la transición
-		await new Promise((resolve) => setTimeout(resolve, 1300));
+		await new Promise((resolve) => setTimeout(resolve, 700));
 
 		// Navegar siguiente (debería volver a la primera)
 		component.next();
@@ -312,7 +312,219 @@ describe('CarouselComponent', () => {
 		expect(component.direction()).toBe('left');
 
 		// Esperar a que se complete la transición
-		await new Promise((resolve) => setTimeout(resolve, 1300));
+		await new Promise((resolve) => setTimeout(resolve, 700));
 		expect(component.direction()).toBe(null);
+	});
+
+	// Pruebas de navegación por gestos táctiles
+	describe('Touch Gesture Navigation', () => {
+		// Función auxiliar para crear eventos táctiles
+		function createTouchEvent(type: string, clientX: number, clientY: number): TouchEvent {
+			return new TouchEvent(type, {
+				touches: [{ clientX, clientY } as Touch],
+			});
+		}
+
+		it('should initialize swipe state signals correctly', async () => {
+			const { fixture } = await render(CarouselComponent, {
+				inputs: { slides: contentCampaignMock },
+			});
+
+			const component = fixture.componentInstance;
+			expect(component.isSwiping()).toBe(false);
+			expect(component.swipeStartX()).toBeNull();
+			expect(component.swipeCurrentX()).toBeNull();
+		});
+
+		it('should set isSwiping to true on touchstart', async () => {
+			const { fixture } = await render(CarouselComponent, {
+				inputs: { slides: contentCampaignMock },
+			});
+
+			const component = fixture.componentInstance;
+			const touchEvent = createTouchEvent('touchstart', 100, 100);
+
+			component['handleTouchStart'](touchEvent);
+
+			expect(component.isSwiping()).toBe(true);
+			expect(component.swipeStartX()).toBe(100);
+		});
+
+		it('should navigate to next slide on left swipe', async () => {
+			const { fixture } = await render(CarouselComponent, {
+				inputs: { slides: contentCampaignMock },
+			});
+
+			const component = fixture.componentInstance;
+
+			// Simular deslizamiento a la izquierda (inicio en 200, fin en 100)
+			component['handleTouchStart'](createTouchEvent('touchstart', 200, 100));
+			component['handleTouchMove'](createTouchEvent('touchmove', 100, 100));
+			component['handleTouchEnd'](createTouchEvent('touchend', 100, 100));
+
+			expect(component.activeIndex()).toBe(1);
+		});
+
+		it('should navigate to previous slide on right swipe', async () => {
+			const { fixture } = await render(CarouselComponent, {
+				inputs: { slides: contentCampaignMock },
+			});
+
+			const component = fixture.componentInstance;
+			component.selectSlide(1, 'left');
+
+			await new Promise((resolve) => setTimeout(resolve, 700));
+
+			// Simular deslizamiento a la derecha (inicio en 100, fin en 200)
+			component['handleTouchStart'](createTouchEvent('touchstart', 100, 100));
+			component['handleTouchMove'](createTouchEvent('touchmove', 200, 100));
+			component['handleTouchEnd'](createTouchEvent('touchend', 200, 100));
+
+			expect(component.activeIndex()).toBe(0);
+		});
+
+		it('should not navigate if swipe distance is below threshold', async () => {
+			const { fixture } = await render(CarouselComponent, {
+				inputs: { slides: contentCampaignMock },
+			});
+
+			const component = fixture.componentInstance;
+			const initialIndex = component.activeIndex();
+
+			// Simular deslizamiento pequeño (30px, por debajo del umbral de 50px)
+			component['handleTouchStart'](createTouchEvent('touchstart', 100, 100));
+			component['handleTouchMove'](createTouchEvent('touchmove', 130, 100));
+			component['handleTouchEnd'](createTouchEvent('touchend', 130, 100));
+
+			expect(component.activeIndex()).toBe(initialIndex);
+		});
+
+		it('should pause auto-play during swipe', async () => {
+			const { fixture } = await render(CarouselComponent, {
+				inputs: { slides: contentCampaignMock },
+			});
+
+			const component = fixture.componentInstance;
+			expect(component.isPaused()).toBe(false);
+
+			component['handleTouchStart'](createTouchEvent('touchstart', 100, 100));
+
+			expect(component.isPaused()).toBe(true);
+		});
+
+		it('should resume auto-play after swipe ends', async () => {
+			const { fixture } = await render(CarouselComponent, {
+				inputs: { slides: contentCampaignMock },
+			});
+
+			const component = fixture.componentInstance;
+
+			component['handleTouchStart'](createTouchEvent('touchstart', 100, 100));
+			component['handleTouchEnd'](createTouchEvent('touchend', 200, 100));
+
+			expect(component.isPaused()).toBe(false);
+		});
+
+		it('should not navigate while transitioning', async () => {
+			const { fixture } = await render(CarouselComponent, {
+				inputs: { slides: contentCampaignMock },
+			});
+
+			const component = fixture.componentInstance;
+			component.next(); // Iniciar transición
+
+			expect(component.isTransitioning()).toBe(true);
+
+			// Intentar deslizar durante la transición
+			component['handleTouchStart'](createTouchEvent('touchstart', 200, 100));
+
+			// No debe establecer isSwiping debido a la guardia de transición
+			expect(component.isSwiping()).toBe(false);
+		});
+	});
+
+	// Pruebas de transiciones con dos diapositivas
+	describe('Dual-slide transitions', () => {
+		it('should set previousIndex when navigating', async () => {
+			const { fixture } = await render(CarouselComponent, {
+				inputs: { slides: contentCampaignMock },
+			});
+
+			const component = fixture.componentInstance;
+			expect(component.previousIndex()).toBeNull();
+
+			// Navegar a la siguiente diapositiva
+			component.next();
+			fixture.detectChanges();
+
+			// El índice anterior debe establecerse en 0 (la antigua diapositiva activa)
+			expect(component.previousIndex()).toBe(0);
+			expect(component.activeIndex()).toBe(1);
+		});
+
+		it('should clear previousIndex after transition completes', async () => {
+			const { fixture } = await render(CarouselComponent, {
+				inputs: { slides: contentCampaignMock },
+			});
+
+			const component = fixture.componentInstance;
+
+			component.next();
+			fixture.detectChanges();
+
+			expect(component.previousIndex()).toBe(0);
+
+			// Esperar a que se complete la transición
+			await new Promise((resolve) => setTimeout(resolve, 700));
+
+			// El índice anterior debe limpiarse
+			expect(component.previousIndex()).toBeNull();
+		});
+
+		it('should render both slides during transition', async () => {
+			const { container, fixture } = await render(CarouselComponent, {
+				inputs: { slides: contentCampaignMock },
+			});
+
+			const component = fixture.componentInstance;
+
+			component.next();
+			fixture.detectChanges();
+
+			// Durante la transición, ambas diapositivas deben estar en el DOM
+			const slides = container.querySelectorAll('.slide');
+			expect(slides.length).toBe(2);
+
+			// Una debe tener la clase 'active', la otra debe tener la clase 'previous'
+			const activeSlide = container.querySelector('.slide.active');
+			const previousSlide = container.querySelector('.slide.previous');
+
+			expect(activeSlide).toBeInTheDocument();
+			expect(previousSlide).toBeInTheDocument();
+		});
+
+		it('should render only one slide when not transitioning', async () => {
+			const { container, fixture } = await render(CarouselComponent, {
+				inputs: { slides: contentCampaignMock },
+			});
+
+			const component = fixture.componentInstance;
+
+			// Inicialmente, solo debe renderizarse una diapositiva
+			const initialSlides = container.querySelectorAll('.slide');
+			expect(initialSlides.length).toBe(1);
+
+			// Navegar
+			component.next();
+			fixture.detectChanges();
+
+			// Esperar a que se complete la transición
+			await new Promise((resolve) => setTimeout(resolve, 700));
+			fixture.detectChanges();
+
+			// Después de la transición, solo una diapositiva nuevamente
+			const finalSlides = container.querySelectorAll('.slide');
+			expect(finalSlides.length).toBe(1);
+		});
 	});
 });

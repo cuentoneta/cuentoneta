@@ -22,21 +22,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 				class="carousel-image-skeleton grid aspect-[540/220] w-full object-cover md:aspect-[960/280]"
 			/>
 		</div>
-		<div class="footer mt-[10px] h-[27px]">
-			<ngx-skeleton-loader
-				[theme]="{
-					'justify-self': 'center',
-					'border-radius.px': '16',
-					'margin-top.px': 5,
-					'margin-bottom.px': 5,
-					'width.px': 48,
-					'height.px': 10,
-				}"
-				count="1"
-				appearance="line"
-				class="carousel-text-skeleton grid"
-			/>
-		</div>
 	</div>`,
 	styles: `
 		:host ::ng-deep .carousel-image-skeleton .skeleton-loader {
