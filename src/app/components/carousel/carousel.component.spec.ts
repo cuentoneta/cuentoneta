@@ -47,7 +47,7 @@ describe('CarouselComponent', () => {
 		});
 		const slideLinks = screen.getAllByRole('link');
 		slideLinks.forEach((link) => {
-			expect(link).toHaveClass('md:hidden');
+			expect(link).toHaveClass('sm:hidden');
 		});
 	});
 
@@ -58,7 +58,7 @@ describe('CarouselComponent', () => {
 		});
 		const slideLinks = screen.getAllByRole('link');
 		slideLinks.forEach((link) => {
-			expect(link).toHaveClass('max-md:hidden');
+			expect(link).toHaveClass('max-sm:hidden');
 		});
 	});
 
@@ -482,7 +482,7 @@ describe('CarouselComponent', () => {
 		});
 
 		it('should render both slides during transition', async () => {
-			const { container, fixture } = await render(CarouselComponent, {
+			const { fixture } = await render(CarouselComponent, {
 				inputs: { slides: contentCampaignMock },
 			});
 
@@ -491,28 +491,25 @@ describe('CarouselComponent', () => {
 			component.next();
 			fixture.detectChanges();
 
-			// Durante la transición, ambas diapositivas deben estar en el DOM
-			const slides = container.querySelectorAll('.slide');
-			expect(slides.length).toBe(2);
+			// Durante la transición, ambas diapositivas deben estar visibles
+			const images = screen.getAllByRole('img');
+			expect(images.length).toBe(2);
 
-			// Una debe tener la clase 'active', la otra debe tener la clase 'previous'
-			const activeSlide = container.querySelector('.slide.active');
-			const previousSlide = container.querySelector('.slide.previous');
-
-			expect(activeSlide).toBeInTheDocument();
-			expect(previousSlide).toBeInTheDocument();
+			// El previousIndex debe estar establecido
+			expect(component.previousIndex()).toBe(0);
+			expect(component.activeIndex()).toBe(1);
 		});
 
 		it('should render only one slide when not transitioning', async () => {
-			const { container, fixture } = await render(CarouselComponent, {
+			const { fixture } = await render(CarouselComponent, {
 				inputs: { slides: contentCampaignMock },
 			});
 
 			const component = fixture.componentInstance;
 
 			// Inicialmente, solo debe renderizarse una diapositiva
-			const initialSlides = container.querySelectorAll('.slide');
-			expect(initialSlides.length).toBe(1);
+			const initialImages = screen.getAllByRole('img');
+			expect(initialImages.length).toBe(1);
 
 			// Navegar
 			component.next();
@@ -523,8 +520,8 @@ describe('CarouselComponent', () => {
 			fixture.detectChanges();
 
 			// Después de la transición, solo una diapositiva nuevamente
-			const finalSlides = container.querySelectorAll('.slide');
-			expect(finalSlides.length).toBe(1);
+			const finalImages = screen.getAllByRole('img');
+			expect(finalImages.length).toBe(1);
 		});
 	});
 });

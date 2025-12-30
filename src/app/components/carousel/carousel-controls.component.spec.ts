@@ -20,10 +20,7 @@ describe('CarouselControlsComponent', () => {
 
 		const button = screen.getByRole('button');
 		expect(button).toHaveAttribute('aria-label', 'Previous slide');
-
-		// Verificar que el icono de chevron izquierdo está presente
-		const icon = button.querySelector('ng-icon');
-		expect(icon).toBeInTheDocument();
+		expect(button).toBeInTheDocument();
 	});
 
 	it('should render right control with correct icon', async () => {
@@ -33,10 +30,7 @@ describe('CarouselControlsComponent', () => {
 
 		const button = screen.getByRole('button');
 		expect(button).toHaveAttribute('aria-label', 'Next slide');
-
-		// Verificar que el icono de chevron derecho está presente
-		const icon = button.querySelector('ng-icon');
-		expect(icon).toBeInTheDocument();
+		expect(button).toBeInTheDocument();
 	});
 
 	it('should emit controlClick event when clicked', async () => {

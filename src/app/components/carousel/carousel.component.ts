@@ -250,7 +250,7 @@ export class CarouselComponent {
 		// Suscripciones a gestos táctiles
 		this.touchStart$.subscribe((event) => this.handleTouchStart(event));
 		this.touchMove$.subscribe((event) => this.handleTouchMove(event));
-		this.touchEnd$.subscribe((event) => this.handleTouchEnd(event));
+		this.touchEnd$.subscribe(() => this.handleTouchEnd());
 		this.touchCancel$.subscribe(() => this.resetSwipeState());
 	}
 
@@ -340,7 +340,7 @@ export class CarouselComponent {
 		}
 	}
 
-	private handleTouchEnd(event: TouchEvent): void {
+	private handleTouchEnd(): void {
 		if (!this.isSwiping()) return;
 
 		const startX = this.swipeStartX();

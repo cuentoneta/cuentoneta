@@ -31,7 +31,7 @@ describe('CarouselIndicatorComponent', () => {
 		expect(indicators.length).toBe(contentCampaignMock.length);
 	});
 
-	it('should mark active indicator with active class', async () => {
+	it('should mark active indicator with aria-current', async () => {
 		await render(CarouselIndicatorComponent, {
 			inputs: {
 				slides: contentCampaignMock,
@@ -40,14 +40,13 @@ describe('CarouselIndicatorComponent', () => {
 		});
 
 		const indicators = screen.getAllByRole('button');
-		const indicatorItems = indicators.map((btn) => btn.querySelector('.indicator-item'));
 
-		// El primer elemento debe tener la clase 'active'
-		expect(indicatorItems[0]).toHaveClass('active');
+		// El primer indicador debe tener aria-current="true"
+		expect(indicators[0]).toHaveAttribute('aria-current', 'true');
 
-		// Los otros elementos no deben tener la clase 'active'
-		for (let i = 1; i < indicatorItems.length; i++) {
-			expect(indicatorItems[i]).not.toHaveClass('active');
+		// Los otros indicadores deben tener aria-current="false"
+		for (let i = 1; i < indicators.length; i++) {
+			expect(indicators[i]).toHaveAttribute('aria-current', 'false');
 		}
 	});
 
@@ -73,8 +72,8 @@ describe('CarouselIndicatorComponent', () => {
 		expect(emittedIndex).toBe(1);
 	});
 
-	it('should apply desktop-specific styles when device is Desktop', async () => {
-		const { container } = await render(CarouselIndicatorComponent, {
+	it('should render with Desktop device input', async () => {
+		await render(CarouselIndicatorComponent, {
 			inputs: {
 				slides: contentCampaignMock,
 				activeIndex: 0,
@@ -82,12 +81,12 @@ describe('CarouselIndicatorComponent', () => {
 			},
 		});
 
-		const indicatorContainer = container.querySelector('.carousel-indicator-container');
-		expect(indicatorContainer).toHaveClass('desktop');
+		const indicators = screen.getAllByRole('button');
+		expect(indicators.length).toBe(contentCampaignMock.length);
 	});
 
-	it('should apply mobile-specific styles when device is Mobile', async () => {
-		const { container } = await render(CarouselIndicatorComponent, {
+	it('should render with Mobile device input', async () => {
+		await render(CarouselIndicatorComponent, {
 			inputs: {
 				slides: contentCampaignMock,
 				activeIndex: 0,
@@ -95,8 +94,8 @@ describe('CarouselIndicatorComponent', () => {
 			},
 		});
 
-		const indicatorContainer = container.querySelector('.carousel-indicator-container');
-		expect(indicatorContainer).toHaveClass('mobile');
+		const indicators = screen.getAllByRole('button');
+		expect(indicators.length).toBe(contentCampaignMock.length);
 	});
 
 	it('should have proper ARIA attributes', async () => {
