@@ -266,18 +266,20 @@ describe('CarouselComponent', () => {
 		expect(component.slideCount()).toBe(contentCampaignMock.length);
 	});
 
-	it('should return activeSlide correctly', async () => {
+	it('should return active slide correctly based on activeIndex signal', async () => {
 		const { fixture } = await render(CarouselComponent, {
 			inputs: { slides: contentCampaignMock },
 		});
 
+		const [firstSlide, secondSlide] = [contentCampaignMock[0], contentCampaignMock[1]];
+
 		const component = fixture.componentInstance;
-		expect(component.activeSlide()).toBe(contentCampaignMock[0]);
+		expect(contentCampaignMock[component.activeIndex()]).toBe(firstSlide);
 
 		component.next();
 		fixture.detectChanges();
 
-		expect(component.activeSlide()).toBe(contentCampaignMock[1]);
+		expect(contentCampaignMock[component.activeIndex()]).toBe(secondSlide);
 	});
 
 	it('should show controls on desktop viewport', async () => {
