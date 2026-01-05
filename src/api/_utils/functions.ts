@@ -104,6 +104,13 @@ export function urlFor(source: SanityImageSource): string {
 	return createImageUrlBuilder(client).image(source).url();
 }
 
+export function urlForWithAutoFormat(source: SanityImageSource): string {
+	if (!source) {
+		return '';
+	}
+	return createImageUrlBuilder(client).image(source).auto('format').url();
+}
+
 type ResourcesSubQuery = (
 	| NonNullable<AuthorBySlugQueryResult>
 	| NonNullable<StoryBySlugQueryResult>
@@ -265,12 +272,12 @@ export function mapContentCampaigns(campaigns: ContentCampaignsSubQuery): Conten
 			description: mapBlockContentToTextParagraphs(campaign.description),
 			contents: {
 				xs: {
-					imageUrl: xs.image ? urlFor(xs.image) : '',
+					imageUrl: xs.image ? urlForWithAutoFormat(xs.image) : '',
 					imageWidth: viewportElementSizes.xs.imageWidth,
 					imageHeight: viewportElementSizes.xs.imageHeight,
 				},
 				md: {
-					imageUrl: md.image ? urlFor(md.image) : '',
+					imageUrl: md.image ? urlForWithAutoFormat(md.image) : '',
 					imageWidth: viewportElementSizes.md.imageWidth,
 					imageHeight: viewportElementSizes.md.imageHeight,
 				},
