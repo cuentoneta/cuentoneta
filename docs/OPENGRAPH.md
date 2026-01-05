@@ -24,7 +24,15 @@ Las imágenes OpenGraph son imágenes que se muestran cuando se comparte un enla
 - **Storylist** (colección de cuentos)
 - **Author** (autor)
 
-Esto mejora significativamente la presentación del contenido en plataformas como WhatsApp, X (Twitter), Threads, Instagram, Facebook y LinkedIn.
+**Característica principal**: El sistema detecta automáticamente la plataforma que realiza la solicitud (mediante User-Agent) y genera imágenes optimizadas con dimensiones específicas para cada plataforma:
+
+- **WhatsApp**: 1200x630px (ratio 1.91:1)
+- **X/Twitter**: 1200x675px (ratio 1.78:1)
+- **Threads**: 1080x1080px (ratio 1:1 - cuadrado)
+- **Instagram**: 1080x1080px (ratio 1:1 - cuadrado)
+- **Discord**: 1200x630px (ratio 1.91:1)
+
+Esto mejora significativamente la presentación del contenido en cada plataforma social.
 
 ## Arquitectura
 
@@ -40,17 +48,28 @@ Esto mejora significativamente la presentación del contenido en plataformas com
 │  Controller │  GET /api/og/:type/:slug
 └──────┬──────┘
        │
+       ├──► Platform Detection (User-Agent)
+       │    ├─ WhatsApp → 1200x630
+       │    ├─ X/Twitter → 1200x675
+       │    ├─ Threads → 1080x1080
+       │    ├─ Instagram → 1080x1080
+       │    └─ Discord → 1200x630
+       │
+       ├──► Cache Check (type-slug-platform)
+       │    ├─ Hit: Return cached PNG
+       │    └─ Miss: Generate new image
+       │
        ├──► Service (getStoryBySlug)
        │
-       ├──► Template (HTML markup)
+       ├──► Template (HTML markup with adaptive dimensions)
        │
        ├──► Satori (HTML → SVG)
        │
        ├──► Resvg (SVG → PNG)
        │
-       ├──► Cache (filesystem)
+       ├──► Cache Save (filesystem)
        │
-       └──► Response (image/png + cache headers)
+       └──► Response (image/png + cache headers + platform info)
 ```
 
 ## Stack Tecnológico
@@ -74,6 +93,65 @@ Esto mejora significativamente la presentación del contenido en plataformas com
 - **Inter Medium**: Fuente utilizada en las imágenes OG
 - Ubicación: `src/api/_utils/Inter-Medium.ttf`
 
+## Detección de Plataforma
+
+El sistema detecta automáticamente la plataforma que solicita la imagen OpenGraph analizando el header `User-Agent` de la request.
+
+### Plataformas Soportadas
+
+| Plataforma | User-Agent contiene | Dimensiones | Ratio | Layout |
+|------------|-------------------|-------------|-------|--------|
+| WhatsApp | `whatsapp` | 1200x630 | 1.91:1 | Rectangular |
+| X/Twitter | `twitterbot`, `twitter` | 1200x675 | 1.78:1 | Rectangular |
+| Threads | `threads` | 1080x1080 | 1:1 | Cuadrado |
+| Instagram | `instagram` | 1080x1080 | 1:1 | Cuadrado |
+| Discord | `discord` | 1200x630 | 1.91:1 | Rectangular |
+| Default | (otros) | 1200x630 | 1.91:1 | Rectangular |
+
+### Función de Detección
+
+```typescript
+function detectPlatform(c: Context): Platform {
+  const userAgent = c.req.header('user-agent')?.toLowerCase() || '';
+
+  if (userAgent.includes('whatsapp')) return 'whatsapp';
+  if (userAgent.includes('twitterbot') || userAgent.includes('twitter')) return 'twitter';
+  if (userAgent.includes('threads')) return 'threads';
+  if (userAgent.includes('instagram')) return 'instagram';
+  if (userAgent.includes('discord')) return 'discord';
+
+  return 'default';
+}
+```
+
+### Dimensiones por Plataforma
+
+```typescript
+const PLATFORM_DIMENSIONS: Record<Platform, ImageDimensions> = {
+  whatsapp: { width: 1200, height: 630, ratio: 1.91 },
+  twitter: { width: 1200, height: 675, ratio: 1.78 },
+  threads: { width: 1080, height: 1080, ratio: 1.0 },
+  instagram: { width: 1080, height: 1080, ratio: 1.0 },
+  discord: { width: 1200, height: 630, ratio: 1.91 },
+  default: { width: 1200, height: 630, ratio: 1.91 },
+};
+```
+
+### Layout Adaptativo
+
+El sistema ajusta automáticamente el diseño basándose en el ratio de aspecto:
+
+**Formatos rectangulares** (ratio > 1):
+- Fuentes más grandes
+- Más espacio entre elementos
+- Layout horizontal optimizado
+
+**Formatos cuadrados** (ratio = 1):
+- Fuentes reducidas proporcionalmente
+- Menos padding
+- Layout más compacto
+- Menos tags mostrados (2 en lugar de 3)
+
 ## Endpoints
 
 ### GET `/api/og/story/:slug`
@@ -83,14 +161,26 @@ Genera imagen OpenGraph para un cuento específico.
 **Parámetros:**
 - `slug` (string): Slug único del cuento
 
+**Headers de Request:**
+- `User-Agent`: Se analiza para detectar la plataforma (WhatsApp, X, Threads, Instagram, Discord)
+
 **Respuesta:**
 - Content-Type: `image/png`
 - Cache-Control: `public, max-age=31536000, immutable`
-- Dimensiones: 1200x630px
+- X-OG-Platform: Plataforma detectada (ej: `whatsapp`, `twitter`, `threads`)
+- X-OG-Dimensions: Dimensiones generadas (ej: `1200x630`, `1080x1080`)
+- Dimensiones: Variables según plataforma (ver sección Detección de Plataforma)
 
 **Ejemplo:**
-```
+```bash
+# Request desde WhatsApp
 GET /api/og/story/manos
+User-Agent: WhatsApp/2.x
+
+# Response
+Content-Type: image/png
+X-OG-Platform: whatsapp
+X-OG-Dimensions: 1200x630
 ```
 
 **Contenido de la imagen:**
@@ -107,13 +197,18 @@ Genera imagen OpenGraph para una colección de cuentos.
 **Parámetros:**
 - `slug` (string): Slug único de la storylist
 
+**Headers de Request:**
+- `User-Agent`: Se analiza para detectar la plataforma
+
 **Respuesta:**
 - Content-Type: `image/png`
 - Cache-Control: `public, max-age=31536000, immutable`
-- Dimensiones: 1200x630px
+- X-OG-Platform: Plataforma detectada
+- X-OG-Dimensions: Dimensiones generadas
+- Dimensiones: Variables según plataforma
 
 **Ejemplo:**
-```
+```bash
 GET /api/og/storylist/cuentos-de-otono
 ```
 
@@ -130,13 +225,18 @@ Genera imagen OpenGraph para un autor.
 **Parámetros:**
 - `slug` (string): Slug único del autor
 
+**Headers de Request:**
+- `User-Agent`: Se analiza para detectar la plataforma
+
 **Respuesta:**
 - Content-Type: `image/png`
 - Cache-Control: `public, max-age=31536000, immutable`
-- Dimensiones: 1200x630px
+- X-OG-Platform: Plataforma detectada
+- X-OG-Dimensions: Dimensiones generadas
+- Dimensiones: Variables según plataforma
 
 **Ejemplo:**
-```
+```bash
 GET /api/og/author/jorge-luis-borges
 ```
 
@@ -244,17 +344,19 @@ private updateMetaTags(author: Author) {
 
 ### Dimensiones
 
-- **Ancho**: 1200px
-- **Alto**: 630px
-- **Ratio**: 1.91:1 (estándar OpenGraph)
+El sistema genera imágenes con dimensiones específicas para cada plataforma:
 
-Estas dimensiones son óptimas para:
-- Facebook
-- Twitter/X
-- LinkedIn
-- WhatsApp
-- Threads
-- Instagram (cuando se comparten enlaces)
+**Formatos Rectangulares (Landscape):**
+- **WhatsApp**: 1200x630px (ratio 1.91:1)
+- **Discord**: 1200x630px (ratio 1.91:1)
+- **X/Twitter**: 1200x675px (ratio 1.78:1)
+- **Default**: 1200x630px (ratio 1.91:1) - Para Facebook, LinkedIn, etc.
+
+**Formatos Cuadrados:**
+- **Threads**: 1080x1080px (ratio 1:1)
+- **Instagram**: 1080x1080px (ratio 1:1)
+
+Cada plataforma recibe la imagen optimizada para su formato nativo, mejorando la presentación visual en cada contexto.
 
 ### Paleta de Colores
 
@@ -267,12 +369,24 @@ Estas dimensiones son óptimas para:
 
 - **Familia**: Inter
 - **Peso**: Medium (500)
-- **Tamaños**:
-  - Logo: 28px
-  - Título principal: 64px (stories/storylists), 72px (authors)
-  - Subtítulo: 36px (stories), 32px (storylists/authors)
-  - Metadata: 24px
-  - Tags: 20px
+
+**Tamaños para formatos rectangulares (WhatsApp, X, Discord, Default):**
+- Logo: 28px
+- Título principal: 64px (stories/storylists), 72px (authors)
+- Subtítulo: 36px (stories), 32px (storylists/authors)
+- Metadata: 24px
+- Tags: 20px
+- Padding: 60px
+
+**Tamaños para formatos cuadrados (Threads, Instagram):**
+- Logo: 24px
+- Título principal: 52px (stories/storylists), 56px (authors)
+- Subtítulo: 28px (stories), 26px (storylists/authors)
+- Metadata: 20px
+- Tags: 16px
+- Padding: 40px
+
+Los tamaños se ajustan automáticamente según el ratio de aspecto de la imagen generada.
 
 ### Layout
 
@@ -337,18 +451,21 @@ El directorio `cache/` está excluido del repositorio (`.gitignore`).
 
 #### Generación de Claves
 
-Las claves de caché se generan mediante MD5 hash:
+Las claves de caché se generan mediante MD5 hash **incluyendo la plataforma**:
 
 ```typescript
-function getCacheKey(type: string, slug: string): string {
-  const hash = createHash('md5').update(`${type}-${slug}`).digest('hex');
+function getCacheKey(type: string, slug: string, platform: Platform): string {
+  const hash = createHash('md5').update(`${type}-${slug}-${platform}`).digest('hex');
   return `${CACHE_DIR}/${hash}.png`;
 }
 ```
 
 **Ejemplos:**
-- Story "manos": `cache/og/a1b2c3d4e5f6...png`
-- Storylist "cuentos-de-otono": `cache/og/f6e5d4c3b2a1...png`
+- Story "manos" para WhatsApp: `cache/og/a1b2c3d4e5f6...png`
+- Story "manos" para Threads: `cache/og/x9y8z7w6v5u4...png`
+- Storylist "cuentos-de-otono" para Twitter: `cache/og/f6e5d4c3b2a1...png`
+
+**Importante**: Cada combinación de tipo, slug y plataforma genera una imagen única. Esto permite que la misma story tenga diferentes versiones optimizadas para cada plataforma social.
 
 #### Flujo de Caché
 
@@ -506,6 +623,55 @@ lt --port 4200 --subdomain cuentoneta-dev
 
 Luego usar `https://cuentoneta-dev.loca.lt/story/manos` en las herramientas de validación.
 
+#### Testing de Detección de Plataforma
+
+Para verificar que la detección de plataforma funciona correctamente:
+
+```bash
+# Simular request de WhatsApp
+curl -H "User-Agent: WhatsApp/2.23.20.0" \
+  http://localhost:4200/api/og/story/manos \
+  -I
+
+# Verificar headers de respuesta
+# X-OG-Platform: whatsapp
+# X-OG-Dimensions: 1200x630
+
+# Simular request de Threads
+curl -H "User-Agent: Mozilla/5.0 (compatible; Threads)" \
+  http://localhost:4200/api/og/story/manos \
+  -I
+
+# Verificar headers de respuesta
+# X-OG-Platform: threads
+# X-OG-Dimensions: 1080x1080
+
+# Simular request de Twitter
+curl -H "User-Agent: Twitterbot/1.0" \
+  http://localhost:4200/api/og/story/manos \
+  -I
+
+# Verificar headers de respuesta
+# X-OG-Platform: twitter
+# X-OG-Dimensions: 1200x675
+```
+
+**Descargar imágenes para comparación visual:**
+
+```bash
+# Generar imagen para WhatsApp
+curl -H "User-Agent: WhatsApp/2.0" \
+  http://localhost:4200/api/og/story/manos \
+  -o manos-whatsapp.png
+
+# Generar imagen para Threads
+curl -H "User-Agent: Threads" \
+  http://localhost:4200/api/og/story/manos \
+  -o manos-threads.png
+
+# Comparar visualmente ambas imágenes
+```
+
 ## Validación
 
 ### Checklist de Validación
@@ -516,10 +682,13 @@ Antes de considerar la implementación completa, verificar:
 - [ ] Imágenes OG generadas para stories
 - [ ] Imágenes OG generadas para storylists
 - [ ] Imágenes OG generadas para authors
-- [ ] Dimensiones correctas (1200x630px)
+- [ ] Detección de plataforma funcionando correctamente
+- [ ] Dimensiones correctas por plataforma (1200x630, 1200x675, 1080x1080)
+- [ ] Layout adaptativo para formatos cuadrados y rectangulares
 - [ ] Formato PNG correcto
-- [ ] Caché funcionando (filesystem)
+- [ ] Caché funcionando (filesystem) con plataforma incluida
 - [ ] Headers de caché configurados
+- [ ] Headers de debug (X-OG-Platform, X-OG-Dimensions) presentes
 
 #### Técnico
 - [ ] Tests unitarios pasando
@@ -638,15 +807,92 @@ curl -I http://localhost:4200/api/og/story/manos
 # Cache-Control: public, max-age=31536000, immutable
 ```
 
+#### Plataforma no detectada correctamente
+
+**Síntoma**: Las imágenes siempre se generan con dimensiones default (1200x630)
+
+**Posibles causas:**
+1. User-Agent no incluye identificadores esperados
+2. La lógica de detección no cubre el caso
+3. La plataforma usa un User-Agent no estándar
+
+**Solución:**
+```bash
+# Verificar el User-Agent que está llegando
+# Agregar logs temporales en og.controller.ts:
+console.log('User-Agent:', c.req.header('user-agent'));
+console.log('Platform detectada:', platform);
+
+# Probar directamente con curl
+curl -H "User-Agent: tu-user-agent-aqui" \
+  http://localhost:4200/api/og/story/manos \
+  -I | grep X-OG-Platform
+
+# Si la plataforma no se detecta, actualizar la función detectPlatform()
+```
+
+#### Imágenes cuadradas se ven mal
+
+**Síntoma**: En formatos cuadrados (Threads/Instagram) el texto se corta o se ve desbalanceado
+
+**Posibles causas:**
+1. Títulos muy largos
+2. Ajustes de tamaño de fuente insuficientes
+3. Padding inadecuado
+
+**Solución:**
+```typescript
+// Ajustar tamaños en generateStoryMarkup, generateStorylistMarkup, etc.
+const titleSize = isSquare ? '48px' : '64px'; // Reducir más si es necesario
+const padding = isSquare ? '30px' : '60px'; // Ajustar espaciado
+```
+
+#### Caché retorna imagen de plataforma incorrecta
+
+**Síntoma**: WhatsApp muestra imagen cuadrada o viceversa
+
+**Posibles causas:**
+1. Caché no incluye plataforma en la key
+2. Caché corrupto de versión anterior
+3. CDN cacheando sin considerar User-Agent
+
+**Solución:**
+```bash
+# Limpiar caché completamente
+pnpm clear-og-cache
+
+# Verificar que la función getCacheKey incluya platform
+# En og.controller.ts debe ser:
+# createHash('md5').update(`${type}-${slug}-${platform}`)
+
+# Si usas CDN, configurar Vary header:
+# Vary: User-Agent
+```
+
 ### Logs y Debugging
 
 Para debugging detallado:
 
 ```typescript
 // En og.controller.ts, agregar logs:
+console.log('📱 User-Agent:', c.req.header('user-agent'));
+console.log('🎯 Platform detectada:', platform);
+console.log('📏 Dimensiones:', dimensions);
 console.log('📸 Generando OG image para:', type, slug);
 console.log('🎨 Markup HTML:', markup.substring(0, 200) + '...');
 console.log('✅ Imagen generada, tamaño:', png.length, 'bytes');
+```
+
+**Headers de debug en respuesta:**
+
+Los headers `X-OG-Platform` y `X-OG-Dimensions` están incluidos en todas las respuestas para facilitar debugging:
+
+```bash
+curl -I http://localhost:4200/api/og/story/manos
+
+# Debe mostrar:
+# X-OG-Platform: default
+# X-OG-Dimensions: 1200x630
 ```
 
 ## Referencias
