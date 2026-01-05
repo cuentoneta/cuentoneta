@@ -36,7 +36,7 @@ import { LayoutService } from '../../providers/layout.service';
 						>
 							<a [routerLink]="slide.url" [ngClass]="viewportSpecificClasses[viewport()]">
 								<img
-									[ngSrc]="sanityFormatImageUrl(slide.contents[viewport()].imageUrl)"
+									[ngSrc]="slide.contents[viewport()].imageUrl"
 									[width]="slide.contents[viewport()].imageWidth"
 									[height]="slide.contents[viewport()].imageHeight"
 									[alt]="'Imagen de la campaña de contenido ' + slide.title"
@@ -56,7 +56,7 @@ import { LayoutService } from '../../providers/layout.service';
 						>
 							<a [routerLink]="slide.url" [ngClass]="viewportSpecificClasses[viewport()]">
 								<img
-									[ngSrc]="sanityFormatImageUrl(slide.contents[viewport()].imageUrl)"
+									[ngSrc]="slide.contents[viewport()].imageUrl"
 									[width]="slide.contents[viewport()].imageWidth"
 									[height]="slide.contents[viewport()].imageHeight"
 									[alt]="'Imagen de la campaña de contenido ' + slide.title"
@@ -371,9 +371,5 @@ export class CarouselComponent {
 
 		// Reanudar auto-reproducción
 		this.resumeAutoPlay();
-	}
-
-	sanityFormatImageUrl(url: string): string {
-		return `${url}?auto=format`;
 	}
 }
