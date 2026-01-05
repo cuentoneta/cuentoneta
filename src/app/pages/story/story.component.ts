@@ -131,18 +131,39 @@ export default class StoryComponent {
 	}
 
 	private updateMetaTags(story: Story) {
+		// Título optimizado
 		this.metaTagsDirective.setTitle(`${story.title} - ${story.author.name}`);
+
+		// Descripción personalizada
+		const readingTime = story.approximateReadingTime;
+		const nationality = story.author.nationality.country;
 		this.metaTagsDirective.setDescription(
-			`Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
+			`Leé "${story.title}", un cuento de ${story.author.name} (${nationality}). ${readingTime} ${readingTime === 1 ? 'minuto' : 'minutos'} de lectura. Literatura breve y gratuita en La Cuentoneta.`,
 		);
-		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/${AppRoutes.Story}/${story.slug}`);
+
+		// URL canónica
+		const canonicalUrl = `${environment.website}/${AppRoutes.Story}/${story.slug}`;
+		this.metaTagsDirective.setCanonicalUrl(canonicalUrl);
+		this.metaTagsDirective.setUrl(canonicalUrl);
+
+		// Tipo de contenido
+		this.metaTagsDirective.setType('article');
+
+		// Imagen OG dinámica
+		const ogImageUrl = `${environment.website}/api/og/story/${story.slug}`;
+		this.metaTagsDirective.setImage(ogImageUrl);
+
+		// Indexación
 		this.metaTagsDirective.setRobots('index, follow');
+
+		// Keywords
 		this.metaTagsDirective.setKeywords([
 			'literatura',
-			'poemas',
 			'cuentos',
+			'literatura breve',
 			story.title.toLowerCase(),
 			story.author.name.toLowerCase(),
+			nationality.toLowerCase(),
 		]);
 	}
 }

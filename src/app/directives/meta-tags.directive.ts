@@ -96,9 +96,65 @@ export class MetaTagsDirective implements OnDestroy {
 		this.metaTagService.removeTag('name="robots"');
 	}
 
+	setImage(imageUrl: string) {
+		this.metaTagService.updateTag({
+			property: 'og:image',
+			content: imageUrl,
+		});
+		this.metaTagService.updateTag({
+			property: 'og:image:width',
+			content: '1200',
+		});
+		this.metaTagService.updateTag({
+			property: 'og:image:height',
+			content: '630',
+		});
+		this.metaTagService.updateTag({
+			name: 'twitter:card',
+			content: 'summary_large_image',
+		});
+		this.metaTagService.updateTag({
+			name: 'twitter:image',
+			content: imageUrl,
+		});
+	}
+
+	setType(type: 'website' | 'article' | 'profile') {
+		this.metaTagService.updateTag({
+			property: 'og:type',
+			content: type,
+		});
+	}
+
+	setUrl(url: string) {
+		this.metaTagService.updateTag({
+			property: 'og:url',
+			content: url,
+		});
+	}
+
+	removeImage() {
+		this.metaTagService.removeTag('property="og:image"');
+		this.metaTagService.removeTag('property="og:image:width"');
+		this.metaTagService.removeTag('property="og:image:height"');
+		this.metaTagService.removeTag('name="twitter:card"');
+		this.metaTagService.removeTag('name="twitter:image"');
+	}
+
+	removeType() {
+		this.metaTagService.removeTag('property="og:type"');
+	}
+
+	removeUrl() {
+		this.metaTagService.removeTag('property="og:url"');
+	}
+
 	ngOnDestroy() {
 		this.removeKeywords();
 		this.removeCanonicalUrl();
 		this.removeRobots();
+		this.removeImage();
+		this.removeType();
+		this.removeUrl();
 	}
 }

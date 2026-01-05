@@ -243,11 +243,41 @@ export default class AuthorComponent {
 	readonly authorFlagUrl = computed(() => `${this.author()?.nationality.flag}?auto=format`);
 
 	private updateMetaTags(author: Author) {
+		// Título
 		this.metaTagsDirective.setTitle(`${author.name}`);
-		this.metaTagsDirective.setDescription(`Perfil y obras de ${author.name} para leer en La Cuentoneta.`);
-		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/author/${author.slug}`);
+
+		// Descripción personalizada
+		const yearRange = author.bornOnYear
+			? `${author.bornOnYear}${author.diedOnYear ? `-${author.diedOnYear}` : ''}`
+			: '';
+
+		this.metaTagsDirective.setDescription(
+			`Descubrí las obras de ${author.name}, ${author.nationality.country}${yearRange ? ` (${yearRange})` : ''}. Biografía, cuentos y recursos sobre este escritor en La Cuentoneta.`,
+		);
+
+		// URL canónica
+		const canonicalUrl = `${environment.website}/author/${author.slug}`;
+		this.metaTagsDirective.setCanonicalUrl(canonicalUrl);
+		this.metaTagsDirective.setUrl(canonicalUrl);
+
+		// Tipo de contenido
+		this.metaTagsDirective.setType('profile');
+
+		// Imagen OG dinámica
+		const ogImageUrl = `${environment.website}/api/og/author/${author.slug}`;
+		this.metaTagsDirective.setImage(ogImageUrl);
+
+		// Indexación
 		this.metaTagsDirective.setRobots('index, follow');
-		this.metaTagsDirective.setKeywords(['escritor', 'poemas', 'cuentos', 'autor', author.name.toLowerCase()]);
+
+		// Keywords
+		this.metaTagsDirective.setKeywords([
+			'autor',
+			'escritor',
+			'biografía',
+			author.name.toLowerCase(),
+			author.nationality.country.toLowerCase(),
+		]);
 	}
 	private author$(slug: string) {
 		return this.authorService.getBySlug(slug).pipe(

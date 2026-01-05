@@ -82,12 +82,41 @@ export default class StorylistComponent {
 	readonly hasMedia = computed(() => this.media().length > 0);
 
 	private updateMetaTags(storylist: Storylist) {
+		// Título
 		this.metaTagsDirective.setTitle(`${storylist.title}`);
+
+		// Descripción personalizada con count
+		const storyCount = storylist.count;
+		const tagNames = storylist.tags.slice(0, 3).map((t) => t.name).join(', ');
+		const tagText = tagNames ? ` Temáticas: ${tagNames}.` : '';
+
 		this.metaTagsDirective.setDescription(
-			`Una storylist en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
+			`Explorá ${storyCount} ${storyCount === 1 ? 'historia' : 'historias'} seleccionadas en esta colección de La Cuentoneta.${tagText} Literatura breve curada para disfrutar.`,
 		);
-		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/storylist/${storylist.slug}`);
+
+		// URL canónica
+		const canonicalUrl = `${environment.website}/storylist/${storylist.slug}`;
+		this.metaTagsDirective.setCanonicalUrl(canonicalUrl);
+		this.metaTagsDirective.setUrl(canonicalUrl);
+
+		// Tipo de contenido
+		this.metaTagsDirective.setType('website');
+
+		// Imagen OG dinámica
+		const ogImageUrl = `${environment.website}/api/og/storylist/${storylist.slug}`;
+		this.metaTagsDirective.setImage(ogImageUrl);
+
+		// Indexación
 		this.metaTagsDirective.setRobots('index, follow');
-		this.metaTagsDirective.setKeywords(['literatura', 'poemas', 'cuentos', 'textos', storylist.title.toLowerCase()]);
+
+		// Keywords
+		this.metaTagsDirective.setKeywords([
+			'literatura',
+			'cuentos',
+			'colección',
+			'storylist',
+			storylist.title.toLowerCase(),
+			...storylist.tags.map((t) => t.name.toLowerCase()),
+		]);
 	}
 }
