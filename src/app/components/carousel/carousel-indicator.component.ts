@@ -1,9 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 @Component({
 	selector: 'cuentoneta-carousel-indicator',
-	imports: [CommonModule],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `
 		<div

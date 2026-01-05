@@ -11,7 +11,7 @@ import {
 	signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // RxJS
@@ -32,7 +32,7 @@ import { CarouselGestureService } from './carousel-gesture.service';
 
 @Component({
 	selector: 'cuentoneta-carousel',
-	imports: [CommonModule, NgOptimizedImage, RouterLink, CarouselIndicatorComponent, CarouselControlsComponent],
+	imports: [NgOptimizedImage, RouterLink, CarouselIndicatorComponent, CarouselControlsComponent],
 	providers: [CarouselStateService, CarouselGestureService],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	templateUrl: './carousel.component.html',

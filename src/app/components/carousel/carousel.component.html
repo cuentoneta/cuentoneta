@@ -17,7 +17,7 @@
 					[class.slide-in-right]="direction() === 'right'"
 					class="slide active"
 				>
-					<a [routerLink]="slide.url" [ngClass]="viewportSpecificClasses[viewport()]">
+					<a [routerLink]="slide.url" [class]="viewportSpecificClasses[viewport()]">
 						<img
 							[ngSrc]="slide.contents[viewport()].imageUrl"
 							[width]="slide.contents[viewport()].imageWidth"
@@ -37,7 +37,7 @@
 					[class.slide-out-right]="direction() === 'right'"
 					class="slide previous"
 				>
-					<a [routerLink]="slide.url" [ngClass]="viewportSpecificClasses[viewport()]">
+					<a [routerLink]="slide.url" [class]="viewportSpecificClasses[viewport()]">
 						<img
 							[ngSrc]="slide.contents[viewport()].imageUrl"
 							[width]="slide.contents[viewport()].imageWidth"
