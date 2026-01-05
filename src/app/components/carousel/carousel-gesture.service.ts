@@ -14,13 +14,13 @@ export class CarouselGestureService {
 	// Umbral mínimo de píxeles para registrar como deslizamiento
 	private readonly SWIPE_THRESHOLD = 50;
 
-	// Señales de estado de deslizamiento
+	// Signals de estado de deslizamiento
 	private readonly _isSwiping = signal(false);
 	private readonly _swipeStartX = signal<number | null>(null);
 	private readonly _swipeStartY = signal<number | null>(null);
 	private readonly _swipeCurrentX = signal<number | null>(null);
 
-	// Señal pública de solo lectura
+	// Signal de solo lectura para informar si un deslizamiento está en proceso
 	readonly isSwiping: Signal<boolean> = this._isSwiping.asReadonly();
 
 	// Subjects para eventos del ciclo de vida del deslizamiento

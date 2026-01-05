@@ -6,7 +6,7 @@ import { Injectable, Signal, signal } from '@angular/core';
  */
 @Injectable()
 export class CarouselStateService {
-	// Señales de estado - Navegación
+	// Signals de estado - Navegación
 	private readonly _activeIndex = signal(0);
 	private readonly _previousIndex = signal<number | null>(null);
 	private readonly _isTransitioning = signal(false);
@@ -16,7 +16,7 @@ export class CarouselStateService {
 	private readonly _slideCount = signal(0);
 	private readonly _transitionDuration = signal(600);
 
-	// Señales públicas de solo lectura
+	// Signals públicas de solo lectura
 	readonly activeIndex: Signal<number> = this._activeIndex.asReadonly();
 	readonly previousIndex: Signal<number | null> = this._previousIndex.asReadonly();
 	readonly isTransitioning: Signal<boolean> = this._isTransitioning.asReadonly();

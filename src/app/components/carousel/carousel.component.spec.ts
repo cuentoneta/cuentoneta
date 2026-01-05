@@ -256,7 +256,7 @@ describe('CarouselComponent', () => {
 		expect(indicators[0]).toHaveAttribute('aria-current', 'false');
 	});
 
-	// Pruebas de señales computadas
+	// Pruebas de signals computadas
 	it('should calculate slideCount correctly', async () => {
 		const { fixture } = await render(CarouselComponent, {
 			inputs: { slides: contentCampaignMock },

@@ -50,16 +50,16 @@ export class CarouselComponent {
 	readonly slides = input<ContentCampaign[]>([]);
 	readonly transitionDuration = input<number>(600);
 
-	// Señales de estado - Auto-reproducción
+	// Signals de estado - Auto-reproducción
 	readonly isPaused = signal(false);
 
-	// Exponer señales del servicio de estado para el template
+	// Exponer signals del servicio de estado para el template
 	readonly activeIndex = this.stateService.activeIndex;
 	readonly previousIndex = this.stateService.previousIndex;
 	readonly isTransitioning = this.stateService.isTransitioning;
 	readonly direction = this.stateService.direction;
 
-	// Señales computadas
+	// Signals computadas
 	readonly slideCount = computed(() => this.slides().length);
 	readonly viewport = computed(() => {
 		const isTabletOrDesktop = this.layoutService.biggerThan('xs');
