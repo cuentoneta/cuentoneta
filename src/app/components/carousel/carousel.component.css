@@ -1,0 +1,107 @@
+:host {
+	@apply mx-auto block max-w-[960px];
+}
+
+.carousel-container {
+	@apply relative overflow-hidden rounded-2xl;
+	@apply aspect-[540/220] sm:aspect-[960/280];
+	@apply focus-visible:ring-primary-500 outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+}
+
+.slide-wrapper {
+	@apply relative h-full w-full;
+	touch-action: pan-y; /* Permite scroll vertical, captura deslizamientos horizontales */
+}
+
+.slide {
+	@apply absolute inset-0 h-full w-full;
+	@apply transition-transform ease-in-out;
+}
+
+.slide.active {
+	z-index: 2; /* Diapositiva activa en la parte superior */
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); /* Sombra para separación visual */
+}
+
+.slide.previous {
+	z-index: 1; /* Diapositiva anterior detrás */
+}
+
+.slide.slide-in-left {
+	animation: slideInLeft 600ms ease-in-out;
+}
+
+.slide.slide-in-right {
+	animation: slideInRight 600ms ease-in-out;
+}
+
+.slide.slide-out-left {
+	animation: slideOutLeft 600ms ease-in-out;
+}
+
+.slide.slide-out-right {
+	animation: slideOutRight 600ms ease-in-out;
+}
+
+@keyframes slideInLeft {
+	from {
+		transform: translateX(calc(100% + 20px)); /* Gap de 20px entre diapositivas */
+	}
+	to {
+		transform: translateX(0);
+	}
+}
+
+@keyframes slideInRight {
+	from {
+		transform: translateX(calc(-100% - 20px)); /* Gap de 20px entre diapositivas */
+	}
+	to {
+		transform: translateX(0);
+	}
+}
+
+@keyframes slideOutLeft {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(calc(-100% - 20px)); /* Gap de 20px entre diapositivas */
+	}
+}
+
+@keyframes slideOutRight {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(calc(100% + 20px)); /* Gap de 20px entre diapositivas */
+	}
+}
+
+/* Respetar preferencia de reducción de movimiento del usuario */
+@media (prefers-reduced-motion: reduce) {
+	.slide {
+		transition: none;
+	}
+
+	.slide.slide-in-left,
+	.slide.slide-in-right,
+	.slide.slide-out-left,
+	.slide.slide-out-right {
+		animation: none;
+	}
+}
+
+/* Se usa z-index: 10 para mostrar controles por encima de las diapositivas */
+.carousel-control-left {
+	@apply absolute left-0 top-1/2 z-10 -translate-y-1/2;
+}
+
+.carousel-control-right {
+	@apply absolute right-0 top-1/2 z-10 -translate-y-1/2;
+}
+
+.carousel-indicators-wrapper {
+	@apply absolute bottom-2 left-1/2 z-10 -translate-x-1/2 sm:bottom-4;
+}

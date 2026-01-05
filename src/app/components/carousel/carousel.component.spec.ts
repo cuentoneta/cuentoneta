@@ -162,7 +162,7 @@ describe('CarouselComponent', () => {
 		});
 
 		const component = fixture.componentInstance;
-		expect(component.isPlaying()).toBe(true);
+		// Auto-play is enabled when isPaused is false
 		expect(component.isPaused()).toBe(false);
 	});
 
@@ -345,32 +345,12 @@ describe('CarouselComponent', () => {
 			});
 		}
 
-		it('should initialize swipe state signals correctly', async () => {
-			const { fixture } = await render(CarouselComponent, {
-				inputs: { slides: contentCampaignMock },
-			});
-
-			const component = fixture.componentInstance;
-			expect(component.isSwiping()).toBe(false);
-			expect(component.swipeStartX()).toBeNull();
-			expect(component.swipeStartY()).toBeNull();
-			expect(component.swipeCurrentX()).toBeNull();
-		});
-
-		it('should set isSwiping to true on touchstart', async () => {
-			const { fixture } = await render(CarouselComponent, {
-				inputs: { slides: contentCampaignMock },
-			});
-
-			const component = fixture.componentInstance;
-			const touchEvent = createTouchEvent('touchstart', 100, 150);
-
-			component['handleTouchStart'](touchEvent);
-
-			expect(component.isSwiping()).toBe(true);
-			expect(component.swipeStartX()).toBe(100);
-			expect(component.swipeStartY()).toBe(150);
-		});
+		// Función auxiliar para simular una secuencia de deslizamiento
+		function simulateSwipe(element: HTMLElement, startX: number, endX: number, y: number = 100): void {
+			element.dispatchEvent(createTouchEvent('touchstart', startX, y));
+			element.dispatchEvent(createTouchEvent('touchmove', endX, y));
+			element.dispatchEvent(createTouchEvent('touchend', endX, y));
+		}
 
 		it('should navigate to next slide on left swipe', async () => {
 			const { fixture } = await render(CarouselComponent, {
@@ -378,11 +358,10 @@ describe('CarouselComponent', () => {
 			});
 
 			const component = fixture.componentInstance;
+			const element = fixture.nativeElement;
 
 			// Simular deslizamiento a la izquierda (inicio en 200, fin en 100)
-			component['handleTouchStart'](createTouchEvent('touchstart', 200, 100));
-			component['handleTouchMove'](createTouchEvent('touchmove', 100, 100));
-			component['handleTouchEnd'](createTouchEvent('touchend', 100, 100));
+			simulateSwipe(element, 200, 100);
 
 			expect(component.activeIndex()).toBe(1);
 		});
@@ -393,14 +372,14 @@ describe('CarouselComponent', () => {
 			});
 
 			const component = fixture.componentInstance;
-			component.selectSlide(1, 'left');
+			const element = fixture.nativeElement;
 
+			// Primero ir a la diapositiva 1
+			component.next();
 			await new Promise((resolve) => setTimeout(resolve, 700));
 
 			// Simular deslizamiento a la derecha (inicio en 100, fin en 200)
-			component['handleTouchStart'](createTouchEvent('touchstart', 100, 100));
-			component['handleTouchMove'](createTouchEvent('touchmove', 200, 100));
-			component['handleTouchEnd'](createTouchEvent('touchend', 200, 100));
+			simulateSwipe(element, 100, 200);
 
 			expect(component.activeIndex()).toBe(0);
 		});
@@ -411,12 +390,11 @@ describe('CarouselComponent', () => {
 			});
 
 			const component = fixture.componentInstance;
+			const element = fixture.nativeElement;
 			const initialIndex = component.activeIndex();
 
 			// Simular deslizamiento pequeño (30px, por debajo del umbral de 50px)
-			component['handleTouchStart'](createTouchEvent('touchstart', 100, 100));
-			component['handleTouchMove'](createTouchEvent('touchmove', 130, 100));
-			component['handleTouchEnd'](createTouchEvent('touchend', 130, 100));
+			simulateSwipe(element, 100, 130);
 
 			expect(component.activeIndex()).toBe(initialIndex);
 		});
@@ -427,9 +405,10 @@ describe('CarouselComponent', () => {
 			});
 
 			const component = fixture.componentInstance;
+			const element = fixture.nativeElement;
 			expect(component.isPaused()).toBe(false);
 
-			component['handleTouchStart'](createTouchEvent('touchstart', 100, 100));
+			element.dispatchEvent(createTouchEvent('touchstart', 100, 100));
 
 			expect(component.isPaused()).toBe(true);
 		});
@@ -440,9 +419,10 @@ describe('CarouselComponent', () => {
 			});
 
 			const component = fixture.componentInstance;
+			const element = fixture.nativeElement;
 
-			component['handleTouchStart'](createTouchEvent('touchstart', 100, 100));
-			component['handleTouchEnd'](createTouchEvent('touchend', 200, 100));
+			element.dispatchEvent(createTouchEvent('touchstart', 100, 100));
+			element.dispatchEvent(createTouchEvent('touchend', 200, 100));
 
 			expect(component.isPaused()).toBe(false);
 		});
@@ -453,15 +433,18 @@ describe('CarouselComponent', () => {
 			});
 
 			const component = fixture.componentInstance;
+			const element = fixture.nativeElement;
 			component.next(); // Iniciar transición
 
 			expect(component.isTransitioning()).toBe(true);
 
-			// Intentar deslizar durante la transición
-			component['handleTouchStart'](createTouchEvent('touchstart', 200, 100));
+			const initialIndex = component.activeIndex();
 
-			// No debe establecer isSwiping debido a la guardia de transición
-			expect(component.isSwiping()).toBe(false);
+			// Intentar deslizar durante la transición
+			simulateSwipe(element, 200, 100);
+
+			// No debe cambiar de diapositiva
+			expect(component.activeIndex()).toBe(initialIndex);
 		});
 	});
 

@@ -1,12 +1,22 @@
 // Core
-import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, signal } from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	computed,
+	DestroyRef,
+	effect,
+	ElementRef,
+	inject,
+	input,
+	signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // RxJS
-import { fromEvent, interval } from 'rxjs';
-import { filter, throttleTime } from 'rxjs/operators';
+import { interval } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 // Componentes
 import { CarouselIndicatorComponent } from './carousel-indicator.component';
@@ -17,222 +27,37 @@ import { ContentCampaign, ContentCampaignViewport } from '@models/content-campai
 
 // Servicios
 import { LayoutService } from '../../providers/layout.service';
+import { CarouselStateService } from './carousel-state.service';
+import { CarouselGestureService } from './carousel-gesture.service';
 
 @Component({
 	selector: 'cuentoneta-carousel',
 	imports: [CommonModule, NgOptimizedImage, RouterLink, CarouselIndicatorComponent, CarouselControlsComponent],
+	providers: [CarouselStateService, CarouselGestureService],
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	template: `
-		<section
-			(mouseenter)="pauseAutoPlay()"
-			(mouseleave)="resumeAutoPlay()"
-			role="region"
-			aria-roledescription="carousel"
-			aria-label="Content campaigns"
-			class="carousel-container relative"
-			tabindex="0"
-		>
-			<!-- Diapositivas -->
-			<div class="slide-wrapper" #slideWrapper>
-				@for (slide of slides(); track slide.slug; let i = $index) {
-					<!-- Diapositiva activa (entrando) -->
-					@if (i === activeIndex()) {
-						<div
-							[class.slide-in-left]="direction() === 'left'"
-							[class.slide-in-right]="direction() === 'right'"
-							class="slide active"
-						>
-							<a [routerLink]="slide.url" [ngClass]="viewportSpecificClasses[viewport()]">
-								<img
-									[ngSrc]="slide.contents[viewport()].imageUrl"
-									[width]="slide.contents[viewport()].imageWidth"
-									[height]="slide.contents[viewport()].imageHeight"
-									[alt]="'Imagen de la campaña de contenido ' + slide.title"
-									class="rounded-2xl"
-									priority
-								/>
-							</a>
-						</div>
-					}
-
-					<!-- Diapositiva anterior (saliendo) -->
-					@if (i === previousIndex() && previousIndex() !== null) {
-						<div
-							[class.slide-out-left]="direction() === 'left'"
-							[class.slide-out-right]="direction() === 'right'"
-							class="slide previous"
-						>
-							<a [routerLink]="slide.url" [ngClass]="viewportSpecificClasses[viewport()]">
-								<img
-									[ngSrc]="slide.contents[viewport()].imageUrl"
-									[width]="slide.contents[viewport()].imageWidth"
-									[height]="slide.contents[viewport()].imageHeight"
-									[alt]="'Imagen de la campaña de contenido ' + slide.title"
-									class="rounded-2xl"
-									priority
-								/>
-							</a>
-						</div>
-					}
-				}
-			</div>
-
-			<!-- Controles de navegación (solo escritorio) -->
-			@if (showControls()) {
-				<div class="carousel-control-left">
-					<cuentoneta-carousel-controls (controlClick)="prev()" [disabled]="isTransitioning()" type="left" />
-				</div>
-
-				<div class="carousel-control-right">
-					<cuentoneta-carousel-controls (controlClick)="next()" [disabled]="isTransitioning()" type="right" />
-				</div>
-			}
-
-			<!-- Indicadores de progreso -->
-			<div class="carousel-indicators-wrapper">
-				<cuentoneta-carousel-indicator
-					(indicatorClick)="onIndicatorClick($event)"
-					[slides]="slides()"
-					[activeIndex]="activeIndex()"
-					[device]="viewport() === 'xs' ? 'Mobile' : 'Desktop'"
-				/>
-			</div>
-		</section>
-	`,
-	styles: `
-		:host {
-			@apply mx-auto block max-w-[960px];
-		}
-
-		.carousel-container {
-			@apply relative overflow-hidden rounded-2xl;
-			@apply aspect-[540/220] sm:aspect-[960/280];
-			@apply focus-visible:ring-primary-500 outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
-		}
-
-		.slide-wrapper {
-			@apply relative h-full w-full;
-			touch-action: pan-y; /* Permite scroll vertical, captura deslizamientos horizontales */
-		}
-
-		.slide {
-			@apply absolute inset-0 h-full w-full;
-			@apply transition-transform ease-in-out;
-		}
-
-		.slide.active {
-			z-index: 2; /* Diapositiva activa en la parte superior */
-			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); /* Sombra para separación visual */
-		}
-
-		.slide.previous {
-			z-index: 1; /* Diapositiva anterior detrás */
-		}
-
-		.slide.slide-in-left {
-			animation: slideInLeft 600ms ease-in-out;
-		}
-
-		.slide.slide-in-right {
-			animation: slideInRight 600ms ease-in-out;
-		}
-
-		.slide.slide-out-left {
-			animation: slideOutLeft 600ms ease-in-out;
-		}
-
-		.slide.slide-out-right {
-			animation: slideOutRight 600ms ease-in-out;
-		}
-
-		@keyframes slideInLeft {
-			from {
-				transform: translateX(calc(100% + 20px)); /* Gap de 20px entre diapositivas */
-			}
-			to {
-				transform: translateX(0);
-			}
-		}
-
-		@keyframes slideInRight {
-			from {
-				transform: translateX(calc(-100% - 20px)); /* Gap de 20px entre diapositivas */
-			}
-			to {
-				transform: translateX(0);
-			}
-		}
-
-		@keyframes slideOutLeft {
-			from {
-				transform: translateX(0);
-			}
-			to {
-				transform: translateX(calc(-100% - 20px)); /* Gap de 20px entre diapositivas */
-			}
-		}
-
-		@keyframes slideOutRight {
-			from {
-				transform: translateX(0);
-			}
-			to {
-				transform: translateX(calc(100% + 20px)); /* Gap de 20px entre diapositivas */
-			}
-		}
-
-		/* Respetar preferencia de reducción de movimiento del usuario */
-		@media (prefers-reduced-motion: reduce) {
-			.slide {
-				transition: none;
-			}
-
-			.slide.slide-in-left,
-			.slide.slide-in-right,
-			.slide.slide-out-left,
-			.slide.slide-out-right {
-				animation: none;
-			}
-		}
-
-		/* Se usa z-index: 10 para mostrar controles por encima de las diapositivas */
-		.carousel-control-left {
-			@apply absolute left-0 top-1/2 z-10 -translate-y-1/2;
-		}
-
-		.carousel-control-right {
-			@apply absolute right-0 top-1/2 z-10 -translate-y-1/2;
-		}
-
-		.carousel-indicators-wrapper {
-			@apply absolute bottom-2 left-1/2 z-10 -translate-x-1/2 sm:bottom-4;
-		}
-	`,
+	templateUrl: './carousel.component.html',
+	styleUrl: './carousel.component.css',
 })
 export class CarouselComponent {
 	// Servicios
-	layoutService = inject(LayoutService);
-	private el = inject(ElementRef);
+	readonly layoutService = inject(LayoutService);
+	private readonly stateService = inject(CarouselStateService);
+	private readonly gestureService = inject(CarouselGestureService);
+	private readonly el = inject(ElementRef);
+	private readonly destroyRef = inject(DestroyRef);
 
 	// Entradas
 	readonly slides = input<ContentCampaign[]>([]);
 	readonly transitionDuration = input<number>(600);
 
 	// Señales de estado - Auto-reproducción
-	readonly isPlaying = signal(true);
 	readonly isPaused = signal(false);
 
-	// Señales de estado - Navegación
-	readonly activeIndex = signal(0);
-	readonly previousIndex = signal<number | null>(null);
-	readonly isTransitioning = signal(false);
-	readonly direction = signal<'left' | 'right' | null>(null);
-
-	// Señales de estado - Gestos táctiles
-	readonly isSwiping = signal(false);
-	readonly swipeStartX = signal<number | null>(null);
-	readonly swipeStartY = signal<number | null>(null);
-	readonly swipeCurrentX = signal<number | null>(null);
+	// Exponer señales del servicio de estado para el template
+	readonly activeIndex = this.stateService.activeIndex;
+	readonly previousIndex = this.stateService.previousIndex;
+	readonly isTransitioning = this.stateService.isTransitioning;
+	readonly direction = this.stateService.direction;
 
 	// Señales computadas
 	readonly slideCount = computed(() => this.slides().length);
@@ -247,174 +72,67 @@ export class CarouselComponent {
 		xs: 'sm:hidden',
 		md: 'max-sm:hidden',
 	};
-	private readonly SWIPE_THRESHOLD = 50; // Mínimo de píxeles para registrar como deslizamiento
 
 	// Intervalo de reproducción automática
 	private autoPlayInterval$ = interval(5000).pipe(
-		filter(() => !this.isPaused() && this.isPlaying() && !this.isSwiping() && this.slideCount() > 1),
+		filter(
+			() => !this.isPaused() && !this.gestureService.isSwiping() && !this.isTransitioning() && this.slideCount() > 1,
+		),
 		takeUntilDestroyed(),
 	);
-
-	// Flujos de eventos táctiles
-	private touchStart$ = fromEvent<TouchEvent>(this.el.nativeElement, 'touchstart').pipe(takeUntilDestroyed());
-	private touchMove$ = fromEvent<TouchEvent>(this.el.nativeElement, 'touchmove').pipe(
-		takeUntilDestroyed(),
-		throttleTime(16), // ~60fps, previene problemas de rendimiento
-	);
-	private touchEnd$ = fromEvent<TouchEvent>(this.el.nativeElement, 'touchend').pipe(takeUntilDestroyed());
-	private touchCancel$ = fromEvent<TouchEvent>(this.el.nativeElement, 'touchcancel').pipe(takeUntilDestroyed());
-
-	// Flujo de eventos de teclado
-	private keydown$ = fromEvent<KeyboardEvent>(this.el.nativeElement, 'keydown').pipe(takeUntilDestroyed());
 
 	constructor() {
+		// Inicializar servicio de estado con valores actuales
+		this.stateService.initialize(this.slides().length, this.transitionDuration());
+
+		// Efecto para sincronizar cambios en slides
+		effect(() => {
+			this.stateService.updateSlideCount(this.slides().length);
+		});
+
 		// Suscripción a auto-reproducción
-		this.autoPlayInterval$.subscribe(() => this.next());
+		this.autoPlayInterval$.subscribe(() => this.stateService.next());
 
-		// Suscripciones a gestos táctiles
-		this.touchStart$.subscribe((event) => this.handleTouchStart(event));
-		this.touchMove$.subscribe((event) => this.handleTouchMove(event));
-		this.touchEnd$.subscribe(() => this.handleTouchEnd());
-		this.touchCancel$.subscribe(() => this.resetSwipeState());
+		// Adjuntar servicio de gestos y conectar comandos de navegación
+		this.gestureService
+			.attach(this.el, this.destroyRef, this.isTransitioning)
+			.pipe(takeUntilDestroyed())
+			.subscribe((command) => {
+				if (command === 'next') {
+					this.stateService.next();
+				} else {
+					this.stateService.prev();
+				}
+			});
 
-		// Suscripción a eventos de teclado
-		this.keydown$.subscribe((event) => this.handleKeydown(event));
+		// Coordinar pausa/reanudación de auto-play con deslizamientos
+		this.gestureService.onSwipeStart$.pipe(takeUntilDestroyed()).subscribe(() => this.pauseAutoPlay());
+		this.gestureService.onSwipeEnd$.pipe(takeUntilDestroyed()).subscribe(() => this.resumeAutoPlay());
 	}
 
-	// Métodos de navegación
+	// Métodos de navegación (delegados al servicio)
 	next(): void {
-		if (this.isTransitioning()) return;
-
-		const nextIndex = this.activeIndex() + 1;
-		if (nextIndex >= this.slideCount()) {
-			this.selectSlide(0, 'left');
-		} else {
-			this.selectSlide(nextIndex, 'left');
-		}
+		this.stateService.next();
 	}
 
 	prev(): void {
-		if (this.isTransitioning()) return;
-
-		const prevIndex = this.activeIndex() - 1;
-		if (prevIndex < 0) {
-			this.selectSlide(this.slideCount() - 1, 'right');
-		} else {
-			this.selectSlide(prevIndex, 'right');
-		}
+		this.stateService.prev();
 	}
 
 	selectSlide(index: number, direction: 'left' | 'right'): void {
-		if (this.isTransitioning() || index === this.activeIndex()) return;
-
-		this.isTransitioning.set(true);
-		this.direction.set(direction);
-
-		// Guardar índice anterior antes de cambiar
-		this.previousIndex.set(this.activeIndex());
-		this.activeIndex.set(index);
-
-		// Reiniciar estado de transición después de que se complete la animación
-		setTimeout(() => {
-			this.isTransitioning.set(false);
-			this.direction.set(null);
-			this.previousIndex.set(null); // Limpiar diapositiva anterior
-		}, this.transitionDuration());
+		this.stateService.selectSlide(index, direction);
 	}
 
 	onIndicatorClick(index: number): void {
-		const direction = index > this.activeIndex() ? 'left' : 'right';
-		this.selectSlide(index, direction);
+		this.stateService.onIndicatorClick(index);
 	}
 
+	// Métodos de control de auto-reproducción
 	pauseAutoPlay(): void {
 		this.isPaused.set(true);
 	}
 
 	resumeAutoPlay(): void {
 		this.isPaused.set(false);
-	}
-
-	// Métodos de manejo de gestos táctiles
-	private handleTouchStart(event: TouchEvent): void {
-		// Guard: No interferir si está en transición
-		if (this.isTransitioning()) return;
-
-		// Guard: Solo procesar toques con un dedo
-		if (event.touches.length !== 1) return;
-
-		const touch = event.touches[0];
-		this.isSwiping.set(true);
-		this.swipeStartX.set(touch.clientX);
-		this.swipeStartY.set(touch.clientY);
-		this.swipeCurrentX.set(touch.clientX);
-
-		// Pausar auto-reproducción durante el deslizamiento
-		this.pauseAutoPlay();
-	}
-
-	private handleTouchMove(event: TouchEvent): void {
-		if (!this.isSwiping()) return;
-		if (event.touches.length !== 1) return;
-
-		const touch = event.touches[0];
-		this.swipeCurrentX.set(touch.clientX);
-
-		// Solo prevenir scroll cuando el movimiento horizontal es dominante
-		const deltaX = Math.abs(touch.clientX - (this.swipeStartX() ?? 0));
-		const deltaY = Math.abs(touch.clientY - (this.swipeStartY() ?? 0));
-
-		if (deltaX > deltaY && deltaX > 10) {
-			event.preventDefault();
-		}
-	}
-
-	private handleTouchEnd(): void {
-		if (!this.isSwiping()) return;
-
-		const startX = this.swipeStartX();
-		const currentX = this.swipeCurrentX();
-
-		if (startX === null || currentX === null) {
-			this.resetSwipeState();
-			return;
-		}
-
-		const deltaX = currentX - startX;
-		const absDeltaX = Math.abs(deltaX);
-
-		// Verificar si el deslizamiento cumple el umbral
-		if (absDeltaX >= this.SWIPE_THRESHOLD) {
-			if (deltaX > 0) {
-				// Deslizamiento a la derecha → diapositiva anterior
-				this.prev();
-			} else {
-				// Deslizamiento a la izquierda → diapositiva siguiente
-				this.next();
-			}
-		}
-
-		this.resetSwipeState();
-	}
-
-	private resetSwipeState(): void {
-		this.isSwiping.set(false);
-		this.swipeStartX.set(null);
-		this.swipeStartY.set(null);
-		this.swipeCurrentX.set(null);
-
-		// Reanudar auto-reproducción
-		this.resumeAutoPlay();
-	}
-
-	// Métodos de manejo de teclado
-	private handleKeydown(event: KeyboardEvent): void {
-		if (event.key === 'ArrowLeft') {
-			event.preventDefault();
-			this.prev();
-		} else if (event.key === 'ArrowRight') {
-			event.preventDefault();
-			this.next();
-		}
 	}
 }
