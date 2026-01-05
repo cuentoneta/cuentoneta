@@ -26,6 +26,9 @@ import { LayoutService } from '../../providers/layout.service';
 		<section
 			(mouseenter)="pauseAutoPlay()"
 			(mouseleave)="resumeAutoPlay()"
+			role="region"
+			aria-roledescription="carousel"
+			aria-label="Content campaigns"
 			class="carousel-container relative"
 			tabindex="0"
 		>
