@@ -193,6 +193,7 @@ export class CarouselComponent {
 
 	// Entradas
 	readonly slides = input<ContentCampaign[]>([]);
+	readonly transitionDuration = input<number>(600);
 
 	// Señales de estado - Auto-reproducción
 	readonly isPlaying = signal(true);
@@ -288,7 +289,7 @@ export class CarouselComponent {
 			this.isTransitioning.set(false);
 			this.direction.set(null);
 			this.previousIndex.set(null); // Limpiar diapositiva anterior
-		}, 600);
+		}, this.transitionDuration());
 	}
 
 	onIndicatorClick(index: number): void {
