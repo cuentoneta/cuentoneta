@@ -40,7 +40,7 @@ import { CarouselGestureService } from './carousel-gesture.service';
 })
 export class CarouselComponent {
 	// Servicios
-	readonly layoutService = inject(LayoutService);
+	private readonly layoutService = inject(LayoutService);
 	private readonly stateService = inject(CarouselStateService);
 	private readonly gestureService = inject(CarouselGestureService);
 	private readonly el = inject(ElementRef);
@@ -117,10 +117,6 @@ export class CarouselComponent {
 
 	prev(): void {
 		this.stateService.prev();
-	}
-
-	selectSlide(index: number, direction: 'left' | 'right'): void {
-		this.stateService.selectSlide(index, direction);
 	}
 
 	onIndicatorClick(index: number): void {
