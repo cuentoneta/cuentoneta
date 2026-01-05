@@ -23,7 +23,12 @@ import { LayoutService } from '../../providers/layout.service';
 	imports: [CommonModule, NgOptimizedImage, RouterLink, CarouselIndicatorComponent, CarouselControlsComponent],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `
-		<section (mouseenter)="pauseAutoPlay()" (mouseleave)="resumeAutoPlay()" class="carousel-container relative">
+		<section
+			(mouseenter)="pauseAutoPlay()"
+			(mouseleave)="resumeAutoPlay()"
+			class="carousel-container relative"
+			tabindex="0"
+		>
 			<!-- Diapositivas -->
 			<div class="slide-wrapper" #slideWrapper>
 				@for (slide of slides(); track slide.slug; let i = $index) {
@@ -99,6 +104,7 @@ import { LayoutService } from '../../providers/layout.service';
 		.carousel-container {
 			@apply relative overflow-hidden rounded-2xl;
 			@apply aspect-[540/220] sm:aspect-[960/280];
+			@apply focus-visible:ring-primary-500 outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
 		}
 
 		.slide-wrapper {
@@ -240,6 +246,9 @@ export class CarouselComponent {
 	private touchEnd$ = fromEvent<TouchEvent>(this.el.nativeElement, 'touchend').pipe(takeUntilDestroyed());
 	private touchCancel$ = fromEvent<TouchEvent>(this.el.nativeElement, 'touchcancel').pipe(takeUntilDestroyed());
 
+	// Flujo de eventos de teclado
+	private keydown$ = fromEvent<KeyboardEvent>(this.el.nativeElement, 'keydown').pipe(takeUntilDestroyed());
+
 	constructor() {
 		// Suscripción a auto-reproducción
 		this.autoPlayInterval$.subscribe(() => this.next());
@@ -249,6 +258,9 @@ export class CarouselComponent {
 		this.touchMove$.subscribe((event) => this.handleTouchMove(event));
 		this.touchEnd$.subscribe(() => this.handleTouchEnd());
 		this.touchCancel$.subscribe(() => this.resetSwipeState());
+
+		// Suscripción a eventos de teclado
+		this.keydown$.subscribe((event) => this.handleKeydown(event));
 	}
 
 	// Métodos de navegación
@@ -372,5 +384,16 @@ export class CarouselComponent {
 
 		// Reanudar auto-reproducción
 		this.resumeAutoPlay();
+	}
+
+	// Métodos de manejo de teclado
+	private handleKeydown(event: KeyboardEvent): void {
+		if (event.key === 'ArrowLeft') {
+			event.preventDefault();
+			this.prev();
+		} else if (event.key === 'ArrowRight') {
+			event.preventDefault();
+			this.next();
+		}
 	}
 }
