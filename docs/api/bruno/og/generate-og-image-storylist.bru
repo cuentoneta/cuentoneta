@@ -1,0 +1,61 @@
+meta {
+  name: Generate OG image for storylist
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/og/storylist/:slug
+  body: none
+  auth: none
+}
+
+params:path {
+  slug: cuentos-de-terror
+}
+
+headers {
+  User-Agent: WhatsApp/2.23.20.0
+}
+
+docs {
+  Generar imagen OpenGraph para una colección de cuentos (storylist).
+
+  **Detección de plataforma**: El sistema detecta automáticamente la plataforma que hace la request mediante el header User-Agent y genera imágenes con dimensiones optimizadas:
+
+  - **WhatsApp**: 1200x630px (ratio 1.91:1)
+  - **X/Twitter**: 1200x675px (ratio 1.78:1)
+  - **Threads**: 1080x1080px (ratio 1:1 - cuadrado)
+  - **Instagram**: 1080x1080px (ratio 1:1 - cuadrado)
+  - **Discord**: 1200x630px (ratio 1.91:1)
+  - **Default**: 1200x630px (ratio 1.91:1)
+
+  **Parámetros de ruta**:
+  - `slug` (string): Identificador único de la storylist (ej: "cuentos-de-terror", "cuentos-de-otono")
+
+  **Headers de Request**:
+  - `User-Agent`: Se analiza para detectar la plataforma
+
+  **Headers de Respuesta**:
+  - `Content-Type`: image/png
+  - `Cache-Control`: public, max-age=31536000, immutable
+  - `X-OG-Platform`: Plataforma detectada
+  - `X-OG-Dimensions`: Dimensiones generadas
+
+  **Contenido de la imagen**:
+  - Logo de La Cuentoneta
+  - Título de la storylist
+  - Cantidad de historias
+  - Tags (hasta 3 en formatos rectangulares, 2 en cuadrados)
+
+  **Layout adaptativo**: Los formatos cuadrados (Threads/Instagram) muestran menos tags y usan fuentes más pequeñas.
+
+  **Caché**: Las imágenes se cachean en filesystem. Cada combinación de tipo-slug-plataforma genera una imagen única.
+
+  **Testing**: Para probar diferentes plataformas, modifica el header User-Agent:
+  - WhatsApp: "WhatsApp/2.23.20.0"
+  - Twitter: "Twitterbot/1.0"
+  - Threads: "Mozilla/5.0 (compatible; Threads)"
+  - Instagram: "Instagram"
+  - Discord: "Discord"
+}

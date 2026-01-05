@@ -1,28 +1,62 @@
 meta {
-  name: Generate OG image
+  name: Generate OG image for story
   type: http
   seq: 1
 }
 
 get {
-  url: {{apiUrl}}{{baseApiPath}}/og?title=Example
+  url: {{apiUrl}}{{baseApiPath}}/og/story/:slug
   body: none
   auth: none
 }
 
-params:query {
-  ~author: jorge-luis-borges
-  ~storylist: cuentos-de-terror
-  rrss: twitter
-  title: Example Title
+params:path {
+  slug: manos
+}
+
+headers {
+  User-Agent: WhatsApp/2.23.20.0
 }
 
 docs {
-  Generar imágenes Open Graph para compartir en redes sociales.
+  Generar imagen OpenGraph para un cuento específico.
 
-  Parámetros de consulta:
-  - author: Slug del autor (opcional)
-  - storylist: Slug de la lista de cuentos (opcional)
-  - rrss: Plataforma social (twitter, facebook, etc.)
-  - title: Título para la imagen
+  **Detección de plataforma**: El sistema detecta automáticamente la plataforma que hace la request mediante el header User-Agent y genera imágenes con dimensiones optimizadas:
+
+  - **WhatsApp**: 1200x630px (ratio 1.91:1) - User-Agent contiene "whatsapp"
+  - **X/Twitter**: 1200x675px (ratio 1.78:1) - User-Agent contiene "twitterbot" o "twitter"
+  - **Threads**: 1080x1080px (ratio 1:1) - User-Agent contiene "threads"
+  - **Instagram**: 1080x1080px (ratio 1:1) - User-Agent contiene "instagram"
+  - **Discord**: 1200x630px (ratio 1.91:1) - User-Agent contiene "discord"
+  - **Default**: 1200x630px (ratio 1.91:1) - Otros casos
+
+  **Parámetros de ruta**:
+  - `slug` (string): Identificador único del cuento (ej: "manos", "el-aleph")
+
+  **Headers de Request**:
+  - `User-Agent`: Se analiza para detectar la plataforma
+
+  **Headers de Respuesta**:
+  - `Content-Type`: image/png
+  - `Cache-Control`: public, max-age=31536000, immutable
+  - `X-OG-Platform`: Plataforma detectada (ej: "whatsapp", "twitter", "threads")
+  - `X-OG-Dimensions`: Dimensiones generadas (ej: "1200x630", "1080x1080")
+
+  **Contenido de la imagen**:
+  - Logo de La Cuentoneta
+  - Título del cuento
+  - Nombre del autor
+  - Bandera y país del autor
+  - Tiempo de lectura en minutos
+
+  **Layout adaptativo**: Los formatos cuadrados (Threads/Instagram) usan fuentes más pequeñas y menos padding para optimizar el espacio.
+
+  **Caché**: Las imágenes se cachean en filesystem. Cada combinación de tipo-slug-plataforma genera una imagen única.
+
+  **Testing**: Para probar diferentes plataformas, modifica el header User-Agent:
+  - WhatsApp: "WhatsApp/2.23.20.0"
+  - Twitter: "Twitterbot/1.0"
+  - Threads: "Mozilla/5.0 (compatible; Threads)"
+  - Instagram: "Instagram"
+  - Discord: "Discord"
 }
