@@ -320,10 +320,28 @@ describe('CarouselComponent', () => {
 
 	// Pruebas de navegación por gestos táctiles
 	describe('Touch Gesture Navigation', () => {
-		// Función auxiliar para crear eventos táctiles
+		// Función auxiliar para crear eventos táctiles con propiedades completas
 		function createTouchEvent(type: string, clientX: number, clientY: number): TouchEvent {
+			const touch = {
+				clientX,
+				clientY,
+				identifier: 0,
+				pageX: clientX,
+				pageY: clientY,
+				screenX: clientX,
+				screenY: clientY,
+				target: document.createElement('div'),
+				radiusX: 0,
+				radiusY: 0,
+				rotationAngle: 0,
+				force: 1,
+			} as Touch;
+
 			return new TouchEvent(type, {
-				touches: [{ clientX, clientY } as Touch],
+				touches: type !== 'touchend' ? [touch] : [],
+				changedTouches: [touch],
+				cancelable: true,
+				bubbles: true,
 			});
 		}
 
@@ -335,6 +353,7 @@ describe('CarouselComponent', () => {
 			const component = fixture.componentInstance;
 			expect(component.isSwiping()).toBe(false);
 			expect(component.swipeStartX()).toBeNull();
+			expect(component.swipeStartY()).toBeNull();
 			expect(component.swipeCurrentX()).toBeNull();
 		});
 
@@ -344,12 +363,13 @@ describe('CarouselComponent', () => {
 			});
 
 			const component = fixture.componentInstance;
-			const touchEvent = createTouchEvent('touchstart', 100, 100);
+			const touchEvent = createTouchEvent('touchstart', 100, 150);
 
 			component['handleTouchStart'](touchEvent);
 
 			expect(component.isSwiping()).toBe(true);
 			expect(component.swipeStartX()).toBe(100);
+			expect(component.swipeStartY()).toBe(150);
 		});
 
 		it('should navigate to next slide on left swipe', async () => {

@@ -178,6 +178,20 @@ import { LayoutService } from '../../providers/layout.service';
 			}
 		}
 
+		/* Respetar preferencia de reducción de movimiento del usuario */
+		@media (prefers-reduced-motion: reduce) {
+			.slide {
+				transition: none;
+			}
+
+			.slide.slide-in-left,
+			.slide.slide-in-right,
+			.slide.slide-out-left,
+			.slide.slide-out-right {
+				animation: none;
+			}
+		}
+
 		/* Se usa z-index: 10 para mostrar controles por encima de las diapositivas */
 		.carousel-control-left {
 			@apply absolute left-0 top-1/2 z-10 -translate-y-1/2;
@@ -214,6 +228,7 @@ export class CarouselComponent {
 	// Señales de estado - Gestos táctiles
 	readonly isSwiping = signal(false);
 	readonly swipeStartX = signal<number | null>(null);
+	readonly swipeStartY = signal<number | null>(null);
 	readonly swipeCurrentX = signal<number | null>(null);
 
 	// Señales computadas
@@ -328,6 +343,7 @@ export class CarouselComponent {
 		const touch = event.touches[0];
 		this.isSwiping.set(true);
 		this.swipeStartX.set(touch.clientX);
+		this.swipeStartY.set(touch.clientY);
 		this.swipeCurrentX.set(touch.clientX);
 
 		// Pausar auto-reproducción durante el deslizamiento
@@ -341,10 +357,11 @@ export class CarouselComponent {
 		const touch = event.touches[0];
 		this.swipeCurrentX.set(touch.clientX);
 
-		// Prevenir scroll horizontal durante el deslizamiento
-		// (Aún permite scroll vertical)
+		// Solo prevenir scroll cuando el movimiento horizontal es dominante
 		const deltaX = Math.abs(touch.clientX - (this.swipeStartX() ?? 0));
-		if (deltaX > 10) {
+		const deltaY = Math.abs(touch.clientY - (this.swipeStartY() ?? 0));
+
+		if (deltaX > deltaY && deltaX > 10) {
 			event.preventDefault();
 		}
 	}
@@ -380,6 +397,7 @@ export class CarouselComponent {
 	private resetSwipeState(): void {
 		this.isSwiping.set(false);
 		this.swipeStartX.set(null);
+		this.swipeStartY.set(null);
 		this.swipeCurrentX.set(null);
 
 		// Reanudar auto-reproducción
