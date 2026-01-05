@@ -64,6 +64,33 @@ Si eres desarrolladora o desarrollador, puedes contribuir al proyecto mediante l
 
 > 💡 No hace falta tener mucho conocimiento en el tech stack para poder contribuir en el desarrollo. Si tienes ganas de aprender, ¡te invitamos a sumarte!
 
+### 🖼️ Imágenes OpenGraph
+
+La Cuentoneta genera imágenes OpenGraph dinámicas para cada story, storylist y author. Estas imágenes se generan automáticamente al compartir contenido en redes sociales (WhatsApp, X, Threads, Instagram, Facebook, LinkedIn).
+
+#### Características de las imágenes OG
+
+- **Formato**: PNG
+- **Dimensiones**: 1200x630px (estándar para todas las plataformas)
+- **Caché**: Las imágenes se almacenan en caché durante 1 año para optimizar el rendimiento
+- **Generación**: Al vuelo mediante Satori + @resvg/resvg-js
+
+#### URLs de las imágenes
+
+- **Stories**: `/api/og/story/:slug`
+- **Storylists**: `/api/og/storylist/:slug`
+- **Authors**: `/api/og/author/:slug`
+
+#### Limpieza de caché
+
+Si necesitas regenerar las imágenes OpenGraph (por ejemplo, después de cambios en el diseño), puedes limpiar el caché con:
+
+```bash
+pnpm clear-og-cache
+```
+
+Para más información técnica sobre la implementación de OpenGraph, consulta la [documentación técnica de OpenGraph][doc-opengraph].
+
 ---
 
 <!-- Enlaces a GitHub Issues y a issue templates -->
@@ -77,6 +104,7 @@ Si eres desarrolladora o desarrollador, puedes contribuir al proyecto mediante l
 
 [doc-code_of_conduct]: https://github.com/cuentoneta/cuentoneta/blob/develop/CODE_OF_CONDUCT.md
 [doc-guia-de-desarrollo]: https://github.com/cuentoneta/cuentoneta/blob/develop/docs/DEVELOPMENT_GUIDE.md
+[doc-opengraph]: https://github.com/cuentoneta/cuentoneta/blob/develop/docs/OPENGRAPH.md
 
 <!-- Enlaces a Discord -->
 

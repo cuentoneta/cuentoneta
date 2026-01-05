@@ -350,4 +350,153 @@ describe('MetaTagsDirective', () => {
 			expect(removeSpy).toHaveBeenCalledWith('name="keywords"');
 		});
 	});
+
+	describe('setImage', () => {
+		it('should set og:image meta tags correctly', () => {
+			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const imageUrl = 'https://example.com/image.png';
+
+			directive.setImage(imageUrl);
+
+			expect(metaSpy).toHaveBeenCalledWith({
+				property: 'og:image',
+				content: imageUrl,
+			});
+			expect(metaSpy).toHaveBeenCalledWith({
+				property: 'og:image:width',
+				content: '1200',
+			});
+			expect(metaSpy).toHaveBeenCalledWith({
+				property: 'og:image:height',
+				content: '630',
+			});
+		});
+
+		it('should set twitter:card as summary_large_image', () => {
+			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const imageUrl = 'https://example.com/image.png';
+
+			directive.setImage(imageUrl);
+
+			expect(metaSpy).toHaveBeenCalledWith({
+				name: 'twitter:card',
+				content: 'summary_large_image',
+			});
+		});
+
+		it('should set twitter:image correctly', () => {
+			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const imageUrl = 'https://example.com/image.png';
+
+			directive.setImage(imageUrl);
+
+			expect(metaSpy).toHaveBeenCalledWith({
+				name: 'twitter:image',
+				content: imageUrl,
+			});
+		});
+	});
+
+	describe('setType', () => {
+		it('should set og:type as article', () => {
+			const metaSpy = jest.spyOn(metaService, 'updateTag');
+
+			directive.setType('article');
+
+			expect(metaSpy).toHaveBeenCalledWith({
+				property: 'og:type',
+				content: 'article',
+			});
+		});
+
+		it('should set og:type as website', () => {
+			const metaSpy = jest.spyOn(metaService, 'updateTag');
+
+			directive.setType('website');
+
+			expect(metaSpy).toHaveBeenCalledWith({
+				property: 'og:type',
+				content: 'website',
+			});
+		});
+
+		it('should set og:type as profile', () => {
+			const metaSpy = jest.spyOn(metaService, 'updateTag');
+
+			directive.setType('profile');
+
+			expect(metaSpy).toHaveBeenCalledWith({
+				property: 'og:type',
+				content: 'profile',
+			});
+		});
+	});
+
+	describe('setUrl', () => {
+		it('should set og:url correctly', () => {
+			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const url = 'https://cuentoneta.ar/story/example';
+
+			directive.setUrl(url);
+
+			expect(metaSpy).toHaveBeenCalledWith({
+				property: 'og:url',
+				content: url,
+			});
+		});
+	});
+
+	describe('removeImage', () => {
+		it('should remove all image-related meta tags', () => {
+			const metaSpy = jest.spyOn(metaService, 'removeTag');
+
+			directive.removeImage();
+
+			expect(metaSpy).toHaveBeenCalledWith('property="og:image"');
+			expect(metaSpy).toHaveBeenCalledWith('property="og:image:width"');
+			expect(metaSpy).toHaveBeenCalledWith('property="og:image:height"');
+			expect(metaSpy).toHaveBeenCalledWith('name="twitter:card"');
+			expect(metaSpy).toHaveBeenCalledWith('name="twitter:image"');
+		});
+	});
+
+	describe('removeType', () => {
+		it('should remove og:type meta tag', () => {
+			const metaSpy = jest.spyOn(metaService, 'removeTag');
+
+			directive.removeType();
+
+			expect(metaSpy).toHaveBeenCalledWith('property="og:type"');
+		});
+	});
+
+	describe('removeUrl', () => {
+		it('should remove og:url meta tag', () => {
+			const metaSpy = jest.spyOn(metaService, 'removeTag');
+
+			directive.removeUrl();
+
+			expect(metaSpy).toHaveBeenCalledWith('property="og:url"');
+		});
+	});
+
+	describe('ngOnDestroy', () => {
+		it('should remove all meta tags on destroy', () => {
+			const removeKeywordsSpy = jest.spyOn(directive, 'removeKeywords');
+			const removeCanonicalUrlSpy = jest.spyOn(directive, 'removeCanonicalUrl');
+			const removeRobotsSpy = jest.spyOn(directive, 'removeRobots');
+			const removeImageSpy = jest.spyOn(directive, 'removeImage');
+			const removeTypeSpy = jest.spyOn(directive, 'removeType');
+			const removeUrlSpy = jest.spyOn(directive, 'removeUrl');
+
+			directive.ngOnDestroy();
+
+			expect(removeKeywordsSpy).toHaveBeenCalled();
+			expect(removeCanonicalUrlSpy).toHaveBeenCalled();
+			expect(removeRobotsSpy).toHaveBeenCalled();
+			expect(removeImageSpy).toHaveBeenCalled();
+			expect(removeTypeSpy).toHaveBeenCalled();
+			expect(removeUrlSpy).toHaveBeenCalled();
+		});
+	});
 });
