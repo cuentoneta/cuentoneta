@@ -101,14 +101,24 @@ export function urlFor(source: SanityImageSource): string {
 	if (!source) {
 		return '';
 	}
-	return createImageUrlBuilder(client).image(source).url();
+	try {
+		return createImageUrlBuilder(client).image(source).url();
+	} catch (error) {
+		console.error('Error al construir URL de imagen:', error);
+		return '';
+	}
 }
 
 export function urlForWithAutoFormat(source: SanityImageSource): string {
 	if (!source) {
 		return '';
 	}
-	return createImageUrlBuilder(client).image(source).auto('format').url();
+	try {
+		return createImageUrlBuilder(client).image(source).auto('format').url();
+	} catch (error) {
+		console.error('Error al construir URL de imagen:', error);
+		return '';
+	}
 }
 
 type ResourcesSubQuery = (
