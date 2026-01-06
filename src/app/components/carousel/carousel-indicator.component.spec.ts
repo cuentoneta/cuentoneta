@@ -5,14 +5,13 @@ import userEvent from '@testing-library/user-event';
 // Componentes
 import { CarouselIndicatorComponent } from './carousel-indicator.component';
 
-// Mocks
-import { contentCampaignMock } from '@mocks/content-campaign.mock';
+const INDICATOR_COUNT = 3;
 
 describe('CarouselIndicatorComponent', () => {
 	it('should render the component', async () => {
 		const { container } = await render(CarouselIndicatorComponent, {
 			inputs: {
-				slides: contentCampaignMock,
+				count: INDICATOR_COUNT,
 				activeIndex: 0,
 			},
 		});
@@ -22,19 +21,19 @@ describe('CarouselIndicatorComponent', () => {
 	it('should render indicator for each slide', async () => {
 		await render(CarouselIndicatorComponent, {
 			inputs: {
-				slides: contentCampaignMock,
+				count: INDICATOR_COUNT,
 				activeIndex: 0,
 			},
 		});
 
 		const indicators = screen.getAllByRole('button');
-		expect(indicators.length).toBe(contentCampaignMock.length);
+		expect(indicators.length).toBe(INDICATOR_COUNT);
 	});
 
 	it('should mark active indicator with aria-current', async () => {
 		await render(CarouselIndicatorComponent, {
 			inputs: {
-				slides: contentCampaignMock,
+				count: INDICATOR_COUNT,
 				activeIndex: 0,
 			},
 		});
@@ -54,7 +53,7 @@ describe('CarouselIndicatorComponent', () => {
 		const user = userEvent.setup();
 		const { fixture } = await render(CarouselIndicatorComponent, {
 			inputs: {
-				slides: contentCampaignMock,
+				count: INDICATOR_COUNT,
 				activeIndex: 0,
 			},
 		});
@@ -75,33 +74,33 @@ describe('CarouselIndicatorComponent', () => {
 	it('should render with Desktop device input', async () => {
 		await render(CarouselIndicatorComponent, {
 			inputs: {
-				slides: contentCampaignMock,
+				count: INDICATOR_COUNT,
 				activeIndex: 0,
 				device: 'Desktop',
 			},
 		});
 
 		const indicators = screen.getAllByRole('button');
-		expect(indicators.length).toBe(contentCampaignMock.length);
+		expect(indicators.length).toBe(INDICATOR_COUNT);
 	});
 
 	it('should render with Mobile device input', async () => {
 		await render(CarouselIndicatorComponent, {
 			inputs: {
-				slides: contentCampaignMock,
+				count: INDICATOR_COUNT,
 				activeIndex: 0,
 				device: 'Mobile',
 			},
 		});
 
 		const indicators = screen.getAllByRole('button');
-		expect(indicators.length).toBe(contentCampaignMock.length);
+		expect(indicators.length).toBe(INDICATOR_COUNT);
 	});
 
 	it('should have proper ARIA attributes', async () => {
 		await render(CarouselIndicatorComponent, {
 			inputs: {
-				slides: contentCampaignMock,
+				count: INDICATOR_COUNT,
 				activeIndex: 0,
 			},
 		});

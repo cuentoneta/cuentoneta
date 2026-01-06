@@ -67,7 +67,7 @@
 		<div class="carousel-indicators-wrapper">
 			<cuentoneta-carousel-indicator
 				(indicatorClick)="onIndicatorClick($event)"
-				[slides]="slides()"
+				[count]="slideCount()"
 				[activeIndex]="activeIndex()"
 				[device]="viewport() === 'xs' ? 'Mobile' : 'Desktop'"
 			/>

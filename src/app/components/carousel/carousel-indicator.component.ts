@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
 @Component({
 	selector: 'cuentoneta-carousel-indicator',
@@ -9,7 +9,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 			[class.desktop]="device() === 'Desktop'"
 			class="carousel-indicator-container"
 		>
-			@for (item of slides(); track $index; let i = $index) {
+			@for (i of indices(); track i) {
 				<button
 					(click)="indicatorClick.emit(i)"
 					[attr.aria-label]="'Go to slide ' + (i + 1)"
@@ -65,10 +65,13 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 	`,
 })
 export class CarouselIndicatorComponent {
-	// Entradas - Acepta cualquier array con propiedad length para máxima flexibilidad
-	readonly slides = input.required<readonly { slug: string }[]>();
+	// Entradas
+	readonly count = input.required<number>();
 	readonly activeIndex = input.required<number>();
 	readonly device = input<'Mobile' | 'Desktop'>('Desktop');
+
+	// Señales computadas
+	readonly indices = computed(() => Array.from({ length: this.count() }, (_, i) => i));
 
 	// Salidas
 	readonly indicatorClick = output<number>();
