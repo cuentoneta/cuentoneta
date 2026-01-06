@@ -13,7 +13,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 		@if (story(); as story) {
 			<article class="flex gap-4">
 				@if (order()) {
-					<span class="source-serif-2.5xl font-bold leading-none text-brand-500">{{ formattedOrder() }}.</span>
+					<span class="source-serif-2-5xl font-bold leading-none text-brand-500">{{ formattedOrder() }}.</span>
 				}
 				<div class="flex flex-1 flex-col">
 					@if (showAuthor() && 'author' in story) {
