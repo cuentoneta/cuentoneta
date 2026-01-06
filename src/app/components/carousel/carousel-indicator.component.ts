@@ -48,25 +48,25 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 		}
 
 		.desktop .indicator-item {
-			@apply h-[6px] w-[12px] bg-[#f0f0f0];
+			@apply h-[6px] w-[12px] bg-neutral-150;
 		}
 
 		.desktop .indicator-item.active {
-			@apply w-[24px] bg-[#b05d30];
+			@apply w-[24px] bg-brand-500;
 		}
 
 		.mobile .indicator-item {
-			@apply h-[4px] w-[8px] bg-[#f0f0f0];
+			@apply h-[4px] w-[8px] bg-neutral-150;
 		}
 
 		.mobile .indicator-item.active {
-			@apply w-[16px] bg-[#b05d30];
+			@apply w-[16px] bg-brand-500;
 		}
 	`,
 })
 export class CarouselIndicatorComponent {
-	// Entradas
-	readonly slides = input.required<unknown[]>();
+	// Entradas - Acepta cualquier array con propiedad length para máxima flexibilidad
+	readonly slides = input.required<readonly { slug: string }[]>();
 	readonly activeIndex = input.required<number>();
 	readonly device = input<'Mobile' | 'Desktop'>('Desktop');
 
