@@ -40,9 +40,14 @@ export class CarouselStateService implements OnDestroy {
 
 	/**
 	 * Actualiza la cantidad de diapositivas (para cuando cambia el input).
+	 * Ajusta el índice activo si excede el nuevo conteo.
 	 */
 	updateSlideCount(count: number): void {
 		this._slideCount.set(count);
+		// Si el índice activo excede el nuevo conteo, ajustar al último índice válido
+		if (this._activeIndex() >= count && count > 0) {
+			this._activeIndex.set(count - 1);
+		}
 	}
 
 	/**
