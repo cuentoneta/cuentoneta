@@ -29,19 +29,19 @@
 }
 
 .slide.slide-in-left {
-	animation: slide-in-left 600ms ease-in-out;
+	animation: slide-in-left var(--transition-duration, 600ms) ease-in-out;
 }
 
 .slide.slide-in-right {
-	animation: slide-in-right 600ms ease-in-out;
+	animation: slide-in-right var(--transition-duration, 600ms) ease-in-out;
 }
 
 .slide.slide-out-left {
-	animation: slide-out-left 600ms ease-in-out;
+	animation: slide-out-left var(--transition-duration, 600ms) ease-in-out;
 }
 
 .slide.slide-out-right {
-	animation: slide-out-right 600ms ease-in-out;
+	animation: slide-out-right var(--transition-duration, 600ms) ease-in-out;
 }
 
 @keyframes slide-in-left {

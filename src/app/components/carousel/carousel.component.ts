@@ -37,6 +37,9 @@ import { CarouselGestureService } from './carousel-gesture.service';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	templateUrl: './carousel.component.html',
 	styleUrl: './carousel.component.css',
+	host: {
+		'[style.--transition-duration]': 'transitionDuration() + "ms"',
+	},
 })
 export class CarouselComponent {
 	// Servicios
