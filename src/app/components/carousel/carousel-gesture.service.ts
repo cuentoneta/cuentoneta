@@ -13,6 +13,8 @@ export type NavigationCommand = 'next' | 'prev';
 export class CarouselGestureService {
 	// Umbral mínimo de píxeles para registrar como deslizamiento
 	private readonly SWIPE_THRESHOLD = 50;
+	// Intervalo de throttle para eventos de movimiento (~60fps)
+	private readonly TOUCH_MOVE_THROTTLE_MS = 16;
 
 	// Signals de estado de deslizamiento
 	private readonly _isSwiping = signal(false);
@@ -46,7 +48,7 @@ export class CarouselGestureService {
 
 		const touchMove$ = fromEvent<TouchEvent>(element.nativeElement, 'touchmove').pipe(
 			takeUntilDestroyed(destroyRef),
-			throttleTime(16), // ~60fps
+			throttleTime(this.TOUCH_MOVE_THROTTLE_MS),
 		);
 
 		const touchEnd$ = fromEvent<TouchEvent>(element.nativeElement, 'touchend').pipe(takeUntilDestroyed(destroyRef));

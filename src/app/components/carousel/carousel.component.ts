@@ -71,13 +71,14 @@ export class CarouselComponent {
 	readonly showControls = computed(() => this.layoutService.biggerThan('xs'));
 
 	// Constantes
+	private readonly AUTO_PLAY_INTERVAL_MS = 5000;
 	readonly viewportSpecificClasses: { [key in ContentCampaignViewport]: string } = {
 		xs: 'sm:hidden',
 		md: 'max-sm:hidden',
 	};
 
 	// Intervalo de reproducción automática
-	private autoPlayInterval$ = interval(5000).pipe(
+	private autoPlayInterval$ = interval(this.AUTO_PLAY_INTERVAL_MS).pipe(
 		filter(
 			() => !this.isPaused() && !this.gestureService.isSwiping() && !this.isTransitioning() && this.slideCount() > 1,
 		),
