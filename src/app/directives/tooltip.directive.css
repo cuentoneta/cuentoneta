@@ -4,7 +4,7 @@
 	/* Layout */
 	@apply absolute left-0 top-0 z-50 box-border;
 
-	/* Texto - inter-xs font-semibold expanded */
+	/* Texto - font-inter text-xs font-semibold */
 	@apply bg-black text-center font-inter text-xs font-semibold tracking-normal text-white opacity-0;
 
 	/* Spacing */
@@ -17,7 +17,7 @@
 	animation: tooltip-slide 0.18s ease-out 0.5s;
 	animation-fill-mode: forwards;
 
-	/* inter-xs specific */
+	/* text-xs specific */
 	line-height: 18px;
 }
 

@@ -78,18 +78,20 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 								height="88"
 							/>
 							<div class="flex flex-col gap-2">
-								<h1 class="inter-xl font-bold">
+								<h1 class="font-inter text-xl font-bold">
 									<span class="hidden sm:inline">{{ author.name }}</span>
 									<span class="sm:hidden">{{ author.name | initials }}</span>
 								</h1>
-								<span class="inter-sm flex items-center gap-2 font-medium text-neutral-600">
+								<span class="flex items-center gap-2 font-inter text-sm font-medium text-neutral-600">
 									<img [ngSrc]="authorFlagUrl()" width="20" height="15" class="h-[15px] w-5 rounded" alt="" />
 									{{ author.nationality.country }}
 								</span>
 
 								<div class="flex">
 									<div class="rounded bg-neutral-200 px-2 py-0.5 hover:cursor-default">
-										<span class="inter-xs flex items-center gap-1 font-semibold">{{ stories().length }} historias</span>
+										<span class="flex items-center gap-1 font-inter text-xs font-semibold"
+											>{{ stories().length }} historias</span
+										>
 									</div>
 								</div>
 							</div>

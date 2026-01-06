@@ -31,7 +31,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 						</h1>
 						<cuentoneta-portable-text-parser
 							[paragraphs]="storylist.description"
-							class="inter-base line-clamp-4 h-24 min-h-24 text-ellipsis font-normal text-neutral-600"
+							class="line-clamp-4 h-24 min-h-24 text-ellipsis font-inter text-base font-normal text-neutral-600"
 						/>
 						<hr class="text-neutral-300" />
 					</section>
@@ -39,7 +39,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 						class="flex justify-between rounded-b-xl border-1 border-t-0 border-solid border-brand-300 px-5 pb-5 pt-4"
 					>
 						<div class="flex rounded bg-neutral-200 px-4.5 py-0.5 uppercase hover:cursor-default">
-							<span class="inter-xs flex items-center gap-1 font-bold">{{ storylist.count }} historias</span>
+							<span class="flex items-center gap-1 font-inter text-xs font-bold">{{ storylist.count }} historias</span>
 						</div>
 						@if (!!storylist.tags && storylist.tags.length > 0) {
 							<div class="flex">

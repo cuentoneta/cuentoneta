@@ -29,8 +29,10 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 		<main class="content vertical-layout-spacing horizontal-layout-spacing">
 			<article class="grid grid-cols-1 gap-8">
 				<section class="flex flex-col gap-4">
-					<h1 class="inter-xl font-bold">Todas las Historias</h1>
-					<p class="inter-base text-neutral-600">Explora nuestra colección completa de historias de La Cuentoneta</p>
+					<h1 class="font-inter text-xl font-bold">Todas las Historias</h1>
+					<p class="font-inter text-base text-neutral-600">
+						Explora nuestra colección completa de historias de La Cuentoneta
+					</p>
 				</section>
 
 				<div class="border overflow-x-auto rounded-lg border-neutral-200">

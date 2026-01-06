@@ -4,7 +4,7 @@ import { Component, input } from '@angular/core';
 	selector: 'cuentoneta-story-edition-date-label[label]',
 	template: `
 		@if (!!label) {
-			<span class="inter-sm flex items-center font-bold text-brand-500">
+			<span class="flex items-center font-inter text-sm font-bold text-brand-500">
 				<div class="mr-2 h-[12px] w-[2px] bg-brand-500" data-testid="visual-indicator"></div>
 				{{ label() }}
 			</span>
@@ -12,7 +12,7 @@ import { Component, input } from '@angular/core';
 		<!--ToDo: Extraer badge a nuevo componente-->
 		@if (markAsNew()) {
 			<div class="flex items-center rounded bg-brand-200">
-				<p class="inter-xs mx-4 my-1 font-bold">NUEVO</p>
+				<p class="mx-4 my-1 font-inter text-xs font-bold">NUEVO</p>
 			</div>
 		}
 	`,

@@ -34,9 +34,11 @@ import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
 				</section>
 				<section class="navigation">
 					<nav>
-						<ul class="justify-left inter-sm flex font-semibold lg:justify-center">
+						<ul class="justify-left flex font-inter text-sm font-semibold lg:justify-center">
 							@for (link of navLinks; track $index) {
-								<li class="max-sm:inter-xs text-neutral-900 hover:text-neutral-900/60 max-sm:font-bold">
+								<li
+									class="text-neutral-900 hover:text-neutral-900/60 max-sm:font-inter max-sm:text-xs max-sm:font-bold"
+								>
 									<a routerLink="{{ link.path }}">{{ link.label }}</a>
 								</li>
 							}

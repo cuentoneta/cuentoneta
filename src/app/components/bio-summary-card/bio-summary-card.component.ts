@@ -23,7 +23,7 @@ import { ResourceComponent } from '../resource/resource.component';
 					</div>
 				}
 			</section>
-			<section class="inter-base font-normal text-neutral-700">
+			<section class="font-inter text-base font-normal text-neutral-700">
 				<cuentoneta-portable-text-parser [paragraphs]="story().author.biography" [classes]="'mb-4'" />
 				<cuentoneta-portable-text-parser [paragraphs]="story().summary" [classes]="'mb-4 last:mb-0'" />
 			</section>

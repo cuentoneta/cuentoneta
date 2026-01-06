@@ -18,7 +18,7 @@ import { NgComponentOutlet } from '@angular/common';
 	hostDirectives: [TooltipDirective],
 	imports: [NgComponentOutlet],
 	template: `
-		<span class="inter-xs flex items-center gap-1 font-bold">
+		<span class="flex items-center gap-1 font-inter text-xs font-bold">
 			@if (showIcon() && icon(); as icon) {
 				<ng-container *ngComponentOutlet="NgIcon; inputs: { name: icon.name }; injector: icon.injector" />
 			}

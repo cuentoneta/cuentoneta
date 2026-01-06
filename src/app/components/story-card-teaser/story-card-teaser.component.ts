@@ -9,7 +9,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 @Component({
 	selector: 'cuentoneta-story-card-teaser',
 	imports: [NgOptimizedImage, RouterLink, StoryCardTeaserSkeletonComponent, PortableTextParserComponent],
-	template: `<article class="flex gap-4">
+	template: `
 		@if (story(); as story) {
 			<article class="flex gap-4">
 				@if (order()) {
@@ -25,7 +25,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 								height="20"
 								class="h-5 w-5 rounded-full"
 							/>
-							<span class="inter-sm font-semibold text-neutral-500">{{ story.author.name }}</span>
+							<span class="font-inter text-sm font-semibold text-neutral-500">{{ story.author.name }}</span>
 						</a>
 					}
 					<a
@@ -34,7 +34,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 						[class]="showExcerpt() ? 'gap-2' : 'gap-1'"
 						class="grid h-full grid-rows-[auto_auto_auto]"
 					>
-						<header class="inter-xl line-clamp-2 font-bold">
+						<header class="line-clamp-2 font-inter text-xl font-bold">
 							{{ story.title }}
 						</header>
 						@if (showExcerpt() && story.paragraphs.length > 0) {
@@ -45,7 +45,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 								class="source-serif-xl min-h-18 relative text-ellipsis text-justify font-normal"
 							/>
 						}
-						<footer class="inter-xs flex gap-1 text-neutral-500">
+						<footer class="flex gap-1 font-inter text-xs text-neutral-500">
 							<span> {{ story.approximateReadingTime }} minutos de lectura </span>
 							<span>•</span>
 							<span> Leer -> </span>
@@ -62,7 +62,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 				data-testid="skeleton"
 			/>
 		}
-	</article> `,
+	`,
 	styles: ``,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })

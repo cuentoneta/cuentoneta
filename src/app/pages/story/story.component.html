@@ -25,17 +25,19 @@
 						<h1 class="h1 mb-2">{{ story.title }}</h1>
 						<a
 							[routerLink]="['/', appRoutes.Author, story.author.slug]"
-							class="inter-xl mb-2 block flex items-center gap-1"
+							class="mb-2 block flex items-center gap-1 font-inter text-xl"
 						>
 							{{ story.author.name }}
 							<ng-icon name="faSolidArrowRightLong" size="16px" />
 						</a>
-						<time class="inter-base font-medium text-neutral-600">
+						<time class="font-inter text-base font-medium text-neutral-600">
 							{{ story.approximateReadingTime }} minutos de lectura
 						</time>
 
 						@if (story.badLanguage) {
-							<p class="inter-base mt-2 flex items-center font-semibold text-brand-500">* Contiene lenguaje adulto</p>
+							<p class="mt-2 flex items-center font-inter text-base font-semibold text-brand-500">
+								* Contiene lenguaje adulto
+							</p>
 						}
 					} @else {
 						<ngx-skeleton-loader
