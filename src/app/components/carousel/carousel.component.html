@@ -1,74 +1,76 @@
-<section
-	(mouseenter)="pauseAutoPlay()"
-	(mouseleave)="resumeAutoPlay()"
-	role="region"
-	aria-roledescription="carousel"
-	aria-label="Content campaigns"
-	class="carousel-container relative"
-	tabindex="0"
->
-	<!-- Diapositivas -->
-	<div class="slide-wrapper" #slideWrapper aria-live="polite" aria-atomic="false">
-		@for (slide of slides(); track slide.slug; let i = $index) {
-			<!-- Diapositiva activa (entrando) -->
-			@if (i === activeIndex()) {
-				<div
-					[class.slide-in-left]="direction() === 'left'"
-					[class.slide-in-right]="direction() === 'right'"
-					class="slide active"
-				>
-					<a [routerLink]="slide.url" [class]="viewportSpecificClasses[viewport()]">
-						<img
-							[ngSrc]="slide.contents[viewport()].imageUrl"
-							[width]="slide.contents[viewport()].imageWidth"
-							[height]="slide.contents[viewport()].imageHeight"
-							[alt]="'Imagen de la campaña de contenido ' + slide.title"
-							class="rounded-2xl"
-							priority
-						/>
-					</a>
-				</div>
-			}
+@if (slides().length > 0) {
+	<section
+		(mouseenter)="pauseAutoPlay()"
+		(mouseleave)="resumeAutoPlay()"
+		role="region"
+		aria-roledescription="carousel"
+		aria-label="Content campaigns"
+		class="carousel-container relative"
+		tabindex="0"
+	>
+		<!-- Diapositivas -->
+		<div class="slide-wrapper" #slideWrapper aria-live="polite" aria-atomic="false">
+			@for (slide of slides(); track slide.slug; let i = $index) {
+				<!-- Diapositiva activa (entrando) -->
+				@if (i === activeIndex()) {
+					<div
+						[class.slide-in-left]="direction() === 'left'"
+						[class.slide-in-right]="direction() === 'right'"
+						class="slide active"
+					>
+						<a [routerLink]="slide.url" [class]="viewportSpecificClasses[viewport()]">
+							<img
+								[ngSrc]="slide.contents[viewport()].imageUrl"
+								[width]="slide.contents[viewport()].imageWidth"
+								[height]="slide.contents[viewport()].imageHeight"
+								[alt]="'Imagen de la campaña de contenido ' + slide.title"
+								class="rounded-2xl"
+								priority
+							/>
+						</a>
+					</div>
+				}
 
-			<!-- Diapositiva anterior (saliendo) -->
-			@if (i === previousIndex() && previousIndex() !== null) {
-				<div
-					[class.slide-out-left]="direction() === 'left'"
-					[class.slide-out-right]="direction() === 'right'"
-					class="slide previous"
-				>
-					<a [routerLink]="slide.url" [class]="viewportSpecificClasses[viewport()]">
-						<img
-							[ngSrc]="slide.contents[viewport()].imageUrl"
-							[width]="slide.contents[viewport()].imageWidth"
-							[height]="slide.contents[viewport()].imageHeight"
-							[alt]="'Imagen de la campaña de contenido ' + slide.title"
-							class="rounded-2xl"
-						/>
-					</a>
-				</div>
+				<!-- Diapositiva anterior (saliendo) -->
+				@if (i === previousIndex() && previousIndex() !== null) {
+					<div
+						[class.slide-out-left]="direction() === 'left'"
+						[class.slide-out-right]="direction() === 'right'"
+						class="slide previous"
+					>
+						<a [routerLink]="slide.url" [class]="viewportSpecificClasses[viewport()]">
+							<img
+								[ngSrc]="slide.contents[viewport()].imageUrl"
+								[width]="slide.contents[viewport()].imageWidth"
+								[height]="slide.contents[viewport()].imageHeight"
+								[alt]="'Imagen de la campaña de contenido ' + slide.title"
+								class="rounded-2xl"
+							/>
+						</a>
+					</div>
+				}
 			}
+		</div>
+
+		<!-- Controles de navegación (solo escritorio) -->
+		@if (showControls()) {
+			<div class="carousel-control-left">
+				<cuentoneta-carousel-controls (controlClick)="prev()" [disabled]="isTransitioning()" type="left" />
+			</div>
+
+			<div class="carousel-control-right">
+				<cuentoneta-carousel-controls (controlClick)="next()" [disabled]="isTransitioning()" type="right" />
+			</div>
 		}
-	</div>
 
-	<!-- Controles de navegación (solo escritorio) -->
-	@if (showControls()) {
-		<div class="carousel-control-left">
-			<cuentoneta-carousel-controls (controlClick)="prev()" [disabled]="isTransitioning()" type="left" />
+		<!-- Indicadores de progreso -->
+		<div class="carousel-indicators-wrapper">
+			<cuentoneta-carousel-indicator
+				(indicatorClick)="onIndicatorClick($event)"
+				[slides]="slides()"
+				[activeIndex]="activeIndex()"
+				[device]="viewport() === 'xs' ? 'Mobile' : 'Desktop'"
+			/>
 		</div>
-
-		<div class="carousel-control-right">
-			<cuentoneta-carousel-controls (controlClick)="next()" [disabled]="isTransitioning()" type="right" />
-		</div>
-	}
-
-	<!-- Indicadores de progreso -->
-	<div class="carousel-indicators-wrapper">
-		<cuentoneta-carousel-indicator
-			(indicatorClick)="onIndicatorClick($event)"
-			[slides]="slides()"
-			[activeIndex]="activeIndex()"
-			[device]="viewport() === 'xs' ? 'Mobile' : 'Desktop'"
-		/>
-	</div>
-</section>
+	</section>
+}
