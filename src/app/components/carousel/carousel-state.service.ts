@@ -1,11 +1,11 @@
-import { Injectable, Signal, signal } from '@angular/core';
+import { Injectable, OnDestroy, Signal, signal } from '@angular/core';
 
 /**
  * Servicio que maneja el estado de navegación del carousel.
  * Gestiona los índices de diapositivas, direcciones de transición y timing.
  */
 @Injectable()
-export class CarouselStateService {
+export class CarouselStateService implements OnDestroy {
 	// Signals de estado - Navegación
 	private readonly _activeIndex = signal(0);
 	private readonly _previousIndex = signal<number | null>(null);
@@ -16,12 +16,19 @@ export class CarouselStateService {
 	private readonly _slideCount = signal(0);
 	private readonly _transitionDuration = signal(600);
 
+	// Control de timeout para evitar race conditions
+	private transitionTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
 	// Signals públicas de solo lectura
 	readonly activeIndex: Signal<number> = this._activeIndex.asReadonly();
 	readonly previousIndex: Signal<number | null> = this._previousIndex.asReadonly();
 	readonly isTransitioning: Signal<boolean> = this._isTransitioning.asReadonly();
 	readonly direction: Signal<'left' | 'right' | null> = this._direction.asReadonly();
 	readonly slideCount: Signal<number> = this._slideCount.asReadonly();
+
+	ngOnDestroy(): void {
+		this.clearTransitionTimeout();
+	}
 
 	/**
 	 * Inicializa el servicio con la cantidad de diapositivas y duración de transición.
@@ -79,12 +86,23 @@ export class CarouselStateService {
 		this._previousIndex.set(this._activeIndex());
 		this._activeIndex.set(index);
 
+		// Limpiar timeout anterior si existe
+		this.clearTransitionTimeout();
+
 		// Reiniciar estado de transición después de que se complete la animación
-		setTimeout(() => {
+		this.transitionTimeoutId = setTimeout(() => {
 			this._isTransitioning.set(false);
 			this._direction.set(null);
 			this._previousIndex.set(null);
+			this.transitionTimeoutId = null;
 		}, this._transitionDuration());
+	}
+
+	private clearTransitionTimeout(): void {
+		if (this.transitionTimeoutId !== null) {
+			clearTimeout(this.transitionTimeoutId);
+			this.transitionTimeoutId = null;
+		}
 	}
 
 	/**
