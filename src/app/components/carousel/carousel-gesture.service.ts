@@ -15,6 +15,8 @@ export class CarouselGestureService {
 	private readonly SWIPE_THRESHOLD = 50;
 	// Intervalo de throttle para eventos de movimiento (~60fps)
 	private readonly TOUCH_MOVE_THROTTLE_MS = 16;
+	// Umbral mínimo para prevenir scroll vertical (debe ser mayor para evitar falsos positivos)
+	private readonly HORIZONTAL_SCROLL_THRESHOLD = 15;
 
 	// Signals de estado de deslizamiento
 	private readonly _isSwiping = signal(false);
@@ -108,7 +110,7 @@ export class CarouselGestureService {
 		const deltaX = Math.abs(touch.clientX - (this._swipeStartX() ?? 0));
 		const deltaY = Math.abs(touch.clientY - (this._swipeStartY() ?? 0));
 
-		if (deltaX > deltaY && deltaX > 10) {
+		if (deltaX > deltaY && deltaX > this.HORIZONTAL_SCROLL_THRESHOLD) {
 			event.preventDefault();
 		}
 	}
