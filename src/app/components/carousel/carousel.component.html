@@ -8,7 +8,7 @@
 	tabindex="0"
 >
 	<!-- Diapositivas -->
-	<div class="slide-wrapper" #slideWrapper>
+	<div class="slide-wrapper" #slideWrapper aria-live="polite" aria-atomic="false">
 		@for (slide of slides(); track slide.slug; let i = $index) {
 			<!-- Diapositiva activa (entrando) -->
 			@if (i === activeIndex()) {
