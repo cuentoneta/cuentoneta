@@ -85,7 +85,7 @@ describe('CarouselComponent', () => {
 
 		const component = fixture.componentInstance;
 		// Comenzar en la diapositiva 1
-		component.selectSlide(1, 'left');
+		component.onIndicatorClick(1);
 		fixture.detectChanges();
 
 		// Esperar a que se complete la transición
@@ -106,7 +106,7 @@ describe('CarouselComponent', () => {
 		const lastIndex = component.slideCount() - 1;
 
 		// Ir a la última diapositiva
-		component.selectSlide(lastIndex, 'left');
+		component.onIndicatorClick(lastIndex);
 		fixture.detectChanges();
 
 		// Esperar a que se complete la transición
