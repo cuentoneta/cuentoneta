@@ -89,9 +89,14 @@ export class CarouselComponent {
 		// Inicializar servicio de estado con valores actuales
 		this.stateService.initialize(this.slides().length, this.transitionDuration());
 
-		// Efecto para sincronizar cambios en slides
+		// Efecto para sincronizar cambios en slides y pausar auto-play si es necesario
 		effect(() => {
-			this.stateService.updateSlideCount(this.slides().length);
+			const count = this.slides().length;
+			this.stateService.updateSlideCount(count);
+			// Pausar auto-play cuando hay 0 o 1 slide para evitar navegación inválida
+			if (count <= 1) {
+				this.isPaused.set(true);
+			}
 		});
 
 		// Suscripción a auto-reproducción
