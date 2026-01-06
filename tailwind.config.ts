@@ -1,7 +1,7 @@
 import { createGlobPatternsForDependencies } from '@nx/angular/tailwind';
 import { join } from 'path';
 import { Config } from 'tailwindcss/types/config';
-import { extendedColors } from './theme.config';
+import { extendedColors, spacing, borderRadius, blur, fontSize } from './theme.config';
 import { VIEWPORT_WIDTHS_PX } from './src/app/utils/screen.utils';
 import { HEADER_HEIGHT_STRING_PX } from './src/app/utils/spacing.utils';
 
@@ -25,6 +25,9 @@ export default {
 			3: '3px',
 			4: '4px',
 		},
+		// Design System V3 - Reemplaza valores por defecto
+		borderRadius: borderRadius,
+		blur: blur,
 		extend: {
 			lineClamp: {
 				4: '4',
@@ -43,18 +46,16 @@ export default {
 				inter: ['Inter', 'sans-serif'],
 				'source-serif': ['Source Serif Pro', 'sans-serif'],
 			},
+			// Design System V3 - Spacing
 			spacing: {
-				4.5: '1.125rem',
-				14: '3.50rem',
-				15: '3.75rem',
-				18: '4.50rem',
-				22: '5.50rem',
-				25: '6.25rem',
+				...spacing,
 				'1/2': '50%',
 				'5/4': '120%',
-				// Tamaños específicos de layouts y componentes globales de la app
 				'header-height': HEADER_HEIGHT_STRING_PX,
 			},
+			// Design System V3 - Typography
+			fontSize: fontSize,
+			backdropBlur: blur,
 			lineHeight: {
 				0: '0',
 			},

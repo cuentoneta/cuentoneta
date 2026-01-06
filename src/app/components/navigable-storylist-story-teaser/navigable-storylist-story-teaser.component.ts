@@ -32,9 +32,9 @@ import { StorylistStoriesNavigationTeasers } from '@models/storylist.model';
 					<cuentoneta-story-edition-date-label [label]="story().originalPublication" />
 				}
 
-				<h1 class="inter-body-sm-bold mb-2">{{ story().title }}</h1>
+				<h1 class="mb-2 font-inter text-sm font-bold">{{ story().title }}</h1>
 				<div class="flex items-center justify-between">
-					<h2 class="inter-body-sm-regular">
+					<h2 class="font-inter text-sm font-normal">
 						{{ story().author.name }}
 					</h2>
 					<cuentoneta-media-resource-tags [resources]="story().media" />

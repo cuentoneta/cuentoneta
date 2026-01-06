@@ -22,7 +22,10 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 			data-testid="spotify-embed"
 			class="mb-2 block"
 		></iframe>
-		<cuentoneta-portable-text-parser [paragraphs]="media().description" class="inter-body-xs-medium text-brand-500" />
+		<cuentoneta-portable-text-parser
+			[paragraphs]="media().description"
+			class="font-inter text-xs font-medium text-brand-500"
+		/>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
