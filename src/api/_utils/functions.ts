@@ -99,24 +99,29 @@ export function mapAuthorBiography(biography: BiographySubQuery): TextBlockConte
 
 export function urlFor(source: SanityImageSource): string {
 	if (!source) {
+		console.warn('urlFor: Se recibió source vacío o nulo');
 		return '';
 	}
 	try {
 		return createImageUrlBuilder(client).image(source).url();
 	} catch (error) {
-		console.error('Error al construir URL de imagen:', error);
+		console.error('urlFor: Error al construir URL de imagen', { error, source: JSON.stringify(source) });
 		return '';
 	}
 }
 
 export function urlForWithAutoFormat(source: SanityImageSource): string {
 	if (!source) {
+		console.warn('urlForWithAutoFormat: Se recibió source vacío o nulo');
 		return '';
 	}
 	try {
 		return createImageUrlBuilder(client).image(source).auto('format').url();
 	} catch (error) {
-		console.error('Error al construir URL de imagen:', error);
+		console.error('urlForWithAutoFormat: Error al construir URL de imagen', {
+			error,
+			source: JSON.stringify(source),
+		});
 		return '';
 	}
 }
