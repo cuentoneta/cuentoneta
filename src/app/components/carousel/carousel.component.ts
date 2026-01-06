@@ -15,8 +15,8 @@ import { NgOptimizedImage } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // RxJS
-import { interval } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { interval, Subject } from 'rxjs';
+import { filter, startWith, switchMap } from 'rxjs/operators';
 
 // Componentes
 import { CarouselIndicatorComponent } from './carousel-indicator.component';
@@ -52,6 +52,7 @@ export class CarouselComponent {
 	// Entradas
 	readonly slides = input<ContentCampaign[]>([]);
 	readonly transitionDuration = input<number>(600);
+	readonly autoPlayInterval = input<number>(5000);
 
 	// Signals de estado - Auto-reproducción
 	readonly isPaused = signal(false);
@@ -71,14 +72,18 @@ export class CarouselComponent {
 	readonly showControls = computed(() => this.layoutService.biggerThan('xs'));
 
 	// Constantes
-	private readonly AUTO_PLAY_INTERVAL_MS = 5000;
 	readonly viewportSpecificClasses: { [key in ContentCampaignViewport]: string } = {
 		xs: 'sm:hidden',
 		md: 'max-sm:hidden',
 	};
 
-	// Intervalo de reproducción automática
-	private autoPlayInterval$ = interval(this.AUTO_PLAY_INTERVAL_MS).pipe(
+	// Subject para reiniciar el timer de auto-play después de interacción del usuario
+	private readonly restartAutoPlay$ = new Subject<void>();
+
+	// Intervalo de reproducción automática con reinicio después de interacción
+	private autoPlayInterval$ = this.restartAutoPlay$.pipe(
+		startWith(undefined),
+		switchMap(() => interval(this.autoPlayInterval())),
 		filter(
 			() => !this.isPaused() && !this.gestureService.isSwiping() && !this.isTransitioning() && this.slideCount() > 1,
 		),
@@ -139,5 +144,6 @@ export class CarouselComponent {
 
 	resumeAutoPlay(): void {
 		this.isPaused.set(false);
+		this.restartAutoPlay$.next();
 	}
 }
