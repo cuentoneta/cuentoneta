@@ -11,11 +11,24 @@ export type NavigationCommand = 'next' | 'prev';
  */
 @Injectable()
 export class CarouselGestureService {
-	// Umbral mínimo de píxeles para registrar como deslizamiento
+	/**
+	 * Umbral mínimo de píxeles para registrar un deslizamiento completo.
+	 * 50px representa aproximadamente 0.5cm en pantallas de alta densidad,
+	 * suficiente para distinguir un swipe intencional de un toque accidental.
+	 */
 	private readonly SWIPE_THRESHOLD = 50;
-	// Intervalo de throttle para eventos de movimiento (~60fps)
+
+	/**
+	 * Intervalo de throttle para eventos de movimiento táctil.
+	 * 16ms corresponde a ~60fps, balance óptimo entre fluidez y rendimiento.
+	 */
 	private readonly TOUCH_MOVE_THROTTLE_MS = 16;
-	// Umbral mínimo para prevenir scroll vertical (debe ser mayor para evitar falsos positivos)
+
+	/**
+	 * Umbral mínimo de movimiento horizontal antes de prevenir scroll vertical.
+	 * 15px evita falsos positivos cuando el usuario intenta hacer scroll vertical
+	 * pero tiene un ligero desplazamiento horizontal involuntario.
+	 */
 	private readonly HORIZONTAL_SCROLL_THRESHOLD = 15;
 
 	// Signals de estado de deslizamiento
