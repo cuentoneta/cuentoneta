@@ -8,7 +8,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	imports: [CommonModule, NgOptimizedImage, PortableTextParserComponent],
 	template: `
 		<a [href]="spaceUrl()" aria-label="space-recording-href" target="_blank" class="mb-2 block">
-			<section class="spaces-card inter-body-base grid grid-rows-3-auto rounded-lg p-4 text-white">
+			<section class="spaces-card inter-base grid grid-rows-3-auto rounded-lg p-4 text-white">
 				<div class="flex items-center justify-between text-base">
 					<div class="spaces-host flex gap-2.5">
 						<img
@@ -34,7 +34,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 				</div>
 			</section>
 		</a>
-		<p class="inter-body-xs-medium text-brand-500">
+		<p class="inter-xs font-medium text-brand-500">
 			<cuentoneta-portable-text-parser [paragraphs]="media().description" />
 		</p>
 	`,

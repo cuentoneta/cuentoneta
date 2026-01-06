@@ -14,7 +14,7 @@ import { StorylistTitleSkeleton } from './storylist-title-skeleton';
 				</h1>
 				<div class="flex gap-2">
 					<div class="flex rounded bg-neutral-200 px-4.5 py-0.5 uppercase hover:cursor-default">
-						<span class="inter-body-xs-bold flex items-center gap-1">{{ storylist()?.count }} textos</span>
+						<span class="inter-xs flex items-center gap-1 font-bold">{{ storylist()?.count }} textos</span>
 					</div>
 					@for (tag of storylist()?.tags; track tag.slug) {
 						<cuentoneta-badge [tag]="tag" [showIcon]="true" />

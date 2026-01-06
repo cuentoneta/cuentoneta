@@ -31,8 +31,8 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 		<div class="block hover:!cursor-pointer">
 			<h2
 				[ngClass]="{
-					'inter-body-base-semibold': variant() === 'sm',
-					'inter-body-lg-semibold': variant() === 'md',
+					'inter-base font-semibold': variant() === 'sm',
+					'inter-lg font-semibold': variant() === 'md',
 				}"
 				class="flex items-center gap-1 hover:!cursor-pointer"
 			>
@@ -49,8 +49,8 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 					/>
 					<span
 						[ngClass]="{
-							'inter-body-sm-semibold text-neutral-500 hover:!cursor-pointer': variant() === 'sm',
-							'inter-body-base-medium text-neutral-700': variant() === 'md',
+							'inter-sm font-semibold text-neutral-500 hover:!cursor-pointer': variant() === 'sm',
+							'inter-base font-medium text-neutral-700': variant() === 'md',
 						}"
 						>{{ nationality.country }}</span
 					>

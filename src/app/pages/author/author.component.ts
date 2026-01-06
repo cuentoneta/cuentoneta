@@ -78,18 +78,18 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 								height="88"
 							/>
 							<div class="flex flex-col gap-2">
-								<h1 class="inter-body-xl font-bold">
+								<h1 class="inter-xl font-bold">
 									<span class="hidden sm:inline">{{ author.name }}</span>
 									<span class="sm:hidden">{{ author.name | initials }}</span>
 								</h1>
-								<span class="inter-body-sm flex items-center gap-2 font-medium text-neutral-600">
+								<span class="inter-sm flex items-center gap-2 font-medium text-neutral-600">
 									<img [ngSrc]="authorFlagUrl()" width="20" height="15" class="h-[15px] w-5 rounded" alt="" />
 									{{ author.nationality.country }}
 								</span>
 
 								<div class="flex">
 									<div class="rounded bg-neutral-200 px-2 py-0.5 hover:cursor-default">
-										<span class="inter-body-xs-semibold flex items-center gap-1">{{ stories().length }} historias</span>
+										<span class="inter-xs flex items-center gap-1 font-semibold">{{ stories().length }} historias</span>
 									</div>
 								</div>
 							</div>
@@ -167,7 +167,7 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 									<div class="flex flex-col gap-4">
 										<cuentoneta-portable-text-parser
 											[paragraphs]="author.biography"
-											[classes]="'source-serif-pro-body-xl leading-8'"
+											[classes]="'source-serif-xl font-normal leading-8'"
 											class="flex flex-col gap-4"
 										/>
 										@if (author.resources && author.resources.length > 0) {

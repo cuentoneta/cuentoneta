@@ -17,14 +17,14 @@ enum VisibilityState {
 			<section class="flex items-center">
 				<a [routerLink]="['/', 'home']" class="flex">
 					<img [ngSrc]="'./assets/svg/logo.svg'" class="mr-3" width="59" height="32" alt="Logo de 'La Cuentoneta'" />
-					<h1 class="inter-body-lg-bold flex items-center">La Cuentoneta</h1>
+					<h1 class="inter-lg flex items-center font-bold">La Cuentoneta</h1>
 				</a>
 			</section>
 
 			<nav class="navigation flex items-center justify-end">
 				<ul class="flex hidden md:flex">
 					@for (navLink of navLinks; track $index) {
-						<li class="inter-body-sm-semibold text-neutral-900 hover:text-neutral-900/60 md:ml-12">
+						<li class="inter-sm font-semibold text-neutral-900 hover:text-neutral-900/60 md:ml-12">
 							<a
 								[routerLink]="navLink.path"
 								[tabindex]="navLink.label === 'Inicio' ? -1 : 0"
@@ -50,7 +50,7 @@ enum VisibilityState {
 				<ul>
 					@for (navLink of navLinks; track $index) {
 						<li
-							class="inter-body-lg-semibold flex h-12 items-center border-b-2 border-neutral-200 px-5 text-neutral-900 hover:text-neutral-900/60"
+							class="inter-lg flex h-12 items-center border-b-2 border-neutral-200 px-5 font-semibold text-neutral-900 hover:text-neutral-900/60"
 						>
 							<a
 								(click)="onMenuTogglerClicked()"

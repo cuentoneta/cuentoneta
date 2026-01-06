@@ -11,7 +11,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	imports: [PortableTextParserComponent],
 	template: `
 		<audio [src]="media().data.url" data-testid="audio-recording" controls class="mb-2 block w-full"></audio>
-		<cuentoneta-portable-text-parser [paragraphs]="media().description" class="inter-body-xs-medium text-brand-500" />
+		<cuentoneta-portable-text-parser [paragraphs]="media().description" class="inter-xs font-medium text-brand-500" />
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })

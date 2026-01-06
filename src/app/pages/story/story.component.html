@@ -11,7 +11,7 @@
 		}
 	</aside>
 	<main>
-		<article class="p-5 md:rounded-xl md:bg-neutral-50 md:p-15 md:shadow-lg">
+		<article class="p-5 md:rounded-xl md:bg-neutral-50 md:p-16 md:shadow-lg">
 			<header class="mb-6 flex flex-col-reverse sm:mb-10 sm:block">
 				<aside class="mt-6 sm:float-right sm:mb-12 sm:ml-12 sm:mt-0">
 					<cuentoneta-share-content
@@ -25,17 +25,17 @@
 						<h1 class="h1 mb-2">{{ story.title }}</h1>
 						<a
 							[routerLink]="['/', appRoutes.Author, story.author.slug]"
-							class="inter-body-xl mb-2 block flex items-center gap-1"
+							class="inter-xl mb-2 block flex items-center gap-1"
 						>
 							{{ story.author.name }}
 							<ng-icon name="faSolidArrowRightLong" size="16px" />
 						</a>
-						<time class="inter-body-base-medium text-neutral-600">
+						<time class="inter-base font-medium text-neutral-600">
 							{{ story.approximateReadingTime }} minutos de lectura
 						</time>
 
 						@if (story.badLanguage) {
-							<p class="inter-body-base-semibold mt-2 flex items-center text-brand-500">* Contiene lenguaje adulto</p>
+							<p class="inter-base mt-2 flex items-center font-semibold text-brand-500">* Contiene lenguaje adulto</p>
 						}
 					} @else {
 						<ngx-skeleton-loader
@@ -90,7 +90,7 @@
 			@if (story(); as story) {
 				<section>
 					<cuentoneta-portable-text-parser
-						[classes]="'source-serif-pro-body-xl mb-8 leading-8'"
+						[classes]="'source-serif-xl font-normal mb-8 leading-8'"
 						[paragraphs]="story.paragraphs"
 					/>
 				</section>

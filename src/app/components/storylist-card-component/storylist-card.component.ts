@@ -23,9 +23,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 		<article class="shadow-lg hover:shadow-lg-hover">
 			@if (storylist(); as storylist) {
 				<a [routerLink]="['/' + appRoutes.StoryList, storylist.slug]" class="navigation-link">
-					<section
-						class="flex flex-col gap-4 rounded-t-2xl border-1 border-b-0 border-solid border-brand-300 px-4 pt-5"
-					>
+					<section class="flex flex-col gap-4 rounded-t-xl border-1 border-b-0 border-solid border-brand-300 px-4 pt-5">
 						<h1
 							class="h3 cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap font-source-serif italic text-neutral-900 hover:text-neutral-900/60"
 						>
@@ -33,15 +31,15 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 						</h1>
 						<cuentoneta-portable-text-parser
 							[paragraphs]="storylist.description"
-							class="inter-body-base-regular line-clamp-4 h-24 min-h-24 text-ellipsis text-neutral-600"
+							class="inter-base line-clamp-4 h-24 min-h-24 text-ellipsis font-normal text-neutral-600"
 						/>
 						<hr class="text-neutral-300" />
 					</section>
 					<footer
-						class="flex justify-between rounded-b-2xl border-1 border-t-0 border-solid border-brand-300 px-5 pb-5 pt-4"
+						class="flex justify-between rounded-b-xl border-1 border-t-0 border-solid border-brand-300 px-5 pb-5 pt-4"
 					>
 						<div class="flex rounded bg-neutral-200 px-4.5 py-0.5 uppercase hover:cursor-default">
-							<span class="inter-body-xs-bold flex items-center gap-1">{{ storylist.count }} historias</span>
+							<span class="inter-xs flex items-center gap-1 font-bold">{{ storylist.count }} historias</span>
 						</div>
 						@if (!!storylist.tags && storylist.tags.length > 0) {
 							<div class="flex">
@@ -57,8 +55,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	`,
 	styles: `
 		:host {
-			@apply rounded-lg bg-neutral-50 shadow-lg;
-			@apply block rounded-2xl;
+			@apply block rounded-xl bg-neutral-50 shadow-lg;
 		}
 	`,
 })

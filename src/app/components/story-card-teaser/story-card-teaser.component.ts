@@ -13,7 +13,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 		@if (story(); as story) {
 			<article class="flex gap-4">
 				@if (order()) {
-					<span class="source-serif-pro-heading-2-bold leading-none text-brand-500">{{ formattedOrder() }}.</span>
+					<span class="source-serif-2.5xl font-bold leading-none text-brand-500">{{ formattedOrder() }}.</span>
 				}
 				<div class="flex flex-1 flex-col">
 					@if (showAuthor() && 'author' in story) {
@@ -25,7 +25,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 								height="20"
 								class="h-5 w-5 rounded-full"
 							/>
-							<span class="inter-body-sm-semibold text-neutral-500">{{ story.author.name }}</span>
+							<span class="inter-sm font-semibold text-neutral-500">{{ story.author.name }}</span>
 						</a>
 					}
 					<a
@@ -34,7 +34,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 						[class]="showExcerpt() ? 'gap-2' : 'gap-1'"
 						class="grid h-full grid-rows-[auto_auto_auto]"
 					>
-						<header class="inter-heading-3-bold line-clamp-2">
+						<header class="inter-xl line-clamp-2 font-bold">
 							{{ story.title }}
 						</header>
 						@if (showExcerpt() && story.paragraphs.length > 0) {
@@ -42,10 +42,10 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 								[paragraphs]="story.paragraphs"
 								[class]="'line-clamp-' + excerptLines()"
 								data-testid="portable-text-parser"
-								class="source-serif-pro-body-base relative min-h-18 text-ellipsis text-justify"
+								class="source-serif-xl min-h-18 relative text-ellipsis text-justify font-normal"
 							/>
 						}
-						<footer class="inter-body-xs flex gap-1 text-neutral-500">
+						<footer class="inter-xs flex gap-1 text-neutral-500">
 							<span> {{ story.approximateReadingTime }} minutos de lectura </span>
 							<span>•</span>
 							<span> Leer -> </span>
