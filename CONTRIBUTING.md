@@ -87,7 +87,7 @@ Si eres desarrolladora o desarrollador, puedes contribuir al proyecto mediante l
 
 [contribuyentes]: https://www.cuentoneta.ar/about#people
 [email]: mailto:contacto@cuentoneta.ar
-[figma]: https://www.figma.com/file/BIlQ6U3eh3M8vtYQt3vLNW/La-Cuentoneta-v2
+[figma]: https://www.figma.com/design/A9PdBCdmoyZrN7FKMpann8/La-Cuentoneta-v3
 [wcag]: https://www.w3.org/WAI/standards-guidelines/wcag/es
 
 <!-- Enlaces a Redes Sociales -->
