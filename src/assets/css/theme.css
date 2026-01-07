@@ -1,5 +1,5 @@
 body {
-	@apply bg-gray-100 font-source-serif;
+	@apply bg-neutral-100 font-source-serif;
 }
 
 h1,
@@ -13,16 +13,15 @@ h6 {
 
 h1,
 .h1 {
-	@apply text-4xl font-bold tracking-normal;
+	@apply text-4xl font-bold;
 }
 
 h2,
 .h2 {
-	@apply text-3xl font-bold tracking-normal;
+	@apply text-2xl font-bold;
 }
 
 h3,
 .h3 {
-	@apply text-xl font-medium tracking-normal;
-	@apply text-2xl font-bold;
+	@apply text-xl font-semibold;
 }

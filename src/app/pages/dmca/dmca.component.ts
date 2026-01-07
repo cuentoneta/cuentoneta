@@ -9,12 +9,12 @@ import { environment } from '../../environments/environment';
 	hostDirectives: [MetaTagsDirective],
 	template: `
 		<main
-			class="content horizontal-layout-spacing vertical-layout-spacing bg-gray-50 p-5 shadow-lg md:rounded-xl md:p-15"
+			class="content horizontal-layout-spacing vertical-layout-spacing bg-neutral-50 p-5 shadow-lg md:rounded-xl md:p-16"
 		>
 			<h1 class="h1 mb-5">Disclaimer for La Cuentoneta</h1>
 
 			<section class="mb-8">
-				<p class="inter-body-base-regular">
+				<p class="font-inter text-base font-normal">
 					If you require any more information or have any questions about our site's disclaimer, please feel free to
 					contact us by email at
 					<a class="underline" href="mailto:contacto@cuentoneta.ar">contacto&#64;cuentoneta.ar</a>.
@@ -22,8 +22,8 @@ import { environment } from '../../environments/environment';
 			</section>
 
 			<section class="mb-8">
-				<h2 class="h2 mb-5 text-gray-600">Disclaimers for <em>La Cuentoneta</em></h2>
-				<p class="inter-body-base-regular">
+				<h2 class="h2 mb-5 text-neutral-600">Disclaimers for <em>La Cuentoneta</em></h2>
+				<p class="font-inter text-base font-normal">
 					All the information on this website - cuentoneta.ar - is published in good faith and for general information
 					purpose only. La Cuentoneta does not make any warranties about the completeness, reliability and accuracy of
 					this information. Any action you take upon the information you find on this website (La Cuentoneta), is
@@ -31,7 +31,7 @@ import { environment } from '../../environments/environment';
 					the use of our website.
 				</p>
 				<br />
-				<p class="inter-body-base-regular">
+				<p class="font-inter text-base font-normal">
 					From our website, you can visit other websites by following hyperlinks to such external sites. While we strive
 					to provide only quality links to useful and ethical websites, we have no control over the content and nature
 					of these sites. These links to other websites do not imply a recommendation for all the content found on these
@@ -39,13 +39,13 @@ import { environment } from '../../environments/environment';
 					remove a link which may have gone 'bad'.
 				</p>
 				<br />
-				<p class="inter-body-base-regular">
+				<p class="font-inter text-base font-normal">
 					Please be also aware that when you leave our website, other sites may have different privacy policies and
 					terms which are beyond our control. Please be sure to check the Privacy Policies of these sites as well as
 					their "Terms of Service" before engaging in any business or uploading any information.
 				</p>
 				<br />
-				<p class="inter-body-base-regular">
+				<p class="font-inter text-base font-normal">
 					La Cuentoneta respects the intellectual property of others. cuentoneta.ar takes matters of Intellectual
 					Property very seriously and is committed to meeting the needs of content owners while helping them manage
 					publication of their content online. It should be noted that cuentoneta.ar only reproduces information already
@@ -53,7 +53,7 @@ import { environment } from '../../environments/environment';
 					from.
 				</p>
 				<br />
-				<p class="inter-body-base-regular">
+				<p class="font-inter text-base font-normal">
 					If you believe that your copyrighted work has been copied in a way that constitutes copyright infringement and
 					is accessible on this site, you may notify our copyright agent, as set forth in the
 					<a class="underline" href="https://www.copyright.gov/legislation/dmca.pdf"
@@ -72,7 +72,7 @@ import { environment } from '../../environments/environment';
 					http://www.watchdogsecurity.online
 				</p>
 				<br />
-				<p class="inter-body-base-regular">
+				<p class="font-inter text-base font-normal">
 					Under argentinian law, the material that is visualized in this website is protected by the intellectual
 					property law (<a
 						class="underline"
@@ -90,22 +90,22 @@ import { environment } from '../../environments/environment';
 			</section>
 
 			<section class="mb-8">
-				<h2 class="h2 mb-5 text-gray-600">Consent</h2>
-				<p class="inter-body-base-regular">
+				<h2 class="h2 mb-5 text-neutral-600">Consent</h2>
+				<p class="font-inter text-base font-normal">
 					By using our website, you hereby consent to our disclaimer and agree to its terms.
 				</p>
 			</section>
 
 			<section class="mb-8">
-				<h2 class="h2 mb-5 text-gray-600">Update</h2>
-				<p class="inter-body-base-regular">
+				<h2 class="h2 mb-5 text-neutral-600">Update</h2>
+				<p class="font-inter text-base font-normal">
 					Should we update, amend or make any changes to this document, those changes will be prominently posted here.
 				</p>
 			</section>
 
 			<section class="mb-8">
-				<h2 class="h2 mb-5 text-gray-600">Original Sources</h2>
-				<p class="inter-body-base-regular">
+				<h2 class="h2 mb-5 text-neutral-600">Original Sources</h2>
+				<p class="font-inter text-base font-normal">
 					In order to demonstrate that La Cuentoneta solely serves as a platform for reproducing existing content, each
 					non-original asset sourced from external contributors and other platforms includes a prominently displayed and
 					easily accessible link to its original source.

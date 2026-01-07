@@ -7,8 +7,8 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	selector: 'cuentoneta-story-epigraph',
 	imports: [PortableTextParserComponent],
 	template: `
-		<div class="mr-4 border-l-3 border-solid border-primary-500"></div>
-		<div class="source-serif-pro-body-lg flex flex-1 flex-col flex-wrap items-end justify-end text-gray-700">
+		<div class="mr-4 border-l-3 border-solid border-brand-500"></div>
+		<div class="source-serif-xl flex flex-1 flex-col flex-wrap items-end justify-end font-normal text-neutral-700">
 			<cuentoneta-portable-text-parser [classes]="'self-baseline'" [paragraphs]="epigraph().text" />
 			<div class="text-end">
 				@if (epigraph().reference) {

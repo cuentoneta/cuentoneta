@@ -17,11 +17,11 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 @Component({
 	selector: 'cuentoneta-story-navigation-bar',
 	template: `
-		<section class="grid grid-cols-1 gap-y-0.5 rounded-xl bg-gray-200 shadow-lg">
-			<header [attr.aria-busy]="frameConfig().headerTitle" class="bg-gray-50 px-7 py-5">
+		<section class="grid grid-cols-1 gap-y-0.5 rounded-xl bg-neutral-200 shadow-lg">
+			<header [attr.aria-busy]="frameConfig().headerTitle" class="bg-neutral-50 px-7 py-5">
 				@if (frameConfig().headerTitle) {
 					<a [routerLink]="frameConfig().navigationRoute">
-						<h2 class="h3 hover:text-interactive-500">{{ frameConfig().headerTitle }}</h2>
+						<h2 class="h3 text-neutral-900 hover:text-neutral-900/60">{{ frameConfig().headerTitle }}</h2>
 					</a>
 				} @else {
 					<ng-container *ngTemplateOutlet="titleSkeleton" />
@@ -32,10 +32,10 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 				<ng-container *ngComponentOutlet="frame.component; inputs: frame.inputs" />
 			}
 
-			<footer class="bg-gray-50 px-7 py-5">
+			<footer class="bg-neutral-50 px-7 py-5">
 				@if (frameConfig().showFooter) {
 					<a [routerLink]="frameConfig().navigationRoute">
-						<h3 class="h3 inter-body-xl-bold hover:text-interactive-500">Ver más...</h3>
+						<h3 class="h3 font-inter text-xl font-bold text-neutral-900 hover:text-neutral-900/60">Ver más...</h3>
 					</a>
 				} @else {
 					<ng-container *ngTemplateOutlet="titleSkeleton" />
@@ -47,7 +47,7 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 			<ngx-skeleton-loader
 				[theme]="{
 					'height.px': 15,
-					'background-color': '#D4D4D8'
+					'background-color': '#D4D4D8',
 				}"
 				count="2"
 				appearance="line"

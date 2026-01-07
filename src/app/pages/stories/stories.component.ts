@@ -29,22 +29,24 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 		<main class="content vertical-layout-spacing horizontal-layout-spacing">
 			<article class="grid grid-cols-1 gap-8">
 				<section class="flex flex-col gap-4">
-					<h1 class="inter-body-xl font-bold">Todas las Historias</h1>
-					<p class="inter-body-md text-gray-600">Explora nuestra colección completa de historias de La Cuentoneta</p>
+					<h1 class="font-inter text-xl font-bold">Todas las Historias</h1>
+					<p class="font-inter text-base text-neutral-600">
+						Explora nuestra colección completa de historias de La Cuentoneta
+					</p>
 				</section>
 
-				<div class="border overflow-x-auto rounded-lg border-gray-200">
+				<div class="border overflow-x-auto rounded-lg border-neutral-200">
 					<table class="w-full border-collapse">
-						<thead class="bg-gray-50">
-							<tr class="border-b border-gray-200">
-								<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Título</th>
-								<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Autor</th>
-								<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Tiempo de lectura</th>
+						<thead class="bg-neutral-50">
+							<tr class="border-b border-neutral-200">
+								<th class="px-6 py-4 text-left text-sm font-semibold text-neutral-900">Título</th>
+								<th class="px-6 py-4 text-left text-sm font-semibold text-neutral-900">Autor</th>
+								<th class="px-6 py-4 text-left text-sm font-semibold text-neutral-900">Tiempo de lectura</th>
 							</tr>
 						</thead>
-						<tbody class="divide-y divide-gray-200">
+						<tbody class="divide-y divide-neutral-200">
 							@for (story of stories(); track story._id) {
-								<tr class="transition-colors hover:bg-gray-50">
+								<tr class="transition-colors hover:bg-neutral-50">
 									<td class="px-6 py-4">
 										<a
 											[routerLink]="['/', appRoutes.Story, story.slug]"
@@ -53,7 +55,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 											{{ story.title }}
 										</a>
 									</td>
-									<td class="px-6 py-4 text-gray-700">
+									<td class="px-6 py-4 text-neutral-700">
 										<a
 											[routerLink]="['/', appRoutes.Author, story.author.slug]"
 											class="text-blue-600 hover:text-blue-800 hover:underline"
@@ -61,7 +63,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 											{{ story.author.name }}
 										</a>
 									</td>
-									<td class="px-6 py-4 text-gray-700">{{ story.approximateReadingTime }} min</td>
+									<td class="px-6 py-4 text-neutral-700">{{ story.approximateReadingTime }} min</td>
 								</tr>
 							}
 						</tbody>

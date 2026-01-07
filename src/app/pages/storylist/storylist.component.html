@@ -39,7 +39,7 @@
 						<div class="flex flex-col">
 							<cuentoneta-portable-text-parser
 								[paragraphs]="storylist.description"
-								[classes]="'source-serif-pro-body-xl'"
+								[classes]="'source-serif-xl font-normal'"
 								class="flex flex-col gap-4"
 							/>
 						</div>
@@ -64,7 +64,7 @@
 					<cuentoneta-tab title="Multimedia" name="media">
 						@if (storylistResource.value()) {
 							<div class="flex flex-col gap-8">
-								<p class="text-lg text-gray-600 dark:text-gray-300">
+								<p class="text-lg text-neutral-600 dark:text-neutral-300">
 									Contenido multimedia relacionado con esta colección
 								</p>
 								<cuentoneta-media-resource [mediaResources]="media()" />
@@ -80,7 +80,7 @@
 							<div class="flex flex-col">
 								<cuentoneta-portable-text-parser
 									[paragraphs]="tab.content"
-									[classes]="'source-serif-pro-body-xl'"
+									[classes]="'source-serif-xl font-normal'"
 									class="flex flex-col gap-4"
 								/>
 							</div>

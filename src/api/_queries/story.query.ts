@@ -73,7 +73,9 @@ export const storyBySlugQuery = defineQuery(`
         nationality->,
         biography,
         bornOn,
+        bornOnYear,
         diedOn,
+        diedOnYear,
         'resources': coalesce(resources[]{ 
             title, 
             url, 
@@ -110,7 +112,9 @@ export const storiesBySlugsQuery = defineQuery(`
         nationality->,
         'biography': [],
         bornOn,
+        bornOnYear,
         diedOn,
+        diedOnYear,
         'resources': []
     }
 }`);
@@ -137,7 +141,9 @@ export const allStoriesQuery = defineQuery(`
         nationality->,
         'biography': [],
         bornOn,
+        bornOnYear,
         diedOn,
+        diedOnYear,
         'resources': []
     }
 }|order(title asc)`);

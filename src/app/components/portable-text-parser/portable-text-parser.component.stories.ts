@@ -17,7 +17,7 @@ export const Primary = {
 `,
 	}),
 	args: {
-		classes: 'source-serif-pro-body-xl mb-8 last:mb-0',
+		classes: 'source-serif-xl font-normal mb-8 last:mb-0',
 		paragraphs: [
 			{
 				_type: 'block',

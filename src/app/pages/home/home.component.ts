@@ -12,9 +12,9 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 import { environment } from '../../environments/environment';
 
 // Componentes
-import { ContentCampaignCarouselComponent } from '@components/content-campaign-carousel/content-campaign-carousel.component';
+import { CarouselComponent } from '@components/carousel/carousel.component';
 import { StorylistCardComponent } from '@components/storylist-card-component/storylist-card.component';
-import { ContentCampaignCarouselSkeletonComponent } from '@components/content-campaign-carousel/content-campaign-carousel-skeleton.component';
+import { CarouselSkeletonComponent } from '@components/carousel/carousel-skeleton.component';
 import { StorylistCardSkeletonComponent } from '@components/storylist-card-component/storylist-card-skeleton.component';
 import { MostReadStoriesCardDeckComponent } from '@components/most-read-stories-card-deck/most-read-stories-card-deck.component';
 import { LatestStoriesCardDeck } from '@components/latest-stories-card-deck/latest-stories-card-deck';
@@ -23,9 +23,9 @@ import { LatestStoriesCardDeck } from '@components/latest-stories-card-deck/late
 	selector: 'cuentoneta-home',
 	templateUrl: './home.component.html',
 	imports: [
-		ContentCampaignCarouselComponent,
+		CarouselComponent,
 		StorylistCardComponent,
-		ContentCampaignCarouselSkeletonComponent,
+		CarouselSkeletonComponent,
 		StorylistCardSkeletonComponent,
 		MostReadStoriesCardDeckComponent,
 		LatestStoriesCardDeck,

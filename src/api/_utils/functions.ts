@@ -62,6 +62,8 @@ export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>): 
 		biography: biography,
 		bornOn: rawAuthorData.bornOn ? (rawAuthorData.bornOn as DateString) : undefined,
 		diedOn: rawAuthorData.diedOn ? (rawAuthorData.diedOn as DateString) : undefined,
+		bornOnYear: rawAuthorData.bornOnYear ?? undefined,
+		diedOnYear: rawAuthorData.diedOnYear ?? undefined,
 	};
 }
 type AuthorTeaserForStoriesSubQuery = NonNullable<StorylistQueryResult>['stories'][0]['author'];
@@ -76,12 +78,14 @@ export function mapAuthorTeaser(
 			country: rawAuthorData.nationality?.country,
 			flag: urlFor(rawAuthorData.nationality.flag),
 		},
+		resources: [],
 		imageUrl: urlFor(rawAuthorData.image),
 		name: rawAuthorData.name,
 		biography: [],
 		bornOn: rawAuthorData.bornOn ? (rawAuthorData.bornOn as DateString) : undefined,
 		diedOn: rawAuthorData.diedOn ? (rawAuthorData.diedOn as DateString) : undefined,
-		resources: [],
+		bornOnYear: rawAuthorData.bornOnYear ?? undefined,
+		diedOnYear: rawAuthorData.diedOnYear ?? undefined,
 	};
 }
 
@@ -95,9 +99,31 @@ export function mapAuthorBiography(biography: BiographySubQuery): TextBlockConte
 
 export function urlFor(source: SanityImageSource): string {
 	if (!source) {
+		console.warn('urlFor: Se recibió source vacío o nulo');
 		return '';
 	}
-	return createImageUrlBuilder(client).image(source).url();
+	try {
+		return createImageUrlBuilder(client).image(source).url();
+	} catch (error) {
+		console.error('urlFor: Error al construir URL de imagen', { error, source: JSON.stringify(source) });
+		return '';
+	}
+}
+
+export function urlForWithAutoFormat(source: SanityImageSource): string {
+	if (!source) {
+		console.warn('urlForWithAutoFormat: Se recibió source vacío o nulo');
+		return '';
+	}
+	try {
+		return createImageUrlBuilder(client).image(source).auto('format').url();
+	} catch (error) {
+		console.error('urlForWithAutoFormat: Error al construir URL de imagen', {
+			error,
+			source: JSON.stringify(source),
+		});
+		return '';
+	}
 }
 
 type ResourcesSubQuery = (
@@ -261,12 +287,12 @@ export function mapContentCampaigns(campaigns: ContentCampaignsSubQuery): Conten
 			description: mapBlockContentToTextParagraphs(campaign.description),
 			contents: {
 				xs: {
-					imageUrl: xs.image ? urlFor(xs.image) : '',
+					imageUrl: xs.image ? urlForWithAutoFormat(xs.image) : '',
 					imageWidth: viewportElementSizes.xs.imageWidth,
 					imageHeight: viewportElementSizes.xs.imageHeight,
 				},
 				md: {
-					imageUrl: md.image ? urlFor(md.image) : '',
+					imageUrl: md.image ? urlForWithAutoFormat(md.image) : '',
 					imageWidth: viewportElementSizes.md.imageWidth,
 					imageHeight: viewportElementSizes.md.imageHeight,
 				},
