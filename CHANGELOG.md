@@ -20,7 +20,7 @@ Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a
 
 Implementados primeros cambios relacionados al diseño de la V3, entre los que se incluyen el design system completo y el reemplazo del carousel de contenido por una implementación nativa en Angular propia del proyecto, reemplazando la dependencia de `ngx-owl-carousel-o`.
 
-Agregadas mejoras en SEO de la mano de la implementación de un endpoint para sitemaps y modificados los perfiles de autor agregando fechas de nacimiento y fallecimiento, las cuales se usarán posteriormente para enriquecer la experiencia de la plataforma
+Agregadas mejoras en SEO de la mano de la implementación de un endpoint para sitemaps y modificados los perfiles de autor agregando fechas de nacimiento y fallecimiento, las cuales se usarán posteriormente para enriquecer la experiencia de la plataforma.
 
 ## Versión 2.7.2 (2025-12-22)
 
