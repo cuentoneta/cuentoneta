@@ -7,12 +7,16 @@ import { Hono } from 'hono';
 import { requestId } from 'hono/request-id';
 import { secureHeaders } from 'hono/secure-headers';
 import apiRoutes from './api/routes';
+import sitemapController from './api/modules/sitemap/sitemap.controller';
 
 /**
  * Inicializa Hono y exporta la instancia de la aplicación
  */
 export const app = new Hono({ strict: false }).use(requestId()).use(secureHeaders());
 const angularApp = new AngularAppEngine();
+
+// Registra ruta del sitemap en la raíz
+app.route('/sitemap', sitemapController);
 
 // Registra rutas de API
 app.route('/api', apiRoutes);
