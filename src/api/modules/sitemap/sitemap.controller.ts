@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { generateSitemapXml, getSitemapUrls } from './sitemap.service';
+import { generateSitemap } from './sitemap.service';
 
 const sitemapController = new Hono();
 
@@ -9,15 +9,18 @@ const sitemapController = new Hono();
  */
 sitemapController.get('/', async (c) => {
 	try {
-		const urls = await getSitemapUrls();
-		const sitemap = generateSitemapXml(urls);
-
+		const sitemap = await generateSitemap();
 		return c.body(sitemap, 200, {
 			'Content-Type': 'application/xml',
-			'Cache-Control': 'public, max-age=3600', // Cache de 1 hora
+			'Cache-Control': 'public, max-age=21600', // Cache de 6 horas
+			'X-Content-Type-Options': 'nosniff',
 		});
 	} catch (error) {
-		console.error('Error generating sitemap:', error);
+		const err = error instanceof Error ? error : new Error(String(error));
+		console.error('[Sitemap] Error generating sitemap:', {
+			message: err.message,
+			stack: err.stack,
+		});
 		return c.body('Error generating sitemap', 500);
 	}
 });
