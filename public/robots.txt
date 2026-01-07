@@ -3,4 +3,9 @@ User-agent: *
 
 # Desactiva indexación de rutas de la API
 Disallow: /api/
-Disallow: /api/*
+
+# Permite acceso a las imágenes OG
+Allow: /api/og/
+
+# Referencia al sitemap
+Sitemap: https://cuentoneta.ar/sitemap.xml
