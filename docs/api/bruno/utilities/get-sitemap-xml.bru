@@ -1,0 +1,15 @@
+meta {
+  name: Get sitemap.xml
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{apiUrl}}/sitemap.xml
+  body: none
+  auth: none
+}
+
+docs {
+  Obtener el sitemap XML dinámico del sitio. Contiene URLs de todas las páginas estáticas, cuentos, autores y storylists publicados.
+}
