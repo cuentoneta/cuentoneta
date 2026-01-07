@@ -7,7 +7,7 @@ const sitemapController = new Hono();
  * Genera un sitemap XML dinámico para el sitio
  * Obtiene todo el contenido publicado de Sanity y crea entradas de URL
  */
-sitemapController.get('.xml', async (c) => {
+sitemapController.get('/', async (c) => {
 	try {
 		const urls = await getSitemapUrls();
 		const sitemap = generateSitemapXml(urls);

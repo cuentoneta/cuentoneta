@@ -16,7 +16,7 @@ export const app = new Hono({ strict: false }).use(requestId()).use(secureHeader
 const angularApp = new AngularAppEngine();
 
 // Registra ruta del sitemap en la raíz
-app.route('/sitemap', sitemapController);
+app.route('/sitemap.xml', sitemapController);
 
 // Registra rutas de API
 app.route('/api', apiRoutes);
