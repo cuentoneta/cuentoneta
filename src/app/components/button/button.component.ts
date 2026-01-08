@@ -17,20 +17,21 @@ export type ButtonType = 'filled' | 'outline' | 'share';
  * @example
  * ```html
  * <!-- En un elemento button -->
- * <button cuentonetaButton type="outline">Click me</button>
+ * <button cuentoneta-button type="outline">Click me</button>
  *
  * <!-- En un elemento anchor con RouterLink -->
- * <a cuentonetaButton type="outline" [routerLink]="'/storylist'">Ver todo</a>
+ * <a cuentoneta-button type="outline" [routerLink]="'/storylist'">Ver todo</a>
  *
  * <!-- Variante de botón compartir -->
- * <button cuentonetaButton type="share">
+ * <button cuentoneta-button type="share">
  *   <ng-icon name="shareIcon" />
  *   Compartir
  * </button>
  * ```
  */
 @Component({
-	selector: '[cuentonetaButton]',
+	// eslint-disable-next-line @angular-eslint/component-selector -- Attribute selector usa el prefijo cuentoneta- pero restringido a tags <button> y <a>
+	selector: 'button[cuentoneta-button], a[cuentoneta-button]',
 	standalone: true,
 	template: `<ng-content />`,
 	host: {

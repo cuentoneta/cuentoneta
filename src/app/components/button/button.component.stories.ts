@@ -34,7 +34,7 @@ type Story = StoryObj<ButtonComponent>;
 export const Filled: Story = {
 	render: (args) => ({
 		props: args,
-		template: `<button cuentonetaButton [type]="type">Button</button>`,
+		template: `<button cuentoneta-button [type]="type">Button</button>`,
 	}),
 	args: {
 		type: 'filled',
@@ -44,7 +44,7 @@ export const Filled: Story = {
 export const Outline: Story = {
 	render: (args) => ({
 		props: args,
-		template: `<button cuentonetaButton [type]="type">Ver todo</button>`,
+		template: `<button cuentoneta-button [type]="type">Ver todo</button>`,
 	}),
 	args: {
 		type: 'outline',
@@ -55,9 +55,9 @@ export const Share: Story = {
 	render: () => ({
 		template: `				<div>
 					<div class="flex items-center gap-2">
-						<button cuentonetaButton type="share"><ng-icon name="faBrandFacebook"/>Facebook</button>
-						<button cuentonetaButton type="share"><ng-icon name="faBrandTwitter"/>Twitter</button>
-						<button cuentonetaButton type="share"><ng-icon name="faBrandWhatsapp"/>WhatsApp</button>
+						<button cuentoneta-button type="share"><ng-icon name="faBrandFacebook"/>Facebook</button>
+						<button cuentoneta-button type="share"><ng-icon name="faBrandTwitter"/>Twitter</button>
+						<button cuentoneta-button type="share"><ng-icon name="faBrandWhatsapp"/>WhatsApp</button>
 					</div>
 				</div>`,
 		moduleMetadata: {
@@ -68,7 +68,7 @@ export const Share: Story = {
 
 export const OnAnchorElement: Story = {
 	render: () => ({
-		template: `<a cuentonetaButton type="outline" routerLink="/storylist">Ver todo</a>`,
+		template: `<a cuentoneta-button type="outline" routerLink="/storylist">Ver todo</a>`,
 	}),
 };
 
@@ -76,9 +76,9 @@ export const Disabled: Story = {
 	render: () => ({
 		template: `
 			<div class="flex flex-wrap items-center gap-4">
-				<button cuentonetaButton type="filled" disabled>Filled</button>
-				<button cuentonetaButton type="outline" disabled>Outline</button>
-				<button cuentonetaButton type="share" disabled>Share</button>
+				<button cuentoneta-button type="filled" disabled>Filled</button>
+				<button cuentoneta-button type="outline" disabled>Outline</button>
+				<button cuentoneta-button type="share" disabled>Share</button>
 			</div>
 		`,
 	}),

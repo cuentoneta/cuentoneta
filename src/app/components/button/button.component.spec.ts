@@ -5,7 +5,7 @@ import { ButtonComponent } from './button.component';
 describe('ButtonComponent', () => {
 	describe('on button element', () => {
 		it('should render the component on a button element', async () => {
-			const { container } = await render(`<button cuentonetaButton>Click me</button>`, {
+			const { container } = await render(`<button cuentoneta-button>Click me</button>`, {
 				imports: [ButtonComponent],
 			});
 			expect(container).toBeTruthy();
@@ -13,14 +13,14 @@ describe('ButtonComponent', () => {
 		});
 
 		it('should display the button text', async () => {
-			await render(`<button cuentonetaButton>Ver todo</button>`, {
+			await render(`<button cuentoneta-button>Ver todo</button>`, {
 				imports: [ButtonComponent],
 			});
 			expect(screen.getByText('Ver todo')).toBeInTheDocument();
 		});
 
 		it('should apply filled type classes by default', async () => {
-			await render(`<button cuentonetaButton>Filled</button>`, {
+			await render(`<button cuentoneta-button>Filled</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
@@ -32,7 +32,7 @@ describe('ButtonComponent', () => {
 		});
 
 		it('should apply outline type classes', async () => {
-			await render(`<button cuentonetaButton type="outline">Outline</button>`, {
+			await render(`<button cuentoneta-button type="outline">Outline</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
@@ -44,7 +44,7 @@ describe('ButtonComponent', () => {
 		});
 
 		it('should apply share type classes', async () => {
-			await render(`<button cuentonetaButton type="share">Share</button>`, {
+			await render(`<button cuentoneta-button type="share">Share</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
@@ -60,7 +60,7 @@ describe('ButtonComponent', () => {
 		const defaultProviders = [provideRouter([])];
 
 		it('should render the component on an anchor element', async () => {
-			const { container } = await render(`<a cuentonetaButton href="/test">Link</a>`, {
+			const { container } = await render(`<a cuentoneta-button href="/test">Link</a>`, {
 				imports: [ButtonComponent],
 				providers: defaultProviders,
 			});
@@ -69,7 +69,7 @@ describe('ButtonComponent', () => {
 		});
 
 		it('should display the link text', async () => {
-			await render(`<a cuentonetaButton href="/storylist">Ver todo</a>`, {
+			await render(`<a cuentoneta-button href="/storylist">Ver todo</a>`, {
 				imports: [ButtonComponent],
 				providers: defaultProviders,
 			});
@@ -77,7 +77,7 @@ describe('ButtonComponent', () => {
 		});
 
 		it('should apply outline type classes on anchor', async () => {
-			await render(`<a cuentonetaButton type="outline" href="/test">Outline Link</a>`, {
+			await render(`<a cuentoneta-button type="outline" href="/test">Outline Link</a>`, {
 				imports: [ButtonComponent],
 				providers: defaultProviders,
 			});
@@ -88,7 +88,7 @@ describe('ButtonComponent', () => {
 		});
 
 		it('should have no-underline class', async () => {
-			await render(`<a cuentonetaButton href="/test">Link</a>`, {
+			await render(`<a cuentoneta-button href="/test">Link</a>`, {
 				imports: [ButtonComponent],
 				providers: defaultProviders,
 			});
@@ -99,7 +99,7 @@ describe('ButtonComponent', () => {
 
 	describe('common styles', () => {
 		it('should have rounded-full class', async () => {
-			await render(`<button cuentonetaButton>Button</button>`, {
+			await render(`<button cuentoneta-button>Button</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
@@ -107,7 +107,7 @@ describe('ButtonComponent', () => {
 		});
 
 		it('should have font-inter class', async () => {
-			await render(`<button cuentonetaButton>Button</button>`, {
+			await render(`<button cuentoneta-button>Button</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
@@ -115,7 +115,7 @@ describe('ButtonComponent', () => {
 		});
 
 		it('should have font-semibold class', async () => {
-			await render(`<button cuentonetaButton>Button</button>`, {
+			await render(`<button cuentoneta-button>Button</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
@@ -123,7 +123,7 @@ describe('ButtonComponent', () => {
 		});
 
 		it('should have focus-visible ring classes', async () => {
-			await render(`<button cuentonetaButton>Button</button>`, {
+			await render(`<button cuentoneta-button>Button</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
@@ -132,7 +132,7 @@ describe('ButtonComponent', () => {
 		});
 
 		it('should have transition classes', async () => {
-			await render(`<button cuentonetaButton>Button</button>`, {
+			await render(`<button cuentoneta-button>Button</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
@@ -141,7 +141,7 @@ describe('ButtonComponent', () => {
 		});
 
 		it('should have disabled state classes', async () => {
-			await render(`<button cuentonetaButton>Button</button>`, {
+			await render(`<button cuentoneta-button>Button</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
@@ -152,16 +152,16 @@ describe('ButtonComponent', () => {
 
 	describe('accessibility', () => {
 		it('should be focusable', async () => {
-			await render(`<button cuentonetaButton>Focusable</button>`, {
+			await render(`<button cuentoneta-button>Focusable</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
 			button.focus();
-			expect(document.activeElement).toBe(button);
+			expect(button).toHaveFocus();
 		});
 
 		it('should support aria-label on button', async () => {
-			await render(`<button cuentonetaButton aria-label="Close dialog">X</button>`, {
+			await render(`<button cuentoneta-button aria-label="Close dialog">X</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button', { name: 'Close dialog' });
@@ -169,7 +169,7 @@ describe('ButtonComponent', () => {
 		});
 
 		it('should support aria-label on anchor', async () => {
-			await render(`<a cuentonetaButton href="/test" aria-label="Ver todas las colecciones">Ver todo</a>`, {
+			await render(`<a cuentoneta-button href="/test" aria-label="Ver todas las colecciones">Ver todo</a>`, {
 				imports: [ButtonComponent],
 				providers: [provideRouter([])],
 			});
@@ -178,7 +178,7 @@ describe('ButtonComponent', () => {
 		});
 
 		it('should support disabled attribute on button', async () => {
-			await render(`<button cuentonetaButton disabled>Disabled</button>`, {
+			await render(`<button cuentoneta-button disabled>Disabled</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
