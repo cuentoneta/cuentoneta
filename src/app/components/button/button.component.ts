@@ -1,28 +1,28 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 /**
- * Button type variants based on Figma design system
- * - `filled`: White background, no border
- * - `outline`: White background with neutral-300 border
- * - `share`: Neutral-100 background, smaller size for share buttons
+ * Variantes de tipo de botón basadas en el sistema de diseño de Figma
+ * - `filled`: Fondo blanco, sin borde
+ * - `outline`: Fondo blanco con borde neutral-300
+ * - `share`: Fondo neutral-100, tamaño más pequeño para botones de compartir
  */
 export type ButtonType = 'filled' | 'outline' | 'share';
 
 /**
- * Button Component
+ * Componente Button
  *
- * An attribute-based component that can be applied to both `<button>` and `<a>` elements.
- * Provides consistent styling based on the Figma design system.
+ * Un componente basado en atributo que puede aplicarse tanto a elementos `<button>` como `<a>`.
+ * Proporciona estilos consistentes basados en el sistema de diseño de Figma.
  *
  * @example
  * ```html
- * <!-- On a button element -->
+ * <!-- En un elemento button -->
  * <button cuentonetaButton type="outline">Click me</button>
  *
- * <!-- On an anchor element with RouterLink -->
+ * <!-- En un elemento anchor con RouterLink -->
  * <a cuentonetaButton type="outline" [routerLink]="'/storylist'">Ver todo</a>
  *
- * <!-- Share button variant -->
+ * <!-- Variante de botón compartir -->
  * <button cuentonetaButton type="share">
  *   <ng-icon name="shareIcon" />
  *   Compartir
@@ -39,10 +39,10 @@ export type ButtonType = 'filled' | 'outline' | 'share';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ButtonComponent {
-	/** Button type variant - determines the visual style */
+	/** Variante del tipo de botón - determina el estilo visual */
 	readonly type = input<ButtonType>('filled');
 
-	/** Computed host classes based on button type */
+	/** Clases del host calculadas según el tipo de botón */
 	readonly hostClasses = computed(() => {
 		const baseClasses =
 			'inline-flex cursor-pointer items-center justify-center font-inter font-semibold no-underline transition-colors duration-200 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-50';
