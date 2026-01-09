@@ -4,11 +4,13 @@ import { render } from '@testing-library/angular';
 import { Observable, of } from 'rxjs';
 import { StoryService } from '../../providers/story.service';
 import { StoryTeaser } from '@models/story.model';
-import { storyMock, storyTeaserMock } from '../../mocks/story.mock';
 import { StorylistService } from '../../providers/storylist.service';
 import { Storylist } from '@models/storylist.model';
-import { storylistMock } from '@mocks/storylistMock';
-import { authorMock } from '../../mocks/author.mock';
+
+// Mocks
+import { storyMock, storyTeaserMock } from '@mocks/story.mock';
+import { storylistMock } from '@mocks/storylist.mock';
+import { authorMock } from '@mocks/author.mock';
 
 describe('StoryNavigationBarComponent', () => {
 	it('should create for AuthorNavigationFrameComponent', async () => {
