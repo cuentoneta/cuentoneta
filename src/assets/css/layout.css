@@ -1,5 +1,5 @@
 .content {
-	@apply my-0 min-h-screen max-w-screen-lg md:m-auto;
+	@apply my-0 min-h-screen max-w-screen-lg lg:m-auto;
 }
 
 .vertical-layout-spacing {
