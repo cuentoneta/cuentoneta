@@ -5,9 +5,6 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AppRoutes } from '../../app.routes';
 
-// 3rd Party Modules
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-
 // Models
 import { StorylistTeaser } from '@models/storylist.model';
 
@@ -17,7 +14,7 @@ import { NgOptimizedImage } from '@angular/common';
 
 @Component({
 	selector: 'cuentoneta-collection-teaser',
-	imports: [RouterLink, NgxSkeletonLoaderModule, PortableTextParserComponent, NgOptimizedImage],
+	imports: [RouterLink, PortableTextParserComponent, NgOptimizedImage],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `
 		<article>
@@ -46,11 +43,9 @@ import { NgOptimizedImage } from '@angular/common';
 							class="text-ellipsis font-inter text-sm text-neutral-700"
 						/>
 						<footer class="flex flex-col gap-1 font-inter text-xs text-neutral-600 sm:flex-row">
-							<span class="font-inter text-xs font-bold text-brand-500">
-								@for (tag of storylist.tags; track tag.slug) {
-									{{ tag.title }}
-								}</span
-							><span class="hidden sm:inline">•</span><span>{{ storylist.count }} historias</span>
+							<span class="font-inter text-xs font-bold text-brand-500"> {{ storylist.tags[0]?.title }} </span>
+							<span class="hidden sm:inline">•</span>
+							<span>{{ storylist.count }} historias</span>
 						</footer>
 					</section>
 				</a>

@@ -21,7 +21,7 @@ import { CollectionTeaserSkeleton } from '@components/collection-teaser/collecti
 					<cuentoneta-collection-teaser [collection]="storylist" class="card w-full" />
 				}
 			} @loading (minimum 500ms) {
-				@for (_ of [].constructor(6); track $index) {
+				@for (_ of [].constructor(4); track $index) {
 					<cuentoneta-collection-teaser-skeleton class="card w-full" />
 				}
 			}
