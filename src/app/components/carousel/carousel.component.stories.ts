@@ -220,7 +220,7 @@ export const DesktopAndMobile: Story = {
 				<!-- Desktop View -->
 				<div>
 					<h3 class="text-lg font-semibold text-neutral-700 mb-3">Desktop (960px)</h3>
-					<div style="width: 960px; max-width: 100%; justify-self: center;">
+					<div style="width: 1240px; max-width: 100%; justify-self: center;">
 						<cuentoneta-carousel [slides]="slides" [transitionDuration]="transitionDuration" />
 					</div>
 				</div>
