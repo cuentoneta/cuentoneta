@@ -24,12 +24,12 @@ export const Primary = {
 		props: args,
 		template: `
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-          <cuentoneta-collection-teaser class="card" [collection]="storylist"/>
+          <cuentoneta-collection-teaser class="card" [collection]="collection"/>
           <cuentoneta-collection-teaser-skeleton class="card w-full"/>
     </div>
 `,
 	}),
 	args: {
-		storylist: storylistMock,
+		collection: storylistMock,
 	},
 };

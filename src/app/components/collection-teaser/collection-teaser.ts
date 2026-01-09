@@ -43,8 +43,10 @@ import { NgOptimizedImage } from '@angular/common';
 							class="text-ellipsis font-inter text-sm text-neutral-700"
 						/>
 						<footer class="flex flex-col gap-1 font-inter text-xs text-neutral-600 sm:flex-row">
-							<span class="font-inter text-xs font-bold text-brand-500"> {{ storylist.tags[0]?.title }} </span>
-							<span class="hidden sm:inline">•</span>
+							@if (storylist.tags[0]) {
+								<span class="font-inter text-xs font-bold text-brand-500"> {{ storylist.tags[0].title }} </span>
+								<span class="hidden sm:inline">•</span>
+							}
 							<span>{{ storylist.count }} historias</span>
 						</footer>
 					</section>

@@ -21,7 +21,7 @@ import { CollectionTeaserSkeleton } from '@components/collection-teaser/collecti
 					<cuentoneta-collection-teaser [collection]="storylist" class="card w-full" />
 				}
 			} @loading (minimum 500ms) {
-				@for (_ of [].constructor(4); track $index) {
+				@for (_ of [].constructor(SKELETON_COUNT); track $index) {
 					<cuentoneta-collection-teaser-skeleton class="card w-full" />
 				}
 			}
@@ -36,5 +36,6 @@ import { CollectionTeaserSkeleton } from '@components/collection-teaser/collecti
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionTeasersDeck {
+	readonly SKELETON_COUNT = 4;
 	readonly teasers = input<StorylistTeaser[]>([]);
 }
