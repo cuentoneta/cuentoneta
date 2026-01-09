@@ -1,10 +1,10 @@
 :host {
-	@apply mx-auto block max-w-[960px];
+	@apply mx-auto block max-w-lg;
 }
 
 .carousel-container {
 	@apply relative overflow-hidden rounded-xl;
-	@apply aspect-[540/220] sm:aspect-[960/280];
+	@apply aspect-[540/220] sm:aspect-[1240/360];
 	@apply outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2;
 }
 
