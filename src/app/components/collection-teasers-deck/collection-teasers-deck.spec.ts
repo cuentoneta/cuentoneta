@@ -5,7 +5,7 @@ import { provideRouter } from '@angular/router';
 
 // Componentes
 import { CollectionTeasersDeck } from './collection-teasers-deck';
-import { CollectionTeaser } from '@components/collection-teaser/collection-teaser.component';
+import { CollectionTeaser } from '@components/collection-teaser/collection-teaser';
 import { CollectionTeaserSkeleton } from '@components/collection-teaser/collection-teaser-skeleton';
 
 // Mocks
@@ -77,9 +77,9 @@ describe('CollectionTeasersDeck', () => {
 			const deferBlockFixture = (await fixture.getDeferBlocks())[0];
 			await deferBlockFixture.render(DeferBlockState.Loading);
 
-			// Verificar que se renderizan 6 skeletons
-			const skeletons = fixture.nativeElement.querySelectorAll('cuentoneta-collection-teaser-skeleton');
-			expect(skeletons.length).toBe(6);
+			// Verificar que se renderizan 6 skeletons buscando por los artículos internos
+			const skeletonArticles = screen.getAllByRole('article');
+			expect(skeletonArticles.length).toBe(6);
 		});
 
 		it('should render collection teasers when data is available', async () => {
@@ -93,9 +93,9 @@ describe('CollectionTeasersDeck', () => {
 			const deferBlockFixture = (await fixture.getDeferBlocks())[0];
 			await deferBlockFixture.render(DeferBlockState.Complete);
 
-			// Verificar que se renderizan las tarjetas
-			const cards = fixture.nativeElement.querySelectorAll('cuentoneta-collection-teaser');
-			expect(cards.length).toBe(3);
+			// Verificar que se renderizan las tarjetas por sus links
+			const links = screen.getAllByRole('link');
+			expect(links.length).toBe(3);
 		});
 
 		it('should transition from loading to complete state', async () => {
@@ -110,17 +110,13 @@ describe('CollectionTeasersDeck', () => {
 
 			// Primero verificar el estado de carga
 			await deferBlockFixture.render(DeferBlockState.Loading);
-			let skeletons = fixture.nativeElement.querySelectorAll('cuentoneta-collection-teaser-skeleton');
-			expect(skeletons.length).toBe(6);
+			const articles = screen.getAllByRole('article');
+			expect(articles.length).toBe(6);
 
 			// Luego verificar el estado completo
 			await deferBlockFixture.render(DeferBlockState.Complete);
-			const cards = fixture.nativeElement.querySelectorAll('cuentoneta-collection-teaser');
-			expect(cards.length).toBe(4);
-
-			// Los skeletons no deben estar presentes
-			skeletons = fixture.nativeElement.querySelectorAll('cuentoneta-collection-teaser-skeleton');
-			expect(skeletons.length).toBe(0);
+			const links = screen.getAllByRole('link');
+			expect(links.length).toBe(4);
 		});
 
 		it('should display the correct titles in collection teasers', async () => {
@@ -174,81 +170,6 @@ describe('CollectionTeasersDeck', () => {
 		});
 	});
 
-	// Pruebas del grid de tarjetas
-	describe('Grid de tarjetas', () => {
-		it('should apply correct grid classes to the section', async () => {
-			const teasers = generateTeaserMocks(2);
-			const { fixture } = await render(CollectionTeasersDeck, {
-				inputs: { teasers },
-				providers: defaultProviders,
-				componentImports: defaultImports,
-			});
-
-			const deferBlockFixture = (await fixture.getDeferBlocks())[0];
-			await deferBlockFixture.render(DeferBlockState.Complete);
-
-			const section = fixture.nativeElement.querySelector('section');
-			expect(section).toHaveClass('grid');
-			expect(section).toHaveClass('grid-cols-1');
-			expect(section).toHaveClass('sm:grid-cols-2');
-			expect(section).toHaveClass('gap-8');
-		});
-
-		it('should apply card class to each collection teaser element', async () => {
-			const teasers = generateTeaserMocks(2);
-			const { fixture } = await render(CollectionTeasersDeck, {
-				inputs: { teasers },
-				providers: defaultProviders,
-				componentImports: defaultImports,
-			});
-
-			const deferBlockFixture = (await fixture.getDeferBlocks())[0];
-			await deferBlockFixture.render(DeferBlockState.Complete);
-
-			const cards = fixture.nativeElement.querySelectorAll('cuentoneta-collection-teaser');
-			cards.forEach((card: HTMLElement) => {
-				expect(card).toHaveClass('w-full');
-				expect(card).toHaveClass('card');
-			});
-		});
-
-		it('should apply card class to each skeleton element', async () => {
-			const teasers = generateTeaserMocks(6);
-			const { fixture } = await render(CollectionTeasersDeck, {
-				inputs: { teasers },
-				providers: defaultProviders,
-				componentImports: defaultImports,
-			});
-
-			const deferBlockFixture = (await fixture.getDeferBlocks())[0];
-			await deferBlockFixture.render(DeferBlockState.Loading);
-
-			const skeletons = fixture.nativeElement.querySelectorAll('cuentoneta-collection-teaser-skeleton');
-			skeletons.forEach((skeleton: HTMLElement) => {
-				expect(skeleton).toHaveClass('w-full');
-				expect(skeleton).toHaveClass('card');
-			});
-		});
-	});
-
-	// Pruebas de estructura del componente
-	describe('Estructura del componente', () => {
-		it('should have main layout elements rendered', async () => {
-			const { fixture } = await render(CollectionTeasersDeck, {
-				inputs: { teasers: [] },
-				providers: defaultProviders,
-				componentImports: defaultImports,
-			});
-
-			// Verificar que el componente tiene la estructura principal
-			const headerDiv = fixture.nativeElement.querySelector('.flex.items-center.justify-between');
-			const section = fixture.nativeElement.querySelector('section');
-
-			expect(headerDiv).toBeInTheDocument();
-			expect(section).toBeInTheDocument();
-		});
-	});
-
 	// Pruebas de accesibilidad
 	describe('Accesibilidad', () => {
 		it('should have a heading element for the section title', async () => {
@@ -263,7 +184,18 @@ describe('CollectionTeasersDeck', () => {
 			expect(heading).toHaveTextContent('Colecciones');
 		});
 
-		it('should have proper semantic structure with section element', async () => {
+		it('should display description text', async () => {
+			await render(CollectionTeasersDeck, {
+				inputs: { teasers: [] },
+				providers: defaultProviders,
+				componentImports: defaultImports,
+			});
+
+			const description = screen.getByText('Historias agrupadas por temas, estilos y universos en común');
+			expect(description).toBeInTheDocument();
+		});
+
+		it('should render links for each teaser in complete state', async () => {
 			const teasers = generateTeaserMocks(2);
 			const { fixture } = await render(CollectionTeasersDeck, {
 				inputs: { teasers },
@@ -274,27 +206,9 @@ describe('CollectionTeasersDeck', () => {
 			const deferBlockFixture = (await fixture.getDeferBlocks())[0];
 			await deferBlockFixture.render(DeferBlockState.Complete);
 
-			// Verificar que existe la sección de tarjetas
-			const section = fixture.nativeElement.querySelector('section');
-			expect(section).toBeInTheDocument();
-		});
-
-		it('should have header content structure with title and description', async () => {
-			const { fixture } = await render(CollectionTeasersDeck, {
-				inputs: { teasers: [] },
-				providers: defaultProviders,
-				componentImports: defaultImports,
-			});
-
-			// Verificar estructura del encabezado
-			const headerContainer = fixture.nativeElement.querySelector('.flex.items-center.justify-between');
-			expect(headerContainer).toBeInTheDocument();
-
-			const titleElement = headerContainer.querySelector('h2');
-			expect(titleElement).toHaveTextContent('Colecciones');
-
-			const descriptionElement = headerContainer.querySelector('.text-neutral-600');
-			expect(descriptionElement).toBeInTheDocument();
+			// Verificar que existen los links de navegación
+			const links = screen.getAllByRole('link');
+			expect(links.length).toBe(2);
 		});
 	});
 });

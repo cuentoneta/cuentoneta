@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { StorylistTeaser } from '@models/storylist.model';
-import { CollectionTeaser } from '@components/collection-teaser/collection-teaser.component';
+import { CollectionTeaser } from '@components/collection-teaser/collection-teaser';
 import { CollectionTeaserSkeleton } from '@components/collection-teaser/collection-teaser-skeleton';
 
 @Component({

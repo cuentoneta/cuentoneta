@@ -1,5 +1,5 @@
 import { applicationConfig, Meta, moduleMetadata } from '@storybook/angular';
-import { CollectionTeaser } from './collection-teaser.component';
+import { CollectionTeaser } from './collection-teaser';
 import { NgOptimizedImage } from '@angular/common';
 import { provideRouter } from '@angular/router';
 import { CollectionTeaserSkeleton } from './collection-teaser-skeleton';
