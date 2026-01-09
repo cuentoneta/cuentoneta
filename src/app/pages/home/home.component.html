@@ -3,7 +3,7 @@
         Las alturas fijadas para los elementos hijos de <main> tienen la finalidad de evitar
         el rebote vertical que puede observarse en el momento de la carga inicial de la página
     -->
-	<section class="mb-8 aspect-[540/220] sm:aspect-[960/280]">
+	<section class="mb-8 aspect-[540/220] sm:aspect-[1240/360]">
 		@defer (when campaigns().length > 0) {
 			<cuentoneta-carousel [slides]="campaigns()" />
 		} @loading (minimum 500ms) {
