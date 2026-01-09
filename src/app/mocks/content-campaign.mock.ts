@@ -39,9 +39,9 @@ export const contentCampaignMock: ContentCampaign[] = [
 			},
 			md: {
 				imageUrl:
-					'https://cdn.sanity.io/images/s4dbqkc5/development/ec31c09f54fe53f4de213075d2e73e61805fbf4f-960x280.jpg',
-				imageWidth: 960,
-				imageHeight: 280,
+					'https://cdn.sanity.io/images/s4dbqkc5/development/ec31c09f54fe53f4de213075d2e73e61805fbf4f-1240x360.jpg',
+				imageWidth: 1240,
+				imageHeight: 360,
 			},
 		},
 		title: 'Pluma de la Semana #1: Alejandro Dolina',
