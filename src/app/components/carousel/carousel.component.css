@@ -1,5 +1,5 @@
 :host {
-	@apply mx-auto block max-w-lg;
+	@apply mx-auto block;
 }
 
 .carousel-container {

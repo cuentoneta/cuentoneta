@@ -7,5 +7,5 @@
 }
 
 .horizontal-layout-spacing {
-	@apply mx-5 md:mx-auto;
+	@apply mx-5 lg:mx-auto;
 }
