@@ -69,7 +69,7 @@ describe('CollectionTeasersDeck', () => {
 	describe('Comportamiento del bloque defer', () => {
 		it('should render skeletons in loading state', async () => {
 			const { fixture } = await render(CollectionTeasersDeck, {
-				inputs: { teasers: generateTeaserMocks(6) },
+				inputs: { teasers: generateTeaserMocks(4) },
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});
@@ -79,7 +79,7 @@ describe('CollectionTeasersDeck', () => {
 
 			// Verificar que se renderizan 6 skeletons buscando por los artículos internos
 			const skeletonArticles = screen.getAllByRole('article');
-			expect(skeletonArticles.length).toBe(6);
+			expect(skeletonArticles.length).toBe(4);
 		});
 
 		it('should render collection teasers when data is available', async () => {
@@ -111,7 +111,7 @@ describe('CollectionTeasersDeck', () => {
 			// Primero verificar el estado de carga
 			await deferBlockFixture.render(DeferBlockState.Loading);
 			const articles = screen.getAllByRole('article');
-			expect(articles.length).toBe(6);
+			expect(articles.length).toBe(4);
 
 			// Luego verificar el estado completo
 			await deferBlockFixture.render(DeferBlockState.Complete);
