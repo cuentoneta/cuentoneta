@@ -1,0 +1,64 @@
+// Core
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+
+// Router
+import { RouterLink } from '@angular/router';
+import { AppRoutes } from '../../app.routes';
+
+// 3rd Party Modules
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+
+// Models
+import { StorylistTeaser } from '@models/storylist.model';
+
+// Components
+import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
+import { NgOptimizedImage } from '@angular/common';
+
+@Component({
+	selector: 'cuentoneta-collection-teaser',
+	imports: [RouterLink, NgxSkeletonLoaderModule, PortableTextParserComponent, NgOptimizedImage],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	template: `
+		<article>
+			@if (collection(); as storylist) {
+				<a [routerLink]="['/' + appRoutes.StoryList, storylist.slug]" class="navigation-link flex items-start gap-5">
+					<section
+						class="flex h-[192px] items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3 sm:flex-1"
+					>
+						<img
+							[ngSrc]="storylist.featuredImage"
+							[alt]="'Imagen alusiva a la storylist ' + storylist.title"
+							class="mb-[-8px]"
+							height="164"
+							width="118"
+						/>
+					</section>
+					<section class="flex flex-1 flex-col gap-1 overflow-hidden">
+						<header
+							class="hover:text-interactive-500 line-clamp-2 cursor-pointer font-inter text-lg font-bold sm:line-clamp-1"
+						>
+							{{ storylist.title }}
+						</header>
+						<cuentoneta-portable-text-parser
+							[classes]="'line-clamp-4 sm:line-clamp-3'"
+							[paragraphs]="[storylist.description[0]]"
+							class="text-ellipsis font-inter text-sm text-neutral-700"
+						/>
+						<footer class="flex flex-col gap-1 font-inter text-xs text-neutral-600 sm:flex-row">
+							<span class="font-inter text-xs font-bold text-brand-500">
+								@for (tag of storylist.tags; track tag.slug) {
+									{{ tag.title }}
+								}</span
+							><span class="hidden sm:inline">•</span><span>{{ storylist.count }} historias</span>
+						</footer>
+					</section>
+				</a>
+			}
+		</article>
+	`,
+})
+export class CollectionTeaser {
+	readonly collection = input<StorylistTeaser>();
+	protected readonly appRoutes = AppRoutes;
+}
