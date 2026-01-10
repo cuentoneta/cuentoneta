@@ -1,4 +1,4 @@
-import { DocumentVideoIcon, PlayIcon, TwitterIcon } from '@sanity/icons';
+import { DocumentPdfIcon, DocumentVideoIcon, PlayIcon, TwitterIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 
 export const audioRecording = defineType({
@@ -171,5 +171,45 @@ export const youtubeVideo = defineType({
 			type: 'string',
 			validation: (Rule) => Rule.required(),
 		},
+	],
+});
+
+export const pdfLink = defineType({
+	name: 'pdfLink',
+	title: 'Enlace a archivo PDF',
+	type: 'object',
+	icon: DocumentPdfIcon,
+	preview: {
+		select: {
+			title: 'title',
+			url: 'url',
+		},
+		prepare(selection) {
+			const { title, url } = selection;
+			return {
+				title: `${title}`,
+				subtitle: `URL PDF: ${url}`,
+			};
+		},
+	},
+	fields: [
+		defineField({
+			name: 'title',
+			title: 'Título del documento PDF',
+			type: 'string',
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
+			name: 'description',
+			title: 'Descripción del documento PDF',
+			type: 'blockContent',
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
+			name: 'url',
+			title: 'URL del archivo PDF',
+			type: 'url',
+			validation: (Rule) => Rule.required(),
+		}),
 	],
 });
