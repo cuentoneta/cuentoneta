@@ -17,7 +17,7 @@
 		"sanity"
 	],
 	"dependencies": {
-		"@sanity/cli": "^5.0.1",
+		"@sanity/cli": "^5.2.0",
 		"@sanity/icons": "^3.4.0",
 		"@sanity/vision": "^5.0.1",
 		"dayjs": "^1.11.19",
