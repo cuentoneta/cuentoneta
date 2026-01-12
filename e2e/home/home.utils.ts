@@ -27,7 +27,10 @@ export const TEST_TIMEOUTS = {
 
 export const EXPECTED_COUNTS = {
 	MAIN_SECTIONS: 4,
-	CARDS_TO_VERIFY: 3, // Number of cards to check in consistency tests
+	// Check first 3 cards to balance test coverage vs execution speed.
+	// Verifying all cards would slow tests; 3 provides sufficient confidence
+	// that the data structure is consistent across the card deck.
+	CARDS_TO_VERIFY: 3,
 	MAX_LINKS_TO_VERIFY: 5, // Max navigation links to validate
 	MAX_A11Y_LINKS_TO_CHECK: 10, // Max links to check for accessibility
 } as const;
