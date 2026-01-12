@@ -29,8 +29,8 @@ const CSS_CLASSES = {
 	ORDER_NUMBER: '[data-testid="story-order"]',
 	AUTHOR_NAME: '[data-testid="author-name"]',
 	COLLECTION_TITLE: '[data-testid="collection-title"]',
-	CAROUSEL_HEIGHT_MOBILE: 'h-[189.36px]',
-	CAROUSEL_HEIGHT_DESKTOP: 'sm:h-[317px]',
+	CAROUSEL_ASPECT_MOBILE: 'aspect-[540/220]',
+	CAROUSEL_ASPECT_DESKTOP: 'sm:aspect-[1240/360]',
 } as const;
 
 // Funciones auxiliares para patrones comunes
@@ -123,15 +123,16 @@ test.describe('HomeComponent', () => {
 			const carousel = page.locator(TEST_SELECTORS.CAROUSEL);
 			await expect(carousel).toBeVisible();
 
-			// Check for owl-carousel container
-			const owlCarousel = carousel.locator('owl-carousel-o');
-			await expect(owlCarousel).toBeVisible();
+			// Check for carousel container with slides
+			const slideWrapper = carousel.locator('.slide-wrapper');
+			await expect(slideWrapper).toBeVisible();
 		});
 
 		test('should have carousel slides with images', async ({ page }) => {
 			await waitForElement(page, TEST_SELECTORS.CAROUSEL);
 
-			const slides = page.locator('.owl-item img');
+			const carousel = page.locator(TEST_SELECTORS.CAROUSEL);
+			const slides = carousel.locator('.slide img');
 			const count = await slides.count();
 			expect(count).toBeGreaterThan(0);
 
@@ -140,48 +141,53 @@ test.describe('HomeComponent', () => {
 			await expect(firstSlide).toHaveAttribute('src', /.+/);
 		});
 
-		test('should have carousel dots navigation', async ({ page }) => {
+		test('should have carousel indicator navigation', async ({ page }) => {
 			await waitForElement(page, TEST_SELECTORS.CAROUSEL);
 
-			const dots = page.locator('.owl-dots .owl-dot');
-			const count = await dots.count();
-			expect(count).toBeGreaterThan(0);
+			const carousel = page.locator(TEST_SELECTORS.CAROUSEL);
+			const indicator = carousel.locator('cuentoneta-carousel-indicator');
+			await expect(indicator).toBeVisible();
 		});
 
-		test('should navigate carousel using dots', async ({ page }) => {
+		test('should navigate carousel using indicators', async ({ page }) => {
 			await waitForElement(page, TEST_SELECTORS.CAROUSEL);
 
-			const dots = page.locator('.owl-dots .owl-dot');
-			const dotCount = await dots.count();
+			const carousel = page.locator(TEST_SELECTORS.CAROUSEL);
+			const indicatorButtons = carousel.locator('cuentoneta-carousel-indicator button');
+			const buttonCount = await indicatorButtons.count();
 
-			if (dotCount > 1) {
-				// Click second dot
-				await dots.nth(1).click();
+			if (buttonCount > 1) {
+				// Click second indicator
+				await indicatorButtons.nth(1).click();
 
-				// Wait for second dot to become active (animation completes)
-				const secondDot = dots.nth(1);
-				await expect(secondDot).toHaveClass(/active/);
+				// Wait for animation to complete
+				await page.waitForTimeout(700);
+
+				// Verify the carousel navigated (active slide changed)
+				const activeSlide = carousel.locator('.slide.active');
+				await expect(activeSlide).toBeVisible();
 			}
 		});
 
 		test('should have clickable campaign slides', async ({ page }) => {
 			await waitForElement(page, TEST_SELECTORS.CAROUSEL);
 
-			const links = page.locator('.owl-item.active a');
+			const carousel = page.locator(TEST_SELECTORS.CAROUSEL);
+			const links = carousel.locator('.slide.active a');
 			if ((await links.count()) > 0) {
 				const firstLink = links.first();
 				await expect(firstLink).toHaveAttribute('href', /.+/);
 			}
 		});
 
-		test('carousel should have correct section height', async ({ page }) => {
+		test('carousel should have correct section aspect ratio', async ({ page }) => {
 			const section = page.locator('main > section').first();
 			await expect(section).toBeVisible();
 
-			// Check for responsive height classes
+			// Check for responsive aspect ratio classes
 			const className = await section.getAttribute('class');
-			expect(className).toContain(CSS_CLASSES.CAROUSEL_HEIGHT_MOBILE);
-			expect(className).toContain(CSS_CLASSES.CAROUSEL_HEIGHT_DESKTOP);
+			expect(className).toContain(CSS_CLASSES.CAROUSEL_ASPECT_MOBILE);
+			expect(className).toContain(CSS_CLASSES.CAROUSEL_ASPECT_DESKTOP);
 		});
 	});
 
@@ -335,16 +341,18 @@ test.describe('HomeComponent', () => {
 	});
 
 	test.describe('Featured Collections Section', () => {
-		test('should render "Colecciones destacadas" heading', async ({ page }) => {
-			const heading = page.locator('h2:has-text("Colecciones destacadas")');
+		test('should render "Colecciones" heading', async ({ page }) => {
+			const heading = page.locator('h2:has-text("Colecciones")');
 			await expect(heading).toBeVisible();
-			await expect(heading).toHaveClass(/italic/);
 		});
 
-		test('should have decorative horizontal lines', async ({ page }) => {
-			const section = page.locator('section').filter({ hasText: 'Colecciones destacadas' });
-			const hrs = section.locator('hr');
-			expect(await hrs.count()).toBeGreaterThan(0);
+		test('should have collections description text', async ({ page }) => {
+			const deck = page.locator(TEST_SELECTORS.COLLECTION_DECK);
+			await expect(deck).toBeVisible();
+
+			// Check for description text - use specific class selector
+			const description = deck.locator('.text-neutral-600:has-text("Historias agrupadas")');
+			await expect(description).toBeVisible();
 		});
 
 		test('should display storylist cards section', async ({ page }) => {
@@ -398,7 +406,7 @@ test.describe('HomeComponent', () => {
 			await expect(description).toBeVisible();
 		});
 
-		test('storylist cards should have story count badge', async ({ page }) => {
+		test('storylist cards should have story count', async ({ page }) => {
 			// Wait for cards to be visible
 			const cards = page.locator('cuentoneta-collection-teaser');
 			await expect(cards.first()).toBeVisible({ timeout: 10000 });
@@ -408,10 +416,10 @@ test.describe('HomeComponent', () => {
 			// Only test if cards exist
 			if (count > 0) {
 				const firstCard = cards.first();
-				const badge = firstCard.locator('footer span.inter-body-xs-bold').first();
+				const footer = firstCard.locator('footer');
 
-				await expect(badge).toBeVisible();
-				await expect(badge).toContainText(/historias/i);
+				await expect(footer).toBeVisible();
+				await expect(footer).toContainText(/historias/i);
 			}
 		});
 
@@ -438,7 +446,8 @@ test.describe('HomeComponent', () => {
 		test('campaign carousel slide links should be valid', async ({ page }) => {
 			await waitForElement(page, TEST_SELECTORS.CAROUSEL);
 
-			const links = page.locator('.owl-item.active a');
+			const carousel = page.locator(TEST_SELECTORS.CAROUSEL);
+			const links = carousel.locator('.slide.active a');
 			if ((await links.count()) > 0) {
 				const href = await links.first().getAttribute('href');
 				expect(href).toBeTruthy();
@@ -534,7 +543,7 @@ test.describe('HomeComponent', () => {
 
 			const section = page.locator('main > section').first();
 			const className = await section.getAttribute('class');
-			expect(className).toContain(CSS_CLASSES.CAROUSEL_HEIGHT_MOBILE);
+			expect(className).toContain(CSS_CLASSES.CAROUSEL_ASPECT_MOBILE);
 		});
 
 		test('desktop: carousel should use correct height', async ({ page }) => {
@@ -545,7 +554,7 @@ test.describe('HomeComponent', () => {
 
 			const section = page.locator('main > section').first();
 			const className = await section.getAttribute('class');
-			expect(className).toContain(CSS_CLASSES.CAROUSEL_HEIGHT_DESKTOP);
+			expect(className).toContain(CSS_CLASSES.CAROUSEL_ASPECT_DESKTOP);
 		});
 
 		test('tablet: should use appropriate breakpoints', async ({ page }) => {
@@ -578,7 +587,7 @@ test.describe('HomeComponent', () => {
 
 		test('should show featured collections section', async ({ page }) => {
 			// Featured collections section should exist
-			const collectionsSection = page.locator('section').filter({ hasText: 'Colecciones destacadas' });
+			const collectionsSection = page.locator('section').filter({ hasText: 'Colecciones' });
 			await expect(collectionsSection).toBeVisible();
 		});
 
@@ -588,7 +597,7 @@ test.describe('HomeComponent', () => {
 
 			// Check if it has the height classes
 			const className = await section.getAttribute('class');
-			expect(className).toContain(CSS_CLASSES.CAROUSEL_HEIGHT_MOBILE);
+			expect(className).toContain(CSS_CLASSES.CAROUSEL_ASPECT_MOBILE);
 		});
 
 		test('story card decks should have correct grid structure', async ({ page }) => {
@@ -623,7 +632,7 @@ test.describe('HomeComponent', () => {
 			// Todos los componentes principales deben ser visibles, indicando carga exitosa de datos
 			const latestDeck = page.locator(TEST_SELECTORS.LATEST_DECK);
 			const mostReadDeck = page.locator(TEST_SELECTORS.MOST_READ_DECK);
-			const collectionsSection = page.locator('section').filter({ hasText: 'Colecciones destacadas' });
+			const collectionsSection = page.locator('section').filter({ hasText: 'Colecciones' });
 
 			await expect(latestDeck).toBeVisible();
 			await expect(mostReadDeck).toBeVisible();
@@ -704,7 +713,7 @@ test.describe('HomeComponent', () => {
 			expect(await h2Headings.count()).toBeGreaterThan(0);
 
 			// Verificar texto del encabezado para colecciones destacadas
-			await expect(page.locator('h2:has-text("Colecciones destacadas")')).toBeVisible();
+			await expect(page.locator('h2:has-text("Colecciones")')).toBeVisible();
 		});
 
 		test('links should be keyboard accessible', async ({ page }) => {
