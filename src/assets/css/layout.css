@@ -1,5 +1,5 @@
 .content {
-	@apply my-0 min-h-screen md:m-auto md:max-w-screen-md;
+	@apply my-0 min-h-screen max-w-screen-lg lg:m-auto;
 }
 
 .vertical-layout-spacing {
@@ -7,5 +7,5 @@
 }
 
 .horizontal-layout-spacing {
-	@apply mx-5 md:mx-auto;
+	@apply mx-5 lg:mx-auto;
 }

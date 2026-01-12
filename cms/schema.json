@@ -1116,10 +1116,26 @@
 				},
 				"optional": true
 			},
+			"bornOnYear": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "inline",
+					"name": "computedNumber"
+				},
+				"optional": true
+			},
 			"diedOn": {
 				"type": "objectAttribute",
 				"value": {
 					"type": "string"
+				},
+				"optional": true
+			},
+			"diedOnYear": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "inline",
+					"name": "computedNumber"
 				},
 				"optional": true
 			},

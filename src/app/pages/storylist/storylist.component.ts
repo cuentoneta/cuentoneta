@@ -43,7 +43,7 @@ import { MediaResourceComponent } from '@components/media-resource/media-resourc
 	hostDirectives: [MetaTagsDirective],
 	styles: `
 		:host ::ng-deep .description-skeleton .skeleton-loader {
-			@apply bg-zinc-300;
+			@apply bg-neutral-300;
 		}
 	`,
 })

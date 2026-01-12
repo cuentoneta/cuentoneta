@@ -1,7 +1,7 @@
 {
 	"name": "@cuentoneta/app",
 	"type": "module",
-	"version": "2.7.1",
+	"version": "2.7.3",
 	"license": "CC BY-NC-SA 4.0",
 	"engines": {
 		"node": "^20.19.0 || ^22.12.0"
@@ -54,7 +54,6 @@
 		"esbuild": "0.27.2",
 		"groq": "^5.0.1",
 		"hono": "^4.11.1",
-		"ngx-owl-carousel-o": "^21.0.0",
 		"ngx-skeleton-loader": "^11.3.0",
 		"rettiwt-api": "^3.1.1",
 		"rxjs": "~7.8.1",

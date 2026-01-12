@@ -21,8 +21,10 @@ export const rotatingContentQuery = defineQuery(`
             image,
             nationality->,
             'biography': [],
-            bornOn,
-            diedOn,
+						bornOn,
+						bornOnYear,
+						diedOn,
+						diedOnYear,
             'resources': [],
         }
     },[])
@@ -107,8 +109,10 @@ export const landingPageContentQuery = defineQuery(`
             image,
             nationality->,
             'biography': [],
-            bornOn,
-            diedOn,
+						bornOn,
+						bornOnYear,
+						diedOn,
+						diedOnYear,
             'resources': [],
         }
     },[]),

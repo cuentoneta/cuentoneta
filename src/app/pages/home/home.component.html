@@ -3,11 +3,11 @@
         Las alturas fijadas para los elementos hijos de <main> tienen la finalidad de evitar
         el rebote vertical que puede observarse en el momento de la carga inicial de la página
     -->
-	<section class="h-[189.36px] sm:h-[317px]">
+	<section class="mb-8 aspect-[540/220] sm:aspect-[1240/360]">
 		@defer (when campaigns().length > 0) {
-			<cuentoneta-content-campaign-carousel [slides]="campaigns()" />
+			<cuentoneta-carousel [slides]="campaigns()" />
 		} @loading (minimum 500ms) {
-			<cuentoneta-content-campaign-carousel-skeleton />
+			<cuentoneta-carousel-skeleton />
 		}
 	</section>
 
@@ -19,23 +19,7 @@
 		<cuentoneta-most-read-stories-card-deck [stories]="mostRead()" class="flex flex-col gap-8" />
 	</section>
 
-	<section class="flex flex-col gap-8">
-		<div class="flex content-between items-center gap-4 text-gray-500">
-			<hr class="w-6" />
-			<h2 class="h3 font-source-serif italic">Colecciones destacadas</h2>
-			<hr class="flex-grow" />
-		</div>
-
-		<section class="mb-8 grid grid-cols-1 justify-items-center gap-8 sm:grid-cols-2">
-			@defer (when cards().length > 0) {
-				@for (storylist of cards(); track storylist.slug) {
-					<cuentoneta-storylist-card [storylist]="storylist" class="card w-full" />
-				}
-			} @loading (minimum 500ms) {
-				@for (_ of [].constructor(6); track $index) {
-					<cuentoneta-storylist-card-skeleton class="card w-full" />
-				}
-			}
-		</section>
+	<section class="mb-8">
+		<cuentoneta-collection-teasers-deck [teasers]="collections()" class="flex flex-col gap-8" />
 	</section>
 </main>

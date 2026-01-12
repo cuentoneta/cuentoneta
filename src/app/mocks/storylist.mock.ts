@@ -1,11 +1,14 @@
-import { Storylist, StorylistPublicationsNavigationTeasers } from '@models/storylist.model';
+import { Storylist, StorylistStoriesNavigationTeasers } from '@models/storylist.model';
 import { tagMock } from './tag.mocks';
 import { storyNavigationTeaserWithAuthor } from './story.mock';
 
 export const storylistMock: Storylist = {
-	title: 'La Cuentoneta 1.0"',
+	_id: 'cuentoneta-10',
+	title: 'La Cuentoneta 1.0',
 	slug: 'verano-2022',
 	count: 1,
+	media: [],
+	tabs: [],
 	description: [
 		{
 			_type: 'block',
@@ -23,7 +26,7 @@ export const storylistMock: Storylist = {
 		},
 	],
 	featuredImage:
-		'https://cdn.sanity.io/images/s4dbqkc5/production/d1a7fc995e0a4d640c9d8e98fb56f56f209f3d89-392x318.webp',
+		'https://cdn.sanity.io/images/s4dbqkc5/production/edd62a3131bd1f46e796e473d0b2b12d1c63c229-1024x1536.png',
 	tags: [tagMock],
 	config: {
 		showAuthors: true,
@@ -31,13 +34,13 @@ export const storylistMock: Storylist = {
 	stories: [storyNavigationTeaserWithAuthor],
 };
 
-export const storylistNavigationTeaserMock: StorylistPublicationsNavigationTeasers = {
+export const storylistNavigationTeaserMock: StorylistStoriesNavigationTeasers = {
+	_id: 'cuentoneta-10',
 	title: 'La Cuentoneta 1.0"',
 	slug: 'verano-2022',
-	displayDates: true,
-	editionPrefix: 'Día',
 	count: 1,
-	comingNextLabel: 'Próximamente',
+	media: [],
+	tabs: [],
 	description: [
 		{
 			_type: 'block',
@@ -55,7 +58,7 @@ export const storylistNavigationTeaserMock: StorylistPublicationsNavigationTease
 		},
 	],
 	featuredImage:
-		'https://cdn.sanity.io/images/s4dbqkc5/production/d1a7fc995e0a4d640c9d8e98fb56f56f209f3d89-392x318.webp',
+		'https://cdn.sanity.io/images/s4dbqkc5/production/edd62a3131bd1f46e796e473d0b2b12d1c63c229-1024x1536.png',
 	tags: [tagMock],
 	config: {
 		showAuthors: true,

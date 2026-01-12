@@ -5,7 +5,7 @@ export const VIEWPORT_WIDTHS_NUMERIC: Record<Viewport, number> = {
 	xs: 0,
 	sm: 768,
 	md: 960,
-	lg: 1280,
+	lg: 1240,
 	xl: 1536,
 };
 
@@ -13,6 +13,6 @@ export const VIEWPORT_WIDTHS_PX: Record<Viewport, string> = {
 	xs: '0px',
 	sm: '768px',
 	md: '960px',
-	lg: '1280px',
+	lg: '1240px',
 	xl: '1536px',
 };

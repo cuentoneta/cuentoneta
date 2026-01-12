@@ -16,6 +16,23 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.7.3 (2026-01-07)
+
+Implementados primeros cambios relacionados al diseño de la V3, entre los que se incluyen el design system completo y el reemplazo del carousel de contenido por una implementación nativa en Angular propia del proyecto, reemplazando la dependencia de `ngx-owl-carousel-o`.
+
+Agregadas mejoras en SEO de la mano de la implementación de un endpoint para sitemaps y modificados los perfiles de autor agregando fechas de nacimiento y fallecimiento, las cuales se usarán posteriormente para enriquecer la experiencia de la plataforma.
+
+## Versión 2.7.2 (2025-12-22)
+
+Abordados problemas visuales, de lógica y de accesibilidad menores, conjuntamente con la actualización de la plataforma a Nx 22.3 + Angular 21 y una serie de cambios orientados a simplificaciones arquitectónicas de la plataforma:
+
+- Se eliminó de la base de código el uso de los modelos de dominio `Publication`, los cuales oficiaban de nexto entre los modelos de dominio `Story` y `Storylist`.
+- Se eliminó el servicio `ThemeService`, reemplazando sus usos por código CSS nativo + ng-deep.
+
+### Cambios completos
+
+Ver el changelog completo en [2.7.2](https://github.com/cuentoneta/cuentoneta/releases/tag/2.7.1)
+
 ## Versión 2.7.1 (2025-12-10)
 
 Versión menor que trae aparejados cambios para robustecer y volver más performante el backend, reemplazar la herramienta utilizada como API client y eliminar el uso de ngxtension. Respecto de características de la plataforma, se elimina el soporte multilenguaje.

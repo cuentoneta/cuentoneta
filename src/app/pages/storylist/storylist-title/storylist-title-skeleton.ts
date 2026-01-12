@@ -51,7 +51,7 @@ import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 	styles: `
 		:host ::ng-deep .title-skeleton .skeleton-loader,
 		:host ::ng-deep .tag-skeleton .skeleton-loader {
-			@apply bg-zinc-300;
+			@apply bg-neutral-300;
 		}
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
