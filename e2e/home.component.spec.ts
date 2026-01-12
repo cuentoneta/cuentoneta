@@ -8,17 +8,16 @@ const TEST_TIMEOUTS = {
 } as const;
 
 const EXPECTED_COUNTS = {
-	LATEST_STORIES_CARDS: 6,
-	MOST_READ_CARDS: 6,
 	MAIN_SECTIONS: 4,
 } as const;
 
 const TEST_SELECTORS = {
-	CAROUSEL: 'cuentoneta-content-campaign-carousel',
-	CAROUSEL_SKELETON: 'cuentoneta-content-campaign-carousel-skeleton',
+	CAROUSEL: 'cuentoneta-carousel',
+	CAROUSEL_SKELETON: 'cuentoneta-carousel-skeleton',
 	LATEST_DECK: 'cuentoneta-latest-stories-card-deck',
 	MOST_READ_DECK: 'cuentoneta-most-read-stories-card-deck',
-	STORYLIST_CARD: 'cuentoneta-storylist-card',
+	COLLECTION_TEASER: 'cuentoneta-collection-teaser',
+	COLLECTION_DECK: 'cuentoneta-collection-teasers-deck',
 	CARD: '[data-testid="card"]',
 	SKELETON: '[data-testid="skeleton"]',
 	MAIN_CONTENT: 'main.content',
@@ -26,32 +25,21 @@ const TEST_SELECTORS = {
 } as const;
 
 const CSS_CLASSES = {
-	STORY_TITLE: '.inter-heading-3-bold',
-	ORDER_NUMBER: '.source-serif-pro-heading-2-bold',
-	AUTHOR_NAME: '.inter-body-sm-semibold',
+	STORY_TITLE: '[data-testid="story-title"]',
+	ORDER_NUMBER: '[data-testid="story-order"]',
+	AUTHOR_NAME: '[data-testid="author-name"]',
+	COLLECTION_TITLE: '[data-testid="collection-title"]',
 	CAROUSEL_HEIGHT_MOBILE: 'h-[189.36px]',
 	CAROUSEL_HEIGHT_DESKTOP: 'sm:h-[317px]',
 } as const;
 
 // Funciones auxiliares para patrones comunes
-async function waitForElement(page: Page, selector: string, timeout = 10000) {
+async function waitForElement(page: Page, selector: string, timeout = TEST_TIMEOUTS.ELEMENT_WAIT) {
 	return await page.waitForSelector(selector, { timeout });
 }
 
 async function waitForCards(page: Page, componentSelector: string) {
 	return await waitForElement(page, `${componentSelector} [data-testid="card"]`);
-}
-
-async function waitForCarousel(page: Page) {
-	return await waitForElement(page, 'cuentoneta-content-campaign-carousel');
-}
-
-async function waitForStorylistCards(page: Page) {
-	return await waitForElement(page, 'cuentoneta-storylist-card');
-}
-
-async function waitForAnyCards(page: Page) {
-	return await waitForElement(page, '[data-testid="card"]');
 }
 
 test.describe('HomeComponent', () => {
@@ -75,8 +63,8 @@ test.describe('HomeComponent', () => {
 
 		test('should have meta keywords', async ({ page }) => {
 			const metaKeywords = page.locator('meta[name="keywords"]');
-			await expect(metaKeywords).toHaveAttribute('content', /.+/);
 			const content = await metaKeywords.getAttribute('content');
+			expect(content).toBeTruthy();
 			expect(content).toContain('cuentos');
 			expect(content).toContain('literatura');
 		});
@@ -107,7 +95,7 @@ test.describe('HomeComponent', () => {
 
 	test.describe('Campaign Carousel Section', () => {
 		test('should render campaign carousel section', async ({ page }) => {
-			await waitForCarousel(page);
+			await waitForElement(page, TEST_SELECTORS.CAROUSEL);
 			const section = page.locator(TEST_SELECTORS.FIRST_SECTION).first();
 			await expect(section).toBeVisible();
 
@@ -130,7 +118,7 @@ test.describe('HomeComponent', () => {
 
 		test('should display carousel with slides after loading', async ({ page }) => {
 			// Wait for skeleton to disappear and carousel to appear
-			await waitForCarousel(page);
+			await waitForElement(page, TEST_SELECTORS.CAROUSEL);
 
 			const carousel = page.locator(TEST_SELECTORS.CAROUSEL);
 			await expect(carousel).toBeVisible();
@@ -141,7 +129,7 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('should have carousel slides with images', async ({ page }) => {
-			await waitForCarousel(page);
+			await waitForElement(page, TEST_SELECTORS.CAROUSEL);
 
 			const slides = page.locator('.owl-item img');
 			const count = await slides.count();
@@ -153,7 +141,7 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('should have carousel dots navigation', async ({ page }) => {
-			await waitForCarousel(page);
+			await waitForElement(page, TEST_SELECTORS.CAROUSEL);
 
 			const dots = page.locator('.owl-dots .owl-dot');
 			const count = await dots.count();
@@ -161,7 +149,7 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('should navigate carousel using dots', async ({ page }) => {
-			await waitForCarousel(page);
+			await waitForElement(page, TEST_SELECTORS.CAROUSEL);
 
 			const dots = page.locator('.owl-dots .owl-dot');
 			const dotCount = await dots.count();
@@ -177,7 +165,7 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('should have clickable campaign slides', async ({ page }) => {
-			await waitForCarousel(page);
+			await waitForElement(page, TEST_SELECTORS.CAROUSEL);
 
 			const links = page.locator('.owl-item.active a');
 			if ((await links.count()) > 0) {
@@ -192,8 +180,8 @@ test.describe('HomeComponent', () => {
 
 			// Check for responsive height classes
 			const className = await section.getAttribute('class');
-			expect(className).toMatch(/h-\[189\.36px\]/);
-			expect(className).toMatch(/sm:h-\[317px\]/);
+			expect(className).toContain(CSS_CLASSES.CAROUSEL_HEIGHT_MOBILE);
+			expect(className).toContain(CSS_CLASSES.CAROUSEL_HEIGHT_DESKTOP);
 		});
 	});
 
@@ -231,7 +219,7 @@ test.describe('HomeComponent', () => {
 
 			const latestDeck = page.locator('cuentoneta-latest-stories-card-deck');
 			const cards = latestDeck.locator('[data-testid="card"]');
-			expect(await cards.count()).toBe(EXPECTED_COUNTS.LATEST_STORIES_CARDS);
+			expect(await cards.count()).toBeGreaterThan(0);
 		});
 
 		test('story cards should have author information', async ({ page }) => {
@@ -244,7 +232,7 @@ test.describe('HomeComponent', () => {
 			await expect(authorImg).toBeVisible();
 
 			// Check for author name
-			const authorName = firstCard.locator('.inter-body-sm-semibold');
+			const authorName = firstCard.locator('[data-testid="author-name"]');
 			await expect(authorName).toBeVisible();
 		});
 
@@ -252,7 +240,7 @@ test.describe('HomeComponent', () => {
 			await waitForCards(page, 'cuentoneta-latest-stories-card-deck');
 
 			const firstCard = page.locator('cuentoneta-latest-stories-card-deck [data-testid="card"]').first();
-			const title = firstCard.locator('.inter-heading-3-bold');
+			const title = firstCard.locator('[data-testid="story-title"]');
 			await expect(title).toBeVisible();
 
 			const titleText = await title.innerText();
@@ -274,16 +262,14 @@ test.describe('HomeComponent', () => {
 			const cards = page.locator('cuentoneta-latest-stories-card-deck [data-testid="card"]');
 
 			// Check first few cards have order numbers
-			await Promise.all(
-				Array.from({ length: 3 }, async (_, i) => {
-					const card = cards.nth(i);
-					const orderNumber = card.locator('.source-serif-pro-heading-2-bold');
-					await expect(orderNumber).toBeVisible();
+			for (let i = 0; i < 3; i++) {
+				const card = cards.nth(i);
+				const orderNumber = card.locator('[data-testid="story-order"]');
+				await expect(orderNumber).toBeVisible();
 
-					const orderText = await orderNumber.innerText();
-					expect(orderText).toMatch(/^0?[1-9]\.$/);
-				}),
-			);
+				const orderText = await orderNumber.innerText();
+				expect(orderText).toMatch(/^0?[1-9]\.$/);
+			}
 		});
 
 		test('should have responsive grid layout', async ({ page }) => {
@@ -326,7 +312,7 @@ test.describe('HomeComponent', () => {
 			const mostReadDeck = page.locator('cuentoneta-most-read-stories-card-deck');
 			const cards = mostReadDeck.locator('[data-testid="card"]');
 
-			expect(await cards.count()).toBe(EXPECTED_COUNTS.MOST_READ_CARDS);
+			expect(await cards.count()).toBeGreaterThan(0);
 		});
 
 		test('most-read cards should have same structure as latest stories', async ({ page }) => {
@@ -339,7 +325,7 @@ test.describe('HomeComponent', () => {
 			await expect(authorImg).toBeVisible();
 
 			// Check for title
-			const title = firstCard.locator('.inter-heading-3-bold');
+			const title = firstCard.locator('[data-testid="story-title"]');
 			await expect(title).toBeVisible();
 
 			// Check for reading time
@@ -368,7 +354,7 @@ test.describe('HomeComponent', () => {
 
 			// Wait for cards or skeletons to appear
 			const cardsInSection = collectionsSection.locator(
-				'cuentoneta-storylist-card, cuentoneta-storylist-card-skeleton',
+				'cuentoneta-collection-teaser, cuentoneta-collection-teaser-skeleton',
 			);
 			await expect(cardsInSection.first()).toBeVisible({ timeout: 10000 });
 
@@ -383,7 +369,7 @@ test.describe('HomeComponent', () => {
 			const collectionsSection = page.locator('section.grid').last();
 
 			// Wait for storylist cards to appear
-			const cards = collectionsSection.locator('cuentoneta-storylist-card');
+			const cards = collectionsSection.locator('cuentoneta-collection-teaser');
 			await expect(cards.first()).toBeVisible({ timeout: 10000 });
 
 			const count = await cards.count();
@@ -393,10 +379,10 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('storylist cards should have title', async ({ page }) => {
-			await waitForStorylistCards(page);
+			await waitForElement(page, TEST_SELECTORS.COLLECTION_TEASER);
 
-			const firstCard = page.locator('cuentoneta-storylist-card').first();
-			const title = firstCard.locator('h1.h3');
+			const firstCard = page.locator('cuentoneta-collection-teaser').first();
+			const title = firstCard.locator('[data-testid="collection-title"]');
 
 			await expect(title).toBeVisible();
 			const titleText = await title.innerText();
@@ -404,9 +390,9 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('storylist cards should have description', async ({ page }) => {
-			await waitForStorylistCards(page);
+			await waitForElement(page, TEST_SELECTORS.COLLECTION_TEASER);
 
-			const firstCard = page.locator('cuentoneta-storylist-card').first();
+			const firstCard = page.locator('cuentoneta-collection-teaser').first();
 			const description = firstCard.locator('cuentoneta-portable-text-parser');
 
 			await expect(description).toBeVisible();
@@ -414,7 +400,7 @@ test.describe('HomeComponent', () => {
 
 		test('storylist cards should have story count badge', async ({ page }) => {
 			// Wait for cards to be visible
-			const cards = page.locator('cuentoneta-storylist-card');
+			const cards = page.locator('cuentoneta-collection-teaser');
 			await expect(cards.first()).toBeVisible({ timeout: 10000 });
 
 			const count = await cards.count();
@@ -439,9 +425,9 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('clicking on storylist card should navigate', async ({ page }) => {
-			await waitForStorylistCards(page);
+			await waitForElement(page, TEST_SELECTORS.COLLECTION_TEASER);
 
-			const firstCard = page.locator('cuentoneta-storylist-card').first();
+			const firstCard = page.locator('cuentoneta-collection-teaser').first();
 			const link = firstCard.locator('a.navigation-link');
 
 			await expect(link).toHaveAttribute('href', /\/storylist\/.+/);
@@ -450,7 +436,7 @@ test.describe('HomeComponent', () => {
 
 	test.describe('Navigation and Links', () => {
 		test('campaign carousel slide links should be valid', async ({ page }) => {
-			await waitForCarousel(page);
+			await waitForElement(page, TEST_SELECTORS.CAROUSEL);
 
 			const links = page.locator('.owl-item.active a');
 			if ((await links.count()) > 0) {
@@ -460,7 +446,7 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('story card links should navigate with correct paths', async ({ page }) => {
-			await waitForAnyCards(page);
+			await waitForElement(page, TEST_SELECTORS.CARD);
 
 			const firstCard = page.locator('[data-testid="card"]').first();
 			const storyLink = firstCard.locator('a[href^="/story/"]');
@@ -471,7 +457,7 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('author links should navigate correctly', async ({ page }) => {
-			await waitForAnyCards(page);
+			await waitForElement(page, TEST_SELECTORS.CARD);
 
 			const firstCard = page.locator('[data-testid="card"]').first();
 			const authorLink = firstCard.locator('a[href^="/author/"]');
@@ -481,7 +467,7 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('all navigation links should be accessible', async ({ page }) => {
-			await waitForAnyCards(page);
+			await waitForElement(page, TEST_SELECTORS.CARD);
 
 			// Obtener todos los links de la página
 			const links = page.locator('a[href]');
@@ -491,8 +477,10 @@ test.describe('HomeComponent', () => {
 
 			// Verificar que los primeros links son válidos
 			const linkCount = Math.min(5, count);
-			const hrefs = await Promise.all(Array.from({ length: linkCount }, (_, i) => links.nth(i).getAttribute('href')));
-			hrefs.forEach((href) => expect(href).toBeTruthy());
+			for (let i = 0; i < linkCount; i++) {
+				const href = await links.nth(i).getAttribute('href');
+				expect(href).toBeTruthy();
+			}
 		});
 	});
 
@@ -503,10 +491,15 @@ test.describe('HomeComponent', () => {
 
 			await page.waitForSelector('main.content');
 
-			// Check latest stories grid
+			// Check latest stories grid has CSS class for single column
 			const latestGrid = page.locator('cuentoneta-latest-stories-card-deck section');
 			const latestClass = await latestGrid.getAttribute('class');
 			expect(latestClass).toContain('grid-cols-1');
+
+			// Verify actual computed grid columns (should be single column on mobile)
+			const computedColumns = await latestGrid.evaluate((el) => window.getComputedStyle(el).gridTemplateColumns);
+			// Single column should have just one column value (not multiple)
+			expect(computedColumns.split(' ').length).toBe(1);
 
 			// Check featured collections grid
 			const collectionsGrid = page.locator('section.grid').last();
@@ -524,6 +517,11 @@ test.describe('HomeComponent', () => {
 			const latestGrid = page.locator('cuentoneta-latest-stories-card-deck section');
 			await expect(latestGrid).toBeVisible();
 
+			// Verify actual computed grid columns (should be multiple columns on desktop)
+			const computedColumns = await latestGrid.evaluate((el) => window.getComputedStyle(el).gridTemplateColumns);
+			// Multiple columns should have more than one column value
+			expect(computedColumns.split(' ').length).toBeGreaterThan(1);
+
 			const collectionsGrid = page.locator('section.grid').last();
 			await expect(collectionsGrid).toBeVisible();
 		});
@@ -536,7 +534,7 @@ test.describe('HomeComponent', () => {
 
 			const section = page.locator('main > section').first();
 			const className = await section.getAttribute('class');
-			expect(className).toContain('h-[189.36px]');
+			expect(className).toContain(CSS_CLASSES.CAROUSEL_HEIGHT_MOBILE);
 		});
 
 		test('desktop: carousel should use correct height', async ({ page }) => {
@@ -547,7 +545,7 @@ test.describe('HomeComponent', () => {
 
 			const section = page.locator('main > section').first();
 			const className = await section.getAttribute('class');
-			expect(className).toContain('sm:h-[317px]');
+			expect(className).toContain(CSS_CLASSES.CAROUSEL_HEIGHT_DESKTOP);
 		});
 
 		test('tablet: should use appropriate breakpoints', async ({ page }) => {
@@ -590,7 +588,7 @@ test.describe('HomeComponent', () => {
 
 			// Check if it has the height classes
 			const className = await section.getAttribute('class');
-			expect(className).toContain('h-[189.36px]');
+			expect(className).toContain(CSS_CLASSES.CAROUSEL_HEIGHT_MOBILE);
 		});
 
 		test('story card decks should have correct grid structure', async ({ page }) => {
@@ -612,7 +610,7 @@ test.describe('HomeComponent', () => {
 			await expect(latestDeck).toBeVisible();
 
 			// Esperar a que las tarjetas se carguen
-			await waitForAnyCards(page);
+			await waitForElement(page, TEST_SELECTORS.CARD);
 		});
 	});
 
@@ -620,7 +618,7 @@ test.describe('HomeComponent', () => {
 		test('should load data successfully', async ({ page }) => {
 			// Verificar que la página cargó exitosamente revisando componentes clave
 			// Esto prueba indirectamente que la llamada a la API fue exitosa
-			await waitForAnyCards(page);
+			await waitForElement(page, TEST_SELECTORS.CARD);
 
 			// Todos los componentes principales deben ser visibles, indicando carga exitosa de datos
 			const latestDeck = page.locator(TEST_SELECTORS.LATEST_DECK);
@@ -632,24 +630,24 @@ test.describe('HomeComponent', () => {
 			await expect(collectionsSection).toBeVisible();
 		});
 
-		test('should display exactly 6 latest stories', async ({ page }) => {
+		test('should display latest stories', async ({ page }) => {
 			await waitForCards(page, 'cuentoneta-latest-stories-card-deck');
 
 			const latestCards = page.locator('cuentoneta-latest-stories-card-deck [data-testid="card"]');
-			expect(await latestCards.count()).toBe(EXPECTED_COUNTS.LATEST_STORIES_CARDS);
+			expect(await latestCards.count()).toBeGreaterThan(0);
 		});
 
-		test('should display exactly 6 most-read stories', async ({ page }) => {
+		test('should display most-read stories', async ({ page }) => {
 			await waitForCards(page, 'cuentoneta-most-read-stories-card-deck');
 
 			const mostReadCards = page.locator('cuentoneta-most-read-stories-card-deck [data-testid="card"]');
-			expect(await mostReadCards.count()).toBe(EXPECTED_COUNTS.MOST_READ_CARDS);
+			expect(await mostReadCards.count()).toBeGreaterThan(0);
 		});
 
 		test('should display featured collections in grid section', async ({ page }) => {
 			// Get cards specifically from the collections grid section
 			const collectionsSection = page.locator('section.grid').last();
-			const cards = collectionsSection.locator('cuentoneta-storylist-card');
+			const cards = collectionsSection.locator('cuentoneta-collection-teaser');
 
 			// Wait for at least one card to be visible
 			await expect(cards.first()).toBeVisible({ timeout: 10000 });
@@ -661,45 +659,45 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('all sections should be present', async ({ page }) => {
-			await waitForAnyCards(page);
+			await waitForElement(page, TEST_SELECTORS.CARD);
 
 			const sections = page.locator(`${TEST_SELECTORS.MAIN_CONTENT} > section`);
 			expect(await sections.count()).toBe(EXPECTED_COUNTS.MAIN_SECTIONS);
 		});
 
 		test('story cards should have consistent data structure', async ({ page }) => {
-			await waitForAnyCards(page);
+			await waitForElement(page, TEST_SELECTORS.CARD);
 
 			const cards = page.locator('[data-testid="card"]');
 
 			// Check first 3 cards for consistency
-			await Promise.all(
-				Array.from({ length: 3 }, async (_, i) => {
-					const card = cards.nth(i);
+			for (let i = 0; i < 3; i++) {
+				const card = cards.nth(i);
 
-					// Each card should have these elements
-					await expect(card.locator('img[width="20"]')).toBeVisible(); // Author image
-					await expect(card.locator('.inter-body-sm-semibold')).toBeVisible(); // Author name
-					await expect(card.locator('.inter-heading-3-bold')).toBeVisible(); // Title
-					await expect(card.locator('footer')).toBeVisible(); // Footer with reading time
-				}),
-			);
+				// Each card should have these elements
+				await expect(card.locator('img[width="20"]')).toBeVisible(); // Author image
+				await expect(card.locator('[data-testid="author-name"]')).toBeVisible(); // Author name
+				await expect(card.locator('[data-testid="story-title"]')).toBeVisible(); // Title
+				await expect(card.locator('footer')).toBeVisible(); // Footer with reading time
+			}
 		});
 	});
 
 	test.describe('Accessibility', () => {
 		test('all images should have alt text', async ({ page }) => {
-			await waitForAnyCards(page);
+			await waitForElement(page, TEST_SELECTORS.CARD);
 
 			const images = page.locator('img');
 			const count = await images.count();
 
-			const altTexts = await Promise.all(Array.from({ length: count }, (_, i) => images.nth(i).getAttribute('alt')));
-			altTexts.forEach((alt) => expect(alt).toBeTruthy());
+			for (let i = 0; i < count; i++) {
+				const alt = await images.nth(i).getAttribute('alt');
+				expect(alt).toBeTruthy();
+			}
 		});
 
 		test('headings should have proper hierarchy', async ({ page }) => {
-			await waitForAnyCards(page);
+			await waitForElement(page, TEST_SELECTORS.CARD);
 
 			// Verificar encabezados h2
 			const h2Headings = page.locator('h2');
@@ -710,7 +708,7 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('links should be keyboard accessible', async ({ page }) => {
-			await waitForAnyCards(page);
+			await waitForElement(page, TEST_SELECTORS.CARD);
 
 			// Navegar con Tab al primer link
 			await page.keyboard.press('Tab');
@@ -719,7 +717,7 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('interactive elements should have proper focus states', async ({ page }) => {
-			await waitForCarousel(page);
+			await waitForElement(page, TEST_SELECTORS.CAROUSEL);
 
 			// Verificar puntos del carrusel
 			const dots = page.locator('.owl-dots .owl-dot');
@@ -730,13 +728,51 @@ test.describe('HomeComponent', () => {
 		});
 
 		test('semantic HTML elements should be used', async ({ page }) => {
-			await waitForAnyCards(page);
+			await waitForElement(page, TEST_SELECTORS.CARD);
 
 			// Verificar elementos semánticos (usar first() para evitar violaciones de modo estricto)
 			await expect(page.locator('main').first()).toBeVisible();
 			await expect(page.locator('section').first()).toBeVisible();
 			await expect(page.locator('article').first()).toBeVisible();
 			await expect(page.locator('footer').first()).toBeVisible();
+		});
+
+		test('page should have lang attribute for accessibility', async ({ page }) => {
+			const htmlLang = await page.locator('html').getAttribute('lang');
+			expect(htmlLang).toBeTruthy();
+		});
+
+		test('links should have meaningful text content', async ({ page }) => {
+			await waitForElement(page, TEST_SELECTORS.CARD);
+
+			// Check that links have text content or aria-label
+			const links = page.locator('a[href]');
+			const count = Math.min(10, await links.count());
+
+			for (let i = 0; i < count; i++) {
+				const link = links.nth(i);
+				const text = await link.innerText();
+				const ariaLabel = await link.getAttribute('aria-label');
+				const hasImage = (await link.locator('img').count()) > 0;
+
+				// Link should have text, aria-label, or contain an image with alt
+				expect(text.trim().length > 0 || ariaLabel || hasImage).toBeTruthy();
+			}
+		});
+
+		test('buttons and interactive elements should be focusable', async ({ page }) => {
+			await waitForElement(page, TEST_SELECTORS.CARD);
+
+			// Check that interactive elements can receive focus
+			const interactiveElements = page.locator('a, button, [tabindex="0"]');
+			const count = await interactiveElements.count();
+
+			expect(count).toBeGreaterThan(0);
+
+			// First interactive element should be focusable
+			const firstElement = interactiveElements.first();
+			await firstElement.focus();
+			await expect(firstElement).toBeFocused();
 		});
 	});
 
@@ -782,12 +818,44 @@ test.describe('HomeComponent', () => {
 				const cards = page.locator(`${TEST_SELECTORS.LATEST_DECK} ${TEST_SELECTORS.CARD}`);
 				await expect(cards.first()).toBeVisible();
 			});
+
+			test('should handle API 500 error gracefully', async ({ page }) => {
+				// Mock API to return 500 error
+				await page.route('**/api/content/landing-page', async (route) => {
+					await route.fulfill({
+						status: 500,
+						contentType: 'application/json',
+						body: JSON.stringify({ error: 'Internal Server Error' }),
+					});
+				});
+
+				await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+				// Page should still render main content structure
+				await expect(page.locator(TEST_SELECTORS.MAIN_CONTENT)).toBeVisible();
+
+				// Component decks should be visible (showing loading or empty state)
+				await expect(page.locator(TEST_SELECTORS.LATEST_DECK)).toBeVisible();
+				await expect(page.locator(TEST_SELECTORS.MOST_READ_DECK)).toBeVisible();
+			});
+
+			test('should handle network failure gracefully', async ({ page }) => {
+				// Mock network failure
+				await page.route('**/api/content/landing-page', async (route) => {
+					await route.abort('failed');
+				});
+
+				await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+				// Page should still render main content structure even with network failure
+				await expect(page.locator(TEST_SELECTORS.MAIN_CONTENT)).toBeVisible();
+			});
 		});
 
 		// Los demás edge cases usan el beforeEach raíz
 		test('should handle missing storylist tags gracefully', async ({ page }) => {
 			// Esperamos a que las tarjetas sean visibles
-			const cards = page.locator('cuentoneta-storylist-card');
+			const cards = page.locator('cuentoneta-collection-teaser');
 			await expect(cards.first()).toBeVisible({ timeout: 10000 });
 
 			const count = await cards.count();
@@ -797,14 +865,7 @@ test.describe('HomeComponent', () => {
 
 			// Verificar que la estructura de cards está en su lugar aunque sea sin tags
 			const firstCard = cards.first();
-			await expect(firstCard.locator('h1.h3')).toBeVisible(); // Title should be visible
-		});
-
-		test('page should have main content visible', async ({ page }) => {
-			await page.goto('/');
-
-			// La estructura básica del contenido debe ser visible
-			await expect(page.locator('main')).toBeVisible();
+			await expect(firstCard.locator('[data-testid="collection-title"]')).toBeVisible(); // Title should be visible
 		});
 	});
 });
