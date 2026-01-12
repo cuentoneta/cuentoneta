@@ -1,21 +1,21 @@
 import { expect, type Page, type Locator } from '@playwright/test';
 
 /**
- * HomeComponent E2E Test Utilities
+ * Utilidades de tests E2E para HomeComponent
  *
- * Test Data Strategy:
- * These tests intentionally use live backend data to validate the full integration
- * between the frontend and API. This approach:
- * - Validates real-world scenarios with actual content
- * - Ensures the API contract is maintained
- * - Tests loading states and error handling with real network conditions
+ * Estrategia de datos de prueba:
+ * Estos tests utilizan intencionalmente datos reales del backend para validar
+ * la integración completa entre el frontend y la API. Este enfoque:
+ * - Valida escenarios reales con contenido actual
+ * - Asegura que el contrato de la API se mantiene
+ * - Prueba estados de carga y manejo de errores con condiciones de red reales
  *
- * Trade-offs:
- * - Tests may fail if backend data changes significantly
- * - Requires a running backend server
+ * Consideraciones:
+ * - Los tests pueden fallar si los datos del backend cambian significativamente
+ * - Requiere un servidor backend en ejecución
  *
- * For isolated unit testing, consider using component tests with mocked data.
- * Network edge cases are tested in home-edge-cases.spec.ts with route mocking.
+ * Para tests unitarios aislados, considerar usar tests de componentes con datos mockeados.
+ * Los casos extremos de red se prueban en home-edge-cases.spec.ts con mocking de rutas.
  */
 
 // Test configuration constants
@@ -27,12 +27,12 @@ export const TEST_TIMEOUTS = {
 
 export const EXPECTED_COUNTS = {
 	MAIN_SECTIONS: 4,
-	// Check first 3 cards to balance test coverage vs execution speed.
-	// Verifying all cards would slow tests; 3 provides sufficient confidence
-	// that the data structure is consistent across the card deck.
+	// Verificamos las primeras 3 tarjetas para balancear cobertura vs velocidad.
+	// Verificar todas las tarjetas ralentizaría los tests; 3 proporciona
+	// confianza suficiente de que la estructura de datos es consistente.
 	CARDS_TO_VERIFY: 3,
-	MAX_LINKS_TO_VERIFY: 5, // Max navigation links to validate
-	MAX_A11Y_LINKS_TO_CHECK: 10, // Max links to check for accessibility
+	MAX_LINKS_TO_VERIFY: 5, // Máximo de links de navegación a validar
+	MAX_A11Y_LINKS_TO_CHECK: 10, // Máximo de links a verificar para accesibilidad
 } as const;
 
 export const TEST_SELECTORS = {

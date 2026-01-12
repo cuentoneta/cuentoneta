@@ -69,17 +69,17 @@ test.describe('HomeComponent - Campaign Carousel Section', () => {
 		const buttonCount = await indicatorButtons.count();
 
 		if (buttonCount > 1) {
-			// Get the second indicator button
+			// Obtener el segundo botón indicador
 			const secondIndicator = indicatorButtons.nth(1);
 
-			// Click second indicator
+			// Click en el segundo indicador
 			await secondIndicator.click();
 
-			// Wait for the second indicator to become active (deterministic wait for state change)
-			// Uses aria-current attribute which indicates the active slide
+			// Esperar a que el segundo indicador se active (espera determinística por cambio de estado)
+			// Usa el atributo aria-current que indica el slide activo
 			await expect(secondIndicator).toHaveAttribute('aria-current', 'true', { timeout: 2000 });
 
-			// Verify the carousel navigated (active slide changed)
+			// Verificar que el carrusel navegó (el slide activo cambió)
 			const activeSlide = carousel.locator('.slide.active');
 			await expect(activeSlide).toBeVisible();
 		}

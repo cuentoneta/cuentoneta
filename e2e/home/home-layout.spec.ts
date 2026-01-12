@@ -57,7 +57,7 @@ test.describe('HomeComponent - Navigation and Links', () => {
 });
 
 test.describe('HomeComponent - Responsive Layout', () => {
-	// Reset viewport to default after each test to ensure test isolation
+	// Restaurar viewport al valor por defecto después de cada test para asegurar aislamiento
 	test.afterEach(async ({ page }) => {
 		await page.setViewportSize(VIEWPORTS.DESKTOP);
 	});
