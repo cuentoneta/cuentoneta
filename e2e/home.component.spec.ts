@@ -806,8 +806,8 @@ test.describe('HomeComponent', () => {
 				await page.goto('/', { waitUntil: 'domcontentloaded' });
 
 				const carousel = page.locator(TEST_SELECTORS.CAROUSEL);
-				const carouselItems = carousel.locator('.owl-item');
-				expect(await carouselItems.count()).toBe(0);
+				const carouselSlides = carousel.locator('.slide');
+				expect(await carouselSlides.count()).toBe(0);
 
 				await expect(page.locator(TEST_SELECTORS.LATEST_DECK)).toBeVisible();
 				const cards = page.locator(`${TEST_SELECTORS.LATEST_DECK} ${TEST_SELECTORS.CARD}`);
