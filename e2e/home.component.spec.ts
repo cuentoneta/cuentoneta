@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Page, type Locator } from '@playwright/test';
 
 // Constantes de configuración de tests
 const TEST_TIMEOUTS = {
@@ -9,6 +9,9 @@ const TEST_TIMEOUTS = {
 
 const EXPECTED_COUNTS = {
 	MAIN_SECTIONS: 4,
+	CARDS_TO_VERIFY: 3, // Number of cards to check in consistency tests
+	MAX_LINKS_TO_VERIFY: 5, // Max navigation links to validate
+	MAX_A11Y_LINKS_TO_CHECK: 10, // Max links to check for accessibility
 } as const;
 
 const TEST_SELECTORS = {
@@ -40,6 +43,17 @@ async function waitForElement(page: Page, selector: string, timeout = TEST_TIMEO
 
 async function waitForCards(page: Page, componentSelector: string) {
 	return await waitForElement(page, `${componentSelector} [data-testid="card"]`);
+}
+
+async function verifyStoryCardStructure(card: Locator) {
+	// Author image
+	await expect(card.locator('img[width="20"][height="20"]')).toBeVisible();
+	// Author name
+	await expect(card.locator('[data-testid="author-name"]')).toBeVisible();
+	// Title
+	await expect(card.locator('[data-testid="story-title"]')).toBeVisible();
+	// Footer with reading time
+	await expect(card.locator('footer')).toContainText(/minutos de lectura/);
 }
 
 test.describe('HomeComponent', () => {
@@ -228,38 +242,19 @@ test.describe('HomeComponent', () => {
 			expect(await cards.count()).toBeGreaterThan(0);
 		});
 
-		test('story cards should have author information', async ({ page }) => {
+		test('story cards should have correct structure', async ({ page }) => {
 			await waitForCards(page, 'cuentoneta-latest-stories-card-deck');
 
 			const firstCard = page.locator('cuentoneta-latest-stories-card-deck [data-testid="card"]').first();
 
-			// Check for author image
-			const authorImg = firstCard.locator('img[width="20"][height="20"]');
-			await expect(authorImg).toBeVisible();
+			// Use shared helper to verify common card structure
+			await verifyStoryCardStructure(firstCard);
 
-			// Check for author name
-			const authorName = firstCard.locator('[data-testid="author-name"]');
-			await expect(authorName).toBeVisible();
-		});
-
-		test('story cards should have title', async ({ page }) => {
-			await waitForCards(page, 'cuentoneta-latest-stories-card-deck');
-
-			const firstCard = page.locator('cuentoneta-latest-stories-card-deck [data-testid="card"]').first();
-			const title = firstCard.locator('[data-testid="story-title"]');
-			await expect(title).toBeVisible();
-
-			const titleText = await title.innerText();
+			// Additional checks specific to latest stories
+			const titleText = await firstCard.locator('[data-testid="story-title"]').innerText();
 			expect(titleText.length).toBeGreaterThan(0);
-		});
 
-		test('story cards should have reading time', async ({ page }) => {
-			await waitForCards(page, 'cuentoneta-latest-stories-card-deck');
-
-			const firstCard = page.locator('cuentoneta-latest-stories-card-deck [data-testid="card"]').first();
-			const footer = firstCard.locator('footer');
-			await expect(footer).toContainText(/minutos de lectura/);
-			await expect(footer).toContainText('Leer ->');
+			await expect(firstCard.locator('footer')).toContainText('Leer ->');
 		});
 
 		test('story cards should have order numbers', async ({ page }) => {
@@ -268,7 +263,7 @@ test.describe('HomeComponent', () => {
 			const cards = page.locator('cuentoneta-latest-stories-card-deck [data-testid="card"]');
 
 			// Check first few cards have order numbers
-			for (let i = 0; i < 3; i++) {
+			for (let i = 0; i < EXPECTED_COUNTS.CARDS_TO_VERIFY; i++) {
 				const card = cards.nth(i);
 				const orderNumber = card.locator('[data-testid="story-order"]');
 				await expect(orderNumber).toBeVisible();
@@ -287,7 +282,7 @@ test.describe('HomeComponent', () => {
 			expect(className).toContain('md:grid-cols-3');
 		});
 
-		test('clicking on story title should navigate', async ({ page }) => {
+		test('story title link should have correct href', async ({ page }) => {
 			await waitForCards(page, 'cuentoneta-latest-stories-card-deck');
 
 			const firstCard = page.locator('cuentoneta-latest-stories-card-deck [data-testid="card"]').first();
@@ -296,7 +291,7 @@ test.describe('HomeComponent', () => {
 			await expect(storyLink).toHaveAttribute('href', /\/story\/.+/);
 		});
 
-		test('clicking on author should navigate', async ({ page }) => {
+		test('author link should have correct href', async ({ page }) => {
 			await waitForCards(page, 'cuentoneta-latest-stories-card-deck');
 
 			const firstCard = page.locator('cuentoneta-latest-stories-card-deck [data-testid="card"]').first();
@@ -321,22 +316,13 @@ test.describe('HomeComponent', () => {
 			expect(await cards.count()).toBeGreaterThan(0);
 		});
 
-		test('most-read cards should have same structure as latest stories', async ({ page }) => {
+		test('most-read cards should have correct structure', async ({ page }) => {
 			await waitForCards(page, 'cuentoneta-most-read-stories-card-deck');
 
 			const firstCard = page.locator('cuentoneta-most-read-stories-card-deck [data-testid="card"]').first();
 
-			// Check for author
-			const authorImg = firstCard.locator('img[width="20"][height="20"]');
-			await expect(authorImg).toBeVisible();
-
-			// Check for title
-			const title = firstCard.locator('[data-testid="story-title"]');
-			await expect(title).toBeVisible();
-
-			// Check for reading time
-			const footer = firstCard.locator('footer');
-			await expect(footer).toContainText(/minutos de lectura/);
+			// Use shared helper to verify card structure (same as latest stories)
+			await verifyStoryCardStructure(firstCard);
 		});
 	});
 
@@ -432,7 +418,7 @@ test.describe('HomeComponent', () => {
 			expect(className).toContain('sm:grid-cols-2');
 		});
 
-		test('clicking on storylist card should navigate', async ({ page }) => {
+		test('storylist card link should have correct href', async ({ page }) => {
 			await waitForElement(page, TEST_SELECTORS.COLLECTION_TEASER);
 
 			const firstCard = page.locator('cuentoneta-collection-teaser').first();
@@ -485,7 +471,7 @@ test.describe('HomeComponent', () => {
 			expect(count).toBeGreaterThan(0);
 
 			// Verificar que los primeros links son válidos
-			const linkCount = Math.min(5, count);
+			const linkCount = Math.min(EXPECTED_COUNTS.MAX_LINKS_TO_VERIFY, count);
 			for (let i = 0; i < linkCount; i++) {
 				const href = await links.nth(i).getAttribute('href');
 				expect(href).toBeTruthy();
@@ -679,8 +665,8 @@ test.describe('HomeComponent', () => {
 
 			const cards = page.locator('[data-testid="card"]');
 
-			// Check first 3 cards for consistency
-			for (let i = 0; i < 3; i++) {
+			// Check first cards for consistency
+			for (let i = 0; i < EXPECTED_COUNTS.CARDS_TO_VERIFY; i++) {
 				const card = cards.nth(i);
 
 				// Each card should have these elements
@@ -756,7 +742,7 @@ test.describe('HomeComponent', () => {
 
 			// Check that links have text content or aria-label
 			const links = page.locator('a[href]');
-			const count = Math.min(10, await links.count());
+			const count = Math.min(EXPECTED_COUNTS.MAX_A11Y_LINKS_TO_CHECK, await links.count());
 
 			for (let i = 0; i < count; i++) {
 				const link = links.nth(i);
