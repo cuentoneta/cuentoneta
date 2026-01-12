@@ -1,5 +1,23 @@
 import { expect, type Page, type Locator } from '@playwright/test';
 
+/**
+ * HomeComponent E2E Test Utilities
+ *
+ * Test Data Strategy:
+ * These tests intentionally use live backend data to validate the full integration
+ * between the frontend and API. This approach:
+ * - Validates real-world scenarios with actual content
+ * - Ensures the API contract is maintained
+ * - Tests loading states and error handling with real network conditions
+ *
+ * Trade-offs:
+ * - Tests may fail if backend data changes significantly
+ * - Requires a running backend server
+ *
+ * For isolated unit testing, consider using component tests with mocked data.
+ * Network edge cases are tested in home-edge-cases.spec.ts with route mocking.
+ */
+
 // Test configuration constants
 export const TEST_TIMEOUTS = {
 	DEFAULT: 10000,
