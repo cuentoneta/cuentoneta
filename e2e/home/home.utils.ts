@@ -36,6 +36,12 @@ export const CSS_CLASSES = {
 	CAROUSEL_ASPECT_DESKTOP: 'sm:aspect-[1240/360]',
 } as const;
 
+export const VIEWPORTS = {
+	MOBILE: { width: 375, height: 667 }, // iPhone SE
+	TABLET: { width: 768, height: 1024 }, // iPad
+	DESKTOP: { width: 1280, height: 720 }, // Standard desktop
+} as const;
+
 // Helper functions
 export async function waitForElement(page: Page, selector: string, timeout = TEST_TIMEOUTS.ELEMENT_WAIT) {
 	return await page.waitForSelector(selector, { timeout });

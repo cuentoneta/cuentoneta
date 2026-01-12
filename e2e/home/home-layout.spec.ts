@@ -1,12 +1,5 @@
 import { test, expect } from '@playwright/test';
-import {
-	setupHomePage,
-	waitForElement,
-	TEST_SELECTORS,
-	CSS_CLASSES,
-	EXPECTED_COUNTS,
-	TEST_TIMEOUTS,
-} from './home.utils';
+import { setupHomePage, waitForElement, TEST_SELECTORS, CSS_CLASSES, EXPECTED_COUNTS, VIEWPORTS } from './home.utils';
 
 test.describe('HomeComponent - Navigation and Links', () => {
 	test.beforeEach(async ({ page }) => {
@@ -64,8 +57,13 @@ test.describe('HomeComponent - Navigation and Links', () => {
 });
 
 test.describe('HomeComponent - Responsive Layout', () => {
+	// Reset viewport to default after each test to ensure test isolation
+	test.afterEach(async ({ page }) => {
+		await page.setViewportSize(VIEWPORTS.DESKTOP);
+	});
+
 	test('mobile: should display single column layouts', async ({ page }) => {
-		await page.setViewportSize({ width: 375, height: 667 }); // iPhone SE size
+		await page.setViewportSize(VIEWPORTS.MOBILE);
 		await page.goto('/');
 
 		await page.waitForSelector('main.content');
@@ -87,7 +85,7 @@ test.describe('HomeComponent - Responsive Layout', () => {
 	});
 
 	test('desktop: should display multi-column layouts', async ({ page }) => {
-		await page.setViewportSize({ width: 1280, height: 720 }); // Desktop size
+		await page.setViewportSize(VIEWPORTS.DESKTOP);
 		await page.goto('/');
 
 		await page.waitForSelector('main.content');
@@ -106,7 +104,7 @@ test.describe('HomeComponent - Responsive Layout', () => {
 	});
 
 	test('mobile: carousel should use correct height', async ({ page }) => {
-		await page.setViewportSize({ width: 375, height: 667 });
+		await page.setViewportSize(VIEWPORTS.MOBILE);
 		await page.goto('/');
 
 		await page.waitForSelector('main > section');
@@ -117,7 +115,7 @@ test.describe('HomeComponent - Responsive Layout', () => {
 	});
 
 	test('desktop: carousel should use correct height', async ({ page }) => {
-		await page.setViewportSize({ width: 1280, height: 720 });
+		await page.setViewportSize(VIEWPORTS.DESKTOP);
 		await page.goto('/');
 
 		await page.waitForSelector('main > section');
@@ -128,7 +126,7 @@ test.describe('HomeComponent - Responsive Layout', () => {
 	});
 
 	test('tablet: should use appropriate breakpoints', async ({ page }) => {
-		await page.setViewportSize({ width: 768, height: 1024 }); // iPad size
+		await page.setViewportSize(VIEWPORTS.TABLET);
 		await page.goto('/');
 
 		await page.waitForSelector('main.content');
