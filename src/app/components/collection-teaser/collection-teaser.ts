@@ -34,6 +34,7 @@ import { NgOptimizedImage } from '@angular/common';
 					<section class="flex flex-1 flex-col gap-1 overflow-hidden">
 						<header
 							class="hover:text-interactive-500 line-clamp-2 cursor-pointer font-inter text-lg font-bold sm:line-clamp-1"
+							data-testid="collection-title"
 						>
 							{{ storylist.title }}
 						</header>

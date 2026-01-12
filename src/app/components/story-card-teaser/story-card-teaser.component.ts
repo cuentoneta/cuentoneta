@@ -13,7 +13,9 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 		@if (story(); as story) {
 			<article class="flex gap-4">
 				@if (order()) {
-					<span class="source-serif-2-5xl font-bold leading-none text-brand-500">{{ formattedOrder() }}.</span>
+					<span class="source-serif-2-5xl font-bold leading-none text-brand-500" data-testid="story-order"
+						>{{ formattedOrder() }}.</span
+					>
 				}
 				<div class="flex flex-1 flex-col">
 					@if (showAuthor() && 'author' in story) {
@@ -25,7 +27,9 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 								height="20"
 								class="h-5 w-5 rounded-full"
 							/>
-							<span class="font-inter text-sm font-semibold text-neutral-500">{{ story.author.name }}</span>
+							<span class="font-inter text-sm font-semibold text-neutral-500" data-testid="author-name">{{
+								story.author.name
+							}}</span>
 						</a>
 					}
 					<a
@@ -34,7 +38,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 						[class]="showExcerpt() ? 'gap-2' : 'gap-1'"
 						class="grid h-full grid-rows-[auto_auto_auto]"
 					>
-						<header class="line-clamp-2 font-inter text-xl font-bold">
+						<header class="line-clamp-2 font-inter text-xl font-bold" data-testid="story-title">
 							{{ story.title }}
 						</header>
 						@if (showExcerpt() && story.paragraphs.length > 0) {
