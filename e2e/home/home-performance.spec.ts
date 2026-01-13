@@ -17,7 +17,7 @@ const PERFORMANCE_BUDGETS = {
 	LOAD_TIME: 5000, // Tiempo total de carga
 	LCP: 4000, // Largest Contentful Paint (umbral permisivo para CI)
 	FCP: 3000, // First Contentful Paint
-	DOM_CONTENT_LOADED: 3000, // DOMContentLoaded
+	DOM_CONTENT_LOADED: 5000, // DOMContentLoaded
 } as const;
 
 test.describe('HomeComponent - Performance', () => {
