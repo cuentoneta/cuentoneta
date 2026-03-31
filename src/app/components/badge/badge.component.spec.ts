@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/angular';
 import { BadgeComponent } from './badge.component';
 import { tagMock } from '../../mocks/tag.mocks';
-
 describe('BadgeComponent', () => {
 	it('should render the component', async () => {
 		const { container } = await render(BadgeComponent, {
@@ -12,7 +11,6 @@ describe('BadgeComponent', () => {
 		});
 		expect(container).toBeTruthy();
 	});
-
 	it('should display the mock badge title', async () => {
 		await render(BadgeComponent, {
 			inputs: {
@@ -24,4 +22,3 @@ describe('BadgeComponent', () => {
 		expect(resourceElement).toBeInTheDocument();
 	});
 });
-

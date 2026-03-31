@@ -1,17 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-
 import { ContributorService } from './contributor.service';
 import { Contributor } from '@models/contributor.model';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
 import { provideHttpClient } from '@angular/common/http';
-
 describe('ContributorService', () => {
 	let service: ContributorService;
 	let httpMock: HttpTestingController;
 	const apiUrl = `${environment.apiUrl}${Endpoints.Contributor}`;
-
 	beforeEach(() => {
 		TestBed.configureTestingModule({
 			providers: [ContributorService, provideHttpClient(), provideHttpClientTesting()],
@@ -19,15 +16,12 @@ describe('ContributorService', () => {
 		service = TestBed.inject(ContributorService);
 		httpMock = TestBed.inject(HttpTestingController);
 	});
-
 	afterEach(() => {
 		httpMock.verify();
 	});
-
 	it('should be created', () => {
 		expect(service).toBeTruthy();
 	});
-
 	describe('getAll', () => {
 		it('should fetch all contributors from the API', () => {
 			const mockContributors: Contributor[] = [
@@ -58,28 +52,23 @@ describe('ContributorService', () => {
 					link: { handle: '@arrobapato', url: 'https://twitter.com/arroba_pato' },
 				},
 			];
-
 			service.getAll().subscribe((contributors) => {
 				expect(contributors).toEqual(mockContributors);
 				expect(contributors.length).toBe(4);
 			});
-
 			const req = httpMock.expectOne(apiUrl);
 			expect(req.request.method).toBe('GET');
 			req.flush(mockContributors);
 		});
-
 		it('should return an empty array when no contributors are available', () => {
 			service.getAll().subscribe((contributors) => {
 				expect(contributors).toEqual([]);
 				expect(contributors.length).toBe(0);
 			});
-
 			const req = httpMock.expectOne(apiUrl);
 			expect(req.request.method).toBe('GET');
 			req.flush([]);
 		});
-
 		it('should handle HTTP errors gracefully', () => {
 			service.getAll().subscribe(
 				() => {
@@ -89,7 +78,6 @@ describe('ContributorService', () => {
 					expect(error.status).toBe(500);
 				},
 			);
-
 			const req = httpMock.expectOne(apiUrl);
 			req.flush('Server error', { status: 500, statusText: 'Internal Server Error' });
 		});

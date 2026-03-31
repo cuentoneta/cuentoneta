@@ -7,7 +7,6 @@ import { FooterComponent } from '@components/footer/footer.component';
 import { AnalyticsService } from './providers/analytics/analytics.service';
 import { AnalyticsMockService } from './providers/analytics/analytics.mock.service';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-
 describe('AppComponent', () => {
 	const setup = async () => {
 		return await render(AppComponent, {
@@ -19,7 +18,6 @@ describe('AppComponent', () => {
 			],
 		});
 	};
-
 	it('should create the app', async () => {
 		const view = setup();
 		expect(view).toBeTruthy();
