@@ -27,7 +27,7 @@ export interface EnvironmentConfig {
 }
 
 export const environment: EnvironmentConfig = {
-	production: true,
+	production: process.env['VERCEL_TARGET_ENV'] === 'production',
 	// TODO: Mover obtención de la URL base a las variables de entorno
 	basePath: 'https://www.cuentoneta.ar',
 	sanity: {
@@ -43,3 +43,16 @@ export const environment: EnvironmentConfig = {
 		apiKey: process.env['TWITTER_API_KEY'] as string,
 	},
 };
+
+/**
+ * A partir de la versión 21.1 de Angular, para SSR, debe proveerse una whitelist
+ * de hostnames para dar por válidas las requests que debe responder el servidor
+ * de NodeJS
+ */
+export function getAllowedHosts(): string[] {
+	const hosts = ['localhost', 'cuentoneta.ar', '*.cuentoneta.ar'];
+	if (!environment.production) {
+		hosts.push('*.vercel.app');
+	}
+	return hosts;
+}
