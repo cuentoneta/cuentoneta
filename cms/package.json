@@ -17,24 +17,26 @@
 		"sanity"
 	],
 	"dependencies": {
-		"@sanity/cli": "^5.2.0",
+		"@sanity/cli": "^6.3.1",
+		"@sanity/export": "^6.1.0",
 		"@sanity/icons": "^3.4.0",
-		"@sanity/vision": "^5.0.1",
-		"dayjs": "^1.11.19",
+		"@sanity/import": "^6.0.1",
+		"@sanity/vision": "^5.19.0",
+		"dayjs": "^1.11.20",
 		"prop-types": "^15.8.1",
-		"react": "^19.2.3",
-		"react-dom": "^19.2.3",
-		"react-icons": "^5.5.0",
-		"react-is": "^19.2.3",
-		"sanity": "^5.0.1",
+		"react": "^19.2.4",
+		"react-dom": "^19.2.4",
+		"react-icons": "^5.6.0",
+		"react-is": "^19.2.4",
+		"sanity": "^5.19.0",
 		"sanity-plugin-bulk-actions-table": "^1.0.4",
 		"sanity-plugin-computed-field": "^2.0.2",
 		"sanity-plugin-icon-picker": "^4.0.0",
-		"sanity-plugin-singleton-management": "^1.0.5",
-		"styled-components": "^6.1.13"
+		"sanity-plugin-singleton-management": "^1.0.6",
+		"styled-components": "^6.3.12"
 	},
 	"devDependencies": {
-		"@types/node": "^22.9.0",
+		"@types/node": "^22.12.0",
 		"ts-node": "^10.9.2"
 	}
 }
