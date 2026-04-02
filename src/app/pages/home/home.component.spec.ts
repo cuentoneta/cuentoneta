@@ -7,6 +7,7 @@ import { provideMock } from '@testing-library/angular/jest-utils';
 import { ContentService } from '../../providers/content.service';
 import { Component, input } from '@angular/core';
 import { Storylist } from '@models/storylist.model';
+
 xdescribe('HomeComponent', () => {
 	const setup = async () => {
 		return await render(HomeComponent, {
@@ -21,11 +22,13 @@ xdescribe('HomeComponent', () => {
 			componentProviders: [provideRouter([]), { provide: ContentService, useClass: provideMock(ContentService) }],
 		});
 	};
+
 	it('should create', async () => {
 		const view = setup();
 		expect(view).toBeTruthy();
 	});
 });
+
 @Component({
 	standalone: true,
 	selector: 'cuentoneta-storylist-card-deck:not(p)',

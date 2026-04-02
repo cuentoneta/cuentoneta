@@ -1,18 +1,24 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Observable, of } from 'rxjs';
+
 // Components
 import { StorylistNavigationFrameComponent } from './storylist-navigation-frame.component';
 import { NavigableStorylistStoryTeaserComponent } from '../navigable-storylist-story-teaser/navigable-storylist-story-teaser.component';
+
 // Models
 import { Storylist } from '@models/storylist.model';
+
 // Mocks
 import { storylistMock } from '@mocks/storylist.mock';
 import { storyMock } from '@mocks/story.mock';
+
 // Services
 import { StorylistService } from '../../providers/storylist.service';
+
 // 3rd party libs
 import { render, screen } from '@testing-library/angular';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+
 describe('StorylistNavigationFrameComponent', () => {
 	const setup = async () => {
 		return await render(StorylistNavigationFrameComponent, {
@@ -34,10 +40,12 @@ describe('StorylistNavigationFrameComponent', () => {
 			],
 		});
 	};
+
 	test('should render StorylistNavigationFrameComponent', async () => {
 		const view = await setup();
 		expect(view).toBeTruthy();
 	});
+
 	test('should render StorylistNavigationFrameComponent with stories', async () => {
 		const view = await setup();
 		view.detectChanges();
