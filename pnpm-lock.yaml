@@ -68,11 +68,11 @@ importers:
         specifier: 22.4.5
         version: 22.4.5(2290ca806bf042cfb5c59096028c8b8e)
       '@sanity/client':
-        specifier: ^7.13.2
-        version: 7.13.2
+        specifier: ^7.20.0
+        version: 7.20.0
       '@sanity/image-url':
-        specifier: ^2.0.2
-        version: 2.0.2
+        specifier: ^2.1.1
+        version: 2.1.1
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -3423,23 +3423,23 @@ packages:
       webpack-hot-middleware:
         optional: true
 
-  '@sanity/client@7.13.2':
+  '@sanity/client@7.20.0':
     resolution:
-      { integrity: sha512-bXuQGWgrpkSInZy8lfCMmOgdTNpsoZ7PORW0+zXss8qVpNo1DC002l1c8to6kfxNF0OaL9v7LwsPqKcTZ/VWrw== }
+      { integrity: sha512-uKwfqA+UfyWH6QzqpDD2DQnZu+WRa2iCM3OJ9AoyDZB9oHLl2NKI+9mX1xEZ7PiBuq09pogI7sxKaTKnaB6d+g== }
     engines: { node: '>=20' }
 
   '@sanity/eventsource@5.0.2':
     resolution:
       { integrity: sha512-/B9PMkUvAlUrpRq0y+NzXgRv5lYCLxZNsBJD2WXVnqZYOfByL9oQBV7KiTaARuObp5hcQYuPfOAVjgXe3hrixA== }
 
-  '@sanity/image-url@2.0.2':
+  '@sanity/image-url@2.1.1':
     resolution:
-      { integrity: sha512-JnwFIHATLXHGVTCKmVwV0xy3xKwGlgVfeUB9cWxu72xJZMsQUyFgGiTz4zD9gRXuncAndkmtzHeIG+2vhKgxHA== }
+      { integrity: sha512-qVXsF1teWR6FO3ZFAz46HDcRU+E6EQkpyncPnkGOzeJ1PgnaOiWMVbiSrZtX10s3txzzu/tAjKwbxbGHfDWgGw== }
     engines: { node: '>=20.19.0' }
 
-  '@sanity/signed-urls@2.0.1':
+  '@sanity/signed-urls@2.0.2':
     resolution:
-      { integrity: sha512-/u++FnDbaXDWHiHxG1Q4rbGsKRPf6lmTKsXeZ3bbbty/kNHDhVRUA5mRA+TtXlbPrse4ksv3a2vAerKNUNDZOw== }
+      { integrity: sha512-w/Aq0JDYI44WC5w8mzJBAjCem8qlGrxGTzvNbUWwBfys6kSL+TZBSypV5waCc35XRgt0X5zdYZMJOrshcjJLFw== }
 
   '@schematics/angular@21.1.5':
     resolution:
@@ -14746,7 +14746,7 @@ snapshots:
     optionalDependencies:
       webpack-hot-middleware: 2.25.3
 
-  '@sanity/client@7.13.2':
+  '@sanity/client@7.20.0':
     dependencies:
       '@sanity/eventsource': 5.0.2
       get-it: 8.7.0
@@ -14762,11 +14762,11 @@ snapshots:
       event-source-polyfill: 1.0.31
       eventsource: 2.0.2
 
-  '@sanity/image-url@2.0.2':
+  '@sanity/image-url@2.1.1':
     dependencies:
-      '@sanity/signed-urls': 2.0.1
+      '@sanity/signed-urls': 2.0.2
 
-  '@sanity/signed-urls@2.0.1':
+  '@sanity/signed-urls@2.0.2':
     dependencies:
       '@noble/ed25519': 3.0.0
       '@noble/hashes': 2.0.1
