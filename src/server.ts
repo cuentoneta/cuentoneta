@@ -14,7 +14,7 @@ import sitemapController from './api/modules/sitemap/sitemap.controller';
  */
 export const app = new Hono({ strict: false }).use(requestId()).use(secureHeaders());
 const angularApp = new AngularAppEngine({
-	allowedHosts: ['cuentoneta-*-reset-*.vercel.app', 'cuentoneta.ar', '*.cuentoneta.ar'],
+	allowedHosts: ['localhost', 'cuentoneta-*-reset-*.vercel.app', 'cuentoneta.ar', '*.cuentoneta.ar'],
 });
 
 // Registra ruta del sitemap en la raíz
