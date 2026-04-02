@@ -10,7 +10,7 @@
 	"scripts": {
 		"preinstall": "pnpx only-allow pnpm",
 		"postinstall": "pnpm run config",
-		"postbuild": "node scripts/fix-index-file-name.js",
+		"postbuild": "node scripts/fix-index-file-name.mjs",
 		"dev": "nx run @cuentoneta/app:serve:development",
 		"build": "nx run @cuentoneta/app:build:production --skip-nx-cache",
 		"config": "node --loader ts-node/esm ./scripts/set-environment.ts",
