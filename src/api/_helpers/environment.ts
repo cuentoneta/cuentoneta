@@ -4,6 +4,9 @@ try {
 	process.loadEnvFile();
 } catch {
 	// En producción (Vercel) las variables son inyectadas por la plataforma.
+	console.info(
+		'process.loadEnvFile() no disponible o .env no encontrado. Se asume entorno de producción donde las variables son inyectadas por la plataforma.',
+	);
 }
 
 export interface EnvironmentConfig {
