@@ -62,7 +62,7 @@ export default defineType({
 			title: 'Fecha de nacimiento',
 			type: 'string',
 			description:
-				'Formato: YYYY-MM-DD. Para fechas a.C., usar guión inicial (ej: -0043-03-20 para 20 de marzo de 43 a.C.).',
+				'Formato: YYYY-MM-DD para d.C. y -YYYY-MM-DD para a.C. (ej: -0043-03-20 = 20 de marzo de 43 a.C.). Se utiliza numeración histórica: -43 representa 43 a.C. (no se aplica el corrimiento astronómico de ISO-8601).',
 			validation: (Rule) => Rule.custom(validateHistoricalDate),
 		}),
 		defineField({
@@ -84,7 +84,7 @@ export default defineType({
 			title: 'Fecha de fallecimiento',
 			type: 'string',
 			description:
-				'Formato: YYYY-MM-DD. Para fechas a.C., usar guión inicial (ej: -0043-03-20 para 20 de marzo de 43 a.C.).',
+				'Formato: YYYY-MM-DD para d.C. y -YYYY-MM-DD para a.C. (ej: -0043-03-20 = 20 de marzo de 43 a.C.). Se utiliza numeración histórica: -43 representa 43 a.C. (no se aplica el corrimiento astronómico de ISO-8601).',
 			validation: (Rule) => Rule.custom(validateHistoricalDate),
 		}),
 		defineField({
