@@ -15,6 +15,7 @@
 		"build": "nx run @cuentoneta/app:build:production --skip-nx-cache",
 		"config": "node --loader ts-node/esm ./scripts/set-environment.ts",
 		"delete-unused-assets": "node --import tsx --env-file=.env ./scripts/delete-unused-assets.ts",
+		"export-authors-bios": "node --import tsx --env-file=.env ./scripts/export-authors-bios.ts",
 		"storybook": "nx run @cuentoneta/app:storybook",
 		"storybook:build": "nx run @cuentoneta/app:build-storybook",
 		"lint": "nx lint --skip-nx-cache",

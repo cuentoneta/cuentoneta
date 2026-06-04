@@ -50,3 +50,6 @@ Thumbs.db
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
 .claude
+
+# Generated reference material (re-create with `pnpm export-authors-bios`)
+/tools/author-bios/
