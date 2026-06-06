@@ -88,9 +88,6 @@ importers:
       ngx-skeleton-loader:
         specifier: ^11.3.0
         version: 11.3.0(@angular/common@21.2.7(@angular/core@21.2.7(@angular/compiler@21.2.7)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@21.2.7(@angular/compiler@21.2.7)(rxjs@7.8.2)(zone.js@0.15.0))
-      rettiwt-api:
-        specifier: ^3.1.1
-        version: 3.1.1
       rxjs:
         specifier: ~7.8.1
         version: 7.8.2
@@ -4379,10 +4376,6 @@ packages:
     resolution:
       { integrity: sha512-Q5vtl1W5ue16D+nIaW8JWebSSraJVlK+EthKn7e7UcD4KWsaSJ8BqGPXNaPghgtcn/fhvrN17Tv8ksUsQpiplw== }
 
-  '@types/validator@13.15.2':
-    resolution:
-      { integrity: sha512-y7pa/oEJJ4iGYBxOpfAKn5b9+xuihvzDVnC/OSvlVnGxVg0pOqmjiMafiJ1KVNQEaPZf9HsEp5icEwGg8uIe5Q== }
-
   '@types/whatwg-mimetype@3.0.2':
     resolution:
       { integrity: sha512-c2AKvDT8ToxLIOUlN51gTiHXflsfIFisS4pO7pDPoKouJCESkhZnEy623gwP9laCy5lnLDAw1vAzu2vM2YLOrA== }
@@ -5000,10 +4993,6 @@ packages:
     resolution:
       { integrity: sha512-ChTCHMouEe2kn713WHbQGcuYrr6fXTBiu460OTwWrWob16g1bXn4vtz07Ope7ewMozJAnEquLk5lWQWtBig9DQ== }
 
-  axios@1.6.3:
-    resolution:
-      { integrity: sha512-fWyNdeawGam70jXSVlKl+SUNVcL6j6W79CuSIPfi6HnDUmSCH6gyUys/HrqHeA/wU0Az41rRgean494d0Jb+ww== }
-
   axobject-query@4.1.0:
     resolution:
       { integrity: sha512-qIj0G9wZbMGNLjLmg1PT6v2mE9AH2zlnADJD/2tC6E00hgmhUOfEB6greHPAfLRSufHqROIUTkw6E+M3lH0PTQ== }
@@ -5471,10 +5460,6 @@ packages:
     resolution:
       { integrity: sha512-UX0OwmYRYQQetfrLEZeewIFFI+wSTofC+pMBLNuH3RUuu/xzG1oz84UCEDOSoQlN3fZ4+AzmV50ZYvGqkMh9yA== }
 
-  class-validator@0.14.1:
-    resolution:
-      { integrity: sha512-2VEG9JICxIqTpoK1eMzZqaV+u/EiwEJkMGzTrZf6sU/fwsnOITVgYJ8yojSy6CaXtO9V0Cc6ZQZ8h8m4UBuLwQ== }
-
   clean-css@5.3.2:
     resolution:
       { integrity: sha512-JVJbM+f3d3Q704rF4bqQ5UUyTtuJ0JRKNbTKVEeujCCBoMdkEi+V+e8oktO9qGQNSvHrFTM6JZRXrUvGR1czww== }
@@ -5677,10 +5662,6 @@ packages:
     resolution:
       { integrity: sha512-6DnInpx7SJ2AK3+CTUE/ZM0vWTUboZCegxhC2xiIydHR9jNuTAASBrfEpHhiGOZw/nX51bHt6YQl8jsGo4y/0w== }
     engines: { node: '>= 0.6' }
-
-  cookiejar@2.1.4:
-    resolution:
-      { integrity: sha512-LDx6oHrK+PhzLKJU9j5S7/Y3jM/mUHvD/DeI1WQmJn652iPC5Y4TBzC9l+5OMOXlyTTA+SmVUPm0HQUwpD5Jqw== }
 
   cookies@0.9.1:
     resolution:
@@ -6827,11 +6808,6 @@ packages:
       typescript: '>3.6.0'
       webpack: ^5.11.0
 
-  form-data@4.0.0:
-    resolution:
-      { integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww== }
-    engines: { node: '>= 6' }
-
   form-data@4.0.5:
     resolution:
       { integrity: sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w== }
@@ -7255,11 +7231,6 @@ packages:
       { integrity: sha512-+cbxadF40UXd9T01zUHgA+rlo2Bg1Srer4+B4NwIHdaGxAGGv59nYRnGGDJ9LBk7alpS0US+J+bLLdQOOkJq4A== }
     engines: { node: '>=12' }
     hasBin: true
-
-  https-proxy-agent@7.0.2:
-    resolution:
-      { integrity: sha512-NmLNjm6ucYwtcUmL7JQC1ZQ57LmHP4lT15FQ8D61nak1rO6DH+fz5qNK2Ap5UN4ZapYICE3/0KodcLYSPsPbaA== }
-    engines: { node: '>= 14' }
 
   https-proxy-agent@7.0.6:
     resolution:
@@ -8014,10 +7985,6 @@ packages:
     resolution:
       { integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ== }
     engines: { node: '>= 0.8.0' }
-
-  libphonenumber-js@1.12.9:
-    resolution:
-      { integrity: sha512-VWwAdNeJgN7jFOD+wN4qx83DTPMVPPAUyx9/TUkBXKLiNkuWWk6anV0439tgdtwaJDrEdqkvdN22iA6J4bUCZg== }
 
   license-webpack-plugin@4.0.2:
     resolution:
@@ -9779,22 +9746,6 @@ packages:
       { integrity: sha512-XQBQ3I8W1Cge0Seh+6gjj03LbmRFWuoszgK9ooCpwYIrhhoO80pfq4cUkU5DkknwfOfFteRwlZ56PYOGYyFWdg== }
     engines: { node: '>= 4' }
 
-  rettiwt-api@3.1.1:
-    resolution:
-      { integrity: sha512-fUUIlIG1Wz2wvDNnFZciyvTdBVUVJRMwY9j8VhcnM1BMhpsQNtmJoAc1ZLg2JwRwppv/CVYQPJsSQU3JNmf7cQ== }
-    hasBin: true
-
-  rettiwt-auth@2.1.0:
-    resolution:
-      { integrity: sha512-N3G1kX/4TFYvUumxcACHO9ngVnhM+DhpuRn2/JxWlgHuztAQShbO9ux3hfMducCqzzjdcMLPJhrEDt9fwSbpaQ== }
-    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
-    hasBin: true
-
-  rettiwt-core@4.1.1:
-    resolution:
-      { integrity: sha512-oPQlEwQRKlMEi6wx3ZjnbIKOFrM9VaYuX7IpsyVVsfRxSBgjqIYhonAYzX9DkpOs6ZTgr9Z9VK0kNuv7hf6AGw== }
-    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
-
   reusify@1.0.4:
     resolution:
       { integrity: sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw== }
@@ -11183,11 +11134,6 @@ packages:
     resolution:
       { integrity: sha512-hVDIBwsRruT73PbK7uP5ebUt+ezEtCmzZz3F59BSr2F6OVFnJ/6h8liuvdLrQ88Xmnk6/+xGGuq+pG9WwTuy3A== }
     engines: { node: ^20.17.0 || >=22.9.0 }
-
-  validator@13.15.15:
-    resolution:
-      { integrity: sha512-BgWVbCI72aIQy937xbawcs+hrVaN/CZ2UwutgaJ36hGqRrLNM+f5LUT/YPRbo8IV/ASeFzXszezV+y2+rq3l8A== }
-    engines: { node: '>= 0.10' }
 
   varint@6.0.0:
     resolution:
@@ -16395,8 +16341,6 @@ snapshots:
 
   '@types/tough-cookie@4.0.2': {}
 
-  '@types/validator@13.15.2': {}
-
   '@types/whatwg-mimetype@3.0.2': {}
 
   '@types/ws@8.5.10':
@@ -16932,14 +16876,6 @@ snapshots:
   axios@1.13.6:
     dependencies:
       follow-redirects: 1.15.11
-      form-data: 4.0.5
-      proxy-from-env: 1.1.0
-    transitivePeerDependencies:
-      - debug
-
-  axios@1.6.3:
-    dependencies:
-      follow-redirects: 1.15.9(debug@4.4.3)
       form-data: 4.0.5
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
@@ -17494,12 +17430,6 @@ snapshots:
 
   cjs-module-lexer@2.1.0: {}
 
-  class-validator@0.14.1:
-    dependencies:
-      '@types/validator': 13.15.2
-      libphonenumber-js: 1.12.9
-      validator: 13.15.15
-
   clean-css@5.3.2:
     dependencies:
       source-map: 0.6.1
@@ -17649,8 +17579,6 @@ snapshots:
     optional: true
 
   cookie@0.7.1: {}
-
-  cookiejar@2.1.4: {}
 
   cookies@0.9.1:
     dependencies:
@@ -18770,12 +18698,6 @@ snapshots:
       typescript: 5.9.3
       webpack: 5.104.1(esbuild@0.27.2)
 
-  form-data@4.0.0:
-    dependencies:
-      asynckit: 0.4.0
-      combined-stream: 1.0.8
-      mime-types: 2.1.35
-
   form-data@4.0.5:
     dependencies:
       asynckit: 0.4.0
@@ -19192,13 +19114,6 @@ snapshots:
       url-join: 4.0.1
     transitivePeerDependencies:
       - debug
-      - supports-color
-
-  https-proxy-agent@7.0.2:
-    dependencies:
-      agent-base: 7.1.3
-      debug: 4.4.3
-    transitivePeerDependencies:
       - supports-color
 
   https-proxy-agent@7.0.6:
@@ -19969,8 +19884,6 @@ snapshots:
     dependencies:
       prelude-ls: 1.2.1
       type-check: 0.4.0
-
-  libphonenumber-js@1.12.9: {}
 
   license-webpack-plugin@4.0.2(webpack@5.104.1(esbuild@0.27.2)):
     dependencies:
@@ -21445,36 +21358,6 @@ snapshots:
 
   retry@0.13.1: {}
 
-  rettiwt-api@3.1.1:
-    dependencies:
-      axios: 1.6.3
-      chalk: 4.1.2
-      class-validator: 0.14.1
-      commander: 11.1.0
-      https-proxy-agent: 7.0.2
-      rettiwt-auth: 2.1.0
-      rettiwt-core: 4.1.1
-    transitivePeerDependencies:
-      - debug
-      - supports-color
-
-  rettiwt-auth@2.1.0:
-    dependencies:
-      axios: 1.6.3
-      commander: 11.1.0
-      cookiejar: 2.1.4
-      https-proxy-agent: 7.0.2
-    transitivePeerDependencies:
-      - debug
-      - supports-color
-
-  rettiwt-core@4.1.1:
-    dependencies:
-      axios: 1.6.3
-      form-data: 4.0.0
-    transitivePeerDependencies:
-      - debug
-
   reusify@1.0.4: {}
 
   rfdc@1.4.1: {}
@@ -22804,8 +22687,6 @@ snapshots:
       spdx-expression-parse: 3.0.1
 
   validate-npm-package-name@7.0.2: {}
-
-  validator@13.15.15: {}
 
   varint@6.0.0: {}
 

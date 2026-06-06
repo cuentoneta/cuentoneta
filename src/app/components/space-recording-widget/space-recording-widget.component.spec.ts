@@ -26,13 +26,18 @@ describe('SpaceRecordingWidgetComponent', () => {
 
 	it('should display the host name', async () => {
 		await setup();
-		expect(screen.getByText('@' + spaceRecordingMock.data.tweetBy.userName)).toBeInTheDocument();
+		expect(screen.getByText(spaceRecordingMock.data.hostName)).toBeInTheDocument();
+	});
+
+	it('should display the "Anfitrión" badge', async () => {
+		await setup();
+		expect(screen.getByText('Anfitrión')).toBeInTheDocument();
 	});
 
 	it('should display the recording date', async () => {
 		await setup();
 		const datePipe = new DatePipe('en-US');
-		const date = datePipe.transform(new Date(spaceRecordingMock.data.createdAt), 'MMMM d, yyyy') as string;
+		const date = datePipe.transform(spaceRecordingMock.data.date, 'MMMM d, yyyy') as string;
 		expect(screen.getByText(date)).toBeInTheDocument();
 	});
 
@@ -41,21 +46,16 @@ describe('SpaceRecordingWidgetComponent', () => {
 		expect(screen.getByText(spaceRecordingMock.data.duration)).toBeInTheDocument();
 	});
 
-	it('should have the correct href for the space recording', async () => {
+	it('should render an audio player with the correct source', async () => {
 		await setup();
-		const link = screen.getByRole('link', { name: 'space-recording-href' });
-		expect(link).toHaveAttribute('href', spaceRecordingMock.data.entities.urls[0]);
+		const audio = screen.getByTestId('space-recording-audio');
+		expect(audio).toHaveAttribute('src', spaceRecordingMock.data.url);
 	});
 
-	it('should display the "Play Recording on X" button', async () => {
-		await setup();
-		expect(screen.getByText('Reproducir Grabación en X')).toBeInTheDocument();
-	});
-
-	it('should render the profile image', async () => {
+	it('should render the host avatar', async () => {
 		await setup();
 		const img = screen.getByRole('img');
-		expect(img).toHaveAttribute('src', spaceRecordingMock.data.tweetBy.profileImage);
+		expect(img).toHaveAttribute('src', spaceRecordingMock.data.hostAvatar);
 	});
 
 	it('should display the space recording description', async () => {

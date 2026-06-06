@@ -1,4 +1,3 @@
-import { Tweet } from 'rettiwt-api';
 import { TextBlockContent } from '@models/block-content.model';
 import { BlockContent } from '../../api/sanity/types';
 
@@ -24,7 +23,13 @@ export interface AudioRecording extends Media {
 }
 
 export interface SpaceRecording extends Media {
-	data: Tweet & { duration: string };
+	data: {
+		url: string;
+		duration: string;
+		hostName: string;
+		hostAvatar?: string;
+		date: string;
+	};
 }
 
 export interface YouTubeVideo extends Media {
@@ -47,12 +52,6 @@ export interface MediaSchemaObject {
 	title: string;
 	icon: string;
 	description: BlockContent;
-}
-
-export interface SpaceRecordingSchemaObject extends MediaSchemaObject {
-	postId: string;
-	spaceUrl: string;
-	duration: string;
 }
 
 export interface AudioRecordingSchemaObject extends MediaSchemaObject {

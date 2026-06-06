@@ -90,23 +90,18 @@ export const spaceRecording = defineType({
 	preview: {
 		select: {
 			title: 'title',
-			spaceUrl: 'spaceUrl',
+			hostName: 'hostName',
+			media: 'hostAvatar',
 		},
 		prepare(selection) {
-			const { title, spaceUrl } = selection;
+			const { title, hostName } = selection;
 			return {
-				title: `${title} | ID Tweet: ${'abc'} | URL Grabación: ${spaceUrl}`,
-				subtitle: `${spaceUrl}`,
+				title: `${title}`,
+				subtitle: hostName ? `Anfitrión: ${hostName}` : 'Grabación de Space de X',
 			};
 		},
 	},
 	fields: [
-		defineField({
-			name: 'postId',
-			title: 'ID de post de X',
-			type: 'string',
-			validation: (Rule) => Rule.required(),
-		}),
 		defineField({
 			name: 'title',
 			title: 'Título del space',
@@ -120,9 +115,28 @@ export const spaceRecording = defineType({
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
-			name: 'spaceUrl',
-			title: 'URL de la grabación del space',
-			type: 'url',
+			name: 'audioFile',
+			title: 'Archivo de audio de la grabación',
+			description: 'Archivo de audio del space (mp4, m4a, mp3). Se reproduce por streaming desde el sitio.',
+			type: 'file',
+			options: { accept: 'audio/*,video/mp4' },
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
+			name: 'hostName',
+			title: 'Nombre del anfitrión',
+			type: 'string',
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
+			name: 'hostAvatar',
+			title: 'Avatar del anfitrión',
+			type: 'image',
+		}),
+		defineField({
+			name: 'date',
+			title: 'Fecha del space',
+			type: 'datetime',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({

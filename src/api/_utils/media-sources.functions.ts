@@ -1,6 +1,3 @@
-// 3rd party modules
-import { getTweetData } from './twitter-api';
-
 // Tipos de Sanity
 import { StoryBySlugQueryResult, StorylistQueryResult } from '../sanity/types';
 
@@ -9,16 +6,17 @@ import {
 	AudioRecording,
 	AudioRecordingSchemaObject,
 	Media,
-	SpaceRecordingSchemaObject,
+	SpaceRecording,
 	SpotifyPodcasteEpisodeSchemaObject,
 	SpotifyPodcastEpisode,
 	YouTubeVideo,
 	YoutubeVideoSchemaObject,
 } from '@models/media.model';
-import { mapBlockContentToTextParagraphs } from './functions';
+import { mapBlockContentToTextParagraphs, urlFor } from './functions';
 
 type MediaResourcesStorySubQuery = NonNullable<StoryBySlugQueryResult>['mediaSources'];
-export async function mapMediaSources(mediaSources: MediaResourcesStorySubQuery): Promise<Media[]> {
+type SpaceRecordingSource = Extract<MediaResourcesStorySubQuery[number], { _type: 'spaceRecording' }>;
+export function mapMediaSources(mediaSources: MediaResourcesStorySubQuery): Media[] {
 	if (!mediaSources) return [];
 
 	const media: Media[] = [];
@@ -27,7 +25,7 @@ export async function mapMediaSources(mediaSources: MediaResourcesStorySubQuery)
 			media.push(getAudioRecordingData(mediaSource as AudioRecordingSchemaObject));
 		}
 		if (mediaSource._type === 'spaceRecording') {
-			media.push(await getTweetData(mediaSource as SpaceRecordingSchemaObject));
+			media.push(getSpaceRecordingData(mediaSource));
 		}
 		if (mediaSource._type === 'spotifyPodcastEpisode') {
 			media.push(getSpotifyPodcastEpisodeData(mediaSource as SpotifyPodcasteEpisodeSchemaObject));
@@ -73,6 +71,21 @@ function getAudioRecordingData(mediaSource: AudioRecordingSchemaObject): AudioRe
 		description: mapBlockContentToTextParagraphs(mediaSource.description),
 		data: {
 			url: mediaSource.url,
+		},
+	};
+}
+
+function getSpaceRecordingData(mediaSource: SpaceRecordingSource): SpaceRecording {
+	return {
+		title: mediaSource.title,
+		type: mediaSource._type,
+		description: mapBlockContentToTextParagraphs(mediaSource.description),
+		data: {
+			url: mediaSource.audioUrl ?? '',
+			duration: mediaSource.duration,
+			hostName: mediaSource.hostName,
+			hostAvatar: mediaSource.hostAvatar ? urlFor(mediaSource.hostAvatar) : undefined,
+			date: mediaSource.date,
 		},
 	};
 }

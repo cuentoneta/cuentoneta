@@ -21,9 +21,6 @@ export interface EnvironmentConfig {
 		projectId: string;
 		token: string;
 	};
-	twitter: {
-		apiKey: string;
-	};
 }
 
 export const environment: EnvironmentConfig = {
@@ -38,9 +35,6 @@ export const environment: EnvironmentConfig = {
 	clarity: {
 		projectId: process.env['CLARITY_PROJECT_ID'] as string,
 		token: process.env['CLARITY_TOKEN'] as string,
-	},
-	twitter: {
-		apiKey: process.env['TWITTER_API_KEY'] as string,
 	},
 };
 
