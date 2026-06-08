@@ -45,6 +45,7 @@
 		],
 		"no-descending-specificity": null,
 		"import-notation": "string",
+		"custom-property-pattern": null,
 		"selector-pseudo-class-no-unknown": [
 			true,
 			{
@@ -58,5 +59,17 @@
 			}
 		]
 	},
+	"overrides": [
+		{
+			"files": ["src/tailwind.css"],
+			"rules": {
+				"color-function-notation": null,
+				"color-function-alias-notation": null,
+				"alpha-value-notation": null,
+				"hue-degree-notation": null,
+				"value-keyword-case": null
+			}
+		}
+	],
 	"ignoreFiles": ["!**/*", "dist/**/*"]
 }

@@ -1,13 +1,107 @@
 /*
-	Punto de entrada de Tailwind CSS v4.
+	Configuración de Tailwind CSS v4 (CSS-first).
 
-	Este archivo importa el motor de Tailwind y carga la configuración del Design System mediante la
-	directiva `@config`, que apunta al archivo `tailwind.config.ts` ubicado en la raíz del proyecto.
+	Este archivo importa el motor de Tailwind y define el tema del Design System mediante la directiva
+	`@theme`, reemplazando por completo a la antigua configuración basada en `tailwind.config.ts`.
 
-	Se utiliza como referencia (`@reference`) desde las hojas de estilo de componentes y desde las hojas
-	de estilo globales independientes, de manera que `@apply` y `theme()` tengan acceso a los tokens
-	personalizados del tema sin emitir CSS duplicado.
+	Se utiliza como referencia (`@reference`) desde las hojas de estilo de componentes y desde las hojas de
+	estilo globales independientes, de manera que `@apply` y `theme()` tengan acceso a los tokens del tema
+	sin emitir CSS duplicado.
+
+	Notas sobre la migración desde la configuración v3.x:
+	- Colores, breakpoints y border-radius reemplazan por completo los valores por defecto (se limpian con
+	  `--<namespace>-*: initial`), replicando la semántica de `theme.<key>` (no `extend`) de v3.
+	- El espaciado numérico (p-4, px-4.5, py-0.5, p-52, etc.) se genera automáticamente a partir del
+	  multiplicador `--spacing` de v4, por lo que no es necesario redeclararlo.
+	- Las fracciones (top-1/2, -translate-y-1/2) y line-clamp son nativas en v4.
+	- Los anchos de borde arbitrarios (border-1, border-l-3) los genera v4 de forma dinámica.
 */
 @import 'tailwindcss';
 
-@config '../tailwind.config.ts';
+@theme {
+	/* Colores — reemplazan la paleta por defecto (equivalente a `theme.colors` en v3) */
+	--color-*: initial;
+	--color-white: #fff;
+	--color-black: #000;
+
+	/* Design System v3 - Colores de marca */
+	--color-brand-50: hsl(12, 60%, 97%);
+	--color-brand-100: hsl(11, 50%, 96%);
+	--color-brand-200: hsl(11, 78%, 93%);
+	--color-brand-300: hsl(24, 45%, 76%);
+	--color-brand-400: hsl(25, 45%, 62%);
+	--color-brand-500: hsl(21, 57%, 44%);
+
+	/* Design System v3 - Colores neutrales */
+	--color-neutral-50: hsl(0, 0%, 98%);
+	--color-neutral-100: hsl(0, 0%, 96%);
+	--color-neutral-150: hsl(0, 0%, 94%);
+	--color-neutral-200: hsl(0, 0%, 90%);
+	--color-neutral-300: hsl(0, 0%, 83%);
+	--color-neutral-400: hsl(0, 0%, 64%);
+	--color-neutral-500: hsl(0, 0%, 45%);
+	--color-neutral-600: hsl(0, 0%, 32%);
+	--color-neutral-700: hsl(0, 0%, 25%);
+	--color-neutral-800: hsl(0, 0%, 15%);
+	--color-neutral-900: hsl(0, 0%, 9%);
+	--color-neutral-950: hsl(0, 0%, 4%);
+
+	/* Design System v3 - Variantes con opacidad */
+	--color-white-15: hsla(0, 0%, 100%, 0.15);
+	--color-neutral-950-40: hsla(0, 0%, 4%, 0.4);
+	--color-neutral-950-70: hsla(0, 0%, 4%, 0.7);
+
+	/* Breakpoints — reemplazan los valores por defecto (equivalente a `theme.screens` en v3) */
+	--breakpoint-*: initial;
+	--breakpoint-xs: 0px;
+	--breakpoint-sm: 768px;
+	--breakpoint-md: 960px;
+	--breakpoint-lg: 1240px;
+	--breakpoint-xl: 1536px;
+
+	/* Design System V3 - Border Radius — reemplaza los valores por defecto */
+	--radius-*: initial;
+	--radius: 4px;
+	--radius-sm: 4px;
+	--radius-md: 6px;
+	--radius-lg: 8px;
+	--radius-xl: 12px;
+	--radius-full: 1000px;
+
+	/* Design System V3 - Blur (también alimenta a backdrop-blur en v4) */
+	--blur-xl: 24px;
+
+	/* Design System V3 - Sombras */
+	--shadow-lg: 0px 0px 8px rgba(63, 63, 70, 0.08);
+	--shadow-lg-hover: 0px 12px 16px rgba(63, 63, 70, 0.12);
+
+	/* Tipografías */
+	--font-inter: Inter, sans-serif;
+	--font-source-serif: 'Source Serif Pro', sans-serif;
+
+	/* Design System V3 - Spacing personalizado (el espaciado numérico lo genera el multiplicador --spacing) */
+	--spacing-header-height: 64px;
+
+	/* Design System V3 - Typography (Inter) */
+	--text-xxs: 0.625rem; /* 10px */
+	--text-xxs--line-height: 0.875rem; /* 14px */
+	--text-xs: 0.75rem; /* 12px */
+	--text-xs--line-height: 1rem; /* 16px */
+	--text-sm: 0.875rem; /* 14px */
+	--text-sm--line-height: 1.25rem; /* 20px */
+	--text-base: 1rem; /* 16px */
+	--text-base--line-height: 1.5rem; /* 24px */
+	--text-lg: 1.125rem; /* 18px */
+	--text-lg--line-height: 1.75rem; /* 28px */
+	--text-xl: 1.25rem; /* 20px */
+	--text-xl--line-height: 1.75rem; /* 28px */
+	--text-2xl: 1.5rem; /* 24px */
+	--text-2xl--line-height: 2rem; /* 32px */
+	--text-4xl: 2.25rem; /* 36px */
+	--text-4xl--line-height: 2.5rem; /* 40px */
+	--text-6xl: 3.25rem; /* 52px */
+	--text-6xl--line-height: 3.625rem; /* 58px */
+
+	/* Design System V3 - Grid templates personalizados */
+	--grid-template-rows-3-auto: repeat(3, auto);
+}

@@ -10,7 +10,7 @@
 @import './assets/css/transitions.css';
 @import './app/directives/tooltip.directive.css';
 
-/* Imports de Tailwind v4 (motor + configuración del Design System vía @config) */
+/* Imports de Tailwind v4 (motor + tema del Design System definido con @theme) */
 @import './tailwind.css';
 
 /*
