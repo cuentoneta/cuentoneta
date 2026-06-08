@@ -38,6 +38,7 @@ import { CarouselGestureService } from './carousel-gesture.service';
 	templateUrl: './carousel.component.html',
 	styleUrl: './carousel.component.css',
 	host: {
+		class: 'mx-auto block',
 		'[style.--transition-duration]': 'transitionDuration() + "ms"',
 	},
 })

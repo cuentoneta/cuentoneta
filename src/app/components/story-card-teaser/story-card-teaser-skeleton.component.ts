@@ -97,6 +97,8 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 		</div>
 	</article>`,
 	styles: `
+		@reference '#tailwind-theme';
+
 		:host {
 			@apply w-full;
 		}

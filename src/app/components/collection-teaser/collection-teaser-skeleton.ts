@@ -82,6 +82,8 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 		</article>
 	`,
 	styles: `
+		@reference '#tailwind-theme';
+
 		:host ::ng-deep .image-skeleton .skeleton-loader {
 			@apply bg-neutral-300;
 		}

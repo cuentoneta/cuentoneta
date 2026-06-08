@@ -25,11 +25,9 @@ import { NgComponentOutlet } from '@angular/common';
 			{{ tag().title }}
 		</span>
 	`,
-	styles: `
-		:host {
-			@apply flex rounded bg-brand-200 px-4.5 py-0.5 uppercase hover:cursor-default;
-		}
-	`,
+	host: {
+		class: 'flex rounded bg-brand-200 px-4.5 py-0.5 uppercase hover:cursor-default',
+	},
 })
 export class BadgeComponent implements OnInit {
 	readonly tag = input.required<Tag>();

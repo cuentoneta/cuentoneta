@@ -4,16 +4,48 @@
 		"at-rule-no-unknown": [
 			true,
 			{
-				"ignoreAtRules": ["apply", "layer", "responsive", "screen", "tailwind", "variants", "use"]
+				"ignoreAtRules": [
+					"apply",
+					"config",
+					"custom-variant",
+					"layer",
+					"plugin",
+					"reference",
+					"responsive",
+					"screen",
+					"source",
+					"tailwind",
+					"theme",
+					"utility",
+					"variants",
+					"use"
+				]
 			}
 		],
 		"at-rule-no-deprecated": [
 			true,
 			{
-				"ignoreAtRules": ["apply", "layer", "responsive", "screen", "tailwind", "variants", "use"]
+				"ignoreAtRules": [
+					"apply",
+					"config",
+					"custom-variant",
+					"layer",
+					"plugin",
+					"reference",
+					"responsive",
+					"screen",
+					"source",
+					"tailwind",
+					"theme",
+					"utility",
+					"variants",
+					"use"
+				]
 			}
 		],
 		"no-descending-specificity": null,
+		"import-notation": "string",
+		"custom-property-pattern": null,
 		"selector-pseudo-class-no-unknown": [
 			true,
 			{
@@ -27,5 +59,17 @@
 			}
 		]
 	},
+	"overrides": [
+		{
+			"files": ["src/tailwind.css"],
+			"rules": {
+				"color-function-notation": null,
+				"color-function-alias-notation": null,
+				"alpha-value-notation": null,
+				"hue-degree-notation": null,
+				"value-keyword-case": null
+			}
+		}
+	],
 	"ignoreFiles": ["!**/*", "dist/**/*"]
 }

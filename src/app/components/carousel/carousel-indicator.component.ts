@@ -22,6 +22,8 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 		</div>
 	`,
 	styles: `
+		@reference '#tailwind-theme';
+
 		:host {
 			@apply block;
 		}

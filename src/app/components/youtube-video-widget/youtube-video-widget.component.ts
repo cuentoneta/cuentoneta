@@ -17,11 +17,13 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 			<cuentoneta-portable-text-parser [paragraphs]="media().description" />
 		</p>`,
 	styles: `
+		@reference '#tailwind-theme';
+
 		cuentoneta-youtube-video-widget {
 			youtube-player {
 				.youtube-player-placeholder,
 				div iframe {
-					@apply mb-2 aspect-video w-full rounded-xl !important;
+					@apply mb-2! aspect-video! w-full! rounded-xl!;
 					height: unset !important;
 				}
 			}
