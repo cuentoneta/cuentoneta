@@ -27,13 +27,9 @@ import { NgTemplateOutlet } from '@angular/common';
 				<ng-container [ngTemplateOutlet]="active().content()" />
 			</div>
 		}`,
-	styles: `
-		@reference '#tailwind-theme';
-
-		:host {
-			@apply flex flex-col gap-8;
-		}
-	`,
+	host: {
+		class: 'flex flex-col gap-8',
+	},
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class Tabs {

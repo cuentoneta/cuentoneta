@@ -33,13 +33,9 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 				}
 			}
 		</section>`,
-	styles: `
-		@reference '#tailwind-theme';
-
-		:host {
-			@apply mb-8 flex flex-col gap-8;
-		}
-	`,
+	host: {
+		class: 'mb-8 flex flex-col gap-8',
+	},
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LatestStoriesCardDeck {

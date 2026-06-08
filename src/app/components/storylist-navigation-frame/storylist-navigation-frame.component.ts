@@ -28,6 +28,9 @@ export type NavigationBarConfig = {
 @Component({
 	selector: 'cuentoneta-storylist-navigation-frame',
 	imports: [NgxSkeletonLoaderModule, NavigableStorylistStoryTeaserComponent],
+	host: {
+		class: 'grid grid-cols-1 gap-y-0.5 rounded-xl bg-neutral-200 shadow-lg',
+	},
 	template: ` @if (storylist(); as storylist) {
 			@for (story of displayedStories; track $index) {
 				<cuentoneta-navigable-storylist-story-teaser
@@ -43,13 +46,6 @@ export type NavigationBarConfig = {
 				</article>
 			}
 		}`,
-	styles: `
-		@reference '#tailwind-theme';
-
-		:host {
-			@apply grid grid-cols-1 gap-y-0.5 rounded-xl bg-neutral-200 shadow-lg;
-		}
-	`,
 })
 export class StorylistNavigationFrameComponent extends NavigationFrameComponent {
 	// Routes

@@ -15,6 +15,9 @@ import { rxResource } from '@angular/core/rxjs-interop';
 @Component({
 	selector: 'cuentoneta-author-navigation-frame',
 	imports: [NavigableStoryTeaserComponent],
+	host: {
+		class: 'grid grid-cols-1 gap-y-0.5 rounded-xl bg-neutral-200 shadow-lg',
+	},
 	template: `@if (stories(); as stories) {
 		@for (story of stories; track $index) {
 			<cuentoneta-navigable-story-teaser
@@ -24,13 +27,6 @@ import { rxResource } from '@angular/core/rxjs-interop';
 			/>
 		}
 	}`,
-	styles: `
-		@reference '#tailwind-theme';
-
-		:host {
-			@apply grid grid-cols-1 gap-y-0.5 rounded-xl bg-neutral-200 shadow-lg;
-		}
-	`,
 })
 export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 	readonly appRoutes = AppRoutes;

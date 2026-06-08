@@ -26,13 +26,9 @@ import { CollectionTeaserSkeleton } from '@components/collection-teaser/collecti
 				}
 			}
 		</section>`,
-	styles: `
-		@reference '#tailwind-theme';
-
-		:host {
-			@apply flex flex-col gap-8;
-		}
-	`,
+	host: {
+		class: 'flex flex-col gap-8',
+	},
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionTeasersDeck {
