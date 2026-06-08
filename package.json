@@ -7,7 +7,7 @@
 	},
 	"license": "CC BY-NC-SA 4.0",
 	"engines": {
-		"node": "^20.19.0 || ^22.12.0"
+		"node": "^22.12.0"
 	},
 	"packageManager": "pnpm@10.12.1",
 	"scripts": {

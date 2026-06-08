@@ -19,7 +19,7 @@ jobs:
       - name: Use Node.js 22
         uses: actions/setup-node@v4.4.0
         with:
-          node-version: 22.12
+          node-version: 22.22.3
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -59,7 +59,7 @@ jobs:
       - name: Use Node.js 22
         uses: actions/setup-node@v4.4.0
         with:
-          node-version: 22.12
+          node-version: 22.22.3
           cache: 'pnpm'
 
       - name: Run Tests
@@ -85,7 +85,7 @@ jobs:
       - name: Use Node.js 22
         uses: actions/setup-node@v4.4.0
         with:
-          node-version: 22.12
+          node-version: 22.22.3
           cache: 'pnpm'
 
       - name: Run Linter
@@ -111,7 +111,7 @@ jobs:
       - name: Use Node.js 22
         uses: actions/setup-node@v4.4.0
         with:
-          node-version: 22.12
+          node-version: 22.22.3
           cache: 'pnpm'
 
       - name: Run stylelint
@@ -137,7 +137,7 @@ jobs:
       - name: Use Node.js 22
         uses: actions/setup-node@v4.4.0
         with:
-          node-version: 22.12
+          node-version: 22.22.3
           cache: 'pnpm'
 
       - name: Install Playwright browsers
@@ -172,7 +172,7 @@ jobs:
       - name: Use Node.js 22
         uses: actions/setup-node@v4.4.0
         with:
-          node-version: 22.12
+          node-version: 22.22.3
           cache: 'pnpm'
 
       - name: Run build
@@ -204,7 +204,7 @@ jobs:
       - name: Use Node.js 22
         uses: actions/setup-node@v4.4.0
         with:
-          node-version: 22.12
+          node-version: 22.22.3
           cache: 'pnpm'
 
       - name: Run Storybook build
