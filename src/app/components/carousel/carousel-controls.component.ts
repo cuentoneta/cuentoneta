@@ -20,7 +20,7 @@ import { faSolidChevronLeft, faSolidChevronRight } from '@ng-icons/font-awesome/
 		</button>
 	`,
 	styles: `
-		@reference '../../../tailwind.css';
+		@reference '#tailwind-theme';
 
 		:host {
 			@apply block;

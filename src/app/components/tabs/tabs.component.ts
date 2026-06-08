@@ -28,7 +28,7 @@ import { NgTemplateOutlet } from '@angular/common';
 			</div>
 		}`,
 	styles: `
-		@reference '../../../tailwind.css';
+		@reference '#tailwind-theme';
 
 		:host {
 			@apply flex flex-col gap-8;

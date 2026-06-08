@@ -1,4 +1,4 @@
-@reference '../../../tailwind.css';
+@reference '#tailwind-theme';
 
 :host {
 	@apply mx-auto block;

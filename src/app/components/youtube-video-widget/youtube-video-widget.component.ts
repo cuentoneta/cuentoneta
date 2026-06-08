@@ -17,7 +17,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 			<cuentoneta-portable-text-parser [paragraphs]="media().description" />
 		</p>`,
 	styles: `
-		@reference '../../../tailwind.css';
+		@reference '#tailwind-theme';
 
 		cuentoneta-youtube-video-widget {
 			youtube-player {

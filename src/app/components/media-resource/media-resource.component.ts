@@ -26,7 +26,7 @@ const MEDIA_WIDGET_MAP: Record<MediaTypeKey, Type<MediaTypeWidgetComponents>> = 
 		<ng-container *ngComponentOutlet="media.component; inputs: media.inputs" />
 	}`,
 	styles: `
-		@reference '../../../tailwind.css';
+		@reference '#tailwind-theme';
 
 		:host {
 			@apply mb-10 block w-full;

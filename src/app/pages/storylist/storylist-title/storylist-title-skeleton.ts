@@ -49,7 +49,7 @@ import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 		</div>
 	</div>`,
 	styles: `
-		@reference '../../../../tailwind.css';
+		@reference '#tailwind-theme';
 
 		:host ::ng-deep .title-skeleton .skeleton-loader,
 		:host ::ng-deep .tag-skeleton .skeleton-loader {

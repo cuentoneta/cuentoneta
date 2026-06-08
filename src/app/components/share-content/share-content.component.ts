@@ -15,7 +15,7 @@ import { FacebookPlatform, SharingPlatform, TwitterPlatform, WhatsappPlatform } 
 		</section>
 	`,
 	styles: `
-		@reference '../../../tailwind.css';
+		@reference '#tailwind-theme';
 
 		:host ::ng-deep .share-button-skeleton .skeleton-loader {
 			@apply bg-neutral-300;

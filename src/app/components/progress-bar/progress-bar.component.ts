@@ -6,7 +6,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 	imports: [],
 	template: ` <div class="progress-bar h-full w-0 bg-brand-400" data-testid="progress-bar"></div>`,
 	styles: `
-		@reference '../../../tailwind.css';
+		@reference '#tailwind-theme';
 
 		:host {
 			@apply sticky z-10 col-span-full h-2 w-full overflow-hidden bg-brand-100;

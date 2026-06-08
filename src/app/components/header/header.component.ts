@@ -73,7 +73,7 @@ enum VisibilityState {
 		}
 	`,
 	styles: `
-		@reference '../../../tailwind.css';
+		@reference '#tailwind-theme';
 
 		:host {
 			@apply fixed top-0 z-10 w-full items-center justify-center;

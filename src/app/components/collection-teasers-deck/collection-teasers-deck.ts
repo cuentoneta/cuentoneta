@@ -27,7 +27,7 @@ import { CollectionTeaserSkeleton } from '@components/collection-teaser/collecti
 			}
 		</section>`,
 	styles: `
-		@reference '../../../tailwind.css';
+		@reference '#tailwind-theme';
 
 		:host {
 			@apply flex flex-col gap-8;

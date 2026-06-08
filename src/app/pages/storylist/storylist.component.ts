@@ -42,7 +42,7 @@ import { MediaResourceComponent } from '@components/media-resource/media-resourc
 	],
 	hostDirectives: [MetaTagsDirective],
 	styles: `
-		@reference '../../../tailwind.css';
+		@reference '#tailwind-theme';
 
 		:host ::ng-deep .description-skeleton .skeleton-loader {
 			@apply bg-neutral-300;

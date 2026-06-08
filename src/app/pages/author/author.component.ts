@@ -55,7 +55,7 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 	hostDirectives: [MetaTagsDirective],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	styles: `
-		@reference '../../../tailwind.css';
+		@reference '#tailwind-theme';
 
 		:host ::ng-deep .author-image-skeleton .skeleton-loader,
 		:host ::ng-deep .author-name-skeleton .skeleton-loader,

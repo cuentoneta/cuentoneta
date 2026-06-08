@@ -26,7 +26,7 @@ import { NgComponentOutlet } from '@angular/common';
 		</span>
 	`,
 	styles: `
-		@reference '../../../tailwind.css';
+		@reference '#tailwind-theme';
 
 		:host {
 			@apply flex rounded bg-brand-200 px-4.5 py-0.5 uppercase hover:cursor-default;

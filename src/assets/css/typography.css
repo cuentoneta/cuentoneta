@@ -2,7 +2,7 @@
 	Esta hoja de estilos se compila como entrada independiente (ver `project.json`), por lo que necesita
 	`@reference` para que `@apply` acceda a los tokens del tema de Tailwind v4 sin emitir CSS duplicado.
 */
-@reference '../../tailwind.css';
+@reference '#tailwind-theme';
 
 /* Design System V3 - Typography Classes */
 
