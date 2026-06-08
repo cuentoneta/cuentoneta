@@ -43,7 +43,10 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 		</p>
 	`,
 	styles: `
+		@reference "tailwindcss";
+
 		:host {
+			@apply flex flex-col gap-2;
 			font-family: sans-serif;
 		}
 
