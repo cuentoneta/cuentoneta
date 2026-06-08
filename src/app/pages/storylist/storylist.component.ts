@@ -42,6 +42,8 @@ import { MediaResourceComponent } from '@components/media-resource/media-resourc
 	],
 	hostDirectives: [MetaTagsDirective],
 	styles: `
+		@reference '../../../tailwind.css';
+
 		:host ::ng-deep .description-skeleton .skeleton-loader {
 			@apply bg-neutral-300;
 		}

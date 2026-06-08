@@ -49,6 +49,8 @@ import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 		</div>
 	</div>`,
 	styles: `
+		@reference '../../../../tailwind.css';
+
 		:host ::ng-deep .title-skeleton .skeleton-loader,
 		:host ::ng-deep .tag-skeleton .skeleton-loader {
 			@apply bg-neutral-300;

@@ -20,6 +20,8 @@ export interface MediaResourcePlatform {
 		/>
 	</div>`,
 	styles: `
+		@reference '../../../tailwind.css';
+
 		.md {
 			@apply h-6 w-6;
 		}

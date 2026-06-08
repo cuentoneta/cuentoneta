@@ -25,6 +25,8 @@ import { rxResource } from '@angular/core/rxjs-interop';
 		}
 	}`,
 	styles: `
+		@reference '../../../tailwind.css';
+
 		:host {
 			@apply grid grid-cols-1 gap-y-0.5 rounded-xl bg-neutral-200 shadow-lg;
 		}

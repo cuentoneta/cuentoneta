@@ -46,6 +46,8 @@ Thumbs.db
 # Tools & frameworks
 .angular
 .nx
+node-compile-cache
+v8-compile-cache-0
 .vercel
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md

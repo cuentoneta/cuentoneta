@@ -1,0 +1,13 @@
+/*
+	Punto de entrada de Tailwind CSS v4.
+
+	Este archivo importa el motor de Tailwind y carga la configuración del Design System mediante la
+	directiva `@config`, que apunta al archivo `tailwind.config.ts` ubicado en la raíz del proyecto.
+
+	Se utiliza como referencia (`@reference`) desde las hojas de estilo de componentes y desde las hojas
+	de estilo globales independientes, de manera que `@apply` y `theme()` tengan acceso a los tokens
+	personalizados del tema sin emitir CSS duplicado.
+*/
+@import 'tailwindcss';
+
+@config '../tailwind.config.ts';

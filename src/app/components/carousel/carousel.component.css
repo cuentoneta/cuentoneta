@@ -1,3 +1,5 @@
+@reference '../../../tailwind.css';
+
 :host {
 	@apply mx-auto block;
 }
@@ -100,11 +102,11 @@
 
 /* Se usa z-index: 10 para mostrar controles por encima de las diapositivas */
 .carousel-control-left {
-	@apply absolute left-0 top-1/2 z-10 -translate-y-1/2;
+	@apply absolute top-1/2 left-0 z-10 -translate-y-1/2;
 }
 
 .carousel-control-right {
-	@apply absolute right-0 top-1/2 z-10 -translate-y-1/2;
+	@apply absolute top-1/2 right-0 z-10 -translate-y-1/2;
 }
 
 .carousel-indicators-wrapper {

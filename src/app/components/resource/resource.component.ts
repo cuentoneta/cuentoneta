@@ -38,6 +38,8 @@ import { NgComponentOutlet } from '@angular/common';
 		</a>
 	`,
 	styles: `
+		@reference '../../../tailwind.css';
+
 		:host {
 			@apply flex items-center justify-center;
 		}

@@ -4,16 +4,47 @@
 		"at-rule-no-unknown": [
 			true,
 			{
-				"ignoreAtRules": ["apply", "layer", "responsive", "screen", "tailwind", "variants", "use"]
+				"ignoreAtRules": [
+					"apply",
+					"config",
+					"custom-variant",
+					"layer",
+					"plugin",
+					"reference",
+					"responsive",
+					"screen",
+					"source",
+					"tailwind",
+					"theme",
+					"utility",
+					"variants",
+					"use"
+				]
 			}
 		],
 		"at-rule-no-deprecated": [
 			true,
 			{
-				"ignoreAtRules": ["apply", "layer", "responsive", "screen", "tailwind", "variants", "use"]
+				"ignoreAtRules": [
+					"apply",
+					"config",
+					"custom-variant",
+					"layer",
+					"plugin",
+					"reference",
+					"responsive",
+					"screen",
+					"source",
+					"tailwind",
+					"theme",
+					"utility",
+					"variants",
+					"use"
+				]
 			}
 		],
 		"no-descending-specificity": null,
+		"import-notation": "string",
 		"selector-pseudo-class-no-unknown": [
 			true,
 			{

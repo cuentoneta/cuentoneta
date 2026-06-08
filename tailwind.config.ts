@@ -1,17 +1,22 @@
 import { createGlobPatternsForDependencies } from '@nx/angular/tailwind';
 import { join } from 'path';
-import { Config } from 'tailwindcss/types/config';
+import { Config } from 'tailwindcss';
 import { extendedColors, spacing, borderRadius, blur, fontSize } from './theme.config';
 import { VIEWPORT_WIDTHS_PX } from './src/app/utils/screen.utils';
 import { HEADER_HEIGHT_STRING_PX } from './src/app/utils/spacing.utils';
 
+/*
+	Configuración de Tailwind CSS v4 cargada mediante la directiva `@config` desde `src/tailwind.css`.
+
+	Se conserva el archivo de configuración en formato JS/TS (en lugar de migrar a `@theme` en CSS) para
+	mantener `theme.config.ts` como fuente única de verdad del Design System, ya que sus tokens también son
+	consumidos por pruebas unitarias (ver `src/app/theme-config.spec.ts`) y utilidades de la aplicación.
+
+	El `safelist` de Tailwind v3 se reemplazó por la directiva `@source inline(...)` en `src/styles.css`,
+	dado que v4 ya no admite la opción `safelist` en la configuración.
+*/
 export default {
 	content: [join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}'), ...createGlobPatternsForDependencies(__dirname)],
-	safelist: [
-		{
-			pattern: /line-clamp-(1|2|3|4|5|6|7|8|9|10)/,
-		},
-	],
 	theme: {
 		colors: extendedColors,
 		content: {

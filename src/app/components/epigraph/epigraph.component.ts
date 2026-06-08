@@ -18,6 +18,8 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 		</div>
 	`,
 	styles: `
+		@reference '../../../tailwind.css';
+
 		:host {
 			@apply flex;
 		}

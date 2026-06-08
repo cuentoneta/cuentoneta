@@ -13,7 +13,7 @@ enum VisibilityState {
 @Component({
 	selector: 'cuentoneta-header',
 	template: `
-		<header [@toggle]="isVisible()" class="w-100 nav-container">
+		<header [@toggle]="isVisible()" class="nav-container w-100">
 			<section class="flex items-center">
 				<a [routerLink]="['/', 'home']" class="flex">
 					<img [ngSrc]="'./assets/svg/logo.svg'" class="mr-3" width="59" height="32" alt="Logo de 'La Cuentoneta'" />
@@ -73,6 +73,8 @@ enum VisibilityState {
 		}
 	`,
 	styles: `
+		@reference '../../../tailwind.css';
+
 		:host {
 			@apply fixed top-0 z-10 w-full items-center justify-center;
 			@apply md:m-auto;
