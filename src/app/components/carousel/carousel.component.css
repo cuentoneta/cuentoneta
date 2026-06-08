@@ -1,24 +1,12 @@
-@reference '#tailwind-theme';
-
-:host {
-	@apply mx-auto block;
-}
-
-.carousel-container {
-	@apply relative overflow-hidden rounded-xl;
-	@apply aspect-[540/220] sm:aspect-[1240/360];
-	@apply outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2;
-}
+/*
+	Solo CSS puro: estados de diapositiva, animaciones y keyframes. Las utilidades de layout/estilo
+	(las que antes se aplicaban con `@apply`) viven ahora en `class="..."` en el template y en `host`,
+	de modo que Tailwind las genera una sola vez en la hoja global y no se duplica la maquinaria `--tw-*`
+	por componente. Por eso este archivo ya no necesita `@reference`.
+*/
 
 .slide-wrapper {
-	@apply relative h-full w-full;
-
 	touch-action: pan-y; /* Permite scroll vertical, captura deslizamientos horizontales */
-}
-
-.slide {
-	@apply absolute inset-0 h-full w-full;
-	@apply transition-transform ease-in-out;
 }
 
 .slide.active {
@@ -98,17 +86,4 @@
 	.slide.slide-out-right {
 		animation: none;
 	}
-}
-
-/* Se usa z-index: 10 para mostrar controles por encima de las diapositivas */
-.carousel-control-left {
-	@apply absolute top-1/2 left-0 z-10 -translate-y-1/2;
-}
-
-.carousel-control-right {
-	@apply absolute top-1/2 right-0 z-10 -translate-y-1/2;
-}
-
-.carousel-indicators-wrapper {
-	@apply absolute bottom-2 left-1/2 z-10 -translate-x-1/2 sm:bottom-4;
 }
