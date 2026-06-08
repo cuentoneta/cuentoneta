@@ -1,8 +1,11 @@
-@import './assets/css/reset.css';
-@import './assets/css/layout.css';
-@import './assets/css/theme.css';
-@import './assets/css/transitions.css';
-@import './app/directives/tooltip.directive.css';
+/* Las utilidades de Tailwind (capa `utilities`) deben poder sobreescribir los estilos base globales (reset/theme/layout). */
+@layer theme, base, components, utilities;
+
+@import './assets/css/reset.css' layer(base);
+@import './assets/css/layout.css' layer(base);
+@import './assets/css/theme.css' layer(base);
+@import './assets/css/transitions.css' layer(base);
+@import './app/directives/tooltip.directive.css' layer(base);
 
 /* Imports de Tailwind v4 (motor + tema del Design System definido con @theme) */
 @import './tailwind.css';

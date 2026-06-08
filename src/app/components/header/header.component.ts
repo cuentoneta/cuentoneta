@@ -13,7 +13,7 @@ enum VisibilityState {
 @Component({
 	selector: 'cuentoneta-header',
 	template: `
-		<header [@toggle]="isVisible()" class="nav-container w-100">
+		<header [@toggle]="isVisible()" class="nav-container w-full">
 			<section class="flex items-center">
 				<a [routerLink]="['/', 'home']" class="flex">
 					<img [ngSrc]="'./assets/svg/logo.svg'" class="mr-3" width="59" height="32" alt="Logo de 'La Cuentoneta'" />
