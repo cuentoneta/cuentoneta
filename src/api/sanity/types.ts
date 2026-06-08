@@ -152,6 +152,13 @@ export type Story = {
 				_type: 'spotifyPodcastEpisode';
 				_key: string;
 		  }
+		| {
+				title: string;
+				description: BlockContent;
+				url: string;
+				_type: 'pdfLink';
+				_key: string;
+		  }
 	>;
 	resources?: Array<{
 		title: string;
@@ -319,6 +326,13 @@ export type Storylist = {
 				_type: 'spotifyPodcastEpisode';
 				_key: string;
 		  }
+		| {
+				title: string;
+				description: BlockContent;
+				url: string;
+				_type: 'pdfLink';
+				_key: string;
+		  }
 	>;
 };
 
@@ -468,6 +482,7 @@ export type SanityImageMetadata = {
 	palette?: SanityImagePalette;
 	lqip?: string;
 	blurHash?: string;
+	thumbHash?: string;
 	hasAlpha?: boolean;
 	isOpaque?: boolean;
 };
@@ -483,14 +498,14 @@ export type SanityFileAsset = {
 	title?: string;
 	description?: string;
 	altText?: string;
-	sha1hash?: string;
-	extension?: string;
-	mimeType?: string;
-	size?: number;
-	assetId?: string;
+	sha1hash: string;
+	extension: string;
+	mimeType: string;
+	size: number;
+	assetId: string;
 	uploadId?: string;
-	path?: string;
-	url?: string;
+	path: string;
+	url: string;
 	source?: SanityAssetSourceData;
 };
 
@@ -512,14 +527,14 @@ export type SanityImageAsset = {
 	title?: string;
 	description?: string;
 	altText?: string;
-	sha1hash?: string;
-	extension?: string;
-	mimeType?: string;
-	size?: number;
-	assetId?: string;
+	sha1hash: string;
+	extension: string;
+	mimeType: string;
+	size: number;
+	assetId: string;
 	uploadId?: string;
-	path?: string;
-	url?: string;
+	path: string;
+	url: string;
 	metadata?: SanityImageMetadata;
 	source?: SanityAssetSourceData;
 };
@@ -682,6 +697,13 @@ export type RotatingContentQueryResult = {
 									_key: string;
 							  }
 							| {
+									title: string;
+									description: BlockContent;
+									url: string;
+									_type: 'pdfLink';
+									_key: string;
+							  }
+							| {
 									postId: string;
 									title: string;
 									description: BlockContent;
@@ -828,6 +850,13 @@ export type LandingPageContentQueryResult = {
 									_key: string;
 							  }
 							| {
+									title: string;
+									description: BlockContent;
+									url: string;
+									_type: 'pdfLink';
+									_key: string;
+							  }
+							| {
 									postId: string;
 									title: string;
 									description: BlockContent;
@@ -904,6 +933,13 @@ export type LandingPageContentQueryResult = {
 									description: BlockContent;
 									url: string;
 									_type: 'audioRecording';
+									_key: string;
+							  }
+							| {
+									title: string;
+									description: BlockContent;
+									url: string;
+									_type: 'pdfLink';
 									_key: string;
 							  }
 							| {
@@ -1050,6 +1086,13 @@ export type StoriesByAuthorSlugQueryResult = Array<{
 						_key: string;
 				  }
 				| {
+						title: string;
+						description: BlockContent;
+						url: string;
+						_type: 'pdfLink';
+						_key: string;
+				  }
+				| {
 						postId: string;
 						title: string;
 						description: BlockContent;
@@ -1107,6 +1150,13 @@ export type StoryNavigationTeasersByAuthorSlugQueryResult = Array<{
 						description: BlockContent;
 						url: string;
 						_type: 'audioRecording';
+						_key: string;
+				  }
+				| {
+						title: string;
+						description: BlockContent;
+						url: string;
+						_type: 'pdfLink';
 						_key: string;
 				  }
 				| {
@@ -1191,6 +1241,13 @@ export type StoryBySlugQueryResult = {
 						description: BlockContent;
 						url: string;
 						_type: 'audioRecording';
+						_key: string;
+				  }
+				| {
+						title: string;
+						description: BlockContent;
+						url: string;
+						_type: 'pdfLink';
 						_key: string;
 				  }
 				| {
@@ -1301,6 +1358,13 @@ export type StoriesBySlugsQueryResult = Array<{
 						_key: string;
 				  }
 				| {
+						title: string;
+						description: BlockContent;
+						url: string;
+						_type: 'pdfLink';
+						_key: string;
+				  }
+				| {
 						postId: string;
 						title: string;
 						description: BlockContent;
@@ -1380,6 +1444,13 @@ export type AllStoriesQueryResult = Array<{
 						description: BlockContent;
 						url: string;
 						_type: 'audioRecording';
+						_key: string;
+				  }
+				| {
+						title: string;
+						description: BlockContent;
+						url: string;
+						_type: 'pdfLink';
 						_key: string;
 				  }
 				| {
@@ -1483,6 +1554,13 @@ export type StorylistTeasersQueryResult = Array<{
 						_key: string;
 				  }
 				| {
+						title: string;
+						description: BlockContent;
+						url: string;
+						_type: 'pdfLink';
+						_key: string;
+				  }
+				| {
 						postId: string;
 						title: string;
 						description: BlockContent;
@@ -1542,6 +1620,13 @@ export type StorylistStoriesNavigationTeasersQueryResult = {
 									description: BlockContent;
 									url: string;
 									_type: 'audioRecording';
+									_key: string;
+							  }
+							| {
+									title: string;
+									description: BlockContent;
+									url: string;
+									_type: 'pdfLink';
 									_key: string;
 							  }
 							| {
@@ -1685,6 +1770,13 @@ export type StorylistQueryResult = {
 									_key: string;
 							  }
 							| {
+									title: string;
+									description: BlockContent;
+									url: string;
+									_type: 'pdfLink';
+									_key: string;
+							  }
+							| {
 									postId: string;
 									title: string;
 									description: BlockContent;
@@ -1765,6 +1857,13 @@ export type StorylistQueryResult = {
 						description: BlockContent;
 						url: string;
 						_type: 'audioRecording';
+						_key: string;
+				  }
+				| {
+						title: string;
+						description: BlockContent;
+						url: string;
+						_type: 'pdfLink';
 						_key: string;
 				  }
 				| {
