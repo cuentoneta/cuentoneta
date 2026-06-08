@@ -1,9 +1,3 @@
-/*
-	Reset y hojas de estilo globales.
-
-	Se utilizan imports en formato de cadena (en lugar de `url(...)`) para que el motor de Tailwind v4 los
-	incorpore y procese sus directivas `@apply` con acceso a los tokens del tema.
-*/
 @import './assets/css/reset.css';
 @import './assets/css/layout.css';
 @import './assets/css/theme.css';
@@ -13,11 +7,7 @@
 /* Imports de Tailwind v4 (motor + tema del Design System definido con @theme) */
 @import './tailwind.css';
 
-/*
-	Reemplaza al `safelist` de Tailwind v3. Garantiza la generación de las utilidades `line-clamp-*` que se
-	construyen dinámicamente en plantillas (por ejemplo, `'line-clamp-' + excerptLines()`) y que, por lo
-	tanto, no pueden ser detectadas por el escaneo estático de clases de Tailwind.
-*/
+/* Genera las utilidades `line-clamp-*` que se construyen dinámicamente en las plantillas y que el escaneo estático de clases no detecta. */
 @source inline('line-clamp-{1,2,3,4,5,6,7,8,9,10}');
 
 /* Imports de fuentes */

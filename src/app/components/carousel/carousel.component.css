@@ -1,10 +1,3 @@
-/*
-	Solo CSS puro: estados de diapositiva, animaciones y keyframes. Las utilidades de layout/estilo
-	(las que antes se aplicaban con `@apply`) viven ahora en `class="..."` en el template y en `host`,
-	de modo que Tailwind las genera una sola vez en la hoja global y no se duplica la maquinaria `--tw-*`
-	por componente. Por eso este archivo ya no necesita `@reference`.
-*/
-
 .slide-wrapper {
 	touch-action: pan-y; /* Permite scroll vertical, captura deslizamientos horizontales */
 }

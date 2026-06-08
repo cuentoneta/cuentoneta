@@ -7,7 +7,6 @@ export default {
 	bracketSpacing: true,
 	arrowFunctionParentheses: true,
 	plugins: ['prettier-plugin-organize-attributes', 'prettier-plugin-tailwindcss'],
-	// Hoja de estilos de entrada de Tailwind v4, usada por el plugin para resolver la configuración del tema.
-	tailwindStylesheet: './src/styles.css',
+	tailwindStylesheet: './src/tailwind.css',
 	attributeGroups: ['$ANGULAR_OUTPUT', '$ANGULAR_TWO_WAY_BINDING', '$ANGULAR_INPUT', '$ANGULAR_STRUCTURAL_DIRECTIVE'],
 };
