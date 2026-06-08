@@ -5,18 +5,18 @@
 		role="region"
 		aria-roledescription="carousel"
 		aria-label="Content campaigns"
-		class="carousel-container relative"
+		class="carousel-container relative aspect-[540/220] overflow-hidden rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 sm:aspect-[1240/360]"
 		tabindex="0"
 	>
 		<!-- Diapositivas -->
-		<div class="slide-wrapper" #slideWrapper aria-live="polite" aria-atomic="false">
+		<div class="slide-wrapper relative h-full w-full" #slideWrapper aria-live="polite" aria-atomic="false">
 			@for (slide of slides(); track slide.slug; let i = $index) {
 				<!-- Diapositiva activa (entrando) -->
 				@if (i === activeIndex()) {
 					<div
 						[class.slide-in-left]="direction() === 'left'"
 						[class.slide-in-right]="direction() === 'right'"
-						class="slide active"
+						class="slide active absolute inset-0 h-full w-full transition-transform ease-in-out"
 					>
 						<a [routerLink]="slide.url" [class]="viewportSpecificClasses[viewport()]">
 							<img
@@ -36,7 +36,7 @@
 					<div
 						[class.slide-out-left]="direction() === 'left'"
 						[class.slide-out-right]="direction() === 'right'"
-						class="slide previous"
+						class="slide previous absolute inset-0 h-full w-full transition-transform ease-in-out"
 					>
 						<a [routerLink]="slide.url" [class]="viewportSpecificClasses[viewport()]">
 							<img
@@ -54,17 +54,17 @@
 
 		<!-- Controles de navegación (solo escritorio) -->
 		@if (showControls()) {
-			<div class="carousel-control-left">
+			<div class="carousel-control-left absolute top-1/2 left-0 z-10 -translate-y-1/2">
 				<cuentoneta-carousel-controls (controlClick)="prev()" [disabled]="isTransitioning()" type="left" />
 			</div>
 
-			<div class="carousel-control-right">
+			<div class="carousel-control-right absolute top-1/2 right-0 z-10 -translate-y-1/2">
 				<cuentoneta-carousel-controls (controlClick)="next()" [disabled]="isTransitioning()" type="right" />
 			</div>
 		}
 
 		<!-- Indicadores de progreso -->
-		<div class="carousel-indicators-wrapper">
+		<div class="carousel-indicators-wrapper absolute bottom-2 left-1/2 z-10 -translate-x-1/2 sm:bottom-4">
 			<cuentoneta-carousel-indicator
 				(indicatorClick)="onIndicatorClick($event)"
 				[count]="slideCount()"
