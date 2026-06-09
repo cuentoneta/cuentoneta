@@ -11,8 +11,12 @@
  *   (prueba sin escribir) DRY_RUN=1 pnpm exec tsx --env-file=.env scripts/upload-space-audios.ts
  */
 import { createReadStream } from 'node:fs';
-import { basename } from 'node:path';
+import { basename, resolve } from 'node:path';
 import { client } from '../src/api/_helpers/sanity-connector';
+
+// Las rutas locales (audioPath/avatarPath) se resuelven relativas a esta carpeta (scripts/),
+// salvo que sean absolutas. Coloca los audios en scripts/ o usa rutas absolutas.
+const FILES_DIR = import.meta.dirname;
 
 interface Operation {
 	slug: string;
@@ -20,18 +24,51 @@ interface Operation {
 	hostName: string;
 	date: string; // ISO 8601, p.ej. '2024-03-28T01:31:58.000Z'
 	avatarPath?: string; // opcional: ruta local a la imagen del avatar
+	avatarUrl?: string; // opcional: URL de la imagen del avatar (se descarga y sube)
 }
 
+// Avatar usado cuando una entrada no define avatarPath/avatarUrl propios. Útil cuando
+// varios Spaces comparten el mismo host: se sube una sola vez (ver dedup más abajo).
+// Puede ser una URL (se descarga) — dejar '' para no asignar avatar por defecto.
+const DEFAULT_AVATAR_URL = 'https://pbs.twimg.com/profile_images/1968092947057905664/QM6BF2ua_400x400.jpg';
+
 // Las 7 historias con un Space (serie "Desde el sótano de la casa de la calle Garay").
-// Completar audioPath/hostName/date (y avatarPath opcional) para cada una antes de ejecutar.
+// Completar audioPath/hostName/date para cada una antes de ejecutar.
+// Avatar (opcional): por entrada con `avatarUrl` (URL, se descarga) o `avatarPath` (archivo
+// local), o globalmente con DEFAULT_AVATAR_URL. Se sube una sola vez aunque se repita.
 const OPERATIONS: Operation[] = [
-	{ slug: 'la-casa-de-asterion', audioPath: '', hostName: '', date: '' }, // Encuentro #1
-	{ slug: 'el-fin-borges', audioPath: '', hostName: '', date: '' }, // Encuentro #2
-	{ slug: 'biografia-de-tadeo-isidoro-cruz', audioPath: '', hostName: '', date: '' }, // Encuentro #3
-	{ slug: 'tema-del-traidor-y-del-heroe', audioPath: '', hostName: '', date: '' }, // Encuentro #4
-	{ slug: 'la-forma-de-la-espada', audioPath: '', hostName: '', date: '' }, // Encuentro #5
-	{ slug: 'tres-versiones-de-judas', audioPath: '', hostName: '', date: '' }, // Encuentro #6
-	{ slug: 'el-aleph', audioPath: '', hostName: '', date: '' }, // Encuentro #7
+	{
+		slug: 'la-casa-de-asterion',
+		audioPath: 'la-casa-de-asterion.mp4',
+		hostName: '@ladrondesabado',
+		date: '2023-12-18',
+	}, // Encuentro #1
+	{ slug: 'el-fin-borges', audioPath: 'el-fin-borges.mp4', hostName: '@ladrondesabado', date: '2023-12-23' }, // Encuentro #2
+	{
+		slug: 'biografia-de-tadeo-isidoro-cruz',
+		audioPath: 'biografia-de-tadeo-isidoro-cruz.m4a',
+		hostName: '@ladrondesabado',
+		date: '2023-12-26',
+	}, // Encuentro #3
+	{
+		slug: 'tema-del-traidor-y-del-heroe',
+		audioPath: 'tema-del-traidor-y-del-heroe.m4a',
+		hostName: '@ladrondesabado',
+		date: '2023-12-30',
+	}, // Encuentro #4
+	{
+		slug: 'la-forma-de-la-espada',
+		audioPath: 'la-forma-de-la-espada.m4a',
+		hostName: '@ladrondesabado',
+		date: '2024-01-09',
+	}, // Encuentro #5
+	{
+		slug: 'tres-versiones-de-judas',
+		audioPath: 'tres-versiones-de-judas.m4a',
+		hostName: '@ladrondesabado',
+		date: '2024-03-27',
+	}, // Encuentro #6
+	{ slug: 'el-aleph', audioPath: 'el-aleph.m4a', hostName: '@ladrondesabado', date: '2024-11-26' }, // Encuentro #7
 ];
 
 const DRY_RUN = process.env['DRY_RUN'] === '1';
@@ -42,8 +79,41 @@ interface StoryDoc {
 }
 
 async function uploadAsset(kind: 'file' | 'image', path: string): Promise<string> {
-	const asset = await client.assets.upload(kind, createReadStream(path), { filename: basename(path) });
+	const fullPath = resolve(FILES_DIR, path);
+	const asset = await client.assets.upload(kind, createReadStream(fullPath), { filename: basename(fullPath) });
 	return asset._id;
+}
+
+async function uploadImageFromUrl(url: string): Promise<string> {
+	const res = await fetch(url);
+	if (!res.ok) throw new Error(`No se pudo descargar el avatar (${res.status}): ${url}`);
+	const buffer = Buffer.from(await res.arrayBuffer());
+	const filename = basename(new URL(url).pathname) || 'avatar';
+	const asset = await client.assets.upload('image', buffer, { filename });
+	return asset._id;
+}
+
+// Cache para subir el mismo avatar (por ruta o URL) una sola vez.
+const avatarAssetCache = new Map<string, string>();
+
+async function getCachedAsset(key: string, upload: () => Promise<string>): Promise<string> {
+	const cached = avatarAssetCache.get(key);
+	if (cached) return cached;
+	const assetId = await upload();
+	avatarAssetCache.set(key, assetId);
+	return assetId;
+}
+
+async function resolveAvatarAssetId(op: Operation): Promise<string | null> {
+	const { avatarPath } = op;
+	if (avatarPath) {
+		return getCachedAsset(avatarPath, () => uploadAsset('image', avatarPath));
+	}
+	const url = op.avatarUrl ?? DEFAULT_AVATAR_URL;
+	if (url) {
+		return getCachedAsset(url, () => uploadImageFromUrl(url));
+	}
+	return null;
 }
 
 async function run() {
@@ -82,7 +152,7 @@ async function run() {
 		}
 
 		const audioAssetId = await uploadAsset('file', op.audioPath);
-		const avatarAssetId = op.avatarPath ? await uploadAsset('image', op.avatarPath) : null;
+		const avatarAssetId = await resolveAvatarAssetId(op);
 
 		const prefix = `mediaSources[_key=="${space._key}"]`;
 		const set: Record<string, unknown> = {

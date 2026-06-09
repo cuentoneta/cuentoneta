@@ -136,7 +136,7 @@ export const spaceRecording = defineType({
 		defineField({
 			name: 'date',
 			title: 'Fecha del space',
-			type: 'datetime',
+			type: 'date',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({

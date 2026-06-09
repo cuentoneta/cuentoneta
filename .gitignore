@@ -50,3 +50,12 @@ Thumbs.db
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
 .claude
+
+# Archivos de audio locales para la migración de Spaces (no versionar)
+/scripts/*.mp3
+/scripts/*.mp4
+/scripts/*.m4a
+/scripts/*.wav
+
+# Exportaciones de dataset de Sanity
+/cms/*.tar.gz
