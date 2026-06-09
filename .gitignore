@@ -53,6 +53,3 @@ Thumbs.db
 
 # Exportaciones de dataset de Sanity
 /cms/*.tar.gz
-
-# Script local de migración de audios de Spaces (no se versiona)
-/scripts/upload-space-audios.ts
