@@ -1,7 +1,7 @@
 /**
  * Sube los audios de los Spaces de X (archivos locales) como assets de Sanity y
  * popula el nuevo schema de `spaceRecording` (audioFile, hostName, hostAvatar, date)
- * en cada historia, quitando los campos obsoletos `postId`/`spaceUrl`.
+ * en cada historia. Solo aditivo: deja intactos los campos obsoletos `postId`/`spaceUrl`.
  *
  * Completar las rutas locales y los datos de anfitrión en OPERATIONS antes de correr.
  * Patchea el documento PUBLICADO directamente (no crea borrador).
@@ -164,11 +164,10 @@ async function run() {
 			set[`${prefix}.hostAvatar`] = { _type: 'image', asset: { _type: 'reference', _ref: avatarAssetId } };
 		}
 
-		await client
-			.patch(doc._id)
-			.set(set)
-			.unset([`${prefix}.postId`, `${prefix}.spaceUrl`])
-			.commit();
+		// Solo aditivo: NO se borran postId/spaceUrl para no romper la app vieja durante
+		// la transición (siguen leyendo postId vía rettiwt hasta que se despliegue la app
+		// nueva). Quedan como campos obsoletos inertes; se pueden limpiar luego del deploy.
+		await client.patch(doc._id).set(set).commit();
 
 		console.log(`✓ ${op.slug}: audio + datos cargados (audioAsset=${audioAssetId})`);
 		done++;
