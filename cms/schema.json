@@ -1,6 +1,146 @@
 [
 	{
 		"type": "type",
+		"name": "sanity.fileAsset.reference",
+		"value": {
+			"type": "object",
+			"attributes": {
+				"_ref": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "string"
+					}
+				},
+				"_type": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "string",
+						"value": "reference"
+					}
+				},
+				"_weak": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "boolean"
+					},
+					"optional": true
+				}
+			},
+			"dereferencesTo": "sanity.fileAsset"
+		}
+	},
+	{
+		"type": "type",
+		"name": "audioFile",
+		"value": {
+			"type": "object",
+			"attributes": {
+				"asset": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "inline",
+						"name": "sanity.fileAsset.reference"
+					},
+					"optional": true
+				},
+				"media": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "inline",
+						"name": "audioFile.media"
+					},
+					"optional": true
+				},
+				"_type": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "string",
+						"value": "file"
+					}
+				}
+			}
+		}
+	},
+	{
+		"type": "type",
+		"name": "sanity.imageAsset.reference",
+		"value": {
+			"type": "object",
+			"attributes": {
+				"_ref": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "string"
+					}
+				},
+				"_type": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "string",
+						"value": "reference"
+					}
+				},
+				"_weak": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "boolean"
+					},
+					"optional": true
+				}
+			},
+			"dereferencesTo": "sanity.imageAsset"
+		}
+	},
+	{
+		"type": "type",
+		"name": "hostAvatar",
+		"value": {
+			"type": "object",
+			"attributes": {
+				"asset": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "inline",
+						"name": "sanity.imageAsset.reference"
+					},
+					"optional": true
+				},
+				"media": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "inline",
+						"name": "hostAvatar.media"
+					},
+					"optional": true
+				},
+				"hotspot": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "inline",
+						"name": "sanity.imageHotspot"
+					},
+					"optional": true
+				},
+				"crop": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "inline",
+						"name": "sanity.imageCrop"
+					},
+					"optional": true
+				},
+				"_type": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "string",
+						"value": "image"
+					}
+				}
+			}
+		}
+	},
+	{
+		"type": "type",
 		"name": "story.reference",
 		"value": {
 			"type": "object",
@@ -205,36 +345,6 @@
 					"optional": true
 				}
 			}
-		}
-	},
-	{
-		"type": "type",
-		"name": "sanity.imageAsset.reference",
-		"value": {
-			"type": "object",
-			"attributes": {
-				"_ref": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "string"
-					}
-				},
-				"_type": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "string",
-						"value": "reference"
-					}
-				},
-				"_weak": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "boolean"
-					},
-					"optional": true
-				}
-			},
-			"dereferencesTo": "sanity.imageAsset"
 		}
 	},
 	{
@@ -678,13 +788,6 @@
 							{
 								"type": "object",
 								"attributes": {
-									"postId": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
 									"title": {
 										"type": "objectAttribute",
 										"value": {
@@ -700,7 +803,30 @@
 										},
 										"optional": false
 									},
-									"spaceUrl": {
+									"audioFile": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "inline",
+											"name": "audioFile"
+										},
+										"optional": false
+									},
+									"hostName": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "string"
+										},
+										"optional": false
+									},
+									"hostAvatar": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "inline",
+											"name": "hostAvatar"
+										},
+										"optional": true
+									},
+									"date": {
 										"type": "objectAttribute",
 										"value": {
 											"type": "string"
@@ -1735,13 +1861,6 @@
 							{
 								"type": "object",
 								"attributes": {
-									"postId": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
 									"title": {
 										"type": "objectAttribute",
 										"value": {
@@ -1757,7 +1876,30 @@
 										},
 										"optional": false
 									},
-									"spaceUrl": {
+									"audioFile": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "inline",
+											"name": "audioFile"
+										},
+										"optional": false
+									},
+									"hostName": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "string"
+										},
+										"optional": false
+									},
+									"hostAvatar": {
+										"type": "objectAttribute",
+										"value": {
+											"type": "inline",
+											"name": "hostAvatar"
+										},
+										"optional": true
+									},
+									"date": {
 										"type": "objectAttribute",
 										"value": {
 											"type": "string"

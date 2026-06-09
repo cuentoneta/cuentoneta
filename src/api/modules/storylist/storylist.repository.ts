@@ -76,7 +76,7 @@ export async function fetchStorylistBySlug(slug: string): Promise<Storylist> {
 			content: mapBlockContentToTextParagraphs(tab.content),
 			icon: tab.icon ?? undefined,
 		})),
-		media: await mapMediaSources(result.mediaSources),
+		media: mapMediaSources(result.mediaSources),
 	};
 }
 

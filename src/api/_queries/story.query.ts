@@ -53,13 +53,18 @@ export const storyBySlugQuery = defineQuery(`
     'review': coalesce(review, []),
     'originalPublication': coalesce(originalPublication, ''),
     approximateReadingTime,
-    'mediaSources': coalesce(mediaSources[], []),
+    'mediaSources': coalesce(mediaSources[]{
+        ...,
+        _type == 'spaceRecording' => {
+            'audioUrl': audioFile.asset->url
+        }
+    }, []),
     'resources': coalesce(resources[]{
-        title, 
-        url, 
+        title,
+        url,
         resourceType->{
             'slug': slug.current,
-            title, 
+            title,
             shortDescription,
             description,
             icon
