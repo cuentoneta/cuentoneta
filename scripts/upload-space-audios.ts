@@ -10,7 +10,7 @@
  *   pnpm exec tsx --env-file=.env scripts/upload-space-audios.ts
  *   (prueba sin escribir) DRY_RUN=1 pnpm exec tsx --env-file=.env scripts/upload-space-audios.ts
  */
-import { createReadStream } from 'node:fs';
+import { createReadStream, existsSync } from 'node:fs';
 import { basename, resolve } from 'node:path';
 import { client } from '../src/api/_helpers/sanity-connector';
 
@@ -72,10 +72,12 @@ const OPERATIONS: Operation[] = [
 ];
 
 const DRY_RUN = process.env['DRY_RUN'] === '1';
+// Con FORCE=1 se sobreescriben las entradas que ya tienen audioFile (por defecto se saltan).
+const FORCE = process.env['FORCE'] === '1';
 
 interface StoryDoc {
 	_id: string;
-	mediaSources?: Array<{ _key: string; _type: string }>;
+	mediaSources?: Array<{ _key: string; _type: string; hasAudio?: boolean }>;
 }
 
 async function uploadAsset(kind: 'file' | 'image', path: string): Promise<string> {
@@ -131,7 +133,7 @@ async function run() {
 		}
 
 		const doc = await client.fetch<StoryDoc | null>(
-			`*[_type == "story" && slug.current == $slug && !(_id in path("drafts.**"))][0]{ _id, mediaSources[]{ _key, _type } }`,
+			`*[_type == "story" && slug.current == $slug && !(_id in path("drafts.**"))][0]{ _id, mediaSources[]{ _key, _type, "hasAudio": defined(audioFile) } }`,
 			{ slug: op.slug },
 		);
 		if (!doc) {
@@ -142,6 +144,18 @@ async function run() {
 		const space = (doc.mediaSources ?? []).find((m) => m._type === 'spaceRecording');
 		if (!space) {
 			console.log(`- ${op.slug}: sin mediaSource spaceRecording`);
+			skipped++;
+			continue;
+		}
+
+		if (space.hasAudio && !FORCE) {
+			console.log(`- ${op.slug}: YA MIGRADO (tiene audioFile) — se omite (usa FORCE=1 para sobreescribir)`);
+			skipped++;
+			continue;
+		}
+
+		if (!existsSync(resolve(FILES_DIR, op.audioPath))) {
+			console.log(`- ${op.slug}: FALTA archivo "${op.audioPath}" en scripts/ — se omite`);
 			skipped++;
 			continue;
 		}
