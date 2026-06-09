@@ -3,14 +3,15 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 import { render, screen, within } from '@testing-library/angular';
 import { CommonModule, DatePipe, NgOptimizedImage } from '@angular/common';
 import { spaceRecordingMock } from '../../mocks/space-recording.mock';
+import { SpaceRecording } from '@models/media.model';
 
 describe('SpaceRecordingWidgetComponent', () => {
-	const setup = async () => {
+	const setup = async (media: SpaceRecording = spaceRecordingMock) => {
 		return await render(SpaceRecordingWidgetComponent, {
 			componentImports: [CommonModule, NgOptimizedImage, PortableTextParserComponent],
 			componentProviders: [],
 			inputs: {
-				media: spaceRecordingMock,
+				media,
 			},
 		});
 	};
@@ -50,6 +51,13 @@ describe('SpaceRecordingWidgetComponent', () => {
 		await setup();
 		const audio = screen.getByTestId('space-recording-audio');
 		expect(audio).toHaveAttribute('src', spaceRecordingMock.data.url);
+	});
+
+	it('should show a placeholder instead of the audio player when there is no recording URL', async () => {
+		await setup({ ...spaceRecordingMock, data: { ...spaceRecordingMock.data, url: null } });
+		expect(screen.getByTestId('space-recording-unavailable')).toBeInTheDocument();
+		expect(screen.getByText('Grabación no disponible')).toBeInTheDocument();
+		expect(screen.queryByTestId('space-recording-audio')).not.toBeInTheDocument();
 	});
 
 	it('should render the host avatar', async () => {

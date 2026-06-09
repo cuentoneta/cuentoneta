@@ -42,6 +42,6 @@ export const spaceRecordingMock: SpaceRecording = {
 		duration: '2:19:23',
 		hostName: 'Crítico Cultural',
 		hostAvatar: 'https://pbs.twimg.com/profile_images/1610082924069588992/xCKlsPnA_normal.jpg',
-		date: '2024-03-28T01:31:58.000Z',
+		date: '2024-03-28',
 	},
 };

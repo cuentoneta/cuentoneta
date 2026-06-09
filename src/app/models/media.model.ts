@@ -24,7 +24,7 @@ export interface AudioRecording extends Media {
 
 export interface SpaceRecording extends Media {
 	data: {
-		url: string;
+		url: string | null;
 		duration: string;
 		hostName: string;
 		hostAvatar?: string;

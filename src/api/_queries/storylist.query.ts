@@ -105,10 +105,10 @@ export const storylistQuery = defineQuery(`
     config,
     'tabs': coalesce(tabs[], []),
 		'mediaSources': coalesce(mediaSources[]{
-        ...,
-        _type == 'spaceRecording' => {
-            'audioUrl': audioFile.asset->url
-        }
-    }, []),
+			...,
+			_type == 'spaceRecording' => {
+				'audioUrl': audioFile.asset->url
+			}
+		}, []),
     }
 `);

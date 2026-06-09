@@ -14,9 +14,14 @@ import {
 } from '@models/media.model';
 import { mapBlockContentToTextParagraphs, urlFor } from './functions';
 
-type MediaResourcesStorySubQuery = NonNullable<StoryBySlugQueryResult>['mediaSources'];
-type SpaceRecordingSource = Extract<MediaResourcesStorySubQuery[number], { _type: 'spaceRecording' }>;
-export function mapMediaSources(mediaSources: MediaResourcesStorySubQuery): Media[] {
+// mapMediaSources se invoca con la proyección de mediaSources tanto de story como de
+// storylist. Hoy son estructuralmente idénticas; aceptar ambas explícitamente documenta
+// el acoplamiento. SpaceRecordingSource se extrae de la de story: si una futura corrida de
+// typegen diverge la de storylist, getSpaceRecordingData deja de compilar (no es silencioso).
+type StoryMediaSources = NonNullable<StoryBySlugQueryResult>['mediaSources'];
+type StorylistMediaSources = NonNullable<StorylistQueryResult>['mediaSources'];
+type SpaceRecordingSource = Extract<StoryMediaSources[number], { _type: 'spaceRecording' }>;
+export function mapMediaSources(mediaSources: StoryMediaSources | StorylistMediaSources): Media[] {
 	if (!mediaSources) return [];
 
 	const media: Media[] = [];
@@ -81,7 +86,9 @@ function getSpaceRecordingData(mediaSource: SpaceRecordingSource): SpaceRecordin
 		type: mediaSource._type,
 		description: mapBlockContentToTextParagraphs(mediaSource.description),
 		data: {
-			url: mediaSource.audioUrl ?? '',
+			// Se pasa null tal cual (en vez de '') para que el widget pueda mostrar un
+			// placeholder visible en historias aún no migradas, en vez de un reproductor roto.
+			url: mediaSource.audioUrl,
 			duration: mediaSource.duration,
 			hostName: mediaSource.hostName,
 			hostAvatar: mediaSource.hostAvatar ? urlFor(mediaSource.hostAvatar) : undefined,

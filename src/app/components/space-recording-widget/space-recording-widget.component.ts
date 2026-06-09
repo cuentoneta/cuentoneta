@@ -30,13 +30,22 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 			<h2 class="my-4 text-xl font-semibold text-white">
 				{{ media().title }}
 			</h2>
-			<audio
-				[src]="media().data.url"
-				controls
-				aria-label="space-recording-audio"
-				data-testid="space-recording-audio"
-				class="w-full"
-			></audio>
+			@if (media().data.url; as audioUrl) {
+				<audio
+					[src]="audioUrl"
+					[attr.aria-label]="'Grabación: ' + media().title"
+					controls
+					data-testid="space-recording-audio"
+					class="w-full"
+				></audio>
+			} @else {
+				<div
+					data-testid="space-recording-unavailable"
+					class="rounded-3xl bg-[#fff4] p-2.5 text-center text-base font-bold"
+				>
+					Grabación no disponible
+				</div>
+			}
 		</section>
 		<p class="font-inter text-xs font-medium text-brand-500">
 			<cuentoneta-portable-text-parser [paragraphs]="media().description" />
