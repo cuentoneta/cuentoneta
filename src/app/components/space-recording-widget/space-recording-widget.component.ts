@@ -23,7 +23,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 					<span class="flex items-center rounded bg-[#fff4] px-1 py-0.5 text-sm">Anfitrión</span>
 				</div>
 				<div class="space-recording-data hidden gap-2.5 md:flex">
-					<div class="font-bold">{{ media().data.date | date: 'MMMM d, yyyy' }}</div>
+					<div class="font-bold">{{ media().data.date | date: 'MMMM d, yyyy' : 'UTC' }}</div>
 					<div class="spaces-duration">{{ media().data.duration }}</div>
 				</div>
 			</div>
@@ -35,6 +35,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 					[src]="audioUrl"
 					[attr.aria-label]="'Grabación: ' + media().title"
 					controls
+					preload="none"
 					data-testid="space-recording-audio"
 					class="w-full"
 				></audio>
