@@ -53,3 +53,6 @@ Thumbs.db
 
 # Generated reference material (re-create with `pnpm export-authors-bios`)
 /tools/author-bios/
+
+# Exportaciones de dataset de Sanity
+/cms/*.tar.gz

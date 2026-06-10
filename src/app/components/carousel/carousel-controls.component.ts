@@ -20,6 +20,8 @@ import { faSolidChevronLeft, faSolidChevronRight } from '@ng-icons/font-awesome/
 		</button>
 	`,
 	styles: `
+		@reference '#tailwind-theme';
+
 		:host {
 			@apply block;
 		}
@@ -32,13 +34,13 @@ import { faSolidChevronLeft, faSolidChevronRight } from '@ng-icons/font-awesome/
 			@apply cursor-pointer border-0;
 
 			&.left {
-				@apply pl-[4px] pr-[6px];
-				@apply rounded-br-[12px] rounded-tr-[12px];
+				@apply pr-[6px] pl-[4px];
+				@apply rounded-tr-[12px] rounded-br-[12px];
 			}
 
 			&.right {
-				@apply pl-[6px] pr-[4px];
-				@apply rounded-bl-[12px] rounded-tl-[12px];
+				@apply pr-[4px] pl-[6px];
+				@apply rounded-tl-[12px] rounded-bl-[12px];
 			}
 
 			ng-icon {

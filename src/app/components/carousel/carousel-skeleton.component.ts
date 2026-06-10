@@ -24,6 +24,8 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 		</div>
 	</div>`,
 	styles: `
+		@reference '#tailwind-theme';
+
 		:host ::ng-deep .carousel-image-skeleton .skeleton-loader {
 			@apply bg-neutral-200;
 		}

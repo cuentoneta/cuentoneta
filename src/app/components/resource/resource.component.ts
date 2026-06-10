@@ -37,11 +37,9 @@ import { NgComponentOutlet } from '@angular/common';
 			}
 		</a>
 	`,
-	styles: `
-		:host {
-			@apply flex items-center justify-center;
-		}
-	`,
+	host: {
+		class: 'flex items-center justify-center',
+	},
 })
 export class ResourceComponent implements OnInit {
 	readonly resource = input.required<Resource>();

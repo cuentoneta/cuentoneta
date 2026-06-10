@@ -12,8 +12,14 @@ enum VisibilityState {
 
 @Component({
 	selector: 'cuentoneta-header',
+	host: {
+		class: 'fixed top-0 z-10 w-full items-center justify-center border-b-1 border-neutral-200 md:m-auto',
+	},
 	template: `
-		<header [@toggle]="isVisible()" class="w-100 nav-container">
+		<header
+			[@toggle]="isVisible()"
+			class="nav-container grid w-full grid-cols-[1fr_theme(spacing.6)] grid-rows-[theme(spacing.16)_1fr] bg-neutral-50 px-5 md:grid-cols-2 md:grid-rows-1"
+		>
 			<section class="flex items-center">
 				<a [routerLink]="['/', 'home']" class="flex">
 					<img [ngSrc]="'./assets/svg/logo.svg'" class="mr-3" width="59" height="32" alt="Logo de 'La Cuentoneta'" />
@@ -70,23 +76,6 @@ enum VisibilityState {
 				tabIndex="0"
 				class="backdrop h-dvh bg-neutral-500/70"
 			></div>
-		}
-	`,
-	styles: `
-		:host {
-			@apply fixed top-0 z-10 w-full items-center justify-center;
-			@apply md:m-auto;
-			@apply border-b-1 border-neutral-200;
-
-			.nav-container {
-				@apply grid bg-neutral-50 px-5;
-
-				/*Layout de grid para vistas md y superiores */
-				@apply grid-cols-[1fr_theme(spacing.6)] grid-rows-[theme(spacing.16)_1fr];
-
-				/*Layout de grid para vistas sm y menores */
-				@apply md:grid-cols-2 md:grid-rows-1;
-			}
 		}
 	`,
 	imports: [RouterModule, NgOptimizedImage],

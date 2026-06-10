@@ -17,11 +17,9 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 			</div>
 		</div>
 	`,
-	styles: `
-		:host {
-			@apply flex;
-		}
-	`,
+	host: {
+		class: 'flex',
+	},
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EpigraphComponent {

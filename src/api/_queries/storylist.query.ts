@@ -104,6 +104,11 @@ export const storylistQuery = defineQuery(`
     'count': coalesce(count(stories), 0),
     config,
     'tabs': coalesce(tabs[], []),
-		'mediaSources': coalesce(mediaSources[], []),
+		'mediaSources': coalesce(mediaSources[]{
+			...,
+			_type == 'spaceRecording' => {
+				'audioUrl': audioFile.asset->url
+			}
+		}, []),
     }
 `);
