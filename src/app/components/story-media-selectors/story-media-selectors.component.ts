@@ -45,9 +45,8 @@ interface MediaSelectorItem {
 				<button
 					(click)="selected.emit(selector.media!)"
 					[class]="selectorClasses()"
-					[attr.aria-label]="selector.label"
+					[attr.aria-label]="ariaLabel(selector)"
 					type="button"
-					class="relative flex items-center justify-center rounded-lg px-2.5 py-2"
 					data-testid="media-selector"
 				>
 					<ng-icon [name]="selector.iconName" size="18px" class="text-neutral-900" />
@@ -55,7 +54,8 @@ interface MediaSelectorItem {
 			} @else {
 				<div
 					[class]="selectorClasses()"
-					class="relative flex items-center justify-center rounded-lg px-2.5 py-2"
+					[attr.aria-label]="ariaLabel(selector)"
+					role="img"
 					data-testid="media-selector"
 				>
 					<ng-icon [name]="selector.iconName" [attr.aria-label]="selector.label" size="18px" class="text-neutral-900" />
@@ -63,6 +63,7 @@ interface MediaSelectorItem {
 						<span
 							[class]="badgeClasses()"
 							class="absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-[10px] font-inter text-xxs font-bold text-neutral-900"
+							aria-hidden="true"
 						>
 							{{ selector.count }}
 						</span>
@@ -109,17 +110,29 @@ export class StoryMediaSelectorsComponent {
 		this.orientation() === 'vertical' ? 'flex flex-col items-center gap-2.5' : 'flex items-center gap-2.5',
 	);
 
-	// Estilos del recuadro de cada selector según el tema.
+	// Clases base del recuadro, compartidas por ambas variantes (selectores y botones).
+	private readonly selectorBaseClasses = 'relative flex items-center justify-center rounded-lg px-2.5 py-2';
+
+	// Estilos del recuadro de cada selector: clases base + las propias del tema.
 	readonly selectorClasses = computed(() => {
-		switch (this.theme()) {
-			case 'solid':
-				return 'bg-white';
-			case 'bordered':
-				return 'border border-neutral-150 bg-white';
-			default:
-				return 'bg-neutral-100';
-		}
+		const theme = (() => {
+			switch (this.theme()) {
+				case 'solid':
+					return 'bg-white';
+				case 'bordered':
+					return 'border border-neutral-150 bg-white';
+				default:
+					return 'bg-neutral-100';
+			}
+		})();
+		return `${this.selectorBaseClasses} ${theme}`;
 	});
+
+	// Nombre accesible del selector: incluye el conteo cuando se agrupan varios recursos de la
+	// misma plataforma, de modo que el badge visual pueda marcarse como decorativo (aria-hidden).
+	ariaLabel(selector: MediaSelectorItem): string {
+		return selector.count > 1 ? `${selector.label} (${selector.count})` : selector.label;
+	}
 
 	// Estilos del contador (badge) que se superpone al selector según el tema.
 	readonly badgeClasses = computed(() => {

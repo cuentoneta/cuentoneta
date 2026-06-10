@@ -36,6 +36,13 @@ describe('StoryMediaSelectorsComponent', () => {
 			await render(StoryMediaSelectorsComponent, { inputs: { media } });
 			expect(screen.queryAllByRole('button')).toHaveLength(0);
 		});
+
+		it('should expose each selector as an image with the count folded into its accessible name', async () => {
+			await render(StoryMediaSelectorsComponent, { inputs: { media } });
+			// El badge visual es decorativo: el conteo se anuncia en el nombre accesible del recuadro.
+			expect(screen.getByRole('img', { name: 'YouTube (2)' })).toBeInTheDocument();
+			expect(screen.getByRole('img', { name: 'Spotify' })).toBeInTheDocument();
+		});
 	});
 
 	describe('Selectable mode (selectable = true)', () => {
