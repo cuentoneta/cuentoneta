@@ -161,6 +161,9 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 			</div>
 		</ng-template>
 	`,
+	host: {
+		'[class]': '"block"',
+	},
 	styles: ``,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
