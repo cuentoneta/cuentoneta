@@ -1,0 +1,191 @@
+import { StoryCardTeaserV3Component } from './story-card-teaser-v3.component';
+import { DefaultUrlSerializer, UrlTree } from '@angular/router';
+import { render, screen } from '@testing-library/angular';
+import { storyNavigationTeaserWithAuthorMock, storyTeaserMock } from '../../mocks/story.mock';
+import { authorTeaserMock } from '../../mocks/author.mock';
+import { Media } from '@models/media.model';
+import { StoryTeaserWithAuthor } from '@models/story.model';
+
+describe('StoryCardTeaserV3Component', () => {
+	const storyUrl = '/story/el-espejo-del-tiempo?navigation=author&navigationSlug=francois-onoff';
+	const authorUrl = '/author/francois-onoff';
+
+	let navigationParams: { navigation: string; navigationSlug: string } = { navigation: '', navigationSlug: '' };
+
+	beforeEach(() => {
+		const urlSerializer = new DefaultUrlSerializer();
+		const urlTree: UrlTree = urlSerializer.parse(storyUrl);
+		navigationParams = urlTree.queryParams as { navigation: string; navigationSlug: string };
+	});
+
+	it('should render the component', async () => {
+		const { container } = await render(StoryCardTeaserV3Component, {
+			inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+		});
+		expect(container).toBeTruthy();
+	});
+
+	it('should display the story title', async () => {
+		await render(StoryCardTeaserV3Component, {
+			inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+		});
+		expect(screen.getByText(storyNavigationTeaserWithAuthorMock.title)).toBeInTheDocument();
+	});
+
+	it('should display the approximate reading time', async () => {
+		await render(StoryCardTeaserV3Component, {
+			inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+		});
+		expect(
+			screen.getByText(`${storyNavigationTeaserWithAuthorMock.approximateReadingTime} minutos de lectura`),
+		).toBeInTheDocument();
+	});
+
+	it('should link to the story', async () => {
+		await render(StoryCardTeaserV3Component, {
+			inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+		});
+		const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/story/'));
+		expect(link?.getAttribute('href')).toContain(storyUrl);
+	});
+
+	describe('Order', () => {
+		it('should display the order without leading zero in row variants', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, order: 3, variant: 'on-white' },
+			});
+			expect(screen.getByText('3.')).toBeInTheDocument();
+		});
+
+		it('should display the order in the compact variant', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, order: 7, variant: 'compact' },
+			});
+			expect(screen.getByTestId('order')).toHaveTextContent('7');
+		});
+
+		it('should not display the order when not provided', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+			});
+			expect(screen.queryByText('3.')).not.toBeInTheDocument();
+		});
+	});
+
+	describe('Author', () => {
+		it('should display the author name and avatar when showAuthor is true', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, showAuthor: true },
+			});
+			expect(screen.getByText(storyNavigationTeaserWithAuthorMock.author.name)).toBeInTheDocument();
+			expect(screen.getByTestId('author')).toBeInTheDocument();
+		});
+
+		it('should link to the author profile', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, showAuthor: true },
+			});
+			const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/author/'));
+			expect(link?.getAttribute('href')).toContain(authorUrl);
+		});
+
+		it('should not display the author when showAuthor is false', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, showAuthor: false },
+			});
+			expect(screen.queryByTestId('author')).not.toBeInTheDocument();
+		});
+	});
+
+	describe('Cover image', () => {
+		it('should render the cover image when a URL is provided', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: {
+					story: storyNavigationTeaserWithAuthorMock,
+					navigationParams,
+					coverImageUrl: 'https://example.com/cover.jpg',
+				},
+			});
+			expect(screen.getByTestId('cover-image')).toBeInTheDocument();
+		});
+
+		it('should render a placeholder when no cover URL is provided', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+			});
+			expect(screen.getByTestId('cover-placeholder')).toBeInTheDocument();
+		});
+	});
+
+	describe('Description', () => {
+		const storyWithParagraphs: StoryTeaserWithAuthor = { ...storyTeaserMock, author: authorTeaserMock };
+
+		it('should display the description when showDescription is true and there are paragraphs', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: storyWithParagraphs, showDescription: true, excerptLines: 2 },
+			});
+			expect(screen.getByTestId('description')).toBeInTheDocument();
+		});
+
+		it('should not display the description when showDescription is false', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: storyWithParagraphs, showDescription: false },
+			});
+			expect(screen.queryByTestId('description')).not.toBeInTheDocument();
+		});
+
+		it('should apply the configured number of excerpt lines', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: storyWithParagraphs, showDescription: true, excerptLines: 3 },
+			});
+			expect(screen.getByTestId('description')).toHaveClass('line-clamp-3');
+		});
+	});
+
+	// El detalle de agrupación, contador y emisión vive en story-media-selectors.component.spec.ts.
+	// Aquí solo se verifica la integración: que la tarjeta delegue en el componente cuando corresponde.
+	describe('Multimedia selectors', () => {
+		const richMedia: Media[] = [
+			{ title: 'Video 1', type: 'youTubeVideo', description: [], data: { videoId: 'a' } },
+			{ title: 'Podcast', type: 'spotifyPodcastEpisode', description: [], data: { url: 'https://spotify.com' } },
+		];
+		const storyWithMedia: StoryTeaserWithAuthor = { ...storyTeaserMock, author: authorTeaserMock, media: richMedia };
+
+		it('should display the multimedia selectors when showMultimedia is true and there is media', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: storyWithMedia, showMultimedia: true },
+			});
+			expect(screen.getByTestId('media')).toBeInTheDocument();
+		});
+
+		it('should not display the multimedia selectors when showMultimedia is false', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: storyWithMedia, showMultimedia: false },
+			});
+			expect(screen.queryByTestId('media')).not.toBeInTheDocument();
+		});
+
+		it('should not display the multimedia selectors when the story has no media', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: { ...storyWithMedia, media: [] }, showMultimedia: true },
+			});
+			expect(screen.queryByTestId('media')).not.toBeInTheDocument();
+		});
+	});
+
+	describe('Tag label', () => {
+		it('should display the tag label when provided', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, tagLabel: 'Cuento' },
+			});
+			expect(screen.getByText('Cuento')).toBeInTheDocument();
+		});
+
+		it('should not display the tag label when not provided', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+			});
+			expect(screen.queryByText('Cuento')).not.toBeInTheDocument();
+		});
+	});
+});
