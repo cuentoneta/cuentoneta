@@ -50,3 +50,16 @@ Thumbs.db
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
 .claude
+
+# Generated reference material (re-create with `pnpm exec tsx --env-file=.env scripts/audit/export-authors-bios.ts`)
+/tools/author-bios/
+
+# Exportaciones de dataset de Sanity
+/cms/*.tar.gz
+
+# Plan de trabajo local (no se versiona)
+/PLAN.md
+
+# Grabaciones sueltas de referencia en scripts/
+scripts/*.m4a
+scripts/*.mp4

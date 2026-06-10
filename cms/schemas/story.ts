@@ -1,7 +1,7 @@
 import { DocumentTextIcon } from '@sanity/icons';
 import { resource } from './resourceType';
 import { defineArrayMember, defineField, defineType } from 'sanity';
-import { audioRecording, spaceRecording, spotifyPodcastEpisode, youtubeVideo } from './media-sources';
+import { audioRecording, pdfLink, spaceRecording, spotifyPodcastEpisode, youtubeVideo } from './media-sources';
 
 export default defineType({
 	name: 'story',
@@ -41,6 +41,7 @@ export default defineType({
 				defineArrayMember(spaceRecording),
 				defineArrayMember(youtubeVideo),
 				defineArrayMember(spotifyPodcastEpisode),
+				defineArrayMember(pdfLink),
 			],
 		}),
 		defineField({

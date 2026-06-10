@@ -37,3 +37,7 @@ Este patrón asegura que los cambios en el esquema de Sanity no afecten directam
 ## Actualización y generación automática de contenido
 
 Para más detalles sobre las **consultas GROQ** y **funciones de repositorio** utilizadas para actualizar contenido automáticamente en Sanity, así como la estructura y mantenimiento de documentos clave como `landingPage` y `rotatingContent`, consulta la documentación sobre [Estrategias de Actualización de Contenido](./CONTENT_UPDATE_STRATEGIES.md).
+
+## Scripts de auditoría y diagnóstico
+
+Para tareas puntuales de **auditoría, diagnóstico o migración** sobre los datos de Sanity (por ejemplo, auditar el formato de las biografías de autores o exportarlas a Markdown), el proyecto incluye scripts one-off en `scripts/audit/`. No se exponen como comandos de `package.json` y se ejecutan explícitamente. Consulta su documentación, comandos y advertencias (read-only vs. escritura en producción) en [`scripts/audit/README.md`](../scripts/audit/README.md).

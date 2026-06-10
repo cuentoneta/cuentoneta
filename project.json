@@ -12,6 +12,9 @@
 			"options": {
 				"clearScreen": true,
 				"outputPath": "dist/cuentoneta/",
+				"security": {
+					"allowedHosts": ["cuentoneta-*-reset-*.vercel.app", "cuentoneta.ar", "*.cuentoneta.ar"]
+				},
 				"index": "./src/indexFile.html",
 				"browser": "./src/main.ts",
 				"polyfills": [],

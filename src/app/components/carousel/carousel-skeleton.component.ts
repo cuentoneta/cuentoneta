@@ -7,7 +7,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 @Component({
 	selector: 'cuentoneta-carousel-skeleton',
 	imports: [NgxSkeletonLoaderModule],
-	template: ` <div class="mx-auto max-w-[960px]">
+	template: ` <div class="mx-auto">
 		<div class="slider">
 			<ngx-skeleton-loader
 				[theme]="{
@@ -19,11 +19,13 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 				}"
 				count="1"
 				appearance="line"
-				class="carousel-image-skeleton grid aspect-[540/220] w-full object-cover md:aspect-[960/280]"
+				class="carousel-image-skeleton grid aspect-[540/220] w-full object-cover md:aspect-[1240/360]"
 			/>
 		</div>
 	</div>`,
 	styles: `
+		@reference '#tailwind-theme';
+
 		:host ::ng-deep .carousel-image-skeleton .skeleton-loader {
 			@apply bg-neutral-200;
 		}

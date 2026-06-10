@@ -1,6 +1,6 @@
 import { DashboardIcon, DocumentTextIcon } from '@sanity/icons';
 import { defineArrayMember, defineField, defineType } from 'sanity';
-import { audioRecording, spaceRecording, spotifyPodcastEpisode, youtubeVideo } from './media-sources';
+import { audioRecording, pdfLink, spaceRecording, spotifyPodcastEpisode, youtubeVideo } from './media-sources';
 
 // Sub-schema para definir tabs programables
 // TODO: Evaluar su uso para futuros features donde se requiera contenido programable desde Sanity
@@ -139,6 +139,7 @@ export default defineType({
 				defineArrayMember(spaceRecording),
 				defineArrayMember(youtubeVideo),
 				defineArrayMember(spotifyPodcastEpisode),
+				defineArrayMember(pdfLink),
 			],
 		}),
 	],

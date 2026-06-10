@@ -1,14 +1,17 @@
-/* Reset de CSS */
-@import url('assets/css/reset.css');
-@import url('assets/css/layout.css');
-@import url('assets/css/theme.css');
-@import url('assets/css/transitions.css');
-@import url('app/directives/tooltip.directive.css');
+/* Las utilidades de Tailwind (capa `utilities`) deben poder sobreescribir los estilos base globales (reset/theme/layout). */
+@layer theme, base, components, utilities;
 
-/* Imports de Tailwind */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import './assets/css/reset.css' layer(base);
+@import './assets/css/layout.css' layer(base);
+@import './assets/css/theme.css' layer(base);
+@import './assets/css/transitions.css' layer(base);
+@import './app/directives/tooltip.directive.css' layer(base);
+
+/* Imports de Tailwind v4 (motor + tema del Design System definido con @theme) */
+@import './tailwind.css';
+
+/* Genera las utilidades `line-clamp-*` que se construyen dinámicamente en las plantillas y que el escaneo estático de clases no detecta. */
+@source inline('line-clamp-{1,2,3,4,5,6,7,8,9,10}');
 
 /* Imports de fuentes */
 

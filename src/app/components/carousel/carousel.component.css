@@ -1,22 +1,5 @@
-:host {
-	@apply mx-auto block max-w-[960px];
-}
-
-.carousel-container {
-	@apply relative overflow-hidden rounded-xl;
-	@apply aspect-[540/220] sm:aspect-[960/280];
-	@apply outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2;
-}
-
 .slide-wrapper {
-	@apply relative h-full w-full;
-
 	touch-action: pan-y; /* Permite scroll vertical, captura deslizamientos horizontales */
-}
-
-.slide {
-	@apply absolute inset-0 h-full w-full;
-	@apply transition-transform ease-in-out;
 }
 
 .slide.active {
@@ -96,17 +79,4 @@
 	.slide.slide-out-right {
 		animation: none;
 	}
-}
-
-/* Se usa z-index: 10 para mostrar controles por encima de las diapositivas */
-.carousel-control-left {
-	@apply absolute left-0 top-1/2 z-10 -translate-y-1/2;
-}
-
-.carousel-control-right {
-	@apply absolute right-0 top-1/2 z-10 -translate-y-1/2;
-}
-
-.carousel-indicators-wrapper {
-	@apply absolute bottom-2 left-1/2 z-10 -translate-x-1/2 sm:bottom-4;
 }

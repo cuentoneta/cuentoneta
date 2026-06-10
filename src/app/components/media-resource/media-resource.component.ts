@@ -25,11 +25,9 @@ const MEDIA_WIDGET_MAP: Record<MediaTypeKey, Type<MediaTypeWidgetComponents>> = 
 	template: ` @for (media of mediaResources(); track $index) {
 		<ng-container *ngComponentOutlet="media.component; inputs: media.inputs" />
 	}`,
-	styles: `
-		:host {
-			@apply mb-10 block w-full;
-		}
-	`,
+	host: {
+		class: 'mb-10 block w-full',
+	},
 })
 export class MediaResourceComponent {
 	readonly mediaResources = input.required({

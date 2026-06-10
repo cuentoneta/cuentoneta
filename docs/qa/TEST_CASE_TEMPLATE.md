@@ -8,32 +8,39 @@
 
 ---
 
-## Plan de pruebas manuales
+# Plantilla de Casos de Prueba
 
-### ¿Qué es?
+Un **caso de prueba** define una verificación concreta: qué se prueba, bajo qué condiciones, los pasos, el resultado esperado y obtenido, y su estado. Es la unidad que hace que el software se verifique de forma completa, trazable y repetible.
 
-Es un documento que define y describe cada prueba que se va a realizar sobre un sistema o sitio web. Cada caso de prueba debe contener, al menos, qué se va a probar, bajo qué condiciones, pasos a seguir, resultado esperado y obtenido, estado final.
+Cada caso lleva, además, dos campos propios de este proyecto (ver [`TESTPLAN_GUIDE.md`](./TESTPLAN_GUIDE.md)):
 
-Es una herramienta clave en la ejecución de pruebas, mejora la comunicación entre devs y QAs, y garantiza que el software se verifique de manera completa, trazable y repetible.
+- **Nivel** — cómo se verifica: `unit` | `integration` | `e2e` | `manual`.
+- **Test(s) asociado(s)** — la ruta y el nombre del test automatizado que cubre el caso, o `pendiente de automatizar`.
 
-A manera de ejemplo, se incluyen en el presente documento plantillas para definir planes de pruebas manuales para validar funcionalidades de la plataforma.
+> Copiá el bloque `TC-NNN` tantas veces como casos necesites, con IDs correlativos.
 
-## Plantilla
+---
 
-### Caso de prueba: TC-001
+## Caso de prueba: TC-001
 
-**Módulo**:<br>
+**Módulo:**<br>
 **Nombre del caso:**
+
+### Nivel
+
+- [ ] `unit`
+- [ ] `integration`
+- [ ] `e2e`
+- [ ] `manual`
 
 ### Objetivo
 
-Descripción breve de lo que se busca al realizar las pruebas.
+Descripción breve de lo que se busca verificar.
 
 ### Precondiciones
 
 - [ ] (Ejemplo 1)
 - [ ] (Ejemplo 2)
-- [ ] (Ejemplo 3)
 
 ### Pasos a seguir
 
@@ -52,7 +59,11 @@ Descripción breve de lo que se busca al realizar las pruebas.
 
 ### Resultado obtenido
 
-Comportamiento observado durante la ejecución.
+Comportamiento observado durante la ejecución. _(No completar hasta ejecutar la prueba.)_
+
+### Test(s) asociado(s)
+
+- `ruta/al/archivo.spec.ts > "nombre del test"` — o `pendiente de automatizar`.
 
 ### Estado
 
@@ -80,18 +91,24 @@ Comportamiento observado durante la ejecución.
 
 ## Caso de prueba: TC-002
 
-**Módulo**:
+**Módulo:**<br>
 **Nombre del caso:**
+
+### Nivel
+
+- [ ] `unit`
+- [ ] `integration`
+- [ ] `e2e`
+- [ ] `manual`
 
 ### Objetivo
 
-Descripción breve de lo que se busca al realizar las pruebas.
+Descripción breve de lo que se busca verificar.
 
 ### Precondiciones
 
 - [ ] (Ejemplo 1)
 - [ ] (Ejemplo 2)
-- [ ] (Ejemplo 3)
 
 ### Pasos a seguir
 
@@ -110,7 +127,11 @@ Descripción breve de lo que se busca al realizar las pruebas.
 
 ### Resultado obtenido
 
-Comportamiento observado durante la ejecución.
+Comportamiento observado durante la ejecución. _(No completar hasta ejecutar la prueba.)_
+
+### Test(s) asociado(s)
+
+- `ruta/al/archivo.spec.ts > "nombre del test"` — o `pendiente de automatizar`.
 
 ### Estado
 

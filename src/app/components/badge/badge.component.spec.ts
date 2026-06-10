@@ -24,4 +24,3 @@ describe('BadgeComponent', () => {
 		expect(resourceElement).toBeInTheDocument();
 	});
 });
-

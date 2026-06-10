@@ -5,9 +5,11 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 	selector: 'cuentoneta-progress-bar',
 	imports: [],
 	template: ` <div class="progress-bar h-full w-0 bg-brand-400" data-testid="progress-bar"></div>`,
+	host: {
+		class: 'sticky z-10 col-span-full h-2 w-full overflow-hidden bg-brand-100',
+	},
 	styles: `
 		:host {
-			@apply sticky z-10 col-span-full h-2 w-full overflow-hidden bg-brand-100;
 			transition: top 200ms ease-in-out;
 		}
 

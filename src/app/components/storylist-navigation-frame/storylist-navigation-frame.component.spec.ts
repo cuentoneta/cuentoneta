@@ -9,7 +9,7 @@ import { NavigableStorylistStoryTeaserComponent } from '../navigable-storylist-s
 import { Storylist } from '@models/storylist.model';
 
 // Mocks
-import { storylistMock } from '@mocks/storylistMock';
+import { storylistMock } from '@mocks/storylist.mock';
 import { storyMock } from '@mocks/story.mock';
 
 // Services
