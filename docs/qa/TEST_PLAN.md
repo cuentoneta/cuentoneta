@@ -6,6 +6,8 @@
     </picture>
 </div>
 
+> **Nota:** este documento es un **ejemplo de test plan tipo B (regresión del sitio)**. Para escribir uno nuevo, ver la [guía](./TESTPLAN_GUIDE.md) y el [índice del área de QA](./README.md).
+
 # 1. **Objetivo**
 
 Este documento tiene como finalidad asegurar la calidad del sitio web de cuentos "Cuentoneta". Esto incluye:
