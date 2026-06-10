@@ -12,7 +12,7 @@
  * Uso:
  *   pnpm exec tsx --env-file=.env scripts/bold-author-pen-names.ts
  */
-import { client } from '../src/api/_helpers/sanity-connector';
+import { client } from '../../src/api/_helpers/sanity-connector';
 
 type Mode = 'in_place' | 'prepend' | 'skip';
 

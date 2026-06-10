@@ -5,7 +5,7 @@
  */
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { client } from '../src/api/_helpers/sanity-connector';
+import { client } from '../../src/api/_helpers/sanity-connector';
 
 interface Span {
 	_type: 'span';

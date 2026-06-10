@@ -6,7 +6,7 @@
  * Uso:
  *   pnpm exec tsx --env-file=.env scripts/audit-bold-names.ts
  */
-import { client } from '../src/api/_helpers/sanity-connector';
+import { client } from '../../src/api/_helpers/sanity-connector';
 
 interface Result {
 	slug: string | null;
