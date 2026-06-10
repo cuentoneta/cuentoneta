@@ -27,7 +27,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 		@if (story(); as story) {
 			@switch (variant()) {
 				@case ('compact') {
-					<article class="flex w-full max-w-[395px] flex-col items-center gap-4">
+					<article class="flex w-full max-w-98.75 flex-col items-center gap-4">
 						<div
 							class="relative flex w-full items-center justify-center rounded-xl bg-neutral-100 py-5"
 							data-testid="cover-container"
@@ -36,12 +36,12 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 								<ng-container [ngTemplateOutlet]="cover" />
 							</a>
 							@if (order()) {
-								<span class="source-serif-4xl absolute top-5 left-[22px] font-bold text-brand-500" data-testid="order">
+								<span class="source-serif-4xl absolute top-5 left-5.5 font-bold text-brand-500" data-testid="order">
 									{{ order() }}
 								</span>
 							}
 							@if (showMultimedia() && story.media.length > 0) {
-								<div class="absolute top-5 right-[18px]">
+								<div class="absolute top-5 right-4.5">
 									<cuentoneta-story-media-selectors
 										[media]="story.media"
 										theme="solid"
@@ -122,11 +122,11 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 					width="118"
 					height="164"
 					alt=""
-					class="h-41 w-[118px] shrink-0 rounded-lg object-cover"
+					class="h-41 w-29.5 shrink-0 rounded-lg object-cover"
 					data-testid="cover-image"
 				/>
 			} @else {
-				<div class="h-41 w-[118px] shrink-0 rounded-lg bg-neutral-300" data-testid="cover-placeholder"></div>
+				<div class="h-41 w-29.5 shrink-0 rounded-lg bg-neutral-300" data-testid="cover-placeholder"></div>
 			}
 		</ng-template>
 
@@ -206,8 +206,8 @@ export class StoryCardTeaserV3Component {
 
 	readonly rowWrapperClasses = computed(() =>
 		this.variant() === 'highlighted'
-			? 'flex w-full max-w-[715px] items-start gap-8 overflow-hidden rounded-[16px] border border-neutral-200 bg-neutral-50 p-6'
-			: 'flex w-full max-w-[715px] items-start gap-6',
+			? 'flex w-full max-w-178.75 items-start gap-8 overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50 p-6'
+			: 'flex w-full max-w-178.75 items-start gap-6',
 	);
 
 	readonly rowColumnClasses = computed(() => {
