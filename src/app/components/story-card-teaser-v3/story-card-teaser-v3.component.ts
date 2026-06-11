@@ -120,23 +120,22 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 
 		<!-- Imagen alusiva a la historia (o placeholder mientras no haya URL disponible) -->
 		<ng-template #cover>
-			@if (coverImageUrl(); as url) {
-				<img
-					[ngSrc]="url"
-					width="118"
-					height="164"
-					alt=""
-					class="h-41 w-29.5 shrink-0 rounded-lg object-cover"
-					data-testid="cover-image"
-				/>
-			} @else {
-				<div
-					class="flex h-41 w-29.5 shrink-0 items-center justify-center rounded-lg bg-neutral-300"
-					data-testid="cover-placeholder"
-				>
-					<img [ngSrc]="'./assets/svg/cover-placeholder.svg'" width="60" height="60" alt="" />
-				</div>
-			}
+			<div class="h-41 w-29.5 shrink-0 overflow-hidden rounded-lg bg-neutral-300">
+				@if (coverImageUrl(); as url) {
+					<img
+						[ngSrc]="url"
+						[width]="coverWidth"
+						[height]="coverHeight"
+						alt=""
+						class="h-full w-full object-cover"
+						data-testid="cover-image"
+					/>
+				} @else {
+					<div class="flex h-full w-full items-center justify-center" data-testid="cover-placeholder">
+						<img [ngSrc]="'./assets/svg/cover-placeholder.svg'" width="60" height="60" alt="" />
+					</div>
+				}
+			</div>
 		</ng-template>
 
 		<!-- Contenedor de autor con avatar y nombre -->
@@ -178,6 +177,10 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 })
 export class StoryCardTeaserV3Component {
 	protected readonly appRoutes = AppRoutes;
+
+	// Dimensiones intrínsecas del cover (px). El tamaño visual se controla por CSS (h-41 w-29.5).
+	protected readonly coverWidth = 118;
+	protected readonly coverHeight = 164;
 
 	// Inputs
 	readonly story = input<StoryNavigationTeaserWithAuthor | StoryTeaserWithAuthor | StoryTeaser>();
