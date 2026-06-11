@@ -9,6 +9,7 @@ import {
 	StoryMediaSelectorsComponent,
 	StoryMediaSelectorsTheme,
 } from '../story-media-selectors/story-media-selectors.component';
+import { StoryCardTeaserV3SkeletonComponent } from './story-card-teaser-v3-skeleton.component';
 
 /**
  * Variantes visuales del componente StoryCardTeaser definidas en el Design System v3.
@@ -22,7 +23,14 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 
 @Component({
 	selector: 'cuentoneta-story-card-teaser-v3',
-	imports: [NgOptimizedImage, NgTemplateOutlet, RouterLink, PortableTextParserComponent, StoryMediaSelectorsComponent],
+	imports: [
+		NgOptimizedImage,
+		NgTemplateOutlet,
+		RouterLink,
+		PortableTextParserComponent,
+		StoryMediaSelectorsComponent,
+		StoryCardTeaserV3SkeletonComponent,
+	],
 	template: `
 		@if (story(); as story) {
 			@switch (variant()) {
@@ -101,6 +109,16 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 					</article>
 				}
 			}
+		} @else {
+			<cuentoneta-story-card-teaser-v3-skeleton
+				[variant]="variant()"
+				[order]="order()"
+				[showAuthor]="showAuthor()"
+				[showDescription]="showDescription()"
+				[showMultimedia]="showMultimedia()"
+				[excerptLines]="excerptLines()"
+				data-testid="skeleton"
+			/>
 		}
 
 		<!-- Enlace a la historia que envuelve la imagen del cover; reutilizado por las 4 variantes.

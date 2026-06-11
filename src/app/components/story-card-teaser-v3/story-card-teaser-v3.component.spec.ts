@@ -219,4 +219,20 @@ describe('StoryCardTeaserV3Component', () => {
 			expect(screen.queryByText('Cuento')).not.toBeInTheDocument();
 		});
 	});
+
+	describe('Loading state', () => {
+		it('should render the skeleton when no story is provided', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: undefined, variant: 'on-white' },
+			});
+			expect(screen.getByTestId('skeleton')).toBeInTheDocument();
+		});
+
+		it('should not render the skeleton when a story is provided', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+			});
+			expect(screen.queryByTestId('skeleton')).not.toBeInTheDocument();
+		});
+	});
 });

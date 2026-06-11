@@ -334,3 +334,41 @@ export const AllVariants: Story = {
 		},
 	},
 };
+
+// Estado de carga: la tarjeta renderiza el esqueleto cuando la story aun no esta disponible.
+export const Loading: Story = {
+	render: (args) => ({
+		props: args,
+		template: `
+			<div class="flex flex-col gap-10">
+				<div class="space-y-2">
+					<h3 class="text-sm font-semibold text-neutral-600">OnWhite</h3>
+					<cuentoneta-story-card-teaser-v3 variant="on-white" [order]="order" [showAuthor]="showAuthor" [showDescription]="showDescription" [showMultimedia]="showMultimedia" [excerptLines]="excerptLines" />
+				</div>
+				<div class="space-y-2">
+					<h3 class="text-sm font-semibold text-neutral-600">Highlighted</h3>
+					<cuentoneta-story-card-teaser-v3 variant="highlighted" [order]="order" [showAuthor]="showAuthor" [showDescription]="showDescription" [showMultimedia]="showMultimedia" [excerptLines]="3" />
+				</div>
+				<div class="space-y-2">
+					<h3 class="text-sm font-semibold text-neutral-600">Compact</h3>
+					<cuentoneta-story-card-teaser-v3 variant="compact" [order]="order" [showAuthor]="showAuthor" [showMultimedia]="showMultimedia" />
+				</div>
+			</div>
+		`,
+	}),
+	args: {
+		story: undefined,
+		order: 1,
+		showAuthor: true,
+		showDescription: true,
+		showMultimedia: true,
+		excerptLines: 2,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: 'Estado de carga (esqueleto) que se muestra mientras la story no esta disponible.',
+			},
+		},
+	},
+};
