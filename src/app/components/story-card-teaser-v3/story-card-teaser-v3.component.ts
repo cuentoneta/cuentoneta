@@ -158,7 +158,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 			<div class="flex items-center gap-2" data-testid="reading-time">
 				@if (tagLabel()) {
 					<span class="font-inter text-xs font-bold text-brand-500">{{ tagLabel() }}</span>
-					<span class="font-inter text-xxs font-medium text-neutral-600">•</span>
+					<span class="font-inter text-xxs font-medium text-neutral-600" aria-hidden="true">•</span>
 				}
 				<span class="font-inter text-xs font-medium text-neutral-600">
 					{{ story.approximateReadingTime }} minutos de lectura
