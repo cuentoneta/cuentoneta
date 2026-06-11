@@ -164,6 +164,13 @@ describe('StoryCardTeaserV3Component', () => {
 			});
 			expect(screen.getByTestId('description')).toHaveClass('line-clamp-3');
 		});
+
+		it('should clamp excerptLines to the supported range (1-10)', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: storyWithParagraphs, showDescription: true, excerptLines: 99 },
+			});
+			expect(screen.getByTestId('description')).toHaveClass('line-clamp-10');
+		});
 	});
 
 	// El detalle de agrupación, contador y emisión vive en story-media-selectors.component.spec.ts.

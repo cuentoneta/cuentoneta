@@ -194,7 +194,9 @@ export class StoryCardTeaserV3Component {
 	readonly showAuthor = input<boolean>(false);
 	readonly showDescription = input<boolean>(false);
 	readonly showMultimedia = input<boolean>(false);
-	readonly excerptLines = input<number>(2);
+	// Acotado a [1, 10] para coincidir con el safelist `line-clamp-{1..10}` de styles.css,
+	// ya que la clase `line-clamp-N` se construye dinámicamente y no la detecta el escaneo de Tailwind.
+	readonly excerptLines = input(2, { transform: (value: number) => Math.min(10, Math.max(1, value)) });
 	readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
 
 	// El avatar se renderiza a 24px (h-6 w-6); se solicita al CDN de Sanity a 2x (HiDPI).
