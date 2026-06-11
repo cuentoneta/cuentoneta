@@ -197,10 +197,15 @@ export class StoryCardTeaserV3Component {
 	readonly excerptLines = input<number>(2);
 	readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
 
+	// El avatar se renderiza a 24px (h-6 w-6); se solicita al CDN de Sanity a 2x (HiDPI).
+	// Idealmente esto lo resolvería un loader de imágenes en lugar del resize manual.
+	private readonly avatarImageSize = 48;
+
 	readonly authorImageUrl = computed(() => {
 		const story = this.story();
 		if (story && 'author' in story && story.author.imageUrl) {
-			return `${story.author.imageUrl}?h=64&w=64`;
+			const size = this.avatarImageSize;
+			return `${story.author.imageUrl}?h=${size}&w=${size}`;
 		}
 		return '';
 	});
