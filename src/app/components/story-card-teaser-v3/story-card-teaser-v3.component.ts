@@ -109,8 +109,9 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 			<a
 				[routerLink]="storyRouterLink()"
 				[queryParams]="navigationParams()"
-				[attr.aria-label]="coverAriaLabel()"
 				[class.order-last]="variant() === 'highlighted'"
+				aria-hidden="true"
+				tabindex="-1"
 				class="shrink-0"
 			>
 				<ng-container [ngTemplateOutlet]="cover" />
@@ -199,12 +200,6 @@ export class StoryCardTeaserV3Component {
 	});
 
 	readonly storyRouterLink = computed(() => ['/', this.appRoutes.Story, this.story()?.slug]);
-
-	// Nombre accesible del enlace del cover, que envuelve una imagen decorativa (alt vacio).
-	readonly coverAriaLabel = computed(() => {
-		const story = this.story();
-		return story ? `Leer: ${story.title}` : null;
-	});
 
 	// Mapea la variante de la tarjeta al tema visual de los selectores de multimedia.
 	readonly mediaTheme = computed<StoryMediaSelectorsTheme>(() => {

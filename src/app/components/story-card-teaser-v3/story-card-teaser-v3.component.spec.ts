@@ -123,17 +123,21 @@ describe('StoryCardTeaserV3Component', () => {
 			expect(screen.getByTestId('cover-placeholder')).toBeInTheDocument();
 		});
 
-		it('should expose an accessible name on the cover link', async () => {
+		it('should keep the cover link decorative, leaving a single accessible story link', async () => {
 			await render(StoryCardTeaserV3Component, {
 				inputs: {
 					story: storyNavigationTeaserWithAuthorMock,
 					navigationParams,
 					coverImageUrl: 'https://example.com/cover.jpg',
+					showAuthor: false,
 				},
 			});
-			expect(
-				screen.getByRole('link', { name: `Leer: ${storyNavigationTeaserWithAuthorMock.title}` }),
-			).toBeInTheDocument();
+			// El cover sigue renderizándose como target visual, pero no se expone a tecnologías de
+			// asistencia: queda un único enlace accesible a la historia (el del título).
+			expect(screen.getByTestId('cover-image')).toBeInTheDocument();
+			const links = screen.getAllByRole('link');
+			expect(links).toHaveLength(1);
+			expect(links[0]).toHaveAttribute('href', expect.stringContaining('/story/'));
 		});
 	});
 
