@@ -32,9 +32,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 							class="relative flex w-full items-center justify-center rounded-xl bg-neutral-100 py-5"
 							data-testid="cover-container"
 						>
-							<a [routerLink]="storyRouterLink()" [queryParams]="navigationParams()">
-								<ng-container [ngTemplateOutlet]="cover" />
-							</a>
+							<ng-container [ngTemplateOutlet]="coverLink" />
 							@if (order() !== undefined) {
 								<span class="source-serif-4xl absolute top-5 left-5.5 font-bold text-brand-500" data-testid="order">
 									{{ order() }}
@@ -68,11 +66,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 				}
 				@default {
 					<article [class]="rowWrapperClasses()">
-						@if (variant() !== 'highlighted') {
-							<a [routerLink]="storyRouterLink()" [queryParams]="navigationParams()" class="shrink-0">
-								<ng-container [ngTemplateOutlet]="cover" />
-							</a>
-						}
+						<ng-container [ngTemplateOutlet]="coverLink" />
 						<div [class]="rowColumnClasses()">
 							@if (showAuthor() && 'author' in story) {
 								<ng-container [ngTemplateOutlet]="authorContainer" [ngTemplateOutletContext]="{ $implicit: story }" />
@@ -104,15 +98,23 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 								<cuentoneta-story-media-selectors [media]="story.media" [theme]="mediaTheme()" data-testid="media" />
 							}
 						</div>
-						@if (variant() === 'highlighted') {
-							<a [routerLink]="storyRouterLink()" [queryParams]="navigationParams()" class="shrink-0">
-								<ng-container [ngTemplateOutlet]="cover" />
-							</a>
-						}
 					</article>
 				}
 			}
 		}
+
+		<!-- Enlace a la historia que envuelve la imagen del cover; reutilizado por las 4 variantes.
+			 En highlighted la imagen va a la derecha (order-last); en el resto, a la izquierda. -->
+		<ng-template #coverLink>
+			<a
+				[routerLink]="storyRouterLink()"
+				[queryParams]="navigationParams()"
+				[class.order-last]="variant() === 'highlighted'"
+				class="shrink-0"
+			>
+				<ng-container [ngTemplateOutlet]="cover" />
+			</a>
+		</ng-template>
 
 		<!-- Imagen alusiva a la historia (o placeholder mientras no haya URL disponible) -->
 		<ng-template #cover>
