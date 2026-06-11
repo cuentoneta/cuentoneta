@@ -35,7 +35,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 							<a [routerLink]="storyRouterLink()" [queryParams]="navigationParams()">
 								<ng-container [ngTemplateOutlet]="cover" />
 							</a>
-							@if (order()) {
+							@if (order() !== undefined) {
 								<span class="source-serif-4xl absolute top-5 left-5.5 font-bold text-brand-500" data-testid="order">
 									{{ order() }}
 								</span>
@@ -84,7 +84,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 									class="flex w-full flex-col gap-1"
 								>
 									<p class="line-clamp-2 font-inter text-xl font-bold text-neutral-900">
-										@if (order()) {
+										@if (order() !== undefined) {
 											<span class="source-serif-2-5xl font-bold text-brand-500">{{ order() }}. </span>
 										}
 										<span>{{ story.title }}</span>

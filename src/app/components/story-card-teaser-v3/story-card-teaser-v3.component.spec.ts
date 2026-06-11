@@ -70,6 +70,13 @@ describe('StoryCardTeaserV3Component', () => {
 			});
 			expect(screen.queryByText('3.')).not.toBeInTheDocument();
 		});
+
+		it('should display an order of 0 (not treated as absent)', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, order: 0, variant: 'on-white' },
+			});
+			expect(screen.getByText('0.')).toBeInTheDocument();
+		});
 	});
 
 	describe('Author', () => {
