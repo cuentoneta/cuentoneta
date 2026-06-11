@@ -126,7 +126,12 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 					data-testid="cover-image"
 				/>
 			} @else {
-				<div class="h-41 w-29.5 shrink-0 rounded-lg bg-neutral-300" data-testid="cover-placeholder"></div>
+				<div
+					class="flex h-41 w-29.5 shrink-0 items-center justify-center rounded-lg bg-neutral-300"
+					data-testid="cover-placeholder"
+				>
+					<img [ngSrc]="'./assets/svg/cover-placeholder.svg'" width="60" height="60" alt="" />
+				</div>
 			}
 		</ng-template>
 
