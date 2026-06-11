@@ -126,6 +126,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 						[ngSrc]="url"
 						[width]="coverWidth"
 						[height]="coverHeight"
+						[priority]="priority()"
 						alt=""
 						class="h-full w-full object-cover"
 						data-testid="cover-image"
@@ -187,6 +188,8 @@ export class StoryCardTeaserV3Component {
 	readonly variant = input<StoryCardTeaserV3Variant>('on-white');
 	readonly order = input<number>();
 	readonly coverImageUrl = input<string>();
+	// Marca el cover como prioritario (above-the-fold, p. ej. en la variante highlighted como hero).
+	readonly priority = input<boolean>(false);
 	readonly tagLabel = input<string>();
 	readonly showAuthor = input<boolean>(false);
 	readonly showDescription = input<boolean>(false);
