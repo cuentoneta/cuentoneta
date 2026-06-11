@@ -44,7 +44,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 								<div class="absolute top-5 right-4.5">
 									<cuentoneta-story-media-selectors
 										[media]="story.media"
-										theme="solid"
+										[theme]="mediaTheme()"
 										orientation="vertical"
 										data-testid="media"
 									/>
@@ -196,6 +196,7 @@ export class StoryCardTeaserV3Component {
 	readonly mediaTheme = computed<StoryMediaSelectorsTheme>(() => {
 		switch (this.variant()) {
 			case 'on-gray':
+			case 'compact':
 				return 'solid';
 			case 'highlighted':
 				return 'bordered';
