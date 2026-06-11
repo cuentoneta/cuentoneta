@@ -122,6 +122,19 @@ describe('StoryCardTeaserV3Component', () => {
 			});
 			expect(screen.getByTestId('cover-placeholder')).toBeInTheDocument();
 		});
+
+		it('should expose an accessible name on the cover link', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: {
+					story: storyNavigationTeaserWithAuthorMock,
+					navigationParams,
+					coverImageUrl: 'https://example.com/cover.jpg',
+				},
+			});
+			expect(
+				screen.getByRole('link', { name: `Leer: ${storyNavigationTeaserWithAuthorMock.title}` }),
+			).toBeInTheDocument();
+		});
 	});
 
 	describe('Description', () => {
