@@ -10,6 +10,7 @@ import {
 	StoryMediaSelectorsTheme,
 } from '../story-media-selectors/story-media-selectors.component';
 import { StoryCardTeaserV3SkeletonComponent } from './story-card-teaser-v3-skeleton.component';
+import { AuthorTeaserV3Component } from '../author-teaser-v3/author-teaser-v3.component';
 
 /**
  * Variantes visuales del componente StoryCardTeaser definidas en el Design System v3.
@@ -30,6 +31,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 		PortableTextParserComponent,
 		StoryMediaSelectorsComponent,
 		StoryCardTeaserV3SkeletonComponent,
+		AuthorTeaserV3Component,
 	],
 	template: `
 		@if (story(); as story) {
@@ -59,7 +61,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 						</div>
 						<div class="flex w-full flex-col gap-1">
 							@if (showAuthor() && 'author' in story) {
-								<ng-container [ngTemplateOutlet]="authorContainer" [ngTemplateOutletContext]="{ $implicit: story }" />
+								<cuentoneta-author-teaser-v3 [author]="story.author" />
 							}
 							<a
 								[routerLink]="storyRouterLink()"
@@ -77,7 +79,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 						<ng-container [ngTemplateOutlet]="coverLink" />
 						<div [class]="rowColumnClasses()">
 							@if (showAuthor() && 'author' in story) {
-								<ng-container [ngTemplateOutlet]="authorContainer" [ngTemplateOutletContext]="{ $implicit: story }" />
+								<cuentoneta-author-teaser-v3 [author]="story.author" />
 							}
 							<div class="flex w-full flex-col gap-2">
 								<a
@@ -157,24 +159,6 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 			</div>
 		</ng-template>
 
-		<!-- Contenedor de autor con avatar y nombre -->
-		<ng-template #authorContainer let-story>
-			<a [routerLink]="['/', appRoutes.Author, story.author.slug]" class="flex items-center gap-2" data-testid="author">
-				@if (authorImageUrl()) {
-					<img
-						[ngSrc]="authorImageUrl()"
-						[alt]="'Retrato de ' + story.author.name"
-						width="24"
-						height="24"
-						class="h-6 w-6 rounded-full object-cover"
-					/>
-				} @else {
-					<div class="h-6 w-6 rounded-full bg-neutral-300"></div>
-				}
-				<span class="font-inter text-sm font-medium text-neutral-900">{{ story.author.name }}</span>
-			</a>
-		</ng-template>
-
 		<!-- Etiqueta opcional, separador y tiempo de lectura -->
 		<ng-template #readingTime let-story>
 			<div class="flex items-center gap-2" data-testid="reading-time">
@@ -216,19 +200,6 @@ export class StoryCardTeaserV3Component {
 	// ya que la clase `line-clamp-N` se construye dinámicamente y no la detecta el escaneo de Tailwind.
 	readonly excerptLines = input(2, { transform: (value: number) => Math.min(10, Math.max(1, value)) });
 	readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
-
-	// El avatar se renderiza a 24px (h-6 w-6); se solicita al CDN de Sanity a 2x (HiDPI).
-	// Idealmente esto lo resolvería un loader de imágenes en lugar del resize manual.
-	private readonly avatarImageSize = 48;
-
-	readonly authorImageUrl = computed(() => {
-		const story = this.story();
-		if (story && 'author' in story && story.author.imageUrl) {
-			const size = this.avatarImageSize;
-			return `${story.author.imageUrl}?h=${size}&w=${size}`;
-		}
-		return '';
-	});
 
 	readonly storyRouterLink = computed(() => ['/', this.appRoutes.Story, this.story()?.slug]);
 
