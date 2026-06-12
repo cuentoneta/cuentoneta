@@ -1,9 +1,12 @@
 import { argsToTemplate, Meta, StoryObj } from '@storybook/angular';
 
 import { ImageProfileComponent } from './image-profile.component';
+import { authorTeaserMock } from '../../mocks/author.mock';
 
-// Foto de muestra para las stories.
-const src = 'https://picsum.photos/seed/cuentoneta-author/240/240';
+// Foto de muestra: François Onoff, nuestro "autor de stock" para Storybook, mocks y tests
+// (misma foto que usa AuthorTeaser, tomada del mock para mantener una única fuente de verdad).
+const src = authorTeaserMock.imageUrl;
+const alt = `Retrato de ${authorTeaserMock.name}`;
 
 const meta: Meta<ImageProfileComponent> = {
 	component: ImageProfileComponent,
@@ -48,7 +51,7 @@ type Story = StoryObj<ImageProfileComponent>;
 // Playground.
 export const Default: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-image-profile ${argsToTemplate(args)} />` }),
-	args: { src, alt: 'Retrato del autor', size: 'medium', variant: 'profile' },
+	args: { src, alt, size: 'medium', variant: 'profile' },
 };
 
 // Placeholder (sin imagen).
@@ -74,9 +77,9 @@ export const Showcase: Story = {
 				<div class="space-y-2">
 					<h3 class="text-sm font-semibold text-neutral-600">Foto — small / medium / large</h3>
 					<div class="flex items-end gap-4">
-						<cuentoneta-image-profile [src]="src" alt="Retrato" size="small" />
-						<cuentoneta-image-profile [src]="src" alt="Retrato" size="medium" />
-						<cuentoneta-image-profile [src]="src" alt="Retrato" size="large" />
+						<cuentoneta-image-profile [src]="src" [alt]="alt" size="small" />
+						<cuentoneta-image-profile [src]="src" [alt]="alt" size="medium" />
+						<cuentoneta-image-profile [src]="src" [alt]="alt" size="large" />
 					</div>
 				</div>
 				<div class="space-y-2">
@@ -98,6 +101,6 @@ export const Showcase: Story = {
 			</div>
 		`,
 	}),
-	args: { src },
+	args: { src, alt },
 	parameters: { docs: { description: { story: 'Todos los tamaños y estados (foto, placeholder, collection).' } } },
 };

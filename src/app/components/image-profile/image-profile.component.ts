@@ -5,11 +5,22 @@ import { NgOptimizedImage } from '@angular/common';
 export type ImageProfileSize = 'small' | 'medium' | 'large';
 
 /**
- * Variante del componente:
- * - `profile`: foto de perfil (o placeholder de persona si no hay imagen).
+ * Variante pública del componente (elección del consumidor):
+ * - `profile`: foto de perfil (cae en placeholder de persona si no se pasa `src`).
  * - `collection`: avatar de colección (fondo brand-100 + ícono de biblioteca).
  */
 export type ImageProfileVariant = 'profile' | 'collection';
+
+/**
+ * Estado de render efectivo (derivado de `variant` + `src`), no es parte de la API pública:
+ * - `photo`: imagen real solicitada al CDN.
+ * - `placeholder`: ícono de persona (variante `profile` sin `src`).
+ * - `collection`: ícono de biblioteca.
+ */
+type RenderMode = 'photo' | 'placeholder' | 'collection';
+
+const COLLECTION_ICON = './assets/svg/collection.svg';
+const PROFILE_PLACEHOLDER = './assets/svg/profile-placeholder.svg';
 
 /**
  * Foto de perfil circular del Design System v3. Componente de presentación más anidado del árbol de
@@ -20,36 +31,7 @@ export type ImageProfileVariant = 'profile' | 'collection';
 	selector: 'cuentoneta-image-profile',
 	imports: [NgOptimizedImage],
 	template: `
-		@if (variant() === 'collection') {
-			<img
-				[ngSrc]="'./assets/svg/collection.svg'"
-				[width]="iconPx()"
-				[height]="iconPx()"
-				[class]="iconClass()"
-				alt=""
-				data-testid="collection-icon"
-			/>
-		} @else {
-			@if (imageUrl(); as url) {
-				<img
-					[ngSrc]="url"
-					[alt]="alt()"
-					[width]="px()"
-					[height]="px()"
-					class="size-full object-cover"
-					data-testid="image"
-				/>
-			} @else {
-				<img
-					[ngSrc]="'./assets/svg/profile-placeholder.svg'"
-					[width]="iconPx()"
-					[height]="iconPx()"
-					[class]="iconClass()"
-					alt=""
-					data-testid="placeholder"
-				/>
-			}
-		}
+		<img [ngSrc]="view().url" [width]="view().px" [height]="view().px" [class]="view().classes" [alt]="alt()" />
 	`,
 	host: {
 		'[class]': 'containerClasses()',
@@ -63,26 +45,42 @@ export class ImageProfileComponent {
 	readonly size = input<ImageProfileSize>('medium');
 	readonly variant = input<ImageProfileVariant>('profile');
 
-	// Tamaño del círculo (px) y clase de Tailwind (en unidades de spacing) y del ícono interno, por tamaño.
+	// Tamaño del círculo (px) y clases de Tailwind del círculo y del ícono interno, por tamaño.
 	private readonly sizeMap: Record<ImageProfileSize, { px: number; circle: string; icon: string }> = {
 		small: { px: 24, circle: 'size-6', icon: 'size-3' },
 		medium: { px: 40, circle: 'size-10', icon: 'size-5' },
 		large: { px: 120, circle: 'size-30', icon: 'size-15' },
 	};
 
-	readonly px = computed(() => this.sizeMap[this.size()].px);
-	readonly iconPx = computed(() => this.px() / 2);
-	readonly iconClass = computed(() => this.sizeMap[this.size()].icon);
+	// Estado de render efectivo: única fuente de verdad de "qué se dibuja", derivada de variant + src.
+	readonly renderMode = computed<RenderMode>(() => {
+		if (this.variant() === 'collection') {
+			return 'collection';
+		}
+		return this.src() ? 'photo' : 'placeholder';
+	});
 
-	// La imagen se solicita al CDN a 2x (HiDPI) del tamaño de display.
-	readonly imageUrl = computed(() => {
-		const src = this.src();
-		return src ? `${src}?h=${this.px() * 2}&w=${this.px() * 2}` : '';
+	// Descriptor único por estado: centraliza url, tamaño, clases de la imagen y fondo del círculo.
+	readonly view = computed(() => {
+		const { px, icon } = this.sizeMap[this.size()];
+		switch (this.renderMode()) {
+			case 'collection':
+				return { url: COLLECTION_ICON, px: px / 2, classes: icon, background: 'bg-brand-100' };
+			case 'placeholder':
+				return { url: PROFILE_PLACEHOLDER, px: px / 2, classes: icon, background: 'bg-neutral-300' };
+			default:
+				// photo: la imagen se solicita al CDN a 2x (HiDPI) del tamaño de display.
+				return {
+					url: `${this.src()}?h=${px * 2}&w=${px * 2}`,
+					px,
+					classes: 'size-full object-cover',
+					background: 'bg-neutral-300',
+				};
+		}
 	});
 
 	readonly containerClasses = computed(() => {
 		const { circle } = this.sizeMap[this.size()];
-		const background = this.variant() === 'collection' ? 'bg-brand-100' : 'bg-neutral-300';
-		return `relative inline-flex items-center justify-center overflow-hidden rounded-full ${circle} ${background}`;
+		return `relative inline-flex items-center justify-center overflow-hidden rounded-full ${circle} ${this.view().background}`;
 	});
 }
