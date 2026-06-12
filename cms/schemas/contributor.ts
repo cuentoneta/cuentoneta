@@ -49,7 +49,6 @@ export default defineType({
 			options: {
 				collapsible: false,
 			},
-			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'notes',
