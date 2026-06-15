@@ -38,8 +38,13 @@ describe('ImageProfileComponent', () => {
 			expect(screen.getByRole('img', { name: alt })).toHaveAttribute('src', expect.stringContaining('h=80&w=80'));
 		});
 
-		it('should request large at 240px', async () => {
-			await render(ImageProfileComponent, { inputs: { src, alt, size: 'large' } });
+		it('should request lg at 160px', async () => {
+			await render(ImageProfileComponent, { inputs: { src, alt, size: 'lg' } });
+			expect(screen.getByRole('img', { name: alt })).toHaveAttribute('src', expect.stringContaining('h=160&w=160'));
+		});
+
+		it('should request xl at 240px', async () => {
+			await render(ImageProfileComponent, { inputs: { src, alt, size: 'xl' } });
 			expect(screen.getByRole('img', { name: alt })).toHaveAttribute('src', expect.stringContaining('h=240&w=240'));
 		});
 	});

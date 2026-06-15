@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 
-/** Tamaños del avatar (Design System v3): small=24px, medium=40px, large=120px. */
-export type ImageProfileSize = 'small' | 'medium' | 'large';
+/** Tamaños del avatar (Design System v3): small=24px, medium=40px, lg=80px, xl=120px. */
+export type ImageProfileSize = 'small' | 'medium' | 'lg' | 'xl';
 
 /**
  * Variante pública del componente (elección del consumidor):
@@ -49,7 +49,8 @@ export class ImageProfileComponent {
 	private readonly sizeMap: Record<ImageProfileSize, { px: number; circle: string; icon: string }> = {
 		small: { px: 24, circle: 'size-6', icon: 'size-3' },
 		medium: { px: 40, circle: 'size-10', icon: 'size-5' },
-		large: { px: 120, circle: 'size-30', icon: 'size-15' },
+		lg: { px: 80, circle: 'size-20', icon: 'size-10' },
+		xl: { px: 120, circle: 'size-30', icon: 'size-15' },
 	};
 
 	// Estado de render efectivo: única fuente de verdad de "qué se dibuja", derivada de variant + src.
