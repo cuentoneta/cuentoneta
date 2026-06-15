@@ -57,7 +57,7 @@ importers:
     dependencies:
       '@angular-devkit/build-angular':
         specifier: 21.2.14
-        version: 21.2.14(5336ddd8ad284d8974e4fc21877eae1c)
+        version: 21.2.14(3c2d047ff3a181eca498a6ec45db0368)
       '@angular/animations':
         specifier: 21.2.16
         version: 21.2.16(@angular/core@21.2.16(@angular/compiler@21.2.16)(rxjs@7.8.2)(zone.js@0.15.0))
@@ -114,7 +114,7 @@ importers:
         version: 33.2.0
       '@nx/angular':
         specifier: 22.6.4
-        version: 22.6.4(1fc7e4152603185d6a45f0f8559dde90)
+        version: 22.6.4(27e97a47ca56f0a056d4b0c0b15a21e1)
       '@sanity/client':
         specifier: ^7.20.0
         version: 7.20.0
@@ -154,10 +154,10 @@ importers:
     devDependencies:
       '@analogjs/vite-plugin-angular':
         specifier: 2.6.1
-        version: 2.6.1(@angular-devkit/build-angular@21.2.14(5336ddd8ad284d8974e4fc21877eae1c))(@angular/build@21.2.14(0588f591835d192fbc5cace0cf21720b))(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(vite@7.3.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.32.0)(sass-embedded@1.85.1)(sass@1.97.1)(stylus@0.64.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0))
+        version: 2.6.1(@angular-devkit/build-angular@21.2.14(3c2d047ff3a181eca498a6ec45db0368))(@angular/build@21.2.14(dbe3a6bed5b8d12f90bfc75723c7ca7d))(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(vite@7.3.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.32.0)(sass-embedded@1.85.1)(sass@1.97.1)(stylus@0.64.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0))
       '@analogjs/vitest-angular':
         specifier: 2.6.1
-        version: 2.6.1(@analogjs/vite-plugin-angular@2.6.1(@angular-devkit/build-angular@21.2.14(5336ddd8ad284d8974e4fc21877eae1c))(@angular/build@21.2.14(0588f591835d192fbc5cace0cf21720b))(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(vite@7.3.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.32.0)(sass-embedded@1.85.1)(sass@1.97.1)(stylus@0.64.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0)))(@angular-devkit/architect@0.2102.14(chokidar@5.0.0))(@angular-devkit/schematics@21.2.14(chokidar@5.0.0))(vitest@4.1.9)(zone.js@0.15.0)
+        version: 2.6.1(@analogjs/vite-plugin-angular@2.6.1(@angular-devkit/build-angular@21.2.14(3c2d047ff3a181eca498a6ec45db0368))(@angular/build@21.2.14(dbe3a6bed5b8d12f90bfc75723c7ca7d))(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(vite@7.3.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.32.0)(sass-embedded@1.85.1)(sass@1.97.1)(stylus@0.64.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0)))(@angular-devkit/architect@0.2102.14(chokidar@5.0.0))(@angular-devkit/schematics@21.2.14(chokidar@5.0.0))(vitest@4.1.9)(zone.js@0.15.0)
       '@angular/cli':
         specifier: 21.2.14
         version: 21.2.14(@types/node@22.17.1)(chokidar@5.0.0)
@@ -188,7 +188,7 @@ importers:
       '@nx/storybook':
         specifier: 22.6.4
         version: 22.6.4(@babel/traverse@7.29.7)(@zkochan/js-yaml@0.0.7)(eslint@9.39.2(jiti@2.6.1))(nx@22.6.4)(storybook@10.4.2(@testing-library/dom@10.4.1)(@types/react@19.2.7)(prettier@3.7.4)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(typescript@5.9.3)
-      '@nx/vite':
+      '@nx/vitest':
         specifier: 22.6.4
         version: 22.6.4(@babel/traverse@7.29.7)(nx@22.6.4)(typescript@5.9.3)(vite@7.3.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.32.0)(sass-embedded@1.85.1)(sass@1.97.1)(stylus@0.64.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0))(vitest@4.1.9)
       '@nx/workspace':
@@ -202,7 +202,7 @@ importers:
         version: 10.4.2(@types/react@19.2.7)(esbuild@0.27.2)(rollup@4.61.1)(storybook@10.4.2(@testing-library/dom@10.4.1)(@types/react@19.2.7)(prettier@3.7.4)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(vite@7.3.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.32.0)(sass-embedded@1.85.1)(sass@1.97.1)(stylus@0.64.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0))(webpack@5.104.1(esbuild@0.27.2))
       '@storybook/angular':
         specifier: 10.4.2
-        version: 10.4.2(3df5cb793ac13cfd2833364703166963)
+        version: 10.4.2(b4aefd929f89c0eb2c1c53cff6fafb70)
       '@stylistic/eslint-plugin':
         specifier: ^5.6.1
         version: 5.6.1(eslint@9.39.2(jiti@2.6.1))
@@ -3590,13 +3590,6 @@ packages:
       { integrity: sha512-dmtSooGWuVMZ0ytl1eACbGoUSI+r/yYnMCshLzs0Ex/GuX0NRR9N5NSoFBMXLzC95zH34BhNBSWfyWxt7H5/ZQ== }
     peerDependencies:
       storybook: '>=7.0.0 <11.0.0'
-
-  '@nx/vite@22.6.4':
-    resolution:
-      { integrity: sha512-fD1eSfZv9FISoaLzYyjji8hzM5oewFAtMMxaERn0Li5tqL+LvmmhEB7IiTGah2BrhtPcrkZcvFGWl/x4Cu2N0A== }
-    peerDependencies:
-      vite: '>=7.3.2 <8'
-      vitest: ^1.3.1 || ^2.0.0 || ^3.0.0 || ^4.0.0
 
   '@nx/vitest@22.6.4':
     resolution:
@@ -12457,24 +12450,24 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.30
 
-  '@analogjs/vite-plugin-angular@2.6.1(@angular-devkit/build-angular@21.2.14(5336ddd8ad284d8974e4fc21877eae1c))(@angular/build@21.2.14(0588f591835d192fbc5cace0cf21720b))(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(vite@7.3.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.32.0)(sass-embedded@1.85.1)(sass@1.97.1)(stylus@0.64.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0))':
+  '@analogjs/vite-plugin-angular@2.6.1(@angular-devkit/build-angular@21.2.14(3c2d047ff3a181eca498a6ec45db0368))(@angular/build@21.2.14(dbe3a6bed5b8d12f90bfc75723c7ca7d))(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(vite@7.3.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.32.0)(sass-embedded@1.85.1)(sass@1.97.1)(stylus@0.64.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0))':
     dependencies:
       magic-string: 0.30.21
       obug: 2.1.3
-      oxc-parser: 0.121.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)
+      oxc-parser: 0.121.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)
       tinyglobby: 0.2.15
       ts-morph: 21.0.1
     optionalDependencies:
-      '@angular-devkit/build-angular': 21.2.14(5336ddd8ad284d8974e4fc21877eae1c)
-      '@angular/build': 21.2.14(0588f591835d192fbc5cace0cf21720b)
+      '@angular-devkit/build-angular': 21.2.14(3c2d047ff3a181eca498a6ec45db0368)
+      '@angular/build': 21.2.14(dbe3a6bed5b8d12f90bfc75723c7ca7d)
       vite: 7.3.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.32.0)(sass-embedded@1.85.1)(sass@1.97.1)(stylus@0.64.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0)
     transitivePeerDependencies:
       - '@emnapi/core'
       - '@emnapi/runtime'
 
-  '@analogjs/vitest-angular@2.6.1(@analogjs/vite-plugin-angular@2.6.1(@angular-devkit/build-angular@21.2.14(5336ddd8ad284d8974e4fc21877eae1c))(@angular/build@21.2.14(0588f591835d192fbc5cace0cf21720b))(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(vite@7.3.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.32.0)(sass-embedded@1.85.1)(sass@1.97.1)(stylus@0.64.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0)))(@angular-devkit/architect@0.2102.14(chokidar@5.0.0))(@angular-devkit/schematics@21.2.14(chokidar@5.0.0))(vitest@4.1.9)(zone.js@0.15.0)':
+  '@analogjs/vitest-angular@2.6.1(@analogjs/vite-plugin-angular@2.6.1(@angular-devkit/build-angular@21.2.14(3c2d047ff3a181eca498a6ec45db0368))(@angular/build@21.2.14(dbe3a6bed5b8d12f90bfc75723c7ca7d))(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(vite@7.3.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.32.0)(sass-embedded@1.85.1)(sass@1.97.1)(stylus@0.64.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0)))(@angular-devkit/architect@0.2102.14(chokidar@5.0.0))(@angular-devkit/schematics@21.2.14(chokidar@5.0.0))(vitest@4.1.9)(zone.js@0.15.0)':
     dependencies:
-      '@analogjs/vite-plugin-angular': 2.6.1(@angular-devkit/build-angular@21.2.14(5336ddd8ad284d8974e4fc21877eae1c))(@angular/build@21.2.14(0588f591835d192fbc5cace0cf21720b))(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(vite@7.3.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.32.0)(sass-embedded@1.85.1)(sass@1.97.1)(stylus@0.64.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0))
+      '@analogjs/vite-plugin-angular': 2.6.1(@angular-devkit/build-angular@21.2.14(3c2d047ff3a181eca498a6ec45db0368))(@angular/build@21.2.14(dbe3a6bed5b8d12f90bfc75723c7ca7d))(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(vite@7.3.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.32.0)(sass-embedded@1.85.1)(sass@1.97.1)(stylus@0.64.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0))
       '@angular-devkit/architect': 0.2102.14(chokidar@5.0.0)
       '@angular-devkit/schematics': 21.2.14(chokidar@5.0.0)
       vitest: 4.1.9(@types/node@22.17.1)(@vitest/coverage-v8@4.1.9)(happy-dom@20.10.2)(jsdom@26.1.0)(vite@7.3.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.32.0)(sass-embedded@1.85.1)(sass@1.97.1)(stylus@0.64.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0))
@@ -12495,13 +12488,13 @@ snapshots:
     transitivePeerDependencies:
       - chokidar
 
-  '@angular-devkit/build-angular@21.2.14(5336ddd8ad284d8974e4fc21877eae1c)':
+  '@angular-devkit/build-angular@21.2.14(3c2d047ff3a181eca498a6ec45db0368)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@angular-devkit/architect': 0.2102.14(chokidar@5.0.0)
       '@angular-devkit/build-webpack': 0.2102.14(chokidar@5.0.0)(webpack-dev-server@5.2.4(webpack@5.105.2(esbuild@0.27.3)(lightningcss@1.32.0)(postcss@8.5.15)))(webpack@5.105.2(esbuild@0.27.3)(lightningcss@1.32.0)(postcss@8.5.15))
       '@angular-devkit/core': 21.2.14(chokidar@5.0.0)
-      '@angular/build': 21.2.14(0588f591835d192fbc5cace0cf21720b)
+      '@angular/build': 21.2.14(dbe3a6bed5b8d12f90bfc75723c7ca7d)
       '@angular/compiler-cli': 21.2.16(@angular/compiler@21.2.16)(typescript@5.9.3)
       '@babel/core': 7.29.0
       '@babel/generator': 7.29.1
@@ -12716,7 +12709,7 @@ snapshots:
       '@angular/core': 21.2.16(@angular/compiler@21.2.16)(rxjs@7.8.2)(zone.js@0.15.0)
       tslib: 2.8.1
 
-  '@angular/build@21.2.14(0588f591835d192fbc5cace0cf21720b)':
+  '@angular/build@21.2.14(dbe3a6bed5b8d12f90bfc75723c7ca7d)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@angular-devkit/architect': 0.2102.14(chokidar@5.0.0)
@@ -12739,7 +12732,7 @@ snapshots:
       parse5-html-rewriting-stream: 8.0.0
       picomatch: 4.0.4
       piscina: 5.1.4
-      rolldown: 1.0.0-rc.4(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)
+      rolldown: 1.0.0-rc.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)
       sass: 1.97.3
       semver: 7.7.4
       source-map-support: 0.5.21
@@ -15882,7 +15875,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@nx/angular@22.6.4(1fc7e4152603185d6a45f0f8559dde90)':
+  '@nx/angular@22.6.4(27e97a47ca56f0a056d4b0c0b15a21e1)':
     dependencies:
       '@angular-devkit/core': 21.2.14(chokidar@5.0.0)
       '@angular-devkit/schematics': 21.2.14(chokidar@5.0.0)
@@ -15906,8 +15899,8 @@ snapshots:
       tslib: 2.8.1
       webpack-merge: 5.10.0
     optionalDependencies:
-      '@angular-devkit/build-angular': 21.2.14(5336ddd8ad284d8974e4fc21877eae1c)
-      '@angular/build': 21.2.14(0588f591835d192fbc5cace0cf21720b)
+      '@angular-devkit/build-angular': 21.2.14(3c2d047ff3a181eca498a6ec45db0368)
+      '@angular/build': 21.2.14(dbe3a6bed5b8d12f90bfc75723c7ca7d)
     transitivePeerDependencies:
       - '@babel/traverse'
       - '@module-federation/enhanced'
@@ -16229,30 +16222,6 @@ snapshots:
       - typescript
       - verdaccio
 
-  '@nx/vite@22.6.4(@babel/traverse@7.29.7)(nx@22.6.4)(typescript@5.9.3)(vite@7.3.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.32.0)(sass-embedded@1.85.1)(sass@1.97.1)(stylus@0.64.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0))(vitest@4.1.9)':
-    dependencies:
-      '@nx/devkit': 22.6.4(nx@22.6.4)
-      '@nx/js': 22.6.4(@babel/traverse@7.29.7)(nx@22.6.4)
-      '@nx/vitest': 22.6.4(@babel/traverse@7.29.7)(nx@22.6.4)(typescript@5.9.3)(vite@7.3.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.32.0)(sass-embedded@1.85.1)(sass@1.97.1)(stylus@0.64.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0))(vitest@4.1.9)
-      '@phenomnomnominal/tsquery': 6.1.4(typescript@5.9.3)
-      ajv: 8.18.0
-      enquirer: 2.3.6
-      picomatch: 4.0.4
-      semver: 7.7.4
-      tsconfig-paths: 4.1.2
-      tslib: 2.8.1
-      vite: 7.3.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.32.0)(sass-embedded@1.85.1)(sass@1.97.1)(stylus@0.64.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0)
-      vitest: 4.1.9(@types/node@22.17.1)(@vitest/coverage-v8@4.1.9)(happy-dom@20.10.2)(jsdom@26.1.0)(vite@7.3.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.32.0)(sass-embedded@1.85.1)(sass@1.97.1)(stylus@0.64.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0))
-    transitivePeerDependencies:
-      - '@babel/traverse'
-      - '@swc-node/register'
-      - '@swc/core'
-      - debug
-      - nx
-      - supports-color
-      - typescript
-      - verdaccio
-
   '@nx/vitest@22.6.4(@babel/traverse@7.29.7)(nx@22.6.4)(typescript@5.9.3)(vite@7.3.2(@types/node@22.17.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.32.0)(sass-embedded@1.85.1)(sass@1.97.1)(stylus@0.64.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0))(vitest@4.1.9)':
     dependencies:
       '@nx/devkit': 22.6.4(nx@22.6.4)
@@ -16464,9 +16433,9 @@ snapshots:
   '@oxc-parser/binding-openharmony-arm64@0.127.0':
     optional: true
 
-  '@oxc-parser/binding-wasm32-wasi@0.121.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)':
+  '@oxc-parser/binding-wasm32-wasi@0.121.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)':
     dependencies:
-      '@napi-rs/wasm-runtime': 1.1.4(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)
+      '@napi-rs/wasm-runtime': 1.1.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)
     transitivePeerDependencies:
       - '@emnapi/core'
       - '@emnapi/runtime'
@@ -16760,9 +16729,9 @@ snapshots:
   '@rolldown/binding-openharmony-arm64@1.0.0-rc.4':
     optional: true
 
-  '@rolldown/binding-wasm32-wasi@1.0.0-rc.4(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)':
+  '@rolldown/binding-wasm32-wasi@1.0.0-rc.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)':
     dependencies:
-      '@napi-rs/wasm-runtime': 1.1.4(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)
+      '@napi-rs/wasm-runtime': 1.1.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)
     transitivePeerDependencies:
       - '@emnapi/core'
       - '@emnapi/runtime'
@@ -17037,10 +17006,10 @@ snapshots:
       - vite
       - webpack
 
-  '@storybook/angular@10.4.2(3df5cb793ac13cfd2833364703166963)':
+  '@storybook/angular@10.4.2(b4aefd929f89c0eb2c1c53cff6fafb70)':
     dependencies:
       '@angular-devkit/architect': 0.2102.14(chokidar@5.0.0)
-      '@angular-devkit/build-angular': 21.2.14(5336ddd8ad284d8974e4fc21877eae1c)
+      '@angular-devkit/build-angular': 21.2.14(3c2d047ff3a181eca498a6ec45db0368)
       '@angular-devkit/core': 21.2.14(chokidar@5.0.0)
       '@angular/common': 21.2.16(@angular/core@21.2.16(@angular/compiler@21.2.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
       '@angular/compiler': 21.2.16
@@ -21801,7 +21770,7 @@ snapshots:
   ordered-binary@1.5.3:
     optional: true
 
-  oxc-parser@0.121.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2):
+  oxc-parser@0.121.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0):
     dependencies:
       '@oxc-project/types': 0.121.0
     optionalDependencies:
@@ -21821,7 +21790,7 @@ snapshots:
       '@oxc-parser/binding-linux-x64-gnu': 0.121.0
       '@oxc-parser/binding-linux-x64-musl': 0.121.0
       '@oxc-parser/binding-openharmony-arm64': 0.121.0
-      '@oxc-parser/binding-wasm32-wasi': 0.121.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)
+      '@oxc-parser/binding-wasm32-wasi': 0.121.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)
       '@oxc-parser/binding-win32-arm64-msvc': 0.121.0
       '@oxc-parser/binding-win32-ia32-msvc': 0.121.0
       '@oxc-parser/binding-win32-x64-msvc': 0.121.0
@@ -22616,7 +22585,7 @@ snapshots:
 
   rfdc@1.4.1: {}
 
-  rolldown@1.0.0-rc.4(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2):
+  rolldown@1.0.0-rc.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0):
     dependencies:
       '@oxc-project/types': 0.113.0
       '@rolldown/pluginutils': 1.0.0-rc.4
@@ -22631,7 +22600,7 @@ snapshots:
       '@rolldown/binding-linux-x64-gnu': 1.0.0-rc.4
       '@rolldown/binding-linux-x64-musl': 1.0.0-rc.4
       '@rolldown/binding-openharmony-arm64': 1.0.0-rc.4
-      '@rolldown/binding-wasm32-wasi': 1.0.0-rc.4(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)
+      '@rolldown/binding-wasm32-wasi': 1.0.0-rc.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)
       '@rolldown/binding-win32-arm64-msvc': 1.0.0-rc.4
       '@rolldown/binding-win32-x64-msvc': 1.0.0-rc.4
     transitivePeerDependencies:
