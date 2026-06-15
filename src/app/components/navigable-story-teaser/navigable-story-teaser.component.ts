@@ -32,7 +32,7 @@ import { RouterLink } from '@angular/router';
 						<cuentoneta-story-edition-date-label [label]="story().originalPublication" />
 					}
 
-					<h1 class="mb-2 font-inter text-sm font-bold">{{ story().title }}</h1>
+					<h3 class="mb-2 font-inter text-sm font-bold">{{ story().title }}</h3>
 					<div class="flex items-center justify-between">
 						<time class="font-inter text-xs font-semibold text-neutral-600">
 							{{ story().approximateReadingTime }} minutos de lectura
