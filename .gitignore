@@ -65,6 +65,9 @@ Thumbs.db
 # Plan de trabajo local (no se versiona)
 /PLAN.md
 
+# Planes y artefactos de trabajo del epic (no se versionan)
+/workflows/
+
 # Grabaciones sueltas de referencia en scripts/
 scripts/*.m4a
 scripts/*.mp4
