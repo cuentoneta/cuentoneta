@@ -19,7 +19,7 @@ const meta: Meta<ImageProfileComponent> = {
 					mostrar la imagen de autores (y, a futuro, de usuarios logueados). Es el componente más anidado del árbol
 					de teasers v3.</p>
 					<ul>
-						<li><code>size</code>: small (24px), medium (40px), large (120px).</li>
+						<li><code>size</code>: small (24px), medium (40px), lg (80px), xl (120px).</li>
 						<li><code>src</code>/<code>alt</code>: foto del perfil. Sin <code>src</code> se muestra el placeholder de persona.</li>
 						<li><code>variant</code>: <code>profile</code> (default) o <code>collection</code> (fondo brand-100 + ícono de biblioteca).</li>
 					</ul>
@@ -32,7 +32,7 @@ const meta: Meta<ImageProfileComponent> = {
 	argTypes: {
 		size: {
 			control: { type: 'inline-radio' },
-			options: ['small', 'medium', 'large'],
+			options: ['small', 'medium', 'lg', 'xl'],
 			table: { defaultValue: { summary: 'medium' } },
 		},
 		variant: {
@@ -75,27 +75,30 @@ export const Showcase: Story = {
 		template: `
 			<div class="flex flex-col gap-8">
 				<div class="space-y-2">
-					<h3 class="text-sm font-semibold text-neutral-600">Foto — small / medium / large</h3>
+					<h3 class="text-sm font-semibold text-neutral-600">Foto — small / medium / lg / xl</h3>
 					<div class="flex items-end gap-4">
 						<cuentoneta-image-profile [src]="src" [alt]="alt" size="small" />
 						<cuentoneta-image-profile [src]="src" [alt]="alt" size="medium" />
-						<cuentoneta-image-profile [src]="src" [alt]="alt" size="large" />
+						<cuentoneta-image-profile [src]="src" [alt]="alt" size="lg" />
+						<cuentoneta-image-profile [src]="src" [alt]="alt" size="xl" />
 					</div>
 				</div>
 				<div class="space-y-2">
-					<h3 class="text-sm font-semibold text-neutral-600">Placeholder — small / medium / large</h3>
+					<h3 class="text-sm font-semibold text-neutral-600">Placeholder — small / medium / lg / xl</h3>
 					<div class="flex items-end gap-4">
 						<cuentoneta-image-profile size="small" />
 						<cuentoneta-image-profile size="medium" />
-						<cuentoneta-image-profile size="large" />
+						<cuentoneta-image-profile size="lg" />
+						<cuentoneta-image-profile size="xl" />
 					</div>
 				</div>
 				<div class="space-y-2">
-					<h3 class="text-sm font-semibold text-neutral-600">Collection — small / medium / large</h3>
+					<h3 class="text-sm font-semibold text-neutral-600">Collection — small / medium / lg / xl</h3>
 					<div class="flex items-end gap-4">
 						<cuentoneta-image-profile variant="collection" size="small" />
 						<cuentoneta-image-profile variant="collection" size="medium" />
-						<cuentoneta-image-profile variant="collection" size="large" />
+						<cuentoneta-image-profile variant="collection" size="lg" />
+						<cuentoneta-image-profile variant="collection" size="xl" />
 					</div>
 				</div>
 			</div>

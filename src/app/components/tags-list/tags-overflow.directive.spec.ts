@@ -3,7 +3,11 @@ import { render, screen } from '@testing-library/angular';
 
 import { TagsOverflowDirective } from './tags-overflow.directive';
 import { TagComponent } from '../tag/tag.component';
-import { installIntersectionObserverStub, markInsideViewport, markOutsideViewport } from './intersection-observer.stub';
+import {
+	installIntersectionObserverStub,
+	markInsideViewport,
+	markOutsideViewport,
+} from '../../testing/intersection-observer.stub';
 
 // Host de prueba que usa la directiva como hostDirective y proyecta tags, tal como TagsListComponent.
 @Component({

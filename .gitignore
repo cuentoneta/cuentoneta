@@ -51,6 +51,11 @@ Thumbs.db
 .github/instructions/nx.instructions.md
 .claude
 
+# Artefactos de Playwright MCP (snapshots/logs de inspección). No versionar: además, al
+# vivir dentro del repo, el escaneo de contenido de Tailwind v4 los vigila y su escritura
+# en vivo dispara rebuilds en bucle del dev server (HMR) si no se ignoran.
+.playwright-mcp/
+
 # Generated reference material (re-create with `pnpm exec tsx --env-file=.env scripts/audit/export-authors-bios.ts`)
 /tools/author-bios/
 
