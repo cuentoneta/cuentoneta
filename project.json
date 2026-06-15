@@ -69,11 +69,11 @@
 			}
 		},
 		"test": {
-			"executor": "@nx/jest:jest",
-			"outputs": [],
+			"executor": "@nx/vite:test",
+			"outputs": ["{options.reportsDirectory}"],
 			"options": {
-				"jestConfig": "jest.config.ts",
-				"aot": true
+				"configFile": "vitest.config.ts",
+				"reportsDirectory": "./coverage/cuentoneta"
 			}
 		},
 		"storybook": {
