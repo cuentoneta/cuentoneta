@@ -161,14 +161,14 @@ describe('MetaTagsDirective', () => {
 	});
 
 	describe('setRobots', () => {
-		it('should set robots meta tag with "index, follow"', () => {
+		it('should expand "index, follow" into indexable robots with preview directives', () => {
 			const metaSpy = jest.spyOn(metaService, 'updateTag');
 
 			directive.setRobots('index, follow');
 
 			expect(metaSpy).toHaveBeenCalledWith({
 				name: 'robots',
-				content: 'index, follow',
+				content: 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1',
 			});
 		});
 
@@ -205,14 +205,14 @@ describe('MetaTagsDirective', () => {
 			});
 		});
 
-		it('should set robots meta tag with "all"', () => {
+		it('should expand "all" into indexable robots with preview directives', () => {
 			const metaSpy = jest.spyOn(metaService, 'updateTag');
 
 			directive.setRobots('all');
 
 			expect(metaSpy).toHaveBeenCalledWith({
 				name: 'robots',
-				content: 'all',
+				content: 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1',
 			});
 		});
 
