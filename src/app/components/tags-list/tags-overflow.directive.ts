@@ -2,7 +2,6 @@ import {
 	afterNextRender,
 	computed,
 	contentChildren,
-	DestroyRef,
 	Directive,
 	effect,
 	ElementRef,
@@ -20,28 +19,31 @@ import { TagComponent } from '../tag/tag.component';
  * con flex `order`; expone cuántos quedan visibles (`visibleCount`) y cuántos se colapsan (`hiddenCount`).
  *
  * Pensada como `hostDirective` del contenedor (que debe ser `position: relative; overflow: hidden`): su
- * host es el contenedor y el root del observer. Usa `IntersectionObserver` (con un margen derecho que
- * reserva el contador) en lugar de `ResizeObserver` por restricción de diseño; reacciona a cualquier
- * cambio de ancho del contenedor. Los tags ocultos quedan en el flujo con `visibility:hidden` (no
- * `display:none`): así no alteran el layout y siguen siendo observables (recorte bidireccional).
+ * host es el contenedor y el root del observer. Usa `IntersectionObserver` (en lugar de `ResizeObserver`,
+ * por restricción de diseño) y reacciona a cualquier cambio de ancho del contenedor. El espacio a reservar
+ * a la derecha (p. ej. para un contador "+N") es configurable vía `groupedTagsSlotReservedSpace`: la directiva **no fija
+ * ningún tamaño**; quien la usa le pasa la huella real. Los tags ocultos quedan en el flujo con
+ * `visibility:hidden` (no `display:none`): no alteran el layout y siguen siendo observables (bidireccional).
  *
- * Sin layout (SSR/jsdom) el observer no reporta y se consideran todos visibles (acotados por `maxVisible`).
+ * Sin layout (SSR/jsdom) el observer no se crea y se consideran todos visibles (acotados por `maxVisible`).
  */
 @Directive({})
 export class TagsOverflowDirective {
 	/** Tope duro opcional de tags visibles; sin valor, el único límite es el ancho. */
 	readonly maxVisible = input<number>();
+	/** Espacio (px) a reservar a la derecha (p. ej. para un contador). Lo setea quien usa la directiva. */
+	readonly groupedTagsSlotReservedSpace = signal(0);
 
 	private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 	private readonly renderer = inject(Renderer2);
-	private readonly destroyRef = inject(DestroyRef);
 
 	/** Tags proyectados a recortar, en orden de render. */
 	private readonly items = contentChildren(TagComponent, { read: ElementRef });
 
-	// Elementos que NO entran completos en el contenedor (reservando el contador), según el observer.
+	// Elementos que NO entran completos en el contenedor (reservando `groupedTagsSlotReservedSpace`), según el observer.
 	private readonly overflowing = signal<ReadonlySet<Element>>(new Set());
-	private readonly observer = signal<IntersectionObserver | undefined>(undefined);
+	// Habilita la creación del observer recién tras el primer render (browser-only).
+	private readonly ready = signal(false);
 
 	/** Cantidad de tags visibles: prefijo que entra, acotado por `maxVisible`. */
 	readonly visibleCount = computed(() => {
@@ -66,10 +68,10 @@ export class TagsOverflowDirective {
 	//   contador "+N" —un tag más, in-flow— caiga justo a la derecha del último visible sin medir nada.
 	// - los visibles vuelven a su estado por defecto (`order` 0, visible).
 	private readonly applyOverflowEffect = effect(() => {
-		const count = this.visibleCount();
+		const visibleCount = this.visibleCount();
 		this.items().forEach((ref, i) => {
-			if (i >= count) {
-				this.renderer.setStyle(ref.nativeElement, 'order', `${count + 1}`);
+			if (i >= visibleCount) {
+				this.renderer.setStyle(ref.nativeElement, 'order', `${visibleCount + 1}`);
 				this.renderer.setStyle(ref.nativeElement, 'visibility', 'hidden');
 			} else {
 				this.renderer.removeStyle(ref.nativeElement, 'order');
@@ -78,44 +80,39 @@ export class TagsOverflowDirective {
 		});
 	});
 
-	// (Re)observa los tags cuando el observer está listo o cambia la lista proyectada.
-	private readonly observeEffect = effect(() => {
-		const observer = this.observer();
-		if (!observer) {
+	// Crea el IntersectionObserver y observa los tags. Se recrea cuando cambia `groupedTagsSlotReservedSpace` (el
+	// `rootMargin` es inmutable por observer) o la lista proyectada; `onCleanup` desconecta el observer
+	// anterior en cada recreación y al destruir la directiva.
+	private readonly observerEffect = effect((onCleanup) => {
+		if (!this.ready()) {
 			return;
 		}
-		observer.disconnect();
+		const observer = new IntersectionObserver(
+			(entries) =>
+				this.overflowing.update((prev) => {
+					const next = new Set(prev);
+					for (const entry of entries) {
+						if (entry.intersectionRatio >= 0.99) {
+							next.delete(entry.target);
+						} else {
+							next.add(entry.target);
+						}
+					}
+					return next;
+				}),
+			{
+				root: this.host.nativeElement,
+				threshold: 1,
+				rootMargin: `0px -${this.groupedTagsSlotReservedSpace()}px 0px 0px`,
+			},
+		);
 		for (const ref of this.items()) {
 			observer.observe(ref.nativeElement);
 		}
+		onCleanup(() => observer.disconnect());
 	});
 
 	constructor() {
-		afterNextRender(() => {
-			/** Espacio (px) reservado a la derecha para el contador "+N" al decidir qué ítems entran. */
-			const COUNTER_RESERVE_PX = 44;
-			const observer = new IntersectionObserver(
-				(entries) => {
-					this.overflowing.update((prev) => {
-						const next = new Set(prev);
-						for (const entry of entries) {
-							if (entry.intersectionRatio >= 0.99) {
-								next.delete(entry.target);
-							} else {
-								next.add(entry.target);
-							}
-						}
-						return next;
-					});
-				},
-				{
-					root: this.host.nativeElement,
-					threshold: 1,
-					rootMargin: `0px -${COUNTER_RESERVE_PX}px 0px 0px`,
-				},
-			);
-			this.observer.set(observer);
-			this.destroyRef.onDestroy(() => observer.disconnect());
-		});
+		afterNextRender(() => this.ready.set(true));
 	}
 }

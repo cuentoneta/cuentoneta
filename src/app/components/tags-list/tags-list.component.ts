@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import {
+	afterRenderEffect,
+	ChangeDetectionStrategy,
+	Component,
+	ElementRef,
+	inject,
+	input,
+	viewChild,
+} from '@angular/core';
 
 import { TagComponent, TagVariant } from '../tag/tag.component';
 import { TagsOverflowDirective } from './tags-overflow.directive';
@@ -31,7 +39,12 @@ import { TagsOverflowDirective } from './tags-overflow.directive';
 		@if (overflow.hiddenCount() > 0) {
 			<!-- Un tag más, in-flow: la directiva ordena (flex order) los ocultos después, así cae justo
 				 a la derecha del último visible, con el gap natural de la fila. -->
-			<cuentoneta-tag [label]="'+' + overflow.hiddenCount()" [variant]="variant()" data-testid="tags-overflow" />
+			<cuentoneta-tag
+				[label]="'+' + overflow.hiddenCount()"
+				[variant]="variant()"
+				#counter
+				data-testid="tags-overflow"
+			/>
 		}
 	`,
 	host: { class: 'relative flex items-center gap-1.5 overflow-hidden' },
@@ -42,4 +55,21 @@ export class TagsListComponent {
 	readonly variant = input<TagVariant>('filled');
 
 	protected readonly overflow = inject(TagsOverflowDirective);
+	private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef);
+	private readonly counterRef = viewChild('counter', { read: ElementRef });
+
+	// Mide el ancho real del contador "+N" (tras el render, browser-only) y le pasa su huella —ancho + el
+	// gap de la fila— a la directiva como reserva: así el espacio reservado es exacto, sin tamaño
+	// hardcodeado. Se re-mide cuando el contador aparece/desaparece o cambia su "+N" (su ancho varía con
+	// los dígitos). El feedback reserva → recorte → "+N" se separa por el callback asíncrono del observer.
+	private readonly measureReserve = afterRenderEffect(() => {
+		const counter = this.counterRef()?.nativeElement as HTMLElement | undefined;
+		this.overflow.hiddenCount();
+		if (!counter) {
+			this.overflow.groupedTagsSlotReservedSpace.set(0);
+			return;
+		}
+		const gap = parseFloat(getComputedStyle(this.hostRef.nativeElement).columnGap) || 0;
+		this.overflow.groupedTagsSlotReservedSpace.set(counter.offsetWidth + gap);
+	});
 }
