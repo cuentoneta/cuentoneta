@@ -13,6 +13,9 @@ const meta: Meta<ImageProfileComponent> = {
 	title: 'Componentes/ImageProfile',
 	parameters: {
 		docs: {
+			canvas: {
+				sourceState: 'shown',
+			},
 			description: {
 				component: `<div>
 					<p>El componente **ImageProfileComponent** es la foto de perfil circular del Design System v3, usada para

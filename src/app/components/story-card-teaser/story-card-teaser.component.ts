@@ -13,7 +13,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 		@if (story(); as story) {
 			<article class="flex gap-4">
 				@if (order()) {
-					<span class="source-serif-2-5xl font-bold leading-none text-brand-500">{{ formattedOrder() }}.</span>
+					<span class="source-serif-2-5xl leading-none font-bold text-brand-500">{{ formattedOrder() }}.</span>
 				}
 				<div class="flex flex-1 flex-col">
 					@if (showAuthor() && 'author' in story) {
@@ -42,7 +42,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 								[paragraphs]="story.paragraphs"
 								[class]="'line-clamp-' + excerptLines()"
 								data-testid="portable-text-parser"
-								class="source-serif-xl min-h-18 relative text-ellipsis text-justify font-normal"
+								class="source-serif-xl relative min-h-18 text-justify font-normal text-ellipsis"
 							/>
 						}
 						<footer class="flex gap-1 font-inter text-xs text-neutral-500">
@@ -70,13 +70,13 @@ export class StoryCardTeaserComponent {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs
-	readonly story = input<StoryNavigationTeaserWithAuthor | StoryTeaserWithAuthor | StoryTeaser>();
-	readonly order = input<number>();
-	readonly showAuthor = input<boolean>(false);
-	readonly showExcerpt = input<boolean>(false);
-	readonly excerptLines = input<number>(3);
-	readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
-	readonly authorImageUrl = computed(() => {
+	public readonly story = input<StoryNavigationTeaserWithAuthor | StoryTeaserWithAuthor | StoryTeaser>();
+	public readonly order = input<number>();
+	public readonly showAuthor = input<boolean>(false);
+	public readonly showExcerpt = input<boolean>(false);
+	public readonly excerptLines = input<number>(3);
+	public readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
+	protected readonly authorImageUrl = computed(() => {
 		const story = this.story();
 		if (story && 'author' in story) {
 			return `${story.author.imageUrl}?h=64&w=64`;
@@ -85,7 +85,7 @@ export class StoryCardTeaserComponent {
 	});
 
 	// Propiedades
-	readonly formattedOrder = computed(() => {
+	protected readonly formattedOrder = computed(() => {
 		const order = this.order();
 		return order && order >= 10 ? order : `0${order}`;
 	});

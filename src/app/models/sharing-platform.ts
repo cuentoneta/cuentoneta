@@ -11,26 +11,26 @@ export interface SharingPlatform {
 }
 
 export class FacebookPlatform implements SharingPlatform {
-	name = 'Facebook';
-	icon = { faBrandFacebook };
-	platformApiUrl = `https://www.facebook.com/share.php`;
-	target = 'facebook-share-dialog';
-	features = 'width=626,height=436';
+	public name = 'Facebook';
+	public icon = { faBrandFacebook };
+	public platformApiUrl = `https://www.facebook.com/share.php`;
+	public target = 'facebook-share-dialog';
+	public features = 'width=626,height=436';
 
-	generateSharingUrl(appRoute: string, urlParams: string): string {
+	public generateSharingUrl(appRoute: string, urlParams: string): string {
 		const url = encodeURIComponent(`${environment.website}${appRoute}?${urlParams}`);
 		return `${this.platformApiUrl}?u=${url}`;
 	}
 }
 
 export class WhatsappPlatform implements SharingPlatform {
-	name = 'Whatsapp';
-	icon = { faBrandWhatsapp };
-	platformApiUrl = `whatsapp://send/`;
-	target = '_blank';
-	features = '';
+	public name = 'Whatsapp';
+	public icon = { faBrandWhatsapp };
+	public platformApiUrl = `whatsapp://send/`;
+	public target = '_blank';
+	public features = '';
 
-	generateSharingUrl(appRoute: string, urlParams: string, message: string): string {
+	public generateSharingUrl(appRoute: string, urlParams: string, message: string): string {
 		const sharedUrl = encodeURIComponent(`${environment.website}${appRoute}?${urlParams}`);
 		const queryParams: { [key: string]: string } = {
 			text: `${message}%0a%0a${sharedUrl}`,
@@ -42,13 +42,13 @@ export class WhatsappPlatform implements SharingPlatform {
 }
 
 export class TwitterPlatform implements SharingPlatform {
-	name = 'Twitter';
-	icon = { faBrandXTwitter };
-	platformApiUrl = `https://twitter.com/intent/tweet`;
-	target = '_blank';
-	features = '';
+	public name = 'Twitter';
+	public icon = { faBrandXTwitter };
+	public platformApiUrl = `https://twitter.com/intent/tweet`;
+	public target = '_blank';
+	public features = '';
 
-	generateSharingUrl(appRoute: string, urlParams: string, message: string): string {
+	public generateSharingUrl(appRoute: string, urlParams: string, message: string): string {
 		const queryParams: { [key: string]: string } = {
 			url: encodeURIComponent(`${environment.website}${appRoute}?${urlParams}`),
 			text: message + '%0a%0a',

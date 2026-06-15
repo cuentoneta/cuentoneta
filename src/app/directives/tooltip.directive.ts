@@ -8,24 +8,24 @@ type TooltipPosition = 'top' | 'right' | 'bottom' | 'left';
 	standalone: true,
 })
 export class TooltipDirective implements OnDestroy {
-	readonly text = signal<string>(''); // Texto para el Tooltip
-	readonly position = signal<TooltipPosition>('top'); // Posición del tooltip
-	readonly offset = signal<number>(6); // Offset del tooltip respecto al elemento
+	public readonly text = signal<string>(''); // Texto para el Tooltip
+	public readonly position = signal<TooltipPosition>('top'); // Posición del tooltip
+	public readonly offset = signal<number>(6); // Offset del tooltip respecto al elemento
 
 	private myPopup: HTMLElement | null = null;
 	private readonly el = inject(ElementRef);
 
-	ngOnDestroy(): void {
+	public ngOnDestroy(): void {
 		if (this.myPopup) {
 			this.myPopup.remove();
 		}
 	}
 
-	@HostListener('mouseenter') onMouseEnter() {
+	@HostListener('mouseenter') public onMouseEnter() {
 		this.createTooltipPopup();
 	}
 
-	@HostListener('mouseleave') onMouseLeave() {
+	@HostListener('mouseleave') public onMouseLeave() {
 		if (this.myPopup) {
 			this.myPopup.remove();
 		}

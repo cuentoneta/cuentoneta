@@ -5,8 +5,20 @@ import storybook from 'eslint-plugin-storybook';
 import vitest from '@vitest/eslint-plugin';
 import testingLibrary from 'eslint-plugin-testing-library';
 import noBarrelFiles from 'eslint-plugin-no-barrel-files';
+import requireEnvironmentProviders from './tools/eslint/require-environment-providers.js';
+import storybookSourceState from './tools/eslint/storybook-source-state.js';
 
-// Reglas base de ES modules: prohíben CommonJS.
+// Restricciones de sintaxis comunes: CommonJS, enums, lifecycle hooks y propiedades estáticas.
+const lifecycleHooks = [
+	['OnInit', 'Usá inicialización en el constructor y signals en lugar de OnInit.'],
+	['OnChanges', 'Reaccioná a cambios de input con computed() o effect() en lugar de OnChanges.'],
+	['DoCheck', 'Usá computed() o effect() en lugar de DoCheck.'],
+	['AfterContentInit', 'Usá contentChild() y effect() en lugar de AfterContentInit.'],
+	['AfterContentChecked', 'Usá computed() o effect() en lugar de AfterContentChecked.'],
+	['AfterViewInit', 'Usá viewChild() y effect() en lugar de AfterViewInit.'],
+	['AfterViewChecked', 'Usá computed() o effect() en lugar de AfterViewChecked.'],
+];
+
 const commonRestrictedSyntax = [
 	{
 		selector: 'MemberExpression[object.name="module"][property.name="exports"]',
@@ -15,6 +27,18 @@ const commonRestrictedSyntax = [
 	{
 		selector: 'MemberExpression[object.name="exports"]',
 		message: 'Use ES modules (export) instead of CommonJS (exports)',
+	},
+	{
+		selector: 'TSEnumDeclaration',
+		message: 'Los enum están prohibidos. Usá Object.freeze({...} as const) — ver typescript.md.',
+	},
+	...lifecycleHooks.map(([hook, message]) => ({
+		selector: `TSClassImplements > Identifier[name="${hook}"]`,
+		message: `${hook} está prohibido. ${message}`,
+	})),
+	{
+		selector: 'PropertyDefinition[static=true]',
+		message: 'Las propiedades estáticas están prohibidas. Usá un servicio singleton (providedIn: root).',
 	},
 ];
 
@@ -53,7 +77,7 @@ const viRestrictedSyntax = [
 export default [
 	{
 		name: 'ignores',
-		ignores: ['!**/*', '.nx', 'dist'],
+		ignores: ['!**/*', '.nx', 'dist', 'tools/**'],
 	},
 	...nx.configs['flat/base'],
 	...nx.configs['flat/typescript'],
@@ -108,14 +132,12 @@ export default [
 				},
 			],
 			'@angular-eslint/prefer-signals': 'error',
-			'@typescript-eslint/no-inferrable-types': 0,
-			'@typescript-eslint/no-unused-vars': [
+			'@typescript-eslint/explicit-member-accessibility': [
 				'error',
-				{
-					argsIgnorePattern: '^_',
-					varsIgnorePattern: '^_',
-				},
+				{ accessibility: 'explicit', overrides: { constructors: 'no-public' } },
 			],
+			'@typescript-eslint/no-inferrable-types': 0,
+			'@typescript-eslint/no-unused-vars': 'error',
 			'@typescript-eslint/no-non-null-assertion': 'error',
 			'@typescript-eslint/no-explicit-any': 'error',
 			'@typescript-eslint/no-require-imports': 'error',
@@ -132,6 +154,26 @@ export default [
 		files: ['src/test-utils.ts'],
 		rules: {
 			'no-restricted-syntax': ['error', ...commonRestrictedSyntax],
+		},
+	},
+	{
+		name: 'require-environment-providers',
+		files: ['src/app/providers/**/*.provider.ts', 'src/app/providers/**/*.mock.ts'],
+		plugins: {
+			'custom-providers': { rules: { 'require-environment-providers': requireEnvironmentProviders } },
+		},
+		rules: {
+			'custom-providers/require-environment-providers': 'error',
+		},
+	},
+	{
+		name: 'storybook-source-state',
+		files: ['**/*.stories.ts'],
+		plugins: {
+			'custom-storybook': { rules: { 'storybook-source-state': storybookSourceState } },
+		},
+		rules: {
+			'custom-storybook/storybook-source-state': 'error',
 		},
 	},
 	{

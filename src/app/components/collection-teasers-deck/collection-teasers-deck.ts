@@ -32,6 +32,6 @@ import { CollectionTeaserSkeleton } from '@components/collection-teaser/collecti
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionTeasersDeck {
-	readonly SKELETON_COUNT = 4;
-	readonly teasers = input<StorylistTeaser[]>([]);
+	protected readonly SKELETON_COUNT = 4;
+	public readonly teasers = input<StorylistTeaser[]>([]);
 }

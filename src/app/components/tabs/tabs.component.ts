@@ -33,9 +33,9 @@ import { NgTemplateOutlet } from '@angular/common';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class Tabs {
-	readonly initialTab = input<string>();
-	readonly tabs = contentChildren(Tab);
-	readonly active = linkedSignal({
+	public readonly initialTab = input<string>();
+	public readonly tabs = contentChildren(Tab);
+	protected readonly active = linkedSignal({
 		source: this.tabs,
 		computation: (tabs) => {
 			if (tabs.length === 0) {
@@ -57,7 +57,7 @@ export default class Tabs {
 		},
 	});
 
-	setActive(tab: Tab) {
+	protected setActive(tab: Tab) {
 		this.active.set(tab);
 	}
 }

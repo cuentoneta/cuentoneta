@@ -210,8 +210,8 @@ export default class AuthorComponent {
 	private readonly appRoutes = AppRoutes;
 
 	// Route inputs
-	readonly slug = input.required<string>();
-	readonly activeTab = input<'stories' | 'about'>('stories');
+	public readonly slug = input.required<string>();
+	public readonly activeTab = input<'stories' | 'about'>('stories');
 
 	// Providers
 	private authorService = inject(AuthorApi);
@@ -222,7 +222,7 @@ export default class AuthorComponent {
 	private metaTagsDirective = inject(MetaTagsDirective);
 
 	// Recursos
-	readonly authorResource = rxResource({
+	protected readonly authorResource = rxResource({
 		params: this.slug,
 		stream: ({ params }) =>
 			this.author$(params).pipe(
@@ -232,19 +232,19 @@ export default class AuthorComponent {
 			),
 		defaultValue: undefined,
 	});
-	readonly storiesResource = rxResource({
+	protected readonly storiesResource = rxResource({
 		params: this.slug,
 		stream: ({ params }) => this.stories$(params),
 		defaultValue: [],
 	});
 
 	// Propiedades
-	readonly author = computed(() => this.authorResource.value());
-	readonly stories = computed(() => this.storiesResource.value());
-	readonly authorImageUrl = computed(() =>
+	protected readonly author = computed(() => this.authorResource.value());
+	protected readonly stories = computed(() => this.storiesResource.value());
+	protected readonly authorImageUrl = computed(() =>
 		this.author()?.imageUrl ? `${this.author()?.imageUrl}?auto=format` : 'assets/img/default-avatar.jpg',
 	);
-	readonly authorFlagUrl = computed(() => `${this.author()?.nationality.flag}?auto=format`);
+	protected readonly authorFlagUrl = computed(() => `${this.author()?.nationality.flag}?auto=format`);
 
 	private updateMetaTags(author: Author) {
 		this.metaTagsDirective.setTitle(`${author.name}`);

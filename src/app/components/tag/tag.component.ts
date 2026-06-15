@@ -23,8 +23,8 @@ export type TagVariant = 'soft' | 'filled' | 'gray';
 })
 export class TagComponent {
 	// Inputs
-	readonly label = input.required<string>();
-	readonly variant = input<TagVariant>('soft');
+	public readonly label = input.required<string>();
+	public readonly variant = input<TagVariant>('soft');
 
 	// Clases (chrome + tipografía) por variante. Las dimensiones/colores salen de tokens del DS v3.
 	private readonly variantClasses: Record<TagVariant, string> = {
@@ -33,7 +33,7 @@ export class TagComponent {
 		gray: 'rounded-sm bg-neutral-950-40 px-1.5 py-1 text-xxs text-neutral-50',
 	};
 
-	readonly hostClasses = computed(
+	protected readonly hostClasses = computed(
 		() => `inline-flex items-center font-inter font-bold whitespace-nowrap ${this.variantClasses[this.variant()]}`,
 	);
 }

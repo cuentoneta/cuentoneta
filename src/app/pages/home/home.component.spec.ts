@@ -35,6 +35,6 @@ describe.skip('HomeComponent', () => {
 	template: '',
 })
 class MockStorylistCardDeckComponent {
-	readonly storylist = input<Storylist>();
-	readonly isLoading = input<boolean>(false);
+	public readonly storylist = input<Storylist>();
+	public readonly isLoading = input<boolean>(false);
 }

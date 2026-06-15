@@ -13,8 +13,8 @@ import { PortableTextDirective } from './portable-text-parser.directive';
 	</article>`,
 })
 class TestComponent {
-	readonly content = signal(authorMock.biography);
-	readonly classes = signal('test-class');
+	public readonly content = signal(authorMock.biography);
+	public readonly classes = signal('test-class');
 }
 
 describe('PortableTextDirective', () => {

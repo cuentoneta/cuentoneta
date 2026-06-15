@@ -29,7 +29,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 	}`,
 })
 export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
-	readonly appRoutes = AppRoutes;
+	private readonly appRoutes = AppRoutes;
 
 	// Providers
 	private storyService = inject(StoryApi);
@@ -42,8 +42,8 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 	});
 
 	// Propiedades
-	readonly stories = computed(() => this.storiesResource.value());
-	readonly authorSlug = computed(() => this.navigationSlug() ?? '');
+	protected readonly stories = computed(() => this.storiesResource.value());
+	protected readonly authorSlug = computed(() => this.navigationSlug() ?? '');
 
 	constructor() {
 		super();

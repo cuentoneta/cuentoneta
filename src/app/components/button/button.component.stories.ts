@@ -9,6 +9,11 @@ const meta: Meta<ButtonComponent> = {
 	component: ButtonComponent,
 	parameters: {
 		layout: 'centered',
+		docs: {
+			canvas: {
+				sourceState: 'shown',
+			},
+		},
 	},
 	tags: ['autodocs'],
 	argTypes: {

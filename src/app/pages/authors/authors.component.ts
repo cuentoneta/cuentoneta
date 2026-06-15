@@ -31,7 +31,7 @@ export default class AuthorsComponent {
 		defaultValue: [],
 	});
 
-	readonly authors = computed(() => this.authorsResource.value());
+	protected readonly authors = computed(() => this.authorsResource.value());
 
 	constructor() {
 		this.updateMetaTags();

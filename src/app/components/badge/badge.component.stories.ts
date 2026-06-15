@@ -7,6 +7,11 @@ const meta: Meta<BadgeComponent> = {
 	component: BadgeComponent,
 	parameters: {
 		layout: 'centered',
+		docs: {
+			canvas: {
+				sourceState: 'shown',
+			},
+		},
 	},
 	tags: ['autodocs'],
 	argTypes: {

@@ -10,13 +10,13 @@ import { LayoutService } from '../../providers/layout.service';
 
 // Servicios mock
 class MockLayoutXsViewportService {
-	biggerThan(viewport: string) {
+	public biggerThan(viewport: string) {
 		return viewport !== 'xs';
 	}
 }
 
 class MockLayoutMdViewportService {
-	biggerThan(viewport: string) {
+	public biggerThan(viewport: string) {
 		return viewport === 'xs';
 	}
 }

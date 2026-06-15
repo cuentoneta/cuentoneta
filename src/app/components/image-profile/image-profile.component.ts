@@ -40,10 +40,10 @@ const PROFILE_PLACEHOLDER = './assets/svg/profile-placeholder.svg';
 })
 export class ImageProfileComponent {
 	// Inputs
-	readonly src = input<string>();
-	readonly alt = input<string>('');
-	readonly size = input<ImageProfileSize>('medium');
-	readonly variant = input<ImageProfileVariant>('profile');
+	public readonly src = input<string>();
+	public readonly alt = input<string>('');
+	public readonly size = input<ImageProfileSize>('medium');
+	public readonly variant = input<ImageProfileVariant>('profile');
 
 	// Tamaño del círculo (px) y clases de Tailwind del círculo y del ícono interno, por tamaño.
 	private readonly sizeMap: Record<ImageProfileSize, { px: number; circle: string; icon: string }> = {
@@ -54,7 +54,7 @@ export class ImageProfileComponent {
 	};
 
 	// Estado de render efectivo: única fuente de verdad de "qué se dibuja", derivada de variant + src.
-	readonly renderMode = computed<RenderMode>(() => {
+	private readonly renderMode = computed<RenderMode>(() => {
 		if (this.variant() === 'collection') {
 			return 'collection';
 		}
@@ -62,7 +62,7 @@ export class ImageProfileComponent {
 	});
 
 	// Descriptor único por estado: centraliza url, tamaño, clases de la imagen y fondo del círculo.
-	readonly view = computed(() => {
+	protected readonly view = computed(() => {
 		const { px, icon } = this.sizeMap[this.size()];
 		switch (this.renderMode()) {
 			case 'collection':
@@ -80,7 +80,7 @@ export class ImageProfileComponent {
 		}
 	});
 
-	readonly containerClasses = computed(() => {
+	protected readonly containerClasses = computed(() => {
 		const { circle } = this.sizeMap[this.size()];
 		return `relative inline-flex items-center justify-center overflow-hidden rounded-full ${circle} ${this.view().background}`;
 	});

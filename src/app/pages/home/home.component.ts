@@ -38,17 +38,17 @@ export default class HomeComponent {
 	private metaTagsDirective = inject(MetaTagsDirective);
 
 	// Recursos
-	readonly landingPageResource = rxResource({
+	private readonly landingPageResource = rxResource({
 		stream: () => this.contentService.getLandingPageContent(),
 		defaultValue: undefined,
 	});
 
 	// Propiedades
-	readonly landingPageContent = computed(() => this.landingPageResource.value());
-	readonly collections = computed(() => this.landingPageContent()?.cards || []);
-	readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
-	readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
-	readonly latestReads = computed(() => this.landingPageContent()?.latestReads.slice(0, 6) || []);
+	private readonly landingPageContent = computed(() => this.landingPageResource.value());
+	protected readonly collections = computed(() => this.landingPageContent()?.cards || []);
+	protected readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
+	protected readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
+	protected readonly latestReads = computed(() => this.landingPageContent()?.latestReads.slice(0, 6) || []);
 
 	constructor() {
 		this.updateMetaTags();

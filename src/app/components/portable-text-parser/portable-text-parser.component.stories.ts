@@ -4,6 +4,13 @@ import { PortableTextParserComponent } from './portable-text-parser.component';
 const meta: Meta<PortableTextParserComponent> = {
 	component: PortableTextParserComponent,
 	title: 'PortableTextParserComponent',
+	parameters: {
+		docs: {
+			canvas: {
+				sourceState: 'shown',
+			},
+		},
+	},
 };
 export default meta;
 

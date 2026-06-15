@@ -12,7 +12,7 @@ export class MetaTagsDirective implements OnDestroy {
 	private platformId = inject(PLATFORM_ID);
 	private titleService = inject(Title);
 
-	setTitle(title: string, addPrefix: boolean = true) {
+	public setTitle(title: string, addPrefix: boolean = true) {
 		const platformTitle = isPlatformBrowser(this.platformId) && addPrefix ? `${title} | La Cuentoneta` : title;
 		this.titleService.setTitle(`${platformTitle}`);
 		this.metaTagService.updateTag({
@@ -26,7 +26,7 @@ export class MetaTagsDirective implements OnDestroy {
 		});
 	}
 
-	setDescription(content: string) {
+	public setDescription(content: string) {
 		this.metaTagService.updateTag({
 			name: 'description',
 			content: content,
@@ -41,7 +41,7 @@ export class MetaTagsDirective implements OnDestroy {
 		});
 	}
 
-	setKeywords(keywords: string | string[]) {
+	public setKeywords(keywords: string | string[]) {
 		const keywordsString = Array.isArray(keywords) ? keywords.join(', ') : keywords;
 		this.metaTagService.updateTag({
 			name: 'keywords',
@@ -49,25 +49,25 @@ export class MetaTagsDirective implements OnDestroy {
 		});
 	}
 
-	removeKeywords() {
+	public removeKeywords() {
 		this.metaTagService.removeTag('name="keywords"');
 	}
 
-	setDefault() {
+	public setDefault() {
 		this.setTitle('La Cuentoneta', false);
 		this.setDefaultDescription();
 		this.setDefaultKeywords();
 	}
 
-	setDefaultDescription() {
+	public setDefaultDescription() {
 		this.setDescription('Una iniciativa que busca fomentar y hacer accesible la lectura digital.');
 	}
 
-	setDefaultKeywords() {
+	public setDefaultKeywords() {
 		this.setKeywords(['cuentos', 'literatura', 'poemas', 'podcast', 'narraciones']);
 	}
 
-	setCanonicalUrl(url: string) {
+	public setCanonicalUrl(url: string) {
 		const head = this.document.getElementsByTagName('head')[0];
 		let element: HTMLLinkElement | null = this.document.querySelector(`link[rel='canonical']`) || null;
 		if (!element) {
@@ -78,7 +78,7 @@ export class MetaTagsDirective implements OnDestroy {
 		element.setAttribute('href', url);
 	}
 
-	removeCanonicalUrl() {
+	public removeCanonicalUrl() {
 		const element = this.document.querySelector(`link[rel='canonical']`);
 		if (element) {
 			element.remove();
@@ -90,7 +90,9 @@ export class MetaTagsDirective implements OnDestroy {
 	// buscadores y answer engines. Coincide con el fallback estático de indexFile.html.
 	private readonly indexableRobots = 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
 
-	setRobots(content: 'index, follow' | 'noindex, nofollow' | 'index, nofollow' | 'noindex, follow' | 'all' | 'none') {
+	public setRobots(
+		content: 'index, follow' | 'noindex, nofollow' | 'index, nofollow' | 'noindex, follow' | 'all' | 'none',
+	) {
 		const value = content === 'index, follow' || content === 'all' ? this.indexableRobots : content;
 		this.metaTagService.updateTag({
 			name: 'robots',
@@ -98,11 +100,11 @@ export class MetaTagsDirective implements OnDestroy {
 		});
 	}
 
-	removeRobots() {
+	public removeRobots() {
 		this.metaTagService.removeTag('name="robots"');
 	}
 
-	ngOnDestroy() {
+	public ngOnDestroy() {
 		this.removeKeywords();
 		this.removeCanonicalUrl();
 		this.removeRobots();

@@ -115,11 +115,11 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 })
 export class StoryCardTeaserSkeletonComponent {
 	// Inputs
-	readonly order = input<number>();
-	readonly showAuthor = input<boolean>(false);
-	readonly showExcerpt = input<boolean>(false);
-	readonly excerptLines = input<number>(3);
+	public readonly order = input<number>();
+	public readonly showAuthor = input<boolean>(false);
+	public readonly showExcerpt = input<boolean>(false);
+	public readonly excerptLines = input<number>(3);
 
 	// Usado de auxiliar para iterar a través de la cantidad de líneas del extracto de texto
-	readonly excerptArrayLines = computed(() => Array(this.excerptLines()).fill(0));
+	protected readonly excerptArrayLines = computed(() => Array(this.excerptLines()).fill(0));
 }

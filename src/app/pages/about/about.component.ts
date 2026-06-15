@@ -14,7 +14,7 @@ import { ContributorApi } from '../../providers/contributor-api.interface';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class AboutComponent {
-	readonly links = {
+	protected readonly links = {
 		CONTRIBUTING: 'https://github.com/rolivencia/cuentoneta/blob/master/CONTRIBUTING.md',
 		GITHUB_REPO: 'https://github.com/rolivencia/cuentoneta',
 		FACEBOOK: 'https://facebook.com/cuentoneta',
@@ -29,12 +29,12 @@ export default class AboutComponent {
 	private metaTagsDirective = inject(MetaTagsDirective);
 	private contributorService = inject(ContributorApi);
 
-	readonly contributorsResource = rxResource({
+	private readonly contributorsResource = rxResource({
 		stream: () => this.contributorService.getAllByArea(),
 		defaultValue: [],
 	});
 
-	readonly contributorsPerArea = computed(() => this.contributorsResource.value());
+	protected readonly contributorsPerArea = computed(() => this.contributorsResource.value());
 
 	constructor() {
 		this.updateMetaTags();

@@ -8,23 +8,19 @@ import { storyMock, storyNavigationTeaserMock, storyTeaserMock, storyTeaserWithA
 import { StoryApi } from './story-api.interface';
 
 export class InMemoryStoryApi implements StoryApi {
-	public getBySlug(_slug: string): Observable<Story> {
+	public getBySlug(): Observable<Story> {
 		return of(storyMock);
 	}
 
-	public getByAuthorSlug(_slug: string, _offset?: number, _limit?: number): Observable<StoryTeaser[]> {
+	public getByAuthorSlug(): Observable<StoryTeaser[]> {
 		return of([storyTeaserMock]);
 	}
 
-	public getNavigationTeasersByAuthorSlug(
-		_slug: string,
-		_offset?: number,
-		_limit?: number,
-	): Observable<StoryNavigationTeaser[]> {
+	public getNavigationTeasersByAuthorSlug(): Observable<StoryNavigationTeaser[]> {
 		return of([storyNavigationTeaserMock]);
 	}
 
-	public get(_offset?: number, _limit?: number): Observable<StoryTeaserWithAuthor[]> {
+	public get(): Observable<StoryTeaserWithAuthor[]> {
 		return of([storyTeaserWithAuthorMock]);
 	}
 }

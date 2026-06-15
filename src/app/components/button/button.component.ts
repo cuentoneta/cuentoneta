@@ -41,10 +41,10 @@ export type ButtonType = 'filled' | 'outline' | 'share';
 })
 export class ButtonComponent {
 	/** Variante del tipo de botón - determina el estilo visual */
-	readonly type = input<ButtonType>('filled');
+	public readonly type = input<ButtonType>('filled');
 
 	/** Clases del host calculadas según el tipo de botón */
-	readonly hostClasses = computed(() => {
+	protected readonly hostClasses = computed(() => {
 		const baseClasses =
 			'inline-flex cursor-pointer items-center justify-center font-inter font-semibold no-underline transition-colors duration-200 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-50';
 

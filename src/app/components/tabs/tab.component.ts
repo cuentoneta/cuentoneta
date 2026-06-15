@@ -10,7 +10,7 @@ import { ChangeDetectionStrategy, Component, input, TemplateRef, viewChild } fro
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class Tab {
-	readonly title = input.required<string>();
-	readonly name = input.required<string>();
-	readonly content = viewChild.required(TemplateRef);
+	public readonly title = input.required<string>();
+	public readonly name = input.required<string>();
+	public readonly content = viewChild.required(TemplateRef);
 }

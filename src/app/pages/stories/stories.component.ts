@@ -79,12 +79,12 @@ export default class StoriesComponent {
 	private metaTagsDirective = inject(MetaTagsDirective);
 
 	// TODO: Implementar tamaño de página variable
-	readonly storiesResource = rxResource({
+	private readonly storiesResource = rxResource({
 		stream: () => this.storyService.get(0, 2000),
 		defaultValue: [],
 	});
 
-	readonly stories = computed(() => this.storiesResource.value());
+	protected readonly stories = computed(() => this.storiesResource.value());
 
 	constructor() {
 		this.updateMetaTags();
