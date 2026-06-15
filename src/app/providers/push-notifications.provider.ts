@@ -13,6 +13,6 @@ export class HttpPushNotificationsApi implements PushNotificationsApi {
 	}
 }
 
-export function providePushNotifications(): EnvironmentProviders {
+export function providePushNotificationsApi(): EnvironmentProviders {
 	return makeEnvironmentProviders([{ provide: PushNotificationsApi, useExisting: HttpPushNotificationsApi }]);
 }

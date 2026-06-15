@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { Contributor, ContributorArea } from '@models/contributor.model';
 import { ContributorApi } from './contributor.interface';
 
-// Doble de test en memoria (nunca `Mock*`). Cablear en specs con provideContributorMock().
+// Doble de test en memoria (nunca `Mock*`). Cablear en specs con provideContributorApiMock().
 export class InMemoryContributorApi implements ContributorApi {
 	public getAll(): Observable<Contributor[]> {
 		return of([]);
@@ -17,6 +17,6 @@ export class InMemoryContributorApi implements ContributorApi {
 	}
 }
 
-export function provideContributorMock(api: ContributorApi = new InMemoryContributorApi()): EnvironmentProviders {
+export function provideContributorApiMock(api: ContributorApi = new InMemoryContributorApi()): EnvironmentProviders {
 	return makeEnvironmentProviders([{ provide: ContributorApi, useValue: api }]);
 }

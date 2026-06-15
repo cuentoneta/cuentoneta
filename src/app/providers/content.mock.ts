@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { LandingPageContent } from '@models/landing-page-content.model';
 import { ContentApi } from './content.interface';
 
-// Doble de test en memoria (nunca `Mock*`). Cablear en specs con provideContentMock().
+// Doble de test en memoria (nunca `Mock*`). Cablear en specs con provideContentApiMock().
 export class InMemoryContentApi implements ContentApi {
 	public getLandingPageContent(): Observable<LandingPageContent> {
 		const landingPageContent: LandingPageContent = {
@@ -21,6 +21,6 @@ export class InMemoryContentApi implements ContentApi {
 	}
 }
 
-export function provideContentMock(api: ContentApi = new InMemoryContentApi()): EnvironmentProviders {
+export function provideContentApiMock(api: ContentApi = new InMemoryContentApi()): EnvironmentProviders {
 	return makeEnvironmentProviders([{ provide: ContentApi, useValue: api }]);
 }

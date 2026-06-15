@@ -7,7 +7,7 @@ import { Author, AuthorTeaser } from '@models/author.model';
 import { authorMock, authorTeaserMock } from '@mocks/author.mock';
 import { AuthorApi } from './author.interface';
 
-// Doble de test en memoria (nunca `Mock*`). Cablear en specs con provideAuthorMock().
+// Doble de test en memoria (nunca `Mock*`). Cablear en specs con provideAuthorApiMock().
 export class InMemoryAuthorApi implements AuthorApi {
 	public getAll(): Observable<AuthorTeaser[]> {
 		return of([authorTeaserMock]);
@@ -18,6 +18,6 @@ export class InMemoryAuthorApi implements AuthorApi {
 	}
 }
 
-export function provideAuthorMock(api: AuthorApi = new InMemoryAuthorApi()): EnvironmentProviders {
+export function provideAuthorApiMock(api: AuthorApi = new InMemoryAuthorApi()): EnvironmentProviders {
 	return makeEnvironmentProviders([{ provide: AuthorApi, useValue: api }]);
 }

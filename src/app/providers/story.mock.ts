@@ -7,7 +7,7 @@ import { Story, StoryNavigationTeaser, StoryTeaser, StoryTeaserWithAuthor } from
 import { storyMock, storyNavigationTeaserMock, storyTeaserMock, storyTeaserWithAuthorMock } from '@mocks/story.mock';
 import { StoryApi } from './story.interface';
 
-// Doble de test en memoria (nunca `Mock*`). Cablear en specs con provideStoryMock().
+// Doble de test en memoria (nunca `Mock*`). Cablear en specs con provideStoryApiMock().
 export class InMemoryStoryApi implements StoryApi {
 	public getBySlug(_slug: string): Observable<Story> {
 		return of(storyMock);
@@ -30,6 +30,6 @@ export class InMemoryStoryApi implements StoryApi {
 	}
 }
 
-export function provideStoryMock(api: StoryApi = new InMemoryStoryApi()): EnvironmentProviders {
+export function provideStoryApiMock(api: StoryApi = new InMemoryStoryApi()): EnvironmentProviders {
 	return makeEnvironmentProviders([{ provide: StoryApi, useValue: api }]);
 }

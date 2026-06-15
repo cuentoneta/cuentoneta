@@ -25,6 +25,6 @@ export class HttpAuthorApi implements AuthorApi {
 	}
 }
 
-export function provideAuthor(): EnvironmentProviders {
+export function provideAuthorApi(): EnvironmentProviders {
 	return makeEnvironmentProviders([{ provide: AuthorApi, useExisting: HttpAuthorApi }]);
 }

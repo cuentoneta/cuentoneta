@@ -40,6 +40,6 @@ export class HttpStoryApi implements StoryApi {
 	}
 }
 
-export function provideStory(): EnvironmentProviders {
+export function provideStoryApi(): EnvironmentProviders {
 	return makeEnvironmentProviders([{ provide: StoryApi, useExisting: HttpStoryApi }]);
 }

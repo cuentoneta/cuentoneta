@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Storylist, StorylistStoriesNavigationTeasers } from '@models/storylist.model';
 
 // Interfaz (nombre limpio) + token. La implementación HTTP vive en storylist.provider.ts; el doble de
-// test InMemoryStorylistApi, en storylist.mock.ts. El token no lleva `providedIn`/`factory`: se cablea vía provideStorylist().
+// test InMemoryStorylistApi, en storylist.mock.ts. El token no lleva `providedIn`/`factory`: se cablea vía provideStorylistApi().
 export interface StorylistApi {
 	get(slug: string, amount?: number, ordering?: 'asc' | 'desc'): Observable<Storylist>;
 	getStorylistNavigationTeasers(

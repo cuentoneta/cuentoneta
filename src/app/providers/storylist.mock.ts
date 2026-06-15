@@ -7,7 +7,7 @@ import { Storylist, StorylistStoriesNavigationTeasers } from '@models/storylist.
 import { storylistMock, storylistNavigationTeaserMock } from '@mocks/storylist.mock';
 import { StorylistApi } from './storylist.interface';
 
-// Doble de test en memoria (nunca `Mock*`). Cablear en specs con provideStorylistMock().
+// Doble de test en memoria (nunca `Mock*`). Cablear en specs con provideStorylistApiMock().
 export class InMemoryStorylistApi implements StorylistApi {
 	public get(_slug: string, _amount?: number, _ordering?: 'asc' | 'desc'): Observable<Storylist> {
 		return of(storylistMock);
@@ -22,6 +22,6 @@ export class InMemoryStorylistApi implements StorylistApi {
 	}
 }
 
-export function provideStorylistMock(api: StorylistApi = new InMemoryStorylistApi()): EnvironmentProviders {
+export function provideStorylistApiMock(api: StorylistApi = new InMemoryStorylistApi()): EnvironmentProviders {
 	return makeEnvironmentProviders([{ provide: StorylistApi, useValue: api }]);
 }

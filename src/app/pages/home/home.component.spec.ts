@@ -3,7 +3,7 @@ import { render } from '@testing-library/angular';
 import { CommonModule, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
 import { provideRouter } from '@angular/router';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { provideContentMock } from '../../providers/content.mock';
+import { provideContentApiMock } from '../../providers/content.mock';
 import { Component, input } from '@angular/core';
 import { Storylist } from '@models/storylist.model';
 
@@ -18,7 +18,7 @@ describe.skip('HomeComponent', () => {
 				NgOptimizedImage,
 				MockStorylistCardDeckComponent,
 			],
-			providers: [provideRouter([]), provideContentMock()],
+			providers: [provideRouter([]), provideContentApiMock()],
 		});
 	};
 

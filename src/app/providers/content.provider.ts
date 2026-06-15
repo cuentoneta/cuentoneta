@@ -20,6 +20,6 @@ export class HttpContentApi implements ContentApi {
 	}
 }
 
-export function provideContent(): EnvironmentProviders {
+export function provideContentApi(): EnvironmentProviders {
 	return makeEnvironmentProviders([{ provide: ContentApi, useExisting: HttpContentApi }]);
 }

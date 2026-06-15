@@ -3,12 +3,12 @@ import { render } from '@testing-library/angular';
 import AboutComponent from './about.component';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideContributorMock } from '../../providers/contributor.mock';
+import { provideContributorApiMock } from '../../providers/contributor.mock';
 
 describe('AboutComponent', () => {
 	const setup = async () => {
 		return await render(AboutComponent, {
-			providers: [provideHttpClient(), provideHttpClientTesting(), provideContributorMock()],
+			providers: [provideHttpClient(), provideHttpClientTesting(), provideContributorApiMock()],
 		});
 	};
 

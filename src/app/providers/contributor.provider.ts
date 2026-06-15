@@ -36,6 +36,6 @@ export class HttpContributorApi implements ContributorApi {
 	}
 }
 
-export function provideContributor(): EnvironmentProviders {
+export function provideContributorApi(): EnvironmentProviders {
 	return makeEnvironmentProviders([{ provide: ContributorApi, useExisting: HttpContributorApi }]);
 }

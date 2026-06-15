@@ -9,7 +9,7 @@ export class InMemoryPushNotificationsApi implements PushNotificationsApi {
 	}
 }
 
-export function providePushNotificationsMock(
+export function providePushNotificationsApiMock(
 	api: PushNotificationsApi = new InMemoryPushNotificationsApi(),
 ): EnvironmentProviders {
 	return makeEnvironmentProviders([{ provide: PushNotificationsApi, useValue: api }]);

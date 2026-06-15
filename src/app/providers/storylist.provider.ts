@@ -31,6 +31,6 @@ export class HttpStorylistApi implements StorylistApi {
 	}
 }
 
-export function provideStorylist(): EnvironmentProviders {
+export function provideStorylistApi(): EnvironmentProviders {
 	return makeEnvironmentProviders([{ provide: StorylistApi, useExisting: HttpStorylistApi }]);
 }

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Author, AuthorTeaser } from '@models/author.model';
 
 // Interfaz (nombre limpio) + token. La implementación HTTP vive en author.provider.ts; el doble de
-// test InMemoryAuthorApi, en author.mock.ts. El token no lleva `providedIn`/`factory`: se cablea vía provideAuthor().
+// test InMemoryAuthorApi, en author.mock.ts. El token no lleva `providedIn`/`factory`: se cablea vía provideAuthorApi().
 export interface AuthorApi {
 	getAll(): Observable<AuthorTeaser[]>;
 	getBySlug(slug: string): Observable<Author>;
