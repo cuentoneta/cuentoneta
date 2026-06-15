@@ -1,6 +1,6 @@
 import { storyMock } from '@mocks/story.mock';
 
-import { buildStoryArticleSchema } from './story.schema';
+import { buildStoryArticleSchema, buildStoryBreadcrumb } from './story.schema';
 
 describe('buildStoryArticleSchema', () => {
 	// URL con barra final como la que llega en producción; el builder debe normalizarla.
@@ -60,5 +60,22 @@ describe('buildStoryArticleSchema', () => {
 			name: 'François Onoff',
 			url: 'https://www.cuentoneta.ar/author/francois-onoff',
 		});
+	});
+});
+
+describe('buildStoryBreadcrumb', () => {
+	it('should build the trail Inicio → Cuentos → story', () => {
+		const schema = buildStoryBreadcrumb(storyMock, 'https://www.cuentoneta.ar/');
+
+		expect(schema['itemListElement']).toEqual([
+			{ '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://www.cuentoneta.ar/home' },
+			{ '@type': 'ListItem', position: 2, name: 'Cuentos', item: 'https://www.cuentoneta.ar/story' },
+			{
+				'@type': 'ListItem',
+				position: 3,
+				name: 'El espejo del tiempo',
+				item: 'https://www.cuentoneta.ar/story/el-espejo-del-tiempo',
+			},
+		]);
 	});
 });
