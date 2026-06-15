@@ -23,7 +23,7 @@ enum VisibilityState {
 			<section class="flex items-center">
 				<a [routerLink]="['/', 'home']" class="flex">
 					<img [ngSrc]="'./assets/svg/logo.svg'" class="mr-3" width="59" height="32" alt="Logo de 'La Cuentoneta'" />
-					<h1 class="flex items-center font-inter text-lg font-bold">La Cuentoneta</h1>
+					<span class="flex items-center font-inter text-lg font-bold">La Cuentoneta</span>
 				</a>
 			</section>
 
