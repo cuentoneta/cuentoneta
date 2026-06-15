@@ -12,7 +12,7 @@ import { StoryTeaser } from '@models/story.model';
 import { storyMock, storyTeaserMock } from '../../mocks/story.mock';
 
 // Services
-import { StoryService } from '../../providers/story.service';
+import { StoryApi } from '../../providers/story.interface';
 
 // 3rd party libs
 import { render, screen } from '@testing-library/angular';
@@ -28,7 +28,7 @@ describe('AuthorNavigationFrameComponent', () => {
 			},
 			providers: [
 				{
-					provide: StoryService,
+					provide: StoryApi,
 					useValue: {
 						getNavigationTeasersByAuthorSlug(): Observable<StoryTeaser[]> {
 							return of([storyTeaserMock]);

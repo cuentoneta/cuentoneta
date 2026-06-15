@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { rxResource } from '@angular/core/rxjs-interop';
 
 // Services
-import { StoryService } from '../../providers/story.service';
+import { StoryApi } from '../../providers/story.interface';
 
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
@@ -35,7 +35,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 					</p>
 				</section>
 
-				<div class="border overflow-x-auto rounded-lg border-neutral-200">
+				<div class="overflow-x-auto rounded-lg border border-neutral-200">
 					<table class="w-full border-collapse">
 						<thead class="bg-neutral-50">
 							<tr class="border-b border-neutral-200">
@@ -75,7 +75,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 })
 export default class StoriesComponent {
 	protected readonly appRoutes = AppRoutes;
-	private storyService = inject(StoryService);
+	private storyService = inject(StoryApi);
 	private metaTagsDirective = inject(MetaTagsDirective);
 
 	// TODO: Implementar tamaño de página variable

@@ -10,6 +10,14 @@ import { DatePipe, registerLocaleData } from '@angular/common';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
+// API providers (patrón provideX con makeEnvironmentProviders)
+import { provideAuthor } from './providers/author.provider';
+import { provideContent } from './providers/content.provider';
+import { provideContributor } from './providers/contributor.provider';
+import { provideStory } from './providers/story.provider';
+import { provideStorylist } from './providers/storylist.provider';
+import { providePushNotifications } from './providers/push-notifications.provider';
+
 registerLocaleData(localeEs);
 
 export const appConfig: ApplicationConfig = {
@@ -27,5 +35,11 @@ export const appConfig: ApplicationConfig = {
 			withComponentInputBinding(),
 		),
 		provideHttpClient(withFetch()),
+		provideAuthor(),
+		provideContent(),
+		provideContributor(),
+		provideStory(),
+		provideStorylist(),
+		providePushNotifications(),
 	],
 };

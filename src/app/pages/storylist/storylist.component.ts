@@ -10,7 +10,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Storylist } from '@models/storylist.model';
 
 // Services
-import { StorylistService } from '../../providers/storylist.service';
+import { StorylistApi } from '../../providers/storylist.interface';
 
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
@@ -56,7 +56,7 @@ export default class StorylistComponent {
 
 	// Providers
 	private metaTagsDirective = inject(MetaTagsDirective);
-	private storylistService = inject(StorylistService);
+	private storylistService = inject(StorylistApi);
 
 	// Recursos
 	readonly storylistResource = rxResource({

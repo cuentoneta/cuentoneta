@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 
-import { AuthorService } from '../../providers/author.service';
+import { AuthorApi } from '../../providers/author.interface';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
@@ -23,7 +23,7 @@ import { environment } from '../../environments/environment';
 	styles: ``,
 })
 export default class AuthorsComponent {
-	private authorService = inject(AuthorService);
+	private authorService = inject(AuthorApi);
 	private metaTagsDirective = inject(MetaTagsDirective);
 
 	private authorsResource = rxResource({

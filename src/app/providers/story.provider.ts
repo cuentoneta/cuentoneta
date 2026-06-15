@@ -1,7 +1,7 @@
 // Core
-import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { EnvironmentProviders, inject, Injectable, makeEnvironmentProviders } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 // Environment
 import { environment } from '../environments/environment';
@@ -9,9 +9,10 @@ import { environment } from '../environments/environment';
 // Models
 import { Story, StoryNavigationTeaser, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
 import { ApiUrl, Endpoints } from './endpoints';
+import { StoryApi } from './story.interface';
 
 @Injectable({ providedIn: 'root' })
-export class StoryService {
+export class HttpStoryApi implements StoryApi {
 	private readonly url: ApiUrl = `${environment.apiUrl}${Endpoints.Story}`;
 	private http = inject(HttpClient);
 
@@ -37,4 +38,8 @@ export class StoryService {
 		const params = new HttpParams().set('offset', offset).append('limit', limit);
 		return this.http.get<StoryTeaserWithAuthor[]>(this.url, { params });
 	}
+}
+
+export function provideStory(): EnvironmentProviders {
+	return makeEnvironmentProviders([{ provide: StoryApi, useExisting: HttpStoryApi }]);
 }

@@ -23,8 +23,8 @@ import { environment } from '../../environments/environment';
 import { NgxSkeletonLoaderComponent, NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Services
-import { AuthorService } from '../../providers/author.service';
-import { StoryService } from '../../providers/story.service';
+import { AuthorApi } from '../../providers/author.interface';
+import { StoryApi } from '../../providers/story.interface';
 
 // Componentes
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
@@ -214,8 +214,8 @@ export default class AuthorComponent {
 	readonly activeTab = input<'stories' | 'about'>('stories');
 
 	// Providers
-	private authorService = inject(AuthorService);
-	private storyService = inject(StoryService);
+	private authorService = inject(AuthorApi);
+	private storyService = inject(StoryApi);
 	private router = inject(Router);
 
 	// Directives

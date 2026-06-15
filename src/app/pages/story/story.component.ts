@@ -18,7 +18,7 @@ import { environment } from '../../environments/environment';
 import { Story } from '@models/story.model';
 
 // Services
-import { StoryService } from '../../providers/story.service';
+import { StoryApi } from '../../providers/story.interface';
 import { LayoutService } from '../../providers/layout.service';
 
 // Directives
@@ -81,7 +81,7 @@ export default class StoryComponent {
 	readonly navigation = input<'author' | 'storylist'>('author');
 	readonly navigationSlug = input<string>();
 
-	private storyService = inject(StoryService);
+	private storyService = inject(StoryApi);
 	private layoutService = inject(LayoutService);
 	private metaTagsDirective = inject(MetaTagsDirective);
 	private isHeaderVisible$ = inject(LayoutService).isHeaderVisible$.pipe(takeUntilDestroyed());
