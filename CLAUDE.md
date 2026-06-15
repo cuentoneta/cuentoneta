@@ -104,6 +104,10 @@ Reglas no negociables. Una violación requiere justificación explícita.
 - Interfaces **sin** prefijo `I` (salvo que coexista con una clase homónima). Convención **Qualified Implementation**: la interfaz tiene el nombre limpio; las implementaciones llevan prefijo de tecnología (`Sanity*`, `Http*`) y los dobles de test son `InMemory*` (**nunca** `Mock*`).
 - **API providers del frontend:** el archivo de la interfaz lleva el sufijo `-api` — `<dominio>-api.interface.ts` (export `<X>Api`) — para distinguirlo de una interfaz del modelo de dominio. La impl y el doble viven en `<dominio>.provider.ts` (`Http<X>Api` + `provide<X>Api()`) y `<dominio>.mock.ts` (`InMemory<X>Api` + `provide<X>ApiMock()`). Ver [`clean-architecture.md`](.claude/references/clean-architecture.md).
 
+### Comentarios
+
+Comentar el **porqué no obvio**, nunca el **qué**. No restatear convenciones ya documentadas en `.claude/references/`, ni el código/tipos/nombres. El rationale de un cambio (qué reemplaza, contexto histórico) va al **commit/PR**, no inline. Detalle y ejemplos en [`coding-agent-policies.md`](.claude/references/coding-agent-policies.md) (Sección 3).
+
 ### Arquitectura (resumen)
 
 - **Frontend:** Angular standalone, **zoneless**, OnPush; estado **signals-first sin NgRx** (servicios + signals/RxJS). Sin `firstValueFrom`/`toPromise`; derivar con `computed()`/`toSignal()`. Detalle: [`angular-components.md`](.claude/references/angular-components.md) · [`angular-state.md`](.claude/references/angular-state.md).
