@@ -1,8 +1,14 @@
 import { test, expect } from '@playwright/test';
 
-test('has title', async ({ page }) => {
+test('home: único H1 de contenido y marca en el header', async ({ page }) => {
 	await page.goto('/');
 
-	// Expect h1 to contain a substring.
-	expect(await page.locator('header').locator('h1').innerText()).toContain('La Cuentoneta');
+	// La home debe tener exactamente un <h1> de contenido (sr-only). La marca del header
+	// dejó de ser <h1> (ahora es un <span>), por lo que ya no duplica el encabezado.
+	await expect(page.locator('h1')).toHaveCount(1);
+	await expect(page.locator('h1')).toHaveText('Cuentos y relatos breves para leer en línea');
+
+	// La marca sigue presente en el header y el <title> SEO contiene la marca.
+	await expect(page.locator('header').getByText('La Cuentoneta').first()).toBeVisible();
+	await expect(page).toHaveTitle(/La Cuentoneta/);
 });
