@@ -1,14 +1,15 @@
 import { Routes } from '@angular/router';
 
-export enum AppRoutes {
-	Home = 'home',
-	Story = 'story',
-	StoryList = 'storylist',
-	Author = 'author',
-	Authors = 'authors',
-	About = 'about',
-	Dmca = 'dmca',
-}
+export const AppRoutes = Object.freeze({
+	Home: 'home',
+	Story: 'story',
+	StoryList: 'storylist',
+	Author: 'author',
+	Authors: 'authors',
+	About: 'about',
+	Dmca: 'dmca',
+} as const);
+export type AppRoutes = (typeof AppRoutes)[keyof typeof AppRoutes];
 
 export const appRoutes: Routes = [
 	{

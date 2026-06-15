@@ -5,10 +5,11 @@ import { InternalLink } from '@models/link.model';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { HEADER_HEIGHT_STRING_PX } from '@utils/spacing.utils';
 
-enum VisibilityState {
-	Visible = 'visible',
-	Hidden = 'hidden',
-}
+const VisibilityState = Object.freeze({
+	Visible: 'visible',
+	Hidden: 'hidden',
+} as const);
+type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 
 @Component({
 	selector: 'cuentoneta-header',

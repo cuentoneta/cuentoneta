@@ -3,10 +3,10 @@ import {
 	Component,
 	computed,
 	createEnvironmentInjector,
+	effect,
 	EnvironmentInjector,
 	inject,
 	input,
-	OnInit,
 } from '@angular/core';
 
 // Models
@@ -41,7 +41,7 @@ import { NgComponentOutlet } from '@angular/common';
 		class: 'flex items-center justify-center',
 	},
 })
-export class ResourceComponent implements OnInit {
+export class ResourceComponent {
 	readonly resource = input.required<Resource>();
 	readonly icon = computed(() => {
 		if (!this.resource()?.resourceType?.slug) {
@@ -63,8 +63,8 @@ export class ResourceComponent implements OnInit {
 	private injector = inject(EnvironmentInjector);
 	private tooltipDirective = inject(TooltipDirective);
 
-	ngOnInit() {
+	private readonly syncTooltipEffect = effect(() => {
 		this.tooltipDirective.text.set(this.resource().title);
 		this.tooltipDirective.position.set('bottom');
-	}
+	});
 }

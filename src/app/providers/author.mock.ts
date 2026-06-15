@@ -12,7 +12,7 @@ export class InMemoryAuthorApi implements AuthorApi {
 		return of([authorTeaserMock]);
 	}
 
-	public getBySlug(_slug: string): Observable<Author> {
+	public getBySlug(): Observable<Author> {
 		return of(authorMock);
 	}
 }

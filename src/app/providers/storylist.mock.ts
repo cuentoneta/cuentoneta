@@ -8,15 +8,11 @@ import { storylistMock, storylistNavigationTeaserMock } from '@mocks/storylist.m
 import { StorylistApi } from './storylist-api.interface';
 
 export class InMemoryStorylistApi implements StorylistApi {
-	public get(_slug: string, _amount?: number, _ordering?: 'asc' | 'desc'): Observable<Storylist> {
+	public get(): Observable<Storylist> {
 		return of(storylistMock);
 	}
 
-	public getStorylistNavigationTeasers(
-		_slug: string,
-		_limit?: number,
-		_offset?: number,
-	): Observable<StorylistStoriesNavigationTeasers> {
+	public getStorylistNavigationTeasers(): Observable<StorylistStoriesNavigationTeasers> {
 		return of(storylistNavigationTeaserMock);
 	}
 }

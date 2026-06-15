@@ -1,4 +1,4 @@
-import { afterNextRender, Component, inject, OnInit, signal } from '@angular/core';
+import { afterNextRender, Component, inject, signal } from '@angular/core';
 
 import { HeaderComponent } from '@components/header/header.component';
 import { FooterComponent } from '@components/footer/footer.component';
@@ -20,7 +20,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 	imports: [FooterComponent, HeaderComponent, RouterModule],
 	providers: [AnalyticsService],
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 	private readonly analytics = inject(AnalyticsService);
 	private readonly isHeaderVisible$ = inject(LayoutService).isHeaderVisible$.pipe(takeUntilDestroyed());
 
@@ -32,12 +32,9 @@ export class AppComponent implements OnInit {
 				this.isHeaderVisible.set(isVisible);
 			});
 		});
-	}
 
-	async ngOnInit() {
-		if (environment.environment !== 'production') {
-			return;
+		if (environment.environment === 'production') {
+			void this.analytics.init();
 		}
-		await this.analytics.init();
 	}
 }

@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, input } from '@angular/core';
 import { TooltipDirective } from '../../directives/tooltip.directive';
 import { NgIcon } from '@ng-icons/core';
 
@@ -20,7 +20,7 @@ export interface MediaResourcePlatform {
 		/>
 	</div>`,
 })
-export class MediaResourceTagComponent implements OnInit {
+export class MediaResourceTagComponent {
 	readonly platform = input.required<MediaResourcePlatform>();
 	readonly size = input<'md' | 'lg'>('md');
 	readonly iconSize = computed(() => (this.size() === 'md' ? '32px' : '24px'));
@@ -33,8 +33,8 @@ export class MediaResourceTagComponent implements OnInit {
 
 	private tooltipDirective = inject(TooltipDirective);
 
-	ngOnInit() {
+	private readonly syncTooltipEffect = effect(() => {
 		this.tooltipDirective.text.set(this.platform().title);
 		this.tooltipDirective.position.set('bottom');
-	}
+	});
 }

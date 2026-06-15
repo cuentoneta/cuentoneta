@@ -2,10 +2,10 @@ import {
 	Component,
 	computed,
 	createEnvironmentInjector,
+	effect,
 	EnvironmentInjector,
 	inject,
 	input,
-	OnInit,
 } from '@angular/core';
 import { SharingPlatform } from '@models/sharing-platform';
 import { TooltipDirective } from '../../directives/tooltip.directive';
@@ -29,7 +29,7 @@ import { NgComponentOutlet } from '@angular/common';
 		</button>
 	}`,
 })
-export class ShareButtonComponent implements OnInit {
+export class ShareButtonComponent {
 	readonly platform = input.required<SharingPlatform>();
 	readonly params = input<{ [key: string]: string }>({});
 	readonly message = input<string>('');
@@ -39,6 +39,11 @@ export class ShareButtonComponent implements OnInit {
 
 	private tooltipDirective = inject(TooltipDirective);
 	private injector = inject(EnvironmentInjector);
+
+	private readonly syncTooltipEffect = effect(() => {
+		this.tooltipDirective.text.set('Compartir en ' + this.platform().name);
+		this.tooltipDirective.position.set('bottom');
+	});
 
 	readonly icon = computed(() => {
 		const platform = this.platform();
@@ -62,10 +67,5 @@ export class ShareButtonComponent implements OnInit {
 			platform.target,
 			platform.features,
 		);
-	}
-
-	ngOnInit() {
-		this.tooltipDirective.text.set('Compartir en ' + this.platform().name);
-		this.tooltipDirective.position.set('bottom');
 	}
 }
