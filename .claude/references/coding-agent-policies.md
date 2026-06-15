@@ -94,7 +94,29 @@ Prohibido. Todo componente nuevo en `src/app/components/` lleva su `*.stories.ts
 
 ---
 
-## Sección 3 — Preguntas aclaratorias
+## Sección 3 — Disciplina de comentarios
+
+Los comentarios explican el **porqué no obvio**, nunca el **qué**. Si el código, los tipos, los nombres o una referencia de `.claude/references/` ya lo dicen, **no se comenta**. El **rationale de un cambio** (por qué se hizo, qué reemplaza, contexto histórico) va al **mensaje de commit / descripción del PR**, no inline.
+
+**No comentar** (es ruido y se desincroniza; review-blocking si solo agrega ruido):
+
+- **Restatear una convención ya documentada.** ❌ `// doble de test, nunca Mock*` · ❌ `// el token no lleva providedIn/factory`. La convención vive en `clean-architecture.md`; repetirla en cada archivo es ruido.
+- **Rationale histórico / de cambio inline.** ❌ `// Rediseñado en #1499: la versión previa usaba .toPromise()…` · ❌ `// sin consumidores al momento del cambio`. Eso va al commit/PR.
+- **Navegación / estructura obvia.** ❌ `// la implementación HTTP vive en x.provider.ts` · ❌ `// API providers (patrón provideX)`. Los imports y los nombres de archivo ya lo muestran.
+- **Parafrasear la línea siguiente.** ❌ `// inyecta el HttpClient` encima de `inject(HttpClient)`.
+
+**Sí comentar:**
+
+- Un **porqué** que no se deduce del código: una decisión no obvia, un workaround con su causa, una restricción externa, una sutileza de orden/timing (idealmente con enlace al issue/PR).
+- Una **invariante** o precondición que el tipo no captura.
+
+**Antes de escribir un comentario, preguntarse:** ¿esto ya lo dice el código, un nombre, un tipo o una referencia? ¿es contexto de cambio que debería ir al PR? Si la respuesta a cualquiera es "sí", no se escribe.
+
+Los comentarios de sección de estilo `// Core` / `// Models` que ya existen en el repo se respetan donde están, pero **no se agregan nuevos** salvo que aporten navegación real en un archivo grande.
+
+---
+
+## Sección 4 — Preguntas aclaratorias
 
 Los agentes pueden hacer preguntas aclaratorias cuando la instrucción del usuario es genuinamente ambigua. No pueden hacer preguntas cuya respuesta cambiaría qué opción recomienda el agente sobre el eje rigor / ceremonia. En concreto:
 
@@ -108,7 +130,7 @@ Los agentes pueden hacer preguntas aclaratorias cuando la instrucción del usuar
 
 ---
 
-## Sección 4 — Repos externos: política de issues
+## Sección 5 — Repos externos: política de issues
 
 Cuando trabajés contra repos donde el usuario **no es contribuidor** (p. ej. dependencias upstream, el starter de referencia, librerías de terceros):
 
@@ -120,7 +142,7 @@ El repo propio donde sí se crean issues/PRs es `cuentoneta/cuentoneta` (usar `g
 
 ---
 
-## Sección 5 — Retención de memoria
+## Sección 6 — Retención de memoria
 
 Este agente usa el **sistema de memoria de Claude Code** (archivos en `.claude/projects/<project-id>/memory/` indexados desde `MEMORY.md`). Debe guardar un registro de feedback que codifique estas reglas, para que sobrevivan a la pérdida de contexto entre sesiones.
 
@@ -132,7 +154,7 @@ El principio: **el documento es canónico; la memoria es refuerzo**. Si los dos 
 
 ---
 
-## Sección 6 — Enforcement
+## Sección 7 — Enforcement
 
 ### Para agentes
 
@@ -157,4 +179,4 @@ Proponé cambios vía issue en `cuentoneta/cuentoneta`. Las enmiendas requieren 
 
 ---
 
-_Última actualización: 2026-06-15. Versión inicial creada como parte del issue #1495 (CLAUDE.md + archivos de referencia)._
+_Última actualización: 2026-06-15. Versión inicial en #1495 (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) agregada en #1499._

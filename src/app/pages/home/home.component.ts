@@ -3,7 +3,7 @@ import { Component, computed, inject } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 
 // Services
-import { ContentService } from '../../providers/content.service';
+import { ContentApi } from '../../providers/content-api.interface';
 
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
@@ -32,7 +32,7 @@ import { CollectionTeasersDeck } from '@components/collection-teasers-deck/colle
 })
 export default class HomeComponent {
 	// Services
-	private contentService = inject(ContentService);
+	private contentService = inject(ContentApi);
 
 	// Directives
 	private metaTagsDirective = inject(MetaTagsDirective);

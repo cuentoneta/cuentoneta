@@ -14,6 +14,7 @@ import { Story } from '@models/story.model';
 // Components
 import StoryComponent from './story.component';
 import { storyMock } from '@mocks/story.mock';
+import { provideStoryApiMock } from '../../providers/story.mock';
 
 describe('StoryComponent', () => {
 	const setup = async () => {
@@ -29,6 +30,7 @@ describe('StoryComponent', () => {
 				MockShareContentComponent,
 				MockStoryNavigationBarComponent,
 			],
+			providers: [provideStoryApiMock()],
 			inputs: {
 				slug: storyMock.slug,
 			},

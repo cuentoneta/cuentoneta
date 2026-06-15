@@ -12,7 +12,7 @@ import { AppRoutes } from '../../app.routes';
 import { NavigationFrameComponent } from '@models/navigation-frame.component';
 
 // Services
-import { StorylistService } from '../../providers/storylist.service';
+import { StorylistApi } from '../../providers/storylist-api.interface';
 
 // Componentes
 import { rxResource } from '@angular/core/rxjs-interop';
@@ -52,7 +52,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	readonly appRoutes = AppRoutes;
 
 	// Providers
-	private storylistService = inject(StorylistService);
+	private storylistService = inject(StorylistApi);
 
 	// Recursos
 	private readonly storylistResource = rxResource({

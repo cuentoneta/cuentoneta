@@ -1,21 +1,21 @@
 import { TestBed } from '@angular/core/testing';
 
 // Servicios
-import { StorylistService } from './storylist.service';
+import { HttpContentApi } from './content.provider';
 
 // Proveedores
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
-describe('StorylistService', () => {
-	let service: StorylistService;
+describe('HttpContentApi', () => {
+	let service: HttpContentApi;
 
 	beforeEach(() => {
 		TestBed.configureTestingModule({
 			providers: [provideHttpClient(), provideHttpClientTesting()],
 		});
 		TestBed.runInInjectionContext(() => {
-			service = TestBed.inject(StorylistService);
+			service = TestBed.inject(HttpContentApi);
 		});
 	});
 

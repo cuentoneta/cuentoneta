@@ -4,13 +4,12 @@ import { rxResource } from '@angular/core/rxjs-interop';
 
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 import { environment } from '../../environments/environment';
-import { ContributorService } from '../../providers/contributor.service';
+import { ContributorApi } from '../../providers/contributor-api.interface';
 
 @Component({
 	selector: 'cuentoneta-about',
 	imports: [NgOptimizedImage],
 	hostDirectives: [MetaTagsDirective],
-	providers: [ContributorService],
 	templateUrl: './about.component.html',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -28,7 +27,7 @@ export default class AboutComponent {
 	};
 
 	private metaTagsDirective = inject(MetaTagsDirective);
-	private contributorService = inject(ContributorService);
+	private contributorService = inject(ContributorApi);
 
 	readonly contributorsResource = rxResource({
 		stream: () => this.contributorService.getAllByArea(),

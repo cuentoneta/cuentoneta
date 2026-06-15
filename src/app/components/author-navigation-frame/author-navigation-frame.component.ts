@@ -5,7 +5,7 @@ import { Component, computed, effect, inject } from '@angular/core';
 import { AppRoutes } from '../../app.routes';
 
 // Providers
-import { StoryService } from '../../providers/story.service';
+import { StoryApi } from '../../providers/story-api.interface';
 
 // Componentes
 import { NavigationFrameComponent } from '@models/navigation-frame.component';
@@ -32,7 +32,7 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 	readonly appRoutes = AppRoutes;
 
 	// Providers
-	private storyService = inject(StoryService);
+	private storyService = inject(StoryApi);
 
 	// Recursos
 	private readonly storiesResource = rxResource({
