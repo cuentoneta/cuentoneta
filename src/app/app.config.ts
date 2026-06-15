@@ -10,6 +10,8 @@ import { DatePipe, registerLocaleData } from '@angular/common';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
+import { provideSchemaOrgInitializer } from './providers/schema-org.initializer';
+
 registerLocaleData(localeEs);
 
 export const appConfig: ApplicationConfig = {
@@ -27,5 +29,6 @@ export const appConfig: ApplicationConfig = {
 			withComponentInputBinding(),
 		),
 		provideHttpClient(withFetch()),
+		provideSchemaOrgInitializer(),
 	],
 };
