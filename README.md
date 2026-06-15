@@ -6,6 +6,12 @@
     </picture>
 </div>
 
+<div align="center" width="100%">
+    <a href="https://codecov.io/gh/cuentoneta/cuentoneta">
+        <img alt="Cobertura de tests" src="https://codecov.io/gh/cuentoneta/cuentoneta/graph/badge.svg" />
+    </a>
+</div>
+
 ---
 
 **La Cuentoneta** es un proyecto abierto y sin fines de lucro que busca generar un espacio comunitario para difundir escritos en literatura breve. Esta iniciativa fue gestada originalmente por un grupo de amigas y amigos residentes de la ciudad de Santa Fe, Argentina durante los últimos días de diciembre de 2021.

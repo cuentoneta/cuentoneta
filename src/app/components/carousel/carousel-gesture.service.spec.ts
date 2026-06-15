@@ -1,3 +1,4 @@
+import { fn, spyOn } from '@test-utils';
 import { DestroyRef, ElementRef, signal } from '@angular/core';
 import { CarouselGestureService, NavigationCommand } from './carousel-gesture.service';
 
@@ -13,7 +14,7 @@ describe('CarouselGestureService', () => {
 		mockElement = document.createElement('div');
 		mockElementRef = { nativeElement: mockElement };
 		mockDestroyRef = {
-			onDestroy: jest.fn((_callback: () => void) => {
+			onDestroy: fn((_callback: () => void) => {
 				// Store callback for potential cleanup simulation
 			}),
 		} as unknown as DestroyRef;
@@ -51,14 +52,15 @@ describe('CarouselGestureService', () => {
 			expect(service.isSwiping()).toBe(true);
 		});
 
-		it('should emit onSwipeStart$ on touchstart', (done) => {
-			service.onSwipeStart$.subscribe(() => {
-				expect(true).toBe(true);
-				done();
-			});
+		it('should emit onSwipeStart$ on touchstart', () =>
+			new Promise<void>((resolve) => {
+				service.onSwipeStart$.subscribe(() => {
+					expect(true).toBe(true);
+					resolve();
+				});
 
-			dispatchTouchEvent(mockElement, 'touchstart', 100, 100);
-		});
+				dispatchTouchEvent(mockElement, 'touchstart', 100, 100);
+			}));
 
 		it('should set isSwiping to false on touchend', () => {
 			dispatchTouchEvent(mockElement, 'touchstart', 100, 100);
@@ -69,15 +71,16 @@ describe('CarouselGestureService', () => {
 			expect(service.isSwiping()).toBe(false);
 		});
 
-		it('should emit onSwipeEnd$ on touchend', (done) => {
-			service.onSwipeEnd$.subscribe(() => {
-				expect(true).toBe(true);
-				done();
-			});
+		it('should emit onSwipeEnd$ on touchend', () =>
+			new Promise<void>((resolve) => {
+				service.onSwipeEnd$.subscribe(() => {
+					expect(true).toBe(true);
+					resolve();
+				});
 
-			dispatchTouchEvent(mockElement, 'touchstart', 100, 100);
-			dispatchTouchEvent(mockElement, 'touchend', 100, 100);
-		});
+				dispatchTouchEvent(mockElement, 'touchstart', 100, 100);
+				dispatchTouchEvent(mockElement, 'touchend', 100, 100);
+			}));
 
 		it('should emit "next" command on left swipe (swipe distance >= 50px)', () => {
 			simulateSwipe(mockElement, 200, 100); // Swipe left by 100px
@@ -180,7 +183,7 @@ describe('CarouselGestureService', () => {
 				bubbles: true,
 				cancelable: true,
 			});
-			const preventDefaultSpy = jest.spyOn(event, 'preventDefault');
+			const preventDefaultSpy = spyOn(event, 'preventDefault');
 
 			mockElement.dispatchEvent(event);
 
@@ -197,7 +200,7 @@ describe('CarouselGestureService', () => {
 			dispatchTouchEvent(mockElement, 'touchstart', 100, 100);
 
 			const moveEvent = createTouchEvent('touchmove', 150, 105); // More horizontal than vertical
-			const preventDefaultSpy = jest.spyOn(moveEvent, 'preventDefault');
+			const preventDefaultSpy = spyOn(moveEvent, 'preventDefault');
 
 			mockElement.dispatchEvent(moveEvent);
 
@@ -208,7 +211,7 @@ describe('CarouselGestureService', () => {
 			dispatchTouchEvent(mockElement, 'touchstart', 100, 100);
 
 			const moveEvent = createTouchEvent('touchmove', 105, 150); // More vertical than horizontal
-			const preventDefaultSpy = jest.spyOn(moveEvent, 'preventDefault');
+			const preventDefaultSpy = spyOn(moveEvent, 'preventDefault');
 
 			mockElement.dispatchEvent(moveEvent);
 

@@ -8,7 +8,7 @@ import { ContentService } from '../../providers/content.service';
 import { Component, input } from '@angular/core';
 import { Storylist } from '@models/storylist.model';
 
-xdescribe('HomeComponent', () => {
+describe.skip('HomeComponent', () => {
 	const setup = async () => {
 		return await render(HomeComponent, {
 			componentImports: [
