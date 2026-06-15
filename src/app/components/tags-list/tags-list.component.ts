@@ -1,25 +1,27 @@
 import {
-	afterRenderEffect,
 	ChangeDetectionStrategy,
 	Component,
+	computed,
+	contentChildren,
+	effect,
 	ElementRef,
 	inject,
-	input,
+	PLATFORM_ID,
 	viewChild,
 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
-import { TagComponent, TagVariant } from '../tag/tag.component';
+import { TagComponent } from '../tag/tag.component';
 import { TagsOverflowDirective } from './tags-overflow.directive';
 
 /**
- * Lista de tags del Design System v3. Los tags se **proyectan** (`<ng-content>`) y, cuando no entran en
- * el ancho del contenedor, se colapsa el excedente detrás de un contador "+N" de ancho fijo ubicado
- * justo después del último tag visible.
+ * Lista de tags del Design System v3. Los tags se proyectan (`<ng-content>`) y, cuando no entran en el
+ * ancho del contenedor, se colapsa el excedente detrás de un contador "+N" ubicado tras el último visible.
  *
- * Toda la lógica de recorte por ancho vive en {@link TagsOverflowDirective}, aplicada como `hostDirective`
- * (el propio host del componente es el contenedor/root del observer — sin `<div>` wrapper). El componente
- * solo proyecta el contenido, renderiza el contador y expone `maxVisible` (vía la hostDirective). El
- * `variant` aplica al contador (los tags proyectados llevan el suyo).
+ * La lógica de recorte vive en `TagsOverflowDirective`, aplicada como `hostDirective` (el host del
+ * componente es el contenedor — sin `<div>` wrapper). El componente proyecta el contenido, renderiza el
+ * contador (toma la variante de los tags proyectados) y le mide el ancho a la directiva para que reserve
+ * su espacio. `maxVisible` se expone vía la hostDirective.
  *
  * Uso:
  * ```html
@@ -37,39 +39,40 @@ import { TagsOverflowDirective } from './tags-overflow.directive';
 	template: `
 		<ng-content />
 		@if (overflow.hiddenCount() > 0) {
-			<!-- Un tag más, in-flow: la directiva ordena (flex order) los ocultos después, así cae justo
-				 a la derecha del último visible, con el gap natural de la fila. -->
 			<cuentoneta-tag
 				[label]="'+' + overflow.hiddenCount()"
-				[variant]="variant()"
+				[variant]="counterVariant()"
+				[attr.aria-label]="overflow.hiddenCount() + ' etiquetas más'"
 				#counter
 				data-testid="tags-overflow"
 			/>
 		}
 	`,
-	host: { class: 'relative flex items-center gap-1.5 overflow-hidden' },
+	host: { class: 'flex items-center gap-1.5 overflow-hidden' },
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TagsListComponent {
-	/** Variante del contador "+N" (los tags proyectados llevan la suya). */
-	readonly variant = input<TagVariant>('filled');
-
 	protected readonly overflow = inject(TagsOverflowDirective);
 	private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef);
-	private readonly counterRef = viewChild('counter', { read: ElementRef });
+	private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
-	// Mide el ancho real del contador "+N" (tras el render, browser-only) y le pasa su huella —ancho + el
-	// gap de la fila— a la directiva como reserva: así el espacio reservado es exacto, sin tamaño
-	// hardcodeado. Se re-mide cuando el contador aparece/desaparece o cambia su "+N" (su ancho varía con
-	// los dígitos). El feedback reserva → recorte → "+N" se separa por el callback asíncrono del observer.
-	private readonly measureReserve = afterRenderEffect(() => {
-		const counter = this.counterRef()?.nativeElement as HTMLElement | undefined;
+	private readonly projectedTags = contentChildren(TagComponent);
+	private readonly counter = viewChild('counter', { read: ElementRef });
+
+	/** El contador "+N" toma la variante de los tags proyectados (todos suelen compartirla). */
+	protected readonly counterVariant = computed(() => this.projectedTags()[0]?.variant() ?? 'filled');
+
+	// Mide el ancho real del contador (más el gap de la fila) y se lo pasa a la directiva como reserva (se
+	// re-mide al aparecer el contador o cambiar su "+N"). El feedback reserva → recorte → "+N" se rompe por
+	// el callback asíncrono del observer, y un `set` con el mismo valor no recrea el observer.
+	private readonly measureReserveSpace = effect(() => {
+		const counter = this.counter()?.nativeElement as HTMLElement | undefined;
 		this.overflow.hiddenCount();
-		if (!counter) {
-			this.overflow.groupedTagsSlotReservedSpace.set(0);
+		if (!this.isBrowser || !counter) {
+			this.overflow.reserveTrailingSpace(0);
 			return;
 		}
 		const gap = parseFloat(getComputedStyle(this.hostRef.nativeElement).columnGap) || 0;
-		this.overflow.groupedTagsSlotReservedSpace.set(counter.offsetWidth + gap);
+		this.overflow.reserveTrailingSpace(counter.offsetWidth + gap);
 	});
 }

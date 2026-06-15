@@ -1,8 +1,10 @@
 import { componentWrapperDecorator, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 
 import { TagsListComponent } from './tags-list.component';
-import { TagComponent } from '../tag/tag.component';
+import { TagComponent, TagVariant } from '../tag/tag.component';
 import { Tag } from '@models/tag.model';
+
+type Args = TagsListComponent & { tags: Tag[]; variant: TagVariant; maxVisible?: number };
 
 const tags: Tag[] = [
 	{ title: 'Crónica', slug: 'cronica', shortDescription: '', description: [] },
@@ -13,7 +15,7 @@ const tags: Tag[] = [
 ];
 
 /** Proyecta los tags dentro del componente (la API es por content projection). */
-const projected = `<cuentoneta-tags-list [variant]="variant" [maxVisible]="maxVisible">
+const projected = `<cuentoneta-tags-list [maxVisible]="maxVisible">
 		@for (tag of tags; track tag.slug) {
 			<cuentoneta-tag [label]="tag.title" [variant]="variant" />
 		}
@@ -25,7 +27,7 @@ const boxed = (width: string) =>
 		(story) => `<div style="width:${width}; outline:1px dashed #cbd5e1; border-radius:8px; padding:8px">${story}</div>`,
 	);
 
-const meta: Meta<TagsListComponent & { tags: Tag[]; maxVisible?: number }> = {
+const meta: Meta<Args> = {
 	component: TagsListComponent,
 	title: 'Componentes/TagsList',
 	decorators: [moduleMetadata({ imports: [TagComponent] })],
@@ -61,7 +63,7 @@ const meta: Meta<TagsListComponent & { tags: Tag[]; maxVisible?: number }> = {
 };
 
 export default meta;
-type Story = StoryObj<TagsListComponent & { tags: Tag[]; maxVisible?: number }>;
+type Story = StoryObj<Args>;
 
 // Contenedor ancho: entran todos, no se muestra contador.
 export const Default: Story = {
@@ -115,7 +117,7 @@ export const Variants: Story = {
 			<div class="flex flex-col gap-6">
 				@for (variant of ['soft', 'filled', 'gray']; track variant) {
 					<div style="width:240px; outline:1px dashed #cbd5e1; border-radius:8px; padding:8px">
-						<cuentoneta-tags-list [variant]="variant">
+						<cuentoneta-tags-list>
 							@for (tag of tags; track tag.slug) {
 								<cuentoneta-tag [label]="tag.title" [variant]="variant" />
 							}
