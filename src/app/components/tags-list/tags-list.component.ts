@@ -29,14 +29,9 @@ import { TagsOverflowDirective } from './tags-overflow.directive';
 	template: `
 		<ng-content />
 		@if (overflow.hiddenCount() > 0) {
-			<!-- Ancho fijo (de su contenido), ubicado justo después del último tag visible (left medido). -->
-			<cuentoneta-tag
-				[style.left.px]="overflow.counterLeft()"
-				[label]="'+' + overflow.hiddenCount()"
-				[variant]="variant()"
-				class="absolute top-1/2 -translate-y-1/2"
-				data-testid="tags-overflow"
-			/>
+			<!-- Un tag más, in-flow: la directiva ordena (flex order) los ocultos después, así cae justo
+				 a la derecha del último visible, con el gap natural de la fila. -->
+			<cuentoneta-tag [label]="'+' + overflow.hiddenCount()" [variant]="variant()" data-testid="tags-overflow" />
 		}
 	`,
 	host: { class: 'relative flex items-center gap-1.5 overflow-hidden' },

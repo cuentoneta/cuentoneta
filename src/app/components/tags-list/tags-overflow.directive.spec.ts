@@ -34,7 +34,7 @@ const markOverflowing = (...elements: Element[]) =>
 	template: `
 		<ng-content />
 		@if (overflow.hiddenCount() > 0) {
-			<span [style.left.px]="overflow.counterLeft()" data-testid="counter">+{{ overflow.hiddenCount() }}</span>
+			<span data-testid="counter">+{{ overflow.hiddenCount() }}</span>
 		}
 	`,
 	host: { class: 'relative flex overflow-hidden' },
@@ -119,19 +119,5 @@ describe('TagsOverflowDirective', () => {
 		expect(screen.getByTestId('counter')).toHaveTextContent('+3');
 		expect(screen.getByText('B')).not.toHaveStyle({ visibility: 'hidden' });
 		expect(screen.getByText('C')).toHaveStyle({ visibility: 'hidden' });
-	});
-
-	it('posiciona el contador al final del último tag visible (counterLeft)', async () => {
-		const { fixture } = await renderHost(['A', 'B', 'C']);
-		// jsdom no hace layout: simulamos la geometría del último tag visible (B, tras ocultar C).
-		const b = screen.getByText('B');
-		Object.defineProperty(b, 'offsetLeft', { configurable: true, value: 40 });
-		Object.defineProperty(b, 'offsetWidth', { configurable: true, value: 30 });
-
-		markOverflowing(screen.getByText('C'));
-		await fixture.whenStable();
-
-		// counterLeft = offsetLeft(40) + offsetWidth(30) + gap(6) = 76
-		expect(screen.getByTestId('counter')).toHaveStyle({ left: '76px' });
 	});
 });
