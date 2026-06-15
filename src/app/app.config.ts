@@ -10,7 +10,7 @@ import { DatePipe, registerLocaleData } from '@angular/common';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
-// API providers (patrón provideX con makeEnvironmentProviders)
+// API providers
 import { provideAuthorApi } from './providers/author.provider';
 import { provideContentApi } from './providers/content.provider';
 import { provideContributorApi } from './providers/contributor.provider';
@@ -35,6 +35,8 @@ export const appConfig: ApplicationConfig = {
 			withComponentInputBinding(),
 		),
 		provideHttpClient(withFetch()),
+
+		// API providers
 		provideAuthorApi(),
 		provideContentApi(),
 		provideContributorApi(),

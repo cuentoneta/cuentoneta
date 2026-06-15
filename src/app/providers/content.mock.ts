@@ -6,7 +6,6 @@ import { Observable, of } from 'rxjs';
 import { LandingPageContent } from '@models/landing-page-content.model';
 import { ContentApi } from './content-api.interface';
 
-// Doble de test en memoria (nunca `Mock*`). Cablear en specs con provideContentApiMock().
 export class InMemoryContentApi implements ContentApi {
 	public getLandingPageContent(): Observable<LandingPageContent> {
 		const landingPageContent: LandingPageContent = {

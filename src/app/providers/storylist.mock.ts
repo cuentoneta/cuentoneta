@@ -7,7 +7,6 @@ import { Storylist, StorylistStoriesNavigationTeasers } from '@models/storylist.
 import { storylistMock, storylistNavigationTeaserMock } from '@mocks/storylist.mock';
 import { StorylistApi } from './storylist-api.interface';
 
-// Doble de test en memoria (nunca `Mock*`). Cablear en specs con provideStorylistApiMock().
 export class InMemoryStorylistApi implements StorylistApi {
 	public get(_slug: string, _amount?: number, _ordering?: 'asc' | 'desc'): Observable<Storylist> {
 		return of(storylistMock);
