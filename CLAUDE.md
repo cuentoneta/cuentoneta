@@ -1,8 +1,8 @@
 # Guía del proyecto — La Cuentoneta
 
-> **Propósito:** este documento define estándares de código, principios de arquitectura y convenciones de tooling para **La Cuentoneta**. Claude Code debe seguir estas reglas al generar, revisar o modificar código.
+> **Propósito:** este documento define estándares de código, principios de arquitectura y convenciones de tooling para **La Cuentoneta**. Claude Code debe seguir estas reglas al generar, revisar o modificar código. Es la guía **siempre presente**; el detalle del "cómo" vive en [`.claude/references/`](.claude/references/) y se carga **según la tarea** (ver [Carga estratificada de referencias](#carga-estratificada-de-referencias)).
 
-> **Idioma:** la documentación y las reviews van en **español**; el **código siempre en inglés** (los comentarios pueden ir en español). Los identificadores, nombres de archivo, ramas y mensajes de commit siguen las convenciones de abajo.
+> **Idioma:** la documentación y las reviews van en **español**; el **código siempre en inglés** (los comentarios pueden ir en español). Identificadores, nombres de archivo, ramas y mensajes de commit siguen las convenciones de abajo.
 
 > **Políticas de agentes de IA:** todo agente que opere sobre este repo debe seguir además [`.claude/references/coding-agent-policies.md`](.claude/references/coding-agent-policies.md) y **cargarlo al inicio de cada sesión, antes de generar recomendaciones**. Es una restricción dura, al mismo nivel que las de este archivo.
 
@@ -13,14 +13,8 @@
 1. [Resumen del proyecto](#resumen-del-proyecto)
 2. [Comandos comunes](#comandos-comunes)
 3. [Restricciones duras (Hard Constraints)](#restricciones-duras-hard-constraints)
-4. [Arquitectura de código (Angular)](#arquitectura-de-código-angular)
-5. [Estado: signals-first (sin NgRx)](#estado-signals-first-sin-ngrx)
-6. [Backend API (Hono + Sanity)](#backend-api-hono--sanity)
-7. [Anti-Corruption Layer (mappers)](#anti-corruption-layer-mappers)
-8. [Testing](#testing)
-9. [Manejo de errores](#manejo-de-errores)
-10. [Convenciones de Git](#convenciones-de-git)
-11. [Archivos de referencia](#archivos-de-referencia)
+4. [Convenciones del repo](#convenciones-del-repo)
+5. [Carga estratificada de referencias](#carga-estratificada-de-referencias)
 
 ---
 
@@ -71,186 +65,52 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 
 Reglas no negociables. Una violación requiere justificación explícita.
 
-| Restricción                                  | Límite / regla                                                                                  |
-| -------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Largo de función                             | ≤ 50 líneas                                                                                     |
-| Largo de archivo                             | ≤ 500 líneas (los `*.spec.ts` quedan exentos)                                                   |
-| Complejidad ciclomática                      | ≤ 10                                                                                            |
-| Profundidad de anidamiento                   | ≤ 3 niveles                                                                                     |
-| Barrels (`index.ts` re-export)               | **Prohibidos** en todo el proyecto (ESLint `no-barrel-files`)                                   |
-| Tipo `any`                                   | Prohibido sin un comentario `// REASON:` (ESLint `no-explicit-any`)                             |
-| `// @ts-ignore`                              | Prohibido sin issue enlazado                                                                    |
-| `console.log`                                | Quitar antes de commitear                                                                       |
-| `enum` de TypeScript                         | **Prohibidos** — usar `Object.freeze({...} as const)` (ver abajo)                               |
-| Lifecycle hooks (`OnInit`, etc.)             | **Prohibidos** — usar signals / `computed` / `effect` / `viewChild` / `contentChild`            |
-| Propiedades estáticas                        | **Prohibidas** — usar un servicio singleton (`providedIn: 'root'`)                              |
-| Imports type-only                            | Usar `type` cuando un import se use solo como anotación de tipo (`isolatedModules`)             |
-| Literales de tiempo crudos                   | Usar duration strings (`'15m'`, `'1h'`, `'7d'`) resueltas en el punto de uso, no `60000`        |
-| `vi.fn()` / `vi.mock()` / `vi.*`             | **Prohibido** el uso directo — usar los wrappers de `@test-utils` (ESLint `viRestrictedSyntax`) |
-| `firstValueFrom`/`lastValueFrom`/`toPromise` | **Prohibidos** en el frontend — usar `computed()`/`toSignal()`/operadores RxJS                  |
-| Non-null assertion (`!`)                     | Prohibido (ESLint `no-non-null-assertion`)                                                      |
-| Non-self-closing / control flow viejo        | Plantillas: `@if`/`@for` (no `*ngIf`/`*ngFor`), self-closing tags, `ngSrc`                      |
+| Restricción                                  | Límite / regla                                                                                                    |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Largo de función                             | ≤ 50 líneas                                                                                                       |
+| Largo de archivo                             | ≤ 500 líneas (los `*.spec.ts` quedan exentos)                                                                     |
+| Complejidad ciclomática                      | ≤ 10                                                                                                              |
+| Profundidad de anidamiento                   | ≤ 3 niveles                                                                                                       |
+| Barrels (`index.ts` re-export)               | **Prohibidos** en todo el proyecto (ESLint `no-barrel-files`)                                                     |
+| Tipo `any`                                   | Prohibido sin un comentario `// REASON:` (ESLint `no-explicit-any`)                                               |
+| `// @ts-ignore`                              | Prohibido sin issue enlazado                                                                                      |
+| `console.log`                                | Quitar antes de commitear                                                                                         |
+| `enum` de TypeScript                         | **Prohibidos** — usar `Object.freeze({...} as const)` → [`typescript.md`](.claude/references/typescript.md)       |
+| Lifecycle hooks (`OnInit`, etc.)             | **Prohibidos** — usar signals / `computed` / `effect` / `viewChild` / `contentChild`                              |
+| Propiedades estáticas                        | **Prohibidas** — usar un servicio singleton (`providedIn: 'root'`)                                                |
+| Imports type-only                            | Usar `type` cuando un import se use solo como anotación de tipo (`isolatedModules`)                               |
+| Literales de tiempo crudos                   | Usar duration strings (`'15m'`, `'1h'`, `'7d'`), no `60000` → [`typescript.md`](.claude/references/typescript.md) |
+| `vi.fn()` / `vi.mock()` / `vi.*`             | **Prohibido** el uso directo — usar los wrappers de `@test-utils` (ESLint `viRestrictedSyntax`)                   |
+| `firstValueFrom`/`lastValueFrom`/`toPromise` | **Prohibidos** en el frontend — usar `computed()`/`toSignal()`/operadores RxJS                                    |
+| Non-null assertion (`!`)                     | Prohibido (ESLint `no-non-null-assertion`)                                                                        |
+| Errores atrapados                            | Preservar la causa (ESLint `preserve-caught-error`); errores tipados por operación                                |
+| Plantillas: control flow / tags              | `@if`/`@for` (no `*ngIf`/`*ngFor`), self-closing tags, `ngSrc`                                                    |
 
-### `Object.freeze()` en vez de `enum`
-
-```typescript
-// ✅ Correcto
-export const MediaType = Object.freeze({
-	AUDIO: 'audio',
-	VIDEO: 'video',
-} as const);
-export type MediaType = (typeof MediaType)[keyof typeof MediaType];
-
-// ❌ Incorrecto
-export enum MediaType {
-	AUDIO = 'audio',
-	VIDEO = 'video',
-}
-```
-
-Beneficios: idiomático en JS, mejor tree-shaking, sin runtime overhead de TS, funciona con `typeof`/`keyof`.
+> El **rationale y los ejemplos** de las micro-convenciones de TS/JS (`Object.freeze`, imports type-only, duration strings, scope de constantes) están en [`typescript.md`](.claude/references/typescript.md).
 
 ---
 
-## Arquitectura de código (Angular)
+## Convenciones del repo
 
-> Principios: [`solid.md`](.claude/references/solid.md) · [`cupid.md`](.claude/references/cupid.md) · [`guiding-principles.md`](.claude/references/guiding-principles.md) · [`clean-architecture.md`](.claude/references/clean-architecture.md)
->
-> Detalle de componentes: [`angular-components.md`](.claude/references/angular-components.md)
-
-### Visibilidad de campos
-
-Los campos de clase de un componente usan `protected` — nunca `public` implícito. Las plantillas de Angular acceden a miembros `protected`, así que no hay razón para exponerlos. Lo que no se usa en la plantilla va `private`.
-
-- `protected` → campos/métodos usados solo en la plantilla del propio componente.
-- `private` → internos, no referenciados en ninguna plantilla.
-- `public` → **solo** inputs/outputs/models de signals (`input()`, `output()`, `model()`), API imperativa llamada por padres (`open()`, `close()`), y miembros requeridos por interfaces.
-
-### `effect()` como field initializers nombrados
-
-Todo `effect()` / `afterRenderEffect()` / `afterNextRender()` se declara como **field initializer nombrado**, nunca dentro del `constructor`. Los field initializers de clases decoradas corren en contexto de inyección.
-
-```typescript
-// ✅ Correcto
-export class StoryComponent {
-	private readonly store = inject(StoryService);
-	private readonly syncEffect = effect(() => {
-		const slug = this.slug();
-		untracked(() => this.load(slug));
-	});
-}
-
-// ❌ Incorrecto — effect dentro del constructor
-```
-
-- Nombres descriptivos (`syncSlugEffect`, `closeOnSuccessEffect`).
-- Los campos referenciados por el effect se declaran **antes** que el effect en el orden del cuerpo de la clase.
-
-### App initializers
-
-`provideAppInitializer` usa una factory nombrada en un archivo `<nombre>.initializer.ts` que devuelve un closure async; nunca lógica inline en `app.config.ts`.
-
-### Control flow y change detection
-
-- Componentes standalone, `ChangeDetectionStrategy.OnPush`, app **zoneless**.
-- Plantillas con `@if` / `@for` / `@switch` (nunca `*ngIf`/`*ngFor`), self-closing tags y `ngSrc` para imágenes.
-- Inyección con `inject()` (no inyección por constructor).
-
----
-
-## Estado: signals-first (sin NgRx)
-
-> Detalle: [`angular-state.md`](.claude/references/angular-state.md)
-
-Cuentoneta **no usa NgRx**. El estado se modela con **servicios + signals + RxJS**. Las reglas "signals-first" se adoptan como **principio**, no como mecanismo `rxMethod`/Signal Store.
-
-**Reglas:**
-
-1. **Sin promesas sobre observables:** prohibido `firstValueFrom`, `lastValueFrom`, `toPromise`, y `async/await` sobre observables en el frontend. Componer con operadores RxJS.
-2. **Derivar con `computed()` / `toSignal()`** en vez de mantener estado duplicado. Los valores derivados son `computed`, nunca estado guardado.
-3. **Debounce / coordinación centralizados en servicios** (p. ej. `LayoutService`), no esparcidos en componentes.
-4. **Errores tipados por operación** — preferir un estado de error por operación a un único `string | null` compartido.
-5. **`switchMap` como operador de aplanado por defecto** para cancelar requests en vuelo obsoletos.
-6. Los servicios de acceso a datos del frontend viven en `src/app/providers/` _(en migración al patrón `provideX()` / `_.provider.ts` — ver #1499)\*.
-
-> **Dirección futura (paridad con el starter):** adoptar **NgRx Signal Store** (`@ngrx/signals` + `rxMethod`) — ver **#1530**. Hasta su adopción, rige lo de arriba; **no** generar código NgRx salvo que el issue lo indique.
-
----
-
-## Backend API (Hono + Sanity)
-
-> Detalle: [`sanity-acl.md`](.claude/references/sanity-acl.md)
-
-El backend es **Hono plano** (no OpenAPIHono). Cada módulo en `src/api/modules/<dominio>/` sigue el patrón **controller → service → repository**, con **mappers (ACL)** traduciendo los resultados crudos de Sanity al modelo de dominio.
-
-### Convención de capas
-
-| Capa           | Archivo                   | Responsabilidad                                                                                    |
-| -------------- | ------------------------- | -------------------------------------------------------------------------------------------------- |
-| **Controller** | `<dominio>.controller.ts` | Rutas Hono (`new Hono()`), validación con `zValidator('param'\|'query', schema)`, llama al service |
-| **Service**    | `<dominio>.service.ts`    | Lógica de negocio. Funciones `get*()`/`update*()`. Llama al repository y mapea al dominio          |
-| **Repository** | `<dominio>.repository.ts` | Acceso a datos. Funciones `fetch*()` que ejecutan `client.fetch(query, params)` (GROQ)             |
-| **Schemas**    | `<dominio>.schema.ts`     | Schemas Zod locales del módulo                                                                     |
-
-### Naming de capas
-
-- **Repository → `fetch*()`** para todas las lecturas (`fetchStoryBySlug`, `fetchStories`). Devuelve el resultado **crudo** de la query de Sanity.
-- **Service → `get*()`** para lecturas (`getStoryBySlug`, `getStories`). Envuelve al repository y **mapea** al modelo de dominio vía la ACL.
-- Validación de params/query con `@hono/zod-validator`; los path params usan `:slug` (estilo Hono).
-- El cliente de Sanity se importa desde `_helpers/sanity-connector` (no instanciar `client` ad-hoc).
-
-> **Dirección futura (paridad con el starter):** adoptar **OpenAPIHono** (`@hono/zod-openapi`: `createRoute`/`registerRoute` + spec en `/api/openapi.json`) — ver **#1531**. Hasta su adopción, rige el patrón Hono plano de arriba.
-
----
-
-## Anti-Corruption Layer (mappers)
-
-> Detalle: [`sanity-acl.md`](.claude/references/sanity-acl.md) · [`domain-model.md`](.claude/references/domain-model.md)
-
-El **ACL es el patrón central** de cuentoneta: los resultados crudos de GROQ **nunca** se filtran al frontend. Los **mappers** en `src/api/_utils/functions.ts` (y `*.functions.ts` vecinos) traducen el shape de Sanity al **modelo de dominio** (`Story`, `Author`, `Storylist`, `Resource`, …).
-
-```
-GROQ query → repository.fetch*()  →  service.get*()  →  mapX(rawResult): DomainType  →  controller
-            (resultado crudo Sanity)                    (mapper / ACL en _utils)
-```
-
-- Los mappers son funciones puras (`mapAuthor`, `mapAuthorTeaser`, `mapResources`, …).
-- Helpers de imágenes (`urlFor`, `urlForWithAutoFormat`) también viven en la capa de mappers.
-- Al cambiar una query GROQ o un tipo generado de Sanity, actualizar el mapper correspondiente y los tipos de dominio en el **mismo** PR.
-
----
-
-## Testing
-
-> Detalle: [`testing.md`](.claude/references/testing.md)
-
-- **Runner:** Vitest (`pnpm test`). Setup zoneless en `src/test-setup.ts`.
-- **Componentes:** **siempre** Angular Testing Library (`@testing-library/angular`). **Nunca** `ComponentFixture`, `TestBed.createComponent()`, ni queries por `querySelector`/`container`. Testear **comportamiento de usuario**, no implementación.
-- **Mocks/timers:** usar los wrappers de **`@test-utils`** (`fn()`, `spyOn()`, `clearAllMocks()`, `useFakeTimers()`, …). **Prohibido** `vi.fn()`/`vi.mock()`/`vi.spyOn()` directo (ESLint `viRestrictedSyntax`). `src/test-utils.ts` es la única excepción.
-- **`clearAllMocks()` de `@test-utils` en `beforeEach`** para resetear estado entre tests.
-- **Prioridad de queries:** `getByRole` > `getByLabelText` > `getByPlaceholderText` > `getByText` > `getByDisplayValue` > `getByAltText` > `getByTitle` > `getByTestId` (último recurso).
-- **Storybook:** todo componente nuevo en `src/app/components/` lleva su `*.stories.ts`.
-
----
-
-## Manejo de errores
-
-> Detalle: [`maintainability.md`](.claude/references/maintainability.md)
-
-- Manejar errores en el nivel adecuado — no atrapar e ignorar. Preservar la causa (`preserve-caught-error`).
-- Errores tipados por operación; loguear con contexto suficiente.
-- Backend: propagar errores con mensajes accionables; el controller traduce a la respuesta HTTP.
-- Frontend: errores tipados por operación expuestos como signals para la UI.
-
----
-
-## Convenciones de Git
+### Git
 
 - **Ramas:** `feat/<id_issue>-<descripcion-en-kebab-case>` desde `develop` actualizado (p. ej. `feat/1495-claude-md-and-references`).
-- **Commits:** `[#<id_issue>] - <mensaje>` (p. ej. `[#1495] - Crea CLAUDE.md y archivos de referencia`).
-- **PRs:** título `[#<id_issue>] - <título>`; cuerpo en español con `Closes #<id_issue>`; base `develop`; milestone correspondiente.
-- **Reviews:** en **español**.
-- Antes de borrar/sobrescribir archivos generados (p. ej. `tools/author-bios/`), verificar que sean re-generables.
+- **Commits:** `[#<id_issue>] - <mensaje>`.
+- **PRs:** título `[#<id_issue>] - <título>`; cuerpo en español con `Closes #<id_issue>`; base `develop`; milestone correspondiente. **Reviews en español.**
+
+### Naming
+
+- Archivos `kebab-case`; clases `PascalCase`; funciones/métodos `camelCase`; constantes globales `SCREAMING_SNAKE_CASE`, locales `camelCase`.
+- Interfaces **sin** prefijo `I` (salvo que coexista con una clase homónima). Convención **Qualified Implementation**: la interfaz tiene el nombre limpio; las implementaciones llevan prefijo de tecnología (`Sanity*`, `Http*`) y los dobles de test son `InMemory*` (**nunca** `Mock*`).
+
+### Arquitectura (resumen)
+
+- **Frontend:** Angular standalone, **zoneless**, OnPush; estado **signals-first sin NgRx** (servicios + signals/RxJS). Sin `firstValueFrom`/`toPromise`; derivar con `computed()`/`toSignal()`. Detalle: [`angular-components.md`](.claude/references/angular-components.md) · [`angular-state.md`](.claude/references/angular-state.md).
+- **Backend:** **Hono plano** (`src/api/modules/<dominio>/`) con el patrón **controller → service → repository** y un **Anti-Corruption Layer de mappers** (`src/api/_utils/`) que traduce los resultados crudos de Sanity/GROQ al modelo de dominio. Repos `fetch*()` (crudo), services `get*()` (mapean a dominio). Detalle: [`sanity-acl.md`](.claude/references/sanity-acl.md) · [`clean-architecture.md`](.claude/references/clean-architecture.md).
+
+### Dirección futura (paridad con el starter)
+
+Como dirección objetivo —**no adoptada**— se evalúa **NgRx Signal Store** (#1530) y **OpenAPIHono** (#1531). Hasta que esos issues cambien de estado, **no** se genera código NgRx ni OpenAPIHono salvo que el issue lo pida. Detalle en [`angular-state.md`](.claude/references/angular-state.md) y [`sanity-acl.md`](.claude/references/sanity-acl.md).
 
 ### Scan de impacto en documentación
 
@@ -258,9 +118,24 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 
 ---
 
-## Archivos de referencia
+## Carga estratificada de referencias
 
-`CLAUDE.md` es la guía base; el conocimiento detallado se estratifica en [`.claude/references/`](.claude/references/) y se carga **según el tipo de tarea** (los subagentes de `.claude/agents/` los consumen — ver #1501). `coding-agent-policies.md` se carga **siempre**, al inicio de cada sesión.
+`CLAUDE.md` (este archivo) se carga **siempre**. El conocimiento detallado vive en [`.claude/references/`](.claude/references/) y se carga **según el tipo de tarea** (los subagentes de `.claude/agents/` lo consumen — ver #1501). `coding-agent-policies.md` se carga **siempre**, al inicio de cada sesión.
+
+**Qué cargar según la tarea:**
+
+| Cuando trabajes en…                  | Cargá                                                                                              |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| Cualquier sesión (siempre)           | `coding-agent-policies`                                                                            |
+| Componentes / plantillas Angular     | `angular-components`, `angular-state`                                                              |
+| Estado / servicios / RxJS            | `angular-state`, `guiding-principles`                                                              |
+| Backend / Sanity / GROQ / mappers    | `sanity-acl`, `clean-architecture`, `domain-model`                                                 |
+| Modelo de dominio / DDD              | `domain-model`, `clean-architecture`                                                               |
+| Tests (Vitest / Storybook)           | `testing`                                                                                          |
+| Tipos / constantes / imports (TS/JS) | `typescript`                                                                                       |
+| Decisiones de diseño / arquitectura  | `solid`, `cupid`, `guiding-principles`, `cross-reference`, `clean-architecture`, `maintainability` |
+
+**Catálogo completo (`.claude/references/`):**
 
 | Referencia                 | Contenido                                                                           |
 | -------------------------- | ----------------------------------------------------------------------------------- |
@@ -275,4 +150,5 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 | `angular-state.md`         | Estado signals-first sin NgRx (servicios + signals/RxJS)                            |
 | `testing.md`               | Vitest + Angular Testing Library + `@test-utils` + Storybook                        |
 | `sanity-acl.md`            | GROQ → repository → mapper → modelo de dominio (el ACL central)                     |
+| `typescript.md`            | Micro-convenciones TS/JS (`Object.freeze`, type-only, duration strings)             |
 | `maintainability.md`       | Mantenibilidad y simplificación estructural                                         |
