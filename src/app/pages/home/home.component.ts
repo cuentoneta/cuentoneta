@@ -55,7 +55,11 @@ export default class HomeComponent {
 	}
 
 	private updateMetaTags() {
-		this.metaTagsDirective.setDefault();
+		// Title descriptivo (keyword + marca). Se pasa `addPrefix = false` para que el string completo
+		// —marca incluida— se emita tal cual en el SSR, donde el sufijo "| La Cuentoneta" no se agrega.
+		this.metaTagsDirective.setTitle('Cuentos y relatos breves para leer en línea | La Cuentoneta', false);
+		this.metaTagsDirective.setDefaultDescription();
+		this.metaTagsDirective.setDefaultKeywords();
 		this.metaTagsDirective.setCanonicalUrl(`${environment.website}`);
 		this.metaTagsDirective.setRobots('index, follow');
 	}

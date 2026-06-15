@@ -85,10 +85,16 @@ export class MetaTagsDirective implements OnDestroy {
 		}
 	}
 
+	// Para páginas indexables emitimos, además de index/follow, las directivas de vista previa
+	// enriquecida (imagen grande, snippet y video sin límite) para mejorar la aparición en
+	// buscadores y answer engines. Coincide con el fallback estático de indexFile.html.
+	private readonly indexableRobots = 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
+
 	setRobots(content: 'index, follow' | 'noindex, nofollow' | 'index, nofollow' | 'noindex, follow' | 'all' | 'none') {
+		const value = content === 'index, follow' || content === 'all' ? this.indexableRobots : content;
 		this.metaTagService.updateTag({
 			name: 'robots',
-			content: content,
+			content: value,
 		});
 	}
 
