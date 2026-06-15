@@ -49,7 +49,11 @@ Thumbs.db
 .vercel
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
-.claude
+
+# Claude — se versiona la config de equipo (.claude/{references,agents,skills,settings.json}).
+# Quedan fuera los datos personales/locales y el almacenamiento interno de git worktrees.
+.claude/settings.local.json
+.claude/worktrees/
 
 # Artefactos de Playwright MCP (snapshots/logs de inspección). No versionar: además, al
 # vivir dentro del repo, el escaneo de contenido de Tailwind v4 los vigila y su escritura
