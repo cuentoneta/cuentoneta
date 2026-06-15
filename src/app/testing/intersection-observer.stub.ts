@@ -1,8 +1,9 @@
 // TODO(#1494): eliminar este stub al migrar a Vitest. Su browser mode provee un IntersectionObserver
-// real, lo que permitiría testear el recorte con layout real en vez de simular el callback a mano.
+// real, lo que permitiría testear con layout real en vez de simular el callback a mano.
 //
-// Stub de IntersectionObserver para tests (jsdom no lo implementa). Captura el callback del observer y
-// las opciones con que se creó, y permite simular que ciertos elementos entran o no en el contenedor.
+// Stub global de IntersectionObserver para tests (jsdom no lo implementa). Se instala en test-setup para
+// que cualquier componente que use IO se pueda renderizar. Captura el callback y las opciones del último
+// observer creado, y expone helpers para simular que ciertos elementos entran o no en el contenedor.
 let callback: IntersectionObserverCallback | undefined;
 let options: IntersectionObserverInit | undefined;
 
@@ -14,12 +15,18 @@ class IntersectionObserverStub {
 	observe(): void {
 		return;
 	}
+	unobserve(): void {
+		return;
+	}
 	disconnect(): void {
 		return;
 	}
+	takeRecords(): IntersectionObserverEntry[] {
+		return [];
+	}
 }
 
-/** Instala el stub como `IntersectionObserver` global y resetea el estado. Llamar en `beforeEach`. */
+/** Instala el stub como `IntersectionObserver` global y resetea el estado capturado. */
 export function installIntersectionObserverStub(): void {
 	(globalThis as unknown as { IntersectionObserver: unknown }).IntersectionObserver = IntersectionObserverStub;
 	callback = undefined;

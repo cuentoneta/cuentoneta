@@ -5,7 +5,7 @@ import {
 	installIntersectionObserverStub,
 	lastObserverOptions,
 	markOutsideViewport,
-} from './intersection-observer.stub';
+} from '../../testing/intersection-observer.stub';
 
 // Los tags se proyectan: la API del componente es por content projection. Se les da variant 'gray'
 // para verificar que el contador toma la variante de los tags proyectados.
