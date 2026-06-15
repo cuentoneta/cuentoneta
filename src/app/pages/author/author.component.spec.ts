@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import AuthorComponent from './author.component';
 
-xdescribe('AuthorComponent', () => {
+describe.skip('AuthorComponent', () => {
 	let component: AuthorComponent;
 	let fixture: ComponentFixture<AuthorComponent>;
 

@@ -1,3 +1,4 @@
+import { fn } from '@test-utils';
 import { StoryMediaSelectorsComponent } from './story-media-selectors.component';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
@@ -58,7 +59,7 @@ describe('StoryMediaSelectorsComponent', () => {
 		});
 
 		it('should emit the corresponding resource when a selector is clicked', async () => {
-			const onSelected = jest.fn();
+			const onSelected = fn();
 			await render(StoryMediaSelectorsComponent, {
 				inputs: { media, selectable: true },
 				on: { selected: onSelected },

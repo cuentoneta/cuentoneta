@@ -18,7 +18,7 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 // Componentes
 import StorylistComponent from './storylist.component';
 
-xdescribe('StorylistComponent', () => {
+describe.skip('StorylistComponent', () => {
 	const setup = async () => {
 		return await render(StorylistComponent, {
 			componentImports: [
