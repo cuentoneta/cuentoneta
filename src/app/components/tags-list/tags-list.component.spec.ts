@@ -1,3 +1,4 @@
+import { restoreAllMocks, spyOn } from '@test-utils';
 import { TagsListComponent } from './tags-list.component';
 import { TagComponent } from '../tag/tag.component';
 import { render, screen } from '@testing-library/angular';
@@ -21,7 +22,7 @@ const renderList = (labels: string[]) =>
 
 describe('TagsListComponent', () => {
 	beforeEach(() => installIntersectionObserverStub());
-	afterEach(() => jest.restoreAllMocks());
+	afterEach(() => restoreAllMocks());
 
 	it('should project and render the tags, with no counter when they all fit', async () => {
 		await renderList(['Crónica', 'Ensayo', 'Memoria']);
@@ -43,7 +44,7 @@ describe('TagsListComponent', () => {
 	});
 
 	it('should reserve the measured counter width in the observer', async () => {
-		jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(30);
+		spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(30);
 		const { fixture } = await renderList(['A', 'B', 'C', 'D', 'E']);
 
 		markOutsideViewport(screen.getByText('D'), screen.getByText('E'));

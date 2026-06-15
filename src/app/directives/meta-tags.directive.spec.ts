@@ -1,3 +1,4 @@
+import { spyOn } from '@test-utils';
 import { MetaTagsDirective } from './meta-tags.directive';
 import { TestBed } from '@angular/core/testing';
 import { Meta, Title } from '@angular/platform-browser';
@@ -30,8 +31,8 @@ describe('MetaTagsDirective', () => {
 
 	describe('setTitle', () => {
 		it('should set title with prefix by default', () => {
-			const titleSpy = jest.spyOn(titleService, 'setTitle');
-			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const titleSpy = spyOn(titleService, 'setTitle');
+			const metaSpy = spyOn(metaService, 'updateTag');
 
 			directive.setTitle('Test Title');
 
@@ -47,7 +48,7 @@ describe('MetaTagsDirective', () => {
 		});
 
 		it('should set title without prefix when addPrefix is false', () => {
-			const titleSpy = jest.spyOn(titleService, 'setTitle');
+			const titleSpy = spyOn(titleService, 'setTitle');
 
 			directive.setTitle('Test Title', false);
 
@@ -57,7 +58,7 @@ describe('MetaTagsDirective', () => {
 
 	describe('setDescription', () => {
 		it('should set description meta tags', () => {
-			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const metaSpy = spyOn(metaService, 'updateTag');
 
 			directive.setDescription('Test description');
 
@@ -78,9 +79,9 @@ describe('MetaTagsDirective', () => {
 
 	describe('setDefault', () => {
 		it('should set default title, description and keywords', () => {
-			const setTitleSpy = jest.spyOn(directive, 'setTitle');
-			const setDefaultDescriptionSpy = jest.spyOn(directive, 'setDefaultDescription');
-			const setDefaultKeywordsSpy = jest.spyOn(directive, 'setDefaultKeywords');
+			const setTitleSpy = spyOn(directive, 'setTitle');
+			const setDefaultDescriptionSpy = spyOn(directive, 'setDefaultDescription');
+			const setDefaultKeywordsSpy = spyOn(directive, 'setDefaultKeywords');
 
 			directive.setDefault();
 
@@ -92,7 +93,7 @@ describe('MetaTagsDirective', () => {
 
 	describe('setDefaultDescription', () => {
 		it('should set default description', () => {
-			const setDescriptionSpy = jest.spyOn(directive, 'setDescription');
+			const setDescriptionSpy = spyOn(directive, 'setDescription');
 
 			directive.setDefaultDescription();
 
@@ -104,7 +105,7 @@ describe('MetaTagsDirective', () => {
 
 	describe('setDefaultKeywords', () => {
 		it('should set default keywords', () => {
-			const setKeywordsSpy = jest.spyOn(directive, 'setKeywords');
+			const setKeywordsSpy = spyOn(directive, 'setKeywords');
 
 			directive.setDefaultKeywords();
 
@@ -162,7 +163,7 @@ describe('MetaTagsDirective', () => {
 
 	describe('setRobots', () => {
 		it('should set robots meta tag with "index, follow"', () => {
-			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const metaSpy = spyOn(metaService, 'updateTag');
 
 			directive.setRobots('index, follow');
 
@@ -173,7 +174,7 @@ describe('MetaTagsDirective', () => {
 		});
 
 		it('should set robots meta tag with "noindex, nofollow"', () => {
-			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const metaSpy = spyOn(metaService, 'updateTag');
 
 			directive.setRobots('noindex, nofollow');
 
@@ -184,7 +185,7 @@ describe('MetaTagsDirective', () => {
 		});
 
 		it('should set robots meta tag with "index, nofollow"', () => {
-			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const metaSpy = spyOn(metaService, 'updateTag');
 
 			directive.setRobots('index, nofollow');
 
@@ -195,7 +196,7 @@ describe('MetaTagsDirective', () => {
 		});
 
 		it('should set robots meta tag with "noindex, follow"', () => {
-			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const metaSpy = spyOn(metaService, 'updateTag');
 
 			directive.setRobots('noindex, follow');
 
@@ -206,7 +207,7 @@ describe('MetaTagsDirective', () => {
 		});
 
 		it('should set robots meta tag with "all"', () => {
-			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const metaSpy = spyOn(metaService, 'updateTag');
 
 			directive.setRobots('all');
 
@@ -217,7 +218,7 @@ describe('MetaTagsDirective', () => {
 		});
 
 		it('should set robots meta tag with "none"', () => {
-			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const metaSpy = spyOn(metaService, 'updateTag');
 
 			directive.setRobots('none');
 
@@ -230,7 +231,7 @@ describe('MetaTagsDirective', () => {
 
 	describe('removeRobots', () => {
 		it('should remove robots meta tag', () => {
-			const metaSpy = jest.spyOn(metaService, 'removeTag');
+			const metaSpy = spyOn(metaService, 'removeTag');
 
 			directive.removeRobots();
 
@@ -240,7 +241,7 @@ describe('MetaTagsDirective', () => {
 
 	describe('setKeywords', () => {
 		it('should set keywords meta tag with comma-separated string', () => {
-			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const metaSpy = spyOn(metaService, 'updateTag');
 			const keywords = 'literatura, cuentos, lectura';
 
 			directive.setKeywords(keywords);
@@ -252,7 +253,7 @@ describe('MetaTagsDirective', () => {
 		});
 
 		it('should set keywords meta tag with array of keywords', () => {
-			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const metaSpy = spyOn(metaService, 'updateTag');
 			const keywordsArray = ['literatura', 'cuentos', 'lectura'];
 			const expectedContent = 'literatura, cuentos, lectura';
 
@@ -265,7 +266,7 @@ describe('MetaTagsDirective', () => {
 		});
 
 		it('should handle array with single keyword', () => {
-			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const metaSpy = spyOn(metaService, 'updateTag');
 			const keywordsArray = ['literatura'];
 
 			directive.setKeywords(keywordsArray);
@@ -277,7 +278,7 @@ describe('MetaTagsDirective', () => {
 		});
 
 		it('should handle empty string', () => {
-			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const metaSpy = spyOn(metaService, 'updateTag');
 			const keywords = '';
 
 			directive.setKeywords(keywords);
@@ -289,7 +290,7 @@ describe('MetaTagsDirective', () => {
 		});
 
 		it('should handle empty array', () => {
-			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const metaSpy = spyOn(metaService, 'updateTag');
 			const keywordsArray: string[] = [];
 
 			directive.setKeywords(keywordsArray);
@@ -301,7 +302,7 @@ describe('MetaTagsDirective', () => {
 		});
 
 		it('should handle keywords with special characters', () => {
-			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const metaSpy = spyOn(metaService, 'updateTag');
 			const keywords = 'José, María, niños & niñas';
 
 			directive.setKeywords(keywords);
@@ -313,7 +314,7 @@ describe('MetaTagsDirective', () => {
 		});
 
 		it('should handle multiple keywords with spaces in array', () => {
-			const metaSpy = jest.spyOn(metaService, 'updateTag');
+			const metaSpy = spyOn(metaService, 'updateTag');
 			const keywordsArray = ['literatura digital', 'lectores jóvenes', 'cuentos cortos'];
 			const expectedContent = 'literatura digital, lectores jóvenes, cuentos cortos';
 
@@ -328,7 +329,7 @@ describe('MetaTagsDirective', () => {
 
 	describe('removeKeywords', () => {
 		it('should remove keywords meta tag', () => {
-			const metaSpy = jest.spyOn(metaService, 'removeTag');
+			const metaSpy = spyOn(metaService, 'removeTag');
 
 			directive.removeKeywords();
 
@@ -340,8 +341,8 @@ describe('MetaTagsDirective', () => {
 		});
 
 		it('should remove keywords after they were set', () => {
-			const updateSpy = jest.spyOn(metaService, 'updateTag');
-			const removeSpy = jest.spyOn(metaService, 'removeTag');
+			const updateSpy = spyOn(metaService, 'updateTag');
+			const removeSpy = spyOn(metaService, 'removeTag');
 
 			directive.setKeywords(['prueba', 'palabras clave']);
 			directive.removeKeywords();

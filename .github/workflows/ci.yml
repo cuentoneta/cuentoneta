@@ -42,6 +42,9 @@ jobs:
   test:
     needs: setup
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - name: Restore repository
         uses: actions/cache@v4.2.3
@@ -64,6 +67,31 @@ jobs:
 
       - name: Run Tests
         run: npx nx test --skip-nx-cache
+
+      # A) Reporte navegable (html + lcov) como artefacto descargable del workflow.
+      - name: Upload coverage artifact
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/cuentoneta
+          retention-days: 7
+
+      # B) Comentario en el PR + job summary a partir del coverage de Vitest.
+      - name: Coverage PR report
+        if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          json-summary-path: coverage/cuentoneta/coverage-summary.json
+          json-final-path: coverage/cuentoneta/coverage-final.json
+
+      # C) Subida a Codecov (badge + tendencia histórica). Requiere el secret CODECOV_TOKEN.
+      - name: Upload coverage to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/codecov-action@v5
+        with:
+          files: coverage/cuentoneta/lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   lint:
     needs: setup
