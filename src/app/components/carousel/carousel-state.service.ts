@@ -20,20 +20,20 @@ export class CarouselStateService implements OnDestroy {
 	private transitionTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
 	// Signals públicas de solo lectura
-	readonly activeIndex: Signal<number> = this._activeIndex.asReadonly();
-	readonly previousIndex: Signal<number | null> = this._previousIndex.asReadonly();
-	readonly isTransitioning: Signal<boolean> = this._isTransitioning.asReadonly();
-	readonly direction: Signal<'left' | 'right' | null> = this._direction.asReadonly();
-	readonly slideCount: Signal<number> = this._slideCount.asReadonly();
+	public readonly activeIndex: Signal<number> = this._activeIndex.asReadonly();
+	public readonly previousIndex: Signal<number | null> = this._previousIndex.asReadonly();
+	public readonly isTransitioning: Signal<boolean> = this._isTransitioning.asReadonly();
+	public readonly direction: Signal<'left' | 'right' | null> = this._direction.asReadonly();
+	public readonly slideCount: Signal<number> = this._slideCount.asReadonly();
 
-	ngOnDestroy(): void {
+	public ngOnDestroy(): void {
 		this.clearTransitionTimeout();
 	}
 
 	/**
 	 * Inicializa el servicio con la cantidad de diapositivas y duración de transición.
 	 */
-	initialize(slideCount: number, transitionDuration: number): void {
+	public initialize(slideCount: number, transitionDuration: number): void {
 		this._slideCount.set(slideCount);
 		this._transitionDuration.set(transitionDuration);
 	}
@@ -42,7 +42,7 @@ export class CarouselStateService implements OnDestroy {
 	 * Actualiza la cantidad de diapositivas (para cuando cambia el input).
 	 * Ajusta el índice activo si excede el nuevo conteo.
 	 */
-	updateSlideCount(count: number): void {
+	public updateSlideCount(count: number): void {
 		this._slideCount.set(count);
 		// Si el índice activo excede el nuevo conteo, ajustar al último índice válido
 		if (this._activeIndex() >= count && count > 0) {
@@ -53,7 +53,7 @@ export class CarouselStateService implements OnDestroy {
 	/**
 	 * Navega a la siguiente diapositiva.
 	 */
-	next(): void {
+	public next(): void {
 		if (this._isTransitioning()) return;
 
 		const nextIndex = this._activeIndex() + 1;
@@ -67,7 +67,7 @@ export class CarouselStateService implements OnDestroy {
 	/**
 	 * Navega a la diapositiva anterior.
 	 */
-	prev(): void {
+	public prev(): void {
 		if (this._isTransitioning()) return;
 
 		const prevIndex = this._activeIndex() - 1;
@@ -81,7 +81,7 @@ export class CarouselStateService implements OnDestroy {
 	/**
 	 * Selecciona una diapositiva específica con la dirección de animación indicada.
 	 */
-	selectSlide(index: number, direction: 'left' | 'right'): void {
+	public selectSlide(index: number, direction: 'left' | 'right'): void {
 		if (this._isTransitioning() || index === this._activeIndex()) return;
 
 		this._isTransitioning.set(true);
@@ -113,7 +113,7 @@ export class CarouselStateService implements OnDestroy {
 	/**
 	 * Maneja el clic en un indicador, determinando la dirección automáticamente.
 	 */
-	onIndicatorClick(index: number): void {
+	public onIndicatorClick(index: number): void {
 		const direction = index > this._activeIndex() ? 'left' : 'right';
 		this.selectSlide(index, direction);
 	}

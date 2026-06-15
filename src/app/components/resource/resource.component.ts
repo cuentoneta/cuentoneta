@@ -42,8 +42,8 @@ import { NgComponentOutlet } from '@angular/common';
 	},
 })
 export class ResourceComponent {
-	readonly resource = input.required<Resource>();
-	readonly icon = computed(() => {
+	public readonly resource = input.required<Resource>();
+	protected readonly icon = computed(() => {
 		if (!this.resource()?.resourceType?.slug) {
 			return null;
 		}
@@ -58,7 +58,7 @@ export class ResourceComponent {
 		};
 	});
 
-	readonly NgIcon = NgIcon;
+	protected readonly NgIcon = NgIcon;
 
 	private injector = inject(EnvironmentInjector);
 	private tooltipDirective = inject(TooltipDirective);

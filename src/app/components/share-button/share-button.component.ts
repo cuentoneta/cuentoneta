@@ -30,12 +30,12 @@ import { NgComponentOutlet } from '@angular/common';
 	}`,
 })
 export class ShareButtonComponent {
-	readonly platform = input.required<SharingPlatform>();
-	readonly params = input<{ [key: string]: string }>({});
-	readonly message = input<string>('');
-	readonly route = input<string>('');
+	public readonly platform = input.required<SharingPlatform>();
+	public readonly params = input<{ [key: string]: string }>({});
+	public readonly message = input<string>('');
+	public readonly route = input<string>('');
 
-	readonly NgIcon = NgIcon;
+	protected readonly NgIcon = NgIcon;
 
 	private tooltipDirective = inject(TooltipDirective);
 	private injector = inject(EnvironmentInjector);
@@ -45,7 +45,7 @@ export class ShareButtonComponent {
 		this.tooltipDirective.position.set('bottom');
 	});
 
-	readonly icon = computed(() => {
+	protected readonly icon = computed(() => {
 		const platform = this.platform();
 
 		if (!platform) {
@@ -58,7 +58,7 @@ export class ShareButtonComponent {
 		};
 	});
 
-	onShareToPlatformClicked(event: MouseEvent | KeyboardEvent, platform: SharingPlatform) {
+	protected onShareToPlatformClicked(event: MouseEvent | KeyboardEvent, platform: SharingPlatform) {
 		const urlParams = Object.keys(this.params())
 			.map((key) => `${key}=${this.params()[key]}`)
 			.join('&');

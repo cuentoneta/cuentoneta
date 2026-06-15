@@ -30,9 +30,9 @@ import { NgComponentOutlet } from '@angular/common';
 	},
 })
 export class BadgeComponent {
-	readonly tag = input.required<Tag>();
-	readonly showIcon = input(false);
-	readonly icon = computed(() => {
+	public readonly tag = input.required<Tag>();
+	public readonly showIcon = input(false);
+	protected readonly icon = computed(() => {
 		if (!this.tag().slug) {
 			return null;
 		}
@@ -49,7 +49,7 @@ export class BadgeComponent {
 		};
 	});
 
-	readonly NgIcon = NgIcon;
+	protected readonly NgIcon = NgIcon;
 
 	private injector = inject(EnvironmentInjector);
 	private tooltipDirective = inject(TooltipDirective);

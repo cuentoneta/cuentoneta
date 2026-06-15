@@ -68,13 +68,13 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 })
 export class CarouselIndicatorComponent {
 	// Entradas
-	readonly count = input.required<number>();
-	readonly activeIndex = input.required<number>();
-	readonly device = input<'Mobile' | 'Desktop'>('Desktop');
+	public readonly count = input.required<number>();
+	public readonly activeIndex = input.required<number>();
+	public readonly device = input<'Mobile' | 'Desktop'>('Desktop');
 
 	// Señales computadas
-	readonly indices = computed(() => Array.from({ length: this.count() }, (_, i) => i));
+	protected readonly indices = computed(() => Array.from({ length: this.count() }, (_, i) => i));
 
 	// Salidas
-	readonly indicatorClick = output<number>();
+	public readonly indicatorClick = output<number>();
 }

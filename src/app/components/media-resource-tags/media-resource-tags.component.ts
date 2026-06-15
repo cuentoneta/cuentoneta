@@ -21,23 +21,23 @@ import { NgComponentOutlet } from '@angular/common';
 	}`,
 })
 export class MediaResourceTagsComponent {
-	readonly resources = input<Media[]>([]);
-	readonly size = input<'md' | 'lg'>('md');
-	readonly MediaResourceTagComponent = MediaResourceTagComponent;
+	public readonly resources = input<Media[]>([]);
+	public readonly size = input<'md' | 'lg'>('md');
+	protected readonly MediaResourceTagComponent = MediaResourceTagComponent;
 
 	private injector = inject(EnvironmentInjector);
 
 	// We use a custom injector for the nav items to load ng-icons on demand using lazy loading
 	// By providing the icon definitions in navigation.config.ts we're able to directly load the icons
 	// that are rendered on the sidebar
-	readonly parsedResources = computed(() =>
+	protected readonly parsedResources = computed(() =>
 		this.resources().map((resource) => ({
 			...resource,
 			injector: createEnvironmentInjector([provideIcons(this.platforms[resource.type].icon)], this.injector),
 		})),
 	);
 
-	readonly platforms: { [key in MediaTypeKey]: MediaResourcePlatform } = {
+	protected readonly platforms: { [key in MediaTypeKey]: MediaResourcePlatform } = {
 		audioRecording: {
 			title: 'Contiene narraciones en audio',
 			icon: { faSolidFileAudio },

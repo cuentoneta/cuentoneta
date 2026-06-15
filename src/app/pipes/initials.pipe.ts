@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 	standalone: true,
 })
 export class InitialsPipe implements PipeTransform {
-	transform(name: string): string {
+	public transform(name: string): string {
 		if (!name) return '';
 
 		if (name.length <= 22) {

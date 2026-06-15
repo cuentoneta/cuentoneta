@@ -22,7 +22,7 @@ import Tabs from './tabs.component';
 	`,
 })
 class TestHostComponent {
-	initialActiveTab = 'tab1';
+	public initialActiveTab = 'tab1';
 }
 
 describe('TabsComponent', () => {

@@ -75,5 +75,5 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpaceRecordingWidgetComponent {
-	readonly media = input.required<SpaceRecording>();
+	public readonly media = input.required<SpaceRecording>();
 }

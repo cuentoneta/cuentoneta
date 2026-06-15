@@ -104,13 +104,13 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 	],
 })
 export class HeaderComponent {
-	readonly navLinks: InternalLink[] = [
+	protected readonly navLinks: InternalLink[] = [
 		{ label: 'Inicio', path: '/home' },
 		{ label: 'Nosotros', path: '/about' },
 	];
-	readonly displayMenu = signal(false);
+	protected readonly displayMenu = signal(false);
 
-	readonly isVisible = input(VisibilityState.Visible, {
+	public readonly isVisible = input(VisibilityState.Visible, {
 		transform: (value) => (value ? VisibilityState.Visible : VisibilityState.Hidden),
 	});
 
@@ -122,7 +122,7 @@ export class HeaderComponent {
 		});
 	}
 
-	onMenuTogglerClicked() {
+	protected onMenuTogglerClicked() {
 		this.displayMenu.set(!this.displayMenu());
 	}
 }

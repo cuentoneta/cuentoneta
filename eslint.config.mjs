@@ -132,11 +132,10 @@ export default [
 				},
 			],
 			'@angular-eslint/prefer-signals': 'error',
-			// TODO(#1500): se habilita en el commit de visibilidad de miembros (298 clasificaciones).
-			// '@typescript-eslint/explicit-member-accessibility': [
-			// 	'error',
-			// 	{ accessibility: 'explicit', overrides: { constructors: 'no-public' } },
-			// ],
+			'@typescript-eslint/explicit-member-accessibility': [
+				'error',
+				{ accessibility: 'explicit', overrides: { constructors: 'no-public' } },
+			],
 			'@typescript-eslint/no-inferrable-types': 0,
 			'@typescript-eslint/no-unused-vars': 'error',
 			'@typescript-eslint/no-non-null-assertion': 'error',
