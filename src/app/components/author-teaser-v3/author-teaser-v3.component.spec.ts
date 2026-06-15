@@ -12,10 +12,29 @@ describe('AuthorTeaserV3Component', () => {
 
 	it('should link to the author profile', async () => {
 		await render(AuthorTeaserV3Component, { inputs: { author: authorTeaserMock } });
-		expect(screen.getByRole('link')).toHaveAttribute(
+		expect(screen.getByRole('link', { name: authorTeaserMock.name })).toHaveAttribute(
 			'href',
 			expect.stringContaining(`/author/${authorTeaserMock.slug}`),
 		);
+	});
+
+	it('should render the teaser as an article', async () => {
+		await render(AuthorTeaserV3Component, { inputs: { author: authorTeaserMock } });
+		expect(screen.getByRole('article')).toBeInTheDocument();
+	});
+
+	it('should expose a single link whose accessible name is just the author name', async () => {
+		await render(AuthorTeaserV3Component, { inputs: { author: authorTeaserMock, tags, storyCount: 21 } });
+		// Pese al avatar, los tags y el contador, el único enlace es el del nombre (nombre accesible conciso).
+		expect(screen.getAllByRole('link')).toHaveLength(1);
+		expect(screen.getByRole('link', { name: authorTeaserMock.name })).toBeInTheDocument();
+	});
+
+	it('should stretch the author-name link to cover the whole card', async () => {
+		await render(AuthorTeaserV3Component, { inputs: { author: authorTeaserMock } });
+		// El contenedor posicionado + el ::after del link es lo que hace clickeable toda la tarjeta.
+		expect(screen.getByRole('article')).toHaveClass('relative');
+		expect(screen.getByRole('link', { name: authorTeaserMock.name })).toHaveClass('after:absolute', 'after:inset-0');
 	});
 
 	it('should render the author name and avatar', async () => {
@@ -26,8 +45,10 @@ describe('AuthorTeaserV3Component', () => {
 
 	it('should render a placeholder when the author has no image', async () => {
 		await render(AuthorTeaserV3Component, { inputs: { author: { ...authorTeaserMock, imageUrl: '' } } });
-		expect(screen.queryByRole('img', { name: avatarName })).not.toBeInTheDocument();
-		expect(screen.getByTestId('author')).toBeInTheDocument();
+		expect(screen.getByRole('img', { name: avatarName })).toHaveAttribute(
+			'src',
+			expect.stringContaining('profile-placeholder.svg'),
+		);
 	});
 
 	it('should request the avatar at 2x of 80px (HiDPI)', async () => {

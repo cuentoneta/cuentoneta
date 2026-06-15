@@ -1,4 +1,11 @@
-import { applicationConfig, argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
+import {
+	applicationConfig,
+	argsToTemplate,
+	componentWrapperDecorator,
+	Meta,
+	moduleMetadata,
+	StoryObj,
+} from '@storybook/angular';
 import { provideRouter } from '@angular/router';
 
 import { AuthorTeaserV3Component } from './author-teaser-v3.component';
@@ -59,12 +66,18 @@ export const Default: Story = {
 	},
 };
 
-// Más de 2 tags: la fila de tags se acomoda en varias líneas (ejemplo: Eduardo Galeano).
+// Más de 2 tags en un contenedor acotado: la fila de tags se recorta por ancho y colapsa el excedente
+// tras un contador "+N" (ejemplo: Eduardo Galeano).
 export const ManyTags: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-author-teaser-v3 ${argsToTemplate(args)} />` }),
 	args: { author: galeanoMock, tags: galeanoTags, storyCount: 35 },
+	decorators: [componentWrapperDecorator((story) => `<div style="width:320px">${story}</div>`)],
 	parameters: {
-		docs: { description: { story: 'Autor con más de 2 tags asignados, que se distribuyen en varias líneas.' } },
+		docs: {
+			description: {
+				story: 'Autor con varios tags en un contenedor de 320px: los que no entran se colapsan tras un contador "+N".',
+			},
+		},
 	},
 };
 
