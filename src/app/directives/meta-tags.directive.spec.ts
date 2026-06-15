@@ -351,4 +351,58 @@ describe('MetaTagsDirective', () => {
 			expect(removeSpy).toHaveBeenCalledWith('name="keywords"');
 		});
 	});
+
+	describe('setAuthor', () => {
+		it('should set the author meta tag', () => {
+			const metaSpy = spyOn(metaService, 'updateTag');
+
+			directive.setAuthor('François Onoff');
+
+			expect(metaSpy).toHaveBeenCalledWith({ name: 'author', content: 'François Onoff' });
+		});
+	});
+
+	describe('removeAuthor', () => {
+		it('should remove the author meta tag', () => {
+			const metaSpy = spyOn(metaService, 'removeTag');
+
+			directive.removeAuthor();
+
+			expect(metaSpy).toHaveBeenCalledWith('name="author"');
+		});
+	});
+
+	describe('setArticleDates', () => {
+		it('should set article published and modified time meta tags', () => {
+			const metaSpy = spyOn(metaService, 'updateTag');
+
+			directive.setArticleDates('2024-03-15', '2024-05-20T10:30:00Z');
+
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'article:published_time', content: '2024-03-15' });
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'article:modified_time', content: '2024-05-20T10:30:00Z' });
+		});
+	});
+
+	describe('removeArticleDates', () => {
+		it('should remove both article date meta tags', () => {
+			const metaSpy = spyOn(metaService, 'removeTag');
+
+			directive.removeArticleDates();
+
+			expect(metaSpy).toHaveBeenCalledWith('property="article:published_time"');
+			expect(metaSpy).toHaveBeenCalledWith('property="article:modified_time"');
+		});
+	});
+
+	describe('ngOnDestroy', () => {
+		it('should clean up the per-page meta tags (author and article dates included)', () => {
+			const metaSpy = spyOn(metaService, 'removeTag');
+
+			directive.ngOnDestroy();
+
+			expect(metaSpy).toHaveBeenCalledWith('name="author"');
+			expect(metaSpy).toHaveBeenCalledWith('property="article:published_time"');
+			expect(metaSpy).toHaveBeenCalledWith('property="article:modified_time"');
+		});
+	});
 });

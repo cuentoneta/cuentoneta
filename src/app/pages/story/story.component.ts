@@ -1,5 +1,5 @@
 // Core
-import { Component, computed, inject, signal, input } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -23,6 +23,10 @@ import { LayoutService } from '../../providers/layout.service';
 
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+
+// Datos estructurados
+import { SchemaOrgService } from '../../providers/schema-org.service';
+import { buildStoryArticleSchema } from './story.schema';
 
 // Components
 import { StoryNavigationBarComponent } from '@components/story-navigation-bar/story-navigation-bar.component';
@@ -84,6 +88,8 @@ export default class StoryComponent {
 	private storyService = inject(StoryService);
 	private layoutService = inject(LayoutService);
 	private metaTagsDirective = inject(MetaTagsDirective);
+	private schemaOrg = inject(SchemaOrgService);
+	private destroyRef = inject(DestroyRef);
 	private isHeaderVisible$ = inject(LayoutService).isHeaderVisible$.pipe(takeUntilDestroyed());
 
 	// Recursos
@@ -123,6 +129,9 @@ export default class StoryComponent {
 	readonly headerPosition = signal('top-header-height');
 
 	constructor() {
+		// El JSON-LD del Article es específico de la página; se limpia al navegar fuera del cuento.
+		this.destroyRef.onDestroy(() => this.schemaOrg.removeJsonLd('article'));
+
 		this.isHeaderVisible$.subscribe((isVisible) => {
 			if (this.layoutService.biggerThan('xs')) {
 				this.headerPosition.set('top-header-height');
@@ -146,5 +155,9 @@ export default class StoryComponent {
 			story.title.toLowerCase(),
 			story.author.name.toLowerCase(),
 		]);
+		// Señales E-E-A-T + datos estructurados de tipo artículo.
+		this.metaTagsDirective.setAuthor(story.author.name);
+		this.metaTagsDirective.setArticleDates(story.publishedAt, story.updatedAt);
+		this.schemaOrg.setJsonLd('article', buildStoryArticleSchema(story, environment.website));
 	}
 }

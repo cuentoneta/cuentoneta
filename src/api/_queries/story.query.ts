@@ -52,6 +52,8 @@ export const storyBySlugQuery = defineQuery(`
     'body': coalesce(body, []),
     'review': coalesce(review, []),
     'originalPublication': coalesce(originalPublication, ''),
+    'publishedAt': coalesce(publishedAt, _createdAt),
+    'updatedAt': _updatedAt,
     approximateReadingTime,
     'mediaSources': coalesce(mediaSources[]{
         ...,
