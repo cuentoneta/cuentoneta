@@ -20,20 +20,20 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 			<div class="flex min-w-0 flex-1 flex-col gap-1 pt-1">
 				<div class="flex flex-wrap items-center gap-1.5">
 					<ngx-skeleton-loader
-						[theme]="{ height: '24px', width: '72px', 'margin-bottom': 0, 'border-radius': '4px' }"
+						[theme]="{ height: '22px', width: '72px', 'margin-bottom': 0, 'border-radius': '4px' }"
 						count="1"
 						appearance="line"
 						class="tag-skeleton"
 					/>
 					<ngx-skeleton-loader
-						[theme]="{ height: '24px', width: '72px', 'margin-bottom': 0, 'border-radius': '4px' }"
+						[theme]="{ height: '22px', width: '72px', 'margin-bottom': 0, 'border-radius': '4px' }"
 						count="1"
 						appearance="line"
 						class="tag-skeleton"
 					/>
 				</div>
 				<ngx-skeleton-loader
-					[theme]="{ height: '24px', width: '160px', 'margin-bottom': 0 }"
+					[theme]="{ height: '28px', width: '160px', 'margin-bottom': 0 }"
 					count="1"
 					appearance="line"
 					class="name-skeleton"
