@@ -10,7 +10,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Storylist } from '@models/storylist.model';
 
 // Services
-import { StorylistApi } from '../../providers/storylist.interface';
+import { StorylistApi } from '../../providers/storylist-api.interface';
 
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';

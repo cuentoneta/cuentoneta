@@ -9,7 +9,7 @@ import { environment } from '../environments/environment';
 // Models
 import { Contributor, ContributorArea, SORTED_AREAS } from '@models/contributor.model';
 import { ApiUrl, Endpoints } from './endpoints';
-import { ContributorApi } from './contributor.interface';
+import { ContributorApi } from './contributor-api.interface';
 
 @Injectable({ providedIn: 'root' })
 export class HttpContributorApi implements ContributorApi {

@@ -23,8 +23,8 @@ import { environment } from '../../environments/environment';
 import { NgxSkeletonLoaderComponent, NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Services
-import { AuthorApi } from '../../providers/author.interface';
-import { StoryApi } from '../../providers/story.interface';
+import { AuthorApi } from '../../providers/author-api.interface';
+import { StoryApi } from '../../providers/story-api.interface';
 
 // Componentes
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';

@@ -3,7 +3,7 @@ import { Component, computed, inject } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 
 // Services
-import { ContentApi } from '../../providers/content.interface';
+import { ContentApi } from '../../providers/content-api.interface';
 
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';

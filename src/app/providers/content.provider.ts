@@ -8,7 +8,7 @@ import { environment } from '../environments/environment';
 
 // Models
 import { LandingPageContent } from '@models/landing-page-content.model';
-import { ContentApi } from './content.interface';
+import { ContentApi } from './content-api.interface';
 
 @Injectable({ providedIn: 'root' })
 export class HttpContentApi implements ContentApi {

@@ -12,7 +12,7 @@ import { StoryTeaser } from '@models/story.model';
 import { storyMock, storyTeaserMock } from '../../mocks/story.mock';
 
 // Services
-import { StoryApi } from '../../providers/story.interface';
+import { StoryApi } from '../../providers/story-api.interface';
 
 // 3rd party libs
 import { render, screen } from '@testing-library/angular';

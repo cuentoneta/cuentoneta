@@ -5,7 +5,7 @@ import { Observable, of } from 'rxjs';
 // Models
 import { Author, AuthorTeaser } from '@models/author.model';
 import { authorMock, authorTeaserMock } from '@mocks/author.mock';
-import { AuthorApi } from './author.interface';
+import { AuthorApi } from './author-api.interface';
 
 // Doble de test en memoria (nunca `Mock*`). Cablear en specs con provideAuthorApiMock().
 export class InMemoryAuthorApi implements AuthorApi {

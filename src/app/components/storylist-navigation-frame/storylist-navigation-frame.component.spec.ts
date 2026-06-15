@@ -13,7 +13,7 @@ import { storylistMock } from '@mocks/storylist.mock';
 import { storyMock } from '@mocks/story.mock';
 
 // Services
-import { StorylistApi } from '../../providers/storylist.interface';
+import { StorylistApi } from '../../providers/storylist-api.interface';
 
 // 3rd party libs
 import { render, screen } from '@testing-library/angular';

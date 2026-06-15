@@ -2,9 +2,9 @@ import { StoryNavigationBarComponent } from './story-navigation-bar.component';
 
 import { render } from '@testing-library/angular';
 import { Observable, of } from 'rxjs';
-import { StoryApi } from '../../providers/story.interface';
+import { StoryApi } from '../../providers/story-api.interface';
 import { StoryTeaser } from '@models/story.model';
-import { StorylistApi } from '../../providers/storylist.interface';
+import { StorylistApi } from '../../providers/storylist-api.interface';
 import { Storylist } from '@models/storylist.model';
 
 // Mocks

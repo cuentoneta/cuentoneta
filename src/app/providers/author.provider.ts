@@ -9,7 +9,7 @@ import { environment } from '../environments/environment';
 // Models
 import { Author, AuthorTeaser } from '@models/author.model';
 import { ApiUrl, Endpoints } from './endpoints';
-import { AuthorApi } from './author.interface';
+import { AuthorApi } from './author-api.interface';
 
 @Injectable({ providedIn: 'root' })
 export class HttpAuthorApi implements AuthorApi {

@@ -5,7 +5,7 @@ import { Observable, of } from 'rxjs';
 // Models
 import { Story, StoryNavigationTeaser, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
 import { storyMock, storyNavigationTeaserMock, storyTeaserMock, storyTeaserWithAuthorMock } from '@mocks/story.mock';
-import { StoryApi } from './story.interface';
+import { StoryApi } from './story-api.interface';
 
 // Doble de test en memoria (nunca `Mock*`). Cablear en specs con provideStoryApiMock().
 export class InMemoryStoryApi implements StoryApi {

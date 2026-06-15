@@ -9,7 +9,7 @@ import { environment } from '../environments/environment';
 // Models
 import { Story, StoryNavigationTeaser, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
 import { ApiUrl, Endpoints } from './endpoints';
-import { StoryApi } from './story.interface';
+import { StoryApi } from './story-api.interface';
 
 @Injectable({ providedIn: 'root' })
 export class HttpStoryApi implements StoryApi {

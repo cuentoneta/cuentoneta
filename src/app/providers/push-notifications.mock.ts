@@ -1,7 +1,7 @@
 import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
-import { PushNotificationsApi } from './push-notifications.interface';
+import { PushNotificationsApi } from './push-notifications-api.interface';
 
 export class InMemoryPushNotificationsApi implements PushNotificationsApi {
 	public getAppId(): Observable<string> {

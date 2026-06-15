@@ -5,7 +5,7 @@ import { Component, computed, effect, inject } from '@angular/core';
 import { AppRoutes } from '../../app.routes';
 
 // Providers
-import { StoryApi } from '../../providers/story.interface';
+import { StoryApi } from '../../providers/story-api.interface';
 
 // Componentes
 import { NavigationFrameComponent } from '@models/navigation-frame.component';

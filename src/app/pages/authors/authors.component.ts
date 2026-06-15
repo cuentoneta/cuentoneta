@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 
-import { AuthorApi } from '../../providers/author.interface';
+import { AuthorApi } from '../../providers/author-api.interface';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';

@@ -18,7 +18,7 @@ import { environment } from '../../environments/environment';
 import { Story } from '@models/story.model';
 
 // Services
-import { StoryApi } from '../../providers/story.interface';
+import { StoryApi } from '../../providers/story-api.interface';
 import { LayoutService } from '../../providers/layout.service';
 
 // Directives

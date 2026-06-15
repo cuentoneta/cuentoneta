@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { rxResource } from '@angular/core/rxjs-interop';
 
 // Services
-import { StoryApi } from '../../providers/story.interface';
+import { StoryApi } from '../../providers/story-api.interface';
 
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';

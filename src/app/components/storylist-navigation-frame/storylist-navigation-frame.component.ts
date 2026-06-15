@@ -12,7 +12,7 @@ import { AppRoutes } from '../../app.routes';
 import { NavigationFrameComponent } from '@models/navigation-frame.component';
 
 // Services
-import { StorylistApi } from '../../providers/storylist.interface';
+import { StorylistApi } from '../../providers/storylist-api.interface';
 
 // Componentes
 import { rxResource } from '@angular/core/rxjs-interop';

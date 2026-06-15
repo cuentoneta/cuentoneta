@@ -4,7 +4,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 import { environment } from '../../environments/environment';
-import { ContributorApi } from '../../providers/contributor.interface';
+import { ContributorApi } from '../../providers/contributor-api.interface';
 
 @Component({
 	selector: 'cuentoneta-about',

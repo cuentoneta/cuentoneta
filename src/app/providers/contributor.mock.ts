@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 
 // Models
 import { Contributor, ContributorArea } from '@models/contributor.model';
-import { ContributorApi } from './contributor.interface';
+import { ContributorApi } from './contributor-api.interface';
 
 // Doble de test en memoria (nunca `Mock*`). Cablear en specs con provideContributorApiMock().
 export class InMemoryContributorApi implements ContributorApi {
