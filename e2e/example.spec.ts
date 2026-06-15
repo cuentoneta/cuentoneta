@@ -11,4 +11,8 @@ test('home: único H1 de contenido y marca en el header', async ({ page }) => {
 	// La marca sigue presente en el header y el <title> SEO contiene la marca.
 	await expect(page.locator('header').getByText('La Cuentoneta').first()).toBeVisible();
 	await expect(page).toHaveTitle(/La Cuentoneta/);
+
+	// La home expone contenido indexable: la sección "Sobre La Cuentoneta" con texto sustantivo.
+	await expect(page.getByRole('heading', { name: /Sobre La Cuentoneta/i })).toBeVisible();
+	await expect(page.getByText(/proyecto abierto, comunitario y sin fines de lucro/i)).toBeVisible();
 });
