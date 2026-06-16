@@ -4,8 +4,8 @@ import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 @Component({
 	selector: 'cuentoneta-storylist-title-skeleton',
 	imports: [NgxSkeletonLoaderComponent],
-	template: ` <div class="flex flex-col gap-5">
-		<ngx-skeleton-loader
+	host: { class: 'flex flex-col gap-5' },
+	template: `<ngx-skeleton-loader
 			[theme]="{
 				height: '36px',
 				width: '320px',
@@ -46,8 +46,7 @@ import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 				appearance="line"
 				class="tag-skeleton"
 			/>
-		</div>
-	</div>`,
+		</div>`,
 	styles: `
 		@reference '#tailwind-theme';
 
