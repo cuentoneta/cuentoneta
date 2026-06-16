@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, inject, OnDestroy, signal } from '@angular/core';
+import { Directive, ElementRef, inject, OnDestroy, signal } from '@angular/core';
 import { computePosition, flip, shift, arrow, offset } from '@floating-ui/dom';
 
 type TooltipPosition = 'top' | 'right' | 'bottom' | 'left';
@@ -6,6 +6,10 @@ type TooltipPosition = 'top' | 'right' | 'bottom' | 'left';
 @Directive({
 	selector: '[cuentonetaTooltip]',
 	standalone: true,
+	host: {
+		'(mouseenter)': 'onMouseEnter()',
+		'(mouseleave)': 'onMouseLeave()',
+	},
 })
 export class TooltipDirective implements OnDestroy {
 	public readonly text = signal<string>(''); // Texto para el Tooltip
@@ -21,11 +25,11 @@ export class TooltipDirective implements OnDestroy {
 		}
 	}
 
-	@HostListener('mouseenter') public onMouseEnter() {
+	protected onMouseEnter() {
 		this.createTooltipPopup();
 	}
 
-	@HostListener('mouseleave') public onMouseLeave() {
+	protected onMouseLeave() {
 		if (this.myPopup) {
 			this.myPopup.remove();
 		}
