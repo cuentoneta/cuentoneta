@@ -59,7 +59,19 @@ export default class HomeComponent {
 		// —marca incluida— se emita tal cual en el SSR, donde el sufijo "| La Cuentoneta" no se agrega.
 		this.metaTagsDirective.setTitle('Cuentos y relatos breves para leer en línea | La Cuentoneta', false);
 		this.metaTagsDirective.setDefaultDescription();
-		this.metaTagsDirective.setDefaultKeywords();
+		// Keywords específicas de la home (relevantes y alineadas al título/posicionamiento).
+		this.metaTagsDirective.setKeywords([
+			'cuentos',
+			'relatos breves',
+			'literatura',
+			'poemas',
+			'narraciones',
+			'lectura digital',
+			'cuentos para leer',
+			'literatura breve',
+			'colecciones de cuentos',
+			'leer en línea',
+		]);
 		this.metaTagsDirective.setCanonicalUrl(`${environment.website}`);
 		this.metaTagsDirective.setRobots('index, follow');
 	}
