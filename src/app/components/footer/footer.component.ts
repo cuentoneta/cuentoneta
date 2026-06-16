@@ -94,13 +94,13 @@ import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
 	`,
 })
 export class FooterComponent {
-	readonly navLinks: InternalLink[] = [
+	protected readonly navLinks: InternalLink[] = [
 		{ path: '/', label: 'Inicio' },
 		{ path: '/about', label: 'Acerca de' },
 		{ path: '/dmca', label: 'DMCA' },
 	];
 
-	readonly socialLinks: UrlLink[] = [
+	protected readonly socialLinks: UrlLink[] = [
 		{
 			url: 'https://whatsapp.com/channel/0029VaC3aCSJuyAGTU2tC02F',
 			label: 'Whatsapp',

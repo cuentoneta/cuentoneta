@@ -5,6 +5,13 @@ import { spotifyPodcastEpisodeMock } from '@mocks/spotify-podcast-episode.mock';
 const meta: Meta<SpotifyPodcastEpisodeWidget> = {
 	title: 'Widgets/SpotifyPodcastEpisode',
 	component: SpotifyPodcastEpisodeWidget,
+	parameters: {
+		docs: {
+			canvas: {
+				sourceState: 'shown',
+			},
+		},
+	},
 	argTypes: {
 		media: {
 			description: 'Spotify podcast episode media object containing title, description, and Spotify embed URL',

@@ -16,6 +16,13 @@ const meta: Meta<CollectionTeaser> = {
 			imports: [NgOptimizedImage, CollectionTeaserSkeleton],
 		}),
 	],
+	parameters: {
+		docs: {
+			canvas: {
+				sourceState: 'shown',
+			},
+		},
+	},
 };
 export default meta;
 

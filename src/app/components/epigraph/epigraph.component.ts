@@ -23,5 +23,5 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EpigraphComponent {
-	readonly epigraph = input.required<Epigraph>();
+	public readonly epigraph = input.required<Epigraph>();
 }

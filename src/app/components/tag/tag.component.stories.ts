@@ -7,6 +7,9 @@ const meta: Meta<TagComponent> = {
 	title: 'Componentes/Tag',
 	parameters: {
 		docs: {
+			canvas: {
+				sourceState: 'shown',
+			},
 			description: {
 				component: `<div>
 					<p>El componente **TagComponent** es la etiqueta (tag) del Design System v3. Reemplaza progresivamente

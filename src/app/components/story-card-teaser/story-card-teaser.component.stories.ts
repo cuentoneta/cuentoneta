@@ -20,6 +20,9 @@ const meta: Meta<StoryCardTeaserComponent> = {
 	],
 	parameters: {
 		docs: {
+			canvas: {
+				sourceState: 'shown',
+			},
 			description: {
 				component: `<div>
 					<p>El componente **StoryCardTeaserComponent** representa una vista previa de una entidad story del sistema. El componente posee inputs opcionales que permiten visualizar:</p>

@@ -23,6 +23,9 @@ const meta: Meta<StoryMediaSelectorsComponent> = {
 	title: 'Componentes/StoryMediaSelectors',
 	parameters: {
 		docs: {
+			canvas: {
+				sourceState: 'shown',
+			},
 			description: {
 				component: `<div>
 					<p>El componente **StoryMediaSelectorsComponent** renderiza los selectores de los recursos multimedia

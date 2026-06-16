@@ -13,7 +13,7 @@ import { storylistMock } from '@mocks/storylist.mock';
 import { storyMock } from '@mocks/story.mock';
 
 // Services
-import { StorylistService } from '../../providers/storylist.service';
+import { StorylistApi } from '../../providers/storylist-api.interface';
 
 // 3rd party libs
 import { render, screen } from '@testing-library/angular';
@@ -30,7 +30,7 @@ describe('StorylistNavigationFrameComponent', () => {
 			providers: [
 				DatePipe,
 				{
-					provide: StorylistService,
+					provide: StorylistApi,
 					useValue: {
 						getStorylistNavigationTeasers(): Observable<Storylist> {
 							return of(storylistMock);

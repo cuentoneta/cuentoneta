@@ -73,7 +73,7 @@ export class AuthorTeaserV3Component {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs
-	readonly author = input.required<AuthorTeaser>();
-	readonly tags = input<Tag[]>([]);
-	readonly storyCount = input<number>();
+	public readonly author = input.required<AuthorTeaser>();
+	public readonly tags = input<Tag[]>([]);
+	public readonly storyCount = input<number>();
 }

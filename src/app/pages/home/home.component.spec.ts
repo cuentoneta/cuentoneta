@@ -3,8 +3,7 @@ import { render } from '@testing-library/angular';
 import { CommonModule, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
 import { provideRouter } from '@angular/router';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { provideMock } from '@testing-library/angular/jest-utils';
-import { ContentService } from '../../providers/content.service';
+import { provideContentApiMock } from '../../providers/content.mock';
 import { Component, input } from '@angular/core';
 import { Storylist } from '@models/storylist.model';
 
@@ -19,7 +18,7 @@ describe.skip('HomeComponent', () => {
 				NgOptimizedImage,
 				MockStorylistCardDeckComponent,
 			],
-			componentProviders: [provideRouter([]), { provide: ContentService, useClass: provideMock(ContentService) }],
+			providers: [provideRouter([]), provideContentApiMock()],
 		});
 	};
 
@@ -36,6 +35,6 @@ describe.skip('HomeComponent', () => {
 	template: '',
 })
 class MockStorylistCardDeckComponent {
-	readonly storylist = input<Storylist>();
-	readonly isLoading = input<boolean>(false);
+	public readonly storylist = input<Storylist>();
+	public readonly isLoading = input<boolean>(false);
 }

@@ -23,11 +23,11 @@ import { FacebookPlatform, SharingPlatform, TwitterPlatform, WhatsappPlatform } 
 	`,
 })
 export class ShareContentComponent {
-	readonly route = input<string>('');
-	readonly params = input<{ [key: string]: string }>({});
-	readonly message = input<string>('');
+	public readonly route = input<string>('');
+	public readonly params = input<{ [key: string]: string }>({});
+	public readonly message = input<string>('');
 
-	platforms: SharingPlatform[] = [
+	protected platforms: SharingPlatform[] = [
 		new FacebookPlatform(),
 		new WhatsappPlatform(),
 		new TwitterPlatform(),

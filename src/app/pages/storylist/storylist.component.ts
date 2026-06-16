@@ -10,7 +10,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Storylist } from '@models/storylist.model';
 
 // Services
-import { StorylistService } from '../../providers/storylist.service';
+import { StorylistApi } from '../../providers/storylist-api.interface';
 
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
@@ -51,15 +51,15 @@ import { MediaResourceComponent } from '@components/media-resource/media-resourc
 })
 export default class StorylistComponent {
 	// Route inputs
-	readonly slug = input.required<string>();
-	readonly activeTab = input<'stories' | 'about' | string>('stories');
+	public readonly slug = input.required<string>();
+	public readonly activeTab = input<'stories' | 'about' | string>('stories');
 
 	// Providers
 	private metaTagsDirective = inject(MetaTagsDirective);
-	private storylistService = inject(StorylistService);
+	private storylistService = inject(StorylistApi);
 
 	// Recursos
-	readonly storylistResource = rxResource({
+	protected readonly storylistResource = rxResource({
 		params: this.slug,
 		stream: ({ params }) =>
 			this.storylistService.get(params, 60, 'asc').pipe(
@@ -72,16 +72,16 @@ export default class StorylistComponent {
 
 	// Propiedades
 	// TODO: Implementar uso de imagen alusiva/tapa de libro en la ficha técnica
-	readonly featuredImageUrl = computed(
+	private readonly featuredImageUrl = computed(
 		() => `${this.storylistResource.value()?.featuredImage}?h=${256 * 1.5}&w=${192 * 1.5}&auto=format`,
 	);
 	// TODO: Simplificar estructura de tipo Storylist para evitar estas transformaciones
-	readonly stories = computed(() => this.storylistResource.value()?.stories.map((story) => story) || []);
+	protected readonly stories = computed(() => this.storylistResource.value()?.stories.map((story) => story) || []);
 
 	// Computed properties for tabs and media
-	readonly tabs = computed(() => this.storylistResource.value()?.tabs || []);
-	readonly media = computed(() => this.storylistResource.value()?.media || []);
-	readonly hasMedia = computed(() => this.media().length > 0);
+	protected readonly tabs = computed(() => this.storylistResource.value()?.tabs || []);
+	protected readonly media = computed(() => this.storylistResource.value()?.media || []);
+	protected readonly hasMedia = computed(() => this.media().length > 0);
 
 	private updateMetaTags(storylist: Storylist) {
 		this.metaTagsDirective.setTitle(`${storylist.title}`);

@@ -1,0 +1,17 @@
+{
+	"mcpServers": {
+		"Sanity": {
+			"type": "http",
+			"url": "https://mcp.sanity.io"
+		},
+		"figma": {
+			"type": "http",
+			"url": "https://mcp.figma.com/mcp"
+		},
+		"nx": {
+			"type": "stdio",
+			"command": "pnpm",
+			"args": ["exec", "nx", "mcp"]
+		}
+	}
+}

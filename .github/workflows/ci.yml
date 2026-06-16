@@ -31,13 +31,20 @@ jobs:
       - name: Rebuild and prepare
         run: pnpm rebuild && pnpm run prepare --if-present
 
-      - name: Cache repository
-        uses: actions/cache@v4.2.3
+      # El workspace se comparte entre jobs con upload/download-artifact (entrega garantizada
+      # dentro del run), no con actions/cache: cachear todo el workspace (key por sha) se
+      # evicta bajo el límite de 10 GB por repo y deja a los jobs downstream sin lockfile.
+      # --anchored + prefijo ./ : sin anclar, un --exclude sin slash matchea el basename en
+      # CUALQUIER nivel, así que 'dist' borraba todos los node_modules/**/dist (rompía los paquetes).
+      - name: Pack workspace
+        run: tar -cf workspace.tar --anchored --exclude='./workspace.tar' --exclude='./.git' --exclude='./dist' --exclude='./.nx/cache' .
+
+      - name: Upload workspace artifact
+        uses: actions/upload-artifact@v4
         with:
-          path: .
-          key: repo-${{ github.sha }}
-          restore-keys: |
-            repo-${{ github.sha }}
+          name: workspace
+          path: workspace.tar
+          retention-days: 1
 
   test:
     needs: setup
@@ -46,14 +53,6 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - name: Restore repository
-        uses: actions/cache@v4.2.3
-        with:
-          path: .
-          key: repo-${{ github.sha }}
-          restore-keys: |
-            repo-${{ github.sha }}
-
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
         with:
@@ -63,7 +62,14 @@ jobs:
         uses: actions/setup-node@v4.4.0
         with:
           node-version: 22.22.3
-          cache: 'pnpm'
+
+      - name: Download workspace artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: workspace
+
+      - name: Unpack workspace
+        run: tar -xf workspace.tar
 
       - name: Run Tests
         run: npx nx test --skip-nx-cache
@@ -97,14 +103,6 @@ jobs:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Restore repository
-        uses: actions/cache@v4.2.3
-        with:
-          path: .
-          key: repo-${{ github.sha }}
-          restore-keys: |
-            repo-${{ github.sha }}
-
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
         with:
@@ -114,7 +112,14 @@ jobs:
         uses: actions/setup-node@v4.4.0
         with:
           node-version: 22.22.3
-          cache: 'pnpm'
+
+      - name: Download workspace artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: workspace
+
+      - name: Unpack workspace
+        run: tar -xf workspace.tar
 
       - name: Run Linter
         run: npx nx lint --skip-nx-cache
@@ -123,14 +128,6 @@ jobs:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Restore repository
-        uses: actions/cache@v4.2.3
-        with:
-          path: .
-          key: repo-${{ github.sha }}
-          restore-keys: |
-            repo-${{ github.sha }}
-
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
         with:
@@ -140,7 +137,14 @@ jobs:
         uses: actions/setup-node@v4.4.0
         with:
           node-version: 22.22.3
-          cache: 'pnpm'
+
+      - name: Download workspace artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: workspace
+
+      - name: Unpack workspace
+        run: tar -xf workspace.tar
 
       - name: Run stylelint
         run: npx nx stylelint @cuentoneta/app --skip-nx-cache
@@ -149,14 +153,6 @@ jobs:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Restore repository
-        uses: actions/cache@v4.2.3
-        with:
-          path: .
-          key: repo-${{ github.sha }}
-          restore-keys: |
-            repo-${{ github.sha }}
-
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
         with:
@@ -166,7 +162,14 @@ jobs:
         uses: actions/setup-node@v4.4.0
         with:
           node-version: 22.22.3
-          cache: 'pnpm'
+
+      - name: Download workspace artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: workspace
+
+      - name: Unpack workspace
+        run: tar -xf workspace.tar
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
@@ -174,7 +177,8 @@ jobs:
       - name: Run Tests
         run: npx nx run @cuentoneta/app:e2e --skip-nx-cache
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
@@ -185,13 +189,6 @@ jobs:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Restore repository
-        uses: actions/cache@v4.2.3
-        with:
-          path: .
-          key: repo-${{ github.sha }}
-          restore-keys: |
-            repo-${{ github.sha }}
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
         with:
@@ -201,7 +198,14 @@ jobs:
         uses: actions/setup-node@v4.4.0
         with:
           node-version: 22.22.3
-          cache: 'pnpm'
+
+      - name: Download workspace artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: workspace
+
+      - name: Unpack workspace
+        run: tar -xf workspace.tar
 
       - name: Run build
         run: npx nx run @cuentoneta/app:build:production --skip-nx-cache
@@ -217,13 +221,6 @@ jobs:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Restore repository
-        uses: actions/cache@v4.2.3
-        with:
-          path: .
-          key: repo-${{ github.sha }}
-          restore-keys: |
-            repo-${{ github.sha }}
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v4.1.0
         with:
@@ -233,7 +230,14 @@ jobs:
         uses: actions/setup-node@v4.4.0
         with:
           node-version: 22.22.3
-          cache: 'pnpm'
+
+      - name: Download workspace artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: workspace
+
+      - name: Unpack workspace
+        run: tar -xf workspace.tar
 
       - name: Run Storybook build
         run: npx nx run @cuentoneta/app:build-storybook --skip-nx-cache

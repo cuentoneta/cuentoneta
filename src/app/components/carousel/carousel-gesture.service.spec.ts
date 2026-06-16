@@ -14,7 +14,7 @@ describe('CarouselGestureService', () => {
 		mockElement = document.createElement('div');
 		mockElementRef = { nativeElement: mockElement };
 		mockDestroyRef = {
-			onDestroy: fn((_callback: () => void) => {
+			onDestroy: fn(() => {
 				// Store callback for potential cleanup simulation
 			}),
 		} as unknown as DestroyRef;

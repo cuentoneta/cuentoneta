@@ -1,20 +1,22 @@
 import { TestBed } from '@angular/core/testing';
 
-// Services
-import { AuthorService } from './author.service';
+// Servicios
+import { HttpStorylistApi } from './storylist.provider';
 
-// Providers
+// Proveedores
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
-describe('AuthorService', () => {
-	let service: AuthorService;
+describe('HttpStorylistApi', () => {
+	let service: HttpStorylistApi;
 
 	beforeEach(() => {
 		TestBed.configureTestingModule({
 			providers: [provideHttpClient(), provideHttpClientTesting()],
 		});
-		service = TestBed.inject(AuthorService);
+		TestBed.runInInjectionContext(() => {
+			service = TestBed.inject(HttpStorylistApi);
+		});
 	});
 
 	it('should be created', () => {

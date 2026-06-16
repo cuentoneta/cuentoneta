@@ -51,29 +51,29 @@ export class CarouselComponent {
 	private readonly destroyRef = inject(DestroyRef);
 
 	// Entradas
-	readonly slides = input<ContentCampaign[]>([]);
-	readonly transitionDuration = input<number>(600);
-	readonly autoPlayInterval = input<number>(5000);
+	public readonly slides = input<ContentCampaign[]>([]);
+	public readonly transitionDuration = input<number>(600);
+	public readonly autoPlayInterval = input<number>(5000);
 
 	// Signals de estado - Auto-reproducción
-	readonly isPaused = signal(false);
+	public readonly isPaused = signal(false);
 
 	// Exponer signals del servicio de estado para el template
-	readonly activeIndex = this.stateService.activeIndex;
-	readonly previousIndex = this.stateService.previousIndex;
-	readonly isTransitioning = this.stateService.isTransitioning;
-	readonly direction = this.stateService.direction;
+	public readonly activeIndex = this.stateService.activeIndex;
+	public readonly previousIndex = this.stateService.previousIndex;
+	public readonly isTransitioning = this.stateService.isTransitioning;
+	public readonly direction = this.stateService.direction;
 
 	// Signals computadas
-	readonly slideCount = computed(() => this.slides().length);
-	readonly viewport = computed(() => {
+	public readonly slideCount = computed(() => this.slides().length);
+	protected readonly viewport = computed(() => {
 		const isTabletOrDesktop = this.layoutService.biggerThan('xs');
 		return isTabletOrDesktop ? 'md' : 'xs';
 	});
-	readonly showControls = computed(() => this.layoutService.biggerThan('xs'));
+	public readonly showControls = computed(() => this.layoutService.biggerThan('xs'));
 
 	// Constantes
-	readonly viewportSpecificClasses: { [key in ContentCampaignViewport]: string } = {
+	protected readonly viewportSpecificClasses: { [key in ContentCampaignViewport]: string } = {
 		xs: 'sm:hidden',
 		md: 'max-sm:hidden',
 	};
@@ -126,24 +126,24 @@ export class CarouselComponent {
 	}
 
 	// Métodos de navegación (delegados al servicio)
-	next(): void {
+	public next(): void {
 		this.stateService.next();
 	}
 
-	prev(): void {
+	public prev(): void {
 		this.stateService.prev();
 	}
 
-	onIndicatorClick(index: number): void {
+	public onIndicatorClick(index: number): void {
 		this.stateService.onIndicatorClick(index);
 	}
 
 	// Métodos de control de auto-reproducción
-	pauseAutoPlay(): void {
+	public pauseAutoPlay(): void {
 		this.isPaused.set(true);
 	}
 
-	resumeAutoPlay(): void {
+	public resumeAutoPlay(): void {
 		this.isPaused.set(false);
 		this.restartAutoPlay$.next();
 	}

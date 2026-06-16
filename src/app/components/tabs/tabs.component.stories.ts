@@ -12,6 +12,11 @@ const meta: Meta<TabsComponent> = {
 	],
 	parameters: {
 		layout: 'centered',
+		docs: {
+			canvas: {
+				sourceState: 'shown',
+			},
+		},
 	},
 	tags: ['autodocs'],
 	argTypes: {

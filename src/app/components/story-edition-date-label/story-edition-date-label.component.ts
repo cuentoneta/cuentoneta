@@ -24,6 +24,6 @@ import { Component, input } from '@angular/core';
 	`,
 })
 export class StoryEditionDateLabelComponent {
-	readonly label = input<string>();
-	readonly markAsNew = input<boolean>(false);
+	public readonly label = input<string>();
+	public readonly markAsNew = input<boolean>(false);
 }
