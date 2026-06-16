@@ -246,7 +246,7 @@ export function provideFooInitializer() {
 
 ## Host element
 
-Todo lo que afecte al elemento anfitrión (host) se declara en la propiedad **`host`** del decorador `@Component`/`@Directive`. No usar los decoradores `@HostBinding`/`@HostListener` ni el bloque `:host { @apply ... }` en `styles`.
+Todo lo que afecte al elemento anfitrión (host) se declara en la propiedad **`host`** del decorador `@Component`/`@Directive`. No usar los decoradores `@HostBinding`/`@HostListener` ni el bloque `:host { @apply ... }` en `styles`. Los dos decoradores están **enforced por ESLint** vía `@angular-eslint/prefer-host-metadata-property`.
 
 | En vez de…                                   | Usar en `host`                        |
 | -------------------------------------------- | ------------------------------------- |
