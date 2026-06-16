@@ -5,8 +5,9 @@ import { environment } from '../environments/environment';
 
 const SCHEMA_CONTEXT = 'https://schema.org';
 const ORGANIZATION_NAME = 'La Cuentoneta';
-const ORGANIZATION_DESCRIPTION = `Proyecto abierto, comunitario y sin fines de lucro que fomenta y
-	hace accesible la lectura digital, publicando relatos breves en storylists temáticas.`;
+const ORGANIZATION_DESCRIPTION =
+	'Proyecto abierto, comunitario y sin fines de lucro que fomenta y hace accesible la lectura digital, ' +
+	'publicando relatos breves en storylists temáticas.';
 
 // URLs canónicas de los perfiles, alineadas con las que renderiza el footer (footer.component.ts).
 const SOCIAL_PROFILES = [
