@@ -34,8 +34,10 @@ jobs:
       # El workspace se comparte entre jobs con upload/download-artifact (entrega garantizada
       # dentro del run), no con actions/cache: cachear todo el workspace (key por sha) se
       # evicta bajo el límite de 10 GB por repo y deja a los jobs downstream sin lockfile.
+      # --anchored + prefijo ./ : sin anclar, un --exclude sin slash matchea el basename en
+      # CUALQUIER nivel, así que 'dist' borraba todos los node_modules/**/dist (rompía los paquetes).
       - name: Pack workspace
-        run: tar -cf workspace.tar --exclude='workspace.tar' --exclude='.git' --exclude='dist' --exclude='.nx/cache' .
+        run: tar -cf workspace.tar --anchored --exclude='./workspace.tar' --exclude='./.git' --exclude='./dist' --exclude='./.nx/cache' .
 
       - name: Upload workspace artifact
         uses: actions/upload-artifact@v4
