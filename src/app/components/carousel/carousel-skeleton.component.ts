@@ -7,7 +7,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 @Component({
 	selector: 'cuentoneta-carousel-skeleton',
 	imports: [NgxSkeletonLoaderModule],
-	host: { class: 'mx-auto' },
+	host: { class: 'mx-auto block' },
 	template: `<div class="slider">
 		<ngx-skeleton-loader
 			[theme]="{

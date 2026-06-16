@@ -28,7 +28,7 @@ import { ResourceComponent } from '../resource/resource.component';
 		</section>
 	`,
 	host: {
-		class: 'rounded border-1 border-solid border-neutral-200 bg-neutral-100 p-6',
+		class: 'block rounded border-1 border-solid border-neutral-200 bg-neutral-100 p-6',
 	},
 	imports: [AuthorTeaserComponent, ResourceComponent, PortableTextParserComponent],
 	changeDetection: ChangeDetectionStrategy.OnPush,
