@@ -1,11 +1,11 @@
-import { Injectable, OnDestroy, Signal, signal } from '@angular/core';
+import { effect, Injectable, Signal, signal } from '@angular/core';
 
 /**
  * Servicio que maneja el estado de navegación del carousel.
  * Gestiona los índices de diapositivas, direcciones de transición y timing.
  */
 @Injectable()
-export class CarouselStateService implements OnDestroy {
+export class CarouselStateService {
 	// Signals de estado - Navegación
 	private readonly _activeIndex = signal(0);
 	private readonly _previousIndex = signal<number | null>(null);
@@ -26,9 +26,9 @@ export class CarouselStateService implements OnDestroy {
 	public readonly direction: Signal<'left' | 'right' | null> = this._direction.asReadonly();
 	public readonly slideCount: Signal<number> = this._slideCount.asReadonly();
 
-	public ngOnDestroy(): void {
-		this.clearTransitionTimeout();
-	}
+	private readonly clearTimeoutOnDestroy = effect((onCleanup) => {
+		onCleanup(() => this.clearTransitionTimeout());
+	});
 
 	/**
 	 * Inicializa el servicio con la cantidad de diapositivas y duración de transición.

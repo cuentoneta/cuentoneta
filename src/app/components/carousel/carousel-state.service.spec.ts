@@ -1,10 +1,14 @@
 import { CarouselStateService } from './carousel-state.service';
+import { TestBed } from '@angular/core/testing';
 
 describe('CarouselStateService', () => {
 	let service: CarouselStateService;
 
 	beforeEach(() => {
-		service = new CarouselStateService();
+		TestBed.configureTestingModule({
+			providers: [CarouselStateService],
+		});
+		service = TestBed.inject(CarouselStateService);
 	});
 
 	describe('initialization', () => {
