@@ -5,6 +5,7 @@
 
 # env variables
 .env
+.env.*
 # compiled output
 dist
 tmp
