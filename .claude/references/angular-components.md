@@ -125,14 +125,32 @@ readonly icon = computed(() => {
 
 **No usar lifecycle hooks** (`OnInit`/`ngOnInit`, `OnChanges`, `AfterViewInit`, `OnDestroy`, etc.). Reemplazar por las primitivas reactivas:
 
-| En vez de…                                       | Usar…                                                                     |
-| ------------------------------------------------ | ------------------------------------------------------------------------- |
-| `ngOnInit` / `ngOnChanges` reaccionando a inputs | `computed()` (derivación pura) o `effect()` (efecto colateral)            |
-| `ngAfterViewInit` para tocar el DOM              | `viewChild()` / `afterNextRender()` / `afterRenderEffect()`               |
-| `ngAfterContentInit`                             | `contentChild()` / `contentChildren()`                                    |
-| `ngOnDestroy` para limpieza                      | `takeUntilDestroyed()`, o el cleanup que retorna `effect()` (`onCleanup`) |
+| En vez de…                                       | Usar…                                                                                                            |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `ngOnInit` / `ngOnChanges` reaccionando a inputs | `computed()` (derivación pura) o `effect()` (efecto colateral)                                                   |
+| `ngAfterViewInit` para tocar el DOM              | `viewChild()` / `afterNextRender()` / `afterRenderEffect()`                                                      |
+| `ngAfterContentInit`                             | `contentChild()` / `contentChildren()`                                                                           |
+| `ngOnDestroy` para limpieza                      | **`effect((onCleanup) => onCleanup(...))`** (por defecto); `takeUntilDestroyed()` para cortar suscripciones RxJS |
 
 > Componentes antiguos como `badge.component.ts` aún usan `implements OnInit`; al modificarlos, migrar el `ngOnInit` a un `effect()` nombrado o a `computed()`.
+
+El reemplazo de `ngOnDestroy` por un `effect()` nombrado con `onCleanup` es el patrón **por defecto** para cualquier limpieza al destruirse: sirve en componentes, directivas y servicios creados en contexto de inyección (un `effect()` sin lecturas de signals solo corre su `onCleanup` en la destrucción). Es un mapeo canónico — **no se comenta** que el `effect` reemplaza al hook (ver [`coding-agent-policies.md`](./coding-agent-policies.md) Sección 3).
+
+```typescript
+// ❌ Antes
+export class MetaTagsDirective implements OnDestroy {
+	ngOnDestroy() {
+		this.resetTags();
+	}
+}
+
+// ✅ Después — field initializer nombrado, sin comentario que reitere el reemplazo
+export class MetaTagsDirective {
+	private readonly resetTagsOnDestroy = effect((onCleanup) => {
+		onCleanup(() => this.resetTags());
+	});
+}
+```
 
 ---
 
