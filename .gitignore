@@ -71,6 +71,8 @@ Thumbs.db
 
 # Planes y artefactos de orquestación de Claude (no se versionan)
 /workflows
+# Artefactos del skill issue-workflow (PLAN.md / CODE_REVIEW.md por sesión)
+/workspace
 
 # Grabaciones sueltas de referencia en scripts/
 scripts/*.m4a
