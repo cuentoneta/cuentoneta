@@ -132,6 +132,7 @@ export default [
 				},
 			],
 			'@angular-eslint/prefer-signals': 'error',
+			'@angular-eslint/prefer-host-metadata-property': 'error',
 			'@typescript-eslint/explicit-member-accessibility': [
 				'error',
 				{ accessibility: 'explicit', overrides: { constructors: 'no-public' } },
