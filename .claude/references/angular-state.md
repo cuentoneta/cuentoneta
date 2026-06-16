@@ -66,6 +66,8 @@ readonly sharingRoute = signal('');
 // ...y luego un effect/set por cada cambio de story → estado duplicado
 ```
 
+> **Leer el valor = invocar el signal**, también en condiciones y expresiones: `resources().length`, no `resources.length` (esto último lee `Function.length`, un bug silencioso). En **código TS** lo enforcea `@angular-eslint/no-uncalled-signals` (typed-linting, sobre `src/**/*.ts`). **No** cubre plantillas — ese punto ciego se documenta en [`angular-components.md`](./angular-components.md).
+
 ### 3. Mutaciones con `signal.set()` / `signal.update()` en servicios
 
 El estado mutable vive como `signal(...)` **privado** dentro del servicio; se muta solo con `set()` / `update()` y se expone **de solo lectura** con `asReadonly()`.
