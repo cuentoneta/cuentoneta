@@ -39,7 +39,7 @@ export default {
 		schema: [],
 		messages: {
 			applyInHost:
-				'Mové las utilidades de `:host { @apply ... }` a `host: { class }` del decorador — ver angular-components.md#host-element.',
+				"Move the utilities from `:host { @apply ... }` to the decorator's `host: { class }` — see angular-components.md#host-element.",
 		},
 	},
 	create(context) {

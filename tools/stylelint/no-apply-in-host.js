@@ -14,7 +14,7 @@ const { createPlugin, utils } = stylelint;
 const ruleName = 'cuentoneta/no-apply-in-host';
 const messages = utils.ruleMessages(ruleName, {
 	rejected:
-		'Mové las utilidades de :host { @apply ... } a host: { class } del decorador — ver angular-components.md#host-element.',
+		"Move the utilities from :host { @apply ... } to the decorator's host: { class } — see angular-components.md#host-element.",
 });
 const meta = {
 	url: 'https://github.com/cuentoneta/cuentoneta/blob/develop/.claude/references/angular-components.md#host-element',
