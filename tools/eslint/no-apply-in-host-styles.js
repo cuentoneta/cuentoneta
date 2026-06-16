@@ -10,7 +10,7 @@
 // `:host {` seguido de `@apply` sin llaves intermedias: el @apply está directo en
 // el bloque del host. `[^{}]*` corta ante cualquier `{`/`}`, así que un `@apply`
 // anidado (`:host { .child { @apply } }`) o `:host ::ng-deep { @apply }` no matchea.
-const BARE_HOST_APPLY = /:host\s*\{[^{}]*@apply/;
+const BARE_HOST_APPLY = /:host\s*\{[^{}]*@apply/i;
 
 function stylesText(node) {
 	if (!node) {
