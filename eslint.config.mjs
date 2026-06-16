@@ -189,6 +189,20 @@ export default [
 		},
 	},
 	{
+		// Linting con información de tipos, acotado a src/**/*.ts (cubierto por los tsconfig).
+		// projectService auto-detecta el tsconfig de cada archivo; el parser ya lo fija el preset de nx.
+		name: 'typed-linting',
+		files: ['src/**/*.ts'],
+		languageOptions: {
+			parserOptions: {
+				projectService: true,
+			},
+		},
+		rules: {
+			'@angular-eslint/no-uncalled-signals': 'error',
+		},
+	},
+	{
 		name: 'html',
 		files: ['**/*.html'],
 		rules: {
