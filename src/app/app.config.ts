@@ -18,6 +18,9 @@ import { provideStoryApi } from './providers/story.provider';
 import { provideStorylistApi } from './providers/storylist.provider';
 import { providePushNotificationsApi } from './providers/push-notifications.provider';
 
+// SEO providers
+import { provideSchemaOrgInitializer } from './providers/schema-org.initializer';
+
 registerLocaleData(localeEs);
 
 export const appConfig: ApplicationConfig = {
@@ -43,5 +46,8 @@ export const appConfig: ApplicationConfig = {
 		provideStoryApi(),
 		provideStorylistApi(),
 		providePushNotificationsApi(),
+
+		// SEO providers
+		provideSchemaOrgInitializer(),
 	],
 };
