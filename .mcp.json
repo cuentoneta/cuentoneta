@@ -6,8 +6,8 @@
 		},
 		"nx": {
 			"type": "stdio",
-			"command": "npx",
-			"args": ["nx", "mcp"]
+			"command": "pnpm",
+			"args": ["exec", "nx", "mcp"]
 		}
 	}
 }
