@@ -242,7 +242,7 @@ export function provideFooInitializer() {
 
 > Las signals se **invocan** en la plantilla: `author()`, `tags()`, `storyCount()`.
 >
-> **Punto ciego:** olvidar el `()` en una **plantilla** no lo atrapa el lint — `@angular-eslint/no-uncalled-signals` solo cubre código **TS** (ver [`angular-state.md`](./angular-state.md)). `strictTemplates` tampoco lo detecta: `unaSignal.length` es type-válido (lee `Function.length`, un `number`). En plantillas, invocar el signal queda como disciplina de revisión.
+> **Punto ciego:** olvidar el `()` en una **plantilla** no lo atrapa el lint — `@angular-eslint/no-uncalled-signals` solo cubre código **TS** (ver [`angular-state.md`](./angular-state.md)). `strictTemplates` tampoco lo detecta: `mySignal.length` es type-válido (lee `Function.length`, un `number`). En plantillas, invocar el signal queda como disciplina de revisión.
 
 ---
 
