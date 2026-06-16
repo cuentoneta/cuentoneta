@@ -1,17 +1,18 @@
-import { Directive, ElementRef, inject, OnDestroy, signal } from '@angular/core';
+import { Directive, ElementRef, effect, inject, signal } from '@angular/core';
 import { computePosition, flip, shift, arrow, offset } from '@floating-ui/dom';
 
 type TooltipPosition = 'top' | 'right' | 'bottom' | 'left';
 
 @Directive({
 	selector: '[cuentonetaTooltip]',
-	standalone: true,
 	host: {
 		'(mouseenter)': 'onMouseEnter()',
 		'(mouseleave)': 'onMouseLeave()',
 	},
 })
-export class TooltipDirective implements OnDestroy {
+export class TooltipDirective {
+	// API imperativa de la directiva: los componentes anfitriones la consumen vía
+	// `inject(TooltipDirective)` y `.set(...)`, por eso estas signals son `public`.
 	public readonly text = signal<string>(''); // Texto para el Tooltip
 	public readonly position = signal<TooltipPosition>('top'); // Posición del tooltip
 	public readonly offset = signal<number>(6); // Offset del tooltip respecto al elemento
@@ -19,11 +20,11 @@ export class TooltipDirective implements OnDestroy {
 	private myPopup: HTMLElement | null = null;
 	private readonly el = inject(ElementRef);
 
-	public ngOnDestroy(): void {
-		if (this.myPopup) {
-			this.myPopup.remove();
-		}
-	}
+	// Limpia el popup al destruirse la directiva (reemplaza ngOnDestroy: el effect
+	// no lee signals, así que su onCleanup solo corre en la destrucción).
+	private readonly removePopupOnDestroy = effect((onCleanup) => {
+		onCleanup(() => this.myPopup?.remove());
+	});
 
 	protected onMouseEnter() {
 		this.createTooltipPopup();
