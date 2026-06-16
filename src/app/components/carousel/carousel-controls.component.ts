@@ -6,6 +6,7 @@ import { faSolidChevronLeft, faSolidChevronRight } from '@ng-icons/font-awesome/
 	selector: 'cuentoneta-carousel-controls',
 	imports: [NgIcon],
 	providers: [provideIcons({ faSolidChevronLeft, faSolidChevronRight })],
+	host: { class: 'block' },
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `
 		<button
@@ -21,10 +22,6 @@ import { faSolidChevronLeft, faSolidChevronRight } from '@ng-icons/font-awesome/
 	`,
 	styles: `
 		@reference '#tailwind-theme';
-
-		:host {
-			@apply block;
-		}
 
 		.carousel-control {
 			@apply flex items-center justify-center bg-white/15;

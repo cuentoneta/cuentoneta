@@ -104,6 +104,8 @@ Los comentarios explican el **porqué no obvio**, nunca el **qué**. Si el códi
 - **Rationale histórico / de cambio inline.** ❌ `// Rediseñado en #1499: la versión previa usaba .toPromise()…` · ❌ `// sin consumidores al momento del cambio`. Eso va al commit/PR.
 - **Navegación / estructura obvia.** ❌ `// la implementación HTTP vive en x.provider.ts` · ❌ `// API providers (patrón provideX)`. Los imports y los nombres de archivo ya lo muestran.
 - **Parafrasear la línea siguiente.** ❌ `// inyecta el HttpClient` encima de `inject(HttpClient)`.
+- **Justificar una visibilidad que la convención ya fija.** ❌ `// public porque es la API imperativa` sobre un `input()`/`output()`/signal expuesta. Si el miembro **es** la API pública, su visibilidad ya la dicta `angular-components.md`; el modificador es autoexplicativo.
+- **Anotar un reemplazo canónico.** ❌ `// reemplaza ngOnDestroy` sobre un `effect((onCleanup) => …)`. El mapeo lifecycle hook → primitiva reactiva es la regla por defecto (`angular-components.md`); nombrarlo inline es restatear la convención.
 
 **Sí comentar:**
 
@@ -179,4 +181,4 @@ Proponé cambios vía issue en `cuentoneta/cuentoneta`. Las enmiendas requieren 
 
 ---
 
-_Última actualización: 2026-06-15. Versión inicial en #1495 (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) agregada en #1499._
+_Última actualización: 2026-06-16. Versión inicial en #1495 (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) agregada en #1499 y ampliada en #1542 (visibilidad de API y reemplazos canónicos)._

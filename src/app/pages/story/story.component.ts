@@ -41,11 +41,6 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 	styles: `
 		@reference '#tailwind-theme';
 
-		:host {
-			@apply grid;
-			@apply md:grid-rows-[8px_1fr];
-		}
-
 		.content {
 			@apply grid grid-cols-1 md:mx-auto md:grid-cols-[286px_1fr] md:gap-x-8;
 		}
@@ -70,6 +65,7 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 		NgIcon,
 	],
 	providers: [provideIcons({ faSolidArrowRightLong }), LayoutService],
+	host: { class: 'grid md:grid-rows-[8px_1fr]' },
 	hostDirectives: [MetaTagsDirective],
 })
 export default class StoryComponent {

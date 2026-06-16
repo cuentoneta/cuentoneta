@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 
 @Component({
 	selector: 'cuentoneta-carousel-indicator',
+	host: { class: 'block' },
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `
 		<div
@@ -23,10 +24,6 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 	`,
 	styles: `
 		@reference '#tailwind-theme';
-
-		:host {
-			@apply block;
-		}
 
 		.carousel-indicator-container {
 			@apply flex items-center gap-[10px] bg-white/15;

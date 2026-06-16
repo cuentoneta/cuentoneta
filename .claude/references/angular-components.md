@@ -125,14 +125,32 @@ readonly icon = computed(() => {
 
 **No usar lifecycle hooks** (`OnInit`/`ngOnInit`, `OnChanges`, `AfterViewInit`, `OnDestroy`, etc.). Reemplazar por las primitivas reactivas:
 
-| En vez de…                                       | Usar…                                                                     |
-| ------------------------------------------------ | ------------------------------------------------------------------------- |
-| `ngOnInit` / `ngOnChanges` reaccionando a inputs | `computed()` (derivación pura) o `effect()` (efecto colateral)            |
-| `ngAfterViewInit` para tocar el DOM              | `viewChild()` / `afterNextRender()` / `afterRenderEffect()`               |
-| `ngAfterContentInit`                             | `contentChild()` / `contentChildren()`                                    |
-| `ngOnDestroy` para limpieza                      | `takeUntilDestroyed()`, o el cleanup que retorna `effect()` (`onCleanup`) |
+| En vez de…                                       | Usar…                                                                                                            |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `ngOnInit` / `ngOnChanges` reaccionando a inputs | `computed()` (derivación pura) o `effect()` (efecto colateral)                                                   |
+| `ngAfterViewInit` para tocar el DOM              | `viewChild()` / `afterNextRender()` / `afterRenderEffect()`                                                      |
+| `ngAfterContentInit`                             | `contentChild()` / `contentChildren()`                                                                           |
+| `ngOnDestroy` para limpieza                      | **`effect((onCleanup) => onCleanup(...))`** (por defecto); `takeUntilDestroyed()` para cortar suscripciones RxJS |
 
 > Componentes antiguos como `badge.component.ts` aún usan `implements OnInit`; al modificarlos, migrar el `ngOnInit` a un `effect()` nombrado o a `computed()`.
+
+El reemplazo de `ngOnDestroy` por un `effect()` nombrado con `onCleanup` es el patrón **por defecto** para cualquier limpieza al destruirse: sirve en componentes, directivas y servicios creados en contexto de inyección (un `effect()` sin lecturas de signals solo corre su `onCleanup` en la destrucción). Es un mapeo canónico — **no se comenta** que el `effect` reemplaza al hook (ver [`coding-agent-policies.md`](./coding-agent-policies.md) Sección 3).
+
+```typescript
+// ❌ Antes
+export class MetaTagsDirective implements OnDestroy {
+	ngOnDestroy() {
+		this.resetTags();
+	}
+}
+
+// ✅ Después — field initializer nombrado, sin comentario que reitere el reemplazo
+export class MetaTagsDirective {
+	private readonly resetTagsOnDestroy = effect((onCleanup) => {
+		onCleanup(() => this.resetTags());
+	});
+}
+```
 
 ---
 
@@ -202,7 +220,7 @@ export function provideFooInitializer() {
 - `@for` **requiere `track`**.
 - **Self-closing tags** para elementos sin contenido proyectado (`<cuentoneta-tag ... />`).
 - **`ngSrc`** (de `NgOptimizedImage`) para imágenes, no `src` crudo; declarar `width`/`height`.
-- Vincular clases de host vía la propiedad `host` del decorador, no `@HostBinding`.
+- Manejar el elemento anfitrión (clases, bindings, eventos) vía la propiedad `host` del decorador, nunca con `@HostBinding`/`@HostListener` ni con `:host { @apply ... }` en `styles` (ver [Host element](#host-element)).
 
 ```html
 <article class="relative flex items-start gap-4" data-testid="author">
@@ -226,6 +244,43 @@ export function provideFooInitializer() {
 
 ---
 
+## Host element
+
+Todo lo que afecte al elemento anfitrión (host) se declara en la propiedad **`host`** del decorador `@Component`/`@Directive`. No usar los decoradores `@HostBinding`/`@HostListener` ni el bloque `:host { @apply ... }` en `styles`.
+
+| En vez de…                                   | Usar en `host`                        |
+| -------------------------------------------- | ------------------------------------- |
+| `@HostListener('<evento>') handler()`        | `host: { '(<evento>)': 'handler()' }` |
+| `@HostBinding('<prop>') prop`                | `host: { '[<prop>]': 'expr' }`        |
+| `:host { @apply <utilidades>; }` en `styles` | `host: { class: '<utilidades>' }`     |
+
+```typescript
+@Directive({
+	selector: '[cuentonetaTooltip]',
+	host: {
+		'(mouseenter)': 'onMouseEnter()',
+		'(mouseleave)': 'onMouseLeave()',
+	},
+})
+export class TooltipDirective {
+	// Los métodos referenciados por string desde `host` alcanzan con ser `protected`.
+	protected onMouseEnter() {
+		/* ... */
+	}
+	protected onMouseLeave() {
+		/* ... */
+	}
+}
+```
+
+Notas:
+
+- Los métodos/propiedades referenciados por string desde `host` solo necesitan ser **`protected`** (no `public`). Distinto es el caso de las directivas cuya API la consumen los anfitriones vía `hostDirectives` + `inject(Directive)` (p. ej. `TooltipDirective.text.set(...)`): esas signals **sí** son `public` por ser API imperativa.
+- El bloque `:host` en `styles` se reserva para lo que **no** es `@apply`: CSS crudo (`font-family`, `transition`, …), `:host ::ng-deep ...` y `:host(.clase)` condicionales. Esas reglas **no** se mueven a `host`.
+- Si el componente ya tiene `host: { class: '...' }`, **agregar** las utilidades al string existente, no reemplazarlo.
+
+---
+
 ## Prohibiciones adicionales
 
 - **Propiedades estáticas** en componentes/servicios → usar un servicio singleton (`providedIn: 'root'`).
@@ -243,6 +298,7 @@ export function provideFooInitializer() {
 - [ ] Sin lifecycle hooks: derivar con `computed()`, efectos como `effect()` nombrados (no en el constructor).
 - [ ] DI con `inject()`.
 - [ ] Plantilla con `@if`/`@for` (con `track`)/`@switch`, self-closing tags y `ngSrc`.
+- [ ] Host (clases/bindings/eventos) en la propiedad `host` del decorador; sin `@HostBinding`/`@HostListener` ni `:host { @apply ... }`.
 - [ ] Sin `enum`, sin propiedades estáticas, sin `!`.
 - [ ] Acompañar con su `*.stories.ts` (Storybook) y tests con Angular Testing Library (ver [`testing.md`](./testing.md)).
 - [ ] El estado vive en servicios + signals (ver [`angular-state.md`](./angular-state.md)).
