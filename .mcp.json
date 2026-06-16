@@ -1,0 +1,13 @@
+{
+	"mcpServers": {
+		"Sanity": {
+			"type": "http",
+			"url": "https://mcp.sanity.io"
+		},
+		"nx": {
+			"type": "stdio",
+			"command": "npx",
+			"args": ["nx", "mcp"]
+		}
+	}
+}

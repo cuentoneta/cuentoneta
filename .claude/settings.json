@@ -1,0 +1,39 @@
+{
+	"$schema": "https://json.schemastore.org/claude-code-settings.json",
+	"permissions": {
+		"deny": [
+			"Read(.env)",
+			"Read(.env.*)",
+			"Read(./cms/.env)",
+			"Read(./cms/.env.*)",
+			"Write(.env)",
+			"Write(.env.*)",
+			"Write(./cms/.env)",
+			"Write(./cms/.env.*)",
+			"Edit(.env)",
+			"Edit(.env.*)",
+			"Edit(./cms/.env)",
+			"Edit(./cms/.env.*)",
+			"Bash(*>*.env*)",
+			"Bash(*>>*.env*)",
+			"Bash(touch *.env*)",
+			"Bash(cp * .env*)",
+			"Bash(mv * .env*)"
+		],
+		"allow": [
+			"Bash(pnpm lint:*)",
+			"Bash(pnpm test:*)",
+			"Bash(pnpm stylelint:*)",
+			"Bash(pnpm build:*)",
+			"Bash(pnpm run build:*)",
+			"Bash(pnpm storybook:build:*)",
+			"Bash(git status:*)",
+			"Bash(git diff:*)",
+			"Bash(git log:*)",
+			"Bash(git branch:*)",
+			"Bash(gh issue view:*)",
+			"Bash(gh pr view:*)",
+			"Bash(gh pr diff:*)"
+		]
+	}
+}
