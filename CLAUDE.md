@@ -124,7 +124,7 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 ### Config de Claude (equipo vs personal)
 
 - **`.mcp.json`** (raíz, versionado): servidores MCP del equipo — **Sanity** (remoto `https://mcp.sanity.io`, OAuth; no requiere token en el archivo) y **nx** (análisis del workspace). Sin secrets.
-- **`.claude/settings.json`** (versionado): permisos de equipo — `deny` de lectura/escritura/creación de `.env*` (incluye `./.env` y `./cms/.env`) y una `allow` mínima (gates de CI con `pnpm` + inspección read-only de git/gh).
+- **`.claude/settings.json`** (versionado): permisos de equipo — `deny` de lectura/escritura/edición de `.env*` en la raíz y en cualquier subdirectorio (`**/.env*`, cubre `./.env` y `./cms/.env`), más bloqueo de su creación por shell (redirecciones `>`/`>>`, `tee`, `touch`, `cp`, `mv`); y una `allow` mínima (gates de CI con `pnpm` + inspección read-only de git/gh).
 - **`.claude/settings.local.json`** y **`.claude/worktrees/`**: **personales/locales**, gitignoreados. Las allowlists o MCP propios de cada quien (p. ej. Figma, que requiere la app de escritorio) van ahí.
 
 ---
