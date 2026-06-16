@@ -11,17 +11,13 @@ type TooltipPosition = 'top' | 'right' | 'bottom' | 'left';
 	},
 })
 export class TooltipDirective {
-	// API imperativa de la directiva: los componentes anfitriones la consumen vía
-	// `inject(TooltipDirective)` y `.set(...)`, por eso estas signals son `public`.
-	public readonly text = signal<string>(''); // Texto para el Tooltip
-	public readonly position = signal<TooltipPosition>('top'); // Posición del tooltip
-	public readonly offset = signal<number>(6); // Offset del tooltip respecto al elemento
+	public readonly text = signal<string>('');
+	public readonly position = signal<TooltipPosition>('top');
+	public readonly offset = signal<number>(6);
 
 	private myPopup: HTMLElement | null = null;
 	private readonly el = inject(ElementRef);
 
-	// Limpia el popup al destruirse la directiva (reemplaza ngOnDestroy: el effect
-	// no lee signals, así que su onCleanup solo corre en la destrucción).
 	private readonly removePopupOnDestroy = effect((onCleanup) => {
 		onCleanup(() => this.myPopup?.remove());
 	});
