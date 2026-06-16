@@ -6,6 +6,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 @Component({
 	selector: 'cuentoneta-space-recording-widget',
 	imports: [CommonModule, NgOptimizedImage, PortableTextParserComponent],
+	host: { class: 'flex flex-col gap-2' },
 	template: `
 		<section class="spaces-card grid grid-rows-3-auto rounded-lg p-4 font-inter text-base text-white">
 			<div class="flex items-center justify-between text-base">
@@ -53,10 +54,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 		</p>
 	`,
 	styles: `
-		@reference "tailwindcss";
-
 		:host {
-			@apply flex flex-col gap-2;
 			font-family: sans-serif;
 		}
 

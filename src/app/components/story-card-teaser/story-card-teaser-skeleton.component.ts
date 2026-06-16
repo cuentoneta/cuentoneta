@@ -5,6 +5,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 @Component({
 	selector: 'cuentoneta-story-card-teaser-skeleton',
 	imports: [NgxSkeletonLoaderModule],
+	host: { class: 'w-full' },
 	template: `<article class="flex gap-4">
 		@if (order()) {
 			<ngx-skeleton-loader
@@ -98,10 +99,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 	</article>`,
 	styles: `
 		@reference '#tailwind-theme';
-
-		:host {
-			@apply w-full;
-		}
 
 		:host ::ng-deep .order-skeleton .skeleton-loader {
 			@apply bg-brand-300;
