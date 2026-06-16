@@ -7,6 +7,7 @@ import testingLibrary from 'eslint-plugin-testing-library';
 import noBarrelFiles from 'eslint-plugin-no-barrel-files';
 import requireEnvironmentProviders from './tools/eslint/require-environment-providers.js';
 import storybookSourceState from './tools/eslint/storybook-source-state.js';
+import noApplyInHostStyles from './tools/eslint/no-apply-in-host-styles.js';
 
 // Restricciones de sintaxis comunes: CommonJS, enums, lifecycle hooks y propiedades estáticas.
 const lifecycleHooks = [
@@ -132,6 +133,7 @@ export default [
 				},
 			],
 			'@angular-eslint/prefer-signals': 'error',
+			'@angular-eslint/prefer-host-metadata-property': 'error',
 			'@typescript-eslint/explicit-member-accessibility': [
 				'error',
 				{ accessibility: 'explicit', overrides: { constructors: 'no-public' } },
@@ -174,6 +176,16 @@ export default [
 		},
 		rules: {
 			'custom-storybook/storybook-source-state': 'error',
+		},
+	},
+	{
+		name: 'no-apply-in-host-styles',
+		files: ['src/**/*.ts'],
+		plugins: {
+			'custom-host': { rules: { 'no-apply-in-host-styles': noApplyInHostStyles } },
+		},
+		rules: {
+			'custom-host/no-apply-in-host-styles': 'error',
 		},
 	},
 	{
