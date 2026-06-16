@@ -14,7 +14,7 @@ import { ResourceComponent } from '../resource/resource.component';
 	template: `
 		<section class="mb-4 grid grid-cols-[1fr] gap-4 sm:mb-8 sm:grid-cols-[auto_1fr]">
 			<cuentoneta-author-teaser [author]="story().author" [variant]="'md'" />
-			@if (resources.length > 0) {
+			@if (resources().length > 0) {
 				<div class="xs-max:col-start-1 xs-max:col-end-3 flex justify-start gap-4 sm:justify-end">
 					@for (resource of resources(); track $index) {
 						<cuentoneta-resource [resource]="resource" />
