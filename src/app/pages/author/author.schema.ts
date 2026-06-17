@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 
 import { type Author } from '@models/author.model';
-import { buildBreadcrumbSchema, buildPersonSchema, SCHEMA_CONTEXT } from '@utils/schema-org.builders';
+import { buildBreadcrumbSchema, buildPersonSchema } from '@utils/schema-org.builders';
 import { type JsonLdSchema } from '../../providers/schema-org.service';
 
 /**
@@ -11,7 +11,7 @@ import { type JsonLdSchema } from '../../providers/schema-org.service';
 export function buildAuthorPersonSchema(author: Author, websiteUrl: string): JsonLdSchema {
 	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	const schema: JsonLdSchema = {
-		'@context': SCHEMA_CONTEXT,
+		'@context': 'https://schema.org',
 		...buildPersonSchema(author, `${baseUrl}/author/${author.slug}`),
 	};
 	if (author.bornOn) {

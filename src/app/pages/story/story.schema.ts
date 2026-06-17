@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 
 import { type Story } from '@models/story.model';
-import { buildBreadcrumbSchema, buildPersonSchema, SCHEMA_CONTEXT } from '@utils/schema-org.builders';
+import { buildBreadcrumbSchema, buildPersonSchema } from '@utils/schema-org.builders';
 import { type JsonLdSchema } from '../../providers/schema-org.service';
 
 const PUBLISHER_NAME = 'La Cuentoneta';
@@ -16,7 +16,7 @@ const PUBLISHER_NAME = 'La Cuentoneta';
 export function buildStoryArticleSchema(story: Story, websiteUrl: string): JsonLdSchema {
 	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	return {
-		'@context': SCHEMA_CONTEXT,
+		'@context': 'https://schema.org',
 		'@type': 'Article',
 		headline: story.title,
 		inLanguage: 'es-AR',

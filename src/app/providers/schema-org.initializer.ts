@@ -4,7 +4,6 @@ import { Location } from '@angular/common';
 import { SchemaOrgService, type JsonLdSchema } from './schema-org.service';
 import { environment } from '../environments/environment';
 
-const SCHEMA_CONTEXT = 'https://schema.org';
 const ORGANIZATION_NAME = 'La Cuentoneta';
 const ORGANIZATION_DESCRIPTION =
 	'Proyecto abierto, comunitario y sin fines de lucro que fomenta y hace accesible la lectura digital, ' +
@@ -23,7 +22,7 @@ export function buildOrganizationSchema(websiteUrl: string): JsonLdSchema {
 	// `Location.stripTrailingSlash` la recorta para no generar dobles slashes al concatenar.
 	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	return {
-		'@context': SCHEMA_CONTEXT,
+		'@context': 'https://schema.org',
 		'@type': 'Organization',
 		name: ORGANIZATION_NAME,
 		url: baseUrl,
@@ -36,7 +35,7 @@ export function buildOrganizationSchema(websiteUrl: string): JsonLdSchema {
 /** Construye el JSON-LD de la entidad `WebSite` del sitio. */
 export function buildWebSiteSchema(websiteUrl: string): JsonLdSchema {
 	return {
-		'@context': SCHEMA_CONTEXT,
+		'@context': 'https://schema.org',
 		'@type': 'WebSite',
 		name: ORGANIZATION_NAME,
 		url: Location.stripTrailingSlash(websiteUrl),

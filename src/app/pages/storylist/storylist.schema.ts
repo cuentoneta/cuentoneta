@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 
 import { type Storylist } from '@models/storylist.model';
-import { buildBreadcrumbSchema, SCHEMA_CONTEXT } from '@utils/schema-org.builders';
+import { buildBreadcrumbSchema } from '@utils/schema-org.builders';
 import { type JsonLdSchema } from '../../providers/schema-org.service';
 
 /**
@@ -11,7 +11,7 @@ import { type JsonLdSchema } from '../../providers/schema-org.service';
 export function buildStorylistCollectionSchema(storylist: Storylist, websiteUrl: string): JsonLdSchema {
 	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	return {
-		'@context': SCHEMA_CONTEXT,
+		'@context': 'https://schema.org',
 		'@type': 'CollectionPage',
 		name: storylist.title,
 		url: `${baseUrl}/storylist/${storylist.slug}`,

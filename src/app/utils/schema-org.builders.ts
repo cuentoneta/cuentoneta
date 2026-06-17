@@ -1,9 +1,6 @@
 import { type Author } from '@models/author.model';
 import { type JsonLdSchema } from '../providers/schema-org.service';
 
-/** Contexto JSON-LD de schema.org, compartido por todos los builders. */
-export const SCHEMA_CONTEXT = 'https://schema.org';
-
 /** Ítem de un breadcrumb: etiqueta visible y URL absoluta de la página. */
 export interface BreadcrumbItem {
 	name: string;
@@ -33,7 +30,7 @@ export function buildPersonSchema(author: Author, authorUrl: string): JsonLdSche
 /** Construye un `BreadcrumbList` a partir de una lista ordenada de ítems (home → … → página actual). */
 export function buildBreadcrumbSchema(items: BreadcrumbItem[]): JsonLdSchema {
 	return {
-		'@context': SCHEMA_CONTEXT,
+		'@context': 'https://schema.org',
 		'@type': 'BreadcrumbList',
 		itemListElement: items.map((item, index) => ({
 			'@type': 'ListItem',
