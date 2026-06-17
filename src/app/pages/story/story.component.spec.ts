@@ -5,7 +5,6 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 // 3rd party modules
 import { render } from '@testing-library/angular';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Models
 import { Storylist } from '@models/storylist.model';
@@ -25,7 +24,6 @@ describe('StoryComponent', () => {
 				NgForOf,
 				NgIf,
 				NgOptimizedImage,
-				NgxSkeletonLoaderModule,
 				MockBioSummaryCardComponent,
 				MockShareContentComponent,
 				MockStoryNavigationBarComponent,
