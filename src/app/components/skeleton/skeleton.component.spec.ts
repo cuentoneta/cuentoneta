@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/angular';
 
-import { SkeletonComponent } from './skeleton.component';
+import { SkeletonAppearance, SkeletonComponent } from './skeleton.component';
 
 describe('SkeletonComponent', () => {
 	it('should expose role="status" with the loading label for assistive technology', async () => {
@@ -17,18 +17,17 @@ describe('SkeletonComponent', () => {
 		await render(SkeletonComponent);
 		const bar = screen.getByRole('status');
 		expect(bar).toHaveClass('rounded');
-		expect(bar).not.toHaveClass('rounded-full', 'rounded-sm');
+		expect(bar).not.toHaveClass('rounded-full', 'aspect-square');
 	});
 
 	it('should render a fully rounded square bar for the circle appearance', async () => {
-		await render(SkeletonComponent, { inputs: { appearance: 'circle' } });
+		await render(SkeletonComponent, { inputs: { appearance: SkeletonAppearance.Circle } });
 		expect(screen.getByRole('status')).toHaveClass('rounded-full', 'aspect-square');
 	});
 
-	it('should render a slightly rounded bar for the square appearance', async () => {
-		await render(SkeletonComponent, { inputs: { appearance: 'square' } });
+	it('should leave the radius to the consumer for the square appearance', async () => {
+		await render(SkeletonComponent, { inputs: { appearance: SkeletonAppearance.Square } });
 		const bar = screen.getByRole('status');
-		expect(bar).toHaveClass('rounded-sm');
-		expect(bar).not.toHaveClass('rounded-full', 'aspect-square');
+		expect(bar).not.toHaveClass('rounded', 'rounded-full', 'aspect-square');
 	});
 });

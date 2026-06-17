@@ -10,7 +10,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 	host: { class: 'mx-auto block' },
 	template: `<div class="slider">
 		<cuentoneta-skeleton
-			appearance="line"
+			appearance="square"
 			class="grid aspect-[540/220] w-full justify-self-center rounded-[16px] bg-neutral-200 object-cover md:aspect-[1240/360]"
 		/>
 	</div>`,
