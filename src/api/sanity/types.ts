@@ -615,10 +615,12 @@ export type AllSanitySchemaTypes =
 
 // Source: ../src/api/_queries/author.query.ts
 // Variable: authorBySlugQuery
-// Query: *[_type == 'author' && slug.current == $slug && !(_id in path('drafts.**'))][0]{    _id,    'slug': slug.current,    name,    image,    nationality->,    biography,    bornOn,		bornOnYear,    diedOn,		diedOnYear,    'resources': coalesce(resources[]{        title,        url,        resourceType->{        	'slug': slug.current,        	title,        	shortDescription,        	description,            icon        }    }, [])}
+// Query: *[_type == 'author' && slug.current == $slug && !(_id in path('drafts.**'))][0]{    _id,    'slug': slug.current,    'createdAt': _createdAt,    'updatedAt': _updatedAt,    name,    image,    nationality->,    biography,    bornOn,		bornOnYear,    diedOn,		diedOnYear,    'resources': coalesce(resources[]{        title,        url,        resourceType->{        	'slug': slug.current,        	title,        	shortDescription,        	description,            icon        }    }, [])}
 export type AuthorBySlugQueryResult = {
 	_id: string;
 	slug: string;
+	createdAt: string;
+	updatedAt: string;
 	name: string;
 	image: {
 		asset?: SanityImageAssetReference;
@@ -1953,7 +1955,7 @@ export type StorylistQueryResult = {
 import '@sanity/client';
 declare module '@sanity/client' {
 	interface SanityQueries {
-		"\n*[_type == 'author' && slug.current == $slug && !(_id in path('drafts.**'))][0]\n{\n    _id,\n    'slug': slug.current,\n    name,\n    image,\n    nationality->,\n    biography,\n    bornOn,\n\t\tbornOnYear,\n    diedOn,\n\t\tdiedOnYear,\n    'resources': coalesce(resources[]{\n        title,\n        url,\n        resourceType->{\n        \t'slug': slug.current,\n        \ttitle,\n        \tshortDescription,\n        \tdescription,\n            icon\n        }\n    }, [])\n}": AuthorBySlugQueryResult;
+		"\n*[_type == 'author' && slug.current == $slug && !(_id in path('drafts.**'))][0]\n{\n    _id,\n    'slug': slug.current,\n    'createdAt': _createdAt,\n    'updatedAt': _updatedAt,\n    name,\n    image,\n    nationality->,\n    biography,\n    bornOn,\n\t\tbornOnYear,\n    diedOn,\n\t\tdiedOnYear,\n    'resources': coalesce(resources[]{\n        title,\n        url,\n        resourceType->{\n        \t'slug': slug.current,\n        \ttitle,\n        \tshortDescription,\n        \tdescription,\n            icon\n        }\n    }, [])\n}": AuthorBySlugQueryResult;
 		"\n*[_type == 'author' && !(_id in path('drafts.**'))]\n{\n    _id,\n    'slug': slug.current,\n    name,\n    image,\n    nationality->,\n    'biography': [],\n    bornOn,\n \t\tbornOnYear,\n    diedOn,\n    diedOnYear,\n    'resources': []\n}|order(name asc)": AuthorsQueryResult;
 		"\n*[_type == 'rotatingContent' && _id == 'rotatingContent'][0]{\n    _id,\n    name,\n    'mostRead': coalesce(mostRead[]->{\n        _id,\n        'slug': slug.current,\n        title,\n        badLanguage,\n        'body': [],\n        originalPublication,\n        approximateReadingTime,\n        'resources': [],\n        'mediaSources': coalesce(mediaSources[], []),\n        'author': author-> {\n            _id,\n            'slug': slug.current,\n            name,\n            image,\n            nationality->,\n            'biography': [],\n\t\t\t\t\t\tbornOn,\n\t\t\t\t\t\tbornOnYear,\n\t\t\t\t\t\tdiedOn,\n\t\t\t\t\t\tdiedOnYear,\n            'resources': [],\n        }\n    },[])\n}": RotatingContentQueryResult;
 		"\n*[_type == 'landingPage' && !(_id in path('drafts.**')) && slug.current in $slugs]{\n\t\t_id,\n\t\t'slug': slug.current,\n\t\tconfig,\n}": LandingPageListQueryResult;
