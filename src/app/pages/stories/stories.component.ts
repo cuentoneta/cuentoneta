@@ -16,13 +16,10 @@ import { environment } from '../../environments/environment';
 // Routing
 import { AppRoutes } from '../../app.routes';
 
-// 3rd Party
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-
 @Component({
 	selector: 'cuentoneta-stories',
 	standalone: true,
-	imports: [RouterLink, NgxSkeletonLoaderModule],
+	imports: [RouterLink],
 	hostDirectives: [MetaTagsDirective],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `

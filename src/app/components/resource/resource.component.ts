@@ -12,9 +12,6 @@ import {
 // Models
 import { Resource } from '@models/resource.model';
 
-// 3rd Party Modules
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-
 // Directives
 import { TooltipDirective } from '../../directives/tooltip.directive';
 import { iconMappers } from '@models/icon.model';
@@ -24,7 +21,7 @@ import { NgComponentOutlet } from '@angular/common';
 @Component({
 	selector: 'cuentoneta-resource',
 	hostDirectives: [TooltipDirective],
-	imports: [NgxSkeletonLoaderModule, NgComponentOutlet],
+	imports: [NgComponentOutlet],
 	template: `
 		<a
 			[href]="resource().url"
