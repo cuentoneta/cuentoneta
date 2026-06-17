@@ -9,6 +9,7 @@ describe('buildAuthorProfilePageSchema', () => {
 		expect(buildAuthorProfilePageSchema(authorMock, websiteUrl)).toEqual({
 			'@context': 'https://schema.org',
 			'@type': 'ProfilePage',
+			url: 'https://www.cuentoneta.ar/author/francois-onoff',
 			dateCreated: '2021-12-28T00:00:00Z',
 			dateModified: '2024-05-20T10:30:00Z',
 			mainEntity: {

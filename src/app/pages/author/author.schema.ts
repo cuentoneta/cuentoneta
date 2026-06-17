@@ -11,7 +11,8 @@ import { type JsonLdSchema } from '../../providers/schema-org.service';
  */
 export function buildAuthorProfilePageSchema(author: Author, websiteUrl: string): JsonLdSchema {
 	const baseUrl = Location.stripTrailingSlash(websiteUrl);
-	const person = buildPersonSchema(author, `${baseUrl}/author/${author.slug}`);
+	const authorUrl = `${baseUrl}/author/${author.slug}`;
+	const person = buildPersonSchema(author, authorUrl);
 	if (author.bornOn) {
 		person['birthDate'] = author.bornOn;
 	}
@@ -21,6 +22,7 @@ export function buildAuthorProfilePageSchema(author: Author, websiteUrl: string)
 	return {
 		'@context': 'https://schema.org',
 		'@type': 'ProfilePage',
+		url: authorUrl,
 		dateCreated: author.createdAt,
 		dateModified: author.updatedAt,
 		mainEntity: person,
