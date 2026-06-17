@@ -1,5 +1,6 @@
+import { Location } from '@angular/common';
+
 import { type Story } from '@models/story.model';
-import { normalizeBaseUrl } from '@utils/url.utils';
 import { type JsonLdSchema } from '../../providers/schema-org.service';
 
 const SCHEMA_CONTEXT = 'https://schema.org';
@@ -29,7 +30,7 @@ function buildAuthorPerson(story: Story, baseUrl: string): JsonLdSchema {
  * redes y Google no aceptan SVG para `image`); queda como follow-up.
  */
 export function buildStoryArticleSchema(story: Story, websiteUrl: string): JsonLdSchema {
-	const baseUrl = normalizeBaseUrl(websiteUrl);
+	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	return {
 		'@context': SCHEMA_CONTEXT,
 		'@type': 'Article',
