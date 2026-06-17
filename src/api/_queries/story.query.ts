@@ -75,6 +75,8 @@ export const storyBySlugQuery = defineQuery(`
     'author': author-> {
         _id,
         'slug': slug.current,
+        'createdAt': _createdAt,
+        'updatedAt': _updatedAt,
         name,
         image,
         nationality->,
@@ -83,16 +85,16 @@ export const storyBySlugQuery = defineQuery(`
         bornOnYear,
         diedOn,
         diedOnYear,
-        'resources': coalesce(resources[]{ 
-            title, 
-            url, 
+        'resources': coalesce(resources[]{
+            title,
+            url,
             resourceType->{
                 'slug': slug.current,
-                title, 
+                title,
                 shortDescription,
-                description, 
+                description,
                 icon
-            } 
+            }
         }, [])
     }
 }[0]`);
