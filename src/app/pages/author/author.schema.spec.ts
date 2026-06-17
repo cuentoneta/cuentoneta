@@ -23,6 +23,17 @@ describe('buildAuthorProfilePageSchema', () => {
 		});
 	});
 
+	it('should forward the ISO datetime dates verbatim to dateCreated/dateModified', () => {
+		const author = { ...authorMock, createdAt: '2022-01-25T23:26:34Z', updatedAt: '2026-06-09T00:32:32Z' };
+
+		const schema = buildAuthorProfilePageSchema(author, websiteUrl);
+
+		expect(schema).toMatchObject({
+			dateCreated: '2022-01-25T23:26:34Z',
+			dateModified: '2026-06-09T00:32:32Z',
+		});
+	});
+
 	it('should omit life dates in mainEntity when the author has none', () => {
 		const author = { ...authorMock, bornOn: undefined, diedOn: undefined };
 
