@@ -1,4 +1,4 @@
-import { Directive, inject } from '@angular/core';
+import { Directive, effect, inject } from '@angular/core';
 
 import { environment } from '../../environments/environment';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
@@ -10,7 +10,7 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 export class HomeSeoDirective {
 	private readonly meta = inject(MetaTagsDirective);
 
-	constructor() {
+	private readonly applyStaticSeo = effect(() => {
 		// addPrefix = false para emitir el string completo —marca incluida— tal cual en el SSR,
 		// donde el sufijo "| La Cuentoneta" no se agrega.
 		this.meta.setTitle('Cuentos y relatos breves para leer en línea | La Cuentoneta', false);
@@ -29,5 +29,5 @@ export class HomeSeoDirective {
 		]);
 		this.meta.setCanonicalUrl(`${environment.website}`);
 		this.meta.setRobots('index, follow');
-	}
+	});
 }

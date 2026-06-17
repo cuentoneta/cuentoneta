@@ -15,7 +15,7 @@ describe('HomeSeoDirective', () => {
 		meta = TestBed.inject(MetaTagsDirective);
 	});
 
-	it('should apply the home meta tags on construction', () => {
+	it('should apply the home meta tags', () => {
 		const titleSpy = spyOn(meta, 'setTitle');
 		const descriptionSpy = spyOn(meta, 'setDefaultDescription');
 		const keywordsSpy = spyOn(meta, 'setKeywords');
@@ -23,6 +23,7 @@ describe('HomeSeoDirective', () => {
 		const robotsSpy = spyOn(meta, 'setRobots');
 
 		TestBed.runInInjectionContext(() => new HomeSeoDirective());
+		TestBed.tick();
 
 		expect(titleSpy).toHaveBeenCalledWith('Cuentos y relatos breves para leer en línea | La Cuentoneta', false);
 		expect(descriptionSpy).toHaveBeenCalled();
