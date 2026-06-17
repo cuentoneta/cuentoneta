@@ -3,9 +3,6 @@ import { Component, computed, effect, inject, input } from '@angular/core';
 import { tap } from 'rxjs';
 import { rxResource } from '@angular/core/rxjs-interop';
 
-// 3rd party modules
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-
 // Models
 import { Storylist } from '@models/storylist.model';
 
@@ -30,12 +27,13 @@ import { StorylistTitle } from './storylist-title/storylist-title';
 import { StoryCardTeaserComponent } from '@components/story-card-teaser/story-card-teaser.component';
 import { StoryCardTeaserSkeletonComponent } from '@components/story-card-teaser/story-card-teaser-skeleton.component';
 import { MediaResourceComponent } from '@components/media-resource/media-resource.component';
+import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
 @Component({
 	selector: 'cuentoneta-storylist',
 	templateUrl: './storylist.component.html',
 	imports: [
-		NgxSkeletonLoaderModule,
+		SkeletonComponent,
 		PortableTextParserComponent,
 		Tabs,
 		Tab,
@@ -45,13 +43,6 @@ import { MediaResourceComponent } from '@components/media-resource/media-resourc
 		MediaResourceComponent,
 	],
 	hostDirectives: [MetaTagsDirective],
-	styles: `
-		@reference '#tailwind-theme';
-
-		:host ::ng-deep .description-skeleton .skeleton-loader {
-			@apply bg-neutral-300;
-		}
-	`,
 })
 export default class StorylistComponent {
 	// Route inputs

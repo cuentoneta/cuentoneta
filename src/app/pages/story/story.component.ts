@@ -5,9 +5,6 @@ import { tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-// 3rd Party modules
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-
 // Router
 import { AppRoutes } from '../../app.routes';
 
@@ -36,6 +33,7 @@ import { EpigraphComponent } from '@components/epigraph/epigraph.component';
 import { MediaResourceComponent } from '@components/media-resource/media-resource.component';
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
 import { ProgressBarComponent } from '@components/progress-bar/progress-bar.component';
+import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 
@@ -48,19 +46,13 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 		.content {
 			@apply grid grid-cols-1 md:mx-auto md:grid-cols-[286px_1fr] md:gap-x-8;
 		}
-
-		:host ::ng-deep .story-title-skeleton .skeleton-loader,
-		:host ::ng-deep .story-author-skeleton .skeleton-loader,
-		:host ::ng-deep .story-reading-time-skeleton .skeleton-loader {
-			@apply bg-neutral-300;
-		}
 	`,
 	imports: [
 		BioSummaryCardComponent,
 		CommonModule,
 		EpigraphComponent,
 		MediaResourceComponent,
-		NgxSkeletonLoaderModule,
+		SkeletonComponent,
 		PortableTextParserComponent,
 		RouterLink,
 		ShareContentComponent,

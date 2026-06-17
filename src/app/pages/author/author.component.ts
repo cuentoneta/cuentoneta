@@ -23,9 +23,6 @@ import { buildAuthorBreadcrumb, buildAuthorPersonSchema } from './author.schema'
 // Environment
 import { environment } from '../../environments/environment';
 
-// 3rd Party Modules
-import { NgxSkeletonLoaderComponent, NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-
 // Services
 import { AuthorApi } from '../../providers/author-api.interface';
 import { StoryApi } from '../../providers/story-api.interface';
@@ -38,6 +35,7 @@ import { StoryCardTeaserComponent } from '@components/story-card-teaser/story-ca
 import Tab from '@components/tabs/tab.component';
 import Tabs from '@components/tabs/tabs.component';
 import { StoryCardTeaserSkeletonComponent } from '@components/story-card-teaser/story-card-teaser-skeleton.component';
+import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
 // Pipes
 import { InitialsPipe } from '../../pipes/initials.pipe';
@@ -47,29 +45,16 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 	imports: [
 		NgOptimizedImage,
 		PortableTextParserComponent,
-		NgxSkeletonLoaderModule,
 		StoryCardTeaserComponent,
 		Tab,
 		Tabs,
 		InitialsPipe,
 		ResourceComponent,
-		NgxSkeletonLoaderComponent,
+		SkeletonComponent,
 		StoryCardTeaserSkeletonComponent,
 	],
 	hostDirectives: [MetaTagsDirective],
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	styles: `
-		@reference '#tailwind-theme';
-
-		:host ::ng-deep .author-image-skeleton .skeleton-loader,
-		:host ::ng-deep .author-name-skeleton .skeleton-loader,
-		:host ::ng-deep .author-flag-skeleton .skeleton-loader,
-		:host ::ng-deep .author-nationality-skeleton .skeleton-loader,
-		:host ::ng-deep .author-stories-count-skeleton .skeleton-loader,
-		:host ::ng-deep .biography-skeleton .skeleton-loader {
-			@apply bg-neutral-300;
-		}
-	`,
 	template: `
 		<main class="content vertical-layout-spacing horizontal-layout-spacing">
 			<article class="grid grid-cols-1 gap-8">
@@ -105,40 +90,14 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 					}
 				} @placeholder (minimum 500ms) {
 					<section class="flex items-center gap-4">
-						<ngx-skeleton-loader
-							[theme]="{ margin: 0 }"
-							count="1"
-							appearance="square"
-							size="88"
-							class="author-image-skeleton"
-						/>
+						<cuentoneta-skeleton appearance="square" class="h-[88px] w-[88px] rounded-xl bg-neutral-300" />
 						<div class="flex flex-col gap-2">
-							<ngx-skeleton-loader
-								[theme]="{ margin: 0, width: '160px', height: '24px' }"
-								count="1"
-								appearance="line"
-								class="author-name-skeleton"
-							/>
+							<cuentoneta-skeleton appearance="line" class="h-6 w-[160px] bg-neutral-300" />
 							<span class="flex items-center gap-2">
-								<ngx-skeleton-loader
-									[theme]="{ margin: 0, width: '20px', height: '18px' }"
-									count="1"
-									appearance="line"
-									class="author-flag-skeleton"
-								/>
-								<ngx-skeleton-loader
-									[theme]="{ margin: 0, width: '100px', height: '18px' }"
-									count="1"
-									appearance="line"
-									class="author-nationality-skeleton"
-								/>
+								<cuentoneta-skeleton appearance="line" class="h-[18px] w-5 bg-neutral-300" />
+								<cuentoneta-skeleton appearance="line" class="h-[18px] w-[100px] bg-neutral-300" />
 							</span>
-							<ngx-skeleton-loader
-								[theme]="{ margin: 0, width: '80px' }"
-								count="1"
-								appearance="line"
-								class="author-stories-count-skeleton"
-							/>
+							<cuentoneta-skeleton appearance="line" class="h-4 w-20 bg-neutral-300" />
 						</div>
 					</section>
 				}
@@ -189,17 +148,10 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 										}
 									</div>
 								} @loading (minimum 500ms) {
-									<div class="flex flex-col gap-4">
-										<ngx-skeleton-loader
-											[theme]="{
-												'margin-bottom': '8px',
-												height: '25px',
-												width: '100%',
-											}"
-											count="10"
-											appearance="line"
-											class="biography-skeleton"
-										/>
+									<div class="flex flex-col gap-2">
+										@for (line of [].constructor(10); track $index) {
+											<cuentoneta-skeleton appearance="line" class="h-[25px] w-full bg-neutral-300" />
+										}
 									</div>
 								}
 							</div>
