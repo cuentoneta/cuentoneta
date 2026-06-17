@@ -1,5 +1,5 @@
 // Core
-import { Component, computed, DestroyRef, inject, input } from '@angular/core';
+import { Component, computed, effect, inject, input } from '@angular/core';
 import { tap } from 'rxjs';
 import { rxResource } from '@angular/core/rxjs-interop';
 
@@ -10,7 +10,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Storylist } from '@models/storylist.model';
 
 // Services
-import { StorylistService } from '../../providers/storylist.service';
+import { StorylistApi } from '../../providers/storylist-api.interface';
 
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
@@ -55,26 +55,25 @@ import { MediaResourceComponent } from '@components/media-resource/media-resourc
 })
 export default class StorylistComponent {
 	// Route inputs
-	readonly slug = input.required<string>();
-	readonly activeTab = input<'stories' | 'about' | string>('stories');
+	public readonly slug = input.required<string>();
+	public readonly activeTab = input<'stories' | 'about' | string>('stories');
 
 	// Providers
 	private metaTagsDirective = inject(MetaTagsDirective);
-	private storylistService = inject(StorylistService);
+	private storylistService = inject(StorylistApi);
 	private schemaOrg = inject(SchemaOrgService);
-	private destroyRef = inject(DestroyRef);
 
-	constructor() {
-		// Los JSON-LD de CollectionPage y breadcrumb son específicos de la página; se limpian al navegar fuera.
-		// El breadcrumb usa un id por página para no pisar el de la ruta entrante durante una navegación.
-		this.destroyRef.onDestroy(() => {
+	// Los JSON-LD de CollectionPage y breadcrumb son específicos de la página; se limpian al navegar fuera.
+	// El breadcrumb usa un id por página para no pisar el de la ruta entrante durante una navegación.
+	private readonly removeStructuredDataOnDestroy = effect((onCleanup) => {
+		onCleanup(() => {
 			this.schemaOrg.removeJsonLd('collection');
 			this.schemaOrg.removeJsonLd('breadcrumb-storylist');
 		});
-	}
+	});
 
 	// Recursos
-	readonly storylistResource = rxResource({
+	protected readonly storylistResource = rxResource({
 		params: this.slug,
 		stream: ({ params }) =>
 			this.storylistService.get(params, 60, 'asc').pipe(
@@ -87,16 +86,16 @@ export default class StorylistComponent {
 
 	// Propiedades
 	// TODO: Implementar uso de imagen alusiva/tapa de libro en la ficha técnica
-	readonly featuredImageUrl = computed(
+	private readonly featuredImageUrl = computed(
 		() => `${this.storylistResource.value()?.featuredImage}?h=${256 * 1.5}&w=${192 * 1.5}&auto=format`,
 	);
 	// TODO: Simplificar estructura de tipo Storylist para evitar estas transformaciones
-	readonly stories = computed(() => this.storylistResource.value()?.stories.map((story) => story) || []);
+	protected readonly stories = computed(() => this.storylistResource.value()?.stories.map((story) => story) || []);
 
 	// Computed properties for tabs and media
-	readonly tabs = computed(() => this.storylistResource.value()?.tabs || []);
-	readonly media = computed(() => this.storylistResource.value()?.media || []);
-	readonly hasMedia = computed(() => this.media().length > 0);
+	protected readonly tabs = computed(() => this.storylistResource.value()?.tabs || []);
+	protected readonly media = computed(() => this.storylistResource.value()?.media || []);
+	protected readonly hasMedia = computed(() => this.media().length > 0);
 
 	private updateMetaTags(storylist: Storylist) {
 		this.metaTagsDirective.setTitle(`${storylist.title}`);

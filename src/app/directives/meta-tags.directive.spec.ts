@@ -394,15 +394,26 @@ describe('MetaTagsDirective', () => {
 		});
 	});
 
-	describe('ngOnDestroy', () => {
-		it('should clean up the per-page meta tags (author and article dates included)', () => {
-			const metaSpy = spyOn(metaService, 'removeTag');
+	describe('reset on destroy', () => {
+		it('should clean up every per-page tag (keywords, robots, author, article dates and canonical) when destroyed', () => {
+			const removeSpy = spyOn(metaService, 'removeTag');
+			// El canonical no se limpia con removeTag (quita un <link>): lo seteamos para verificar su remoción.
+			directive.setCanonicalUrl(`${BASE_URL}/home`);
+			expect(document.querySelector(`link[rel='canonical']`)).not.toBeNull();
 
-			directive.ngOnDestroy();
+			// La limpieza vive en un effect con onCleanup: se corre el effect y luego se destruye el
+			// contexto de inyección del directive para disparar la limpieza.
+			TestBed.tick();
+			TestBed.resetTestingModule();
 
-			expect(metaSpy).toHaveBeenCalledWith('name="author"');
-			expect(metaSpy).toHaveBeenCalledWith('property="article:published_time"');
-			expect(metaSpy).toHaveBeenCalledWith('property="article:modified_time"');
+			// Meta tags por página que la limpieza remueve vía Meta.removeTag.
+			expect(removeSpy).toHaveBeenCalledWith('name="keywords"');
+			expect(removeSpy).toHaveBeenCalledWith('name="robots"');
+			expect(removeSpy).toHaveBeenCalledWith('name="author"');
+			expect(removeSpy).toHaveBeenCalledWith('property="article:published_time"');
+			expect(removeSpy).toHaveBeenCalledWith('property="article:modified_time"');
+			// El <link rel="canonical"> se quita del head.
+			expect(document.querySelector(`link[rel='canonical']`)).toBeNull();
 		});
 	});
 });

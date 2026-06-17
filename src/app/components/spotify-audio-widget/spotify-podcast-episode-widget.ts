@@ -30,10 +30,10 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpotifyPodcastEpisodeWidget {
-	readonly media = input.required<SpotifyPodcastEpisode>();
+	public readonly media = input.required<SpotifyPodcastEpisode>();
 	private readonly sanitizer = inject(DomSanitizer);
 
-	readonly mediaUrl = computed((): SafeResourceUrl => {
+	protected readonly mediaUrl = computed((): SafeResourceUrl => {
 		const spotifyUrl = this.media().data.url;
 		// Transformar URL a formato embedded en caso de que sea necesario
 		// e.g., https://open.spotify.com/episode/xxx -> https://open.spotify.com/embed/episode/xxx

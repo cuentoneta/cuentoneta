@@ -5,14 +5,14 @@ import { NavigationBarConfig } from '../components/storylist-navigation-frame/st
 	providedIn: 'root',
 })
 export class NavigationFrameService {
-	readonly navigationBarConfig = signal<NavigationBarConfig>({
+	public readonly navigationBarConfig = signal<NavigationBarConfig>({
 		headerTitle: '',
 		footerTitle: '',
 		navigationRoute: '',
 		showFooter: false,
 	});
 
-	setNavigationBarConfig(config: NavigationBarConfig) {
+	public setNavigationBarConfig(config: NavigationBarConfig) {
 		this.navigationBarConfig.set(config);
 	}
 }

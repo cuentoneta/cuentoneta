@@ -15,7 +15,7 @@ export class SchemaOrgService {
 	private readonly document = inject(DOCUMENT);
 
 	/** Inserta o reemplaza (idempotente por `id`) un bloque JSON-LD en el `<head>`. */
-	setJsonLd(id: string, schema: JsonLdSchema): void {
+	public setJsonLd(id: string, schema: JsonLdSchema): void {
 		this.resolveScript(id).textContent = JSON.stringify(schema);
 	}
 
@@ -25,7 +25,7 @@ export class SchemaOrgService {
 	 * Pensado para los schemas por página (Article/Person/Breadcrumb de #1521/#1522), que deben
 	 * limpiarse al navegar fuera de la ruta; los schemas sitewide (Organization/WebSite) persisten.
 	 */
-	removeJsonLd(id: string): void {
+	public removeJsonLd(id: string): void {
 		this.findScript(id)?.remove();
 	}
 

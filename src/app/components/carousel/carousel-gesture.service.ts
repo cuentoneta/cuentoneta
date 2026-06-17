@@ -38,15 +38,15 @@ export class CarouselGestureService {
 	private readonly _swipeCurrentX = signal<number | null>(null);
 
 	// Signal de solo lectura para informar si un deslizamiento está en proceso
-	readonly isSwiping: Signal<boolean> = this._isSwiping.asReadonly();
+	public readonly isSwiping: Signal<boolean> = this._isSwiping.asReadonly();
 
 	// Subjects para eventos del ciclo de vida del deslizamiento
 	private readonly _swipeStart$ = new Subject<void>();
 	private readonly _swipeEnd$ = new Subject<void>();
 
 	// Observables públicos para coordinación con auto-play
-	readonly onSwipeStart$: Observable<void> = this._swipeStart$.asObservable();
-	readonly onSwipeEnd$: Observable<void> = this._swipeEnd$.asObservable();
+	public readonly onSwipeStart$: Observable<void> = this._swipeStart$.asObservable();
+	public readonly onSwipeEnd$: Observable<void> = this._swipeEnd$.asObservable();
 
 	// Subject para comandos de navegación
 	private readonly _navigationCommand$ = new Subject<NavigationCommand>();
@@ -57,7 +57,11 @@ export class CarouselGestureService {
 	 * @param destroyRef DestroyRef para limpieza automática
 	 * @param isTransitioning Signal que indica si hay una transición en curso
 	 */
-	attach(element: ElementRef, destroyRef: DestroyRef, isTransitioning: Signal<boolean>): Observable<NavigationCommand> {
+	public attach(
+		element: ElementRef,
+		destroyRef: DestroyRef,
+		isTransitioning: Signal<boolean>,
+	): Observable<NavigationCommand> {
 		// Flujos de eventos táctiles
 		const touchStart$ = fromEvent<TouchEvent>(element.nativeElement, 'touchstart').pipe(takeUntilDestroyed(destroyRef));
 

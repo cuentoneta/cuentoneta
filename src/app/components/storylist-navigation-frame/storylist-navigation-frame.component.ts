@@ -12,7 +12,7 @@ import { AppRoutes } from '../../app.routes';
 import { NavigationFrameComponent } from '@models/navigation-frame.component';
 
 // Services
-import { StorylistService } from '../../providers/storylist.service';
+import { StorylistApi } from '../../providers/storylist-api.interface';
 
 // Componentes
 import { rxResource } from '@angular/core/rxjs-interop';
@@ -49,10 +49,10 @@ export type NavigationBarConfig = {
 })
 export class StorylistNavigationFrameComponent extends NavigationFrameComponent {
 	// Routes
-	readonly appRoutes = AppRoutes;
+	private readonly appRoutes = AppRoutes;
 
 	// Providers
-	private storylistService = inject(StorylistService);
+	private storylistService = inject(StorylistApi);
 
 	// Recursos
 	private readonly storylistResource = rxResource({
@@ -62,9 +62,9 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	});
 
 	// Propiedades
-	displayedStories: StoryNavigationTeaserWithAuthor[] = [];
-	dummyList: null[] = Array(9);
-	readonly storylist = computed(() => this.storylistResource.value());
+	protected displayedStories: StoryNavigationTeaserWithAuthor[] = [];
+	protected dummyList: null[] = Array(9);
+	protected readonly storylist = computed(() => this.storylistResource.value());
 
 	constructor() {
 		super();
@@ -93,7 +93,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	 * caso de que la story actualmente en vista sea una de las primeras o de las últimas.
 	 * @author Ramiro Olivencia <ramiro@olivencia.com.ar>
 	 */
-	sliceDisplayedStories(stories: StoryNavigationTeaserWithAuthor[]): void {
+	private sliceDisplayedStories(stories: StoryNavigationTeaserWithAuthor[]): void {
 		if (!this.storylist) {
 			return;
 		}

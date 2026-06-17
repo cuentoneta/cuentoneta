@@ -2,10 +2,10 @@ import {
 	Component,
 	computed,
 	createEnvironmentInjector,
+	effect,
 	EnvironmentInjector,
 	inject,
 	input,
-	OnInit,
 } from '@angular/core';
 import { SharingPlatform } from '@models/sharing-platform';
 import { TooltipDirective } from '../../directives/tooltip.directive';
@@ -29,18 +29,23 @@ import { NgComponentOutlet } from '@angular/common';
 		</button>
 	}`,
 })
-export class ShareButtonComponent implements OnInit {
-	readonly platform = input.required<SharingPlatform>();
-	readonly params = input<{ [key: string]: string }>({});
-	readonly message = input<string>('');
-	readonly route = input<string>('');
+export class ShareButtonComponent {
+	public readonly platform = input.required<SharingPlatform>();
+	public readonly params = input<{ [key: string]: string }>({});
+	public readonly message = input<string>('');
+	public readonly route = input<string>('');
 
-	readonly NgIcon = NgIcon;
+	protected readonly NgIcon = NgIcon;
 
 	private tooltipDirective = inject(TooltipDirective);
 	private injector = inject(EnvironmentInjector);
 
-	readonly icon = computed(() => {
+	private readonly syncTooltipEffect = effect(() => {
+		this.tooltipDirective.text.set('Compartir en ' + this.platform().name);
+		this.tooltipDirective.position.set('bottom');
+	});
+
+	protected readonly icon = computed(() => {
 		const platform = this.platform();
 
 		if (!platform) {
@@ -53,7 +58,7 @@ export class ShareButtonComponent implements OnInit {
 		};
 	});
 
-	onShareToPlatformClicked(event: MouseEvent | KeyboardEvent, platform: SharingPlatform) {
+	protected onShareToPlatformClicked(event: MouseEvent | KeyboardEvent, platform: SharingPlatform) {
 		const urlParams = Object.keys(this.params())
 			.map((key) => `${key}=${this.params()[key]}`)
 			.join('&');
@@ -62,10 +67,5 @@ export class ShareButtonComponent implements OnInit {
 			platform.target,
 			platform.features,
 		);
-	}
-
-	ngOnInit() {
-		this.tooltipDirective.text.set('Compartir en ' + this.platform().name);
-		this.tooltipDirective.position.set('bottom');
 	}
 }

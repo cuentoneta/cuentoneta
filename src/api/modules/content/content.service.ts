@@ -62,7 +62,8 @@ export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 
 	const notLoadedWeeks = slugs.filter((t) => !existingLandingPagesList.find((r) => r.config === t));
 
 	const landingPageObjects = notLoadedWeeks.map((weekYear) => {
-		const { _id: _, ...config } = latestLandingPageConfig;
+		const config = { ...latestLandingPageConfig };
+		delete (config as { _id?: string })._id;
 		return {
 			...config,
 			config: weekYear,

@@ -44,8 +44,8 @@ import { StorylistStoriesNavigationTeasers } from '@models/storylist.model';
 	`,
 })
 export class NavigableStorylistStoryTeaserComponent {
-	readonly story = input.required<StoryNavigationTeaserWithAuthor>();
-	readonly selected = input<boolean>();
-	readonly storylist = input.required<StorylistStoriesNavigationTeasers>();
+	public readonly story = input.required<StoryNavigationTeaserWithAuthor>();
+	public readonly selected = input<boolean>();
+	public readonly storylist = input.required<StorylistStoriesNavigationTeasers>();
 	protected readonly appRoutes = AppRoutes;
 }

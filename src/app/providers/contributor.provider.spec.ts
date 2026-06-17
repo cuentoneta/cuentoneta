@@ -1,22 +1,22 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
-import { ContributorService } from './contributor.service';
+import { HttpContributorApi } from './contributor.provider';
 import { Contributor } from '@models/contributor.model';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
 import { provideHttpClient } from '@angular/common/http';
 
-describe('ContributorService', () => {
-	let service: ContributorService;
+describe('HttpContributorApi', () => {
+	let service: HttpContributorApi;
 	let httpMock: HttpTestingController;
 	const apiUrl = `${environment.apiUrl}${Endpoints.Contributor}`;
 
 	beforeEach(() => {
 		TestBed.configureTestingModule({
-			providers: [ContributorService, provideHttpClient(), provideHttpClientTesting()],
+			providers: [HttpContributorApi, provideHttpClient(), provideHttpClientTesting()],
 		});
-		service = TestBed.inject(ContributorService);
+		service = TestBed.inject(HttpContributorApi);
 		httpMock = TestBed.inject(HttpTestingController);
 	});
 

@@ -1,15 +1,18 @@
-import { inject, Injectable } from '@angular/core';
+// Core
+import { EnvironmentProviders, inject, Injectable, makeEnvironmentProviders } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 
+// Environment
 import { environment } from '../environments/environment';
-import { ApiUrl, Endpoints } from './endpoints';
-import { Contributor, ContributorArea, SORTED_AREAS } from '@models/contributor.model';
 
-@Injectable({
-	providedIn: 'root',
-})
-export class ContributorService {
+// Models
+import { Contributor, ContributorArea, SORTED_AREAS } from '@models/contributor.model';
+import { ApiUrl, Endpoints } from './endpoints';
+import { ContributorApi } from './contributor-api.interface';
+
+@Injectable({ providedIn: 'root' })
+export class HttpContributorApi implements ContributorApi {
 	private readonly url: ApiUrl = `${environment.apiUrl}${Endpoints.Contributor}`;
 	private http = inject(HttpClient);
 
@@ -31,4 +34,8 @@ export class ContributorService {
 			),
 		);
 	}
+}
+
+export function provideContributorApi(): EnvironmentProviders {
+	return makeEnvironmentProviders([{ provide: ContributorApi, useExisting: HttpContributorApi }]);
 }

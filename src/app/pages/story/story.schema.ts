@@ -1,5 +1,6 @@
+import { Location } from '@angular/common';
+
 import { type Story } from '@models/story.model';
-import { normalizeBaseUrl } from '@utils/url.utils';
 import { buildBreadcrumbSchema, buildPersonSchema, SCHEMA_CONTEXT } from '@utils/schema-org.builders';
 import { type JsonLdSchema } from '../../providers/schema-org.service';
 
@@ -13,7 +14,7 @@ const PUBLISHER_NAME = 'La Cuentoneta';
  * redes y Google no aceptan SVG para `image`); queda como follow-up.
  */
 export function buildStoryArticleSchema(story: Story, websiteUrl: string): JsonLdSchema {
-	const baseUrl = normalizeBaseUrl(websiteUrl);
+	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	return {
 		'@context': SCHEMA_CONTEXT,
 		'@type': 'Article',
@@ -34,7 +35,7 @@ export function buildStoryArticleSchema(story: Story, websiteUrl: string): JsonL
 
 /** Construye el `BreadcrumbList` de la página de un cuento: Inicio → Cuentos → cuento. */
 export function buildStoryBreadcrumb(story: Story, websiteUrl: string): JsonLdSchema {
-	const baseUrl = normalizeBaseUrl(websiteUrl);
+	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	return buildBreadcrumbSchema([
 		{ name: 'Inicio', url: `${baseUrl}/home` },
 		{ name: 'Cuentos', url: `${baseUrl}/story` },

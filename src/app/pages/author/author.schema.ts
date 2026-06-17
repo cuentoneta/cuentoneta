@@ -1,5 +1,6 @@
+import { Location } from '@angular/common';
+
 import { type Author } from '@models/author.model';
-import { normalizeBaseUrl } from '@utils/url.utils';
 import { buildBreadcrumbSchema, buildPersonSchema, SCHEMA_CONTEXT } from '@utils/schema-org.builders';
 import { type JsonLdSchema } from '../../providers/schema-org.service';
 
@@ -8,7 +9,7 @@ import { type JsonLdSchema } from '../../providers/schema-org.service';
  * agrega `@context` y, si están disponibles, las fechas de nacimiento y fallecimiento.
  */
 export function buildAuthorPersonSchema(author: Author, websiteUrl: string): JsonLdSchema {
-	const baseUrl = normalizeBaseUrl(websiteUrl);
+	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	const schema: JsonLdSchema = {
 		'@context': SCHEMA_CONTEXT,
 		...buildPersonSchema(author, `${baseUrl}/author/${author.slug}`),
@@ -24,7 +25,7 @@ export function buildAuthorPersonSchema(author: Author, websiteUrl: string): Jso
 
 /** Construye el `BreadcrumbList` de la página de un autor: Inicio → Autores → autor. */
 export function buildAuthorBreadcrumb(author: Author, websiteUrl: string): JsonLdSchema {
-	const baseUrl = normalizeBaseUrl(websiteUrl);
+	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	return buildBreadcrumbSchema([
 		{ name: 'Inicio', url: `${baseUrl}/home` },
 		{ name: 'Autores', url: `${baseUrl}/authors` },

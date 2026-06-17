@@ -1,31 +1,32 @@
-import { Directive, ElementRef, HostListener, inject, OnDestroy, signal } from '@angular/core';
+import { Directive, ElementRef, effect, inject, signal } from '@angular/core';
 import { computePosition, flip, shift, arrow, offset } from '@floating-ui/dom';
 
 type TooltipPosition = 'top' | 'right' | 'bottom' | 'left';
 
 @Directive({
 	selector: '[cuentonetaTooltip]',
-	standalone: true,
+	host: {
+		'(mouseenter)': 'onMouseEnter()',
+		'(mouseleave)': 'onMouseLeave()',
+	},
 })
-export class TooltipDirective implements OnDestroy {
-	readonly text = signal<string>(''); // Texto para el Tooltip
-	readonly position = signal<TooltipPosition>('top'); // Posición del tooltip
-	readonly offset = signal<number>(6); // Offset del tooltip respecto al elemento
+export class TooltipDirective {
+	public readonly text = signal<string>('');
+	public readonly position = signal<TooltipPosition>('top');
+	public readonly offset = signal<number>(6);
 
 	private myPopup: HTMLElement | null = null;
 	private readonly el = inject(ElementRef);
 
-	ngOnDestroy(): void {
-		if (this.myPopup) {
-			this.myPopup.remove();
-		}
-	}
+	private readonly removePopupOnDestroy = effect((onCleanup) => {
+		onCleanup(() => this.myPopup?.remove());
+	});
 
-	@HostListener('mouseenter') onMouseEnter() {
+	protected onMouseEnter() {
 		this.createTooltipPopup();
 	}
 
-	@HostListener('mouseleave') onMouseLeave() {
+	protected onMouseLeave() {
 		if (this.myPopup) {
 			this.myPopup.remove();
 		}

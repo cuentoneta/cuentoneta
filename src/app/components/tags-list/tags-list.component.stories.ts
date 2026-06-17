@@ -33,6 +33,9 @@ const meta: Meta<Args> = {
 	decorators: [moduleMetadata({ imports: [TagComponent] })],
 	parameters: {
 		docs: {
+			canvas: {
+				sourceState: 'shown',
+			},
 			description: {
 				component: `<div>
 					<p>El componente **TagsListComponent** recibe los tags por <strong>content projection</strong>

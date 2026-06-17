@@ -1,14 +1,15 @@
 import { type EnvironmentProviders, inject, provideAppInitializer } from '@angular/core';
+import { Location } from '@angular/common';
 
 import { SchemaOrgService, type JsonLdSchema } from './schema-org.service';
 import { environment } from '../environments/environment';
-import { normalizeBaseUrl } from '@utils/url.utils';
 
 const SCHEMA_CONTEXT = 'https://schema.org';
 const ORGANIZATION_NAME = 'La Cuentoneta';
 const ORGANIZATION_DESCRIPTION =
 	'Proyecto abierto, comunitario y sin fines de lucro que fomenta y hace accesible la lectura digital, ' +
 	'publicando relatos breves en storylists temáticas.';
+
 // URLs canónicas de los perfiles, alineadas con las que renderiza el footer (footer.component.ts).
 const SOCIAL_PROFILES = [
 	'https://twitter.com/cuentoneta',
@@ -18,7 +19,9 @@ const SOCIAL_PROFILES = [
 
 /** Construye el JSON-LD de la entidad `Organization` del sitio. */
 export function buildOrganizationSchema(websiteUrl: string): JsonLdSchema {
-	const baseUrl = normalizeBaseUrl(websiteUrl);
+	// `environment.website` llega con barra final en producción (`https://host/`) y como `/` en dev;
+	// `Location.stripTrailingSlash` la recorta para no generar dobles slashes al concatenar.
+	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	return {
 		'@context': SCHEMA_CONTEXT,
 		'@type': 'Organization',
@@ -36,7 +39,7 @@ export function buildWebSiteSchema(websiteUrl: string): JsonLdSchema {
 		'@context': SCHEMA_CONTEXT,
 		'@type': 'WebSite',
 		name: ORGANIZATION_NAME,
-		url: normalizeBaseUrl(websiteUrl),
+		url: Location.stripTrailingSlash(websiteUrl),
 		inLanguage: 'es-AR',
 	};
 }

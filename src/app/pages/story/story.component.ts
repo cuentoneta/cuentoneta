@@ -1,5 +1,5 @@
 // Core
-import { Component, computed, DestroyRef, inject, signal, input } from '@angular/core';
+import { Component, computed, effect, inject, signal, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -18,7 +18,7 @@ import { environment } from '../../environments/environment';
 import { Story } from '@models/story.model';
 
 // Services
-import { StoryService } from '../../providers/story.service';
+import { StoryApi } from '../../providers/story-api.interface';
 import { LayoutService } from '../../providers/layout.service';
 
 // Directives
@@ -45,11 +45,6 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 	styles: `
 		@reference '#tailwind-theme';
 
-		:host {
-			@apply grid;
-			@apply md:grid-rows-[8px_1fr];
-		}
-
 		.content {
 			@apply grid grid-cols-1 md:mx-auto md:grid-cols-[286px_1fr] md:gap-x-8;
 		}
@@ -74,27 +69,37 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 		NgIcon,
 	],
 	providers: [provideIcons({ faSolidArrowRightLong }), LayoutService],
+	host: { class: 'grid md:grid-rows-[8px_1fr]' },
 	hostDirectives: [MetaTagsDirective],
 })
 export default class StoryComponent {
 	// Routes
-	readonly appRoutes = AppRoutes;
+	protected readonly appRoutes = AppRoutes;
 
 	// Providers
-	readonly slug = input.required<string>();
-	readonly navigation = input<'author' | 'storylist'>('author');
-	readonly navigationSlug = input<string>();
+	public readonly slug = input.required<string>();
+	public readonly navigation = input<'author' | 'storylist'>('author');
+	public readonly navigationSlug = input<string>();
 
-	private storyService = inject(StoryService);
+	private storyService = inject(StoryApi);
 	private layoutService = inject(LayoutService);
 	private metaTagsDirective = inject(MetaTagsDirective);
 	private schemaOrg = inject(SchemaOrgService);
-	private destroyRef = inject(DestroyRef);
 	private isHeaderVisible$ = inject(LayoutService).isHeaderVisible$.pipe(takeUntilDestroyed());
 
+	// El JSON-LD del Article y el breadcrumb son específicos de la página; se limpian al navegar fuera.
+	// El breadcrumb usa un id por página (no uno compartido) para que el cleanup de la ruta saliente
+	// nunca borre el breadcrumb que ya seteó la ruta entrante durante una navegación.
+	private readonly removeStructuredDataOnDestroy = effect((onCleanup) => {
+		onCleanup(() => {
+			this.schemaOrg.removeJsonLd('article');
+			this.schemaOrg.removeJsonLd('breadcrumb-story');
+		});
+	});
+
 	// Recursos
-	readonly dummyList = Array(10);
-	readonly storyResource = rxResource({
+	protected readonly dummyList = Array(10);
+	private readonly storyResource = rxResource({
 		params: this.slug,
 		stream: ({ params }) =>
 			this.storyService.getBySlug(params).pipe(
@@ -106,17 +111,17 @@ export default class StoryComponent {
 	});
 
 	// Propiedades
-	readonly story = computed(() => this.storyResource.value());
-	readonly sharingRoute = computed(() => `${AppRoutes.Story}/${this.story()?.slug}`);
-	readonly shareContentParams = computed(() => ({
+	protected readonly story = computed(() => this.storyResource.value());
+	protected readonly sharingRoute = computed(() => `${AppRoutes.Story}/${this.story()?.slug}`);
+	protected readonly shareContentParams = computed(() => ({
 		navigationSlug: this.story()?.author.slug ?? '',
 		navigation: this.navigation() ?? 'author',
 	}));
-	readonly shareMessage = computed(
+	protected readonly shareMessage = computed(
 		() =>
 			`Leí "${this.story()?.title}" de ${this.story()?.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`,
 	);
-	readonly navigationParams = computed(() => {
+	protected readonly navigationParams = computed(() => {
 		const navigation = this.navigation() ?? 'author';
 		let navigationSlug = this.navigationSlug();
 
@@ -126,17 +131,9 @@ export default class StoryComponent {
 
 		return { navigation, navigationSlug };
 	});
-	readonly headerPosition = signal('top-header-height');
+	protected readonly headerPosition = signal('top-header-height');
 
 	constructor() {
-		// Los JSON-LD del Article y el breadcrumb son específicos de la página; se limpian al navegar fuera.
-		// El breadcrumb usa un id por página (no uno compartido) para que el cleanup de la ruta saliente
-		// nunca borre el breadcrumb que ya seteó la ruta entrante durante una navegación.
-		this.destroyRef.onDestroy(() => {
-			this.schemaOrg.removeJsonLd('article');
-			this.schemaOrg.removeJsonLd('breadcrumb-story');
-		});
-
 		this.isHeaderVisible$.subscribe((isVisible) => {
 			if (this.layoutService.biggerThan('xs')) {
 				this.headerPosition.set('top-header-height');

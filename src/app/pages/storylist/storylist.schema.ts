@@ -1,5 +1,6 @@
+import { Location } from '@angular/common';
+
 import { type Storylist } from '@models/storylist.model';
-import { normalizeBaseUrl } from '@utils/url.utils';
 import { buildBreadcrumbSchema, SCHEMA_CONTEXT } from '@utils/schema-org.builders';
 import { type JsonLdSchema } from '../../providers/schema-org.service';
 
@@ -8,7 +9,7 @@ import { type JsonLdSchema } from '../../providers/schema-org.service';
  * cuentos que la integran (posición + URL + título), para que los answer engines entiendan la colección.
  */
 export function buildStorylistCollectionSchema(storylist: Storylist, websiteUrl: string): JsonLdSchema {
-	const baseUrl = normalizeBaseUrl(websiteUrl);
+	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	return {
 		'@context': SCHEMA_CONTEXT,
 		'@type': 'CollectionPage',
@@ -30,7 +31,7 @@ export function buildStorylistCollectionSchema(storylist: Storylist, websiteUrl:
 
 /** Construye el `BreadcrumbList` de la página de una storylist: Inicio → storylist. */
 export function buildStorylistBreadcrumb(storylist: Storylist, websiteUrl: string): JsonLdSchema {
-	const baseUrl = normalizeBaseUrl(websiteUrl);
+	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	return buildBreadcrumbSchema([
 		{ name: 'Inicio', url: `${baseUrl}/home` },
 		{ name: storylist.title, url: `${baseUrl}/storylist/${storylist.slug}` },

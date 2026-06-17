@@ -1,5 +1,5 @@
 // Core
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { Router, UrlTree } from '@angular/router';
 import { map, Observable, tap } from 'rxjs';
@@ -27,8 +27,8 @@ import { environment } from '../../environments/environment';
 import { NgxSkeletonLoaderComponent, NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Services
-import { AuthorService } from '../../providers/author.service';
-import { StoryService } from '../../providers/story.service';
+import { AuthorApi } from '../../providers/author-api.interface';
+import { StoryApi } from '../../providers/story-api.interface';
 
 // Componentes
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
@@ -214,30 +214,29 @@ export default class AuthorComponent {
 	private readonly appRoutes = AppRoutes;
 
 	// Route inputs
-	readonly slug = input.required<string>();
-	readonly activeTab = input<'stories' | 'about'>('stories');
+	public readonly slug = input.required<string>();
+	public readonly activeTab = input<'stories' | 'about'>('stories');
 
 	// Providers
-	private authorService = inject(AuthorService);
-	private storyService = inject(StoryService);
+	private authorService = inject(AuthorApi);
+	private storyService = inject(StoryApi);
 	private router = inject(Router);
 
 	// Directives
 	private metaTagsDirective = inject(MetaTagsDirective);
 	private schemaOrg = inject(SchemaOrgService);
-	private destroyRef = inject(DestroyRef);
 
-	constructor() {
-		// Los JSON-LD de Person y breadcrumb son específicos de la página; se limpian al navegar fuera.
-		// El breadcrumb usa un id por página para no pisar el de la ruta entrante durante una navegación.
-		this.destroyRef.onDestroy(() => {
+	// Los JSON-LD de Person y breadcrumb son específicos de la página; se limpian al navegar fuera.
+	// El breadcrumb usa un id por página para no pisar el de la ruta entrante durante una navegación.
+	private readonly removeStructuredDataOnDestroy = effect((onCleanup) => {
+		onCleanup(() => {
 			this.schemaOrg.removeJsonLd('person');
 			this.schemaOrg.removeJsonLd('breadcrumb-author');
 		});
-	}
+	});
 
 	// Recursos
-	readonly authorResource = rxResource({
+	protected readonly authorResource = rxResource({
 		params: this.slug,
 		stream: ({ params }) =>
 			this.author$(params).pipe(
@@ -247,19 +246,19 @@ export default class AuthorComponent {
 			),
 		defaultValue: undefined,
 	});
-	readonly storiesResource = rxResource({
+	protected readonly storiesResource = rxResource({
 		params: this.slug,
 		stream: ({ params }) => this.stories$(params),
 		defaultValue: [],
 	});
 
 	// Propiedades
-	readonly author = computed(() => this.authorResource.value());
-	readonly stories = computed(() => this.storiesResource.value());
-	readonly authorImageUrl = computed(() =>
+	protected readonly author = computed(() => this.authorResource.value());
+	protected readonly stories = computed(() => this.storiesResource.value());
+	protected readonly authorImageUrl = computed(() =>
 		this.author()?.imageUrl ? `${this.author()?.imageUrl}?auto=format` : 'assets/img/default-avatar.jpg',
 	);
-	readonly authorFlagUrl = computed(() => `${this.author()?.nationality.flag}?auto=format`);
+	protected readonly authorFlagUrl = computed(() => `${this.author()?.nationality.flag}?auto=format`);
 
 	private updateMetaTags(author: Author) {
 		this.metaTagsDirective.setTitle(`${author.name}`);

@@ -30,7 +30,7 @@ const FULLY_VISIBLE_RATIO = 0.99;
 @Directive({})
 export class TagsOverflowDirective {
 	/** Tope duro opcional de tags visibles; sin valor, el único límite es el ancho. */
-	readonly maxVisible = input<number>();
+	public readonly maxVisible = input<number>();
 
 	private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 	private readonly renderer = inject(Renderer2);
@@ -44,7 +44,7 @@ export class TagsOverflowDirective {
 	private readonly ready = signal(false);
 
 	/** Cantidad de tags visibles: prefijo que entra, acotado por `maxVisible`. */
-	readonly visibleCount = computed(() => {
+	public readonly visibleCount = computed(() => {
 		const overflowing = this.overflowing();
 		const cap = this.maxVisible() ?? Infinity;
 		let count = 0;
@@ -58,10 +58,10 @@ export class TagsOverflowDirective {
 	});
 
 	/** Cantidad de tags colapsados detrás del contador "+N". */
-	readonly hiddenCount = computed(() => Math.max(0, this.items().length - this.visibleCount()));
+	public readonly hiddenCount = computed(() => Math.max(0, this.items().length - this.visibleCount()));
 
 	/** El host informa el ancho (px) a reservar a la derecha para el contador "+N". */
-	reserveTrailingSpace(px: number): void {
+	public reserveTrailingSpace(px: number): void {
 		this.reservedSpace.set(px);
 	}
 
