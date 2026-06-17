@@ -63,20 +63,20 @@ export class MetaTagsDirective {
 		this.metaTagService.removeTag('name="keywords"');
 	}
 
-	setAuthor(name: string) {
+	public setAuthor(name: string) {
 		this.metaTagService.updateTag({
 			name: 'author',
 			content: name,
 		});
 	}
 
-	removeAuthor() {
+	public removeAuthor() {
 		this.metaTagService.removeTag('name="author"');
 	}
 
 	// Señales E-E-A-T para contenido de tipo artículo (cuentos): fecha de publicación y de
 	// modificación en formato ISO, vía las propiedades og/article.
-	setArticleDates(publishedTime: string, modifiedTime: string) {
+	public setArticleDates(publishedTime: string, modifiedTime: string) {
 		this.metaTagService.updateTag({
 			property: 'article:published_time',
 			content: publishedTime,
@@ -87,7 +87,7 @@ export class MetaTagsDirective {
 		});
 	}
 
-	removeArticleDates() {
+	public removeArticleDates() {
 		this.metaTagService.removeTag('property="article:published_time"');
 		this.metaTagService.removeTag('property="article:modified_time"');
 	}
