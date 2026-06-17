@@ -1,7 +1,8 @@
 <main class="content horizontal-layout-spacing vertical-layout-spacing">
 	<!--
-        H1 de contenido de la home, oculto visualmente (sr-only) para mantener un único H1 por
-        página sin alterar el diseño. #1523 lo reemplazará por una intro visible.
+        H1 de contenido de la home, oculto visualmente (sr-only) para mantener un único H1 por página
+        sin desplazar el hero. El texto introductorio sustantivo va en la sección "Sobre La Cuentoneta"
+        al final del main (contenido indexable para buscadores y answer engines).
     -->
 	<h1 class="sr-only">Cuentos y relatos breves para leer en línea</h1>
 
@@ -27,5 +28,27 @@
 
 	<section class="mb-8">
 		<cuentoneta-collection-teasers-deck [teasers]="collections()" class="flex flex-col gap-8" />
+	</section>
+
+	<!--
+        Intro descriptiva con texto sustantivo y citable, server-rendered (sin @defer), para que
+        buscadores y answer engines tengan contenido indexable más allá de las imágenes del hero.
+    -->
+	<section class="mb-8 flex flex-col gap-8">
+		<h2 class="font-inter text-2xl font-bold">Sobre <em>La Cuentoneta</em></h2>
+
+		<div class="flex flex-col gap-4">
+			<p class="font-inter text-base font-normal">
+				La Cuentoneta es un proyecto abierto, comunitario y sin fines de lucro que busca fomentar y hacer accesible la
+				lectura digital. Publicamos cuentos, poemas y relatos breves organizados en colecciones temáticas —antologías
+				pensadas como las playlists de Spotify o YouTube— para que descubrir y disfrutar literatura se transforme en un
+				proceso simple y entretenido.
+			</p>
+			<p class="font-inter text-base font-normal">
+				Reunimos obras de autores y autoras de distintos géneros, estilos y épocas, con soporte multimedia y foco en la
+				captura de material literario editado con fines educativos y su adaptación a texto accesible. Te invitamos a
+				leer, compartir y aprender con cada historia.
+			</p>
+		</div>
 	</section>
 </main>
