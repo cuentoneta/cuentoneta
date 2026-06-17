@@ -1,6 +1,6 @@
 import { TextBlockContent } from '@models/block-content.model';
 import { Resource } from '@models/resource.model';
-import { DateString } from '@utils/date.utils';
+import { DateString, IsoDateTime } from '@utils/date.utils';
 
 export type AuthorNationality = { country: string; flag: string };
 
@@ -29,6 +29,6 @@ export interface Author extends AuthorBase {
 // La página de perfil necesita las fechas de la ficha (campos de sistema de Sanity) para el
 // JSON-LD `ProfilePage`. No viven en `Author` porque la story embebe un autor que no las usa.
 export interface AuthorProfile extends Author {
-	createdAt: string;
-	updatedAt: string;
+	createdAt: IsoDateTime;
+	updatedAt: IsoDateTime;
 }

@@ -40,7 +40,7 @@ import {
 } from '../sanity/types';
 
 // Tipos de datos
-import { DateString } from '@utils/date.utils';
+import { DateString, IsoDateTime } from '@utils/date.utils';
 
 // Unwrapper de tipos definidos en Array<...>
 type UnwrapArray<A> = A extends unknown[] ? UnwrapArray<A[number]> : A;
@@ -75,8 +75,8 @@ export function mapAuthor(
 export function mapAuthorProfile(rawAuthorData: NonNullable<AuthorBySlugQueryResult>): AuthorProfile {
 	return {
 		...mapAuthor(rawAuthorData),
-		createdAt: rawAuthorData.createdAt,
-		updatedAt: rawAuthorData.updatedAt,
+		createdAt: rawAuthorData.createdAt as IsoDateTime,
+		updatedAt: rawAuthorData.updatedAt as IsoDateTime,
 	};
 }
 type AuthorTeaserForStoriesSubQuery = NonNullable<StorylistQueryResult>['stories'][0]['author'];
