@@ -1,5 +1,6 @@
 import { Directive, effect, inject } from '@angular/core';
 
+import { AppRoutes } from '../../app.routes';
 import { environment } from '../../environments/environment';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 import { SchemaOrgService } from '../../providers/schema-org.service';
@@ -24,7 +25,7 @@ export class StorylistSeoDirective {
 		this.meta.setDescription(
 			'Una storylist en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.',
 		);
-		this.meta.setCanonicalUrl(`${environment.website}/storylist/${storylist.slug}`);
+		this.meta.setCanonicalUrl(`${environment.website}/${AppRoutes.StoryList}/${storylist.slug}`);
 		this.meta.setRobots('index, follow');
 		this.meta.setKeywords(['literatura', 'poemas', 'cuentos', 'textos', storylist.title.toLowerCase()]);
 		this.schemaOrg.setJsonLd('collection', buildStorylistCollectionSchema(storylist, environment.website));
