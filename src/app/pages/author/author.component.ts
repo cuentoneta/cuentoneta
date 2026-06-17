@@ -149,7 +149,7 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 									</div>
 								} @loading (minimum 500ms) {
 									<div class="flex flex-col gap-2">
-										@for (line of [].constructor(10); track $index) {
+										@for (line of biographySkeletonLines; track $index) {
 											<cuentoneta-skeleton appearance="line" class="h-[25px] w-full bg-neutral-300" />
 										}
 									</div>
@@ -168,6 +168,9 @@ export default class AuthorComponent {
 	// Route inputs
 	public readonly slug = input.required<string>();
 	public readonly activeTab = input<'stories' | 'about'>('stories');
+
+	// Cantidad de líneas del skeleton de la biografía mientras carga
+	protected readonly biographySkeletonLines = Array.from({ length: 10 });
 
 	// Providers
 	private authorService = inject(AuthorApi);

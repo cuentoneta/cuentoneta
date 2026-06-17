@@ -45,7 +45,7 @@
 						</div>
 					} @else {
 						<div class="flex flex-col gap-2.5 xs:max-md:col-span-1 md:col-span-6">
-							@for (line of [].constructor(10); track $index) {
+							@for (line of descriptionSkeletonLines; track $index) {
 								<cuentoneta-skeleton appearance="line" class="h-5 w-full bg-neutral-300" />
 							}
 						</div>

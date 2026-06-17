@@ -49,6 +49,9 @@ export default class StorylistComponent {
 	public readonly slug = input.required<string>();
 	public readonly activeTab = input<'stories' | 'about' | string>('stories');
 
+	// Cantidad de líneas del skeleton de la descripción mientras carga
+	protected readonly descriptionSkeletonLines = Array.from({ length: 10 });
+
 	// Providers
 	private metaTagsDirective = inject(MetaTagsDirective);
 	private storylistService = inject(StorylistApi);
