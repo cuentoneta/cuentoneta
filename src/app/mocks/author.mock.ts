@@ -1,6 +1,6 @@
-import { Author, AuthorTeaser } from '@models/author.model';
+import { AuthorProfile, AuthorTeaser } from '@models/author.model';
 
-export const authorMock: Author = {
+export const authorMock: AuthorProfile = {
 	_id: 'author_1',
 	slug: 'francois-onoff',
 	createdAt: '2021-12-28T00:00:00Z',

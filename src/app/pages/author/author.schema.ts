@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 
-import { type Author } from '@models/author.model';
+import { type Author, type AuthorProfile } from '@models/author.model';
 import { buildBreadcrumbSchema, buildPersonSchema } from '@utils/schema-org.builders';
 import { type JsonLdSchema } from '../../providers/schema-org.service';
 
@@ -9,7 +9,7 @@ import { type JsonLdSchema } from '../../providers/schema-org.service';
  * las fechas de la ficha (`dateCreated`/`dateModified`) no son válidas sobre el `Person`; se declaran
  * en el `ProfilePage` que lo envuelve como `mainEntity`. Las fechas de vida van en el `Person`.
  */
-export function buildAuthorProfilePageSchema(author: Author, websiteUrl: string): JsonLdSchema {
+export function buildAuthorProfilePageSchema(author: AuthorProfile, websiteUrl: string): JsonLdSchema {
 	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	const authorUrl = `${baseUrl}/author/${author.slug}`;
 	const person = buildPersonSchema(author, authorUrl);

@@ -75,8 +75,6 @@ export const storyBySlugQuery = defineQuery(`
     'author': author-> {
         _id,
         'slug': slug.current,
-        'createdAt': _createdAt,
-        'updatedAt': _updatedAt,
         name,
         image,
         nationality->,

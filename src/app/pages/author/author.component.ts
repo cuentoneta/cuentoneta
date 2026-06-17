@@ -10,7 +10,7 @@ import { AppRoutes } from '../../app.routes';
 // 3rd party modules
 
 // Modelos
-import { Author } from '@models/author.model';
+import { AuthorProfile } from '@models/author.model';
 import { StoryTeaser } from '@models/story.model';
 
 // Directives
@@ -260,7 +260,7 @@ export default class AuthorComponent {
 	);
 	protected readonly authorFlagUrl = computed(() => `${this.author()?.nationality.flag}?auto=format`);
 
-	private updateMetaTags(author: Author) {
+	private updateMetaTags(author: AuthorProfile) {
 		this.metaTagsDirective.setTitle(`${author.name}`);
 		this.metaTagsDirective.setDescription(`Perfil y obras de ${author.name} para leer en La Cuentoneta.`);
 		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/author/${author.slug}`);

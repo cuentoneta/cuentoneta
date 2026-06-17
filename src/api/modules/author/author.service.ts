@@ -1,20 +1,20 @@
 // Interfaces
-import { Author, AuthorTeaser } from '@models/author.model';
+import { AuthorProfile, AuthorTeaser } from '@models/author.model';
 
 // Funciones de mapeo
-import { mapAuthor, mapAuthorTeaser } from '../../_utils/functions';
+import { mapAuthorProfile, mapAuthorTeaser } from '../../_utils/functions';
 
 // Funciones de repository
 import { fetchAllAuthors, fetchAuthorBySlug } from './author.repository';
 
-export async function getAuthorBySlug(slug: string): Promise<Author> {
+export async function getAuthorBySlug(slug: string): Promise<AuthorProfile> {
 	const result = await fetchAuthorBySlug(slug);
 
 	if (!result) {
 		throw new Error(`Author with slug ${slug} not found.`);
 	}
 
-	return mapAuthor(result);
+	return mapAuthorProfile(result);
 }
 
 export async function getAllAuthors(): Promise<AuthorTeaser[]> {

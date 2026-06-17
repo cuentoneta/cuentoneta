@@ -24,6 +24,11 @@ export interface AuthorTeaser extends AuthorBase {
 export interface Author extends AuthorBase {
 	biography: TextBlockContent[];
 	resources: Resource[];
+}
+
+// La página de perfil necesita las fechas de la ficha (campos de sistema de Sanity) para el
+// JSON-LD `ProfilePage`. No viven en `Author` porque la story embebe un autor que no las usa.
+export interface AuthorProfile extends Author {
 	createdAt: string;
 	updatedAt: string;
 }
