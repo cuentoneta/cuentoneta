@@ -52,6 +52,8 @@ export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>): 
 	return {
 		_id: rawAuthorData._id,
 		slug: rawAuthorData.slug,
+		createdAt: rawAuthorData.createdAt,
+		updatedAt: rawAuthorData.updatedAt,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
 			flag: urlFor(rawAuthorData.nationality.flag),

@@ -24,4 +24,6 @@ export interface AuthorTeaser extends AuthorBase {
 export interface Author extends AuthorBase {
 	biography: TextBlockContent[];
 	resources: Resource[];
+	createdAt: string;
+	updatedAt: string;
 }
