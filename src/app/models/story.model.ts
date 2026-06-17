@@ -24,8 +24,6 @@ export interface Story extends StoryBase {
 	author: Author;
 	epigraphs: Epigraph[];
 	summary: TextBlockContent[];
-	// Fechas ISO para datos estructurados / E-E-A-T. `publishedAt` cae a `_createdAt` si no se cargó
-	// en el CMS; `updatedAt` proviene de `_updatedAt` (sistema). Ver story.query.ts.
 	publishedAt: string;
 	updatedAt: string;
 }

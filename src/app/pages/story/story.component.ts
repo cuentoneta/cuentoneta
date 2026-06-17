@@ -1,5 +1,5 @@
 // Core
-import { Component, computed, DestroyRef, inject, signal, input } from '@angular/core';
+import { Component, computed, effect, inject, signal, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -85,8 +85,11 @@ export default class StoryComponent {
 	private layoutService = inject(LayoutService);
 	private metaTagsDirective = inject(MetaTagsDirective);
 	private schemaOrg = inject(SchemaOrgService);
-	private destroyRef = inject(DestroyRef);
 	private isHeaderVisible$ = inject(LayoutService).isHeaderVisible$.pipe(takeUntilDestroyed());
+
+	private readonly removeArticleSchemaOnDestroy = effect((onCleanup) => {
+		onCleanup(() => this.schemaOrg.removeJsonLd('article'));
+	});
 
 	// Recursos
 	protected readonly dummyList = Array(10);
@@ -125,9 +128,6 @@ export default class StoryComponent {
 	protected readonly headerPosition = signal('top-header-height');
 
 	constructor() {
-		// El JSON-LD del Article es específico de la página; se limpia al navegar fuera del cuento.
-		this.destroyRef.onDestroy(() => this.schemaOrg.removeJsonLd('article'));
-
 		this.isHeaderVisible$.subscribe((isVisible) => {
 			if (this.layoutService.biggerThan('xs')) {
 				this.headerPosition.set('top-header-height');

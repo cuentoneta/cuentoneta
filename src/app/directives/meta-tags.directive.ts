@@ -74,8 +74,9 @@ export class MetaTagsDirective {
 		this.metaTagService.removeTag('name="author"');
 	}
 
-	// Señales E-E-A-T para contenido de tipo artículo (cuentos): fecha de publicación y de
-	// modificación en formato ISO, vía las propiedades og/article.
+	// Fecha de publicación y de última modificación (ISO) vía las propiedades og/article. Son señales
+	// E-E-A-T aplicables a cualquier entidad del sistema modelada como artículo —cuentos, perfiles de
+	// autor (cuándo se creó/actualizó la ficha), etc.—, no solo a cuentos.
 	public setArticleDates(publishedTime: string, modifiedTime: string) {
 		this.metaTagService.updateTag({
 			property: 'article:published_time',
