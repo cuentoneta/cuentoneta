@@ -26,4 +26,4 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CollectionTeaserSkeleton {}
+export class CollectionTeaserSkeletonComponent {}
