@@ -26,7 +26,7 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 // Datos estructurados
 import { SchemaOrgService } from '../../providers/schema-org.service';
-import { buildStoryArticleSchema } from './story.schema';
+import { buildStoryArticleSchema, buildStoryBreadcrumb } from './story.schema';
 
 // Components
 import { StoryNavigationBarComponent } from '@components/story-navigation-bar/story-navigation-bar.component';
@@ -87,8 +87,14 @@ export default class StoryComponent {
 	private schemaOrg = inject(SchemaOrgService);
 	private isHeaderVisible$ = inject(LayoutService).isHeaderVisible$.pipe(takeUntilDestroyed());
 
-	private readonly removeArticleSchemaOnDestroy = effect((onCleanup) => {
-		onCleanup(() => this.schemaOrg.removeJsonLd('article'));
+	// El JSON-LD del Article y el breadcrumb son específicos de la página; se limpian al navegar fuera.
+	// El breadcrumb usa un id por página (no uno compartido) para que el cleanup de la ruta saliente
+	// nunca borre el breadcrumb que ya seteó la ruta entrante durante una navegación.
+	private readonly removeStructuredDataOnDestroy = effect((onCleanup) => {
+		onCleanup(() => {
+			this.schemaOrg.removeJsonLd('article');
+			this.schemaOrg.removeJsonLd('breadcrumb-story');
+		});
 	});
 
 	// Recursos
@@ -155,5 +161,6 @@ export default class StoryComponent {
 		this.metaTagsDirective.setAuthor(story.author.name);
 		this.metaTagsDirective.setArticleDates(story.publishedAt, story.updatedAt);
 		this.schemaOrg.setJsonLd('article', buildStoryArticleSchema(story, environment.website));
+		this.schemaOrg.setJsonLd('breadcrumb-story', buildStoryBreadcrumb(story, environment.website));
 	}
 }

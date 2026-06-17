@@ -1,5 +1,5 @@
 // Core
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, effect, inject, input } from '@angular/core';
 import { tap } from 'rxjs';
 import { rxResource } from '@angular/core/rxjs-interop';
 
@@ -14,6 +14,10 @@ import { StorylistApi } from '../../providers/storylist-api.interface';
 
 // Directives
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+
+// Datos estructurados
+import { SchemaOrgService } from '../../providers/schema-org.service';
+import { buildStorylistBreadcrumb, buildStorylistCollectionSchema } from './storylist.schema';
 
 // Environment
 import { environment } from '../../environments/environment';
@@ -57,6 +61,16 @@ export default class StorylistComponent {
 	// Providers
 	private metaTagsDirective = inject(MetaTagsDirective);
 	private storylistService = inject(StorylistApi);
+	private schemaOrg = inject(SchemaOrgService);
+
+	// Los JSON-LD de CollectionPage y breadcrumb son específicos de la página; se limpian al navegar fuera.
+	// El breadcrumb usa un id por página para no pisar el de la ruta entrante durante una navegación.
+	private readonly removeStructuredDataOnDestroy = effect((onCleanup) => {
+		onCleanup(() => {
+			this.schemaOrg.removeJsonLd('collection');
+			this.schemaOrg.removeJsonLd('breadcrumb-storylist');
+		});
+	});
 
 	// Recursos
 	protected readonly storylistResource = rxResource({
@@ -91,5 +105,7 @@ export default class StorylistComponent {
 		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/storylist/${storylist.slug}`);
 		this.metaTagsDirective.setRobots('index, follow');
 		this.metaTagsDirective.setKeywords(['literatura', 'poemas', 'cuentos', 'textos', storylist.title.toLowerCase()]);
+		this.schemaOrg.setJsonLd('collection', buildStorylistCollectionSchema(storylist, environment.website));
+		this.schemaOrg.setJsonLd('breadcrumb-storylist', buildStorylistBreadcrumb(storylist, environment.website));
 	}
 }

@@ -1,26 +1,10 @@
 import { Location } from '@angular/common';
 
 import { type Story } from '@models/story.model';
+import { buildBreadcrumbSchema, buildPersonSchema } from '@utils/schema-org.builders';
 import { type JsonLdSchema } from '../../providers/schema-org.service';
 
-const SCHEMA_CONTEXT = 'https://schema.org';
 const PUBLISHER_NAME = 'La Cuentoneta';
-
-function buildAuthorPerson(story: Story, baseUrl: string): JsonLdSchema {
-	const person: JsonLdSchema = {
-		'@type': 'Person',
-		name: story.author.name,
-		url: `${baseUrl}/author/${story.author.slug}`,
-	};
-	if (story.author.imageUrl) {
-		person['image'] = story.author.imageUrl;
-	}
-	const sameAs = story.author.resources.map((resource) => resource.url).filter((url) => url.length > 0);
-	if (sameAs.length > 0) {
-		person['sameAs'] = sameAs;
-	}
-	return person;
-}
 
 /**
  * Construye el JSON-LD `Article` (+ `Person` autor) de una página de cuento.
@@ -32,13 +16,13 @@ function buildAuthorPerson(story: Story, baseUrl: string): JsonLdSchema {
 export function buildStoryArticleSchema(story: Story, websiteUrl: string): JsonLdSchema {
 	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	return {
-		'@context': SCHEMA_CONTEXT,
+		'@context': 'https://schema.org',
 		'@type': 'Article',
 		headline: story.title,
 		inLanguage: 'es-AR',
 		datePublished: story.publishedAt,
 		dateModified: story.updatedAt,
-		author: buildAuthorPerson(story, baseUrl),
+		author: buildPersonSchema(story.author, `${baseUrl}/author/${story.author.slug}`),
 		publisher: {
 			'@type': 'Organization',
 			name: PUBLISHER_NAME,
@@ -47,4 +31,14 @@ export function buildStoryArticleSchema(story: Story, websiteUrl: string): JsonL
 		},
 		mainEntityOfPage: `${baseUrl}/story/${story.slug}`,
 	};
+}
+
+/** Construye el `BreadcrumbList` de la página de un cuento: Inicio → Cuentos → cuento. */
+export function buildStoryBreadcrumb(story: Story, websiteUrl: string): JsonLdSchema {
+	const baseUrl = Location.stripTrailingSlash(websiteUrl);
+	return buildBreadcrumbSchema([
+		{ name: 'Inicio', url: `${baseUrl}/home` },
+		{ name: 'Cuentos', url: `${baseUrl}/story` },
+		{ name: story.title, url: `${baseUrl}/story/${story.slug}` },
+	]);
 }

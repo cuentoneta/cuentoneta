@@ -42,6 +42,17 @@ describe('SchemaOrgService', () => {
 		expect(document.head.querySelectorAll('script[data-schema-id]')).toHaveLength(2);
 	});
 
+	it('should not let one page cleanup remove another page block (per-page ids avoid the navigation race)', () => {
+		// Navegación A→B: la ruta entrante setea su breadcrumb (id propio) antes de que la saliente
+		// se destruya; el cleanup de la saliente solo borra el suyo, nunca el de la entrante.
+		service.setJsonLd('breadcrumb-story', { '@type': 'BreadcrumbList' });
+		service.setJsonLd('breadcrumb-author', { '@type': 'BreadcrumbList' });
+		service.removeJsonLd('breadcrumb-story');
+
+		expect(scriptFor('breadcrumb-author')).not.toBeNull();
+		expect(scriptFor('breadcrumb-story')).toBeNull();
+	});
+
 	it('should remove the script for the given id', () => {
 		service.setJsonLd('organization', { '@type': 'Organization' });
 		service.removeJsonLd('organization');
