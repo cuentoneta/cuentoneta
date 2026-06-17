@@ -14,6 +14,8 @@ import { Story } from '@models/story.model';
 import StoryComponent from './story.component';
 import { storyMock } from '@mocks/story.mock';
 import { provideStoryApiMock } from '../../providers/story.mock';
+import { InMemoryLayoutService } from '../../providers/layout.mock';
+import { LayoutService } from '../../providers/layout.service';
 
 describe('StoryComponent', () => {
 	const setup = async () => {
@@ -38,6 +40,65 @@ describe('StoryComponent', () => {
 	it('should create', async () => {
 		const view = setup();
 		expect(view).toBeTruthy();
+	});
+});
+
+describe('StoryComponent - headerPosition', () => {
+	let mockLayoutService: InMemoryLayoutService;
+
+	const setup = async () => {
+		mockLayoutService = new InMemoryLayoutService();
+		const view = await render(StoryComponent, {
+			componentImports: [
+				CommonModule,
+				HttpClientTestingModule,
+				NgForOf,
+				NgIf,
+				NgOptimizedImage,
+				MockBioSummaryCardComponent,
+				MockShareContentComponent,
+				MockStoryNavigationBarComponent,
+			],
+			componentProviders: [{ provide: LayoutService, useValue: mockLayoutService }],
+			providers: [provideStoryApiMock()],
+			inputs: {
+				slug: storyMock.slug,
+			},
+		});
+		return view.fixture.componentInstance as unknown as { headerPosition: () => string };
+	};
+
+	it('derives top-header-height when viewport is larger than xs (covers SSR, which fixes viewport to md)', async () => {
+		const { headerPosition } = await setup();
+		mockLayoutService.setViewport('lg');
+
+		expect(headerPosition()).toBe('top-header-height');
+	});
+
+	it('derives top-header-height on xs while the header is visible (initial state before any scroll)', async () => {
+		const { headerPosition } = await setup();
+		mockLayoutService.setViewport('xs');
+
+		expect(headerPosition()).toBe('top-header-height');
+	});
+
+	it('derives top-0 on xs when the header is hidden after scrolling down', async () => {
+		const { headerPosition } = await setup();
+		mockLayoutService.setViewport('xs');
+		mockLayoutService.isHeaderVisible.set(false);
+
+		expect(headerPosition()).toBe('top-0');
+	});
+
+	it('recomputes to top-header-height when viewport grows past xs while the header is hidden', async () => {
+		const { headerPosition } = await setup();
+		mockLayoutService.setViewport('xs');
+		mockLayoutService.isHeaderVisible.set(false);
+		expect(headerPosition()).toBe('top-0');
+
+		mockLayoutService.setViewport('lg');
+
+		expect(headerPosition()).toBe('top-header-height');
 	});
 });
 
