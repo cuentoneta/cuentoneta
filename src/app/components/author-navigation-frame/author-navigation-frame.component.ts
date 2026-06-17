@@ -5,7 +5,7 @@ import { Component, computed, effect, inject } from '@angular/core';
 import { AppRoutes } from '../../app.routes';
 
 // Providers
-import { StoryService } from '../../providers/story.service';
+import { StoryApi } from '../../providers/story-api.interface';
 
 // Componentes
 import { NavigationFrameComponent } from '@models/navigation-frame.component';
@@ -29,10 +29,10 @@ import { rxResource } from '@angular/core/rxjs-interop';
 	}`,
 })
 export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
-	readonly appRoutes = AppRoutes;
+	private readonly appRoutes = AppRoutes;
 
 	// Providers
-	private storyService = inject(StoryService);
+	private storyService = inject(StoryApi);
 
 	// Recursos
 	private readonly storiesResource = rxResource({
@@ -42,8 +42,8 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 	});
 
 	// Propiedades
-	readonly stories = computed(() => this.storiesResource.value());
-	readonly authorSlug = computed(() => this.navigationSlug() ?? '');
+	protected readonly stories = computed(() => this.storiesResource.value());
+	protected readonly authorSlug = computed(() => this.navigationSlug() ?? '');
 
 	constructor() {
 		super();

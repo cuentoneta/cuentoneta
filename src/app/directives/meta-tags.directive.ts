@@ -1,4 +1,4 @@
-import { Directive, inject, PLATFORM_ID, DOCUMENT, OnDestroy } from '@angular/core';
+import { Directive, effect, inject, PLATFORM_ID, DOCUMENT } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { isPlatformBrowser } from '@angular/common';
 
@@ -6,13 +6,23 @@ import { isPlatformBrowser } from '@angular/common';
 	selector: '[cuentonetaMetaTags]',
 	standalone: true,
 })
-export class MetaTagsDirective implements OnDestroy {
+export class MetaTagsDirective {
 	private document = inject(DOCUMENT);
 	private metaTagService = inject(Meta);
 	private platformId = inject(PLATFORM_ID);
 	private titleService = inject(Title);
 
-	setTitle(title: string, addPrefix: boolean = true) {
+	private readonly resetTagsOnDestroy = effect((onCleanup) => {
+		onCleanup(() => {
+			this.removeKeywords();
+			this.removeCanonicalUrl();
+			this.removeRobots();
+			this.removeAuthor();
+			this.removeArticleDates();
+		});
+	});
+
+	public setTitle(title: string, addPrefix: boolean = true) {
 		const platformTitle = isPlatformBrowser(this.platformId) && addPrefix ? `${title} | La Cuentoneta` : title;
 		this.titleService.setTitle(`${platformTitle}`);
 		this.metaTagService.updateTag({
@@ -26,7 +36,7 @@ export class MetaTagsDirective implements OnDestroy {
 		});
 	}
 
-	setDescription(content: string) {
+	public setDescription(content: string) {
 		this.metaTagService.updateTag({
 			name: 'description',
 			content: content,
@@ -41,7 +51,7 @@ export class MetaTagsDirective implements OnDestroy {
 		});
 	}
 
-	setKeywords(keywords: string | string[]) {
+	public setKeywords(keywords: string | string[]) {
 		const keywordsString = Array.isArray(keywords) ? keywords.join(', ') : keywords;
 		this.metaTagService.updateTag({
 			name: 'keywords',
@@ -49,7 +59,7 @@ export class MetaTagsDirective implements OnDestroy {
 		});
 	}
 
-	removeKeywords() {
+	public removeKeywords() {
 		this.metaTagService.removeTag('name="keywords"');
 	}
 
@@ -82,21 +92,21 @@ export class MetaTagsDirective implements OnDestroy {
 		this.metaTagService.removeTag('property="article:modified_time"');
 	}
 
-	setDefault() {
+	public setDefault() {
 		this.setTitle('La Cuentoneta', false);
 		this.setDefaultDescription();
 		this.setDefaultKeywords();
 	}
 
-	setDefaultDescription() {
+	public setDefaultDescription() {
 		this.setDescription('Una iniciativa que busca fomentar y hacer accesible la lectura digital.');
 	}
 
-	setDefaultKeywords() {
+	public setDefaultKeywords() {
 		this.setKeywords(['cuentos', 'literatura', 'poemas', 'podcast', 'narraciones']);
 	}
 
-	setCanonicalUrl(url: string) {
+	public setCanonicalUrl(url: string) {
 		const head = this.document.getElementsByTagName('head')[0];
 		let element: HTMLLinkElement | null = this.document.querySelector(`link[rel='canonical']`) || null;
 		if (!element) {
@@ -107,7 +117,7 @@ export class MetaTagsDirective implements OnDestroy {
 		element.setAttribute('href', url);
 	}
 
-	removeCanonicalUrl() {
+	public removeCanonicalUrl() {
 		const element = this.document.querySelector(`link[rel='canonical']`);
 		if (element) {
 			element.remove();
@@ -119,7 +129,9 @@ export class MetaTagsDirective implements OnDestroy {
 	// buscadores y answer engines. Coincide con el fallback estático de indexFile.html.
 	private readonly indexableRobots = 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
 
-	setRobots(content: 'index, follow' | 'noindex, nofollow' | 'index, nofollow' | 'noindex, follow' | 'all' | 'none') {
+	public setRobots(
+		content: 'index, follow' | 'noindex, nofollow' | 'index, nofollow' | 'noindex, follow' | 'all' | 'none',
+	) {
 		const value = content === 'index, follow' || content === 'all' ? this.indexableRobots : content;
 		this.metaTagService.updateTag({
 			name: 'robots',
@@ -127,15 +139,7 @@ export class MetaTagsDirective implements OnDestroy {
 		});
 	}
 
-	removeRobots() {
+	public removeRobots() {
 		this.metaTagService.removeTag('name="robots"');
-	}
-
-	ngOnDestroy() {
-		this.removeKeywords();
-		this.removeCanonicalUrl();
-		this.removeRobots();
-		this.removeAuthor();
-		this.removeArticleDates();
 	}
 }

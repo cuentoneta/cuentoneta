@@ -30,7 +30,7 @@ const MEDIA_WIDGET_MAP: Record<MediaTypeKey, Type<MediaTypeWidgetComponents>> = 
 	},
 })
 export class MediaResourceComponent {
-	readonly mediaResources = input.required({
+	public readonly mediaResources = input.required({
 		transform: (media: Media[]) => media.map((m) => this.mediaTypesAdapter(m)),
 	});
 

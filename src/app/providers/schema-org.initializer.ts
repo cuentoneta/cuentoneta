@@ -9,12 +9,21 @@ const ORGANIZATION_NAME = 'La Cuentoneta';
 const ORGANIZATION_DESCRIPTION =
 	'Proyecto abierto, comunitario y sin fines de lucro que fomenta y hace accesible la lectura digital, ' +
 	'publicando relatos breves en storylists temáticas.';
+
 // URLs canónicas de los perfiles, alineadas con las que renderiza el footer (footer.component.ts).
 const SOCIAL_PROFILES = [
 	'https://twitter.com/cuentoneta',
 	'https://www.instagram.com/cuentoneta',
 	'https://www.facebook.com/cuentoneta',
 ];
+
+/**
+ * `environment.website` llega con barra final en producción (`https://host/`) y como `/` en dev,
+ * así que la recortamos antes de concatenar para no generar dobles slashes en las URLs del schema.
+ */
+function normalizeBaseUrl(url: string): string {
+	return url.replace(/\/+$/, '');
+}
 
 /** Construye el JSON-LD de la entidad `Organization` del sitio. */
 export function buildOrganizationSchema(websiteUrl: string): JsonLdSchema {

@@ -5,6 +5,13 @@ import { audioRecordingMock } from '@mocks/audio-recording.mock';
 const meta: Meta<AudioRecordingWidgetComponent> = {
 	title: 'Widgets/AudioRecording',
 	component: AudioRecordingWidgetComponent,
+	parameters: {
+		docs: {
+			canvas: {
+				sourceState: 'shown',
+			},
+		},
+	},
 	argTypes: {
 		media: {
 			description: 'Audio recording media object containing title, description, and audio URL',

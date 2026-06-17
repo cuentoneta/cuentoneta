@@ -37,6 +37,9 @@ const meta: Meta<AuthorTeaserV3Component> = {
 	],
 	parameters: {
 		docs: {
+			canvas: {
+				sourceState: 'shown',
+			},
 			description: {
 				component: `<div>
 					<p>El componente **AuthorTeaserV3Component** muestra una vista previa de un autor enlazada a su perfil,

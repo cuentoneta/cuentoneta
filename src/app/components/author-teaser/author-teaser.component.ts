@@ -60,19 +60,19 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 	</a>`,
 })
 export class AuthorTeaserComponent {
-	readonly author = input.required<Omit<Author, 'biography'>>();
-	readonly variant = input<'sm' | 'md'>('sm');
+	public readonly author = input.required<Omit<Author, 'biography'>>();
+	public readonly variant = input<'sm' | 'md'>('sm');
 
-	readonly imageSize = computed(() => (this.variant() === 'sm' ? 40 : 64));
+	protected readonly imageSize = computed(() => (this.variant() === 'sm' ? 40 : 64));
 
 	// Para un mejor scaling, a cargo del browser, se obtiene una imagen del 1.5x el tamaño final renderizado
-	readonly authorImageUrl = computed(() =>
+	protected readonly authorImageUrl = computed(() =>
 		this.author().imageUrl
 			? `${this.author().imageUrl}?h=${this.imageSize() * 1.5}&w=${this.imageSize() * 1.5}&auto=format`
 			: 'assets/img/default-avatar.jpg',
 	);
 
-	readonly authorFlagUrl = computed(
+	protected readonly authorFlagUrl = computed(
 		() => `${this.author().nationality.flag}?h=${this.flagImageSize.height}&w=${this.flagImageSize.width}&auto=format`,
 	);
 

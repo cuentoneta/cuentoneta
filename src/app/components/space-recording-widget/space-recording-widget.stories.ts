@@ -11,6 +11,13 @@ const meta: Meta<SpaceRecordingWidgetComponent> = {
 			imports: [CommonModule, NgOptimizedImage],
 		}),
 	],
+	parameters: {
+		docs: {
+			canvas: {
+				sourceState: 'shown',
+			},
+		},
+	},
 	argTypes: {
 		media: {
 			description: 'Space recording media object containing Twitter/X Space data with metadata',

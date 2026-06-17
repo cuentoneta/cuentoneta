@@ -9,6 +9,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 @Component({
 	selector: 'cuentoneta-author-teaser-v3-skeleton',
 	imports: [NgxSkeletonLoaderModule],
+	host: { class: 'block w-full' },
 	template: `
 		<article class="flex items-start gap-4">
 			<ngx-skeleton-loader
@@ -49,10 +50,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 	`,
 	styles: `
 		@reference '#tailwind-theme';
-
-		:host {
-			@apply block w-full;
-		}
 
 		:host ::ng-deep .avatar-skeleton .skeleton-loader,
 		:host ::ng-deep .name-skeleton .skeleton-loader,

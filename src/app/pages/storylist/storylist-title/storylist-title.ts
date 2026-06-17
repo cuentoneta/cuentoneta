@@ -28,5 +28,5 @@ import { StorylistTitleSkeleton } from './storylist-title-skeleton';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StorylistTitle {
-	readonly storylist = input<Storylist>();
+	public readonly storylist = input<Storylist>();
 }

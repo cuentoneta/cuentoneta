@@ -5,11 +5,11 @@ import { storyMock } from '../../mocks/story.mock';
 import { faBrandFacebook } from '@ng-icons/font-awesome/brands';
 
 class MockSharingPlatform implements SharingPlatform {
-	name = 'MySpace';
-	icon = { faBrandFacebook };
-	platformApiUrl = `https://www.facebook.com/share.php`;
+	public name = 'MySpace';
+	public icon = { faBrandFacebook };
+	public platformApiUrl = `https://www.facebook.com/share.php`;
 
-	generateSharingUrl(appRoute: string, urlParams: string): string {
+	public generateSharingUrl(appRoute: string, urlParams: string): string {
 		const url = encodeURIComponent(`http://localhost:4200/${appRoute}?${urlParams}`);
 		return `${this.platformApiUrl}?u=${url}`;
 	}

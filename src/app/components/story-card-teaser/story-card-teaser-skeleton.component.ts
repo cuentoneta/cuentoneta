@@ -5,6 +5,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 @Component({
 	selector: 'cuentoneta-story-card-teaser-skeleton',
 	imports: [NgxSkeletonLoaderModule],
+	host: { class: 'w-full' },
 	template: `<article class="flex gap-4">
 		@if (order()) {
 			<ngx-skeleton-loader
@@ -99,10 +100,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 	styles: `
 		@reference '#tailwind-theme';
 
-		:host {
-			@apply w-full;
-		}
-
 		:host ::ng-deep .order-skeleton .skeleton-loader {
 			@apply bg-brand-300;
 		}
@@ -115,11 +112,11 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 })
 export class StoryCardTeaserSkeletonComponent {
 	// Inputs
-	readonly order = input<number>();
-	readonly showAuthor = input<boolean>(false);
-	readonly showExcerpt = input<boolean>(false);
-	readonly excerptLines = input<number>(3);
+	public readonly order = input<number>();
+	public readonly showAuthor = input<boolean>(false);
+	public readonly showExcerpt = input<boolean>(false);
+	public readonly excerptLines = input<number>(3);
 
 	// Usado de auxiliar para iterar a través de la cantidad de líneas del extracto de texto
-	readonly excerptArrayLines = computed(() => Array(this.excerptLines()).fill(0));
+	protected readonly excerptArrayLines = computed(() => Array(this.excerptLines()).fill(0));
 }

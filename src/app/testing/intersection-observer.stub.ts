@@ -12,16 +12,16 @@ class IntersectionObserverStub {
 		callback = cb;
 		options = init;
 	}
-	observe(): void {
+	public observe(): void {
 		return;
 	}
-	unobserve(): void {
+	public unobserve(): void {
 		return;
 	}
-	disconnect(): void {
+	public disconnect(): void {
 		return;
 	}
-	takeRecords(): IntersectionObserverEntry[] {
+	public takeRecords(): IntersectionObserverEntry[] {
 		return [];
 	}
 }

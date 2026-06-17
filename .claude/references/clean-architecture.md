@@ -106,7 +106,11 @@ La interfaz lleva el **nombre limpio** (la responsabilidad), y la **implementaci
 | API de storylists | `StorylistApi`                      | `HttpStorylistApi` | `InMemoryStorylistApi` |
 
 - Prefijo **`Http*`** para implementaciones de servicios de API basadas en HTTP.
-- Los tokens son `InjectionToken` planos (sin `providedIn`/`factory`), cableados vía funciones `provideX()` (en migración — ver #1499).
+- Los tokens son `InjectionToken` planos (sin `providedIn`/`factory`), cableados vía `provide<X>Api()` (real) y `provide<X>ApiMock()` (doble) con `makeEnvironmentProviders`.
+- **Archivos (3 por API provider):**
+  - **`<dominio>-api.interface.ts`** — la interfaz `<X>Api` + el `InjectionToken`. El sufijo **`-api`** distingue el archivo de una interfaz del **modelo de dominio**: `author-api.interface.ts` exporta `AuthorApi`, no una interfaz del agregado `Author`.
+  - `<dominio>.provider.ts` — `Http<X>Api implements <X>Api` + `provide<X>Api()`.
+  - `<dominio>.mock.ts` — `InMemory<X>Api` + `provide<X>ApiMock()`.
 
 **Resumen de reglas:**
 

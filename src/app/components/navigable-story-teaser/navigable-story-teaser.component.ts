@@ -45,8 +45,8 @@ import { RouterLink } from '@angular/router';
 	`,
 })
 export class NavigableStoryTeaserComponent {
-	readonly story = input.required<StoryNavigationTeaser>();
-	readonly selected = input<boolean>();
-	readonly authorSlug = input.required<string>();
+	public readonly story = input.required<StoryNavigationTeaser>();
+	public readonly selected = input<boolean>();
+	public readonly authorSlug = input.required<string>();
 	protected readonly appRoutes = AppRoutes;
 }
