@@ -1,4 +1,4 @@
-import { spyOn } from '@test-utils';
+import { clearAllMocks, spyOn } from '@test-utils';
 import { TestBed } from '@angular/core/testing';
 import { DOCUMENT } from '@angular/common';
 import { signal } from '@angular/core';
@@ -18,6 +18,7 @@ describe('StorylistSeoDirective', () => {
 	}
 
 	beforeEach(() => {
+		clearAllMocks();
 		storylistSignal.set(undefined);
 		TestBed.configureTestingModule({
 			providers: [

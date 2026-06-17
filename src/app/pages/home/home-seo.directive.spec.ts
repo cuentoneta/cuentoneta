@@ -1,4 +1,4 @@
-import { spyOn } from '@test-utils';
+import { clearAllMocks, spyOn } from '@test-utils';
 import { TestBed } from '@angular/core/testing';
 
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
@@ -8,6 +8,7 @@ describe('HomeSeoDirective', () => {
 	let meta: MetaTagsDirective;
 
 	beforeEach(() => {
+		clearAllMocks();
 		TestBed.configureTestingModule({
 			providers: [HomeSeoDirective, MetaTagsDirective],
 		});
