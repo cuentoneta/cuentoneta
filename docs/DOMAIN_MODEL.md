@@ -155,6 +155,8 @@ interface Story {
 	approximateReadingTime: number; // Minutos estimados de lectura (>= 1)
 	badLanguage?: boolean; // Advertencia de lenguaje explícito
 	originalPublication: string; // Atribución/publicación original
+	publishedAt: string; // Fecha ISO de publicación en la plataforma (fallback a _createdAt). Datos estructurados/E-E-A-T
+	updatedAt: string; // Fecha ISO de última modificación (_updatedAt de Sanity)
 
 	// Relaciones
 	author: Author; // Autor de la historia (requerido)

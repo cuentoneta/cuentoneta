@@ -351,4 +351,69 @@ describe('MetaTagsDirective', () => {
 			expect(removeSpy).toHaveBeenCalledWith('name="keywords"');
 		});
 	});
+
+	describe('setAuthor', () => {
+		it('should set the author meta tag', () => {
+			const metaSpy = spyOn(metaService, 'updateTag');
+
+			directive.setAuthor('François Onoff');
+
+			expect(metaSpy).toHaveBeenCalledWith({ name: 'author', content: 'François Onoff' });
+		});
+	});
+
+	describe('removeAuthor', () => {
+		it('should remove the author meta tag', () => {
+			const metaSpy = spyOn(metaService, 'removeTag');
+
+			directive.removeAuthor();
+
+			expect(metaSpy).toHaveBeenCalledWith('name="author"');
+		});
+	});
+
+	describe('setArticleDates', () => {
+		it('should set article published and modified time meta tags', () => {
+			const metaSpy = spyOn(metaService, 'updateTag');
+
+			directive.setArticleDates('2024-03-15', '2024-05-20T10:30:00Z');
+
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'article:published_time', content: '2024-03-15' });
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'article:modified_time', content: '2024-05-20T10:30:00Z' });
+		});
+	});
+
+	describe('removeArticleDates', () => {
+		it('should remove both article date meta tags', () => {
+			const metaSpy = spyOn(metaService, 'removeTag');
+
+			directive.removeArticleDates();
+
+			expect(metaSpy).toHaveBeenCalledWith('property="article:published_time"');
+			expect(metaSpy).toHaveBeenCalledWith('property="article:modified_time"');
+		});
+	});
+
+	describe('reset on destroy', () => {
+		it('should clean up every per-page tag (keywords, robots, author, article dates and canonical) when destroyed', () => {
+			const removeSpy = spyOn(metaService, 'removeTag');
+			// El canonical no se limpia con removeTag (quita un <link>): lo seteamos para verificar su remoción.
+			directive.setCanonicalUrl(`${BASE_URL}/home`);
+			expect(document.querySelector(`link[rel='canonical']`)).not.toBeNull();
+
+			// La limpieza vive en un effect con onCleanup: se corre el effect y luego se destruye el
+			// contexto de inyección del directive para disparar la limpieza.
+			TestBed.tick();
+			TestBed.resetTestingModule();
+
+			// Meta tags por página que la limpieza remueve vía Meta.removeTag.
+			expect(removeSpy).toHaveBeenCalledWith('name="keywords"');
+			expect(removeSpy).toHaveBeenCalledWith('name="robots"');
+			expect(removeSpy).toHaveBeenCalledWith('name="author"');
+			expect(removeSpy).toHaveBeenCalledWith('property="article:published_time"');
+			expect(removeSpy).toHaveBeenCalledWith('property="article:modified_time"');
+			// El <link rel="canonical"> se quita del head.
+			expect(document.querySelector(`link[rel='canonical']`)).toBeNull();
+		});
+	});
 });

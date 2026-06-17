@@ -24,6 +24,8 @@ export interface Story extends StoryBase {
 	author: Author;
 	epigraphs: Epigraph[];
 	summary: TextBlockContent[];
+	publishedAt: string;
+	updatedAt: string;
 }
 
 export interface StoryNavigationTeaser extends StoryBase {

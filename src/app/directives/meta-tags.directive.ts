@@ -17,6 +17,8 @@ export class MetaTagsDirective {
 			this.removeKeywords();
 			this.removeCanonicalUrl();
 			this.removeRobots();
+			this.removeAuthor();
+			this.removeArticleDates();
 		});
 	});
 
@@ -59,6 +61,36 @@ export class MetaTagsDirective {
 
 	public removeKeywords() {
 		this.metaTagService.removeTag('name="keywords"');
+	}
+
+	public setAuthor(name: string) {
+		this.metaTagService.updateTag({
+			name: 'author',
+			content: name,
+		});
+	}
+
+	public removeAuthor() {
+		this.metaTagService.removeTag('name="author"');
+	}
+
+	// Fecha de publicación y de última modificación (ISO) vía las propiedades og/article. Son señales
+	// E-E-A-T aplicables a cualquier entidad del sistema modelada como artículo —cuentos, perfiles de
+	// autor (cuándo se creó/actualizó la ficha), etc.—, no solo a cuentos.
+	public setArticleDates(publishedTime: string, modifiedTime: string) {
+		this.metaTagService.updateTag({
+			property: 'article:published_time',
+			content: publishedTime,
+		});
+		this.metaTagService.updateTag({
+			property: 'article:modified_time',
+			content: modifiedTime,
+		});
+	}
+
+	public removeArticleDates() {
+		this.metaTagService.removeTag('property="article:published_time"');
+		this.metaTagService.removeTag('property="article:modified_time"');
 	}
 
 	public setDefault() {
