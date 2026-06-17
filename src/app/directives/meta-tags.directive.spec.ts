@@ -56,6 +56,19 @@ describe('MetaTagsDirective', () => {
 		});
 	});
 
+	describe('removeTitle', () => {
+		it('should clear the document title and remove twitter/og title tags', () => {
+			const titleSpy = spyOn(titleService, 'setTitle');
+			const metaSpy = spyOn(metaService, 'removeTag');
+
+			directive.removeTitle();
+
+			expect(titleSpy).toHaveBeenCalledWith('');
+			expect(metaSpy).toHaveBeenCalledWith('name="twitter:title"');
+			expect(metaSpy).toHaveBeenCalledWith('property="og:title"');
+		});
+	});
+
 	describe('setDescription', () => {
 		it('should set description meta tags', () => {
 			const metaSpy = spyOn(metaService, 'updateTag');
@@ -74,6 +87,18 @@ describe('MetaTagsDirective', () => {
 				property: 'og:description',
 				content: 'Test description',
 			});
+		});
+	});
+
+	describe('removeDescription', () => {
+		it('should remove description, twitter and og description tags', () => {
+			const metaSpy = spyOn(metaService, 'removeTag');
+
+			directive.removeDescription();
+
+			expect(metaSpy).toHaveBeenCalledWith('name="description"');
+			expect(metaSpy).toHaveBeenCalledWith('name="twitter:description"');
+			expect(metaSpy).toHaveBeenCalledWith('property="og:description"');
 		});
 	});
 
@@ -395,7 +420,7 @@ describe('MetaTagsDirective', () => {
 	});
 
 	describe('reset on destroy', () => {
-		it('should clean up every per-page tag (keywords, robots, author, article dates and canonical) when destroyed', () => {
+		it('should clean up every per-page tag (title, description, keywords, robots, author, article dates and canonical) when destroyed', () => {
 			const removeSpy = spyOn(metaService, 'removeTag');
 			// El canonical no se limpia con removeTag (quita un <link>): lo seteamos para verificar su remoción.
 			directive.setCanonicalUrl(`${BASE_URL}/home`);
@@ -407,6 +432,11 @@ describe('MetaTagsDirective', () => {
 			TestBed.resetTestingModule();
 
 			// Meta tags por página que la limpieza remueve vía Meta.removeTag.
+			expect(removeSpy).toHaveBeenCalledWith('name="twitter:title"');
+			expect(removeSpy).toHaveBeenCalledWith('property="og:title"');
+			expect(removeSpy).toHaveBeenCalledWith('name="description"');
+			expect(removeSpy).toHaveBeenCalledWith('name="twitter:description"');
+			expect(removeSpy).toHaveBeenCalledWith('property="og:description"');
 			expect(removeSpy).toHaveBeenCalledWith('name="keywords"');
 			expect(removeSpy).toHaveBeenCalledWith('name="robots"');
 			expect(removeSpy).toHaveBeenCalledWith('name="author"');

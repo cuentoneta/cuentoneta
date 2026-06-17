@@ -14,6 +14,8 @@ export class MetaTagsDirective {
 
 	private readonly resetTagsOnDestroy = effect((onCleanup) => {
 		onCleanup(() => {
+			this.removeTitle();
+			this.removeDescription();
 			this.removeKeywords();
 			this.removeCanonicalUrl();
 			this.removeRobots();
@@ -36,6 +38,12 @@ export class MetaTagsDirective {
 		});
 	}
 
+	public removeTitle() {
+		this.titleService.setTitle('');
+		this.metaTagService.removeTag('name="twitter:title"');
+		this.metaTagService.removeTag('property="og:title"');
+	}
+
 	public setDescription(content: string) {
 		this.metaTagService.updateTag({
 			name: 'description',
@@ -49,6 +57,12 @@ export class MetaTagsDirective {
 			property: 'og:description',
 			content: content,
 		});
+	}
+
+	public removeDescription() {
+		this.metaTagService.removeTag('name="description"');
+		this.metaTagService.removeTag('name="twitter:description"');
+		this.metaTagService.removeTag('property="og:description"');
 	}
 
 	public setKeywords(keywords: string | string[]) {
