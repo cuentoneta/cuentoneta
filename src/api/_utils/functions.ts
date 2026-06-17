@@ -10,7 +10,7 @@ import { mapMediaSources, mapMediaSourcesTeasers } from './media-sources.functio
 import { createImageUrlBuilder, SanityImageSource } from '@sanity/image-url';
 
 // Modelos
-import { Author, AuthorTeaser } from '@models/author.model';
+import { Author, AuthorProfile, AuthorTeaser } from '@models/author.model';
 import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
 import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
 import { StorylistTeaser } from '@models/storylist.model';
@@ -40,12 +40,16 @@ import {
 } from '../sanity/types';
 
 // Tipos de datos
-import { DateString } from '@utils/date.utils';
+import { DateString, IsoDateTime } from '@utils/date.utils';
 
 // Unwrapper de tipos definidos en Array<...>
 type UnwrapArray<A> = A extends unknown[] ? UnwrapArray<A[number]> : A;
 
-export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>): Author {
+// Acepta el autor crudo sin los timestamps de ficha (los proyecta solo `authorBySlugQuery`, no el
+// autor embebido en `storyBySlugQuery`), para que ambos orígenes compartan este mapper de dominio.
+export function mapAuthor(
+	rawAuthorData: Omit<NonNullable<AuthorBySlugQueryResult>, 'createdAt' | 'updatedAt'>,
+): Author {
 	const resources = mapResources(rawAuthorData.resources);
 	const biography = mapAuthorBiography(rawAuthorData.biography);
 
@@ -64,6 +68,15 @@ export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>): 
 		diedOn: rawAuthorData.diedOn ? (rawAuthorData.diedOn as DateString) : undefined,
 		bornOnYear: rawAuthorData.bornOnYear ?? undefined,
 		diedOnYear: rawAuthorData.diedOnYear ?? undefined,
+	};
+}
+
+// Variante para la página de perfil: agrega las fechas de la ficha sobre el `Author` base.
+export function mapAuthorProfile(rawAuthorData: NonNullable<AuthorBySlugQueryResult>): AuthorProfile {
+	return {
+		...mapAuthor(rawAuthorData),
+		createdAt: rawAuthorData.createdAt as IsoDateTime,
+		updatedAt: rawAuthorData.updatedAt as IsoDateTime,
 	};
 }
 type AuthorTeaserForStoriesSubQuery = NonNullable<StorylistQueryResult>['stories'][0]['author'];

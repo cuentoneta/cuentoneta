@@ -10,7 +10,7 @@ import { AppRoutes } from '../../app.routes';
 // 3rd party modules
 
 // Modelos
-import { Author } from '@models/author.model';
+import { AuthorProfile } from '@models/author.model';
 import { StoryTeaser } from '@models/story.model';
 
 // Directives
@@ -18,7 +18,7 @@ import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 
 // Datos estructurados
 import { SchemaOrgService } from '../../providers/schema-org.service';
-import { buildAuthorBreadcrumb, buildAuthorPersonSchema } from './author.schema';
+import { buildAuthorBreadcrumb, buildAuthorProfilePageSchema } from './author.schema';
 
 // Environment
 import { environment } from '../../environments/environment';
@@ -226,11 +226,11 @@ export default class AuthorComponent {
 	private metaTagsDirective = inject(MetaTagsDirective);
 	private schemaOrg = inject(SchemaOrgService);
 
-	// Los JSON-LD de Person y breadcrumb son específicos de la página; se limpian al navegar fuera.
+	// Los JSON-LD de ProfilePage y breadcrumb son específicos de la página; se limpian al navegar fuera.
 	// El breadcrumb usa un id por página para no pisar el de la ruta entrante durante una navegación.
 	private readonly removeStructuredDataOnDestroy = effect((onCleanup) => {
 		onCleanup(() => {
-			this.schemaOrg.removeJsonLd('person');
+			this.schemaOrg.removeJsonLd('profile-page');
 			this.schemaOrg.removeJsonLd('breadcrumb-author');
 		});
 	});
@@ -260,13 +260,13 @@ export default class AuthorComponent {
 	);
 	protected readonly authorFlagUrl = computed(() => `${this.author()?.nationality.flag}?auto=format`);
 
-	private updateMetaTags(author: Author) {
+	private updateMetaTags(author: AuthorProfile) {
 		this.metaTagsDirective.setTitle(`${author.name}`);
 		this.metaTagsDirective.setDescription(`Perfil y obras de ${author.name} para leer en La Cuentoneta.`);
 		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/author/${author.slug}`);
 		this.metaTagsDirective.setRobots('index, follow');
 		this.metaTagsDirective.setKeywords(['escritor', 'poemas', 'cuentos', 'autor', author.name.toLowerCase()]);
-		this.schemaOrg.setJsonLd('person', buildAuthorPersonSchema(author, environment.website));
+		this.schemaOrg.setJsonLd('profile-page', buildAuthorProfilePageSchema(author, environment.website));
 		this.schemaOrg.setJsonLd('breadcrumb-author', buildAuthorBreadcrumb(author, environment.website));
 	}
 	private author$(slug: string) {
