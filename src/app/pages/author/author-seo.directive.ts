@@ -1,5 +1,6 @@
 import { Directive, effect, inject } from '@angular/core';
 
+import { AppRoutes } from '../../app.routes';
 import { environment } from '../../environments/environment';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
 import { SchemaOrgService } from '../../providers/schema-org.service';
@@ -22,7 +23,7 @@ export class AuthorSeoDirective {
 		}
 		this.meta.setTitle(author.name);
 		this.meta.setDescription(`Perfil y obras de ${author.name} para leer en La Cuentoneta.`);
-		this.meta.setCanonicalUrl(`${environment.website}/author/${author.slug}`);
+		this.meta.setCanonicalUrl(`${environment.website}/${AppRoutes.Author}/${author.slug}`);
 		this.meta.setRobots('index, follow');
 		this.meta.setKeywords(['escritor', 'poemas', 'cuentos', 'autor', author.name.toLowerCase()]);
 		this.schemaOrg.setJsonLd('profile-page', buildAuthorProfilePageSchema(author, environment.website));
