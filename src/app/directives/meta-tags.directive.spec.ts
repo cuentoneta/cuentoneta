@@ -46,13 +46,18 @@ describe('MetaTagsDirective', () => {
 				content: 'Test Title',
 			});
 		});
+	});
 
-		it('should set title without prefix when addPrefix is false', () => {
+	describe('setExactTitle', () => {
+		it('should set the title verbatim without the brand suffix', () => {
 			const titleSpy = spyOn(titleService, 'setTitle');
+			const metaSpy = spyOn(metaService, 'updateTag');
 
-			directive.setTitle('Test Title', false);
+			directive.setExactTitle('Cuentos | La Cuentoneta');
 
-			expect(titleSpy).toHaveBeenCalledWith('Test Title');
+			expect(titleSpy).toHaveBeenCalledWith('Cuentos | La Cuentoneta');
+			expect(metaSpy).toHaveBeenCalledWith({ name: 'twitter:title', content: 'Cuentos | La Cuentoneta' });
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:title', content: 'Cuentos | La Cuentoneta' });
 		});
 	});
 
@@ -104,13 +109,13 @@ describe('MetaTagsDirective', () => {
 
 	describe('setDefault', () => {
 		it('should set default title, description and keywords', () => {
-			const setTitleSpy = spyOn(directive, 'setTitle');
+			const setExactTitleSpy = spyOn(directive, 'setExactTitle');
 			const setDefaultDescriptionSpy = spyOn(directive, 'setDefaultDescription');
 			const setDefaultKeywordsSpy = spyOn(directive, 'setDefaultKeywords');
 
 			directive.setDefault();
 
-			expect(setTitleSpy).toHaveBeenCalledWith('La Cuentoneta', false);
+			expect(setExactTitleSpy).toHaveBeenCalledWith('La Cuentoneta');
 			expect(setDefaultDescriptionSpy).toHaveBeenCalled();
 			expect(setDefaultKeywordsSpy).toHaveBeenCalled();
 		});

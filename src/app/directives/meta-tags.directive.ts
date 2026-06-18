@@ -24,18 +24,20 @@ export class MetaTagsDirective {
 		});
 	});
 
-	public setTitle(title: string, addPrefix: boolean = true) {
-		const platformTitle = isPlatformBrowser(this.platformId) && addPrefix ? `${title} | La Cuentoneta` : title;
-		this.titleService.setTitle(`${platformTitle}`);
-		this.metaTagService.updateTag({
-			name: 'twitter:title',
-			content: title,
-		});
+	public setTitle(title: string) {
+		const documentTitle = isPlatformBrowser(this.platformId) ? `${title} | La Cuentoneta` : title;
+		this.setTitleTags(documentTitle, title);
+	}
 
-		this.metaTagService.updateTag({
-			property: 'og:title',
-			content: title,
-		});
+	// Para títulos que ya incluyen la marca (p. ej. la home), sin agregar el sufijo "| La Cuentoneta".
+	public setExactTitle(title: string) {
+		this.setTitleTags(title, title);
+	}
+
+	private setTitleTags(documentTitle: string, socialTitle: string) {
+		this.titleService.setTitle(documentTitle);
+		this.metaTagService.updateTag({ name: 'twitter:title', content: socialTitle });
+		this.metaTagService.updateTag({ property: 'og:title', content: socialTitle });
 	}
 
 	public removeTitle() {
@@ -108,7 +110,7 @@ export class MetaTagsDirective {
 	}
 
 	public setDefault() {
-		this.setTitle('La Cuentoneta', false);
+		this.setExactTitle('La Cuentoneta');
 		this.setDefaultDescription();
 		this.setDefaultKeywords();
 	}
