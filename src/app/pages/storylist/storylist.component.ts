@@ -1,26 +1,17 @@
 // Core
-import { Component, computed, effect, inject, input } from '@angular/core';
-import { tap } from 'rxjs';
+import { Component, computed, forwardRef, inject, input } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 
 // 3rd party modules
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
-// Models
-import { Storylist } from '@models/storylist.model';
-
 // Services
 import { StorylistApi } from '../../providers/storylist-api.interface';
 
-// Directives
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
-
-// Datos estructurados
-import { SchemaOrgService } from '../../providers/schema-org.service';
-import { buildStorylistBreadcrumb, buildStorylistCollectionSchema } from './storylist.schema';
-
-// Environment
-import { environment } from '../../environments/environment';
+// SEO
+import { StorylistMetaTagsDirective } from './storylist-meta-tags.directive';
+import { StorylistStructuredDataDirective } from './storylist-structured-data.directive';
+import { STORYLIST_HOST, type StorylistHost } from './storylist-host';
 
 // Componentes
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
@@ -44,7 +35,8 @@ import { MediaResourceComponent } from '@components/media-resource/media-resourc
 		StorylistTitle,
 		MediaResourceComponent,
 	],
-	hostDirectives: [MetaTagsDirective],
+	providers: [{ provide: STORYLIST_HOST, useExisting: forwardRef(() => StorylistComponent) }],
+	hostDirectives: [StorylistMetaTagsDirective, StorylistStructuredDataDirective],
 	styles: `
 		@reference '#tailwind-theme';
 
@@ -53,36 +45,21 @@ import { MediaResourceComponent } from '@components/media-resource/media-resourc
 		}
 	`,
 })
-export default class StorylistComponent {
+export default class StorylistComponent implements StorylistHost {
 	// Route inputs
 	public readonly slug = input.required<string>();
 	public readonly activeTab = input<'stories' | 'about' | string>('stories');
 
 	// Providers
-	private metaTagsDirective = inject(MetaTagsDirective);
 	private storylistService = inject(StorylistApi);
-	private schemaOrg = inject(SchemaOrgService);
-
-	// Los JSON-LD de CollectionPage y breadcrumb son específicos de la página; se limpian al navegar fuera.
-	// El breadcrumb usa un id por página para no pisar el de la ruta entrante durante una navegación.
-	private readonly removeStructuredDataOnDestroy = effect((onCleanup) => {
-		onCleanup(() => {
-			this.schemaOrg.removeJsonLd('collection');
-			this.schemaOrg.removeJsonLd('breadcrumb-storylist');
-		});
-	});
 
 	// Recursos
 	protected readonly storylistResource = rxResource({
 		params: this.slug,
-		stream: ({ params }) =>
-			this.storylistService.get(params, 60, 'asc').pipe(
-				tap((storylist) => {
-					this.updateMetaTags(storylist);
-				}),
-			),
+		stream: ({ params }) => this.storylistService.get(params, 60, 'asc'),
 		defaultValue: undefined,
 	});
+	public readonly storylist = computed(() => this.storylistResource.value());
 
 	// Propiedades
 	// TODO: Implementar uso de imagen alusiva/tapa de libro en la ficha técnica
@@ -96,16 +73,4 @@ export default class StorylistComponent {
 	protected readonly tabs = computed(() => this.storylistResource.value()?.tabs || []);
 	protected readonly media = computed(() => this.storylistResource.value()?.media || []);
 	protected readonly hasMedia = computed(() => this.media().length > 0);
-
-	private updateMetaTags(storylist: Storylist) {
-		this.metaTagsDirective.setTitle(`${storylist.title}`);
-		this.metaTagsDirective.setDescription(
-			`Una storylist en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
-		);
-		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/storylist/${storylist.slug}`);
-		this.metaTagsDirective.setRobots('index, follow');
-		this.metaTagsDirective.setKeywords(['literatura', 'poemas', 'cuentos', 'textos', storylist.title.toLowerCase()]);
-		this.schemaOrg.setJsonLd('collection', buildStorylistCollectionSchema(storylist, environment.website));
-		this.schemaOrg.setJsonLd('breadcrumb-storylist', buildStorylistBreadcrumb(storylist, environment.website));
-	}
 }

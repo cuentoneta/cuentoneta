@@ -1,7 +1,6 @@
 // Core
-import { Component, computed, effect, inject, signal, input } from '@angular/core';
+import { Component, computed, forwardRef, inject, signal, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -11,22 +10,14 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 // Router
 import { AppRoutes } from '../../app.routes';
 
-// Environment
-import { environment } from '../../environments/environment';
-
-// Models
-import { Story } from '@models/story.model';
-
 // Services
 import { StoryApi } from '../../providers/story-api.interface';
 import { LayoutService } from '../../providers/layout.service';
 
-// Directives
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
-
-// Datos estructurados
-import { SchemaOrgService } from '../../providers/schema-org.service';
-import { buildStoryArticleSchema, buildStoryBreadcrumb } from './story.schema';
+// SEO
+import { StoryMetaTagsDirective } from './story-meta-tags.directive';
+import { StoryStructuredDataDirective } from './story-structured-data.directive';
+import { STORY_HOST, type StoryHost } from './story-host';
 
 // Components
 import { StoryNavigationBarComponent } from '@components/story-navigation-bar/story-navigation-bar.component';
@@ -68,11 +59,15 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 		ProgressBarComponent,
 		NgIcon,
 	],
-	providers: [provideIcons({ faSolidArrowRightLong }), LayoutService],
+	providers: [
+		provideIcons({ faSolidArrowRightLong }),
+		LayoutService,
+		{ provide: STORY_HOST, useExisting: forwardRef(() => StoryComponent) },
+	],
 	host: { class: 'grid md:grid-rows-[8px_1fr]' },
-	hostDirectives: [MetaTagsDirective],
+	hostDirectives: [StoryMetaTagsDirective, StoryStructuredDataDirective],
 })
-export default class StoryComponent {
+export default class StoryComponent implements StoryHost {
 	// Routes
 	protected readonly appRoutes = AppRoutes;
 
@@ -83,35 +78,18 @@ export default class StoryComponent {
 
 	private storyService = inject(StoryApi);
 	private layoutService = inject(LayoutService);
-	private metaTagsDirective = inject(MetaTagsDirective);
-	private schemaOrg = inject(SchemaOrgService);
 	private isHeaderVisible$ = inject(LayoutService).isHeaderVisible$.pipe(takeUntilDestroyed());
-
-	// El JSON-LD del Article y el breadcrumb son específicos de la página; se limpian al navegar fuera.
-	// El breadcrumb usa un id por página (no uno compartido) para que el cleanup de la ruta saliente
-	// nunca borre el breadcrumb que ya seteó la ruta entrante durante una navegación.
-	private readonly removeStructuredDataOnDestroy = effect((onCleanup) => {
-		onCleanup(() => {
-			this.schemaOrg.removeJsonLd('article');
-			this.schemaOrg.removeJsonLd('breadcrumb-story');
-		});
-	});
 
 	// Recursos
 	protected readonly dummyList = Array(10);
 	private readonly storyResource = rxResource({
 		params: this.slug,
-		stream: ({ params }) =>
-			this.storyService.getBySlug(params).pipe(
-				tap((story) => {
-					this.updateMetaTags(story);
-				}),
-			),
+		stream: ({ params }) => this.storyService.getBySlug(params),
 		defaultValue: undefined,
 	});
 
 	// Propiedades
-	protected readonly story = computed(() => this.storyResource.value());
+	public readonly story = computed(() => this.storyResource.value());
 	protected readonly sharingRoute = computed(() => `${AppRoutes.Story}/${this.story()?.slug}`);
 	protected readonly shareContentParams = computed(() => ({
 		navigationSlug: this.story()?.author.slug ?? '',
@@ -141,26 +119,5 @@ export default class StoryComponent {
 			}
 			this.headerPosition.set(isVisible ? 'top-header-height' : 'top-0');
 		});
-	}
-
-	private updateMetaTags(story: Story) {
-		this.metaTagsDirective.setTitle(`${story.title} - ${story.author.name}`);
-		this.metaTagsDirective.setDescription(
-			`Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
-		);
-		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/${AppRoutes.Story}/${story.slug}`);
-		this.metaTagsDirective.setRobots('index, follow');
-		this.metaTagsDirective.setKeywords([
-			'literatura',
-			'poemas',
-			'cuentos',
-			story.title.toLowerCase(),
-			story.author.name.toLowerCase(),
-		]);
-		// Señales E-E-A-T + datos estructurados de tipo artículo.
-		this.metaTagsDirective.setAuthor(story.author.name);
-		this.metaTagsDirective.setArticleDates(story.publishedAt, story.updatedAt);
-		this.schemaOrg.setJsonLd('article', buildStoryArticleSchema(story, environment.website));
-		this.schemaOrg.setJsonLd('breadcrumb-story', buildStoryBreadcrumb(story, environment.website));
 	}
 }

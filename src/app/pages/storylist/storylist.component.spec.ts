@@ -13,7 +13,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Storylist } from '@models/storylist.model';
 
 // Directives
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 
 // Componentes
 import StorylistComponent from './storylist.component';
@@ -27,7 +27,7 @@ describe.skip('StorylistComponent', () => {
 				MockStorylistCardDeckComponent,
 				NgxSkeletonLoaderModule,
 			],
-			componentProviders: [provideRouter([]), provideMock(MetaTagsDirective)],
+			componentProviders: [provideRouter([]), provideMock(HeadMetadataDirective)],
 		});
 	};
 
