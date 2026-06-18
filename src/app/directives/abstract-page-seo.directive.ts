@@ -1,13 +1,13 @@
 import { Directive, effect, inject } from '@angular/core';
 
-import { MetaTagsDirective } from './meta-tags.directive';
+import { HeadMetadataDirective } from './head-metadata.directive';
 import { SchemaOrgService } from '../providers/schema-org.service';
 
 // Contrato común de las directivas SEO por página. Cada página implementa `applySeoTags` (y, si emite
 // JSON-LD, `removeStructuredData`); la base las orquesta en un effect que aplica al entrar y limpia al salir.
 @Directive()
 export abstract class AbstractPageSeoDirective {
-	protected readonly meta = inject(MetaTagsDirective);
+	protected readonly meta = inject(HeadMetadataDirective);
 	protected readonly schemaOrg = inject(SchemaOrgService);
 
 	protected abstract applySeoTags(): void;

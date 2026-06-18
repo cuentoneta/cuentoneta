@@ -2,14 +2,14 @@ import { Directive, inject, untracked } from '@angular/core';
 
 import { AppRoutes } from '../../app.routes';
 import { environment } from '../../environments/environment';
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { AbstractPageSeoDirective } from '../../directives/abstract-page-seo.directive';
 import { STORY_SEO_HOST } from './story-seo-host';
 import { buildStoryArticleSchema, buildStoryBreadcrumb } from './story.schema';
 
 @Directive({
 	selector: '[cuentonetaStorySeo]',
-	hostDirectives: [MetaTagsDirective],
+	hostDirectives: [HeadMetadataDirective],
 })
 export class StorySeoDirective extends AbstractPageSeoDirective {
 	private readonly host = inject(STORY_SEO_HOST);

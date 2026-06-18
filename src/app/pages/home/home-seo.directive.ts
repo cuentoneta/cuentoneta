@@ -1,12 +1,12 @@
 import { Directive } from '@angular/core';
 
 import { environment } from '../../environments/environment';
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { AbstractPageSeoDirective } from '../../directives/abstract-page-seo.directive';
 
 @Directive({
 	selector: '[cuentonetaHomeSeo]',
-	hostDirectives: [MetaTagsDirective],
+	hostDirectives: [HeadMetadataDirective],
 })
 export class HomeSeoDirective extends AbstractPageSeoDirective {
 	protected applySeoTags(): void {

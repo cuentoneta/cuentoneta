@@ -6,7 +6,7 @@ import { Title } from '@angular/platform-browser';
 
 import { authorMock } from '@mocks/author.mock';
 import { type AuthorProfile } from '@models/author.model';
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { AuthorSeoDirective } from './author-seo.directive';
 import { AUTHOR_SEO_HOST } from './author-seo-host';
 
@@ -23,7 +23,7 @@ describe('AuthorSeoDirective', () => {
 		TestBed.configureTestingModule({
 			providers: [
 				AuthorSeoDirective,
-				MetaTagsDirective,
+				HeadMetadataDirective,
 				{ provide: AUTHOR_SEO_HOST, useValue: { author: authorSignal.asReadonly() } },
 			],
 		});

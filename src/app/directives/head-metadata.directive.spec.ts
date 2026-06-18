@@ -1,24 +1,24 @@
 import { spyOn } from '@test-utils';
-import { MetaTagsDirective } from './meta-tags.directive';
+import { HeadMetadataDirective } from './head-metadata.directive';
 import { TestBed } from '@angular/core/testing';
 import { Meta, Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 
-describe('MetaTagsDirective', () => {
+describe('HeadMetadataDirective', () => {
 	const BASE_URL = 'https://www.cuentoneta.ar';
 
-	let directive: MetaTagsDirective;
+	let directive: HeadMetadataDirective;
 	let metaService: Meta;
 	let titleService: Title;
 	let document: Document;
 
 	beforeEach(() => {
 		TestBed.configureTestingModule({
-			providers: [MetaTagsDirective],
+			providers: [HeadMetadataDirective],
 		});
 
 		TestBed.runInInjectionContext(() => {
-			directive = new MetaTagsDirective();
+			directive = new HeadMetadataDirective();
 			metaService = TestBed.inject(Meta);
 			titleService = TestBed.inject(Title);
 			document = TestBed.inject(DOCUMENT);

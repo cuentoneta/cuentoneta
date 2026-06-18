@@ -3,10 +3,10 @@ import { Meta, Title } from '@angular/platform-browser';
 import { isPlatformBrowser } from '@angular/common';
 
 @Directive({
-	selector: '[cuentonetaMetaTags]',
+	selector: '[cuentonetaHeadMetadata]',
 	standalone: true,
 })
-export class MetaTagsDirective {
+export class HeadMetadataDirective {
 	private document = inject(DOCUMENT);
 	private metaTagService = inject(Meta);
 	private platformId = inject(PLATFORM_ID);

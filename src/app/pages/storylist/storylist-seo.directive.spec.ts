@@ -6,7 +6,7 @@ import { Title } from '@angular/platform-browser';
 
 import { storylistMock } from '@mocks/storylist.mock';
 import { type Storylist } from '@models/storylist.model';
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { StorylistSeoDirective } from './storylist-seo.directive';
 import { STORYLIST_SEO_HOST } from './storylist-seo-host';
 
@@ -23,7 +23,7 @@ describe('StorylistSeoDirective', () => {
 		TestBed.configureTestingModule({
 			providers: [
 				StorylistSeoDirective,
-				MetaTagsDirective,
+				HeadMetadataDirective,
 				{ provide: STORYLIST_SEO_HOST, useValue: { storylist: storylistSignal.asReadonly() } },
 			],
 		});

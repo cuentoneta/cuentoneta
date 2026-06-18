@@ -1,18 +1,18 @@
 import { clearAllMocks, spyOn } from '@test-utils';
 import { TestBed } from '@angular/core/testing';
 
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { HomeSeoDirective } from './home-seo.directive';
 
 describe('HomeSeoDirective', () => {
-	let meta: MetaTagsDirective;
+	let meta: HeadMetadataDirective;
 
 	beforeEach(() => {
 		clearAllMocks();
 		TestBed.configureTestingModule({
-			providers: [HomeSeoDirective, MetaTagsDirective],
+			providers: [HomeSeoDirective, HeadMetadataDirective],
 		});
-		meta = TestBed.inject(MetaTagsDirective);
+		meta = TestBed.inject(HeadMetadataDirective);
 	});
 
 	it('should apply the home meta tags', () => {

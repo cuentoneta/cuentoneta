@@ -6,7 +6,7 @@ import { Title } from '@angular/platform-browser';
 
 import { storyMock } from '@mocks/story.mock';
 import { type Story } from '@models/story.model';
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { StorySeoDirective } from './story-seo.directive';
 import { STORY_SEO_HOST } from './story-seo-host';
 
@@ -23,7 +23,7 @@ describe('StorySeoDirective', () => {
 		TestBed.configureTestingModule({
 			providers: [
 				StorySeoDirective,
-				MetaTagsDirective,
+				HeadMetadataDirective,
 				{ provide: STORY_SEO_HOST, useValue: { story: storySignal.asReadonly() } },
 			],
 		});
