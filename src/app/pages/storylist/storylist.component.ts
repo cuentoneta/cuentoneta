@@ -9,8 +9,9 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { StorylistApi } from '../../providers/storylist-api.interface';
 
 // SEO
-import { StorylistSeoDirective } from './storylist-seo.directive';
-import { STORYLIST_SEO_HOST, type StorylistSeoHost } from './storylist-seo-host';
+import { StorylistMetaTagsDirective } from './storylist-meta-tags.directive';
+import { StorylistStructuredDataDirective } from './storylist-structured-data.directive';
+import { STORYLIST_HOST, type StorylistHost } from './storylist-host';
 
 // Componentes
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
@@ -34,8 +35,8 @@ import { MediaResourceComponent } from '@components/media-resource/media-resourc
 		StorylistTitle,
 		MediaResourceComponent,
 	],
-	providers: [{ provide: STORYLIST_SEO_HOST, useExisting: forwardRef(() => StorylistComponent) }],
-	hostDirectives: [StorylistSeoDirective],
+	providers: [{ provide: STORYLIST_HOST, useExisting: forwardRef(() => StorylistComponent) }],
+	hostDirectives: [StorylistMetaTagsDirective, StorylistStructuredDataDirective],
 	styles: `
 		@reference '#tailwind-theme';
 
@@ -44,7 +45,7 @@ import { MediaResourceComponent } from '@components/media-resource/media-resourc
 		}
 	`,
 })
-export default class StorylistComponent implements StorylistSeoHost {
+export default class StorylistComponent implements StorylistHost {
 	// Route inputs
 	public readonly slug = input.required<string>();
 	public readonly activeTab = input<'stories' | 'about' | string>('stories');

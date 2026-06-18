@@ -1,20 +1,18 @@
-import { clearAllMocks, spyOn } from '@test-utils';
+import { clearAllMocks } from '@test-utils';
 import { TestBed } from '@angular/core/testing';
 import { DOCUMENT } from '@angular/common';
 import { signal } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 
 import { storylistMock } from '@mocks/storylist.mock';
 import { type Storylist } from '@models/storylist.model';
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { StorylistSeoDirective } from './storylist-seo.directive';
-import { STORYLIST_SEO_HOST } from './storylist-seo-host';
+import { StorylistStructuredDataDirective } from './storylist-structured-data.directive';
+import { STORYLIST_HOST } from './storylist-host';
 
-describe('StorylistSeoDirective', () => {
+describe('StorylistStructuredDataDirective', () => {
 	const storylistSignal = signal<Storylist | undefined>(undefined);
 
 	function instantiate(): void {
-		TestBed.runInInjectionContext(() => new StorylistSeoDirective());
+		TestBed.runInInjectionContext(() => new StorylistStructuredDataDirective());
 	}
 
 	beforeEach(() => {
@@ -22,9 +20,8 @@ describe('StorylistSeoDirective', () => {
 		storylistSignal.set(undefined);
 		TestBed.configureTestingModule({
 			providers: [
-				StorylistSeoDirective,
-				HeadMetadataDirective,
-				{ provide: STORYLIST_SEO_HOST, useValue: { storylist: storylistSignal.asReadonly() } },
+				StorylistStructuredDataDirective,
+				{ provide: STORYLIST_HOST, useValue: { storylist: storylistSignal.asReadonly() } },
 			],
 		});
 	});
@@ -35,23 +32,19 @@ describe('StorylistSeoDirective', () => {
 			.forEach((el) => el.remove());
 	});
 
-	it('should not apply SEO while the storylist is undefined', () => {
-		const titleSpy = spyOn(TestBed.inject(Title), 'setTitle');
-
+	it('should not emit JSON-LD while the storylist is undefined', () => {
 		instantiate();
 		TestBed.tick();
 
-		expect(titleSpy).not.toHaveBeenCalled();
+		expect(TestBed.inject(DOCUMENT).head.querySelector('script[data-schema-id="collection"]')).toBeNull();
 	});
 
-	it('should set the title and emit the CollectionPage and breadcrumb JSON-LD when the storylist resolves', () => {
+	it('should emit the CollectionPage and breadcrumb JSON-LD when the storylist resolves', () => {
 		storylistSignal.set(storylistMock);
-		const titleSpy = spyOn(TestBed.inject(Title), 'setTitle');
 
 		instantiate();
 		TestBed.tick();
 
-		expect(titleSpy).toHaveBeenCalledWith(expect.stringContaining(storylistMock.title));
 		const head = TestBed.inject(DOCUMENT).head;
 		expect(JSON.parse(head.querySelector('script[data-schema-id="collection"]')?.textContent ?? '{}')).toMatchObject({
 			'@type': 'CollectionPage',
@@ -72,17 +65,5 @@ describe('StorylistSeoDirective', () => {
 
 		expect(head.querySelector('script[data-schema-id="collection"]')).toBeNull();
 		expect(head.querySelector('script[data-schema-id="breadcrumb-storylist"]')).toBeNull();
-	});
-
-	it('should re-apply the SEO when the storylist signal changes', () => {
-		storylistSignal.set(storylistMock);
-		const titleSpy = spyOn(TestBed.inject(Title), 'setTitle');
-		instantiate();
-		TestBed.tick();
-
-		storylistSignal.set({ ...storylistMock, title: 'Otra colección' });
-		TestBed.tick();
-
-		expect(titleSpy).toHaveBeenLastCalledWith(expect.stringContaining('Otra colección'));
 	});
 });
