@@ -8,7 +8,6 @@ export abstract class AbstractMetaTagsDirective {
 
 	protected abstract applyMetaTags(): void;
 
-	// El reset al destruir lo maneja HeadMetadataDirective (resetTagsOnDestroy); por eso no hay cleanup acá.
 	private readonly metaTagsEffect = effect(() => {
 		this.applyMetaTags();
 	});
