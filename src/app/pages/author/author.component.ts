@@ -11,8 +11,9 @@ import { AppRoutes } from '../../app.routes';
 import { StoryTeaser } from '@models/story.model';
 
 // SEO
-import { AuthorSeoDirective } from './author-seo.directive';
-import { AUTHOR_SEO_HOST, type AuthorSeoHost } from './author-seo-host';
+import { AuthorMetaTagsDirective } from './author-meta-tags.directive';
+import { AuthorStructuredDataDirective } from './author-structured-data.directive';
+import { AUTHOR_HOST, type AuthorHost } from './author-host';
 
 // 3rd Party Modules
 import { NgxSkeletonLoaderComponent, NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -47,8 +48,8 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 		NgxSkeletonLoaderComponent,
 		StoryCardTeaserSkeletonComponent,
 	],
-	providers: [{ provide: AUTHOR_SEO_HOST, useExisting: forwardRef(() => AuthorComponent) }],
-	hostDirectives: [AuthorSeoDirective],
+	providers: [{ provide: AUTHOR_HOST, useExisting: forwardRef(() => AuthorComponent) }],
+	hostDirectives: [AuthorMetaTagsDirective, AuthorStructuredDataDirective],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	styles: `
 		@reference '#tailwind-theme';
@@ -202,7 +203,7 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 		</main>
 	`,
 })
-export default class AuthorComponent implements AuthorSeoHost {
+export default class AuthorComponent implements AuthorHost {
 	private readonly appRoutes = AppRoutes;
 
 	// Route inputs

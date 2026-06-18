@@ -2,8 +2,8 @@ import { InjectionToken, type Signal } from '@angular/core';
 
 import { type AuthorProfile } from '@models/author.model';
 
-export interface AuthorSeoHost {
+export interface AuthorHost {
 	readonly author: Signal<AuthorProfile | undefined>;
 }
 
-export const AUTHOR_SEO_HOST = new InjectionToken<AuthorSeoHost>('AUTHOR_SEO_HOST');
+export const AUTHOR_HOST = new InjectionToken<AuthorHost>('AUTHOR_HOST');
