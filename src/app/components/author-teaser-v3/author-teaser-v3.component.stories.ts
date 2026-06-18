@@ -101,3 +101,25 @@ export const Skeleton: StoryObj = {
 		docs: { description: { story: 'Skeleton de carga del teaser.' } },
 	},
 };
+
+// Switch "Cargando" para alternar real↔skeleton en el mismo slot y evaluar la transición/alineación.
+export const Estados: StoryObj<AuthorTeaserV3Component & { loading: boolean }> = {
+	decorators: [moduleMetadata({ imports: [AuthorTeaserV3SkeletonComponent] })],
+	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
+	render: (args) => ({
+		props: args,
+		template: `
+			<div class="w-[320px]">
+				@if (loading) {
+					<cuentoneta-author-teaser-v3-skeleton />
+				} @else {
+					<cuentoneta-author-teaser-v3 [author]="author" [tags]="tags" [storyCount]="storyCount" />
+				}
+			</div>
+		`,
+	}),
+	args: { loading: true, author: authorTeaserMock, tags, storyCount: 21 },
+	parameters: {
+		docs: { description: { story: 'Activá/desactivá "Cargando" para alternar entre el estado real y el skeleton.' } },
+	},
+};
