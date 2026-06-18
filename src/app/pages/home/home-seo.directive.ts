@@ -1,16 +1,15 @@
-import { Directive, effect, inject } from '@angular/core';
+import { Directive } from '@angular/core';
 
 import { environment } from '../../environments/environment';
 import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { AbstractPageSeoDirective } from '../../directives/abstract-page-seo.directive';
 
 @Directive({
 	selector: '[cuentonetaHomeSeo]',
 	hostDirectives: [MetaTagsDirective],
 })
-export class HomeSeoDirective {
-	private readonly meta = inject(MetaTagsDirective);
-
-	private readonly applyStaticSeo = effect(() => {
+export class HomeSeoDirective extends AbstractPageSeoDirective {
+	protected applySeoTags(): void {
 		this.meta.setExactTitle('Cuentos y relatos breves para leer en línea | La Cuentoneta');
 		this.meta.setDefaultDescription();
 		this.meta.setKeywords([
@@ -27,5 +26,5 @@ export class HomeSeoDirective {
 		]);
 		this.meta.setCanonicalUrl(`${environment.website}`);
 		this.meta.setRobots('index, follow');
-	});
+	}
 }
