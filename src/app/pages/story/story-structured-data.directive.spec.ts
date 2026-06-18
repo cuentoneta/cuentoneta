@@ -1,31 +1,25 @@
-import { clearAllMocks, spyOn } from '@test-utils';
+import { clearAllMocks } from '@test-utils';
 import { TestBed } from '@angular/core/testing';
 import { DOCUMENT } from '@angular/common';
 import { signal } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 
 import { storyMock } from '@mocks/story.mock';
 import { type Story } from '@models/story.model';
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { StorySeoDirective } from './story-seo.directive';
-import { STORY_SEO_HOST } from './story-seo-host';
+import { StoryStructuredDataDirective } from './story-structured-data.directive';
+import { STORY_HOST } from './story-host';
 
-describe('StorySeoDirective', () => {
+describe('StoryStructuredDataDirective', () => {
 	const storySignal = signal<Story | undefined>(undefined);
 
 	function instantiate(): void {
-		TestBed.runInInjectionContext(() => new StorySeoDirective());
+		TestBed.runInInjectionContext(() => new StoryStructuredDataDirective());
 	}
 
 	beforeEach(() => {
 		clearAllMocks();
 		storySignal.set(undefined);
 		TestBed.configureTestingModule({
-			providers: [
-				StorySeoDirective,
-				HeadMetadataDirective,
-				{ provide: STORY_SEO_HOST, useValue: { story: storySignal.asReadonly() } },
-			],
+			providers: [StoryStructuredDataDirective, { provide: STORY_HOST, useValue: { story: storySignal.asReadonly() } }],
 		});
 	});
 
@@ -35,23 +29,19 @@ describe('StorySeoDirective', () => {
 			.forEach((el) => el.remove());
 	});
 
-	it('should not apply SEO while the story is undefined', () => {
-		const titleSpy = spyOn(TestBed.inject(Title), 'setTitle');
-
+	it('should not emit JSON-LD while the story is undefined', () => {
 		instantiate();
 		TestBed.tick();
 
-		expect(titleSpy).not.toHaveBeenCalled();
+		expect(TestBed.inject(DOCUMENT).head.querySelector('script[data-schema-id="article"]')).toBeNull();
 	});
 
-	it('should set the title and emit the Article and breadcrumb JSON-LD when the story resolves', () => {
+	it('should emit the Article and breadcrumb JSON-LD when the story resolves', () => {
 		storySignal.set(storyMock);
-		const titleSpy = spyOn(TestBed.inject(Title), 'setTitle');
 
 		instantiate();
 		TestBed.tick();
 
-		expect(titleSpy).toHaveBeenCalledWith(expect.stringContaining(`${storyMock.title} - ${storyMock.author.name}`));
 		const head = TestBed.inject(DOCUMENT).head;
 		expect(JSON.parse(head.querySelector('script[data-schema-id="article"]')?.textContent ?? '{}')).toMatchObject({
 			'@type': 'Article',
@@ -72,17 +62,5 @@ describe('StorySeoDirective', () => {
 
 		expect(head.querySelector('script[data-schema-id="article"]')).toBeNull();
 		expect(head.querySelector('script[data-schema-id="breadcrumb-story"]')).toBeNull();
-	});
-
-	it('should re-apply the SEO when the story signal changes', () => {
-		storySignal.set(storyMock);
-		const titleSpy = spyOn(TestBed.inject(Title), 'setTitle');
-		instantiate();
-		TestBed.tick();
-
-		storySignal.set({ ...storyMock, title: 'Otro título' });
-		TestBed.tick();
-
-		expect(titleSpy).toHaveBeenLastCalledWith(expect.stringContaining(`Otro título - ${storyMock.author.name}`));
 	});
 });

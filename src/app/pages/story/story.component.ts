@@ -15,8 +15,9 @@ import { StoryApi } from '../../providers/story-api.interface';
 import { LayoutService } from '../../providers/layout.service';
 
 // SEO
-import { StorySeoDirective } from './story-seo.directive';
-import { STORY_SEO_HOST, type StorySeoHost } from './story-seo-host';
+import { StoryMetaTagsDirective } from './story-meta-tags.directive';
+import { StoryStructuredDataDirective } from './story-structured-data.directive';
+import { STORY_HOST, type StoryHost } from './story-host';
 
 // Components
 import { StoryNavigationBarComponent } from '@components/story-navigation-bar/story-navigation-bar.component';
@@ -61,12 +62,12 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 	providers: [
 		provideIcons({ faSolidArrowRightLong }),
 		LayoutService,
-		{ provide: STORY_SEO_HOST, useExisting: forwardRef(() => StoryComponent) },
+		{ provide: STORY_HOST, useExisting: forwardRef(() => StoryComponent) },
 	],
 	host: { class: 'grid md:grid-rows-[8px_1fr]' },
-	hostDirectives: [StorySeoDirective],
+	hostDirectives: [StoryMetaTagsDirective, StoryStructuredDataDirective],
 })
-export default class StoryComponent implements StorySeoHost {
+export default class StoryComponent implements StoryHost {
 	// Routes
 	protected readonly appRoutes = AppRoutes;
 
