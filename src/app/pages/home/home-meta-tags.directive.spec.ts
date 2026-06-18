@@ -2,27 +2,27 @@ import { clearAllMocks, spyOn } from '@test-utils';
 import { TestBed } from '@angular/core/testing';
 
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { HomeSeoDirective } from './home-seo.directive';
+import { HomeMetaTagsDirective } from './home-meta-tags.directive';
 
-describe('HomeSeoDirective', () => {
-	let meta: HeadMetadataDirective;
+describe('HomeMetaTagsDirective', () => {
+	let head: HeadMetadataDirective;
 
 	beforeEach(() => {
 		clearAllMocks();
 		TestBed.configureTestingModule({
-			providers: [HomeSeoDirective, HeadMetadataDirective],
+			providers: [HomeMetaTagsDirective, HeadMetadataDirective],
 		});
-		meta = TestBed.inject(HeadMetadataDirective);
+		head = TestBed.inject(HeadMetadataDirective);
 	});
 
-	it('should apply the home meta tags', () => {
-		const titleSpy = spyOn(meta, 'setExactTitle');
-		const descriptionSpy = spyOn(meta, 'setDefaultDescription');
-		const keywordsSpy = spyOn(meta, 'setKeywords');
-		const canonicalSpy = spyOn(meta, 'setCanonicalUrl');
-		const robotsSpy = spyOn(meta, 'setRobots');
+	it('should apply the static home meta tags', () => {
+		const titleSpy = spyOn(head, 'setExactTitle');
+		const descriptionSpy = spyOn(head, 'setDefaultDescription');
+		const keywordsSpy = spyOn(head, 'setKeywords');
+		const canonicalSpy = spyOn(head, 'setCanonicalUrl');
+		const robotsSpy = spyOn(head, 'setRobots');
 
-		TestBed.runInInjectionContext(() => new HomeSeoDirective());
+		TestBed.runInInjectionContext(() => new HomeMetaTagsDirective());
 		TestBed.tick();
 
 		expect(titleSpy).toHaveBeenCalledWith('Cuentos y relatos breves para leer en línea | La Cuentoneta');

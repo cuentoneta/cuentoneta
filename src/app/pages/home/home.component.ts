@@ -6,7 +6,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { ContentApi } from '../../providers/content-api.interface';
 
 // SEO
-import { HomeSeoDirective } from './home-seo.directive';
+import { HomeMetaTagsDirective } from './home-meta-tags.directive';
 
 // Componentes
 import { CarouselComponent } from '@components/carousel/carousel.component';
@@ -25,7 +25,7 @@ import { CollectionTeasersDeck } from '@components/collection-teasers-deck/colle
 		CarouselSkeletonComponent,
 		CollectionTeasersDeck,
 	],
-	hostDirectives: [HomeSeoDirective],
+	hostDirectives: [HomeMetaTagsDirective],
 })
 export default class HomeComponent {
 	// Services
