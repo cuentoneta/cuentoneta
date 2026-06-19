@@ -49,7 +49,7 @@ test('home — D: al navegar a una story aparece el Article y el sitewide persis
 	await page.goto('/home');
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.organization}"]`)).toHaveCount(1);
 
-	await page.locator('a[href^="/story/"]').first().click();
+	await page.locator('a[href^="/story/"]').filter({ visible: true }).first().click();
 	await expect(page).toHaveURL(/\/story\//);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.article}"]`)).toHaveCount(1);
 

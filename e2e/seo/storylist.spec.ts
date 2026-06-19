@@ -67,7 +67,7 @@ test('storylist — D: al navegar a un cuento se remueven los bloques de la cole
 	await page.goto(storylistPath);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.collection}"]`)).toHaveCount(1);
 
-	await page.locator('a[href^="/story/"]').first().click();
+	await page.locator('a[href^="/story/"]').filter({ visible: true }).first().click();
 	await expect(page).toHaveURL(/\/story\//);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.article}"]`)).toHaveCount(1);
 
@@ -82,12 +82,13 @@ test('storylist — E: al navegar a la home se remueven los bloques de la colecc
 	await page.goto(storylistPath);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.collection}"]`)).toHaveCount(1);
 
-	await page.locator('a[href$="/home"]').first().click();
-	await expect(page).toHaveURL(/\/home/);
+	await page.locator('header a[href="/home"]').first().click();
+	await expect(page).toHaveURL(/\/home$/);
 
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.collection}"]`)).toHaveCount(0);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.breadcrumbStorylist}"]`)).toHaveCount(0);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.organization}"]`)).toHaveCount(1);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.website}"]`)).toHaveCount(1);
+	await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
 	await expect(page.locator('head > title')).toHaveCount(1);
 });
