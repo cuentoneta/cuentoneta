@@ -88,7 +88,7 @@ jobs:
             echo "::error::El tarball $TARBALL no existe. Se aborta para no borrar los targets." >&2
             exit 1
           fi
-          actual_bytes=$(stat -c%s "$TARBALL")
+          actual_bytes=$(wc -c < "$TARBALL")
           if [ "$actual_bytes" -lt "$MIN_TARBALL_BYTES" ]; then
             echo "::error::El tarball pesa ${actual_bytes} bytes (< mínimo ${MIN_TARBALL_BYTES}). Posible export fallido; se aborta." >&2
             exit 1
