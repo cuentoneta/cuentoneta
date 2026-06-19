@@ -41,6 +41,11 @@ jobs:
     env:
       SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
       SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID }}
+      # El CLI de Sanity corre desatendido cuando CI=true (Actions ya lo setea; explícito por
+      # robustez ante un cambio futuro del runner). El flujo además no dispara prompts: delete usa
+      # --force, create pasa --visibility, e import escribe en un dataset recién creado y vacío
+      # (sin conflictos de ids → sin prompt de --replace).
+      CI: 'true'
       SOURCE_DATASET: production
       TARBALL: production.tar.gz
       # Umbral mínimo: un export real de producción pesa varios MB; por debajo de 50 KB asumimos un
