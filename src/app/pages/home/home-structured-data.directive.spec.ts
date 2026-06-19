@@ -19,6 +19,7 @@ describe('HomeStructuredDataDirective', () => {
 		TestBed.inject(DOCUMENT)
 			.head.querySelectorAll('script[data-schema-id]')
 			.forEach((el) => el.remove());
+		TestBed.resetTestingModule();
 	});
 
 	it('should remove collection and breadcrumb-storylist left by a previous storylist route', () => {
