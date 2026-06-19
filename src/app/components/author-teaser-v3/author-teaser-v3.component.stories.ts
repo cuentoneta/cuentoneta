@@ -29,7 +29,7 @@ const galeanoTags: Tag[] = [
 
 const meta: Meta<AuthorTeaserV3Component> = {
 	component: AuthorTeaserV3Component,
-	title: 'Componentes/AuthorTeaserV3',
+	title: 'Componentes V3/AuthorTeaserV3',
 	decorators: [
 		applicationConfig({
 			providers: [provideRouter([])],
