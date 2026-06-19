@@ -47,6 +47,7 @@ test('author — B: JSON-LD ProfilePage y BreadcrumbList', async ({ request }) =
 	expect(mainEntity?.['name']).toBeTruthy();
 
 	const breadcrumb = blocks.get(SCHEMA_IDS.breadcrumbAuthor);
+	expect(breadcrumb?.['@context']).toBe('https://schema.org');
 	expect(breadcrumb?.['@type']).toBe('BreadcrumbList');
 	expect((breadcrumb?.['itemListElement'] as unknown[])?.length).toBeGreaterThanOrEqual(2);
 });

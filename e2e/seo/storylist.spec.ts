@@ -51,6 +51,7 @@ test('storylist — B: JSON-LD CollectionPage y BreadcrumbList', async ({ reques
 	expect(listElements?.[0]?.['position']).toBe(1);
 
 	const breadcrumb = blocks.get(SCHEMA_IDS.breadcrumbStorylist);
+	expect(breadcrumb?.['@context']).toBe('https://schema.org');
 	expect(breadcrumb?.['@type']).toBe('BreadcrumbList');
 	expect((breadcrumb?.['itemListElement'] as unknown[])?.length).toBeGreaterThanOrEqual(2);
 });
