@@ -65,7 +65,8 @@ test('story — D: al navegar al autor se remueven los bloques del cuento', asyn
 	await page.goto(storyPath);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.article}"]`)).toHaveCount(1);
 
-	await page.locator(`a[href="/author/${STABLE_SLUGS.author}"]`).first().click();
+	// El-aleph es de Borges: la ficha del cuento enlaza a /author/jorge-luis-borges.
+	await page.locator(`a[href="/author/${STABLE_SLUGS.author}"]`).filter({ visible: true }).first().click();
 	await expect(page).toHaveURL(/\/author\//);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.profilePage}"]`)).toHaveCount(1);
 
