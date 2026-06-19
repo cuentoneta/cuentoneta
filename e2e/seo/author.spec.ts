@@ -19,9 +19,13 @@ import { STABLE_SLUGS, SCHEMA_IDS } from '../_utils/seo-fixtures';
 
 const authorPath = `/author/${STABLE_SLUGS.author}`;
 
-test('author — A: meta tags en el HTML server-rendered', async ({ request }) => {
-	const html = await (await request.get(authorPath)).text();
+let html: string;
 
+test.beforeAll(async ({ request }) => {
+	html = await (await request.get(authorPath)).text();
+});
+
+test('author — A: meta tags en el HTML server-rendered', async () => {
 	expect(getTitleText(html)).toMatch(/borges/i);
 	expect(getMetaContent(html, 'description')).toMatch(/borges/i);
 	expect(getMetaContent(html, 'og:title')).toBeTruthy();
@@ -33,8 +37,7 @@ test('author — A: meta tags en el HTML server-rendered', async ({ request }) =
 	expect(getMetaContent(html, 'keywords')).toBeTruthy();
 });
 
-test('author — B: JSON-LD ProfilePage y BreadcrumbList', async ({ request }) => {
-	const html = await (await request.get(authorPath)).text();
+test('author — B: JSON-LD ProfilePage y BreadcrumbList', async () => {
 	const blocks = parseJsonLdBlocks(html);
 
 	const profilePage = blocks.get(SCHEMA_IDS.profilePage);
@@ -52,8 +55,7 @@ test('author — B: JSON-LD ProfilePage y BreadcrumbList', async ({ request }) =
 	expect((breadcrumb?.['itemListElement'] as unknown[])?.length).toBeGreaterThanOrEqual(2);
 });
 
-test('author — C: bloques sitewide Organization y WebSite presentes', async ({ request }) => {
-	const html = await (await request.get(authorPath)).text();
+test('author — C: bloques sitewide Organization y WebSite presentes', async () => {
 	const blocks = parseJsonLdBlocks(html);
 
 	expect(blocks.get(SCHEMA_IDS.organization)?.['@type']).toBe('Organization');

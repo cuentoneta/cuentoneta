@@ -16,9 +16,13 @@ import { test, expect } from '@playwright/test';
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
 import { SCHEMA_IDS } from '../_utils/seo-fixtures';
 
-test('home — A: meta tags en el HTML server-rendered', async ({ request }) => {
-	const html = await (await request.get('/home')).text();
+let html: string;
 
+test.beforeAll(async ({ request }) => {
+	html = await (await request.get('/home')).text();
+});
+
+test('home — A: meta tags en el HTML server-rendered', async () => {
 	expect(getTitleText(html)).toContain('La Cuentoneta');
 	expect(getMetaContent(html, 'description')).toBeTruthy();
 	expect(getMetaContent(html, 'og:title')).toBeTruthy();
@@ -30,8 +34,7 @@ test('home — A: meta tags en el HTML server-rendered', async ({ request }) => 
 	expect(getMetaContent(html, 'keywords')).toContain('relatos breves');
 });
 
-test('home — B/C: bloques JSON-LD sitewide Organization y WebSite', async ({ request }) => {
-	const html = await (await request.get('/home')).text();
+test('home — B/C: bloques JSON-LD sitewide Organization y WebSite', async () => {
 	const blocks = parseJsonLdBlocks(html);
 
 	const organization = blocks.get(SCHEMA_IDS.organization);

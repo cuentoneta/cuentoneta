@@ -19,9 +19,13 @@ import { STABLE_SLUGS, SCHEMA_IDS } from '../_utils/seo-fixtures';
 
 const storyPath = `/story/${STABLE_SLUGS.story}`;
 
-test('story — A: meta tags en el HTML server-rendered', async ({ request }) => {
-	const html = await (await request.get(storyPath)).text();
+let html: string;
 
+test.beforeAll(async ({ request }) => {
+	html = await (await request.get(storyPath)).text();
+});
+
+test('story — A: meta tags en el HTML server-rendered', async () => {
 	expect(getTitleText(html)).toMatch(/aleph/i);
 	expect(getMetaContent(html, 'description')).toBeTruthy();
 	expect(getMetaContent(html, 'og:title')).toBeTruthy();
@@ -34,8 +38,7 @@ test('story — A: meta tags en el HTML server-rendered', async ({ request }) =>
 	expect(getMetaContent(html, 'author')).toBeTruthy();
 });
 
-test('story — B: JSON-LD Article y BreadcrumbList', async ({ request }) => {
-	const html = await (await request.get(storyPath)).text();
+test('story — B: JSON-LD Article y BreadcrumbList', async () => {
 	const blocks = parseJsonLdBlocks(html);
 
 	const article = blocks.get(SCHEMA_IDS.article);
@@ -53,8 +56,7 @@ test('story — B: JSON-LD Article y BreadcrumbList', async ({ request }) => {
 	expect((breadcrumb?.['itemListElement'] as unknown[])?.length).toBeGreaterThanOrEqual(2);
 });
 
-test('story — C: bloques sitewide Organization y WebSite presentes', async ({ request }) => {
-	const html = await (await request.get(storyPath)).text();
+test('story — C: bloques sitewide Organization y WebSite presentes', async () => {
 	const blocks = parseJsonLdBlocks(html);
 
 	expect(blocks.get(SCHEMA_IDS.organization)?.['@type']).toBe('Organization');

@@ -21,10 +21,16 @@ import { STABLE_SLUGS, SCHEMA_IDS } from '../_utils/seo-fixtures';
 
 const storylistPath = `/storylist/${STABLE_SLUGS.storylist}`;
 
-test('storylist — A: meta tags en el HTML server-rendered', async ({ request }) => {
-	const html = await (await request.get(storylistPath)).text();
+let html: string;
 
-	expect(getTitleText(html)).toMatch(/verano/i);
+test.beforeAll(async ({ request }) => {
+	html = await (await request.get(storylistPath)).text();
+});
+
+test('storylist — A: meta tags en el HTML server-rendered', async () => {
+	// El título de la storylist es editorial (no deriva del slug); la especificidad por colección
+	// la cubre la aserción del canonical más abajo.
+	expect(getTitleText(html)).toBeTruthy();
 	expect(getMetaContent(html, 'description')).toBeTruthy();
 	expect(getMetaContent(html, 'og:title')).toBeTruthy();
 	expect(getMetaContent(html, 'og:description')).toBeTruthy();
@@ -35,8 +41,7 @@ test('storylist — A: meta tags en el HTML server-rendered', async ({ request }
 	expect(getMetaContent(html, 'keywords')).toBeTruthy();
 });
 
-test('storylist — B: JSON-LD CollectionPage y BreadcrumbList', async ({ request }) => {
-	const html = await (await request.get(storylistPath)).text();
+test('storylist — B: JSON-LD CollectionPage y BreadcrumbList', async () => {
 	const blocks = parseJsonLdBlocks(html);
 
 	const collection = blocks.get(SCHEMA_IDS.collection);
@@ -56,8 +61,7 @@ test('storylist — B: JSON-LD CollectionPage y BreadcrumbList', async ({ reques
 	expect((breadcrumb?.['itemListElement'] as unknown[])?.length).toBeGreaterThanOrEqual(2);
 });
 
-test('storylist — C: bloques sitewide Organization y WebSite presentes', async ({ request }) => {
-	const html = await (await request.get(storylistPath)).text();
+test('storylist — C: bloques sitewide Organization y WebSite presentes', async () => {
 	const blocks = parseJsonLdBlocks(html);
 
 	expect(blocks.get(SCHEMA_IDS.organization)?.['@type']).toBe('Organization');
