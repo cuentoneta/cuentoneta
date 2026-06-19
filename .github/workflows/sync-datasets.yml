@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
     inputs:
       targets:
-        description: 'Datasets a sincronizar (los disparos manuales apuntan a development por defecto, para un dry-run seguro).'
+        description: 'Dataset(s) DESTINO a sobrescribir con un espejo exacto de production (se BORRAN y se reimportan). El origen siempre es production. Default development = dry-run seguro.'
         type: choice
         default: development
         options:
