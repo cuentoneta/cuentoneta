@@ -17,8 +17,8 @@ export class AuthorStructuredDataDirective extends AbstractStructuredDataDirecti
 			return;
 		}
 		untracked(() => {
-			this.schemaOrg.setJsonLd('profile-page', buildAuthorProfilePageSchema(author, environment.website));
-			this.schemaOrg.setJsonLd('breadcrumb-author', buildAuthorBreadcrumb(author, environment.website));
+			this.schemaOrg.setPageScopedJsonLd('profile-page', buildAuthorProfilePageSchema(author, environment.website));
+			this.schemaOrg.setPageScopedJsonLd('breadcrumb-author', buildAuthorBreadcrumb(author, environment.website));
 		});
 	}
 
