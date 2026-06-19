@@ -11,6 +11,8 @@
  * Sobre el DOM hidratado, vía navegación in-app (router):
  *  - D. Al navegar a un cuento de la colección, los bloques de la storylist (CollectionPage +
  *       breadcrumb) se remueven y aparece el Article; sin duplicar canonical ni <title>.
+ *  - E. Al navegar a la home (que no emite structured data propia), los bloques de la storylist
+ *       se remueven igual y persisten solo los sitewide — regresión de #1578.
  */
 import { test, expect } from '@playwright/test';
 
@@ -73,5 +75,19 @@ test('storylist — D: al navegar a un cuento se remueven los bloques de la cole
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.breadcrumbStorylist}"]`)).toHaveCount(0);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.organization}"]`)).toHaveCount(1);
 	await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
+	await expect(page.locator('head > title')).toHaveCount(1);
+});
+
+test('storylist — E: al navegar a la home se remueven los bloques de la colección', async ({ page }) => {
+	await page.goto(storylistPath);
+	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.collection}"]`)).toHaveCount(1);
+
+	await page.locator('a[href$="/home"]').first().click();
+	await expect(page).toHaveURL(/\/home/);
+
+	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.collection}"]`)).toHaveCount(0);
+	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.breadcrumbStorylist}"]`)).toHaveCount(0);
+	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.organization}"]`)).toHaveCount(1);
+	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.website}"]`)).toHaveCount(1);
 	await expect(page.locator('head > title')).toHaveCount(1);
 });
