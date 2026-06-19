@@ -92,6 +92,10 @@ Prohibido. Si un edge case se puede enumerar en un comentario, se puede enumerar
 
 Prohibido. Todo componente nuevo en `src/app/components/` lleva su `*.stories.ts` (ver "Testing" en `CLAUDE.md`). La respuesta siempre es escribir la story.
 
+### "El estado de carga ya se ve, no hace falta una story intercambiable"
+
+Prohibido. Si el componente tiene un **estado de carga (skeleton)**, su story debe exponer ese estado de forma **intercambiable**: un control booleano (`loading` / "Cargando") que alterna real↔skeleton en el **mismo slot**, para poder evaluar la transición y la alineación 1:1 entre ambos. Aplica a componentes que se implementen de ahora en más (no es retroactivo sobre legacy que será rediseñado). El patrón vive en [`testing.md`](testing.md); su omisión es bloqueante para la review.
+
 ---
 
 ## Sección 3 — Disciplina de comentarios
@@ -181,4 +185,4 @@ Proponé cambios vía issue en `cuentoneta/cuentoneta`. Las enmiendas requieren 
 
 ---
 
-_Última actualización: 2026-06-16. Versión inicial en #1495 (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) agregada en #1499 y ampliada en #1542 (visibilidad de API y reemplazos canónicos)._
+_Última actualización: 2026-06-19. Versión inicial en #1495 (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) agregada en #1499 y ampliada en #1542 (visibilidad de API y reemplazos canónicos); regla de story intercambiable para estados de carga agregada en #1581._

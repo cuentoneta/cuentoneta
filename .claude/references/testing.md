@@ -296,11 +296,37 @@ Para dependencias de DI usá los decoradores `moduleMetadata({ imports, provider
 
 **Siempre** actualizá las stories cuando cambien inputs, estados visuales o la API pública del componente.
 
+### Estado de carga (skeleton) → story intercambiable (obligatoria)
+
+Si el componente tiene un **estado de carga** (renderiza un skeleton), su story debe exponer ese estado de forma **intercambiable**: un control booleano (`loading` / "Cargando") que alterna entre el estado real y el skeleton **en el mismo slot**, para poder evaluar la transición y la alineación 1:1 (sobre todo el **alto**, que es el que produce jitter de layout). Es obligatoria para todo componente con estado de carga; su omisión es bloqueante en review (ver [`coding-agent-policies.md`](coding-agent-policies.md)).
+
+```typescript
+// Un control booleano `loading` alterna real↔skeleton en el mismo slot.
+export const Estados: StoryObj<MiComponente & { loading: boolean }> = {
+	decorators: [moduleMetadata({ imports: [MiComponenteSkeleton] })],
+	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
+	render: (args) => ({
+		props: args,
+		template: `
+			@if (loading) {
+				<cuentoneta-mi-componente-skeleton />
+			} @else {
+				<cuentoneta-mi-componente [data]="data" />
+			}
+		`,
+	}),
+	args: { loading: true /* …datos del estado real */ },
+};
+```
+
+Si el componente **renderiza su propio skeleton** según un input (p. ej. cuando `data` está ausente), alcanza con una sola instancia y se evita el `@if`: `[data]="loading ? undefined : data"`.
+
 ---
 
 ## Checklist por tipo de cambio
 
 - **Componente nuevo/modificado en `src/app/components/`** → spec con ATL (comportamiento) **y** `*.stories.ts`.
+- **Componente con estado de carga (skeleton)** → además, story con **estado intercambiable** (switch real↔skeleton en el mismo slot).
 - **Service/repository de backend** → spec funcional; si necesita aislar el repository, module mocking con el bloque `eslint-disable` + nota #1503.
 - **Mocks/timers** → siempre desde `@test-utils`; `clearAllMocks()` en `beforeEach`.
 - **Componente que usa `IntersectionObserver`** → `installIntersectionObserverStub()` en `beforeEach`; simular overflow con `markOutsideViewport` / `markInsideViewport`.

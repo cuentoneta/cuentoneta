@@ -145,6 +145,7 @@ Estos patrones son intencionales y correctos. NO los reportes como problemas:
 - [ ] Los componentes nuevos en `src/app/components/` tienen su `*.stories.ts`
 - [ ] Las stories incluyen `tags: ['autodocs']` y `parameters.docs.description.component`
 - [ ] Las stories cubren las variantes/estados clave (p. ej. default, loading, error, collapsed)
+- [ ] Si el componente tiene estado de carga (skeleton): existe una story con **estado intercambiable** (switch booleano real↔skeleton en el mismo slot)
 - [ ] Las stories que necesitan providers usan los decorators `applicationConfig` o `moduleMetadata`
 - [ ] Los componentes cuyos `input()` signals, estados visuales o API pública cambian tienen sus stories actualizadas
 
