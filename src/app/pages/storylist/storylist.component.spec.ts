@@ -12,7 +12,7 @@ import { provideMock } from '@testing-library/angular/jest-utils';
 import { Storylist } from '@models/storylist.model';
 
 // Directives
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 
 // Componentes
 import StorylistComponent from './storylist.component';
@@ -21,7 +21,7 @@ describe.skip('StorylistComponent', () => {
 	const setup = async () => {
 		return await render(StorylistComponent, {
 			componentImports: [CommonModule, HttpClientTestingModule, MockStorylistCardDeckComponent],
-			componentProviders: [provideRouter([]), provideMock(MetaTagsDirective)],
+			componentProviders: [provideRouter([]), provideMock(HeadMetadataDirective)],
 		});
 	};
 

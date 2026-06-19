@@ -15,4 +15,7 @@ test('home: único H1 de contenido y marca en el header', async ({ page }) => {
 	// La home expone contenido indexable: la sección "Sobre La Cuentoneta" con texto sustantivo.
 	await expect(page.getByRole('heading', { name: /Sobre La Cuentoneta/i })).toBeVisible();
 	await expect(page.getByText(/proyecto abierto, comunitario y sin fines de lucro/i)).toBeVisible();
+
+	// La home declara keywords relevantes en su meta tag.
+	await expect(page.locator('meta[name="keywords"]')).toHaveAttribute('content', /relatos breves/);
 });

@@ -14,9 +14,18 @@ export type JsonLdSchema = Record<string, unknown>;
 export class SchemaOrgService {
 	private readonly document = inject(DOCUMENT);
 
-	/** Inserta o reemplaza (idempotente por `id`) un bloque JSON-LD en el `<head>`. */
+	/** Inserta o reemplaza (idempotente por `id`) un bloque JSON-LD sitewide, que persiste entre rutas. */
 	public setJsonLd(id: string, schema: JsonLdSchema): void {
-		this.resolveScript(id).textContent = JSON.stringify(schema);
+		this.writeScript(id, schema, 'sitewide');
+	}
+
+	/**
+	 * Inserta o reemplaza un bloque JSON-LD de página, marcándolo con `data-schema-scope="page"`.
+	 * El marcador permite que `removePageScopedJsonLd()` limpie todos los bloques de página al cambiar
+	 * de ruta sin mantener a mano una lista de ids.
+	 */
+	public setPageScopedJsonLd(id: string, schema: JsonLdSchema): void {
+		this.writeScript(id, schema, 'page');
 	}
 
 	/**
@@ -27,6 +36,16 @@ export class SchemaOrgService {
 	 */
 	public removeJsonLd(id: string): void {
 		this.findScript(id)?.remove();
+	}
+
+	public removePageScopedJsonLd(): void {
+		this.document.head.querySelectorAll('script[data-schema-scope="page"]').forEach((script) => script.remove());
+	}
+
+	private writeScript(id: string, schema: JsonLdSchema, scope: 'sitewide' | 'page'): void {
+		const script = this.resolveScript(id);
+		script.setAttribute('data-schema-scope', scope);
+		script.textContent = JSON.stringify(schema);
 	}
 
 	private resolveScript(id: string): HTMLScriptElement {

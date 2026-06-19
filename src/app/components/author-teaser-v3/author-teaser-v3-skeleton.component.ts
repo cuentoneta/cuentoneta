@@ -2,10 +2,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
-/**
- * Skeleton de carga de `AuthorTeaserV3`: reproduce su layout (avatar circular de 80px + columna con
- * tags, fila nombre + bandera y cantidad de historias) mientras se cargan los datos del autor.
- */
 @Component({
 	selector: 'cuentoneta-author-teaser-v3-skeleton',
 	imports: [SkeletonComponent],

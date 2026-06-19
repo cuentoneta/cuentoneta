@@ -8,7 +8,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { StoryApi } from '../../providers/story-api.interface';
 
 // Directives
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 
 // Environment
 import { environment } from '../../environments/environment';
@@ -20,7 +20,7 @@ import { AppRoutes } from '../../app.routes';
 	selector: 'cuentoneta-stories',
 	standalone: true,
 	imports: [RouterLink],
-	hostDirectives: [MetaTagsDirective],
+	hostDirectives: [HeadMetadataDirective],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `
 		<main class="content vertical-layout-spacing horizontal-layout-spacing">
@@ -73,7 +73,7 @@ import { AppRoutes } from '../../app.routes';
 export default class StoriesComponent {
 	protected readonly appRoutes = AppRoutes;
 	private storyService = inject(StoryApi);
-	private metaTagsDirective = inject(MetaTagsDirective);
+	private metaTagsDirective = inject(HeadMetadataDirective);
 
 	// TODO: Implementar tamaño de página variable
 	private readonly storiesResource = rxResource({

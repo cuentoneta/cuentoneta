@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 
 // Models
-import { Author, AuthorTeaser } from '@models/author.model';
+import { AuthorProfile, AuthorTeaser } from '@models/author.model';
 import { ApiUrl, Endpoints } from './endpoints';
 import { AuthorApi } from './author-api.interface';
 
@@ -20,8 +20,8 @@ export class HttpAuthorApi implements AuthorApi {
 		return this.http.get<AuthorTeaser[]>(this.url);
 	}
 
-	public getBySlug(slug: string): Observable<Author> {
-		return this.http.get<Author>(`${this.url}/${slug}`);
+	public getBySlug(slug: string): Observable<AuthorProfile> {
+		return this.http.get<AuthorProfile>(`${this.url}/${slug}`);
 	}
 }
 

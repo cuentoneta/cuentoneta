@@ -5,11 +5,9 @@ import { rxResource } from '@angular/core/rxjs-interop';
 // Services
 import { ContentApi } from '../../providers/content-api.interface';
 
-// Directives
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
-
-// Environment
-import { environment } from '../../environments/environment';
+// SEO
+import { HomeMetaTagsDirective } from './home-meta-tags.directive';
+import { HomeStructuredDataDirective } from './home-structured-data.directive';
 
 // Componentes
 import { CarouselComponent } from '@components/carousel/carousel.component';
@@ -28,14 +26,11 @@ import { CollectionTeasersDeck } from '@components/collection-teasers-deck/colle
 		CarouselSkeletonComponent,
 		CollectionTeasersDeck,
 	],
-	hostDirectives: [MetaTagsDirective],
+	hostDirectives: [HomeMetaTagsDirective, HomeStructuredDataDirective],
 })
 export default class HomeComponent {
 	// Services
 	private contentService = inject(ContentApi);
-
-	// Directives
-	private metaTagsDirective = inject(MetaTagsDirective);
 
 	// Recursos
 	private readonly landingPageResource = rxResource({
@@ -49,18 +44,4 @@ export default class HomeComponent {
 	protected readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
 	protected readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
 	protected readonly latestReads = computed(() => this.landingPageContent()?.latestReads.slice(0, 6) || []);
-
-	constructor() {
-		this.updateMetaTags();
-	}
-
-	private updateMetaTags() {
-		// Title descriptivo (keyword + marca). Se pasa `addPrefix = false` para que el string completo
-		// —marca incluida— se emita tal cual en el SSR, donde el sufijo "| La Cuentoneta" no se agrega.
-		this.metaTagsDirective.setTitle('Cuentos y relatos breves para leer en línea | La Cuentoneta', false);
-		this.metaTagsDirective.setDefaultDescription();
-		this.metaTagsDirective.setDefaultKeywords();
-		this.metaTagsDirective.setCanonicalUrl(`${environment.website}`);
-		this.metaTagsDirective.setRobots('index, follow');
-	}
 }
