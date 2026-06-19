@@ -2,7 +2,6 @@ import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppRoutes } from '../../app.routes';
 import { MediaResourceTagsComponent } from '../media-resource-tags/media-resource-tags.component';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 import { RouterLink } from '@angular/router';
 import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
@@ -10,13 +9,7 @@ import { StorylistStoriesNavigationTeasers } from '@models/storylist.model';
 
 @Component({
 	selector: 'cuentoneta-navigable-storylist-story-teaser',
-	imports: [
-		CommonModule,
-		MediaResourceTagsComponent,
-		NgxSkeletonLoaderModule,
-		StoryEditionDateLabelComponent,
-		RouterLink,
-	],
+	imports: [CommonModule, MediaResourceTagsComponent, StoryEditionDateLabelComponent, RouterLink],
 	template: `
 		<a
 			[routerLink]="['/', appRoutes.Story, story().slug]"

@@ -7,7 +7,6 @@ import { provideRouter } from '@angular/router';
 // 3rd party modules
 import { render } from '@testing-library/angular';
 import { provideMock } from '@testing-library/angular/jest-utils';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Models
 import { Storylist } from '@models/storylist.model';
@@ -21,12 +20,7 @@ import StorylistComponent from './storylist.component';
 describe.skip('StorylistComponent', () => {
 	const setup = async () => {
 		return await render(StorylistComponent, {
-			componentImports: [
-				CommonModule,
-				HttpClientTestingModule,
-				MockStorylistCardDeckComponent,
-				NgxSkeletonLoaderModule,
-			],
+			componentImports: [CommonModule, HttpClientTestingModule, MockStorylistCardDeckComponent],
 			componentProviders: [provideRouter([]), provideMock(HeadMetadataDirective)],
 		});
 	};

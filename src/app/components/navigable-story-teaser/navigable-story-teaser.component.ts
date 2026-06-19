@@ -3,19 +3,12 @@ import { CommonModule } from '@angular/common';
 import { StoryNavigationTeaser } from '@models/story.model';
 import { AppRoutes } from '../../app.routes';
 import { MediaResourceTagsComponent } from '../media-resource-tags/media-resource-tags.component';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 import { RouterLink } from '@angular/router';
 
 @Component({
 	selector: 'cuentoneta-navigable-story-teaser',
-	imports: [
-		CommonModule,
-		MediaResourceTagsComponent,
-		NgxSkeletonLoaderModule,
-		StoryEditionDateLabelComponent,
-		RouterLink,
-	],
+	imports: [CommonModule, MediaResourceTagsComponent, StoryEditionDateLabelComponent, RouterLink],
 	template: `
 		@if (story()) {
 			<a

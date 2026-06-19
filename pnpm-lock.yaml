@@ -133,9 +133,6 @@ importers:
       hono:
         specifier: ^4.12.24
         version: 4.12.24
-      ngx-skeleton-loader:
-        specifier: ^11.3.0
-        version: 11.3.0(@angular/common@21.2.16(@angular/core@21.2.16(@angular/compiler@21.2.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@21.2.16(@angular/compiler@21.2.16)(rxjs@7.8.2)(zone.js@0.15.0))
       rxjs:
         specifier: ~7.8.1
         version: 7.8.2
@@ -9266,13 +9263,6 @@ packages:
   neo-async@2.6.2:
     resolution:
       { integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw== }
-
-  ngx-skeleton-loader@11.3.0:
-    resolution:
-      { integrity: sha512-MLm5shgXGiCA1W5NEqct6glBFx2AEgEKbk8pDyY15BsZ2zTGUwa5jw4pe6nJdrCj6xcl/d9oFTinQHrO0q+3RA== }
-    peerDependencies:
-      '@angular/common': '>=19.0.0'
-      '@angular/core': '>=19.0.0'
 
   no-case@3.0.4:
     resolution:
@@ -21455,12 +21445,6 @@ snapshots:
   negotiator@1.0.0: {}
 
   neo-async@2.6.2: {}
-
-  ngx-skeleton-loader@11.3.0(@angular/common@21.2.16(@angular/core@21.2.16(@angular/compiler@21.2.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@21.2.16(@angular/compiler@21.2.16)(rxjs@7.8.2)(zone.js@0.15.0)):
-    dependencies:
-      '@angular/common': 21.2.16(@angular/core@21.2.16(@angular/compiler@21.2.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
-      '@angular/core': 21.2.16(@angular/compiler@21.2.16)(rxjs@7.8.2)(zone.js@0.15.0)
-      tslib: 2.8.1
 
   no-case@3.0.4:
     dependencies:

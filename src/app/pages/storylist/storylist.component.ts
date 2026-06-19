@@ -2,9 +2,6 @@
 import { Component, computed, forwardRef, inject, input } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 
-// 3rd party modules
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-
 // Services
 import { StorylistApi } from '../../providers/storylist-api.interface';
 
@@ -21,12 +18,13 @@ import { StorylistTitle } from './storylist-title/storylist-title';
 import { StoryCardTeaserComponent } from '@components/story-card-teaser/story-card-teaser.component';
 import { StoryCardTeaserSkeletonComponent } from '@components/story-card-teaser/story-card-teaser-skeleton.component';
 import { MediaResourceComponent } from '@components/media-resource/media-resource.component';
+import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
 @Component({
 	selector: 'cuentoneta-storylist',
 	templateUrl: './storylist.component.html',
 	imports: [
-		NgxSkeletonLoaderModule,
+		SkeletonComponent,
 		PortableTextParserComponent,
 		Tabs,
 		Tab,
@@ -37,18 +35,14 @@ import { MediaResourceComponent } from '@components/media-resource/media-resourc
 	],
 	providers: [{ provide: STORYLIST_HOST, useExisting: forwardRef(() => StorylistComponent) }],
 	hostDirectives: [StorylistMetaTagsDirective, StorylistStructuredDataDirective],
-	styles: `
-		@reference '#tailwind-theme';
-
-		:host ::ng-deep .description-skeleton .skeleton-loader {
-			@apply bg-neutral-300;
-		}
-	`,
 })
 export default class StorylistComponent implements StorylistHost {
 	// Route inputs
 	public readonly slug = input.required<string>();
 	public readonly activeTab = input<'stories' | 'about' | string>('stories');
+
+	// Cantidad de líneas del skeleton de la descripción mientras carga
+	protected readonly descriptionSkeletonLines = Array.from({ length: 10 });
 
 	// Providers
 	private storylistService = inject(StorylistApi);
