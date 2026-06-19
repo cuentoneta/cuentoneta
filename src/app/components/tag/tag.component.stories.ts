@@ -1,10 +1,11 @@
-import { argsToTemplate, Meta, StoryObj } from '@storybook/angular';
+import { argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 
 import { TagComponent } from './tag.component';
+import { TagSkeletonComponent } from './tag-skeleton.component';
 
 const meta: Meta<TagComponent> = {
 	component: TagComponent,
-	title: 'Componentes/Tag',
+	title: 'Componentes V3/Tag',
 	parameters: {
 		docs: {
 			canvas: {
@@ -65,4 +66,33 @@ export const Showcase: Story = {
 	}),
 	args: { label: 'Crónica' },
 	parameters: { docs: { description: { story: 'Las tres variantes: soft, filled y gray.' } } },
+};
+
+// Estado de carga (skeleton) del tag.
+export const Skeleton: StoryObj = {
+	decorators: [moduleMetadata({ imports: [TagSkeletonComponent] })],
+	render: () => ({ template: `<cuentoneta-tag-skeleton />` }),
+	parameters: {
+		docs: { description: { story: 'Skeleton de carga del tag.' } },
+	},
+};
+
+// Switch "Cargando" para alternar real↔skeleton en el mismo slot y evaluar la transición/alineación.
+export const Estados: StoryObj<TagComponent & { loading: boolean }> = {
+	decorators: [moduleMetadata({ imports: [TagSkeletonComponent] })],
+	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
+	render: (args) => ({
+		props: args,
+		template: `
+			@if (loading) {
+				<cuentoneta-tag-skeleton />
+			} @else {
+				<cuentoneta-tag [label]="label" [variant]="variant" />
+			}
+		`,
+	}),
+	args: { loading: true, label: 'Crónica', variant: 'filled' },
+	parameters: {
+		docs: { description: { story: 'Activá/desactivá "Cargando" para alternar entre el estado real y el skeleton.' } },
+	},
 };
