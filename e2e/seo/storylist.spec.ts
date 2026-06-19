@@ -9,8 +9,8 @@
  *  - C. Bloques sitewide Organization y WebSite.
  *
  * Sobre el DOM hidratado, vía navegación in-app (router):
- *  - D. Al volver a la home (logo del header), los bloques de la colección se remueven y los
- *       sitewide persisten; sin duplicar canonical ni <title>.
+ *  - D. Al navegar a un cuento de la colección, los bloques de la storylist (CollectionPage +
+ *       breadcrumb) se remueven y aparece el Article; sin duplicar canonical ni <title>.
  */
 import { test, expect } from '@playwright/test';
 
@@ -61,17 +61,17 @@ test('storylist — C: bloques sitewide Organization y WebSite presentes', async
 	expect(blocks.get(SCHEMA_IDS.website)?.['@type']).toBe('WebSite');
 });
 
-test('storylist — D: al volver a la home se remueven los bloques de la colección', async ({ page }) => {
+test('storylist — D: al navegar a un cuento se remueven los bloques de la colección', async ({ page }) => {
 	await page.goto(storylistPath);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.collection}"]`)).toHaveCount(1);
 
-	await page.locator('header a[href="/home"]').first().click();
-	await expect(page).toHaveURL(/\/home$/);
-	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.organization}"]`)).toHaveCount(1);
+	await page.locator('a[href^="/story/"]').first().click();
+	await expect(page).toHaveURL(/\/story\//);
+	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.article}"]`)).toHaveCount(1);
 
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.collection}"]`)).toHaveCount(0);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.breadcrumbStorylist}"]`)).toHaveCount(0);
-	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.website}"]`)).toHaveCount(1);
+	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.organization}"]`)).toHaveCount(1);
 	await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
-	await expect(page.locator('title')).toHaveCount(1);
+	await expect(page.locator('head > title')).toHaveCount(1);
 });

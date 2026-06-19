@@ -56,5 +56,5 @@ test('home — D: al navegar a una story aparece el Article y el sitewide persis
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.organization}"]`)).toHaveCount(1);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.website}"]`)).toHaveCount(1);
 	await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
-	await expect(page.locator('title')).toHaveCount(1);
+	await expect(page.locator('head > title')).toHaveCount(1);
 });

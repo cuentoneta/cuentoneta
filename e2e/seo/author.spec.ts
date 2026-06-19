@@ -71,5 +71,5 @@ test('author — D: al volver a la home se remueven los bloques del autor', asyn
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.breadcrumbAuthor}"]`)).toHaveCount(0);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.website}"]`)).toHaveCount(1);
 	await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
-	await expect(page.locator('title')).toHaveCount(1);
+	await expect(page.locator('head > title')).toHaveCount(1);
 });
