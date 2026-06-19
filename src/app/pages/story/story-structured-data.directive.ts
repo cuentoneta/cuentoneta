@@ -17,8 +17,8 @@ export class StoryStructuredDataDirective extends AbstractStructuredDataDirectiv
 			return;
 		}
 		untracked(() => {
-			this.schemaOrg.setJsonLd('article', buildStoryArticleSchema(story, environment.website));
-			this.schemaOrg.setJsonLd('breadcrumb-story', buildStoryBreadcrumb(story, environment.website));
+			this.schemaOrg.setPageScopedJsonLd('article', buildStoryArticleSchema(story, environment.website));
+			this.schemaOrg.setPageScopedJsonLd('breadcrumb-story', buildStoryBreadcrumb(story, environment.website));
 		});
 	}
 

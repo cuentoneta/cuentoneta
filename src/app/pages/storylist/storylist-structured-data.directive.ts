@@ -17,8 +17,11 @@ export class StorylistStructuredDataDirective extends AbstractStructuredDataDire
 			return;
 		}
 		untracked(() => {
-			this.schemaOrg.setJsonLd('collection', buildStorylistCollectionSchema(storylist, environment.website));
-			this.schemaOrg.setJsonLd('breadcrumb-storylist', buildStorylistBreadcrumb(storylist, environment.website));
+			this.schemaOrg.setPageScopedJsonLd('collection', buildStorylistCollectionSchema(storylist, environment.website));
+			this.schemaOrg.setPageScopedJsonLd(
+				'breadcrumb-storylist',
+				buildStorylistBreadcrumb(storylist, environment.website),
+			);
 		});
 	}
 

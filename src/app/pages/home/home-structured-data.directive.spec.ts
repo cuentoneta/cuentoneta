@@ -2,7 +2,7 @@ import { clearAllMocks } from '@test-utils';
 import { TestBed } from '@angular/core/testing';
 import { DOCUMENT } from '@angular/common';
 
-import { PAGE_SCOPED_SCHEMA_IDS, SchemaOrgService } from '../../providers/schema-org.service';
+import { SchemaOrgService } from '../../providers/schema-org.service';
 import { HomeStructuredDataDirective } from './home-structured-data.directive';
 
 describe('HomeStructuredDataDirective', () => {
@@ -24,8 +24,8 @@ describe('HomeStructuredDataDirective', () => {
 
 	it('should remove collection and breadcrumb-storylist left by a previous storylist route', () => {
 		const schemaOrg = TestBed.inject(SchemaOrgService);
-		schemaOrg.setJsonLd('collection', { '@type': 'CollectionPage' });
-		schemaOrg.setJsonLd('breadcrumb-storylist', { '@type': 'BreadcrumbList' });
+		schemaOrg.setPageScopedJsonLd('collection', { '@type': 'CollectionPage' });
+		schemaOrg.setPageScopedJsonLd('breadcrumb-storylist', { '@type': 'BreadcrumbList' });
 
 		instantiate();
 		TestBed.tick();
@@ -35,26 +35,26 @@ describe('HomeStructuredDataDirective', () => {
 		expect(head.querySelector('script[data-schema-id="breadcrumb-storylist"]')).toBeNull();
 	});
 
-	it('should remove every page-scoped block on init', () => {
+	it('should remove page-scoped blocks left by any route, not just storylist', () => {
 		const schemaOrg = TestBed.inject(SchemaOrgService);
-		for (const id of PAGE_SCOPED_SCHEMA_IDS) {
-			schemaOrg.setJsonLd(id, { '@type': 'Test' });
-		}
+		schemaOrg.setPageScopedJsonLd('article', { '@type': 'Article' });
+		schemaOrg.setPageScopedJsonLd('profile-page', { '@type': 'ProfilePage' });
+		schemaOrg.setPageScopedJsonLd('collection', { '@type': 'CollectionPage' });
 
 		instantiate();
 		TestBed.tick();
 
 		const head = TestBed.inject(DOCUMENT).head;
-		for (const id of PAGE_SCOPED_SCHEMA_IDS) {
-			expect(head.querySelector(`script[data-schema-id="${id}"]`)).toBeNull();
-		}
+		expect(head.querySelector('script[data-schema-id="article"]')).toBeNull();
+		expect(head.querySelector('script[data-schema-id="profile-page"]')).toBeNull();
+		expect(head.querySelector('script[data-schema-id="collection"]')).toBeNull();
 	});
 
 	it('should not remove sitewide blocks (organization, website)', () => {
 		const schemaOrg = TestBed.inject(SchemaOrgService);
 		schemaOrg.setJsonLd('organization', { '@type': 'Organization' });
 		schemaOrg.setJsonLd('website', { '@type': 'WebSite' });
-		schemaOrg.setJsonLd('collection', { '@type': 'CollectionPage' });
+		schemaOrg.setPageScopedJsonLd('collection', { '@type': 'CollectionPage' });
 
 		instantiate();
 		TestBed.tick();

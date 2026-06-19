@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
-import { PAGE_SCOPED_SCHEMA_IDS, SchemaOrgService } from './schema-org.service';
+import { SchemaOrgService } from './schema-org.service';
 
 describe('SchemaOrgService', () => {
 	let service: SchemaOrgService;
@@ -65,20 +65,18 @@ describe('SchemaOrgService', () => {
 	});
 
 	describe('removePageScopedJsonLd', () => {
-		it('should remove all page-scoped blocks and leave sitewide intact', () => {
+		it('should remove blocks set as page-scoped and leave sitewide intact', () => {
 			service.setJsonLd('organization', { '@type': 'Organization' });
 			service.setJsonLd('website', { '@type': 'WebSite' });
-			for (const id of PAGE_SCOPED_SCHEMA_IDS) {
-				service.setJsonLd(id, { '@type': 'Test' });
-			}
+			service.setPageScopedJsonLd('article', { '@type': 'Article' });
+			service.setPageScopedJsonLd('collection', { '@type': 'CollectionPage' });
 
 			service.removePageScopedJsonLd();
 
 			expect(scriptFor('organization')).not.toBeNull();
 			expect(scriptFor('website')).not.toBeNull();
-			for (const id of PAGE_SCOPED_SCHEMA_IDS) {
-				expect(scriptFor(id)).toBeNull();
-			}
+			expect(scriptFor('article')).toBeNull();
+			expect(scriptFor('collection')).toBeNull();
 		});
 
 		it('should not throw when no page-scoped blocks are present', () => {
