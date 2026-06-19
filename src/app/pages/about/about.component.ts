@@ -2,14 +2,14 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { NgOptimizedImage } from '@angular/common';
 import { rxResource } from '@angular/core/rxjs-interop';
 
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { environment } from '../../environments/environment';
 import { ContributorApi } from '../../providers/contributor-api.interface';
 
 @Component({
 	selector: 'cuentoneta-about',
 	imports: [NgOptimizedImage],
-	hostDirectives: [MetaTagsDirective],
+	hostDirectives: [HeadMetadataDirective],
 	templateUrl: './about.component.html',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -26,7 +26,7 @@ export default class AboutComponent {
 		GITHUB_CONTRIBUTORS: 'https://github.com/rolivencia/cuentoneta/tree/master#contribuyentes',
 	};
 
-	private metaTagsDirective = inject(MetaTagsDirective);
+	private metaTagsDirective = inject(HeadMetadataDirective);
 	private contributorService = inject(ContributorApi);
 
 	private readonly contributorsResource = rxResource({

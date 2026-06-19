@@ -1,24 +1,24 @@
 import { spyOn } from '@test-utils';
-import { MetaTagsDirective } from './meta-tags.directive';
+import { HeadMetadataDirective } from './head-metadata.directive';
 import { TestBed } from '@angular/core/testing';
 import { Meta, Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 
-describe('MetaTagsDirective', () => {
+describe('HeadMetadataDirective', () => {
 	const BASE_URL = 'https://www.cuentoneta.ar';
 
-	let directive: MetaTagsDirective;
+	let directive: HeadMetadataDirective;
 	let metaService: Meta;
 	let titleService: Title;
 	let document: Document;
 
 	beforeEach(() => {
 		TestBed.configureTestingModule({
-			providers: [MetaTagsDirective],
+			providers: [HeadMetadataDirective],
 		});
 
 		TestBed.runInInjectionContext(() => {
-			directive = new MetaTagsDirective();
+			directive = new HeadMetadataDirective();
 			metaService = TestBed.inject(Meta);
 			titleService = TestBed.inject(Title);
 			document = TestBed.inject(DOCUMENT);
@@ -46,13 +46,31 @@ describe('MetaTagsDirective', () => {
 				content: 'Test Title',
 			});
 		});
+	});
 
-		it('should set title without prefix when addPrefix is false', () => {
+	describe('setExactTitle', () => {
+		it('should set the title verbatim without the brand suffix', () => {
 			const titleSpy = spyOn(titleService, 'setTitle');
+			const metaSpy = spyOn(metaService, 'updateTag');
 
-			directive.setTitle('Test Title', false);
+			directive.setExactTitle('Cuentos | La Cuentoneta');
 
-			expect(titleSpy).toHaveBeenCalledWith('Test Title');
+			expect(titleSpy).toHaveBeenCalledWith('Cuentos | La Cuentoneta');
+			expect(metaSpy).toHaveBeenCalledWith({ name: 'twitter:title', content: 'Cuentos | La Cuentoneta' });
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:title', content: 'Cuentos | La Cuentoneta' });
+		});
+	});
+
+	describe('removeTitle', () => {
+		it('should clear the document title and remove twitter/og title tags', () => {
+			const titleSpy = spyOn(titleService, 'setTitle');
+			const metaSpy = spyOn(metaService, 'removeTag');
+
+			directive.removeTitle();
+
+			expect(titleSpy).toHaveBeenCalledWith('');
+			expect(metaSpy).toHaveBeenCalledWith('name="twitter:title"');
+			expect(metaSpy).toHaveBeenCalledWith('property="og:title"');
 		});
 	});
 
@@ -77,15 +95,27 @@ describe('MetaTagsDirective', () => {
 		});
 	});
 
+	describe('removeDescription', () => {
+		it('should remove description, twitter and og description tags', () => {
+			const metaSpy = spyOn(metaService, 'removeTag');
+
+			directive.removeDescription();
+
+			expect(metaSpy).toHaveBeenCalledWith('name="description"');
+			expect(metaSpy).toHaveBeenCalledWith('name="twitter:description"');
+			expect(metaSpy).toHaveBeenCalledWith('property="og:description"');
+		});
+	});
+
 	describe('setDefault', () => {
 		it('should set default title, description and keywords', () => {
-			const setTitleSpy = spyOn(directive, 'setTitle');
+			const setExactTitleSpy = spyOn(directive, 'setExactTitle');
 			const setDefaultDescriptionSpy = spyOn(directive, 'setDefaultDescription');
 			const setDefaultKeywordsSpy = spyOn(directive, 'setDefaultKeywords');
 
 			directive.setDefault();
 
-			expect(setTitleSpy).toHaveBeenCalledWith('La Cuentoneta', false);
+			expect(setExactTitleSpy).toHaveBeenCalledWith('La Cuentoneta');
 			expect(setDefaultDescriptionSpy).toHaveBeenCalled();
 			expect(setDefaultKeywordsSpy).toHaveBeenCalled();
 		});
@@ -395,7 +425,7 @@ describe('MetaTagsDirective', () => {
 	});
 
 	describe('reset on destroy', () => {
-		it('should clean up every per-page tag (keywords, robots, author, article dates and canonical) when destroyed', () => {
+		it('should clean up every per-page tag (title, description, keywords, robots, author, article dates and canonical) when destroyed', () => {
 			const removeSpy = spyOn(metaService, 'removeTag');
 			// El canonical no se limpia con removeTag (quita un <link>): lo seteamos para verificar su remoción.
 			directive.setCanonicalUrl(`${BASE_URL}/home`);
@@ -407,6 +437,11 @@ describe('MetaTagsDirective', () => {
 			TestBed.resetTestingModule();
 
 			// Meta tags por página que la limpieza remueve vía Meta.removeTag.
+			expect(removeSpy).toHaveBeenCalledWith('name="twitter:title"');
+			expect(removeSpy).toHaveBeenCalledWith('property="og:title"');
+			expect(removeSpy).toHaveBeenCalledWith('name="description"');
+			expect(removeSpy).toHaveBeenCalledWith('name="twitter:description"');
+			expect(removeSpy).toHaveBeenCalledWith('property="og:description"');
 			expect(removeSpy).toHaveBeenCalledWith('name="keywords"');
 			expect(removeSpy).toHaveBeenCalledWith('name="robots"');
 			expect(removeSpy).toHaveBeenCalledWith('name="author"');

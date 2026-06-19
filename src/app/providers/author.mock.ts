@@ -3,7 +3,7 @@ import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
 // Models
-import { Author, AuthorTeaser } from '@models/author.model';
+import { AuthorProfile, AuthorTeaser } from '@models/author.model';
 import { authorMock, authorTeaserMock } from '@mocks/author.mock';
 import { AuthorApi } from './author-api.interface';
 
@@ -12,7 +12,7 @@ export class InMemoryAuthorApi implements AuthorApi {
 		return of([authorTeaserMock]);
 	}
 
-	public getBySlug(): Observable<Author> {
+	public getBySlug(): Observable<AuthorProfile> {
 		return of(authorMock);
 	}
 }

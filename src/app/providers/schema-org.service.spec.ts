@@ -63,4 +63,24 @@ describe('SchemaOrgService', () => {
 	it('should not throw when removing a missing id', () => {
 		expect(() => service.removeJsonLd('missing')).not.toThrow();
 	});
+
+	describe('removePageScopedJsonLd', () => {
+		it('should remove blocks set as page-scoped and leave sitewide intact', () => {
+			service.setJsonLd('organization', { '@type': 'Organization' });
+			service.setJsonLd('website', { '@type': 'WebSite' });
+			service.setPageScopedJsonLd('article', { '@type': 'Article' });
+			service.setPageScopedJsonLd('collection', { '@type': 'CollectionPage' });
+
+			service.removePageScopedJsonLd();
+
+			expect(scriptFor('organization')).not.toBeNull();
+			expect(scriptFor('website')).not.toBeNull();
+			expect(scriptFor('article')).toBeNull();
+			expect(scriptFor('collection')).toBeNull();
+		});
+
+		it('should not throw when no page-scoped blocks are present', () => {
+			expect(() => service.removePageScopedJsonLd()).not.toThrow();
+		});
+	});
 });
