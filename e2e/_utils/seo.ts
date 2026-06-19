@@ -1,4 +1,4 @@
-const JSONLD_PATTERN = /<script type="application\/ld\+json" data-schema-id="([^"]+)">([\s\S]*?)<\/script>/g;
+const JSONLD_PATTERN = /<script[^>]*\bdata-schema-id="([^"]+)"[^>]*>([\s\S]*?)<\/script>/g;
 
 export function parseJsonLdBlocks(html: string): Map<string, Record<string, unknown>> {
 	const blocks = new Map<string, Record<string, unknown>>();
