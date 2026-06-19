@@ -118,7 +118,7 @@ Escribí el plan en `workspace/PLAN.md` con esta estructura:
 
 - <Qué tests unitarios (Vitest + Angular Testing Library + `@test-utils`) hay que escribir o actualizar; usar los wrappers de `@test-utils`, nunca `vi.*` directo>
 - <Enfoque de testing y prioridad de queries>
-- <Stories de Storybook a crear o actualizar para componentes nuevos/modificados>
+- <Stories de Storybook a crear o actualizar para componentes nuevos/modificados; si el componente tiene estado de carga (skeleton), incluir una story con **estado intercambiable** (switch real↔skeleton) — obligatoria, ver `testing.md`>
 
 ## Riesgos y consideraciones
 
