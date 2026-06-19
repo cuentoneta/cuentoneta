@@ -51,7 +51,8 @@ jobs:
       # Umbral mínimo: un export real de producción pesa varios MB; por debajo de 50 KB asumimos un
       # export fallido o un dataset vacío y abortamos sin tocar los targets.
       MIN_TARBALL_BYTES: 51200
-      # En el schedule no hay inputs → la corrida diaria sincroniza ambos targets.
+      # En schedule no hay inputs (github.event.inputs.targets = '') → el fallback deja TARGETS en
+      # 'both' y la corrida diaria sincroniza ambos targets. En workflow_dispatch toma el input.
       TARGETS: ${{ github.event.inputs.targets || 'both' }}
 
     steps:
@@ -119,6 +120,8 @@ jobs:
           for dataset in $datasets; do
             echo "::group::Sync $dataset"
             pnpm exec sanity dataset delete "$dataset" --force
+            # --visibility public preserva la visibilidad actual: staging y development son públicos
+            # (los lee el frontend de esos entornos sin token); production es el privado.
             pnpm exec sanity dataset create "$dataset" --visibility public
             pnpm exec sanity dataset import "$TARBALL" "$dataset"
             echo "::endgroup::"
