@@ -10,6 +10,6 @@ export class HomeStructuredDataDirective extends AbstractStructuredDataDirective
 		this.schemaOrg.removePageScopedJsonLd();
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-empty-function -- la home no inyecta bloques propios; no hay nada que remover al salir
+	// eslint-disable-next-line @typescript-eslint/no-empty-function -- la home no agrega bloques propios; no hay nada que remover al salir
 	protected removeStructuredData(): void {}
 }
