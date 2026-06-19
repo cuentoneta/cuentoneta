@@ -23,7 +23,7 @@ test('author — A: meta tags en el HTML server-rendered', async ({ request }) =
 	const html = await (await request.get(authorPath)).text();
 
 	expect(getTitleText(html)).toMatch(/borges/i);
-	expect(getMetaContent(html, 'description')).toContain('Perfil');
+	expect(getMetaContent(html, 'description')).toMatch(/borges/i);
 	expect(getMetaContent(html, 'og:title')).toBeTruthy();
 	expect(getMetaContent(html, 'og:description')).toBeTruthy();
 	expect(getMetaContent(html, 'twitter:title')).toBeTruthy();

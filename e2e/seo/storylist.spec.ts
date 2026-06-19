@@ -24,7 +24,7 @@ const storylistPath = `/storylist/${STABLE_SLUGS.storylist}`;
 test('storylist — A: meta tags en el HTML server-rendered', async ({ request }) => {
 	const html = await (await request.get(storylistPath)).text();
 
-	expect(getTitleText(html)).toBeTruthy();
+	expect(getTitleText(html)).toMatch(/verano/i);
 	expect(getMetaContent(html, 'description')).toBeTruthy();
 	expect(getMetaContent(html, 'og:title')).toBeTruthy();
 	expect(getMetaContent(html, 'og:description')).toBeTruthy();
