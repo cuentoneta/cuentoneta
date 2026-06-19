@@ -7,6 +7,7 @@ import { ContentApi } from '../../providers/content-api.interface';
 
 // SEO
 import { HomeMetaTagsDirective } from './home-meta-tags.directive';
+import { HomeStructuredDataDirective } from './home-structured-data.directive';
 
 // Componentes
 import { CarouselComponent } from '@components/carousel/carousel.component';
@@ -25,7 +26,7 @@ import { CollectionTeasersDeck } from '@components/collection-teasers-deck/colle
 		CarouselSkeletonComponent,
 		CollectionTeasersDeck,
 	],
-	hostDirectives: [HomeMetaTagsDirective],
+	hostDirectives: [HomeMetaTagsDirective, HomeStructuredDataDirective],
 })
 export default class HomeComponent {
 	// Services
