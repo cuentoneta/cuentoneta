@@ -90,6 +90,17 @@ jobs:
           fi
           echo "Tarball válido: ${actual_bytes} bytes."
 
+      # Se sube ANTES del wipe: si un import falla tras el delete, el tarball queda disponible para
+      # restaurar el dataset manualmente sin re-exportar production.
+      - name: Upload tarball (recuperación manual)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-tarball
+          path: cms/production.tar.gz
+          retention-days: 1
+          if-no-files-found: ignore
+
       - name: Sync targets (wipe + import)
         working-directory: cms
         run: |
@@ -107,3 +118,10 @@ jobs:
             pnpm exec sanity dataset import "$TARBALL" "$dataset"
             echo "::endgroup::"
           done
+
+      - name: Instrucciones de recuperación ante fallo
+        if: failure()
+        run: |
+          echo "::error::La sincronización falló. Si un dataset quedó vacío tras el delete, restauralo:" >&2
+          echo "::error::  1) descargá el artefacto 'production-tarball' de este run;" >&2
+          echo "::error::  2) cd cms && pnpm exec sanity dataset import production.tar.gz <target>" >&2
