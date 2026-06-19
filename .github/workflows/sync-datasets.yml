@@ -35,7 +35,7 @@ permissions:
 
 jobs:
   sync:
-    name: Export production → wipe + import targets
+    name: Sync Sanity datasets from production
     runs-on: ubuntu-latest
 
     env:
@@ -126,6 +126,7 @@ jobs:
             pnpm exec sanity dataset import "$TARBALL" "$dataset"
             echo "::endgroup::"
           done
+          echo "Sync completado para: $datasets"
 
       - name: Instrucciones de recuperación ante fallo
         if: failure()
