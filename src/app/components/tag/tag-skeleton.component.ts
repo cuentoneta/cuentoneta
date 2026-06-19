@@ -10,7 +10,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 	selector: 'cuentoneta-tag-skeleton',
 	imports: [SkeletonComponent],
 	host: { class: 'inline-block' },
-	template: `<cuentoneta-skeleton appearance="square" class="h-[22px] w-[72px] rounded-sm bg-brand-100" />`,
+	template: `<cuentoneta-skeleton appearance="square" class="h-[22px] w-[72px] rounded-sm bg-neutral-200" />`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TagSkeletonComponent {}
