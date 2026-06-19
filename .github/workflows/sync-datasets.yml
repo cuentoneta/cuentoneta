@@ -118,6 +118,12 @@ jobs:
             *) echo "::error::Valor de targets no soportado: $TARGETS" >&2; exit 1 ;;
           esac
           for dataset in $datasets; do
+            # Salvaguarda dura: nunca borrar/reimportar el dataset de origen (production), pase lo
+            # que pase con $TARGETS o el case de arriba. production solo se lee (export), jamás se escribe.
+            if [ "$dataset" = "$SOURCE_DATASET" ]; then
+              echo "::error::Target prohibido: '$dataset' es el dataset de origen. Se aborta sin tocarlo." >&2
+              exit 1
+            fi
             echo "::group::Sync $dataset"
             pnpm exec sanity dataset delete "$dataset" --force
             # --visibility public preserva la visibilidad actual: staging y development son públicos
