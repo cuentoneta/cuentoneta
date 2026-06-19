@@ -10,22 +10,26 @@ export function parseJsonLdBlocks(html: string): Map<string, Record<string, unkn
 }
 
 export function getMetaContent(html: string, nameOrProperty: string): string | null {
-	const byName = html.match(new RegExp(`<meta[^>]+name="${nameOrProperty}"[^>]+content="([^"]*)"`, 'i'));
+	const key = escapeRegExp(nameOrProperty);
+	const byName = html.match(new RegExp(`<meta[^>]+name="${key}"[^>]+content="([^"]*)"`, 'i'));
 	if (byName) {
 		return byName[1];
 	}
-	const byProperty = html.match(new RegExp(`<meta[^>]+property="${nameOrProperty}"[^>]+content="([^"]*)"`, 'i'));
+	const byProperty = html.match(new RegExp(`<meta[^>]+property="${key}"[^>]+content="([^"]*)"`, 'i'));
 	if (byProperty) {
 		return byProperty[1];
 	}
-	const contentFirst = html.match(
-		new RegExp(`<meta[^>]+content="([^"]*)"[^>]+(?:name|property)="${nameOrProperty}"`, 'i'),
-	);
+	const contentFirst = html.match(new RegExp(`<meta[^>]+content="([^"]*)"[^>]+(?:name|property)="${key}"`, 'i'));
 	return contentFirst?.[1] ?? null;
 }
 
 export function getTitleText(html: string): string | null {
-	return html.match(/<title>([\s\S]*?)<\/title>/i)?.[1] ?? null;
+	const head = html.match(/<head[\s\S]*?<\/head>/i)?.[0] ?? html;
+	return head.match(/<title>([\s\S]*?)<\/title>/i)?.[1] ?? null;
+}
+
+function escapeRegExp(value: string): string {
+	return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 export function getCanonicalHref(html: string): string | null {
