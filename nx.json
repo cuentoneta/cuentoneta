@@ -5,9 +5,7 @@
 	"tasksRunnerOptions": {
 		"default": {
 			"runner": "nx-cloud",
-			"options": {
-				"cacheableOperations": ["lint", "test", "e2e", "build-storybook"]
-			}
+			"options": {}
 		}
 	},
 	"targetDefaults": {
@@ -17,10 +15,15 @@
 			"cache": true
 		},
 		"e2e": {
-			"inputs": ["default", "^production"]
+			"inputs": ["default", "^production"],
+			"cache": false
 		},
 		"lint": {
-			"inputs": ["default", "{workspaceRoot}/eslint.config.mjs"]
+			"inputs": ["default", "{workspaceRoot}/eslint.config.mjs"],
+			"cache": true
+		},
+		"test": {
+			"cache": true
 		},
 		"build-storybook": {
 			"inputs": ["default", "^production", "{projectRoot}/.storybook/**/*", "{projectRoot}/tsconfig.storybook.json"],
