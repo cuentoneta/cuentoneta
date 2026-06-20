@@ -2,6 +2,11 @@ name: CI
 
 on:
   pull_request:
+  # Push a develop: corre el CI al mergear y, sobre todo, guarda el cache de Nx en la rama default.
+  # Por el scoping de actions/cache, ese cache base lo pueden restaurar todos los PRs (warm desde
+  # el primer push), no solo los pushes de un mismo PR.
+  push:
+    branches: [develop]
 
 jobs:
   setup:
@@ -71,8 +76,20 @@ jobs:
       - name: Unpack workspace
         run: tar -xf workspace.tar
 
+      # Capa de cache gratuita (cache de Actions) sobre el cache local de Nx: da hits sin consumir
+      # créditos de Nx Cloud, y sigue funcionando si Nx Cloud se queda sin créditos o no responde.
+      - name: Cache de Nx local (fallback sin Nx Cloud)
+        uses: actions/cache@v4
+        with:
+          path: .nx/cache
+          key: nx-cache-test-${{ github.sha }}
+          restore-keys: |
+            nx-cache-test-
+
       - name: Run Tests
-        run: npx nx test --skip-nx-cache
+        run: npx nx test
+        env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
       # A) Reporte navegable (html + lcov) como artefacto descargable del workflow.
       - name: Upload coverage artifact
@@ -121,8 +138,18 @@ jobs:
       - name: Unpack workspace
         run: tar -xf workspace.tar
 
+      - name: Cache de Nx local (fallback sin Nx Cloud)
+        uses: actions/cache@v4
+        with:
+          path: .nx/cache
+          key: nx-cache-lint-${{ github.sha }}
+          restore-keys: |
+            nx-cache-lint-
+
       - name: Run Linter
-        run: npx nx lint --skip-nx-cache
+        run: npx nx lint
+        env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
   stylelint:
     needs: setup
@@ -146,8 +173,18 @@ jobs:
       - name: Unpack workspace
         run: tar -xf workspace.tar
 
+      - name: Cache de Nx local (fallback sin Nx Cloud)
+        uses: actions/cache@v4
+        with:
+          path: .nx/cache
+          key: nx-cache-stylelint-${{ github.sha }}
+          restore-keys: |
+            nx-cache-stylelint-
+
       - name: Run stylelint
-        run: npx nx stylelint @cuentoneta/app --skip-nx-cache
+        run: npx nx stylelint @cuentoneta/app
+        env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
   e2e:
     needs: setup
@@ -175,7 +212,9 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Tests
-        run: npx nx run @cuentoneta/app:e2e --skip-nx-cache
+        run: npx nx run @cuentoneta/app:e2e
+        env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
@@ -207,13 +246,26 @@ jobs:
       - name: Unpack workspace
         run: tar -xf workspace.tar
 
+      - name: Cache de Nx local (fallback sin Nx Cloud)
+        uses: actions/cache@v4
+        with:
+          path: .nx/cache
+          key: nx-cache-build-${{ github.sha }}
+          restore-keys: |
+            nx-cache-build-
+
       - name: Run build
-        run: npx nx run @cuentoneta/app:build:production --skip-nx-cache
+        run: npx nx run @cuentoneta/app:build:production
         env:
-          SANITY_STUDIO_DATASET: ${{ secrets.SANITY_STUDIO_DATASET }}
-          SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID }}
+          # Nx Cloud (cache remota de tareas)
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+          # Sanity / terceros. En PRs de forks los secrets llegan vacíos: para projectId/dataset
+          # (públicos, ya son los defaults de set-environment.ts) caemos a esos valores para que el
+          # build compile contra el dataset público de desarrollo. El token y los de terceros quedan
+          # vacíos a propósito — no se exponen credenciales reales a un fork.
+          SANITY_STUDIO_DATASET: ${{ secrets.SANITY_STUDIO_DATASET || 'development' }}
+          SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
           SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_STUDIO_TOKEN }}
-          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
           CLARITY_TOKEN: ${{ secrets.CLARITY_TOKEN }}
           CLARITY_PROJECT_ID: ${{ secrets.CLARITY_PROJECT_ID }}
 
@@ -239,5 +291,15 @@ jobs:
       - name: Unpack workspace
         run: tar -xf workspace.tar
 
+      - name: Cache de Nx local (fallback sin Nx Cloud)
+        uses: actions/cache@v4
+        with:
+          path: .nx/cache
+          key: nx-cache-storybook-${{ github.sha }}
+          restore-keys: |
+            nx-cache-storybook-
+
       - name: Run Storybook build
-        run: npx nx run @cuentoneta/app:build-storybook --skip-nx-cache
+        run: npx nx run @cuentoneta/app:build-storybook
+        env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}

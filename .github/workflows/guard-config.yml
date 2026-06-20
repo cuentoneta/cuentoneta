@@ -1,0 +1,48 @@
+name: Guard de config sensible
+
+# Bloquea que un PR desde un fork modifique configuración sensible (env/target de Sanity, CI).
+#
+# Usa `pull_request_target` a propósito: el workflow corre desde la rama base, así un fork NO puede
+# neutralizar este guard editándolo en su propio PR (lo que sí podría con `pull_request`). Es seguro
+# pese a correr en contexto base porque SOLO lee la lista de archivos del PR vía la API con un token
+# read-only — no hace checkout del código del fork ni ejecuta nada de él (sin install/build/test).
+#
+# Para que efectivamente BLOQUEE, agregar el check de este job a los required status checks de
+# branch protection de `develop`.
+
+on:
+  pull_request_target:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  guard:
+    name: Config sensible (forks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar archivos protegidos
+        env:
+          GH_TOKEN: ${{ github.token }}
+          IS_FORK: ${{ github.event.pull_request.head.repo.fork }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if [ "$IS_FORK" != "true" ]; then
+            echo "PR del mismo repo: el guard no aplica (los maintainers pueden cambiar config)."
+            exit 0
+          fi
+          # Rutas sensibles: env/target de Sanity (SANITY_STUDIO_PROJECT_ID/DATASET viven acá) + toda
+          # la config de CI. Sumar nuevas rutas a medida que aparezcan más valores sensibles.
+          protected='^(scripts/set-environment\.ts|cms/set-environment\.ts|src/api/_helpers/environment\.ts|cms/sanity\.config\.ts|cms/sanity\.cli\.ts|\.github/)'
+          changed=$(gh api --paginate "repos/${REPO}/pulls/${PR_NUMBER}/files" --jq '.[].filename')
+          offending=$(echo "$changed" | grep -E "$protected" || true)
+          if [ -n "$offending" ]; then
+            echo "::error::Este PR de fork modifica configuración protegida (env/target de Sanity o CI). Un maintainer debe revisarlo o adoptar el PR a una rama del repo." >&2
+            echo "Archivos protegidos tocados:" >&2
+            echo "$offending" >&2
+            exit 1
+          fi
+          echo "OK: el PR de fork no toca configuración protegida."
