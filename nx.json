@@ -6,27 +6,52 @@
 		"default": {
 			"runner": "nx-cloud",
 			"options": {
-				"cacheableOperations": ["lint", "test", "e2e", "build-storybook"]
+				"cacheableOperations": [
+					"lint",
+					"test",
+					"e2e",
+					"build-storybook"
+				]
 			}
 		}
 	},
 	"targetDefaults": {
 		"build": {
-			"dependsOn": ["^build"],
-			"inputs": ["production", "^production"]
+			"dependsOn": [
+				"^build"
+			],
+			"inputs": [
+				"production",
+				"^production"
+			]
 		},
 		"e2e": {
-			"inputs": ["default", "^production"]
+			"inputs": [
+				"default",
+				"^production"
+			]
 		},
 		"lint": {
-			"inputs": ["default", "{workspaceRoot}/eslint.config.mjs"]
+			"inputs": [
+				"default",
+				"{workspaceRoot}/eslint.config.mjs"
+			]
 		},
 		"build-storybook": {
-			"inputs": ["default", "^production", "{projectRoot}/.storybook/**/*", "{projectRoot}/tsconfig.storybook.json"],
+			"inputs": [
+				"default",
+				"^production",
+				"{projectRoot}/.storybook/**/*",
+				"{projectRoot}/tsconfig.storybook.json"
+			],
 			"cache": true
 		},
 		"@nx/jest:jest": {
-			"inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
+			"inputs": [
+				"default",
+				"^production",
+				"{workspaceRoot}/jest.preset.js"
+			],
 			"cache": true,
 			"options": {
 				"passWithNoTests": true
@@ -39,12 +64,18 @@
 			}
 		},
 		"stylelint": {
-			"inputs": ["default", "{workspaceRoot}/.stylelintrc(.(json|yml|yaml|js))?"],
+			"inputs": [
+				"default",
+				"{workspaceRoot}/.stylelintrc(.(json|yml|yaml|js))?"
+			],
 			"cache": true
 		}
 	},
 	"namedInputs": {
-		"default": ["{projectRoot}/**/*", "sharedGlobals"],
+		"default": [
+			"{projectRoot}/**/*",
+			"sharedGlobals"
+		],
 		"production": [
 			"default",
 			"!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
@@ -135,6 +166,6 @@
 			}
 		}
 	],
-	"nxCloudId": "639687547a4efa4dbb11b35a",
+	"nxCloudId": "6a35fc453b16c443fa31f351",
 	"analytics": true
 }
