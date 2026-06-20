@@ -2,6 +2,11 @@ name: CI
 
 on:
   pull_request:
+  # Push a develop: corre el CI al mergear y, sobre todo, guarda el cache de Nx en la rama default.
+  # Por el scoping de actions/cache, ese cache base lo pueden restaurar todos los PRs (warm desde
+  # el primer push), no solo los pushes de un mismo PR.
+  push:
+    branches: [develop]
 
 jobs:
   setup:
