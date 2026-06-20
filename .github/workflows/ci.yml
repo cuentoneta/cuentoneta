@@ -71,6 +71,16 @@ jobs:
       - name: Unpack workspace
         run: tar -xf workspace.tar
 
+      # Capa de cache gratuita (cache de Actions) sobre el cache local de Nx: da hits sin consumir
+      # créditos de Nx Cloud, y sigue funcionando si Nx Cloud se queda sin créditos o no responde.
+      - name: Cache de Nx local (fallback sin Nx Cloud)
+        uses: actions/cache@v4
+        with:
+          path: .nx/cache
+          key: nx-cache-test-${{ github.sha }}
+          restore-keys: |
+            nx-cache-test-
+
       - name: Run Tests
         run: npx nx test
         env:
@@ -123,6 +133,14 @@ jobs:
       - name: Unpack workspace
         run: tar -xf workspace.tar
 
+      - name: Cache de Nx local (fallback sin Nx Cloud)
+        uses: actions/cache@v4
+        with:
+          path: .nx/cache
+          key: nx-cache-lint-${{ github.sha }}
+          restore-keys: |
+            nx-cache-lint-
+
       - name: Run Linter
         run: npx nx lint
         env:
@@ -149,6 +167,14 @@ jobs:
 
       - name: Unpack workspace
         run: tar -xf workspace.tar
+
+      - name: Cache de Nx local (fallback sin Nx Cloud)
+        uses: actions/cache@v4
+        with:
+          path: .nx/cache
+          key: nx-cache-stylelint-${{ github.sha }}
+          restore-keys: |
+            nx-cache-stylelint-
 
       - name: Run stylelint
         run: npx nx stylelint @cuentoneta/app
@@ -215,6 +241,14 @@ jobs:
       - name: Unpack workspace
         run: tar -xf workspace.tar
 
+      - name: Cache de Nx local (fallback sin Nx Cloud)
+        uses: actions/cache@v4
+        with:
+          path: .nx/cache
+          key: nx-cache-build-${{ github.sha }}
+          restore-keys: |
+            nx-cache-build-
+
       - name: Run build
         run: npx nx run @cuentoneta/app:build:production
         env:
@@ -249,6 +283,14 @@ jobs:
 
       - name: Unpack workspace
         run: tar -xf workspace.tar
+
+      - name: Cache de Nx local (fallback sin Nx Cloud)
+        uses: actions/cache@v4
+        with:
+          path: .nx/cache
+          key: nx-cache-storybook-${{ github.sha }}
+          restore-keys: |
+            nx-cache-storybook-
 
       - name: Run Storybook build
         run: npx nx run @cuentoneta/app:build-storybook
