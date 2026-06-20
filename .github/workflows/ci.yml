@@ -218,7 +218,9 @@ jobs:
       - name: Run build
         run: npx nx run @cuentoneta/app:build:production
         env:
+          # Nx Cloud (cache remota de tareas)
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+          # Sanity / terceros (consumidos por el build de producción)
           SANITY_STUDIO_DATASET: ${{ secrets.SANITY_STUDIO_DATASET }}
           SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID }}
           SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_STUDIO_TOKEN }}
