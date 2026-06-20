@@ -11,7 +11,7 @@ import {
 	startWith,
 	throttleTime,
 } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { Viewport, VIEWPORT_WIDTHS_NUMERIC } from '@utils/screen.utils';
 
@@ -48,6 +48,8 @@ export class LayoutService {
 		fromEvent(this.window, 'resize').pipe(startWith(null)),
 		fromEvent(this.window, 'orientationchange').pipe(startWith(null)),
 	).pipe(takeUntilDestroyed(), throttleTime(100));
+
+	public readonly isHeaderVisible = toSignal(this.isHeaderVisible$, { initialValue: true });
 
 	public get userHasScrolled$() {
 		return this._userHasScrolled$;
