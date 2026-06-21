@@ -16,6 +16,107 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.8.0 (2026-06-20)
+
+La versión 2.8.0 implementa parcialmente el Design System V3 con una nueva familia de componentes —avatares circulares, tags con recorte por ancho, teasers de autor y skeletons de carga propios— y reemplaza la dependencia `ngx-skeleton-loader` por una implementación in-house.
+
+En paralelo, impulsa un trabajo extenso de SEO y AEO: datos estructurados con JSON-LD (`Organization`, `WebSite`, `Article`, `Person`, `CollectionPage` y `BreadcrumbList`), señales E-E-A-T en las páginas de cuento, una jerarquía de headings correcta (un único `H1` por página) y la encapsulación de toda la lógica SEO en host directives dedicadas por página, con cobertura de tests e2e.
+
+Finalmente, moderniza el tooling y la arquitectura del proyecto —migración de Jest a Vitest, endurecimiento de las reglas de ESLint, adopción de la propiedad `host` del decorador y la incorporación de flujos de trabajo basados en agentes de IA (Claude)— y robustece la integración continua con cache de tareas de Nx, la automatización de la replicación de datasets de Sanity y mejoras de seguridad ante PRs externos.
+
+### Cambios completos
+
+Ver el changelog completo en [2.8.0](https://github.com/cuentoneta/cuentoneta/releases/tag/2.8.0)
+
+### Cambios
+
+#### Design System V3 y componentes
+
+- [#1510] - Implementación del componente `StoryMediaSelectors`.
+- [#1512] - Componente `ImageProfile`, el avatar circular del Design System v3.
+- [#1514] - El campo de redes sociales del colaborador pasa a ser opcional.
+- [#1515] - Componentes `Tag` y `TagsList` (DS v3) con recorte de etiquetas por ancho.
+- [#1509] - Componente `AuthorTeaser` V3 con avatar, tags recortables y skeleton de carga.
+- [#1486] - Reemplazo de `ngx-skeleton-loader` por un componente de skeleton propio.
+- [#1581] - Convención de story de Storybook intercambiable para componentes con estado de carga.
+- [#1583] - Categoría "Componentes V3" en Storybook y skeleton del componente `Tag`.
+
+#### SEO y AEO
+
+- [#1518] - Title descriptivo en la home y meta `robots` permisivo en el SSR.
+- [#1519] - Corrección de la jerarquía de headings: un único `H1` por página.
+- [#1520] - `SchemaOrgService` (SSR) e inyección del JSON-LD de `Organization` y `WebSite`.
+- [#1521] - Datos estructurados `Article`/`Person` y señales E-E-A-T en las páginas de cuento.
+- [#1522] - Datos estructurados en autor y storylist (`Person`, `CollectionPage`) más `BreadcrumbList`.
+- [#1523] - Contenido indexable en la home mediante la sección "Sobre La Cuentoneta".
+- [#1524] - Keywords específicas y relevantes en el meta tag de la home.
+- [#1564] - Fechas de creación y actualización de la ficha de autor en el JSON-LD `ProfilePage`.
+- [#1565] - Encapsulamiento de la lógica SEO de cada página en host directives dedicadas (meta tags + JSON-LD).
+- [#1578] - Limpieza de los bloques JSON-LD de página al navegar hacia la home.
+- [#1577] - Tests e2e de meta tags y JSON-LD en home, story, author y storylist.
+
+#### Arquitectura, linting y testing
+
+- [#1494] - Migración del proyecto de Jest a Vitest.
+- [#1499] - Adopción del patrón de API providers (`*.service.ts` → `*.provider.ts`).
+- [#1500] - Adopción del enforcement de ESLint al estilo ResetShop.
+- [#1542] - Reemplazo de `@HostListener`/`@HostBinding`/`:host { @apply }` por la propiedad `host` del decorador.
+- [#1547] - Regla de ESLint que prohíbe `@HostListener` y `@HostBinding`.
+- [#1548] - Colapso de los wrappers de componentes a `host: { class }`.
+- [#1552] - Habilitación de la regla `@angular-eslint/no-uncalled-signals` (typed-linting).
+
+#### Flujos de trabajo y agentes de IA (Claude)
+
+- [#1495] - Creación de `CLAUDE.md` y los archivos de referencia de Claude.
+- [#1501] - Portado de los subagentes y el skill `issue-workflow`.
+- [#1502] - Versionado de la configuración de Claude de equipo (`.mcp.json` + `settings.json`).
+
+#### Integración continua e infraestructura
+
+- [#1528] - Eliminación de la propiedad `public` en `vercel.json`.
+- [#1550] - Hotfix de CI: compartir el workspace entre jobs mediante artifacts en lugar de cache.
+- [#1587] - Configuración del workspace de Nx.
+- [#1493] - Automatización de la replicación diaria del dataset de producción hacia staging y development.
+- [#1553] - Cache de tareas de Nx en CI (Nx Cloud + fallback `actions/cache`) y hardening ante PRs desde forks.
+
+## Versión 2.7.4 (2026-06-10)
+
+La versión 2.7.4 está dominada por la puesta al día del stack: Angular 21.2, Nx 22.6, TailwindCSS v4.3, y la actualización de Sanity, las dependencias del CMS y Storybook, junto con la resolución de alertas de seguridad de Dependabot.
+
+Suma nuevos componentes del Design System (`Button` y `CollectionTeaser`) y ajustes de layout para desktop, mejoras en los perfiles de autor (fechas anteriores a Cristo y nombres en negrita en las biografías), el reemplazo de `rettiwt-api` por audio self-hosted en las grabaciones de Spaces, y una guía de QA para escribir test plans.
+
+### Cambios completos
+
+Ver el changelog completo en [2.7.4](https://github.com/cuentoneta/cuentoneta/releases/tag/2.7.4)
+
+### Cambios
+
+#### Design System, componentes y layout
+
+- [#1463] - Implementación del componente `Button`.
+- [#1465] - Implementación del componente `CollectionTeaser`.
+- [#1466] - Actualización del layout y los tamaños para pantallas desktop.
+
+#### Actualizaciones de framework y dependencias
+
+- [#1473] - Actualización a Angular 21.1 y Nx 22.4.
+- [#1474] - Actualización del codebase a Nx v22.6.4 y Angular v21.2.6.
+- [#1295] - Migración de TailwindCSS a v4.3 y su configuración completa.
+- [#1487] - Actualización de Sanity y las dependencias del CMS a sus últimas versiones.
+- [#1488] - Actualización de Storybook a la versión 10.4.2.
+- [#1490] - Resolución de las alertas de seguridad de Dependabot en las dependencias de la raíz.
+
+#### Contenido, autores y multimedia
+
+- [#1478] - Soporte de fechas anteriores a Cristo (a.C.) en los perfiles de autor.
+- [#1483] - Nombre del autor en negrita en las biografías y reubicación de los scripts de diagnóstico.
+- [#1438] - Reemplazo de `rettiwt-api` por audio self-hosted en `spaceRecording`.
+
+#### Integración continua, QA y documentación
+
+- [#1497] - Eliminación de las actions de Claude Code del pipeline de CI.
+- [#1115] - Guía de QA para escribir un test plan y reorganización de `docs/qa`.
+
 ## Versión 2.7.3 (2026-01-07)
 
 Implementados primeros cambios relacionados al diseño de la V3, entre los que se incluyen el design system completo y el reemplazo del carousel de contenido por una implementación nativa en Angular propia del proyecto, reemplazando la dependencia de `ngx-owl-carousel-o`.
