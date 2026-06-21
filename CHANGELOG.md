@@ -79,6 +79,44 @@ Ver el changelog completo en [2.8.0](https://github.com/cuentoneta/cuentoneta/re
 - [#1493] - Automatización de la replicación diaria del dataset de producción hacia staging y development.
 - [#1553] - Cache de tareas de Nx en CI (Nx Cloud + fallback `actions/cache`) y hardening ante PRs desde forks.
 
+## Versión 2.7.4 (2026-06-10)
+
+La versión 2.7.4 está dominada por la puesta al día del stack: Angular 21.2, Nx 22.6, TailwindCSS v4.3, y la actualización de Sanity, las dependencias del CMS y Storybook, junto con la resolución de alertas de seguridad de Dependabot.
+
+Suma nuevos componentes del Design System (`Button` y `CollectionTeaser`) y ajustes de layout para desktop, mejoras en los perfiles de autor (fechas anteriores a Cristo y nombres en negrita en las biografías), el reemplazo de `rettiwt-api` por audio self-hosted en las grabaciones de Spaces, y una guía de QA para escribir test plans.
+
+### Cambios completos
+
+Ver el changelog completo en [2.7.4](https://github.com/cuentoneta/cuentoneta/releases/tag/2.7.4)
+
+### Cambios
+
+#### Design System, componentes y layout
+
+- [#1463] - Implementación del componente `Button`.
+- [#1465] - Implementación del componente `CollectionTeaser`.
+- [#1466] - Actualización del layout y los tamaños para pantallas desktop.
+
+#### Actualizaciones de framework y dependencias
+
+- [#1473] - Actualización a Angular 21.1 y Nx 22.4.
+- [#1474] - Actualización del codebase a Nx v22.6.4 y Angular v21.2.6.
+- [#1295] - Migración de TailwindCSS a v4.3 y su configuración completa.
+- [#1487] - Actualización de Sanity y las dependencias del CMS a sus últimas versiones.
+- [#1488] - Actualización de Storybook a la versión 10.4.2.
+- [#1490] - Resolución de las alertas de seguridad de Dependabot en las dependencias de la raíz.
+
+#### Contenido, autores y multimedia
+
+- [#1478] - Soporte de fechas anteriores a Cristo (a.C.) en los perfiles de autor.
+- [#1483] - Nombre del autor en negrita en las biografías y reubicación de los scripts de diagnóstico.
+- [#1438] - Reemplazo de `rettiwt-api` por audio self-hosted en `spaceRecording`.
+
+#### Integración continua, QA y documentación
+
+- [#1497] - Eliminación de las actions de Claude Code del pipeline de CI.
+- [#1115] - Guía de QA para escribir un test plan y reorganización de `docs/qa`.
+
 ## Versión 2.7.3 (2026-01-07)
 
 Implementados primeros cambios relacionados al diseño de la V3, entre los que se incluyen el design system completo y el reemplazo del carousel de contenido por una implementación nativa en Angular propia del proyecto, reemplazando la dependencia de `ngx-owl-carousel-o`.
