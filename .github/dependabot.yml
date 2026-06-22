@@ -1,0 +1,50 @@
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      # Martes para esquivar el pico de PRs de Dependabot de los lunes.
+      day: tuesday
+    target-branch: develop
+    open-pull-requests-limit: 5
+    groups:
+      actions:
+        update-types:
+          - minor
+          - patch
+    commit-message:
+      prefix: 'chore(deps-ci)'
+
+  # package-ecosystem: npm es el valor correcto para pnpm: Dependabot no tiene
+  # ecosystem "pnpm"; detecta pnpm-lock.yaml y respeta packageManager.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: tuesday
+    target-branch: develop
+    open-pull-requests-limit: 10
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+    commit-message:
+      prefix: 'chore(deps)'
+
+  - package-ecosystem: npm
+    directory: /cms
+    schedule:
+      interval: weekly
+      day: tuesday
+    target-branch: develop
+    open-pull-requests-limit: 10
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+    commit-message:
+      prefix: 'chore(deps-cms)'
