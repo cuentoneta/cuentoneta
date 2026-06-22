@@ -2,10 +2,10 @@ import {
 	Component,
 	computed,
 	createEnvironmentInjector,
+	effect,
 	EnvironmentInjector,
 	inject,
 	input,
-	OnInit,
 } from '@angular/core';
 import { Tag } from '@models/tag.model';
 import { TooltipDirective } from '../../directives/tooltip.directive';
@@ -29,10 +29,10 @@ import { NgComponentOutlet } from '@angular/common';
 		class: 'flex rounded bg-brand-200 px-4.5 py-0.5 uppercase hover:cursor-default',
 	},
 })
-export class BadgeComponent implements OnInit {
-	readonly tag = input.required<Tag>();
-	readonly showIcon = input(false);
-	readonly icon = computed(() => {
+export class BadgeComponent {
+	public readonly tag = input.required<Tag>();
+	public readonly showIcon = input(false);
+	protected readonly icon = computed(() => {
 		if (!this.tag().slug) {
 			return null;
 		}
@@ -49,13 +49,13 @@ export class BadgeComponent implements OnInit {
 		};
 	});
 
-	readonly NgIcon = NgIcon;
+	protected readonly NgIcon = NgIcon;
 
 	private injector = inject(EnvironmentInjector);
 	private tooltipDirective = inject(TooltipDirective);
 
-	ngOnInit() {
+	private readonly syncTooltipEffect = effect(() => {
 		this.tooltipDirective.text.set(this.tag().shortDescription);
 		this.tooltipDirective.position.set('top');
-	}
+	});
 }

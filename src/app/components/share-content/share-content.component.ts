@@ -1,12 +1,11 @@
 import { Component, input } from '@angular/core';
 
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ShareButtonComponent } from '../share-button/share-button.component';
 import { FacebookPlatform, SharingPlatform, TwitterPlatform, WhatsappPlatform } from '@models/sharing-platform';
 
 @Component({
 	selector: 'cuentoneta-share-content',
-	imports: [NgxSkeletonLoaderModule, ShareButtonComponent],
+	imports: [ShareButtonComponent],
 	template: `
 		<section class="flex flex-1 flex-row gap-6">
 			@for (platform of platforms; track $index) {
@@ -14,20 +13,13 @@ import { FacebookPlatform, SharingPlatform, TwitterPlatform, WhatsappPlatform } 
 			}
 		</section>
 	`,
-	styles: `
-		@reference '#tailwind-theme';
-
-		:host ::ng-deep .share-button-skeleton .skeleton-loader {
-			@apply bg-neutral-300;
-		}
-	`,
 })
 export class ShareContentComponent {
-	readonly route = input<string>('');
-	readonly params = input<{ [key: string]: string }>({});
-	readonly message = input<string>('');
+	public readonly route = input<string>('');
+	public readonly params = input<{ [key: string]: string }>({});
+	public readonly message = input<string>('');
 
-	platforms: SharingPlatform[] = [
+	protected platforms: SharingPlatform[] = [
 		new FacebookPlatform(),
 		new WhatsappPlatform(),
 		new TwitterPlatform(),

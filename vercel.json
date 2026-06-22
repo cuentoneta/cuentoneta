@@ -1,6 +1,5 @@
 {
 	"version": 2,
-	"public": true,
 	"name": "cuentoneta",
 	"installCommand": "pnpm install",
 	"devCommand": "pnpm run dev",

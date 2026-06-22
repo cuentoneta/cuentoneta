@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
 
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { environment } from '../../environments/environment';
 
 @Component({
 	selector: 'cuentoneta-dmca',
 	imports: [],
-	hostDirectives: [MetaTagsDirective],
+	hostDirectives: [HeadMetadataDirective],
 	template: `
 		<main
 			class="content horizontal-layout-spacing vertical-layout-spacing bg-neutral-50 p-5 shadow-lg md:rounded-xl md:p-16"
@@ -115,7 +115,7 @@ import { environment } from '../../environments/environment';
 	`,
 })
 export default class DmcaComponent {
-	private metaTagsDirective = inject(MetaTagsDirective);
+	private metaTagsDirective = inject(HeadMetadataDirective);
 
 	constructor() {
 		this.updateMetaTags();

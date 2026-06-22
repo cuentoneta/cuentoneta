@@ -3,17 +3,14 @@ import {
 	Component,
 	computed,
 	createEnvironmentInjector,
+	effect,
 	EnvironmentInjector,
 	inject,
 	input,
-	OnInit,
 } from '@angular/core';
 
 // Models
 import { Resource } from '@models/resource.model';
-
-// 3rd Party Modules
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Directives
 import { TooltipDirective } from '../../directives/tooltip.directive';
@@ -24,7 +21,7 @@ import { NgComponentOutlet } from '@angular/common';
 @Component({
 	selector: 'cuentoneta-resource',
 	hostDirectives: [TooltipDirective],
-	imports: [NgxSkeletonLoaderModule, NgComponentOutlet],
+	imports: [NgComponentOutlet],
 	template: `
 		<a
 			[href]="resource().url"
@@ -41,9 +38,9 @@ import { NgComponentOutlet } from '@angular/common';
 		class: 'flex items-center justify-center',
 	},
 })
-export class ResourceComponent implements OnInit {
-	readonly resource = input.required<Resource>();
-	readonly icon = computed(() => {
+export class ResourceComponent {
+	public readonly resource = input.required<Resource>();
+	protected readonly icon = computed(() => {
 		if (!this.resource()?.resourceType?.slug) {
 			return null;
 		}
@@ -58,13 +55,13 @@ export class ResourceComponent implements OnInit {
 		};
 	});
 
-	readonly NgIcon = NgIcon;
+	protected readonly NgIcon = NgIcon;
 
 	private injector = inject(EnvironmentInjector);
 	private tooltipDirective = inject(TooltipDirective);
 
-	ngOnInit() {
+	private readonly syncTooltipEffect = effect(() => {
 		this.tooltipDirective.text.set(this.resource().title);
 		this.tooltipDirective.position.set('bottom');
-	}
+	});
 }

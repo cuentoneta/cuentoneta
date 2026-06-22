@@ -155,9 +155,14 @@ interface Story {
 	approximateReadingTime: number; // Minutos estimados de lectura (>= 1)
 	badLanguage?: boolean; // Advertencia de lenguaje explícito
 	originalPublication: string; // Atribución/publicación original
+	publishedAt: string; // Fecha ISO de publicación en la plataforma (fallback a _createdAt). Datos estructurados/E-E-A-T
+	updatedAt: string; // Fecha ISO de última modificación (_updatedAt de Sanity)
 
 	// Relaciones
 	author: Author; // Autor de la historia (requerido)
+
+	// Categorización
+	tags: Tag[]; // Etiquetas de taxonomía (editoriales). Vacío en los teasers
 
 	// Recursos Multimedia
 	resources: Resource[]; // Enlaces a recursos externos
@@ -221,6 +226,9 @@ interface Author {
 	// Contenido
 	biography: TextBlockContent[]; // Biografía del autor
 	resources: Resource[]; // Enlaces a recursos sobre el autor
+
+	// Categorización
+	tags: Tag[]; // Etiquetas de taxonomía del autor. Vacío en los teasers
 }
 
 interface AuthorNationality {

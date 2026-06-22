@@ -40,7 +40,7 @@ import { NgOptimizedImage } from '@angular/common';
 						<cuentoneta-portable-text-parser
 							[classes]="'line-clamp-4 sm:line-clamp-3'"
 							[paragraphs]="[storylist.description[0]]"
-							class="text-ellipsis font-inter text-sm text-neutral-700"
+							class="font-inter text-sm text-ellipsis text-neutral-700"
 						/>
 						<footer class="flex flex-col gap-1 font-inter text-xs text-neutral-600 sm:flex-row">
 							@if (storylist.tags[0]) {
@@ -56,6 +56,6 @@ import { NgOptimizedImage } from '@angular/common';
 	`,
 })
 export class CollectionTeaser {
-	readonly collection = input<StorylistTeaser>();
+	public readonly collection = input<StorylistTeaser>();
 	protected readonly appRoutes = AppRoutes;
 }

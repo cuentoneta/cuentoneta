@@ -10,6 +10,17 @@ import { DatePipe, registerLocaleData } from '@angular/common';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
+// API providers
+import { provideAuthorApi } from './providers/author.provider';
+import { provideContentApi } from './providers/content.provider';
+import { provideContributorApi } from './providers/contributor.provider';
+import { provideStoryApi } from './providers/story.provider';
+import { provideStorylistApi } from './providers/storylist.provider';
+import { providePushNotificationsApi } from './providers/push-notifications.provider';
+
+// SEO providers
+import { provideSchemaOrgInitializer } from './providers/schema-org.initializer';
+
 registerLocaleData(localeEs);
 
 export const appConfig: ApplicationConfig = {
@@ -27,5 +38,16 @@ export const appConfig: ApplicationConfig = {
 			withComponentInputBinding(),
 		),
 		provideHttpClient(withFetch()),
+
+		// API providers
+		provideAuthorApi(),
+		provideContentApi(),
+		provideContributorApi(),
+		provideStoryApi(),
+		provideStorylistApi(),
+		providePushNotificationsApi(),
+
+		// SEO providers
+		provideSchemaOrgInitializer(),
 	],
 };

@@ -1,9 +1,6 @@
 import { Component, computed, effect, inject } from '@angular/core';
 import { UrlTree } from '@angular/router';
 
-// 3rd party modules
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-
 // Models
 import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 
@@ -12,11 +9,12 @@ import { AppRoutes } from '../../app.routes';
 import { NavigationFrameComponent } from '@models/navigation-frame.component';
 
 // Services
-import { StorylistService } from '../../providers/storylist.service';
+import { StorylistApi } from '../../providers/storylist-api.interface';
 
 // Componentes
 import { rxResource } from '@angular/core/rxjs-interop';
 import { NavigableStorylistStoryTeaserComponent } from '@components/navigable-storylist-story-teaser/navigable-storylist-story-teaser.component';
+import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
 export type NavigationBarConfig = {
 	headerTitle: string;
@@ -27,7 +25,7 @@ export type NavigationBarConfig = {
 
 @Component({
 	selector: 'cuentoneta-storylist-navigation-frame',
-	imports: [NgxSkeletonLoaderModule, NavigableStorylistStoryTeaserComponent],
+	imports: [SkeletonComponent, NavigableStorylistStoryTeaserComponent],
 	host: {
 		class: 'grid grid-cols-1 gap-y-0.5 rounded-xl bg-neutral-200 shadow-lg',
 	},
@@ -41,18 +39,19 @@ export type NavigationBarConfig = {
 			}
 		} @else {
 			@for (skeleton of dummyList; track $index) {
-				<article [attr.aria-busy]="true" class="bg-neutral-50 px-7 py-5">
-					<ngx-skeleton-loader count="2" appearance="line" />
+				<article [attr.aria-busy]="true" class="flex flex-col gap-2 bg-neutral-50 px-7 py-5">
+					<cuentoneta-skeleton appearance="line" class="h-4 w-full bg-neutral-300" />
+					<cuentoneta-skeleton appearance="line" class="h-4 w-full bg-neutral-300" />
 				</article>
 			}
 		}`,
 })
 export class StorylistNavigationFrameComponent extends NavigationFrameComponent {
 	// Routes
-	readonly appRoutes = AppRoutes;
+	private readonly appRoutes = AppRoutes;
 
 	// Providers
-	private storylistService = inject(StorylistService);
+	private storylistService = inject(StorylistApi);
 
 	// Recursos
 	private readonly storylistResource = rxResource({
@@ -62,9 +61,9 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	});
 
 	// Propiedades
-	displayedStories: StoryNavigationTeaserWithAuthor[] = [];
-	dummyList: null[] = Array(9);
-	readonly storylist = computed(() => this.storylistResource.value());
+	protected displayedStories: StoryNavigationTeaserWithAuthor[] = [];
+	protected dummyList: null[] = Array(9);
+	protected readonly storylist = computed(() => this.storylistResource.value());
 
 	constructor() {
 		super();
@@ -93,7 +92,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	 * caso de que la story actualmente en vista sea una de las primeras o de las últimas.
 	 * @author Ramiro Olivencia <ramiro@olivencia.com.ar>
 	 */
-	sliceDisplayedStories(stories: StoryNavigationTeaserWithAuthor[]): void {
+	private sliceDisplayedStories(stories: StoryNavigationTeaserWithAuthor[]): void {
 		if (!this.storylist) {
 			return;
 		}

@@ -1,0 +1,20 @@
+# Code owners de rutas sensibles de La Cuentoneta.
+#
+# Todo PR (incluido uno desde un fork) que toque estos archivos auto-asigna a un maintainer como
+# reviewer. Para que además BLOQUEE el merge sin su aprobación, activar en branch protection de
+# `develop`: "Require a pull request before merging" → "Require approvals" (>= 1) + "Require review
+# from Code Owners".
+#
+# Motivación: evitar que un PR externo cambie config sensible —p. ej. SANITY_STUDIO_PROJECT_ID /
+# SANITY_STUDIO_DATASET, o los secrets/defaults del CI— sin revisión de un maintainer. Sumar acá
+# nuevas rutas a medida que aparezcan más valores sensibles.
+
+# Configuración de entorno / target de Sanity (projectId, dataset, token)
+/scripts/set-environment.ts        @rolivencia
+/cms/set-environment.ts            @rolivencia
+/src/api/_helpers/environment.ts   @rolivencia
+/cms/sanity.config.ts              @rolivencia
+/cms/sanity.cli.ts                 @rolivencia
+
+# CI/CD y configuración de Actions (workflows, secrets, defaults — y este mismo archivo)
+/.github/                          @rolivencia

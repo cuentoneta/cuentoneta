@@ -676,6 +676,36 @@
 		}
 	},
 	{
+		"type": "type",
+		"name": "tag.reference",
+		"value": {
+			"type": "object",
+			"attributes": {
+				"_ref": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "string"
+					}
+				},
+				"_type": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "string",
+						"value": "reference"
+					}
+				},
+				"_weak": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "boolean"
+					},
+					"optional": true
+				}
+			},
+			"dereferencesTo": "tag"
+		}
+	},
+	{
 		"name": "story",
 		"type": "document",
 		"attributes": {
@@ -1113,6 +1143,28 @@
 				},
 				"optional": true
 			},
+			"tags": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "array",
+					"of": {
+						"type": "object",
+						"attributes": {
+							"_key": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "string"
+								}
+							}
+						},
+						"rest": {
+							"type": "inline",
+							"name": "tag.reference"
+						}
+					}
+				},
+				"optional": true
+			},
 			"body": {
 				"type": "objectAttribute",
 				"value": {
@@ -1135,6 +1187,13 @@
 					"type": "string"
 				},
 				"optional": false
+			},
+			"publishedAt": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "string"
+				},
+				"optional": true
 			}
 		}
 	},
@@ -1369,6 +1428,28 @@
 					}
 				},
 				"optional": true
+			},
+			"tags": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "array",
+					"of": {
+						"type": "object",
+						"attributes": {
+							"_key": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "string"
+								}
+							}
+						},
+						"rest": {
+							"type": "inline",
+							"name": "tag.reference"
+						}
+					}
+				},
+				"optional": true
 			}
 		}
 	},
@@ -1549,36 +1630,6 @@
 					"optional": false
 				}
 			}
-		}
-	},
-	{
-		"type": "type",
-		"name": "tag.reference",
-		"value": {
-			"type": "object",
-			"attributes": {
-				"_ref": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "string"
-					}
-				},
-				"_type": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "string",
-						"value": "reference"
-					}
-				},
-				"_weak": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "boolean"
-					},
-					"optional": true
-				}
-			},
-			"dereferencesTo": "tag"
 		}
 	},
 	{
@@ -2650,7 +2701,7 @@
 						}
 					}
 				},
-				"optional": false
+				"optional": true
 			},
 			"notes": {
 				"type": "objectAttribute",

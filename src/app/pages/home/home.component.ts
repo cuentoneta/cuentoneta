@@ -3,13 +3,11 @@ import { Component, computed, inject } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 
 // Services
-import { ContentService } from '../../providers/content.service';
+import { ContentApi } from '../../providers/content-api.interface';
 
-// Directives
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
-
-// Environment
-import { environment } from '../../environments/environment';
+// SEO
+import { HomeMetaTagsDirective } from './home-meta-tags.directive';
+import { HomeStructuredDataDirective } from './home-structured-data.directive';
 
 // Componentes
 import { CarouselComponent } from '@components/carousel/carousel.component';
@@ -28,35 +26,22 @@ import { CollectionTeasersDeck } from '@components/collection-teasers-deck/colle
 		CarouselSkeletonComponent,
 		CollectionTeasersDeck,
 	],
-	hostDirectives: [MetaTagsDirective],
+	hostDirectives: [HomeMetaTagsDirective, HomeStructuredDataDirective],
 })
 export default class HomeComponent {
 	// Services
-	private contentService = inject(ContentService);
-
-	// Directives
-	private metaTagsDirective = inject(MetaTagsDirective);
+	private contentService = inject(ContentApi);
 
 	// Recursos
-	readonly landingPageResource = rxResource({
+	private readonly landingPageResource = rxResource({
 		stream: () => this.contentService.getLandingPageContent(),
 		defaultValue: undefined,
 	});
 
 	// Propiedades
-	readonly landingPageContent = computed(() => this.landingPageResource.value());
-	readonly collections = computed(() => this.landingPageContent()?.cards || []);
-	readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
-	readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
-	readonly latestReads = computed(() => this.landingPageContent()?.latestReads.slice(0, 6) || []);
-
-	constructor() {
-		this.updateMetaTags();
-	}
-
-	private updateMetaTags() {
-		this.metaTagsDirective.setDefault();
-		this.metaTagsDirective.setCanonicalUrl(`${environment.website}`);
-		this.metaTagsDirective.setRobots('index, follow');
-	}
+	private readonly landingPageContent = computed(() => this.landingPageResource.value());
+	protected readonly collections = computed(() => this.landingPageContent()?.cards || []);
+	protected readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
+	protected readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
+	protected readonly latestReads = computed(() => this.landingPageContent()?.latestReads.slice(0, 6) || []);
 }

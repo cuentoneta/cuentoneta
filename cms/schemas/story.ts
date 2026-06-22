@@ -140,6 +140,17 @@ export default defineType({
 			],
 		}),
 		defineField({
+			name: 'tags',
+			title: 'Etiquetas',
+			type: 'array',
+			of: [
+				defineArrayMember({
+					type: 'reference',
+					to: [{ type: 'tag' }],
+				}),
+			],
+		}),
+		defineField({
 			name: 'body',
 			title: 'Cuerpo del cuento',
 			type: 'blockContent',
@@ -154,6 +165,13 @@ export default defineType({
 			title: 'Publicación original',
 			type: 'string',
 			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
+			name: 'publishedAt',
+			title: 'Fecha de publicación en La Cuentoneta',
+			description:
+				'Fecha y hora en que el cuento se publicó en la plataforma. Alimenta datePublished en los datos estructurados (SEO/AEO). Si se deja vacía, se usa la fecha de creación del documento (_createdAt). Se usa datetime para mantener el mismo formato ISO que el fallback.',
+			type: 'datetime',
 		}),
 	],
 	preview: {

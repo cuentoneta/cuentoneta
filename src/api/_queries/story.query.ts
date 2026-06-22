@@ -11,17 +11,18 @@ export const storiesByAuthorSlugQuery = defineQuery(`
     'originalPublication': coalesce(originalPublication, ''),
     approximateReadingTime,
     'mediaSources': coalesce(mediaSources[], []),
-    'resources': coalesce(resources[]{ 
-        title, 
-        url, 
+    'resources': coalesce(resources[]{
+        title,
+        url,
         resourceType->{
             'slug': slug.current,
-            title, 
+            title,
             shortDescription,
-            description, 
+            description,
             icon
-        } 
+        }
     }, []),
+    'tags': [],
 }|order(title asc)`);
 
 export const storyNavigationTeasersByAuthorSlugQuery = defineQuery(`
@@ -36,6 +37,7 @@ export const storyNavigationTeasersByAuthorSlugQuery = defineQuery(`
     approximateReadingTime,
     'mediaSources': coalesce(mediaSources[], []),
     'resources': [],
+    'tags': [],
 }|order(title asc)[$start...$end]`);
 
 export const storyBySlugQuery = defineQuery(`
@@ -52,6 +54,8 @@ export const storyBySlugQuery = defineQuery(`
     'body': coalesce(body, []),
     'review': coalesce(review, []),
     'originalPublication': coalesce(originalPublication, ''),
+    'publishedAt': coalesce(publishedAt, _createdAt),
+    'updatedAt': _updatedAt,
     approximateReadingTime,
     'mediaSources': coalesce(mediaSources[]{
         ...,
@@ -70,6 +74,13 @@ export const storyBySlugQuery = defineQuery(`
             icon
         }
     }, []),
+    'tags': coalesce(tags[] -> {
+        title,
+        'slug': slug.current,
+        shortDescription,
+        description,
+        icon
+    }, []),
     'author': author-> {
         _id,
         'slug': slug.current,
@@ -81,17 +92,18 @@ export const storyBySlugQuery = defineQuery(`
         bornOnYear,
         diedOn,
         diedOnYear,
-        'resources': coalesce(resources[]{ 
-            title, 
-            url, 
+        'resources': coalesce(resources[]{
+            title,
+            url,
             resourceType->{
                 'slug': slug.current,
-                title, 
+                title,
                 shortDescription,
-                description, 
+                description,
                 icon
-            } 
-        }, [])
+            }
+        }, []),
+        'tags': []
     }
 }[0]`);
 
@@ -109,6 +121,7 @@ export const storiesBySlugsQuery = defineQuery(`
     approximateReadingTime,
     'mediaSources': coalesce(mediaSources[], []),
     'resources': [],
+    'tags': [],
     'author': author-> {
         _id,
         'slug': slug.current,
@@ -138,6 +151,7 @@ export const allStoriesQuery = defineQuery(`
     approximateReadingTime,
     'mediaSources': coalesce(mediaSources[], []),
     'resources': [],
+    'tags': [],
     'author': author-> {
         _id,
         'slug': slug.current,

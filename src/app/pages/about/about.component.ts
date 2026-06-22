@@ -2,20 +2,19 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { NgOptimizedImage } from '@angular/common';
 import { rxResource } from '@angular/core/rxjs-interop';
 
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { environment } from '../../environments/environment';
-import { ContributorService } from '../../providers/contributor.service';
+import { ContributorApi } from '../../providers/contributor-api.interface';
 
 @Component({
 	selector: 'cuentoneta-about',
 	imports: [NgOptimizedImage],
-	hostDirectives: [MetaTagsDirective],
-	providers: [ContributorService],
+	hostDirectives: [HeadMetadataDirective],
 	templateUrl: './about.component.html',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class AboutComponent {
-	readonly links = {
+	protected readonly links = {
 		CONTRIBUTING: 'https://github.com/rolivencia/cuentoneta/blob/master/CONTRIBUTING.md',
 		GITHUB_REPO: 'https://github.com/rolivencia/cuentoneta',
 		FACEBOOK: 'https://facebook.com/cuentoneta',
@@ -27,15 +26,15 @@ export default class AboutComponent {
 		GITHUB_CONTRIBUTORS: 'https://github.com/rolivencia/cuentoneta/tree/master#contribuyentes',
 	};
 
-	private metaTagsDirective = inject(MetaTagsDirective);
-	private contributorService = inject(ContributorService);
+	private metaTagsDirective = inject(HeadMetadataDirective);
+	private contributorService = inject(ContributorApi);
 
-	readonly contributorsResource = rxResource({
+	private readonly contributorsResource = rxResource({
 		stream: () => this.contributorService.getAllByArea(),
 		defaultValue: [],
 	});
 
-	readonly contributorsPerArea = computed(() => this.contributorsResource.value());
+	protected readonly contributorsPerArea = computed(() => this.contributorsResource.value());
 
 	constructor() {
 		this.updateMetaTags();

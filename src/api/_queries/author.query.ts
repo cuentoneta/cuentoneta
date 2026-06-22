@@ -5,6 +5,8 @@ export const authorBySlugQuery = defineQuery(`
 {
     _id,
     'slug': slug.current,
+    'createdAt': _createdAt,
+    'updatedAt': _updatedAt,
     name,
     image,
     nationality->,
@@ -23,6 +25,13 @@ export const authorBySlugQuery = defineQuery(`
         	description,
             icon
         }
+    }, []),
+    'tags': coalesce(tags[] -> {
+        title,
+        'slug': slug.current,
+        shortDescription,
+        description,
+        icon
     }, [])
 }`);
 

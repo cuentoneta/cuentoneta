@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { StorylistTeaser } from '@models/storylist.model';
 import { CollectionTeaser } from '@components/collection-teaser/collection-teaser';
-import { CollectionTeaserSkeleton } from '@components/collection-teaser/collection-teaser-skeleton';
+import { CollectionTeaserSkeletonComponent } from '@components/collection-teaser/collection-teaser-skeleton';
 
 @Component({
 	selector: 'cuentoneta-collection-teasers-deck',
-	imports: [CollectionTeaser, CollectionTeaserSkeleton],
+	imports: [CollectionTeaser, CollectionTeaserSkeletonComponent],
 	template: ` <div class="flex items-center justify-between">
 			<div class="flex flex-col content-between gap-1">
 				<h2 class="font-inter text-2xl font-bold">Colecciones</h2>
@@ -32,6 +32,6 @@ import { CollectionTeaserSkeleton } from '@components/collection-teaser/collecti
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionTeasersDeck {
-	readonly SKELETON_COUNT = 4;
-	readonly teasers = input<StorylistTeaser[]>([]);
+	protected readonly SKELETON_COUNT = 4;
+	public readonly teasers = input<StorylistTeaser[]>([]);
 }

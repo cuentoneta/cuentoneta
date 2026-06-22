@@ -113,6 +113,18 @@ export default defineType({
 			type: 'array',
 			of: [defineArrayMember(resource)],
 		}),
+		defineField({
+			name: 'tags',
+			title: 'Etiquetas',
+			description: 'Etiquetas asignadas al autor.',
+			type: 'array',
+			of: [
+				defineArrayMember({
+					type: 'reference',
+					to: [{ type: 'tag' }],
+				}),
+			],
+		}),
 	],
 	preview: {
 		select: {

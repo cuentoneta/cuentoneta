@@ -79,12 +79,12 @@ interface MediaSelectorItem {
 })
 export class StoryMediaSelectorsComponent {
 	// Inputs
-	readonly media = input<Media[]>([]);
-	readonly orientation = input<'horizontal' | 'vertical'>('horizontal');
-	readonly theme = input<StoryMediaSelectorsTheme>('subtle');
-	readonly selectable = input<boolean>(false);
+	public readonly media = input<Media[]>([]);
+	public readonly orientation = input<'horizontal' | 'vertical'>('horizontal');
+	public readonly theme = input<StoryMediaSelectorsTheme>('subtle');
+	public readonly selectable = input<boolean>(false);
 
-	readonly selected = output<Media>();
+	public readonly selected = output<Media>();
 
 	// Mapeo de cada tipo de media del dominio a su ícono y etiqueta accesible.
 	private readonly mediaPlatforms: Record<MediaTypeKey, { iconName: string; label: string }> = {
@@ -94,7 +94,7 @@ export class StoryMediaSelectorsComponent {
 		audioRecording: { iconName: 'faSolidFileAudio', label: 'Audio' },
 	};
 
-	readonly selectors = computed<MediaSelectorItem[]>(() => {
+	protected readonly selectors = computed<MediaSelectorItem[]>(() => {
 		const media = this.media();
 		if (this.selectable()) {
 			return media.map((item) => ({ ...this.mediaPlatforms[item.type], count: 1, media: item }));
@@ -106,7 +106,7 @@ export class StoryMediaSelectorsComponent {
 		return [...counts.entries()].map(([type, count]) => ({ ...this.mediaPlatforms[type], count }));
 	});
 
-	readonly containerClasses = computed(() =>
+	protected readonly containerClasses = computed(() =>
 		this.orientation() === 'vertical' ? 'flex flex-col items-center gap-2.5' : 'flex items-center gap-2.5',
 	);
 
@@ -114,7 +114,7 @@ export class StoryMediaSelectorsComponent {
 	private readonly selectorBaseClasses = 'relative flex items-center justify-center rounded-lg px-2.5 py-2';
 
 	// Estilos del recuadro de cada selector: clases base + las propias del tema.
-	readonly selectorClasses = computed(() => {
+	protected readonly selectorClasses = computed(() => {
 		const theme = (() => {
 			switch (this.theme()) {
 				case 'solid':
@@ -130,12 +130,12 @@ export class StoryMediaSelectorsComponent {
 
 	// Nombre accesible del selector: incluye el conteo cuando se agrupan varios recursos de la
 	// misma plataforma, de modo que el badge visual pueda marcarse como decorativo (aria-hidden).
-	ariaLabel(selector: MediaSelectorItem): string {
+	protected ariaLabel(selector: MediaSelectorItem): string {
 		return selector.count > 1 ? `${selector.label} (${selector.count})` : selector.label;
 	}
 
 	// Estilos del contador (badge) que se superpone al selector según el tema.
-	readonly badgeClasses = computed(() => {
+	protected readonly badgeClasses = computed(() => {
 		switch (this.theme()) {
 			case 'solid':
 				return 'border-2 border-neutral-100 bg-white';

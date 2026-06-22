@@ -1,0 +1,142 @@
+name: Sync datasets (production → staging + development)
+
+# Replica el dataset `production` de Sanity hacia `staging` y `development` como espejo exacto
+# (wipe + import), para que los entornos no acumulen documentos huérfanos.
+#
+# Prerequisitos (secrets del repo — se configuran una sola vez, ver el PR del issue #1493):
+#   - SANITY_AUTH_TOKEN: robot token de manage.sanity.io con permisos para administrar datasets
+#     (crear/borrar/importar) y leer `production` (que es privado).
+#   - SANITY_STUDIO_PROJECT_ID: id del proyecto Sanity (s4dbqkc5). Ya existe (lo usa ci.yml).
+
+on:
+  schedule:
+    # 03:17 UTC (~00:17 ART), horario valle; minuto ≠ 0 para evitar el pico de carga de las :00.
+    # GitHub desactiva los schedules tras 60 días sin actividad en el repo (avisa por email); si el
+    # cron deja de correr, reactivarlo desde la pestaña Actions o con un push a la rama default.
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+    inputs:
+      targets:
+        description: 'Dataset(s) DESTINO a sobrescribir con un espejo exacto de production (se BORRAN y se reimportan). El origen siempre es production. Default development = dry-run seguro.'
+        type: choice
+        default: development
+        options:
+          - development
+          - staging
+          - both
+
+concurrency:
+  group: sync-datasets
+  # No cancelar una corrida en progreso: cortar a mitad de un wipe dejaría un dataset vacío.
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    name: Sync Sanity datasets from production
+    runs-on: ubuntu-latest
+
+    env:
+      SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+      SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID }}
+      # El CLI de Sanity corre desatendido cuando CI=true (Actions ya lo setea; explícito por
+      # robustez ante un cambio futuro del runner). El flujo además no dispara prompts: delete usa
+      # --force, create pasa --visibility, e import escribe en un dataset recién creado y vacío
+      # (sin conflictos de ids → sin prompt de --replace).
+      CI: 'true'
+      SOURCE_DATASET: production
+      TARBALL: production.tar.gz
+      # Umbral mínimo: un export real de producción pesa varios MB; por debajo de 50 KB asumimos un
+      # export fallido o un dataset vacío y abortamos sin tocar los targets.
+      MIN_TARBALL_BYTES: 51200
+      # En schedule no hay inputs (github.event.inputs.targets = '') → el fallback deja TARGETS en
+      # 'both' y la corrida diaria sincroniza ambos targets. En workflow_dispatch toma el input.
+      TARGETS: ${{ github.event.inputs.targets || 'both' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
+      - name: Select pnpm as package manager
+        uses: pnpm/action-setup@v4.1.0
+        with:
+          version: 10.12.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22.22.3
+          cache: 'pnpm'
+          cache-dependency-path: cms/pnpm-lock.yaml
+
+      - name: Install CMS dependencies
+        working-directory: cms
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Export production dataset
+        working-directory: cms
+        run: |
+          set -euo pipefail
+          pnpm exec sanity dataset export "$SOURCE_DATASET" "$TARBALL" --overwrite
+
+      - name: Validate tarball (safety guard)
+        working-directory: cms
+        run: |
+          set -euo pipefail
+          if [ ! -f "$TARBALL" ]; then
+            echo "::error::El tarball $TARBALL no existe. Se aborta para no borrar los targets." >&2
+            exit 1
+          fi
+          actual_bytes=$(wc -c < "$TARBALL")
+          if [ "$actual_bytes" -lt "$MIN_TARBALL_BYTES" ]; then
+            echo "::error::El tarball pesa ${actual_bytes} bytes (< mínimo ${MIN_TARBALL_BYTES}). Posible export fallido; se aborta." >&2
+            exit 1
+          fi
+          echo "Tarball válido: ${actual_bytes} bytes."
+
+      # Se sube ANTES del wipe: si un import falla tras el delete, el tarball queda disponible para
+      # restaurar el dataset manualmente sin re-exportar production.
+      - name: Upload tarball (recuperación manual)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-tarball
+          path: cms/production.tar.gz
+          retention-days: 1
+          if-no-files-found: ignore
+
+      - name: Sync targets (wipe + import)
+        working-directory: cms
+        run: |
+          set -euo pipefail
+          case "$TARGETS" in
+            both) datasets="staging development" ;;
+            staging) datasets="staging" ;;
+            development) datasets="development" ;;
+            *) echo "::error::Valor de targets no soportado: $TARGETS" >&2; exit 1 ;;
+          esac
+          for dataset in $datasets; do
+            # Salvaguarda dura: nunca borrar/reimportar el dataset de origen (production), pase lo
+            # que pase con $TARGETS o el case de arriba. production solo se lee (export), jamás se escribe.
+            if [ "$dataset" = "$SOURCE_DATASET" ]; then
+              echo "::error::Target prohibido: '$dataset' es el dataset de origen. Se aborta sin tocarlo." >&2
+              exit 1
+            fi
+            echo "::group::Sync $dataset"
+            pnpm exec sanity dataset delete "$dataset" --force
+            # --visibility public preserva la visibilidad actual: staging y development son públicos
+            # (los lee el frontend de esos entornos sin token); production es el privado.
+            pnpm exec sanity dataset create "$dataset" --visibility public
+            pnpm exec sanity dataset import "$TARBALL" "$dataset"
+            echo "::endgroup::"
+          done
+          echo "Sync completado para: $datasets"
+
+      - name: Instrucciones de recuperación ante fallo
+        if: failure()
+        run: |
+          echo "::error::La sincronización falló. Si un dataset quedó vacío tras el delete, restauralo:" >&2
+          echo "::error::  1) descargá el artefacto 'production-tarball' de este run;" >&2
+          echo "::error::  2) cd cms && pnpm exec sanity dataset import production.tar.gz <target>" >&2

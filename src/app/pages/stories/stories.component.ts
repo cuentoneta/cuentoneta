@@ -5,10 +5,10 @@ import { RouterLink } from '@angular/router';
 import { rxResource } from '@angular/core/rxjs-interop';
 
 // Services
-import { StoryService } from '../../providers/story.service';
+import { StoryApi } from '../../providers/story-api.interface';
 
 // Directives
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 
 // Environment
 import { environment } from '../../environments/environment';
@@ -16,14 +16,11 @@ import { environment } from '../../environments/environment';
 // Routing
 import { AppRoutes } from '../../app.routes';
 
-// 3rd Party
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-
 @Component({
 	selector: 'cuentoneta-stories',
 	standalone: true,
-	imports: [RouterLink, NgxSkeletonLoaderModule],
-	hostDirectives: [MetaTagsDirective],
+	imports: [RouterLink],
+	hostDirectives: [HeadMetadataDirective],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `
 		<main class="content vertical-layout-spacing horizontal-layout-spacing">
@@ -35,7 +32,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 					</p>
 				</section>
 
-				<div class="border overflow-x-auto rounded-lg border-neutral-200">
+				<div class="overflow-x-auto rounded-lg border border-neutral-200">
 					<table class="w-full border-collapse">
 						<thead class="bg-neutral-50">
 							<tr class="border-b border-neutral-200">
@@ -75,16 +72,16 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 })
 export default class StoriesComponent {
 	protected readonly appRoutes = AppRoutes;
-	private storyService = inject(StoryService);
-	private metaTagsDirective = inject(MetaTagsDirective);
+	private storyService = inject(StoryApi);
+	private metaTagsDirective = inject(HeadMetadataDirective);
 
 	// TODO: Implementar tamaño de página variable
-	readonly storiesResource = rxResource({
+	private readonly storiesResource = rxResource({
 		stream: () => this.storyService.get(0, 2000),
 		defaultValue: [],
 	});
 
-	readonly stories = computed(() => this.storiesResource.value());
+	protected readonly stories = computed(() => this.storiesResource.value());
 
 	constructor() {
 		this.updateMetaTags();

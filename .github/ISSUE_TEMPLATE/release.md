@@ -10,7 +10,6 @@ assignees: ''
 
 - [ ] Ajustar changelog.
 - [ ] Actualizar versión en package.json.
-- [ ] Sanity: Exportar PROD a .zip para backup.
 - [ ] Sanity: Hacer deploy de Sanity Studio.
 - [ ] Sanity: Determinar si hay scripts de actualización de datos a ejecutar.
 - [ ] Generar release desde GitHub.

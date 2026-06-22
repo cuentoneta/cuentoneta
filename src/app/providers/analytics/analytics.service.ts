@@ -5,7 +5,7 @@ import { environment } from '../../environments/environment';
 	providedIn: 'root',
 })
 export class AnalyticsService {
-	async init() {
+	public async init() {
 		if (!environment.clarityProjectId) {
 			return;
 		}

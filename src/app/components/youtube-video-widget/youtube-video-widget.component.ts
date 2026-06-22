@@ -31,5 +31,5 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	`,
 })
 export class YoutubeVideoWidgetComponent {
-	readonly media = input.required<YouTubeVideo>();
+	public readonly media = input.required<YouTubeVideo>();
 }

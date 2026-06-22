@@ -2,7 +2,7 @@ import { applicationConfig, Meta, moduleMetadata } from '@storybook/angular';
 import { CollectionTeaser } from './collection-teaser';
 import { NgOptimizedImage } from '@angular/common';
 import { provideRouter } from '@angular/router';
-import { CollectionTeaserSkeleton } from './collection-teaser-skeleton';
+import { CollectionTeaserSkeletonComponent } from './collection-teaser-skeleton';
 import { storylistMock } from '@mocks/storylist.mock';
 
 const meta: Meta<CollectionTeaser> = {
@@ -13,9 +13,16 @@ const meta: Meta<CollectionTeaser> = {
 			providers: [provideRouter([])],
 		}),
 		moduleMetadata({
-			imports: [NgOptimizedImage, CollectionTeaserSkeleton],
+			imports: [NgOptimizedImage, CollectionTeaserSkeletonComponent],
 		}),
 	],
+	parameters: {
+		docs: {
+			canvas: {
+				sourceState: 'shown',
+			},
+		},
+	},
 };
 export default meta;
 

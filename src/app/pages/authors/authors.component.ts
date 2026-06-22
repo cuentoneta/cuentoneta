@@ -1,14 +1,14 @@
 import { Component, computed, inject } from '@angular/core';
 
-import { AuthorService } from '../../providers/author.service';
+import { AuthorApi } from '../../providers/author-api.interface';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { environment } from '../../environments/environment';
 
 @Component({
 	imports: [RouterLink],
-	hostDirectives: [MetaTagsDirective],
+	hostDirectives: [HeadMetadataDirective],
 	template: `<main class="content horizontal-layout-spacing vertical-layout-spacing">
 		<ul class="list-inside list-disc">
 			@for (author of authors(); track author.slug) {
@@ -23,15 +23,15 @@ import { environment } from '../../environments/environment';
 	styles: ``,
 })
 export default class AuthorsComponent {
-	private authorService = inject(AuthorService);
-	private metaTagsDirective = inject(MetaTagsDirective);
+	private authorService = inject(AuthorApi);
+	private metaTagsDirective = inject(HeadMetadataDirective);
 
 	private authorsResource = rxResource({
 		stream: () => this.authorService.getAll(),
 		defaultValue: [],
 	});
 
-	readonly authors = computed(() => this.authorsResource.value());
+	protected readonly authors = computed(() => this.authorsResource.value());
 
 	constructor() {
 		this.updateMetaTags();

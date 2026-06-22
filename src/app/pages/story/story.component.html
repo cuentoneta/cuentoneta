@@ -13,7 +13,7 @@
 	<main>
 		<article class="p-5 md:rounded-xl md:bg-neutral-50 md:p-16 md:shadow-lg">
 			<header class="mb-6 flex flex-col-reverse sm:mb-10 sm:block">
-				<aside class="mt-6 sm:float-right sm:mb-12 sm:ml-12 sm:mt-0">
+				<aside class="mt-6 sm:float-right sm:mt-0 sm:mb-12 sm:ml-12">
 					<cuentoneta-share-content
 						[params]="shareContentParams()"
 						[route]="sharingRoute()"
@@ -40,33 +40,11 @@
 							</p>
 						}
 					} @else {
-						<ngx-skeleton-loader
-							[theme]="{
-								'height.px': 36,
-								width: '50%',
-							}"
-							count="1"
-							appearance="line"
-							class="story-title-skeleton"
-						/>
-						<ngx-skeleton-loader
-							[theme]="{
-								'height.px': 20,
-								width: '25%',
-							}"
-							count="1"
-							appearance="line"
-							class="story-author-skeleton"
-						/>
-						<ngx-skeleton-loader
-							[theme]="{
-								'height.px': 16,
-								width: '20%',
-							}"
-							count="1"
-							appearance="line"
-							class="story-reading-time-skeleton"
-						/>
+						<div class="flex flex-col gap-2">
+							<cuentoneta-skeleton appearance="line" class="h-[36px] w-1/2 bg-neutral-300" />
+							<cuentoneta-skeleton appearance="line" class="h-5 w-1/4 bg-neutral-300" />
+							<cuentoneta-skeleton appearance="line" class="h-4 w-1/5 bg-neutral-300" />
+						</div>
 					}
 				</div>
 			</header>
@@ -98,10 +76,10 @@
 				</section>
 			} @else {
 				@for (skeleton of dummyList; track $index) {
-					<div class="mb-5">
-						<ngx-skeleton-loader />
-						<ngx-skeleton-loader />
-						<ngx-skeleton-loader />
+					<div class="mb-5 flex flex-col gap-2">
+						@for (line of [0, 1, 2]; track line) {
+							<cuentoneta-skeleton appearance="line" class="h-4 w-full bg-neutral-300" />
+						}
 					</div>
 				}
 			}
