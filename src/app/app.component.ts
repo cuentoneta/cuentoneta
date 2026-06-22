@@ -21,9 +21,7 @@ import { LayoutService } from './providers/layout.service';
 })
 export class AppComponent {
 	private readonly analytics = inject(AnalyticsService);
-	private readonly layoutService = inject(LayoutService);
-
-	protected readonly isHeaderVisible = this.layoutService.isHeaderVisible;
+	protected readonly isHeaderVisible = inject(LayoutService).isHeaderVisible;
 
 	constructor() {
 		if (environment.environment === 'production') {

@@ -16,23 +16,39 @@ export class LayoutService {
 
 	private readonly viewport: WritableSignal<Viewport> = signal('xl');
 
-	private lastScrollY = 0;
-	private hasFirstScrollPastThreshold = false;
-	private currentScrollDirection: Direction = Direction.Up;
-
-	public readonly userHasScrolled: Signal<Direction> = fromEventSignal<Direction>(
-		this.window,
-		'scroll',
-		() => this.computeScrollDirection(),
-		Direction.Up,
-	);
+	public readonly userHasScrolled: Signal<Direction> = (() => {
+		let lastScrollY = 0;
+		let hasFirstScrollPastThreshold = false;
+		return fromEventSignal<Direction>(
+			this.window,
+			'scroll',
+			(previous) => {
+				const y = this.window.scrollY;
+				if (y <= 400) {
+					return previous;
+				}
+				if (!hasFirstScrollPastThreshold) {
+					hasFirstScrollPastThreshold = true;
+					lastScrollY = y;
+					return previous;
+				}
+				const direction = y < lastScrollY ? Direction.Up : Direction.Down;
+				lastScrollY = y;
+				return direction;
+			},
+			Direction.Up,
+		);
+	})();
 
 	// Su project sincroniza `viewport` ante resize/orientationchange; el valor de la signal
 	// no se consume directamente (`isHeaderVisible` lee `viewport` vía `biggerThan`).
 	private readonly viewportHasChanged = fromEventSignal<Viewport>(
 		this.window,
 		['resize', 'orientationchange'],
-		() => this.setViewport(),
+		() => {
+			this.setViewport();
+			return this.viewport();
+		},
 		this.viewport(),
 	);
 
@@ -42,21 +58,6 @@ export class LayoutService {
 
 	constructor() {
 		this.setViewport();
-	}
-
-	private computeScrollDirection(): Direction {
-		const y = this.window.scrollY;
-		if (y <= 400) {
-			return this.currentScrollDirection;
-		}
-		if (!this.hasFirstScrollPastThreshold) {
-			this.hasFirstScrollPastThreshold = true;
-			this.lastScrollY = y;
-			return this.currentScrollDirection;
-		}
-		this.currentScrollDirection = y < this.lastScrollY ? Direction.Up : Direction.Down;
-		this.lastScrollY = y;
-		return this.currentScrollDirection;
 	}
 
 	/**
@@ -73,11 +74,11 @@ export class LayoutService {
 		return isPlatformServer(this.platformId);
 	}
 
-	public setViewport(): Viewport {
+	public setViewport(): void {
 		// Para SSR, siempre devolver md dado que no se puede acceder a window
 		if (this.isPlatformServer()) {
 			this.viewport.set('md');
-			return 'md';
+			return;
 		}
 
 		const breakpoints = [
@@ -92,7 +93,6 @@ export class LayoutService {
 		const currentViewport = (match?.viewport || 'md') as Viewport;
 
 		this.viewport.set(currentViewport);
-		return currentViewport;
 	}
 
 	/**

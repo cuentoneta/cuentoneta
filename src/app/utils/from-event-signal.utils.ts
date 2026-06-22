@@ -3,18 +3,20 @@ import { isPlatformBrowser } from '@angular/common';
 
 // Adhiere listeners al target sólo en el navegador (en SSR la signal conserva `initial`) y los
 // limpia al destruirse el contexto de inyección. Debe llamarse dentro de un contexto de inyección
-// (p. ej. field initializer de un @Injectable). `signal.set` deduplica valores iguales, de modo
-// que cada evento sólo actualiza la signal cuando el valor projectado cambia.
+// (p. ej. field initializer de un @Injectable). `project` recibe el valor anterior de la signal,
+// permitiendo transformaciones con estado (p. ej. comparar con el scroll previo) sin propiedades
+// de instancia. `signal.set` deduplica valores iguales, de modo que cada evento sólo actualiza
+// la signal cuando el valor projectado cambia.
 export function fromEventSignal<T>(
 	target: EventTarget,
 	events: string | string[],
-	project: () => T,
+	project: (previous: T) => T,
 	initial: T,
 ): Signal<T> {
 	const value = signal(initial);
 	const names = typeof events === 'string' ? [events] : events;
 	const handler = (): void => {
-		value.set(project());
+		value.set(project(value()));
 	};
 	const destroyRef = inject(DestroyRef);
 
