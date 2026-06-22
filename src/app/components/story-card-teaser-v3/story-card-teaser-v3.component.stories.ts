@@ -35,7 +35,7 @@ const storyMock: StoryTeaserWithAuthor = {
 
 const meta: Meta<StoryCardTeaserV3Component> = {
 	component: StoryCardTeaserV3Component,
-	title: 'Componentes/StoryCardTeaserV3',
+	title: 'Componentes V3/StoryCardTeaserV3',
 	decorators: [
 		applicationConfig({
 			providers: [provideRouter([])],
