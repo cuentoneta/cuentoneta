@@ -1,9 +1,10 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Observable, of } from 'rxjs';
+import { NEVER, Observable, of } from 'rxjs';
 
 // Components
 import { StorylistNavigationFrameComponent } from './storylist-navigation-frame.component';
 import { NavigableStorylistStoryTeaserComponent } from '../navigable-storylist-story-teaser/navigable-storylist-story-teaser.component';
+import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
 // Models
 import { Storylist } from '@models/storylist.model';
@@ -13,16 +14,15 @@ import { storylistMock } from '@mocks/storylist.mock';
 import { storyMock } from '@mocks/story.mock';
 
 // Services
-import { StorylistService } from '../../providers/storylist.service';
+import { StorylistApi } from '../../providers/storylist-api.interface';
 
 // 3rd party libs
 import { render, screen } from '@testing-library/angular';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 describe('StorylistNavigationFrameComponent', () => {
 	const setup = async () => {
 		return await render(StorylistNavigationFrameComponent, {
-			componentImports: [CommonModule, NavigableStorylistStoryTeaserComponent, NgxSkeletonLoaderModule],
+			componentImports: [CommonModule, NavigableStorylistStoryTeaserComponent, SkeletonComponent],
 			inputs: {
 				selectedStorySlug: storyMock.slug,
 				navigationSlug: storylistMock.slug,
@@ -30,7 +30,7 @@ describe('StorylistNavigationFrameComponent', () => {
 			providers: [
 				DatePipe,
 				{
-					provide: StorylistService,
+					provide: StorylistApi,
 					useValue: {
 						getStorylistNavigationTeasers(): Observable<Storylist> {
 							return of(storylistMock);
@@ -51,5 +51,27 @@ describe('StorylistNavigationFrameComponent', () => {
 		view.detectChanges();
 		expect(screen.getByText(storylistMock.stories[0].title)).toBeInTheDocument();
 		expect(screen.getByText(storylistMock.stories[0].author.name)).toBeInTheDocument();
+	});
+
+	test('should render loading skeletons with role="status" while the storylist resolves', async () => {
+		await render(StorylistNavigationFrameComponent, {
+			componentImports: [CommonModule, NavigableStorylistStoryTeaserComponent, SkeletonComponent],
+			inputs: {
+				selectedStorySlug: storyMock.slug,
+				navigationSlug: storylistMock.slug,
+			},
+			providers: [
+				DatePipe,
+				{
+					provide: StorylistApi,
+					useValue: {
+						getStorylistNavigationTeasers(): Observable<Storylist> {
+							return NEVER;
+						},
+					},
+				},
+			],
+		});
+		expect(screen.getAllByRole('status').length).toBeGreaterThan(0);
 	});
 });

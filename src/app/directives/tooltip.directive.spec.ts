@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 import { TooltipDirective } from './tooltip.directive';
 import userEvent from '@testing-library/user-event';
@@ -16,12 +16,12 @@ const ELEMENT_HEIGHT = 500;
 	imports: [TooltipDirective],
 	hostDirectives: [TooltipDirective],
 })
-class HostComponent implements OnInit {
-	width = ELEMENT_WIDTH;
-	height = ELEMENT_HEIGHT;
+class HostComponent {
+	protected width = ELEMENT_WIDTH;
+	protected height = ELEMENT_HEIGHT;
 	private tooltipDirective = inject(TooltipDirective);
 
-	ngOnInit() {
+	constructor() {
 		this.tooltipDirective.text.set('Tooltip test');
 		this.tooltipDirective.position.set('bottom');
 	}

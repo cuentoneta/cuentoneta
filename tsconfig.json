@@ -9,7 +9,8 @@
 			"@components/*": ["src/app/components/*"],
 			"@mocks/*": ["src/app/mocks/*"],
 			"@models/*": ["src/app/models/*"],
-			"@utils/*": ["src/app/utils/*"]
+			"@utils/*": ["src/app/utils/*"],
+			"@test-utils": ["src/test-utils.ts"]
 		},
 		"isolatedModules": true,
 		"baseUrl": ".",

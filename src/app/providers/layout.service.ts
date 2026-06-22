@@ -49,15 +49,15 @@ export class LayoutService {
 		fromEvent(this.window, 'orientationchange').pipe(startWith(null)),
 	).pipe(takeUntilDestroyed(), throttleTime(100));
 
-	get userHasScrolled$() {
+	public get userHasScrolled$() {
 		return this._userHasScrolled$;
 	}
 
-	get viewportHasChanged$() {
+	public get viewportHasChanged$() {
 		return this._viewportHasChanged$;
 	}
 
-	get isHeaderVisible$() {
+	public get isHeaderVisible$() {
 		return combineLatest([this.viewportHasChanged$, this.userHasScrolled$]).pipe(
 			map(([hasChanged, direction]) => {
 				if (hasChanged) {
@@ -79,15 +79,15 @@ export class LayoutService {
 	 * Se usan estos wrappers en vez de las implementaciones nativas
 	 * a fin de permitir evaluar casos de pruebas unitarias variadas.
 	 */
-	isPlatformBrowser() {
+	public isPlatformBrowser() {
 		return isPlatformBrowser(this.platformId);
 	}
 
-	isPlatformServer() {
+	public isPlatformServer() {
 		return isPlatformServer(this.platformId);
 	}
 
-	setViewport() {
+	public setViewport() {
 		// Para SSR, siempre devolver md dado que no se puede acceder a window
 		if (this.isPlatformServer()) {
 			this.viewport.set('md');
@@ -114,7 +114,7 @@ export class LayoutService {
 	 * @param viewport
 	 * @param test
 	 */
-	biggerThan(test: Viewport): boolean {
+	public biggerThan(test: Viewport): boolean {
 		const currentWidth = VIEWPORT_WIDTHS_NUMERIC[this.viewport()];
 		const testWidth = VIEWPORT_WIDTHS_NUMERIC[test];
 
@@ -130,7 +130,7 @@ export class LayoutService {
 	 * @param viewport
 	 * @param test
 	 */
-	smallerThan(test: Viewport): boolean {
+	public smallerThan(test: Viewport): boolean {
 		const currentWidth = VIEWPORT_WIDTHS_NUMERIC[this.viewport()];
 		const testWidth = VIEWPORT_WIDTHS_NUMERIC[test];
 
@@ -141,7 +141,7 @@ export class LayoutService {
 		return currentWidth < testWidth;
 	}
 
-	isActual(test: Viewport): boolean {
+	public isActual(test: Viewport): boolean {
 		const currentWidth = VIEWPORT_WIDTHS_NUMERIC[this.viewport()];
 		const testWidth = VIEWPORT_WIDTHS_NUMERIC[test];
 

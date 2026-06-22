@@ -40,10 +40,10 @@ interface ParagraphGroup {
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PortableTextParserComponent {
-	readonly paragraphs = input.required<TextBlockContent[]>();
-	readonly classes = input<string>('classes');
+	public readonly paragraphs = input.required<TextBlockContent[]>();
+	public readonly classes = input<string>('classes');
 
-	readonly groups = computed(() => {
+	protected readonly groups = computed(() => {
 		let currentGroupIndex = 0;
 		const groups: ParagraphGroup[] = [];
 

@@ -1,25 +1,35 @@
 import { addWeeks, getWeek, getYear } from 'date-fns';
+import {
+	clearAllMocks,
+	runOnlyPendingTimers,
+	setSystemTime,
+	useFakeTimers,
+	useRealTimers,
+	type Mock,
+} from '@test-utils';
 import * as contentRepository from './content.repository';
 import * as contentService from './content.service';
 import { LandingPageContentQueryResult } from '../../sanity/types.js';
 
-jest.mock('./content.repository', () => ({
-	fetchLandingPagesList: jest.fn(),
-	fetchLandingPageContent: jest.fn(),
-	createLandingPages: jest.fn(),
-	fetchLatestLandingPageReferences: jest.fn(),
-	fetchRotatingContent: jest.fn(),
+/* eslint-disable no-restricted-syntax -- vi.mock/vi.fn: mock de módulo del repository; se migra a inyección de dependencias en #1503 */
+vi.mock('./content.repository', () => ({
+	fetchLandingPagesList: vi.fn(),
+	fetchLandingPageContent: vi.fn(),
+	createLandingPages: vi.fn(),
+	fetchLatestLandingPageReferences: vi.fn(),
+	fetchRotatingContent: vi.fn(),
 }));
+/* eslint-enable no-restricted-syntax */
 
 describe('ContentService', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
-		jest.useFakeTimers();
+		clearAllMocks();
+		useFakeTimers();
 	});
 
 	afterEach(() => {
-		jest.runOnlyPendingTimers();
-		jest.useRealTimers();
+		runOnlyPendingTimers();
+		useRealTimers();
 	});
 
 	describe('addNextWeeksLandingPageContent', () => {
@@ -36,16 +46,16 @@ describe('ContentService', () => {
 		};
 
 		beforeEach(() => {
-			jest.setSystemTime(currentDate);
+			setSystemTime(currentDate);
 		});
 
 		it('should create missing weeks landing pages when they do not exist', async () => {
 			const weeksInTheFuture = 4;
 
 			// Mock repository responses
-			(contentRepository.fetchLandingPagesList as jest.Mock).mockResolvedValue([]);
-			(contentRepository.fetchLatestLandingPageReferences as jest.Mock).mockResolvedValue(mockLandingPage);
-			(contentRepository.createLandingPages as jest.Mock).mockResolvedValue([
+			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
+			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
+			(contentRepository.createLandingPages as Mock).mockResolvedValue([
 				{ _id: 'created-1' },
 				{ _id: 'created-2' },
 				{ _id: 'created-3' },
@@ -75,7 +85,7 @@ describe('ContentService', () => {
 				return { _id: `landing-page-${index}`, config: `${week.toString().padStart(2, '0')}-${year}` };
 			});
 
-			(contentRepository.fetchLandingPagesList as jest.Mock).mockResolvedValue(futureWeeks);
+			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue(futureWeeks);
 
 			const result = await contentService.addNextWeeksLandingPageContent(weeksInTheFuture);
 
@@ -86,8 +96,8 @@ describe('ContentService', () => {
 		it('should throw an error when current landing page is not found', async () => {
 			const weeksInTheFuture = 4;
 
-			(contentRepository.fetchLandingPagesList as jest.Mock).mockResolvedValue([]);
-			(contentRepository.fetchLatestLandingPageReferences as jest.Mock).mockResolvedValue(null);
+			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
+			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(null);
 
 			await expect(contentService.addNextWeeksLandingPageContent(weeksInTheFuture)).rejects.toThrow(
 				`Latest landing page for the '${currentSlug}' slug content not found`,
@@ -97,7 +107,7 @@ describe('ContentService', () => {
 		it('should throw an error when landing page list query fails', async () => {
 			const weeksInTheFuture = 4;
 
-			(contentRepository.fetchLandingPagesList as jest.Mock).mockResolvedValue(null);
+			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue(null);
 
 			await expect(contentService.addNextWeeksLandingPageContent(weeksInTheFuture)).rejects.toThrow(
 				'Could not retrieve the landing page configs',
@@ -113,12 +123,9 @@ describe('ContentService', () => {
 				return { _id: `landing-page-${index}`, config: `${week.toString().padStart(2, '0')}-${year}` };
 			});
 
-			(contentRepository.fetchLandingPagesList as jest.Mock).mockResolvedValue(existingWeek);
-			(contentRepository.fetchLatestLandingPageReferences as jest.Mock).mockResolvedValue(mockLandingPage);
-			(contentRepository.createLandingPages as jest.Mock).mockResolvedValue([
-				{ _id: 'created-3' },
-				{ _id: 'created-4' },
-			]);
+			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue(existingWeek);
+			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
+			(contentRepository.createLandingPages as Mock).mockResolvedValue([{ _id: 'created-3' }, { _id: 'created-4' }]);
 
 			const result = await contentService.addNextWeeksLandingPageContent(weeksInTheFuture);
 
@@ -127,7 +134,7 @@ describe('ContentService', () => {
 			expect(contentRepository.createLandingPages).toHaveBeenCalled();
 
 			// Verify that the created objects have the correct structure
-			const callArgs = (contentRepository.createLandingPages as jest.Mock).mock.calls[0][0];
+			const callArgs = (contentRepository.createLandingPages as Mock).mock.calls[0][0];
 			expect(callArgs).toHaveLength(2);
 			callArgs.forEach((obj: LandingPageContentQueryResult) => {
 				expect(obj).toHaveProperty('config');
@@ -141,9 +148,9 @@ describe('ContentService', () => {
 		it('should call createLandingPages with Promise.all for parallel execution', async () => {
 			const weeksInTheFuture = 3;
 
-			(contentRepository.fetchLandingPagesList as jest.Mock).mockResolvedValue([]);
-			(contentRepository.fetchLatestLandingPageReferences as jest.Mock).mockResolvedValue(mockLandingPage);
-			(contentRepository.createLandingPages as jest.Mock).mockResolvedValue([
+			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
+			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
+			(contentRepository.createLandingPages as Mock).mockResolvedValue([
 				{ _id: 'created-1' },
 				{ _id: 'created-2' },
 				{ _id: 'created-3' },
@@ -153,7 +160,7 @@ describe('ContentService', () => {
 
 			// Verify that createLandingPages was called (which internally uses Promise.all)
 			expect(contentRepository.createLandingPages).toHaveBeenCalled();
-			const passedObjects = (contentRepository.createLandingPages as jest.Mock).mock.calls[0][0];
+			const passedObjects = (contentRepository.createLandingPages as Mock).mock.calls[0][0];
 			expect(Array.isArray(passedObjects)).toBe(true);
 			expect(passedObjects.length).toBe(weeksInTheFuture);
 		});

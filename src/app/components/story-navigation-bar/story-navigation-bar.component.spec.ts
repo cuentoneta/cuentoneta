@@ -2,9 +2,9 @@ import { StoryNavigationBarComponent } from './story-navigation-bar.component';
 
 import { render } from '@testing-library/angular';
 import { Observable, of } from 'rxjs';
-import { StoryService } from '../../providers/story.service';
+import { StoryApi } from '../../providers/story-api.interface';
 import { StoryTeaser } from '@models/story.model';
-import { StorylistService } from '../../providers/storylist.service';
+import { StorylistApi } from '../../providers/storylist-api.interface';
 import { Storylist } from '@models/storylist.model';
 
 // Mocks
@@ -22,7 +22,7 @@ describe('StoryNavigationBarComponent', () => {
 			},
 			providers: [
 				{
-					provide: StoryService,
+					provide: StoryApi,
 					useValue: {
 						getNavigationTeasersByAuthorSlug(): Observable<StoryTeaser[]> {
 							return of([storyTeaserMock]);
@@ -43,7 +43,7 @@ describe('StoryNavigationBarComponent', () => {
 			},
 			providers: [
 				{
-					provide: StorylistService,
+					provide: StorylistApi,
 					useValue: {
 						getStorylistNavigationTeasers(): Observable<Storylist> {
 							return of(storylistMock);

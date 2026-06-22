@@ -1,22 +1,14 @@
 // Core
-import { Component, computed, inject, input } from '@angular/core';
-import { tap } from 'rxjs';
+import { Component, computed, forwardRef, inject, input } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 
-// 3rd party modules
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-
-// Models
-import { Storylist } from '@models/storylist.model';
-
 // Services
-import { StorylistService } from '../../providers/storylist.service';
+import { StorylistApi } from '../../providers/storylist-api.interface';
 
-// Directives
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
-
-// Environment
-import { environment } from '../../environments/environment';
+// SEO
+import { StorylistMetaTagsDirective } from './storylist-meta-tags.directive';
+import { StorylistStructuredDataDirective } from './storylist-structured-data.directive';
+import { STORYLIST_HOST, type StorylistHost } from './storylist-host';
 
 // Componentes
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
@@ -26,12 +18,13 @@ import { StorylistTitle } from './storylist-title/storylist-title';
 import { StoryCardTeaserComponent } from '@components/story-card-teaser/story-card-teaser.component';
 import { StoryCardTeaserSkeletonComponent } from '@components/story-card-teaser/story-card-teaser-skeleton.component';
 import { MediaResourceComponent } from '@components/media-resource/media-resource.component';
+import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
 @Component({
 	selector: 'cuentoneta-storylist',
 	templateUrl: './storylist.component.html',
 	imports: [
-		NgxSkeletonLoaderModule,
+		SkeletonComponent,
 		PortableTextParserComponent,
 		Tabs,
 		Tab,
@@ -40,56 +33,38 @@ import { MediaResourceComponent } from '@components/media-resource/media-resourc
 		StorylistTitle,
 		MediaResourceComponent,
 	],
-	hostDirectives: [MetaTagsDirective],
-	styles: `
-		@reference '#tailwind-theme';
-
-		:host ::ng-deep .description-skeleton .skeleton-loader {
-			@apply bg-neutral-300;
-		}
-	`,
+	providers: [{ provide: STORYLIST_HOST, useExisting: forwardRef(() => StorylistComponent) }],
+	hostDirectives: [StorylistMetaTagsDirective, StorylistStructuredDataDirective],
 })
-export default class StorylistComponent {
+export default class StorylistComponent implements StorylistHost {
 	// Route inputs
-	readonly slug = input.required<string>();
-	readonly activeTab = input<'stories' | 'about' | string>('stories');
+	public readonly slug = input.required<string>();
+	public readonly activeTab = input<'stories' | 'about' | string>('stories');
+
+	// Cantidad de líneas del skeleton de la descripción mientras carga
+	protected readonly descriptionSkeletonLines = Array.from({ length: 10 });
 
 	// Providers
-	private metaTagsDirective = inject(MetaTagsDirective);
-	private storylistService = inject(StorylistService);
+	private storylistService = inject(StorylistApi);
 
 	// Recursos
-	readonly storylistResource = rxResource({
+	protected readonly storylistResource = rxResource({
 		params: this.slug,
-		stream: ({ params }) =>
-			this.storylistService.get(params, 60, 'asc').pipe(
-				tap((storylist) => {
-					this.updateMetaTags(storylist);
-				}),
-			),
+		stream: ({ params }) => this.storylistService.get(params, 60, 'asc'),
 		defaultValue: undefined,
 	});
+	public readonly storylist = computed(() => this.storylistResource.value());
 
 	// Propiedades
 	// TODO: Implementar uso de imagen alusiva/tapa de libro en la ficha técnica
-	readonly featuredImageUrl = computed(
+	private readonly featuredImageUrl = computed(
 		() => `${this.storylistResource.value()?.featuredImage}?h=${256 * 1.5}&w=${192 * 1.5}&auto=format`,
 	);
 	// TODO: Simplificar estructura de tipo Storylist para evitar estas transformaciones
-	readonly stories = computed(() => this.storylistResource.value()?.stories.map((story) => story) || []);
+	protected readonly stories = computed(() => this.storylistResource.value()?.stories.map((story) => story) || []);
 
 	// Computed properties for tabs and media
-	readonly tabs = computed(() => this.storylistResource.value()?.tabs || []);
-	readonly media = computed(() => this.storylistResource.value()?.media || []);
-	readonly hasMedia = computed(() => this.media().length > 0);
-
-	private updateMetaTags(storylist: Storylist) {
-		this.metaTagsDirective.setTitle(`${storylist.title}`);
-		this.metaTagsDirective.setDescription(
-			`Una storylist en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.`,
-		);
-		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/storylist/${storylist.slug}`);
-		this.metaTagsDirective.setRobots('index, follow');
-		this.metaTagsDirective.setKeywords(['literatura', 'poemas', 'cuentos', 'textos', storylist.title.toLowerCase()]);
-	}
+	protected readonly tabs = computed(() => this.storylistResource.value()?.tabs || []);
+	protected readonly media = computed(() => this.storylistResource.value()?.media || []);
+	protected readonly hasMedia = computed(() => this.media().length > 0);
 }

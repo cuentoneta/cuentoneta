@@ -15,6 +15,9 @@ const meta: Meta<CarouselComponent> = {
 	],
 	parameters: {
 		docs: {
+			canvas: {
+				sourceState: 'shown',
+			},
 			description: {
 				component: `<div>
 					<p>El componente **CarouselComponent** es un carousel de contenido interactivo que permite mostrar campañas de contenido destacado con navegación automática y manual.</p>

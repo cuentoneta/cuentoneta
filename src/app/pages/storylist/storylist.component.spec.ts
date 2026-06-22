@@ -7,27 +7,21 @@ import { provideRouter } from '@angular/router';
 // 3rd party modules
 import { render } from '@testing-library/angular';
 import { provideMock } from '@testing-library/angular/jest-utils';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Models
 import { Storylist } from '@models/storylist.model';
 
 // Directives
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
+import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 
 // Componentes
 import StorylistComponent from './storylist.component';
 
-xdescribe('StorylistComponent', () => {
+describe.skip('StorylistComponent', () => {
 	const setup = async () => {
 		return await render(StorylistComponent, {
-			componentImports: [
-				CommonModule,
-				HttpClientTestingModule,
-				MockStorylistCardDeckComponent,
-				NgxSkeletonLoaderModule,
-			],
-			componentProviders: [provideRouter([]), provideMock(MetaTagsDirective)],
+			componentImports: [CommonModule, HttpClientTestingModule, MockStorylistCardDeckComponent],
+			componentProviders: [provideRouter([]), provideMock(HeadMetadataDirective)],
 		});
 	};
 
@@ -43,6 +37,6 @@ xdescribe('StorylistComponent', () => {
 	template: '',
 })
 class MockStorylistCardDeckComponent {
-	readonly storyList = input<Storylist>();
-	readonly isLoading = input(false);
+	public readonly storyList = input<Storylist>();
+	public readonly isLoading = input(false);
 }

@@ -5,6 +5,7 @@
 
 # env variables
 .env
+.env.*
 # compiled output
 dist
 tmp
@@ -49,7 +50,16 @@ Thumbs.db
 .vercel
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
-.claude
+
+# Claude — se versiona la config de equipo (.claude/{references,agents,skills,settings.json}).
+# Quedan fuera los datos personales/locales y el almacenamiento interno de git worktrees.
+.claude/settings.local.json
+.claude/worktrees/
+
+# Artefactos de Playwright MCP (snapshots/logs de inspección). No versionar: además, al
+# vivir dentro del repo, el escaneo de contenido de Tailwind v4 los vigila y su escritura
+# en vivo dispara rebuilds en bucle del dev server (HMR) si no se ignoran.
+.playwright-mcp/
 
 # Generated reference material (re-create with `pnpm exec tsx --env-file=.env scripts/audit/export-authors-bios.ts`)
 /tools/author-bios/
@@ -59,6 +69,11 @@ Thumbs.db
 
 # Plan de trabajo local (no se versiona)
 /PLAN.md
+
+# Planes y artefactos de orquestación de Claude (no se versionan)
+/workflows
+# Artefactos del skill issue-workflow (PLAN.md / CODE_REVIEW.md por sesión)
+/workspace
 
 # Grabaciones sueltas de referencia en scripts/
 scripts/*.m4a

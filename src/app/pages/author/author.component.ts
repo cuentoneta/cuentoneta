@@ -1,30 +1,23 @@
 // Core
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, forwardRef, inject, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { Router, UrlTree } from '@angular/router';
-import { map, Observable, tap } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 // Routing
 import { AppRoutes } from '../../app.routes';
 
-// 3rd party modules
-
 // Modelos
-import { Author } from '@models/author.model';
 import { StoryTeaser } from '@models/story.model';
 
-// Directives
-import { MetaTagsDirective } from '../../directives/meta-tags.directive';
-
-// Environment
-import { environment } from '../../environments/environment';
-
-// 3rd Party Modules
-import { NgxSkeletonLoaderComponent, NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+// SEO
+import { AuthorMetaTagsDirective } from './author-meta-tags.directive';
+import { AuthorStructuredDataDirective } from './author-structured-data.directive';
+import { AUTHOR_HOST, type AuthorHost } from './author-host';
 
 // Services
-import { AuthorService } from '../../providers/author.service';
-import { StoryService } from '../../providers/story.service';
+import { AuthorApi } from '../../providers/author-api.interface';
+import { StoryApi } from '../../providers/story-api.interface';
 
 // Componentes
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
@@ -34,6 +27,7 @@ import { StoryCardTeaserComponent } from '@components/story-card-teaser/story-ca
 import Tab from '@components/tabs/tab.component';
 import Tabs from '@components/tabs/tabs.component';
 import { StoryCardTeaserSkeletonComponent } from '@components/story-card-teaser/story-card-teaser-skeleton.component';
+import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
 // Pipes
 import { InitialsPipe } from '../../pipes/initials.pipe';
@@ -43,29 +37,17 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 	imports: [
 		NgOptimizedImage,
 		PortableTextParserComponent,
-		NgxSkeletonLoaderModule,
 		StoryCardTeaserComponent,
 		Tab,
 		Tabs,
 		InitialsPipe,
 		ResourceComponent,
-		NgxSkeletonLoaderComponent,
+		SkeletonComponent,
 		StoryCardTeaserSkeletonComponent,
 	],
-	hostDirectives: [MetaTagsDirective],
+	providers: [{ provide: AUTHOR_HOST, useExisting: forwardRef(() => AuthorComponent) }],
+	hostDirectives: [AuthorMetaTagsDirective, AuthorStructuredDataDirective],
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	styles: `
-		@reference '#tailwind-theme';
-
-		:host ::ng-deep .author-image-skeleton .skeleton-loader,
-		:host ::ng-deep .author-name-skeleton .skeleton-loader,
-		:host ::ng-deep .author-flag-skeleton .skeleton-loader,
-		:host ::ng-deep .author-nationality-skeleton .skeleton-loader,
-		:host ::ng-deep .author-stories-count-skeleton .skeleton-loader,
-		:host ::ng-deep .biography-skeleton .skeleton-loader {
-			@apply bg-neutral-300;
-		}
-	`,
 	template: `
 		<main class="content vertical-layout-spacing horizontal-layout-spacing">
 			<article class="grid grid-cols-1 gap-8">
@@ -101,40 +83,14 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 					}
 				} @placeholder (minimum 500ms) {
 					<section class="flex items-center gap-4">
-						<ngx-skeleton-loader
-							[theme]="{ margin: 0 }"
-							count="1"
-							appearance="square"
-							size="88"
-							class="author-image-skeleton"
-						/>
+						<cuentoneta-skeleton appearance="square" class="h-[88px] w-[88px] rounded-xl bg-neutral-300" />
 						<div class="flex flex-col gap-2">
-							<ngx-skeleton-loader
-								[theme]="{ margin: 0, width: '160px', height: '24px' }"
-								count="1"
-								appearance="line"
-								class="author-name-skeleton"
-							/>
+							<cuentoneta-skeleton appearance="line" class="h-6 w-[160px] bg-neutral-300" />
 							<span class="flex items-center gap-2">
-								<ngx-skeleton-loader
-									[theme]="{ margin: 0, width: '20px', height: '18px' }"
-									count="1"
-									appearance="line"
-									class="author-flag-skeleton"
-								/>
-								<ngx-skeleton-loader
-									[theme]="{ margin: 0, width: '100px', height: '18px' }"
-									count="1"
-									appearance="line"
-									class="author-nationality-skeleton"
-								/>
+								<cuentoneta-skeleton appearance="line" class="h-[18px] w-5 bg-neutral-300" />
+								<cuentoneta-skeleton appearance="line" class="h-[18px] w-[100px] bg-neutral-300" />
 							</span>
-							<ngx-skeleton-loader
-								[theme]="{ margin: 0, width: '80px' }"
-								count="1"
-								appearance="line"
-								class="author-stories-count-skeleton"
-							/>
+							<cuentoneta-skeleton appearance="line" class="h-4 w-20 bg-neutral-300" />
 						</div>
 					</section>
 				}
@@ -185,17 +141,10 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 										}
 									</div>
 								} @loading (minimum 500ms) {
-									<div class="flex flex-col gap-4">
-										<ngx-skeleton-loader
-											[theme]="{
-												'margin-bottom': '8px',
-												height: '25px',
-												width: '100%',
-											}"
-											count="10"
-											appearance="line"
-											class="biography-skeleton"
-										/>
+									<div class="flex flex-col gap-2">
+										@for (line of biographySkeletonLines; track $index) {
+											<cuentoneta-skeleton appearance="line" class="h-[25px] w-full bg-neutral-300" />
+										}
 									</div>
 								}
 							</div>
@@ -206,60 +155,40 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 		</main>
 	`,
 })
-export default class AuthorComponent {
+export default class AuthorComponent implements AuthorHost {
 	private readonly appRoutes = AppRoutes;
 
 	// Route inputs
-	readonly slug = input.required<string>();
-	readonly activeTab = input<'stories' | 'about'>('stories');
+	public readonly slug = input.required<string>();
+	public readonly activeTab = input<'stories' | 'about'>('stories');
+
+	// Cantidad de líneas del skeleton de la biografía mientras carga
+	protected readonly biographySkeletonLines = Array.from({ length: 10 });
 
 	// Providers
-	private authorService = inject(AuthorService);
-	private storyService = inject(StoryService);
+	private authorService = inject(AuthorApi);
+	private storyService = inject(StoryApi);
 	private router = inject(Router);
 
-	// Directives
-	private metaTagsDirective = inject(MetaTagsDirective);
-
 	// Recursos
-	readonly authorResource = rxResource({
+	protected readonly authorResource = rxResource({
 		params: this.slug,
-		stream: ({ params }) =>
-			this.author$(params).pipe(
-				tap((author) => {
-					this.updateMetaTags(author);
-				}),
-			),
+		stream: ({ params }) => this.authorService.getBySlug(params),
 		defaultValue: undefined,
 	});
-	readonly storiesResource = rxResource({
+	protected readonly storiesResource = rxResource({
 		params: this.slug,
 		stream: ({ params }) => this.stories$(params),
 		defaultValue: [],
 	});
 
 	// Propiedades
-	readonly author = computed(() => this.authorResource.value());
-	readonly stories = computed(() => this.storiesResource.value());
-	readonly authorImageUrl = computed(() =>
+	public readonly author = computed(() => this.authorResource.value());
+	protected readonly stories = computed(() => this.storiesResource.value());
+	protected readonly authorImageUrl = computed(() =>
 		this.author()?.imageUrl ? `${this.author()?.imageUrl}?auto=format` : 'assets/img/default-avatar.jpg',
 	);
-	readonly authorFlagUrl = computed(() => `${this.author()?.nationality.flag}?auto=format`);
-
-	private updateMetaTags(author: Author) {
-		this.metaTagsDirective.setTitle(`${author.name}`);
-		this.metaTagsDirective.setDescription(`Perfil y obras de ${author.name} para leer en La Cuentoneta.`);
-		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/author/${author.slug}`);
-		this.metaTagsDirective.setRobots('index, follow');
-		this.metaTagsDirective.setKeywords(['escritor', 'poemas', 'cuentos', 'autor', author.name.toLowerCase()]);
-	}
-	private author$(slug: string) {
-		return this.authorService.getBySlug(slug).pipe(
-			tap((author) => {
-				this.updateMetaTags(author);
-			}),
-		);
-	}
+	protected readonly authorFlagUrl = computed(() => `${this.author()?.nationality.flag}?auto=format`);
 
 	private stories$(slug: string): Observable<(StoryTeaser & { navigationRoute: UrlTree })[]> {
 		return this.storyService.getByAuthorSlug(slug).pipe(

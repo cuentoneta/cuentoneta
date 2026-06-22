@@ -1,3 +1,4 @@
+import { spyOn } from '@test-utils';
 import { AuthorTeaserComponent } from './author-teaser.component';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { render, screen } from '@testing-library/angular';
@@ -64,7 +65,7 @@ describe('AuthorTeaserComponent', () => {
 	test('should navigate to the correct route when clicked', async () => {
 		const { fixture } = await setup();
 		const router = fixture.debugElement.injector.get(Router);
-		const navigateSpy = jest.spyOn(router, 'navigateByUrl');
+		const navigateSpy = spyOn(router, 'navigateByUrl');
 
 		const link = screen.getByRole('link');
 		await userEvent.click(link);

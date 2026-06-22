@@ -3,19 +3,12 @@ import { CommonModule } from '@angular/common';
 import { StoryNavigationTeaser } from '@models/story.model';
 import { AppRoutes } from '../../app.routes';
 import { MediaResourceTagsComponent } from '../media-resource-tags/media-resource-tags.component';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { StoryEditionDateLabelComponent } from '../story-edition-date-label/story-edition-date-label.component';
 import { RouterLink } from '@angular/router';
 
 @Component({
 	selector: 'cuentoneta-navigable-story-teaser',
-	imports: [
-		CommonModule,
-		MediaResourceTagsComponent,
-		NgxSkeletonLoaderModule,
-		StoryEditionDateLabelComponent,
-		RouterLink,
-	],
+	imports: [CommonModule, MediaResourceTagsComponent, StoryEditionDateLabelComponent, RouterLink],
 	template: `
 		@if (story()) {
 			<a
@@ -32,7 +25,7 @@ import { RouterLink } from '@angular/router';
 						<cuentoneta-story-edition-date-label [label]="story().originalPublication" />
 					}
 
-					<h1 class="mb-2 font-inter text-sm font-bold">{{ story().title }}</h1>
+					<h3 class="mb-2 font-inter text-sm font-bold">{{ story().title }}</h3>
 					<div class="flex items-center justify-between">
 						<time class="font-inter text-xs font-semibold text-neutral-600">
 							{{ story().approximateReadingTime }} minutos de lectura
@@ -45,8 +38,8 @@ import { RouterLink } from '@angular/router';
 	`,
 })
 export class NavigableStoryTeaserComponent {
-	readonly story = input.required<StoryNavigationTeaser>();
-	readonly selected = input<boolean>();
-	readonly authorSlug = input.required<string>();
+	public readonly story = input.required<StoryNavigationTeaser>();
+	public readonly selected = input<boolean>();
+	public readonly authorSlug = input.required<string>();
 	protected readonly appRoutes = AppRoutes;
 }

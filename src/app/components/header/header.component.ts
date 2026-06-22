@@ -5,10 +5,11 @@ import { InternalLink } from '@models/link.model';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { HEADER_HEIGHT_STRING_PX } from '@utils/spacing.utils';
 
-enum VisibilityState {
-	Visible = 'visible',
-	Hidden = 'hidden',
-}
+const VisibilityState = Object.freeze({
+	Visible: 'visible',
+	Hidden: 'hidden',
+} as const);
+type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 
 @Component({
 	selector: 'cuentoneta-header',
@@ -23,7 +24,7 @@ enum VisibilityState {
 			<section class="flex items-center">
 				<a [routerLink]="['/', 'home']" class="flex">
 					<img [ngSrc]="'./assets/svg/logo.svg'" class="mr-3" width="59" height="32" alt="Logo de 'La Cuentoneta'" />
-					<h1 class="flex items-center font-inter text-lg font-bold">La Cuentoneta</h1>
+					<span class="flex items-center font-inter text-lg font-bold">La Cuentoneta</span>
 				</a>
 			</section>
 
@@ -103,13 +104,13 @@ enum VisibilityState {
 	],
 })
 export class HeaderComponent {
-	readonly navLinks: InternalLink[] = [
+	protected readonly navLinks: InternalLink[] = [
 		{ label: 'Inicio', path: '/home' },
 		{ label: 'Nosotros', path: '/about' },
 	];
-	readonly displayMenu = signal(false);
+	protected readonly displayMenu = signal(false);
 
-	readonly isVisible = input(VisibilityState.Visible, {
+	public readonly isVisible = input(VisibilityState.Visible, {
 		transform: (value) => (value ? VisibilityState.Visible : VisibilityState.Hidden),
 	});
 
@@ -121,7 +122,7 @@ export class HeaderComponent {
 		});
 	}
 
-	onMenuTogglerClicked() {
+	protected onMenuTogglerClicked() {
 		this.displayMenu.set(!this.displayMenu());
 	}
 }

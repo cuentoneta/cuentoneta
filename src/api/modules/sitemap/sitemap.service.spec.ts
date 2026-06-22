@@ -1,3 +1,4 @@
+import { clearAllMocks, type Mock } from '@test-utils';
 import * as sitemapRepository from './sitemap.repository';
 import { generateSitemap, generateSitemapXml, getSitemapUrls } from './sitemap.service';
 
@@ -11,7 +12,8 @@ const escapeXml = (str: string): string => {
 		.replace(/'/g, '&apos;');
 };
 
-jest.mock('./sitemap.repository', () => ({
+/* eslint-disable no-restricted-syntax -- vi.mock/vi.fn: mock de módulo del repository; se migra a inyección de dependencias en #1503 */
+vi.mock('./sitemap.repository', () => ({
 	escapeXml: (str: string): string => {
 		return str
 			.replace(/&/g, '&amp;')
@@ -20,12 +22,13 @@ jest.mock('./sitemap.repository', () => ({
 			.replace(/"/g, '&quot;')
 			.replace(/'/g, '&apos;');
 	},
-	fetchSitemapSlugs: jest.fn(),
+	fetchSitemapSlugs: vi.fn(),
 }));
+/* eslint-enable no-restricted-syntax */
 
 describe('SitemapService', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		clearAllMocks();
 		process.env['BASE_URL'] = 'https://test.cuentoneta.ar';
 	});
 
@@ -65,7 +68,7 @@ describe('SitemapService', () => {
 
 	describe('getSitemapUrls', () => {
 		it('should return static pages', async () => {
-			(sitemapRepository.fetchSitemapSlugs as jest.Mock).mockResolvedValue({
+			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
 				stories: [],
 				authors: [],
 				storylists: [],
@@ -88,7 +91,7 @@ describe('SitemapService', () => {
 
 		it('should include story URLs', async () => {
 			// Repository returns already-processed data (dates formatted)
-			(sitemapRepository.fetchSitemapSlugs as jest.Mock).mockResolvedValue({
+			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
 				stories: [{ slug: 'el-aleph', lastmod: '2025-01-01' }],
 				authors: [],
 				storylists: [],
@@ -105,7 +108,7 @@ describe('SitemapService', () => {
 		});
 
 		it('should include author URLs', async () => {
-			(sitemapRepository.fetchSitemapSlugs as jest.Mock).mockResolvedValue({
+			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
 				stories: [],
 				authors: [{ slug: 'jorge-luis-borges', lastmod: '2025-01-02' }],
 				storylists: [],
@@ -122,7 +125,7 @@ describe('SitemapService', () => {
 		});
 
 		it('should include storylist URLs', async () => {
-			(sitemapRepository.fetchSitemapSlugs as jest.Mock).mockResolvedValue({
+			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
 				stories: [],
 				authors: [],
 				storylists: [{ slug: 'cuentos-de-terror', lastmod: '2025-01-03' }],
@@ -140,7 +143,7 @@ describe('SitemapService', () => {
 
 		it('should handle missing lastmod gracefully', async () => {
 			// Repository returns processed data (undefined lastmod preserved)
-			(sitemapRepository.fetchSitemapSlugs as jest.Mock).mockResolvedValue({
+			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
 				stories: [{ slug: 'no-lastmod-story', lastmod: undefined }],
 				authors: [],
 				storylists: [],
@@ -155,7 +158,7 @@ describe('SitemapService', () => {
 		it('should use default BASE_URL when env variable is not set', async () => {
 			delete process.env['BASE_URL'];
 
-			(sitemapRepository.fetchSitemapSlugs as jest.Mock).mockResolvedValue({
+			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
 				stories: [],
 				authors: [],
 				storylists: [],
@@ -241,7 +244,7 @@ describe('SitemapService', () => {
 
 	describe('generateSitemap', () => {
 		it('should combine getSitemapUrls and generateSitemapXml', async () => {
-			(sitemapRepository.fetchSitemapSlugs as jest.Mock).mockResolvedValue({
+			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
 				stories: [{ slug: 'test-story', lastmod: '2025-01-01' }],
 				authors: [],
 				storylists: [],

@@ -100,6 +100,8 @@ export const storyMock: Story = {
 			},
 		},
 	],
+	publishedAt: '2024-03-15T09:00:00Z',
+	updatedAt: '2024-05-20T10:30:00Z',
 	author: authorMock,
 	paragraphs: [
 		{

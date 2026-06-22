@@ -52,6 +52,8 @@ export const storyBySlugQuery = defineQuery(`
     'body': coalesce(body, []),
     'review': coalesce(review, []),
     'originalPublication': coalesce(originalPublication, ''),
+    'publishedAt': coalesce(publishedAt, _createdAt),
+    'updatedAt': _updatedAt,
     approximateReadingTime,
     'mediaSources': coalesce(mediaSources[]{
         ...,
@@ -81,16 +83,16 @@ export const storyBySlugQuery = defineQuery(`
         bornOnYear,
         diedOn,
         diedOnYear,
-        'resources': coalesce(resources[]{ 
-            title, 
-            url, 
+        'resources': coalesce(resources[]{
+            title,
+            url,
             resourceType->{
                 'slug': slug.current,
-                title, 
+                title,
                 shortDescription,
-                description, 
+                description,
                 icon
-            } 
+            }
         }, [])
     }
 }[0]`);

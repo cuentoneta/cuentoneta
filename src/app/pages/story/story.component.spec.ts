@@ -5,7 +5,6 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 // 3rd party modules
 import { render } from '@testing-library/angular';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Models
 import { Storylist } from '@models/storylist.model';
@@ -14,6 +13,7 @@ import { Story } from '@models/story.model';
 // Components
 import StoryComponent from './story.component';
 import { storyMock } from '@mocks/story.mock';
+import { provideStoryApiMock } from '../../providers/story.mock';
 
 describe('StoryComponent', () => {
 	const setup = async () => {
@@ -24,11 +24,11 @@ describe('StoryComponent', () => {
 				NgForOf,
 				NgIf,
 				NgOptimizedImage,
-				NgxSkeletonLoaderModule,
 				MockBioSummaryCardComponent,
 				MockShareContentComponent,
 				MockStoryNavigationBarComponent,
 			],
+			providers: [provideStoryApiMock()],
 			inputs: {
 				slug: storyMock.slug,
 			},
@@ -47,10 +47,10 @@ describe('StoryComponent', () => {
 	template: '',
 })
 class MockShareContentComponent {
-	readonly route = input('');
-	readonly params = input<{ [key: string]: string }>({});
-	readonly message = input('');
-	readonly isLoading = input(false);
+	public readonly route = input('');
+	public readonly params = input<{ [key: string]: string }>({});
+	public readonly message = input('');
+	public readonly isLoading = input(false);
 }
 
 @Component({
@@ -59,7 +59,7 @@ class MockShareContentComponent {
 	template: '',
 })
 class MockBioSummaryCardComponent {
-	readonly story = input.required<Story>();
+	public readonly story = input.required<Story>();
 }
 
 @Component({
@@ -68,6 +68,6 @@ class MockBioSummaryCardComponent {
 	template: '',
 })
 class MockStoryNavigationBarComponent {
-	readonly selectedStorySlug = input('');
-	readonly storylist = input<Storylist>();
+	public readonly selectedStorySlug = input('');
+	public readonly storylist = input<Storylist>();
 }

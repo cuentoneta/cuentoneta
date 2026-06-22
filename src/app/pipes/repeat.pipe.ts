@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 	standalone: true,
 })
 export class RepeatPipe implements PipeTransform {
-	transform(value: number): number[] {
+	public transform(value: number): number[] {
 		return Array(value).fill(0);
 	}
 }

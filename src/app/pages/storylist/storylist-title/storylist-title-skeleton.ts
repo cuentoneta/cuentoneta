@@ -1,60 +1,18 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
+
+import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
 @Component({
 	selector: 'cuentoneta-storylist-title-skeleton',
-	imports: [NgxSkeletonLoaderComponent],
-	template: ` <div class="flex flex-col gap-5">
-		<ngx-skeleton-loader
-			[theme]="{
-				height: '36px',
-				width: '320px',
-				'margin-bottom': 0,
-			}"
-			count="1"
-			appearance="line"
-			class="title-skeleton"
-		/>
+	imports: [SkeletonComponent],
+	host: { class: 'flex flex-col gap-5' },
+	template: `
+		<cuentoneta-skeleton appearance="line" class="h-[36px] w-[320px] bg-neutral-300" />
 		<div class="flex gap-2">
-			<ngx-skeleton-loader
-				[theme]="{
-					height: '20px',
-					width: '100px',
-					'margin-bottom': 0,
-				}"
-				count="1"
-				appearance="line"
-				class="tag-skeleton"
-			/>
-			<ngx-skeleton-loader
-				[theme]="{
-					height: '20px',
-					width: '100px',
-					'margin-bottom': 0,
-				}"
-				count="1"
-				appearance="line"
-				class="tag-skeleton"
-			/>
-			<ngx-skeleton-loader
-				[theme]="{
-					height: '20px',
-					width: '100px',
-					'margin-bottom': 0,
-				}"
-				count="1"
-				appearance="line"
-				class="tag-skeleton"
-			/>
+			@for (tag of [0, 1, 2]; track tag) {
+				<cuentoneta-skeleton appearance="line" class="h-5 w-[100px] bg-neutral-300" />
+			}
 		</div>
-	</div>`,
-	styles: `
-		@reference '#tailwind-theme';
-
-		:host ::ng-deep .title-skeleton .skeleton-loader,
-		:host ::ng-deep .tag-skeleton .skeleton-loader {
-			@apply bg-neutral-300;
-		}
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })

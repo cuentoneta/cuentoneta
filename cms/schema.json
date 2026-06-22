@@ -1135,6 +1135,13 @@
 					"type": "string"
 				},
 				"optional": false
+			},
+			"publishedAt": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "string"
+				},
+				"optional": true
 			}
 		}
 	},
@@ -2650,7 +2657,7 @@
 						}
 					}
 				},
-				"optional": false
+				"optional": true
 			},
 			"notes": {
 				"type": "objectAttribute",

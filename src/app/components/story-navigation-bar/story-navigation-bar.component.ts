@@ -3,9 +3,6 @@ import { Component, computed, inject, input, Type } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
-// 3rd Party modules
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-
 // Services
 import { NavigationFrameService } from '../../providers/navigation-frame.service';
 
@@ -13,6 +10,7 @@ import { NavigationFrameService } from '../../providers/navigation-frame.service
 import { StorylistNavigationFrameComponent } from '../storylist-navigation-frame/storylist-navigation-frame.component';
 import { AuthorNavigationFrameComponent } from '../author-navigation-frame/author-navigation-frame.component';
 import { NavigationFrameComponent } from '@models/navigation-frame.component';
+import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
 @Component({
 	selector: 'cuentoneta-story-navigation-bar',
@@ -44,34 +42,30 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 		</section>
 
 		<ng-template #titleSkeleton>
-			<ngx-skeleton-loader
-				[theme]="{
-					'height.px': 15,
-					'background-color': '#D4D4D8',
-				}"
-				count="2"
-				appearance="line"
-			/>
+			<div class="flex flex-col gap-2">
+				<cuentoneta-skeleton appearance="line" class="h-[15px] w-full bg-neutral-300" />
+				<cuentoneta-skeleton appearance="line" class="h-[15px] w-full bg-neutral-300" />
+			</div>
 		</ng-template>
 	`,
-	imports: [CommonModule, NgxSkeletonLoaderModule, RouterLink],
+	imports: [CommonModule, SkeletonComponent, RouterLink],
 })
 export class StoryNavigationBarComponent {
-	readonly selectedStorySlug = input<string>();
-	readonly navigation = input.required<'author' | 'storylist'>();
-	readonly navigationSlug = input.required<string>();
+	public readonly selectedStorySlug = input<string>();
+	public readonly navigation = input.required<'author' | 'storylist'>();
+	public readonly navigationSlug = input.required<string>();
 
 	// Inyección de providers
 	private navigationFrameService = inject(NavigationFrameService);
 
-	readonly frame = computed(() => {
+	protected readonly frame = computed(() => {
 		const storySlug = this.selectedStorySlug() ?? '';
 		const navigation = this.navigation();
 
 		return this.setNavigationFrame(storySlug, navigation);
 	});
 
-	frameConfig = this.navigationFrameService.navigationBarConfig;
+	protected frameConfig = this.navigationFrameService.navigationBarConfig;
 
 	private setNavigationFrame(
 		storySlug: string,
