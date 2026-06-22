@@ -474,8 +474,8 @@ describe('HeadMetadataDirective', () => {
 
 			directive.removeImage();
 
-			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:image', content: 'https://i.ibb.co/HVHFrFg/logo.png' });
-			expect(metaSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: 'https://i.ibb.co/HVHFrFg/logo.png' });
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:image', content: '/assets/svg/logo.svg' });
+			expect(metaSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: '/assets/svg/logo.svg' });
 		});
 
 		it('should reset og:image:alt to the logo fallback alt text', () => {
@@ -527,9 +527,9 @@ describe('HeadMetadataDirective', () => {
 			expect(removeSpy).toHaveBeenCalledWith('property="og:image:width"');
 			expect(removeSpy).toHaveBeenCalledWith('property="og:image:height"');
 			// La imagen se resetea al logo estático (no se elimina del todo).
-			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image', content: 'https://i.ibb.co/HVHFrFg/logo.png' });
+			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image', content: '/assets/svg/logo.svg' });
 			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image:alt', content: 'Logo de La Cuentoneta' });
-			expect(updateSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: 'https://i.ibb.co/HVHFrFg/logo.png' });
+			expect(updateSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: '/assets/svg/logo.svg' });
 			// El <link rel="canonical"> se quita del head.
 			expect(document.querySelector(`link[rel='canonical']`)).toBeNull();
 		});

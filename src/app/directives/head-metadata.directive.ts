@@ -1,6 +1,7 @@
 import { Directive, effect, inject, PLATFORM_ID, DOCUMENT } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, Location } from '@angular/common';
+import { environment } from '../environments/environment';
 
 @Directive({
 	selector: '[cuentonetaHeadMetadata]',
@@ -164,7 +165,7 @@ export class HeadMetadataDirective {
 	// El fallback de OG image coincide con el <meta property="og:image"> estático de indexFile.html.
 	// A diferencia del resto de los tags —que se eliminan al limpiar— la imagen se resetea al logo
 	// para que una página sin imagen dedicada siga exponiendo un og:image/twitter:image válido.
-	private readonly defaultOgImageUrl = 'https://i.ibb.co/HVHFrFg/logo.png';
+	private readonly defaultOgImageUrl = `${Location.stripTrailingSlash(environment.website)}/assets/svg/logo.svg`;
 	private readonly defaultOgImageAlt = 'Logo de La Cuentoneta';
 
 	public setImage(url: string, alt: string, width?: number, height?: number) {
