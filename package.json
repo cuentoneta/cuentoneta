@@ -46,7 +46,7 @@
 		"@angular/ssr": "21.2.14",
 		"@angular/youtube-player": "21.2.14",
 		"@floating-ui/dom": "^1.7.6",
-		"@hono/node-server": "^1.19.13",
+		"@hono/node-server": "^2.0.6",
 		"@hono/zod-validator": "^0.7.6",
 		"@microsoft/clarity": "^1.0.0",
 		"@ng-icons/core": "^33.2.0",
