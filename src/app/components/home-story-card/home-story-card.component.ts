@@ -94,6 +94,7 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
 					<a
 						[routerLink]="storyRouterLink()"
 						[queryParams]="navigationParams()"
+						[attr.aria-label]="story.title"
 						class="block w-full min-w-0 after:absolute after:inset-0 after:content-['']"
 					>
 						<span class="block truncate font-inter text-lg font-bold text-neutral-900">{{ story.title }}</span>

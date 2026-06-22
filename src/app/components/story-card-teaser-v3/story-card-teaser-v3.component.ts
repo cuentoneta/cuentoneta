@@ -45,6 +45,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
 						<a
 							[routerLink]="storyRouterLink()"
 							[queryParams]="navigationParams()"
+							[attr.aria-label]="story.title"
 							class="flex w-full flex-col gap-1 after:absolute after:inset-0 after:content-['']"
 						>
 							<p class="line-clamp-2 font-inter text-xl font-bold text-neutral-900">
