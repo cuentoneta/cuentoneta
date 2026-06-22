@@ -228,7 +228,7 @@ interface Author {
 	resources: Resource[]; // Enlaces a recursos sobre el autor
 
 	// Categorización
-	tags: Tag[]; // Etiquetas de taxonomía (editables; el follow-up suma las derivadas de sus cuentos). Vacío en los teasers
+	tags: Tag[]; // Etiquetas de taxonomía del autor. Vacío en los teasers
 }
 
 interface AuthorNationality {
