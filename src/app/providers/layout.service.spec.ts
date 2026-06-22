@@ -2,7 +2,6 @@ import { fn, spyOn, type Mock } from '@test-utils';
 import { TestBed } from '@angular/core/testing';
 import { LayoutService, Direction } from './layout.service';
 import { WINDOW } from './window';
-import { map, of } from 'rxjs';
 import { Viewport } from '@utils/screen.utils';
 
 describe('LayoutService', () => {
@@ -21,12 +20,10 @@ describe('LayoutService', () => {
 			innerWidth: 1920,
 			addEventListener: fn(),
 			removeEventListener: fn(),
-			dispatchEvent: fn((event: Event) => {
-				if (typeof event === 'object' && event.type) {
-					mockWindow.addEventListener.mock.calls
-						.filter(([type]: ['resize' | 'orientationchange']) => type === event.type)
-						.forEach(([, listener]: [string, Mock]) => listener(event));
-				}
+			dispatchEvent: fn((event: { type: string }) => {
+				mockWindow.addEventListener.mock.calls
+					.filter(([type]: [string]) => type === event.type)
+					.forEach(([, listener]: [string, (e: unknown) => void]) => listener(event));
 			}),
 		};
 
@@ -37,83 +34,106 @@ describe('LayoutService', () => {
 		service = TestBed.inject(LayoutService);
 	});
 
+	const scrollTo = (scrollY: number): void => {
+		mockWindow.scrollY = scrollY;
+		mockWindow.dispatchEvent({ type: 'scroll' });
+	};
+
 	it('should be created', () => {
 		expect(service).toBeTruthy();
 	});
 
-	describe('userHasScrolled$', () => {
-		it('should emit Direction.Up when scrolling up', () =>
-			new Promise<void>((resolve) => {
-				const scrollEvents = of([800, 500]).pipe(map(([prev, curr]) => (curr < prev ? Direction.Up : Direction.Down)));
-				spyOn(service, 'userHasScrolled$', 'get').mockReturnValue(scrollEvents);
+	describe('userHasScrolled', () => {
+		it('stays Up until a second scroll past 400px establishes a direction', () => {
+			scrollTo(800); // primer scroll > 400: absorbed como baseline
+			expect(service.userHasScrolled()).toBe(Direction.Up);
 
-				service.userHasScrolled$.subscribe((direction: string) => {
-					expect(direction).toBe(Direction.Up);
-					resolve();
-				});
-			}));
+			scrollTo(500); // 500 < 800 → Up
+			expect(service.userHasScrolled()).toBe(Direction.Up);
+		});
 
-		it('should emit Direction.Down when scrolling down', () =>
-			new Promise<void>((resolve) => {
-				const scrollEvents = of([500, 900]).pipe(map(([prev, curr]) => (curr < prev ? Direction.Up : Direction.Down)));
-				spyOn(service, 'userHasScrolled$', 'get').mockReturnValue(scrollEvents);
+		it('emits Down when scrolling down past 400px after the baseline scroll', () => {
+			scrollTo(500); // baseline
+			scrollTo(900); // 900 > 500 → Down
+			expect(service.userHasScrolled()).toBe(Direction.Down);
+		});
 
-				service.userHasScrolled$.subscribe((direction: string) => {
-					expect(direction).toBe(Direction.Down);
-					resolve();
-				});
-			}));
+		it('ignores scroll events at or below 400px', () => {
+			scrollTo(300);
+			expect(service.userHasScrolled()).toBe(Direction.Up);
+
+			scrollTo(400);
+			expect(service.userHasScrolled()).toBe(Direction.Up);
+		});
+
+		it('toggles between Up and Down across direction changes', () => {
+			scrollTo(800); // baseline
+			scrollTo(500); // Up
+			expect(service.userHasScrolled()).toBe(Direction.Up);
+
+			scrollTo(900); // Down
+			expect(service.userHasScrolled()).toBe(Direction.Down);
+
+			scrollTo(600); // Up
+			expect(service.userHasScrolled()).toBe(Direction.Up);
+		});
 	});
 
-	describe('isHeaderVisible$', () => {
-		it('should emit true when the user scrolls up', () =>
-			new Promise<void>((resolve) => {
-				const scrollEvents = of([1200, 500]).pipe(map(([prev, curr]) => (curr < prev ? Direction.Up : Direction.Down)));
-				spyOn(service, 'userHasScrolled$', 'get').mockReturnValue(scrollEvents);
+	describe('isHeaderVisible', () => {
+		it('is visible when the user scrolls up on xs', () => {
+			mockWindow.innerWidth = 500; // xs
+			service.setViewport();
 
-				service.isHeaderVisible$.subscribe((isVisible) => {
-					expect(isVisible).toBe(true);
-					resolve();
-				});
-			}));
+			scrollTo(800); // baseline
+			scrollTo(500); // Up
+			expect(service.isHeaderVisible()).toBe(true);
+		});
 
-		it('should emit false when the user scrolls down for an xs screen', () =>
-			new Promise<void>((resolve) => {
-				mockWindow.innerWidth = 500; // xs
-				service.setViewport();
-				const scrollEvents = of([500, 1000]).pipe(map(([prev, curr]) => (curr < prev ? Direction.Up : Direction.Down)));
-				spyOn(service, 'userHasScrolled$', 'get').mockReturnValue(scrollEvents);
+		it('is hidden when the user scrolls down on xs', () => {
+			mockWindow.innerWidth = 500; // xs
+			service.setViewport();
 
-				service.isHeaderVisible$.subscribe((isVisible) => {
-					expect(isVisible).toBe(false);
-					resolve();
-				});
-			}));
+			scrollTo(500); // baseline
+			scrollTo(900); // Down
+			expect(service.isHeaderVisible()).toBe(false);
+		});
 
-		it('should emit true when the user scrolls down for an sm screen', () =>
-			new Promise<void>((resolve) => {
-				mockWindow.innerWidth = 768; // sm
-				service.setViewport();
-				const scrollEvents = of([500, 1000]).pipe(map(([prev, curr]) => (curr < prev ? Direction.Up : Direction.Down)));
-				spyOn(service, 'userHasScrolled$', 'get').mockReturnValue(scrollEvents);
+		it('stays visible when scrolling down on sm (bigger than xs)', () => {
+			mockWindow.innerWidth = 768; // sm
+			service.setViewport();
 
-				service.isHeaderVisible$.subscribe((isVisible) => {
-					expect(isVisible).toBe(true);
-					resolve();
-				});
-			}));
+			scrollTo(500); // baseline
+			scrollTo(900); // Down
+			expect(service.isHeaderVisible()).toBe(true);
+		});
 
-		it('should emit true when the user scrolls down for an md screen', () =>
-			new Promise<void>((resolve) => {
-				spyOn(service, 'setViewport').mockReturnValue();
-				const scrollEvents = of([500, 1000]).pipe(map(([prev, curr]) => (curr < prev ? Direction.Up : Direction.Down)));
-				spyOn(service, 'userHasScrolled$', 'get').mockReturnValue(scrollEvents);
+		it('stays visible when scrolling down on md', () => {
+			mockWindow.innerWidth = 960; // md
+			service.setViewport();
 
-				service.isHeaderVisible$.subscribe((isVisible) => {
-					expect(isVisible).toBe(true);
-					resolve();
-				});
-			}));
+			scrollTo(500); // baseline
+			scrollTo(900); // Down
+			expect(service.isHeaderVisible()).toBe(true);
+		});
+
+		it('recomputes to visible when the viewport grows past xs while the header is hidden', () => {
+			mockWindow.innerWidth = 500; // xs
+			service.setViewport();
+
+			scrollTo(500); // baseline
+			scrollTo(900); // Down → oculta en xs
+			expect(service.isHeaderVisible()).toBe(false);
+
+			mockWindow.innerWidth = 960; // md
+			service.setViewport();
+			expect(service.isHeaderVisible()).toBe(true);
+		});
+
+		it('is visible by default before any scroll', () => {
+			mockWindow.innerWidth = 500; // xs
+			service.setViewport();
+			expect(service.isHeaderVisible()).toBe(true);
+		});
 
 		describe('biggerThan', () => {
 			it('should return true if the current viewport is larger than the test viewport', () => {
