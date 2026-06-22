@@ -87,7 +87,7 @@ jobs:
             nx-cache-test-
 
       - name: Run Tests
-        run: npx nx test
+        run: bash .github/scripts/nx-run.sh nx test
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
@@ -147,7 +147,7 @@ jobs:
             nx-cache-lint-
 
       - name: Run Linter
-        run: npx nx lint
+        run: bash .github/scripts/nx-run.sh nx lint
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
@@ -182,7 +182,7 @@ jobs:
             nx-cache-stylelint-
 
       - name: Run stylelint
-        run: npx nx stylelint @cuentoneta/app
+        run: bash .github/scripts/nx-run.sh nx stylelint @cuentoneta/app
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
@@ -212,7 +212,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Tests
-        run: npx nx run @cuentoneta/app:e2e
+        run: bash .github/scripts/nx-run.sh nx run @cuentoneta/app:e2e
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
@@ -255,7 +255,7 @@ jobs:
             nx-cache-build-
 
       - name: Run build
-        run: npx nx run @cuentoneta/app:build:production
+        run: bash .github/scripts/nx-run.sh nx run @cuentoneta/app:build:production
         env:
           # Nx Cloud (cache remota de tareas)
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
@@ -300,6 +300,6 @@ jobs:
             nx-cache-storybook-
 
       - name: Run Storybook build
-        run: npx nx run @cuentoneta/app:build-storybook
+        run: bash .github/scripts/nx-run.sh nx run @cuentoneta/app:build-storybook
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
