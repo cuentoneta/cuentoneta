@@ -32,6 +32,7 @@ const storyMock: StoryTeaserWithAuthor = {
 const meta: Meta<HomeStoryCardComponent> = {
 	component: HomeStoryCardComponent,
 	title: 'Componentes V3/HomeStoryCard',
+	tags: ['autodocs'],
 	decorators: [
 		applicationConfig({
 			providers: [provideRouter([])],

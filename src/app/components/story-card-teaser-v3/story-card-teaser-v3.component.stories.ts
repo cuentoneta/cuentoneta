@@ -1,6 +1,5 @@
-import { applicationConfig, argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
+import { applicationConfig, argsToTemplate, Meta, StoryObj } from '@storybook/angular';
 import { provideRouter } from '@angular/router';
-import { CommonModule } from '@angular/common';
 
 import { StoryCardTeaserV3Component } from './story-card-teaser-v3.component';
 import { storyTeaserMock } from '../../mocks/story.mock';
@@ -32,12 +31,10 @@ const storyMock: StoryTeaserWithAuthor = {
 const meta: Meta<StoryCardTeaserV3Component> = {
 	component: StoryCardTeaserV3Component,
 	title: 'Componentes V3/StoryCardTeaserV3',
+	tags: ['autodocs'],
 	decorators: [
 		applicationConfig({
 			providers: [provideRouter([])],
-		}),
-		moduleMetadata({
-			imports: [CommonModule],
 		}),
 	],
 	parameters: {
