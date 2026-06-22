@@ -3,6 +3,7 @@ import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import { storyNavigationTeaserWithAuthorMock, storyTeaserMock } from '../../mocks/story.mock';
 import { authorTeaserMock } from '../../mocks/author.mock';
+import { clearAllMocks } from '@test-utils';
 import type { Media } from '@models/media.model';
 import type { StoryTeaserWithAuthor } from '@models/story.model';
 
@@ -13,6 +14,7 @@ describe('StoryCardTeaserV3Component', () => {
 	let navigationParams: { navigation: string; navigationSlug: string } = { navigation: '', navigationSlug: '' };
 
 	beforeEach(() => {
+		clearAllMocks();
 		const urlSerializer = new DefaultUrlSerializer();
 		const urlTree: UrlTree = urlSerializer.parse(storyUrl);
 		navigationParams = urlTree.queryParams as { navigation: string; navigationSlug: string };
