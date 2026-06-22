@@ -133,6 +133,13 @@ export type ResourceTypeReference = {
 	[internalGroqTypeReferenceTo]?: 'resourceType';
 };
 
+export type TagReference = {
+	_ref: string;
+	_type: 'reference';
+	_weak?: boolean;
+	[internalGroqTypeReferenceTo]?: 'tag';
+};
+
 export type Story = {
 	_id: string;
 	_type: 'story';
@@ -198,6 +205,11 @@ export type Story = {
 		_type: 'epigraph';
 		_key: string;
 	}>;
+	tags?: Array<
+		{
+			_key: string;
+		} & TagReference
+	>;
 	body?: BlockContent;
 	review?: BlockContent;
 	originalPublication: string;
@@ -273,13 +285,6 @@ export type SanityImageHotspot = {
 	y: number;
 	height: number;
 	width: number;
-};
-
-export type TagReference = {
-	_ref: string;
-	_type: 'reference';
-	_weak?: boolean;
-	[internalGroqTypeReferenceTo]?: 'tag';
 };
 
 export type Storylist = {
@@ -585,6 +590,7 @@ export type AllSanitySchemaTypes =
 	| Slug
 	| AuthorReference
 	| ResourceTypeReference
+	| TagReference
 	| Story
 	| ComputedNumber
 	| NationalityReference
@@ -592,7 +598,6 @@ export type AllSanitySchemaTypes =
 	| Nationality
 	| SanityImageCrop
 	| SanityImageHotspot
-	| TagReference
 	| Storylist
 	| ContentCampaign
 	| ContentCampaignReference
