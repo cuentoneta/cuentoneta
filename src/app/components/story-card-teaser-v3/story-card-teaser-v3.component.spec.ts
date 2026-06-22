@@ -8,7 +8,6 @@ import { StoryTeaserWithAuthor } from '@models/story.model';
 
 describe('StoryCardTeaserV3Component', () => {
 	const storyUrl = '/story/el-espejo-del-tiempo?navigation=author&navigationSlug=francois-onoff';
-	const authorUrl = '/author/francois-onoff';
 
 	let navigationParams: { navigation: string; navigationSlug: string } = { navigation: '', navigationSlug: '' };
 
@@ -88,12 +87,16 @@ describe('StoryCardTeaserV3Component', () => {
 			expect(screen.getByTestId('author')).toBeInTheDocument();
 		});
 
-		it('should link to the author profile', async () => {
+		it('should render the author name as text, keeping the story as the only link', async () => {
 			await render(StoryCardTeaserV3Component, {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, showAuthor: true },
 			});
-			const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/author/'));
-			expect(link?.getAttribute('href')).toContain(authorUrl);
+			// Según el Design System v3 el card no usa AuthorTeaserV3: el nombre se muestra como texto, sin
+			// enlace propio al perfil. El único enlace accesible sigue siendo el de la historia.
+			expect(screen.getByText(storyNavigationTeaserWithAuthorMock.author.name)).toBeInTheDocument();
+			const links = screen.getAllByRole('link');
+			expect(links).toHaveLength(1);
+			expect(links[0]).toHaveAttribute('href', expect.stringContaining('/story/'));
 		});
 
 		it('should not display the author when showAuthor is false', async () => {

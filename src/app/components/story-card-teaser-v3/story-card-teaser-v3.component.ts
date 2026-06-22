@@ -10,7 +10,7 @@ import {
 	StoryMediaSelectorsTheme,
 } from '../story-media-selectors/story-media-selectors.component';
 import { StoryCardTeaserV3SkeletonComponent } from './story-card-teaser-v3-skeleton.component';
-import { AuthorTeaserV3Component } from '../author-teaser-v3/author-teaser-v3.component';
+import { ImageProfileComponent } from '../image-profile/image-profile.component';
 
 /**
  * Variantes visuales del componente StoryCardTeaser definidas en el Design System v3.
@@ -31,7 +31,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 		PortableTextParserComponent,
 		StoryMediaSelectorsComponent,
 		StoryCardTeaserV3SkeletonComponent,
-		AuthorTeaserV3Component,
+		ImageProfileComponent,
 	],
 	template: `
 		@if (story(); as story) {
@@ -61,7 +61,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 						</div>
 						<div class="flex w-full flex-col gap-1">
 							@if (showAuthor() && 'author' in story) {
-								<cuentoneta-author-teaser-v3 [author]="story.author" />
+								<ng-container [ngTemplateOutlet]="author" [ngTemplateOutletContext]="{ $implicit: story.author }" />
 							}
 							<a
 								[routerLink]="storyRouterLink()"
@@ -79,7 +79,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 						<ng-container [ngTemplateOutlet]="coverLink" />
 						<div [class]="rowColumnClasses()">
 							@if (showAuthor() && 'author' in story) {
-								<cuentoneta-author-teaser-v3 [author]="story.author" />
+								<ng-container [ngTemplateOutlet]="author" [ngTemplateOutletContext]="{ $implicit: story.author }" />
 							}
 							<div class="flex w-full flex-col gap-2">
 								<a
@@ -159,6 +159,20 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 			</div>
 		</ng-template>
 
+		<!-- Autor: avatar pequeño + nombre. Implementación propia del card (Design System v3): no usa
+			 AuthorTeaserV3; el nombre va como texto porque el único enlace accesible es el de la historia. -->
+		<ng-template #author let-author>
+			<div class="flex min-w-0 items-center gap-2" data-testid="author">
+				<cuentoneta-image-profile
+					[src]="author.imageUrl"
+					[alt]="'Retrato de ' + author.name"
+					size="small"
+					class="shrink-0"
+				/>
+				<span class="truncate font-inter text-sm font-medium text-neutral-900">{{ author.name }}</span>
+			</div>
+		</ng-template>
+
 		<!-- Etiqueta opcional, separador y tiempo de lectura -->
 		<ng-template #readingTime let-story>
 			<div class="flex items-center gap-2" data-testid="reading-time">
@@ -186,25 +200,25 @@ export class StoryCardTeaserV3Component {
 	protected readonly coverHeight = 164;
 
 	// Inputs
-	readonly story = input<StoryNavigationTeaserWithAuthor | StoryTeaserWithAuthor | StoryTeaser>();
-	readonly variant = input<StoryCardTeaserV3Variant>('on-white');
-	readonly order = input<number>();
-	readonly coverImageUrl = input<string>();
+	public readonly story = input<StoryNavigationTeaserWithAuthor | StoryTeaserWithAuthor | StoryTeaser>();
+	public readonly variant = input<StoryCardTeaserV3Variant>('on-white');
+	public readonly order = input<number>();
+	public readonly coverImageUrl = input<string>();
 	// Marca el cover como prioritario (above-the-fold, p. ej. en la variante highlighted como hero).
-	readonly priority = input<boolean>(false);
-	readonly tagLabel = input<string>();
-	readonly showAuthor = input<boolean>(false);
-	readonly showDescription = input<boolean>(false);
-	readonly showMultimedia = input<boolean>(false);
+	public readonly priority = input<boolean>(false);
+	public readonly tagLabel = input<string>();
+	public readonly showAuthor = input<boolean>(false);
+	public readonly showDescription = input<boolean>(false);
+	public readonly showMultimedia = input<boolean>(false);
 	// Acotado a [1, 10] para coincidir con el safelist `line-clamp-{1..10}` de styles.css,
 	// ya que la clase `line-clamp-N` se construye dinámicamente y no la detecta el escaneo de Tailwind.
-	readonly excerptLines = input(2, { transform: (value: number) => Math.min(10, Math.max(1, value)) });
-	readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
+	public readonly excerptLines = input(2, { transform: (value: number) => Math.min(10, Math.max(1, value)) });
+	public readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
 
-	readonly storyRouterLink = computed(() => ['/', this.appRoutes.Story, this.story()?.slug]);
+	protected readonly storyRouterLink = computed(() => ['/', this.appRoutes.Story, this.story()?.slug]);
 
 	// Mapea la variante de la tarjeta al tema visual de los selectores de multimedia.
-	readonly mediaTheme = computed<StoryMediaSelectorsTheme>(() => {
+	protected readonly mediaTheme = computed<StoryMediaSelectorsTheme>(() => {
 		switch (this.variant()) {
 			case 'on-gray':
 			case 'compact':
@@ -216,13 +230,13 @@ export class StoryCardTeaserV3Component {
 		}
 	});
 
-	readonly rowWrapperClasses = computed(() =>
+	protected readonly rowWrapperClasses = computed(() =>
 		this.variant() === 'highlighted'
 			? 'flex w-full max-w-178.75 items-start gap-8 overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50 p-6'
 			: 'flex w-full max-w-178.75 items-start gap-6',
 	);
 
-	readonly rowColumnClasses = computed(() => {
+	protected readonly rowColumnClasses = computed(() => {
 		const base = 'flex min-w-0 flex-1 flex-col justify-center gap-3';
 		return this.variant() === 'highlighted' ? base : `${base} pt-1`;
 	});

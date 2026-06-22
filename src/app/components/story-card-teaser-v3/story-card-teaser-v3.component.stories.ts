@@ -8,10 +8,6 @@ import { authorTeaserMock } from '../../mocks/author.mock';
 import { StoryTeaserWithAuthor } from '@models/story.model';
 import { Media } from '@models/media.model';
 
-// Imagen alusiva de muestra para las stories (placeholder estable mientras el modelo de dominio
-// no exponga aún la URL de la imagen de la historia — ver issue derivado mencionado en #1510).
-const coverImageUrl = 'https://picsum.photos/seed/cuentoneta-story/240/328';
-
 // Conjunto de medios variado para ilustrar los selectores de multimedia y el contador (badge):
 // 3 videos de YouTube (muestra el contador), un Space de X y un episodio de Spotify.
 const richMedia: Media[] = [
@@ -46,6 +42,7 @@ const meta: Meta<StoryCardTeaserV3Component> = {
 	],
 	parameters: {
 		docs: {
+			canvas: { sourceState: 'shown' },
 			description: {
 				component: `<div>
 					<p>El componente **StoryCardTeaserV3Component** es la versión 3 de la tarjeta de vista previa de una historia,
@@ -79,7 +76,8 @@ const meta: Meta<StoryCardTeaserV3Component> = {
 		},
 		coverImageUrl: {
 			control: { type: 'text' },
-			description: 'URL de la imagen alusiva a la historia (si no se provee, se muestra un placeholder)',
+			description:
+				'URL de la imagen alusiva a la historia (si no se provee, se muestra el placeholder del Design System)',
 			table: { type: { summary: 'string' }, defaultValue: { summary: 'undefined' } },
 		},
 		tagLabel: {
@@ -122,6 +120,7 @@ export default meta;
 type Story = StoryObj<StoryCardTeaserV3Component>;
 
 // Playground interactivo: permite alternar todos los inputs sobre cualquier variante.
+// Sin coverImageUrl: se muestra el placeholder del Design System (cover-placeholder.svg).
 export const Docs: Story = {
 	render: (args) => ({
 		props: args,
@@ -131,7 +130,6 @@ export const Docs: Story = {
 		story: storyMock,
 		variant: 'on-white',
 		order: 1,
-		coverImageUrl,
 		tagLabel: 'Cuento',
 		showAuthor: true,
 		showDescription: true,
@@ -157,7 +155,6 @@ export const OnWhite: Story = {
 		story: storyMock,
 		variant: 'on-white',
 		order: 1,
-		coverImageUrl,
 		tagLabel: 'Cuento',
 		showAuthor: true,
 		showDescription: true,
@@ -183,7 +180,6 @@ export const OnGray: Story = {
 		story: storyMock,
 		variant: 'on-gray',
 		order: 1,
-		coverImageUrl,
 		tagLabel: 'Cuento',
 		showAuthor: true,
 		showDescription: true,
@@ -210,7 +206,6 @@ export const Highlighted: Story = {
 		story: storyMock,
 		variant: 'highlighted',
 		order: 1,
-		coverImageUrl,
 		tagLabel: 'Cuento',
 		showAuthor: true,
 		showDescription: true,
@@ -234,7 +229,6 @@ export const Compact: Story = {
 		story: storyMock,
 		variant: 'compact',
 		order: 1,
-		coverImageUrl,
 		tagLabel: 'Cuento',
 		showAuthor: true,
 		showMultimedia: true,
@@ -263,7 +257,6 @@ export const AllVariants: Story = {
 						variant="on-white"
 						[story]="story"
 						[order]="order"
-						[coverImageUrl]="coverImageUrl"
 						[tagLabel]="tagLabel"
 						[showAuthor]="showAuthor"
 						[showDescription]="showDescription"
@@ -278,7 +271,6 @@ export const AllVariants: Story = {
 							variant="on-gray"
 							[story]="story"
 							[order]="order"
-							[coverImageUrl]="coverImageUrl"
 							[tagLabel]="tagLabel"
 							[showAuthor]="showAuthor"
 							[showDescription]="showDescription"
@@ -293,7 +285,6 @@ export const AllVariants: Story = {
 						variant="highlighted"
 						[story]="story"
 						[order]="order"
-						[coverImageUrl]="coverImageUrl"
 						[tagLabel]="tagLabel"
 						[showAuthor]="showAuthor"
 						[showDescription]="showDescription"
@@ -307,7 +298,6 @@ export const AllVariants: Story = {
 						variant="compact"
 						[story]="story"
 						[order]="order"
-						[coverImageUrl]="coverImageUrl"
 						[tagLabel]="tagLabel"
 						[showAuthor]="showAuthor"
 						[showMultimedia]="showMultimedia"
@@ -319,7 +309,6 @@ export const AllVariants: Story = {
 	args: {
 		story: storyMock,
 		order: 1,
-		coverImageUrl,
 		tagLabel: 'Cuento',
 		showAuthor: true,
 		showDescription: true,
