@@ -164,7 +164,10 @@ export function mapResources(resources: ResourcesSubQuery): Resource[] {
 	);
 }
 
-type TagsSubQuery = NonNullable<StorylistTeasersQueryResult>[0]['tags'];
+type TagsSubQuery =
+	| NonNullable<StoryBySlugQueryResult>['tags']
+	| NonNullable<AuthorBySlugQueryResult>['tags']
+	| NonNullable<StorylistTeasersQueryResult>[0]['tags'];
 export function mapTags(tags: TagsSubQuery): Tag[] {
 	return tags.map((tag) => ({
 		...tag,
