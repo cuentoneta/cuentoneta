@@ -22,7 +22,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v4.4.0
+        uses: actions/setup-node@v6.4.0
         with:
           node-version: 22.22.3
           cache: 'pnpm'
@@ -64,7 +64,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v4.4.0
+        uses: actions/setup-node@v6.4.0
         with:
           node-version: 22.22.3
 
@@ -126,7 +126,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v4.4.0
+        uses: actions/setup-node@v6.4.0
         with:
           node-version: 22.22.3
 
@@ -161,7 +161,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v4.4.0
+        uses: actions/setup-node@v6.4.0
         with:
           node-version: 22.22.3
 
@@ -196,7 +196,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v4.4.0
+        uses: actions/setup-node@v6.4.0
         with:
           node-version: 22.22.3
 
@@ -234,7 +234,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v4.4.0
+        uses: actions/setup-node@v6.4.0
         with:
           node-version: 22.22.3
 
@@ -279,7 +279,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v4.4.0
+        uses: actions/setup-node@v6.4.0
         with:
           node-version: 22.22.3
 
