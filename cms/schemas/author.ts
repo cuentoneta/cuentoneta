@@ -116,8 +116,7 @@ export default defineType({
 		defineField({
 			name: 'tags',
 			title: 'Etiquetas',
-			description:
-				'Etiquetas del autor. Editables manualmente; el script de reconciliación sumará además las derivadas de sus cuentos.',
+			description: 'Etiquetas asignadas al autor.',
 			type: 'array',
 			of: [
 				defineArrayMember({
