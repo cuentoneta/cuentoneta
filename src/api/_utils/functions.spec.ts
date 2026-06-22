@@ -1,7 +1,7 @@
 import { mapTags } from './functions';
 
 describe('mapTags (ACL)', () => {
-	it('mapea un tag crudo de Sanity al modelo de dominio Tag', () => {
+	it('maps a raw Sanity tag to the domain Tag model', () => {
 		const result = mapTags([
 			{
 				title: 'Cumpleaños',
@@ -31,7 +31,7 @@ describe('mapTags (ACL)', () => {
 		expect(result[0].description[0]._type).toBe('block');
 	});
 
-	it('normaliza provider/name ausentes del icono a string vacío', () => {
+	it('normalizes missing icon provider/name to empty strings', () => {
 		const result = mapTags([
 			{
 				title: 'Sin ícono',
@@ -45,7 +45,7 @@ describe('mapTags (ACL)', () => {
 		expect(result[0].icon).toEqual({ provider: '', name: '' });
 	});
 
-	it('descarta de la descripción los elementos que no son bloques de texto', () => {
+	it('discards non-text-block elements from the description', () => {
 		const result = mapTags([
 			{
 				title: 'Mixto',
@@ -69,7 +69,7 @@ describe('mapTags (ACL)', () => {
 		expect(result[0].description[0]._type).toBe('block');
 	});
 
-	it('devuelve un arreglo vacío cuando no hay tags', () => {
+	it('returns an empty array when there are no tags', () => {
 		expect(mapTags([])).toEqual([]);
 	});
 });
