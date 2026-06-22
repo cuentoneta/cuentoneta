@@ -45,6 +45,7 @@ export const storyMock: Story = {
 	originalPublication: 'Ecos del silencio (1983)',
 	approximateReadingTime: 2,
 	slug: 'el-espejo-del-tiempo',
+	tags: [],
 	media: [
 		{
 			title: 'Narración del cuento a cargo de Gérard Depardieu',
@@ -382,6 +383,7 @@ export const storyTeaserWithAuthorMock: StoryTeaserWithAuthor = {
 	originalPublication: 'Ecos del silencio (1983)',
 	approximateReadingTime: 2,
 	slug: 'el-espejo-del-tiempo',
+	tags: [],
 	media: [
 		{
 			title: 'Video',
@@ -511,6 +513,7 @@ export const storyTeaserMock: StoryTeaser = {
 	originalPublication: 'Ecos del silencio (1983)',
 	approximateReadingTime: 2,
 	slug: 'el-espejo-del-tiempo',
+	tags: [],
 	media: [
 		{
 			title: 'Narración del cuento a cargo de Gérard Depardieu',
@@ -652,6 +655,7 @@ export const storyNavigationTeaserMock: StoryNavigationTeaser = {
 	originalPublication: 'Ecos del silencio (1983)',
 	approximateReadingTime: 2,
 	slug: 'el-espejo-del-tiempo',
+	tags: [],
 };
 
 export const storyNavigationTeaserWithAuthor: StoryNavigationTeaserWithAuthor = {

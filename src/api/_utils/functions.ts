@@ -61,6 +61,7 @@ export function mapAuthor(
 			flag: urlFor(rawAuthorData.nationality.flag),
 		},
 		resources: resources,
+		tags: mapTags(rawAuthorData.tags),
 		imageUrl: urlFor(rawAuthorData.image),
 		name: rawAuthorData.name,
 		biography: biography,
@@ -92,6 +93,7 @@ export function mapAuthorTeaser(
 			flag: urlFor(rawAuthorData.nationality.flag),
 		},
 		resources: [],
+		tags: [],
 		imageUrl: urlFor(rawAuthorData.image),
 		name: rawAuthorData.name,
 		biography: [],
@@ -206,6 +208,7 @@ export async function mapStoryContent(result: NonNullable<StoryBySlugQueryResult
 		author: mapAuthor(result.author),
 		media: mapMediaSources(result.mediaSources),
 		resources: mapResources(result.resources),
+		tags: mapTags(result.tags),
 	};
 }
 

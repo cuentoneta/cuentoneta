@@ -3,6 +3,7 @@ import { AuthorProfile, AuthorTeaser } from '@models/author.model';
 export const authorMock: AuthorProfile = {
 	_id: 'author_1',
 	slug: 'francois-onoff',
+	tags: [],
 	createdAt: '2021-12-28T00:00:00Z',
 	updatedAt: '2024-05-20T10:30:00Z',
 	nationality: {
@@ -136,6 +137,7 @@ export const authorMock: AuthorProfile = {
 export const authorTeaserMock: AuthorTeaser = {
 	_id: 'author_1',
 	slug: 'francois-onoff',
+	tags: [],
 	nationality: {
 		country: 'Francia',
 		flag: 'https://cdn.sanity.io/images/s4dbqkc5/production/b80876a5f3a89e13acc14254b1f45dd6d29b79f4-30x20.png',
