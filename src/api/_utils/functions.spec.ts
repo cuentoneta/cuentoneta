@@ -45,6 +45,30 @@ describe('mapTags (ACL)', () => {
 		expect(result[0].icon).toEqual({ provider: '', name: '' });
 	});
 
+	it('descarta de la descripción los elementos que no son bloques de texto', () => {
+		const result = mapTags([
+			{
+				title: 'Mixto',
+				slug: 'mixto',
+				shortDescription: 'desc',
+				description: [
+					{
+						_type: 'block',
+						_key: 'b1',
+						style: 'normal',
+						markDefs: [],
+						children: [{ _type: 'span', _key: 's1', text: 'texto', marks: [] }],
+					},
+					{ _type: 'image', _key: 'img1' },
+				],
+				icon: { _type: 'iconPicker', provider: 'mdi', name: 'tag' },
+			},
+		]);
+
+		expect(result[0].description).toHaveLength(1);
+		expect(result[0].description[0]._type).toBe('block');
+	});
+
 	it('devuelve un arreglo vacío cuando no hay tags', () => {
 		expect(mapTags([])).toEqual([]);
 	});
