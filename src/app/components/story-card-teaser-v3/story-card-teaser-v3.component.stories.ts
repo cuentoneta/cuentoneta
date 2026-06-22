@@ -288,36 +288,50 @@ export const AllVariants: Story = {
 	},
 };
 
-// Estado de carga: la tarjeta renderiza el esqueleto cuando la story aun no esta disponible.
-export const Loading: Story = {
+// Switch "Cargando" para alternar real↔skeleton en el mismo slot y evaluar la transición/alineación.
+// La tarjeta renderiza su propio skeleton cuando no recibe story.
+export const Estados: StoryObj<StoryCardTeaserV3Component & { loading: boolean }> = {
+	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
 	render: (args) => ({
 		props: args,
 		template: `
-			<div class="flex flex-col gap-10">
-				<div class="space-y-2">
-					<h3 class="text-sm font-semibold text-neutral-600">OnWhite</h3>
-					<cuentoneta-story-card-teaser-v3 variant="on-white" [order]="order" [showAuthor]="showAuthor" [showDescription]="showDescription" [showMultimedia]="showMultimedia" [excerptLines]="excerptLines" />
-				</div>
-				<div class="space-y-2">
-					<h3 class="text-sm font-semibold text-neutral-600">Highlighted</h3>
-					<cuentoneta-story-card-teaser-v3 variant="highlighted" [order]="order" [showAuthor]="showAuthor" [showDescription]="showDescription" [showMultimedia]="showMultimedia" [excerptLines]="3" />
-				</div>
+			<div class="w-[680px]">
+				@if (loading) {
+					<cuentoneta-story-card-teaser-v3
+						[variant]="variant"
+						[order]="order"
+						[showAuthor]="showAuthor"
+						[showDescription]="showDescription"
+						[showMultimedia]="showMultimedia"
+						[excerptLines]="excerptLines"
+					/>
+				} @else {
+					<cuentoneta-story-card-teaser-v3
+						[story]="story"
+						[variant]="variant"
+						[order]="order"
+						[tagLabel]="tagLabel"
+						[showAuthor]="showAuthor"
+						[showDescription]="showDescription"
+						[showMultimedia]="showMultimedia"
+						[excerptLines]="excerptLines"
+					/>
+				}
 			</div>
 		`,
 	}),
 	args: {
-		story: undefined,
+		loading: true,
+		story: storyMock,
+		variant: 'on-white',
 		order: 1,
+		tagLabel: 'Cuento',
 		showAuthor: true,
 		showDescription: true,
 		showMultimedia: true,
 		excerptLines: 2,
 	},
 	parameters: {
-		docs: {
-			description: {
-				story: 'Estado de carga (esqueleto) que se muestra mientras la story no esta disponible.',
-			},
-		},
+		docs: { description: { story: 'Activá/desactivá "Cargando" para alternar entre el estado real y el skeleton.' } },
 	},
 };
