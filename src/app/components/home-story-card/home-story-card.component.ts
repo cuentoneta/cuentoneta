@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 import { StoryNavigationTeaserWithAuthor, StoryTeaserWithAuthor } from '@models/story.model';
@@ -17,14 +17,17 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
  * Decisiones de diseño tomadas del nodo de Figma:
  * - El título se trunca siempre a una línea.
  * - Los selectores de multimedia usan siempre el tema `solid` (recuadros blancos sobre el gris).
- * - El autor (avatar + nombre como texto) se muestra siempre; el único enlace accesible es el de la
- *   historia (la imagen del cover es un target visual decorativo, oculto a tecnologías de asistencia).
+ * - El autor (avatar + nombre) se muestra siempre y enlaza a su perfil (`/author/:slug`).
+ *
+ * Patrón de tarjeta clickeable (sin wrapper `<a>`): el enlace de la historia se estira con un
+ * pseudo-elemento (`after:absolute after:inset-0`) para cubrir toda la tarjeta, de modo que cualquier
+ * sección navega a `/story/:slug`. El bloque del autor es un enlace propio elevado con `z-10`, por
+ * encima del pseudo-elemento, para que la foto y el nombre naveguen a `/author/:slug`.
  */
 @Component({
 	selector: 'cuentoneta-home-story-card',
 	imports: [
 		NgOptimizedImage,
-		NgTemplateOutlet,
 		RouterLink,
 		StoryMediaSelectorsComponent,
 		ImageProfileComponent,
@@ -32,12 +35,29 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
 	],
 	template: `
 		@if (story(); as story) {
-			<article class="flex w-full max-w-82.75 flex-col items-center gap-4">
+			<article class="relative flex w-full max-w-82.75 flex-col items-center gap-4">
 				<div
 					class="relative flex w-full items-center justify-center rounded-xl bg-neutral-100 py-5"
 					data-testid="cover-container"
 				>
-					<ng-container [ngTemplateOutlet]="coverLink" />
+					<!-- Imagen alusiva (o placeholder). Decorativa: el click se delega al enlace estirado de la historia. -->
+					<div class="h-41 w-29.5 shrink-0 overflow-hidden rounded-lg bg-neutral-300">
+						@if (coverImageUrl(); as url) {
+							<img
+								[ngSrc]="url"
+								[width]="coverWidth"
+								[height]="coverHeight"
+								[priority]="priority()"
+								alt=""
+								class="h-full w-full object-cover"
+								data-testid="cover-image"
+							/>
+						} @else {
+							<div class="flex h-full w-full items-center justify-center" data-testid="cover-placeholder">
+								<img [ngSrc]="'./assets/svg/cover-placeholder.svg'" width="60" height="60" alt="" />
+							</div>
+						}
+					</div>
 					@if (order() !== undefined) {
 						<span class="source-serif-4xl absolute top-5 left-5.5 font-bold text-brand-500" data-testid="order">
 							{{ order() }}
@@ -55,7 +75,12 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
 					}
 				</div>
 				<div class="flex w-full flex-col gap-1">
-					<div class="flex min-w-0 items-center gap-2" data-testid="author">
+					<!-- Autor: enlace propio a /author/:slug, elevado (z-10) por encima del enlace estirado. -->
+					<a
+						[routerLink]="['/', appRoutes.Author, story.author.slug]"
+						class="relative z-10 flex min-w-0 items-center gap-2"
+						data-testid="author"
+					>
 						<cuentoneta-image-profile
 							[src]="story.author.imageUrl"
 							[alt]="'Retrato de ' + story.author.name"
@@ -63,13 +88,15 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
 							class="shrink-0"
 						/>
 						<span class="truncate font-inter text-sm font-medium text-neutral-900">{{ story.author.name }}</span>
-					</div>
+					</a>
+					<!-- Enlace de la historia estirado con ::after para cubrir toda la tarjeta (sin wrapper <a>).
+						 El truncate va en el span interno: el ::after se recortaría si el <a> tuviera overflow-hidden. -->
 					<a
 						[routerLink]="storyRouterLink()"
 						[queryParams]="navigationParams()"
-						class="block w-full truncate font-inter text-lg font-bold text-neutral-900"
+						class="block w-full min-w-0 after:absolute after:inset-0 after:content-['']"
 					>
-						{{ story.title }}
+						<span class="block truncate font-inter text-lg font-bold text-neutral-900">{{ story.title }}</span>
 					</a>
 					<div class="flex items-center gap-2" data-testid="reading-time">
 						@if (tagLabel()) {
@@ -85,36 +112,6 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
 		} @else {
 			<cuentoneta-home-story-card-skeleton data-testid="skeleton" />
 		}
-
-		<!-- Enlace a la historia que envuelve la imagen del cover; decorativo (aria-hidden) para dejar el
-			 título como único enlace accesible. -->
-		<ng-template #coverLink>
-			<a
-				[routerLink]="storyRouterLink()"
-				[queryParams]="navigationParams()"
-				aria-hidden="true"
-				tabindex="-1"
-				class="shrink-0"
-			>
-				<div class="h-41 w-29.5 shrink-0 overflow-hidden rounded-lg bg-neutral-300">
-					@if (coverImageUrl(); as url) {
-						<img
-							[ngSrc]="url"
-							[width]="coverWidth"
-							[height]="coverHeight"
-							[priority]="priority()"
-							alt=""
-							class="h-full w-full object-cover"
-							data-testid="cover-image"
-						/>
-					} @else {
-						<div class="flex h-full w-full items-center justify-center" data-testid="cover-placeholder">
-							<img [ngSrc]="'./assets/svg/cover-placeholder.svg'" width="60" height="60" alt="" />
-						</div>
-					}
-				</div>
-			</a>
-		</ng-template>
 	`,
 	host: {
 		class: 'block',

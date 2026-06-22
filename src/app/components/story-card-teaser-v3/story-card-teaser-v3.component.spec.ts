@@ -8,6 +8,7 @@ import { StoryTeaserWithAuthor } from '@models/story.model';
 
 describe('StoryCardTeaserV3Component', () => {
 	const storyUrl = '/story/el-espejo-del-tiempo?navigation=author&navigationSlug=francois-onoff';
+	const authorUrl = '/author/francois-onoff';
 
 	let navigationParams: { navigation: string; navigationSlug: string } = { navigation: '', navigationSlug: '' };
 
@@ -80,16 +81,14 @@ describe('StoryCardTeaserV3Component', () => {
 			expect(screen.getByTestId('author')).toBeInTheDocument();
 		});
 
-		it('should render the author name as text, keeping the story as the only link', async () => {
+		it('should link the author photo and name to the author profile', async () => {
 			await render(StoryCardTeaserV3Component, {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, showAuthor: true },
 			});
-			// Según el Design System v3 el card no usa AuthorTeaserV3: el nombre se muestra como texto, sin
-			// enlace propio al perfil. El único enlace accesible sigue siendo el de la historia.
-			expect(screen.getByText(storyNavigationTeaserWithAuthorMock.author.name)).toBeInTheDocument();
-			const links = screen.getAllByRole('link');
-			expect(links).toHaveLength(1);
-			expect(links[0]).toHaveAttribute('href', expect.stringContaining('/story/'));
+			// El bloque del autor (foto + nombre) es un enlace propio a /author/:slug, elevado por encima del
+			// enlace de la historia que se estira sobre toda la tarjeta.
+			const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/author/'));
+			expect(link?.getAttribute('href')).toContain(authorUrl);
 		});
 
 		it('should not display the author when showAuthor is false', async () => {
@@ -119,7 +118,7 @@ describe('StoryCardTeaserV3Component', () => {
 			expect(screen.getByTestId('cover-placeholder')).toBeInTheDocument();
 		});
 
-		it('should keep the cover link decorative, leaving a single accessible story link', async () => {
+		it('should keep the cover decorative, leaving a single accessible story link when the author is hidden', async () => {
 			await render(StoryCardTeaserV3Component, {
 				inputs: {
 					story: storyNavigationTeaserWithAuthorMock,
@@ -128,8 +127,8 @@ describe('StoryCardTeaserV3Component', () => {
 					showAuthor: false,
 				},
 			});
-			// El cover sigue renderizándose como target visual, pero no se expone a tecnologías de
-			// asistencia: queda un único enlace accesible a la historia (el del título).
+			// El cover se renderiza como target visual (el click se delega al enlace estirado de la historia),
+			// pero no es un enlace propio: con el autor oculto queda un único enlace accesible, el de la historia.
 			expect(screen.getByTestId('cover-image')).toBeInTheDocument();
 			const links = screen.getAllByRole('link');
 			expect(links).toHaveLength(1);

@@ -8,6 +8,7 @@ import { StoryTeaserWithAuthor } from '@models/story.model';
 
 describe('HomeStoryCardComponent', () => {
 	const storyUrl = '/story/el-espejo-del-tiempo?navigation=author&navigationSlug=francois-onoff';
+	const authorUrl = '/author/francois-onoff';
 
 	let navigationParams: { navigation: string; navigationSlug: string } = { navigation: '', navigationSlug: '' };
 
@@ -57,16 +58,14 @@ describe('HomeStoryCardComponent', () => {
 			expect(screen.getByTestId('author')).toBeInTheDocument();
 		});
 
-		it('should render the author name as text, keeping the story as the only link', async () => {
+		it('should link the author photo and name to the author profile', async () => {
 			await render(HomeStoryCardComponent, {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
 			});
-			// El nombre del autor se muestra como texto, sin enlace propio: el único enlace accesible es el
-			// de la historia (la imagen del cover es decorativa y queda oculta a tecnologías de asistencia).
-			expect(screen.getByText(storyNavigationTeaserWithAuthorMock.author.name)).toBeInTheDocument();
-			const links = screen.getAllByRole('link');
-			expect(links).toHaveLength(1);
-			expect(links[0]).toHaveAttribute('href', expect.stringContaining('/story/'));
+			// La foto y el nombre del autor son un enlace propio a /author/:slug, elevado por encima del
+			// enlace de la historia que se estira sobre toda la tarjeta.
+			const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/author/'));
+			expect(link?.getAttribute('href')).toContain(authorUrl);
 		});
 	});
 

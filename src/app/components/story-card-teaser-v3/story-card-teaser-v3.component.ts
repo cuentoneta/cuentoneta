@@ -35,13 +35,18 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
 	template: `
 		@if (story(); as story) {
 			<article [class]="rowWrapperClasses()">
-				<ng-container [ngTemplateOutlet]="coverLink" />
+				<ng-container [ngTemplateOutlet]="cover" />
 				<div [class]="rowColumnClasses()">
 					@if (showAuthor() && 'author' in story) {
 						<ng-container [ngTemplateOutlet]="author" [ngTemplateOutletContext]="{ $implicit: story.author }" />
 					}
 					<div class="flex w-full flex-col gap-2">
-						<a [routerLink]="storyRouterLink()" [queryParams]="navigationParams()" class="flex w-full flex-col gap-1">
+						<!-- Enlace de la historia estirado con ::after para cubrir toda la tarjeta (sin wrapper <a>). -->
+						<a
+							[routerLink]="storyRouterLink()"
+							[queryParams]="navigationParams()"
+							class="flex w-full flex-col gap-1 after:absolute after:inset-0 after:content-['']"
+						>
 							<p class="line-clamp-2 font-inter text-xl font-bold text-neutral-900">
 								@if (order() !== undefined) {
 									<span class="source-serif-2-5xl font-bold text-brand-500">{{ order() }}. </span>
@@ -76,24 +81,14 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
 			/>
 		}
 
-		<!-- Enlace a la historia que envuelve la imagen del cover; reutilizado por las variantes.
-			 En highlighted la imagen va a la derecha (order-last); en el resto, a la izquierda. -->
-		<ng-template #coverLink>
-			<a
-				[routerLink]="storyRouterLink()"
-				[queryParams]="navigationParams()"
-				[class.order-last]="variant() === 'highlighted'"
-				aria-hidden="true"
-				tabindex="-1"
-				class="shrink-0"
-			>
-				<ng-container [ngTemplateOutlet]="cover" />
-			</a>
-		</ng-template>
-
-		<!-- Imagen alusiva a la historia (o placeholder mientras no haya URL disponible) -->
+		<!-- Imagen alusiva a la historia (o placeholder mientras no haya URL disponible). Es decorativa: el
+			 click se delega al enlace de la historia, estirado sobre toda la tarjeta. En highlighted va a la
+			 derecha (order-last); en el resto, a la izquierda. -->
 		<ng-template #cover>
-			<div class="h-41 w-29.5 shrink-0 overflow-hidden rounded-lg bg-neutral-300">
+			<div
+				[class.order-last]="variant() === 'highlighted'"
+				class="h-41 w-29.5 shrink-0 overflow-hidden rounded-lg bg-neutral-300"
+			>
 				@if (coverImageUrl(); as url) {
 					<img
 						[ngSrc]="url"
@@ -113,9 +108,14 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
 		</ng-template>
 
 		<!-- Autor: avatar pequeño + nombre. Implementación propia del card (Design System v3): no usa
-			 AuthorTeaserV3; el nombre va como texto porque el único enlace accesible es el de la historia. -->
+			 AuthorTeaserV3. Es un enlace propio al perfil del autor, elevado con z-10 para quedar por encima
+			 del enlace de la historia (que se estira sobre toda la tarjeta). -->
 		<ng-template #author let-author>
-			<div class="flex min-w-0 items-center gap-2" data-testid="author">
+			<a
+				[routerLink]="['/', appRoutes.Author, author.slug]"
+				class="relative z-10 flex min-w-0 items-center gap-2"
+				data-testid="author"
+			>
 				<cuentoneta-image-profile
 					[src]="author.imageUrl"
 					[alt]="'Retrato de ' + author.name"
@@ -123,7 +123,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
 					class="shrink-0"
 				/>
 				<span class="truncate font-inter text-sm font-medium text-neutral-900">{{ author.name }}</span>
-			</div>
+			</a>
 		</ng-template>
 
 		<!-- Etiqueta opcional, separador y tiempo de lectura -->
@@ -184,8 +184,8 @@ export class StoryCardTeaserV3Component {
 
 	protected readonly rowWrapperClasses = computed(() =>
 		this.variant() === 'highlighted'
-			? 'flex w-full max-w-178.75 items-start gap-8 overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50 p-6'
-			: 'flex w-full max-w-178.75 items-start gap-6',
+			? 'relative flex w-full max-w-178.75 items-start gap-8 overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50 p-6'
+			: 'relative flex w-full max-w-178.75 items-start gap-6',
 	);
 
 	protected readonly rowColumnClasses = computed(() => {
