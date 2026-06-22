@@ -5,8 +5,8 @@ import { HomeStoryCardComponent } from './home-story-card.component';
 import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.component';
 import { storyTeaserMock } from '../../mocks/story.mock';
 import { authorTeaserMock } from '../../mocks/author.mock';
-import { StoryTeaserWithAuthor } from '@models/story.model';
-import { Media } from '@models/media.model';
+import type { StoryTeaserWithAuthor } from '@models/story.model';
+import type { Media } from '@models/media.model';
 
 // Conjunto de medios variado para ilustrar los selectores de multimedia y el contador (badge):
 // 3 videos de YouTube (muestra el contador), un Space de X y un episodio de Spotify.

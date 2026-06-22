@@ -3,8 +3,8 @@ import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import { storyNavigationTeaserWithAuthorMock, storyTeaserMock } from '../../mocks/story.mock';
 import { authorTeaserMock } from '../../mocks/author.mock';
-import { Media } from '@models/media.model';
-import { StoryTeaserWithAuthor } from '@models/story.model';
+import type { Media } from '@models/media.model';
+import type { StoryTeaserWithAuthor } from '@models/story.model';
 
 describe('StoryCardTeaserV3Component', () => {
 	const storyUrl = '/story/el-espejo-del-tiempo?navigation=author&navigationSlug=francois-onoff';

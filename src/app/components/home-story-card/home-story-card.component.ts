@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
-import { StoryNavigationTeaserWithAuthor, StoryTeaserWithAuthor } from '@models/story.model';
+import type { StoryNavigationTeaserWithAuthor, StoryTeaserWithAuthor } from '@models/story.model';
 import { AppRoutes } from '../../app.routes';
 import { StoryMediaSelectorsComponent } from '../story-media-selectors/story-media-selectors.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';

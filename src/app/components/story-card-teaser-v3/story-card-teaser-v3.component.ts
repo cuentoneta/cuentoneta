@@ -2,12 +2,12 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
-import { StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
+import type { StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
 import { AppRoutes } from '../../app.routes';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import {
 	StoryMediaSelectorsComponent,
-	StoryMediaSelectorsTheme,
+	type StoryMediaSelectorsTheme,
 } from '../story-media-selectors/story-media-selectors.component';
 import { StoryCardTeaserV3SkeletonComponent } from './story-card-teaser-v3-skeleton.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
