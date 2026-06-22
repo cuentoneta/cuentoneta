@@ -111,7 +111,7 @@ jobs:
       # C) Subida a Codecov (badge + tendencia histórica). Requiere el secret CODECOV_TOKEN.
       - name: Upload coverage to Codecov
         if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           files: coverage/cuentoneta/lcov.info
           token: ${{ secrets.CODECOV_TOKEN }}
