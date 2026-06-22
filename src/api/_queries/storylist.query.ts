@@ -40,6 +40,7 @@ export const storylistStoriesNavigationTeasersQuery = defineQuery(`
         originalPublication,
         approximateReadingTime,
         'resources': [],
+        'tags': [],
         'mediaSources': coalesce(mediaSources[], []),
         'author': author->{
             _id,
@@ -86,6 +87,7 @@ export const storylistQuery = defineQuery(`
         originalPublication,
         approximateReadingTime,
         'resources': [],
+        'tags': [],
         'mediaSources': coalesce(mediaSources[], []),
         'author': author->{
             _id,
