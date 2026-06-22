@@ -78,7 +78,7 @@
 		"@nx/js": "22.6.4",
 		"@nx/playwright": "22.6.4",
 		"@nx/storybook": "22.6.4",
-		"@nx/vitest": "22.6.4",
+		"@nx/vitest": "22.6.5",
 		"@nx/workspace": "22.6.4",
 		"@playwright/test": "^1.57.0",
 		"@storybook/addon-docs": "^10.4.2",
