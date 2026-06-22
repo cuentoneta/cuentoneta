@@ -253,6 +253,11 @@ export type Author = {
 		_type: 'resource';
 		_key: string;
 	}>;
+	tags?: Array<
+		{
+			_key: string;
+		} & TagReference
+	>;
 };
 
 export type Nationality = {

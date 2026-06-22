@@ -1428,6 +1428,28 @@
 					}
 				},
 				"optional": true
+			},
+			"tags": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "array",
+					"of": {
+						"type": "object",
+						"attributes": {
+							"_key": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "string"
+								}
+							}
+						},
+						"rest": {
+							"type": "inline",
+							"name": "tag.reference"
+						}
+					}
+				},
+				"optional": true
 			}
 		}
 	},
