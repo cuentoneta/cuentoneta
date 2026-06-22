@@ -167,7 +167,9 @@ Patrones que se repiten:
 - **Normalización de nullables:** `?? undefined`, `?? ''`, `?? []` para colapsar los opcionales de
   Sanity a la forma que el dominio espera.
 - **Composición:** un mapper grande delega en otros (`mapStoryContent` usa `mapAuthor`,
-  `mapResources`, `mapBlockContentToTextParagraphs`, `mapMediaSources`).
+  `mapResources`, `mapTags`, `mapBlockContentToTextParagraphs`, `mapMediaSources`). `mapStoryContent`
+  y `mapAuthor` propagan los **tags** del cuento y del autor vía `mapTags`; los mappers de teasers
+  devuelven `tags: []` (sus queries no proyectan los tags completos).
 - **`BlockContent` → texto de dominio:** `mapBlockContentToTextParagraphs(content)` filtra los
   bloques `_type === 'block'` a `TextBlockContent[]`.
 
