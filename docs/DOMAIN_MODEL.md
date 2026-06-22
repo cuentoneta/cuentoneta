@@ -161,6 +161,9 @@ interface Story {
 	// Relaciones
 	author: Author; // Autor de la historia (requerido)
 
+	// Categorización
+	tags: Tag[]; // Etiquetas de taxonomía (editoriales). Vacío en los teasers
+
 	// Recursos Multimedia
 	resources: Resource[]; // Enlaces a recursos externos
 	media: Media[]; // Contenido multimedia (audio, video, tweets)
@@ -223,6 +226,9 @@ interface Author {
 	// Contenido
 	biography: TextBlockContent[]; // Biografía del autor
 	resources: Resource[]; // Enlaces a recursos sobre el autor
+
+	// Categorización
+	tags: Tag[]; // Etiquetas de taxonomía (editables; el follow-up suma las derivadas de sus cuentos). Vacío en los teasers
 }
 
 interface AuthorNationality {
