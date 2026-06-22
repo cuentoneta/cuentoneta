@@ -5,7 +5,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { StoryCardTeaserV3Variant } from './story-card-teaser-v3.component';
 
 /**
- * Estado de carga (esqueleto) de StoryCardTeaserV3Component. Replica la estructura de cada variante
+ * Estado de carga (esqueleto) de StoryCardTeaserV3Component. Replica la estructura de la tarjeta
  * con placeholders de cuentoneta-skeleton para evitar saltos de layout mientras la story carga.
  *
  * Recibe los mismos flags de presentación que la tarjeta (variante, orden, autor, descripción,
@@ -16,57 +16,39 @@ import { StoryCardTeaserV3Variant } from './story-card-teaser-v3.component';
 	imports: [SkeletonComponent, NgTemplateOutlet],
 	host: { class: 'block' },
 	template: `
-		@switch (variant()) {
-			@case ('compact') {
-				<article class="flex w-full max-w-98.75 flex-col items-center gap-4">
-					<div class="flex w-full items-center justify-center rounded-xl bg-neutral-100 py-5">
-						<cuentoneta-skeleton appearance="square" class="h-[164px] w-[118px] rounded-lg bg-neutral-300" />
-					</div>
-					<div class="flex w-full flex-col gap-1">
-						@if (showAuthor()) {
-							<ng-container [ngTemplateOutlet]="author" />
-						}
-						<cuentoneta-skeleton appearance="line" class="h-6 w-full max-w-48 bg-neutral-300" />
-						<cuentoneta-skeleton appearance="line" class="h-4 w-full max-w-36 bg-neutral-300" />
-					</div>
-				</article>
-			}
-			@default {
-				<article [class]="rowWrapperClasses()">
-					<cuentoneta-skeleton
-						[class.order-last]="variant() === 'highlighted'"
-						appearance="square"
-						class="h-[164px] w-[118px] shrink-0 rounded-lg bg-neutral-300"
-					/>
-					<div [class]="rowColumnClasses()">
-						@if (showAuthor()) {
-							<ng-container [ngTemplateOutlet]="author" />
-						}
-						<div class="flex w-full flex-col gap-2">
-							<cuentoneta-skeleton appearance="line" class="h-6 w-full max-w-64 bg-neutral-300" />
-							@if (showDescription()) {
-								<div class="flex flex-col gap-1">
-									@for (line of descriptionLines(); track $index) {
-										<cuentoneta-skeleton
-											[class]="$last ? 'h-4 w-3/4 bg-neutral-300' : 'h-4 w-full bg-neutral-300'"
-											appearance="line"
-										/>
-									}
-								</div>
+		<article [class]="rowWrapperClasses()">
+			<cuentoneta-skeleton
+				[class.order-last]="variant() === 'highlighted'"
+				appearance="square"
+				class="h-[164px] w-[118px] shrink-0 rounded-lg bg-neutral-300"
+			/>
+			<div [class]="rowColumnClasses()">
+				@if (showAuthor()) {
+					<ng-container [ngTemplateOutlet]="author" />
+				}
+				<div class="flex w-full flex-col gap-2">
+					<cuentoneta-skeleton appearance="line" class="h-6 w-full max-w-64 bg-neutral-300" />
+					@if (showDescription()) {
+						<div class="flex flex-col gap-1">
+							@for (line of descriptionLines(); track $index) {
+								<cuentoneta-skeleton
+									[class]="$last ? 'h-4 w-3/4 bg-neutral-300' : 'h-4 w-full bg-neutral-300'"
+									appearance="line"
+								/>
 							}
-							<cuentoneta-skeleton appearance="line" class="h-4 w-full max-w-44 bg-neutral-300" />
 						</div>
-						@if (showMultimedia()) {
-							<div class="flex items-center gap-2.5">
-								@for (selector of mediaPlaceholders; track $index) {
-									<cuentoneta-skeleton appearance="square" class="h-[34px] w-[38px] rounded-lg bg-neutral-300" />
-								}
-							</div>
+					}
+					<cuentoneta-skeleton appearance="line" class="h-4 w-full max-w-44 bg-neutral-300" />
+				</div>
+				@if (showMultimedia()) {
+					<div class="flex items-center gap-2.5">
+						@for (selector of mediaPlaceholders; track $index) {
+							<cuentoneta-skeleton appearance="square" class="h-[34px] w-[38px] rounded-lg bg-neutral-300" />
 						}
 					</div>
-				</article>
-			}
-		}
+				}
+			</div>
+		</article>
 
 		<!-- Autor: avatar circular + línea con el nombre -->
 		<ng-template #author>

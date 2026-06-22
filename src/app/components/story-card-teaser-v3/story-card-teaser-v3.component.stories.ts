@@ -46,12 +46,11 @@ const meta: Meta<StoryCardTeaserV3Component> = {
 			description: {
 				component: `<div>
 					<p>El componente **StoryCardTeaserV3Component** es la versión 3 de la tarjeta de vista previa de una historia,
-					basada en el Design System v3 de La Cuentoneta. Se implementa en cuatro variantes seleccionables mediante el input <code>variant</code>:</p>
+					basada en el Design System v3 de La Cuentoneta. Se implementa en tres variantes seleccionables mediante el input <code>variant</code>:</p>
 					<ul>
 						<li><strong>OnWhite</strong> (<code>on-white</code>): layout horizontal con imagen a la izquierda, para fondos blancos.</li>
 						<li><strong>OnGray</strong> (<code>on-gray</code>): igual a OnWhite con selectores de multimedia en blanco, para fondos grises.</li>
 						<li><strong>Highlighted</strong> (<code>highlighted</code>): tarjeta destacada con borde, fondo e imagen a la derecha.</li>
-						<li><strong>Compact</strong> (<code>compact</code>): layout vertical angosto con imagen, numeración y multimedia apiladas.</li>
 					</ul>
 					<p>Cada variante admite mostrar opcionalmente autor, descripción, numeración, etiqueta y selectores de multimedia.</p>
 				</div>`,
@@ -62,10 +61,10 @@ const meta: Meta<StoryCardTeaserV3Component> = {
 	argTypes: {
 		variant: {
 			control: { type: 'select' },
-			options: ['on-white', 'on-gray', 'highlighted', 'compact'],
+			options: ['on-white', 'on-gray', 'highlighted'],
 			description: 'Variante visual del componente',
 			table: {
-				type: { summary: "'on-white' | 'on-gray' | 'highlighted' | 'compact'" },
+				type: { summary: "'on-white' | 'on-gray' | 'highlighted'" },
 				defaultValue: { summary: 'on-white' },
 			},
 		},
@@ -92,7 +91,7 @@ const meta: Meta<StoryCardTeaserV3Component> = {
 		},
 		showDescription: {
 			control: { type: 'boolean' },
-			description: 'Mostrar la descripción/extracto de la historia (no aplica a la variante compact)',
+			description: 'Mostrar la descripción/extracto de la historia',
 			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
 		},
 		showMultimedia: {
@@ -219,31 +218,7 @@ export const Highlighted: Story = {
 	},
 };
 
-// Variante Compact — layout vertical angosto.
-export const Compact: Story = {
-	render: (args) => ({
-		props: args,
-		template: `<cuentoneta-story-card-teaser-v3 ${argsToTemplate(args)} />`,
-	}),
-	args: {
-		story: storyMock,
-		variant: 'compact',
-		order: 1,
-		tagLabel: 'Cuento',
-		showAuthor: true,
-		showMultimedia: true,
-	},
-	parameters: {
-		docs: {
-			description: {
-				story:
-					'Variante Compact: layout vertical angosto con imagen, numeración y multimedia apiladas. No muestra descripción.',
-			},
-		},
-	},
-};
-
-// Vitrina con las cuatro variantes en simultáneo.
+// Vitrina con las tres variantes en simultáneo.
 // Nota: se usan bindings explícitos (en lugar de argsToTemplate) porque la variante difiere por
 // instancia; argsToTemplate genera bindings `[variant]="variant"` que apuntan a un único `props.variant`.
 export const AllVariants: Story = {
@@ -292,17 +267,6 @@ export const AllVariants: Story = {
 						[excerptLines]="3"
 					/>
 				</div>
-				<div class="space-y-2">
-					<h3 class="text-sm font-semibold text-neutral-600">Compact</h3>
-					<cuentoneta-story-card-teaser-v3
-						variant="compact"
-						[story]="story"
-						[order]="order"
-						[tagLabel]="tagLabel"
-						[showAuthor]="showAuthor"
-						[showMultimedia]="showMultimedia"
-					/>
-				</div>
 			</div>
 		`,
 	}),
@@ -318,7 +282,7 @@ export const AllVariants: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Vista general de las cuatro variantes del componente con todas las características habilitadas.',
+				story: 'Vista general de las tres variantes del componente con todas las características habilitadas.',
 			},
 		},
 	},
@@ -337,10 +301,6 @@ export const Loading: Story = {
 				<div class="space-y-2">
 					<h3 class="text-sm font-semibold text-neutral-600">Highlighted</h3>
 					<cuentoneta-story-card-teaser-v3 variant="highlighted" [order]="order" [showAuthor]="showAuthor" [showDescription]="showDescription" [showMultimedia]="showMultimedia" [excerptLines]="3" />
-				</div>
-				<div class="space-y-2">
-					<h3 class="text-sm font-semibold text-neutral-600">Compact</h3>
-					<cuentoneta-story-card-teaser-v3 variant="compact" [order]="order" [showAuthor]="showAuthor" [showMultimedia]="showMultimedia" />
 				</div>
 			</div>
 		`,

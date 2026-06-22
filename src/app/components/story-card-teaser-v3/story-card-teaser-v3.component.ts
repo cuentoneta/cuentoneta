@@ -18,9 +18,8 @@ import { ImageProfileComponent } from '../image-profile/image-profile.component'
  * - `on-white`: layout horizontal con imagen a la izquierda, pensado para fondos blancos.
  * - `on-gray`: idéntico a `on-white` pero con los selectores de multimedia en blanco, para fondos grises.
  * - `highlighted`: tarjeta destacada con borde y fondo, con la imagen a la derecha.
- * - `compact`: layout vertical angosto con la imagen, numeración y multimedia apiladas.
  */
-export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 'compact';
+export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
 
 @Component({
 	selector: 'cuentoneta-story-card-teaser-v3',
@@ -35,82 +34,36 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 	],
 	template: `
 		@if (story(); as story) {
-			@switch (variant()) {
-				@case ('compact') {
-					<article class="flex w-full max-w-98.75 flex-col items-center gap-4">
-						<div
-							class="relative flex w-full items-center justify-center rounded-xl bg-neutral-100 py-5"
-							data-testid="cover-container"
-						>
-							<ng-container [ngTemplateOutlet]="coverLink" />
-							@if (order() !== undefined) {
-								<span class="source-serif-4xl absolute top-5 left-5.5 font-bold text-brand-500" data-testid="order">
-									{{ order() }}
-								</span>
+			<article [class]="rowWrapperClasses()">
+				<ng-container [ngTemplateOutlet]="coverLink" />
+				<div [class]="rowColumnClasses()">
+					@if (showAuthor() && 'author' in story) {
+						<ng-container [ngTemplateOutlet]="author" [ngTemplateOutletContext]="{ $implicit: story.author }" />
+					}
+					<div class="flex w-full flex-col gap-2">
+						<a [routerLink]="storyRouterLink()" [queryParams]="navigationParams()" class="flex w-full flex-col gap-1">
+							<p class="line-clamp-2 font-inter text-xl font-bold text-neutral-900">
+								@if (order() !== undefined) {
+									<span class="source-serif-2-5xl font-bold text-brand-500">{{ order() }}. </span>
+								}
+								<span>{{ story.title }}</span>
+							</p>
+							@if (showDescription() && story.paragraphs.length > 0) {
+								<cuentoneta-portable-text-parser
+									[paragraphs]="story.paragraphs"
+									[class]="'line-clamp-' + excerptLines()"
+									data-testid="description"
+									class="overflow-hidden font-inter text-sm font-medium text-ellipsis text-neutral-600"
+								/>
 							}
-							@if (showMultimedia() && story.media.length > 0) {
-								<div class="absolute top-5 right-4.5">
-									<cuentoneta-story-media-selectors
-										[media]="story.media"
-										[theme]="mediaTheme()"
-										orientation="vertical"
-										data-testid="media"
-									/>
-								</div>
-							}
-						</div>
-						<div class="flex w-full flex-col gap-1">
-							@if (showAuthor() && 'author' in story) {
-								<ng-container [ngTemplateOutlet]="author" [ngTemplateOutletContext]="{ $implicit: story.author }" />
-							}
-							<a
-								[routerLink]="storyRouterLink()"
-								[queryParams]="navigationParams()"
-								class="truncate font-inter text-lg font-bold text-neutral-900"
-							>
-								{{ story.title }}
-							</a>
-							<ng-container [ngTemplateOutlet]="readingTime" [ngTemplateOutletContext]="{ $implicit: story }" />
-						</div>
-					</article>
-				}
-				@default {
-					<article [class]="rowWrapperClasses()">
-						<ng-container [ngTemplateOutlet]="coverLink" />
-						<div [class]="rowColumnClasses()">
-							@if (showAuthor() && 'author' in story) {
-								<ng-container [ngTemplateOutlet]="author" [ngTemplateOutletContext]="{ $implicit: story.author }" />
-							}
-							<div class="flex w-full flex-col gap-2">
-								<a
-									[routerLink]="storyRouterLink()"
-									[queryParams]="navigationParams()"
-									class="flex w-full flex-col gap-1"
-								>
-									<p class="line-clamp-2 font-inter text-xl font-bold text-neutral-900">
-										@if (order() !== undefined) {
-											<span class="source-serif-2-5xl font-bold text-brand-500">{{ order() }}. </span>
-										}
-										<span>{{ story.title }}</span>
-									</p>
-									@if (showDescription() && story.paragraphs.length > 0) {
-										<cuentoneta-portable-text-parser
-											[paragraphs]="story.paragraphs"
-											[class]="'line-clamp-' + excerptLines()"
-											data-testid="description"
-											class="overflow-hidden font-inter text-sm font-medium text-ellipsis text-neutral-600"
-										/>
-									}
-								</a>
-								<ng-container [ngTemplateOutlet]="readingTime" [ngTemplateOutletContext]="{ $implicit: story }" />
-							</div>
-							@if (showMultimedia() && story.media.length > 0) {
-								<cuentoneta-story-media-selectors [media]="story.media" [theme]="mediaTheme()" data-testid="media" />
-							}
-						</div>
-					</article>
-				}
-			}
+						</a>
+						<ng-container [ngTemplateOutlet]="readingTime" [ngTemplateOutletContext]="{ $implicit: story }" />
+					</div>
+					@if (showMultimedia() && story.media.length > 0) {
+						<cuentoneta-story-media-selectors [media]="story.media" [theme]="mediaTheme()" data-testid="media" />
+					}
+				</div>
+			</article>
 		} @else {
 			<cuentoneta-story-card-teaser-v3-skeleton
 				[variant]="variant()"
@@ -123,7 +76,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted' | 
 			/>
 		}
 
-		<!-- Enlace a la historia que envuelve la imagen del cover; reutilizado por las 4 variantes.
+		<!-- Enlace a la historia que envuelve la imagen del cover; reutilizado por las variantes.
 			 En highlighted la imagen va a la derecha (order-last); en el resto, a la izquierda. -->
 		<ng-template #coverLink>
 			<a
@@ -221,7 +174,6 @@ export class StoryCardTeaserV3Component {
 	protected readonly mediaTheme = computed<StoryMediaSelectorsTheme>(() => {
 		switch (this.variant()) {
 			case 'on-gray':
-			case 'compact':
 				return 'solid';
 			case 'highlighted':
 				return 'bordered';
