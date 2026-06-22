@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, contentChildren, input, linkedSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, contentChildren, inject, input, linkedSignal } from '@angular/core';
 import Tab from './tab.component';
 import { NgTemplateOutlet } from '@angular/common';
+import { LoggerService } from '../../providers/logging/logger.service';
 
 @Component({
 	selector: 'cuentoneta-tabs',
@@ -35,6 +36,7 @@ import { NgTemplateOutlet } from '@angular/common';
 export default class Tabs {
 	public readonly initialTab = input<string>();
 	public readonly tabs = contentChildren(Tab);
+	private readonly logger = inject(LoggerService);
 	protected readonly active = linkedSignal({
 		source: this.tabs,
 		computation: (tabs) => {
@@ -49,7 +51,7 @@ export default class Tabs {
 
 			const found = tabs.find((tab) => tab.name() === name);
 			if (!found) {
-				console.error(`Tab with name ${name} not found, falling back to first tab`);
+				this.logger.error(`Tab with name ${name} not found, falling back to first tab`);
 				return tabs[0];
 			}
 

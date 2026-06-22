@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { generateSitemap } from './sitemap.service';
+import { logger } from '../../_utils/logger';
 
 const sitemapController = new Hono();
 
@@ -17,7 +18,7 @@ sitemapController.get('/', async (c) => {
 		});
 	} catch (error) {
 		const err = error instanceof Error ? error : new Error(String(error));
-		console.error('[Sitemap] Error generating sitemap:', {
+		logger.error('[Sitemap] Error generating sitemap:', {
 			message: err.message,
 			stack: err.stack,
 		});

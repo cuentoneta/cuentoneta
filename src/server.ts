@@ -9,6 +9,7 @@ import { secureHeaders } from 'hono/secure-headers';
 import apiRoutes from './api/routes';
 import sitemapController from './api/modules/sitemap/sitemap.controller';
 import { getAllowedHosts } from './api/_helpers/environment';
+import { logger } from './api/_utils/logger';
 
 /**
  * Inicializa Hono y exporta la instancia de la aplicación
@@ -64,7 +65,7 @@ app.notFound((c) => {
  * Handler para Error 500: Internal Server Error
  */
 app.onError((error, c) => {
-	console.error('Server Error:', error);
+	logger.error('Server Error:', error);
 	const isDev = process.env['NODE_ENV'] !== 'production';
 	const message = isDev ? error.message : 'Internal Server Error';
 	return c.json({ error: message }, 500);
