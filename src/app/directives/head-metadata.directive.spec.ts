@@ -6,6 +6,8 @@ import { DOCUMENT } from '@angular/common';
 
 describe('HeadMetadataDirective', () => {
 	const BASE_URL = 'https://www.cuentoneta.ar';
+	const TEST_IMAGE_URL = 'assets/svg/collection.svg';
+	const TEST_IMAGE_ALT = 'Imagen de prueba';
 
 	let directive: HeadMetadataDirective;
 	let metaService: Meta;
@@ -428,18 +430,18 @@ describe('HeadMetadataDirective', () => {
 		it('should set og:image, og:image:alt and twitter:image with the given url and alt', () => {
 			const metaSpy = spyOn(metaService, 'updateTag');
 
-			directive.setImage('https://example.com/og.png', 'Imagen de prueba');
+			directive.setImage(TEST_IMAGE_URL, TEST_IMAGE_ALT);
 
-			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:image', content: 'https://example.com/og.png' });
-			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:image:alt', content: 'Imagen de prueba' });
-			expect(metaSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: 'https://example.com/og.png' });
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:image', content: TEST_IMAGE_URL });
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:image:alt', content: TEST_IMAGE_ALT });
+			expect(metaSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: TEST_IMAGE_URL });
 		});
 
 		it('should set og:image:width and og:image:height when dimensions are provided', () => {
 			const updateSpy = spyOn(metaService, 'updateTag');
 			const removeSpy = spyOn(metaService, 'removeTag');
 
-			directive.setImage('https://example.com/og.png', 'Imagen de prueba', 1200, 630);
+			directive.setImage(TEST_IMAGE_URL, TEST_IMAGE_ALT, 1200, 630);
 
 			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image:width', content: '1200' });
 			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image:height', content: '630' });
@@ -450,7 +452,7 @@ describe('HeadMetadataDirective', () => {
 		it('should remove og:image:width and og:image:height when dimensions are omitted', () => {
 			const removeSpy = spyOn(metaService, 'removeTag');
 
-			directive.setImage('https://example.com/og.png', 'Imagen de prueba');
+			directive.setImage(TEST_IMAGE_URL, TEST_IMAGE_ALT);
 
 			expect(removeSpy).toHaveBeenCalledWith('property="og:image:width"');
 			expect(removeSpy).toHaveBeenCalledWith('property="og:image:height"');
@@ -460,11 +462,21 @@ describe('HeadMetadataDirective', () => {
 			const updateSpy = spyOn(metaService, 'updateTag');
 			const removeSpy = spyOn(metaService, 'removeTag');
 
-			directive.setImage('https://example.com/og.png', 'Imagen de prueba', 1200);
+			directive.setImage(TEST_IMAGE_URL, TEST_IMAGE_ALT, 1200);
 
 			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image:width', content: '1200' });
 			expect(removeSpy).toHaveBeenCalledWith('property="og:image:height"');
 			expect(removeSpy).not.toHaveBeenCalledWith('property="og:image:width"');
+		});
+
+		it('should skip updates when url and alt match the default logo fallback', () => {
+			const updateSpy = spyOn(metaService, 'updateTag');
+			const removeSpy = spyOn(metaService, 'removeTag');
+
+			directive.setImage('assets/svg/logo.svg', 'Logo de La Cuentoneta', 1200, 630);
+
+			expect(updateSpy).not.toHaveBeenCalled();
+			expect(removeSpy).not.toHaveBeenCalled();
 		});
 	});
 
@@ -474,8 +486,8 @@ describe('HeadMetadataDirective', () => {
 
 			directive.removeImage();
 
-			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:image', content: '/assets/svg/logo.svg' });
-			expect(metaSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: '/assets/svg/logo.svg' });
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:image', content: 'assets/svg/logo.svg' });
+			expect(metaSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: 'assets/svg/logo.svg' });
 		});
 
 		it('should reset og:image:alt to the logo fallback alt text', () => {
@@ -503,7 +515,7 @@ describe('HeadMetadataDirective', () => {
 			directive.setCanonicalUrl(`${BASE_URL}/home`);
 			expect(document.querySelector(`link[rel='canonical']`)).not.toBeNull();
 			// La imagen se resetea al logo (no se elimina): la seteamos para verificar el fallback al limpiar.
-			directive.setImage('https://example.com/og.png', 'Imagen de prueba', 1200, 630);
+			directive.setImage(TEST_IMAGE_URL, TEST_IMAGE_ALT, 1200, 630);
 
 			const updateSpy = spyOn(metaService, 'updateTag');
 
@@ -527,9 +539,9 @@ describe('HeadMetadataDirective', () => {
 			expect(removeSpy).toHaveBeenCalledWith('property="og:image:width"');
 			expect(removeSpy).toHaveBeenCalledWith('property="og:image:height"');
 			// La imagen se resetea al logo estático (no se elimina del todo).
-			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image', content: '/assets/svg/logo.svg' });
+			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image', content: 'assets/svg/logo.svg' });
 			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image:alt', content: 'Logo de La Cuentoneta' });
-			expect(updateSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: '/assets/svg/logo.svg' });
+			expect(updateSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: 'assets/svg/logo.svg' });
 			// El <link rel="canonical"> se quita del head.
 			expect(document.querySelector(`link[rel='canonical']`)).toBeNull();
 		});
