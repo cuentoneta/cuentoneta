@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { NgTemplateOutlet } from '@angular/common';
 
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton.component';
 import { StoryCardTeaserV3Variant } from './story-card-teaser-v3.component';
 
 /**
@@ -13,15 +14,11 @@ import { StoryCardTeaserV3Variant } from './story-card-teaser-v3.component';
  */
 @Component({
 	selector: 'cuentoneta-story-card-teaser-v3-skeleton',
-	imports: [SkeletonComponent, NgTemplateOutlet],
+	imports: [SkeletonComponent, NgTemplateOutlet, CoverImageSkeletonComponent],
 	host: { class: 'block' },
 	template: `
 		<article [class]="rowWrapperClasses()">
-			<cuentoneta-skeleton
-				[class.order-last]="variant() === 'highlighted'"
-				appearance="square"
-				class="h-[164px] w-[118px] shrink-0 rounded-lg bg-neutral-300"
-			/>
+			<cuentoneta-cover-image-skeleton [class.order-last]="variant() === 'highlighted'" />
 			<div [class]="rowColumnClasses()">
 				@if (showAuthor()) {
 					<ng-container [ngTemplateOutlet]="author" />

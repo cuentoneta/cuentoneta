@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 import type { StoryNavigationTeaserWithAuthor, StoryTeaserWithAuthor } from '@models/story.model';
 import { AppRoutes } from '../../app.routes';
 import { StoryMediaSelectorsComponent } from '../story-media-selectors/story-media-selectors.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
+import { CoverImageComponent } from '../cover-image/cover-image.component';
 import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.component';
 
 /**
@@ -27,11 +27,11 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
 @Component({
 	selector: 'cuentoneta-home-story-card',
 	imports: [
-		NgOptimizedImage,
 		RouterLink,
 		StoryMediaSelectorsComponent,
 		ImageProfileComponent,
 		HomeStoryCardSkeletonComponent,
+		CoverImageComponent,
 	],
 	template: `
 		@if (story(); as story) {
@@ -40,24 +40,7 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
 					class="relative flex w-full items-center justify-center rounded-xl bg-neutral-100 py-5"
 					data-testid="cover-container"
 				>
-					<!-- Imagen alusiva (o placeholder). Decorativa: el click se delega al enlace estirado de la historia. -->
-					<div class="h-41 w-29.5 shrink-0 overflow-hidden rounded-lg bg-neutral-300">
-						@if (coverImageUrl(); as url) {
-							<img
-								[ngSrc]="url"
-								[width]="coverWidth"
-								[height]="coverHeight"
-								[priority]="priority()"
-								alt=""
-								class="h-full w-full object-cover"
-								data-testid="cover-image"
-							/>
-						} @else {
-							<div class="flex h-full w-full items-center justify-center" data-testid="cover-placeholder">
-								<img [ngSrc]="'./assets/svg/cover-placeholder.svg'" width="60" height="60" alt="" />
-							</div>
-						}
-					</div>
+					<cuentoneta-cover-image [src]="coverImageUrl()" [priority]="priority()" />
 					@if (order() !== undefined) {
 						<span class="source-serif-4xl absolute top-5 left-5.5 font-bold text-brand-500" data-testid="order">
 							{{ order() }}
@@ -123,10 +106,6 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
 })
 export class HomeStoryCardComponent {
 	protected readonly appRoutes = AppRoutes;
-
-	// Dimensiones intrínsecas del cover (px). El tamaño visual se controla por CSS (h-41 w-29.5).
-	protected readonly coverWidth = 118;
-	protected readonly coverHeight = 164;
 
 	// Inputs
 	public readonly story = input<StoryTeaserWithAuthor | StoryNavigationTeaserWithAuthor>();
