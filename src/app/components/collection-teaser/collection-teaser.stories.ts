@@ -3,6 +3,9 @@ import { CollectionTeaser } from './collection-teaser';
 import { provideRouter } from '@angular/router';
 import { CollectionTeaserSkeletonComponent } from './collection-teaser-skeleton';
 import { storylistMock } from '@mocks/storylist.mock';
+import { StorylistTeaser } from '@models/storylist.model';
+
+const collectionMock: StorylistTeaser = { ...storylistMock, stories: [], tabs: [] };
 
 const meta: Meta<CollectionTeaser> = {
 	component: CollectionTeaser,
@@ -40,7 +43,7 @@ export const Primary = {
 `,
 	}),
 	args: {
-		collection: storylistMock,
+		collection: collectionMock,
 	},
 };
 
@@ -59,7 +62,7 @@ export const Estados: StoryObj<CollectionTeaser & { loading: boolean }> = {
 			</div>
 		`,
 	}),
-	args: { loading: true, collection: storylistMock },
+	args: { loading: true, collection: collectionMock },
 	parameters: {
 		docs: { description: { story: 'Activá/desactivá "Cargando" para alternar entre el estado real y el skeleton.' } },
 	},
