@@ -18,10 +18,6 @@
 			"inputs": ["default", "^production"],
 			"cache": false
 		},
-		"lint": {
-			"inputs": ["default", "{workspaceRoot}/eslint.config.mjs"],
-			"cache": true
-		},
 		"test": {
 			"cache": true
 		},
