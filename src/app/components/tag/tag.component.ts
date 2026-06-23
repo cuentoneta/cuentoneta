@@ -10,12 +10,12 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 export type TagVariant = 'soft' | 'filled' | 'gray';
 
 /**
- * Etiqueta (tag) del Design System v3. Componente de presentación que reemplaza progresivamente a
- * `BadgeComponent`: muestra un texto con el estilo de la variante indicada.
+ * Etiqueta (tag) del Design System v3. Componente de presentación que muestra un texto con el
+ * estilo y la capitalización correspondientes a la variante indicada.
  */
 @Component({
 	selector: 'cuentoneta-tag',
-	template: `{{ label() }}`,
+	template: `{{ displayLabel() }}`,
 	host: {
 		'[class]': 'hostClasses()',
 	},
@@ -32,6 +32,17 @@ export class TagComponent {
 		filled: 'rounded-sm bg-brand-50 px-2 py-1 text-xxs text-brand-500 uppercase',
 		gray: 'rounded-sm bg-neutral-950-40 px-1.5 py-1 text-xxs text-neutral-50',
 	};
+
+	// Capitalización por variante (DS v3 / Figma): `soft` y `gray` muestran el texto en sentence-case
+	// (primera letra en mayúscula, resto en minúsculas) transformando el contenido; `filled` lo deja
+	// intacto y aplica mayúsculas vía CSS (clase `uppercase`), preservando el texto original.
+	protected readonly displayLabel = computed(() => {
+		const label = this.label();
+		if (this.variant() === 'filled') {
+			return label;
+		}
+		return label.charAt(0).toLocaleUpperCase() + label.slice(1).toLocaleLowerCase();
+	});
 
 	protected readonly hostClasses = computed(
 		() => `inline-flex items-center font-inter font-bold whitespace-nowrap ${this.variantClasses[this.variant()]}`,
