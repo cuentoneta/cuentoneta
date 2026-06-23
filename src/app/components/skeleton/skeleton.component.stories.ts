@@ -4,7 +4,7 @@ import { SkeletonComponent } from './skeleton.component';
 
 const meta: Meta<SkeletonComponent> = {
 	component: SkeletonComponent,
-	title: 'Componentes/Skeleton',
+	title: 'Componentes V3/Skeleton',
 	parameters: {
 		docs: {
 			canvas: { sourceState: 'shown' },

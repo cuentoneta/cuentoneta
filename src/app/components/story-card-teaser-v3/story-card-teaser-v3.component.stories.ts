@@ -80,7 +80,7 @@ const meta: Meta<StoryCardTeaserV3Component> = {
 			description: 'Mostrar información del autor con avatar y nombre',
 			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
 		},
-		showDescription: {
+		showExcerpt: {
 			control: { type: 'boolean' },
 			description: 'Mostrar la descripción/extracto de la historia',
 			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
@@ -122,7 +122,7 @@ export const Docs: Story = {
 		order: 1,
 		tagLabel: 'Cuento',
 		showAuthor: true,
-		showDescription: true,
+		showExcerpt: true,
 		showMultimedia: true,
 		excerptLines: 2,
 	},
@@ -147,7 +147,7 @@ export const OnWhite: Story = {
 		order: 1,
 		tagLabel: 'Cuento',
 		showAuthor: true,
-		showDescription: true,
+		showExcerpt: true,
 		showMultimedia: true,
 		excerptLines: 2,
 	},
@@ -172,7 +172,7 @@ export const OnGray: Story = {
 		order: 1,
 		tagLabel: 'Cuento',
 		showAuthor: true,
-		showDescription: true,
+		showExcerpt: true,
 		showMultimedia: true,
 		excerptLines: 2,
 	},
@@ -197,7 +197,7 @@ export const Highlighted: Story = {
 		order: 1,
 		tagLabel: 'Cuento',
 		showAuthor: true,
-		showDescription: true,
+		showExcerpt: true,
 		showMultimedia: true,
 		excerptLines: 3,
 	},
@@ -226,7 +226,7 @@ export const AllVariants: Story = {
 						[order]="order"
 						[tagLabel]="tagLabel"
 						[showAuthor]="showAuthor"
-						[showDescription]="showDescription"
+						[showExcerpt]="showExcerpt"
 						[showMultimedia]="showMultimedia"
 						[excerptLines]="excerptLines"
 					/>
@@ -240,7 +240,7 @@ export const AllVariants: Story = {
 							[order]="order"
 							[tagLabel]="tagLabel"
 							[showAuthor]="showAuthor"
-							[showDescription]="showDescription"
+							[showExcerpt]="showExcerpt"
 							[showMultimedia]="showMultimedia"
 							[excerptLines]="excerptLines"
 						/>
@@ -254,7 +254,7 @@ export const AllVariants: Story = {
 						[order]="order"
 						[tagLabel]="tagLabel"
 						[showAuthor]="showAuthor"
-						[showDescription]="showDescription"
+						[showExcerpt]="showExcerpt"
 						[showMultimedia]="showMultimedia"
 						[excerptLines]="3"
 					/>
@@ -267,7 +267,7 @@ export const AllVariants: Story = {
 		order: 1,
 		tagLabel: 'Cuento',
 		showAuthor: true,
-		showDescription: true,
+		showExcerpt: true,
 		showMultimedia: true,
 		excerptLines: 2,
 	},
@@ -293,7 +293,7 @@ export const Estados: StoryObj<StoryCardTeaserV3Component & { loading: boolean }
 						[variant]="variant"
 						[order]="order"
 						[showAuthor]="showAuthor"
-						[showDescription]="showDescription"
+						[showExcerpt]="showExcerpt"
 						[showMultimedia]="showMultimedia"
 						[excerptLines]="excerptLines"
 					/>
@@ -304,7 +304,7 @@ export const Estados: StoryObj<StoryCardTeaserV3Component & { loading: boolean }
 						[order]="order"
 						[tagLabel]="tagLabel"
 						[showAuthor]="showAuthor"
-						[showDescription]="showDescription"
+						[showExcerpt]="showExcerpt"
 						[showMultimedia]="showMultimedia"
 						[excerptLines]="excerptLines"
 					/>
@@ -319,7 +319,7 @@ export const Estados: StoryObj<StoryCardTeaserV3Component & { loading: boolean }
 		order: 1,
 		tagLabel: 'Cuento',
 		showAuthor: true,
-		showDescription: true,
+		showExcerpt: true,
 		showMultimedia: true,
 		excerptLines: 2,
 	},

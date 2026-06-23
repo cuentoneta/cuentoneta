@@ -5,7 +5,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { faBrandFacebook, faBrandTwitter, faBrandWhatsapp } from '@ng-icons/font-awesome/brands';
 
 const meta: Meta<ButtonComponent> = {
-	title: 'Components/Button',
+	title: 'Componentes V3/Button',
 	component: ButtonComponent,
 	parameters: {
 		layout: 'centered',

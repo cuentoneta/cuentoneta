@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { NgTemplateOutlet } from '@angular/common';
 
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton.component';
 import { StoryCardTeaserV3Variant } from './story-card-teaser-v3.component';
 
 /**
@@ -13,22 +14,18 @@ import { StoryCardTeaserV3Variant } from './story-card-teaser-v3.component';
  */
 @Component({
 	selector: 'cuentoneta-story-card-teaser-v3-skeleton',
-	imports: [SkeletonComponent, NgTemplateOutlet],
+	imports: [SkeletonComponent, NgTemplateOutlet, CoverImageSkeletonComponent],
 	host: { class: 'block' },
 	template: `
 		<article [class]="rowWrapperClasses()">
-			<cuentoneta-skeleton
-				[class.order-last]="variant() === 'highlighted'"
-				appearance="square"
-				class="h-[164px] w-[118px] shrink-0 rounded-lg bg-neutral-300"
-			/>
+			<cuentoneta-cover-image-skeleton [class.order-last]="variant() === 'highlighted'" />
 			<div [class]="rowColumnClasses()">
 				@if (showAuthor()) {
 					<ng-container [ngTemplateOutlet]="author" />
 				}
 				<div class="flex w-full flex-col gap-2">
 					<cuentoneta-skeleton appearance="line" class="h-6 w-full max-w-64 bg-neutral-300" />
-					@if (showDescription()) {
+					@if (showExcerpt()) {
 						<div class="flex flex-col gap-1">
 							@for (line of descriptionLines(); track $index) {
 								<cuentoneta-skeleton
@@ -65,7 +62,7 @@ export class StoryCardTeaserV3SkeletonComponent {
 	public readonly variant = input<StoryCardTeaserV3Variant>('on-white');
 	public readonly order = input<number>();
 	public readonly showAuthor = input<boolean>(false);
-	public readonly showDescription = input<boolean>(false);
+	public readonly showExcerpt = input<boolean>(false);
 	public readonly showMultimedia = input<boolean>(false);
 	public readonly excerptLines = input<number>(2);
 

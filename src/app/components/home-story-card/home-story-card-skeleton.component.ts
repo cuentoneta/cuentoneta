@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton.component';
 
 /**
  * Estado de carga (esqueleto) de HomeStoryCardComponent. Replica la estructura de la tarjeta
@@ -9,12 +10,12 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
  */
 @Component({
 	selector: 'cuentoneta-home-story-card-skeleton',
-	imports: [SkeletonComponent],
+	imports: [SkeletonComponent, CoverImageSkeletonComponent],
 	host: { class: 'block' },
 	template: `
 		<article class="flex w-full max-w-82.75 flex-col items-center gap-4">
 			<div class="flex w-full items-center justify-center rounded-xl bg-neutral-100 py-5">
-				<cuentoneta-skeleton appearance="square" class="h-[164px] w-[118px] rounded-lg bg-neutral-300" />
+				<cuentoneta-cover-image-skeleton />
 			</div>
 			<div class="flex w-full flex-col gap-1">
 				<div class="flex items-center gap-2">

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 import type { StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
@@ -11,6 +11,7 @@ import {
 } from '../story-media-selectors/story-media-selectors.component';
 import { StoryCardTeaserV3SkeletonComponent } from './story-card-teaser-v3-skeleton.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
+import { CoverImageComponent } from '../cover-image/cover-image.component';
 
 /**
  * Variantes visuales del componente StoryCardTeaser definidas en el Design System v3.
@@ -24,13 +25,13 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
 @Component({
 	selector: 'cuentoneta-story-card-teaser-v3',
 	imports: [
-		NgOptimizedImage,
 		NgTemplateOutlet,
 		RouterLink,
 		PortableTextParserComponent,
 		StoryMediaSelectorsComponent,
 		StoryCardTeaserV3SkeletonComponent,
 		ImageProfileComponent,
+		CoverImageComponent,
 	],
 	template: `
 		@if (story(); as story) {
@@ -54,7 +55,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
 								}
 								<span>{{ story.title }}</span>
 							</p>
-							@if (showDescription() && story.paragraphs.length > 0) {
+							@if (showExcerpt() && story.paragraphs.length > 0) {
 								<cuentoneta-portable-text-parser
 									[paragraphs]="story.paragraphs"
 									[class]="'line-clamp-' + excerptLines()"
@@ -75,37 +76,21 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
 				[variant]="variant()"
 				[order]="order()"
 				[showAuthor]="showAuthor()"
-				[showDescription]="showDescription()"
+				[showExcerpt]="showExcerpt()"
 				[showMultimedia]="showMultimedia()"
 				[excerptLines]="excerptLines()"
 				data-testid="skeleton"
 			/>
 		}
 
-		<!-- Imagen alusiva a la historia (o placeholder mientras no haya URL disponible). Es decorativa: el
-			 click se delega al enlace de la historia, estirado sobre toda la tarjeta. En highlighted va a la
-			 derecha (order-last); en el resto, a la izquierda. -->
+		<!-- Portada: la posiciona la tarjeta (en highlighted va a la derecha con order-last; en el resto,
+			 a la izquierda). El manejo de imagen/placeholder vive en CoverImageComponent. -->
 		<ng-template #cover>
-			<div
+			<cuentoneta-cover-image
+				[src]="coverImageUrl()"
+				[priority]="priority()"
 				[class.order-last]="variant() === 'highlighted'"
-				class="h-41 w-29.5 shrink-0 overflow-hidden rounded-lg bg-neutral-300"
-			>
-				@if (coverImageUrl(); as url) {
-					<img
-						[ngSrc]="url"
-						[width]="coverWidth"
-						[height]="coverHeight"
-						[priority]="priority()"
-						alt=""
-						class="h-full w-full object-cover"
-						data-testid="cover-image"
-					/>
-				} @else {
-					<div class="flex h-full w-full items-center justify-center" data-testid="cover-placeholder">
-						<img [ngSrc]="'./assets/svg/cover-placeholder.svg'" width="60" height="60" alt="" />
-					</div>
-				}
-			</div>
+			/>
 		</ng-template>
 
 		<!-- Autor: avatar pequeño + nombre. Implementación propia del card (Design System v3): no usa
@@ -150,10 +135,6 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
 export class StoryCardTeaserV3Component {
 	protected readonly appRoutes = AppRoutes;
 
-	// Dimensiones intrínsecas del cover (px). El tamaño visual se controla por CSS (h-41 w-29.5).
-	protected readonly coverWidth = 118;
-	protected readonly coverHeight = 164;
-
 	// Inputs
 	public readonly story = input<StoryNavigationTeaserWithAuthor | StoryTeaserWithAuthor | StoryTeaser>();
 	public readonly variant = input<StoryCardTeaserV3Variant>('on-white');
@@ -163,7 +144,7 @@ export class StoryCardTeaserV3Component {
 	public readonly priority = input<boolean>(false);
 	public readonly tagLabel = input<string>();
 	public readonly showAuthor = input<boolean>(false);
-	public readonly showDescription = input<boolean>(false);
+	public readonly showExcerpt = input<boolean>(false);
 	public readonly showMultimedia = input<boolean>(false);
 	// Acotado a [1, 10] para coincidir con el safelist `line-clamp-{1..10}` de styles.css,
 	// ya que la clase `line-clamp-N` se construye dinámicamente y no la detecta el escaneo de Tailwind.
