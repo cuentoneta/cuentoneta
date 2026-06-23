@@ -2,6 +2,7 @@ import { Author, AuthorTeaser } from './author.model';
 import { TextBlockContent } from '@models/block-content.model';
 import { Media } from '@models/media.model';
 import { Resource } from '@models/resource.model';
+import { Tag } from '@models/tag.model';
 
 interface StoryBase {
 	_id: string;
@@ -10,6 +11,7 @@ interface StoryBase {
 	approximateReadingTime: number;
 	badLanguage?: boolean;
 	resources: Resource[];
+	tags: Tag[];
 	paragraphs: TextBlockContent[];
 	media: Media[];
 	originalPublication: string;

@@ -140,6 +140,17 @@ export default defineType({
 			],
 		}),
 		defineField({
+			name: 'tags',
+			title: 'Etiquetas',
+			type: 'array',
+			of: [
+				defineArrayMember({
+					type: 'reference',
+					to: [{ type: 'tag' }],
+				}),
+			],
+		}),
+		defineField({
 			name: 'body',
 			title: 'Cuerpo del cuento',
 			type: 'blockContent',

@@ -1,5 +1,6 @@
 import { TextBlockContent } from '@models/block-content.model';
 import { Resource } from '@models/resource.model';
+import { Tag } from '@models/tag.model';
 import { DateString, IsoDateTime } from '@utils/date.utils';
 
 export type AuthorNationality = { country: string; flag: string };
@@ -10,6 +11,7 @@ interface AuthorBase {
 	name: string;
 	imageUrl: string;
 	nationality: AuthorNationality;
+	tags: Tag[];
 	bornOn?: DateString;
 	diedOn?: DateString;
 	bornOnYear?: number;

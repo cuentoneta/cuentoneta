@@ -1,14 +1,15 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton.component';
 
 @Component({
 	selector: 'cuentoneta-collection-teaser-skeleton',
-	imports: [SkeletonComponent],
+	imports: [SkeletonComponent, CoverImageSkeletonComponent],
 	template: `
 		<article class="flex items-start gap-5">
 			<section class="flex h-[192px] flex-1 items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3">
-				<cuentoneta-skeleton appearance="line" class="-mb-2 h-[164px] w-[118px] bg-neutral-300" />
+				<cuentoneta-cover-image-skeleton class="-mb-2" />
 			</section>
 			<section class="flex flex-1 flex-col gap-1 overflow-hidden">
 				<cuentoneta-skeleton appearance="line" class="h-[18px] w-4/5 bg-neutral-300" />
