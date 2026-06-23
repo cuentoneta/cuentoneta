@@ -7,7 +7,7 @@ import { storylistMock } from '@mocks/storylist.mock';
 
 const meta: Meta<CollectionTeaser> = {
 	component: CollectionTeaser,
-	title: 'Componentes/CollectionTeaser',
+	title: 'Componentes V3/CollectionTeaser',
 	decorators: [
 		applicationConfig({
 			providers: [provideRouter([])],
