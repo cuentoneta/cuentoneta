@@ -47,7 +47,7 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 | `pnpm install`                            | Instala dependencias                 |
 | `pnpm dev`                                | Dev server (SSR) en desarrollo       |
 | `pnpm build`                              | Build de producción                  |
-| `pnpm lint`                               | ESLint sobre `src/**/*.{ts,html}`    |
+| `pnpm lint`                               | ESLint sobre `src`                   |
 | `pnpm stylelint`                          | Stylelint sobre CSS                  |
 | `pnpm test`                               | Tests unitarios (Vitest)             |
 | `pnpm test:watch`                         | Tests en watch                       |
