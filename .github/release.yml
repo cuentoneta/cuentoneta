@@ -1,0 +1,9 @@
+# Configura el listado de PRs que GitHub genera automáticamente para las release
+# notes (--generate-notes / botón "Generate release notes"). La categoría catch-all
+# agrupa todos los PRs bajo el encabezado "Bitácora de cambios", reproduciendo el
+# formato histórico de las releases del proyecto en vez del default "What's Changed".
+changelog:
+  categories:
+    - title: Bitácora de cambios
+      labels:
+        - '*'

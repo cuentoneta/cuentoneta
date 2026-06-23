@@ -99,9 +99,13 @@ jobs:
         run: |
           set -euo pipefail
           echo "::group::Creando release ${VERSION}"
+          # --notes-file (prosa curada del CHANGELOG) se antepone al listado de PRs
+          # que genera --generate-notes desde el tag anterior. El encabezado de ese
+          # listado ("Bitácora de cambios") lo define .github/release.yml.
           gh release create "$VERSION" \
             --title "$VERSION" \
             --notes-file "$NOTES_FILE" \
+            --generate-notes \
             --target master
           echo "::endgroup::"
           echo "Release ${VERSION} publicado."
