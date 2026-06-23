@@ -29,6 +29,9 @@ const storyMock: StoryTeaserWithAuthor = {
 	media: richMedia,
 };
 
+// Las descripciones de la doc van en una sola línea: el renderer de Markdown de los autodocs
+// interpreta como bloque de código cualquier línea con indentación, así que un HTML multilínea
+// indentado se mostraría dentro de un recuadro de código.
 const meta: Meta<HomeStoryCardComponent> = {
 	component: HomeStoryCardComponent,
 	title: 'Componentes V3/HomeStoryCard',
@@ -42,20 +45,7 @@ const meta: Meta<HomeStoryCardComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div>
-					<p>Utilizado para representar una vista previa de una historia en la Home. Resume la información principal
-					del contenido, incluyendo autor, título, categoría, tiempo estimado de lectura, imagen asociada y accesos a
-					archivos multimediales como video, X o Spotify.</p>
-						<p>Su objetivo es facilitar un vistazo rápido del contenido disponible y ayudar al usuario a decidir si
-						quiere profundizar en la historia.</p>
-						<p>Derivada de StoryCardTeaserV3, presenta un layout vertical angosto con la imagen, la numeración y los
-						selectores de multimedia apilados sobre un contenedor gris.</p>
-					<ul>
-						<li>El título de la historia se trunca siempre a una sola línea.</li>
-						<li>Los selectores de multimedia usan siempre la variante <code>Filled</code> del MediaTag (recuadros blancos sobre el gris).</li>
-						<li>El avatar y el nombre del autor son elementos clickeables que enlazan al perfil del autor; en estado hover, el nombre se subraya.</li>
-					</ul>
-				</div>`,
+				component: `<div><p>Utilizado para representar una vista previa de una historia en la Home. Resume la información principal del contenido, incluyendo autor, título, categoría, tiempo estimado de lectura, imagen asociada y accesos a archivos multimediales como video, X o Spotify.</p><p>Su objetivo es facilitar un vistazo rápido del contenido disponible y ayudar al usuario a decidir si quiere profundizar en la historia.</p><p>Derivada de <a href="./?path=/docs/componentes-v3-storycardteaserv3--docs" target="_top"><strong>StoryCardTeaserV3</strong></a>, presenta un layout vertical angosto con la imagen, la numeración y los selectores de multimedia apilados sobre un contenedor gris.</p><ul><li>El título de la historia se trunca siempre a una sola línea.</li><li>Los selectores de multimedia usan siempre la variante <code>Filled</code> del MediaTag (recuadros blancos sobre el gris).</li><li>El avatar y el nombre del autor son elementos clickeables que enlazan al perfil del autor; en estado hover, el nombre se subraya.</li></ul></div>`,
 			},
 		},
 		layout: 'padded',
@@ -132,13 +122,7 @@ export const Default: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante Default: tarjeta de home con el cover, la numeración y los selectores de multimedia apilados sobre el contenedor gris, más el autor y el título. Cuando la historia contenga un archivo multimedial para ser reproducido se va a visualizar con un MediaTag, y este deberá utilizarse siempre en su variante <code>Filled</code>.</p>
-						<p><strong>Comportamiento:</strong></p>
-						<ul>
-							<li>El título se trunca a un máximo de 1 línea.</li>
-							<li>El avatar y el nombre del autor son elementos clickeables. En estado hover, el nombre se subraya para reforzar la affordance de enlace y permitir el acceso directo al perfil del autor y debe aplicarse únicamente sobre los elementos vinculados al autor, sin afectar el resto del contenido de la card.</li>
-						</ul>
-						<p><strong>Usos:</strong> Home.</p>`,
+				story: `<p>Variante Default: tarjeta de home con el cover, la numeración y los selectores de multimedia apilados sobre el contenedor gris, más el autor y el título. Cuando la historia contenga un archivo multimedial para ser reproducido se va a visualizar con un MediaTag, y este deberá utilizarse siempre en su variante <code>Filled</code>.</p><p><strong>Comportamiento:</strong></p><ul><li>El título se trunca a un máximo de 1 línea.</li><li>El avatar y el nombre del autor son elementos clickeables. En estado hover, el nombre se subraya para reforzar la affordance de enlace y permitir el acceso directo al perfil del autor y debe aplicarse únicamente sobre los elementos vinculados al autor, sin afectar el resto del contenido de la card.</li></ul><p><strong>Usos:</strong> Home.</p>`,
 			},
 		},
 	},
