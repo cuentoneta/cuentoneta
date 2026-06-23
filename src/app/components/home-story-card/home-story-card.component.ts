@@ -78,7 +78,7 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
 					<!-- Autor: enlace propio a /author/:slug, elevado (z-10) por encima del enlace estirado. -->
 					<a
 						[routerLink]="['/', appRoutes.Author, story.author.slug]"
-						class="relative z-10 flex min-w-0 items-center gap-2"
+						class="group relative z-10 flex min-w-0 items-center gap-2"
 						data-testid="author"
 					>
 						<cuentoneta-image-profile
@@ -87,7 +87,9 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
 							size="small"
 							class="shrink-0"
 						/>
-						<span class="truncate font-inter text-sm font-medium text-neutral-900">{{ story.author.name }}</span>
+						<span class="truncate font-inter text-sm font-medium text-neutral-900 group-hover:underline">{{
+							story.author.name
+						}}</span>
 					</a>
 					<!-- Enlace de la historia estirado con ::after para cubrir toda la tarjeta (sin wrapper <a>).
 						 El truncate va en el span interno: el ::after se recortaría si el <a> tuviera overflow-hidden. -->

@@ -42,8 +42,13 @@ const meta: Meta<StoryCardTeaserV3Component> = {
 			canvas: { sourceState: 'shown' },
 			description: {
 				component: `<div>
-					<p>El componente **StoryCardTeaserV3Component** es la versión 3 de la tarjeta de vista previa de una historia,
-					basada en el Design System v3 de La Cuentoneta. Se implementa en tres variantes seleccionables mediante el input <code>variant</code>:</p>
+					<p>Utilizado para representar una vista previa de una historia dentro de listados o secciones de exploración.
+					Resume la información principal del contenido, incluyendo autor, título, texto truncado, categoría, tiempo
+						estimado de lectura, imagen asociada y accesos a archivos multimediales como video, X o Spotify.</p>
+						<p>Su objetivo es facilitar una lectura rápida del contenido disponible y ayudar al usuario a decidir si
+						quiere profundizar en la historia. Puede adaptarse a distintas estructuras visuales según el contexto de uso,
+						manteniendo consistencia en la jerarquía de información y en las acciones disponibles.</p>
+						<p>Se implementa en tres variantes seleccionables mediante el input <code>variant</code>:</p>
 					<ul>
 						<li><strong>OnWhite</strong> (<code>on-white</code>): layout horizontal con imagen a la izquierda, para fondos blancos.</li>
 						<li><strong>OnGray</strong> (<code>on-gray</code>): igual a OnWhite con selectores de multimedia en blanco, para fondos grises.</li>
@@ -160,7 +165,14 @@ export const OnWhite: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Variante OnWhite: layout horizontal con la imagen a la izquierda, pensada para fondos blancos.',
+				story: `<p>Variante OnWhite: layout horizontal con la imagen a la izquierda, pensada para fondos blancos. Cuando la historia contenga un archivo multimedial para ser reproducido se va a visualizar con un MediaTag, y este deberá utilizarse siempre en su variante <code>Gray</code>.</p>
+						<p><strong>Comportamiento:</strong></p>
+						<ul>
+							<li>El título se trunca a un máximo de 2 líneas.</li>
+							<li>El extracto se trunca a un máximo de 2 líneas.</li>
+							<li>El avatar y el nombre del autor son elementos clickeables. En estado hover, el nombre se subraya para reforzar la affordance de enlace y permitir el acceso directo al perfil del autor y debe aplicarse únicamente sobre los elementos vinculados al autor, sin afectar el resto del contenido de la card.</li>
+						</ul>
+						<p><strong>Usos:</strong> Story List, Author List.</p>`,
 			},
 		},
 	},
@@ -185,8 +197,14 @@ export const OnGray: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story:
-					'Variante OnGray: idéntica a OnWhite pero con los selectores de multimedia en blanco, para fondos grises.',
+				story: `<p>Variante OnGray: idéntica a OnWhite pero con los selectores de multimedia en blanco, pensada para fondos grises. Cuando la historia contenga un archivo multimedial para ser reproducido se va a visualizar con un MediaTag, y este deberá utilizarse siempre en su variante <code>Filled</code>.</p>
+						<p><strong>Comportamiento:</strong></p>
+						<ul>
+							<li>El título se trunca a un máximo de 2 líneas.</li>
+							<li>El extracto se trunca a un máximo de 2 líneas.</li>
+							<li>El avatar y el nombre del autor son elementos clickeables. En estado hover, el nombre se subraya para reforzar la affordance de enlace y permitir el acceso directo al perfil del autor y debe aplicarse únicamente sobre los elementos vinculados al autor, sin afectar el resto del contenido de la card.</li>
+						</ul>
+						<p><strong>Usos:</strong> Story {Footer}.</p>`,
 			},
 		},
 	},
@@ -210,7 +228,18 @@ export const Highlighted: Story = {
 	},
 	parameters: {
 		docs: {
-			description: { story: 'Variante Highlighted: tarjeta destacada con borde y fondo, con la imagen a la derecha.' },
+			description: {
+				story: `<p>Variante destacada del componente, utilizada para dar mayor relevancia visual a una historia dentro de un listado o sección específica; tarjeta con borde y fondo, con la imagen a la derecha. Cuando la historia contenga un archivo multimedial para ser reproducido se va a visualizar con un MediaTag, y este deberá utilizarse siempre en su variante <code>Filled</code>.</p>
+						<p><strong>Comportamiento:</strong></p>
+						<ul>
+							<li>El título se trunca a un máximo de 2 líneas.</li>
+							<li>El extracto se trunca a un máximo de 2 líneas.</li>
+							<li>El avatar y el nombre del autor son elementos clickeables. En estado hover, el nombre se subraya para reforzar la affordance de enlace y permitir el acceso directo al perfil del autor y debe aplicarse únicamente sobre los elementos vinculados al autor, sin afectar el resto del contenido de la card.</li>
+							<li>En Story List, se muestra el avatar y el nombre del autor.</li>
+							<li>En Author List, se ocultan el avatar y el nombre del autor.</li>
+						</ul>
+						<p><strong>Usos:</strong> Story List, Author List.</p>`,
+			},
 		},
 	},
 };

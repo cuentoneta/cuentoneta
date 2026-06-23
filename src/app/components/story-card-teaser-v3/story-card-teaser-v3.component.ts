@@ -114,7 +114,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
 		<ng-template #author let-author>
 			<a
 				[routerLink]="['/', appRoutes.Author, author.slug]"
-				class="relative z-10 flex min-w-0 items-center gap-2"
+				class="group relative z-10 flex min-w-0 items-center gap-2"
 				data-testid="author"
 			>
 				<cuentoneta-image-profile
@@ -123,7 +123,9 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
 					size="small"
 					class="shrink-0"
 				/>
-				<span class="truncate font-inter text-sm font-medium text-neutral-900">{{ author.name }}</span>
+				<span class="truncate font-inter text-sm font-medium text-neutral-900 group-hover:underline">{{
+					author.name
+				}}</span>
 			</a>
 		</ng-template>
 
