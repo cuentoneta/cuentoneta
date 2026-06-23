@@ -28,7 +28,7 @@ import { StoryCardTeaserV3Variant } from './story-card-teaser-v3.component';
 				}
 				<div class="flex w-full flex-col gap-2">
 					<cuentoneta-skeleton appearance="line" class="h-6 w-full max-w-64 bg-neutral-300" />
-					@if (showDescription()) {
+					@if (showExcerpt()) {
 						<div class="flex flex-col gap-1">
 							@for (line of descriptionLines(); track $index) {
 								<cuentoneta-skeleton
@@ -65,7 +65,7 @@ export class StoryCardTeaserV3SkeletonComponent {
 	public readonly variant = input<StoryCardTeaserV3Variant>('on-white');
 	public readonly order = input<number>();
 	public readonly showAuthor = input<boolean>(false);
-	public readonly showDescription = input<boolean>(false);
+	public readonly showExcerpt = input<boolean>(false);
 	public readonly showMultimedia = input<boolean>(false);
 	public readonly excerptLines = input<number>(2);
 

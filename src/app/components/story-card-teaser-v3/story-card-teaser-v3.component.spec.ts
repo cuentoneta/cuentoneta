@@ -141,30 +141,30 @@ describe('StoryCardTeaserV3Component', () => {
 	describe('Description', () => {
 		const storyWithParagraphs: StoryTeaserWithAuthor = { ...storyTeaserMock, author: authorTeaserMock };
 
-		it('should display the description when showDescription is true and there are paragraphs', async () => {
+		it('should display the description when showExcerpt is true and there are paragraphs', async () => {
 			await render(StoryCardTeaserV3Component, {
-				inputs: { story: storyWithParagraphs, showDescription: true, excerptLines: 2 },
+				inputs: { story: storyWithParagraphs, showExcerpt: true, excerptLines: 2 },
 			});
 			expect(screen.getByTestId('description')).toBeInTheDocument();
 		});
 
-		it('should not display the description when showDescription is false', async () => {
+		it('should not display the description when showExcerpt is false', async () => {
 			await render(StoryCardTeaserV3Component, {
-				inputs: { story: storyWithParagraphs, showDescription: false },
+				inputs: { story: storyWithParagraphs, showExcerpt: false },
 			});
 			expect(screen.queryByTestId('description')).not.toBeInTheDocument();
 		});
 
 		it('should apply the configured number of excerpt lines', async () => {
 			await render(StoryCardTeaserV3Component, {
-				inputs: { story: storyWithParagraphs, showDescription: true, excerptLines: 3 },
+				inputs: { story: storyWithParagraphs, showExcerpt: true, excerptLines: 3 },
 			});
 			expect(screen.getByTestId('description')).toHaveClass('line-clamp-3');
 		});
 
 		it('should clamp excerptLines to the supported range (1-10)', async () => {
 			await render(StoryCardTeaserV3Component, {
-				inputs: { story: storyWithParagraphs, showDescription: true, excerptLines: 99 },
+				inputs: { story: storyWithParagraphs, showExcerpt: true, excerptLines: 99 },
 			});
 			expect(screen.getByTestId('description')).toHaveClass('line-clamp-10');
 		});

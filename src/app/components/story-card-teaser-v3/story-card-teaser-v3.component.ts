@@ -54,7 +54,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
 								}
 								<span>{{ story.title }}</span>
 							</p>
-							@if (showDescription() && story.paragraphs.length > 0) {
+							@if (showExcerpt() && story.paragraphs.length > 0) {
 								<cuentoneta-portable-text-parser
 									[paragraphs]="story.paragraphs"
 									[class]="'line-clamp-' + excerptLines()"
@@ -75,7 +75,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
 				[variant]="variant()"
 				[order]="order()"
 				[showAuthor]="showAuthor()"
-				[showDescription]="showDescription()"
+				[showExcerpt]="showExcerpt()"
 				[showMultimedia]="showMultimedia()"
 				[excerptLines]="excerptLines()"
 				data-testid="skeleton"
@@ -163,7 +163,7 @@ export class StoryCardTeaserV3Component {
 	public readonly priority = input<boolean>(false);
 	public readonly tagLabel = input<string>();
 	public readonly showAuthor = input<boolean>(false);
-	public readonly showDescription = input<boolean>(false);
+	public readonly showExcerpt = input<boolean>(false);
 	public readonly showMultimedia = input<boolean>(false);
 	// Acotado a [1, 10] para coincidir con el safelist `line-clamp-{1..10}` de styles.css,
 	// ya que la clase `line-clamp-N` se construye dinámicamente y no la detecta el escaneo de Tailwind.
