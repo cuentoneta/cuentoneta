@@ -33,9 +33,8 @@ export class TagComponent {
 		gray: 'rounded-sm bg-neutral-950-40 px-1.5 py-1 text-xxs text-neutral-50',
 	};
 
-	// Capitalización por variante (DS v3 / Figma): `soft` y `gray` muestran el texto en sentence-case
-	// (primera letra en mayúscula, resto en minúsculas) transformando el contenido; `filled` lo deja
-	// intacto y aplica mayúsculas vía CSS (clase `uppercase`), preservando el texto original.
+	// `filled` aplica las mayúsculas vía CSS (no acá) para preservar el texto original; `soft`/`gray`
+	// transforman el contenido a sentence-case, que CSS no puede hacer sobre la primera letra del string.
 	protected readonly displayLabel = computed(() => {
 		const label = this.label();
 		if (this.variant() === 'filled') {

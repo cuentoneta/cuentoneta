@@ -3,8 +3,6 @@ import { argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angul
 import { TagComponent } from './tag.component';
 import { TagSkeletonComponent } from './tag-skeleton.component';
 
-// Las descripciones de la doc van en una sola línea: el Markdown de los autodocs interpreta como
-// bloque de código cualquier línea con indentación. Los componentes mencionados se enlazan a su story.
 const meta: Meta<TagComponent> = {
 	component: TagComponent,
 	title: 'Componentes V3/Tag',
