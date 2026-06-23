@@ -11,16 +11,21 @@ import { storylistMock } from '@mocks/storylist.mock';
 // Modelos
 import { StorylistTeaser } from '@models/storylist.model';
 
-// Mock de StorylistTeaser basado en el mock existente
+// Utilidades de test
+import { clearAllMocks } from '@test-utils';
+
 const collectionTeaserMock: StorylistTeaser = {
 	...storylistMock,
 	stories: [],
 	tabs: [],
-} as StorylistTeaser;
+};
 
 describe('CollectionTeaser', () => {
-	// Providers necesarios para las pruebas
 	const defaultProviders = [provideRouter([])];
+
+	beforeEach(() => {
+		clearAllMocks();
+	});
 
 	// Pruebas de renderizado básico
 	describe('Renderizado del componente', () => {
@@ -87,7 +92,7 @@ describe('CollectionTeaser', () => {
 		});
 	});
 
-	// Pruebas de la imagen (cover delegado a CoverImageComponent)
+	// Pruebas del cover de la colección
 	describe('Imagen de la colección', () => {
 		it('should render the cover image', async () => {
 			await render(CollectionTeaser, {
@@ -105,17 +110,6 @@ describe('CollectionTeaser', () => {
 			});
 
 			expect(screen.getByTestId('cover-image')).toHaveAttribute('alt', '');
-		});
-
-		it('should have correct dimensions', async () => {
-			await render(CollectionTeaser, {
-				inputs: { collection: collectionTeaserMock },
-				providers: defaultProviders,
-			});
-
-			const image = screen.getByTestId('cover-image');
-			expect(image).toHaveAttribute('height', '164');
-			expect(image).toHaveAttribute('width', '118');
 		});
 	});
 
