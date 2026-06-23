@@ -19,7 +19,8 @@ describe('StorylistTitle', () => {
 		await deferBlock.render(DeferBlockState.Complete);
 
 		for (const tag of storylistMock.tags) {
-			expect(screen.getByText(tag.title)).toBeInTheDocument();
+			// La clase `uppercase` confirma que el tag se renderiza con la variante `filled`.
+			expect(screen.getByText(tag.title)).toHaveClass('uppercase');
 		}
 	});
 
