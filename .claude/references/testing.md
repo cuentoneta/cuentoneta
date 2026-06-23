@@ -296,6 +296,20 @@ Para dependencias de DI usá los decoradores `moduleMetadata({ imports, provider
 
 **Siempre** actualizá las stories cuando cambien inputs, estados visuales o la API pública del componente.
 
+### Documentación de la descripción (`description`)
+
+`docs.description.component` y `docs.description.story` se renderizan como **Markdown** en los autodocs. Reglas:
+
+- **Una sola línea por descripción.** El render de Markdown trata cualquier línea con indentación (tab / ≥ 4 espacios) como bloque de código, así que un HTML multilínea indentado se muestra dentro de un recuadro de código. Escribí el HTML de la descripción en una sola línea (sin saltos ni indentación interna).
+- **Negrita para nombres de componentes.** El nombre del componente documentado y el de cualquier otro componente mencionado van en `<strong>…</strong>`.
+- **Enlace navegable a otros componentes.** Cuando la descripción menciona otro componente documentado, su nombre debe ser un enlace que navegue a la story de ese componente. Como la doc se renderiza dentro de `iframe.html`, usá un enlace relativo a la raíz del Storybook (robusto ante subpaths de deploy) con `target="_top"`:
+
+  ```html
+  <a href="./?path=/docs/<kind-id>--docs" target="_top"><strong>StoryCardTeaserV3</strong></a>
+  ```
+
+  El `<kind-id>` se deriva del `title` (minúsculas; espacios y `/` → `-`): `Componentes V3/StoryCardTeaserV3` → `componentes-v3-storycardteaserv3`. El sufijo `--docs` apunta a la página de autodocs.
+
 ### Estado de carga (skeleton) → story intercambiable (obligatoria)
 
 Si el componente tiene un **estado de carga** (renderiza un skeleton), su story debe exponer ese estado de forma **intercambiable**: un control booleano (`loading` / "Cargando") que alterna entre el estado real y el skeleton **en el mismo slot**, para poder evaluar la transición y la alineación 1:1 (sobre todo el **alto**, que es el que produce jitter de layout). Es obligatoria para todo componente con estado de carga; su omisión es bloqueante en review (ver [`coding-agent-policies.md`](coding-agent-policies.md)).
