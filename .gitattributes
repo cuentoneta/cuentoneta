@@ -1,0 +1,3 @@
+# Los scripts de shell deben mantener fin de línea LF aunque se editen en Windows:
+# el CI los ejecuta con bash en Linux y un CR los rompería.
+*.sh text eol=lf
