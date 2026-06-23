@@ -70,16 +70,15 @@ beforeEach(() => {
 
 ```typescript
 import { render, screen } from '@testing-library/angular';
-import { BadgeComponent } from './badge.component';
-import { tagMock } from '../../mocks/tag.mocks';
+import { TagComponent } from './tag.component';
 
-describe('BadgeComponent', () => {
-	it('should display the badge title', async () => {
-		await render(BadgeComponent, {
-			inputs: { tag: tagMock, showIcon: true },
+describe('TagComponent', () => {
+	it('should display the label', async () => {
+		await render(TagComponent, {
+			inputs: { label: 'Crónica', variant: 'soft' },
 		});
 
-		expect(screen.getByText(tagMock.title)).toBeInTheDocument();
+		expect(screen.getByText('Crónica')).toBeInTheDocument();
 	});
 });
 ```
