@@ -14,4 +14,11 @@ describe('CoverImageComponent', () => {
 		expect(screen.getByTestId('cover-placeholder')).toBeInTheDocument();
 		expect(screen.queryByTestId('cover-image')).not.toBeInTheDocument();
 	});
+
+	it('should render the cover at the fixed 118×164 dimensions', async () => {
+		await render(CoverImageComponent, { inputs: { src: 'https://example.com/cover.jpg' } });
+		const image = screen.getByTestId('cover-image');
+		expect(image).toHaveAttribute('width', '118');
+		expect(image).toHaveAttribute('height', '164');
+	});
 });
