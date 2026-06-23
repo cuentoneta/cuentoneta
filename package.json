@@ -20,7 +20,7 @@
 		"delete-unused-assets": "node --import tsx --env-file=.env ./scripts/delete-unused-assets.ts",
 		"storybook": "nx run @cuentoneta/app:storybook",
 		"storybook:build": "nx run @cuentoneta/app:build-storybook",
-		"lint": "nx lint --skip-nx-cache",
+		"lint": "nx eslint:lint --skip-nx-cache",
 		"stylelint": "nx stylelint @cuentoneta/app",
 		"test": "nx test --skip-nx-cache",
 		"test:watch": "nx test --watch",

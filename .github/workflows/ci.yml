@@ -147,7 +147,7 @@ jobs:
             nx-cache-lint-
 
       - name: Run Linter
-        run: bash .github/scripts/nx-run.sh nx lint
+        run: bash .github/scripts/nx-run.sh nx eslint:lint
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 

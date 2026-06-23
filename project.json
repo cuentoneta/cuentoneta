@@ -61,13 +61,6 @@
 			},
 			"defaultConfiguration": "production"
 		},
-		"lint": {
-			"executor": "@nx/eslint:lint",
-			"outputs": ["{options.outputFile}"],
-			"options": {
-				"lintFilePatterns": ["./src/**/*.ts", "./src/**/*.html"]
-			}
-		},
 		"test": {
 			"executor": "@nx/vitest:test",
 			"outputs": ["{options.reportsDirectory}"],
