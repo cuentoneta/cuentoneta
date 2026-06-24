@@ -1,0 +1,154 @@
+name: Release (tag + notas + deploy Studio)
+
+# Crea el tag, publica el GitHub Release con las notas del CHANGELOG y hace el
+# deploy de Sanity Studio al mergear develop → master con la versión bumpeada en
+# package.json. El deploy de la app en Vercel lo cubre la integración Git nativa
+# de Vercel — este workflow no lo toca.
+#
+# Prerequisitos (secrets del repo):
+#   - SANITY_AUTH_TOKEN: robot token de manage.sanity.io con permisos de deploy del Studio.
+#     Mismo token que usa sync-datasets.yml; ya existe.
+#   - SANITY_STUDIO_PROJECT_ID: id del proyecto Sanity (s4dbqkc5). Ya existe.
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Crear tag y GitHub Release
+    runs-on: ubuntu-latest
+    outputs:
+      # 'true' si se creó el release en esta corrida; 'false' si el tag ya existía.
+      # Es un string ('true'/'false'), no un booleano — el job deploy-studio lo
+      # compara como string para no re-deployar en pushes sin cambio de versión.
+      should_deploy: ${{ steps.check-tag.outputs.should_deploy }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.0
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v6.4.0
+        with:
+          node-version: 22.22.3
+
+      - name: Leer versión de package.json
+        id: version
+        run: |
+          set -euo pipefail
+          version=$(node -p "require('./package.json').version")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Versión detectada: $version"
+
+      - name: Verificar si el tag ya existe (idempotencia)
+        id: check-tag
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          # ls-remote con un refspec exacto solo devuelve el tag si existe (no hace
+          # match por prefijo), así que basta con chequear si la salida es no-vacía.
+          if [ -n "$(git ls-remote --tags origin "refs/tags/${VERSION}")" ]; then
+            echo "El tag ${VERSION} ya existe. No se vuelve a crear el release."
+            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "El tag ${VERSION} no existe. Se procede con el release."
+            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Extraer notas del CHANGELOG.md
+        id: notes
+        if: steps.check-tag.outputs.should_deploy == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          # awk con comparación literal (index, no regex) para que los puntos de la
+          # versión no actúen como metacaracteres. Imprime el cuerpo entre el header
+          # de la versión y el próximo "## Versión" (o EOF, si es la sección más
+          # reciente). El error si queda vacío fuerza que el bump de versión vaya
+          # siempre acompañado de su entrada de CHANGELOG.
+          notes=$(awk -v ver="$VERSION" '
+            BEGIN { header = "## Versión " ver }
+            index($0, header) == 1 {
+              after = substr($0, length(header) + 1, 1)
+              if (after == "" || after == " ") { found = 1; next }
+            }
+            found && index($0, "## Versión ") == 1 { exit }
+            found { print }
+          ' CHANGELOG.md)
+          if [ -z "${notes//[[:space:]]/}" ]; then
+            echo "::error::No se encontró la sección '## Versión ${VERSION}' en CHANGELOG.md. Agregá la entrada antes de mergear a master." >&2
+            exit 1
+          fi
+          # Archivo temporal para evitar problemas de quoting con caracteres
+          # especiales al pasar las notas a gh release create.
+          echo "$notes" > "${RUNNER_TEMP}/release-notes.md"
+          echo "notes_file=${RUNNER_TEMP}/release-notes.md" >> "$GITHUB_OUTPUT"
+
+      - name: Crear tag y publicar GitHub Release
+        if: steps.check-tag.outputs.should_deploy == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+          NOTES_FILE: ${{ steps.notes.outputs.notes_file }}
+        run: |
+          set -euo pipefail
+          echo "::group::Creando release ${VERSION}"
+          # --notes-file (prosa curada del CHANGELOG) se antepone al listado de PRs
+          # que genera --generate-notes desde el tag anterior. El encabezado de ese
+          # listado ("Bitácora de cambios") lo define .github/release.yml.
+          gh release create "$VERSION" \
+            --title "$VERSION" \
+            --notes-file "$NOTES_FILE" \
+            --generate-notes \
+            --target master
+          echo "::endgroup::"
+          echo "Release ${VERSION} publicado."
+
+  deploy-studio:
+    name: Deploy Sanity Studio
+    needs: release
+    # should_deploy es un string ('true'/'false'); solo corre si release creó un
+    # release nuevo en esta corrida.
+    if: needs.release.outputs.should_deploy == 'true'
+    runs-on: ubuntu-latest
+
+    env:
+      SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+      SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID }}
+      # El CLI de Sanity corre desatendido cuando CI=true (Actions ya lo setea;
+      # explícito por robustez ante un cambio futuro del runner).
+      CI: 'true'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.0
+
+      - name: Select pnpm as package manager
+        uses: pnpm/action-setup@v6.0.9
+        with:
+          version: 10.12.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v6.4.0
+        with:
+          node-version: 22.22.3
+          cache: 'pnpm'
+          cache-dependency-path: cms/pnpm-lock.yaml
+
+      - name: Install CMS dependencies
+        working-directory: cms
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Deploy Sanity Studio
+        working-directory: cms
+        run: |
+          set -euo pipefail
+          echo "::group::Deploy de Sanity Studio"
+          pnpm exec sanity deploy
+          echo "::endgroup::"
