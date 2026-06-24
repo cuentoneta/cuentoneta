@@ -168,9 +168,6 @@ export class HeadMetadataDirective {
 	private readonly defaultOgImageAlt = 'Logo de La Cuentoneta';
 
 	public setImage(url: string, alt: string, width?: number, height?: number) {
-		if (url === this.defaultOgImageUrl && alt === this.defaultOgImageAlt) {
-			return;
-		}
 		this.metaTagService.updateTag({ property: 'og:image', content: url });
 		this.metaTagService.updateTag({ property: 'og:image:alt', content: alt });
 		this.setImageDimensions(width, height);

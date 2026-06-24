@@ -468,16 +468,6 @@ describe('HeadMetadataDirective', () => {
 			expect(removeSpy).toHaveBeenCalledWith('property="og:image:height"');
 			expect(removeSpy).not.toHaveBeenCalledWith('property="og:image:width"');
 		});
-
-		it('should skip updates when url and alt match the default logo fallback', () => {
-			const updateSpy = spyOn(metaService, 'updateTag');
-			const removeSpy = spyOn(metaService, 'removeTag');
-
-			directive.setImage('assets/svg/logo.svg', 'Logo de La Cuentoneta', 1200, 630);
-
-			expect(updateSpy).not.toHaveBeenCalled();
-			expect(removeSpy).not.toHaveBeenCalled();
-		});
 	});
 
 	describe('removeImage', () => {
