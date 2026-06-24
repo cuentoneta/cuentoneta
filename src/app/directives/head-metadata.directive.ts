@@ -21,6 +21,7 @@ export class HeadMetadataDirective {
 			this.removeRobots();
 			this.removeAuthor();
 			this.removeArticleDates();
+			this.removeImage();
 		});
 	});
 
@@ -158,5 +159,39 @@ export class HeadMetadataDirective {
 
 	public removeRobots() {
 		this.metaTagService.removeTag('name="robots"');
+	}
+
+	// El fallback de OG image coincide con el <meta property="og:image"> estático de indexFile.html.
+	// A diferencia del resto de los tags —que se eliminan al limpiar— la imagen se resetea al logo
+	// para que una página sin imagen dedicada siga exponiendo un og:image/twitter:image válido.
+	private readonly defaultOgImageUrl = 'assets/svg/logo.svg';
+	private readonly defaultOgImageAlt = 'Logo de La Cuentoneta';
+
+	public setImage(url: string, alt: string, width?: number, height?: number) {
+		this.metaTagService.updateTag({ property: 'og:image', content: url });
+		this.metaTagService.updateTag({ property: 'og:image:alt', content: alt });
+		this.setImageDimensions(width, height);
+		this.metaTagService.updateTag({ name: 'twitter:image', content: url });
+	}
+
+	public removeImage() {
+		this.metaTagService.updateTag({ property: 'og:image', content: this.defaultOgImageUrl });
+		this.metaTagService.updateTag({ property: 'og:image:alt', content: this.defaultOgImageAlt });
+		this.metaTagService.removeTag('property="og:image:width"');
+		this.metaTagService.removeTag('property="og:image:height"');
+		this.metaTagService.updateTag({ name: 'twitter:image', content: this.defaultOgImageUrl });
+	}
+
+	private setImageDimensions(width?: number, height?: number) {
+		if (width !== undefined) {
+			this.metaTagService.updateTag({ property: 'og:image:width', content: String(width) });
+		} else {
+			this.metaTagService.removeTag('property="og:image:width"');
+		}
+		if (height !== undefined) {
+			this.metaTagService.updateTag({ property: 'og:image:height', content: String(height) });
+		} else {
+			this.metaTagService.removeTag('property="og:image:height"');
+		}
 	}
 }
