@@ -11,16 +11,21 @@ import { storylistMock } from '@mocks/storylist.mock';
 // Modelos
 import { StorylistTeaser } from '@models/storylist.model';
 
-// Mock de StorylistTeaser basado en el mock existente
+// Utilidades de test
+import { clearAllMocks } from '@test-utils';
+
 const collectionTeaserMock: StorylistTeaser = {
 	...storylistMock,
 	stories: [],
 	tabs: [],
-} as StorylistTeaser;
+};
 
 describe('CollectionTeaser', () => {
-	// Providers necesarios para las pruebas
 	const defaultProviders = [provideRouter([])];
+
+	beforeEach(() => {
+		clearAllMocks();
+	});
 
 	// Pruebas de renderizado básico
 	describe('Renderizado del componente', () => {
@@ -87,37 +92,24 @@ describe('CollectionTeaser', () => {
 		});
 	});
 
-	// Pruebas de la imagen
+	// Pruebas del cover de la colección
 	describe('Imagen de la colección', () => {
-		it('should render the featured image', async () => {
+		it('should render the cover image', async () => {
 			await render(CollectionTeaser, {
 				inputs: { collection: collectionTeaserMock },
 				providers: defaultProviders,
 			});
 
-			const image = screen.getByRole('img');
-			expect(image).toBeInTheDocument();
+			expect(screen.getByTestId('cover-image')).toBeInTheDocument();
 		});
 
-		it('should have correct alt text', async () => {
+		it('should render a decorative cover with empty alt', async () => {
 			await render(CollectionTeaser, {
 				inputs: { collection: collectionTeaserMock },
 				providers: defaultProviders,
 			});
 
-			const image = screen.getByRole('img');
-			expect(image).toHaveAttribute('alt', `Imagen alusiva a la storylist ${collectionTeaserMock.title}`);
-		});
-
-		it('should have correct dimensions', async () => {
-			await render(CollectionTeaser, {
-				inputs: { collection: collectionTeaserMock },
-				providers: defaultProviders,
-			});
-
-			const image = screen.getByRole('img');
-			expect(image).toHaveAttribute('height', '164');
-			expect(image).toHaveAttribute('width', '118');
+			expect(screen.getByTestId('cover-image')).toHaveAttribute('alt', '');
 		});
 	});
 
@@ -233,15 +225,16 @@ describe('CollectionTeaser', () => {
 			expect(link).toBeInTheDocument();
 		});
 
-		it('should have accessible image with alt text', async () => {
+		it('should have a decorative cover and the link named by the collection title', async () => {
 			await render(CollectionTeaser, {
 				inputs: { collection: collectionTeaserMock },
 				providers: defaultProviders,
 			});
 
-			const image = screen.getByRole('img');
-			expect(image).toHaveAttribute('alt');
-			expect(image.getAttribute('alt')).not.toBe('');
+			// El cover es decorativo (alt vacío); el nombre accesible del enlace lo aporta el título.
+			expect(screen.getByTestId('cover-image')).toHaveAttribute('alt', '');
+			const link = screen.getByRole('link');
+			expect(within(link).getByText(collectionTeaserMock.title)).toBeInTheDocument();
 		});
 
 		it('should use semantic article element', async () => {

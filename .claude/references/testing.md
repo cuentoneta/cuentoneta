@@ -70,16 +70,15 @@ beforeEach(() => {
 
 ```typescript
 import { render, screen } from '@testing-library/angular';
-import { BadgeComponent } from './badge.component';
-import { tagMock } from '../../mocks/tag.mocks';
+import { TagComponent } from './tag.component';
 
-describe('BadgeComponent', () => {
-	it('should display the badge title', async () => {
-		await render(BadgeComponent, {
-			inputs: { tag: tagMock, showIcon: true },
+describe('TagComponent', () => {
+	it('should display the label', async () => {
+		await render(TagComponent, {
+			inputs: { label: 'Crónica', variant: 'soft' },
 		});
 
-		expect(screen.getByText(tagMock.title)).toBeInTheDocument();
+		expect(screen.getByText('Crónica')).toBeInTheDocument();
 	});
 });
 ```
@@ -295,6 +294,20 @@ export const Soft: Story = {
 Para dependencias de DI usá los decoradores `moduleMetadata({ imports, providers })` (imports/iconos por story) o `applicationConfig({ providers })` (servicios globales: Router, etc.).
 
 **Siempre** actualizá las stories cuando cambien inputs, estados visuales o la API pública del componente.
+
+### Documentación de la descripción (`description`)
+
+`docs.description.component` y `docs.description.story` se renderizan como **Markdown** en los autodocs. Reglas:
+
+- **Una sola línea por descripción.** El render de Markdown trata cualquier línea con indentación (tab / ≥ 4 espacios) como bloque de código, así que un HTML multilínea indentado se muestra dentro de un recuadro de código. Escribí el HTML de la descripción en una sola línea (sin saltos ni indentación interna).
+- **Negrita para nombres de componentes.** El nombre del componente documentado y el de cualquier otro componente mencionado van en `<strong>…</strong>`.
+- **Enlace navegable a otros componentes.** Cuando la descripción menciona otro componente documentado, su nombre debe ser un enlace que navegue a la story de ese componente. Como la doc se renderiza dentro de `iframe.html`, usá un enlace relativo a la raíz del Storybook (robusto ante subpaths de deploy) con `target="_top"`:
+
+  ```html
+  <a href="./?path=/docs/<kind-id>--docs" target="_top"><strong>StoryCardTeaserV3</strong></a>
+  ```
+
+  El `<kind-id>` se deriva del `title` (minúsculas; espacios y `/` → `-`): `Componentes V3/StoryCardTeaserV3` → `componentes-v3-storycardteaserv3`. El sufijo `--docs` apunta a la página de autodocs.
 
 ### Estado de carga (skeleton) → story intercambiable (obligatoria)
 

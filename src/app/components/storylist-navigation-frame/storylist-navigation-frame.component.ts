@@ -93,7 +93,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	 * @author Ramiro Olivencia <ramiro@olivencia.com.ar>
 	 */
 	private sliceDisplayedStories(stories: StoryNavigationTeaserWithAuthor[]): void {
-		if (!this.storylist) {
+		if (!this.storylist()) {
 			return;
 		}
 

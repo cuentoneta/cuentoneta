@@ -66,6 +66,7 @@
 	--radius-md: 6px;
 	--radius-lg: 8px;
 	--radius-xl: 12px;
+	--radius-2xl: 16px;
 	--radius-full: 1000px;
 
 	/* Design System V3 - Blur (también alimenta a backdrop-blur en v4) */

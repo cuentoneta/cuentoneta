@@ -10,10 +10,9 @@ assignees: ''
 
 - [ ] Ajustar changelog.
 - [ ] Actualizar versión en package.json.
-- [ ] Sanity: Hacer deploy de Sanity Studio.
 - [ ] Sanity: Determinar si hay scripts de actualización de datos a ejecutar.
-- [ ] Generar release desde GitHub.
-  - [ ] Listar todos los issues agregados a la release.
+- [ ] ~~Generar release desde GitHub (tag + notas)~~ _(automatizado por el workflow `release.yml` al mergear a master)_
+- [ ] ~~Sanity: Hacer deploy de Sanity Studio~~ _(automatizado por el workflow `release.yml` al mergear a master)_
 - [ ] Chequear si deben actualizarse en la documentación del proyecto las versiones de herramientas o dependencias
 
 `(Agregar otras tareas particulares de la versión, en caso de que sea necesario)`

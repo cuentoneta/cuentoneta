@@ -20,7 +20,7 @@ const media: Media[] = [
 
 const meta: Meta<StoryMediaSelectorsComponent> = {
 	component: StoryMediaSelectorsComponent,
-	title: 'Componentes/StoryMediaSelectors',
+	title: 'Componentes V3/StoryMediaSelectors',
 	parameters: {
 		docs: {
 			canvas: {
