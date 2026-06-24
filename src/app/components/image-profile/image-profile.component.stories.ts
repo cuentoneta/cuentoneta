@@ -10,7 +10,7 @@ const alt = `Retrato de ${authorTeaserMock.name}`;
 
 const meta: Meta<ImageProfileComponent> = {
 	component: ImageProfileComponent,
-	title: 'Componentes/ImageProfile',
+	title: 'Componentes V3/ImageProfile',
 	parameters: {
 		docs: {
 			canvas: {

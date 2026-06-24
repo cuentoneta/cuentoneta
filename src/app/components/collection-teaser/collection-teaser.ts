@@ -10,11 +10,11 @@ import { StorylistTeaser } from '@models/storylist.model';
 
 // Components
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
-import { NgOptimizedImage } from '@angular/common';
+import { CoverImageComponent } from '../cover-image/cover-image.component';
 
 @Component({
 	selector: 'cuentoneta-collection-teaser',
-	imports: [RouterLink, PortableTextParserComponent, NgOptimizedImage],
+	imports: [RouterLink, PortableTextParserComponent, CoverImageComponent],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `
 		<article>
@@ -23,13 +23,7 @@ import { NgOptimizedImage } from '@angular/common';
 					<section
 						class="flex h-[192px] items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3 sm:flex-1"
 					>
-						<img
-							[ngSrc]="storylist.featuredImage"
-							[alt]="'Imagen alusiva a la storylist ' + storylist.title"
-							class="mb-[-8px]"
-							height="164"
-							width="118"
-						/>
+						<cuentoneta-cover-image [src]="storylist.featuredImage" class="-mb-2" />
 					</section>
 					<section class="flex flex-1 flex-col gap-1 overflow-hidden">
 						<header

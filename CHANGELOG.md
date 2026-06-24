@@ -16,6 +16,33 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.8.1 (2026-06-23)
+
+La versión 2.8.1 continúa la implementación del Design System V3 con cuatro nuevas entregas: el componente `StoryCardTeaserV3` y el nuevo `HomeStoryCard`, el reemplazo de `BadgeComponent` por `TagComponent` en todos sus usos con documentación de story desde Figma, la adopción de `CoverImageComponent` en el `CollectionTeaser` y la reconciliación de tags en las vistas de story y autor con soporte de override de color.
+
+En paralelo, moderniza el tooling y la infraestructura de CI: actualización de Nx a la versión 23.0, angular-eslint a 21.4.0 con migración del executor `@nx/eslint:lint` deprecado, la migración de la configuración de Sanity TypeGen a `sanity.cli.ts`, la automatización completa del flujo de release (tag + release notes + deploy de Sanity Studio) y la configuración de Dependabot para el auto-bump de GitHub Actions.
+
+### Cambios completos
+
+Ver el changelog completo en [2.8.1](https://github.com/cuentoneta/cuentoneta/releases/tag/2.8.1)
+
+### Cambios
+
+#### Design System V3 y componentes
+
+- [#1510] - Implementación de `StoryCardTeaserV3` y `HomeStoryCard` (Design System V3).
+- [#1629] - Reemplazo de `BadgeComponent` por `TagComponent` y documentación de su story desde Figma.
+- [#1633] - Adopción de `CoverImageComponent` en `CollectionTeaser`.
+- [#1569] - Tags en las vistas de story y autor, reconciliación de tags de autor y override de color en tag.
+
+#### Tooling, CI y mantenimiento
+
+- [#1640] - Actualización de angular-eslint a 21.4.0 y migración del executor `@nx/eslint:lint` deprecado.
+- [#1622] - Actualización de Nx a la versión 23.0.
+- [#1624] - Migración de la configuración de Sanity TypeGen de `sanity-typegen.json` a `sanity.cli.ts`.
+- [#1590] - Automatización del flujo de release: tag, release notes y deploy de Sanity Studio.
+- [#1584] - Configuración de Dependabot para el auto-bump de versiones de GitHub Actions.
+
 ## Versión 2.8.0 (2026-06-20)
 
 La versión 2.8.0 implementa parcialmente el Design System V3 con una nueva familia de componentes —avatares circulares, tags con recorte por ancho, teasers de autor y skeletons de carga propios— y reemplaza la dependencia `ngx-skeleton-loader` por una implementación in-house.
