@@ -2,11 +2,16 @@ import { applicationConfig, Meta, moduleMetadata, StoryObj } from '@storybook/an
 import { CollectionTeaser } from './collection-teaser';
 import { provideRouter } from '@angular/router';
 import { CollectionTeaserSkeletonComponent } from './collection-teaser-skeleton';
-import { collectionCoverImagesMock, storylistMock } from '@mocks/storylist.mock';
+import { collectionCoverImagesMock, collectionCoverImagesWithGapMock, storylistMock } from '@mocks/storylist.mock';
 import { StorylistTeaser } from '@models/storylist.model';
 
 const collectionMock: StorylistTeaser = { ...storylistMock, stories: [], tabs: [] };
 const collectionMultipleMock: StorylistTeaser = { ...collectionMock, coverImages: collectionCoverImagesMock };
+const collectionSinglePlaceholderMock: StorylistTeaser = { ...collectionMock, featuredImage: '', coverImages: [] };
+const collectionMultiplePlaceholderMock: StorylistTeaser = {
+	...collectionMock,
+	coverImages: collectionCoverImagesWithGapMock,
+};
 
 const meta: Meta<CollectionTeaser> = {
 	component: CollectionTeaser,
@@ -69,6 +74,47 @@ export const Multiple = {
 			description: {
 				story:
 					'Variante Multiple: abanico de 3 portadas (las de los primeros 3 textos) para colecciones de distintos autores.',
+			},
+		},
+	},
+};
+
+export const SinglePlaceholder = {
+	render: (args: CollectionTeaser) => ({
+		props: args,
+		template: `
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+          <cuentoneta-collection-teaser class="card" [collection]="collection"/>
+    </div>
+`,
+	}),
+	args: {
+		collection: collectionSinglePlaceholderMock,
+	},
+	parameters: {
+		docs: {
+			description: { story: 'Variante Single sin portada: CoverImage muestra el placeholder del Design System.' },
+		},
+	},
+};
+
+export const MultiplePlaceholder = {
+	render: (args: CollectionTeaser) => ({
+		props: args,
+		template: `
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+          <cuentoneta-collection-teaser class="card" [collection]="collection"/>
+    </div>
+`,
+	}),
+	args: {
+		collection: collectionMultiplePlaceholderMock,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Variante Multiple con una portada faltante: el slot sin imagen muestra el placeholder dentro del abanico.',
 			},
 		},
 	},
