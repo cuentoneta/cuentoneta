@@ -1,5 +1,5 @@
 // Core
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 // Router
 import { RouterLink } from '@angular/router';
@@ -21,9 +21,24 @@ import { CoverImageComponent } from '../cover-image/cover-image.component';
 			@if (collection(); as storylist) {
 				<a [routerLink]="['/' + appRoutes.StoryList, storylist.slug]" class="navigation-link flex items-start gap-5">
 					<section
-						class="flex h-[192px] items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3 sm:flex-1"
+						class="relative flex h-[192px] items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3 sm:flex-1"
 					>
-						<cuentoneta-cover-image [src]="storylist.featuredImage" class="-mb-2" />
+						@if (isFanout()) {
+							<cuentoneta-cover-image
+								[src]="coverImages()[1]"
+								class="absolute top-[calc(50%_+_39.35px)] left-[calc(50%_-_82.75px)] z-10 -translate-x-1/2 -translate-y-1/2 border-[3px] border-neutral-100"
+							/>
+							<cuentoneta-cover-image
+								[src]="coverImages()[2] ?? coverImages()[0]"
+								class="absolute top-[calc(50%_+_39.35px)] left-[calc(50%_+_83.03px)] z-10 -translate-x-1/2 -translate-y-1/2 border-[3px] border-neutral-100"
+							/>
+							<cuentoneta-cover-image
+								[src]="coverImages()[0]"
+								class="absolute bottom-[-8px] left-1/2 z-20 -translate-x-1/2 border-[3px] border-neutral-100"
+							/>
+						} @else {
+							<cuentoneta-cover-image [src]="storylist.featuredImage" class="-mb-2" />
+						}
 					</section>
 					<section class="flex flex-1 flex-col gap-1 overflow-hidden">
 						<header
@@ -52,4 +67,10 @@ import { CoverImageComponent } from '../cover-image/cover-image.component';
 export class CollectionTeaser {
 	public readonly collection = input<StorylistTeaser>();
 	protected readonly appRoutes = AppRoutes;
+
+	protected readonly coverImages = computed(() => this.collection()?.coverImages ?? []);
+
+	// La variante Multiple (abanico) representa colecciones de distintos autores. Como cada portada es la
+	// imagen del autor del texto, ≥2 portadas distintas equivale a ≥2 autores distintos entre los primeros textos.
+	protected readonly isFanout = computed(() => new Set(this.coverImages()).size >= 2);
 }

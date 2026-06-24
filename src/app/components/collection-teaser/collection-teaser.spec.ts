@@ -20,6 +20,16 @@ const collectionTeaserMock: StorylistTeaser = {
 	tabs: [],
 };
 
+const fanoutCoverImages = [
+	'https://example.test/cover-a.jpg',
+	'https://example.test/cover-b.jpg',
+	'https://example.test/cover-c.jpg',
+];
+
+function teaserWithCoverImages(coverImages: string[]): StorylistTeaser {
+	return { ...collectionTeaserMock, coverImages };
+}
+
 describe('CollectionTeaser', () => {
 	const defaultProviders = [provideRouter([])];
 
@@ -110,6 +120,57 @@ describe('CollectionTeaser', () => {
 			});
 
 			expect(screen.getByTestId('cover-image')).toHaveAttribute('alt', '');
+		});
+	});
+
+	// Variante Multiple: abanico de 3 portadas para colecciones de distintos autores.
+	describe('Variante Multiple (abanico de portadas)', () => {
+		it('should render 3 cover images when there are 2 or more distinct cover images', async () => {
+			await render(CollectionTeaser, {
+				inputs: { collection: teaserWithCoverImages(fanoutCoverImages) },
+				providers: defaultProviders,
+			});
+
+			expect(screen.getAllByTestId('cover-image')).toHaveLength(3);
+		});
+
+		it('should render a single cover (featuredImage) when coverImages is empty', async () => {
+			await render(CollectionTeaser, {
+				inputs: { collection: teaserWithCoverImages([]) },
+				providers: defaultProviders,
+			});
+
+			expect(screen.getAllByTestId('cover-image')).toHaveLength(1);
+		});
+
+		// Distintos autores ⟺ distintas portadas: portadas repetidas (un solo autor) no activan el abanico.
+		it('should render a single cover when all cover images are identical (single author)', async () => {
+			const sameAuthor = fanoutCoverImages[0];
+			await render(CollectionTeaser, {
+				inputs: { collection: teaserWithCoverImages([sameAuthor, sameAuthor, sameAuthor]) },
+				providers: defaultProviders,
+			});
+
+			expect(screen.getAllByTestId('cover-image')).toHaveLength(1);
+		});
+
+		it('should still render 3 covers when only 2 distinct images are provided (third falls back)', async () => {
+			await render(CollectionTeaser, {
+				inputs: { collection: teaserWithCoverImages(fanoutCoverImages.slice(0, 2)) },
+				providers: defaultProviders,
+			});
+
+			expect(screen.getAllByTestId('cover-image')).toHaveLength(3);
+		});
+
+		it('should place coverImages[0] as the front (last in DOM) cover', async () => {
+			await render(CollectionTeaser, {
+				inputs: { collection: teaserWithCoverImages(fanoutCoverImages) },
+				providers: defaultProviders,
+			});
+
+			const covers = screen.getAllByTestId('cover-image');
+			expect(covers[covers.length - 1]).toHaveAttribute('src', fanoutCoverImages[0]);
 		});
 	});
 
