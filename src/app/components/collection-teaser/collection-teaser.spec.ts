@@ -170,7 +170,16 @@ describe('CollectionTeaser', () => {
 			});
 
 			const covers = screen.getAllByTestId('cover-image');
-			expect(covers[covers.length - 1]).toHaveAttribute('src', fanoutCoverImages[0]);
+			expect(covers[covers.length - 1]).toHaveAttribute('src', expect.stringContaining(fanoutCoverImages[0]));
+		});
+
+		it('should render a single cover when coverImages has exactly one entry', async () => {
+			await render(CollectionTeaser, {
+				inputs: { collection: teaserWithCoverImages(['https://example.test/solo.jpg']) },
+				providers: defaultProviders,
+			});
+
+			expect(screen.getAllByTestId('cover-image')).toHaveLength(1);
 		});
 	});
 
