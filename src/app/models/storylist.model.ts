@@ -17,6 +17,8 @@ interface StorylistBase<T> {
 	count: number;
 	description: TextBlockContent[];
 	featuredImage: string;
+	// Portadas (imagen del autor) de las primeras 3 historias; alimentan la variante Multiple del CollectionTeaser.
+	coverImages: string[];
 	tags: Tag[];
 	stories: T[];
 	config: {

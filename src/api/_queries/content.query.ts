@@ -61,6 +61,7 @@ export const landingPageContentQuery = defineQuery(`
         'slug': slug.current,
         description,
         featuredImage,
+        'coverImages': coalesce(stories[0...3]->author->image, []),
         'tags': coalesce(tags[] -> {
             title,
             'slug': slug.current,

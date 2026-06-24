@@ -274,6 +274,7 @@ interface Storylist {
 	// Contenido
 	description: TextBlockContent[]; // Descripción de la colección
 	featuredImage: string; // URL de imagen destacada
+	coverImages: string[]; // Portadas (autor) de las primeras 3 historias; variante Multiple del CollectionTeaser
 	tags: Tag[]; // Etiquetas de categorización
 
 	// Configuración

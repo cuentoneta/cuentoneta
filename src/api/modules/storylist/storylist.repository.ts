@@ -17,6 +17,7 @@ import { mapMediaSources, mapMediaSourcesTeasers } from '../../_utils/media-sour
 import {
 	mapAuthorTeaser,
 	mapBlockContentToTextParagraphs,
+	mapCoverImages,
 	mapStoryTeaserWithAuthor,
 	mapTags,
 	urlFor,
@@ -34,6 +35,7 @@ export async function fetchAllStorylistTeasers(): Promise<StorylistTeaser[]> {
 		description: mapBlockContentToTextParagraphs(item.description),
 		tags: mapTags(item.tags),
 		featuredImage: urlFor(item.featuredImage),
+		coverImages: mapCoverImages(item.coverImages),
 		tabs: [],
 		media: mapMediaSourcesTeasers(item.mediaSources),
 	}));
@@ -69,6 +71,7 @@ export async function fetchStorylistBySlug(slug: string): Promise<Storylist> {
 		description: mapBlockContentToTextParagraphs(result.description),
 		tags: mapTags(result.tags),
 		featuredImage: urlFor(result.featuredImage),
+		coverImages: [],
 		stories,
 		tabs: result.tabs.map((tab) => ({
 			title: tab.title,
@@ -103,6 +106,7 @@ export async function fetchStorylistStoriesNavigationTeaserByStorylistSlug(
 		description: mapBlockContentToTextParagraphs(result.description),
 		tags: mapTags(result.tags),
 		featuredImage: urlFor(result.featuredImage),
+		coverImages: [],
 		stories: result.stories.map((story) => ({
 			...story,
 			author: mapAuthorTeaser(story.author),

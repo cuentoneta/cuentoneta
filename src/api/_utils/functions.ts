@@ -189,9 +189,15 @@ function mapStorylistTeasers(result: StorylistTeasersQueryResult): StorylistTeas
 		description: mapBlockContentToTextParagraphs(item.description),
 		tags: mapTags(item.tags),
 		featuredImage: urlFor(item.featuredImage),
+		coverImages: mapCoverImages(item.coverImages),
 		tabs: [],
 		media: mapMediaSourcesTeasers(item.mediaSources),
 	}));
+}
+
+type CoverImagesSubQuery = NonNullable<StorylistTeasersQueryResult>[0]['coverImages'];
+export function mapCoverImages(coverImages: CoverImagesSubQuery): string[] {
+	return coverImages.map((image) => (image ? urlFor(image) : '')).filter(Boolean);
 }
 
 // TODO: Agregar soporte a futuro para mapear imágenes dentro del cuerpo de una story

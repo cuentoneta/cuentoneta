@@ -7,6 +7,7 @@ export const storylistTeasersQuery = defineQuery(`
     title,
     description,
     featuredImage,
+    'coverImages': coalesce(stories[0...3]->author->image, []),
     'tags': coalesce(tags[] -> {
         title,
         'slug': slug.current,
