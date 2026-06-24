@@ -195,9 +195,11 @@ function mapStorylistTeasers(result: StorylistTeasersQueryResult): StorylistTeas
 	}));
 }
 
-type CoverImagesSubQuery = NonNullable<StorylistTeasersQueryResult>[0]['coverImages'];
+type CoverImagesSubQuery =
+	| NonNullable<StorylistTeasersQueryResult>[0]['coverImages']
+	| NonNullable<LandingPageContentQueryResult>['cards'][0]['coverImages'];
 export function mapCoverImages(coverImages: CoverImagesSubQuery): string[] {
-	return coverImages.map((image) => (image ? urlFor(image) : '')).filter(Boolean);
+	return coverImages.map((image) => urlFor(image)).filter(Boolean);
 }
 
 // TODO: Agregar soporte a futuro para mapear imágenes dentro del cuerpo de una story
