@@ -29,7 +29,7 @@ const boxed = (width: string) =>
 
 const meta: Meta<Args> = {
 	component: TagsListComponent,
-	title: 'Componentes/TagsList',
+	title: 'Componentes V3/TagsList',
 	decorators: [moduleMetadata({ imports: [TagComponent] })],
 	parameters: {
 		docs: {
