@@ -36,6 +36,7 @@ export const storylistMock: Storylist = {
 };
 
 // Portadas de ejemplo (imágenes de autores) para ejercitar la variante Multiple del CollectionTeaser.
+// images[0] === images[2] a propósito: ejercita el fallback del tercer slot con solo 2 autores distintos.
 export const collectionCoverImagesMock: string[] = [
 	'https://cdn.sanity.io/images/s4dbqkc5/production/f656d95d41369adb6f7d3a7d0b20b36861fd2028-350x350.jpg',
 	'https://cdn.sanity.io/images/s4dbqkc5/production/edd62a3131bd1f46e796e473d0b2b12d1c63c229-1024x1536.png',

@@ -71,12 +71,13 @@ export class CollectionTeaser {
 
 	protected readonly coverImages = computed(() => this.collection()?.coverImages ?? []);
 
-	// La variante Multiple (abanico) representa colecciones de distintos autores. Como cada portada es la
-	// imagen del autor del texto, ≥2 portadas distintas equivale a ≥2 autores distintos entre los primeros textos.
+	// Cada portada es la imagen del autor del texto, así que portadas distintas implican autores distintos: el
+	// abanico (variante Multiple) representa colecciones multi-autor. No se usa config.showAuthors: esa flag
+	// controla los nombres en los teasers, no las portadas.
 	protected readonly isFanout = computed(() => new Set(this.coverImages()).size >= 2);
 
-	// Posiciones del abanico; con solo 2 portadas disponibles, la lateral derecha repite la frontal.
 	protected readonly fanoutCovers = computed(() => {
+		// Con solo 2 portadas, la lateral derecha repite la frontal en vez de mostrar el placeholder.
 		const [front, left, right = front] = this.coverImages();
 		return { front, left, right };
 	});

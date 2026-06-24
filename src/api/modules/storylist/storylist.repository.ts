@@ -71,6 +71,7 @@ export async function fetchStorylistBySlug(slug: string): Promise<Storylist> {
 		description: mapBlockContentToTextParagraphs(result.description),
 		tags: mapTags(result.tags),
 		featuredImage: urlFor(result.featuredImage),
+		// El abanico solo se consume en los teasers; las queries de detalle no proyectan las portadas.
 		coverImages: [],
 		stories,
 		tabs: result.tabs.map((tab) => ({
@@ -106,6 +107,7 @@ export async function fetchStorylistStoriesNavigationTeaserByStorylistSlug(
 		description: mapBlockContentToTextParagraphs(result.description),
 		tags: mapTags(result.tags),
 		featuredImage: urlFor(result.featuredImage),
+		// El abanico solo se consume en los teasers; las queries de detalle no proyectan las portadas.
 		coverImages: [],
 		stories: result.stories.map((story) => ({
 			...story,
