@@ -7,7 +7,7 @@ import { ContentCampaign } from '@models/content-campaign.model';
 
 const meta: Meta<CarouselComponent> = {
 	component: CarouselComponent,
-	title: 'Componentes/Carousel',
+	title: 'Componentes V3/Carousel',
 	decorators: [
 		applicationConfig({
 			providers: [provideRouter([])],

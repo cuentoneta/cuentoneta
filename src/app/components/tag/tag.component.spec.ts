@@ -7,20 +7,20 @@ describe('TagComponent', () => {
 		expect(screen.getByText('Crónica')).toBeInTheDocument();
 	});
 
-	it('should apply the soft variant by default (text only, no background)', async () => {
-		await render(TagComponent, { inputs: { label: 'Crónica' } });
+	it('should apply the soft variant by default and sentence-case the label', async () => {
+		await render(TagComponent, { inputs: { label: 'CRÓNICA', variant: 'soft' } });
 		const tag = screen.getByText('Crónica');
 		expect(tag).toHaveClass('text-xs', 'text-brand-500');
 		expect(tag).not.toHaveClass('bg-brand-50');
 	});
 
-	it('should apply the filled variant chrome (uppercase pill)', async () => {
-		await render(TagComponent, { inputs: { label: 'Crónica', variant: 'filled' } });
-		expect(screen.getByText('Crónica')).toHaveClass('bg-brand-50', 'text-brand-500', 'text-xxs', 'uppercase');
+	it('should apply the filled variant chrome and keep the label text (uppercase via CSS)', async () => {
+		await render(TagComponent, { inputs: { label: 'crónica', variant: 'filled' } });
+		expect(screen.getByText('crónica')).toHaveClass('bg-brand-50', 'text-brand-500', 'text-xxs', 'uppercase');
 	});
 
-	it('should apply the gray variant chrome (translucent pill)', async () => {
-		await render(TagComponent, { inputs: { label: 'Crónica', variant: 'gray' } });
+	it('should apply the gray variant chrome and sentence-case the label', async () => {
+		await render(TagComponent, { inputs: { label: 'crónica', variant: 'gray' } });
 		expect(screen.getByText('Crónica')).toHaveClass('bg-neutral-950-40', 'text-neutral-50', 'text-xxs');
 	});
 });

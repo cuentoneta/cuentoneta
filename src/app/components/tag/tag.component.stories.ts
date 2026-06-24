@@ -12,15 +12,7 @@ const meta: Meta<TagComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div>
-					<p>El componente **TagComponent** es la etiqueta (tag) del Design System v3. Reemplaza progresivamente
-					a <code>BadgeComponent</code>. Soporta tres variantes (input <code>variant</code>):</p>
-					<ul>
-						<li><strong>soft</strong> (default): solo texto en brand-500, sin fondo.</li>
-						<li><strong>filled</strong>: pill brand-50 con texto brand-500 en mayúsculas.</li>
-						<li><strong>gray</strong>: pill translúcido oscuro con texto claro, para mostrarse sobre imágenes.</li>
-					</ul>
-				</div>`,
+				component: `<div><p>La etiqueta (tag) del Design System v3, <strong>TagComponent</strong>: muestra un texto breve con el estilo y la capitalización correspondientes a la variante elegida (input <code>variant</code>).</p><ul><li><strong>soft</strong> (default): solo texto en brand-500, sin fondo; sentence-case.</li><li><strong>filled</strong>: pill brand-50 con el texto en mayúsculas.</li><li><strong>gray</strong>: pill translúcido oscuro con texto claro, pensado para mostrarse sobre imágenes; sentence-case.</li></ul></div>`,
 			},
 		},
 		layout: 'padded',
@@ -41,16 +33,37 @@ type Story = StoryObj<TagComponent>;
 export const Soft: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-tag ${argsToTemplate(args)} />` }),
 	args: { label: 'Crónica', variant: 'soft' },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Variante <strong>soft</strong> (default): solo texto en brand-500, sin fondo. Comportamiento (Figma): la primera letra del texto en mayúscula y el resto en minúsculas (sentence-case).</p><p><strong>Usos:</strong> Home (en <a href="./?path=/docs/componentes-collectionteaser--docs" target="_top"><strong>CollectionTeaser</strong></a> y <a href="./?path=/docs/componentes-v3-homestorycard--docs" target="_top"><strong>HomeStoryCard</strong></a>); Story, Story List y Author Profile (en <a href="./?path=/docs/componentes-v3-storycardteaserv3--docs" target="_top"><strong>StoryCardTeaserV3</strong></a>).</p>`,
+			},
+		},
+	},
 };
 
 export const Filled: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-tag ${argsToTemplate(args)} />` }),
 	args: { label: 'Crónica', variant: 'filled' },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Variante <strong>filled</strong>: pill brand-50 con el texto en mayúsculas (aplicadas vía CSS). Comportamiento (Figma): todo el texto en mayúsculas.</p><p><strong>Usos:</strong> Home (en <a href="./?path=/docs/componentes-v3-authorteaserv3--docs" target="_top"><strong>AuthorTeaserV3</strong></a>), Story List y Author Profile.</p>`,
+			},
+		},
+	},
 };
 
 export const Gray: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-tag ${argsToTemplate(args)} />` }),
 	args: { label: 'Crónica', variant: 'gray' },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Variante <strong>gray</strong>: pill translúcido oscuro con texto claro, pensado para mostrarse sobre imágenes. Comportamiento (Figma): la primera letra del texto en mayúscula y el resto en minúsculas (sentence-case).</p><p><strong>Usos:</strong> Story.</p>`,
+			},
+		},
+	},
 };
 
 export const Showcase: Story = {
