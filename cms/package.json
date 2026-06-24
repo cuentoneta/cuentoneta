@@ -21,7 +21,7 @@
 		"@sanity/export": "^6.2.0",
 		"@sanity/icons": "^3.7.4",
 		"@sanity/import": "^6.0.2",
-		"@sanity/vision": "^5.30.0",
+		"@sanity/vision": "^5.31.1",
 		"date-fns": "^4.1.0",
 		"prop-types": "^15.8.1",
 		"react": "^19.2.4",
