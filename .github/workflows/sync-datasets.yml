@@ -60,7 +60,7 @@ jobs:
         uses: actions/checkout@v4.2.2
 
       - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v4.1.0
+        uses: pnpm/action-setup@v6.0.9
         with:
           version: 10.12.1
 
