@@ -74,11 +74,11 @@ export class CollectionTeaser {
 	// Cada portada es la imagen del autor del texto, así que portadas distintas implican autores distintos: el
 	// abanico (variante Multiple) representa colecciones multi-autor. No se usa config.showAuthors: esa flag
 	// controla los nombres en los teasers, no las portadas.
-	protected readonly isFanout = computed(() => new Set(this.coverImages()).size >= 2);
+	protected readonly isFanout = computed(() => new Set(this.coverImages().filter(Boolean)).size >= 2);
 
+	// Cada slot toma su portada por posición; un slot sin portada queda en '' y CoverImage muestra el placeholder.
 	protected readonly fanoutCovers = computed(() => {
-		// Con solo 2 portadas, la lateral derecha repite la frontal en vez de mostrar el placeholder.
-		const [front, left, right = front] = this.coverImages();
-		return { front, left, right };
+		const covers = this.coverImages();
+		return { left: covers.at(1) ?? '', front: covers.at(0) ?? '', right: covers.at(2) ?? '' };
 	});
 }

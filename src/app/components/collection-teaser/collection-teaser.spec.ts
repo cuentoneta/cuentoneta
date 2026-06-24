@@ -154,13 +154,24 @@ describe('CollectionTeaser', () => {
 			expect(screen.getAllByTestId('cover-image')).toHaveLength(1);
 		});
 
-		it('should still render 3 covers when only 2 distinct images are provided (third falls back)', async () => {
+		it('should render a placeholder for the empty slot when only 2 covers are provided', async () => {
 			await render(CollectionTeaser, {
 				inputs: { collection: teaserWithCoverImages(fanoutCoverImages.slice(0, 2)) },
 				providers: defaultProviders,
 			});
 
-			expect(screen.getAllByTestId('cover-image')).toHaveLength(3);
+			expect(screen.getAllByTestId('cover-image')).toHaveLength(2);
+			expect(screen.getByTestId('cover-placeholder')).toBeInTheDocument();
+		});
+
+		it('should render a placeholder for an interior missing cover, preserving position', async () => {
+			await render(CollectionTeaser, {
+				inputs: { collection: teaserWithCoverImages([fanoutCoverImages[0], '', fanoutCoverImages[2]]) },
+				providers: defaultProviders,
+			});
+
+			expect(screen.getAllByTestId('cover-image')).toHaveLength(2);
+			expect(screen.getByTestId('cover-placeholder')).toBeInTheDocument();
 		});
 
 		it('should place coverImages[0] as the front (last in DOM) cover', async () => {

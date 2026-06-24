@@ -198,8 +198,10 @@ function mapStorylistTeasers(result: StorylistTeasersQueryResult): StorylistTeas
 type CoverImagesSubQuery =
 	| NonNullable<StorylistTeasersQueryResult>[0]['coverImages']
 	| NonNullable<LandingPageContentQueryResult>['cards'][0]['coverImages'];
+// Conserva la posición de cada portada (no descarta las faltantes): un autor sin imagen queda como ''
+// para que el slot correspondiente del abanico muestre el placeholder en lugar de desplazar las demás.
 export function mapCoverImages(coverImages: CoverImagesSubQuery): string[] {
-	return coverImages.map((image) => urlFor(image)).filter(Boolean);
+	return coverImages.map((image) => urlFor(image));
 }
 
 // TODO: Agregar soporte a futuro para mapear imágenes dentro del cuerpo de una story
