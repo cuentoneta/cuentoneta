@@ -24,16 +24,17 @@ import { CoverImageComponent } from '../cover-image/cover-image.component';
 						class="relative flex h-[192px] items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3 sm:flex-1"
 					>
 						@if (isFanout()) {
+							@let covers = fanoutCovers();
 							<cuentoneta-cover-image
-								[src]="coverImages()[1]"
+								[src]="covers.left"
 								class="absolute top-[calc(50%_+_39.35px)] left-[calc(50%_-_82.75px)] z-10 -translate-x-1/2 -translate-y-1/2 border-[3px] border-neutral-100"
 							/>
 							<cuentoneta-cover-image
-								[src]="coverImages()[2] ?? coverImages()[0]"
+								[src]="covers.right"
 								class="absolute top-[calc(50%_+_39.35px)] left-[calc(50%_+_83.03px)] z-10 -translate-x-1/2 -translate-y-1/2 border-[3px] border-neutral-100"
 							/>
 							<cuentoneta-cover-image
-								[src]="coverImages()[0]"
+								[src]="covers.front"
 								class="absolute bottom-[-8px] left-1/2 z-20 -translate-x-1/2 border-[3px] border-neutral-100"
 							/>
 						} @else {
@@ -73,4 +74,10 @@ export class CollectionTeaser {
 	// La variante Multiple (abanico) representa colecciones de distintos autores. Como cada portada es la
 	// imagen del autor del texto, ≥2 portadas distintas equivale a ≥2 autores distintos entre los primeros textos.
 	protected readonly isFanout = computed(() => new Set(this.coverImages()).size >= 2);
+
+	// Posiciones del abanico; con solo 2 portadas disponibles, la lateral derecha repite la frontal.
+	protected readonly fanoutCovers = computed(() => {
+		const [front, left, right = front] = this.coverImages();
+		return { front, left, right };
+	});
 }
