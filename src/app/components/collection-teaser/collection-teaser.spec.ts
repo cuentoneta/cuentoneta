@@ -26,8 +26,14 @@ const fanoutCoverImages = [
 	'https://example.test/cover-c.jpg',
 ];
 
-function teaserWithCoverImages(coverImages: string[]): StorylistTeaser {
-	return { ...collectionTeaserMock, coverImages };
+// Multiple: sin featuredImage y con 3 o más historias.
+function teaserMultiple(coverImages: string[]): StorylistTeaser {
+	return { ...collectionTeaserMock, featuredImage: '', count: 3, coverImages };
+}
+
+// Single derivado de stories: sin featuredImage y con menos de 3 historias.
+function teaserSingleFromStories(coverImages: string[]): StorylistTeaser {
+	return { ...collectionTeaserMock, featuredImage: '', count: 2, coverImages };
 }
 
 describe('CollectionTeaser', () => {
@@ -123,50 +129,39 @@ describe('CollectionTeaser', () => {
 		});
 	});
 
-	// Variante Multiple: abanico de 3 portadas para colecciones de distintos autores.
-	describe('Variante Multiple (abanico de portadas)', () => {
-		it('should render 3 cover images when there are 2 or more distinct cover images', async () => {
+	// Selección de variante: featuredImage manda; sin ella, el abanico aparece con 3 o más historias.
+	describe('Variante de portada', () => {
+		it('should show featuredImage as a single cover even with 3+ stories and cover images', async () => {
 			await render(CollectionTeaser, {
-				inputs: { collection: teaserWithCoverImages(fanoutCoverImages) },
+				inputs: { collection: { ...collectionTeaserMock, count: 5, coverImages: fanoutCoverImages } },
+				providers: defaultProviders,
+			});
+
+			expect(screen.getAllByTestId('cover-image')).toHaveLength(1);
+		});
+
+		it('should render the fan of 3 covers when there is no featuredImage and 3+ stories', async () => {
+			await render(CollectionTeaser, {
+				inputs: { collection: teaserMultiple(fanoutCoverImages) },
 				providers: defaultProviders,
 			});
 
 			expect(screen.getAllByTestId('cover-image')).toHaveLength(3);
 		});
 
-		it('should render a single cover (featuredImage) when coverImages is empty', async () => {
+		it('should render 3 placeholders in the fan when no story has a cover image', async () => {
 			await render(CollectionTeaser, {
-				inputs: { collection: teaserWithCoverImages([]) },
+				inputs: { collection: teaserMultiple([]) },
 				providers: defaultProviders,
 			});
 
-			expect(screen.getAllByTestId('cover-image')).toHaveLength(1);
-		});
-
-		// Distintos autores ⟺ distintas portadas: portadas repetidas (un solo autor) no activan el abanico.
-		it('should render a single cover when all cover images are identical (single author)', async () => {
-			const sameAuthor = fanoutCoverImages[0];
-			await render(CollectionTeaser, {
-				inputs: { collection: teaserWithCoverImages([sameAuthor, sameAuthor, sameAuthor]) },
-				providers: defaultProviders,
-			});
-
-			expect(screen.getAllByTestId('cover-image')).toHaveLength(1);
-		});
-
-		it('should render a placeholder for the empty slot when only 2 covers are provided', async () => {
-			await render(CollectionTeaser, {
-				inputs: { collection: teaserWithCoverImages(fanoutCoverImages.slice(0, 2)) },
-				providers: defaultProviders,
-			});
-
-			expect(screen.getAllByTestId('cover-image')).toHaveLength(2);
-			expect(screen.getByTestId('cover-placeholder')).toBeInTheDocument();
+			expect(screen.queryAllByTestId('cover-image')).toHaveLength(0);
+			expect(screen.getAllByTestId('cover-placeholder')).toHaveLength(3);
 		});
 
 		it('should render a placeholder for an interior missing cover, preserving position', async () => {
 			await render(CollectionTeaser, {
-				inputs: { collection: teaserWithCoverImages([fanoutCoverImages[0], '', fanoutCoverImages[2]]) },
+				inputs: { collection: teaserMultiple([fanoutCoverImages[0], '', fanoutCoverImages[2]]) },
 				providers: defaultProviders,
 			});
 
@@ -176,7 +171,7 @@ describe('CollectionTeaser', () => {
 
 		it('should place coverImages[0] as the front (last in DOM) cover', async () => {
 			await render(CollectionTeaser, {
-				inputs: { collection: teaserWithCoverImages(fanoutCoverImages) },
+				inputs: { collection: teaserMultiple(fanoutCoverImages) },
 				providers: defaultProviders,
 			});
 
@@ -184,13 +179,25 @@ describe('CollectionTeaser', () => {
 			expect(covers[covers.length - 1]).toHaveAttribute('src', expect.stringContaining(fanoutCoverImages[0]));
 		});
 
-		it('should render a single cover when coverImages has exactly one entry', async () => {
+		it('should render Single with the first available story cover when no featuredImage and fewer than 3 stories', async () => {
 			await render(CollectionTeaser, {
-				inputs: { collection: teaserWithCoverImages(['https://example.test/solo.jpg']) },
+				inputs: { collection: teaserSingleFromStories(['', fanoutCoverImages[1]]) },
 				providers: defaultProviders,
 			});
 
-			expect(screen.getAllByTestId('cover-image')).toHaveLength(1);
+			const covers = screen.getAllByTestId('cover-image');
+			expect(covers).toHaveLength(1);
+			expect(covers[0]).toHaveAttribute('src', expect.stringContaining(fanoutCoverImages[1]));
+		});
+
+		it('should render the Single placeholder when no featuredImage, fewer than 3 stories and no cover images', async () => {
+			await render(CollectionTeaser, {
+				inputs: { collection: teaserSingleFromStories([]) },
+				providers: defaultProviders,
+			});
+
+			expect(screen.queryAllByTestId('cover-image')).toHaveLength(0);
+			expect(screen.getByTestId('cover-placeholder')).toBeInTheDocument();
 		});
 	});
 

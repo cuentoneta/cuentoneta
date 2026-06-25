@@ -38,7 +38,7 @@ import { CoverImageComponent } from '../cover-image/cover-image.component';
 								class="absolute bottom-[-8px] left-1/2 z-20 -translate-x-1/2 border-[3px] border-neutral-100"
 							/>
 						} @else {
-							<cuentoneta-cover-image [src]="storylist.featuredImage" class="-mb-2" />
+							<cuentoneta-cover-image [src]="singleCover()" class="-mb-2" />
 						}
 					</section>
 					<section class="flex flex-1 flex-col gap-1 overflow-hidden">
@@ -71,12 +71,19 @@ export class CollectionTeaser {
 
 	protected readonly coverImages = computed(() => this.collection()?.coverImages ?? []);
 
-	// Cada portada es la imagen del autor del texto, así que portadas distintas implican autores distintos: el
-	// abanico (variante Multiple) representa colecciones multi-autor. No se usa config.showAuthors: esa flag
-	// controla los nombres en los teasers, no las portadas.
-	protected readonly isFanout = computed(() => new Set(this.coverImages().filter(Boolean)).size >= 2);
+	// Multiple (abanico) cuando la colección no tiene portada propia y agrupa 3 o más historias: las portadas de
+	// las stories arman el abanico. Con featuredImage, o con menos de 3 historias, es Single.
+	protected readonly isFanout = computed(() => {
+		const storylist = this.collection();
+		return !!storylist && !storylist.featuredImage && storylist.count >= 3;
+	});
 
-	// Cada slot toma su portada por posición; un slot sin portada queda en '' y CoverImage muestra el placeholder.
+	// Single: la portada destacada de la colección o, si no tiene, la primera portada de story disponible.
+	protected readonly singleCover = computed(
+		() => this.collection()?.featuredImage || this.coverImages().find(Boolean) || '',
+	);
+
+	// Cada slot del abanico toma su portada por posición; un slot sin portada queda en '' y CoverImage muestra el placeholder.
 	protected readonly fanoutCovers = computed(() => {
 		const covers = this.coverImages();
 		return { left: covers.at(1) ?? '', front: covers.at(0) ?? '', right: covers.at(2) ?? '' };

@@ -6,12 +6,19 @@ import { collectionCoverImagesMock, collectionCoverImagesWithGapMock, storylistM
 import { StorylistTeaser } from '@models/storylist.model';
 
 const collectionMock: StorylistTeaser = { ...storylistMock, stories: [], tabs: [] };
-const collectionMultipleMock: StorylistTeaser = { ...collectionMock, coverImages: collectionCoverImagesMock };
+// Multiple: sin featuredImage y con 3 o más historias; las portadas de las stories arman el abanico.
+const collectionMultipleMock: StorylistTeaser = {
+	...collectionMock,
+	featuredImage: '',
+	count: 3,
+	coverImages: collectionCoverImagesMock,
+};
 const collectionSinglePlaceholderMock: StorylistTeaser = { ...collectionMock, featuredImage: '', coverImages: [] };
 const collectionMultiplePlaceholderMock: StorylistTeaser = {
-	...collectionMock,
+	...collectionMultipleMock,
 	coverImages: collectionCoverImagesWithGapMock,
 };
+const collectionAllPlaceholdersMock: StorylistTeaser = { ...collectionMultipleMock, coverImages: [] };
 
 const meta: Meta<CollectionTeaser> = {
 	component: CollectionTeaser,
@@ -31,7 +38,7 @@ const meta: Meta<CollectionTeaser> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>Tarjeta de una colección (storylist) para el Design System v3: portada, título, descripción y footer con tag y contador de historias. La portada usa <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> para unificar el tratamiento de imagen/placeholder con el resto de las tarjetas v3. Tiene dos variantes de portada: <strong>Single</strong> (una portada de la colección) y <strong>Multiple</strong> (abanico de 3 portadas para colecciones de distintos autores), derivada automáticamente cuando hay 2 o más portadas distintas.</p></div>`,
+				component: `<div><p>Tarjeta de una colección (storylist) para el Design System v3: portada, título, descripción y footer con tag y contador de historias. La portada usa <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> para unificar el tratamiento de imagen/placeholder con el resto de las tarjetas v3. La variante se deriva del dato: <strong>Single</strong> (una portada) cuando la colección tiene <code>featuredImage</code> o agrupa menos de 3 historias; <strong>Multiple</strong> (abanico de 3 portadas de las historias) cuando no tiene <code>featuredImage</code> y agrupa 3 o más. Cada portada faltante muestra el placeholder.</p></div>`,
 			},
 		},
 	},
@@ -115,6 +122,28 @@ export const MultiplePlaceholder = {
 			description: {
 				story:
 					'Variante Multiple con una portada faltante: el slot sin imagen muestra el placeholder dentro del abanico.',
+			},
+		},
+	},
+};
+
+export const MultipleAllPlaceholders = {
+	render: (args: CollectionTeaser) => ({
+		props: args,
+		template: `
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+          <cuentoneta-collection-teaser class="card" [collection]="collection"/>
+    </div>
+`,
+	}),
+	args: {
+		collection: collectionAllPlaceholdersMock,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Variante Multiple sin ninguna portada (colección de 3+ historias sin imágenes): el abanico muestra 3 placeholders, como en el diseño de Figma.',
 			},
 		},
 	},
