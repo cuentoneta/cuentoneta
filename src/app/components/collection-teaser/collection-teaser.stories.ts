@@ -90,7 +90,7 @@ export const SinglePlaceholder = {
 	render: (args: CollectionTeaser) => ({
 		props: args,
 		template: `
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+      <div class="p-4">
           <cuentoneta-collection-teaser class="card" [collection]="collection"/>
     </div>
 `,
@@ -109,7 +109,7 @@ export const MultiplePlaceholder = {
 	render: (args: CollectionTeaser) => ({
 		props: args,
 		template: `
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+      <div class="p-4">
           <cuentoneta-collection-teaser class="card" [collection]="collection"/>
     </div>
 `,
@@ -131,7 +131,7 @@ export const MultipleAllPlaceholders = {
 	render: (args: CollectionTeaser) => ({
 		props: args,
 		template: `
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+      <div class="p-4">
           <cuentoneta-collection-teaser class="card" [collection]="collection"/>
     </div>
 `,
