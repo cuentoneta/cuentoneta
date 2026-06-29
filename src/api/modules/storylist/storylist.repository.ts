@@ -53,6 +53,7 @@ export async function fetchStorylistBySlug(slug: string): Promise<Storylist> {
 			mapStoryTeaserWithAuthor({
 				...story,
 				author: mapAuthorTeaser({ ...story.author }),
+				coverImage: urlFor(story.coverImage),
 				media: mapMediaSourcesTeasers(story.mediaSources),
 				paragraphs: mapBlockContentToTextParagraphs(story.body),
 				resources: [],
@@ -106,6 +107,7 @@ export async function fetchStorylistStoriesNavigationTeaserByStorylistSlug(
 		stories: result.stories.map((story) => ({
 			...story,
 			author: mapAuthorTeaser(story.author),
+			coverImage: urlFor(story.coverImage),
 			paragraphs: [],
 			media: [],
 		})),

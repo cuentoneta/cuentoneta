@@ -10,6 +10,7 @@ export const storiesByAuthorSlugQuery = defineQuery(`
     'body': coalesce(body[0...3], []),
     'originalPublication': coalesce(originalPublication, ''),
     approximateReadingTime,
+    'coverImage': coalesce(coverImage, null),
     'mediaSources': coalesce(mediaSources[], []),
     'resources': coalesce(resources[]{
         title,
@@ -35,6 +36,7 @@ export const storyNavigationTeasersByAuthorSlugQuery = defineQuery(`
     'body': [],
     'originalPublication': coalesce(originalPublication, ''),
     approximateReadingTime,
+    'coverImage': coalesce(coverImage, null),
     'mediaSources': coalesce(mediaSources[], []),
     'resources': [],
     'tags': [],
@@ -57,6 +59,7 @@ export const storyBySlugQuery = defineQuery(`
     'publishedAt': coalesce(publishedAt, _createdAt),
     'updatedAt': _updatedAt,
     approximateReadingTime,
+    'coverImage': coalesce(coverImage, null),
     'mediaSources': coalesce(mediaSources[]{
         ...,
         _type == 'spaceRecording' => {
@@ -119,6 +122,7 @@ export const storiesBySlugsQuery = defineQuery(`
     'review': [],
     'originalPublication': coalesce(originalPublication, ''),
     approximateReadingTime,
+    'coverImage': coalesce(coverImage, null),
     'mediaSources': coalesce(mediaSources[], []),
     'resources': [],
     'tags': [],
@@ -149,6 +153,7 @@ export const allStoriesQuery = defineQuery(`
     'review': [],
     'originalPublication': coalesce(originalPublication, ''),
     approximateReadingTime,
+    'coverImage': coalesce(coverImage, null),
     'mediaSources': coalesce(mediaSources[], []),
     'resources': [],
     'tags': [],
