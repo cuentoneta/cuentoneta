@@ -1,4 +1,4 @@
-import { Storylist, StorylistStoriesNavigationTeasers } from '@models/storylist.model';
+import { Storylist, StorylistStoriesNavigationTeasers, StorylistTeaser } from '@models/storylist.model';
 import { tagMock } from './tag.mocks';
 import { storyNavigationTeaserWithAuthor } from './story.mock';
 
@@ -32,6 +32,37 @@ export const storylistMock: Storylist = {
 		showAuthors: true,
 	},
 	stories: [storyNavigationTeaserWithAuthor],
+};
+
+// Teaser con portada editorial propia → imagery representative.
+export const storylistTeaserRepresentativeMock: StorylistTeaser = {
+	_id: 'cuentoneta-10',
+	title: 'La Cuentoneta 1.0',
+	slug: 'verano-2022',
+	count: 10,
+	media: [],
+	tabs: [],
+	stories: [],
+	description: storylistMock.description,
+	tags: [tagMock],
+	config: { showAuthors: true },
+	imagery: { kind: 'representative', image: 'assets/img/mocks/stories/geometria.svg' },
+};
+
+// Teaser sin portada propia → imagery sample (3 portadas de historias).
+export const storylistTeaserSampleMock: StorylistTeaser = {
+	...storylistTeaserRepresentativeMock,
+	_id: 'cuentoneta-11',
+	slug: 'primavera-2022',
+	title: 'La Cuentoneta 1.1',
+	imagery: {
+		kind: 'sample',
+		images: [
+			'assets/img/mocks/stories/el-odio.svg',
+			'assets/img/mocks/stories/las-escaleras.svg',
+			'assets/img/mocks/stories/geometria.svg',
+		],
+	},
 };
 
 export const storylistNavigationTeaserMock: StorylistStoriesNavigationTeasers = {

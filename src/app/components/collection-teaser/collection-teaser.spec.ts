@@ -6,7 +6,7 @@ import { provideRouter } from '@angular/router';
 import { CollectionTeaser } from './collection-teaser';
 
 // Mocks
-import { storylistMock } from '@mocks/storylist.mock';
+import { storylistTeaserRepresentativeMock, storylistTeaserSampleMock } from '@mocks/storylist.mock';
 
 // Modelos
 import { StorylistTeaser } from '@models/storylist.model';
@@ -14,11 +14,7 @@ import { StorylistTeaser } from '@models/storylist.model';
 // Utilidades de test
 import { clearAllMocks } from '@test-utils';
 
-const collectionTeaserMock: StorylistTeaser = {
-	...storylistMock,
-	stories: [],
-	tabs: [],
-};
+const collectionTeaserMock: StorylistTeaser = storylistTeaserRepresentativeMock;
 
 describe('CollectionTeaser', () => {
 	const defaultProviders = [provideRouter([])];
@@ -110,6 +106,42 @@ describe('CollectionTeaser', () => {
 			});
 
 			expect(screen.getByTestId('cover-image')).toHaveAttribute('alt', '');
+		});
+	});
+
+	// Variantes del objeto de valor `imagery`
+	describe('Variante de imagery', () => {
+		it('should render a single cover for representative imagery', async () => {
+			await render(CollectionTeaser, {
+				inputs: { collection: storylistTeaserRepresentativeMock },
+				providers: defaultProviders,
+			});
+
+			expect(screen.getAllByTestId('cover-image')).toHaveLength(1);
+		});
+
+		it('should render 3 covers for sample imagery with three images', async () => {
+			await render(CollectionTeaser, {
+				inputs: { collection: storylistTeaserSampleMock },
+				providers: defaultProviders,
+			});
+
+			expect(screen.getAllByTestId('cover-image')).toHaveLength(3);
+		});
+
+		it('should render placeholders for the empty slots of a sample imagery', async () => {
+			const teaser: StorylistTeaser = {
+				...storylistTeaserSampleMock,
+				imagery: { kind: 'sample', images: ['assets/img/mocks/stories/el-odio.svg', '', ''] },
+			};
+
+			await render(CollectionTeaser, {
+				inputs: { collection: teaser },
+				providers: defaultProviders,
+			});
+
+			expect(screen.getAllByTestId('cover-image')).toHaveLength(1);
+			expect(screen.getAllByTestId('cover-placeholder')).toHaveLength(2);
 		});
 	});
 

@@ -17,6 +17,7 @@ import { mapMediaSources, mapMediaSourcesTeasers } from '../../_utils/media-sour
 import {
 	mapAuthorTeaser,
 	mapBlockContentToTextParagraphs,
+	mapImagery,
 	mapStoryTeaserWithAuthor,
 	mapTags,
 	urlFor,
@@ -25,18 +26,19 @@ import {
 export async function fetchAllStorylistTeasers(): Promise<StorylistTeaser[]> {
 	const result = await client.fetch(storylistTeasersQuery);
 
-	return result.map((item) => ({
-		...item,
-		config: {
-			...item.config,
-			showAuthors: item.config?.showAuthors ?? false,
-		},
-		description: mapBlockContentToTextParagraphs(item.description),
-		tags: mapTags(item.tags),
-		featuredImage: urlFor(item.featuredImage),
-		tabs: [],
-		media: mapMediaSourcesTeasers(item.mediaSources),
-	}));
+	return result.map((item) => {
+		const { featuredImage, storyCoverImages, mediaSources, ...rest } = item;
+		return {
+			...rest,
+			config: { ...item.config, showAuthors: item.config?.showAuthors ?? false },
+			description: mapBlockContentToTextParagraphs(item.description),
+			tags: mapTags(item.tags),
+			stories: [],
+			tabs: [],
+			media: mapMediaSourcesTeasers(mediaSources),
+			imagery: mapImagery({ id: item._id, featuredImage, storyCoverImages }),
+		};
+	});
 }
 
 export async function fetchStorylistBySlug(slug: string): Promise<Storylist> {
