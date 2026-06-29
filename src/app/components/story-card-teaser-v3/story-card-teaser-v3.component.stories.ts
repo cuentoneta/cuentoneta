@@ -116,7 +116,7 @@ export default meta;
 type Story = StoryObj<StoryCardTeaserV3Component>;
 
 // Playground interactivo: un único selector de Obra; la portada, el título y el extracto cambian juntos.
-export const Docs: StoryObj<StoryCardTeaserV3Component & { storyIndex: number }> = {
+export const Interactiva: StoryObj<StoryCardTeaserV3Component & { storyIndex: number }> = {
 	argTypes: {
 		storyIndex: {
 			name: 'Obra',
