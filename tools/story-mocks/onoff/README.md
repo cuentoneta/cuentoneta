@@ -8,6 +8,14 @@ Fuente de verdad del corpus de mocks de `story` generado en el issue [#1650](htt
 
 Una ficha Markdown por obra (`<slug>.md`) con: título, slug, publicación original, sinopsis y el path de portada asignado. Son la fuente regenerable de `src/app/mocks/onoff-stories.mock.ts` (corpus de `StoryTeaserWithAuthor`).
 
+## Convención de naming (mock generado)
+
+- **Constante individual:** `<slugCamelCase>Mock: StoryTeaserWithAuthor` (p. ej. `palacioNueveFronterasMock`).
+- **Array de agregación:** `<autor>StoriesMock: StoryTeaserWithAuthor[]` (p. ej. `onoffStoriesMock`).
+- **`_id`:** `'onoff-story-<slug>'`. **Archivo:** `<autor>-stories.mock.ts` (kebab-case).
+
+Aplica esta convención al sumar corpus de otros autores en el epic #1651.
+
 ## Convención de portadas (assets locales)
 
 - **Directorio:** `src/assets/img/mocks/stories/`

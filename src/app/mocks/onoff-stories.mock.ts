@@ -2,7 +2,6 @@ import type { StoryTeaserWithAuthor } from '@models/story.model';
 import { authorTeaserMock } from './author.mock';
 
 // Corpus de mocks de las obras (ficticias) de François Onoff, personaje del film "Una pura formalità".
-// Fuente de verdad: tools/story-mocks/onoff/. Las portadas son assets locales en assets/img/mocks/stories/<slug>.svg.
 
 export const palacioNueveFronterasMock: StoryTeaserWithAuthor = {
 	_id: 'onoff-story-el-palacio-de-las-nueve-fronteras',
