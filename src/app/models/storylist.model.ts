@@ -29,8 +29,8 @@ interface StorylistBase<T> {
 // Representación visual de una colección en su teaser: la portada editorial propia (`representative`) o, en su
 // ausencia, una muestra de 3 portadas de sus historias (`sample`), con '' en los slots sin historia.
 export type StorylistImagery =
-	| { kind: 'representative'; image: string }
-	| { kind: 'sample'; images: [string, string, string] };
+	| { readonly kind: 'representative'; readonly image: string }
+	| { readonly kind: 'sample'; readonly images: readonly [string, string, string] };
 
 export interface StorylistTeaser extends Omit<StorylistBase<never>, 'featuredImage'> {
 	stories: Array<never>;

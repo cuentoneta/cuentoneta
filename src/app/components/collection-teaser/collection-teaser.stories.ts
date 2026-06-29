@@ -29,7 +29,7 @@ const meta: Meta<CollectionTeaser> = {
 };
 export default meta;
 
-export const Primary = {
+export const Primary: StoryObj<CollectionTeaser> = {
 	render: () => ({
 		props: { representative: storylistTeaserRepresentativeMock, sample: storylistTeaserSampleMock },
 		template: `

@@ -133,4 +133,13 @@ describe('mapImagery (ACL)', () => {
 
 		expect(first).toEqual(second);
 	});
+
+	it('varies the sample selection across different ids', () => {
+		const covers = [img('a'), img('b'), img('c'), img('d'), img('e')];
+		const selections = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6'].map((id) =>
+			JSON.stringify(mapImagery({ id, featuredImage: null, storyCoverImages: covers })),
+		);
+
+		expect(new Set(selections).size).toBeGreaterThan(1);
+	});
 });
