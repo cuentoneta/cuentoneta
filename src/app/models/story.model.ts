@@ -10,7 +10,7 @@ interface StoryBase {
 	slug: string;
 	approximateReadingTime: number;
 	badLanguage?: boolean;
-	// URL de la portada de la historia; '' si no fue asignada (los consumidores muestran placeholder).
+	// URL de la portada; '' cuando no fue asignada.
 	coverImage: string;
 	resources: Resource[];
 	tags: Tag[];

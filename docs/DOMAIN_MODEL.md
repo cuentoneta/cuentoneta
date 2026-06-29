@@ -159,7 +159,7 @@ interface Story {
 	updatedAt: string; // Fecha ISO de última modificación (_updatedAt de Sanity)
 
 	// Imagen
-	coverImage: string; // URL de portada de la historia (atributo propio); '' si no fue asignada
+	coverImage: string; // URL de portada de la historia; '' si no fue asignada
 
 	// Relaciones
 	author: Author; // Autor de la historia (requerido)
