@@ -200,8 +200,10 @@ export function mapBlockContentToTextParagraphs(content: BlockContent): TextBloc
 }
 
 export async function mapStoryContent(result: NonNullable<StoryBySlugQueryResult>): Promise<Story> {
+	const { coverImage, ...rest } = result;
 	return {
-		...result,
+		...rest,
+		coverImage: urlFor(coverImage),
 		epigraphs: result.epigraphs.map((epigraph) => ({
 			text: mapBlockContentToTextParagraphs(epigraph.text),
 			reference: mapBlockContentToTextParagraphs(epigraph.reference),
@@ -229,10 +231,11 @@ export function mapStoryTeaser(result: StoryTeasersQueryResult): StoryTeaser[] {
 	const stories = [];
 
 	for (const item of result) {
-		const { mediaSources, resources, body, ...properties } = item;
+		const { mediaSources, resources, body, coverImage, ...properties } = item;
 
 		stories.push({
 			...properties,
+			coverImage: urlFor(coverImage),
 			media: mapMediaSourcesTeasers(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: mapBlockContentToTextParagraphs(body) as [TextBlockContent, TextBlockContent, TextBlockContent],
@@ -246,10 +249,11 @@ export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlug
 	const stories = [];
 
 	for (const item of result) {
-		const { mediaSources, resources, ...properties } = item;
+		const { mediaSources, resources, coverImage, ...properties } = item;
 
 		stories.push({
 			...properties,
+			coverImage: urlFor(coverImage),
 			media: mapMediaSourcesTeasers(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: [],
@@ -266,11 +270,12 @@ export function mapStoryNavigationTeaserWithAuthor(
 	const stories = [];
 
 	for (const item of result) {
-		const { mediaSources, resources, ...properties } = item;
+		const { mediaSources, resources, coverImage, ...properties } = item;
 
 		stories.push({
 			...properties,
 			author: mapAuthorTeaser(item.author),
+			coverImage: urlFor(coverImage),
 			media: mapMediaSourcesTeasers(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: [],
