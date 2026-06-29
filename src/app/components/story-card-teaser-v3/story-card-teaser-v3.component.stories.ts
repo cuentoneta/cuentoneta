@@ -120,9 +120,9 @@ export const Interactiva: StoryObj<StoryCardTeaserV3Component & { storyIndex: nu
 	argTypes: {
 		storyIndex: {
 			name: 'Obra',
-			control: { type: 'select' },
+			// `labels` debe ir dentro de `control`; como hermano del argType, Storybook lo ignora y muestra el índice.
+			control: { type: 'select', labels: corpusLabels },
 			options: corpusStories.map((_, index) => index),
-			labels: corpusLabels,
 			description: 'Obra del corpus de François Onoff; su portada, título y extracto cambian de forma conjunta',
 			table: { type: { summary: 'number' } },
 		},
