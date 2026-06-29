@@ -8,7 +8,7 @@ export const palacioNueveFronterasStoryMock: Story = {
 	originalPublication: 'Éditions du Méridien (1985)',
 	approximateReadingTime: 11,
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/el-palacio-de-las-nueve-fronteras.svg',
+	coverImage: 'assets/img/mocks/stories/el-palacio-de-las-nueve-fronteras.png',
 	tags: [],
 	resources: [],
 	media: [],

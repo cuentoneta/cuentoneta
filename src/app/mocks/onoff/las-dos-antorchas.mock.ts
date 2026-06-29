@@ -8,7 +8,7 @@ export const lasDosAntorchasStoryMock: Story = {
 	originalPublication: 'Éditions du Méridien (1987)',
 	approximateReadingTime: 8,
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/las-dos-antorchas.svg',
+	coverImage: 'assets/img/mocks/stories/las-dos-antorchas.png',
 	tags: [],
 	resources: [],
 	media: [],

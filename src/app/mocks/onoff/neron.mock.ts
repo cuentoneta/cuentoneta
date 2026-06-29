@@ -8,7 +8,7 @@ export const neronStoryMock: Story = {
 	originalPublication: 'Estreno teatral (1988)',
 	approximateReadingTime: 7,
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/neron.svg',
+	coverImage: 'assets/img/mocks/stories/neron.png',
 	tags: [],
 	resources: [],
 	media: [],

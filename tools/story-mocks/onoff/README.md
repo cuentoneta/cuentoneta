@@ -22,8 +22,8 @@ Un archivo por obra mantiene cada mock bajo el límite de 500 líneas. Aplicá e
 ## Convención de portadas (assets locales)
 
 - **Directorio:** `src/assets/img/mocks/stories/`
-- **Nombre:** `<slug>.svg` (la misma cadena que el campo `slug` del mock)
-- **Path en el mock:** `assets/img/mocks/stories/<slug>.svg` (sin `./` ni `/` inicial)
+- **Nombre:** `<slug>.png` (la misma cadena que el campo `slug` del mock)
+- **Path en el mock:** `assets/img/mocks/stories/<slug>.png` (sin `./` ni `/` inicial)
 - **Aspecto:** portrait 3:4 (referencia 118×164 del `CoverImageComponent`)
 
 ## Obras
