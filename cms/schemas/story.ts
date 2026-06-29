@@ -6,6 +6,7 @@ import { audioRecording, pdfLink, spaceRecording, spotifyPodcastEpisode, youtube
 // Placeholder por defecto del dataset `production`; las historias nuevas y las existentes (vía migración) lo usan
 // hasta que el equipo editorial cargue una imagen propia.
 const defaultStoryCoverImage = {
+	_type: 'image',
 	asset: {
 		_type: 'reference',
 		_ref: 'image-852a122db56840452a0b7e2e58d73741de44bb01-229x320-svg',
