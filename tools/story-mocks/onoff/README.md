@@ -6,15 +6,17 @@ Fuente de verdad del corpus de mocks de `story` generado en el issue [#1650](htt
 
 ## Qué hay acá
 
-Una ficha Markdown por obra (`<slug>.md`) con: título, slug, publicación original, sinopsis y el path de portada asignado. Son la fuente regenerable de `src/app/mocks/onoff-stories.mock.ts` (corpus de `StoryTeaserWithAuthor`).
+Una ficha Markdown por obra (`<slug>.md`) con: título, slug, publicación original, reseña y el path de portada asignado. Son la fuente regenerable del corpus. La **reseña** de la ficha alimenta el campo `summary` de la story; `paragraphs` es **cuerpo ficticio generado** a partir de ella.
 
-## Convención de naming (mock generado)
+## Estructura y convención de naming
 
-- **Constante individual:** `<slugCamelCase>Mock: StoryTeaserWithAuthor` (p. ej. `palacioNueveFronterasMock`).
-- **Array de agregación:** `<autor>StoriesMock: StoryTeaserWithAuthor[]` (p. ej. `onoffStoriesMock`).
-- **`_id`:** `'onoff-story-<slug>'`. **Archivo:** `<autor>-stories.mock.ts` (kebab-case).
+El corpus son **`Story` completos** (fuente de verdad), de los que se **derivan** los teasers:
 
-Aplica esta convención al sumar corpus de otros autores en el epic #1651.
+- **Story completo:** `<slugCamelCase>StoryMock: Story` en `<autor>-stories.mock.ts`; array `<autor>StoriesMock: Story[]`.
+- **Teaser derivado:** `<slugCamelCase>TeaserMock: StoryTeaserWithAuthor` en `<autor>-story-teasers.mock.ts`; array `<autor>StoryTeasersMock`.
+- **`_id`:** `'onoff-story-<slug>'`.
+
+Aplicá esta convención al sumar corpus de otros autores en el epic #1651.
 
 ## Convención de portadas (assets locales)
 
