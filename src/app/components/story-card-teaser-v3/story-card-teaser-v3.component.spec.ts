@@ -140,7 +140,7 @@ describe('StoryCardTeaserV3Component', () => {
 	});
 
 	describe('Description', () => {
-		const storyWithParagraphs = palacioNueveFronterasTeaserMock;
+		const storyWithParagraphs: StoryTeaserWithAuthor = palacioNueveFronterasTeaserMock;
 
 		it('should display the description when showExcerpt is true and there are paragraphs', async () => {
 			await render(StoryCardTeaserV3Component, {
@@ -236,6 +236,8 @@ describe('StoryCardTeaserV3Component', () => {
 
 	// Variedad de obras reales del corpus de François Onoff (#1650): detecta regresiones de datos del corpus.
 	describe('Corpus Onoff — variedad de obras', () => {
+		beforeEach(() => clearAllMocks());
+
 		it.each(onoffStoryTeasersMock)('should render title and reading time for "$title"', async (teaser) => {
 			await render(StoryCardTeaserV3Component, {
 				inputs: { story: teaser, coverImageUrl: teaser.coverImage },

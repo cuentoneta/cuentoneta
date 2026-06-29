@@ -29,7 +29,7 @@ const richMedia: Media[] = [
 // Los teasers del corpus tienen media: []; se les compone richMedia para ilustrar los selectores de multimedia.
 const withMedia = (teaser: StoryTeaserWithAuthor): StoryTeaserWithAuthor => ({ ...teaser, media: richMedia });
 
-// Obras y portadas del corpus para el playground; los índices de obra y portada se eligen por separado.
+// Las portadas se derivan del coverImage de cada teaser; los tres arrays comparten el índice del corpus.
 const corpusStories = onoffStoryTeasersMock.map(withMedia);
 const corpusCovers = onoffStoryTeasersMock.map((teaser) => teaser.coverImage);
 const corpusLabels = Object.fromEntries(onoffStoryTeasersMock.map((teaser, index) => [index, teaser.title]));
