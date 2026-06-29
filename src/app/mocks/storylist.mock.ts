@@ -46,7 +46,7 @@ export const storylistTeaserRepresentativeMock: StorylistTeaser = {
 	description: storylistMock.description,
 	tags: [tagMock],
 	config: { showAuthors: true },
-	imagery: { kind: 'representative', image: 'assets/img/mocks/stories/geometria.svg' },
+	imagery: { kind: 'representative', image: 'assets/img/mocks/stories/geometria.png' },
 };
 
 // Teaser sin portada propia → imagery sample (3 portadas de historias).
@@ -58,9 +58,9 @@ export const storylistTeaserSampleMock: StorylistTeaser = {
 	imagery: {
 		kind: 'sample',
 		images: [
-			'assets/img/mocks/stories/el-odio.svg',
-			'assets/img/mocks/stories/las-escaleras.svg',
-			'assets/img/mocks/stories/geometria.svg',
+			'assets/img/mocks/stories/el-odio.png',
+			'assets/img/mocks/stories/las-escaleras.png',
+			'assets/img/mocks/stories/geometria.png',
 		],
 	},
 };

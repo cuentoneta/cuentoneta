@@ -132,7 +132,7 @@ describe('CollectionTeaser', () => {
 		it('should render placeholders for the empty slots of a sample imagery', async () => {
 			const teaser: StorylistTeaser = {
 				...storylistTeaserSampleMock,
-				imagery: { kind: 'sample', images: ['assets/img/mocks/stories/el-odio.svg', '', ''] },
+				imagery: { kind: 'sample', images: ['assets/img/mocks/stories/el-odio.png', '', ''] },
 			};
 
 			await render(CollectionTeaser, {
