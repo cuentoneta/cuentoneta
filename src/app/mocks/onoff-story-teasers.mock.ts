@@ -1,20 +1,16 @@
 import type { Story, StoryTeaserWithAuthor } from '@models/story.model';
 import { authorTeaserMock } from './author.mock';
-import {
-	elOdioStoryMock,
-	elTratadoDeLosPlaceresStoryMock,
-	geometriaStoryMock,
-	lasDosAntorchasStoryMock,
-	lasEscalerasStoryMock,
-	losPeldanosStoryMock,
-	neronStoryMock,
-	onoffStoriesMock,
-	palacioNueveFronterasStoryMock,
-} from './onoff-stories.mock';
+import { elOdioStoryMock } from './onoff/el-odio.mock';
+import { elTratadoDeLosPlaceresStoryMock } from './onoff/el-tratado-de-los-placeres.mock';
+import { geometriaStoryMock } from './onoff/geometria.mock';
+import { lasDosAntorchasStoryMock } from './onoff/las-dos-antorchas.mock';
+import { lasEscalerasStoryMock } from './onoff/las-escaleras.mock';
+import { losPeldanosStoryMock } from './onoff/los-peldanos.mock';
+import { neronStoryMock } from './onoff/neron.mock';
+import { palacioNueveFronterasStoryMock } from './onoff/el-palacio-de-las-nueve-fronteras.mock';
 
-// Deriva el teaser desde la story completa: toma los campos de la vista de teaser y reemplaza el autor
-// por su variante AuthorTeaser. Los campos exclusivos de la vista completa (summary, epigraphs, fechas)
-// no se propagan.
+// Deriva el teaser desde la story completa: toma los campos de la vista de teaser, trunca el cuerpo a los
+// primeros 3 párrafos (igual que el ACL con body[0...3]) y reemplaza el autor por su variante AuthorTeaser.
 function toTeaser(story: Story): StoryTeaserWithAuthor {
 	return {
 		_id: story._id,
@@ -25,7 +21,7 @@ function toTeaser(story: Story): StoryTeaserWithAuthor {
 		coverImage: story.coverImage,
 		resources: story.resources,
 		tags: story.tags,
-		paragraphs: story.paragraphs,
+		paragraphs: story.paragraphs.slice(0, 3),
 		media: story.media,
 		originalPublication: story.originalPublication,
 		author: authorTeaserMock,
@@ -41,4 +37,13 @@ export const elTratadoDeLosPlaceresTeaserMock = toTeaser(elTratadoDeLosPlaceresS
 export const lasDosAntorchasTeaserMock = toTeaser(lasDosAntorchasStoryMock);
 export const neronTeaserMock = toTeaser(neronStoryMock);
 
-export const onoffStoryTeasersMock: StoryTeaserWithAuthor[] = onoffStoriesMock.map(toTeaser);
+export const onoffStoryTeasersMock: StoryTeaserWithAuthor[] = [
+	palacioNueveFronterasTeaserMock,
+	geometriaTeaserMock,
+	losPeldanosTeaserMock,
+	lasEscalerasTeaserMock,
+	elOdioTeaserMock,
+	elTratadoDeLosPlaceresTeaserMock,
+	lasDosAntorchasTeaserMock,
+	neronTeaserMock,
+];

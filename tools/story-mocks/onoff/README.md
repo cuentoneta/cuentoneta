@@ -12,11 +12,12 @@ Una ficha Markdown por obra (`<slug>.md`) con: título, slug, publicación origi
 
 El corpus son **`Story` completos** (fuente de verdad), de los que se **derivan** los teasers:
 
-- **Story completo:** `<slugCamelCase>StoryMock: Story` en `<autor>-stories.mock.ts`; array `<autor>StoriesMock: Story[]`.
-- **Teaser derivado:** `<slugCamelCase>TeaserMock: StoryTeaserWithAuthor` en `<autor>-story-teasers.mock.ts`; array `<autor>StoryTeasersMock`.
+- **Story completo:** un archivo por obra en `src/app/mocks/onoff/<slug>.mock.ts`, export `<slugCamelCase>StoryMock: Story` (cuerpo de 10–15 párrafos con itálicas/negritas).
+- **Agregador:** `src/app/mocks/onoff-stories.mock.ts` exporta `onoffStoriesMock: Story[]`.
+- **Teasers derivados:** `src/app/mocks/onoff-story-teasers.mock.ts` deriva con `toTeaser` (trunca el cuerpo a 3 párrafos, como el ACL con `body[0...3]`); exporta `<slugCamelCase>TeaserMock` + `onoffStoryTeasersMock`.
 - **`_id`:** `'onoff-story-<slug>'`.
 
-Aplicá esta convención al sumar corpus de otros autores en el epic #1651.
+Un archivo por obra mantiene cada mock bajo el límite de 500 líneas. Aplicá esta convención al sumar corpus de otros autores en el epic #1651.
 
 ## Convención de portadas (assets locales)
 
