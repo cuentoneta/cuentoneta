@@ -48,12 +48,12 @@ export async function fetchStorylistBySlug(slug: string): Promise<Storylist> {
 
 	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
 	const stories: StoryTeaserWithAuthor[] = [];
-	for (const story of result.stories) {
+	for (const { coverImage, ...story } of result.stories) {
 		stories.push(
 			mapStoryTeaserWithAuthor({
 				...story,
 				author: mapAuthorTeaser({ ...story.author }),
-				coverImage: urlFor(story.coverImage),
+				coverImage: urlFor(coverImage),
 				media: mapMediaSourcesTeasers(story.mediaSources),
 				paragraphs: mapBlockContentToTextParagraphs(story.body),
 				resources: [],
@@ -104,10 +104,10 @@ export async function fetchStorylistStoriesNavigationTeaserByStorylistSlug(
 		description: mapBlockContentToTextParagraphs(result.description),
 		tags: mapTags(result.tags),
 		featuredImage: urlFor(result.featuredImage),
-		stories: result.stories.map((story) => ({
+		stories: result.stories.map(({ coverImage, ...story }) => ({
 			...story,
 			author: mapAuthorTeaser(story.author),
-			coverImage: urlFor(story.coverImage),
+			coverImage: urlFor(coverImage),
 			paragraphs: [],
 			media: [],
 		})),

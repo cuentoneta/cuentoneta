@@ -200,9 +200,10 @@ export function mapBlockContentToTextParagraphs(content: BlockContent): TextBloc
 }
 
 export async function mapStoryContent(result: NonNullable<StoryBySlugQueryResult>): Promise<Story> {
+	const { coverImage, ...rest } = result;
 	return {
-		...result,
-		coverImage: urlFor(result.coverImage),
+		...rest,
+		coverImage: urlFor(coverImage),
 		epigraphs: result.epigraphs.map((epigraph) => ({
 			text: mapBlockContentToTextParagraphs(epigraph.text),
 			reference: mapBlockContentToTextParagraphs(epigraph.reference),
