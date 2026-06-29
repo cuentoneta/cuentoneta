@@ -17,11 +17,11 @@ import { mapMediaSources, mapMediaSourcesTeasers } from '../../_utils/media-sour
 import {
 	mapAuthorTeaser,
 	mapBlockContentToTextParagraphs,
-	mapImagery,
 	mapStoryTeaserWithAuthor,
 	mapTags,
 	urlFor,
 } from '../../_utils/functions';
+import { mapImagery } from '../../_utils/storylist-imagery.functions';
 
 export async function fetchAllStorylistTeasers(): Promise<StorylistTeaser[]> {
 	const result = await client.fetch(storylistTeasersQuery);
