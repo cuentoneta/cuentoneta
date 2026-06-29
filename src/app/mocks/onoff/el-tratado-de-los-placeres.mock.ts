@@ -211,6 +211,54 @@ export const elTratadoDeLosPlaceresStoryMock: Story = {
 		{
 			_type: 'block',
 			style: 'normal',
+			_key: 'tratado-b12',
+			markDefs: [],
+			children: [
+				{
+					_type: 'span',
+					_key: 'tratado-b12-s1',
+					text: 'Hacia el final intenté una entrada nueva, la más ambiciosa: el placer de renunciar a clasificar. Pero apenas lo nombré, ya estaba ',
+				},
+				{
+					_type: 'span',
+					_key: 'tratado-b12-s2',
+					text: 'dentro del sistema',
+					marks: ['em'],
+				},
+				{
+					_type: 'span',
+					_key: 'tratado-b12-s3',
+					text: ', convertido en una casilla más. No hay afuera del catálogo para quien escribe catálogos.',
+				},
+			],
+		},
+		{
+			_type: 'block',
+			style: 'normal',
+			_key: 'tratado-b13',
+			markDefs: [],
+			children: [
+				{
+					_type: 'span',
+					_key: 'tratado-b13-s1',
+					text: 'Tardé en admitir lo que el cuaderno repetía en cada margen: ',
+				},
+				{
+					_type: 'span',
+					_key: 'tratado-b13-s2',
+					text: 'el deseo no se deja inventariar sin morir un poco',
+					marks: ['strong'],
+				},
+				{
+					_type: 'span',
+					_key: 'tratado-b13-s3',
+					text: '. Cada definición era una pequeña autopsia, y yo, su forense más fiel.',
+				},
+			],
+		},
+		{
+			_type: 'block',
+			style: 'normal',
 			_key: 'tratado-b11',
 			markDefs: [],
 			children: [

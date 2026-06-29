@@ -220,6 +220,54 @@ export const lasDosAntorchasStoryMock: Story = {
 		{
 			_type: 'block',
 			style: 'normal',
+			_key: 'antorchas-b12',
+			markDefs: [],
+			children: [
+				{
+					_type: 'span',
+					_key: 'antorchas-b12-s1',
+					text: 'Probé, una noche, apagar una de las dos. Quería saber si la otra bastaba, si el muro existía sin su sombra o la sombra sin su muro. La oscuridad que siguió no era una ni dos: era ',
+				},
+				{
+					_type: 'span',
+					_key: 'antorchas-b12-s2',
+					text: 'ninguna',
+					marks: ['em'],
+				},
+				{
+					_type: 'span',
+					_key: 'antorchas-b12-s3',
+					text: ', un país sin contorno donde mi propia mano dejó de pertenecerme.',
+				},
+			],
+		},
+		{
+			_type: 'block',
+			style: 'normal',
+			_key: 'antorchas-b13',
+			markDefs: [],
+			children: [
+				{
+					_type: 'span',
+					_key: 'antorchas-b13-s1',
+					text: 'Volví a encenderla con dedos que no reconocía. ',
+				},
+				{
+					_type: 'span',
+					_key: 'antorchas-b13-s2',
+					text: 'Dos llamas, dos lecturas, dos verdades que no se tocan',
+					marks: ['strong'],
+				},
+				{
+					_type: 'span',
+					_key: 'antorchas-b13-s3',
+					text: ': comprendí que el corredor no me pedía elegir sino sostener la distancia. Caminar era eso: no avanzar, sino mantener abierto el intervalo.',
+				},
+			],
+		},
+		{
+			_type: 'block',
+			style: 'normal',
 			_key: 'antorchas-b11',
 			markDefs: [],
 			children: [
