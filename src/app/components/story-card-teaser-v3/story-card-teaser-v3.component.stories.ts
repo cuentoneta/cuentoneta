@@ -2,8 +2,12 @@ import { applicationConfig, argsToTemplate, Meta, StoryObj } from '@storybook/an
 import { provideRouter } from '@angular/router';
 
 import { StoryCardTeaserV3Component } from './story-card-teaser-v3.component';
-import { storyTeaserMock } from '../../mocks/story.mock';
-import { authorTeaserMock } from '../../mocks/author.mock';
+import {
+	elOdioTeaserMock,
+	geometriaTeaserMock,
+	onoffStoryTeasersMock,
+	palacioNueveFronterasTeaserMock,
+} from '../../mocks/onoff-story-teasers.mock';
 import type { StoryTeaserWithAuthor } from '@models/story.model';
 import type { Media } from '@models/media.model';
 
@@ -22,11 +26,13 @@ const richMedia: Media[] = [
 	{ title: 'Podcast', type: 'spotifyPodcastEpisode', description: [], data: { url: 'https://spotify.com' } },
 ];
 
-const storyMock: StoryTeaserWithAuthor = {
-	...storyTeaserMock,
-	author: authorTeaserMock,
-	media: richMedia,
-};
+// Los teasers del corpus tienen media: []; se les compone richMedia para ilustrar los selectores de multimedia.
+const withMedia = (teaser: StoryTeaserWithAuthor): StoryTeaserWithAuthor => ({ ...teaser, media: richMedia });
+
+// Obras y portadas del corpus para el playground; los índices de obra y portada se eligen por separado.
+const corpusStories = onoffStoryTeasersMock.map(withMedia);
+const corpusCovers = onoffStoryTeasersMock.map((teaser) => teaser.coverImage);
+const corpusLabels = Object.fromEntries(onoffStoryTeasersMock.map((teaser, index) => [index, teaser.title]));
 
 // Las descripciones de la doc van en una sola línea: el renderer de Markdown de los autodocs
 // interpreta como bloque de código cualquier línea con indentación, así que un HTML multilínea
@@ -109,15 +115,36 @@ const meta: Meta<StoryCardTeaserV3Component> = {
 export default meta;
 type Story = StoryObj<StoryCardTeaserV3Component>;
 
-// Playground interactivo: permite alternar todos los inputs sobre cualquier variante.
-// Sin coverImageUrl: se muestra el placeholder del Design System (cover-placeholder.svg).
-export const Docs: Story = {
+// Playground interactivo: un único selector de Obra; la portada, el título y el extracto cambian juntos.
+export const Docs: StoryObj<StoryCardTeaserV3Component & { storyIndex: number }> = {
+	argTypes: {
+		storyIndex: {
+			name: 'Obra',
+			control: { type: 'select' },
+			options: corpusStories.map((_, index) => index),
+			labels: corpusLabels,
+			description: 'Obra del corpus de François Onoff; su portada, título y extracto cambian de forma conjunta',
+			table: { type: { summary: 'number' } },
+		},
+	},
 	render: (args) => ({
-		props: args,
-		template: `<cuentoneta-story-card-teaser-v3 ${argsToTemplate(args)} />`,
+		props: { ...args, stories: corpusStories, covers: corpusCovers },
+		template: `
+			<cuentoneta-story-card-teaser-v3
+				[story]="stories[storyIndex]"
+				[coverImageUrl]="covers[storyIndex]"
+				[variant]="variant"
+				[order]="order"
+				[tagLabel]="tagLabel"
+				[showAuthor]="showAuthor"
+				[showExcerpt]="showExcerpt"
+				[showMultimedia]="showMultimedia"
+				[excerptLines]="excerptLines"
+			/>
+		`,
 	}),
 	args: {
-		story: storyMock,
+		storyIndex: 0,
 		variant: 'on-white',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -129,7 +156,8 @@ export const Docs: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Playground interactivo. Usá los controles de abajo para alternar la variante y el resto de los inputs.',
+				story:
+					'Playground interactivo. Elegí la <strong>Obra</strong> del corpus: su portada, título y extracto cambian de forma conjunta. El resto de los controles ajusta variante, autor, extracto y multimedia.',
 			},
 		},
 	},
@@ -142,7 +170,8 @@ export const OnWhite: Story = {
 		template: `<cuentoneta-story-card-teaser-v3 ${argsToTemplate(args)} />`,
 	}),
 	args: {
-		story: storyMock,
+		story: withMedia(palacioNueveFronterasTeaserMock),
+		coverImageUrl: palacioNueveFronterasTeaserMock.coverImage,
 		variant: 'on-white',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -167,7 +196,8 @@ export const OnGray: Story = {
 		template: `<div class="rounded-lg bg-neutral-100 p-6"><cuentoneta-story-card-teaser-v3 ${argsToTemplate(args)} /></div>`,
 	}),
 	args: {
-		story: storyMock,
+		story: withMedia(geometriaTeaserMock),
+		coverImageUrl: geometriaTeaserMock.coverImage,
 		variant: 'on-gray',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -192,7 +222,8 @@ export const Highlighted: Story = {
 		template: `<cuentoneta-story-card-teaser-v3 ${argsToTemplate(args)} />`,
 	}),
 	args: {
-		story: storyMock,
+		story: withMedia(elOdioTeaserMock),
+		coverImageUrl: elOdioTeaserMock.coverImage,
 		variant: 'highlighted',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -215,14 +246,23 @@ export const Highlighted: Story = {
 // instancia; argsToTemplate genera bindings `[variant]="variant"` que apuntan a un único `props.variant`.
 export const AllVariants: Story = {
 	render: (args) => ({
-		props: args,
+		props: {
+			...args,
+			stories: [
+				withMedia(palacioNueveFronterasTeaserMock),
+				withMedia(geometriaTeaserMock),
+				withMedia(elOdioTeaserMock),
+			],
+			covers: [palacioNueveFronterasTeaserMock.coverImage, geometriaTeaserMock.coverImage, elOdioTeaserMock.coverImage],
+		},
 		template: `
 			<div class="flex flex-col gap-10">
 				<div class="space-y-2">
 					<h3 class="text-sm font-semibold text-neutral-600">OnWhite</h3>
 					<cuentoneta-story-card-teaser-v3
 						variant="on-white"
-						[story]="story"
+						[story]="stories[0]"
+						[coverImageUrl]="covers[0]"
 						[order]="order"
 						[tagLabel]="tagLabel"
 						[showAuthor]="showAuthor"
@@ -236,7 +276,8 @@ export const AllVariants: Story = {
 					<div class="rounded-lg bg-neutral-100 p-6">
 						<cuentoneta-story-card-teaser-v3
 							variant="on-gray"
-							[story]="story"
+							[story]="stories[1]"
+							[coverImageUrl]="covers[1]"
 							[order]="order"
 							[tagLabel]="tagLabel"
 							[showAuthor]="showAuthor"
@@ -250,7 +291,8 @@ export const AllVariants: Story = {
 					<h3 class="text-sm font-semibold text-neutral-600">Highlighted</h3>
 					<cuentoneta-story-card-teaser-v3
 						variant="highlighted"
-						[story]="story"
+						[story]="stories[2]"
+						[coverImageUrl]="covers[2]"
 						[order]="order"
 						[tagLabel]="tagLabel"
 						[showAuthor]="showAuthor"
@@ -263,7 +305,6 @@ export const AllVariants: Story = {
 		`,
 	}),
 	args: {
-		story: storyMock,
 		order: 1,
 		tagLabel: 'Cuento',
 		showAuthor: true,
@@ -300,6 +341,7 @@ export const Estados: StoryObj<StoryCardTeaserV3Component & { loading: boolean }
 				} @else {
 					<cuentoneta-story-card-teaser-v3
 						[story]="story"
+						[coverImageUrl]="coverImageUrl"
 						[variant]="variant"
 						[order]="order"
 						[tagLabel]="tagLabel"
@@ -314,7 +356,8 @@ export const Estados: StoryObj<StoryCardTeaserV3Component & { loading: boolean }
 	}),
 	args: {
 		loading: true,
-		story: storyMock,
+		story: withMedia(palacioNueveFronterasTeaserMock),
+		coverImageUrl: palacioNueveFronterasTeaserMock.coverImage,
 		variant: 'on-white',
 		order: 1,
 		tagLabel: 'Cuento',
