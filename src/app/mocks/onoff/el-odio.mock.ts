@@ -8,7 +8,7 @@ export const elOdioStoryMock: Story = {
 	originalPublication: 'Éditions du Méridien (1971)',
 	approximateReadingTime: 6,
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/el-odio.svg',
+	coverImage: 'assets/img/mocks/stories/el-odio.png',
 	tags: [],
 	resources: [],
 	media: [],

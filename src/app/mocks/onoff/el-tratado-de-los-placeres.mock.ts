@@ -8,7 +8,7 @@ export const elTratadoDeLosPlaceresStoryMock: Story = {
 	originalPublication: 'Éditions du Méridien (1981)',
 	approximateReadingTime: 10,
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/el-tratado-de-los-placeres.svg',
+	coverImage: 'assets/img/mocks/stories/el-tratado-de-los-placeres.png',
 	tags: [],
 	resources: [],
 	media: [],

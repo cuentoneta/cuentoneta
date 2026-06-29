@@ -8,7 +8,7 @@ export const losPeldanosStoryMock: Story = {
 	originalPublication: 'Éditions du Méridien (1977)',
 	approximateReadingTime: 8,
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/los-peldanos.svg',
+	coverImage: 'assets/img/mocks/stories/los-peldanos.png',
 	tags: [],
 	resources: [],
 	media: [],

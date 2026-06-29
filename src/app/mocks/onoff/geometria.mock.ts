@@ -8,7 +8,7 @@ export const geometriaStoryMock: Story = {
 	originalPublication: 'Éditions du Méridien (1974)',
 	approximateReadingTime: 7,
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/geometria.svg',
+	coverImage: 'assets/img/mocks/stories/geometria.png',
 	tags: [],
 	resources: [],
 	media: [],

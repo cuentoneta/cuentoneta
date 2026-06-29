@@ -8,7 +8,7 @@ export const lasEscalerasStoryMock: Story = {
 	originalPublication: 'Éditions du Méridien (1979)',
 	approximateReadingTime: 9,
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/las-escaleras.svg',
+	coverImage: 'assets/img/mocks/stories/las-escaleras.png',
 	tags: [],
 	resources: [],
 	media: [],
