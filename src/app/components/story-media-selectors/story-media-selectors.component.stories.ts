@@ -27,17 +27,7 @@ const meta: Meta<StoryMediaSelectorsComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div>
-					<p>El componente **StoryMediaSelectorsComponent** renderiza los selectores de los recursos multimedia
-					(YouTube, X, Spotify, audio) asociados a una historia. Es un componente de presentación: no monta los
-					widgets, solo emite el recurso seleccionado vía el output <code>selected</code>.</p>
-					<ul>
-						<li><code>selectable = false</code> (por defecto): agrupa por plataforma con un contador (badge). Decorativo.</li>
-						<li><code>selectable = true</code>: un selector clickeable por recurso; al click emite el <code>Media</code> vía <code>selected</code>.</li>
-					</ul>
-					<p>El input <code>theme</code> (<code>subtle</code> / <code>solid</code> / <code>bordered</code>) y
-					<code>orientation</code> (<code>horizontal</code> / <code>vertical</code>) controlan la presentación.</p>
-				</div>`,
+				component: `<div><p>El componente <strong>StoryMediaSelectorsComponent</strong> renderiza los selectores de los recursos multimedia (YouTube, X, Spotify, audio) asociados a una historia. Es un componente de presentación: no monta los widgets, solo emite el recurso seleccionado vía el output <code>selected</code>.</p><ul><li><code>selectable = false</code> (por defecto): agrupa por plataforma con un contador (badge). Decorativo.</li><li><code>selectable = true</code>: un selector clickeable por recurso; al click emite el <code>Media</code> vía <code>selected</code>.</li></ul><p>Los inputs <code>theme</code> (<code>subtle</code> / <code>solid</code> / <code>bordered</code>) y <code>orientation</code> (<code>horizontal</code> / <code>vertical</code>) controlan la presentación.</p><p>Se consume desde <a href="./?path=/docs/componentes-v3-storycardteaserv3--docs" target="_top"><strong>StoryCardTeaserV3</strong></a> y <a href="./?path=/docs/componentes-v3-homestorycard--docs" target="_top"><strong>HomeStoryCard</strong></a> (modo agrupado), y en la página de Story en modo seleccionable.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -53,6 +43,7 @@ const meta: Meta<StoryMediaSelectorsComponent> = {
 		orientation: {
 			control: { type: 'inline-radio' },
 			options: ['horizontal', 'vertical'],
+			description: 'Disposición de los selectores: en fila (horizontal) o en columna (vertical)',
 			table: { defaultValue: { summary: 'horizontal' } },
 		},
 		selectable: {
@@ -73,7 +64,9 @@ export const Grouped: Story = {
 	args: { media, theme: 'subtle', orientation: 'horizontal', selectable: false },
 	parameters: {
 		docs: {
-			description: { story: 'Modo agrupado: un selector por plataforma con contador. Tema `subtle` (OnWhite).' },
+			description: {
+				story: `<p>Modo agrupado (decorativo): un selector por plataforma con contador. Tema <code>subtle</code> (OnWhite).</p><p><strong>Usos:</strong> <a href="./?path=/docs/componentes-v3-storycardteaserv3--docs" target="_top"><strong>StoryCardTeaserV3</strong></a> y <a href="./?path=/docs/componentes-v3-homestorycard--docs" target="_top"><strong>HomeStoryCard</strong></a>, como resumen de los recursos disponibles.</p>`,
+			},
 		},
 	},
 };
@@ -85,7 +78,7 @@ export const Selectable: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Modo seleccionable: un botón por recurso. Al hacer click emite el `Media` (ver la pestaña Actions).',
+				story: `<p>Modo seleccionable: un botón por recurso. Al hacer click emite el <code>Media</code> vía el output <code>selected</code> (ver la pestaña Actions).</p><p><strong>Usos:</strong> página de Story, donde el padre monta el widget del recurso seleccionado.</p>`,
 			},
 		},
 	},
@@ -124,6 +117,10 @@ export const Themes: Story = {
 	}),
 	args: { media, selectable: false },
 	parameters: {
-		docs: { description: { story: 'Los tres temas en su contexto de fondo y la orientación vertical.' } },
+		docs: {
+			description: {
+				story: `<p>Vitrina de los tres temas en su contexto de fondo (subtle/solid/bordered) y la orientación vertical.</p><p><strong>Usos:</strong> referencia para elegir el tema según el fondo de la tarjeta contenedora.</p>`,
+			},
+		},
 	},
 };
