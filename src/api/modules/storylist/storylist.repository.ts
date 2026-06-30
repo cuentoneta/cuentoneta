@@ -59,6 +59,7 @@ export async function fetchStorylistBySlug(slug: string): Promise<Storylist> {
 				media: mapMediaSourcesTeasers(story.mediaSources),
 				paragraphs: mapBlockContentToTextParagraphs(story.body),
 				resources: [],
+				tags: [],
 			}),
 		);
 	}
@@ -112,6 +113,7 @@ export async function fetchStorylistStoriesNavigationTeaserByStorylistSlug(
 			coverImage: urlFor(coverImage),
 			paragraphs: [],
 			media: [],
+			tags: [],
 		})),
 		tabs: [],
 		media: [],

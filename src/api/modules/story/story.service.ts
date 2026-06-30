@@ -120,6 +120,7 @@ export async function getStories(limit: number = 100, offset: number = 0): Promi
 			media: mapMediaSourcesTeasers(mediaSources),
 			paragraphs: mapBlockContentToTextParagraphs(body),
 			resources: [],
+			tags: [],
 		});
 	});
 }
