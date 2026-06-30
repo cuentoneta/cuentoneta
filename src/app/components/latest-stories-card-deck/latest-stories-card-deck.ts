@@ -3,23 +3,23 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { StoryCardTeaserComponent } from '../story-card-teaser/story-card-teaser.component';
 import { StoryCardTeaserSkeletonComponent } from '../story-card-teaser/story-card-teaser-skeleton.component';
 import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
+import { HomeStoryCardComponent } from '@components/home-story-card/home-story-card.component';
+import { HomeStoryCardSkeletonComponent } from '@components/home-story-card/home-story-card-skeleton.component';
 
 @Component({
 	selector: 'cuentoneta-latest-stories-card-deck',
-	imports: [StoryCardTeaserComponent, StoryCardTeaserSkeletonComponent],
+	imports: [HomeStoryCardComponent, HomeStoryCardSkeletonComponent],
 	template: ` <div class="flex content-between items-center gap-4 text-neutral-500">
 			<hr class="w-6" />
 			<h2 class="h3 text-center font-source-serif italic">Últimas novedades</h2>
-			<hr class="flex-grow" />
+			<hr class="grow" />
 		</div>
 
 		<section class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-8">
 			@defer (when stories().length > 0) {
 				@for (story of stories(); track $index) {
-					<cuentoneta-story-card-teaser
+					<cuentoneta-home-story-card
 						[story]="story"
-						[showAuthor]="true"
-						[order]="$index + 1"
 						[navigationParams]="{
 							navigation: 'author',
 							navigationSlug: story.author.slug,
@@ -29,7 +29,7 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 				}
 			} @loading (minimum 500ms) {
 				@for (_ of [].constructor(6); track $index) {
-					<cuentoneta-story-card-teaser-skeleton [showAuthor]="true" [order]="$index + 1" data-testid="skeleton" />
+					<cuentoneta-home-story-card-skeleton data-testid="skeleton" />
 				}
 			}
 		</section>`,
