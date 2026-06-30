@@ -85,6 +85,7 @@ export const Interactiva: StoryObj<HomeStoryCardComponent & { storyIndex: number
 				[order]="order"
 				[tagLabel]="tagLabel"
 				[showMultimedia]="showMultimedia"
+				[navigationParams]="navigationParams"
 			/>
 		`,
 	}),
@@ -93,6 +94,7 @@ export const Interactiva: StoryObj<HomeStoryCardComponent & { storyIndex: number
 		order: 1,
 		tagLabel: 'Cuento',
 		showMultimedia: true,
+		navigationParams: { navigation: 'author', navigationSlug: 'francois-onoff' },
 	},
 	parameters: {
 		docs: {
