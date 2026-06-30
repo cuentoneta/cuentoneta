@@ -1,7 +1,7 @@
 import { clearAllMocks, type Mock } from '@test-utils';
 import * as storyRepository from './story.repository';
 import * as storyService from './story.service';
-import { StoriesByAuthorSlugQueryResult, StoryBySlugQueryResult } from '../../sanity/types';
+import type { StoriesByAuthorSlugQueryResult, StoryBySlugQueryResult } from '../../sanity/types';
 import { elOdioRawStory } from '../../_mocks/onoff/el-odio.raw.mock';
 import { elOdioRawTeaser } from '../../_mocks/onoff-raw-stories.mock';
 
@@ -41,7 +41,7 @@ describe('StoryService', () => {
 		it('should map coverImage to an empty string when the story has no image', async () => {
 			(storyRepository.fetchStoriesByAuthorSlug as Mock).mockResolvedValue([rawTeaserNoCover]);
 
-			const [story] = await storyService.getStoriesByAuthorSlug({ slug: 'autor', limit: 10, offset: 0 });
+			const [story] = await storyService.getStoriesByAuthorSlug({ slug: 'francois-onoff', limit: 10, offset: 0 });
 
 			expect(story.coverImage).toBe('');
 		});
@@ -49,7 +49,7 @@ describe('StoryService', () => {
 		it('should expose coverImage as a string, never the raw Sanity image object', async () => {
 			(storyRepository.fetchStoriesByAuthorSlug as Mock).mockResolvedValue([rawTeaserWithCover]);
 
-			const [story] = await storyService.getStoriesByAuthorSlug({ slug: 'autor', limit: 10, offset: 0 });
+			const [story] = await storyService.getStoriesByAuthorSlug({ slug: 'francois-onoff', limit: 10, offset: 0 });
 
 			expect(typeof story.coverImage).toBe('string');
 			expect(story.coverImage).not.toBeInstanceOf(Object);
@@ -60,7 +60,7 @@ describe('StoryService', () => {
 		it('should map coverImage to an empty string when the story has no image', async () => {
 			(storyRepository.fetchStoryBySlug as Mock).mockResolvedValue(rawContentNoCover);
 
-			const story = await storyService.getStoryBySlug('historia-1');
+			const story = await storyService.getStoryBySlug('el-odio');
 
 			expect(story.coverImage).toBe('');
 		});
