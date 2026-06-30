@@ -90,9 +90,9 @@ export const storylistTeaserSampleMock: StorylistTeaser = {
 	imagery: {
 		kind: 'sample',
 		images: [
+			'assets/img/mocks/stories/neron.png',
 			'assets/img/mocks/stories/el-odio.png',
-			'assets/img/mocks/stories/las-escaleras.png',
-			'assets/img/mocks/stories/geometria.png',
+			'assets/img/mocks/stories/las-dos-antorchas.png',
 		],
 	},
 };
