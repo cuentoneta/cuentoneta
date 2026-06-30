@@ -5,34 +5,14 @@ import { StoryCardTeaserV3Component } from './story-card-teaser-v3.component';
 import {
 	elOdioTeaserMock,
 	geometriaTeaserMock,
-	onoffStoryTeasersMock,
 	palacioNueveFronterasTeaserMock,
 } from '../../mocks/onoff-story-teasers.mock';
-import type { StoryTeaserWithAuthor } from '@models/story.model';
-import type { Media } from '@models/media.model';
-
-// Conjunto de medios variado para ilustrar los selectores de multimedia y el contador (badge):
-// 3 videos de YouTube (muestra el contador), un Space de X y un episodio de Spotify.
-const richMedia: Media[] = [
-	{ title: 'Video 1', type: 'youTubeVideo', description: [], data: { videoId: 'a' } },
-	{ title: 'Video 2', type: 'youTubeVideo', description: [], data: { videoId: 'b' } },
-	{ title: 'Video 3', type: 'youTubeVideo', description: [], data: { videoId: 'c' } },
-	{
-		title: 'Space',
-		type: 'spaceRecording',
-		description: [],
-		data: { url: null, duration: '', hostName: '', date: '' },
-	},
-	{ title: 'Podcast', type: 'spotifyPodcastEpisode', description: [], data: { url: 'https://spotify.com' } },
-];
-
-// Los teasers del corpus tienen media: []; se les compone richMedia para ilustrar los selectores de multimedia.
-const withMedia = (teaser: StoryTeaserWithAuthor): StoryTeaserWithAuthor => ({ ...teaser, media: richMedia });
-
-// Las portadas se derivan del coverImage de cada teaser; los tres arrays comparten el índice del corpus.
-const corpusStories = onoffStoryTeasersMock.map(withMedia);
-const corpusCovers = onoffStoryTeasersMock.map((teaser) => teaser.coverImage);
-const corpusLabels = Object.fromEntries(onoffStoryTeasersMock.map((teaser, index) => [index, teaser.title]));
+import {
+	corpusStories,
+	corpusCovers,
+	literaryWorkSelectArgType,
+	withRichMedia,
+} from '../../mocks/onoff-corpus.storybook';
 
 // Las descripciones de la doc van en una sola línea: el renderer de Markdown de los autodocs
 // interpreta como bloque de código cualquier línea con indentación, así que un HTML multilínea
@@ -119,12 +99,8 @@ type Story = StoryObj<StoryCardTeaserV3Component>;
 export const Interactiva: StoryObj<StoryCardTeaserV3Component & { storyIndex: number }> = {
 	argTypes: {
 		storyIndex: {
-			name: 'Obra',
-			// `labels` debe ir dentro de `control`; como hermano del argType, Storybook lo ignora y muestra el índice.
-			control: { type: 'select', labels: corpusLabels },
-			options: corpusStories.map((_, index) => index),
+			...literaryWorkSelectArgType,
 			description: 'Obra del corpus de François Onoff; su portada, título y extracto cambian de forma conjunta',
-			table: { type: { summary: 'number' } },
 		},
 	},
 	render: (args) => ({
@@ -170,7 +146,7 @@ export const OnWhite: Story = {
 		template: `<cuentoneta-story-card-teaser-v3 ${argsToTemplate(args)} />`,
 	}),
 	args: {
-		story: withMedia(palacioNueveFronterasTeaserMock),
+		story: withRichMedia(palacioNueveFronterasTeaserMock),
 		coverImageUrl: palacioNueveFronterasTeaserMock.coverImage,
 		variant: 'on-white',
 		order: 1,
@@ -196,7 +172,7 @@ export const OnGray: Story = {
 		template: `<div class="rounded-lg bg-neutral-100 p-6"><cuentoneta-story-card-teaser-v3 ${argsToTemplate(args)} /></div>`,
 	}),
 	args: {
-		story: withMedia(geometriaTeaserMock),
+		story: withRichMedia(geometriaTeaserMock),
 		coverImageUrl: geometriaTeaserMock.coverImage,
 		variant: 'on-gray',
 		order: 1,
@@ -222,7 +198,7 @@ export const Highlighted: Story = {
 		template: `<cuentoneta-story-card-teaser-v3 ${argsToTemplate(args)} />`,
 	}),
 	args: {
-		story: withMedia(elOdioTeaserMock),
+		story: withRichMedia(elOdioTeaserMock),
 		coverImageUrl: elOdioTeaserMock.coverImage,
 		variant: 'highlighted',
 		order: 1,
@@ -249,9 +225,9 @@ export const AllVariants: Story = {
 		props: {
 			...args,
 			stories: [
-				withMedia(palacioNueveFronterasTeaserMock),
-				withMedia(geometriaTeaserMock),
-				withMedia(elOdioTeaserMock),
+				withRichMedia(palacioNueveFronterasTeaserMock),
+				withRichMedia(geometriaTeaserMock),
+				withRichMedia(elOdioTeaserMock),
 			],
 			covers: [palacioNueveFronterasTeaserMock.coverImage, geometriaTeaserMock.coverImage, elOdioTeaserMock.coverImage],
 		},
@@ -356,7 +332,7 @@ export const Estados: StoryObj<StoryCardTeaserV3Component & { loading: boolean }
 	}),
 	args: {
 		loading: true,
-		story: withMedia(palacioNueveFronterasTeaserMock),
+		story: withRichMedia(palacioNueveFronterasTeaserMock),
 		coverImageUrl: palacioNueveFronterasTeaserMock.coverImage,
 		variant: 'on-white',
 		order: 1,
