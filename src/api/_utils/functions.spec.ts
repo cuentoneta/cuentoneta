@@ -74,8 +74,7 @@ describe('mapTags (ACL)', () => {
 	});
 });
 
-// El input crudo no incluye `tags`: las queries de teaser/navegación dejaron de proyectar `'tags': []`,
-// así que el mapper es la única fuente del campo vacío (consistente con `mapAuthorTeaser`).
+// El input crudo no incluye `tags`: el mapper es la única fuente del campo vacío (consistente con `mapAuthorTeaser`).
 function rawStoryTeaserItem() {
 	return {
 		_id: 'story-1',
