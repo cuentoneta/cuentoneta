@@ -148,6 +148,7 @@ export const Estados: StoryObj<HomeStoryCardComponent & { loading: boolean }> = 
 				} @else {
 					<cuentoneta-home-story-card
 						[story]="story"
+						[coverImageUrl]="coverImageUrl"
 						[order]="order"
 						[tagLabel]="tagLabel"
 						[showMultimedia]="showMultimedia"
