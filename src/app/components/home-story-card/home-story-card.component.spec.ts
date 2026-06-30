@@ -3,6 +3,7 @@ import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import { storyNavigationTeaserWithAuthorMock, storyTeaserMock } from '../../mocks/story.mock';
 import { authorTeaserMock } from '../../mocks/author.mock';
+import { onoffStoryTeasersMock } from '../../mocks/onoff-story-teasers.mock';
 import { clearAllMocks } from '@test-utils';
 import type { Media } from '@models/media.model';
 import type { StoryTeaserWithAuthor } from '@models/story.model';
@@ -174,6 +175,20 @@ describe('HomeStoryCardComponent', () => {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
 			});
 			expect(screen.queryByTestId('skeleton')).not.toBeInTheDocument();
+		});
+	});
+
+	// Variedad de obras reales del corpus de François Onoff (#1650): detecta regresiones de datos del corpus.
+	describe('Corpus Onoff — variedad de obras', () => {
+		beforeEach(() => clearAllMocks());
+
+		it.each(onoffStoryTeasersMock)('should render title and reading time for "$title"', async (teaser) => {
+			await render(HomeStoryCardComponent, {
+				inputs: { story: teaser, coverImageUrl: teaser.coverImage },
+			});
+
+			expect(screen.getByText(teaser.title)).toBeInTheDocument();
+			expect(screen.getByText(`${teaser.approximateReadingTime} minutos de lectura`)).toBeInTheDocument();
 		});
 	});
 });
