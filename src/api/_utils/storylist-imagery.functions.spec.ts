@@ -13,7 +13,7 @@ const img = (ref: string): SanityImageSource => ({ _type: 'image', asset: { _typ
 
 describe('mapImagery (ACL)', () => {
 	it('returns representative imagery from the featuredImage', () => {
-		const result = mapImagery({ id: 'col-1', featuredImage: img('feat'), storyCoverImages: [img('s1')] });
+		const result = mapImagery({ featuredImage: img('feat'), storyCoverImages: [img('s1')] });
 
 		expect(result.kind).toBe('representative');
 		if (result.kind === 'representative') {
@@ -21,9 +21,8 @@ describe('mapImagery (ACL)', () => {
 		}
 	});
 
-	it('returns sample imagery (tuple of 3 non-empty) when there is no featuredImage', () => {
+	it('takes the first 3 covers in order when there is no featuredImage', () => {
 		const result = mapImagery({
-			id: 'col-1',
 			featuredImage: null,
 			storyCoverImages: [img('a'), img('b'), img('c'), img('d'), img('e')],
 		});
@@ -31,12 +30,14 @@ describe('mapImagery (ACL)', () => {
 		expect(result.kind).toBe('sample');
 		if (result.kind === 'sample') {
 			expect(result.images).toHaveLength(3);
-			expect(result.images.every((url) => url !== '')).toBe(true);
+			expect(result.images[0]).toContain('a');
+			expect(result.images[1]).toContain('b');
+			expect(result.images[2]).toContain('c');
 		}
 	});
 
 	it('pads the sample tuple with empty strings when there are fewer than 3 covers', () => {
-		const result = mapImagery({ id: 'col-1', featuredImage: null, storyCoverImages: [img('only')] });
+		const result = mapImagery({ featuredImage: null, storyCoverImages: [img('only')] });
 
 		expect(result.kind).toBe('sample');
 		if (result.kind === 'sample') {
@@ -46,26 +47,9 @@ describe('mapImagery (ACL)', () => {
 	});
 
 	it('produces an all-empty tuple when there are no covers', () => {
-		expect(mapImagery({ id: 'col-1', featuredImage: null, storyCoverImages: [] })).toEqual({
+		expect(mapImagery({ featuredImage: null, storyCoverImages: [] })).toEqual({
 			kind: 'sample',
 			images: ['', '', ''],
 		});
-	});
-
-	it('is deterministic: same id and input produce the same selection', () => {
-		const covers = [img('a'), img('b'), img('c'), img('d'), img('e')];
-		const first = mapImagery({ id: 'col-7', featuredImage: null, storyCoverImages: covers });
-		const second = mapImagery({ id: 'col-7', featuredImage: null, storyCoverImages: covers });
-
-		expect(first).toEqual(second);
-	});
-
-	it('varies the sample selection across different ids', () => {
-		const covers = [img('a'), img('b'), img('c'), img('d'), img('e')];
-		const selections = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6'].map((id) =>
-			JSON.stringify(mapImagery({ id, featuredImage: null, storyCoverImages: covers })),
-		);
-
-		expect(new Set(selections).size).toBeGreaterThan(1);
 	});
 });

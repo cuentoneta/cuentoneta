@@ -36,7 +36,7 @@ export async function fetchAllStorylistTeasers(): Promise<StorylistTeaser[]> {
 			stories: [],
 			tabs: [],
 			media: mapMediaSourcesTeasers(mediaSources),
-			imagery: mapImagery({ id: item._id, featuredImage, storyCoverImages }),
+			imagery: mapImagery({ featuredImage, storyCoverImages }),
 		};
 	});
 }

@@ -191,7 +191,7 @@ function mapStorylistTeasers(result: StorylistTeasersQueryResult): StorylistTeas
 			stories: [],
 			tabs: [],
 			media: mapMediaSourcesTeasers(mediaSources),
-			imagery: mapImagery({ id: item._id, featuredImage, storyCoverImages }),
+			imagery: mapImagery({ featuredImage, storyCoverImages }),
 		};
 	});
 }
