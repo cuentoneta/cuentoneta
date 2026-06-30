@@ -235,7 +235,7 @@ describe('StoryCardTeaserV3Component', () => {
 	});
 
 	// Variedad de obras reales del corpus de François Onoff (#1650): detecta regresiones de datos del corpus.
-	describe('Corpus Onoff — variedad de obras', () => {
+	describe('Onoff corpus — story variety', () => {
 		beforeEach(() => clearAllMocks());
 
 		it.each(onoffStoryTeasersMock)('should render title and reading time for "$title"', async (teaser) => {
