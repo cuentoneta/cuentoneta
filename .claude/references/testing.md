@@ -256,10 +256,11 @@ Todo componente nuevo en **`src/app/components/`** lleva su `*.stories.ts` (docu
 
 ### Convenciones (según las stories existentes)
 
-- `title` en español bajo `Componentes/...` (p. ej. `'Componentes/Tag'`).
-- `parameters.docs.description.component` con descripción en español (markdown/HTML).
-- `argTypes` para cada `input()` público, con `control`, `options` y `table.defaultValue`.
-- Una **story por estado/variante** (`Soft`, `Filled`, `Gray`, …) y opcionalmente un `Showcase`.
+- `title` en español bajo `Componentes V3/...` (p. ej. `'Componentes V3/Tag'`).
+- **autodocs es global.** `.storybook/preview.js` exporta `tags = ['autodocs']`, así que **no** hace falta repetir `tags: ['autodocs']` por archivo (es redundante).
+- `parameters.docs.description.component` con descripción en español (HTML, ver reglas abajo).
+- `argTypes` para **cada `input()` público**, con `control`, `options`/`type` y `table` (`type` + `defaultValue`). Aplica también a inputs de tipo objeto complejo (p. ej. `story`, `collection`): aunque no se editen cómodamente en el panel, usar `control: { type: 'object' }` y documentar `table.type`/`table.defaultValue`.
+- Una **story por estado/variante** (`Soft`, `Filled`, `Gray`, …) y opcionalmente un `Showcase` con todas las variantes en simultáneo. Cada story lleva su `docs.description.story` con el **comportamiento** y una línea **`<strong>Usos:</strong>`** que indica en qué páginas/componentes se usa la variante.
 - Render con `argsToTemplate(args)` y el selector real del componente (`cuentoneta-...`).
 
 ```typescript
@@ -268,9 +269,9 @@ import { TagComponent } from './tag.component';
 
 const meta: Meta<TagComponent> = {
 	component: TagComponent,
-	title: 'Componentes/Tag',
+	title: 'Componentes V3/Tag',
 	parameters: {
-		docs: { description: { component: `El **TagComponent** del Design System v3...` } },
+		docs: { description: { component: `<div><p>El <strong>TagComponent</strong> del Design System v3...</p></div>` } },
 		layout: 'padded',
 	},
 	argTypes: {

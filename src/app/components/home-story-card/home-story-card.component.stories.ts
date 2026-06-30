@@ -11,13 +11,9 @@ import {
 	withRichMedia,
 } from '../../mocks/onoff-corpus.storybook';
 
-// Las descripciones de la doc van en una sola línea: el renderer de Markdown de los autodocs
-// interpreta como bloque de código cualquier línea con indentación, así que un HTML multilínea
-// indentado se mostraría dentro de un recuadro de código.
 const meta: Meta<HomeStoryCardComponent> = {
 	component: HomeStoryCardComponent,
 	title: 'Componentes V3/HomeStoryCard',
-	tags: ['autodocs'],
 	decorators: [
 		applicationConfig({
 			providers: [provideRouter([])],
@@ -33,10 +29,23 @@ const meta: Meta<HomeStoryCardComponent> = {
 		layout: 'padded',
 	},
 	argTypes: {
+		story: {
+			control: { type: 'object' },
+			description: 'Historia a previsualizar (con autor); si no se provee, la tarjeta renderiza su skeleton',
+			table: {
+				type: { summary: 'StoryTeaserWithAuthor | StoryNavigationTeaserWithAuthor' },
+				defaultValue: { summary: 'undefined' },
+			},
+		},
 		order: {
 			control: { type: 'number', min: 1, max: 99 },
 			description: 'Numeración opcional de la historia',
 			table: { type: { summary: 'number' }, defaultValue: { summary: 'undefined' } },
+		},
+		priority: {
+			control: { type: 'boolean' },
+			description: 'Marca el cover como prioritario (above-the-fold) para la carga de imágenes',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
 		},
 		coverImageUrl: {
 			control: { type: 'text' },
@@ -99,8 +108,7 @@ export const Interactiva: StoryObj<HomeStoryCardComponent & { storyIndex: number
 	parameters: {
 		docs: {
 			description: {
-				story:
-					'Playground interactivo. Elegí la <strong>Obra</strong> del corpus: su portada y título cambian de forma conjunta. El resto de los controles ajusta numeración, etiqueta y multimedia.',
+				story: `<p>Playground interactivo. Elegí la <strong>Obra</strong> del corpus: su portada y título cambian de forma conjunta. El resto de los controles ajusta numeración, etiqueta y multimedia.</p><p><strong>Usos:</strong> Home.</p>`,
 			},
 		},
 	},
@@ -145,17 +153,13 @@ export const Estados: StoryObj<HomeStoryCardComponent & { loading: boolean }> = 
 		props: args,
 		template: `
 			<div class="w-[331px]">
-				@if (loading) {
-					<cuentoneta-home-story-card />
-				} @else {
-					<cuentoneta-home-story-card
-						[story]="story"
-						[coverImageUrl]="coverImageUrl"
-						[order]="order"
-						[tagLabel]="tagLabel"
-						[showMultimedia]="showMultimedia"
-					/>
-				}
+				<cuentoneta-home-story-card
+					[story]="loading ? undefined : story"
+					[coverImageUrl]="coverImageUrl"
+					[order]="order"
+					[tagLabel]="tagLabel"
+					[showMultimedia]="showMultimedia"
+				/>
 			</div>
 		`,
 	}),
