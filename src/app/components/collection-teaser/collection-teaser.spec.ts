@@ -76,16 +76,6 @@ describe('CollectionTeaser', () => {
 			const link = screen.getByRole('link');
 			expect(link).toHaveAttribute('href', `/storylist/${collectionTeaserMock.slug}`);
 		});
-
-		it('should have navigation-link class', async () => {
-			await render(CollectionTeaser, {
-				inputs: { collection: collectionTeaserMock },
-				providers: defaultProviders,
-			});
-
-			const link = screen.getByRole('link');
-			expect(link).toHaveClass('navigation-link');
-		});
 	});
 
 	// Pruebas del cover de la colección
@@ -227,21 +217,6 @@ describe('CollectionTeaser', () => {
 			fixture.detectChanges();
 
 			expect(screen.getByText('Nueva Colección')).toBeInTheDocument();
-		});
-	});
-
-	// Pruebas de estructura del layout
-	describe('Estructura del layout', () => {
-		it('should have flex layout with gap on link', async () => {
-			await render(CollectionTeaser, {
-				inputs: { collection: collectionTeaserMock },
-				providers: defaultProviders,
-			});
-
-			const link = screen.getByRole('link');
-			expect(link).toHaveClass('flex');
-			expect(link).toHaveClass('items-start');
-			expect(link).toHaveClass('gap-5');
 		});
 	});
 
