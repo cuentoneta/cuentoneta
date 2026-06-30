@@ -39,6 +39,14 @@ export const Primary: StoryObj<CollectionTeaser> = {
     </div>
 `,
 	}),
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Columna izquierda: variante representative (portada editorial propia). Columna derecha: variante sample (composición de portadas de historias).',
+			},
+		},
+	},
 };
 
 export const Interactiva: StoryObj<CollectionTeaser & { kind: 'representative' | 'sample' }> = {
@@ -59,7 +67,7 @@ export const Interactiva: StoryObj<CollectionTeaser & { kind: 'representative' |
 			</div>
 		`,
 	}),
-	args: { kind: 'representative' },
+	args: { kind: 'sample' },
 	parameters: {
 		docs: {
 			description: {

@@ -1,5 +1,6 @@
 import type { SanityImageSource } from '@sanity/image-url';
 import { mapImagery } from './storylist-imagery.functions';
+import { clearAllMocks } from '@test-utils';
 
 /* eslint-disable no-restricted-syntax -- vi.mock: builder de imágenes de Sanity para que urlFor sea determinista en test; se migra a DI en #1503 */
 vi.mock('@sanity/image-url', () => ({
@@ -12,6 +13,10 @@ vi.mock('@sanity/image-url', () => ({
 const img = (ref: string): SanityImageSource => ({ _type: 'image', asset: { _type: 'reference', _ref: ref } });
 
 describe('mapImagery (ACL)', () => {
+	beforeEach(() => {
+		clearAllMocks();
+	});
+
 	it('returns representative imagery from the featuredImage', () => {
 		const result = mapImagery({ featuredImage: img('feat'), storyCoverImages: [img('s1')] });
 

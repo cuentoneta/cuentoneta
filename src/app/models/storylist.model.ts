@@ -26,8 +26,8 @@ interface StorylistBase<T> {
 	media: Media[];
 }
 
-// Representación visual de una colección en su teaser: la portada editorial propia (`representative`) o, en su
-// ausencia, una muestra de 3 portadas de sus historias (`sample`), con '' en los slots sin historia.
+// Si la colección tiene portada editorial propia se usa (`representative`); en caso contrario, las primeras
+// portadas de sus historias (`sample`).
 export type StorylistImagery =
 	| { readonly kind: 'representative'; readonly image: string }
 	| { readonly kind: 'sample'; readonly images: readonly [string, string, string] };
