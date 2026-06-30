@@ -33,10 +33,23 @@ const meta: Meta<HomeStoryCardComponent> = {
 		layout: 'padded',
 	},
 	argTypes: {
+		story: {
+			control: { type: 'object' },
+			description: 'Historia a previsualizar (con autor); si no se provee, la tarjeta renderiza su skeleton',
+			table: {
+				type: { summary: 'StoryTeaserWithAuthor | StoryNavigationTeaserWithAuthor' },
+				defaultValue: { summary: 'undefined' },
+			},
+		},
 		order: {
 			control: { type: 'number', min: 1, max: 99 },
 			description: 'Numeración opcional de la historia',
 			table: { type: { summary: 'number' }, defaultValue: { summary: 'undefined' } },
+		},
+		priority: {
+			control: { type: 'boolean' },
+			description: 'Marca el cover como prioritario (above-the-fold) para la carga de imágenes',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
 		},
 		coverImageUrl: {
 			control: { type: 'text' },
@@ -99,8 +112,7 @@ export const Interactiva: StoryObj<HomeStoryCardComponent & { storyIndex: number
 	parameters: {
 		docs: {
 			description: {
-				story:
-					'Playground interactivo. Elegí la <strong>Obra</strong> del corpus: su portada y título cambian de forma conjunta. El resto de los controles ajusta numeración, etiqueta y multimedia.',
+				story: `<p>Playground interactivo. Elegí la <strong>Obra</strong> del corpus: su portada y título cambian de forma conjunta. El resto de los controles ajusta numeración, etiqueta y multimedia.</p><p><strong>Usos:</strong> Home.</p>`,
 			},
 		},
 	},
