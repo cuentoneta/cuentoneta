@@ -11,13 +11,9 @@ import {
 	withRichMedia,
 } from '../../mocks/onoff-corpus.storybook';
 
-// Las descripciones de la doc van en una sola línea: el renderer de Markdown de los autodocs
-// interpreta como bloque de código cualquier línea con indentación, así que un HTML multilínea
-// indentado se mostraría dentro de un recuadro de código.
 const meta: Meta<HomeStoryCardComponent> = {
 	component: HomeStoryCardComponent,
 	title: 'Componentes V3/HomeStoryCard',
-	tags: ['autodocs'],
 	decorators: [
 		applicationConfig({
 			providers: [provideRouter([])],
@@ -157,17 +153,13 @@ export const Estados: StoryObj<HomeStoryCardComponent & { loading: boolean }> = 
 		props: args,
 		template: `
 			<div class="w-[331px]">
-				@if (loading) {
-					<cuentoneta-home-story-card />
-				} @else {
-					<cuentoneta-home-story-card
-						[story]="story"
-						[coverImageUrl]="coverImageUrl"
-						[order]="order"
-						[tagLabel]="tagLabel"
-						[showMultimedia]="showMultimedia"
-					/>
-				}
+				<cuentoneta-home-story-card
+					[story]="loading ? undefined : story"
+					[coverImageUrl]="coverImageUrl"
+					[order]="order"
+					[tagLabel]="tagLabel"
+					[showMultimedia]="showMultimedia"
+				/>
 			</div>
 		`,
 	}),
