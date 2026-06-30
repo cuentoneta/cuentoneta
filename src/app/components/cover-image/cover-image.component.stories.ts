@@ -2,13 +2,9 @@ import { argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angul
 
 import { CoverImageComponent } from './cover-image.component';
 import { CoverImageSkeletonComponent } from './cover-image-skeleton.component';
-import { onoffStoryTeasersMock } from '../../mocks/onoff-story-teasers.mock';
+import { corpusCovers, obraSelectArgType } from '../../mocks/onoff-corpus.storybook';
 
 const coverImageUrl = 'assets/img/mocks/stories/geometria.png';
-
-// Portadas disponibles en los assets del proyecto (corpus de Onoff); el índice se elige en el selector "Obra".
-const corpusCovers = onoffStoryTeasersMock.map((teaser) => teaser.coverImage);
-const corpusLabels = Object.fromEntries(onoffStoryTeasersMock.map((teaser, index) => [index, teaser.title]));
 
 const meta: Meta<CoverImageComponent> = {
 	component: CoverImageComponent,
@@ -50,11 +46,8 @@ export const WithImage: Story = {
 export const Interactiva: StoryObj<CoverImageComponent & { coverIndex: number }> = {
 	argTypes: {
 		coverIndex: {
-			name: 'Obra',
-			control: { type: 'select', labels: corpusLabels },
-			options: corpusCovers.map((_, index) => index),
+			...obraSelectArgType,
 			description: 'Portada a visualizar, elegida entre las covers del corpus disponibles en los assets del proyecto',
-			table: { type: { summary: 'number' } },
 		},
 	},
 	render: (args) => ({
