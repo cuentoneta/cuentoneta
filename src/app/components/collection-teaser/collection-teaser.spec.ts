@@ -48,7 +48,6 @@ describe('CollectionTeaser', () => {
 				providers: defaultProviders,
 			});
 
-			// Solo debe existir el article vacío, sin link
 			const article = screen.getByRole('article');
 			expect(article).toBeInTheDocument();
 			expect(screen.queryByRole('link')).not.toBeInTheDocument();
