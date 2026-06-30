@@ -1,8 +1,6 @@
 import type { StoryBySlugQueryResult } from '../../sanity/types';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 
-// Cuerpo replicado verbatim del campo `paragraphs` de src/app/mocks/onoff/las-dos-antorchas.mock.ts (separación de capas:
-// la capa API no importa del frontend). Espeja el shape crudo de GROQ `storyBySlugQuery` (`body` = BlockContent).
 export const lasDosAntorchasRawStory: NonNullable<StoryBySlugQueryResult> = {
 	_id: 'onoff-story-las-dos-antorchas',
 	slug: 'las-dos-antorchas',

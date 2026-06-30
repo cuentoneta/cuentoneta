@@ -13,8 +13,6 @@ import { lasEscalerasRawStory } from './onoff/las-escaleras.raw.mock';
 import { losPeldanosRawStory } from './onoff/los-peldanos.raw.mock';
 import { neronRawStory } from './onoff/neron.raw.mock';
 
-// Corpus crudo del autor Onoff en shape de GROQ, espejo de src/app/mocks/onoff-stories.mock.ts. El orden coincide
-// con el del frontend para facilitar comparaciones de paridad.
 export const onoffRawStoriesMock: NonNullable<StoryBySlugQueryResult>[] = [
 	elPalacioRawStory,
 	geometriaRawStory,
@@ -26,8 +24,6 @@ export const onoffRawStoriesMock: NonNullable<StoryBySlugQueryResult>[] = [
 	neronRawStory,
 ];
 
-// Proyecta el sub-shape de teaser de autor (`storiesByAuthorSlugQuery`): trunca el cuerpo a los primeros 3 bloques
-// (igual que `coalesce(body[0...3], [])`) y descarta `author`, `epigraphs`, `review` y `tags`.
 function toRawTeaser(raw: NonNullable<StoryBySlugQueryResult>): StoriesByAuthorSlugQueryResult[0] {
 	return {
 		_id: raw._id,
@@ -43,8 +39,6 @@ function toRawTeaser(raw: NonNullable<StoryBySlugQueryResult>): StoriesByAuthorS
 	};
 }
 
-// Proyecta el sub-shape de nav-teaser con autor (`mostRead` de `rotatingContentQuery`): `body` y `resources`
-// vacíos, y el autor en su variante de teaser (`biography: []`, `resources: []`).
 function toRawNavTeaser(
 	raw: NonNullable<StoryBySlugQueryResult>,
 ): NonNullable<RotatingContentQueryResult>['mostRead'][0] {

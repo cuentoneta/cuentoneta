@@ -1,8 +1,6 @@
 import type { StoryBySlugQueryResult } from '../../sanity/types';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 
-// Cuerpo replicado verbatim del campo `paragraphs` de src/app/mocks/onoff/el-palacio-de-las-nueve-fronteras.mock.ts (separación de capas:
-// la capa API no importa del frontend). Espeja el shape crudo de GROQ `storyBySlugQuery` (`body` = BlockContent).
 export const elPalacioRawStory: NonNullable<StoryBySlugQueryResult> = {
 	_id: 'onoff-story-el-palacio-de-las-nueve-fronteras',
 	slug: 'el-palacio-de-las-nueve-fronteras',

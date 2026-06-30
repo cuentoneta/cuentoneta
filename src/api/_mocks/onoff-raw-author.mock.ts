@@ -1,7 +1,5 @@
 import type { RotatingContentQueryResult, StoryBySlugQueryResult } from '../sanity/types';
 
-// Autor François Onoff en shape crudo de GROQ. Valores replicados de src/app/mocks/author.mock.ts (separación de
-// capas: la capa API no importa del frontend). `nationality` viene expandida (la query usa `nationality->`).
 export const rawOnoffAuthor: NonNullable<StoryBySlugQueryResult>['author'] = {
 	_id: 'author_1',
 	slug: 'francois-onoff',
@@ -143,8 +141,6 @@ export const rawOnoffAuthor: NonNullable<StoryBySlugQueryResult>['author'] = {
 	tags: [],
 };
 
-// Variante para el sub-shape de nav-teaser (`RotatingContentQueryResult['mostRead'][0]['author']`): la query
-// proyecta `'biography': []` y `'resources': []`.
 export const rawOnoffAuthorTeaser: NonNullable<RotatingContentQueryResult>['mostRead'][0]['author'] = {
 	_id: 'author_1',
 	slug: 'francois-onoff',

@@ -1,8 +1,6 @@
 import type { StoryBySlugQueryResult } from '../../sanity/types';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 
-// Cuerpo replicado verbatim del campo `paragraphs` de src/app/mocks/onoff/el-tratado-de-los-placeres.mock.ts (separación de capas:
-// la capa API no importa del frontend). Espeja el shape crudo de GROQ `storyBySlugQuery` (`body` = BlockContent).
 export const elTratadoRawStory: NonNullable<StoryBySlugQueryResult> = {
 	_id: 'onoff-story-el-tratado-de-los-placeres',
 	slug: 'el-tratado-de-los-placeres',
