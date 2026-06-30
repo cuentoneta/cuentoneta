@@ -4,7 +4,8 @@ import { onoffStoryTeasersMock } from './onoff-story-teasers.mock';
 
 // Conjunto de medios variado para ilustrar los selectores de multimedia y el contador (badge):
 // 3 videos de YouTube (muestra el contador), un Space de X y un episodio de Spotify.
-export const richMedia: Media[] = [
+// Privado: los consumidores usan `withRichMedia`, no el array crudo.
+const richMedia: Media[] = [
 	{ title: 'Video 1', type: 'youTubeVideo', description: [], data: { videoId: 'a' } },
 	{ title: 'Video 2', type: 'youTubeVideo', description: [], data: { videoId: 'b' } },
 	{ title: 'Video 3', type: 'youTubeVideo', description: [], data: { videoId: 'c' } },
@@ -23,10 +24,12 @@ export const withRichMedia = (teaser: StoryTeaserWithAuthor): StoryTeaserWithAut
 	media: richMedia,
 });
 
-// Obras del corpus (con multimedia), sus portadas y labels; los tres comparten el índice del corpus.
+// Obras del corpus (con multimedia) y sus portadas; comparten el índice del corpus.
 export const corpusStories = onoffStoryTeasersMock.map(withRichMedia);
 export const corpusCovers = onoffStoryTeasersMock.map((teaser) => teaser.coverImage);
-export const corpusLabels = Object.fromEntries(onoffStoryTeasersMock.map((teaser, index) => [index, teaser.title]));
+
+// Privado: solo lo consume `literaryWorkSelectArgType` (mapea índice → título para el select).
+const corpusLabels = Object.fromEntries(onoffStoryTeasersMock.map((teaser, index) => [index, teaser.title]));
 
 // argType reutilizable del selector "Obra". `labels` va DENTRO de `control` (si no, Storybook muestra el índice crudo).
 // Key-agnóstico: el consumidor lo asigna a su propia key (`storyIndex`, `coverIndex`, …) y agrega su `description`.
