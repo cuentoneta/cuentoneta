@@ -7,7 +7,6 @@ import { storylistTeaserRepresentativeMock, storylistTeaserSampleMock } from '@m
 const meta: Meta<CollectionTeaser> = {
 	component: CollectionTeaser,
 	title: 'Componentes V3/CollectionTeaser',
-	tags: ['autodocs'],
 	decorators: [
 		applicationConfig({
 			providers: [provideRouter([])],
