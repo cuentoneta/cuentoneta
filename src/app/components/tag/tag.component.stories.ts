@@ -36,7 +36,7 @@ export const Soft: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante <strong>soft</strong> (default): solo texto en brand-500, sin fondo. Comportamiento (Figma): la primera letra del texto en mayúscula y el resto en minúsculas (sentence-case).</p><p><strong>Usos:</strong> Home (en <a href="./?path=/docs/componentes-collectionteaser--docs" target="_top"><strong>CollectionTeaser</strong></a> y <a href="./?path=/docs/componentes-v3-homestorycard--docs" target="_top"><strong>HomeStoryCard</strong></a>); Story, Story List y Author Profile (en <a href="./?path=/docs/componentes-v3-storycardteaserv3--docs" target="_top"><strong>StoryCardTeaserV3</strong></a>).</p>`,
+				story: `<p>Variante <strong>soft</strong> (default): solo texto en brand-500, sin fondo. Comportamiento (Figma): la primera letra del texto en mayúscula y el resto en minúsculas (sentence-case).</p><p><strong>Usos:</strong> Home (en <a href="./?path=/docs/componentes-v3-collectionteaser--docs" target="_top"><strong>CollectionTeaser</strong></a> y <a href="./?path=/docs/componentes-v3-homestorycard--docs" target="_top"><strong>HomeStoryCard</strong></a>); Story, Story List y Author Profile (en <a href="./?path=/docs/componentes-v3-storycardteaserv3--docs" target="_top"><strong>StoryCardTeaserV3</strong></a>).</p>`,
 			},
 		},
 	},
