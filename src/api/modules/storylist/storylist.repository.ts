@@ -21,22 +21,24 @@ import {
 	mapTags,
 	urlFor,
 } from '../../_utils/functions';
+import { mapImagery } from '../../_utils/storylist-imagery.functions';
 
 export async function fetchAllStorylistTeasers(): Promise<StorylistTeaser[]> {
 	const result = await client.fetch(storylistTeasersQuery);
 
-	return result.map((item) => ({
-		...item,
-		config: {
-			...item.config,
-			showAuthors: item.config?.showAuthors ?? false,
-		},
-		description: mapBlockContentToTextParagraphs(item.description),
-		tags: mapTags(item.tags),
-		featuredImage: urlFor(item.featuredImage),
-		tabs: [],
-		media: mapMediaSourcesTeasers(item.mediaSources),
-	}));
+	return result.map((item) => {
+		const { featuredImage, storyCoverImages, mediaSources, ...rest } = item;
+		return {
+			...rest,
+			config: { ...item.config, showAuthors: item.config?.showAuthors ?? false },
+			description: mapBlockContentToTextParagraphs(item.description),
+			tags: mapTags(item.tags),
+			stories: [],
+			tabs: [],
+			media: mapMediaSourcesTeasers(mediaSources),
+			imagery: mapImagery({ featuredImage, storyCoverImages }),
+		};
+	});
 }
 
 export async function fetchStorylistBySlug(slug: string): Promise<Storylist> {

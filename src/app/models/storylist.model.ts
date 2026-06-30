@@ -26,9 +26,16 @@ interface StorylistBase<T> {
 	media: Media[];
 }
 
-export interface StorylistTeaser extends StorylistBase<never> {
+// Si la colección tiene portada editorial propia se usa (`representative`); en caso contrario, las primeras
+// portadas de sus historias (`sample`).
+export type StorylistImagery =
+	| { readonly kind: 'representative'; readonly image: string }
+	| { readonly kind: 'sample'; readonly images: readonly [string, string, string] };
+
+export interface StorylistTeaser extends Omit<StorylistBase<never>, 'featuredImage'> {
 	stories: Array<never>;
 	tabs: Array<never>;
+	imagery: StorylistImagery;
 }
 
 export interface StorylistStoriesNavigationTeasers extends StorylistBase<StoryNavigationTeaserWithAuthor> {

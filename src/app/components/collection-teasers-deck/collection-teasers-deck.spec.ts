@@ -9,7 +9,7 @@ import { CollectionTeaser } from '@components/collection-teaser/collection-tease
 import { CollectionTeaserSkeletonComponent } from '@components/collection-teaser/collection-teaser-skeleton';
 
 // Mocks
-import { storylistMock } from '@mocks/storylist.mock';
+import { storylistTeaserRepresentativeMock } from '@mocks/storylist.mock';
 
 // Modelos
 import { StorylistTeaser } from '@models/storylist.model';
@@ -17,13 +17,11 @@ import { StorylistTeaser } from '@models/storylist.model';
 // Función auxiliar para generar múltiples teasers a partir del mock existente
 function generateTeaserMocks(count: number): StorylistTeaser[] {
 	return Array.from({ length: count }, (_, index) => ({
-		...storylistMock,
+		...storylistTeaserRepresentativeMock,
 		_id: `storylist-mock-${index + 1}`,
 		title: `Colección ${index + 1}`,
 		slug: `coleccion-${index + 1}`,
-		stories: [],
-		tabs: [],
-	})) as StorylistTeaser[];
+	}));
 }
 
 describe('CollectionTeasersDeck', () => {

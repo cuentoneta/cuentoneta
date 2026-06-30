@@ -69,7 +69,7 @@ export const landingPageContentQuery = defineQuery(`
             description,
             icon
         }, []),
-        'stories': [],
+        'storyCoverImages': coalesce(stories[]->coverImage, []),
         'count': coalesce(count(stories), 0),
 				config,
 				'tabs': [],
