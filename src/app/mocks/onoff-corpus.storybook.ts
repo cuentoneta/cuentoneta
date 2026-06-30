@@ -30,7 +30,7 @@ export const corpusLabels = Object.fromEntries(onoffStoryTeasersMock.map((teaser
 
 // argType reutilizable del selector "Obra". `labels` va DENTRO de `control` (si no, Storybook muestra el índice crudo).
 // Key-agnóstico: el consumidor lo asigna a su propia key (`storyIndex`, `coverIndex`, …) y agrega su `description`.
-export const obraSelectArgType = {
+export const literaryWorkSelectArgType = {
 	name: 'Obra',
 	control: { type: 'select' as const, labels: corpusLabels },
 	options: corpusStories.map((_, index) => index),

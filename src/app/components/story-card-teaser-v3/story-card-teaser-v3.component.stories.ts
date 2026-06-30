@@ -7,7 +7,12 @@ import {
 	geometriaTeaserMock,
 	palacioNueveFronterasTeaserMock,
 } from '../../mocks/onoff-story-teasers.mock';
-import { corpusStories, corpusCovers, obraSelectArgType, withRichMedia } from '../../mocks/onoff-corpus.storybook';
+import {
+	corpusStories,
+	corpusCovers,
+	literaryWorkSelectArgType,
+	withRichMedia,
+} from '../../mocks/onoff-corpus.storybook';
 
 // Las descripciones de la doc van en una sola línea: el renderer de Markdown de los autodocs
 // interpreta como bloque de código cualquier línea con indentación, así que un HTML multilínea
@@ -94,7 +99,7 @@ type Story = StoryObj<StoryCardTeaserV3Component>;
 export const Interactiva: StoryObj<StoryCardTeaserV3Component & { storyIndex: number }> = {
 	argTypes: {
 		storyIndex: {
-			...obraSelectArgType,
+			...literaryWorkSelectArgType,
 			description: 'Obra del corpus de François Onoff; su portada, título y extracto cambian de forma conjunta',
 		},
 	},
