@@ -27,7 +27,6 @@ function rawStoryTeaser(coverImage: any) {
 		coverImage,
 		mediaSources: [],
 		resources: [],
-		tags: [],
 	};
 }
 

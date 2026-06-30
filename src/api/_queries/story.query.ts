@@ -23,7 +23,6 @@ export const storiesByAuthorSlugQuery = defineQuery(`
             icon
         }
     }, []),
-    'tags': [],
 }|order(title asc)`);
 
 export const storyNavigationTeasersByAuthorSlugQuery = defineQuery(`
@@ -39,7 +38,6 @@ export const storyNavigationTeasersByAuthorSlugQuery = defineQuery(`
     coverImage,
     'mediaSources': coalesce(mediaSources[], []),
     'resources': [],
-    'tags': [],
 }|order(title asc)[$start...$end]`);
 
 export const storyBySlugQuery = defineQuery(`
@@ -125,7 +123,6 @@ export const storiesBySlugsQuery = defineQuery(`
     coverImage,
     'mediaSources': coalesce(mediaSources[], []),
     'resources': [],
-    'tags': [],
     'author': author-> {
         _id,
         'slug': slug.current,
@@ -156,7 +153,6 @@ export const allStoriesQuery = defineQuery(`
     coverImage,
     'mediaSources': coalesce(mediaSources[], []),
     'resources': [],
-    'tags': [],
     'author': author-> {
         _id,
         'slug': slug.current,

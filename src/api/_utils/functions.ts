@@ -241,6 +241,7 @@ export function mapStoryTeaser(result: StoryTeasersQueryResult): StoryTeaser[] {
 			media: mapMediaSourcesTeasers(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: mapBlockContentToTextParagraphs(body) as [TextBlockContent, TextBlockContent, TextBlockContent],
+			tags: [],
 		});
 	}
 
@@ -259,6 +260,7 @@ export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlug
 			media: mapMediaSourcesTeasers(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: [],
+			tags: [],
 		});
 	}
 
@@ -281,6 +283,7 @@ export function mapStoryNavigationTeaserWithAuthor(
 			media: mapMediaSourcesTeasers(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: [],
+			tags: [],
 		});
 	}
 
