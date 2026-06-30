@@ -33,7 +33,11 @@ const meta: Meta<StoryMediaSelectorsComponent> = {
 		layout: 'padded',
 	},
 	argTypes: {
-		media: { control: { type: 'object' }, description: 'Recursos multimedia de la historia' },
+		media: {
+			control: { type: 'object' },
+			description: 'Recursos multimedia de la historia',
+			table: { type: { summary: 'Media[]' }, defaultValue: { summary: '[]' } },
+		},
 		theme: {
 			control: { type: 'inline-radio' },
 			options: ['subtle', 'solid', 'bordered'],
