@@ -2,10 +2,11 @@ import { Storylist, StorylistStoriesNavigationTeasers, StorylistTeaser } from '@
 import { tagMock } from './tag.mocks';
 import { storyNavigationTeaserWithAuthor } from './story.mock';
 
+// Colección — los espacios imposibles de Onoff (palacios, escaleras, peldaños).
 export const storylistMock: Storylist = {
-	_id: 'cuentoneta-10',
-	title: 'La Cuentoneta 1.0',
-	slug: 'verano-2022',
+	_id: 'onoff-arquitecturas-laberinto',
+	title: 'Arquitecturas del laberinto',
+	slug: 'arquitecturas-del-laberinto',
 	count: 1,
 	media: [],
 	tabs: [],
@@ -13,14 +14,14 @@ export const storylistMock: Storylist = {
 		{
 			_type: 'block',
 			style: 'normal',
-			_key: '58f75b67346a',
+			_key: 'arquitecturas-desc',
 			markDefs: [],
 			children: [
 				{
 					_type: 'span',
 					marks: [],
-					text: 'La colección de cuentos de la primera versión de La Cuentoneta, publicados diariamente entre el Año Nuevo y el Martes de Carnaval de 2022. Esta colección consiste de sesenta textos, todos ellos de diferentes autores.',
-					_key: 'e846ec598eb60',
+					text: 'Los relatos en los que François Onoff convierte la arquitectura en metafísica: palacios de nueve fronteras, escaleras que no terminan, peldaños que se multiplican al ser contados. Espacios que se recorren como demostraciones y se habitan como preguntas.',
+					_key: 'arquitecturas-span',
 				},
 			],
 		},
@@ -34,27 +35,58 @@ export const storylistMock: Storylist = {
 	stories: [storyNavigationTeaserWithAuthor],
 };
 
-// Teaser con portada editorial propia → imagery representative.
+// Colección — la obsesión de Onoff por el orden y el tiempo (Geometría, el desvelo). Teaser con portada editorial propia → imagery representative.
 export const storylistTeaserRepresentativeMock: StorylistTeaser = {
-	_id: 'cuentoneta-10',
-	title: 'La Cuentoneta 1.0',
-	slug: 'verano-2022',
+	_id: 'onoff-geometrias-del-desvelo',
+	title: 'Geometrías del desvelo',
+	slug: 'geometrias-del-desvelo',
 	count: 10,
 	media: [],
 	tabs: [],
 	stories: [],
-	description: storylistMock.description,
+	description: [
+		{
+			_type: 'block',
+			style: 'normal',
+			_key: 'geometrias-desc',
+			markDefs: [],
+			children: [
+				{
+					_type: 'span',
+					marks: [],
+					text: 'Onoff lleva la precisión del compás al territorio de lo humano: insomnios que se vuelven una geometría del tiempo, vidas reducidas a coordenadas, figuras que prometen un orden perfecto y terminan revelando, en algún vértice, su grieta.',
+					_key: 'geometrias-span',
+				},
+			],
+		},
+	],
 	tags: [tagMock],
 	config: { showAuthors: true },
 	imagery: { kind: 'representative', image: 'assets/img/mocks/stories/geometria.png' },
 };
 
-// Teaser sin portada propia → imagery sample (3 portadas de historias).
+// Colección — las pasiones que Onoff intenta catalogar (el placer, el odio, la dualidad). Teaser sin portada propia → imagery sample (3 portadas de historias).
 export const storylistTeaserSampleMock: StorylistTeaser = {
 	...storylistTeaserRepresentativeMock,
-	_id: 'cuentoneta-11',
-	slug: 'primavera-2022',
-	title: 'La Cuentoneta 1.1',
+	_id: 'onoff-inventario-de-las-pasiones',
+	slug: 'inventario-de-las-pasiones',
+	title: 'El inventario de las pasiones',
+	description: [
+		{
+			_type: 'block',
+			style: 'normal',
+			_key: 'inventario-pasiones-desc',
+			markDefs: [],
+			children: [
+				{
+					_type: 'span',
+					marks: [],
+					text: 'Una colección sobre el deseo de ordenar lo inordenable. Onoff cataloga el placer, retrata el odio sin causa y enfrenta dos antorchas que nunca alumbran lo mismo: tratados que terminan por descubrir que toda taxonomía de lo humano es una forma elegante de perderlo.',
+					_key: 'inventario-pasiones-span',
+				},
+			],
+		},
+	],
 	imagery: {
 		kind: 'sample',
 		images: [
@@ -65,10 +97,11 @@ export const storylistTeaserSampleMock: StorylistTeaser = {
 	},
 };
 
+// Colección — la desmesura del poder en Onoff (Nerón, la ambición y su ruina). Teaser de navegación.
 export const storylistNavigationTeaserMock: StorylistStoriesNavigationTeasers = {
-	_id: 'cuentoneta-10',
-	title: 'La Cuentoneta 1.0"',
-	slug: 'verano-2022',
+	_id: 'onoff-cronicas-de-la-desmesura',
+	title: 'Crónicas de la desmesura',
+	slug: 'cronicas-de-la-desmesura',
 	count: 1,
 	media: [],
 	tabs: [],
@@ -76,14 +109,14 @@ export const storylistNavigationTeaserMock: StorylistStoriesNavigationTeasers = 
 		{
 			_type: 'block',
 			style: 'normal',
-			_key: '58f75b67346a',
+			_key: 'cronicas-desmesura-desc',
 			markDefs: [],
 			children: [
 				{
 					_type: 'span',
 					marks: [],
-					text: 'La colección de cuentos de la primera versión de La Cuentoneta, publicados diariamente entre el Año Nuevo y el Martes de Carnaval de 2022. Esta colección consiste de sesenta textos, todos ellos de diferentes autores.',
-					_key: 'e846ec598eb60',
+					text: 'Los textos donde Onoff interroga la desmesura del poder: emperadores que confunden el imperio con su propio cuerpo, voluntades que se agrandan hasta no caber en ninguna frontera. Retratos de la ambición y de su lenta, inevitable ruina.',
+					_key: 'cronicas-desmesura-span',
 				},
 			],
 		},

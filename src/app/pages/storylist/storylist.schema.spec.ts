@@ -11,8 +11,8 @@ describe('buildStorylistCollectionSchema', () => {
 		expect(schema).toMatchObject({
 			'@context': 'https://schema.org',
 			'@type': 'CollectionPage',
-			name: 'La Cuentoneta 1.0',
-			url: 'https://www.cuentoneta.ar/storylist/verano-2022',
+			name: 'Arquitecturas del laberinto',
+			url: 'https://www.cuentoneta.ar/storylist/arquitecturas-del-laberinto',
 			inLanguage: 'es-AR',
 			mainEntity: {
 				'@type': 'ItemList',
@@ -39,8 +39,8 @@ describe('buildStorylistBreadcrumb', () => {
 			{
 				'@type': 'ListItem',
 				position: 2,
-				name: 'La Cuentoneta 1.0',
-				item: 'https://www.cuentoneta.ar/storylist/verano-2022',
+				name: 'Arquitecturas del laberinto',
+				item: 'https://www.cuentoneta.ar/storylist/arquitecturas-del-laberinto',
 			},
 		]);
 	});
