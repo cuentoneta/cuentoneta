@@ -19,7 +19,7 @@ import { CoverImageComponent } from '../cover-image/cover-image.component';
 	template: `
 		<article>
 			@if (collection(); as storylist) {
-				<a [routerLink]="['/' + appRoutes.StoryList, storylist.slug]" class="navigation-link flex items-start gap-5">
+				<a [routerLink]="['/' + appRoutes.StoryList, storylist.slug]" class="flex items-start gap-5">
 					<section
 						class="relative flex h-48 items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3 sm:flex-1"
 					>
