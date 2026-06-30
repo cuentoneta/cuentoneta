@@ -1,4 +1,4 @@
-import { applicationConfig, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
+import { applicationConfig, argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { provideRouter } from '@angular/router';
 
 import { CarouselComponent } from './carousel.component';
@@ -58,6 +58,7 @@ type Story = StoryObj<CarouselComponent>;
 
 // Historia principal con documentación
 export const Default: Story = {
+	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: contentCampaignMock,
 		transitionDuration: 600,
@@ -73,6 +74,7 @@ export const Default: Story = {
 
 // Carousel con una sola diapositiva
 export const SingleSlide: Story = {
+	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: [contentCampaignMock[0]],
 		transitionDuration: 600,
@@ -88,6 +90,7 @@ export const SingleSlide: Story = {
 
 // Carousel con transición rápida
 export const FastTransition: Story = {
+	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: contentCampaignMock,
 		transitionDuration: 300,
@@ -103,6 +106,7 @@ export const FastTransition: Story = {
 
 // Carousel con transición lenta
 export const SlowTransition: Story = {
+	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: contentCampaignMock,
 		transitionDuration: 1200,
@@ -158,6 +162,7 @@ const extendedSlidesMock: ContentCampaign[] = [
 
 // Carousel con múltiples diapositivas
 export const MultipleSlides: Story = {
+	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: extendedSlidesMock,
 		transitionDuration: 600,
