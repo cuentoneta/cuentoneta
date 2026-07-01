@@ -150,7 +150,6 @@ export class StoryCardTeaserV3Component {
 	public readonly excerptLines = input(2, { transform: (value: number) => Math.min(10, Math.max(1, value)) });
 	public readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
 
-	// La portada se deriva del propio story; '' cuando no fue asignada, y el cover cae al placeholder.
 	protected readonly coverImageUrl = computed(() => this.story()?.coverImage);
 	protected readonly storyRouterLink = computed(() => ['/', this.appRoutes.Story, this.story()?.slug]);
 
