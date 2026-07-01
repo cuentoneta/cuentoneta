@@ -30,6 +30,7 @@ export const storylistStoriesNavigationTeasersQuery = defineQuery(`
     title,
     description,
     featuredImage,
+    'storyCoverImages': coalesce(stories[0...3]->coverImage, []),
     'tags': [],
     'stories': coalesce(stories[$start...$end]->{
     		_id,
@@ -41,7 +42,6 @@ export const storylistStoriesNavigationTeasersQuery = defineQuery(`
         approximateReadingTime,
         coverImage,
         'resources': [],
-        'tags': [],
         'mediaSources': coalesce(mediaSources[], []),
         'author': author->{
             _id,
@@ -72,6 +72,7 @@ export const storylistQuery = defineQuery(`
     title,
     description,
     featuredImage,
+    'storyCoverImages': coalesce(stories[0...3]->coverImage, []),
     'tags': coalesce(tags[] -> {
         title,
         'slug': slug.current,
@@ -89,7 +90,6 @@ export const storylistQuery = defineQuery(`
         approximateReadingTime,
         coverImage,
         'resources': [],
-        'tags': [],
         'mediaSources': coalesce(mediaSources[], []),
         'author': author->{
             _id,

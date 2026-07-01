@@ -26,8 +26,11 @@ export const storylistMock: Storylist = {
 			],
 		},
 	],
-	featuredImage:
-		'https://cdn.sanity.io/images/s4dbqkc5/production/edd62a3131bd1f46e796e473d0b2b12d1c63c229-1024x1536.png',
+	// TODO: #1681 - por una ref de imagen real de Sanity en base a las imágenes mock provistas
+	imagery: {
+		kind: 'representative',
+		image: 'https://cdn.sanity.io/images/s4dbqkc5/production/edd62a3131bd1f46e796e473d0b2b12d1c63c229-1024x1536.png',
+	},
 	tags: [tagMock],
 	config: {
 		showAuthors: true,
@@ -121,8 +124,14 @@ export const storylistNavigationTeaserMock: StorylistStoriesNavigationTeasers = 
 			],
 		},
 	],
-	featuredImage:
-		'https://cdn.sanity.io/images/s4dbqkc5/production/edd62a3131bd1f46e796e473d0b2b12d1c63c229-1024x1536.png',
+	imagery: {
+		kind: 'sample',
+		images: [
+			'assets/img/mocks/stories/neron.png',
+			'assets/img/mocks/stories/el-odio.png',
+			'assets/img/mocks/stories/las-dos-antorchas.png',
+		],
+	},
 	tags: [tagMock],
 	config: {
 		showAuthors: true,

@@ -1,17 +1,15 @@
 // Modelos
 import type { StorylistImagery } from '@models/storylist.model';
 
-// Tipos de Sanity (typegen)
-import type { StorylistTeasersQueryResult } from '../sanity/types';
+// Tipos de Sanity
+import type { SanityImageSource } from '@sanity/image-url';
 
 // Funciones
 import { urlFor } from './functions';
 
-type StorylistTeaserSource = StorylistTeasersQueryResult[number];
-
 export function mapImagery(params: {
-	featuredImage: StorylistTeaserSource['featuredImage'] | null;
-	storyCoverImages: StorylistTeaserSource['storyCoverImages'];
+	featuredImage: SanityImageSource | null;
+	storyCoverImages: readonly SanityImageSource[];
 }): StorylistImagery {
 	const featuredImageUrl = params.featuredImage ? urlFor(params.featuredImage) : '';
 	if (featuredImageUrl) {

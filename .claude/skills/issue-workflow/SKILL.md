@@ -7,6 +7,8 @@ description: Orquesta el ciclo completo de resolución de un issue de GitHub en 
 
 Orquesta el ciclo de vida completo para resolver un issue de GitHub en **cuentoneta**. Cada invocación sobrescribe `workspace/PLAN.md` y `workspace/CODE_REVIEW.md` — guardá los artefactos de una sesión previa antes de empezar una nueva. (`workspace/` está gitignoreado.)
 
+> **Issues de release:** para los issues de gestión de release (p. ej. "Generar release para versión X") usá el skill dedicado [`release-workflow`](../release-workflow/SKILL.md), que encodea el checklist determinista del release (bump lockstep, CHANGELOG desde el milestone, gatillo `develop → master`) en vez de este flujo de feature.
+
 ## Uso
 
 ```

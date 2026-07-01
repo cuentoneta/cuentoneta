@@ -59,19 +59,21 @@ export async function fetchStorylistBySlug(slug: string): Promise<Storylist> {
 				media: mapMediaSourcesTeasers(story.mediaSources),
 				paragraphs: mapBlockContentToTextParagraphs(story.body),
 				resources: [],
+				tags: [],
 			}),
 		);
 	}
 
+	const { featuredImage, storyCoverImages, ...rest } = result;
 	return {
-		...result,
+		...rest,
 		config: {
 			...result.config,
 			showAuthors: result.config?.showAuthors ?? false,
 		},
 		description: mapBlockContentToTextParagraphs(result.description),
 		tags: mapTags(result.tags),
-		featuredImage: urlFor(result.featuredImage),
+		imagery: mapImagery({ featuredImage, storyCoverImages }),
 		stories,
 		tabs: result.tabs.map((tab) => ({
 			title: tab.title,
@@ -97,21 +99,23 @@ export async function fetchStorylistStoriesNavigationTeaserByStorylistSlug(
 		throw new Error(`Storylist with slug ${params.slug} not found`);
 	}
 
+	const { featuredImage, storyCoverImages, ...rest } = result;
 	return {
-		...result,
+		...rest,
 		config: {
 			...result.config,
 			showAuthors: result.config?.showAuthors ?? false,
 		},
 		description: mapBlockContentToTextParagraphs(result.description),
 		tags: mapTags(result.tags),
-		featuredImage: urlFor(result.featuredImage),
+		imagery: mapImagery({ featuredImage, storyCoverImages }),
 		stories: result.stories.map(({ coverImage, ...story }) => ({
 			...story,
 			author: mapAuthorTeaser(story.author),
 			coverImage: urlFor(coverImage),
 			paragraphs: [],
 			media: [],
+			tags: [],
 		})),
 		tabs: [],
 		media: [],

@@ -7,7 +7,6 @@ import { storylistTeaserRepresentativeMock, storylistTeaserSampleMock } from '@m
 const meta: Meta<CollectionTeaser> = {
 	component: CollectionTeaser,
 	title: 'Componentes V3/CollectionTeaser',
-	tags: ['autodocs'],
 	decorators: [
 		applicationConfig({
 			providers: [provideRouter([])],
@@ -22,8 +21,15 @@ const meta: Meta<CollectionTeaser> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>Tarjeta de una colección (storylist) para el Design System v3: portada, título, descripción y footer con tag y contador de historias. La portada se resuelve con el objeto de valor <strong>imagery</strong>: <strong>representative</strong> (una portada editorial propia de la colección) o <strong>sample</strong> (composición de 3 portadas de sus historias, con placeholder en los slots vacíos). Usa <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> para cada portada.</p></div>`,
+				component: `<div><p>El <strong>CollectionTeaser</strong> es la tarjeta de una colección (storylist) para el Design System v3: portada, título, descripción y footer con tag y contador de historias. La portada se resuelve con el objeto de valor <strong>imagery</strong>: <strong>representative</strong> (una portada editorial propia de la colección) o <strong>sample</strong> (composición de 3 portadas de sus historias, con placeholder en los slots vacíos). Usa <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> para cada portada.</p></div>`,
 			},
+		},
+	},
+	argTypes: {
+		collection: {
+			control: { type: 'object' },
+			description: 'Colección a previsualizar (título, descripción, tags, contador e imagery)',
+			table: { type: { summary: 'StorylistTeaser' }, defaultValue: { summary: 'undefined' } },
 		},
 	},
 };
@@ -42,8 +48,7 @@ export const Primary: StoryObj<CollectionTeaser> = {
 	parameters: {
 		docs: {
 			description: {
-				story:
-					'Columna izquierda: variante representative (portada editorial propia). Columna derecha: variante sample (composición de portadas de historias).',
+				story: `<p>Columna izquierda: variante representative (portada editorial propia). Columna derecha: variante sample (composición de portadas de historias).</p><p><strong>Usos:</strong> Home, en la grilla de colecciones destacadas.</p>`,
 			},
 		},
 	},
@@ -71,8 +76,7 @@ export const Interactiva: StoryObj<CollectionTeaser & { kind: 'representative' |
 	parameters: {
 		docs: {
 			description: {
-				story:
-					'Cambiá "Tipo de imagery" para alternar entre la variante representative (portada editorial propia) y sample (composición de 3 portadas de historias).',
+				story: `<p>Cambiá "Tipo de imagery" para alternar entre la variante representative (portada editorial propia) y sample (composición de 3 portadas de historias).</p><p><strong>Usos:</strong> Home; usar representative cuando la colección tiene portada editorial y sample cuando se compone de las portadas de sus historias.</p>`,
 			},
 		},
 	},

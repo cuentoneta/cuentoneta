@@ -1,4 +1,5 @@
-import { mapTags } from './functions';
+import { mapStoryNavigationTeaser, mapStoryNavigationTeaserWithAuthor, mapStoryTeaser, mapTags } from './functions';
+import { elOdioRawTeaser, onoffRawNavTeasersMock } from '../_mocks/onoff-raw-stories.mock';
 
 describe('mapTags (ACL)', () => {
 	it('maps a raw Sanity tag to the domain Tag model', () => {
@@ -71,5 +72,30 @@ describe('mapTags (ACL)', () => {
 
 	it('returns an empty array when there are no tags', () => {
 		expect(mapTags([])).toEqual([]);
+	});
+});
+
+// El input crudo no incluye `tags`: el mapper es la única fuente del campo vacío (consistente con `mapAuthorTeaser`).
+describe('mapStoryTeaser (ACL)', () => {
+	it('sets tags to [] from the mapper, not from the raw spread', () => {
+		const result = mapStoryTeaser([elOdioRawTeaser]);
+
+		expect(result[0].tags).toEqual([]);
+	});
+});
+
+describe('mapStoryNavigationTeaser (ACL)', () => {
+	it('sets tags to [] from the mapper, not from the raw spread', () => {
+		const result = mapStoryNavigationTeaser([elOdioRawTeaser]);
+
+		expect(result[0].tags).toEqual([]);
+	});
+});
+
+describe('mapStoryNavigationTeaserWithAuthor (ACL)', () => {
+	it('sets tags to [] from the mapper, not from the raw spread', () => {
+		const result = mapStoryNavigationTeaserWithAuthor([onoffRawNavTeasersMock[0]]);
+
+		expect(result[0].tags).toEqual([]);
 	});
 });
