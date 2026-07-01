@@ -124,17 +124,17 @@ export const SlowTransition: Story = {
 const extendedSlidesMock: ContentCampaign[] = [
 	...contentCampaignMock,
 	{
-		title: 'Cuentos Clásicos Argentinos',
-		slug: 'cuentos-clasicos-argentinos',
+		title: 'Geometrías del desvelo',
+		slug: 'geometrias-del-desvelo',
 		description: [
 			{
 				style: 'normal',
-				_key: 'abc123',
+				_key: 'ab12cd34ef56',
 				markDefs: [],
 				children: [
 					{
-						text: 'Una selección de los mejores cuentos de la literatura argentina.',
-						_key: 'def456',
+						text: 'Shannon despierta a las tres y media. Nunca duerme más de dos horas.',
+						_key: '78ab90cd12ef',
 						_type: 'span',
 						marks: [],
 					},
@@ -142,19 +142,50 @@ const extendedSlidesMock: ContentCampaign[] = [
 				_type: 'block',
 			},
 		],
-		url: '../storylist/cuentos-clasicos-argentinos',
+		url: '../storylist/geometrias-del-desvelo',
 		contents: {
 			xs: {
-				imageUrl:
-					'https://cdn.sanity.io/images/s4dbqkc5/development/d1954f5948a07ec4f02c9c621f664e42bbe61ce9-540x220.jpg',
+				imageUrl: 'assets/img/mocks/banners/banner-geometrias-del-desvelo-mobile.png',
 				imageWidth: 540,
 				imageHeight: 220,
 			},
 			md: {
-				imageUrl:
-					'https://cdn.sanity.io/images/s4dbqkc5/development/ec31c09f54fe53f4de213075d2e73e61805fbf4f-960x280.jpg',
-				imageWidth: 960,
-				imageHeight: 280,
+				imageUrl: 'assets/img/mocks/banners/banner-geometrias-del-desvelo-desktop.png',
+				imageWidth: 1240,
+				imageHeight: 360,
+			},
+		},
+	},
+	{
+		title: 'Onoff, la voz de las fronteras',
+		slug: 'onoff-autor-en-foco',
+		description: [
+			{
+				style: 'normal',
+				_key: '34ef56ab78cd',
+				markDefs: [],
+				children: [
+					{
+						text: 'Ocho obras donde ninguna ley vale del todo y ninguna lengua se habla por completo.',
+						_key: '90cd12ef34ab',
+						_type: 'span',
+						marks: [],
+					},
+				],
+				_type: 'block',
+			},
+		],
+		url: '../author/francois-onoff',
+		contents: {
+			xs: {
+				imageUrl: 'assets/img/mocks/banners/banner-onoff-autor-mobile.png',
+				imageWidth: 540,
+				imageHeight: 220,
+			},
+			md: {
+				imageUrl: 'assets/img/mocks/banners/banner-onoff-autor-desktop.png',
+				imageWidth: 1240,
+				imageHeight: 360,
 			},
 		},
 	},
@@ -170,7 +201,7 @@ export const MultipleSlides: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Carousel con tres diapositivas para demostrar la navegación cíclica.</p><p><strong>Usos:</strong> Home cuando hay varias campañas activas en rotación.</p>`,
+				story: `<p>Carousel con cuatro diapositivas para demostrar la navegación cíclica.</p><p><strong>Usos:</strong> Home cuando hay varias campañas activas en rotación.</p>`,
 			},
 		},
 	},
