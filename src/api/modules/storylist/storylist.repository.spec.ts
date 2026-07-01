@@ -1,6 +1,8 @@
 import type { SanityImageSource } from '@sanity/image-url';
 import { clearAllMocks, type Mock } from '@test-utils';
 import { client } from '../../_helpers/sanity-connector';
+import { geometriasDelDesveloRawCollection } from '../../_mocks/onoff/geometrias-del-desvelo.collection.raw.mock';
+import { elInventarioDeLasPasionesRawNavCollection } from '../../_mocks/onoff/el-inventario-de-las-pasiones.collection.raw.mock';
 import { fetchStorylistBySlug, fetchStorylistStoriesNavigationTeaserByStorylistSlug } from './storylist.repository';
 
 /* eslint-disable no-restricted-syntax -- vi.mock/vi.fn: mock del cliente de Sanity y del builder de imágenes para aislar el mapeo del repository; se migra a inyección de dependencias en #1503 */
@@ -14,25 +16,9 @@ vi.mock('@sanity/image-url', () => ({
 }));
 /* eslint-enable no-restricted-syntax */
 
+// Portadas explícitas para los casos de imagery: el corpus crudo tiene featuredImage/coverImage en null
+// hasta el follow-up #1681, así que los refs de imagen se inyectan por caso sobre las collections crudas.
 const img = (ref: string): SanityImageSource => ({ _type: 'image', asset: { _type: 'reference', _ref: ref } });
-
-// Colección cruda mínima: las sub-colecciones van vacías para aislar el mapeo de `imagery`.
-const rawStorylist = (overrides: {
-	featuredImage: SanityImageSource | null;
-	storyCoverImages: SanityImageSource[];
-}) => ({
-	_id: 'onoff-arquitecturas-laberinto',
-	slug: 'arquitecturas-del-laberinto',
-	title: 'Arquitecturas del laberinto',
-	description: [],
-	tags: [],
-	stories: [],
-	count: 0,
-	config: { showAuthors: true },
-	tabs: [],
-	mediaSources: [],
-	...overrides,
-});
 
 describe('storylist.repository', () => {
 	beforeEach(() => {
@@ -41,24 +27,26 @@ describe('storylist.repository', () => {
 
 	describe('fetchStorylistBySlug', () => {
 		it('maps a present featuredImage to representative imagery', async () => {
-			(client.fetch as Mock).mockResolvedValue(
-				rawStorylist({ featuredImage: img('feat'), storyCoverImages: [img('c1')] }),
-			);
+			(client.fetch as Mock).mockResolvedValue({
+				...geometriasDelDesveloRawCollection,
+				featuredImage: img('geometrias-del-desvelo'),
+			});
 
-			const result = await fetchStorylistBySlug('arquitecturas-del-laberinto');
+			const result = await fetchStorylistBySlug('geometrias-del-desvelo');
 
 			expect(result.imagery.kind).toBe('representative');
 			if (result.imagery.kind === 'representative') {
-				expect(result.imagery.image).toContain('feat');
+				expect(result.imagery.image).toContain('geometrias-del-desvelo');
 			}
 		});
 
 		it('falls back to sample imagery (story covers) when featuredImage is null', async () => {
-			(client.fetch as Mock).mockResolvedValue(
-				rawStorylist({ featuredImage: null, storyCoverImages: [img('c1'), img('c2'), img('c3')] }),
-			);
+			(client.fetch as Mock).mockResolvedValue({
+				...geometriasDelDesveloRawCollection,
+				storyCoverImages: [img('c1'), img('c2'), img('c3')],
+			});
 
-			const result = await fetchStorylistBySlug('arquitecturas-del-laberinto');
+			const result = await fetchStorylistBySlug('geometrias-del-desvelo');
 
 			expect(result.imagery.kind).toBe('sample');
 			if (result.imagery.kind === 'sample') {
@@ -70,25 +58,27 @@ describe('storylist.repository', () => {
 	});
 
 	describe('fetchStorylistStoriesNavigationTeaserByStorylistSlug', () => {
-		const params = { slug: 'arquitecturas-del-laberinto', start: 0, end: 10 };
+		const params = { slug: 'inventario-de-las-pasiones', start: 0, end: 10 };
 
 		it('maps a present featuredImage to representative imagery', async () => {
-			(client.fetch as Mock).mockResolvedValue(
-				rawStorylist({ featuredImage: img('feat'), storyCoverImages: [img('c1')] }),
-			);
+			(client.fetch as Mock).mockResolvedValue({
+				...elInventarioDeLasPasionesRawNavCollection,
+				featuredImage: img('el-inventario-de-las-pasiones'),
+			});
 
 			const result = await fetchStorylistStoriesNavigationTeaserByStorylistSlug(params);
 
 			expect(result.imagery.kind).toBe('representative');
 			if (result.imagery.kind === 'representative') {
-				expect(result.imagery.image).toContain('feat');
+				expect(result.imagery.image).toContain('el-inventario-de-las-pasiones');
 			}
 		});
 
 		it('falls back to sample imagery (story covers) when featuredImage is null', async () => {
-			(client.fetch as Mock).mockResolvedValue(
-				rawStorylist({ featuredImage: null, storyCoverImages: [img('c1'), img('c2'), img('c3')] }),
-			);
+			(client.fetch as Mock).mockResolvedValue({
+				...elInventarioDeLasPasionesRawNavCollection,
+				storyCoverImages: [img('c1'), img('c2'), img('c3')],
+			});
 
 			const result = await fetchStorylistStoriesNavigationTeaserByStorylistSlug(params);
 
