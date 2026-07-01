@@ -26,6 +26,7 @@ describe('ImageProfileSkeletonComponent', () => {
 			expect(screen.getByRole('status')).toHaveClass(expectedClass);
 		});
 
+		// Cubre el default del signal (sin pasar el input), que el it.each no ejercita.
 		it('defaults to medium (size-10) when no size is provided', async () => {
 			await render(ImageProfileSkeletonComponent);
 
