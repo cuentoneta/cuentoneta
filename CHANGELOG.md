@@ -20,7 +20,7 @@ Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a
 
 La versión 2.8.2 profundiza el Design System V3 y el modelo de dominio de historias: `story` gana una portada propia (`coverImage`) con su migración de backfill, `CollectionTeaser` incorpora la variante `Multiple` (tres portadas en abanico para colecciones multi-autor) y se completan los skeletons faltantes de los componentes V3 mediante stories `Estados` intercambiables (real↔skeleton).
 
-En el Anti-Corruption Layer de Sanity, la asignación de `tags` en los mappers de teaser pasa a ser explícita y se incorpora un corpus crudo (shape Sanity) para testear mappers y services. En paralelo, se refuerza la infraestructura de tests y Storybook con un corpus de mocks enriquecido a partir de las obras de François Onoff —con sus portadas migradas a PNG—, aplicado a `StoryCardTeaserV3` y `HomeStoryCard`, y se unifica la documentación de Storybook al estándar V3.
+En el Anti-Corruption Layer de Sanity, la asignación de `tags` en los mappers de teaser pasa a ser explícita y se incorpora un corpus crudo (shape Sanity) para testear mappers y services. En paralelo, se refuerza la infraestructura de tests y Storybook con un corpus de mocks enriquecido a partir de las obras de François Onoff —con sus portadas migradas a PNG—, aplicado a `StoryCardTeaserV3` y `HomeStoryCard`, se unifica la documentación de Storybook al estándar V3 y se depuran tests que afirmaban clases CSS estructurales en `CollectionTeaser`.
 
 ### Cambios completos
 
