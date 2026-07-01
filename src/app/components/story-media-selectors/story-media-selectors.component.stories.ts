@@ -1,6 +1,7 @@
-import { argsToTemplate, Meta, StoryObj } from '@storybook/angular';
+import { argsToTemplate, moduleMetadata, Meta, StoryObj } from '@storybook/angular';
 
 import { StoryMediaSelectorsComponent } from './story-media-selectors.component';
+import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { Media } from '@models/media.model';
 
 // Conjunto de medios variado: 3 videos de YouTube (muestra el contador en modo agrupado),
@@ -124,6 +125,36 @@ export const Themes: Story = {
 		docs: {
 			description: {
 				story: `<p>Vitrina de los tres temas en su contexto de fondo (subtle/solid/bordered) y la orientación vertical.</p><p><strong>Usos:</strong> referencia para elegir el tema según el fondo de la tarjeta contenedora.</p>`,
+			},
+		},
+	},
+};
+
+// Este componente no tiene skeleton propio: el estado de carga lo gestiona el padre. La story muestra
+// el placeholder del skeleton del padre (barras 34×38) como referencia visual.
+export const Estados: StoryObj<StoryMediaSelectorsComponent & { loading: boolean }> = {
+	decorators: [moduleMetadata({ imports: [SkeletonComponent] })],
+	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
+	render: (args) => ({
+		props: args,
+		template: `
+			@if (loading) {
+				<div class="flex items-center gap-2.5">
+					<cuentoneta-skeleton appearance="square" class="h-[34px] w-[38px] rounded-lg bg-neutral-300" />
+					<cuentoneta-skeleton appearance="square" class="h-[34px] w-[38px] rounded-lg bg-neutral-300" />
+					<cuentoneta-skeleton appearance="square" class="h-[34px] w-[38px] rounded-lg bg-neutral-300" />
+				</div>
+			} @else {
+				<cuentoneta-story-media-selectors [media]="media" [theme]="theme" [selectable]="selectable" />
+			}
+		`,
+	}),
+	args: { loading: true, media, theme: 'subtle', selectable: false },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Este componente <strong>no tiene skeleton propio</strong>: el estado de carga lo gestiona el padre (ver <a href="./?path=/docs/componentes-v3-storycardteaserv3--docs" target="_top"><strong>StoryCardTeaserV3</strong></a>). El placeholder de arriba replica el del skeleton del padre (barras 34×38) como referencia visual.',
 			},
 		},
 	},
