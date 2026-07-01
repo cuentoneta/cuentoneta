@@ -7,12 +7,7 @@ import {
 	geometriaTeaserMock,
 	palacioNueveFronterasTeaserMock,
 } from '../../mocks/onoff-story-teasers.mock';
-import {
-	corpusStories,
-	corpusCovers,
-	literaryWorkSelectArgType,
-	withRichMedia,
-} from '../../mocks/onoff-corpus.storybook';
+import { corpusStories, literaryWorkSelectArgType, withRichMedia } from '../../mocks/onoff-corpus.storybook';
 
 // Las descripciones de la doc van en una sola línea: el renderer de Markdown de los autodocs
 // interpreta como bloque de código cualquier línea con indentación, así que un HTML multilínea
@@ -49,12 +44,6 @@ const meta: Meta<StoryCardTeaserV3Component> = {
 			control: { type: 'number', min: 1, max: 99 },
 			description: 'Numeración opcional de la historia',
 			table: { type: { summary: 'number' }, defaultValue: { summary: 'undefined' } },
-		},
-		coverImageUrl: {
-			control: { type: 'text' },
-			description:
-				'URL de la imagen alusiva a la historia (si no se provee, se muestra el placeholder del Design System)',
-			table: { type: { summary: 'string' }, defaultValue: { summary: 'undefined' } },
 		},
 		tagLabel: {
 			control: { type: 'text' },
@@ -104,11 +93,10 @@ export const Interactiva: StoryObj<StoryCardTeaserV3Component & { storyIndex: nu
 		},
 	},
 	render: (args) => ({
-		props: { ...args, stories: corpusStories, covers: corpusCovers },
+		props: { ...args, stories: corpusStories },
 		template: `
 			<cuentoneta-story-card-teaser-v3
 				[story]="stories[storyIndex]"
-				[coverImageUrl]="covers[storyIndex]"
 				[variant]="variant"
 				[order]="order"
 				[tagLabel]="tagLabel"
@@ -147,7 +135,6 @@ export const OnWhite: Story = {
 	}),
 	args: {
 		story: withRichMedia(palacioNueveFronterasTeaserMock),
-		coverImageUrl: palacioNueveFronterasTeaserMock.coverImage,
 		variant: 'on-white',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -173,7 +160,6 @@ export const OnGray: Story = {
 	}),
 	args: {
 		story: withRichMedia(geometriaTeaserMock),
-		coverImageUrl: geometriaTeaserMock.coverImage,
 		variant: 'on-gray',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -199,7 +185,6 @@ export const Highlighted: Story = {
 	}),
 	args: {
 		story: withRichMedia(elOdioTeaserMock),
-		coverImageUrl: elOdioTeaserMock.coverImage,
 		variant: 'highlighted',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -229,7 +214,6 @@ export const AllVariants: Story = {
 				withRichMedia(geometriaTeaserMock),
 				withRichMedia(elOdioTeaserMock),
 			],
-			covers: [palacioNueveFronterasTeaserMock.coverImage, geometriaTeaserMock.coverImage, elOdioTeaserMock.coverImage],
 		},
 		template: `
 			<div class="flex flex-col gap-10">
@@ -238,7 +222,6 @@ export const AllVariants: Story = {
 					<cuentoneta-story-card-teaser-v3
 						variant="on-white"
 						[story]="stories[0]"
-						[coverImageUrl]="covers[0]"
 						[order]="order"
 						[tagLabel]="tagLabel"
 						[showAuthor]="showAuthor"
@@ -253,7 +236,6 @@ export const AllVariants: Story = {
 						<cuentoneta-story-card-teaser-v3
 							variant="on-gray"
 							[story]="stories[1]"
-							[coverImageUrl]="covers[1]"
 							[order]="order"
 							[tagLabel]="tagLabel"
 							[showAuthor]="showAuthor"
@@ -268,7 +250,6 @@ export const AllVariants: Story = {
 					<cuentoneta-story-card-teaser-v3
 						variant="highlighted"
 						[story]="stories[2]"
-						[coverImageUrl]="covers[2]"
 						[order]="order"
 						[tagLabel]="tagLabel"
 						[showAuthor]="showAuthor"
@@ -317,7 +298,6 @@ export const Estados: StoryObj<StoryCardTeaserV3Component & { loading: boolean }
 				} @else {
 					<cuentoneta-story-card-teaser-v3
 						[story]="story"
-						[coverImageUrl]="coverImageUrl"
 						[variant]="variant"
 						[order]="order"
 						[tagLabel]="tagLabel"
@@ -333,7 +313,6 @@ export const Estados: StoryObj<StoryCardTeaserV3Component & { loading: boolean }
 	args: {
 		loading: true,
 		story: withRichMedia(palacioNueveFronterasTeaserMock),
-		coverImageUrl: palacioNueveFronterasTeaserMock.coverImage,
 		variant: 'on-white',
 		order: 1,
 		tagLabel: 'Cuento',

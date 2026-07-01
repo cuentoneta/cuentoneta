@@ -110,12 +110,13 @@ export class HomeStoryCardComponent {
 	// Inputs
 	public readonly story = input<StoryTeaserWithAuthor | StoryNavigationTeaserWithAuthor>();
 	public readonly order = input<number>();
-	public readonly coverImageUrl = input<string>();
 	// Marca el cover como prioritario (above-the-fold) para la carga de imágenes.
 	public readonly priority = input<boolean>(false);
 	public readonly tagLabel = input<string>();
 	public readonly showMultimedia = input<boolean>(false);
 	public readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
 
+	// La portada se deriva del propio story; '' cuando no fue asignada, y el cover cae al placeholder.
+	protected readonly coverImageUrl = computed(() => this.story()?.coverImage);
 	protected readonly storyRouterLink = computed(() => ['/', this.appRoutes.Story, this.story()?.slug]);
 }

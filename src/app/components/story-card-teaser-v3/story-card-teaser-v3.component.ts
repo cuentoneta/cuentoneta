@@ -139,7 +139,6 @@ export class StoryCardTeaserV3Component {
 	public readonly story = input<StoryNavigationTeaserWithAuthor | StoryTeaserWithAuthor | StoryTeaser>();
 	public readonly variant = input<StoryCardTeaserV3Variant>('on-white');
 	public readonly order = input<number>();
-	public readonly coverImageUrl = input<string>();
 	// Marca el cover como prioritario (above-the-fold, p. ej. en la variante highlighted como hero).
 	public readonly priority = input<boolean>(false);
 	public readonly tagLabel = input<string>();
@@ -151,6 +150,8 @@ export class StoryCardTeaserV3Component {
 	public readonly excerptLines = input(2, { transform: (value: number) => Math.min(10, Math.max(1, value)) });
 	public readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
 
+	// La portada se deriva del propio story; '' cuando no fue asignada, y el cover cae al placeholder.
+	protected readonly coverImageUrl = computed(() => this.story()?.coverImage);
 	protected readonly storyRouterLink = computed(() => ['/', this.appRoutes.Story, this.story()?.slug]);
 
 	// Mapea la variante de la tarjeta al tema visual de los selectores de multimedia.

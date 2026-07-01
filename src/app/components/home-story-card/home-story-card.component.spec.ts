@@ -96,18 +96,17 @@ describe('HomeStoryCardComponent', () => {
 	});
 
 	describe('Cover image', () => {
-		it('should render the cover image when a URL is provided', async () => {
+		it('should render the cover image when the story has a cover', async () => {
 			await render(HomeStoryCardComponent, {
 				inputs: {
-					story: storyNavigationTeaserWithAuthorMock,
+					story: { ...storyNavigationTeaserWithAuthorMock, coverImage: 'https://example.com/cover.jpg' },
 					navigationParams,
-					coverImageUrl: 'https://example.com/cover.jpg',
 				},
 			});
 			expect(screen.getByTestId('cover-image')).toBeInTheDocument();
 		});
 
-		it('should render a placeholder when no cover URL is provided', async () => {
+		it('should render a placeholder when the story has no cover', async () => {
 			await render(HomeStoryCardComponent, {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
 			});
@@ -184,7 +183,7 @@ describe('HomeStoryCardComponent', () => {
 
 		it.each(onoffStoryTeasersMock)('should render title and reading time for "$title"', async (teaser) => {
 			await render(HomeStoryCardComponent, {
-				inputs: { story: teaser, coverImageUrl: teaser.coverImage },
+				inputs: { story: teaser },
 			});
 
 			expect(screen.getByText(teaser.title)).toBeInTheDocument();
