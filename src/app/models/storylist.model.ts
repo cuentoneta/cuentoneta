@@ -10,13 +10,19 @@ export interface StorylistTab {
 	icon?: string;
 }
 
+// Si la colección tiene portada editorial propia se usa (`representative`); en caso contrario, las primeras
+// portadas de sus historias (`sample`).
+export type StorylistImagery =
+	| { readonly kind: 'representative'; readonly image: string }
+	| { readonly kind: 'sample'; readonly images: readonly [string, string, string] };
+
 interface StorylistBase<T> {
 	_id: string;
 	title: string;
 	slug: string;
 	count: number;
 	description: TextBlockContent[];
-	featuredImage: string;
+	imagery: StorylistImagery;
 	tags: Tag[];
 	stories: T[];
 	config: {
@@ -26,16 +32,9 @@ interface StorylistBase<T> {
 	media: Media[];
 }
 
-// Si la colección tiene portada editorial propia se usa (`representative`); en caso contrario, las primeras
-// portadas de sus historias (`sample`).
-export type StorylistImagery =
-	| { readonly kind: 'representative'; readonly image: string }
-	| { readonly kind: 'sample'; readonly images: readonly [string, string, string] };
-
-export interface StorylistTeaser extends Omit<StorylistBase<never>, 'featuredImage'> {
+export interface StorylistTeaser extends StorylistBase<never> {
 	stories: Array<never>;
 	tabs: Array<never>;
-	imagery: StorylistImagery;
 }
 
 export interface StorylistStoriesNavigationTeasers extends StorylistBase<StoryNavigationTeaserWithAuthor> {
