@@ -276,7 +276,7 @@ interface Storylist {
 
 	// Contenido
 	description: TextBlockContent[]; // Descripción de la colección
-	featuredImage: string; // URL de imagen destacada
+	imagery: StorylistImagery; // representative (portada editorial) o sample (portadas de historias)
 	tags: Tag[]; // Etiquetas de categorización
 
 	// Configuración
@@ -293,6 +293,7 @@ interface Storylist {
 
 - El slug debe ser único
 - `count` debe coincidir con el número real de stories
+- `imagery` es un value object (`{ kind: 'representative', image }` cuando hay portada editorial propia; `{ kind: 'sample', images }` con las portadas de las historias cuando no la hay). Las tres vistas polimórficas de la colección (`Storylist`, `StorylistStoriesNavigationTeasers`, `StorylistTeaser`) lo comparten desde `StorylistBase`, en vez de exponer una `featuredImage` cruda.
 
 **Ciclo de Vida:**
 
