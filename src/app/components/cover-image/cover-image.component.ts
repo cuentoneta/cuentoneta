@@ -27,7 +27,7 @@ import { NgOptimizedImage } from '@angular/common';
 			/>
 		} @else {
 			<div class="flex h-full w-full items-center justify-center" data-testid="cover-placeholder">
-				<img class="h-auto w-full" ngSrc="./assets/svg/cover-placeholder.svg" width="60" height="60" alt="" />
+				<img ngSrc="./assets/svg/cover-placeholder.svg" width="60" height="60" alt="" />
 			</div>
 		}
 	`,
