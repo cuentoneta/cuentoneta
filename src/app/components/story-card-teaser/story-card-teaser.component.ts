@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { StoryCardTeaserSkeletonComponent } from './story-card-teaser-skeleton.component';
 import { AppRoutes } from '../../app.routes';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
+import { withSanityImageParams } from '@utils/sanity-image.utils';
 
 @Component({
 	selector: 'cuentoneta-story-card-teaser',
@@ -79,7 +80,7 @@ export class StoryCardTeaserComponent {
 	protected readonly authorImageUrl = computed(() => {
 		const story = this.story();
 		if (story && 'author' in story) {
-			return `${story.author.imageUrl}?h=64&w=64`;
+			return withSanityImageParams(story.author.imageUrl, { h: 64, w: 64 });
 		}
 		return '';
 	});
