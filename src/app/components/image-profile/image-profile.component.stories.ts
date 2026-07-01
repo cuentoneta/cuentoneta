@@ -138,7 +138,6 @@ export const Showcase: Story = {
 	},
 };
 
-// Switch "Cargando" para alternar real↔skeleton en el mismo slot y evaluar la paridad de tamaño.
 export const Estados: StoryObj<ImageProfileComponent & { loading: boolean }> = {
 	decorators: [moduleMetadata({ imports: [ImageProfileSkeletonComponent] })],
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },

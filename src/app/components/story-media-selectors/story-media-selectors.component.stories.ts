@@ -130,8 +130,6 @@ export const Themes: Story = {
 	},
 };
 
-// Este componente no tiene skeleton propio: el estado de carga lo gestiona el padre. La story muestra
-// el placeholder del skeleton del padre (barras 34×38) como referencia visual.
 export const Estados: StoryObj<StoryMediaSelectorsComponent & { loading: boolean }> = {
 	decorators: [moduleMetadata({ imports: [SkeletonComponent] })],
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
