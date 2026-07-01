@@ -232,6 +232,8 @@ export const Interactive: Story = {
 	},
 	parameters: {
 		docs: {
+			// El render envuelve al carousel en un andamiaje de instrucciones; ocultamos el código para no exponerlo como uso copiable.
+			canvas: { sourceState: 'none' },
 			description: {
 				story: `<p>Carousel interactivo con instrucciones de uso. Probá las diferentes formas de navegación (teclado, indicadores, swipe, hover).</p><p><strong>Usos:</strong> verificación manual de las interacciones del componente.</p>`,
 			},
@@ -270,6 +272,8 @@ export const DesktopAndMobile: Story = {
 	parameters: {
 		layout: 'fullscreen',
 		docs: {
+			// El render envuelve al carousel en un andamiaje comparativo desktop/mobile; ocultamos el código para no exponerlo como uso copiable.
+			canvas: { sourceState: 'none' },
 			description: {
 				story: `<p>Comparativa del carousel en vista desktop (960px) y mobile (375px) para visualizar las diferencias de diseño responsivo.</p><p><strong>Usos:</strong> referencia de comportamiento responsive entre breakpoints.</p>`,
 			},
