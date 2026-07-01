@@ -18,6 +18,7 @@
 		"build": "nx run @cuentoneta/app:build:production --skip-nx-cache",
 		"config": "node --loader ts-node/esm ./scripts/set-environment.ts",
 		"delete-unused-assets": "node --import tsx --env-file=.env ./scripts/delete-unused-assets.ts",
+		"reconcile-author-tags": "node --import tsx --env-file=.env ./scripts/reconcile-author-tags.ts",
 		"storybook": "nx run @cuentoneta/app:storybook",
 		"storybook:build": "nx run @cuentoneta/app:build-storybook",
 		"lint": "nx eslint:lint --skip-nx-cache",
