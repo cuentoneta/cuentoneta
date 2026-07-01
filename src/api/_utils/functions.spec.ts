@@ -1,4 +1,5 @@
 import { mapStoryNavigationTeaser, mapStoryNavigationTeaserWithAuthor, mapStoryTeaser, mapTags } from './functions';
+import { elOdioRawTeaser, onoffRawNavTeasersMock } from '../_mocks/onoff-raw-stories.mock';
 
 describe('mapTags (ACL)', () => {
 	it('maps a raw Sanity tag to the domain Tag model', () => {
@@ -75,38 +76,9 @@ describe('mapTags (ACL)', () => {
 });
 
 // El input crudo no incluye `tags`: el mapper es la única fuente del campo vacío (consistente con `mapAuthorTeaser`).
-function rawStoryTeaserItem() {
-	return {
-		_id: 'story-1',
-		slug: 'historia-1',
-		title: 'Historia 1',
-		badLanguage: false,
-		body: [],
-		originalPublication: '',
-		approximateReadingTime: 2,
-		coverImage: null,
-		mediaSources: [],
-		resources: [],
-	};
-}
-
-function rawAuthorTeaser() {
-	return {
-		_id: 'author-1',
-		slug: 'autor',
-		name: 'Autor',
-		image: null,
-		nationality: { country: 'AR', flag: null },
-		bornOn: null,
-		bornOnYear: null,
-		diedOn: null,
-		diedOnYear: null,
-	};
-}
-
 describe('mapStoryTeaser (ACL)', () => {
 	it('sets tags to [] from the mapper, not from the raw spread', () => {
-		const result = mapStoryTeaser([rawStoryTeaserItem()] as unknown as Parameters<typeof mapStoryTeaser>[0]);
+		const result = mapStoryTeaser([elOdioRawTeaser]);
 
 		expect(result[0].tags).toEqual([]);
 	});
@@ -114,9 +86,7 @@ describe('mapStoryTeaser (ACL)', () => {
 
 describe('mapStoryNavigationTeaser (ACL)', () => {
 	it('sets tags to [] from the mapper, not from the raw spread', () => {
-		const result = mapStoryNavigationTeaser([rawStoryTeaserItem()] as unknown as Parameters<
-			typeof mapStoryNavigationTeaser
-		>[0]);
+		const result = mapStoryNavigationTeaser([elOdioRawTeaser]);
 
 		expect(result[0].tags).toEqual([]);
 	});
@@ -124,9 +94,7 @@ describe('mapStoryNavigationTeaser (ACL)', () => {
 
 describe('mapStoryNavigationTeaserWithAuthor (ACL)', () => {
 	it('sets tags to [] from the mapper, not from the raw spread', () => {
-		const result = mapStoryNavigationTeaserWithAuthor([
-			{ ...rawStoryTeaserItem(), author: rawAuthorTeaser() },
-		] as unknown as Parameters<typeof mapStoryNavigationTeaserWithAuthor>[0]);
+		const result = mapStoryNavigationTeaserWithAuthor([onoffRawNavTeasersMock[0]]);
 
 		expect(result[0].tags).toEqual([]);
 	});
