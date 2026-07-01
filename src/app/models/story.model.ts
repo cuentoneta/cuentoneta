@@ -10,6 +10,8 @@ interface StoryBase {
 	slug: string;
 	approximateReadingTime: number;
 	badLanguage?: boolean;
+	// URL de la portada; '' cuando no fue asignada.
+	coverImage: string;
 	resources: Resource[];
 	tags: Tag[];
 	paragraphs: TextBlockContent[];

@@ -3,6 +3,7 @@ import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import { storyNavigationTeaserWithAuthorMock, storyTeaserMock } from '../../mocks/story.mock';
 import { authorTeaserMock } from '../../mocks/author.mock';
+import { onoffStoryTeasersMock } from '../../mocks/onoff-story-teasers.mock';
 import { clearAllMocks } from '@test-utils';
 import type { Media } from '@models/media.model';
 import type { StoryTeaserWithAuthor } from '@models/story.model';
@@ -95,18 +96,17 @@ describe('HomeStoryCardComponent', () => {
 	});
 
 	describe('Cover image', () => {
-		it('should render the cover image when a URL is provided', async () => {
+		it('should render the cover image when the story has a cover', async () => {
 			await render(HomeStoryCardComponent, {
 				inputs: {
-					story: storyNavigationTeaserWithAuthorMock,
+					story: { ...storyNavigationTeaserWithAuthorMock, coverImage: 'https://example.com/cover.jpg' },
 					navigationParams,
-					coverImageUrl: 'https://example.com/cover.jpg',
 				},
 			});
 			expect(screen.getByTestId('cover-image')).toBeInTheDocument();
 		});
 
-		it('should render a placeholder when no cover URL is provided', async () => {
+		it('should render a placeholder when the story has no cover', async () => {
 			await render(HomeStoryCardComponent, {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
 			});
@@ -174,6 +174,20 @@ describe('HomeStoryCardComponent', () => {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
 			});
 			expect(screen.queryByTestId('skeleton')).not.toBeInTheDocument();
+		});
+	});
+
+	// Variedad de obras reales del corpus de François Onoff (#1650): detecta regresiones de datos del corpus.
+	describe('Onoff corpus — story variety', () => {
+		beforeEach(() => clearAllMocks());
+
+		it.each(onoffStoryTeasersMock)('should render title and reading time for "$title"', async (teaser) => {
+			await render(HomeStoryCardComponent, {
+				inputs: { story: teaser },
+			});
+
+			expect(screen.getByText(teaser.title)).toBeInTheDocument();
+			expect(screen.getByText(`${teaser.approximateReadingTime} minutos de lectura`)).toBeInTheDocument();
 		});
 	});
 });

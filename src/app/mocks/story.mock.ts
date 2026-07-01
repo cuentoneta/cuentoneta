@@ -44,6 +44,7 @@ export const storyMock: Story = {
 	badLanguage: false,
 	originalPublication: 'Ecos del silencio (1983)',
 	approximateReadingTime: 2,
+	coverImage: '',
 	slug: 'el-espejo-del-tiempo',
 	tags: [],
 	media: [
@@ -382,6 +383,7 @@ export const storyTeaserWithAuthorMock: StoryTeaserWithAuthor = {
 	badLanguage: false,
 	originalPublication: 'Ecos del silencio (1983)',
 	approximateReadingTime: 2,
+	coverImage: '',
 	slug: 'el-espejo-del-tiempo',
 	tags: [],
 	media: [
@@ -512,6 +514,7 @@ export const storyTeaserMock: StoryTeaser = {
 	badLanguage: false,
 	originalPublication: 'Ecos del silencio (1983)',
 	approximateReadingTime: 2,
+	coverImage: '',
 	slug: 'el-espejo-del-tiempo',
 	tags: [],
 	media: [
@@ -654,6 +657,7 @@ export const storyNavigationTeaserMock: StoryNavigationTeaser = {
 	badLanguage: false,
 	originalPublication: 'Ecos del silencio (1983)',
 	approximateReadingTime: 2,
+	coverImage: '',
 	slug: 'el-espejo-del-tiempo',
 	tags: [],
 };

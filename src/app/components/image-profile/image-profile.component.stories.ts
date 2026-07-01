@@ -1,6 +1,7 @@
-import { argsToTemplate, Meta, StoryObj } from '@storybook/angular';
+import { argsToTemplate, moduleMetadata, Meta, StoryObj } from '@storybook/angular';
 
-import { ImageProfileComponent } from './image-profile.component';
+import { ImageProfileComponent, type ImageProfileSize } from './image-profile.component';
+import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { authorTeaserMock } from '../../mocks/author.mock';
 
 // Foto de muestra: François Onoff, nuestro "autor de stock" para Storybook, mocks y tests
@@ -17,17 +18,7 @@ const meta: Meta<ImageProfileComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div>
-					<p>El componente **ImageProfileComponent** es la foto de perfil circular del Design System v3, usada para
-					mostrar la imagen de autores (y, a futuro, de usuarios logueados). Es el componente más anidado del árbol
-					de teasers v3.</p>
-					<ul>
-						<li><code>size</code>: small (24px), medium (40px), lg (80px), xl (120px).</li>
-						<li><code>src</code>/<code>alt</code>: foto del perfil. Sin <code>src</code> se muestra el placeholder de persona.</li>
-						<li><code>variant</code>: <code>profile</code> (default) o <code>collection</code> (fondo brand-100 + ícono de biblioteca).</li>
-					</ul>
-					<p>Encapsula el redimensionado de la imagen (solicita al CDN 2× del tamaño de display).</p>
-				</div>`,
+				component: `<div><p>El componente <strong>ImageProfileComponent</strong> es la foto de perfil circular del Design System v3, usada para mostrar la imagen de autores (y, a futuro, de usuarios logueados). Es el componente más anidado del árbol de teasers v3. Encapsula el recorte circular, el placeholder y el redimensionado de la imagen (solicita al CDN 2× del tamaño de display).</p><ul><li><code>size</code>: small (24px), medium (40px), lg (80px), xl (120px).</li><li><code>src</code>/<code>alt</code>: foto del perfil. Sin <code>src</code> se muestra el placeholder de persona.</li><li><code>variant</code>: <code>profile</code> (default) o <code>collection</code> (fondo brand-100 + ícono de biblioteca).</li></ul><p>Se consume desde <a href="./?path=/docs/componentes-v3-authorteaserv3--docs" target="_top"><strong>AuthorTeaserV3</strong></a>, <a href="./?path=/docs/componentes-v3-homestorycard--docs" target="_top"><strong>HomeStoryCard</strong></a> y <a href="./?path=/docs/componentes-v3-storycardteaserv3--docs" target="_top"><strong>StoryCardTeaserV3</strong></a> como avatar del autor.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -36,15 +27,26 @@ const meta: Meta<ImageProfileComponent> = {
 		size: {
 			control: { type: 'inline-radio' },
 			options: ['small', 'medium', 'lg', 'xl'],
-			table: { defaultValue: { summary: 'medium' } },
+			description: 'Tamaño del avatar: small (24px), medium (40px), lg (80px), xl (120px)',
+			table: { type: { summary: "'small' | 'medium' | 'lg' | 'xl'" }, defaultValue: { summary: 'medium' } },
 		},
 		variant: {
 			control: { type: 'inline-radio' },
 			options: ['profile', 'collection'],
-			table: { defaultValue: { summary: 'profile' } },
+			description:
+				'Variante: profile (foto/placeholder de persona) o collection (fondo brand-100 + ícono de biblioteca)',
+			table: { type: { summary: "'profile' | 'collection'" }, defaultValue: { summary: 'profile' } },
 		},
-		src: { control: { type: 'text' } },
-		alt: { control: { type: 'text' } },
+		src: {
+			control: { type: 'text' },
+			description: 'URL de la foto; sin valor se muestra el placeholder de persona',
+			table: { type: { summary: 'string' }, defaultValue: { summary: 'undefined' } },
+		},
+		alt: {
+			control: { type: 'text' },
+			description: 'Texto alternativo de la imagen',
+			table: { type: { summary: 'string' }, defaultValue: { summary: "''" } },
+		},
 	},
 };
 
@@ -55,20 +57,39 @@ type Story = StoryObj<ImageProfileComponent>;
 export const Default: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-image-profile ${argsToTemplate(args)} />` }),
 	args: { src, alt, size: 'medium', variant: 'profile' },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Playground interactivo: ajustá tamaño, variante, foto y texto alternativo desde los controles.</p><p><strong>Usos:</strong> referencia para integrar el avatar dentro de teasers y tarjetas.</p>`,
+			},
+		},
+	},
 };
 
 // Placeholder (sin imagen).
 export const Placeholder: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-image-profile ${argsToTemplate(args)} />` }),
 	args: { size: 'medium', variant: 'profile' },
-	parameters: { docs: { description: { story: 'Sin `src`: placeholder de persona sobre fondo gris.' } } },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Sin <code>src</code>: placeholder de persona sobre fondo gris.</p><p><strong>Usos:</strong> autores cuyo perfil todavía no tiene retrato cargado en el CMS.</p>`,
+			},
+		},
+	},
 };
 
 // Variante Collections.
 export const Collection: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-image-profile ${argsToTemplate(args)} />` }),
 	args: { size: 'medium', variant: 'collection' },
-	parameters: { docs: { description: { story: 'Variante collection: fondo brand-100 + ícono de biblioteca.' } } },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Variante collection: fondo brand-100 + ícono de biblioteca, en lugar de una foto.</p><p><strong>Usos:</strong> representación de una colección (storylist) donde no aplica un retrato de persona.</p>`,
+			},
+		},
+	},
 };
 
 // Vitrina de tamaños y estados.
@@ -108,5 +129,43 @@ export const Showcase: Story = {
 		`,
 	}),
 	args: { src, alt },
-	parameters: { docs: { description: { story: 'Todos los tamaños y estados (foto, placeholder, collection).' } } },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Todos los tamaños y estados (foto, placeholder, collection) en simultáneo.</p><p><strong>Usos:</strong> referencia visual de la escala de tamaños del avatar.</p>`,
+			},
+		},
+	},
+};
+
+// size del avatar → clase de dimensión, para que el skeleton nativo coincida 1:1 con el avatar real.
+const skeletonSizeClass: Record<ImageProfileSize, string> = {
+	small: 'size-6',
+	medium: 'size-10',
+	lg: 'size-20',
+	xl: 'size-30',
+};
+
+export const Estados: StoryObj<ImageProfileComponent & { loading: boolean }> = {
+	decorators: [moduleMetadata({ imports: [SkeletonComponent] })],
+	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
+	render: (args) => ({
+		props: { ...args, skeletonClass: `${skeletonSizeClass[args.size ?? 'medium']} bg-neutral-300` },
+		template: `
+			@if (loading) {
+				<cuentoneta-skeleton appearance="circle" [class]="skeletonClass" />
+			} @else {
+				<cuentoneta-image-profile [src]="src" [alt]="alt" [size]="size" />
+			}
+		`,
+	}),
+	args: { loading: true, size: 'medium', src, alt },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Activá/desactivá "Cargando" para alternar entre el avatar real y el <strong>cuentoneta-skeleton</strong> nativo en variante <code>circle</code>, dimensionado con la clase del tamaño (small/medium/lg/xl) para coincidir 1:1 y evitar jitter.',
+			},
+		},
+	},
 };

@@ -12,8 +12,8 @@ export const rotatingContentQuery = defineQuery(`
         'body': [],
         originalPublication,
         approximateReadingTime,
+        coverImage,
         'resources': [],
-        'tags': [],
         'mediaSources': coalesce(mediaSources[], []),
         'author': author-> {
             _id,
@@ -68,7 +68,7 @@ export const landingPageContentQuery = defineQuery(`
             description,
             icon
         }, []),
-        'stories': [],
+        'storyCoverImages': coalesce(stories[]->coverImage, []),
         'count': coalesce(count(stories), 0),
 				config,
 				'tabs': [],
@@ -101,8 +101,8 @@ export const landingPageContentQuery = defineQuery(`
         'body': [],
         originalPublication,
         approximateReadingTime,
+        coverImage,
         'resources': [],
-        'tags': [],
         'mediaSources': coalesce(mediaSources[], []),
         'author': author-> { 
             _id,

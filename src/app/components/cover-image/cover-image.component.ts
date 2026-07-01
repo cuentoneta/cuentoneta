@@ -19,10 +19,10 @@ import { NgOptimizedImage } from '@angular/common';
 			<img
 				[ngSrc]="url"
 				[priority]="priority()"
+				class="h-auto w-full"
 				width="118"
 				height="164"
 				alt=""
-				class="h-full w-full object-cover"
 				data-testid="cover-image"
 			/>
 		} @else {

@@ -2,31 +2,12 @@ import { applicationConfig, argsToTemplate, Meta, StoryObj } from '@storybook/an
 import { provideRouter } from '@angular/router';
 
 import { StoryCardTeaserV3Component } from './story-card-teaser-v3.component';
-import { storyTeaserMock } from '../../mocks/story.mock';
-import { authorTeaserMock } from '../../mocks/author.mock';
-import type { StoryTeaserWithAuthor } from '@models/story.model';
-import type { Media } from '@models/media.model';
-
-// Conjunto de medios variado para ilustrar los selectores de multimedia y el contador (badge):
-// 3 videos de YouTube (muestra el contador), un Space de X y un episodio de Spotify.
-const richMedia: Media[] = [
-	{ title: 'Video 1', type: 'youTubeVideo', description: [], data: { videoId: 'a' } },
-	{ title: 'Video 2', type: 'youTubeVideo', description: [], data: { videoId: 'b' } },
-	{ title: 'Video 3', type: 'youTubeVideo', description: [], data: { videoId: 'c' } },
-	{
-		title: 'Space',
-		type: 'spaceRecording',
-		description: [],
-		data: { url: null, duration: '', hostName: '', date: '' },
-	},
-	{ title: 'Podcast', type: 'spotifyPodcastEpisode', description: [], data: { url: 'https://spotify.com' } },
-];
-
-const storyMock: StoryTeaserWithAuthor = {
-	...storyTeaserMock,
-	author: authorTeaserMock,
-	media: richMedia,
-};
+import {
+	elOdioTeaserMock,
+	geometriaTeaserMock,
+	palacioNueveFronterasTeaserMock,
+} from '../../mocks/onoff-story-teasers.mock';
+import { corpusStories, literaryWorkSelectArgType, withRichMedia } from '../../mocks/onoff-corpus.storybook';
 
 // Las descripciones de la doc van en una sola línea: el renderer de Markdown de los autodocs
 // interpreta como bloque de código cualquier línea con indentación, así que un HTML multilínea
@@ -44,7 +25,7 @@ const meta: Meta<StoryCardTeaserV3Component> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Utilizado para representar una vista previa de una historia dentro de listados o secciones de exploración. Resume la información principal del contenido, incluyendo autor, título, texto truncado, categoría, tiempo estimado de lectura, imagen asociada y accesos a archivos multimediales como video, X o Spotify.</p><p>Su objetivo es facilitar una lectura rápida del contenido disponible y ayudar al usuario a decidir si quiere profundizar en la historia. Puede adaptarse a distintas estructuras visuales según el contexto de uso, manteniendo consistencia en la jerarquía de información y en las acciones disponibles.</p><p>Se implementa en tres variantes seleccionables mediante el input <code>variant</code>:</p><ul><li><strong>OnWhite</strong> (<code>on-white</code>): layout horizontal con imagen a la izquierda, para fondos blancos.</li><li><strong>OnGray</strong> (<code>on-gray</code>): igual a OnWhite con selectores de multimedia en blanco, para fondos grises.</li><li><strong>Highlighted</strong> (<code>highlighted</code>): tarjeta destacada con borde, fondo e imagen a la derecha.</li></ul><p>Cada variante admite mostrar opcionalmente autor, descripción, numeración, etiqueta y selectores de multimedia.</p></div>`,
+				component: `<div><p>Utilizado para representar una vista previa de una historia dentro de listados o secciones de exploración. Resume la información principal del contenido, incluyendo autor, título, texto truncado, categoría, tiempo estimado de lectura, imagen asociada y accesos a archivos multimediales como video, X o Spotify.</p><p>Su objetivo es facilitar una lectura rápida del contenido disponible y ayudar al usuario a decidir si quiere profundizar en la historia. Puede adaptarse a distintas estructuras visuales según el contexto de uso, manteniendo consistencia en la jerarquía de información y en las acciones disponibles.</p><p>Se implementa en tres variantes seleccionables mediante el input <code>variant</code>:</p><ul><li><strong>OnWhite</strong> (<code>on-white</code>): layout horizontal con imagen a la izquierda, para fondos blancos.</li><li><strong>OnGray</strong> (<code>on-gray</code>): igual a OnWhite con selectores de multimedia en blanco, para fondos grises.</li><li><strong>Highlighted</strong> (<code>highlighted</code>): tarjeta destacada con borde, fondo e imagen a la derecha.</li></ul><p>Cada variante admite mostrar opcionalmente autor, descripción, numeración, etiqueta y selectores de multimedia.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada), <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor) y <a href="./?path=/docs/componentes-v3-storymediaselectors--docs" target="_top"><strong>StoryMediaSelectors</strong></a> (accesos multimedia); el extracto se renderiza con <strong>PortableTextParser</strong>.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -63,12 +44,6 @@ const meta: Meta<StoryCardTeaserV3Component> = {
 			control: { type: 'number', min: 1, max: 99 },
 			description: 'Numeración opcional de la historia',
 			table: { type: { summary: 'number' }, defaultValue: { summary: 'undefined' } },
-		},
-		coverImageUrl: {
-			control: { type: 'text' },
-			description:
-				'URL de la imagen alusiva a la historia (si no se provee, se muestra el placeholder del Design System)',
-			table: { type: { summary: 'string' }, defaultValue: { summary: 'undefined' } },
 		},
 		tagLabel: {
 			control: { type: 'text' },
@@ -109,15 +84,31 @@ const meta: Meta<StoryCardTeaserV3Component> = {
 export default meta;
 type Story = StoryObj<StoryCardTeaserV3Component>;
 
-// Playground interactivo: permite alternar todos los inputs sobre cualquier variante.
-// Sin coverImageUrl: se muestra el placeholder del Design System (cover-placeholder.svg).
-export const Docs: Story = {
+// Playground interactivo: un único selector de Obra; la portada, el título y el extracto cambian juntos.
+export const Interactiva: StoryObj<StoryCardTeaserV3Component & { storyIndex: number }> = {
+	argTypes: {
+		storyIndex: {
+			...literaryWorkSelectArgType,
+			description: 'Obra del corpus de François Onoff; su portada, título y extracto cambian de forma conjunta',
+		},
+	},
 	render: (args) => ({
-		props: args,
-		template: `<cuentoneta-story-card-teaser-v3 ${argsToTemplate(args)} />`,
+		props: { ...args, stories: corpusStories },
+		template: `
+			<cuentoneta-story-card-teaser-v3
+				[story]="stories[storyIndex]"
+				[variant]="variant"
+				[order]="order"
+				[tagLabel]="tagLabel"
+				[showAuthor]="showAuthor"
+				[showExcerpt]="showExcerpt"
+				[showMultimedia]="showMultimedia"
+				[excerptLines]="excerptLines"
+			/>
+		`,
 	}),
 	args: {
-		story: storyMock,
+		storyIndex: 0,
 		variant: 'on-white',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -129,7 +120,8 @@ export const Docs: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Playground interactivo. Usá los controles de abajo para alternar la variante y el resto de los inputs.',
+				story:
+					'Playground interactivo. Elegí la <strong>Obra</strong> del corpus: su portada, título y extracto cambian de forma conjunta. El resto de los controles ajusta variante, autor, extracto y multimedia.',
 			},
 		},
 	},
@@ -142,7 +134,7 @@ export const OnWhite: Story = {
 		template: `<cuentoneta-story-card-teaser-v3 ${argsToTemplate(args)} />`,
 	}),
 	args: {
-		story: storyMock,
+		story: withRichMedia(palacioNueveFronterasTeaserMock),
 		variant: 'on-white',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -167,7 +159,7 @@ export const OnGray: Story = {
 		template: `<div class="rounded-lg bg-neutral-100 p-6"><cuentoneta-story-card-teaser-v3 ${argsToTemplate(args)} /></div>`,
 	}),
 	args: {
-		story: storyMock,
+		story: withRichMedia(geometriaTeaserMock),
 		variant: 'on-gray',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -192,7 +184,7 @@ export const Highlighted: Story = {
 		template: `<cuentoneta-story-card-teaser-v3 ${argsToTemplate(args)} />`,
 	}),
 	args: {
-		story: storyMock,
+		story: withRichMedia(elOdioTeaserMock),
 		variant: 'highlighted',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -215,14 +207,21 @@ export const Highlighted: Story = {
 // instancia; argsToTemplate genera bindings `[variant]="variant"` que apuntan a un único `props.variant`.
 export const AllVariants: Story = {
 	render: (args) => ({
-		props: args,
+		props: {
+			...args,
+			stories: [
+				withRichMedia(palacioNueveFronterasTeaserMock),
+				withRichMedia(geometriaTeaserMock),
+				withRichMedia(elOdioTeaserMock),
+			],
+		},
 		template: `
 			<div class="flex flex-col gap-10">
 				<div class="space-y-2">
 					<h3 class="text-sm font-semibold text-neutral-600">OnWhite</h3>
 					<cuentoneta-story-card-teaser-v3
 						variant="on-white"
-						[story]="story"
+						[story]="stories[0]"
 						[order]="order"
 						[tagLabel]="tagLabel"
 						[showAuthor]="showAuthor"
@@ -236,7 +235,7 @@ export const AllVariants: Story = {
 					<div class="rounded-lg bg-neutral-100 p-6">
 						<cuentoneta-story-card-teaser-v3
 							variant="on-gray"
-							[story]="story"
+							[story]="stories[1]"
 							[order]="order"
 							[tagLabel]="tagLabel"
 							[showAuthor]="showAuthor"
@@ -250,7 +249,7 @@ export const AllVariants: Story = {
 					<h3 class="text-sm font-semibold text-neutral-600">Highlighted</h3>
 					<cuentoneta-story-card-teaser-v3
 						variant="highlighted"
-						[story]="story"
+						[story]="stories[2]"
 						[order]="order"
 						[tagLabel]="tagLabel"
 						[showAuthor]="showAuthor"
@@ -263,7 +262,6 @@ export const AllVariants: Story = {
 		`,
 	}),
 	args: {
-		story: storyMock,
 		order: 1,
 		tagLabel: 'Cuento',
 		showAuthor: true,
@@ -314,7 +312,7 @@ export const Estados: StoryObj<StoryCardTeaserV3Component & { loading: boolean }
 	}),
 	args: {
 		loading: true,
-		story: storyMock,
+		story: withRichMedia(palacioNueveFronterasTeaserMock),
 		variant: 'on-white',
 		order: 1,
 		tagLabel: 'Cuento',

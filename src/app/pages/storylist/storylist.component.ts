@@ -55,11 +55,6 @@ export default class StorylistComponent implements StorylistHost {
 	});
 	public readonly storylist = computed(() => this.storylistResource.value());
 
-	// Propiedades
-	// TODO: Implementar uso de imagen alusiva/tapa de libro en la ficha técnica
-	private readonly featuredImageUrl = computed(
-		() => `${this.storylistResource.value()?.featuredImage}?h=${256 * 1.5}&w=${192 * 1.5}&auto=format`,
-	);
 	// TODO: Simplificar estructura de tipo Storylist para evitar estas transformaciones
 	protected readonly stories = computed(() => this.storylistResource.value()?.stories.map((story) => story) || []);
 

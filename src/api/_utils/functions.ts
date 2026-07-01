@@ -3,6 +3,7 @@ import { client } from '../_helpers/sanity-connector';
 
 // Funciones
 import { mapMediaSources, mapMediaSourcesTeasers } from './media-sources.functions';
+import { mapImagery } from './storylist-imagery.functions';
 
 // Tipos de Sanity
 
@@ -180,18 +181,19 @@ export function mapTags(tags: TagsSubQuery): Tag[] {
 }
 
 function mapStorylistTeasers(result: StorylistTeasersQueryResult): StorylistTeaser[] {
-	return result.map((item) => ({
-		...item,
-		config: {
-			...item.config,
-			showAuthors: item.config?.showAuthors ?? false,
-		},
-		description: mapBlockContentToTextParagraphs(item.description),
-		tags: mapTags(item.tags),
-		featuredImage: urlFor(item.featuredImage),
-		tabs: [],
-		media: mapMediaSourcesTeasers(item.mediaSources),
-	}));
+	return result.map((item) => {
+		const { featuredImage, storyCoverImages, mediaSources, ...rest } = item;
+		return {
+			...rest,
+			config: { ...item.config, showAuthors: item.config?.showAuthors ?? false },
+			description: mapBlockContentToTextParagraphs(item.description),
+			tags: mapTags(item.tags),
+			stories: [],
+			tabs: [],
+			media: mapMediaSourcesTeasers(mediaSources),
+			imagery: mapImagery({ featuredImage, storyCoverImages }),
+		};
+	});
 }
 
 // TODO: Agregar soporte a futuro para mapear imágenes dentro del cuerpo de una story
@@ -200,8 +202,10 @@ export function mapBlockContentToTextParagraphs(content: BlockContent): TextBloc
 }
 
 export async function mapStoryContent(result: NonNullable<StoryBySlugQueryResult>): Promise<Story> {
+	const { coverImage, ...rest } = result;
 	return {
-		...result,
+		...rest,
+		coverImage: urlFor(coverImage),
 		epigraphs: result.epigraphs.map((epigraph) => ({
 			text: mapBlockContentToTextParagraphs(epigraph.text),
 			reference: mapBlockContentToTextParagraphs(epigraph.reference),
@@ -229,13 +233,15 @@ export function mapStoryTeaser(result: StoryTeasersQueryResult): StoryTeaser[] {
 	const stories = [];
 
 	for (const item of result) {
-		const { mediaSources, resources, body, ...properties } = item;
+		const { mediaSources, resources, body, coverImage, ...properties } = item;
 
 		stories.push({
 			...properties,
+			coverImage: urlFor(coverImage),
 			media: mapMediaSourcesTeasers(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: mapBlockContentToTextParagraphs(body) as [TextBlockContent, TextBlockContent, TextBlockContent],
+			tags: [],
 		});
 	}
 
@@ -246,13 +252,15 @@ export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlug
 	const stories = [];
 
 	for (const item of result) {
-		const { mediaSources, resources, ...properties } = item;
+		const { mediaSources, resources, coverImage, ...properties } = item;
 
 		stories.push({
 			...properties,
+			coverImage: urlFor(coverImage),
 			media: mapMediaSourcesTeasers(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: [],
+			tags: [],
 		});
 	}
 
@@ -266,14 +274,16 @@ export function mapStoryNavigationTeaserWithAuthor(
 	const stories = [];
 
 	for (const item of result) {
-		const { mediaSources, resources, ...properties } = item;
+		const { mediaSources, resources, coverImage, ...properties } = item;
 
 		stories.push({
 			...properties,
 			author: mapAuthorTeaser(item.author),
+			coverImage: urlFor(coverImage),
 			media: mapMediaSourcesTeasers(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: [],
+			tags: [],
 		});
 	}
 

@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v7.0.0
 
       - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v4.1.0
+        uses: pnpm/action-setup@v6.0.9
         with:
           version: 10.12.1
 
@@ -59,7 +59,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v4.1.0
+        uses: pnpm/action-setup@v6.0.9
         with:
           version: 10.12.1
 
@@ -79,7 +79,7 @@ jobs:
       # Capa de cache gratuita (cache de Actions) sobre el cache local de Nx: da hits sin consumir
       # créditos de Nx Cloud, y sigue funcionando si Nx Cloud se queda sin créditos o no responde.
       - name: Cache de Nx local (fallback sin Nx Cloud)
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: .nx/cache
           key: nx-cache-test-${{ github.sha }}
@@ -121,7 +121,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v4.1.0
+        uses: pnpm/action-setup@v6.0.9
         with:
           version: 10.12.1
 
@@ -139,7 +139,7 @@ jobs:
         run: tar -xf workspace.tar
 
       - name: Cache de Nx local (fallback sin Nx Cloud)
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: .nx/cache
           key: nx-cache-lint-${{ github.sha }}
@@ -156,7 +156,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v4.1.0
+        uses: pnpm/action-setup@v6.0.9
         with:
           version: 10.12.1
 
@@ -174,7 +174,7 @@ jobs:
         run: tar -xf workspace.tar
 
       - name: Cache de Nx local (fallback sin Nx Cloud)
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: .nx/cache
           key: nx-cache-stylelint-${{ github.sha }}
@@ -191,7 +191,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v4.1.0
+        uses: pnpm/action-setup@v6.0.9
         with:
           version: 10.12.1
 
@@ -229,7 +229,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v4.1.0
+        uses: pnpm/action-setup@v6.0.9
         with:
           version: 10.12.1
 
@@ -247,7 +247,7 @@ jobs:
         run: tar -xf workspace.tar
 
       - name: Cache de Nx local (fallback sin Nx Cloud)
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: .nx/cache
           key: nx-cache-build-${{ github.sha }}
@@ -274,7 +274,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v4.1.0
+        uses: pnpm/action-setup@v6.0.9
         with:
           version: 10.12.1
 
@@ -292,7 +292,7 @@ jobs:
         run: tar -xf workspace.tar
 
       - name: Cache de Nx local (fallback sin Nx Cloud)
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: .nx/cache
           key: nx-cache-storybook-${{ github.sha }}

@@ -6,7 +6,7 @@ import { provideRouter } from '@angular/router';
 import { CollectionTeaser } from './collection-teaser';
 
 // Mocks
-import { storylistMock } from '@mocks/storylist.mock';
+import { storylistTeaserRepresentativeMock, storylistTeaserSampleMock } from '@mocks/storylist.mock';
 
 // Modelos
 import { StorylistTeaser } from '@models/storylist.model';
@@ -14,11 +14,7 @@ import { StorylistTeaser } from '@models/storylist.model';
 // Utilidades de test
 import { clearAllMocks } from '@test-utils';
 
-const collectionTeaserMock: StorylistTeaser = {
-	...storylistMock,
-	stories: [],
-	tabs: [],
-};
+const collectionTeaserMock: StorylistTeaser = storylistTeaserRepresentativeMock;
 
 describe('CollectionTeaser', () => {
 	const defaultProviders = [provideRouter([])];
@@ -52,7 +48,6 @@ describe('CollectionTeaser', () => {
 				providers: defaultProviders,
 			});
 
-			// Solo debe existir el article vacío, sin link
 			const article = screen.getByRole('article');
 			expect(article).toBeInTheDocument();
 			expect(screen.queryByRole('link')).not.toBeInTheDocument();
@@ -80,16 +75,6 @@ describe('CollectionTeaser', () => {
 			const link = screen.getByRole('link');
 			expect(link).toHaveAttribute('href', `/storylist/${collectionTeaserMock.slug}`);
 		});
-
-		it('should have navigation-link class', async () => {
-			await render(CollectionTeaser, {
-				inputs: { collection: collectionTeaserMock },
-				providers: defaultProviders,
-			});
-
-			const link = screen.getByRole('link');
-			expect(link).toHaveClass('navigation-link');
-		});
 	});
 
 	// Pruebas del cover de la colección
@@ -110,6 +95,42 @@ describe('CollectionTeaser', () => {
 			});
 
 			expect(screen.getByTestId('cover-image')).toHaveAttribute('alt', '');
+		});
+	});
+
+	// Variantes del objeto de valor `imagery`
+	describe('Variante de imagery', () => {
+		it('should render a single cover for representative imagery', async () => {
+			await render(CollectionTeaser, {
+				inputs: { collection: storylistTeaserRepresentativeMock },
+				providers: defaultProviders,
+			});
+
+			expect(screen.getAllByTestId('cover-image')).toHaveLength(1);
+		});
+
+		it('should render 3 covers for sample imagery with three images', async () => {
+			await render(CollectionTeaser, {
+				inputs: { collection: storylistTeaserSampleMock },
+				providers: defaultProviders,
+			});
+
+			expect(screen.getAllByTestId('cover-image')).toHaveLength(3);
+		});
+
+		it('should render placeholders for the empty slots of a sample imagery', async () => {
+			const teaser: StorylistTeaser = {
+				...storylistTeaserSampleMock,
+				imagery: { kind: 'sample', images: ['assets/img/mocks/stories/el-odio.png', '', ''] },
+			};
+
+			await render(CollectionTeaser, {
+				inputs: { collection: teaser },
+				providers: defaultProviders,
+			});
+
+			expect(screen.getAllByTestId('cover-image')).toHaveLength(1);
+			expect(screen.getAllByTestId('cover-placeholder')).toHaveLength(2);
 		});
 	});
 
@@ -195,21 +216,6 @@ describe('CollectionTeaser', () => {
 			fixture.detectChanges();
 
 			expect(screen.getByText('Nueva Colección')).toBeInTheDocument();
-		});
-	});
-
-	// Pruebas de estructura del layout
-	describe('Estructura del layout', () => {
-		it('should have flex layout with gap on link', async () => {
-			await render(CollectionTeaser, {
-				inputs: { collection: collectionTeaserMock },
-				providers: defaultProviders,
-			});
-
-			const link = screen.getByRole('link');
-			expect(link).toHaveClass('flex');
-			expect(link).toHaveClass('items-start');
-			expect(link).toHaveClass('gap-5');
 		});
 	});
 

@@ -1,7 +1,8 @@
-import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
+import { applicationConfig, argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { provideRouter } from '@angular/router';
 
 import { CarouselComponent } from './carousel.component';
+import { CarouselSkeletonComponent } from './carousel-skeleton.component';
 import { contentCampaignMock } from '@mocks/content-campaign.mock';
 import { ContentCampaign } from '@models/content-campaign.model';
 
@@ -19,26 +20,7 @@ const meta: Meta<CarouselComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div>
-					<p>El componente **CarouselComponent** es un carousel de contenido interactivo que permite mostrar campañas de contenido destacado con navegación automática y manual.</p>
-					<h4>Características:</h4>
-					<ul>
-						<li>Reproducción automática con pausa al hacer hover o durante interacción táctil</li>
-						<li>Navegación por gestos táctiles (swipe izquierda/derecha)</li>
-						<li>Navegación por teclado (flechas izquierda/derecha)</li>
-						<li>Indicadores de progreso clickeables</li>
-						<li>Controles de navegación (solo en desktop)</li>
-						<li>Soporte para imágenes responsive (mobile/desktop)</li>
-						<li>Respeta preferencias de reducción de movimiento del usuario</li>
-					</ul>
-					<h4>Accesibilidad:</h4>
-					<ul>
-						<li>Atributos ARIA completos para lectores de pantalla</li>
-						<li>Navegación por teclado</li>
-						<li>Focus visible para navegación</li>
-						<li>Soporte para <code>prefers-reduced-motion</code></li>
-					</ul>
-				</div>`,
+				component: `<div><p>El componente <strong>CarouselComponent</strong> es un carousel de contenido interactivo que muestra campañas de contenido destacado con navegación automática y manual. Compone <strong>CarouselIndicator</strong> (indicadores de progreso clickeables) y <strong>CarouselControls</strong> (controles de navegación, solo en desktop).</p><p><strong>Características:</strong> reproducción automática con pausa al hacer hover o durante interacción táctil; navegación por gestos táctiles (swipe) y por teclado (flechas ← →); indicadores de progreso clickeables; controles de navegación solo en desktop; imágenes responsive (mobile/desktop); respeta <code>prefers-reduced-motion</code>.</p><p><strong>Accesibilidad:</strong> atributos ARIA completos para lectores de pantalla, navegación por teclado y focus visible.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -60,6 +42,14 @@ const meta: Meta<CarouselComponent> = {
 				defaultValue: { summary: '600' },
 			},
 		},
+		autoPlayInterval: {
+			control: { type: 'number', min: 1000, max: 10000, step: 500 },
+			description: 'Intervalo de reproducción automática entre diapositivas en milisegundos',
+			table: {
+				type: { summary: 'number' },
+				defaultValue: { summary: '5000' },
+			},
+		},
 	},
 };
 
@@ -68,6 +58,7 @@ type Story = StoryObj<CarouselComponent>;
 
 // Historia principal con documentación
 export const Default: Story = {
+	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: contentCampaignMock,
 		transitionDuration: 600,
@@ -75,7 +66,7 @@ export const Default: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Carousel con configuración por defecto mostrando múltiples campañas de contenido.',
+				story: `<p>Carousel con configuración por defecto mostrando múltiples campañas de contenido.</p><p><strong>Usos:</strong> Home, en la sección de campañas de contenido destacado.</p>`,
 			},
 		},
 	},
@@ -83,6 +74,7 @@ export const Default: Story = {
 
 // Carousel con una sola diapositiva
 export const SingleSlide: Story = {
+	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: [contentCampaignMock[0]],
 		transitionDuration: 600,
@@ -90,8 +82,7 @@ export const SingleSlide: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story:
-					'Carousel con una única diapositiva. Los controles de navegación e indicadores se ocultan automáticamente.',
+				story: `<p>Carousel con una única diapositiva. Los controles de navegación e indicadores se ocultan automáticamente y se pausa la reproducción.</p><p><strong>Usos:</strong> Home cuando hay una sola campaña activa.</p>`,
 			},
 		},
 	},
@@ -99,6 +90,7 @@ export const SingleSlide: Story = {
 
 // Carousel con transición rápida
 export const FastTransition: Story = {
+	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: contentCampaignMock,
 		transitionDuration: 300,
@@ -106,7 +98,7 @@ export const FastTransition: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Carousel con transición rápida de 300ms.',
+				story: `<p>Carousel con transición rápida de 300ms.</p><p><strong>Usos:</strong> referencia para ajustar la velocidad de transición a un ritmo más ágil.</p>`,
 			},
 		},
 	},
@@ -114,6 +106,7 @@ export const FastTransition: Story = {
 
 // Carousel con transición lenta
 export const SlowTransition: Story = {
+	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: contentCampaignMock,
 		transitionDuration: 1200,
@@ -121,7 +114,7 @@ export const SlowTransition: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Carousel con transición lenta de 1200ms.',
+				story: `<p>Carousel con transición lenta de 1200ms.</p><p><strong>Usos:</strong> referencia para una transición más pausada y enfática.</p>`,
 			},
 		},
 	},
@@ -169,6 +162,7 @@ const extendedSlidesMock: ContentCampaign[] = [
 
 // Carousel con múltiples diapositivas
 export const MultipleSlides: Story = {
+	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: extendedSlidesMock,
 		transitionDuration: 600,
@@ -176,7 +170,7 @@ export const MultipleSlides: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Carousel con tres diapositivas para demostrar la navegación cíclica.',
+				story: `<p>Carousel con tres diapositivas para demostrar la navegación cíclica.</p><p><strong>Usos:</strong> Home cuando hay varias campañas activas en rotación.</p>`,
 			},
 		},
 	},
@@ -208,7 +202,7 @@ export const Interactive: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Carousel interactivo con instrucciones de uso. Prueba las diferentes formas de navegación.',
+				story: `<p>Carousel interactivo con instrucciones de uso. Probá las diferentes formas de navegación (teclado, indicadores, swipe, hover).</p><p><strong>Usos:</strong> verificación manual de las interacciones del componente.</p>`,
 			},
 		},
 	},
@@ -246,9 +240,32 @@ export const DesktopAndMobile: Story = {
 		layout: 'fullscreen',
 		docs: {
 			description: {
-				story:
-					'Comparativa del carousel en vista desktop (960px) y mobile (375px) para visualizar las diferencias de diseño responsivo.',
+				story: `<p>Comparativa del carousel en vista desktop (960px) y mobile (375px) para visualizar las diferencias de diseño responsivo.</p><p><strong>Usos:</strong> referencia de comportamiento responsive entre breakpoints.</p>`,
 			},
 		},
+	},
+};
+
+// Switch "Cargando" para alternar real↔skeleton en el mismo slot y evaluar la transición/alineación.
+export const Estados: StoryObj<CarouselComponent & { loading: boolean }> = {
+	decorators: [moduleMetadata({ imports: [CarouselSkeletonComponent] })],
+	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
+	render: (args) => ({
+		props: args,
+		template: `
+			@if (loading) {
+				<cuentoneta-carousel-skeleton />
+			} @else {
+				<cuentoneta-carousel [slides]="slides" [transitionDuration]="transitionDuration" />
+			}
+		`,
+	}),
+	args: {
+		loading: true,
+		slides: contentCampaignMock,
+		transitionDuration: 600,
+	},
+	parameters: {
+		docs: { description: { story: 'Activá/desactivá "Cargando" para alternar entre el estado real y el skeleton.' } },
 	},
 };

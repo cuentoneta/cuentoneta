@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 
+import { withSanityImageParams } from '@utils/sanity-image.utils';
+
 /** Tamaños del avatar (Design System v3): small=24px, medium=40px, lg=80px, xl=120px. */
 export type ImageProfileSize = 'small' | 'medium' | 'lg' | 'xl';
 
@@ -10,14 +12,6 @@ export type ImageProfileSize = 'small' | 'medium' | 'lg' | 'xl';
  * - `collection`: avatar de colección (fondo brand-100 + ícono de biblioteca).
  */
 export type ImageProfileVariant = 'profile' | 'collection';
-
-/**
- * Estado de render efectivo (derivado de `variant` + `src`), no es parte de la API pública:
- * - `photo`: imagen real solicitada al CDN.
- * - `placeholder`: ícono de persona (variante `profile` sin `src`).
- * - `collection`: ícono de biblioteca.
- */
-type RenderMode = 'photo' | 'placeholder' | 'collection';
 
 const COLLECTION_ICON = './assets/svg/collection.svg';
 const PROFILE_PLACEHOLDER = './assets/svg/profile-placeholder.svg';
@@ -53,31 +47,24 @@ export class ImageProfileComponent {
 		xl: { px: 120, circle: 'size-30', icon: 'size-15' },
 	};
 
-	// Estado de render efectivo: única fuente de verdad de "qué se dibuja", derivada de variant + src.
-	private readonly renderMode = computed<RenderMode>(() => {
-		if (this.variant() === 'collection') {
-			return 'collection';
-		}
-		return this.src() ? 'photo' : 'placeholder';
-	});
-
-	// Descriptor único por estado: centraliza url, tamaño, clases de la imagen y fondo del círculo.
+	// Descriptor único de "qué se dibuja" (url, tamaño, clases de la imagen y fondo del círculo),
+	// derivado de variant + src. Ramifica sobre `src` para estrechar su tipo antes de armar la URL.
 	protected readonly view = computed(() => {
 		const { px, icon } = this.sizeMap[this.size()];
-		switch (this.renderMode()) {
-			case 'collection':
-				return { url: COLLECTION_ICON, px: px / 2, classes: icon, background: 'bg-brand-100' };
-			case 'placeholder':
-				return { url: PROFILE_PLACEHOLDER, px: px / 2, classes: icon, background: 'bg-neutral-300' };
-			default:
-				// photo: la imagen se solicita al CDN a 2x (HiDPI) del tamaño de display.
-				return {
-					url: `${this.src()}?h=${px * 2}&w=${px * 2}`,
-					px,
-					classes: 'size-full object-cover',
-					background: 'bg-neutral-300',
-				};
+		const src = this.src();
+		if (this.variant() === 'collection') {
+			return { url: COLLECTION_ICON, px: px / 2, classes: icon, background: 'bg-brand-100' };
 		}
+		if (!src) {
+			return { url: PROFILE_PLACEHOLDER, px: px / 2, classes: icon, background: 'bg-neutral-300' };
+		}
+		// photo: la imagen se solicita al CDN a 2x (HiDPI) del tamaño de display.
+		return {
+			url: withSanityImageParams(src, { h: px * 2, w: px * 2 }),
+			px,
+			classes: 'size-full object-cover',
+			background: 'bg-neutral-300',
+		};
 	});
 
 	protected readonly containerClasses = computed(() => {
