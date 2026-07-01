@@ -18,9 +18,11 @@ Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a
 
 ## Versión 2.8.2 (2026-07-01)
 
-La versión 2.8.2 profundiza el Design System V3 y el modelo de dominio de historias: `story` gana una portada propia (`coverImage`) con su migración de backfill, `CollectionTeaser` incorpora la variante `Multiple` (tres portadas en abanico para colecciones multi-autor) y se completan los skeletons faltantes de los componentes V3 mediante stories `Estados` intercambiables (real↔skeleton).
+La versión 2.8.2 profundiza el Design System V3 y el modelo de dominio de historias: `story` gana una portada propia (`coverImage`) con su migración de backfill, `CollectionTeaser` incorpora la variante `Multiple` (tres portadas en abanico para colecciones multi-autor), la imagen de `Collection` se unifica alrededor del value object `imagery` (`representative`/`sample`, portada editorial opcional) y las tarjetas V3 derivan su portada del propio `story`. Además, se completan los skeletons faltantes de los componentes V3 mediante stories `Estados` intercambiables (real↔skeleton).
 
 En el Anti-Corruption Layer de Sanity, la asignación de `tags` en los mappers de teaser pasa a ser explícita y se incorpora un corpus crudo (shape Sanity) para testear mappers y services. En paralelo, se refuerza la infraestructura de tests y Storybook con un corpus de mocks enriquecido a partir de las obras de François Onoff —con sus portadas migradas a PNG—, aplicado a `StoryCardTeaserV3` y `HomeStoryCard`, se unifica la documentación de Storybook al estándar V3 y se depuran tests que afirmaban clases CSS estructurales en `CollectionTeaser`.
+
+Finalmente, sienta la base de las OG images dinámicas (`setImage()`/`removeImage()` en `HeadMetadataDirective`), corrige la generación de URLs de imágenes de Sanity con crop, incorpora un skill `/release-workflow` dedicado a los issues de release y suma una tanda de actualizaciones de dependencias (`groq`, Hono, Sanity CLI) y de GitHub Actions.
 
 ### Cambios completos
 
@@ -31,12 +33,14 @@ Ver el changelog completo en [2.8.2](https://github.com/cuentoneta/cuentoneta/re
 #### Modelo de dominio y ACL
 
 - [#1648] - `coverImage` como atributo propio de `story` para su representación visual, con migración de backfill en historias existentes.
+- [#1684] - Imagen de `Collection` modelada con el value object `imagery` (`representative`/`sample`) y portada editorial (`featuredImage`) opcional, en paridad con `CollectionTeaser`.
 - [#1593] - Asignación explícita de `tags: []` en los mappers de teaser de story (ACL).
 - [#1678] - Corpus Onoff crudo (shape Sanity) del lado del ACL para tests de mappers y services.
 
 #### Design System V3 y componentes
 
 - [#1638] - Variante `Multiple` de `CollectionTeaser`: tres portadas en abanico para colecciones multi-autor.
+- [#1692] - Las tarjetas `HomeStoryCard` y `StoryCardTeaserV3` derivan la portada del propio `story`, eliminando el input redundante `coverImageUrl`.
 - [#1675] - Skeletons faltantes de los componentes V3 con stories `Estados` intercambiables (real↔skeleton).
 
 #### Storybook, tests y corpus de mocks
@@ -47,6 +51,26 @@ Ver el changelog completo en [2.8.2](https://github.com/cuentoneta/cuentoneta/re
 - [#1669] - Refuerzo de tests y Storybook de `HomeStoryCard` con el corpus de Onoff.
 - [#1631] - Auditoría de documentación V3 en Storybook: unificación al estándar de `StoryCardTeaserV3` y `TagComponent`.
 - [#1639] - Limpieza de tests que afirmaban clases CSS en `collection-teaser` (testear comportamiento, no estructura).
+
+#### SEO y OpenGraph
+
+- [#1535] - Base de las OG images dinámicas: `setImage()` y `removeImage()` en `HeadMetadataDirective`, con fallback al logo estático.
+
+#### Correcciones
+
+- [#1694] - Corrección de la generación de URLs de imágenes de Sanity con crop (helper `withSanityImageParams`), que producía un doble `?` y un `rect` inválido.
+
+#### Flujos de trabajo y agentes de IA (Claude)
+
+- [#1685] - Skill `/release-workflow` dedicado a los issues de release.
+
+#### Dependencias e infraestructura
+
+- [#1613] - Actualización de `groq` a la versión 6.1.0.
+- [#1619] - Actualización de `@hono/node-server` a la versión 2.0.6.
+- [#1611] - Actualización de `@sanity/cli` a la versión 7.2.3 (CMS).
+- [#1612] · [#1662] · [#1660] · [#1608] - Actualización de los grupos `minor-and-patch` de dependencias de app y CMS (Dependabot).
+- [#1636] · [#1637] · [#1659] - Auto-bump de GitHub Actions (`pnpm/action-setup`, `actions/checkout`, `actions/cache`) vía Dependabot.
 
 ## Versión 2.8.1 (2026-06-23)
 
