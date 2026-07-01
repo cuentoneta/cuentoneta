@@ -103,18 +103,17 @@ describe('StoryCardTeaserV3Component', () => {
 	});
 
 	describe('Cover image', () => {
-		it('should render the cover image when a URL is provided', async () => {
+		it('should render the cover image when the story has a cover', async () => {
 			await render(StoryCardTeaserV3Component, {
 				inputs: {
-					story: storyNavigationTeaserWithAuthorMock,
+					story: { ...storyNavigationTeaserWithAuthorMock, coverImage: 'https://example.com/cover.jpg' },
 					navigationParams,
-					coverImageUrl: 'https://example.com/cover.jpg',
 				},
 			});
 			expect(screen.getByTestId('cover-image')).toBeInTheDocument();
 		});
 
-		it('should render a placeholder when no cover URL is provided', async () => {
+		it('should render a placeholder when the story has no cover', async () => {
 			await render(StoryCardTeaserV3Component, {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
 			});
@@ -124,9 +123,8 @@ describe('StoryCardTeaserV3Component', () => {
 		it('should keep the cover decorative, leaving a single accessible story link when the author is hidden', async () => {
 			await render(StoryCardTeaserV3Component, {
 				inputs: {
-					story: storyNavigationTeaserWithAuthorMock,
+					story: { ...storyNavigationTeaserWithAuthorMock, coverImage: 'https://example.com/cover.jpg' },
 					navigationParams,
-					coverImageUrl: 'https://example.com/cover.jpg',
 					showAuthor: false,
 				},
 			});
@@ -240,7 +238,7 @@ describe('StoryCardTeaserV3Component', () => {
 
 		it.each(onoffStoryTeasersMock)('should render title and reading time for "$title"', async (teaser) => {
 			await render(StoryCardTeaserV3Component, {
-				inputs: { story: teaser, coverImageUrl: teaser.coverImage },
+				inputs: { story: teaser },
 			});
 
 			expect(screen.getByText(teaser.title)).toBeInTheDocument();

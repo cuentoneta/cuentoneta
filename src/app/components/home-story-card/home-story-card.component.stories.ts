@@ -4,12 +4,7 @@ import { provideRouter } from '@angular/router';
 import { HomeStoryCardComponent } from './home-story-card.component';
 import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.component';
 import { palacioNueveFronterasTeaserMock } from '../../mocks/onoff-story-teasers.mock';
-import {
-	corpusStories,
-	corpusCovers,
-	literaryWorkSelectArgType,
-	withRichMedia,
-} from '../../mocks/onoff-corpus.storybook';
+import { corpusStories, literaryWorkSelectArgType, withRichMedia } from '../../mocks/onoff-corpus.storybook';
 
 const meta: Meta<HomeStoryCardComponent> = {
 	component: HomeStoryCardComponent,
@@ -47,12 +42,6 @@ const meta: Meta<HomeStoryCardComponent> = {
 			description: 'Marca el cover como prioritario (above-the-fold) para la carga de imágenes',
 			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
 		},
-		coverImageUrl: {
-			control: { type: 'text' },
-			description:
-				'URL de la imagen alusiva a la historia (si no se provee, se muestra el placeholder del Design System)',
-			table: { type: { summary: 'string' }, defaultValue: { summary: 'undefined' } },
-		},
 		tagLabel: {
 			control: { type: 'text' },
 			description: 'Etiqueta opcional que se muestra antes del tiempo de lectura',
@@ -86,11 +75,10 @@ export const Interactiva: StoryObj<HomeStoryCardComponent & { storyIndex: number
 		},
 	},
 	render: (args) => ({
-		props: { ...args, stories: corpusStories, covers: corpusCovers },
+		props: { ...args, stories: corpusStories },
 		template: `
 			<cuentoneta-home-story-card
 				[story]="stories[storyIndex]"
-				[coverImageUrl]="covers[storyIndex]"
 				[order]="order"
 				[tagLabel]="tagLabel"
 				[showMultimedia]="showMultimedia"
@@ -122,7 +110,6 @@ export const Default: Story = {
 	}),
 	args: {
 		story: withRichMedia(palacioNueveFronterasTeaserMock),
-		coverImageUrl: palacioNueveFronterasTeaserMock.coverImage,
 		order: 1,
 		tagLabel: 'Cuento',
 		showMultimedia: true,
@@ -155,7 +142,6 @@ export const Estados: StoryObj<HomeStoryCardComponent & { loading: boolean }> = 
 			<div class="w-[331px]">
 				<cuentoneta-home-story-card
 					[story]="loading ? undefined : story"
-					[coverImageUrl]="coverImageUrl"
 					[order]="order"
 					[tagLabel]="tagLabel"
 					[showMultimedia]="showMultimedia"
@@ -166,7 +152,6 @@ export const Estados: StoryObj<HomeStoryCardComponent & { loading: boolean }> = 
 	args: {
 		loading: true,
 		story: withRichMedia(palacioNueveFronterasTeaserMock),
-		coverImageUrl: palacioNueveFronterasTeaserMock.coverImage,
 		order: 1,
 		tagLabel: 'Cuento',
 		showMultimedia: true,
