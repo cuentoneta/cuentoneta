@@ -60,5 +60,15 @@ export default defineType({
 			},
 			validation: (Rule) => Rule.required(),
 		}),
+		defineField({
+			name: 'backgroundColor',
+			title: 'Color de fondo',
+			type: 'string',
+		}),
+		defineField({
+			name: 'textColor',
+			title: 'Color de texto',
+			type: 'string',
+		}),
 	],
 });
