@@ -1,6 +1,7 @@
-import { argsToTemplate, Meta, StoryObj } from '@storybook/angular';
+import { argsToTemplate, moduleMetadata, Meta, StoryObj } from '@storybook/angular';
 
-import { ImageProfileComponent } from './image-profile.component';
+import { ImageProfileComponent, type ImageProfileSize } from './image-profile.component';
+import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { authorTeaserMock } from '../../mocks/author.mock';
 
 // Foto de muestra: François Onoff, nuestro "autor de stock" para Storybook, mocks y tests
@@ -132,6 +133,38 @@ export const Showcase: Story = {
 		docs: {
 			description: {
 				story: `<p>Todos los tamaños y estados (foto, placeholder, collection) en simultáneo.</p><p><strong>Usos:</strong> referencia visual de la escala de tamaños del avatar.</p>`,
+			},
+		},
+	},
+};
+
+// size del avatar → clase de dimensión, para que el skeleton nativo coincida 1:1 con el avatar real.
+const skeletonSizeClass: Record<ImageProfileSize, string> = {
+	small: 'size-6',
+	medium: 'size-10',
+	lg: 'size-20',
+	xl: 'size-30',
+};
+
+export const Estados: StoryObj<ImageProfileComponent & { loading: boolean }> = {
+	decorators: [moduleMetadata({ imports: [SkeletonComponent] })],
+	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
+	render: (args) => ({
+		props: { ...args, skeletonClass: `${skeletonSizeClass[args.size ?? 'medium']} bg-neutral-300` },
+		template: `
+			@if (loading) {
+				<cuentoneta-skeleton appearance="circle" [class]="skeletonClass" />
+			} @else {
+				<cuentoneta-image-profile [src]="src" [alt]="alt" [size]="size" />
+			}
+		`,
+	}),
+	args: { loading: true, size: 'medium', src, alt },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Activá/desactivá "Cargando" para alternar entre el avatar real y el <strong>cuentoneta-skeleton</strong> nativo en variante <code>circle</code>, dimensionado con la clase del tamaño (small/medium/lg/xl) para coincidir 1:1 y evitar jitter.',
 			},
 		},
 	},
