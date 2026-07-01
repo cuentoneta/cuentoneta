@@ -19,15 +19,15 @@ import { NgOptimizedImage } from '@angular/common';
 			<img
 				[ngSrc]="url"
 				[priority]="priority()"
+				class="h-auto w-full"
 				width="118"
 				height="164"
 				alt=""
-				class="h-full w-full object-cover"
 				data-testid="cover-image"
 			/>
 		} @else {
 			<div class="flex h-full w-full items-center justify-center" data-testid="cover-placeholder">
-				<img ngSrc="./assets/svg/cover-placeholder.svg" width="60" height="60" alt="" />
+				<img class="h-auto w-full" ngSrc="./assets/svg/cover-placeholder.svg" width="60" height="60" alt="" />
 			</div>
 		}
 	`,

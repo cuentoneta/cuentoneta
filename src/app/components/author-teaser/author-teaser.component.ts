@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { AppRoutes } from '../../app.routes';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
+import { withSanityImageParams } from '@utils/sanity-image.utils';
 
 @Component({
 	selector: 'cuentoneta-author-teaser',
@@ -66,14 +67,19 @@ export class AuthorTeaserComponent {
 	protected readonly imageSize = computed(() => (this.variant() === 'sm' ? 40 : 64));
 
 	// Para un mejor scaling, a cargo del browser, se obtiene una imagen del 1.5x el tamaño final renderizado
-	protected readonly authorImageUrl = computed(() =>
-		this.author().imageUrl
-			? `${this.author().imageUrl}?h=${this.imageSize() * 1.5}&w=${this.imageSize() * 1.5}&auto=format`
-			: 'assets/img/default-avatar.jpg',
-	);
+	protected readonly authorImageUrl = computed(() => {
+		const size = this.imageSize() * 1.5;
+		return this.author().imageUrl
+			? withSanityImageParams(this.author().imageUrl, { h: size, w: size, auto: 'format' })
+			: 'assets/img/default-avatar.jpg';
+	});
 
-	protected readonly authorFlagUrl = computed(
-		() => `${this.author().nationality.flag}?h=${this.flagImageSize.height}&w=${this.flagImageSize.width}&auto=format`,
+	protected readonly authorFlagUrl = computed(() =>
+		withSanityImageParams(this.author().nationality.flag, {
+			h: this.flagImageSize.height,
+			w: this.flagImageSize.width,
+			auto: 'format',
+		}),
 	);
 
 	protected readonly appRoutes = AppRoutes;

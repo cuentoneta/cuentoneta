@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 
+import { withSanityImageParams } from '@utils/sanity-image.utils';
+
 /** Tamaños del avatar (Design System v3): small=24px, medium=40px, lg=80px, xl=120px. */
 export type ImageProfileSize = 'small' | 'medium' | 'lg' | 'xl';
 
@@ -72,7 +74,7 @@ export class ImageProfileComponent {
 			default:
 				// photo: la imagen se solicita al CDN a 2x (HiDPI) del tamaño de display.
 				return {
-					url: `${this.src()}?h=${px * 2}&w=${px * 2}`,
+					url: withSanityImageParams(this.src(), { h: px * 2, w: px * 2 }),
 					px,
 					classes: 'size-full object-cover',
 					background: 'bg-neutral-300',
