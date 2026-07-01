@@ -1,6 +1,7 @@
-import { argsToTemplate, Meta, StoryObj } from '@storybook/angular';
+import { argsToTemplate, moduleMetadata, Meta, StoryObj } from '@storybook/angular';
 
 import { ImageProfileComponent } from './image-profile.component';
+import { ImageProfileSkeletonComponent } from './image-profile-skeleton.component';
 import { authorTeaserMock } from '../../mocks/author.mock';
 
 // Foto de muestra: François Onoff, nuestro "autor de stock" para Storybook, mocks y tests
@@ -132,6 +133,31 @@ export const Showcase: Story = {
 		docs: {
 			description: {
 				story: `<p>Todos los tamaños y estados (foto, placeholder, collection) en simultáneo.</p><p><strong>Usos:</strong> referencia visual de la escala de tamaños del avatar.</p>`,
+			},
+		},
+	},
+};
+
+// Switch "Cargando" para alternar real↔skeleton en el mismo slot y evaluar la paridad de tamaño.
+export const Estados: StoryObj<ImageProfileComponent & { loading: boolean }> = {
+	decorators: [moduleMetadata({ imports: [ImageProfileSkeletonComponent] })],
+	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
+	render: (args) => ({
+		props: args,
+		template: `
+			@if (loading) {
+				<cuentoneta-image-profile-skeleton [size]="size" />
+			} @else {
+				<cuentoneta-image-profile [src]="src" [alt]="alt" [size]="size" />
+			}
+		`,
+	}),
+	args: { loading: true, size: 'medium', src, alt },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Activá/desactivá "Cargando" para alternar entre el avatar real y el skeleton. El skeleton replica el tamaño (small/medium/lg/xl) para evitar jitter.',
 			},
 		},
 	},
