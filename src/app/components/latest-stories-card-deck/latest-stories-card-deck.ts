@@ -1,7 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-import { StoryCardTeaserComponent } from '../story-card-teaser/story-card-teaser.component';
-import { StoryCardTeaserSkeletonComponent } from '../story-card-teaser/story-card-teaser-skeleton.component';
 import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 import { HomeStoryCardComponent } from '@components/home-story-card/home-story-card.component';
 import { HomeStoryCardSkeletonComponent } from '@components/home-story-card/home-story-card-skeleton.component';
