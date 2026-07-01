@@ -66,7 +66,9 @@ export const landingPageContentQuery = defineQuery(`
             'slug': slug.current,
             shortDescription,
             description,
-            icon
+            icon,
+            backgroundColor,
+            textColor
         }, []),
         'storyCoverImages': coalesce(stories[]->coverImage, []),
         'count': coalesce(count(stories), 0),

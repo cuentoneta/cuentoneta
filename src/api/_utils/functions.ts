@@ -23,7 +23,7 @@ import {
 	StoryTeaser,
 	StoryTeaserWithAuthor,
 } from '@models/story.model';
-import { Tag } from '@models/tag.model';
+import { PresentationTag } from '@models/tag.model';
 import { TextBlockContent } from '@models/block-content.model';
 
 // Tipos de Sanity
@@ -169,7 +169,7 @@ type TagsSubQuery =
 	| NonNullable<StoryBySlugQueryResult>['tags']
 	| NonNullable<AuthorBySlugQueryResult>['tags']
 	| NonNullable<StorylistTeasersQueryResult>[0]['tags'];
-export function mapTags(tags: TagsSubQuery): Tag[] {
+export function mapTags(tags: TagsSubQuery): PresentationTag[] {
 	return tags.map((tag) => ({
 		...tag,
 		description: mapBlockContentToTextParagraphs(tag.description),
@@ -177,6 +177,8 @@ export function mapTags(tags: TagsSubQuery): Tag[] {
 			provider: tag.icon.provider ?? '',
 			name: tag.icon.name ?? '',
 		},
+		backgroundColor: tag.backgroundColor ?? undefined,
+		textColor: tag.textColor ?? undefined,
 	}));
 }
 

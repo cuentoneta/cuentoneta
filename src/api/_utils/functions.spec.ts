@@ -73,6 +73,38 @@ describe('mapTags (ACL)', () => {
 	it('returns an empty array when there are no tags', () => {
 		expect(mapTags([])).toEqual([]);
 	});
+
+	it('preserves backgroundColor and textColor when present', () => {
+		const result = mapTags([
+			{
+				title: 'Cumpleaños',
+				slug: 'cumpleanos',
+				shortDescription: 'Etiqueta de cumpleaños',
+				description: [],
+				icon: { _type: 'iconPicker', provider: 'mdi', name: 'cake' },
+				backgroundColor: '#FFD700',
+				textColor: '#000000',
+			},
+		]);
+
+		expect(result[0].backgroundColor).toBe('#FFD700');
+		expect(result[0].textColor).toBe('#000000');
+	});
+
+	it('does not set backgroundColor and textColor when absent from the raw data', () => {
+		const result = mapTags([
+			{
+				title: 'Sin colores',
+				slug: 'sin-colores',
+				shortDescription: 'desc',
+				description: [],
+				icon: { _type: 'iconPicker', provider: 'mdi', name: 'tag' },
+			},
+		]);
+
+		expect(result[0].backgroundColor).toBeUndefined();
+		expect(result[0].textColor).toBeUndefined();
+	});
 });
 
 // El input crudo no incluye `tags`: el mapper es la única fuente del campo vacío (consistente con `mapAuthorTeaser`).

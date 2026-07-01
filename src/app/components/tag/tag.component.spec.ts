@@ -23,4 +23,26 @@ describe('TagComponent', () => {
 		await render(TagComponent, { inputs: { label: 'crónica', variant: 'gray' } });
 		expect(screen.getByText('Crónica')).toHaveClass('bg-neutral-950-40', 'text-neutral-50', 'text-xxs');
 	});
+
+	it('should apply inline background and text colors when both are provided', async () => {
+		await render(TagComponent, {
+			inputs: { label: 'Cumpleaños', variant: 'filled', backgroundColor: '#FFD700', textColor: '#000000' },
+		});
+		const tag = screen.getByText('Cumpleaños');
+		expect(tag).toHaveStyle({ backgroundColor: '#FFD700', color: '#000000' });
+	});
+
+	it('should apply only background color when only backgroundColor is provided', async () => {
+		await render(TagComponent, { inputs: { label: 'Especial', backgroundColor: 'gold' } });
+		const tag = screen.getByText('Especial');
+		expect(tag).toHaveStyle({ backgroundColor: 'gold' });
+		expect(tag.style.color).toBe('');
+	});
+
+	it('should not apply inline colors when neither backgroundColor nor textColor is provided', async () => {
+		await render(TagComponent, { inputs: { label: 'Normal', variant: 'soft' } });
+		const tag = screen.getByText('Normal');
+		expect(tag.style.backgroundColor).toBe('');
+		expect(tag.style.color).toBe('');
+	});
 });

@@ -24,6 +24,8 @@ const meta: Meta<TagComponent> = {
 			options: ['soft', 'filled', 'gray'],
 			table: { defaultValue: { summary: 'soft' } },
 		},
+		backgroundColor: { control: { type: 'color' } },
+		textColor: { control: { type: 'color' } },
 	},
 };
 
@@ -79,6 +81,18 @@ export const Showcase: Story = {
 	}),
 	args: { label: 'Crónica' },
 	parameters: { docs: { description: { story: 'Las tres variantes: soft, filled y gray.' } } },
+};
+
+export const ColorOverride: Story = {
+	render: (args) => ({ props: args, template: `<cuentoneta-tag ${argsToTemplate(args)} />` }),
+	args: { label: 'Cumpleaños', variant: 'filled', backgroundColor: 'gold', textColor: 'black' },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Override de color contextual: cuando un tag tiene <code>backgroundColor</code> y/o <code>textColor</code>, el <strong>TagComponent</strong> los aplica vía estilos inline, sobreescribiendo los colores del variant. Si no se definen, el tag usa el look por defecto del variant elegido.</p>`,
+			},
+		},
+	},
 };
 
 // Estado de carga (skeleton) del tag.

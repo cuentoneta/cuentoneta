@@ -18,6 +18,7 @@ export type TagVariant = 'soft' | 'filled' | 'gray';
 	template: `{{ displayLabel() }}`,
 	host: {
 		'[class]': 'hostClasses()',
+		'[style]': 'hostStyles()',
 	},
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -25,6 +26,8 @@ export class TagComponent {
 	// Inputs
 	public readonly label = input.required<string>();
 	public readonly variant = input<TagVariant>('soft');
+	public readonly backgroundColor = input<string>();
+	public readonly textColor = input<string>();
 
 	// Clases (chrome + tipografía) por variante. Las dimensiones/colores salen de tokens del DS v3.
 	private readonly variantClasses: Record<TagVariant, string> = {
@@ -46,4 +49,16 @@ export class TagComponent {
 	protected readonly hostClasses = computed(
 		() => `inline-flex items-center font-inter font-bold whitespace-nowrap ${this.variantClasses[this.variant()]}`,
 	);
+
+	protected readonly hostStyles = computed(() => {
+		const backgroundColor = this.backgroundColor();
+		const textColor = this.textColor();
+		if (backgroundColor || textColor) {
+			return {
+				backgroundColor: backgroundColor ?? null,
+				color: textColor ?? null,
+			};
+		}
+		return null;
+	});
 }

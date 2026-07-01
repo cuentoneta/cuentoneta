@@ -12,7 +12,9 @@ export const storylistTeasersQuery = defineQuery(`
         'slug': slug.current,
         shortDescription,
         description,
-        icon
+        icon,
+        backgroundColor,
+        textColor
     }, []),
     'storyCoverImages': coalesce(stories[]->coverImage, []),
     'count': coalesce(count(stories), 0),
@@ -76,7 +78,9 @@ export const storylistQuery = defineQuery(`
         'slug': slug.current,
         shortDescription,
         description,
-        icon
+        icon,
+        backgroundColor,
+        textColor
     }, []),
     'stories': coalesce(stories[]->{
         _id,
