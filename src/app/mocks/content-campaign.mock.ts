@@ -4,93 +4,89 @@ export const contentCampaignMock: ContentCampaign[] = [
 		description: [
 			{
 				style: 'normal',
-				_key: '09bf9f4aeccb',
+				_key: 'a1b2c3d4e5f6',
 				markDefs: [],
 				children: [
 					{
-						text: 'Edición #1 del ciclo ',
-						_key: '3d8e33327972',
+						text: 'Toda la biblioteca de Onoff, de ',
+						_key: '11aa22bb33cc',
 						_type: 'span',
 						marks: [],
 					},
 					{
-						text: 'Pluma de la semana',
-						_key: 'd9f0b0e822ff',
+						text: 'El odio',
+						_key: '44dd55ee66ff',
 						_type: 'span',
-						marks: ['strong', 'em'],
+						marks: ['em'],
 					},
 					{
+						text: ' (1971) a ',
+						_key: '77aa88bb99cc',
 						_type: 'span',
 						marks: [],
-						text: ', destacando obras de Alejandro Dolina e incluyendo narraciones en formato audio de sus cuentos.',
-						_key: '610dceac7d20',
+					},
+					{
+						text: 'Nerón',
+						_key: 'aa11bb22cc33',
+						_type: 'span',
+						marks: ['em'],
+					},
+					{
+						text: ' (1988).',
+						_key: 'dd44ee55ff66',
+						_type: 'span',
+						marks: [],
 					},
 				],
 				_type: 'block',
 			},
 		],
-		url: '../author/alejandro-dolina',
+		url: '../author/francois-onoff',
 		contents: {
 			xs: {
-				imageUrl:
-					'https://cdn.sanity.io/images/s4dbqkc5/development/d1954f5948a07ec4f02c9c621f664e42bbe61ce9-540x220.jpg',
+				imageUrl: 'assets/img/mocks/banners/banner-coleccion-completa-mobile.png',
 				imageWidth: 540,
 				imageHeight: 220,
 			},
 			md: {
-				imageUrl:
-					'https://cdn.sanity.io/images/s4dbqkc5/development/ec31c09f54fe53f4de213075d2e73e61805fbf4f-1240x360.jpg',
+				imageUrl: 'assets/img/mocks/banners/banner-coleccion-completa-desktop.png',
 				imageWidth: 1240,
 				imageHeight: 360,
 			},
 		},
-		title: 'Pluma de la Semana #1: Alejandro Dolina',
-		slug: 'pluma-de-la-semana-1',
+		title: 'Diez tapas, una sola obra',
+		slug: 'coleccion-completa-onoff',
 	},
 	{
-		title: 'Cuentos de terror con Alberto Laiseca',
-		slug: 'cuentos-de-terror-con-alberto-laiseca',
+		title: 'El palacio de las nueve fronteras',
+		slug: 'el-palacio-de-las-nueve-fronteras',
 		description: [
 			{
 				markDefs: [],
 				children: [
 					{
 						_type: 'span',
-						marks: [],
-						text: 'Recopilación de los cuentos relatados por Alberto Laiseca en el programa ',
-						_key: '712feffe72a3',
-					},
-					{
-						_type: 'span',
-						marks: ['strong', 'em'],
-						text: 'Cuentos de Terror con Alberto Laiseca',
-						_key: '51f3963a90ee',
-					},
-					{
-						marks: [],
-						text: ', originalmente emitido en la señal iSAT entre 2002 y 2005.',
-						_key: 'a4c15af18f34',
-						_type: 'span',
+						marks: ['em'],
+						text: '«Ese cuerpo necesitaba un aliento; esos ojos vacíos, una mirada.»',
+						_key: 'bc12de34fa56',
 					},
 				],
 				_type: 'block',
 				style: 'normal',
-				_key: '59ffda9f06cb',
+				_key: 'ef78ab90cd12',
 			},
 		],
-		url: '../storylist/cuentos-de-terror-de-alberto-laiseca',
+		url: '../story/el-palacio-de-las-nueve-fronteras',
 		contents: {
 			xs: {
-				imageUrl:
-					'https://cdn.sanity.io/images/s4dbqkc5/development/611360ec02e690fc8c56d674162815690ea0b1fc-540x220.jpg',
+				imageUrl: 'assets/img/mocks/banners/banner-el-palacio-mobile.png',
 				imageWidth: 540,
 				imageHeight: 220,
 			},
 			md: {
-				imageUrl:
-					'https://cdn.sanity.io/images/s4dbqkc5/development/5e37e287e037a35f9034abb9da33dac68acc6517-960x280.jpg',
-				imageWidth: 960,
-				imageHeight: 280,
+				imageUrl: 'assets/img/mocks/banners/banner-el-palacio-desktop.png',
+				imageWidth: 1240,
+				imageHeight: 360,
 			},
 		},
 	},
