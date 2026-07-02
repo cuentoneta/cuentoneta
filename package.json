@@ -23,6 +23,7 @@
 		"lint": "nx eslint:lint --skip-nx-cache",
 		"stylelint": "nx stylelint @cuentoneta/app",
 		"test": "nx test --skip-nx-cache",
+		"typecheck": "nx typecheck --skip-nx-cache",
 		"test:watch": "nx test --watch",
 		"test:ui": "nx test --ui",
 		"test:e2e": "nx run @cuentoneta/app:e2e",

@@ -46,7 +46,7 @@ describe('MediaResourceTagsComponent', () => {
 		});
 
 		const instance = view.fixture.componentInstance;
-		const platforms = instance.platforms as { [key in MediaTypeKey]: MediaResourcePlatform };
+		const platforms = instance['platforms'] as { [key in MediaTypeKey]: MediaResourcePlatform };
 
 		mockMedia.forEach((media) => {
 			const platformIcon = screen.getByLabelText(platforms[media.type].title);
@@ -64,7 +64,7 @@ describe('MediaResourceTagsComponent', () => {
 			},
 		});
 		const instance = view.fixture.componentInstance;
-		const platforms = instance.platforms as { [key in MediaTypeKey]: MediaResourcePlatform };
+		const platforms = instance['platforms'] as { [key in MediaTypeKey]: MediaResourcePlatform };
 		const expectedPlatforms = ['audioRecording', 'spaceRecording', 'spotifyPodcastEpisode', 'youTubeVideo'];
 		const actualPlatforms = Object.keys(platforms) as MediaTypeKey[];
 		expect(actualPlatforms).toEqual(expectedPlatforms);

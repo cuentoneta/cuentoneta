@@ -177,7 +177,7 @@ El principio: **el documento es canónico; la memoria es refuerzo**. Si los dos 
 
 ### Gates de CI
 
-Independientemente de lo anterior, todo PR debe dejar verdes los gates de CI definidos en `CLAUDE.md`: `test`, `lint`, `stylelint`, `e2e`, `build`, `storybook`. Que un gate sea "molesto" o "lento" no es justificación para saltearlo o deshabilitarlo.
+Independientemente de lo anterior, todo PR debe dejar verdes los gates de CI definidos en `CLAUDE.md`: `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`. Que un gate sea "molesto" o "lento" no es justificación para saltearlo o deshabilitarlo.
 
 ### Enmiendas
 

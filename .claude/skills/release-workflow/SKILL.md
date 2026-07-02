@@ -59,7 +59,7 @@ Formato de commit: `[#<issue>] - <qué cambió>` (español). Cada commit deja el
 
 **Propósito:** confirmar que el release no rompe el pipeline automático.
 
-1. **Gates de CI** (con `pnpm`): `pnpm lint · pnpm stylelint · pnpm test · pnpm build · pnpm storybook:build`. Un bump + CHANGELOG no toca runtime, pero se corren igual por política. El `build` confirma de paso la versión (`@cuentoneta/app@<x>` en el `postbuild`).
+1. **Gates de CI** (con `pnpm`): `pnpm lint · pnpm stylelint · pnpm typecheck · pnpm test · pnpm build · pnpm storybook:build`. Un bump + CHANGELOG no toca runtime, pero se corren igual por política. El `build` confirma de paso la versión (`@cuentoneta/app@<x>` en el `postbuild`).
 2. **Dry-run de la extracción de notas de `release.yml`:** el workflow extrae con `awk` el cuerpo entre `## Versión <x>` y el próximo `## Versión`. Simularlo y confirmar que devuelve una sección **no vacía** (si falta, el job del release falla):
 
    ```bash
