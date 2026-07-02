@@ -46,11 +46,6 @@ export const appRoutes: Routes = [
 		resolve: { storylist: storylistResolver },
 	},
 	{
-		path: `${AppRoutes.StoryList}`,
-		loadComponent: () => import('./pages/storylist/storylist.component'),
-		resolve: { storylist: storylistResolver },
-	},
-	{
 		path: AppRoutes.About,
 		loadComponent: () => import('./pages/about/about.component'),
 	},
