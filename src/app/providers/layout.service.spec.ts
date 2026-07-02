@@ -24,8 +24,8 @@ describe('LayoutService', () => {
 			dispatchEvent: fn((event: Event) => {
 				if (typeof event === 'object' && event.type) {
 					mockWindow.addEventListener.mock.calls
-						.filter(([type]: ['resize' | 'orientationchange']) => type === event.type)
-						.forEach(([, listener]: [string, Mock]) => listener(event));
+						.filter(([type]) => type === event.type)
+						.forEach(([, listener]) => listener(event));
 				}
 			}),
 		};

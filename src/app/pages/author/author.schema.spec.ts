@@ -25,7 +25,11 @@ describe('buildAuthorProfilePageSchema', () => {
 	});
 
 	it('should forward the ISO datetime dates verbatim to dateCreated/dateModified', () => {
-		const author = { ...authorMock, createdAt: '2022-01-25T23:26:34Z', updatedAt: '2026-06-09T00:32:32Z' };
+		const author = {
+			...authorMock,
+			createdAt: '2022-01-25T23:26:34Z' as typeof authorMock.createdAt,
+			updatedAt: '2026-06-09T00:32:32Z' as typeof authorMock.updatedAt,
+		};
 
 		const schema = buildAuthorProfilePageSchema(author, websiteUrl);
 

@@ -21,7 +21,8 @@ describe.skip('StorylistComponent', () => {
 	const setup = async () => {
 		return await render(StorylistComponent, {
 			componentImports: [CommonModule, HttpClientTestingModule, MockStorylistCardDeckComponent],
-			componentProviders: [provideRouter([]), provideMock(HeadMetadataDirective)],
+			providers: [provideRouter([])],
+			componentProviders: [provideMock(HeadMetadataDirective)],
 		});
 	};
 

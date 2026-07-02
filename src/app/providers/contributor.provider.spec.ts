@@ -83,7 +83,7 @@ describe('HttpContributorApi', () => {
 		it('should handle HTTP errors gracefully', () => {
 			service.getAll().subscribe(
 				() => {
-					fail('should have failed');
+					throw new Error('should have failed');
 				},
 				(error) => {
 					expect(error.status).toBe(500);

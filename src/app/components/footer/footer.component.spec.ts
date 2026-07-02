@@ -20,7 +20,7 @@ describe('FooterComponent', () => {
 			providers: [provideRouter([])],
 		});
 
-		view.fixture.componentInstance.navLinks.forEach((link) => {
+		view.fixture.componentInstance['navLinks'].forEach((link) => {
 			const navItem = screen.getByRole('link', { name: link.label });
 			expect(navItem).toBeInTheDocument();
 			expect(screen.getByText(link.label)).toHaveProperty('href', expect.stringMatching(new RegExp(link.path)));
@@ -32,7 +32,7 @@ describe('FooterComponent', () => {
 			providers: [provideRouter([])],
 		});
 
-		view.fixture.componentInstance.socialLinks.forEach((link) => {
+		view.fixture.componentInstance['socialLinks'].forEach((link) => {
 			const socialIcon = screen.getByAltText(link.alt);
 			expect(socialIcon).toBeInTheDocument();
 		});

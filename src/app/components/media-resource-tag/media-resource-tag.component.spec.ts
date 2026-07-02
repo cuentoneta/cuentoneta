@@ -7,7 +7,8 @@ describe('MediaResourceTagComponent', () => {
 			inputs: {
 				platform: {
 					title: 'Posee contenido multimedia',
-					icon: 'media',
+					// La plantilla concatena `icon` en el data-testid; el test usa un string como stand-in del Record de ng-icon.
+					icon: 'media' as unknown as Record<string, string>,
 				},
 				size: 'md',
 			},
