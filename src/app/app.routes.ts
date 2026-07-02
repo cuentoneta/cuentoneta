@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { authorResolver } from './pages/author/author.resolver';
+import { homeContentResolver } from './pages/home/home-content.resolver';
 import { storyResolver } from './pages/story/story.resolver';
 import { storylistResolver } from './pages/storylist/storylist.resolver';
 
@@ -19,6 +20,7 @@ export const appRoutes: Routes = [
 	{
 		path: AppRoutes.Home,
 		loadComponent: () => import('./pages/home/home.component'),
+		resolve: { landingPageContent: homeContentResolver },
 	},
 	{
 		path: AppRoutes.Authors,
