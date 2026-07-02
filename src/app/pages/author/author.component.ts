@@ -123,7 +123,7 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 						</cuentoneta-tab>
 						<cuentoneta-tab title="Biografía" name="about">
 							<div>
-								@defer (when author()) {
+								@defer (when author) {
 									<div class="flex flex-col gap-4">
 										<cuentoneta-portable-text-parser
 											[paragraphs]="author.biography"
