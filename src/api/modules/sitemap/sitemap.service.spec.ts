@@ -166,7 +166,7 @@ describe('SitemapService', () => {
 
 			const urls = await getSitemapUrls();
 
-			expect(urls[0].loc).toBe('https://cuentoneta.ar');
+			expect(urls[0].loc).toBe('https://www.cuentoneta.ar');
 		});
 	});
 
