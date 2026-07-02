@@ -58,6 +58,7 @@ type Story = StoryObj<CarouselComponent>;
 
 // Historia principal con documentación
 export const Default: Story = {
+	name: 'Por defecto',
 	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: contentCampaignMock,
@@ -74,6 +75,7 @@ export const Default: Story = {
 
 // Carousel con una sola diapositiva
 export const SingleSlide: Story = {
+	name: 'Diapositiva única',
 	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: [contentCampaignMock[0]],
@@ -90,6 +92,7 @@ export const SingleSlide: Story = {
 
 // Carousel con transición rápida
 export const FastTransition: Story = {
+	name: 'Transición rápida',
 	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: contentCampaignMock,
@@ -106,6 +109,7 @@ export const FastTransition: Story = {
 
 // Carousel con transición lenta
 export const SlowTransition: Story = {
+	name: 'Transición lenta',
 	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: contentCampaignMock,
@@ -124,17 +128,17 @@ export const SlowTransition: Story = {
 const extendedSlidesMock: ContentCampaign[] = [
 	...contentCampaignMock,
 	{
-		title: 'Cuentos Clásicos Argentinos',
-		slug: 'cuentos-clasicos-argentinos',
+		title: 'Geometrías del desvelo',
+		slug: 'geometrias-del-desvelo',
 		description: [
 			{
 				style: 'normal',
-				_key: 'abc123',
+				_key: 'ab12cd34ef56',
 				markDefs: [],
 				children: [
 					{
-						text: 'Una selección de los mejores cuentos de la literatura argentina.',
-						_key: 'def456',
+						text: 'Shannon despierta a las tres y media. Nunca duerme más de dos horas.',
+						_key: '78ab90cd12ef',
 						_type: 'span',
 						marks: [],
 					},
@@ -142,19 +146,50 @@ const extendedSlidesMock: ContentCampaign[] = [
 				_type: 'block',
 			},
 		],
-		url: '../storylist/cuentos-clasicos-argentinos',
+		url: '../storylist/geometrias-del-desvelo',
 		contents: {
 			xs: {
-				imageUrl:
-					'https://cdn.sanity.io/images/s4dbqkc5/development/d1954f5948a07ec4f02c9c621f664e42bbe61ce9-540x220.jpg',
+				imageUrl: 'assets/img/mocks/banners/banner-geometrias-del-desvelo-mobile.png',
 				imageWidth: 540,
 				imageHeight: 220,
 			},
 			md: {
-				imageUrl:
-					'https://cdn.sanity.io/images/s4dbqkc5/development/ec31c09f54fe53f4de213075d2e73e61805fbf4f-960x280.jpg',
-				imageWidth: 960,
-				imageHeight: 280,
+				imageUrl: 'assets/img/mocks/banners/banner-geometrias-del-desvelo-desktop.png',
+				imageWidth: 1240,
+				imageHeight: 360,
+			},
+		},
+	},
+	{
+		title: 'Onoff, la voz de las fronteras',
+		slug: 'onoff-autor-en-foco',
+		description: [
+			{
+				style: 'normal',
+				_key: '34ef56ab78cd',
+				markDefs: [],
+				children: [
+					{
+						text: 'Ocho obras donde ninguna ley vale del todo y ninguna lengua se habla por completo.',
+						_key: '90cd12ef34ab',
+						_type: 'span',
+						marks: [],
+					},
+				],
+				_type: 'block',
+			},
+		],
+		url: '../author/francois-onoff',
+		contents: {
+			xs: {
+				imageUrl: 'assets/img/mocks/banners/banner-onoff-autor-mobile.png',
+				imageWidth: 540,
+				imageHeight: 220,
+			},
+			md: {
+				imageUrl: 'assets/img/mocks/banners/banner-onoff-autor-desktop.png',
+				imageWidth: 1240,
+				imageHeight: 360,
 			},
 		},
 	},
@@ -162,6 +197,7 @@ const extendedSlidesMock: ContentCampaign[] = [
 
 // Carousel con múltiples diapositivas
 export const MultipleSlides: Story = {
+	name: 'Múltiples diapositivas',
 	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: extendedSlidesMock,
@@ -170,7 +206,7 @@ export const MultipleSlides: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Carousel con tres diapositivas para demostrar la navegación cíclica.</p><p><strong>Usos:</strong> Home cuando hay varias campañas activas en rotación.</p>`,
+				story: `<p>Carousel con cuatro diapositivas para demostrar la navegación cíclica.</p><p><strong>Usos:</strong> Home cuando hay varias campañas activas en rotación.</p>`,
 			},
 		},
 	},
@@ -178,6 +214,7 @@ export const MultipleSlides: Story = {
 
 // Historia interactiva para documentación
 export const Interactive: Story = {
+	name: 'Interactivo',
 	render: (args) => ({
 		props: args,
 		template: `
@@ -201,6 +238,8 @@ export const Interactive: Story = {
 	},
 	parameters: {
 		docs: {
+			// El render envuelve al carousel en un andamiaje de instrucciones; ocultamos el código para no exponerlo como uso copiable.
+			canvas: { sourceState: 'none' },
 			description: {
 				story: `<p>Carousel interactivo con instrucciones de uso. Probá las diferentes formas de navegación (teclado, indicadores, swipe, hover).</p><p><strong>Usos:</strong> verificación manual de las interacciones del componente.</p>`,
 			},
@@ -210,6 +249,7 @@ export const Interactive: Story = {
 
 // Vista comparativa Desktop y Mobile
 export const DesktopAndMobile: Story = {
+	name: 'Escritorio y móvil',
 	render: (args) => ({
 		props: args,
 		template: `
@@ -239,6 +279,8 @@ export const DesktopAndMobile: Story = {
 	parameters: {
 		layout: 'fullscreen',
 		docs: {
+			// El render envuelve al carousel en un andamiaje comparativo desktop/mobile; ocultamos el código para no exponerlo como uso copiable.
+			canvas: { sourceState: 'none' },
 			description: {
 				story: `<p>Comparativa del carousel en vista desktop (960px) y mobile (375px) para visualizar las diferencias de diseño responsivo.</p><p><strong>Usos:</strong> referencia de comportamiento responsive entre breakpoints.</p>`,
 			},

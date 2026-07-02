@@ -42,7 +42,7 @@ export const authorMock: AuthorProfile = {
 			},
 		},
 	],
-	imageUrl: 'https://cdn.sanity.io/images/s4dbqkc5/production/f656d95d41369adb6f7d3a7d0b20b36861fd2028-350x350.jpg',
+	imageUrl: 'assets/img/mocks/author/francois-onoff.png',
 	name: 'François Onoff',
 	biography: [
 		{
@@ -144,7 +144,7 @@ export const authorTeaserMock: AuthorTeaser = {
 		flag: 'https://cdn.sanity.io/images/s4dbqkc5/production/b80876a5f3a89e13acc14254b1f45dd6d29b79f4-30x20.png',
 	},
 	resources: [],
-	imageUrl: 'https://cdn.sanity.io/images/s4dbqkc5/production/f656d95d41369adb6f7d3a7d0b20b36861fd2028-350x350.jpg',
+	imageUrl: 'assets/img/mocks/author/francois-onoff.png',
 	name: 'François Onoff',
 	biography: [],
 	bornOn: '1948-01-01',

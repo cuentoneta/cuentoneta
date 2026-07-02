@@ -16,7 +16,7 @@ describe('buildAuthorProfilePageSchema', () => {
 				'@type': 'Person',
 				name: 'François Onoff',
 				url: 'https://www.cuentoneta.ar/author/francois-onoff',
-				image: 'https://cdn.sanity.io/images/s4dbqkc5/production/f656d95d41369adb6f7d3a7d0b20b36861fd2028-350x350.jpg',
+				image: 'assets/img/mocks/author/francois-onoff.png',
 				sameAs: ['https://es.wikipedia.org/wiki/Francois_Onoff'],
 				birthDate: '1948-01-01',
 				deathDate: '1994-12-31',
