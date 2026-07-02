@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 
+import { authorResolver } from './pages/author/author.resolver';
 import { storyResolver } from './pages/story/story.resolver';
 
 export const AppRoutes = Object.freeze({
@@ -25,6 +26,7 @@ export const appRoutes: Routes = [
 	{
 		path: `${AppRoutes.Author}/:slug`,
 		loadComponent: () => import('./pages/author/author.component'),
+		resolve: { author: authorResolver },
 	},
 	{
 		path: AppRoutes.Story,
