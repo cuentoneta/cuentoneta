@@ -2,13 +2,15 @@
 import { Component, computed, forwardRef, inject, signal, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // Router
 import { AppRoutes } from '../../app.routes';
 
+// Models
+import { type Story } from '@models/story.model';
+
 // Services
-import { StoryApi } from '../../providers/story-api.interface';
 import { LayoutService } from '../../providers/layout.service';
 
 // SEO
@@ -65,23 +67,15 @@ export default class StoryComponent implements StoryHost {
 
 	// Providers
 	public readonly slug = input.required<string>();
+	public readonly story = input.required<Story>();
 	public readonly navigation = input<'author' | 'storylist'>('author');
 	public readonly navigationSlug = input<string>();
 
-	private storyService = inject(StoryApi);
 	private layoutService = inject(LayoutService);
 	private isHeaderVisible$ = inject(LayoutService).isHeaderVisible$.pipe(takeUntilDestroyed());
 
 	// Recursos
 	protected readonly dummyList = Array(10);
-	private readonly storyResource = rxResource({
-		params: this.slug,
-		stream: ({ params }) => this.storyService.getBySlug(params),
-		defaultValue: undefined,
-	});
-
-	// Propiedades
-	public readonly story = computed(() => this.storyResource.value());
 	protected readonly sharingRoute = computed(() => `${AppRoutes.Story}/${this.story()?.slug}`);
 	protected readonly shareContentParams = computed(() => ({
 		navigationSlug: this.story()?.author.slug ?? '',

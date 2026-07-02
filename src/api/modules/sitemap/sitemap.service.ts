@@ -13,7 +13,7 @@ interface SitemapUrl {
  */
 export async function getSitemapUrls(): Promise<SitemapUrl[]> {
 	const { stories, authors, storylists } = await fetchSitemapSlugs();
-	const BASE_URL = process.env['BASE_URL'] || 'https://cuentoneta.ar';
+	const BASE_URL = process.env['BASE_URL'] || 'https://www.cuentoneta.ar';
 
 	return [
 		// Páginas estáticas

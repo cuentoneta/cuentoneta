@@ -8,4 +8,4 @@ Disallow: /api/
 Allow: /api/og/
 
 # Referencia al sitemap
-Sitemap: https://cuentoneta.ar/sitemap.xml
+Sitemap: https://www.cuentoneta.ar/sitemap.xml

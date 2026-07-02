@@ -1,9 +1,8 @@
 // Core
-import { Component, computed, inject } from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { Component, computed, input } from '@angular/core';
 
-// Services
-import { ContentApi } from '../../providers/content-api.interface';
+// Models
+import { type LandingPageContent } from '@models/landing-page-content.model';
 
 // SEO
 import { HomeMetaTagsDirective } from './home-meta-tags.directive';
@@ -29,19 +28,12 @@ import { CollectionTeasersDeck } from '@components/collection-teasers-deck/colle
 	hostDirectives: [HomeMetaTagsDirective, HomeStructuredDataDirective],
 })
 export default class HomeComponent {
-	// Services
-	private contentService = inject(ContentApi);
-
-	// Recursos
-	private readonly landingPageResource = rxResource({
-		stream: () => this.contentService.getLandingPageContent(),
-		defaultValue: undefined,
-	});
+	// Route data
+	public readonly landingPageContent = input.required<LandingPageContent>();
 
 	// Propiedades
-	private readonly landingPageContent = computed(() => this.landingPageResource.value());
-	protected readonly collections = computed(() => this.landingPageContent()?.cards || []);
-	protected readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
-	protected readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
-	protected readonly latestReads = computed(() => this.landingPageContent()?.latestReads.slice(0, 6) || []);
+	protected readonly collections = computed(() => this.landingPageContent().cards);
+	protected readonly campaigns = computed(() => this.landingPageContent().campaigns);
+	protected readonly mostRead = computed(() => this.landingPageContent().mostRead.slice(0, 6));
+	protected readonly latestReads = computed(() => this.landingPageContent().latestReads.slice(0, 6));
 }

@@ -5,12 +5,15 @@ import { Title } from '@angular/platform-browser';
 
 import { storylistMock } from '@mocks/storylist.mock';
 import { type Storylist } from '@models/storylist.model';
+import { AppRoutes } from '../../app.routes';
+import { buildCanonicalUrl } from '../../utils/build-canonical-url.util';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { StorylistMetaTagsDirective } from './storylist-meta-tags.directive';
 import { STORYLIST_HOST } from './storylist-host';
 
 describe('StorylistMetaTagsDirective', () => {
 	const storylistSignal = signal<Storylist | undefined>(undefined);
+	const slugSignal = signal('cuentos-de-terror');
 
 	function instantiate(): void {
 		TestBed.runInInjectionContext(() => new StorylistMetaTagsDirective());
@@ -19,11 +22,15 @@ describe('StorylistMetaTagsDirective', () => {
 	beforeEach(() => {
 		clearAllMocks();
 		storylistSignal.set(undefined);
+		slugSignal.set('cuentos-de-terror');
 		TestBed.configureTestingModule({
 			providers: [
 				StorylistMetaTagsDirective,
 				HeadMetadataDirective,
-				{ provide: STORYLIST_HOST, useValue: { storylist: storylistSignal.asReadonly() } },
+				{
+					provide: STORYLIST_HOST,
+					useValue: { storylist: storylistSignal.asReadonly(), slug: slugSignal.asReadonly() },
+				},
 			],
 		});
 	});
@@ -35,6 +42,15 @@ describe('StorylistMetaTagsDirective', () => {
 		TestBed.tick();
 
 		expect(titleSpy).not.toHaveBeenCalled();
+	});
+
+	it('should set the canonical URL from the slug even when the storylist has not resolved yet', () => {
+		const canonicalSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setCanonicalUrl');
+
+		instantiate();
+		TestBed.tick();
+
+		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl(`${AppRoutes.StoryList}/cuentos-de-terror`));
 	});
 
 	it('should set the title from the storylist when it resolves', () => {

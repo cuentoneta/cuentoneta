@@ -9,6 +9,7 @@ import { AppRoutes } from '../../app.routes';
 
 // Modelos
 import { StoryTeaser } from '@models/story.model';
+import { type AuthorProfile } from '@models/author.model';
 
 // SEO
 import { AuthorMetaTagsDirective } from './author-meta-tags.directive';
@@ -16,7 +17,6 @@ import { AuthorStructuredDataDirective } from './author-structured-data.directiv
 import { AUTHOR_HOST, type AuthorHost } from './author-host';
 
 // Services
-import { AuthorApi } from '../../providers/author-api.interface';
 import { StoryApi } from '../../providers/story-api.interface';
 
 // Componentes
@@ -51,7 +51,7 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 	template: `
 		<main class="content vertical-layout-spacing horizontal-layout-spacing">
 			<article class="grid grid-cols-1 gap-8">
-				@defer (when authorResource.hasValue()) {
+				@defer (when author()) {
 					@if (author(); as author) {
 						<section class="flex items-center gap-4">
 							<img
@@ -123,7 +123,7 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 						</cuentoneta-tab>
 						<cuentoneta-tab title="Biografía" name="about">
 							<div>
-								@defer (when authorResource.hasValue()) {
+								@defer (when author) {
 									<div class="flex flex-col gap-4">
 										<cuentoneta-portable-text-parser
 											[paragraphs]="author.biography"
@@ -160,22 +160,17 @@ export default class AuthorComponent implements AuthorHost {
 
 	// Route inputs
 	public readonly slug = input.required<string>();
+	public readonly author = input.required<AuthorProfile>();
 	public readonly activeTab = input<'stories' | 'about'>('stories');
 
 	// Cantidad de líneas del skeleton de la biografía mientras carga
 	protected readonly biographySkeletonLines = Array.from({ length: 10 });
 
 	// Providers
-	private authorService = inject(AuthorApi);
 	private storyService = inject(StoryApi);
 	private router = inject(Router);
 
 	// Recursos
-	protected readonly authorResource = rxResource({
-		params: this.slug,
-		stream: ({ params }) => this.authorService.getBySlug(params),
-		defaultValue: undefined,
-	});
 	protected readonly storiesResource = rxResource({
 		params: this.slug,
 		stream: ({ params }) => this.stories$(params),
@@ -183,12 +178,11 @@ export default class AuthorComponent implements AuthorHost {
 	});
 
 	// Propiedades
-	public readonly author = computed(() => this.authorResource.value());
 	protected readonly stories = computed(() => this.storiesResource.value());
 	protected readonly authorImageUrl = computed(() =>
-		this.author()?.imageUrl ? `${this.author()?.imageUrl}?auto=format` : 'assets/img/default-avatar.jpg',
+		this.author().imageUrl ? `${this.author().imageUrl}?auto=format` : 'assets/img/default-avatar.jpg',
 	);
-	protected readonly authorFlagUrl = computed(() => `${this.author()?.nationality.flag}?auto=format`);
+	protected readonly authorFlagUrl = computed(() => `${this.author().nationality.flag}?auto=format`);
 
 	private stories$(slug: string): Observable<(StoryTeaser & { navigationRoute: UrlTree })[]> {
 		return this.storyService.getByAuthorSlug(slug).pipe(
