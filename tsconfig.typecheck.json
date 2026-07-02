@@ -1,0 +1,10 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"outDir": "./dist/out-tsc",
+		"noEmit": true,
+		"types": ["node", "vitest/globals"]
+	},
+	"include": ["src/**/*.ts", "scripts/**/*.ts"],
+	"exclude": ["node_modules", "tmp", "dist"]
+}
