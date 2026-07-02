@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 
+import { storyResolver } from './pages/story/story.resolver';
+
 export const AppRoutes = Object.freeze({
 	Home: 'home',
 	Story: 'story',
@@ -31,6 +33,7 @@ export const appRoutes: Routes = [
 	{
 		path: `${AppRoutes.Story}/:slug`,
 		loadComponent: () => import('./pages/story/story.component'),
+		resolve: { story: storyResolver },
 	},
 	{
 		path: `${AppRoutes.StoryList}/:slug`,
