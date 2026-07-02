@@ -1,8 +1,8 @@
 // Core
-import { Component, computed, forwardRef, inject, signal, input } from '@angular/core';
+import { Component, computed, forwardRef, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { rxResource } from '@angular/core/rxjs-interop';
 
 // Router
 import { AppRoutes } from '../../app.routes';
@@ -70,7 +70,6 @@ export default class StoryComponent implements StoryHost {
 
 	private storyService = inject(StoryApi);
 	private layoutService = inject(LayoutService);
-	private isHeaderVisible$ = inject(LayoutService).isHeaderVisible$.pipe(takeUntilDestroyed());
 
 	// Recursos
 	protected readonly dummyList = Array(10);
@@ -101,15 +100,11 @@ export default class StoryComponent implements StoryHost {
 
 		return { navigation, navigationSlug };
 	});
-	protected readonly headerPosition = signal('top-header-height');
-
-	constructor() {
-		this.isHeaderVisible$.subscribe((isVisible) => {
-			if (this.layoutService.biggerThan('xs')) {
-				this.headerPosition.set('top-header-height');
-				return;
-			}
-			this.headerPosition.set(isVisible ? 'top-header-height' : 'top-0');
-		});
-	}
+	protected readonly headerPosition = computed(() =>
+		this.layoutService.biggerThan('xs')
+			? 'top-header-height'
+			: this.layoutService.isHeaderVisible()
+				? 'top-header-height'
+				: 'top-0',
+	);
 }

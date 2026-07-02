@@ -1,4 +1,4 @@
-import { afterNextRender, Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { HeaderComponent } from '@components/header/header.component';
 import { FooterComponent } from '@components/footer/footer.component';
@@ -8,7 +8,6 @@ import { environment } from './environments/environment';
 // Services
 import { AnalyticsService } from './providers/analytics/analytics.service';
 import { LayoutService } from './providers/layout.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'cuentoneta-root',
@@ -22,17 +21,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class AppComponent {
 	private readonly analytics = inject(AnalyticsService);
-	private readonly isHeaderVisible$ = inject(LayoutService).isHeaderVisible$.pipe(takeUntilDestroyed());
-
-	protected readonly isHeaderVisible = signal(true);
+	protected readonly isHeaderVisible = inject(LayoutService).isHeaderVisible;
 
 	constructor() {
-		afterNextRender(() => {
-			this.isHeaderVisible$.subscribe((isVisible) => {
-				this.isHeaderVisible.set(isVisible);
-			});
-		});
-
 		if (environment.environment === 'production') {
 			void this.analytics.init();
 		}
