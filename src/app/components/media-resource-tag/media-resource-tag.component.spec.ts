@@ -26,7 +26,6 @@ describe('MediaResourceTagComponent', () => {
 		expect(icon).toHaveAttribute('aria-label', 'Posee contenido multimedia');
 	});
 
-	// Regresión #1702: el data-testid deriva de la key del ícono, no del objeto crudo (antes daba `icon-[object Object]`).
 	it('should derive the data-testid from the icon key, not the icon object', async () => {
 		await render(MediaResourceTagComponent, {
 			inputs: {
