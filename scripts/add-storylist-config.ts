@@ -11,7 +11,7 @@ const runMigration = async () => {
 
 	console.log('\n--- Fetching all storylists without config field ---');
 
-	const documents = await client.fetch(
+	const documents = await client.fetch<Array<{ _id: string; title: string; slug: { current: string } }>>(
 		`*[_type == 'storylist' && !defined(config) && !(_id in path('drafts.**'))] { _id, title, slug }`,
 	);
 
