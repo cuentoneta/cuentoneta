@@ -49,6 +49,7 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 | `pnpm build`                              | Build de producción                  |
 | `pnpm lint`                               | ESLint sobre `src`                   |
 | `pnpm stylelint`                          | Stylelint sobre CSS                  |
+| `pnpm typecheck`                          | Type-check estricto (`tsc --noEmit`) |
 | `pnpm test`                               | Tests unitarios (Vitest)             |
 | `pnpm test:watch`                         | Tests en watch                       |
 | `pnpm test:e2e`                           | E2E (Playwright)                     |
@@ -57,7 +58,9 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 | `pnpm sanity:extract-schema`              | Extrae el schema de Sanity           |
 | `pnpm sanity:run-typegen-generator`       | Genera tipos a partir del schema     |
 
-**Gates de CI** (deben quedar verdes en cada PR): `test`, `lint`, `stylelint`, `e2e`, `build`, `storybook`.
+**Gates de CI** (deben quedar verdes en cada PR): `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`.
+
+> El gate `typecheck` (`pnpm typecheck` → `tsc --noEmit` estricto) cubre el **TS puro** de la app (`src/**`, incluidos `*.spec.ts` y `*.stories.ts`) y `scripts/`. **No** valida plantillas Angular (eso lo hacen `build`/`storybook` vía `ngtsc`) ni el proyecto `cms/`.
 
 ---
 

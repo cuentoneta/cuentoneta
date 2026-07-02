@@ -107,7 +107,7 @@ pnpm outdated
 
 ### Verificación final (gates de CI)
 
-Todos deben quedar verdes antes de mergear: `pnpm test`, `pnpm lint`, `pnpm stylelint`, `pnpm build`, `pnpm storybook:build`.
+Todos deben quedar verdes antes de mergear: `pnpm test`, `pnpm lint`, `pnpm stylelint`, `pnpm typecheck`, `pnpm build`, `pnpm storybook:build`.
 
 ### Plan de rollback
 
