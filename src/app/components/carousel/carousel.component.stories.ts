@@ -58,6 +58,7 @@ type Story = StoryObj<CarouselComponent>;
 
 // Historia principal con documentación
 export const Default: Story = {
+	name: 'Por defecto',
 	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: contentCampaignMock,
@@ -74,6 +75,7 @@ export const Default: Story = {
 
 // Carousel con una sola diapositiva
 export const SingleSlide: Story = {
+	name: 'Diapositiva única',
 	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: [contentCampaignMock[0]],
@@ -90,6 +92,7 @@ export const SingleSlide: Story = {
 
 // Carousel con transición rápida
 export const FastTransition: Story = {
+	name: 'Transición rápida',
 	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: contentCampaignMock,
@@ -106,6 +109,7 @@ export const FastTransition: Story = {
 
 // Carousel con transición lenta
 export const SlowTransition: Story = {
+	name: 'Transición lenta',
 	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: contentCampaignMock,
@@ -193,6 +197,7 @@ const extendedSlidesMock: ContentCampaign[] = [
 
 // Carousel con múltiples diapositivas
 export const MultipleSlides: Story = {
+	name: 'Múltiples diapositivas',
 	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	args: {
 		slides: extendedSlidesMock,
@@ -209,6 +214,7 @@ export const MultipleSlides: Story = {
 
 // Historia interactiva para documentación
 export const Interactive: Story = {
+	name: 'Interactivo',
 	render: (args) => ({
 		props: args,
 		template: `
@@ -243,6 +249,7 @@ export const Interactive: Story = {
 
 // Vista comparativa Desktop y Mobile
 export const DesktopAndMobile: Story = {
+	name: 'Escritorio y móvil',
 	render: (args) => ({
 		props: args,
 		template: `

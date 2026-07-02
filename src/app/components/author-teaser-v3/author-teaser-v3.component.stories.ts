@@ -18,9 +18,8 @@ const tags: Tag[] = [
 	{ title: 'Fantástico', slug: 'fantastico', shortDescription: '', description: [] },
 ];
 
-// Autor con más de 2 tags (ejemplo de Eduardo Galeano en el diseño v3).
-const galeanoMock = { ...authorTeaserMock, name: 'Eduardo Galeano' };
-const galeanoTags: Tag[] = [
+// Autor con más de 2 tags para ejercitar el recorte por ancho de la fila de tags.
+const manyTags: Tag[] = [
 	{ title: 'Crónica', slug: 'cronica', shortDescription: '', description: [] },
 	{ title: 'Ensayo', slug: 'ensayo', shortDescription: '', description: [] },
 	{ title: 'Memoria', slug: 'memoria', shortDescription: '', description: [] },
@@ -70,6 +69,7 @@ type Story = StoryObj<AuthorTeaserV3Component>;
 
 // Teaser completo: avatar, tags, nombre + bandera y cantidad de historias.
 export const Default: Story = {
+	name: 'Por defecto',
 	render: (args) => ({ props: args, template: `<cuentoneta-author-teaser-v3 ${argsToTemplate(args)} />` }),
 	args: { author: authorTeaserMock, tags, storyCount: 21 },
 	parameters: {
@@ -82,15 +82,16 @@ export const Default: Story = {
 };
 
 // Más de 2 tags en un contenedor acotado: la fila de tags se recorta por ancho y colapsa el excedente
-// tras un contador "+N" (ejemplo: Eduardo Galeano).
+// tras un contador "+N".
 export const ManyTags: Story = {
+	name: 'Muchos tags',
 	render: (args) => ({ props: args, template: `<cuentoneta-author-teaser-v3 ${argsToTemplate(args)} />` }),
-	args: { author: galeanoMock, tags: galeanoTags, storyCount: 35 },
+	args: { author: authorTeaserMock, tags: manyTags, storyCount: 35 },
 	decorators: [componentWrapperDecorator((story) => `<div style="width:320px">${story}</div>`)],
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Autor con varios tags en un contenedor acotado de 320px: los que no entran se recortan por ancho y colapsan tras un contador "+N" (ejemplo: Eduardo Galeano).</p><p><strong>Usos:</strong> Author List, en columnas angostas o viewports reducidos donde la fila de tags no entra completa.</p>`,
+				story: `<p>Autor con varios tags en un contenedor acotado de 320px: los que no entran se recortan por ancho y colapsan tras un contador "+N".</p><p><strong>Usos:</strong> Author List, en columnas angostas o viewports reducidos donde la fila de tags no entra completa.</p>`,
 			},
 		},
 	},
@@ -98,6 +99,7 @@ export const ManyTags: Story = {
 
 // Sin imagen: el avatar cae al placeholder circular.
 export const WithoutImage: Story = {
+	name: 'Sin imagen',
 	render: (args) => ({ props: args, template: `<cuentoneta-author-teaser-v3 ${argsToTemplate(args)} />` }),
 	args: { author: { ...authorTeaserMock, imageUrl: '' }, tags, storyCount: 21 },
 	parameters: {
@@ -111,6 +113,7 @@ export const WithoutImage: Story = {
 
 // Estado de carga (skeleton) del teaser.
 export const Skeleton: StoryObj = {
+	name: 'Esqueleto',
 	decorators: [moduleMetadata({ imports: [AuthorTeaserV3SkeletonComponent] })],
 	render: () => ({ template: `<cuentoneta-author-teaser-v3-skeleton />` }),
 	parameters: {
