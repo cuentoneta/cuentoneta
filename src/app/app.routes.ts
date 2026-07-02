@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { authorResolver } from './pages/author/author.resolver';
 import { storyResolver } from './pages/story/story.resolver';
+import { storylistResolver } from './pages/storylist/storylist.resolver';
 
 export const AppRoutes = Object.freeze({
 	Home: 'home',
@@ -40,10 +41,12 @@ export const appRoutes: Routes = [
 	{
 		path: `${AppRoutes.StoryList}/:slug`,
 		loadComponent: () => import('./pages/storylist/storylist.component'),
+		resolve: { storylist: storylistResolver },
 	},
 	{
 		path: `${AppRoutes.StoryList}`,
 		loadComponent: () => import('./pages/storylist/storylist.component'),
+		resolve: { storylist: storylistResolver },
 	},
 	{
 		path: AppRoutes.About,

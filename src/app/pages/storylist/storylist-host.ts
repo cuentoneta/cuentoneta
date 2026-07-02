@@ -4,6 +4,7 @@ import { type Storylist } from '@models/storylist.model';
 
 export interface StorylistHost {
 	readonly storylist: Signal<Storylist | undefined>;
+	readonly slug: Signal<string>;
 }
 
 export const STORYLIST_HOST = new InjectionToken<StorylistHost>('STORYLIST_HOST');
