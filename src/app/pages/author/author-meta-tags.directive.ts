@@ -1,7 +1,7 @@
 import { Directive, effect, inject, untracked } from '@angular/core';
 
 import { AppRoutes } from '../../app.routes';
-import { buildCanonicalUrl } from '../../utils/build-canonical-url.util';
+import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { AbstractMetaTagsDirective } from '../../directives/abstract-meta-tags.directive';
 import { AUTHOR_HOST } from './author-host';
