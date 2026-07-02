@@ -4,6 +4,8 @@ import { TestBed } from '@angular/core/testing';
 import { Meta, Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 
+import { environment } from '../environments/environment';
+
 describe('HeadMetadataDirective', () => {
 	const BASE_URL = 'https://www.cuentoneta.ar';
 	const TEST_IMAGE_URL = 'assets/svg/collection.svg';
@@ -173,6 +175,15 @@ describe('HeadMetadataDirective', () => {
 			expect(linkElements[0]).toHaveAttribute('href', updatedUrl);
 			expect(linkElements[0].parentElement).toBe(document.head);
 		});
+
+		it('should also set the og:url meta tag to the canonical url', () => {
+			const metaSpy = spyOn(metaService, 'updateTag');
+			const url = `${BASE_URL}/story/el-aleph`;
+
+			directive.setCanonicalUrl(url);
+
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:url', content: url });
+		});
 	});
 
 	describe('removeCanonicalUrl', () => {
@@ -190,6 +201,14 @@ describe('HeadMetadataDirective', () => {
 
 		it('should not throw error if canonical link does not exist', () => {
 			expect(() => directive.removeCanonicalUrl()).not.toThrow();
+		});
+
+		it('should reset the og:url meta tag to the site home', () => {
+			const metaSpy = spyOn(metaService, 'updateTag');
+
+			directive.removeCanonicalUrl();
+
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:url', content: environment.website });
 		});
 	});
 

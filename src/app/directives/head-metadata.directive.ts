@@ -2,6 +2,8 @@ import { Directive, effect, inject, PLATFORM_ID, DOCUMENT } from '@angular/core'
 import { Meta, Title } from '@angular/platform-browser';
 import { isPlatformBrowser } from '@angular/common';
 
+import { environment } from '../environments/environment';
+
 @Directive({
 	selector: '[cuentonetaHeadMetadata]',
 	standalone: true,
@@ -133,6 +135,7 @@ export class HeadMetadataDirective {
 		}
 		element.setAttribute('rel', 'canonical');
 		element.setAttribute('href', url);
+		this.metaTagService.updateTag({ property: 'og:url', content: url });
 	}
 
 	public removeCanonicalUrl() {
@@ -140,6 +143,9 @@ export class HeadMetadataDirective {
 		if (element) {
 			element.remove();
 		}
+		// El og:url no se elimina: se resetea al home para que una página sin canonical propio no
+		// arrastre el og:url de la página anterior (mismo patrón que removeImage con la OG image por defecto).
+		this.metaTagService.updateTag({ property: 'og:url', content: environment.website });
 	}
 
 	// Para páginas indexables emitimos, además de index/follow, las directivas de vista previa
