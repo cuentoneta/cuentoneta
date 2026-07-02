@@ -7,8 +7,7 @@ describe('MediaResourceTagComponent', () => {
 			inputs: {
 				platform: {
 					title: 'Posee contenido multimedia',
-					// La plantilla concatena `icon` en el data-testid; el test usa un string como stand-in del Record de ng-icon.
-					icon: 'media' as unknown as Record<string, string>,
+					icon: { media: '' },
 				},
 				size: 'md',
 			},
@@ -25,5 +24,18 @@ describe('MediaResourceTagComponent', () => {
 		const icon = screen.getByTestId('icon-media');
 		expect(icon).toBeInTheDocument();
 		expect(icon).toHaveAttribute('aria-label', 'Posee contenido multimedia');
+	});
+
+	// Regresión #1702: el data-testid deriva de la key del ícono, no del objeto crudo (antes daba `icon-[object Object]`).
+	it('should derive the data-testid from the icon key, not the icon object', async () => {
+		await render(MediaResourceTagComponent, {
+			inputs: {
+				platform: { title: 'Contiene videos de YouTube', icon: { faBrandYoutube: '' } },
+				size: 'md',
+			},
+		});
+
+		expect(screen.getByTestId('icon-faBrandYoutube')).toBeInTheDocument();
+		expect(screen.queryByTestId('icon-[object Object]')).toBeNull();
 	});
 });
