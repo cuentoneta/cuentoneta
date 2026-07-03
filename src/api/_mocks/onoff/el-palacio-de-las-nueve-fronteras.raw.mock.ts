@@ -229,9 +229,10 @@ export const elPalacioRawStory: NonNullable<StoryBySlugQueryResult> = {
 	publishedAt: '1985-01-01T00:00:00Z',
 	updatedAt: '1985-01-01T00:00:00Z',
 	approximateReadingTime: 11,
-	// REASON: GROQ devuelve null para stories sin imagen; el typegen lo declara non-nullable.
-	// TODO(#1681): reemplazar el cast por una ref de imagen real de Sanity; el imagery de los raws se resuelve de una vez en el follow-up.
-	coverImage: null as unknown as NonNullable<StoryBySlugQueryResult>['coverImage'],
+	coverImage: {
+		_type: 'image',
+		asset: { _type: 'reference', _ref: 'image-3f8774ea01abc54483829d982035a810667240e1-236x328-png' },
+	},
 	mediaSources: [],
 	resources: [],
 	tags: [],
