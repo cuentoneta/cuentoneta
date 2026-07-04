@@ -1,5 +1,5 @@
 // Core
-import { ChangeDetectionStrategy, Component, computed, forwardRef, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, forwardRef, inject, Injector, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { Router, UrlTree } from '@angular/router';
 import { map, Observable } from 'rxjs';
@@ -9,7 +9,6 @@ import { AppRoutes } from '../../app.routes';
 
 // Modelos
 import { StoryTeaser } from '@models/story.model';
-import { type AuthorProfile } from '@models/author.model';
 
 // SEO
 import { AuthorMetaTagsDirective } from './author-meta-tags.directive';
@@ -17,12 +16,13 @@ import { AuthorStructuredDataDirective } from './author-structured-data.directiv
 import { AUTHOR_HOST, type AuthorHost } from './author-host';
 
 // Services
+import { AuthorApi } from '../../providers/author-api.interface';
 import { StoryApi } from '../../providers/story-api.interface';
 
 // Componentes
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
 import { ResourceComponent } from '@components/resource/resource.component';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { pendingUntilEvent, rxResource } from '@angular/core/rxjs-interop';
 import { StoryCardTeaserComponent } from '@components/story-card-teaser/story-card-teaser.component';
 import Tab from '@components/tabs/tab.component';
 import Tabs from '@components/tabs/tabs.component';
@@ -51,7 +51,7 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 	template: `
 		<main class="content vertical-layout-spacing horizontal-layout-spacing">
 			<article class="grid grid-cols-1 gap-8">
-				@defer (when author()) {
+				@defer (when authorResource.hasValue()) {
 					@if (author(); as author) {
 						<section class="flex items-center gap-4">
 							<img
@@ -123,7 +123,7 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 						</cuentoneta-tab>
 						<cuentoneta-tab title="Biografía" name="about">
 							<div>
-								@defer (when author) {
+								@defer (when authorResource.hasValue()) {
 									<div class="flex flex-col gap-4">
 										<cuentoneta-portable-text-parser
 											[paragraphs]="author.biography"
@@ -160,17 +160,25 @@ export default class AuthorComponent implements AuthorHost {
 
 	// Route inputs
 	public readonly slug = input.required<string>();
-	public readonly author = input.required<AuthorProfile>();
 	public readonly activeTab = input<'stories' | 'about'>('stories');
 
 	// Cantidad de líneas del skeleton de la biografía mientras carga
 	protected readonly biographySkeletonLines = Array.from({ length: 10 });
 
 	// Providers
+	private authorService = inject(AuthorApi);
 	private storyService = inject(StoryApi);
 	private router = inject(Router);
+	private readonly injector = inject(Injector);
 
 	// Recursos
+	// pendingUntilEvent bloquea el SSR hasta tener el perfil (contenido + meta tags). El listado de cuentos
+	// (storiesResource) se deja sin bloquear a propósito, para conservar su carga progresiva con skeleton.
+	protected readonly authorResource = rxResource({
+		params: this.slug,
+		stream: ({ params }) => this.authorService.getBySlug(params).pipe(pendingUntilEvent(this.injector)),
+		defaultValue: undefined,
+	});
 	protected readonly storiesResource = rxResource({
 		params: this.slug,
 		stream: ({ params }) => this.stories$(params),
@@ -178,11 +186,12 @@ export default class AuthorComponent implements AuthorHost {
 	});
 
 	// Propiedades
+	public readonly author = computed(() => this.authorResource.value());
 	protected readonly stories = computed(() => this.storiesResource.value());
 	protected readonly authorImageUrl = computed(() =>
-		this.author().imageUrl ? `${this.author().imageUrl}?auto=format` : 'assets/img/default-avatar.jpg',
+		this.author()?.imageUrl ? `${this.author()?.imageUrl}?auto=format` : 'assets/img/default-avatar.jpg',
 	);
-	protected readonly authorFlagUrl = computed(() => `${this.author().nationality.flag}?auto=format`);
+	protected readonly authorFlagUrl = computed(() => `${this.author()?.nationality.flag}?auto=format`);
 
 	private stories$(slug: string): Observable<(StoryTeaser & { navigationRoute: UrlTree })[]> {
 		return this.storyService.getByAuthorSlug(slug).pipe(

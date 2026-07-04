@@ -1,8 +1,9 @@
 // Core
-import { Component, computed, forwardRef, input } from '@angular/core';
+import { Component, computed, forwardRef, inject, Injector, input } from '@angular/core';
+import { pendingUntilEvent, rxResource } from '@angular/core/rxjs-interop';
 
-// Models
-import { type Storylist } from '@models/storylist.model';
+// Services
+import { StorylistApi } from '../../providers/storylist-api.interface';
 
 // SEO
 import { StorylistMetaTagsDirective } from './storylist-meta-tags.directive';
@@ -38,15 +39,30 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 export default class StorylistComponent implements StorylistHost {
 	// Route inputs
 	public readonly slug = input.required<string>();
-	public readonly storylist = input.required<Storylist>();
 	public readonly activeTab = input<'stories' | 'about' | string>('stories');
 
 	// Cantidad de líneas del skeleton de la descripción mientras carga
 	protected readonly descriptionSkeletonLines = Array.from({ length: 10 });
 
-	// Propiedades derivadas
-	protected readonly stories = computed(() => this.storylist().stories);
-	protected readonly tabs = computed(() => this.storylist().tabs);
-	protected readonly media = computed(() => this.storylist().media);
+	// Providers
+	private storylistService = inject(StorylistApi);
+	private readonly injector = inject(Injector);
+
+	// Recursos
+	// pendingUntilEvent bloquea la estabilización del SSR hasta el primer emit, para que el server
+	// renderice el contenido y los meta tags. En el browser no afecta el skeleton (la app ya está estable).
+	protected readonly storylistResource = rxResource({
+		params: this.slug,
+		stream: ({ params }) => this.storylistService.get(params, 60, 'asc').pipe(pendingUntilEvent(this.injector)),
+		defaultValue: undefined,
+	});
+	public readonly storylist = computed(() => this.storylistResource.value());
+
+	// TODO: Simplificar estructura de tipo Storylist para evitar estas transformaciones
+	protected readonly stories = computed(() => this.storylistResource.value()?.stories.map((story) => story) || []);
+
+	// Computed properties for tabs and media
+	protected readonly tabs = computed(() => this.storylistResource.value()?.tabs || []);
+	protected readonly media = computed(() => this.storylistResource.value()?.media || []);
 	protected readonly hasMedia = computed(() => this.media().length > 0);
 }

@@ -1,8 +1,9 @@
 // Core
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, inject, Injector } from '@angular/core';
+import { pendingUntilEvent, rxResource } from '@angular/core/rxjs-interop';
 
-// Models
-import { type LandingPageContent } from '@models/landing-page-content.model';
+// Services
+import { ContentApi } from '../../providers/content-api.interface';
 
 // SEO
 import { HomeMetaTagsDirective } from './home-meta-tags.directive';
@@ -28,12 +29,22 @@ import { CollectionTeasersDeck } from '@components/collection-teasers-deck/colle
 	hostDirectives: [HomeMetaTagsDirective, HomeStructuredDataDirective],
 })
 export default class HomeComponent {
-	// Route data
-	public readonly landingPageContent = input.required<LandingPageContent>();
+	// Services
+	private contentService = inject(ContentApi);
+	private readonly injector = inject(Injector);
+
+	// Recursos
+	// pendingUntilEvent bloquea la estabilización del SSR hasta el primer emit, para que el server
+	// renderice el contenido y los meta tags. En el browser no afecta el skeleton (la app ya está estable).
+	private readonly landingPageResource = rxResource({
+		stream: () => this.contentService.getLandingPageContent().pipe(pendingUntilEvent(this.injector)),
+		defaultValue: undefined,
+	});
 
 	// Propiedades
-	protected readonly collections = computed(() => this.landingPageContent().cards);
-	protected readonly campaigns = computed(() => this.landingPageContent().campaigns);
-	protected readonly mostRead = computed(() => this.landingPageContent().mostRead.slice(0, 6));
-	protected readonly latestReads = computed(() => this.landingPageContent().latestReads.slice(0, 6));
+	private readonly landingPageContent = computed(() => this.landingPageResource.value());
+	protected readonly collections = computed(() => this.landingPageContent()?.cards || []);
+	protected readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
+	protected readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
+	protected readonly latestReads = computed(() => this.landingPageContent()?.latestReads.slice(0, 6) || []);
 }
