@@ -13,7 +13,6 @@ import { STORY_HOST } from './story-host';
 
 describe('StoryMetaTagsDirective', () => {
 	const storySignal = signal<Story | undefined>(undefined);
-	const slugSignal = signal('el-aleph');
 
 	function instantiate(): void {
 		TestBed.runInInjectionContext(() => new StoryMetaTagsDirective());
@@ -22,12 +21,11 @@ describe('StoryMetaTagsDirective', () => {
 	beforeEach(() => {
 		clearAllMocks();
 		storySignal.set(undefined);
-		slugSignal.set('el-aleph');
 		TestBed.configureTestingModule({
 			providers: [
 				StoryMetaTagsDirective,
 				HeadMetadataDirective,
-				{ provide: STORY_HOST, useValue: { story: storySignal.asReadonly(), slug: slugSignal.asReadonly() } },
+				{ provide: STORY_HOST, useValue: { story: storySignal.asReadonly() } },
 			],
 		});
 	});
@@ -41,13 +39,14 @@ describe('StoryMetaTagsDirective', () => {
 		expect(titleSpy).not.toHaveBeenCalled();
 	});
 
-	it('should set the canonical URL from the slug even when the story has not resolved yet', () => {
+	it('should set the canonical URL from the story slug when it resolves', () => {
+		storySignal.set(storyMock);
 		const canonicalSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setCanonicalUrl');
 
 		instantiate();
 		TestBed.tick();
 
-		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl(`${AppRoutes.Story}/el-aleph`));
+		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl(`${AppRoutes.Story}/${storyMock.slug}`));
 	});
 
 	it('should set the title from the story when it resolves', () => {
