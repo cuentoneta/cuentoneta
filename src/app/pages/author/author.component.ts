@@ -171,8 +171,6 @@ export default class AuthorComponent implements AuthorHost {
 	private router = inject(Router);
 
 	// Recursos
-	// El perfil bloquea el SSR (contenido + meta tags indexables). El listado de cuentos se deja progresivo
-	// a propósito: no es indexable crítico y así conserva su carga con skeleton sin frenar el render del perfil.
 	protected readonly authorResource = ssrBlockingRxResource({
 		params: this.slug,
 		stream: ({ params }) => this.authorService.getBySlug(params),
