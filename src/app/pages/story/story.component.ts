@@ -1,8 +1,9 @@
 // Core
-import { Component, computed, forwardRef, inject, Injector, signal, input } from '@angular/core';
+import { Component, computed, forwardRef, inject, signal, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { pendingUntilEvent, rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ssrBlockingRxResource } from '@utils/ssr-resource';
 
 // Router
 import { AppRoutes } from '../../app.routes';
@@ -69,17 +70,14 @@ export default class StoryComponent implements StoryHost {
 	public readonly navigationSlug = input<string>();
 
 	private storyService = inject(StoryApi);
-	private readonly injector = inject(Injector);
 	private layoutService = inject(LayoutService);
 	private isHeaderVisible$ = inject(LayoutService).isHeaderVisible$.pipe(takeUntilDestroyed());
 
 	// Recursos
 	protected readonly dummyList = Array(10);
-	private readonly storyResource = rxResource({
+	private readonly storyResource = ssrBlockingRxResource({
 		params: this.slug,
-		// pendingUntilEvent bloquea la estabilización del SSR hasta el primer emit, para que el server
-		// renderice el contenido y los meta tags. En el browser no afecta el skeleton (la app ya está estable).
-		stream: ({ params }) => this.storyService.getBySlug(params).pipe(pendingUntilEvent(this.injector)),
+		stream: ({ params }) => this.storyService.getBySlug(params),
 		defaultValue: undefined,
 	});
 

@@ -189,6 +189,29 @@ export default [
 		},
 	},
 	{
+		// Fuerza que cada fetch de una página decida explícitamente su estrategia de SSR: bloquear
+		// (ssrBlockingRxResource) u opt-out progresivo (progressiveRxResource). Evita la regresión de #1697,
+		// donde un rxResource crudo no bloquea la estabilización del SSR y sirve skeleton sin contenido/meta.
+		name: 'ssr-fetch-must-decide-blocking',
+		files: ['src/app/pages/**/*.ts'],
+		ignores: ['**/*.spec.ts'],
+		rules: {
+			'no-restricted-syntax': [
+				'error',
+				{
+					selector: "CallExpression[callee.name='rxResource']",
+					message:
+						'En páginas usá ssrBlockingRxResource() (bloquea el SSR para SEO) o progressiveRxResource() (carga progresiva, justificá el opt-out). rxResource crudo omite pendingUntilEvent → regresión de #1697. Ver @utils/ssr-resource.',
+				},
+				{
+					selector: "CallExpression[callee.name='httpResource']",
+					message:
+						'En páginas usá ssrBlockingRxResource() o progressiveRxResource() (ver @utils/ssr-resource). httpResource crudo omite el bloqueo del SSR → regresión de #1697.',
+				},
+			],
+		},
+	},
+	{
 		// projectService auto-detecta el tsconfig de cada archivo; el parser ya lo fija el preset de nx.
 		name: 'typed-linting',
 		files: ['src/**/*.ts'],

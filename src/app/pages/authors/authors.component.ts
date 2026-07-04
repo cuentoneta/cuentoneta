@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 
 import { AuthorApi } from '../../providers/author-api.interface';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { ssrBlockingRxResource } from '@utils/ssr-resource';
 import { RouterLink } from '@angular/router';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { environment } from '../../environments/environment';
@@ -26,7 +26,7 @@ export default class AuthorsComponent {
 	private authorService = inject(AuthorApi);
 	private metaTagsDirective = inject(HeadMetadataDirective);
 
-	private authorsResource = rxResource({
+	private authorsResource = ssrBlockingRxResource({
 		stream: () => this.authorService.getAll(),
 		defaultValue: [],
 	});

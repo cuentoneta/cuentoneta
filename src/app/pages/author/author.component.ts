@@ -1,5 +1,5 @@
 // Core
-import { ChangeDetectionStrategy, Component, computed, forwardRef, inject, Injector, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, forwardRef, inject, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { Router, UrlTree } from '@angular/router';
 import { map, Observable } from 'rxjs';
@@ -22,7 +22,7 @@ import { StoryApi } from '../../providers/story-api.interface';
 // Componentes
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
 import { ResourceComponent } from '@components/resource/resource.component';
-import { pendingUntilEvent, rxResource } from '@angular/core/rxjs-interop';
+import { progressiveRxResource, ssrBlockingRxResource } from '@utils/ssr-resource';
 import { StoryCardTeaserComponent } from '@components/story-card-teaser/story-card-teaser.component';
 import Tab from '@components/tabs/tab.component';
 import Tabs from '@components/tabs/tabs.component';
@@ -169,17 +169,16 @@ export default class AuthorComponent implements AuthorHost {
 	private authorService = inject(AuthorApi);
 	private storyService = inject(StoryApi);
 	private router = inject(Router);
-	private readonly injector = inject(Injector);
 
 	// Recursos
-	// pendingUntilEvent bloquea el SSR hasta tener el perfil (contenido + meta tags). El listado de cuentos
-	// (storiesResource) se deja sin bloquear a propósito, para conservar su carga progresiva con skeleton.
-	protected readonly authorResource = rxResource({
+	// El perfil bloquea el SSR (contenido + meta tags indexables). El listado de cuentos se deja progresivo
+	// a propósito: no es indexable crítico y así conserva su carga con skeleton sin frenar el render del perfil.
+	protected readonly authorResource = ssrBlockingRxResource({
 		params: this.slug,
-		stream: ({ params }) => this.authorService.getBySlug(params).pipe(pendingUntilEvent(this.injector)),
+		stream: ({ params }) => this.authorService.getBySlug(params),
 		defaultValue: undefined,
 	});
-	protected readonly storiesResource = rxResource({
+	protected readonly storiesResource = progressiveRxResource({
 		params: this.slug,
 		stream: ({ params }) => this.stories$(params),
 		defaultValue: [],

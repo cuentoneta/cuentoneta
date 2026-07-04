@@ -1,6 +1,6 @@
 // Core
-import { Component, computed, inject, Injector } from '@angular/core';
-import { pendingUntilEvent, rxResource } from '@angular/core/rxjs-interop';
+import { Component, computed, inject } from '@angular/core';
+import { ssrBlockingRxResource } from '@utils/ssr-resource';
 
 // Services
 import { ContentApi } from '../../providers/content-api.interface';
@@ -31,13 +31,10 @@ import { CollectionTeasersDeck } from '@components/collection-teasers-deck/colle
 export default class HomeComponent {
 	// Services
 	private contentService = inject(ContentApi);
-	private readonly injector = inject(Injector);
 
 	// Recursos
-	// pendingUntilEvent bloquea la estabilización del SSR hasta el primer emit, para que el server
-	// renderice el contenido y los meta tags. En el browser no afecta el skeleton (la app ya está estable).
-	private readonly landingPageResource = rxResource({
-		stream: () => this.contentService.getLandingPageContent().pipe(pendingUntilEvent(this.injector)),
+	private readonly landingPageResource = ssrBlockingRxResource({
+		stream: () => this.contentService.getLandingPageContent(),
 		defaultValue: undefined,
 	});
 

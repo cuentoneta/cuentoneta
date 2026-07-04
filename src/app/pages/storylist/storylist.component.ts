@@ -1,6 +1,6 @@
 // Core
-import { Component, computed, forwardRef, inject, Injector, input } from '@angular/core';
-import { pendingUntilEvent, rxResource } from '@angular/core/rxjs-interop';
+import { Component, computed, forwardRef, inject, input } from '@angular/core';
+import { ssrBlockingRxResource } from '@utils/ssr-resource';
 
 // Services
 import { StorylistApi } from '../../providers/storylist-api.interface';
@@ -46,14 +46,11 @@ export default class StorylistComponent implements StorylistHost {
 
 	// Providers
 	private storylistService = inject(StorylistApi);
-	private readonly injector = inject(Injector);
 
 	// Recursos
-	// pendingUntilEvent bloquea la estabilización del SSR hasta el primer emit, para que el server
-	// renderice el contenido y los meta tags. En el browser no afecta el skeleton (la app ya está estable).
-	protected readonly storylistResource = rxResource({
+	protected readonly storylistResource = ssrBlockingRxResource({
 		params: this.slug,
-		stream: ({ params }) => this.storylistService.get(params, 60, 'asc').pipe(pendingUntilEvent(this.injector)),
+		stream: ({ params }) => this.storylistService.get(params, 60, 'asc'),
 		defaultValue: undefined,
 	});
 	public readonly storylist = computed(() => this.storylistResource.value());
