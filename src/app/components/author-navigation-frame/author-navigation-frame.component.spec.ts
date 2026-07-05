@@ -13,6 +13,7 @@ import { storyMock, storyTeaserMock } from '../../mocks/story.mock';
 
 // Services
 import { StoryApi } from '../../providers/story-api.interface';
+import { NavigationFrameService } from '../../providers/navigation-frame.service';
 
 // 3rd party libs
 import { render, screen } from '@testing-library/angular';
@@ -70,5 +71,35 @@ describe('AuthorNavigationFrameComponent', () => {
 		view.detectChanges();
 
 		expect(getNavigationTeasersByAuthorSlug).not.toHaveBeenCalled();
+	});
+
+	test('should not publish a navigation config when navigationSlug is empty', async () => {
+		const view = await render(AuthorNavigationFrameComponent, {
+			componentImports: [CommonModule, NavigableStoryTeaserComponent],
+			inputs: {
+				selectedStorySlug: storyMock.slug,
+				navigationSlug: '',
+			},
+			providers: [
+				{
+					provide: StoryApi,
+					useValue: {
+						getNavigationTeasersByAuthorSlug: () => of([storyTeaserMock]),
+					},
+				},
+			],
+		});
+		view.detectChanges();
+
+		const navigationFrameService = view.fixture.debugElement.injector.get(NavigationFrameService);
+		expect(navigationFrameService.navigationBarConfig().headerTitle).toBe('');
+	});
+
+	test('should publish the author navigation config when navigationSlug is present', async () => {
+		const view = await setup();
+		view.detectChanges();
+
+		const navigationFrameService = view.fixture.debugElement.injector.get(NavigationFrameService);
+		expect(navigationFrameService.navigationBarConfig().headerTitle).toBe('Más del autor');
 	});
 });
