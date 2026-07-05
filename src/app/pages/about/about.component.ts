@@ -3,7 +3,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { rxResource } from '@angular/core/rxjs-interop';
 
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { environment } from '../../environments/environment';
+import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
 import { ContributorApi } from '../../providers/contributor-api.interface';
 
 @Component({
@@ -43,7 +43,7 @@ export default class AboutComponent {
 	private updateMetaTags() {
 		this.metaTagsDirective.setTitle('Nosotros');
 		this.metaTagsDirective.setDefaultDescription();
-		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/about`);
+		this.metaTagsDirective.setCanonicalUrl(buildCanonicalUrl('about'));
 		this.metaTagsDirective.setRobots('noindex, nofollow');
 	}
 }

@@ -4,7 +4,7 @@ import { AuthorApi } from '../../providers/author-api.interface';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { environment } from '../../environments/environment';
+import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
 
 @Component({
 	imports: [RouterLink],
@@ -40,7 +40,7 @@ export default class AuthorsComponent {
 	private updateMetaTags() {
 		this.metaTagsDirective.setTitle('Índice de Autores');
 		this.metaTagsDirective.setDefaultDescription();
-		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/authors`);
+		this.metaTagsDirective.setCanonicalUrl(buildCanonicalUrl('authors'));
 		this.metaTagsDirective.setRobots('noindex, follow');
 	}
 }
