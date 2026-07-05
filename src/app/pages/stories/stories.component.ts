@@ -2,10 +2,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 
 import { RouterLink } from '@angular/router';
-import { rxResource } from '@angular/core/rxjs-interop';
 
 // Services
 import { StoryApi } from '../../providers/story-api.interface';
+
+// Utils
+import { ssrBlockingRxResource } from '@utils/ssr-resource';
 
 // Directives
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
@@ -76,7 +78,7 @@ export default class StoriesComponent {
 	private metaTagsDirective = inject(HeadMetadataDirective);
 
 	// TODO: Implementar tamaño de página variable
-	private readonly storiesResource = rxResource({
+	private readonly storiesResource = ssrBlockingRxResource({
 		stream: () => this.storyService.get(0, 2000),
 		defaultValue: [],
 	});

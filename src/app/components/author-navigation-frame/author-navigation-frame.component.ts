@@ -10,7 +10,7 @@ import { StoryApi } from '../../providers/story-api.interface';
 // Componentes
 import { NavigationFrameComponent } from '@models/navigation-frame.component';
 import { NavigableStoryTeaserComponent } from '../navigable-story-teaser/navigable-story-teaser.component';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { progressiveRxResource } from '@utils/ssr-resource';
 
 @Component({
 	selector: 'cuentoneta-author-navigation-frame',
@@ -35,7 +35,7 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 	private storyService = inject(StoryApi);
 
 	// Recursos
-	private readonly storiesResource = rxResource({
+	private readonly storiesResource = progressiveRxResource({
 		params: () => this.navigationSlug(),
 		stream: ({ params: slug }) => this.storyService.getNavigationTeasersByAuthorSlug(slug),
 		defaultValue: [],
