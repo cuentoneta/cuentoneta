@@ -4,7 +4,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { environment } from '../../environments/environment';
 import { ContributorApi } from '../../providers/contributor-api.interface';
-import { ssrBlockingRxResource } from '@utils/ssr-resource';
+import { progressiveRxResource } from '@utils/ssr-resource';
 
 @Component({
 	selector: 'cuentoneta-about',
@@ -29,7 +29,9 @@ export default class AboutComponent {
 	private metaTagsDirective = inject(HeadMetadataDirective);
 	private contributorService = inject(ContributorApi);
 
-	private readonly contributorsResource = ssrBlockingRxResource({
+	// Ruta Server + `noindex, nofollow` con meta tags estáticos: bloquear el SSR solo agregaría latencia
+	// por request sin beneficio de indexación. La grilla de colaboradores carga progresivamente en cliente.
+	private readonly contributorsResource = progressiveRxResource({
 		stream: () => this.contributorService.getAllByArea(),
 		defaultValue: [],
 	});
