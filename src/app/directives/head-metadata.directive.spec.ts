@@ -3,6 +3,7 @@ import { HeadMetadataDirective } from './head-metadata.directive';
 import { TestBed } from '@angular/core/testing';
 import { Meta, Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
+import { environment } from '../environments/environment';
 
 describe('HeadMetadataDirective', () => {
 	const BASE_URL = 'https://www.cuentoneta.ar';
@@ -147,6 +148,7 @@ describe('HeadMetadataDirective', () => {
 
 	describe('setCanonicalUrl', () => {
 		it('should create and set canonical link element if it does not exist', () => {
+			const metaSpy = spyOn(metaService, 'updateTag');
 			const url = `${BASE_URL}/test`;
 
 			directive.setCanonicalUrl(url);
@@ -157,9 +159,11 @@ describe('HeadMetadataDirective', () => {
 			expect(linkElement).toHaveAttribute('rel', 'canonical');
 			expect(linkElement).toHaveAttribute('href', url);
 			expect(linkElement.parentElement).toBe(document.head);
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:url', content: url });
 		});
 
 		it('should update existing canonical link element', () => {
+			const metaSpy = spyOn(metaService, 'updateTag');
 			const initialUrl = `${BASE_URL}/initial`;
 			const updatedUrl = `${BASE_URL}/updated`;
 
@@ -172,11 +176,13 @@ describe('HeadMetadataDirective', () => {
 			expect(linkElements[0]).toHaveAttribute('rel', 'canonical');
 			expect(linkElements[0]).toHaveAttribute('href', updatedUrl);
 			expect(linkElements[0].parentElement).toBe(document.head);
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:url', content: updatedUrl });
 		});
 	});
 
 	describe('removeCanonicalUrl', () => {
-		it('should remove canonical link element if it exists', () => {
+		it('should remove canonical link element and reset og:url to the home fallback if it exists', () => {
+			const metaSpy = spyOn(metaService, 'updateTag');
 			directive.setCanonicalUrl(`${BASE_URL}/test`);
 
 			let linkElement = document.querySelector('link[rel="canonical"]');
@@ -186,6 +192,15 @@ describe('HeadMetadataDirective', () => {
 
 			linkElement = document.querySelector('link[rel="canonical"]');
 			expect(linkElement).toBeFalsy();
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:url', content: environment.website });
+		});
+
+		it('should reset og:url to the home fallback even when no canonical link exists', () => {
+			const metaSpy = spyOn(metaService, 'updateTag');
+
+			directive.removeCanonicalUrl();
+
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:url', content: environment.website });
 		});
 
 		it('should not throw error if canonical link does not exist', () => {
@@ -532,8 +547,9 @@ describe('HeadMetadataDirective', () => {
 			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image', content: 'assets/svg/logo.svg' });
 			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image:alt', content: 'Logo de La Cuentoneta' });
 			expect(updateSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: 'assets/svg/logo.svg' });
-			// El <link rel="canonical"> se quita del head.
+			// El <link rel="canonical"> se quita del head y og:url se resetea al home (no se elimina).
 			expect(document.querySelector(`link[rel='canonical']`)).toBeNull();
+			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:url', content: environment.website });
 		});
 	});
 });
