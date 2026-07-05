@@ -75,6 +75,22 @@ const viRestrictedSyntax = [
 	},
 ];
 
+// Prohíbe rxResource/httpResource crudos en páginas: todo fetch de página debe decidir explícitamente
+// su estrategia de SSR con ssrBlockingRxResource()/progressiveRxResource(), para no repetir la
+// regresión de SEO de #1697 (un fetch sin pendingUntilEvent sirve el skeleton al SSR sin bloquear).
+const pageFetchRestrictedSyntax = [
+	{
+		selector: "CallExpression[callee.name='rxResource']",
+		message:
+			'En páginas usá ssrBlockingRxResource() o progressiveRxResource() de @utils/ssr-resource en vez de rxResource crudo — rxResource omite pendingUntilEvent y puede reproducir la regresión de SEO de #1697.',
+	},
+	{
+		selector: "CallExpression[callee.name='httpResource']",
+		message:
+			'En páginas usá ssrBlockingRxResource() o progressiveRxResource() de @utils/ssr-resource en vez de httpResource crudo — httpResource omite el bloqueo explícito del SSR y puede reproducir la regresión de SEO de #1697.',
+	},
+];
+
 export default [
 	{
 		name: 'ignores',
@@ -147,6 +163,17 @@ export default [
 			'@stylistic/js/no-extra-semi': 'off',
 			'no-barrel-files/no-barrel-files': 'error',
 			'preserve-caught-error': 'error',
+		},
+	},
+	{
+		// Compone commonRestrictedSyntax con las restricciones de fetch de página: en flat config, un
+		// bloque posterior que setea la misma regla REEMPLAZA el array del bloque `nx`, no lo mergea —
+		// recomponer commonRestrictedSyntax evita perder su cobertura (enum/lifecycle/estáticas) en páginas.
+		name: 'ssr-fetch-must-decide-blocking',
+		files: ['src/app/pages/**/*.ts'],
+		ignores: ['**/*.spec.ts'],
+		rules: {
+			'no-restricted-syntax': ['error', ...commonRestrictedSyntax, ...pageFetchRestrictedSyntax],
 		},
 	},
 	{
