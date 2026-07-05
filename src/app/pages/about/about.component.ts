@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { rxResource } from '@angular/core/rxjs-interop';
 
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { environment } from '../../environments/environment';
 import { ContributorApi } from '../../providers/contributor-api.interface';
+import { ssrBlockingRxResource } from '@utils/ssr-resource';
 
 @Component({
 	selector: 'cuentoneta-about',
@@ -29,7 +29,7 @@ export default class AboutComponent {
 	private metaTagsDirective = inject(HeadMetadataDirective);
 	private contributorService = inject(ContributorApi);
 
-	private readonly contributorsResource = rxResource({
+	private readonly contributorsResource = ssrBlockingRxResource({
 		stream: () => this.contributorService.getAllByArea(),
 		defaultValue: [],
 	});

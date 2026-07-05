@@ -2,10 +2,11 @@
 import { Component, computed, forwardRef, inject, signal, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // Router
 import { AppRoutes } from '../../app.routes';
+import { ssrBlockingRxResource } from '@utils/ssr-resource';
 
 // Services
 import { StoryApi } from '../../providers/story-api.interface';
@@ -74,7 +75,7 @@ export default class StoryComponent implements StoryHost {
 
 	// Recursos
 	protected readonly dummyList = Array(10);
-	private readonly storyResource = rxResource({
+	private readonly storyResource = ssrBlockingRxResource({
 		params: this.slug,
 		stream: ({ params }) => this.storyService.getBySlug(params),
 		defaultValue: undefined,

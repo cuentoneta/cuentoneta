@@ -1,9 +1,9 @@
 // Core
 import { Component, computed, forwardRef, inject, input } from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
 
 // Services
 import { StorylistApi } from '../../providers/storylist-api.interface';
+import { ssrBlockingRxResource } from '@utils/ssr-resource';
 
 // SEO
 import { StorylistMetaTagsDirective } from './storylist-meta-tags.directive';
@@ -48,7 +48,7 @@ export default class StorylistComponent implements StorylistHost {
 	private storylistService = inject(StorylistApi);
 
 	// Recursos
-	protected readonly storylistResource = rxResource({
+	protected readonly storylistResource = ssrBlockingRxResource({
 		params: this.slug,
 		stream: ({ params }) => this.storylistService.get(params, 60, 'asc'),
 		defaultValue: undefined,
