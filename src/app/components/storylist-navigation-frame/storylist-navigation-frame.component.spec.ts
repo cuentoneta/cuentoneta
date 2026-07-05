@@ -19,6 +19,9 @@ import { StorylistApi } from '../../providers/storylist-api.interface';
 // 3rd party libs
 import { render, screen } from '@testing-library/angular';
 
+// Test utils
+import { fn } from '@test-utils';
+
 describe('StorylistNavigationFrameComponent', () => {
 	const setup = async () => {
 		return await render(StorylistNavigationFrameComponent, {
@@ -51,6 +54,23 @@ describe('StorylistNavigationFrameComponent', () => {
 		view.detectChanges();
 		expect(screen.getByText(storylistMock.stories[0].title)).toBeInTheDocument();
 		expect(screen.getByText(storylistMock.stories[0].author.name)).toBeInTheDocument();
+	});
+
+	test('should not fetch navigation teasers when navigationSlug is empty', async () => {
+		const getStorylistNavigationTeasers = fn<(slug: string) => Observable<Storylist>>();
+		getStorylistNavigationTeasers.mockReturnValue(of(storylistMock));
+
+		const view = await render(StorylistNavigationFrameComponent, {
+			componentImports: [CommonModule, NavigableStorylistStoryTeaserComponent, SkeletonComponent],
+			inputs: {
+				selectedStorySlug: storyMock.slug,
+				navigationSlug: '',
+			},
+			providers: [DatePipe, { provide: StorylistApi, useValue: { getStorylistNavigationTeasers } }],
+		});
+		view.detectChanges();
+
+		expect(getStorylistNavigationTeasers).not.toHaveBeenCalled();
 	});
 
 	test('should render loading skeletons with role="status" while the storylist resolves', async () => {

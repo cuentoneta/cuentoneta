@@ -36,7 +36,7 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 
 	// Recursos
 	private readonly storiesResource = progressiveRxResource({
-		params: () => this.navigationSlug(),
+		params: () => this.navigationSlug() || undefined,
 		stream: ({ params: slug }) => this.storyService.getNavigationTeasersByAuthorSlug(slug),
 		defaultValue: [],
 	});
@@ -48,10 +48,14 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 	constructor() {
 		super();
 		effect(() => {
+			const navigationSlug = this.navigationSlug();
+			if (!navigationSlug) {
+				return;
+			}
 			this.config.set({
 				headerTitle: 'Más del autor',
 				footerTitle: 'Ver más...',
-				navigationRoute: this.router.createUrlTree([this.appRoutes.Author, this.navigationSlug()]),
+				navigationRoute: this.router.createUrlTree([this.appRoutes.Author, navigationSlug]),
 				showFooter: true,
 			});
 		});
