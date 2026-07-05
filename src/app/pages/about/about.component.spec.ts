@@ -1,6 +1,5 @@
 import { render } from '@testing-library/angular';
-import { spyOn } from '@test-utils';
-import { TestBed } from '@angular/core/testing';
+import { restoreAllMocks, spyOn } from '@test-utils';
 
 import AboutComponent from './about.component';
 import { provideHttpClient } from '@angular/common/http';
@@ -16,17 +15,17 @@ describe('AboutComponent', () => {
 		});
 	};
 
+	afterEach(() => restoreAllMocks());
+
 	it('should create', async () => {
 		const view = setup();
 		expect(view).toBeTruthy();
 	});
 
-	it('should set the canonical URL for /about via buildCanonicalUrl', () => {
+	it('should set the canonical URL for /about via buildCanonicalUrl', async () => {
 		const canonicalSpy = spyOn(HeadMetadataDirective.prototype, 'setCanonicalUrl');
-		TestBed.configureTestingModule({
-			providers: [provideHttpClient(), provideHttpClientTesting(), provideContributorApiMock()],
-		});
-		TestBed.createComponent(AboutComponent);
+
+		await setup();
 
 		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl('about'));
 	});

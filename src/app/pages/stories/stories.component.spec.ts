@@ -1,7 +1,6 @@
-import { spyOn } from '@test-utils';
-import { TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { render } from '@testing-library/angular';
+import { restoreAllMocks, spyOn } from '@test-utils';
+import { provideRouter } from '@angular/router';
 
 import StoriesComponent from './stories.component';
 import { AppRoutes } from '../../app.routes';
@@ -10,12 +9,12 @@ import { HeadMetadataDirective } from '../../directives/head-metadata.directive'
 import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
 
 describe('StoriesComponent', () => {
-	it('should set the canonical URL for /story via buildCanonicalUrl', () => {
+	afterEach(() => restoreAllMocks());
+
+	it('should set the canonical URL for /story via buildCanonicalUrl', async () => {
 		const canonicalSpy = spyOn(HeadMetadataDirective.prototype, 'setCanonicalUrl');
-		TestBed.configureTestingModule({
-			providers: [provideHttpClient(), provideHttpClientTesting(), provideStoryApiMock()],
-		});
-		TestBed.createComponent(StoriesComponent);
+
+		await render(StoriesComponent, { providers: [provideRouter([]), provideStoryApiMock()] });
 
 		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl(AppRoutes.Story));
 	});

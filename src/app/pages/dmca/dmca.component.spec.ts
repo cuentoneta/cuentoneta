@@ -1,14 +1,18 @@
-import { spyOn } from '@test-utils';
-import { TestBed } from '@angular/core/testing';
+import { render } from '@testing-library/angular';
+import { restoreAllMocks, spyOn } from '@test-utils';
+import { provideRouter } from '@angular/router';
 
 import DmcaComponent from './dmca.component';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
 
 describe('DmcaComponent', () => {
-	it('should set the canonical URL for /dmca via buildCanonicalUrl', () => {
+	afterEach(() => restoreAllMocks());
+
+	it('should set the canonical URL for /dmca via buildCanonicalUrl', async () => {
 		const canonicalSpy = spyOn(HeadMetadataDirective.prototype, 'setCanonicalUrl');
-		TestBed.createComponent(DmcaComponent);
+
+		await render(DmcaComponent, { providers: [provideRouter([])] });
 
 		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl('dmca'));
 	});
