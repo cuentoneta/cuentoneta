@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { environment } from '../../environments/environment';
+import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
 
 @Component({
 	selector: 'cuentoneta-dmca',
@@ -124,7 +124,7 @@ export default class DmcaComponent {
 	private updateMetaTags() {
 		this.metaTagsDirective.setTitle('DMCA');
 		this.metaTagsDirective.setDefaultDescription();
-		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/dmca`);
+		this.metaTagsDirective.setCanonicalUrl(buildCanonicalUrl('dmca'));
 		this.metaTagsDirective.setRobots('noindex, nofollow');
 	}
 }
