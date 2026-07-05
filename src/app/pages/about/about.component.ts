@@ -29,8 +29,7 @@ export default class AboutComponent {
 	private metaTagsDirective = inject(HeadMetadataDirective);
 	private contributorService = inject(ContributorApi);
 
-	// Ruta Server + `noindex, nofollow` con meta tags estáticos: bloquear el SSR solo agregaría latencia
-	// por request sin beneficio de indexación. La grilla de colaboradores carga progresivamente en cliente.
+	// Ruta Server + `noindex, nofollow`: se maneja con carga progresiva.
 	private readonly contributorsResource = progressiveRxResource({
 		stream: () => this.contributorService.getAllByArea(),
 		defaultValue: [],

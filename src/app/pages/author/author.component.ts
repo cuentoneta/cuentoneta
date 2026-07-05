@@ -22,7 +22,7 @@ import { StoryApi } from '../../providers/story-api.interface';
 // Componentes
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
 import { ResourceComponent } from '@components/resource/resource.component';
-import { progressiveRxResource, ssrBlockingRxResource } from '@utils/ssr-resource';
+import { ssrBlockingRxResource } from '@utils/ssr-resource';
 import { StoryCardTeaserComponent } from '@components/story-card-teaser/story-card-teaser.component';
 import Tab from '@components/tabs/tab.component';
 import Tabs from '@components/tabs/tabs.component';
@@ -176,12 +176,8 @@ export default class AuthorComponent implements AuthorHost {
 		stream: ({ params }) => this.authorService.getBySlug(params),
 		defaultValue: undefined,
 	});
-	// Progresivo a propósito: el listado de cuentos es contenido secundario que carga tras el perfil.
-	// El badge "{{ stories().length }} historias" deriva de este recurso; como vive en un @defer que sirve
-	// su placeholder en SSR, el conteo recién se pinta al hidratar y puede mostrar 0 hasta que el listado
-	// resuelve en cliente. Se acepta: el conteo no es contenido indexable y bloquearlo anularía la carga
-	// progresiva (el agregado Author tampoco expone un conteo del que derivarlo).
-	protected readonly storiesResource = progressiveRxResource({
+
+	protected readonly storiesResource = ssrBlockingRxResource({
 		params: this.slug,
 		stream: ({ params }) => this.stories$(params),
 		defaultValue: [],
