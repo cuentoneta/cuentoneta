@@ -51,6 +51,22 @@ describe('ssrBlockingRxResource', () => {
 		expect(true).toBe(true);
 	});
 
+	it('libera el bloqueo si el stream falla (whenStable resuelve y el error queda seteado)', async () => {
+		const emitter = new Subject<string>();
+		const resource = TestBed.runInInjectionContext(() =>
+			ssrBlockingRxResource({ stream: () => emitter.asObservable(), defaultValue: undefined }),
+		);
+		const appRef = TestBed.inject(ApplicationRef);
+		TestBed.tick();
+
+		emitter.error(new Error('fetch de Sanity falló'));
+
+		// El SSR no debe colgarse ante un fetch fallido: `pendingUntilEvent` libera la task también en error.
+		await appRef.whenStable();
+		TestBed.tick();
+		expect(resource.error()).toBeTruthy();
+	});
+
 	it('respeta el overload sin defaultValue (valor inicial undefined)', () => {
 		const resource = TestBed.runInInjectionContext(() => ssrBlockingRxResource({ stream: () => NEVER }));
 		expect(resource.value()).toBeUndefined();

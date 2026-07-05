@@ -4,9 +4,10 @@ import { pendingUntilEvent, rxResource, type RxResourceOptions } from '@angular/
 /**
  * `rxResource` cuyo stream se pipea por `pendingUntilEvent`: registra una `PendingTask` que hace
  * esperar a `ApplicationRef.whenStable()` (lo que `@angular/ssr` aguarda antes de serializar) hasta
- * el primer emit del fetch. Así el SSR y el prerender de build sirven contenido + meta tags reales
- * en vez del skeleton genérico. En el browser no bloquea el render, solo retrasa `isStable`, por lo
- * que la carga progresiva in-app se conserva.
+ * que el stream emite, completa, falla o se desuscribe. Así el SSR y el prerender de build sirven
+ * contenido + meta tags reales en vez del skeleton genérico, y un fetch que falla libera el bloqueo
+ * en vez de colgar la serialización. En el browser no bloquea el render, solo retrasa `isStable`,
+ * por lo que la carga progresiva in-app se conserva.
  *
  * Reemplazo zoneless de `FetchContentDirective` → `MacroTaskWrapperService` (macrotask de Zone.js),
  * perdido en la migración a signals/zoneless (#1144).
@@ -20,7 +21,7 @@ export function ssrBlockingRxResource<T, R>(
 ): ResourceRef<T>;
 export function ssrBlockingRxResource<T, R>(options: RxResourceOptions<T, R>): ResourceRef<T | undefined>;
 export function ssrBlockingRxResource<T, R>(options: RxResourceOptions<T, R>): ResourceRef<T | undefined> {
-	const injector = inject(Injector);
+	const injector = options.injector ?? inject(Injector);
 	return rxResource<T, R>({
 		...options,
 		stream: (params) => options.stream(params).pipe(pendingUntilEvent(injector)),
