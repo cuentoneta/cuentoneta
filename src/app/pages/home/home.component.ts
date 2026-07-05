@@ -3,6 +3,8 @@ import { Component, computed, inject } from '@angular/core';
 
 // Services
 import { ContentApi } from '../../providers/content-api.interface';
+
+// Utils
 import { ssrBlockingRxResource } from '@utils/ssr-resource';
 
 // SEO

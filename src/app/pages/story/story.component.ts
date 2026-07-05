@@ -6,6 +6,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // Router
 import { AppRoutes } from '../../app.routes';
+
+// Utils
 import { ssrBlockingRxResource } from '@utils/ssr-resource';
 
 // Services

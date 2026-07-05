@@ -5,6 +5,8 @@ import { RouterLink } from '@angular/router';
 
 // Services
 import { StoryApi } from '../../providers/story-api.interface';
+
+// Utils
 import { ssrBlockingRxResource } from '@utils/ssr-resource';
 
 // Directives
