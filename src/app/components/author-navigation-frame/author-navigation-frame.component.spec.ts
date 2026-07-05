@@ -18,6 +18,9 @@ import { StoryApi } from '../../providers/story-api.interface';
 import { render, screen } from '@testing-library/angular';
 import { authorMock } from '../../mocks/author.mock';
 
+// Test utils
+import { fn } from '@test-utils';
+
 describe('AuthorNavigationFrameComponent', () => {
 	const setup = async () => {
 		return await render(AuthorNavigationFrameComponent, {
@@ -50,5 +53,22 @@ describe('AuthorNavigationFrameComponent', () => {
 		expect(screen.getByText(storyTeaserMock.title)).toBeInTheDocument();
 		expect(screen.getByText(storyTeaserMock.originalPublication)).toBeInTheDocument();
 		expect(screen.getByText(`${storyTeaserMock.approximateReadingTime} minutos de lectura`)).toBeInTheDocument();
+	});
+
+	test('should not fetch navigation teasers when navigationSlug is empty', async () => {
+		const getNavigationTeasersByAuthorSlug = fn<(slug: string) => Observable<StoryTeaser[]>>();
+		getNavigationTeasersByAuthorSlug.mockReturnValue(of([storyTeaserMock]));
+
+		const view = await render(AuthorNavigationFrameComponent, {
+			componentImports: [CommonModule, NavigableStoryTeaserComponent],
+			inputs: {
+				selectedStorySlug: storyMock.slug,
+				navigationSlug: '',
+			},
+			providers: [{ provide: StoryApi, useValue: { getNavigationTeasersByAuthorSlug } }],
+		});
+		view.detectChanges();
+
+		expect(getNavigationTeasersByAuthorSlug).not.toHaveBeenCalled();
 	});
 });

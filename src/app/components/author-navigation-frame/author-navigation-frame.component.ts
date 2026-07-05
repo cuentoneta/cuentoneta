@@ -36,7 +36,7 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 
 	// Recursos
 	private readonly storiesResource = progressiveRxResource({
-		params: () => this.navigationSlug(),
+		params: () => this.navigationSlug() || undefined,
 		stream: ({ params: slug }) => this.storyService.getNavigationTeasersByAuthorSlug(slug),
 		defaultValue: [],
 	});
