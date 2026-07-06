@@ -159,6 +159,8 @@ readonly storiesResource = progressiveRxResource({
 
 Cuándo **bloquear**: rutas cuyo HTML server-rendered debe traer contenido/meta reales — `RenderMode.Server` indexables y `Prerender` con contenido (el prerender de build gana contenido real en vez de skeleton). Cuándo **no**: rutas `noindex` servidas por request con meta estáticos (bloquear solo agrega latencia sin ganar indexación → `progressiveRxResource`), y datos secundarios.
 
+**Enforced por lint:** en `src/app/pages/**` está prohibido `rxResource`/`httpResource` crudo — el gate `lint` obliga a elegir `ssrBlockingRxResource` o `progressiveRxResource` (`no-restricted-syntax`, bloque `ssr-fetch-must-decide-blocking` de `eslint.config.mjs`; #1705).
+
 ---
 
 ## Checklist rápido
