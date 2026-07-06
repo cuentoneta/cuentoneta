@@ -5,6 +5,10 @@
 	"main": "dist/cuentoneta/server/server.mjs",
 	"compatibility_date": "2026-06-01",
 	"compatibility_flags": ["nodejs_compat"],
+	"vars": {
+		"SANITY_STUDIO_PROJECT_ID": "s4dbqkc5",
+		"SANITY_STUDIO_DATASET": "development",
+	},
 	"alias": { "xhr2": "./xhr2-stub.js" },
 	"assets": {
 		"directory": "dist/cuentoneta/browser",

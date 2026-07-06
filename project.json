@@ -63,7 +63,36 @@
 					"ssr": {
 						"entry": "./src/worker.ts",
 						"experimentalPlatform": "neutral"
-					}
+					},
+					"externalDependencies": [
+						"@sanity/client",
+						"fs",
+						"path",
+						"os",
+						"crypto",
+						"stream",
+						"util",
+						"url",
+						"zlib",
+						"tty",
+						"http",
+						"https",
+						"net",
+						"tls",
+						"events",
+						"buffer",
+						"string_decoder",
+						"querystring",
+						"async_hooks",
+						"perf_hooks",
+						"node:fs",
+						"node:path",
+						"node:crypto",
+						"node:stream",
+						"node:util",
+						"node:url",
+						"node:buffer"
+					]
 				}
 			},
 			"defaultConfiguration": "production"
