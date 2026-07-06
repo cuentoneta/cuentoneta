@@ -16,6 +16,49 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.8.3 (2026-07-06)
+
+La versión 2.8.3 se enfoca en la robustez del render SSR y en la higiene de SEO/AEO, cerrando dos epics. El epic de render SSR (#1697) corrige la causa raíz por la que las rutas dinámicas (`home`, `story/:slug`, `author/:slug`, `storylist/:slug`) servían un skeleton sin contenido ni meta indexables: los recursos de página ahora **bloquean la serialización del SSR** hasta resolver (`ssrBlockingRxResource` vía `pendingUntilEvent`), conservando la carga progresiva de los datos secundarios (`progressiveRxResource`). Una regla ESLint impide reintroducir la regresión al prohibir `rxResource`/`httpResource` crudos en páginas.
+
+En el frente de SEO/AEO (epic #1525), se estandarizan las URLs canónicas con `buildCanonicalUrl` (corrige el bug de doble slash) tanto en las páginas de detalle como en `about`/`authors`/`dmca`/`stories`, se emite `og:url` por página en el SSR (antes estático al home) y se unifica el host de `sitemap.xml` y `robots.txt` a `www.cuentoneta.ar`.
+
+En infraestructura, se incorpora un gate de CI de type-checking estricto (`tsc --noEmit`) y se depuran los casts del corpus de tests del ACL. Además, se proveen imágenes de ejemplo locales para las stories de `Carousel` y `Author`, se corrigen un fetch de navegación con slug vacío (404) y el `data-testid` de `MediaResourceTag`, y se suma una tanda de actualizaciones de dependencias.
+
+### Cambios completos
+
+Ver el changelog completo en [2.8.3](https://github.com/cuentoneta/cuentoneta/releases/tag/2.8.3)
+
+### Cambios
+
+#### SEO y render SSR
+
+- [#1704] - Bloqueo del SSR hasta resolver los recursos async de las páginas (`ssrBlockingRxResource`/`progressiveRxResource` vía `pendingUntilEvent`), para que el HTML server-rendered sirva contenido y meta resueltos (epic #1697).
+- [#1705] - Regla ESLint que prohíbe `rxResource`/`httpResource` crudos en páginas, forzando la decisión de bloqueo de SSR (`ssrBlockingRxResource`/`progressiveRxResource`).
+- [#1706] - Estandarización de las URLs canónicas con `buildCanonicalUrl` (corrige el doble slash) en las directivas de meta de story, author y storylist.
+- [#1709] - Extensión de `buildCanonicalUrl` a `about`/`authors`/`dmca`/`stories` (mismo bug de doble slash).
+- [#1707] - Emisión de `og:url` por página en el SSR (antes estático al home).
+- [#1703] - Unificación del host de `sitemap.xml` y `robots.txt` a `www.cuentoneta.ar`.
+
+#### Tooling e infraestructura
+
+- [#1691] - Gate de CI de type-checking estricto (`tsc --noEmit`) como gate obligatorio en cada PR.
+- [#1681] - Eliminación de los casts `null as unknown as` en los tests del ACL (coverImage real).
+
+#### Storybook y tests
+
+- [#1676] - Imágenes de ejemplo locales para las stories del `Carousel` y de `Author`.
+
+#### Correcciones
+
+- [#1715] - Corrección del fetch a `/author//navigation` (404) cuando `navigationSlug` está vacío.
+- [#1702] - Corrección del `data-testid` de `MediaResourceTagComponent` (deriva de la key del icono, no del objeto crudo).
+
+#### Dependencias
+
+- [#1664] - Bump de `@angular/ssr` de 21.2.14 a 21.2.17.
+- [#1665] - Bump de `@angular/cli` de 21.2.14 a 21.2.18.
+- [#1667] - Bump de `@eslint/js` de 9.39.2 a 9.39.4.
+
 ## Versión 2.8.2 (2026-07-01)
 
 La versión 2.8.2 profundiza el Design System V3 y el modelo de dominio de historias: `story` gana una portada propia (`coverImage`) con su migración de backfill, `CollectionTeaser` incorpora la variante `Multiple` (tres portadas en abanico para colecciones multi-autor), la imagen de `Collection` se unifica alrededor del value object `imagery` (`representative`/`sample`, portada editorial opcional) y las tarjetas V3 derivan su portada del propio `story`. Además, se completan los skeletons faltantes de los componentes V3 mediante stories `Estados` intercambiables (real↔skeleton).
