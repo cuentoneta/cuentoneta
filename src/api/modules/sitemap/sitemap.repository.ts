@@ -1,5 +1,5 @@
 // Sanity
-import { client } from '../../_helpers/sanity-connector';
+import { getClient } from '../../_helpers/sanity-connector';
 
 // Queries
 import { sitemapSlugsQuery } from 'src/api/_queries/sitemap.query';
@@ -54,7 +54,7 @@ function processSlugEntries(
 }
 
 export async function fetchSitemapSlugs(): Promise<SitemapSlugsResult> {
-	const result = await client.fetch(sitemapSlugsQuery);
+	const result = await getClient().fetch(sitemapSlugsQuery);
 
 	return {
 		stories: processSlugEntries(result.stories),

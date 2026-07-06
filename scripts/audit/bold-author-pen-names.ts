@@ -12,7 +12,7 @@
  * Uso:
  *   pnpm exec tsx --env-file=.env scripts/bold-author-pen-names.ts
  */
-import { client } from '../../src/api/_helpers/sanity-connector';
+import { getClient } from '../../src/api/_helpers/sanity-connector';
 
 type Mode = 'in_place' | 'prepend' | 'skip';
 
@@ -189,11 +189,11 @@ const stripSystemFields = (doc: AuthorDoc) => {
 
 const run = async () => {
 	const slugs = OPERATIONS.map((o) => o.slug);
-	const docs: AuthorDoc[] = await client.fetch(
+	const docs: AuthorDoc[] = await getClient().fetch(
 		`*[_type == "author" && !(_id in path("drafts.**")) && slug.current in $slugs]{...}`,
 		{ slugs },
 	);
-	const existingDrafts: Array<{ _id: string; biography: Block[] | null }> = await client.fetch(
+	const existingDrafts: Array<{ _id: string; biography: Block[] | null }> = await getClient().fetch(
 		`*[_type == "author" && _id in path("drafts.**") && slug.current in $slugs]{_id, biography}`,
 		{ slugs },
 	);
@@ -247,7 +247,7 @@ const run = async () => {
 		const draftId = `drafts.${doc._id}`;
 		const draftSeed = stripSystemFields(doc);
 
-		await client
+		await getClient()
 			.transaction()
 			.createIfNotExists(draftSeed as never)
 			.patch(draftId, (p) => p.set({ biography: nextBiography }))

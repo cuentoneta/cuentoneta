@@ -6,7 +6,7 @@
  * Uso:
  *   pnpm exec tsx --env-file=.env scripts/audit-bold-names.ts
  */
-import { client } from '../../src/api/_helpers/sanity-connector';
+import { getClient } from '../../src/api/_helpers/sanity-connector';
 
 interface Result {
 	slug: string | null;
@@ -15,7 +15,7 @@ interface Result {
 }
 
 const run = async () => {
-	const results: Result[] = await client.fetch(
+	const results: Result[] = await getClient().fetch(
 		`*[_type == "author" && !(_id in path("drafts.**"))] | order(slug.current asc) {
 			"slug": slug.current,
 			name,

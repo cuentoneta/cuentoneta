@@ -3,10 +3,10 @@
  * en base al campo name de los documentos de tipo author
  *
  * */
-import { client } from '../src/api/_helpers/sanity-connector';
+import { getClient } from '../src/api/_helpers/sanity-connector';
 import slugify from 'slugify';
 
-const fetchDocuments = () => client.fetch(`*[_type == 'author'] {_id, _rev, name}`);
+const fetchDocuments = () => getClient().fetch(`*[_type == 'author'] {_id, _rev, name}`);
 
 const buildPatches = (docs: any[]) => {
 	return docs.map((doc) => {
@@ -34,7 +34,7 @@ const buildPatches = (docs: any[]) => {
 };
 
 const createTransaction = (patches: any) =>
-	patches.reduce((tx: any, patch: any) => tx.patch(patch.id, patch.patch), client.transaction());
+	patches.reduce((tx: any, patch: any) => tx.patch(patch.id, patch.patch), getClient().transaction());
 
 const commitTransaction = (tx: any) => tx.commit();
 

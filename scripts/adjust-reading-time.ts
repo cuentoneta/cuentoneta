@@ -3,11 +3,11 @@
  * ajustando así el tiempo de lectura aproximado para cada historia de la plataforma
  *
  * */
-import { client } from '../src/api/_helpers/sanity-connector';
+import { getClient } from '../src/api/_helpers/sanity-connector';
 
 const newReadingTimeFormula = (wordCount: number) => Math.ceil((wordCount * 200) / 180);
 
-const fetchDocuments = () => client.fetch(`*[_type == 'story'] {_id, _rev, approximateReadingTime, title}`);
+const fetchDocuments = () => getClient().fetch(`*[_type == 'story'] {_id, _rev, approximateReadingTime, title}`);
 
 const buildPatches = (docs: any[]) =>
 	docs.map((doc) => ({
@@ -21,7 +21,7 @@ const buildPatches = (docs: any[]) =>
 	}));
 
 const createTransaction = (patches: any) =>
-	patches.reduce((tx: any, patch: any) => tx.patch(patch.id, patch.patch), client.transaction());
+	patches.reduce((tx: any, patch: any) => tx.patch(patch.id, patch.patch), getClient().transaction());
 
 const commitTransaction = (tx: any) => tx.commit();
 

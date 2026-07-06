@@ -2,12 +2,12 @@
  * Script to remove the 'language' field from all story and storylist documents.
  * The language attribute was removed from the schemas and needs to be unset from existing documents.
  */
-import { client } from '../src/api/_helpers/sanity-connector';
+import { getClient } from '../src/api/_helpers/sanity-connector';
 
 const migrateDocType = async (docType: 'story' | 'storylist') => {
 	console.log(`\n--- Fetching all ${docType} documents with language field ---`);
 
-	const documents = await client.fetch<Array<{ _id: string; title: string }>>(
+	const documents = await getClient().fetch<Array<{ _id: string; title: string }>>(
 		`*[_type == '${docType}' && defined(language) && !(_id in path('drafts.**'))] { _id, title }`,
 	);
 
@@ -22,7 +22,7 @@ const migrateDocType = async (docType: 'story' | 'storylist') => {
 	// Build transaction with all patches
 	const transaction = documents.reduce((tx, doc) => {
 		return tx.patch(doc._id, (patch) => patch.unset(['language']));
-	}, client.transaction());
+	}, getClient().transaction());
 
 	// Commit all patches at once
 	await transaction.commit();

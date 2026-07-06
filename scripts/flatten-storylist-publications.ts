@@ -8,7 +8,7 @@
  * 3. Elimina campos deprecados: displayDates, comingNextLabel, editionPrefix, publications
  */
 import { randomUUID } from 'node:crypto';
-import { client } from '../src/api/_helpers/sanity-connector';
+import { getClient } from '../src/api/_helpers/sanity-connector';
 
 const runMigration = async () => {
 	console.log('='.repeat(60));
@@ -17,7 +17,7 @@ const runMigration = async () => {
 
 	console.log('\n--- Fetching all storylists ---');
 
-	const storylists = await client.fetch(`
+	const storylists = await getClient().fetch(`
     *[_type == 'storylist' && !(_id in path('drafts.**'))] {
       _id,
       title,
@@ -57,7 +57,7 @@ const runMigration = async () => {
 		return tx.patch(doc._id, (patch: any) =>
 			patch.set({ stories: sortedRefs }).unset(['displayDates', 'comingNextLabel', 'editionPrefix', 'publications']),
 		);
-	}, client.transaction());
+	}, getClient().transaction());
 
 	await transaction.commit();
 

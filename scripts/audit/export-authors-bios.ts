@@ -5,7 +5,7 @@
  */
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { client } from '../../src/api/_helpers/sanity-connector';
+import { getClient } from '../../src/api/_helpers/sanity-connector';
 
 interface Span {
 	_type: 'span';
@@ -132,7 +132,7 @@ const exportBiographies = async () => {
 	console.log('Exportando biografías de autores a Markdown');
 	console.log('='.repeat(60));
 
-	const authors = await client.fetch<Author[]>(
+	const authors = await getClient().fetch<Author[]>(
 		`*[_type == 'author' && !(_id in path('drafts.**')) && defined(biography)]{
 			name,
 			'slug': slug.current,

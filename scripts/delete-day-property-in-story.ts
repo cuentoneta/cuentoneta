@@ -3,14 +3,14 @@
 // Queda aquí a modo de ejemplo para saber cómo proceder a la hora de escribir otro script de migración a futuro.
 
 // Importar cliente de Sanity
-import { client } from '../src/api/_helpers/sanity-connector';
+import { getClient } from '../src/api/_helpers/sanity-connector';
 import type { Transaction } from '@sanity/client';
 
 type StoryDocument = { _id: string; _rev: string };
 type StoryPatch = { id: string; patch: { unset: string[]; ifRevisionID: string } };
 
 const fetchStories = () =>
-	client.fetch<StoryDocument[]>(`
+	getClient().fetch<StoryDocument[]>(`
   *[_type == 'story']
 `);
 
@@ -24,7 +24,7 @@ const buildPatches = (stories: StoryDocument[]): StoryPatch[] =>
 	}));
 
 const createTransaction = (patches: StoryPatch[]) =>
-	patches.reduce((tx, patch) => tx.patch(patch.id, patch.patch), client.transaction());
+	patches.reduce((tx, patch) => tx.patch(patch.id, patch.patch), getClient().transaction());
 
 const commitTransaction = (tx: Transaction) => tx.commit();
 

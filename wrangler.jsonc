@@ -11,6 +11,8 @@
 		"SANITY_STUDIO_PROJECT_ID": "s4dbqkc5",
 		"SANITY_STUDIO_DATASET": "development",
 		"APP_ENV": "development",
+		// URL base del sitio para canónicas/OG (host-agnóstico). En el spike apunta al *.workers.dev.
+		"SITE_URL": "https://cuentoneta-cf-spike.ramiro-0ae.workers.dev/",
 	},
 	// Cron Triggers (reemplazan los `crons` de vercel.json). El handler `scheduled` los despacha.
 	"triggers": {

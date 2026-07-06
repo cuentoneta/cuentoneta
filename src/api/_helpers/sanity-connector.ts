@@ -1,38 +1,24 @@
 import { createClient, SanityClient } from '@sanity/client';
 
-// El cliente se construye de forma diferida (primer acceso), no al evaluar el módulo, y lee
-// `process.env` fresco en ese momento. Motivo: en Cloudflare Workers las env vars llegan por
-// request —el worker las copia a process.env antes de atender— y no están al importar (el objeto
-// `environment` se captura al evaluar el módulo, cuando aún están vacías). En Node/Vercel ya
-// están presentes, así que el comportamiento es idéntico.
+let instance: SanityClient | undefined;
+
 function buildClient(): SanityClient {
 	return createClient({
 		projectId: process.env['SANITY_STUDIO_PROJECT_ID'] as string,
 		dataset: process.env['SANITY_STUDIO_DATASET'] as string,
 		token: process.env['SANITY_STUDIO_TOKEN'] as string,
 		apiVersion: '2021-10-21', // use current UTC date - see "specifying API version"!
-		// `APP_ENV` es un flag propio de la app (host-agnóstico), seteado explícitamente por
-		// entorno: en Cloudflare vía `[env.<name>.vars]` de wrangler; reemplaza a `VERCEL_TARGET_ENV`.
 		useCdn: process.env['APP_ENV'] === 'production', // `false` para datos frescos
 	});
 }
 
-let instance: SanityClient | undefined;
-
-// Proxy: inicializa el client real en el primer acceso, sin tocar a los consumidores
-// (siguen usando `client.fetch(...)`). Las funciones se bindean al client real para
-// preservar el `this`.
-export const client: SanityClient = new Proxy({} as SanityClient, {
-	get(_target, property) {
-		instance ??= buildClient();
-		const value = Reflect.get(instance, property, instance);
-		return typeof value === 'function' ? value.bind(instance) : value;
-	},
-	// El operador `in` usa el trap `has`, no `get`. `@sanity/image-url` detecta al cliente con
-	// `"config" in client`; sin este trap chequearía el target vacío → false → no lo reconoce
-	// como cliente y arma la URL de imagen sin projectId/dataset (cdn.sanity.io/images/undefined/...).
-	has(_target, property) {
-		instance ??= buildClient();
-		return property in instance;
-	},
-});
+/**
+ * Devuelve el cliente Sanity con inicialización diferida (primer uso), no al evaluar el módulo,
+ * leyendo `process.env` fresco en ese momento. Motivo: en Cloudflare Workers las env vars llegan
+ * por request (el worker las copia a process.env antes de atender); en Node/Vercel ya están al
+ * importar. Se prefiere una función explícita a un cliente exportado (o un Proxy lazy) porque el
+ * cliente real es introspeccionado por libs como `@sanity/image-url` (que hace `"config" in client`).
+ */
+export function getClient(): SanityClient {
+	return (instance ??= buildClient());
+}

@@ -13,6 +13,7 @@ interface Env {
 	SANITY_STUDIO_DATASET?: string;
 	SANITY_STUDIO_TOKEN?: string;
 	APP_ENV?: string;
+	SITE_URL?: string;
 }
 
 // Tipo mínimo del evento de Cron Trigger (evita depender de @cloudflare/workers-types en el spike;
@@ -29,6 +30,7 @@ const BRIDGED_ENV_KEYS = [
 	'SANITY_STUDIO_DATASET',
 	'SANITY_STUDIO_TOKEN',
 	'APP_ENV',
+	'SITE_URL',
 ] as const;
 
 // Mapa Cron Trigger → endpoint. Reemplaza los `crons` de vercel.json.
@@ -37,9 +39,13 @@ const CRON_ROUTES: Record<string, string> = {
 	'30 3 * * 0': '/api/content/add-next-weeks-landing-page-content',
 };
 
-// trustProxyHeaders: Cloudflare agrega headers de proxy; honrarlos evita el deopt a CSR
-// (mismo motivo que en server.ts para Vercel). allowedHosts reales vía getAllowedHosts().
-const angularApp = new AngularAppEngine({ allowedHosts: getAllowedHosts(), trustProxyHeaders: true });
+// Engine SSR con construcción diferida (primera request, ya con process.env poblado por el bridge):
+// getAllowedHosts() lee APP_ENV en ese momento. trustProxyHeaders: Cloudflare agrega headers de
+// proxy; honrarlos evita el deopt a CSR (mismo motivo que en server.ts para Vercel).
+let angularApp: AngularAppEngine | undefined;
+function getAngularApp(): AngularAppEngine {
+	return (angularApp ??= new AngularAppEngine({ allowedHosts: getAllowedHosts(), trustProxyHeaders: true }));
+}
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -64,7 +70,7 @@ app.use('*', async (c) => {
 	if (assetResponse.status !== 404) {
 		return assetResponse;
 	}
-	const rendered = await angularApp.handle(c.req.raw);
+	const rendered = await getAngularApp().handle(c.req.raw);
 	return rendered ?? c.notFound();
 });
 

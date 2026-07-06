@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
-import { client } from '../src/api/_helpers/sanity-connector';
+import { getClient } from '../src/api/_helpers/sanity-connector';
 import { makeid } from './script.utils';
 
 // length(description) returns null if description isn't a (Portable Text) array
-const fetchDocuments = () => client.fetch(`*[_type == 'author'] {_id, _rev, bio}`);
+const fetchDocuments = () => getClient().fetch(`*[_type == 'author'] {_id, _rev, bio}`);
 
 const buildPatches = (docs: any[]) =>
 	docs.map((doc) => ({
@@ -34,7 +34,7 @@ const buildPatches = (docs: any[]) =>
 	}));
 
 const createTransaction = (patches: any) =>
-	patches.reduce((tx: any, patch: any) => tx.patch(patch.id, patch.patch), client.transaction());
+	patches.reduce((tx: any, patch: any) => tx.patch(patch.id, patch.patch), getClient().transaction());
 
 const commitTransaction = (tx: any) => tx.commit();
 
