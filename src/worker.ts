@@ -1,9 +1,10 @@
-// [SPIKE cloudflare-migration] Entry SSR neutral para Cloudflare Workers.
-// Fase 1: monta /api (Hono) + puentea env→process.env para el cliente Sanity (lazy),
-// de modo que el SSR renderice con datos reales. Sin APIs Node (nada de @hono/node-server ni fs).
+// [SPIKE cloudflare-migration] Entry para Cloudflare Workers (platform=neutral).
+// Monta /api (Hono), puentea env→process.env para el backend lazy, sirve SSR + assets,
+// y despacha los crons vía Cron Triggers. Sin APIs Node (nada de @hono/node-server ni fs).
 import { AngularAppEngine } from '@angular/ssr';
-import { Hono } from 'hono';
+import { Hono, type ExecutionContext } from 'hono';
 import apiRoutes from './api/routes';
+import { getAllowedHosts } from './api/_helpers/environment';
 
 interface Env {
 	// Binding de Workers Assets: sirve el output estático (dist browser + prerender).
@@ -12,6 +13,13 @@ interface Env {
 	SANITY_STUDIO_DATASET?: string;
 	SANITY_STUDIO_TOKEN?: string;
 	APP_ENV?: string;
+}
+
+// Tipo mínimo del evento de Cron Trigger (evita depender de @cloudflare/workers-types en el spike;
+// ExecutionContext se toma de Hono).
+interface ScheduledEvent {
+	cron: string;
+	scheduledTime: number;
 }
 
 // En Workers las env vars llegan por request (no al evaluar el módulo). El código de backend
@@ -23,9 +31,15 @@ const BRIDGED_ENV_KEYS = [
 	'APP_ENV',
 ] as const;
 
-// allowedHosts '*' y trustProxyHeaders son SOLO para el spike (dominio *.workers.dev):
-// en prod real se usaría getAllowedHosts() como en server.ts.
-const angularApp = new AngularAppEngine({ allowedHosts: ['*'], trustProxyHeaders: true });
+// Mapa Cron Trigger → endpoint. Reemplaza los `crons` de vercel.json.
+const CRON_ROUTES: Record<string, string> = {
+	'15 3 * * *': '/api/story/update-most-read',
+	'30 3 * * 0': '/api/content/add-next-weeks-landing-page-content',
+};
+
+// trustProxyHeaders: Cloudflare agrega headers de proxy; honrarlos evita el deopt a CSR
+// (mismo motivo que en server.ts para Vercel). allowedHosts reales vía getAllowedHosts().
+const angularApp = new AngularAppEngine({ allowedHosts: getAllowedHosts(), trustProxyHeaders: true });
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -52,4 +66,17 @@ app.use('*', async (c) => {
 	return rendered ?? c.notFound();
 });
 
-export default app;
+export default {
+	fetch(request: Request, env: Env, ctx: ExecutionContext): Response | Promise<Response> {
+		return app.fetch(request, env, ctx);
+	},
+	// Cron Triggers: despacha el endpoint correspondiente por el mismo pipeline Hono (el
+	// middleware puentea las env vars). Los endpoints de cron son GET.
+	async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+		const path = CRON_ROUTES[event.cron];
+		if (!path) {
+			return;
+		}
+		await app.fetch(new Request(`https://cron.internal${path}`), env, ctx);
+	},
+};

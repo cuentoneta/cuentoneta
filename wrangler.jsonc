@@ -1,13 +1,20 @@
-// [SPIKE cloudflare-migration] Config mínima para validar Angular SSR en Workers.
-// No es la config final de prod (faltan /api, secrets, crons, allowedHosts reales).
+// [SPIKE cloudflare-migration] Config del spike para validar en workerd (wrangler dev).
+// En prod real: token de Sanity como secret (no var), APP_ENV=production + dataset=production
+// por entorno con [env.<name>.vars], y allowedHosts vía getAllowedHosts().
 {
 	"name": "cuentoneta-cf-spike",
 	"main": "dist/cuentoneta/server/server.mjs",
 	"compatibility_date": "2026-06-01",
 	"compatibility_flags": ["nodejs_compat"],
 	"vars": {
+		// Dataset público (sin token) para el spike. APP_ENV reemplaza a VERCEL_TARGET_ENV.
 		"SANITY_STUDIO_PROJECT_ID": "s4dbqkc5",
 		"SANITY_STUDIO_DATASET": "development",
+		"APP_ENV": "development",
+	},
+	// Cron Triggers (reemplazan los `crons` de vercel.json). El handler `scheduled` los despacha.
+	"triggers": {
+		"crons": ["15 3 * * *", "30 3 * * 0"],
 	},
 	"alias": { "xhr2": "./xhr2-stub.js" },
 	"assets": {

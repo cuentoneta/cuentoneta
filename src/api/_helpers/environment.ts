@@ -24,7 +24,8 @@ export interface EnvironmentConfig {
 }
 
 export const environment: EnvironmentConfig = {
-	production: process.env['VERCEL_TARGET_ENV'] === 'production',
+	// `APP_ENV` es el flag de entorno propio de la app (host-agnóstico), reemplaza a `VERCEL_TARGET_ENV`.
+	production: process.env['APP_ENV'] === 'production',
 	// TODO: Mover obtención de la URL base a las variables de entorno
 	basePath: 'https://www.cuentoneta.ar',
 	sanity: {
@@ -40,13 +41,13 @@ export const environment: EnvironmentConfig = {
 
 /**
  * A partir de la versión 21.1 de Angular, para SSR, debe proveerse una whitelist
- * de hostnames para dar por válidas las requests que debe responder el servidor
- * de NodeJS
+ * de hostnames para dar por válidas las requests que atiende el servidor (Node o Workers).
  */
 export function getAllowedHosts(): string[] {
-	const hosts = ['localhost', 'cuentoneta.ar', '*.cuentoneta.ar'];
+	const hosts = ['localhost', '127.0.0.1', 'cuentoneta.ar', '*.cuentoneta.ar'];
 	if (!environment.production) {
-		hosts.push('*.vercel.app');
+		// Dominios de preview: Cloudflare Workers (`*.workers.dev`).
+		hosts.push('*.workers.dev');
 	}
 	return hosts;
 }
