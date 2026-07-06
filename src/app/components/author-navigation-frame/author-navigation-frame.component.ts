@@ -10,7 +10,7 @@ import { StoryApi } from '../../providers/story-api.interface';
 // Componentes
 import { NavigationFrameComponent } from '@models/navigation-frame.component';
 import { NavigableStoryTeaserComponent } from '../navigable-story-teaser/navigable-story-teaser.component';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { progressiveRxResource } from '@utils/ssr-resource';
 
 @Component({
 	selector: 'cuentoneta-author-navigation-frame',
@@ -35,8 +35,8 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 	private storyService = inject(StoryApi);
 
 	// Recursos
-	private readonly storiesResource = rxResource({
-		params: () => this.navigationSlug(),
+	private readonly storiesResource = progressiveRxResource({
+		params: () => this.navigationSlug() || undefined,
 		stream: ({ params: slug }) => this.storyService.getNavigationTeasersByAuthorSlug(slug),
 		defaultValue: [],
 	});
@@ -48,10 +48,14 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 	constructor() {
 		super();
 		effect(() => {
+			const navigationSlug = this.navigationSlug();
+			if (!navigationSlug) {
+				return;
+			}
 			this.config.set({
 				headerTitle: 'Más del autor',
 				footerTitle: 'Ver más...',
-				navigationRoute: this.router.createUrlTree([this.appRoutes.Author, this.navigationSlug()]),
+				navigationRoute: this.router.createUrlTree([this.appRoutes.Author, navigationSlug]),
 				showFooter: true,
 			});
 		});

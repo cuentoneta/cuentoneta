@@ -262,9 +262,10 @@ export const neronRawStory: NonNullable<StoryBySlugQueryResult> = {
 	publishedAt: '1988-01-01T00:00:00Z',
 	updatedAt: '1988-01-01T00:00:00Z',
 	approximateReadingTime: 7,
-	// REASON: GROQ devuelve null para stories sin imagen; el typegen lo declara non-nullable.
-	// TODO(#1681): reemplazar el cast por una ref de imagen real de Sanity; el imagery de los raws se resuelve de una vez en el follow-up.
-	coverImage: null as unknown as NonNullable<StoryBySlugQueryResult>['coverImage'],
+	coverImage: {
+		_type: 'image',
+		asset: { _type: 'reference', _ref: 'image-9642ca580d43168d6965f428e65df5ca6ec34cdc-236x328-png' },
+	},
 	mediaSources: [],
 	resources: [],
 	tags: [],

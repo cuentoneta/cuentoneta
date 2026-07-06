@@ -78,3 +78,6 @@ Thumbs.db
 # Grabaciones sueltas de referencia en scripts/
 scripts/*.m4a
 scripts/*.mp4
+
+# Info incremental de TypeScript (regenerable por tsc -b)
+*.tsbuildinfo

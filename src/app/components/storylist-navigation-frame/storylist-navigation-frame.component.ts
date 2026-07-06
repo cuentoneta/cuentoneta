@@ -12,7 +12,7 @@ import { NavigationFrameComponent } from '@models/navigation-frame.component';
 import { StorylistApi } from '../../providers/storylist-api.interface';
 
 // Componentes
-import { rxResource } from '@angular/core/rxjs-interop';
+import { progressiveRxResource } from '@utils/ssr-resource';
 import { NavigableStorylistStoryTeaserComponent } from '@components/navigable-storylist-story-teaser/navigable-storylist-story-teaser.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
@@ -54,8 +54,8 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	private storylistService = inject(StorylistApi);
 
 	// Recursos
-	private readonly storylistResource = rxResource({
-		params: () => this.navigationSlug(),
+	private readonly storylistResource = progressiveRxResource({
+		params: () => this.navigationSlug() || undefined,
 		stream: ({ params }) => this.storylistService.getStorylistNavigationTeasers(params),
 		defaultValue: undefined,
 	});

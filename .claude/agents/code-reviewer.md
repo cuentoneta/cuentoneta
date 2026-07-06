@@ -53,7 +53,7 @@ Cargá todas estas juntas:
 3. **Verificar cobertura de tests** — Confirmá que hay tests para el código nuevo (Vitest + Angular Testing Library + `@test-utils`).
 4. **Correr los gates de CI** — Ejecutá los gates vía `pnpm` para asegurar que nada se rompió. Debés correr esta verificación vos mismo en **cada** invocación; nunca confíes en ni reportes un estado de CI que no observaste directamente.
 
-Los gates que deben quedar verdes en cada PR son: `pnpm lint`, `pnpm test`, `pnpm stylelint`, `pnpm build` y `pnpm storybook:build`. Corré cada uno y reportá el resultado real que observaste.
+Los gates que deben quedar verdes en cada PR son: `pnpm lint`, `pnpm test`, `pnpm stylelint`, `pnpm typecheck`, `pnpm build` y `pnpm storybook:build`. Corré cada uno y reportá el resultado real que observaste.
 
 ## Falsos positivos conocidos — NO marcar
 
@@ -217,6 +217,7 @@ Corré los gates vía `pnpm` vos mismo en cada invocación y reportá el resulta
 | ---------------------- | --------- |
 | `pnpm lint`            | PASS/FAIL |
 | `pnpm stylelint`       | PASS/FAIL |
+| `pnpm typecheck`       | PASS/FAIL |
 | `pnpm test`            | PASS/FAIL |
 | `pnpm build`           | PASS/FAIL |
 | `pnpm storybook:build` | PASS/FAIL |

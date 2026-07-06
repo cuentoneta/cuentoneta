@@ -28,11 +28,11 @@ Dónde viven los servicios de estado:
 **Prohibido** `firstValueFrom`, `lastValueFrom`, `toPromise` y `async/await` sobre observables en el frontend (restricción dura de `CLAUDE.md`). Se compone con **operadores RxJS** y se cruza a signals con `rxResource` / `toSignal`.
 
 ```typescript
-// ✅ Correcto — el HTTP queda como Observable y se consume vía rxResource (story.component.ts)
-readonly storyResource = rxResource({
+// ✅ Correcto — el HTTP queda como Observable y se consume vía un rxResource (story.component.ts).
+// En componentes de página se usa el wrapper `ssrBlockingRxResource` (ver §7), no `rxResource` crudo.
+readonly storyResource = ssrBlockingRxResource({
 	params: this.slug,
-	stream: ({ params }) =>
-		this.storyService.getBySlug(params).pipe(tap((story) => this.updateMetaTags(story))),
+	stream: ({ params }) => this.storyService.getBySlug(params),
 	defaultValue: undefined,
 });
 
@@ -137,6 +137,30 @@ Preferir un estado de error **por operación** a un único `string | null` compa
 
 > El detalle de **manejo de errores** (preservar la causa, loguear con contexto) está en `CLAUDE.md` → _Manejo de errores_ y en [`maintainability.md`](maintainability.md).
 
+### 7. Recursos de página: bloquear el SSR con `ssrBlockingRxResource`
+
+En **componentes de página** (`src/app/pages/**`), los recursos que alimentan contenido indexable o meta tags por página se declaran con **`ssrBlockingRxResource`** (de [`@utils/ssr-resource`](../../src/app/utils/ssr-resource.ts)), no con `rxResource` crudo. El helper pipea el stream por `pendingUntilEvent`: registra una `PendingTask` que hace esperar la serialización del SSR (`ApplicationRef.whenStable()`) hasta que el fetch emite, completa o falla. Sin él, el server emite el skeleton con meta genérico y Google indexa una página vacía (#1704). En el browser no afecta el render, solo retrasa `isStable`, así que la carga progresiva in-app se conserva.
+
+Para **datos secundarios o no indexables** que deben seguir cargando progresivamente (p. ej. el listado de cuentos de un autor, o los frames de navegación), usar **`progressiveRxResource`** — un alias explícito de `rxResource` que documenta que el no-bloqueo es una decisión, no un olvido.
+
+```typescript
+// ✅ Página: el perfil bloquea el SSR; el listado secundario carga progresivamente (author.component.ts)
+readonly authorResource = ssrBlockingRxResource({
+	params: this.slug,
+	stream: ({ params }) => this.authorService.getBySlug(params),
+	defaultValue: undefined,
+});
+readonly storiesResource = progressiveRxResource({
+	params: this.slug,
+	stream: ({ params }) => this.stories$(params),
+	defaultValue: [],
+});
+```
+
+Cuándo **bloquear**: rutas cuyo HTML server-rendered debe traer contenido/meta reales — `RenderMode.Server` indexables y `Prerender` con contenido (el prerender de build gana contenido real en vez de skeleton). Cuándo **no**: rutas `noindex` servidas por request con meta estáticos (bloquear solo agrega latencia sin ganar indexación → `progressiveRxResource`), y datos secundarios.
+
+**Enforced por lint:** en `src/app/pages/**` está prohibido `rxResource`/`httpResource` crudo — el gate `lint` obliga a elegir `ssrBlockingRxResource` o `progressiveRxResource` (`no-restricted-syntax`, bloque `ssr-fetch-must-decide-blocking` de `eslint.config.mjs`; #1705).
+
 ---
 
 ## Checklist rápido
@@ -148,6 +172,7 @@ Preferir un estado de error **por operación** a un único `string | null` compa
 - [ ] ¿El aplanado por defecto es `switchMap` (y cualquier otro está justificado)?
 - [ ] ¿El debounce/throttle/coordinación está en el servicio, no en el componente?
 - [ ] ¿Los errores están tipados por operación, no en un `string | null` global?
+- [ ] ¿Los recursos de página que alimentan contenido/meta indexable usan `ssrBlockingRxResource`, y los secundarios/`noindex` usan `progressiveRxResource` (nunca `rxResource` crudo en `pages/**`)?
 
 ---
 

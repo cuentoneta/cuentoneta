@@ -246,9 +246,10 @@ export const elOdioRawStory: NonNullable<StoryBySlugQueryResult> = {
 	publishedAt: '1971-01-01T00:00:00Z',
 	updatedAt: '1971-01-01T00:00:00Z',
 	approximateReadingTime: 6,
-	// REASON: GROQ devuelve null para stories sin imagen; el typegen lo declara non-nullable.
-	// TODO(#1681): reemplazar el cast por una ref de imagen real de Sanity; el imagery de los raws se resuelve de una vez en el follow-up.
-	coverImage: null as unknown as NonNullable<StoryBySlugQueryResult>['coverImage'],
+	coverImage: {
+		_type: 'image',
+		asset: { _type: 'reference', _ref: 'image-83588a6210ea3de0cee7f493f3d41140427958bf-236x328-png' },
+	},
 	mediaSources: [],
 	resources: [],
 	tags: [],

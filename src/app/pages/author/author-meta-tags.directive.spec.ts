@@ -5,6 +5,8 @@ import { Title } from '@angular/platform-browser';
 
 import { authorMock } from '@mocks/author.mock';
 import { type AuthorProfile } from '@models/author.model';
+import { AppRoutes } from '../../app.routes';
+import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { AuthorMetaTagsDirective } from './author-meta-tags.directive';
 import { AUTHOR_HOST } from './author-host';
@@ -45,6 +47,16 @@ describe('AuthorMetaTagsDirective', () => {
 		TestBed.tick();
 
 		expect(titleSpy).toHaveBeenCalledWith(expect.stringContaining(authorMock.name));
+	});
+
+	it('should set the canonical URL from the author slug via buildCanonicalUrl', () => {
+		authorSignal.set(authorMock);
+		const canonicalSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setCanonicalUrl');
+
+		instantiate();
+		TestBed.tick();
+
+		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl(`${AppRoutes.Author}/${authorMock.slug}`));
 	});
 
 	it('should re-apply the meta tags when the author signal changes', () => {

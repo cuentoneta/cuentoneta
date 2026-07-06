@@ -7,7 +7,7 @@ import { client } from '../src/api/_helpers/sanity-connector';
 const migrateDocType = async (docType: 'story' | 'storylist') => {
 	console.log(`\n--- Fetching all ${docType} documents with language field ---`);
 
-	const documents = await client.fetch(
+	const documents = await client.fetch<Array<{ _id: string; title: string }>>(
 		`*[_type == '${docType}' && defined(language) && !(_id in path('drafts.**'))] { _id, title }`,
 	);
 

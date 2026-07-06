@@ -1,4 +1,3 @@
-import type { SanityImageSource } from '@sanity/image-url';
 import { clearAllMocks, type Mock } from '@test-utils';
 import { client } from '../../_helpers/sanity-connector';
 import { geometriasDelDesveloRawCollection } from '../../_mocks/onoff/geometrias-del-desvelo.collection.raw.mock';
@@ -16,9 +15,13 @@ vi.mock('@sanity/image-url', () => ({
 }));
 /* eslint-enable no-restricted-syntax */
 
-// Portadas explícitas para los casos de imagery: el corpus crudo tiene featuredImage/coverImage en null
-// hasta el follow-up #1681, así que los refs de imagen se inyectan por caso sobre las collections crudas.
-const img = (ref: string): SanityImageSource => ({ _type: 'image', asset: { _type: 'reference', _ref: ref } });
+// Fragmentos de los `_ref` reales del corpus: la collection (featuredImage) y las 3 primeras
+// stories de `onoffRawNavTeasersMock` (el-palacio, geometria, los-peldanos), que alimentan `storyCoverImages`.
+const geometriasFeaturedRef = '6efd3e53eec8dfab23e1c0109027be9f58a01f8c';
+const inventarioFeaturedRef = 'b02ff4ca997e7b8d5244cae72b704f59a4855fb1';
+const elPalacioCoverRef = '3f8774ea01abc54483829d982035a810667240e1';
+const geometriaCoverRef = '9e1eab984fbe94e19101c7aa4fc2e99a88f71736';
+const losPeldanosCoverRef = '27fb05f42b38f0ba9ba21aeb566e25abe670b213';
 
 describe('storylist.repository', () => {
 	beforeEach(() => {
@@ -27,32 +30,26 @@ describe('storylist.repository', () => {
 
 	describe('fetchStorylistBySlug', () => {
 		it('maps a present featuredImage to representative imagery', async () => {
-			(client.fetch as Mock).mockResolvedValue({
-				...geometriasDelDesveloRawCollection,
-				featuredImage: img('geometrias-del-desvelo'),
-			});
+			(client.fetch as Mock).mockResolvedValue(geometriasDelDesveloRawCollection);
 
 			const result = await fetchStorylistBySlug('geometrias-del-desvelo');
 
 			expect(result.imagery.kind).toBe('representative');
 			if (result.imagery.kind === 'representative') {
-				expect(result.imagery.image).toContain('geometrias-del-desvelo');
+				expect(result.imagery.image).toContain(geometriasFeaturedRef);
 			}
 		});
 
 		it('falls back to sample imagery (story covers) when featuredImage is null', async () => {
-			(client.fetch as Mock).mockResolvedValue({
-				...geometriasDelDesveloRawCollection,
-				storyCoverImages: [img('c1'), img('c2'), img('c3')],
-			});
+			(client.fetch as Mock).mockResolvedValue({ ...geometriasDelDesveloRawCollection, featuredImage: null });
 
 			const result = await fetchStorylistBySlug('geometrias-del-desvelo');
 
 			expect(result.imagery.kind).toBe('sample');
 			if (result.imagery.kind === 'sample') {
-				expect(result.imagery.images[0]).toContain('c1');
-				expect(result.imagery.images[1]).toContain('c2');
-				expect(result.imagery.images[2]).toContain('c3');
+				expect(result.imagery.images[0]).toContain(elPalacioCoverRef);
+				expect(result.imagery.images[1]).toContain(geometriaCoverRef);
+				expect(result.imagery.images[2]).toContain(losPeldanosCoverRef);
 			}
 		});
 	});
@@ -61,32 +58,26 @@ describe('storylist.repository', () => {
 		const params = { slug: 'inventario-de-las-pasiones', start: 0, end: 10 };
 
 		it('maps a present featuredImage to representative imagery', async () => {
-			(client.fetch as Mock).mockResolvedValue({
-				...elInventarioDeLasPasionesRawNavCollection,
-				featuredImage: img('el-inventario-de-las-pasiones'),
-			});
+			(client.fetch as Mock).mockResolvedValue(elInventarioDeLasPasionesRawNavCollection);
 
 			const result = await fetchStorylistStoriesNavigationTeaserByStorylistSlug(params);
 
 			expect(result.imagery.kind).toBe('representative');
 			if (result.imagery.kind === 'representative') {
-				expect(result.imagery.image).toContain('el-inventario-de-las-pasiones');
+				expect(result.imagery.image).toContain(inventarioFeaturedRef);
 			}
 		});
 
 		it('falls back to sample imagery (story covers) when featuredImage is null', async () => {
-			(client.fetch as Mock).mockResolvedValue({
-				...elInventarioDeLasPasionesRawNavCollection,
-				storyCoverImages: [img('c1'), img('c2'), img('c3')],
-			});
+			(client.fetch as Mock).mockResolvedValue({ ...elInventarioDeLasPasionesRawNavCollection, featuredImage: null });
 
 			const result = await fetchStorylistStoriesNavigationTeaserByStorylistSlug(params);
 
 			expect(result.imagery.kind).toBe('sample');
 			if (result.imagery.kind === 'sample') {
-				expect(result.imagery.images[0]).toContain('c1');
-				expect(result.imagery.images[1]).toContain('c2');
-				expect(result.imagery.images[2]).toContain('c3');
+				expect(result.imagery.images[0]).toContain(elPalacioCoverRef);
+				expect(result.imagery.images[1]).toContain(geometriaCoverRef);
+				expect(result.imagery.images[2]).toContain(losPeldanosCoverRef);
 			}
 		});
 	});

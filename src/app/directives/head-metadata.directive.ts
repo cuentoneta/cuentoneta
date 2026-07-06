@@ -1,6 +1,7 @@
 import { Directive, effect, inject, PLATFORM_ID, DOCUMENT } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../environments/environment';
 
 @Directive({
 	selector: '[cuentonetaHeadMetadata]',
@@ -124,6 +125,11 @@ export class HeadMetadataDirective {
 		this.setKeywords(['cuentos', 'literatura', 'poemas', 'podcast', 'narraciones']);
 	}
 
+	// El fallback de og:url es el home. A diferencia del <link rel="canonical"> —que se elimina al
+	// limpiar— og:url se resetea al home para que una página sin canonical propio no arrastre el og:url
+	// de la anterior en la navegación SPA (mismo patrón que og:image con su logo por defecto).
+	private readonly defaultOgUrl = environment.website;
+
 	public setCanonicalUrl(url: string) {
 		const head = this.document.getElementsByTagName('head')[0];
 		let element: HTMLLinkElement | null = this.document.querySelector(`link[rel='canonical']`) || null;
@@ -133,6 +139,7 @@ export class HeadMetadataDirective {
 		}
 		element.setAttribute('rel', 'canonical');
 		element.setAttribute('href', url);
+		this.metaTagService.updateTag({ property: 'og:url', content: url });
 	}
 
 	public removeCanonicalUrl() {
@@ -140,6 +147,7 @@ export class HeadMetadataDirective {
 		if (element) {
 			element.remove();
 		}
+		this.metaTagService.updateTag({ property: 'og:url', content: this.defaultOgUrl });
 	}
 
 	// Para páginas indexables emitimos, además de index/follow, las directivas de vista previa

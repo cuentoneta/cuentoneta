@@ -186,6 +186,41 @@ jobs:
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
+  typecheck:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Select pnpm as package manager
+        uses: pnpm/action-setup@v6.0.9
+        with:
+          version: 10.12.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v6.4.0
+        with:
+          node-version: 22.22.3
+
+      - name: Download workspace artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: workspace
+
+      - name: Unpack workspace
+        run: tar -xf workspace.tar
+
+      - name: Cache de Nx local (fallback sin Nx Cloud)
+        uses: actions/cache@v6
+        with:
+          path: .nx/cache
+          key: nx-cache-typecheck-${{ github.sha }}
+          restore-keys: |
+            nx-cache-typecheck-
+
+      - name: Run typecheck
+        run: bash .github/scripts/nx-run.sh nx typecheck
+        env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+
   e2e:
     needs: setup
     runs-on: ubuntu-latest

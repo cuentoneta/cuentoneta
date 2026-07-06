@@ -1,4 +1,11 @@
-import { mapStoryNavigationTeaser, mapStoryNavigationTeaserWithAuthor, mapStoryTeaser, mapTags } from './functions';
+import type { SanityImageSource } from '@sanity/image-url';
+import {
+	mapStoryNavigationTeaser,
+	mapStoryNavigationTeaserWithAuthor,
+	mapStoryTeaser,
+	mapTags,
+	urlFor,
+} from './functions';
 import { elOdioRawTeaser, onoffRawNavTeasersMock } from '../_mocks/onoff-raw-stories.mock';
 
 describe('mapTags (ACL)', () => {
@@ -97,5 +104,15 @@ describe('mapStoryNavigationTeaserWithAuthor (ACL)', () => {
 		const result = mapStoryNavigationTeaserWithAuthor([onoffRawNavTeasersMock[0]]);
 
 		expect(result[0].tags).toEqual([]);
+	});
+});
+
+describe('urlFor (ACL)', () => {
+	it('returns an empty string when the source is null or undefined', () => {
+		// REASON: urlFor es una función de propósito general invocada desde varios mappers; su tipo
+		// SanityImageSource no incluye null/undefined, pero el guard defensivo es real (llamadores
+		// externos al tipo pueden pasar un valor vacío) y se ejercita acotado, con el único cast del corpus.
+		expect(urlFor(null as unknown as SanityImageSource)).toBe('');
+		expect(urlFor(undefined as unknown as SanityImageSource)).toBe('');
 	});
 });

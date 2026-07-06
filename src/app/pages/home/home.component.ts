@@ -1,9 +1,11 @@
 // Core
 import { Component, computed, inject } from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
 
 // Services
 import { ContentApi } from '../../providers/content-api.interface';
+
+// Utils
+import { ssrBlockingRxResource } from '@utils/ssr-resource';
 
 // SEO
 import { HomeMetaTagsDirective } from './home-meta-tags.directive';
@@ -33,7 +35,7 @@ export default class HomeComponent {
 	private contentService = inject(ContentApi);
 
 	// Recursos
-	private readonly landingPageResource = rxResource({
+	private readonly landingPageResource = ssrBlockingRxResource({
 		stream: () => this.contentService.getLandingPageContent(),
 		defaultValue: undefined,
 	});

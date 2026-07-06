@@ -2,11 +2,11 @@ import { Storylist, StorylistStoriesNavigationTeasers, StorylistTeaser } from '@
 import { tagMock } from './tag.mocks';
 import { storyNavigationTeaserWithAuthor } from './story.mock';
 
-// Colección — los espacios imposibles de Onoff (palacios, escaleras, peldaños).
+// Colección — la obsesión de Onoff por el orden y el tiempo (Geometría, el desvelo). Proyección completa (Storylist).
 export const storylistMock: Storylist = {
-	_id: 'onoff-arquitecturas-laberinto',
-	title: 'Arquitecturas del laberinto',
-	slug: 'arquitecturas-del-laberinto',
+	_id: 'onoff-geometrias-del-desvelo',
+	title: 'Geometrías del desvelo',
+	slug: 'geometrias-del-desvelo',
 	count: 1,
 	media: [],
 	tabs: [],
@@ -14,22 +14,21 @@ export const storylistMock: Storylist = {
 		{
 			_type: 'block',
 			style: 'normal',
-			_key: 'arquitecturas-desc',
+			_key: 'geometrias-desc',
 			markDefs: [],
 			children: [
 				{
 					_type: 'span',
 					marks: [],
-					text: 'Los relatos en los que François Onoff convierte la arquitectura en metafísica: palacios de nueve fronteras, escaleras que no terminan, peldaños que se multiplican al ser contados. Espacios que se recorren como demostraciones y se habitan como preguntas.',
-					_key: 'arquitecturas-span',
+					text: 'Onoff lleva la precisión del compás al territorio de lo humano: insomnios que se vuelven una geometría del tiempo, vidas reducidas a coordenadas, figuras que prometen un orden perfecto y terminan revelando, en algún vértice, su grieta.',
+					_key: 'geometrias-span',
 				},
 			],
 		},
 	],
-	// TODO: #1681 - por una ref de imagen real de Sanity en base a las imágenes mock provistas
 	imagery: {
 		kind: 'representative',
-		image: 'https://cdn.sanity.io/images/s4dbqkc5/production/edd62a3131bd1f46e796e473d0b2b12d1c63c229-1024x1536.png',
+		image: 'assets/img/mocks/collections/geometrias-del-desvelo.png',
 	},
 	tags: [tagMock],
 	config: {

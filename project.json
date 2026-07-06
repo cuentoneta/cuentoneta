@@ -120,6 +120,12 @@
 				"lintFilePatterns": ["**/*.css"]
 			}
 		},
+		"typecheck": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "tsc -p tsconfig.typecheck.json --noEmit"
+			}
+		},
 		"test-storybook": {
 			"executor": "nx:run-commands",
 			"options": {

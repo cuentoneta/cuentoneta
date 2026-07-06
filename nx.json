@@ -41,6 +41,10 @@
 		"stylelint": {
 			"inputs": ["default", "{workspaceRoot}/.stylelintrc(.(json|yml|yaml|js))?"],
 			"cache": true
+		},
+		"typecheck": {
+			"inputs": ["default", "^default"],
+			"cache": true
 		}
 	},
 	"namedInputs": {
