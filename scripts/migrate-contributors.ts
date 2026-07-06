@@ -12,7 +12,7 @@
  * Uso: npx ts-node scripts/migrate-contributors.ts
  */
 
-import { client } from '../src/api/_helpers/sanity-connector';
+import { getClient } from '../src/api/_helpers/sanity-connector';
 import slugify from 'slugify';
 
 // Interfaz para los datos de colaboradores
@@ -278,7 +278,7 @@ const generateSlug = (name: string): string => {
  * Obtiene los documentos de colaboradores existentes en Sanity
  */
 const fetchExistingContributors = async (): Promise<any[]> => {
-	return client.fetch(`*[_type == 'contributor'] { _id, slug }`);
+	return getClient().fetch(`*[_type == 'contributor'] { _id, slug }`);
 };
 
 /**
@@ -317,7 +317,7 @@ const buildContributorDocuments = (contributorsList: ContributorData[], existing
  * Crea una transacción para crear múltiples documentos
  */
 const createTransaction = (documentItems: any[]) => {
-	return documentItems.reduce((tx: any, item: any) => tx.create(item.document), client.transaction());
+	return documentItems.reduce((tx: any, item: any) => tx.create(item.document), getClient().transaction());
 };
 
 /**

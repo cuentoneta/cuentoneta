@@ -7,7 +7,7 @@
 
 /* eslint-disable no-console */
 // Importar cliente de Sanity
-import { client } from '../src/api/_helpers/sanity-connector';
+import { getClient } from '../src/api/_helpers/sanity-connector';
 import { Transaction } from '@sanity/client';
 
 const query = `
@@ -17,7 +17,7 @@ const query = `
   ._id
 `;
 
-client
+getClient()
 	.fetch(query)
 	.then((ids) => {
 		if (!ids.length) {
@@ -27,7 +27,7 @@ client
 
 		console.log(`Deleting ${ids.length} assets`);
 		return ids
-			.reduce((trx: Transaction, id: string) => trx.delete(id), client.transaction())
+			.reduce((trx: Transaction, id: string) => trx.delete(id), getClient().transaction())
 			.commit({ visibility: 'async' })
 			.then(() => console.log('Done!'));
 	})

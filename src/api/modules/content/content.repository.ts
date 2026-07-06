@@ -1,5 +1,5 @@
 // Sanity
-import { client } from '../../_helpers/sanity-connector';
+import { getClient } from '../../_helpers/sanity-connector';
 
 // Queries
 import {
@@ -17,19 +17,19 @@ import { mapLandingPageContent, mapStoryNavigationTeaserWithAuthor } from '../..
 import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
 
 export async function fetchLandingPageContent(slug: string): Promise<LandingPageContentQueryResult> {
-	return client.fetch(landingPageContentQuery, { slug });
+	return getClient().fetch(landingPageContentQuery, { slug });
 }
 
 export async function fetchLatestLandingPageReferences(): Promise<LatestLandingPageReferencesQueryResult> {
-	return client.fetch(latestLandingPageReferencesQuery);
+	return getClient().fetch(latestLandingPageReferencesQuery);
 }
 
 export async function fetchLandingPagesList(slugs: string[]): Promise<LandingPageListQueryResult> {
-	return client.fetch(landingPageListQuery, { slugs });
+	return getClient().fetch(landingPageListQuery, { slugs });
 }
 
 export async function fetchRotatingContent(): Promise<RotatingContent> {
-	const result = await client.fetch(rotatingContentQuery);
+	const result = await getClient().fetch(rotatingContentQuery);
 	if (!result) {
 		throw new Error('Rotating content not found');
 	}
@@ -47,7 +47,7 @@ export async function createLandingPages(
 		latestReads: Array<{ _key: string; _type: string; _ref: string }>;
 	}>,
 ) {
-	return Promise.all(landingPageObjects.map((object) => client.create(object)));
+	return Promise.all(landingPageObjects.map((object) => getClient().create(object)));
 }
 
 // TODO: Rever estructura luego de migrar funciones de mapeo
@@ -75,5 +75,7 @@ export async function updateRotatingContentMostRead(
 		throw new Error('Rotating content not found');
 	}
 
-	await client.patch(rotatingContent._id, { set: { mostRead: stories } }).commit();
+	await getClient()
+		.patch(rotatingContent._id, { set: { mostRead: stories } })
+		.commit();
 }

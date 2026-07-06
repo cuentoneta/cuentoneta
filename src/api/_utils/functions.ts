@@ -1,5 +1,5 @@
 // Conector a Sanity
-import { client } from '../_helpers/sanity-connector';
+import { getClient } from '../_helpers/sanity-connector';
 
 // Funciones
 import { mapMediaSources, mapMediaSourcesTeasers } from './media-sources.functions';
@@ -119,7 +119,7 @@ export function urlFor(source: SanityImageSource): string {
 		return '';
 	}
 	try {
-		return createImageUrlBuilder(client).image(source).url();
+		return createImageUrlBuilder(getClient()).image(source).url();
 	} catch (error) {
 		console.error('urlFor: Error al construir URL de imagen', { error, source: JSON.stringify(source) });
 		return '';
@@ -132,7 +132,7 @@ export function urlForWithAutoFormat(source: SanityImageSource): string {
 		return '';
 	}
 	try {
-		return createImageUrlBuilder(client).image(source).auto('format').url();
+		return createImageUrlBuilder(getClient()).image(source).auto('format').url();
 	} catch (error) {
 		console.error('urlForWithAutoFormat: Error al construir URL de imagen', {
 			error,

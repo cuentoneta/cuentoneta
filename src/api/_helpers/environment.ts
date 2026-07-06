@@ -23,30 +23,48 @@ export interface EnvironmentConfig {
 	};
 }
 
+// Getters: leen `process.env` en el momento del acceso, no al evaluar el módulo. Motivo: en
+// Cloudflare Workers las env vars llegan por request (el worker las copia a process.env antes de
+// atender); en Node/Vercel ya están al importar, así que el comportamiento es idéntico.
 export const environment: EnvironmentConfig = {
-	production: process.env['VERCEL_TARGET_ENV'] === 'production',
-	// TODO: Mover obtención de la URL base a las variables de entorno
-	basePath: 'https://www.cuentoneta.ar',
+	// `APP_ENV` es el flag de entorno propio de la app (host-agnóstico), reemplaza a `VERCEL_TARGET_ENV`.
+	get production() {
+		return process.env['APP_ENV'] === 'production';
+	},
+	// URL base para canónicas, host-agnóstica vía `SITE_URL` (sin barra final para componer).
+	get basePath() {
+		return (process.env['SITE_URL'] ?? 'https://www.cuentoneta.ar').replace(/\/$/, '');
+	},
 	sanity: {
-		projectId: process.env['SANITY_STUDIO_PROJECT_ID'] as string,
-		dataset: process.env['SANITY_STUDIO_DATASET'] as string,
-		token: process.env['SANITY_STUDIO_TOKEN'] as string,
+		get projectId() {
+			return process.env['SANITY_STUDIO_PROJECT_ID'] as string;
+		},
+		get dataset() {
+			return process.env['SANITY_STUDIO_DATASET'] as string;
+		},
+		get token() {
+			return process.env['SANITY_STUDIO_TOKEN'] as string;
+		},
 	},
 	clarity: {
-		projectId: process.env['CLARITY_PROJECT_ID'] as string,
-		token: process.env['CLARITY_TOKEN'] as string,
+		get projectId() {
+			return process.env['CLARITY_PROJECT_ID'] as string;
+		},
+		get token() {
+			return process.env['CLARITY_TOKEN'] as string;
+		},
 	},
 };
 
 /**
  * A partir de la versión 21.1 de Angular, para SSR, debe proveerse una whitelist
- * de hostnames para dar por válidas las requests que debe responder el servidor
- * de NodeJS
+ * de hostnames para dar por válidas las requests que atiende el servidor (Node o Workers).
  */
 export function getAllowedHosts(): string[] {
-	const hosts = ['localhost', 'cuentoneta.ar', '*.cuentoneta.ar'];
+	const hosts = ['localhost', '127.0.0.1', 'cuentoneta.ar', '*.cuentoneta.ar'];
 	if (!environment.production) {
-		hosts.push('*.vercel.app');
+		// Dominios de preview: Cloudflare Workers (`*.workers.dev`).
+		hosts.push('*.workers.dev');
 	}
 	return hosts;
 }

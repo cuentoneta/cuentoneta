@@ -2,7 +2,7 @@
  * Script to add config.showAuthors field to all existing storylist documents.
  * Sets the default value to true for all existing storylists.
  */
-import { client } from '../src/api/_helpers/sanity-connector';
+import { getClient } from '../src/api/_helpers/sanity-connector';
 
 const runMigration = async () => {
 	console.log('='.repeat(60));
@@ -11,7 +11,7 @@ const runMigration = async () => {
 
 	console.log('\n--- Fetching all storylists without config field ---');
 
-	const documents = await client.fetch<Array<{ _id: string; title: string; slug: { current: string } }>>(
+	const documents = await getClient().fetch<Array<{ _id: string; title: string; slug: { current: string } }>>(
 		`*[_type == 'storylist' && !defined(config) && !(_id in path('drafts.**'))] { _id, title, slug }`,
 	);
 
@@ -37,7 +37,7 @@ const runMigration = async () => {
 				},
 			}),
 		);
-	}, client.transaction());
+	}, getClient().transaction());
 
 	// Commit all patches at once
 	console.log('Committing changes...');

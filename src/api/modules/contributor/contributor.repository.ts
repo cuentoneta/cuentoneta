@@ -1,5 +1,5 @@
 // Sanity
-import { client } from '../../_helpers/sanity-connector';
+import { getClient } from '../../_helpers/sanity-connector';
 import { allContributorsQuery } from '../../_queries/contributor.query';
 
 // Interfaces
@@ -9,7 +9,7 @@ import { Contributor, CONTRIBUTOR_AREA_LABELS } from '@models/contributor.model'
  * Obtiene todos los colaboradores ordenados alfabéticamente por nombre
  */
 export async function fetchAllContributors(): Promise<Contributor[]> {
-	const result = await client.fetch(allContributorsQuery);
+	const result = await getClient().fetch(allContributorsQuery);
 
 	if (!result) {
 		throw new Error('Could not fetch the list of contributors.');

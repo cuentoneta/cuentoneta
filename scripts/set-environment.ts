@@ -17,7 +17,8 @@ import { TEnvironmentType } from './vercel-environments.model';
 import { join } from 'node:path';
 
 // Constantes para generar el archivo de environment
-const environment: TEnvironmentType = (process.env['VERCEL_TARGET_ENV'] as TEnvironmentType) ?? 'development';
+// `APP_ENV` es el flag de entorno propio de la app (host-agnóstico), reemplaza a `VERCEL_TARGET_ENV`.
+const environment: TEnvironmentType = (process.env['APP_ENV'] as TEnvironmentType) ?? 'development';
 const dirPath = `src/app/environments`;
 const targetPath = `${dirPath}/environment.ts`;
 
@@ -62,34 +63,18 @@ if (environment === 'development') {
 	createSanityStudioEnvFile();
 }
 
-// Genera una ruta absoluta a la API en función del ambiente
-const generateApiUrl = (environment: TEnvironmentType): string => {
-	let url = '/';
+// La API se consume con URL relativa (`/api/...`): el SSR la resuelve contra el origen del
+// request (self-fetch same-origin), tanto en el server Node como en Cloudflare Workers. Evita
+// depender de una URL pública por-plataforma (VERCEL_PROJECT_PRODUCTION_URL, etc.).
+const apiUrl = '/';
 
-	// Asigna URL en base a la URL de la rama de Vercel para ambiente staging
-	if (environment === 'staging') {
-		url = `https://staging.cuentoneta.ar/`;
-	}
-	// Lectura de la variable de entorno de Vercel para deployments de preview fuera de staging
-	else if (environment === 'preview') {
-		url = `https://${process.env['VERCEL_BRANCH_URL']}/`;
-	}
-	// Asigna URL en base a variables de entorno para producción y staging (preview develop)
-	else if (environment === 'production') {
-		url = `https://${process.env['VERCEL_PROJECT_PRODUCTION_URL']}/` as string;
-	}
-
-	return url;
-};
-
-const apiUrl = generateApiUrl(environment);
-// Accede a las variables de entorno y genera un string
-// correspondiente al objeto environment que utilizará Angular
+// URL absoluta del sitio para canónicas/OG. Host-agnóstica vía `SITE_URL`; en dev cae a '/'.
+const website = environment === 'development' ? '/' : (process.env['SITE_URL'] ?? 'https://www.cuentoneta.ar/');
 
 const exportedEnvironment = {
 	environment: `${environment ?? 'development'}`,
-	website: `${apiUrl ?? 'https://cuentoneta.ar/'}`,
-	apiUrl: `${apiUrl}`,
+	website,
+	apiUrl,
 	clarityProjectId: '',
 };
 
@@ -114,8 +99,7 @@ writeFile(targetPath, environmentFileContent, { flag: 'w' }, function (err: Errn
 		return;
 	}
 	console.log(`Variables de entorno escritas en ${targetPath}`);
-	console.log('Ambiente de Vercel - VERCEL_TARGET_ENV = ', process.env['VERCEL_TARGET_ENV']);
-	console.log('Ambiente de Vercel - VERCEL_URL = ', process.env['VERCEL_URL']);
-	console.log('URL de branch de Vercel - VERCEL_BRANCH_URL = ', process.env['VERCEL_BRANCH_URL']);
-	console.log('URL de API y Website = ', apiUrl);
+	console.log('APP_ENV = ', process.env['APP_ENV']);
+	console.log('SITE_URL = ', process.env['SITE_URL']);
+	console.log('apiUrl = ', apiUrl, '| website = ', website);
 });

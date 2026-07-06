@@ -8,6 +8,9 @@ vi.mock('@sanity/image-url', () => ({
 		image: (source: unknown) => ({ url: () => `https://cdn.test/${JSON.stringify(source)}` }),
 	}),
 }));
+// getClient() se evalúa eager como argumento de createImageUrlBuilder; sin este mock intentaría
+// crear un cliente Sanity real (createClient lanza sin projectId en el entorno de test).
+vi.mock('../_helpers/sanity-connector', () => ({ getClient: () => ({}) }));
 /* eslint-enable no-restricted-syntax */
 
 const img = (ref: string): SanityImageSource => ({ _type: 'image', asset: { _type: 'reference', _ref: ref } });

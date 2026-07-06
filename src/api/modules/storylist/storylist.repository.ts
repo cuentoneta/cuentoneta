@@ -1,5 +1,5 @@
 // Sanity
-import { client } from '../../_helpers/sanity-connector';
+import { getClient } from '../../_helpers/sanity-connector';
 
 // Modelos
 import { Storylist, StorylistStoriesNavigationTeasers, StorylistTeaser } from '@models/storylist.model';
@@ -24,7 +24,7 @@ import {
 import { mapImagery } from '../../_utils/storylist-imagery.functions';
 
 export async function fetchAllStorylistTeasers(): Promise<StorylistTeaser[]> {
-	const result = await client.fetch(storylistTeasersQuery);
+	const result = await getClient().fetch(storylistTeasersQuery);
 
 	return result.map((item) => {
 		const { featuredImage, storyCoverImages, mediaSources, ...rest } = item;
@@ -42,7 +42,7 @@ export async function fetchAllStorylistTeasers(): Promise<StorylistTeaser[]> {
 }
 
 export async function fetchStorylistBySlug(slug: string): Promise<Storylist> {
-	const result = await client.fetch(storylistQuery, { slug });
+	const result = await getClient().fetch(storylistQuery, { slug });
 
 	if (!result) {
 		throw new Error(`Storylist with slug ${slug} not found`);
@@ -93,7 +93,7 @@ type FetchStorylistNavigationTeasersByStorylistSlugParams = {
 export async function fetchStorylistStoriesNavigationTeaserByStorylistSlug(
 	params: FetchStorylistNavigationTeasersByStorylistSlugParams,
 ): Promise<StorylistStoriesNavigationTeasers> {
-	const result = await client.fetch(storylistStoriesNavigationTeasersQuery, params);
+	const result = await getClient().fetch(storylistStoriesNavigationTeasersQuery, params);
 
 	if (!result) {
 		throw new Error(`Storylist with slug ${params.slug} not found`);

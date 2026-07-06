@@ -3,7 +3,7 @@
  * Transforms biography from { es: [...], en: [...] } to just [...]
  * Uses the Spanish (es) version as the default content.
  */
-import { client } from '../src/api/_helpers/sanity-connector';
+import { getClient } from '../src/api/_helpers/sanity-connector';
 
 const runMigration = async () => {
 	console.log('='.repeat(60));
@@ -12,7 +12,7 @@ const runMigration = async () => {
 
 	console.log('\n--- Fetching all authors with localized biographies ---');
 
-	const documents = await client.fetch<Array<{ _id: string; name: string; biography?: { es?: unknown } }>>(
+	const documents = await getClient().fetch<Array<{ _id: string; name: string; biography?: { es?: unknown } }>>(
 		`*[_type == 'author' && biography.es != null && !(_id in path('drafts.**'))] { _id, name, biography }`,
 	);
 
@@ -30,7 +30,7 @@ const runMigration = async () => {
 			return tx.patch(doc._id, (patch) => patch.set({ biography: doc.biography?.es }));
 		}
 		return tx;
-	}, client.transaction());
+	}, getClient().transaction());
 
 	// Commit all patches at once
 	await transaction.commit();
