@@ -44,8 +44,10 @@ const angularApp = new AngularAppEngine({ allowedHosts: getAllowedHosts(), trust
 const app = new Hono<{ Bindings: Env }>();
 
 app.use('*', async (c, next) => {
+	// `c.env?` porque el dispatch in-process (abajo) invoca app.fetch sin env; process.env ya
+	// quedó poblado por la request externa (misma config para todo el isolate).
 	for (const key of BRIDGED_ENV_KEYS) {
-		const value = c.env[key];
+		const value = c.env?.[key];
 		if (value !== undefined) {
 			process.env[key] = value;
 		}
@@ -65,6 +67,25 @@ app.use('*', async (c) => {
 	const rendered = await angularApp.handle(c.req.raw);
 	return rendered ?? c.notFound();
 });
+
+// P2 (requerido en CF): durante el SSR, Angular HttpClient fetchea /api por HTTP. En el edge de
+// Cloudflare un Worker NO puede subrequest a su propia URL pública (falla/loop), así que el fetch
+// same-origin no resuelve y el SSR sale sin datos (validado: local ok, edge no). Se despachan las
+// requests /api/* al app Hono EN PROCESO (mismo isolate), sin red. El resto usa el fetch nativo
+// (p. ej. las llamadas a Sanity, cuyo host no es /api).
+const nativeFetch = globalThis.fetch;
+globalThis.fetch = (input, init) => {
+	const url = input instanceof Request ? input.url : input.toString();
+	try {
+		if (new URL(url, 'http://workers.internal').pathname.startsWith('/api/')) {
+			const request = input instanceof Request ? input : new Request(new URL(url, 'http://workers.internal'), init);
+			return Promise.resolve(app.fetch(request));
+		}
+	} catch {
+		// URL no parseable → fetch nativo
+	}
+	return nativeFetch(input, init);
+};
 
 export default {
 	fetch(request: Request, env: Env, ctx: ExecutionContext): Response | Promise<Response> {
