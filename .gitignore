@@ -81,3 +81,6 @@ scripts/*.mp4
 
 # Info incremental de TypeScript (regenerable por tsc -b)
 *.tsbuildinfo
+
+# Cloudflare Wrangler (local)
+.wrangler/
