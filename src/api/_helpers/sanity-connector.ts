@@ -28,4 +28,11 @@ export const client: SanityClient = new Proxy({} as SanityClient, {
 		const value = Reflect.get(instance, property, instance);
 		return typeof value === 'function' ? value.bind(instance) : value;
 	},
+	// El operador `in` usa el trap `has`, no `get`. `@sanity/image-url` detecta al cliente con
+	// `"config" in client`; sin este trap chequearía el target vacío → false → no lo reconoce
+	// como cliente y arma la URL de imagen sin projectId/dataset (cdn.sanity.io/images/undefined/...).
+	has(_target, property) {
+		instance ??= buildClient();
+		return property in instance;
+	},
 });
