@@ -57,6 +57,13 @@
 					"extractLicenses": false,
 					"sourceMap": true,
 					"namedChunks": true
+				},
+				"cloudflare": {
+					"outputHashing": "all",
+					"ssr": {
+						"entry": "./src/worker.ts",
+						"experimentalPlatform": "neutral"
+					}
 				}
 			},
 			"defaultConfiguration": "production"

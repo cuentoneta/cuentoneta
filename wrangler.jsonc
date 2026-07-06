@@ -1,0 +1,13 @@
+// [SPIKE cloudflare-migration] Config mínima para validar Angular SSR en Workers.
+// No es la config final de prod (faltan /api, secrets, crons, allowedHosts reales).
+{
+	"name": "cuentoneta-cf-spike",
+	"main": "dist/cuentoneta/server/server.mjs",
+	"compatibility_date": "2026-06-01",
+	"compatibility_flags": ["nodejs_compat"],
+	"alias": { "xhr2": "./xhr2-stub.js" },
+	"assets": {
+		"directory": "dist/cuentoneta/browser",
+		"binding": "ASSETS",
+	},
+}
