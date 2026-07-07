@@ -47,7 +47,7 @@ export const latestLandingPageReferencesQuery = defineQuery(`
     'cards': coalesce(cards[],[]),
     'campaigns': coalesce(campaigns[],[]),
     'latestReads': coalesce(latestReads,[]),
-} | order(config desc)[0]
+} | order(config desc, _createdAt desc)[0]
 `);
 
 export const landingPageContentQuery = defineQuery(`
