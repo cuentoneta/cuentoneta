@@ -14,18 +14,17 @@ import type { Transaction } from '@sanity/client';
 
 type LandingPageDocument = { _id: string; config: string };
 
-const OLD_CONFIG_PATTERN = /^(\d{2})-(\d{4})$/;
-
 const fetchLandingPages = () =>
 	client.fetch<LandingPageDocument[]>(`
   *[_type == 'landingPage']{ _id, config }
 `);
 
 const buildMigration = (documents: LandingPageDocument[]): { transaction: Transaction; migratedCount: number } => {
+	const oldConfigPattern = /^(\d{2})-(\d{4})$/;
 	let migratedCount = 0;
 
 	const transaction = documents.reduce((tx, doc) => {
-		const match = doc.config?.match(OLD_CONFIG_PATTERN);
+		const match = doc.config?.match(oldConfigPattern);
 		if (!match) {
 			console.log(`  ⊘ Se omite ${doc._id} — config "${doc.config}" no coincide con WW-YYYY`);
 			return tx;
