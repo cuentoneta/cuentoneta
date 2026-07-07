@@ -6,6 +6,13 @@ export default defineType({
 	title: 'Página de Inicio',
 	type: 'document',
 	icon: CodeBlockIcon,
+	orderings: [
+		{
+			title: 'Semana (más reciente primero)',
+			name: 'configDesc',
+			by: [{ field: 'config', direction: 'desc' }],
+		},
+	],
 	preview: {
 		select: {
 			config: 'config',

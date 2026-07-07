@@ -20,8 +20,10 @@ export async function fetchLandingPageContent(slug: string): Promise<LandingPage
 	return client.fetch(landingPageContentQuery, { slug });
 }
 
-export async function fetchLatestLandingPageReferences(): Promise<LatestLandingPageReferencesQueryResult> {
-	return client.fetch(latestLandingPageReferencesQuery);
+export async function fetchLatestLandingPageReferences(
+	currentSlug: string,
+): Promise<LatestLandingPageReferencesQueryResult> {
+	return client.fetch(latestLandingPageReferencesQuery, { currentSlug });
 }
 
 export async function fetchLandingPagesList(slugs: string[]): Promise<LandingPageListQueryResult> {

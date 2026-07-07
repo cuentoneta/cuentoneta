@@ -1,4 +1,4 @@
-import { addWeeks, getWeek, getYear } from 'date-fns';
+import { addWeeks, getWeek, getWeekYear } from 'date-fns';
 import {
 	clearAllMocks,
 	runOnlyPendingTimers,
@@ -34,9 +34,8 @@ describe('ContentService', () => {
 
 	describe('addNextWeeksLandingPageContent', () => {
 		const currentDate = new Date('2025-11-14');
-		const currentWeek = getWeek(currentDate);
-		const currentYear = getYear(currentDate);
-		const currentSlug = `${currentWeek.toString().padStart(2, '0')}-${currentYear}`;
+		const buildSlug = (date: Date) => `${getWeekYear(date)}-${getWeek(date).toString().padStart(2, '0')}`;
+		const currentSlug = buildSlug(currentDate);
 
 		const mockLandingPage = {
 			_id: 'landing-page-current',
@@ -68,22 +67,61 @@ describe('ContentService', () => {
 			expect(result).toHaveLength(4);
 			expect(contentRepository.fetchLandingPagesList).toHaveBeenCalledWith(
 				expect.arrayContaining([
-					expect.stringMatching(/^\d{2}-2025$/),
-					expect.stringMatching(/^\d{2}-2025$/),
-					expect.stringMatching(/^\d{2}-2025$/),
-					expect.stringMatching(/^\d{2}-2025$/),
+					expect.stringMatching(/^2025-\d{2}$/),
+					expect.stringMatching(/^2025-\d{2}$/),
+					expect.stringMatching(/^2025-\d{2}$/),
+					expect.stringMatching(/^2025-\d{2}$/),
 				]),
 			);
+			// Regresión #1749: la base a clonar debe pedirse acotada a la semana actual (antes se
+			// invocaba sin argumentos y terminaba clonando el último stub futuro autogenerado).
+			expect(contentRepository.fetchLatestLandingPageReferences).toHaveBeenCalledWith(currentSlug);
+		});
+
+		it('should build the slug from the week-year (getWeekYear), not the calendar year, across the Dec/Jan boundary', async () => {
+			// 2025-12-29 cae en la semana 01 de 2026: getWeekYear → "2026-01"; getYear daría "2025-01",
+			// rompiendo el orden lexicográfico = cronológico. Fija getWeekYear para que un refactor no lo revierta.
+			setSystemTime(new Date(2025, 11, 29));
+
+			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
+			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
+			(contentRepository.createLandingPages as Mock).mockResolvedValue([]);
+
+			await contentService.addNextWeeksLandingPageContent(4);
+
+			expect(contentRepository.fetchLatestLandingPageReferences).toHaveBeenCalledWith('2026-01');
+		});
+
+		it('should clone the base returned by the repository verbatim, without leaking its _id', async () => {
+			const weeksInTheFuture = 2;
+
+			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
+			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
+			(contentRepository.createLandingPages as Mock).mockResolvedValue([{ _id: 'created-1' }, { _id: 'created-2' }]);
+
+			await contentService.addNextWeeksLandingPageContent(weeksInTheFuture);
+
+			// El filtrado de "última semana no futura" vive en la query GROQ (config <= $currentSlug); el
+			// service solo pasa la semana actual y clona la base tal cual la recibe, sin selección propia.
+			expect(contentRepository.fetchLatestLandingPageReferences).toHaveBeenCalledWith(currentSlug);
+
+			const createdObjects = (contentRepository.createLandingPages as Mock).mock.calls[0][0] as Array<
+				Record<string, unknown>
+			>;
+			createdObjects.forEach((obj) => {
+				expect(obj.campaigns).toEqual(mockLandingPage.campaigns);
+				expect(obj.cards).toEqual(mockLandingPage.cards);
+				expect(obj.latestReads).toEqual(mockLandingPage.latestReads);
+				expect(obj).not.toHaveProperty('_id');
+			});
 		});
 
 		it('should return an empty array when all weeks already exist', async () => {
 			const weeksInTheFuture = 4;
-			const futureWeeks = Array.from({ length: weeksInTheFuture }, (_, index) => {
-				const date = addWeeks(currentDate, index + 1);
-				const week = getWeek(date);
-				const year = getYear(date);
-				return { _id: `landing-page-${index}`, config: `${week.toString().padStart(2, '0')}-${year}` };
-			});
+			const futureWeeks = Array.from({ length: weeksInTheFuture }, (_, index) => ({
+				_id: `landing-page-${index}`,
+				config: buildSlug(addWeeks(currentDate, index + 1)),
+			}));
 
 			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue(futureWeeks);
 
@@ -116,12 +154,10 @@ describe('ContentService', () => {
 
 		it('should create only missing weeks when some already exist', async () => {
 			const weeksInTheFuture = 4;
-			const existingWeek = Array.from({ length: 2 }, (_, index) => {
-				const date = addWeeks(currentDate, index + 1);
-				const week = getWeek(date);
-				const year = getYear(date);
-				return { _id: `landing-page-${index}`, config: `${week.toString().padStart(2, '0')}-${year}` };
-			});
+			const existingWeek = Array.from({ length: 2 }, (_, index) => ({
+				_id: `landing-page-${index}`,
+				config: buildSlug(addWeeks(currentDate, index + 1)),
+			}));
 
 			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue(existingWeek);
 			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
