@@ -78,6 +78,20 @@ describe('ContentService', () => {
 			expect(contentRepository.fetchLatestLandingPageReferences).toHaveBeenCalledWith(currentSlug);
 		});
 
+		it('should build the slug from the week-year (getWeekYear), not the calendar year, across the Dec/Jan boundary', async () => {
+			// 2025-12-29 cae en la semana 01 de 2026: getWeekYear → "2026-01"; getYear daría "2025-01",
+			// rompiendo el orden lexicográfico = cronológico. Fija getWeekYear para que un refactor no lo revierta.
+			setSystemTime(new Date(2025, 11, 29));
+
+			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
+			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
+			(contentRepository.createLandingPages as Mock).mockResolvedValue([]);
+
+			await contentService.addNextWeeksLandingPageContent(4);
+
+			expect(contentRepository.fetchLatestLandingPageReferences).toHaveBeenCalledWith('2026-01');
+		});
+
 		it('should clone the base returned by the repository verbatim, without leaking its _id', async () => {
 			const weeksInTheFuture = 2;
 
