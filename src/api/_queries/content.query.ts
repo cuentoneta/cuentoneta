@@ -39,7 +39,7 @@ export const landingPageListQuery = defineQuery(`
 }`);
 
 export const latestLandingPageReferencesQuery = defineQuery(`
-*[_type == 'landingPage' && !(_id in path('drafts.**'))]{
+*[_type == 'landingPage' && !(_id in path('drafts.**')) && config <= $currentSlug]{
     _id,
     _type,
     'slug': slug.current,
@@ -47,7 +47,7 @@ export const latestLandingPageReferencesQuery = defineQuery(`
     'cards': coalesce(cards[],[]),
     'campaigns': coalesce(campaigns[],[]),
     'latestReads': coalesce(latestReads,[]),
-} | order(_createdAt desc)[0]
+} | order(config desc, _createdAt desc)[0]
 `);
 
 export const landingPageContentQuery = defineQuery(`

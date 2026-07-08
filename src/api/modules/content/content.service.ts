@@ -11,15 +11,18 @@ import {
 import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
 
 // Utils
-import { addWeeks, getWeek, getYear } from 'date-fns';
+import { addWeeks, getISOWeek, getISOWeekYear } from 'date-fns';
 import slugify from 'slugify';
 
-export async function getLandingPageContent(): Promise<LandingPageContent> {
-	const weekOfYear = getWeek(new Date());
-	const year = getYear(new Date());
+// Formato YYYY-WW con numeración ISO-8601 (lunes = día 1; la semana 1 es la que contiene el primer
+// jueves del año). El orden lexicográfico sigue coincidiendo con el cronológico: getISOWeekYear
+// etiqueta la semana con su año ISO, no con el calendario, así que el cruce dic/ene no rompe el orden.
+function buildWeekSlug(date: Date): string {
+	return `${getISOWeekYear(date)}-${getISOWeek(date).toString().padStart(2, '0')}`;
+}
 
-	const slug = `${weekOfYear.toString().padStart(2, '0')}-${year}`;
-	return fetchAndMapLandingPageContent(slug);
+export async function getLandingPageContent(): Promise<LandingPageContent> {
+	return fetchAndMapLandingPageContent(buildWeekSlug(new Date()));
 }
 
 export async function getRotatingContent(): Promise<RotatingContent> {
@@ -27,19 +30,10 @@ export async function getRotatingContent(): Promise<RotatingContent> {
 }
 
 export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 4) {
-	// Obtiene información para generar slug de la configuración contenido de landing page activo (MM-YYYY)
 	const currentDate = new Date();
-	const currentWeekOfYear = getWeek(currentDate);
-	const year = getYear(currentDate);
-	const currentLandingPageSlug = `${currentWeekOfYear.toString().padStart(2, '0')}-${year}`;
+	const currentLandingPageSlug = buildWeekSlug(currentDate);
 
-	// Obtiene los nombres de los documentos de contenido de la landing page, obteniendo en formato MM-YYYY las próximas 'weeksIntheFuture' semanas
-	const slugs = Array.from({ length: weeksInTheFuture }, () => '').map((_, index) => {
-		const date = addWeeks(currentDate, index + 1); // Se obtiene una semana futura en base a correr la fecha actual una semana
-		const weekOfYear = getWeek(date);
-		const year = getYear(date);
-		return `${weekOfYear.toString().padStart(2, '0')}-${year}`;
-	});
+	const slugs = Array.from({ length: weeksInTheFuture }, (_, index) => buildWeekSlug(addWeeks(currentDate, index + 1)));
 
 	const existingLandingPagesList = await fetchLandingPagesList(slugs);
 
@@ -53,7 +47,7 @@ export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 
 		return [];
 	}
 
-	const latestLandingPageConfig = await fetchLatestLandingPageReferences();
+	const latestLandingPageConfig = await fetchLatestLandingPageReferences(currentLandingPageSlug);
 
 	if (!latestLandingPageConfig) {
 		throw new Error(`Latest landing page for the '${currentLandingPageSlug}' slug content not found`);

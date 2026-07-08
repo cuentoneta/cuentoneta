@@ -92,24 +92,24 @@ El cron job que actualiza el contenido rotativo se ejecuta de manera diaria, dur
 
 Una **configuración de landing page** en La Cuentoneta es una configuración temática que agrupa contenido relevante para un período de tiempo, contable en semanas, y con un mínimo de una semana — siendo extensible a períodos múltiplos de una semana mediante la copia de este contenido.
 
-El sistema genera automáticamente las configuraciones de landing pages para las próximas semanas a partir de la vigente mediante un cronjob. En caso de que no haya configuraciones de landing pages definidas para alguna de las próximas cuatro semanas en la plataforma el sistema se encarga de generarlas, utilizando como base la configuración más reciente existente.
+El sistema genera automáticamente las configuraciones de landing pages para las próximas semanas a partir de la vigente mediante un cronjob. En caso de que no haya configuraciones de landing pages definidas para alguna de las próximas cuatro semanas en la plataforma el sistema se encarga de generarlas, utilizando como base la configuración válida más reciente **que no sea futura** (`config <= semana actual`), es decir, la semana vigente curada por los editores.
 
 Este proceso garantiza que:
 
 - Siempre haya landing pages disponibles para las próximas cuatro semanas, permitiendo una configuración planificada en múltiplos de semanas.
-- Los editores de contenido solo necesiten actualizar la configuración más reciente, modificándola completamente o en partes.
-- Las nuevas semanas hereden automáticamente la estructura de la más reciente, siendo las nuevas configuraciones creadas automáticamente copiando la última configuración disponible en el estado en el que se encuentra al momento de ejecutarse el cronjob.
+- Los editores de contenido solo necesiten actualizar la configuración de la semana vigente, modificándola completamente o en partes.
+- Las nuevas semanas hereden automáticamente la estructura de la semana vigente, siendo las nuevas configuraciones creadas copiando esa configuración en el estado en el que se encuentra al momento de ejecutarse el cronjob.
 
 ### Estructura de una Landing Page
 
 ```typescript
 {
-  _id: "landing-page-46-2025",
+  _id: "landing-page-2025-46",
   _type: "landingPage",
-  config: "46-2025",        // Número de semana - Año
+  config: "2025-46",        // Año - Número de semana
   slug: {
     _type: "slug",
-    current: "46-2025"
+    current: "2025-46"
   },
   campaigns: Array<CampaignReference>,     // Campañas a mostrar
   cards: Array<CardReference>,             // Tarjetas de contenido
@@ -119,23 +119,30 @@ Este proceso garantiza que:
 
 ### Nomenclatura de Slugs
 
-Las landing pages se identifican mediante slugs en formato **`SS-YYYY`**:
+Las landing pages se identifican mediante slugs en formato **`YYYY-SS`**, con numeración de semana **ISO-8601**:
 
+- **YYYY**: Año de cuatro dígitos (`getISOWeekYear`, el año ISO de la semana, no el calendario)
 - **SS**: Número de semana ISO (01-53), con relleno cero a dos dígitos
-- **YYYY**: Año de cuatro dígitos
-- **Ejemplos**: `46-2025`, `01-2026`, `52-2024`
+- **Convención ISO-8601**: la semana empieza el **lunes** y la semana 1 es la que contiene el **primer jueves** del año (equivalente: la que contiene el 4 de enero). No es la convención local por defecto de `date-fns` (domingo = día 1, semana del 1° de enero).
+- **Ejemplos**: `2025-46`, `2026-01`, `2024-52`
+
+El año va primero para que el **orden lexicográfico del slug coincida con el orden cronológico** (`"2025-52" < "2026-01"`). Esto es lo que permite ordenar las semanas cronológicamente en Sanity Studio y acotar la query de la configuración base a `config <= semana actual`.
+
+> **Migración (#1749):** el formato original era `SS-YYYY` (p. ej. `46-2025`), que no ordenaba cronológicamente. Se migró a `YYYY-SS` con `scripts/migrate-landing-page-config-to-yyyy-ww.ts` (reordenamiento de string puro, sin recalcular la semana).
+>
+> **Migración (#1751):** la numeración pasó de la convención local (domingo) a **ISO-8601** (lunes). Se migró con `scripts/migrate-landing-page-config-to-iso-week.ts`, que reconstruye el jueves de cada semana local y recalcula la semana/año ISO (dry-run por defecto + manejo de colisiones de borde de año). Para el rango 2025-2026 ambas convenciones coinciden, así que la migración fue un no-op sobre esos datos.
 
 ### Ubicación en el Código
 
 - **Consultas GROQ**: `src/api/_queries/content.query.ts`
   - `landingPageContentQuery` - Obtiene contenido de una semana específica
   - `landingPageListQuery` - Lista landing pages existentes
-  - `latestLandingPageReferencesQuery` - Obtiene la configuración más reciente
+  - `latestLandingPageReferencesQuery` - Obtiene la configuración válida más reciente no futura (`config <= $currentSlug`, ordenada por `config desc`)
 
 - **Repositorio de acceso a datos**: `src/api/modules/content/content.repository.ts`
   - `fetchLandingPageContent(slug)` - Obtiene landing page por slug
   - `fetchLandingPageList(slugs)` - Lista landing pages por slugs
-  - `fetchLatestLandingPageReferences()` - Obtiene la configuración base
+  - `fetchLatestLandingPageReferences(currentSlug)` - Obtiene la configuración base (semana actual o anterior más reciente)
   - `createLandingPages(objects)` - Crea múltiples landing pages
 
 - **Servicio de lógica de negocio**: `src/api/modules/content/content.service.ts`
@@ -148,12 +155,12 @@ Las landing pages se identifican mediante slugs en formato **`SS-YYYY`**:
 La función `addNextWeeksLandingPageContent(weeksInTheFuture)` ejecuta el siguiente algoritmo:
 
 ```
-1. Calcular fecha actual y semana/año ISO actual
+1. Calcular fecha actual y slug de la semana actual (formato YYYY-WW vía getISOWeekYear + getISOWeek)
 2. Generar slugs para las próximas N semanas (ej: weeksInTheFuture = 4)
 3. Consultar Sanity para obtener landing pages existentes con esos slugs
 4. Si TODAS las próximas N semanas ya existen → retornar vacío (sin cambios)
 5. Si alguna no existe:
-   a. Obtener la configuración más reciente (campaignas, tarjetas, etc.)
+   a. Obtener la configuración base: la más reciente NO futura (config <= semana actual)
    b. Validar que la configuración existe (error si no)
    c. Filtrar las semanas que necesitan ser creadas
    d. Para cada semana faltante:
@@ -171,6 +178,8 @@ La definición para la ejecución de este cronjob se encuentra en el archivo `ve
 - **Frecuencia**: Semanalmente
 - **Día y hora**: Domingos a las 03:30 am (GMT -3)
 - **Tolerancia**: Puede también ejecutarse de manera manual en cualquier momento antes de que se necesite
+
+> **Interacción con la numeración ISO-8601 (#1751):** las semanas ISO empiezan el **lunes**, y el cron corre el **domingo** — el último día de la semana ISO en curso. Por eso, el domingo la home todavía sirve la semana que termina ese día, y recién el lunes rota a la siguiente. Esto es **continuo, sin huecos**: cada domingo el cron pre-genera las próximas 4 semanas (`semana_actual + 1 … + 4`), así que la semana que la home pedirá de lunes a sábado siempre existe. (La corrida del domingo genera desde la semana _siguiente_; la semana que la home pide ese mismo domingo fue creada por la corrida del domingo anterior.)
 
 ### Ejemplo de Ejecución
 
@@ -190,8 +199,8 @@ Este flujo alternativo asume que fueron agregadas, por una ejecución manual lla
 
 ```javascript
 [
-  { _id: "landing-page-49-2025", config: "49-2025", slug: "49-2025", ... },
-  { _id: "landing-page-50-2025", config: "50-2025", slug: "50-2025", ... }
+  { _id: "landing-page-2025-49", config: "2025-49", slug: "2025-49", ... },
+  { _id: "landing-page-2025-50", config: "2025-50", slug: "2025-50", ... }
 ]
 ```
 
@@ -202,7 +211,7 @@ La función lanza excepciones descriptivas en los siguientes casos:
 | Condición                            | Error                                                          | Acción Recomendada                       |
 | ------------------------------------ | -------------------------------------------------------------- | ---------------------------------------- |
 | Lista de landing pages no se obtiene | `Could not retrieve the landing page configs`                  | Verificar conexión a Sanity              |
-| Configuración base no existe         | `Latest landing page for the 'SS-YYYY' slug content not found` | Crear manualmente una configuración base |
+| Configuración base no existe         | `Latest landing page for the 'YYYY-SS' slug content not found` | Crear manualmente una configuración base |
 | Error al crear documentos            | Error de Sanity API                                            | Reintentar o verificar permisos          |
 
 ---
@@ -307,7 +316,7 @@ No, la creación está bloqueada para evitar inconsistencias. Sin embargo, puede
 
 ### ¿Qué pasa si la configuración base es muy antigua?
 
-La función siempre utiliza la configuración más reciente. Si necesitas cambiar la estructura para todas las futuras semanas, actualiza la landing page "base" (la semana actual) y ejecuta el cron job nuevamente.
+La función siempre utiliza la configuración válida más reciente que no sea futura (`config <= semana actual`), es decir, la semana vigente. Si necesitas cambiar la estructura para todas las futuras semanas, actualiza la landing page de la semana actual y ejecuta el cron job nuevamente.
 
 ### ¿Puedo generar landing pages para más de 4 semanas?
 

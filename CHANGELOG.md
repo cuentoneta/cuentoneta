@@ -16,6 +16,29 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.8.4 (2026-07-08)
+
+La versión 2.8.4 corrige y endurece la generación automática de las páginas de inicio semanales. El cron `add-next-weeks-landing-page-content` había dejado de anclarse a la semana curada y clonaba indefinidamente el último stub futuro autogenerado, produciendo un bache entre la semana vigente y las siguientes; ahora la query selecciona la última semana válida no futura (`config <= semana actual`) y el formato del slug pasa a `YYYY-WW` para que su orden lexicográfico coincida con el cronológico (#1749).
+
+Sobre esa base, la numeración de semana adopta la convención **ISO-8601** (lunes = día 1, semana del primer jueves) en lugar del default de locale de `date-fns` (domingo), alineando el identificador con la convención esperada. Ambos cambios incluyen scripts de migración de datos con dry-run y manejo de colisiones de borde de año (#1751).
+
+Además, se incorpora formalmente el hotfix de SSR que restaura la confianza en los proxy headers de Vercel (`trustProxyHeaders`), corrigiendo el deopt a CSR que había afectado la indexación en Google Search Console (#1730).
+
+### Cambios completos
+
+Ver el changelog completo en [2.8.4](https://github.com/cuentoneta/cuentoneta/releases/tag/2.8.4)
+
+### Cambios
+
+#### Páginas de inicio y cron de contenido
+
+- [#1749] - Anclaje del cron de páginas de inicio a la última semana válida no futura (`config <= semana actual`, orden `config desc`) y migración del formato de slug de `WW-YYYY` a `YYYY-WW` (orden lexicográfico = cronológico), con ordenamiento cronológico en Sanity Studio.
+- [#1751] - Adopción de numeración de semana **ISO-8601** (lunes = día 1) para el slug de las páginas de inicio, con script de migración (dry-run + manejo de colisiones de borde de año).
+
+#### Correcciones
+
+- [#1730] - (Hotfix) Confianza en los proxy headers de Vercel en el SSR (`trustProxyHeaders`) para evitar el deopt a CSR que afectaba la indexación en Google Search Console.
+
 ## Versión 2.8.3 (2026-07-06)
 
 La versión 2.8.3 se enfoca en la robustez del render SSR y en la higiene de SEO/AEO, cerrando dos epics. El epic de render SSR (#1697) corrige la causa raíz por la que las rutas dinámicas (`home`, `story/:slug`, `author/:slug`, `storylist/:slug`) servían un skeleton sin contenido ni meta indexables: los recursos de página ahora **bloquean la serialización del SSR** hasta resolver (`ssrBlockingRxResource` vía `pendingUntilEvent`), conservando la carga progresiva de los datos secundarios (`progressiveRxResource`). Una regla ESLint impide reintroducir la regresión al prohibir `rxResource`/`httpResource` crudos en páginas.
