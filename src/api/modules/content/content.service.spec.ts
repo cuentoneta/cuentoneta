@@ -107,7 +107,7 @@ describe('ContentService', () => {
 		});
 
 		it('generates contiguous ISO weeks with no gap when the cron runs on a Sunday', async () => {
-			// El cron corre en domingo (vercel.json "* * 0"). Bajo ISO el domingo es el último día de su
+			// El cron corre en domingo. Bajo ISO el domingo es el último día de su
 			// semana, así que la home la pide ese domingo y pide la SIGUIENTE de lunes a sábado. Este test
 			// fija que ambas quedan cubiertas: la base se pide para la semana del domingo (2026-26) y se
 			// generan las 4 siguientes contiguas (2026-27..2026-30), incluida la que la home leerá el lunes.
