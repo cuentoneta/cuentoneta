@@ -11,6 +11,9 @@
  * (ISO YYYY-WW) son indistinguibles, así que re-aplicar volvería a desplazar las semanas de borde
  * de año. Correr SIEMPRE el dry-run primero y revisar el reporte (incluido el respaldo de colisiones).
  *
+ * 🗑️ Programado para eliminación en el milestone 2.9.0 (#1754), junto con `iso-week-mapping.ts` y su
+ * spec, una vez confirmada la corrida contra producción.
+ *
  * Uso:
  *   node --import tsx --env-file=.env ./scripts/migrate-landing-page-config-to-iso-week.ts                       # dry-run
  *   node --import tsx --env-file=.env ./scripts/migrate-landing-page-config-to-iso-week.ts --apply

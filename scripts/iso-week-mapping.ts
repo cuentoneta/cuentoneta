@@ -1,6 +1,7 @@
 // Funciones puras del mapeo de semanas locale → ISO-8601 para la migración #1751.
 // Separadas del script de I/O (`migrate-landing-page-config-to-iso-week.ts`) para poder testearlas
 // sin tocar Sanity.
+// 🗑️ Programado para eliminación en el milestone 2.9.0 (#1754), junto con su migración y su spec.
 import { addDays, getISOWeek, getISOWeekYear, setWeek, setWeekYear, startOfWeek } from 'date-fns';
 
 export type LandingPageDocument = { _id: string; config: string };
