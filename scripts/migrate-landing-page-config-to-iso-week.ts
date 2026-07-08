@@ -1,16 +1,15 @@
 /**
  * Migración única (#1751): re-sluggea `config` y `slug.current` de TODOS los documentos landingPage
  * de numeración de semana LOCAL (default de date-fns: domingo = día 1, semana del 1° de enero) a
- * ISO-8601 (lunes = día 1, semana del primer jueves). El slug no guarda la fecha, así que por cada
- * semana locale se reconstruye una fecha representativa, se ancla en su JUEVES (el criterio con el
- * que ISO decide a qué semana/año pertenece) y se recalcula la semana/año ISO.
+ * ISO-8601 (lunes = día 1, semana del primer jueves). La lógica pura del mapeo vive en
+ * `iso-week-mapping.ts`; acá solo el I/O contra Sanity.
  *
  * Para casi toda semana el número no cambia; solo diverge en algunos bordes de año, donde además
  * dos semanas locale pueden mapear al mismo destino ISO (colisión).
  *
  * ⚠️ EJECUTAR UNA SOLA VEZ. No es idempotente: el formato viejo (locale YYYY-WW) y el nuevo
  * (ISO YYYY-WW) son indistinguibles, así que re-aplicar volvería a desplazar las semanas de borde
- * de año. Correr SIEMPRE el dry-run primero y revisar el reporte.
+ * de año. Correr SIEMPRE el dry-run primero y revisar el reporte (incluido el respaldo de colisiones).
  *
  * Uso:
  *   node --import tsx --env-file=.env ./scripts/migrate-landing-page-config-to-iso-week.ts                       # dry-run
@@ -18,70 +17,9 @@
  *   node --import tsx --env-file=.env ./scripts/migrate-landing-page-config-to-iso-week.ts --apply --resolve=latest-wins
  */
 import { client } from '../src/api/_helpers/sanity-connector';
-import { addDays, getISOWeek, getISOWeekYear, setWeek, setWeekYear, startOfWeek } from 'date-fns';
-
-type LandingPageDocument = { _id: string; config: string };
-type MappedDoc = { id: string; logical: string; config: string; iso: string };
-
-const LOCALE_OPTIONS = { weekStartsOn: 0, firstWeekContainsDate: 1 } as const;
-const LOCALE_SLUG = /^(\d{4})-(\d{2})$/;
-
-const pad = (n: number) => n.toString().padStart(2, '0');
-// Un draft (`drafts.<id>`) y su published son el mismo documento lógico: no cuentan como colisión.
-const logicalId = (id: string) => id.replace(/^drafts\./, '');
-const configOf = (group: MappedDoc[], logical: string): string =>
-	group.find((m) => m.logical === logical)?.config ?? '';
-const distinctLogicals = (group: MappedDoc[]): string[] => [...new Set(group.map((m) => m.logical))];
-
-// Mapea un slug locale YYYY-WW a su equivalente ISO-8601, anclando en el jueves de la semana locale.
-function toIsoSlug(config: string): string | null {
-	const match = config?.match(LOCALE_SLUG);
-	if (!match) {
-		return null;
-	}
-	const [, year, week] = match;
-	const inWeek = setWeek(
-		setWeekYear(new Date(2025, 5, 15), Number(year), LOCALE_OPTIONS),
-		Number(week),
-		LOCALE_OPTIONS,
-	);
-	const thursday = addDays(startOfWeek(inWeek, { weekStartsOn: 0 }), 4);
-	return `${getISOWeekYear(thursday)}-${pad(getISOWeek(thursday))}`;
-}
-
-function mapDocuments(docs: LandingPageDocument[]): { items: MappedDoc[]; skipped: LandingPageDocument[] } {
-	const items: MappedDoc[] = [];
-	const skipped: LandingPageDocument[] = [];
-	for (const doc of docs) {
-		const iso = toIsoSlug(doc.config);
-		if (iso) {
-			items.push({ id: doc._id, logical: logicalId(doc._id), config: doc.config, iso });
-		} else {
-			skipped.push(doc);
-		}
-	}
-	return { items, skipped };
-}
-
-function groupByIso(items: MappedDoc[]): Map<string, MappedDoc[]> {
-	const groups = new Map<string, MappedDoc[]>();
-	for (const item of items) {
-		const group = groups.get(item.iso) ?? [];
-		group.push(item);
-		groups.set(item.iso, group);
-	}
-	return groups;
-}
-
-// Ante colisión (>1 doc lógico → mismo ISO), gana el config locale mayor (YYYY-WW ordena cronológico).
-function collisionLosers(group: MappedDoc[]): string[] {
-	const logicals = distinctLogicals(group);
-	if (logicals.length <= 1) {
-		return [];
-	}
-	const winner = logicals.reduce((a, b) => (configOf(group, a) >= configOf(group, b) ? a : b));
-	return logicals.filter((l) => l !== winner);
-}
+import type { Transaction } from '@sanity/client';
+import type { LandingPageDocument, MappedDoc } from './iso-week-mapping';
+import { collisionLosers, configOf, distinctLogicals, groupByIso, mapDocuments } from './iso-week-mapping';
 
 function printReport(
 	total: number,
@@ -111,6 +49,16 @@ function printReport(
 	);
 }
 
+// Antes de borrar un perdedor de colisión, vuelca su contenido completo para poder recuperarlo.
+async function backupAndDelete(transaction: Transaction, ids: string[]): Promise<void> {
+	const docs = await client.fetch<unknown[]>(`*[_id in $ids]`, { ids });
+	console.log(`\n⚠️  Se borran ${ids.length} documento(s) por colisión. Respaldo (revisar antes de confirmar):`);
+	console.log(JSON.stringify(docs, null, 2));
+	for (const id of ids) {
+		transaction.delete(id);
+	}
+}
+
 async function applyMigration(groups: Map<string, MappedDoc[]>, resolveLatest: boolean): Promise<void> {
 	const hasCollisions = [...groups.values()].some((group) => distinctLogicals(group).length > 1);
 	if (hasCollisions && !resolveLatest) {
@@ -119,17 +67,21 @@ async function applyMigration(groups: Map<string, MappedDoc[]>, resolveLatest: b
 	}
 
 	const transaction = client.transaction();
-	for (const [iso, group] of groups) {
+	const toDelete: string[] = [];
+	for (const [, group] of groups) {
 		const losers = collisionLosers(group);
 		for (const item of group) {
 			if (losers.includes(item.logical)) {
-				console.log(`  ✗ borra ${item.id} (colisión en ${iso})`);
-				transaction.delete(item.id);
+				toDelete.push(item.id);
 			} else if (item.config !== item.iso) {
 				console.log(`  ✓ ${item.id}: ${item.config} → ${item.iso}`);
 				transaction.patch(item.id, { set: { config: item.iso, 'slug.current': item.iso } });
 			}
 		}
+	}
+
+	if (toDelete.length > 0) {
+		await backupAndDelete(transaction, toDelete);
 	}
 	await transaction.commit();
 	console.log('\n✓ Migración aplicada.');
