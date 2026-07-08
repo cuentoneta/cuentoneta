@@ -106,6 +106,30 @@ describe('ContentService', () => {
 			expect(contentRepository.fetchLatestLandingPageReferences).toHaveBeenCalledWith('2026-27');
 		});
 
+		it('generates contiguous ISO weeks with no gap when the cron runs on a Sunday', async () => {
+			// El cron corre en domingo (vercel.json "* * 0"). Bajo ISO el domingo es el último día de su
+			// semana, así que la home la pide ese domingo y pide la SIGUIENTE de lunes a sábado. Este test
+			// fija que ambas quedan cubiertas: la base se pide para la semana del domingo (2026-26) y se
+			// generan las 4 siguientes contiguas (2026-27..2026-30), incluida la que la home leerá el lunes.
+			setSystemTime(new Date(2026, 5, 28)); // domingo, semana ISO 2026-26
+			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
+			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
+			(contentRepository.createLandingPages as Mock).mockResolvedValue([]);
+
+			await contentService.addNextWeeksLandingPageContent(4);
+
+			expect(contentRepository.fetchLatestLandingPageReferences).toHaveBeenCalledWith('2026-26');
+			expect(contentRepository.fetchLandingPagesList).toHaveBeenCalledWith([
+				'2026-27',
+				'2026-28',
+				'2026-29',
+				'2026-30',
+			]);
+			// La semana que la home leerá de lunes a sábado (lunes 29/jun → 2026-27) está entre las generadas.
+			const generatedSlugs = (contentRepository.fetchLandingPagesList as Mock).mock.calls[0][0];
+			expect(generatedSlugs).toContain(buildSlug(new Date(2026, 5, 29)));
+		});
+
 		it('should clone the base returned by the repository verbatim, without leaking its _id', async () => {
 			const weeksInTheFuture = 2;
 
