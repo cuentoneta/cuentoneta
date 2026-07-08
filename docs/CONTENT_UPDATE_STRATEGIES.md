@@ -179,6 +179,8 @@ La definición para la ejecución de este cronjob se encuentra en el archivo `ve
 - **Día y hora**: Domingos a las 03:30 am (GMT -3)
 - **Tolerancia**: Puede también ejecutarse de manera manual en cualquier momento antes de que se necesite
 
+> **Interacción con la numeración ISO-8601 (#1751):** las semanas ISO empiezan el **lunes**, y el cron corre el **domingo** — el último día de la semana ISO en curso. Por eso, el domingo la home todavía sirve la semana que termina ese día, y recién el lunes rota a la siguiente. Esto es **continuo, sin huecos**: cada domingo el cron pre-genera las próximas 4 semanas (`semana_actual + 1 … + 4`), así que la semana que la home pedirá de lunes a sábado siempre existe. (La corrida del domingo genera desde la semana _siguiente_; la semana que la home pide ese mismo domingo fue creada por la corrida del domingo anterior.)
+
 ### Ejemplo de Ejecución
 
 **Escenario**: Domingo 16 de noviembre de 2025, último día de la semana 46, a las 3:30 am (GMT -3). Se ejecuta el cronjob con el queryParam de "semanas hacia adelante" `weeksInTheFuture` predeterminado de 4.
