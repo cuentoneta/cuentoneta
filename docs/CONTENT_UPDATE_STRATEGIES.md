@@ -119,15 +119,18 @@ Este proceso garantiza que:
 
 ### Nomenclatura de Slugs
 
-Las landing pages se identifican mediante slugs en formato **`YYYY-SS`**:
+Las landing pages se identifican mediante slugs en formato **`YYYY-SS`**, con numeración de semana **ISO-8601**:
 
-- **YYYY**: Año de cuatro dígitos (`getWeekYear`, el año de la semana, no el calendario)
-- **SS**: Número de semana (01-53), con relleno cero a dos dígitos
+- **YYYY**: Año de cuatro dígitos (`getISOWeekYear`, el año ISO de la semana, no el calendario)
+- **SS**: Número de semana ISO (01-53), con relleno cero a dos dígitos
+- **Convención ISO-8601**: la semana empieza el **lunes** y la semana 1 es la que contiene el **primer jueves** del año (equivalente: la que contiene el 4 de enero). No es la convención local por defecto de `date-fns` (domingo = día 1, semana del 1° de enero).
 - **Ejemplos**: `2025-46`, `2026-01`, `2024-52`
 
 El año va primero para que el **orden lexicográfico del slug coincida con el orden cronológico** (`"2025-52" < "2026-01"`). Esto es lo que permite ordenar las semanas cronológicamente en Sanity Studio y acotar la query de la configuración base a `config <= semana actual`.
 
-> **Migración (#1749):** el formato anterior era `SS-YYYY` (p. ej. `46-2025`), que no ordenaba cronológicamente. Los documentos existentes se migraron a `YYYY-SS` con `scripts/migrate-landing-page-config-to-yyyy-ww.ts`, un reordenamiento de string puro que **no recalcula** el número de semana ya asignado.
+> **Migración (#1749):** el formato original era `SS-YYYY` (p. ej. `46-2025`), que no ordenaba cronológicamente. Se migró a `YYYY-SS` con `scripts/migrate-landing-page-config-to-yyyy-ww.ts` (reordenamiento de string puro, sin recalcular la semana).
+>
+> **Migración (#1751):** la numeración pasó de la convención local (domingo) a **ISO-8601** (lunes). Se migró con `scripts/migrate-landing-page-config-to-iso-week.ts`, que reconstruye el jueves de cada semana local y recalcula la semana/año ISO (dry-run por defecto + manejo de colisiones de borde de año). Para el rango 2025-2026 ambas convenciones coinciden, así que la migración fue un no-op sobre esos datos.
 
 ### Ubicación en el Código
 
@@ -152,7 +155,7 @@ El año va primero para que el **orden lexicográfico del slug coincida con el o
 La función `addNextWeeksLandingPageContent(weeksInTheFuture)` ejecuta el siguiente algoritmo:
 
 ```
-1. Calcular fecha actual y slug de la semana actual (formato YYYY-WW vía getWeekYear + getWeek)
+1. Calcular fecha actual y slug de la semana actual (formato YYYY-WW vía getISOWeekYear + getISOWeek)
 2. Generar slugs para las próximas N semanas (ej: weeksInTheFuture = 4)
 3. Consultar Sanity para obtener landing pages existentes con esos slugs
 4. Si TODAS las próximas N semanas ya existen → retornar vacío (sin cambios)
