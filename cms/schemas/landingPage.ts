@@ -31,6 +31,8 @@ export default defineType({
 			name: 'config',
 			title: 'Configuración',
 			type: 'string',
+			description:
+				'Formato YYYY-WW, numeración de semana ISO-8601 (lunes = día 1). Ver docs/CONTENT_UPDATE_STRATEGIES.md.',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({

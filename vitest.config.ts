@@ -11,7 +11,7 @@ export default defineConfig({
 		globals: true,
 		environment: 'happy-dom',
 		setupFiles: ['src/test-setup.ts'],
-		include: ['src/**/*.{test,spec}.ts'],
+		include: ['src/**/*.{test,spec}.ts', 'scripts/**/*.{test,spec}.ts'],
 		// @sanity y los bundles fesm de Angular se inlinan para que Vite los transforme.
 		server: {
 			deps: {

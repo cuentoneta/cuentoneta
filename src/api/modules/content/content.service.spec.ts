@@ -1,4 +1,4 @@
-import { addWeeks, getWeek, getWeekYear } from 'date-fns';
+import { addWeeks, getISOWeek, getISOWeekYear } from 'date-fns';
 import {
 	clearAllMocks,
 	runOnlyPendingTimers,
@@ -34,7 +34,7 @@ describe('ContentService', () => {
 
 	describe('addNextWeeksLandingPageContent', () => {
 		const currentDate = new Date('2025-11-14');
-		const buildSlug = (date: Date) => `${getWeekYear(date)}-${getWeek(date).toString().padStart(2, '0')}`;
+		const buildSlug = (date: Date) => `${getISOWeekYear(date)}-${getISOWeek(date).toString().padStart(2, '0')}`;
 		const currentSlug = buildSlug(currentDate);
 
 		const mockLandingPage = {
@@ -78,9 +78,9 @@ describe('ContentService', () => {
 			expect(contentRepository.fetchLatestLandingPageReferences).toHaveBeenCalledWith(currentSlug);
 		});
 
-		it('should build the slug from the week-year (getWeekYear), not the calendar year, across the Dec/Jan boundary', async () => {
-			// 2025-12-29 cae en la semana 01 de 2026: getWeekYear → "2026-01"; getYear daría "2025-01",
-			// rompiendo el orden lexicográfico = cronológico. Fija getWeekYear para que un refactor no lo revierta.
+		it('should label the week with its ISO week-year, not the calendar year, across the Dec/Jan boundary', async () => {
+			// 2025-12-29 (lunes) es la semana ISO 01 de 2026: getISOWeekYear la etiqueta 2026, no 2025,
+			// preservando el orden lexicográfico = cronológico en el cruce dic/ene.
 			setSystemTime(new Date(2025, 11, 29));
 
 			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
@@ -90,6 +90,44 @@ describe('ContentService', () => {
 			await contentService.addNextWeeksLandingPageContent(4);
 
 			expect(contentRepository.fetchLatestLandingPageReferences).toHaveBeenCalledWith('2026-01');
+		});
+
+		it('should use ISO-8601 week numbering (Monday-start), not the locale default — decision pinned in #1751', async () => {
+			// 2026-07-05 es domingo: en ISO (lunes = día 1) pertenece a la semana 27; el default locale
+			// de date-fns (domingo = día 1) lo pondría en la 28. Fija ISO para que un refactor no lo revierta.
+			setSystemTime(new Date(2026, 6, 5));
+
+			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
+			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
+			(contentRepository.createLandingPages as Mock).mockResolvedValue([]);
+
+			await contentService.addNextWeeksLandingPageContent(4);
+
+			expect(contentRepository.fetchLatestLandingPageReferences).toHaveBeenCalledWith('2026-27');
+		});
+
+		it('generates contiguous ISO weeks with no gap when the cron runs on a Sunday', async () => {
+			// El cron corre en domingo. Bajo ISO el domingo es el último día de su
+			// semana, así que la home la pide ese domingo y pide la SIGUIENTE de lunes a sábado. Este test
+			// fija que ambas quedan cubiertas: la base se pide para la semana del domingo (2026-26) y se
+			// generan las 4 siguientes contiguas (2026-27..2026-30), incluida la que la home leerá el lunes.
+			setSystemTime(new Date(2026, 5, 28)); // domingo, semana ISO 2026-26
+			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
+			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
+			(contentRepository.createLandingPages as Mock).mockResolvedValue([]);
+
+			await contentService.addNextWeeksLandingPageContent(4);
+
+			expect(contentRepository.fetchLatestLandingPageReferences).toHaveBeenCalledWith('2026-26');
+			expect(contentRepository.fetchLandingPagesList).toHaveBeenCalledWith([
+				'2026-27',
+				'2026-28',
+				'2026-29',
+				'2026-30',
+			]);
+			// La semana que la home leerá de lunes a sábado (lunes 29/jun → 2026-27) está entre las generadas.
+			const generatedSlugs = (contentRepository.fetchLandingPagesList as Mock).mock.calls[0][0];
+			expect(generatedSlugs).toContain(buildSlug(new Date(2026, 5, 29)));
 		});
 
 		it('should clone the base returned by the repository verbatim, without leaking its _id', async () => {

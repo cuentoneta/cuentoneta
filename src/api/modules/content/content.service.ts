@@ -11,14 +11,14 @@ import {
 import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
 
 // Utils
-import { addWeeks, getWeek, getWeekYear } from 'date-fns';
+import { addWeeks, getISOWeek, getISOWeekYear } from 'date-fns';
 import slugify from 'slugify';
 
-// Formato YYYY-WW para que el orden lexicográfico del slug/config coincida con el cronológico.
-// Se usa getWeekYear (no getYear): en el cruce dic/ene el año calendario puede diferir del año de
-// la semana, y etiquetar la semana con el año calendario rompería ese orden.
+// Formato YYYY-WW con numeración ISO-8601 (lunes = día 1; la semana 1 es la que contiene el primer
+// jueves del año). El orden lexicográfico sigue coincidiendo con el cronológico: getISOWeekYear
+// etiqueta la semana con su año ISO, no con el calendario, así que el cruce dic/ene no rompe el orden.
 function buildWeekSlug(date: Date): string {
-	return `${getWeekYear(date)}-${getWeek(date).toString().padStart(2, '0')}`;
+	return `${getISOWeekYear(date)}-${getISOWeek(date).toString().padStart(2, '0')}`;
 }
 
 export async function getLandingPageContent(): Promise<LandingPageContent> {
