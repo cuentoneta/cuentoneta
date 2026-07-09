@@ -85,7 +85,9 @@ export const Estados: StoryObj<HighlightedAuthorsComponent & { loading: boolean 
 				<div class="flex flex-col gap-8">
 					<div class="flex flex-col gap-1">
 						<h2 class="font-inter text-2xl font-bold text-neutral-900">Autores/as destacados/as</h2>
-						<p class="font-inter text-sm text-neutral-600">Una selección curada de autores y autoras imprescindibles</p>
+						<p class="font-inter text-sm font-medium text-neutral-600">
+							Una selección curada de autores y autoras imprescindibles
+						</p>
 					</div>
 					<section class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
 						<cuentoneta-highlighted-authors-skeleton />

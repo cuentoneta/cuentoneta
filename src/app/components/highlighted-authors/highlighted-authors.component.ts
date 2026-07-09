@@ -11,10 +11,12 @@ import { HighlightedAuthorsSkeletonComponent } from './highlighted-authors-skele
 	selector: 'cuentoneta-highlighted-authors',
 	imports: [AuthorTeaserV3Component, ButtonComponent, HighlightedAuthorsSkeletonComponent, RouterLink],
 	template: `
-		<div class="flex items-center justify-between gap-4">
+		<div class="flex items-center justify-between gap-8">
 			<div class="flex min-w-0 flex-col gap-1">
 				<h2 class="font-inter text-2xl font-bold text-neutral-900">Autores/as destacados/as</h2>
-				<p class="font-inter text-sm text-neutral-600">Una selección curada de autores y autoras imprescindibles</p>
+				<p class="font-inter text-sm font-medium text-neutral-600">
+					Una selección curada de autores y autoras imprescindibles
+				</p>
 			</div>
 			@if (showViewAll) {
 				<a [routerLink]="['/', appRoutes.Authors]" cuentoneta-button type="outline">Ver todo</a>
