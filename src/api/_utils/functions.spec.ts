@@ -1,5 +1,6 @@
 import type { SanityImageSource } from '@sanity/image-url';
 import {
+	mapHighlightedAuthors,
 	mapStoryNavigationTeaser,
 	mapStoryNavigationTeaserWithAuthor,
 	mapStoryTeaser,
@@ -79,6 +80,116 @@ describe('mapTags (ACL)', () => {
 
 	it('returns an empty array when there are no tags', () => {
 		expect(mapTags([])).toEqual([]);
+	});
+});
+
+describe('mapHighlightedAuthors (ACL)', () => {
+	const rawTag = (title: string, slug: string) => ({
+		title,
+		slug,
+		shortDescription: title,
+		description: [] as never[],
+		icon: { _type: 'iconPicker' as const, provider: 'mdi', name: 'tag' },
+	});
+
+	const rawAuthor = (overrides: { tags?: ReturnType<typeof rawTag>[] } = {}) => ({
+		_id: 'author_1',
+		slug: 'clarice-lispector',
+		name: 'Clarice Lispector',
+		image: { _type: 'image' as const },
+		nationality: {
+			_id: 'nat_1',
+			_type: 'nationality' as const,
+			_createdAt: '2020-01-01T00:00:00Z',
+			_updatedAt: '2020-01-01T00:00:00Z',
+			_rev: 'rev',
+			country: 'Brasil',
+			flag: { _type: 'image' as const },
+		},
+		biography: [] as never[],
+		bornOn: null,
+		bornOnYear: null,
+		diedOn: null,
+		diedOnYear: null,
+		resources: [] as never[],
+		tags: overrides.tags ?? [],
+	});
+
+	it('concatenates additionalTags before author tags', () => {
+		const result = mapHighlightedAuthors([
+			{
+				author: rawAuthor({ tags: [rawTag('Surrealismo', 'surrealismo')] }),
+				additionalTags: [rawTag('Cumpleaños', 'cumpleanos')],
+				storyCount: 12,
+			},
+		]);
+
+		expect(result).toHaveLength(1);
+		expect(result[0].tags.map((tag) => tag.slug)).toEqual(['cumpleanos', 'surrealismo']);
+		expect(result[0].storyCount).toBe(12);
+	});
+
+	it('returns empty tags when both sources are empty', () => {
+		const result = mapHighlightedAuthors([
+			{
+				author: rawAuthor({ tags: [] }),
+				additionalTags: [],
+				storyCount: 0,
+			},
+		]);
+
+		expect(result[0].tags).toEqual([]);
+		expect(result[0].storyCount).toBe(0);
+	});
+
+	it('keeps only additionalTags when the author has none', () => {
+		const result = mapHighlightedAuthors([
+			{
+				author: rawAuthor({ tags: [] }),
+				additionalTags: [rawTag('Cumpleaños', 'cumpleanos')],
+				storyCount: 3,
+			},
+		]);
+
+		expect(result[0].tags.map((tag) => tag.slug)).toEqual(['cumpleanos']);
+	});
+
+	it('keeps only author tags when additionalTags are empty', () => {
+		const result = mapHighlightedAuthors([
+			{
+				author: rawAuthor({ tags: [rawTag('Crónica', 'cronica'), rawTag('Ensayo', 'ensayo')] }),
+				additionalTags: [],
+				storyCount: 7,
+			},
+		]);
+
+		expect(result[0].tags.map((tag) => tag.slug)).toEqual(['cronica', 'ensayo']);
+	});
+
+	it('maps the author through the teaser ACL with empty tags on the teaser', () => {
+		const result = mapHighlightedAuthors([
+			{
+				author: rawAuthor({ tags: [rawTag('Surrealismo', 'surrealismo')] }),
+				additionalTags: [],
+				storyCount: 5,
+			},
+		]);
+
+		expect(result[0].author).toMatchObject({
+			_id: 'author_1',
+			slug: 'clarice-lispector',
+			name: 'Clarice Lispector',
+			tags: [],
+			biography: [],
+			resources: [],
+		});
+		expect(result[0].author.imageUrl).toBeDefined();
+	});
+
+	it('returns an empty array when the input is empty or missing', () => {
+		expect(mapHighlightedAuthors([])).toEqual([]);
+		expect(mapHighlightedAuthors(undefined)).toEqual([]);
+		expect(mapHighlightedAuthors(null)).toEqual([]);
 	});
 });
 

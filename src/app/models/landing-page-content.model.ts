@@ -1,6 +1,14 @@
-import { StorylistTeaser } from '@models/storylist.model';
-import { ContentCampaign } from '@models/content-campaign.model';
-import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
+import type { AuthorTeaser } from '@models/author.model';
+import type { ContentCampaign } from '@models/content-campaign.model';
+import type { StorylistTeaser } from '@models/storylist.model';
+import type { StoryNavigationTeaserWithAuthor } from '@models/story.model';
+import type { Tag } from '@models/tag.model';
+
+export interface HighlightedAuthor {
+	author: AuthorTeaser;
+	tags: Tag[];
+	storyCount: number;
+}
 
 export interface LandingPageContent {
 	_id: string;
@@ -9,6 +17,7 @@ export interface LandingPageContent {
 	campaigns: ContentCampaign[];
 	mostRead: StoryNavigationTeaserWithAuthor[];
 	latestReads: StoryNavigationTeaserWithAuthor[];
+	highlightedAuthors: HighlightedAuthor[];
 }
 
 export interface RotatingContent {

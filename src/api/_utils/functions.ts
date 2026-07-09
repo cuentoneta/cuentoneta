@@ -13,7 +13,7 @@ import { createImageUrlBuilder, SanityImageSource } from '@sanity/image-url';
 // Modelos
 import { Author, AuthorProfile, AuthorTeaser } from '@models/author.model';
 import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
-import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
+import { HighlightedAuthor, LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
 import { StorylistTeaser } from '@models/storylist.model';
 import { Resource } from '@models/resource.model';
 import {
@@ -83,8 +83,11 @@ export function mapAuthorProfile(rawAuthorData: NonNullable<AuthorBySlugQueryRes
 }
 type AuthorTeaserForStoriesSubQuery = NonNullable<StorylistQueryResult>['stories'][0]['author'];
 type AuthorTeaserForListSubQuery = UnwrapArray<AuthorsQueryResult>;
+type AuthorTeaserForHighlightedSubQuery = UnwrapArray<
+	NonNullable<LandingPageContentQueryResult>['highlightedAuthors']
+>['author'];
 export function mapAuthorTeaser(
-	rawAuthorData: AuthorTeaserForStoriesSubQuery | AuthorTeaserForListSubQuery,
+	rawAuthorData: AuthorTeaserForStoriesSubQuery | AuthorTeaserForListSubQuery | AuthorTeaserForHighlightedSubQuery,
 ): AuthorTeaser {
 	return {
 		_id: rawAuthorData._id,
@@ -165,10 +168,13 @@ export function mapResources(resources: ResourcesSubQuery): Resource[] {
 	);
 }
 
+type HighlightedAuthorRaw = UnwrapArray<NonNullable<LandingPageContentQueryResult>['highlightedAuthors']>;
 type TagsSubQuery =
 	| NonNullable<StoryBySlugQueryResult>['tags']
 	| NonNullable<AuthorBySlugQueryResult>['tags']
-	| NonNullable<StorylistTeasersQueryResult>[0]['tags'];
+	| NonNullable<StorylistTeasersQueryResult>[0]['tags']
+	| HighlightedAuthorRaw['author']['tags']
+	| HighlightedAuthorRaw['additionalTags'];
 export function mapTags(tags: TagsSubQuery): Tag[] {
 	return tags.map((tag) => ({
 		...tag,
@@ -290,6 +296,20 @@ export function mapStoryNavigationTeaserWithAuthor(
 	return stories;
 }
 
+export function mapHighlightedAuthors(
+	raw: NonNullable<LandingPageContentQueryResult>['highlightedAuthors'] | null | undefined,
+): HighlightedAuthor[] {
+	if (!raw || raw.length === 0) {
+		return [];
+	}
+
+	return raw.map((item) => ({
+		author: mapAuthorTeaser(item.author),
+		tags: [...mapTags(item.additionalTags), ...mapTags(item.author.tags)],
+		storyCount: item.storyCount,
+	}));
+}
+
 export function mapLandingPageContent(
 	result: NonNullable<LandingPageContentQueryResult> & RotatingContent,
 ): LandingPageContent {
@@ -298,6 +318,7 @@ export function mapLandingPageContent(
 		cards: mapStorylistTeasers(result.cards),
 		campaigns: mapContentCampaigns(result.campaigns),
 		latestReads: mapStoryNavigationTeaserWithAuthor(result.latestReads),
+		highlightedAuthors: mapHighlightedAuthors(result.highlightedAuthors),
 	};
 }
 

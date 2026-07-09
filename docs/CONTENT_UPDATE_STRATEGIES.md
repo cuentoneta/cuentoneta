@@ -113,9 +113,15 @@ Este proceso garantiza que:
   },
   campaigns: Array<CampaignReference>,     // Campañas a mostrar
   cards: Array<CardReference>,             // Tarjetas de contenido
-  latestReads: Array<StoryReference>       // Historias destacadas
+  latestReads: Array<StoryReference>,      // Historias destacadas
+  highlightedAuthors: Array<{              // Hasta 6 autores destacados de la semana
+    author: AuthorReference,
+    additionalTags?: Array<TagReference>
+  }>
 }
 ```
+
+El campo `highlightedAuthors` se clona en crudo junto con `campaigns`, `cards` y `latestReads` vía `latestLandingPageReferencesQuery`. Sin incluirlo en esa query, el cron semanal lo perdería.
 
 ### Nomenclatura de Slugs
 

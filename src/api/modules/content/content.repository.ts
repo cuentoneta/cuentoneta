@@ -47,6 +47,12 @@ export async function createLandingPages(
 		campaigns: Array<{ _key: string; _type: string; _ref: string }>;
 		cards: Array<{ _key: string; _type: string; _ref: string }>;
 		latestReads: Array<{ _key: string; _type: string; _ref: string }>;
+		highlightedAuthors: Array<{
+			_key: string;
+			_type: string;
+			author: { _type: string; _ref: string };
+			additionalTags?: Array<{ _key: string; _type: string; _ref: string }>;
+		}>;
 	}>,
 ) {
 	return Promise.all(landingPageObjects.map((object) => client.create(object)));

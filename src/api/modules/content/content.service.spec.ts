@@ -42,6 +42,14 @@ describe('ContentService', () => {
 			campaigns: [{ _id: 'campaign-1' }, { _id: 'campaign-2' }],
 			cards: [{ _id: 'card-1' }],
 			latestReads: [{ _id: 'story-1' }, { _id: 'story-2' }],
+			highlightedAuthors: [
+				{
+					_key: 'ha-1',
+					_type: 'highlightedAuthor',
+					author: { _type: 'reference', _ref: 'author-1' },
+					additionalTags: [{ _key: 't1', _type: 'reference', _ref: 'tag-1' }],
+				},
+			],
 		};
 
 		beforeEach(() => {
@@ -150,6 +158,7 @@ describe('ContentService', () => {
 				expect(obj.campaigns).toEqual(mockLandingPage.campaigns);
 				expect(obj.cards).toEqual(mockLandingPage.cards);
 				expect(obj.latestReads).toEqual(mockLandingPage.latestReads);
+				expect(obj.highlightedAuthors).toEqual(mockLandingPage.highlightedAuthors);
 				expect(obj).not.toHaveProperty('_id');
 			});
 		});
@@ -216,6 +225,7 @@ describe('ContentService', () => {
 				expect(obj).toHaveProperty('campaigns');
 				expect(obj).toHaveProperty('cards');
 				expect(obj).toHaveProperty('latestReads');
+				expect(obj).toHaveProperty('highlightedAuthors');
 			});
 		});
 
