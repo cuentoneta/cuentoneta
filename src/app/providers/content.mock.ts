@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 // Models
 import { LandingPageContent } from '@models/landing-page-content.model';
 import { ContentApi } from './content-api.interface';
+import { highlightedAuthorsMock } from '@mocks/highlighted-authors.mock';
 
 export class InMemoryContentApi implements ContentApi {
 	public getLandingPageContent(): Observable<LandingPageContent> {
@@ -15,7 +16,7 @@ export class InMemoryContentApi implements ContentApi {
 			campaigns: [],
 			mostRead: [],
 			latestReads: [],
-			highlightedAuthors: [],
+			highlightedAuthors: highlightedAuthorsMock,
 		};
 		return of(landingPageContent);
 	}
