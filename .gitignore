@@ -64,6 +64,9 @@ Thumbs.db
 # Generated reference material (re-create with `pnpm exec tsx --env-file=.env scripts/audit/export-authors-bios.ts`)
 /tools/author-bios/
 
+# Auditoría de fichas incompletas para structured data (re-create with audit-structured-data-completeness.ts)
+/tools/structured-data-audit/
+
 # Exportaciones de dataset de Sanity
 /cms/*.tar.gz
 
