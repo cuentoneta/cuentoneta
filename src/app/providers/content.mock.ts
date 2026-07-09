@@ -15,6 +15,7 @@ export class InMemoryContentApi implements ContentApi {
 			campaigns: [],
 			mostRead: [],
 			latestReads: [],
+			highlightedAuthors: [],
 		};
 		return of(landingPageContent);
 	}

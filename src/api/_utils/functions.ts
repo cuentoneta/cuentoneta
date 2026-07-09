@@ -298,6 +298,7 @@ export function mapLandingPageContent(
 		cards: mapStorylistTeasers(result.cards),
 		campaigns: mapContentCampaigns(result.campaigns),
 		latestReads: mapStoryNavigationTeaserWithAuthor(result.latestReads),
+		highlightedAuthors: [],
 	};
 }
 

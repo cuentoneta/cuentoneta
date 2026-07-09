@@ -364,6 +364,12 @@ interface ContributorLink {
 **Raíz de Agregado:** `LandingPageContent`
 
 ```typescript
+interface HighlightedAuthor {
+	author: AuthorTeaser;
+	tags: Tag[]; // tags puntuales de la semana + tags derivados del autor
+	storyCount: number;
+}
+
 interface LandingPageContent {
 	// Identidad
 	_id: string; // Identificador único
@@ -373,6 +379,7 @@ interface LandingPageContent {
 	campaigns: ContentCampaign[]; // Campañas de marketing
 	mostRead: StoryNavigationTeaserWithAuthor[]; // Top 10 historias más leídas
 	latestReads: StoryNavigationTeaserWithAuthor[]; // Últimas historias publicadas
+	highlightedAuthors: HighlightedAuthor[]; // Hasta 6 autores destacados de la semana
 }
 ```
 
@@ -380,6 +387,7 @@ interface LandingPageContent {
 
 - Agregar contenido de múltiples contextos para presentación en página inicio
 - Mantener datos de lectura y estadísticas
+- Exponer hasta 6 autores destacados editoriales (`highlightedAuthors`) con tags contextuales y conteo de historias
 
 > **Nota:** Para comprender la implementación práctica de este agregado, incluyendo la generación automática de configuraciones y actualización de contenido, consulta la documentación sobre [Estrategias de Actualización de Contenido](./CONTENT_UPDATE_STRATEGIES.md).
 
