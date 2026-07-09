@@ -1,15 +1,16 @@
+import { singletonDocumentListItems } from 'sanity-plugin-singleton-management';
+
 import { activeLandingItem } from './structure/active-landing-item';
-import { configurationItem } from './structure/configuration-item';
-import { contentItem } from './structure/content-item';
+import { contentTypeItems } from './structure/content-type-items';
 
 export default (S, context) =>
 	S.list()
-		.title('Content')
+		.title('Contenido')
 		.items([
-			// Registros dedicados (resueltos por query, no listados crudos): arriba y separados del resto.
+			// Registros dedicados de un solo documento (resueltos o singleton), planos y arriba del resto.
 			activeLandingItem(S, context),
+			...singletonDocumentListItems({ S, context }),
 			S.divider(),
-			// Gestión de contenido.
-			configurationItem(S, context),
-			contentItem(S, context),
+			// Tipos de documento navegables, sin carpeta intermedia.
+			...contentTypeItems(S, context),
 		]);
