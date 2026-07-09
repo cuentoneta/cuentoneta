@@ -15,11 +15,9 @@ test.describe('DMCA Component', () => {
 		const elements = page.locator(':text("contacto@cuentoneta.ar")');
 
 		const elementsCount = await elements.count();
-		const linksCount = await links.count();
+		await expect(links).toHaveCount(elementsCount);
 
-		expect(elementsCount).toEqual(linksCount);
-
-		for (let i = 0; i < linksCount; i++) {
+		for (let i = 0; i < elementsCount; i++) {
 			const link = links.nth(i);
 			await expect(link).toHaveAttribute('href', 'mailto:contacto@cuentoneta.ar');
 			await expect(link).toBeVisible();
