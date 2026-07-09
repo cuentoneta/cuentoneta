@@ -16,13 +16,11 @@ export default defineType({
 	preview: {
 		select: {
 			config: 'config',
-			active: 'active',
 		},
 		prepare(selection) {
-			const { config, active } = selection;
+			const { config } = selection;
 			return {
 				title: `${config}`,
-				subtitle: active ? 'Activa' : 'Inactiva',
 			};
 		},
 	},
