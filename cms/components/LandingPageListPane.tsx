@@ -62,6 +62,10 @@ export function LandingPageListPane() {
 		);
 	}
 
+	// Referencia para clasificar filas: el config de la activa (máximo config <= semana actual). Toda fila con
+	// config mayor es una semana futura. Sin activa, se cae a la semana actual como referencia.
+	const activeConfig = rows.find((row) => row._id === activeId)?.config ?? activeWeekSlug();
+
 	return (
 		<Stack space={0}>
 			<Box padding={2}>
@@ -80,11 +84,13 @@ export function LandingPageListPane() {
 			) : (
 				rows.map((row) => {
 					const isActive = row._id === activeId;
+					const isFuture = !isActive && row.config > activeConfig;
+					const tone = isActive ? 'positive' : isFuture ? 'primary' : 'default';
 					return (
 						<ChildLink key={row._id} childId={row._id} style={{ textDecoration: 'none', color: 'inherit' }}>
-							<Card paddingX={3} paddingY={3} radius={0} borderBottom tone={isActive ? 'positive' : 'default'}>
+							<Card paddingX={3} paddingY={3} radius={0} borderBottom tone={tone}>
 								<Flex align="center" gap={3}>
-									<Text size={2} muted={!isActive}>
+									<Text size={2} muted={tone === 'default'}>
 										<CodeBlockIcon />
 									</Text>
 									<Box flex={1}>
@@ -95,6 +101,11 @@ export function LandingPageListPane() {
 									{isActive && (
 										<Badge tone="positive" mode="outline">
 											Activa
+										</Badge>
+									)}
+									{isFuture && (
+										<Badge tone="primary" mode="outline">
+											Futura
 										</Badge>
 									)}
 								</Flex>
