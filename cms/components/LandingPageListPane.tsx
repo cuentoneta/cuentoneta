@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useClient } from 'sanity';
-import { IntentLink, useRouter } from 'sanity/router';
+import { usePaneRouter } from 'sanity/structure';
 import { Badge, Box, Button, Card, Flex, Spinner, Stack, Text } from '@sanity/ui';
-import { AddIcon } from '@sanity/icons';
+import { AddIcon, CodeBlockIcon } from '@sanity/icons';
 
 import {
 	ACTIVE_LANDING_ID_QUERY,
@@ -18,7 +18,7 @@ function toMessage(cause: unknown): string {
 
 export function LandingPageListPane() {
 	const client = useClient({ apiVersion: API_VERSION });
-	const router = useRouter();
+	const { ChildLink, navigateIntent } = usePaneRouter();
 	const [rows, setRows] = useState<LandingPageRow[] | null>(null);
 	const [activeId, setActiveId] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -63,16 +63,16 @@ export function LandingPageListPane() {
 	}
 
 	return (
-		<Stack space={2} padding={3}>
-			<Flex justify="flex-end">
+		<Stack space={0}>
+			<Box padding={2}>
 				<Button
 					icon={AddIcon}
 					text="Crear nueva"
 					mode="ghost"
 					tone="primary"
-					onClick={() => router.navigateIntent('create', { type: 'landingPage' })}
+					onClick={() => navigateIntent('create', { type: 'landingPage' })}
 				/>
-			</Flex>
+			</Box>
 			{rows.length === 0 ? (
 				<Box padding={3}>
 					<Text muted>No hay páginas de inicio cargadas.</Text>
@@ -81,21 +81,25 @@ export function LandingPageListPane() {
 				rows.map((row) => {
 					const isActive = row._id === activeId;
 					return (
-						<IntentLink
-							key={row._id}
-							intent="edit"
-							params={{ id: row._id, type: 'landingPage' }}
-							style={{ textDecoration: 'none' }}
-						>
-							<Card padding={3} radius={2} shadow={1} tone={isActive ? 'positive' : 'default'}>
+						<ChildLink key={row._id} childId={row._id} style={{ textDecoration: 'none', color: 'inherit' }}>
+							<Card paddingX={3} paddingY={3} radius={0} borderBottom tone={isActive ? 'positive' : 'default'}>
 								<Flex align="center" gap={3}>
-									<Text size={2} weight="semibold" style={{ flex: 1 }}>
-										{row.config}
+									<Text size={2} muted={!isActive}>
+										<CodeBlockIcon />
 									</Text>
-									{isActive && <Badge tone="positive">Activa</Badge>}
+									<Box flex={1}>
+										<Text size={2} weight="medium" textOverflow="ellipsis">
+											{row.config}
+										</Text>
+									</Box>
+									{isActive && (
+										<Badge tone="positive" mode="outline">
+											Activa
+										</Badge>
+									)}
 								</Flex>
 							</Card>
-						</IntentLink>
+						</ChildLink>
 					);
 				})
 			)}
