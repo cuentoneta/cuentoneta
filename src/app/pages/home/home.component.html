@@ -30,6 +30,10 @@
 		<cuentoneta-collection-teasers-deck [teasers]="collections()" class="flex flex-col gap-8" />
 	</section>
 
+	<section class="mb-8">
+		<cuentoneta-highlighted-authors [authors]="highlightedAuthors()" />
+	</section>
+
 	<!--
         Intro descriptiva con texto sustantivo y citable, server-rendered (sin @defer), para que
         buscadores y answer engines tengan contenido indexable más allá de las imágenes del hero.
