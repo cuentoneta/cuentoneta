@@ -1,9 +1,11 @@
 import { defineArrayMember, defineField, defineType } from 'sanity';
+import { SyncIcon } from '@sanity/icons';
 
 export default defineType({
 	name: 'rotatingContent',
 	title: 'Contenido rotativo',
 	type: 'document',
+	icon: SyncIcon,
 	options: {
 		singleton: true, // Identify this document as a singleton
 	},
