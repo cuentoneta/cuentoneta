@@ -120,8 +120,11 @@ export default [
 		plugins: {
 			playwright,
 		},
+		languageOptions: {
+			...playwright.configs['flat/recommended'].languageOptions,
+		},
 		rules: {
-			...playwright.configs['flat/recommended'],
+			...playwright.configs['flat/recommended'].rules,
 		},
 	},
 	{
