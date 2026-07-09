@@ -85,5 +85,53 @@ export default defineType({
 				}),
 			],
 		}),
+		defineField({
+			name: 'highlightedAuthors',
+			title: 'Autores/as destacados/as',
+			description:
+				'Hasta 6 autores destacados de la semana. Las etiquetas adicionales se suman a las del autor y se muestran primero.',
+			type: 'array',
+			validation: (Rule) => Rule.max(6),
+			of: [
+				defineArrayMember({
+					name: 'highlightedAuthor',
+					title: 'Autor/a destacado/a',
+					type: 'object',
+					preview: {
+						select: {
+							title: 'author.name',
+							media: 'author.image',
+						},
+						prepare({ title, media }) {
+							return {
+								title: title ?? 'Sin autor',
+								media,
+							};
+						},
+					},
+					fields: [
+						defineField({
+							name: 'author',
+							title: 'Autor/a',
+							type: 'reference',
+							to: [{ type: 'author' }],
+							validation: (Rule) => Rule.required(),
+						}),
+						defineField({
+							name: 'additionalTags',
+							title: 'Etiquetas adicionales',
+							description: 'Etiquetas puntuales de la semana (p. ej. Cumpleaños). Se muestran antes que las del autor.',
+							type: 'array',
+							of: [
+								defineArrayMember({
+									type: 'reference',
+									to: [{ type: 'tag' }],
+								}),
+							],
+						}),
+					],
+				}),
+			],
+		}),
 	],
 });
