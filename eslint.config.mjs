@@ -116,13 +116,8 @@ export default [
 	},
 	{
 		name: 'playwright',
+		...playwright.configs['flat/recommended'],
 		files: ['**/e2e/**/?(*.)+(spec|test).ts'],
-		plugins: {
-			playwright,
-		},
-		rules: {
-			...playwright.configs['flat/recommended'],
-		},
 	},
 	{
 		name: 'nx',
