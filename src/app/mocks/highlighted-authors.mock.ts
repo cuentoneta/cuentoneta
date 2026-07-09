@@ -11,6 +11,12 @@ const genreTags: Tag[] = [
 	{ title: 'Ciencia Ficción', slug: 'ciencia-ficcion', shortDescription: '', description: [] },
 ];
 
+const flagByCountry: Record<string, string> = {
+	Brasil: 'https://flagcdn.com/w40/br.png',
+	Argentina: 'https://flagcdn.com/w40/ar.png',
+	Uruguay: 'https://flagcdn.com/w40/uy.png',
+};
+
 const authorsSeed = [
 	{ name: 'Clarice Lispector', slug: 'clarice-lispector', country: 'Brasil', storyCount: 27, tagIndexes: [0] },
 	{
@@ -18,7 +24,7 @@ const authorsSeed = [
 		slug: 'maria-elena-walsh',
 		country: 'Argentina',
 		storyCount: 16,
-		tagIndexes: [1, 0],
+		tagIndexes: [1],
 	},
 	{
 		name: 'Mariana Enríquez',
@@ -56,9 +62,10 @@ export const highlightedAuthorsMock: HighlightedAuthor[] = authorsSeed.map((seed
 		_id: `highlighted-author-${index + 1}`,
 		slug: seed.slug,
 		name: seed.name,
+		tags: [],
 		nationality: {
-			...authorTeaserMock.nationality,
 			country: seed.country,
+			flag: flagByCountry[seed.country] ?? '',
 		},
 	},
 	tags: seed.tagIndexes.map((tagIndex) => genreTags[tagIndex]),
