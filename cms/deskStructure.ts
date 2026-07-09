@@ -4,9 +4,7 @@ import { createBulkActionsTable } from 'sanity-plugin-bulk-actions-table';
 import { filteredDocumentListItems, singletonDocumentListItems } from 'sanity-plugin-singleton-management';
 
 import { LandingPageListPane } from './components/LandingPageListPane';
-import { resolveActiveLandingId } from './utils/landing-page';
-
-const API_VERSION = '2024-01-01';
+import { API_VERSION, resolveActiveLandingId } from './utils/landing-page';
 
 export default (S, context) =>
 	S.list()
@@ -17,11 +15,14 @@ export default (S, context) =>
 				.id('active-landing')
 				.icon(StarIcon)
 				.child(() =>
-					resolveActiveLandingId(context.getClient({ apiVersion: API_VERSION })).then((id) =>
-						id
-							? S.document().documentId(id).schemaType('landingPage').title('Landing activa')
-							: S.component(LandingPageListPane).title('Landing activa').id('active-landing-empty'),
-					),
+					resolveActiveLandingId(context.getClient({ apiVersion: API_VERSION }))
+						.then((id) =>
+							id
+								? S.document().documentId(id).schemaType('landingPage').title('Landing activa')
+								: S.component(LandingPageListPane).title('Landing activa').id('active-landing-empty'),
+						)
+						// Ante fallo de red/permisos, cae al pane (que muestra su propio estado de error).
+						.catch(() => S.component(LandingPageListPane).title('Landing activa').id('active-landing-error')),
 				),
 			S.listItem()
 				.title('Configuración')
