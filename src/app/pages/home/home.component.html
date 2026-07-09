@@ -10,7 +10,7 @@
         Las alturas fijadas para los elementos hijos de <main> tienen la finalidad de evitar
         el rebote vertical que puede observarse en el momento de la carga inicial de la página
     -->
-	<section class="mb-8 aspect-[540/220] sm:aspect-[1240/360]">
+	<section class="mb-12 aspect-[540/220] sm:aspect-[1240/360] md:mb-16">
 		@defer (when campaigns().length > 0) {
 			<cuentoneta-carousel [slides]="campaigns()" />
 		} @loading (minimum 500ms) {
@@ -18,27 +18,27 @@
 		}
 	</section>
 
-	<section class="mb-8">
+	<section class="mb-12 md:mb-16">
 		<cuentoneta-latest-stories-card-deck [stories]="latestReads()" />
 	</section>
 
-	<section class="mb-8">
+	<section class="mb-12 md:mb-16">
 		<cuentoneta-highlighted-authors [authors]="highlightedAuthors()" />
 	</section>
 
-	<section class="mb-8">
+	<section class="mb-12 md:mb-16">
 		<cuentoneta-most-read-stories-card-deck [stories]="mostRead()" />
 	</section>
 
-	<section class="mb-8">
-		<cuentoneta-collection-teasers-deck [teasers]="collections()" class="flex flex-col gap-8" />
+	<section class="mb-12 md:mb-16">
+		<cuentoneta-collection-teasers-deck [teasers]="collections()" />
 	</section>
 
 	<!--
         Intro descriptiva con texto sustantivo y citable, server-rendered (sin @defer), para que
         buscadores y answer engines tengan contenido indexable más allá de las imágenes del hero.
     -->
-	<section class="mb-8 flex flex-col gap-8">
+	<section class="mb-12 flex flex-col gap-8 md:mb-16">
 		<h2 class="font-inter text-2xl font-bold">Sobre <em>La Cuentoneta</em></h2>
 
 		<div class="flex flex-col gap-4">
