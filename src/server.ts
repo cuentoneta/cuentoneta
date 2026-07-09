@@ -14,7 +14,11 @@ import { getAllowedHosts } from './api/_helpers/environment';
  * Inicializa Hono y exporta la instancia de la aplicación
  */
 export const app = new Hono({ strict: false }).use(requestId()).use(secureHeaders());
-const angularApp = new AngularAppEngine({ allowedHosts: getAllowedHosts() });
+// Vercel termina TLS y siempre agrega headers `x-forwarded-*` (incluido `x-forwarded-for`).
+// Sin declararlos confiables, el hardening SSR de Angular degrada cada request a client-side
+// rendering (sirve `index.csr.html` sin contenido ni meta), dejando las páginas Server sin SSR
+// para los crawlers. `trustProxyHeaders: true` los honra y preserva el render server-side.
+const angularApp = new AngularAppEngine({ allowedHosts: getAllowedHosts(), trustProxyHeaders: true });
 
 // Registra ruta del sitemap en la raíz
 app.route('/sitemap.xml', sitemapController);

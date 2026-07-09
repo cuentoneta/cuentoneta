@@ -7,6 +7,8 @@ description: Orquesta el ciclo completo de resolución de un issue de GitHub en 
 
 Orquesta el ciclo de vida completo para resolver un issue de GitHub en **cuentoneta**. Cada invocación sobrescribe `workspace/PLAN.md` y `workspace/CODE_REVIEW.md` — guardá los artefactos de una sesión previa antes de empezar una nueva. (`workspace/` está gitignoreado.)
 
+> **Issues de release:** para los issues de gestión de release (p. ej. "Generar release para versión X") usá el skill dedicado [`release-workflow`](../release-workflow/SKILL.md), que encodea el checklist determinista del release (bump lockstep, CHANGELOG desde el milestone, gatillo `develop → master`) en vez de este flujo de feature.
+
 ## Uso
 
 ```
@@ -77,7 +79,7 @@ No avanzar a la Fase 3 sin aprobación explícita.
 **Propósito:** verificar que pasen los gates de CI y correr el agente `code-reviewer`.
 
 1. Correr los **gates de CI** localmente (con `pnpm`, nunca `nx` directo):
-   - `pnpm lint` · `pnpm test` · `pnpm stylelint` · `pnpm build` · `pnpm storybook:build` · (`pnpm test:e2e` si el cambio toca flujos E2E).
+   - `pnpm lint` · `pnpm test` · `pnpm stylelint` · `pnpm typecheck` · `pnpm build` · `pnpm storybook:build` · (`pnpm test:e2e` si el cambio toca flujos E2E).
    - Si alguno falla: reportar cuál, diagnosticar, arreglar, commitear el fix (reglas de Fase 3) y re-correr hasta que pasen.
 2. Delegar al agente **`code-reviewer`** para revisar todos los cambios de la rama vs. `develop`.
 3. El code-reviewer escribe los hallazgos en `workspace/CODE_REVIEW.md`.

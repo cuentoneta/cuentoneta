@@ -10,17 +10,18 @@ export const storiesByAuthorSlugQuery = defineQuery(`
     'body': coalesce(body[0...3], []),
     'originalPublication': coalesce(originalPublication, ''),
     approximateReadingTime,
+    coverImage,
     'mediaSources': coalesce(mediaSources[], []),
-    'resources': coalesce(resources[]{ 
-        title, 
-        url, 
+    'resources': coalesce(resources[]{
+        title,
+        url,
         resourceType->{
             'slug': slug.current,
-            title, 
+            title,
             shortDescription,
-            description, 
+            description,
             icon
-        } 
+        }
     }, []),
 }|order(title asc)`);
 
@@ -34,6 +35,7 @@ export const storyNavigationTeasersByAuthorSlugQuery = defineQuery(`
     'body': [],
     'originalPublication': coalesce(originalPublication, ''),
     approximateReadingTime,
+    coverImage,
     'mediaSources': coalesce(mediaSources[], []),
     'resources': [],
 }|order(title asc)[$start...$end]`);
@@ -55,6 +57,7 @@ export const storyBySlugQuery = defineQuery(`
     'publishedAt': coalesce(publishedAt, _createdAt),
     'updatedAt': _updatedAt,
     approximateReadingTime,
+    coverImage,
     'mediaSources': coalesce(mediaSources[]{
         ...,
         _type == 'spaceRecording' => {
@@ -71,6 +74,13 @@ export const storyBySlugQuery = defineQuery(`
             description,
             icon
         }
+    }, []),
+    'tags': coalesce(tags[] -> {
+        title,
+        'slug': slug.current,
+        shortDescription,
+        description,
+        icon
     }, []),
     'author': author-> {
         _id,
@@ -93,7 +103,8 @@ export const storyBySlugQuery = defineQuery(`
                 description,
                 icon
             }
-        }, [])
+        }, []),
+        'tags': []
     }
 }[0]`);
 
@@ -109,6 +120,7 @@ export const storiesBySlugsQuery = defineQuery(`
     'review': [],
     'originalPublication': coalesce(originalPublication, ''),
     approximateReadingTime,
+    coverImage,
     'mediaSources': coalesce(mediaSources[], []),
     'resources': [],
     'author': author-> {
@@ -138,6 +150,7 @@ export const allStoriesQuery = defineQuery(`
     'review': [],
     'originalPublication': coalesce(originalPublication, ''),
     approximateReadingTime,
+    coverImage,
     'mediaSources': coalesce(mediaSources[], []),
     'resources': [],
     'author': author-> {

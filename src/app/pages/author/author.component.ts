@@ -22,7 +22,7 @@ import { StoryApi } from '../../providers/story-api.interface';
 // Componentes
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
 import { ResourceComponent } from '@components/resource/resource.component';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { ssrBlockingRxResource } from '@utils/ssr-resource';
 import { StoryCardTeaserComponent } from '@components/story-card-teaser/story-card-teaser.component';
 import Tab from '@components/tabs/tab.component';
 import Tabs from '@components/tabs/tabs.component';
@@ -171,12 +171,13 @@ export default class AuthorComponent implements AuthorHost {
 	private router = inject(Router);
 
 	// Recursos
-	protected readonly authorResource = rxResource({
+	protected readonly authorResource = ssrBlockingRxResource({
 		params: this.slug,
 		stream: ({ params }) => this.authorService.getBySlug(params),
 		defaultValue: undefined,
 	});
-	protected readonly storiesResource = rxResource({
+
+	protected readonly storiesResource = ssrBlockingRxResource({
 		params: this.slug,
 		stream: ({ params }) => this.stories$(params),
 		defaultValue: [],

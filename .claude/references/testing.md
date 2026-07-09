@@ -70,16 +70,15 @@ beforeEach(() => {
 
 ```typescript
 import { render, screen } from '@testing-library/angular';
-import { BadgeComponent } from './badge.component';
-import { tagMock } from '../../mocks/tag.mocks';
+import { TagComponent } from './tag.component';
 
-describe('BadgeComponent', () => {
-	it('should display the badge title', async () => {
-		await render(BadgeComponent, {
-			inputs: { tag: tagMock, showIcon: true },
+describe('TagComponent', () => {
+	it('should display the label', async () => {
+		await render(TagComponent, {
+			inputs: { label: 'Crónica', variant: 'soft' },
 		});
 
-		expect(screen.getByText(tagMock.title)).toBeInTheDocument();
+		expect(screen.getByText('Crónica')).toBeInTheDocument();
 	});
 });
 ```
@@ -257,10 +256,11 @@ Todo componente nuevo en **`src/app/components/`** lleva su `*.stories.ts` (docu
 
 ### Convenciones (según las stories existentes)
 
-- `title` en español bajo `Componentes/...` (p. ej. `'Componentes/Tag'`).
-- `parameters.docs.description.component` con descripción en español (markdown/HTML).
-- `argTypes` para cada `input()` público, con `control`, `options` y `table.defaultValue`.
-- Una **story por estado/variante** (`Soft`, `Filled`, `Gray`, …) y opcionalmente un `Showcase`.
+- `title` en español bajo `Componentes V3/...` (p. ej. `'Componentes V3/Tag'`).
+- **autodocs es global.** `.storybook/preview.js` exporta `tags = ['autodocs']`, así que **no** hace falta repetir `tags: ['autodocs']` por archivo (es redundante).
+- `parameters.docs.description.component` con descripción en español (HTML, ver reglas abajo).
+- `argTypes` para **cada `input()` público**, con `control`, `options`/`type` y `table` (`type` + `defaultValue`). Aplica también a inputs de tipo objeto complejo (p. ej. `story`, `collection`): aunque no se editen cómodamente en el panel, usar `control: { type: 'object' }` y documentar `table.type`/`table.defaultValue`.
+- Una **story por estado/variante** (`Soft`, `Filled`, `Gray`, …) y opcionalmente un `Showcase` con todas las variantes en simultáneo. Cada story lleva su `docs.description.story` con el **comportamiento** y una línea **`<strong>Usos:</strong>`** que indica en qué páginas/componentes se usa la variante.
 - Render con `argsToTemplate(args)` y el selector real del componente (`cuentoneta-...`).
 
 ```typescript
@@ -269,9 +269,9 @@ import { TagComponent } from './tag.component';
 
 const meta: Meta<TagComponent> = {
 	component: TagComponent,
-	title: 'Componentes/Tag',
+	title: 'Componentes V3/Tag',
 	parameters: {
-		docs: { description: { component: `El **TagComponent** del Design System v3...` } },
+		docs: { description: { component: `<div><p>El <strong>TagComponent</strong> del Design System v3...</p></div>` } },
 		layout: 'padded',
 	},
 	argTypes: {
@@ -295,6 +295,20 @@ export const Soft: Story = {
 Para dependencias de DI usá los decoradores `moduleMetadata({ imports, providers })` (imports/iconos por story) o `applicationConfig({ providers })` (servicios globales: Router, etc.).
 
 **Siempre** actualizá las stories cuando cambien inputs, estados visuales o la API pública del componente.
+
+### Documentación de la descripción (`description`)
+
+`docs.description.component` y `docs.description.story` se renderizan como **Markdown** en los autodocs. Reglas:
+
+- **Una sola línea por descripción.** El render de Markdown trata cualquier línea con indentación (tab / ≥ 4 espacios) como bloque de código, así que un HTML multilínea indentado se muestra dentro de un recuadro de código. Escribí el HTML de la descripción en una sola línea (sin saltos ni indentación interna).
+- **Negrita para nombres de componentes.** El nombre del componente documentado y el de cualquier otro componente mencionado van en `<strong>…</strong>`.
+- **Enlace navegable a otros componentes.** Cuando la descripción menciona otro componente documentado, su nombre debe ser un enlace que navegue a la story de ese componente. Como la doc se renderiza dentro de `iframe.html`, usá un enlace relativo a la raíz del Storybook (robusto ante subpaths de deploy) con `target="_top"`:
+
+  ```html
+  <a href="./?path=/docs/<kind-id>--docs" target="_top"><strong>StoryCardTeaserV3</strong></a>
+  ```
+
+  El `<kind-id>` se deriva del `title` (minúsculas; espacios y `/` → `-`): `Componentes V3/StoryCardTeaserV3` → `componentes-v3-storycardteaserv3`. El sufijo `--docs` apunta a la página de autodocs.
 
 ### Estado de carga (skeleton) → story intercambiable (obligatoria)
 

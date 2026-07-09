@@ -10,14 +10,17 @@ assignees: ''
 
 - [ ] Ajustar changelog.
 - [ ] Actualizar versión en package.json.
-- [ ] Sanity: Exportar PROD a .zip para backup.
-- [ ] Sanity: Hacer deploy de Sanity Studio.
 - [ ] Sanity: Determinar si hay scripts de actualización de datos a ejecutar.
-- [ ] Generar release desde GitHub.
-  - [ ] Listar todos los issues agregados a la release.
 - [ ] Chequear si deben actualizarse en la documentación del proyecto las versiones de herramientas o dependencias
 
 `(Agregar otras tareas particulares de la versión, en caso de que sea necesario)`
+
+## Pasos automatizados (post-merge a master)
+
+Estos pasos los ejecuta el workflow `release.yml` automáticamente al mergear `develop → master` con la versión bumpeada en `package.json`. No requieren acción manual:
+
+- Creación del tag y publicación del GitHub Release (notas del CHANGELOG + listado de PRs).
+- Deploy de Sanity Studio.
 
 ## Criterios de aceptación
 

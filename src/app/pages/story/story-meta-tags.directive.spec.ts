@@ -5,6 +5,8 @@ import { Title } from '@angular/platform-browser';
 
 import { storyMock } from '@mocks/story.mock';
 import { type Story } from '@models/story.model';
+import { AppRoutes } from '../../app.routes';
+import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { StoryMetaTagsDirective } from './story-meta-tags.directive';
 import { STORY_HOST } from './story-host';
@@ -45,6 +47,16 @@ describe('StoryMetaTagsDirective', () => {
 		TestBed.tick();
 
 		expect(titleSpy).toHaveBeenCalledWith(expect.stringContaining(`${storyMock.title} - ${storyMock.author.name}`));
+	});
+
+	it('should set the canonical URL from the story slug via buildCanonicalUrl', () => {
+		storySignal.set(storyMock);
+		const canonicalSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setCanonicalUrl');
+
+		instantiate();
+		TestBed.tick();
+
+		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl(`${AppRoutes.Story}/${storyMock.slug}`));
 	});
 
 	it('should re-apply the meta tags when the story signal changes', () => {

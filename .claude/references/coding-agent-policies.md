@@ -96,6 +96,10 @@ Prohibido. Todo componente nuevo en `src/app/components/` lleva su `*.stories.ts
 
 Prohibido. Si el componente tiene un **estado de carga (skeleton)**, su story debe exponer ese estado de forma **intercambiable**: un control booleano (`loading` / "Cargando") que alterna real↔skeleton en el **mismo slot**, para poder evaluar la transición y la alineación 1:1 entre ambos. Aplica a componentes que se implementen de ahora en más (no es retroactivo sobre legacy que será rediseñado). El patrón vive en [`testing.md`](testing.md); su omisión es bloqueante para la review.
 
+### "Agrego la leyenda de atribución de agente al PR/commit"
+
+Prohibido. Nunca incluir `🤖 Generated with [Claude Code]…`, `Co-Authored-By: Claude …` ni `Claude-Session: …` en un mensaje de commit ni en el cuerpo de un PR (`gh pr create --body`/`--body-file`). El trailer **automático** de commits ya está suprimido por `attribution` en `.claude/settings.json`; el vector que queda es que el agente lo **tipee a mano** en el cuerpo del PR —ese setting no lo borra porque no es un trailer del harness—. La descripción de un PR o commit que lo contenga es bloqueante para la review.
+
 ---
 
 ## Sección 3 — Disciplina de comentarios
@@ -177,7 +181,7 @@ El principio: **el documento es canónico; la memoria es refuerzo**. Si los dos 
 
 ### Gates de CI
 
-Independientemente de lo anterior, todo PR debe dejar verdes los gates de CI definidos en `CLAUDE.md`: `test`, `lint`, `stylelint`, `e2e`, `build`, `storybook`. Que un gate sea "molesto" o "lento" no es justificación para saltearlo o deshabilitarlo.
+Independientemente de lo anterior, todo PR debe dejar verdes los gates de CI definidos en `CLAUDE.md`: `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`. Que un gate sea "molesto" o "lento" no es justificación para saltearlo o deshabilitarlo.
 
 ### Enmiendas
 

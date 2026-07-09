@@ -6,6 +6,13 @@ export default defineType({
 	title: 'Página de Inicio',
 	type: 'document',
 	icon: CodeBlockIcon,
+	orderings: [
+		{
+			title: 'Semana (más reciente primero)',
+			name: 'configDesc',
+			by: [{ field: 'config', direction: 'desc' }],
+		},
+	],
 	preview: {
 		select: {
 			config: 'config',
@@ -24,6 +31,8 @@ export default defineType({
 			name: 'config',
 			title: 'Configuración',
 			type: 'string',
+			description:
+				'Formato YYYY-WW, numeración de semana ISO-8601 (lunes = día 1). Ver docs/CONTENT_UPDATE_STRATEGIES.md.',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({

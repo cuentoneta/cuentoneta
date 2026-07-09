@@ -5,53 +5,28 @@
 	"tasksRunnerOptions": {
 		"default": {
 			"runner": "nx-cloud",
-			"options": {
-				"cacheableOperations": [
-					"lint",
-					"test",
-					"e2e",
-					"build-storybook"
-				]
-			}
+			"options": {}
 		}
 	},
 	"targetDefaults": {
 		"build": {
-			"dependsOn": [
-				"^build"
-			],
-			"inputs": [
-				"production",
-				"^production"
-			]
+			"dependsOn": ["^build"],
+			"inputs": ["production", "^production"],
+			"cache": true
 		},
 		"e2e": {
-			"inputs": [
-				"default",
-				"^production"
-			]
+			"inputs": ["default", "^production"],
+			"cache": false
 		},
-		"lint": {
-			"inputs": [
-				"default",
-				"{workspaceRoot}/eslint.config.mjs"
-			]
+		"test": {
+			"cache": true
 		},
 		"build-storybook": {
-			"inputs": [
-				"default",
-				"^production",
-				"{projectRoot}/.storybook/**/*",
-				"{projectRoot}/tsconfig.storybook.json"
-			],
+			"inputs": ["default", "^production", "{projectRoot}/.storybook/**/*", "{projectRoot}/tsconfig.storybook.json"],
 			"cache": true
 		},
 		"@nx/jest:jest": {
-			"inputs": [
-				"default",
-				"^production",
-				"{workspaceRoot}/jest.preset.js"
-			],
+			"inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
 			"cache": true,
 			"options": {
 				"passWithNoTests": true
@@ -64,18 +39,16 @@
 			}
 		},
 		"stylelint": {
-			"inputs": [
-				"default",
-				"{workspaceRoot}/.stylelintrc(.(json|yml|yaml|js))?"
-			],
+			"inputs": ["default", "{workspaceRoot}/.stylelintrc(.(json|yml|yaml|js))?"],
+			"cache": true
+		},
+		"typecheck": {
+			"inputs": ["default", "^default"],
 			"cache": true
 		}
 	},
 	"namedInputs": {
-		"default": [
-			"{projectRoot}/**/*",
-			"sharedGlobals"
-		],
+		"default": ["{projectRoot}/**/*", "sharedGlobals"],
 		"production": [
 			"default",
 			"!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",

@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { rxResource } from '@angular/core/rxjs-interop';
 
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { environment } from '../../environments/environment';
+import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
 import { ContributorApi } from '../../providers/contributor-api.interface';
+import { progressiveRxResource } from '@utils/ssr-resource';
 
 @Component({
 	selector: 'cuentoneta-about',
@@ -29,7 +29,8 @@ export default class AboutComponent {
 	private metaTagsDirective = inject(HeadMetadataDirective);
 	private contributorService = inject(ContributorApi);
 
-	private readonly contributorsResource = rxResource({
+	// Ruta Server + `noindex, nofollow`: se maneja con carga progresiva.
+	private readonly contributorsResource = progressiveRxResource({
 		stream: () => this.contributorService.getAllByArea(),
 		defaultValue: [],
 	});
@@ -43,7 +44,7 @@ export default class AboutComponent {
 	private updateMetaTags() {
 		this.metaTagsDirective.setTitle('Nosotros');
 		this.metaTagsDirective.setDefaultDescription();
-		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/about`);
+		this.metaTagsDirective.setCanonicalUrl(buildCanonicalUrl('about'));
 		this.metaTagsDirective.setRobots('noindex, nofollow');
 	}
 }

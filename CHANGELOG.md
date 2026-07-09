@@ -16,6 +16,256 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.8.4 (2026-07-08)
+
+La versión 2.8.4 corrige y endurece la generación automática de las páginas de inicio semanales. El cron `add-next-weeks-landing-page-content` había dejado de anclarse a la semana curada y clonaba indefinidamente el último stub futuro autogenerado, produciendo un bache entre la semana vigente y las siguientes; ahora la query selecciona la última semana válida no futura (`config <= semana actual`) y el formato del slug pasa a `YYYY-WW` para que su orden lexicográfico coincida con el cronológico (#1749).
+
+Sobre esa base, la numeración de semana adopta la convención **ISO-8601** (lunes = día 1, semana del primer jueves) en lugar del default de locale de `date-fns` (domingo), alineando el identificador con la convención esperada. Ambos cambios incluyen scripts de migración de datos con dry-run y manejo de colisiones de borde de año (#1751).
+
+Además, se incorpora formalmente el hotfix de SSR que restaura la confianza en los proxy headers de Vercel (`trustProxyHeaders`), corrigiendo el deopt a CSR que había afectado la indexación en Google Search Console (#1730).
+
+### Cambios completos
+
+Ver el changelog completo en [2.8.4](https://github.com/cuentoneta/cuentoneta/releases/tag/2.8.4)
+
+### Cambios
+
+#### Páginas de inicio y cron de contenido
+
+- [#1749] - Anclaje del cron de páginas de inicio a la última semana válida no futura (`config <= semana actual`, orden `config desc`) y migración del formato de slug de `WW-YYYY` a `YYYY-WW` (orden lexicográfico = cronológico), con ordenamiento cronológico en Sanity Studio.
+- [#1751] - Adopción de numeración de semana **ISO-8601** (lunes = día 1) para el slug de las páginas de inicio, con script de migración (dry-run + manejo de colisiones de borde de año).
+
+#### Correcciones
+
+- [#1730] - (Hotfix) Confianza en los proxy headers de Vercel en el SSR (`trustProxyHeaders`) para evitar el deopt a CSR que afectaba la indexación en Google Search Console.
+
+## Versión 2.8.3 (2026-07-06)
+
+La versión 2.8.3 se enfoca en la robustez del render SSR y en la higiene de SEO/AEO, cerrando dos epics. El epic de render SSR (#1697) corrige la causa raíz por la que las rutas dinámicas (`home`, `story/:slug`, `author/:slug`, `storylist/:slug`) servían un skeleton sin contenido ni meta indexables: los recursos de página ahora **bloquean la serialización del SSR** hasta resolver (`ssrBlockingRxResource` vía `pendingUntilEvent`), conservando la carga progresiva de los datos secundarios (`progressiveRxResource`). Una regla ESLint impide reintroducir la regresión al prohibir `rxResource`/`httpResource` crudos en páginas.
+
+En el frente de SEO/AEO (epic #1525), se estandarizan las URLs canónicas con `buildCanonicalUrl` (corrige el bug de doble slash) tanto en las páginas de detalle como en `about`/`authors`/`dmca`/`stories`, se emite `og:url` por página en el SSR (antes estático al home) y se unifica el host de `sitemap.xml` y `robots.txt` a `www.cuentoneta.ar`.
+
+En infraestructura, se incorpora un gate de CI de type-checking estricto (`tsc --noEmit`) y se depuran los casts del corpus de tests del ACL. Además, se proveen imágenes de ejemplo locales para las stories de `Carousel` y `Author`, se corrigen un fetch de navegación con slug vacío (404) y el `data-testid` de `MediaResourceTag`, y se suma una tanda de actualizaciones de dependencias.
+
+### Cambios completos
+
+Ver el changelog completo en [2.8.3](https://github.com/cuentoneta/cuentoneta/releases/tag/2.8.3)
+
+### Cambios
+
+#### SEO y render SSR
+
+- [#1704] - Bloqueo del SSR hasta resolver los recursos async de las páginas (`ssrBlockingRxResource`/`progressiveRxResource` vía `pendingUntilEvent`), para que el HTML server-rendered sirva contenido y meta resueltos (epic #1697).
+- [#1705] - Regla ESLint que prohíbe `rxResource`/`httpResource` crudos en páginas, forzando la decisión de bloqueo de SSR (`ssrBlockingRxResource`/`progressiveRxResource`).
+- [#1706] - Estandarización de las URLs canónicas con `buildCanonicalUrl` (corrige el doble slash) en las directivas de meta de story, author y storylist.
+- [#1709] - Extensión de `buildCanonicalUrl` a `about`/`authors`/`dmca`/`stories` (mismo bug de doble slash).
+- [#1707] - Emisión de `og:url` por página en el SSR (antes estático al home).
+- [#1703] - Unificación del host de `sitemap.xml` y `robots.txt` a `www.cuentoneta.ar`.
+
+#### Tooling e infraestructura
+
+- [#1691] - Gate de CI de type-checking estricto (`tsc --noEmit`) como gate obligatorio en cada PR.
+- [#1681] - Eliminación de los casts `null as unknown as` en los tests del ACL (coverImage real).
+
+#### Storybook y tests
+
+- [#1676] - Imágenes de ejemplo locales para las stories del `Carousel` y de `Author`.
+
+#### Correcciones
+
+- [#1715] - Corrección del fetch a `/author//navigation` (404) cuando `navigationSlug` está vacío.
+- [#1702] - Corrección del `data-testid` de `MediaResourceTagComponent` (deriva de la key del icono, no del objeto crudo).
+
+#### Dependencias
+
+- [#1664] - Bump de `@angular/ssr` de 21.2.14 a 21.2.17.
+- [#1665] - Bump de `@angular/cli` de 21.2.14 a 21.2.18.
+- [#1667] - Bump de `@eslint/js` de 9.39.2 a 9.39.4.
+
+## Versión 2.8.2 (2026-07-01)
+
+La versión 2.8.2 profundiza el Design System V3 y el modelo de dominio de historias: `story` gana una portada propia (`coverImage`) con su migración de backfill, `CollectionTeaser` incorpora la variante `Multiple` (tres portadas en abanico para colecciones multi-autor), la imagen de `Collection` se unifica alrededor del value object `imagery` (`representative`/`sample`, portada editorial opcional) y las tarjetas V3 derivan su portada del propio `story`. Además, se completan los skeletons faltantes de los componentes V3 mediante stories `Estados` intercambiables (real↔skeleton).
+
+En el Anti-Corruption Layer de Sanity, la asignación de `tags` en los mappers de teaser pasa a ser explícita y se incorpora un corpus crudo (shape Sanity) para testear mappers y services. En paralelo, se refuerza la infraestructura de tests y Storybook con un corpus de mocks enriquecido a partir de las obras de François Onoff —con sus portadas migradas a PNG—, aplicado a `StoryCardTeaserV3` y `HomeStoryCard`, se unifica la documentación de Storybook al estándar V3 y se depuran tests que afirmaban clases CSS estructurales en `CollectionTeaser`.
+
+Finalmente, sienta la base de las OG images dinámicas (`setImage()`/`removeImage()` en `HeadMetadataDirective`), corrige la generación de URLs de imágenes de Sanity con crop, incorpora un skill `/release-workflow` dedicado a los issues de release y suma una tanda de actualizaciones de dependencias (`groq`, Hono, Sanity CLI) y de GitHub Actions.
+
+### Cambios completos
+
+Ver el changelog completo en [2.8.2](https://github.com/cuentoneta/cuentoneta/releases/tag/2.8.2)
+
+### Cambios
+
+#### Modelo de dominio y ACL
+
+- [#1648] - `coverImage` como atributo propio de `story` para su representación visual, con migración de backfill en historias existentes.
+- [#1684] - Imagen de `Collection` modelada con el value object `imagery` (`representative`/`sample`) y portada editorial (`featuredImage`) opcional, en paridad con `CollectionTeaser`.
+- [#1593] - Asignación explícita de `tags: []` en los mappers de teaser de story (ACL).
+- [#1678] - Corpus Onoff crudo (shape Sanity) del lado del ACL para tests de mappers y services.
+
+#### Design System V3 y componentes
+
+- [#1638] - Variante `Multiple` de `CollectionTeaser`: tres portadas en abanico para colecciones multi-autor.
+- [#1692] - Las tarjetas `HomeStoryCard` y `StoryCardTeaserV3` derivan la portada del propio `story`, eliminando el input redundante `coverImageUrl`.
+- [#1675] - Skeletons faltantes de los componentes V3 con stories `Estados` intercambiables (real↔skeleton).
+
+#### Storybook, tests y corpus de mocks
+
+- [#1650] - Corpus de mocks de `Story` enriquecido con las obras de François Onoff.
+- [#1655] - Portadas mock del corpus de Onoff migradas de SVG a PNG (236×328).
+- [#1657] - Refuerzo de tests y Storybook de `StoryCardTeaserV3` con el corpus de Onoff.
+- [#1669] - Refuerzo de tests y Storybook de `HomeStoryCard` con el corpus de Onoff.
+- [#1631] - Auditoría de documentación V3 en Storybook: unificación al estándar de `StoryCardTeaserV3` y `TagComponent`.
+- [#1639] - Limpieza de tests que afirmaban clases CSS en `collection-teaser` (testear comportamiento, no estructura).
+
+#### SEO y OpenGraph
+
+- [#1535] - Base de las OG images dinámicas: `setImage()` y `removeImage()` en `HeadMetadataDirective`, con fallback al logo estático.
+
+#### Correcciones
+
+- [#1694] - Corrección de la generación de URLs de imágenes de Sanity con crop (helper `withSanityImageParams`), que producía un doble `?` y un `rect` inválido.
+
+#### Flujos de trabajo y agentes de IA (Claude)
+
+- [#1685] - Skill `/release-workflow` dedicado a los issues de release.
+
+#### Dependencias e infraestructura
+
+- [#1613] - Actualización de `groq` a la versión 6.1.0.
+- [#1619] - Actualización de `@hono/node-server` a la versión 2.0.6.
+- [#1611] - Actualización de `@sanity/cli` a la versión 7.2.3 (CMS).
+- [#1612] · [#1662] · [#1660] · [#1608] - Actualización de los grupos `minor-and-patch` de dependencias de app y CMS (Dependabot).
+- [#1636] · [#1637] · [#1659] - Auto-bump de GitHub Actions (`pnpm/action-setup`, `actions/checkout`, `actions/cache`) vía Dependabot.
+
+## Versión 2.8.1 (2026-06-23)
+
+La versión 2.8.1 continúa la implementación del Design System V3 con cuatro nuevas entregas: el componente `StoryCardTeaserV3` y el nuevo `HomeStoryCard`, el reemplazo de `BadgeComponent` por `TagComponent` en todos sus usos con documentación de story desde Figma, la adopción de `CoverImageComponent` en el `CollectionTeaser` y la reconciliación de tags en las vistas de story y autor con soporte de override de color.
+
+En paralelo, moderniza el tooling y la infraestructura de CI: actualización de Nx a la versión 23.0, angular-eslint a 21.4.0 con migración del executor `@nx/eslint:lint` deprecado, la migración de la configuración de Sanity TypeGen a `sanity.cli.ts`, la automatización completa del flujo de release (tag + release notes + deploy de Sanity Studio) y la configuración de Dependabot para el auto-bump de GitHub Actions.
+
+### Cambios completos
+
+Ver el changelog completo en [2.8.1](https://github.com/cuentoneta/cuentoneta/releases/tag/2.8.1)
+
+### Cambios
+
+#### Design System V3 y componentes
+
+- [#1510] - Implementación de `StoryCardTeaserV3` y `HomeStoryCard` (Design System V3).
+- [#1629] - Reemplazo de `BadgeComponent` por `TagComponent` y documentación de su story desde Figma.
+- [#1633] - Adopción de `CoverImageComponent` en `CollectionTeaser`.
+- [#1569] - Tags en las vistas de story y autor, reconciliación de tags de autor y override de color en tag.
+
+#### Tooling, CI y mantenimiento
+
+- [#1640] - Actualización de angular-eslint a 21.4.0 y migración del executor `@nx/eslint:lint` deprecado.
+- [#1622] - Actualización de Nx a la versión 23.0.
+- [#1624] - Migración de la configuración de Sanity TypeGen de `sanity-typegen.json` a `sanity.cli.ts`.
+- [#1590] - Automatización del flujo de release: tag, release notes y deploy de Sanity Studio.
+- [#1584] - Configuración de Dependabot para el auto-bump de versiones de GitHub Actions.
+
+## Versión 2.8.0 (2026-06-20)
+
+La versión 2.8.0 implementa parcialmente el Design System V3 con una nueva familia de componentes —avatares circulares, tags con recorte por ancho, teasers de autor y skeletons de carga propios— y reemplaza la dependencia `ngx-skeleton-loader` por una implementación in-house.
+
+En paralelo, impulsa un trabajo extenso de SEO y AEO: datos estructurados con JSON-LD (`Organization`, `WebSite`, `Article`, `Person`, `CollectionPage` y `BreadcrumbList`), señales E-E-A-T en las páginas de cuento, una jerarquía de headings correcta (un único `H1` por página) y la encapsulación de toda la lógica SEO en host directives dedicadas por página, con cobertura de tests e2e.
+
+Finalmente, moderniza el tooling y la arquitectura del proyecto —migración de Jest a Vitest, endurecimiento de las reglas de ESLint, adopción de la propiedad `host` del decorador y la incorporación de flujos de trabajo basados en agentes de IA (Claude)— y robustece la integración continua con cache de tareas de Nx, la automatización de la replicación de datasets de Sanity y mejoras de seguridad ante PRs externos.
+
+### Cambios completos
+
+Ver el changelog completo en [2.8.0](https://github.com/cuentoneta/cuentoneta/releases/tag/2.8.0)
+
+### Cambios
+
+#### Design System V3 y componentes
+
+- [#1510] - Implementación del componente `StoryMediaSelectors`.
+- [#1512] - Componente `ImageProfile`, el avatar circular del Design System v3.
+- [#1514] - El campo de redes sociales del colaborador pasa a ser opcional.
+- [#1515] - Componentes `Tag` y `TagsList` (DS v3) con recorte de etiquetas por ancho.
+- [#1509] - Componente `AuthorTeaser` V3 con avatar, tags recortables y skeleton de carga.
+- [#1486] - Reemplazo de `ngx-skeleton-loader` por un componente de skeleton propio.
+- [#1581] - Convención de story de Storybook intercambiable para componentes con estado de carga.
+- [#1583] - Categoría "Componentes V3" en Storybook y skeleton del componente `Tag`.
+
+#### SEO y AEO
+
+- [#1518] - Title descriptivo en la home y meta `robots` permisivo en el SSR.
+- [#1519] - Corrección de la jerarquía de headings: un único `H1` por página.
+- [#1520] - `SchemaOrgService` (SSR) e inyección del JSON-LD de `Organization` y `WebSite`.
+- [#1521] - Datos estructurados `Article`/`Person` y señales E-E-A-T en las páginas de cuento.
+- [#1522] - Datos estructurados en autor y storylist (`Person`, `CollectionPage`) más `BreadcrumbList`.
+- [#1523] - Contenido indexable en la home mediante la sección "Sobre La Cuentoneta".
+- [#1524] - Keywords específicas y relevantes en el meta tag de la home.
+- [#1564] - Fechas de creación y actualización de la ficha de autor en el JSON-LD `ProfilePage`.
+- [#1565] - Encapsulamiento de la lógica SEO de cada página en host directives dedicadas (meta tags + JSON-LD).
+- [#1578] - Limpieza de los bloques JSON-LD de página al navegar hacia la home.
+- [#1577] - Tests e2e de meta tags y JSON-LD en home, story, author y storylist.
+
+#### Arquitectura, linting y testing
+
+- [#1494] - Migración del proyecto de Jest a Vitest.
+- [#1499] - Adopción del patrón de API providers (`*.service.ts` → `*.provider.ts`).
+- [#1500] - Adopción del enforcement de ESLint al estilo ResetShop.
+- [#1542] - Reemplazo de `@HostListener`/`@HostBinding`/`:host { @apply }` por la propiedad `host` del decorador.
+- [#1547] - Regla de ESLint que prohíbe `@HostListener` y `@HostBinding`.
+- [#1548] - Colapso de los wrappers de componentes a `host: { class }`.
+- [#1552] - Habilitación de la regla `@angular-eslint/no-uncalled-signals` (typed-linting).
+
+#### Flujos de trabajo y agentes de IA (Claude)
+
+- [#1495] - Creación de `CLAUDE.md` y los archivos de referencia de Claude.
+- [#1501] - Portado de los subagentes y el skill `issue-workflow`.
+- [#1502] - Versionado de la configuración de Claude de equipo (`.mcp.json` + `settings.json`).
+
+#### Integración continua e infraestructura
+
+- [#1528] - Eliminación de la propiedad `public` en `vercel.json`.
+- [#1550] - Hotfix de CI: compartir el workspace entre jobs mediante artifacts en lugar de cache.
+- [#1587] - Configuración del workspace de Nx.
+- [#1493] - Automatización de la replicación diaria del dataset de producción hacia staging y development.
+- [#1553] - Cache de tareas de Nx en CI (Nx Cloud + fallback `actions/cache`) y hardening ante PRs desde forks.
+
+## Versión 2.7.4 (2026-06-10)
+
+La versión 2.7.4 está dominada por la puesta al día del stack: Angular 21.2, Nx 22.6, TailwindCSS v4.3, y la actualización de Sanity, las dependencias del CMS y Storybook, junto con la resolución de alertas de seguridad de Dependabot.
+
+Suma nuevos componentes del Design System (`Button` y `CollectionTeaser`) y ajustes de layout para desktop, mejoras en los perfiles de autor (fechas anteriores a Cristo y nombres en negrita en las biografías), el reemplazo de `rettiwt-api` por audio self-hosted en las grabaciones de Spaces, y una guía de QA para escribir test plans.
+
+### Cambios completos
+
+Ver el changelog completo en [2.7.4](https://github.com/cuentoneta/cuentoneta/releases/tag/2.7.4)
+
+### Cambios
+
+#### Design System, componentes y layout
+
+- [#1463] - Implementación del componente `Button`.
+- [#1465] - Implementación del componente `CollectionTeaser`.
+- [#1466] - Actualización del layout y los tamaños para pantallas desktop.
+
+#### Actualizaciones de framework y dependencias
+
+- [#1473] - Actualización a Angular 21.1 y Nx 22.4.
+- [#1474] - Actualización del codebase a Nx v22.6.4 y Angular v21.2.6.
+- [#1295] - Migración de TailwindCSS a v4.3 y su configuración completa.
+- [#1487] - Actualización de Sanity y las dependencias del CMS a sus últimas versiones.
+- [#1488] - Actualización de Storybook a la versión 10.4.2.
+- [#1490] - Resolución de las alertas de seguridad de Dependabot en las dependencias de la raíz.
+
+#### Contenido, autores y multimedia
+
+- [#1478] - Soporte de fechas anteriores a Cristo (a.C.) en los perfiles de autor.
+- [#1483] - Nombre del autor en negrita en las biografías y reubicación de los scripts de diagnóstico.
+- [#1438] - Reemplazo de `rettiwt-api` por audio self-hosted en `spaceRecording`.
+
+#### Integración continua, QA y documentación
+
+- [#1497] - Eliminación de las actions de Claude Code del pipeline de CI.
+- [#1115] - Guía de QA para escribir un test plan y reorganización de `docs/qa`.
+
 ## Versión 2.7.3 (2026-01-07)
 
 Implementados primeros cambios relacionados al diseño de la V3, entre los que se incluyen el design system completo y el reemplazo del carousel de contenido por una implementación nativa en Angular propia del proyecto, reemplazando la dependencia de `ngx-owl-carousel-o`.

@@ -4,13 +4,17 @@
 
 // Importar cliente de Sanity
 import { client } from '../src/api/_helpers/sanity-connector';
+import type { Transaction } from '@sanity/client';
+
+type StoryDocument = { _id: string; _rev: string };
+type StoryPatch = { id: string; patch: { unset: string[]; ifRevisionID: string } };
 
 const fetchStories = () =>
-	client.fetch(`
+	client.fetch<StoryDocument[]>(`
   *[_type == 'story']
 `);
 
-const buildPatches = (stories) =>
+const buildPatches = (stories: StoryDocument[]): StoryPatch[] =>
 	stories.map((story) => ({
 		id: story._id,
 		patch: {
@@ -19,10 +23,10 @@ const buildPatches = (stories) =>
 		},
 	}));
 
-const createTransaction = (patches) =>
+const createTransaction = (patches: StoryPatch[]) =>
 	patches.reduce((tx, patch) => tx.patch(patch.id, patch.patch), client.transaction());
 
-const commitTransaction = (tx) => tx.commit();
+const commitTransaction = (tx: Transaction) => tx.commit();
 
 const migrateBatch = async () => {
 	const stories = await fetchStories();

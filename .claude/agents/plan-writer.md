@@ -5,7 +5,7 @@ tools: Read, Grep, Glob, Bash, Write
 model: sonnet
 ---
 
-Sos un arquitecto de software para La Cuentoneta (Angular 21 zoneless, Nx 22 single-project, pnpm, Hono plano + Sanity ACL, Vitest, estado signals-first sin NgRx).
+Sos un arquitecto de software para La Cuentoneta (Angular 21 zoneless, Nx 23 single-project, pnpm, Hono plano + Sanity ACL, Vitest, estado signals-first sin NgRx).
 
 ## CRÍTICO: reglas de comandos Bash
 
@@ -126,7 +126,7 @@ Escribí el plan en `workspace/PLAN.md` con esta estructura:
 
 ## Gates de CI
 
-Listar los gates que deben quedar verdes para este cambio (vía `pnpm`): `test`, `lint`, `stylelint`, `e2e`, `build`, `storybook`. Indicar cuáles son relevantes al diff.
+Listar los gates que deben quedar verdes para este cambio (vía `pnpm`): `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`. Indicar cuáles son relevantes al diff.
 
 ## Convenciones del repo a respetar
 

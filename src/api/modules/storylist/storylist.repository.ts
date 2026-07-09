@@ -21,22 +21,24 @@ import {
 	mapTags,
 	urlFor,
 } from '../../_utils/functions';
+import { mapImagery } from '../../_utils/storylist-imagery.functions';
 
 export async function fetchAllStorylistTeasers(): Promise<StorylistTeaser[]> {
 	const result = await client.fetch(storylistTeasersQuery);
 
-	return result.map((item) => ({
-		...item,
-		config: {
-			...item.config,
-			showAuthors: item.config?.showAuthors ?? false,
-		},
-		description: mapBlockContentToTextParagraphs(item.description),
-		tags: mapTags(item.tags),
-		featuredImage: urlFor(item.featuredImage),
-		tabs: [],
-		media: mapMediaSourcesTeasers(item.mediaSources),
-	}));
+	return result.map((item) => {
+		const { featuredImage, storyCoverImages, mediaSources, ...rest } = item;
+		return {
+			...rest,
+			config: { ...item.config, showAuthors: item.config?.showAuthors ?? false },
+			description: mapBlockContentToTextParagraphs(item.description),
+			tags: mapTags(item.tags),
+			stories: [],
+			tabs: [],
+			media: mapMediaSourcesTeasers(mediaSources),
+			imagery: mapImagery({ featuredImage, storyCoverImages }),
+		};
+	});
 }
 
 export async function fetchStorylistBySlug(slug: string): Promise<Storylist> {
@@ -48,27 +50,30 @@ export async function fetchStorylistBySlug(slug: string): Promise<Storylist> {
 
 	// Toma las publicaciones que fueron traídas en la consulta a Sanity y las mapea a una colección de publicaciones
 	const stories: StoryTeaserWithAuthor[] = [];
-	for (const story of result.stories) {
+	for (const { coverImage, ...story } of result.stories) {
 		stories.push(
 			mapStoryTeaserWithAuthor({
 				...story,
 				author: mapAuthorTeaser({ ...story.author }),
+				coverImage: urlFor(coverImage),
 				media: mapMediaSourcesTeasers(story.mediaSources),
 				paragraphs: mapBlockContentToTextParagraphs(story.body),
 				resources: [],
+				tags: [],
 			}),
 		);
 	}
 
+	const { featuredImage, storyCoverImages, ...rest } = result;
 	return {
-		...result,
+		...rest,
 		config: {
 			...result.config,
 			showAuthors: result.config?.showAuthors ?? false,
 		},
 		description: mapBlockContentToTextParagraphs(result.description),
 		tags: mapTags(result.tags),
-		featuredImage: urlFor(result.featuredImage),
+		imagery: mapImagery({ featuredImage, storyCoverImages }),
 		stories,
 		tabs: result.tabs.map((tab) => ({
 			title: tab.title,
@@ -94,20 +99,23 @@ export async function fetchStorylistStoriesNavigationTeaserByStorylistSlug(
 		throw new Error(`Storylist with slug ${params.slug} not found`);
 	}
 
+	const { featuredImage, storyCoverImages, ...rest } = result;
 	return {
-		...result,
+		...rest,
 		config: {
 			...result.config,
 			showAuthors: result.config?.showAuthors ?? false,
 		},
 		description: mapBlockContentToTextParagraphs(result.description),
 		tags: mapTags(result.tags),
-		featuredImage: urlFor(result.featuredImage),
-		stories: result.stories.map((story) => ({
+		imagery: mapImagery({ featuredImage, storyCoverImages }),
+		stories: result.stories.map(({ coverImage, ...story }) => ({
 			...story,
 			author: mapAuthorTeaser(story.author),
+			coverImage: urlFor(coverImage),
 			paragraphs: [],
 			media: [],
+			tags: [],
 		})),
 		tabs: [],
 		media: [],

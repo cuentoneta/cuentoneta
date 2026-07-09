@@ -1,10 +1,10 @@
 import { Component, computed, inject } from '@angular/core';
 
 import { AuthorApi } from '../../providers/author-api.interface';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { ssrBlockingRxResource } from '@utils/ssr-resource';
 import { RouterLink } from '@angular/router';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { environment } from '../../environments/environment';
+import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
 
 @Component({
 	imports: [RouterLink],
@@ -26,7 +26,7 @@ export default class AuthorsComponent {
 	private authorService = inject(AuthorApi);
 	private metaTagsDirective = inject(HeadMetadataDirective);
 
-	private authorsResource = rxResource({
+	private authorsResource = ssrBlockingRxResource({
 		stream: () => this.authorService.getAll(),
 		defaultValue: [],
 	});
@@ -40,7 +40,7 @@ export default class AuthorsComponent {
 	private updateMetaTags() {
 		this.metaTagsDirective.setTitle('Índice de Autores');
 		this.metaTagsDirective.setDefaultDescription();
-		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/authors`);
+		this.metaTagsDirective.setCanonicalUrl(buildCanonicalUrl('authors'));
 		this.metaTagsDirective.setRobots('noindex, follow');
 	}
 }

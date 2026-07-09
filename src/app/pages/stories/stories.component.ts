@@ -2,16 +2,18 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 
 import { RouterLink } from '@angular/router';
-import { rxResource } from '@angular/core/rxjs-interop';
 
 // Services
 import { StoryApi } from '../../providers/story-api.interface';
 
+// Utils
+import { ssrBlockingRxResource } from '@utils/ssr-resource';
+
 // Directives
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 
-// Environment
-import { environment } from '../../environments/environment';
+// Utils
+import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
 
 // Routing
 import { AppRoutes } from '../../app.routes';
@@ -76,7 +78,7 @@ export default class StoriesComponent {
 	private metaTagsDirective = inject(HeadMetadataDirective);
 
 	// TODO: Implementar tamaño de página variable
-	private readonly storiesResource = rxResource({
+	private readonly storiesResource = ssrBlockingRxResource({
 		stream: () => this.storyService.get(0, 2000),
 		defaultValue: [],
 	});
@@ -92,7 +94,7 @@ export default class StoriesComponent {
 		this.metaTagsDirective.setDescription(
 			'Explora la colección completa de historias publicadas en La Cuentoneta y descubre nuevos autores y lecturas',
 		);
-		this.metaTagsDirective.setCanonicalUrl(`${environment.website}/${this.appRoutes.Story}`);
+		this.metaTagsDirective.setCanonicalUrl(buildCanonicalUrl(this.appRoutes.Story));
 		this.metaTagsDirective.setRobots('noindex, follow');
 	}
 }

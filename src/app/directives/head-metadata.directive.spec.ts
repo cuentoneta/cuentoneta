@@ -3,9 +3,12 @@ import { HeadMetadataDirective } from './head-metadata.directive';
 import { TestBed } from '@angular/core/testing';
 import { Meta, Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
+import { environment } from '../environments/environment';
 
 describe('HeadMetadataDirective', () => {
 	const BASE_URL = 'https://www.cuentoneta.ar';
+	const TEST_IMAGE_URL = 'assets/svg/collection.svg';
+	const TEST_IMAGE_ALT = 'Imagen de prueba';
 
 	let directive: HeadMetadataDirective;
 	let metaService: Meta;
@@ -145,6 +148,7 @@ describe('HeadMetadataDirective', () => {
 
 	describe('setCanonicalUrl', () => {
 		it('should create and set canonical link element if it does not exist', () => {
+			const metaSpy = spyOn(metaService, 'updateTag');
 			const url = `${BASE_URL}/test`;
 
 			directive.setCanonicalUrl(url);
@@ -155,9 +159,11 @@ describe('HeadMetadataDirective', () => {
 			expect(linkElement).toHaveAttribute('rel', 'canonical');
 			expect(linkElement).toHaveAttribute('href', url);
 			expect(linkElement.parentElement).toBe(document.head);
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:url', content: url });
 		});
 
 		it('should update existing canonical link element', () => {
+			const metaSpy = spyOn(metaService, 'updateTag');
 			const initialUrl = `${BASE_URL}/initial`;
 			const updatedUrl = `${BASE_URL}/updated`;
 
@@ -170,11 +176,13 @@ describe('HeadMetadataDirective', () => {
 			expect(linkElements[0]).toHaveAttribute('rel', 'canonical');
 			expect(linkElements[0]).toHaveAttribute('href', updatedUrl);
 			expect(linkElements[0].parentElement).toBe(document.head);
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:url', content: updatedUrl });
 		});
 	});
 
 	describe('removeCanonicalUrl', () => {
-		it('should remove canonical link element if it exists', () => {
+		it('should remove canonical link element and reset og:url to the home fallback if it exists', () => {
+			const metaSpy = spyOn(metaService, 'updateTag');
 			directive.setCanonicalUrl(`${BASE_URL}/test`);
 
 			let linkElement = document.querySelector('link[rel="canonical"]');
@@ -184,6 +192,15 @@ describe('HeadMetadataDirective', () => {
 
 			linkElement = document.querySelector('link[rel="canonical"]');
 			expect(linkElement).toBeFalsy();
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:url', content: environment.website });
+		});
+
+		it('should reset og:url to the home fallback even when no canonical link exists', () => {
+			const metaSpy = spyOn(metaService, 'updateTag');
+
+			directive.removeCanonicalUrl();
+
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:url', content: environment.website });
 		});
 
 		it('should not throw error if canonical link does not exist', () => {
@@ -424,12 +441,88 @@ describe('HeadMetadataDirective', () => {
 		});
 	});
 
+	describe('setImage', () => {
+		it('should set og:image, og:image:alt and twitter:image with the given url and alt', () => {
+			const metaSpy = spyOn(metaService, 'updateTag');
+
+			directive.setImage(TEST_IMAGE_URL, TEST_IMAGE_ALT);
+
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:image', content: TEST_IMAGE_URL });
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:image:alt', content: TEST_IMAGE_ALT });
+			expect(metaSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: TEST_IMAGE_URL });
+		});
+
+		it('should set og:image:width and og:image:height when dimensions are provided', () => {
+			const updateSpy = spyOn(metaService, 'updateTag');
+			const removeSpy = spyOn(metaService, 'removeTag');
+
+			directive.setImage(TEST_IMAGE_URL, TEST_IMAGE_ALT, 1200, 630);
+
+			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image:width', content: '1200' });
+			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image:height', content: '630' });
+			expect(removeSpy).not.toHaveBeenCalledWith('property="og:image:width"');
+			expect(removeSpy).not.toHaveBeenCalledWith('property="og:image:height"');
+		});
+
+		it('should remove og:image:width and og:image:height when dimensions are omitted', () => {
+			const removeSpy = spyOn(metaService, 'removeTag');
+
+			directive.setImage(TEST_IMAGE_URL, TEST_IMAGE_ALT);
+
+			expect(removeSpy).toHaveBeenCalledWith('property="og:image:width"');
+			expect(removeSpy).toHaveBeenCalledWith('property="og:image:height"');
+		});
+
+		it('should set only the provided dimension and remove the omitted one', () => {
+			const updateSpy = spyOn(metaService, 'updateTag');
+			const removeSpy = spyOn(metaService, 'removeTag');
+
+			directive.setImage(TEST_IMAGE_URL, TEST_IMAGE_ALT, 1200);
+
+			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image:width', content: '1200' });
+			expect(removeSpy).toHaveBeenCalledWith('property="og:image:height"');
+			expect(removeSpy).not.toHaveBeenCalledWith('property="og:image:width"');
+		});
+	});
+
+	describe('removeImage', () => {
+		it('should reset og:image and twitter:image to the static logo fallback', () => {
+			const metaSpy = spyOn(metaService, 'updateTag');
+
+			directive.removeImage();
+
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:image', content: 'assets/svg/logo.svg' });
+			expect(metaSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: 'assets/svg/logo.svg' });
+		});
+
+		it('should reset og:image:alt to the logo fallback alt text', () => {
+			const metaSpy = spyOn(metaService, 'updateTag');
+
+			directive.removeImage();
+
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:image:alt', content: 'Logo de La Cuentoneta' });
+		});
+
+		it('should remove og:image:width and og:image:height dimensions', () => {
+			const removeSpy = spyOn(metaService, 'removeTag');
+
+			directive.removeImage();
+
+			expect(removeSpy).toHaveBeenCalledWith('property="og:image:width"');
+			expect(removeSpy).toHaveBeenCalledWith('property="og:image:height"');
+		});
+	});
+
 	describe('reset on destroy', () => {
-		it('should clean up every per-page tag (title, description, keywords, robots, author, article dates and canonical) when destroyed', () => {
+		it('should clean up every per-page tag (title, description, keywords, robots, author, article dates, canonical and image) when destroyed', () => {
 			const removeSpy = spyOn(metaService, 'removeTag');
 			// El canonical no se limpia con removeTag (quita un <link>): lo seteamos para verificar su remoción.
 			directive.setCanonicalUrl(`${BASE_URL}/home`);
 			expect(document.querySelector(`link[rel='canonical']`)).not.toBeNull();
+			// La imagen se resetea al logo (no se elimina): la seteamos para verificar el fallback al limpiar.
+			directive.setImage(TEST_IMAGE_URL, TEST_IMAGE_ALT, 1200, 630);
+
+			const updateSpy = spyOn(metaService, 'updateTag');
 
 			// La limpieza vive en un effect con onCleanup: se corre el effect y luego se destruye el
 			// contexto de inyección del directive para disparar la limpieza.
@@ -447,8 +540,16 @@ describe('HeadMetadataDirective', () => {
 			expect(removeSpy).toHaveBeenCalledWith('name="author"');
 			expect(removeSpy).toHaveBeenCalledWith('property="article:published_time"');
 			expect(removeSpy).toHaveBeenCalledWith('property="article:modified_time"');
-			// El <link rel="canonical"> se quita del head.
+			// Las dimensiones de OG image se eliminan al limpiar.
+			expect(removeSpy).toHaveBeenCalledWith('property="og:image:width"');
+			expect(removeSpy).toHaveBeenCalledWith('property="og:image:height"');
+			// La imagen se resetea al logo estático (no se elimina del todo).
+			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image', content: 'assets/svg/logo.svg' });
+			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image:alt', content: 'Logo de La Cuentoneta' });
+			expect(updateSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: 'assets/svg/logo.svg' });
+			// El <link rel="canonical"> se quita del head y og:url se resetea al home (no se elimina).
 			expect(document.querySelector(`link[rel='canonical']`)).toBeNull();
+			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:url', content: environment.website });
 		});
 	});
 });

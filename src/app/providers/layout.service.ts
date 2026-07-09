@@ -1,8 +1,19 @@
-import { computed, inject, Injectable, PLATFORM_ID, signal, type Signal, type WritableSignal } from '@angular/core';
+import { inject, Injectable, PLATFORM_ID, signal, type WritableSignal } from '@angular/core';
+import { WINDOW } from './window';
+import {
+	combineLatest,
+	distinctUntilChanged,
+	filter,
+	fromEvent,
+	map,
+	merge,
+	pairwise,
+	startWith,
+	throttleTime,
+} from 'rxjs';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { Viewport, VIEWPORT_WIDTHS_NUMERIC } from '@utils/screen.utils';
-import { fromEventSignal } from '@utils/from-event-signal.utils';
-import { WINDOW } from './window';
 
 export const Direction = Object.freeze({ Up: 'Up', Down: 'Down' } as const);
 export type Direction = (typeof Direction)[keyof typeof Direction];
@@ -16,45 +27,47 @@ export class LayoutService {
 
 	private readonly viewport: WritableSignal<Viewport> = signal('xl');
 
-	public readonly userHasScrolled: Signal<Direction> = (() => {
-		let lastScrollY = 0;
-		let hasFirstScrollPastThreshold = false;
-		return fromEventSignal<Direction>(
-			this.window,
-			'scroll',
-			(previous) => {
-				const y = this.window.scrollY;
-				if (y <= 400) {
-					return previous;
+	private _userHasScrolled$ = fromEvent(this.window, 'scroll').pipe(
+		takeUntilDestroyed(),
+		throttleTime(25),
+		map(() => this.window?.scrollY),
+		filter((scrollAmount) => scrollAmount > 400),
+		pairwise(),
+		map(([y1, y2]) => (y2 < y1 ? Direction.Up : Direction.Down)),
+		distinctUntilChanged(),
+	);
+
+	/**
+	 * Observable que se dispara cuando ocurre un cambio de orientación de pantalla
+	 * o se recalcula el tamaño de pantalla asignado al navegador en el dispositivo.
+	 * @private
+	 */
+	private _viewportHasChanged$ = merge(
+		fromEvent(this.window, 'resize').pipe(startWith(null)),
+		fromEvent(this.window, 'orientationchange').pipe(startWith(null)),
+	).pipe(takeUntilDestroyed(), throttleTime(100));
+
+	public readonly isHeaderVisible = toSignal(this.isHeaderVisible$, { initialValue: true });
+
+	public get userHasScrolled$() {
+		return this._userHasScrolled$;
+	}
+
+	public get viewportHasChanged$() {
+		return this._viewportHasChanged$;
+	}
+
+	public get isHeaderVisible$() {
+		return combineLatest([this.viewportHasChanged$, this.userHasScrolled$]).pipe(
+			map(([hasChanged, direction]) => {
+				if (hasChanged) {
+					this.setViewport();
 				}
-				if (!hasFirstScrollPastThreshold) {
-					hasFirstScrollPastThreshold = true;
-					lastScrollY = y;
-					return previous;
-				}
-				const direction = y < lastScrollY ? Direction.Up : Direction.Down;
-				lastScrollY = y;
-				return direction;
-			},
-			Direction.Up,
+
+				return this.biggerThan('xs') || direction === Direction.Up;
+			}),
 		);
-	})();
-
-	// Su project sincroniza `viewport` ante resize/orientationchange; el valor de la signal
-	// no se consume directamente (`isHeaderVisible` lee `viewport` vía `biggerThan`).
-	private readonly viewportHasChanged = fromEventSignal<Viewport>(
-		this.window,
-		['resize', 'orientationchange'],
-		() => {
-			this.setViewport();
-			return this.viewport();
-		},
-		this.viewport(),
-	);
-
-	public readonly isHeaderVisible: Signal<boolean> = computed(
-		() => this.biggerThan('xs') || this.userHasScrolled() === Direction.Up,
-	);
+	}
 
 	constructor() {
 		this.setViewport();

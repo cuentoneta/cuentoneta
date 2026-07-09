@@ -1,7 +1,7 @@
 import { Directive, inject, untracked } from '@angular/core';
 
 import { AppRoutes } from '../../app.routes';
-import { environment } from '../../environments/environment';
+import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { AbstractMetaTagsDirective } from '../../directives/abstract-meta-tags.directive';
 import { STORY_HOST } from './story-host';
@@ -23,7 +23,7 @@ export class StoryMetaTagsDirective extends AbstractMetaTagsDirective {
 			this.head.setDescription(
 				'Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.',
 			);
-			this.head.setCanonicalUrl(`${environment.website}/${AppRoutes.Story}/${story.slug}`);
+			this.head.setCanonicalUrl(buildCanonicalUrl(`${AppRoutes.Story}/${story.slug}`));
 			this.head.setRobots('index, follow');
 			this.head.setKeywords([
 				'literatura',

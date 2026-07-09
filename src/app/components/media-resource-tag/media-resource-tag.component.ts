@@ -16,7 +16,7 @@ export interface MediaResourcePlatform {
 			[name]="iconName()"
 			[size]="iconSize()"
 			[attr.aria-label]="platform().title"
-			[attr.data-testid]="'icon-' + platform().icon"
+			[attr.data-testid]="'icon-' + iconName()"
 		/>
 	</div>`,
 })

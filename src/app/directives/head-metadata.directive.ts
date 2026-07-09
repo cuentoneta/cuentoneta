@@ -1,6 +1,7 @@
 import { Directive, effect, inject, PLATFORM_ID, DOCUMENT } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../environments/environment';
 
 @Directive({
 	selector: '[cuentonetaHeadMetadata]',
@@ -21,6 +22,7 @@ export class HeadMetadataDirective {
 			this.removeRobots();
 			this.removeAuthor();
 			this.removeArticleDates();
+			this.removeImage();
 		});
 	});
 
@@ -123,6 +125,11 @@ export class HeadMetadataDirective {
 		this.setKeywords(['cuentos', 'literatura', 'poemas', 'podcast', 'narraciones']);
 	}
 
+	// El fallback de og:url es el home. A diferencia del <link rel="canonical"> —que se elimina al
+	// limpiar— og:url se resetea al home para que una página sin canonical propio no arrastre el og:url
+	// de la anterior en la navegación SPA (mismo patrón que og:image con su logo por defecto).
+	private readonly defaultOgUrl = environment.website;
+
 	public setCanonicalUrl(url: string) {
 		const head = this.document.getElementsByTagName('head')[0];
 		let element: HTMLLinkElement | null = this.document.querySelector(`link[rel='canonical']`) || null;
@@ -132,6 +139,7 @@ export class HeadMetadataDirective {
 		}
 		element.setAttribute('rel', 'canonical');
 		element.setAttribute('href', url);
+		this.metaTagService.updateTag({ property: 'og:url', content: url });
 	}
 
 	public removeCanonicalUrl() {
@@ -139,6 +147,7 @@ export class HeadMetadataDirective {
 		if (element) {
 			element.remove();
 		}
+		this.metaTagService.updateTag({ property: 'og:url', content: this.defaultOgUrl });
 	}
 
 	// Para páginas indexables emitimos, además de index/follow, las directivas de vista previa
@@ -158,5 +167,39 @@ export class HeadMetadataDirective {
 
 	public removeRobots() {
 		this.metaTagService.removeTag('name="robots"');
+	}
+
+	// El fallback de OG image coincide con el <meta property="og:image"> estático de indexFile.html.
+	// A diferencia del resto de los tags —que se eliminan al limpiar— la imagen se resetea al logo
+	// para que una página sin imagen dedicada siga exponiendo un og:image/twitter:image válido.
+	private readonly defaultOgImageUrl = 'assets/svg/logo.svg';
+	private readonly defaultOgImageAlt = 'Logo de La Cuentoneta';
+
+	public setImage(url: string, alt: string, width?: number, height?: number) {
+		this.metaTagService.updateTag({ property: 'og:image', content: url });
+		this.metaTagService.updateTag({ property: 'og:image:alt', content: alt });
+		this.setImageDimensions(width, height);
+		this.metaTagService.updateTag({ name: 'twitter:image', content: url });
+	}
+
+	public removeImage() {
+		this.metaTagService.updateTag({ property: 'og:image', content: this.defaultOgImageUrl });
+		this.metaTagService.updateTag({ property: 'og:image:alt', content: this.defaultOgImageAlt });
+		this.metaTagService.removeTag('property="og:image:width"');
+		this.metaTagService.removeTag('property="og:image:height"');
+		this.metaTagService.updateTag({ name: 'twitter:image', content: this.defaultOgImageUrl });
+	}
+
+	private setImageDimensions(width?: number, height?: number) {
+		if (width !== undefined) {
+			this.metaTagService.updateTag({ property: 'og:image:width', content: String(width) });
+		} else {
+			this.metaTagService.removeTag('property="og:image:width"');
+		}
+		if (height !== undefined) {
+			this.metaTagService.updateTag({ property: 'og:image:height', content: String(height) });
+		} else {
+			this.metaTagService.removeTag('property="og:image:height"');
+		}
 	}
 }

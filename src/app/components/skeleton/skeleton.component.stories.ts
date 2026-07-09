@@ -4,19 +4,12 @@ import { SkeletonComponent } from './skeleton.component';
 
 const meta: Meta<SkeletonComponent> = {
 	component: SkeletonComponent,
-	title: 'Componentes/Skeleton',
+	title: 'Componentes V3/Skeleton',
 	parameters: {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div>
-					<p>El componente **SkeletonComponent** es la barra de carga (skeleton) in-house del Design System v3.
-					Reemplaza a la dependencia <code>ngx-skeleton-loader</code>. El host <em>es</em> la barra: el alto, el
-					ancho y el color se controlan con clases utilitarias de Tailwind directamente sobre el elemento
-					(<code>&lt;cuentoneta-skeleton class="h-[36px] w-[40px] bg-brand-300" /&gt;</code>). El único input es
-					<code>appearance</code> (<strong>line</strong> / <strong>circle</strong> / <strong>square</strong>), que
-					define la forma. Para múltiples barras, el consumidor repite el elemento con <code>@for</code>.</p>
-				</div>`,
+				component: `<div><p>El componente <strong>SkeletonComponent</strong> es la barra de carga (skeleton) in-house del Design System v3. Reemplaza a la dependencia <code>ngx-skeleton-loader</code>. El host <em>es</em> la barra: el alto, el ancho y el color se controlan con clases utilitarias de Tailwind directamente sobre el elemento (<code>&lt;cuentoneta-skeleton class="h-[36px] w-[40px] bg-brand-300" /&gt;</code>). El único input es <code>appearance</code> (<strong>line</strong> / <strong>circle</strong> / <strong>square</strong>), que define la forma. Para múltiples barras, el consumidor repite el elemento con <code>@for</code>.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -25,7 +18,8 @@ const meta: Meta<SkeletonComponent> = {
 		appearance: {
 			control: { type: 'inline-radio' },
 			options: ['line', 'circle', 'square'],
-			table: { defaultValue: { summary: 'line' } },
+			description: 'Forma del skeleton: line (radio chico), circle (avatar redondo) o square (sin radio impuesto)',
+			table: { type: { summary: "'line' | 'circle' | 'square'" }, defaultValue: { summary: 'line' } },
 		},
 	},
 };
@@ -35,14 +29,35 @@ type Story = StoryObj<SkeletonComponent>;
 
 export const Line: Story = {
 	render: () => ({ template: `<cuentoneta-skeleton appearance="line" class="h-4 w-48 bg-neutral-300" />` }),
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Forma <strong>line</strong> (default): barra con radio chico para representar líneas de texto.</p><p><strong>Usos:</strong> placeholders de títulos, párrafos y metadatos en los skeletons de las tarjetas.</p>`,
+			},
+		},
+	},
 };
 
 export const Circle: Story = {
 	render: () => ({ template: `<cuentoneta-skeleton appearance="circle" class="w-10 bg-neutral-300" />` }),
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Forma <strong>circle</strong>: fuerza un aspecto cuadrado redondeado para representar avatares.</p><p><strong>Usos:</strong> placeholder del avatar del autor en los skeletons de teasers y tarjetas.</p>`,
+			},
+		},
+	},
 };
 
 export const Square: Story = {
 	render: () => ({ template: `<cuentoneta-skeleton appearance="square" class="h-20 w-20 bg-neutral-200" />` }),
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Forma <strong>square</strong>: no impone radio (lo deja en manos del consumidor) para representar bloques e imágenes.</p><p><strong>Usos:</strong> placeholder de portadas e imágenes dentro de los skeletons.</p>`,
+			},
+		},
+	},
 };
 
 export const MultipleLines: Story = {

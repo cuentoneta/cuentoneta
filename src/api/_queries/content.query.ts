@@ -12,6 +12,7 @@ export const rotatingContentQuery = defineQuery(`
         'body': [],
         originalPublication,
         approximateReadingTime,
+        coverImage,
         'resources': [],
         'mediaSources': coalesce(mediaSources[], []),
         'author': author-> {
@@ -38,7 +39,7 @@ export const landingPageListQuery = defineQuery(`
 }`);
 
 export const latestLandingPageReferencesQuery = defineQuery(`
-*[_type == 'landingPage' && !(_id in path('drafts.**'))]{
+*[_type == 'landingPage' && !(_id in path('drafts.**')) && config <= $currentSlug]{
     _id,
     _type,
     'slug': slug.current,
@@ -46,7 +47,7 @@ export const latestLandingPageReferencesQuery = defineQuery(`
     'cards': coalesce(cards[],[]),
     'campaigns': coalesce(campaigns[],[]),
     'latestReads': coalesce(latestReads,[]),
-} | order(_createdAt desc)[0]
+} | order(config desc, _createdAt desc)[0]
 `);
 
 export const landingPageContentQuery = defineQuery(`
@@ -67,7 +68,7 @@ export const landingPageContentQuery = defineQuery(`
             description,
             icon
         }, []),
-        'stories': [],
+        'storyCoverImages': coalesce(stories[]->coverImage, []),
         'count': coalesce(count(stories), 0),
 				config,
 				'tabs': [],
@@ -100,6 +101,7 @@ export const landingPageContentQuery = defineQuery(`
         'body': [],
         originalPublication,
         approximateReadingTime,
+        coverImage,
         'resources': [],
         'mediaSources': coalesce(mediaSources[], []),
         'author': author-> { 

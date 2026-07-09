@@ -12,7 +12,7 @@ const runMigration = async () => {
 
 	console.log('\n--- Fetching all authors with localized biographies ---');
 
-	const documents = await client.fetch(
+	const documents = await client.fetch<Array<{ _id: string; name: string; biography?: { es?: unknown } }>>(
 		`*[_type == 'author' && biography.es != null && !(_id in path('drafts.**'))] { _id, name, biography }`,
 	);
 
@@ -27,7 +27,7 @@ const runMigration = async () => {
 	// Build transaction with all patches
 	const transaction = documents.reduce((tx, doc) => {
 		if (doc.biography?.es) {
-			return tx.patch(doc._id, (patch) => patch.set({ biography: doc.biography.es }));
+			return tx.patch(doc._id, (patch) => patch.set({ biography: doc.biography?.es }));
 		}
 		return tx;
 	}, client.transaction());

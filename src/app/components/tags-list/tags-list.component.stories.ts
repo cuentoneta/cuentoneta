@@ -29,7 +29,7 @@ const boxed = (width: string) =>
 
 const meta: Meta<Args> = {
 	component: TagsListComponent,
-	title: 'Componentes/TagsList',
+	title: 'Componentes V3/TagsList',
 	decorators: [moduleMetadata({ imports: [TagComponent] })],
 	parameters: {
 		docs: {
@@ -37,16 +37,7 @@ const meta: Meta<Args> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div>
-					<p>El componente **TagsListComponent** recibe los tags por <strong>content projection</strong>
-					(<code>&lt;ng-content&gt;</code>) y, cuando <strong>no entran en el ancho del contenedor</strong>,
-					colapsa el excedente detrás de un contador <strong>"+N"</strong> de ancho fijo ubicado justo
-					después del último tag visible.</p>
-					<p>El recorte es <strong>por ancho real</strong> (vía <code>IntersectionObserver</code>, sin
-					<code>ResizeObserver</code>), no por cantidad, y vive en <code>TagsOverflowDirective</code> aplicada
-					como <code>hostDirective</code>. <code>maxVisible</code> es un <strong>tope duro opcional</strong>.</p>
-					<p>Probá el <em>Playground</em> para arrastrar el ancho y ver el contador aparecer/desaparecer en vivo.</p>
-				</div>`,
+				component: `<div><p>El componente <strong>TagsListComponent</strong> recibe instancias de <a href="./?path=/docs/componentes-v3-tag--docs" target="_top"><strong>Tag</strong></a> por <strong>content projection</strong> (<code>&lt;ng-content&gt;</code>) y, cuando <strong>no entran en el ancho del contenedor</strong>, colapsa el excedente detrás de un contador <strong>"+N"</strong> de ancho fijo ubicado justo después del último tag visible.</p><p>El recorte es <strong>por ancho real</strong> (vía <code>IntersectionObserver</code>, sin <code>ResizeObserver</code>), no por cantidad, y vive en <code>TagsOverflowDirective</code> aplicada como <code>hostDirective</code>. <code>maxVisible</code> es un <strong>tope duro opcional</strong>.</p><p>Probá el <em>Playground</em> para arrastrar el ancho y ver el contador aparecer/desaparecer en vivo.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -55,12 +46,13 @@ const meta: Meta<Args> = {
 		variant: {
 			control: { type: 'inline-radio' },
 			options: ['soft', 'filled', 'gray'],
-			table: { defaultValue: { summary: 'filled' } },
+			description: 'Variante aplicada a los tags proyectados (ver Tag)',
+			table: { type: { summary: "'soft' | 'filled' | 'gray'" }, defaultValue: { summary: 'filled' } },
 		},
 		maxVisible: {
 			control: { type: 'number' },
 			description: 'Tope duro opcional de tags visibles. Vacío = recorte solo por ancho.',
-			table: { defaultValue: { summary: '— (sin tope)' } },
+			table: { type: { summary: 'number' }, defaultValue: { summary: '— (sin tope)' } },
 		},
 	},
 };
@@ -73,7 +65,13 @@ export const Default: Story = {
 	render: (args) => ({ props: { ...args, tags }, template: projected }),
 	args: { variant: 'filled' },
 	decorators: [boxed('100%')],
-	parameters: { docs: { description: { story: 'Con espacio de sobra, los 5 tags se muestran sin contador.' } } },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Con espacio de sobra, los 5 tags se muestran sin contador.</p><p><strong>Usos:</strong> <a href="./?path=/docs/componentes-v3-authorteaserv3--docs" target="_top"><strong>AuthorTeaserV3</strong></a>, en columnas anchas donde la fila de tags entra completa.</p>`,
+			},
+		},
+	},
 };
 
 // Contenedor acotado: el excedente que no entra por ancho se colapsa en "+N".
@@ -84,7 +82,7 @@ export const WidthOverflow: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'En 240px no entran los 5 tags: los que sobran se colapsan tras un "+N" después del último visible.',
+				story: `<p>En 240px no entran los 5 tags: los que sobran se colapsan tras un "+N" después del último visible.</p><p><strong>Usos:</strong> <a href="./?path=/docs/componentes-v3-authorteaserv3--docs" target="_top"><strong>AuthorTeaserV3</strong></a> en anchos intermedios.</p>`,
 			},
 		},
 	},
@@ -95,7 +93,13 @@ export const NarrowWidth: Story = {
 	render: (args) => ({ props: { ...args, tags }, template: projected }),
 	args: { variant: 'filled' },
 	decorators: [boxed('130px')],
-	parameters: { docs: { description: { story: 'A 130px casi nada entra; el contador refleja todo lo colapsado.' } } },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>A 130px casi nada entra; el contador refleja todo lo colapsado.</p><p><strong>Usos:</strong> teasers en viewports muy reducidos o columnas muy angostas.</p>`,
+			},
+		},
+	},
 };
 
 // Tope duro: el contenedor daría para más, pero maxVisible corta antes.
@@ -106,7 +110,7 @@ export const MaxVisibleCap: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Con ancho de sobra pero maxVisible=2, se muestran 2 + "+3"; el tope manda sobre el ancho.',
+				story: `<p>Con ancho de sobra pero maxVisible=2, se muestran 2 + "+3"; el tope manda sobre el ancho.</p><p><strong>Usos:</strong> cuando el diseño exige un máximo fijo de tags independientemente del ancho disponible.</p>`,
 			},
 		},
 	},
@@ -131,7 +135,11 @@ export const Variants: Story = {
 		`,
 	}),
 	parameters: {
-		docs: { description: { story: 'soft / filled / gray recortando por ancho en contenedores de 240px.' } },
+		docs: {
+			description: {
+				story: `<p>soft / filled / gray recortando por ancho en contenedores de 240px.</p><p><strong>Usos:</strong> referencia visual de cómo afecta la variante de <a href="./?path=/docs/componentes-v3-tag--docs" target="_top"><strong>Tag</strong></a> a la fila completa.</p>`,
+			},
+		},
 	},
 };
 
@@ -148,7 +156,7 @@ export const Playground: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Arrastrá el handle de resize del contenedor: el "+N" aparece/desaparece según el ancho disponible.',
+				story: `<p>Arrastrá el handle de resize del contenedor: el "+N" aparece/desaparece según el ancho disponible.</p><p><strong>Usos:</strong> verificación interactiva del recorte por ancho real (IntersectionObserver).</p>`,
 			},
 		},
 	},

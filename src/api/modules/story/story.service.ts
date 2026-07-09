@@ -9,6 +9,7 @@ import {
 	mapStoryNavigationTeaser,
 	mapStoryTeaser,
 	mapStoryTeaserWithAuthor,
+	urlFor,
 } from '../../_utils/functions';
 
 // Modelos
@@ -110,14 +111,16 @@ export async function getStories(limit: number = 100, offset: number = 0): Promi
 	const result = await fetchStories(offset * limit, (offset + 1) * limit);
 
 	return result.map((story) => {
-		const { body, author, mediaSources, ...fields } = story;
+		const { body, author, mediaSources, coverImage, ...fields } = story;
 
 		return mapStoryTeaserWithAuthor({
 			...fields,
 			author: mapAuthorTeaser(author),
+			coverImage: urlFor(coverImage),
 			media: mapMediaSourcesTeasers(mediaSources),
 			paragraphs: mapBlockContentToTextParagraphs(body),
 			resources: [],
+			tags: [],
 		});
 	});
 }

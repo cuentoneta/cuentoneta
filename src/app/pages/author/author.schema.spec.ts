@@ -1,4 +1,5 @@
 import { authorMock } from '@mocks/author.mock';
+import type { IsoDateTime } from '@utils/date.utils';
 
 import { buildAuthorBreadcrumb, buildAuthorProfilePageSchema } from './author.schema';
 
@@ -16,7 +17,7 @@ describe('buildAuthorProfilePageSchema', () => {
 				'@type': 'Person',
 				name: 'François Onoff',
 				url: 'https://www.cuentoneta.ar/author/francois-onoff',
-				image: 'https://cdn.sanity.io/images/s4dbqkc5/production/f656d95d41369adb6f7d3a7d0b20b36861fd2028-350x350.jpg',
+				image: 'assets/img/mocks/author/francois-onoff.png',
 				sameAs: ['https://es.wikipedia.org/wiki/Francois_Onoff'],
 				birthDate: '1948-01-01',
 				deathDate: '1994-12-31',
@@ -25,7 +26,11 @@ describe('buildAuthorProfilePageSchema', () => {
 	});
 
 	it('should forward the ISO datetime dates verbatim to dateCreated/dateModified', () => {
-		const author = { ...authorMock, createdAt: '2022-01-25T23:26:34Z', updatedAt: '2026-06-09T00:32:32Z' };
+		const author = {
+			...authorMock,
+			createdAt: '2022-01-25T23:26:34Z' as IsoDateTime,
+			updatedAt: '2026-06-09T00:32:32Z' as IsoDateTime,
+		};
 
 		const schema = buildAuthorProfilePageSchema(author, websiteUrl);
 

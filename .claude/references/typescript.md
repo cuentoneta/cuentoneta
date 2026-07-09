@@ -92,3 +92,16 @@ const DEFAULT_INTERVAL = 24 * 60 * 60 * 1000;
 - **Global:** solo tras confirmar reuso entre varios archivos.
 
 **Rationale:** una constante declarada 50 líneas lejos de su único uso obliga al lector a saltar entre dos lugares. Co-locarla con su uso (cuando es único) hace el código autocontenido.
+
+## `eslint.config.mjs`: reglas por-scope reemplazan, no mergean
+
+En ESLint flat config, cuando **dos config objects aplican al mismo archivo** y ambos setean la **misma** regla (p. ej. `no-restricted-syntax`), el bloque que matchea **último gana por completo**: su array de opciones **reemplaza** el del bloque anterior, no lo concatena. Un bloque acotado (`files: ['src/app/pages/**/*.ts']`) que redeclara `no-restricted-syntax` con solo sus restricciones nuevas **pierde silenciosamente** las del bloque global (`files: ['**/*.ts']`) para esos archivos.
+
+**Regla:** al acotar `no-restricted-syntax` (u otra regla de array) a un scope, **recomponer** las restricciones base en vez de redeclarar solo las nuevas — típicamente esparciendo la constante común:
+
+```js
+// ✅ el bloque de páginas conserva commonRestrictedSyntax (enum, lifecycle hooks, estáticas, CommonJS)
+'no-restricted-syntax': ['error', ...commonRestrictedSyntax, ...pageFetchRestrictedSyntax],
+```
+
+Precedentes en el propio archivo: `test-utils-vi-exception` (recompone `commonRestrictedSyntax` al soltar `viRestrictedSyntax` para `src/test-utils.ts`) y `ssr-fetch-must-decide-blocking` (recompone `commonRestrictedSyntax` al sumar las restricciones de fetch de página; #1705). La única parte que **sí** se puede soltar sin recomponer es la que no aplica al scope (`viRestrictedSyntax` en un bloque que ya `ignores: ['**/*.spec.ts']`, porque `vi.*` solo aparece en specs).
