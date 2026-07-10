@@ -113,6 +113,9 @@
 			"defaultConfiguration": "development",
 			"continuous": true
 		},
+		"eslint:lint": {
+			"command": "eslint ./src ./e2e"
+		},
 		"stylelint": {
 			"executor": "nx-stylelint:lint",
 			"outputs": ["{options.outputFile}"],
