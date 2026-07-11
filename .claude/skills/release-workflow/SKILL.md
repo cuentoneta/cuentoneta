@@ -50,7 +50,6 @@ Ejemplo: `/release-workflow https://github.com/cuentoneta/cuentoneta/issues/1672
 
 1. **Bump de versión en lockstep:** actualizar la versión target en **`package.json` raíz Y `cms/package.json`**. El versionado app/Studio va en lockstep (convención del release #1641); omitir `cms/package.json` deja el Studio desincronizado. Commitear (pueden ser uno o dos commits, pero **ambos** archivos deben quedar bumpeados antes del merge).
 2. **Entrada de CHANGELOG:** insertar la sección `## Versión <x> (<fecha-de-hoy>)` sobre la anterior, con la prosa y los cambios aprobados en la Fase 1. Commit aparte.
-3. **Pasos manuales versionados (si aplica):** si en pre-flight hay migraciones de Sanity u otros pasos manuales pendientes, escribir **`.github/release-steps/<x>.md`** con el contenido concreto (comandos, orden, precauciones). El Action `prepare-release-pr` lo incluye en el cuerpo del PR `develop → master`. **No** crear el archivo si no hay pasos (el Action usa un fallback “sin pasos manuales”). Commit aparte: `[#<issue>] - Documenta pasos manuales del release <x>`.
 
 Formato de commit: `[#<issue>] - <qué cambió>` (español). Cada commit deja el repo buildeable.
 
@@ -100,10 +99,9 @@ Anotar los resultados en `workspace/RELEASE.md`. Si algo falla: diagnosticar, ar
         cd cms
         pnpm exec sanity migration run <nombre> --project <id> --dataset production          # dry-run
         pnpm exec sanity migration run <nombre> --project <id> --dataset production --no-dry-run
-      (también documentados en `.github/release-steps/<x>.md` si se creó en Fase 2).
    2. Mergear este PR a `develop` (el issue de release debe tener label `release`).
    3. Tras el merge, el workflow `prepare-release-pr` crea/actualiza el PR `develop → master`
-      con las notas del CHANGELOG y los pasos manuales. Revisarlo y mergearlo a `master`
+      con los pasos manuales. Revisarlo y mergearlo a `master`
       → dispara `release.yml` (tag <x> + GitHub Release + deploy de Sanity Studio).
       El deploy de la app lo cubre Vercel por integración Git nativa.
       Si el milestone no estaba completo, el Action hace skip con warning; re-disparar

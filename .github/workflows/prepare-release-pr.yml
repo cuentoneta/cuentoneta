@@ -34,7 +34,7 @@ concurrency:
 
 jobs:
   prepare:
-    name: Crear/actualizar PR develop → master
+    name: Crear PR de release
     runs-on: ubuntu-latest
     # En eventos PR solo corre si el PR se mergeó (no en close sin merge).
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
@@ -129,61 +129,30 @@ jobs:
               --jq "[.[] | select(.number != $exclude)] | length")
           fi
           if [ "$open" != "0" ]; then
-            echo "::warning::El milestone $VERSION tiene $open issue(s) abierto(s) además del de release. No se crea el PR develop→master. Re-disparar con workflow_dispatch y force=true si corresponde."
+            echo "::warning::El milestone $VERSION tiene $open issue(s) abierto(s) además del de release. No se crea el PR de release. Re-disparar con workflow_dispatch y force=true si corresponde."
             echo "ready=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           echo "Milestone $VERSION completo (salvo issue de release). Se procede."
           echo "ready=true" >> "$GITHUB_OUTPUT"
 
-      - name: Extraer notas del CHANGELOG y armar cuerpo del PR
+      - name: Armar cuerpo del PR
         id: body
         if: steps.resolve.outputs.skip != 'true' && steps.milestone.outputs.ready == 'true'
         env:
           VERSION: ${{ steps.resolve.outputs.version }}
+          REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
-          # Mismo awk que release.yml (comparación literal por index; mantener en sync).
-          notes=$(awk -v ver="$VERSION" '
-            BEGIN { header = "## Versión " ver }
-            index($0, header) == 1 {
-              after = substr($0, length(header) + 1, 1)
-              if (after == "" || after == " ") { found = 1; next }
-            }
-            found && index($0, "## Versión ") == 1 { exit }
-            found { print }
-          ' CHANGELOG.md)
-          if [ -z "${notes//[[:space:]]/}" ]; then
-            echo "::error::No se encontró la sección '## Versión ${VERSION}' en CHANGELOG.md." >&2
-            exit 1
-          fi
-
-          steps_file=".github/release-steps/${VERSION}.md"
-          if [ -f "$steps_file" ]; then
-            manual_steps=$(cat "$steps_file")
-          else
-            manual_steps="Sin pasos manuales adicionales para esta versión."
-          fi
-
           body_file="${RUNNER_TEMP}/release-pr-body.md"
           {
-            echo "## Release ${VERSION}"
-            echo ""
-            echo "PR generado automáticamente por el workflow \`prepare-release-pr\` al preparar el release en \`develop\`."
-            echo ""
-            echo "## Notas del CHANGELOG"
-            echo ""
-            echo "$notes"
-            echo ""
-            echo "## Pasos manuales / migraciones"
-            echo ""
-            echo "$manual_steps"
-            echo ""
-            echo "## Checklist antes de mergear a \`master\`"
+            echo "## Pasos manuales"
             echo ""
             echo "- [ ] Correr las migraciones de Sanity pendientes contra producción (si aplica)."
             echo "- [ ] Mergear este PR a \`master\` → dispara \`release.yml\` (tag + GitHub Release + deploy de Studio)."
             echo "- [ ] Verificar que el workflow Release quede verde y la app/Studio en producción sin regresiones."
+            echo ""
+            echo "CHANGELOG: https://github.com/${REPO}/blob/develop/CHANGELOG.md"
             echo ""
             echo "El deploy de la app lo cubre Vercel por integración Git nativa."
           } > "$body_file"
