@@ -12,6 +12,7 @@ import { NgTemplateOutlet } from '@angular/common';
 				<button
 					(click)="setActive(tab)"
 					[attr.aria-selected]="tabTitle === activeTabTitle"
+					[attr.aria-controls]="'tabpanel-' + tab.name()"
 					[class]="
 						tabTitle === activeTabTitle ? 'border-brand-400 text-brand-500' : 'border-neutral-200 text-neutral-600'
 					"
@@ -22,9 +23,16 @@ import { NgTemplateOutlet } from '@angular/common';
 				</button>
 			}
 		</div>
-		@if (active()) {
-			<div [attr.aria-labelledby]="active().title()" role="tabpanel">
-				<ng-container [ngTemplateOutlet]="active().content()" />
+		<!-- Todos los paneles se renderizan en el DOM (el inactivo se oculta con [hidden]): así el contenido
+			 del tab no activo — p. ej. la biografía del autor — llega al HTML SSR y es indexable por buscadores. -->
+		@for (tab of tabs(); track $index) {
+			<div
+				[id]="'tabpanel-' + tab.name()"
+				[attr.aria-labelledby]="tab.title()"
+				[hidden]="tab !== active()"
+				role="tabpanel"
+			>
+				<ng-container [ngTemplateOutlet]="tab.content()" />
 			</div>
 		}`,
 	host: {
