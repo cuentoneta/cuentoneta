@@ -1,6 +1,6 @@
-# Scripts
+# Scripts del monorepo
 
-Utilidades operacionales y de build del monorepo. **No** se versionan aquí migraciones one-off de datos ya corridas en producción: viven en el historial de git (p. ej. buscar commits previos a #1754).
+> Convención para agentes y contribuidores sobre qué vive en `scripts/` y qué no. Detalle de auditoría/diagnóstico Sanity: [`scripts/audit/README.md`](../../scripts/audit/README.md).
 
 ## Convención
 
@@ -8,10 +8,12 @@ Utilidades operacionales y de build del monorepo. **No** se versionan aquí migr
 | ---------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | Build / config de la app           | raíz de `scripts/` (p. ej. `set-environment.ts`, `fix-index-file-name.mjs`)                                   |
 | Operaciones reusables sobre Sanity | raíz de `scripts/` o npm script en `package.json` (p. ej. `delete-unused-assets`)                             |
-| Auditoría / diagnóstico one-off    | [`scripts/audit/`](audit/README.md) — **no** se agregan a `package.json`                                      |
+| Auditoría / diagnóstico one-off    | `scripts/audit/` — **no** se agregan a `package.json`                                                         |
 | Migración de datos one-off         | se escribe, se corre, se borra del working tree tras confirmar producción; el historial de git es el registro |
 
-Para una migración nueva, copiá el patrón de un script histórico en git (p. ej. `delete-day-property-in-story.ts` en commits anteriores a #1754): cliente de Sanity, fetch por lotes, patches con `ifRevisionID`, dry-run cuando aplique.
+**No** se versionan en `scripts/` migraciones one-off de datos ya corridas en producción: viven en el historial de git (p. ej. commits previos a #1754).
+
+Para una migración nueva, copiá el patrón de un script histórico en git (cliente de Sanity, fetch por lotes, patches con `ifRevisionID`, dry-run cuando aplique).
 
 ## Scripts en la raíz (vivos)
 
