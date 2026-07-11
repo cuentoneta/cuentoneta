@@ -23,7 +23,7 @@ import { NgTemplateOutlet } from '@angular/common';
 				</button>
 			}
 		</div>
-		<!-- Todos los paneles se renderizan en el DOM (el inactivo se oculta con [hidden]): así el contenido
+		<!-- Fix temporal pre-Design System V3: Todos los paneles se renderizan en el DOM (el inactivo se oculta con [hidden]): así el contenido
 			 del tab no activo — p. ej. la biografía del autor — llega al HTML SSR y es indexable por buscadores. -->
 		@for (tab of tabs(); track $index) {
 			<div
