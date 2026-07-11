@@ -51,8 +51,6 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 	template: `
 		<main class="content vertical-layout-spacing horizontal-layout-spacing">
 			<article class="grid grid-cols-1 gap-8">
-				<!-- Contenido renderizado con @if plano (no @defer): ssrBlockingRxResource ya resuelve el dato en SSR,
-					 pero un @defer serviría el placeholder al crawler → ficha sin H1/biografía/enlaces internos (thin content). -->
 				@if (author(); as author) {
 					<section class="flex items-center gap-4">
 						<img
