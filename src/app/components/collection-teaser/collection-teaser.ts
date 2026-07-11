@@ -32,7 +32,9 @@ import { CoverImageComponent } from '../cover-image/cover-image.component';
 						}
 					</section>
 					<section class="flex flex-1 flex-col gap-1 overflow-hidden">
-						<header class="hover:text-interactive-500 line-clamp-2 cursor-pointer font-inter text-lg font-bold">
+						<header
+							class="hover:text-interactive-500 line-clamp-2 cursor-pointer font-inter text-lg leading-6 font-bold"
+						>
 							{{ storylist.title }}
 						</header>
 						<cuentoneta-portable-text-parser
