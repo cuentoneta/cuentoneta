@@ -47,7 +47,7 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 | `pnpm install`                            | Instala dependencias                                                                                                                 |
 | `pnpm dev`                                | Dev server (SSR) en desarrollo                                                                                                       |
 | `pnpm build`                              | Build de producción                                                                                                                  |
-| `pnpm lint`                               | ESLint sobre `src`                                                                                                                   |
+| `pnpm lint`                               | ESLint sobre `src` y `e2e`                                                                                                           |
 | `pnpm stylelint`                          | Stylelint sobre CSS                                                                                                                  |
 | `pnpm typecheck`                          | Type-check estricto (`tsc --noEmit`)                                                                                                 |
 | `pnpm test`                               | Tests unitarios (Vitest)                                                                                                             |
@@ -150,8 +150,6 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 | Modelo de dominio / DDD              | `domain-model`, `clean-architecture`                                                               |
 | Tests (Vitest / Storybook)           | `testing`                                                                                          |
 | Tipos / constantes / imports (TS/JS) | `typescript`                                                                                       |
-| Scripts de monorepo                  | `scripts`                                                                                          |
-| Migraciones de datos (Sanity)        | `sanity-migrations`                                                                                |
 | Decisiones de diseño / arquitectura  | `solid`, `cupid`, `guiding-principles`, `cross-reference`, `clean-architecture`, `maintainability` |
 
 **Catálogo completo (`.claude/references/`):**
@@ -171,5 +169,3 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 | `sanity-acl.md`            | GROQ → repository → mapper → modelo de dominio (el ACL central)                     |
 | `typescript.md`            | Micro-convenciones TS/JS (`Object.freeze`, type-only, duration strings)             |
 | `maintainability.md`       | Mantenibilidad y simplificación estructural                                         |
-| `scripts.md`               | Convención de `scripts/` (build/config, ops sobre Sanity, audit one-off)            |
-| `sanity-migrations.md`     | Migraciones de datos con la infraestructura de Sanity (`cms/migrations/`)           |

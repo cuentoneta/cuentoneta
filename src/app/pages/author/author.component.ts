@@ -51,37 +51,35 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 	template: `
 		<main class="content vertical-layout-spacing horizontal-layout-spacing">
 			<article class="grid grid-cols-1 gap-8">
-				@defer (when authorResource.hasValue()) {
-					@if (author(); as author) {
-						<section class="flex items-center gap-4">
-							<img
-								[ngSrc]="authorImageUrl()"
-								[alt]="'Retrato de ' + author.name"
-								class="h-[88px] rounded-xl"
-								width="88"
-								height="88"
-							/>
-							<div class="flex flex-col gap-2">
-								<h1 class="font-inter text-xl font-bold">
-									<span class="hidden sm:inline">{{ author.name }}</span>
-									<span class="sm:hidden">{{ author.name | initials }}</span>
-								</h1>
-								<span class="flex items-center gap-2 font-inter text-sm font-medium text-neutral-600">
-									<img [ngSrc]="authorFlagUrl()" width="20" height="15" class="h-[15px] w-5 rounded" alt="" />
-									{{ author.nationality.country }}
-								</span>
+				@if (author(); as author) {
+					<section class="flex items-center gap-4">
+						<img
+							[ngSrc]="authorImageUrl()"
+							[alt]="'Retrato de ' + author.name"
+							class="h-[88px] rounded-xl"
+							width="88"
+							height="88"
+						/>
+						<div class="flex flex-col gap-2">
+							<h1 class="font-inter text-xl font-bold">
+								<span class="hidden sm:inline">{{ author.name }}</span>
+								<span class="sm:hidden">{{ author.name | initials }}</span>
+							</h1>
+							<span class="flex items-center gap-2 font-inter text-sm font-medium text-neutral-600">
+								<img [ngSrc]="authorFlagUrl()" width="20" height="15" class="h-[15px] w-5 rounded" alt="" />
+								{{ author.nationality.country }}
+							</span>
 
-								<div class="flex">
-									<div class="rounded bg-neutral-200 px-2 py-0.5 hover:cursor-default">
-										<span class="flex items-center gap-1 font-inter text-xs font-semibold"
-											>{{ stories().length }} historias</span
-										>
-									</div>
+							<div class="flex">
+								<div class="rounded bg-neutral-200 px-2 py-0.5 hover:cursor-default">
+									<span class="flex items-center gap-1 font-inter text-xs font-semibold"
+										>{{ stories().length }} historias</span
+									>
 								</div>
 							</div>
-						</section>
-					}
-				} @placeholder (minimum 500ms) {
+						</div>
+					</section>
+				} @else {
 					<section class="flex items-center gap-4">
 						<cuentoneta-skeleton appearance="square" class="h-[88px] w-[88px] rounded-xl bg-neutral-300" />
 						<div class="flex flex-col gap-2">
@@ -99,7 +97,13 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 					<cuentoneta-tabs [initialTab]="activeTab()" class="w-full">
 						<cuentoneta-tab title="Textos" name="stories">
 							<div>
-								@defer (when storiesResource.hasValue()) {
+								@if (storiesResource.isLoading()) {
+									<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
+										@for (_ of [].constructor(12); track $index) {
+											<cuentoneta-story-card-teaser-skeleton [order]="$index + 1" data-testid="skeleton" />
+										}
+									</section>
+								} @else {
 									<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
 										@for (story of stories(); track $index) {
 											<cuentoneta-story-card-teaser
@@ -112,41 +116,27 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 											/>
 										}
 									</section>
-								} @loading (minimum 500ms) {
-									<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-										@for (_ of [].constructor(12); track $index) {
-											<cuentoneta-story-card-teaser-skeleton [order]="$index + 1" data-testid="skeleton" />
-										}
-									</section>
 								}
 							</div>
 						</cuentoneta-tab>
 						<cuentoneta-tab title="Biografía" name="about">
 							<div>
-								@defer (when authorResource.hasValue()) {
-									<div class="flex flex-col gap-4">
-										<cuentoneta-portable-text-parser
-											[paragraphs]="author.biography"
-											[classes]="'source-serif-xl font-normal leading-8'"
-											class="flex flex-col gap-4"
-										/>
-										@if (author.resources && author.resources.length > 0) {
-											<hr class="text-neutral-500" />
-											<div class="font-inter font-semibold text-neutral-600">Recursos web sobre el autor:</div>
-											<div class="flex justify-start gap-4">
-												@for (resource of author.resources; track $index) {
-													<cuentoneta-resource [resource]="resource" />
-												}
-											</div>
-										}
-									</div>
-								} @loading (minimum 500ms) {
-									<div class="flex flex-col gap-2">
-										@for (line of biographySkeletonLines; track $index) {
-											<cuentoneta-skeleton appearance="line" class="h-[25px] w-full bg-neutral-300" />
-										}
-									</div>
-								}
+								<div class="flex flex-col gap-4">
+									<cuentoneta-portable-text-parser
+										[paragraphs]="author.biography"
+										[classes]="'source-serif-xl font-normal leading-8'"
+										class="flex flex-col gap-4"
+									/>
+									@if (author.resources && author.resources.length > 0) {
+										<hr class="text-neutral-500" />
+										<div class="font-inter font-semibold text-neutral-600">Recursos web sobre el autor:</div>
+										<div class="flex justify-start gap-4">
+											@for (resource of author.resources; track $index) {
+												<cuentoneta-resource [resource]="resource" />
+											}
+										</div>
+									}
+								</div>
 							</div>
 						</cuentoneta-tab>
 					</cuentoneta-tabs>
@@ -161,9 +151,6 @@ export default class AuthorComponent implements AuthorHost {
 	// Route inputs
 	public readonly slug = input.required<string>();
 	public readonly activeTab = input<'stories' | 'about'>('stories');
-
-	// Cantidad de líneas del skeleton de la biografía mientras carga
-	protected readonly biographySkeletonLines = Array.from({ length: 10 });
 
 	// Providers
 	private authorService = inject(AuthorApi);
