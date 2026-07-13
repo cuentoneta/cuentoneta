@@ -10,7 +10,7 @@
 | Operaciones reusables sobre Sanity | raíz de `scripts/` o npm script en `package.json` (p. ej. `delete-unused-assets`) |
 | Auditoría / diagnóstico one-off    | `scripts/audit/` — **no** se agregan a `package.json`                             |
 
-**No** viven en `scripts/` las migraciones de datos: se delegan exclusivamente a la infraestructura de migrations de Sanity.
+**No** viven en `scripts/` las migraciones de datos: se delegan exclusivamente a la infraestructura de migrations de Sanity → [`sanity-migrations.md`](sanity-migrations.md).
 
 ## Scripts en la raíz (vivos)
 
