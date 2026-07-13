@@ -1,7 +1,19 @@
 import { authorMock } from '@mocks/author.mock';
+import type { TextBlockContent } from '@models/block-content.model';
 import type { IsoDateTime } from '@utils/date.utils';
 
 import { buildAuthorBreadcrumb, buildAuthorProfilePageSchema } from './author.schema';
+
+// Construye un bloque de biografía (PortableText) con un span por texto; sin textos deja children vacío.
+function bioBlock(...texts: string[]): TextBlockContent {
+	return {
+		_type: 'block',
+		_key: `block-${texts.length}`,
+		style: 'normal',
+		markDefs: [],
+		children: texts.map((text, index) => ({ _type: 'span', _key: `span-${index}`, text, marks: [] })),
+	};
+}
 
 describe('buildAuthorProfilePageSchema', () => {
 	const websiteUrl = 'https://www.cuentoneta.ar/';
@@ -47,12 +59,31 @@ describe('buildAuthorProfilePageSchema', () => {
 	});
 
 	it('should truncate a long biography description at a word boundary with an ellipsis', () => {
-		const mainEntity = buildAuthorProfilePageSchema(authorMock, websiteUrl)['mainEntity'] as Record<string, unknown>;
-		const description = mainEntity['description'] as string;
+		// 295 'a' + espacio + palabra que cruza el tope de 300: el corte cae en el espacio (índice 295)
+		// y descarta la palabra parcial, dejando los 295 caracteres previos + elipsis.
+		const author = { ...authorMock, biography: [bioBlock(`${'a'.repeat(295)} palabraDescartada`)] };
 
-		expect(description.startsWith('François Onoff (Chateauroux, 1948 - París, 1994)')).toBe(true);
-		expect(description.endsWith('…')).toBe(true);
-		expect(description.length).toBeLessThanOrEqual(301);
+		const mainEntity = buildAuthorProfilePageSchema(author, websiteUrl)['mainEntity'] as Record<string, unknown>;
+
+		expect(mainEntity['description']).toBe(`${'a'.repeat(295)}…`);
+	});
+
+	it('should hard-cut at the max length when there is no space within the limit', () => {
+		// Una sola "palabra" de 350 caracteres sin espacios: no hay límite de palabra donde cortar,
+		// así que cae al tope duro de 300 caracteres + elipsis.
+		const author = { ...authorMock, biography: [bioBlock('b'.repeat(350))] };
+
+		const mainEntity = buildAuthorProfilePageSchema(author, websiteUrl)['mainEntity'] as Record<string, unknown>;
+
+		expect(mainEntity['description']).toBe(`${'b'.repeat(300)}…`);
+	});
+
+	it('should collapse a block with empty children when flattening the biography', () => {
+		const author = { ...authorMock, biography: [bioBlock(), bioBlock('Biografía sin bloque vacío previo.')] };
+
+		const mainEntity = buildAuthorProfilePageSchema(author, websiteUrl)['mainEntity'] as Record<string, unknown>;
+
+		expect(mainEntity['description']).toBe('Biografía sin bloque vacío previo.');
 	});
 
 	it('should omit the description in mainEntity when the author has no biography', () => {
