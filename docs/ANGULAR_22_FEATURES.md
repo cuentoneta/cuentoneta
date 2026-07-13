@@ -39,5 +39,6 @@ La actualización se limitó a llevar el framework a Angular 22 / Nx 23.1 **pres
 - **OnPush**: los 23 componentes que dependían del default pre-v22 pasaron a declarar `ChangeDetectionStrategy.OnPush` explícito (nuevo default de v22), alineados con la convención del repo. No es una feature nueva a adoptar: ya quedó hecho.
 - **Hidratación incremental (#2)**: se preservó el comportamiento previo con `withNoIncrementalHydration()`. Su adopción es el candidato #2.
 - **`withFetch()`**: removido, ya que Fetch es el transporte por defecto del `HttpClient` en v22 (no es una feature a evaluar, es limpieza de deprecación).
+- **Supresión de diagnósticos de safe-navigation**: la migración de v22 agregó `angularCompilerOptions.extendedDiagnostics` en `tsconfig.app.json` suprimiendo `nullishCoalescingNotNullable` y `optionalChainNotNullable`. Hoy es un **no-op defensivo** (no hay plantillas que disparen esos diagnósticos), pero se preserva para evitar que un `?.`/`??` innecesario futuro rompa el `build` sin aviso. Endurecer estos diagnósticos (quitar la supresión) es trabajo aparte.
 
 Todo lo demás de la tabla es trabajo futuro a decidir por el equipo.
