@@ -4,7 +4,6 @@ import type { IsoDateTime } from '@utils/date.utils';
 
 import { buildAuthorBreadcrumb, buildAuthorProfilePageSchema } from './author.schema';
 
-// Construye un bloque de biografía (PortableText) con un span por texto; sin textos deja children vacío.
 function bioBlock(...texts: string[]): TextBlockContent {
 	return {
 		_type: 'block',
@@ -55,27 +54,31 @@ describe('buildAuthorProfilePageSchema', () => {
 
 		const mainEntity = buildAuthorProfilePageSchema(author, websiteUrl)['mainEntity'] as Record<string, unknown>;
 
-		expect(mainEntity['description']).toBe('Primera oración. Segunda oración.');
+		expect(mainEntity['description'], 'une el texto de cada bloque separándolos con un espacio').toBe(
+			'Primera oración. Segunda oración.',
+		);
 	});
 
 	it('should truncate a long biography description at a word boundary with an ellipsis', () => {
-		// 295 'a' + espacio + palabra que cruza el tope de 300: el corte cae en el espacio (índice 295)
-		// y descarta la palabra parcial, dejando los 295 caracteres previos + elipsis.
-		const author = { ...authorMock, biography: [bioBlock(`${'a'.repeat(295)} palabraDescartada`)] };
+		const fitsBeforeLimit = 'a'.repeat(295);
+		const author = { ...authorMock, biography: [bioBlock(`${fitsBeforeLimit} palabraDescartada`)] };
 
 		const mainEntity = buildAuthorProfilePageSchema(author, websiteUrl)['mainEntity'] as Record<string, unknown>;
 
-		expect(mainEntity['description']).toBe(`${'a'.repeat(295)}…`);
+		expect(mainEntity['description'], 'corta en el espacio previo al tope de 300 y descarta la palabra parcial').toBe(
+			`${fitsBeforeLimit}…`,
+		);
 	});
 
 	it('should hard-cut at the max length when there is no space within the limit', () => {
-		// Una sola "palabra" de 350 caracteres sin espacios: no hay límite de palabra donde cortar,
-		// así que cae al tope duro de 300 caracteres + elipsis.
-		const author = { ...authorMock, biography: [bioBlock('b'.repeat(350))] };
+		const singleLongWord = 'b'.repeat(350);
+		const author = { ...authorMock, biography: [bioBlock(singleLongWord)] };
 
 		const mainEntity = buildAuthorProfilePageSchema(author, websiteUrl)['mainEntity'] as Record<string, unknown>;
 
-		expect(mainEntity['description']).toBe(`${'b'.repeat(300)}…`);
+		expect(mainEntity['description'], 'sin límite de palabra, cae al tope duro de 300 caracteres + elipsis').toBe(
+			`${'b'.repeat(300)}…`,
+		);
 	});
 
 	it('should collapse a block with empty children when flattening the biography', () => {
@@ -83,7 +86,9 @@ describe('buildAuthorProfilePageSchema', () => {
 
 		const mainEntity = buildAuthorProfilePageSchema(author, websiteUrl)['mainEntity'] as Record<string, unknown>;
 
-		expect(mainEntity['description']).toBe('Biografía sin bloque vacío previo.');
+		expect(mainEntity['description'], 'el bloque vacío no agrega espacios ni artefactos al aplanar').toBe(
+			'Biografía sin bloque vacío previo.',
+		);
 	});
 
 	it('should omit the description in mainEntity when the author has no biography', () => {
