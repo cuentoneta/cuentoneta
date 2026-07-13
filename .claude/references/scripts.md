@@ -4,16 +4,13 @@
 
 ## Convención
 
-| Qué                                | Dónde                                                                                                         |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Build / config de la app           | raíz de `scripts/` (p. ej. `set-environment.ts`, `fix-index-file-name.mjs`)                                   |
-| Operaciones reusables sobre Sanity | raíz de `scripts/` o npm script en `package.json` (p. ej. `delete-unused-assets`)                             |
-| Auditoría / diagnóstico one-off    | `scripts/audit/` — **no** se agregan a `package.json`                                                         |
-| Migración de datos one-off         | se escribe, se corre, se borra del working tree tras confirmar producción; el historial de git es el registro |
+| Qué                                | Dónde                                                                             |
+| ---------------------------------- | --------------------------------------------------------------------------------- |
+| Build / config de la app           | raíz de `scripts/` (p. ej. `set-environment.ts`, `fix-index-file-name.mjs`)       |
+| Operaciones reusables sobre Sanity | raíz de `scripts/` o npm script en `package.json` (p. ej. `delete-unused-assets`) |
+| Auditoría / diagnóstico one-off    | `scripts/audit/` — **no** se agregan a `package.json`                             |
 
-**No** se versionan en `scripts/` migraciones one-off de datos ya corridas en producción: viven en el historial de git (p. ej. commits previos a #1754).
-
-Para una migración nueva, copiá el patrón de un script histórico en git (cliente de Sanity, fetch por lotes, patches con `ifRevisionID`, dry-run cuando aplique).
+**No** viven en `scripts/` las migraciones de datos: se delegan exclusivamente a la infraestructura de migrations de Sanity.
 
 ## Scripts en la raíz (vivos)
 

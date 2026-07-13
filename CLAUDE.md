@@ -149,7 +149,7 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 | Modelo de dominio / DDD              | `domain-model`, `clean-architecture`                                                               |
 | Tests (Vitest / Storybook)           | `testing`                                                                                          |
 | Tipos / constantes / imports (TS/JS) | `typescript`                                                                                       |
-| Scripts de monorepo / migraciones    | `scripts`                                                                                          |
+| Scripts de monorepo                  | `scripts`                                                                                          |
 | Decisiones de diseño / arquitectura  | `solid`, `cupid`, `guiding-principles`, `cross-reference`, `clean-architecture`, `maintainability` |
 
 **Catálogo completo (`.claude/references/`):**
@@ -169,4 +169,4 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 | `sanity-acl.md`            | GROQ → repository → mapper → modelo de dominio (el ACL central)                     |
 | `typescript.md`            | Micro-convenciones TS/JS (`Object.freeze`, type-only, duration strings)             |
 | `maintainability.md`       | Mantenibilidad y simplificación estructural                                         |
-| `scripts.md`               | Convención de `scripts/` (build, ops, audit, migraciones one-off)                   |
+| `scripts.md`               | Convención de `scripts/` (build/config, ops sobre Sanity, audit one-off)            |
