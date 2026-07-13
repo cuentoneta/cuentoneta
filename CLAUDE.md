@@ -42,21 +42,22 @@
 
 Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven targets de Nx del proyecto `@cuentoneta/app`.
 
-| Comando                                   | Descripción                          |
-| ----------------------------------------- | ------------------------------------ |
-| `pnpm install`                            | Instala dependencias                 |
-| `pnpm dev`                                | Dev server (SSR) en desarrollo       |
-| `pnpm build`                              | Build de producción                  |
-| `pnpm lint`                               | ESLint sobre `src` y `e2e`           |
-| `pnpm stylelint`                          | Stylelint sobre CSS                  |
-| `pnpm typecheck`                          | Type-check estricto (`tsc --noEmit`) |
-| `pnpm test`                               | Tests unitarios (Vitest)             |
-| `pnpm test:watch`                         | Tests en watch                       |
-| `pnpm test:e2e`                           | E2E (Playwright)                     |
-| `pnpm storybook` / `pnpm storybook:build` | Storybook dev / build                |
-| `pnpm sanity:dev`                         | Studio de Sanity (`@cuentoneta/cms`) |
-| `pnpm sanity:extract-schema`              | Extrae el schema de Sanity           |
-| `pnpm sanity:run-typegen-generator`       | Genera tipos a partir del schema     |
+| Comando                                   | Descripción                                                                                                                          |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `pnpm install`                            | Instala dependencias                                                                                                                 |
+| `pnpm dev`                                | Dev server (SSR) en desarrollo                                                                                                       |
+| `pnpm build`                              | Build de producción                                                                                                                  |
+| `pnpm lint`                               | ESLint sobre `src` y `e2e`                                                                                                           |
+| `pnpm stylelint`                          | Stylelint sobre CSS                                                                                                                  |
+| `pnpm typecheck`                          | Type-check estricto (`tsc --noEmit`)                                                                                                 |
+| `pnpm test`                               | Tests unitarios (Vitest)                                                                                                             |
+| `pnpm test:watch`                         | Tests en watch                                                                                                                       |
+| `pnpm test:e2e`                           | E2E (Playwright)                                                                                                                     |
+| `pnpm storybook` / `pnpm storybook:build` | Storybook dev / build                                                                                                                |
+| `pnpm sanity:dev`                         | Studio de Sanity (`@cuentoneta/cms`)                                                                                                 |
+| `pnpm sanity:extract-schema`              | Extrae el schema de Sanity                                                                                                           |
+| `pnpm sanity:run-typegen-generator`       | Genera tipos a partir del schema                                                                                                     |
+| `pnpm sanity migration run <slug>`        | Corre una migración de datos (desde `cms/`; dry-run por defecto) → [`sanity-migrations.md`](.claude/references/sanity-migrations.md) |
 
 **Gates de CI** (deben quedar verdes en cada PR): `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`.
 

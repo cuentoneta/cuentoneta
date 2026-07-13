@@ -128,10 +128,6 @@ Las landing pages se identifican mediante slugs en formato **`YYYY-SS`**, con nu
 
 El año va primero para que el **orden lexicográfico del slug coincida con el orden cronológico** (`"2025-52" < "2026-01"`). Esto es lo que permite ordenar las semanas cronológicamente en Sanity Studio y acotar la query de la configuración base a `config <= semana actual`.
 
-> **Migración (#1749):** el formato original era `SS-YYYY` (p. ej. `46-2025`), que no ordenaba cronológicamente. Se migró a `YYYY-SS` con `scripts/migrate-landing-page-config-to-yyyy-ww.ts` (reordenamiento de string puro, sin recalcular la semana).
->
-> **Migración (#1751):** la numeración pasó de la convención local (domingo) a **ISO-8601** (lunes). Se migró con `scripts/migrate-landing-page-config-to-iso-week.ts`, que reconstruye el jueves de cada semana local y recalcula la semana/año ISO (dry-run por defecto + manejo de colisiones de borde de año). Para el rango 2025-2026 ambas convenciones coinciden, así que la migración fue un no-op sobre esos datos.
-
 ### Ubicación en el Código
 
 - **Consultas GROQ**: `src/api/_queries/content.query.ts`

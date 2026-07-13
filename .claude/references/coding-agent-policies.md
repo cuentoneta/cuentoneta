@@ -43,7 +43,7 @@ Tampoco incluyas esas frases como **cláusulas condicionales** en recomendacione
 ### Por qué
 
 1. **El agente no está en posición de evaluar el contexto de mantenimiento.** Ve el repo en un momento puntual; no ve quién va a leer el código en seis meses, qué review de compliance lo va a tocar, ni qué historia de onboarding le importa al equipo.
-2. **Aunque el usuario fuera el único mantenedor**, el precedente existe para futuros contribuidores que copien patrones de este repo a su propio trabajo. La escapatoria del "solo-maintainer" envenena el pozo para todos aguas abajo.
+2. **Aunque el usuario fuera el único mantenedor**, el precedente existe para futuros colaboradores que copien patrones de este repo a su propio trabajo. La escapatoria del "solo-maintainer" envenena el pozo para todos aguas abajo.
 3. **Este es un proyecto colaborativo y de referencia.** Sugerir atajos sobre supuestos de mantenimiento en solitario malinterpreta el contexto real.
 
 ### Cómo aplicarla
