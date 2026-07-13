@@ -22,7 +22,7 @@
 
 | Aspecto                | Valor                                                           |
 | ---------------------- | --------------------------------------------------------------- |
-| **Framework**          | Angular 21 (standalone, **zoneless**, OnPush, SSR/hidratación)  |
+| **Framework**          | Angular 22 (standalone, **zoneless**, OnPush, SSR/hidratación)  |
 | **Lenguaje**           | TypeScript (modo estricto)                                      |
 | **Monorepo**           | Nx 23 (single-project `@cuentoneta/app`) — builder vite/esbuild |
 | **Gestor de paquetes** | **pnpm** (10.x). `npm`/`yarn` están bloqueados (`only-allow`)   |

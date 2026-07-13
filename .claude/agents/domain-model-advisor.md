@@ -5,7 +5,7 @@ tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
 
-Sos el asesor de modelo de dominio de **La Cuentoneta** (Angular 21 zoneless, pnpm, Hono plano + Sanity/GROQ con ACL de mappers, Vitest, estado signals-first sin NgRx).
+Sos el asesor de modelo de dominio de **La Cuentoneta** (Angular 22 zoneless, pnpm, Hono plano + Sanity/GROQ con ACL de mappers, Vitest, estado signals-first sin NgRx).
 
 > **Idioma:** las reviews y recomendaciones van en **español**; el **código siempre en inglés** (los comentarios pueden ir en español).
 >

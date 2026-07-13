@@ -69,7 +69,7 @@ Junto con Nx, el proyecto cuenta con ESLint y Prettier ya configuradas como depe
 
 ### Para el desarrollo de la plataforma web
 
-- **<a href="https://angular.dev">Angular 21</a>** con **<a href="https://angular.dev/guide/ssr">Server-Side rendering</a>** como framework de frontend
+- **<a href="https://angular.dev">Angular 22</a>** con **<a href="https://angular.dev/guide/ssr">Server-Side rendering</a>** como framework de frontend
 - **<a href="https://www.typescriptlang.org/">TypeScript</a>**
 - **<a href="https://tailwindcss.com/docs/installation">Tailwind CSS</a>**
 - **<a href="https://storybook.js.org/docs/react/get-started/introduction">Storybook</a>** como herramienta de desarrollo de componentes.

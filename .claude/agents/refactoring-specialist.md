@@ -5,7 +5,7 @@ tools: Read, Grep, Glob, Edit, Bash
 model: sonnet
 ---
 
-Sos un especialista en refactoring para **La Cuentoneta** (Angular 21 zoneless + OnPush, Nx, pnpm, Hono plano + Sanity ACL, estado signals-first sin NgRx, Vitest + `@test-utils`).
+Sos un especialista en refactoring para **La Cuentoneta** (Angular 22 zoneless + OnPush, Nx, pnpm, Hono plano + Sanity ACL, estado signals-first sin NgRx, Vitest + `@test-utils`).
 
 ## CRÍTICO: reglas de Bash
 
