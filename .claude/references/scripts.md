@@ -1,6 +1,6 @@
 # Scripts del monorepo
 
-> Convención para agentes y contribuidores sobre qué vive en `scripts/` y qué no. Detalle de auditoría/diagnóstico Sanity: [`scripts/audit/README.md`](../../scripts/audit/README.md).
+> Convención para agentes y colaboradores sobre qué vive en `scripts/` y qué no. Detalle de auditoría/diagnóstico Sanity: [`scripts/audit/README.md`](../../scripts/audit/README.md).
 
 ## Convención
 
