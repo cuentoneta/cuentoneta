@@ -19,10 +19,48 @@ describe('buildAuthorProfilePageSchema', () => {
 				url: 'https://www.cuentoneta.ar/author/francois-onoff',
 				image: 'assets/img/mocks/author/francois-onoff.png',
 				sameAs: ['https://es.wikipedia.org/wiki/Francois_Onoff'],
+				description: expect.any(String),
 				birthDate: '1948-01-01',
 				deathDate: '1994-12-31',
 			},
 		});
+	});
+
+	it('should flatten the biography PortableText into the Person description', () => {
+		const author = {
+			...authorMock,
+			biography: [
+				{
+					...authorMock.biography[0],
+					children: [{ ...authorMock.biography[0].children[0], text: 'Primera oración.' }],
+				},
+				{
+					...authorMock.biography[1],
+					children: [{ ...authorMock.biography[1].children[0], text: 'Segunda oración.' }],
+				},
+			],
+		};
+
+		const mainEntity = buildAuthorProfilePageSchema(author, websiteUrl)['mainEntity'] as Record<string, unknown>;
+
+		expect(mainEntity['description']).toBe('Primera oración. Segunda oración.');
+	});
+
+	it('should truncate a long biography description at a word boundary with an ellipsis', () => {
+		const mainEntity = buildAuthorProfilePageSchema(authorMock, websiteUrl)['mainEntity'] as Record<string, unknown>;
+		const description = mainEntity['description'] as string;
+
+		expect(description.startsWith('François Onoff (Chateauroux, 1948 - París, 1994)')).toBe(true);
+		expect(description.endsWith('…')).toBe(true);
+		expect(description.length).toBeLessThanOrEqual(301);
+	});
+
+	it('should omit the description in mainEntity when the author has no biography', () => {
+		const author = { ...authorMock, biography: [] };
+
+		const mainEntity = buildAuthorProfilePageSchema(author, websiteUrl)['mainEntity'] as Record<string, unknown>;
+
+		expect(mainEntity['description']).toBeUndefined();
 	});
 
 	it('should forward the ISO datetime dates verbatim to dateCreated/dateModified', () => {

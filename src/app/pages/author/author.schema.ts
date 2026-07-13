@@ -1,8 +1,34 @@
 import { Location } from '@angular/common';
 
 import { type Author, type AuthorProfile } from '@models/author.model';
+import { type TextBlockContent } from '@models/block-content.model';
 import { buildBreadcrumbSchema, buildPersonSchema } from '@utils/schema-org.builders';
 import { type JsonLdSchema } from '../../providers/schema-org.service';
+
+// Tope del `description` del Person: un resumen citable, no la biografía entera volcada al JSON-LD.
+const MAX_BIOGRAPHY_DESCRIPTION_LENGTH = 300;
+
+/**
+ * Aplana la biografía (PortableText) a texto plano para el `description` del Person, recortado en el
+ * último espacio antes del tope. Da al `Person`/`ProfilePage` una señal de "aboutness" para AEO/rich
+ * results, independiente de que la bio quede en un tab oculto por CSS en la página.
+ */
+function buildBiographyDescription(biography: TextBlockContent[]): string | undefined {
+	const plainText = biography
+		.map((block) => block.children.map((child) => child.text).join(''))
+		.join(' ')
+		.replace(/\s+/g, ' ')
+		.trim();
+	if (!plainText) {
+		return undefined;
+	}
+	if (plainText.length <= MAX_BIOGRAPHY_DESCRIPTION_LENGTH) {
+		return plainText;
+	}
+	const truncated = plainText.slice(0, MAX_BIOGRAPHY_DESCRIPTION_LENGTH);
+	const lastSpace = truncated.lastIndexOf(' ');
+	return `${truncated.slice(0, lastSpace > 0 ? lastSpace : MAX_BIOGRAPHY_DESCRIPTION_LENGTH).trimEnd()}…`;
+}
 
 /**
  * Construye el JSON-LD `ProfilePage` de la página de un autor. Como `Person` no es un `CreativeWork`,
@@ -13,6 +39,10 @@ export function buildAuthorProfilePageSchema(author: AuthorProfile, websiteUrl: 
 	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	const authorUrl = `${baseUrl}/author/${author.slug}`;
 	const person = buildPersonSchema(author, authorUrl);
+	const description = buildBiographyDescription(author.biography);
+	if (description) {
+		person['description'] = description;
+	}
 	if (author.bornOn) {
 		person['birthDate'] = author.bornOn;
 	}
