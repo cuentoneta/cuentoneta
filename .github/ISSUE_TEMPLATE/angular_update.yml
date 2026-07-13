@@ -1,0 +1,42 @@
+name: ⬆️ Actualizar Angular
+description: Planificar la actualización de Angular (y Nx) a una nueva versión mayor del framework
+labels: ['🛠️ tooling', '✍️ bosquejo']
+body:
+  - type: input
+    id: target-version
+    attributes:
+      label: Versión objetivo
+      description: Versión de Angular a la que se migra y la versión de Nx que le da soporte.
+      placeholder: 'Por ejemplo: Angular 22.0 vía Nx 23.1'
+    validations:
+      required: true
+  - type: textarea
+    id: changelog
+    attributes:
+      label: Changelog relevante
+      description: Breaking changes y features nuevas del release, resumidas o enlazadas desde las release notes oficiales.
+      placeholder: |
+        * [Angular X.0 release notes](https://blog.angular.dev)
+        * [Nx Y.0 release notes](https://github.com/nrwl/nx/releases)
+        * Breaking changes que aplican a este repo: ...
+    validations:
+      required: true
+  - type: checkboxes
+    id: compat-checklist
+    attributes:
+      label: Checklist de compatibilidad
+      description: Verificaciones mínimas antes de mergear la actualización.
+      options:
+        - label: Node y TypeScript requeridos por la nueva versión verificados (engines, CI)
+        - label: '`ng-icons` y demás dependencias fuera del ecosistema Nx verificadas contra la nueva versión de Angular'
+        - label: '`nx migrate` revisado (package.json + migrations.json) antes de correr `--run-migrations`'
+        - label: Breaking changes de Router / HttpClient / Hydration / plantillas revisados contra el código actual
+        - label: Codemods que contradicen convenciones del repo (OnPush, strictTemplates) revisados y descartados si corresponde
+        - label: 'Gates de CI verdes (`test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`)'
+  - type: textarea
+    id: new-features
+    attributes:
+      label: Minuta de nuevas features
+      description: Enlace al documento con los candidatos a issue por las features nuevas del framework a evaluar.
+      placeholder: |
+        Por ejemplo: "Ver docs/ANGULAR_22_FEATURES.md"
