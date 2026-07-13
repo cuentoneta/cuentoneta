@@ -1,6 +1,6 @@
 # Migraciones de datos (Sanity)
 
-> Convención para agentes y contribuidores sobre migraciones de datos del contenido. Las migraciones **no** viven en `scripts/` (ver [`scripts.md`](scripts.md)): se delegan a la infraestructura de migrations de Sanity, versionada en `cms/migrations/`.
+> Convención para agentes y colaboradores sobre migraciones de datos del contenido. Las migraciones **no** viven en `scripts/` (ver [`scripts.md`](scripts.md)): se delegan a la infraestructura de migrations de Sanity, versionada en `cms/migrations/`.
 
 ## Dónde viven
 
