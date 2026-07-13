@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Author } from '@models/author.model';
 import { RouterLink } from '@angular/router';
@@ -11,6 +11,7 @@ import { withSanityImageParams } from '@utils/sanity-image.utils';
 	selector: 'cuentoneta-author-teaser',
 	imports: [CommonModule, NgIcon, NgOptimizedImage, RouterLink],
 	providers: [provideIcons({ faSolidArrowRightLong })],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: ` <a
 		[routerLink]="['/', appRoutes.Author, author().slug]"
 		[ngClass]="{

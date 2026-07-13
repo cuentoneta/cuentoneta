@@ -2,8 +2,8 @@ import { APP_ID, ApplicationConfig, LOCALE_ID } from '@angular/core';
 import { provideRouter, withInMemoryScrolling, withViewTransitions, withComponentInputBinding } from '@angular/router';
 import { appRoutes } from './app.routes';
 
-import { provideHttpClient, withFetch } from '@angular/common/http';
-import { provideClientHydration } from '@angular/platform-browser';
+import { provideHttpClient } from '@angular/common/http';
+import { provideClientHydration, withNoIncrementalHydration } from '@angular/platform-browser';
 import localeEs from '@angular/common/locales/es-419';
 import { DatePipe, registerLocaleData } from '@angular/common';
 
@@ -28,7 +28,7 @@ export const appConfig: ApplicationConfig = {
 		DatePipe,
 		{ provide: APP_ID, useValue: 'serverApp' },
 		{ provide: LOCALE_ID, useValue: 'es-419' },
-		provideClientHydration(),
+		provideClientHydration(withNoIncrementalHydration()),
 		provideAnimations(),
 		provideAnimationsAsync(),
 		provideRouter(
@@ -37,7 +37,7 @@ export const appConfig: ApplicationConfig = {
 			withViewTransitions(),
 			withComponentInputBinding(),
 		),
-		provideHttpClient(withFetch()),
+		provideHttpClient(),
 
 		// API providers
 		provideAuthorApi(),

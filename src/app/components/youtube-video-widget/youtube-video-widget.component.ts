@@ -1,4 +1,4 @@
-import { Component, input, ViewEncapsulation } from '@angular/core';
+import { Component, input, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 
 import { YouTubeVideo } from '@models/media.model';
 import { YouTubePlayer } from '@angular/youtube-player';
@@ -16,6 +16,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 		<p class="font-inter text-xs font-medium text-brand-500">
 			<cuentoneta-portable-text-parser [paragraphs]="media().description" />
 		</p>`,
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	styles: `
 		@reference '#tailwind-theme';
 

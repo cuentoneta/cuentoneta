@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
@@ -7,6 +7,7 @@ import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
 	selector: 'cuentoneta-dmca',
 	imports: [],
 	hostDirectives: [HeadMetadataDirective],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `
 		<main
 			class="content horizontal-layout-spacing vertical-layout-spacing bg-neutral-50 p-5 shadow-lg md:rounded-xl md:p-16"

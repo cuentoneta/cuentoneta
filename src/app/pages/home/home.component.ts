@@ -1,5 +1,5 @@
 // Core
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 
 // Services
 import { ContentApi } from '../../providers/content-api.interface';
@@ -28,6 +28,7 @@ import { CollectionTeasersDeck } from '@components/collection-teasers-deck/colle
 		CarouselSkeletonComponent,
 		CollectionTeasersDeck,
 	],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	hostDirectives: [HomeMetaTagsDirective, HomeStructuredDataDirective],
 })
 export default class HomeComponent {

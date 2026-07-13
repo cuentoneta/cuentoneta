@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import { AuthorApi } from '../../providers/author-api.interface';
 import { ssrBlockingRxResource } from '@utils/ssr-resource';
@@ -20,6 +20,7 @@ import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
 			}
 		</ul>
 	</main>`,
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	styles: ``,
 })
 export default class AuthorsComponent {

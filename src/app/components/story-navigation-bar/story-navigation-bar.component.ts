@@ -1,5 +1,5 @@
 // Core
-import { Component, computed, inject, input, Type } from '@angular/core';
+import { Component, computed, inject, input, Type, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -48,6 +48,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 			</div>
 		</ng-template>
 	`,
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	imports: [CommonModule, SkeletonComponent, RouterLink],
 })
 export class StoryNavigationBarComponent {

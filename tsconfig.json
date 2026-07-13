@@ -15,7 +15,11 @@
 		"isolatedModules": true,
 		"baseUrl": ".",
 		"skipLibCheck": true,
-		"strict": true
+		"strict": true,
+		"noUncheckedSideEffectImports": false,
+		"types": ["*"],
+		"esModuleInterop": false,
+		"ignoreDeprecations": "6.0"
 	},
 	"files": [],
 	"include": [],
@@ -41,11 +45,5 @@
 		"strictInputAccessModifiers": true,
 		"typeCheckHostBindings": true,
 		"strictTemplates": true
-	},
-	"ts-node": {
-		"esm": true,
-		"compilerOptions": {
-			"module": "ESNext"
-		}
 	}
 }

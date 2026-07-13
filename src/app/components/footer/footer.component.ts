@@ -1,5 +1,5 @@
 import { NgOptimizedImage } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { InternalLink, UrlLink } from '@models/link.model';
 import {
@@ -61,6 +61,7 @@ import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
 			</div>
 		</footer>
 	`,
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	styles: `
 		@reference '#tailwind-theme';
 

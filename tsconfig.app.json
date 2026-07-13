@@ -2,9 +2,18 @@
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
 		"outDir": "./dist/out-tsc",
-		"types": ["node"]
+		"types": ["node"],
+		"rootDir": "src"
 	},
 	"files": ["src/main.ts", "src/main.server.ts", "src/server.ts"],
 	"include": ["src/**/*.d.ts"],
-	"exclude": ["jest.config.ts", "src/**/*.test.ts", "src/**/*.spec.ts", "**/*.stories.ts", "**/*.stories.js"]
+	"exclude": ["jest.config.ts", "src/**/*.test.ts", "src/**/*.spec.ts", "**/*.stories.ts", "**/*.stories.js"],
+	"angularCompilerOptions": {
+		"extendedDiagnostics": {
+			"checks": {
+				"nullishCoalescingNotNullable": "suppress",
+				"optionalChainNotNullable": "suppress"
+			}
+		}
+	}
 }

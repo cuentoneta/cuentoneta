@@ -1,4 +1,4 @@
-import { afterNextRender, Component, inject, signal } from '@angular/core';
+import { afterNextRender, Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 
 import { HeaderComponent } from '@components/header/header.component';
 import { FooterComponent } from '@components/footer/footer.component';
@@ -18,6 +18,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 		<cuentoneta-footer />
 	`,
 	imports: [FooterComponent, HeaderComponent, RouterModule],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [AnalyticsService],
 })
 export class AppComponent {

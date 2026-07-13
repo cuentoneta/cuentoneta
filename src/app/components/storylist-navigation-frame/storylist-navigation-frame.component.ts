@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject, ChangeDetectionStrategy } from '@angular/core';
 import { UrlTree } from '@angular/router';
 
 // Models
@@ -29,6 +29,7 @@ export type NavigationBarConfig = {
 	host: {
 		class: 'grid grid-cols-1 gap-y-0.5 rounded-xl bg-neutral-200 shadow-lg',
 	},
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: ` @if (storylist(); as storylist) {
 			@for (story of displayedStories; track $index) {
 				<cuentoneta-navigable-storylist-story-teaser

@@ -3,7 +3,8 @@
 	"compilerOptions": {
 		"allowSyntheticDefaultImports": true,
 		"emitDecoratorMetadata": true,
-		"experimentalDecorators": true
+		"experimentalDecorators": true,
+		"ignoreDeprecations": "6.0"
 	},
 
 	"exclude": ["../**/*.spec.ts"],

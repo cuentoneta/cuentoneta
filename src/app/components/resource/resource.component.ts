@@ -7,6 +7,7 @@ import {
 	EnvironmentInjector,
 	inject,
 	input,
+	ChangeDetectionStrategy,
 } from '@angular/core';
 
 // Models
@@ -34,6 +35,7 @@ import { NgComponentOutlet } from '@angular/common';
 			}
 		</a>
 	`,
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	host: {
 		class: 'flex items-center justify-center',
 	},

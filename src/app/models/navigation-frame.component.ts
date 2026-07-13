@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, signal } from '@angular/core';
+import { Component, effect, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { NavigationFrameService } from '../providers/navigation-frame.service';
 import { Router } from '@angular/router';
 import { NavigationBarConfig } from '../components/storylist-navigation-frame/storylist-navigation-frame.component';
@@ -7,6 +7,7 @@ import { NavigationBarConfig } from '../components/storylist-navigation-frame/st
 	selector: 'cuentoneta-navigation-frame',
 	template: '',
 	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [NavigationFrameService],
 })
 export abstract class NavigationFrameComponent {
