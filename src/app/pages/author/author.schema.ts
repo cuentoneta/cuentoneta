@@ -6,12 +6,12 @@ import { buildBreadcrumbSchema, buildPersonSchema } from '@utils/schema-org.buil
 import { type JsonLdSchema } from '../../providers/schema-org.service';
 
 /**
- * Aplana la biografía (PortableText) a texto plano para el `description` del Person, recortado en el
- * último espacio antes del tope. Da al `Person`/`ProfilePage` una señal de "aboutness" para AEO/rich
- * results, independiente de que la bio quede en un tab oculto por CSS en la página.
+ * Aplana y recorta la biografía (PortableText) a texto plano para el `description` del Person, recortado
+ * en el último espacio antes del tope. Da al `Person`/`ProfilePage` texto para resultados enriquecidos
+ * para AEO/SEO en la información expuesta en JSON-LD, independiente de la biografía visible para el
+ * crawler en HTML
  */
 function buildBiographyDescription(biography: TextBlockContent[]): string | undefined {
-	// Tope del `description`: un resumen citable, no la biografía entera volcada al JSON-LD.
 	const maxLength = 300;
 	const plainText = biography
 		.map((block) => block.children.map((child) => child.text).join(''))
