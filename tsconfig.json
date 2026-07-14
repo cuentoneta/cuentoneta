@@ -6,18 +6,15 @@
 		"module": "preserve",
 		"lib": ["dom", "es2022"],
 		"paths": {
-			"@components/*": ["src/app/components/*"],
-			"@mocks/*": ["src/app/mocks/*"],
-			"@models/*": ["src/app/models/*"],
-			"@utils/*": ["src/app/utils/*"],
-			"@test-utils": ["src/test-utils.ts"]
+			"@components/*": ["./src/app/components/*"],
+			"@mocks/*": ["./src/app/mocks/*"],
+			"@models/*": ["./src/app/models/*"],
+			"@utils/*": ["./src/app/utils/*"],
+			"@test-utils": ["./src/test-utils.ts"]
 		},
 		"isolatedModules": true,
-		"baseUrl": ".",
 		"skipLibCheck": true,
-		"strict": true,
-		// `baseUrl` (requerido por los imports absolutos `src/api/...`) está deprecado en TS 6 y se elimina en TS 7; esto silencia el error hasta que se migre esos imports.
-		"ignoreDeprecations": "6.0"
+		"strict": true
 	},
 	"files": [],
 	"include": [],

@@ -2,7 +2,7 @@
 import { client } from '../../_helpers/sanity-connector';
 
 // Queries
-import { sitemapSlugsQuery } from 'src/api/_queries/sitemap.query';
+import { sitemapSlugsQuery } from '../../_queries/sitemap.query';
 
 // Interfaces
 interface SlugEntry {
