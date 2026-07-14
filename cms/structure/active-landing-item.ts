@@ -3,8 +3,8 @@ import { StarIcon } from '@sanity/icons';
 import { LandingPageListPane } from '../components/LandingPageListPane';
 import { API_VERSION, resolveActiveLandingId } from '../utils/landing-page';
 
-// B1: abre directo la landing activa (misma resolución que sirve producción); ante error o ausencia,
-// cae al pane, que muestra su propio estado.
+// Abre directo la landing activa (misma resolución que sirve producción);
+// ante error o ausencia, cae al pane, que muestra su propio estado.
 export const activeLandingItem = (S, context) =>
 	S.listItem()
 		.title('Landing activa')
