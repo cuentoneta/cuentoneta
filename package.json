@@ -72,7 +72,7 @@
 		"@angular/cli": "22.0.6",
 		"@angular/compiler-cli": "22.0.6",
 		"@angular/language-service": "22.0.6",
-		"@eslint/js": "^9.39.4",
+		"@eslint/js": "^10.0.1",
 		"@nx/devkit": "23.1.0",
 		"@nx/eslint": "23.1.0",
 		"@nx/eslint-plugin": "23.1.0",
