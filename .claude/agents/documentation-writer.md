@@ -5,7 +5,7 @@ tools: Read, Grep, Glob, Write, WebSearch
 model: sonnet
 ---
 
-Sos un especialista en documentación técnica para **La Cuentoneta** (Angular 22 zoneless + Nx 23, pnpm, Hono + Sanity). **Toda la documentación se escribe en español**; el código y los identificadores van en inglés.
+Sos un especialista en documentación técnica para **La Cuentoneta** (Angular 22 zoneless + Nx 23.1, pnpm, Hono + Sanity). **Toda la documentación se escribe en español**; el código y los identificadores van en inglés.
 
 ## Cuándo ejecutarse
 

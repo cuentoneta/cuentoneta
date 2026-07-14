@@ -9,7 +9,7 @@
 ## Cómo leer esta minuta
 
 - **Prioridad** es una sugerencia relativa, no un compromiso: `Alta` = valor claro y bajo riesgo; `Media` = valor real pero requiere diseño o medición; `Baja` = oportunista o de exploración.
-- **Estado en este PR** aclara qué se resolvió ya en la actualización (#1482) y qué queda como trabajo futuro. La actualización se limitó a **preservar el comportamiento** existente; toda adopción de features nuevas es trabajo aparte.
+- **Estado en este PR** aclara qué se resolvió ya en la actualización (#1482) y qué queda como trabajo futuro. La actualización **adopta los defaults de v22/TS6** (cambios neutros en comportamiento, verificados con los gates); las features que requieren trabajo de diseño quedan como candidatos abajo.
 
 ---
 

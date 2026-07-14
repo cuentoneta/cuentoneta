@@ -20,17 +20,17 @@
 
 ## Resumen del proyecto
 
-| Aspecto                | Valor                                                           |
-| ---------------------- | --------------------------------------------------------------- |
-| **Framework**          | Angular 22 (standalone, **zoneless**, OnPush, SSR/hidratación)  |
-| **Lenguaje**           | TypeScript (modo estricto)                                      |
-| **Monorepo**           | Nx 23 (single-project `@cuentoneta/app`) — builder vite/esbuild |
-| **Gestor de paquetes** | **pnpm** (10.x). `npm`/`yarn` están bloqueados (`only-allow`)   |
-| **Backend**            | **Hono** (`src/api/`) + `@hono/zod-validator`                   |
-| **Persistencia/CMS**   | **Sanity** (GROQ) vía `@sanity/client`. Studio en `/cms`        |
-| **Testing**            | **Vitest** + Angular Testing Library + `@test-utils`            |
-| **Estilos**            | Tailwind v4 + Stylelint                                         |
-| **Componentes**        | Storybook 10                                                    |
+| Aspecto                | Valor                                                             |
+| ---------------------- | ----------------------------------------------------------------- |
+| **Framework**          | Angular 22 (standalone, **zoneless**, OnPush, SSR/hidratación)    |
+| **Lenguaje**           | TypeScript (modo estricto)                                        |
+| **Monorepo**           | Nx 23.1 (single-project `@cuentoneta/app`) — builder vite/esbuild |
+| **Gestor de paquetes** | **pnpm** (10.x). `npm`/`yarn` están bloqueados (`only-allow`)     |
+| **Backend**            | **Hono** (`src/api/`) + `@hono/zod-validator`                     |
+| **Persistencia/CMS**   | **Sanity** (GROQ) vía `@sanity/client`. Studio en `/cms`          |
+| **Testing**            | **Vitest** + Angular Testing Library + `@test-utils`              |
+| **Estilos**            | Tailwind v4 + Stylelint                                           |
+| **Componentes**        | Storybook 10                                                      |
 
 **Aliases de paths** (ver `tsconfig.json`): `@components/*`, `@mocks/*`, `@models/*`, `@utils/*`, `@test-utils`.
 
