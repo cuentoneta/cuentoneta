@@ -1,4 +1,4 @@
-import { StarIcon } from '@sanity/icons';
+import { StarIcon } from '@sanity/icons/Star';
 
 import { LandingPageListPane } from '../components/LandingPageListPane';
 import { API_VERSION, resolveActiveLandingId } from '../utils/landing-page';

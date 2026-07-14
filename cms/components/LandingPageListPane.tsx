@@ -2,7 +2,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useClient } from 'sanity';
 import { usePaneRouter } from 'sanity/structure';
 import { Badge, Box, Button, Card, Flex, Spinner, Stack, Text } from '@sanity/ui';
-import { AddIcon, CodeBlockIcon } from '@sanity/icons';
+import { AddIcon } from '@sanity/icons/Add';
+import { CodeBlockIcon } from '@sanity/icons/CodeBlock';
 
 import {
 	ACTIVE_LANDING_ID_QUERY,

@@ -1,5 +1,5 @@
 import { defineArrayMember, defineField, defineType } from 'sanity';
-import { SyncIcon } from '@sanity/icons';
+import { SyncIcon } from '@sanity/icons/Sync';
 
 export default defineType({
 	name: 'rotatingContent',
