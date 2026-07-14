@@ -101,7 +101,9 @@ Anotar los resultados en `workspace/RELEASE.md`. Si algo falla: diagnosticar, ar
         pnpm exec sanity migration run <nombre> --project <id> --dataset production --no-dry-run
    2. Mergear este PR a `develop` (el issue de release debe tener label `release`).
    3. Tras el merge, el workflow `prepare-release-pr` crea/actualiza el PR `develop → master`
-      con los pasos manuales. Revisarlo y mergearlo a `master`
+      con los pasos manuales y dispara `ci.yml` sobre `develop` (el PR no gatilla checks por sí
+      mismo por la anti-recursión del `GITHUB_TOKEN`; la señal de CI está en la corrida sobre
+      `develop`). Revisarlo y mergearlo a `master`
       → dispara `release.yml` (tag <x> + GitHub Release + deploy de Sanity Studio).
       El deploy de la app lo cubre Vercel por integración Git nativa.
       Si el milestone no estaba completo, el Action hace skip con warning; re-disparar
