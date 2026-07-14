@@ -1,4 +1,5 @@
-import { DashboardIcon, DocumentTextIcon } from '@sanity/icons';
+import { DashboardIcon } from '@sanity/icons/Dashboard';
+import { DocumentTextIcon } from '@sanity/icons/DocumentText';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { audioRecording, pdfLink, spaceRecording, spotifyPodcastEpisode, youtubeVideo } from './media-sources';
 

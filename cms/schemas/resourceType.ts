@@ -1,4 +1,4 @@
-import { LinkIcon } from '@sanity/icons';
+import { LinkIcon } from '@sanity/icons/Link';
 import { preview } from 'sanity-plugin-icon-picker';
 import { defineField, defineType } from 'sanity';
 

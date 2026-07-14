@@ -1,4 +1,4 @@
-import { UsersIcon } from '@sanity/icons';
+import { UsersIcon } from '@sanity/icons/Users';
 import { resource } from './resourceType';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { validateHistoricalDate } from '../utils/validations';
