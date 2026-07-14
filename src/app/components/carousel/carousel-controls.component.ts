@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { faSolidChevronLeft, faSolidChevronRight } from '@ng-icons/font-awesome/solid';
 
@@ -7,7 +7,7 @@ import { faSolidChevronLeft, faSolidChevronRight } from '@ng-icons/font-awesome/
 	imports: [NgIcon],
 	providers: [provideIcons({ faSolidChevronLeft, faSolidChevronRight })],
 	host: { class: 'block' },
-	changeDetection: ChangeDetectionStrategy.OnPush,
+
 	template: `
 		<button
 			(click)="controlClick.emit()"

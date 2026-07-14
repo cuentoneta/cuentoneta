@@ -1,4 +1,4 @@
-import { Component, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StoryNavigationTeaser } from '@models/story.model';
 import { AppRoutes } from '../../app.routes';
@@ -9,7 +9,6 @@ import { RouterLink } from '@angular/router';
 @Component({
 	selector: 'cuentoneta-navigable-story-teaser',
 	imports: [CommonModule, MediaResourceTagsComponent, StoryEditionDateLabelComponent, RouterLink],
-	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `
 		@if (story()) {
 			<a

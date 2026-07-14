@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -130,7 +130,6 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
 	host: {
 		class: 'block',
 	},
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StoryCardTeaserV3Component {
 	protected readonly appRoutes = AppRoutes;

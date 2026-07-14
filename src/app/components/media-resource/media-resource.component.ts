@@ -1,4 +1,4 @@
-import { Component, input, Type, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Media, MediaTypeKey, MediaTypes } from '@models/media.model';
 import { SpaceRecordingWidgetComponent } from '../space-recording-widget/space-recording-widget.component';
@@ -25,7 +25,6 @@ const MEDIA_WIDGET_MAP: Record<MediaTypeKey, Type<MediaTypeWidgetComponents>> = 
 	template: ` @for (media of mediaResources(); track $index) {
 		<ng-container *ngComponentOutlet="media.component; inputs: media.inputs" />
 	}`,
-	changeDetection: ChangeDetectionStrategy.OnPush,
 	host: {
 		class: 'mb-10 block w-full',
 	},

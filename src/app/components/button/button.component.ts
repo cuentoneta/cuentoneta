@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 
 /**
  * Variantes de tipo de botón basadas en el sistema de diseño de Figma
@@ -37,7 +37,6 @@ export type ButtonType = 'filled' | 'outline' | 'share';
 	host: {
 		'[class]': 'hostClasses()',
 	},
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ButtonComponent {
 	/** Variante del tipo de botón - determina el estilo visual */

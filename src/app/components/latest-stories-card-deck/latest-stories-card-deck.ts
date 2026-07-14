@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 import { StoryCardTeaserComponent } from '../story-card-teaser/story-card-teaser.component';
 import { StoryCardTeaserSkeletonComponent } from '../story-card-teaser/story-card-teaser-skeleton.component';
@@ -36,7 +36,6 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 	host: {
 		class: 'mb-8 flex flex-col gap-8',
 	},
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LatestStoriesCardDeck {
 	public readonly stories = input<StoryNavigationTeaserWithAuthor[]>([]);

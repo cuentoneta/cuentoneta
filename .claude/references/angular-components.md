@@ -12,13 +12,13 @@ Esta referencia describe cómo se escriben los **componentes de presentación y 
 ## Base de todo componente
 
 - **Standalone** (sin `NgModule`). No se declara `standalone: true` porque ya es el default de Angular.
-- **`ChangeDetectionStrategy.OnPush`** siempre.
+- **OnPush por defecto**: en Angular 22 `OnPush` es la estrategia de detección de cambios por defecto, así que **no se declara** `changeDetection: ChangeDetectionStrategy.OnPush` en el decorador (igual que con `standalone: true`). No introducir esa línea en componentes nuevos ni dejarla en los existentes.
 - App **zoneless** (sin Zone.js): la detección de cambios se dispara por signals, no por callbacks async. No depender de change detection automática post-evento.
 - **Selector con prefijo `cuentoneta-`** (kebab-case, selector de elemento) para componentes; `cuentoneta` (camelCase, selector de atributo) para directivas.
 - **`imports` explícitos** en el decorador con los componentes/directivas/pipes que usa la plantilla.
 
 ```typescript
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -38,7 +38,6 @@ import { TagsListComponent } from '../tags-list/tags-list.component';
 	host: {
 		class: 'block',
 	},
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthorTeaserV3Component {
 	// Inputs
@@ -294,7 +293,7 @@ Notas:
 
 ## Checklist al crear/modificar un componente
 
-- [ ] `ChangeDetectionStrategy.OnPush` y selector `cuentoneta-…`.
+- [ ] Selector `cuentoneta-…`; sin declarar `changeDetection` (OnPush es el default de v22).
 - [ ] Inputs/outputs con `input()`/`input.required()`/`output()`/`model()`; queries con `viewChild()`/`contentChild()`.
 - [ ] Campos `protected` (plantilla) / `private` (interno); `public` solo para API (inputs/outputs/imperativa/interfaces).
 - [ ] Sin lifecycle hooks: derivar con `computed()`, efectos como `effect()` nombrados (no en el constructor).

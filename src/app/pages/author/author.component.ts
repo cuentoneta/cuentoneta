@@ -1,5 +1,5 @@
 // Core
-import { ChangeDetectionStrategy, Component, computed, forwardRef, inject, input } from '@angular/core';
+import { Component, computed, forwardRef, inject, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { Router, UrlTree } from '@angular/router';
 import { map, Observable } from 'rxjs';
@@ -47,7 +47,7 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 	],
 	providers: [{ provide: AUTHOR_HOST, useExisting: forwardRef(() => AuthorComponent) }],
 	hostDirectives: [AuthorMetaTagsDirective, AuthorStructuredDataDirective],
-	changeDetection: ChangeDetectionStrategy.OnPush,
+
 	template: `
 		<main class="content vertical-layout-spacing horizontal-layout-spacing">
 			<article class="grid grid-cols-1 gap-8">

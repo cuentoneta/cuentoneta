@@ -6,7 +6,6 @@ import {
 	EnvironmentInjector,
 	inject,
 	input,
-	ChangeDetectionStrategy,
 } from '@angular/core';
 import { SharingPlatform } from '@models/sharing-platform';
 import { TooltipDirective } from '../../directives/tooltip.directive';
@@ -17,7 +16,6 @@ import { NgComponentOutlet } from '@angular/common';
 	selector: 'cuentoneta-share-button',
 	imports: [NgComponentOutlet],
 	hostDirectives: [TooltipDirective],
-	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: ` @if (platform(); as platform) {
 		<button
 			(click)="onShareToPlatformClicked($event, platform)"

@@ -1,5 +1,5 @@
 // Core
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 
 // Modelos
 import { Story } from '@models/story.model';
@@ -31,7 +31,6 @@ import { ResourceComponent } from '../resource/resource.component';
 		class: 'block rounded border-1 border-solid border-neutral-200 bg-neutral-100 p-6',
 	},
 	imports: [AuthorTeaserComponent, ResourceComponent, PortableTextParserComponent],
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BioSummaryCardComponent {
 	public readonly story = input.required<Story>();

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
 import { RouterLink } from '@angular/router';
@@ -65,7 +65,6 @@ import { withSanityImageParams } from '@utils/sanity-image.utils';
 		}
 	`,
 	styles: ``,
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StoryCardTeaserComponent {
 	protected readonly appRoutes = AppRoutes;

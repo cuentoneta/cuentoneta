@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, effect, inject, input } from '@angular/core';
 import { TooltipDirective } from '../../directives/tooltip.directive';
 import { NgIcon } from '@ng-icons/core';
 
@@ -11,7 +11,6 @@ export interface MediaResourcePlatform {
 	selector: 'cuentoneta-media-resource-tag',
 	imports: [NgIcon],
 	hostDirectives: [TooltipDirective],
-	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: ` <div [class]="sizeClasses()" class="flex items-center justify-center">
 		<ng-icon
 			[name]="iconName()"

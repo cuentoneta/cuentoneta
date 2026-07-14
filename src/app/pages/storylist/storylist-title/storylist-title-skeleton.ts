@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
@@ -14,6 +14,5 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 			}
 		</div>
 	`,
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StorylistTitleSkeleton {}

@@ -1,5 +1,5 @@
 // Core
-import { Component, computed, forwardRef, inject, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, forwardRef, inject, input } from '@angular/core';
 
 // Services
 import { StorylistApi } from '../../providers/storylist-api.interface';
@@ -36,7 +36,6 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 		MediaResourceComponent,
 	],
 	providers: [{ provide: STORYLIST_HOST, useExisting: forwardRef(() => StorylistComponent) }],
-	changeDetection: ChangeDetectionStrategy.OnPush,
 	hostDirectives: [StorylistMetaTagsDirective, StorylistStructuredDataDirective],
 })
 export default class StorylistComponent implements StorylistHost {

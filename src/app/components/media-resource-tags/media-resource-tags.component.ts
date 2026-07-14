@@ -1,12 +1,4 @@
-import {
-	Component,
-	computed,
-	createEnvironmentInjector,
-	EnvironmentInjector,
-	inject,
-	input,
-	ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, computed, createEnvironmentInjector, EnvironmentInjector, inject, input } from '@angular/core';
 
 import { Media, MediaTypeKey } from '@models/media.model';
 import { MediaResourcePlatform, MediaResourceTagComponent } from '../media-resource-tag/media-resource-tag.component';
@@ -18,7 +10,6 @@ import { NgComponentOutlet } from '@angular/common';
 @Component({
 	selector: 'cuentoneta-media-resource-tags',
 	imports: [NgComponentOutlet],
-	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: ` @for (mediaResource of parsedResources(); track $index) {
 		<ng-container
 			*ngComponentOutlet="

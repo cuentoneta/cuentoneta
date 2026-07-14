@@ -1,4 +1,4 @@
-import { Component, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 import { ShareButtonComponent } from '../share-button/share-button.component';
 import { FacebookPlatform, SharingPlatform, TwitterPlatform, WhatsappPlatform } from '@models/sharing-platform';
@@ -6,7 +6,6 @@ import { FacebookPlatform, SharingPlatform, TwitterPlatform, WhatsappPlatform } 
 @Component({
 	selector: 'cuentoneta-share-content',
 	imports: [ShareButtonComponent],
-	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `
 		<section class="flex flex-1 flex-row gap-6">
 			@for (platform of platforms; track $index) {

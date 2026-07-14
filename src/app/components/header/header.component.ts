@@ -1,4 +1,4 @@
-import { Component, effect, input, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, effect, input, signal } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { InternalLink } from '@models/link.model';
@@ -80,7 +80,6 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 		}
 	`,
 	imports: [RouterModule, NgOptimizedImage],
-	changeDetection: ChangeDetectionStrategy.OnPush,
 	animations: [
 		trigger('toggle', [
 			state(

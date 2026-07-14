@@ -1,5 +1,5 @@
 // Core
-import { Component, computed, forwardRef, inject, signal, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, forwardRef, inject, signal, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -60,7 +60,6 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 		{ provide: STORY_HOST, useExisting: forwardRef(() => StoryComponent) },
 	],
 	host: { class: 'grid md:grid-rows-[8px_1fr]' },
-	changeDetection: ChangeDetectionStrategy.OnPush,
 	hostDirectives: [StoryMetaTagsDirective, StoryStructuredDataDirective],
 })
 export default class StoryComponent implements StoryHost {

@@ -1,4 +1,4 @@
-import { Component, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
 	selector: 'cuentoneta-story-edition-date-label[label]',
@@ -16,7 +16,6 @@ import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 			</div>
 		}
 	`,
-	changeDetection: ChangeDetectionStrategy.OnPush,
 	styles: `
 		:host {
 			display: flex;

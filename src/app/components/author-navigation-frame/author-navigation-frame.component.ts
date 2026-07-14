@@ -1,5 +1,5 @@
 // Core
-import { Component, computed, effect, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 
 // Routing
 import { AppRoutes } from '../../app.routes';
@@ -18,7 +18,6 @@ import { progressiveRxResource } from '@utils/ssr-resource';
 	host: {
 		class: 'grid grid-cols-1 gap-y-0.5 rounded-xl bg-neutral-200 shadow-lg',
 	},
-	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `@if (stories(); as stories) {
 		@for (story of stories; track $index) {
 			<cuentoneta-navigable-story-teaser

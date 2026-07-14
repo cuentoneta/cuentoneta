@@ -1,4 +1,4 @@
-import { Component, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppRoutes } from '../../app.routes';
 import { MediaResourceTagsComponent } from '../media-resource-tags/media-resource-tags.component';
@@ -10,7 +10,6 @@ import { StorylistStoriesNavigationTeasers } from '@models/storylist.model';
 @Component({
 	selector: 'cuentoneta-navigable-storylist-story-teaser',
 	imports: [CommonModule, MediaResourceTagsComponent, StoryEditionDateLabelComponent, RouterLink],
-	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `
 		<a
 			[routerLink]="['/', appRoutes.Story, story().slug]"

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { SpaceRecording } from '@models/media.model';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
@@ -70,7 +70,6 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 			background-color: rgba(255, 255, 255, 0.25);
 		}
 	`,
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpaceRecordingWidgetComponent {
 	public readonly media = input.required<SpaceRecording>();
