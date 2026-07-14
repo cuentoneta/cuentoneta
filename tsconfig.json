@@ -16,9 +16,7 @@
 		"baseUrl": ".",
 		"skipLibCheck": true,
 		"strict": true,
-		"noUncheckedSideEffectImports": false,
-		"types": ["*"],
-		"esModuleInterop": false,
+		// `baseUrl` (requerido por los imports absolutos `src/api/...`) está deprecado en TS 6 y se elimina en TS 7; esto silencia el error hasta que se migre esos imports.
 		"ignoreDeprecations": "6.0"
 	},
 	"files": [],

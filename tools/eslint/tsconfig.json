@@ -5,12 +5,7 @@
 		"noEmit": true,
 		"skipLibCheck": true,
 		"module": "esnext",
-		"moduleResolution": "bundler",
-		"strict": false,
-		"noUncheckedSideEffectImports": false,
-		"types": ["*"],
-		"esModuleInterop": false,
-		"ignoreDeprecations": "6.0"
+		"moduleResolution": "bundler"
 	},
 	"include": ["**/*.js"]
 }

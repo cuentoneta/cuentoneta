@@ -3,7 +3,7 @@ import { provideRouter, withInMemoryScrolling, withViewTransitions, withComponen
 import { appRoutes } from './app.routes';
 
 import { provideHttpClient } from '@angular/common/http';
-import { provideClientHydration, withNoIncrementalHydration } from '@angular/platform-browser';
+import { provideClientHydration } from '@angular/platform-browser';
 import localeEs from '@angular/common/locales/es-419';
 import { DatePipe, registerLocaleData } from '@angular/common';
 
@@ -28,7 +28,7 @@ export const appConfig: ApplicationConfig = {
 		DatePipe,
 		{ provide: APP_ID, useValue: 'serverApp' },
 		{ provide: LOCALE_ID, useValue: 'es-419' },
-		provideClientHydration(withNoIncrementalHydration()),
+		provideClientHydration(),
 		provideAnimations(),
 		provideAnimationsAsync(),
 		provideRouter(
