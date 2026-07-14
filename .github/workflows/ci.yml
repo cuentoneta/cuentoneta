@@ -7,6 +7,10 @@ on:
   # el primer push), no solo los pushes de un mismo PR.
   push:
     branches: [develop]
+  # Permite dispararlo manualmente y desde `prepare-release-pr.yml`: el PR `develop → master` lo crea
+  # el GITHUB_TOKEN, que por anti-recursión no gatilla `pull_request`; `workflow_dispatch` es la
+  # excepción (sí corre invocado por el token), así que da señal de CI sobre `develop` para el release.
+  workflow_dispatch:
 
 jobs:
   setup:

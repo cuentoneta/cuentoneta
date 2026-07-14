@@ -1,0 +1,205 @@
+name: Preparar PR de release (develop → master)
+
+# Crea o actualiza el PR develop → master cuando se mergea a develop el PR de
+# preparación de release (issue con label `release`). No mergea a master ni
+# corre migraciones de Sanity — solo documenta y abre el PR.
+#
+# Triggers:
+#   - pull_request closed → develop (gate: merged + issue con label release)
+#   - workflow_dispatch (version opcional; force saltea el chequeo de milestone)
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [develop]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Versión (default: la de package.json en develop)'
+        required: false
+        type: string
+      force:
+        description: 'Omitir el chequeo de milestone completo'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: read
+  actions: write # disparar ci.yml sobre develop vía workflow_dispatch
+
+concurrency:
+  group: prepare-release-pr
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    name: Crear PR de release
+    runs-on: ubuntu-latest
+    # workflow_dispatch siempre; en eventos PR solo si se mergeó (no en close sin merge) y NO viene de
+    # un fork: para PRs de fork el GITHUB_TOKEN es read-only y `gh pr create`/`gh workflow run` darían
+    # 403 sin causa obvia. El label `release` solo lo aplican mantenedores, así que el caso es teórico,
+    # pero el guard lo hace explícito en vez de depender del comportamiento implícito de GitHub.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged == true && github.event.pull_request.head.repo.fork != true)
+
+    steps:
+      - name: Checkout develop
+        uses: actions/checkout@v7.0.0
+        with:
+          ref: develop
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v6.4.0
+        with:
+          node-version: 22.22.3
+
+      - name: Resolver versión, issue de release y force
+        id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_FORCE: ${{ inputs.force }}
+        run: |
+          set -euo pipefail
+
+          force=false
+          release_issue=""
+
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            # Gate: el PR mergeado debe cerrar un issue con label `release`.
+            refs=$(gh pr view "$PR_NUMBER" --json closingIssuesReferences \
+              --jq '.closingIssuesReferences[].number')
+            if [ -z "${refs//[[:space:]]/}" ]; then
+              echo "El PR #$PR_NUMBER no cierra issues (falta Closes #N). Skip."
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            for n in $refs; do
+              if gh issue view "$n" --json labels --jq '.labels[].name' | grep -qx 'release'; then
+                release_issue=$n
+                break
+              fi
+            done
+            if [ -z "$release_issue" ]; then
+              echo "Ningún issue cerrado por el PR #$PR_NUMBER tiene label release. Skip."
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            version=$(node -p "require('./package.json').version")
+            echo "PR de release detectado (issue #$release_issue). Versión: $version"
+          else
+            if [ -n "${INPUT_VERSION:-}" ]; then
+              version="$INPUT_VERSION"
+            else
+              version=$(node -p "require('./package.json').version")
+            fi
+            if [ "${INPUT_FORCE:-false}" = "true" ]; then
+              force=true
+            fi
+            # Issue del milestone con label release (abierto o cerrado).
+            release_issue=$(gh issue list --milestone "$version" --label release --state all \
+              --json number --jq '.[0].number // empty' || true)
+            echo "workflow_dispatch: versión=$version force=$force release_issue=${release_issue:-ninguno}"
+          fi
+
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "release_issue=$release_issue" >> "$GITHUB_OUTPUT"
+          echo "force=$force" >> "$GITHUB_OUTPUT"
+
+      - name: Chequear milestone completo
+        id: milestone
+        if: steps.resolve.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.resolve.outputs.version }}
+          RELEASE_ISSUE: ${{ steps.resolve.outputs.release_issue }}
+          FORCE: ${{ steps.resolve.outputs.force }}
+        run: |
+          set -euo pipefail
+          if [ "$FORCE" = "true" ]; then
+            echo "force=true: se omite el chequeo de milestone."
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          exclude="${RELEASE_ISSUE:-}"
+          if [ -z "$exclude" ]; then
+            open=$(gh issue list --milestone "$VERSION" --state open --json number --jq 'length')
+          else
+            open=$(gh issue list --milestone "$VERSION" --state open --json number \
+              --jq "[.[] | select(.number != $exclude)] | length")
+          fi
+          if [ "$open" != "0" ]; then
+            echo "::warning::El milestone $VERSION tiene $open issue(s) abierto(s) además del de release. No se crea el PR de release. Re-disparar con workflow_dispatch y force=true si corresponde."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "Milestone $VERSION completo (salvo issue de release). Se procede."
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+
+      - name: Armar cuerpo del PR
+        id: body
+        if: steps.resolve.outputs.skip != 'true' && steps.milestone.outputs.ready == 'true'
+        env:
+          VERSION: ${{ steps.resolve.outputs.version }}
+          REPO: ${{ github.repository }}
+          RELEASE_ISSUE: ${{ steps.resolve.outputs.release_issue }}
+        run: |
+          set -euo pipefail
+          body_file="${RUNNER_TEMP}/release-pr-body.md"
+          {
+            echo "## Pasos manuales"
+            echo ""
+            echo "- [ ] Correr las migraciones de Sanity pendientes contra producción (si aplica)."
+            echo "- [ ] Mergear este PR a \`master\` → dispara \`release.yml\` (tag + GitHub Release + deploy de Studio)."
+            echo "- [ ] Verificar que el workflow Release quede verde y la app/Studio en producción sin regresiones."
+            echo ""
+            if [ -n "${RELEASE_ISSUE:-}" ]; then
+              echo "Relacionado: #${RELEASE_ISSUE}"
+              echo ""
+            fi
+            echo "CI: este PR no dispara checks por sí mismo (anti-recursión del \`GITHUB_TOKEN\`); el workflow corre \`ci.yml\` sobre \`develop\` al preparar el PR."
+            echo ""
+            echo "CHANGELOG: https://github.com/${REPO}/blob/develop/CHANGELOG.md"
+            echo ""
+            echo "El deploy de la app lo cubre Vercel por integración Git nativa."
+          } > "$body_file"
+
+          echo "body_file=$body_file" >> "$GITHUB_OUTPUT"
+          echo "title=Release ${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Crear o actualizar PR develop → master
+        if: steps.resolve.outputs.skip != 'true' && steps.milestone.outputs.ready == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: ${{ steps.body.outputs.title }}
+          BODY_FILE: ${{ steps.body.outputs.body_file }}
+        run: |
+          set -euo pipefail
+          existing=$(gh pr list --base master --head develop --state open \
+            --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            echo "Actualizando PR existente #$existing"
+            gh pr edit "$existing" --title "$TITLE" --body-file "$BODY_FILE"
+            echo "PR actualizado: $(gh pr view "$existing" --json url --jq .url)"
+          else
+            url=$(gh pr create --base master --head develop --title "$TITLE" --body-file "$BODY_FILE")
+            echo "PR creado: $url"
+          fi
+
+      - name: Disparar CI sobre develop
+        # El PR develop → master lo crea el GITHUB_TOKEN, que por anti-recursión no gatilla ci.yml
+        # (on: pull_request). Se dispara explícitamente ci.yml sobre develop (workflow_dispatch, la
+        # excepción que sí corre invocada por el token) para tener señal de CI de lo que se releasea.
+        if: steps.resolve.outputs.skip != 'true' && steps.milestone.outputs.ready == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh workflow run ci.yml --ref develop
+          echo "CI (ci.yml) disparado sobre develop."
