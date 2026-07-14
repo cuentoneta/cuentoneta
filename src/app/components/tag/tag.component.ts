@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 
 /**
  * Variantes visuales del tag (Design System v3):
@@ -19,7 +19,6 @@ export type TagVariant = 'soft' | 'filled' | 'gray';
 	host: {
 		'[class]': 'hostClasses()',
 	},
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TagComponent {
 	// Inputs

@@ -4,7 +4,7 @@ import { zValidator } from '@hono/zod-validator';
 
 // Esquemas de zod
 import { mostReadStorySchema, storyControllerSchema } from './story.schema';
-import { slugSchema } from 'src/api/schemas/common.schemas';
+import { slugSchema } from '../../schemas/common.schemas';
 
 import { StoriesByAuthorSlugArgs } from '../../interfaces/queryArgs';
 import {

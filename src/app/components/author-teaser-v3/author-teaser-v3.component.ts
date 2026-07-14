@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -67,7 +67,6 @@ import { TagComponent } from '../tag/tag.component';
 	host: {
 		class: 'block',
 	},
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthorTeaserV3Component {
 	protected readonly appRoutes = AppRoutes;

@@ -1,5 +1,4 @@
 import {
-	ChangeDetectionStrategy,
 	Component,
 	computed,
 	contentChildren,
@@ -49,7 +48,6 @@ import { TagsOverflowDirective } from './tags-overflow.directive';
 		}
 	`,
 	host: { class: 'flex items-center gap-1.5 overflow-hidden' },
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TagsListComponent {
 	protected readonly overflow = inject(TagsOverflowDirective);

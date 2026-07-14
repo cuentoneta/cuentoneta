@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 import { Epigraph } from '@models/story.model';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
@@ -20,7 +20,6 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 	host: {
 		class: 'flex',
 	},
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EpigraphComponent {
 	public readonly epigraph = input.required<Epigraph>();

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, TemplateRef, viewChild } from '@angular/core';
+import { Component, input, TemplateRef, viewChild } from '@angular/core';
 
 @Component({
 	selector: 'cuentoneta-tab',
@@ -7,7 +7,6 @@ import { ChangeDetectionStrategy, Component, input, TemplateRef, viewChild } fro
 		<ng-content />
 	</ng-template>`,
 	styles: ``,
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class Tab {
 	public readonly title = input.required<string>();

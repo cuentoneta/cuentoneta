@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, contentChildren, input, linkedSignal } from '@angular/core';
+import { Component, contentChildren, input, linkedSignal } from '@angular/core';
 import Tab from './tab.component';
 import { NgTemplateOutlet } from '@angular/common';
 
@@ -38,7 +38,6 @@ import { NgTemplateOutlet } from '@angular/common';
 	host: {
 		class: 'flex flex-col gap-8',
 	},
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class Tabs {
 	public readonly initialTab = input<string>();

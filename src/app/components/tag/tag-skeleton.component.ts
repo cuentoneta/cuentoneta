@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
@@ -7,6 +7,5 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 	imports: [SkeletonComponent],
 	host: { class: 'inline-block' },
 	template: `<cuentoneta-skeleton appearance="square" class="h-[22px] w-[72px] rounded-sm bg-neutral-200" />`,
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TagSkeletonComponent {}

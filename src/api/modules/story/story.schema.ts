@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { basePaginationSchema } from 'src/api/schemas/common.schemas';
+import { basePaginationSchema } from '../../schemas/common.schemas';
 
 export const mostReadStorySchema = basePaginationSchema.extend({
 	limit: basePaginationSchema.shape.limit.default(6),

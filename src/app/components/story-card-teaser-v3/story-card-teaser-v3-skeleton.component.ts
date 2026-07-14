@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
@@ -55,7 +55,6 @@ import { StoryCardTeaserV3Variant } from './story-card-teaser-v3.component';
 			</div>
 		</ng-template>
 	`,
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StoryCardTeaserV3SkeletonComponent {
 	// Inputs (espejo de StoryCardTeaserV3Component)

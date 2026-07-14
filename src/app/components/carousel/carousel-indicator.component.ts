@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 
 @Component({
 	selector: 'cuentoneta-carousel-indicator',
 	host: { class: 'block' },
-	changeDetection: ChangeDetectionStrategy.OnPush,
+
 	template: `
 		<div
 			[class.mobile]="device() === 'Mobile'"

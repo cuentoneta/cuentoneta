@@ -6,7 +6,8 @@
 		"target": "es2022",
 		"types": ["vitest/globals", "node"],
 		"moduleResolution": "bundler",
-		"isolatedModules": true
+		"isolatedModules": true,
+		"rootDir": "."
 	},
 	"files": ["src/test-setup.ts"],
 	"include": ["vitest.config.ts", "src/**/*.test.ts", "src/**/*.spec.ts", "src/**/*.d.ts", "src/test-utils.ts"]

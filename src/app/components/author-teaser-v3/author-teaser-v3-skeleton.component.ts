@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
@@ -22,6 +22,5 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 			</div>
 		</article>
 	`,
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthorTeaserV3SkeletonComponent {}

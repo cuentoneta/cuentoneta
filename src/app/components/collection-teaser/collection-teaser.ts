@@ -1,5 +1,5 @@
 // Core
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 // Router
 import { RouterLink } from '@angular/router';
@@ -15,7 +15,7 @@ import { CoverImageComponent } from '../cover-image/cover-image.component';
 @Component({
 	selector: 'cuentoneta-collection-teaser',
 	imports: [RouterLink, PortableTextParserComponent, CoverImageComponent],
-	changeDetection: ChangeDetectionStrategy.OnPush,
+
 	template: `
 		<article>
 			@if (collection(); as storylist) {

@@ -5,7 +5,7 @@ tools: Read, Grep, Glob, Bash, WebSearch
 model: sonnet
 ---
 
-Sos un especialista en planificación de migraciones para **La Cuentoneta** (Angular 21 zoneless + Nx 23 single-project, pnpm).
+Sos un especialista en planificación de migraciones para **La Cuentoneta** (Angular 22 zoneless + Nx 23.1 single-project, pnpm).
 
 ## CRÍTICO: reglas para comandos Bash
 
@@ -60,14 +60,14 @@ pnpm outdated
 
 ### Consideraciones específicas de Nx
 
-- Es un monorepo Nx 23 **single-project** (`@cuentoneta/app`); los scripts de `package.json` envuelven targets de Nx.
+- Es un monorepo Nx 23.1 **single-project** (`@cuentoneta/app`); los scripts de `package.json` envuelven targets de Nx.
 - Revisar los generadores de migración de Nx con `pnpm exec nx migrate <package>@<version>` (nunca `nx` crudo ni `npx nx`).
 - Consultar la matriz de compatibilidad de Nx para las versiones de Angular/TypeScript.
 - Considerar cambios en `nx.json` y en la config del proyecto.
 
 ### Consideraciones específicas de Angular
 
-- Angular 21 standalone, **zoneless**, OnPush, con SSR/hidratación.
+- Angular 22 standalone, **zoneless**, OnPush, con SSR/hidratación.
 - Usar `pnpm exec ng update <package>@<version>` para los schematics oficiales de Angular cuando existan; revisar la salida del schematic antes de aplicar.
 - Recordar las restricciones del repo (no lifecycle hooks, signals-first sin NgRx, `@if`/`@for`): un upgrade no debe reintroducir patrones prohibidos.
 

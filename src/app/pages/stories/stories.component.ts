@@ -1,5 +1,5 @@
 // Core
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 
 import { RouterLink } from '@angular/router';
 
@@ -23,7 +23,7 @@ import { AppRoutes } from '../../app.routes';
 	standalone: true,
 	imports: [RouterLink],
 	hostDirectives: [HeadMetadataDirective],
-	changeDetection: ChangeDetectionStrategy.OnPush,
+
 	template: `
 		<main class="content vertical-layout-spacing horizontal-layout-spacing">
 			<article class="grid grid-cols-1 gap-8">

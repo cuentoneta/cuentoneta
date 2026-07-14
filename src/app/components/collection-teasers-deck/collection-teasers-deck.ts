@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { StorylistTeaser } from '@models/storylist.model';
 import { CollectionTeaser } from '@components/collection-teaser/collection-teaser';
 import { CollectionTeaserSkeletonComponent } from '@components/collection-teaser/collection-teaser-skeleton';
@@ -29,7 +29,6 @@ import { CollectionTeaserSkeletonComponent } from '@components/collection-teaser
 	host: {
 		class: 'flex flex-col gap-8',
 	},
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionTeasersDeck {
 	protected readonly SKELETON_COUNT = 4;

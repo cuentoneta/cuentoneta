@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { TagComponent } from '@components/tag/tag.component';
 import { Storylist } from '@models/storylist.model';
 import { StorylistTitleSkeleton } from './storylist-title-skeleton';
@@ -25,7 +25,6 @@ import { StorylistTitleSkeleton } from './storylist-title-skeleton';
 			<cuentoneta-storylist-title-skeleton />
 		}
 	`,
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StorylistTitle {
 	public readonly storylist = input<Storylist>();
