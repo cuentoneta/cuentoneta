@@ -55,6 +55,7 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 | `pnpm test:e2e`                           | E2E (Playwright)                                                                                                                     |
 | `pnpm storybook` / `pnpm storybook:build` | Storybook dev / build                                                                                                                |
 | `pnpm sanity:dev`                         | Studio de Sanity (`@cuentoneta/cms`)                                                                                                 |
+| `pnpm sanity:build`                       | Build del Studio (`sanity build`) — reproduce en local el gate de CI `studio-build`                                                  |
 | `pnpm sanity:extract-schema`              | Extrae el schema de Sanity                                                                                                           |
 | `pnpm sanity:run-typegen-generator`       | Genera tipos a partir del schema                                                                                                     |
 | `pnpm sanity migration run <slug>`        | Corre una migración de datos (desde `cms/`; dry-run por defecto) → [`sanity-migrations.md`](.claude/references/sanity-migrations.md) |
