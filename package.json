@@ -28,6 +28,7 @@
 		"test:ui": "nx test --ui",
 		"test:e2e": "nx run @cuentoneta/app:e2e",
 		"sanity:dev": "nx run @cuentoneta/cms:dev",
+		"sanity:build": "nx run @cuentoneta/cms:build --skip-nx-cache",
 		"sanity:extract-schema": "nx run @cuentoneta/cms:extract-schema",
 		"sanity:run-typegen-generator": "nx run @cuentoneta/cms:typegen",
 		"prepare": "husky"
