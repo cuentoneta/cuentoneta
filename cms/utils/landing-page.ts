@@ -1,6 +1,5 @@
 import { getISOWeek, getISOWeekYear } from 'date-fns';
 
-// apiVersion compartido por el nodo B1 (deskStructure) y el pane B2, para que no diverjan al bumpearlo.
 export const API_VERSION = '2024-01-01';
 
 export interface LandingPageRow {
