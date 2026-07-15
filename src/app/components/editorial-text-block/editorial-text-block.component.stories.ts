@@ -43,6 +43,18 @@ export const Note: Story = {
 	},
 };
 
+export const NoteWithReference: Story = {
+	render: (args) => ({ props: args, template: `<cuentoneta-editorial-text-block ${argsToTemplate(args)} />` }),
+	args: { content: epigraphMock, variant: 'note' },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Variante <strong>note</strong> con pie de referencia: la tarjeta neutra con el pie de referencia en cursiva alineado a la derecha. El pie es agnóstico a la variante (se muestra cuando <code>content</code> trae <code>reference</code>), no una variante propia del componente.</p>`,
+			},
+		},
+	},
+};
+
 export const Highlight: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-editorial-text-block ${argsToTemplate(args)} />` }),
 	args: { content: epigraphWithoutReference, variant: 'highlight' },
@@ -71,12 +83,14 @@ export const Showcase: Story = {
 	render: () => ({
 		props: {
 			note: epigraphWithoutReference,
+			noteWithReference: epigraphMock,
 			highlight: epigraphWithoutReference,
 			highlightWithReference: epigraphMock,
 		},
 		template: `
 			<div class="flex flex-col gap-6">
 				<cuentoneta-editorial-text-block [content]="note" variant="note" />
+				<cuentoneta-editorial-text-block [content]="noteWithReference" variant="note" />
 				<cuentoneta-editorial-text-block [content]="highlight" variant="highlight" />
 				<cuentoneta-editorial-text-block [content]="highlightWithReference" variant="highlight" />
 			</div>
@@ -86,7 +100,7 @@ export const Showcase: Story = {
 		docs: {
 			description: {
 				story:
-					'Los tres casos: note (tarjeta neutra), highlight sin referencia y highlight con referencia (pie right-aligned).',
+					'Los cuatro casos: note y highlight, cada una sin y con pie de referencia (right-aligned). El pie es agnóstico a la variante.',
 			},
 		},
 	},
