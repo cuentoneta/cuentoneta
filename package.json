@@ -27,6 +27,7 @@
 		"test:watch": "nx test --watch",
 		"test:ui": "nx test --ui",
 		"test:e2e": "nx run @cuentoneta/app:e2e",
+		"seo:smoke": "node --import tsx ./scripts/seo-smoke.ts",
 		"sanity:dev": "nx run @cuentoneta/cms:dev",
 		"sanity:extract-schema": "nx run @cuentoneta/cms:extract-schema",
 		"sanity:run-typegen-generator": "nx run @cuentoneta/cms:typegen",
