@@ -15,7 +15,8 @@
 import { test, expect } from '@playwright/test';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
-import { STABLE_SLUGS, SCHEMA_IDS } from '../_utils/seo-fixtures';
+import { collectIndexableHtmlViolations } from '../_utils/seo-invariants';
+import { STABLE_SLUGS, SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
 
 const storyPath = `/story/${STABLE_SLUGS.story}`;
 
@@ -61,6 +62,18 @@ test('story — C: bloques sitewide Organization y WebSite presentes', async () 
 
 	expect(blocks.get(SCHEMA_IDS.organization)?.['@type']).toBe('Organization');
 	expect(blocks.get(SCHEMA_IDS.website)?.['@type']).toBe('WebSite');
+});
+
+test('story — invariantes de indexado para crawlers (ssr, h1, contenido primario, sin skeleton, enlace a autor)', () => {
+	expect(
+		collectIndexableHtmlViolations(html, {
+			path: storyPath,
+			titlePattern: /aleph/i,
+			h1Pattern: /aleph/i,
+			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.article, SCHEMA_IDS.breadcrumbStory],
+			requiredInternalLinkPrefix: '/author/',
+		}),
+	).toEqual([]);
 });
 
 test('story — D: al navegar al autor se remueven los bloques del cuento', async ({ page }) => {

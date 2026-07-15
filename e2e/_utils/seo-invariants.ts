@@ -24,6 +24,9 @@ export interface IndexableHtmlExpectations {
 	readonly requiredJsonLdIds: readonly string[];
 	readonly requiredInternalLinkPrefix?: string;
 	readonly minPrimaryContentLength?: number;
+	// Substring esperado en la canónica cuando NO coincide con `path` (p. ej. home canonicaliza a la
+	// raíz del sitio, no a `/home`). Por defecto se afirma que la canónica contiene `path`.
+	readonly canonicalContains?: string;
 }
 
 // Umbral por defecto de texto en `<main>`: muy por debajo del contenido real de los fixtures (bio,
@@ -41,7 +44,7 @@ function stripTags(fragment: string): string {
 		.trim();
 }
 
-export function checkServerRenderContext(html: string): Violation | null {
+export function checkNgServerContext(html: string): Violation | null {
 	if (/ng-server-context="ssr"/.test(html)) {
 		return null;
 	}
@@ -161,9 +164,9 @@ export function checkJsonLdBlocksPresent(html: string, ids: readonly string[]): 
  */
 export function collectIndexableHtmlViolations(html: string, expectations: IndexableHtmlExpectations): Violation[] {
 	const checks: (Violation | null)[] = [
-		checkServerRenderContext(html),
+		checkNgServerContext(html),
 		checkTitle(html, expectations.titlePattern),
-		checkCanonical(html, expectations.path),
+		checkCanonical(html, expectations.canonicalContains ?? expectations.path),
 		checkRobotsIndexable(html),
 		checkPrimaryHeading(html, expectations.h1Pattern),
 		checkPrimaryContentLength(html, expectations.minPrimaryContentLength),

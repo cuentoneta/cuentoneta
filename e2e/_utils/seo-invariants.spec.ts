@@ -7,7 +7,7 @@ import {
 	checkPrimaryContentLength,
 	checkPrimaryHeading,
 	checkRobotsIndexable,
-	checkServerRenderContext,
+	checkNgServerContext,
 	checkTitle,
 	collectIndexableHtmlViolations,
 	type IndexableHtmlExpectations,
@@ -35,19 +35,19 @@ const GOOD_EXPECTATIONS: IndexableHtmlExpectations = {
 	requiredInternalLinkPrefix: '/author/',
 };
 
-describe('checkServerRenderContext', () => {
+describe('checkNgServerContext', () => {
 	it('pasa con ng-server-context="ssr"', () => {
-		expect(checkServerRenderContext(GOOD_HTML)).toBeNull();
+		expect(checkNgServerContext(GOOD_HTML)).toBeNull();
 	});
 
 	it('viola con el deopt a CSR (ssg) e informa el valor encontrado', () => {
-		const violation = checkServerRenderContext(GOOD_HTML.replace('"ssr"', '"ssg"'));
+		const violation = checkNgServerContext(GOOD_HTML.replace('"ssr"', '"ssg"'));
 		expect(violation?.rule).toBe('server-render-context');
 		expect(violation?.message).toContain('ssg');
 	});
 
 	it('viola cuando el atributo está ausente', () => {
-		expect(checkServerRenderContext('<html><head></head><body></body></html>')?.message).toContain('(ausente)');
+		expect(checkNgServerContext('<html><head></head><body></body></html>')?.message).toContain('(ausente)');
 	});
 });
 
@@ -196,6 +196,14 @@ describe('collectIndexableHtmlViolations', () => {
 				'internal-link',
 				'json-ld',
 			]),
+		);
+	});
+
+	it('afirma la canónica con canonicalContains cuando difiere del path', () => {
+		const homeLike = GOOD_HTML.replace('/story/el-aleph', 'https://www.cuentoneta.org');
+		const expectations = { path: '/home', requiredJsonLdIds: [], canonicalContains: 'cuentoneta.org' };
+		expect(collectIndexableHtmlViolations(homeLike, expectations).map((violation) => violation.rule)).not.toContain(
+			'canonical',
 		);
 	});
 

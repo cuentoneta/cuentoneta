@@ -17,7 +17,17 @@
 import { test, expect } from '@playwright/test';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
-import { STABLE_SLUGS, SCHEMA_IDS } from '../_utils/seo-fixtures';
+import {
+	checkNgServerContext,
+	checkTitle,
+	checkCanonical,
+	checkRobotsIndexable,
+	checkPrimaryContentLength,
+	checkJsonLdBlocksPresent,
+	collectIndexableHtmlViolations,
+	type Violation,
+} from '../_utils/seo-invariants';
+import { STABLE_SLUGS, SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
 
 const storylistPath = `/storylist/${STABLE_SLUGS.storylist}`;
 
@@ -66,6 +76,31 @@ test('storylist — C: bloques sitewide Organization y WebSite presentes', async
 
 	expect(blocks.get(SCHEMA_IDS.organization)?.['@type']).toBe('Organization');
 	expect(blocks.get(SCHEMA_IDS.website)?.['@type']).toBe('WebSite');
+});
+
+test('storylist — invariantes de indexado disponibles hoy (ssr, title, canonical, robots, contenido primario, jsonld)', () => {
+	const violations: Violation[] = [
+		checkNgServerContext(html),
+		checkTitle(html),
+		checkCanonical(html, storylistPath),
+		checkRobotsIndexable(html),
+		checkPrimaryContentLength(html),
+		...checkJsonLdBlocksPresent(html, [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.collection, SCHEMA_IDS.breadcrumbStorylist]),
+	].filter((violation): violation is Violation => violation !== null);
+	expect(violations).toEqual([]);
+});
+
+// Bloqueado por #1771: storylist-title.ts (el <h1>) y el tab "Textos" (las tarjetas de cuento) usan
+// @defer, así que el SSR no emite h1 real, ni enlaces /story/, y sirve skeletons dentro de <main>.
+// Al cerrar #1771, esta aserción completa reemplaza al subset real de arriba.
+test.fixme('storylist — h1 real + enlace a /story/ + sin skeleton (bloqueado por #1771)', () => {
+	expect(
+		collectIndexableHtmlViolations(html, {
+			path: storylistPath,
+			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.collection, SCHEMA_IDS.breadcrumbStorylist],
+			requiredInternalLinkPrefix: '/story/',
+		}),
+	).toEqual([]);
 });
 
 test('storylist — D: al navegar a un cuento se remueven los bloques de la colección', async ({ page }) => {
