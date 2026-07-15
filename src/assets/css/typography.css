@@ -11,6 +11,13 @@
  */
 
 /* Source Serif Pro Typography Classes - custom sizes with non-standard line-heights */
+.source-serif-lg {
+	@apply font-source-serif;
+
+	font-size: 1.0625rem;
+	line-height: 1.6875rem; /* 17px/27px */
+}
+
 .source-serif-xl {
 	@apply font-source-serif;
 
