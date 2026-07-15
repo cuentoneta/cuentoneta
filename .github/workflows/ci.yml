@@ -349,9 +349,7 @@ jobs:
     # Checkout propio, sin `needs: setup`: cms/ es un proyecto pnpm aparte (lockfile
     # propio, fuera del workspace de la raíz) y además referencia el árbol `src/` de la
     # raíz vía import relativo (schemas/contentCampaign.ts). El workspace.tar de `setup`
-    # no instala cms/node_modules, así que reusarlo no ahorra nada. Es el gate que
-    # faltaba: `pnpm build`/`typecheck` no compilan cms/, así que un bump roto de una
-    # dep del Studio (como @sanity/icons 3→5 en #1759/#1800) llegaba a develop sin señal.
+    # no instala cms/node_modules, así que reusarlo no ahorra nada.
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.0
