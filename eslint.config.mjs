@@ -104,7 +104,7 @@ export default [
 	...nx.configs['flat/angular-template'],
 	{
 		name: 'testing',
-		files: ['**/src/**/?(*.)+(spec|test).ts'],
+		files: ['**/src/**/?(*.)+(spec|test).ts', '**/e2e/_utils/**/?(*.)+(spec|test).ts'],
 		plugins: {
 			vitest,
 			'testing-library': testingLibrary,
@@ -117,6 +117,8 @@ export default [
 	{
 		name: 'playwright',
 		files: ['**/e2e/**/?(*.)+(spec|test).ts'],
+		// Los specs de Vitest bajo e2e/_utils no corren con Playwright; se rigen por el bloque 'testing'.
+		ignores: ['**/e2e/_utils/**'],
 		plugins: {
 			playwright,
 		},
