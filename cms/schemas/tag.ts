@@ -1,4 +1,4 @@
-import { TagIcon } from '@sanity/icons';
+import { TagIcon } from '@sanity/icons/Tag';
 import { preview } from 'sanity-plugin-icon-picker';
 import { defineField, defineType } from 'sanity';
 

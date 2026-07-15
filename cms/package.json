@@ -44,6 +44,18 @@
 			"uuid": ">=11.1.1",
 			"ws": ">=8.20.1",
 			"brace-expansion@5": ">=5.0.6"
+		},
+		"packageExtensions": {
+			"sanity-plugin-bulk-actions-table": {
+				"dependencies": {
+					"@sanity/icons": "^3.8.0"
+				}
+			},
+			"sanity-plugin-icon-picker": {
+				"dependencies": {
+					"@sanity/icons": "^3.8.0"
+				}
+			}
 		}
 	}
 }
