@@ -5,32 +5,29 @@
  * Cobertura: siempre chequea `/home` + los slugs estables conocidos-buenos (baseline de regresión),
  * y además una muestra ALEATORIA de cuentos/autores/colecciones tomada del `/sitemap.xml` en cada
  * corrida (cobertura rotativa). Los patrones de `<title>`/`<h1>` se derivan del slug de cada URL.
+ * Si el sitemap no está disponible, el baseline igual se ejerce (la muestra se omite con un aviso).
  *
  * Uso:
  *   BASE_URL=https://www.cuentoneta.ar pnpm seo:smoke
- *   SEO_SMOKE_SAMPLE=5 pnpm seo:smoke                     # N aleatorios por tipo (default 3)
- *   SEO_SMOKE_SLUGS=/story/el-aleph,/author/... pnpm seo:smoke   # reproduce paths puntuales
- *   pnpm seo:smoke --full                                 # recorre TODO el sitemap (lento)
- *   SIMULATE_PROXY_HEADERS=true pnpm seo:smoke            # reproduce el x-forwarded-for de Vercel
+ *   SEO_SMOKE_SAMPLE=5 pnpm seo:smoke                            # N aleatorios por tipo (default 3)
+ *   SEO_SMOKE_SLUGS=/story/el-aleph,/author/... pnpm seo:smoke   # reproduce paths puntuales (sin muestra)
+ *   pnpm seo:smoke --full   (o SEO_SMOKE_FULL=true)              # recorre TODO el sitemap (lento)
+ *   SIMULATE_PROXY_HEADERS=true pnpm seo:smoke                   # reproduce el x-forwarded-for de Vercel
  *
  * Herramienta manual de diagnóstico (no un gate de CI): reporta TODAS las violaciones por página,
- * loguea los slugs muestreados (para reproducir) y sale con código 1 si hay alguna.
+ * loguea los paths chequeados (para reproducir) y sale con código 1 si hay alguna.
  */
-import { parseHtml } from '../e2e/_utils/seo';
-import {
-	collectIndexableHtmlViolations,
-	type IndexableHtmlExpectations,
-	type Violation,
-} from '../e2e/_utils/seo-invariants';
-import { STABLE_SLUGS, SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../e2e/_utils/seo-fixtures';
+import { collectIndexableHtmlViolations, type IndexableHtmlExpectations } from '../e2e/_utils/seo-invariants';
+import { STABLE_SLUGS, SITEWIDE_SCHEMA_IDS } from '../e2e/_utils/seo-fixtures';
+import { expectationsFor, parseSitemap, selectByType } from './seo-smoke.helpers';
 
 const BASE_URL = process.env['BASE_URL'] ?? 'http://localhost:4000';
-const SAMPLE_SIZE = Number(process.env['SEO_SMOKE_SAMPLE'] ?? '3');
 const FULL = process.argv.includes('--full') || process.env['SEO_SMOKE_FULL'] === 'true';
 const SLUGS_OVERRIDE = (process.env['SEO_SMOKE_SLUGS'] ?? '')
 	.split(',')
 	.map((path) => path.trim())
 	.filter(Boolean);
+const SAMPLE_SIZE = resolveSampleSize(process.env['SEO_SMOKE_SAMPLE']);
 
 // Mismo header y razonamiento que ssr-proxy-headers.spec.ts: Vercel agrega x-forwarded-for a toda
 // request y dispara el deopt a CSR si no se confía. Se omite x-forwarded-proto a propósito para no
@@ -45,117 +42,23 @@ const HOME_EXPECTATIONS: IndexableHtmlExpectations = {
 	requiredJsonLdIds: SITEWIDE_SCHEMA_IDS,
 };
 
-// Vocales/consonantes que el slugify de Sanity aplana: el título conserva el acento/ñ, el slug no.
-const LETTER_VARIANTS: Record<string, string> = {
-	a: 'aáàäâ',
-	e: 'eéèëê',
-	i: 'iíìïî',
-	o: 'oóòöô',
-	u: 'uúùüû',
-	n: 'nñ',
-	c: 'cç',
-};
-
-function slugOf(path: string): string {
-	return path.split('/').filter(Boolean).pop() ?? '';
-}
-
-// Deriva un patrón tolerante del slug: matchea (accent-insensitive) el token más distintivo (el más
-// largo), lo bastante robusto ante sufijos de desambiguación (`-2`) y stopwords cortas.
-function slugToTitlePattern(slug: string): RegExp {
-	const token =
-		[
-			...slug
-				.toLowerCase()
-				.split('-')
-				.filter((word) => /[a-z]/.test(word)),
-		].sort((a, b) => b.length - a.length)[0] ?? slug;
-	const body = [...token].map((char) => (LETTER_VARIANTS[char] ? `[${LETTER_VARIANTS[char]}]` : char)).join('');
-	return new RegExp(body, 'i');
-}
-
-function expectationsFor(path: string): IndexableHtmlExpectations | null {
-	if (path.startsWith('/story/')) {
-		const pattern = slugToTitlePattern(slugOf(path));
-		return {
-			path,
-			canonicalContains: path,
-			titlePattern: pattern,
-			h1Pattern: pattern,
-			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.article, SCHEMA_IDS.breadcrumbStory],
-			requiredInternalLinkPrefix: '/author/',
-		};
+function resolveSampleSize(raw: string | undefined): number {
+	if (raw === undefined) {
+		return 3;
 	}
-	if (path.startsWith('/author/')) {
-		return {
-			path,
-			canonicalContains: path,
-			titlePattern: slugToTitlePattern(slugOf(path)),
-			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.profilePage, SCHEMA_IDS.breadcrumbAuthor],
-			requiredInternalLinkPrefix: '/story/',
-		};
+	const size = Number(raw);
+	if (Number.isInteger(size) && size > 0) {
+		return size;
 	}
-	if (path.startsWith('/storylist/')) {
-		// El título de la storylist es editorial (no deriva del slug); sin titlePattern/h1Pattern.
-		return {
-			path,
-			canonicalContains: path,
-			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.collection, SCHEMA_IDS.breadcrumbStorylist],
-			requiredInternalLinkPrefix: '/story/',
-		};
-	}
-	return null;
+	console.log(`⚠️ SEO_SMOKE_SAMPLE="${raw}" no es un entero positivo; usando el default 3.`);
+	return 3;
 }
 
-function toPath(loc: string): string | null {
-	try {
-		return new URL(loc.trim()).pathname;
-	} catch {
-		return null;
-	}
+function messageOf(error: unknown): string {
+	return error instanceof Error ? error.message : String(error);
 }
 
-async function sitemapPaths(): Promise<string[]> {
-	const response = await fetch(`${BASE_URL}/sitemap.xml`, { headers: proxyHeaders });
-	if (!response.ok) {
-		throw new Error(`GET /sitemap.xml devolvió HTTP ${response.status}`);
-	}
-	return parseHtml(await response.text())
-		.querySelectorAll('loc')
-		.map((element) => toPath(element.text))
-		.filter((path): path is string => path !== null);
-}
-
-function sample(paths: readonly string[], size: number): string[] {
-	const pool = [...paths];
-	const picked: string[] = [];
-	while (picked.length < size && pool.length > 0) {
-		const [chosen] = pool.splice(Math.floor(Math.random() * pool.length), 1);
-		picked.push(chosen);
-	}
-	return picked;
-}
-
-function selectByType(paths: string[], prefix: string): string[] {
-	const ofType = paths.filter((path) => path.startsWith(prefix));
-	return FULL ? ofType : sample(ofType, SAMPLE_SIZE);
-}
-
-async function targetPaths(): Promise<string[]> {
-	if (SLUGS_OVERRIDE.length > 0) {
-		return SLUGS_OVERRIDE;
-	}
-	const paths = await sitemapPaths();
-	const baseline = [
-		`/story/${STABLE_SLUGS.story}`,
-		`/author/${STABLE_SLUGS.author}`,
-		`/storylist/${STABLE_SLUGS.storylist}`,
-	];
-	const sampled = ['/story/', '/author/', '/storylist/'].flatMap((prefix) => selectByType(paths, prefix));
-	return [...new Set([...baseline, ...sampled])];
-}
-
-async function report(expectations: IndexableHtmlExpectations): Promise<boolean> {
+async function reportExpectations(expectations: IndexableHtmlExpectations): Promise<boolean> {
 	try {
 		const response = await fetch(`${BASE_URL}${expectations.path}`, { headers: proxyHeaders });
 		const violations = collectIndexableHtmlViolations(await response.text(), expectations);
@@ -167,9 +70,34 @@ async function report(expectations: IndexableHtmlExpectations): Promise<boolean>
 		violations.forEach((violation) => console.log(`     - [${violation.rule}] ${violation.message}`));
 		return true;
 	} catch (error) {
-		console.log(`❌ ${expectations.path} — fetch falló: ${error instanceof Error ? error.message : String(error)}`);
+		console.log(`❌ ${expectations.path} — fetch falló: ${messageOf(error)}`);
 		return true;
 	}
+}
+
+// Construye las expectations (incluye el `new RegExp` del patrón por slug) y reporta, todo dentro de
+// un try por-página: un slug problemático solo invalida su propio reporte, no aborta la corrida.
+async function reportPath(path: string): Promise<boolean> {
+	let expectations: IndexableHtmlExpectations | null;
+	try {
+		expectations = expectationsFor(path);
+	} catch (error) {
+		console.log(`❌ ${path} — no se pudo construir las expectations: ${messageOf(error)}`);
+		return true;
+	}
+	return expectations ? reportExpectations(expectations) : false;
+}
+
+async function sampledPaths(baseline: readonly string[]): Promise<string[]> {
+	const response = await fetch(`${BASE_URL}/sitemap.xml`, { headers: proxyHeaders });
+	if (!response.ok) {
+		throw new Error(`GET /sitemap.xml devolvió HTTP ${response.status}`);
+	}
+	const paths = parseSitemap(await response.text());
+	const excluded = new Set(baseline);
+	return ['/story/', '/author/', '/storylist/']
+		.flatMap((prefix) => selectByType(paths, prefix, SAMPLE_SIZE, FULL))
+		.filter((path) => !excluded.has(path));
 }
 
 async function run(): Promise<void> {
@@ -177,25 +105,31 @@ async function run(): Promise<void> {
 		`Smoke de indexado contra ${BASE_URL}${proxyHeaders['x-forwarded-for'] ? ' (con x-forwarded-for)' : ''}\n`,
 	);
 
-	let paths: string[];
-	try {
-		paths = await targetPaths();
-	} catch (error) {
-		console.log(`❌ sitemap: ${error instanceof Error ? error.message : String(error)}`);
-		process.exitCode = 1;
-		return;
+	// El baseline no depende del sitemap: se ejerce siempre.
+	const baseline =
+		SLUGS_OVERRIDE.length > 0
+			? SLUGS_OVERRIDE
+			: [`/story/${STABLE_SLUGS.story}`, `/author/${STABLE_SLUGS.author}`, `/storylist/${STABLE_SLUGS.storylist}`];
+	console.log(`Baseline: /home\n  ${baseline.join('\n  ')}\n`);
+	let failed = await reportExpectations(HOME_EXPECTATIONS);
+	for (const path of baseline) {
+		failed = (await reportPath(path)) || failed;
 	}
 
-	const mode = SLUGS_OVERRIDE.length > 0 ? 'override' : FULL ? 'full' : `muestra ${SAMPLE_SIZE}/tipo`;
-	console.log(`/home + ${paths.length} páginas (${mode}):\n  ${paths.join('\n  ')}\n`);
-
-	let failed = await report(HOME_EXPECTATIONS);
-	for (const path of paths) {
-		const expectations = expectationsFor(path);
-		if (expectations) {
-			failed = (await report(expectations)) || failed;
+	// La muestra sí depende del sitemap: su falla se reporta pero NO tumba el baseline.
+	if (SLUGS_OVERRIDE.length === 0) {
+		try {
+			const sample = await sampledPaths(baseline);
+			console.log(`\nMuestra del sitemap (${FULL ? 'full' : `${SAMPLE_SIZE}/tipo`}):\n  ${sample.join('\n  ')}\n`);
+			for (const path of sample) {
+				failed = (await reportPath(path)) || failed;
+			}
+		} catch (error) {
+			console.log(`⚠️ sitemap no disponible, se omite la muestra aleatoria: ${messageOf(error)}`);
+			failed = true;
 		}
 	}
+
 	if (failed) {
 		process.exitCode = 1;
 	}
