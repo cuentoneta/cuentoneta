@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 // Models
 import { AudioRecording } from '@models/media.model';
@@ -16,7 +16,6 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 			class="font-inter text-xs font-medium text-brand-500"
 		/>
 	`,
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AudioRecordingWidgetComponent {
 	public readonly media = input.required<AudioRecording>();

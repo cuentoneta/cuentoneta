@@ -1,0 +1,18 @@
+import { CodeBlockIcon } from '@sanity/icons/CodeBlock';
+
+import { LandingPageListPane } from '../components/LandingPageListPane';
+
+// Reemplaza la lista nativa de landing pages por el pane con badge "Activa". El `.child` resuelve el
+// editor del documento clickeado (vía ChildLink), en vez del intent global de edición — que para la landing
+// activa colisiona y no abre el editor desde la lista.
+export const landingPageListItem = (S) =>
+	S.listItem()
+		.title('Páginas de Inicio')
+		.id('landingPage')
+		.icon(CodeBlockIcon)
+		.child(
+			S.component(LandingPageListPane)
+				.title('Páginas de Inicio')
+				.id('landingPage-list')
+				.child((childId) => S.document().documentId(childId).schemaType('landingPage')),
+		);

@@ -21,8 +21,8 @@ Ejemplo: `/release-workflow https://github.com/cuentoneta/cuentoneta/issues/1672
 
 ## Supuestos
 
-- El issue es de **gestión de release**: su milestone define la **versión target** (p. ej. milestone `2.8.2` → versión `2.8.2`).
-- El release se genera al mergear **`develop → master`**, que dispara el workflow `release.yml` (tag + GitHub Release + deploy de Sanity Studio). Este skill prepara el commit de release en una rama contra `develop`; **no** mergea a master.
+- El issue es de **gestión de release**: su milestone define la **versión target** (p. ej. milestone `2.8.2` → versión `2.8.2`). Debe tener el label **`release`** (lo aplica el template `.github/ISSUE_TEMPLATE/release.md`); el Action `prepare-release-pr` lo usa como gate.
+- El release se genera al mergear **`develop → master`**, que dispara el workflow `release.yml` (tag + GitHub Release + deploy de Sanity Studio). Este skill prepara el commit de release en una rama contra `develop`; **no** mergea a master. Tras el merge a `develop`, el workflow `prepare-release-pr` crea/actualiza el PR `develop → master`.
 
 ---
 
@@ -99,10 +99,15 @@ Anotar los resultados en `workspace/RELEASE.md`. Si algo falla: diagnosticar, ar
         cd cms
         pnpm exec sanity migration run <nombre> --project <id> --dataset production          # dry-run
         pnpm exec sanity migration run <nombre> --project <id> --dataset production --no-dry-run
-   2. Mergear este PR a `develop`.
-   3. Abrir PR `develop → master` y mergearlo → dispara `release.yml`
-      (tag <x> + GitHub Release con las notas del CHANGELOG + deploy de Sanity Studio).
+   2. Mergear este PR a `develop` (el issue de release debe tener label `release`).
+   3. Tras el merge, el workflow `prepare-release-pr` crea/actualiza el PR `develop → master`
+      con los pasos manuales y dispara `ci.yml` sobre `develop` (el PR no gatilla checks por sí
+      mismo por la anti-recursión del `GITHUB_TOKEN`; la señal de CI está en la corrida sobre
+      `develop`). Revisarlo y mergearlo a `master`
+      → dispara `release.yml` (tag <x> + GitHub Release + deploy de Sanity Studio).
       El deploy de la app lo cubre Vercel por integración Git nativa.
+      Si el milestone no estaba completo, el Action hace skip con warning; re-disparar
+      con workflow_dispatch + force si corresponde.
    4. Verificar post-release: workflow Release verde (jobs `release` y `deploy-studio`),
       Release <x> publicado, Studio con el schema nuevo, app en producción sin regresiones.
    ```

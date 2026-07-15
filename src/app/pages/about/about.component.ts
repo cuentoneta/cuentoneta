@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
@@ -11,7 +11,6 @@ import { progressiveRxResource } from '@utils/ssr-resource';
 	imports: [NgOptimizedImage],
 	hostDirectives: [HeadMetadataDirective],
 	templateUrl: './about.component.html',
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class AboutComponent {
 	protected readonly links = {

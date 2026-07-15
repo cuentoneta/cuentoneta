@@ -1,15 +1,5 @@
 // Core
-import {
-	ChangeDetectionStrategy,
-	Component,
-	computed,
-	DestroyRef,
-	effect,
-	ElementRef,
-	inject,
-	input,
-	signal,
-} from '@angular/core';
+import { Component, computed, DestroyRef, effect, ElementRef, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -34,7 +24,7 @@ import { CarouselGestureService } from './carousel-gesture.service';
 	selector: 'cuentoneta-carousel',
 	imports: [NgOptimizedImage, RouterLink, CarouselIndicatorComponent, CarouselControlsComponent],
 	providers: [CarouselStateService, CarouselGestureService],
-	changeDetection: ChangeDetectionStrategy.OnPush,
+
 	templateUrl: './carousel.component.html',
 	styleUrl: './carousel.component.css',
 	host: {

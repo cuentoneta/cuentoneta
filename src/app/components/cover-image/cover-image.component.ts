@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 
 /**
@@ -31,7 +31,6 @@ import { NgOptimizedImage } from '@angular/common';
 			</div>
 		}
 	`,
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CoverImageComponent {
 	// URL de la imagen; si no se provee, se muestra el placeholder del Design System.

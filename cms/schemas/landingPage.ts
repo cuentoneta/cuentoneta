@@ -1,4 +1,4 @@
-import { CodeBlockIcon } from '@sanity/icons';
+import { CodeBlockIcon } from '@sanity/icons/CodeBlock';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 
 export default defineType({
@@ -16,13 +16,11 @@ export default defineType({
 	preview: {
 		select: {
 			config: 'config',
-			active: 'active',
 		},
 		prepare(selection) {
-			const { config, active } = selection;
+			const { config } = selection;
 			return {
 				title: `${config}`,
-				subtitle: active ? 'Activa' : 'Inactiva',
 			};
 		},
 	},

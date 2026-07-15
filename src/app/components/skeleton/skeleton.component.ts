@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 export const SkeletonAppearance = Object.freeze({
 	Line: 'line',
@@ -27,7 +27,6 @@ export type SkeletonAppearance = (typeof SkeletonAppearance)[keyof typeof Skelet
 		'[class.rounded-full]': "appearance() === 'circle'",
 		'[class.aspect-square]': "appearance() === 'circle'",
 	},
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SkeletonComponent {
 	public readonly appearance = input<SkeletonAppearance>(SkeletonAppearance.Line);

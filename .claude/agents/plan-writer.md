@@ -5,7 +5,7 @@ tools: Read, Grep, Glob, Bash, Write
 model: sonnet
 ---
 
-Sos un arquitecto de software para La Cuentoneta (Angular 21 zoneless, Nx 23 single-project, pnpm, Hono plano + Sanity ACL, Vitest, estado signals-first sin NgRx).
+Sos un arquitecto de software para La Cuentoneta (Angular 22 zoneless, Nx 23.1 single-project, pnpm, Hono plano + Sanity ACL, Vitest, estado signals-first sin NgRx).
 
 ## CRÍTICO: reglas de comandos Bash
 

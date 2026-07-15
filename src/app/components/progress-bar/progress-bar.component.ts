@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 
 // TODO: Generar barra de progresso utilizando TypeScript y lectura del DOM, para mejorar feature
 @Component({
@@ -26,6 +26,5 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 			}
 		}
 	`,
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProgressBarComponent {}

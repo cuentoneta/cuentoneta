@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton.component';
@@ -27,6 +27,5 @@ import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton
 			</div>
 		</article>
 	`,
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeStoryCardSkeletonComponent {}

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 
 import { withSanityImageParams } from '@utils/sanity-image.utils';
@@ -30,7 +30,6 @@ const PROFILE_PLACEHOLDER = './assets/svg/profile-placeholder.svg';
 	host: {
 		'[class]': 'containerClasses()',
 	},
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImageProfileComponent {
 	// Inputs

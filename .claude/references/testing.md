@@ -19,7 +19,7 @@
 Archivos clave:
 
 - **`vitest.config.ts`** — `globals: true`, `environment: 'happy-dom'`, `setupFiles: ['src/test-setup.ts']`, `include: ['src/**/*.{test,spec}.ts']`. Inlina `@sanity` y bundles `fesm` para que Vite los transforme. Coverage solo en CI (`CI=true`/`COVERAGE=true`).
-- **`src/test-setup.ts`** — inicializa el `TestBed` zoneless (Angular 21 corre zoneless por defecto cuando `zone.js` no está presente; no se llama a `provideZonelessChangeDetection()`). El `ErrorHandler` **relanza** cualquier error no manejado para que falle el test. Instala el stub global de `IntersectionObserver`.
+- **`src/test-setup.ts`** — inicializa el `TestBed` zoneless (Angular 22 corre zoneless por defecto cuando `zone.js` no está presente; no se llama a `provideZonelessChangeDetection()`). El `ErrorHandler` **relanza** cualquier error no manejado para que falle el test. Instala el stub global de `IntersectionObserver`.
 - **`src/test-utils.ts`** — los wrappers obligatorios (ver abajo).
 
 ---

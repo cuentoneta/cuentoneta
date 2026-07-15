@@ -69,7 +69,7 @@ Junto con Nx, el proyecto cuenta con ESLint y Prettier ya configuradas como depe
 
 ### Para el desarrollo de la plataforma web
 
-- **<a href="https://angular.dev">Angular 21</a>** con **<a href="https://angular.dev/guide/ssr">Server-Side rendering</a>** como framework de frontend
+- **<a href="https://angular.dev">Angular 22</a>** con **<a href="https://angular.dev/guide/ssr">Server-Side rendering</a>** como framework de frontend
 - **<a href="https://www.typescriptlang.org/">TypeScript</a>**
 - **<a href="https://tailwindcss.com/docs/installation">Tailwind CSS</a>**
 - **<a href="https://storybook.js.org/docs/react/get-started/introduction">Storybook</a>** como herramienta de desarrollo de componentes.
@@ -200,10 +200,10 @@ Esto iniciará una corrida de tests unitarios utilizando Jest, el cual se encarg
 
 ##### Tests de integración y e2e
 
-Para ejecutar una corrida de tests de integración/e2e, ejecutá el siguiente comando.
+Los tests de e2e corren contra el build SSR de producción (el `webServer` de Playwright levanta `dist/cuentoneta/server/server.mjs`, no el dev-server), para tener la fidelidad del HTML que ve el crawler. Por eso necesitás un build previo:
 
 ```bash
-pnpm run test:e2e
+pnpm build && pnpm run test:e2e
 ```
 
 Esto iniciará una corrida de tests de integración y end-to-end utilizando Playwright, mostrando los resultados en consola y generando un reporte, el cual se encontrará en la carpeta `dist/.playwright/playwright-reports` al final de la corrida.

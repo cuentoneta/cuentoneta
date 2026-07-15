@@ -20,17 +20,17 @@
 
 ## Resumen del proyecto
 
-| Aspecto                | Valor                                                           |
-| ---------------------- | --------------------------------------------------------------- |
-| **Framework**          | Angular 21 (standalone, **zoneless**, OnPush, SSR/hidratación)  |
-| **Lenguaje**           | TypeScript (modo estricto)                                      |
-| **Monorepo**           | Nx 23 (single-project `@cuentoneta/app`) — builder vite/esbuild |
-| **Gestor de paquetes** | **pnpm** (10.x). `npm`/`yarn` están bloqueados (`only-allow`)   |
-| **Backend**            | **Hono** (`src/api/`) + `@hono/zod-validator`                   |
-| **Persistencia/CMS**   | **Sanity** (GROQ) vía `@sanity/client`. Studio en `/cms`        |
-| **Testing**            | **Vitest** + Angular Testing Library + `@test-utils`            |
-| **Estilos**            | Tailwind v4 + Stylelint                                         |
-| **Componentes**        | Storybook 10                                                    |
+| Aspecto                | Valor                                                             |
+| ---------------------- | ----------------------------------------------------------------- |
+| **Framework**          | Angular 22 (standalone, **zoneless**, OnPush, SSR/hidratación)    |
+| **Lenguaje**           | TypeScript (modo estricto)                                        |
+| **Monorepo**           | Nx 23.1 (single-project `@cuentoneta/app`) — builder vite/esbuild |
+| **Gestor de paquetes** | **pnpm** (10.x). `npm`/`yarn` están bloqueados (`only-allow`)     |
+| **Backend**            | **Hono** (`src/api/`) + `@hono/zod-validator`                     |
+| **Persistencia/CMS**   | **Sanity** (GROQ) vía `@sanity/client`. Studio en `/cms`          |
+| **Testing**            | **Vitest** + Angular Testing Library + `@test-utils`              |
+| **Estilos**            | Tailwind v4 + Stylelint                                           |
+| **Componentes**        | Storybook 10                                                      |
 
 **Aliases de paths** (ver `tsconfig.json`): `@components/*`, `@mocks/*`, `@models/*`, `@utils/*`, `@test-utils`.
 
@@ -42,25 +42,30 @@
 
 Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven targets de Nx del proyecto `@cuentoneta/app`.
 
-| Comando                                   | Descripción                          |
-| ----------------------------------------- | ------------------------------------ |
-| `pnpm install`                            | Instala dependencias                 |
-| `pnpm dev`                                | Dev server (SSR) en desarrollo       |
-| `pnpm build`                              | Build de producción                  |
-| `pnpm lint`                               | ESLint sobre `src`                   |
-| `pnpm stylelint`                          | Stylelint sobre CSS                  |
-| `pnpm typecheck`                          | Type-check estricto (`tsc --noEmit`) |
-| `pnpm test`                               | Tests unitarios (Vitest)             |
-| `pnpm test:watch`                         | Tests en watch                       |
-| `pnpm test:e2e`                           | E2E (Playwright)                     |
-| `pnpm storybook` / `pnpm storybook:build` | Storybook dev / build                |
-| `pnpm sanity:dev`                         | Studio de Sanity (`@cuentoneta/cms`) |
-| `pnpm sanity:extract-schema`              | Extrae el schema de Sanity           |
-| `pnpm sanity:run-typegen-generator`       | Genera tipos a partir del schema     |
+| Comando                                   | Descripción                                                                                                                          |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `pnpm install`                            | Instala dependencias                                                                                                                 |
+| `pnpm dev`                                | Dev server (SSR) en desarrollo                                                                                                       |
+| `pnpm build`                              | Build de producción                                                                                                                  |
+| `pnpm lint`                               | ESLint sobre `src` y `e2e`                                                                                                           |
+| `pnpm stylelint`                          | Stylelint sobre CSS                                                                                                                  |
+| `pnpm typecheck`                          | Type-check estricto (`tsc --noEmit`)                                                                                                 |
+| `pnpm test`                               | Tests unitarios (Vitest)                                                                                                             |
+| `pnpm test:watch`                         | Tests en watch                                                                                                                       |
+| `pnpm test:e2e`                           | E2E (Playwright)                                                                                                                     |
+| `pnpm seo:smoke`                          | Smoke manual post-deploy de indexado (invariantes SSR sobre `BASE_URL`, muestreando el sitemap)                                      |
+| `pnpm storybook` / `pnpm storybook:build` | Storybook dev / build                                                                                                                |
+| `pnpm sanity:dev`                         | Studio de Sanity (`@cuentoneta/cms`)                                                                                                 |
+| `pnpm sanity:build`                       | Build del Studio (`sanity build`) — reproduce en local el gate de CI `studio-build`                                                  |
+| `pnpm sanity:extract-schema`              | Extrae el schema de Sanity                                                                                                           |
+| `pnpm sanity:run-typegen-generator`       | Genera tipos a partir del schema                                                                                                     |
+| `pnpm sanity migration run <slug>`        | Corre una migración de datos (desde `cms/`; dry-run por defecto) → [`sanity-migrations.md`](.claude/references/sanity-migrations.md) |
 
-**Gates de CI** (deben quedar verdes en cada PR): `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`.
+**Gates de CI** (deben quedar verdes en cada PR): `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`, `studio-build`.
 
 > El gate `typecheck` (`pnpm typecheck` → `tsc --noEmit` estricto) cubre el **TS puro** de la app (`src/**`, incluidos `*.spec.ts` y `*.stories.ts`) y `scripts/`. **No** valida plantillas Angular (eso lo hacen `build`/`storybook` vía `ngtsc`) ni el proyecto `cms/`.
+>
+> El build del Studio de Sanity (`cms/`) lo cubre el gate **`studio-build`** (`pnpm -C cms exec sanity build`, el bundler Vite/Rollup real del Studio), no `typecheck` ni `build`. Corre en un job aparte con install propio de `cms/` (proyecto pnpm standalone). Cierra el punto ciego por el que un bump roto de una dependencia del Studio podía llegar a `develop` sin señal de CI.
 
 ---
 

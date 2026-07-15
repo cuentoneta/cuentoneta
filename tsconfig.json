@@ -6,14 +6,13 @@
 		"module": "preserve",
 		"lib": ["dom", "es2022"],
 		"paths": {
-			"@components/*": ["src/app/components/*"],
-			"@mocks/*": ["src/app/mocks/*"],
-			"@models/*": ["src/app/models/*"],
-			"@utils/*": ["src/app/utils/*"],
-			"@test-utils": ["src/test-utils.ts"]
+			"@components/*": ["./src/app/components/*"],
+			"@mocks/*": ["./src/app/mocks/*"],
+			"@models/*": ["./src/app/models/*"],
+			"@utils/*": ["./src/app/utils/*"],
+			"@test-utils": ["./src/test-utils.ts"]
 		},
 		"isolatedModules": true,
-		"baseUrl": ".",
 		"skipLibCheck": true,
 		"strict": true
 	},
@@ -41,11 +40,5 @@
 		"strictInputAccessModifiers": true,
 		"typeCheckHostBindings": true,
 		"strictTemplates": true
-	},
-	"ts-node": {
-		"esm": true,
-		"compilerOptions": {
-			"module": "ESNext"
-		}
 	}
 }

@@ -1,5 +1,5 @@
 // Núcleo
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 
 // Componentes
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
@@ -14,6 +14,5 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 			class="grid aspect-[540/220] w-full justify-self-center rounded-[16px] bg-neutral-200 object-cover md:aspect-[1240/360]"
 		/>
 	</div>`,
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CarouselSkeletonComponent {}

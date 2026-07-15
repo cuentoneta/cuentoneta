@@ -107,12 +107,13 @@ describe('TabsComponent', () => {
 		await render(TestHostComponent);
 
 		const buttons = screen.getAllByRole('tab');
-		const tabPanel = screen.getByRole('tabpanel');
 
-		expect(tabPanel).toHaveTextContent('Content 1');
+		expect(screen.getByRole('tabpanel')).toHaveTextContent('Content 1');
 
 		await user.click(buttons[2]);
 
-		expect(tabPanel).toHaveTextContent('Content 3');
+		// Cada tab tiene su propio panel (el inactivo queda [hidden], fuera del árbol de accesibilidad),
+		// por lo que se re-consulta el tabpanel visible en vez de reutilizar la referencia anterior.
+		expect(screen.getByRole('tabpanel')).toHaveTextContent('Content 3');
 	});
 });

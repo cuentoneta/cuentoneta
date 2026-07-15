@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import type { StoryNavigationTeaserWithAuthor, StoryTeaserWithAuthor } from '@models/story.model';
@@ -102,7 +102,6 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
 	host: {
 		class: 'block',
 	},
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeStoryCardComponent {
 	protected readonly appRoutes = AppRoutes;

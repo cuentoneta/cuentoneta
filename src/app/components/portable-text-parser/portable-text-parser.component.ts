@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 
 import { TextBlockContent } from '@models/block-content.model';
 import { PortableTextDirective } from '../../directives/portable-text-parser/portable-text-parser.directive';
@@ -37,7 +37,6 @@ interface ParagraphGroup {
 			}
 		}
 	`,
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PortableTextParserComponent {
 	public readonly paragraphs = input.required<TextBlockContent[]>();

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
@@ -39,7 +39,6 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 			</div>
 		</div>
 	</article>`,
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StoryCardTeaserSkeletonComponent {
 	// Inputs

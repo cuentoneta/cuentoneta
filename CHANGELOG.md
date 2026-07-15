@@ -16,6 +16,47 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.8.5 (2026-07-15)
+
+La versión 2.8.5 consolida la **indexación por SSR** de las fichas de autor, que era el mayor punto ciego de SEO pendiente. La ficha de autor ahora completa su render en el servidor —hidratación incremental y biografía servida aunque esté detrás de tabs— en lugar de emitir un body vacío por los `@defer`/tabs que solo montaban en cliente (#1771), con un hotfix previo que reemplazó los `@defer` por `@if` plano para restaurar el H1, la biografía y los enlaces `/story/` en el HTML crudo (#1773). Sobre esa corrección se incorpora una **suite de verificación del HTML SSR** (invariantes de indexado con cobertura Vitest, e2e contra el build de producción y un smoke post-deploy sobre el sitemap) para blindar que el indexado no vuelva a romperse silenciosamente (#1772).
+
+En el frente de **tooling del Studio**, se cierra el punto ciego por el que un breakage de `cms/` llegaba a `develop` sin señal: se agrega el gate de CI `studio-build`, que compila el Studio (`sanity build`) en cada PR (#1799), y se arregla el build roto por el bump mayor de `@sanity/icons` v5 —imports migrados a subpaths + `packageExtensions` para plugins phantom— que había motivado el gate (#1800). El Studio además visibiliza la landing page activa (acceso directo y badges de estado en la lista) y corrige el subtítulo 'Inactiva' fantasma (#1759).
+
+Finalmente, el proyecto adopta la actualización mayor de framework a **Angular 22.0 y Nx 23.1** (#1482), acompañada de un template de issue para futuras actualizaciones de Angular (#1778) y la extensión del gate de lint para cubrir `e2e/**`, antes fuera de su alcance (#1731). En el pipeline de release, se automatiza la creación del PR `develop → master` vía GitHub Action (#1758) y se limpian scripts de migración one-off ya obsoletos (#1754).
+
+### Cambios completos
+
+Ver el changelog completo en [2.8.5](https://github.com/cuentoneta/cuentoneta/releases/tag/2.8.5)
+
+### Cambios
+
+#### SEO / SSR / indexado
+
+- [#1771] - Completa el render SSR de la ficha de autor: hidratación incremental y biografía tab-gated servida en el HTML del servidor.
+- [#1773] - (Hotfix) Reemplaza los `@defer` de la ficha de autor por `@if` plano para restaurar H1, biografía y enlaces `/story/` en el SSR crudo.
+- [#1772] - Suite de verificación del HTML SSR crudo: core puro de invariantes de indexado con cobertura Vitest, e2e contra el build de producción y smoke post-deploy (`pnpm seo:smoke`) muestreando el sitemap.
+
+#### Studio / CMS y tooling de build
+
+- [#1799] - Agrega el gate de CI `studio-build` (`sanity build`) que compila el Studio en cada PR, más el script `pnpm sanity:build` para reproducirlo en local.
+- [#1800] - Arregla el build del Studio con `@sanity/icons` v5: imports migrados a subpaths y `packageExtensions` para plugins phantom.
+- [#1759] - Visibiliza la landing page activa en el Studio (acceso directo + badges de estado en la lista) y corrige el subtítulo 'Inactiva' fantasma.
+
+#### Framework y tooling
+
+- [#1482] - Actualiza Angular a la versión 22.0 y Nx a la 23.1 (adopción de defaults de v22/TS6).
+- [#1778] - Agrega un template de issue para actualizaciones de Angular.
+- [#1731] - Extiende el gate de lint (`eslint:lint`) para cubrir `e2e/**`, antes fuera de su alcance.
+
+#### Automatización de release y mantenimiento
+
+- [#1758] - Automatiza la creación del PR de release `develop → master` vía GitHub Action.
+- [#1754] - Limpieza de scripts de migración one-off ya obsoletos.
+
+#### Correcciones
+
+- [#1770] - (Hotfix) Correcciones en el lineado de `CollectionTeaser`.
+
 ## Versión 2.8.4 (2026-07-08)
 
 La versión 2.8.4 corrige y endurece la generación automática de las páginas de inicio semanales. El cron `add-next-weeks-landing-page-content` había dejado de anclarse a la semana curada y clonaba indefinidamente el último stub futuro autogenerado, produciendo un bache entre la semana vigente y las siguientes; ahora la query selecciona la última semana válida no futura (`config <= semana actual`) y el formato del slug pasa a `YYYY-WW` para que su orden lexicográfico coincida con el cronológico (#1749).

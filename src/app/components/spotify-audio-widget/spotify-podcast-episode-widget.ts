@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
+import { Component, computed, input, inject } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 // Models
@@ -27,7 +27,6 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 			class="font-inter text-xs font-medium text-brand-500"
 		/>
 	`,
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpotifyPodcastEpisodeWidget {
 	public readonly media = input.required<SpotifyPodcastEpisode>();

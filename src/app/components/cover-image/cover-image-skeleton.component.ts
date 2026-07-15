@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
@@ -11,6 +11,5 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 	imports: [SkeletonComponent],
 	host: { class: 'block h-41 w-29.5 shrink-0' },
 	template: `<cuentoneta-skeleton appearance="square" class="h-full w-full rounded-lg bg-neutral-300" />`,
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CoverImageSkeletonComponent {}

@@ -15,7 +15,8 @@
 import { test, expect } from '@playwright/test';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
-import { STABLE_SLUGS, SCHEMA_IDS } from '../_utils/seo-fixtures';
+import { collectIndexableHtmlViolations } from '../_utils/seo-invariants';
+import { STABLE_SLUGS, SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
 
 const authorPath = `/author/${STABLE_SLUGS.author}`;
 
@@ -60,6 +61,17 @@ test('author — C: bloques sitewide Organization y WebSite presentes', async ()
 
 	expect(blocks.get(SCHEMA_IDS.organization)?.['@type']).toBe('Organization');
 	expect(blocks.get(SCHEMA_IDS.website)?.['@type']).toBe('WebSite');
+});
+
+test('author — invariantes de indexado para crawlers (ssr, h1, bio, sin skeleton, enlace a story)', () => {
+	expect(
+		collectIndexableHtmlViolations(html, {
+			path: authorPath,
+			titlePattern: /borges/i,
+			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.profilePage, SCHEMA_IDS.breadcrumbAuthor],
+			requiredInternalLinkPrefix: '/story/',
+		}),
+	).toEqual([]);
 });
 
 test('author — D: al volver a la home se remueven los bloques del autor', async ({ page }) => {

@@ -2,7 +2,8 @@ import { defineConfig } from 'sanity';
 import deskStructure from './deskStructure';
 import schemas from './schemas/schema';
 
-import { LaunchIcon, RobotIcon } from '@sanity/icons';
+import { LaunchIcon } from '@sanity/icons/Launch';
+import { RobotIcon } from '@sanity/icons/Robot';
 
 // Plugins
 import { structureTool } from 'sanity/structure';

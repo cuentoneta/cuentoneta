@@ -7,6 +7,10 @@ on:
   # el primer push), no solo los pushes de un mismo PR.
   push:
     branches: [develop]
+  # Permite dispararlo manualmente y desde `prepare-release-pr.yml`: el PR `develop → master` lo crea
+  # el GITHUB_TOKEN, que por anti-recursión no gatilla `pull_request`; `workflow_dispatch` es la
+  # excepción (sí corre invocado por el token), así que da señal de CI sobre `develop` para el release.
+  workflow_dispatch:
 
 jobs:
   setup:
@@ -22,7 +26,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v6.4.0
+        uses: actions/setup-node@v7.0.0
         with:
           node-version: 22.22.3
           cache: 'pnpm'
@@ -64,7 +68,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v6.4.0
+        uses: actions/setup-node@v7.0.0
         with:
           node-version: 22.22.3
 
@@ -126,7 +130,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v6.4.0
+        uses: actions/setup-node@v7.0.0
         with:
           node-version: 22.22.3
 
@@ -161,7 +165,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v6.4.0
+        uses: actions/setup-node@v7.0.0
         with:
           node-version: 22.22.3
 
@@ -196,7 +200,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v6.4.0
+        uses: actions/setup-node@v7.0.0
         with:
           node-version: 22.22.3
 
@@ -231,7 +235,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v6.4.0
+        uses: actions/setup-node@v7.0.0
         with:
           node-version: 22.22.3
 
@@ -242,6 +246,31 @@ jobs:
 
       - name: Unpack workspace
         run: tar -xf workspace.tar
+
+      - name: Cache de Nx local (fallback sin Nx Cloud)
+        uses: actions/cache@v6
+        with:
+          path: .nx/cache
+          key: nx-cache-e2e-${{ github.sha }}
+          restore-keys: |
+            nx-cache-e2e-
+
+      # El webServer de Playwright levanta el build SSR de producción (fidelidad con el crawler), así
+      # que hay que compilarlo acá. Mismas env vars que el job `build`.
+      - name: Build de producción para e2e (SSR real)
+        run: bash .github/scripts/nx-run.sh nx run @cuentoneta/app:build:production
+        env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+          SANITY_STUDIO_DATASET: ${{ secrets.SANITY_STUDIO_DATASET || 'development' }}
+          SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
+          SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_STUDIO_TOKEN }}
+          CLARITY_TOKEN: ${{ secrets.CLARITY_TOKEN }}
+          CLARITY_PROJECT_ID: ${{ secrets.CLARITY_PROJECT_ID }}
+
+      # Replica el hook `postbuild` de package.json, que `nx run` directo no dispara (solo el lifecycle
+      # de `pnpm run build`). Parchea la referencia al index en el bundle del server.
+      - name: Fix index file reference (postbuild)
+        run: node scripts/fix-index-file-name.mjs
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
@@ -269,7 +298,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v6.4.0
+        uses: actions/setup-node@v7.0.0
         with:
           node-version: 22.22.3
 
@@ -314,7 +343,7 @@ jobs:
           version: 10.12.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v6.4.0
+        uses: actions/setup-node@v7.0.0
         with:
           node-version: 22.22.3
 
@@ -338,3 +367,46 @@ jobs:
         run: bash .github/scripts/nx-run.sh nx run @cuentoneta/app:build-storybook
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+
+  studio-build:
+    name: 'Studio build (sanity build)'
+    runs-on: ubuntu-latest
+    # Checkout propio, sin `needs: setup`: cms/ es un proyecto pnpm aparte (lockfile
+    # propio, fuera del workspace de la raíz) y además referencia el árbol `src/` de la
+    # raíz vía import relativo (schemas/contentCampaign.ts). El workspace.tar de `setup`
+    # no instala cms/node_modules, así que reusarlo no ahorra nada.
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.0
+
+      - name: Select pnpm as package manager
+        uses: pnpm/action-setup@v6.0.9
+        with:
+          version: 10.12.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: 22.22.3
+          cache: 'pnpm'
+          cache-dependency-path: cms/pnpm-lock.yaml
+
+      - name: Install CMS dependencies
+        working-directory: cms
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      # `sanity build` (bundler Vite/Rollup) es el gate autoritativo del Studio: un
+      # `tsc --noEmit` sobre cms/ no sirve (ruido de moduleResolution sobre node_modules,
+      # sin relación con errores reales de bundling). `--ignore-scripts` en el install
+      # saltea el postinstall que genera cms/.env (set-environment.ts), así que las vars
+      # que lee sanity.cli.ts se pasan acá explícitas, con fallback a los valores públicos
+      # por defecto (s4dbqkc5/development) para que corra igual en PRs de forks sin secrets.
+      - name: Build Sanity Studio
+        working-directory: cms
+        run: pnpm exec sanity build
+        env:
+          SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
+          SANITY_STUDIO_DATASET: ${{ secrets.SANITY_STUDIO_DATASET || 'development' }}
+          # El CLI de Sanity corre desatendido cuando CI=true (Actions ya lo setea;
+          # explícito por robustez, mismo patrón que el job deploy-studio de release.yml).
+          CI: 'true'

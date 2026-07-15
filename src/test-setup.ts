@@ -7,7 +7,7 @@ import { BrowserTestingModule, platformBrowserTesting } from '@angular/platform-
 
 import { installIntersectionObserverStub } from './app/testing/intersection-observer.stub';
 
-// Angular 21 corre el TestBed en modo zoneless por defecto cuando zone.js no está presente,
+// Angular 22 corre el TestBed en modo zoneless por defecto cuando zone.js no está presente,
 // por eso no se provee `provideZonelessChangeDetection()` explícitamente. El ErrorHandler relanza
 // para que cualquier error no manejado falle el test (mismo comportamiento que el preset de Jest).
 @NgModule({

@@ -79,7 +79,7 @@ Primero determiná el change set: corré `git diff --name-only develop...HEAD` (
 - **Composable** — los componentes se combinan fácil mediante interfaces claras y acoplamiento mínimo
 - **Filosofía Unix** — cada módulo/servicio hace una sola cosa bien; evitar god classes o librerías "todo en uno"
 - **Predecible** — la arquitectura sigue el principio de mínima sorpresa; patrones estándar antes que abstracciones ingeniosas
-- **Idiomático** — sigue las convenciones de Angular 21 (standalone, **zoneless**, OnPush, signals/`computed`/`effect`, sin lifecycle hooks) y Nx 23 single-project
+- **Idiomático** — sigue las convenciones de Angular 22 (standalone, **zoneless**, OnPush, signals/`computed`/`effect`, sin lifecycle hooks) y Nx 23.1 single-project
 - **Basado en el dominio** — la estructura refleja conceptos de negocio (Story / Author / Storylist), no capas técnicas; el código cuenta la historia del dominio
 
 ### Estado signals-first (sin NgRx)

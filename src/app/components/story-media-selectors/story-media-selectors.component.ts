@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { simpleSpotify, simpleX, simpleYoutube } from '@ng-icons/simple-icons';
 import { faSolidFileAudio } from '@ng-icons/font-awesome/solid';
@@ -75,7 +75,6 @@ interface MediaSelectorItem {
 	host: {
 		'[class]': 'containerClasses()',
 	},
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StoryMediaSelectorsComponent {
 	// Inputs

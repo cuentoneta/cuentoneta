@@ -1,4 +1,7 @@
-import { DocumentPdfIcon, DocumentVideoIcon, PlayIcon, TwitterIcon } from '@sanity/icons';
+import { DocumentPdfIcon } from '@sanity/icons/DocumentPdf';
+import { DocumentVideoIcon } from '@sanity/icons/DocumentVideo';
+import { PlayIcon } from '@sanity/icons/Play';
+import { TwitterIcon } from '@sanity/icons/Twitter';
 import { defineField, defineType } from 'sanity';
 
 export const audioRecording = defineType({
