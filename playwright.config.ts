@@ -8,7 +8,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // For CI, you may want to set BASE_URL to the deployed application.
-const baseURL = process.env['BASE_URL'] || 'http://localhost:3000';
+// El default es el server SSR de producción (`src/server.ts`, puerto 4000), no el dev-server: los
+// tests de SEO ejercen el HTML crudo que ve el crawler y necesitan la fidelidad del build de prod
+// (comportamiento real de `@defer`, deopt por proxy headers) que el dev-server no reproduce.
+const baseURL = process.env['BASE_URL'] || 'http://localhost:4000';
 
 /**
  * Read environment variables from file.
@@ -27,10 +30,11 @@ export default defineConfig({
 		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
 		trace: 'on-first-retry',
 	},
-	/* Run your local dev server before starting the tests */
+	/* Levanta el server SSR de producción ya buildeado. Requiere un build previo (`pnpm build` local,
+	   o el paso de build del job `e2e` en CI): este comando solo arranca el server, no compila. */
 	webServer: {
-		command: 'nx run @cuentoneta/app:serve:development --port=3000',
-		url: 'http://localhost:3000',
+		command: 'node dist/cuentoneta/server/server.mjs',
+		url: 'http://localhost:4000',
 		reuseExistingServer: !process.env.CI,
 		cwd: workspaceRoot,
 	},
