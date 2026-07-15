@@ -60,7 +60,7 @@
 					<section class="mb-10 flex flex-col gap-10">
 						@for (epigraph of story.epigraphs; track $index) {
 							@defer {
-								<cuentoneta-story-epigraph [epigraph]="epigraph" />
+								<cuentoneta-editorial-text-block [content]="epigraph" variant="highlight" />
 							}
 						}
 					</section>
