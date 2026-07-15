@@ -25,12 +25,12 @@ export type EditorialTextBlockVariant = 'note' | 'highlight';
 	imports: [PortableTextParserComponent],
 	template: `
 		@if (variant() === 'highlight') {
-			<div class="w-1 self-stretch rounded-full bg-brand-400"></div>
+			<div class="w-1 self-stretch rounded-full bg-brand-400" data-testid="accent-bar"></div>
 		}
 		<div class="source-serif-lg flex flex-1 flex-col font-normal {{ textClasses() }}">
 			<cuentoneta-portable-text-parser [paragraphs]="content().text" />
 			@if (hasReference()) {
-				<div class="text-end">
+				<div class="text-end" data-testid="reference">
 					<em><cuentoneta-portable-text-parser [paragraphs]="content().reference" /></em>
 				</div>
 			}
@@ -38,6 +38,7 @@ export type EditorialTextBlockVariant = 'note' | 'highlight';
 	`,
 	host: {
 		'[class]': 'hostClasses()',
+		'data-testid': 'editorial-text-block',
 	},
 })
 export class EditorialTextBlockComponent {
