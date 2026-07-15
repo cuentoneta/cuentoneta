@@ -33,10 +33,6 @@ export interface IndexableHtmlExpectations {
 	readonly canonicalContains?: string;
 }
 
-// Umbral por defecto de texto en `<main>`: muy por debajo del contenido real de los fixtures (bio,
-// cuerpo del cuento, ficha técnica) pero muy por encima del ruido de whitespace de un skeleton.
-const DEFAULT_MIN_PRIMARY_CONTENT_LENGTH = 120;
-
 function normalizedText(element: HTMLElement | null): string {
 	return (element?.text ?? '').replace(/\s+/g, ' ').trim();
 }
@@ -105,7 +101,9 @@ function primaryHeading(root: HTMLElement, pattern?: RegExp): Violation | null {
 
 function primaryContentLength(
 	root: HTMLElement,
-	minLength: number = DEFAULT_MIN_PRIMARY_CONTENT_LENGTH,
+	// Umbral por defecto de texto en `<main>`: muy por debajo del contenido real de los fixtures (bio,
+	// cuerpo del cuento, ficha técnica) pero muy por encima del ruido de whitespace de un skeleton.
+	minLength: number = 120,
 ): Violation | null {
 	const length = normalizedText(root.querySelector('main')).length;
 	if (length >= minLength) {

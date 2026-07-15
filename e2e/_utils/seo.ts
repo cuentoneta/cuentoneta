@@ -16,10 +16,11 @@ export function parseJsonLdBlocks(html: string): Map<string, Record<string, unkn
 }
 
 export function getMetaContent(html: string, nameOrProperty: string): string | null {
+	const key = nameOrProperty.replace(/"/g, '\\"');
 	const root = parseHtml(html);
 	return (
-		root.querySelector(`meta[name="${nameOrProperty}"]`)?.getAttribute('content') ??
-		root.querySelector(`meta[property="${nameOrProperty}"]`)?.getAttribute('content') ??
+		root.querySelector(`meta[name="${key}"]`)?.getAttribute('content') ??
+		root.querySelector(`meta[property="${key}"]`)?.getAttribute('content') ??
 		null
 	);
 }
