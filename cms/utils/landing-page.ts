@@ -9,8 +9,7 @@ export interface LandingPageRow {
 }
 
 // Espejo de buildWeekSlug (src/api/modules/content/content.service.ts): formato YYYY-WW con numeración
-// ISO-8601 (lunes = día 1; la semana 1 es la que contiene el primer jueves del año). La convención ISO
-// está fijada en #1751; si cambia allá, actualizar acá para que el Studio no diverja de lo que sirve prod.
+// ISO-8601 (lunes = día 1; la semana 1 es la que contiene el primer jueves del año).
 export function activeWeekSlug(date: Date = new Date()): string {
 	return `${getISOWeekYear(date)}-${getISOWeek(date).toString().padStart(2, '0')}`;
 }
