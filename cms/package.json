@@ -17,9 +17,9 @@
 		"sanity"
 	],
 	"dependencies": {
-		"@sanity/cli": "^7.5.0",
+		"@sanity/cli": "^7.8.0",
 		"@sanity/export": "^6.2.0",
-		"@sanity/icons": "^5.0.0",
+		"@sanity/icons": "^5.1.0",
 		"@sanity/import": "^6.0.3",
 		"@sanity/vision": "^5.31.1",
 		"date-fns": "^4.4.0",
