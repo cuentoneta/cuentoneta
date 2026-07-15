@@ -45,11 +45,23 @@ export const Note: Story = {
 
 export const Highlight: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-editorial-text-block ${argsToTemplate(args)} />` }),
+	args: { content: epigraphWithoutReference, variant: 'highlight' },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Variante <strong>highlight</strong> sin pie de referencia: callout con tinte de marca y barra de acento vertical, texto left-aligned.</p><p><strong>Usos:</strong> Story (reemplaza a la epígrafe cuando no trae referencia).</p>`,
+			},
+		},
+	},
+};
+
+export const HighlightWithReference: Story = {
+	render: (args) => ({ props: args, template: `<cuentoneta-editorial-text-block ${argsToTemplate(args)} />` }),
 	args: { content: epigraphMock, variant: 'highlight' },
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante <strong>highlight</strong>: callout con tinte de marca y barra de acento vertical, texto left-aligned. Cuando el contenido trae referencia, se muestra en cursiva alineada a la derecha.</p><p><strong>Usos:</strong> Story (reemplaza a la epígrafe).</p>`,
+				story: `<p>Variante <strong>highlight</strong> con pie de referencia: cuando el contenido trae <code>reference</code>, se muestra en cursiva alineada a la derecha (en contraposición al diseño de Figma). No es una variante propia del componente: es la misma <code>highlight</code> con un <code>content</code> que incluye referencia.</p><p><strong>Usos:</strong> Story (reemplaza a la epígrafe cuando trae referencia).</p>`,
 			},
 		},
 	},
@@ -57,18 +69,24 @@ export const Highlight: Story = {
 
 export const Showcase: Story = {
 	render: () => ({
-		props: { note: epigraphWithoutReference, highlight: epigraphMock },
+		props: {
+			note: epigraphWithoutReference,
+			highlight: epigraphWithoutReference,
+			highlightWithReference: epigraphMock,
+		},
 		template: `
 			<div class="flex flex-col gap-6">
 				<cuentoneta-editorial-text-block [content]="note" variant="note" />
 				<cuentoneta-editorial-text-block [content]="highlight" variant="highlight" />
+				<cuentoneta-editorial-text-block [content]="highlightWithReference" variant="highlight" />
 			</div>
 		`,
 	}),
 	parameters: {
 		docs: {
 			description: {
-				story: 'Las dos variantes: note (tarjeta neutra) y highlight (callout de marca, con referencia).',
+				story:
+					'Los tres casos: note (tarjeta neutra), highlight sin referencia y highlight con referencia (pie right-aligned).',
 			},
 		},
 	},
