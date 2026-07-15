@@ -49,18 +49,13 @@ export class EditorialTextBlockComponent {
 	// La query GROQ garantiza `reference: []` cuando no hay referencia (coalesce), así que el chequeo es por longitud.
 	protected readonly hasReference = computed(() => this.content().reference.length > 0);
 
-	// Chrome del contenedor por variante. Colores/radios/espaciados salen de tokens del DS v3.
-	private readonly variantClasses: Record<EditorialTextBlockVariant, string> = {
-		note: 'rounded-xl border border-neutral-150 bg-neutral-50 px-5 py-4',
-		highlight: 'gap-4 rounded-lg bg-brand-50 p-2',
+	// Chrome del contenedor y color de texto por variante. Colores/radios/espaciados salen de tokens del DS v3.
+	private readonly variantClasses: Record<EditorialTextBlockVariant, { container: string; text: string }> = {
+		note: { container: 'rounded-xl border border-neutral-150 bg-neutral-50 px-5 py-4', text: 'text-neutral-800' },
+		highlight: { container: 'gap-4 rounded-lg bg-brand-50 p-2', text: 'text-neutral-700' },
 	};
 
-	private readonly textColorClasses: Record<EditorialTextBlockVariant, string> = {
-		note: 'text-neutral-800',
-		highlight: 'text-neutral-700',
-	};
+	protected readonly textClasses = computed(() => this.variantClasses[this.variant()].text);
 
-	protected readonly textClasses = computed(() => this.textColorClasses[this.variant()]);
-
-	protected readonly hostClasses = computed(() => `flex items-center ${this.variantClasses[this.variant()]}`);
+	protected readonly hostClasses = computed(() => `flex items-center ${this.variantClasses[this.variant()].container}`);
 }
