@@ -59,9 +59,11 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 | `pnpm sanity:run-typegen-generator`       | Genera tipos a partir del schema                                                                                                     |
 | `pnpm sanity migration run <slug>`        | Corre una migración de datos (desde `cms/`; dry-run por defecto) → [`sanity-migrations.md`](.claude/references/sanity-migrations.md) |
 
-**Gates de CI** (deben quedar verdes en cada PR): `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`.
+**Gates de CI** (deben quedar verdes en cada PR): `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`, `studio-build`.
 
 > El gate `typecheck` (`pnpm typecheck` → `tsc --noEmit` estricto) cubre el **TS puro** de la app (`src/**`, incluidos `*.spec.ts` y `*.stories.ts`) y `scripts/`. **No** valida plantillas Angular (eso lo hacen `build`/`storybook` vía `ngtsc`) ni el proyecto `cms/`.
+>
+> El build del Studio de Sanity (`cms/`) lo cubre el gate **`studio-build`** (`pnpm -C cms exec sanity build`, el bundler Vite/Rollup real del Studio), no `typecheck` ni `build`. Corre en un job aparte con install propio de `cms/` (proyecto pnpm standalone). Cierra el punto ciego por el que un bump roto de una dependencia del Studio podía llegar a `develop` sin señal de CI.
 
 ---
 

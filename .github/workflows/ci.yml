@@ -342,3 +342,48 @@ jobs:
         run: bash .github/scripts/nx-run.sh nx run @cuentoneta/app:build-storybook
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+
+  studio-build:
+    name: 'Studio build (sanity build)'
+    runs-on: ubuntu-latest
+    # Checkout propio, sin `needs: setup`: cms/ es un proyecto pnpm aparte (lockfile
+    # propio, fuera del workspace de la raíz) y además referencia el árbol `src/` de la
+    # raíz vía import relativo (schemas/contentCampaign.ts). El workspace.tar de `setup`
+    # no instala cms/node_modules, así que reusarlo no ahorra nada. Es el gate que
+    # faltaba: `pnpm build`/`typecheck` no compilan cms/, así que un bump roto de una
+    # dep del Studio (como @sanity/icons 3→5 en #1759/#1800) llegaba a develop sin señal.
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.0
+
+      - name: Select pnpm as package manager
+        uses: pnpm/action-setup@v6.0.9
+        with:
+          version: 10.12.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: 22.22.3
+          cache: 'pnpm'
+          cache-dependency-path: cms/pnpm-lock.yaml
+
+      - name: Install CMS dependencies
+        working-directory: cms
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      # `sanity build` (bundler Vite/Rollup) es el gate autoritativo del Studio: un
+      # `tsc --noEmit` sobre cms/ no sirve (ruido de moduleResolution sobre node_modules,
+      # sin relación con errores reales de bundling). `--ignore-scripts` en el install
+      # saltea el postinstall que genera cms/.env (set-environment.ts), así que las vars
+      # que lee sanity.cli.ts se pasan acá explícitas, con fallback a los valores públicos
+      # por defecto (s4dbqkc5/development) para que corra igual en PRs de forks sin secrets.
+      - name: Build Sanity Studio
+        working-directory: cms
+        run: pnpm exec sanity build
+        env:
+          SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
+          SANITY_STUDIO_DATASET: ${{ secrets.SANITY_STUDIO_DATASET || 'development' }}
+          # El CLI de Sanity corre desatendido cuando CI=true (Actions ya lo setea;
+          # explícito por robustez, mismo patrón que el job deploy-studio de release.yml).
+          CI: 'true'
