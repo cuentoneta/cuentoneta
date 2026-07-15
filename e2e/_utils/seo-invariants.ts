@@ -29,10 +29,6 @@ export interface IndexableHtmlExpectations {
 	readonly canonicalContains?: string;
 }
 
-// Umbral por defecto de texto en `<main>`: muy por debajo del contenido real de los fixtures (bio,
-// cuerpo del cuento, ficha técnica) pero muy por encima del ruido de whitespace/tags de un skeleton.
-const DEFAULT_MIN_PRIMARY_CONTENT_LENGTH = 120;
-
 function extractMain(html: string): string {
 	return html.match(/<main[\s\S]*?<\/main>/i)?.[0] ?? '';
 }
@@ -109,7 +105,9 @@ export function checkPrimaryHeading(html: string, pattern?: RegExp): Violation |
 
 export function checkPrimaryContentLength(
 	html: string,
-	minLength: number = DEFAULT_MIN_PRIMARY_CONTENT_LENGTH,
+	// Umbral por defecto de texto en `<main>`: muy por debajo del contenido real de los fixtures (bio,
+	// cuerpo del cuento, ficha técnica) pero muy por encima del ruido de whitespace/tags de un skeleton.
+	minLength: number = 120,
 ): Violation | null {
 	const length = stripTags(extractMain(html)).length;
 	if (length >= minLength) {
