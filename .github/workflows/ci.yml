@@ -247,6 +247,31 @@ jobs:
       - name: Unpack workspace
         run: tar -xf workspace.tar
 
+      - name: Cache de Nx local (fallback sin Nx Cloud)
+        uses: actions/cache@v6
+        with:
+          path: .nx/cache
+          key: nx-cache-e2e-${{ github.sha }}
+          restore-keys: |
+            nx-cache-e2e-
+
+      # El webServer de Playwright levanta el build SSR de producción (fidelidad con el crawler), así
+      # que hay que compilarlo acá. Mismas env vars que el job `build`.
+      - name: Build de producción para e2e (SSR real)
+        run: bash .github/scripts/nx-run.sh nx run @cuentoneta/app:build:production
+        env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+          SANITY_STUDIO_DATASET: ${{ secrets.SANITY_STUDIO_DATASET || 'development' }}
+          SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
+          SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_STUDIO_TOKEN }}
+          CLARITY_TOKEN: ${{ secrets.CLARITY_TOKEN }}
+          CLARITY_PROJECT_ID: ${{ secrets.CLARITY_PROJECT_ID }}
+
+      # Replica el hook `postbuild` de package.json, que `nx run` directo no dispara (solo el lifecycle
+      # de `pnpm run build`). Parchea la referencia al index en el bundle del server.
+      - name: Fix index file reference (postbuild)
+        run: node scripts/fix-index-file-name.mjs
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 

@@ -4,6 +4,8 @@ export const STABLE_SLUGS = Object.freeze({
 	storylist: 'verano-2022',
 } as const);
 
+export const SITEWIDE_SCHEMA_IDS = Object.freeze(['organization', 'website'] as const);
+
 export const SCHEMA_IDS = Object.freeze({
 	organization: 'organization',
 	website: 'website',

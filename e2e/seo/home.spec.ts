@@ -14,7 +14,17 @@
 import { test, expect } from '@playwright/test';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
-import { SCHEMA_IDS } from '../_utils/seo-fixtures';
+import {
+	checkNgServerContext,
+	checkTitle,
+	checkRobotsIndexable,
+	checkPrimaryHeading,
+	checkPrimaryContentLength,
+	checkNoSkeletonMarkers,
+	checkJsonLdBlocksPresent,
+	type Violation,
+} from '../_utils/seo-invariants';
+import { SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
 
 let html: string;
 
@@ -46,6 +56,25 @@ test('home — B/C: bloques JSON-LD sitewide Organization y WebSite', async () =
 	expect(website?.['@context']).toBe('https://schema.org');
 	expect(website?.['@type']).toBe('WebSite');
 	expect(website?.['name']).toBe('La Cuentoneta');
+});
+
+test('home — invariantes de indexado para crawlers (ssr, h1 real, contenido primario, jsonld sitewide)', () => {
+	// La canónica de home apunta a la raíz del sitio (no a /home); su presencia la cubre el test A.
+	const violations: Violation[] = [
+		checkNgServerContext(html),
+		checkTitle(html, /La Cuentoneta/),
+		checkRobotsIndexable(html),
+		checkPrimaryHeading(html),
+		checkPrimaryContentLength(html),
+		...checkJsonLdBlocksPresent(html, SITEWIDE_SCHEMA_IDS),
+	].filter((violation): violation is Violation => violation !== null);
+	expect(violations).toEqual([]);
+});
+
+// Bloqueado por #1771: los decks most-read/latest/collection-teasers usan @defer, así que el SSR
+// sirve <cuentoneta-*-skeleton data-testid="skeleton"> dentro de <main>. Activar al cerrar #1771.
+test.fixme('home — sin markers de skeleton en <main> (bloqueado por #1771)', () => {
+	expect(checkNoSkeletonMarkers(html)).toBeNull();
 });
 
 test('home — D: al navegar a una story aparece el Article y el sitewide persiste', async ({ page }) => {
