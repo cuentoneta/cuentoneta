@@ -1,16 +1,20 @@
 /**
  * Core puro de invariantes de indexado sobre el HTML SSR crudo (sin ejecutar JS).
  *
- * Framework-agnóstico: opera sobre un `string` de HTML, sin importar Playwright ni Vitest.
- * Lo consumen tanto los specs de e2e (gate de CI) como el script de smoke post-deploy, para que
- * ambos afirmen exactamente las mismas invariantes sin drift.
+ * Framework-agnóstico: recibe un `string` de HTML y lo parsea con `node-html-parser` (corre en Node
+ * plano y en happy-dom), sin importar Playwright ni Vitest. Lo consumen tanto los specs de e2e (gate
+ * de CI) como el script de smoke post-deploy, para que ambos afirmen las mismas invariantes sin drift.
  *
- * Los checks de contenido (heading, contenido primario, skeleton, enlaces internos) operan sobre
- * el `<main>` de la página, no sobre el HTML completo: el chrome global (header/footer) vive en el
- * shell (`app.component`) como hermano del `<router-outlet>`, así que medir dentro de `<main>` aísla
- * lo que cada página aporta del cascarón compartido.
+ * La API pública (`check*` + `collectIndexableHtmlViolations`) toma `string`; internamente cada check
+ * consulta el DOM por selector CSS, así afirma el elemento exacto (p. ej. `ng-server-context` vive en
+ * `<cuentoneta-root>`, no en cualquier parte del HTML). Los checks de contenido (heading, contenido
+ * primario, skeleton, enlaces internos) se acotan a `<main>`: el chrome global (header/footer) vive en
+ * el shell como hermano del `<router-outlet>`, así que medir dentro de `<main>` aísla lo propio de la
+ * página del cascarón compartido.
  */
-import { escapeRegExp, getCanonicalHref, getMetaContent, getTitleText, parseJsonLdBlocks } from './seo';
+import type { HTMLElement } from 'node-html-parser';
+
+import { parseHtml } from './seo';
 
 export interface Violation {
 	readonly rule: string;
@@ -29,41 +33,38 @@ export interface IndexableHtmlExpectations {
 	readonly canonicalContains?: string;
 }
 
-function extractMain(html: string): string {
-	return html.match(/<main[\s\S]*?<\/main>/i)?.[0] ?? '';
+// Umbral por defecto de texto en `<main>`: muy por debajo del contenido real de los fixtures (bio,
+// cuerpo del cuento, ficha técnica) pero muy por encima del ruido de whitespace de un skeleton.
+const DEFAULT_MIN_PRIMARY_CONTENT_LENGTH = 120;
+
+function normalizedText(element: HTMLElement | null): string {
+	return (element?.text ?? '').replace(/\s+/g, ' ').trim();
 }
 
-function stripTags(fragment: string): string {
-	return fragment
-		.replace(/<[^>]*>/g, ' ')
-		.replace(/\s+/g, ' ')
-		.trim();
-}
-
-export function checkNgServerContext(html: string): Violation | null {
-	if (/ng-server-context="ssr"/.test(html)) {
+function ngServerContext(root: HTMLElement): Violation | null {
+	const actual = root.querySelector('cuentoneta-root')?.getAttribute('ng-server-context');
+	if (actual === 'ssr') {
 		return null;
 	}
-	const actual = html.match(/ng-server-context="([^"]*)"/)?.[1] ?? '(ausente)';
 	return {
 		rule: 'server-render-context',
-		message: `Se esperaba ng-server-context="ssr"; se encontró "${actual}" (deopt a CSR).`,
+		message: `Se esperaba ng-server-context="ssr" en <cuentoneta-root>; se encontró "${actual ?? '(ausente)'}" (deopt a CSR).`,
 	};
 }
 
-export function checkTitle(html: string, pattern?: RegExp): Violation | null {
-	const title = getTitleText(html)?.trim();
-	if (!title) {
+function title(root: HTMLElement, pattern?: RegExp): Violation | null {
+	const text = root.querySelector('head title')?.text?.trim();
+	if (!text) {
 		return { rule: 'title', message: 'El <title> está vacío o ausente.' };
 	}
-	if (pattern && !pattern.test(title)) {
-		return { rule: 'title', message: `El <title> "${title}" no matchea ${pattern}.` };
+	if (pattern && !pattern.test(text)) {
+		return { rule: 'title', message: `El <title> "${text}" no matchea ${pattern}.` };
 	}
 	return null;
 }
 
-export function checkCanonical(html: string, path: string): Violation | null {
-	const href = getCanonicalHref(html);
+function canonical(root: HTMLElement, path: string): Violation | null {
+	const href = root.querySelector('link[rel="canonical"]')?.getAttribute('href') ?? null;
 	if (href?.includes(path)) {
 		return null;
 	}
@@ -73,8 +74,8 @@ export function checkCanonical(html: string, path: string): Violation | null {
 	};
 }
 
-export function checkRobotsIndexable(html: string): Violation | null {
-	const robots = getMetaContent(html, 'robots');
+function robotsIndexable(root: HTMLElement): Violation | null {
+	const robots = root.querySelector('meta[name="robots"]')?.getAttribute('content') ?? null;
 	if (robots && !/noindex/i.test(robots) && /index/i.test(robots)) {
 		return null;
 	}
@@ -84,10 +85,9 @@ export function checkRobotsIndexable(html: string): Violation | null {
 	};
 }
 
-export function checkPrimaryHeading(html: string, pattern?: RegExp): Violation | null {
-	const main = extractMain(html);
-	const headings = [...main.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)]
-		.map((match) => stripTags(match[1]))
+function primaryHeading(root: HTMLElement, pattern?: RegExp): Violation | null {
+	const headings = (root.querySelector('main')?.querySelectorAll('h1') ?? [])
+		.map((h1) => h1.text.trim())
 		.filter((text) => text.length > 0);
 	if (headings.length === 0) {
 		return { rule: 'primary-heading', message: 'No hay <h1> con texto real dentro de <main>.' };
@@ -103,13 +103,11 @@ export function checkPrimaryHeading(html: string, pattern?: RegExp): Violation |
 	return null;
 }
 
-export function checkPrimaryContentLength(
-	html: string,
-	// Umbral por defecto de texto en `<main>`: muy por debajo del contenido real de los fixtures (bio,
-	// cuerpo del cuento, ficha técnica) pero muy por encima del ruido de whitespace/tags de un skeleton.
-	minLength: number = 120,
+function primaryContentLength(
+	root: HTMLElement,
+	minLength: number = DEFAULT_MIN_PRIMARY_CONTENT_LENGTH,
 ): Violation | null {
-	const length = stripTags(extractMain(html)).length;
+	const length = normalizedText(root.querySelector('main')).length;
 	if (length >= minLength) {
 		return null;
 	}
@@ -119,8 +117,8 @@ export function checkPrimaryContentLength(
 	};
 }
 
-export function checkNoSkeletonMarkers(html: string): Violation | null {
-	if (/data-testid="skeleton"/.test(extractMain(html))) {
+function noSkeletonMarkers(root: HTMLElement): Violation | null {
+	if (root.querySelector('main [data-testid="skeleton"]')) {
 		return {
 			rule: 'no-skeleton',
 			message:
@@ -130,9 +128,9 @@ export function checkNoSkeletonMarkers(html: string): Violation | null {
 	return null;
 }
 
-export function checkInternalLink(html: string, prefix: string): Violation | null {
-	const anchor = new RegExp(`<a\\b[^>]*\\shref="${escapeRegExp(prefix)}`, 'i');
-	if (anchor.test(extractMain(html))) {
+function internalLink(root: HTMLElement, prefix: string): Violation | null {
+	const anchors = root.querySelector('main')?.querySelectorAll('a') ?? [];
+	if (anchors.some((anchor) => anchor.getAttribute('href')?.startsWith(prefix))) {
 		return null;
 	}
 	return {
@@ -141,40 +139,88 @@ export function checkInternalLink(html: string, prefix: string): Violation | nul
 	};
 }
 
-export function checkJsonLdBlocksPresent(html: string, ids: readonly string[]): Violation[] {
-	let blocks: Map<string, Record<string, unknown>>;
-	try {
-		blocks = parseJsonLdBlocks(html);
-	} catch (error) {
-		return [
-			{
-				rule: 'json-ld',
-				message: `No se pudieron parsear los bloques JSON-LD: ${error instanceof Error ? error.message : String(error)}`,
-			},
-		];
+function jsonLdBlocks(root: HTMLElement, ids: readonly string[]): Violation[] {
+	const blocks = new Map<string, string>();
+	for (const script of root.querySelectorAll('script[data-schema-id]')) {
+		const id = script.getAttribute('data-schema-id');
+		if (id) {
+			blocks.set(id, script.rawText);
+		}
 	}
-	return ids
-		.filter((id) => !blocks.has(id))
-		.map((id) => ({ rule: 'json-ld', message: `Falta el bloque JSON-LD con data-schema-id="${id}".` }));
+	return ids.flatMap((id) => {
+		const raw = blocks.get(id);
+		if (raw === undefined) {
+			return [{ rule: 'json-ld', message: `Falta el bloque JSON-LD con data-schema-id="${id}".` }];
+		}
+		try {
+			JSON.parse(raw);
+			return [];
+		} catch (error) {
+			return [
+				{
+					rule: 'json-ld',
+					message: `No se pudo parsear el bloque JSON-LD "${id}": ${error instanceof Error ? error.message : String(error)}`,
+				},
+			];
+		}
+	});
+}
+
+// Wrappers públicos: toman `string` (para uso directo desde los specs) y parsean por cuenta propia.
+export function checkNgServerContext(html: string): Violation | null {
+	return ngServerContext(parseHtml(html));
+}
+
+export function checkTitle(html: string, pattern?: RegExp): Violation | null {
+	return title(parseHtml(html), pattern);
+}
+
+export function checkCanonical(html: string, path: string): Violation | null {
+	return canonical(parseHtml(html), path);
+}
+
+export function checkRobotsIndexable(html: string): Violation | null {
+	return robotsIndexable(parseHtml(html));
+}
+
+export function checkPrimaryHeading(html: string, pattern?: RegExp): Violation | null {
+	return primaryHeading(parseHtml(html), pattern);
+}
+
+export function checkPrimaryContentLength(html: string, minLength?: number): Violation | null {
+	return primaryContentLength(parseHtml(html), minLength);
+}
+
+export function checkNoSkeletonMarkers(html: string): Violation | null {
+	return noSkeletonMarkers(parseHtml(html));
+}
+
+export function checkInternalLink(html: string, prefix: string): Violation | null {
+	return internalLink(parseHtml(html), prefix);
+}
+
+export function checkJsonLdBlocksPresent(html: string, ids: readonly string[]): Violation[] {
+	return jsonLdBlocks(parseHtml(html), ids);
 }
 
 /**
- * Corre todos los checks aplicables y devuelve TODAS las violaciones (no fail-fast), para que un
- * test rojo reporte de una vez el set completo de invariantes incumplidas.
+ * Corre todos los checks aplicables sobre un único parse y devuelve TODAS las violaciones (no
+ * fail-fast), para que un test rojo reporte de una vez el set completo de invariantes incumplidas.
  */
 export function collectIndexableHtmlViolations(html: string, expectations: IndexableHtmlExpectations): Violation[] {
+	const root = parseHtml(html);
 	const checks: (Violation | null)[] = [
-		checkNgServerContext(html),
-		checkTitle(html, expectations.titlePattern),
-		checkCanonical(html, expectations.canonicalContains ?? expectations.path),
-		checkRobotsIndexable(html),
-		checkPrimaryHeading(html, expectations.h1Pattern),
-		checkPrimaryContentLength(html, expectations.minPrimaryContentLength),
-		checkNoSkeletonMarkers(html),
-		expectations.requiredInternalLinkPrefix ? checkInternalLink(html, expectations.requiredInternalLinkPrefix) : null,
+		ngServerContext(root),
+		title(root, expectations.titlePattern),
+		canonical(root, expectations.canonicalContains ?? expectations.path),
+		robotsIndexable(root),
+		primaryHeading(root, expectations.h1Pattern),
+		primaryContentLength(root, expectations.minPrimaryContentLength),
+		noSkeletonMarkers(root),
+		expectations.requiredInternalLinkPrefix ? internalLink(root, expectations.requiredInternalLinkPrefix) : null,
 	];
 	return [
 		...checks.filter((violation): violation is Violation => violation !== null),
-		...checkJsonLdBlocksPresent(html, expectations.requiredJsonLdIds),
+		...jsonLdBlocks(root, expectations.requiredJsonLdIds),
 	];
 }

@@ -14,7 +14,7 @@ import {
 
 const primaryText = 'texto '.repeat(40); // 240 caracteres, por encima del umbral por defecto (120)
 
-const GOOD_HTML = `<!doctype html><html ng-server-context="ssr"><head>
+const GOOD_HTML = `<!doctype html><html lang="es"><head>
 	<title>El Aleph — La Cuentoneta</title>
 	<link rel="canonical" href="https://www.cuentoneta.org/story/el-aleph" />
 	<meta name="robots" content="index, follow" />
@@ -22,7 +22,9 @@ const GOOD_HTML = `<!doctype html><html ng-server-context="ssr"><head>
 	<script type="application/ld+json" data-schema-id="website">{"@type":"WebSite"}</script>
 </head><body>
 	<header><h1>chrome fuera de main</h1></header>
-	<main><h1>El Aleph</h1><p>${primaryText}</p><a href="/author/jorge-luis-borges">Borges</a></main>
+	<cuentoneta-root ng-server-context="ssr">
+		<main><h1>El Aleph</h1><p>${primaryText}</p><a href="/author/jorge-luis-borges">Borges</a></main>
+	</cuentoneta-root>
 	<footer>pie</footer>
 </body></html>`;
 
