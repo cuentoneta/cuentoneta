@@ -28,7 +28,7 @@ export function getTitleText(html: string): string | null {
 	return head.match(/<title>([\s\S]*?)<\/title>/i)?.[1] ?? null;
 }
 
-function escapeRegExp(value: string): string {
+export function escapeRegExp(value: string): string {
 	return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
