@@ -200,10 +200,10 @@ Esto iniciará una corrida de tests unitarios utilizando Jest, el cual se encarg
 
 ##### Tests de integración y e2e
 
-Para ejecutar una corrida de tests de integración/e2e, ejecutá el siguiente comando.
+Los tests de e2e corren contra el build SSR de producción (el `webServer` de Playwright levanta `dist/cuentoneta/server/server.mjs`, no el dev-server), para tener la fidelidad del HTML que ve el crawler. Por eso necesitás un build previo:
 
 ```bash
-pnpm run test:e2e
+pnpm build && pnpm run test:e2e
 ```
 
 Esto iniciará una corrida de tests de integración y end-to-end utilizando Playwright, mostrando los resultados en consola y generando un reporte, el cual se encontrará en la carpeta `dist/.playwright/playwright-reports` al final de la corrida.

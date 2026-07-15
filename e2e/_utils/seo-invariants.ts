@@ -96,7 +96,9 @@ export function checkPrimaryHeading(html: string, pattern?: RegExp): Violation |
 	if (headings.length === 0) {
 		return { rule: 'primary-heading', message: 'No hay <h1> con texto real dentro de <main>.' };
 	}
-	if (pattern && !headings.some((text) => pattern.test(text))) {
+	// Se descartan las flags g/y: con `.test()` dentro de un `.some()` arrastran `lastIndex` entre h1.
+	const matcher = pattern && new RegExp(pattern.source, pattern.flags.replace(/[gy]/g, ''));
+	if (matcher && !headings.some((text) => matcher.test(text))) {
 		return {
 			rule: 'primary-heading',
 			message: `Ningún <h1> dentro de <main> matchea ${pattern}. Encontrados: ${JSON.stringify(headings)}.`,
@@ -177,13 +179,4 @@ export function collectIndexableHtmlViolations(html: string, expectations: Index
 		...checks.filter((violation): violation is Violation => violation !== null),
 		...checkJsonLdBlocksPresent(html, expectations.requiredJsonLdIds),
 	];
-}
-
-export function assertIndexableHtml(html: string, expectations: IndexableHtmlExpectations): void {
-	const violations = collectIndexableHtmlViolations(html, expectations);
-	if (violations.length === 0) {
-		return;
-	}
-	const detail = violations.map((violation) => `  - [${violation.rule}] ${violation.message}`).join('\n');
-	throw new Error(`HTML no indexable para "${expectations.path}":\n${detail}`);
 }

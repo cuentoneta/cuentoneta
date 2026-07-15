@@ -1,5 +1,4 @@
 import {
-	assertIndexableHtml,
 	checkCanonical,
 	checkInternalLink,
 	checkJsonLdBlocksPresent,
@@ -110,6 +109,12 @@ describe('checkPrimaryHeading', () => {
 	it('viola cuando el patrón no matchea ningún h1', () => {
 		expect(checkPrimaryHeading('<main><h1>Otro título</h1></main>', /aleph/i)?.rule).toBe('primary-heading');
 	});
+
+	it('no muta el lastIndex de un patrón con flag g (no arrastra estado entre h1)', () => {
+		const pattern = /aleph/gi;
+		checkPrimaryHeading('<main><h1>El Aleph</h1></main>', pattern);
+		expect(pattern.lastIndex).toBe(0);
+	});
 });
 
 describe('checkPrimaryContentLength', () => {
@@ -213,15 +218,5 @@ describe('collectIndexableHtmlViolations', () => {
 			requiredInternalLinkPrefix: undefined,
 		}).map((violation) => violation.rule);
 		expect(rules).not.toContain('internal-link');
-	});
-});
-
-describe('assertIndexableHtml', () => {
-	it('no tira para un HTML indexable', () => {
-		expect(() => assertIndexableHtml(GOOD_HTML, GOOD_EXPECTATIONS)).not.toThrow();
-	});
-
-	it('tira con un mensaje agregado que lista las reglas violadas', () => {
-		expect(() => assertIndexableHtml('<html></html>', GOOD_EXPECTATIONS)).toThrow(/no indexable/);
 	});
 });
