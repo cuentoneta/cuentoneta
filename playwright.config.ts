@@ -24,6 +24,9 @@ const baseURL = process.env['BASE_URL'] || 'http://localhost:4000';
  */
 export default defineConfig({
 	...nxE2EPreset(__filename, { testDir: './e2e' }),
+	// e2e/_utils aloja el core puro y su spec de Vitest (no de Playwright); se excluye del testMatch
+	// para que Playwright no intente correrlo (usa los globals de Vitest, no test/expect de Playwright).
+	testIgnore: '**/e2e/_utils/**',
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	use: {
 		baseURL,
