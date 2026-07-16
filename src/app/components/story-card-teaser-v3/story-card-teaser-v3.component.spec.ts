@@ -94,6 +94,14 @@ describe('StoryCardTeaserV3Component', () => {
 			expect(link?.getAttribute('href')).toContain(authorUrl);
 		});
 
+		it('should expose the author name as the accessible name of the author link', async () => {
+			await render(StoryCardTeaserV3Component, {
+				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, showAuthor: true },
+			});
+			// El avatar es decorativo (alt vacío): el nombre accesible del enlace es solo el nombre del autor.
+			expect(screen.getByRole('link', { name: storyNavigationTeaserWithAuthorMock.author.name })).toBeInTheDocument();
+		});
+
 		it('should not display the author when showAuthor is false', async () => {
 			await render(StoryCardTeaserV3Component, {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, showAuthor: false },

@@ -21,10 +21,11 @@ import { withSanityImageParams } from '@utils/sanity-image.utils';
 						<a [routerLink]="['/', appRoutes.Author, story.author.slug]" class="flex items-center gap-2">
 							<img
 								[ngSrc]="authorImageUrl()"
-								[alt]="'Retrato de ' + story.author.name"
+								alt=""
 								width="20"
 								height="20"
 								class="h-5 w-5 rounded-full"
+								data-testid="author-avatar"
 							/>
 							<span class="font-inter text-sm font-semibold text-neutral-500">{{ story.author.name }}</span>
 						</a>

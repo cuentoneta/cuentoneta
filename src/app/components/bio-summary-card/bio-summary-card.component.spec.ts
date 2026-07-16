@@ -4,7 +4,6 @@ import { storyMock } from '@mocks/story.mock';
 import type { Story } from '@models/story.model';
 
 const country = storyMock.author.nationality.country;
-const countryRegex = new RegExp(`\\b${country}\\b`, 'i');
 
 const name = storyMock.author.name;
 const nameRegex = new RegExp(`\\b${name}\\b`, 'iu');
@@ -37,18 +36,15 @@ describe('BioSummaryCardComponent', () => {
 		expect(screen.getByText('(Chateauroux, 1948 - París, 1994) fue un escritor', { exact: false })).toBeInTheDocument();
 	});
 
-	it('should display the country image text', async () => {
+	it('should display the country flag image', async () => {
 		await render(BioSummaryCardComponent, {
 			inputs: {
 				story: storyMock,
 			},
 		});
 
-		const countryImage = screen.getByRole('img', {
-			name: countryRegex,
-		});
-
-		expect(countryImage).toBeInTheDocument();
+		// La bandera es decorativa (alt vacío): se localiza por su testid, no por el nombre accesible.
+		expect(screen.getByTestId('author-flag')).toBeInTheDocument();
 	});
 
 	it('should display the author name', async () => {
