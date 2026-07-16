@@ -70,6 +70,14 @@ describe('HomeStoryCardComponent', () => {
 			const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/author/'));
 			expect(link?.getAttribute('href')).toContain(authorUrl);
 		});
+
+		it('should expose the author name as the accessible name of the author link', async () => {
+			await render(HomeStoryCardComponent, {
+				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+			});
+			// El avatar es decorativo (alt vacío): el nombre accesible del enlace es solo el nombre del autor.
+			expect(screen.getByRole('link', { name: storyNavigationTeaserWithAuthorMock.author.name })).toBeInTheDocument();
+		});
 	});
 
 	describe('Order', () => {
