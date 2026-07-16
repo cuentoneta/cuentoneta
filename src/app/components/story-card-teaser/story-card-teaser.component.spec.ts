@@ -96,7 +96,8 @@ describe('StoryCardTeaserComponent', () => {
 			},
 		});
 		const authorName = screen.getByText(storyNavigationTeaserWithAuthorMock.author.name);
-		const authorImage = screen.getByRole('img');
+		// El avatar es decorativo (alt vacío), fuera del árbol de accesibilidad: se localiza por su testid.
+		const authorImage = screen.getByTestId('author-avatar');
 		expect(authorName).toBeInTheDocument();
 		expect(authorImage).toBeInTheDocument();
 	});
@@ -116,6 +117,18 @@ describe('StoryCardTeaserComponent', () => {
 		expect(storyLink.href.includes(storyUrl)).toBeTruthy();
 	});
 
+	it('should expose the author name as the accessible name of the author link', async () => {
+		await render(StoryCardTeaserComponent, {
+			inputs: {
+				story: storyNavigationTeaserWithAuthorMock,
+				navigationParams: navigationParams,
+				showAuthor: true,
+			},
+		});
+		// El avatar decorativo no contamina el nombre accesible del enlace: es solo el nombre del autor.
+		expect(screen.getByRole('link', { name: storyNavigationTeaserWithAuthorMock.author.name })).toBeInTheDocument();
+	});
+
 	it('should not display the author name and avatar', async () => {
 		await render(StoryCardTeaserComponent, {
 			inputs: {
@@ -125,7 +138,7 @@ describe('StoryCardTeaserComponent', () => {
 			},
 		});
 		const authorName = screen.queryByText(storyNavigationTeaserWithAuthorMock.author.name);
-		const authorImage = screen.queryByRole('img');
+		const authorImage = screen.queryByTestId('author-avatar');
 		expect(authorName).not.toBeInTheDocument();
 		expect(authorImage).not.toBeInTheDocument();
 	});
