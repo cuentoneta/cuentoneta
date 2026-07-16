@@ -20,7 +20,6 @@ import { withSanityImageParams } from '@utils/sanity-image.utils';
 		class="flex flex-row items-center hover:cursor-pointer"
 	>
 		<img
-			[alt]="'Retrato de ' + author().name"
 			[ngSrc]="authorImageUrl()"
 			[width]="imageSize()"
 			[height]="imageSize()"
@@ -28,6 +27,8 @@ import { withSanityImageParams } from '@utils/sanity-image.utils';
 				'h-[40px] w-[40px] rounded': variant() === 'sm',
 				'h-[64px] w-[64px] rounded-md': variant() === 'md',
 			}"
+			alt=""
+			data-testid="author-avatar"
 		/>
 		<div class="block hover:!cursor-pointer">
 			<h2
@@ -42,11 +43,12 @@ import { withSanityImageParams } from '@utils/sanity-image.utils';
 			@if (author().nationality; as nationality) {
 				<div class="flex items-center gap-2">
 					<img
-						[alt]="'Bandera de ' + nationality.country"
 						[ngSrc]="authorFlagUrl()"
+						alt=""
 						class="h-[15px] w-[20px] rounded"
 						width="20"
 						height="15"
+						data-testid="author-flag"
 					/>
 					<span
 						[ngClass]="{

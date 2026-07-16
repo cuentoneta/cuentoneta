@@ -36,29 +36,38 @@ describe('AuthorTeaserComponent', () => {
 		expect(screen.getByText(authorTeaserMock.name)).toBeInTheDocument();
 	});
 
-	test("should display the author's image with correct alt text", async () => {
+	test("should display the author's image", async () => {
 		await setup();
-		const img = screen.getByAltText(`Retrato de ${authorTeaserMock.name}`);
+		// El avatar es decorativo (alt vacío), fuera del árbol de accesibilidad: se localiza por su testid.
+		const img = screen.getByTestId('author-avatar');
 		expect(img).toBeInTheDocument();
 		expect(img).toHaveAttribute('src', expect.stringContaining(authorTeaserMock.imageUrl));
 	});
 
 	test('should display the nationality flag and country name if available', async () => {
 		await setup();
-		const flag = screen.getByAltText(`Bandera de ${authorTeaserMock.nationality.country}`);
+		const flag = screen.getByTestId('author-flag');
 		expect(flag).toBeInTheDocument();
 		expect(screen.getByText(authorTeaserMock.nationality.country)).toBeInTheDocument();
 	});
 
+	test('should expose just the author name and country as the accessible name of the link', async () => {
+		await setup();
+		// Avatar y bandera decorativos: el nombre accesible del enlace no incluye "Retrato de …" duplicado.
+		const link = screen.getByRole('link');
+		expect(link).toHaveAccessibleName(expect.stringContaining(authorTeaserMock.name));
+		expect(link).toHaveAccessibleName(expect.not.stringContaining('Retrato de'));
+	});
+
 	test('should apply correct styles for "sm" variant', async () => {
 		await setup('sm');
-		const img = screen.getByAltText(`Retrato de ${authorTeaserMock.name}`);
+		const img = screen.getByTestId('author-avatar');
 		expect(img).toHaveClass('h-[40px] w-[40px] rounded');
 	});
 
 	test('should apply correct styles for "md" variant', async () => {
 		await setup('md');
-		const img = screen.getByAltText(`Retrato de ${authorTeaserMock.name}`);
+		const img = screen.getByTestId('author-avatar');
 		expect(img).toHaveClass('h-[64px] w-[64px] rounded-md');
 	});
 
