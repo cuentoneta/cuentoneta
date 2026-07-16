@@ -8,18 +8,27 @@ import { palacioNueveFronterasStoryMock } from '../../mocks/onoff/el-palacio-de-
 describe('StoryHeroHeaderComponent', () => {
 	const genre: Tag = { title: 'Ciencia ficción', slug: 'ciencia-ficcion', shortDescription: '', description: [] };
 	const story: Story = { ...palacioNueveFronterasStoryMock, tags: [genre] };
-	const avatarName = `Retrato de ${story.author.name}`;
 
 	it('should render the story title as the heading', async () => {
 		await render(StoryHeroHeaderComponent, { inputs: { story } });
 		expect(screen.getByRole('heading', { name: story.title })).toBeInTheDocument();
 	});
 
-	it('should render the author name and avatar linking to the author profile', async () => {
+	it('should link the author block to the author profile, exposing just the author name', async () => {
 		await render(StoryHeroHeaderComponent, { inputs: { story } });
-		expect(screen.getByText(story.author.name)).toBeInTheDocument();
-		expect(screen.getByRole('img', { name: avatarName })).toBeInTheDocument();
-		expect(screen.getByRole('link')).toHaveAttribute('href', expect.stringContaining(`/author/${story.author.slug}`));
+		// El avatar es decorativo (alt vacío): el único nombre accesible del enlace es el del autor.
+		const link = screen.getByRole('link', { name: story.author.name });
+		expect(link).toHaveAttribute('href', expect.stringContaining(`/author/${story.author.slug}`));
+	});
+
+	it('should render the blurred background from the cover requested at 1920px width', async () => {
+		await render(StoryHeroHeaderComponent, { inputs: { story } });
+		expect(screen.getByTestId('hero-background')).toHaveAttribute('src', expect.stringContaining('w=1920'));
+	});
+
+	it('should not render the background when the story has no cover', async () => {
+		await render(StoryHeroHeaderComponent, { inputs: { story: { ...story, coverImage: '' } } });
+		expect(screen.queryByTestId('hero-background')).not.toBeInTheDocument();
 	});
 
 	it('should render the original publication with its prefix', async () => {

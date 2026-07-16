@@ -31,7 +31,15 @@ import { StoryHeroHeaderSkeletonComponent } from './story-hero-header-skeleton.c
 	template: `
 		@if (story(); as story) {
 			@if (backgroundImageUrl(); as backgroundImageUrl) {
-				<img [ngSrc]="backgroundImageUrl" fill priority sizes="100vw" alt="" class="scale-105 object-cover blur-xl" />
+				<img
+					[ngSrc]="backgroundImageUrl"
+					fill
+					priority
+					sizes="100vw"
+					alt=""
+					class="scale-105 object-cover blur-xl"
+					data-testid="hero-background"
+				/>
 			}
 			<div class="absolute inset-0 bg-neutral-950-70" data-testid="hero-overlay"></div>
 
@@ -47,12 +55,7 @@ import { StoryHeroHeaderSkeletonComponent } from './story-hero-header-skeleton.c
 							class="group flex items-center gap-2"
 							data-testid="author"
 						>
-							<cuentoneta-image-profile
-								[src]="story.author.imageUrl"
-								[alt]="'Retrato de ' + story.author.name"
-								size="small"
-								class="shrink-0"
-							/>
+							<cuentoneta-image-profile [src]="story.author.imageUrl" size="small" class="shrink-0" />
 							<span class="font-inter text-sm font-medium text-neutral-50 group-hover:underline">{{
 								story.author.name
 							}}</span>
