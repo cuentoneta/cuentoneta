@@ -45,7 +45,6 @@ const meta: Meta<StoryHeroHeaderComponent> = {
 export default meta;
 type Story = StoryObj<StoryHeroHeaderComponent>;
 
-// Playground interactivo: un único selector de Obra; portada de fondo, título, autor y publicación cambian juntos.
 export const Interactiva: StoryObj<StoryHeroHeaderComponent & { storyIndex: number }> = {
 	argTypes: {
 		storyIndex: {
@@ -69,7 +68,6 @@ export const Interactiva: StoryObj<StoryHeroHeaderComponent & { storyIndex: numb
 	},
 };
 
-// Estado principal documentado: un cuento fijo del corpus con género.
 export const Default: Story = {
 	render: (args) => ({
 		props: args,
@@ -85,7 +83,6 @@ export const Default: Story = {
 	},
 };
 
-// Sin género: el estado real de los mocks base (`tags: []`); el Tag se oculta sin romper el layout.
 export const SinGenero: Story = {
 	render: (args) => ({
 		props: args,
@@ -101,7 +98,6 @@ export const SinGenero: Story = {
 	},
 };
 
-// Switch "Cargando" para alternar real↔skeleton en el mismo slot y evaluar la transición/alineación.
 // El hero renderiza su propio skeleton cuando no recibe story, así que basta una única instancia.
 export const Estados: StoryObj<StoryHeroHeaderComponent & { loading: boolean }> = {
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
