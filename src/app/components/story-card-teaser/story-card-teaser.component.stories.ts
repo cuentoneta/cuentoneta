@@ -94,7 +94,6 @@ const meta: Meta<StoryCardTeaserComponent> = {
 export default meta;
 type Story = StoryObj<StoryCardTeaserComponent>;
 
-// Historia de documentación/Playground interactivo
 export const Docs: Story = {
 	render: (args) => ({
 		props: args,
@@ -129,7 +128,6 @@ export const Docs: Story = {
 	},
 };
 
-// Historia por defecto con configuración básica
 export const Default: Story = {
 	render: (args) => ({
 		props: args,
@@ -161,7 +159,6 @@ export const Default: Story = {
 	},
 };
 
-// Con información del autor
 export const WithAuthor: Story = {
 	render: (args) => ({
 		props: args,
@@ -193,7 +190,6 @@ export const WithAuthor: Story = {
 	},
 };
 
-// Con número de orden
 export const WithOrder: Story = {
 	render: (args) => ({
 		props: args,
@@ -226,7 +222,6 @@ export const WithOrder: Story = {
 	},
 };
 
-// Con extracto
 export const WithExcerpt: Story = {
 	render: (args) => ({
 		props: args,
@@ -258,7 +253,6 @@ export const WithExcerpt: Story = {
 	},
 };
 
-// Variante con todas las características
 export const FullFeatured: Story = {
 	render: (args) => ({
 		props: args,
@@ -296,7 +290,6 @@ export const FullFeatured: Story = {
 	},
 };
 
-// Diferentes cantidades de líneas de extracto
 export const ExcerptVariations: Story = {
 	render: (args) => ({
 		props: args,
@@ -332,7 +325,6 @@ export const ExcerptVariations: Story = {
 	},
 };
 
-// Vitrina de todas las variantes
 export const AllVariants: Story = {
 	render: (args) => ({
 		props: args,

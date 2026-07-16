@@ -66,7 +66,6 @@ const meta: Meta<HomeStoryCardComponent> = {
 export default meta;
 type Story = StoryObj<HomeStoryCardComponent>;
 
-// Playground interactivo: un único selector de Obra; la portada y el título cambian juntos.
 export const Interactiva: StoryObj<HomeStoryCardComponent & { storyIndex: number }> = {
 	argTypes: {
 		storyIndex: {
@@ -102,7 +101,6 @@ export const Interactiva: StoryObj<HomeStoryCardComponent & { storyIndex: number
 	},
 };
 
-// Tarjeta completa: cover sobre contenedor gris, numeración, multimedia, autor y título.
 export const Default: Story = {
 	render: (args) => ({
 		props: args,
@@ -123,7 +121,6 @@ export const Default: Story = {
 	},
 };
 
-// Estado de carga (skeleton) de la tarjeta.
 export const Skeleton: StoryObj = {
 	decorators: [moduleMetadata({ imports: [HomeStoryCardSkeletonComponent] })],
 	render: () => ({ template: `<cuentoneta-home-story-card-skeleton />` }),
@@ -132,7 +129,6 @@ export const Skeleton: StoryObj = {
 	},
 };
 
-// Switch "Cargando" para alternar real↔skeleton en el mismo slot y evaluar la transición/alineación.
 // La tarjeta renderiza su propio skeleton cuando no recibe story.
 export const Estados: StoryObj<HomeStoryCardComponent & { loading: boolean }> = {
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },

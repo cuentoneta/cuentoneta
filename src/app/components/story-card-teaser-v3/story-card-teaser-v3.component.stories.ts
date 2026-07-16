@@ -9,9 +9,6 @@ import {
 } from '../../mocks/onoff-story-teasers.mock';
 import { corpusStories, literaryWorkSelectArgType, withRichMedia } from '../../mocks/onoff-corpus.storybook';
 
-// Las descripciones de la doc van en una sola línea: el renderer de Markdown de los autodocs
-// interpreta como bloque de código cualquier línea con indentación, así que un HTML multilínea
-// indentado se mostraría dentro de un recuadro de código.
 const meta: Meta<StoryCardTeaserV3Component> = {
 	component: StoryCardTeaserV3Component,
 	title: 'Componentes V3/StoryCardTeaserV3',
@@ -84,7 +81,6 @@ const meta: Meta<StoryCardTeaserV3Component> = {
 export default meta;
 type Story = StoryObj<StoryCardTeaserV3Component>;
 
-// Playground interactivo: un único selector de Obra; la portada, el título y el extracto cambian juntos.
 export const Interactiva: StoryObj<StoryCardTeaserV3Component & { storyIndex: number }> = {
 	argTypes: {
 		storyIndex: {
@@ -127,7 +123,6 @@ export const Interactiva: StoryObj<StoryCardTeaserV3Component & { storyIndex: nu
 	},
 };
 
-// Variante OnWhite — imagen a la izquierda, fondo blanco.
 export const OnWhite: Story = {
 	render: (args) => ({
 		props: args,
@@ -152,7 +147,6 @@ export const OnWhite: Story = {
 	},
 };
 
-// Variante OnGray — igual a OnWhite pero pensada para fondos grises (selectores en blanco).
 export const OnGray: Story = {
 	render: (args) => ({
 		props: args,
@@ -177,7 +171,6 @@ export const OnGray: Story = {
 	},
 };
 
-// Variante Highlighted — tarjeta destacada con la imagen a la derecha.
 export const Highlighted: Story = {
 	render: (args) => ({
 		props: args,
@@ -202,7 +195,6 @@ export const Highlighted: Story = {
 	},
 };
 
-// Vitrina con las tres variantes en simultáneo.
 // Nota: se usan bindings explícitos (en lugar de argsToTemplate) porque la variante difiere por
 // instancia; argsToTemplate genera bindings `[variant]="variant"` que apuntan a un único `props.variant`.
 export const AllVariants: Story = {
@@ -278,7 +270,6 @@ export const AllVariants: Story = {
 	},
 };
 
-// Switch "Cargando" para alternar real↔skeleton en el mismo slot y evaluar la transición/alineación.
 // La tarjeta renderiza su propio skeleton cuando no recibe story.
 export const Estados: StoryObj<StoryCardTeaserV3Component & { loading: boolean }> = {
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },

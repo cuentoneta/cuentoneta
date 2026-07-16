@@ -60,7 +60,6 @@ const meta: Meta<Args> = {
 export default meta;
 type Story = StoryObj<Args>;
 
-// Contenedor ancho: entran todos, no se muestra contador.
 export const Default: Story = {
 	render: (args) => ({ props: { ...args, tags }, template: projected }),
 	args: { variant: 'filled' },
@@ -74,7 +73,6 @@ export const Default: Story = {
 	},
 };
 
-// Contenedor acotado: el excedente que no entra por ancho se colapsa en "+N".
 export const WidthOverflow: Story = {
 	render: (args) => ({ props: { ...args, tags }, template: projected }),
 	args: { variant: 'filled' },
@@ -88,7 +86,6 @@ export const WidthOverflow: Story = {
 	},
 };
 
-// Contenedor muy angosto: entran muy pocos y el contador refleja el resto.
 export const NarrowWidth: Story = {
 	render: (args) => ({ props: { ...args, tags }, template: projected }),
 	args: { variant: 'filled' },
@@ -102,7 +99,6 @@ export const NarrowWidth: Story = {
 	},
 };
 
-// Tope duro: el contenedor daría para más, pero maxVisible corta antes.
 export const MaxVisibleCap: Story = {
 	render: (args) => ({ props: { ...args, tags }, template: projected }),
 	args: { variant: 'filled', maxVisible: 2 },
@@ -116,7 +112,6 @@ export const MaxVisibleCap: Story = {
 	},
 };
 
-// Las tres variantes recortando por ancho en cajas idénticas.
 export const Variants: Story = {
 	render: () => ({
 		props: { tags },
@@ -143,7 +138,6 @@ export const Variants: Story = {
 	},
 };
 
-// Caja redimensionable: arrastrá el borde inferior-derecho para ver el contador reaccionar al ancho.
 export const Playground: Story = {
 	render: (args) => ({ props: { ...args, tags }, template: projected }),
 	args: { variant: 'filled' },

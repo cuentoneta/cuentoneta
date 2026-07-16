@@ -51,7 +51,6 @@ describe('ContentService', () => {
 		it('should create missing weeks landing pages when they do not exist', async () => {
 			const weeksInTheFuture = 4;
 
-			// Mock repository responses
 			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
 			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
 			(contentRepository.createLandingPages as Mock).mockResolvedValue([
@@ -63,7 +62,6 @@ describe('ContentService', () => {
 
 			const result = await contentService.addNextWeeksLandingPageContent(weeksInTheFuture);
 
-			// Verify all weeks were created
 			expect(result).toHaveLength(4);
 			expect(contentRepository.fetchLandingPagesList).toHaveBeenCalledWith(
 				expect.arrayContaining([
@@ -203,11 +201,9 @@ describe('ContentService', () => {
 
 			const result = await contentService.addNextWeeksLandingPageContent(weeksInTheFuture);
 
-			// Should create only the 2 missing weeks
 			expect(result).toHaveLength(2);
 			expect(contentRepository.createLandingPages).toHaveBeenCalled();
 
-			// Verify that the created objects have the correct structure
 			const callArgs = (contentRepository.createLandingPages as Mock).mock.calls[0][0];
 			expect(callArgs).toHaveLength(2);
 			callArgs.forEach((obj: LandingPageContentQueryResult) => {
