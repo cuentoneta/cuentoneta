@@ -53,10 +53,13 @@ describe('AuthorTeaserComponent', () => {
 
 	test('should expose just the author name and country as the accessible name of the link', async () => {
 		await setup();
-		// Avatar y bandera decorativos: el nombre accesible del enlace no incluye "Retrato de …" duplicado.
+		// Avatar y bandera decorativos: el nombre accesible del enlace es el texto (nombre + país),
+		// sin el "Retrato de …" ni el "Bandera de …" duplicados de los alt descriptivos.
 		const link = screen.getByRole('link');
 		expect(link).toHaveAccessibleName(expect.stringContaining(authorTeaserMock.name));
+		expect(link).toHaveAccessibleName(expect.stringContaining(authorTeaserMock.nationality.country));
 		expect(link).toHaveAccessibleName(expect.not.stringContaining('Retrato de'));
+		expect(link).toHaveAccessibleName(expect.not.stringContaining('Bandera de'));
 	});
 
 	test('should apply correct styles for "sm" variant', async () => {
