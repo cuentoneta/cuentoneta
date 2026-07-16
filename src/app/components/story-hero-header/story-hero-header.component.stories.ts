@@ -10,12 +10,11 @@ import { literaryWorkSelectArgType } from '../../mocks/onoff-corpus.storybook';
 
 // Género de muestra: los mocks del corpus Onoff traen `tags: []` (deuda de #1593), así que se superpone
 // un tag localmente —sin tocar los mocks compartidos— para poder visualizar el Tag de género del hero.
-const genreTag: Tag = { title: 'Ciencia ficción', slug: 'ciencia-ficcion', shortDescription: '', description: [] };
-const withGenre = (story: StoryModel): StoryModel => ({ ...story, tags: [genreTag] });
+const withGenre = (story: StoryModel): StoryModel => {
+	const genreTag: Tag = { title: 'Ciencia ficción', slug: 'ciencia-ficcion', shortDescription: '', description: [] };
+	return { ...story, tags: [genreTag] };
+};
 
-// Las descripciones de la doc van en una sola línea: el renderer de Markdown de los autodocs
-// interpreta como bloque de código cualquier línea con indentación, así que un HTML multilínea
-// indentado se mostraría dentro de un recuadro de código.
 const meta: Meta<StoryHeroHeaderComponent> = {
 	component: StoryHeroHeaderComponent,
 	title: 'Componentes V3/StoryHeroHeader',
@@ -103,18 +102,12 @@ export const SinGenero: Story = {
 };
 
 // Switch "Cargando" para alternar real↔skeleton en el mismo slot y evaluar la transición/alineación.
-// El hero renderiza su propio skeleton cuando no recibe story.
+// El hero renderiza su propio skeleton cuando no recibe story, así que basta una única instancia.
 export const Estados: StoryObj<StoryHeroHeaderComponent & { loading: boolean }> = {
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
 	render: (args) => ({
 		props: args,
-		template: `
-			@if (loading) {
-				<cuentoneta-story-hero-header />
-			} @else {
-				<cuentoneta-story-hero-header [story]="story" />
-			}
-		`,
+		template: `<cuentoneta-story-hero-header [story]="loading ? undefined : story" />`,
 	}),
 	args: { loading: true, story: withGenre(palacioNueveFronterasStoryMock) },
 	parameters: {
