@@ -67,7 +67,6 @@ const meta: Meta<AuthorTeaserV3Component> = {
 export default meta;
 type Story = StoryObj<AuthorTeaserV3Component>;
 
-// Teaser completo: avatar, tags, nombre + bandera y cantidad de historias.
 export const Default: Story = {
 	name: 'Por defecto',
 	render: (args) => ({ props: args, template: `<cuentoneta-author-teaser-v3 ${argsToTemplate(args)} />` }),
@@ -81,8 +80,6 @@ export const Default: Story = {
 	},
 };
 
-// Más de 2 tags en un contenedor acotado: la fila de tags se recorta por ancho y colapsa el excedente
-// tras un contador "+N".
 export const ManyTags: Story = {
 	name: 'Muchos tags',
 	render: (args) => ({ props: args, template: `<cuentoneta-author-teaser-v3 ${argsToTemplate(args)} />` }),
@@ -97,7 +94,6 @@ export const ManyTags: Story = {
 	},
 };
 
-// Sin imagen: el avatar cae al placeholder circular.
 export const WithoutImage: Story = {
 	name: 'Sin imagen',
 	render: (args) => ({ props: args, template: `<cuentoneta-author-teaser-v3 ${argsToTemplate(args)} />` }),
@@ -111,7 +107,6 @@ export const WithoutImage: Story = {
 	},
 };
 
-// Estado de carga (skeleton) del teaser.
 export const Skeleton: StoryObj = {
 	name: 'Esqueleto',
 	decorators: [moduleMetadata({ imports: [AuthorTeaserV3SkeletonComponent] })],
@@ -121,7 +116,6 @@ export const Skeleton: StoryObj = {
 	},
 };
 
-// Switch "Cargando" para alternar real↔skeleton en el mismo slot y evaluar la transición/alineación.
 export const Estados: StoryObj<AuthorTeaserV3Component & { loading: boolean }> = {
 	decorators: [moduleMetadata({ imports: [AuthorTeaserV3SkeletonComponent] })],
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },

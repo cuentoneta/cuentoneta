@@ -53,7 +53,6 @@ const meta: Meta<ImageProfileComponent> = {
 export default meta;
 type Story = StoryObj<ImageProfileComponent>;
 
-// Playground.
 export const Default: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-image-profile ${argsToTemplate(args)} />` }),
 	args: { src, alt, size: 'medium', variant: 'profile' },
@@ -66,7 +65,6 @@ export const Default: Story = {
 	},
 };
 
-// Placeholder (sin imagen).
 export const Placeholder: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-image-profile ${argsToTemplate(args)} />` }),
 	args: { size: 'medium', variant: 'profile' },
@@ -79,7 +77,6 @@ export const Placeholder: Story = {
 	},
 };
 
-// Variante Collections.
 export const Collection: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-image-profile ${argsToTemplate(args)} />` }),
 	args: { size: 'medium', variant: 'collection' },
@@ -92,7 +89,6 @@ export const Collection: Story = {
 	},
 };
 
-// Vitrina de tamaños y estados.
 export const Showcase: Story = {
 	render: (args) => ({
 		props: args,

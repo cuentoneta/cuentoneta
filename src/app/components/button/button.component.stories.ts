@@ -127,7 +127,6 @@ export const Disabled: Story = {
 	},
 };
 
-// Vitrina con las tres variantes activas en simultáneo.
 export const Showcase: Story = {
 	render: () => ({
 		template: `

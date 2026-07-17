@@ -19,15 +19,12 @@ export class PortableTextDirective {
 	}
 
 	private render(content: TextBlockContent, classes: string) {
-		// Limpia el contenido actual
 		while (this.el.nativeElement.firstChild) {
 			this.el.nativeElement.removeChild(this.el.nativeElement.firstChild);
 		}
 
-		// Elimina las clases actuales
 		this.el.nativeElement.className = '';
 
-		// Agrega las clases en base a las pasadas como input
 		const updatedClasses = this.appendClasses(content, classes);
 		if (updatedClasses) {
 			updatedClasses.split(' ').forEach((className) => {
@@ -37,7 +34,6 @@ export class PortableTextDirective {
 			});
 		}
 
-		// Process and append content
 		content.children.forEach((block) => {
 			let element: HTMLElement | Text = this.renderer.createText(block.text);
 			const marks = (block.marks ?? []).slice(0);

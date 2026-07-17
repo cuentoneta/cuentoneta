@@ -42,7 +42,6 @@ export const WithImage: Story = {
 	parameters: { docs: { description: { story: 'Cover con imagen.' } } },
 };
 
-// Playground: selector de Obra que elige la portada a visualizar entre las covers del corpus en assets.
 export const Interactiva: StoryObj<CoverImageComponent & { coverIndex: number }> = {
 	argTypes: {
 		coverIndex: {
@@ -71,7 +70,6 @@ export const Placeholder: Story = {
 	parameters: { docs: { description: { story: 'Sin `src`: se muestra el placeholder del Design System.' } } },
 };
 
-// Switch "Cargando" para alternar real↔skeleton en el mismo slot y evaluar la transición/alineación.
 export const Estados: StoryObj<CoverImageComponent & { loading: boolean }> = {
 	decorators: [moduleMetadata({ imports: [CoverImageSkeletonComponent] })],
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },

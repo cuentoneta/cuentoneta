@@ -56,7 +56,6 @@ const meta: Meta<CarouselComponent> = {
 export default meta;
 type Story = StoryObj<CarouselComponent>;
 
-// Historia principal con documentación
 export const Default: Story = {
 	name: 'Por defecto',
 	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
@@ -73,7 +72,6 @@ export const Default: Story = {
 	},
 };
 
-// Carousel con una sola diapositiva
 export const SingleSlide: Story = {
 	name: 'Diapositiva única',
 	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
@@ -90,7 +88,6 @@ export const SingleSlide: Story = {
 	},
 };
 
-// Carousel con transición rápida
 export const FastTransition: Story = {
 	name: 'Transición rápida',
 	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
@@ -107,7 +104,6 @@ export const FastTransition: Story = {
 	},
 };
 
-// Carousel con transición lenta
 export const SlowTransition: Story = {
 	name: 'Transición lenta',
 	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
@@ -124,7 +120,6 @@ export const SlowTransition: Story = {
 	},
 };
 
-// Múltiples diapositivas de ejemplo
 const extendedSlidesMock: ContentCampaign[] = [
 	...contentCampaignMock,
 	{
@@ -195,7 +190,6 @@ const extendedSlidesMock: ContentCampaign[] = [
 	},
 ];
 
-// Carousel con múltiples diapositivas
 export const MultipleSlides: Story = {
 	name: 'Múltiples diapositivas',
 	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
@@ -212,7 +206,6 @@ export const MultipleSlides: Story = {
 	},
 };
 
-// Historia interactiva para documentación
 export const Interactive: Story = {
 	name: 'Interactivo',
 	render: (args) => ({
@@ -247,14 +240,12 @@ export const Interactive: Story = {
 	},
 };
 
-// Vista comparativa Desktop y Mobile
 export const DesktopAndMobile: Story = {
 	name: 'Escritorio y móvil',
 	render: (args) => ({
 		props: args,
 		template: `
 			<div class="flex flex-col gap-8 p-4">
-				<!-- Desktop View -->
 				<div>
 					<h3 class="text-lg font-semibold text-neutral-700 mb-3">Desktop (960px)</h3>
 					<div style="width: 1240px; max-width: 100%; justify-self: center;">
@@ -262,7 +253,6 @@ export const DesktopAndMobile: Story = {
 					</div>
 				</div>
 
-				<!-- Mobile View -->
 				<div>
 					<h3 class="text-lg font-semibold text-neutral-700 mb-3">Mobile (375px)</h3>
 					<div style="width: 375px; justify-self: center;">
@@ -288,7 +278,6 @@ export const DesktopAndMobile: Story = {
 	},
 };
 
-// Switch "Cargando" para alternar real↔skeleton en el mismo slot y evaluar la transición/alineación.
 export const Estados: StoryObj<CarouselComponent & { loading: boolean }> = {
 	decorators: [moduleMetadata({ imports: [CarouselSkeletonComponent] })],
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },

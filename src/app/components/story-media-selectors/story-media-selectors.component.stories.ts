@@ -63,7 +63,6 @@ const meta: Meta<StoryMediaSelectorsComponent> = {
 export default meta;
 type Story = StoryObj<StoryMediaSelectorsComponent>;
 
-// Modo agrupado (decorativo) — usado por StoryCardTeaserV3.
 export const Grouped: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-story-media-selectors ${argsToTemplate(args)} />` }),
 	args: { media, theme: 'subtle', orientation: 'horizontal', selectable: false },
@@ -76,7 +75,6 @@ export const Grouped: Story = {
 	},
 };
 
-// Modo seleccionable (interactivo) — pensado para la vista Story.
 export const Selectable: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-story-media-selectors ${argsToTemplate(args)} />` }),
 	args: { media, theme: 'solid', orientation: 'horizontal', selectable: true },
@@ -89,7 +87,6 @@ export const Selectable: Story = {
 	},
 };
 
-// Vitrina de los tres temas en sus contextos de fondo.
 // Nota: se usan bindings explícitos (en lugar de argsToTemplate) porque theme/orientation difieren
 // por instancia; argsToTemplate genera `[theme]="theme"` que apunta a un único `props.theme`.
 export const Themes: Story = {
