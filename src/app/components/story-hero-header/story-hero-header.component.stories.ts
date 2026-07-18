@@ -1,19 +1,10 @@
 import { applicationConfig, argsToTemplate, Meta, StoryObj } from '@storybook/angular';
 import { provideRouter } from '@angular/router';
 
-import type { Story as StoryModel } from '@models/story.model';
-import type { Tag } from '@models/tag.model';
 import { StoryHeroHeaderComponent } from './story-hero-header.component';
 import { onoffStoriesMock } from '../../mocks/onoff-stories.mock';
 import { palacioNueveFronterasStoryMock } from '../../mocks/onoff/el-palacio-de-las-nueve-fronteras.mock';
 import { literaryWorkSelectArgType } from '../../mocks/onoff-corpus.storybook';
-
-// Género de muestra: los mocks del corpus Onoff traen `tags: []` (deuda de #1593), así que se superpone
-// un tag localmente —sin tocar los mocks compartidos— para poder visualizar el Tag de género del hero.
-const withGenre = (story: StoryModel): StoryModel => {
-	const genreTag: Tag = { title: 'Ciencia ficción', slug: 'ciencia-ficcion', shortDescription: '', description: [] };
-	return { ...story, tags: [genreTag] };
-};
 
 const meta: Meta<StoryHeroHeaderComponent> = {
 	component: StoryHeroHeaderComponent,
@@ -28,7 +19,7 @@ const meta: Meta<StoryHeroHeaderComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Banda superior (hero) de la página de una historia. Usa la misma portada del cuento como fondo difuminado con una capa de opacidad y, en primer plano, presenta la portada nítida, el género, el autor, el título y la colección/año de publicación originales.</p><p>Recibe el <code>Story</code> completo como único input; cuando no se provee, renderiza su propio estado de carga (skeleton).</p><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada en primer plano), <a href="./?path=/docs/componentes-v3-tag--docs" target="_top"><strong>Tag</strong></a> (género, variante <code>gray</code>) e <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor).</p></div>`,
+				component: `<div><p>Banda superior (hero) de la página de una historia. Usa la misma portada del cuento como fondo difuminado con una capa de opacidad y, en primer plano, presenta la portada nítida, el tipo literario, el autor, el título y la colección/año de publicación originales.</p><p>Recibe el <code>Story</code> completo como único input; cuando no se provee, renderiza su propio estado de carga (skeleton).</p><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada en primer plano), <a href="./?path=/docs/componentes-v3-tag--docs" target="_top"><strong>Tag</strong></a> (tipo literario, variante <code>gray</code>) e <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor).</p></div>`,
 			},
 		},
 		layout: 'fullscreen',
@@ -36,7 +27,8 @@ const meta: Meta<StoryHeroHeaderComponent> = {
 	argTypes: {
 		story: {
 			control: { type: 'object' },
-			description: 'Historia completa a partir de la cual se derivan portada, género, autor, título y publicación',
+			description:
+				'Historia completa a partir de la cual se derivan portada, tipo literario, autor, título y publicación',
 			table: { type: { summary: 'Story' }, defaultValue: { summary: 'undefined' } },
 		},
 	},
@@ -54,7 +46,7 @@ export const Interactiva: StoryObj<StoryHeroHeaderComponent & { storyIndex: numb
 		},
 	},
 	render: (args) => ({
-		props: { ...args, stories: onoffStoriesMock.map(withGenre) },
+		props: { ...args, stories: onoffStoriesMock },
 		template: `<cuentoneta-story-hero-header [story]="stories[storyIndex]" />`,
 	}),
 	args: { storyIndex: 0 },
@@ -73,11 +65,11 @@ export const Default: Story = {
 		props: args,
 		template: `<cuentoneta-story-hero-header ${argsToTemplate(args)} />`,
 	}),
-	args: { story: withGenre(palacioNueveFronterasStoryMock) },
+	args: { story: palacioNueveFronterasStoryMock },
 	parameters: {
 		docs: {
 			description: {
-				story: 'Estado principal del hero con portada, género, autor, título y publicación.',
+				story: 'Estado principal del hero con portada, tipo literario, autor, título y publicación.',
 			},
 		},
 	},
@@ -88,11 +80,11 @@ export const SinGenero: Story = {
 		props: args,
 		template: `<cuentoneta-story-hero-header ${argsToTemplate(args)} />`,
 	}),
-	args: { story: palacioNueveFronterasStoryMock },
+	args: { story: { ...palacioNueveFronterasStoryMock, tags: [] } },
 	parameters: {
 		docs: {
 			description: {
-				story: 'Cuando la historia no tiene tags, el Tag de género se omite y el resto del bloque se mantiene.',
+				story: 'Cuando la historia no tiene tags, el Tag de tipo literario se omite y el resto del bloque se mantiene.',
 			},
 		},
 	},
@@ -105,7 +97,7 @@ export const Estados: StoryObj<StoryHeroHeaderComponent & { loading: boolean }> 
 		props: args,
 		template: `<cuentoneta-story-hero-header [story]="loading ? undefined : story" />`,
 	}),
-	args: { loading: true, story: withGenre(palacioNueveFronterasStoryMock) },
+	args: { loading: true, story: palacioNueveFronterasStoryMock },
 	parameters: {
 		docs: { description: { story: 'Activá/desactivá "Cargando" para alternar entre el estado real y el skeleton.' } },
 	},

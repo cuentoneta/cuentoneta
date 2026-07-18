@@ -1,5 +1,6 @@
 import type { Story } from '@models/story.model';
 import { authorMock } from '../author.mock';
+import { ensayoTagMock, filosoficoTagMock, metaficcionTagMock } from '../onoff-tags.mock';
 
 export const elTratadoDeLosPlaceresStoryMock: Story = {
 	_id: 'onoff-story-el-tratado-de-los-placeres',
@@ -9,7 +10,7 @@ export const elTratadoDeLosPlaceresStoryMock: Story = {
 	approximateReadingTime: 10,
 	badLanguage: false,
 	coverImage: 'assets/img/mocks/stories/el-tratado-de-los-placeres.png',
-	tags: [],
+	tags: [ensayoTagMock, filosoficoTagMock, metaficcionTagMock],
 	resources: [],
 	media: [],
 	epigraphs: [],

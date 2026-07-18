@@ -12,7 +12,7 @@ import { StoryHeroHeaderSkeletonComponent } from './story-hero-header-skeleton.c
 
 /**
  * Hero de la página Story (Design System v3): banda superior del cuento con la MISMA portada de fondo
- * difuminada + capa de opacidad, y en primer plano la portada nítida (`CoverImage`), el género (`Tag`),
+ * difuminada + capa de opacidad, y en primer plano la portada nítida (`CoverImage`), el tipo literario (`Tag`),
  * el autor (`ImageProfile` + nombre, enlace al perfil), el título y "Publicado en: <colección> (<año>)".
  *
  * Recibe el `Story` completo como único input; ausente ⇒ renderiza su propio skeleton.
@@ -47,8 +47,8 @@ import { StoryHeroHeaderSkeletonComponent } from './story-hero-header-skeleton.c
 				<div class="mx-auto flex w-full max-w-180 items-center gap-8">
 					<cuentoneta-cover-image [src]="story.coverImage" [priority]="true" />
 					<div class="flex min-w-0 flex-col items-start gap-2.5">
-						@if (genre(); as genre) {
-							<cuentoneta-tag [label]="genre.title" variant="gray" data-testid="genre" />
+						@if (literaryType(); as literaryType) {
+							<cuentoneta-tag [label]="literaryType.title" variant="gray" data-testid="literary-type" />
 						}
 						<a
 							[routerLink]="['/', appRoutes.Author, story.author.slug]"
@@ -77,7 +77,7 @@ export class StoryHeroHeaderComponent {
 
 	public readonly story = input<Story>();
 
-	protected readonly genre = computed(() => this.story()?.tags[0]);
+	protected readonly literaryType = computed(() => this.story()?.tags[0]);
 
 	// La misma coverImage pedida al CDN en una talla mayor para el fondo full-bleed (no es otra imagen).
 	protected readonly backgroundImageUrl = computed(() =>

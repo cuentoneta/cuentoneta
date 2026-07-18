@@ -1,5 +1,6 @@
 import type { Story } from '@models/story.model';
 import { authorMock } from '../author.mock';
+import { cuentoTagMock, dramaPsicologicoTagMock, filosoficoTagMock } from '../onoff-tags.mock';
 
 export const geometriaStoryMock: Story = {
 	_id: 'onoff-story-geometria',
@@ -9,7 +10,7 @@ export const geometriaStoryMock: Story = {
 	approximateReadingTime: 7,
 	badLanguage: false,
 	coverImage: 'assets/img/mocks/stories/geometria.png',
-	tags: [],
+	tags: [cuentoTagMock, dramaPsicologicoTagMock, filosoficoTagMock],
 	resources: [],
 	media: [],
 	epigraphs: [],

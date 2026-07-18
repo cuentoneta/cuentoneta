@@ -1,5 +1,6 @@
 import type { Story } from '@models/story.model';
 import { authorMock } from '../author.mock';
+import { absurdoTagMock, alegoriaTagMock, novelaTagMock } from '../onoff-tags.mock';
 
 export const lasEscalerasStoryMock: Story = {
 	_id: 'onoff-story-las-escaleras',
@@ -9,7 +10,7 @@ export const lasEscalerasStoryMock: Story = {
 	approximateReadingTime: 9,
 	badLanguage: false,
 	coverImage: 'assets/img/mocks/stories/las-escaleras.png',
-	tags: [],
+	tags: [novelaTagMock, absurdoTagMock, alegoriaTagMock],
 	resources: [],
 	media: [],
 	epigraphs: [],

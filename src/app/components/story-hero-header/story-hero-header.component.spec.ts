@@ -6,8 +6,8 @@ import { StoryHeroHeaderComponent } from './story-hero-header.component';
 import { palacioNueveFronterasStoryMock } from '../../mocks/onoff/el-palacio-de-las-nueve-fronteras.mock';
 
 describe('StoryHeroHeaderComponent', () => {
-	const genre: Tag = { title: 'Ciencia ficción', slug: 'ciencia-ficcion', shortDescription: '', description: [] };
-	const story: Story = { ...palacioNueveFronterasStoryMock, tags: [genre] };
+	const literaryType: Tag = { title: 'Novela', slug: 'novela', shortDescription: '', description: [] };
+	const story: Story = { ...palacioNueveFronterasStoryMock, tags: [literaryType] };
 
 	it('should render the story title as the heading', async () => {
 		await render(StoryHeroHeaderComponent, { inputs: { story } });
@@ -36,14 +36,14 @@ describe('StoryHeroHeaderComponent', () => {
 		expect(screen.getByTestId('publication')).toHaveTextContent(`Publicado en: ${story.originalPublication}`);
 	});
 
-	it('should render the genre tag from the first tag', async () => {
+	it('should render the literary type tag from the first tag', async () => {
 		await render(StoryHeroHeaderComponent, { inputs: { story } });
-		expect(screen.getByTestId('genre')).toHaveTextContent(genre.title);
+		expect(screen.getByTestId('literary-type')).toHaveTextContent(literaryType.title);
 	});
 
-	it('should not render the genre tag when the story has no tags', async () => {
+	it('should not render the literary type tag when the story has no tags', async () => {
 		await render(StoryHeroHeaderComponent, { inputs: { story: { ...story, tags: [] } } });
-		expect(screen.queryByTestId('genre')).not.toBeInTheDocument();
+		expect(screen.queryByTestId('literary-type')).not.toBeInTheDocument();
 	});
 
 	it('should render the foreground cover image when the story has a cover', async () => {
