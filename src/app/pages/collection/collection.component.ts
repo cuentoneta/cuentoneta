@@ -1,18 +1,25 @@
-import { Component, inject, input } from '@angular/core';
+import { afterRenderEffect, Component, computed, ElementRef, inject, input, signal, viewChild } from '@angular/core';
 
 import type { StorylistTeaser } from '@models/storylist.model';
+import { StorylistApi } from '../../providers/storylist-api.interface';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
+import { progressiveRxResource } from '@utils/ssr-resource';
 import { StoryCardTeaserV3Component } from '@components/story-card-teaser-v3/story-card-teaser-v3.component';
 import { TagComponent } from '@components/tag/tag.component';
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
 import { CoverImageComponent } from '@components/cover-image/cover-image.component';
 import { NavigableCollectionTeaserComponent } from '@components/navigable-collection-teaser/navigable-collection-teaser.component';
-import { storylistMock, storylistTeaserSampleMock } from '@mocks/storylist.mock';
+import { NavigableCollectionTeaserSkeletonComponent } from '@components/navigable-collection-teaser/navigable-collection-teaser-skeleton.component';
+import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { DrawerComponent } from '@components/drawer/drawer.component';
+import { ButtonComponent } from '@components/button/button.component';
+import { storylistTeaserSampleMock } from '@mocks/storylist.mock';
 
-// Blueprint de la CollectionPage V3 (spike). Página temporal en /collection/:slug con placeholders para cada
-// región del diseño de Figma; se irá reemplazando por los componentes reales. Marcada `noindex` mientras es
-// un placeholder (no debe indexarse ni competir con /storylist/:slug).
+// Blueprint de la CollectionPage V3 (spike). Página en /collection/:slug: trae la colección real desde Sanity por
+// slug (misma vía que /storylist/:slug) y la renderiza con los componentes V3. Marcada `noindex` mientras el
+// diseño se estabiliza; por eso el fetch es no bloqueante (progressiveRxResource). La lista de «colecciones
+// sugeridas» todavía usa datos de ejemplo (no hay endpoint de sugeridas).
 @Component({
 	selector: 'cuentoneta-collection',
 	imports: [
@@ -21,15 +28,33 @@ import { storylistMock, storylistTeaserSampleMock } from '@mocks/storylist.mock'
 		PortableTextParserComponent,
 		CoverImageComponent,
 		NavigableCollectionTeaserComponent,
+		NavigableCollectionTeaserSkeletonComponent,
+		SkeletonComponent,
+		DrawerComponent,
+		ButtonComponent,
 	],
 	hostDirectives: [HeadMetadataDirective],
 	templateUrl: './collection.component.html',
 })
 export default class CollectionComponent {
-	public readonly slug = input<string>();
+	public readonly slug = input.required<string>();
 
-	// Datos de ejemplo del corpus Onoff mientras el blueprint no consume un servicio real.
-	protected readonly collection = storylistMock;
+	private readonly storylistService = inject(StorylistApi);
+
+	private readonly collectionResource = progressiveRxResource({
+		params: this.slug,
+		stream: ({ params }) => this.storylistService.get(params, 60, 'asc'),
+		defaultValue: undefined,
+	});
+	// `value()` lanza si el resource está en error; `hasValue()` no. Así el estado de error cae a "sin resultados".
+	protected readonly collection = computed(() =>
+		this.collectionResource.hasValue() ? this.collectionResource.value() : undefined,
+	);
+	protected readonly isLoading = this.collectionResource.isLoading;
+
+	// Descripción del sidebar recortada a 8 líneas: se muestra "Leer más" solo si el texto real desborda el clamp.
+	private readonly descriptionEl = viewChild<ElementRef<HTMLElement>>('description');
+	protected readonly isDescriptionOverflowing = signal(false);
 
 	// Colecciones sugeridas de ejemplo (distintas de la actual y con categorías variadas para el blueprint).
 	protected readonly suggestedCollections: StorylistTeaser[] = [
@@ -63,5 +88,15 @@ export default class CollectionComponent {
 		this.metaTagsDirective.setDefaultDescription();
 		this.metaTagsDirective.setCanonicalUrl(buildCanonicalUrl('collection'));
 		this.metaTagsDirective.setRobots('noindex, nofollow');
+
+		// Mide el desborde del clamp después de renderizar (scrollHeight real vs. alto visible) y expone el
+		// resultado a la plantilla. `earlyRead` lee el DOM; `write` fija el signal con ese valor.
+		afterRenderEffect({
+			earlyRead: () => {
+				const el = this.descriptionEl()?.nativeElement;
+				return !!el && el.scrollHeight > el.clientHeight + 1;
+			},
+			write: (overflowing) => this.isDescriptionOverflowing.set(overflowing()),
+		});
 	}
 }
