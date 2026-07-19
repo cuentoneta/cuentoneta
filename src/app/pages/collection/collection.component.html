@@ -61,7 +61,7 @@
 							[showAuthor]="collection.config.showAuthors"
 							[showExcerpt]="true"
 							[showMultimedia]="true"
-							[excerptLines]="3"
+							[excerptLines]="collection.config.showAuthors ? 3 : 4"
 							[tagLabel]="story.tags[0]?.title"
 							data-testid="story-card"
 						/>
