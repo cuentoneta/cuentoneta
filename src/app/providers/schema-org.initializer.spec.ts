@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
-import { assertValidJsonLd } from '@seo-invariants/json-ld-validation';
+import { assertValidJsonLd } from '../testing/json-ld-validation';
 import { applySiteSchema, buildOrganizationSchema, buildWebSiteSchema } from './schema-org.initializer';
 import { SchemaOrgService } from './schema-org.service';
 

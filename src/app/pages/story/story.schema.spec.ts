@@ -1,6 +1,6 @@
 import { storyMock } from '@mocks/story.mock';
 
-import { assertValidJsonLd, validateJsonLd } from '@seo-invariants/json-ld-validation';
+import { assertValidJsonLd, validateJsonLd } from '../../testing/json-ld-validation';
 import { buildStoryArticleSchema, buildStoryBreadcrumb } from './story.schema';
 
 describe('buildStoryArticleSchema', () => {

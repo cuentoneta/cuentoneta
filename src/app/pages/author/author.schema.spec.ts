@@ -2,7 +2,7 @@ import { authorMock } from '@mocks/author.mock';
 import type { TextBlockContent } from '@models/block-content.model';
 import type { IsoDateTime } from '@utils/date.utils';
 
-import { assertValidJsonLd } from '@seo-invariants/json-ld-validation';
+import { assertValidJsonLd } from '../../testing/json-ld-validation';
 import { buildAuthorBreadcrumb, buildAuthorProfilePageSchema } from './author.schema';
 
 function bioBlock(...texts: string[]): TextBlockContent {

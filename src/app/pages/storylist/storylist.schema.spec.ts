@@ -1,6 +1,6 @@
 import { storylistMock } from '@mocks/storylist.mock';
 
-import { assertValidJsonLd } from '@seo-invariants/json-ld-validation';
+import { assertValidJsonLd } from '../../testing/json-ld-validation';
 import { buildStorylistBreadcrumb, buildStorylistCollectionSchema } from './storylist.schema';
 
 describe('buildStorylistCollectionSchema', () => {

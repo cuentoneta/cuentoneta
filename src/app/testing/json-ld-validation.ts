@@ -14,7 +14,7 @@
 import * as jsonld from 'jsonld';
 import type { JsonLdDocument, NodeObject } from 'jsonld';
 
-import type { SeoInvariantViolation } from './seo-invariants';
+import type { SeoInvariantViolation } from './seo-invariant-violation';
 
 // Contexto local con `@vocab` schema.org: la expansión mapea cualquier término a un IRI schema.org
 // sin descargar el contexto real (los términos válidos ya los garantiza `schema-dts` en compile-time).
