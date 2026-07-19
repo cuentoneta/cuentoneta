@@ -161,6 +161,17 @@ Cuándo **bloquear**: rutas cuyo HTML server-rendered debe traer contenido/meta 
 
 **Enforced por lint:** en `src/app/pages/**` está prohibido `rxResource`/`httpResource` crudo — el gate `lint` obliga a elegir `ssrBlockingRxResource` o `progressiveRxResource` (`no-restricted-syntax`, bloque `ssr-fetch-must-decide-blocking` de `eslint.config.mjs`; #1705).
 
+### 8. Directivas de SEO de página: declarar el combo según la indexabilidad
+
+Cada componente de página compone su SEO en el campo **`hostDirectives`** del decorador `@Component` (distinto de `host`, ver [`angular-components.md`](angular-components.md#host-element)). Hay exactamente **dos formas**, elegidas según si la ruta es indexable:
+
+- **Forma A — página indexable** (`RenderMode.Server`/`Prerender` sin `noindex`): `hostDirectives: [<Page>MetaTagsDirective, <Page>StructuredDataDirective]`. Ambas extienden `AbstractMetaTagsDirective`/`AbstractStructuredDataDirective`; la `<Page>MetaTagsDirective` emite `setRobots('index, follow')` y la `<Page>StructuredDataDirective` inyecta el JSON-LD. Ejemplos: `home`, `author`, `story`, `storylist`.
+- **Forma B — opt-out explícito** (`noindex`): `hostDirectives: [HeadMetadataDirective]` (la directiva genérica, sin structured data) y el componente llama `setRobots('noindex, ...')` en su constructor. Ejemplos: `about`, `authors`, `stories`, `dmca`. La ausencia de structured data acá es intencional, no un hueco.
+
+Una página indexable **nunca** debe usar la Forma B: quedaría sin structured data y sin `setRobots('index...')` de forma silenciosa.
+
+**Enforced por test:** el gate `test` corre `src/app/pages/seo-host-directives.spec.ts` (#1726), que cruza `app.routes.server.ts` (RenderMode) × `app.routes.ts` (ruta→componente) × el fuente del componente (`hostDirectives`) y exige que toda ruta `Server`/`Prerender` esté clasificada en `PAGE_SEO_REGISTRY`: las `indexable: true` deben declarar el combo MetaTags + StructuredData; las `indexable: false`, el opt-out `HeadMetadataDirective` + `setRobots('noindex...')`. Una ruta nueva sin entrada en el registro **rompe el test** — no se puede agregar una página indexable sin decidir explícitamente su SEO.
+
 ---
 
 ## Checklist rápido
@@ -173,6 +184,7 @@ Cuándo **bloquear**: rutas cuyo HTML server-rendered debe traer contenido/meta 
 - [ ] ¿El debounce/throttle/coordinación está en el servicio, no en el componente?
 - [ ] ¿Los errores están tipados por operación, no en un `string | null` global?
 - [ ] ¿Los recursos de página que alimentan contenido/meta indexable usan `ssrBlockingRxResource`, y los secundarios/`noindex` usan `progressiveRxResource` (nunca `rxResource` crudo en `pages/**`)?
+- [ ] ¿La página declara sus `hostDirectives` de SEO según su indexabilidad (Forma A indexable: MetaTags + StructuredData; Forma B `noindex`: HeadMetadataDirective + `setRobots('noindex...')`) y su ruta está registrada en `seo-host-directives.spec.ts`?
 
 ---
 
