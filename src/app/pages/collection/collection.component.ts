@@ -5,6 +5,7 @@ import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
 import { StoryCardTeaserV3Component } from '@components/story-card-teaser-v3/story-card-teaser-v3.component';
 import { TagComponent } from '@components/tag/tag.component';
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
+import { CoverImageComponent } from '@components/cover-image/cover-image.component';
 import { storylistMock } from '@mocks/storylist.mock';
 
 // Blueprint de la CollectionPage V3 (spike). Página temporal en /collection/:slug con placeholders para cada
@@ -12,7 +13,7 @@ import { storylistMock } from '@mocks/storylist.mock';
 // un placeholder (no debe indexarse ni competir con /storylist/:slug).
 @Component({
 	selector: 'cuentoneta-collection',
-	imports: [StoryCardTeaserV3Component, TagComponent, PortableTextParserComponent],
+	imports: [StoryCardTeaserV3Component, TagComponent, PortableTextParserComponent, CoverImageComponent],
 	hostDirectives: [HeadMetadataDirective],
 	templateUrl: './collection.component.html',
 })
