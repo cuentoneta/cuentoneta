@@ -17,7 +17,7 @@ import StoriesComponent from './stories/stories.component';
 import AboutComponent from './about/about.component';
 import DmcaComponent from './dmca/dmca.component';
 
-// Guardrail estructural (#1726): garantiza que toda página con una ruta indexable (RenderMode.Server/Prerender,
+// Guardrail estructural: garantiza que toda página con una ruta indexable (RenderMode.Server/Prerender,
 // sin noindex) declare sus directivas de SEO. No usa Angular Testing Library a propósito: no hay UI que ejercitar,
 // es un test de convención de código sobre el mapeo ruta→RenderMode→componente, que cruza tres archivos
 // (app.routes.ts, app.routes.server.ts y el fuente del componente). Ver `angular-state.md` para la convención.

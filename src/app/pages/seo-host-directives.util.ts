@@ -1,4 +1,4 @@
-// Helpers de parseo estático (texto → texto) para el guardrail de SEO de páginas (#1726). Operan sobre el
+// Helpers de parseo estático (texto → texto) para el guardrail de SEO de páginas. Operan sobre el
 // código fuente de un componente de página como string; no dependen de Angular, Ivy ni el DOM, y por eso son
 // unit-testeables con fixtures inline en `seo-host-directives.util.spec.ts`.
 
