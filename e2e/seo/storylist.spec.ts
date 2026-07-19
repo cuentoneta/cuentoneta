@@ -23,7 +23,7 @@ import {
 	checkCanonical,
 	checkRobotsIndexable,
 	checkPrimaryContentLength,
-	checkJsonLdBlocksPresent,
+	checkJsonLdBlocks,
 	collectIndexableHtmlViolations,
 	type Violation,
 } from '../_utils/seo-invariants';
@@ -78,14 +78,14 @@ test('storylist — C: bloques sitewide Organization y WebSite presentes', async
 	expect(blocks.get(SCHEMA_IDS.website)?.['@type']).toBe('WebSite');
 });
 
-test('storylist — invariantes de indexado disponibles hoy (ssr, title, canonical, robots, contenido primario, jsonld)', () => {
+test('storylist — invariantes de indexado disponibles hoy (ssr, title, canonical, robots, contenido primario, jsonld)', async () => {
 	const violations: Violation[] = [
 		checkNgServerContext(html),
 		checkTitle(html),
 		checkCanonical(html, storylistPath),
 		checkRobotsIndexable(html),
 		checkPrimaryContentLength(html),
-		...checkJsonLdBlocksPresent(html, [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.collection, SCHEMA_IDS.breadcrumbStorylist]),
+		...(await checkJsonLdBlocks(html, [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.collection, SCHEMA_IDS.breadcrumbStorylist])),
 	].filter((violation): violation is Violation => violation !== null);
 	expect(violations).toEqual([]);
 });
@@ -93,9 +93,9 @@ test('storylist — invariantes de indexado disponibles hoy (ssr, title, canonic
 // Bloqueado por #1771: storylist-title.ts (el <h1>) y el tab "Textos" (las tarjetas de cuento) usan
 // @defer, así que el SSR no emite h1 real, ni enlaces /story/, y sirve skeletons dentro de <main>.
 // Al cerrar #1771, esta aserción completa reemplaza al subset real de arriba.
-test.fixme('storylist — h1 real + enlace a /story/ + sin skeleton (bloqueado por #1771)', () => {
+test.fixme('storylist — h1 real + enlace a /story/ + sin skeleton (bloqueado por #1771)', async () => {
 	expect(
-		collectIndexableHtmlViolations(html, {
+		await collectIndexableHtmlViolations(html, {
 			path: storylistPath,
 			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.collection, SCHEMA_IDS.breadcrumbStorylist],
 			requiredInternalLinkPrefix: '/story/',

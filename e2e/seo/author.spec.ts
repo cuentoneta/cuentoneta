@@ -63,9 +63,9 @@ test('author — C: bloques sitewide Organization y WebSite presentes', async ()
 	expect(blocks.get(SCHEMA_IDS.website)?.['@type']).toBe('WebSite');
 });
 
-test('author — invariantes de indexado para crawlers (ssr, h1, bio, sin skeleton, enlace a story)', () => {
+test('author — invariantes de indexado para crawlers (ssr, h1, bio, sin skeleton, enlace a story)', async () => {
 	expect(
-		collectIndexableHtmlViolations(html, {
+		await collectIndexableHtmlViolations(html, {
 			path: authorPath,
 			titlePattern: /borges/i,
 			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.profilePage, SCHEMA_IDS.breadcrumbAuthor],

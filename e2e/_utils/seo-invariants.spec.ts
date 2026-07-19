@@ -1,7 +1,7 @@
 import {
 	checkCanonical,
 	checkInternalLink,
-	checkJsonLdBlocksPresent,
+	checkJsonLdBlocks,
 	checkNoSkeletonMarkers,
 	checkPrimaryContentLength,
 	checkPrimaryHeading,
@@ -18,8 +18,8 @@ const GOOD_HTML = `<!doctype html><html lang="es"><head>
 	<title>El Aleph — La Cuentoneta</title>
 	<link rel="canonical" href="https://www.cuentoneta.org/story/el-aleph" />
 	<meta name="robots" content="index, follow" />
-	<script type="application/ld+json" data-schema-id="organization">{"@type":"Organization"}</script>
-	<script type="application/ld+json" data-schema-id="website">{"@type":"WebSite"}</script>
+	<script type="application/ld+json" data-schema-id="organization">{"@context":"https://schema.org","@type":"Organization","name":"La Cuentoneta","url":"https://x"}</script>
+	<script type="application/ld+json" data-schema-id="website">{"@context":"https://schema.org","@type":"WebSite","name":"La Cuentoneta","url":"https://x"}</script>
 </head><body>
 	<header><h1>chrome fuera de main</h1></header>
 	<cuentoneta-root ng-server-context="ssr">
@@ -163,34 +163,41 @@ describe('checkInternalLink', () => {
 	});
 });
 
-describe('checkJsonLdBlocksPresent', () => {
-	it('no devuelve violaciones cuando están todos los ids', () => {
-		expect(checkJsonLdBlocksPresent(GOOD_HTML, ['organization', 'website'])).toEqual([]);
+describe('checkJsonLdBlocks', () => {
+	it('no devuelve violaciones cuando los bloques están presentes y son schema.org válidos', async () => {
+		expect(await checkJsonLdBlocks(GOOD_HTML, ['organization', 'website'])).toEqual([]);
 	});
 
-	it('reporta cada id faltante', () => {
-		const violations = checkJsonLdBlocksPresent(GOOD_HTML, ['organization', 'article']);
+	it('reporta cada id faltante', async () => {
+		const violations = await checkJsonLdBlocks(GOOD_HTML, ['organization', 'article']);
 		expect(violations).toHaveLength(1);
 		expect(violations[0].message).toContain('article');
 	});
 
-	it('reporta JSON-LD malformado como violación en vez de tirar', () => {
+	it('reporta JSON-LD malformado como violación en vez de tirar', async () => {
 		const malformed = '<script data-schema-id="organization">{ malformado }</script>';
-		const violations = checkJsonLdBlocksPresent(malformed, ['organization']);
+		const violations = await checkJsonLdBlocks(malformed, ['organization']);
 		expect(violations[0].rule).toBe('json-ld');
 		expect(violations[0].message).toContain('parsear');
+	});
+
+	it('reporta un bloque presente y parseable pero estructuralmente inválido (Organization sin name/url)', async () => {
+		const invalid =
+			'<script data-schema-id="organization">{"@context":"https://schema.org","@type":"Organization"}</script>';
+		const violations = await checkJsonLdBlocks(invalid, ['organization']);
+		expect(violations.map((violation) => violation.message).join(' ')).toContain('name');
 	});
 });
 
 describe('collectIndexableHtmlViolations', () => {
-	it('no devuelve violaciones para un HTML indexable completo', () => {
-		expect(collectIndexableHtmlViolations(GOOD_HTML, GOOD_EXPECTATIONS)).toEqual([]);
+	it('no devuelve violaciones para un HTML indexable completo', async () => {
+		expect(await collectIndexableHtmlViolations(GOOD_HTML, GOOD_EXPECTATIONS)).toEqual([]);
 	});
 
-	it('acumula todas las violaciones simultáneas (no fail-fast)', () => {
+	it('acumula todas las violaciones simultáneas (no fail-fast)', async () => {
 		const broken =
 			'<html ng-server-context="ssg"><head><title></title></head><body><main><div data-testid="skeleton"></div></main></body></html>';
-		const rules = collectIndexableHtmlViolations(broken, GOOD_EXPECTATIONS).map((violation) => violation.rule);
+		const rules = (await collectIndexableHtmlViolations(broken, GOOD_EXPECTATIONS)).map((violation) => violation.rule);
 		expect(rules).toEqual(
 			expect.arrayContaining([
 				'server-render-context',
@@ -206,19 +213,21 @@ describe('collectIndexableHtmlViolations', () => {
 		);
 	});
 
-	it('afirma la canónica con canonicalContains cuando difiere del path', () => {
+	it('afirma la canónica con canonicalContains cuando difiere del path', async () => {
 		const homeLike = GOOD_HTML.replace('/story/el-aleph', 'https://www.cuentoneta.org');
 		const expectations = { path: '/home', requiredJsonLdIds: [], canonicalContains: 'cuentoneta.org' };
-		expect(collectIndexableHtmlViolations(homeLike, expectations).map((violation) => violation.rule)).not.toContain(
-			'canonical',
-		);
+		expect(
+			(await collectIndexableHtmlViolations(homeLike, expectations)).map((violation) => violation.rule),
+		).not.toContain('canonical');
 	});
 
-	it('omite el check de enlace interno cuando no se pide prefijo', () => {
-		const rules = collectIndexableHtmlViolations(GOOD_HTML, {
-			...GOOD_EXPECTATIONS,
-			requiredInternalLinkPrefix: undefined,
-		}).map((violation) => violation.rule);
+	it('omite el check de enlace interno cuando no se pide prefijo', async () => {
+		const rules = (
+			await collectIndexableHtmlViolations(GOOD_HTML, {
+				...GOOD_EXPECTATIONS,
+				requiredInternalLinkPrefix: undefined,
+			})
+		).map((violation) => violation.rule);
 		expect(rules).not.toContain('internal-link');
 	});
 });

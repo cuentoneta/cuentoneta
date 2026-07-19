@@ -64,9 +64,9 @@ test('story — C: bloques sitewide Organization y WebSite presentes', async () 
 	expect(blocks.get(SCHEMA_IDS.website)?.['@type']).toBe('WebSite');
 });
 
-test('story — invariantes de indexado para crawlers (ssr, h1, contenido primario, sin skeleton, enlace a autor)', () => {
+test('story — invariantes de indexado para crawlers (ssr, h1, contenido primario, sin skeleton, enlace a autor)', async () => {
 	expect(
-		collectIndexableHtmlViolations(html, {
+		await collectIndexableHtmlViolations(html, {
 			path: storyPath,
 			titlePattern: /aleph/i,
 			h1Pattern: /aleph/i,

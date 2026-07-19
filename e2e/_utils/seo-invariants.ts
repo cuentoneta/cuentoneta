@@ -14,6 +14,7 @@
  */
 import type { HTMLElement } from 'node-html-parser';
 
+import { validateJsonLd } from './json-ld-validation';
 import { parseHtml } from './seo';
 
 export interface Violation {
@@ -137,7 +138,7 @@ function internalLink(root: HTMLElement, prefix: string): Violation | null {
 	};
 }
 
-function jsonLdBlocks(root: HTMLElement, ids: readonly string[]): Violation[] {
+async function jsonLdBlocks(root: HTMLElement, ids: readonly string[]): Promise<Violation[]> {
 	const blocks = new Map<string, string>();
 	for (const script of root.querySelectorAll('script[data-schema-id]')) {
 		const id = script.getAttribute('data-schema-id');
@@ -145,23 +146,28 @@ function jsonLdBlocks(root: HTMLElement, ids: readonly string[]): Violation[] {
 			blocks.set(id, script.rawText);
 		}
 	}
-	return ids.flatMap((id) => {
-		const raw = blocks.get(id);
-		if (raw === undefined) {
-			return [{ rule: 'json-ld', message: `Falta el bloque JSON-LD con data-schema-id="${id}".` }];
-		}
-		try {
-			JSON.parse(raw);
-			return [];
-		} catch (error) {
-			return [
-				{
-					rule: 'json-ld',
-					message: `No se pudo parsear el bloque JSON-LD "${id}": ${error instanceof Error ? error.message : String(error)}`,
-				},
-			];
-		}
-	});
+	const perId = await Promise.all(ids.map((id) => validateBlock(id, blocks.get(id))));
+	return perId.flat();
+}
+
+// Presencia + parseabilidad + validez estructural schema.org (via `validateJsonLd`): un bloque que
+// existe y parsea pero al que le falta `datePublished`/`author` o trae un `@type` roto ahora viola.
+async function validateBlock(id: string, raw: string | undefined): Promise<Violation[]> {
+	if (raw === undefined) {
+		return [{ rule: 'json-ld', message: `Falta el bloque JSON-LD con data-schema-id="${id}".` }];
+	}
+	let parsed: unknown;
+	try {
+		parsed = JSON.parse(raw);
+	} catch (error) {
+		return [
+			{
+				rule: 'json-ld',
+				message: `No se pudo parsear el bloque JSON-LD "${id}": ${error instanceof Error ? error.message : String(error)}`,
+			},
+		];
+	}
+	return validateJsonLd(parsed);
 }
 
 // Wrappers públicos: toman `string` (para uso directo desde los specs) y parsean por cuenta propia.
@@ -197,15 +203,19 @@ export function checkInternalLink(html: string, prefix: string): Violation | nul
 	return internalLink(parseHtml(html), prefix);
 }
 
-export function checkJsonLdBlocksPresent(html: string, ids: readonly string[]): Violation[] {
+export function checkJsonLdBlocks(html: string, ids: readonly string[]): Promise<Violation[]> {
 	return jsonLdBlocks(parseHtml(html), ids);
 }
 
 /**
  * Corre todos los checks aplicables sobre un único parse y devuelve TODAS las violaciones (no
  * fail-fast), para que un test rojo reporte de una vez el set completo de invariantes incumplidas.
+ * Es async porque la validación estructural de JSON-LD corre `jsonld.expand` (asíncrono).
  */
-export function collectIndexableHtmlViolations(html: string, expectations: IndexableHtmlExpectations): Violation[] {
+export async function collectIndexableHtmlViolations(
+	html: string,
+	expectations: IndexableHtmlExpectations,
+): Promise<Violation[]> {
 	const root = parseHtml(html);
 	const checks: (Violation | null)[] = [
 		ngServerContext(root),
@@ -219,6 +229,6 @@ export function collectIndexableHtmlViolations(html: string, expectations: Index
 	];
 	return [
 		...checks.filter((violation): violation is Violation => violation !== null),
-		...jsonLdBlocks(root, expectations.requiredJsonLdIds),
+		...(await jsonLdBlocks(root, expectations.requiredJsonLdIds)),
 	];
 }

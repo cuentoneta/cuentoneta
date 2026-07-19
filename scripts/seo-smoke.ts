@@ -61,7 +61,7 @@ function messageOf(error: unknown): string {
 async function reportExpectations(expectations: IndexableHtmlExpectations): Promise<boolean> {
 	try {
 		const response = await fetch(`${BASE_URL}${expectations.path}`, { headers: proxyHeaders });
-		const violations = collectIndexableHtmlViolations(await response.text(), expectations);
+		const violations = await collectIndexableHtmlViolations(await response.text(), expectations);
 		if (violations.length === 0) {
 			console.log(`✅ ${expectations.path} (${response.status})`);
 			return false;
