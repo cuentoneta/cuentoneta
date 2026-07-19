@@ -1,0 +1,83 @@
+<main class="mx-auto w-full max-w-[1240px] px-6 pt-8 pb-16 font-inter">
+	<p class="bg-amber-50 text-amber-700 mb-8 rounded-md px-3 py-2 text-xs">
+		Blueprint temporal de la CollectionPage V3 · ruta <code>/collection/{{ slug() ?? ':slug' }}</code> · cada bloque es
+		un placeholder del componente indicado.
+	</p>
+
+	<div class="flex items-start gap-16">
+		<!-- Columna izquierda: título + listado de historias -->
+		<section class="flex flex-1 flex-col gap-12 pt-8">
+			<div
+				class="flex h-10 w-64 items-center rounded-md border border-dashed border-neutral-300 bg-neutral-50 px-3 text-sm text-neutral-500"
+			>
+				Título · «N Historías» (h1)
+			</div>
+
+			<div class="flex flex-col gap-9">
+				<!-- Primera historia: card destacada/enmarcada -->
+				<div
+					class="flex min-h-[212px] items-center justify-center rounded-2xl border border-dashed border-brand-300 bg-neutral-50 p-6 text-center text-sm text-neutral-500"
+				>
+					StoryCardTeaserV3 · variant <strong>highlighted</strong> · order 1 <br />(autor · título numerado · extracto ·
+					tag de género · tiempo de lectura · media)
+				</div>
+
+				<!-- Resto de historias: cards planas -->
+				<div
+					class="flex min-h-[164px] items-center justify-center rounded-lg border border-dashed border-neutral-300 bg-neutral-50 p-6 text-center text-sm text-neutral-500"
+				>
+					StoryCardTeaserV3 · variant <strong>on-white</strong> · order 2 (cover izquierda + contenido)
+				</div>
+
+				<div class="h-px w-full bg-neutral-200" role="separator"></div>
+
+				<div
+					class="flex min-h-[164px] items-center justify-center rounded-lg border border-dashed border-neutral-300 bg-neutral-50 p-6 text-center text-sm text-neutral-500"
+				>
+					StoryCardTeaserV3 · variant <strong>on-white</strong> · order 3
+				</div>
+			</div>
+		</section>
+
+		<!-- Divisor vertical -->
+		<div class="w-px self-stretch bg-neutral-200" role="separator"></div>
+
+		<!-- Columna derecha: info de la colección + colecciones sugeridas -->
+		<aside class="flex w-[364px] shrink-0 flex-col gap-6 pt-8">
+			<div class="flex flex-col gap-4">
+				<div
+					class="flex h-[164px] w-[118px] items-center justify-center rounded-lg border border-dashed border-neutral-300 bg-neutral-50 text-center text-xs text-neutral-500"
+				>
+					CoverImage
+				</div>
+				<div
+					class="flex h-9 items-center rounded-md border border-dashed border-neutral-300 bg-neutral-50 px-3 text-sm text-neutral-500"
+				>
+					Título de la colección + TagComponent (filled)
+				</div>
+				<div
+					class="flex min-h-[140px] items-center justify-center rounded-lg border border-dashed border-neutral-300 bg-neutral-50 p-4 text-center text-sm text-neutral-500"
+				>
+					Descripción · PortableTextParser
+				</div>
+			</div>
+
+			<div class="flex flex-col gap-4">
+				<div
+					class="flex h-8 items-center rounded-md border border-dashed border-neutral-300 bg-neutral-50 px-3 text-sm text-neutral-500"
+				>
+					«Otras colecciones sugeridas» (h2)
+				</div>
+
+				@for (index of [1, 2, 3]; track index) {
+					<div
+						class="flex items-center gap-3 rounded-lg border border-dashed border-brand-300 bg-neutral-50 p-3 text-sm text-neutral-500"
+					>
+						<div class="size-10 shrink-0 rounded-full border border-dashed border-brand-300 bg-brand-100"></div>
+						<span>CollectionCard <strong>(componente nuevo)</strong> · nombre · tag · «N historias»</span>
+					</div>
+				}
+			</div>
+		</aside>
+	</div>
+</main>
