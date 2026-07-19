@@ -19,7 +19,7 @@ const meta: Meta<StoryHeroHeaderComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Banda superior (hero) de la página de una historia. Usa la misma portada del cuento como fondo difuminado con una capa de opacidad y, en primer plano, presenta la portada nítida, los tags, el autor, el título y la colección/año de publicación originales.</p><p>Recibe el <code>Story</code> completo como único input; cuando no se provee, renderiza su propio estado de carga (skeleton).</p><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada en primer plano), <a href="./?path=/docs/componentes-v3-tagslist--docs" target="_top"><strong>TagsList</strong></a> (tags de la obra, variante <code>gray</code>) e <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor).</p></div>`,
+				component: `<div><p>Banda superior (hero) de la página de una historia. Usa la misma portada del cuento como fondo difuminado con una capa de opacidad y, en primer plano, presenta la portada nítida, los tags, el autor, el título y la colección/año de publicación originales.</p><p>El fondo no es otra imagen: es la misma <code>coverImage</code> pedida al CDN en una talla mayor (1920px de ancho) para cubrir el ancho completo del hero.</p><p>Recibe el <code>Story</code> completo como único input; cuando no se provee, renderiza su propio estado de carga (skeleton).</p><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada en primer plano), <a href="./?path=/docs/componentes-v3-tagslist--docs" target="_top"><strong>TagsList</strong></a> (tags de la obra, variante <code>gray</code>) e <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor).</p></div>`,
 			},
 		},
 		layout: 'fullscreen',
@@ -69,21 +69,6 @@ export const Default: Story = {
 		docs: {
 			description: {
 				story: 'Estado principal del hero con portada, tags, autor, título y publicación.',
-			},
-		},
-	},
-};
-
-export const SinGenero: Story = {
-	render: (args) => ({
-		props: args,
-		template: `<cuentoneta-story-hero-header ${argsToTemplate(args)} />`,
-	}),
-	args: { story: { ...palacioNueveFronterasStoryMock, tags: [] } },
-	parameters: {
-		docs: {
-			description: {
-				story: 'Cuando la historia no tiene tags, la lista de tags se omite y el resto del bloque se mantiene.',
 			},
 		},
 	},
