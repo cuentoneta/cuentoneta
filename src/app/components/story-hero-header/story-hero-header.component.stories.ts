@@ -19,7 +19,7 @@ const meta: Meta<StoryHeroHeaderComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Banda superior (hero) de la página de una historia. Usa la misma portada del cuento como fondo difuminado con una capa de opacidad y, en primer plano, presenta la portada nítida, el tipo literario, el autor, el título y la colección/año de publicación originales.</p><p>Recibe el <code>Story</code> completo como único input; cuando no se provee, renderiza su propio estado de carga (skeleton).</p><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada en primer plano), <a href="./?path=/docs/componentes-v3-tag--docs" target="_top"><strong>Tag</strong></a> (tipo literario, variante <code>gray</code>) e <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor).</p></div>`,
+				component: `<div><p>Banda superior (hero) de la página de una historia. Usa la misma portada del cuento como fondo difuminado con una capa de opacidad y, en primer plano, presenta la portada nítida, los tags, el autor, el título y la colección/año de publicación originales.</p><p>Recibe el <code>Story</code> completo como único input; cuando no se provee, renderiza su propio estado de carga (skeleton).</p><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada en primer plano), <a href="./?path=/docs/componentes-v3-tagslist--docs" target="_top"><strong>TagsList</strong></a> (tags de la obra, variante <code>gray</code>) e <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor).</p></div>`,
 			},
 		},
 		layout: 'fullscreen',
@@ -27,8 +27,7 @@ const meta: Meta<StoryHeroHeaderComponent> = {
 	argTypes: {
 		story: {
 			control: { type: 'object' },
-			description:
-				'Historia completa a partir de la cual se derivan portada, tipo literario, autor, título y publicación',
+			description: 'Historia completa a partir de la cual se derivan portada, tags, autor, título y publicación',
 			table: { type: { summary: 'Story' }, defaultValue: { summary: 'undefined' } },
 		},
 	},
@@ -69,7 +68,7 @@ export const Default: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Estado principal del hero con portada, tipo literario, autor, título y publicación.',
+				story: 'Estado principal del hero con portada, tags, autor, título y publicación.',
 			},
 		},
 	},
@@ -84,7 +83,7 @@ export const SinGenero: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Cuando la historia no tiene tags, el Tag de tipo literario se omite y el resto del bloque se mantiene.',
+				story: 'Cuando la historia no tiene tags, la lista de tags se omite y el resto del bloque se mantiene.',
 			},
 		},
 	},
