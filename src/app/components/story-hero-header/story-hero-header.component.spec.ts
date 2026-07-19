@@ -46,11 +46,6 @@ describe('StoryHeroHeaderComponent', () => {
 		}
 	});
 
-	it('should not render the tags list when the story has no tags', async () => {
-		await render(StoryHeroHeaderComponent, { inputs: { story: { ...story, tags: [] } } });
-		expect(screen.queryByTestId('tags')).not.toBeInTheDocument();
-	});
-
 	it('should render the foreground cover image when the story has a cover', async () => {
 		await render(StoryHeroHeaderComponent, { inputs: { story } });
 		expect(screen.getByTestId('cover-image')).toBeInTheDocument();

@@ -49,13 +49,11 @@ import { StoryHeroHeaderSkeletonComponent } from './story-hero-header-skeleton.c
 				<div class="mx-auto flex w-full max-w-180 items-center gap-8">
 					<cuentoneta-cover-image [src]="story.coverImage" [priority]="true" />
 					<div class="flex min-w-0 flex-col items-start gap-2.5">
-						@if (tags().length) {
-							<cuentoneta-tags-list data-testid="tags">
-								@for (tag of tags(); track tag.slug) {
-									<cuentoneta-tag [label]="tag.title" variant="gray" />
-								}
-							</cuentoneta-tags-list>
-						}
+						<cuentoneta-tags-list data-testid="tags">
+							@for (tag of story.tags; track tag.slug) {
+								<cuentoneta-tag [label]="tag.title" variant="gray" />
+							}
+						</cuentoneta-tags-list>
 						<a
 							[routerLink]="['/', appRoutes.Author, story.author.slug]"
 							class="group flex items-center gap-2"
@@ -83,9 +81,6 @@ export class StoryHeroHeaderComponent {
 
 	public readonly story = input<Story>();
 
-	protected readonly tags = computed(() => this.story()?.tags ?? []);
-
-	// La misma coverImage pedida al CDN en una talla mayor para el fondo full-bleed (no es otra imagen).
 	protected readonly backgroundImageUrl = computed(() =>
 		withSanityImageParams(this.story()?.coverImage ?? '', { w: 1920 }),
 	);
