@@ -8,6 +8,7 @@ export const AppRoutes = Object.freeze({
 	Authors: 'authors',
 	About: 'about',
 	Dmca: 'dmca',
+	Collection: 'collection',
 } as const);
 export type AppRoutes = (typeof AppRoutes)[keyof typeof AppRoutes];
 
