@@ -28,4 +28,10 @@ describe('CollectionComponent (blueprint)', () => {
 		await setup();
 		expect(screen.getByText(storylistMock.tags[0].title)).toBeInTheDocument();
 	});
+
+	it('should render the suggested collections list', async () => {
+		await setup();
+		expect(screen.getAllByTestId('suggested-collection')).toHaveLength(3);
+		expect(screen.getByText('El inventario de las pasiones')).toBeInTheDocument();
+	});
 });
