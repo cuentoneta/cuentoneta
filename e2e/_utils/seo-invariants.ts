@@ -17,7 +17,7 @@ import type { HTMLElement } from 'node-html-parser';
 import { validateJsonLd } from './json-ld-validation';
 import { parseHtml } from './seo';
 
-export interface Violation {
+export interface SeoInvariantViolation {
 	readonly rule: string;
 	readonly message: string;
 }
@@ -38,7 +38,7 @@ function normalizedText(element: HTMLElement | null): string {
 	return (element?.text ?? '').replace(/\s+/g, ' ').trim();
 }
 
-function ngServerContext(root: HTMLElement): Violation | null {
+function ngServerContext(root: HTMLElement): SeoInvariantViolation | null {
 	const actual = root.querySelector('cuentoneta-root')?.getAttribute('ng-server-context');
 	if (actual === 'ssr') {
 		return null;
@@ -49,7 +49,7 @@ function ngServerContext(root: HTMLElement): Violation | null {
 	};
 }
 
-function title(root: HTMLElement, pattern?: RegExp): Violation | null {
+function title(root: HTMLElement, pattern?: RegExp): SeoInvariantViolation | null {
 	const text = root.querySelector('head title')?.text?.trim();
 	if (!text) {
 		return { rule: 'title', message: 'El <title> está vacío o ausente.' };
@@ -60,7 +60,7 @@ function title(root: HTMLElement, pattern?: RegExp): Violation | null {
 	return null;
 }
 
-function canonical(root: HTMLElement, path: string): Violation | null {
+function canonical(root: HTMLElement, path: string): SeoInvariantViolation | null {
 	const href = root.querySelector('link[rel="canonical"]')?.getAttribute('href') ?? null;
 	if (href?.includes(path)) {
 		return null;
@@ -71,7 +71,7 @@ function canonical(root: HTMLElement, path: string): Violation | null {
 	};
 }
 
-function robotsIndexable(root: HTMLElement): Violation | null {
+function robotsIndexable(root: HTMLElement): SeoInvariantViolation | null {
 	const robots = root.querySelector('meta[name="robots"]')?.getAttribute('content') ?? null;
 	if (robots && !/noindex/i.test(robots) && /index/i.test(robots)) {
 		return null;
@@ -82,7 +82,7 @@ function robotsIndexable(root: HTMLElement): Violation | null {
 	};
 }
 
-function primaryHeading(root: HTMLElement, pattern?: RegExp): Violation | null {
+function primaryHeading(root: HTMLElement, pattern?: RegExp): SeoInvariantViolation | null {
 	const headings = (root.querySelector('main')?.querySelectorAll('h1') ?? [])
 		.map((h1) => h1.text.trim())
 		.filter((text) => text.length > 0);
@@ -105,7 +105,7 @@ function primaryContentLength(
 	// Umbral por defecto de texto en `<main>`: muy por debajo del contenido real de los fixtures (bio,
 	// cuerpo del cuento, ficha técnica) pero muy por encima del ruido de whitespace de un skeleton.
 	minLength: number = 120,
-): Violation | null {
+): SeoInvariantViolation | null {
 	const length = normalizedText(root.querySelector('main')).length;
 	if (length >= minLength) {
 		return null;
@@ -116,7 +116,7 @@ function primaryContentLength(
 	};
 }
 
-function noSkeletonMarkers(root: HTMLElement): Violation | null {
+function noSkeletonMarkers(root: HTMLElement): SeoInvariantViolation | null {
 	if (root.querySelector('main [data-testid="skeleton"]')) {
 		return {
 			rule: 'no-skeleton',
@@ -127,7 +127,7 @@ function noSkeletonMarkers(root: HTMLElement): Violation | null {
 	return null;
 }
 
-function internalLink(root: HTMLElement, prefix: string): Violation | null {
+function internalLink(root: HTMLElement, prefix: string): SeoInvariantViolation | null {
 	const anchors = root.querySelector('main')?.querySelectorAll('a') ?? [];
 	if (anchors.some((anchor) => anchor.getAttribute('href')?.startsWith(prefix))) {
 		return null;
@@ -138,7 +138,7 @@ function internalLink(root: HTMLElement, prefix: string): Violation | null {
 	};
 }
 
-async function jsonLdBlocks(root: HTMLElement, ids: readonly string[]): Promise<Violation[]> {
+async function jsonLdBlocks(root: HTMLElement, ids: readonly string[]): Promise<SeoInvariantViolation[]> {
 	const blocks = new Map<string, string>();
 	for (const script of root.querySelectorAll('script[data-schema-id]')) {
 		const id = script.getAttribute('data-schema-id');
@@ -152,7 +152,7 @@ async function jsonLdBlocks(root: HTMLElement, ids: readonly string[]): Promise<
 
 // Presencia + parseabilidad + validez estructural schema.org (via `validateJsonLd`): un bloque que
 // existe y parsea pero al que le falta `datePublished`/`author` o trae un `@type` roto ahora viola.
-async function validateBlock(id: string, raw: string | undefined): Promise<Violation[]> {
+async function validateBlock(id: string, raw: string | undefined): Promise<SeoInvariantViolation[]> {
 	if (raw === undefined) {
 		return [{ rule: 'json-ld', message: `Falta el bloque JSON-LD con data-schema-id="${id}".` }];
 	}
@@ -171,39 +171,39 @@ async function validateBlock(id: string, raw: string | undefined): Promise<Viola
 }
 
 // Wrappers públicos: toman `string` (para uso directo desde los specs) y parsean por cuenta propia.
-export function checkNgServerContext(html: string): Violation | null {
+export function checkNgServerContext(html: string): SeoInvariantViolation | null {
 	return ngServerContext(parseHtml(html));
 }
 
-export function checkTitle(html: string, pattern?: RegExp): Violation | null {
+export function checkTitle(html: string, pattern?: RegExp): SeoInvariantViolation | null {
 	return title(parseHtml(html), pattern);
 }
 
-export function checkCanonical(html: string, path: string): Violation | null {
+export function checkCanonical(html: string, path: string): SeoInvariantViolation | null {
 	return canonical(parseHtml(html), path);
 }
 
-export function checkRobotsIndexable(html: string): Violation | null {
+export function checkRobotsIndexable(html: string): SeoInvariantViolation | null {
 	return robotsIndexable(parseHtml(html));
 }
 
-export function checkPrimaryHeading(html: string, pattern?: RegExp): Violation | null {
+export function checkPrimaryHeading(html: string, pattern?: RegExp): SeoInvariantViolation | null {
 	return primaryHeading(parseHtml(html), pattern);
 }
 
-export function checkPrimaryContentLength(html: string, minLength?: number): Violation | null {
+export function checkPrimaryContentLength(html: string, minLength?: number): SeoInvariantViolation | null {
 	return primaryContentLength(parseHtml(html), minLength);
 }
 
-export function checkNoSkeletonMarkers(html: string): Violation | null {
+export function checkNoSkeletonMarkers(html: string): SeoInvariantViolation | null {
 	return noSkeletonMarkers(parseHtml(html));
 }
 
-export function checkInternalLink(html: string, prefix: string): Violation | null {
+export function checkInternalLink(html: string, prefix: string): SeoInvariantViolation | null {
 	return internalLink(parseHtml(html), prefix);
 }
 
-export function checkJsonLdBlocks(html: string, ids: readonly string[]): Promise<Violation[]> {
+export function checkJsonLdBlocks(html: string, ids: readonly string[]): Promise<SeoInvariantViolation[]> {
 	return jsonLdBlocks(parseHtml(html), ids);
 }
 
@@ -215,9 +215,9 @@ export function checkJsonLdBlocks(html: string, ids: readonly string[]): Promise
 export async function collectIndexableHtmlViolations(
 	html: string,
 	expectations: IndexableHtmlExpectations,
-): Promise<Violation[]> {
+): Promise<SeoInvariantViolation[]> {
 	const root = parseHtml(html);
-	const checks: (Violation | null)[] = [
+	const checks: (SeoInvariantViolation | null)[] = [
 		ngServerContext(root),
 		title(root, expectations.titlePattern),
 		canonical(root, expectations.canonicalContains ?? expectations.path),
@@ -228,7 +228,7 @@ export async function collectIndexableHtmlViolations(
 		expectations.requiredInternalLinkPrefix ? internalLink(root, expectations.requiredInternalLinkPrefix) : null,
 	];
 	return [
-		...checks.filter((violation): violation is Violation => violation !== null),
+		...checks.filter((violation): violation is SeoInvariantViolation => violation !== null),
 		...(await jsonLdBlocks(root, expectations.requiredJsonLdIds)),
 	];
 }

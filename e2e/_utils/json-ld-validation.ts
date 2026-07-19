@@ -14,7 +14,7 @@
 import * as jsonld from 'jsonld';
 import type { JsonLdDocument, NodeObject } from 'jsonld';
 
-import type { Violation } from './seo-invariants';
+import type { SeoInvariantViolation } from './seo-invariants';
 
 // Contexto local con `@vocab` schema.org: la expansión mapea cualquier término a un IRI schema.org
 // sin descargar el contexto real (los términos válidos ya los garantiza `schema-dts` en compile-time).
@@ -34,7 +34,7 @@ const REQUIRED_PROPERTIES: Record<string, readonly string[]> = {
 	ListItem: ['position', 'name'],
 };
 
-function violation(message: string): Violation {
+function violation(message: string): SeoInvariantViolation {
 	return { rule: 'json-ld', message };
 }
 
@@ -62,7 +62,7 @@ async function hermeticDocumentLoader(url: string): Promise<{ documentUrl: strin
 	);
 }
 
-async function expandViolations(schema: Record<string, unknown>): Promise<Violation[]> {
+async function expandViolations(schema: Record<string, unknown>): Promise<SeoInvariantViolation[]> {
 	try {
 		const expanded = await jsonld.expand(schema as JsonLdDocument, { documentLoader: hermeticDocumentLoader });
 		return expanded.length === 0
@@ -76,7 +76,7 @@ async function expandViolations(schema: Record<string, unknown>): Promise<Violat
 // Recorre un nodo (y sus hijos) exigiendo las propiedades de su `@type`. Los records sin `@type` pero
 // con `@id` son referencias por IRI válidas (p. ej. `ListItem.item`) y se omiten; el resto sin `@type`
 // se reporta. Los `@type` fuera del registro (typos, tipos no soportados) también se reportan.
-function validateNode(node: unknown, path: string): Violation[] {
+function validateNode(node: unknown, path: string): SeoInvariantViolation[] {
 	if (Array.isArray(node)) {
 		return node.flatMap((item, index) => validateNode(item, `${path}[${index}]`));
 	}
@@ -99,7 +99,7 @@ function requiredViolations(
 	type: string,
 	required: readonly string[],
 	path: string,
-): Violation[] {
+): SeoInvariantViolation[] {
 	const missing = required
 		.filter((property) => isEmpty(node[property]))
 		.map((property) => violation(`${path} (${type}): falta la propiedad requerida "${property}".`));
@@ -110,7 +110,7 @@ function requiredViolations(
 	return missing;
 }
 
-function childrenViolations(node: Record<string, unknown>, path: string): Violation[] {
+function childrenViolations(node: Record<string, unknown>, path: string): SeoInvariantViolation[] {
 	return Object.entries(node)
 		.filter(([key]) => !key.startsWith('@'))
 		.flatMap(([key, value]) => validateNode(value, `${path}.${key}`));
@@ -120,11 +120,11 @@ function childrenViolations(node: Record<string, unknown>, path: string): Violat
  * Devuelve todas las violaciones estructurales de un bloque JSON-LD ya parseado: `@context`
  * schema.org, coherencia por `jsonld.expand` y propiedades requeridas por tipo (recursivo).
  */
-export async function validateJsonLd(schema: unknown): Promise<Violation[]> {
+export async function validateJsonLd(schema: unknown): Promise<SeoInvariantViolation[]> {
 	if (!isRecord(schema)) {
 		return [violation('El bloque JSON-LD no es un objeto.')];
 	}
-	const violations: Violation[] = [];
+	const violations: SeoInvariantViolation[] = [];
 	if (schema['@context'] !== 'https://schema.org') {
 		violations.push(
 			violation(

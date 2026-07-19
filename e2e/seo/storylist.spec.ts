@@ -26,7 +26,7 @@ import {
 	checkPrimaryContentLength,
 	checkJsonLdBlocks,
 	collectIndexableHtmlViolations,
-	type Violation,
+	type SeoInvariantViolation,
 } from '../_utils/seo-invariants';
 import { STABLE_SLUGS, SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
 
@@ -77,14 +77,14 @@ test('storylist — C: bloques sitewide Organization y WebSite presentes', async
 });
 
 test('storylist — invariantes de indexado disponibles hoy (ssr, title, canonical, robots, contenido primario, jsonld)', async () => {
-	const violations: Violation[] = [
+	const violations: SeoInvariantViolation[] = [
 		checkNgServerContext(html),
 		checkTitle(html),
 		checkCanonical(html, storylistPath),
 		checkRobotsIndexable(html),
 		checkPrimaryContentLength(html),
 		...(await checkJsonLdBlocks(html, [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.collection, SCHEMA_IDS.breadcrumbStorylist])),
-	].filter((violation): violation is Violation => violation !== null);
+	].filter((violation): violation is SeoInvariantViolation => violation !== null);
 	expect(violations).toEqual([]);
 });
 

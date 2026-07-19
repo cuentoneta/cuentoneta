@@ -23,7 +23,7 @@ import {
 	checkPrimaryContentLength,
 	checkNoSkeletonMarkers,
 	checkJsonLdBlocks,
-	type Violation,
+	type SeoInvariantViolation,
 } from '../_utils/seo-invariants';
 import { SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
 
@@ -59,14 +59,14 @@ test('home — B/C: bloques JSON-LD sitewide Organization y WebSite', async () =
 
 test('home — invariantes de indexado para crawlers (ssr, h1 real, contenido primario, jsonld sitewide)', async () => {
 	// La canónica de home apunta a la raíz del sitio (no a /home); su presencia la cubre el test A.
-	const violations: Violation[] = [
+	const violations: SeoInvariantViolation[] = [
 		checkNgServerContext(html),
 		checkTitle(html, /La Cuentoneta/),
 		checkRobotsIndexable(html),
 		checkPrimaryHeading(html),
 		checkPrimaryContentLength(html),
 		...(await checkJsonLdBlocks(html, SITEWIDE_SCHEMA_IDS)),
-	].filter((violation): violation is Violation => violation !== null);
+	].filter((violation): violation is SeoInvariantViolation => violation !== null);
 	expect(violations).toEqual([]);
 });
 
