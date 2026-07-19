@@ -11,6 +11,7 @@ import { visionTool } from '@sanity/vision';
 import { sanityComputedField } from 'sanity-plugin-computed-field';
 import { iconPicker } from 'sanity-plugin-icon-picker';
 import { singletonTools } from 'sanity-plugin-singleton-management';
+import { markdownSchema } from 'sanity-plugin-markdown';
 
 export default defineConfig([
 	{
@@ -29,6 +30,7 @@ export default defineConfig([
 			}),
 			sanityComputedField(),
 			visionTool(),
+			markdownSchema(),
 			iconPicker(),
 			singletonTools(),
 		],
@@ -52,6 +54,7 @@ export default defineConfig([
 			}),
 			sanityComputedField(),
 			visionTool(),
+			markdownSchema(),
 			iconPicker(),
 			singletonTools(),
 		],
@@ -74,6 +77,7 @@ export default defineConfig([
 			}),
 			sanityComputedField(),
 			visionTool(),
+			markdownSchema(),
 			iconPicker(),
 		],
 		schema: {

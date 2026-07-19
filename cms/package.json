@@ -33,6 +33,7 @@
 		"sanity-plugin-bulk-actions-table": "^1.0.4",
 		"sanity-plugin-computed-field": "^2.0.2",
 		"sanity-plugin-icon-picker": "^4.0.0",
+		"sanity-plugin-markdown": "^9.0.6",
 		"sanity-plugin-singleton-management": "^1.0.7",
 		"styled-components": "^6.4.3"
 	},

@@ -7,6 +7,7 @@ import blockContent from './blockContent';
 import nationality from './nationality';
 import landingPage from './landingPage';
 import story from './story';
+import literaryWork from './literaryWork';
 import storylist from './storylist';
 import tag from './tag';
 import { resourceType, resource } from './resourceType';
@@ -24,6 +25,7 @@ export default [
 	contentCampaign,
 	storylist,
 	story,
+	literaryWork,
 	author,
 	nationality,
 	resourceType,
