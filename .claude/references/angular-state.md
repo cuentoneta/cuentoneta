@@ -170,7 +170,7 @@ Cada componente de página compone su SEO en el campo **`hostDirectives`** del d
 
 Una página indexable **nunca** debe usar la forma no indexable: quedaría sin structured data y sin `setRobots('index...')` de forma silenciosa.
 
-**Enforced por test:** el gate `test` corre `src/app/pages/seo-host-directives.spec.ts` (#1726), que cruza `app.routes.server.ts` (RenderMode) × `app.routes.ts` (ruta→componente) × el fuente del componente (`hostDirectives`) y exige que toda ruta `Server`/`Prerender` esté clasificada en `PAGE_SEO_REGISTRY`: las `indexable: true` deben declarar el combo MetaTags + StructuredData; las `indexable: false`, el opt-out `HeadMetadataDirective` + `setRobots('noindex...')`. Una ruta nueva sin entrada en el registro **rompe el test** — no se puede agregar una página indexable sin decidir explícitamente su SEO.
+**Enforced por test:** el gate `test` corre `src/app/pages/seo-host-directives.spec.ts` (#1726), que descubre las páginas desde `app.routes.server.ts` (rutas `Server`/`Prerender`) resolviendo su fuente vía el `loadComponent` de `app.routes.ts`, y deriva la indexabilidad del propio código: una página que llama `setRobots('noindex...')` solo debe declarar `[HeadMetadataDirective]`; cualquier otra se considera indexable y debe declarar el combo MetaTags + StructuredData. No hay registro que mantener ni imports de componentes: una página nueva se chequea automáticamente y **rompe el test** si es indexable sin structured data (para saltearse el combo hay que emitir un `noindex` real, visible en el diff).
 
 ---
 
@@ -184,7 +184,7 @@ Una página indexable **nunca** debe usar la forma no indexable: quedaría sin s
 - [ ] ¿El debounce/throttle/coordinación está en el servicio, no en el componente?
 - [ ] ¿Los errores están tipados por operación, no en un `string | null` global?
 - [ ] ¿Los recursos de página que alimentan contenido/meta indexable usan `ssrBlockingRxResource`, y los secundarios/`noindex` usan `progressiveRxResource` (nunca `rxResource` crudo en `pages/**`)?
-- [ ] ¿La página declara sus `hostDirectives` de SEO según su indexabilidad (indexable: MetaTags + StructuredData; no indexable/`noindex`: HeadMetadataDirective + `setRobots('noindex...')`) y su ruta está registrada en `seo-host-directives.spec.ts`?
+- [ ] ¿La página declara sus `hostDirectives` de SEO según su indexabilidad (indexable: MetaTags + StructuredData; no indexable/`noindex`: HeadMetadataDirective + `setRobots('noindex...')`)? Lo verifica automáticamente `seo-host-directives.spec.ts`.
 
 ---
 

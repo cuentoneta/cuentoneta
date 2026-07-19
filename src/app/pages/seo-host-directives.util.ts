@@ -28,29 +28,26 @@ export function extractRobotsLiteral(source: string): string | undefined {
 }
 
 /**
- * Lista los incumplimientos de la convención de SEO de una página según su indexabilidad (vacío = conforme).
- * Es la lógica de detección del guardrail, separada del spec para poder cubrir el camino de fallo con fixtures.
- * - Indexable: exige una `<Page>MetaTagsDirective` y una `<Page>StructuredDataDirective` en `hostDirectives`.
- * - No indexable: exige `hostDirectives` exactamente `[HeadMetadataDirective]` y un `setRobots('noindex...')`.
+ * Lista los incumplimientos de la convención de SEO de una página (vacío = conforme). La indexabilidad se
+ * deriva del propio código: una página que llama `setRobots('noindex...')` es un opt-out y solo debe declarar
+ * `[HeadMetadataDirective]`; cualquier otra se considera indexable y debe declarar una `<Page>MetaTagsDirective`
+ * y una `<Page>StructuredDataDirective`.
  */
-export function collectSeoViolations(indexable: boolean, source: string): string[] {
+export function collectSeoViolations(source: string): string[] {
 	const hostDirectives = extractHostDirectiveNames(source);
 	const declared = `hostDirectives: [${hostDirectives.join(', ')}]`;
 	const violations: string[] = [];
-	if (indexable) {
-		if (!hostDirectives.some((name) => /MetaTagsDirective$/.test(name))) {
-			violations.push(`falta una <Page>MetaTagsDirective (${declared})`);
-		}
-		if (!hostDirectives.some((name) => /StructuredDataDirective$/.test(name))) {
-			violations.push(`falta una <Page>StructuredDataDirective (${declared})`);
+	if (extractRobotsLiteral(source)?.includes('noindex')) {
+		if (hostDirectives.length !== 1 || hostDirectives[0] !== 'HeadMetadataDirective') {
+			violations.push(`página noindex: se espera hostDirectives: [HeadMetadataDirective], hay ${declared}`);
 		}
 		return violations;
 	}
-	if (hostDirectives.length !== 1 || hostDirectives[0] !== 'HeadMetadataDirective') {
-		violations.push(`se espera hostDirectives: [HeadMetadataDirective], hay [${hostDirectives.join(', ')}]`);
+	if (!hostDirectives.some((name) => /MetaTagsDirective$/.test(name))) {
+		violations.push(`página indexable: falta una <Page>MetaTagsDirective (${declared})`);
 	}
-	if (!extractRobotsLiteral(source)?.includes('noindex')) {
-		violations.push(`falta setRobots('noindex...') — el opt-out de indexación no está wireado en el código`);
+	if (!hostDirectives.some((name) => /StructuredDataDirective$/.test(name))) {
+		violations.push(`página indexable: falta una <Page>StructuredDataDirective (${declared})`);
 	}
 	return violations;
 }
