@@ -11,7 +11,10 @@
  * Framework-agnóstico (solo `jsonld`): reutilizable desde los specs unit (Vitest), los e2e
  * (Playwright) y el core de invariantes SSR (`seo-invariants.ts`).
  */
-import * as jsonld from 'jsonld';
+// Default import (no `import * as`): bajo el bundler de Playwright (esbuild `__toESM`) el namespace de
+// este módulo CJS pierde los métodos no enumerables (`jsonld.expand is not a function`); el default
+// resuelve al objeto real. Funciona igual en Vitest y tsx.
+import jsonld from 'jsonld';
 import type { JsonLdDocument, NodeObject } from 'jsonld';
 
 import type { SeoInvariantViolation } from './seo-invariant-violation';
@@ -23,8 +26,10 @@ const SCHEMA_ORG_VOCAB_CONTEXT: NodeObject = { '@context': { '@vocab': 'https://
 // Propiedades que cada `@type` que emitimos debe llevar. schema.org no las marca requeridas, pero su
 // ausencia degrada el rich result / la respuesta del answer engine, así que acá sí son obligatorias.
 const REQUIRED_PROPERTIES: Record<string, readonly string[]> = {
-	Organization: ['name', 'url'],
-	WebSite: ['name', 'url'],
+	// Organization/WebSite no exigen `url`: es la raíz del sitio (= base URL), que en builds con base
+	// relativa (el e2e sirve con `website` = '/') queda vacía. `name` sí es una señal siempre presente.
+	Organization: ['name'],
+	WebSite: ['name'],
 	Person: ['name'],
 	Article: ['headline', 'datePublished', 'author', 'publisher'],
 	ProfilePage: ['mainEntity'],
