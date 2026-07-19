@@ -6,7 +6,7 @@ import { RenderMode } from '@angular/ssr';
 
 import { appRoutes } from '../app.routes';
 import { serverRoutes } from '../app.routes.server';
-import { extractHostDirectiveNames, extractRobotsLiteral } from './seo-host-directives.util';
+import { collectSeoViolations } from './seo-host-directives.util';
 
 import HomeComponent from './home/home.component';
 import AuthorComponent from './author/author.component';
@@ -24,8 +24,7 @@ import DmcaComponent from './dmca/dmca.component';
 
 type PageSeoEntry = Readonly<{ component: Type<unknown>; sourceFile: string; indexable: boolean }>;
 
-// Clasificación explícita de cada página. `indexable: true` exige el combo MetaTags + StructuredData;
-// `indexable: false` exige el opt-out HeadMetadataDirective + setRobots('noindex...').
+// Clasificación explícita de cada página como indexable o no (ver angular-state.md §8).
 const PAGE_SEO_REGISTRY: readonly PageSeoEntry[] = [
 	{ component: HomeComponent, sourceFile: 'home/home.component.ts', indexable: true },
 	{ component: AuthorComponent, sourceFile: 'author/author.component.ts', indexable: true },
@@ -75,32 +74,12 @@ describe('SEO host directives guardrail', () => {
 	});
 
 	describe.each(PAGE_SEO_REGISTRY)('$sourceFile', (entry) => {
-		const source = readPageSource(entry.sourceFile);
-		const hostDirectives = extractHostDirectiveNames(source);
-
-		if (entry.indexable) {
-			it('should declare a MetaTags + StructuredData host directive combo', () => {
-				const detail = `${entry.component.name} es indexable pero hostDirectives = [${hostDirectives.join(', ')}]`;
-				expect(
-					hostDirectives.some((name) => /MetaTagsDirective$/.test(name)),
-					`${detail}: falta una <Page>MetaTagsDirective`,
-				).toBe(true);
-				expect(
-					hostDirectives.some((name) => /StructuredDataDirective$/.test(name)),
-					`${detail}: falta una <Page>StructuredDataDirective`,
-				).toBe(true);
-			});
-		} else {
-			it('should opt out of indexing with HeadMetadataDirective + setRobots(noindex)', () => {
-				expect(
-					hostDirectives,
-					`${entry.component.name} está registrado indexable: false pero hostDirectives = [${hostDirectives.join(', ')}]`,
-				).toEqual(['HeadMetadataDirective']);
-				expect(
-					extractRobotsLiteral(source),
-					`${entry.component.name} está registrado indexable: false pero no llama setRobots('noindex...') — el opt-out no está wireado en el código`,
-				).toContain('noindex');
-			});
-		}
+		it('should comply with the SEO host-directive convention for its indexability', () => {
+			const violations = collectSeoViolations(entry.indexable, readPageSource(entry.sourceFile));
+			expect(
+				violations,
+				`${entry.component.name} (indexable: ${entry.indexable}) incumple la convención de SEO: ${violations.join('; ')}`,
+			).toEqual([]);
+		});
 	});
 });

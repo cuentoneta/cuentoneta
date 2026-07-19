@@ -26,3 +26,31 @@ export function extractRobotsLiteral(source: string): string | undefined {
 	const match = source.match(/setRobots\(\s*['"]([^'"]*)['"]/);
 	return match ? match[1] : undefined;
 }
+
+/**
+ * Lista los incumplimientos de la convención de SEO de una página según su indexabilidad (vacío = conforme).
+ * Es la lógica de detección del guardrail, separada del spec para poder cubrir el camino de fallo con fixtures.
+ * - Indexable: exige una `<Page>MetaTagsDirective` y una `<Page>StructuredDataDirective` en `hostDirectives`.
+ * - No indexable: exige `hostDirectives` exactamente `[HeadMetadataDirective]` y un `setRobots('noindex...')`.
+ */
+export function collectSeoViolations(indexable: boolean, source: string): string[] {
+	const hostDirectives = extractHostDirectiveNames(source);
+	const declared = `hostDirectives: [${hostDirectives.join(', ')}]`;
+	const violations: string[] = [];
+	if (indexable) {
+		if (!hostDirectives.some((name) => /MetaTagsDirective$/.test(name))) {
+			violations.push(`falta una <Page>MetaTagsDirective (${declared})`);
+		}
+		if (!hostDirectives.some((name) => /StructuredDataDirective$/.test(name))) {
+			violations.push(`falta una <Page>StructuredDataDirective (${declared})`);
+		}
+		return violations;
+	}
+	if (hostDirectives.length !== 1 || hostDirectives[0] !== 'HeadMetadataDirective') {
+		violations.push(`se espera hostDirectives: [HeadMetadataDirective], hay [${hostDirectives.join(', ')}]`);
+	}
+	if (!extractRobotsLiteral(source)?.includes('noindex')) {
+		violations.push(`falta setRobots('noindex...') — el opt-out de indexación no está wireado en el código`);
+	}
+	return violations;
+}

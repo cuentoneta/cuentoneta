@@ -1,4 +1,4 @@
-import { extractHostDirectiveNames, extractRobotsLiteral } from './seo-host-directives.util';
+import { collectSeoViolations, extractHostDirectiveNames, extractRobotsLiteral } from './seo-host-directives.util';
 
 describe('seo-host-directives.util', () => {
 	describe('extractHostDirectiveNames', () => {
@@ -49,6 +49,50 @@ describe('seo-host-directives.util', () => {
 
 		it('should return undefined when there is no setRobots call', () => {
 			expect(extractRobotsLiteral(`hostDirectives: [HomeMetaTagsDirective]`)).toBeUndefined();
+		});
+	});
+
+	describe('collectSeoViolations', () => {
+		const indexableSource = `hostDirectives: [HomeMetaTagsDirective, HomeStructuredDataDirective],`;
+		const noindexSource = `hostDirectives: [HeadMetadataDirective],\nsetRobots('noindex, follow');`;
+
+		it('should report no violations for a conformant indexable page', () => {
+			expect(collectSeoViolations(true, indexableSource)).toEqual([]);
+		});
+
+		it('should report no violations for a conformant noindex page', () => {
+			expect(collectSeoViolations(false, noindexSource)).toEqual([]);
+		});
+
+		it('should flag an indexable page missing the StructuredData directive', () => {
+			const violations = collectSeoViolations(true, `hostDirectives: [HomeMetaTagsDirective],`);
+			expect(violations).toHaveLength(1);
+			expect(violations[0]).toContain('StructuredDataDirective');
+		});
+
+		it('should flag an indexable page missing both SEO directives', () => {
+			expect(collectSeoViolations(true, `hostDirectives: [HeadMetadataDirective],`)).toHaveLength(2);
+		});
+
+		it('should flag a noindex page that declares the indexable combo', () => {
+			const violations = collectSeoViolations(false, indexableSource);
+			expect(violations.some((v) => v.includes('HeadMetadataDirective'))).toBe(true);
+			expect(violations.some((v) => v.includes('setRobots'))).toBe(true);
+		});
+
+		it('should flag a noindex page with an extra host directive', () => {
+			const violations = collectSeoViolations(
+				false,
+				`hostDirectives: [HeadMetadataDirective, FooDirective],\nsetRobots('noindex, follow');`,
+			);
+			expect(violations).toHaveLength(1);
+			expect(violations[0]).toContain('HeadMetadataDirective');
+		});
+
+		it('should flag a noindex page that never calls setRobots(noindex)', () => {
+			const violations = collectSeoViolations(false, `hostDirectives: [HeadMetadataDirective],`);
+			expect(violations).toHaveLength(1);
+			expect(violations[0]).toContain('setRobots');
 		});
 	});
 });
