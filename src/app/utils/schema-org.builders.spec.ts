@@ -1,6 +1,6 @@
 import { authorMock } from '@mocks/author.mock';
 
-import { assertValidJsonLd } from '../../../e2e/_utils/json-ld-validation';
+import { assertValidJsonLd } from '@seo-invariants/json-ld-validation';
 import { buildBreadcrumbSchema, buildPersonSchema } from './schema-org.builders';
 
 describe('buildPersonSchema', () => {

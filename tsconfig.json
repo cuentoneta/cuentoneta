@@ -10,7 +10,8 @@
 			"@mocks/*": ["./src/app/mocks/*"],
 			"@models/*": ["./src/app/models/*"],
 			"@utils/*": ["./src/app/utils/*"],
-			"@test-utils": ["./src/test-utils.ts"]
+			"@test-utils": ["./src/test-utils.ts"],
+			"@seo-invariants/*": ["./e2e/_utils/*"]
 		},
 		"isolatedModules": true,
 		"skipLibCheck": true,
