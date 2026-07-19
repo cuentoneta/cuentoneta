@@ -1,9 +1,6 @@
 import { DOCUMENT, Injectable, inject } from '@angular/core';
 import { type Thing, type WithContext } from 'schema-dts';
 
-/** Bloque JSON-LD top-level de schema.org (lleva `@context`), tipado por `schema-dts`. */
-export type JsonLdSchema = WithContext<Thing>;
-
 /**
  * Gestiona los bloques `<script type="application/ld+json">` del `<head>`.
  *
@@ -16,7 +13,7 @@ export class SchemaOrgService {
 	private readonly document = inject(DOCUMENT);
 
 	/** Inserta o reemplaza (idempotente por `id`) un bloque JSON-LD sitewide, que persiste entre rutas. */
-	public setJsonLd(id: string, schema: JsonLdSchema): void {
+	public setJsonLd(id: string, schema: WithContext<Thing>): void {
 		this.writeScript(id, schema, 'sitewide');
 	}
 
@@ -25,7 +22,7 @@ export class SchemaOrgService {
 	 * El marcador permite que `removePageScopedJsonLd()` limpie todos los bloques de página al cambiar
 	 * de ruta sin mantener a mano una lista de ids.
 	 */
-	public setPageScopedJsonLd(id: string, schema: JsonLdSchema): void {
+	public setPageScopedJsonLd(id: string, schema: WithContext<Thing>): void {
 		this.writeScript(id, schema, 'page');
 	}
 
@@ -43,7 +40,7 @@ export class SchemaOrgService {
 		this.document.head.querySelectorAll('script[data-schema-scope="page"]').forEach((script) => script.remove());
 	}
 
-	private writeScript(id: string, schema: JsonLdSchema, scope: 'sitewide' | 'page'): void {
+	private writeScript(id: string, schema: WithContext<Thing>, scope: 'sitewide' | 'page'): void {
 		const script = this.resolveScript(id);
 		script.setAttribute('data-schema-scope', scope);
 		script.textContent = JSON.stringify(schema);
