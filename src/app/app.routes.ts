@@ -47,6 +47,10 @@ export const appRoutes: Routes = [
 		loadComponent: () => import('./pages/read/read.page'),
 	},
 	{
+		path: `${AppRoutes.Collection}/:slug`,
+		loadComponent: () => import('./pages/collection/collection.component'),
+	},
+	{
 		path: AppRoutes.About,
 		loadComponent: () => import('./pages/about/about.component'),
 	},
