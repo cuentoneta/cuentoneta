@@ -23,7 +23,7 @@ import { TagComponent } from '../tag/tag.component';
 			<div class="flex min-w-0 flex-1 flex-col gap-1">
 				<!-- Enlace real (nombre de la colección) estirado con ::after para cubrir toda la tarjeta. -->
 				<a
-					[routerLink]="['/', appRoutes.StoryList, collection().slug]"
+					[routerLink]="['/', appRoutes.Collection, collection().slug]"
 					class="min-w-0 after:absolute after:inset-0 after:content-['']"
 					data-testid="collection-link"
 				>

@@ -39,6 +39,6 @@ describe('NavigableCollectionTeaserComponent', () => {
 		// El ícono es decorativo (alt vacío) y el enlace envuelve solo el título, así que el nombre accesible
 		// del link es el título de la colección.
 		const link = screen.getByRole('link', { name: collection.title });
-		expect(link).toHaveAttribute('href', expect.stringContaining(`/storylist/${collection.slug}`));
+		expect(link).toHaveAttribute('href', expect.stringContaining(`/collection/${collection.slug}`));
 	});
 });
