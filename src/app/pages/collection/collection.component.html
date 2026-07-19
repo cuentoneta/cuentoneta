@@ -63,18 +63,14 @@
 			</div>
 
 			<div class="flex flex-col gap-4">
-				<div
-					class="flex h-8 items-center rounded-md border border-dashed border-neutral-300 bg-neutral-50 px-3 text-sm text-neutral-500"
-				>
-					«Otras colecciones sugeridas» (h2)
-				</div>
+				<h2 class="font-inter text-base leading-6 font-bold text-neutral-900">Otras colecciones sugeridas</h2>
 
 				@for (index of [1, 2, 3]; track index) {
 					<div
 						class="flex items-center gap-3 rounded-lg border border-dashed border-brand-300 bg-neutral-50 p-3 text-sm text-neutral-500"
 					>
 						<div class="size-10 shrink-0 rounded-full border border-dashed border-brand-300 bg-brand-100"></div>
-						<span>CollectionCard <strong>(componente nuevo)</strong> · nombre · tag · «N historias»</span>
+						<span>NavigableCollectionTeaser <strong>(componente nuevo)</strong> · nombre · tag · «N historias»</span>
 					</div>
 				}
 			</div>

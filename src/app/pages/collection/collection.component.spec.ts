@@ -8,8 +8,8 @@ describe('CollectionComponent (blueprint)', () => {
 		expect(screen.getByText('/collection/miscelaneas-tertulianas')).toBeInTheDocument();
 	});
 
-	it('should render the suggested-collections section', async () => {
+	it('should render the static suggested-collections heading', async () => {
 		await render(CollectionComponent, { inputs: { slug: 'x' } });
-		expect(screen.getByText(/Otras colecciones sugeridas/)).toBeInTheDocument();
+		expect(screen.getByRole('heading', { name: 'Otras colecciones sugeridas' })).toBeInTheDocument();
 	});
 });
