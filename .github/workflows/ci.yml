@@ -256,12 +256,14 @@ jobs:
             nx-cache-e2e-
 
       # El webServer de Playwright levanta el build SSR de producción (fidelidad con el crawler), así
-      # que hay que compilarlo acá. Mismas env vars que el job `build`.
+      # que hay que compilarlo acá. Los e2e corren contra `staging` (espejo de producción, aislado del
+      # `development` compartido que los devs mutan) para reducir la fragilidad por curación de contenido
+      # (#1722); en local se usa `development` (default del .env). staging es público → no requiere token.
       - name: Build de producción para e2e (SSR real)
         run: bash .github/scripts/nx-run.sh nx run @cuentoneta/app:build:production
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-          SANITY_STUDIO_DATASET: ${{ secrets.SANITY_STUDIO_DATASET || 'development' }}
+          SANITY_STUDIO_DATASET: staging
           SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
           SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_STUDIO_TOKEN }}
           CLARITY_TOKEN: ${{ secrets.CLARITY_TOKEN }}
@@ -275,10 +277,15 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
+      # El webServer SSR resuelve el dataset en runtime (environment.ts lee process.env), no en build:
+      # se fija acá `staging` para que sea el dataset que ve el crawler. Gana sobre el `development` del
+      # .env porque process.loadEnvFile() no pisa variables ya presentes en el entorno.
       - name: Run Tests
         run: bash .github/scripts/nx-run.sh nx run @cuentoneta/app:e2e
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+          SANITY_STUDIO_DATASET: staging
+          SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v7
