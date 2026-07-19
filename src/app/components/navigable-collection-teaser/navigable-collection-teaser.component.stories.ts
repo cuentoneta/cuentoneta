@@ -61,7 +61,7 @@ export const SinCategoria: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Colección sin categoría asignada: se omiten el tag y el separador, y queda solo la cantidad de historias.</p>`,
+				story: `<p>Colección sin categoría asignada: se omiten el tag y el separador, y queda solo la cantidad de historias.</p><p><strong>Usos:</strong> «Otras colecciones sugeridas», para colecciones que todavía no tienen una categoría cargada en el CMS.</p>`,
 			},
 		},
 	},
@@ -80,7 +80,7 @@ export const TituloLargo: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Colección con título extenso en un contenedor acotado de 320px: el nombre se recorta a una línea con puntos suspensivos.</p>`,
+				story: `<p>Colección con título extenso en un contenedor acotado de 320px: el nombre se recorta a una línea con puntos suspensivos.</p><p><strong>Usos:</strong> el sidebar de la CollectionPage en columnas o viewports angostos, donde el nombre no entra completo.</p>`,
 			},
 		},
 	},
