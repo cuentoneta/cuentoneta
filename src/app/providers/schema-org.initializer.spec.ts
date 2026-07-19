@@ -1,6 +1,7 @@
 import { DOCUMENT } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
+import { assertValidJsonLd } from '../../../e2e/_utils/json-ld-validation';
 import { applySiteSchema, buildOrganizationSchema, buildWebSiteSchema } from './schema-org.initializer';
 import { SchemaOrgService } from './schema-org.service';
 
@@ -30,6 +31,10 @@ describe('schema-org builders', () => {
 				],
 			});
 		});
+
+		it('should build a schema.org-valid Organization', async () => {
+			await expect(assertValidJsonLd(buildOrganizationSchema(websiteUrl))).resolves.toBeUndefined();
+		});
 	});
 
 	describe('buildWebSiteSchema', () => {
@@ -41,6 +46,10 @@ describe('schema-org builders', () => {
 				url: 'https://www.cuentoneta.ar',
 				inLanguage: 'es-AR',
 			});
+		});
+
+		it('should build a schema.org-valid WebSite', async () => {
+			await expect(assertValidJsonLd(buildWebSiteSchema(websiteUrl))).resolves.toBeUndefined();
 		});
 	});
 });

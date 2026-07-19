@@ -14,6 +14,7 @@
 import { test, expect } from '@playwright/test';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
+import { assertValidJsonLd } from '../_utils/json-ld-validation';
 import {
 	checkNgServerContext,
 	checkTitle,
@@ -48,13 +49,11 @@ test('home — B/C: bloques JSON-LD sitewide Organization y WebSite', async () =
 	const blocks = parseJsonLdBlocks(html);
 
 	const organization = blocks.get(SCHEMA_IDS.organization);
-	expect(organization?.['@context']).toBe('https://schema.org');
-	expect(organization?.['@type']).toBe('Organization');
+	await assertValidJsonLd(organization);
 	expect(organization?.['name']).toBe('La Cuentoneta');
 
 	const website = blocks.get(SCHEMA_IDS.website);
-	expect(website?.['@context']).toBe('https://schema.org');
-	expect(website?.['@type']).toBe('WebSite');
+	await assertValidJsonLd(website);
 	expect(website?.['name']).toBe('La Cuentoneta');
 });
 

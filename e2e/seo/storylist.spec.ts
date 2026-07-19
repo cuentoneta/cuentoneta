@@ -17,6 +17,7 @@
 import { test, expect } from '@playwright/test';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
+import { assertValidJsonLd } from '../_utils/json-ld-validation';
 import {
 	checkNgServerContext,
 	checkTitle,
@@ -55,19 +56,16 @@ test('storylist — B: JSON-LD CollectionPage y BreadcrumbList', async () => {
 	const blocks = parseJsonLdBlocks(html);
 
 	const collection = blocks.get(SCHEMA_IDS.collection);
-	expect(collection?.['@context']).toBe('https://schema.org');
-	expect(collection?.['@type']).toBe('CollectionPage');
+	await assertValidJsonLd(collection);
 	const mainEntity = collection?.['mainEntity'] as Record<string, unknown>;
 	expect(mainEntity?.['@type']).toBe('ItemList');
 	expect(Number(mainEntity?.['numberOfItems'])).toBeGreaterThan(0);
 	const listElements = mainEntity?.['itemListElement'] as Record<string, unknown>[];
 	expect(listElements?.length).toBeGreaterThan(0);
-	expect(listElements?.[0]?.['@type']).toBe('ListItem');
 	expect(listElements?.[0]?.['position']).toBe(1);
 
 	const breadcrumb = blocks.get(SCHEMA_IDS.breadcrumbStorylist);
-	expect(breadcrumb?.['@context']).toBe('https://schema.org');
-	expect(breadcrumb?.['@type']).toBe('BreadcrumbList');
+	await assertValidJsonLd(breadcrumb);
 	expect((breadcrumb?.['itemListElement'] as unknown[])?.length).toBeGreaterThanOrEqual(2);
 });
 

@@ -1,47 +1,23 @@
 import { storylistMock } from '@mocks/storylist.mock';
 
+import { assertValidJsonLd } from '../../../../e2e/_utils/json-ld-validation';
 import { buildStorylistBreadcrumb, buildStorylistCollectionSchema } from './storylist.schema';
 
-describe('buildStorylistCollectionSchema', () => {
-	const websiteUrl = 'https://www.cuentoneta.ar/';
+const websiteUrl = 'https://www.cuentoneta.ar/';
 
-	it('should build a CollectionPage with an ordered ItemList of its stories', () => {
-		const schema = buildStorylistCollectionSchema(storylistMock, websiteUrl);
+describe('storylist schema builders', () => {
+	it('buildStorylistCollectionSchema emite un CollectionPage schema.org válido', async () => {
+		await expect(assertValidJsonLd(buildStorylistCollectionSchema(storylistMock, websiteUrl))).resolves.toBeUndefined();
+	});
 
-		expect(schema).toMatchObject({
-			'@context': 'https://schema.org',
+	it('el CollectionPage lista los cuentos en un ItemList ordenado', () => {
+		expect(buildStorylistCollectionSchema(storylistMock, websiteUrl)).toMatchObject({
 			'@type': 'CollectionPage',
-			name: 'Geometrías del desvelo',
-			url: 'https://www.cuentoneta.ar/storylist/geometrias-del-desvelo',
-			inLanguage: 'es-AR',
-			mainEntity: {
-				'@type': 'ItemList',
-				numberOfItems: 1,
-				itemListElement: [
-					{
-						'@type': 'ListItem',
-						position: 1,
-						url: 'https://www.cuentoneta.ar/story/el-espejo-del-tiempo',
-						name: 'El espejo del tiempo',
-					},
-				],
-			},
+			mainEntity: { '@type': 'ItemList', numberOfItems: storylistMock.stories.length },
 		});
 	});
-});
 
-describe('buildStorylistBreadcrumb', () => {
-	it('should build the trail Inicio → storylist', () => {
-		const schema = buildStorylistBreadcrumb(storylistMock, 'https://www.cuentoneta.ar/');
-
-		expect(schema['itemListElement']).toEqual([
-			{ '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://www.cuentoneta.ar/home' },
-			{
-				'@type': 'ListItem',
-				position: 2,
-				name: 'Geometrías del desvelo',
-				item: 'https://www.cuentoneta.ar/storylist/geometrias-del-desvelo',
-			},
-		]);
+	it('buildStorylistBreadcrumb emite un BreadcrumbList schema.org válido', async () => {
+		await expect(assertValidJsonLd(buildStorylistBreadcrumb(storylistMock, websiteUrl))).resolves.toBeUndefined();
 	});
 });

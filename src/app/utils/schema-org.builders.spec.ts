@@ -1,5 +1,6 @@
 import { authorMock } from '@mocks/author.mock';
 
+import { assertValidJsonLd } from '../../../e2e/_utils/json-ld-validation';
 import { buildBreadcrumbSchema, buildPersonSchema } from './schema-org.builders';
 
 describe('buildPersonSchema', () => {
@@ -35,9 +36,18 @@ describe('buildBreadcrumbSchema', () => {
 			'@context': 'https://schema.org',
 			'@type': 'BreadcrumbList',
 			itemListElement: [
-				{ '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://x/home' },
-				{ '@type': 'ListItem', position: 2, name: 'Autores', item: 'https://x/authors' },
+				{ '@type': 'ListItem', position: 1, name: 'Inicio', item: { '@id': 'https://x/home' } },
+				{ '@type': 'ListItem', position: 2, name: 'Autores', item: { '@id': 'https://x/authors' } },
 			],
 		});
+	});
+
+	it('should build a schema.org-valid BreadcrumbList', async () => {
+		const schema = buildBreadcrumbSchema([
+			{ name: 'Inicio', url: 'https://x/home' },
+			{ name: 'Autores', url: 'https://x/authors' },
+		]);
+
+		await expect(assertValidJsonLd(schema)).resolves.toBeUndefined();
 	});
 });
