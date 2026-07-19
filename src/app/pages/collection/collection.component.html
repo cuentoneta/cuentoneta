@@ -125,6 +125,13 @@
 				class="flex flex-col gap-2"
 				data-testid="drawer-description"
 			/>
+			<div class="h-px w-full bg-neutral-200" role="separator"></div>
+			<div class="flex w-full flex-col gap-4">
+				<h2 class="font-inter text-base leading-6 font-bold text-neutral-900">Otras colecciones sugeridas</h2>
+				@for (suggested of suggestedCollections; track suggested.slug) {
+					<cuentoneta-navigable-collection-teaser [collection]="suggested" data-testid="drawer-suggested-collection" />
+				}
+			</div>
 		</cuentoneta-drawer>
 	} @else {
 		<!-- Estado sin resultados: el slug no matcheó ninguna colección (o el fetch falló) -->

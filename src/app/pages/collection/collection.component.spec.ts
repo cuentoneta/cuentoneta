@@ -41,10 +41,16 @@ describe('CollectionComponent (blueprint)', () => {
 		expect(await screen.findByTestId('drawer-description')).toBeInTheDocument();
 	});
 
-	it('should render the suggested collections list', async () => {
+	it('should render the suggested collections list in the sidebar', async () => {
 		await setup();
 		expect(await screen.findAllByTestId('suggested-collection')).toHaveLength(3);
-		expect(screen.getByText('El inventario de las pasiones')).toBeInTheDocument();
+		// El título del sample aparece en el sidebar y también dentro del drawer.
+		expect(screen.getAllByText('El inventario de las pasiones').length).toBeGreaterThanOrEqual(1);
+	});
+
+	it('should also list the suggested collections inside the drawer', async () => {
+		await setup();
+		expect(await screen.findAllByTestId('drawer-suggested-collection')).toHaveLength(3);
 	});
 
 	it('should render the loading skeletons while the collection resolves', async () => {
