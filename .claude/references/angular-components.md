@@ -279,6 +279,7 @@ Notas:
 - Los métodos/propiedades referenciados por string desde `host` solo necesitan ser **`protected`** (no `public`). Distinto es el caso de las directivas cuya API la consumen los anfitriones vía `hostDirectives` + `inject(Directive)` (p. ej. `TooltipDirective.text.set(...)`): esas signals **sí** son `public` por ser API imperativa.
 - El bloque `:host` en `styles` se reserva para lo que **no** es `@apply`: CSS crudo (`font-family`, `transition`, …), `:host ::ng-deep ...` y `:host(.clase)` condicionales. Esas reglas **no** se mueven a `host`.
 - Si el componente ya tiene `host: { class: '...' }`, **agregar** las utilidades al string existente, no reemplazarlo.
+- **`hostDirectives`** (campo del decorador, distinto de `host`) es el mecanismo de composición de directivas del anfitrión. En **componentes de página** es cómo se declaran las directivas de SEO (meta tags + structured data): la forma correcta depende de la indexabilidad de la ruta y está **enforced por test** — ver [`angular-state.md` §8](./angular-state.md#8-directivas-de-seo-de-página-declarar-el-combo-según-la-indexabilidad).
 
 ---
 
