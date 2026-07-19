@@ -23,4 +23,9 @@ describe('CollectionComponent (blueprint)', () => {
 		expect(screen.getAllByTestId('story-card')).toHaveLength(storylistMock.stories.length);
 		expect(screen.getByText(storylistMock.stories[0].title)).toBeInTheDocument();
 	});
+
+	it('should render the collection tag in the sidebar', async () => {
+		await setup();
+		expect(screen.getByText(storylistMock.tags[0].title)).toBeInTheDocument();
+	});
 });
