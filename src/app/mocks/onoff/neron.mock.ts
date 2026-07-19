@@ -1,5 +1,6 @@
 import type { Story } from '@models/story.model';
 import { authorMock } from '../author.mock';
+import { dramaHistoricoTagMock, teatroTagMock, tragediaTagMock } from '../onoff-tags.mock';
 
 export const neronStoryMock: Story = {
 	_id: 'onoff-story-neron',
@@ -9,7 +10,7 @@ export const neronStoryMock: Story = {
 	approximateReadingTime: 7,
 	badLanguage: false,
 	coverImage: 'assets/img/mocks/stories/neron.png',
-	tags: [],
+	tags: [teatroTagMock, tragediaTagMock, dramaHistoricoTagMock],
 	resources: [],
 	media: [],
 	epigraphs: [],

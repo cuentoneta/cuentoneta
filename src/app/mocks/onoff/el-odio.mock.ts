@@ -1,5 +1,6 @@
 import type { Story } from '@models/story.model';
 import { authorMock } from '../author.mock';
+import { dramaPsicologicoTagMock, novelaTagMock } from '../onoff-tags.mock';
 
 export const elOdioStoryMock: Story = {
 	_id: 'onoff-story-el-odio',
@@ -9,7 +10,7 @@ export const elOdioStoryMock: Story = {
 	approximateReadingTime: 6,
 	badLanguage: false,
 	coverImage: 'assets/img/mocks/stories/el-odio.png',
-	tags: [],
+	tags: [novelaTagMock, dramaPsicologicoTagMock],
 	resources: [],
 	media: [],
 	epigraphs: [],
