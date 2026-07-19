@@ -1,4 +1,5 @@
 import {
+	checkSitewideAbsoluteUrls,
 	expectationsFor,
 	parseSitemap,
 	sample,
@@ -7,6 +8,33 @@ import {
 	slugToTitlePattern,
 	toPath,
 } from './seo-smoke.helpers';
+
+function sitewideHtml(organizationUrl: string, websiteUrl: string): string {
+	return (
+		`<script data-schema-id="organization">{"@type":"Organization","name":"La Cuentoneta","url":"${organizationUrl}"}</script>` +
+		`<script data-schema-id="website">{"@type":"WebSite","name":"La Cuentoneta","url":"${websiteUrl}"}</script>`
+	);
+}
+
+describe('checkSitewideAbsoluteUrls', () => {
+	it('no viola cuando organization y website exponen una url absoluta', () => {
+		expect(checkSitewideAbsoluteUrls(sitewideHtml('https://www.cuentoneta.ar', 'https://www.cuentoneta.ar'))).toEqual(
+			[],
+		);
+	});
+
+	it('viola por cada entidad sitewide con url vacía o relativa (base mal configurada en el deploy)', () => {
+		const violations = checkSitewideAbsoluteUrls(sitewideHtml('', '/'));
+
+		expect(violations).toHaveLength(2);
+		expect(violations.join(' ')).toContain('organization');
+		expect(violations.join(' ')).toContain('website');
+	});
+
+	it('no tira ante JSON-LD malformado (lo reporta la validación estructural, no este check)', () => {
+		expect(checkSitewideAbsoluteUrls('<script data-schema-id="organization">{ roto }</script>')).toEqual([]);
+	});
+});
 
 describe('slugToTitlePattern', () => {
 	it('matchea el título derivado del slug (sin acentos)', () => {

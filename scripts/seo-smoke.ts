@@ -19,7 +19,7 @@
  */
 import { collectIndexableHtmlViolations, type IndexableHtmlExpectations } from '../e2e/_utils/seo-invariants';
 import { STABLE_SLUGS, SITEWIDE_SCHEMA_IDS } from '../e2e/_utils/seo-fixtures';
-import { expectationsFor, parseSitemap, selectByType } from './seo-smoke.helpers';
+import { checkSitewideAbsoluteUrls, expectationsFor, parseSitemap, selectByType } from './seo-smoke.helpers';
 
 const BASE_URL = process.env['BASE_URL'] ?? 'http://localhost:4000';
 const FULL = process.argv.includes('--full') || process.env['SEO_SMOKE_FULL'] === 'true';
@@ -61,7 +61,11 @@ function messageOf(error: unknown): string {
 async function reportExpectations(expectations: IndexableHtmlExpectations): Promise<boolean> {
 	try {
 		const response = await fetch(`${BASE_URL}${expectations.path}`, { headers: proxyHeaders });
-		const violations = await collectIndexableHtmlViolations(await response.text(), expectations);
+		const html = await response.text();
+		const violations = [
+			...(await collectIndexableHtmlViolations(html, expectations)),
+			...checkSitewideAbsoluteUrls(html).map((message) => ({ rule: 'sitewide-url', message })),
+		];
 		if (violations.length === 0) {
 			console.log(`✅ ${expectations.path} (${response.status})`);
 			return false;
