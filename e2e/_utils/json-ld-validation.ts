@@ -50,6 +50,9 @@ function messageOf(error: unknown): string {
 	return error instanceof Error ? error.message : String(error);
 }
 
+// El regex es deliberadamente permisivo (http/https, con o sin barra final) solo para que `expand`
+// resuelva sin red; el formato exacto del `@context` lo hace cumplir la aserción de `validateJsonLd`
+// (`@context === 'https://schema.org'`), no este loader.
 async function hermeticDocumentLoader(url: string): Promise<{ documentUrl: string; document: NodeObject }> {
 	if (/^https?:\/\/schema\.org\/?$/.test(url)) {
 		return { documentUrl: url, document: SCHEMA_ORG_VOCAB_CONTEXT };
