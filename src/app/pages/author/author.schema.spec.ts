@@ -2,6 +2,7 @@ import { authorMock } from '@mocks/author.mock';
 import type { TextBlockContent } from '@models/block-content.model';
 import type { IsoDateTime } from '@utils/date.utils';
 
+import { assertValidJsonLd } from '../../testing/json-ld-validation';
 import { buildAuthorBreadcrumb, buildAuthorProfilePageSchema } from './author.schema';
 
 function bioBlock(...texts: string[]): TextBlockContent {
@@ -16,6 +17,10 @@ function bioBlock(...texts: string[]): TextBlockContent {
 
 describe('buildAuthorProfilePageSchema', () => {
 	const websiteUrl = 'https://www.cuentoneta.ar/';
+
+	it('should build a schema.org-valid ProfilePage', async () => {
+		await expect(assertValidJsonLd(buildAuthorProfilePageSchema(authorMock, websiteUrl))).resolves.toBeUndefined();
+	});
 
 	it('should build a ProfilePage with creation/update dates wrapping the Person as mainEntity', () => {
 		expect(buildAuthorProfilePageSchema(authorMock, websiteUrl)).toEqual({
@@ -147,14 +152,20 @@ describe('buildAuthorBreadcrumb', () => {
 		const schema = buildAuthorBreadcrumb(authorMock, 'https://www.cuentoneta.ar/');
 
 		expect(schema['itemListElement']).toEqual([
-			{ '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://www.cuentoneta.ar/home' },
-			{ '@type': 'ListItem', position: 2, name: 'Autores', item: 'https://www.cuentoneta.ar/authors' },
+			{ '@type': 'ListItem', position: 1, name: 'Inicio', item: { '@id': 'https://www.cuentoneta.ar/home' } },
+			{ '@type': 'ListItem', position: 2, name: 'Autores', item: { '@id': 'https://www.cuentoneta.ar/authors' } },
 			{
 				'@type': 'ListItem',
 				position: 3,
 				name: 'François Onoff',
-				item: 'https://www.cuentoneta.ar/author/francois-onoff',
+				item: { '@id': 'https://www.cuentoneta.ar/author/francois-onoff' },
 			},
 		]);
+	});
+
+	it('should build a schema.org-valid BreadcrumbList', async () => {
+		await expect(
+			assertValidJsonLd(buildAuthorBreadcrumb(authorMock, 'https://www.cuentoneta.ar/')),
+		).resolves.toBeUndefined();
 	});
 });

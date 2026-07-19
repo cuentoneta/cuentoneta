@@ -15,6 +15,7 @@
 import { test, expect } from '@playwright/test';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
+import { assertValidJsonLd } from '../../src/app/testing/json-ld-validation';
 import { collectIndexableHtmlViolations } from '../_utils/seo-invariants';
 import { STABLE_SLUGS, SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
 
@@ -42,8 +43,7 @@ test('author — B: JSON-LD ProfilePage y BreadcrumbList', async () => {
 	const blocks = parseJsonLdBlocks(html);
 
 	const profilePage = blocks.get(SCHEMA_IDS.profilePage);
-	expect(profilePage?.['@context']).toBe('https://schema.org');
-	expect(profilePage?.['@type']).toBe('ProfilePage');
+	await assertValidJsonLd(profilePage);
 	expect(profilePage?.['dateCreated']).toBeTruthy();
 	expect(profilePage?.['dateModified']).toBeTruthy();
 	const mainEntity = profilePage?.['mainEntity'] as Record<string, unknown>;
@@ -51,8 +51,7 @@ test('author — B: JSON-LD ProfilePage y BreadcrumbList', async () => {
 	expect(mainEntity?.['name']).toBeTruthy();
 
 	const breadcrumb = blocks.get(SCHEMA_IDS.breadcrumbAuthor);
-	expect(breadcrumb?.['@context']).toBe('https://schema.org');
-	expect(breadcrumb?.['@type']).toBe('BreadcrumbList');
+	await assertValidJsonLd(breadcrumb);
 	expect((breadcrumb?.['itemListElement'] as unknown[])?.length).toBeGreaterThanOrEqual(2);
 });
 
@@ -63,9 +62,9 @@ test('author — C: bloques sitewide Organization y WebSite presentes', async ()
 	expect(blocks.get(SCHEMA_IDS.website)?.['@type']).toBe('WebSite');
 });
 
-test('author — invariantes de indexado para crawlers (ssr, h1, bio, sin skeleton, enlace a story)', () => {
+test('author — invariantes de indexado para crawlers (ssr, h1, bio, sin skeleton, enlace a story)', async () => {
 	expect(
-		collectIndexableHtmlViolations(html, {
+		await collectIndexableHtmlViolations(html, {
 			path: authorPath,
 			titlePattern: /borges/i,
 			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.profilePage, SCHEMA_IDS.breadcrumbAuthor],

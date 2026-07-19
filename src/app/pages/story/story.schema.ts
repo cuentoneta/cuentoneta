@@ -1,8 +1,8 @@
 import { Location } from '@angular/common';
+import { type Article, type BreadcrumbList, type WithContext } from 'schema-dts';
 
 import { type Story } from '@models/story.model';
 import { buildBreadcrumbSchema, buildPersonSchema } from '@utils/schema-org.builders';
-import { type JsonLdSchema } from '../../providers/schema-org.service';
 
 const PUBLISHER_NAME = 'La Cuentoneta';
 
@@ -13,7 +13,7 @@ const PUBLISHER_NAME = 'La Cuentoneta';
  * No incluye `image` todavía: una imagen raster por cuento requiere que `/api/og` emita PNG (las
  * redes y Google no aceptan SVG para `image`); queda como follow-up.
  */
-export function buildStoryArticleSchema(story: Story, websiteUrl: string): JsonLdSchema {
+export function buildStoryArticleSchema(story: Story, websiteUrl: string): WithContext<Article> {
 	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	return {
 		'@context': 'https://schema.org',
@@ -34,7 +34,7 @@ export function buildStoryArticleSchema(story: Story, websiteUrl: string): JsonL
 }
 
 /** Construye el `BreadcrumbList` de la página de un cuento: Inicio → Cuentos → cuento. */
-export function buildStoryBreadcrumb(story: Story, websiteUrl: string): JsonLdSchema {
+export function buildStoryBreadcrumb(story: Story, websiteUrl: string): WithContext<BreadcrumbList> {
 	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	return buildBreadcrumbSchema([
 		{ name: 'Inicio', url: `${baseUrl}/home` },

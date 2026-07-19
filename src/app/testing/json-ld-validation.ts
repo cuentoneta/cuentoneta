@@ -1,0 +1,151 @@
+/**
+ * Validación estructural de bloques JSON-LD de schema.org (más allá de la parseabilidad).
+ *
+ * Dos comprobaciones complementarias, ambas sin red:
+ *  1. `jsonld.expand` con un documentLoader hermético (mapea `https://schema.org` a un `@vocab`
+ *     local): detecta JSON-LD incoherente y `@context` rotos sin salir a internet.
+ *  2. Un registro de propiedades requeridas por `@type`, recorrido de forma recursiva sobre los
+ *     nodos anidados (autor, publisher, ItemList, ListItem), que afirma las señales que schema.org
+ *     no marca como obligatorias pero los answer engines esperan (p. ej. `Article.datePublished`).
+ *
+ * Framework-agnóstico (solo `jsonld`): reutilizable desde los specs unit (Vitest), los e2e
+ * (Playwright) y el core de invariantes SSR (`seo-invariants.ts`).
+ */
+// Default import (no `import * as`): bajo el bundler de Playwright (esbuild `__toESM`) el namespace de
+// este módulo CJS pierde los métodos no enumerables (`jsonld.expand is not a function`); el default
+// resuelve al objeto real. Funciona igual en Vitest y tsx.
+import jsonld from 'jsonld';
+import type { JsonLdDocument, NodeObject } from 'jsonld';
+
+import type { SeoInvariantViolation } from './seo-invariant-violation';
+
+// Contexto local con `@vocab` schema.org: la expansión mapea cualquier término a un IRI schema.org
+// sin descargar el contexto real (los términos válidos ya los garantiza `schema-dts` en compile-time).
+const SCHEMA_ORG_VOCAB_CONTEXT: NodeObject = { '@context': { '@vocab': 'https://schema.org/' } };
+
+// Propiedades que cada `@type` que emitimos debe llevar. schema.org no las marca requeridas, pero su
+// ausencia degrada el rich result / la respuesta del answer engine, así que acá sí son obligatorias.
+const REQUIRED_PROPERTIES: Record<string, readonly string[]> = {
+	// Organization/WebSite no exigen `url`: es la raíz del sitio (= base URL), que en builds con base
+	// relativa (el e2e sirve con `website` = '/') queda vacía. `name` sí es una señal siempre presente.
+	Organization: ['name'],
+	WebSite: ['name'],
+	Person: ['name'],
+	Article: ['headline', 'datePublished', 'author', 'publisher'],
+	ProfilePage: ['mainEntity'],
+	CollectionPage: ['name', 'url', 'mainEntity'],
+	ItemList: ['itemListElement'],
+	BreadcrumbList: ['itemListElement'],
+	ListItem: ['position', 'name'],
+};
+
+function violation(message: string): SeoInvariantViolation {
+	return { rule: 'json-ld', message };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isEmpty(value: unknown): boolean {
+	return value === undefined || value === null || value === '' || (Array.isArray(value) && value.length === 0);
+}
+
+function messageOf(error: unknown): string {
+	return error instanceof Error ? error.message : String(error);
+}
+
+// El regex es deliberadamente permisivo (http/https, con o sin barra final) solo para que `expand`
+// resuelva sin red; el formato exacto del `@context` lo hace cumplir la aserción de `validateJsonLd`
+// (`@context === 'https://schema.org'`), no este loader.
+async function hermeticDocumentLoader(url: string): Promise<{ documentUrl: string; document: NodeObject }> {
+	if (/^https?:\/\/schema\.org\/?$/.test(url)) {
+		return { documentUrl: url, document: SCHEMA_ORG_VOCAB_CONTEXT };
+	}
+	throw new Error(
+		`documentLoader hermético: no se resuelve "${url}" (el JSON-LD debe usar @context https://schema.org).`,
+	);
+}
+
+async function expandViolations(schema: Record<string, unknown>): Promise<SeoInvariantViolation[]> {
+	try {
+		const expanded = await jsonld.expand(schema as JsonLdDocument, { documentLoader: hermeticDocumentLoader });
+		return expanded.length === 0
+			? [violation('jsonld.expand devolvió un documento vacío (¿@context/@type inválidos?).')]
+			: [];
+	} catch (error) {
+		return [violation(`jsonld.expand falló: ${messageOf(error)}`)];
+	}
+}
+
+// Recorre un nodo (y sus hijos) exigiendo las propiedades de su `@type`. Los records sin `@type` pero
+// con `@id` son referencias por IRI válidas (p. ej. `ListItem.item`) y se omiten; el resto sin `@type`
+// se reporta. Los `@type` fuera del registro (typos, tipos no soportados) también se reportan.
+function validateNode(node: unknown, path: string): SeoInvariantViolation[] {
+	if (Array.isArray(node)) {
+		return node.flatMap((item, index) => validateNode(item, `${path}[${index}]`));
+	}
+	if (!isRecord(node)) {
+		return [];
+	}
+	const type = node['@type'];
+	if (typeof type !== 'string') {
+		return typeof node['@id'] === 'string' ? [] : [violation(`${path}: falta @type.`)];
+	}
+	const required = REQUIRED_PROPERTIES[type];
+	if (!required) {
+		return [violation(`${path}: @type "${type}" no reconocido (¿typo o tipo no soportado?).`)];
+	}
+	return [...requiredViolations(node, type, required, path), ...childrenViolations(node, path)];
+}
+
+function requiredViolations(
+	node: Record<string, unknown>,
+	type: string,
+	required: readonly string[],
+	path: string,
+): SeoInvariantViolation[] {
+	const missing = required
+		.filter((property) => isEmpty(node[property]))
+		.map((property) => violation(`${path} (${type}): falta la propiedad requerida "${property}".`));
+	// Un ListItem identifica su destino con `item` (breadcrumb) o `url` (ItemList); exigimos al menos uno.
+	if (type === 'ListItem' && isEmpty(node['item']) && isEmpty(node['url'])) {
+		missing.push(violation(`${path} (ListItem): falta "item" o "url".`));
+	}
+	return missing;
+}
+
+function childrenViolations(node: Record<string, unknown>, path: string): SeoInvariantViolation[] {
+	return Object.entries(node)
+		.filter(([key]) => !key.startsWith('@'))
+		.flatMap(([key, value]) => validateNode(value, `${path}.${key}`));
+}
+
+/**
+ * Devuelve todas las violaciones estructurales de un bloque JSON-LD ya parseado: `@context`
+ * schema.org, coherencia por `jsonld.expand` y propiedades requeridas por tipo (recursivo).
+ */
+export async function validateJsonLd(schema: unknown): Promise<SeoInvariantViolation[]> {
+	if (!isRecord(schema)) {
+		return [violation('El bloque JSON-LD no es un objeto.')];
+	}
+	const violations: SeoInvariantViolation[] = [];
+	if (schema['@context'] !== 'https://schema.org') {
+		violations.push(
+			violation(
+				`@context inválido: se esperaba "https://schema.org", se encontró ${JSON.stringify(schema['@context'])}.`,
+			),
+		);
+	}
+	violations.push(...(await expandViolations(schema)));
+	violations.push(...validateNode(schema, '$'));
+	return violations;
+}
+
+/** Afirma que un bloque JSON-LD es schema.org válido; lanza con el detalle de las violaciones si no. */
+export async function assertValidJsonLd(schema: unknown): Promise<void> {
+	const violations = await validateJsonLd(schema);
+	if (violations.length > 0) {
+		throw new Error(`JSON-LD inválido:\n${violations.map((v) => `  - ${v.message}`).join('\n')}`);
+	}
+}

@@ -5,6 +5,8 @@ import { DOCUMENT } from '@angular/common';
 import { SchemaOrgService } from '../../providers/schema-org.service';
 import { HomeStructuredDataDirective } from './home-structured-data.directive';
 
+const CONTEXT = 'https://schema.org';
+
 describe('HomeStructuredDataDirective', () => {
 	function instantiate(): void {
 		TestBed.runInInjectionContext(() => new HomeStructuredDataDirective());
@@ -24,8 +26,8 @@ describe('HomeStructuredDataDirective', () => {
 
 	it('should remove collection and breadcrumb-storylist left by a previous storylist route', () => {
 		const schemaOrg = TestBed.inject(SchemaOrgService);
-		schemaOrg.setPageScopedJsonLd('collection', { '@type': 'CollectionPage' });
-		schemaOrg.setPageScopedJsonLd('breadcrumb-storylist', { '@type': 'BreadcrumbList' });
+		schemaOrg.setPageScopedJsonLd('collection', { '@context': CONTEXT, '@type': 'CollectionPage' });
+		schemaOrg.setPageScopedJsonLd('breadcrumb-storylist', { '@context': CONTEXT, '@type': 'BreadcrumbList' });
 
 		instantiate();
 		TestBed.tick();
@@ -37,9 +39,9 @@ describe('HomeStructuredDataDirective', () => {
 
 	it('should remove page-scoped blocks left by any route, not just storylist', () => {
 		const schemaOrg = TestBed.inject(SchemaOrgService);
-		schemaOrg.setPageScopedJsonLd('article', { '@type': 'Article' });
-		schemaOrg.setPageScopedJsonLd('profile-page', { '@type': 'ProfilePage' });
-		schemaOrg.setPageScopedJsonLd('collection', { '@type': 'CollectionPage' });
+		schemaOrg.setPageScopedJsonLd('article', { '@context': CONTEXT, '@type': 'Article' });
+		schemaOrg.setPageScopedJsonLd('profile-page', { '@context': CONTEXT, '@type': 'ProfilePage' });
+		schemaOrg.setPageScopedJsonLd('collection', { '@context': CONTEXT, '@type': 'CollectionPage' });
 
 		instantiate();
 		TestBed.tick();
@@ -52,9 +54,9 @@ describe('HomeStructuredDataDirective', () => {
 
 	it('should not remove sitewide blocks (organization, website)', () => {
 		const schemaOrg = TestBed.inject(SchemaOrgService);
-		schemaOrg.setJsonLd('organization', { '@type': 'Organization' });
-		schemaOrg.setJsonLd('website', { '@type': 'WebSite' });
-		schemaOrg.setPageScopedJsonLd('collection', { '@type': 'CollectionPage' });
+		schemaOrg.setJsonLd('organization', { '@context': CONTEXT, '@type': 'Organization' });
+		schemaOrg.setJsonLd('website', { '@context': CONTEXT, '@type': 'WebSite' });
+		schemaOrg.setPageScopedJsonLd('collection', { '@context': CONTEXT, '@type': 'CollectionPage' });
 
 		instantiate();
 		TestBed.tick();

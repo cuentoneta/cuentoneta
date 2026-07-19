@@ -15,6 +15,7 @@
 import { test, expect } from '@playwright/test';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
+import { assertValidJsonLd } from '../../src/app/testing/json-ld-validation';
 import { collectIndexableHtmlViolations } from '../_utils/seo-invariants';
 import { STABLE_SLUGS, SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
 
@@ -43,17 +44,14 @@ test('story — B: JSON-LD Article y BreadcrumbList', async () => {
 	const blocks = parseJsonLdBlocks(html);
 
 	const article = blocks.get(SCHEMA_IDS.article);
-	expect(article?.['@context']).toBe('https://schema.org');
-	expect(article?.['@type']).toBe('Article');
+	await assertValidJsonLd(article);
 	expect(article?.['headline']).toBeTruthy();
-	expect(article?.['datePublished']).toBeTruthy();
 	expect(article?.['dateModified']).toBeTruthy();
 	expect((article?.['author'] as Record<string, unknown>)?.['@type']).toBe('Person');
 	expect((article?.['publisher'] as Record<string, unknown>)?.['@type']).toBe('Organization');
 
 	const breadcrumb = blocks.get(SCHEMA_IDS.breadcrumbStory);
-	expect(breadcrumb?.['@context']).toBe('https://schema.org');
-	expect(breadcrumb?.['@type']).toBe('BreadcrumbList');
+	await assertValidJsonLd(breadcrumb);
 	expect((breadcrumb?.['itemListElement'] as unknown[])?.length).toBeGreaterThanOrEqual(2);
 });
 
@@ -64,9 +62,9 @@ test('story — C: bloques sitewide Organization y WebSite presentes', async () 
 	expect(blocks.get(SCHEMA_IDS.website)?.['@type']).toBe('WebSite');
 });
 
-test('story — invariantes de indexado para crawlers (ssr, h1, contenido primario, sin skeleton, enlace a autor)', () => {
+test('story — invariantes de indexado para crawlers (ssr, h1, contenido primario, sin skeleton, enlace a autor)', async () => {
 	expect(
-		collectIndexableHtmlViolations(html, {
+		await collectIndexableHtmlViolations(html, {
 			path: storyPath,
 			titlePattern: /aleph/i,
 			h1Pattern: /aleph/i,
