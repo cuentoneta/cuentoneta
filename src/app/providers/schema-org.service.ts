@@ -1,7 +1,8 @@
 import { DOCUMENT, Injectable, inject } from '@angular/core';
+import { type Thing, type WithContext } from 'schema-dts';
 
-/** Forma serializable de un bloque JSON-LD de schema.org. */
-export type JsonLdSchema = Record<string, unknown>;
+/** Bloque JSON-LD top-level de schema.org (lleva `@context`), tipado por `schema-dts`. */
+export type JsonLdSchema = WithContext<Thing>;
 
 /**
  * Gestiona los bloques `<script type="application/ld+json">` del `<head>`.

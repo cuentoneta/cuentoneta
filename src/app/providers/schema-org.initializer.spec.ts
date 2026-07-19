@@ -22,11 +22,13 @@ describe('schema-org builders', () => {
 		});
 
 		it('should expose the official social profiles (matching the footer) in sameAs', () => {
-			expect(buildOrganizationSchema(websiteUrl)['sameAs']).toEqual([
-				'https://twitter.com/cuentoneta',
-				'https://www.instagram.com/cuentoneta',
-				'https://www.facebook.com/cuentoneta',
-			]);
+			expect(buildOrganizationSchema(websiteUrl)).toMatchObject({
+				sameAs: [
+					'https://twitter.com/cuentoneta',
+					'https://www.instagram.com/cuentoneta',
+					'https://www.facebook.com/cuentoneta',
+				],
+			});
 		});
 	});
 
