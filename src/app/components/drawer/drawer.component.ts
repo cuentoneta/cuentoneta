@@ -47,7 +47,7 @@ export type DrawerDirection = 'left' | 'right' | 'top' | 'bottom';
 			[attr.aria-describedby]="description() ? descriptionId : null"
 			#dialog
 			tabindex="-1"
-			class="m-0 flex max-h-full max-w-full flex-col gap-5 overflow-y-auto rounded-xl bg-white p-10 transition-transform duration-300 ease-out backdrop:bg-black/60 motion-reduce:duration-[0.01ms]"
+			class="m-0 flex max-w-full flex-col gap-5 overflow-y-auto rounded-xl bg-white p-10 transition-transform duration-300 ease-out backdrop:bg-black/60 motion-reduce:duration-[0.01ms]"
 		>
 			<button
 				(click)="close()"
