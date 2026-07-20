@@ -1,4 +1,4 @@
-import { inject, Injectable, PLATFORM_ID, signal, WritableSignal } from '@angular/core';
+import { inject, Injectable, PLATFORM_ID, signal, type WritableSignal } from '@angular/core';
 import { WINDOW } from './window';
 import {
 	combineLatest,
@@ -11,14 +11,12 @@ import {
 	startWith,
 	throttleTime,
 } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { Viewport, VIEWPORT_WIDTHS_NUMERIC } from '@utils/screen.utils';
 
-export const Direction = Object.freeze({
-	Up: 'Up',
-	Down: 'Down',
-});
+export const Direction = Object.freeze({ Up: 'Up', Down: 'Down' } as const);
+export type Direction = (typeof Direction)[keyof typeof Direction];
 
 @Injectable({
 	providedIn: 'root',
@@ -48,6 +46,8 @@ export class LayoutService {
 		fromEvent(this.window, 'resize').pipe(startWith(null)),
 		fromEvent(this.window, 'orientationchange').pipe(startWith(null)),
 	).pipe(takeUntilDestroyed(), throttleTime(100));
+
+	public readonly isHeaderVisible = toSignal(this.isHeaderVisible$, { initialValue: true });
 
 	public get userHasScrolled$() {
 		return this._userHasScrolled$;
@@ -87,7 +87,7 @@ export class LayoutService {
 		return isPlatformServer(this.platformId);
 	}
 
-	public setViewport() {
+	public setViewport(): void {
 		// Para SSR, siempre devolver md dado que no se puede acceder a window
 		if (this.isPlatformServer()) {
 			this.viewport.set('md');
@@ -105,13 +105,11 @@ export class LayoutService {
 		const match = breakpoints.find((bp) => this.window.innerWidth <= bp.maxWidth);
 		const currentViewport = (match?.viewport || 'md') as Viewport;
 
-		// Actualizar el signal con el viewport actual
 		this.viewport.set(currentViewport);
 	}
 
 	/**
 	 * Chequea si el viewport actual es mayor al viewport de test
-	 * @param viewport
 	 * @param test
 	 */
 	public biggerThan(test: Viewport): boolean {
@@ -127,7 +125,6 @@ export class LayoutService {
 
 	/**
 	 * Chequea si el viewport actual es menor al viewport de test
-	 * @param viewport
 	 * @param test
 	 */
 	public smallerThan(test: Viewport): boolean {

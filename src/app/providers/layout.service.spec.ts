@@ -115,6 +115,12 @@ describe('LayoutService', () => {
 				});
 			}));
 
+		it('is visible by default via the signal before any scroll', () => {
+			mockWindow.innerWidth = 500; // xs
+			service.setViewport();
+			expect(service.isHeaderVisible()).toBe(true);
+		});
+
 		describe('biggerThan', () => {
 			it('should return true if the current viewport is larger than the test viewport', () => {
 				mockWindow.innerWidth = 1440; // lg
