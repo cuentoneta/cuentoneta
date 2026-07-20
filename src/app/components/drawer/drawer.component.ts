@@ -1,5 +1,18 @@
-import { Component, computed, contentChild, effect, ElementRef, inject, input, output, viewChild } from '@angular/core';
+import {
+	Component,
+	computed,
+	contentChild,
+	effect,
+	ElementRef,
+	inject,
+	input,
+	output,
+	signal,
+	viewChild,
+} from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { faSolidXmark } from '@ng-icons/font-awesome/solid';
 
 import { DrawerTrackerService } from './drawer-tracker.service';
 import { DrawerTransitionDirective } from './drawer-transition.directive';
@@ -21,7 +34,8 @@ export type DrawerDirection = 'left' | 'right' | 'top' | 'bottom';
  */
 @Component({
 	selector: 'cuentoneta-drawer',
-	imports: [NgTemplateOutlet],
+	imports: [NgTemplateOutlet, NgIcon],
+	providers: [provideIcons({ faSolidXmark })],
 	hostDirectives: [DrawerTransitionDirective, { directive: DrawerPanelDirective, inputs: ['direction'] }],
 	host: { class: 'contents' },
 	template: `
@@ -29,6 +43,7 @@ export type DrawerDirection = 'left' | 'right' | 'top' | 'bottom';
 			[class]="panel.panelClasses()"
 			[attr.data-open]="transition.isTransitionedIn() ? '' : null"
 			[attr.aria-labelledby]="title() ? titleId : null"
+			[attr.aria-label]="dialogAriaLabel()"
 			[attr.aria-describedby]="description() ? descriptionId : null"
 			#dialog
 			tabindex="-1"
@@ -51,9 +66,7 @@ export type DrawerDirection = 'left' | 'right' | 'top' | 'bottom';
 					aria-label="Cerrar"
 					class="flex size-10 shrink-0 items-center justify-center rounded-full bg-neutral-100 p-2 text-neutral-900 hover:bg-neutral-200"
 				>
-					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-						<path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-					</svg>
+					<ng-icon name="faSolidXmark" class="text-2xl" aria-hidden="true" />
 				</button>
 			</div>
 
@@ -68,6 +81,7 @@ export type DrawerDirection = 'left' | 'right' | 'top' | 'bottom';
 export class DrawerComponent {
 	public readonly title = input('');
 	public readonly description = input('');
+	public readonly ariaLabel = input('');
 	public readonly closeOnBackdrop = input(true);
 	public readonly closeOnEscape = input(true);
 
@@ -86,8 +100,22 @@ export class DrawerComponent {
 	protected readonly titleId = `drawer-title-${this.instanceId}`;
 	protected readonly descriptionId = `drawer-desc-${this.instanceId}`;
 
+	// Todo `<dialog>` modal necesita un nombre accesible: si hay `title` lo cubre `aria-labelledby`; en su ausencia
+	// (slot de encabezado o contenido plano) se cae a `ariaLabel`, con un rótulo genérico por defecto.
+	protected readonly dialogAriaLabel = computed(() => this.ariaLabel() || (this.title() ? null : 'Panel lateral'));
+
 	protected readonly transition = inject(DrawerTransitionDirective);
 	protected readonly panel = inject(DrawerPanelDirective);
+
+	// Marca la ventana entre `close()` y `transitionend`, durante la cual el `<dialog>` sigue `open === true`: sin
+	// esta guarda, un segundo `close()` en pleno cierre volvería a emitir eventos y a apilar listeners de transición.
+	private readonly isClosing = signal(false);
+
+	// Desregistra del tracker si el componente se destruye sin cerrar antes (p. ej. navegación con el drawer abierto):
+	// de otro modo `activeInstance` quedaría apuntando a una instancia muerta y bloquearía todo `register()` futuro.
+	private readonly unregisterOnDestroy = effect((onCleanup) => {
+		onCleanup(() => this.tracker.unregister(this));
+	});
 
 	// Backdrop-click y Escape se cablean con addEventListener (no en la plantilla): la regla de ESLint
 	// click-events-have-key-events solo analiza bindings de plantilla, y la paridad de teclado ya la dan el
@@ -118,6 +146,7 @@ export class DrawerComponent {
 		if (dialog.open) {
 			return;
 		}
+		this.isClosing.set(false);
 		this.tracker.register(this);
 		this.transition.open(dialog);
 		this.opened.emit();
@@ -125,11 +154,15 @@ export class DrawerComponent {
 
 	public close(): void {
 		const dialog = this.dialogElement();
-		if (!dialog.open) {
+		if (!dialog.open || this.isClosing()) {
 			return;
 		}
+		this.isClosing.set(true);
 		this.tracker.unregister(this);
-		this.transition.close(dialog, () => this.afterClosed.emit());
+		this.transition.close(dialog, () => {
+			this.isClosing.set(false);
+			this.afterClosed.emit();
+		});
 		this.closed.emit();
 	}
 }
