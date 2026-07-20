@@ -100,6 +100,20 @@ Prohibido. Si el componente tiene un **estado de carga (skeleton)**, su story de
 
 Prohibido. Nunca incluir `🤖 Generated with [Claude Code]…`, `Co-Authored-By: Claude …` ni `Claude-Session: …` en un mensaje de commit ni en el cuerpo de un PR (`gh pr create --body`/`--body-file`). El trailer **automático** de commits ya está suprimido por `attribution` en `.claude/settings.json`; el vector que queda es que el agente lo **tipee a mano** en el cuerpo del PR —ese setting no lo borra porque no es un trailer del harness—. La descripción de un PR o commit que lo contenga es bloqueante para la review.
 
+### "Listo los hijos del epic en el cuerpo y queda linkeado igual"
+
+Prohibido. Los issues hijos de un epic se crean **como child issues reales** (relación de sub-issue de GitHub), nunca como una tasklist o una lista de menciones `#<id>` en el cuerpo del epic. Una mención crea una referencia cruzada, no una jerarquía: no aparece en el panel de sub-issues, no aporta progreso agregado y se pierde al reordenar el cuerpo.
+
+El cuerpo del epic **puede** incluir una tabla de hijos como resumen legible, pero eso **no reemplaza** el vínculo: cada hijo debe quedar además enlazado como sub-issue.
+
+```bash
+# El endpoint toma el id numérico interno del issue (`.id`), no su número (`.number`).
+id=$(gh api repos/<owner>/<repo>/issues/<hijo> --jq .id)
+gh api repos/<owner>/<repo>/issues/<epic>/sub_issues -X POST -F sub_issue_id="$id"
+```
+
+Un epic cuyos hijos figuren solo como menciones es bloqueante para la review. Si la API de GitHub falla al vincular, **reportarlo explícitamente** y dejar el vínculo pendiente: no darlo por hecho ni sustituirlo por una tasklist.
+
 ---
 
 ## Sección 3 — Disciplina de comentarios
@@ -189,4 +203,4 @@ Proponé cambios vía issue en `cuentoneta/cuentoneta`. Las enmiendas requieren 
 
 ---
 
-_Última actualización: 2026-06-19. Versión inicial en #1495 (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) agregada en #1499 y ampliada en #1542 (visibilidad de API y reemplazos canónicos); regla de story intercambiable para estados de carga agregada en #1581._
+_Última actualización: 2026-07-19. Versión inicial en #1495 (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) agregada en #1499 y ampliada en #1542 (visibilidad de API y reemplazos canónicos); regla de story intercambiable para estados de carga agregada en #1581; regla de child issues reales en epics agregada en #1843._
