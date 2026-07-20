@@ -34,6 +34,31 @@ const meta: Meta<DrawerArgs> = {
 			description: 'Lado desde el que aparece el panel',
 			table: { type: { summary: 'DrawerDirection' }, defaultValue: { summary: 'right' } },
 		},
+		title: {
+			control: 'text',
+			description: 'Título del encabezado por defecto (omitir si se usa el slot `cuentonetaDrawerHeader`)',
+			table: { type: { summary: 'string' }, defaultValue: { summary: '' } },
+		},
+		description: {
+			control: 'text',
+			description: 'Bajada opcional del encabezado por defecto',
+			table: { type: { summary: 'string' }, defaultValue: { summary: '' } },
+		},
+		ariaLabel: {
+			control: 'text',
+			description: 'Nombre accesible del panel cuando no hay `title` ni slot de encabezado',
+			table: { type: { summary: 'string' }, defaultValue: { summary: '' } },
+		},
+		closeOnBackdrop: {
+			control: 'boolean',
+			description: 'Cerrar al hacer click fuera del panel',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'true' } },
+		},
+		closeOnEscape: {
+			control: 'boolean',
+			description: 'Cerrar al presionar Escape',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'true' } },
+		},
 	},
 };
 
