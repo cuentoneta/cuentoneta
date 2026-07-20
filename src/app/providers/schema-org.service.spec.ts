@@ -3,6 +3,8 @@ import { TestBed } from '@angular/core/testing';
 
 import { SchemaOrgService } from './schema-org.service';
 
+const CONTEXT = 'https://schema.org';
+
 describe('SchemaOrgService', () => {
 	let service: SchemaOrgService;
 	let document: Document;
@@ -19,25 +21,33 @@ describe('SchemaOrgService', () => {
 	});
 
 	it('should insert a JSON-LD script with the schema serialized', () => {
-		service.setJsonLd('organization', { '@type': 'Organization', name: 'La Cuentoneta' });
+		service.setJsonLd('organization', { '@context': CONTEXT, '@type': 'Organization', name: 'La Cuentoneta' });
 
 		const script = scriptFor('organization');
 		expect(script).not.toBeNull();
 		expect(script?.type).toBe('application/ld+json');
-		expect(JSON.parse(script?.textContent ?? '{}')).toEqual({ '@type': 'Organization', name: 'La Cuentoneta' });
+		expect(JSON.parse(script?.textContent ?? '{}')).toEqual({
+			'@context': CONTEXT,
+			'@type': 'Organization',
+			name: 'La Cuentoneta',
+		});
 	});
 
 	it('should reuse the same script on repeated calls (idempotent by id)', () => {
-		service.setJsonLd('website', { '@type': 'WebSite', name: 'A' });
-		service.setJsonLd('website', { '@type': 'WebSite', name: 'B' });
+		service.setJsonLd('website', { '@context': CONTEXT, '@type': 'WebSite', name: 'A' });
+		service.setJsonLd('website', { '@context': CONTEXT, '@type': 'WebSite', name: 'B' });
 
 		expect(document.head.querySelectorAll('script[data-schema-id="website"]')).toHaveLength(1);
-		expect(JSON.parse(scriptFor('website')?.textContent ?? '{}')).toEqual({ '@type': 'WebSite', name: 'B' });
+		expect(JSON.parse(scriptFor('website')?.textContent ?? '{}')).toEqual({
+			'@context': CONTEXT,
+			'@type': 'WebSite',
+			name: 'B',
+		});
 	});
 
 	it('should keep separate scripts per id', () => {
-		service.setJsonLd('organization', { '@type': 'Organization' });
-		service.setJsonLd('website', { '@type': 'WebSite' });
+		service.setJsonLd('organization', { '@context': CONTEXT, '@type': 'Organization' });
+		service.setJsonLd('website', { '@context': CONTEXT, '@type': 'WebSite' });
 
 		expect(document.head.querySelectorAll('script[data-schema-id]')).toHaveLength(2);
 	});
@@ -45,8 +55,8 @@ describe('SchemaOrgService', () => {
 	it('should not let one page cleanup remove another page block (per-page ids avoid the navigation race)', () => {
 		// Navegación A→B: la ruta entrante setea su breadcrumb (id propio) antes de que la saliente
 		// se destruya; el cleanup de la saliente solo borra el suyo, nunca el de la entrante.
-		service.setJsonLd('breadcrumb-story', { '@type': 'BreadcrumbList' });
-		service.setJsonLd('breadcrumb-author', { '@type': 'BreadcrumbList' });
+		service.setJsonLd('breadcrumb-story', { '@context': CONTEXT, '@type': 'BreadcrumbList' });
+		service.setJsonLd('breadcrumb-author', { '@context': CONTEXT, '@type': 'BreadcrumbList' });
 		service.removeJsonLd('breadcrumb-story');
 
 		expect(scriptFor('breadcrumb-author')).not.toBeNull();
@@ -54,7 +64,7 @@ describe('SchemaOrgService', () => {
 	});
 
 	it('should remove the script for the given id', () => {
-		service.setJsonLd('organization', { '@type': 'Organization' });
+		service.setJsonLd('organization', { '@context': CONTEXT, '@type': 'Organization' });
 		service.removeJsonLd('organization');
 
 		expect(scriptFor('organization')).toBeNull();
@@ -66,10 +76,10 @@ describe('SchemaOrgService', () => {
 
 	describe('removePageScopedJsonLd', () => {
 		it('should remove blocks set as page-scoped and leave sitewide intact', () => {
-			service.setJsonLd('organization', { '@type': 'Organization' });
-			service.setJsonLd('website', { '@type': 'WebSite' });
-			service.setPageScopedJsonLd('article', { '@type': 'Article' });
-			service.setPageScopedJsonLd('collection', { '@type': 'CollectionPage' });
+			service.setJsonLd('organization', { '@context': CONTEXT, '@type': 'Organization' });
+			service.setJsonLd('website', { '@context': CONTEXT, '@type': 'WebSite' });
+			service.setPageScopedJsonLd('article', { '@context': CONTEXT, '@type': 'Article' });
+			service.setPageScopedJsonLd('collection', { '@context': CONTEXT, '@type': 'CollectionPage' });
 
 			service.removePageScopedJsonLd();
 

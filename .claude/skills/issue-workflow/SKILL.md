@@ -123,10 +123,9 @@ No avanzar a la Fase 3 sin aprobación explícita.
 
      ## Plan de pruebas
      [checklist de lo verificado]
-
-     🤖 Generated with [Claude Code](https://claude.com/claude-code)
      ```
 
+   - **El cuerpo termina en el plan de pruebas (restricción dura):** sin leyenda de atribución de agente (`🤖 Generated with …`, `Co-Authored-By: Claude …`, `Claude-Session: …`). Ver [`coding-agent-policies.md`](../../references/coding-agent-policies.md) Sección 2.
    - **El PR DEBE enlazar su issue de origen (restricción dura):** el cuerpo debe contener un keyword de cierre — `Closes #<issue>` (o `Fixes`/`Resolves`). El prefijo `[#<issue>]` del título **no** crea el enlace; el keyword en el cuerpo es obligatorio.
    - Si el issue es **hijo de un epic**, agregar además una línea `Parte de #<epic>.` (sin keyword de cierre) para cross-linkear el epic sin auto-cerrarlo.
 
