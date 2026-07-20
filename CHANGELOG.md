@@ -16,6 +16,40 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.8.6 (2026-07-20)
+
+La versión 2.8.6 avanza el **Design System v3** con una tanda de componentes nuevos para las páginas de dominio. Se incorpora el **StoryHeroHeader**, el hero de la página de cuento con portada de fondo difuminada y metadatos, listando todos los tags del cuento con `TagsList` (#1810, con una corrección posterior del listado de tags #1819); el **EditorialTextBlock**, un bloque de nota/destacado editorial que reemplaza al `EpigraphComponent` (#1812); el **NavigableCollectionTeaser**, un ítem compacto y navegable de colección enlazado a `/collection/:slug` (#1823); y el **DrawerComponent**, un panel modal direccional con transiciones sobre `<dialog>` nativo (#1827). Se corrige además el nombre accesible duplicado en el enlace de autor cuando el avatar queda dentro del `<a>`, dejándolo decorativo en las tarjetas afectadas (#1815).
+
+En el frente de **SEO/AEO y verificación**, se agrega la validación estructural de **JSON-LD**: los builders se tipan con `schema-dts` y se valida en runtime con `assertValidJsonLd` (#1721). Los e2e de SEO pasan a correr contra el **dataset `staging`** aislado en CI —en lugar del `development` compartido— para estabilizar la suite (#1722), y un **guardrail estructural** exige que toda página indexable declare su host directive de SEO acorde a su indexabilidad, derivándola del código y cubriendo el camino de fallo con fixtures adversariales (#1726).
+
+En **tooling y pipeline de release**, se elimina de la plantilla de PR del skill `issue-workflow` la leyenda de atribución prohibida, reemplazándola por una restricción dura (#1842), y se adapta el PR de release `develop → master` que genera `prepare-release-pr.yml`: nuevo título `[RELEASE] - Lanzamiento de la versión X.Y.Z de La Cuentoneta` y cuerpo reducido a los pasos manuales más el link al changelog de GitHub de la versión (#1863).
+
+### Cambios completos
+
+Ver el changelog completo en [2.8.6](https://github.com/cuentoneta/cuentoneta/releases/tag/2.8.6)
+
+### Cambios
+
+#### Design System v3 (componentes)
+
+- [#1810] - Agrega el componente V3 `StoryHeroHeader` (portada de fondo difuminada + meta del cuento) con su skeleton y stories, listando todos los tags del cuento con `TagsList`.
+- [#1812] - Agrega el componente V3 `EditorialTextBlock` (variantes nota y destacado) y migra la epígrafe de la página Story, eliminando `EpigraphComponent`.
+- [#1823] - Agrega `NavigableCollectionTeaser` (DS v3): ítem compacto navegable de colección enlazado a `/collection/:slug`, con su skeleton y stories, e introduce la ruta de dominio Collection.
+- [#1827] - Agrega `DrawerComponent` (DS v3): panel modal direccional con transiciones sobre `<dialog>` nativo, con slots header/footer y flags de cierre.
+- [#1815] - Corrige el nombre accesible duplicado en el enlace de autor dejando avatar y bandera decorativos en `HomeStoryCard`, `StoryCardTeaser`, `StoryCardTeaserV3` y `AuthorTeaser`.
+
+#### SEO / AEO y testing
+
+- [#1721] - Validación estructural de JSON-LD: tipado de los builders con `schema-dts` y verificación en runtime con `assertValidJsonLd`.
+- [#1722] - Apunta los e2e de SEO en CI al dataset `staging` aislado (local sigue en `development`).
+- [#1726] - Guardrail estructural que exige a cada página indexable declarar su host directive de SEO según su indexabilidad, derivada del código.
+
+#### Tooling / mantenimiento
+
+- [#1842] - Quita la leyenda de atribución prohibida de la plantilla de PR del skill `issue-workflow` y la reemplaza por una restricción dura.
+- [#1863] - Adapta el título y el cuerpo del PR de release `develop → master` generado por `prepare-release-pr.yml`.
+- (Hotfix) Reemplaza `ts-node` por `tsx` en los scripts.
+
 ## Versión 2.8.5 (2026-07-15)
 
 La versión 2.8.5 consolida la **indexación por SSR** de las fichas de autor, que era el mayor punto ciego de SEO pendiente. La ficha de autor ahora completa su render en el servidor —hidratación incremental y biografía servida aunque esté detrás de tabs— en lugar de emitir un body vacío por los `@defer`/tabs que solo montaban en cliente (#1771), con un hotfix previo que reemplazó los `@defer` por `@if` plano para restaurar el H1, la biografía y los enlaces `/story/` en el HTML crudo (#1773). Sobre esa corrección se incorpora una **suite de verificación del HTML SSR** (invariantes de indexado con cobertura Vitest, e2e contra el build de producción y un smoke post-deploy sobre el sitemap) para blindar que el indexado no vuelva a romperse silenciosamente (#1772).
