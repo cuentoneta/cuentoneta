@@ -9,7 +9,7 @@ import { audioRecording, pdfLink, spaceRecording, spotifyPodcastEpisode, youtube
 //
 // Diferencias de diseño respecto de `story` que este prototipo valida:
 //  - `body: blockContent`  ->  `content: array<section>` con cuerpo `markdown` por sección.
-//  - epígrafe `blockContent` -> Markdown-native (sin acoplar el lenguaje viejo).
+//  - epígrafes: array por seccion (analogo a Story.epigraphs), texto Markdown-native (sin acoplar el lenguaje viejo).
 //  - SIN `approximateReadingTime` (computedNumber): el reading time se materializa fuera del CMS,
 //    vía webhook -> función -> documento derivado (decisión T1b). El source doc no lo persiste.
 
@@ -25,12 +25,20 @@ const section = defineArrayMember({
 			type: 'string',
 		}),
 		defineField({
-			name: 'epigraph',
-			title: 'Epígrafe de la sección',
-			type: 'object',
-			fields: [
-				defineField({ name: 'text', title: 'Texto', type: 'markdown' }),
-				defineField({ name: 'reference', title: 'Referencia', type: 'string' }),
+			name: 'epigraphs',
+			title: 'Epígrafes de la sección',
+			description: 'Una sección puede tener más de un epígrafe (análogo a los epígrafes de una Story).',
+			type: 'array',
+			of: [
+				defineArrayMember({
+					name: 'epigraph',
+					title: 'Epígrafe',
+					type: 'object',
+					fields: [
+						defineField({ name: 'text', title: 'Texto', type: 'markdown' }),
+						defineField({ name: 'reference', title: 'Referencia', type: 'string' }),
+					],
+				}),
 			],
 		}),
 		defineField({
