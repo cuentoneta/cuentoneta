@@ -17,15 +17,16 @@
 import { test, expect } from '@playwright/test';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
+import { assertValidJsonLd } from '../../src/app/testing/json-ld-validation';
+import type { SeoInvariantViolation } from '../../src/app/testing/seo-invariant-violation';
 import {
 	checkNgServerContext,
 	checkTitle,
 	checkCanonical,
 	checkRobotsIndexable,
 	checkPrimaryContentLength,
-	checkJsonLdBlocksPresent,
+	checkJsonLdBlocks,
 	collectIndexableHtmlViolations,
-	type Violation,
 } from '../_utils/seo-invariants';
 import { STABLE_SLUGS, SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
 
@@ -55,19 +56,16 @@ test('storylist — B: JSON-LD CollectionPage y BreadcrumbList', async () => {
 	const blocks = parseJsonLdBlocks(html);
 
 	const collection = blocks.get(SCHEMA_IDS.collection);
-	expect(collection?.['@context']).toBe('https://schema.org');
-	expect(collection?.['@type']).toBe('CollectionPage');
+	await assertValidJsonLd(collection);
 	const mainEntity = collection?.['mainEntity'] as Record<string, unknown>;
 	expect(mainEntity?.['@type']).toBe('ItemList');
 	expect(Number(mainEntity?.['numberOfItems'])).toBeGreaterThan(0);
 	const listElements = mainEntity?.['itemListElement'] as Record<string, unknown>[];
 	expect(listElements?.length).toBeGreaterThan(0);
-	expect(listElements?.[0]?.['@type']).toBe('ListItem');
 	expect(listElements?.[0]?.['position']).toBe(1);
 
 	const breadcrumb = blocks.get(SCHEMA_IDS.breadcrumbStorylist);
-	expect(breadcrumb?.['@context']).toBe('https://schema.org');
-	expect(breadcrumb?.['@type']).toBe('BreadcrumbList');
+	await assertValidJsonLd(breadcrumb);
 	expect((breadcrumb?.['itemListElement'] as unknown[])?.length).toBeGreaterThanOrEqual(2);
 });
 
@@ -78,24 +76,24 @@ test('storylist — C: bloques sitewide Organization y WebSite presentes', async
 	expect(blocks.get(SCHEMA_IDS.website)?.['@type']).toBe('WebSite');
 });
 
-test('storylist — invariantes de indexado disponibles hoy (ssr, title, canonical, robots, contenido primario, jsonld)', () => {
-	const violations: Violation[] = [
+test('storylist — invariantes de indexado disponibles hoy (ssr, title, canonical, robots, contenido primario, jsonld)', async () => {
+	const violations: SeoInvariantViolation[] = [
 		checkNgServerContext(html),
 		checkTitle(html),
 		checkCanonical(html, storylistPath),
 		checkRobotsIndexable(html),
 		checkPrimaryContentLength(html),
-		...checkJsonLdBlocksPresent(html, [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.collection, SCHEMA_IDS.breadcrumbStorylist]),
-	].filter((violation): violation is Violation => violation !== null);
+		...(await checkJsonLdBlocks(html, [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.collection, SCHEMA_IDS.breadcrumbStorylist])),
+	].filter((violation): violation is SeoInvariantViolation => violation !== null);
 	expect(violations).toEqual([]);
 });
 
 // Bloqueado por #1771: storylist-title.ts (el <h1>) y el tab "Textos" (las tarjetas de cuento) usan
 // @defer, así que el SSR no emite h1 real, ni enlaces /story/, y sirve skeletons dentro de <main>.
 // Al cerrar #1771, esta aserción completa reemplaza al subset real de arriba.
-test.fixme('storylist — h1 real + enlace a /story/ + sin skeleton (bloqueado por #1771)', () => {
+test.fixme('storylist — h1 real + enlace a /story/ + sin skeleton (bloqueado por #1771)', async () => {
 	expect(
-		collectIndexableHtmlViolations(html, {
+		await collectIndexableHtmlViolations(html, {
 			path: storylistPath,
 			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.collection, SCHEMA_IDS.breadcrumbStorylist],
 			requiredInternalLinkPrefix: '/story/',

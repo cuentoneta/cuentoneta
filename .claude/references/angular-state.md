@@ -161,6 +161,17 @@ Cuándo **bloquear**: rutas cuyo HTML server-rendered debe traer contenido/meta 
 
 **Enforced por lint:** en `src/app/pages/**` está prohibido `rxResource`/`httpResource` crudo — el gate `lint` obliga a elegir `ssrBlockingRxResource` o `progressiveRxResource` (`no-restricted-syntax`, bloque `ssr-fetch-must-decide-blocking` de `eslint.config.mjs`; #1705).
 
+### 8. Directivas de SEO de página: declarar el combo según la indexabilidad
+
+Cada componente de página compone su SEO en el campo **`hostDirectives`** del decorador `@Component` (distinto de `host`, ver [`angular-components.md`](angular-components.md#host-element)). Hay exactamente **dos formas**, elegidas según si la ruta es indexable:
+
+- **Página indexable** (`RenderMode.Server`/`Prerender` sin `noindex`): `hostDirectives: [<Page>MetaTagsDirective, <Page>StructuredDataDirective]`. Ambas extienden `AbstractMetaTagsDirective`/`AbstractStructuredDataDirective`; la `<Page>MetaTagsDirective` emite `setRobots('index, follow')` y la `<Page>StructuredDataDirective` inyecta el JSON-LD. Ejemplos: `home`, `author`, `story`, `storylist`.
+- **Página no indexable** (`noindex`): `hostDirectives: [HeadMetadataDirective]` (la directiva genérica, sin structured data) y el componente llama `setRobots('noindex, ...')` en su constructor. Ejemplos: `about`, `authors`, `stories`, `dmca`. La ausencia de structured data acá es intencional, no un hueco.
+
+Una página indexable **nunca** debe usar la forma no indexable: quedaría sin structured data y sin `setRobots('index...')` de forma silenciosa.
+
+**Enforced por test:** el gate `test` corre `src/app/pages/seo-host-directives.spec.ts` (#1726), que descubre las páginas desde `app.routes.server.ts` (rutas `Server`/`Prerender`) resolviendo su fuente vía el `loadComponent` de `app.routes.ts`, y deriva la indexabilidad del propio código: una página que llama `setRobots('noindex...')` solo debe declarar `[HeadMetadataDirective]`; cualquier otra se considera indexable y debe declarar el combo MetaTags + StructuredData. No hay registro que mantener ni imports de componentes: una página nueva se chequea automáticamente y **rompe el test** si es indexable sin structured data (para saltearse el combo hay que emitir un `noindex` real, visible en el diff).
+
 ---
 
 ## Checklist rápido
@@ -173,6 +184,7 @@ Cuándo **bloquear**: rutas cuyo HTML server-rendered debe traer contenido/meta 
 - [ ] ¿El debounce/throttle/coordinación está en el servicio, no en el componente?
 - [ ] ¿Los errores están tipados por operación, no en un `string | null` global?
 - [ ] ¿Los recursos de página que alimentan contenido/meta indexable usan `ssrBlockingRxResource`, y los secundarios/`noindex` usan `progressiveRxResource` (nunca `rxResource` crudo en `pages/**`)?
+- [ ] ¿La página declara sus `hostDirectives` de SEO según su indexabilidad (indexable: MetaTags + StructuredData; no indexable/`noindex`: HeadMetadataDirective + `setRobots('noindex...')`)? Lo verifica automáticamente `seo-host-directives.spec.ts`.
 
 ---
 

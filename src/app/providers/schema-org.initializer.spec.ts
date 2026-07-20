@@ -1,6 +1,7 @@
 import { DOCUMENT } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
+import { assertValidJsonLd } from '../testing/json-ld-validation';
 import { applySiteSchema, buildOrganizationSchema, buildWebSiteSchema } from './schema-org.initializer';
 import { SchemaOrgService } from './schema-org.service';
 
@@ -22,11 +23,17 @@ describe('schema-org builders', () => {
 		});
 
 		it('should expose the official social profiles (matching the footer) in sameAs', () => {
-			expect(buildOrganizationSchema(websiteUrl)['sameAs']).toEqual([
-				'https://twitter.com/cuentoneta',
-				'https://www.instagram.com/cuentoneta',
-				'https://www.facebook.com/cuentoneta',
-			]);
+			expect(buildOrganizationSchema(websiteUrl)).toMatchObject({
+				sameAs: [
+					'https://twitter.com/cuentoneta',
+					'https://www.instagram.com/cuentoneta',
+					'https://www.facebook.com/cuentoneta',
+				],
+			});
+		});
+
+		it('should build a schema.org-valid Organization', async () => {
+			await expect(assertValidJsonLd(buildOrganizationSchema(websiteUrl))).resolves.toBeUndefined();
 		});
 	});
 
@@ -39,6 +46,10 @@ describe('schema-org builders', () => {
 				url: 'https://www.cuentoneta.ar',
 				inLanguage: 'es-AR',
 			});
+		});
+
+		it('should build a schema.org-valid WebSite', async () => {
+			await expect(assertValidJsonLd(buildWebSiteSchema(websiteUrl))).resolves.toBeUndefined();
 		});
 	});
 });

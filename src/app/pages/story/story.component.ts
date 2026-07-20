@@ -23,7 +23,7 @@ import { STORY_HOST, type StoryHost } from './story-host';
 import { StoryNavigationBarComponent } from '@components/story-navigation-bar/story-navigation-bar.component';
 import { BioSummaryCardComponent } from '@components/bio-summary-card/bio-summary-card.component';
 import { ShareContentComponent } from '@components/share-content/share-content.component';
-import { EpigraphComponent } from '@components/epigraph/epigraph.component';
+import { EditorialTextBlockComponent } from '@components/editorial-text-block/editorial-text-block.component';
 import { MediaResourceComponent } from '@components/media-resource/media-resource.component';
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
 import { ProgressBarComponent } from '@components/progress-bar/progress-bar.component';
@@ -44,7 +44,7 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 	imports: [
 		BioSummaryCardComponent,
 		CommonModule,
-		EpigraphComponent,
+		EditorialTextBlockComponent,
 		MediaResourceComponent,
 		SkeletonComponent,
 		PortableTextParserComponent,

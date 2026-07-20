@@ -148,7 +148,6 @@ jobs:
         env:
           VERSION: ${{ steps.resolve.outputs.version }}
           REPO: ${{ github.repository }}
-          RELEASE_ISSUE: ${{ steps.resolve.outputs.release_issue }}
         run: |
           set -euo pipefail
           body_file="${RUNNER_TEMP}/release-pr-body.md"
@@ -159,19 +158,13 @@ jobs:
             echo "- [ ] Mergear este PR a \`master\` → dispara \`release.yml\` (tag + GitHub Release + deploy de Studio)."
             echo "- [ ] Verificar que el workflow Release quede verde y la app/Studio en producción sin regresiones."
             echo ""
-            if [ -n "${RELEASE_ISSUE:-}" ]; then
-              echo "Relacionado: #${RELEASE_ISSUE}"
-              echo ""
-            fi
-            echo "CI: este PR no dispara checks por sí mismo (anti-recursión del \`GITHUB_TOKEN\`); el workflow corre \`ci.yml\` sobre \`develop\` al preparar el PR."
-            echo ""
-            echo "CHANGELOG: https://github.com/${REPO}/blob/develop/CHANGELOG.md"
-            echo ""
-            echo "El deploy de la app lo cubre Vercel por integración Git nativa."
+            # El release y su changelog los publica release.yml al mergear a master, así
+            # que el link resuelve recién después del merge (404 hasta entonces).
+            echo "Changelog de la versión: https://github.com/${REPO}/releases/tag/${VERSION}"
           } > "$body_file"
 
           echo "body_file=$body_file" >> "$GITHUB_OUTPUT"
-          echo "title=Release ${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "title=[RELEASE] - Lanzamiento de la versión ${VERSION} de La Cuentoneta" >> "$GITHUB_OUTPUT"
 
       - name: Crear o actualizar PR develop → master
         if: steps.resolve.outputs.skip != 'true' && steps.milestone.outputs.ready == 'true'

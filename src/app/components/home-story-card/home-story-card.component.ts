@@ -64,12 +64,7 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
 						class="group relative z-10 flex min-w-0 items-center gap-2"
 						data-testid="author"
 					>
-						<cuentoneta-image-profile
-							[src]="story.author.imageUrl"
-							[alt]="'Retrato de ' + story.author.name"
-							size="small"
-							class="shrink-0"
-						/>
+						<cuentoneta-image-profile [src]="story.author.imageUrl" size="small" class="shrink-0" />
 						<span class="truncate font-inter text-sm font-medium text-neutral-900 group-hover:underline">{{
 							story.author.name
 						}}</span>

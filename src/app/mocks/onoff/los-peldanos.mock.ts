@@ -1,5 +1,6 @@
 import type { Story } from '@models/story.model';
 import { authorMock } from '../author.mock';
+import { absurdoTagMock, cuentoTagMock, surrealismoTagMock } from '../onoff-tags.mock';
 
 export const losPeldanosStoryMock: Story = {
 	_id: 'onoff-story-los-peldanos',
@@ -9,7 +10,7 @@ export const losPeldanosStoryMock: Story = {
 	approximateReadingTime: 8,
 	badLanguage: false,
 	coverImage: 'assets/img/mocks/stories/los-peldanos.png',
-	tags: [],
+	tags: [cuentoTagMock, absurdoTagMock, surrealismoTagMock],
 	resources: [],
 	media: [],
 	epigraphs: [],

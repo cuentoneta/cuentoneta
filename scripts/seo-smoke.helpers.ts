@@ -4,7 +4,7 @@
  * sin levantar un server ni tocar la red.
  */
 import type { IndexableHtmlExpectations } from '../e2e/_utils/seo-invariants';
-import { parseHtml } from '../e2e/_utils/seo';
+import { parseHtml, parseJsonLdBlocks } from '../e2e/_utils/seo';
 import { SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../e2e/_utils/seo-fixtures';
 
 export function slugOf(path: string): string {
@@ -96,4 +96,24 @@ export function expectationsFor(path: string): IndexableHtmlExpectations | null 
 		};
 	}
 	return null;
+}
+
+/**
+ * A diferencia del build de e2e (base relativa, `website='/'`, url sitewide vacía), el smoke corre
+ * contra prod real (BASE_URL absoluto): ahí las entidades sitewide DEBEN llevar una url absoluta. Este
+ * check —exclusivo del smoke— atrapa un `environment.website` mal configurado en el deploy (url vacía o
+ * relativa), el único modo de falla que ni los unit tests (input hardcodeado) ni el e2e (base relativa) ven.
+ */
+export function checkSitewideAbsoluteUrls(html: string): string[] {
+	try {
+		const blocks = parseJsonLdBlocks(html);
+		return SITEWIDE_SCHEMA_IDS.flatMap((id) => {
+			const url = blocks.get(id)?.['url'];
+			return typeof url === 'string' && /^https?:\/\//.test(url)
+				? []
+				: [`El bloque sitewide "${id}" no expone una url absoluta (encontrado: ${JSON.stringify(url)}).`];
+		});
+	} catch {
+		return []; // un bloque malformado ya lo reporta collectIndexableHtmlViolations; no duplicamos
+	}
 }

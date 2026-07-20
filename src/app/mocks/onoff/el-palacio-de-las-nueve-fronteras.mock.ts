@@ -1,5 +1,6 @@
 import type { Story } from '@models/story.model';
 import { authorMock } from '../author.mock';
+import { dramaPsicologicoTagMock, metaficcionTagMock, novelaTagMock } from '../onoff-tags.mock';
 
 export const palacioNueveFronterasStoryMock: Story = {
 	_id: 'onoff-story-el-palacio-de-las-nueve-fronteras',
@@ -9,7 +10,7 @@ export const palacioNueveFronterasStoryMock: Story = {
 	approximateReadingTime: 11,
 	badLanguage: false,
 	coverImage: 'assets/img/mocks/stories/el-palacio-de-las-nueve-fronteras.png',
-	tags: [],
+	tags: [novelaTagMock, dramaPsicologicoTagMock, metaficcionTagMock],
 	resources: [],
 	media: [],
 	epigraphs: [],

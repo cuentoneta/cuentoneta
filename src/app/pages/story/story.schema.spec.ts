@@ -1,10 +1,20 @@
 import { storyMock } from '@mocks/story.mock';
 
+import { assertValidJsonLd, validateJsonLd } from '../../testing/json-ld-validation';
 import { buildStoryArticleSchema, buildStoryBreadcrumb } from './story.schema';
 
 describe('buildStoryArticleSchema', () => {
 	// URL con barra final como la que llega en producción; el builder debe normalizarla.
 	const websiteUrl = 'https://www.cuentoneta.ar/';
+
+	it('should build a schema.org-valid Article', async () => {
+		await expect(assertValidJsonLd(buildStoryArticleSchema(storyMock, websiteUrl))).resolves.toBeUndefined();
+	});
+
+	it('should emit an invalid Article when the story has no publication date (caught by validation)', async () => {
+		const schema = buildStoryArticleSchema({ ...storyMock, publishedAt: '' }, websiteUrl);
+		expect((await validateJsonLd(schema)).map((violation) => violation.message).join(' ')).toContain('datePublished');
+	});
 
 	it('should build an Article with E-E-A-T dates and normalized urls', () => {
 		const schema = buildStoryArticleSchema(storyMock, websiteUrl);
@@ -68,14 +78,20 @@ describe('buildStoryBreadcrumb', () => {
 		const schema = buildStoryBreadcrumb(storyMock, 'https://www.cuentoneta.ar/');
 
 		expect(schema['itemListElement']).toEqual([
-			{ '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://www.cuentoneta.ar/home' },
-			{ '@type': 'ListItem', position: 2, name: 'Cuentos', item: 'https://www.cuentoneta.ar/story' },
+			{ '@type': 'ListItem', position: 1, name: 'Inicio', item: { '@id': 'https://www.cuentoneta.ar/home' } },
+			{ '@type': 'ListItem', position: 2, name: 'Cuentos', item: { '@id': 'https://www.cuentoneta.ar/story' } },
 			{
 				'@type': 'ListItem',
 				position: 3,
 				name: 'El espejo del tiempo',
-				item: 'https://www.cuentoneta.ar/story/el-espejo-del-tiempo',
+				item: { '@id': 'https://www.cuentoneta.ar/story/el-espejo-del-tiempo' },
 			},
 		]);
+	});
+
+	it('should build a schema.org-valid BreadcrumbList', async () => {
+		await expect(
+			assertValidJsonLd(buildStoryBreadcrumb(storyMock, 'https://www.cuentoneta.ar/')),
+		).resolves.toBeUndefined();
 	});
 });

@@ -81,7 +81,6 @@ export const Showcase: Story = {
 	parameters: { docs: { description: { story: 'Las tres variantes: soft, filled y gray.' } } },
 };
 
-// Estado de carga (skeleton) del tag.
 export const Skeleton: StoryObj = {
 	decorators: [moduleMetadata({ imports: [TagSkeletonComponent] })],
 	render: () => ({ template: `<cuentoneta-tag-skeleton />` }),
@@ -90,7 +89,6 @@ export const Skeleton: StoryObj = {
 	},
 };
 
-// Switch "Cargando" para alternar real↔skeleton en el mismo slot y evaluar la transición/alineación.
 export const Estados: StoryObj<TagComponent & { loading: boolean }> = {
 	decorators: [moduleMetadata({ imports: [TagSkeletonComponent] })],
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },

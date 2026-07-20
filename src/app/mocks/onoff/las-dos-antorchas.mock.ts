@@ -1,5 +1,6 @@
 import type { Story } from '@models/story.model';
 import { authorMock } from '../author.mock';
+import { experimentalTagMock, metaficcionTagMock, novelaTagMock } from '../onoff-tags.mock';
 
 export const lasDosAntorchasStoryMock: Story = {
 	_id: 'onoff-story-las-dos-antorchas',
@@ -9,7 +10,7 @@ export const lasDosAntorchasStoryMock: Story = {
 	approximateReadingTime: 8,
 	badLanguage: false,
 	coverImage: 'assets/img/mocks/stories/las-dos-antorchas.png',
-	tags: [],
+	tags: [novelaTagMock, metaficcionTagMock, experimentalTagMock],
 	resources: [],
 	media: [],
 	epigraphs: [],

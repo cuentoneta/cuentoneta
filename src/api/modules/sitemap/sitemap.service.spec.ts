@@ -90,7 +90,6 @@ describe('SitemapService', () => {
 		});
 
 		it('should include story URLs', async () => {
-			// Repository returns already-processed data (dates formatted)
 			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
 				stories: [{ slug: 'el-aleph', lastmod: '2025-01-01' }],
 				authors: [],
@@ -142,7 +141,6 @@ describe('SitemapService', () => {
 		});
 
 		it('should handle missing lastmod gracefully', async () => {
-			// Repository returns processed data (undefined lastmod preserved)
 			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
 				stories: [{ slug: 'no-lastmod-story', lastmod: undefined }],
 				authors: [],
