@@ -169,6 +169,21 @@ describe('DrawerComponent', () => {
 		expect(getDialog()).toHaveClass('drawer-left');
 	});
 
+	it('should anchor the close button to the inner edge according to direction', async () => {
+		const { rerender } = await render(HostComponent, { componentProperties: { direction: 'left' } });
+		const closeButton = (): HTMLElement => screen.getByRole('button', { name: 'Cerrar', hidden: true });
+		expect(closeButton()).toHaveClass('self-end');
+
+		await rerender({ componentProperties: { direction: 'right' } });
+		expect(closeButton()).toHaveClass('self-start');
+
+		await rerender({ componentProperties: { direction: 'top' } });
+		expect(closeButton()).toHaveClass('order-last', 'self-center');
+
+		await rerender({ componentProperties: { direction: 'bottom' } });
+		expect(closeButton()).toHaveClass('self-center');
+	});
+
 	it('should unregister from the tracker when destroyed while open', async () => {
 		const user = userEvent.setup();
 		const { fixture } = await render(HostComponent);

@@ -47,28 +47,28 @@ export type DrawerDirection = 'left' | 'right' | 'top' | 'bottom';
 			[attr.aria-describedby]="description() ? descriptionId : null"
 			#dialog
 			tabindex="-1"
-			class="m-0 flex max-h-full flex-col gap-5 overflow-y-auto rounded-xl bg-white p-10 transition-transform duration-300 ease-out backdrop:bg-black/60 motion-reduce:duration-[0.01ms]"
+			class="m-0 flex max-h-full max-w-full flex-col gap-5 overflow-y-auto rounded-xl bg-white p-10 transition-transform duration-300 ease-out backdrop:bg-black/60 motion-reduce:duration-[0.01ms]"
 		>
-			<div class="flex items-start justify-between gap-4">
-				@if (headerTemplate(); as header) {
-					<ng-container [ngTemplateOutlet]="header.templateRef" />
-				} @else if (title()) {
-					<div>
-						<h2 [id]="titleId" class="font-inter text-xl font-bold text-neutral-900">{{ title() }}</h2>
-						@if (description()) {
-							<p [id]="descriptionId" class="mt-1 font-inter text-sm text-neutral-600">{{ description() }}</p>
-						}
-					</div>
-				}
-				<button
-					(click)="close()"
-					type="button"
-					aria-label="Cerrar"
-					class="flex size-10 shrink-0 items-center justify-center rounded-full bg-neutral-100 p-2 text-neutral-900 hover:bg-neutral-200"
-				>
-					<ng-icon name="faSolidXmark" class="text-2xl" aria-hidden="true" />
-				</button>
-			</div>
+			<button
+				(click)="close()"
+				[class]="closeButtonClasses()"
+				type="button"
+				aria-label="Cerrar"
+				class="flex size-10 shrink-0 items-center justify-center rounded-full bg-neutral-100 p-2 text-neutral-900 hover:bg-neutral-200"
+			>
+				<ng-icon name="faSolidXmark" class="text-2xl" aria-hidden="true" />
+			</button>
+
+			@if (headerTemplate(); as header) {
+				<ng-container [ngTemplateOutlet]="header.templateRef" />
+			} @else if (title()) {
+				<div>
+					<h2 [id]="titleId" class="font-inter text-xl font-bold text-neutral-900">{{ title() }}</h2>
+					@if (description()) {
+						<p [id]="descriptionId" class="mt-1 font-inter text-sm text-neutral-600">{{ description() }}</p>
+					}
+				</div>
+			}
 
 			<div class="flex-1"><ng-content /></div>
 
@@ -106,6 +106,16 @@ export class DrawerComponent {
 
 	protected readonly transition = inject(DrawerTransitionDirective);
 	protected readonly panel = inject(DrawerPanelDirective);
+
+	// El botón de cierre se ancla al borde interior del panel (el que da hacia el contenido, no hacia el borde del
+	// viewport): a la derecha en `left`, a la izquierda en `right`, y centrado al fondo/al top en `top`/`bottom`.
+	private readonly closeButtonConfig: Record<DrawerDirection, string> = {
+		left: 'self-end',
+		right: 'self-start',
+		top: 'order-last self-center',
+		bottom: 'self-center',
+	};
+	protected readonly closeButtonClasses = computed(() => this.closeButtonConfig[this.panel.direction()]);
 
 	// Marca la ventana entre `close()` y `transitionend`, durante la cual el `<dialog>` sigue `open === true`: sin
 	// esta guarda, un segundo `close()` en pleno cierre volvería a emitir eventos y a apilar listeners de transición.
