@@ -195,7 +195,7 @@ El principio: **el documento es canónico; la memoria es refuerzo**. Si los dos 
 
 ### Gates de CI
 
-Independientemente de lo anterior, todo PR debe dejar verdes los gates de CI definidos en `CLAUDE.md`: `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`, `studio-build`. Que un gate sea "molesto" o "lento" no es justificación para saltearlo o deshabilitarlo.
+Independientemente de lo anterior, todo PR debe dejar verdes los gates de CI definidos en la sección [Comandos comunes](../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**). Que un gate sea "molesto" o "lento" no es justificación para saltearlo o deshabilitarlo.
 
 ### Enmiendas
 
@@ -203,4 +203,4 @@ Proponé cambios vía issue en `cuentoneta/cuentoneta`. Las enmiendas requieren 
 
 ---
 
-_Última actualización: 2026-07-19. Versión inicial en #1495 (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) agregada en #1499 y ampliada en #1542 (visibilidad de API y reemplazos canónicos); regla de story intercambiable para estados de carga agregada en #1581; regla de child issues reales en epics agregada en #1843._
+_Última actualización: 2026-07-20. Versión inicial en #1495 (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) agregada en #1499 y ampliada en #1542 (visibilidad de API y reemplazos canónicos); regla de story intercambiable para estados de carga agregada en #1581; regla de child issues reales en epics agregada en #1843; "Gates de CI" convertida a remisión a CLAUDE.md en #1844._

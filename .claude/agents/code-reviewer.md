@@ -53,7 +53,7 @@ Cargá todas estas juntas:
 3. **Verificar cobertura de tests** — Confirmá que hay tests para el código nuevo (Vitest + Angular Testing Library + `@test-utils`).
 4. **Correr los gates de CI** — Ejecutá los gates vía `pnpm` para asegurar que nada se rompió. Debés correr esta verificación vos mismo en **cada** invocación; nunca confíes en ni reportes un estado de CI que no observaste directamente.
 
-Los gates que deben quedar verdes en cada PR son: `pnpm lint`, `pnpm test`, `pnpm stylelint`, `pnpm typecheck`, `pnpm build` y `pnpm storybook:build`. Corré cada uno y reportá el resultado real que observaste.
+Los gates que deben quedar verdes en cada PR son los definidos en la sección [Comandos comunes](../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**). Corré cada uno y reportá el resultado real que observaste.
 
 ## Falsos positivos conocidos — NO marcar
 
@@ -211,16 +211,11 @@ La columna **#** da un número secuencial a través de las tres tablas dentro de
 
 ### Resultados de verificación
 
-Corré los gates vía `pnpm` vos mismo en cada invocación y reportá el resultado que observaste:
+Corré vos mismo, en cada invocación, los gates de CI definidos en la sección [Comandos comunes](../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**) y reportá el resultado real que observaste. Generá una fila por gate:
 
-| Comando                | Resultado |
-| ---------------------- | --------- |
-| `pnpm lint`            | PASS/FAIL |
-| `pnpm stylelint`       | PASS/FAIL |
-| `pnpm typecheck`       | PASS/FAIL |
-| `pnpm test`            | PASS/FAIL |
-| `pnpm build`           | PASS/FAIL |
-| `pnpm storybook:build` | PASS/FAIL |
+| Comando          | Resultado |
+| ---------------- | --------- |
+| `pnpm <comando>` | PASS/FAIL |
 
 Si alguno falla, reportá cuál y el detalle del fallo.
 

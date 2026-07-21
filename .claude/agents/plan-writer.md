@@ -126,7 +126,7 @@ Escribí el plan en `workspace/PLAN.md` con esta estructura:
 
 ## Gates de CI
 
-Listar los gates que deben quedar verdes para este cambio (vía `pnpm`): `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`. Indicar cuáles son relevantes al diff.
+Listar los gates de CI definidos en la sección [Comandos comunes](../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**) que aplican a este cambio. Indicar cuáles son relevantes al diff.
 
 ## Convenciones del repo a respetar
 
