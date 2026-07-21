@@ -6,14 +6,14 @@ import { CarouselComponent } from './carousel.component';
 
 // Mocks
 import { contentCampaignMock } from '@mocks/content-campaign.mock';
-import { InMemoryLayoutService } from '../../providers/layout.mock';
-import { LayoutService } from '../../providers/layout.service';
+import { InMemoryLayoutService, provideLayoutServiceMock } from '../../providers/layout.mock';
+import type { EnvironmentProviders } from '@angular/core';
 import type { Viewport } from '@utils/screen.utils';
 
-function layoutAt(viewport: Viewport): InMemoryLayoutService {
+function layoutAt(viewport: Viewport): EnvironmentProviders {
 	const layout = new InMemoryLayoutService();
-	layout.setViewport(viewport);
-	return layout;
+	layout.simulateViewport(viewport);
+	return provideLayoutServiceMock(layout);
 }
 
 describe('CarouselComponent', () => {
@@ -38,7 +38,7 @@ describe('CarouselComponent', () => {
 	it('should apply xs viewport-specific classes correctly', async () => {
 		await render(CarouselComponent, {
 			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('xs') }],
+			providers: [layoutAt('xs')],
 		});
 		const slideLinks = screen.getAllByRole('link');
 		slideLinks.forEach((link) => {
@@ -49,7 +49,7 @@ describe('CarouselComponent', () => {
 	it('should apply md viewport-specific classes correctly', async () => {
 		await render(CarouselComponent, {
 			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
+			providers: [layoutAt('md')],
 		});
 		const slideLinks = screen.getAllByRole('link');
 		slideLinks.forEach((link) => {
@@ -192,7 +192,7 @@ describe('CarouselComponent', () => {
 	it('should have proper ARIA attributes on navigation buttons', async () => {
 		await render(CarouselComponent, {
 			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
+			providers: [layoutAt('md')],
 		});
 
 		const prevButton = screen.getByLabelText('Previous slide');
@@ -262,7 +262,7 @@ describe('CarouselComponent', () => {
 	it('should show controls on desktop viewport', async () => {
 		await render(CarouselComponent, {
 			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
+			providers: [layoutAt('md')],
 		});
 
 		expect(screen.getByLabelText('Previous slide')).toBeInTheDocument();
@@ -272,7 +272,7 @@ describe('CarouselComponent', () => {
 	it('should hide controls on mobile viewport', async () => {
 		await render(CarouselComponent, {
 			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('xs') }],
+			providers: [layoutAt('xs')],
 		});
 
 		expect(screen.queryByLabelText('Previous slide')).not.toBeInTheDocument();

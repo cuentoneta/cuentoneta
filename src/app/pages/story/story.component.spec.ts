@@ -70,21 +70,21 @@ describe('StoryComponent - headerPosition', () => {
 
 	it('derives top-header-height when viewport is larger than xs (covers SSR, which fixes viewport to md)', async () => {
 		const { headerPosition } = await setup();
-		mockLayoutService.setViewport('lg');
+		mockLayoutService.simulateViewport('lg');
 
 		expect(headerPosition()).toBe('top-header-height');
 	});
 
 	it('derives top-header-height on xs while the header is visible (initial state before any scroll)', async () => {
 		const { headerPosition } = await setup();
-		mockLayoutService.setViewport('xs');
+		mockLayoutService.simulateViewport('xs');
 
 		expect(headerPosition()).toBe('top-header-height');
 	});
 
 	it('derives top-0 on xs when the header is hidden after scrolling down', async () => {
 		const { headerPosition } = await setup();
-		mockLayoutService.setViewport('xs');
+		mockLayoutService.simulateViewport('xs');
 		mockLayoutService.isHeaderVisible.set(false);
 
 		expect(headerPosition()).toBe('top-0');
@@ -92,11 +92,11 @@ describe('StoryComponent - headerPosition', () => {
 
 	it('recomputes to top-header-height when viewport grows past xs while the header is hidden', async () => {
 		const { headerPosition } = await setup();
-		mockLayoutService.setViewport('xs');
+		mockLayoutService.simulateViewport('xs');
 		mockLayoutService.isHeaderVisible.set(false);
 		expect(headerPosition()).toBe('top-0');
 
-		mockLayoutService.setViewport('lg');
+		mockLayoutService.simulateViewport('lg');
 
 		expect(headerPosition()).toBe('top-header-height');
 	});
