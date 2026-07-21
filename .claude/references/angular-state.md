@@ -1,6 +1,6 @@
 # Estado: signals-first (sin NgRx)
 
-> **Alcance:** cómo se modela y muta el **estado** en el frontend de La Cuentoneta. Complementa la sección [_"Estado: signals-first (sin NgRx)"_ de `CLAUDE.md`](../../CLAUDE.md) con ejemplos anclados en el código real.
+> **Alcance:** cómo se modela y muta el **estado** en el frontend de La Cuentoneta. Complementa el bullet **Frontend** de [`CLAUDE.md` → Arquitectura (resumen)](../../CLAUDE.md#arquitectura-resumen) —donde se fija el estado **signals-first sin NgRx**— con ejemplos anclados en el código real.
 >
 > **Idioma:** explicación en español, **código/identificadores en inglés**.
 >
@@ -135,7 +135,7 @@ El componente que lo consume no repite el `throttleTime` ni el `merge`: inyecta 
 
 Preferir un estado de error **por operación** a un único `string | null` compartido entre todas las operaciones del servicio. Cada lectura/mutación expone su propio estado de error/carga, de modo que la UI distingue qué falló. Con `rxResource` esto sale del propio recurso (`.status()` / `.error()` por recurso); con observables crudos, modelar un signal de error por operación, no un campo global del servicio.
 
-> El detalle de **manejo de errores** (preservar la causa, loguear con contexto) está en `CLAUDE.md` → _Manejo de errores_ y en [`maintainability.md`](maintainability.md).
+> La regla base para los **errores atrapados** —preservar la causa (ESLint `preserve-caught-error`) y tipar el error por operación— es una restricción dura: ver la fila _Errores atrapados_ en [`CLAUDE.md` → Restricciones duras](../../CLAUDE.md#restricciones-duras-hard-constraints).
 
 ### 7. Recursos de página: bloquear el SSR con `ssrBlockingRxResource`
 

@@ -52,7 +52,7 @@ Tampoco incluyas esas frases como **cláusulas condicionales** en recomendacione
 - Si una opción más liviana realmente vale la pena mencionarla, framéala como "la opción de menor costo, asumiendo que aceptamos X pérdida de rigor" —nunca como "está bien si sos solo vos".
 - Aplicá esto en code reviews, estructuración de planes, estrategia de PRs, decisiones de refactor, decisiones de cobertura de tests, decisiones de documentación y cualquier otro lugar donde el agente pueda tentarse de optimizar para el flujo en solitario.
 - Esta política es una regla dura, no una preferencia. Las personas revisoras pueden citar esta sección para bloquear un PR.
-- Las convenciones específicas de commits y PRs están en [`CLAUDE.md`](../../CLAUDE.md) (sección "Convenciones de Git"); esta sección gobierna el **framing** de las recomendaciones que tocan esas convenciones, no las convenciones en sí.
+- Las convenciones específicas de commits y PRs están en [`CLAUDE.md` → Git](../../CLAUDE.md#git) (bajo "Convenciones del repo"); esta sección gobierna el **framing** de las recomendaciones que tocan esas convenciones, no las convenciones en sí.
 
 ### Framing bueno vs. malo
 
@@ -78,7 +78,7 @@ Prohibido. Los tests existen por algo; "chico" no es una medida de riesgo. Hasta
 
 ### "Borremos el archivo total está gitignoreado"
 
-Prohibido para artefactos intencionalmente autorados aunque estén gitignoreados —por ejemplo salidas regenerables bajo `tools/` (como `tools/author-bios/` o `tools/story-summaries/`), planes, notas de review o mapas de issues. No borres ese tipo de archivos sin instrucción explícita del usuario, sin importar su estado de gitignore. Antes de borrar/sobrescribir un artefacto generado, verificá que sea **re-generable** (ver "Convenciones de Git" en `CLAUDE.md`). Para archivos fuera de esas rutas, usá criterio: si la existencia del archivo fue pedida o referenciada explícitamente por el usuario en algún archivo commiteado (`CLAUDE.md`, `docs/`, etc.), no lo borres sin confirmar.
+Prohibido para artefactos intencionalmente autorados aunque estén gitignoreados —por ejemplo salidas regenerables bajo `tools/` (como `tools/author-bios/` o `tools/story-summaries/`), planes, notas de review o mapas de issues. No borres ese tipo de archivos sin instrucción explícita del usuario, sin importar su estado de gitignore. Antes de borrar/sobrescribir un artefacto generado, verificá que sea **re-generable**: que exista en el repo el script o comando que lo produce y que puedas nombrarlo (p. ej. las salidas de `tools/author-bios/` las regenera `export-authors-bios.ts`, con el comando documentado en [`scripts/audit/README.md`](../../scripts/audit/README.md)). Si no podés señalar cómo se regenera, tratalo como **no** re-generable y no lo toques. Para archivos fuera de esas rutas, usá criterio: si la existencia del archivo fue pedida o referenciada explícitamente por el usuario en algún archivo commiteado (`CLAUDE.md`, `docs/`, etc.), no lo borres sin confirmar.
 
 ### "La code review puede esperar hasta después de abrir el PR"
 
@@ -90,7 +90,7 @@ Prohibido. Si un edge case se puede enumerar en un comentario, se puede enumerar
 
 ### "El componente es simple, no hace falta la story de Storybook"
 
-Prohibido. Todo componente nuevo en `src/app/components/` lleva su `*.stories.ts` (ver "Testing" en `CLAUDE.md`). La respuesta siempre es escribir la story.
+Prohibido. Todo componente nuevo en `src/app/components/` lleva su `*.stories.ts` (los de página, `src/app/pages/`, están exentos — ver [`testing.md`](testing.md)). La respuesta siempre es escribir la story.
 
 ### "El estado de carga ya se ve, no hace falta una story intercambiable"
 
@@ -203,4 +203,4 @@ Proponé cambios vía issue en `cuentoneta/cuentoneta`. Las enmiendas requieren 
 
 ---
 
-_Última actualización: 2026-07-20. Versión inicial en #1495 (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) agregada en #1499 y ampliada en #1542 (visibilidad de API y reemplazos canónicos); regla de story intercambiable para estados de carga agregada en #1581; regla de child issues reales en epics agregada en #1843; "Gates de CI" convertida a remisión a CLAUDE.md en #1844._
+_Última actualización: 2026-07-20. Versión inicial en #1495 (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) agregada en #1499 y ampliada en #1542 (visibilidad de API y reemplazos canónicos); regla de story intercambiable para estados de carga agregada en #1581; regla de child issues reales en epics agregada en #1843; "Gates de CI" convertida a remisión a CLAUDE.md en #1844; punteros a secciones de CLAUDE.md corregidos a headings reales en #1846._

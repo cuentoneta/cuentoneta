@@ -64,7 +64,7 @@ Antes de escribir, leé las referencias relevantes para tener el contexto del pr
 ### Cross-referencing
 
 - Enlazar a documentos relacionados con rutas relativas.
-- Al referenciar secciones de `CLAUDE.md`, usar anclas: `[Nombre de sección](../CLAUDE.md#nombre-de-seccion)`.
+- Al referenciar secciones de `CLAUDE.md` desde `.claude/agents/` o `.claude/references/`, el path relativo sube **dos** niveles y el ancla debe corresponder a un heading real: `[Restricciones duras](../../CLAUDE.md#restricciones-duras-hard-constraints)`.
 - Al actualizar una referencia, verificar si hay que actualizar los punteros de `CLAUDE.md`.
 - Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología de dominio, actualizar en el **mismo** commit/PR toda la documentación que los referencie (`docs/`, `CLAUDE.md`, `.claude/references/`).
 
