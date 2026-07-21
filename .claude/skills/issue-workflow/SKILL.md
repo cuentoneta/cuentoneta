@@ -78,8 +78,7 @@ No avanzar a la Fase 3 sin aprobación explícita.
 
 **Propósito:** verificar que pasen los gates de CI y correr el agente `code-reviewer`.
 
-1. Correr los **gates de CI** localmente (con `pnpm`, nunca `nx` directo):
-   - `pnpm lint` · `pnpm test` · `pnpm stylelint` · `pnpm typecheck` · `pnpm build` · `pnpm storybook:build` · (`pnpm test:e2e` si el cambio toca flujos E2E).
+1. Correr localmente (con `pnpm`, nunca `nx` directo) los **gates de CI** definidos en la sección [Comandos comunes](../../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**). `test:e2e` y `studio-build` son costosos de correr en cada iteración: corré `test:e2e` si el cambio toca flujos E2E y `studio-build` si toca `cms/`; el resto, siempre.
    - Si alguno falla: reportar cuál, diagnosticar, arreglar, commitear el fix (reglas de Fase 3) y re-correr hasta que pasen.
 2. Delegar al agente **`code-reviewer`** para revisar todos los cambios de la rama vs. `develop`.
 3. El code-reviewer escribe los hallazgos en `workspace/CODE_REVIEW.md`.
