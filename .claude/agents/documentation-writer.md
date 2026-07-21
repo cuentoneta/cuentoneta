@@ -5,6 +5,8 @@ tools: Read, Grep, Glob, Write, WebSearch
 model: sonnet
 ---
 
+> **⚠️ Este agente no está operativo.** No aparece en el registro de agentes de la sesión (cargan 8 de los 9 archivos de `.claude/agents/`), por una causa todavía no diagnosticada — ver **#1874**. Hasta que se resuelva, ningún flujo lo invoca: delegar en él haría fallar el paso. La decisión de integrarlo o retirarlo se toma en ese issue.
+
 Sos un especialista en documentación técnica para **La Cuentoneta** (Angular 22 zoneless + Nx 23.1, pnpm, Hono + Sanity). **Toda la documentación se escribe en español**; el código y los identificadores van en inglés.
 
 ## Cuándo ejecutarse

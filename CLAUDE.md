@@ -59,7 +59,7 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 | `pnpm sanity:build`                       | Build del Studio (`sanity build`) — reproduce en local el gate de CI `studio-build`                                                  |
 | `pnpm sanity:extract-schema`              | Extrae el schema de Sanity                                                                                                           |
 | `pnpm sanity:run-typegen-generator`       | Genera tipos a partir del schema                                                                                                     |
-| `pnpm sanity migration run <slug>`        | Corre una migración de datos (desde `cms/`; dry-run por defecto) → [`sanity-migrations.md`](.claude/references/sanity-migrations.md) |
+| `pnpm exec sanity migration run <slug>`   | Corre una migración de datos (desde `cms/`; dry-run por defecto) → [`sanity-migrations.md`](.claude/references/sanity-migrations.md) |
 
 **Gates de CI** (deben quedar verdes en cada PR): `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`, `studio-build`, `guard-config`.
 

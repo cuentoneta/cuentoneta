@@ -99,7 +99,7 @@ El frontend de cuentoneta modela el estado con **servicios + signals + RxJS** (v
 
 - Componer las llamadas a la API en métodos de servicio con un pipe declarativo: `service.getX(params).pipe(map(mapper), tap(sideEffect), catchError(...))`
 - Derivar valores con `computed()` / `toSignal()` en vez de mantener estado duplicado (p. ej. `totalPages` se deriva, no se guarda)
-- Usar `switchMap` como operador de aplanado por defecto (cancela los requests en vuelo obsoletos); `concatMap` cuando el orden importa, `mergeMap` para concurrencia, `exhaustMap` para ignorar disparos mientras hay uno en curso
+- Usar `switchMap` como operador de aplanado **por defecto** (cancela los requests en vuelo obsoletos); `concatMap` cuando el orden importa y `exhaustMap` para ignorar disparos mientras hay uno en curso, ambos solo cuando la semántica lo exija y dejándolo justificado. **`mergeMap` no se usa** para encadenar una emisión a un request: al no cancelar ni ordenar, una respuesta vieja puede ganar la carrera y pisar estado más reciente — ver [`angular-state.md`](angular-state.md)
 - Centralizar debounce/coordinación en servicios (p. ej. `LayoutService`), no esparcidos en los componentes
 - Usar errores tipados por operación (p. ej. una signal de error por operación) en vez de un único `string | null` compartido
 - Loguear los errores con contexto suficiente en cada handler (`catchError`)
@@ -108,7 +108,7 @@ El frontend de cuentoneta modela el estado con **servicios + signals + RxJS** (v
 
 - Usar `firstValueFrom`, `lastValueFrom` o `toPromise` para convertir observables a promesas (prohibido en el frontend — ver Restricciones duras en `CLAUDE.md`)
 - Usar `async/await` sobre observables en métodos de servicio que llaman a la API
-- Anidar `subscribe()` dentro de otro `subscribe()` — componer con operadores de orden superior (`switchMap`, `mergeMap`, `concatMap`, `exhaustMap`)
+- Anidar `subscribe()` dentro de otro `subscribe()` — componer con operadores de orden superior (`switchMap` por defecto; `concatMap` / `exhaustMap` según la semántica, con la salvedad sobre `mergeMap` de arriba)
 - Suscribirse manualmente cuando alcanza con `toSignal()` / el `async` pipe en la plantilla; cuando una suscripción manual es inevitable, atarla a `takeUntilDestroyed()`
 - Mantener estado derivado como estado guardado: derivarlo con `computed()`
 - Inventar signals contador/trigger (`reloadCounter`, `_reload`, `forceRefresh`) para forzar re-evaluación — son workarounds innecesarios que ensucian el estado; usá una llamada imperativa al método del servicio con el valor actual

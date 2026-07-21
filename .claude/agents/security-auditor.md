@@ -1,6 +1,6 @@
 ---
 name: security-auditor
-description: Audita el código en busca de vulnerabilidades OWASP aplicables a un sitio público de lectura (inyección en GROQ, XSS vía PortableText/HTML, secrets de Sanity hardcodeados, validación con zod en controllers Hono, SSRF en fetch externo, dependencias vulnerables). Correr antes de la code review en ramas de implementación.
+description: Audita el código en busca de vulnerabilidades OWASP aplicables a un sitio público de lectura (inyección en GROQ, XSS vía PortableText/HTML, secrets de Sanity hardcodeados, validación con zod en controllers Hono, SSRF en fetch externo, dependencias vulnerables). Lo invoca la Fase 4 del skill `issue-workflow`, antes del `code-reviewer`, cuando el diff toca superficie de seguridad: `src/api/**`, renderizado de contenido del CMS, fetch externo o dependencias.
 tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
@@ -22,7 +22,7 @@ Esto aplica a TODOS los comandos: git, pnpm y cualquier otra CLI.
 
 ## Cuándo correr
 
-- Antes del agente `code-reviewer` (fase pre-review)
+- Antes del agente `code-reviewer` (fase pre-review) — lo invoca la Fase 4 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md) cuando el diff toca alguno de los disparadores de abajo
 - Cuando se agregan o cambian endpoints de la API (`src/api/`), queries GROQ o mappers
 - Cuando cambia el manejo de contenido externo: renderizado de PortableText/HTML del CMS, fetch a servicios externos (Spotify u otros), `localStorage`
 - Cuando se tocan variables de entorno, secrets o config de Sanity/Clarity
@@ -92,6 +92,8 @@ Antes de auditar, leé estas referencias para tener el contexto completo. Cargal
 - [ ] Dependencias pineadas a versiones específicas
 
 ## Formato de salida
+
+Escribí los hallazgos en `workspace/CODE_REVIEW.md`, en una sección propia titulada **"Auditoría de seguridad"**, sin pisar lo que haya escrito el `code-reviewer` (corrés antes que él). Presentá además el resumen en la respuesta.
 
 ### Resumen
 
