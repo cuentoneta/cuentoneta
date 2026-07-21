@@ -47,7 +47,7 @@ jobs:
 
     steps:
       - name: Checkout develop
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
         with:
           ref: develop
 
