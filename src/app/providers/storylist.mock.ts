@@ -7,7 +7,7 @@ import { Storylist, StorylistStoriesNavigationTeasers } from '@models/storylist.
 import { storylistMock, storylistNavigationTeaserMock } from '@mocks/storylist.mock';
 import { StorylistApi } from './storylist-api.interface';
 
-export class InMemoryStorylistApi implements StorylistApi {
+export class StubStorylistApi implements StorylistApi {
 	public get(): Observable<Storylist> {
 		return of(storylistMock);
 	}
@@ -17,6 +17,6 @@ export class InMemoryStorylistApi implements StorylistApi {
 	}
 }
 
-export function provideStorylistApiMock(api: StorylistApi = new InMemoryStorylistApi()): EnvironmentProviders {
+export function provideStorylistApiMock(api: StorylistApi = new StubStorylistApi()): EnvironmentProviders {
 	return makeEnvironmentProviders([{ provide: StorylistApi, useValue: api }]);
 }

@@ -7,7 +7,7 @@ import { AuthorProfile, AuthorTeaser } from '@models/author.model';
 import { authorMock, authorTeaserMock } from '@mocks/author.mock';
 import { AuthorApi } from './author-api.interface';
 
-export class InMemoryAuthorApi implements AuthorApi {
+export class StubAuthorApi implements AuthorApi {
 	public getAll(): Observable<AuthorTeaser[]> {
 		return of([authorTeaserMock]);
 	}
@@ -17,6 +17,6 @@ export class InMemoryAuthorApi implements AuthorApi {
 	}
 }
 
-export function provideAuthorApiMock(api: AuthorApi = new InMemoryAuthorApi()): EnvironmentProviders {
+export function provideAuthorApiMock(api: AuthorApi = new StubAuthorApi()): EnvironmentProviders {
 	return makeEnvironmentProviders([{ provide: AuthorApi, useValue: api }]);
 }

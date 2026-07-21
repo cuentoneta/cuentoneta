@@ -86,7 +86,7 @@ Estos patrones son intencionales y correctos. NO los reportes como problemas:
 - [ ] Open/Closed — extender comportamiento sin modificar lo existente
 - [ ] Liskov Substitution — los subtipos son sustituibles por sus tipos base
 - [ ] Interface Segregation — sin dependencias forzadas sobre interfaces no usadas
-- [ ] Dependency Inversion — depender de abstracciones, no de concreciones (convención **Qualified Implementation**: interfaz con nombre limpio, impls con prefijo `Sanity*`/`Http*`, dobles `InMemory*` nunca `Mock*`)
+- [ ] Dependency Inversion — depender de abstracciones, no de concreciones (convención **Qualified Implementation**: interfaz con nombre limpio, impls con prefijo `Sanity*`/`Http*`, dobles por comportamiento `Stub*`/`InMemory*`/`Spy*` nunca `Mock*`)
 
 ### Principios CUPID
 
