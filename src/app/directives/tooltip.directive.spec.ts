@@ -19,7 +19,7 @@ const ELEMENT_HEIGHT = 500;
 class HostComponent {
 	protected width = ELEMENT_WIDTH;
 	protected height = ELEMENT_HEIGHT;
-	private tooltipDirective = inject(TooltipDirective);
+	private readonly tooltipDirective = inject(TooltipDirective);
 
 	constructor() {
 		this.tooltipDirective.text.set('Tooltip test');

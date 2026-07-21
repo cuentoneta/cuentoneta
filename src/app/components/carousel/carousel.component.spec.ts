@@ -270,8 +270,8 @@ describe('CarouselComponent', () => {
 			providers: [{ provide: LayoutService, useClass: MockLayoutMdViewportService }],
 		});
 
-		expect(screen.queryByLabelText('Previous slide')).toBeInTheDocument();
-		expect(screen.queryByLabelText('Next slide')).toBeInTheDocument();
+		expect(screen.getByLabelText('Previous slide')).toBeInTheDocument();
+		expect(screen.getByLabelText('Next slide')).toBeInTheDocument();
 	});
 
 	it('should hide controls on mobile viewport', async () => {

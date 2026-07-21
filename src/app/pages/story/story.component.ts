@@ -70,8 +70,8 @@ export default class StoryComponent implements StoryHost {
 	public readonly navigation = input<'author' | 'storylist'>('author');
 	public readonly navigationSlug = input<string>();
 
-	private storyService = inject(StoryApi);
-	private layoutService = inject(LayoutService);
+	private readonly storyService = inject(StoryApi);
+	private readonly layoutService = inject(LayoutService);
 
 	// Recursos
 	protected readonly dummyList = Array(10);

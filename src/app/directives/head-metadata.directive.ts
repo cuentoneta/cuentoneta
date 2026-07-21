@@ -8,10 +8,10 @@ import { environment } from '../environments/environment';
 	standalone: true,
 })
 export class HeadMetadataDirective {
-	private document = inject(DOCUMENT);
-	private metaTagService = inject(Meta);
-	private platformId = inject(PLATFORM_ID);
-	private titleService = inject(Title);
+	private readonly document = inject(DOCUMENT);
+	private readonly metaTagService = inject(Meta);
+	private readonly platformId = inject(PLATFORM_ID);
+	private readonly titleService = inject(Title);
 
 	private readonly resetTagsOnDestroy = effect((onCleanup) => {
 		onCleanup(() => {

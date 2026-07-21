@@ -47,7 +47,7 @@ export default class StorylistComponent implements StorylistHost {
 	protected readonly descriptionSkeletonLines = Array.from({ length: 10 });
 
 	// Providers
-	private storylistService = inject(StorylistApi);
+	private readonly storylistService = inject(StorylistApi);
 
 	// Recursos
 	protected readonly storylistResource = ssrBlockingRxResource({

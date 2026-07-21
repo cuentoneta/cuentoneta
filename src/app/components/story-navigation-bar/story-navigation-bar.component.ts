@@ -56,7 +56,7 @@ export class StoryNavigationBarComponent {
 	public readonly navigationSlug = input.required<string>();
 
 	// Inyección de providers
-	private navigationFrameService = inject(NavigationFrameService);
+	private readonly navigationFrameService = inject(NavigationFrameService);
 
 	protected readonly frame = computed(() => {
 		const storySlug = this.selectedStorySlug() ?? '';

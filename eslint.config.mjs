@@ -231,6 +231,8 @@ export default [
 		},
 		rules: {
 			'@angular-eslint/no-uncalled-signals': 'error',
+			// Solo alcanza miembros `private`; los `protected` quedan a cargo de la review (#1877).
+			'@typescript-eslint/prefer-readonly': 'error',
 		},
 	},
 	{

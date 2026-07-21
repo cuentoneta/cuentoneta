@@ -72,7 +72,7 @@ export class CarouselComponent {
 	private readonly restartAutoPlay$ = new Subject<void>();
 
 	// Intervalo de reproducción automática con reinicio después de interacción
-	private autoPlayInterval$ = this.restartAutoPlay$.pipe(
+	private readonly autoPlayInterval$ = this.restartAutoPlay$.pipe(
 		startWith(undefined),
 		switchMap(() => interval(this.autoPlayInterval())),
 		filter(

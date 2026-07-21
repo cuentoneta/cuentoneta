@@ -22,12 +22,12 @@ export type Direction = (typeof Direction)[keyof typeof Direction];
 	providedIn: 'root',
 })
 export class LayoutService {
-	private window = inject(WINDOW);
-	private platformId = inject(PLATFORM_ID);
+	private readonly window = inject(WINDOW);
+	private readonly platformId = inject(PLATFORM_ID);
 
 	private readonly viewport: WritableSignal<Viewport> = signal('xl');
 
-	private _userHasScrolled$ = fromEvent(this.window, 'scroll').pipe(
+	private readonly _userHasScrolled$ = fromEvent(this.window, 'scroll').pipe(
 		takeUntilDestroyed(),
 		throttleTime(25),
 		map(() => this.window?.scrollY),
@@ -42,7 +42,7 @@ export class LayoutService {
 	 * o se recalcula el tamaño de pantalla asignado al navegador en el dispositivo.
 	 * @private
 	 */
-	private _viewportHasChanged$ = merge(
+	private readonly _viewportHasChanged$ = merge(
 		fromEvent(this.window, 'resize').pipe(startWith(null)),
 		fromEvent(this.window, 'orientationchange').pipe(startWith(null)),
 	).pipe(takeUntilDestroyed(), throttleTime(100));

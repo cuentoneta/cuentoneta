@@ -14,7 +14,7 @@ import { AuthorApi } from './author-api.interface';
 @Injectable({ providedIn: 'root' })
 export class HttpAuthorApi implements AuthorApi {
 	private readonly url: ApiUrl = `${environment.apiUrl}${Endpoints.Author}`;
-	private http = inject(HttpClient);
+	private readonly http = inject(HttpClient);
 
 	public getAll(): Observable<AuthorTeaser[]> {
 		return this.http.get<AuthorTeaser[]>(this.url);

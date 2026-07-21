@@ -13,7 +13,7 @@ import { ContentApi } from './content-api.interface';
 @Injectable({ providedIn: 'root' })
 export class HttpContentApi implements ContentApi {
 	private readonly prefix = `${environment.apiUrl}api/content`;
-	private http = inject(HttpClient);
+	private readonly http = inject(HttpClient);
 
 	public getLandingPageContent(): Observable<LandingPageContent> {
 		return this.http.get<LandingPageContent>(`${this.prefix}/landing-page`);

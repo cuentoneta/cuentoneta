@@ -32,7 +32,7 @@ export class AuthorNavigationFrameComponent extends NavigationFrameComponent {
 	private readonly appRoutes = AppRoutes;
 
 	// Providers
-	private storyService = inject(StoryApi);
+	private readonly storyService = inject(StoryApi);
 
 	// Recursos
 	private readonly storiesResource = progressiveRxResource({
