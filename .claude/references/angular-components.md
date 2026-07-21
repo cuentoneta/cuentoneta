@@ -1,6 +1,6 @@
 # Componentes Angular — convenciones de cuentoneta
 
-> Detalle de componentes referenciado desde [`CLAUDE.md`](../../CLAUDE.md) (sección "Arquitectura de código (Angular)").
+> Detalle de componentes referenciado desde el bullet **Frontend** de [`CLAUDE.md` → Arquitectura (resumen)](../../CLAUDE.md#arquitectura-resumen).
 > Para el manejo de **estado** (servicios + signals/RxJS, signals-first), ver [`angular-state.md`](./angular-state.md).
 >
 > **Idioma:** la documentación va en español; el **código y los identificadores siempre en inglés**. Los comentarios pueden ir en español.

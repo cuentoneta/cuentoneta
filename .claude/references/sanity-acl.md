@@ -253,5 +253,5 @@ paridad con el starter, es migrar a **OpenAPIHono** (`@hono/zod-openapi`: `creat
 `registerRoute` + spec servida en `/api/openapi.json`) — ver **#1531**.
 
 Hasta su adopción, rige el patrón Hono plano descripto en esta referencia y en
-[`CLAUDE.md` → Backend API](../../CLAUDE.md#backend-api-hono--sanity). **No** generar código
+el bullet **Backend** de [`CLAUDE.md` → Arquitectura (resumen)](../../CLAUDE.md#arquitectura-resumen). **No** generar código
 OpenAPIHono salvo que el issue lo indique.

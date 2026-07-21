@@ -1,6 +1,6 @@
 # Testing — La Cuentoneta
 
-> Referencia detallada de testing. La síntesis vive en [`CLAUDE.md` → Testing](../../CLAUDE.md); este archivo profundiza en patrones y ejemplos.
+> Referencia detallada de testing. En `CLAUDE.md` viven el stack ([Resumen del proyecto](../../CLAUDE.md#resumen-del-proyecto)) y la obligación de usar los wrappers de `@test-utils` en lugar de `vi.*` ([Restricciones duras](../../CLAUDE.md#restricciones-duras-hard-constraints)); este archivo profundiza en patrones y ejemplos.
 >
 > **Idioma:** documentación en español; **código e identificadores en inglés**.
 
