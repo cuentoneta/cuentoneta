@@ -114,12 +114,13 @@ expect(heading).toBeInTheDocument();
 
 ```typescript
 import { fn } from '@test-utils';
+import { of, type Observable } from 'rxjs';
 
-const getStory = fn<[string], Promise<Story>>();
-getStory.mockResolvedValue(storyMock);
+const getBySlug = fn<[string], Observable<Story>>();
+getBySlug.mockReturnValue(of(storyMock));
 
 await render(StoryComponent, {
-	providers: [{ provide: StoryService, useValue: { getStory } }],
+	providers: [{ provide: StoryApi, useValue: { getBySlug } }],
 });
 
 expect(await screen.findByText(storyMock.title)).toBeInTheDocument();
