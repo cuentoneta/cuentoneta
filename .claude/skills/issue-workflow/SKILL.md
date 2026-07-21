@@ -76,13 +76,14 @@ No avanzar a la Fase 3 sin aprobación explícita.
 
 ## Fase 4 — Review
 
-**Propósito:** verificar que pasen los gates de CI y correr el agente `code-reviewer`.
+**Propósito:** verificar que pasen los gates de CI y correr los agentes de review.
 
 1. Correr localmente (con `pnpm`, nunca `nx` directo) los **gates de CI** definidos en la sección [Comandos comunes](../../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**). `test:e2e` y `studio-build` son costosos de correr en cada iteración: corré `test:e2e` si el cambio toca flujos E2E y `studio-build` si toca `cms/`; el resto, siempre.
    - Si alguno falla: reportar cuál, diagnosticar, arreglar, commitear el fix (reglas de Fase 3) y re-correr hasta que pasen.
-2. Delegar al agente **`code-reviewer`** para revisar todos los cambios de la rama vs. `develop`.
-3. El code-reviewer escribe los hallazgos en `workspace/CODE_REVIEW.md`.
-4. Presentar la tabla de hallazgos al usuario (Críticos, Advertencias, Sugerencias).
+2. Si el diff toca **superficie de seguridad**, delegar primero al agente **`security-auditor`**. Cuenta como superficie de seguridad que el diff toque `src/api/**` (controllers, GROQ, mappers), el renderizado de contenido del CMS (PortableText/HTML, `bypassSecurityTrust*`), fetch hacia servicios externos, o `package.json`/`pnpm-lock.yaml`. Un diff que no toca nada de eso —solo documentación, estilos o UI sin datos externos— **no** lo requiere.
+3. Delegar al agente **`code-reviewer`** para revisar todos los cambios de la rama vs. `develop`.
+4. Ambos agentes escriben sus hallazgos en `workspace/CODE_REVIEW.md`; los del `security-auditor` van en una sección propia.
+5. Presentar la tabla de hallazgos al usuario (Críticos, Advertencias, Sugerencias), indicando si el `security-auditor` corrió o por qué no correspondía.
 
 **⏸ PAUSA — requiere decisión del usuario.**
 
@@ -99,7 +100,7 @@ No avanzar a la Fase 3 sin aprobación explícita.
 3. Un commit atómico por fix. El mensaje describe el **cambio real**, nunca referencia el número de hallazgo.
    - ✅ `[#1234] - Acota la constante al cuerpo de la función — estaba a nivel de módulo`
    - ❌ `[#1234] - Arregla el hallazgo #2`
-4. Si un hallazgo se **difiere**, crear un issue de GitHub (`gh issue create`) y poner la URL en la columna Abordado.
+4. Si un hallazgo se **difiere**, proponer el issue al usuario y **esperar su confirmación** antes de crearlo (`gh issue create`); una vez creado, poner la URL en la columna Abordado. Crear un issue es una acción hacia afuera: la misma política rige en la Fase 6.
 5. Tras abordar Críticos y Advertencias, re-correr los gates de CI. Arreglar regresiones.
 6. Las **Sugerencias** son opcionales: presentarlas y dejar que el usuario decida.
 

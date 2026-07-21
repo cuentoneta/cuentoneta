@@ -99,7 +99,7 @@ El frontend de cuentoneta modela el estado con **servicios + signals + RxJS** (v
 
 - Componer las llamadas a la API en métodos de servicio con un pipe declarativo: `service.getX(params).pipe(map(mapper), tap(sideEffect), catchError(...))`
 - Derivar valores con `computed()` / `toSignal()` en vez de mantener estado duplicado (p. ej. `totalPages` se deriva, no se guarda)
-- Usar `switchMap` como operador de aplanado por defecto (cancela los requests en vuelo obsoletos); `concatMap` cuando el orden importa, `mergeMap` para concurrencia, `exhaustMap` para ignorar disparos mientras hay uno en curso
+- Usar `switchMap` como operador de aplanado **por defecto** (cancela los requests en vuelo obsoletos); `concatMap` cuando el orden importa y `exhaustMap` para ignorar disparos mientras hay uno en curso, ambos solo cuando la semántica lo exija y dejándolo justificado. **`mergeMap` no se usa** para encadenar una emisión a un request: al no cancelar ni ordenar, una respuesta vieja puede ganar la carrera y pisar estado más reciente — ver [`angular-state.md`](angular-state.md)
 - Centralizar debounce/coordinación en servicios (p. ej. `LayoutService`), no esparcidos en los componentes
 - Usar errores tipados por operación (p. ej. una signal de error por operación) en vez de un único `string | null` compartido
 - Loguear los errores con contexto suficiente en cada handler (`catchError`)

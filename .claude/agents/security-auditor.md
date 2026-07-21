@@ -1,6 +1,6 @@
 ---
 name: security-auditor
-description: Audita el código en busca de vulnerabilidades OWASP aplicables a un sitio público de lectura (inyección en GROQ, XSS vía PortableText/HTML, secrets de Sanity hardcodeados, validación con zod en controllers Hono, SSRF en fetch externo, dependencias vulnerables). Correr antes de la code review en ramas de implementación.
+description: Audita el código en busca de vulnerabilidades OWASP aplicables a un sitio público de lectura (inyección en GROQ, XSS vía PortableText/HTML, secrets de Sanity hardcodeados, validación con zod en controllers Hono, SSRF en fetch externo, dependencias vulnerables). Lo invoca la Fase 4 del skill `issue-workflow`, antes del `code-reviewer`, cuando el diff toca superficie de seguridad: `src/api/**`, renderizado de contenido del CMS, fetch externo o dependencias.
 tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
