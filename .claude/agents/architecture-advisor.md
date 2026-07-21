@@ -64,7 +64,7 @@ Primero determiná el change set: corré `git diff --name-only develop...HEAD` (
 - **Regla de dependencia** — las dependencias apuntan hacia adentro (dominio → casos de uso → adaptadores → frameworks). En el backend: el flujo `controller → service → repository` con el mapper (ACL) como frontera que traduce Sanity/GROQ al modelo de dominio
 - **Independencia de capas** — las reglas de negocio no dependen de frameworks ni de la UI; el modelo de dominio no conoce a Sanity
 - **Cruce de fronteras** — los datos cruzan como modelo de dominio mapeado, no como resultados crudos de GROQ; los repos exponen `fetch*()` (crudo) y los services `get*()` (mapeado a dominio)
-- **Testeabilidad** — la lógica de negocio se testea sin dependencias externas (dobles `InMemory*`, nunca `Mock*`)
+- **Testeabilidad** — la lógica de negocio se testea sin dependencias externas (dobles nombrados por comportamiento: `Stub*`/`InMemory*`/`Spy*`, nunca `Mock*`)
 
 ### Diseño de componentes (acoplamiento entre módulos)
 
@@ -96,14 +96,14 @@ Al evaluar nuevos módulos o endpoints, verificá que el plan incluya:
 - [ ] Módulo bajo `src/api/modules/<dominio>/` con el patrón **controller → service → repository**
 - [ ] Mapper (ACL) en `src/api/_utils/` que traduce GROQ/Sanity al modelo de dominio
 - [ ] Validación con `@hono/zod-validator` y contratos/tipos de dominio acordes
-- [ ] Tests (Vitest + `@test-utils`) con dobles `InMemory*` para los repos
+- [ ] Tests (Vitest + `@test-utils`) con dobles nombrados por comportamiento (`Stub*`/`InMemory*`) para los repos
 - [ ] Hono plano, no `OpenAPIHono` (dirección futura no adoptada, #1531); sin Drizzle — la persistencia es Sanity vía `@sanity/client`
 
 ### Convención de providers del frontend (Qualified Implementation)
 
 - Interfaz de API con sufijo `-api`: `<dominio>-api.interface.ts` (export `<X>Api`)
 - Implementación + factory en `<dominio>.provider.ts` (`Http<X>Api` + `provide<X>Api()`)
-- Doble de test en `<dominio>.mock.ts` (`InMemory<X>Api` + `provide<X>ApiMock()`)
+- Doble de test en `<dominio>.mock.ts` (`Stub<X>Api` + `provide<X>ApiMock()`)
 
 ## Restricciones duras a vigilar (de CLAUDE.md)
 

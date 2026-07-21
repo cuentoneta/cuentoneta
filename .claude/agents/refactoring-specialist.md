@@ -76,7 +76,7 @@ Antes de refactorizar, leé estas referencias del proyecto. Cargalas en **un ún
 - [ ] Los nombres revelan intención (sin abreviaturas ni nombres genéricos).
 - [ ] Convenciones consistentes: archivos `kebab-case`, clases `PascalCase`, métodos `camelCase`, constantes globales `SCREAMING_SNAKE_CASE` y locales `camelCase`.
 - [ ] Variables/métodos booleanos con prefijos `is`, `has`, `can`, `should`.
-- [ ] Interfaces sin prefijo `I`; convención **Qualified Implementation** (`Sanity*`/`Http*`, dobles `InMemory*`, nunca `Mock*`).
+- [ ] Interfaces sin prefijo `I`; convención **Qualified Implementation** (`Sanity*`/`Http*`, dobles por comportamiento `Stub*`/`InMemory*`/`Spy*`, nunca `Mock*`).
 
 ### Simplificación
 
