@@ -47,7 +47,7 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 | `pnpm install`                            | Instala dependencias                                                                                                                 |
 | `pnpm dev`                                | Dev server (SSR) en desarrollo                                                                                                       |
 | `pnpm build`                              | Build de producción                                                                                                                  |
-| `pnpm lint`                               | ESLint sobre `src` y `e2e`                                                                                                           |
+| `pnpm lint`                               | Valida el frontmatter de `.claude/agents/` y corre ESLint sobre `src` y `e2e`                                                       |
 | `pnpm stylelint`                          | Stylelint sobre CSS                                                                                                                  |
 | `pnpm typecheck`                          | Type-check estricto (`tsc --noEmit`)                                                                                                 |
 | `pnpm test`                               | Tests unitarios (Vitest)                                                                                                             |
@@ -137,6 +137,7 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 
 - **`.mcp.json`** (raíz, versionado): servidores MCP del equipo — **Sanity** (remoto `https://mcp.sanity.io`, OAuth; no requiere token en el archivo), **Figma** (remoto `https://mcp.figma.com/mcp`, OAuth; para desarrollo de componentes a partir del diseño) y **nx** (análisis del workspace). Sin secrets.
 - **`.claude/settings.json`** (versionado): permisos de equipo — `deny` de lectura/escritura/edición de `.env*` en la raíz y en cualquier subdirectorio (`**/.env*`, cubre `./.env` y `./cms/.env`), más bloqueo de su creación por shell (redirecciones `>`/`>>`, `tee`, `touch`, `cp`, `mv`); y una `allow` mínima (gates de CI con `pnpm` + inspección read-only de git/gh).
+- **`.claude/agents/*.md`** (versionado): un `description:` **no puede contener `: `** (dos puntos + espacio) sin comillas — YAML lo lee como un mapping anidado, el frontmatter queda inválido y el agente **no carga, sin emitir ningún error**. Usar un guion (`—`) en su lugar. Lo verifica `pnpm lint` (gate de CI) vía `scripts/check-agent-frontmatter.ts`; el fallo silencioso costó dos agentes caídos (#1874).
 - **`.claude/settings.local.json`** y **`.claude/worktrees/`**: **personales/locales**, gitignoreados. Las allowlists o MCP propios de cada quien van ahí — p. ej. el **Figma Dev Mode** local (`http://127.0.0.1:3845/sse`), que requiere la app de escritorio corriendo y es distinto del servidor remoto de Figma versionado en `.mcp.json`.
 
 ---
