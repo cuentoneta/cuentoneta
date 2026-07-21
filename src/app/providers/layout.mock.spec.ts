@@ -4,11 +4,8 @@ import { WindowLayoutService } from './layout.service';
 import { Direction, LayoutService } from './layout.interface';
 import type { Viewport } from '@utils/screen.utils';
 
-/**
- * `implements` obliga a cada implementación a seguir el contrato, pero no obliga al contrato a seguir al real:
- * un miembro público agregado solo a `WindowLayoutService` volvería a divergir sin señal. Esta constante deja
- * de compilar en ese caso, forzando a extender el contrato (y con él, al doble).
- */
+// `implements` no obliga al contrato a seguir al real: esta constante deja de compilar si
+// `WindowLayoutService` gana un miembro público que el contrato no declare.
 const contractCoversWindowLayoutService: Exclude<keyof WindowLayoutService, keyof LayoutService> extends never
 	? true
 	: false = true;

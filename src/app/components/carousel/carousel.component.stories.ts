@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 
 import { CarouselComponent } from './carousel.component';
 import { CarouselSkeletonComponent } from './carousel-skeleton.component';
+import { provideLayout } from '../../providers/layout.service';
 import { contentCampaignMock } from '@mocks/content-campaign.mock';
 import { ContentCampaign } from '@models/content-campaign.model';
 
@@ -11,7 +12,7 @@ const meta: Meta<CarouselComponent> = {
 	title: 'Componentes V3/Carousel',
 	decorators: [
 		applicationConfig({
-			providers: [provideRouter([])],
+			providers: [provideRouter([]), provideLayout()],
 		}),
 	],
 	parameters: {

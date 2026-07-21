@@ -25,7 +25,7 @@ export class InMemoryLayoutService implements LayoutService {
 	}
 
 	public setViewport(): void {
-		// Sin `window`, no hay nada que detectar: el viewport del doble se fija con simulateViewport().
+		// no-op
 	}
 
 	public biggerThan(test: Viewport): boolean {
