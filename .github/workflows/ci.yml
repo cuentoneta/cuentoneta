@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
 
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v6.0.9
@@ -382,7 +382,7 @@ jobs:
     # no instala cms/node_modules, así que reusarlo no ahorra nada.
     steps:
       - name: Checkout
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
 
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v6.0.9
