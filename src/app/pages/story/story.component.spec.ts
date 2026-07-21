@@ -14,7 +14,7 @@ import { Story } from '@models/story.model';
 import StoryComponent from './story.component';
 import { storyMock } from '@mocks/story.mock';
 import { provideStoryApiMock } from '../../providers/story.mock';
-import { InMemoryLayoutService } from '../../providers/layout.mock';
+import { InMemoryLayoutService, provideLayoutMock } from '../../providers/layout.mock';
 import { LayoutService } from '../../providers/layout.interface';
 
 describe('StoryComponent', () => {
@@ -30,7 +30,7 @@ describe('StoryComponent', () => {
 				MockShareContentComponent,
 				MockStoryNavigationBarComponent,
 			],
-			providers: [provideStoryApiMock()],
+			providers: [provideStoryApiMock(), provideLayoutMock()],
 			inputs: {
 				slug: storyMock.slug,
 			},
