@@ -7,8 +7,9 @@ name: Guard de config sensible
 # pese a correr en contexto base porque SOLO lee la lista de archivos del PR vía la API con un token
 # read-only — no hace checkout del código del fork ni ejecuta nada de él (sin install/build/test).
 #
-# Para que efectivamente BLOQUEE, agregar el check de este job a los required status checks de
-# branch protection de `develop`.
+# Solo bloquea si el context de este job (`guard-config`) está en los required status checks de
+# branch protection de `develop`. Sin eso, un PR de fork que toque config protegida lo deja en rojo
+# y se mergea igual.
 
 on:
   pull_request_target:
@@ -18,8 +19,7 @@ permissions:
   pull-requests: read
 
 jobs:
-  guard:
-    name: Config sensible (forks)
+  guard-config:
     runs-on: ubuntu-latest
     steps:
       - name: Verificar archivos protegidos

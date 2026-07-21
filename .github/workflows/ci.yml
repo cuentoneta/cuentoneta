@@ -14,7 +14,6 @@ on:
 
 jobs:
   setup:
-    name: 'Setup and dependencies'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -376,7 +375,6 @@ jobs:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
   studio-build:
-    name: 'Studio build (sanity build)'
     runs-on: ubuntu-latest
     # Checkout propio, sin `needs: setup`: cms/ es un proyecto pnpm aparte (lockfile
     # propio, fuera del workspace de la raíz) y además referencia el árbol `src/` de la
