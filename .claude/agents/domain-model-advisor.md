@@ -108,7 +108,7 @@ Como toda sesión de agente sobre este repo: cargá también `.claude/references
 - [ ] **Sin `enum` de TS** — usar `Object.freeze({...} as const)` para conjuntos cerrados de literales (`ResourceType.slug`, `MediaType`, …).
 - [ ] **Sin barrels** (`index.ts` re-export prohibidos).
 - [ ] **`any` prohibido** sin comentario `// REASON:`.
-- [ ] **Qualified Implementation:** la interfaz lleva el nombre limpio; las implementaciones llevan prefijo de tecnología (`Sanity*`, `Http*`) y los dobles de test son `InMemory*` (**nunca** `Mock*`).
+- [ ] **Qualified Implementation:** la interfaz lleva el nombre limpio; las implementaciones llevan prefijo de tecnología (`Sanity*`, `Http*`) y los dobles de test se nombran por comportamiento — `Stub*`/`InMemory*`/`Spy*`, **nunca** `Mock*`.
 - [ ] Tests con **Vitest** + Angular Testing Library + wrappers de `@test-utils` (prohibido `vi.*` directo).
 
 ## Organización de archivos
