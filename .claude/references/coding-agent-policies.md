@@ -80,6 +80,16 @@ Prohibido. Los tests existen por algo; "chico" no es una medida de riesgo. Hasta
 
 Prohibido para artefactos intencionalmente autorados aunque estén gitignoreados —por ejemplo salidas regenerables bajo `tools/` (como `tools/author-bios/`), planes, notas de review o mapas de issues. No borres ese tipo de archivos sin instrucción explícita del usuario, sin importar su estado de gitignore. Antes de borrar/sobrescribir un artefacto generado, verificá que sea **re-generable**: que exista en el repo el script o comando que lo produce y que puedas nombrarlo (p. ej. las salidas de `tools/author-bios/` las regenera `export-authors-bios.ts`, con el comando documentado en [`scripts/audit/README.md`](../../scripts/audit/README.md)). Si no podés señalar cómo se regenera, tratalo como **no** re-generable y no lo toques. Para archivos fuera de esas rutas, usá criterio: si la existencia del archivo fue pedida o referenciada explícitamente por el usuario en algún archivo commiteado (`CLAUDE.md`, `docs/`, etc.), no lo borres sin confirmar.
 
+### "Uso `git add -A` para no ir listando archivos uno por uno"
+
+Prohibido. **Stagear siempre rutas explícitas**: `git add <path> <path>`, nunca `git add -A`, `git add .` ni `git commit -a`.
+
+El working tree de este repo acumula artefactos no versionados que no son basura: `workspace/` (planes y notas de review), salidas bajo `tools/`, worktrees en `.claude/worktrees/`, archivos generados como `src/app/environments/environment.ts`. Un `-A` los barre sin que nadie los mire, y el commit se pushea antes de que se note. Ya pasó en el PR #1576.
+
+El argumento de que "el `.gitignore` los cubre" no alcanza: la lista de ignorados cambia, un artefacto nuevo puede no estar contemplado todavía, y el momento de descubrirlo no es después del push. Listar las rutas obliga a mirar qué entra, que es justamente el control que se busca.
+
+Si el cambio tocó muchos archivos, `git status --short` y armar la lista es barato comparado con revertir un commit publicado.
+
 ### "La code review puede esperar hasta después de abrir el PR"
 
 Prohibido. La review local del agente (p. ej. el agente `code-reviewer` / skill de code review) corre **antes de abrir el PR**, para que quienes revisen el PR vean código ya pulido. Pushear la rama está bien; abrir el PR antes de la review local, no.
@@ -203,4 +213,4 @@ Proponé cambios vía issue en `cuentoneta/cuentoneta`. Las enmiendas requieren 
 
 ---
 
-_Última actualización: 2026-07-20. Versión inicial en #1495 (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) agregada en #1499 y ampliada en #1542 (visibilidad de API y reemplazos canónicos); regla de story intercambiable para estados de carga agregada en #1581; regla de child issues reales en epics agregada en #1843; "Gates de CI" convertida a remisión a CLAUDE.md en #1844; punteros a secciones de CLAUDE.md corregidos a headings reales en #1846._
+_Última actualización: 2026-07-21. Versión inicial en #1495 (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) agregada en #1499 y ampliada en #1542 (visibilidad de API y reemplazos canónicos); regla de story intercambiable para estados de carga agregada en #1581; regla de child issues reales en epics agregada en #1843; "Gates de CI" convertida a remisión a CLAUDE.md en #1844; punteros a secciones de CLAUDE.md corregidos a headings reales en #1846; prohibición de `git add -A` agregada tras un incidente en el flujo de #1882._
