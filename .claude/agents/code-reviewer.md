@@ -28,23 +28,10 @@ Claude debería delegar proactivamente en este agente cuando:
 
 ## Step 0: cargar las referencias
 
-Antes de revisar, leé **LAS 13** referencias para tener el contexto completo del proyecto. Cargalas en **una sola tanda paralela** — emití todas las llamadas `Read` en un único turno (todas en el mismo mensaje), no una tras otra. **No omitas ninguna**: el revisor es la última línea de defensa y siempre carga el set completo (la carga condicional/según-diff está explícitamente fuera del alcance de `code-reviewer`).
+Antes de revisar, leé **todas** las referencias del catálogo para tener el contexto completo del proyecto — sin importar cuántas sean, sin omitir ninguna: el revisor es la última línea de defensa y siempre carga el set completo (la carga condicional/según-diff está explícitamente fuera del alcance de `code-reviewer`). Cargalas en **una sola tanda paralela** — emití todas las llamadas `Read` en un único turno (todas en el mismo mensaje), no una tras otra.
 
-Cargá todas estas juntas:
-
-- `.claude/references/coding-agent-policies.md` — pinneada en duro, bloqueante de la review; **siempre** se carga primero
-- `.claude/references/solid.md`
-- `.claude/references/cupid.md`
-- `.claude/references/guiding-principles.md` — YAGNI / KISS + disciplina de operadores RxJS
-- `.claude/references/cross-reference.md`
-- `.claude/references/clean-architecture.md`
-- `.claude/references/domain-model.md`
-- `.claude/references/angular-components.md`
-- `.claude/references/angular-state.md`
-- `.claude/references/testing.md`
-- `.claude/references/sanity-acl.md`
-- `.claude/references/typescript.md`
-- `.claude/references/maintainability.md` — lente de simplificación estructural / "code judo"
+1. `.claude/references/coding-agent-policies.md` — pinneada en duro, bloqueante de la review; **siempre** se carga primero.
+2. El resto de los archivos listados en la tabla "Catálogo completo" de [Carga estratificada de referencias](../../CLAUDE.md#carga-estratificada-de-referencias) en `CLAUDE.md` — cargalos **todos**.
 
 ## Proceso de revisión
 
