@@ -61,7 +61,6 @@ Regla central: **un campo de componente nunca es `public` por defecto.** Las pla
 
 ```typescript
 // Miembros de `src/app/components/share-button/share-button.component.ts`
-// (el archivo real declara la dependencia sin `readonly`: es deuda, no el patrón)
 export class ShareButtonComponent {
 	public readonly platform = input.required<SharingPlatform>();
 
