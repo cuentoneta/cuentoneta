@@ -39,7 +39,7 @@ function describe(type: MediaType): string {
 }
 ```
 
-> **Deuda existente:** todavía hay `enum` en el repo (p. ej. `src/app/app.routes.ts`, `src/app/components/header/header.component.ts`, `src/app/providers/endpoints.ts`). Son **deuda a migrar** al tocarlos; el enforcement por ESLint llega en #1500. El patrón `Object.freeze` ya se usa en `src/app/models/content-campaign.model.ts` y `src/app/providers/layout.service.ts`.
+> **Enforcement activo:** ESLint prohíbe declarar `enum` (`selector: 'TSEnumDeclaration'` dentro de `commonRestrictedSyntax`, en `eslint.config.mjs`), y el repo ya no tiene ninguno: la deuda de migración está saldada. El patrón `Object.freeze` se usa en `src/app/models/content-campaign.model.ts` y `src/app/providers/layout.service.ts`.
 
 ---
 

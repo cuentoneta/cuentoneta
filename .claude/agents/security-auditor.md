@@ -84,7 +84,7 @@ Antes de auditar, leé estas referencias para tener el contexto completo. Cargal
 
 - [ ] Los mappers (ACL) no filtran al frontend campos crudos de Sanity que no deban exponerse (`_*` internos, drafts, referencias sin resolver)
 - [ ] Los mensajes de error no exponen stack traces ni rutas internas en producción
-- [ ] La config de CORS / allowed hosts es restrictiva (`getAllowedHosts()` en `environment.ts`)
+- [ ] La config de CORS / allowed hosts es restrictiva (`getAllowedHosts()` en `src/api/_helpers/environment.ts` — no confundir con `src/app/environments/environment.ts`)
 
 ### Dependencias (Info)
 

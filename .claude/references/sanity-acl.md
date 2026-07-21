@@ -240,8 +240,8 @@ implementaciones intercambiables:
   deterministas sin tocar Sanity.
 
 El service dependería del **puerto** (interfaz), no de la implementación concreta, y la elección se
-resolvería vía un **contenedor de DI**. El directorio **`src/api/di/`** ya existe **vacío** como
-placeholder de esa dirección (#1503). Mientras tanto, rige el patrón de funciones `fetch*()` /
+resolvería vía un **contenedor de DI**. Esa dirección está registrada en **#1503**, sin estructura
+creada todavía en el repo. Mientras tanto, rige el patrón de funciones `fetch*()` /
 `get*()` descripto arriba; **no** introducir clases de repositorio ni DI salvo que el issue lo pida.
 
 ---

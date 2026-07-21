@@ -5,7 +5,7 @@
 >
 > **Idioma:** la documentación va en español; el **código y los identificadores siempre en inglés**. Los comentarios pueden ir en español.
 
-Esta referencia describe cómo se escriben los **componentes de presentación y de página** en cuentoneta. Los ejemplos buenos se anclan en componentes reales del repo (p. ej. `src/app/components/author-teaser-v3/`, alineado con el Design System v3). Algunos componentes antiguos del repo (p. ej. `badge`, `header`) todavía violan estas reglas: **son deuda técnica, no el patrón a imitar** — al tocarlos, migrarlos.
+Esta referencia describe cómo se escriben los **componentes de presentación y de página** en cuentoneta. Los ejemplos buenos se anclan en componentes reales del repo (p. ej. `src/app/components/author-teaser-v3/`, alineado con el Design System v3). Los componentes previos al Design System v3 siguen pendientes de rediseño, pero la deuda contra **estas** reglas ya está saldada: `src/` no tiene lifecycle hooks, `@HostBinding`/`@HostListener`, `*ngIf`/`*ngFor` ni `firstValueFrom`.
 
 ---
 
@@ -130,8 +130,6 @@ readonly icon = computed(() => {
 | `ngAfterViewInit` para tocar el DOM              | `viewChild()` / `afterNextRender()` / `afterRenderEffect()`                                                      |
 | `ngAfterContentInit`                             | `contentChild()` / `contentChildren()`                                                                           |
 | `ngOnDestroy` para limpieza                      | **`effect((onCleanup) => onCleanup(...))`** (por defecto); `takeUntilDestroyed()` para cortar suscripciones RxJS |
-
-> Componentes antiguos como `badge.component.ts` aún usan `implements OnInit`; al modificarlos, migrar el `ngOnInit` a un `effect()` nombrado o a `computed()`.
 
 El reemplazo de `ngOnDestroy` por un `effect()` nombrado con `onCleanup` es el patrón **por defecto** para cualquier limpieza al destruirse: sirve en componentes, directivas y servicios creados en contexto de inyección (un `effect()` sin lecturas de signals solo corre su `onCleanup` en la destrucción). Es un mapeo canónico — **no se comenta** que el `effect` reemplaza al hook (ver [`coding-agent-policies.md`](./coding-agent-policies.md) Sección 3).
 

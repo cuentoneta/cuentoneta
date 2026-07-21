@@ -26,7 +26,7 @@ Archivos clave:
 
 ## Regla dura: nada de `vi.*` directo
 
-ESLint (`viRestrictedSyntax` en `eslint.config.js`) **prohíbe** usar `vi.fn()`, `vi.spyOn()`, `vi.useFakeTimers()`, `vi.clearAllMocks()`, etc. directamente en los specs. **`src/test-utils.ts` es la única excepción** (es el wrapper que el resto del repo consume).
+ESLint (`viRestrictedSyntax` en `eslint.config.mjs`) **prohíbe** usar `vi.fn()`, `vi.spyOn()`, `vi.useFakeTimers()`, `vi.clearAllMocks()`, etc. directamente en los specs. **`src/test-utils.ts` es la única excepción** (es el wrapper que el resto del repo consume).
 
 Importá siempre desde `@test-utils`:
 

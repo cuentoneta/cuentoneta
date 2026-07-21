@@ -30,7 +30,7 @@ Delegá en este agente cuando:
 
 ## Paso 0 — Cargar referencias
 
-Cargá las referencias en dos grupos, lanzados juntos como un **único batch en paralelo** — todas las llamadas `Read` en un mismo turno (en el mismo mensaje), no una tras otra. La separación (core vs. dominio) y el mapa glob→ref están documentados en `CLAUDE.md` → **"Carga estratificada de referencias"**.
+Cargá las referencias en dos grupos, lanzados juntos como un **único batch en paralelo** — todas las llamadas `Read` en un mismo turno (en el mismo mensaje), no una tras otra. La separación core vs. dominio y las rutas trigger de cada referencia son las de este archivo; la tabla por **tipo de tarea** vive en [`CLAUDE.md` → Carga estratificada de referencias](../../CLAUDE.md#carga-estratificada-de-referencias).
 
 ### Core — cargar siempre (nunca omitir)
 
@@ -44,9 +44,9 @@ Cargá las referencias en dos grupos, lanzados juntos como un **único batch en 
 
 ### Dominio — cargar solo las relevantes al diff
 
-Primero determiná el change set: corré `git diff --name-only develop...HEAD` (o, si todavía no hay diff de rama, usá los archivos que la tarea describe como in-scope). Si ninguno arroja un set claro de archivos, tratá el cambio como ambiguo y aplicá la regla fail-open de abajo. Después cargá las referencias de dominio cuyas rutas trigger coincidan, según el mapa glob→ref de `CLAUDE.md`:
+Primero determiná el change set: corré `git diff --name-only develop...HEAD` (o, si todavía no hay diff de rama, usá los archivos que la tarea describe como in-scope). Si ninguno arroja un set claro de archivos, tratá el cambio como ambiguo y aplicá la regla fail-open de abajo. Después cargá las referencias de dominio cuyas rutas trigger coincidan:
 
-- `.claude/references/domain-model.md` — el diff toca `src/api/**`, `src/contracts/**` o el modelo de dominio (Story/Author/Storylist, agregados, invariantes, validación Zod)
+- `.claude/references/domain-model.md` — el diff toca `src/api/**` o el modelo de dominio (Story/Author/Storylist, agregados, invariantes, validación Zod)
 - `.claude/references/sanity-acl.md` — el diff toca `src/api/**` (controllers/services/repositories, mappers en `src/api/_utils/`) o consultas GROQ
 - `.claude/references/angular-components.md` — el diff toca `src/app/components/**`, plantillas de componentes o estilos
 - `.claude/references/angular-state.md` — el diff toca servicios de estado, signals, providers o flujos RxJS del frontend

@@ -27,7 +27,7 @@ Esto aplica a TODOS los comandos: git, pnpm y cualquier otra CLI.
 
 ## Paso 0: Cargar archivos de referencia
 
-Cargá las referencias en dos grupos, emitidos como **un único batch en paralelo** — todas las llamadas `Read` en un mismo turno de respuesta (en el mismo mensaje), no una tras otra. La división (core vs. dominio) y el mapa completo glob→referencia están en CLAUDE.md → **"Carga estratificada de referencias"**.
+Cargá las referencias en dos grupos, emitidos como **un único batch en paralelo** — todas las llamadas `Read` en un mismo turno de respuesta (en el mismo mensaje), no una tras otra. La división core vs. dominio y los paths-trigger de cada referencia son los de este archivo; la tabla por **tipo de tarea** vive en [`CLAUDE.md` → Carga estratificada de referencias](../../CLAUDE.md#carga-estratificada-de-referencias).
 
 ### Core — cargar siempre (nunca omitir)
 
@@ -40,9 +40,9 @@ Cargá las referencias en dos grupos, emitidos como **un único batch en paralel
 
 ### Dominio — cargar solo las relevantes al diff
 
-Primero determiná el change set: corré `git diff --name-only develop...HEAD` (o, cuando todavía no hay diff de rama, usá los archivos que la tarea describe como en alcance). Si ninguno arroja un set claro de archivos, tratá el cambio como ambiguo y aplicá la regla de fail-open de abajo. Después cargá las referencias de dominio cuyos paths-trigger coincidan, según el mapa glob→referencia de CLAUDE.md:
+Primero determiná el change set: corré `git diff --name-only develop...HEAD` (o, cuando todavía no hay diff de rama, usá los archivos que la tarea describe como en alcance). Si ninguno arroja un set claro de archivos, tratá el cambio como ambiguo y aplicá la regla de fail-open de abajo. Después cargá las referencias de dominio cuyos paths-trigger coincidan:
 
-- `.claude/references/domain-model.md` — el diff toca `src/api/**` o `src/contracts/**`, o involucra entidades de dominio, agregados, invariantes o bounded contexts (Story / Author / Storylist) y validación Zod
+- `.claude/references/domain-model.md` — el diff toca `src/api/**` o involucra entidades de dominio, agregados, invariantes o bounded contexts (Story / Author / Storylist) y validación Zod
 - `.claude/references/sanity-acl.md` — el diff toca `src/api/**` (repos / services / mappers en `src/api/_utils/`), GROQ o el Anti-Corruption Layer que traduce los resultados crudos de Sanity al modelo de dominio
 - `.claude/references/angular-components.md` — el diff toca `src/app/components/**`, plantillas, providers/DI, effects o control flow
 - `.claude/references/angular-state.md` — el diff toca estado / servicios / RxJS en `src/app/` (estado signals-first sin NgRx)

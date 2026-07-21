@@ -37,7 +37,7 @@ Es la **única** referencia que cargás. No asumas convenciones del starter ni d
 
 1. **Identificar el target** — qué archivos necesitan tests.
 2. **Analizar la fuente** — leé el componente/service para entender `input()`/`output()`, dependencias inyectadas y comportamiento observable.
-3. **Mirar tests existentes** — buscá un spec cercano (p. ej. `src/app/components/badge/badge.component.spec.ts` o `src/api/modules/sitemap/sitemap.service.spec.ts`) y seguí ese patrón.
+3. **Mirar tests existentes** — buscá un spec cercano (p. ej. `src/app/components/story-card-teaser-v3/story-card-teaser-v3.component.spec.ts` para un componente, o `src/api/modules/sitemap/sitemap.service.spec.ts` para el backend) y seguí ese patrón.
 4. **Generar tests** — escribilos siguiendo las reglas de abajo.
 5. **Verificar** — `pnpm test` debe compilar y pasar.
 
