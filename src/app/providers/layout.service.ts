@@ -1,4 +1,12 @@
-import { inject, Injectable, PLATFORM_ID, signal, type WritableSignal } from '@angular/core';
+import {
+	EnvironmentProviders,
+	inject,
+	Injectable,
+	makeEnvironmentProviders,
+	PLATFORM_ID,
+	signal,
+	type WritableSignal,
+} from '@angular/core';
 import { WINDOW } from './window';
 import {
 	combineLatest,
@@ -14,12 +22,12 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { Viewport, VIEWPORT_WIDTHS_NUMERIC } from '@utils/screen.utils';
-import { Direction, type Layout } from './layout.interface';
+import { Direction, LayoutService } from './layout.interface';
 
 @Injectable({
 	providedIn: 'root',
 })
-export class LayoutService implements Layout {
+export class WindowLayoutService implements LayoutService {
 	private readonly window = inject(WINDOW);
 	private readonly platformId = inject(PLATFORM_ID);
 
@@ -146,4 +154,8 @@ export class LayoutService implements Layout {
 
 		return currentWidth === testWidth;
 	}
+}
+
+export function provideLayout(): EnvironmentProviders {
+	return makeEnvironmentProviders([{ provide: LayoutService, useExisting: WindowLayoutService }]);
 }

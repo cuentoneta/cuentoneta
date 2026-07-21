@@ -1,22 +1,24 @@
 import { TestBed } from '@angular/core/testing';
-import { InMemoryLayoutService, provideLayoutServiceMock } from './layout.mock';
-import { LayoutService } from './layout.service';
-import { Direction, type Layout } from './layout.interface';
+import { InMemoryLayoutService, provideLayoutMock } from './layout.mock';
+import { WindowLayoutService } from './layout.service';
+import { Direction, LayoutService } from './layout.interface';
 import type { Viewport } from '@utils/screen.utils';
 
 /**
- * `implements Layout` obliga al doble a seguir la interfaz, pero no obliga a la interfaz a seguir al real:
- * un miembro público agregado solo a `LayoutService` volvería a divergir sin señal. Esta constante deja de
- * compilar en ese caso, forzando a extender el contrato (y con él, al doble).
+ * `implements` obliga a cada implementación a seguir el contrato, pero no obliga al contrato a seguir al real:
+ * un miembro público agregado solo a `WindowLayoutService` volvería a divergir sin señal. Esta constante deja
+ * de compilar en ese caso, forzando a extender el contrato (y con él, al doble).
  */
-const contractCoversLayoutService: Exclude<keyof LayoutService, keyof Layout> extends never ? true : false = true;
+const contractCoversWindowLayoutService: Exclude<keyof WindowLayoutService, keyof LayoutService> extends never
+	? true
+	: false = true;
 
 describe('InMemoryLayoutService', () => {
-	it('should expose a Layout contract that covers the whole LayoutService public surface', () => {
-		expect(contractCoversLayoutService).toBe(true);
-	});
-
 	let service: InMemoryLayoutService;
+
+	it('should expose a contract that covers the whole WindowLayoutService public surface', () => {
+		expect(contractCoversWindowLayoutService).toBe(true);
+	});
 
 	beforeEach(() => {
 		service = new InMemoryLayoutService();
@@ -131,15 +133,15 @@ describe('InMemoryLayoutService', () => {
 		});
 	});
 
-	describe('provideLayoutServiceMock', () => {
+	describe('provideLayoutMock', () => {
 		it('should substitute LayoutService with the provided instance', () => {
-			TestBed.configureTestingModule({ providers: [provideLayoutServiceMock(service)] });
+			TestBed.configureTestingModule({ providers: [provideLayoutMock(service)] });
 
 			expect(TestBed.inject(LayoutService)).toBe(service);
 		});
 
 		it('should substitute LayoutService with a fresh double when no instance is provided', () => {
-			TestBed.configureTestingModule({ providers: [provideLayoutServiceMock()] });
+			TestBed.configureTestingModule({ providers: [provideLayoutMock()] });
 
 			expect(TestBed.inject(LayoutService)).toBeInstanceOf(InMemoryLayoutService);
 		});

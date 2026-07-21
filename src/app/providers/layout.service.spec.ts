@@ -1,13 +1,13 @@
 import { fn, spyOn, type Mock } from '@test-utils';
 import { TestBed } from '@angular/core/testing';
-import { LayoutService } from './layout.service';
+import { WindowLayoutService } from './layout.service';
 import { Direction } from './layout.interface';
 import { WINDOW } from './window';
 import { map, of } from 'rxjs';
 import { Viewport } from '@utils/screen.utils';
 
-describe('LayoutService', () => {
-	let service: LayoutService;
+describe('WindowLayoutService', () => {
+	let service: WindowLayoutService;
 	let mockWindow: {
 		scrollY: number;
 		innerWidth: number;
@@ -32,10 +32,10 @@ describe('LayoutService', () => {
 		};
 
 		TestBed.configureTestingModule({
-			providers: [LayoutService, { provide: WINDOW, useValue: mockWindow }],
+			providers: [WindowLayoutService, { provide: WINDOW, useValue: mockWindow }],
 		});
 
-		service = TestBed.inject(LayoutService);
+		service = TestBed.inject(WindowLayoutService);
 	});
 
 	it('should be created', () => {

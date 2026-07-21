@@ -7,7 +7,7 @@ import { environment } from './environments/environment';
 
 // Services
 import { AnalyticsService } from './providers/analytics/analytics.service';
-import { LayoutService } from './providers/layout.service';
+import { LayoutService } from './providers/layout.interface';
 
 @Component({
 	selector: 'cuentoneta-root',

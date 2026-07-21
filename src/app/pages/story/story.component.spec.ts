@@ -15,7 +15,7 @@ import StoryComponent from './story.component';
 import { storyMock } from '@mocks/story.mock';
 import { provideStoryApiMock } from '../../providers/story.mock';
 import { InMemoryLayoutService } from '../../providers/layout.mock';
-import { LayoutService } from '../../providers/layout.service';
+import { LayoutService } from '../../providers/layout.interface';
 
 describe('StoryComponent', () => {
 	const setup = async () => {

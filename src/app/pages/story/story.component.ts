@@ -11,7 +11,8 @@ import { ssrBlockingRxResource } from '@utils/ssr-resource';
 
 // Services
 import { StoryApi } from '../../providers/story-api.interface';
-import { LayoutService } from '../../providers/layout.service';
+import { LayoutService } from '../../providers/layout.interface';
+import { WindowLayoutService } from '../../providers/layout.service';
 
 // SEO
 import { StoryMetaTagsDirective } from './story-meta-tags.directive';
@@ -55,7 +56,7 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 	],
 	providers: [
 		provideIcons({ faSolidArrowRightLong }),
-		LayoutService,
+		{ provide: LayoutService, useClass: WindowLayoutService },
 		{ provide: STORY_HOST, useExisting: forwardRef(() => StoryComponent) },
 	],
 	host: { class: 'grid md:grid-rows-[8px_1fr]' },
