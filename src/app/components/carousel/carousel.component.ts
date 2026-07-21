@@ -55,12 +55,12 @@ export class CarouselComponent {
 	public readonly direction = this.stateService.direction;
 
 	// Signals computadas
-	public readonly slideCount = computed(() => this.slides().length);
+	protected readonly slideCount = computed(() => this.slides().length);
 	protected readonly viewport = computed(() => {
 		const isTabletOrDesktop = this.layoutService.biggerThan('xs');
 		return isTabletOrDesktop ? 'md' : 'xs';
 	});
-	public readonly showControls = computed(() => this.layoutService.biggerThan('xs'));
+	protected readonly showControls = computed(() => this.layoutService.biggerThan('xs'));
 
 	// Constantes
 	protected readonly viewportSpecificClasses: { [key in ContentCampaignViewport]: string } = {
@@ -72,7 +72,7 @@ export class CarouselComponent {
 	private readonly restartAutoPlay$ = new Subject<void>();
 
 	// Intervalo de reproducción automática con reinicio después de interacción
-	private autoPlayInterval$ = this.restartAutoPlay$.pipe(
+	private readonly autoPlayInterval$ = this.restartAutoPlay$.pipe(
 		startWith(undefined),
 		switchMap(() => interval(this.autoPlayInterval())),
 		filter(

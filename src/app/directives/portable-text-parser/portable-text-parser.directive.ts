@@ -6,8 +6,8 @@ import { TextBlockContent } from '@models/block-content.model';
 	standalone: true,
 })
 export class PortableTextDirective {
-	private el = inject(ElementRef);
-	private renderer = inject(Renderer2);
+	private readonly el = inject(ElementRef);
+	private readonly renderer = inject(Renderer2);
 
 	public readonly portableText = input.required<TextBlockContent>();
 	public readonly classes = input<string>('');

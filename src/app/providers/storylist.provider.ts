@@ -14,7 +14,7 @@ import { StorylistApi } from './storylist-api.interface';
 @Injectable({ providedIn: 'root' })
 export class HttpStorylistApi implements StorylistApi {
 	private readonly url: ApiUrl = `${environment.apiUrl}${Endpoints.StoryList}`;
-	private http = inject(HttpClient);
+	private readonly http = inject(HttpClient);
 
 	public get(slug: string, amount: number = 5, ordering: 'asc' | 'desc' = 'asc'): Observable<Storylist> {
 		const params = new HttpParams().set('amount', amount).set('ordering', ordering);

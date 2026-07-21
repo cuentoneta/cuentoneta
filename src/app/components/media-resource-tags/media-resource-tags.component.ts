@@ -25,7 +25,7 @@ export class MediaResourceTagsComponent {
 	public readonly size = input<'md' | 'lg'>('md');
 	protected readonly MediaResourceTagComponent = MediaResourceTagComponent;
 
-	private injector = inject(EnvironmentInjector);
+	private readonly injector = inject(EnvironmentInjector);
 
 	// We use a custom injector for the nav items to load ng-icons on demand using lazy loading
 	// By providing the icon definitions in navigation.config.ts we're able to directly load the icons

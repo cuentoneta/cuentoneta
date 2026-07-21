@@ -31,7 +31,7 @@ export class MediaResourceTagComponent {
 		return Object.keys(icon)[0]; // Get the key name
 	});
 
-	private tooltipDirective = inject(TooltipDirective);
+	private readonly tooltipDirective = inject(TooltipDirective);
 
 	private readonly syncTooltipEffect = effect(() => {
 		this.tooltipDirective.text.set(this.platform().title);
