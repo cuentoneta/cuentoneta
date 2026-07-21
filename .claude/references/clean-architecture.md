@@ -104,10 +104,18 @@ La interfaz lleva el **nombre limpio** (la responsabilidad), y la **implementaci
 | API de stories    | `StoryApi`                          | `HttpStoryApi`     | `InMemoryStoryApi`     |
 | API de autores    | `AuthorApi`                         | `HttpAuthorApi`    | `InMemoryAuthorApi`    |
 | API de storylists | `StorylistApi`                      | `HttpStorylistApi` | `InMemoryStorylistApi` |
-| Service (impl. única) | `LayoutService` (sin token)     | `LayoutService`    | `InMemoryLayoutService` |
+
+Los services de **implementación única** no llevan token, pero sí interfaz **en cuanto tienen un doble de test**:
+
+| Rol                                   | Interfaz (sin token) | Implementación  | Doble de test           |
+| ------------------------------------- | -------------------- | --------------- | ----------------------- |
+| Layout / viewport (con doble de test) | `Layout`             | `LayoutService` | `InMemoryLayoutService` |
 
 - Prefijo **`Http*`** para implementaciones de servicios de API basadas en HTTP.
-- Un service de **implementación única** (`LayoutService`, `NavigationFrameService`, `SchemaOrgService`) no necesita interfaz ni token: se inyecta la clase y su doble es `InMemory*` (`layout.mock.ts`). El par interfaz + `InjectionToken` se reserva a los **API providers**, que sí tienen dos implementaciones intercambiables.
+- Un service de **implementación única** necesita interfaz **solo cuando existe un doble `InMemory*`** para él: la interfaz es la superficie compartida contra la cual el compilador marca el hueco cuando el real crece y el doble no lo sigue. Sin ese contrato, la divergencia entre real y doble no tiene ninguna señal, porque los providers de test usan `useValue`/`useClass` y no obligan a nada (#1882). Un service de implementación única **sin** doble (`NavigationFrameService`, `SchemaOrgService`) no necesita interfaz: se inyecta la clase directamente.
+- El `InjectionToken` sigue reservado a los **API providers**, que tienen dos implementaciones intercambiables en producción; una clase real + su doble de test no lo justifica.
+- **Nombres cuando la clase real ya está establecida:** la interfaz toma un nombre limpio propio en su archivo (`<dominio>.interface.ts` → `layout.interface.ts` exporta `Layout`) y la clase real **conserva su nombre** (`LayoutService`, con sus `inject(LayoutService)` intactos). No se renombra la implementación solo para liberarle el nombre a la interfaz.
+- **Operaciones propias del doble:** si el doble necesita una operación que el contrato no tiene —o que tiene otra semántica que en el real—, se declara **fuera de la interfaz y con otro nombre**, nunca reusando el del contrato con una firma distinta. `InMemoryLayoutService.simulateViewport(viewport)` fija el viewport para un test; `setViewport()` (del contrato) significa "detectarlo desde `window`" y en el doble es un no-op.
 - Los tokens son `InjectionToken` planos (sin `providedIn`/`factory`), cableados vía `provide<X>Api()` (real) y `provide<X>ApiMock()` (doble) con `makeEnvironmentProviders`.
 - **Archivos (3 por API provider):**
   - **`<dominio>-api.interface.ts`** — la interfaz `<X>Api` + el `InjectionToken`. El sufijo **`-api`** distingue el archivo de una interfaz del **modelo de dominio**: `author-api.interface.ts` exporta `AuthorApi`, no una interfaz del agregado `Author`.
@@ -119,7 +127,8 @@ La interfaz lleva el **nombre limpio** (la responsabilidad), y la **implementaci
 - Interfaz sin prefijo `I`, sin excepciones.
 - `Sanity*` para repositories sobre Sanity/GROQ; `Http*` para API services del front.
 - `InMemory*` para todo doble de test — nunca `Mock*`.
-- Servicio de implementación única → conserva el nombre de la interfaz.
+- Servicio de implementación única del backend → conserva el nombre de la interfaz. En el frontend, si la clase real ya está establecida, la interfaz toma un nombre limpio propio (`Layout` / `LayoutService`).
+- Todo doble `InMemory*` implementa la interfaz de su real: es lo que hace que el compilador detecte la divergencia.
 
 ---
 
