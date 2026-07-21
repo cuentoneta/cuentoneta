@@ -72,6 +72,8 @@ export interface IStory {
 
 **Convención `I`:** usar el prefijo `I` **solo** cuando coexista una clase concreta con el mismo nombre (`IStory`/`Story`), para distinguir contrato de implementación. Donde hoy hay solo una `interface Story` (sin clase), no hace falta el prefijo.
 
+> Por eso los bloques de **roadmap** de esta referencia sí usan `IStory`/`IAuthor` —ahí coexisten con las clases `Story`/`Author` de `<entidad>.model.ts`—, mientras que el texto que describe el código **de hoy** usa `Story`/`Author` a secas: hoy no hay clases homónimas. Ninguno de los dos usos contradice la regla de [`CLAUDE.md` → Naming](../../CLAUDE.md#naming).
+
 ### Factory functions
 
 Usá factories para abstraer la instanciación y **devolver la interfaz**, no la clase concreta. Esto encaja con el rol actual de los mappers del ACL (`mapAuthor`, `mapStoryContent`):
@@ -234,7 +236,7 @@ El ACL es la frontera explícita entre la infraestructura (Sanity) y el dominio:
 
 ## Binding en componentes: solo dominio
 
-Los componentes deben hacer binding **exclusivamente** a interfaces de dominio (`IStory`, `IAuthor`, `IStorylist`, `IResource`) o sus modelos. El **shape crudo de Sanity** y cualquier DTO de contrato pertenecen a la capa de API/provider — **nunca** se importan ni se referencian en componentes ni plantillas.
+Los componentes deben hacer binding **exclusivamente** a interfaces de dominio (hoy `Story`, `Author`, `Storylist`, `Resource`) o sus modelos. El **shape crudo de Sanity** y cualquier DTO de contrato pertenecen a la capa de API/provider — **nunca** se importan ni se referencian en componentes ni plantillas.
 
 La frontera es clara: los repositories/services de Sanity manejan el shape crudo; desde la superficie pública del provider/store hacia arriba (componentes, plantillas), **solo** interfaces de dominio. Los modelos de dominio exponen propiedades computadas y métodos que encierran las reglas de negocio en un único lugar.
 
@@ -252,7 +254,7 @@ Un **agregado** es un cluster de objetos de dominio tratado como una unidad para
 
 **Cómo identificar la raíz:** buscá la entidad que **posee más invariantes de negocio**; esa entidad es la raíz, porque las invariantes solo se garantizan si toda mutación pasa por ella.
 
-En cuentoneta, **`Story` es la raíz** del agregado de contenido. Posee `author: IAuthor`, `paragraphs`, `epigraphs`, `resources: IResource[]`, `tags: Tag[]` y `media: Media[]`. Sus invariantes (de `docs/DOMAIN_MODEL.md`):
+En cuentoneta, **`Story` es la raíz** del agregado de contenido. Posee `author: Author`, `paragraphs`, `epigraphs`, `resources: Resource[]`, `tags: Tag[]` y `media: Media[]`. Sus invariantes (de `docs/DOMAIN_MODEL.md`):
 
 - El `slug` es único e inmutable una vez creado.
 - Toda historia **debe tener un autor**.
@@ -302,17 +304,17 @@ En cuentoneta, candidatas naturales a policy:
 
 ```typescript
 // policy pura: ¿esta Storylist debe mostrar info de autores en sus tarjetas?
-function shouldShowAuthors(storylist: IStorylist): boolean {
+function shouldShowAuthors(storylist: Storylist): boolean {
 	return storylist.config.showAuthors;
 }
 
 // policy pura: ¿este Story lleva advertencia de lenguaje explícito?
-function requiresLanguageWarning(story: IStory): boolean {
+function requiresLanguageWarning(story: Story): boolean {
 	return story.badLanguage === true;
 }
 
 // composición de predicados pequeños con && / ||
-function isReadyForLanding(story: IStory): boolean {
+function isReadyForLanding(story: Story): boolean {
 	return story.approximateReadingTime >= 1 && Boolean(story.author);
 }
 ```

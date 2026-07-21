@@ -139,8 +139,8 @@ interface StoryListProvider {
 ```typescript
 // ✅ El componente (alto nivel) depende de una abstracción inyectada, no de Sanity directo.
 export class StoryComponent {
-	private readonly stories = inject(StoryService);
-	private readonly slug = input.required<string>();
+	private readonly stories = inject(StoryApi);
+	readonly slug = input.required<string>();
 	protected readonly story = toSignal(/* derivado del slug vía el service */);
 }
 

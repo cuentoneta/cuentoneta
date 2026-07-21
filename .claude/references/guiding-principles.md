@@ -118,7 +118,7 @@ El frontend de cuentoneta modela el estado con **servicios + signals + RxJS** (v
 //              efectos colaterales en tap y sin promesas
 @Injectable({ providedIn: 'root' })
 export class StorylistService {
-	private readonly api = inject(StorylistApiService);
+	private readonly api = inject(StorylistApi);
 	private readonly stories = signal<Story[]>([]);
 
 	readonly storyCount = computed(() => this.stories().length); // derivado, no guardado

@@ -51,7 +51,7 @@ Usar la palabra clave `type` cuando un import se use **solo** como anotación de
 // ✅ Correcto
 import type { Story } from '@models/story.model';
 import { type Mock } from '@test-utils';
-import { StoryService } from '../../providers/story.service'; // se usa en runtime → sin `type`
+import { StoryApi } from '../../providers/story-api.interface'; // token, se usa en runtime → sin `type`
 
 // ❌ Incorrecto — falta `type` en imports solo-de-tipo
 import { Story } from '@models/story.model';
