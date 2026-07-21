@@ -53,7 +53,7 @@ Como toda sesión de agente sobre este repo: cargá también `.claude/references
 ### Diseño interface-first
 
 - [ ] Los componentes y services dependen de **interfaces de dominio** (`Story`, `Author`, `Storylist`, `Resource`), no del shape crudo de Sanity ni de DTOs de contrato.
-- [ ] **Sin notación húngara:** la interfaz de dominio lleva el nombre limpio (`Story`, `Author`) y **nunca** el prefijo `I`, sin excepciones. No se declara una clase homónima que duplique el contrato: las invariantes las hace cumplir la factory del mapper.
+- [ ] **Sin prefijo `I`:** la interfaz de dominio lleva el nombre limpio (`Story`, `Author`) y **nunca** el prefijo `I`, sin excepciones. No se declara una clase homónima que duplique el contrato: las invariantes las hace cumplir la factory del mapper.
 - [ ] La interfaz contiene todas las propiedades y métodos públicos del contrato.
 
 ### Vistas polimórficas (projection pattern) — vigente

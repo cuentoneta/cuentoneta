@@ -69,7 +69,7 @@ export interface Story {
 }
 ```
 
-**Nada de notación húngara.** La interfaz de dominio lleva el **nombre limpio** (`Story`, `Author`, `Storylist`, `Resource`) y **nunca** el prefijo `I` — ver [`CLAUDE.md` → Naming](../../CLAUDE.md#naming). No se declara una clase homónima que duplique el contrato: quien hace cumplir las invariantes es la **factory** del mapper, que devuelve un objeto congelado tipado como la interfaz.
+**Sin prefijo `I`.** La interfaz de dominio lleva el **nombre limpio** (`Story`, `Author`, `Storylist`, `Resource`) y **nunca** el prefijo `I` — ver [`CLAUDE.md` → Naming](../../CLAUDE.md#naming). No se declara una clase homónima que duplique el contrato: quien hace cumplir las invariantes es la **factory** del mapper, que devuelve un objeto congelado tipado como la interfaz.
 
 ### Factory functions
 
