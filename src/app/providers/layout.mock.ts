@@ -1,9 +1,8 @@
-import { Injectable, makeEnvironmentProviders, signal, type EnvironmentProviders } from '@angular/core';
+import { makeEnvironmentProviders, signal, type EnvironmentProviders } from '@angular/core';
 import { of, type Observable } from 'rxjs';
 import { compareViewports, type Viewport } from '@utils/screen.utils';
 import { Direction, LayoutService } from './layout.interface';
 
-@Injectable({ providedIn: 'root' })
 export class InMemoryLayoutService implements LayoutService {
 	private readonly viewport = signal<Viewport>('lg');
 
@@ -41,6 +40,6 @@ export class InMemoryLayoutService implements LayoutService {
 	}
 }
 
-export function provideLayoutMock(service: InMemoryLayoutService = new InMemoryLayoutService()): EnvironmentProviders {
+export function provideLayoutMock(service: LayoutService = new InMemoryLayoutService()): EnvironmentProviders {
 	return makeEnvironmentProviders([{ provide: LayoutService, useValue: service }]);
 }

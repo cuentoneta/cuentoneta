@@ -17,7 +17,11 @@ export function compareViewports(current: Viewport, test: Viewport): number {
 	const currentWidth = VIEWPORT_WIDTHS_NUMERIC[current];
 	const testWidth = VIEWPORT_WIDTHS_NUMERIC[test];
 
-	if (currentWidth === undefined || testWidth === undefined) {
+	if (currentWidth === undefined) {
+		throw new Error(`Viewport inválido: ${current}`);
+	}
+
+	if (testWidth === undefined) {
 		throw new Error(`Viewport inválido: ${test}`);
 	}
 

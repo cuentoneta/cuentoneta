@@ -16,8 +16,8 @@ describe('compareViewports', () => {
 		expect(compareViewports('md', 'md')).toBe(0);
 	});
 
-	it('should throw when either viewport is outside the scale', () => {
-		expect(() => compareViewports('lg', 'invalid' as Viewport)).toThrow();
-		expect(() => compareViewports('invalid' as Viewport, 'lg')).toThrow();
+	it('should throw naming the viewport that is outside the scale', () => {
+		expect(() => compareViewports('lg', 'invalid' as Viewport)).toThrow(/invalid/);
+		expect(() => compareViewports('bogus' as Viewport, 'lg')).toThrow(/bogus/);
 	});
 });

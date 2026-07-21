@@ -21,7 +21,7 @@ import {
 } from 'rxjs';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
-import { compareViewports, Viewport, VIEWPORT_WIDTHS_NUMERIC } from '@utils/screen.utils';
+import { compareViewports, VIEWPORT_WIDTHS_NUMERIC, type Viewport } from '@utils/screen.utils';
 import { Direction, LayoutService } from './layout.interface';
 
 @Injectable({
