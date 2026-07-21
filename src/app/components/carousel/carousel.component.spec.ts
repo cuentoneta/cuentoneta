@@ -6,19 +6,14 @@ import { CarouselComponent } from './carousel.component';
 
 // Mocks
 import { contentCampaignMock } from '@mocks/content-campaign.mock';
+import { InMemoryLayoutService } from '../../providers/layout.mock';
 import { LayoutService } from '../../providers/layout.service';
+import type { Viewport } from '@utils/screen.utils';
 
-// Servicios mock
-class MockLayoutXsViewportService {
-	public biggerThan(viewport: string) {
-		return viewport !== 'xs';
-	}
-}
-
-class MockLayoutMdViewportService {
-	public biggerThan(viewport: string) {
-		return viewport === 'xs';
-	}
+function layoutAt(viewport: Viewport): InMemoryLayoutService {
+	const layout = new InMemoryLayoutService();
+	layout.setViewport(viewport);
+	return layout;
 }
 
 describe('CarouselComponent', () => {
@@ -43,7 +38,7 @@ describe('CarouselComponent', () => {
 	it('should apply xs viewport-specific classes correctly', async () => {
 		await render(CarouselComponent, {
 			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useClass: MockLayoutXsViewportService }],
+			providers: [{ provide: LayoutService, useValue: layoutAt('xs') }],
 		});
 		const slideLinks = screen.getAllByRole('link');
 		slideLinks.forEach((link) => {
@@ -54,7 +49,7 @@ describe('CarouselComponent', () => {
 	it('should apply md viewport-specific classes correctly', async () => {
 		await render(CarouselComponent, {
 			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useClass: MockLayoutMdViewportService }],
+			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
 		});
 		const slideLinks = screen.getAllByRole('link');
 		slideLinks.forEach((link) => {
@@ -197,7 +192,7 @@ describe('CarouselComponent', () => {
 	it('should have proper ARIA attributes on navigation buttons', async () => {
 		await render(CarouselComponent, {
 			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useClass: MockLayoutMdViewportService }],
+			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
 		});
 
 		const prevButton = screen.getByLabelText('Previous slide');
@@ -267,7 +262,7 @@ describe('CarouselComponent', () => {
 	it('should show controls on desktop viewport', async () => {
 		await render(CarouselComponent, {
 			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useClass: MockLayoutMdViewportService }],
+			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
 		});
 
 		expect(screen.getByLabelText('Previous slide')).toBeInTheDocument();
@@ -277,7 +272,7 @@ describe('CarouselComponent', () => {
 	it('should hide controls on mobile viewport', async () => {
 		await render(CarouselComponent, {
 			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useClass: MockLayoutXsViewportService }],
+			providers: [{ provide: LayoutService, useValue: layoutAt('xs') }],
 		});
 
 		expect(screen.queryByLabelText('Previous slide')).not.toBeInTheDocument();
