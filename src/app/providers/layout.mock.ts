@@ -13,8 +13,6 @@ export class InMemoryLayoutService implements Layout {
 	public readonly viewportHasChanged$: Observable<Event | null> = of(null);
 	public readonly isHeaderVisible$: Observable<boolean> = of(true);
 
-	/** Fija el viewport del doble. Es la operación que `setViewport()` no puede cubrir: el contrato lo define como
-	 * detección desde `window`, y acá no hay `window` de la cual detectar. */
 	public simulateViewport(viewport: Viewport): void {
 		this.viewport.set(viewport);
 	}

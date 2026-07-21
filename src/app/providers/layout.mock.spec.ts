@@ -26,6 +26,10 @@ describe('InMemoryLayoutService', () => {
 		expect(service.isActual('lg')).toBe(true);
 	});
 
+	it('should start with a visible header', () => {
+		expect(service.isHeaderVisible()).toBe(true);
+	});
+
 	describe('biggerThan', () => {
 		it('should return true if the current viewport is larger than the test viewport', () => {
 			service.simulateViewport('lg');
