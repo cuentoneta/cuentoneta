@@ -19,7 +19,7 @@ const FULLY_VISIBLE_RATIO = 0.99;
 /**
  * Recorta una fila de tags proyectados según el ancho de su contenedor: descubre los tags vía
  * `contentChildren`, oculta los que no entran (`visibility:hidden`) y los empuja después del contador con
- * flex `order`. Expone `visibleCount` y `hiddenCount`, y recibe vía `reserveTrailingSpace()` cuánto
+ * flex `order`. Expone `hiddenCount`, y recibe vía `reserveTrailingSpace()` cuánto
  * espacio guardar a la derecha (el ancho del contador "+N", que mide el host).
  *
  * Se aplica como `hostDirective` del contenedor (que debe tener `overflow: hidden`): su host es el root del
@@ -44,7 +44,7 @@ export class TagsOverflowDirective {
 	private readonly ready = signal(false);
 
 	/** Cantidad de tags visibles: prefijo que entra, acotado por `maxVisible`. */
-	public readonly visibleCount = computed(() => {
+	private readonly visibleCount = computed(() => {
 		const overflowing = this.overflowing();
 		const cap = this.maxVisible() ?? Infinity;
 		let count = 0;

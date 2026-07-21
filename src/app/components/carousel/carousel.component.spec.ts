@@ -103,7 +103,7 @@ describe('CarouselComponent', () => {
 		});
 
 		const component = fixture.componentInstance;
-		const lastIndex = component.slideCount() - 1;
+		const lastIndex = contentCampaignMock.length - 1;
 
 		// Ir a la última diapositiva
 		component.onIndicatorClick(lastIndex);
@@ -131,7 +131,7 @@ describe('CarouselComponent', () => {
 		component.prev();
 		fixture.detectChanges();
 
-		expect(component.activeIndex()).toBe(component.slideCount() - 1);
+		expect(component.activeIndex()).toBe(contentCampaignMock.length - 1);
 	});
 
 	it('should not allow navigation while transitioning', async () => {
@@ -193,15 +193,6 @@ describe('CarouselComponent', () => {
 		expect(component.isPaused()).toBe(false);
 	});
 
-	it('should have correct slide count', async () => {
-		const { fixture } = await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-		});
-
-		const component = fixture.componentInstance;
-		expect(component.slideCount()).toBeGreaterThan(1);
-	});
-
 	// Pruebas de accesibilidad
 	it('should have proper ARIA attributes on navigation buttons', async () => {
 		await render(CarouselComponent, {
@@ -257,15 +248,6 @@ describe('CarouselComponent', () => {
 	});
 
 	// Pruebas de signals computadas
-	it('should calculate slideCount correctly', async () => {
-		const { fixture } = await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-		});
-
-		const component = fixture.componentInstance;
-		expect(component.slideCount()).toBe(contentCampaignMock.length);
-	});
-
 	it('should return active slide correctly based on activeIndex signal', async () => {
 		const { fixture } = await render(CarouselComponent, {
 			inputs: { slides: contentCampaignMock },
@@ -283,23 +265,23 @@ describe('CarouselComponent', () => {
 	});
 
 	it('should show controls on desktop viewport', async () => {
-		const { fixture } = await render(CarouselComponent, {
+		await render(CarouselComponent, {
 			inputs: { slides: contentCampaignMock },
 			providers: [{ provide: LayoutService, useClass: MockLayoutMdViewportService }],
 		});
 
-		const component = fixture.componentInstance;
-		expect(component.showControls()).toBe(true);
+		expect(screen.queryByLabelText('Previous slide')).toBeInTheDocument();
+		expect(screen.queryByLabelText('Next slide')).toBeInTheDocument();
 	});
 
 	it('should hide controls on mobile viewport', async () => {
-		const { fixture } = await render(CarouselComponent, {
+		await render(CarouselComponent, {
 			inputs: { slides: contentCampaignMock },
 			providers: [{ provide: LayoutService, useClass: MockLayoutXsViewportService }],
 		});
 
-		const component = fixture.componentInstance;
-		expect(component.showControls()).toBe(false);
+		expect(screen.queryByLabelText('Previous slide')).not.toBeInTheDocument();
+		expect(screen.queryByLabelText('Next slide')).not.toBeInTheDocument();
 	});
 
 	// Pruebas de señal de dirección
