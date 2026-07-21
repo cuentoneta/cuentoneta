@@ -119,13 +119,13 @@ El frontend de cuentoneta modela el estado con **servicios + signals + RxJS** (v
 @Injectable({ providedIn: 'root' })
 export class StorylistService {
 	private readonly api = inject(StorylistApi);
-	private readonly stories = signal<Story[]>([]);
+	private readonly stories = signal<StoryTeaserWithAuthor[]>([]);
 
 	readonly storyCount = computed(() => this.stories().length); // derivado, no guardado
 
-	load(slug: string): Observable<Story[]> {
-		return this.api.getStorylistBySlug(slug).pipe(
-			map((raw) => raw.stories.map(mapStory)),
+	load(slug: string): Observable<StoryTeaserWithAuthor[]> {
+		return this.api.get(slug).pipe(
+			map((storylist) => storylist.stories), // ya viene mapeado por el ACL del backend
 			tap((stories) => this.stories.set(stories)), // efecto colateral en tap
 			catchError((err) => {
 				this.logError('load', err);

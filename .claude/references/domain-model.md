@@ -76,10 +76,10 @@ export interface IStory {
 
 ### Factory functions
 
-Usá factories para abstraer la instanciación y **devolver la interfaz**, no la clase concreta. Esto encaja con el rol actual de los mappers del ACL (`mapAuthor`, `mapStoryContent`):
+Usá factories para abstraer la instanciación y **devolver la interfaz**, no la clase concreta. Es la evolución natural del rol que hoy cumplen los mappers del ACL (`mapAuthor`, `mapStoryContent`), que devuelven objetos planos tipados y no instancian clases:
 
 ```typescript
-// story.mapper.ts
+// story.mapper.ts (objetivo: la factory devuelve la interfaz, no la clase)
 interface CreateStoryOptions {
 	slug: string;
 	title: string;

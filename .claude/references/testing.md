@@ -114,8 +114,7 @@ expect(heading).toBeInTheDocument();
 
 ```typescript
 import { fn } from '@test-utils';
-import { of } from 'rxjs';
-import type { Observable } from 'rxjs';
+import { of, type Observable } from 'rxjs';
 
 const getBySlug = fn<[string], Observable<Story>>();
 getBySlug.mockReturnValue(of(storyMock));
