@@ -1,6 +1,7 @@
 import { fn, spyOn, type Mock } from '@test-utils';
 import { TestBed } from '@angular/core/testing';
-import { LayoutService, Direction } from './layout.service';
+import { LayoutService } from './layout.service';
+import { Direction } from './layout.interface';
 import { WINDOW } from './window';
 import { map, of } from 'rxjs';
 import { Viewport } from '@utils/screen.utils';

@@ -14,14 +14,12 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { Viewport, VIEWPORT_WIDTHS_NUMERIC } from '@utils/screen.utils';
-
-export const Direction = Object.freeze({ Up: 'Up', Down: 'Down' } as const);
-export type Direction = (typeof Direction)[keyof typeof Direction];
+import { Direction, type Layout } from './layout.interface';
 
 @Injectable({
 	providedIn: 'root',
 })
-export class LayoutService {
+export class LayoutService implements Layout {
 	private readonly window = inject(WINDOW);
 	private readonly platformId = inject(PLATFORM_ID);
 
