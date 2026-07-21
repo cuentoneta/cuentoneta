@@ -61,7 +61,9 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 | `pnpm sanity:run-typegen-generator`       | Genera tipos a partir del schema                                                                                                     |
 | `pnpm sanity migration run <slug>`        | Corre una migración de datos (desde `cms/`; dry-run por defecto) → [`sanity-migrations.md`](.claude/references/sanity-migrations.md) |
 
-**Gates de CI** (deben quedar verdes en cada PR): `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`, `studio-build`.
+**Gates de CI** (deben quedar verdes en cada PR): `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`, `studio-build`, `guard-config`.
+
+> Los nueve son **required status checks** de `develop`: GitHub bloquea el merge si alguno queda en rojo. El nombre del gate es el **id del job** en `.github/workflows/` — los jobs no declaran `name:` justamente para que id y context no puedan desincronizarse. `guard-config` solo tiene efecto en PRs desde forks (en PRs del mismo repo pasa en verde sin verificar nada).
 
 > El gate `typecheck` (`pnpm typecheck` → `tsc --noEmit` estricto) cubre el **TS puro** de la app (`src/**`, incluidos `*.spec.ts` y `*.stories.ts`) y `scripts/`. **No** valida plantillas Angular (eso lo hacen `build`/`storybook` vía `ngtsc`) ni el proyecto `cms/`.
 >
