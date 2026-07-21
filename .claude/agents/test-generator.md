@@ -56,21 +56,22 @@ Es la **única** referencia que cargás. No asumas convenciones del starter ni d
 
 ```typescript
 import { clearAllMocks, fn } from '@test-utils';
+import { of, type Observable } from 'rxjs';
 
-const getStory = fn<[string], Promise<Story>>();
+const getBySlug = fn<[string], Observable<Story>>();
 
 beforeEach(() => {
 	clearAllMocks();
 });
 
 // ...
-getStory.mockResolvedValue(storyMock);
+getBySlug.mockReturnValue(of(storyMock));
 await render(StoryComponent, {
-	providers: [{ provide: StoryService, useValue: { getStory } }],
+	providers: [{ provide: StoryApi, useValue: { getBySlug } }],
 });
 ```
 
-`fn()` es genérico: `fn<[number], Promise<User>>()`. Para castear una función auto-mockeada usá `as Mock` importado de `@test-utils` (nunca `vi.mocked()`).
+`fn()` es genérico: `fn<[string], Observable<Story>>()`. Para castear una función auto-mockeada usá `as Mock` importado de `@test-utils` (nunca `vi.mocked()`).
 
 ### Timers
 

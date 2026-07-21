@@ -95,7 +95,7 @@ La interfaz lleva el **nombre limpio** (la responsabilidad), y la **implementaci
 - Prefijo **`InMemory*`** para **todos** los dobles de test (jamás `Mock*`).
 - Los services de implementación única **conservan el nombre de la interfaz** (sin prefijo, sin sufijo `Impl`).
 
-> Nota sobre el estado actual: hoy los módulos backend exponen funciones (`getStoryBySlug`, `fetchStories`) más que clases con interfaz explícita. La convención de arriba rige al introducir abstracciones de repository/service o sus dobles de test, y es la dirección a la que tienden los `*.service.spec.ts`.
+> Nota sobre el estado actual: hoy los módulos backend exponen funciones (`getStoryBySlug`, `fetchStories`) más que clases con interfaz explícita, así que **los nombres de esta tabla son ilustrativos de la convención, no símbolos existentes** — las clases llegan con #1503. La convención rige al introducir abstracciones de repository/service o sus dobles de test, y es la dirección a la que tienden los `*.service.spec.ts`.
 
 ### Frontend
 
@@ -104,8 +104,10 @@ La interfaz lleva el **nombre limpio** (la responsabilidad), y la **implementaci
 | API de stories    | `StoryApi`                          | `HttpStoryApi`     | `InMemoryStoryApi`     |
 | API de autores    | `AuthorApi`                         | `HttpAuthorApi`    | `InMemoryAuthorApi`    |
 | API de storylists | `StorylistApi`                      | `HttpStorylistApi` | `InMemoryStorylistApi` |
+| Service (impl. única) | `LayoutService` (sin token)     | `LayoutService`    | `InMemoryLayoutService` |
 
 - Prefijo **`Http*`** para implementaciones de servicios de API basadas en HTTP.
+- Un service de **implementación única** (`LayoutService`, `NavigationFrameService`, `SchemaOrgService`) no necesita interfaz ni token: se inyecta la clase y su doble es `InMemory*` (`layout.mock.ts`). El par interfaz + `InjectionToken` se reserva a los **API providers**, que sí tienen dos implementaciones intercambiables.
 - Los tokens son `InjectionToken` planos (sin `providedIn`/`factory`), cableados vía `provide<X>Api()` (real) y `provide<X>ApiMock()` (doble) con `makeEnvironmentProviders`.
 - **Archivos (3 por API provider):**
   - **`<dominio>-api.interface.ts`** — la interfaz `<X>Api` + el `InjectionToken`. El sufijo **`-api`** distingue el archivo de una interfaz del **modelo de dominio**: `author-api.interface.ts` exporta `AuthorApi`, no una interfaz del agregado `Author`.

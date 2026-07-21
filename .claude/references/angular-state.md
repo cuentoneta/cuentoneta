@@ -55,14 +55,14 @@ Los valores derivados son **`computed`** (o `toSignal` para fuentes observables)
 
 ```typescript
 // ✅ Correcto — todo lo derivado cuelga de un único origen (story.component.ts)
-readonly story = computed(() => this.storyResource.value());
-readonly sharingRoute = computed(() => `${AppRoutes.Story}/${this.story()?.slug}`);
-readonly shareMessage = computed(
+public readonly story = computed(() => this.storyResource.value()); // `public`: lo exige la interfaz StoryHost
+protected readonly sharingRoute = computed(() => `${AppRoutes.Story}/${this.story()?.slug}`);
+protected readonly shareMessage = computed(
 	() => `Leí "${this.story()?.title}" de ${this.story()?.author.name} en La Cuentoneta ...`,
 );
 
 // ❌ Incorrecto — segundo signal que hay que mantener en sync a mano
-readonly sharingRoute = signal('');
+protected readonly sharingRoute = signal('');
 // ...y luego un effect/set por cada cambio de story → estado duplicado
 ```
 
@@ -80,10 +80,10 @@ export class CarouselStateService {
 	private readonly _isTransitioning = signal(false);
 
 	// Signals públicas de solo lectura
-	readonly activeIndex: Signal<number> = this._activeIndex.asReadonly();
-	readonly isTransitioning: Signal<boolean> = this._isTransitioning.asReadonly();
+	public readonly activeIndex: Signal<number> = this._activeIndex.asReadonly();
+	public readonly isTransitioning: Signal<boolean> = this._isTransitioning.asReadonly();
 
-	selectSlide(index: number, direction: 'left' | 'right'): void {
+	public selectSlide(index: number, direction: 'left' | 'right'): void {
 		if (this._isTransitioning() || index === this._activeIndex()) return;
 		this._isTransitioning.set(true);
 		this._activeIndex.set(index);
