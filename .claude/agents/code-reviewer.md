@@ -38,9 +38,11 @@ Antes de revisar, leé **todas** las referencias del catálogo para tener el con
 1. **Identificar cambios** — Usá `git diff develop...HEAD` para ver todos los cambios de la rama.
 2. **Revisar contra CLAUDE.md y las referencias** y sus lineamientos.
 3. **Verificar cobertura de tests** — Confirmá que hay tests para el código nuevo (Vitest + Angular Testing Library + `@test-utils`).
-4. **Correr los gates de CI** — Ejecutá los gates vía `pnpm` para asegurar que nada se rompió. Debés correr esta verificación vos mismo en **cada** invocación; nunca confíes en ni reportes un estado de CI que no observaste directamente.
+4. **Verificar los gates de CI** — Los que deben quedar verdes en cada PR son los definidos en la sección [Comandos comunes](../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**).
 
-Los gates que deben quedar verdes en cada PR son los definidos en la sección [Comandos comunes](../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**). Corré cada uno y reportá el resultado real que observaste.
+- **Corré solo los que aplican al diff.** `e2e` y `studio-build` son costosos: `e2e` solo si el cambio toca flujos E2E, `studio-build` solo si toca `cms/`. Es la misma condición que aplica la Fase 4 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md); correrlos sobre un diff que no los toca no verifica nada.
+- **Si quien te invoca ya los corrió y te pasa el resultado observado, no los repitas.** La Fase 4 los corre antes de delegar en vos: volver a ejecutarlos es la parte más cara de la review y no agrega información.
+- **Nunca reportes un estado que no observaste ni te fue reportado.** Cada fila de la tabla de resultados declara **quién** lo corrió. Si el resultado ajeno te resulta dudoso, o si tocaste archivos después de que se corriera, corré ese gate vos mismo — la duda se resuelve ejecutando, no asumiendo.
 
 ## Falsos positivos conocidos — NO marcar
 
@@ -198,13 +200,13 @@ La columna **#** da un número secuencial a través de las tres tablas dentro de
 
 ### Resultados de verificación
 
-Corré vos mismo, en cada invocación, los gates de CI definidos en la sección [Comandos comunes](../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**) y reportá el resultado real que observaste. Generá una fila por gate:
+Una fila por gate **aplicable al diff** (ver el paso 4 del proceso de revisión), declarando quién observó el resultado:
 
-| Comando          | Resultado |
-| ---------------- | --------- |
-| `pnpm <comando>` | PASS/FAIL |
+| Comando          | Resultado | Corrido por  |
+| ---------------- | --------- | ------------ |
+| `pnpm <comando>` | PASS/FAIL | vos / Fase 4 |
 
-Si alguno falla, reportá cuál y el detalle del fallo.
+Los gates que no aplican al diff no se listan como PASS: se omiten, y se aclara por qué debajo de la tabla. Si alguno falla, reportá cuál y el detalle del fallo.
 
 ### Cobertura de tests
 
