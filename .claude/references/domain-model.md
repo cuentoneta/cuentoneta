@@ -45,10 +45,9 @@ Hoy los tipos de dominio viven en `src/app/models/` (frontend) y la ACL/dominio 
 
 ```
 <contexto>/                 # p. ej. content-catalog/, curation/
-├── <entidad>.interface.ts   # contrato de dominio (IStory, IAuthor, …)
-├── <entidad>.model.ts       # implementación con invariantes
-├── <entidad>.mapper.ts      # factory + traducción desde Sanity
-└── <entidad>.model.spec.ts
+├── <entidad>.interface.ts   # contrato de dominio (Story, Author, …)
+├── <entidad>.mapper.ts      # factory (hace cumplir las invariantes) + traducción desde Sanity
+└── <entidad>.mapper.spec.ts
 ```
 
 > **Roadmap:** la separación física por carpeta de contexto es objetivo. No inventar estos archivos al implementar features actuales; seguir la organización vigente (`src/app/models/`, `src/api/_utils/`) hasta que #1503 la migre.
@@ -57,39 +56,43 @@ Hoy los tipos de dominio viven en `src/app/models/` (frontend) y la ACL/dominio 
 
 ## Diseño orientado a interfaces
 
-Definí **interfaces** para las entidades de dominio. Los componentes dependen de interfaces, no de clases concretas. Esto ya rige hoy: el frontend consume `Story`, `Author`, `Storylist`, `Resource` como contratos, nunca el shape crudo de Sanity.
+Definí **interfaces** para las entidades de dominio. Los componentes dependen de esas interfaces, nunca de un tipo de infraestructura. Esto ya rige hoy: el frontend consume `Story`, `Author`, `Storylist`, `Resource` como contratos, nunca el shape crudo de Sanity.
 
 ```typescript
-// story.interface.ts (objetivo: contrato explícito separado de la implementación)
-export interface IStory {
+// story.interface.ts (objetivo: el contrato de dominio, sin clase que lo duplique)
+export interface Story {
 	readonly slug: string; // business key, invariante única
 	readonly title: string;
-	readonly author: IAuthor; // un Story siempre tiene autor
+	readonly author: Author; // un Story siempre tiene autor
 	readonly approximateReadingTime: number; // minutos, >= 1
 	hasMedia(): boolean;
 }
 ```
 
-**Convención `I`:** usar el prefijo `I` **solo** cuando coexista una clase concreta con el mismo nombre (`IStory`/`Story`), para distinguir contrato de implementación. Donde hoy hay solo una `interface Story` (sin clase), no hace falta el prefijo.
-
-> Por eso los bloques de **roadmap** de esta referencia sí usan `IStory`/`IAuthor` —ahí coexisten con las clases `Story`/`Author` de `<entidad>.model.ts`—, mientras que el texto que describe el código **de hoy** usa `Story`/`Author` a secas: hoy no hay clases homónimas. Ninguno de los dos usos contradice la regla de [`CLAUDE.md` → Naming](../../CLAUDE.md#naming).
+**Nada de notación húngara.** La interfaz de dominio lleva el **nombre limpio** (`Story`, `Author`, `Storylist`, `Resource`) y **nunca** el prefijo `I` — ver [`CLAUDE.md` → Naming](../../CLAUDE.md#naming). No se declara una clase homónima que duplique el contrato: quien hace cumplir las invariantes es la **factory** del mapper, que devuelve un objeto congelado tipado como la interfaz.
 
 ### Factory functions
 
-Usá factories para abstraer la instanciación y **devolver la interfaz**, no la clase concreta. Es la evolución natural del rol que hoy cumplen los mappers del ACL (`mapAuthor`, `mapStoryContent`), que devuelven objetos planos tipados y no instancian clases:
+La factory es el **único** punto de construcción de un objeto de dominio: ahí se validan las invariantes y se devuelve el contrato ya congelado. Es la evolución natural del rol que hoy cumplen los mappers del ACL (`mapAuthor`, `mapStoryContent`), que devuelven objetos planos tipados:
 
 ```typescript
-// story.mapper.ts (objetivo: la factory devuelve la interfaz, no la clase)
+// story.mapper.ts (objetivo: la factory valida las invariantes y devuelve el contrato)
 interface CreateStoryOptions {
 	slug: string;
 	title: string;
-	author: IAuthor;
+	author: Author;
 	paragraphs: TextBlockContent[];
 	approximateReadingTime: number;
 }
 
-export function createStory(options: CreateStoryOptions): IStory {
-	return new Story(options);
+export function createStory(options: CreateStoryOptions): Story {
+	if (!options.author) {
+		throw new Error(`La historia "${options.slug}" no tiene autor`);
+	}
+	return Object.freeze({
+		...options,
+		hasMedia: () => options.paragraphs.some(isMediaBlock),
+	});
 }
 ```
 
@@ -97,7 +100,8 @@ export function createStory(options: CreateStoryOptions): IStory {
 
 - **Options object** para funciones con 3+ parámetros.
 - Mantené las interfaces de options **privadas** (no exportadas) — TS infiere el tipo en el call site.
-- Devolvé el **tipo interfaz**, no la clase concreta.
+- Devolvé el **tipo de la interfaz** de dominio.
+- La construcción pasa **siempre** por la factory: es el único lugar donde una invariante puede quedar sin verificar.
 
 ---
 
@@ -127,18 +131,19 @@ Cada vista es una proyección coherente del mismo agregado; el mapper correspond
 Los objetos de dominio deben ser **inmutables** tras su construcción:
 
 ```typescript
-export class Story implements IStory {
+export interface Story {
 	readonly slug: string;
 	readonly title: string;
-	readonly author: IAuthor;
-	readonly resources: readonly IResource[];
+	readonly author: Author;
+	readonly resources: readonly Resource[];
 	// …
 }
 ```
 
 - Marcá todas las propiedades `readonly`.
 - Usá `readonly T[]` para arrays.
-- Calculá los valores derivados en el constructor y guardalos en campos privados.
+- Calculá los valores derivados en la factory, antes de congelar el objeto.
+- `readonly` es una garantía **de tipos** (desaparece en runtime); el `Object.freeze` de la factory es la que sobrevive a la compilación.
 
 El contenido enriquecido (`TextBlockContent` / Portable Text) **se trata como inmutable**: una vez producido por Sanity, no se modifica en la aplicación.
 
@@ -261,16 +266,18 @@ En cuentoneta, **`Story` es la raíz** del agregado de contenido. Posee `author:
 - Debe tener **al menos un párrafo** de contenido.
 - El tiempo de lectura es un número positivo (`>= 1`).
 
-El objetivo (roadmap #1503) es hacer cumplir esas invariantes **en construcción**, de modo que ningún caller pueda crear un `Story` inconsistente:
+El objetivo (roadmap #1503) es hacer cumplir esas invariantes **en construcción**, dentro de la factory, de modo que ningún caller pueda crear un `Story` inconsistente:
 
 ```typescript
-// story.model.ts — objetivo: invariantes en tiempo de construcción
-constructor(options: CreateStoryOptions) {
+// story.mapper.ts — objetivo: invariantes en tiempo de construcción
+export function createStory(options: CreateStoryOptions): Story {
 	if (!options.author) throw new Error('Story requiere autor');
 	if (options.paragraphs.length === 0) throw new Error('Story requiere al menos un párrafo');
-	this.slug = slug(options.slug);
-	this.approximateReadingTime = readingTime(options.approximateReadingTime);
-	// …
+	return Object.freeze({
+		...options,
+		slug: slug(options.slug),
+		approximateReadingTime: readingTime(options.approximateReadingTime),
+	});
 }
 ```
 

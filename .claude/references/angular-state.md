@@ -14,7 +14,7 @@ Cuentoneta **no usa NgRx**. El estado vive en **servicios**, se expone como **si
 
 Dónde viven los servicios de estado:
 
-- **`@Injectable({ providedIn: 'root' })`** para estado/acceso a datos de aplicación (singleton). Ej.: `LayoutService`, `NavigationFrameService`, `SchemaOrgService` en [`src/app/providers/`](../../src/app/providers/). El **acceso a datos** no usa services `providedIn: 'root'`: va por los tokens `*Api` del mismo directorio (`StoryApi`, `AuthorApi`, …) — ver [`clean-architecture.md`](clean-architecture.md).
+- **`@Injectable({ providedIn: 'root' })`** para estado/acceso a datos de aplicación (singleton). Es el default de todo servicio del frontend, salvo indicación explícita en contrario. Ej.: `LayoutService`, `NavigationFrameService`, `SchemaOrgService` y las implementaciones de API (`HttpStoryApi`, `HttpAuthorApi`, …) en [`src/app/providers/`](../../src/app/providers/). Los consumidores inyectan el **token** `*Api` (`StoryApi`, `AuthorApi`, …), no la clase concreta — ver [`clean-architecture.md`](clean-architecture.md).
 - **`@Injectable()` provisto en un componente** cuando el estado es local a un subárbol y debe morir con él. Ej.: `CarouselStateService`, provisto en el `providers` del componente de carousel.
 
 > Los servicios de acceso a datos del frontend viven en `src/app/providers/` _(en migración al patrón `provideX()` / `*.provider.ts` — ver #1499)_.

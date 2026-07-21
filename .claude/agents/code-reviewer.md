@@ -96,7 +96,7 @@ Estos patrones son intencionales y correctos. NO los reportes como problemas:
 
 ### Patrones del modelo de dominio (si aplica)
 
-- [ ] Diseño interface-first (patrón Entity sin prefijo `I`, salvo coexistencia con clase homónima)
+- [ ] Diseño interface-first (patrón Entity sin prefijo `I`, sin excepciones — nada de notación húngara)
 - [ ] Objetos inmutables (propiedades `readonly`)
 - [ ] Factory functions con patrón de objeto de opciones
 - [ ] Validación Zod para datos externos (en los bordes del sistema)

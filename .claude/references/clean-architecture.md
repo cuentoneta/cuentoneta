@@ -80,7 +80,7 @@ Angular **signals-first** (sin NgRx). Los componentes y servicios consumen **mod
 
 La interfaz lleva el **nombre limpio** (la responsabilidad), y la **implementación** lleva un **prefijo de tecnología/propósito**. El doble de test es siempre `InMemory*` — **nunca `Mock*`**.
 
-**Regla del prefijo `I`:** la interfaz **no** lleva prefijo `I` (no `IStoryRepository`). La única excepción es una **colisión** con una clase del mismo nombre que deba coexistir; recién ahí se admite `I` para desambiguar.
+**Regla del prefijo `I`:** la interfaz **nunca** lleva prefijo `I` (no `IStoryRepository`), sin excepciones. Si una clase necesitara el mismo nombre que la interfaz, el problema es el **nombre de la clase**, no el de la interfaz: la implementación se califica (`Sanity*`, `Http*`, `InMemory*`), o directamente no se declara la clase — ver el caso de los modelos de dominio en [`domain-model.md`](domain-model.md).
 
 ### Backend
 
@@ -114,7 +114,7 @@ La interfaz lleva el **nombre limpio** (la responsabilidad), y la **implementaci
 
 **Resumen de reglas:**
 
-- Interfaz sin prefijo `I` (salvo colisión con clase homónima).
+- Interfaz sin prefijo `I`, sin excepciones.
 - `Sanity*` para repositories sobre Sanity/GROQ; `Http*` para API services del front.
 - `InMemory*` para todo doble de test — nunca `Mock*`.
 - Servicio de implementación única → conserva el nombre de la interfaz.

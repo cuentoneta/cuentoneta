@@ -53,7 +53,7 @@ Como toda sesión de agente sobre este repo: cargá también `.claude/references
 ### Diseño interface-first
 
 - [ ] Los componentes y services dependen de **interfaces de dominio** (`Story`, `Author`, `Storylist`, `Resource`), no del shape crudo de Sanity ni de DTOs de contrato.
-- [ ] **Convención de prefijo `I`:** usar `I` **solo** cuando coexiste una clase concreta con el mismo nombre (`IStory`/`Story`) para distinguir contrato de implementación. Donde hoy hay solo una `interface Story` (sin clase), **no** se usa prefijo. (No imponer `I` por defecto — diverge de otros starters.)
+- [ ] **Sin notación húngara:** la interfaz de dominio lleva el nombre limpio (`Story`, `Author`) y **nunca** el prefijo `I`, sin excepciones. No se declara una clase homónima que duplique el contrato: las invariantes las hace cumplir la factory del mapper.
 - [ ] La interfaz contiene todas las propiedades y métodos públicos del contrato.
 
 ### Vistas polimórficas (projection pattern) — vigente
@@ -119,10 +119,9 @@ Objetivo (roadmap #1503, **no inventar estos archivos hoy**): agrupar por bounde
 
 ```
 <contexto>/                  # p. ej. content-catalog/, curation/
-├── <entidad>.interface.ts    # contrato de dominio (IStory, IAuthor, …)
-├── <entidad>.model.ts        # implementación con invariantes
-├── <entidad>.mapper.ts       # factory + traducción desde Sanity
-└── <entidad>.model.spec.ts
+├── <entidad>.interface.ts    # contrato de dominio (Story, Author, …)
+├── <entidad>.mapper.ts       # factory (hace cumplir las invariantes) + traducción desde Sanity
+└── <entidad>.mapper.spec.ts
 ```
 
 > No inventes archivos inexistentes ni recomiendes migrar la estructura física salvo que el issue lo pida; seguí la organización vigente hasta que #1503 la cambie.
