@@ -112,10 +112,11 @@ La interfaz lleva el **nombre limpio** (la responsabilidad), y la **implementaci
 - **La interfaz se queda con el nombre limpio y la implementación se califica**, aunque el nombre limpio ya estuviera ocupado por la clase real. Renombrar la clase (`LayoutService` → `WindowLayoutService`) **no rompe a los consumidores**: el token homónimo (`export const LayoutService = new InjectionToken<LayoutService>('LayoutService')`) deja cada `inject(LayoutService)` intacto. La pista de que el nombre limpio pertenece al contrato suele estar en el propio doble: `InMemoryLayoutService` se lee como `InMemory` + `LayoutService`.
 - **Operaciones propias del doble:** si el doble necesita una operación que el contrato no tiene —o que tiene otra semántica que en el real—, se declara **fuera de la interfaz y con otro nombre**, nunca reusando el del contrato con una firma distinta. `InMemoryLayoutService.simulateViewport(viewport)` fija el viewport para un test; `setViewport()` (del contrato) significa "detectarlo desde `window`" y en el doble es un no-op.
 - Los tokens son `InjectionToken` planos (sin `providedIn`/`factory`), cableados vía `provide<X>Api()` (real) y `provide<X>ApiMock()` (doble) con `makeEnvironmentProviders`.
-- **Archivos (3 por API provider):**
-  - **`<dominio>-api.interface.ts`** — la interfaz `<X>Api` + el `InjectionToken`. El sufijo **`-api`** distingue el archivo de una interfaz del **modelo de dominio**: `author-api.interface.ts` exporta `AuthorApi`, no una interfaz del agregado `Author`.
-  - `<dominio>.provider.ts` — `Http<X>Api implements <X>Api` + `provide<X>Api()`.
-  - `<dominio>.mock.ts` — `InMemory<X>Api` + `provide<X>ApiMock()`.
+- **Archivos (3 por provider).** Se nombran por **dominio + rol**, nunca por la clase que contienen (`story.provider.ts` aloja `HttpStoryApi`). Al calificar una implementación, el sufijo del archivo debe seguir describiendo su rol: `layout.service.ts` pasó a `layout.provider.ts` cuando dejó de contener un service suelto para contener una implementación calificada más su `provide*()`.
+  - **`<dominio>-api.interface.ts`** — la interfaz `<X>Api` + el `InjectionToken`. El sufijo **`-api`** distingue el archivo de una interfaz del **modelo de dominio**: `author-api.interface.ts` exporta `AuthorApi`, no una interfaz del agregado `Author`. Cuando el contrato no es una API (`layout.interface.ts` → `LayoutService`) el sufijo no aplica.
+  - `<dominio>.provider.ts` — la implementación calificada (`Http<X>Api`, `WindowLayoutService`) + `provide<X>()`.
+  - `<dominio>.mock.ts` — `InMemory<X>` + `provide<X>Mock()`.
+- **El doble no reimplementa la lógica del real.** Si ambos necesitan la misma regla, se extrae a una función pura que consuman los dos (`compareViewports` en `@utils/screen.utils`), de modo que su comportamiento —incluidos los errores— sea idéntico **por construcción**. Un doble que copia la lógica puede satisfacer el contrato de tipos y aun así divergir en comportamiento, que es la falla que el contrato por sí solo no atrapa. Corolario: **los dobles no se testean**; lo que se testea es la función compartida y el real.
 
 **Resumen de reglas:**
 

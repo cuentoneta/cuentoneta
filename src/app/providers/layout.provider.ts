@@ -21,7 +21,7 @@ import {
 } from 'rxjs';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
-import { Viewport, VIEWPORT_WIDTHS_NUMERIC } from '@utils/screen.utils';
+import { compareViewports, Viewport, VIEWPORT_WIDTHS_NUMERIC } from '@utils/screen.utils';
 import { Direction, LayoutService } from './layout.interface';
 
 @Injectable({
@@ -114,45 +114,16 @@ export class WindowLayoutService implements LayoutService {
 		this.viewport.set(currentViewport);
 	}
 
-	/**
-	 * Chequea si el viewport actual es mayor al viewport de test
-	 * @param test
-	 */
 	public biggerThan(test: Viewport): boolean {
-		const currentWidth = VIEWPORT_WIDTHS_NUMERIC[this.viewport()];
-		const testWidth = VIEWPORT_WIDTHS_NUMERIC[test];
-
-		if (currentWidth === undefined || testWidth === undefined) {
-			throw new Error(`Viewport inválido: ${test}`);
-		}
-
-		return currentWidth > testWidth;
+		return compareViewports(this.viewport(), test) > 0;
 	}
 
-	/**
-	 * Chequea si el viewport actual es menor al viewport de test
-	 * @param test
-	 */
 	public smallerThan(test: Viewport): boolean {
-		const currentWidth = VIEWPORT_WIDTHS_NUMERIC[this.viewport()];
-		const testWidth = VIEWPORT_WIDTHS_NUMERIC[test];
-
-		if (currentWidth === undefined || testWidth === undefined) {
-			throw new Error(`Viewport inválido: ${test}`);
-		}
-
-		return currentWidth < testWidth;
+		return compareViewports(this.viewport(), test) < 0;
 	}
 
 	public isActual(test: Viewport): boolean {
-		const currentWidth = VIEWPORT_WIDTHS_NUMERIC[this.viewport()];
-		const testWidth = VIEWPORT_WIDTHS_NUMERIC[test];
-
-		if (currentWidth === undefined || testWidth === undefined) {
-			throw new Error(`Viewport inválido: ${test}`);
-		}
-
-		return currentWidth === testWidth;
+		return compareViewports(this.viewport(), test) === 0;
 	}
 }
 

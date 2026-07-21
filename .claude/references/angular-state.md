@@ -112,7 +112,7 @@ Usar `concatMap` / `exhaustMap` solo cuando la semántica lo exija (preservar or
 El throttle/debounce, el merge de fuentes de eventos y la coordinación de estado viven **en el servicio**, no esparcidos por los componentes. El componente solo consume el resultado ya coordinado.
 
 ```typescript
-// ✅ Correcto — LayoutService centraliza el throttle y el merge de eventos (layout.service.ts)
+// ✅ Correcto — WindowLayoutService centraliza el throttle y el merge de eventos (layout.provider.ts)
 private _userHasScrolled$ = fromEvent(this.window, 'scroll').pipe(
 	takeUntilDestroyed(),
 	throttleTime(25),

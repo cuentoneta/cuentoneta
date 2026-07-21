@@ -1,13 +1,23 @@
 import { fn, spyOn, type Mock } from '@test-utils';
 import { TestBed } from '@angular/core/testing';
-import { WindowLayoutService } from './layout.service';
-import { Direction } from './layout.interface';
+import { WindowLayoutService } from './layout.provider';
+import { Direction, type LayoutService } from './layout.interface';
 import { WINDOW } from './window';
 import { map, of } from 'rxjs';
 import { Viewport } from '@utils/screen.utils';
 
+// `implements` no obliga al contrato a seguir al real: esta constante deja de compilar si
+// `WindowLayoutService` gana un miembro público que el contrato no declare.
+const contractCoversWindowLayoutService: Exclude<keyof WindowLayoutService, keyof LayoutService> extends never
+	? true
+	: false = true;
+
 describe('WindowLayoutService', () => {
 	let service: WindowLayoutService;
+
+	it('should expose a public surface fully described by the LayoutService contract', () => {
+		expect(contractCoversWindowLayoutService).toBe(true);
+	});
 	let mockWindow: {
 		scrollY: number;
 		innerWidth: number;

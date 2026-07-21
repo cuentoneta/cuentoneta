@@ -39,7 +39,7 @@ function describe(type: MediaType): string {
 }
 ```
 
-> **Enforcement activo:** ESLint prohíbe declarar `enum` (`selector: 'TSEnumDeclaration'` dentro de `commonRestrictedSyntax`, en `eslint.config.mjs`), y el repo ya no tiene ninguno: la deuda de migración está saldada. El patrón `Object.freeze` se usa en `src/app/models/content-campaign.model.ts` y `src/app/providers/layout.service.ts`.
+> **Enforcement activo:** ESLint prohíbe declarar `enum` (`selector: 'TSEnumDeclaration'` dentro de `commonRestrictedSyntax`, en `eslint.config.mjs`), y el repo ya no tiene ninguno: la deuda de migración está saldada. El patrón `Object.freeze` se usa en `src/app/models/content-campaign.model.ts` y `src/app/providers/layout.interface.ts`.
 
 ---
 

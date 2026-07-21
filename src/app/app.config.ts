@@ -19,7 +19,7 @@ import { provideStorylistApi } from './providers/storylist.provider';
 import { providePushNotificationsApi } from './providers/push-notifications.provider';
 
 // UI providers
-import { provideLayout } from './providers/layout.service';
+import { provideLayout } from './providers/layout.provider';
 
 // SEO providers
 import { provideSchemaOrgInitializer } from './providers/schema-org.initializer';

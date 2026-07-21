@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 
 import { CarouselComponent } from './carousel.component';
 import { CarouselSkeletonComponent } from './carousel-skeleton.component';
-import { provideLayout } from '../../providers/layout.service';
+import { provideLayout } from '../../providers/layout.provider';
 import { contentCampaignMock } from '@mocks/content-campaign.mock';
 import { ContentCampaign } from '@models/content-campaign.model';
 

@@ -1,6 +1,6 @@
 import { Injectable, makeEnvironmentProviders, signal, type EnvironmentProviders } from '@angular/core';
 import { of, type Observable } from 'rxjs';
-import { VIEWPORT_WIDTHS_NUMERIC, type Viewport } from '@utils/screen.utils';
+import { compareViewports, type Viewport } from '@utils/screen.utils';
 import { Direction, LayoutService } from './layout.interface';
 
 @Injectable({ providedIn: 'root' })
@@ -29,29 +29,15 @@ export class InMemoryLayoutService implements LayoutService {
 	}
 
 	public biggerThan(test: Viewport): boolean {
-		const { currentWidth, testWidth } = this.getWidths(test);
-		return currentWidth > testWidth;
+		return compareViewports(this.viewport(), test) > 0;
 	}
 
 	public smallerThan(test: Viewport): boolean {
-		const { currentWidth, testWidth } = this.getWidths(test);
-		return currentWidth < testWidth;
+		return compareViewports(this.viewport(), test) < 0;
 	}
 
 	public isActual(test: Viewport): boolean {
-		const { currentWidth, testWidth } = this.getWidths(test);
-		return currentWidth === testWidth;
-	}
-
-	private getWidths(test: Viewport): { currentWidth: number; testWidth: number } {
-		const currentWidth = VIEWPORT_WIDTHS_NUMERIC[this.viewport()];
-		const testWidth = VIEWPORT_WIDTHS_NUMERIC[test];
-
-		if (currentWidth === undefined || testWidth === undefined) {
-			throw new Error(`Viewport inválido: ${test}`);
-		}
-
-		return { currentWidth, testWidth };
+		return compareViewports(this.viewport(), test) === 0;
 	}
 }
 
