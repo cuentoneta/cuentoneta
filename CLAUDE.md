@@ -153,7 +153,7 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 | Componentes / plantillas Angular     | `angular-components`, `angular-state`                                                              |
 | Estado / servicios / RxJS            | `angular-state`, `guiding-principles`                                                              |
 | Backend / Sanity / GROQ / mappers    | `sanity-acl`, `clean-architecture`, `domain-model`                                                 |
-| Scripts / migraciones de datos (Sanity) | `scripts`, `sanity-migrations`                                                                  |
+| Scripts / migraciones de datos       | `scripts`, `sanity-migrations`                                                                     |
 | Modelo de dominio / DDD              | `domain-model`, `clean-architecture`                                                               |
 | Tests (Vitest / Storybook)           | `testing`                                                                                          |
 | Tipos / constantes / imports (TS/JS) | `typescript`                                                                                       |
@@ -174,7 +174,7 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 | `angular-state.md`         | Estado signals-first sin NgRx (servicios + signals/RxJS)                            |
 | `testing.md`               | Vitest + Angular Testing Library + `@test-utils` + Storybook                        |
 | `sanity-acl.md`            | GROQ → repository → mapper → modelo de dominio (el ACL central)                     |
-| `scripts.md`               | Convención de `scripts/`: qué vive en la raíz vs. `scripts/audit/` (auditoría one-off) |
-| `sanity-migrations.md`     | Migraciones de datos de Sanity (`cms/migrations/`) — separadas de `scripts/`           |
+| `scripts.md`               | Convención de `scripts/` vs. `scripts/audit/` (auditoría one-off)                   |
+| `sanity-migrations.md`     | Migraciones de datos de Sanity (`cms/migrations/`), no en `scripts/`                |
 | `typescript.md`            | Micro-convenciones TS/JS (`Object.freeze`, type-only, duration strings)             |
 | `maintainability.md`       | Mantenibilidad y simplificación estructural                                         |
