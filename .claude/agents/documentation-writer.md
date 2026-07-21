@@ -79,23 +79,7 @@ Antes de escribir, leé las referencias relevantes para tener el contexto del pr
 
 ## Catálogo de referencias (`.claude/references/`)
 
-Este es el set **válido y completo**; no inventes archivos que no existan.
-
-| Referencia                 | Contenido                                                               |
-| -------------------------- | ----------------------------------------------------------------------- |
-| `coding-agent-policies.md` | Políticas de colaboración de agentes (carga obligatoria al inicio)      |
-| `solid.md`                 | Principios SOLID                                                        |
-| `cupid.md`                 | Propiedades CUPID                                                       |
-| `guiding-principles.md`    | YAGNI / KISS + disciplina de operadores RxJS                            |
-| `cross-reference.md`       | Cómo se relacionan SOLID / CUPID / Clean Architecture / DDD             |
-| `clean-architecture.md`    | Capas, regla de dependencia, "Qualified Implementation"                 |
-| `domain-model.md`          | DDD estratégico — Story/Author/Storylist                                |
-| `angular-components.md`    | Componentes, effects, DI/providers, control flow                        |
-| `angular-state.md`         | Estado signals-first sin NgRx                                           |
-| `testing.md`               | Vitest + Angular Testing Library + `@test-utils` + Storybook            |
-| `sanity-acl.md`            | GROQ → repository → mapper → modelo de dominio                          |
-| `typescript.md`            | Micro-convenciones TS/JS (`Object.freeze`, type-only, duration strings) |
-| `maintainability.md`       | Mantenibilidad y simplificación estructural                             |
+El catálogo completo y actualizado — con la descripción de cada archivo — vive en la tabla "Catálogo completo" de [Carga estratificada de referencias](../../CLAUDE.md#carga-estratificada-de-referencias) en `CLAUDE.md`. No lo transcribas acá: consultalo ahí antes de escribir, y no inventes archivos que no figuren en esa tabla.
 
 ## Formato de salida
 
