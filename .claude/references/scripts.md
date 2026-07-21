@@ -19,3 +19,4 @@
 - `remove-all-unpublished-drafts.ts` — limpia drafts no publicados (operacional, no en package.json).
 - `fix-index-file-name.mjs` — postbuild: renombra el index SSR.
 - `vercel-environments.model.ts` — tipos compartidos con `cms/set-environment.ts`.
+- `check-agent-frontmatter.ts` — valida el frontmatter de `.claude/agents/` (`pnpm check:agents`, gate de CI `check-agents`).
