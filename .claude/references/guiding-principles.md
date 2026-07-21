@@ -108,7 +108,7 @@ El frontend de cuentoneta modela el estado con **servicios + signals + RxJS** (v
 
 - Usar `firstValueFrom`, `lastValueFrom` o `toPromise` para convertir observables a promesas (prohibido en el frontend — ver Restricciones duras en `CLAUDE.md`)
 - Usar `async/await` sobre observables en métodos de servicio que llaman a la API
-- Anidar `subscribe()` dentro de otro `subscribe()` — componer con operadores de orden superior (`switchMap`, `mergeMap`, `concatMap`, `exhaustMap`)
+- Anidar `subscribe()` dentro de otro `subscribe()` — componer con operadores de orden superior (`switchMap` por defecto; `concatMap` / `exhaustMap` según la semántica, con la salvedad sobre `mergeMap` de arriba)
 - Suscribirse manualmente cuando alcanza con `toSignal()` / el `async` pipe en la plantilla; cuando una suscripción manual es inevitable, atarla a `takeUntilDestroyed()`
 - Mantener estado derivado como estado guardado: derivarlo con `computed()`
 - Inventar signals contador/trigger (`reloadCounter`, `_reload`, `forceRefresh`) para forzar re-evaluación — son workarounds innecesarios que ensucian el estado; usá una llamada imperativa al método del servicio con el valor actual

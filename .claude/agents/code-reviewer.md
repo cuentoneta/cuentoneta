@@ -177,20 +177,20 @@ Usá estos valores:
 | En progreso       | Se está trabajando activamente                                                                |
 | Corregido         | Resuelto y verificado                                                                         |
 | Descartado        | No es un problema real — irrelevante, hallazgo incorrecto, o el usuario decidió que no aplica |
-| Diferido          | Válido pero pospuesto — **debe** crearse un issue de GitHub para trackearlo                   |
+| Diferido          | Válido pero pospuesto — se propone un issue de GitHub, que crea el usuario tras confirmarlo   |
 | No se corrige     | Problema válido pero aceptado a propósito (trade-off de diseño, deuda técnica asumida)        |
 | Requiere test E2E | No verificable a nivel unitario — necesita un test E2E (Playwright)                           |
 
 ### Flujo de issues diferidos
 
-Cuando un problema se marca como **Diferido**, **debe** crearse un nuevo issue de GitHub antes de considerar completa la review. El issue debe:
+Cuando un problema se marca como **Diferido**, hay que **proponer** un issue de GitHub y **esperar la confirmación del usuario** antes de crearlo: crear un issue es una acción hacia afuera (misma política que la Fase 5 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md)). La propuesta debe:
 
 1. Referenciar el número de la review original (p. ej. "Detectado como #7 durante la review del PR #107").
 2. Incluir contexto suficiente para actuar de forma independiente (archivo, línea, descripción del problema y la corrección recomendada).
 3. Estar etiquetado apropiadamente (p. ej. `tech-debt`, `enhancement` o el label de dominio correspondiente).
 4. Estar vinculado al PR e issue actuales para trazabilidad.
 
-La URL del issue creado debe anotarse en el reporte junto al ítem diferido.
+Una vez que el usuario confirma y el issue existe, anotar su URL en el reporte junto al ítem diferido.
 
 ### Numeración de problemas
 
