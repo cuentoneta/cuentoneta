@@ -89,7 +89,7 @@ La interfaz lleva el **nombre limpio** (la responsabilidad), y la **implementaci
 | Repository de stories    | `StoryRepository`        | `SanityStoryRepository`       | `InMemoryStoryRepository`     |
 | Repository de autores    | `AuthorRepository`       | `SanityAuthorRepository`      | `InMemoryAuthorRepository`    |
 | Repository de storylists | `StorylistRepository`    | `SanityStorylistRepository`   | `InMemoryStorylistRepository` |
-| Service (impl. única)    | `StoryService`           | `StoryService` (mismo nombre) | `InMemoryStoryService`        |
+| Service (impl. única)    | `LayoutService`          | `LayoutService` (mismo nombre) | `InMemoryLayoutService`      |
 
 - Prefijo **`Sanity*`** para implementaciones de repository respaldadas por Sanity/GROQ.
 - Prefijo **`InMemory*`** para **todos** los dobles de test (jamás `Mock*`).

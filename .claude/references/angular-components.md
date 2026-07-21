@@ -41,9 +41,9 @@ import { TagsListComponent } from '../tags-list/tags-list.component';
 })
 export class AuthorTeaserV3Component {
 	// Inputs
-	readonly author = input.required<AuthorTeaser>();
-	readonly tags = input<Tag[]>([]);
-	readonly storyCount = input<number>();
+	public readonly author = input.required<AuthorTeaser>();
+	public readonly tags = input<Tag[]>([]);
+	public readonly storyCount = input<number>();
 }
 ```
 
@@ -60,19 +60,28 @@ Regla central: **un campo de componente nunca es `public` por defecto.** Las pla
 | `public`    | **Solo** inputs/outputs/models de signals (`input()`, `output()`, `model()`), **API imperativa** llamada por padres (`open()`, `close()`), y miembros **requeridos por interfaces**. |
 
 ```typescript
-export class AuthorTeaserV3Component {
-	// public: input de signal → parte de la API del componente
-	readonly author = input.required<AuthorTeaser>();
+// Patrón de `src/app/components/share-button/share-button.component.ts`
+export class ShareButtonComponent {
+	public readonly platform = input.required<SharingPlatform>();
 
-	// protected: solo lo consume la plantilla
-	protected readonly appRoutes = AppRoutes;
+	protected readonly NgIcon = NgIcon;
 
-	// private: interno, no aparece en la plantilla
-	private readonly store = inject(StoryService);
+	private readonly tooltipDirective = inject(TooltipDirective);
 }
 ```
 
-> Los `input()`/`output()`/`model()` no llevan modificador (son `public` implícito): son la API del componente. El resto, decidir entre `protected` y `private` según se use o no en la plantilla.
+> Los `input()` / `output()` / `model()` llevan **`public` explícito**: son la API del componente. El resto, decidir entre `protected` y `private` según la plantilla lo consuma o no.
+
+### Signals dentro del componente
+
+Un `computed()` —y cualquier otra signal que no sea `input()`/`output()`/`model()`— es **`private` por defecto**. Pasa a **`protected`** solo cuando la plantilla del propio componente interpola su valor.
+
+```typescript
+protected readonly icon = computed(() => /* … */); // la plantilla lo interpola
+private readonly isExpanded = signal(false); // estado interno, no llega a la plantilla
+```
+
+`public` queda reservado a las dos excepciones que ya fija la tabla: un miembro **requerido por una interfaz** (p. ej. `story` en `StoryComponent`, exigido por `StoryHost`) o **consumido por otro componente** (p. ej. `hiddenCount` de `TagsOverflowDirective`, que lee `TagsListComponent`). Exponer una signal en `public` "por las dudas" agranda la API del componente sin que nadie la consuma.
 
 ---
 
@@ -92,25 +101,27 @@ Nunca usar decoradores `@Input()`/`@Output()`/`@ViewChild()`/`@ContentChild()`. 
 
 ```typescript
 // Inputs
-readonly author = input.required<AuthorTeaser>();
-readonly tags = input<Tag[]>([]);
-readonly storyCount = input<number>();
+public readonly author = input.required<AuthorTeaser>();
+public readonly tags = input<Tag[]>([]);
+public readonly storyCount = input<number>();
 
 // Input con transform
-readonly isVisible = input(VisibilityState.Visible, {
+public readonly isVisible = input(VisibilityState.Visible, {
 	transform: (value) => (value ? VisibilityState.Visible : VisibilityState.Hidden),
 });
 
-// Output / model / queries
-readonly selected = output<string>();
-readonly value = model<string>('');
-readonly listItems = contentChildren(TagComponent);
+// Output / model — también API del componente
+public readonly selected = output<string>();
+public readonly value = model<string>('');
+
+// Queries — no son API: `protected` si la plantilla las usa, `private` si no
+private readonly listItems = contentChildren(TagComponent);
 ```
 
 Los valores **derivados** son `computed()`, nunca estado duplicado guardado a mano:
 
 ```typescript
-readonly icon = computed(() => {
+protected readonly icon = computed(() => {
 	if (!this.tag().slug) {
 		return null;
 	}
@@ -157,13 +168,14 @@ Todo `effect()` / `afterRenderEffect()` / `afterNextRender()` se declara como **
 
 ```typescript
 // ✅ Correcto — effect nombrado como field, después de lo que referencia
-export class StoryComponent {
-	private readonly store = inject(StoryService);
-	readonly slug = input.required<string>();
+// (patrón de `share-button.component.ts`)
+export class ShareButtonComponent {
+	private readonly tooltipDirective = inject(TooltipDirective);
+	public readonly platform = input.required<SharingPlatform>();
 
-	private readonly syncSlugEffect = effect(() => {
-		const slug = this.slug();
-		untracked(() => this.store.load(slug));
+	private readonly syncTooltipEffect = effect(() => {
+		this.tooltipDirective.text.set(`Compartir en ${this.platform().name}`);
+		this.tooltipDirective.position.set('bottom');
 	});
 }
 
@@ -191,7 +203,7 @@ Reglas:
 - Marcar las dependencias `private readonly` (o `protected readonly` si la plantilla las usa).
 
 ```typescript
-private readonly store = inject(StoryService);
+private readonly storyApi = inject(StoryApi); // token del API provider, no la clase concreta
 private readonly injector = inject(EnvironmentInjector);
 ```
 
