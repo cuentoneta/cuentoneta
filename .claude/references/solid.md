@@ -141,7 +141,7 @@ interface StoryListProvider {
 export class StoryComponent {
 	private readonly storyApi = inject(StoryApi);
 	public readonly slug = input.required<string>();
-	protected readonly story = toSignal(/* derivado del slug vía el API provider */);
+	public readonly story = computed(/* derivado del slug vía el API provider */); // `public`: lo exige StoryHost
 }
 
 // ❌ El componente conoce GROQ y el cliente de Sanity directamente: alto nivel

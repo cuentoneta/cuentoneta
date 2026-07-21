@@ -60,7 +60,8 @@ Regla central: **un campo de componente nunca es `public` por defecto.** Las pla
 | `public`    | **Solo** inputs/outputs/models de signals (`input()`, `output()`, `model()`), **API imperativa** llamada por padres (`open()`, `close()`), y miembros **requeridos por interfaces**. |
 
 ```typescript
-// Patrón de `src/app/components/share-button/share-button.component.ts`
+// Miembros de `src/app/components/share-button/share-button.component.ts`
+// (el archivo real declara la dependencia sin `readonly`: es deuda, no el patrón)
 export class ShareButtonComponent {
 	public readonly platform = input.required<SharingPlatform>();
 
@@ -168,7 +169,7 @@ Todo `effect()` / `afterRenderEffect()` / `afterNextRender()` se declara como **
 
 ```typescript
 // ✅ Correcto — effect nombrado como field, después de lo que referencia
-// (patrón de `share-button.component.ts`)
+// (tomado de `share-button.component.ts`)
 export class ShareButtonComponent {
 	private readonly tooltipDirective = inject(TooltipDirective);
 	public readonly platform = input.required<SharingPlatform>();

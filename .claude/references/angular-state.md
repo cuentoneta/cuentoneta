@@ -80,10 +80,10 @@ export class CarouselStateService {
 	private readonly _isTransitioning = signal(false);
 
 	// Signals públicas de solo lectura
-	readonly activeIndex: Signal<number> = this._activeIndex.asReadonly();
-	readonly isTransitioning: Signal<boolean> = this._isTransitioning.asReadonly();
+	public readonly activeIndex: Signal<number> = this._activeIndex.asReadonly();
+	public readonly isTransitioning: Signal<boolean> = this._isTransitioning.asReadonly();
 
-	selectSlide(index: number, direction: 'left' | 'right'): void {
+	public selectSlide(index: number, direction: 'left' | 'right'): void {
 		if (this._isTransitioning() || index === this._activeIndex()) return;
 		this._isTransitioning.set(true);
 		this._activeIndex.set(index);
