@@ -1,0 +1,73 @@
+import { createLiteraryWorkEpigraph, createLiteraryWorkSection } from './literary-work-section.model';
+import { createChapterTitle } from './chapter-title.model';
+import { createReadingTime } from './reading-time.model';
+import { createSanitizedHtml } from './sanitized-html.model';
+
+describe('createLiteraryWorkEpigraph', () => {
+	it('builds a frozen epigraph from sanitized text and reference', () => {
+		const epigraph = createLiteraryWorkEpigraph({
+			text: createSanitizedHtml('<p>Y si el alma te pesa…</p>'),
+			reference: createSanitizedHtml('<p>Rafael Obligado</p>'),
+		});
+
+		expect(epigraph.text).toBe('<p>Y si el alma te pesa…</p>');
+		expect(epigraph.reference).toBe('<p>Rafael Obligado</p>');
+		expect(Object.isFrozen(epigraph)).toBe(true);
+	});
+
+	it('builds an epigraph without reference', () => {
+		const epigraph = createLiteraryWorkEpigraph({ text: createSanitizedHtml('<p>Texto</p>') });
+
+		expect(epigraph.reference).toBeUndefined();
+	});
+});
+
+describe('createLiteraryWorkSection', () => {
+	const bodyHtml = createSanitizedHtml('<p>Cuerpo de la sección.</p>');
+	const readingTime = createReadingTime(3);
+
+	it('builds a minimal section without chapter title nor epigraphs', () => {
+		const section = createLiteraryWorkSection({ position: 0, bodyHtml, readingTime });
+
+		expect(section.position).toBe(0);
+		expect(section.bodyHtml).toBe(bodyHtml);
+		expect(section.readingTime).toBe(3);
+		expect(section.chapterTitle).toBeUndefined();
+		expect(section.epigraphs).toBeUndefined();
+	});
+
+	it('builds a full section with chapter title and epigraphs', () => {
+		const section = createLiteraryWorkSection({
+			position: 1,
+			chapterTitle: createChapterTitle('Capítulo Uno'),
+			epigraphs: [
+				createLiteraryWorkEpigraph({
+					text: createSanitizedHtml('<p>Epígrafe</p>'),
+					reference: createSanitizedHtml('<p>Anónimo</p>'),
+				}),
+			],
+			bodyHtml,
+			readingTime,
+		});
+
+		expect(section.position).toBe(1);
+		expect(section.chapterTitle?.value).toBe('Capítulo Uno');
+		expect(section.epigraphs).toHaveLength(1);
+	});
+
+	it('throws on a negative position', () => {
+		expect(() => createLiteraryWorkSection({ position: -1, bodyHtml, readingTime })).toThrow(
+			'LiteraryWorkSection inválida: position -1 (debe ser un entero >= 0)',
+		);
+	});
+
+	it('throws on a non-integer position', () => {
+		expect(() => createLiteraryWorkSection({ position: 1.5, bodyHtml, readingTime })).toThrow(
+			'LiteraryWorkSection inválida: position 1.5 (debe ser un entero >= 0)',
+		);
+	});
+
+	it('returns a frozen object', () => {
+		expect(Object.isFrozen(createLiteraryWorkSection({ position: 0, bodyHtml, readingTime }))).toBe(true);
+	});
+});

@@ -43,10 +43,12 @@ Un **Contexto Acotado** (Bounded Context) es un límite explícito dentro del cu
 
 - `Story` - Historias publicadas
 - `Author` - Autores del contenido
+- `LiteraryWork` - Obras literarias con secciones/capítulos (entidad paralela a `Story`, sin supertipo compartido)
 
 **Responsabilidades:**
 
 - Almacenar y recuperar historias con toda su información (párrafos, epígrafes, recursos, multimedia)
+- Almacenar y recuperar obras literarias seccionadas con contenido Markdown saneado a HTML
 - Mantener perfiles completos de autores con biografías y referencias
 - Gestionar metadatos como tiempo de lectura, idioma, advertencias de contenido
 - Proporcionar múltiples vistas del contenido (teaser, navegación, preview)
@@ -204,6 +206,81 @@ interface Epigraph {
 - `StoryTeaser` - Vista resumida (sin párrafos)
 - `StoryNavigationTeaser` - Vista mínima para navegación
 - `StoryNavigationTeaserWithAuthor` - Vista mínima con autor resumido
+
+---
+
+### Agregado: LiteraryWork (Obra literaria)
+
+**Raíz de Agregado:** `LiteraryWork`
+
+> Contratos completos y decisiones de diseño en [`LITERARY_WORK_DESIGN.md`](LITERARY_WORK_DESIGN.md). `LiteraryWork` es una **entidad paralela e independiente**: no extiende ni comparte tipos con `Story` (contrato limpio, sin supertipo — ver epic #1481). Es la primera raíz de agregado con **invariantes implementadas en código** (factory `createLiteraryWork` + value objects brandeados en `src/app/models/`).
+
+```typescript
+interface LiteraryWork {
+	// Identidad
+	_id: string; // Identificador único (Sanity)
+	slug: Slug; // Clave de negocio, invariante única (value object brandeado)
+
+	// Contenido
+	title: string; // Título de la obra
+	content: LiteraryWorkSection[]; // Secciones/capítulos (nunca vacío)
+
+	// Metadatos
+	totalReadingTime: ReadingTime; // Derivado: suma de los readingTime de sus secciones
+	sectionCount: number; // Derivado: total real de secciones (en proyecciones parciales puede superar a content.length)
+	badLanguage?: boolean; // Advertencia de lenguaje explícito
+	originalPublication: string; // Atribución/publicación original
+	publishedAt: IsoDateTime; // Fecha ISO de publicación en la plataforma
+
+	// Imagen
+	coverImage: string; // URL de portada; '' si no fue asignada
+
+	// Relaciones
+	authors: Author[]; // 1..N autores; la obra anónima referencia al author "Anónimo" (policy isAnonymous)
+
+	// Categorización
+	tags: Tag[]; // Etiquetas de taxonomía
+
+	// Recursos Multimedia
+	resources: Resource[]; // Enlaces a recursos externos
+	mediaSources: MediaTypes[]; // Contenido multimedia asociado
+}
+
+interface LiteraryWorkSection {
+	position: number; // Identidad numérica en la obra (0-based, igual al índice del array en el CMS)
+	chapterTitle?: ChapterTitle; // Opcional; expone toAnchor(): Slug para anclas
+	epigraphs?: LiteraryWorkEpigraph[]; // 0..N epígrafes por sección
+	bodyHtml: SanitizedHtml; // HTML saneado server-side (nunca markdown crudo)
+	readingTime: ReadingTime; // Minutos de lectura de la sección
+}
+
+interface LiteraryWorkEpigraph {
+	text: SanitizedHtml; // Markdown saneado a HTML (mismo pipeline que el cuerpo)
+	reference?: SanitizedHtml; // Atribución, también markdown saneado (paridad con Story.Epigraph)
+}
+```
+
+**Invariantes de Negocio:**
+
+- El slug debe ser único (garantizado por Sanity) y con formato válido (validado por el value object `Slug`)
+- La obra debe tener al menos una sección de contenido
+- `totalReadingTime` es la suma de los `readingTime` de sus secciones (derivado en la factory) — salvo `readingTimeOverride` editorial, que lo reemplaza (obras recitadas/audiovisuales, ver [`LITERARY_WORK_DESIGN.md`](LITERARY_WORK_DESIGN.md) §5)
+- `sectionCount` es el número real de secciones (derivado en la factory; en proyecciones parciales lo provee el mapper)
+- Las posiciones de sección son contiguas desde 0 en el agregado completo (`content[i].position === i`); las proyecciones parciales conservan el `position` de origen
+- `authors` exige al menos un autor (1..N) — la **obra anónima** referencia explícitamente al author "Anónimo" (slug `anonimo`, valor bien conocido del dominio; policy `isAnonymous` compara por slug, nunca por `_id`)
+
+**Ciclo de Vida:**
+
+```
+Borrador en Sanity → Publicación → Accesible para lectura en /read/:slug
+```
+
+**Vistas Polimórficas:**
+
+- `LiteraryWork` - Vista completa (todas las secciones, autores completos)
+- `LiteraryWorkTeaser` - Vista resumida: a diferencia de `StoryTeaser` (que vacía `paragraphs`), expone la **primera sección completa** (`teaserSection`) — decisión de diseño del epic #1481
+- `LiteraryWorkNavigationTeaser` - Vista mínima para navegación
+- `LiteraryWorkNavigationTeaserWithAuthors` - Vista mínima con autores resumidos
 
 ---
 
@@ -586,17 +663,20 @@ El **Lenguaje Ubicuo** es el lenguaje estructurado alrededor del modelo de domin
 
 ### Términos Clave
 
-| Término                  | Definición                                                    | Contexto              |
-| ------------------------ | ------------------------------------------------------------- | --------------------- |
-| **Historia**             | Obra literaria curada y publicada en la plataforma            | Catálogo de Contenido |
-| **Slug**                 | Identificador amigable, único e inmutable basado en el título | Todos                 |
-| **Epígrafe**             | Cita literaria que precede al texto principal                 | Catálogo de Contenido |
-| **Teaser**               | Vista reducida de una entidad para listados y navegación      | Todos                 |
-| **Colección**            | Agrupación temática u editorial de historias                  | Curación              |
-| **Colaborador**          | Persona que contribuye al proyecto en algún rol               | Administración        |
-| **Recurso**              | Enlace externo a información complementaria                   | Catálogo de Contenido |
-| **Campaña de Contenido** | Promoción temporal de contenido con variantes responsivas     | Página de Inicio      |
-| **Curaduría**            | Proceso de seleccionar, ordenar y presentar historias         | Curación              |
+| Término                  | Definición                                                                                                    | Contexto              |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------- | --------------------- |
+| **Historia**             | Obra literaria curada y publicada en la plataforma                                                            | Catálogo de Contenido |
+| **Obra literaria**       | Obra con secciones/capítulos (`LiteraryWork`), paralela a Historia                                            | Catálogo de Contenido |
+| **Sección / Capítulo**   | Unidad de contenido de una obra literaria: epígrafes + cuerpo Markdown saneado                                | Catálogo de Contenido |
+| **Anónimo**              | Author real del catálogo (slug `anonimo`) que representa la obra sin autoría atribuida (policy `isAnonymous`) | Catálogo de Contenido |
+| **Slug**                 | Identificador amigable, único e inmutable basado en el título                                                 | Todos                 |
+| **Epígrafe**             | Cita literaria que precede al texto principal                                                                 | Catálogo de Contenido |
+| **Teaser**               | Vista reducida de una entidad para listados y navegación                                                      | Todos                 |
+| **Colección**            | Agrupación temática u editorial de historias                                                                  | Curación              |
+| **Colaborador**          | Persona que contribuye al proyecto en algún rol                                                               | Administración        |
+| **Recurso**              | Enlace externo a información complementaria                                                                   | Catálogo de Contenido |
+| **Campaña de Contenido** | Promoción temporal de contenido con variantes responsivas                                                     | Página de Inicio      |
+| **Curaduría**            | Proceso de seleccionar, ordenar y presentar historias                                                         | Curación              |
 
 ---
 
