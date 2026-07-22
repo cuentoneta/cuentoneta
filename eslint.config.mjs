@@ -79,7 +79,7 @@ const viRestrictedSyntax = [
 	})),
 	{
 		selector: 'CallExpression[callee.object.name="vi"][callee.property.name="mock"]',
-		message: 'vi.mock() está prohibido. Usá inyección de dependencias y dobles InMemory* en su lugar.',
+		message: 'vi.mock() está prohibido. Usá inyección de dependencias y dobles de test (Stub*/Fake*/Spy*) en su lugar.',
 	},
 	{
 		selector: 'CallExpression[callee.object.name="vi"][callee.property.name="mocked"]',
