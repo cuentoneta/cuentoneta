@@ -12,12 +12,14 @@ function buildSection(minutes: number): LiteraryWorkSection {
 	});
 }
 
+const anonymousAuthor = { ...authorMock, slug: 'anonimo', name: 'Anónimo' };
+
 function buildOptions(overrides: Partial<Parameters<typeof createLiteraryWork>[0]> = {}) {
 	return {
 		_id: 'lw-1',
 		slug: 'la-obra',
 		title: 'La obra',
-		authors: [],
+		authors: [anonymousAuthor],
 		coverImage: '',
 		content: [buildSection(2)],
 		mediaSources: [],
@@ -45,10 +47,10 @@ describe('createLiteraryWork', () => {
 		expect(work.sectionCount).toBe(3);
 	});
 
-	it('accepts an empty authors array (anonymous work)', () => {
-		const work = createLiteraryWork(buildOptions({ authors: [] }));
+	it('builds an anonymous work when its only author is Anónimo', () => {
+		const work = createLiteraryWork(buildOptions({ authors: [anonymousAuthor] }));
 
-		expect(work.authors).toHaveLength(0);
+		expect(work.authors).toHaveLength(1);
 		expect(isAnonymous(work.authors)).toBe(true);
 	});
 
@@ -57,6 +59,12 @@ describe('createLiteraryWork', () => {
 
 		expect(work.authors).toHaveLength(2);
 		expect(isAnonymous(work.authors)).toBe(false);
+	});
+
+	it('throws when there are no authors', () => {
+		expect(() => createLiteraryWork(buildOptions({ authors: [] }))).toThrow(
+			'LiteraryWork inválida: sin autores (slug "la-obra") — la obra anónima referencia al author "Anónimo"',
+		);
 	});
 
 	it('throws on an empty title', () => {
@@ -77,11 +85,16 @@ describe('createLiteraryWork', () => {
 });
 
 describe('isAnonymous', () => {
-	it('returns true for an empty authors array', () => {
-		expect(isAnonymous([])).toBe(true);
+	it('returns true when every author is Anónimo', () => {
+		expect(isAnonymous([{ slug: 'anonimo' }])).toBe(true);
 	});
 
-	it('returns false when there is at least one author', () => {
-		expect(isAnonymous([{ name: 'Autora' }])).toBe(false);
+	it('returns false when there is at least one real author', () => {
+		expect(isAnonymous([{ slug: 'jorge-luis-borges' }])).toBe(false);
+		expect(isAnonymous([{ slug: 'anonimo' }, { slug: 'jorge-luis-borges' }])).toBe(false);
+	});
+
+	it('returns false for an empty array (not a valid aggregate state)', () => {
+		expect(isAnonymous([])).toBe(false);
 	});
 });

@@ -236,7 +236,7 @@ interface LiteraryWork {
 	coverImage: string; // URL de portada; '' si no fue asignada
 
 	// Relaciones
-	authors: Author[]; // 0..N autores; [] = obra anónima (policy isAnonymous)
+	authors: Author[]; // 1..N autores; la obra anónima referencia al author "Anónimo" (policy isAnonymous)
 
 	// Categorización
 	tags: Tag[]; // Etiquetas de taxonomía
@@ -265,7 +265,7 @@ interface LiteraryWorkEpigraph {
 - La obra debe tener al menos una sección de contenido
 - `totalReadingTime` es la suma de los `readingTime` de sus secciones (derivado en la factory, no es input)
 - `sectionCount` es el número real de secciones (derivado en la factory; en proyecciones parciales lo provee el mapper)
-- `authors` admite 0..N — el array vacío es un valor válido que representa la **obra anónima** (a diferencia de `Story`, que exige exactamente un autor)
+- `authors` exige al menos un autor (1..N) — la **obra anónima** referencia explícitamente al author "Anónimo" (slug `anonimo`, valor bien conocido del dominio; policy `isAnonymous` compara por slug, nunca por `_id`)
 
 **Ciclo de Vida:**
 
@@ -661,20 +661,20 @@ El **Lenguaje Ubicuo** es el lenguaje estructurado alrededor del modelo de domin
 
 ### Términos Clave
 
-| Término                  | Definición                                                                     | Contexto              |
-| ------------------------ | ------------------------------------------------------------------------------ | --------------------- |
-| **Historia**             | Obra literaria curada y publicada en la plataforma                             | Catálogo de Contenido |
-| **Obra literaria**       | Obra con secciones/capítulos (`LiteraryWork`), paralela a Historia             | Catálogo de Contenido |
-| **Sección / Capítulo**   | Unidad de contenido de una obra literaria: epígrafes + cuerpo Markdown saneado | Catálogo de Contenido |
-| **Anónimo**              | Obra sin autoría atribuida (`authors: []`, policy `isAnonymous`)               | Catálogo de Contenido |
-| **Slug**                 | Identificador amigable, único e inmutable basado en el título                  | Todos                 |
-| **Epígrafe**             | Cita literaria que precede al texto principal                                  | Catálogo de Contenido |
-| **Teaser**               | Vista reducida de una entidad para listados y navegación                       | Todos                 |
-| **Colección**            | Agrupación temática u editorial de historias                                   | Curación              |
-| **Colaborador**          | Persona que contribuye al proyecto en algún rol                                | Administración        |
-| **Recurso**              | Enlace externo a información complementaria                                    | Catálogo de Contenido |
-| **Campaña de Contenido** | Promoción temporal de contenido con variantes responsivas                      | Página de Inicio      |
-| **Curaduría**            | Proceso de seleccionar, ordenar y presentar historias                          | Curación              |
+| Término                  | Definición                                                                                                    | Contexto              |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------- | --------------------- |
+| **Historia**             | Obra literaria curada y publicada en la plataforma                                                            | Catálogo de Contenido |
+| **Obra literaria**       | Obra con secciones/capítulos (`LiteraryWork`), paralela a Historia                                            | Catálogo de Contenido |
+| **Sección / Capítulo**   | Unidad de contenido de una obra literaria: epígrafes + cuerpo Markdown saneado                                | Catálogo de Contenido |
+| **Anónimo**              | Author real del catálogo (slug `anonimo`) que representa la obra sin autoría atribuida (policy `isAnonymous`) | Catálogo de Contenido |
+| **Slug**                 | Identificador amigable, único e inmutable basado en el título                                                 | Todos                 |
+| **Epígrafe**             | Cita literaria que precede al texto principal                                                                 | Catálogo de Contenido |
+| **Teaser**               | Vista reducida de una entidad para listados y navegación                                                      | Todos                 |
+| **Colección**            | Agrupación temática u editorial de historias                                                                  | Curación              |
+| **Colaborador**          | Persona que contribuye al proyecto en algún rol                                                               | Administración        |
+| **Recurso**              | Enlace externo a información complementaria                                                                   | Catálogo de Contenido |
+| **Campaña de Contenido** | Promoción temporal de contenido con variantes responsivas                                                     | Página de Inicio      |
+| **Curaduría**            | Proceso de seleccionar, ordenar y presentar historias                                                         | Curación              |
 
 ---
 

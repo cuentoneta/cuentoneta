@@ -20,6 +20,7 @@ interface LiteraryWorkBase {
 }
 
 export interface LiteraryWork extends LiteraryWorkBase {
+	// 1..N; la obra anónima referencia al author "Anónimo" (ver isAnonymous).
 	readonly authors: readonly Author[];
 	readonly content: readonly LiteraryWorkSection[];
 	readonly mediaSources: readonly MediaTypes[];
@@ -44,10 +45,14 @@ export interface LiteraryWorkNavigationTeaserWithAuthors extends LiteraryWorkBas
 	readonly authors: readonly AuthorTeaser[];
 }
 
-// Única señal de obra anónima que conoce el dominio: el ACL normaliza la referencia
-// al autor "anonimo" antes de construir el agregado — ver docs/LITERARY_WORK_DESIGN.md §10.
-export function isAnonymous(authors: readonly unknown[]): boolean {
-	return authors.length === 0;
+// "Anónimo" es un author real del catálogo: la obra anónima lo referencia explícitamente
+// en todas las capas (sin normalización en el ACL) — ver docs/LITERARY_WORK_DESIGN.md §10.
+// Se compara por slug (clave de negocio), nunca por _id (infraestructura).
+export const ANONYMOUS_AUTHOR_SLUG = 'anonimo';
+
+// `every` y no `some`: si la obra referencia a Anónimo y a un autor real, tiene autoría real.
+export function isAnonymous(authors: ReadonlyArray<{ readonly slug: string }>): boolean {
+	return authors.length > 0 && authors.every((author) => author.slug === ANONYMOUS_AUTHOR_SLUG);
 }
 
 interface CreateLiteraryWorkOptions {
@@ -71,6 +76,11 @@ export function createLiteraryWork(options: CreateLiteraryWorkOptions): Literary
 	}
 	if (options.content.length === 0) {
 		throw new Error(`LiteraryWork inválida: sin secciones de contenido (slug "${options.slug}")`);
+	}
+	if (options.authors.length === 0) {
+		throw new Error(
+			`LiteraryWork inválida: sin autores (slug "${options.slug}") — la obra anónima referencia al author "Anónimo"`,
+		);
 	}
 	return Object.freeze({
 		...options,

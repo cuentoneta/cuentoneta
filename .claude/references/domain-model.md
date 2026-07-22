@@ -285,7 +285,7 @@ export function createStory(options: CreateStoryOptions): Story {
 
 `Author` y `Storylist` son raíces de sus propios agregados. **`Storylist`** posee la invariante _`count` coincide con el número real de `stories`_; **`Author`** posee _`diedOn` (si existe) es posterior a `bornOn`_ y _`nationality` siempre presente_.
 
-> **Implementado (#1852):** `LiteraryWork` es la primera raíz de agregado con invariantes **hechas cumplir en código** (no solo descritas): `createLiteraryWork` en `src/app/models/literary-work.model.ts` valida título no vacío y ≥ 1 sección, deriva `totalReadingTime` y congela el objeto; `authors` admite 0..N (el array vacío modela la obra anónima — policy `isAnonymous`). Ver `docs/DOMAIN_MODEL.md` y `docs/LITERARY_WORK_DESIGN.md`. El ejemplo de `Story` de arriba sigue siendo roadmap (#1503).
+> **Implementado (#1852):** `LiteraryWork` es la primera raíz de agregado con invariantes **hechas cumplir en código** (no solo descritas): `createLiteraryWork` en `src/app/models/literary-work.model.ts` valida título no vacío, ≥ 1 sección y ≥ 1 autor, deriva `totalReadingTime`/`sectionCount` y congela el objeto. La obra anónima referencia al author real "Anónimo" (slug `anonimo`, valor bien conocido — policy `isAnonymous` compara por slug). Ver `docs/DOMAIN_MODEL.md` y `docs/LITERARY_WORK_DESIGN.md`. El ejemplo de `Story` de arriba sigue siendo roadmap (#1503).
 
 > **Nota:** la frontera del agregado es también la frontera de consistencia — ver [Decisiones de consistencia](#decisiones-de-consistencia).
 >
