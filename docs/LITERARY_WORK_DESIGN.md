@@ -186,11 +186,14 @@ export function sumReadingTimes(times: readonly ReadingTime[]): ReadingTime;
 // suma por sección → total del agregado; mínimo 1
 ```
 
-**Contrato para Slice 1** (no implementado — requiere `unified`/`remark-parse`/`mdast-util-to-string`, que no se instalan sin caller real):
+**Implementado en Slice 1** (`reading-time.model.ts`, sobre `unified`/`remark-parse`):
 
 ```typescript
 export function countWords(markdown: Markdown): WordCount;
-// mdast-util-to-string sobre el AST de remark-parse → split por whitespace → createWordCount
+// Walker in-house sobre el AST de remark-parse: colecciona solo texto legible (text/inlineCode/code),
+// excluyendo nodos `html` crudos y el alt de imágenes; una palabra contiene al menos una letra o número.
+// Se evaluó mdast-util-to-string y se descartó: sus defaults cuentan HTML embebido y alt como palabras,
+// y su concatenación sin separador entre bloques pierde límites de palabra.
 ```
 
 El flujo completo por sección: `body (Markdown) → countWords → WordCount → deriveReadingTime → ReadingTime`; el total del agregado: `sumReadingTimes(sections.map(s => s.readingTime))` (derivado en `createLiteraryWork`).
@@ -371,7 +374,7 @@ Consecuencias:
 | VOs (`Slug`, `WordCount`, `ReadingTime`, `Markdown`, `SanitizedHtml`, `ChapterTitle`) + `createIsoDateTime`     | ✅ Implementados con specs                                   | Consume         |
 | Aritmética de reading time (`deriveReadingTime`, `sumReadingTimes`)                                             | ✅ Implementada con specs                                    | Consume         |
 | Agregado `LiteraryWork` + secciones + vistas + `createLiteraryWork` + `isAnonymous`                             | ✅ Implementados con specs                                   | Consume         |
-| `countWords` (markdown → texto plano, `mdast-util-to-string`)                                                   | Contrato ([§5](#5-helper-de-reading-time))                   | ⚙️ Implementa   |
+| `countWords` (markdown → texto legible, walker in-house sobre el AST)                                           | Contrato ([§5](#5-helper-de-reading-time))                   | ⚙️ Implementa   |
 | Pipeline MD→HTML (`unified`/`rehype-sanitize`) + allow-list como constante + rewrite de imágenes                | Contrato ([§9](#9-allow-list-de-sanitización))               | ⚙️ Implementa   |
 | Repository (puerto + `Sanity*` + `InMemory*`) + módulo backend                                                  | Contrato ([§6](#6-repository-puerto-adaptador-y-doble))      | ⚙️ Implementa   |
 | Endpoint `GET /literary-work/:slug[?section=N]` + `.bru`                                                        | Contrato ([§7](#7-contrato-del-endpoint))                    | ⚙️ Implementa   |
