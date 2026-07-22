@@ -1,4 +1,4 @@
-import { EnvironmentProviders, Injectable, makeEnvironmentProviders, signal, type WritableSignal } from '@angular/core';
+import { signal, type WritableSignal } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { Viewport, compareViewports } from '@utils/screen.utils';
 import { Direction, LayoutService } from './layout.interface';
@@ -12,7 +12,8 @@ import { Direction, LayoutService } from './layout.interface';
  * `smallerThan`/`isActual` delegan en la misma `compareViewports()` que el real, así que su
  * comportamiento —incluido el error ante un viewport inválido— es idéntico por construcción.
  */
-@Injectable({ providedIn: 'root' })
+// Sin `@Injectable`: no tiene dependencias inyectadas y se instancia a mano (`new`) para proveerlo con
+// `useValue` en los specs. No es un servicio del árbol de DI.
 export class ControllableLayoutService implements LayoutService {
 	private readonly viewport: WritableSignal<Viewport> = signal('lg');
 
@@ -53,10 +54,4 @@ export class ControllableLayoutService implements LayoutService {
 	public isActual(test: Viewport): boolean {
 		return compareViewports(this.viewport(), test) === 0;
 	}
-}
-
-export function provideLayoutServiceMock(
-	service: ControllableLayoutService = new ControllableLayoutService(),
-): EnvironmentProviders {
-	return makeEnvironmentProviders([{ provide: LayoutService, useValue: service }]);
 }
