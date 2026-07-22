@@ -10,26 +10,23 @@ import { ControllableLayoutService } from '../../providers/layout.mock';
 import { LayoutService } from '../../providers/layout.interface';
 import type { Viewport } from '@utils/screen.utils';
 
-function layoutAt(viewport: Viewport): ControllableLayoutService {
+function setup(viewport: Viewport = 'md') {
 	const layout = new ControllableLayoutService();
 	layout.simulateViewport(viewport);
-	return layout;
+	return render(CarouselComponent, {
+		inputs: { slides: contentCampaignMock },
+		providers: [{ provide: LayoutService, useValue: layout }],
+	});
 }
 
 describe('CarouselComponent', () => {
 	it('should render the component', async () => {
-		const { container } = await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-		});
+		const { container } = await setup();
 		expect(container).toBeInTheDocument();
 	});
 
 	it('should receive and render slides correctly', async () => {
-		const { fixture } = await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-		});
+		const { fixture } = await setup();
 		// Verificar que el componente recibe el número correcto de diapositivas
 		expect(fixture.componentInstance.slides()).toHaveLength(contentCampaignMock.length);
 		// Verificar que exactamente una diapositiva se renderiza (diapositiva activa)
@@ -38,10 +35,7 @@ describe('CarouselComponent', () => {
 	});
 
 	it('should apply xs viewport-specific classes correctly', async () => {
-		await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('xs') }],
-		});
+		await setup('xs');
 		const slideLinks = screen.getAllByRole('link');
 		slideLinks.forEach((link) => {
 			expect(link).toHaveClass('sm:hidden');
@@ -49,10 +43,7 @@ describe('CarouselComponent', () => {
 	});
 
 	it('should apply md viewport-specific classes correctly', async () => {
-		await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-		});
+		await setup('md');
 		const slideLinks = screen.getAllByRole('link');
 		slideLinks.forEach((link) => {
 			expect(link).toHaveClass('max-sm:hidden');
@@ -61,10 +52,7 @@ describe('CarouselComponent', () => {
 
 	// Pruebas de navegación
 	it('should navigate to next slide', async () => {
-		const { fixture } = await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-		});
+		const { fixture } = await setup();
 
 		const component = fixture.componentInstance;
 		const initialIndex = component.activeIndex();
@@ -77,10 +65,7 @@ describe('CarouselComponent', () => {
 	});
 
 	it('should navigate to previous slide', async () => {
-		const { fixture } = await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-		});
+		const { fixture } = await setup();
 
 		const component = fixture.componentInstance;
 		// Comenzar en la diapositiva 1
@@ -97,10 +82,7 @@ describe('CarouselComponent', () => {
 	});
 
 	it('should loop to first slide when at end', async () => {
-		const { fixture } = await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-		});
+		const { fixture } = await setup();
 
 		const component = fixture.componentInstance;
 		const lastIndex = contentCampaignMock.length - 1;
@@ -120,10 +102,7 @@ describe('CarouselComponent', () => {
 	});
 
 	it('should loop to last slide when at start', async () => {
-		const { fixture } = await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-		});
+		const { fixture } = await setup();
 
 		const component = fixture.componentInstance;
 		expect(component.activeIndex()).toBe(0);
@@ -136,10 +115,7 @@ describe('CarouselComponent', () => {
 	});
 
 	it('should not allow navigation while transitioning', async () => {
-		const { fixture } = await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-		});
+		const { fixture } = await setup();
 
 		const component = fixture.componentInstance;
 		expect(component.activeIndex()).toBe(0);
@@ -159,10 +135,7 @@ describe('CarouselComponent', () => {
 
 	// Pruebas de reproducción automática
 	it('should start with auto-play enabled', async () => {
-		const { fixture } = await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-		});
+		const { fixture } = await setup();
 
 		const component = fixture.componentInstance;
 		// Auto-play is enabled when isPaused is false
@@ -170,10 +143,7 @@ describe('CarouselComponent', () => {
 	});
 
 	it('should pause auto-play when paused', async () => {
-		const { fixture } = await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-		});
+		const { fixture } = await setup();
 
 		const component = fixture.componentInstance;
 		expect(component.isPaused()).toBe(false);
@@ -184,10 +154,7 @@ describe('CarouselComponent', () => {
 	});
 
 	it('should resume auto-play when resumed', async () => {
-		const { fixture } = await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-		});
+		const { fixture } = await setup();
 
 		const component = fixture.componentInstance;
 		component.pauseAutoPlay();
@@ -200,10 +167,7 @@ describe('CarouselComponent', () => {
 
 	// Pruebas de accesibilidad
 	it('should have proper ARIA attributes on navigation buttons', async () => {
-		await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-		});
+		await setup();
 
 		const prevButton = screen.getByLabelText('Previous slide');
 		const nextButton = screen.getByLabelText('Next slide');
@@ -213,10 +177,7 @@ describe('CarouselComponent', () => {
 	});
 
 	it('should have proper ARIA attributes on indicators', async () => {
-		await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-		});
+		await setup();
 
 		const indicators = screen
 			.getAllByRole('button')
@@ -234,10 +195,7 @@ describe('CarouselComponent', () => {
 	});
 
 	it('should update aria-current when slide changes', async () => {
-		const { fixture } = await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-		});
+		const { fixture } = await setup();
 
 		const component = fixture.componentInstance;
 
@@ -256,10 +214,7 @@ describe('CarouselComponent', () => {
 
 	// Pruebas de signals computadas
 	it('should return active slide correctly based on activeIndex signal', async () => {
-		const { fixture } = await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-		});
+		const { fixture } = await setup();
 
 		const [firstSlide, secondSlide] = [contentCampaignMock[0], contentCampaignMock[1]];
 
@@ -273,20 +228,14 @@ describe('CarouselComponent', () => {
 	});
 
 	it('should show controls on desktop viewport', async () => {
-		await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-		});
+		await setup();
 
 		expect(screen.getByLabelText('Previous slide')).toBeInTheDocument();
 		expect(screen.getByLabelText('Next slide')).toBeInTheDocument();
 	});
 
 	it('should hide controls on mobile viewport', async () => {
-		await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('xs') }],
-		});
+		await setup('xs');
 
 		expect(screen.queryByLabelText('Previous slide')).not.toBeInTheDocument();
 		expect(screen.queryByLabelText('Next slide')).not.toBeInTheDocument();
@@ -294,10 +243,7 @@ describe('CarouselComponent', () => {
 
 	// Pruebas de señal de dirección
 	it('should set direction signal when navigating', async () => {
-		const { fixture } = await render(CarouselComponent, {
-			inputs: { slides: contentCampaignMock },
-			providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-		});
+		const { fixture } = await setup();
 
 		const component = fixture.componentInstance;
 
@@ -344,10 +290,7 @@ describe('CarouselComponent', () => {
 		}
 
 		it('should navigate to next slide on left swipe', async () => {
-			const { fixture } = await render(CarouselComponent, {
-				inputs: { slides: contentCampaignMock },
-				providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-			});
+			const { fixture } = await setup();
 
 			const component = fixture.componentInstance;
 			const element = fixture.nativeElement;
@@ -359,10 +302,7 @@ describe('CarouselComponent', () => {
 		});
 
 		it('should navigate to previous slide on right swipe', async () => {
-			const { fixture } = await render(CarouselComponent, {
-				inputs: { slides: contentCampaignMock },
-				providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-			});
+			const { fixture } = await setup();
 
 			const component = fixture.componentInstance;
 			const element = fixture.nativeElement;
@@ -378,10 +318,7 @@ describe('CarouselComponent', () => {
 		});
 
 		it('should not navigate if swipe distance is below threshold', async () => {
-			const { fixture } = await render(CarouselComponent, {
-				inputs: { slides: contentCampaignMock },
-				providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-			});
+			const { fixture } = await setup();
 
 			const component = fixture.componentInstance;
 			const element = fixture.nativeElement;
@@ -394,10 +331,7 @@ describe('CarouselComponent', () => {
 		});
 
 		it('should pause auto-play during swipe', async () => {
-			const { fixture } = await render(CarouselComponent, {
-				inputs: { slides: contentCampaignMock },
-				providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-			});
+			const { fixture } = await setup();
 
 			const component = fixture.componentInstance;
 			const element = fixture.nativeElement;
@@ -409,10 +343,7 @@ describe('CarouselComponent', () => {
 		});
 
 		it('should resume auto-play after swipe ends', async () => {
-			const { fixture } = await render(CarouselComponent, {
-				inputs: { slides: contentCampaignMock },
-				providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-			});
+			const { fixture } = await setup();
 
 			const component = fixture.componentInstance;
 			const element = fixture.nativeElement;
@@ -424,10 +355,7 @@ describe('CarouselComponent', () => {
 		});
 
 		it('should not navigate while transitioning', async () => {
-			const { fixture } = await render(CarouselComponent, {
-				inputs: { slides: contentCampaignMock },
-				providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-			});
+			const { fixture } = await setup();
 
 			const component = fixture.componentInstance;
 			const element = fixture.nativeElement;
@@ -448,10 +376,7 @@ describe('CarouselComponent', () => {
 	// Pruebas de transiciones con dos diapositivas
 	describe('Dual-slide transitions', () => {
 		it('should set previousIndex when navigating', async () => {
-			const { fixture } = await render(CarouselComponent, {
-				inputs: { slides: contentCampaignMock },
-				providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-			});
+			const { fixture } = await setup();
 
 			const component = fixture.componentInstance;
 			expect(component.previousIndex()).toBeNull();
@@ -466,10 +391,7 @@ describe('CarouselComponent', () => {
 		});
 
 		it('should clear previousIndex after transition completes', async () => {
-			const { fixture } = await render(CarouselComponent, {
-				inputs: { slides: contentCampaignMock },
-				providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-			});
+			const { fixture } = await setup();
 
 			const component = fixture.componentInstance;
 
@@ -486,10 +408,7 @@ describe('CarouselComponent', () => {
 		});
 
 		it('should render both slides during transition', async () => {
-			const { fixture } = await render(CarouselComponent, {
-				inputs: { slides: contentCampaignMock },
-				providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-			});
+			const { fixture } = await setup();
 
 			const component = fixture.componentInstance;
 
@@ -506,10 +425,7 @@ describe('CarouselComponent', () => {
 		});
 
 		it('should render only one slide when not transitioning', async () => {
-			const { fixture } = await render(CarouselComponent, {
-				inputs: { slides: contentCampaignMock },
-				providers: [{ provide: LayoutService, useValue: layoutAt('md') }],
-			});
+			const { fixture } = await setup();
 
 			const component = fixture.componentInstance;
 
