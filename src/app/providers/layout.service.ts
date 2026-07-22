@@ -13,7 +13,7 @@ import {
 } from 'rxjs';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
-import { Viewport, VIEWPORT_WIDTHS_NUMERIC } from '@utils/screen.utils';
+import { Viewport, VIEWPORT_WIDTHS_NUMERIC, compareViewports } from '@utils/screen.utils';
 
 export const Direction = Object.freeze({ Up: 'Up', Down: 'Down' } as const);
 export type Direction = (typeof Direction)[keyof typeof Direction];
@@ -113,14 +113,7 @@ export class LayoutService {
 	 * @param test
 	 */
 	public biggerThan(test: Viewport): boolean {
-		const currentWidth = VIEWPORT_WIDTHS_NUMERIC[this.viewport()];
-		const testWidth = VIEWPORT_WIDTHS_NUMERIC[test];
-
-		if (currentWidth === undefined || testWidth === undefined) {
-			throw new Error(`Viewport inválido: ${test}`);
-		}
-
-		return currentWidth > testWidth;
+		return compareViewports(this.viewport(), test) > 0;
 	}
 
 	/**
@@ -128,24 +121,10 @@ export class LayoutService {
 	 * @param test
 	 */
 	public smallerThan(test: Viewport): boolean {
-		const currentWidth = VIEWPORT_WIDTHS_NUMERIC[this.viewport()];
-		const testWidth = VIEWPORT_WIDTHS_NUMERIC[test];
-
-		if (currentWidth === undefined || testWidth === undefined) {
-			throw new Error(`Viewport inválido: ${test}`);
-		}
-
-		return currentWidth < testWidth;
+		return compareViewports(this.viewport(), test) < 0;
 	}
 
 	public isActual(test: Viewport): boolean {
-		const currentWidth = VIEWPORT_WIDTHS_NUMERIC[this.viewport()];
-		const testWidth = VIEWPORT_WIDTHS_NUMERIC[test];
-
-		if (currentWidth === undefined || testWidth === undefined) {
-			throw new Error(`Viewport inválido: ${test}`);
-		}
-
-		return currentWidth === testWidth;
+		return compareViewports(this.viewport(), test) === 0;
 	}
 }
