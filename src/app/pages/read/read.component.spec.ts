@@ -4,7 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 // 3rd party modules
 import { render, screen } from '@testing-library/angular';
-import { of, throwError, type Observable } from 'rxjs';
+import { throwError, type Observable } from 'rxjs';
 
 // Models
 import type { LiteraryWork } from '@models/literary-work.model';
@@ -13,7 +13,7 @@ import { provideLiteraryWorkApiMock } from '../../providers/literary-work.mock';
 import type { LiteraryWorkApi } from '../../providers/literary-work-api.interface';
 import ReadComponent from './read.component';
 
-class FailingLiteraryWorkApi implements LiteraryWorkApi {
+class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 	constructor(private readonly status: number) {}
 
 	public getBySlug(): Observable<LiteraryWork> {
@@ -21,17 +21,11 @@ class FailingLiteraryWorkApi implements LiteraryWorkApi {
 	}
 }
 
-class SingleWorkLiteraryWorkApi implements LiteraryWorkApi {
-	public getBySlug(): Observable<LiteraryWork> {
-		return of(literaryWorkMock);
-	}
-}
-
 describe('ReadComponent', () => {
 	const setup = async (api?: LiteraryWorkApi, responseInit?: ResponseInit) => {
 		return await render(ReadComponent, {
 			providers: [
-				provideLiteraryWorkApiMock(api ?? new SingleWorkLiteraryWorkApi()),
+				provideLiteraryWorkApiMock(api),
 				...(responseInit ? [{ provide: RESPONSE_INIT, useValue: responseInit }] : []),
 			],
 			inputs: { slug: literaryWorkMock.slug },
@@ -55,7 +49,7 @@ describe('ReadComponent', () => {
 
 	it('renders the not-found state and flags the SSR response as 404', async () => {
 		const responseInit: ResponseInit = {};
-		await setup(new FailingLiteraryWorkApi(404), responseInit);
+		await setup(new StubFailingLiteraryWorkApi(404), responseInit);
 
 		expect(await screen.findByText(/no encontramos esta obra/i)).toBeTruthy();
 		expect(responseInit.status).toBe(404);
@@ -63,7 +57,7 @@ describe('ReadComponent', () => {
 
 	it('does not flag the SSR response for non-404 errors', async () => {
 		const responseInit: ResponseInit = {};
-		await setup(new FailingLiteraryWorkApi(500), responseInit);
+		await setup(new StubFailingLiteraryWorkApi(500), responseInit);
 
 		expect(await screen.findByText(/no encontramos esta obra/i)).toBeTruthy();
 		expect(responseInit.status).toBeUndefined();
