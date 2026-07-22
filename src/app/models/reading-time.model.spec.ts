@@ -11,8 +11,18 @@ describe('countWords', () => {
 		expect(countWords(createMarkdown('Texto con **negrita**, _cursiva_ y un [enlace](https://example.com).'))).toBe(7);
 	});
 
-	it('ignores whitespace-only segments', () => {
+	it('ignores whitespace-only segments and preserves word boundaries across blocks', () => {
 		expect(countWords(createMarkdown('Una   palabra\n\n\ny   otra'))).toBe(4);
+	});
+
+	it('does not count raw HTML tags nor image alt text as words', () => {
+		expect(
+			countWords(
+				createMarkdown(
+					'Dos palabras\n\n<div class="x">tres</div>\n\n![alt largo de imagen](https://example.com/i.jpg)',
+				),
+			),
+		).toBe(2);
 	});
 
 	it('feeds deriveReadingTime for the full markdown-to-minutes flow', () => {
