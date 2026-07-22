@@ -38,7 +38,7 @@ Hallazgos del prototipo (validados, rama `spike/1481-literarywork-schema`):
 
 - `sanity-plugin-markdown@^9.0.6` es compatible con Sanity v5; `sanity build` (gate `studio-build`) verde, incluso en Node 26.
 - El tipo `markdown` se almacena como `string` crudo → en la frontera se valida como `Markdown` y el ACL produce `SanitizedHtml`.
-- Typegen tipa **todo `optional`** (ignora `Rule.required()`) → las invariantes se hacen cumplir en el mapper/dominio, nunca se asumen del tipo generado.
+- El hallazgo del spike "typegen tipa todo `optional`" aplicaba a una extracción **sin** `--enforce-required-fields`; el target `extract-schema` del repo (`cms/project.json`) extrae **con** ese flag, así que los campos con `Rule.required()` sí se tipan como no opcionales en `types.ts`. Las invariantes se hacen cumplir **igualmente** en el mapper/dominio: el flag garantiza el tipo, no los datos en runtime (documentos legacy o drafts pueden violar el schema), y las proyecciones GROQ parciales tienen sus propios shapes.
 - Autoría 0..N con array vacío = obra anónima, y default de alta en Studio (ver [§10](#10-autoría-0n-y-obra-anónima)).
 
 ---
