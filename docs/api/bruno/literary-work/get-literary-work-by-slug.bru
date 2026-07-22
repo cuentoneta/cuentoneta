@@ -1,0 +1,20 @@
+meta {
+  name: Get literary work by slug
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/literary-work/:slug
+  body: none
+  auth: none
+}
+
+params:path {
+  slug: la-obra
+}
+
+docs {
+  Obtener una obra literaria completa por su slug (todas las secciones).
+  Slug inexistente responde 404 con body { error } — ver docs/LITERARY_WORK_DESIGN.md §7.
+}
