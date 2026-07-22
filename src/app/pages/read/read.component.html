@@ -1,0 +1,34 @@
+<!-- Sin @defer a propósito: los bloques diferidos sirven skeleton en SSR y esta página debe
+     indexar contenido real (ver el caso de la página de autor en el epic de SEO). -->
+@if (literaryWork(); as work) {
+	<article class="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-8">
+		<header class="flex flex-col gap-2">
+			<h1>{{ work.title }}</h1>
+			<p>{{ byline() }}</p>
+			<p>{{ work.totalReadingTime }} min de lectura</p>
+		</header>
+		@for (section of sections(); track section.position) {
+			<section class="flex flex-col gap-4">
+				@if (section.chapterTitle) {
+					<h2 [id]="section.anchor">{{ section.chapterTitle }}</h2>
+				}
+				@for (epigraph of section.epigraphs; track $index) {
+					<blockquote>
+						<div [innerHTML]="epigraph.text"></div>
+						@if (epigraph.reference) {
+							<footer [innerHTML]="epigraph.reference"></footer>
+						}
+					</blockquote>
+				}
+				<div [innerHTML]="section.bodyHtml"></div>
+			</section>
+		}
+	</article>
+} @else if (notFound()) {
+	<section class="mx-auto flex w-full max-w-3xl flex-col gap-4 px-4 py-8">
+		<h1>No encontramos esta obra</h1>
+		<p>La obra que buscás no existe o ya no está disponible.</p>
+	</section>
+} @else {
+	<p class="mx-auto w-full max-w-3xl px-4 py-8">Cargando…</p>
+}
