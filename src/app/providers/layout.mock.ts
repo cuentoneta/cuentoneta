@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 import { Viewport, VIEWPORT_WIDTHS_NUMERIC } from '@utils/screen.utils';
-import { LayoutService } from './layout.service';
+import { LayoutService } from './layout.interface';
 
 @Injectable({ providedIn: 'root' })
 export class InMemoryLayoutService {

@@ -1,12 +1,13 @@
 import { fn, spyOn, type Mock } from '@test-utils';
 import { TestBed } from '@angular/core/testing';
-import { LayoutService, Direction } from './layout.service';
+import { WindowLayoutService } from './layout.provider';
+import { Direction, type LayoutService } from './layout.interface';
 import { WINDOW } from './window';
 import { map, of } from 'rxjs';
 import { Viewport } from '@utils/screen.utils';
 
-describe('LayoutService', () => {
-	let service: LayoutService;
+describe('WindowLayoutService', () => {
+	let service: WindowLayoutService;
 	let mockWindow: {
 		scrollY: number;
 		innerWidth: number;
@@ -31,10 +32,10 @@ describe('LayoutService', () => {
 		};
 
 		TestBed.configureTestingModule({
-			providers: [LayoutService, { provide: WINDOW, useValue: mockWindow }],
+			providers: [WindowLayoutService, { provide: WINDOW, useValue: mockWindow }],
 		});
 
-		service = TestBed.inject(LayoutService);
+		service = TestBed.inject(WindowLayoutService);
 	});
 
 	it('should be created', () => {
@@ -201,5 +202,16 @@ describe('LayoutService', () => {
 				expect(service.isActual('xl')).toBe(true);
 			});
 		});
+	});
+});
+
+describe('WindowLayoutService — paridad de superficie con el contrato LayoutService', () => {
+	it('mantiene cada miembro público de WindowLayoutService cubierto por la interfaz LayoutService', () => {
+		// Si WindowLayoutService gana un miembro público que LayoutService no declara, `ExtraPublicMembers`
+		// deja de ser `never`, el tipo del literal `true` no calza contra `false` y esta asignación rompe el
+		// typecheck con TS2322 — la señal de divergencia que antes no existía.
+		type ExtraPublicMembers = Exclude<keyof WindowLayoutService, keyof LayoutService>;
+		const parityHolds: ExtraPublicMembers extends never ? true : false = true;
+		expect(parityHolds).toBe(true);
 	});
 });
