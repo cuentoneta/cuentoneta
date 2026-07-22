@@ -6,17 +6,6 @@ import rehypeStringify from 'rehype-stringify';
 import type { Markdown } from '@models/markdown.model';
 import { createSanitizedHtml, type SanitizedHtml } from '@models/sanitized-html.model';
 
-// Única fuente de verdad del allow-list — la materialización de derivados la reutiliza
-// (docs/LITERARY_WORK_DESIGN.md §9). Cambiarla exige regen masivo + tests de XSS.
-export const literaryWorkSanitizationSchema: Options = {
-	...defaultSchema,
-	attributes: {
-		...defaultSchema.attributes,
-		// src/alt/width/height ya están permitidos por el schema por defecto (img + global `*`).
-		img: [...(defaultSchema.attributes?.['img'] ?? []), 'srcSet', 'loading', 'decoding'],
-	},
-};
-
 // Tipado estructural mínimo del hast: alcanza para el walker sin acoplar @types/hast.
 interface HtmlNode {
 	readonly type: string;
@@ -25,10 +14,16 @@ interface HtmlNode {
 	readonly children?: readonly HtmlNode[];
 }
 
-// Solo URLs del CDN de Sanity: srcSet se construye desde src ANTES de que rehypeSanitize valide
-// protocolos, y srcset no tiene validación de protocolo en el schema — anclar el host cierra ese
-// hueco de defensa en profundidad.
-const SANITY_IMAGE_DIMENSIONS = /^https:\/\/cdn\.sanity\.io\/.*-(\d+)x(\d+)\.\w+(?:\?.*)?$/;
+// Única fuente de verdad del allow-list (docs/LITERARY_WORK_DESIGN.md §9): cambiarla exige
+// regen masivo de derivados + tests de XSS. Privada hasta que exista otro consumidor real.
+const literaryWorkSanitizationSchema: Options = {
+	...defaultSchema,
+	attributes: {
+		...defaultSchema.attributes,
+		// src/alt/width/height ya están permitidos por el schema por defecto (img + global `*`).
+		img: [...(defaultSchema.attributes?.['img'] ?? []), 'srcSet', 'loading', 'decoding'],
+	},
+};
 
 function visitImages(node: HtmlNode, transform: (properties: Record<string, unknown>) => void): void {
 	if (node.type === 'element' && node.tagName === 'img' && node.properties) {
@@ -41,12 +36,17 @@ function visitImages(node: HtmlNode, transform: (properties: Record<string, unkn
 // así que las dimensiones (CLS) y los hints de carga se inyectan acá, leyendo el WxH que la
 // URL de cdn.sanity.io codifica en el assetId.
 function rehypeSanityImages() {
+	// Solo URLs del CDN de Sanity: srcSet se construye desde src ANTES de que rehypeSanitize valide
+	// protocolos, y srcset no tiene validación de protocolo en el schema — anclar el host cierra ese
+	// hueco de defensa en profundidad.
+	const sanityImageDimensions = /^https:\/\/cdn\.sanity\.io\/.*-(\d+)x(\d+)\.\w+(?:\?.*)?$/;
+
 	return (tree: HtmlNode) => {
 		visitImages(tree, (properties) => {
 			if (typeof properties['src'] !== 'string') {
 				return;
 			}
-			const match = properties['src'].match(SANITY_IMAGE_DIMENSIONS);
+			const match = properties['src'].match(sanityImageDimensions);
 			if (!match) {
 				return;
 			}
