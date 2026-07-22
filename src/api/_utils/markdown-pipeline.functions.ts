@@ -19,7 +19,10 @@ export const literaryWorkSanitizationSchema: Options = {
 	},
 };
 
-const SANITY_IMAGE_DIMENSIONS = /-(\d+)x(\d+)\.\w+(?:\?.*)?$/;
+// Solo URLs del CDN de Sanity: srcSet se construye desde src ANTES de que rehypeSanitize valide
+// protocolos, y srcset no tiene validación de protocolo en el schema — anclar el host cierra ese
+// hueco de defensa en profundidad.
+const SANITY_IMAGE_DIMENSIONS = /^https:\/\/cdn\.sanity\.io\/.*-(\d+)x(\d+)\.\w+(?:\?.*)?$/;
 
 // Reproduce la optimización que ngSrc haría en templates: el cuerpo se pinta por [innerHTML],
 // así que las dimensiones (CLS) y los hints de carga se inyectan acá, leyendo el WxH que la

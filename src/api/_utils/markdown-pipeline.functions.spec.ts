@@ -49,6 +49,13 @@ describe('markdownToSanitizedHtml', () => {
 		expect(html).not.toContain('loading=');
 	});
 
+	it('does not enrich a non-Sanity URL even if it mimics the WxH pattern', () => {
+		const html = markdownToSanitizedHtml(createMarkdown('![impostora](https://example.com/foto-800x600.jpg)'));
+
+		expect(html).not.toContain('srcset');
+		expect(html).not.toContain('width=');
+	});
+
 	it('propagates the SanitizedHtml invariant for empty rendered output', () => {
 		expect(() => markdownToSanitizedHtml(createMarkdown('<!-- solo un comentario -->'))).toThrow(
 			'SanitizedHtml inválido: contenido vacío',
