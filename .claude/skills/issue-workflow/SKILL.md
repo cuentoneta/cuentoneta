@@ -5,7 +5,7 @@ description: Orquesta el ciclo completo de resolución de un issue de GitHub en 
 
 # Issue Workflow
 
-Orquesta el ciclo de vida completo para resolver un issue de GitHub en **cuentoneta**. Cada invocación sobrescribe `workspace/PLAN.md` y `workspace/CODE_REVIEW.md` — guardá los artefactos de una sesión previa antes de empezar una nueva. (`workspace/` está gitignoreado.)
+Orquesta el ciclo de vida completo para resolver un issue de GitHub en **cuentoneta**. Cada invocación sobrescribe `workspace/PLAN.md`, `workspace/CODE_REVIEW.md` y — si el diff amerita auditoría de seguridad — `workspace/SECURITY_REVIEW.md`; guardá los artefactos de una sesión previa antes de empezar una nueva. (`workspace/` está gitignoreado.)
 
 > **Issues de release:** para los issues de gestión de release (p. ej. "Generar release para versión X") usá el skill dedicado [`release-workflow`](../release-workflow/SKILL.md), que encodea el checklist determinista del release (bump lockstep, CHANGELOG desde el milestone, gatillo `develop → master`) en vez de este flujo de feature.
 
@@ -82,14 +82,14 @@ No avanzar a la Fase 3 sin aprobación explícita.
 1. Correr localmente (con `pnpm`, nunca `nx` directo) los **gates de CI** definidos en la sección [Comandos comunes](../../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**). `test:e2e` y `studio-build` son costosos de correr en cada iteración: corré `test:e2e` si el cambio toca flujos E2E y `studio-build` si toca `cms/`; el resto, siempre.
    - **Lanzalos concurrentemente**, no uno tras otro: son independientes entre sí y así los corre CI (todos los jobs cuelgan de `setup` y van en runners separados). En serie tardan la **suma**; en paralelo, lo que tarde el más lento. Medido en #1850: 105s → 29s.
    - Si alguno falla: reportar cuál, diagnosticar, arreglar, commitear el fix (reglas de Fase 3) y re-correr **solo el que falló** mientras el resto sigue verde; re-correr todo solo si el fix toca superficie compartida.
-2. Si el diff toca **superficie de seguridad**, delegar primero al agente **`security-auditor`**. La lista de disparadores es la sección **"Cuándo correr"** del propio agente: `src/api/**` (endpoints, GROQ, mappers), manejo de contenido externo (PortableText/HTML del CMS, `bypassSecurityTrust*`, fetch a servicios externos, `localStorage`), variables de entorno / secrets / config de Sanity o Clarity, y dependencias (`package.json` / `pnpm-lock.yaml`). Un diff que no toca nada de eso —solo documentación, estilos o UI sin datos externos— **no** lo requiere; también puede invocarse a demanda si surge una preocupación puntual.
-3. Delegar al agente **`code-reviewer`** para revisar todos los cambios de la rama vs. `develop`, **pasándole el resultado observado de los gates del paso 1** (qué corriste, con qué resultado, y cuáles omitiste por no aplicar al diff). Sin ese dato el agente los vuelve a correr, que es la parte más cara de la review.
-4. Ambos agentes escriben sus hallazgos en `workspace/CODE_REVIEW.md`; los del `security-auditor` van en una sección propia.
-5. Presentar la tabla de hallazgos al usuario (Críticos, Advertencias, Sugerencias), indicando si el `security-auditor` corrió o por qué no correspondía.
+2. **Determinar si el diff toca superficie de seguridad.** La lista de disparadores es la sección **"Cuándo correr"** del agente `security-auditor`: `src/api/**` (endpoints, GROQ, mappers), manejo de contenido externo (PortableText/HTML del CMS, `bypassSecurityTrust*`, fetch a servicios externos, `localStorage`), variables de entorno / secrets / config de Sanity o Clarity, y dependencias (`package.json` / `pnpm-lock.yaml`). Un diff que no toca nada de eso —solo documentación, estilos o UI sin datos externos— **no** la amerita; el auditor también puede invocarse a demanda si surge una preocupación puntual.
+3. **Delegar las reviews — en paralelo si corren ambas.** Si el diff toca superficie de seguridad, lanzar al **`security-auditor`** y al **`code-reviewer`** en el **mismo turno** (ambas delegaciones en una única respuesta, igual que los gates del paso 1): sus reviews son independientes y no comparten archivo de salida. Si no la toca, delegar solo al `code-reviewer`. En ambos casos el `code-reviewer` revisa todos los cambios de la rama vs. `develop` y recibe **el resultado observado de los gates del paso 1** (qué corriste, con qué resultado, y cuáles omitiste por no aplicar al diff) — sin ese dato los vuelve a correr, que es la parte más cara de la review.
+4. Cada agente escribe su propio archivo: el `code-reviewer` en `workspace/CODE_REVIEW.md` y el `security-auditor` en `workspace/SECURITY_REVIEW.md`.
+5. Presentar la tabla de hallazgos al usuario (Críticos, Advertencias, Sugerencias), combinando ambos archivos cuando corrió el auditor, e indicando si corrió o por qué no correspondía.
 
 **⏸ PAUSA — requiere decisión del usuario.**
 
-> Review completa en `workspace/CODE_REVIEW.md`. Respondé **proceder** para abordar los hallazgos, o **ship** si no hay nada bloqueante.
+> Review completa en `workspace/CODE_REVIEW.md` (y `workspace/SECURITY_REVIEW.md` si corrió el auditor de seguridad). Respondé **proceder** para abordar los hallazgos, o **ship** si no hay nada bloqueante.
 
 ---
 
@@ -97,8 +97,8 @@ No avanzar a la Fase 3 sin aprobación explícita.
 
 **Propósito:** abordar los hallazgos con commits atómicos.
 
-1. Abordar cada **Crítico** y **Advertencia** de `workspace/CODE_REVIEW.md` por prioridad (Críticos primero).
-2. Tras cada fix, actualizar la columna **Abordado** en `workspace/CODE_REVIEW.md` (Fixed / Discarded / Deferred / Won't Fix).
+1. Abordar cada **Crítico** y **Advertencia** de `workspace/CODE_REVIEW.md` — y de `workspace/SECURITY_REVIEW.md` si corrió el auditor — por prioridad (Críticos primero).
+2. Tras cada fix, actualizar la columna **Abordado** en el archivo al que pertenece el hallazgo (Fixed / Discarded / Deferred / Won't Fix).
 3. Un commit atómico por fix. El mensaje describe el **cambio real**, nunca referencia el número de hallazgo.
    - ✅ `[#1234] - Acota la constante al cuerpo de la función — estaba a nivel de módulo`
    - ❌ `[#1234] - Arregla el hallazgo #2`
