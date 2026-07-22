@@ -54,6 +54,7 @@ interface LiteraryWorkBase {
 	readonly title: string;
 	readonly coverImage: string;
 	readonly totalReadingTime: ReadingTime;
+	readonly sectionCount: number; // total de secciones de la obra (>= 1)
 	readonly tags: readonly Tag[];
 }
 
@@ -76,7 +77,7 @@ export interface LiteraryWorkNavigationTeaser extends LiteraryWorkBase {
 	readonly authors: Array<never>;
 }
 
-export interface LiteraryWorkNavigationTeaserWithAuthor extends LiteraryWorkBase {
+export interface LiteraryWorkNavigationTeaserWithAuthors extends LiteraryWorkBase {
 	readonly authors: readonly AuthorTeaser[];
 }
 ```
@@ -89,13 +90,14 @@ export interface LiteraryWorkNavigationTeaserWithAuthor extends LiteraryWorkBase
 
 **Invariantes del agregado** (validadas en `createLiteraryWork`, la única vía de construcción):
 
-| Invariante                             | Enforcement                                                                                      |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `slug` con formato válido e inmutable  | VO `Slug` (`createSlug` lanza ante formato inválido); unicidad garantizada por Sanity            |
-| `title` no vacío                       | `createLiteraryWork` lanza                                                                       |
-| Al menos una sección de contenido      | `createLiteraryWork` lanza si `content.length === 0`                                             |
-| `totalReadingTime` = suma de secciones | Derivado en la factory (no es input)                                                             |
-| `authors` admite 0..N                  | **Sin** invariante de longitud — `[]` es un valor válido (obra anónima), a diferencia de `Story` |
+| Invariante                                | Enforcement                                                                                                                                                      |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `slug` con formato válido e inmutable     | VO `Slug` (`createSlug` lanza ante formato inválido); unicidad garantizada por Sanity                                                                            |
+| `title` no vacío                          | `createLiteraryWork` lanza                                                                                                                                       |
+| Al menos una sección de contenido         | `createLiteraryWork` lanza si `content.length === 0`                                                                                                             |
+| `totalReadingTime` = suma de secciones    | Derivado en la factory (no es input)                                                                                                                             |
+| `sectionCount` = número real de secciones | Derivado en la factory (`content.length`); en las vistas parciales/teaser lo provee el mapper (GROQ `count()`) y puede ser mayor que las secciones transportadas |
+| `authors` admite 0..N                     | **Sin** invariante de longitud — `[]` es un valor válido (obra anónima), a diferencia de `Story`                                                                 |
 
 ---
 
@@ -106,7 +108,7 @@ export interface LiteraryWorkNavigationTeaserWithAuthor extends LiteraryWorkBase
 ```
 section {
 	chapterTitle?: string
-	epigraphs?: Array<{ text: string (markdown), reference: string }>
+	epigraphs?: Array<{ text: string (markdown), reference: string (markdown) }>
 	body: string (markdown, required)
 }
 ```
@@ -116,7 +118,7 @@ section {
 ```typescript
 export interface LiteraryWorkEpigraph {
 	readonly text: SanitizedHtml;
-	readonly reference: string;
+	readonly reference?: SanitizedHtml;
 }
 
 export interface LiteraryWorkSection {
@@ -129,13 +131,13 @@ export interface LiteraryWorkSection {
 
 ### Mapeo campo a campo (CMS → dominio, responsabilidad del ACL de Slice 1)
 
-| CMS                             | Dominio                           | Transformación                                                                                           |
-| ------------------------------- | --------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `chapterTitle?: string`         | `chapterTitle?: ChapterTitle`     | `createChapterTitle` (si presente); habilita `toAnchor(): Slug` para anclas de navegación                |
-| `epigraphs[].text: markdown`    | `epigraphs[].text: SanitizedHtml` | **Pasa por el mismo pipeline MD→HTML que el body** (el texto del epígrafe también es markdown)           |
-| `epigraphs[].reference: string` | `epigraphs[].reference: string`   | Directo (no es markdown)                                                                                 |
-| `body: markdown`                | `bodyHtml: SanitizedHtml`         | Pipeline `unified` + rewrite de imágenes ([§9](#9-allow-list-de-sanitización))                           |
-| —                               | `readingTime: ReadingTime`        | Derivado: texto plano del markdown → `WordCount` → `deriveReadingTime` ([§5](#5-helper-de-reading-time)) |
+| CMS                                        | Dominio                                 | Transformación                                                                                                                         |
+| ------------------------------------------ | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `chapterTitle?: string`                    | `chapterTitle?: ChapterTitle`           | `createChapterTitle` (si presente); habilita `toAnchor(): Slug` para anclas de navegación                                              |
+| `epigraphs[].text: markdown`               | `epigraphs[].text: SanitizedHtml`       | **Pasa por el mismo pipeline MD→HTML que el body** (el texto del epígrafe también es markdown)                                         |
+| `epigraphs[].reference: string (markdown)` | `epigraphs[].reference?: SanitizedHtml` | **Mismo pipeline MD→HTML** (paridad con `Story.Epigraph.reference`, que es rich text); ausente o vacío en CMS → `undefined` en dominio |
+| `body: markdown`                           | `bodyHtml: SanitizedHtml`               | Pipeline `unified` + rewrite de imágenes ([§9](#9-allow-list-de-sanitización))                                                         |
+| —                                          | `readingTime: ReadingTime`              | Derivado: texto plano del markdown → `WordCount` → `deriveReadingTime` ([§5](#5-helper-de-reading-time))                               |
 
 ---
 
@@ -151,6 +153,15 @@ Implementados en `src/app/models/*.model.ts` (#1852) — primera implementación
 | `Markdown`      | `string & Brand`              | No vacío (`trim() !== ''`). Marca la **frontera CMS**: markdown crudo validado                                         | `markdown.model.ts`       |
 | `SanitizedHtml` | `string & Brand`              | No vacío. **No sanitiza** (ver corte abajo)                                                                            | `sanitized-html.model.ts` |
 | `ChapterTitle`  | `{ value; toAnchor(): Slug }` | No vacío; `toAnchor()` deriva un `Slug` válido vía `slugify`                                                           | `chapter-title.model.ts`  |
+
+### Anclas de sección — cómo funciona `toAnchor()`
+
+`toAnchor()` normaliza el título del capítulo vía `slugify` (`lower: true, strict: true` — quita tildes y signos, kebab-case) y valida el resultado con `createSlug`: `createChapterTitle('¡Capítulo Uno!').toAnchor()` → `'capitulo-uno'` (tipado `Slug`). Su propósito es la **navegación intra-documento** en `/read/:slug`: anclas estables para la tabla de contenidos y deep-links (`/read/la-obra#capitulo-uno`), a consumir por la navegación multi-sección (Slice 2). Es complementario a `?section=N` ([§7](#7-contrato-del-endpoint)): el ancla desplaza dentro del documento **ya cargado**; el query param trae **una porción** por request.
+
+Casos límite documentados para Slice 2 (no resueltos acá):
+
+- **Títulos duplicados** producen anclas duplicadas — la deduplicación (p. ej. sufijo `-2`) es responsabilidad de la capa que renderiza la navegación.
+- **Secciones sin `chapterTitle`** no tienen ancla derivable — el fallback (p. ej. ancla posicional `#seccion-3`) se decide al construir la navegación.
 
 **`IsoDateTime` — reutilizado, no duplicado.** `publishedAt` usa el tipo `IsoDateTime` ya existente en `src/app/utils/date.utils.ts`; #1852 le suma la factory validadora `createIsoDateTime(value: string): IsoDateTime`. No se crea un segundo símbolo ni se brandea el tipo existente (lo consumen `Author`/`AuthorProfile` sin factory; migrarlos excede este issue).
 
@@ -201,7 +212,7 @@ interface LiteraryWorkRepository {
 Firma del módulo backend (service, mapea vía ACL):
 
 ```typescript
-getLiteraryWorkBySlug(slug: string): Promise<LiteraryWork>;
+getLiteraryWorkBySlug(slug: string, section?: number): Promise<LiteraryWork>;
 ```
 
 El mapper del ACL (`src/api/_utils/`) es responsable de: validar invariantes contra el shape `optional` de typegen, correr el pipeline MD→HTML sobre body y epígrafes, derivar reading times, y **normalizar la autoría anónima** ([§10](#10-autoría-0n-y-obra-anónima)).
@@ -210,16 +221,27 @@ El mapper del ACL (`src/api/_utils/`) es responsable de: validar invariantes con
 
 ## 7. Contrato del endpoint
 
-### `GET /literary-work/:slug`
+### `GET /literary-work/:slug[?section=N]`
 
 | Aspecto         | Contrato                                                                                                                                               |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Params          | `{ slug: string }` — validación zod con el `slugSchema` existente de `src/api/schemas/common.schemas.ts` (reutilizar, no duplicar)                     |
+| Query params    | `section?: number` — **1-based**, opcional. Validación zod: entero `>= 1`. Ausente ⇒ la obra completa; presente ⇒ solo esa sección (ver abajo)         |
 | Respuesta 200   | `LiteraryWork` (JSON; forma idéntica a la interfaz de dominio de [§2](#2-modelo-de-dominio-y-vistas-polimórficas))                                     |
 | Registro        | `apiRoutes.route('/literary-work', literaryWorkController)` en `src/api/routes.ts`                                                                     |
 | Colección Bruno | `docs/api/bruno/literary-work/get-literary-work-by-slug.bru` — se crea **en el mismo PR** que el endpoint (DoD de Slice 1); este contrato es su fuente |
 
-> **Nota abierta para Slice 1 — slug inexistente:** el comportamiento vigente del módulo `story` ante slug no encontrado es que el service lanza `Error` genérico sin handler `onError` global en `routes.ts` → HTTP **500 sin body estructurado**, no un 404 JSON. Slice 1 debe decidir si `literary-work` introduce un 404 propio (y sienta el precedente) o mantiene paridad con `story` y se difiere el manejo de errores a un issue transversal. Es una decisión **diferida a propósito**, no una omisión de este diseño.
+### Semántica de `?section=N` (obtención parcial)
+
+El consumidor decide por query param si obtiene **toda la obra o un capítulo**:
+
+- **Sin `section`**: `content` transporta **todas** las secciones. `sectionCount === content.length`.
+- **Con `section=N`**: `content` transporta **únicamente la sección N** (1-based). El resto de la respuesta describe la obra completa: `totalReadingTime` sigue siendo el **total de la obra** (no el de la sección) y `sectionCount` el total real — con ellos el cliente pagina/navega (`N` de `sectionCount`) sin otra request de metadata. La respuesta parcial es una **proyección**: `sectionCount > content.length` es el indicador de parcialidad.
+- **`N` fuera de rango** (`N > sectionCount`): mismo tratamiento que el recurso inexistente (ver nota abierta abajo) — no responde 200 con `content` vacío, porque violaría la invariante `content.length >= 1`.
+
+El SSR de `/read/:slug` (Slice 1) consume la forma completa; la obtención por sección habilita la navegación multi-capítulo (Slice 2) sin transferir la obra entera, y se apoya en la materialización **por sección** ([§8](#8-estrategia-de-materialización)).
+
+> **Nota abierta para Slice 1 — slug inexistente / sección fuera de rango:** el comportamiento vigente del módulo `story` ante slug no encontrado es que el service lanza `Error` genérico sin handler `onError` global en `routes.ts` → HTTP **500 sin body estructurado**, no un 404 JSON. Slice 1 debe decidir si `literary-work` introduce un 404 propio (y sienta el precedente) o mantiene paridad con `story` y se difiere el manejo de errores a un issue transversal. La decisión que se tome aplica por igual a ambos casos (slug y sección). Es una decisión **diferida a propósito**, no una omisión de este diseño.
 
 ---
 
@@ -235,6 +257,8 @@ Decisión T1b del epic; implementación en **Slice 4**. Hasta entonces rige **tr
 | Fallback     | Si el derivado falta o está stale respecto del hash/rev: el ACL transforma on-the-fly esa vez y dispara la regeneración                                                                                                              |
 | Regen masivo | Tarea/función para re-materializar todo ante cambio de allow-list o de estrategia de imágenes                                                                                                                                        |
 | Source doc   | `literaryWork` **no persiste** `approximateReadingTime` ni HTML — solo markdown                                                                                                                                                      |
+
+**Granularidad por sección y `?section=N`.** El documento derivado persiste los transformados **por sección** (HTML + `readingTime` de cada una, más los agregados de la obra: `totalReadingTime`, `sectionCount`). Eso hace que servir `GET /literary-work/:slug?section=N` ([§7](#7-contrato-del-endpoint)) sea una lectura directa de la porción N del derivado — sin recomputar la obra completa — y que la respuesta parcial conserve los metadatos totales sin costo extra. El webhook regenera el derivado por documento; la invalidación de caché de una obra cubre todas sus secciones de una vez (una edición cambia el hash de origen → todas las porciones vuelven a servirse frescas).
 
 ---
 
