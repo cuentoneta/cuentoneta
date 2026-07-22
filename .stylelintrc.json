@@ -73,5 +73,5 @@
 			}
 		}
 	],
-	"ignoreFiles": ["!**/*", "dist/**/*"]
+	"ignoreFiles": ["!**/*", "dist/**/*", "cms/dist/**/*"]
 }

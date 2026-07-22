@@ -120,7 +120,7 @@
 			"executor": "nx-stylelint:lint",
 			"outputs": ["{options.outputFile}"],
 			"options": {
-				"lintFilePatterns": ["**/*.css"]
+				"lintFilePatterns": ["src/**/*.css"]
 			}
 		},
 		"typecheck": {
