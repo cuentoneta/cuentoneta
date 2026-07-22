@@ -32,6 +32,7 @@ import {
 	AuthorsQueryResult,
 	BlockContent,
 	LandingPageContentQueryResult,
+	LiteraryWorkBySlugQueryResult,
 	RotatingContentQueryResult,
 	StoriesByAuthorSlugQueryResult,
 	StoriesBySlugsQueryResult,
@@ -147,6 +148,7 @@ type ResourcesSubQuery = (
 	| NonNullable<StoryBySlugQueryResult>
 	| NonNullable<StoryBySlugQueryResult>['author']
 	| NonNullable<StorylistQueryResult>['stories'][0]
+	| NonNullable<LiteraryWorkBySlugQueryResult>
 	| StoriesByAuthorSlugQueryResult[0]
 )['resources'];
 export function mapResources(resources: ResourcesSubQuery): Resource[] {
@@ -168,7 +170,8 @@ export function mapResources(resources: ResourcesSubQuery): Resource[] {
 type TagsSubQuery =
 	| NonNullable<StoryBySlugQueryResult>['tags']
 	| NonNullable<AuthorBySlugQueryResult>['tags']
-	| NonNullable<StorylistTeasersQueryResult>[0]['tags'];
+	| NonNullable<StorylistTeasersQueryResult>[0]['tags']
+	| NonNullable<LiteraryWorkBySlugQueryResult>['tags'];
 export function mapTags(tags: TagsSubQuery): Tag[] {
 	return tags.map((tag) => ({
 		...tag,
