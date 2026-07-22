@@ -53,7 +53,8 @@ describe('StorylistNavigationFrameComponent', () => {
 		const view = await setup();
 		view.detectChanges();
 		expect(screen.getByText(storylistMock.stories[0].title)).toBeInTheDocument();
-		expect(screen.getByText(storylistMock.stories[0].author.name)).toBeInTheDocument();
+		// Las obras del corpus Onoff comparten autor, así que el nombre aparece una vez por historia.
+		expect(screen.getAllByText(storylistMock.stories[0].author.name).length).toBeGreaterThan(0);
 	});
 
 	test('should not fetch navigation teasers when navigationSlug is empty', async () => {

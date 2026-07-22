@@ -25,8 +25,8 @@ export default class AboutComponent {
 		GITHUB_CONTRIBUTORS: 'https://github.com/rolivencia/cuentoneta/tree/master#contribuyentes',
 	};
 
-	private metaTagsDirective = inject(HeadMetadataDirective);
-	private contributorService = inject(ContributorApi);
+	private readonly metaTagsDirective = inject(HeadMetadataDirective);
+	private readonly contributorService = inject(ContributorApi);
 
 	// Ruta Server + `noindex, nofollow`: se maneja con carga progresiva.
 	private readonly contributorsResource = progressiveRxResource({

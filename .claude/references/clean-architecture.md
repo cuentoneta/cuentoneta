@@ -33,7 +33,7 @@ Construir sistemas **mantenibles, testeables e independientes** de los detalles 
 
 - Las reglas de negocio se testean sin UI, sin Sanity y sin servidor web.
 - Los tipos de dominio son objetos planos sin dependencias de framework.
-- Los services se testean sustituyendo el repository por un doble en memoria (`InMemory*`, ver más abajo): ver los `*.service.spec.ts` existentes (`content.service.spec.ts`, `sitemap.service.spec.ts`).
+- Los services se testean sustituyendo el repository por un doble (nombrado por comportamiento — `Stub*`/`Fake*`, ver más abajo): ver los `*.service.spec.ts` existentes (`content.service.spec.ts`, `sitemap.service.spec.ts`).
 
 ### Cruce de fronteras
 
@@ -78,9 +78,19 @@ Angular **signals-first** (sin NgRx). Los componentes y servicios consumen **mod
 
 ## Qualified Implementation (convención de nombres)
 
-La interfaz lleva el **nombre limpio** (la responsabilidad), y la **implementación** lleva un **prefijo de tecnología/propósito**. El doble de test es siempre `InMemory*` — **nunca `Mock*`**.
+La interfaz lleva el **nombre limpio** (la responsabilidad), y la **implementación** lleva un **prefijo de tecnología/propósito** (`Sanity*`, `Http*`).
 
-**Regla del prefijo `I`:** la interfaz **no** lleva prefijo `I` (no `IStoryRepository`). La única excepción es una **colisión** con una clase del mismo nombre que deba coexistir; recién ahí se admite `I` para desambiguar.
+El **doble de test** se nombra por lo que **es**, no con el término vago `Mock*`:
+
+- **`Stub*`** — devuelve valores fijos e ignora la entrada. Es el caso de los API providers del front: `StubStoryApi.getBySlug()` devuelve siempre el mismo `storyMock`, sin mirar el slug. No hay nada "en memoria" que consultar, así que llamarlo `InMemory*` prometería una implementación que no existe.
+- **`Fake*`** — la **categoría**: una implementación real con un atajo (sí ejecuta lógica de verdad, pero se salta la dependencia costosa o externa). Se califica por lo que sustituye:
+  - **`InMemory*`** — sustituye **almacenamiento**: un repository/DB real reemplazado por una lista en memoria. `InMemoryStoryRepository` guarda datos reales y los consulta con lógica real, solo que sin Sanity de por medio.
+  - **`Controllable*`** (o `Static*`, según el mecanismo) — sustituye un **entorno** cuyo input el test necesita fijar (viewport, reloj, random, geolocalización). `ControllableLayoutService` es el ejemplo: no reemplaza un almacén de datos, fija el viewport que el real (`WindowLayoutService`) leería de `window`. "En memoria" no distingue nada acá — todo objeto guarda su estado en memoria; lo que importa es que el input lo fija el test, no el entorno real.
+- **`Spy*`** — registra las llamadas recibidas, cuando el test las inspecciona.
+
+El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiMock()`: ahí "mock" nombra genéricamente al proveedor del doble, no reclama una categoría de la taxonomía.
+
+**Regla del prefijo `I`:** la interfaz **nunca** lleva prefijo `I` (no `IStoryRepository`), sin excepciones. Si una clase necesitara el mismo nombre que la interfaz, el problema es el **nombre de la clase**, no el de la interfaz: la implementación se califica (`Sanity*`, `Http*`, `InMemory*`), o directamente no se declara la clase — ver el caso de los modelos de dominio en [`domain-model.md`](domain-model.md).
 
 ### Backend
 
@@ -92,31 +102,35 @@ La interfaz lleva el **nombre limpio** (la responsabilidad), y la **implementaci
 | Service (impl. única)    | `StoryService`           | `StoryService` (mismo nombre) | `InMemoryStoryService`        |
 
 - Prefijo **`Sanity*`** para implementaciones de repository respaldadas por Sanity/GROQ.
-- Prefijo **`InMemory*`** para **todos** los dobles de test (jamás `Mock*`).
+- El doble se nombra por su comportamiento (`Stub*` / `Fake*` — `InMemory*` para almacenamiento — / `Spy*`), **jamás `Mock*`**. Un repository de test con datos cargados en memoria sí es un `InMemory*Repository` (un fake de almacenamiento); uno que devuelve una lista fija es un `Stub*Repository`.
 - Los services de implementación única **conservan el nombre de la interfaz** (sin prefijo, sin sufijo `Impl`).
 
-> Nota sobre el estado actual: hoy los módulos backend exponen funciones (`getStoryBySlug`, `fetchStories`) más que clases con interfaz explícita. La convención de arriba rige al introducir abstracciones de repository/service o sus dobles de test, y es la dirección a la que tienden los `*.service.spec.ts`.
+> Nota sobre el estado actual: hoy los módulos backend exponen funciones (`getStoryBySlug`, `fetchStories`) más que clases con interfaz explícita, así que **los nombres de esta tabla son ilustrativos de la convención, no símbolos existentes** — las clases llegan con #1503. La convención rige al introducir abstracciones de repository/service o sus dobles de test, y es la dirección a la que tienden los `*.service.spec.ts`.
 
 ### Frontend
 
-| Rol               | Interfaz + token (`InjectionToken`) | Implementación     | Doble de test          |
-| ----------------- | ----------------------------------- | ------------------ | ---------------------- |
-| API de stories    | `StoryApi`                          | `HttpStoryApi`     | `InMemoryStoryApi`     |
-| API de autores    | `AuthorApi`                         | `HttpAuthorApi`    | `InMemoryAuthorApi`    |
-| API de storylists | `StorylistApi`                      | `HttpStorylistApi` | `InMemoryStorylistApi` |
+| Rol                   | Interfaz + token (`InjectionToken`) | Implementación        | Doble de test               |
+| --------------------- | ----------------------------------- | --------------------- | --------------------------- |
+| API de stories        | `StoryApi`                          | `HttpStoryApi`        | `StubStoryApi`              |
+| API de autores        | `AuthorApi`                         | `HttpAuthorApi`       | `StubAuthorApi`             |
+| API de storylists     | `StorylistApi`                      | `HttpStorylistApi`    | `StubStorylistApi`          |
+| Service (impl. única) | `LayoutService` (token homónimo)    | `WindowLayoutService` | `ControllableLayoutService` |
+
+> Los dobles de API son **`Stub*`** (devuelven canned, ignoran la entrada); el de `LayoutService` es un **`Fake*` de entorno**, calificado `Controllable*` porque el viewport lo fija el test (`simulateViewport()`), no `window` como en el real (`WindowLayoutService`). No es `InMemory*`: no sustituye almacenamiento, sustituye el navegador. La diferencia no es de capa sino de qué sustituye el doble — ver la taxonomía de arriba.
 
 - Prefijo **`Http*`** para implementaciones de servicios de API basadas en HTTP.
+- Un service **con doble de test** usa el par interfaz + `InjectionToken` homónimo, igual que los API providers: real y doble son dos implementaciones intercambiables del mismo contrato. `LayoutService` es el caso — interfaz + token `LayoutService`, real `WindowLayoutService` (prefijo de mecanismo), doble `ControllableLayoutService` (`layout.mock.ts`). Un service de **implementación única sin doble** (`NavigationFrameService`, `SchemaOrgService`) no necesita ni interfaz ni token: se inyecta la clase directamente.
 - Los tokens son `InjectionToken` planos (sin `providedIn`/`factory`), cableados vía `provide<X>Api()` (real) y `provide<X>ApiMock()` (doble) con `makeEnvironmentProviders`.
 - **Archivos (3 por API provider):**
   - **`<dominio>-api.interface.ts`** — la interfaz `<X>Api` + el `InjectionToken`. El sufijo **`-api`** distingue el archivo de una interfaz del **modelo de dominio**: `author-api.interface.ts` exporta `AuthorApi`, no una interfaz del agregado `Author`.
   - `<dominio>.provider.ts` — `Http<X>Api implements <X>Api` + `provide<X>Api()`.
-  - `<dominio>.mock.ts` — `InMemory<X>Api` + `provide<X>ApiMock()`.
+  - `<dominio>.mock.ts` — `Stub<X>Api` (los API providers devuelven canned) + `provide<X>ApiMock()`.
 
 **Resumen de reglas:**
 
-- Interfaz sin prefijo `I` (salvo colisión con clase homónima).
+- Interfaz sin prefijo `I`, sin excepciones.
 - `Sanity*` para repositories sobre Sanity/GROQ; `Http*` para API services del front.
-- `InMemory*` para todo doble de test — nunca `Mock*`.
+- Doble de test nombrado por comportamiento: `Stub*` (canned), `Fake*` (implementación real con un atajo — `InMemory*` para almacenamiento, `Controllable*` para entorno), `Spy*` (registra) — nunca `Mock*`.
 - Servicio de implementación única → conserva el nombre de la interfaz.
 
 ---

@@ -14,11 +14,10 @@ on:
 
 jobs:
   setup:
-    name: 'Setup and dependencies'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
 
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v6.0.9
@@ -154,6 +153,31 @@ jobs:
         run: bash .github/scripts/nx-run.sh nx eslint:lint
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+
+  check-agents:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Select pnpm as package manager
+        uses: pnpm/action-setup@v6.0.9
+        with:
+          version: 10.12.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: 22.22.3
+
+      - name: Download workspace artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: workspace
+
+      - name: Unpack workspace
+        run: tar -xf workspace.tar
+
+      - name: Validar el frontmatter de .claude/agents/
+        run: pnpm check:agents
 
   stylelint:
     needs: setup
@@ -376,7 +400,6 @@ jobs:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
   studio-build:
-    name: 'Studio build (sanity build)'
     runs-on: ubuntu-latest
     # Checkout propio, sin `needs: setup`: cms/ es un proyecto pnpm aparte (lockfile
     # propio, fuera del workspace de la raíz) y además referencia el árbol `src/` de la
@@ -384,7 +407,7 @@ jobs:
     # no instala cms/node_modules, así que reusarlo no ahorra nada.
     steps:
       - name: Checkout
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
 
       - name: Select pnpm as package manager
         uses: pnpm/action-setup@v6.0.9

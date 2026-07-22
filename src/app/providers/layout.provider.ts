@@ -1,4 +1,12 @@
-import { inject, Injectable, PLATFORM_ID, signal, WritableSignal } from '@angular/core';
+import {
+	EnvironmentProviders,
+	inject,
+	Injectable,
+	makeEnvironmentProviders,
+	PLATFORM_ID,
+	signal,
+	type WritableSignal,
+} from '@angular/core';
 import { WINDOW } from './window';
 import {
 	combineLatest,
@@ -11,25 +19,21 @@ import {
 	startWith,
 	throttleTime,
 } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
-import { Viewport, VIEWPORT_WIDTHS_NUMERIC } from '@utils/screen.utils';
-
-export const Direction = Object.freeze({
-	Up: 'Up',
-	Down: 'Down',
-});
+import { Viewport, VIEWPORT_WIDTHS_NUMERIC, compareViewports } from '@utils/screen.utils';
+import { Direction, LayoutService } from './layout.interface';
 
 @Injectable({
 	providedIn: 'root',
 })
-export class LayoutService {
-	private window = inject(WINDOW);
-	private platformId = inject(PLATFORM_ID);
+export class WindowLayoutService implements LayoutService {
+	private readonly window = inject(WINDOW);
+	private readonly platformId = inject(PLATFORM_ID);
 
 	private readonly viewport: WritableSignal<Viewport> = signal('xl');
 
-	private _userHasScrolled$ = fromEvent(this.window, 'scroll').pipe(
+	private readonly _userHasScrolled$ = fromEvent(this.window, 'scroll').pipe(
 		takeUntilDestroyed(),
 		throttleTime(25),
 		map(() => this.window?.scrollY),
@@ -44,10 +48,12 @@ export class LayoutService {
 	 * o se recalcula el tamaño de pantalla asignado al navegador en el dispositivo.
 	 * @private
 	 */
-	private _viewportHasChanged$ = merge(
+	private readonly _viewportHasChanged$ = merge(
 		fromEvent(this.window, 'resize').pipe(startWith(null)),
 		fromEvent(this.window, 'orientationchange').pipe(startWith(null)),
 	).pipe(takeUntilDestroyed(), throttleTime(100));
+
+	public readonly isHeaderVisible = toSignal(this.isHeaderVisible$, { initialValue: true });
 
 	public get userHasScrolled$() {
 		return this._userHasScrolled$;
@@ -57,7 +63,7 @@ export class LayoutService {
 		return this._viewportHasChanged$;
 	}
 
-	public get isHeaderVisible$() {
+	private get isHeaderVisible$() {
 		return combineLatest([this.viewportHasChanged$, this.userHasScrolled$]).pipe(
 			map(([hasChanged, direction]) => {
 				if (hasChanged) {
@@ -87,7 +93,7 @@ export class LayoutService {
 		return isPlatformServer(this.platformId);
 	}
 
-	public setViewport() {
+	public setViewport(): void {
 		// Para SSR, siempre devolver md dado que no se puede acceder a window
 		if (this.isPlatformServer()) {
 			this.viewport.set('md');
@@ -105,50 +111,30 @@ export class LayoutService {
 		const match = breakpoints.find((bp) => this.window.innerWidth <= bp.maxWidth);
 		const currentViewport = (match?.viewport || 'md') as Viewport;
 
-		// Actualizar el signal con el viewport actual
 		this.viewport.set(currentViewport);
 	}
 
 	/**
 	 * Chequea si el viewport actual es mayor al viewport de test
-	 * @param viewport
 	 * @param test
 	 */
 	public biggerThan(test: Viewport): boolean {
-		const currentWidth = VIEWPORT_WIDTHS_NUMERIC[this.viewport()];
-		const testWidth = VIEWPORT_WIDTHS_NUMERIC[test];
-
-		if (currentWidth === undefined || testWidth === undefined) {
-			throw new Error(`Viewport inválido: ${test}`);
-		}
-
-		return currentWidth > testWidth;
+		return compareViewports(this.viewport(), test) > 0;
 	}
 
 	/**
 	 * Chequea si el viewport actual es menor al viewport de test
-	 * @param viewport
 	 * @param test
 	 */
 	public smallerThan(test: Viewport): boolean {
-		const currentWidth = VIEWPORT_WIDTHS_NUMERIC[this.viewport()];
-		const testWidth = VIEWPORT_WIDTHS_NUMERIC[test];
-
-		if (currentWidth === undefined || testWidth === undefined) {
-			throw new Error(`Viewport inválido: ${test}`);
-		}
-
-		return currentWidth < testWidth;
+		return compareViewports(this.viewport(), test) < 0;
 	}
 
 	public isActual(test: Viewport): boolean {
-		const currentWidth = VIEWPORT_WIDTHS_NUMERIC[this.viewport()];
-		const testWidth = VIEWPORT_WIDTHS_NUMERIC[test];
-
-		if (currentWidth === undefined || testWidth === undefined) {
-			throw new Error(`Viewport inválido: ${test}`);
-		}
-
-		return currentWidth === testWidth;
+		return compareViewports(this.viewport(), test) === 0;
 	}
+}
+
+export function provideLayout(): EnvironmentProviders {
+	return makeEnvironmentProviders([{ provide: LayoutService, useExisting: WindowLayoutService }]);
 }

@@ -1,7 +1,7 @@
 {
 	"name": "@cuentoneta/app",
 	"type": "module",
-	"version": "2.8.6",
+	"version": "2.8.7",
 	"imports": {
 		"#tailwind-theme": "./src/tailwind.css"
 	},
@@ -21,6 +21,7 @@
 		"storybook": "nx run @cuentoneta/app:storybook",
 		"storybook:build": "nx run @cuentoneta/app:build-storybook",
 		"lint": "nx eslint:lint --skip-nx-cache",
+		"check:agents": "node --import tsx ./scripts/check-claude-docs.ts",
 		"stylelint": "nx stylelint @cuentoneta/app",
 		"test": "nx test --skip-nx-cache",
 		"typecheck": "nx typecheck --skip-nx-cache",

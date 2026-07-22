@@ -1,6 +1,6 @@
 ---
 name: documentation-writer
-description: Escribe o actualiza documentación del proyecto: guías de `docs/`, `CLAUDE.md` y referencias de `.claude/references/`. Usalo en fase de mantenimiento o cuando se detecten huecos de documentación.
+description: Escribe o actualiza documentación del proyecto — guías de `docs/`, `CLAUDE.md` y referencias de `.claude/references/`. Usalo en fase de mantenimiento, o cuando un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología de dominio y hay que correr el scan de impacto en documentación.
 tools: Read, Grep, Glob, Write, WebSearch
 model: sonnet
 ---
@@ -64,7 +64,7 @@ Antes de escribir, leé las referencias relevantes para tener el contexto del pr
 ### Cross-referencing
 
 - Enlazar a documentos relacionados con rutas relativas.
-- Al referenciar secciones de `CLAUDE.md`, usar anclas: `[Nombre de sección](../CLAUDE.md#nombre-de-seccion)`.
+- Al referenciar secciones de `CLAUDE.md` desde `.claude/agents/` o `.claude/references/`, el path relativo sube **dos** niveles y el ancla debe corresponder a un heading real: `[Restricciones duras](../../CLAUDE.md#restricciones-duras-hard-constraints)`.
 - Al actualizar una referencia, verificar si hay que actualizar los punteros de `CLAUDE.md`.
 - Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología de dominio, actualizar en el **mismo** commit/PR toda la documentación que los referencie (`docs/`, `CLAUDE.md`, `.claude/references/`).
 
@@ -79,23 +79,7 @@ Antes de escribir, leé las referencias relevantes para tener el contexto del pr
 
 ## Catálogo de referencias (`.claude/references/`)
 
-Este es el set **válido y completo**; no inventes archivos que no existan.
-
-| Referencia                 | Contenido                                                               |
-| -------------------------- | ----------------------------------------------------------------------- |
-| `coding-agent-policies.md` | Políticas de colaboración de agentes (carga obligatoria al inicio)      |
-| `solid.md`                 | Principios SOLID                                                        |
-| `cupid.md`                 | Propiedades CUPID                                                       |
-| `guiding-principles.md`    | YAGNI / KISS + disciplina de operadores RxJS                            |
-| `cross-reference.md`       | Cómo se relacionan SOLID / CUPID / Clean Architecture / DDD             |
-| `clean-architecture.md`    | Capas, regla de dependencia, "Qualified Implementation"                 |
-| `domain-model.md`          | DDD estratégico — Story/Author/Storylist                                |
-| `angular-components.md`    | Componentes, effects, DI/providers, control flow                        |
-| `angular-state.md`         | Estado signals-first sin NgRx                                           |
-| `testing.md`               | Vitest + Angular Testing Library + `@test-utils` + Storybook            |
-| `sanity-acl.md`            | GROQ → repository → mapper → modelo de dominio                          |
-| `typescript.md`            | Micro-convenciones TS/JS (`Object.freeze`, type-only, duration strings) |
-| `maintainability.md`       | Mantenibilidad y simplificación estructural                             |
+El catálogo completo y actualizado — con la descripción de cada archivo — vive en la tabla "Catálogo completo" de [Carga estratificada de referencias](../../CLAUDE.md#carga-estratificada-de-referencias) en `CLAUDE.md`. No lo transcribas acá: consultalo ahí antes de escribir, y no inventes archivos que no figuren en esa tabla.
 
 ## Formato de salida
 

@@ -20,6 +20,14 @@ const lifecycleHooks = [
 	['AfterViewChecked', 'Usá computed() o effect() en lugar de AfterViewChecked.'],
 ];
 
+// Cubren el hueco que dejan las otras dos reglas de `readonly`: `@angular-eslint/prefer-signals` solo
+// alcanza propiedades que **son** signals —por eso no ve `output()`, que devuelve un OutputEmitterRef—
+// y `@typescript-eslint/prefer-readonly` solo alcanza las `private`.
+const readonlyFactories = ['effect', 'inject', 'output'];
+
+const readonlyFactoryMessage =
+	'Las dependencias inyectadas, los effects y los outputs se declaran `readonly` (la referencia no se reasigna) — ver angular-components.md.';
+
 const commonRestrictedSyntax = [
 	{
 		selector: 'MemberExpression[object.name="module"][property.name="exports"]',
@@ -40,6 +48,10 @@ const commonRestrictedSyntax = [
 	{
 		selector: 'PropertyDefinition[static=true]',
 		message: 'Las propiedades estáticas están prohibidas. Usá un servicio singleton (providedIn: root).',
+	},
+	{
+		selector: `PropertyDefinition[readonly!=true][value.callee.name=/^(${readonlyFactories.join('|')})$/]`,
+		message: readonlyFactoryMessage,
 	},
 ];
 
@@ -67,7 +79,8 @@ const viRestrictedSyntax = [
 	})),
 	{
 		selector: 'CallExpression[callee.object.name="vi"][callee.property.name="mock"]',
-		message: 'vi.mock() está prohibido. Usá inyección de dependencias y dobles InMemory* en su lugar.',
+		message:
+			'vi.mock() está prohibido. Usá inyección de dependencias y dobles de test (Stub*/Fake*/InMemory*/Spy*) en su lugar.',
 	},
 	{
 		selector: 'CallExpression[callee.object.name="vi"][callee.property.name="mocked"]',
@@ -231,6 +244,7 @@ export default [
 		},
 		rules: {
 			'@angular-eslint/no-uncalled-signals': 'error',
+			'@typescript-eslint/prefer-readonly': 'error',
 		},
 	},
 	{

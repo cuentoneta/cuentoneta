@@ -23,10 +23,10 @@ import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
 	styles: ``,
 })
 export default class AuthorsComponent {
-	private authorService = inject(AuthorApi);
-	private metaTagsDirective = inject(HeadMetadataDirective);
+	private readonly authorService = inject(AuthorApi);
+	private readonly metaTagsDirective = inject(HeadMetadataDirective);
 
-	private authorsResource = ssrBlockingRxResource({
+	private readonly authorsResource = ssrBlockingRxResource({
 		stream: () => this.authorService.getAll(),
 		defaultValue: [],
 	});

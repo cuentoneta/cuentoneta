@@ -153,9 +153,9 @@ export default class AuthorComponent implements AuthorHost {
 	public readonly activeTab = input<'stories' | 'about'>('stories');
 
 	// Providers
-	private authorService = inject(AuthorApi);
-	private storyService = inject(StoryApi);
-	private router = inject(Router);
+	private readonly authorService = inject(AuthorApi);
+	private readonly storyService = inject(StoryApi);
+	private readonly router = inject(Router);
 
 	// Recursos
 	protected readonly authorResource = ssrBlockingRxResource({

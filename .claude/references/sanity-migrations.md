@@ -27,13 +27,15 @@ Desde `cms/` (la CLI toma `projectId`/`dataset` de las env `SANITY_STUDIO_*` ví
 
 ```bash
 # Listar migraciones disponibles
-pnpm sanity migration list
+pnpm exec sanity migration list
 
 # Dry-run (por defecto): muestra las mutaciones sin aplicarlas
-pnpm sanity migration run <slug>
+pnpm exec sanity migration run <slug>
 
 # Aplicar de verdad
-pnpm sanity migration run <slug> --no-dry-run
+pnpm exec sanity migration run <slug> --no-dry-run
 ```
 
-Correr siempre el dry-run antes de aplicar. Para un dataset u objetivo distinto usar los flags `--dataset` / `--project` de la CLI.
+> `cms/package.json` no define un script `sanity`: la forma **`pnpm exec`** invoca el binario de `node_modules/.bin` de manera explícita. (`pnpm sanity …` también funciona hoy, porque pnpm cae al binario cuando no encuentra un script homónimo, pero esa resolución dejaría de aplicar si algún día se agregara un script con ese nombre.)
+
+Correr siempre el dry-run antes de aplicar. Para un dataset u objetivo distinto usar los flags `--dataset` / `--project` de la CLI, como hace el skill [`release-workflow`](../skills/release-workflow/SKILL.md) al migrar contra producción.

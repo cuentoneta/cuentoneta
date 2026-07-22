@@ -74,8 +74,8 @@ import { AppRoutes } from '../../app.routes';
 })
 export default class StoriesComponent {
 	protected readonly appRoutes = AppRoutes;
-	private storyService = inject(StoryApi);
-	private metaTagsDirective = inject(HeadMetadataDirective);
+	private readonly storyService = inject(StoryApi);
+	private readonly metaTagsDirective = inject(HeadMetadataDirective);
 
 	// TODO: Implementar tamaño de página variable
 	private readonly storiesResource = ssrBlockingRxResource({

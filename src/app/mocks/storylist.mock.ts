@@ -1,13 +1,14 @@
 import { Storylist, StorylistStoriesNavigationTeasers, StorylistTeaser } from '@models/storylist.model';
 import { tagMock } from './tag.mocks';
 import { storyNavigationTeaserWithAuthor } from './story.mock';
+import { onoffStoryTeasersMock } from './onoff-story-teasers.mock';
 
 // Colección — la obsesión de Onoff por el orden y el tiempo (Geometría, el desvelo). Proyección completa (Storylist).
 export const storylistMock: Storylist = {
 	_id: 'onoff-geometrias-del-desvelo',
 	title: 'Geometrías del desvelo',
 	slug: 'geometrias-del-desvelo',
-	count: 1,
+	count: 3,
 	media: [],
 	tabs: [],
 	description: [
@@ -34,7 +35,7 @@ export const storylistMock: Storylist = {
 	config: {
 		showAuthors: true,
 	},
-	stories: [storyNavigationTeaserWithAuthor],
+	stories: onoffStoryTeasersMock.slice(0, 3),
 };
 
 // Colección — la obsesión de Onoff por el orden y el tiempo (Geometría, el desvelo). Teaser con portada editorial propia → imagery representative.

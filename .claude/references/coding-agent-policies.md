@@ -52,7 +52,7 @@ Tampoco incluyas esas frases como **cláusulas condicionales** en recomendacione
 - Si una opción más liviana realmente vale la pena mencionarla, framéala como "la opción de menor costo, asumiendo que aceptamos X pérdida de rigor" —nunca como "está bien si sos solo vos".
 - Aplicá esto en code reviews, estructuración de planes, estrategia de PRs, decisiones de refactor, decisiones de cobertura de tests, decisiones de documentación y cualquier otro lugar donde el agente pueda tentarse de optimizar para el flujo en solitario.
 - Esta política es una regla dura, no una preferencia. Las personas revisoras pueden citar esta sección para bloquear un PR.
-- Las convenciones específicas de commits y PRs están en [`CLAUDE.md`](../../CLAUDE.md) (sección "Convenciones de Git"); esta sección gobierna el **framing** de las recomendaciones que tocan esas convenciones, no las convenciones en sí.
+- Las convenciones específicas de commits y PRs están en [`CLAUDE.md` → Git](../../CLAUDE.md#git) (bajo "Convenciones del repo"); esta sección gobierna el **framing** de las recomendaciones que tocan esas convenciones, no las convenciones en sí.
 
 ### Framing bueno vs. malo
 
@@ -78,7 +78,17 @@ Prohibido. Los tests existen por algo; "chico" no es una medida de riesgo. Hasta
 
 ### "Borremos el archivo total está gitignoreado"
 
-Prohibido para artefactos intencionalmente autorados aunque estén gitignoreados —por ejemplo salidas regenerables bajo `tools/` (como `tools/author-bios/` o `tools/story-summaries/`), planes, notas de review o mapas de issues. No borres ese tipo de archivos sin instrucción explícita del usuario, sin importar su estado de gitignore. Antes de borrar/sobrescribir un artefacto generado, verificá que sea **re-generable** (ver "Convenciones de Git" en `CLAUDE.md`). Para archivos fuera de esas rutas, usá criterio: si la existencia del archivo fue pedida o referenciada explícitamente por el usuario en algún archivo commiteado (`CLAUDE.md`, `docs/`, etc.), no lo borres sin confirmar.
+Prohibido para artefactos intencionalmente autorados aunque estén gitignoreados —por ejemplo salidas regenerables bajo `tools/` (como `tools/author-bios/`), planes, notas de review o mapas de issues. No borres ese tipo de archivos sin instrucción explícita del usuario, sin importar su estado de gitignore. Antes de borrar/sobrescribir un artefacto generado, verificá que sea **re-generable**: que exista en el repo el script o comando que lo produce y que puedas nombrarlo (p. ej. las salidas de `tools/author-bios/` las regenera `export-authors-bios.ts`, con el comando documentado en [`scripts/audit/README.md`](../../scripts/audit/README.md)). Si no podés señalar cómo se regenera, tratalo como **no** re-generable y no lo toques. Para archivos fuera de esas rutas, usá criterio: si la existencia del archivo fue pedida o referenciada explícitamente por el usuario en algún archivo commiteado (`CLAUDE.md`, `docs/`, etc.), no lo borres sin confirmar.
+
+### "Uso `git add -A` para no ir listando archivos uno por uno"
+
+Prohibido. **Stagear siempre rutas explícitas**: `git add <path> <path>`, nunca `git add -A`, `git add .` ni `git commit -a`.
+
+El working tree de este repo acumula artefactos no versionados que no son basura: `workspace/` (planes y notas de review), salidas bajo `tools/`, worktrees en `.claude/worktrees/`, archivos generados como `src/app/environments/environment.ts`. Un `-A` los barre sin que nadie los mire, y el commit se pushea antes de que se note. Ya pasó en el PR #1576.
+
+El argumento de que "el `.gitignore` los cubre" no alcanza: la lista de ignorados cambia, un artefacto nuevo puede no estar contemplado todavía, y el momento de descubrirlo no es después del push. Listar las rutas obliga a mirar qué entra, que es justamente el control que se busca.
+
+Si el cambio tocó muchos archivos, `git status --short` y armar la lista es barato comparado con revertir un commit publicado.
 
 ### "La code review puede esperar hasta después de abrir el PR"
 
@@ -90,7 +100,7 @@ Prohibido. Si un edge case se puede enumerar en un comentario, se puede enumerar
 
 ### "El componente es simple, no hace falta la story de Storybook"
 
-Prohibido. Todo componente nuevo en `src/app/components/` lleva su `*.stories.ts` (ver "Testing" en `CLAUDE.md`). La respuesta siempre es escribir la story.
+Prohibido. Todo componente nuevo en `src/app/components/` lleva su `*.stories.ts` (los de página, `src/app/pages/`, están exentos — ver [`testing.md`](testing.md)). La respuesta siempre es escribir la story.
 
 ### "El estado de carga ya se ve, no hace falta una story intercambiable"
 
@@ -195,7 +205,7 @@ El principio: **el documento es canónico; la memoria es refuerzo**. Si los dos 
 
 ### Gates de CI
 
-Independientemente de lo anterior, todo PR debe dejar verdes los gates de CI definidos en `CLAUDE.md`: `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`, `studio-build`. Que un gate sea "molesto" o "lento" no es justificación para saltearlo o deshabilitarlo.
+Independientemente de lo anterior, todo PR debe dejar verdes los gates de CI definidos en la sección [Comandos comunes](../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**). Que un gate sea "molesto" o "lento" no es justificación para saltearlo o deshabilitarlo.
 
 ### Enmiendas
 
@@ -203,4 +213,4 @@ Proponé cambios vía issue en `cuentoneta/cuentoneta`. Las enmiendas requieren 
 
 ---
 
-_Última actualización: 2026-07-19. Versión inicial en #1495 (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) agregada en #1499 y ampliada en #1542 (visibilidad de API y reemplazos canónicos); regla de story intercambiable para estados de carga agregada en #1581; regla de child issues reales en epics agregada en #1843._
+_Última actualización: 2026-07-21. Versión inicial en #1495 (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) agregada en #1499 y ampliada en #1542 (visibilidad de API y reemplazos canónicos); regla de story intercambiable para estados de carga agregada en #1581; regla de child issues reales en epics agregada en #1843; "Gates de CI" convertida a remisión a CLAUDE.md en #1844; punteros a secciones de CLAUDE.md corregidos a headings reales en #1846; prohibición de `git add -A` agregada tras un incidente en el flujo de #1882._

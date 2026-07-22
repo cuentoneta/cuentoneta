@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { Contributor, ContributorArea } from '@models/contributor.model';
 import { ContributorApi } from './contributor-api.interface';
 
-export class InMemoryContributorApi implements ContributorApi {
+export class StubContributorApi implements ContributorApi {
 	public getAll(): Observable<Contributor[]> {
 		return of([]);
 	}
@@ -16,6 +16,6 @@ export class InMemoryContributorApi implements ContributorApi {
 	}
 }
 
-export function provideContributorApiMock(api: ContributorApi = new InMemoryContributorApi()): EnvironmentProviders {
+export function provideContributorApiMock(api: ContributorApi = new StubContributorApi()): EnvironmentProviders {
 	return makeEnvironmentProviders([{ provide: ContributorApi, useValue: api }]);
 }

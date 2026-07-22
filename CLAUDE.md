@@ -48,6 +48,7 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 | `pnpm dev`                                | Dev server (SSR) en desarrollo                                                                                                       |
 | `pnpm build`                              | Build de producción                                                                                                                  |
 | `pnpm lint`                               | ESLint sobre `src` y `e2e`                                                                                                           |
+| `pnpm check:agents`                       | Valida la integridad de `.claude/` (frontmatter de agentes + anclas y rutas de las referencias) — reproduce el gate `check-agents`   |
 | `pnpm stylelint`                          | Stylelint sobre CSS                                                                                                                  |
 | `pnpm typecheck`                          | Type-check estricto (`tsc --noEmit`)                                                                                                 |
 | `pnpm test`                               | Tests unitarios (Vitest)                                                                                                             |
@@ -59,9 +60,11 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 | `pnpm sanity:build`                       | Build del Studio (`sanity build`) — reproduce en local el gate de CI `studio-build`                                                  |
 | `pnpm sanity:extract-schema`              | Extrae el schema de Sanity                                                                                                           |
 | `pnpm sanity:run-typegen-generator`       | Genera tipos a partir del schema                                                                                                     |
-| `pnpm sanity migration run <slug>`        | Corre una migración de datos (desde `cms/`; dry-run por defecto) → [`sanity-migrations.md`](.claude/references/sanity-migrations.md) |
+| `pnpm exec sanity migration run <slug>`   | Corre una migración de datos (desde `cms/`; dry-run por defecto) → [`sanity-migrations.md`](.claude/references/sanity-migrations.md) |
 
-**Gates de CI** (deben quedar verdes en cada PR): `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`, `studio-build`.
+**Gates de CI** (deben quedar verdes en cada PR): `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`, `studio-build`, `guard-config`, `check-agents`.
+
+> Los diez son **required status checks** de `develop`: GitHub bloquea el merge si alguno queda en rojo. El nombre del gate es el **id del job** en `.github/workflows/` — los jobs no declaran `name:` justamente para que id y context no puedan desincronizarse. `guard-config` solo tiene efecto en PRs desde forks (en PRs del mismo repo pasa en verde sin verificar nada).
 
 > El gate `typecheck` (`pnpm typecheck` → `tsc --noEmit` estricto) cubre el **TS puro** de la app (`src/**`, incluidos `*.spec.ts` y `*.stories.ts`) y `scripts/`. **No** valida plantillas Angular (eso lo hacen `build`/`storybook` vía `ngtsc`) ni el proyecto `cms/`.
 >
@@ -111,8 +114,8 @@ Reglas no negociables. Una violación requiere justificación explícita.
 ### Naming
 
 - Archivos `kebab-case`; clases `PascalCase`; funciones/métodos `camelCase`; constantes globales `SCREAMING_SNAKE_CASE`, locales `camelCase`.
-- Interfaces **sin** prefijo `I` (salvo que coexista con una clase homónima). Convención **Qualified Implementation**: la interfaz tiene el nombre limpio; las implementaciones llevan prefijo de tecnología (`Sanity*`, `Http*`) y los dobles de test son `InMemory*` (**nunca** `Mock*`).
-- **API providers del frontend:** el archivo de la interfaz lleva el sufijo `-api` — `<dominio>-api.interface.ts` (export `<X>Api`) — para distinguirlo de una interfaz del modelo de dominio. La impl y el doble viven en `<dominio>.provider.ts` (`Http<X>Api` + `provide<X>Api()`) y `<dominio>.mock.ts` (`InMemory<X>Api` + `provide<X>ApiMock()`). Ver [`clean-architecture.md`](.claude/references/clean-architecture.md).
+- Interfaces **sin** prefijo `I`, sin excepciones. Convención **Qualified Implementation**: la interfaz tiene el nombre limpio; las implementaciones llevan prefijo de tecnología (`Sanity*`, `Http*`) y los dobles de test se nombran por su comportamiento — `Stub*` (devuelve canned), `Fake*` (implementación real con un atajo; `InMemory*` para lo que sustituye **almacenamiento**, `Controllable*` para lo que sustituye un **entorno**), `Spy*` (registra) — **nunca** `Mock*` → [`clean-architecture.md`](.claude/references/clean-architecture.md).
+- **API providers del frontend:** el archivo de la interfaz lleva el sufijo `-api` — `<dominio>-api.interface.ts` (export `<X>Api`) — para distinguirlo de una interfaz del modelo de dominio. La impl y el doble viven en `<dominio>.provider.ts` (`Http<X>Api` + `provide<X>Api()`) y `<dominio>.mock.ts` (`Stub<X>Api` — devuelve canned — + `provide<X>ApiMock()`). Ver [`clean-architecture.md`](.claude/references/clean-architecture.md).
 
 ### Comentarios
 
@@ -135,6 +138,7 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 
 - **`.mcp.json`** (raíz, versionado): servidores MCP del equipo — **Sanity** (remoto `https://mcp.sanity.io`, OAuth; no requiere token en el archivo), **Figma** (remoto `https://mcp.figma.com/mcp`, OAuth; para desarrollo de componentes a partir del diseño) y **nx** (análisis del workspace). Sin secrets.
 - **`.claude/settings.json`** (versionado): permisos de equipo — `deny` de lectura/escritura/edición de `.env*` en la raíz y en cualquier subdirectorio (`**/.env*`, cubre `./.env` y `./cms/.env`), más bloqueo de su creación por shell (redirecciones `>`/`>>`, `tee`, `touch`, `cp`, `mv`); y una `allow` mínima (gates de CI con `pnpm` + inspección read-only de git/gh).
+- **`.claude/agents/*.md`** (versionado): un `description:` **no puede contener `: `** (dos puntos + espacio) sin comillas — YAML lo lee como un mapping anidado, el frontmatter queda inválido y el agente **no carga, sin emitir ningún error**. Usar un guion (`—`) en su lugar. Lo verifica el gate **`check-agents`** (`pnpm check:agents` → `scripts/check-claude-docs.ts`, que además valida las anclas a `CLAUDE.md` y las rutas citadas en las referencias); el fallo silencioso costó dos agentes caídos (#1874).
 - **`.claude/settings.local.json`** y **`.claude/worktrees/`**: **personales/locales**, gitignoreados. Las allowlists o MCP propios de cada quien van ahí — p. ej. el **Figma Dev Mode** local (`http://127.0.0.1:3845/sse`), que requiere la app de escritorio corriendo y es distinto del servidor remoto de Figma versionado en `.mcp.json`.
 
 ---
@@ -151,6 +155,7 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 | Componentes / plantillas Angular     | `angular-components`, `angular-state`                                                              |
 | Estado / servicios / RxJS            | `angular-state`, `guiding-principles`                                                              |
 | Backend / Sanity / GROQ / mappers    | `sanity-acl`, `clean-architecture`, `domain-model`                                                 |
+| Scripts / migraciones de datos       | `scripts`, `sanity-migrations`                                                                     |
 | Modelo de dominio / DDD              | `domain-model`, `clean-architecture`                                                               |
 | Tests (Vitest / Storybook)           | `testing`                                                                                          |
 | Tipos / constantes / imports (TS/JS) | `typescript`                                                                                       |
@@ -171,5 +176,7 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 | `angular-state.md`         | Estado signals-first sin NgRx (servicios + signals/RxJS)                            |
 | `testing.md`               | Vitest + Angular Testing Library + `@test-utils` + Storybook                        |
 | `sanity-acl.md`            | GROQ → repository → mapper → modelo de dominio (el ACL central)                     |
+| `scripts.md`               | Convención de `scripts/` vs. `scripts/audit/` (auditoría one-off)                   |
+| `sanity-migrations.md`     | Migraciones de datos de Sanity (`cms/migrations/`), no en `scripts/`                |
 | `typescript.md`            | Micro-convenciones TS/JS (`Object.freeze`, type-only, duration strings)             |
 | `maintainability.md`       | Mantenibilidad y simplificación estructural                                         |

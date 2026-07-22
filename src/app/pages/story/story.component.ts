@@ -1,8 +1,7 @@
 // Core
-import { Component, computed, forwardRef, inject, signal, input } from '@angular/core';
+import { Component, computed, forwardRef, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // Router
 import { AppRoutes } from '../../app.routes';
@@ -12,7 +11,7 @@ import { ssrBlockingRxResource } from '@utils/ssr-resource';
 
 // Services
 import { StoryApi } from '../../providers/story-api.interface';
-import { LayoutService } from '../../providers/layout.service';
+import { LayoutService } from '../../providers/layout.interface';
 
 // SEO
 import { StoryMetaTagsDirective } from './story-meta-tags.directive';
@@ -56,7 +55,6 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 	],
 	providers: [
 		provideIcons({ faSolidArrowRightLong }),
-		LayoutService,
 		{ provide: STORY_HOST, useExisting: forwardRef(() => StoryComponent) },
 	],
 	host: { class: 'grid md:grid-rows-[8px_1fr]' },
@@ -71,9 +69,8 @@ export default class StoryComponent implements StoryHost {
 	public readonly navigation = input<'author' | 'storylist'>('author');
 	public readonly navigationSlug = input<string>();
 
-	private storyService = inject(StoryApi);
-	private layoutService = inject(LayoutService);
-	private isHeaderVisible$ = inject(LayoutService).isHeaderVisible$.pipe(takeUntilDestroyed());
+	private readonly storyService = inject(StoryApi);
+	private readonly layoutService = inject(LayoutService);
 
 	// Recursos
 	protected readonly dummyList = Array(10);
@@ -104,15 +101,11 @@ export default class StoryComponent implements StoryHost {
 
 		return { navigation, navigationSlug };
 	});
-	protected readonly headerPosition = signal('top-header-height');
-
-	constructor() {
-		this.isHeaderVisible$.subscribe((isVisible) => {
-			if (this.layoutService.biggerThan('xs')) {
-				this.headerPosition.set('top-header-height');
-				return;
-			}
-			this.headerPosition.set(isVisible ? 'top-header-height' : 'top-0');
-		});
-	}
+	protected readonly headerPosition = computed(() =>
+		this.layoutService.biggerThan('xs')
+			? 'top-header-height'
+			: this.layoutService.isHeaderVisible()
+				? 'top-header-height'
+				: 'top-0',
+	);
 }

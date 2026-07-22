@@ -7,7 +7,7 @@ import { Story, StoryNavigationTeaser, StoryTeaser, StoryTeaserWithAuthor } from
 import { storyMock, storyNavigationTeaserMock, storyTeaserMock, storyTeaserWithAuthorMock } from '@mocks/story.mock';
 import { StoryApi } from './story-api.interface';
 
-export class InMemoryStoryApi implements StoryApi {
+export class StubStoryApi implements StoryApi {
 	public getBySlug(): Observable<Story> {
 		return of(storyMock);
 	}
@@ -25,6 +25,6 @@ export class InMemoryStoryApi implements StoryApi {
 	}
 }
 
-export function provideStoryApiMock(api: StoryApi = new InMemoryStoryApi()): EnvironmentProviders {
+export function provideStoryApiMock(api: StoryApi = new StubStoryApi()): EnvironmentProviders {
 	return makeEnvironmentProviders([{ provide: StoryApi, useValue: api }]);
 }

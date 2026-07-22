@@ -1,12 +1,19 @@
 import { fn, spyOn, type Mock } from '@test-utils';
 import { TestBed } from '@angular/core/testing';
-import { LayoutService, Direction } from './layout.service';
+import { WindowLayoutService } from './layout.provider';
+import { Direction, type LayoutService } from './layout.interface';
 import { WINDOW } from './window';
-import { map, of } from 'rxjs';
+import { map, of, type Observable } from 'rxjs';
 import { Viewport } from '@utils/screen.utils';
 
-describe('LayoutService', () => {
-	let service: LayoutService;
+// `isHeaderVisible$` es privado: es el detalle que alimenta el signal público `isHeaderVisible`. Se
+// accede acá para probar la política de visibilidad del header —la lógica que el signal deriva— sin
+// exponer el observable en el contrato.
+const headerVisibility$ = (svc: WindowLayoutService): Observable<boolean> =>
+	(svc as unknown as { readonly isHeaderVisible$: Observable<boolean> }).isHeaderVisible$;
+
+describe('WindowLayoutService', () => {
+	let service: WindowLayoutService;
 	let mockWindow: {
 		scrollY: number;
 		innerWidth: number;
@@ -31,10 +38,10 @@ describe('LayoutService', () => {
 		};
 
 		TestBed.configureTestingModule({
-			providers: [LayoutService, { provide: WINDOW, useValue: mockWindow }],
+			providers: [WindowLayoutService, { provide: WINDOW, useValue: mockWindow }],
 		});
 
-		service = TestBed.inject(LayoutService);
+		service = TestBed.inject(WindowLayoutService);
 	});
 
 	it('should be created', () => {
@@ -65,13 +72,13 @@ describe('LayoutService', () => {
 			}));
 	});
 
-	describe('isHeaderVisible$', () => {
+	describe('política de visibilidad del header (deriva el signal isHeaderVisible)', () => {
 		it('should emit true when the user scrolls up', () =>
 			new Promise<void>((resolve) => {
 				const scrollEvents = of([1200, 500]).pipe(map(([prev, curr]) => (curr < prev ? Direction.Up : Direction.Down)));
 				spyOn(service, 'userHasScrolled$', 'get').mockReturnValue(scrollEvents);
 
-				service.isHeaderVisible$.subscribe((isVisible) => {
+				headerVisibility$(service).subscribe((isVisible) => {
 					expect(isVisible).toBe(true);
 					resolve();
 				});
@@ -84,7 +91,7 @@ describe('LayoutService', () => {
 				const scrollEvents = of([500, 1000]).pipe(map(([prev, curr]) => (curr < prev ? Direction.Up : Direction.Down)));
 				spyOn(service, 'userHasScrolled$', 'get').mockReturnValue(scrollEvents);
 
-				service.isHeaderVisible$.subscribe((isVisible) => {
+				headerVisibility$(service).subscribe((isVisible) => {
 					expect(isVisible).toBe(false);
 					resolve();
 				});
@@ -97,7 +104,7 @@ describe('LayoutService', () => {
 				const scrollEvents = of([500, 1000]).pipe(map(([prev, curr]) => (curr < prev ? Direction.Up : Direction.Down)));
 				spyOn(service, 'userHasScrolled$', 'get').mockReturnValue(scrollEvents);
 
-				service.isHeaderVisible$.subscribe((isVisible) => {
+				headerVisibility$(service).subscribe((isVisible) => {
 					expect(isVisible).toBe(true);
 					resolve();
 				});
@@ -109,11 +116,17 @@ describe('LayoutService', () => {
 				const scrollEvents = of([500, 1000]).pipe(map(([prev, curr]) => (curr < prev ? Direction.Up : Direction.Down)));
 				spyOn(service, 'userHasScrolled$', 'get').mockReturnValue(scrollEvents);
 
-				service.isHeaderVisible$.subscribe((isVisible) => {
+				headerVisibility$(service).subscribe((isVisible) => {
 					expect(isVisible).toBe(true);
 					resolve();
 				});
 			}));
+
+		it('is visible by default via the signal before any scroll', () => {
+			mockWindow.innerWidth = 500; // xs
+			service.setViewport();
+			expect(service.isHeaderVisible()).toBe(true);
+		});
 
 		describe('biggerThan', () => {
 			it('should return true if the current viewport is larger than the test viewport', () => {
@@ -195,5 +208,16 @@ describe('LayoutService', () => {
 				expect(service.isActual('xl')).toBe(true);
 			});
 		});
+	});
+});
+
+describe('WindowLayoutService — paridad de superficie con el contrato LayoutService', () => {
+	it('mantiene cada miembro público de WindowLayoutService cubierto por la interfaz LayoutService', () => {
+		// Si WindowLayoutService gana un miembro público que LayoutService no declara, `ExtraPublicMembers`
+		// deja de ser `never`, el tipo del literal `true` no calza contra `false` y esta asignación rompe el
+		// typecheck con TS2322 — la señal de divergencia que antes no existía.
+		type ExtraPublicMembers = Exclude<keyof WindowLayoutService, keyof LayoutService>;
+		const parityHolds: ExtraPublicMembers extends never ? true : false = true;
+		expect(parityHolds).toBe(true);
 	});
 });

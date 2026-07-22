@@ -14,7 +14,7 @@ import { StoryApi } from './story-api.interface';
 @Injectable({ providedIn: 'root' })
 export class HttpStoryApi implements StoryApi {
 	private readonly url: ApiUrl = `${environment.apiUrl}${Endpoints.Story}`;
-	private http = inject(HttpClient);
+	private readonly http = inject(HttpClient);
 
 	public getBySlug(slug: string): Observable<Story> {
 		return this.http.get<Story>(`${this.url}/${slug}`);

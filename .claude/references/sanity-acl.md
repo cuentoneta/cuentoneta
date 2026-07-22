@@ -240,8 +240,8 @@ implementaciones intercambiables:
   deterministas sin tocar Sanity.
 
 El service dependería del **puerto** (interfaz), no de la implementación concreta, y la elección se
-resolvería vía un **contenedor de DI**. El directorio **`src/api/di/`** ya existe **vacío** como
-placeholder de esa dirección (#1503). Mientras tanto, rige el patrón de funciones `fetch*()` /
+resolvería vía un **contenedor de DI**. Esa dirección está registrada en **#1503**, sin estructura
+creada todavía en el repo. Mientras tanto, rige el patrón de funciones `fetch*()` /
 `get*()` descripto arriba; **no** introducir clases de repositorio ni DI salvo que el issue lo pida.
 
 ---
@@ -253,5 +253,5 @@ paridad con el starter, es migrar a **OpenAPIHono** (`@hono/zod-openapi`: `creat
 `registerRoute` + spec servida en `/api/openapi.json`) — ver **#1531**.
 
 Hasta su adopción, rige el patrón Hono plano descripto en esta referencia y en
-[`CLAUDE.md` → Backend API](../../CLAUDE.md#backend-api-hono--sanity). **No** generar código
+el bullet **Backend** de [`CLAUDE.md` → Arquitectura (resumen)](../../CLAUDE.md#arquitectura-resumen). **No** generar código
 OpenAPIHono salvo que el issue lo indique.

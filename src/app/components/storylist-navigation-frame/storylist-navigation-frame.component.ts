@@ -51,7 +51,7 @@ export class StorylistNavigationFrameComponent extends NavigationFrameComponent 
 	private readonly appRoutes = AppRoutes;
 
 	// Providers
-	private storylistService = inject(StorylistApi);
+	private readonly storylistService = inject(StorylistApi);
 
 	// Recursos
 	private readonly storylistResource = progressiveRxResource({

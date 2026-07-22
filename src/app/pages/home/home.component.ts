@@ -32,7 +32,7 @@ import { CollectionTeasersDeck } from '@components/collection-teasers-deck/colle
 })
 export default class HomeComponent {
 	// Services
-	private contentService = inject(ContentApi);
+	private readonly contentService = inject(ContentApi);
 
 	// Recursos
 	private readonly landingPageResource = ssrBlockingRxResource({

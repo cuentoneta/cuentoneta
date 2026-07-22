@@ -28,32 +28,21 @@ Claude debería delegar proactivamente en este agente cuando:
 
 ## Step 0: cargar las referencias
 
-Antes de revisar, leé **LAS 13** referencias para tener el contexto completo del proyecto. Cargalas en **una sola tanda paralela** — emití todas las llamadas `Read` en un único turno (todas en el mismo mensaje), no una tras otra. **No omitas ninguna**: el revisor es la última línea de defensa y siempre carga el set completo (la carga condicional/según-diff está explícitamente fuera del alcance de `code-reviewer`).
+Antes de revisar, leé **todas** las referencias del catálogo para tener el contexto completo del proyecto — sin importar cuántas sean, sin omitir ninguna: el revisor es la última línea de defensa y siempre carga el set completo (la carga condicional/según-diff está explícitamente fuera del alcance de `code-reviewer`). Cargalas en **una sola tanda paralela** — emití todas las llamadas `Read` en un único turno (todas en el mismo mensaje), no una tras otra.
 
-Cargá todas estas juntas:
-
-- `.claude/references/coding-agent-policies.md` — pinneada en duro, bloqueante de la review; **siempre** se carga primero
-- `.claude/references/solid.md`
-- `.claude/references/cupid.md`
-- `.claude/references/guiding-principles.md` — YAGNI / KISS + disciplina de operadores RxJS
-- `.claude/references/cross-reference.md`
-- `.claude/references/clean-architecture.md`
-- `.claude/references/domain-model.md`
-- `.claude/references/angular-components.md`
-- `.claude/references/angular-state.md`
-- `.claude/references/testing.md`
-- `.claude/references/sanity-acl.md`
-- `.claude/references/typescript.md`
-- `.claude/references/maintainability.md` — lente de simplificación estructural / "code judo"
+1. `.claude/references/coding-agent-policies.md` — pinneada en duro, bloqueante de la review; **siempre** se carga primero.
+2. El resto de los archivos listados en la tabla "Catálogo completo" de [Carga estratificada de referencias](../../CLAUDE.md#carga-estratificada-de-referencias) en `CLAUDE.md` — cargalos **todos**.
 
 ## Proceso de revisión
 
 1. **Identificar cambios** — Usá `git diff develop...HEAD` para ver todos los cambios de la rama.
 2. **Revisar contra CLAUDE.md y las referencias** y sus lineamientos.
 3. **Verificar cobertura de tests** — Confirmá que hay tests para el código nuevo (Vitest + Angular Testing Library + `@test-utils`).
-4. **Correr los gates de CI** — Ejecutá los gates vía `pnpm` para asegurar que nada se rompió. Debés correr esta verificación vos mismo en **cada** invocación; nunca confíes en ni reportes un estado de CI que no observaste directamente.
+4. **Verificar los gates de CI** — Los que deben quedar verdes en cada PR son los definidos en la sección [Comandos comunes](../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**).
 
-Los gates que deben quedar verdes en cada PR son: `pnpm lint`, `pnpm test`, `pnpm stylelint`, `pnpm typecheck`, `pnpm build` y `pnpm storybook:build`. Corré cada uno y reportá el resultado real que observaste.
+- **Corré solo los que aplican al diff.** `e2e` y `studio-build` son costosos: `e2e` solo si el cambio toca flujos E2E, `studio-build` solo si toca `cms/`. Es la misma condición que aplica la Fase 4 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md); correrlos sobre un diff que no los toca no verifica nada.
+- **Si quien te invoca ya los corrió y te pasa el resultado observado, no los repitas.** La Fase 4 los corre antes de delegar en vos: volver a ejecutarlos es la parte más cara de la review y no agrega información.
+- **Nunca reportes un estado que no observaste ni te fue reportado.** Cada fila de la tabla de resultados declara **quién** lo corrió. Si el resultado ajeno te resulta dudoso, o si tocaste archivos después de que se corriera, corré ese gate vos mismo — la duda se resuelve ejecutando, no asumiendo.
 
 ## Falsos positivos conocidos — NO marcar
 
@@ -97,7 +86,7 @@ Estos patrones son intencionales y correctos. NO los reportes como problemas:
 - [ ] Open/Closed — extender comportamiento sin modificar lo existente
 - [ ] Liskov Substitution — los subtipos son sustituibles por sus tipos base
 - [ ] Interface Segregation — sin dependencias forzadas sobre interfaces no usadas
-- [ ] Dependency Inversion — depender de abstracciones, no de concreciones (convención **Qualified Implementation**: interfaz con nombre limpio, impls con prefijo `Sanity*`/`Http*`, dobles `InMemory*` nunca `Mock*`)
+- [ ] Dependency Inversion — depender de abstracciones, no de concreciones (convención **Qualified Implementation**: interfaz con nombre limpio, impls con prefijo `Sanity*`/`Http*`, dobles por comportamiento `Stub*`/`Fake*`/`InMemory*`/`Controllable*`/`Spy*` nunca `Mock*`)
 
 ### Principios CUPID
 
@@ -109,7 +98,7 @@ Estos patrones son intencionales y correctos. NO los reportes como problemas:
 
 ### Patrones del modelo de dominio (si aplica)
 
-- [ ] Diseño interface-first (patrón Entity sin prefijo `I`, salvo coexistencia con clase homónima)
+- [ ] Diseño interface-first (patrón Entity sin prefijo `I`, sin excepciones)
 - [ ] Objetos inmutables (propiedades `readonly`)
 - [ ] Factory functions con patrón de objeto de opciones
 - [ ] Validación Zod para datos externos (en los bordes del sistema)
@@ -190,20 +179,20 @@ Usá estos valores:
 | En progreso       | Se está trabajando activamente                                                                |
 | Corregido         | Resuelto y verificado                                                                         |
 | Descartado        | No es un problema real — irrelevante, hallazgo incorrecto, o el usuario decidió que no aplica |
-| Diferido          | Válido pero pospuesto — **debe** crearse un issue de GitHub para trackearlo                   |
+| Diferido          | Válido pero pospuesto — se propone un issue de GitHub, que crea el usuario tras confirmarlo   |
 | No se corrige     | Problema válido pero aceptado a propósito (trade-off de diseño, deuda técnica asumida)        |
 | Requiere test E2E | No verificable a nivel unitario — necesita un test E2E (Playwright)                           |
 
 ### Flujo de issues diferidos
 
-Cuando un problema se marca como **Diferido**, **debe** crearse un nuevo issue de GitHub antes de considerar completa la review. El issue debe:
+Cuando un problema se marca como **Diferido**, hay que **proponer** un issue de GitHub y **esperar la confirmación del usuario** antes de crearlo: crear un issue es una acción hacia afuera (misma política que la Fase 5 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md)). La propuesta debe:
 
 1. Referenciar el número de la review original (p. ej. "Detectado como #7 durante la review del PR #107").
 2. Incluir contexto suficiente para actuar de forma independiente (archivo, línea, descripción del problema y la corrección recomendada).
 3. Estar etiquetado apropiadamente (p. ej. `tech-debt`, `enhancement` o el label de dominio correspondiente).
 4. Estar vinculado al PR e issue actuales para trazabilidad.
 
-La URL del issue creado debe anotarse en el reporte junto al ítem diferido.
+Una vez que el usuario confirma y el issue existe, anotar su URL en el reporte junto al ítem diferido.
 
 ### Numeración de problemas
 
@@ -211,18 +200,13 @@ La columna **#** da un número secuencial a través de las tres tablas dentro de
 
 ### Resultados de verificación
 
-Corré los gates vía `pnpm` vos mismo en cada invocación y reportá el resultado que observaste:
+Una fila por gate **aplicable al diff** (ver el paso 4 del proceso de revisión), declarando quién observó el resultado:
 
-| Comando                | Resultado |
-| ---------------------- | --------- |
-| `pnpm lint`            | PASS/FAIL |
-| `pnpm stylelint`       | PASS/FAIL |
-| `pnpm typecheck`       | PASS/FAIL |
-| `pnpm test`            | PASS/FAIL |
-| `pnpm build`           | PASS/FAIL |
-| `pnpm storybook:build` | PASS/FAIL |
+| Comando          | Resultado | Corrido por  |
+| ---------------- | --------- | ------------ |
+| `pnpm <comando>` | PASS/FAIL | vos / Fase 4 |
 
-Si alguno falla, reportá cuál y el detalle del fallo.
+Los gates que no aplican al diff no se listan como PASS: se omiten, y se aclara por qué debajo de la tabla. Si alguno falla, reportá cuál y el detalle del fallo.
 
 ### Cobertura de tests
 

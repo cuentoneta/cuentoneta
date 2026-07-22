@@ -7,6 +7,8 @@ import { FooterComponent } from '@components/footer/footer.component';
 import { AnalyticsService } from './providers/analytics/analytics.service';
 import { AnalyticsMockService } from './providers/analytics/analytics.mock.service';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { LayoutService } from './providers/layout.interface';
+import { ControllableLayoutService } from './providers/layout.mock';
 
 describe('AppComponent', () => {
 	const setup = async () => {
@@ -16,6 +18,7 @@ describe('AppComponent', () => {
 				provideRouter([]),
 				{ provide: AnalyticsService, useClass: AnalyticsMockService },
 				provideNoopAnimations(),
+				{ provide: LayoutService, useValue: new ControllableLayoutService() },
 			],
 		});
 	};

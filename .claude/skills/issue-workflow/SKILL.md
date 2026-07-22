@@ -55,7 +55,8 @@ No avanzar a la Fase 3 sin aprobación explícita.
 
 1. Ejecutar los pasos de `workspace/PLAN.md` en orden.
 2. Un commit atómico por unidad lógica de trabajo.
-3. **CHANGELOG:** cuentoneta mantiene `CHANGELOG.md` **por release/versión** (no por PR), al cerrar un milestone. **No** se exige una entrada por issue en este flujo; el tracking del cambio vive en el issue + su milestone. (Esto reemplaza el gate de CHANGELOG del starter.)
+3. **Scan de impacto en documentación.** Si el cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología de dominio, delegar en el agente **`documentation-writer`** la actualización de `docs/`, `CLAUDE.md` y `.claude/references/`, en el **mismo** commit/PR — lo exige la sección [Scan de impacto en documentación](../../../CLAUDE.md#scan-de-impacto-en-documentación) de `CLAUDE.md`. Si el cambio no toca nada de eso, saltear el paso.
+4. **CHANGELOG:** cuentoneta mantiene `CHANGELOG.md` **por release/versión** (no por PR), al cerrar un milestone. **No** se exige una entrada por issue en este flujo; el tracking del cambio vive en el issue + su milestone. (Esto reemplaza el gate de CHANGELOG del starter.)
 
 ### Reglas de commit
 
@@ -76,14 +77,15 @@ No avanzar a la Fase 3 sin aprobación explícita.
 
 ## Fase 4 — Review
 
-**Propósito:** verificar que pasen los gates de CI y correr el agente `code-reviewer`.
+**Propósito:** verificar que pasen los gates de CI y correr los agentes de review.
 
-1. Correr los **gates de CI** localmente (con `pnpm`, nunca `nx` directo):
-   - `pnpm lint` · `pnpm test` · `pnpm stylelint` · `pnpm typecheck` · `pnpm build` · `pnpm storybook:build` · (`pnpm test:e2e` si el cambio toca flujos E2E).
-   - Si alguno falla: reportar cuál, diagnosticar, arreglar, commitear el fix (reglas de Fase 3) y re-correr hasta que pasen.
-2. Delegar al agente **`code-reviewer`** para revisar todos los cambios de la rama vs. `develop`.
-3. El code-reviewer escribe los hallazgos en `workspace/CODE_REVIEW.md`.
-4. Presentar la tabla de hallazgos al usuario (Críticos, Advertencias, Sugerencias).
+1. Correr localmente (con `pnpm`, nunca `nx` directo) los **gates de CI** definidos en la sección [Comandos comunes](../../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**). `test:e2e` y `studio-build` son costosos de correr en cada iteración: corré `test:e2e` si el cambio toca flujos E2E y `studio-build` si toca `cms/`; el resto, siempre.
+   - **Lanzalos concurrentemente**, no uno tras otro: son independientes entre sí y así los corre CI (todos los jobs cuelgan de `setup` y van en runners separados). En serie tardan la **suma**; en paralelo, lo que tarde el más lento. Medido en #1850: 105s → 29s.
+   - Si alguno falla: reportar cuál, diagnosticar, arreglar, commitear el fix (reglas de Fase 3) y re-correr **solo el que falló** mientras el resto sigue verde; re-correr todo solo si el fix toca superficie compartida.
+2. Si el diff toca **superficie de seguridad**, delegar primero al agente **`security-auditor`**. La lista de disparadores es la sección **"Cuándo correr"** del propio agente: `src/api/**` (endpoints, GROQ, mappers), manejo de contenido externo (PortableText/HTML del CMS, `bypassSecurityTrust*`, fetch a servicios externos, `localStorage`), variables de entorno / secrets / config de Sanity o Clarity, y dependencias (`package.json` / `pnpm-lock.yaml`). Un diff que no toca nada de eso —solo documentación, estilos o UI sin datos externos— **no** lo requiere; también puede invocarse a demanda si surge una preocupación puntual.
+3. Delegar al agente **`code-reviewer`** para revisar todos los cambios de la rama vs. `develop`, **pasándole el resultado observado de los gates del paso 1** (qué corriste, con qué resultado, y cuáles omitiste por no aplicar al diff). Sin ese dato el agente los vuelve a correr, que es la parte más cara de la review.
+4. Ambos agentes escriben sus hallazgos en `workspace/CODE_REVIEW.md`; los del `security-auditor` van en una sección propia.
+5. Presentar la tabla de hallazgos al usuario (Críticos, Advertencias, Sugerencias), indicando si el `security-auditor` corrió o por qué no correspondía.
 
 **⏸ PAUSA — requiere decisión del usuario.**
 
@@ -100,7 +102,7 @@ No avanzar a la Fase 3 sin aprobación explícita.
 3. Un commit atómico por fix. El mensaje describe el **cambio real**, nunca referencia el número de hallazgo.
    - ✅ `[#1234] - Acota la constante al cuerpo de la función — estaba a nivel de módulo`
    - ❌ `[#1234] - Arregla el hallazgo #2`
-4. Si un hallazgo se **difiere**, crear un issue de GitHub (`gh issue create`) y poner la URL en la columna Abordado.
+4. Si un hallazgo se **difiere**, proponer el issue al usuario y **esperar su confirmación** antes de crearlo (`gh issue create`); una vez creado, poner la URL en la columna Abordado. Crear un issue es una acción hacia afuera: la misma política rige en la Fase 6.
 5. Tras abordar Críticos y Advertencias, re-correr los gates de CI. Arreglar regresiones.
 6. Las **Sugerencias** son opcionales: presentarlas y dejar que el usuario decida.
 

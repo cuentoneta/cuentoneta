@@ -21,15 +21,13 @@ describe('buildStorylistCollectionSchema', () => {
 			inLanguage: 'es-AR',
 			mainEntity: {
 				'@type': 'ItemList',
-				numberOfItems: 1,
-				itemListElement: [
-					{
-						'@type': 'ListItem',
-						position: 1,
-						url: 'https://www.cuentoneta.ar/story/el-espejo-del-tiempo',
-						name: 'El espejo del tiempo',
-					},
-				],
+				numberOfItems: storylistMock.stories.length,
+				itemListElement: storylistMock.stories.map((story, index) => ({
+					'@type': 'ListItem',
+					position: index + 1,
+					url: `https://www.cuentoneta.ar/story/${story.slug}`,
+					name: story.title,
+				})),
 			},
 		});
 	});

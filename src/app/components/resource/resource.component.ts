@@ -57,8 +57,8 @@ export class ResourceComponent {
 
 	protected readonly NgIcon = NgIcon;
 
-	private injector = inject(EnvironmentInjector);
-	private tooltipDirective = inject(TooltipDirective);
+	private readonly injector = inject(EnvironmentInjector);
+	private readonly tooltipDirective = inject(TooltipDirective);
 
 	private readonly syncTooltipEffect = effect(() => {
 		this.tooltipDirective.text.set(this.resource().title);

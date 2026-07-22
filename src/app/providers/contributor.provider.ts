@@ -14,7 +14,7 @@ import { ContributorApi } from './contributor-api.interface';
 @Injectable({ providedIn: 'root' })
 export class HttpContributorApi implements ContributorApi {
 	private readonly url: ApiUrl = `${environment.apiUrl}${Endpoints.Contributor}`;
-	private http = inject(HttpClient);
+	private readonly http = inject(HttpClient);
 
 	public getAll(): Observable<Contributor[]> {
 		return this.http.get<Contributor[]>(this.url);

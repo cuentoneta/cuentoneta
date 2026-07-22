@@ -11,8 +11,8 @@ import { NavigationBarConfig } from '../components/storylist-navigation-frame/st
 })
 export abstract class NavigationFrameComponent {
 	// Providers
-	protected router = inject(Router);
-	private navigationFrameService = inject(NavigationFrameService);
+	protected readonly router = inject(Router);
+	private readonly navigationFrameService = inject(NavigationFrameService);
 
 	// Inputs
 	public readonly selectedStorySlug = input<string>();

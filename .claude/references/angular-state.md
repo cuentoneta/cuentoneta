@@ -1,6 +1,6 @@
 # Estado: signals-first (sin NgRx)
 
-> **Alcance:** cómo se modela y muta el **estado** en el frontend de La Cuentoneta. Complementa la sección [_"Estado: signals-first (sin NgRx)"_ de `CLAUDE.md`](../../CLAUDE.md) con ejemplos anclados en el código real.
+> **Alcance:** cómo se modela y muta el **estado** en el frontend de La Cuentoneta. Complementa el bullet **Frontend** de [`CLAUDE.md` → Arquitectura (resumen)](../../CLAUDE.md#arquitectura-resumen) —donde se fija el estado **signals-first sin NgRx**— con ejemplos anclados en el código real.
 >
 > **Idioma:** explicación en español, **código/identificadores en inglés**.
 >
@@ -14,7 +14,7 @@ Cuentoneta **no usa NgRx**. El estado vive en **servicios**, se expone como **si
 
 Dónde viven los servicios de estado:
 
-- **`@Injectable({ providedIn: 'root' })`** para estado/acceso a datos de aplicación (singleton). Ej.: `LayoutService`, `StoryService`, `StorylistService`, `ContentService` en [`src/app/providers/`](../../src/app/providers/).
+- **`@Injectable({ providedIn: 'root' })`** para estado/acceso a datos de aplicación (singleton). Es el default de todo servicio del frontend, salvo indicación explícita en contrario. Ej.: `LayoutService`, `NavigationFrameService`, `SchemaOrgService` y las implementaciones de API (`HttpStoryApi`, `HttpAuthorApi`, …) en [`src/app/providers/`](../../src/app/providers/). Los consumidores inyectan el **token** `*Api` (`StoryApi`, `AuthorApi`, …), no la clase concreta — ver [`clean-architecture.md`](clean-architecture.md).
 - **`@Injectable()` provisto en un componente** cuando el estado es local a un subárbol y debe morir con él. Ej.: `CarouselStateService`, provisto en el `providers` del componente de carousel.
 
 > Los servicios de acceso a datos del frontend viven en `src/app/providers/` _(en migración al patrón `provideX()` / `*.provider.ts` — ver #1499)_.
@@ -55,14 +55,14 @@ Los valores derivados son **`computed`** (o `toSignal` para fuentes observables)
 
 ```typescript
 // ✅ Correcto — todo lo derivado cuelga de un único origen (story.component.ts)
-readonly story = computed(() => this.storyResource.value());
-readonly sharingRoute = computed(() => `${AppRoutes.Story}/${this.story()?.slug}`);
-readonly shareMessage = computed(
+public readonly story = computed(() => this.storyResource.value()); // `public`: lo exige la interfaz StoryHost
+protected readonly sharingRoute = computed(() => `${AppRoutes.Story}/${this.story()?.slug}`);
+protected readonly shareMessage = computed(
 	() => `Leí "${this.story()?.title}" de ${this.story()?.author.name} en La Cuentoneta ...`,
 );
 
 // ❌ Incorrecto — segundo signal que hay que mantener en sync a mano
-readonly sharingRoute = signal('');
+protected readonly sharingRoute = signal('');
 // ...y luego un effect/set por cada cambio de story → estado duplicado
 ```
 
@@ -80,10 +80,10 @@ export class CarouselStateService {
 	private readonly _isTransitioning = signal(false);
 
 	// Signals públicas de solo lectura
-	readonly activeIndex: Signal<number> = this._activeIndex.asReadonly();
-	readonly isTransitioning: Signal<boolean> = this._isTransitioning.asReadonly();
+	public readonly activeIndex: Signal<number> = this._activeIndex.asReadonly();
+	public readonly isTransitioning: Signal<boolean> = this._isTransitioning.asReadonly();
 
-	selectSlide(index: number, direction: 'left' | 'right'): void {
+	public selectSlide(index: number, direction: 'left' | 'right'): void {
 		if (this._isTransitioning() || index === this._activeIndex()) return;
 		this._isTransitioning.set(true);
 		this._activeIndex.set(index);
@@ -135,7 +135,7 @@ El componente que lo consume no repite el `throttleTime` ni el `merge`: inyecta 
 
 Preferir un estado de error **por operación** a un único `string | null` compartido entre todas las operaciones del servicio. Cada lectura/mutación expone su propio estado de error/carga, de modo que la UI distingue qué falló. Con `rxResource` esto sale del propio recurso (`.status()` / `.error()` por recurso); con observables crudos, modelar un signal de error por operación, no un campo global del servicio.
 
-> El detalle de **manejo de errores** (preservar la causa, loguear con contexto) está en `CLAUDE.md` → _Manejo de errores_ y en [`maintainability.md`](maintainability.md).
+> La regla base para los **errores atrapados** —preservar la causa (ESLint `preserve-caught-error`) y tipar el error por operación— es una restricción dura: ver la fila _Errores atrapados_ en [`CLAUDE.md` → Restricciones duras](../../CLAUDE.md#restricciones-duras-hard-constraints).
 
 ### 7. Recursos de página: bloquear el SSR con `ssrBlockingRxResource`
 

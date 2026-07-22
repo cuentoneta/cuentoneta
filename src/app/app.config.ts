@@ -18,6 +18,9 @@ import { provideStoryApi } from './providers/story.provider';
 import { provideStorylistApi } from './providers/storylist.provider';
 import { providePushNotificationsApi } from './providers/push-notifications.provider';
 
+// Layout
+import { provideLayout } from './providers/layout.provider';
+
 // SEO providers
 import { provideSchemaOrgInitializer } from './providers/schema-org.initializer';
 
@@ -46,6 +49,7 @@ export const appConfig: ApplicationConfig = {
 		provideStoryApi(),
 		provideStorylistApi(),
 		providePushNotificationsApi(),
+		provideLayout(),
 
 		// SEO providers
 		provideSchemaOrgInitializer(),

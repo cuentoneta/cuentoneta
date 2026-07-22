@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { LandingPageContent } from '@models/landing-page-content.model';
 import { ContentApi } from './content-api.interface';
 
-export class InMemoryContentApi implements ContentApi {
+export class StubContentApi implements ContentApi {
 	public getLandingPageContent(): Observable<LandingPageContent> {
 		const landingPageContent: LandingPageContent = {
 			_id: '',
@@ -20,6 +20,6 @@ export class InMemoryContentApi implements ContentApi {
 	}
 }
 
-export function provideContentApiMock(api: ContentApi = new InMemoryContentApi()): EnvironmentProviders {
+export function provideContentApiMock(api: ContentApi = new StubContentApi()): EnvironmentProviders {
 	return makeEnvironmentProviders([{ provide: ContentApi, useValue: api }]);
 }

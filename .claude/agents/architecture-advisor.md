@@ -27,7 +27,7 @@ Esto aplica a TODOS los comandos: git, pnpm y cualquier otra CLI.
 
 ## Paso 0: Cargar archivos de referencia
 
-Cargá las referencias en dos grupos, emitidos como **un único batch en paralelo** — todas las llamadas `Read` en un mismo turno de respuesta (en el mismo mensaje), no una tras otra. La división (core vs. dominio) y el mapa completo glob→referencia están en CLAUDE.md → **"Carga estratificada de referencias"**.
+Cargá las referencias en dos grupos, emitidos como **un único batch en paralelo** — todas las llamadas `Read` en un mismo turno de respuesta (en el mismo mensaje), no una tras otra. La división core vs. dominio y los paths-trigger de cada referencia son los de este archivo; la tabla por **tipo de tarea** vive en [`CLAUDE.md` → Carga estratificada de referencias](../../CLAUDE.md#carga-estratificada-de-referencias).
 
 ### Core — cargar siempre (nunca omitir)
 
@@ -40,9 +40,9 @@ Cargá las referencias en dos grupos, emitidos como **un único batch en paralel
 
 ### Dominio — cargar solo las relevantes al diff
 
-Primero determiná el change set: corré `git diff --name-only develop...HEAD` (o, cuando todavía no hay diff de rama, usá los archivos que la tarea describe como en alcance). Si ninguno arroja un set claro de archivos, tratá el cambio como ambiguo y aplicá la regla de fail-open de abajo. Después cargá las referencias de dominio cuyos paths-trigger coincidan, según el mapa glob→referencia de CLAUDE.md:
+Primero determiná el change set: corré `git diff --name-only develop...HEAD` (o, cuando todavía no hay diff de rama, usá los archivos que la tarea describe como en alcance). Si ninguno arroja un set claro de archivos, tratá el cambio como ambiguo y aplicá la regla de fail-open de abajo. Después cargá las referencias de dominio cuyos paths-trigger coincidan:
 
-- `.claude/references/domain-model.md` — el diff toca `src/api/**` o `src/contracts/**`, o involucra entidades de dominio, agregados, invariantes o bounded contexts (Story / Author / Storylist) y validación Zod
+- `.claude/references/domain-model.md` — el diff toca `src/api/**` o involucra entidades de dominio, agregados, invariantes o bounded contexts (Story / Author / Storylist) y validación Zod
 - `.claude/references/sanity-acl.md` — el diff toca `src/api/**` (repos / services / mappers en `src/api/_utils/`), GROQ o el Anti-Corruption Layer que traduce los resultados crudos de Sanity al modelo de dominio
 - `.claude/references/angular-components.md` — el diff toca `src/app/components/**`, plantillas, providers/DI, effects o control flow
 - `.claude/references/angular-state.md` — el diff toca estado / servicios / RxJS en `src/app/` (estado signals-first sin NgRx)
@@ -64,7 +64,7 @@ Primero determiná el change set: corré `git diff --name-only develop...HEAD` (
 - **Regla de dependencia** — las dependencias apuntan hacia adentro (dominio → casos de uso → adaptadores → frameworks). En el backend: el flujo `controller → service → repository` con el mapper (ACL) como frontera que traduce Sanity/GROQ al modelo de dominio
 - **Independencia de capas** — las reglas de negocio no dependen de frameworks ni de la UI; el modelo de dominio no conoce a Sanity
 - **Cruce de fronteras** — los datos cruzan como modelo de dominio mapeado, no como resultados crudos de GROQ; los repos exponen `fetch*()` (crudo) y los services `get*()` (mapeado a dominio)
-- **Testeabilidad** — la lógica de negocio se testea sin dependencias externas (dobles `InMemory*`, nunca `Mock*`)
+- **Testeabilidad** — la lógica de negocio se testea sin dependencias externas (dobles nombrados por comportamiento: `Stub*`/`Fake*`/`InMemory*`/`Controllable*`/`Spy*`, nunca `Mock*`)
 
 ### Diseño de componentes (acoplamiento entre módulos)
 
@@ -96,14 +96,14 @@ Al evaluar nuevos módulos o endpoints, verificá que el plan incluya:
 - [ ] Módulo bajo `src/api/modules/<dominio>/` con el patrón **controller → service → repository**
 - [ ] Mapper (ACL) en `src/api/_utils/` que traduce GROQ/Sanity al modelo de dominio
 - [ ] Validación con `@hono/zod-validator` y contratos/tipos de dominio acordes
-- [ ] Tests (Vitest + `@test-utils`) con dobles `InMemory*` para los repos
+- [ ] Tests (Vitest + `@test-utils`) con dobles nombrados por comportamiento (`Stub*`/`Fake*`/`InMemory*`/`Controllable*`/`Spy*`) para los repos
 - [ ] Hono plano, no `OpenAPIHono` (dirección futura no adoptada, #1531); sin Drizzle — la persistencia es Sanity vía `@sanity/client`
 
 ### Convención de providers del frontend (Qualified Implementation)
 
 - Interfaz de API con sufijo `-api`: `<dominio>-api.interface.ts` (export `<X>Api`)
 - Implementación + factory en `<dominio>.provider.ts` (`Http<X>Api` + `provide<X>Api()`)
-- Doble de test en `<dominio>.mock.ts` (`InMemory<X>Api` + `provide<X>ApiMock()`)
+- Doble de test en `<dominio>.mock.ts` (`Stub<X>Api` + `provide<X>ApiMock()`)
 
 ## Restricciones duras a vigilar (de CLAUDE.md)
 

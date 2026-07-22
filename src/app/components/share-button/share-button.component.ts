@@ -37,8 +37,8 @@ export class ShareButtonComponent {
 
 	protected readonly NgIcon = NgIcon;
 
-	private tooltipDirective = inject(TooltipDirective);
-	private injector = inject(EnvironmentInjector);
+	private readonly tooltipDirective = inject(TooltipDirective);
+	private readonly injector = inject(EnvironmentInjector);
 
 	private readonly syncTooltipEffect = effect(() => {
 		this.tooltipDirective.text.set('Compartir en ' + this.platform().name);

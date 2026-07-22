@@ -59,7 +59,7 @@ Formato de commit: `[#<issue>] - <qué cambió>` (español). Cada commit deja el
 
 **Propósito:** confirmar que el release no rompe el pipeline automático.
 
-1. **Gates de CI** (con `pnpm`): `pnpm lint · pnpm stylelint · pnpm typecheck · pnpm test · pnpm build · pnpm storybook:build`. Un bump + CHANGELOG no toca runtime, pero se corren igual por política. El `build` confirma de paso la versión (`@cuentoneta/app@<x>` en el `postbuild`).
+1. Correr los **gates de CI** (con `pnpm`) definidos en la sección [Comandos comunes](../../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**), incluido `studio-build` — el bump lockstep de la Fase 2 toca `cms/package.json`. Un bump + CHANGELOG no toca runtime, pero se corren igual por política. `test:e2e` es opcional acá (sin cambios de flujo de usuario). El `build` confirma de paso la versión (`@cuentoneta/app@<x>` en el `postbuild`).
 2. **Dry-run de la extracción de notas de `release.yml`:** el workflow extrae con `awk` el cuerpo entre `## Versión <x>` y el próximo `## Versión`. Simularlo y confirmar que devuelve una sección **no vacía** (si falta, el job del release falla):
 
    ```bash
