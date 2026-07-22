@@ -1,24 +1,54 @@
-import { Injectable, signal } from '@angular/core';
-import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
-import { Viewport, VIEWPORT_WIDTHS_NUMERIC } from '@utils/screen.utils';
-import { LayoutService } from './layout.service';
+import { Injectable, signal, type WritableSignal } from '@angular/core';
+import { EMPTY, Observable } from 'rxjs';
+import { Viewport, compareViewports } from '@utils/screen.utils';
+import { Direction, LayoutService } from './layout.interface';
 
-@Injectable({ providedIn: 'root' })
-export class InMemoryLayoutService {
-	public readonly viewport = signal<Viewport>('lg');
+/**
+ * Doble de test de `LayoutService`: el viewport lo fija el test con `simulateViewport()`
+ * en vez de derivarlo de `window` como hace el real (`WindowLayoutService`).
+ *
+ * `implements LayoutService` obliga a cubrir la superficie completa del contrato; su `biggerThan`/
+ * `smallerThan`/`isActual` delegan en la misma `compareViewports()` que el real, así que su
+ * comportamiento —incluido el error ante un viewport inválido— es idéntico por construcción.
+ */
+@Injectable({
+	providedIn: 'root',
+})
+export class ControllableLayoutService implements LayoutService {
+	private readonly viewport: WritableSignal<Viewport> = signal('lg');
+
 	public readonly isHeaderVisible = signal(true);
 
-	public setViewport(viewport: Viewport): void {
+	public readonly userHasScrolled$: Observable<Direction> = EMPTY;
+	public readonly viewportHasChanged$: Observable<Event | null> = EMPTY;
+
+	public isPlatformBrowser(): boolean {
+		return true;
+	}
+
+	public isPlatformServer(): boolean {
+		return false;
+	}
+
+	/** Operación del **contrato**: en el real detecta el viewport desde `window`; el doble no tiene entorno que detectar. */
+	public setViewport(): void {
+		// no-op: el viewport del doble se fija con `simulateViewport()`, no se detecta.
+	}
+
+	/** Operación **propia del doble** (fuera del contrato): fija el viewport que el test quiere simular. */
+	public simulateViewport(viewport: Viewport): void {
 		this.viewport.set(viewport);
 	}
 
 	public biggerThan(test: Viewport): boolean {
-		return VIEWPORT_WIDTHS_NUMERIC[this.viewport()] > VIEWPORT_WIDTHS_NUMERIC[test];
+		return compareViewports(this.viewport(), test) > 0;
 	}
-}
 
-export function provideLayoutServiceMock(
-	service: InMemoryLayoutService = new InMemoryLayoutService(),
-): EnvironmentProviders {
-	return makeEnvironmentProviders([{ provide: LayoutService, useValue: service }]);
+	public smallerThan(test: Viewport): boolean {
+		return compareViewports(this.viewport(), test) < 0;
+	}
+
+	public isActual(test: Viewport): boolean {
+		return compareViewports(this.viewport(), test) === 0;
+	}
 }

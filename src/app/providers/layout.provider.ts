@@ -1,4 +1,12 @@
-import { inject, Injectable, PLATFORM_ID, signal, type WritableSignal } from '@angular/core';
+import {
+	EnvironmentProviders,
+	inject,
+	Injectable,
+	makeEnvironmentProviders,
+	PLATFORM_ID,
+	signal,
+	type WritableSignal,
+} from '@angular/core';
 import { WINDOW } from './window';
 import {
 	combineLatest,
@@ -14,14 +22,12 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { Viewport, VIEWPORT_WIDTHS_NUMERIC, compareViewports } from '@utils/screen.utils';
-
-export const Direction = Object.freeze({ Up: 'Up', Down: 'Down' } as const);
-export type Direction = (typeof Direction)[keyof typeof Direction];
+import { Direction, LayoutService } from './layout.interface';
 
 @Injectable({
 	providedIn: 'root',
 })
-export class LayoutService {
+export class WindowLayoutService implements LayoutService {
 	private readonly window = inject(WINDOW);
 	private readonly platformId = inject(PLATFORM_ID);
 
@@ -57,7 +63,7 @@ export class LayoutService {
 		return this._viewportHasChanged$;
 	}
 
-	public get isHeaderVisible$() {
+	private get isHeaderVisible$() {
 		return combineLatest([this.viewportHasChanged$, this.userHasScrolled$]).pipe(
 			map(([hasChanged, direction]) => {
 				if (hasChanged) {
@@ -127,4 +133,8 @@ export class LayoutService {
 	public isActual(test: Viewport): boolean {
 		return compareViewports(this.viewport(), test) === 0;
 	}
+}
+
+export function provideLayout(): EnvironmentProviders {
+	return makeEnvironmentProviders([{ provide: LayoutService, useExisting: WindowLayoutService }]);
 }
