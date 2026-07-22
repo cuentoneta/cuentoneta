@@ -12,6 +12,22 @@ import { audioRecording, pdfLink, spaceRecording, spotifyPodcastEpisode, youtube
 //  - epígrafes: array por seccion (analogo a Story.epigraphs), texto Markdown-native (sin acoplar el lenguaje viejo).
 //  - SIN `approximateReadingTime` (computedNumber): el reading time se materializa fuera del CMS,
 //    vía webhook -> función -> documento derivado (decisión T1b). El source doc no lo persiste.
+//  - `author` (reference único, required)  ->  `authors` (array<reference>, 0..N): una obra puede tener
+//    varios autores y el array vacío modela la obra anónima. Diverge de Story a propósito (Story sigue con
+//    autor único); el shape multi/opcional se propaga al futuro GROQ (`authors[]->`), dominio (`authors: Author[]`)
+//    y JSON-LD (schema.org `author` admite array). Sin migración: literaryWork es greenfield.
+//
+// ABIERTO — default de anónimo en alta (a resolver en Slice 1). En vez de dejar `authors` vacío al crear,
+// se puede pre-cargar por `initialValue` una referencia al author de slug "anonimo" (ya existe en los
+// datasets production/development/staging, mismo `_id` a9af4fc4-25d4-48c0-8776-5b0a14c758c5, name "Anónimo"):
+//
+//    initialValue: { authors: [{ _type: 'reference', _ref: 'a9af4fc4-25d4-48c0-8776-5b0a14c758c5', _key: '...' }] }
+//
+// Ventaja: el editor arranca con una atribución válida y visible ("Anónimo") en lugar de un vacío ambiguo,
+// y la reemplaza por autores reales cuando corresponde. Costo: entra en tensión con "array vacío = anónimo"
+// — si el default es `[ref(anonimo)]`, el dominio debe tratar ESE ref (no solo `[]`) como obra anónima,
+// o aceptar dos representaciones del mismo estado. La decisión de qué es canónico (vacío vs. ref explícita)
+// queda para el modelado de Slice 1; acá solo se deja anotada la afordancia de Studio.
 
 const section = defineArrayMember({
 	name: 'section',
@@ -76,11 +92,13 @@ export default defineType({
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
-			name: 'author',
-			title: 'Autor/a',
-			type: 'reference',
-			to: { type: 'author' },
-			validation: (Rule) => Rule.required(),
+			name: 'authors',
+			title: 'Autores/as',
+			description:
+				'Cero o más autores. Sin autores, la obra se considera anónima. El orden expresa prioridad (autor principal primero).',
+			type: 'array',
+			of: [defineArrayMember({ type: 'reference', to: [{ type: 'author' }] })],
+			validation: (Rule) => Rule.unique(),
 		}),
 		defineField({
 			name: 'coverImage',
@@ -139,9 +157,12 @@ export default defineType({
 		}),
 	],
 	preview: {
-		select: { title: 'title', author: 'author.name' },
-		prepare({ title, author }) {
-			return { title, subtitle: author ? `por ${author}` : '' };
+		// Sanity dereferencia por path de campo (no evalúa `.length`): seleccionamos el 1.º y 2.º autor.
+		// Array vacío (obra anónima) -> subtítulo explícito; con 2.º autor presente -> "y otros".
+		select: { title: 'title', author: 'authors.0.name', secondAuthor: 'authors.1.name' },
+		prepare({ title, author, secondAuthor }) {
+			const subtitle = !author ? 'Anónimo' : secondAuthor ? `por ${author} y otros` : `por ${author}`;
+			return { title, subtitle };
 		},
 	},
 });

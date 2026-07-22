@@ -755,11 +755,25 @@
         },
         "optional": true
       },
-      "author": {
+      "authors": {
         "type": "objectAttribute",
         "value": {
-          "type": "inline",
-          "name": "author.reference"
+          "type": "array",
+          "of": {
+            "type": "object",
+            "attributes": {
+              "_key": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                }
+              }
+            },
+            "rest": {
+              "type": "inline",
+              "name": "author.reference"
+            }
+          }
         },
         "optional": true
       },
@@ -824,25 +838,46 @@
                 },
                 "optional": true
               },
-              "epigraph": {
+              "epigraphs": {
                 "type": "objectAttribute",
                 "value": {
-                  "type": "object",
-                  "attributes": {
-                    "text": {
-                      "type": "objectAttribute",
-                      "value": {
-                        "type": "inline",
-                        "name": "markdown"
+                  "type": "array",
+                  "of": {
+                    "type": "object",
+                    "attributes": {
+                      "text": {
+                        "type": "objectAttribute",
+                        "value": {
+                          "type": "inline",
+                          "name": "markdown"
+                        },
+                        "optional": true
                       },
-                      "optional": true
+                      "reference": {
+                        "type": "objectAttribute",
+                        "value": {
+                          "type": "string"
+                        },
+                        "optional": true
+                      },
+                      "_type": {
+                        "type": "objectAttribute",
+                        "value": {
+                          "type": "string",
+                          "value": "epigraph"
+                        }
+                      }
                     },
-                    "reference": {
-                      "type": "objectAttribute",
-                      "value": {
-                        "type": "string"
-                      },
-                      "optional": true
+                    "rest": {
+                      "type": "object",
+                      "attributes": {
+                        "_key": {
+                          "type": "objectAttribute",
+                          "value": {
+                            "type": "string"
+                          }
+                        }
+                      }
                     }
                   }
                 },
