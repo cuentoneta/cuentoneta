@@ -50,6 +50,15 @@ describe('createLiteraryWork', () => {
 		expect(work.sectionCount).toBe(3);
 	});
 
+	it('uses readingTimeOverride as totalReadingTime when present (recited/audiovisual works)', () => {
+		const work = createLiteraryWork(
+			buildOptions({ content: [buildSection(0, 1)], readingTimeOverride: createReadingTime(40) }),
+		);
+
+		expect(work.totalReadingTime).toBe(40);
+		expect('readingTimeOverride' in work).toBe(false);
+	});
+
 	it('throws when section positions do not match their array index', () => {
 		expect(() => createLiteraryWork(buildOptions({ content: [buildSection(1, 2)] }))).toThrow(
 			'LiteraryWork inválida: posiciones de sección no contiguas (slug "la-obra", índice 0 con position 1)',

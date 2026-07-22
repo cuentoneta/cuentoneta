@@ -264,7 +264,7 @@ interface LiteraryWorkEpigraph {
 
 - El slug debe ser único (garantizado por Sanity) y con formato válido (validado por el value object `Slug`)
 - La obra debe tener al menos una sección de contenido
-- `totalReadingTime` es la suma de los `readingTime` de sus secciones (derivado en la factory, no es input)
+- `totalReadingTime` es la suma de los `readingTime` de sus secciones (derivado en la factory) — salvo `readingTimeOverride` editorial, que lo reemplaza (obras recitadas/audiovisuales, ver [`LITERARY_WORK_DESIGN.md`](LITERARY_WORK_DESIGN.md) §5)
 - `sectionCount` es el número real de secciones (derivado en la factory; en proyecciones parciales lo provee el mapper)
 - Las posiciones de sección son contiguas desde 0 en el agregado completo (`content[i].position === i`); las proyecciones parciales conservan el `position` de origen
 - `authors` exige al menos un autor (1..N) — la **obra anónima** referencia explícitamente al author "Anónimo" (slug `anonimo`, valor bien conocido del dominio; policy `isAnonymous` compara por slug, nunca por `_id`)

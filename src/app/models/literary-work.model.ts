@@ -68,6 +68,9 @@ interface CreateLiteraryWorkOptions {
 	tags: readonly Tag[];
 	originalPublication: string;
 	publishedAt: IsoDateTime;
+	// Duración editorial fija (obras recitadas/audiovisuales): reemplaza a la suma de
+	// secciones como totalReadingTime — ver LITERARY_WORK_DESIGN.md §5.
+	readingTimeOverride?: ReadingTime;
 }
 
 export function createLiteraryWork(options: CreateLiteraryWorkOptions): LiteraryWork {
@@ -92,10 +95,11 @@ export function createLiteraryWork(options: CreateLiteraryWorkOptions): Literary
 			);
 		}
 	});
+	const { readingTimeOverride, ...rest } = options;
 	return Object.freeze({
-		...options,
+		...rest,
 		slug: createSlug(options.slug),
-		totalReadingTime: sumReadingTimes(options.content.map((section) => section.readingTime)),
+		totalReadingTime: readingTimeOverride ?? sumReadingTimes(options.content.map((section) => section.readingTime)),
 		sectionCount: options.content.length,
 	});
 }
