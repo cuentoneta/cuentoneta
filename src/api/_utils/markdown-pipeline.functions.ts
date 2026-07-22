@@ -14,17 +14,6 @@ interface HtmlNode {
 	readonly children?: readonly HtmlNode[];
 }
 
-// Única fuente de verdad del allow-list (docs/LITERARY_WORK_DESIGN.md §9): cambiarla exige
-// regen masivo de derivados + tests de XSS. Privada hasta que exista otro consumidor real.
-const literaryWorkSanitizationSchema: Options = {
-	...defaultSchema,
-	attributes: {
-		...defaultSchema.attributes,
-		// src/alt/width/height ya están permitidos por el schema por defecto (img + global `*`).
-		img: [...(defaultSchema.attributes?.['img'] ?? []), 'srcSet', 'loading', 'decoding'],
-	},
-};
-
 function visitImages(node: HtmlNode, transform: (properties: Record<string, unknown>) => void): void {
 	if (node.type === 'element' && node.tagName === 'img' && node.properties) {
 		transform(node.properties);
@@ -59,6 +48,17 @@ function rehypeSanityImages() {
 		});
 	};
 }
+
+// Única fuente de verdad del allow-list (docs/LITERARY_WORK_DESIGN.md §9): cambiarla exige
+// regen masivo de derivados + tests de XSS. Privada hasta que exista otro consumidor real.
+const literaryWorkSanitizationSchema: Options = {
+	...defaultSchema,
+	attributes: {
+		...defaultSchema.attributes,
+		// src/alt/width/height ya están permitidos por el schema por defecto (img + global `*`).
+		img: [...(defaultSchema.attributes?.['img'] ?? []), 'srcSet', 'loading', 'decoding'],
+	},
+};
 
 // Singleton de módulo: construir el procesador unified es costoso y el pipeline es inmutable.
 const pipeline = unified()
