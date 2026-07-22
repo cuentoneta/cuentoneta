@@ -1,0 +1,143 @@
+<main class="mx-auto w-full max-w-[1240px] px-6 pt-8 pb-16 font-inter">
+	<p class="bg-amber-50 text-amber-700 mb-8 rounded-md px-3 py-2 text-xs">
+		Blueprint de la CollectionPage V3 · ruta <code>/collection/{{ slug() ?? ':slug' }}</code> · alimentada con la
+		storylist real de Sanity por slug.
+	</p>
+
+	@if (isLoading()) {
+		<!-- Estado de carga: skeletons que reflejan el layout de dos columnas -->
+		<div class="flex items-start gap-16" aria-busy="true" data-testid="loading">
+			<section class="flex flex-1 flex-col gap-12 pt-8">
+				<cuentoneta-skeleton appearance="line" class="h-10 w-64 bg-neutral-300" />
+				<div class="flex flex-col gap-9">
+					@for (i of [1, 2, 3]; track i) {
+						<cuentoneta-story-card-teaser-v3
+							[showAuthor]="true"
+							[showExcerpt]="true"
+							[showMultimedia]="true"
+							[excerptLines]="3"
+						/>
+					}
+				</div>
+			</section>
+
+			<div class="w-px self-stretch bg-neutral-200"></div>
+
+			<aside class="flex w-[364px] shrink-0 flex-col gap-6 pt-8">
+				<div class="flex flex-col gap-4">
+					<cuentoneta-skeleton appearance="line" class="h-[164px] w-[118px] bg-neutral-300" />
+					<cuentoneta-skeleton appearance="line" class="h-7 w-40 bg-neutral-300" />
+					<cuentoneta-skeleton appearance="line" class="h-6 w-24 bg-neutral-300" />
+					<div class="flex flex-col gap-2">
+						@for (i of [1, 2, 3, 4]; track i) {
+							<cuentoneta-skeleton appearance="line" class="h-4 w-full bg-neutral-300" />
+						}
+					</div>
+				</div>
+
+				<div class="flex flex-col gap-4">
+					<h2 class="font-inter text-base leading-6 font-bold text-neutral-900">Otras colecciones sugeridas</h2>
+					@for (i of [1, 2, 3]; track i) {
+						<cuentoneta-navigable-collection-teaser-skeleton />
+					}
+				</div>
+			</aside>
+		</div>
+	} @else if (collection(); as collection) {
+		<div class="flex items-start gap-16">
+			<!-- Columna izquierda: título + listado de historias -->
+			<section class="flex flex-1 flex-col gap-12 pt-8">
+				<h1 class="font-inter text-4xl leading-10 font-bold text-neutral-900">{{ collection.title }}</h1>
+
+				<div class="flex flex-col gap-9">
+					@for (story of collection.stories; track story._id; let i = $index) {
+						@if (i >= 2) {
+							<div class="h-px w-full bg-neutral-200" role="separator"></div>
+						}
+						<cuentoneta-story-card-teaser-v3
+							[story]="story"
+							[variant]="i === 0 ? 'highlighted' : 'on-white'"
+							[order]="i + 1"
+							[showAuthor]="collection.config.showAuthors"
+							[showExcerpt]="true"
+							[showMultimedia]="true"
+							[excerptLines]="collection.config.showAuthors ? 3 : 4"
+							[tagLabel]="story.tags[0]?.title"
+							data-testid="story-card"
+						/>
+					}
+				</div>
+			</section>
+
+			<!-- Divisor vertical -->
+			<div class="w-px self-stretch bg-neutral-200" role="separator"></div>
+
+			<!-- Columna derecha: info de la colección + colecciones sugeridas -->
+			<aside class="flex w-[364px] shrink-0 flex-col gap-6 pt-8">
+				<div class="flex flex-col gap-4">
+					@if (collection.imagery.kind === 'representative') {
+						<cuentoneta-cover-image [src]="collection.imagery.image" [priority]="true" />
+					}
+					<div class="flex flex-col items-start gap-2">
+						<p class="font-inter text-xl leading-7 font-bold text-neutral-900">{{ collection.title }}</p>
+						@if (collection.tags[0]; as tag) {
+							<cuentoneta-tag [label]="tag.title" variant="filled" data-testid="collection-tag" />
+						}
+					</div>
+					<div class="flex flex-col items-start gap-3">
+						<div #description class="line-clamp-[8] font-inter text-sm font-medium text-neutral-700">
+							<cuentoneta-portable-text-parser [paragraphs]="collection.description" />
+						</div>
+						@if (isDescriptionOverflowing()) {
+							<button (click)="descriptionDrawer.open()" cuentoneta-button type="outline" data-testid="read-more">
+								Leer más
+							</button>
+						}
+					</div>
+				</div>
+
+				<div class="flex flex-col gap-4">
+					<h2 class="font-inter text-base leading-6 font-bold text-neutral-900">Otras colecciones sugeridas</h2>
+
+					@for (suggested of suggestedCollections; track suggested.slug) {
+						<cuentoneta-navigable-collection-teaser [collection]="suggested" data-testid="suggested-collection" />
+					}
+				</div>
+			</aside>
+		</div>
+
+		<!-- Drawer con la descripción completa (se abre desde "Leer más") -->
+		<cuentoneta-drawer #descriptionDrawer>
+			<div class="flex flex-col gap-4">
+				@if (collection.imagery.kind === 'representative') {
+					<cuentoneta-cover-image [src]="collection.imagery.image" />
+				}
+				<div class="flex flex-col items-start gap-2">
+					<p class="font-inter text-xl leading-7 font-bold text-neutral-900">{{ collection.title }}</p>
+					@if (collection.tags[0]; as tag) {
+						<cuentoneta-tag [label]="tag.title" variant="filled" />
+					}
+				</div>
+			</div>
+			<cuentoneta-portable-text-parser
+				[paragraphs]="collection.description"
+				classes="font-inter text-sm font-medium text-neutral-700"
+				class="flex flex-col gap-2"
+				data-testid="drawer-description"
+			/>
+			<div class="h-px w-full bg-neutral-200" role="separator"></div>
+			<div class="flex w-full flex-col gap-4">
+				<h2 class="font-inter text-base leading-6 font-bold text-neutral-900">Otras colecciones sugeridas</h2>
+				@for (suggested of suggestedCollections; track suggested.slug) {
+					<cuentoneta-navigable-collection-teaser [collection]="suggested" data-testid="drawer-suggested-collection" />
+				}
+			</div>
+		</cuentoneta-drawer>
+	} @else {
+		<!-- Estado sin resultados: el slug no matcheó ninguna colección (o el fetch falló) -->
+		<div class="py-16 text-center" data-testid="not-found">
+			<p class="font-inter text-lg font-bold text-neutral-900">No encontramos esta colección</p>
+			<p class="mt-2 font-inter text-sm text-neutral-600">Revisá el enlace o volvé al inicio.</p>
+		</div>
+	}
+</main>
