@@ -90,14 +90,15 @@ export interface LiteraryWorkNavigationTeaserWithAuthors extends LiteraryWorkBas
 
 **Invariantes del agregado** (validadas en `createLiteraryWork`, la única vía de construcción):
 
-| Invariante                                | Enforcement                                                                                                                                                      |
-| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `slug` con formato válido e inmutable     | VO `Slug` (`createSlug` lanza ante formato inválido); unicidad garantizada por Sanity                                                                            |
-| `title` no vacío                          | `createLiteraryWork` lanza                                                                                                                                       |
-| Al menos una sección de contenido         | `createLiteraryWork` lanza si `content.length === 0`                                                                                                             |
-| `totalReadingTime` = suma de secciones    | Derivado en la factory (no es input)                                                                                                                             |
-| `sectionCount` = número real de secciones | Derivado en la factory (`content.length`); en las vistas parciales/teaser lo provee el mapper (GROQ `count()`) y puede ser mayor que las secciones transportadas |
-| `authors` con al menos un autor           | `createLiteraryWork` lanza si `authors.length === 0`; la obra anónima referencia al author "Anónimo" ([§10](#10-autoría-y-obra-anónima))                         |
+| Invariante                                   | Enforcement                                                                                                                                                                                                                                |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `slug` con formato válido e inmutable        | VO `Slug` (`createSlug` lanza ante formato inválido); unicidad garantizada por Sanity                                                                                                                                                      |
+| `title` no vacío                             | `createLiteraryWork` lanza                                                                                                                                                                                                                 |
+| Al menos una sección de contenido            | `createLiteraryWork` lanza si `content.length === 0`                                                                                                                                                                                       |
+| `totalReadingTime` = suma de secciones       | Derivado en la factory (no es input)                                                                                                                                                                                                       |
+| `sectionCount` = número real de secciones    | Derivado en la factory (`content.length`); en las vistas parciales/teaser lo provee el mapper (GROQ `count()`) y puede ser mayor que las secciones transportadas                                                                           |
+| Posiciones contiguas en el agregado completo | `createLiteraryWork` lanza si `content[i].position !== i + 1` — el agregado completo siempre transporta las secciones `1..sectionCount` en orden; las proyecciones parciales (construidas por el mapper) conservan el `position` de origen |
+| `authors` con al menos un autor              | `createLiteraryWork` lanza si `authors.length === 0`; la obra anónima referencia al author "Anónimo" ([§10](#10-autoría-y-obra-anónima))                                                                                                   |
 
 ---
 
@@ -122,6 +123,7 @@ export interface LiteraryWorkEpigraph {
 }
 
 export interface LiteraryWorkSection {
+	readonly position: number; // identidad numérica de la sección en la obra (1-based)
 	readonly chapterTitle?: ChapterTitle;
 	readonly epigraphs?: readonly LiteraryWorkEpigraph[];
 	readonly bodyHtml: SanitizedHtml;
@@ -131,13 +133,14 @@ export interface LiteraryWorkSection {
 
 ### Mapeo campo a campo (CMS → dominio, responsabilidad del ACL de Slice 1)
 
-| CMS                                        | Dominio                                 | Transformación                                                                                                                         |
-| ------------------------------------------ | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `chapterTitle?: string`                    | `chapterTitle?: ChapterTitle`           | `createChapterTitle` (si presente); habilita `toAnchor(): Slug` para anclas de navegación                                              |
-| `epigraphs[].text: markdown`               | `epigraphs[].text: SanitizedHtml`       | **Pasa por el mismo pipeline MD→HTML que el body** (el texto del epígrafe también es markdown)                                         |
-| `epigraphs[].reference: string (markdown)` | `epigraphs[].reference?: SanitizedHtml` | **Mismo pipeline MD→HTML** (paridad con `Story.Epigraph.reference`, que es rich text); ausente o vacío en CMS → `undefined` en dominio |
-| `body: markdown`                           | `bodyHtml: SanitizedHtml`               | Pipeline `unified` + rewrite de imágenes ([§9](#9-allow-list-de-sanitización))                                                         |
-| —                                          | `readingTime: ReadingTime`              | Derivado: texto plano del markdown → `WordCount` → `deriveReadingTime` ([§5](#5-helper-de-reading-time))                               |
+| CMS                                        | Dominio                                 | Transformación                                                                                                                                                                                                                                                                            |
+| ------------------------------------------ | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `chapterTitle?: string`                    | `chapterTitle?: ChapterTitle`           | `createChapterTitle` (si presente); habilita `toAnchor(): Slug` para anclas de navegación                                                                                                                                                                                                 |
+| `epigraphs[].text: markdown`               | `epigraphs[].text: SanitizedHtml`       | **Pasa por el mismo pipeline MD→HTML que el body** (el texto del epígrafe también es markdown)                                                                                                                                                                                            |
+| `epigraphs[].reference: string (markdown)` | `epigraphs[].reference?: SanitizedHtml` | **Mismo pipeline MD→HTML** (paridad con `Story.Epigraph.reference`, que es rich text); ausente o vacío en CMS → `undefined` en dominio                                                                                                                                                    |
+| `body: markdown`                           | `bodyHtml: SanitizedHtml`               | Pipeline `unified` + rewrite de imágenes ([§9](#9-allow-list-de-sanitización))                                                                                                                                                                                                            |
+| —                                          | `readingTime: ReadingTime`              | Derivado: texto plano del markdown → `WordCount` → `deriveReadingTime` ([§5](#5-helper-de-reading-time))                                                                                                                                                                                  |
+| —                                          | `position: number`                      | Derivado del **índice en el array de secciones** (1-based) — el orden del array en Sanity es la fuente de verdad. Identidad numérica estable de la sección: es lo que permite al cliente saber **qué sección tiene en memoria** en una respuesta parcial ([§7](#7-contrato-del-endpoint)) |
 
 ---
 
@@ -161,7 +164,7 @@ Implementados en `src/app/models/*.model.ts` (#1852) — primera implementación
 Casos límite documentados para Slice 2 (no resueltos acá):
 
 - **Títulos duplicados** producen anclas duplicadas — la deduplicación (p. ej. sufijo `-2`) es responsabilidad de la capa que renderiza la navegación.
-- **Secciones sin `chapterTitle`** no tienen ancla derivable — el fallback (p. ej. ancla posicional `#seccion-3`) se decide al construir la navegación.
+- **Secciones sin `chapterTitle`** no tienen ancla derivable del título — el fallback natural es el ancla posicional construida desde `position` (p. ej. `#seccion-3`); su formato exacto se decide al construir la navegación.
 
 **`IsoDateTime` — reutilizado, no duplicado.** `publishedAt` usa el tipo `IsoDateTime` ya existente en `src/app/utils/date.utils.ts`; #1852 le suma la factory validadora `createIsoDateTime(value: string): IsoDateTime`. No se crea un segundo símbolo ni se brandea el tipo existente (lo consumen `Author`/`AuthorProfile` sin factory; migrarlos excede este issue).
 
@@ -237,6 +240,7 @@ El consumidor decide por query param si obtiene **toda la obra o un capítulo**:
 
 - **Sin `section`**: `content` transporta **todas** las secciones. `sectionCount === content.length`.
 - **Con `section=N`**: `content` transporta **únicamente la sección N** (1-based). El resto de la respuesta describe la obra completa: `totalReadingTime` sigue siendo el **total de la obra** (no el de la sección) y `sectionCount` el total real — con ellos el cliente pagina/navega (`N` de `sectionCount`) sin otra request de metadata. La respuesta parcial es una **proyección**: `sectionCount > content.length` es el indicador de parcialidad.
+- **Identidad de las secciones en memoria:** cada sección transporta su **`position`** (1-based, [§3](#3-shape-de-sección)) — la identidad numérica no depende del índice del array de la respuesta ni del `N` pedido. Eso hace seguro cachear secciones sueltas en el cliente, mezclar respuestas parciales y verificar la coherencia request↔respuesta (`content[0].position === N`).
 - **`N` fuera de rango** (`N > sectionCount`): mismo tratamiento que el recurso inexistente (ver nota abierta abajo) — no responde 200 con `content` vacío, porque violaría la invariante `content.length >= 1`.
 
 El SSR de `/read/:slug` (Slice 1) consume la forma completa; la obtención por sección habilita la navegación multi-capítulo (Slice 2) sin transferir la obra entera, y se apoya en la materialización **por sección** ([§8](#8-estrategia-de-materialización)).
@@ -258,7 +262,7 @@ Decisión T1b del epic; implementación en **Slice 4**. Hasta entonces rige **tr
 | Regen masivo | Tarea/función para re-materializar todo ante cambio de allow-list o de estrategia de imágenes                                                                                                                                        |
 | Source doc   | `literaryWork` **no persiste** `approximateReadingTime` ni HTML — solo markdown                                                                                                                                                      |
 
-**Granularidad por sección y `?section=N`.** El documento derivado persiste los transformados **por sección** (HTML + `readingTime` de cada una, más los agregados de la obra: `totalReadingTime`, `sectionCount`). Eso hace que servir `GET /literary-work/:slug?section=N` ([§7](#7-contrato-del-endpoint)) sea una lectura directa de la porción N del derivado — sin recomputar la obra completa — y que la respuesta parcial conserve los metadatos totales sin costo extra. El webhook regenera el derivado por documento; la invalidación de caché de una obra cubre todas sus secciones de una vez (una edición cambia el hash de origen → todas las porciones vuelven a servirse frescas).
+**Granularidad por sección y `?section=N`.** El documento derivado persiste los transformados **por sección, indexados por `position`** (HTML + `readingTime` de cada una, más los agregados de la obra: `totalReadingTime`, `sectionCount`). Eso hace que servir `GET /literary-work/:slug?section=N` ([§7](#7-contrato-del-endpoint)) sea una lectura directa de la porción N del derivado — sin recomputar la obra completa — y que la respuesta parcial conserve los metadatos totales sin costo extra. El webhook regenera el derivado por documento; la invalidación de caché de una obra cubre todas sus secciones de una vez (una edición cambia el hash de origen → todas las porciones vuelven a servirse frescas).
 
 ---
 
