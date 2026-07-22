@@ -120,7 +120,7 @@ Observaciones de seguridad y sugerencias de hardening.
 | #   | Archivo | Línea | Hallazgo | Estado |
 | --- | ------- | ----- | -------- | ------ |
 
-> La columna **Estado** usa el vocabulario canónico documentado en `code-reviewer.md` (Detectado / En progreso / Corregido / Descartado / Diferido / No se corrige / Requiere test E2E).
+> La columna **Estado** usa el vocabulario canónico documentado en [`code-reviewer.md`](code-reviewer.md) (Detectado / En progreso / Corregido / Descartado / Diferido / No se corrige / Requiere test E2E).
 
 ### Veredicto
 
