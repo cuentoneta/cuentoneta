@@ -91,9 +91,13 @@ Antes de auditar, leé estas referencias para tener el contexto completo. Cargal
 - [ ] `pnpm audit` no reporta paquetes con CVEs críticos
 - [ ] Dependencias pineadas a versiones específicas
 
+## Ruta de salida
+
+La Fase 4 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md) te pasa la ruta completa en la delegación: `workspace/<número>/SECURITY_REVIEW.md`. Si te invocan a demanda sin número de issue, usá el fallback plano `workspace/SECURITY_REVIEW.md` y aclará en el resumen final de tu respuesta que usaste el fallback.
+
 ## Formato de salida
 
-Escribí los hallazgos en `workspace/SECURITY_REVIEW.md`, bajo el título **"Auditoría de seguridad"**. Es tu archivo propio — el `code-reviewer` escribe el suyo en `workspace/CODE_REVIEW.md`. Presentá además el resumen en la respuesta.
+Escribí los hallazgos en la ruta de salida indicada arriba, bajo el título **"Auditoría de seguridad"**. Es tu archivo propio — el `code-reviewer` escribe el suyo (`CODE_REVIEW.md`). Presentá además el resumen en la respuesta.
 
 ### Resumen
 
