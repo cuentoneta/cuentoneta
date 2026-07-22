@@ -247,6 +247,24 @@ El SSR de `/read/:slug` (Slice 1) consume la forma completa; la obtención por s
 
 > **Nota abierta para Slice 1 — slug inexistente / sección fuera de rango:** el comportamiento vigente del módulo `story` ante slug no encontrado es que el service lanza `Error` genérico sin handler `onError` global en `routes.ts` → HTTP **500 sin body estructurado**, no un 404 JSON. Slice 1 debe decidir si `literary-work` introduce un 404 propio (y sienta el precedente) o mantiene paridad con `story` y se difiere el manejo de errores a un issue transversal. La decisión que se tome aplica por igual a ambos casos (slug y sección). Es una decisión **diferida a propósito**, no una omisión de este diseño.
 
+### Consumo desde el frontend — DTO de wire + rehidratación en el provider
+
+**Decisión.** El body de la respuesta **es** la proyección serializada del agregado (no se introduce un shape distinto tipo `LiteraryWorkHttpResponse` — misma repo, sin versionado ni multi-cliente: una tercera forma solo agregaría riesgo de drift). Pero el **tipo** con el que el frontend recibe ese body no es `LiteraryWork`: la serialización pierde exactamente lo que hace dominio al dominio —
+
+- **Métodos**: `ChapterTitle.toAnchor()` no viaja por JSON — tipear la respuesta como `LiteraryWork` produciría un error en runtime al invocarlo.
+- **Brands**: `Slug`/`SanitizedHtml`/`ReadingTime` son compile-time; `HttpClient.get<T>` es un cast, no una validación.
+- **`Object.freeze`**: la inmutabilidad runtime no cruza el wire.
+
+El contrato del frontend (Slice 1) es entonces:
+
+| Pieza             | Contrato                                                                                                                                                                                                                                                                                                    |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tipo de wire**  | `LiteraryWorkDto`: la misma forma del agregado con todo primitivo (`slug: string`, `chapterTitle?: string`, `bodyHtml: string`, …). Vive junto a `literary-work-api.interface.ts` (convención de API providers). Es **tipado, no una capa**: no hay transformación de shape                                 |
+| **Rehidratación** | `HttpLiteraryWorkApi` (el ACL del frontend, simétrico al mapper de Sanity del backend) mapea `dto → createLiteraryWork(...)` reutilizando **las mismas factories** del dominio — único punto de construcción. Si el backend enviara datos inválidos, la factory **lanza en la frontera**, no en un template |
+| **Superficie**    | El DTO **no sale del provider**: services, señales públicas y componentes consumen exclusivamente `LiteraryWork` y sus vistas (regla "Binding en componentes: solo dominio" de `domain-model.md`)                                                                                                           |
+
+**Alternativa evaluada y descartada:** volver el modelo _serialization-transparent_ demoviendo `toAnchor()` a función pura standalone y compartiendo el tipo de dominio como contrato de wire (paridad con el flujo actual de `Story`, que funciona porque sus interfaces son anémicas). Se descarta porque renuncia al modelo rico recién construido y porque las factories ya existen y están testeadas — el costo de la rehidratación es marginal frente a recuperar métodos, brands re-validados e inmutabilidad en el cliente.
+
 ---
 
 ## 8. Estrategia de materialización
@@ -320,17 +338,17 @@ Consecuencias:
 
 ## 11. Corte de #1852 vs. Slice 1 (#1853)
 
-| Pieza                                                                                                       | #1852 (este issue)                                           | Slice 1 (#1853) |
-| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ | --------------- |
-| Doc de diseño (este archivo)                                                                                | ✅ Código de contratos cerrados                              | Consume         |
-| Schema `literaryWork` definitivo + registro + `markdownSchema()` + typegen                                  | ✅ Implementado                                              | Consume         |
-| VOs (`Slug`, `WordCount`, `ReadingTime`, `Markdown`, `SanitizedHtml`, `ChapterTitle`) + `createIsoDateTime` | ✅ Implementados con specs                                   | Consume         |
-| Aritmética de reading time (`deriveReadingTime`, `sumReadingTimes`)                                         | ✅ Implementada con specs                                    | Consume         |
-| Agregado `LiteraryWork` + secciones + vistas + `createLiteraryWork` + `isAnonymous`                         | ✅ Implementados con specs                                   | Consume         |
-| `countWords` (markdown → texto plano, `mdast-util-to-string`)                                               | Contrato ([§5](#5-helper-de-reading-time))                   | ⚙️ Implementa   |
-| Pipeline MD→HTML (`unified`/`rehype-sanitize`) + allow-list como constante + rewrite de imágenes            | Contrato ([§9](#9-allow-list-de-sanitización))               | ⚙️ Implementa   |
-| Repository (puerto + `Sanity*` + `InMemory*`) + módulo backend                                              | Contrato ([§6](#6-repository-puerto-adaptador-y-doble))      | ⚙️ Implementa   |
-| Endpoint `GET /literary-work/:slug[?section=N]` + `.bru`                                                    | Contrato ([§7](#7-contrato-del-endpoint))                    | ⚙️ Implementa   |
-| Frontend (`LiteraryWorkApi`, ruta `/read/:slug`, página SSR)                                                | —                                                            | ⚙️ Implementa   |
-| Materialización de derivados                                                                                | Contrato ([§8](#8-estrategia-de-materialización))            | Slice 4         |
-| JSON-LD                                                                                                     | Consecuencia documentada ([§10](#10-autoría-y-obra-anónima)) | Slice 3         |
+| Pieza                                                                                                           | #1852 (este issue)                                           | Slice 1 (#1853) |
+| --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ | --------------- |
+| Doc de diseño (este archivo)                                                                                    | ✅ Código de contratos cerrados                              | Consume         |
+| Schema `literaryWork` definitivo + registro + `markdownSchema()` + typegen                                      | ✅ Implementado                                              | Consume         |
+| VOs (`Slug`, `WordCount`, `ReadingTime`, `Markdown`, `SanitizedHtml`, `ChapterTitle`) + `createIsoDateTime`     | ✅ Implementados con specs                                   | Consume         |
+| Aritmética de reading time (`deriveReadingTime`, `sumReadingTimes`)                                             | ✅ Implementada con specs                                    | Consume         |
+| Agregado `LiteraryWork` + secciones + vistas + `createLiteraryWork` + `isAnonymous`                             | ✅ Implementados con specs                                   | Consume         |
+| `countWords` (markdown → texto plano, `mdast-util-to-string`)                                                   | Contrato ([§5](#5-helper-de-reading-time))                   | ⚙️ Implementa   |
+| Pipeline MD→HTML (`unified`/`rehype-sanitize`) + allow-list como constante + rewrite de imágenes                | Contrato ([§9](#9-allow-list-de-sanitización))               | ⚙️ Implementa   |
+| Repository (puerto + `Sanity*` + `InMemory*`) + módulo backend                                                  | Contrato ([§6](#6-repository-puerto-adaptador-y-doble))      | ⚙️ Implementa   |
+| Endpoint `GET /literary-work/:slug[?section=N]` + `.bru`                                                        | Contrato ([§7](#7-contrato-del-endpoint))                    | ⚙️ Implementa   |
+| Frontend (`LiteraryWorkApi` + `LiteraryWorkDto` + rehidratación en el provider, ruta `/read/:slug`, página SSR) | Contrato ([§7](#7-contrato-del-endpoint))                    | ⚙️ Implementa   |
+| Materialización de derivados                                                                                    | Contrato ([§8](#8-estrategia-de-materialización))            | Slice 4         |
+| JSON-LD                                                                                                         | Consecuencia documentada ([§10](#10-autoría-y-obra-anónima)) | Slice 3         |
