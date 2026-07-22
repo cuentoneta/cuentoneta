@@ -27,8 +27,9 @@ describe('createLiteraryWorkSection', () => {
 	const readingTime = createReadingTime(3);
 
 	it('builds a minimal section without chapter title nor epigraphs', () => {
-		const section = createLiteraryWorkSection({ bodyHtml, readingTime });
+		const section = createLiteraryWorkSection({ position: 1, bodyHtml, readingTime });
 
+		expect(section.position).toBe(1);
 		expect(section.bodyHtml).toBe(bodyHtml);
 		expect(section.readingTime).toBe(3);
 		expect(section.chapterTitle).toBeUndefined();
@@ -37,6 +38,7 @@ describe('createLiteraryWorkSection', () => {
 
 	it('builds a full section with chapter title and epigraphs', () => {
 		const section = createLiteraryWorkSection({
+			position: 2,
 			chapterTitle: createChapterTitle('Capítulo Uno'),
 			epigraphs: [
 				createLiteraryWorkEpigraph({
@@ -48,11 +50,24 @@ describe('createLiteraryWorkSection', () => {
 			readingTime,
 		});
 
+		expect(section.position).toBe(2);
 		expect(section.chapterTitle?.value).toBe('Capítulo Uno');
 		expect(section.epigraphs).toHaveLength(1);
 	});
 
+	it('throws on a position below 1', () => {
+		expect(() => createLiteraryWorkSection({ position: 0, bodyHtml, readingTime })).toThrow(
+			'LiteraryWorkSection inválida: position 0 (debe ser un entero >= 1)',
+		);
+	});
+
+	it('throws on a non-integer position', () => {
+		expect(() => createLiteraryWorkSection({ position: 1.5, bodyHtml, readingTime })).toThrow(
+			'LiteraryWorkSection inválida: position 1.5 (debe ser un entero >= 1)',
+		);
+	});
+
 	it('returns a frozen object', () => {
-		expect(Object.isFrozen(createLiteraryWorkSection({ bodyHtml, readingTime }))).toBe(true);
+		expect(Object.isFrozen(createLiteraryWorkSection({ position: 1, bodyHtml, readingTime }))).toBe(true);
 	});
 });

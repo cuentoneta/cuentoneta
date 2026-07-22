@@ -5,8 +5,9 @@ import { createSanitizedHtml } from './sanitized-html.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { authorMock } from '@mocks/author.mock';
 
-function buildSection(minutes: number): LiteraryWorkSection {
+function buildSection(position: number, minutes: number): LiteraryWorkSection {
 	return createLiteraryWorkSection({
+		position,
 		bodyHtml: createSanitizedHtml('<p>Cuerpo.</p>'),
 		readingTime: createReadingTime(minutes),
 	});
@@ -21,7 +22,7 @@ function buildOptions(overrides: Partial<Parameters<typeof createLiteraryWork>[0
 		title: 'La obra',
 		authors: [anonymousAuthor],
 		coverImage: '',
-		content: [buildSection(2)],
+		content: [buildSection(1, 2)],
 		mediaSources: [],
 		resources: [],
 		tags: [],
@@ -41,10 +42,18 @@ describe('createLiteraryWork', () => {
 	});
 
 	it('derives totalReadingTime and sectionCount from its sections', () => {
-		const work = createLiteraryWork(buildOptions({ content: [buildSection(2), buildSection(3), buildSection(1)] }));
+		const work = createLiteraryWork(
+			buildOptions({ content: [buildSection(1, 2), buildSection(2, 3), buildSection(3, 1)] }),
+		);
 
 		expect(work.totalReadingTime).toBe(6);
 		expect(work.sectionCount).toBe(3);
+	});
+
+	it('throws when section positions are not contiguous from 1', () => {
+		expect(() => createLiteraryWork(buildOptions({ content: [buildSection(2, 2)] }))).toThrow(
+			'LiteraryWork inválida: posiciones de sección no contiguas (slug "la-obra", índice 0 con position 2)',
+		);
 	});
 
 	it('builds an anonymous work when its only author is Anónimo', () => {
