@@ -26,7 +26,7 @@ const section = defineArrayMember({
 					type: 'object',
 					fields: [
 						defineField({ name: 'text', title: 'Texto', type: 'markdown' }),
-						defineField({ name: 'reference', title: 'Referencia', type: 'string' }),
+						defineField({ name: 'reference', title: 'Referencia', type: 'markdown' }),
 					],
 				}),
 			],
