@@ -1,7 +1,12 @@
 import { BookIcon } from '@sanity/icons/Book';
 import { resource } from './resourceType';
 import { defineArrayMember, defineField, defineType } from 'sanity';
+import type { MarkdownOptions } from 'sanity-plugin-markdown';
 import { audioRecording, pdfLink, spaceRecording, spotifyPodcastEpisode, youtubeVideo } from './media-sources';
+
+// URL limpia del asset (sin el `?w=450` que el plugin agrega por defecto): las transforms de
+// imagen son responsabilidad del ACL, que lee las dimensiones del assetId de la URL de CDN.
+const markdownImageOptions: MarkdownOptions = { imageUrl: (imageAsset) => imageAsset.url };
 
 const section = defineArrayMember({
 	name: 'section',
@@ -25,8 +30,8 @@ const section = defineArrayMember({
 					title: 'Epígrafe',
 					type: 'object',
 					fields: [
-						defineField({ name: 'text', title: 'Texto', type: 'markdown' }),
-						defineField({ name: 'reference', title: 'Referencia', type: 'markdown' }),
+						defineField({ name: 'text', title: 'Texto', type: 'markdown', options: markdownImageOptions }),
+						defineField({ name: 'reference', title: 'Referencia', type: 'markdown', options: markdownImageOptions }),
 					],
 				}),
 			],
@@ -35,6 +40,7 @@ const section = defineArrayMember({
 			name: 'body',
 			title: 'Cuerpo (Markdown)',
 			type: 'markdown',
+			options: markdownImageOptions,
 			validation: (Rule) => Rule.required(),
 		}),
 	],

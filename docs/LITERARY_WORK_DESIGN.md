@@ -262,7 +262,16 @@ El consumidor decide por query param si obtiene **toda la obra o un capítulo**:
 
 El SSR de `/read/:slug` (Slice 1) consume la forma completa; la obtención por sección habilita la navegación multi-capítulo (Slice 2) sin transferir la obra entera, y se apoya en la materialización **por sección** ([§8](#8-estrategia-de-materialización)).
 
-> **Nota abierta para Slice 1 — slug inexistente / sección fuera de rango:** el comportamiento vigente del módulo `story` ante slug no encontrado es que el service lanza `Error` genérico sin handler `onError` global en `routes.ts` → HTTP **500 sin body estructurado**, no un 404 JSON. Slice 1 debe decidir si `literary-work` introduce un 404 propio (y sienta el precedente) o mantiene paridad con `story` y se difiere el manejo de errores a un issue transversal. La decisión que se tome aplica por igual a ambos casos (slug y sección). Es una decisión **diferida a propósito**, no una omisión de este diseño.
+### Recurso inexistente — 404 propio (decisión cerrada en el Slice 1)
+
+**Decisión:** el módulo `literary-work` responde **404 JSON propio** ante slug inexistente o `section >= sectionCount` — no la paridad con `story` (que deja subir un `Error` genérico al `onError` global → 500 sin body estructurado, perpetuando el hueco de indexación de URLs muertas).
+
+| Pieza                | Mecánica                                                                                                                                                                                                                                           |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Service              | Lanza errores tipados: `LiteraryWorkNotFoundError` / `LiteraryWorkSectionNotFoundError` (`literary-work.errors.ts`)                                                                                                                                |
+| Controller           | Los atrapa con `instanceof` y responde `{ error: message }` con status **404** — mismo envelope que el 500 del `onError` global. Cualquier otro error sigue subiendo al handler global                                                             |
+| SSR de `/read/:slug` | La página inyecta **`RESPONSE_INIT`** (token de Angular, `null` fuera de SSR) y, ante un `HttpErrorResponse` 404 del recurso, fija `status = 404` en la respuesta SSR — una URL inexistente responde **404 HTTP real**, nunca 200 con página vacía |
+| Alcance              | Solo recurso inexistente; otros errores (500 genuino) conservan el comportamiento por defecto. `story` no se toca — su manejo de errores es deuda preexistente fuera de este epic                                                                  |
 
 ### Consumo desde el frontend — DTO de wire + rehidratación en el provider
 
