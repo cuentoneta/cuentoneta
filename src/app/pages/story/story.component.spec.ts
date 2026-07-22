@@ -30,7 +30,7 @@ describe('StoryComponent', () => {
 				MockShareContentComponent,
 				MockStoryNavigationBarComponent,
 			],
-			providers: [provideStoryApiMock()],
+			providers: [provideStoryApiMock(), { provide: LayoutService, useValue: new ControllableLayoutService() }],
 			inputs: {
 				slug: storyMock.slug,
 			},
