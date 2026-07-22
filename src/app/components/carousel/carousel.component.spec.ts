@@ -6,13 +6,13 @@ import { CarouselComponent } from './carousel.component';
 
 // Mocks
 import { contentCampaignMock } from '@mocks/content-campaign.mock';
-import { InMemoryLayoutService } from '../../providers/layout.mock';
+import { ControllableLayoutService } from '../../providers/layout.mock';
 import { LayoutService } from '../../providers/layout.interface';
 import type { Viewport } from '@utils/screen.utils';
 
-function layoutAt(viewport: Viewport): InMemoryLayoutService {
-	const layout = new InMemoryLayoutService();
-	layout.setViewport(viewport);
+function layoutAt(viewport: Viewport): ControllableLayoutService {
+	const layout = new ControllableLayoutService();
+	layout.simulateViewport(viewport);
 	return layout;
 }
 
