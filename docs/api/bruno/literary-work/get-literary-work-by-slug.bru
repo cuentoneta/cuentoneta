@@ -14,13 +14,7 @@ params:path {
   slug: la-obra
 }
 
-params:query {
-  ~section: 0
-}
-
 docs {
-  Obtener una obra literaria por su slug. El query param `section` (0-based, opcional,
-  deshabilitado por defecto) devuelve únicamente esa sección conservando los metadatos
-  totales de la obra (totalReadingTime, sectionCount) — ver docs/LITERARY_WORK_DESIGN.md §7.
-  Slug inexistente o sección fuera de rango responden 404 con body { error }.
+  Obtener una obra literaria completa por su slug (todas las secciones).
+  Slug inexistente responde 404 con body { error } — ver docs/LITERARY_WORK_DESIGN.md §7.
 }

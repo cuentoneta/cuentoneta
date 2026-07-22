@@ -40,9 +40,20 @@ function toSection(dto: LiteraryWorkSectionDto): LiteraryWorkSection {
 // como override: es el valor autoritativo que el backend ya resolvió (suma u override editorial);
 // re-derivarlo de las secciones lo perdería.
 function toLiteraryWork(dto: LiteraryWorkDto): LiteraryWork {
+	// Sin spread del dto: totalReadingTime/sectionCount son derivados de la factory, no options —
+	// pasarlos de más dependería del orden interno de propiedades de createLiteraryWork.
 	return createLiteraryWork({
-		...dto,
+		_id: dto._id,
+		slug: dto.slug,
+		title: dto.title,
+		authors: dto.authors,
+		coverImage: dto.coverImage,
 		content: dto.content.map(toSection),
+		mediaSources: dto.mediaSources,
+		resources: dto.resources,
+		badLanguage: dto.badLanguage,
+		tags: dto.tags,
+		originalPublication: dto.originalPublication,
 		publishedAt: createIsoDateTime(dto.publishedAt),
 		readingTimeOverride: createReadingTime(dto.totalReadingTime),
 	});

@@ -47,6 +47,7 @@ function rehypeSanityImages() {
 	};
 }
 
+// Singleton de módulo: construir el procesador unified es costoso y el pipeline es inmutable.
 const pipeline = unified()
 	.use(remarkParse)
 	.use(remarkRehype)

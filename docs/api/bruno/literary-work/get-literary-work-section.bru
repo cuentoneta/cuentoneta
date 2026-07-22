@@ -1,0 +1,26 @@
+meta {
+  name: Get literary work section
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/literary-work/:slug?section=0
+  body: none
+  auth: none
+}
+
+params:path {
+  slug: la-obra
+}
+
+params:query {
+  section: 0
+}
+
+docs {
+  Obtener una única sección de la obra por su position (0-based). La respuesta es una
+  proyección: content transporta solo esa sección, pero totalReadingTime y sectionCount
+  siguen siendo los totales de la obra. Sección fuera de rango responde 404 — ver
+  docs/LITERARY_WORK_DESIGN.md §7.
+}
