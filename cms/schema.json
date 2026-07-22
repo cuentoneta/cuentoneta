@@ -915,6 +915,13 @@
 				},
 				"optional": false
 			},
+			"readingTimeOverride": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "number"
+				},
+				"optional": true
+			},
 			"mediaSources": {
 				"type": "objectAttribute",
 				"value": {
