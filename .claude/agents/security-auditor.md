@@ -103,22 +103,24 @@ Descripción breve de qué se auditó y la postura de seguridad general.
 
 Problemas que deben resolverse antes del merge — vectores de explotación activos.
 
-| #   | Archivo | Línea | Vulnerabilidad | Categoría OWASP | Fix | Resuelto |
-| --- | ------- | ----- | -------------- | --------------- | --- | -------- |
+| #   | Archivo | Línea | Vulnerabilidad | Categoría OWASP | Fix | Estado |
+| --- | ------- | ----- | -------------- | --------------- | --- | ------ |
 
 ### Advertencias de seguridad (Should Fix)
 
 Patrones que debilitan la postura de seguridad pero no son explotables de inmediato.
 
-| #   | Archivo | Línea | Problema | Recomendación | Resuelto |
-| --- | ------- | ----- | -------- | ------------- | -------- |
+| #   | Archivo | Línea | Problema | Recomendación | Estado |
+| --- | ------- | ----- | -------- | ------------- | ------ |
 
 ### Hallazgos informativos
 
 Observaciones de seguridad y sugerencias de hardening.
 
-| #   | Archivo | Línea | Hallazgo | Resuelto |
-| --- | ------- | ----- | -------- | -------- |
+| #   | Archivo | Línea | Hallazgo | Estado |
+| --- | ------- | ----- | -------- | ------ |
+
+> La columna **Estado** usa el vocabulario canónico documentado en [`code-reviewer.md`](code-reviewer.md) (Detectado / En progreso / Corregido / Descartado / Diferido / No se corrige / Requiere test E2E).
 
 ### Veredicto
 

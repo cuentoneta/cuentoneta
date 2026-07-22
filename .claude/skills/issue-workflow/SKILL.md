@@ -98,11 +98,11 @@ No avanzar a la Fase 3 sin aprobación explícita.
 **Propósito:** abordar los hallazgos con commits atómicos.
 
 1. Abordar cada **Crítico** y **Advertencia** de `workspace/CODE_REVIEW.md` — y de `workspace/SECURITY_REVIEW.md` si corrió el auditor — por prioridad (Críticos primero).
-2. Tras cada fix, actualizar la columna **Abordado** en el archivo al que pertenece el hallazgo (Fixed / Discarded / Deferred / Won't Fix).
+2. Tras cada fix, actualizar la columna **Estado** en el archivo al que pertenece el hallazgo (`CODE_REVIEW.md` o `SECURITY_REVIEW.md`), con los valores canónicos del `code-reviewer` (Detectado / En progreso / Corregido / Descartado / Diferido / No se corrige / Requiere test E2E).
 3. Un commit atómico por fix. El mensaje describe el **cambio real**, nunca referencia el número de hallazgo.
    - ✅ `[#1234] - Acota la constante al cuerpo de la función — estaba a nivel de módulo`
    - ❌ `[#1234] - Arregla el hallazgo #2`
-4. Si un hallazgo se **difiere**, proponer el issue al usuario y **esperar su confirmación** antes de crearlo (`gh issue create`); una vez creado, poner la URL en la columna Abordado. Crear un issue es una acción hacia afuera: la misma política rige en la Fase 6.
+4. Si un hallazgo se **difiere**, proponer el issue al usuario y **esperar su confirmación** antes de crearlo (`gh issue create`); una vez creado, anotar su URL junto al valor **Diferido** en la columna **Estado**. Crear un issue es una acción hacia afuera: la misma política rige en la Fase 6.
 5. Tras abordar Críticos y Advertencias, re-correr los gates de CI. Arreglar regresiones.
 6. Las **Sugerencias** son opcionales: presentarlas y dejar que el usuario decida.
 
