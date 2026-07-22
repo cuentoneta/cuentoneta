@@ -140,6 +140,115 @@ export type TagReference = {
 	[internalGroqTypeReferenceTo]?: 'tag';
 };
 
+export type LiteraryWork = {
+	_id: string;
+	_type: 'literaryWork';
+	_createdAt: string;
+	_updatedAt: string;
+	_rev: string;
+	title: string;
+	slug: Slug;
+	authors: Array<
+		{
+			_key: string;
+		} & AuthorReference
+	>;
+	coverImage?: {
+		asset?: SanityImageAssetReference;
+		media?: unknown;
+		hotspot?: SanityImageHotspot;
+		crop?: SanityImageCrop;
+		_type: 'image';
+	};
+	content: Array<{
+		chapterTitle?: string;
+		epigraphs?: Array<{
+			text?: Markdown;
+			reference?: Markdown;
+			_type: 'epigraph';
+			_key: string;
+		}>;
+		body: Markdown;
+		_type: 'section';
+		_key: string;
+	}>;
+	readingTimeOverride?: number;
+	mediaSources?: Array<
+		| {
+				title: string;
+				description: BlockContent;
+				url: string;
+				_type: 'audioRecording';
+				_key: string;
+		  }
+		| {
+				title: string;
+				description: BlockContent;
+				audioFile: AudioFile;
+				hostName: string;
+				hostAvatar?: HostAvatar;
+				date: string;
+				duration: string;
+				_type: 'spaceRecording';
+				_key: string;
+		  }
+		| {
+				title: string;
+				description: BlockContent;
+				videoId: string;
+				_type: 'youTubeVideo';
+				_key: string;
+		  }
+		| {
+				title: string;
+				description: BlockContent;
+				url: string;
+				_type: 'spotifyPodcastEpisode';
+				_key: string;
+		  }
+		| {
+				title: string;
+				description: BlockContent;
+				url: string;
+				_type: 'pdfLink';
+				_key: string;
+		  }
+	>;
+	resources?: Array<{
+		title: string;
+		url: string;
+		resourceType: ResourceTypeReference;
+		_type: 'resource';
+		_key: string;
+	}>;
+	badLanguage?: boolean;
+	tags?: Array<
+		{
+			_key: string;
+		} & TagReference
+	>;
+	originalPublication?: string;
+	publishedAt?: string;
+};
+
+export type Markdown = string;
+
+export type SanityImageCrop = {
+	_type: 'sanity.imageCrop';
+	top: number;
+	bottom: number;
+	left: number;
+	right: number;
+};
+
+export type SanityImageHotspot = {
+	_type: 'sanity.imageHotspot';
+	x: number;
+	y: number;
+	height: number;
+	width: number;
+};
+
 export type Story = {
 	_id: string;
 	_type: 'story';
@@ -224,22 +333,6 @@ export type Story = {
 };
 
 export type ComputedNumber = number;
-
-export type SanityImageCrop = {
-	_type: 'sanity.imageCrop';
-	top: number;
-	bottom: number;
-	left: number;
-	right: number;
-};
-
-export type SanityImageHotspot = {
-	_type: 'sanity.imageHotspot';
-	x: number;
-	y: number;
-	height: number;
-	width: number;
-};
 
 export type NationalityReference = {
 	_ref: string;
@@ -603,10 +696,12 @@ export type AllSanitySchemaTypes =
 	| AuthorReference
 	| ResourceTypeReference
 	| TagReference
-	| Story
-	| ComputedNumber
+	| LiteraryWork
+	| Markdown
 	| SanityImageCrop
 	| SanityImageHotspot
+	| Story
+	| ComputedNumber
 	| NationalityReference
 	| Author
 	| Nationality

@@ -95,7 +95,7 @@ export interface LiteraryWorkNavigationTeaserWithAuthors extends LiteraryWorkBas
 | `slug` con formato válido e inmutable        | VO `Slug` (`createSlug` lanza ante formato inválido); unicidad garantizada por Sanity                                                                                                                                                    |
 | `title` no vacío                             | `createLiteraryWork` lanza                                                                                                                                                                                                               |
 | Al menos una sección de contenido            | `createLiteraryWork` lanza si `content.length === 0`                                                                                                                                                                                     |
-| `totalReadingTime` = suma de secciones       | Derivado en la factory (no es input)                                                                                                                                                                                                     |
+| `totalReadingTime` = suma de secciones       | Derivado en la factory — salvo **`readingTimeOverride`** editorial, que lo reemplaza (obras recitadas/audiovisuales, ver [§5](#5-helper-de-reading-time))                                                                                |
 | `sectionCount` = número real de secciones    | Derivado en la factory (`content.length`); en las vistas parciales/teaser lo provee el mapper (GROQ `count()`) y puede ser mayor que las secciones transportadas                                                                         |
 | Posiciones contiguas en el agregado completo | `createLiteraryWork` lanza si `content[i].position !== i` — el agregado completo siempre transporta las secciones `0..sectionCount-1` en orden; las proyecciones parciales (construidas por el mapper) conservan el `position` de origen |
 | `authors` con al menos un autor              | `createLiteraryWork` lanza si `authors.length === 0`; la obra anónima referencia al author "Anónimo" ([§10](#10-autoría-y-obra-anónima))                                                                                                 |
@@ -194,6 +194,23 @@ export function countWords(markdown: Markdown): WordCount;
 ```
 
 El flujo completo por sección: `body (Markdown) → countWords → WordCount → deriveReadingTime → ReadingTime`; el total del agregado: `sumReadingTimes(sections.map(s => s.readingTime))` (derivado en `createLiteraryWork`).
+
+### Override editorial de duración (`readingTimeOverride`)
+
+Para obras cuyo contenido principal es un **recitado o audiovisual** (p. ej. narraciones verbales sin texto fuente), la duración relevante es la del medio, no la del texto. El schema expone el campo opcional **`readingTimeOverride`** (entero `>= 1`, minutos): si está presente, `createLiteraryWork` lo usa como `totalReadingTime` en lugar de la suma de secciones. La interfaz pública no cambia — los consumidores ven un único `totalReadingTime` sin conocer su procedencia.
+
+- **Compatibilidad con T1b:** el override es un **dato fuente editorial** (input curatorial), no un derivado persistido — la decisión "el source doc no persiste `approximateReadingTime`" prohíbe persistir lo computado, no un input.
+- El `readingTime` **por sección** sigue derivándose del texto (el override es solo del total).
+
+### Obras solo-recitado (sin texto fuente)
+
+La invariante `content >= 1` **se mantiene**: una obra cuyo contenido es únicamente un recitado (p. ej. narraciones de Alberto Laiseca adaptadas de una película, sin versión textual) se publica con:
+
+1. Una **sección editorial mínima** (presentación/contexto curatorial del recitado) — le da a `/read/:slug` el cuerpo SSR indexable que la estrategia SEO del epic exige, y mantiene válidos `teaserSection`, `sectionCount` y `?section=N`.
+2. El medio en **`mediaSources`** (el schema ya soporta `youTubeVideo`/`audioRecording`/etc.).
+3. **`readingTimeOverride`** con la duración real del medio.
+
+Permitir `content: []` se evaluó y descartó: degeneraría `totalReadingTime` (mínimo 1 falso), `teaserSection` (pasaría a opcional en cascada), la semántica de `?section=N` y la premisa "un documento SSR indexable" del epic. Una `MediaSection` como tipo de sección (unión `TextSection | MediaSection`) queda como extensión futura si surge necesidad curatorial concreta — reabre pipeline, reading time y render, y no se justifica hoy.
 
 ---
 
