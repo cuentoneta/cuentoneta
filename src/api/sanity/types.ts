@@ -148,7 +148,7 @@ export type LiteraryWork = {
 	_rev: string;
 	title: string;
 	slug: Slug;
-	authors?: Array<
+	authors: Array<
 		{
 			_key: string;
 		} & AuthorReference
