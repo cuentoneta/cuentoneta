@@ -1,5 +1,6 @@
 export const Endpoints = Object.freeze({
 	Author: 'api/author',
+	LiteraryWork: 'api/literary-work',
 	Story: 'api/story',
 	StoryList: 'api/storylist',
 	Contributor: 'api/contributor',

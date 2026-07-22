@@ -12,6 +12,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 
 // API providers
 import { provideAuthorApi } from './providers/author.provider';
+import { provideLiteraryWorkApi } from './providers/literary-work.provider';
 import { provideContentApi } from './providers/content.provider';
 import { provideContributorApi } from './providers/contributor.provider';
 import { provideStoryApi } from './providers/story.provider';
@@ -46,6 +47,7 @@ export const appConfig: ApplicationConfig = {
 		provideAuthorApi(),
 		provideContentApi(),
 		provideContributorApi(),
+		provideLiteraryWorkApi(),
 		provideStoryApi(),
 		provideStorylistApi(),
 		providePushNotificationsApi(),
