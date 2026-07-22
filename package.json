@@ -72,7 +72,6 @@
 		"satori-html": "^0.3.2",
 		"tslib": "^2.6.2",
 		"unified": "^11.0.5",
-		"unist-util-visit": "^5.1.0",
 		"zod": "^4.4.3"
 	},
 	"devDependencies": {
@@ -99,7 +98,6 @@
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/jest-dom": "^6.9.1",
 		"@testing-library/user-event": "^14.6.1",
-		"@types/hast": "^3.0.5",
 		"@types/jsonld": "^1.5.15",
 		"@types/node": "^22.12.0",
 		"@types/react": "^19.2.17",
