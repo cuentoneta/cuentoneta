@@ -3,8 +3,14 @@ import { TestBed } from '@angular/core/testing';
 import { WindowLayoutService } from './layout.provider';
 import { Direction, type LayoutService } from './layout.interface';
 import { WINDOW } from './window';
-import { map, of } from 'rxjs';
+import { map, of, type Observable } from 'rxjs';
 import { Viewport } from '@utils/screen.utils';
+
+// `isHeaderVisible$` es privado: es el detalle que alimenta el signal público `isHeaderVisible`. Se
+// accede acá para probar la política de visibilidad del header —la lógica que el signal deriva— sin
+// exponer el observable en el contrato.
+const headerVisibility$ = (svc: WindowLayoutService): Observable<boolean> =>
+	(svc as unknown as { readonly isHeaderVisible$: Observable<boolean> }).isHeaderVisible$;
 
 describe('WindowLayoutService', () => {
 	let service: WindowLayoutService;
@@ -66,13 +72,13 @@ describe('WindowLayoutService', () => {
 			}));
 	});
 
-	describe('isHeaderVisible$', () => {
+	describe('política de visibilidad del header (deriva el signal isHeaderVisible)', () => {
 		it('should emit true when the user scrolls up', () =>
 			new Promise<void>((resolve) => {
 				const scrollEvents = of([1200, 500]).pipe(map(([prev, curr]) => (curr < prev ? Direction.Up : Direction.Down)));
 				spyOn(service, 'userHasScrolled$', 'get').mockReturnValue(scrollEvents);
 
-				service.isHeaderVisible$.subscribe((isVisible) => {
+				headerVisibility$(service).subscribe((isVisible) => {
 					expect(isVisible).toBe(true);
 					resolve();
 				});
@@ -85,7 +91,7 @@ describe('WindowLayoutService', () => {
 				const scrollEvents = of([500, 1000]).pipe(map(([prev, curr]) => (curr < prev ? Direction.Up : Direction.Down)));
 				spyOn(service, 'userHasScrolled$', 'get').mockReturnValue(scrollEvents);
 
-				service.isHeaderVisible$.subscribe((isVisible) => {
+				headerVisibility$(service).subscribe((isVisible) => {
 					expect(isVisible).toBe(false);
 					resolve();
 				});
@@ -98,7 +104,7 @@ describe('WindowLayoutService', () => {
 				const scrollEvents = of([500, 1000]).pipe(map(([prev, curr]) => (curr < prev ? Direction.Up : Direction.Down)));
 				spyOn(service, 'userHasScrolled$', 'get').mockReturnValue(scrollEvents);
 
-				service.isHeaderVisible$.subscribe((isVisible) => {
+				headerVisibility$(service).subscribe((isVisible) => {
 					expect(isVisible).toBe(true);
 					resolve();
 				});
@@ -110,7 +116,7 @@ describe('WindowLayoutService', () => {
 				const scrollEvents = of([500, 1000]).pipe(map(([prev, curr]) => (curr < prev ? Direction.Up : Direction.Down)));
 				spyOn(service, 'userHasScrolled$', 'get').mockReturnValue(scrollEvents);
 
-				service.isHeaderVisible$.subscribe((isVisible) => {
+				headerVisibility$(service).subscribe((isVisible) => {
 					expect(isVisible).toBe(true);
 					resolve();
 				});

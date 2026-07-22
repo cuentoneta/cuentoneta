@@ -63,7 +63,7 @@ export class WindowLayoutService implements LayoutService {
 		return this._viewportHasChanged$;
 	}
 
-	public get isHeaderVisible$() {
+	private get isHeaderVisible$() {
 		return combineLatest([this.viewportHasChanged$, this.userHasScrolled$]).pipe(
 			map(([hasChanged, direction]) => {
 				if (hasChanged) {

@@ -10,10 +10,11 @@ export type Direction = (typeof Direction)[keyof typeof Direction];
 // `inject(LayoutService)` intacto y la interfaz es la superficie contra la cual el compilador exige
 // paridad entre real y doble.
 export interface LayoutService {
+	// La cara pública de la visibilidad del header es el **signal**; el observable que lo alimenta es
+	// un detalle de implementación privado del real (ver `WindowLayoutService`).
 	readonly isHeaderVisible: Signal<boolean>;
 	readonly userHasScrolled$: Observable<Direction>;
 	readonly viewportHasChanged$: Observable<Event | null>;
-	readonly isHeaderVisible$: Observable<boolean>;
 	isPlatformBrowser(): boolean;
 	isPlatformServer(): boolean;
 	setViewport(): void;
