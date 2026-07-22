@@ -33,7 +33,8 @@ test.describe('read — B: HTML server-rendered de una obra existente', () => {
 
 	test.beforeEach(() => {
 		// Contenido curado a mano en el dataset: si todavía no existe, se saltea con señal clara
-		// en vez de fallar el gate (mismo espíritu que los test.fixme de la suite hasta #1771).
+		// en vez de fallar el gate.
+		// eslint-disable-next-line playwright/no-skipped-test -- skip condicional por contenido del dataset, no un test deshabilitado
 		test.skip(status === 404, `No existe literaryWork con slug "${STABLE_SLUGS.literaryWork}" en el dataset`);
 	});
 

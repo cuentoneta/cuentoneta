@@ -61,7 +61,7 @@ interface LiteraryWorkBase {
 export interface LiteraryWork extends LiteraryWorkBase {
 	readonly authors: readonly Author[]; // 1..N; la obra anónima referencia al author "Anónimo" (ver §10)
 	readonly content: readonly LiteraryWorkSection[]; // >= 1
-	readonly mediaSources: readonly MediaTypes[];
+	readonly mediaSources: readonly Media[];
 	readonly resources: readonly Resource[];
 	readonly badLanguage?: boolean;
 	readonly originalPublication: string;

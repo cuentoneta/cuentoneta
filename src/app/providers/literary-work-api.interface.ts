@@ -2,13 +2,13 @@ import { InjectionToken } from '@angular/core';
 import type { Observable } from 'rxjs';
 import type { Author } from '@models/author.model';
 import type { LiteraryWork } from '@models/literary-work.model';
-import type { MediaTypes } from '@models/media.model';
+import type { Media } from '@models/media.model';
 import type { Resource } from '@models/resource.model';
 import type { Tag } from '@models/tag.model';
 
 // Shape de wire del agregado serializado (LITERARY_WORK_DESIGN.md §7): los brands compile-time
 // y los métodos no cruzan JSON — ChapterTitle llega como { value } sin toAnchor(). Author/Tag/
-// Resource/MediaTypes no están brandeados, se reusan tal cual. El DTO no sale del provider.
+// Resource/Media no están brandeados, se reusan tal cual. El DTO no sale del provider.
 export interface LiteraryWorkEpigraphDto {
 	readonly text: string;
 	readonly reference?: string;
@@ -32,7 +32,7 @@ export interface LiteraryWorkDto {
 	readonly tags: readonly Tag[];
 	readonly authors: readonly Author[];
 	readonly content: readonly LiteraryWorkSectionDto[];
-	readonly mediaSources: readonly MediaTypes[];
+	readonly mediaSources: readonly Media[];
 	readonly resources: readonly Resource[];
 	readonly badLanguage?: boolean;
 	readonly originalPublication: string;
