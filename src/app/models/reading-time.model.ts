@@ -1,6 +1,24 @@
-import type { WordCount } from './word-count.model';
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import { toString as mdastToString } from 'mdast-util-to-string';
+import type { Markdown } from './markdown.model';
+import { createWordCount, type WordCount } from './word-count.model';
 
 export type ReadingTime = number & { readonly __brand: 'ReadingTime' };
+
+const markdownParser = unified().use(remarkParse);
+
+export function countWords(markdown: Markdown): WordCount {
+	const tree = markdownParser.parse(markdown);
+	// mdastToString concatena bloques hermanos sin separador ("fin.Inicio"): unir los bloques
+	// de nivel superior con espacio preserva el límite de palabra entre párrafos.
+	const words = tree.children
+		.map((block) => mdastToString(block))
+		.join(' ')
+		.split(/\s+/)
+		.filter((word) => word.length > 0);
+	return createWordCount(words.length);
+}
 
 export function createReadingTime(minutes: number): ReadingTime {
 	if (!Number.isInteger(minutes) || minutes < 1) {
