@@ -96,6 +96,14 @@ export default defineType({
 			validation: (Rule) => Rule.required().min(1),
 		}),
 		defineField({
+			name: 'readingTimeOverride',
+			title: 'Duración fija (minutos)',
+			description:
+				'Opcional. Para obras cuyo contenido principal es un recitado o audiovisual: fija la duración total mostrada, en lugar de derivarla del texto de las secciones.',
+			type: 'number',
+			validation: (Rule) => Rule.integer().min(1),
+		}),
+		defineField({
 			name: 'mediaSources',
 			title: 'Recursos multimedia asociados en otras plataformas',
 			type: 'array',

@@ -172,6 +172,7 @@ export type LiteraryWork = {
 		_type: 'section';
 		_key: string;
 	}>;
+	readingTimeOverride?: number;
 	mediaSources?: Array<
 		| {
 				title: string;
