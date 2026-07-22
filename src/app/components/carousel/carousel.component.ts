@@ -16,7 +16,7 @@ import { CarouselControlsComponent } from './carousel-controls.component';
 import { ContentCampaign, ContentCampaignViewport } from '@models/content-campaign.model';
 
 // Servicios
-import { LayoutService } from '../../providers/layout.service';
+import { LayoutService } from '../../providers/layout.interface';
 import { CarouselStateService } from './carousel-state.service';
 import { CarouselGestureService } from './carousel-gesture.service';
 
