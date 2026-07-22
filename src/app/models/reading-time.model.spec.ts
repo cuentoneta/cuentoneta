@@ -1,5 +1,35 @@
-import { createReadingTime, deriveReadingTime, sumReadingTimes } from './reading-time.model';
+import { countWords, createReadingTime, deriveReadingTime, sumReadingTimes } from './reading-time.model';
+import { createMarkdown } from './markdown.model';
 import { createWordCount } from './word-count.model';
+
+describe('countWords', () => {
+	it('counts the words of a plain paragraph', () => {
+		expect(countWords(createMarkdown('Una obra de cinco palabras.'))).toBe(5);
+	});
+
+	it('counts plain-text words without inflating the count with markdown syntax', () => {
+		expect(countWords(createMarkdown('Texto con **negrita**, _cursiva_ y un [enlace](https://example.com).'))).toBe(7);
+	});
+
+	it('ignores whitespace-only segments and preserves word boundaries across blocks', () => {
+		expect(countWords(createMarkdown('Una   palabra\n\n\ny   otra'))).toBe(4);
+	});
+
+	it('does not count raw HTML tags nor image alt text as words', () => {
+		expect(
+			countWords(
+				createMarkdown(
+					'Dos palabras\n\n<div class="x">tres</div>\n\n![alt largo de imagen](https://example.com/i.jpg)',
+				),
+			),
+		).toBe(2);
+	});
+
+	it('feeds deriveReadingTime for the full markdown-to-minutes flow', () => {
+		const words = countWords(createMarkdown('palabra '.repeat(401).trim()));
+		expect(deriveReadingTime(words)).toBe(3);
+	});
+});
 
 describe('createReadingTime', () => {
 	it('returns the value branded as ReadingTime when it is a positive integer', () => {
