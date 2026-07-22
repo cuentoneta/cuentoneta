@@ -198,6 +198,8 @@ Una vez que el usuario confirma y el issue existe, anotar su URL en el reporte j
 
 La columna **#** da un número secuencial a través de las tres tablas dentro de la misma sesión de review. La numeración es continua: si los Críticos terminan en #3, las Advertencias empiezan en #4. Así cualquier problema se referencia por un único número (p. ej. "corregí el #6") sin importar su severidad.
 
+Los hallazgos del `security-auditor` (si corrió) llevan su propio prefijo `S` (S1, S2, …) en `SECURITY_REVIEW.md` y no comparten secuencia con los de este agente — ver "Numeración de hallazgos" en [`security-auditor.md`](security-auditor.md).
+
 ### Resultados de verificación
 
 Una fila por gate **aplicable al diff** (ver el paso 4 del proceso de revisión), declarando quién observó el resultado:
