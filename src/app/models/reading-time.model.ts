@@ -1,6 +1,5 @@
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
-import { toString as mdastToString } from 'mdast-util-to-string';
 import type { Markdown } from './markdown.model';
 import { createWordCount, type WordCount } from './word-count.model';
 
@@ -8,15 +7,33 @@ export type ReadingTime = number & { readonly __brand: 'ReadingTime' };
 
 const markdownParser = unified().use(remarkParse);
 
+// Tipado estructural mínimo del mdast: alcanza para el walker sin acoplar @types/mdast.
+interface MarkdownNode {
+	readonly type: string;
+	readonly value?: string;
+	readonly children?: readonly MarkdownNode[];
+}
+
+// Solo texto que el lector efectivamente lee: excluye nodos `html` crudos (tags no son palabras)
+// y el `alt` de las imágenes (metadata) — semántica que mdast-util-to-string incluía por defecto.
+const readableLiteralTypes = new Set(['text', 'inlineCode', 'code']);
+
+function collectReadableText(node: MarkdownNode, fragments: string[]): void {
+	if (node.value !== undefined && readableLiteralTypes.has(node.type)) {
+		fragments.push(node.value);
+	}
+	node.children?.forEach((child) => collectReadableText(child, fragments));
+}
+
 export function countWords(markdown: Markdown): WordCount {
-	const tree = markdownParser.parse(markdown);
-	// mdastToString concatena bloques hermanos sin separador ("fin.Inicio"): unir los bloques
-	// de nivel superior con espacio preserva el límite de palabra entre párrafos.
-	const words = tree.children
-		.map((block) => mdastToString(block))
+	const fragments: string[] = [];
+	collectReadableText(markdownParser.parse(markdown), fragments);
+	// Una palabra contiene al menos una letra o número: la puntuación que queda suelta al
+	// separar nodos inline ("negrita" + ",") no cuenta.
+	const words = fragments
 		.join(' ')
 		.split(/\s+/)
-		.filter((word) => word.length > 0);
+		.filter((word) => /[\p{L}\p{N}]/u.test(word));
 	return createWordCount(words.length);
 }
 
