@@ -153,6 +153,8 @@ El contenido enriquecido (`TextBlockContent` / Portable Text) **se trata como in
 
 Un **Value Object** no tiene identidad propia: representa un concepto del dominio, es inmutable y se compara por su contenido. Hoy cuentoneta usa **tipos primitivos** para estos conceptos (`slug: string`, `approximateReadingTime: number`, `bornOn?: DateString`). Promoverlos a value objects con auto-validación es **roadmap (#1503)**; abajo va el objetivo.
 
+> **Primera implementación real (#1852):** el módulo `LiteraryWork` ya usa este patrón en producción — `Slug`, `WordCount`, `ReadingTime`, `Markdown`, `SanitizedHtml`, `ChapterTitle` viven en `src/app/models/*.model.ts` (branded types + factory `create*` que valida y lanza), con specs, más la factory `createIsoDateTime` en `src/app/utils/date.utils.ts`. Los contratos están en `docs/LITERARY_WORK_DESIGN.md` §4. `Story`/`Author` siguen sin brandear (roadmap #1503, sin cambios); los bloques "objetivo (roadmap)" de abajo describen ese estado pendiente.
+
 ### Slug — clave de negocio
 
 `slug` es el patrón **Business Key** del proyecto: identificador amigable, único e **inmutable** que reemplaza al `_id` técnico de Sanity en URLs y rutas (`/story/el-aleph`, `/author/jorge-luis-borges`). El `_id` se reserva para GROQ y manipulación en la capa de datos.
