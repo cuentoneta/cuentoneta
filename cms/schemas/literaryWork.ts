@@ -17,17 +17,16 @@ import { audioRecording, pdfLink, spaceRecording, spotifyPodcastEpisode, youtube
 //    autor único); el shape multi/opcional se propaga al futuro GROQ (`authors[]->`), dominio (`authors: Author[]`)
 //    y JSON-LD (schema.org `author` admite array). Sin migración: literaryWork es greenfield.
 //
-// ABIERTO — default de anónimo en alta (a resolver en Slice 1). En vez de dejar `authors` vacío al crear,
-// se puede pre-cargar por `initialValue` una referencia al author de slug "anonimo" (ya existe en los
-// datasets production/development/staging, mismo `_id` a9af4fc4-25d4-48c0-8776-5b0a14c758c5, name "Anónimo"):
+// DEFAULT de anónimo en alta (aplicado en el prototipo, ver `initialValue` abajo). Al crear un literaryWork,
+// `authors[0]` se pre-carga con una referencia al author de slug "anonimo" (existe en los datasets
+// production/development/staging, mismo `_id` a9af4fc4-25d4-48c0-8776-5b0a14c758c5, name "Anónimo"), en vez
+// de dejar el array vacío. Así el editor arranca con una atribución válida y visible ("Anónimo") y la
+// reemplaza por autores reales cuando corresponde. El `_id` está hardcodeado a propósito: es idéntico en los
+// tres datasets, así que no hay que resolverlo por slug en un initialValue asíncrono.
 //
-//    initialValue: { authors: [{ _type: 'reference', _ref: 'a9af4fc4-25d4-48c0-8776-5b0a14c758c5', _key: '...' }] }
-//
-// Ventaja: el editor arranca con una atribución válida y visible ("Anónimo") en lugar de un vacío ambiguo,
-// y la reemplaza por autores reales cuando corresponde. Costo: entra en tensión con "array vacío = anónimo"
-// — si el default es `[ref(anonimo)]`, el dominio debe tratar ESE ref (no solo `[]`) como obra anónima,
-// o aceptar dos representaciones del mismo estado. La decisión de qué es canónico (vacío vs. ref explícita)
-// queda para el modelado de Slice 1; acá solo se deja anotada la afordancia de Studio.
+// TENSIÓN a resolver en Slice 1: con este default, la obra anónima se representa como `[ref(anonimo)]`, no
+// como `[]`. El dominio deberá tratar ESA referencia (no solo el array vacío) como "anónima", o el modelado
+// deberá decidir qué es canónico (vacío vs. ref explícita) y normalizar. Acá se prioriza la ergonomía de alta.
 
 const section = defineArrayMember({
 	name: 'section',
@@ -77,6 +76,10 @@ export default defineType({
 	title: 'Obra literaria',
 	type: 'document',
 	icon: BookIcon,
+	// authors[0] = "Anónimo" por defecto al crear (ver nota "DEFAULT de anónimo en alta" arriba).
+	initialValue: {
+		authors: [{ _type: 'reference', _ref: 'a9af4fc4-25d4-48c0-8776-5b0a14c758c5', _key: 'anonimo' }],
+	},
 	fields: [
 		defineField({
 			name: 'title',
