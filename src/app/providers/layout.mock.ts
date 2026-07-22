@@ -23,7 +23,6 @@ export class ControllableLayoutService implements LayoutService {
 	// consumidor los lee sobre el doble; tipan el contrato y nada más.
 	public readonly userHasScrolled$: Observable<Direction> = EMPTY;
 	public readonly viewportHasChanged$: Observable<Event | null> = EMPTY;
-	public readonly isHeaderVisible$: Observable<boolean> = EMPTY;
 
 	public isPlatformBrowser(): boolean {
 		return true;
