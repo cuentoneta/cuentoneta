@@ -18,8 +18,9 @@ export function createLiteraryWorkEpigraph(options: CreateLiteraryWorkEpigraphOp
 }
 
 export interface LiteraryWorkSection {
-	// Identidad numérica de la sección en la obra (1-based), derivada del orden del array
-	// en el CMS. Estable ante respuestas parciales del endpoint — ver LITERARY_WORK_DESIGN.md §3/§7.
+	// Identidad numérica de la sección en la obra: 0-based, igual al índice del array en el CMS
+	// (sin transformación 0↔1 en el flujo). Estable ante respuestas parciales del endpoint —
+	// ver LITERARY_WORK_DESIGN.md §3/§7.
 	readonly position: number;
 	readonly chapterTitle?: ChapterTitle;
 	readonly epigraphs?: readonly LiteraryWorkEpigraph[];
@@ -36,8 +37,8 @@ interface CreateLiteraryWorkSectionOptions {
 }
 
 export function createLiteraryWorkSection(options: CreateLiteraryWorkSectionOptions): LiteraryWorkSection {
-	if (!Number.isInteger(options.position) || options.position < 1) {
-		throw new Error(`LiteraryWorkSection inválida: position ${options.position} (debe ser un entero >= 1)`);
+	if (!Number.isInteger(options.position) || options.position < 0) {
+		throw new Error(`LiteraryWorkSection inválida: position ${options.position} (debe ser un entero >= 0)`);
 	}
 	return Object.freeze({ ...options });
 }

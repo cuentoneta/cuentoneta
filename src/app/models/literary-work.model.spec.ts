@@ -22,7 +22,7 @@ function buildOptions(overrides: Partial<Parameters<typeof createLiteraryWork>[0
 		title: 'La obra',
 		authors: [anonymousAuthor],
 		coverImage: '',
-		content: [buildSection(1, 2)],
+		content: [buildSection(0, 2)],
 		mediaSources: [],
 		resources: [],
 		tags: [],
@@ -43,16 +43,16 @@ describe('createLiteraryWork', () => {
 
 	it('derives totalReadingTime and sectionCount from its sections', () => {
 		const work = createLiteraryWork(
-			buildOptions({ content: [buildSection(1, 2), buildSection(2, 3), buildSection(3, 1)] }),
+			buildOptions({ content: [buildSection(0, 2), buildSection(1, 3), buildSection(2, 1)] }),
 		);
 
 		expect(work.totalReadingTime).toBe(6);
 		expect(work.sectionCount).toBe(3);
 	});
 
-	it('throws when section positions are not contiguous from 1', () => {
-		expect(() => createLiteraryWork(buildOptions({ content: [buildSection(2, 2)] }))).toThrow(
-			'LiteraryWork inválida: posiciones de sección no contiguas (slug "la-obra", índice 0 con position 2)',
+	it('throws when section positions do not match their array index', () => {
+		expect(() => createLiteraryWork(buildOptions({ content: [buildSection(1, 2)] }))).toThrow(
+			'LiteraryWork inválida: posiciones de sección no contiguas (slug "la-obra", índice 0 con position 1)',
 		);
 	});
 

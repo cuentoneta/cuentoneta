@@ -247,7 +247,7 @@ interface LiteraryWork {
 }
 
 interface LiteraryWorkSection {
-	position: number; // Identidad numérica en la obra (1-based, derivada del orden del array en el CMS)
+	position: number; // Identidad numérica en la obra (0-based, igual al índice del array en el CMS)
 	chapterTitle?: ChapterTitle; // Opcional; expone toAnchor(): Slug para anclas
 	epigraphs?: LiteraryWorkEpigraph[]; // 0..N epígrafes por sección
 	bodyHtml: SanitizedHtml; // HTML saneado server-side (nunca markdown crudo)
@@ -266,7 +266,7 @@ interface LiteraryWorkEpigraph {
 - La obra debe tener al menos una sección de contenido
 - `totalReadingTime` es la suma de los `readingTime` de sus secciones (derivado en la factory, no es input)
 - `sectionCount` es el número real de secciones (derivado en la factory; en proyecciones parciales lo provee el mapper)
-- Las posiciones de sección son contiguas desde 1 en el agregado completo (`content[i].position === i + 1`); las proyecciones parciales conservan el `position` de origen
+- Las posiciones de sección son contiguas desde 0 en el agregado completo (`content[i].position === i`); las proyecciones parciales conservan el `position` de origen
 - `authors` exige al menos un autor (1..N) — la **obra anónima** referencia explícitamente al author "Anónimo" (slug `anonimo`, valor bien conocido del dominio; policy `isAnonymous` compara por slug, nunca por `_id`)
 
 **Ciclo de Vida:**

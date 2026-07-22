@@ -82,10 +82,11 @@ export function createLiteraryWork(options: CreateLiteraryWorkOptions): Literary
 			`LiteraryWork inválida: sin autores (slug "${options.slug}") — la obra anónima referencia al author "Anónimo"`,
 		);
 	}
-	// El agregado completo transporta las secciones 1..sectionCount en orden; solo las
-	// proyecciones parciales (construidas por el mapper) pueden omitir posiciones.
+	// El agregado completo transporta las secciones 0..sectionCount-1 en orden (position ===
+	// índice del array); solo las proyecciones parciales (construidas por el mapper) pueden
+	// omitir posiciones.
 	options.content.forEach((section, index) => {
-		if (section.position !== index + 1) {
+		if (section.position !== index) {
 			throw new Error(
 				`LiteraryWork inválida: posiciones de sección no contiguas (slug "${options.slug}", índice ${index} con position ${section.position})`,
 			);
