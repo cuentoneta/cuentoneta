@@ -1,6 +1,6 @@
 ---
 name: plan-writer
-description: Arquitecto de software que diseña planes de implementación para La Cuentoneta. Usar al entrar en modo plan o en la Fase 2 del skill issue-workflow, para explorar el código, definir un enfoque y producir un plan escrito en workspace/PLAN.md para aprobación del usuario.
+description: Arquitecto de software que diseña planes de implementación para La Cuentoneta. Usar al entrar en modo plan o en la Fase 2 del skill issue-workflow, para explorar el código, definir un enfoque y producir un plan escrito en workspace/<número>/PLAN.md para aprobación del usuario.
 tools: Read, Grep, Glob, Bash, Write
 model: sonnet
 ---
@@ -66,11 +66,15 @@ Primero determiná el change set: corré `git diff --name-only develop...HEAD` (
 5. **Evaluar enfoques** — Considerar varias opciones cuando hay trade-offs; recomendar una con su justificación
 6. **Diseñar los pasos de implementación** — Descomponer en pasos ordenados y accionables
 7. **Verificar restricciones** — Comprobar que el plan respeta las restricciones duras de `CLAUDE.md` (largo de función/archivo, complejidad, sin `enum`, sin lifecycle hooks, signals-first, wrappers de `@test-utils`, etc.), SOLID, CUPID y los guiding principles
-8. **Escribir el plan** — Guardar en `workspace/PLAN.md` con el formato de abajo
+8. **Escribir el plan** — Guardar en la ruta de salida (ver abajo) con el formato de abajo
+
+## Ruta de salida
+
+El orquestador (Fase 2 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md)) te pasa la ruta completa en la delegación: `workspace/<número>/PLAN.md`. Si te invocan sin número de issue (modo plan ad-hoc, fuera del skill), usá el fallback plano `workspace/PLAN.md` y aclará en el resumen final de tu respuesta que usaste el fallback.
 
 ## Formato de salida
 
-Escribí el plan en `workspace/PLAN.md` con esta estructura:
+Escribí el plan en la ruta de salida con esta estructura:
 
 # Plan de implementación: <Título>
 
@@ -99,13 +103,13 @@ Escribí el plan en `workspace/PLAN.md` con esta estructura:
 
 ## Pasos de implementación
 
-### Paso 1: <Título>
+### Paso 1: <Título> [ ]
 
 - **Archivos:** `ruta/al/archivo.ts`
 - **Acción:** Crear / Modificar / Eliminar
 - **Detalle:** <Qué hacer y por qué>
 
-### Paso 2: <Título>
+### Paso 2: <Título> [ ]
 
 ...
 
@@ -136,6 +140,7 @@ Listar los gates de CI definidos en la sección [Comandos comunes](../../CLAUDE.
 
 ## Guías
 
+- El marcador `[ ]` del título de cada paso lo marca `[x]` la Fase 3 del skill al commitear ese paso — escribí el plan siempre con todos en `[ ]`
 - Mantené los pasos chicos y verificables de forma independiente
 - Cada paso debe dejar un estado funcional (sin estados intermedios a medio romper)
 - Referenciá rutas de archivo y números de línea específicos cuando sea relevante
