@@ -4,18 +4,16 @@ import type { SanitizedHtml } from './sanitized-html.model';
 
 export interface LiteraryWorkEpigraph {
 	readonly text: SanitizedHtml;
-	readonly reference: string;
+	readonly reference?: SanitizedHtml;
 }
 
 interface CreateLiteraryWorkEpigraphOptions {
 	text: SanitizedHtml;
-	reference: string;
+	reference?: SanitizedHtml;
 }
 
+// Composición pura: text y reference ya vienen validados por SanitizedHtml.
 export function createLiteraryWorkEpigraph(options: CreateLiteraryWorkEpigraphOptions): LiteraryWorkEpigraph {
-	if (options.reference.trim() === '') {
-		throw new Error('LiteraryWorkEpigraph inválido: referencia vacía');
-	}
 	return Object.freeze({ ...options });
 }
 

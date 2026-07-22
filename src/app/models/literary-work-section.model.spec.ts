@@ -4,21 +4,21 @@ import { createReadingTime } from './reading-time.model';
 import { createSanitizedHtml } from './sanitized-html.model';
 
 describe('createLiteraryWorkEpigraph', () => {
-	it('builds a frozen epigraph from sanitized text and a reference', () => {
+	it('builds a frozen epigraph from sanitized text and reference', () => {
 		const epigraph = createLiteraryWorkEpigraph({
 			text: createSanitizedHtml('<p>Y si el alma te pesa…</p>'),
-			reference: 'Rafael Obligado',
+			reference: createSanitizedHtml('<p>Rafael Obligado</p>'),
 		});
 
 		expect(epigraph.text).toBe('<p>Y si el alma te pesa…</p>');
-		expect(epigraph.reference).toBe('Rafael Obligado');
+		expect(epigraph.reference).toBe('<p>Rafael Obligado</p>');
 		expect(Object.isFrozen(epigraph)).toBe(true);
 	});
 
-	it('throws on an empty reference', () => {
-		expect(() => createLiteraryWorkEpigraph({ text: createSanitizedHtml('<p>Texto</p>'), reference: '  ' })).toThrow(
-			'LiteraryWorkEpigraph inválido: referencia vacía',
-		);
+	it('builds an epigraph without reference', () => {
+		const epigraph = createLiteraryWorkEpigraph({ text: createSanitizedHtml('<p>Texto</p>') });
+
+		expect(epigraph.reference).toBeUndefined();
 	});
 });
 
@@ -38,7 +38,12 @@ describe('createLiteraryWorkSection', () => {
 	it('builds a full section with chapter title and epigraphs', () => {
 		const section = createLiteraryWorkSection({
 			chapterTitle: createChapterTitle('Capítulo Uno'),
-			epigraphs: [createLiteraryWorkEpigraph({ text: createSanitizedHtml('<p>Epígrafe</p>'), reference: 'Anónimo' })],
+			epigraphs: [
+				createLiteraryWorkEpigraph({
+					text: createSanitizedHtml('<p>Epígrafe</p>'),
+					reference: createSanitizedHtml('<p>Anónimo</p>'),
+				}),
+			],
 			bodyHtml,
 			readingTime,
 		});

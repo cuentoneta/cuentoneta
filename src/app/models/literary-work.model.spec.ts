@@ -38,10 +38,11 @@ describe('createLiteraryWork', () => {
 		expect(Object.isFrozen(work)).toBe(true);
 	});
 
-	it('derives totalReadingTime as the sum of its sections', () => {
+	it('derives totalReadingTime and sectionCount from its sections', () => {
 		const work = createLiteraryWork(buildOptions({ content: [buildSection(2), buildSection(3), buildSection(1)] }));
 
 		expect(work.totalReadingTime).toBe(6);
+		expect(work.sectionCount).toBe(3);
 	});
 
 	it('accepts an empty authors array (anonymous work)', () => {

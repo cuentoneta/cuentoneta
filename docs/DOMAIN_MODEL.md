@@ -227,6 +227,7 @@ interface LiteraryWork {
 
 	// Metadatos
 	totalReadingTime: ReadingTime; // Derivado: suma de los readingTime de sus secciones
+	sectionCount: number; // Derivado: total real de secciones (en proyecciones parciales puede superar a content.length)
 	badLanguage?: boolean; // Advertencia de lenguaje explícito
 	originalPublication: string; // Atribución/publicación original
 	publishedAt: IsoDateTime; // Fecha ISO de publicación en la plataforma
@@ -251,6 +252,11 @@ interface LiteraryWorkSection {
 	bodyHtml: SanitizedHtml; // HTML saneado server-side (nunca markdown crudo)
 	readingTime: ReadingTime; // Minutos de lectura de la sección
 }
+
+interface LiteraryWorkEpigraph {
+	text: SanitizedHtml; // Markdown saneado a HTML (mismo pipeline que el cuerpo)
+	reference?: SanitizedHtml; // Atribución, también markdown saneado (paridad con Story.Epigraph)
+}
 ```
 
 **Invariantes de Negocio:**
@@ -258,6 +264,7 @@ interface LiteraryWorkSection {
 - El slug debe ser único (garantizado por Sanity) y con formato válido (validado por el value object `Slug`)
 - La obra debe tener al menos una sección de contenido
 - `totalReadingTime` es la suma de los `readingTime` de sus secciones (derivado en la factory, no es input)
+- `sectionCount` es el número real de secciones (derivado en la factory; en proyecciones parciales lo provee el mapper)
 - `authors` admite 0..N — el array vacío es un valor válido que representa la **obra anónima** (a diferencia de `Story`, que exige exactamente un autor)
 
 **Ciclo de Vida:**
@@ -271,7 +278,7 @@ Borrador en Sanity → Publicación → Accesible para lectura en /read/:slug
 - `LiteraryWork` - Vista completa (todas las secciones, autores completos)
 - `LiteraryWorkTeaser` - Vista resumida: a diferencia de `StoryTeaser` (que vacía `paragraphs`), expone la **primera sección completa** (`teaserSection`) — decisión de diseño del epic #1481
 - `LiteraryWorkNavigationTeaser` - Vista mínima para navegación
-- `LiteraryWorkNavigationTeaserWithAuthor` - Vista mínima con autores resumidos
+- `LiteraryWorkNavigationTeaserWithAuthors` - Vista mínima con autores resumidos
 
 ---
 

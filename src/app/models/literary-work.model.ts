@@ -13,6 +13,9 @@ interface LiteraryWorkBase {
 	readonly title: string;
 	readonly coverImage: string;
 	readonly totalReadingTime: ReadingTime;
+	// Total real de secciones de la obra: en la respuesta parcial del endpoint (?section=N)
+	// y en los teasers puede ser mayor que las secciones transportadas — ver LITERARY_WORK_DESIGN.md §7.
+	readonly sectionCount: number;
 	readonly tags: readonly Tag[];
 }
 
@@ -37,7 +40,7 @@ export interface LiteraryWorkNavigationTeaser extends LiteraryWorkBase {
 	readonly authors: Array<never>;
 }
 
-export interface LiteraryWorkNavigationTeaserWithAuthor extends LiteraryWorkBase {
+export interface LiteraryWorkNavigationTeaserWithAuthors extends LiteraryWorkBase {
 	readonly authors: readonly AuthorTeaser[];
 }
 
@@ -73,5 +76,6 @@ export function createLiteraryWork(options: CreateLiteraryWorkOptions): Literary
 		...options,
 		slug: createSlug(options.slug),
 		totalReadingTime: sumReadingTimes(options.content.map((section) => section.readingTime)),
+		sectionCount: options.content.length,
 	});
 }
