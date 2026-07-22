@@ -16,6 +16,49 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.8.7 (2026-07-22)
+
+La versión 2.8.7 es un release de **mantenimiento de tooling y deuda técnica**, centrado en el epic de **saneamiento de la configuración de Claude Code** (#1843). Se corrige la deriva acumulada en el corpus de configuración: los cinco sitios que transcribían los gates de CI omitían `e2e` y/o `studio-build` (#1844), el catálogo de referencias se declaraba completo con 13 de 15 archivos (#1845), ocho punteros apuntaban a secciones de `CLAUDE.md` inexistentes (#1846), y varias referencias y agentes describían rutas, archivos y deuda técnica ya eliminados (#1847). Se saldan además cuatro ejemplos del corpus que violaban sus propias reglas (#1848), las contradicciones semánticas entre referencias y dos agentes huérfanos que ningún flujo invocaba (#1849), y tres ejemplos de `angular-components.md` que inyectaban un `StoryService` inexistente (#1872). Se documenta como restricción dura que los hijos de un epic se crean como sub-issues reales (#1860), se repara la ausencia de `documentation-writer` en el registro de agentes (#1874), y se evalúa cómo acelerar la ejecución de los flujos sin perder calidad (#1850). Un conjunto de correcciones de endurecimiento cierra el epic: el gate `check-agents` pasa a validar también las rutas citadas en las referencias (#1888), se deduplican los gates en el `code-reviewer` (#1886), se prohíbe `git add -A` como política (#1887) y se corrige la taxonomía de dobles de test `Stub*`/`Fake*`/`InMemory*` (#1889).
+
+En **deuda técnica de código** se salda la visibilidad de signals y el `readonly` en dependencias inyectadas en `src/` (#1877), y se renombra el doble de `LayoutService` a `ControllableLayoutService` —nombrado por mecanismo, no por almacenamiento— haciendo cumplir la **paridad de contrato por compilación** contra el `WindowLayoutService` real (#1882). Se deriva el `headerPosition` de la página de cuento con signals (`computed`/`toSignal`) en vez de una subscription (#1563), y se actualiza el `storylistMock` al corpus de Onoff (3 historias) ajustando los tests dependientes (#1891).
+
+En **CI y tooling**, todos los gates documentados pasan a ser **required status checks** en `develop`, de modo que GitHub bloquee el merge si alguno queda en rojo (#1701). Se actualizan además dependencias de GitHub Actions (#1880).
+
+### Cambios completos
+
+Ver el changelog completo en [2.8.7](https://github.com/cuentoneta/cuentoneta/releases/tag/2.8.7)
+
+### Cambios
+
+#### Saneamiento de la configuración de Claude Code (epic #1843)
+
+- [#1844] - Unifica los cinco sitios que transcribían los gates de CI, incluyendo `e2e` y `studio-build`.
+- [#1845] - Completa el catálogo de referencias a los 15 archivos en los tres sitios que lo declaran.
+- [#1846] - Corrige los ocho punteros a secciones de `CLAUDE.md` que no existían con ese nombre.
+- [#1847] - Elimina de referencias y agentes las rutas, archivos y deuda técnica que ya no existen.
+- [#1848] - Ajusta los cuatro ejemplos del corpus que violaban las reglas que el propio corpus enuncia.
+- [#1849] - Resuelve las contradicciones semánticas entre referencias y retira los dos agentes huérfanos que ningún flujo invocaba.
+- [#1850] - Acelera la ejecución de los flujos de Claude Code sin perder calidad.
+- [#1860] - Documenta como restricción dura que los hijos de un epic se crean como sub-issues reales de GitHub.
+- [#1872] - Corrige los tres ejemplos de `angular-components.md` que inyectaban un `StoryService` inexistente.
+- [#1874] - Registra a `documentation-writer` en el listado de agentes de la sesión.
+- [#1888] - Extiende el gate `check-agents` para validar también las rutas citadas en las referencias.
+- [#1886] - Deduplica los gates de CI en el agente `code-reviewer`.
+- [#1887] - Prohíbe `git add -A` / `git add .` como política de agentes.
+- [#1889] - Corrige la taxonomía de dobles de test en el corpus: `Fake*` como categoría, `InMemory*` solo para almacenamiento.
+
+#### Deuda técnica de código y calidad
+
+- [#1877] - Salda la visibilidad de signals y el `readonly` en dependencias inyectadas en `src/`.
+- [#1882] - Renombra el doble de `LayoutService` a `ControllableLayoutService` y hace cumplir la paridad de contrato por compilación con el `WindowLayoutService` real.
+- [#1563] - Deriva el `headerPosition` de la página de cuento con signals (`computed`/`toSignal`) en vez de una subscription.
+- [#1891] - Actualiza el `storylistMock` al corpus de Onoff (3 historias) y ajusta los tests dependientes.
+
+#### CI y tooling
+
+- [#1701] - Exige todos los gates documentados como required status checks en `develop`.
+- [#1880] - Actualiza dependencias de GitHub Actions (grupo Dependabot).
+
 ## Versión 2.8.6 (2026-07-20)
 
 La versión 2.8.6 avanza el **Design System v3** con una tanda de componentes nuevos para las páginas de dominio. Se incorpora el **StoryHeroHeader**, el hero de la página de cuento con portada de fondo difuminada y metadatos, listando todos los tags del cuento con `TagsList` (#1810, con una corrección posterior del listado de tags #1819); el **EditorialTextBlock**, un bloque de nota/destacado editorial que reemplaza al `EpigraphComponent` (#1812); el **NavigableCollectionTeaser**, un ítem compacto y navegable de colección enlazado a `/collection/:slug` (#1823); y el **DrawerComponent**, un panel modal direccional con transiciones sobre `<dialog>` nativo (#1827). Se corrige además el nombre accesible duplicado en el enlace de autor cuando el avatar queda dentro del `<a>`, dejándolo decorativo en las tarjetas afectadas (#1815).
