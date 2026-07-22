@@ -93,7 +93,7 @@ Antes de auditar, leé estas referencias para tener el contexto completo. Cargal
 
 ## Ruta de salida
 
-La Fase 4 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md) te pasa la ruta completa en la delegación: `workspace/<número>/SECURITY_REVIEW.md`. Si te invocan a demanda sin número de issue, usá el fallback plano `workspace/SECURITY_REVIEW.md` y aclará en el resumen final de tu respuesta que usaste el fallback.
+La Fase 4 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md) te pasa la ruta completa en la delegación: `workspace/<number>/SECURITY_REVIEW.md`. Si te invocan a demanda sin número de issue, usá el fallback plano `workspace/SECURITY_REVIEW.md` y aclará en el resumen final de tu respuesta que usaste el fallback.
 
 ## Formato de salida
 

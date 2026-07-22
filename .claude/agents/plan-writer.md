@@ -1,6 +1,6 @@
 ---
 name: plan-writer
-description: Arquitecto de software que diseña planes de implementación para La Cuentoneta. Usar al entrar en modo plan o en la Fase 2 del skill issue-workflow, para explorar el código, definir un enfoque y producir un plan escrito en workspace/<número>/PLAN.md para aprobación del usuario.
+description: Arquitecto de software que diseña planes de implementación para La Cuentoneta. Usar al entrar en modo plan o en la Fase 2 del skill issue-workflow, para explorar el código, definir un enfoque y producir un plan escrito en workspace/<number>/PLAN.md para aprobación del usuario.
 tools: Read, Grep, Glob, Bash, Write
 model: sonnet
 ---
@@ -70,7 +70,7 @@ Primero determiná el change set: corré `git diff --name-only develop...HEAD` (
 
 ## Ruta de salida
 
-El orquestador (Fase 2 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md)) te pasa la ruta completa en la delegación: `workspace/<número>/PLAN.md`. Si te invocan sin número de issue (modo plan ad-hoc, fuera del skill), usá el fallback plano `workspace/PLAN.md` y aclará en el resumen final de tu respuesta que usaste el fallback.
+El orquestador (Fase 2 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md)) te pasa la ruta completa en la delegación: `workspace/<number>/PLAN.md`. Si te invocan sin número de issue (modo plan ad-hoc, fuera del skill), usá el fallback plano `workspace/PLAN.md` y aclará en el resumen final de tu respuesta que usaste el fallback.
 
 ## Formato de salida
 
@@ -78,7 +78,7 @@ Escribí el plan en la ruta de salida con esta estructura:
 
 # Plan de implementación: <Título>
 
-**Issue:** #<número> (si aplica)
+**Issue:** #<number> (si aplica)
 **Rama:** feat/<id_issue>-<descripcion-en-kebab-case> (desde `develop`)
 **Fecha:** <YYYY-MM-DD>
 

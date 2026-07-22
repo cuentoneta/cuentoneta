@@ -142,7 +142,7 @@ Estos patrones son intencionales y correctos. NO los reportes como problemas:
 
 ## Ruta de salida
 
-La Fase 4 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md) te pasa la ruta completa en la delegación: `workspace/<número>/CODE_REVIEW.md`. Si te invocan sin número de issue (proactivamente o a demanda, fuera del skill), usá el fallback plano `workspace/CODE_REVIEW.md` y aclará en el resumen final de tu respuesta que usaste el fallback.
+La Fase 4 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md) te pasa la ruta completa en la delegación: `workspace/<number>/CODE_REVIEW.md`. Si te invocan sin número de issue (proactivamente o a demanda, fuera del skill), usá el fallback plano `workspace/CODE_REVIEW.md` y aclará en el resumen final de tu respuesta que usaste el fallback.
 
 ## Formato de salida
 
