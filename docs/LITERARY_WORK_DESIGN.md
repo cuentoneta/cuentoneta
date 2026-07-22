@@ -15,7 +15,7 @@
 7. [Contrato del endpoint](#7-contrato-del-endpoint)
 8. [Estrategia de materialización](#8-estrategia-de-materialización)
 9. [Allow-list de sanitización](#9-allow-list-de-sanitización)
-10. [Autoría 0..N y obra anónima](#10-autoría-0n-y-obra-anónima)
+10. [Autoría y obra anónima](#10-autoría-y-obra-anónima)
 11. [Corte de #1852 vs. Slice 1 (#1853)](#11-corte-de-1852-vs-slice-1-1853)
 
 ---
@@ -39,7 +39,7 @@ Hallazgos del prototipo (validados, rama `spike/1481-literarywork-schema`):
 - `sanity-plugin-markdown@^9.0.6` es compatible con Sanity v5; `sanity build` (gate `studio-build`) verde, incluso en Node 26.
 - El tipo `markdown` se almacena como `string` crudo → en la frontera se valida como `Markdown` y el ACL produce `SanitizedHtml`.
 - El hallazgo del spike "typegen tipa todo `optional`" aplicaba a una extracción **sin** `--enforce-required-fields`; el target `extract-schema` del repo (`cms/project.json`) extrae **con** ese flag, así que los campos con `Rule.required()` sí se tipan como no opcionales en `types.ts`. Las invariantes se hacen cumplir **igualmente** en el mapper/dominio: el flag garantiza el tipo, no los datos en runtime (documentos legacy o drafts pueden violar el schema), y las proyecciones GROQ parciales tienen sus propios shapes.
-- Autoría 0..N con array vacío = obra anónima, y default de alta en Studio (ver [§10](#10-autoría-0n-y-obra-anónima)).
+- Autoría multi-autor como `array<reference → author>` con default de alta en Studio verificado (`initialValue` con referencia al author `anonimo`); el modelo de anonimato quedó definido en [§10](#10-autoría-y-obra-anónima).
 
 ---
 
@@ -59,7 +59,7 @@ interface LiteraryWorkBase {
 }
 
 export interface LiteraryWork extends LiteraryWorkBase {
-	readonly authors: readonly Author[]; // 0..N; [] = obra anónima (ver §10)
+	readonly authors: readonly Author[]; // 1..N; la obra anónima referencia al author "Anónimo" (ver §10)
 	readonly content: readonly LiteraryWorkSection[]; // >= 1
 	readonly mediaSources: readonly MediaTypes[];
 	readonly resources: readonly Resource[];
@@ -85,7 +85,7 @@ export interface LiteraryWorkNavigationTeaserWithAuthors extends LiteraryWorkBas
 **Diferencias deliberadas con las vistas de `Story`:**
 
 - `StoryTeaser` **vacía** su contenido (`paragraphs: []`); `LiteraryWorkTeaser` expone la **primera sección completa** (`teaserSection`) — decisión del epic: el teaser de una obra es su primera sección.
-- `Story.author` es exactamente uno; `LiteraryWork.authors` es 0..N.
+- `Story.author` es exactamente uno; `LiteraryWork.authors` es 1..N (el anonimato se expresa con el author "Anónimo", ver [§10](#10-autoría-y-obra-anónima)).
 - `Story.approximateReadingTime` viene persistido del CMS; `LiteraryWork.totalReadingTime` es **derivado** (suma de los `readingTime` de sus secciones, calculado en la factory).
 
 **Invariantes del agregado** (validadas en `createLiteraryWork`, la única vía de construcción):
@@ -97,7 +97,7 @@ export interface LiteraryWorkNavigationTeaserWithAuthors extends LiteraryWorkBas
 | Al menos una sección de contenido         | `createLiteraryWork` lanza si `content.length === 0`                                                                                                             |
 | `totalReadingTime` = suma de secciones    | Derivado en la factory (no es input)                                                                                                                             |
 | `sectionCount` = número real de secciones | Derivado en la factory (`content.length`); en las vistas parciales/teaser lo provee el mapper (GROQ `count()`) y puede ser mayor que las secciones transportadas |
-| `authors` admite 0..N                     | **Sin** invariante de longitud — `[]` es un valor válido (obra anónima), a diferencia de `Story`                                                                 |
+| `authors` con al menos un autor           | `createLiteraryWork` lanza si `authors.length === 0`; la obra anónima referencia al author "Anónimo" ([§10](#10-autoría-y-obra-anónima))                         |
 
 ---
 
@@ -215,7 +215,7 @@ Firma del módulo backend (service, mapea vía ACL):
 getLiteraryWorkBySlug(slug: string, section?: number): Promise<LiteraryWork>;
 ```
 
-El mapper del ACL (`src/api/_utils/`) es responsable de: validar invariantes contra el shape `optional` de typegen, correr el pipeline MD→HTML sobre body y epígrafes, derivar reading times, y **normalizar la autoría anónima** ([§10](#10-autoría-0n-y-obra-anónima)).
+El mapper del ACL (`src/api/_utils/`) es responsable de: validar invariantes contra el shape de typegen, correr el pipeline MD→HTML sobre body y epígrafes, y derivar reading times. La autoría **no requiere normalización**: la referencia al author "Anónimo" viaja al dominio como cualquier otra ([§10](#10-autoría-y-obra-anónima)).
 
 ---
 
@@ -280,47 +280,53 @@ Reglas duras del pipeline:
 
 ---
 
-## 10. Autoría 0..N y obra anónima
+## 10. Autoría y obra anónima
+
+**Decisión: "Anónimo" es un Author real del catálogo.** La obra anónima referencia explícitamente al author de slug `anonimo` — en el CMS y en el dominio por igual. No hay estado "sin autores": una obra tiene **siempre al menos un autor**.
 
 ### Schema (CMS)
 
-- `authors: array<reference → author>`, sin `required`, con `.unique()`. El **orden expresa prioridad** (primer autor = principal).
-- **Default de alta en Studio:** `initialValue` a nivel documento pre-carga `authors[0]` con la referencia al author de slug `anonimo` (`_id: a9af4fc4-25d4-48c0-8776-5b0a14c758c5`, idéntico en los datasets production/staging/development; name "Anónimo"). El editor arranca con una atribución válida y visible en lugar de un vacío ambiguo, y la reemplaza cuando corresponde.
+- `authors: array<reference → author>`, con `Rule.required().min(1).unique()`. El **orden expresa prioridad** (primer autor = principal).
+- **Default de alta en Studio:** `initialValue` a nivel documento pre-carga `authors[0]` con la referencia al author de slug `anonimo` (`_id: a9af4fc4-25d4-48c0-8776-5b0a14c758c5`, idéntico en los datasets production/staging/development; name "Anónimo"). El editor arranca con una atribución válida — que ya es la representación correcta de la obra anónima — y la reemplaza cuando la obra tiene autoría real.
+- Con `min(1)`, el array vacío **no es un estado válido** en el CMS: existe una única representación del anonimato (la referencia explícita), sin colisión entre `[]` y `[ref(anonimo)]`.
 
-### Dominio — representación canónica: `authors: []`
+### Dominio — "Anónimo" viaja como `Author`
 
-**La única señal de "obra anónima" que el dominio conoce es `authors.length === 0`.** El mapper del ACL (Slice 1) **filtra** cualquier referencia al author `anonimo` antes de construir el array que recibe `createLiteraryWork`; el dominio nunca ve esa referencia especial.
-
-Justificación:
-
-- **Menor superficie de invariante.** Si el dominio aceptara tanto `[]` como `[ref(anonimo)]`, todo consumidor de `authors` (componentes, JSON-LD, policies futuras) tendría que conocer el `_id` mágico para no tratar a "Anónimo" como autor real.
-- **El `_id` de Sanity es infraestructura**, no dominio. Que el dominio compare `author._id === 'a9af…'` sería exactamente la fuga que el ACL existe para prevenir.
-- **La ergonomía de alta no se pierde:** el `initialValue` sigue en el schema; solo cambia lo que el ACL construye a partir del dato, no la experiencia de edición.
+El ACL **no filtra ni normaliza** la referencia: el dominio recibe `authors: [Author('Anónimo')]` como cualquier otra autoría. La invariante del agregado pasa a ser `authors.length >= 1` (paridad conceptual con `Story`, que exige autor — acá generalizada a 1..N).
 
 Policy pura (único punto de verdad de la regla, `literary-work.model.ts`):
 
 ```typescript
-export function isAnonymous(authors: readonly unknown[]): boolean; // authors.length === 0
+export const ANONYMOUS_AUTHOR_SLUG = 'anonimo';
+
+export function isAnonymous(authors: ReadonlyArray<{ readonly slug: string }>): boolean;
+// authors.length > 0 && authors.every(a => a.slug === ANONYMOUS_AUTHOR_SLUG)
 ```
 
-Consecuencia para JSON-LD (Slice 3): obra anónima ⇒ **omitir** la propiedad `author` de schema.org (no inventar un `Person` "Anónimo"); multi-autor ⇒ array de `Person`.
+- Se compara por **slug** (clave de negocio), nunca por `_id` (infraestructura). El slug `anonimo` es un **valor bien conocido del dominio** — el costo aceptado de esta decisión es que el dominio conoce ese valor especial; a cambio, el mapeo es directo (sin caso especial en el ACL) y la atribución "Anónimo" es visible y navegable como cualquier autor.
+- `every` (y no `some`): si una obra referencia a Anónimo **y** a un autor real, tiene autoría real — no es anónima. Con `.unique()` en el schema, el caso esperado de anonimato es exactamente `[Anónimo]`.
+
+Consecuencias:
+
+- **UI:** el byline sale natural del modelo (`authors[0].name === 'Anónimo'`); la página `/author/anonimo` existe y lista las obras anónimas — comportamiento aceptado y deseado.
+- **JSON-LD (Slice 3):** la obra anónima emite `author` como `Person` "Anónimo" (representación real del catálogo); multi-autor ⇒ array de `Person`.
+- **Curaduría:** las obras anónimas se consultan por referencia al author `anonimo` (GROQ estándar), sin queries especiales por array vacío.
 
 ---
 
 ## 11. Corte de #1852 vs. Slice 1 (#1853)
 
-| Pieza                                                                                                       | #1852 (este issue)                                              | Slice 1 (#1853) |
-| ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | --------------- |
-| Doc de diseño (este archivo)                                                                                | ✅ Código de contratos cerrados                                 | Consume         |
-| Schema `literaryWork` definitivo + registro + `markdownSchema()` + typegen                                  | ✅ Implementado                                                 | Consume         |
-| VOs (`Slug`, `WordCount`, `ReadingTime`, `Markdown`, `SanitizedHtml`, `ChapterTitle`) + `createIsoDateTime` | ✅ Implementados con specs                                      | Consume         |
-| Aritmética de reading time (`deriveReadingTime`, `sumReadingTimes`)                                         | ✅ Implementada con specs                                       | Consume         |
-| Agregado `LiteraryWork` + secciones + vistas + `createLiteraryWork` + `isAnonymous`                         | ✅ Implementados con specs                                      | Consume         |
-| `countWords` (markdown → texto plano, `mdast-util-to-string`)                                               | Contrato ([§5](#5-helper-de-reading-time))                      | ⚙️ Implementa   |
-| Pipeline MD→HTML (`unified`/`rehype-sanitize`) + allow-list como constante + rewrite de imágenes            | Contrato ([§9](#9-allow-list-de-sanitización))                  | ⚙️ Implementa   |
-| Normalización de autoría anónima en el mapper                                                               | Contrato ([§10](#10-autoría-0n-y-obra-anónima))                 | ⚙️ Implementa   |
-| Repository (puerto + `Sanity*` + `InMemory*`) + módulo backend                                              | Contrato ([§6](#6-repository-puerto-adaptador-y-doble))         | ⚙️ Implementa   |
-| Endpoint `GET /literary-work/:slug` + `.bru`                                                                | Contrato ([§7](#7-contrato-del-endpoint))                       | ⚙️ Implementa   |
-| Frontend (`LiteraryWorkApi`, ruta `/read/:slug`, página SSR)                                                | —                                                               | ⚙️ Implementa   |
-| Materialización de derivados                                                                                | Contrato ([§8](#8-estrategia-de-materialización))               | Slice 4         |
-| JSON-LD                                                                                                     | Consecuencia documentada ([§10](#10-autoría-0n-y-obra-anónima)) | Slice 3         |
+| Pieza                                                                                                       | #1852 (este issue)                                           | Slice 1 (#1853) |
+| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ | --------------- |
+| Doc de diseño (este archivo)                                                                                | ✅ Código de contratos cerrados                              | Consume         |
+| Schema `literaryWork` definitivo + registro + `markdownSchema()` + typegen                                  | ✅ Implementado                                              | Consume         |
+| VOs (`Slug`, `WordCount`, `ReadingTime`, `Markdown`, `SanitizedHtml`, `ChapterTitle`) + `createIsoDateTime` | ✅ Implementados con specs                                   | Consume         |
+| Aritmética de reading time (`deriveReadingTime`, `sumReadingTimes`)                                         | ✅ Implementada con specs                                    | Consume         |
+| Agregado `LiteraryWork` + secciones + vistas + `createLiteraryWork` + `isAnonymous`                         | ✅ Implementados con specs                                   | Consume         |
+| `countWords` (markdown → texto plano, `mdast-util-to-string`)                                               | Contrato ([§5](#5-helper-de-reading-time))                   | ⚙️ Implementa   |
+| Pipeline MD→HTML (`unified`/`rehype-sanitize`) + allow-list como constante + rewrite de imágenes            | Contrato ([§9](#9-allow-list-de-sanitización))               | ⚙️ Implementa   |
+| Repository (puerto + `Sanity*` + `InMemory*`) + módulo backend                                              | Contrato ([§6](#6-repository-puerto-adaptador-y-doble))      | ⚙️ Implementa   |
+| Endpoint `GET /literary-work/:slug[?section=N]` + `.bru`                                                    | Contrato ([§7](#7-contrato-del-endpoint))                    | ⚙️ Implementa   |
+| Frontend (`LiteraryWorkApi`, ruta `/read/:slug`, página SSR)                                                | —                                                            | ⚙️ Implementa   |
+| Materialización de derivados                                                                                | Contrato ([§8](#8-estrategia-de-materialización))            | Slice 4         |
+| JSON-LD                                                                                                     | Consecuencia documentada ([§10](#10-autoría-y-obra-anónima)) | Slice 3         |

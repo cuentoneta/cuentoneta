@@ -775,7 +775,7 @@
 						}
 					}
 				},
-				"optional": true
+				"optional": false
 			},
 			"coverImage": {
 				"type": "objectAttribute",

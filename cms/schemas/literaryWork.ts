@@ -51,11 +51,10 @@ export default defineType({
 	title: 'Obra literaria',
 	type: 'document',
 	icon: BookIcon,
-	// authors[0] = "Anónimo" al crear: el editor arranca con una atribución válida y la reemplaza
-	// cuando corresponde. El _id va fijo porque es idéntico en production/staging/development y
-	// evita resolver por slug en un initialValue asíncrono. authors=[] es la representación
-	// canónica de "obra anónima" en el dominio; el ACL normaliza la referencia al autor "anonimo"
-	// — ver docs/LITERARY_WORK_DESIGN.md.
+	// authors[0] = "Anónimo" al crear: el editor arranca con la representación real de la obra
+	// anónima (la referencia explícita al author "anonimo" — ver docs/LITERARY_WORK_DESIGN.md §10)
+	// y la reemplaza cuando la obra tiene autoría real. El _id va fijo porque es idéntico en
+	// production/staging/development y evita resolver por slug en un initialValue asíncrono.
 	initialValue: {
 		authors: [{ _type: 'reference', _ref: 'a9af4fc4-25d4-48c0-8776-5b0a14c758c5', _key: 'anonimo' }],
 	},
@@ -77,10 +76,10 @@ export default defineType({
 			name: 'authors',
 			title: 'Autores/as',
 			description:
-				'Cero o más autores. Sin autores, la obra se considera anónima. El orden expresa prioridad (autor principal primero).',
+				'Al menos un autor. La obra anónima referencia al autor "Anónimo" (precargado al crear). El orden expresa prioridad (autor principal primero).',
 			type: 'array',
 			of: [defineArrayMember({ type: 'reference', to: [{ type: 'author' }] })],
-			validation: (Rule) => Rule.unique(),
+			validation: (Rule) => Rule.required().min(1).unique(),
 		}),
 		defineField({
 			name: 'coverImage',
