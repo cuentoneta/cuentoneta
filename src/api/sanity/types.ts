@@ -164,7 +164,7 @@ export type LiteraryWork = {
 		chapterTitle?: string;
 		epigraphs?: Array<{
 			text?: Markdown;
-			reference?: string;
+			reference?: Markdown;
 			_type: 'epigraph';
 			_key: string;
 		}>;
