@@ -103,24 +103,28 @@ Descripción breve de qué se auditó y la postura de seguridad general.
 
 Problemas que deben resolverse antes del merge — vectores de explotación activos.
 
-| #   | Archivo | Línea | Vulnerabilidad | Categoría OWASP | Fix | Estado |
+| S#  | Archivo | Línea | Vulnerabilidad | Categoría OWASP | Fix | Estado |
 | --- | ------- | ----- | -------------- | --------------- | --- | ------ |
 
 ### Advertencias de seguridad (Should Fix)
 
 Patrones que debilitan la postura de seguridad pero no son explotables de inmediato.
 
-| #   | Archivo | Línea | Problema | Recomendación | Estado |
+| S#  | Archivo | Línea | Problema | Recomendación | Estado |
 | --- | ------- | ----- | -------- | ------------- | ------ |
 
 ### Hallazgos informativos
 
 Observaciones de seguridad y sugerencias de hardening.
 
-| #   | Archivo | Línea | Hallazgo | Estado |
+| S#  | Archivo | Línea | Hallazgo | Estado |
 | --- | ------- | ----- | -------- | ------ |
 
 > La columna **Estado** usa el vocabulario canónico documentado en [`code-reviewer.md`](code-reviewer.md) (Detectado / En progreso / Corregido / Descartado / Diferido / No se corrige / Requiere test E2E).
+
+### Numeración de hallazgos
+
+La columna **S#** numera de forma continua a través de las tres tablas (misma mecánica que la "Numeración de problemas" de [`code-reviewer.md`](code-reviewer.md)), con el prefijo `S` (S1, S2, …) para que un hallazgo de seguridad pueda citarse sin ambigüedad junto a los del `code-reviewer` (que van sin prefijo). La numeración **no** continúa la de `CODE_REVIEW.md`: ambos agentes corren en paralelo en la Fase 4 del skill `issue-workflow`, así que este agente no puede conocer en qué número terminó el reviewer.
 
 ### Veredicto
 
