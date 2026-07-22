@@ -1,0 +1,26 @@
+meta {
+  name: Get literary work by slug
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/literary-work/:slug
+  body: none
+  auth: none
+}
+
+params:path {
+  slug: la-obra
+}
+
+params:query {
+  ~section: 0
+}
+
+docs {
+  Obtener una obra literaria por su slug. El query param `section` (0-based, opcional,
+  deshabilitado por defecto) devuelve únicamente esa sección conservando los metadatos
+  totales de la obra (totalReadingTime, sectionCount) — ver docs/LITERARY_WORK_DESIGN.md §7.
+  Slug inexistente o sección fuera de rango responden 404 con body { error }.
+}
