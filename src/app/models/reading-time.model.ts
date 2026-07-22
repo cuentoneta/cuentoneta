@@ -5,14 +5,15 @@ import { createWordCount, type WordCount } from './word-count.model';
 
 export type ReadingTime = number & { readonly __brand: 'ReadingTime' };
 
-const markdownParser = unified().use(remarkParse);
-
 // Tipado estructural mínimo del mdast: alcanza para el walker sin acoplar @types/mdast.
 interface MarkdownNode {
 	readonly type: string;
 	readonly value?: string;
 	readonly children?: readonly MarkdownNode[];
 }
+
+// Singleton de módulo: construir el parser unified es costoso y es inmutable.
+const markdownParser = unified().use(remarkParse);
 
 // Solo texto que el lector efectivamente lee: excluye nodos `html` crudos (tags no son palabras)
 // y el `alt` de las imágenes (metadata) — semántica que mdast-util-to-string incluía por defecto.
