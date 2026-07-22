@@ -72,7 +72,7 @@ Thumbs.db
 
 # Planes y artefactos de orquestación de Claude (no se versionan)
 /workflows
-# Artefactos del skill issue-workflow (PLAN.md / CODE_REVIEW.md / SECURITY_REVIEW.md por sesión)
+# Artefactos del skill issue-workflow (workspace/<numero>/{PLAN,CODE_REVIEW,SECURITY_REVIEW}.md por issue; ruta plana como fallback ad-hoc)
 /workspace
 
 # Grabaciones sueltas de referencia en scripts/
