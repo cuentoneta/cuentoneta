@@ -29,16 +29,20 @@ Corre siempre, en toda invocación, con el número de issue extraído de la URL.
 2. `workspace/<number>/PLAN.md` — ¿existe el plan? Si existe, contar sus marcadores de paso `[ ]` vs. `[x]`.
 3. `workspace/<number>/CODE_REVIEW.md` y/o `workspace/<number>/SECURITY_REVIEW.md` — ¿existe la review?
 4. Si la rama existe: `git rev-list --count develop..<rama>` — ¿cuántos commits tiene sobre `develop`?
+5. Si la rama existe: `gh pr list --head feat/<number>-<kebab> --state open` — ¿hay un PR abierto de esa rama?
 
-| Rama | `PLAN.md`       | Review | Commits | Interpretación → fase sugerida                                                                                                                                                                 |
-| ---- | --------------- | ------ | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| No   | No              | —      | —       | Sesión nueva (caso normal) → **Fase 1**, sin pausa ni mensaje adicional                                                                                                                        |
-| Sí   | No              | —      | 0       | La sesión murió antes de escribir el plan → **Fase 2**                                                                                                                                         |
-| Sí   | No              | —      | >0      | Inconsistente (commits sin plan) → pausar y preguntar: reconstruir el plan a partir del diff existente vía `plan-writer`, o ir directo a Fase 4 tratando los commits como implementación hecha |
-| Sí   | Sí, todo `[ ]`  | —      | 0       | Plan escrito, sin aprobar/implementar → **Fase 2**, re-presentando el plan existente sin re-delegar en `plan-writer`                                                                           |
-| Sí   | Sí, algún `[x]` | —      | >0      | Implementación en curso → **Fase 3**, retomando en el primer paso `[ ]`                                                                                                                        |
-| Sí   | Sí              | Sí     | >0      | Review ya escrita → **Fase 5**, abordando los hallazgos con Estado pendiente                                                                                                                   |
-| No   | Sí              | —      | —       | El plan sobrevivió pero la rama no → recrear la rama (Fase 1) y re-confirmar el plan existente en **Fase 2**, sin regenerarlo                                                                  |
+| Rama | `PLAN.md`                  | Review | Commits | Interpretación → fase sugerida                                                                                                |
+| ---- | -------------------------- | ------ | ------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| No   | No                         | —      | —       | Sesión nueva (caso normal) → **Fase 1**, sin pausa ni mensaje adicional                                                       |
+| Sí   | No                         | —      | 0       | La sesión murió antes de escribir el plan → **Fase 2**                                                                        |
+| Sí   | No                         | —      | >0      | Inconsistente (commits sin plan) → pausa con respuestas propias: **reconstruir** / **revisar** (ver abajo)                    |
+| Sí   | Sí, todo `[ ]`             | —      | 0       | Plan escrito, sin aprobar/implementar → **Fase 2**, re-presentando el plan existente sin re-delegar en `plan-writer`          |
+| Sí   | Sí, algún `[x]` (no todos) | —      | >0      | Implementación en curso → **Fase 3**, retomando en el primer paso `[ ]`                                                       |
+| Sí   | Sí, todo `[x]`             | No     | >0      | Implementación terminada, sin review → **Fase 4**                                                                             |
+| Sí   | Sí                         | Sí     | >0      | Review ya escrita → **Fase 5**, abordando los hallazgos con Estado pendiente                                                  |
+| No   | Sí                         | —      | —       | El plan sobrevivió pero la rama no → recrear la rama (Fase 1) y re-confirmar el plan existente en **Fase 2**, sin regenerarlo |
+
+Si además existe un **PR abierto** para la rama (señal 5), el flujo ya completó la **Fase 6**: reportar la URL del PR y pausar — el trabajo restante, si lo hay, es abordar feedback de ese PR, no re-ejecutar el flujo.
 
 Si se detecta cualquier señal:
 
@@ -48,6 +52,11 @@ Si se detecta cualquier señal:
 
 - **reanudar** → saltar a la fase sugerida por la tabla, reusando los artefactos existentes sin sobrescribirlos.
 - **rehacer** → flujo normal desde la Fase 1. No borra `workspace/<number>/` ni la rama existente: antes de cada punto que sobrescribiría un artefacto existente (recrear la rama en Fase 1, reescribir `PLAN.md` en Fase 2), confirmar explícitamente con el usuario — nunca pisar en silencio.
+
+El caso **commits sin plan** usa un par de respuestas propio — ni "reanudar" ni "rehacer" describen esa situación:
+
+- **reconstruir** → delegar en `plan-writer` la reconstrucción del plan a partir del diff existente y seguir el flujo desde la Fase 2.
+- **revisar** → tratar los commits como implementación hecha e ir directo a la Fase 4.
 
 ---
 
