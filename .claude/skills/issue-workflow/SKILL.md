@@ -5,7 +5,7 @@ description: Orquesta el ciclo completo de resolución de un issue de GitHub en 
 
 # Issue Workflow
 
-Orquesta el ciclo de vida completo para resolver un issue de GitHub en **cuentoneta**. Cada invocación sobrescribe `workspace/PLAN.md`, `workspace/CODE_REVIEW.md` y — si el diff amerita auditoría de seguridad — `workspace/SECURITY_REVIEW.md`; guardá los artefactos de una sesión previa antes de empezar una nueva. (`workspace/` está gitignoreado.)
+Orquesta el ciclo de vida completo para resolver un issue de GitHub en **cuentoneta**. Los artefactos de cada sesión viven namespaceados por issue en `workspace/<number>/` — `PLAN.md`, `CODE_REVIEW.md` y, si el diff amerita auditoría de seguridad, `SECURITY_REVIEW.md` — así sesiones de issues distintos no se pisan. Re-invocar el mismo issue pasa por la **Fase 0**, que reanuda o rehace con confirmación, nunca sobrescribe en silencio. Los artefactos sueltos de sesiones previas al namespacing que ya están en `workspace/` no se migran ni se borran. (`workspace/` está gitignoreado.)
 
 > **Issues de release:** para los issues de gestión de release (p. ej. "Generar release para versión X") usá el skill dedicado [`release-workflow`](../release-workflow/SKILL.md), que encodea el checklist determinista del release (bump lockstep, CHANGELOG desde el milestone, gatillo `develop → master`) en vez de este flujo de feature.
 
@@ -19,6 +19,47 @@ Ejemplo: `/issue-workflow https://github.com/cuentoneta/cuentoneta/issues/1234`
 
 ---
 
+## Fase 0 — Detección de estado
+
+**Propósito:** detectar trabajo previo sobre el issue y reanudar en la fase que corresponda en vez de re-setupear.
+
+Corre siempre, en toda invocación, con el número de issue extraído de la URL. Señales a relevar:
+
+1. `git branch --list 'feat/<number>-*'` — ¿existe la rama?
+2. `workspace/<number>/PLAN.md` — ¿existe el plan? Si existe, contar sus marcadores de paso `[ ]` vs. `[x]`.
+3. `workspace/<number>/CODE_REVIEW.md` y/o `workspace/<number>/SECURITY_REVIEW.md` — ¿existe la review?
+4. Si la rama existe: `git rev-list --count develop..<rama>` — ¿cuántos commits tiene sobre `develop`?
+5. Si la rama existe: `gh pr list --head feat/<number>-<kebab> --state open` — ¿hay un PR abierto de esa rama?
+
+| Rama | `PLAN.md`                  | Review | Commits | Interpretación → fase sugerida                                                                                                |
+| ---- | -------------------------- | ------ | ------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| No   | No                         | —      | —       | Sesión nueva (caso normal) → **Fase 1**, sin pausa ni mensaje adicional                                                       |
+| Sí   | No                         | —      | 0       | La sesión murió antes de escribir el plan → **Fase 2**                                                                        |
+| Sí   | No                         | —      | >0      | Inconsistente (commits sin plan) → pausa con respuestas propias: **reconstruir** / **revisar** (ver abajo)                    |
+| Sí   | Sí, todo `[ ]`             | —      | 0       | Plan escrito, sin aprobar/implementar → **Fase 2**, re-presentando el plan existente sin re-delegar en `plan-writer`          |
+| Sí   | Sí, algún `[x]` (no todos) | —      | >0      | Implementación en curso → **Fase 3**, retomando en el primer paso `[ ]`                                                       |
+| Sí   | Sí, todo `[x]`             | No     | >0      | Implementación terminada, sin review → **Fase 4**                                                                             |
+| Sí   | Sí                         | Sí     | >0      | Review ya escrita → **Fase 5**, abordando los hallazgos con Estado pendiente                                                  |
+| No   | Sí                         | —      | —       | El plan sobrevivió pero la rama no → recrear la rama (Fase 1) y re-confirmar el plan existente en **Fase 2**, sin regenerarlo |
+
+Si además existe un **PR abierto** para la rama (señal 5), el flujo ya completó la **Fase 6**: reportar la URL del PR y pausar — el trabajo restante, si lo hay, es abordar feedback de ese PR, no re-ejecutar el flujo.
+
+Si se detecta cualquier señal:
+
+**⏸ PAUSA — requiere decisión del usuario.**
+
+> Detecté <lo encontrado: rama con N commits / plan con M de T pasos marcados / review existente>. Una sesión previa llegó hasta la **Fase <X>**. Respondé **reanudar** para continuar ahí reusando los artefactos tal cual están, o **rehacer** para empezar de nuevo desde la Fase 1.
+
+- **reanudar** → saltar a la fase sugerida por la tabla, reusando los artefactos existentes sin sobrescribirlos.
+- **rehacer** → flujo normal desde la Fase 1. No borra `workspace/<number>/` ni la rama existente: antes de cada punto que sobrescribiría un artefacto existente (recrear la rama en Fase 1, reescribir `PLAN.md` en Fase 2), confirmar explícitamente con el usuario — nunca pisar en silencio.
+
+El caso **commits sin plan** usa un par de respuestas propio — ni "reanudar" ni "rehacer" describen esa situación:
+
+- **reconstruir** → delegar en `plan-writer` la reconstrucción del plan a partir del diff existente y seguir el flujo desde la Fase 2.
+- **revisar** → tratar los commits como implementación hecha e ir directo a la Fase 4.
+
+---
+
 ## Fase 1 — Setup
 
 **Propósito:** crear una rama de feature limpia desde `develop` actualizado.
@@ -28,7 +69,7 @@ Ejemplo: `/issue-workflow https://github.com/cuentoneta/cuentoneta/issues/1234`
    - Formato: **`feat/<number>-<titulo-en-kebab-case>`**.
    - Transformación: minúsculas, espacios y no-alfanuméricos → guiones, colapsar guiones consecutivos, recortar guiones de borde, truncar a ~60 caracteres en un límite de palabra.
 3. `git checkout develop && git pull` para asegurar la base actualizada.
-4. `git checkout -b feat/<number>-<kebab>`.
+4. `git checkout -b feat/<number>-<kebab>`. Si la Fase 0 detectó la rama existente y el usuario eligió **rehacer**, confirmar la reutilización y usar `git checkout feat/<number>-<kebab>` (sin `-b`).
 5. Reportar al usuario: número, título y nombre de rama.
 
 ---
@@ -37,13 +78,13 @@ Ejemplo: `/issue-workflow https://github.com/cuentoneta/cuentoneta/issues/1234`
 
 **Propósito:** producir un plan de implementación detallado para aprobación.
 
-1. Delegar al agente **`plan-writer`** pasándole la URL del issue, su descripción y el nombre de rama.
-2. El plan-writer produce `workspace/PLAN.md`.
+1. Delegar al agente **`plan-writer`** pasándole la URL del issue, su descripción, el nombre de rama y la ruta de salida completa (`workspace/<number>/PLAN.md`). Si la Fase 0 reanudó acá con un plan ya escrito, saltear la delegación y pasar directo al resumen.
+2. El plan-writer produce `workspace/<number>/PLAN.md`.
 3. Presentar un resumen breve al usuario (objetivo, enfoque, archivos afectados, decisiones clave).
 
 **⏸ PAUSA — requiere aprobación del usuario.**
 
-> El plan está en `workspace/PLAN.md`. Revisalo y respondé **aprobar** para empezar la implementación, o dame feedback para revisarlo.
+> El plan está en `workspace/<number>/PLAN.md`. Revisalo y respondé **aprobar** para empezar la implementación, o dame feedback para revisarlo.
 
 No avanzar a la Fase 3 sin aprobación explícita.
 
@@ -53,8 +94,8 @@ No avanzar a la Fase 3 sin aprobación explícita.
 
 **Propósito:** ejecutar el plan con commits atómicos.
 
-1. Ejecutar los pasos de `workspace/PLAN.md` en orden.
-2. Un commit atómico por unidad lógica de trabajo.
+1. Ejecutar los pasos de `workspace/<number>/PLAN.md` en orden. Si la Fase 0 reanudó acá, saltear los pasos ya marcados `[x]`.
+2. Un commit atómico por unidad lógica de trabajo. Tras cada commit, marcar `[x]` el checkbox del paso correspondiente en `workspace/<number>/PLAN.md`.
 3. **Scan de impacto en documentación.** Si el cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología de dominio, delegar en el agente **`documentation-writer`** la actualización de `docs/`, `CLAUDE.md` y `.claude/references/`, en el **mismo** commit/PR — lo exige la sección [Scan de impacto en documentación](../../../CLAUDE.md#scan-de-impacto-en-documentación) de `CLAUDE.md`. Si el cambio no toca nada de eso, saltear el paso.
 4. **CHANGELOG:** cuentoneta mantiene `CHANGELOG.md` **por release/versión** (no por PR), al cerrar un milestone. **No** se exige una entrada por issue en este flujo; el tracking del cambio vive en el issue + su milestone. (Esto reemplaza el gate de CHANGELOG del starter.)
 
@@ -83,13 +124,13 @@ No avanzar a la Fase 3 sin aprobación explícita.
    - **Lanzalos concurrentemente**, no uno tras otro: son independientes entre sí y así los corre CI (todos los jobs cuelgan de `setup` y van en runners separados). En serie tardan la **suma**; en paralelo, lo que tarde el más lento. Medido en #1850: 105s → 29s.
    - Si alguno falla: reportar cuál, diagnosticar, arreglar, commitear el fix (reglas de Fase 3) y re-correr **solo el que falló** mientras el resto sigue verde; re-correr todo solo si el fix toca superficie compartida.
 2. **Determinar si el diff toca superficie de seguridad.** La lista de disparadores es la sección **"Cuándo correr"** del agente `security-auditor`: `src/api/**` (endpoints, GROQ, mappers), manejo de contenido externo (PortableText/HTML del CMS, `bypassSecurityTrust*`, fetch a servicios externos, `localStorage`), variables de entorno / secrets / config de Sanity o Clarity, y dependencias (`package.json` / `pnpm-lock.yaml`). Un diff que no toca nada de eso —solo documentación, estilos o UI sin datos externos— **no** la amerita; el auditor también puede invocarse a demanda si surge una preocupación puntual.
-3. **Delegar las reviews — en paralelo si corren ambas.** Si el diff toca superficie de seguridad, lanzar al **`security-auditor`** y al **`code-reviewer`** en el **mismo turno** (ambas delegaciones en una única respuesta, igual que los gates del paso 1): sus reviews son independientes y no comparten archivo de salida. Si no la toca, delegar solo al `code-reviewer`. En ambos casos el `code-reviewer` revisa todos los cambios de la rama vs. `develop` y recibe **el resultado observado de los gates del paso 1** (qué corriste, con qué resultado, y cuáles omitiste por no aplicar al diff) — sin ese dato los vuelve a correr, que es la parte más cara de la review.
-4. Cada agente escribe su propio archivo: el `code-reviewer` en `workspace/CODE_REVIEW.md` y el `security-auditor` en `workspace/SECURITY_REVIEW.md`.
+3. **Delegar las reviews — en paralelo si corren ambas.** Si el diff toca superficie de seguridad, lanzar al **`security-auditor`** y al **`code-reviewer`** en el **mismo turno** (ambas delegaciones en una única respuesta, igual que los gates del paso 1): sus reviews son independientes y no comparten archivo de salida. Si no la toca, delegar solo al `code-reviewer`. Cada delegación incluye la ruta de salida completa del agente (ver paso 4). En ambos casos el `code-reviewer` revisa todos los cambios de la rama vs. `develop` y recibe **el resultado observado de los gates del paso 1** (qué corriste, con qué resultado, y cuáles omitiste por no aplicar al diff) — sin ese dato los vuelve a correr, que es la parte más cara de la review.
+4. Cada agente escribe su propio archivo: el `code-reviewer` en `workspace/<number>/CODE_REVIEW.md` y el `security-auditor` en `workspace/<number>/SECURITY_REVIEW.md`.
 5. Presentar la tabla de hallazgos al usuario (Críticos, Advertencias, Sugerencias), combinando ambos archivos cuando corrió el auditor, e indicando si corrió o por qué no correspondía. Al combinar, cada hallazgo se cita con el número tal como aparece en su documento de origen: los de seguridad llevan el prefijo `S` (p. ej. `S3`) y así no se confunden con los del `code-reviewer` (sin prefijo).
 
 **⏸ PAUSA — requiere decisión del usuario.**
 
-> Review completa en `workspace/CODE_REVIEW.md` (y `workspace/SECURITY_REVIEW.md` si corrió el auditor de seguridad). Respondé **proceder** para abordar los hallazgos, o **ship** si no hay nada bloqueante.
+> Review completa en `workspace/<number>/CODE_REVIEW.md` (y `workspace/<number>/SECURITY_REVIEW.md` si corrió el auditor de seguridad). Respondé **proceder** para abordar los hallazgos, o **ship** si no hay nada bloqueante.
 
 ---
 
@@ -97,7 +138,7 @@ No avanzar a la Fase 3 sin aprobación explícita.
 
 **Propósito:** abordar los hallazgos con commits atómicos.
 
-1. Abordar cada **Crítico** y **Advertencia** de `workspace/CODE_REVIEW.md` — y de `workspace/SECURITY_REVIEW.md` si corrió el auditor — por prioridad (Críticos primero).
+1. Abordar cada **Crítico** y **Advertencia** de `workspace/<number>/CODE_REVIEW.md` — y de `workspace/<number>/SECURITY_REVIEW.md` si corrió el auditor — por prioridad (Críticos primero).
 2. Tras cada fix, actualizar la columna **Estado** en el archivo al que pertenece el hallazgo (`CODE_REVIEW.md` o `SECURITY_REVIEW.md`), con los valores canónicos del `code-reviewer` (Detectado / En progreso / Corregido / Descartado / Diferido / No se corrige / Requiere test E2E).
 3. Un commit atómico por fix. El mensaje describe el **cambio real**, nunca referencia el número de hallazgo.
    - ✅ `[#1234] - Acota la constante al cuerpo de la función — estaba a nivel de módulo`

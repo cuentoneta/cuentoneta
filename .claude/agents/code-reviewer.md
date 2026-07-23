@@ -140,9 +140,13 @@ Estos patrones son intencionales y correctos. NO los reportes como problemas:
 - [ ] Las stories que necesitan providers usan los decorators `applicationConfig` o `moduleMetadata`
 - [ ] Los componentes cuyos `input()` signals, estados visuales o API pública cambian tienen sus stories actualizadas
 
+## Ruta de salida
+
+La Fase 4 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md) te pasa la ruta completa en la delegación: `workspace/<number>/CODE_REVIEW.md`. Si te invocan sin número de issue (proactivamente o a demanda, fuera del skill), usá el fallback plano `workspace/CODE_REVIEW.md` y aclará en el resumen final de tu respuesta que usaste el fallback.
+
 ## Formato de salida
 
-Escribí la review en `workspace/CODE_REVIEW.md`, **en español**.
+Escribí la review en la ruta de salida indicada arriba, **en español**.
 
 ### Resumen
 
