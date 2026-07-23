@@ -61,7 +61,7 @@ interface LiteraryWorkBase {
 export interface LiteraryWork extends LiteraryWorkBase {
 	readonly authors: readonly Author[]; // 1..N; la obra anónima referencia al author "Anónimo" (ver §10)
 	readonly content: readonly LiteraryWorkSection[]; // >= 1
-	readonly mediaSources: readonly MediaTypes[];
+	readonly mediaSources: readonly Media[];
 	readonly resources: readonly Resource[];
 	readonly badLanguage?: boolean;
 	readonly originalPublication: string;
@@ -186,11 +186,14 @@ export function sumReadingTimes(times: readonly ReadingTime[]): ReadingTime;
 // suma por sección → total del agregado; mínimo 1
 ```
 
-**Contrato para Slice 1** (no implementado — requiere `unified`/`remark-parse`/`mdast-util-to-string`, que no se instalan sin caller real):
+**Implementado en Slice 1** (`reading-time.model.ts`, sobre `unified`/`remark-parse`):
 
 ```typescript
 export function countWords(markdown: Markdown): WordCount;
-// mdast-util-to-string sobre el AST de remark-parse → split por whitespace → createWordCount
+// Walker in-house sobre el AST de remark-parse: colecciona solo texto legible (text/inlineCode/code),
+// excluyendo nodos `html` crudos y el alt de imágenes; una palabra contiene al menos una letra o número.
+// Se evaluó mdast-util-to-string y se descartó: sus defaults cuentan HTML embebido y alt como palabras,
+// y su concatenación sin separador entre bloques pierde límites de palabra.
 ```
 
 El flujo completo por sección: `body (Markdown) → countWords → WordCount → deriveReadingTime → ReadingTime`; el total del agregado: `sumReadingTimes(sections.map(s => s.readingTime))` (derivado en `createLiteraryWork`).
@@ -262,7 +265,16 @@ El consumidor decide por query param si obtiene **toda la obra o un capítulo**:
 
 El SSR de `/read/:slug` (Slice 1) consume la forma completa; la obtención por sección habilita la navegación multi-capítulo (Slice 2) sin transferir la obra entera, y se apoya en la materialización **por sección** ([§8](#8-estrategia-de-materialización)).
 
-> **Nota abierta para Slice 1 — slug inexistente / sección fuera de rango:** el comportamiento vigente del módulo `story` ante slug no encontrado es que el service lanza `Error` genérico sin handler `onError` global en `routes.ts` → HTTP **500 sin body estructurado**, no un 404 JSON. Slice 1 debe decidir si `literary-work` introduce un 404 propio (y sienta el precedente) o mantiene paridad con `story` y se difiere el manejo de errores a un issue transversal. La decisión que se tome aplica por igual a ambos casos (slug y sección). Es una decisión **diferida a propósito**, no una omisión de este diseño.
+### Recurso inexistente — 404 propio (decisión cerrada en el Slice 1)
+
+**Decisión:** el módulo `literary-work` responde **404 JSON propio** ante slug inexistente o `section >= sectionCount` — no la paridad con `story` (que deja subir un `Error` genérico al `onError` global → 500 sin body estructurado, perpetuando el hueco de indexación de URLs muertas).
+
+| Pieza                | Mecánica                                                                                                                                                                                                                                           |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Service              | Lanza errores tipados: `LiteraryWorkNotFoundError` / `LiteraryWorkSectionNotFoundError` (`literary-work.errors.ts`)                                                                                                                                |
+| Controller           | Los atrapa con `instanceof` y responde `{ error: message }` con status **404** — mismo envelope que el 500 del `onError` global. Cualquier otro error sigue subiendo al handler global                                                             |
+| SSR de `/read/:slug` | La página inyecta **`RESPONSE_INIT`** (token de Angular, `null` fuera de SSR) y, ante un `HttpErrorResponse` 404 del recurso, fija `status = 404` en la respuesta SSR — una URL inexistente responde **404 HTTP real**, nunca 200 con página vacía |
+| Alcance              | Solo recurso inexistente; otros errores (500 genuino) conservan el comportamiento por defecto. `story` no se toca — su manejo de errores es deuda preexistente fuera de este epic                                                                  |
 
 ### Consumo desde el frontend — DTO de wire + rehidratación en el provider
 
@@ -362,7 +374,7 @@ Consecuencias:
 | VOs (`Slug`, `WordCount`, `ReadingTime`, `Markdown`, `SanitizedHtml`, `ChapterTitle`) + `createIsoDateTime`     | ✅ Implementados con specs                                   | Consume         |
 | Aritmética de reading time (`deriveReadingTime`, `sumReadingTimes`)                                             | ✅ Implementada con specs                                    | Consume         |
 | Agregado `LiteraryWork` + secciones + vistas + `createLiteraryWork` + `isAnonymous`                             | ✅ Implementados con specs                                   | Consume         |
-| `countWords` (markdown → texto plano, `mdast-util-to-string`)                                                   | Contrato ([§5](#5-helper-de-reading-time))                   | ⚙️ Implementa   |
+| `countWords` (markdown → texto legible, walker in-house sobre el AST)                                           | Contrato ([§5](#5-helper-de-reading-time))                   | ⚙️ Implementa   |
 | Pipeline MD→HTML (`unified`/`rehype-sanitize`) + allow-list como constante + rewrite de imágenes                | Contrato ([§9](#9-allow-list-de-sanitización))               | ⚙️ Implementa   |
 | Repository (puerto + `Sanity*` + `InMemory*`) + módulo backend                                                  | Contrato ([§6](#6-repository-puerto-adaptador-y-doble))      | ⚙️ Implementa   |
 | Endpoint `GET /literary-work/:slug[?section=N]` + `.bru`                                                        | Contrato ([§7](#7-contrato-del-endpoint))                    | ⚙️ Implementa   |

@@ -1,5 +1,5 @@
 // Tipos de Sanity
-import { StoryBySlugQueryResult, StorylistQueryResult } from '../sanity/types';
+import { LiteraryWorkBySlugQueryResult, StoryBySlugQueryResult, StorylistQueryResult } from '../sanity/types';
 
 // Modelos
 import {
@@ -20,8 +20,11 @@ import { mapBlockContentToTextParagraphs, urlFor } from './functions';
 // typegen diverge la de storylist, getSpaceRecordingData deja de compilar (no es silencioso).
 type StoryMediaSources = NonNullable<StoryBySlugQueryResult>['mediaSources'];
 type StorylistMediaSources = NonNullable<StorylistQueryResult>['mediaSources'];
+type LiteraryWorkMediaSources = NonNullable<LiteraryWorkBySlugQueryResult>['mediaSources'];
 type SpaceRecordingSource = Extract<StoryMediaSources[number], { _type: 'spaceRecording' }>;
-export function mapMediaSources(mediaSources: StoryMediaSources | StorylistMediaSources): Media[] {
+export function mapMediaSources(
+	mediaSources: StoryMediaSources | StorylistMediaSources | LiteraryWorkMediaSources,
+): Media[] {
 	if (!mediaSources) return [];
 
 	const media: Media[] = [];
