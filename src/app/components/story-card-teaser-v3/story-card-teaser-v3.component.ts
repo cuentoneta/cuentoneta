@@ -5,10 +5,7 @@ import { RouterLink } from '@angular/router';
 import type { StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
 import { AppRoutes } from '../../app.routes';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
-import {
-	StoryMediaSelectorsComponent,
-	type StoryMediaSelectorsTheme,
-} from '../story-media-selectors/story-media-selectors.component';
+import { MediaSelectorsComponent, type MediaSelectorsTheme } from '../media-selectors/media-selectors.component';
 import { StoryCardTeaserV3SkeletonComponent } from './story-card-teaser-v3-skeleton.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
 import { CoverImageComponent } from '../cover-image/cover-image.component';
@@ -28,7 +25,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
 		NgTemplateOutlet,
 		RouterLink,
 		PortableTextParserComponent,
-		StoryMediaSelectorsComponent,
+		MediaSelectorsComponent,
 		StoryCardTeaserV3SkeletonComponent,
 		ImageProfileComponent,
 		CoverImageComponent,
@@ -67,7 +64,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
 						<ng-container [ngTemplateOutlet]="readingTime" [ngTemplateOutletContext]="{ $implicit: story }" />
 					</div>
 					@if (showMultimedia() && story.media.length > 0) {
-						<cuentoneta-story-media-selectors [media]="story.media" [theme]="mediaTheme()" data-testid="media" />
+						<cuentoneta-media-selectors [media]="story.media" [theme]="mediaTheme()" data-testid="media" />
 					}
 				</div>
 			</article>
@@ -148,7 +145,7 @@ export class StoryCardTeaserV3Component {
 	protected readonly storyRouterLink = computed(() => ['/', this.appRoutes.Story, this.story()?.slug]);
 
 	// Mapea la variante de la tarjeta al tema visual de los selectores de multimedia.
-	protected readonly mediaTheme = computed<StoryMediaSelectorsTheme>(() => {
+	protected readonly mediaTheme = computed<MediaSelectorsTheme>(() => {
 		switch (this.variant()) {
 			case 'on-gray':
 				return 'solid';
