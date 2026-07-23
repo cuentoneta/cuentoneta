@@ -122,7 +122,7 @@ describe('HomeStoryCardComponent', () => {
 		});
 	});
 
-	// El detalle de agrupación, contador y emisión vive en story-media-selectors.component.spec.ts.
+	// El detalle de agrupación, contador y emisión vive en media-selectors.component.spec.ts.
 	// Aquí solo se verifica la integración: que la tarjeta delegue en el componente cuando corresponde.
 	describe('Multimedia selectors', () => {
 		const richMedia: Media[] = [
