@@ -87,11 +87,18 @@ El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehac
 2. El plan-writer produce `workspace/<number>/PLAN.md`.
 3. Presentar un resumen breve al usuario (objetivo, enfoque, archivos afectados, decisiones clave).
 
-**⏸ PAUSA — requiere aprobación del usuario.**
+**⏸ PAUSA — decisión vía `AskUserQuestion`.**
 
-> El plan está en `workspace/<number>/PLAN.md`. Revisalo y respondé **aprobar** para empezar la implementación, o dame feedback para revisarlo.
+- `question`: "El plan está en `workspace/<number>/PLAN.md`. ¿Cómo seguimos?"
+- `header`: `Plan`
+- `options`: solo **Aprobar** — el plan queda tal cual y se avanza a la Fase 3. No agregar una opción "dar feedback": la opción **"Other"** (automática) es la única vía que puede transportar el contenido del feedback.
 
-No avanzar a la Fase 3 sin aprobación explícita.
+Ramaleo tras la respuesta:
+
+- **Aprobar** → avanzar a la Fase 3.
+- **Other** (feedback) → reenviar el texto recibido **a la misma Task del `plan-writer`** delegada en el paso 1 — conserva toda la exploración en contexto — para que revise `workspace/<number>/PLAN.md` en función del feedback y reescriba el plan en el mismo archivo. Nunca editar `PLAN.md` a mano desde el orquestador ni relanzar un `plan-writer` de cero mientras la Task siga disponible. Repetir la pausa tras cada revisión, iterando hasta un "Aprobar". Si la Task original ya no está disponible (p. ej. reanudación vía Fase 0 en una sesión nueva), delegar en un `plan-writer` nuevo pasándole el `PLAN.md` existente más el feedback — revisa sobre lo escrito, no re-explora de cero.
+
+No avanzar a la Fase 3 sin una respuesta "Aprobar".
 
 ---
 
