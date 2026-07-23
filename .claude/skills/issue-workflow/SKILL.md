@@ -44,14 +44,18 @@ Corre siempre, en toda invocación, con el número de issue extraído de la URL.
 
 Si además existe un **PR abierto** para la rama (señal 5), el flujo ya completó la **Fase 6**: reportar la URL del PR y pausar — el trabajo restante, si lo hay, es abordar feedback de ese PR, no re-ejecutar el flujo.
 
-Si se detecta cualquier señal:
+Si se detecta cualquier señal, pausar con `AskUserQuestion`:
 
-**⏸ PAUSA — requiere decisión del usuario.**
+**⏸ PAUSA — decisión vía `AskUserQuestion`.**
 
-> Detecté <lo encontrado: rama con N commits / plan con M de T pasos marcados / review existente>. Una sesión previa llegó hasta la **Fase <X>**. Respondé **reanudar** para continuar ahí reusando los artefactos tal cual están, o **rehacer** para empezar de nuevo desde la Fase 1.
+- `question`: "Detecté <lo encontrado: rama con N commits / plan con M de T pasos marcados / review existente>. Una sesión previa llegó hasta la Fase <X>. ¿Cómo seguimos?"
+- `header`: `Retomar`
+- `options` (la recomendada primero): **Reanudar** — continuar en la Fase <X> reusando los artefactos tal cual están; **Rehacer** — empezar de nuevo desde la Fase 1, sin borrar nada. La opción **"Other"** (automática) cubre cualquier instrucción libre distinta.
 
-- **reanudar** → saltar a la fase sugerida por la tabla, reusando los artefactos existentes sin sobrescribirlos.
-- **rehacer** → flujo normal desde la Fase 1. No borra `workspace/<number>/` ni la rama existente: antes de cada punto que sobrescribiría un artefacto existente (recrear la rama en Fase 1, reescribir `PLAN.md` en Fase 2), confirmar explícitamente con el usuario — nunca pisar en silencio.
+Semántica de cada respuesta (sin cambios respecto de la tabla):
+
+- **Reanudar** → saltar a la fase sugerida por la tabla, reusando los artefactos existentes sin sobrescribirlos.
+- **Rehacer** → flujo normal desde la Fase 1. No borra `workspace/<number>/` ni la rama existente: antes de cada punto que sobrescribiría un artefacto existente (recrear la rama en Fase 1, reescribir `PLAN.md` en Fase 2), confirmar explícitamente con el usuario — nunca pisar en silencio.
 
 El caso **commits sin plan** usa un par de respuestas propio — ni "reanudar" ni "rehacer" describen esa situación:
 
