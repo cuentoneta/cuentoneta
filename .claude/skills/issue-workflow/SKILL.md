@@ -57,10 +57,11 @@ Semántica de cada respuesta (sin cambios respecto de la tabla):
 - **Reanudar** → saltar a la fase sugerida por la tabla, reusando los artefactos existentes sin sobrescribirlos.
 - **Rehacer** → flujo normal desde la Fase 1. No borra `workspace/<number>/` ni la rama existente: antes de cada punto que sobrescribiría un artefacto existente (recrear la rama en Fase 1, reescribir `PLAN.md` en Fase 2), confirmar explícitamente con el usuario — nunca pisar en silencio.
 
-El caso **commits sin plan** usa un par de respuestas propio — ni "reanudar" ni "rehacer" describen esa situación:
+El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehacer" describen esa situación:
 
-- **reconstruir** → delegar en `plan-writer` la reconstrucción del plan a partir del diff existente y seguir el flujo desde la Fase 2.
-- **revisar** → tratar los commits como implementación hecha e ir directo a la Fase 4.
+- `question`: "Hay <N> commits en la rama pero no existe `workspace/<number>/PLAN.md`. ¿Cómo seguimos?"
+- `header`: `Estado`
+- `options`: **Reconstruir** — delegar en `plan-writer` la reconstrucción del plan a partir del diff existente y seguir el flujo desde la Fase 2; **Revisar** — tratar los commits como implementación hecha e ir directo a la Fase 4. ("Other" cubre cualquier instrucción distinta de esas dos.)
 
 ---
 
