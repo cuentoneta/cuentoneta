@@ -3,17 +3,17 @@ import { NgTemplateOutlet } from '@angular/common';
 
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton.component';
-import { StoryCardTeaserV3Variant } from './story-card-teaser-v3.component';
+import { LiteraryWorkCardTeaserVariant } from './literary-work-card-teaser.component';
 
 /**
- * Estado de carga (esqueleto) de StoryCardTeaserV3Component. Replica la estructura de la tarjeta
- * con placeholders de cuentoneta-skeleton para evitar saltos de layout mientras la story carga.
+ * Estado de carga (esqueleto) de LiteraryWorkCardTeaserComponent. Replica la estructura de la tarjeta
+ * con placeholders de cuentoneta-skeleton para evitar saltos de layout mientras la obra carga.
  *
- * Recibe los mismos flags de presentación que la tarjeta (variante, orden, autor, descripción,
- * multimedia y líneas del extracto) para que el esqueleto coincida con lo que se va a renderizar.
+ * Recibe los mismos flags de presentación que la tarjeta (variante, orden, autor, descripción y
+ * líneas del extracto) para que el esqueleto coincida con lo que se va a renderizar.
  */
 @Component({
-	selector: 'cuentoneta-story-card-teaser-v3-skeleton',
+	selector: 'cuentoneta-literary-work-card-teaser-skeleton',
 	imports: [SkeletonComponent, NgTemplateOutlet, CoverImageSkeletonComponent],
 	host: { class: 'block' },
 	template: `
@@ -37,13 +37,6 @@ import { StoryCardTeaserV3Variant } from './story-card-teaser-v3.component';
 					}
 					<cuentoneta-skeleton appearance="line" class="h-4 w-full max-w-44 bg-neutral-300" />
 				</div>
-				@if (showMultimedia()) {
-					<div class="flex items-center gap-2.5">
-						@for (selector of mediaPlaceholders; track $index) {
-							<cuentoneta-skeleton appearance="square" class="h-[34px] w-[38px] rounded-lg bg-neutral-300" />
-						}
-					</div>
-				}
 			</div>
 		</article>
 
@@ -56,17 +49,13 @@ import { StoryCardTeaserV3Variant } from './story-card-teaser-v3.component';
 		</ng-template>
 	`,
 })
-export class StoryCardTeaserV3SkeletonComponent {
-	// Inputs (espejo de StoryCardTeaserV3Component)
-	public readonly variant = input<StoryCardTeaserV3Variant>('on-white');
+export class LiteraryWorkCardTeaserSkeletonComponent {
+	// Inputs (espejo de LiteraryWorkCardTeaserComponent)
+	public readonly variant = input<LiteraryWorkCardTeaserVariant>('on-white');
 	public readonly order = input<number>();
 	public readonly showAuthor = input<boolean>(false);
 	public readonly showExcerpt = input<boolean>(false);
-	public readonly showMultimedia = input<boolean>(false);
 	public readonly excerptLines = input<number>(2);
-
-	// Placeholders de los selectores de multimedia (YouTube, X, Spotify).
-	protected readonly mediaPlaceholders = [0, 1, 2];
 
 	protected readonly descriptionLines = computed(() => Array(this.excerptLines()).fill(0));
 
