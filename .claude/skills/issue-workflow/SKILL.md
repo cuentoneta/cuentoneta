@@ -140,9 +140,13 @@ No avanzar a la Fase 3 sin una respuesta "Aprobar".
 4. Cada agente escribe su propio archivo: el `code-reviewer` en `workspace/<number>/CODE_REVIEW.md` y el `security-auditor` en `workspace/<number>/SECURITY_REVIEW.md`.
 5. Presentar la tabla de hallazgos al usuario (Críticos, Advertencias, Sugerencias), combinando ambos archivos cuando corrió el auditor, e indicando si corrió o por qué no correspondía. Al combinar, cada hallazgo se cita con el número tal como aparece en su documento de origen: los de seguridad llevan el prefijo `S` (p. ej. `S3`) y así no se confunden con los del `code-reviewer` (sin prefijo).
 
-**⏸ PAUSA — requiere decisión del usuario.**
+**⏸ PAUSA — decisión vía `AskUserQuestion`.**
 
-> Review completa en `workspace/<number>/CODE_REVIEW.md` (y `workspace/<number>/SECURITY_REVIEW.md` si corrió el auditor de seguridad). Respondé **proceder** para abordar los hallazgos, o **ship** si no hay nada bloqueante.
+- `question`: "Review completa en `workspace/<number>/CODE_REVIEW.md` (y `workspace/<number>/SECURITY_REVIEW.md` si corrió el auditor). ¿Cómo seguimos?" — si hay Críticos abiertos, incluir cuántos en el texto de la pregunta.
+- `header`: `Review`
+- `options` (la recomendada primero): **Proceder** — ir a la Fase 5 y abordar los hallazgos por prioridad (Críticos primero); **Ship** — no hay nada bloqueante: saltar la Fase 5 e ir directo a la Fase 6.
+
+> Nota: bloquear "Ship" mecánicamente ante Críticos abiertos es un cambio aparte (#1919, pendiente) — hoy la pausa solo los hace visibles en la pregunta; cuando #1919 se implemente, este es el punto donde aplicaría el bloqueo.
 
 ---
 
