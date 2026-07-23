@@ -4,11 +4,11 @@ import { createChapterTitle } from '@models/chapter-title.model';
 import { createReadingTime } from '@models/reading-time.model';
 import { createSanitizedHtml } from '@models/sanitized-html.model';
 import { createIsoDateTime } from '@utils/date.utils';
-import { authorMock, authorTeaserMock } from '@mocks/author.mock';
+import { authorMock } from '@mocks/author.mock';
 import { tagMock } from '@mocks/tag.mocks';
 
-// Segundo autor derivado del teaser estable para ejercitar el byline 1..N del hero.
-const coauthorMock = { ...authorTeaserMock, _id: 'author_2', slug: 'camille-fournier', name: 'Camille Fournier' };
+// Segundo autor derivado del mock completo para ejercitar el byline 1..N del hero.
+const coauthorMock = { ...authorMock, _id: 'author_2', slug: 'camille-fournier', name: 'Camille Fournier' };
 
 export const literaryWorkHeroFixtureMock: LiteraryWork = createLiteraryWork({
 	_id: 'literaryWork_hero_1',
