@@ -6,27 +6,27 @@ import type { StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAutho
 import { AppRoutes } from '../../app.routes';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import { MediaSelectorsComponent, type MediaSelectorsTheme } from '../media-selectors/media-selectors.component';
-import { StoryCardTeaserV3SkeletonComponent } from './story-card-teaser-v3-skeleton.component';
+import { LiteraryWorkCardTeaserSkeletonComponent } from './literary-work-card-teaser-skeleton.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
 import { CoverImageComponent } from '../cover-image/cover-image.component';
 
 /**
- * Variantes visuales del componente StoryCardTeaser definidas en el Design System v3.
+ * Variantes visuales del componente LiteraryWorkCardTeaser definidas en el Design System v3.
  *
  * - `on-white`: layout horizontal con imagen a la izquierda, pensado para fondos blancos.
  * - `on-gray`: idéntico a `on-white` pero con los selectores de multimedia en blanco, para fondos grises.
  * - `highlighted`: tarjeta destacada con borde y fondo, con la imagen a la derecha.
  */
-export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
+export type LiteraryWorkCardTeaserVariant = 'on-white' | 'on-gray' | 'highlighted';
 
 @Component({
-	selector: 'cuentoneta-story-card-teaser-v3',
+	selector: 'cuentoneta-literary-work-card-teaser',
 	imports: [
 		NgTemplateOutlet,
 		RouterLink,
 		PortableTextParserComponent,
 		MediaSelectorsComponent,
-		StoryCardTeaserV3SkeletonComponent,
+		LiteraryWorkCardTeaserSkeletonComponent,
 		ImageProfileComponent,
 		CoverImageComponent,
 	],
@@ -69,7 +69,7 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
 				</div>
 			</article>
 		} @else {
-			<cuentoneta-story-card-teaser-v3-skeleton
+			<cuentoneta-literary-work-card-teaser-skeleton
 				[variant]="variant()"
 				[order]="order()"
 				[showAuthor]="showAuthor()"
@@ -123,12 +123,12 @@ export type StoryCardTeaserV3Variant = 'on-white' | 'on-gray' | 'highlighted';
 		class: 'block',
 	},
 })
-export class StoryCardTeaserV3Component {
+export class LiteraryWorkCardTeaserComponent {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs
 	public readonly story = input<StoryNavigationTeaserWithAuthor | StoryTeaserWithAuthor | StoryTeaser>();
-	public readonly variant = input<StoryCardTeaserV3Variant>('on-white');
+	public readonly variant = input<LiteraryWorkCardTeaserVariant>('on-white');
 	public readonly order = input<number>();
 	// Marca el cover como prioritario (above-the-fold, p. ej. en la variante highlighted como hero).
 	public readonly priority = input<boolean>(false);

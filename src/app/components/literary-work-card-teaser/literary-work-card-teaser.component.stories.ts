@@ -1,7 +1,7 @@
 import { applicationConfig, argsToTemplate, Meta, StoryObj } from '@storybook/angular';
 import { provideRouter } from '@angular/router';
 
-import { StoryCardTeaserV3Component } from './story-card-teaser-v3.component';
+import { LiteraryWorkCardTeaserComponent } from './literary-work-card-teaser.component';
 import {
 	elOdioTeaserMock,
 	geometriaTeaserMock,
@@ -9,9 +9,9 @@ import {
 } from '../../mocks/onoff-story-teasers.mock';
 import { corpusStories, literaryWorkSelectArgType, withRichMedia } from '../../mocks/onoff-corpus.storybook';
 
-const meta: Meta<StoryCardTeaserV3Component> = {
-	component: StoryCardTeaserV3Component,
-	title: 'Componentes V3/StoryCardTeaserV3',
+const meta: Meta<LiteraryWorkCardTeaserComponent> = {
+	component: LiteraryWorkCardTeaserComponent,
+	title: 'Componentes V3/LiteraryWorkCardTeaser',
 	tags: ['autodocs'],
 	decorators: [
 		applicationConfig({
@@ -79,9 +79,9 @@ const meta: Meta<StoryCardTeaserV3Component> = {
 };
 
 export default meta;
-type Story = StoryObj<StoryCardTeaserV3Component>;
+type Story = StoryObj<LiteraryWorkCardTeaserComponent>;
 
-export const Interactiva: StoryObj<StoryCardTeaserV3Component & { storyIndex: number }> = {
+export const Interactiva: StoryObj<LiteraryWorkCardTeaserComponent & { storyIndex: number }> = {
 	argTypes: {
 		storyIndex: {
 			...literaryWorkSelectArgType,
@@ -91,7 +91,7 @@ export const Interactiva: StoryObj<StoryCardTeaserV3Component & { storyIndex: nu
 	render: (args) => ({
 		props: { ...args, stories: corpusStories },
 		template: `
-			<cuentoneta-story-card-teaser-v3
+			<cuentoneta-literary-work-card-teaser
 				[story]="stories[storyIndex]"
 				[variant]="variant"
 				[order]="order"
@@ -126,7 +126,7 @@ export const Interactiva: StoryObj<StoryCardTeaserV3Component & { storyIndex: nu
 export const OnWhite: Story = {
 	render: (args) => ({
 		props: args,
-		template: `<cuentoneta-story-card-teaser-v3 ${argsToTemplate(args)} />`,
+		template: `<cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} />`,
 	}),
 	args: {
 		story: withRichMedia(palacioNueveFronterasTeaserMock),
@@ -150,7 +150,7 @@ export const OnWhite: Story = {
 export const OnGray: Story = {
 	render: (args) => ({
 		props: args,
-		template: `<div class="rounded-lg bg-neutral-100 p-6"><cuentoneta-story-card-teaser-v3 ${argsToTemplate(args)} /></div>`,
+		template: `<div class="rounded-lg bg-neutral-100 p-6"><cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} /></div>`,
 	}),
 	args: {
 		story: withRichMedia(geometriaTeaserMock),
@@ -174,7 +174,7 @@ export const OnGray: Story = {
 export const Highlighted: Story = {
 	render: (args) => ({
 		props: args,
-		template: `<cuentoneta-story-card-teaser-v3 ${argsToTemplate(args)} />`,
+		template: `<cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} />`,
 	}),
 	args: {
 		story: withRichMedia(elOdioTeaserMock),
@@ -211,7 +211,7 @@ export const AllVariants: Story = {
 			<div class="flex flex-col gap-10">
 				<div class="space-y-2">
 					<h3 class="text-sm font-semibold text-neutral-600">OnWhite</h3>
-					<cuentoneta-story-card-teaser-v3
+					<cuentoneta-literary-work-card-teaser
 						variant="on-white"
 						[story]="stories[0]"
 						[order]="order"
@@ -225,7 +225,7 @@ export const AllVariants: Story = {
 				<div class="space-y-2">
 					<h3 class="text-sm font-semibold text-neutral-600">OnGray</h3>
 					<div class="rounded-lg bg-neutral-100 p-6">
-						<cuentoneta-story-card-teaser-v3
+						<cuentoneta-literary-work-card-teaser
 							variant="on-gray"
 							[story]="stories[1]"
 							[order]="order"
@@ -239,7 +239,7 @@ export const AllVariants: Story = {
 				</div>
 				<div class="space-y-2">
 					<h3 class="text-sm font-semibold text-neutral-600">Highlighted</h3>
-					<cuentoneta-story-card-teaser-v3
+					<cuentoneta-literary-work-card-teaser
 						variant="highlighted"
 						[story]="stories[2]"
 						[order]="order"
@@ -271,14 +271,14 @@ export const AllVariants: Story = {
 };
 
 // La tarjeta renderiza su propio skeleton cuando no recibe story.
-export const Estados: StoryObj<StoryCardTeaserV3Component & { loading: boolean }> = {
+export const Estados: StoryObj<LiteraryWorkCardTeaserComponent & { loading: boolean }> = {
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
 	render: (args) => ({
 		props: args,
 		template: `
 			<div class="w-[680px]">
 				@if (loading) {
-					<cuentoneta-story-card-teaser-v3
+					<cuentoneta-literary-work-card-teaser
 						[variant]="variant"
 						[order]="order"
 						[showAuthor]="showAuthor"
@@ -287,7 +287,7 @@ export const Estados: StoryObj<StoryCardTeaserV3Component & { loading: boolean }
 						[excerptLines]="excerptLines"
 					/>
 				} @else {
-					<cuentoneta-story-card-teaser-v3
+					<cuentoneta-literary-work-card-teaser
 						[story]="story"
 						[variant]="variant"
 						[order]="order"

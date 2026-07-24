@@ -1,4 +1,4 @@
-import { StoryCardTeaserV3Component } from './story-card-teaser-v3.component';
+import { LiteraryWorkCardTeaserComponent } from './literary-work-card-teaser.component';
 import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import { storyNavigationTeaserWithAuthorMock, storyTeaserMock } from '../../mocks/story.mock';
@@ -8,7 +8,7 @@ import { clearAllMocks } from '@test-utils';
 import type { Media } from '@models/media.model';
 import type { StoryTeaserWithAuthor } from '@models/story.model';
 
-describe('StoryCardTeaserV3Component', () => {
+describe('LiteraryWorkCardTeaserComponent', () => {
 	const storyUrl = '/story/el-espejo-del-tiempo?navigation=author&navigationSlug=francois-onoff';
 	const authorUrl = '/author/francois-onoff';
 
@@ -22,21 +22,21 @@ describe('StoryCardTeaserV3Component', () => {
 	});
 
 	it('should render the component', async () => {
-		const { container } = await render(StoryCardTeaserV3Component, {
+		const { container } = await render(LiteraryWorkCardTeaserComponent, {
 			inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
 		});
 		expect(container).toBeTruthy();
 	});
 
 	it('should display the story title', async () => {
-		await render(StoryCardTeaserV3Component, {
+		await render(LiteraryWorkCardTeaserComponent, {
 			inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
 		});
 		expect(screen.getByText(storyNavigationTeaserWithAuthorMock.title)).toBeInTheDocument();
 	});
 
 	it('should display the approximate reading time', async () => {
-		await render(StoryCardTeaserV3Component, {
+		await render(LiteraryWorkCardTeaserComponent, {
 			inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
 		});
 		expect(
@@ -45,7 +45,7 @@ describe('StoryCardTeaserV3Component', () => {
 	});
 
 	it('should link to the story', async () => {
-		await render(StoryCardTeaserV3Component, {
+		await render(LiteraryWorkCardTeaserComponent, {
 			inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
 		});
 		const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/story/'));
@@ -54,21 +54,21 @@ describe('StoryCardTeaserV3Component', () => {
 
 	describe('Order', () => {
 		it('should display the order without leading zero in row variants', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, order: 3, variant: 'on-white' },
 			});
 			expect(screen.getByText('3.')).toBeInTheDocument();
 		});
 
 		it('should not display the order when not provided', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
 			});
 			expect(screen.queryByText('3.')).not.toBeInTheDocument();
 		});
 
 		it('should display an order of 0 (not treated as absent)', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, order: 0, variant: 'on-white' },
 			});
 			expect(screen.getByText('0.')).toBeInTheDocument();
@@ -77,7 +77,7 @@ describe('StoryCardTeaserV3Component', () => {
 
 	describe('Author', () => {
 		it('should display the author name and avatar when showAuthor is true', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, showAuthor: true },
 			});
 			expect(screen.getByText(storyNavigationTeaserWithAuthorMock.author.name)).toBeInTheDocument();
@@ -85,7 +85,7 @@ describe('StoryCardTeaserV3Component', () => {
 		});
 
 		it('should link the author photo and name to the author profile', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, showAuthor: true },
 			});
 			// El bloque del autor (foto + nombre) es un enlace propio a /author/:slug, elevado por encima del
@@ -95,7 +95,7 @@ describe('StoryCardTeaserV3Component', () => {
 		});
 
 		it('should expose the author name as the accessible name of the author link', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, showAuthor: true },
 			});
 			// El avatar es decorativo (alt vacío): el nombre accesible del enlace es solo el nombre del autor.
@@ -103,7 +103,7 @@ describe('StoryCardTeaserV3Component', () => {
 		});
 
 		it('should not display the author when showAuthor is false', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, showAuthor: false },
 			});
 			expect(screen.queryByTestId('author')).not.toBeInTheDocument();
@@ -112,7 +112,7 @@ describe('StoryCardTeaserV3Component', () => {
 
 	describe('Cover image', () => {
 		it('should render the cover image when the story has a cover', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: {
 					story: { ...storyNavigationTeaserWithAuthorMock, coverImage: 'https://example.com/cover.jpg' },
 					navigationParams,
@@ -122,14 +122,14 @@ describe('StoryCardTeaserV3Component', () => {
 		});
 
 		it('should render a placeholder when the story has no cover', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
 			});
 			expect(screen.getByTestId('cover-placeholder')).toBeInTheDocument();
 		});
 
 		it('should keep the cover decorative, leaving a single accessible story link when the author is hidden', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: {
 					story: { ...storyNavigationTeaserWithAuthorMock, coverImage: 'https://example.com/cover.jpg' },
 					navigationParams,
@@ -149,28 +149,28 @@ describe('StoryCardTeaserV3Component', () => {
 		const storyWithParagraphs: StoryTeaserWithAuthor = palacioNueveFronterasTeaserMock;
 
 		it('should display the description when showExcerpt is true and there are paragraphs', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: storyWithParagraphs, showExcerpt: true, excerptLines: 2 },
 			});
 			expect(screen.getByTestId('description')).toBeInTheDocument();
 		});
 
 		it('should not display the description when showExcerpt is false', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: storyWithParagraphs, showExcerpt: false },
 			});
 			expect(screen.queryByTestId('description')).not.toBeInTheDocument();
 		});
 
 		it('should apply the configured number of excerpt lines', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: storyWithParagraphs, showExcerpt: true, excerptLines: 3 },
 			});
 			expect(screen.getByTestId('description')).toHaveClass('line-clamp-3');
 		});
 
 		it('should clamp excerptLines to the supported range (1-10)', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: storyWithParagraphs, showExcerpt: true, excerptLines: 99 },
 			});
 			expect(screen.getByTestId('description')).toHaveClass('line-clamp-10');
@@ -187,21 +187,21 @@ describe('StoryCardTeaserV3Component', () => {
 		const storyWithMedia: StoryTeaserWithAuthor = { ...storyTeaserMock, author: authorTeaserMock, media: richMedia };
 
 		it('should display the multimedia selectors when showMultimedia is true and there is media', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: storyWithMedia, showMultimedia: true },
 			});
 			expect(screen.getByTestId('media')).toBeInTheDocument();
 		});
 
 		it('should not display the multimedia selectors when showMultimedia is false', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: storyWithMedia, showMultimedia: false },
 			});
 			expect(screen.queryByTestId('media')).not.toBeInTheDocument();
 		});
 
 		it('should not display the multimedia selectors when the story has no media', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: { ...storyWithMedia, media: [] }, showMultimedia: true },
 			});
 			expect(screen.queryByTestId('media')).not.toBeInTheDocument();
@@ -210,14 +210,14 @@ describe('StoryCardTeaserV3Component', () => {
 
 	describe('Tag label', () => {
 		it('should display the tag label when provided', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, tagLabel: 'Cuento' },
 			});
 			expect(screen.getByText('Cuento')).toBeInTheDocument();
 		});
 
 		it('should not display the tag label when not provided', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
 			});
 			expect(screen.queryByText('Cuento')).not.toBeInTheDocument();
@@ -226,14 +226,14 @@ describe('StoryCardTeaserV3Component', () => {
 
 	describe('Loading state', () => {
 		it('should render the skeleton when no story is provided', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: undefined, variant: 'on-white' },
 			});
 			expect(screen.getByTestId('skeleton')).toBeInTheDocument();
 		});
 
 		it('should not render the skeleton when a story is provided', async () => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
 			});
 			expect(screen.queryByTestId('skeleton')).not.toBeInTheDocument();
@@ -245,7 +245,7 @@ describe('StoryCardTeaserV3Component', () => {
 		beforeEach(() => clearAllMocks());
 
 		it.each(onoffStoryTeasersMock)('should render title and reading time for "$title"', async (teaser) => {
-			await render(StoryCardTeaserV3Component, {
+			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { story: teaser },
 			});
 
