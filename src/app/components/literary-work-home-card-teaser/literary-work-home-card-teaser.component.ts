@@ -6,7 +6,7 @@ import { AppRoutes } from '../../app.routes';
 import { MediaSelectorsComponent } from '../media-selectors/media-selectors.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
 import { CoverImageComponent } from '../cover-image/cover-image.component';
-import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.component';
+import { LiteraryWorkHomeCardTeaserSkeletonComponent } from './literary-work-home-card-teaser-skeleton.component';
 
 /**
  * Tarjeta de vista previa de una historia para la home (Design System v3). Derivada de
@@ -25,12 +25,12 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
  * encima del pseudo-elemento, para que la foto y el nombre naveguen a `/author/:slug`.
  */
 @Component({
-	selector: 'cuentoneta-home-story-card',
+	selector: 'cuentoneta-literary-work-home-card-teaser',
 	imports: [
 		RouterLink,
 		MediaSelectorsComponent,
 		ImageProfileComponent,
-		HomeStoryCardSkeletonComponent,
+		LiteraryWorkHomeCardTeaserSkeletonComponent,
 		CoverImageComponent,
 	],
 	template: `
@@ -91,14 +91,14 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
 				</div>
 			</article>
 		} @else {
-			<cuentoneta-home-story-card-skeleton data-testid="skeleton" />
+			<cuentoneta-literary-work-home-card-teaser-skeleton data-testid="skeleton" />
 		}
 	`,
 	host: {
 		class: 'block',
 	},
 })
-export class HomeStoryCardComponent {
+export class LiteraryWorkHomeCardTeaserComponent {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs

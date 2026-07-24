@@ -30,7 +30,7 @@ interface MediaSelectorItem {
  *
  * - `false` (por defecto): los recursos se agrupan por plataforma y se muestra un contador (badge)
  *   cuando hay más de uno del mismo tipo. Los selectores son decorativos (no clickeables). Es el
- *   modo usado por las tarjetas LiteraryWorkCardTeaser y HomeStoryCard.
+ *   modo usado por las tarjetas LiteraryWorkCardTeaser y LiteraryWorkHomeCardTeaser.
  * - `true`: se renderiza un selector clickeable por cada recurso (sin agrupar ni contador) y al
  *   hacer click se emite, vía el output `selected`, el `Media` correspondiente. Es el modo pensado
  *   para la vista Story, donde se monta el widget del recurso seleccionado.
