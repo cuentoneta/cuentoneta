@@ -1,6 +1,6 @@
 import { argsToTemplate, moduleMetadata, Meta, StoryObj } from '@storybook/angular';
 
-import { StoryMediaSelectorsComponent } from './story-media-selectors.component';
+import { MediaSelectorsComponent } from './media-selectors.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { Media } from '@models/media.model';
 
@@ -19,16 +19,16 @@ const media: Media[] = [
 	{ title: 'Podcast', type: 'spotifyPodcastEpisode', description: [], data: { url: 'https://spotify.com' } },
 ];
 
-const meta: Meta<StoryMediaSelectorsComponent> = {
-	component: StoryMediaSelectorsComponent,
-	title: 'Componentes V3/StoryMediaSelectors',
+const meta: Meta<MediaSelectorsComponent> = {
+	component: MediaSelectorsComponent,
+	title: 'Componentes V3/MediaSelectors',
 	parameters: {
 		docs: {
 			canvas: {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El componente <strong>StoryMediaSelectorsComponent</strong> renderiza los selectores de los recursos multimedia (YouTube, X, Spotify, audio) asociados a una historia. Es un componente de presentación: no monta los widgets, solo emite el recurso seleccionado vía el output <code>selected</code>.</p><ul><li><code>selectable = false</code> (por defecto): agrupa por plataforma con un contador (badge). Decorativo.</li><li><code>selectable = true</code>: un selector clickeable por recurso; al click emite el <code>Media</code> vía <code>selected</code>.</li></ul><p>Los inputs <code>theme</code> (<code>subtle</code> / <code>solid</code> / <code>bordered</code>) y <code>orientation</code> (<code>horizontal</code> / <code>vertical</code>) controlan la presentación.</p><p>Se consume desde <a href="./?path=/docs/componentes-v3-storycardteaserv3--docs" target="_top"><strong>StoryCardTeaserV3</strong></a> y <a href="./?path=/docs/componentes-v3-homestorycard--docs" target="_top"><strong>HomeStoryCard</strong></a> (modo agrupado), y en la página de Story en modo seleccionable.</p></div>`,
+				component: `<div><p>El componente <strong>MediaSelectorsComponent</strong> renderiza los selectores de los recursos multimedia (YouTube, X, Spotify, audio) asociados a una historia. Es un componente de presentación: no monta los widgets, solo emite el recurso seleccionado vía el output <code>selected</code>.</p><ul><li><code>selectable = false</code> (por defecto): agrupa por plataforma con un contador (badge). Decorativo.</li><li><code>selectable = true</code>: un selector clickeable por recurso; al click emite el <code>Media</code> vía <code>selected</code>.</li></ul><p>Los inputs <code>theme</code> (<code>subtle</code> / <code>solid</code> / <code>bordered</code>) y <code>orientation</code> (<code>horizontal</code> / <code>vertical</code>) controlan la presentación.</p><p>Se consume desde <a href="./?path=/docs/componentes-v3-storycardteaserv3--docs" target="_top"><strong>StoryCardTeaserV3</strong></a> y <a href="./?path=/docs/componentes-v3-homestorycard--docs" target="_top"><strong>HomeStoryCard</strong></a> (modo agrupado), y en la página de Story en modo seleccionable.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -61,10 +61,10 @@ const meta: Meta<StoryMediaSelectorsComponent> = {
 };
 
 export default meta;
-type Story = StoryObj<StoryMediaSelectorsComponent>;
+type Story = StoryObj<MediaSelectorsComponent>;
 
 export const Grouped: Story = {
-	render: (args) => ({ props: args, template: `<cuentoneta-story-media-selectors ${argsToTemplate(args)} />` }),
+	render: (args) => ({ props: args, template: `<cuentoneta-media-selectors ${argsToTemplate(args)} />` }),
 	args: { media, theme: 'subtle', orientation: 'horizontal', selectable: false },
 	parameters: {
 		docs: {
@@ -76,7 +76,7 @@ export const Grouped: Story = {
 };
 
 export const Selectable: Story = {
-	render: (args) => ({ props: args, template: `<cuentoneta-story-media-selectors ${argsToTemplate(args)} />` }),
+	render: (args) => ({ props: args, template: `<cuentoneta-media-selectors ${argsToTemplate(args)} />` }),
 	args: { media, theme: 'solid', orientation: 'horizontal', selectable: true },
 	parameters: {
 		docs: {
@@ -96,23 +96,23 @@ export const Themes: Story = {
 			<div class="flex flex-col gap-6">
 				<div class="space-y-2">
 					<h3 class="text-sm font-semibold text-neutral-600">subtle (sobre blanco)</h3>
-					<cuentoneta-story-media-selectors [media]="media" [selectable]="selectable" theme="subtle" />
+					<cuentoneta-media-selectors [media]="media" [selectable]="selectable" theme="subtle" />
 				</div>
 				<div class="space-y-2">
 					<h3 class="text-sm font-semibold text-neutral-600">solid (sobre gris)</h3>
 					<div class="rounded-lg bg-neutral-100 p-6">
-						<cuentoneta-story-media-selectors [media]="media" [selectable]="selectable" theme="solid" />
+						<cuentoneta-media-selectors [media]="media" [selectable]="selectable" theme="solid" />
 					</div>
 				</div>
 				<div class="space-y-2">
 					<h3 class="text-sm font-semibold text-neutral-600">bordered (tarjeta destacada)</h3>
 					<div class="rounded-lg border border-neutral-200 bg-neutral-50 p-6">
-						<cuentoneta-story-media-selectors [media]="media" [selectable]="selectable" theme="bordered" />
+						<cuentoneta-media-selectors [media]="media" [selectable]="selectable" theme="bordered" />
 					</div>
 				</div>
 				<div class="space-y-2">
 					<h3 class="text-sm font-semibold text-neutral-600">orientation vertical</h3>
-					<cuentoneta-story-media-selectors [media]="media" [selectable]="selectable" theme="solid" orientation="vertical" />
+					<cuentoneta-media-selectors [media]="media" [selectable]="selectable" theme="solid" orientation="vertical" />
 				</div>
 			</div>
 		`,
@@ -127,7 +127,7 @@ export const Themes: Story = {
 	},
 };
 
-export const Estados: StoryObj<StoryMediaSelectorsComponent & { loading: boolean }> = {
+export const Estados: StoryObj<MediaSelectorsComponent & { loading: boolean }> = {
 	decorators: [moduleMetadata({ imports: [SkeletonComponent] })],
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
 	render: (args) => ({
@@ -140,7 +140,7 @@ export const Estados: StoryObj<StoryMediaSelectorsComponent & { loading: boolean
 					<cuentoneta-skeleton appearance="square" class="h-[34px] w-[38px] rounded-lg bg-neutral-300" />
 				</div>
 			} @else {
-				<cuentoneta-story-media-selectors [media]="media" [theme]="theme" [selectable]="selectable" />
+				<cuentoneta-media-selectors [media]="media" [theme]="theme" [selectable]="selectable" />
 			}
 		`,
 	}),

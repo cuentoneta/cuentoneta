@@ -6,13 +6,13 @@ import { faSolidFileAudio } from '@ng-icons/font-awesome/solid';
 import { Media, MediaTypeKey } from '@models/media.model';
 
 /**
- * Tema visual de los selectores, desacoplado de las variantes de StoryCardTeaserV3:
+ * Tema visual de los selectores, desacoplado de las variantes de las tarjetas consumidoras:
  *
  * - `subtle`: pensado para fondos blancos.
  * - `solid`: pensado para fondos grises/contenedores.
  * - `bordered`: pensado para tarjetas destacadas.
  */
-export type StoryMediaSelectorsTheme = 'subtle' | 'solid' | 'bordered';
+export type MediaSelectorsTheme = 'subtle' | 'solid' | 'bordered';
 
 interface MediaSelectorItem {
 	iconName: string;
@@ -30,13 +30,13 @@ interface MediaSelectorItem {
  *
  * - `false` (por defecto): los recursos se agrupan por plataforma y se muestra un contador (badge)
  *   cuando hay más de uno del mismo tipo. Los selectores son decorativos (no clickeables). Es el
- *   modo usado por la tarjeta StoryCardTeaserV3.
+ *   modo usado por las tarjetas StoryCardTeaserV3 y HomeStoryCard.
  * - `true`: se renderiza un selector clickeable por cada recurso (sin agrupar ni contador) y al
  *   hacer click se emite, vía el output `selected`, el `Media` correspondiente. Es el modo pensado
  *   para la vista Story, donde se monta el widget del recurso seleccionado.
  */
 @Component({
-	selector: 'cuentoneta-story-media-selectors',
+	selector: 'cuentoneta-media-selectors',
 	imports: [NgIcon],
 	providers: [provideIcons({ simpleYoutube, simpleX, simpleSpotify, faSolidFileAudio })],
 	template: `
@@ -76,11 +76,11 @@ interface MediaSelectorItem {
 		'[class]': 'containerClasses()',
 	},
 })
-export class StoryMediaSelectorsComponent {
+export class MediaSelectorsComponent {
 	// Inputs
 	public readonly media = input<Media[]>([]);
 	public readonly orientation = input<'horizontal' | 'vertical'>('horizontal');
-	public readonly theme = input<StoryMediaSelectorsTheme>('subtle');
+	public readonly theme = input<MediaSelectorsTheme>('subtle');
 	public readonly selectable = input<boolean>(false);
 
 	public readonly selected = output<Media>();

@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 
 import type { StoryNavigationTeaserWithAuthor, StoryTeaserWithAuthor } from '@models/story.model';
 import { AppRoutes } from '../../app.routes';
-import { StoryMediaSelectorsComponent } from '../story-media-selectors/story-media-selectors.component';
+import { MediaSelectorsComponent } from '../media-selectors/media-selectors.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
 import { CoverImageComponent } from '../cover-image/cover-image.component';
 import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.component';
@@ -28,7 +28,7 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
 	selector: 'cuentoneta-home-story-card',
 	imports: [
 		RouterLink,
-		StoryMediaSelectorsComponent,
+		MediaSelectorsComponent,
 		ImageProfileComponent,
 		HomeStoryCardSkeletonComponent,
 		CoverImageComponent,
@@ -48,7 +48,7 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
 					}
 					@if (showMultimedia() && story.media.length > 0) {
 						<div class="absolute top-5 right-4.5">
-							<cuentoneta-story-media-selectors
+							<cuentoneta-media-selectors
 								[media]="story.media"
 								theme="solid"
 								orientation="vertical"
