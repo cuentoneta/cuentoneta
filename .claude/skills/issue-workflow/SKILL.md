@@ -143,12 +143,14 @@ No avanzar a la Fase 3 sin una respuesta "Aprobar".
 
 **⏸ PAUSA — decisión vía `AskUserQuestion`.**
 
-- `question`: "Review completa en `workspace/<number>/CODE_REVIEW.md` (y `workspace/<number>/SECURITY_REVIEW.md` si corrió el auditor). ¿Cómo seguimos?" — si hay Críticos abiertos, incluir cuántos en el texto de la pregunta.
-- `header`: `Review`
-- `options` (la recomendada primero): **Proceder** — ir a la Fase 5 y abordar los hallazgos por prioridad (Críticos primero); **Ship** — no hay nada bloqueante: saltar la Fase 5 e ir directo a la Fase 6.
-- La opción **"Other"** (automática) cubre instrucciones libres — p. ej. abordar solo un subconjunto de hallazgos, descartar las sugerencias o diferir alguno: el orquestador ejecuta la Fase 5 según lo indicado.
+Antes de armar las `options`, revisar la columna **Estado** de los Críticos en ambos archivos de hallazgos. Un Crítico tiene **disposición** si su Estado es _Corregido_, _Descartado_, _Diferido_ (con el issue ya creado tras confirmación — política de la Fase 5 paso 4) o _No se corrige_ confirmado explícitamente por el usuario; _Detectado_ y _En progreso_ son **sin disposición** (vocabulario canónico: `code-reviewer.md` → "Estados de la columna 'Estado'").
 
-> Nota: bloquear "Ship" mecánicamente ante Críticos abiertos es un cambio aparte (#1919, pendiente) — hoy la pausa solo los hace visibles en la pregunta; cuando #1919 se implemente, este es el punto donde aplicaría el bloqueo.
+- `question`: "Review completa en `workspace/<number>/CODE_REVIEW.md` (y `workspace/<number>/SECURITY_REVIEW.md` si corrió el auditor). ¿Cómo seguimos?" — incluir el conteo de hallazgos por severidad y, si hay Críticos sin disposición, cuántos son y que "Ship" no está disponible hasta resolverlos.
+- `header`: `Review`
+- `options` (la recomendada primero), según el estado de los Críticos:
+  - **Sin Críticos, o todos con disposición:** **Proceder** — ir a la Fase 5 y abordar los hallazgos por prioridad; **Ship** — no hay nada bloqueante: saltar la Fase 5 e ir directo a la Fase 6.
+  - **Algún Crítico sin disposición:** **Proceder** — ir a la Fase 5 y abordarlos; **Disponer y ship** — resolver la disposición de cada Crítico abierto ahí mismo (Diferir —proponiendo el issue y esperando confirmación—, Descartar o No se corrige, actualizando su Estado) y recién entonces saltar a la Fase 6. **"Ship" a secas no se ofrece en esta rama.**
+- La opción **"Other"** (automática) cubre instrucciones libres — p. ej. abordar solo un subconjunto de hallazgos, descartar las sugerencias o diferir alguno: el orquestador ejecuta la Fase 5 según lo indicado, respetando igualmente la precondición de disposición para shipear.
 
 ---
 
@@ -173,6 +175,7 @@ No avanzar a la Fase 3 sin una respuesta "Aprobar".
 
 1. `git push -u origin feat/<number>-<kebab>`.
 2. Crear el PR con `gh pr create` (base `develop`, milestone del issue):
+   - **Precondición:** ningún Crítico de `workspace/<number>/CODE_REVIEW.md` ni `workspace/<number>/SECURITY_REVIEW.md` sin **disposición** (definida en la pausa de la Fase 4). Si lo hay, no crear el PR: volver a la Fase 5, o a la vía "Disponer y ship" de la Fase 4.
    - Título: `[#<issue>] - <título del issue>`.
    - Cuerpo (en **español**):
 
@@ -220,5 +223,6 @@ No avanzar a la Fase 3 sin una respuesta "Aprobar".
 - Nunca prefijar comandos git con `cd` — el working dir ya está en la raíz.
 - Nunca abrir el PR antes de que pasen los gates de CI y haya corrido el `code-reviewer`.
 - Nunca abrir el PR sin el keyword de cierre (`Closes #<issue>`) en el cuerpo enlazando el issue de origen.
+- Nunca abrir el PR con un Crítico sin disposición confirmada — definición en la pausa de la Fase 4; verificación en la Fase 6 paso 2.
 - Nunca saltear la fase Plan — aun cambios triviales se benefician de un plan breve.
 - Aplican siempre las reglas de [`.claude/references/coding-agent-policies.md`](../../references/coding-agent-policies.md): sin framings de mantenedor único, sin "salteá el test por ser chico" (salvo cambios solo-doc), sin diferir la review más allá de abrir el PR, y sin comentarios redundantes (Sección 3).
