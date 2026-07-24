@@ -1,14 +1,14 @@
 import { applicationConfig, argsToTemplate, Meta, StoryObj } from '@storybook/angular';
 import { provideRouter } from '@angular/router';
 
-import { StoryHeroHeaderComponent } from './story-hero-header.component';
+import { LiteraryWorkHeroHeaderComponent } from './literary-work-hero-header.component';
 import { onoffStoriesMock } from '../../mocks/onoff-stories.mock';
 import { palacioNueveFronterasStoryMock } from '../../mocks/onoff/el-palacio-de-las-nueve-fronteras.mock';
 import { literaryWorkSelectArgType } from '../../mocks/onoff-corpus.storybook';
 
-const meta: Meta<StoryHeroHeaderComponent> = {
-	component: StoryHeroHeaderComponent,
-	title: 'Componentes V3/StoryHeroHeader',
+const meta: Meta<LiteraryWorkHeroHeaderComponent> = {
+	component: LiteraryWorkHeroHeaderComponent,
+	title: 'Componentes V3/LiteraryWorkHeroHeader',
 	tags: ['autodocs'],
 	decorators: [
 		applicationConfig({
@@ -19,7 +19,7 @@ const meta: Meta<StoryHeroHeaderComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Banda superior (hero) de la página de una historia. Usa la misma portada del cuento como fondo difuminado con una capa de opacidad y, en primer plano, presenta la portada nítida, los tags, el autor, el título y la colección/año de publicación originales.</p><p>El fondo no es otra imagen: es la misma <code>coverImage</code> pedida al CDN en una talla mayor (1920px de ancho) para cubrir el ancho completo del hero.</p><p>Recibe el <code>Story</code> completo como único input; cuando no se provee, renderiza su propio estado de carga (skeleton).</p><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada en primer plano), <a href="./?path=/docs/componentes-v3-tagslist--docs" target="_top"><strong>TagsList</strong></a> (tags de la obra, variante <code>gray</code>) e <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor).</p></div>`,
+				component: `<div><p>Banda superior (hero) de la página de una obra. Usa la misma portada de la obra como fondo difuminado con una capa de opacidad y, en primer plano, presenta la portada nítida, los tags, el autor, el título y la colección/año de publicación originales.</p><p>El fondo no es otra imagen: es la misma <code>coverImage</code> pedida al CDN en una talla mayor (1920px de ancho) para cubrir el ancho completo del hero.</p><p>Recibe el <code>Story</code> completo como único input; cuando no se provee, renderiza su propio estado de carga (skeleton).</p><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada en primer plano), <a href="./?path=/docs/componentes-v3-tagslist--docs" target="_top"><strong>TagsList</strong></a> (tags de la obra, variante <code>gray</code>) e <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor).</p></div>`,
 			},
 		},
 		layout: 'fullscreen',
@@ -27,16 +27,16 @@ const meta: Meta<StoryHeroHeaderComponent> = {
 	argTypes: {
 		story: {
 			control: { type: 'object' },
-			description: 'Historia completa a partir de la cual se derivan portada, tags, autor, título y publicación',
+			description: 'Obra completa a partir de la cual se derivan portada, tags, autor, título y publicación',
 			table: { type: { summary: 'Story' }, defaultValue: { summary: 'undefined' } },
 		},
 	},
 };
 
 export default meta;
-type Story = StoryObj<StoryHeroHeaderComponent>;
+type Story = StoryObj<LiteraryWorkHeroHeaderComponent>;
 
-export const Interactiva: StoryObj<StoryHeroHeaderComponent & { storyIndex: number }> = {
+export const Interactiva: StoryObj<LiteraryWorkHeroHeaderComponent & { storyIndex: number }> = {
 	argTypes: {
 		storyIndex: {
 			...literaryWorkSelectArgType,
@@ -46,7 +46,7 @@ export const Interactiva: StoryObj<StoryHeroHeaderComponent & { storyIndex: numb
 	},
 	render: (args) => ({
 		props: { ...args, stories: onoffStoriesMock },
-		template: `<cuentoneta-story-hero-header [story]="stories[storyIndex]" />`,
+		template: `<cuentoneta-literary-work-hero-header [story]="stories[storyIndex]" />`,
 	}),
 	args: { storyIndex: 0 },
 	parameters: {
@@ -62,7 +62,7 @@ export const Interactiva: StoryObj<StoryHeroHeaderComponent & { storyIndex: numb
 export const Default: Story = {
 	render: (args) => ({
 		props: args,
-		template: `<cuentoneta-story-hero-header ${argsToTemplate(args)} />`,
+		template: `<cuentoneta-literary-work-hero-header ${argsToTemplate(args)} />`,
 	}),
 	args: { story: palacioNueveFronterasStoryMock },
 	parameters: {
@@ -75,11 +75,11 @@ export const Default: Story = {
 };
 
 // El hero renderiza su propio skeleton cuando no recibe story, así que basta una única instancia.
-export const Estados: StoryObj<StoryHeroHeaderComponent & { loading: boolean }> = {
+export const Estados: StoryObj<LiteraryWorkHeroHeaderComponent & { loading: boolean }> = {
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
 	render: (args) => ({
 		props: args,
-		template: `<cuentoneta-story-hero-header [story]="loading ? undefined : story" />`,
+		template: `<cuentoneta-literary-work-hero-header [story]="loading ? undefined : story" />`,
 	}),
 	args: { loading: true, story: palacioNueveFronterasStoryMock },
 	parameters: {

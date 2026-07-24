@@ -9,17 +9,17 @@ import { CoverImageComponent } from '../cover-image/cover-image.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
 import { TagComponent } from '../tag/tag.component';
 import { TagsListComponent } from '../tags-list/tags-list.component';
-import { StoryHeroHeaderSkeletonComponent } from './story-hero-header-skeleton.component';
+import { LiteraryWorkHeroHeaderSkeletonComponent } from './literary-work-hero-header-skeleton.component';
 
 /**
- * Hero de la página Story (Design System v3): banda superior del cuento con la MISMA portada de fondo
+ * Hero de la página de una obra (Design System v3): banda superior con la MISMA portada de fondo
  * difuminada + capa de opacidad, y en primer plano la portada nítida (`CoverImage`), los tags (`TagsList`),
  * el autor (`ImageProfile` + nombre, enlace al perfil), el título y "Publicado en: <colección> (<año>)".
  *
  * Recibe el `Story` completo como único input; ausente ⇒ renderiza su propio skeleton.
  */
 @Component({
-	selector: 'cuentoneta-story-hero-header',
+	selector: 'cuentoneta-literary-work-hero-header',
 	imports: [
 		NgOptimizedImage,
 		RouterLink,
@@ -27,7 +27,7 @@ import { StoryHeroHeaderSkeletonComponent } from './story-hero-header-skeleton.c
 		ImageProfileComponent,
 		TagComponent,
 		TagsListComponent,
-		StoryHeroHeaderSkeletonComponent,
+		LiteraryWorkHeroHeaderSkeletonComponent,
 	],
 	host: { class: 'relative block overflow-hidden bg-neutral-900' },
 	template: `
@@ -72,11 +72,11 @@ import { StoryHeroHeaderSkeletonComponent } from './story-hero-header-skeleton.c
 				</div>
 			</div>
 		} @else {
-			<cuentoneta-story-hero-header-skeleton data-testid="skeleton" />
+			<cuentoneta-literary-work-hero-header-skeleton data-testid="skeleton" />
 		}
 	`,
 })
-export class StoryHeroHeaderComponent {
+export class LiteraryWorkHeroHeaderComponent {
 	protected readonly appRoutes = AppRoutes;
 
 	public readonly story = input<Story>();
