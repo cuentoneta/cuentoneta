@@ -39,7 +39,7 @@ export type LiteraryWorkCardTeaserVariant = 'on-white' | 'on-gray' | 'highlighte
 						<ng-container [ngTemplateOutlet]="author" [ngTemplateOutletContext]="{ $implicit: story.author }" />
 					}
 					<div class="flex w-full flex-col gap-2">
-						<!-- Enlace de la historia estirado con ::after para cubrir toda la tarjeta (sin wrapper <a>). -->
+						<!-- Enlace de la obra estirado con ::after para cubrir toda la tarjeta (sin wrapper <a>). -->
 						<a
 							[routerLink]="storyRouterLink()"
 							[queryParams]="navigationParams()"
@@ -92,7 +92,7 @@ export type LiteraryWorkCardTeaserVariant = 'on-white' | 'on-gray' | 'highlighte
 
 		<!-- Autor: avatar pequeño + nombre. Implementación propia del card (Design System v3): no usa
 			 AuthorTeaserV3. Es un enlace propio al perfil del autor, elevado con z-10 para quedar por encima
-			 del enlace de la historia (que se estira sobre toda la tarjeta). -->
+			 del enlace de la obra (que se estira sobre toda la tarjeta). -->
 		<ng-template #author let-author>
 			<a
 				[routerLink]="['/', appRoutes.Author, author.slug]"

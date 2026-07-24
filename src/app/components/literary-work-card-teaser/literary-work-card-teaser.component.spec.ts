@@ -89,7 +89,7 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, showAuthor: true },
 			});
 			// El bloque del autor (foto + nombre) es un enlace propio a /author/:slug, elevado por encima del
-			// enlace de la historia que se estira sobre toda la tarjeta.
+			// enlace de la obra que se estira sobre toda la tarjeta.
 			const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/author/'));
 			expect(link?.getAttribute('href')).toContain(authorUrl);
 		});
@@ -136,8 +136,8 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 					showAuthor: false,
 				},
 			});
-			// El cover se renderiza como target visual (el click se delega al enlace estirado de la historia),
-			// pero no es un enlace propio: con el autor oculto queda un único enlace accesible, el de la historia.
+			// El cover se renderiza como target visual (el click se delega al enlace estirado de la obra),
+			// pero no es un enlace propio: con el autor oculto queda un único enlace accesible, el de la obra.
 			expect(screen.getByTestId('cover-image')).toBeInTheDocument();
 			const links = screen.getAllByRole('link');
 			expect(links).toHaveLength(1);

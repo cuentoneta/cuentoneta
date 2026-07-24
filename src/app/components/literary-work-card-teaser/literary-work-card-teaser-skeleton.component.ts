@@ -7,7 +7,7 @@ import { LiteraryWorkCardTeaserVariant } from './literary-work-card-teaser.compo
 
 /**
  * Estado de carga (esqueleto) de LiteraryWorkCardTeaserComponent. Replica la estructura de la tarjeta
- * con placeholders de cuentoneta-skeleton para evitar saltos de layout mientras la story carga.
+ * con placeholders de cuentoneta-skeleton para evitar saltos de layout mientras la obra carga.
  *
  * Recibe los mismos flags de presentación que la tarjeta (variante, orden, autor, descripción,
  * multimedia y líneas del extracto) para que el esqueleto coincida con lo que se va a renderizar.
