@@ -21,14 +21,25 @@ Ejemplo: `/issue-workflow https://github.com/cuentoneta/cuentoneta/issues/1234`
 
 ## Fase 0 — Detección de estado
 
-**Propósito:** detectar trabajo previo sobre el issue y reanudar en la fase que corresponda en vez de re-setupear.
+**Propósito:** detectar el entorno de trabajo (worktree o raíz) y el trabajo previo sobre el issue, y reanudar en la fase que corresponda en vez de re-setupear.
 
-Corre siempre, en toda invocación, con el número de issue extraído de la URL. Señales a relevar:
+### Paso 0 — Entorno (worktree o raíz)
+
+Corre siempre, antes de cualquier otra señal:
+
+1. `git worktree list` — ¿ya existe un worktree para `.claude/worktrees/<number>`? Si existe, el entorno es **worktree**: reingresar con `EnterWorktree` (`path: .claude/worktrees/<number>`), sin preguntar. Continuar con "Señales de reanudación" desde ahí.
+2. Si no existe: ¿la invocación actual o una directiva vigente de la sesión ya declaró el entorno? Si sí, usarlo sin preguntar.
+3. Si no hay worktree previo ni declaración: pausar con `AskUserQuestion` — ver [Modo worktree](#modo-worktree) → "Cuándo se activa". La respuesta fija el entorno para el resto de la sesión (Fase 1 en adelante).
+4. Si el entorno resuelto es worktree porque ya existía (paso 1): evaluar además la señal de limpieza `gh pr list --head feat/<number>-<kebab> --state merged` — ver [Modo worktree](#modo-worktree) → "Ciclo de vida".
+
+### Señales de reanudación
+
+Con el entorno ya resuelto (y el cwd ya en el worktree si corresponde), relevar con el número de issue extraído de la URL:
 
 1. `git branch --list 'feat/<number>-*'` — ¿existe la rama?
 2. `workspace/<number>/PLAN.md` — ¿existe el plan? Si existe, contar sus marcadores de paso `[ ]` vs. `[x]`.
 3. `workspace/<number>/CODE_REVIEW.md` y/o `workspace/<number>/SECURITY_REVIEW.md` — ¿existe la review?
-4. Si la rama existe: `git rev-list --count develop..<rama>` — ¿cuántos commits tiene sobre `develop`?
+4. Si la rama existe: `git rev-list --count <base>..<rama>` — ¿cuántos commits tiene sobre la base? `<base>` es `develop` en modo raíz y **`origin/develop`** en modo worktree (ver [Modo worktree](#modo-worktree) → "Ajustes transversales").
 5. Si la rama existe: `gh pr list --head feat/<number>-<kebab> --state open` — ¿hay un PR abierto de esa rama?
 
 | Rama | `PLAN.md`                  | Review | Commits | Interpretación → fase sugerida                                                                                                |
