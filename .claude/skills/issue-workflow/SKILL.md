@@ -78,15 +78,17 @@ El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehac
 
 ## Fase 1 — Setup
 
-**Propósito:** crear una rama de feature limpia desde `develop` actualizado.
+**Propósito:** crear una rama de feature limpia desde `develop` actualizado — en el entorno resuelto por la Fase 0 (worktree o raíz).
 
 1. `gh issue view <issue-url> --json number,title` para extraer número y título.
 2. Derivar el nombre de rama (convención del repo):
    - Formato: **`feat/<number>-<titulo-en-kebab-case>`**.
    - Transformación: minúsculas, espacios y no-alfanuméricos → guiones, colapsar guiones consecutivos, recortar guiones de borde, truncar a ~60 caracteres en un límite de palabra.
-3. `git checkout develop && git pull` para asegurar la base actualizada.
-4. `git checkout -b feat/<number>-<kebab>`. Si la Fase 0 detectó la rama existente y el usuario eligió **rehacer**, confirmar la reutilización y usar `git checkout feat/<number>-<kebab>` (sin `-b`).
-5. Reportar al usuario: número, título y nombre de rama.
+3. **Modo raíz** (sin cambios respecto del flujo previo a #1942):
+   - `git checkout develop && git pull` para asegurar la base actualizada.
+   - `git checkout -b feat/<number>-<kebab>`. Si la Fase 0 detectó la rama existente y el usuario eligió **rehacer**, confirmar la reutilización y usar `git checkout feat/<number>-<kebab>` (sin `-b`).
+4. **Modo worktree:** seguir [Modo worktree](#modo-worktree) → "Mecánica de creación" (`git fetch origin`, `git worktree add`, `EnterWorktree`, `pnpm install` + `pnpm run config`).
+5. Reportar al usuario: número, título, nombre de rama y, en modo worktree, la ruta del worktree.
 
 ---
 
