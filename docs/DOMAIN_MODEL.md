@@ -243,7 +243,7 @@ interface LiteraryWork {
 
 	// Recursos Multimedia
 	resources: Resource[]; // Enlaces a recursos externos
-	mediaSources: MediaTypes[]; // Contenido multimedia asociado
+	mediaSources: MediaTypes[]; // Contenido multimedia asociado (vive en LiteraryWorkBase: lo exponen también las vistas de teaser)
 }
 
 interface LiteraryWorkSection {
@@ -281,6 +281,8 @@ Borrador en Sanity → Publicación → Accesible para lectura en /read/:slug
 - `LiteraryWorkTeaser` - Vista resumida: a diferencia de `StoryTeaser` (que vacía `paragraphs`), expone la **primera sección completa** (`teaserSection`) — decisión de diseño del epic #1481
 - `LiteraryWorkNavigationTeaser` - Vista mínima para navegación
 - `LiteraryWorkNavigationTeaserWithAuthors` - Vista mínima con autores resumidos
+
+`mediaSources: MediaTypes[]` vive en `LiteraryWorkBase`, así que **todas** las vistas (incluidas las de teaser/navegación) lo exponen; las tarjetas de listado lo consumen para mostrar los recursos multimedia de la obra.
 
 ---
 
