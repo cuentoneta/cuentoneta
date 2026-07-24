@@ -35,7 +35,7 @@ Corre siempre, en toda invocación, con el número de issue extraído de la URL.
 | ---- | -------------------------- | ------ | ------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | No   | No                         | —      | —       | Sesión nueva (caso normal) → **Fase 1**, sin pausa ni mensaje adicional                                                       |
 | Sí   | No                         | —      | 0       | La sesión murió antes de escribir el plan → **Fase 2**                                                                        |
-| Sí   | No                         | —      | >0      | Inconsistente (commits sin plan) → pausa con respuestas propias: **reconstruir** / **revisar** (ver abajo)                    |
+| Sí   | No                         | —      | >0      | Inconsistente (commits sin plan) → pausa con respuestas propias: **Reconstruir** / **Revisar** (ver abajo)                    |
 | Sí   | Sí, todo `[ ]`             | —      | 0       | Plan escrito, sin aprobar/implementar → **Fase 2**, re-presentando el plan existente sin re-delegar en `plan-writer`          |
 | Sí   | Sí, algún `[x]` (no todos) | —      | >0      | Implementación en curso → **Fase 3**, retomando en el primer paso `[ ]`                                                       |
 | Sí   | Sí, todo `[x]`             | No     | >0      | Implementación terminada, sin review → **Fase 4**                                                                             |
@@ -44,19 +44,24 @@ Corre siempre, en toda invocación, con el número de issue extraído de la URL.
 
 Si además existe un **PR abierto** para la rama (señal 5), el flujo ya completó la **Fase 6**: reportar la URL del PR y pausar — el trabajo restante, si lo hay, es abordar feedback de ese PR, no re-ejecutar el flujo.
 
-Si se detecta cualquier señal:
+Si se detecta cualquier señal, pausar con `AskUserQuestion`:
 
-**⏸ PAUSA — requiere decisión del usuario.**
+**⏸ PAUSA — decisión vía `AskUserQuestion`.**
 
-> Detecté <lo encontrado: rama con N commits / plan con M de T pasos marcados / review existente>. Una sesión previa llegó hasta la **Fase <X>**. Respondé **reanudar** para continuar ahí reusando los artefactos tal cual están, o **rehacer** para empezar de nuevo desde la Fase 1.
+- `question`: "Detecté <lo encontrado: rama con N commits / plan con M de T pasos marcados / review existente>. Una sesión previa llegó hasta la Fase <X>. ¿Cómo seguimos?"
+- `header`: `Retomar`
+- `options` (la recomendada primero): **Reanudar** — continuar en la Fase <X> reusando los artefactos tal cual están; **Rehacer** — empezar de nuevo desde la Fase 1, sin borrar nada. La opción **"Other"** (automática) cubre cualquier instrucción libre distinta.
 
-- **reanudar** → saltar a la fase sugerida por la tabla, reusando los artefactos existentes sin sobrescribirlos.
-- **rehacer** → flujo normal desde la Fase 1. No borra `workspace/<number>/` ni la rama existente: antes de cada punto que sobrescribiría un artefacto existente (recrear la rama en Fase 1, reescribir `PLAN.md` en Fase 2), confirmar explícitamente con el usuario — nunca pisar en silencio.
+Semántica de cada respuesta (sin cambios respecto de la tabla):
 
-El caso **commits sin plan** usa un par de respuestas propio — ni "reanudar" ni "rehacer" describen esa situación:
+- **Reanudar** → saltar a la fase sugerida por la tabla, reusando los artefactos existentes sin sobrescribirlos.
+- **Rehacer** → flujo normal desde la Fase 1. No borra `workspace/<number>/` ni la rama existente: antes de cada punto que sobrescribiría un artefacto existente (recrear la rama en Fase 1, reescribir `PLAN.md` en Fase 2), confirmar explícitamente con el usuario — nunca pisar en silencio.
 
-- **reconstruir** → delegar en `plan-writer` la reconstrucción del plan a partir del diff existente y seguir el flujo desde la Fase 2.
-- **revisar** → tratar los commits como implementación hecha e ir directo a la Fase 4.
+El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehacer" describen esa situación:
+
+- `question`: "Hay <N> commits en la rama pero no existe `workspace/<number>/PLAN.md`. ¿Cómo seguimos?"
+- `header`: `Estado`
+- `options`: **Reconstruir** — delegar en `plan-writer` la reconstrucción del plan a partir del diff existente y seguir el flujo desde la Fase 2; **Revisar** — tratar los commits como implementación hecha e ir directo a la Fase 4. ("Other" cubre cualquier instrucción distinta de esas dos.)
 
 ---
 
@@ -82,11 +87,19 @@ El caso **commits sin plan** usa un par de respuestas propio — ni "reanudar" n
 2. El plan-writer produce `workspace/<number>/PLAN.md`.
 3. Presentar un resumen breve al usuario (objetivo, enfoque, archivos afectados, decisiones clave).
 
-**⏸ PAUSA — requiere aprobación del usuario.**
+**⏸ PAUSA — decisión vía `AskUserQuestion`.**
 
-> El plan está en `workspace/<number>/PLAN.md`. Revisalo y respondé **aprobar** para empezar la implementación, o dame feedback para revisarlo.
+- `question`: "El plan está en `workspace/<number>/PLAN.md`. ¿Cómo seguimos?"
+- `header`: `Plan`
+- `options` (la recomendada primero): **Aprobar** — el plan queda tal cual y se avanza a la Fase 3; **Dar feedback** — el orquestador pide el texto del feedback a continuación. La herramienta exige entre 2 y 4 opciones explícitas — "Aprobar" no puede ir sola. La opción **"Other"** (automática) transporta el feedback directamente en un solo paso y es la vía preferida cuando el usuario ya sabe qué cambiar.
 
-No avanzar a la Fase 3 sin aprobación explícita.
+Ramificación tras la respuesta:
+
+- **Aprobar** → avanzar a la Fase 3.
+- **Dar feedback** → pedir el texto del feedback al usuario y tratarlo igual que Other.
+- **Other** (feedback) → reenviar el texto recibido **a la misma Task del `plan-writer`** delegada en el paso 1 — conserva toda la exploración en contexto — para que revise `workspace/<number>/PLAN.md` en función del feedback y reescriba el plan en el mismo archivo. Nunca editar `PLAN.md` a mano desde el orquestador ni relanzar un `plan-writer` de cero mientras la Task siga disponible. Repetir la pausa tras cada revisión, iterando hasta un "Aprobar". Si la Task original ya no está disponible (p. ej. reanudación vía Fase 0 en una sesión nueva), delegar en un `plan-writer` nuevo pasándole el `PLAN.md` existente más el feedback — revisa sobre lo escrito, no re-explora de cero.
+
+No avanzar a la Fase 3 sin una respuesta "Aprobar".
 
 ---
 
@@ -128,9 +141,14 @@ No avanzar a la Fase 3 sin aprobación explícita.
 4. Cada agente escribe su propio archivo: el `code-reviewer` en `workspace/<number>/CODE_REVIEW.md` y el `security-auditor` en `workspace/<number>/SECURITY_REVIEW.md`.
 5. Presentar la tabla de hallazgos al usuario (Críticos, Advertencias, Sugerencias), combinando ambos archivos cuando corrió el auditor, e indicando si corrió o por qué no correspondía. Al combinar, cada hallazgo se cita con el número tal como aparece en su documento de origen: los de seguridad llevan el prefijo `S` (p. ej. `S3`) y así no se confunden con los del `code-reviewer` (sin prefijo).
 
-**⏸ PAUSA — requiere decisión del usuario.**
+**⏸ PAUSA — decisión vía `AskUserQuestion`.**
 
-> Review completa en `workspace/<number>/CODE_REVIEW.md` (y `workspace/<number>/SECURITY_REVIEW.md` si corrió el auditor de seguridad). Respondé **proceder** para abordar los hallazgos, o **ship** si no hay nada bloqueante.
+- `question`: "Review completa en `workspace/<number>/CODE_REVIEW.md` (y `workspace/<number>/SECURITY_REVIEW.md` si corrió el auditor). ¿Cómo seguimos?" — si hay Críticos abiertos, incluir cuántos en el texto de la pregunta.
+- `header`: `Review`
+- `options` (la recomendada primero): **Proceder** — ir a la Fase 5 y abordar los hallazgos por prioridad (Críticos primero); **Ship** — no hay nada bloqueante: saltar la Fase 5 e ir directo a la Fase 6.
+- La opción **"Other"** (automática) cubre instrucciones libres — p. ej. abordar solo un subconjunto de hallazgos, descartar las sugerencias o diferir alguno: el orquestador ejecuta la Fase 5 según lo indicado.
+
+> Nota: bloquear "Ship" mecánicamente ante Críticos abiertos es un cambio aparte (#1919, pendiente) — hoy la pausa solo los hace visibles en la pregunta; cuando #1919 se implemente, este es el punto donde aplicaría el bloqueo.
 
 ---
 
