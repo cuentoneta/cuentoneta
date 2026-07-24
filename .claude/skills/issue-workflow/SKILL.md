@@ -27,10 +27,10 @@ Ejemplo: `/issue-workflow https://github.com/cuentoneta/cuentoneta/issues/1234`
 
 Corre siempre, antes de cualquier otra señal:
 
-1. `git worktree list` — ¿ya existe un worktree para `.claude/worktrees/<number>`? Si existe, el entorno es **worktree**: reingresar con `EnterWorktree` (`path: .claude/worktrees/<number>`), sin preguntar. Continuar con "Señales de reanudación" desde ahí.
-2. Si no existe: ¿la invocación actual o una directiva vigente de la sesión ya declaró el entorno? Si sí, usarlo sin preguntar.
-3. Si no hay worktree previo ni declaración: pausar con `AskUserQuestion` — ver [Modo worktree](#modo-worktree) → "Cuándo se activa". La respuesta fija el entorno para el resto de la sesión (Fase 1 en adelante).
-4. Si el entorno resuelto es worktree porque ya existía (paso 1): evaluar además la señal de limpieza `gh pr list --head feat/<number>-<kebab> --state merged` — ver [Modo worktree](#modo-worktree) → "Ciclo de vida".
+1. ¿La invocación actual o una directiva vigente de la sesión declaró el entorno ("en un worktree", "en la raíz")? Si sí, usarlo — la declaración tiene prioridad. Si la declaración pide **raíz** pero `git worktree list` ya lista `.claude/worktrees/<number>`, avisar el conflicto y confirmar antes de seguir: la rama y los artefactos del issue pueden vivir en ese worktree.
+2. Sin declaración: si `git worktree list` ya lista `.claude/worktrees/<number>`, el entorno es **worktree** — reingresar con `EnterWorktree` (`path: .claude/worktrees/<number>`), sin preguntar. Continuar con "Señales de reanudación" desde ahí.
+3. Sin declaración ni worktree previo: pausar con `AskUserQuestion` — ver [Modo worktree](#modo-worktree) → "Cuándo se activa". La respuesta fija el entorno para el resto de la sesión (Fase 1 en adelante).
+4. Si el entorno resuelto es worktree y el worktree ya existía (pasos 1-2): evaluar además la señal de limpieza `gh pr list --head feat/<number>-<kebab> --state merged` — ver [Modo worktree](#modo-worktree) → "Ciclo de vida".
 
 ### Señales de reanudación
 
@@ -98,8 +98,8 @@ El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehac
 
 ### Cuándo se activa
 
-- **Declarado:** si la invocación actual o una directiva vigente de la sesión ya dice dónde trabajar ("en un worktree", "en la raíz"), se respeta sin preguntar.
-- **Reanudación:** si `git worktree list` ya lista un worktree para `.claude/worktrees/<number>`, el entorno es worktree — no se pregunta, se reingresa (Fase 0, Paso 0).
+- **Declarado:** si la invocación actual o una directiva vigente de la sesión ya dice dónde trabajar ("en un worktree", "en la raíz"), se respeta — la declaración tiene prioridad. Si pide raíz habiendo un worktree del issue, la Fase 0 avisa el conflicto y confirma antes de seguir.
+- **Reanudación:** sin declaración, si `git worktree list` ya lista un worktree para `.claude/worktrees/<number>`, el entorno es worktree — no se pregunta, se reingresa (Fase 0, Paso 0).
 - **Sin declarar y sin worktree previo:** Fase 0 pausa con `AskUserQuestion`:
   - `question`: "¿Dónde corremos el flujo para este issue: en un worktree aislado o en la raíz del repo?"
   - `header`: `Entorno`
@@ -131,7 +131,7 @@ En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
 
 - El worktree se **mantiene** al menos hasta que el PR de la Fase 6 mergea — permite reanudar la sesión (Fase 0 lo detecta vía `git worktree list` y reingresa).
 - El **merge ocurre fuera de esta sesión** (evento humano posterior en GitHub); el skill no lo espera ni lo automatiza.
-- **Limpieza:** cuando la Fase 0 resuelve entorno worktree porque ya existía (reanudación), evalúa además `gh pr list --head feat/<number>-<kebab> --state merged`. Si hay un PR mergeado, pausa con `AskUserQuestion` (`header`: `Limpieza`; `question`: "El PR de este issue ya mergeó. ¿Removemos el worktree?"; opciones **Limpiar (recomendada)** — `git worktree remove .claude/worktrees/<number>` + `git branch -d feat/<number>-<kebab>`; **Mantener** — dejarlo como está; "Other" cubre cualquier instrucción distinta). Cualquiera sea la respuesta, la sesión termina ahí — no hay fase siguiente que ejecutar sobre un issue ya mergeado.
+- **Limpieza:** cuando la Fase 0 resuelve entorno worktree porque ya existía (reanudación), evalúa además `gh pr list --head feat/<number>-<kebab> --state merged`. Si hay un PR mergeado, pausa con `AskUserQuestion` (`header`: `Limpieza`; `question`: "El PR de este issue ya mergeó. ¿Removemos el worktree?"; opciones **Limpiar (recomendada)** — `git worktree remove .claude/worktrees/<number>` + `git branch -d feat/<number>-<kebab>`; **Mantener** — dejarlo como está y agregar la marca `<!-- worktree: mantener -->` al final de `workspace/<number>/PLAN.md` para no repreguntar en futuras reanudaciones (la señal de limpieza se saltea si esa marca existe); "Other" cubre cualquier instrucción distinta). Cualquiera sea la respuesta, la sesión termina ahí — no hay fase siguiente que ejecutar sobre un issue ya mergeado.
 - Los artefactos `workspace/<number>/PLAN.md` / `CODE_REVIEW.md` / `SECURITY_REVIEW.md` **viven dentro del worktree** en modo worktree. Una sesión nueva que reingresa vía `EnterWorktree` los encuentra ahí sin buscarlos en la raíz.
 
 ---
@@ -273,7 +273,7 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
    | CI local            | <Verde / Rojo — ver <motivo>>                                     |
    ```
 
-   - `Commits` cuenta solo los de la rama (`git rev-list --count develop..HEAD`).
+   - `Commits` cuenta solo los de la rama (`git rev-list --count <base>..HEAD`, con `<base>` = `develop` en modo raíz y `origin/develop` en modo worktree).
    - `CI local` reporta el resultado de la última corrida de los gates.
 
 ---
@@ -281,7 +281,7 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 ## Restricciones (todas las fases)
 
 - Usar `pnpm <script>` para ejecutar tareas; no construir variantes de `nx` directas a mano.
-- Nunca prefijar comandos git con `cd` — el working dir ya está en la raíz.
+- Nunca prefijar comandos git con `cd` — el working dir ya está resuelto (raíz del repo, o del worktree según el entorno).
 - Nunca abrir el PR antes de que pasen los gates de CI y haya corrido el `code-reviewer`.
 - Nunca abrir el PR sin el keyword de cierre (`Closes #<issue>`) en el cuerpo enlazando el issue de origen.
 - Nunca abrir el PR con un Crítico sin disposición confirmada — definición en la pausa de la Fase 4; verificación en la Fase 6 paso 2.
