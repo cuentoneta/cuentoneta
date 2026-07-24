@@ -146,6 +146,7 @@ No avanzar a la Fase 3 sin una respuesta "Aprobar".
 - `question`: "Review completa en `workspace/<number>/CODE_REVIEW.md` (y `workspace/<number>/SECURITY_REVIEW.md` si corrió el auditor). ¿Cómo seguimos?" — si hay Críticos abiertos, incluir cuántos en el texto de la pregunta.
 - `header`: `Review`
 - `options` (la recomendada primero): **Proceder** — ir a la Fase 5 y abordar los hallazgos por prioridad (Críticos primero); **Ship** — no hay nada bloqueante: saltar la Fase 5 e ir directo a la Fase 6.
+- La opción **"Other"** (automática) cubre instrucciones libres — p. ej. abordar solo un subconjunto de hallazgos, descartar las sugerencias o diferir alguno: el orquestador ejecuta la Fase 5 según lo indicado.
 
 > Nota: bloquear "Ship" mecánicamente ante Críticos abiertos es un cambio aparte (#1919, pendiente) — hoy la pausa solo los hace visibles en la pregunta; cuando #1919 se implemente, este es el punto donde aplicaría el bloqueo.
 
