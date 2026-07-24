@@ -4,12 +4,12 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton.component';
 
 /**
- * Estado de carga (esqueleto) de HomeStoryCardComponent. Replica la estructura de la tarjeta
+ * Estado de carga (esqueleto) de LiteraryWorkHomeCardTeaserComponent. Replica la estructura de la tarjeta
  * (cover sobre contenedor gris, autor, título y tiempo de lectura) con placeholders de
- * cuentoneta-skeleton para evitar saltos de layout mientras la story carga.
+ * cuentoneta-skeleton para evitar saltos de layout mientras la obra carga.
  */
 @Component({
-	selector: 'cuentoneta-home-story-card-skeleton',
+	selector: 'cuentoneta-literary-work-home-card-teaser-skeleton',
 	imports: [SkeletonComponent, CoverImageSkeletonComponent],
 	host: { class: 'block' },
 	template: `
@@ -28,4 +28,4 @@ import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton
 		</article>
 	`,
 })
-export class HomeStoryCardSkeletonComponent {}
+export class LiteraryWorkHomeCardTeaserSkeletonComponent {}

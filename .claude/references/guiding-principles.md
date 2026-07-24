@@ -70,17 +70,17 @@
 
 ```typescript
 // ✅ Correcto — transformación y efecto colateral separados
-return this.storyService.getStoryBySlug(slug).pipe(
-	map((response) => mapStory(response)),
-	tap((story) => this.story.set(story)), // efecto colateral en tap
+return this.literaryWorkService.getBySlug(slug).pipe(
+	map((response) => mapLiteraryWork(response)),
+	tap((literaryWork) => this.literaryWork.set(literaryWork)), // efecto colateral en tap
 );
 
 // ❌ Incorrecto — efecto colateral escondido en un operador puro
-return this.storyService.getStoryBySlug(slug).pipe(
+return this.literaryWorkService.getBySlug(slug).pipe(
 	map((response) => {
-		const story = mapStory(response);
-		this.story.set(story); // ¡efecto colateral dentro de map!
-		return story;
+		const literaryWork = mapLiteraryWork(response);
+		this.literaryWork.set(literaryWork); // ¡efecto colateral dentro de map!
+		return literaryWork;
 	}),
 );
 ```

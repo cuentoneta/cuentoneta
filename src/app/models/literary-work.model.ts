@@ -17,14 +17,15 @@ interface LiteraryWorkBase {
 	// y en los teasers puede ser mayor que las secciones transportadas — ver LITERARY_WORK_DESIGN.md §7.
 	readonly sectionCount: number;
 	readonly tags: readonly Tag[];
+	// Las tarjetas de listado (vistas de teaser/navegación) muestran los recursos multimedia
+	// de la obra; por eso el campo vive en la base y no solo en el agregado completo.
+	readonly mediaSources: readonly Media[];
 }
 
 export interface LiteraryWork extends LiteraryWorkBase {
 	// 1..N; la obra anónima referencia al author "Anónimo" (ver isAnonymous).
 	readonly authors: readonly Author[];
 	readonly content: readonly LiteraryWorkSection[];
-	// Media (el contrato que produce el ACL), como Story.media — no la unión MediaTypes.
-	readonly mediaSources: readonly Media[];
 	readonly resources: readonly Resource[];
 	readonly badLanguage?: boolean;
 	readonly originalPublication: string;

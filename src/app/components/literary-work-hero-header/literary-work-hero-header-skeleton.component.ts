@@ -4,12 +4,12 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton.component';
 
 /**
- * Estado de carga (esqueleto) de StoryHeroHeaderComponent. Replica la banda oscura del hero y la
+ * Estado de carga (esqueleto) de LiteraryWorkHeroHeaderComponent. Replica la banda oscura del hero y la
  * grilla portada + metadatos con placeholders de cuentoneta-skeleton para evitar saltos de layout
- * mientras la story carga. Los placeholders usan neutral-700 para contrastar sobre el fondo oscuro.
+ * mientras la obra carga. Los placeholders usan neutral-700 para contrastar sobre el fondo oscuro.
  */
 @Component({
-	selector: 'cuentoneta-story-hero-header-skeleton',
+	selector: 'cuentoneta-literary-work-hero-header-skeleton',
 	imports: [SkeletonComponent, CoverImageSkeletonComponent],
 	host: { class: 'relative block overflow-hidden bg-neutral-900' },
 	template: `
@@ -29,4 +29,4 @@ import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton
 		</div>
 	`,
 })
-export class StoryHeroHeaderSkeletonComponent {}
+export class LiteraryWorkHeroHeaderSkeletonComponent {}

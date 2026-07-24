@@ -40,7 +40,7 @@ SOLID describe **cómo diseñar clases**; CUPID describe **qué propiedades** de
 | **ISP** (segregación de interfaces) | Composable                       | Interfaces chicas y enfocadas ⇒ se combinan sin arrastrar dependencias inútiles.                        |
 | **DIP** (inversión de dependencias) | Composable, Domain-Based         | Depender de abstracciones del dominio permite intercambiar implementaciones (p. ej. Sanity / InMemory). |
 
-> CUPID añade dos propiedades sin equivalente directo en SOLID: **Idiomatic** (seguir las convenciones del lenguaje/framework — en cuentoneta: Angular zoneless + signals, `@if`/`@for`, `inject()`) y **Domain-Based** (modelar con el lenguaje del dominio — `Story`, `Author`, `Storylist`).
+> CUPID añade dos propiedades sin equivalente directo en SOLID: **Idiomatic** (seguir las convenciones del lenguaje/framework — en cuentoneta: Angular zoneless + signals, `@if`/`@for`, `inject()`) y **Domain-Based** (modelar con el lenguaje del dominio — `Story`, `Author`, `Storylist`, `LiteraryWork`).
 
 ---
 
@@ -50,7 +50,7 @@ Clean Architecture aporta la **dimensión estructural** que SOLID/CUPID no fijan
 
 | Concepto                        | Encuadre en cuentoneta                                                                                                                                                                     |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **DIP** + regla de dependencia  | El dominio (`Story`, `Author`, `Storylist`, `Resource`) no conoce a Sanity. Los detalles dependen del dominio, nunca al revés.                                                             |
+| **DIP** + regla de dependencia  | El dominio (`Story`, `Author`, `Storylist`, `Resource`, `LiteraryWork`) no conoce a Sanity. Los detalles dependen del dominio, nunca al revés.                                             |
 | **Qualified Implementation**    | Una misma operación de dominio admite varias implementaciones (p. ej. Sanity vs. InMemory) detrás del mismo contrato.                                                                      |
 | **Anti-Corruption Layer (ACL)** | El **patrón central** del repo: los **mappers** (`mapAuthor`, `mapResources`, …) traducen el shape crudo de GROQ al modelo de dominio. Lo crudo de Sanity **nunca** se filtra al frontend. |
 | **SRP por capa** (backend)      | `controller → service → repository`: rutas/validación, lógica/mapeo de dominio, acceso a datos. Cada capa con una única razón para cambiar.                                                |
@@ -69,12 +69,12 @@ GROQ query → repository.fetch*()  →  service.get*()  →  mapX(rawResult): D
 
 Clean Architecture dice **dónde** vive cada cosa (capas); DDD dice **qué** vive en el centro (el modelo de dominio) y **cómo** se expresa.
 
-| DDD                                | Cómo aterriza en cuentoneta                                                                                                            |
-| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| **Lenguaje ubicuo / Domain-Based** | Los tipos de dominio (`Story`, `Author`, `Storylist`, `Resource`) usan el vocabulario del negocio, en el código y en la documentación. |
-| **Agregados e invariantes**        | El modelo de dominio concentra las invariantes; los mappers garantizan que solo entren shapes válidos del dominio.                     |
-| **Anti-Corruption Layer**          | Frontera explícita entre el modelo de Sanity (externo) y el modelo de dominio (interno): los **mappers** del ACL.                      |
-| **Bounded contexts**               | Cada módulo de `src/api/modules/<dominio>/` acota un contexto con su propio controller/service/repository/schema.                      |
+| DDD                                | Cómo aterriza en cuentoneta                                                                                                                            |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Lenguaje ubicuo / Domain-Based** | Los tipos de dominio (`Story`, `Author`, `Storylist`, `Resource`, `LiteraryWork`) usan el vocabulario del negocio, en el código y en la documentación. |
+| **Agregados e invariantes**        | El modelo de dominio concentra las invariantes; los mappers garantizan que solo entren shapes válidos del dominio.                                     |
+| **Anti-Corruption Layer**          | Frontera explícita entre el modelo de Sanity (externo) y el modelo de dominio (interno): los **mappers** del ACL.                                      |
+| **Bounded contexts**               | Cada módulo de `src/api/modules/<dominio>/` acota un contexto con su propio controller/service/repository/schema.                                      |
 
 > Detalle de DDD estratégico (agregados, invariantes, bounded contexts) en [`domain-model.md`](domain-model.md).
 
