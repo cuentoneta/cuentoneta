@@ -38,9 +38,17 @@ Ejemplo: `/release-workflow https://github.com/cuentoneta/cuentoneta/issues/1672
 6. **Reunir el contenido del CHANGELOG:** los issues cerrados del milestone + `git log --oneline <tag-anterior>..develop` para confirmar qué PRs mergearon desde el último tag. Incluir issues sin milestone que hayan shippeado en la ventana (hijos de epics); excluir los que pertenecen a un milestone futuro.
 7. Escribir `workspace/RELEASE.md` con: versión target, estado del milestone, migraciones de Sanity (pendientes / ya corridas), delta de documentación, y el **borrador de la entrada de CHANGELOG** (prosa + cambios agrupados por tema, replicando el formato de la sección anterior en `CHANGELOG.md`).
 
-**⏸ PAUSA — requiere aprobación del usuario.**
+**⏸ PAUSA — decisión vía `AskUserQuestion`.**
 
-> El alcance del release y el borrador del CHANGELOG están en `workspace/RELEASE.md`. Revisalo y respondé **aprobar**, o dame feedback sobre la agrupación/prosa.
+- `question`: "El alcance del release y el borrador del CHANGELOG están en `workspace/RELEASE.md`. ¿Cómo seguimos?"
+- `header`: `Release`
+- `options` (la recomendada primero): **Aprobar** — el alcance y el borrador quedan tal cual y se avanza a la Fase 2; **Dar feedback** — el orquestador pide el texto del feedback a continuación. La opción **"Other"** (automática) transporta el feedback directamente en un solo paso — la vía preferida cuando el usuario ya sabe qué cambiar (alcance, agrupación o prosa).
+
+Ramificación tras la respuesta:
+
+- **Aprobar** → avanzar a la Fase 2.
+- **Dar feedback** → pedir el texto del feedback al usuario y tratarlo igual que Other.
+- **Other** (feedback) → ajustar `workspace/RELEASE.md` según lo indicado (alcance del release, o agrupación/prosa del CHANGELOG) y repetir la pausa, iterando hasta un "Aprobar".
 
 ---
 
@@ -76,9 +84,17 @@ Formato de commit: `[#<issue>] - <qué cambió>` (español). Cada commit deja el
 
 Anotar los resultados en `workspace/RELEASE.md`. Si algo falla: diagnosticar, arreglar con un commit atómico y re-verificar.
 
-**⏸ PAUSA — requiere decisión del usuario.**
+**⏸ PAUSA — decisión vía `AskUserQuestion`.**
 
-> Verificación completa en `workspace/RELEASE.md`. Respondé **proceder** para abrir el PR, o dame feedback.
+- `question`: "Verificación completa en `workspace/RELEASE.md`. ¿Cómo seguimos?"
+- `header`: `Verificación`
+- `options` (la recomendada primero): **Proceder** — abrir el PR de release (Fase 4); **Dar feedback** — el orquestador pide el texto del feedback a continuación. La opción **"Other"** (automática) transporta directamente el ajuste pedido.
+
+Ramificación tras la respuesta:
+
+- **Proceder** → avanzar a la Fase 4 (Ship + handoff manual).
+- **Dar feedback** → pedir el texto del feedback al usuario y tratarlo igual que Other.
+- **Other** (feedback) → aplicar el ajuste indicado sobre la verificación o el contenido preparado (con commit atómico si toca archivos versionados), re-verificar lo afectado y repetir la pausa.
 
 ---
 
