@@ -112,6 +112,8 @@ expect(heading).toBeInTheDocument();
 
 ### Servicios inyectados (mock con `fn()`)
 
+> Ejemplo con `StoryApi`/`StoryComponent` (reales, vigentes) — el mismo patrón aplicará a `LiteraryWorkApi` y a su futuro componente de página cuando aterrice #1853 (Slice 1, PRs #1929–#1932 en review).
+
 ```typescript
 import { fn } from '@test-utils';
 import { of, type Observable } from 'rxjs';
@@ -306,10 +308,10 @@ Para dependencias de DI usá los decoradores `moduleMetadata({ imports, provider
 - **Enlace navegable a otros componentes.** Cuando la descripción menciona otro componente documentado, su nombre debe ser un enlace que navegue a la story de ese componente. Como la doc se renderiza dentro de `iframe.html`, usá un enlace relativo a la raíz del Storybook (robusto ante subpaths de deploy) con `target="_top"`:
 
   ```html
-  <a href="./?path=/docs/<kind-id>--docs" target="_top"><strong>StoryCardTeaserV3</strong></a>
+  <a href="./?path=/docs/<kind-id>--docs" target="_top"><strong>LiteraryWorkCardTeaser</strong></a>
   ```
 
-  El `<kind-id>` se deriva del `title` (minúsculas; espacios y `/` → `-`): `Componentes V3/StoryCardTeaserV3` → `componentes-v3-storycardteaserv3`. El sufijo `--docs` apunta a la página de autodocs.
+  El `<kind-id>` se deriva del `title` (minúsculas; espacios y `/` → `-`): `Componentes V3/LiteraryWorkCardTeaser` → `componentes-v3-literaryworkcardteaser`. El sufijo `--docs` apunta a la página de autodocs.
 
 ### Estado de carga (skeleton) → story intercambiable (obligatoria)
 
