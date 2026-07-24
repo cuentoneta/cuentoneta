@@ -6,7 +6,7 @@ import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton
 /**
  * Estado de carga (esqueleto) de LiteraryWorkHeroHeaderComponent. Replica la banda oscura del hero y la
  * grilla portada + metadatos con placeholders de cuentoneta-skeleton para evitar saltos de layout
- * mientras la story carga. Los placeholders usan neutral-700 para contrastar sobre el fondo oscuro.
+ * mientras la obra carga. Los placeholders usan neutral-700 para contrastar sobre el fondo oscuro.
  */
 @Component({
 	selector: 'cuentoneta-literary-work-hero-header-skeleton',
