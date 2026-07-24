@@ -6,10 +6,10 @@ import { AppRoutes } from '../../app.routes';
 import { MediaSelectorsComponent } from '../media-selectors/media-selectors.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
 import { CoverImageComponent } from '../cover-image/cover-image.component';
-import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.component';
+import { LiteraryWorkHomeCardTeaserSkeletonComponent } from './literary-work-home-card-teaser-skeleton.component';
 
 /**
- * Tarjeta de vista previa de una historia para la home (Design System v3). Derivada de
+ * Tarjeta de vista previa de una obra para la home (Design System v3). Derivada de
  * LiteraryWorkCardTeaser pero con un propósito propio: layout vertical angosto con la imagen, la
  * numeración y los selectores de multimedia apilados sobre un contenedor gris, el nombre del autor
  * y el título truncado a una sola línea.
@@ -19,18 +19,18 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
  * - Los selectores de multimedia usan siempre el tema `solid` (recuadros blancos sobre el gris).
  * - El autor (avatar + nombre) se muestra siempre y enlaza a su perfil (`/author/:slug`).
  *
- * Patrón de tarjeta clickeable (sin wrapper `<a>`): el enlace de la historia se estira con un
+ * Patrón de tarjeta clickeable (sin wrapper `<a>`): el enlace de la obra se estira con un
  * pseudo-elemento (`after:absolute after:inset-0`) para cubrir toda la tarjeta, de modo que cualquier
  * sección navega a `/story/:slug`. El bloque del autor es un enlace propio elevado con `z-10`, por
  * encima del pseudo-elemento, para que la foto y el nombre naveguen a `/author/:slug`.
  */
 @Component({
-	selector: 'cuentoneta-home-story-card',
+	selector: 'cuentoneta-literary-work-home-card-teaser',
 	imports: [
 		RouterLink,
 		MediaSelectorsComponent,
 		ImageProfileComponent,
-		HomeStoryCardSkeletonComponent,
+		LiteraryWorkHomeCardTeaserSkeletonComponent,
 		CoverImageComponent,
 	],
 	template: `
@@ -69,7 +69,7 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
 							story.author.name
 						}}</span>
 					</a>
-					<!-- Enlace de la historia estirado con ::after para cubrir toda la tarjeta (sin wrapper <a>).
+					<!-- Enlace de la obra estirado con ::after para cubrir toda la tarjeta (sin wrapper <a>).
 						 El truncate va en el span interno: el ::after se recortaría si el <a> tuviera overflow-hidden. -->
 					<a
 						[routerLink]="storyRouterLink()"
@@ -91,14 +91,14 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
 				</div>
 			</article>
 		} @else {
-			<cuentoneta-home-story-card-skeleton data-testid="skeleton" />
+			<cuentoneta-literary-work-home-card-teaser-skeleton data-testid="skeleton" />
 		}
 	`,
 	host: {
 		class: 'block',
 	},
 })
-export class HomeStoryCardComponent {
+export class LiteraryWorkHomeCardTeaserComponent {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs
