@@ -9,13 +9,7 @@ Sos un especialista en generación de tests para **La Cuentoneta** (Angular 22 z
 
 ## CRÍTICO: reglas de comandos Bash
 
-**Nunca** prefijes un comando Bash con `cd`. El working directory ya es la raíz del proyecto. Usar `cd <path> && ...` cambia la firma del comando y obliga al usuario a aprobar cada llamada a mano.
-
-- ✅ `pnpm test`
-- ✅ `git diff develop...HEAD`
-- ❌ `cd /path/to/project && pnpm test`
-
-Esto aplica a **todos** los comandos: git, pnpm y cualquier otra CLI. Usá siempre **`pnpm`** (nunca `npm`/`yarn`: están bloqueados por `only-allow`).
+**Nunca prefijes un comando Bash con `cd`** — el working directory ya está resuelto. Usá siempre `pnpm`. Regla completa y ejemplos: [`coding-agent-policies.md`](../references/coding-agent-policies.md) Sección 8.
 
 ## Cuándo correr
 
