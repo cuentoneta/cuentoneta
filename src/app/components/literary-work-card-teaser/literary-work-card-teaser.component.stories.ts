@@ -1,7 +1,7 @@
 import { applicationConfig, argsToTemplate, Meta, StoryObj } from '@storybook/angular';
 import { provideRouter } from '@angular/router';
 
-import { StoryCardTeaserV3Component } from './story-card-teaser-v3.component';
+import { LiteraryWorkCardTeaserComponent } from './literary-work-card-teaser.component';
 import {
 	elOdioTeaserMock,
 	geometriaTeaserMock,
@@ -9,9 +9,9 @@ import {
 } from '../../mocks/onoff-story-teasers.mock';
 import { corpusStories, literaryWorkSelectArgType, withRichMedia } from '../../mocks/onoff-corpus.storybook';
 
-const meta: Meta<StoryCardTeaserV3Component> = {
-	component: StoryCardTeaserV3Component,
-	title: 'Componentes V3/StoryCardTeaserV3',
+const meta: Meta<LiteraryWorkCardTeaserComponent> = {
+	component: LiteraryWorkCardTeaserComponent,
+	title: 'Componentes V3/LiteraryWorkCardTeaser',
 	tags: ['autodocs'],
 	decorators: [
 		applicationConfig({
@@ -22,7 +22,7 @@ const meta: Meta<StoryCardTeaserV3Component> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Utilizado para representar una vista previa de una historia dentro de listados o secciones de exploración. Resume la información principal del contenido, incluyendo autor, título, texto truncado, categoría, tiempo estimado de lectura, imagen asociada y accesos a archivos multimediales como video, X o Spotify.</p><p>Su objetivo es facilitar una lectura rápida del contenido disponible y ayudar al usuario a decidir si quiere profundizar en la historia. Puede adaptarse a distintas estructuras visuales según el contexto de uso, manteniendo consistencia en la jerarquía de información y en las acciones disponibles.</p><p>Se implementa en tres variantes seleccionables mediante el input <code>variant</code>:</p><ul><li><strong>OnWhite</strong> (<code>on-white</code>): layout horizontal con imagen a la izquierda, para fondos blancos.</li><li><strong>OnGray</strong> (<code>on-gray</code>): igual a OnWhite con selectores de multimedia en blanco, para fondos grises.</li><li><strong>Highlighted</strong> (<code>highlighted</code>): tarjeta destacada con borde, fondo e imagen a la derecha.</li></ul><p>Cada variante admite mostrar opcionalmente autor, descripción, numeración, etiqueta y selectores de multimedia.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada), <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor) y <a href="./?path=/docs/componentes-v3-mediaselectors--docs" target="_top"><strong>MediaSelectors</strong></a> (accesos multimedia); el extracto se renderiza con <strong>PortableTextParser</strong>.</p></div>`,
+				component: `<div><p>Utilizado para representar una vista previa de una obra dentro de listados o secciones de exploración. Resume la información principal del contenido, incluyendo autor, título, texto truncado, categoría, tiempo estimado de lectura, imagen asociada y accesos a archivos multimediales como video, X o Spotify.</p><p>Su objetivo es facilitar una lectura rápida del contenido disponible y ayudar al usuario a decidir si quiere profundizar en la obra. Puede adaptarse a distintas estructuras visuales según el contexto de uso, manteniendo consistencia en la jerarquía de información y en las acciones disponibles.</p><p>Se implementa en tres variantes seleccionables mediante el input <code>variant</code>:</p><ul><li><strong>OnWhite</strong> (<code>on-white</code>): layout horizontal con imagen a la izquierda, para fondos blancos.</li><li><strong>OnGray</strong> (<code>on-gray</code>): igual a OnWhite con selectores de multimedia en blanco, para fondos grises.</li><li><strong>Highlighted</strong> (<code>highlighted</code>): tarjeta destacada con borde, fondo e imagen a la derecha.</li></ul><p>Cada variante admite mostrar opcionalmente autor, descripción, numeración, etiqueta y selectores de multimedia.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada), <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor) y <a href="./?path=/docs/componentes-v3-mediaselectors--docs" target="_top"><strong>MediaSelectors</strong></a> (accesos multimedia); el extracto se renderiza con <strong>PortableTextParser</strong>.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -39,7 +39,7 @@ const meta: Meta<StoryCardTeaserV3Component> = {
 		},
 		order: {
 			control: { type: 'number', min: 1, max: 99 },
-			description: 'Numeración opcional de la historia',
+			description: 'Numeración opcional de la obra',
 			table: { type: { summary: 'number' }, defaultValue: { summary: 'undefined' } },
 		},
 		tagLabel: {
@@ -54,12 +54,12 @@ const meta: Meta<StoryCardTeaserV3Component> = {
 		},
 		showExcerpt: {
 			control: { type: 'boolean' },
-			description: 'Mostrar la descripción/extracto de la historia',
+			description: 'Mostrar la descripción/extracto de la obra',
 			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
 		},
 		showMultimedia: {
 			control: { type: 'boolean' },
-			description: 'Mostrar los selectores de multimedia asociados a la historia',
+			description: 'Mostrar los selectores de multimedia asociados a la obra',
 			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
 		},
 		excerptLines: {
@@ -79,9 +79,9 @@ const meta: Meta<StoryCardTeaserV3Component> = {
 };
 
 export default meta;
-type Story = StoryObj<StoryCardTeaserV3Component>;
+type Story = StoryObj<LiteraryWorkCardTeaserComponent>;
 
-export const Interactiva: StoryObj<StoryCardTeaserV3Component & { storyIndex: number }> = {
+export const Interactiva: StoryObj<LiteraryWorkCardTeaserComponent & { storyIndex: number }> = {
 	argTypes: {
 		storyIndex: {
 			...literaryWorkSelectArgType,
@@ -91,7 +91,7 @@ export const Interactiva: StoryObj<StoryCardTeaserV3Component & { storyIndex: nu
 	render: (args) => ({
 		props: { ...args, stories: corpusStories },
 		template: `
-			<cuentoneta-story-card-teaser-v3
+			<cuentoneta-literary-work-card-teaser
 				[story]="stories[storyIndex]"
 				[variant]="variant"
 				[order]="order"
@@ -126,7 +126,7 @@ export const Interactiva: StoryObj<StoryCardTeaserV3Component & { storyIndex: nu
 export const OnWhite: Story = {
 	render: (args) => ({
 		props: args,
-		template: `<cuentoneta-story-card-teaser-v3 ${argsToTemplate(args)} />`,
+		template: `<cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} />`,
 	}),
 	args: {
 		story: withRichMedia(palacioNueveFronterasTeaserMock),
@@ -141,7 +141,7 @@ export const OnWhite: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante OnWhite: layout horizontal con la imagen a la izquierda, pensada para fondos blancos. Cuando la historia contenga un archivo multimedial para ser reproducido se va a visualizar con un MediaTag, y este deberá utilizarse siempre en su variante <code>Gray</code>.</p><p><strong>Comportamiento:</strong></p><ul><li>El título se trunca a un máximo de 2 líneas.</li><li>El extracto se trunca a un máximo de 2 líneas.</li><li>El avatar y el nombre del autor son elementos clickeables. En estado hover, el nombre se subraya para reforzar la affordance de enlace y permitir el acceso directo al perfil del autor y debe aplicarse únicamente sobre los elementos vinculados al autor, sin afectar el resto del contenido de la card.</li></ul><p><strong>Usos:</strong> Story List, Author List.</p>`,
+				story: `<p>Variante OnWhite: layout horizontal con la imagen a la izquierda, pensada para fondos blancos. Cuando la obra contenga un archivo multimedial para ser reproducido se va a visualizar con un MediaTag, y este deberá utilizarse siempre en su variante <code>Gray</code>.</p><p><strong>Comportamiento:</strong></p><ul><li>El título se trunca a un máximo de 2 líneas.</li><li>El extracto se trunca a un máximo de 2 líneas.</li><li>El avatar y el nombre del autor son elementos clickeables. En estado hover, el nombre se subraya para reforzar la affordance de enlace y permitir el acceso directo al perfil del autor y debe aplicarse únicamente sobre los elementos vinculados al autor, sin afectar el resto del contenido de la card.</li></ul><p><strong>Usos:</strong> Story List, Author List.</p>`,
 			},
 		},
 	},
@@ -150,7 +150,7 @@ export const OnWhite: Story = {
 export const OnGray: Story = {
 	render: (args) => ({
 		props: args,
-		template: `<div class="rounded-lg bg-neutral-100 p-6"><cuentoneta-story-card-teaser-v3 ${argsToTemplate(args)} /></div>`,
+		template: `<div class="rounded-lg bg-neutral-100 p-6"><cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} /></div>`,
 	}),
 	args: {
 		story: withRichMedia(geometriaTeaserMock),
@@ -165,7 +165,7 @@ export const OnGray: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante OnGray: idéntica a OnWhite pero con los selectores de multimedia en blanco, pensada para fondos grises. Cuando la historia contenga un archivo multimedial para ser reproducido se va a visualizar con un MediaTag, y este deberá utilizarse siempre en su variante <code>Filled</code>.</p><p><strong>Comportamiento:</strong></p><ul><li>El título se trunca a un máximo de 2 líneas.</li><li>El extracto se trunca a un máximo de 2 líneas.</li><li>El avatar y el nombre del autor son elementos clickeables. En estado hover, el nombre se subraya para reforzar la affordance de enlace y permitir el acceso directo al perfil del autor y debe aplicarse únicamente sobre los elementos vinculados al autor, sin afectar el resto del contenido de la card.</li></ul><p><strong>Usos:</strong> Story {Footer}.</p>`,
+				story: `<p>Variante OnGray: idéntica a OnWhite pero con los selectores de multimedia en blanco, pensada para fondos grises. Cuando la obra contenga un archivo multimedial para ser reproducido se va a visualizar con un MediaTag, y este deberá utilizarse siempre en su variante <code>Filled</code>.</p><p><strong>Comportamiento:</strong></p><ul><li>El título se trunca a un máximo de 2 líneas.</li><li>El extracto se trunca a un máximo de 2 líneas.</li><li>El avatar y el nombre del autor son elementos clickeables. En estado hover, el nombre se subraya para reforzar la affordance de enlace y permitir el acceso directo al perfil del autor y debe aplicarse únicamente sobre los elementos vinculados al autor, sin afectar el resto del contenido de la card.</li></ul><p><strong>Usos:</strong> Story {Footer}.</p>`,
 			},
 		},
 	},
@@ -174,7 +174,7 @@ export const OnGray: Story = {
 export const Highlighted: Story = {
 	render: (args) => ({
 		props: args,
-		template: `<cuentoneta-story-card-teaser-v3 ${argsToTemplate(args)} />`,
+		template: `<cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} />`,
 	}),
 	args: {
 		story: withRichMedia(elOdioTeaserMock),
@@ -189,7 +189,7 @@ export const Highlighted: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante destacada del componente, utilizada para dar mayor relevancia visual a una historia dentro de un listado o sección específica; tarjeta con borde y fondo, con la imagen a la derecha. Cuando la historia contenga un archivo multimedial para ser reproducido se va a visualizar con un MediaTag, y este deberá utilizarse siempre en su variante <code>Filled</code>.</p><p><strong>Comportamiento:</strong></p><ul><li>El título se trunca a un máximo de 2 líneas.</li><li>El extracto se trunca a un máximo de 2 líneas.</li><li>El avatar y el nombre del autor son elementos clickeables. En estado hover, el nombre se subraya para reforzar la affordance de enlace y permitir el acceso directo al perfil del autor y debe aplicarse únicamente sobre los elementos vinculados al autor, sin afectar el resto del contenido de la card.</li><li>En Story List, se muestra el avatar y el nombre del autor.</li><li>En Author List, se ocultan el avatar y el nombre del autor.</li></ul><p><strong>Usos:</strong> Story List, Author List.</p>`,
+				story: `<p>Variante destacada del componente, utilizada para dar mayor relevancia visual a una obra dentro de un listado o sección específica; tarjeta con borde y fondo, con la imagen a la derecha. Cuando la obra contenga un archivo multimedial para ser reproducido se va a visualizar con un MediaTag, y este deberá utilizarse siempre en su variante <code>Filled</code>.</p><p><strong>Comportamiento:</strong></p><ul><li>El título se trunca a un máximo de 2 líneas.</li><li>El extracto se trunca a un máximo de 2 líneas.</li><li>El avatar y el nombre del autor son elementos clickeables. En estado hover, el nombre se subraya para reforzar la affordance de enlace y permitir el acceso directo al perfil del autor y debe aplicarse únicamente sobre los elementos vinculados al autor, sin afectar el resto del contenido de la card.</li><li>En Story List, se muestra el avatar y el nombre del autor.</li><li>En Author List, se ocultan el avatar y el nombre del autor.</li></ul><p><strong>Usos:</strong> Story List, Author List.</p>`,
 			},
 		},
 	},
@@ -211,7 +211,7 @@ export const AllVariants: Story = {
 			<div class="flex flex-col gap-10">
 				<div class="space-y-2">
 					<h3 class="text-sm font-semibold text-neutral-600">OnWhite</h3>
-					<cuentoneta-story-card-teaser-v3
+					<cuentoneta-literary-work-card-teaser
 						variant="on-white"
 						[story]="stories[0]"
 						[order]="order"
@@ -225,7 +225,7 @@ export const AllVariants: Story = {
 				<div class="space-y-2">
 					<h3 class="text-sm font-semibold text-neutral-600">OnGray</h3>
 					<div class="rounded-lg bg-neutral-100 p-6">
-						<cuentoneta-story-card-teaser-v3
+						<cuentoneta-literary-work-card-teaser
 							variant="on-gray"
 							[story]="stories[1]"
 							[order]="order"
@@ -239,7 +239,7 @@ export const AllVariants: Story = {
 				</div>
 				<div class="space-y-2">
 					<h3 class="text-sm font-semibold text-neutral-600">Highlighted</h3>
-					<cuentoneta-story-card-teaser-v3
+					<cuentoneta-literary-work-card-teaser
 						variant="highlighted"
 						[story]="stories[2]"
 						[order]="order"
@@ -271,14 +271,14 @@ export const AllVariants: Story = {
 };
 
 // La tarjeta renderiza su propio skeleton cuando no recibe story.
-export const Estados: StoryObj<StoryCardTeaserV3Component & { loading: boolean }> = {
+export const Estados: StoryObj<LiteraryWorkCardTeaserComponent & { loading: boolean }> = {
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
 	render: (args) => ({
 		props: args,
 		template: `
 			<div class="w-[680px]">
 				@if (loading) {
-					<cuentoneta-story-card-teaser-v3
+					<cuentoneta-literary-work-card-teaser
 						[variant]="variant"
 						[order]="order"
 						[showAuthor]="showAuthor"
@@ -287,7 +287,7 @@ export const Estados: StoryObj<StoryCardTeaserV3Component & { loading: boolean }
 						[excerptLines]="excerptLines"
 					/>
 				} @else {
-					<cuentoneta-story-card-teaser-v3
+					<cuentoneta-literary-work-card-teaser
 						[story]="story"
 						[variant]="variant"
 						[order]="order"

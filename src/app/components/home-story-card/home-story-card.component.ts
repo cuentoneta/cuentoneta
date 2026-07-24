@@ -10,7 +10,7 @@ import { HomeStoryCardSkeletonComponent } from './home-story-card-skeleton.compo
 
 /**
  * Tarjeta de vista previa de una historia para la home (Design System v3). Derivada de
- * StoryCardTeaserV3 pero con un propósito propio: layout vertical angosto con la imagen, la
+ * LiteraryWorkCardTeaser pero con un propósito propio: layout vertical angosto con la imagen, la
  * numeración y los selectores de multimedia apilados sobre un contenedor gris, el nombre del autor
  * y el título truncado a una sola línea.
  *
