@@ -67,12 +67,12 @@ interface LiteraryWorkBase {
 	readonly totalReadingTime: ReadingTime;
 	readonly sectionCount: number;
 	readonly tags: readonly Tag[];
+	readonly mediaSources: readonly MediaTypes[]; // en la base: también lo exponen los teasers de listado
 }
 
 export interface LiteraryWork extends LiteraryWorkBase {
 	readonly authors: readonly Author[]; // 1..N; la obra anónima referencia al author real "Anónimo"
 	readonly content: readonly LiteraryWorkSection[];
-	readonly mediaSources: readonly MediaTypes[];
 	readonly resources: readonly Resource[];
 	// …
 }
