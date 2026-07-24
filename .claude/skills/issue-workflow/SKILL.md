@@ -84,7 +84,7 @@ El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehac
 2. Derivar el nombre de rama (convención del repo):
    - Formato: **`feat/<number>-<titulo-en-kebab-case>`**.
    - Transformación: minúsculas, espacios y no-alfanuméricos → guiones, colapsar guiones consecutivos, recortar guiones de borde, truncar a ~60 caracteres en un límite de palabra.
-3. **Modo raíz** (sin cambios respecto del flujo previo a #1942):
+3. **Modo raíz**:
    - `git checkout develop && git pull` para asegurar la base actualizada.
    - `git checkout -b feat/<number>-<kebab>`. Si la Fase 0 detectó la rama existente y el usuario eligió **rehacer**, confirmar la reutilización y usar `git checkout feat/<number>-<kebab>` (sin `-b`).
 4. **Modo worktree:** seguir [Modo worktree](#modo-worktree) → "Mecánica de creación" (`git fetch origin`, `git worktree add`, `EnterWorktree`, `pnpm install` + `pnpm run config`).
@@ -94,7 +94,7 @@ El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehac
 
 ## Modo worktree
 
-**Propósito:** desde #1942, todo el flujo (implementación, gates, subagentes, ship) puede correr en un **worktree propio** bajo `.claude/worktrees/<number>` en vez del working tree principal, para eliminar colisiones con sesiones paralelas (root u otros worktrees). Esta sección centraliza la mecánica; las Fases 0, 1, 2, 3, 4 y 6 la referencian en vez de repetirla.
+**Propósito:** todo el flujo (implementación, gates, subagentes, ship) puede correr en un **worktree propio** bajo `.claude/worktrees/<number>` en vez del working tree principal, para eliminar colisiones con sesiones paralelas (root u otros worktrees). Esta sección centraliza la mecánica; las Fases 0, 1, 2, 3, 4 y 6 la referencian en vez de repetirla.
 
 ### Cuándo se activa
 
@@ -103,12 +103,12 @@ El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehac
 - **Sin declarar y sin worktree previo:** Fase 0 pausa con `AskUserQuestion`:
   - `question`: "¿Dónde corremos el flujo para este issue: en un worktree aislado o en la raíz del repo?"
   - `header`: `Entorno`
-  - `options` (recomendada primero): **Worktree (recomendada)** — aísla esta sesión de cualquier otra corriendo en paralelo en la raíz o en otro worktree (elimina la clase de colisión de #1908 y la narrada en #1942); a cambio, requiere un setup propio (`pnpm install` + `pnpm run config`, `node_modules` propio). **Raíz** — sin setup adicional, reusa lo ya instalado; queda expuesta a colisión si hay otra sesión activa en la raíz. La opción **"Other"** (automática) cubre cualquier instrucción libre distinta de estas dos.
+  - `options` (recomendada primero): **Worktree (recomendada)** — aísla esta sesión de cualquier otra corriendo en paralelo en la raíz o en otro worktree (un checkout externo a mitad de sesión puede invalidar gates o desviar commits a otra rama); a cambio, requiere un setup propio (`pnpm install` + `pnpm run config`, `node_modules` propio). **Raíz** — sin setup adicional, reusa lo ya instalado; queda expuesta a colisión si hay otra sesión activa en la raíz. La opción **"Other"** (automática) cubre cualquier instrucción libre distinta de estas dos.
 
 ### Mecánica de creación (Fase 1, modo worktree)
 
 1. `git fetch origin`.
-2. `git worktree add .claude/worktrees/<number> -b feat/<number>-<kebab> origin/develop`. Si la Fase 0 detectó una rama `feat/<number>-*` ya existente en la raíz sin worktree propio (sesión previa a #1942, o modo raíz elegido antes), adjuntar el worktree a esa rama en vez de crear una nueva: `git worktree add .claude/worktrees/<number> feat/<number>-<kebab>` (sin `-b`).
+2. `git worktree add .claude/worktrees/<number> -b feat/<number>-<kebab> origin/develop`. Si la Fase 0 detectó una rama `feat/<number>-*` ya existente en la raíz sin worktree propio (creada por una sesión previa en modo raíz), adjuntar el worktree a esa rama en vez de crear una nueva: `git worktree add .claude/worktrees/<number> feat/<number>-<kebab>` (sin `-b`).
 3. Cambiar la sesión al worktree con la herramienta `EnterWorktree` del harness (`path: .claude/worktrees/<number>`). Desde acá el cwd de la sesión —y el de cualquier subagente delegado— ya es el worktree.
 4. Setup de dependencias: `pnpm install` seguido de `pnpm run config` (genera `src/app/environments/environment.ts` y `.env`; el hook `postinstall` ya invoca `pnpm run config`, pero se corre explícito para no depender de que dispare en todos los entornos).
 5. Reportar al usuario: número, título, rama y **ruta del worktree**.
@@ -192,7 +192,7 @@ No avanzar a la Fase 3 sin una respuesta "Aprobar".
 
 1. Correr localmente (con `pnpm`, nunca `nx` directo) los **gates de CI** definidos en la sección [Comandos comunes](../../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**). `test:e2e` y `studio-build` son costosos de correr en cada iteración: corré `test:e2e` si el cambio toca flujos E2E y `studio-build` si toca `cms/`; el resto, siempre.
    - **En modo worktree**, anteponer `NX_NO_CLOUD=true NX_DAEMON=false` a todo gate de Nx y reemplazar `pnpm typecheck` por `pnpm exec tsc -p tsconfig.typecheck.json --noEmit` — ver [Modo worktree](#modo-worktree) → "Ajustes transversales" (evita falsos rojos de teardown y resultados stale del daemon).
-   - **Lanzalos concurrentemente**, no uno tras otro: son independientes entre sí y así los corre CI (todos los jobs cuelgan de `setup` y van en runners separados). En serie tardan la **suma**; en paralelo, lo que tarde el más lento. Medido en #1850: 105s → 29s.
+   - **Lanzalos concurrentemente**, no uno tras otro: son independientes entre sí y así los corre CI (todos los jobs cuelgan de `setup` y van en runners separados). En serie tardan la **suma**; en paralelo, lo que tarde el más lento (medido: 105s → 29s).
    - Si alguno falla: reportar cuál, diagnosticar, arreglar, commitear el fix (reglas de Fase 3) y re-correr **solo el que falló** mientras el resto sigue verde; re-correr todo solo si el fix toca superficie compartida.
 2. **Determinar si el diff toca superficie de seguridad.** La lista de disparadores es la sección **"Cuándo correr"** del agente `security-auditor`: `src/api/**` (endpoints, GROQ, mappers), manejo de contenido externo (PortableText/HTML del CMS, `bypassSecurityTrust*`, fetch a servicios externos, `localStorage`), variables de entorno / secrets / config de Sanity o Clarity, y dependencias (`package.json` / `pnpm-lock.yaml`). Un diff que no toca nada de eso —solo documentación, estilos o UI sin datos externos— **no** la amerita; el auditor también puede invocarse a demanda si surge una preocupación puntual.
 3. **Delegar las reviews — en paralelo si corren ambas.** Si el diff toca superficie de seguridad, lanzar al **`security-auditor`** y al **`code-reviewer`** en el **mismo turno** (ambas delegaciones en una única respuesta, igual que los gates del paso 1): sus reviews son independientes y no comparten archivo de salida. Si no la toca, delegar solo al `code-reviewer`. Cada delegación incluye la ruta de salida completa del agente (ver paso 4); en modo worktree, adjuntar además la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales" a cada Task delegada. En ambos casos el `code-reviewer` revisa todos los cambios de la rama vs. `develop` (u `origin/develop` en modo worktree) y recibe **el resultado observado de los gates del paso 1** (qué corriste, con qué resultado, y cuáles omitiste por no aplicar al diff) — sin ese dato los vuelve a correr, que es la parte más cara de la review.
