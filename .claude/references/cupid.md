@@ -73,7 +73,7 @@ protected readonly hasStories = computed(() => this.stories().length > 0);
 ## Basado en el dominio (Domain-Based)
 
 - Usá el lenguaje del dominio del problema, no detalles de implementación técnica
-- Estructurá el código alrededor de conceptos de negocio (`Story`, `Author`, `Storylist`, `Resource`)
+- Estructurá el código alrededor de conceptos de negocio (`Story`, `Author`, `Storylist`, `Resource`, `LiteraryWork`)
 - Hacé que el código cuente la historia de lo que el sistema hace
 - Mantené la lógica de dominio separada de la infraestructura: el **ACL (mappers)** traduce el shape crudo de Sanity al modelo de dominio, y los resultados crudos de GROQ **nunca** se filtran al frontend
 
