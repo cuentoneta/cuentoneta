@@ -3,7 +3,7 @@ import { NgTemplateOutlet } from '@angular/common';
 
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton.component';
-import { LiteraryWorkCardTeaserVariant } from './literary-work-card-teaser.component';
+import type { LiteraryWorkCardTeaserVariant } from './literary-work-card-teaser.component';
 
 /**
  * Estado de carga (esqueleto) de LiteraryWorkCardTeaserComponent. Replica la estructura de la tarjeta
