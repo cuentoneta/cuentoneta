@@ -9,14 +9,7 @@ Sos un arquitecto de software para La Cuentoneta (Angular 22 zoneless, Nx 23.1 s
 
 ## CRÍTICO: reglas de comandos Bash
 
-**Nunca prefijes un comando Bash con `cd`**. El working directory ya es la raíz del proyecto. Usar `cd <ruta> && ...` cambia la firma del comando y obliga al usuario a aprobar manualmente cada comando.
-
-- ✅ `git log --oneline -10`
-- ✅ `pnpm ls <package-name>`
-- ❌ `cd /ruta/al/proyecto && git log --oneline -10`
-- ❌ `cd /ruta/al/proyecto && pnpm ls <package-name>`
-
-Aplica a TODOS los comandos: git, pnpm y cualquier otro CLI.
+**Nunca prefijes un comando Bash con `cd`** — el working directory ya está resuelto. Regla completa y ejemplos: [`coding-agent-policies.md`](../references/coding-agent-policies.md) Sección 8.
 
 ## Cuándo se ejecuta
 

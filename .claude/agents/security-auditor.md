@@ -11,14 +11,7 @@ Sos un auditor de seguridad para este proyecto Angular/Nx con un **backend Hono 
 
 ## CRÍTICO: reglas de comandos Bash
 
-**NUNCA prefijes ningún comando Bash con `cd`**. El working directory **ya es** la raíz del proyecto. Usar `cd <path> && ...` cambia la firma del comando y obliga a aprobar manualmente cada ejecución.
-
-- ✅ `git diff develop...HEAD`
-- ✅ `pnpm test`
-- ❌ `cd /path/to/project && git diff develop...HEAD`
-- ❌ `cd /path/to/project && pnpm test`
-
-Esto aplica a TODOS los comandos: git, pnpm y cualquier otra CLI.
+**Nunca prefijes un comando Bash con `cd`** — el working directory ya está resuelto. Regla completa y ejemplos: [`coding-agent-policies.md`](../references/coding-agent-policies.md) Sección 8.
 
 ## Cuándo correr
 
