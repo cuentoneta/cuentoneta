@@ -56,7 +56,7 @@ Ramificación tras la respuesta:
 
 **Propósito:** materializar el bump de versión y la entrada de CHANGELOG en commits atómicos.
 
-1. **Bump de versión en lockstep:** actualizar la versión target en **`package.json` raíz Y `cms/package.json`**. El versionado app/Studio va en lockstep (convención del release #1641); omitir `cms/package.json` deja el Studio desincronizado. Commitear (pueden ser uno o dos commits, pero **ambos** archivos deben quedar bumpeados antes del merge).
+1. **Bump de versión en lockstep:** actualizar la versión target en **`package.json` raíz Y `cms/package.json`**. El versionado app/Studio va en lockstep; omitir `cms/package.json` deja el Studio desincronizado. Commitear (pueden ser uno o dos commits, pero **ambos** archivos deben quedar bumpeados antes del merge).
 2. **Entrada de CHANGELOG:** insertar la sección `## Versión <x> (<fecha-de-hoy>)` sobre la anterior, con la prosa y los cambios aprobados en la Fase 1. Commit aparte.
 
 Formato de commit: `[#<issue>] - <qué cambió>` (español). Cada commit deja el repo buildeable.
