@@ -35,7 +35,7 @@ Corre siempre, en toda invocación, con el número de issue extraído de la URL.
 | ---- | -------------------------- | ------ | ------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | No   | No                         | —      | —       | Sesión nueva (caso normal) → **Fase 1**, sin pausa ni mensaje adicional                                                       |
 | Sí   | No                         | —      | 0       | La sesión murió antes de escribir el plan → **Fase 2**                                                                        |
-| Sí   | No                         | —      | >0      | Inconsistente (commits sin plan) → pausa con respuestas propias: **reconstruir** / **revisar** (ver abajo)                    |
+| Sí   | No                         | —      | >0      | Inconsistente (commits sin plan) → pausa con respuestas propias: **Reconstruir** / **Revisar** (ver abajo)                    |
 | Sí   | Sí, todo `[ ]`             | —      | 0       | Plan escrito, sin aprobar/implementar → **Fase 2**, re-presentando el plan existente sin re-delegar en `plan-writer`          |
 | Sí   | Sí, algún `[x]` (no todos) | —      | >0      | Implementación en curso → **Fase 3**, retomando en el primer paso `[ ]`                                                       |
 | Sí   | Sí, todo `[x]`             | No     | >0      | Implementación terminada, sin review → **Fase 4**                                                                             |
@@ -93,7 +93,7 @@ El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehac
 - `header`: `Plan`
 - `options` (la recomendada primero): **Aprobar** — el plan queda tal cual y se avanza a la Fase 3; **Dar feedback** — el orquestador pide el texto del feedback a continuación. La herramienta exige entre 2 y 4 opciones explícitas — "Aprobar" no puede ir sola. La opción **"Other"** (automática) transporta el feedback directamente en un solo paso y es la vía preferida cuando el usuario ya sabe qué cambiar.
 
-Ramaleo tras la respuesta:
+Ramificación tras la respuesta:
 
 - **Aprobar** → avanzar a la Fase 3.
 - **Dar feedback** → pedir el texto del feedback al usuario y tratarlo igual que Other.
