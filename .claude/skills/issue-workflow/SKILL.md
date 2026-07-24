@@ -79,6 +79,50 @@ El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehac
 
 ---
 
+## Modo worktree
+
+**Propósito:** desde #1942, todo el flujo (implementación, gates, subagentes, ship) puede correr en un **worktree propio** bajo `.claude/worktrees/<number>` en vez del working tree principal, para eliminar colisiones con sesiones paralelas (root u otros worktrees). Esta sección centraliza la mecánica; las Fases 0, 1, 2, 3, 4 y 6 la referencian en vez de repetirla.
+
+### Cuándo se activa
+
+- **Declarado:** si la invocación actual o una directiva vigente de la sesión ya dice dónde trabajar ("en un worktree", "en la raíz"), se respeta sin preguntar.
+- **Reanudación:** si `git worktree list` ya lista un worktree para `.claude/worktrees/<number>`, el entorno es worktree — no se pregunta, se reingresa (Fase 0, Paso 0).
+- **Sin declarar y sin worktree previo:** Fase 0 pausa con `AskUserQuestion`:
+  - `question`: "¿Dónde corremos el flujo para este issue: en un worktree aislado o en la raíz del repo?"
+  - `header`: `Entorno`
+  - `options` (recomendada primero): **Worktree (recomendada)** — aísla esta sesión de cualquier otra corriendo en paralelo en la raíz o en otro worktree (elimina la clase de colisión de #1908 y la narrada en #1942); a cambio, requiere un setup propio (`pnpm install` + `pnpm run config`, `node_modules` propio). **Raíz** — sin setup adicional, reusa lo ya instalado; queda expuesta a colisión si hay otra sesión activa en la raíz. La opción **"Other"** (automática) cubre cualquier instrucción libre distinta de estas dos.
+
+### Mecánica de creación (Fase 1, modo worktree)
+
+1. `git fetch origin`.
+2. `git worktree add .claude/worktrees/<number> -b feat/<number>-<kebab> origin/develop`. Si la Fase 0 detectó una rama `feat/<number>-*` ya existente en la raíz sin worktree propio (sesión previa a #1942, o modo raíz elegido antes), adjuntar el worktree a esa rama en vez de crear una nueva: `git worktree add .claude/worktrees/<number> feat/<number>-<kebab>` (sin `-b`).
+3. Cambiar la sesión al worktree con la herramienta `EnterWorktree` del harness (`path: .claude/worktrees/<number>`). Desde acá el cwd de la sesión —y el de cualquier subagente delegado— ya es el worktree.
+4. Setup de dependencias: `pnpm install` seguido de `pnpm run config` (genera `src/app/environments/environment.ts` y `.env`; el hook `postinstall` ya invoca `pnpm run config`, pero se corre explícito para no depender de que dispare en todos los entornos).
+5. Reportar al usuario: número, título, rama y **ruta del worktree**.
+
+En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
+
+### Ajustes transversales en modo worktree
+
+- **Diffs y rev-list contra `origin/develop`, no `develop` local.** La `develop` local del worktree no se actualiza sola durante la sesión y puede quedar stale frente a merges que ocurren en paralelo en otras sesiones. Toda comparación de rango — la señal de commits de la Fase 0, el diff que exploran los subagentes para decidir qué referencias cargar, el diff final que revisa `code-reviewer` — usa `origin/develop` como base.
+- **Gates de Nx con `NX_NO_CLOUD=true NX_DAEMON=false`.** En Windows, el daemon de Nx y el cliente de Nx Cloud crashean en el teardown de targets corridos desde un worktree — el target reporta "Successfully ran" y el proceso igual sale con código de error (falso rojo); el crash de Nx Cloud además puede pisar el cache compartido (`.nx/cache/cloud/`) del repo principal si hay corridas paralelas. Anteponer ambas variables a **todo** `pnpm <gate>` de Nx corrido desde el worktree: `NX_NO_CLOUD=true NX_DAEMON=false pnpm lint`, y así con `test`, `build`, `test:e2e`, `storybook`, `stylelint`.
+- **Typecheck vía `tsc` directo, no `pnpm typecheck`.** `pnpm typecheck` (`nx typecheck`) puede servir un resultado **stale** del daemon aun con `--skip-nx-cache` y aun con las variables de arriba. En modo worktree, correr `pnpm exec tsc -p tsconfig.typecheck.json --noEmit` directamente.
+- **Node v26 local (si aplica):** los wrappers de Nx de `pnpm test` y `pnpm storybook:build` pueden reportar "Failed tasks" por un crash de teardown de `libuv` **después** de terminar bien (el proyecto pide `engines: ^22.22.3`). Si un gate de test/storybook reporta rojo pero el log previo dice que el target corrió exitosamente, verificar el resultado real con `npx vitest run` directo antes de reportarlo como fallo.
+- **Delegación a subagentes — nota de Modo worktree.** Al delegar en `plan-writer`, `documentation-writer`, `code-reviewer` o `security-auditor` (Fases 2, 3 y 4), agregar a la instrucción de la delegación:
+
+  > "Esta sesión corre en el worktree `.claude/worktrees/<number>` (cwd ya resuelto — no hace falta `cd`). Tu base de diff es `origin/develop`, no `develop` local. Los archivos generados/gitignoreados del setup (`src/app/environments/environment.ts`, `.env`) sí existen tras `pnpm install` + `pnpm run config` aunque no estén versionados — antes de reportar una ruta como faltante, verificá con `git check-ignore <ruta>`."
+
+  Sin esta nota, un subagente puede leer del checkout principal en vez del worktree, diffear contra un `develop` local stale, o marcar como bloqueante un archivo generado que sí existe.
+
+### Ciclo de vida
+
+- El worktree se **mantiene** al menos hasta que el PR de la Fase 6 mergea — permite reanudar la sesión (Fase 0 lo detecta vía `git worktree list` y reingresa).
+- El **merge ocurre fuera de esta sesión** (evento humano posterior en GitHub); el skill no lo espera ni lo automatiza.
+- **Limpieza:** cuando la Fase 0 resuelve entorno worktree porque ya existía (reanudación), evalúa además `gh pr list --head feat/<number>-<kebab> --state merged`. Si hay un PR mergeado, pausa con `AskUserQuestion` (`header`: `Limpieza`; `question`: "El PR de este issue ya mergeó. ¿Removemos el worktree?"; opciones **Limpiar (recomendada)** — `git worktree remove .claude/worktrees/<number>` + `git branch -d feat/<number>-<kebab>`; **Mantener** — dejarlo como está; "Other" cubre cualquier instrucción distinta). Cualquiera sea la respuesta, la sesión termina ahí — no hay fase siguiente que ejecutar sobre un issue ya mergeado.
+- Los artefactos `workspace/<number>/PLAN.md` / `CODE_REVIEW.md` / `SECURITY_REVIEW.md` **viven dentro del worktree** en modo worktree. Una sesión nueva que reingresa vía `EnterWorktree` los encuentra ahí sin buscarlos en la raíz.
+
+---
+
 ## Fase 2 — Plan
 
 **Propósito:** producir un plan de implementación detallado para aprobación.
