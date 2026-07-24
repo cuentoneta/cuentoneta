@@ -6,7 +6,7 @@ import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton
 /**
  * Estado de carga (esqueleto) de LiteraryWorkHomeCardTeaserComponent. Replica la estructura de la tarjeta
  * (cover sobre contenedor gris, autor, título y tiempo de lectura) con placeholders de
- * cuentoneta-skeleton para evitar saltos de layout mientras la story carga.
+ * cuentoneta-skeleton para evitar saltos de layout mientras la obra carga.
  */
 @Component({
 	selector: 'cuentoneta-literary-work-home-card-teaser-skeleton',

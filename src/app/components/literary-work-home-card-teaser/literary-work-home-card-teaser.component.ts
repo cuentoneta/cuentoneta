@@ -9,7 +9,7 @@ import { CoverImageComponent } from '../cover-image/cover-image.component';
 import { LiteraryWorkHomeCardTeaserSkeletonComponent } from './literary-work-home-card-teaser-skeleton.component';
 
 /**
- * Tarjeta de vista previa de una historia para la home (Design System v3). Derivada de
+ * Tarjeta de vista previa de una obra para la home (Design System v3). Derivada de
  * LiteraryWorkCardTeaser pero con un propósito propio: layout vertical angosto con la imagen, la
  * numeración y los selectores de multimedia apilados sobre un contenedor gris, el nombre del autor
  * y el título truncado a una sola línea.
@@ -19,7 +19,7 @@ import { LiteraryWorkHomeCardTeaserSkeletonComponent } from './literary-work-hom
  * - Los selectores de multimedia usan siempre el tema `solid` (recuadros blancos sobre el gris).
  * - El autor (avatar + nombre) se muestra siempre y enlaza a su perfil (`/author/:slug`).
  *
- * Patrón de tarjeta clickeable (sin wrapper `<a>`): el enlace de la historia se estira con un
+ * Patrón de tarjeta clickeable (sin wrapper `<a>`): el enlace de la obra se estira con un
  * pseudo-elemento (`after:absolute after:inset-0`) para cubrir toda la tarjeta, de modo que cualquier
  * sección navega a `/story/:slug`. El bloque del autor es un enlace propio elevado con `z-10`, por
  * encima del pseudo-elemento, para que la foto y el nombre naveguen a `/author/:slug`.
@@ -69,7 +69,7 @@ import { LiteraryWorkHomeCardTeaserSkeletonComponent } from './literary-work-hom
 							story.author.name
 						}}</span>
 					</a>
-					<!-- Enlace de la historia estirado con ::after para cubrir toda la tarjeta (sin wrapper <a>).
+					<!-- Enlace de la obra estirado con ::after para cubrir toda la tarjeta (sin wrapper <a>).
 						 El truncate va en el span interno: el ::after se recortaría si el <a> tuviera overflow-hidden. -->
 					<a
 						[routerLink]="storyRouterLink()"

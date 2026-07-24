@@ -66,7 +66,7 @@ describe('LiteraryWorkHomeCardTeaserComponent', () => {
 				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
 			});
 			// La foto y el nombre del autor son un enlace propio a /author/:slug, elevado por encima del
-			// enlace de la historia que se estira sobre toda la tarjeta.
+			// enlace de la obra que se estira sobre toda la tarjeta.
 			const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/author/'));
 			expect(link?.getAttribute('href')).toContain(authorUrl);
 		});
