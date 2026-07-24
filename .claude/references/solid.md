@@ -89,7 +89,7 @@ interface ResourceRenderer {
 
 - No sobreescribas métodos de forma que viole las expectativas de la clase base.
 - Si una subclase no puede soportar plenamente un método de la base, la jerarquía está mal.
-- En cuentoneta esto aplica a las implementaciones intercambiables de un repositorio: un `SanityStoryRepository` y un `InMemoryStoryRepository` (usado en tests) deben honrar el mismo contrato — mismas garantías de retorno y de error — para ser sustituibles sin que el `service` lo note.
+- En cuentoneta esto aplica a las implementaciones intercambiables de un repositorio: un `SanityStoryRepository` y un `InMemoryStoryRepository` (usado en tests) deben honrar el mismo contrato — mismas garantías de retorno y de error — para ser sustituibles sin que el `service` lo note. Ese mismo patrón ya tiene contrato cerrado para `LiteraryWork` — ver `docs/LITERARY_WORK_DESIGN.md` §6 —, pendiente de #1853.
 
 ---
 
@@ -105,16 +105,16 @@ interface ResourceRenderer {
 **Guía:**
 
 - Diseñá las interfaces desde la perspectiva del cliente.
-- Interfaces de rol (`StoryReader`, `StoryListProvider`) antes que interfaces "cabezal" que lo abarcan todo.
+- Interfaces de rol (`LiteraryWorkReader`, `LiteraryWorkListProvider`) antes que interfaces "cabezal" que lo abarcan todo.
 
 ```typescript
-// ✅ Interfaces de rol segregadas: un consumidor que solo lista no depende de la lectura por slug.
-interface StoryReader {
-	getStoryBySlug(slug: string): Promise<Story>;
+// ✅ Interfaces de rol segregadas: un consumidor que solo lee por slug no depende del listado.
+interface LiteraryWorkReader {
+	getLiteraryWorkBySlug(slug: string, section?: number): Promise<LiteraryWork>;
 }
 
-interface StoryListProvider {
-	getStories(): Promise<Story[]>;
+interface LiteraryWorkListProvider {
+	getLiteraryWorks(): Promise<LiteraryWork[]>;
 }
 
 // ❌ Una interfaz monolítica que obliga a todo cliente a conocer lectura, listado,

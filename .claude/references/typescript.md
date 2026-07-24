@@ -39,7 +39,7 @@ function describe(type: MediaType): string {
 }
 ```
 
-> **Enforcement activo:** ESLint prohíbe declarar `enum` (`selector: 'TSEnumDeclaration'` dentro de `commonRestrictedSyntax`, en `eslint.config.mjs`), y el repo ya no tiene ninguno: la deuda de migración está saldada. El patrón `Object.freeze` se usa en `src/app/models/content-campaign.model.ts` y `src/app/providers/layout.interface.ts`.
+> **Enforcement activo:** ESLint prohíbe declarar `enum` (`selector: 'TSEnumDeclaration'` dentro de `commonRestrictedSyntax`, en `eslint.config.mjs`), y el repo ya no tiene ninguno: la deuda de migración está saldada. El patrón `Object.freeze` se usa en `src/app/models/content-campaign.model.ts`, `src/app/providers/layout.interface.ts` y `src/app/models/literary-work.model.ts` (`createLiteraryWork`).
 
 ---
 
@@ -49,15 +49,15 @@ Usar la palabra clave `type` cuando un import se use **solo** como anotación de
 
 ```typescript
 // ✅ Correcto
-import type { Story } from '@models/story.model';
+import type { LiteraryWork } from '@models/literary-work.model';
 import { type Mock } from '@test-utils';
-import { StoryApi } from '../../providers/story-api.interface'; // token, se usa en runtime → sin `type`
+import { createLiteraryWork } from '@models/literary-work.model'; // función, se usa en runtime → sin `type`
 
 // ❌ Incorrecto — falta `type` en imports solo-de-tipo
-import { Story } from '@models/story.model';
+import { LiteraryWork } from '@models/literary-work.model';
 ```
 
-**Cuándo usar `type`:** interfaces, type aliases, o clases usadas solo como tipo (`story: Story` pero nunca `new Story()`).
+**Cuándo usar `type`:** interfaces, type aliases, o clases usadas solo como tipo (`literaryWork: LiteraryWork` pero nunca `new LiteraryWork()`).
 
 **Cuándo NO usar `type`:** clases usadas en runtime (constructores, métodos estáticos), funciones, constantes, o cualquier cosa usada en una expresión.
 

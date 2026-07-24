@@ -2,7 +2,7 @@
 
 # Modelo de Dominio — Guía estratégica (DDD)
 
-> **Propósito:** esta referencia es la **guía conceptual/objetivo** de Domain-Driven Design para La Cuentoneta. Documenta los patrones **estratégicos** de DDD (agregados + invariantes, bounded contexts, lenguaje ubicuo, domain events, policies puras, decisiones de consistencia, value objects) re-ejemplificados con el dominio real: **Story, Author, Storylist, Resource**.
+> **Propósito:** esta referencia es la **guía conceptual/objetivo** de Domain-Driven Design para La Cuentoneta. Documenta los patrones **estratégicos** de DDD (agregados + invariantes, bounded contexts, lenguaje ubicuo, domain events, policies puras, decisiones de consistencia, value objects) re-ejemplificados con el dominio real: **Story, Author, Storylist, Resource, LiteraryWork**.
 >
 > **Idioma:** la guía va en **español**; el **código siempre en inglés**.
 >
@@ -39,7 +39,7 @@
 
 ## Estructura por bounded context
 
-Organizá el modelo de dominio por **contexto acotado**. Cuentoneta define cuatro (ver `docs/DOMAIN_MODEL.md`): **Catálogo de Contenido** (`Story`, `Author`, `Resource`, `Media`, `Epigraph`), **Curación y Colecciones** (`Storylist`), **Administración del Proyecto** (`Contributor`) y **Página de Inicio** (`LandingPageContent`, `ContentCampaign`).
+Organizá el modelo de dominio por **contexto acotado**. Cuentoneta define cuatro (ver `docs/DOMAIN_MODEL.md`): **Catálogo de Contenido** (`Story`, `Author`, `Resource`, `Media`, `Epigraph`, `LiteraryWork`), **Curación y Colecciones** (`Storylist`), **Administración del Proyecto** (`Contributor`) y **Página de Inicio** (`LandingPageContent`, `ContentCampaign`).
 
 Hoy los tipos de dominio viven en `src/app/models/` (frontend) y la ACL/dominio del backend en `src/api/`. La estructura **objetivo** por contexto (roadmap #1503) agrupa, por agregado, el contrato + el modelo + el mapper + su spec:
 
@@ -56,42 +56,61 @@ Hoy los tipos de dominio viven en `src/app/models/` (frontend) y la ACL/dominio 
 
 ## Diseño orientado a interfaces
 
-Definí **interfaces** para las entidades de dominio. Los componentes dependen de esas interfaces, nunca de un tipo de infraestructura. Esto ya rige hoy: el frontend consume `Story`, `Author`, `Storylist`, `Resource` como contratos, nunca el shape crudo de Sanity.
+Definí **interfaces** para las entidades de dominio. Los componentes dependen de esas interfaces, nunca de un tipo de infraestructura. Esto ya rige hoy: el frontend consume `Story`, `Author`, `Storylist`, `Resource`, `LiteraryWork` como contratos, nunca el shape crudo de Sanity.
 
 ```typescript
-// story.interface.ts (objetivo: el contrato de dominio, sin clase que lo duplique)
-export interface Story {
-	readonly slug: string; // business key, invariante única
+// literary-work.model.ts (implementado — el contrato de dominio, sin clase que lo duplique)
+interface LiteraryWorkBase {
+	readonly _id: string;
+	readonly slug: Slug; // business key branded, invariante única
 	readonly title: string;
-	readonly author: Author; // un Story siempre tiene autor
-	readonly approximateReadingTime: number; // minutos, >= 1
-	hasMedia(): boolean;
+	readonly totalReadingTime: ReadingTime;
+	readonly sectionCount: number;
+	readonly tags: readonly Tag[];
+	readonly mediaSources: readonly MediaTypes[]; // en la base: también lo exponen los teasers de listado
+}
+
+export interface LiteraryWork extends LiteraryWorkBase {
+	readonly authors: readonly Author[]; // 1..N; la obra anónima referencia al author real "Anónimo"
+	readonly content: readonly LiteraryWorkSection[];
+	readonly resources: readonly Resource[];
+	// …
 }
 ```
 
-**Sin prefijo `I`.** La interfaz de dominio lleva el **nombre limpio** (`Story`, `Author`, `Storylist`, `Resource`) y **nunca** el prefijo `I` — ver [`CLAUDE.md` → Naming](../../CLAUDE.md#naming). No se declara una clase homónima que duplique el contrato: quien hace cumplir las invariantes es la **factory** del mapper, que devuelve un objeto congelado tipado como la interfaz.
+A diferencia de esta interfaz ya implementada, `Story` (`story.model.ts`) sigue siendo anémica: primitivos sin factory que valide invariantes — ver el contraste completo en [Diseño de agregados](#diseño-de-agregados).
+
+**Sin prefijo `I`.** La interfaz de dominio lleva el **nombre limpio** (`LiteraryWork`, `Story`, `Author`, `Storylist`, `Resource`) y **nunca** el prefijo `I` — ver [`CLAUDE.md` → Naming](../../CLAUDE.md#naming). No se declara una clase homónima que duplique el contrato: quien hace cumplir las invariantes es la **factory** del mapper, que devuelve un objeto congelado tipado como la interfaz.
 
 ### Factory functions
 
 La factory es el **único** punto de construcción de un objeto de dominio: ahí se validan las invariantes y se devuelve el contrato ya congelado. Es la evolución natural del rol que hoy cumplen los mappers del ACL (`mapAuthor`, `mapStoryContent`), que devuelven objetos planos tipados:
 
 ```typescript
-// story.mapper.ts (objetivo: la factory valida las invariantes y devuelve el contrato)
-interface CreateStoryOptions {
+// literary-work.model.ts (implementado, #1852)
+interface CreateLiteraryWorkOptions {
 	slug: string;
 	title: string;
-	author: Author;
-	paragraphs: TextBlockContent[];
-	approximateReadingTime: number;
+	authors: readonly Author[];
+	content: readonly LiteraryWorkSection[];
+	// …
 }
 
-export function createStory(options: CreateStoryOptions): Story {
-	if (!options.author) {
-		throw new Error(`La historia "${options.slug}" no tiene autor`);
+export function createLiteraryWork(options: CreateLiteraryWorkOptions): LiteraryWork {
+	if (options.title.trim() === '') {
+		throw new Error(`LiteraryWork inválida: título vacío (slug "${options.slug}")`);
+	}
+	if (options.content.length === 0) {
+		throw new Error(`LiteraryWork inválida: sin secciones de contenido (slug "${options.slug}")`);
+	}
+	if (options.authors.length === 0) {
+		throw new Error(`LiteraryWork inválida: sin autores (slug "${options.slug}")`);
 	}
 	return Object.freeze({
-		...options,
-		hasMedia: () => options.paragraphs.some(isMediaBlock),
+		...rest,
+		slug: createSlug(options.slug),
+		totalReadingTime: readingTimeOverride ?? sumReadingTimes(options.content.map((s) => s.readingTime)),
+		sectionCount: options.content.length,
 	});
 }
 ```
@@ -110,16 +129,24 @@ export function createStory(options: CreateStoryOptions): Story {
 Un agregado expone **múltiples interfaces** para distintos casos de uso, optimizando la transferencia de datos. Este patrón **ya está implementado** y es central en cuentoneta:
 
 ```typescript
-Story; // vista completa: párrafos, epígrafes, autor completo
-StoryTeaser; // sin contenido pesado, para listados
-StoryNavigationTeaser; // mínima, para navegación
-StoryNavigationTeaserWithAuthor; // mínima + autor resumido
+LiteraryWork; // vista completa: secciones, autores completos, tags
+LiteraryWorkTeaser; // primera sección completa + autores resumidos, para listados
+LiteraryWorkNavigationTeaser; // mínima, sin autores, para navegación
+LiteraryWorkNavigationTeaserWithAuthors; // mínima + autores resumidos
+```
 
-Author; // completa: biografía + recursos
-AuthorTeaser; // resumida, para tarjetas
+```typescript
+// El resto del catálogo sigue el mismo patrón (real, vigente):
+Story;
+StoryTeaser;
+StoryNavigationTeaser;
+StoryNavigationTeaserWithAuthor;
 
-Storylist; // completa: stories con autor
-StorylistTeaser; // sin stories
+Author;
+AuthorTeaser;
+
+Storylist;
+StorylistTeaser;
 ```
 
 Cada vista es una proyección coherente del mismo agregado; el mapper correspondiente del ACL produce exactamente la vista que la query GROQ pidió.
@@ -131,12 +158,13 @@ Cada vista es una proyección coherente del mismo agregado; el mapper correspond
 Los objetos de dominio deben ser **inmutables** tras su construcción:
 
 ```typescript
-export interface Story {
-	readonly slug: string;
+export interface LiteraryWorkBase {
+	readonly _id: string;
+	readonly slug: Slug;
 	readonly title: string;
-	readonly author: Author;
-	readonly resources: readonly Resource[];
-	// …
+	readonly totalReadingTime: ReadingTime;
+	readonly sectionCount: number;
+	readonly tags: readonly Tag[];
 }
 ```
 
@@ -151,20 +179,20 @@ El contenido enriquecido (`TextBlockContent` / Portable Text) **se trata como in
 
 ## Value Objects (Slug, ReadingTime, DateString)
 
-Un **Value Object** no tiene identidad propia: representa un concepto del dominio, es inmutable y se compara por su contenido. Hoy cuentoneta usa **tipos primitivos** para estos conceptos (`slug: string`, `approximateReadingTime: number`, `bornOn?: DateString`). Promoverlos a value objects con auto-validación es **roadmap (#1503)**; abajo va el objetivo.
-
-> **Primera implementación real (#1852):** el módulo `LiteraryWork` ya usa este patrón en producción — `Slug`, `WordCount`, `ReadingTime`, `Markdown`, `SanitizedHtml`, `ChapterTitle` viven en `src/app/models/*.model.ts` (branded types + factory `create*` que valida y lanza), con specs, más la factory `createIsoDateTime` en `src/app/utils/date.utils.ts`. Los contratos están en `docs/LITERARY_WORK_DESIGN.md` §4. `Story`/`Author` siguen sin brandear (roadmap #1503, sin cambios); los bloques "objetivo (roadmap)" de abajo describen ese estado pendiente.
+Un **Value Object** no tiene identidad propia: representa un concepto del dominio, es inmutable y se compara por su contenido. Hoy `Story`/`Author` siguen usando **tipos primitivos** para estos conceptos (`slug: string`, `approximateReadingTime: number`, `bornOn?: DateString`) — promoverlos a value objects es **roadmap (#1503)**, sin cambios. `LiteraryWork` ya implementa el patrón en producción (#1852): `Slug`, `WordCount`, `ReadingTime`, `Markdown`, `SanitizedHtml`, `ChapterTitle` en `src/app/models/*.model.ts` (branded types + factory `create*` que valida y lanza), con specs, más `createIsoDateTime` en `src/app/utils/date.utils.ts`; los contratos están en `docs/LITERARY_WORK_DESIGN.md` §4. Los ejemplos de `Slug`/`ReadingTime` de abajo muestran esa implementación real; `DateString` (`Author.bornOn`/`diedOn`) sigue siendo el ejemplo roadmap, sin factory validadora.
 
 ### Slug — clave de negocio
 
 `slug` es el patrón **Business Key** del proyecto: identificador amigable, único e **inmutable** que reemplaza al `_id` técnico de Sanity en URLs y rutas (`/story/el-aleph`, `/author/jorge-luis-borges`). El `_id` se reserva para GROQ y manipulación en la capa de datos.
 
 ```typescript
-// objetivo (roadmap): brandear el slug y validar formato al construir
+// slug.model.ts — implementado (#1852)
 export type Slug = string & { readonly __brand: 'Slug' };
 
-export function slug(value: string): Slug {
-	if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)) {
+const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+export function createSlug(value: string): Slug {
+	if (!SLUG_PATTERN.test(value)) {
 		throw new Error(`Slug inválido: "${value}"`);
 	}
 	return value as Slug;
@@ -176,10 +204,10 @@ export function slug(value: string): Slug {
 Invariante: el tiempo de lectura es un **número positivo** (`>= 1`). Como value object encapsula esa invariante en un solo lugar:
 
 ```typescript
-// objetivo (roadmap)
+// reading-time.model.ts — implementado (#1852)
 export type ReadingTime = number & { readonly __brand: 'ReadingTime' };
 
-export function readingTime(minutes: number): ReadingTime {
+export function createReadingTime(minutes: number): ReadingTime {
 	if (!Number.isInteger(minutes) || minutes < 1) {
 		throw new Error(`ReadingTime inválido: ${minutes}`);
 	}
@@ -213,11 +241,10 @@ Usá **Zod** para validar **datos externos** en la frontera (respuestas de API, 
 
 ```typescript
 import { z } from 'zod';
-
-const storySlugParamSchema = z.object({ slug: z.string().min(1) });
+import { slugSchema } from '../../schemas/common.schemas'; // reutilizado por todos los módulos, incluido el futuro endpoint de literary-work
 
 // en el controller Hono:
-// zValidator('param', storySlugParamSchema)
+// zValidator('param', slugSchema)
 ```
 
 La validación cruza la frontera una sola vez; pasada esa frontera, el dominio confía en sus tipos.
@@ -243,7 +270,7 @@ El ACL es la frontera explícita entre la infraestructura (Sanity) y el dominio:
 
 ## Binding en componentes: solo dominio
 
-Los componentes deben hacer binding **exclusivamente** a interfaces de dominio (hoy `Story`, `Author`, `Storylist`, `Resource`) o sus modelos. El **shape crudo de Sanity** y cualquier DTO de contrato pertenecen a la capa de API/provider — **nunca** se importan ni se referencian en componentes ni plantillas.
+Los componentes deben hacer binding **exclusivamente** a interfaces de dominio (hoy `Story`, `Author`, `Storylist`, `Resource`; mañana también `LiteraryWork`) o sus modelos. El **shape crudo de Sanity** y cualquier DTO de contrato pertenecen a la capa de API/provider — **nunca** se importan ni se referencian en componentes ni plantillas.
 
 La frontera es clara: los repositories/services de Sanity manejan el shape crudo; desde la superficie pública del provider/store hacia arriba (componentes, plantillas), **solo** interfaces de dominio. Los modelos de dominio exponen propiedades computadas y métodos que encierran las reglas de negocio en un único lugar.
 
@@ -261,17 +288,45 @@ Un **agregado** es un cluster de objetos de dominio tratado como una unidad para
 
 **Cómo identificar la raíz:** buscá la entidad que **posee más invariantes de negocio**; esa entidad es la raíz, porque las invariantes solo se garantizan si toda mutación pasa por ella.
 
-En cuentoneta, **`Story` es la raíz** del agregado de contenido. Posee `author: Author`, `paragraphs`, `epigraphs`, `resources: Resource[]`, `tags: Tag[]` y `media: Media[]`. Sus invariantes (de `docs/DOMAIN_MODEL.md`):
+En cuentoneta, **`LiteraryWork`** es la raíz de agregado con invariantes **hechas cumplir en código** (implementado, #1852): posee `authors: Author[]` (1..N), `content: LiteraryWorkSection[]`, `resources`, `tags` y `mediaSources`. Sus invariantes, garantizadas por la factory `createLiteraryWork` (`src/app/models/literary-work.model.ts`):
 
-- El `slug` es único e inmutable una vez creado.
-- Toda historia **debe tener un autor**.
-- Debe tener **al menos un párrafo** de contenido.
-- El tiempo de lectura es un número positivo (`>= 1`).
-
-El objetivo (roadmap #1503) es hacer cumplir esas invariantes **en construcción**, dentro de la factory, de modo que ningún caller pueda crear un `Story` inconsistente:
+- El `slug` tiene formato válido (VO `Slug`) e inmutable una vez creado.
+- El `title` no puede estar vacío.
+- Debe tener **al menos una sección** de contenido.
+- Debe tener **al menos un autor** (`authors.length >= 1`); la obra anónima referencia al author real "Anónimo" (`isAnonymous`, ver [Policies](#policies-como-funciones-puras)).
+- Las posiciones de sección son contiguas en el agregado completo (`content[i].position === i`).
+- `totalReadingTime`/`sectionCount` se derivan en la factory (salvo `readingTimeOverride` editorial, para obras recitadas/audiovisuales).
 
 ```typescript
-// story.mapper.ts — objetivo: invariantes en tiempo de construcción
+// literary-work.model.ts — invariantes en tiempo de construcción (implementado, #1852)
+export function createLiteraryWork(options: CreateLiteraryWorkOptions): LiteraryWork {
+	if (options.title.trim() === '') {
+		throw new Error(`LiteraryWork inválida: título vacío (slug "${options.slug}")`);
+	}
+	if (options.content.length === 0) {
+		throw new Error(`LiteraryWork inválida: sin secciones de contenido (slug "${options.slug}")`);
+	}
+	if (options.authors.length === 0) {
+		throw new Error(`LiteraryWork inválida: sin autores (slug "${options.slug}")`);
+	}
+	return Object.freeze({
+		...rest,
+		slug: createSlug(options.slug),
+		totalReadingTime: readingTimeOverride ?? sumReadingTimes(options.content.map((s) => s.readingTime)),
+		sectionCount: options.content.length,
+	});
+}
+```
+
+**A diferencia de `LiteraryWork`, `Story` es la raíz de un agregado paralelo** cuyas invariantes están **descritas** en `docs/DOMAIN_MODEL.md` pero **no** se hacen cumplir en código — roadmap #1503:
+
+- El `slug` es único e inmutable una vez creado.
+- Toda historia debe tener un autor.
+- Debe tener al menos un párrafo de contenido.
+- El tiempo de lectura es un número positivo (`>= 1`).
+
+```typescript
+// story.mapper.ts — objetivo (roadmap #1503, nunca implementado): invariantes en tiempo de construcción
 export function createStory(options: CreateStoryOptions): Story {
 	if (!options.author) throw new Error('Story requiere autor');
 	if (options.paragraphs.length === 0) throw new Error('Story requiere al menos un párrafo');
@@ -283,9 +338,7 @@ export function createStory(options: CreateStoryOptions): Story {
 }
 ```
 
-`Author` y `Storylist` son raíces de sus propios agregados. **`Storylist`** posee la invariante _`count` coincide con el número real de `stories`_; **`Author`** posee _`diedOn` (si existe) es posterior a `bornOn`_ y _`nationality` siempre presente_.
-
-> **Implementado (#1852):** `LiteraryWork` es la primera raíz de agregado con invariantes **hechas cumplir en código** (no solo descritas): `createLiteraryWork` en `src/app/models/literary-work.model.ts` valida título no vacío, ≥ 1 sección y ≥ 1 autor, deriva `totalReadingTime`/`sectionCount` y congela el objeto. La obra anónima referencia al author real "Anónimo" (slug `anonimo`, valor bien conocido — policy `isAnonymous` compara por slug). Ver `docs/DOMAIN_MODEL.md` y `docs/LITERARY_WORK_DESIGN.md`. El ejemplo de `Story` de arriba sigue siendo roadmap (#1503).
+`Author` y `Storylist` son raíces de sus propios agregados. **`Storylist`** posee la invariante _`count` coincide con el número real de `stories`_; **`Author`** posee _`diedOn` (si existe) es posterior a `bornOn`_ y _`nationality` siempre presente_ — ambas, como las de `Story`, descritas pero no hechas cumplir en código (roadmap #1503).
 
 > **Nota:** la frontera del agregado es también la frontera de consistencia — ver [Decisiones de consistencia](#decisiones-de-consistencia).
 >
@@ -311,7 +364,18 @@ El ciclo de vida de `Story` hoy es: `Borrador en Sanity → Publicación en cont
 
 Una **policy** es una regla de negocio extraída a una función pura — sin efectos secundarios, sin services inyectados — con la forma `(entity, context) → decision`. Al ser pura es testeable de forma aislada, componible y reutilizable.
 
-En cuentoneta, candidatas naturales a policy:
+En cuentoneta, la policy **implementada** es `isAnonymous` (`literary-work.model.ts`, #1852) — determina si una obra es anónima comparando por slug, no por `_id`:
+
+```typescript
+// policy pura implementada — literary-work.model.ts
+export const ANONYMOUS_AUTHOR_SLUG = 'anonimo';
+
+export function isAnonymous(authors: ReadonlyArray<{ readonly slug: string }>): boolean {
+	return authors.length > 0 && authors.every((author) => author.slug === ANONYMOUS_AUTHOR_SLUG);
+}
+```
+
+Además de la implementada arriba, otras candidatas naturales a policy en cuentoneta, aún no implementadas:
 
 ```typescript
 // policy pura: ¿esta Storylist debe mostrar info de autores en sus tarjetas?
@@ -342,27 +406,28 @@ Un **bounded context** es un ámbito dentro del cual aplican consistentemente un
 
 | Contexto                   | Agregados raíz                          | Perspectiva                                        |
 | -------------------------- | --------------------------------------- | -------------------------------------------------- |
-| **Catálogo de Contenido**  | `Story`, `Author`                       | Inventario completo de historias y autores         |
+| **Catálogo de Contenido**  | `Story`, `Author`, `LiteraryWork`       | Inventario completo de historias y autores         |
 | **Curación y Colecciones** | `Storylist`                             | Agrupar y ordenar historias en colecciones         |
 | **Administración**         | `Contributor`                           | Colaboradores del proyecto por área                |
 | **Página de Inicio**       | `LandingPageContent`, `ContentCampaign` | Agregar contenido de varios contextos para el home |
 
-La idea clave: un mismo `Story` se modela distinto según el contexto. En **Catálogo** es la vista completa (`Story` con párrafos, epígrafes, autor completo). En **Curación**, dentro de una `Storylist`, es una proyección `StoryTeaserWithAuthor` — solo lo esencial para listar. En **Página de Inicio** es `StoryNavigationTeaserWithAuthor` dentro de `mostRead`/`latestReads`. Las **vistas polimórficas + los mappers del ACL** son las fronteras explícitas entre estos modelos.
+La idea clave: un mismo `Story` se modela distinto según el contexto. En **Catálogo** es la vista completa (`Story` con párrafos, epígrafes, autor completo). En **Curación**, dentro de una `Storylist`, es una proyección `StoryTeaserWithAuthor` — solo lo esencial para listar. En **Página de Inicio** es `StoryNavigationTeaserWithAuthor` dentro de `mostRead`/`latestReads`. Las **vistas polimórficas + los mappers del ACL** son las fronteras explícitas entre estos modelos. `LiteraryWork` sigue el mismo principio con sus propias vistas (`LiteraryWorkTeaser`, `LiteraryWorkNavigationTeaser`, …), aunque todavía no participa de `Storylist` ni de la Página de Inicio.
 
 ### Lenguaje ubicuo
 
 Cada contexto **posee las definiciones** de sus términos, co-localizadas con sus interfaces. Una misma palabra puede tener un matiz distinto por contexto, y esa divergencia es esperada. Términos clave (de `docs/DOMAIN_MODEL.md`):
 
-| Término       | Definición                                                                   | Contexto              |
-| ------------- | ---------------------------------------------------------------------------- | --------------------- |
-| **Historia**  | Obra literaria curada y publicada                                            | Catálogo de Contenido |
-| **Slug**      | Identificador amigable, único e inmutable basado en el título                | Todos                 |
-| **Epígrafe**  | Cita literaria que precede al texto principal                                | Catálogo de Contenido |
-| **Teaser**    | Vista reducida de una entidad para listados y navegación                     | Todos                 |
-| **Colección** | Agrupación temática u editorial de historias (`Storylist`)                   | Curación              |
-| **Recurso**   | Enlace externo a información complementaria (`Resource`)                     | Catálogo de Contenido |
-| **Etiqueta**  | Tag de taxonomía (`Tag`) referenciable desde `Story`, `Author` y `Storylist` | Todos                 |
-| **Curaduría** | Proceso de seleccionar, ordenar y presentar historias                        | Curación              |
+| Término            | Definición                                                                           | Contexto              |
+| ------------------ | ------------------------------------------------------------------------------------ | --------------------- |
+| **Historia**       | Obra literaria curada y publicada                                                    | Catálogo de Contenido |
+| **Obra literaria** | Obra narrativa con secciones/capítulos, entidad paralela a Historia (`LiteraryWork`) | Catálogo de Contenido |
+| **Slug**           | Identificador amigable, único e inmutable basado en el título                        | Todos                 |
+| **Epígrafe**       | Cita literaria que precede al texto principal                                        | Catálogo de Contenido |
+| **Teaser**         | Vista reducida de una entidad para listados y navegación                             | Todos                 |
+| **Colección**      | Agrupación temática u editorial de historias (`Storylist`)                           | Curación              |
+| **Recurso**        | Enlace externo a información complementaria (`Resource`)                             | Catálogo de Contenido |
+| **Etiqueta**       | Tag de taxonomía (`Tag`) referenciable desde `Story`, `Author` y `Storylist`         | Todos                 |
+| **Curaduría**      | Proceso de seleccionar, ordenar y presentar historias                                | Curación              |
 
 **Convención para contextos nuevos:** al introducir un bounded context, definí su vocabulario junto a sus interfaces y aclará, por cada término, a qué términos existentes mapea o de cuáles diverge deliberadamente.
 
@@ -370,11 +435,11 @@ Cada contexto **posee las definiciones** de sus términos, co-localizadas con su
 
 Elegí el modelo de consistencia **por frontera**, no por proyecto:
 
-| Modelo       | Cuándo aplicarlo                                        | Ejemplo en cuentoneta                                                               |
-| ------------ | ------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| **Fuerte**   | Invariantes que deben valer de inmediato, en una unidad | Agregado `Story`: autor presente y `>= 1` párrafo siempre consistentes al construir |
-| **Eventual** | Estado best-effort donde un lag breve es aceptable      | _Futuro:_ un `StoryPublished` que actualice `mostRead`/`latestReads` del home       |
+| Modelo       | Cuándo aplicarlo                                        | Ejemplo en cuentoneta                                                                                                                                           |
+| ------------ | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Fuerte**   | Invariantes que deben valer de inmediato, en una unidad | Agregado `LiteraryWork`: título no vacío, ≥1 autor y ≥1 sección con posiciones contiguas siempre consistentes al construir (`createLiteraryWork`, implementado) |
+| **Eventual** | Estado best-effort donde un lag breve es aceptable      | _Futuro:_ un `StoryPublished` que actualice `mostRead`/`latestReads` del home                                                                                   |
 
 **Regla:** consistencia **fuerte** _dentro_ de la frontera de un agregado; consistencia **eventual** _entre_ agregados o contextos (propagada por [domain events](#domain-events)). El pivote de la decisión es la invariante: si _debe_ ser siempre verdadera, mantenela dentro de un agregado bajo consistencia fuerte; si tolera una ventana breve de staleness, dejá que converja.
 
-> **Estado:** la implementación actual es fuertemente consistente de hecho (el contenido se cura y publica en Sanity, y las queries leen el estado publicado). La consistencia eventual cruzando contextos se documenta como guía futura, en tándem con los domain events del roadmap (#1503).
+> **Estado:** la implementación actual es fuertemente consistente de hecho (el contenido se cura y publica en Sanity, y las queries leen el estado publicado). La consistencia eventual cruzando contextos se documenta como guía futura, en tándem con los domain events del roadmap (#1503). `LiteraryWork` va un paso más allá: sus invariantes están además **forzadas en código** por `createLiteraryWork`, no solo garantizadas de hecho por la curaduría.
