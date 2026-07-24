@@ -175,6 +175,7 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 
 1. `git push -u origin feat/<number>-<kebab>`.
 2. Crear el PR con `gh pr create` (base `develop`, milestone del issue):
+   - **Precondición:** ningún Crítico de `workspace/<number>/CODE_REVIEW.md` ni `workspace/<number>/SECURITY_REVIEW.md` sin **disposición** (definida en la pausa de la Fase 4). Si lo hay, no crear el PR: volver a la Fase 5, o a la vía "Disponer y ship" de la Fase 4.
    - Título: `[#<issue>] - <título del issue>`.
    - Cuerpo (en **español**):
 
@@ -222,5 +223,6 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 - Nunca prefijar comandos git con `cd` — el working dir ya está en la raíz.
 - Nunca abrir el PR antes de que pasen los gates de CI y haya corrido el `code-reviewer`.
 - Nunca abrir el PR sin el keyword de cierre (`Closes #<issue>`) en el cuerpo enlazando el issue de origen.
+- Nunca abrir el PR con un Crítico sin disposición confirmada — definición en la pausa de la Fase 4; verificación en la Fase 6 paso 2.
 - Nunca saltear la fase Plan — aun cambios triviales se benefician de un plan breve.
 - Aplican siempre las reglas de [`.claude/references/coding-agent-policies.md`](../../references/coding-agent-policies.md): sin framings de mantenedor único, sin "salteá el test por ser chico" (salvo cambios solo-doc), sin diferir la review más allá de abrir el PR, y sin comentarios redundantes (Sección 3).
