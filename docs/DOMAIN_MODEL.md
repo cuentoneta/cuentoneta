@@ -282,6 +282,8 @@ Borrador en Sanity → Publicación → Accesible para lectura en /read/:slug
 - `LiteraryWorkNavigationTeaser` - Vista mínima para navegación
 - `LiteraryWorkNavigationTeaserWithAuthors` - Vista mínima con autores resumidos
 
+`mediaSources: MediaTypes[]` **todas** las vistas (incluidas las de teaser/navegación) lo exponen; las tarjetas de listado lo consumen para mostrar los recursos multimedia de la obra.
+
 ---
 
 ### Agregado: Author (Autor)
