@@ -23,8 +23,8 @@ import {
 	type RawWorkForBackfill,
 } from './backfill-reading-time.helpers';
 
-const APPLY = process.argv.includes('--apply') || process.env.BACKFILL_APPLY === 'true';
-const PAGE_SIZE = parsePageSize(process.env.BACKFILL_PAGE_SIZE);
+const APPLY = process.argv.includes('--apply') || process.env['BACKFILL_APPLY'] === 'true';
+const PAGE_SIZE = parsePageSize(process.env['BACKFILL_PAGE_SIZE']);
 
 // Candidatas: obras publicadas (no drafts) con `_id` mayor al cursor a las que falta el total o
 // alguna sección sin `readingTime`. `order(_id)` + `_id > $lastId` da un recorrido estable ante
@@ -38,9 +38,9 @@ const candidatePageQuery = `
 
 interface Totals {
 	scanned: number;
-	filled: number;
-	sections: number;
-	totals: number;
+	worksFilled: number;
+	sectionsFilled: number;
+	totalsFilled: number;
 	errors: number;
 }
 
@@ -69,9 +69,9 @@ async function processWork(work: RawWorkForBackfill, totals: Totals): Promise<vo
 	if (isEmptyPlan(plan)) {
 		return;
 	}
-	totals.filled += 1;
-	totals.sections += plan.sectionReadingTimes.length;
-	totals.totals += plan.totalReadingTime === undefined ? 0 : 1;
+	totals.worksFilled += 1;
+	totals.sectionsFilled += plan.sectionReadingTimes.length;
+	totals.totalsFilled += plan.totalReadingTime === undefined ? 0 : 1;
 	if (APPLY) {
 		await client.patch(work._id).setIfMissing(buildSetValues(plan)).commit({ visibility: 'async' });
 	}
@@ -93,7 +93,7 @@ async function processPage(page: readonly RawWorkForBackfill[], totals: Totals):
 }
 
 async function run(): Promise<Totals> {
-	const totals: Totals = { scanned: 0, filled: 0, sections: 0, totals: 0, errors: 0 };
+	const totals: Totals = { scanned: 0, worksFilled: 0, sectionsFilled: 0, totalsFilled: 0, errors: 0 };
 	let lastId = '';
 	for (;;) {
 		const page = await fetchCandidatePage(lastId);
@@ -112,10 +112,10 @@ async function main(): Promise<void> {
 	);
 	const totals = await run();
 	console.log(
-		`Listo. Escaneadas: ${totals.scanned} · A completar: ${totals.filled} ` +
-			`(secciones: ${totals.sections}, totales: ${totals.totals}) · Errores: ${totals.errors}`,
+		`Listo. Escaneadas: ${totals.scanned} · A completar: ${totals.worksFilled} ` +
+			`(secciones: ${totals.sectionsFilled}, totales: ${totals.totalsFilled}) · Errores: ${totals.errors}`,
 	);
-	if (!APPLY && totals.filled > 0) {
+	if (!APPLY && totals.worksFilled > 0) {
 		console.log('Dry-run: nada se escribió. Corré con --apply para persistir.');
 	}
 	if (totals.errors > 0) {
