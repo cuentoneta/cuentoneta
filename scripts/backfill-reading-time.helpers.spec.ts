@@ -1,4 +1,9 @@
-import { isEmptyPlan, planBackfill, type RawWorkForBackfill } from './backfill-reading-time.helpers';
+import {
+	isEmptyPlan,
+	planBackfill,
+	sectionReadingTimePath,
+	type RawWorkForBackfill,
+} from './backfill-reading-time.helpers';
 
 const LONG_BODY = 'palabra '.repeat(401).trim(); // 401 palabras → 3 min por sección
 const SHORT_BODY = 'Breve.'; // → 1 min (piso)
@@ -81,5 +86,21 @@ describe('planBackfill', () => {
 			4,
 		);
 		expect(isEmptyPlan(planBackfill(patched))).toBe(true);
+	});
+
+	it('propagates the error of an inconsistent work (empty body) so the orchestrator counts it', () => {
+		// `createMarkdown('')` lanza: un dato editorial inválido debe fallar en la frontera, no
+		// materializar un reading time silenciosamente. El orquestador lo captura por obra.
+		expect(() => planBackfill(work([{ _key: 'a', body: '' }]))).toThrow();
+	});
+});
+
+describe('sectionReadingTimePath', () => {
+	it('builds the keyed patch path for a well-formed _key', () => {
+		expect(sectionReadingTimePath('a1B2c3')).toBe('content[_key=="a1B2c3"].readingTime');
+	});
+
+	it('throws on a _key with unexpected characters (defense in depth)', () => {
+		expect(() => sectionReadingTimePath('x"] || *[0]')).toThrow('formato inesperado');
 	});
 });

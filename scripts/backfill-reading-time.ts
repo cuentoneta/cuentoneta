@@ -15,7 +15,13 @@
  */
 /* eslint-disable no-console */
 import { client } from '../src/api/_helpers/sanity-connector';
-import { isEmptyPlan, planBackfill, type BackfillPlan, type RawWorkForBackfill } from './backfill-reading-time.helpers';
+import {
+	isEmptyPlan,
+	planBackfill,
+	sectionReadingTimePath,
+	type BackfillPlan,
+	type RawWorkForBackfill,
+} from './backfill-reading-time.helpers';
 
 const APPLY = process.argv.includes('--apply') || process.env.BACKFILL_APPLY === 'true';
 const PAGE_SIZE = parsePageSize(process.env.BACKFILL_PAGE_SIZE);
@@ -53,7 +59,7 @@ function buildSetValues(plan: BackfillPlan): Record<string, number> {
 		values.totalReadingTime = plan.totalReadingTime;
 	}
 	for (const section of plan.sectionReadingTimes) {
-		values[`content[_key=="${section.key}"].readingTime`] = section.readingTime;
+		values[sectionReadingTimePath(section.key)] = section.readingTime;
 	}
 	return values;
 }

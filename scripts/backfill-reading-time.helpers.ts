@@ -55,6 +55,18 @@ export function isEmptyPlan(plan: BackfillPlan): boolean {
 	return plan.sectionReadingTimes.length === 0 && plan.totalReadingTime === undefined;
 }
 
+// El `_key` de Sanity es autogenerado y alfanumérico. Validarlo antes de interpolarlo en el selector
+// del patch (`content[_key=="…"]`) es defensa en profundidad: un `_key` con formato inesperado no
+// llega a alterar el path. Lanza para que el orquestador lo cuente como error de esa obra sin escribir.
+const SECTION_KEY_PATTERN = /^[A-Za-z0-9_-]+$/;
+
+export function sectionReadingTimePath(key: string): string {
+	if (!SECTION_KEY_PATTERN.test(key)) {
+		throw new Error(`_key de sección con formato inesperado: "${key}"`);
+	}
+	return `content[_key=="${key}"].readingTime`;
+}
+
 // "Falta" = ausente (null/undefined), la misma semántica que `setIfMissing` en el patch: un valor
 // ya presente no se recomputa ni se pisa.
 function isMissing(value: number | null | undefined): boolean {
