@@ -14,11 +14,11 @@ import { mapAuthor, mapResources, mapTags, urlFor } from './functions';
 import { mapMediaSources } from './media-sources.functions';
 import { markdownToSanitizedHtml } from './markdown-pipeline.functions';
 
-type RawLiteraryWork = NonNullable<LiteraryWorkBySlugQueryResult>;
-type RawSection = RawLiteraryWork['content'][number];
-type RawEpigraph = NonNullable<RawSection['epigraphs']>[number];
+export type SanityLiteraryWork = NonNullable<LiteraryWorkBySlugQueryResult>;
+type SanityLiteraryWorkSection = SanityLiteraryWork['content'][number];
+type SanityLiteraryWorkEpigraph = NonNullable<SanityLiteraryWorkSection['epigraphs']>[number];
 
-export function mapLiteraryWork(raw: RawLiteraryWork): LiteraryWork {
+export function mapLiteraryWork(raw: SanityLiteraryWork): LiteraryWork {
 	return createLiteraryWork({
 		_id: raw._id,
 		slug: raw.slug,
@@ -36,7 +36,7 @@ export function mapLiteraryWork(raw: RawLiteraryWork): LiteraryWork {
 	});
 }
 
-function mapLiteraryWorkSection(raw: RawSection, index: number): LiteraryWorkSection {
+function mapLiteraryWorkSection(raw: SanityLiteraryWorkSection, index: number): LiteraryWorkSection {
 	const body = createMarkdown(raw.body);
 	return createLiteraryWorkSection({
 		position: index,
@@ -49,7 +49,7 @@ function mapLiteraryWorkSection(raw: RawSection, index: number): LiteraryWorkSec
 
 // `raw.text ?? ''` deja que createMarkdown lance ante un epígrafe sin texto: dato editorial
 // inválido que debe fallar en la frontera, no propagarse silenciado.
-function mapLiteraryWorkEpigraph(raw: RawEpigraph): LiteraryWorkEpigraph {
+function mapLiteraryWorkEpigraph(raw: SanityLiteraryWorkEpigraph): LiteraryWorkEpigraph {
 	return createLiteraryWorkEpigraph({
 		text: markdownToSanitizedHtml(createMarkdown(raw.text ?? '')),
 		reference: raw.reference ? markdownToSanitizedHtml(createMarkdown(raw.reference)) : undefined,

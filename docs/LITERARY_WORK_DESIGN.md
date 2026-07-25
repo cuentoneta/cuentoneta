@@ -216,26 +216,28 @@ Permitir `content: []` se evaluó y descartó: degeneraría `totalReadingTime` (
 
 ## 6. Repository: puerto, adaptador y doble
 
-Contrato para Slice 1 (patrón `fetch*`/`get*` de [`sanity-acl.md`](../.claude/references/sanity-acl.md) + Qualified Implementation de [`clean-architecture.md`](../.claude/references/clean-architecture.md)):
+Contrato para Slice 1. El **repository es la frontera del ACL**: expone dominio ya mapeado (patrón "repositorio como puerto" de [`sanity-acl.md`](../.claude/references/sanity-acl.md) + Qualified Implementation de [`clean-architecture.md`](../.claude/references/clean-architecture.md)):
 
 ```typescript
 // Puerto (nombre limpio)
 interface LiteraryWorkRepository {
-	fetchBySlug(slug: string): Promise<RawLiteraryWork | null>; // crudo de GROQ, tipado por typegen
+	fetchBySlug(slug: string): Promise<LiteraryWork | null>; // dominio ya mapeado, no el shape de Sanity
 }
 
-// Adaptador real: SanityLiteraryWorkRepository implements LiteraryWorkRepository (GROQ)
+// Adaptador real: SanityLiteraryWorkRepository implements LiteraryWorkRepository
+//                 — corre la query GROQ y DELEGA en el mapper puro de _utils (Sanity → dominio)
 // Doble de test:  InMemoryLiteraryWorkRepository implements LiteraryWorkRepository
+//                 — gemelo del real: guarda el shape de Sanity y mapea al leer
 //                 (Fake* de almacenamiento — taxonomía Stub*/Fake*/Spy*, nunca Mock*)
 ```
 
-Firma del módulo backend (service, mapea vía ACL):
+Firma del módulo backend (service — solo orquesta, ya recibe dominio):
 
 ```typescript
 getLiteraryWorkBySlug(slug: string, section?: number): Promise<LiteraryWork>;
 ```
 
-El mapper del ACL (`src/api/_utils/`) es responsable de: validar invariantes contra el shape de typegen, correr el pipeline MD→HTML sobre body y epígrafes, y derivar reading times. La autoría **no requiere normalización**: la referencia al author "Anónimo" viaja al dominio como cualquier otra ([§10](#10-autoría-y-obra-anónima)).
+El mapper del ACL (`src/api/_utils/literary-work.functions.ts`, `mapLiteraryWork`) —invocado por el **repository**, no por el service— es responsable de: validar invariantes contra el shape de typegen (`SanityLiteraryWork`), correr el pipeline MD→HTML sobre body y epígrafes, y derivar reading times. El service queda como pura orquestación (not-found + proyección de `?section=N`). La autoría **no requiere normalización**: la referencia al author "Anónimo" viaja al dominio como cualquier otra ([§10](#10-autoría-y-obra-anónima)).
 
 ---
 
