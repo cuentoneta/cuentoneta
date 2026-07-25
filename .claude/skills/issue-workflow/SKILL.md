@@ -156,7 +156,7 @@ En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
 
 **Propósito:** producir un plan de implementación detallado para aprobación.
 
-1. Delegar al agente **`plan-writer`** pasándole la URL del issue, su descripción, el nombre de rama y la ruta de salida completa (`workspace/<number>/PLAN.md`). En modo worktree, adjuntar la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales". Si la Fase 0 reanudó acá con un plan ya escrito, saltear la delegación y pasar directo al resumen.
+1. Delegar al agente **`plan-writer`** pasándole la URL del issue, su descripción (el **body** recolectado en la Fase 0 → "Datos del issue"), el nombre de rama y la ruta de salida completa (`workspace/<number>/PLAN.md`). En modo worktree, adjuntar la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales". Si la Fase 0 reanudó acá con un plan ya escrito, saltear la delegación y pasar directo al resumen.
 2. El plan-writer produce `workspace/<number>/PLAN.md`.
 3. Presentar un resumen breve al usuario (objetivo, enfoque, archivos afectados, decisiones clave).
 
@@ -250,7 +250,7 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 **Modo worktree:** el worktree **no se limpia en esta fase** — se mantiene hasta que el PR mergee, para permitir reanudar la sesión (ver [Modo worktree](#modo-worktree) → "Ciclo de vida"). Push y creación del PR corren igual, con cwd ya resuelto al worktree.
 
 1. `git push -u origin feat/<number>-<kebab>`.
-2. Crear el PR con `gh pr create` (base `develop`, milestone del issue):
+2. Crear el PR con `gh pr create` (base `develop`, con `--milestone` = el milestone recolectado en la Fase 0 → "Datos del issue"):
    - **Precondición:** ningún Crítico de `workspace/<number>/CODE_REVIEW.md` ni `workspace/<number>/SECURITY_REVIEW.md` sin **disposición** (definida en la pausa de la Fase 4). Si lo hay, no crear el PR: volver a la Fase 5, o a la vía "Disponer y ship" de la Fase 4.
    - Título: `[#<issue>] - <título del issue>`.
    - Cuerpo (en **español**):
@@ -267,7 +267,7 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 
    - **El cuerpo termina en el plan de pruebas (restricción dura):** sin leyenda de atribución de agente (`🤖 Generated with …`, `Co-Authored-By: Claude …`, `Claude-Session: …`). Ver [`coding-agent-policies.md`](../../references/coding-agent-policies.md) Sección 2.
    - **El PR DEBE enlazar su issue de origen (restricción dura):** el cuerpo debe contener un keyword de cierre — `Closes #<issue>` (o `Fixes`/`Resolves`). El prefijo `[#<issue>]` del título **no** crea el enlace; el keyword en el cuerpo es obligatorio.
-   - Si el issue es **hijo de un epic**, agregar además una línea `Parte de #<epic>.` (sin keyword de cierre) para cross-linkear el epic sin auto-cerrarlo.
+   - Si el issue es **hijo de un epic** — el **parent detectado en la Fase 0** (vía el comando GraphQL de "Datos del issue") devolvió un número —, agregar además una línea `Parte de #<epic>.` (sin keyword de cierre) para cross-linkear el epic sin auto-cerrarlo.
 
 3. Presentar la URL del PR al usuario.
 4. Escanear la sesión por ítems **fuera de alcance** (fixes/hallazgos/mejoras más allá del issue). Si hay:
