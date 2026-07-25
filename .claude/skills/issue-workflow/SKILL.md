@@ -190,7 +190,7 @@ No avanzar a la Fase 3 sin una respuesta "Aprobar".
 
 **Propósito:** verificar que pasen los gates de CI y correr los agentes de review.
 
-1. Correr localmente (con `pnpm`, nunca `nx` directo) los **gates de CI** definidos en la sección [Comandos comunes](../../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**). `test:e2e` y `studio-build` son costosos de correr en cada iteración: corré `test:e2e` si el cambio toca flujos E2E y `studio-build` si toca `cms/`; el resto, siempre.
+1. Correr localmente (con `pnpm`, nunca `nx` directo) los **gates de CI** definidos en la sección [Comandos comunes](../../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**). `test:e2e` y `studio-build` son costosos de correr en cada iteración: corré `test:e2e` si el diff toca `e2e/**`, `src/app/pages/**`, rutas/navegación (`app.routes*.ts`) o superficie SSR/SEO (meta tags, JSON-LD, sitemap); `studio-build` si toca `cms/`; el resto, siempre.
    - **En modo worktree**, anteponer `NX_NO_CLOUD=true NX_DAEMON=false` a todo gate de Nx y reemplazar `pnpm typecheck` por `pnpm exec tsc -p tsconfig.typecheck.json --noEmit` — ver [Modo worktree](#modo-worktree) → "Ajustes transversales" (evita falsos rojos de teardown y resultados stale del daemon).
    - **Lanzalos concurrentemente**, no uno tras otro: son independientes entre sí y así los corre CI (todos los jobs cuelgan de `setup` y van en runners separados). En serie tardan la **suma**; en paralelo, lo que tarde el más lento (medido: 105s → 29s).
    - Si alguno falla: reportar cuál, diagnosticar, arreglar, commitear el fix (reglas de Fase 3) y re-correr **solo el que falló** mientras el resto sigue verde; re-correr todo solo si el fix toca superficie compartida.
