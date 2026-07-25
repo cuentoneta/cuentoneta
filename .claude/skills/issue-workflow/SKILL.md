@@ -32,6 +32,21 @@ Corre siempre, antes de cualquier otra señal:
 3. Sin declaración ni worktree previo: pausar con `AskUserQuestion` — ver [Modo worktree](#modo-worktree) → "Cuándo se activa". La respuesta fija el entorno para el resto de la sesión (Fase 1 en adelante).
 4. Si el entorno resuelto es worktree y el worktree ya existía (pasos 1-2): evaluar además la señal de limpieza `gh pr list --head feat/<number>-<kebab> --state merged` — ver [Modo worktree](#modo-worktree) → "Ciclo de vida".
 
+### Datos del issue
+
+La Fase 0 corre en **toda** invocación (fresca o reanudación), así que es acá —no en la Fase 1, que se saltea al reanudar a la Fase 2/4/5— donde se recolectan **una sola vez** los datos del issue que las fases posteriores necesitan. No se persisten en `workspace/`: se re-fetchean en cada invocación.
+
+1. Datos base: `gh issue view <issue-url> --json number,title,body,milestone,labels` — número, título, **body** (la descripción que la Fase 2 le pasa al `plan-writer`), `milestone` (objeto → `.milestone.title`) y `labels` (array → `.labels[].name`).
+2. Parent epic (para la línea `Parte de #<epic>.` de la Fase 6): vía GraphQL, que es la vía confiable —el campo `.parent` del endpoint REST `repos/{owner}/{repo}/issues/{n}` devuelve `null` (no poblado)—:
+
+   ```bash
+   gh api graphql -f query='query { repository(owner:"cuentoneta", name:"cuentoneta") { issue(number:<N>) { parent { number } } } }' --jq '.data.repository.issue.parent.number'
+   ```
+
+   Devuelve el número del epic, o vacío (exit 0) si el issue no tiene parent.
+
+Estos datos alimentan la Fase 1 (reporte + nombre de rama), la Fase 2 (body → `plan-writer`) y la Fase 6 (milestone → `gh pr create --milestone`; parent → `Parte de #<epic>.`).
+
 ### Señales de reanudación
 
 Con el entorno ya resuelto (y el cwd ya en el worktree si corresponde), relevar con el número de issue extraído de la URL:
