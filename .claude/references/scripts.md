@@ -16,6 +16,7 @@
 
 - `set-environment.ts` — genera environments de Angular (`pnpm config`).
 - `delete-unused-assets.ts` — borra assets huérfanos en Sanity (`pnpm delete-unused-assets`).
+- `backfill-reading-time.ts` — puebla los reading time faltantes de las obras `LiteraryWork` en Sanity (`readingTime` por sección + `totalReadingTime`), recorriendo por cursor y persistiendo idempotentemente con `setIfMissing` (`pnpm backfill-reading-time`). **Dry-run por defecto**; `--apply` (o `BACKFILL_APPLY=true`) persiste. La lógica pura de planificación vive en `scripts/backfill-reading-time.helpers.ts` (con su spec). Precondición de runtime: los campos deben estar desplegados en el schema del dataset objetivo.
 - `remove-all-unpublished-drafts.ts` — limpia drafts no publicados (operacional, no en package.json).
 - `fix-index-file-name.mjs` — postbuild: renombra el index SSR.
 - `vercel-environments.model.ts` — tipos compartidos con `cms/set-environment.ts`.

@@ -42,25 +42,26 @@
 
 Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven targets de Nx del proyecto `@cuentoneta/app`.
 
-| Comando                                   | Descripción                                                                                                                          |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `pnpm install`                            | Instala dependencias                                                                                                                 |
-| `pnpm dev`                                | Dev server (SSR) en desarrollo                                                                                                       |
-| `pnpm build`                              | Build de producción                                                                                                                  |
-| `pnpm lint`                               | ESLint sobre `src` y `e2e`                                                                                                           |
-| `pnpm check:agents`                       | Valida la integridad de `.claude/` (frontmatter de agentes + anclas y rutas de las referencias) — reproduce el gate `check-agents`   |
-| `pnpm stylelint`                          | Stylelint sobre CSS                                                                                                                  |
-| `pnpm typecheck`                          | Type-check estricto (`tsc --noEmit`)                                                                                                 |
-| `pnpm test`                               | Tests unitarios (Vitest)                                                                                                             |
-| `pnpm test:watch`                         | Tests en watch                                                                                                                       |
-| `pnpm test:e2e`                           | E2E (Playwright)                                                                                                                     |
-| `pnpm seo:smoke`                          | Smoke manual post-deploy de indexado (invariantes SSR sobre `BASE_URL`, muestreando el sitemap)                                      |
-| `pnpm storybook` / `pnpm storybook:build` | Storybook dev / build                                                                                                                |
-| `pnpm sanity:dev`                         | Studio de Sanity (`@cuentoneta/cms`)                                                                                                 |
-| `pnpm sanity:build`                       | Build del Studio (`sanity build`) — reproduce en local el gate de CI `studio-build`                                                  |
-| `pnpm sanity:extract-schema`              | Extrae el schema de Sanity                                                                                                           |
-| `pnpm sanity:run-typegen-generator`       | Genera tipos a partir del schema                                                                                                     |
-| `pnpm exec sanity migration run <slug>`   | Corre una migración de datos (desde `cms/`; dry-run por defecto) → [`sanity-migrations.md`](.claude/references/sanity-migrations.md) |
+| Comando                                   | Descripción                                                                                                                                             |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm install`                            | Instala dependencias                                                                                                                                    |
+| `pnpm dev`                                | Dev server (SSR) en desarrollo                                                                                                                          |
+| `pnpm build`                              | Build de producción                                                                                                                                     |
+| `pnpm lint`                               | ESLint sobre `src` y `e2e`                                                                                                                              |
+| `pnpm check:agents`                       | Valida la integridad de `.claude/` (frontmatter de agentes + anclas y rutas de las referencias) — reproduce el gate `check-agents`                      |
+| `pnpm stylelint`                          | Stylelint sobre CSS                                                                                                                                     |
+| `pnpm typecheck`                          | Type-check estricto (`tsc --noEmit`)                                                                                                                    |
+| `pnpm test`                               | Tests unitarios (Vitest)                                                                                                                                |
+| `pnpm test:watch`                         | Tests en watch                                                                                                                                          |
+| `pnpm test:e2e`                           | E2E (Playwright)                                                                                                                                        |
+| `pnpm seo:smoke`                          | Smoke manual post-deploy de indexado (invariantes SSR sobre `BASE_URL`, muestreando el sitemap)                                                         |
+| `pnpm backfill-reading-time`              | Puebla los reading time faltantes de `LiteraryWork` en Sanity (dry-run por defecto; `--apply` persiste) → [`scripts.md`](.claude/references/scripts.md) |
+| `pnpm storybook` / `pnpm storybook:build` | Storybook dev / build                                                                                                                                   |
+| `pnpm sanity:dev`                         | Studio de Sanity (`@cuentoneta/cms`)                                                                                                                    |
+| `pnpm sanity:build`                       | Build del Studio (`sanity build`) — reproduce en local el gate de CI `studio-build`                                                                     |
+| `pnpm sanity:extract-schema`              | Extrae el schema de Sanity                                                                                                                              |
+| `pnpm sanity:run-typegen-generator`       | Genera tipos a partir del schema                                                                                                                        |
+| `pnpm exec sanity migration run <slug>`   | Corre una migración de datos (desde `cms/`; dry-run por defecto) → [`sanity-migrations.md`](.claude/references/sanity-migrations.md)                    |
 
 **Gates de CI** (deben quedar verdes en cada PR): `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`, `studio-build`, `guard-config`, `check-agents`.
 
