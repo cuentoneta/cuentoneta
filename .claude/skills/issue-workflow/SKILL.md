@@ -40,12 +40,12 @@ La Fase 0 corre en **toda** invocación (fresca o reanudación), así que es ac�
 2. Parent epic (para la línea `Parte de #<epic>.` de la Fase 6): vía GraphQL, que es la vía confiable —el campo `.parent` del endpoint REST `repos/{owner}/{repo}/issues/{n}` devuelve `null` (no poblado)—:
 
    ```bash
-   gh api graphql -f query='query { repository(owner:"cuentoneta", name:"cuentoneta") { issue(number:<N>) { parent { number } } } }' --jq '.data.repository.issue.parent.number'
+   gh api graphql -f query='query { repository(owner:"cuentoneta", name:"cuentoneta") { issue(number:<number>) { parent { number } } } }' --jq '.data.repository.issue.parent.number // empty'
    ```
 
-   Devuelve el número del epic, o vacío (exit 0) si el issue no tiene parent.
+   El `// empty` garantiza salida **vacía** (no el literal `null`) cuando el issue no tiene parent, para no generar un `Parte de #null.` en la Fase 6.
 
-Estos datos alimentan la Fase 1 (reporte + nombre de rama), la Fase 2 (body → `plan-writer`) y la Fase 6 (milestone → `gh pr create --milestone`; parent → `Parte de #<epic>.`).
+Estos datos alimentan la Fase 1 (reporte + nombre de rama), la Fase 2 (body → `plan-writer`) y la Fase 6 (milestone → `gh pr create --milestone`; labels → `gh pr create --label`; parent → `Parte de #<epic>.`).
 
 ### Señales de reanudación
 
@@ -127,7 +127,7 @@ El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehac
 2. `git worktree add .claude/worktrees/<number> -b feat/<number>-<kebab> origin/develop`. Si la Fase 0 detectó una rama `feat/<number>-*` ya existente en la raíz sin worktree propio (creada por una sesión previa en modo raíz), adjuntar el worktree a esa rama en vez de crear una nueva: `git worktree add .claude/worktrees/<number> feat/<number>-<kebab>` (sin `-b`).
 3. Cambiar la sesión al worktree con la herramienta `EnterWorktree` del harness (`path: .claude/worktrees/<number>`). Desde acá el cwd de la sesión —y el de cualquier subagente delegado— ya es el worktree.
 4. Setup de dependencias: `pnpm install` seguido de `pnpm run config` (genera `src/app/environments/environment.ts` y `.env`; el hook `postinstall` ya invoca `pnpm run config`, pero se corre explícito para no depender de que dispare en todos los entornos).
-5. Reportar al usuario los mismos campos que la Fase 1 paso 5 (número, título, milestone, parent epic, rama) más la **ruta del worktree**.
+5. Reportar al usuario los mismos campos que la Fase 1 paso 5, más la **ruta del worktree**.
 
 En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
 
@@ -250,7 +250,7 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 **Modo worktree:** el worktree **no se limpia en esta fase** — se mantiene hasta que el PR mergee, para permitir reanudar la sesión (ver [Modo worktree](#modo-worktree) → "Ciclo de vida"). Push y creación del PR corren igual, con cwd ya resuelto al worktree.
 
 1. `git push -u origin feat/<number>-<kebab>`.
-2. Crear el PR con `gh pr create` (base `develop`, con `--milestone` = el milestone recolectado en la Fase 0 → "Datos del issue"):
+2. Crear el PR con `gh pr create` (base `develop`, con `--milestone` = el milestone recolectado en la Fase 0 → "Datos del issue", y `--label` por cada label del issue recolectado ahí, para que el PR herede la categorización del issue):
    - **Precondición:** ningún Crítico de `workspace/<number>/CODE_REVIEW.md` ni `workspace/<number>/SECURITY_REVIEW.md` sin **disposición** (definida en la pausa de la Fase 4). Si lo hay, no crear el PR: volver a la Fase 5, o a la vía "Disponer y ship" de la Fase 4.
    - Título: `[#<issue>] - <título del issue>`.
    - Cuerpo (en **español**):
