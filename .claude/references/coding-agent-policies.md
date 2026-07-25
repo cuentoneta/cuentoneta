@@ -211,6 +211,19 @@ Independientemente de lo anterior, todo PR debe dejar verdes los gates de CI def
 
 Proponé cambios vía issue en `cuentoneta/cuentoneta`. Las enmiendas requieren aprobación explícita del usuario antes de mergear al documento. Cada PR que modifique este archivo debe actualizar la fecha de "Última actualización" del pie de página.
 
+## Sección 8 — Disciplina de comandos Bash: nunca prefijar con `cd`
+
+Regla operativa para todo agente con acceso a Bash en este repo: **nunca prefijar un comando con `cd`**. El working directory ya está resuelto al invocar al agente — la raíz del repo, o la del worktree de la sesión. Prefijar con `cd <ruta> && ...` cambia la firma del comando frente al sistema de permisos del harness y obliga a aprobar manualmente cada ejecución.
+
+- ✅ `git diff origin/develop...HEAD`
+- ✅ `pnpm lint`
+- ❌ `cd /ruta/al/proyecto && git diff origin/develop...HEAD`
+- ❌ `cd /ruta/al/proyecto && pnpm lint`
+
+Aplica a TODOS los CLIs: git, pnpm, gh y cualquier otro. Usar **siempre `pnpm`** para scripts del repo — `npm`/`yarn` están bloqueados por `only-allow`.
+
+Las definiciones de agentes (`.claude/agents/*.md`) enuncian la regla en una línea y remiten acá — no duplican los ejemplos, para que esta sección sea la única fuente.
+
 ---
 
-_Última actualización: 2026-07-21. Versión inicial en #1495 (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) agregada en #1499 y ampliada en #1542 (visibilidad de API y reemplazos canónicos); regla de story intercambiable para estados de carga agregada en #1581; regla de child issues reales en epics agregada en #1843; "Gates de CI" convertida a remisión a CLAUDE.md en #1844; punteros a secciones de CLAUDE.md corregidos a headings reales en #1846; prohibición de `git add -A` agregada tras un incidente en el flujo de #1882._
+_Última actualización: 2026-07-24. Versión inicial en #1495 (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) agregada en #1499 y ampliada en #1542 (visibilidad de API y reemplazos canónicos); regla de story intercambiable para estados de carga agregada en #1581; regla de child issues reales en epics agregada en #1843; "Gates de CI" convertida a remisión a CLAUDE.md en #1844; punteros a secciones de CLAUDE.md corregidos a headings reales en #1846; prohibición de `git add -A` agregada tras un incidente en el flujo de #1882; Sección 8 (regla anti-`cd`) consolidada desde las tres copias divergentes de los agentes en #1920._

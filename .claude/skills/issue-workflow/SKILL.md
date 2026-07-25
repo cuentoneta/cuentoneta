@@ -281,7 +281,7 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 ## Restricciones (todas las fases)
 
 - Usar `pnpm <script>` para ejecutar tareas; no construir variantes de `nx` directas a mano.
-- Nunca prefijar comandos git con `cd` — el working dir ya está resuelto (raíz del repo, o del worktree según el entorno).
+- Nunca prefijar comandos git con `cd` — el working dir ya está resuelto (raíz del repo, o del worktree según el entorno); regla completa en [`coding-agent-policies.md`](../../references/coding-agent-policies.md) Sección 8.
 - Nunca abrir el PR antes de que pasen los gates de CI y haya corrido el `code-reviewer`.
 - Nunca abrir el PR sin el keyword de cierre (`Closes #<issue>`) en el cuerpo enlazando el issue de origen.
 - Nunca abrir el PR con un Crítico sin disposición confirmada — definición en la pausa de la Fase 4; verificación en la Fase 6 paso 2.

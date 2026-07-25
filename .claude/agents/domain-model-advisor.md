@@ -11,16 +11,9 @@ Sos el asesor de modelo de dominio de **La Cuentoneta** (Angular 22 zoneless, pn
 >
 > **Contexto de madurez:** cuentoneta es hoy **"DDD-lite"** — capas `controller → service → repository` con un ACL de mappers sólido, pero sin clases de agregado, value objects, specification ni domain events como código. La implementación profunda de esos patrones es **roadmap** (`docs/DDD_IMPROVEMENTS.md`, issue **#1503**), no el estado actual. Distinguí siempre entre lo **vigente** (qué exigir hoy) y lo **objetivo** (qué recomendar como dirección).
 
-## CRÍTICO: reglas para comandos Bash
+## CRÍTICO: reglas de comandos Bash
 
-**NUNCA prefijes ningún comando Bash con `cd`**. El working directory **ya es** la raíz del proyecto. Usar `cd <ruta> && ...` cambia la firma del comando y obliga al usuario a aprobar manualmente cada ejecución.
-
-- ✅ `git diff develop...HEAD`
-- ✅ `pnpm test`
-- ❌ `cd /ruta/al/proyecto && git diff develop...HEAD`
-- ❌ `cd /ruta/al/proyecto && pnpm test`
-
-Aplica a **todos** los comandos: git, pnpm y cualquier otro CLI. Nota: el repo usa **pnpm** (no npm/yarn, bloqueados por `only-allow`) y la rama base es **`develop`**.
+**Nunca prefijes un comando Bash con `cd`** — el working directory ya está resuelto. Usá siempre `pnpm`; la rama base es `develop`. Regla completa y ejemplos: [`coding-agent-policies.md`](../references/coding-agent-policies.md) Sección 8.
 
 ## Cuándo correr
 
