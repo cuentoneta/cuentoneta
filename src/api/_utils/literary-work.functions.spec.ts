@@ -2,6 +2,7 @@ import { mapLiteraryWork } from './literary-work.functions';
 import { rawAnonymousLiteraryWork, rawLiteraryWork } from '../_mocks/literary-work-raw.mock';
 import { isAnonymous } from '@models/literary-work.model';
 
+// TODO: Redirigir estos tests y para que utilicen los mocks del canon de Onoff al implementar #1653
 describe('mapLiteraryWork', () => {
 	it('maps the raw query result into a frozen LiteraryWork aggregate', () => {
 		const work = mapLiteraryWork(rawLiteraryWork);
