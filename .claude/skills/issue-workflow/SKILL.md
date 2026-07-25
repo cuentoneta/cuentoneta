@@ -95,15 +95,16 @@ El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehac
 
 **Propósito:** crear una rama de feature limpia desde `develop` actualizado — en el entorno resuelto por la Fase 0 (worktree o raíz).
 
-1. `gh issue view <issue-url> --json number,title` para extraer número y título.
+1. Usar el número y el título ya recolectados en la Fase 0 → "Datos del issue" (no re-fetchear).
 2. Derivar el nombre de rama (convención del repo):
    - Formato: **`feat/<number>-<titulo-en-kebab-case>`**.
    - Transformación: minúsculas, espacios y no-alfanuméricos → guiones, colapsar guiones consecutivos, recortar guiones de borde, truncar a ~60 caracteres en un límite de palabra.
 3. **Modo raíz**:
+   - **Precondición — working tree limpio:** `git status --short`. Si el árbol no está limpio, no hacer checkout: pausar con `AskUserQuestion` (`header`: `Working tree`; `question` que enumere los archivos sucios; opciones —recomendada primero— **Detener** —el usuario commitea/stashea/descarta y reinvoca— / **Stashear y seguir** —`git stash` y continuar—; "Other" cubre instrucciones libres). Solo aplica en modo raíz: en modo worktree, `git worktree add … origin/develop` crea un checkout nuevo sin tocar el árbol principal.
    - `git checkout develop && git pull` para asegurar la base actualizada.
    - `git checkout -b feat/<number>-<kebab>`. Si la Fase 0 detectó la rama existente y el usuario eligió **rehacer**, confirmar la reutilización y usar `git checkout feat/<number>-<kebab>` (sin `-b`).
 4. **Modo worktree:** seguir [Modo worktree](#modo-worktree) → "Mecánica de creación" (`git fetch origin`, `git worktree add`, `EnterWorktree`, `pnpm install` + `pnpm run config`).
-5. Reportar al usuario: número, título, nombre de rama y, en modo worktree, la ruta del worktree.
+5. Reportar al usuario: número, título, **milestone**, **parent epic** (o "sin epic"), nombre de rama y, en modo worktree, la ruta del worktree.
 
 ---
 
@@ -126,7 +127,7 @@ El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehac
 2. `git worktree add .claude/worktrees/<number> -b feat/<number>-<kebab> origin/develop`. Si la Fase 0 detectó una rama `feat/<number>-*` ya existente en la raíz sin worktree propio (creada por una sesión previa en modo raíz), adjuntar el worktree a esa rama en vez de crear una nueva: `git worktree add .claude/worktrees/<number> feat/<number>-<kebab>` (sin `-b`).
 3. Cambiar la sesión al worktree con la herramienta `EnterWorktree` del harness (`path: .claude/worktrees/<number>`). Desde acá el cwd de la sesión —y el de cualquier subagente delegado— ya es el worktree.
 4. Setup de dependencias: `pnpm install` seguido de `pnpm run config` (genera `src/app/environments/environment.ts` y `.env`; el hook `postinstall` ya invoca `pnpm run config`, pero se corre explícito para no depender de que dispare en todos los entornos).
-5. Reportar al usuario: número, título, rama y **ruta del worktree**.
+5. Reportar al usuario los mismos campos que la Fase 1 paso 5 (número, título, milestone, parent epic, rama) más la **ruta del worktree**.
 
 En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
 
