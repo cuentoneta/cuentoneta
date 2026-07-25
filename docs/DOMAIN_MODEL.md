@@ -243,7 +243,7 @@ interface LiteraryWork {
 
 	// Recursos Multimedia
 	resources: Resource[]; // Enlaces a recursos externos
-	mediaSources: Media[]; // Contenido multimedia asociado (contrato Media del ACL, como Story.media)
+	mediaSources: Media[]; // Contenido multimedia asociado
 }
 
 interface LiteraryWorkSection {
