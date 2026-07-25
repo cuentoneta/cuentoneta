@@ -32,6 +32,21 @@ Corre siempre, antes de cualquier otra señal:
 3. Sin declaración ni worktree previo: pausar con `AskUserQuestion` — ver [Modo worktree](#modo-worktree) → "Cuándo se activa". La respuesta fija el entorno para el resto de la sesión (Fase 1 en adelante).
 4. Si el entorno resuelto es worktree y el worktree ya existía (pasos 1-2): evaluar además la señal de limpieza `gh pr list --head feat/<number>-<kebab> --state merged` — ver [Modo worktree](#modo-worktree) → "Ciclo de vida".
 
+### Datos del issue
+
+La Fase 0 corre en **toda** invocación (fresca o reanudación), así que es acá —no en la Fase 1, que se saltea al reanudar a la Fase 2/4/5— donde se recolectan **una sola vez** los datos del issue que las fases posteriores necesitan. No se persisten en `workspace/`: se re-fetchean en cada invocación.
+
+1. Datos base: `gh issue view <issue-url> --json number,title,body,milestone,labels` — número, título, **body** (la descripción que la Fase 2 le pasa al `plan-writer`), `milestone` (objeto → `.milestone.title`) y `labels` (array → `.labels[].name`).
+2. Parent epic (para la línea `Parte de #<epic>.` de la Fase 6): vía GraphQL, que es la vía confiable —el campo `.parent` del endpoint REST `repos/{owner}/{repo}/issues/{n}` devuelve `null` (no poblado)—:
+
+   ```bash
+   gh api graphql -f query='query { repository(owner:"cuentoneta", name:"cuentoneta") { issue(number:<number>) { parent { number } } } }' --jq '.data.repository.issue.parent.number // empty'
+   ```
+
+   El `// empty` garantiza salida **vacía** (no el literal `null`) cuando el issue no tiene parent, para no generar un `Parte de #null.` en la Fase 6.
+
+Estos datos alimentan la Fase 1 (reporte + nombre de rama), la Fase 2 (body → `plan-writer`) y la Fase 6 (milestone → `gh pr create --milestone`; labels → `gh pr create --label`; parent → `Parte de #<epic>.`).
+
 ### Señales de reanudación
 
 Con el entorno ya resuelto (y el cwd ya en el worktree si corresponde), relevar con el número de issue extraído de la URL:
@@ -80,15 +95,16 @@ El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehac
 
 **Propósito:** crear una rama de feature limpia desde `develop` actualizado — en el entorno resuelto por la Fase 0 (worktree o raíz).
 
-1. `gh issue view <issue-url> --json number,title` para extraer número y título.
+1. Usar el número y el título ya recolectados en la Fase 0 → "Datos del issue" (no re-fetchear).
 2. Derivar el nombre de rama (convención del repo):
    - Formato: **`feat/<number>-<titulo-en-kebab-case>`**.
    - Transformación: minúsculas, espacios y no-alfanuméricos → guiones, colapsar guiones consecutivos, recortar guiones de borde, truncar a ~60 caracteres en un límite de palabra.
 3. **Modo raíz**:
+   - **Precondición — working tree limpio:** `git status --short`. Si el árbol no está limpio, no hacer checkout: pausar con `AskUserQuestion` (`header`: `Working tree`; `question` que enumere los archivos sucios; opciones —recomendada primero— **Detener** —el usuario commitea/stashea/descarta y reinvoca— / **Stashear y seguir** —`git stash` y continuar—; "Other" cubre instrucciones libres). Solo aplica en modo raíz: en modo worktree, `git worktree add … origin/develop` crea un checkout nuevo sin tocar el árbol principal.
    - `git checkout develop && git pull` para asegurar la base actualizada.
    - `git checkout -b feat/<number>-<kebab>`. Si la Fase 0 detectó la rama existente y el usuario eligió **rehacer**, confirmar la reutilización y usar `git checkout feat/<number>-<kebab>` (sin `-b`).
 4. **Modo worktree:** seguir [Modo worktree](#modo-worktree) → "Mecánica de creación" (`git fetch origin`, `git worktree add`, `EnterWorktree`, `pnpm install` + `pnpm run config`).
-5. Reportar al usuario: número, título, nombre de rama y, en modo worktree, la ruta del worktree.
+5. Reportar al usuario: número, título, **milestone**, **parent epic** (o "sin epic"), nombre de rama y, en modo worktree, la ruta del worktree.
 
 ---
 
@@ -111,7 +127,7 @@ El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehac
 2. `git worktree add .claude/worktrees/<number> -b feat/<number>-<kebab> origin/develop`. Si la Fase 0 detectó una rama `feat/<number>-*` ya existente en la raíz sin worktree propio (creada por una sesión previa en modo raíz), adjuntar el worktree a esa rama en vez de crear una nueva: `git worktree add .claude/worktrees/<number> feat/<number>-<kebab>` (sin `-b`).
 3. Cambiar la sesión al worktree con la herramienta `EnterWorktree` del harness (`path: .claude/worktrees/<number>`). Desde acá el cwd de la sesión —y el de cualquier subagente delegado— ya es el worktree.
 4. Setup de dependencias: `pnpm install` seguido de `pnpm run config` (genera `src/app/environments/environment.ts` y `.env`; el hook `postinstall` ya invoca `pnpm run config`, pero se corre explícito para no depender de que dispare en todos los entornos).
-5. Reportar al usuario: número, título, rama y **ruta del worktree**.
+5. Reportar al usuario los mismos campos que la Fase 1 paso 5, más la **ruta del worktree**.
 
 En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
 
@@ -140,7 +156,7 @@ En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
 
 **Propósito:** producir un plan de implementación detallado para aprobación.
 
-1. Delegar al agente **`plan-writer`** pasándole la URL del issue, su descripción, el nombre de rama y la ruta de salida completa (`workspace/<number>/PLAN.md`). En modo worktree, adjuntar la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales". Si la Fase 0 reanudó acá con un plan ya escrito, saltear la delegación y pasar directo al resumen.
+1. Delegar al agente **`plan-writer`** pasándole la URL del issue, su descripción (el **body** recolectado en la Fase 0 → "Datos del issue"), el nombre de rama y la ruta de salida completa (`workspace/<number>/PLAN.md`). En modo worktree, adjuntar la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales". Si la Fase 0 reanudó acá con un plan ya escrito, saltear la delegación y pasar directo al resumen.
 2. El plan-writer produce `workspace/<number>/PLAN.md`.
 3. Presentar un resumen breve al usuario (objetivo, enfoque, archivos afectados, decisiones clave).
 
@@ -234,7 +250,7 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 **Modo worktree:** el worktree **no se limpia en esta fase** — se mantiene hasta que el PR mergee, para permitir reanudar la sesión (ver [Modo worktree](#modo-worktree) → "Ciclo de vida"). Push y creación del PR corren igual, con cwd ya resuelto al worktree.
 
 1. `git push -u origin feat/<number>-<kebab>`.
-2. Crear el PR con `gh pr create` (base `develop`, milestone del issue):
+2. Crear el PR con `gh pr create` (base `develop`, con `--milestone` = el milestone recolectado en la Fase 0 → "Datos del issue", y `--label` por cada label del issue recolectado ahí, para que el PR herede la categorización del issue):
    - **Precondición:** ningún Crítico de `workspace/<number>/CODE_REVIEW.md` ni `workspace/<number>/SECURITY_REVIEW.md` sin **disposición** (definida en la pausa de la Fase 4). Si lo hay, no crear el PR: volver a la Fase 5, o a la vía "Disponer y ship" de la Fase 4.
    - Título: `[#<issue>] - <título del issue>`.
    - Cuerpo (en **español**):
@@ -251,7 +267,7 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 
    - **El cuerpo termina en el plan de pruebas (restricción dura):** sin leyenda de atribución de agente (`🤖 Generated with …`, `Co-Authored-By: Claude …`, `Claude-Session: …`). Ver [`coding-agent-policies.md`](../../references/coding-agent-policies.md) Sección 2.
    - **El PR DEBE enlazar su issue de origen (restricción dura):** el cuerpo debe contener un keyword de cierre — `Closes #<issue>` (o `Fixes`/`Resolves`). El prefijo `[#<issue>]` del título **no** crea el enlace; el keyword en el cuerpo es obligatorio.
-   - Si el issue es **hijo de un epic**, agregar además una línea `Parte de #<epic>.` (sin keyword de cierre) para cross-linkear el epic sin auto-cerrarlo.
+   - Si el issue es **hijo de un epic** — el **parent detectado en la Fase 0** (vía el comando GraphQL de "Datos del issue") devolvió un número —, agregar además una línea `Parte de #<epic>.` (sin keyword de cierre) para cross-linkear el epic sin auto-cerrarlo.
 
 3. Presentar la URL del PR al usuario.
 4. Escanear la sesión por ítems **fuera de alcance** (fixes/hallazgos/mejoras más allá del issue). Si hay:
