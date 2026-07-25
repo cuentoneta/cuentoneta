@@ -1,4 +1,11 @@
-import { countWords, createReadingTime, deriveReadingTime, sumReadingTimes } from './reading-time.model';
+import {
+	countWords,
+	createReadingTime,
+	deriveReadingTime,
+	deriveSectionReadingTime,
+	deriveTotalReadingTime,
+	sumReadingTimes,
+} from './reading-time.model';
 import { createMarkdown } from './markdown.model';
 import { createWordCount } from './word-count.model';
 
@@ -70,5 +77,30 @@ describe('sumReadingTimes', () => {
 
 	it('returns at least 1 minute for an empty list', () => {
 		expect(sumReadingTimes([])).toBe(1);
+	});
+});
+
+describe('deriveSectionReadingTime', () => {
+	it('composes countWords and deriveReadingTime for a section body', () => {
+		expect(deriveSectionReadingTime(createMarkdown('palabra '.repeat(401).trim()))).toBe(3);
+	});
+
+	it('returns at least 1 minute for a short section', () => {
+		expect(deriveSectionReadingTime(createMarkdown('Una obra corta.'))).toBe(1);
+	});
+});
+
+describe('deriveTotalReadingTime', () => {
+	it('equals the single section time for a one-section work', () => {
+		expect(deriveTotalReadingTime([createMarkdown('palabra '.repeat(401).trim())])).toBe(3);
+	});
+
+	it('sums the per-section reading times of a multi-section work', () => {
+		const body = createMarkdown('palabra '.repeat(401).trim()); // 3 min cada una
+		expect(deriveTotalReadingTime([body, body])).toBe(6);
+	});
+
+	it('returns at least 1 minute for a work whose sections are all very short', () => {
+		expect(deriveTotalReadingTime([createMarkdown('Breve.')])).toBe(1);
 	});
 });

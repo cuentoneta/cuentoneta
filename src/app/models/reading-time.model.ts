@@ -60,3 +60,16 @@ export function countWords(markdown: Markdown): WordCount {
 		.filter((word) => /[\p{L}\p{N}]/u.test(word));
 	return createWordCount(words.length);
 }
+
+// Composición canónica body → palabras → minutos. Fuente única del algoritmo de reading time,
+// compartida por el backfill batch (scripts/) y el self-healing on-read del backend: ambos deben
+// producir el mismo número para una misma sección.
+export function deriveSectionReadingTime(body: Markdown): ReadingTime {
+	return deriveReadingTime(countWords(body));
+}
+
+// Total de la obra: suma de los tiempos por sección (mínimo 1). Es la suma pura del texto; el
+// readingTimeOverride editorial no interviene acá — su precedencia vive en la factory de dominio.
+export function deriveTotalReadingTime(bodies: readonly Markdown[]): ReadingTime {
+	return sumReadingTimes(bodies.map(deriveSectionReadingTime));
+}
