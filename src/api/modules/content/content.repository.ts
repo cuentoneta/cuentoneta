@@ -7,7 +7,7 @@ import {
 	landingPageListQuery,
 	latestLandingPageReferencesQuery,
 	rotatingContentQuery,
-} from '../../_queries/content.query';
+} from '@queries/content.query';
 import {
 	LandingPageContentQueryResult,
 	LandingPageListQueryResult,

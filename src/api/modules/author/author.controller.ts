@@ -3,7 +3,7 @@ import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 
 // Esquemas de zod
-import { slugSchema } from '../../schemas/common.schemas';
+import { slugSchema } from '@schemas/common.schemas';
 
 // Funciones de service
 import { getAllAuthors, getAuthorBySlug } from './author.service';
