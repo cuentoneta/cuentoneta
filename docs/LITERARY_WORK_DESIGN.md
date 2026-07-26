@@ -86,7 +86,7 @@ export interface LiteraryWorkNavigationTeaserWithAuthors extends LiteraryWorkBas
 
 - `StoryTeaser` **vacía** su contenido (`paragraphs: []`); `LiteraryWorkTeaser` expone la **primera sección completa** (`teaserSection`) — decisión del epic: el teaser de una obra es su primera sección.
 - `Story.author` es exactamente uno; `LiteraryWork.authors` es 1..N (el anonimato se expresa con el author "Anónimo", ver [§10](#10-autoría-y-obra-anónima)).
-- `Story.approximateReadingTime` viene persistido del CMS (lo entra el editor); `LiteraryWork.totalReadingTime` es **derivado del texto** (suma de los `readingTime` de sus secciones, ensamblado en la factory) y **materializado write-once** en Sanity — ver [§5](#5-helper-de-reading-time).
+- `Story.approximateReadingTime` viene persistido del CMS (lo entra el editor); `LiteraryWork.totalReadingTime` se **lee del campo persistido** (`literaryWork.totalReadingTime`), que el backend **materializa write-once** en la primera lectura (suma de los `readingTime` de las secciones) o que el editor setea a mano en obras recitadas/audiovisuales — ver [§5](#5-helper-de-reading-time). La factory lo **recibe ya resuelto**, no lo deriva.
 
 **Invariantes del agregado** (validadas en `createLiteraryWork`, la única vía de construcción):
 
@@ -95,7 +95,7 @@ export interface LiteraryWorkNavigationTeaserWithAuthors extends LiteraryWorkBas
 | `slug` con formato válido e inmutable        | VO `Slug` (`createSlug` lanza ante formato inválido); unicidad garantizada por Sanity                                                                                                                                                    |
 | `title` no vacío                             | `createLiteraryWork` lanza                                                                                                                                                                                                               |
 | Al menos una sección de contenido            | `createLiteraryWork` lanza si `content.length === 0`                                                                                                                                                                                     |
-| `totalReadingTime` = suma de secciones       | Derivado en la factory — salvo **`readingTimeOverride`** editorial, que lo reemplaza (obras recitadas/audiovisuales, ver [§5](#5-helper-de-reading-time))                                                                                |
+| `totalReadingTime` presente y `>= 1`         | **Recibido ya resuelto** por la factory (leído del campo persistido): el backend lo materializa como suma de secciones o el editor lo setea a mano en obras recitadas/audiovisuales (ver [§5](#5-helper-de-reading-time))                |
 | `sectionCount` = número real de secciones    | Derivado en la factory (`content.length`); en las vistas parciales/teaser lo provee el mapper (GROQ `count()`) y puede ser mayor que las secciones transportadas                                                                         |
 | Posiciones contiguas en el agregado completo | `createLiteraryWork` lanza si `content[i].position !== i` — el agregado completo siempre transporta las secciones `0..sectionCount-1` en orden; las proyecciones parciales (construidas por el mapper) conservan el `position` de origen |
 | `authors` con al menos un autor              | `createLiteraryWork` lanza si `authors.length === 0`; la obra anónima referencia al author "Anónimo" ([§10](#10-autoría-y-obra-anónima))                                                                                                 |
@@ -139,7 +139,8 @@ export interface LiteraryWorkSection {
 | `epigraphs[].text: markdown`               | `epigraphs[].text: SanitizedHtml`       | **Pasa por el mismo pipeline MD→HTML que el body** (el texto del epígrafe también es markdown)                                                                                                                                                                                                                                                                                                                                                |
 | `epigraphs[].reference: string (markdown)` | `epigraphs[].reference?: SanitizedHtml` | **Mismo pipeline MD→HTML** (paridad con `Story.Epigraph.reference`, que es rich text); ausente o vacío en CMS → `undefined` en dominio                                                                                                                                                                                                                                                                                                        |
 | `body: markdown`                           | `bodyHtml: SanitizedHtml`               | Pipeline `unified` + rewrite de imágenes ([§9](#9-allow-list-de-sanitización))                                                                                                                                                                                                                                                                                                                                                                |
-| —                                          | `readingTime: ReadingTime`              | Derivado: texto plano del markdown → `WordCount` → `deriveReadingTime` ([§5](#5-helper-de-reading-time))                                                                                                                                                                                                                                                                                                                                      |
+| `readingTime?: number`                     | `readingTime: ReadingTime`              | **Leído del campo persistido** (`createReadingTime`); si falta (obra sin materializar) se deriva del texto como fallback puro — `WordCount` → `deriveSectionReadingTime` ([§5](#5-helper-de-reading-time))                                                                                                                                                                                                                                    |
+| `totalReadingTime?: number` (documento)    | `totalReadingTime: ReadingTime`         | **Leído del campo persistido**; si falta se deriva de los bodies como fallback puro (`deriveTotalReadingTime`). La persistencia (write-on-read) la hace el repository ([§5](#5-helper-de-reading-time))                                                                                                                                                                                                                                       |
 | —                                          | `position: number`                      | **Igual al índice en el array de secciones** (0-based, sin transformación: `position === index`) — el orden del array en Sanity es la fuente de verdad. Identidad numérica estable de la sección: es lo que permite al cliente saber **qué sección tiene en memoria** en una respuesta parcial ([§7](#7-contrato-del-endpoint)). La numeración humana ("Sección 1 de N") es un concern de presentación (`position + 1`), nunca del transporte |
 
 ---
@@ -186,12 +187,16 @@ export function sumReadingTimes(times: readonly ReadingTime[]): ReadingTime;
 // suma por sección → total del agregado; mínimo 1
 ```
 
-**Contrato para Slice 1** (no implementado — requiere `unified`/`remark-parse`/`mdast-util-to-string`, que no se instalan sin caller real):
+**Conteo de palabras y composición** (`reading-time.model.ts`):
 
 ```typescript
 export function countWords(markdown: Markdown): WordCount;
-// mdast-util-to-string sobre el AST de remark-parse → split por whitespace → createWordCount
+// walker sobre el AST de remark-parse (solo texto legible: excluye html crudo y alt de imágenes)
+export function deriveSectionReadingTime(body: Markdown): ReadingTime; // countWords → deriveReadingTime
+export function deriveTotalReadingTime(bodies: readonly Markdown[]): ReadingTime; // suma de secciones
 ```
+
+`deriveSectionReadingTime`/`deriveTotalReadingTime` son la **fuente única del algoritmo**, compartida por el backfill batch (`scripts/`) y el self-healing on-read del backend: ambos producen el mismo número para un mismo texto.
 
 ### Persistencia write-once (decisión #1953 — Opción B)
 
@@ -206,17 +211,18 @@ Ambos campos son **opcionales** en el schema y arrancan vacíos: el poblado no o
 body (Markdown) → countWords → WordCount → deriveReadingTime → ReadingTime
 ```
 
-— y el total del agregado sigue siendo `sumReadingTimes(sections.map(s => s.readingTime))`. Lo que cambia frente al transform-on-read puro: cuando el mapper del backend lee una obra a la que le falta `readingTime`/`totalReadingTime`, además de computarlos (con el `countWords` real del dominio, "fuera del CMS") los **persiste de vuelta** en Sanity vía un patch (`@sanity/client` con token de escritura) antes de responder. Las lecturas siguientes de esa obra encuentran el valor ya persistido y lo sirven directo, sin recomputar. Como el texto es inmutable, la regla "falta → computar y persistir" alcanza — no hace falta invalidar por hash ni por `_rev`, y cubre obras nuevas automáticamente sin paso manual en el Studio ni webhook.
+— y el total del agregado es `deriveTotalReadingTime(bodies)` (suma de secciones, mínimo 1). El reparto de responsabilidades del read-side:
 
-> **Estado de implementación:** este increment agrega solo el schema (campos opcionales, arrancan vacíos) y esta doc. El mapper que lee/computa/persiste — y el `?section=N` eficiente que se apoya en él para traer solo el body de la sección pedida más el total ya persistido ([§7](#7-contrato-del-endpoint)) — se implementan en el increment de backend rebaseado sobre el PR [#1929](https://github.com/cuentoneta/cuentoneta/pull/1929) (read-side diferido, aún no en este PR).
+- **El mapper (ACL) lee** `section.readingTime` y `totalReadingTime` de los campos persistidos (`createReadingTime`); si faltan, los **deriva del texto como fallback puro** (con el `countWords` real del dominio, "fuera del CMS") — así la respuesta es correcta incluso en la primera lectura o en deploys read-only.
+- **El repository persiste** (write-on-read): tras leer el crudo, si algún reading time falta y hay token de escritura, hace un patch `setIfMissing` (`@sanity/client`) con el total y los `readingTime` por sección (path por `_key`) antes de responder. Es idempotente: `setIfMissing` no pisa lo ya persistido. Sin token degrada — computa en memoria, no persiste, loguea y sirve.
 
-### Override editorial de duración (`readingTimeOverride`)
+Las lecturas siguientes encuentran el valor ya persistido y lo sirven directo, sin recomputar. Como el texto es inmutable, la regla "falta → computar y persistir" alcanza — no hace falta invalidar por hash ni por `_rev`, y cubre obras nuevas automáticamente sin paso manual en el Studio ni webhook.
 
-Para obras cuyo contenido principal es un **recitado o audiovisual** (p. ej. narraciones verbales sin texto fuente), la duración relevante es la del medio, no la del texto. El schema expone el campo opcional **`readingTimeOverride`** (entero `>= 1`, minutos): si está presente, `createLiteraryWork` lo usa como `totalReadingTime` en lugar del total derivado del texto. La interfaz pública no cambia — los consumidores ven un único `totalReadingTime` sin conocer su procedencia.
+### Total editorial en obras recitadas
 
-- **`totalReadingTime` persistido = suma pura del texto.** Lo que se persiste en `literaryWork.totalReadingTime` ([#1953](https://github.com/cuentoneta/cuentoneta/issues/1953)) es siempre `sumReadingTimes` sobre las secciones — nunca el override "bakeado" en el campo. La precedencia `override ?? total` sigue resolviéndose en `createLiteraryWork`, en cada construcción del agregado.
-- **El override no se persiste como derivado.** Sigue siendo un **dato fuente editorial** (input curatorial) que vive únicamente en su propio campo del schema. Distinto del reading time por texto, que #1953 sí persiste (anula T1b para ese derivado): el override nunca estuvo alcanzado por T1b porque no es lo computado, es el input.
-- El `readingTime` **por sección** sigue derivándose del texto (el override es solo del total) y es lo que #1953 persiste en `section.readingTime`.
+`totalReadingTime` es un **campo editable**: para obras cuyo contenido principal es un **recitado o audiovisual** (p. ej. narraciones verbales sin texto fuente), la duración relevante es la del medio, no la del texto. El editor **setea `totalReadingTime` a mano** (la duración del medio) y el backend lo **respeta** — `setIfMissing` solo completa lo ausente, nunca pisa un total ya presente. La interfaz pública no cambia: los consumidores ven un único `totalReadingTime` sin conocer su procedencia.
+
+- El `readingTime` **por sección** siempre se deriva/materializa del texto de esa sección (la sección editorial mínima del recitado, ver abajo); el total a mano es solo del documento.
 
 ### Obras solo-recitado (sin texto fuente)
 
@@ -224,7 +230,7 @@ La invariante `content >= 1` **se mantiene**: una obra cuyo contenido es únicam
 
 1. Una **sección editorial mínima** (presentación/contexto curatorial del recitado) — le da a `/read/:slug` el cuerpo SSR indexable que la estrategia SEO del epic exige, y mantiene válidos `teaserSection`, `sectionCount` y `?section=N`.
 2. El medio en **`mediaSources`** (el schema ya soporta `youTubeVideo`/`audioRecording`/etc.).
-3. **`readingTimeOverride`** con la duración real del medio.
+3. **`totalReadingTime` seteado a mano** con la duración real del medio (el backend lo respeta, no lo pisa).
 
 Permitir `content: []` se evaluó y descartó: degeneraría `totalReadingTime` (mínimo 1 falso), `teaserSection` (pasaría a opcional en cascada), la semántica de `?section=N` y la premisa "un documento SSR indexable" del epic. Una `MediaSection` como tipo de sección (unión `TextSection | MediaSection`) queda como extensión futura si surge necesidad curatorial concreta — reabre pipeline, reading time y render, y no se justifica hoy.
 
@@ -279,6 +285,8 @@ El consumidor decide por query param si obtiene **toda la obra o un capítulo**:
 - **`N` fuera de rango** (`N >= sectionCount`): mismo tratamiento que el recurso inexistente (ver nota abierta abajo) — no responde 200 con `content` vacío, porque violaría la invariante `content.length >= 1`.
 
 El SSR de `/read/:slug` (Slice 1) consume la forma completa; la obtención por sección habilita la navegación multi-capítulo (Slice 2) sin transferir la obra entera, y se apoya en la materialización **por sección** ([§8](#8-estrategia-de-materialización)).
+
+**Cómo se resuelve la proyección (backend).** El repository usa **dos queries GROQ nombradas**: la full trae todas las secciones; la de sección proyecta `content[$section]` — trae la metadata total (incluido `totalReadingTime` y `sectionCount` persistidos) más el body de **una sola** sección, sin transportar el resto. El recorte lo hace GROQ, no una proyección en memoria. El `totalReadingTime` de la respuesta parcial es el **persistido**; en cold-start (obra aún sin materializar, sin total persistido) el repository hace un **fetch full** de costo único que materializa y desde ahí proyecta la sección pedida.
 
 > **Nota abierta para Slice 1 — slug inexistente / sección fuera de rango:** el comportamiento vigente del módulo `story` ante slug no encontrado es que el service lanza `Error` genérico sin handler `onError` global en `routes.ts` → HTTP **500 sin body estructurado**, no un 404 JSON. Slice 1 debe decidir si `literary-work` introduce un 404 propio (y sienta el precedente) o mantiene paridad con `story` y se difiere el manejo de errores a un issue transversal. La decisión que se tome aplica por igual a ambos casos (slug y sección). Es una decisión **diferida a propósito**, no una omisión de este diseño.
 

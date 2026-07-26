@@ -107,9 +107,8 @@ export function createLiteraryWork(options: CreateLiteraryWorkOptions): Literary
 		throw new Error(`LiteraryWork inválida: sin autores (slug "${options.slug}")`);
 	}
 	return Object.freeze({
-		...rest,
+		...options, // totalReadingTime llega ya resuelto en options (leído del campo persistido)
 		slug: createSlug(options.slug),
-		totalReadingTime: readingTimeOverride ?? sumReadingTimes(options.content.map((s) => s.readingTime)),
 		sectionCount: options.content.length,
 	});
 }
@@ -295,7 +294,7 @@ En cuentoneta, **`LiteraryWork`** es la raíz de agregado con invariantes **hech
 - Debe tener **al menos una sección** de contenido.
 - Debe tener **al menos un autor** (`authors.length >= 1`); la obra anónima referencia al author real "Anónimo" (`isAnonymous`, ver [Policies](#policies-como-funciones-puras)).
 - Las posiciones de sección son contiguas en el agregado completo (`content[i].position === i`).
-- `totalReadingTime`/`sectionCount` se derivan en la factory (salvo `readingTimeOverride` editorial, para obras recitadas/audiovisuales).
+- `sectionCount` se deriva en la factory (`content.length`); `totalReadingTime` llega ya resuelto en las options (leído del campo persistido: el backend lo materializa write-once o el editor lo setea a mano en obras recitadas/audiovisuales).
 
 ```typescript
 // literary-work.model.ts — invariantes en tiempo de construcción (implementado, #1852)
@@ -310,9 +309,8 @@ export function createLiteraryWork(options: CreateLiteraryWorkOptions): Literary
 		throw new Error(`LiteraryWork inválida: sin autores (slug "${options.slug}")`);
 	}
 	return Object.freeze({
-		...rest,
+		...options, // totalReadingTime llega ya resuelto en options (leído del campo persistido)
 		slug: createSlug(options.slug),
-		totalReadingTime: readingTimeOverride ?? sumReadingTimes(options.content.map((s) => s.readingTime)),
 		sectionCount: options.content.length,
 	});
 }
