@@ -195,6 +195,7 @@ No avanzar a la Fase 3 sin una respuesta "Aprobar".
   - Los commits **solo-doc / solo-config de tooling** (sin efecto en runtime) saltean esta verificación.
 - Nunca mensajes no descriptivos ("WIP", "fix", "update").
 - Nunca `--amend`; crear commits nuevos tras fallos del hook de pre-commit.
+- **En modo raíz**, antes de cada commit confirmar la rama activa con `git branch --show-current` contra `feat/<number>-<kebab>`; si un subagente con Bash la cambió en el medio, re-checkoutear la rama correcta antes de commitear. En **modo worktree** se omite: `EnterWorktree` fija el cwd/rama del worktree y los subagentes lo heredan (ver [Modo worktree](#modo-worktree)).
 
 ### No hacer en esta fase
 
