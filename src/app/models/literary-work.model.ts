@@ -5,7 +5,7 @@ import type { Resource } from './resource.model';
 import type { Tag } from './tag.model';
 import type { IsoDateTime } from '@utils/date.utils';
 import { createSlug, type Slug } from './slug.model';
-import { sumReadingTimes, type ReadingTime } from './reading-time.model';
+import type { ReadingTime } from './reading-time.model';
 
 interface LiteraryWorkBase {
 	readonly _id: string;
@@ -70,9 +70,9 @@ interface CreateLiteraryWorkOptions {
 	tags: readonly Tag[];
 	originalPublication: string;
 	publishedAt: IsoDateTime;
-	// Duración editorial fija (obras recitadas/audiovisuales): reemplaza a la suma de
-	// secciones como totalReadingTime — ver LITERARY_WORK_DESIGN.md §5.
-	readingTimeOverride?: ReadingTime;
+	// Total ya resuelto: el backend lo materializa (suma de secciones) o lo setea el editor en
+	// recitados/audiovisuales. La factory lo recibe, no lo deriva — ver LITERARY_WORK_DESIGN.md §5.
+	totalReadingTime: ReadingTime;
 }
 
 export function createLiteraryWork(options: CreateLiteraryWorkOptions): LiteraryWork {
@@ -97,11 +97,9 @@ export function createLiteraryWork(options: CreateLiteraryWorkOptions): Literary
 			);
 		}
 	});
-	const { readingTimeOverride, ...rest } = options;
 	return Object.freeze({
-		...rest,
+		...options,
 		slug: createSlug(options.slug),
-		totalReadingTime: readingTimeOverride ?? sumReadingTimes(options.content.map((section) => section.readingTime)),
 		sectionCount: options.content.length,
 	});
 }
