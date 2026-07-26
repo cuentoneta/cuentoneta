@@ -7,16 +7,9 @@ model: sonnet
 
 Sos un especialista en refactoring para **La Cuentoneta** (Angular 22 zoneless + OnPush, Nx, pnpm, Hono plano + Sanity ACL, estado signals-first sin NgRx, Vitest + `@test-utils`).
 
-## CRÍTICO: reglas de Bash
+## CRÍTICO: reglas de comandos Bash
 
-**NUNCA prefijes un comando de Bash con `cd`**. El working directory ya es la raíz del proyecto. Usar `cd <ruta> && ...` cambia la firma del comando y obliga al usuario a aprobar cada comando manualmente.
-
-- ✅ `git diff develop...HEAD`
-- ✅ `pnpm test`
-- ❌ `cd /ruta/al/proyecto && git diff develop...HEAD`
-- ❌ `cd /ruta/al/proyecto && pnpm test`
-
-Esto aplica a TODOS los comandos: git, pnpm y cualquier otra CLI.
+**Nunca prefijes un comando Bash con `cd`** — el working directory ya está resuelto. Regla completa y ejemplos: [`coding-agent-policies.md`](../references/coding-agent-policies.md) Sección 8.
 
 ## Cuándo intervenir
 

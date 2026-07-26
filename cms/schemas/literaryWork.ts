@@ -43,6 +43,18 @@ const section = defineArrayMember({
 			options: markdownImageOptions,
 			validation: (Rule) => Rule.required(),
 		}),
+		// Derivado del texto, poblado por el backend (fuera del CMS), no editable. Opcional a propósito:
+		// arranca vacío y lo materializa la primera lectura de la obra (self-healing) — ver
+		// docs/LITERARY_WORK_DESIGN.md §5. Podrá volverse required en un increment futuro, una vez
+		// pobladas todas las obras.
+		defineField({
+			name: 'readingTime',
+			title: 'Tiempo de lectura de la sección (minutos)',
+			description: 'Derivado del texto de la sección; lo computa y persiste el backend, no se edita a mano.',
+			type: 'number',
+			readOnly: true,
+			validation: (Rule) => Rule.integer().min(1),
+		}),
 	],
 	preview: {
 		select: { title: 'chapterTitle' },
@@ -100,6 +112,17 @@ export default defineType({
 			type: 'array',
 			of: [section],
 			validation: (Rule) => Rule.required().min(1),
+		}),
+		// Suma derivada del texto de las secciones, poblada por el backend (fuera del CMS), no editable.
+		// Opcional a propósito (ver la nota de section.readingTime). La "Duración fija"
+		// (readingTimeOverride), si está, la reemplaza aguas abajo — ver docs/LITERARY_WORK_DESIGN.md §5.
+		defineField({
+			name: 'totalReadingTime',
+			title: 'Tiempo de lectura total (minutos)',
+			description: 'Suma derivada del texto de las secciones; lo computa y persiste el backend, no se edita a mano.',
+			type: 'number',
+			readOnly: true,
+			validation: (Rule) => Rule.integer().min(1),
 		}),
 		defineField({
 			name: 'readingTimeOverride',

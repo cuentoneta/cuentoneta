@@ -4,7 +4,7 @@
 > de Sanity, queries GROQ, mappers o tipos de dominio. Es el **patrón central** de cuentoneta.
 >
 > Relacionadas: [`clean-architecture.md`](clean-architecture.md) (capas y regla de dependencia) ·
-> [`domain-model.md`](domain-model.md) (Story / Author / Storylist / Resource).
+> [`domain-model.md`](domain-model.md) (Story / Author / Storylist / Resource / LiteraryWork).
 
 ---
 
@@ -23,6 +23,15 @@ frontend. El frontend consume únicamente el **modelo de dominio** (`Story`, `Au
 El **Anti-Corruption Layer** son los **mappers**: funciones puras que traducen el resultado crudo de
 Sanity al modelo de dominio. Si mañana se cambia el CMS o se reorganiza una query, el blast radius
 queda contenido en el mapper; el dominio y el frontend no se enteran.
+
+> **Alcance de los ejemplos de este archivo.** El pipeline se ejemplifica con el módulo `story`
+> (`src/api/modules/story/`), hoy el único módulo de contenido narrativo con esta capa completa
+> (repository → mapper → service → controller) mergeada. `LiteraryWork` sigue el mismo patrón —
+> repository (`LiteraryWorkRepository`/`SanityLiteraryWorkRepository`/`InMemoryLiteraryWorkRepository`),
+> mapper y service (`getLiteraryWorkBySlug`) — con el contrato ya cerrado en
+> [`docs/LITERARY_WORK_DESIGN.md`](../../docs/LITERARY_WORK_DESIGN.md) §6, pero su implementación
+> (#1853, Slice 1) sigue en review (PRs #1929–#1932) y todavía no forma parte de `develop`. Los
+> ejemplos de código de abajo se conservan sobre `story` hasta que ese código aterrice.
 
 ---
 
@@ -243,6 +252,9 @@ El service dependería del **puerto** (interfaz), no de la implementación concr
 resolvería vía un **contenedor de DI**. Esa dirección está registrada en **#1503**, sin estructura
 creada todavía en el repo. Mientras tanto, rige el patrón de funciones `fetch*()` /
 `get*()` descripto arriba; **no** introducir clases de repositorio ni DI salvo que el issue lo pida.
+Ese mismo patrón ya tiene contrato cerrado para `LiteraryWork`
+(`LiteraryWorkRepository`/`SanityLiteraryWorkRepository`/`InMemoryLiteraryWorkRepository`, ver
+`docs/LITERARY_WORK_DESIGN.md` §6), pendiente de aterrizar con #1853.
 
 ---
 

@@ -2,6 +2,7 @@ import type { LiteraryWorkBySlugQueryResult } from '../sanity/types';
 import { rawOnoffAuthor } from './onoff-raw-author.mock';
 
 // Obra de dos secciones: ejercita la proyección ?section=N y la derivación de position/sectionCount.
+// TODO: Redirigir los tests y stories que utilizan estos mocks al canon de Onoff al implementar los cambios de #1653
 export const rawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'literaryWork_1',
 	slug: 'la-vigilia-de-onoff',

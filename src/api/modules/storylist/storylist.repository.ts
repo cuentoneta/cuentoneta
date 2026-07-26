@@ -10,7 +10,7 @@ import {
 	storylistStoriesNavigationTeasersQuery,
 	storylistQuery,
 	storylistTeasersQuery,
-} from '../../_queries/storylist.query';
+} from '@queries/storylist.query';
 
 // Utilidades
 import { mapMediaSources, mapMediaSourcesTeasers } from '../../_utils/media-sources.functions';

@@ -2,7 +2,7 @@
 
 # Principios de Clean Architecture
 
-Construir sistemas **mantenibles, testeables e independientes** de los detalles externos (Sanity, Hono, Angular, el navegador). En cuentoneta esto se traduce en una sola idea operativa: **el modelo de dominio (`Story`, `Author`, `Storylist`, …) no conoce ni a GROQ ni al cliente HTTP**; los detalles externos se traducen en los bordes vía la **ACL de mappers**.
+Construir sistemas **mantenibles, testeables e independientes** de los detalles externos (Sanity, Hono, Angular, el navegador). En cuentoneta esto se traduce en una sola idea operativa: **el modelo de dominio (`Story`, `Author`, `Storylist`, `LiteraryWork`, …) no conoce ni a GROQ ni al cliente HTTP**; los detalles externos se traducen en los bordes vía la **ACL de mappers**.
 
 ## Principios arquitectónicos centrales
 
@@ -17,7 +17,7 @@ Construir sistemas **mantenibles, testeables e independientes** de los detalles 
 
 | Capa                        | Contenido                                                        | Ejemplo en cuentoneta                                                           |
 | --------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| **Modelo de dominio**       | Tipos de negocio y datos críticos, sin dependencias de framework | `Story`, `Author`, `Storylist`, `Resource` (`@models/*`)                        |
+| **Modelo de dominio**       | Tipos de negocio y datos críticos, sin dependencias de framework | `Story`, `Author`, `Storylist`, `Resource`, `LiteraryWork` (`@models/*`)        |
 | **Casos de uso / lógica**   | Reglas de aplicación: leer, mapear, coordinar                    | `getStoryBySlug`, `getStories`, `getAuthorBySlug` (services)                    |
 | **Adaptadores de interfaz** | Traducen datos entre la lógica y los formatos externos           | Controllers Hono, **mappers / ACL** (`src/api/_utils/`), API services del front |
 | **Frameworks y drivers**    | Detalles externos                                                | Sanity/GROQ, Hono, `@sanity/client`, Angular, el navegador                      |
@@ -94,29 +94,35 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 
 ### Backend
 
-| Rol                      | Interfaz (nombre limpio) | Implementación real           | Doble de test                 |
-| ------------------------ | ------------------------ | ----------------------------- | ----------------------------- |
-| Repository de stories    | `StoryRepository`        | `SanityStoryRepository`       | `InMemoryStoryRepository`     |
-| Repository de autores    | `AuthorRepository`       | `SanityAuthorRepository`      | `InMemoryAuthorRepository`    |
-| Repository de storylists | `StorylistRepository`    | `SanityStorylistRepository`   | `InMemoryStorylistRepository` |
-| Service (impl. única)    | `StoryService`           | `StoryService` (mismo nombre) | `InMemoryStoryService`        |
+| Rol                            | Interfaz (nombre limpio)   | Implementación real              | Doble de test                      |
+| ------------------------------ | -------------------------- | -------------------------------- | ---------------------------------- |
+| Repository de stories          | `StoryRepository`          | `SanityStoryRepository`          | `InMemoryStoryRepository`          |
+| Repository de autores          | `AuthorRepository`         | `SanityAuthorRepository`         | `InMemoryAuthorRepository`         |
+| Repository de storylists       | `StorylistRepository`      | `SanityStorylistRepository`      | `InMemoryStorylistRepository`      |
+| Repository de obras literarias | `LiteraryWorkRepository`\* | `SanityLiteraryWorkRepository`\* | `InMemoryLiteraryWorkRepository`\* |
+| Service (impl. única)          | `StoryService`             | `StoryService` (mismo nombre)    | `InMemoryStoryService`             |
 
 - Prefijo **`Sanity*`** para implementaciones de repository respaldadas por Sanity/GROQ.
 - El doble se nombra por su comportamiento (`Stub*` / `Fake*` — `InMemory*` para almacenamiento — / `Spy*`), **jamás `Mock*`**. Un repository de test con datos cargados en memoria sí es un `InMemory*Repository` (un fake de almacenamiento); uno que devuelve una lista fija es un `Stub*Repository`.
 - Los services de implementación única **conservan el nombre de la interfaz** (sin prefijo, sin sufijo `Impl`).
 
 > Nota sobre el estado actual: hoy los módulos backend exponen funciones (`getStoryBySlug`, `fetchStories`) más que clases con interfaz explícita, así que **los nombres de esta tabla son ilustrativos de la convención, no símbolos existentes** — las clases llegan con #1503. La convención rige al introducir abstracciones de repository/service o sus dobles de test, y es la dirección a la que tienden los `*.service.spec.ts`.
+>
+> \* Contrato cerrado en `docs/LITERARY_WORK_DESIGN.md` §6; implementación pendiente (#1853, Slice 1, PRs #1929–#1932 en review).
 
 ### Frontend
 
-| Rol                   | Interfaz + token (`InjectionToken`) | Implementación        | Doble de test               |
-| --------------------- | ----------------------------------- | --------------------- | --------------------------- |
-| API de stories        | `StoryApi`                          | `HttpStoryApi`        | `StubStoryApi`              |
-| API de autores        | `AuthorApi`                         | `HttpAuthorApi`       | `StubAuthorApi`             |
-| API de storylists     | `StorylistApi`                      | `HttpStorylistApi`    | `StubStorylistApi`          |
-| Service (impl. única) | `LayoutService` (token homónimo)    | `WindowLayoutService` | `ControllableLayoutService` |
+| Rol                     | Interfaz + token (`InjectionToken`) | Implementación          | Doble de test               |
+| ----------------------- | ----------------------------------- | ----------------------- | --------------------------- |
+| API de stories          | `StoryApi`                          | `HttpStoryApi`          | `StubStoryApi`              |
+| API de autores          | `AuthorApi`                         | `HttpAuthorApi`         | `StubAuthorApi`             |
+| API de storylists       | `StorylistApi`                      | `HttpStorylistApi`      | `StubStorylistApi`          |
+| API de obras literarias | `LiteraryWorkApi`\*                 | `HttpLiteraryWorkApi`\* | `StubLiteraryWorkApi`\*     |
+| Service (impl. única)   | `LayoutService` (token homónimo)    | `WindowLayoutService`   | `ControllableLayoutService` |
 
 > Los dobles de API son **`Stub*`** (devuelven canned, ignoran la entrada); el de `LayoutService` es un **`Fake*` de entorno**, calificado `Controllable*` porque el viewport lo fija el test (`simulateViewport()`), no `window` como en el real (`WindowLayoutService`). No es `InMemory*`: no sustituye almacenamiento, sustituye el navegador. La diferencia no es de capa sino de qué sustituye el doble — ver la taxonomía de arriba.
+>
+> \* Contrato cerrado en `docs/LITERARY_WORK_DESIGN.md` §7 (`LiteraryWorkDto` + rehidratación en el provider); implementación pendiente (#1853, Slice 1, PRs #1929–#1932 en review) — a diferencia del resto de la tabla, todavía no son símbolos existentes.
 
 - Prefijo **`Http*`** para implementaciones de servicios de API basadas en HTTP.
 - Un service **con doble de test** usa el par interfaz + `InjectionToken` homónimo, igual que los API providers: real y doble son dos implementaciones intercambiables del mismo contrato. `LayoutService` es el caso — interfaz + token `LayoutService`, real `WindowLayoutService` (prefijo de mecanismo), doble `ControllableLayoutService` (`layout.mock.ts`). Un service de **implementación única sin doble** (`NavigationFrameService`, `SchemaOrgService`) no necesita ni interfaz ni token: se inyecta la clase directamente.
@@ -150,6 +156,6 @@ _Basado en Robert C. Martin, "Clean Architecture" (2018), adaptado al stack de L
 ## Referencias relacionadas
 
 - [`sanity-acl.md`](sanity-acl.md) — el ACL central: GROQ → repository → mapper → modelo de dominio.
-- [`domain-model.md`](domain-model.md) — DDD estratégico: agregados e invariantes (Story / Author / Storylist).
+- [`domain-model.md`](domain-model.md) — DDD estratégico: agregados e invariantes (Story / Author / Storylist / LiteraryWork).
 - [`solid.md`](solid.md) — principios SOLID (la inversión de dependencias subyace a "Qualified Implementation").
 - [`cupid.md`](cupid.md) — propiedades CUPID.

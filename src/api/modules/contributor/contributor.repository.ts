@@ -1,6 +1,6 @@
 // Sanity
 import { client } from '../../_helpers/sanity-connector';
-import { allContributorsQuery } from '../../_queries/contributor.query';
+import { allContributorsQuery } from '@queries/contributor.query';
 
 // Interfaces
 import { Contributor, CONTRIBUTOR_AREA_LABELS } from '@models/contributor.model';

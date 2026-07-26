@@ -6,6 +6,7 @@ import {
 	AudioRecording,
 	AudioRecordingSchemaObject,
 	Media,
+	MediaTypes,
 	SpaceRecording,
 	SpotifyPodcasteEpisodeSchemaObject,
 	SpotifyPodcastEpisode,
@@ -24,10 +25,10 @@ type LiteraryWorkMediaSources = NonNullable<LiteraryWorkBySlugQueryResult>['medi
 type SpaceRecordingSource = Extract<StoryMediaSources[number], { _type: 'spaceRecording' }>;
 export function mapMediaSources(
 	mediaSources: StoryMediaSources | StorylistMediaSources | LiteraryWorkMediaSources,
-): Media[] {
+): MediaTypes[] {
 	if (!mediaSources) return [];
 
-	const media: Media[] = [];
+	const media: MediaTypes[] = [];
 	for (const mediaSource of mediaSources) {
 		if (mediaSource._type === 'audioRecording') {
 			media.push(getAudioRecordingData(mediaSource as AudioRecordingSchemaObject));

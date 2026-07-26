@@ -3,6 +3,7 @@ import { LiteraryWorkNotFoundError, LiteraryWorkSectionNotFoundError } from './l
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
 import { rawAnonymousLiteraryWork, rawLiteraryWork } from '../../_mocks/literary-work-raw.mock';
 
+// TODO: Redirigir estos tests y para que utilicen los mocks del canon de Onoff al implementar #1653
 describe('getLiteraryWorkBySlug', () => {
 	const repository = new InMemoryLiteraryWorkRepository([rawLiteraryWork, rawAnonymousLiteraryWork]);
 
