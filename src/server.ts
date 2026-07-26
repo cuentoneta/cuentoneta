@@ -9,11 +9,12 @@ import { secureHeaders } from 'hono/secure-headers';
 import apiRoutes from './api/routes';
 import sitemapController from './api/modules/sitemap/sitemap.controller';
 import { getAllowedHosts } from './api/_helpers/environment';
+import { noindexNonProduction } from './api/_middleware/noindex.middleware';
 
 /**
  * Inicializa Hono y exporta la instancia de la aplicación
  */
-export const app = new Hono({ strict: false }).use(requestId()).use(secureHeaders());
+export const app = new Hono({ strict: false }).use(requestId()).use(secureHeaders()).use('*', noindexNonProduction);
 // Vercel termina TLS y siempre agrega headers `x-forwarded-*` (incluido `x-forwarded-for`).
 // Sin declararlos confiables, el hardening SSR de Angular degrada cada request a client-side
 // rendering (sirve `index.csr.html` sin contenido ni meta), dejando las páginas Server sin SSR

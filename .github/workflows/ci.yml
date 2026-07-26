@@ -279,6 +279,14 @@ jobs:
           restore-keys: |
             nx-cache-e2e-
 
+      # Regenera environment.ts con la postura indexable de producción (SEO_INDEXABLE=true) pero sin
+      # tocar las URLs: el entorno sigue siendo `development` (apiUrl/website locales, contra el server
+      # SSR en localhost), lo que permite que los specs de SEO afirmen el HTML indexable del crawler.
+      - name: Generate e2e environment (postura indexable, URLs locales)
+        run: pnpm run config
+        env:
+          SEO_INDEXABLE: 'true'
+
       # El webServer de Playwright levanta el build SSR de producción (fidelidad con el crawler), así
       # que hay que compilarlo acá. Los e2e corren contra `staging` (espejo de producción, aislado del
       # `development` compartido que los devs mutan) para reducir la fragilidad por curación de contenido

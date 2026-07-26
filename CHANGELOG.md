@@ -16,6 +16,17 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.8.8 (2026-07-26)
+
+La versión 2.8.8 es un **hotfix de SEO**: `staging.cuentoneta.ar` y las previews estaban siendo indexados por Google porque compartían el build de producción y no había ninguna señal de no-indexado gateada por entorno ([#1962](https://github.com/cuentoneta/cuentoneta/pull/1962)).
+
+Se agregan dos capas complementarias que solo actúan fuera de producción (producción sigue indexable):
+
+- **Server:** un middleware de Hono emite `X-Robots-Tag: noindex, nofollow` en toda respuesta —HTML (SSR o CSR degradado), `sitemap.xml`, estáticos y OG images—.
+- **Frontend:** `HeadMetadataDirective.setRobots()` fuerza `noindex, nofollow` en builds no indexables, alineando el `<meta name="robots">` con el header y blindando páginas futuras.
+
+Se desacopla la indexabilidad del string `environment` mediante `environment.indexable` (con override `SEO_INDEXABLE`), de modo que los tests e2e de SEO sigan validando la postura de producción con URLs locales.
+
 ## Versión 2.8.7 (2026-07-22)
 
 La versión 2.8.7 es un release de **mantenimiento de tooling y deuda técnica**, centrado en el epic de **saneamiento de la configuración de Claude Code** (#1843). Se corrige la deriva acumulada en el corpus de configuración: los cinco sitios que transcribían los gates de CI omitían `e2e` y/o `studio-build` (#1844), el catálogo de referencias se declaraba completo con 13 de 15 archivos (#1845), ocho punteros apuntaban a secciones de `CLAUDE.md` inexistentes (#1846), y varias referencias y agentes describían rutas, archivos y deuda técnica ya eliminados (#1847). Se saldan además cuatro ejemplos del corpus que violaban sus propias reglas (#1848), las contradicciones semánticas entre referencias y dos agentes huérfanos que ningún flujo invocaba (#1849), y tres ejemplos de `angular-components.md` que inyectaban un `StoryService` inexistente (#1872). Se documenta como restricción dura que los hijos de un epic se crean como sub-issues reales (#1860), se repara la ausencia de `documentation-writer` en el registro de agentes (#1874), y se evalúa cómo acelerar la ejecución de los flujos sin perder calidad (#1850). Un conjunto de correcciones de endurecimiento cierra el epic: el gate `check-agents` pasa a validar también las rutas citadas en las referencias (#1888), se deduplican los gates en el `code-reviewer` (#1886), se prohíbe `git add -A` como política (#1887) y se corrige la taxonomía de dobles de test `Stub*`/`Fake*`/`InMemory*` (#1889).
