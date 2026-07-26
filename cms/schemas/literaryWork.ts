@@ -107,22 +107,15 @@ export default defineType({
 			of: [section],
 			validation: (Rule) => Rule.required().min(1),
 		}),
-		// Suma derivada del texto de las secciones, poblada por el backend (fuera del CMS), no editable.
-		// Opcional a propósito (ver la nota de section.readingTime). La "Duración fija"
-		// (readingTimeOverride), si está, la reemplaza aguas abajo — ver docs/LITERARY_WORK_DESIGN.md §5.
+		// Total de la obra. Editable a propósito: en obras de texto lo materializa el backend con la
+		// suma de las secciones la primera vez que se leen (setIfMissing, no pisa lo que ya está); en
+		// recitados/audiovisuales el editor lo setea a mano (duración del medio) y el backend lo
+		// respeta — ver docs/LITERARY_WORK_DESIGN.md §5.
 		defineField({
 			name: 'totalReadingTime',
 			title: 'Tiempo de lectura total (minutos)',
-			description: 'Suma derivada del texto de las secciones; lo computa y persiste el backend, no se edita a mano.',
-			type: 'number',
-			readOnly: true,
-			validation: (Rule) => Rule.integer().min(1),
-		}),
-		defineField({
-			name: 'readingTimeOverride',
-			title: 'Duración fija (minutos)',
 			description:
-				'Opcional. Para obras cuyo contenido principal es un recitado o audiovisual: fija la duración total mostrada, en lugar de derivarla del texto de las secciones.',
+				'Total de la obra. En obras de texto lo completa el backend con la suma de las secciones; en recitados o audiovisuales, seteá a mano la duración del medio.',
 			type: 'number',
 			validation: (Rule) => Rule.integer().min(1),
 		}),
