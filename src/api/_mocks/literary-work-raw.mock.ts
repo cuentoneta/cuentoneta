@@ -3,7 +3,7 @@ import { rawOnoffAuthor } from './onoff-raw-author.mock';
 
 // Obra de dos secciones, con los reading time ya persistidos (materializados). Ejercita la lectura
 // de persistidos y la proyección ?section=N.
-// TODO: Redirigir los tests y stories que utilizan estos mocks al canon de Onoff al migrar el corpus.
+// TODO: Migrar los tests y stories que consumen estos mocks al corpus canónico de Onoff.
 export const rawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'literaryWork_1',
 	slug: 'la-vigilia-de-onoff',

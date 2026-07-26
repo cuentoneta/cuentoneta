@@ -6,7 +6,7 @@ import {
 } from '../_mocks/literary-work-raw.mock';
 import { isAnonymous } from '@models/literary-work.model';
 
-// TODO: Redirigir estos tests y para que utilicen los mocks del canon de Onoff al implementar #1653
+// TODO: Migrar estos tests para que usen los mocks del corpus canónico de Onoff.
 describe('mapLiteraryWork', () => {
 	it('maps the raw query result into a frozen LiteraryWork aggregate', () => {
 		const work = mapLiteraryWork(rawLiteraryWork);
