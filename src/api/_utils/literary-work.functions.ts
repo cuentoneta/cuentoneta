@@ -25,25 +25,49 @@ export type SanityLiteraryWorkSectionProjection = NonNullable<LiteraryWorkSectio
 type SanityLiteraryWorkSection = SanityLiteraryWork['content'][number];
 type SanityLiteraryWorkEpigraph = NonNullable<SanityLiteraryWorkSection['epigraphs']>[number];
 
+// Shape de metadata común a la query full y a la de sección (difieren solo en `content`/`section`).
+type SanityLiteraryWorkMetadata = Pick<
+	SanityLiteraryWork,
+	| '_id'
+	| 'slug'
+	| 'title'
+	| 'authors'
+	| 'coverImage'
+	| 'mediaSources'
+	| 'resources'
+	| 'badLanguage'
+	| 'tags'
+	| 'originalPublication'
+	| 'publishedAt'
+>;
+
 export function mapLiteraryWork(raw: SanityLiteraryWork): LiteraryWork {
 	return createLiteraryWork({
+		...mapLiteraryWorkMetadata(raw),
+		content: raw.content.map(mapLiteraryWorkSection),
+		totalReadingTime: resolveTotalReadingTime(
+			raw.totalReadingTime,
+			raw.content.map((section) => section.body),
+		),
+	});
+}
+
+// Mapeo de la metadata compartida por ambos caminos de construcción (full y proyección parcial), para no
+// duplicar la superficie. El slug se brandea acá: el path de la factory lo re-valida (idempotente).
+function mapLiteraryWorkMetadata(raw: SanityLiteraryWorkMetadata) {
+	return {
 		_id: raw._id,
-		slug: raw.slug,
+		slug: createSlug(raw.slug),
 		title: raw.title,
 		authors: raw.authors.map(mapAuthor),
 		coverImage: raw.coverImage ? urlFor(raw.coverImage) : '',
-		content: raw.content.map(mapLiteraryWorkSection),
 		mediaSources: mapMediaSources(raw.mediaSources),
 		resources: mapResources(raw.resources),
 		badLanguage: raw.badLanguage,
 		tags: mapTags(raw.tags),
 		originalPublication: raw.originalPublication,
 		publishedAt: createIsoDateTime(raw.publishedAt),
-		totalReadingTime: resolveTotalReadingTime(
-			raw.totalReadingTime,
-			raw.content.map((section) => section.body),
-		),
-	});
+	};
 }
 
 // Proyección parcial (?section=N): construye el agregado con una única sección en `position === section`,
@@ -62,18 +86,8 @@ export function mapLiteraryWorkSectionProjection(
 		return null;
 	}
 	return Object.freeze({
-		_id: raw._id,
-		slug: createSlug(raw.slug),
-		title: raw.title,
-		authors: raw.authors.map(mapAuthor),
-		coverImage: raw.coverImage ? urlFor(raw.coverImage) : '',
+		...mapLiteraryWorkMetadata(raw),
 		content: [mapLiteraryWorkSection(rawSection, section)],
-		mediaSources: mapMediaSources(raw.mediaSources),
-		resources: mapResources(raw.resources),
-		badLanguage: raw.badLanguage,
-		tags: mapTags(raw.tags),
-		originalPublication: raw.originalPublication,
-		publishedAt: createIsoDateTime(raw.publishedAt),
 		totalReadingTime,
 		sectionCount: raw.sectionCount,
 	});
