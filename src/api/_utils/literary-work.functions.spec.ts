@@ -1,5 +1,9 @@
 import { mapLiteraryWork } from './literary-work.functions';
-import { rawAnonymousLiteraryWork, rawLiteraryWork } from '../_mocks/literary-work-raw.mock';
+import {
+	rawAnonymousLiteraryWork,
+	rawLiteraryWork,
+	rawUnmaterializedLiteraryWork,
+} from '../_mocks/literary-work-raw.mock';
 import { isAnonymous } from '@models/literary-work.model';
 
 // TODO: Redirigir estos tests y para que utilicen los mocks del canon de Onoff al implementar #1653
@@ -38,17 +42,24 @@ describe('mapLiteraryWork', () => {
 		expect(work.content[0].bodyHtml).toContain('loading="lazy"');
 	});
 
-	it('derives per-section reading time and sums the total', () => {
+	it('reads the persisted per-section and total reading time (no recompute)', () => {
 		const work = mapLiteraryWork(rawLiteraryWork);
 
-		expect(work.content.every((section) => section.readingTime >= 1)).toBe(true);
-		expect(work.totalReadingTime).toBe(work.content.reduce((sum: number, section) => sum + section.readingTime, 0));
+		expect(work.content.map((section) => section.readingTime)).toEqual([1, 1]);
+		expect(work.totalReadingTime).toBe(2);
 	});
 
-	it('uses readingTimeOverride as the total when present', () => {
+	it('reads the persisted total for recited works (editor-set, independent of the section sum)', () => {
 		const work = mapLiteraryWork(rawAnonymousLiteraryWork);
 
 		expect(work.totalReadingTime).toBe(40);
+	});
+
+	it('derives reading time as a pure fallback when the work is not materialized', () => {
+		const work = mapLiteraryWork(rawUnmaterializedLiteraryWork);
+
+		expect(work.content.every((section) => section.readingTime >= 1)).toBe(true);
+		expect(work.totalReadingTime).toBe(work.content.reduce((sum: number, section) => sum + section.readingTime, 0));
 	});
 
 	it('maps a missing coverImage to an empty string', () => {

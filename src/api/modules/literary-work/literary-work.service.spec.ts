@@ -34,7 +34,7 @@ describe('getLiteraryWorkBySlug', () => {
 		);
 	});
 
-	it('honors readingTimeOverride through the full mapping', async () => {
+	it('reads the persisted total for recited works through the full mapping', async () => {
 		const work = await getLiteraryWorkBySlug('cantar-anonimo', undefined, repository);
 
 		expect(work.totalReadingTime).toBe(40);

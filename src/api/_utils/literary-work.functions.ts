@@ -1,4 +1,4 @@
-import type { LiteraryWorkBySlugQueryResult } from '../sanity/types';
+import type { LiteraryWorkBySlugQueryResult, LiteraryWorkSectionBySlugQueryResult } from '../sanity/types';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import {
 	createLiteraryWorkEpigraph,
@@ -8,13 +8,20 @@ import {
 } from '@models/literary-work-section.model';
 import { createChapterTitle } from '@models/chapter-title.model';
 import { createMarkdown } from '@models/markdown.model';
-import { countWords, createReadingTime, deriveReadingTime } from '@models/reading-time.model';
+import {
+	createReadingTime,
+	deriveSectionReadingTime,
+	deriveTotalReadingTime,
+	type ReadingTime,
+} from '@models/reading-time.model';
+import { createSlug } from '@models/slug.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { mapAuthor, mapResources, mapTags, urlFor } from './functions';
 import { mapMediaSources } from './media-sources.functions';
 import { markdownToSanitizedHtml } from './markdown-pipeline.functions';
 
 export type SanityLiteraryWork = NonNullable<LiteraryWorkBySlugQueryResult>;
+export type SanityLiteraryWorkSectionProjection = NonNullable<LiteraryWorkSectionBySlugQueryResult>;
 type SanityLiteraryWorkSection = SanityLiteraryWork['content'][number];
 type SanityLiteraryWorkEpigraph = NonNullable<SanityLiteraryWorkSection['epigraphs']>[number];
 
@@ -32,8 +39,47 @@ export function mapLiteraryWork(raw: SanityLiteraryWork): LiteraryWork {
 		tags: mapTags(raw.tags),
 		originalPublication: raw.originalPublication,
 		publishedAt: createIsoDateTime(raw.publishedAt),
-		readingTimeOverride: raw.readingTimeOverride ? createReadingTime(raw.readingTimeOverride) : undefined,
+		totalReadingTime: resolveTotalReadingTime(
+			raw.totalReadingTime,
+			raw.content.map((section) => section.body),
+		),
 	});
+}
+
+// Proyección parcial (?section=N): construye el agregado con una única sección en `position === section`,
+// SIN re-correr la invariante de posiciones contiguas de createLiteraryWork (el recorte lo hizo GROQ —
+// ver LITERARY_WORK_DESIGN.md §2/§7). El `totalReadingTime` ya resuelto lo pasa el repository (persistido
+// o materializado por full-fetch): la respuesta parcial no transporta todos los bodies para derivarlo.
+export function mapLiteraryWorkSectionProjection(
+	raw: SanityLiteraryWorkSectionProjection,
+	section: number,
+	totalReadingTime: ReadingTime,
+): LiteraryWork | null {
+	if (!raw.section) {
+		return null;
+	}
+	return Object.freeze({
+		_id: raw._id,
+		slug: createSlug(raw.slug),
+		title: raw.title,
+		authors: raw.authors.map(mapAuthor),
+		coverImage: raw.coverImage ? urlFor(raw.coverImage) : '',
+		content: [mapLiteraryWorkSection(raw.section, section)],
+		mediaSources: mapMediaSources(raw.mediaSources),
+		resources: mapResources(raw.resources),
+		badLanguage: raw.badLanguage,
+		tags: mapTags(raw.tags),
+		originalPublication: raw.originalPublication,
+		publishedAt: createIsoDateTime(raw.publishedAt),
+		totalReadingTime,
+		sectionCount: raw.sectionCount,
+	});
+}
+
+// Prefiere el total persistido; deriva de los bodies solo como fallback puro (obra sin materializar).
+// La persistencia (write-on-read) la hace el repository por separado.
+function resolveTotalReadingTime(persisted: number | null, bodies: readonly string[]): ReadingTime {
+	return persisted !== null ? createReadingTime(persisted) : deriveTotalReadingTime(bodies.map(createMarkdown));
 }
 
 function mapLiteraryWorkSection(raw: SanityLiteraryWorkSection, index: number): LiteraryWorkSection {
@@ -43,7 +89,8 @@ function mapLiteraryWorkSection(raw: SanityLiteraryWorkSection, index: number): 
 		chapterTitle: raw.chapterTitle ? createChapterTitle(raw.chapterTitle) : undefined,
 		epigraphs: raw.epigraphs.map(mapLiteraryWorkEpigraph),
 		bodyHtml: markdownToSanitizedHtml(body),
-		readingTime: deriveReadingTime(countWords(body)),
+		// Prefiere el readingTime persistido; deriva solo como fallback puro (sección sin materializar).
+		readingTime: raw.readingTime !== null ? createReadingTime(raw.readingTime) : deriveSectionReadingTime(body),
 	});
 }
 
