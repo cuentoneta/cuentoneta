@@ -1,5 +1,5 @@
 import type { SanityClient } from '@sanity/client';
-import { fn, type Mock } from '@test-utils';
+import { clearAllMocks, fn, type Mock } from '@test-utils';
 import { SanityLiteraryWorkRepository } from './literary-work.repository';
 import { LiteraryWorkSectionNotFoundError } from './literary-work.errors';
 import { rawLiteraryWork, rawUnmaterializedLiteraryWork } from '../../_mocks/literary-work-raw.mock';
@@ -26,6 +26,10 @@ function createSpyClient(): SpyClient {
 const sectionReadingTimeKey = (key: string) => `content[_key=="${key}"].readingTime`;
 
 describe('SanityLiteraryWorkRepository', () => {
+	// Cada test crea su spy fresco con createSpyClient(), así que no hay estado compartido; el reset
+	// es higiene alineada con la convención del repo (testing.md).
+	beforeEach(clearAllMocks);
+
 	describe('fetchBySlug — materialización write-on-read', () => {
 		it('persists the missing reading times (setIfMissing) and serves the computed values', async () => {
 			const spy = createSpyClient();
