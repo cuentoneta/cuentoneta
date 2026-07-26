@@ -892,6 +892,13 @@
 								},
 								"optional": false
 							},
+							"readingTime": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "number"
+								},
+								"optional": true
+							},
 							"_type": {
 								"type": "objectAttribute",
 								"value": {
@@ -915,7 +922,7 @@
 				},
 				"optional": false
 			},
-			"readingTimeOverride": {
+			"totalReadingTime": {
 				"type": "objectAttribute",
 				"value": {
 					"type": "number"
