@@ -83,6 +83,12 @@ const generateApiUrl = (environment: TEnvironmentType): string => {
 };
 
 const apiUrl = generateApiUrl(environment);
+
+// Postura de indexado SEO de la build: solo producción indexa; staging/preview/development van
+// noindex. SEO_INDEXABLE=true la fuerza en una build no productiva sin tocar las URLs (lo usa el
+// job de e2e para validar el HTML del crawler contra el server SSR local).
+const indexable = environment === 'production' || process.env['SEO_INDEXABLE'] === 'true';
+
 // Accede a las variables de entorno y genera un string
 // correspondiente al objeto environment que utilizará Angular
 
@@ -91,6 +97,7 @@ const exportedEnvironment = {
 	website: `${apiUrl ?? 'https://cuentoneta.ar/'}`,
 	apiUrl: `${apiUrl}`,
 	clarityProjectId: '',
+	indexable,
 };
 
 // Chequea si existe la variable de entorno para analytics de Microsoft Clarity

@@ -158,6 +158,12 @@ export class HeadMetadataDirective {
 	public setRobots(
 		content: 'index, follow' | 'noindex, nofollow' | 'index, nofollow' | 'noindex, follow' | 'all' | 'none',
 	) {
+		// Builds no indexables (staging/previews) van noindex sin importar el argumento: alinea el <meta>
+		// con el header X-Robots-Tag del server y blinda esos entornos frente a páginas futuras.
+		if (!environment.indexable) {
+			this.metaTagService.updateTag({ name: 'robots', content: 'noindex, nofollow' });
+			return;
+		}
 		const value = content === 'index, follow' || content === 'all' ? this.indexableRobots : content;
 		this.metaTagService.updateTag({
 			name: 'robots',
