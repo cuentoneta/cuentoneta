@@ -55,7 +55,10 @@ export function mapLiteraryWorkSectionProjection(
 	section: number,
 	totalReadingTime: ReadingTime,
 ): LiteraryWork | null {
-	if (!raw.section) {
+	// `section` es un slice GROQ (`content[$section...$sectionEnd]`): array de 0 o 1 elementos —
+	// vacío cuando el índice está fuera de rango.
+	const [rawSection] = raw.section;
+	if (!rawSection) {
 		return null;
 	}
 	return Object.freeze({
@@ -64,7 +67,7 @@ export function mapLiteraryWorkSectionProjection(
 		title: raw.title,
 		authors: raw.authors.map(mapAuthor),
 		coverImage: raw.coverImage ? urlFor(raw.coverImage) : '',
-		content: [mapLiteraryWorkSection(raw.section, section)],
+		content: [mapLiteraryWorkSection(rawSection, section)],
 		mediaSources: mapMediaSources(raw.mediaSources),
 		resources: mapResources(raw.resources),
 		badLanguage: raw.badLanguage,

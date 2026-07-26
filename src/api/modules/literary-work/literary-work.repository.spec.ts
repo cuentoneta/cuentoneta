@@ -91,7 +91,7 @@ describe('SanityLiteraryWorkRepository', () => {
 	describe('fetchSectionBySlug — proyección parcial', () => {
 		it('projects the requested section with whole-work metadata in a single query', async () => {
 			const spy = createSpyClient();
-			spy.fetch.mockResolvedValue({ ...rawLiteraryWork, section: rawLiteraryWork.content[1] });
+			spy.fetch.mockResolvedValue({ ...rawLiteraryWork, section: [rawLiteraryWork.content[1]] });
 			const repository = new SanityLiteraryWorkRepository(spy.client, true);
 
 			const work = await repository.fetchSectionBySlug('la-vigilia-de-onoff', 1);
@@ -104,7 +104,7 @@ describe('SanityLiteraryWorkRepository', () => {
 		});
 
 		it('falls back to a full fetch to materialize on cold-start (no persisted total)', async () => {
-			const coldSection = { ...rawUnmaterializedLiteraryWork, section: rawUnmaterializedLiteraryWork.content[1] };
+			const coldSection = { ...rawUnmaterializedLiteraryWork, section: [rawUnmaterializedLiteraryWork.content[1]] };
 			const spy = createSpyClient();
 			spy.fetch.mockResolvedValueOnce(coldSection).mockResolvedValueOnce(rawUnmaterializedLiteraryWork);
 			const repository = new SanityLiteraryWorkRepository(spy.client, true);
@@ -118,7 +118,7 @@ describe('SanityLiteraryWorkRepository', () => {
 
 		it('throws LiteraryWorkSectionNotFoundError when the section is out of range', async () => {
 			const spy = createSpyClient();
-			spy.fetch.mockResolvedValue({ ...rawLiteraryWork, section: null });
+			spy.fetch.mockResolvedValue({ ...rawLiteraryWork, section: [] });
 			const repository = new SanityLiteraryWorkRepository(spy.client, true);
 
 			await expect(repository.fetchSectionBySlug('la-vigilia-de-onoff', 99)).rejects.toThrow(

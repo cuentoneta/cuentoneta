@@ -73,7 +73,9 @@ export const literaryWorkBySlugQuery = defineQuery(`
 }[0]`);
 
 // Obtención parcial: metadata total (incluido totalReadingTime y sectionCount) + el body de una sola
-// sección (la de índice $section, 0-based). Habilita ?section=N sin transportar todos los bodies.
+// sección vía el slice `content[$section...$sectionEnd]` (0-based, fin exclusivo — `$sectionEnd` va
+// como parámetro porque el typegen no infiere aritmética en el rango). Habilita ?section=N sin
+// transportar todos los bodies. `section` es un array de 0 o 1 elementos (vacío si N está fuera de rango).
 export const literaryWorkSectionBySlugQuery = defineQuery(`
 *[_type == 'literaryWork' && slug.current == $slug && !(_id in path('drafts.**'))]
 {
@@ -134,7 +136,7 @@ export const literaryWorkSectionBySlugQuery = defineQuery(`
         }, []),
         'tags': []
     }, []),
-    'section': content[$section]{
+    'section': content[$section...$sectionEnd]{
         _key,
         chapterTitle,
         'epigraphs': coalesce(epigraphs[]{ text, reference }, []),

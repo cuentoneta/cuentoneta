@@ -39,7 +39,9 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 	}
 
 	public async fetchSectionBySlug(slug: string, section: number): Promise<LiteraryWork | null> {
-		const raw = await this.client.fetch(literaryWorkSectionBySlugQuery, { slug, section });
+		// `sectionEnd` cierra el slice GROQ `content[$section...$sectionEnd]` (fin exclusivo): trae solo
+		// la sección pedida. Se pasa como parámetro porque el typegen no infiere aritmética en el rango.
+		const raw = await this.client.fetch(literaryWorkSectionBySlugQuery, { slug, section, sectionEnd: section + 1 });
 		if (!raw) {
 			return null;
 		}
