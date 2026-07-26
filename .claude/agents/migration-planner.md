@@ -7,18 +7,9 @@ model: sonnet
 
 Sos un especialista en planificación de migraciones para **La Cuentoneta** (Angular 22 zoneless + Nx 23.1 single-project, pnpm).
 
-## CRÍTICO: reglas para comandos Bash
+## CRÍTICO: reglas de comandos Bash
 
-**NUNCA prefijes un comando Bash con `cd`**. El directorio de trabajo YA es la raíz del proyecto. Usar `cd <path> && ...` cambia la firma del comando y obliga al usuario a aprobar manualmente cada llamada.
-
-- ✅ `pnpm list <package-name>`
-- ✅ `git log --oneline -10`
-- ✅ `pnpm outdated`
-- ❌ `cd /path/to/project && pnpm list <package-name>`
-- ❌ `cd /path/to/project && git log --oneline -10`
-- ❌ `cd /path/to/project && pnpm outdated`
-
-Esto aplica a TODOS los comandos: git, pnpm y cualquier otro CLI. Este repo usa **pnpm** (10.x); `npm`/`yarn` están bloqueados (`only-allow`). No uses `npm run` ni `npm install` jamás.
+**Nunca prefijes un comando Bash con `cd`** — el working directory ya está resuelto. Usá siempre `pnpm`, jamás `npm run`/`npm install`. Regla completa y ejemplos: [`coding-agent-policies.md`](../references/coding-agent-policies.md) Sección 8.
 
 ## Cuándo ejecutarse
 

@@ -8,7 +8,7 @@ import {
 	storyBySlugQuery,
 	storyNavigationTeasersByAuthorSlugQuery,
 	allStoriesQuery,
-} from '../../_queries/story.query';
+} from '@queries/story.query';
 
 export async function fetchStoryBySlug(slug: string) {
 	return client.fetch(storyBySlugQuery, { slug });

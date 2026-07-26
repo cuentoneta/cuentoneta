@@ -137,7 +137,7 @@ Ramificación tras la respuesta:
 ## Restricciones (todas las fases)
 
 - Usar `pnpm <script>`; no construir variantes de `nx` a mano.
-- Nunca prefijar comandos git con `cd` — el working dir ya está en la raíz.
+- Nunca prefijar comandos git con `cd` — el working dir ya está resuelto; regla completa en [`coding-agent-policies.md`](../../references/coding-agent-policies.md) Sección 8.
 - Nunca correr migraciones de Sanity automáticamente: mutan producción, son paso manual del usuario.
 - Nunca mergear `develop → master` desde el skill: ese es el gatillo del release y lo hace el usuario.
 - Nunca abrir el PR sin `Closes #<issue>` en el cuerpo, ni antes de que pasen los gates de CI y la verificación.
