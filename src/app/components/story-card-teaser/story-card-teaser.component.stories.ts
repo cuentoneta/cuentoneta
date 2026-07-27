@@ -1,5 +1,5 @@
-import { applicationConfig, argsToTemplate, Meta, StoryObj } from '@storybook/angular';
-import { moduleMetadata } from '@storybook/angular';
+import { applicationConfig, argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
+import { moduleMetadata } from '@storybook/angular-vite';
 import { StoryCardTeaserComponent } from './story-card-teaser.component';
 import { storyTeaserMock } from '../../mocks/story.mock';
 import { authorTeaserMock } from '../../mocks/author.mock';

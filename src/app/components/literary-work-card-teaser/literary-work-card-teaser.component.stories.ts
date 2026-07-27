@@ -1,4 +1,4 @@
-import { applicationConfig, argsToTemplate, Meta, StoryObj } from '@storybook/angular';
+import { applicationConfig, argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 import { provideRouter } from '@angular/router';
 
 import { LiteraryWorkCardTeaserComponent } from './literary-work-card-teaser.component';

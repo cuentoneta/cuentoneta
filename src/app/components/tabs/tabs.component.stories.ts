@@ -1,4 +1,4 @@
-import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
+import { Meta, StoryObj, moduleMetadata } from '@storybook/angular-vite';
 import TabsComponent from './tabs.component';
 import Tab from './tab.component';
 

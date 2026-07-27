@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/angular';
+import { Meta, StoryObj } from '@storybook/angular-vite';
 import { AudioRecordingWidgetComponent } from './audio-recording-widget.component';
 import { audioRecordingMock } from '@mocks/audio-recording.mock';
 

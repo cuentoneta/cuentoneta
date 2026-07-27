@@ -1,4 +1,4 @@
-import { argsToTemplate, Meta, StoryObj } from '@storybook/angular';
+import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 
 import { EditorialTextBlockComponent } from './editorial-text-block.component';
 import { Epigraph } from '@models/story.model';

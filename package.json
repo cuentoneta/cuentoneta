@@ -91,7 +91,6 @@
 		"@nx/workspace": "23.1.0",
 		"@playwright/test": "^1.61.0",
 		"@storybook/addon-docs": "10.5.5",
-		"@storybook/angular": "10.5.5",
 		"@storybook/angular-vite": "10.5.5",
 		"@stylistic/eslint-plugin": "^5.10.0",
 		"@tailwindcss/postcss": "^4.3.2",

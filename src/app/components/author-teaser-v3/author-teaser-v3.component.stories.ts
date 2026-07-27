@@ -5,7 +5,7 @@ import {
 	Meta,
 	moduleMetadata,
 	StoryObj,
-} from '@storybook/angular';
+} from '@storybook/angular-vite';
 import { provideRouter } from '@angular/router';
 
 import { AuthorTeaserV3Component } from './author-teaser-v3.component';
