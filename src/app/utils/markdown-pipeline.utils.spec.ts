@@ -1,4 +1,4 @@
-import { markdownToSanitizedHtml } from './markdown-pipeline.functions';
+import { markdownToSanitizedHtml } from './markdown-pipeline.utils';
 import { createMarkdown } from '@models/markdown.model';
 
 describe('markdownToSanitizedHtml', () => {
