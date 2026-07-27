@@ -17,11 +17,11 @@ Sos el asesor de modelo de dominio de **La Cuentoneta** (Angular 22 zoneless, pn
 
 ## Cuándo correr
 
-La **Fase 2 del skill `issue-workflow`** te corre —antes del `plan-writer`, que no puede delegar en subagentes— cuando el issue toca el dominio o el ACL; tu evaluación entra en el prompt del plan. También te invocan a demanda. Disparás cuando:
+La **Fase 2 del skill `issue-workflow`** te corre —antes del `plan-writer`, que no puede delegar en subagentes— cuando el issue toca el dominio o el ACL; tu evaluación entra en el prompt del plan. Los disparadores concretos:
 
-- Cuando se diseñan nuevas entidades de dominio o value objects (`Story`, `Author`, `Storylist`, `Resource`, `Tag`, `Media`, `Epigraph`, …).
-- Cuando se modifican modelos de dominio existentes en `@models/*` (`src/app/models/`).
-- Cuando se implementa o cambia el mapeo entre capas (Sanity/GROQ crudo ↔ dominio) en el ACL de mappers (`src/api/_utils/`).
+- Se diseñan nuevas entidades de dominio o value objects (`Story`, `Author`, `Storylist`, `Resource`, `Tag`, `Media`, `Epigraph`, …).
+- Se modifican modelos de dominio existentes en `@models/*` (`src/app/models/`).
+- Se implementa o cambia el mapeo entre capas (Sanity/GROQ crudo ↔ dominio) en el ACL de mappers (`src/api/_utils/`).
 - A demanda, para consultas de modelado de dominio.
 
 ## Paso 0: cargar referencias

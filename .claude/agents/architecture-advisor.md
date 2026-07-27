@@ -13,11 +13,11 @@ Sos el asesor de arquitectura de este proyecto Angular/Nx (La Cuentoneta).
 
 ## Cuándo intervenir
 
-La **Fase 2 del skill `issue-workflow`** te corre —antes del `plan-writer`, que no puede delegar en subagentes— cuando el issue hace un cambio **estructuralmente significativo**; tu evaluación entra en el prompt del plan. El umbral es alto a propósito: un ajuste localizado no te dispara (la carga de referencias del `plan-writer` basta). También te invocan a demanda. Disparás cuando el cambio es:
+La **Fase 2 del skill `issue-workflow`** te corre —antes del `plan-writer`, que no puede delegar en subagentes— cuando el issue hace un cambio **estructuralmente significativo**; tu evaluación entra en el prompt del plan. El umbral es alto a propósito: un ajuste localizado no te dispara (la carga de referencias del `plan-writer` basta). Los disparadores concretos:
 
 - Un módulo o servicio nuevo, o una feature/provider/interfaz `-api` nueva
 - Un cambio estructural: nuevos límites de módulo, dirección de dependencias, o un bounded context nuevo
-- Cuando hay que revisar relaciones de dependencia
+- Revisar relaciones de dependencia
 - A demanda, para consultas de arquitectura
 
 ## Paso 0: Cargar archivos de referencia
