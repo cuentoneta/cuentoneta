@@ -30,7 +30,7 @@ describe('LiteraryWorkHeroHeaderComponent', () => {
 		expect(screen.getByTestId('hero-background')).toHaveAttribute('src', expect.stringContaining('w=1920'));
 	});
 
-	it('should not render the background when the work has no cover', async () => {
+	it('should not render the background when the literary work has no cover', async () => {
 		await render(LiteraryWorkHeroHeaderComponent, { inputs: { literaryWork: { ...literaryWork, coverImage: '' } } });
 		expect(screen.queryByTestId('hero-background')).not.toBeInTheDocument();
 	});
@@ -40,29 +40,29 @@ describe('LiteraryWorkHeroHeaderComponent', () => {
 		expect(screen.getByTestId('publication')).toHaveTextContent(`Publicado en: ${literaryWork.originalPublication}`);
 	});
 
-	it('should render all the work tags', async () => {
+	it('should render all the literary work tags', async () => {
 		await render(LiteraryWorkHeroHeaderComponent, { inputs: { literaryWork } });
 		for (const tag of tags) {
 			expect(screen.getByText(tag.title)).toBeInTheDocument();
 		}
 	});
 
-	it('should render the foreground cover image when the work has a cover', async () => {
+	it('should render the foreground cover image when the literary work has a cover', async () => {
 		await render(LiteraryWorkHeroHeaderComponent, { inputs: { literaryWork } });
 		expect(screen.getByTestId('cover-image')).toBeInTheDocument();
 	});
 
-	it('should render the cover placeholder when the work has no cover', async () => {
+	it('should render the cover placeholder when the literary work has no cover', async () => {
 		await render(LiteraryWorkHeroHeaderComponent, { inputs: { literaryWork: { ...literaryWork, coverImage: '' } } });
 		expect(screen.getByTestId('cover-placeholder')).toBeInTheDocument();
 	});
 
-	it('should render the skeleton when no work is provided', async () => {
+	it('should render the skeleton when no literary work is provided', async () => {
 		await render(LiteraryWorkHeroHeaderComponent);
 		expect(screen.getByTestId('skeleton')).toBeInTheDocument();
 	});
 
-	it('should not render the skeleton once a work is provided', async () => {
+	it('should not render the skeleton once a literary work is provided', async () => {
 		await render(LiteraryWorkHeroHeaderComponent, { inputs: { literaryWork } });
 		expect(screen.queryByTestId('skeleton')).not.toBeInTheDocument();
 	});

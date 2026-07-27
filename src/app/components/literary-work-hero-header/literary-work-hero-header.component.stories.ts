@@ -36,19 +36,19 @@ const meta: Meta<LiteraryWorkHeroHeaderComponent> = {
 export default meta;
 type Story = StoryObj<LiteraryWorkHeroHeaderComponent>;
 
-export const Interactiva: StoryObj<LiteraryWorkHeroHeaderComponent & { workIndex: number }> = {
+export const Interactiva: StoryObj<LiteraryWorkHeroHeaderComponent & { literaryWorkIndex: number }> = {
 	argTypes: {
-		workIndex: {
+		literaryWorkIndex: {
 			...literaryWorkSelectArgType,
 			description:
 				'Obra del corpus de François Onoff; su portada, título, autor y publicación cambian de forma conjunta',
 		},
 	},
 	render: (args) => ({
-		props: { ...args, works: onoffLiteraryWorksMock },
-		template: `<cuentoneta-literary-work-hero-header [literaryWork]="works[workIndex]" />`,
+		props: { ...args, literaryWorks: onoffLiteraryWorksMock },
+		template: `<cuentoneta-literary-work-hero-header [literaryWork]="literaryWorks[literaryWorkIndex]" />`,
 	}),
-	args: { workIndex: 0 },
+	args: { literaryWorkIndex: 0 },
 	parameters: {
 		docs: {
 			description: {

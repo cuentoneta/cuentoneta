@@ -173,6 +173,15 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 			expect(screen.getByTestId('description')).toBeInTheDocument();
 		});
 
+		it('should render the sanitized section body inside the excerpt', async () => {
+			await render(LiteraryWorkCardTeaserComponent, {
+				inputs: { literaryWork: literaryWorkWithExcerpt, showExcerpt: true },
+			});
+			// El excerpt pinta teaserSection.bodyHtml (HTML saneado) vía [innerHTML]: el elemento debe quedar
+			// con el cuerpo renderizado en el DOM (no vacío), tras dejar de usar PortableTextParser.
+			expect(screen.getByTestId('description')).not.toBeEmptyDOMElement();
+		});
+
 		it('should not display the description when showExcerpt is false', async () => {
 			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { literaryWork: literaryWorkWithExcerpt, showExcerpt: false },
