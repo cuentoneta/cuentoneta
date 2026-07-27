@@ -24,7 +24,7 @@ export const rawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	content: [
 		{
 			_key: 'section-1',
-			chapterTitle: 'La espera',
+			title: 'La espera',
 			epigraphs: [
 				{
 					text: '_El insomnio es una lucidez que nadie pidió._',
@@ -36,7 +36,7 @@ export const rawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 		},
 		{
 			_key: 'section-2',
-			chapterTitle: null,
+			title: null,
 			epigraphs: [],
 			body: 'La segunda noche fue más corta, apenas un paréntesis de _sombras_ y relojes.',
 			readingTime: 1,
@@ -58,7 +58,7 @@ export const rawAnonymousLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult
 	content: [
 		{
 			_key: 'section-1',
-			chapterTitle: null,
+			title: null,
 			epigraphs: [],
 			body: 'Nadie firma estas líneas: la voz que las recita vive en otra parte.',
 			readingTime: 1,

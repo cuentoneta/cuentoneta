@@ -6,14 +6,9 @@ import {
 	type LiteraryWorkEpigraph,
 	type LiteraryWorkSection,
 } from '@models/literary-work-section.model';
-import { createChapterTitle } from '@models/chapter-title.model';
+import { createSectionTitle } from '@models/section-title.model';
 import { createMarkdown } from '@models/markdown.model';
-import {
-	createReadingTime,
-	deriveSectionReadingTime,
-	deriveTotalReadingTime,
-	type ReadingTime,
-} from '@models/reading-time.model';
+import { createReadingTime, deriveSectionReadingTime, type ReadingTime } from '@models/reading-time.model';
 import { createSlug } from '@models/slug.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { mapAuthor, mapResources, mapTags, urlFor } from './functions';
@@ -42,14 +37,17 @@ type SanityLiteraryWorkMetadata = Pick<
 >;
 
 export function mapLiteraryWork(raw: SanityLiteraryWork): LiteraryWork {
-	return createLiteraryWork({
+	const work = createLiteraryWork({
 		...mapLiteraryWorkMetadata(raw),
 		content: raw.content.map(mapLiteraryWorkSection),
-		totalReadingTime: resolveTotalReadingTime(
-			raw.totalReadingTime,
-			raw.content.map((section) => section.body),
-		),
 	});
+	// El total persistido es autoritativo (obras recitadas: la duración del medio ≠ la suma del texto).
+	// La factory deriva un default de las secciones (barato: los readingTime por sección ya vienen
+	// persistidos) y el ACL lo sobrescribe con el valor materializado cuando está presente — igual que
+	// la vía parcial (?section=N), que recibe el total ya resuelto del repository.
+	return raw.totalReadingTime !== null
+		? Object.freeze({ ...work, totalReadingTime: createReadingTime(raw.totalReadingTime) })
+		: work;
 }
 
 // Mapeo de la metadata compartida por ambos caminos de construcción (full y proyección parcial), para no
@@ -93,17 +91,11 @@ export function mapLiteraryWorkSectionProjection(
 	});
 }
 
-// Prefiere el total persistido; deriva de los bodies solo como fallback puro (obra sin materializar).
-// La persistencia (write-on-read) la hace el repository por separado.
-function resolveTotalReadingTime(persisted: number | null, bodies: readonly string[]): ReadingTime {
-	return persisted !== null ? createReadingTime(persisted) : deriveTotalReadingTime(bodies.map(createMarkdown));
-}
-
 function mapLiteraryWorkSection(raw: SanityLiteraryWorkSection, index: number): LiteraryWorkSection {
 	const body = createMarkdown(raw.body);
 	return createLiteraryWorkSection({
 		position: index,
-		chapterTitle: raw.chapterTitle ? createChapterTitle(raw.chapterTitle) : undefined,
+		title: raw.title ? createSectionTitle(raw.title) : undefined,
 		epigraphs: raw.epigraphs.map(mapLiteraryWorkEpigraph),
 		bodyHtml: markdownToSanitizedHtml(body),
 		// Prefiere el readingTime persistido; deriva solo como fallback puro (sección sin materializar).
