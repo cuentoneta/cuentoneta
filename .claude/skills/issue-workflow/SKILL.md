@@ -189,9 +189,13 @@ No avanzar a la Fase 3 sin una respuesta "Aprobar".
 
 - Formato del mensaje: `[#<issue>] - <qué cambió y por qué>` (en español).
 - Un commit por cambio lógico distinto (p. ej. componente nuevo + spec = un commit; una story es otro commit si es otra preocupación).
-- Cada commit debe dejar el código **buildeable** (los gates de CI pasarían).
+- Cada commit debe dejar el código **buildeable** (los gates de CI pasarían). Para no descubrir un commit roto recién en la Fase 4 con todo acumulado, antes de cada commit que toque código TS/runtime correr una **verificación barata** (un subconjunto rápido, **no** la suite ni el resto de gates —eso sigue siendo la Fase 4—):
+  - **typecheck:** `pnpm typecheck` (en modo worktree, `pnpm exec tsc -p tsconfig.typecheck.json --noEmit` — ver [Modo worktree](#modo-worktree) → "Ajustes transversales").
+  - **specs afectados:** `pnpm exec vitest related --run $(git diff --name-only --cached)` — corre solo los `*.spec.ts` que importan los archivos staged; si `related` no rinde, los specs del módulo tocado.
+  - Los commits **solo-doc / solo-config de tooling** (sin efecto en runtime) saltean esta verificación.
 - Nunca mensajes no descriptivos ("WIP", "fix", "update").
 - Nunca `--amend`; crear commits nuevos tras fallos del hook de pre-commit.
+- **En modo raíz**, antes de cada commit confirmar la rama activa con `git branch --show-current` contra `feat/<number>-<kebab>`; si un subagente con Bash la cambió en el medio, re-checkoutear la rama correcta antes de commitear. En **modo worktree** se omite: `EnterWorktree` fija el cwd/rama del worktree y los subagentes lo heredan (ver [Modo worktree](#modo-worktree)).
 
 ### No hacer en esta fase
 
