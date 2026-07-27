@@ -28,7 +28,6 @@ function buildOptions(overrides: Partial<Parameters<typeof createLiteraryWork>[0
 		tags: [],
 		originalPublication: '',
 		publishedAt: createIsoDateTime('2026-07-22T00:00:00Z'),
-		totalReadingTime: createReadingTime(2),
 		...overrides,
 	};
 }
@@ -42,25 +41,13 @@ describe('createLiteraryWork', () => {
 		expect(Object.isFrozen(work)).toBe(true);
 	});
 
-	it('keeps the provided totalReadingTime and derives sectionCount from its sections', () => {
+	it('derives totalReadingTime and sectionCount from its sections', () => {
 		const work = createLiteraryWork(
-			buildOptions({
-				content: [buildSection(0, 2), buildSection(1, 3), buildSection(2, 1)],
-				totalReadingTime: createReadingTime(6),
-			}),
+			buildOptions({ content: [buildSection(0, 2), buildSection(1, 3), buildSection(2, 1)] }),
 		);
 
 		expect(work.totalReadingTime).toBe(6);
 		expect(work.sectionCount).toBe(3);
-	});
-
-	it('takes totalReadingTime as given, independent of the section sum (recited/audiovisual works)', () => {
-		const work = createLiteraryWork(
-			buildOptions({ content: [buildSection(0, 1)], totalReadingTime: createReadingTime(40) }),
-		);
-
-		expect(work.totalReadingTime).toBe(40);
-		expect('readingTimeOverride' in work).toBe(false);
 	});
 
 	it('throws when section positions do not match their array index', () => {

@@ -1,4 +1,4 @@
-import type { ChapterTitle } from './chapter-title.model';
+import type { SectionTitle } from './section-title.model';
 import type { ReadingTime } from './reading-time.model';
 import type { SanitizedHtml } from './sanitized-html.model';
 
@@ -22,7 +22,7 @@ export interface LiteraryWorkSection {
 	// (sin transformación 0↔1 en el flujo). Estable ante respuestas parciales del endpoint —
 	// ver LITERARY_WORK_DESIGN.md §3/§7.
 	readonly position: number;
-	readonly chapterTitle?: ChapterTitle;
+	readonly title?: SectionTitle;
 	readonly epigraphs?: readonly LiteraryWorkEpigraph[];
 	readonly bodyHtml: SanitizedHtml;
 	readonly readingTime: ReadingTime;
@@ -30,7 +30,7 @@ export interface LiteraryWorkSection {
 
 interface CreateLiteraryWorkSectionOptions {
 	position: number;
-	chapterTitle?: ChapterTitle;
+	title?: SectionTitle;
 	epigraphs?: readonly LiteraryWorkEpigraph[];
 	bodyHtml: SanitizedHtml;
 	readingTime: ReadingTime;

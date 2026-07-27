@@ -1,11 +1,11 @@
 import type { Author, AuthorTeaser } from './author.model';
 import type { LiteraryWorkSection } from './literary-work-section.model';
-import type { Media } from './media.model';
+import type { MediaTypes } from './media.model';
 import type { Resource } from './resource.model';
 import type { Tag } from './tag.model';
 import type { IsoDateTime } from '@utils/date.utils';
 import { createSlug, type Slug } from './slug.model';
-import type { ReadingTime } from './reading-time.model';
+import { sumReadingTimes, type ReadingTime } from './reading-time.model';
 
 interface LiteraryWorkBase {
 	readonly _id: string;
@@ -19,7 +19,7 @@ interface LiteraryWorkBase {
 	readonly tags: readonly Tag[];
 	// Las tarjetas de listado (vistas de teaser/navegación) muestran los recursos multimedia
 	// de la obra; por eso el campo vive en la base y no solo en el agregado completo.
-	readonly mediaSources: readonly Media[];
+	readonly mediaSources: readonly MediaTypes[];
 }
 
 export interface LiteraryWork extends LiteraryWorkBase {
@@ -64,15 +64,12 @@ interface CreateLiteraryWorkOptions {
 	authors: readonly Author[];
 	coverImage: string;
 	content: readonly LiteraryWorkSection[];
-	mediaSources: readonly Media[];
+	mediaSources: readonly MediaTypes[];
 	resources: readonly Resource[];
 	badLanguage?: boolean;
 	tags: readonly Tag[];
 	originalPublication: string;
 	publishedAt: IsoDateTime;
-	// Total ya resuelto: el backend lo materializa (suma de secciones) o lo setea el editor en
-	// recitados/audiovisuales. La factory lo recibe, no lo deriva — ver LITERARY_WORK_DESIGN.md §5.
-	totalReadingTime: ReadingTime;
 }
 
 export function createLiteraryWork(options: CreateLiteraryWorkOptions): LiteraryWork {
@@ -100,6 +97,7 @@ export function createLiteraryWork(options: CreateLiteraryWorkOptions): Literary
 	return Object.freeze({
 		...options,
 		slug: createSlug(options.slug),
+		totalReadingTime: sumReadingTimes(options.content.map((section) => section.readingTime)),
 		sectionCount: options.content.length,
 	});
 }

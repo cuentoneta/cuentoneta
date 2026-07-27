@@ -65,7 +65,7 @@ export const literaryWorkBySlugQuery = defineQuery(`
     }, []),
     'content': coalesce(content[]{
         _key,
-        chapterTitle,
+        title,
         'epigraphs': coalesce(epigraphs[]{ text, reference }, []),
         body,
         readingTime
@@ -138,7 +138,7 @@ export const literaryWorkSectionBySlugQuery = defineQuery(`
     }, []),
     'section': content[$section...$sectionEnd]{
         _key,
-        chapterTitle,
+        title,
         'epigraphs': coalesce(epigraphs[]{ text, reference }, []),
         body,
         readingTime

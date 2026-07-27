@@ -226,7 +226,7 @@ interface LiteraryWork {
 	content: LiteraryWorkSection[]; // Secciones/capítulos (nunca vacío)
 
 	// Metadatos
-	totalReadingTime: ReadingTime; // Leído del campo persistido (materializado write-once por el backend o seteado a mano en recitados)
+	totalReadingTime: ReadingTime; // Derivado: suma de los readingTime de sus secciones
 	sectionCount: number; // Derivado: total real de secciones (en proyecciones parciales puede superar a content.length)
 	badLanguage?: boolean; // Advertencia de lenguaje explícito
 	originalPublication: string; // Atribución/publicación original
@@ -243,7 +243,7 @@ interface LiteraryWork {
 
 	// Recursos Multimedia
 	resources: Resource[]; // Enlaces a recursos externos
-	mediaSources: Media[]; // Contenido multimedia asociado
+	mediaSources: MediaTypes[]; // Contenido multimedia asociado
 }
 
 interface LiteraryWorkSection {
@@ -264,7 +264,7 @@ interface LiteraryWorkEpigraph {
 
 - El slug debe ser único (garantizado por Sanity) y con formato válido (validado por el value object `Slug`)
 - La obra debe tener al menos una sección de contenido
-- `totalReadingTime` se lee del campo persistido: el backend lo materializa write-once (suma de los `readingTime` de sus secciones) o el editor lo setea a mano en obras recitadas/audiovisuales; la factory lo recibe ya resuelto, no lo deriva (ver [`LITERARY_WORK_DESIGN.md`](LITERARY_WORK_DESIGN.md) §5)
+- `totalReadingTime` es la suma de los `readingTime` de sus secciones (derivado en la factory); a nivel schema es un campo editable/persistido que el backend materializa (ver [`LITERARY_WORK_DESIGN.md`](LITERARY_WORK_DESIGN.md) §5)
 - `sectionCount` es el número real de secciones (derivado en la factory; en proyecciones parciales lo provee el mapper)
 - Las posiciones de sección son contiguas desde 0 en el agregado completo (`content[i].position === i`); las proyecciones parciales conservan el `position` de origen
 - `authors` exige al menos un autor (1..N) — la **obra anónima** referencia explícitamente al author "Anónimo" (slug `anonimo`, valor bien conocido del dominio; policy `isAnonymous` compara por slug, nunca por `_id`)
