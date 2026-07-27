@@ -209,6 +209,16 @@ describe('HeadMetadataDirective', () => {
 	});
 
 	describe('setRobots', () => {
+		const originalIndexable = environment.indexable;
+
+		beforeEach(() => {
+			environment.indexable = true;
+		});
+
+		afterEach(() => {
+			environment.indexable = originalIndexable;
+		});
+
 		it('should expand "index, follow" into indexable robots with preview directives', () => {
 			const metaSpy = spyOn(metaService, 'updateTag');
 
@@ -273,6 +283,26 @@ describe('HeadMetadataDirective', () => {
 				name: 'robots',
 				content: 'none',
 			});
+		});
+
+		describe('in non-indexable builds', () => {
+			beforeEach(() => {
+				environment.indexable = false;
+			});
+
+			it.each(['index, follow', 'all', 'index, nofollow', 'noindex, follow', 'none'] as const)(
+				'should force "noindex, nofollow" even when the page requests "%s"',
+				(requested) => {
+					const metaSpy = spyOn(metaService, 'updateTag');
+
+					directive.setRobots(requested);
+
+					expect(metaSpy).toHaveBeenCalledWith({
+						name: 'robots',
+						content: 'noindex, nofollow',
+					});
+				},
+			);
 		});
 	});
 
