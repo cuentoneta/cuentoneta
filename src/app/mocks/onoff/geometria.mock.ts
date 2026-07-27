@@ -2,7 +2,7 @@ import type { Story } from '@models/story.model';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
-import { countWords, deriveReadingTime } from '@models/reading-time.model';
+import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import geometriaMdBody from './geometria.md?raw';
@@ -292,7 +292,7 @@ export const geometriaLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 		createLiteraryWorkSection({
 			position: 0,
 			bodyHtml: markdownToSanitizedHtml(geometriaBody),
-			readingTime: deriveReadingTime(countWords(geometriaBody)),
+			readingTime: deriveSectionReadingTime(geometriaBody),
 		}),
 	],
 	mediaSources: [],

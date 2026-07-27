@@ -2,7 +2,7 @@ import type { Story } from '@models/story.model';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
-import { countWords, deriveReadingTime } from '@models/reading-time.model';
+import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import elTratadoDeLosPlaceresMdBody from './el-tratado-de-los-placeres.md?raw';
@@ -294,7 +294,7 @@ export const elTratadoDeLosPlaceresLiteraryWorkMock: LiteraryWork = createLitera
 		createLiteraryWorkSection({
 			position: 0,
 			bodyHtml: markdownToSanitizedHtml(elTratadoDeLosPlaceresBody),
-			readingTime: deriveReadingTime(countWords(elTratadoDeLosPlaceresBody)),
+			readingTime: deriveSectionReadingTime(elTratadoDeLosPlaceresBody),
 		}),
 	],
 	mediaSources: [],

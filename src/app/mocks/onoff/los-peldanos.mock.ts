@@ -2,7 +2,7 @@ import type { Story } from '@models/story.model';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
-import { countWords, deriveReadingTime } from '@models/reading-time.model';
+import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import losPeldanosMdBody from './los-peldanos.md?raw';
@@ -282,7 +282,7 @@ export const losPeldanosLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 		createLiteraryWorkSection({
 			position: 0,
 			bodyHtml: markdownToSanitizedHtml(losPeldanosBody),
-			readingTime: deriveReadingTime(countWords(losPeldanosBody)),
+			readingTime: deriveSectionReadingTime(losPeldanosBody),
 		}),
 	],
 	mediaSources: [],

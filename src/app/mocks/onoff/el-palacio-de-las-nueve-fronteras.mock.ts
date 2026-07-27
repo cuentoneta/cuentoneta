@@ -2,7 +2,7 @@ import type { Story } from '@models/story.model';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
-import { countWords, deriveReadingTime } from '@models/reading-time.model';
+import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import palacioNueveFronterasMdBody from './el-palacio-de-las-nueve-fronteras.md?raw';
@@ -272,7 +272,7 @@ export const palacioNueveFronterasLiteraryWorkMock: LiteraryWork = createLiterar
 		createLiteraryWorkSection({
 			position: 0,
 			bodyHtml: markdownToSanitizedHtml(palacioNueveFronterasBody),
-			readingTime: deriveReadingTime(countWords(palacioNueveFronterasBody)),
+			readingTime: deriveSectionReadingTime(palacioNueveFronterasBody),
 		}),
 	],
 	mediaSources: [],

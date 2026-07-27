@@ -6,7 +6,7 @@ import {
 } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
-import { countWords, deriveReadingTime } from '@models/reading-time.model';
+import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import { authorMock, authorTeaserMock } from './author.mock';
@@ -20,7 +20,7 @@ const body = createMarkdown(
 const section = createLiteraryWorkSection({
 	position: 0,
 	bodyHtml: markdownToSanitizedHtml(body),
-	readingTime: deriveReadingTime(countWords(body)),
+	readingTime: deriveSectionReadingTime(body),
 });
 
 export const literaryWorkMock: LiteraryWork = createLiteraryWork({
