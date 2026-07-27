@@ -248,6 +248,7 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 4. Si un hallazgo se **difiere**, proponer el issue al usuario y **esperar su confirmación** antes de crearlo (`gh issue create`); una vez creado, anotar su URL junto al valor **Diferido** en la columna **Estado**. Crear un issue es una acción hacia afuera: la misma política rige en la Fase 6.
 5. Tras abordar Críticos y Advertencias, re-correr los gates de CI. Arreglar regresiones.
 6. Las **Sugerencias** son opcionales: presentarlas y dejar que el usuario decida.
+7. Si un hallazgo es específicamente un **gap de cobertura de tests**, el orquestador **puede** delegar en **`test-generator`** el scaffolding de los specs faltantes (en modo worktree, adjuntar la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales"). Es un aid opcional, **no** un gate: los tests igual deben existir y pasar; el agente es solo una vía para producirlos.
 
 ---
 
