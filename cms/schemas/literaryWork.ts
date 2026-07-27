@@ -107,10 +107,10 @@ export default defineType({
 			of: [section],
 			validation: (Rule) => Rule.required().min(1),
 		}),
-		// Total de la obra. Editable a propósito: en obras de texto lo materializa el backend con la
-		// suma de las secciones la primera vez que se leen (setIfMissing, no pisa lo que ya está); en
-		// recitados/audiovisuales el editor lo setea a mano (duración del medio) y el backend lo
-		// respeta — ver docs/LITERARY_WORK_DESIGN.md §5.
+    
+		// Total de la obra, en minutos. Editable y opcional a propósito: en obras de texto lo completa
+		// el backend con la suma de las secciones, sin pisar un valor ya cargado; en
+		// recitados/audiovisuales el editor setea a mano la duración del medio.
 		defineField({
 			name: 'totalReadingTime',
 			title: 'Tiempo de lectura total (minutos)',
