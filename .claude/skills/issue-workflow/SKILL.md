@@ -274,7 +274,8 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 **Modo worktree:** el worktree **no se limpia en esta fase** — se mantiene hasta que el PR mergee, para permitir reanudar la sesión (ver [Modo worktree](#modo-worktree) → "Ciclo de vida"). Push y creación del PR corren igual, con cwd ya resuelto al worktree.
 
 1. `git push -u origin feat/<number>-<kebab>`.
-2. Crear el PR con `gh pr create` (base `develop`, con `--milestone` = el milestone recolectado en la Fase 0 → "Datos del issue", y `--label` por cada label del issue recolectado ahí, para que el PR herede la categorización del issue):
+2. Crear el PR con `gh pr create` (base **`<rama-base>`**, default `develop`, resuelta en la Fase 0 → "Base de la rama"; con `--milestone` = el milestone recolectado en la Fase 0 → "Datos del issue", y `--label` por cada label del issue recolectado ahí, para que el PR herede la categorización del issue):
+   - **Apilado (`<rama-base> ≠ develop`):** agregar al cuerpo del PR la línea `> Apilado sobre #<X> — este PR no debe mergearse antes que el PR de su rama base.` (con `#<X>` = el issue base detectado en la Fase 0), y surfacear ese aviso de forma prominente al presentar la URL (paso 3) y en el resumen final (paso 5). Un PR apilado mergeado antes que su base ensucia el diff de la base.
    - **Precondición:** ningún Crítico de `workspace/<number>/CODE_REVIEW.md` ni `workspace/<number>/SECURITY_REVIEW.md` sin **disposición** (definida en la pausa de la Fase 4). Si lo hay, no crear el PR: volver a la Fase 5, o a la vía "Disponer y ship" de la Fase 4.
    - Título: `[#<issue>] - <título del issue>`.
    - Cuerpo (en **español**):
@@ -313,7 +314,7 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
    | CI local            | <Verde / Rojo — ver <motivo>>                                     |
    ```
 
-   - `Commits` cuenta solo los de la rama (`git rev-list --count <base>..HEAD`, con `<base>` = `develop` en modo raíz y `origin/develop` en modo worktree).
+   - `Commits` cuenta solo los de la rama (`git rev-list --count <base>..HEAD`, con `<base>` = `<rama-base>` en modo raíz y `origin/<rama-base>` en modo worktree; default `develop`). Cuando `<rama-base> ≠ develop`, sumar el dato de base apilada bajo la tabla con el aviso de orden de merge (sin alterar la tabla en el caso `develop`).
    - `CI local` reporta el resultado de la última corrida de los gates.
 
 ---
@@ -325,6 +326,7 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 - Nunca abrir el PR antes de que pasen los gates de CI y haya corrido el `code-reviewer`.
 - Nunca abrir el PR sin el keyword de cierre (`Closes #<issue>`) en el cuerpo enlazando el issue de origen.
 - Nunca abrir el PR con un Crítico sin disposición confirmada — definición en la pausa de la Fase 4; verificación en la Fase 6 paso 2.
-- En modo worktree (ver [Modo worktree](#modo-worktree)), el cwd de la sesión y de los subagentes delegados ya está resuelto al worktree tras `EnterWorktree`: la regla anti-`cd` sigue rigiendo igual, y toda comparación de rango git usa `origin/develop` como base, nunca `develop` local.
+- En modo worktree (ver [Modo worktree](#modo-worktree)), el cwd de la sesión y de los subagentes delegados ya está resuelto al worktree tras `EnterWorktree`: la regla anti-`cd` sigue rigiendo igual, y toda comparación de rango git usa `<base>` (`origin/<rama-base>`, default `origin/develop`) como base, nunca la rama base local.
+- Toda delegación a un subagente que compute un diff de rango (`plan-writer`, advisors, `code-reviewer`, `security-auditor`, `test-generator`, `documentation-writer`) recibe la base `<base>` resuelta en la Fase 0: en worktree via la nota de delegación (que ya la incluye); en modo raíz con base apilada (`<rama-base> ≠ develop`), como una línea explícita en la instrucción. Los cuerpos de los agentes usan `develop...HEAD` como default de invocación standalone; esta instrucción lo overridea.
 - Nunca saltear la fase Plan — aun cambios triviales se benefician de un plan breve.
 - Aplican siempre las reglas de [`.claude/references/coding-agent-policies.md`](../../references/coding-agent-policies.md): sin framings de mantenedor único, sin "salteá el test por ser chico" (salvo cambios solo-doc), sin diferir la review más allá de abrir el PR, y sin comentarios redundantes (Sección 3).
