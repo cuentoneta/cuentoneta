@@ -45,7 +45,7 @@ export const rawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 };
 
 // Obra recitada (sin texto principal): `totalReadingTime` lo setea el editor a mano (duración del
-// medio), distinto de la suma de las secciones. Reemplaza al viejo `readingTimeOverride`.
+// medio), distinto de la suma de las secciones.
 export const rawAnonymousLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	...rawLiteraryWork,
 	_id: 'literaryWork_2',
