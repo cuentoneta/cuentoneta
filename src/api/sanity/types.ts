@@ -161,7 +161,7 @@ export type LiteraryWork = {
 		_type: 'image';
 	};
 	content: Array<{
-		chapterTitle?: string;
+		title?: string;
 		epigraphs?: Array<{
 			text?: Markdown;
 			reference?: Markdown;
@@ -169,10 +169,11 @@ export type LiteraryWork = {
 			_key: string;
 		}>;
 		body: Markdown;
+		readingTime?: number;
 		_type: 'section';
 		_key: string;
 	}>;
-	readingTimeOverride?: number;
+	totalReadingTime?: number;
 	mediaSources?: Array<
 		| {
 				title: string;

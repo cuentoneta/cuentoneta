@@ -9,9 +9,9 @@ const section = defineArrayMember({
 	type: 'object',
 	fields: [
 		defineField({
-			name: 'chapterTitle',
-			title: 'Título del capítulo',
-			description: 'Opcional. Una obra de una sola sección puede no llevar título de capítulo.',
+			name: 'title',
+			title: 'Título de la sección',
+			description: 'Opcional. Una obra de una sola sección puede no llevar título de sección.',
 			type: 'string',
 		}),
 		defineField({
@@ -51,7 +51,7 @@ const section = defineArrayMember({
 		}),
 	],
 	preview: {
-		select: { title: 'chapterTitle' },
+		select: { title: 'title' },
 		prepare({ title }) {
 			return { title: title || 'Sección sin título' };
 		},
