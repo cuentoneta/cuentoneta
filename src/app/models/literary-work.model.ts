@@ -1,6 +1,6 @@
 import type { Author, AuthorTeaser } from './author.model';
 import type { LiteraryWorkSection } from './literary-work-section.model';
-import type { MediaTypes } from './media.model';
+import type { Media } from './media.model';
 import type { Resource } from './resource.model';
 import type { Tag } from './tag.model';
 import type { IsoDateTime } from '@utils/date.utils';
@@ -19,7 +19,7 @@ interface LiteraryWorkBase {
 	readonly tags: readonly Tag[];
 	// Las tarjetas de listado (vistas de teaser/navegación) muestran los recursos multimedia
 	// de la obra; por eso el campo vive en la base y no solo en el agregado completo.
-	readonly mediaSources: readonly MediaTypes[];
+	readonly mediaSources: readonly Media[];
 }
 
 export interface LiteraryWork extends LiteraryWorkBase {
@@ -64,7 +64,7 @@ interface CreateLiteraryWorkOptions {
 	authors: readonly Author[];
 	coverImage: string;
 	content: readonly LiteraryWorkSection[];
-	mediaSources: readonly MediaTypes[];
+	mediaSources: readonly Media[];
 	resources: readonly Resource[];
 	badLanguage?: boolean;
 	tags: readonly Tag[];

@@ -243,7 +243,7 @@ interface LiteraryWork {
 
 	// Recursos Multimedia
 	resources: Resource[]; // Enlaces a recursos externos
-	mediaSources: MediaTypes[]; // Contenido multimedia asociado
+	mediaSources: Media[]; // Contenido multimedia asociado
 }
 
 interface LiteraryWorkSection {
@@ -282,7 +282,7 @@ Borrador en Sanity → Publicación → Accesible para lectura en /read/:slug
 - `LiteraryWorkNavigationTeaser` - Vista mínima para navegación
 - `LiteraryWorkNavigationTeaserWithAuthors` - Vista mínima con autores resumidos
 
-`mediaSources: MediaTypes[]` **todas** las vistas (incluidas las de teaser/navegación) lo exponen; las tarjetas de listado lo consumen para mostrar los recursos multimedia de la obra.
+`mediaSources: Media[]` **todas** las vistas (incluidas las de teaser/navegación) lo exponen; las tarjetas de listado lo consumen para mostrar los recursos multimedia de la obra.
 
 ---
 
