@@ -62,14 +62,14 @@ export function countWords(markdown: Markdown): WordCount {
 }
 
 // Composición canónica body → palabras → minutos. Fuente única del algoritmo de reading time,
-// compartida por el backfill batch (scripts/) y el self-healing on-read del backend: ambos deben
-// producir el mismo número para una misma sección.
+// pensada para compartirse entre el backfill batch (scripts/) y la materialización self-healing del
+// backend, que la consumirán en slices siguientes: ambos deben producir el mismo número por sección.
 export function deriveSectionReadingTime(body: Markdown): ReadingTime {
 	return deriveReadingTime(countWords(body));
 }
 
-// Total de la obra: suma de los tiempos por sección (mínimo 1). Es la suma pura del texto; el total
-// editorial de las obras recitadas no interviene acá — su precedencia vive en la factory de dominio.
+// Total de la obra: suma de los tiempos por sección (mínimo 1). Es la suma pura del texto — un
+// eventual total editorial (obras recitadas) lo aplica la capa que consume estos helpers, no acá.
 export function deriveTotalReadingTime(bodies: readonly Markdown[]): ReadingTime {
 	return sumReadingTimes(bodies.map(deriveSectionReadingTime));
 }
