@@ -2,9 +2,12 @@ import { Component, computed, input } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
-import type { StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
+import type {
+	LiteraryWorkNavigationTeaser,
+	LiteraryWorkNavigationTeaserWithAuthors,
+	LiteraryWorkTeaser,
+} from '@models/literary-work.model';
 import { AppRoutes } from '../../app.routes';
-import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import { MediaSelectorsComponent, type MediaSelectorsTheme } from '../media-selectors/media-selectors.component';
 import { LiteraryWorkCardTeaserSkeletonComponent } from './literary-work-card-teaser-skeleton.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
@@ -24,47 +27,53 @@ export type LiteraryWorkCardTeaserVariant = 'on-white' | 'on-gray' | 'highlighte
 	imports: [
 		NgTemplateOutlet,
 		RouterLink,
-		PortableTextParserComponent,
 		MediaSelectorsComponent,
 		LiteraryWorkCardTeaserSkeletonComponent,
 		ImageProfileComponent,
 		CoverImageComponent,
 	],
 	template: `
-		@if (story(); as story) {
+		@if (literaryWork(); as literaryWork) {
 			<article [class]="rowWrapperClasses()">
 				<ng-container [ngTemplateOutlet]="cover" />
 				<div [class]="rowColumnClasses()">
-					@if (showAuthor() && 'author' in story) {
-						<ng-container [ngTemplateOutlet]="author" [ngTemplateOutletContext]="{ $implicit: story.author }" />
+					@if (showAuthor() && literaryWork.authors.length > 0) {
+						<ng-container
+							[ngTemplateOutlet]="author"
+							[ngTemplateOutletContext]="{ $implicit: literaryWork.authors[0] }"
+						/>
 					}
 					<div class="flex w-full flex-col gap-2">
 						<!-- Enlace de la obra estirado con ::after para cubrir toda la tarjeta (sin wrapper <a>). -->
 						<a
-							[routerLink]="storyRouterLink()"
+							[routerLink]="literaryWorkRouterLink()"
 							[queryParams]="navigationParams()"
-							[attr.aria-label]="story.title"
+							[attr.aria-label]="literaryWork.title"
 							class="flex w-full flex-col gap-1 after:absolute after:inset-0 after:content-['']"
 						>
 							<p class="line-clamp-2 font-inter text-xl font-bold text-neutral-900">
 								@if (order() !== undefined) {
 									<span class="source-serif-2-5xl font-bold text-brand-500">{{ order() }}. </span>
 								}
-								<span>{{ story.title }}</span>
+								<span>{{ literaryWork.title }}</span>
 							</p>
-							@if (showExcerpt() && story.paragraphs.length > 0) {
-								<cuentoneta-portable-text-parser
-									[paragraphs]="story.paragraphs"
+							@if (showExcerpt() && 'teaserSection' in literaryWork) {
+								<div
+									[innerHTML]="literaryWork.teaserSection.bodyHtml"
 									[class]="'line-clamp-' + excerptLines()"
 									data-testid="description"
 									class="overflow-hidden font-inter text-sm font-medium text-ellipsis text-neutral-600"
-								/>
+								></div>
 							}
 						</a>
-						<ng-container [ngTemplateOutlet]="readingTime" [ngTemplateOutletContext]="{ $implicit: story }" />
+						<ng-container [ngTemplateOutlet]="readingTime" [ngTemplateOutletContext]="{ $implicit: literaryWork }" />
 					</div>
-					@if (showMultimedia() && story.media.length > 0) {
-						<cuentoneta-media-selectors [media]="story.media" [theme]="mediaTheme()" data-testid="media" />
+					@if (showMultimedia() && literaryWork.mediaSources.length > 0) {
+						<cuentoneta-media-selectors
+							[media]="literaryWork.mediaSources"
+							[theme]="mediaTheme()"
+							data-testid="media"
+						/>
 					}
 				</div>
 			</article>
@@ -107,14 +116,14 @@ export type LiteraryWorkCardTeaserVariant = 'on-white' | 'on-gray' | 'highlighte
 		</ng-template>
 
 		<!-- Etiqueta opcional, separador y tiempo de lectura -->
-		<ng-template #readingTime let-story>
+		<ng-template #readingTime let-literaryWork>
 			<div class="flex items-center gap-2" data-testid="reading-time">
 				@if (tagLabel()) {
 					<span class="font-inter text-xs font-bold text-brand-500">{{ tagLabel() }}</span>
 					<span class="font-inter text-xxs font-medium text-neutral-600" aria-hidden="true">•</span>
 				}
 				<span class="font-inter text-xs font-medium text-neutral-600">
-					{{ story.approximateReadingTime }} minutos de lectura
+					{{ literaryWork.totalReadingTime }} minutos de lectura
 				</span>
 			</div>
 		</ng-template>
@@ -127,7 +136,9 @@ export class LiteraryWorkCardTeaserComponent {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs
-	public readonly story = input<StoryNavigationTeaserWithAuthor | StoryTeaserWithAuthor | StoryTeaser>();
+	public readonly literaryWork = input<
+		LiteraryWorkTeaser | LiteraryWorkNavigationTeaserWithAuthors | LiteraryWorkNavigationTeaser
+	>();
 	public readonly variant = input<LiteraryWorkCardTeaserVariant>('on-white');
 	public readonly order = input<number>();
 	// Marca el cover como prioritario (above-the-fold, p. ej. en la variante highlighted como hero).
@@ -141,8 +152,8 @@ export class LiteraryWorkCardTeaserComponent {
 	public readonly excerptLines = input(2, { transform: (value: number) => Math.min(10, Math.max(1, value)) });
 	public readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
 
-	protected readonly coverImageUrl = computed(() => this.story()?.coverImage);
-	protected readonly storyRouterLink = computed(() => ['/', this.appRoutes.Story, this.story()?.slug]);
+	protected readonly coverImageUrl = computed(() => this.literaryWork()?.coverImage);
+	protected readonly literaryWorkRouterLink = computed(() => ['/', this.appRoutes.Story, this.literaryWork()?.slug]);
 
 	// Mapea la variante de la tarjeta al tema visual de los selectores de multimedia.
 	protected readonly mediaTheme = computed<MediaSelectorsTheme>(() => {
