@@ -107,7 +107,6 @@ export default defineType({
 			of: [section],
 			validation: (Rule) => Rule.required().min(1),
 		}),
-    
 		// Total de la obra, en minutos. Editable y opcional a propósito: en obras de texto lo completa
 		// el backend con la suma de las secciones, sin pisar un valor ya cargado; en
 		// recitados/audiovisuales el editor setea a mano la duración del medio.
