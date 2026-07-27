@@ -95,7 +95,7 @@ export interface LiteraryWorkNavigationTeaserWithAuthors extends LiteraryWorkBas
 | `slug` con formato válido e inmutable        | VO `Slug` (`createSlug` lanza ante formato inválido); unicidad garantizada por Sanity                                                                                                                                                    |
 | `title` no vacío                             | `createLiteraryWork` lanza                                                                                                                                                                                                               |
 | Al menos una sección de contenido            | `createLiteraryWork` lanza si `content.length === 0`                                                                                                                                                                                     |
-| `totalReadingTime` = suma de secciones       | Derivado en la factory — salvo **`readingTimeOverride`** editorial, que lo reemplaza (obras recitadas/audiovisuales, ver [§5](#5-helper-de-reading-time))                                                                                |
+| `totalReadingTime` = suma de secciones       | Derivado en la factory (suma de los `readingTime` de las secciones); persistido/editable a nivel schema y materializado por el backend (ver [§5](#5-helper-de-reading-time))                                                             |
 | `sectionCount` = número real de secciones    | Derivado en la factory (`content.length`); en las vistas parciales/teaser lo provee el mapper (GROQ `count()`) y puede ser mayor que las secciones transportadas                                                                         |
 | Posiciones contiguas en el agregado completo | `createLiteraryWork` lanza si `content[i].position !== i` — el agregado completo siempre transporta las secciones `0..sectionCount-1` en orden; las proyecciones parciales (construidas por el mapper) conservan el `position` de origen |
 | `authors` con al menos un autor              | `createLiteraryWork` lanza si `authors.length === 0`; la obra anónima referencia al author "Anónimo" ([§10](#10-autoría-y-obra-anónima))                                                                                                 |
@@ -210,13 +210,11 @@ body (Markdown) → countWords → WordCount → deriveReadingTime → ReadingTi
 
 > **Estado de implementación:** este increment agrega solo el schema (campos opcionales, arrancan vacíos) y esta doc. El mapper que lee/computa/persiste — y el `?section=N` eficiente que se apoya en él para traer solo el body de la sección pedida más el total ya persistido ([§7](#7-contrato-del-endpoint)) — se implementan en el increment de backend rebaseado sobre el PR [#1929](https://github.com/cuentoneta/cuentoneta/pull/1929) (read-side diferido, aún no en este PR).
 
-### Override editorial de duración (`readingTimeOverride`)
+### Duración de obras recitadas/audiovisuales
 
-Para obras cuyo contenido principal es un **recitado o audiovisual** (p. ej. narraciones verbales sin texto fuente), la duración relevante es la del medio, no la del texto. El schema expone el campo opcional **`readingTimeOverride`** (entero `>= 1`, minutos): si está presente, `createLiteraryWork` lo usa como `totalReadingTime` en lugar del total derivado del texto. La interfaz pública no cambia — los consumidores ven un único `totalReadingTime` sin conocer su procedencia.
+Para obras cuyo contenido principal es un **recitado o audiovisual** (p. ej. narraciones verbales sin texto fuente), la duración relevante es la del medio, no la del texto. No hay un campo aparte para esto: `literaryWork.totalReadingTime` es **editable** en el schema, así que el editor lo carga a mano con la duración del medio y la materialización del backend lo **respeta** (`setIfMissing` no pisa un valor ya cargado). En obras de texto ese mismo campo lo completa el backend con `sumReadingTimes` sobre las secciones.
 
-- **`totalReadingTime` persistido = suma pura del texto.** Lo que se persiste en `literaryWork.totalReadingTime` ([#1953](https://github.com/cuentoneta/cuentoneta/issues/1953)) es siempre `sumReadingTimes` sobre las secciones — nunca el override "bakeado" en el campo. La precedencia `override ?? total` sigue resolviéndose en `createLiteraryWork`, en cada construcción del agregado.
-- **El override no se persiste como derivado.** Sigue siendo un **dato fuente editorial** (input curatorial) que vive únicamente en su propio campo del schema. Distinto del reading time por texto, que #1953 sí persiste (anula T1b para ese derivado): el override nunca estuvo alcanzado por T1b porque no es lo computado, es el input.
-- El `readingTime` **por sección** sigue derivándose del texto (el override es solo del total) y es lo que #1953 persiste en `section.readingTime`.
+`createLiteraryWork` deriva `totalReadingTime` de las secciones en cada construcción del agregado; el valor persistido/editorial vive en el campo del schema y lo sirve el mapper del backend. El `readingTime` **por sección** siempre se deriva del texto y es lo que [#1953](https://github.com/cuentoneta/cuentoneta/issues/1953) persiste en `section.readingTime`.
 
 ### Obras solo-recitado (sin texto fuente)
 
@@ -224,7 +222,7 @@ La invariante `content >= 1` **se mantiene**: una obra cuyo contenido es únicam
 
 1. Una **sección editorial mínima** (presentación/contexto curatorial del recitado) — le da a `/read/:slug` el cuerpo SSR indexable que la estrategia SEO del epic exige, y mantiene válidos `teaserSection`, `sectionCount` y `?section=N`.
 2. El medio en **`mediaSources`** (el schema ya soporta `youTubeVideo`/`audioRecording`/etc.).
-3. **`readingTimeOverride`** con la duración real del medio.
+3. **`totalReadingTime`** (editable) cargado a mano con la duración real del medio.
 
 Permitir `content: []` se evaluó y descartó: degeneraría `totalReadingTime` (mínimo 1 falso), `teaserSection` (pasaría a opcional en cascada), la semántica de `?section=N` y la premisa "un documento SSR indexable" del epic. Una `MediaSection` como tipo de sección (unión `TextSection | MediaSection`) queda como extensión futura si surge necesidad curatorial concreta — reabre pipeline, reading time y render, y no se justifica hoy.
 
