@@ -1,4 +1,4 @@
-import { applicationConfig, Meta, moduleMetadata } from '@storybook/angular';
+import { applicationConfig, Meta, moduleMetadata } from '@storybook/angular-vite';
 import { BioSummaryCardComponent } from './bio-summary-card.component';
 import { storyMock } from '../../mocks/story.mock';
 import { CommonModule, NgIf, NgOptimizedImage } from '@angular/common';
