@@ -47,6 +47,21 @@ La Fase 0 corre en **toda** invocación (fresca o reanudación), así que es ac�
 
 Estos datos alimentan la Fase 1 (reporte + nombre de rama), la Fase 2 (body → `plan-writer`) y la Fase 6 (milestone → `gh pr create --milestone`; labels → `gh pr create --label`; parent → `Parte de #<epic>.`).
 
+### Base de la rama (apilado)
+
+Casi todo issue ramifica desde `develop`, pero un **PR apilado** —un issue que depende de una rama todavía sin mergear— ramifica desde esa rama. La base se resuelve **una vez** acá (necesita el body de "Datos del issue" y corre antes del `rev-list` de las señales) y la consumen la Fase 1 (checkout), las señales de reanudación, la delegación a subagentes (Fases 2/4/5) y la Fase 6 (`--base`). Dos nombres:
+
+- **`<rama-base>`** — el nombre de la rama base. Default `develop`; apilado ⇒ `feat/<X>-<kebab>`.
+- **`<base>`** — la ref resuelta para todo diff/rev-list: `<rama-base>` en modo raíz, `origin/<rama-base>` en modo worktree.
+
+Resolución por precedencia:
+
+1. **Declaración explícita** en la invocación o una directiva de sesión ("apilado sobre #<X>", "base <rama>") → usarla.
+2. **Señal en el body** del issue (menciona depender de / estar apilado sobre #<X>): resolver la rama del issue base con `gh pr list --search "#<X> in:title" --state open --json number,headRefName` (una base sin mergear tiene PR abierto) y **confirmar** con `AskUserQuestion` (`header`: `Base`; `question` que nombre la rama base y su PR abierto; `options` recomendada primero: **Apilar sobre `<rama-base>`** — pasa a ser base del checkout/diff/PR; **Base `develop`** — ignorar la señal; "Other" cubre instrucciones libres).
+3. **Sin declaración ni señal** → `develop`, sin pausa.
+
+Con `develop`, `<base>` resuelve a `develop`/`origin/develop` **igual que sin apilado**. La base se re-deriva en cada invocación (no se persiste): si la rama base mergeó entre corridas, la próxima resolución cae a `develop` sola.
+
 ### Señales de reanudación
 
 Con el entorno ya resuelto (y el cwd ya en el worktree si corresponde), relevar con el número de issue extraído de la URL:
@@ -54,7 +69,7 @@ Con el entorno ya resuelto (y el cwd ya en el worktree si corresponde), relevar 
 1. `git branch --list 'feat/<number>-*'` — ¿existe la rama?
 2. `workspace/<number>/PLAN.md` — ¿existe el plan? Si existe, contar sus marcadores de paso `[ ]` vs. `[x]`.
 3. `workspace/<number>/CODE_REVIEW.md` y/o `workspace/<number>/SECURITY_REVIEW.md` — ¿existe la review?
-4. Si la rama existe: `git rev-list --count <base>..<rama>` — ¿cuántos commits tiene sobre la base? `<base>` es `develop` en modo raíz y **`origin/develop`** en modo worktree (ver [Modo worktree](#modo-worktree) → "Ajustes transversales").
+4. Si la rama existe: `git rev-list --count <base>..<rama>` — ¿cuántos commits tiene sobre la base? `<base>` es `<rama-base>` en modo raíz y `origin/<rama-base>` en modo worktree, con `<rama-base>` resuelta en "Base de la rama" (default `develop`).
 5. Si la rama existe: `gh pr list --head feat/<number>-<kebab> --state open` — ¿hay un PR abierto de esa rama?
 
 | Rama | `PLAN.md`                  | Review | Commits | Interpretación → fase sugerida                                                                                                |
