@@ -1,15 +1,14 @@
 import { LiteraryWorkHomeCardTeaserComponent } from './literary-work-home-card-teaser.component';
 import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
-import { storyNavigationTeaserWithAuthorMock, storyTeaserMock } from '../../mocks/story.mock';
-import { authorTeaserMock } from '../../mocks/author.mock';
-import { onoffStoryTeasersMock } from '../../mocks/onoff-story-teasers.mock';
+import { literaryWorkNavigationTeaserWithAuthorsMock } from '../../mocks/literary-work.mock';
+import { onoffLiteraryWorkTeasersMock } from '../../mocks/onoff-literary-work-teasers.mock';
 import { clearAllMocks } from '@test-utils';
 import type { Media } from '@models/media.model';
-import type { StoryTeaserWithAuthor } from '@models/story.model';
+import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-work.model';
 
 describe('LiteraryWorkHomeCardTeaserComponent', () => {
-	const storyUrl = '/story/el-espejo-del-tiempo?navigation=author&navigationSlug=francois-onoff';
+	const literaryWorkUrl = '/story/obra-de-prueba?navigation=author&navigationSlug=francois-onoff';
 	const authorUrl = '/author/francois-onoff';
 
 	let navigationParams: { navigation: string; navigationSlug: string } = { navigation: '', navigationSlug: '' };
@@ -17,53 +16,53 @@ describe('LiteraryWorkHomeCardTeaserComponent', () => {
 	beforeEach(() => {
 		clearAllMocks();
 		const urlSerializer = new DefaultUrlSerializer();
-		const urlTree: UrlTree = urlSerializer.parse(storyUrl);
+		const urlTree: UrlTree = urlSerializer.parse(literaryWorkUrl);
 		navigationParams = urlTree.queryParams as { navigation: string; navigationSlug: string };
 	});
 
 	it('should render the component', async () => {
 		const { container } = await render(LiteraryWorkHomeCardTeaserComponent, {
-			inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+			inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams },
 		});
 		expect(container).toBeTruthy();
 	});
 
-	it('should display the story title', async () => {
+	it('should display the literary work title', async () => {
 		await render(LiteraryWorkHomeCardTeaserComponent, {
-			inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+			inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams },
 		});
-		expect(screen.getByText(storyNavigationTeaserWithAuthorMock.title)).toBeInTheDocument();
+		expect(screen.getByText(literaryWorkNavigationTeaserWithAuthorsMock.title)).toBeInTheDocument();
 	});
 
-	it('should display the approximate reading time', async () => {
+	it('should display the total reading time', async () => {
 		await render(LiteraryWorkHomeCardTeaserComponent, {
-			inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+			inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams },
 		});
 		expect(
-			screen.getByText(`${storyNavigationTeaserWithAuthorMock.approximateReadingTime} minutos de lectura`),
+			screen.getByText(`${literaryWorkNavigationTeaserWithAuthorsMock.totalReadingTime} minutos de lectura`),
 		).toBeInTheDocument();
 	});
 
-	it('should link to the story', async () => {
+	it('should link to the literary work', async () => {
 		await render(LiteraryWorkHomeCardTeaserComponent, {
-			inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+			inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams },
 		});
 		const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/story/'));
-		expect(link?.getAttribute('href')).toContain(storyUrl);
+		expect(link?.getAttribute('href')).toContain(literaryWorkUrl);
 	});
 
 	describe('Author', () => {
 		it('should always display the author name and avatar', async () => {
 			await render(LiteraryWorkHomeCardTeaserComponent, {
-				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+				inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams },
 			});
-			expect(screen.getByText(storyNavigationTeaserWithAuthorMock.author.name)).toBeInTheDocument();
+			expect(screen.getByText(literaryWorkNavigationTeaserWithAuthorsMock.authors[0].name)).toBeInTheDocument();
 			expect(screen.getByTestId('author')).toBeInTheDocument();
 		});
 
 		it('should link the author photo and name to the author profile', async () => {
 			await render(LiteraryWorkHomeCardTeaserComponent, {
-				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+				inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams },
 			});
 			// La foto y el nombre del autor son un enlace propio a /author/:slug, elevado por encima del
 			// enlace de la obra que se estira sobre toda la tarjeta.
@@ -73,50 +72,55 @@ describe('LiteraryWorkHomeCardTeaserComponent', () => {
 
 		it('should expose the author name as the accessible name of the author link', async () => {
 			await render(LiteraryWorkHomeCardTeaserComponent, {
-				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+				inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams },
 			});
 			// El avatar es decorativo (alt vacío): el nombre accesible del enlace es solo el nombre del autor.
-			expect(screen.getByRole('link', { name: storyNavigationTeaserWithAuthorMock.author.name })).toBeInTheDocument();
+			expect(
+				screen.getByRole('link', { name: literaryWorkNavigationTeaserWithAuthorsMock.authors[0].name }),
+			).toBeInTheDocument();
 		});
 	});
 
 	describe('Order', () => {
 		it('should display the order when provided', async () => {
 			await render(LiteraryWorkHomeCardTeaserComponent, {
-				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, order: 7 },
+				inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams, order: 7 },
 			});
 			expect(screen.getByTestId('order')).toHaveTextContent('7');
 		});
 
 		it('should display an order of 0 (not treated as absent)', async () => {
 			await render(LiteraryWorkHomeCardTeaserComponent, {
-				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, order: 0 },
+				inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams, order: 0 },
 			});
 			expect(screen.getByTestId('order')).toHaveTextContent('0');
 		});
 
 		it('should not display the order when not provided', async () => {
 			await render(LiteraryWorkHomeCardTeaserComponent, {
-				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+				inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams },
 			});
 			expect(screen.queryByTestId('order')).not.toBeInTheDocument();
 		});
 	});
 
 	describe('Cover image', () => {
-		it('should render the cover image when the story has a cover', async () => {
+		it('should render the cover image when the literary work has a cover', async () => {
 			await render(LiteraryWorkHomeCardTeaserComponent, {
 				inputs: {
-					story: { ...storyNavigationTeaserWithAuthorMock, coverImage: 'https://example.com/cover.jpg' },
+					literaryWork: { ...literaryWorkNavigationTeaserWithAuthorsMock, coverImage: 'https://example.com/cover.jpg' },
 					navigationParams,
 				},
 			});
 			expect(screen.getByTestId('cover-image')).toBeInTheDocument();
 		});
 
-		it('should render a placeholder when the story has no cover', async () => {
+		it('should render a placeholder when the literary work has no cover', async () => {
 			await render(LiteraryWorkHomeCardTeaserComponent, {
-				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+				inputs: {
+					literaryWork: { ...literaryWorkNavigationTeaserWithAuthorsMock, coverImage: '' },
+					navigationParams,
+				},
 			});
 			expect(screen.getByTestId('cover-placeholder')).toBeInTheDocument();
 		});
@@ -129,25 +133,28 @@ describe('LiteraryWorkHomeCardTeaserComponent', () => {
 			{ title: 'Video 1', type: 'youTubeVideo', description: [], data: { videoId: 'a' } },
 			{ title: 'Podcast', type: 'spotifyPodcastEpisode', description: [], data: { url: 'https://spotify.com' } },
 		];
-		const storyWithMedia: StoryTeaserWithAuthor = { ...storyTeaserMock, author: authorTeaserMock, media: richMedia };
+		const literaryWorkWithMedia: LiteraryWorkNavigationTeaserWithAuthors = {
+			...literaryWorkNavigationTeaserWithAuthorsMock,
+			mediaSources: richMedia,
+		};
 
 		it('should display the multimedia selectors when showMultimedia is true and there is media', async () => {
 			await render(LiteraryWorkHomeCardTeaserComponent, {
-				inputs: { story: storyWithMedia, showMultimedia: true },
+				inputs: { literaryWork: literaryWorkWithMedia, showMultimedia: true },
 			});
 			expect(screen.getByTestId('media')).toBeInTheDocument();
 		});
 
 		it('should not display the multimedia selectors when showMultimedia is false', async () => {
 			await render(LiteraryWorkHomeCardTeaserComponent, {
-				inputs: { story: storyWithMedia, showMultimedia: false },
+				inputs: { literaryWork: literaryWorkWithMedia, showMultimedia: false },
 			});
 			expect(screen.queryByTestId('media')).not.toBeInTheDocument();
 		});
 
-		it('should not display the multimedia selectors when the story has no media', async () => {
+		it('should not display the multimedia selectors when the literary work has no media', async () => {
 			await render(LiteraryWorkHomeCardTeaserComponent, {
-				inputs: { story: { ...storyWithMedia, media: [] }, showMultimedia: true },
+				inputs: { literaryWork: { ...literaryWorkWithMedia, mediaSources: [] }, showMultimedia: true },
 			});
 			expect(screen.queryByTestId('media')).not.toBeInTheDocument();
 		});
@@ -156,46 +163,46 @@ describe('LiteraryWorkHomeCardTeaserComponent', () => {
 	describe('Tag label', () => {
 		it('should display the tag label when provided', async () => {
 			await render(LiteraryWorkHomeCardTeaserComponent, {
-				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams, tagLabel: 'Cuento' },
+				inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams, tagLabel: 'Cuento' },
 			});
 			expect(screen.getByText('Cuento')).toBeInTheDocument();
 		});
 
 		it('should not display the tag label when not provided', async () => {
 			await render(LiteraryWorkHomeCardTeaserComponent, {
-				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+				inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams },
 			});
 			expect(screen.queryByText('Cuento')).not.toBeInTheDocument();
 		});
 	});
 
 	describe('Loading state', () => {
-		it('should render the skeleton when no story is provided', async () => {
+		it('should render the skeleton when no literary work is provided', async () => {
 			await render(LiteraryWorkHomeCardTeaserComponent, {
-				inputs: { story: undefined },
+				inputs: { literaryWork: undefined },
 			});
 			expect(screen.getByTestId('skeleton')).toBeInTheDocument();
 		});
 
-		it('should not render the skeleton when a story is provided', async () => {
+		it('should not render the skeleton when a literary work is provided', async () => {
 			await render(LiteraryWorkHomeCardTeaserComponent, {
-				inputs: { story: storyNavigationTeaserWithAuthorMock, navigationParams },
+				inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams },
 			});
 			expect(screen.queryByTestId('skeleton')).not.toBeInTheDocument();
 		});
 	});
 
-	// Variedad de obras reales del corpus de François Onoff (#1650): detecta regresiones de datos del corpus.
-	describe('Onoff corpus — story variety', () => {
+	// Variedad de obras reales del corpus de François Onoff: detecta regresiones de datos del corpus.
+	describe('Onoff corpus — literary work variety', () => {
 		beforeEach(() => clearAllMocks());
 
-		it.each(onoffStoryTeasersMock)('should render title and reading time for "$title"', async (teaser) => {
+		it.each(onoffLiteraryWorkTeasersMock)('should render title and reading time for "$title"', async (teaser) => {
 			await render(LiteraryWorkHomeCardTeaserComponent, {
-				inputs: { story: teaser },
+				inputs: { literaryWork: teaser },
 			});
 
 			expect(screen.getByText(teaser.title)).toBeInTheDocument();
-			expect(screen.getByText(`${teaser.approximateReadingTime} minutos de lectura`)).toBeInTheDocument();
+			expect(screen.getByText(`${teaser.totalReadingTime} minutos de lectura`)).toBeInTheDocument();
 		});
 	});
 });

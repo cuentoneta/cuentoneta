@@ -1,6 +1,8 @@
 import type { Media } from '@models/media.model';
 import type { StoryTeaserWithAuthor } from '@models/story.model';
+import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { onoffStoryTeasersMock } from './onoff-story-teasers.mock';
+import { onoffLiteraryWorkTeasersMock } from './onoff-literary-work-teasers.mock';
 
 // Conjunto de medios variado para ilustrar los selectores de multimedia y el contador
 const richMedia: Media[] = [
@@ -24,6 +26,14 @@ export const withRichMedia = (teaser: StoryTeaserWithAuthor): StoryTeaserWithAut
 // Obras del corpus (con multimedia) y sus portadas; comparten el índice del corpus.
 export const corpusStories = onoffStoryTeasersMock.map(withRichMedia);
 export const corpusCovers = onoffStoryTeasersMock.map((teaser) => teaser.coverImage);
+
+// Variante LiteraryWork del corpus (multimedia en mediaSources); mismo índice que el corpus Story.
+export const withRichMediaSources = (teaser: LiteraryWorkTeaser): LiteraryWorkTeaser => ({
+	...teaser,
+	mediaSources: richMedia,
+});
+
+export const corpusLiteraryWorkTeasers = onoffLiteraryWorkTeasersMock.map(withRichMediaSources);
 
 const corpusLabels = Object.fromEntries(onoffStoryTeasersMock.map((teaser, index) => [index, teaser.title]));
 
