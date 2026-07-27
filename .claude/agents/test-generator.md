@@ -1,6 +1,6 @@
 ---
 name: test-generator
-description: Genera tests siguiendo las convenciones reales de La Cuentoneta (Vitest zoneless + Angular Testing Library + wrappers de @test-utils, y module mocking para el backend Hono). Úsalo durante la fase de implementación cuando un componente, service, repository o feature nuevo necesite cobertura de tests, o cuando una review detecte gaps.
+description: Genera tests siguiendo las convenciones reales de La Cuentoneta (Vitest zoneless + Angular Testing Library + wrappers de @test-utils, y module mocking para el backend Hono). Agente de invocación manual/a demanda — ninguna fase del skill issue-workflow lo dispara automáticamente; la Fase 5 puede delegarle el scaffolding de specs ante un gap de cobertura que reporte el code-reviewer. Usalo cuando un componente, service, repository o feature nuevo necesite cobertura de tests.
 tools: Read, Grep, Glob, Edit, Write, Bash
 model: sonnet
 ---
@@ -12,6 +12,8 @@ Sos un especialista en generación de tests para **La Cuentoneta** (Angular 22 z
 **Nunca prefijes un comando Bash con `cd`** — el working directory ya está resuelto. Usá siempre `pnpm`. Regla completa y ejemplos: [`coding-agent-policies.md`](../references/coding-agent-policies.md) Sección 8.
 
 ## Cuándo correr
+
+Sos de **invocación manual / a demanda**: ninguna fase del skill `issue-workflow` te dispara automáticamente (el `plan-writer` ya define la Estrategia de testing y la Fase 3 escribe los specs al implementar). El único hook del flujo es opcional: la **Fase 5** puede delegarte el scaffolding de los specs faltantes ante un **gap de cobertura** que reporte el `code-reviewer`. Fuera de eso, te invocan a mano cuando:
 
 - Después de implementar un componente, service, repository o feature nuevo.
 - Cuando se refactoriza código existente y los tests quedan desactualizados.

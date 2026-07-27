@@ -137,7 +137,7 @@ En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
 - **Gates de Nx con `NX_NO_CLOUD=true NX_DAEMON=false`.** En Windows, el daemon de Nx y el cliente de Nx Cloud crashean en el teardown de targets corridos desde un worktree — el target reporta "Successfully ran" y el proceso igual sale con código de error (falso rojo); el crash de Nx Cloud además puede pisar el cache compartido (`.nx/cache/cloud/`) del repo principal si hay corridas paralelas. Anteponer ambas variables a **todo** `pnpm <gate>` de Nx corrido desde el worktree: `NX_NO_CLOUD=true NX_DAEMON=false pnpm lint`, y así con `test`, `build`, `test:e2e`, `storybook`, `stylelint`.
 - **Typecheck vía `tsc` directo, no `pnpm typecheck`.** `pnpm typecheck` (`nx typecheck`) puede servir un resultado **stale** del daemon aun con `--skip-nx-cache` y aun con las variables de arriba. En modo worktree, correr `pnpm exec tsc -p tsconfig.typecheck.json --noEmit` directamente.
 - **Node v26 local (si aplica):** los wrappers de Nx de `pnpm test` y `pnpm storybook:build` pueden reportar "Failed tasks" por un crash de teardown de `libuv` **después** de terminar bien (el proyecto pide `engines: ^22.22.3`). Si un gate de test/storybook reporta rojo pero el log previo dice que el target corrió exitosamente, verificar el resultado real con `npx vitest run` directo antes de reportarlo como fallo.
-- **Delegación a subagentes — nota de Modo worktree.** Al delegar en `plan-writer`, `documentation-writer`, `code-reviewer` o `security-auditor` (Fases 2, 3 y 4), agregar a la instrucción de la delegación:
+- **Delegación a subagentes — nota de Modo worktree.** Al delegar en `plan-writer`, `domain-model-advisor`, `architecture-advisor`, `documentation-writer`, `code-reviewer`, `security-auditor` o `test-generator` (Fases 2, 3, 4 y 5), agregar a la instrucción de la delegación:
 
   > "Esta sesión corre en el worktree `.claude/worktrees/<number>` (cwd ya resuelto — no hace falta `cd`). Tu base de diff es `origin/develop`, no `develop` local. Los archivos generados/gitignoreados del setup (`src/app/environments/environment.ts`, `.env`) sí existen tras `pnpm install` + `pnpm run config` aunque no estén versionados — antes de reportar una ruta como faltante, verificá con `git check-ignore <ruta>`."
 
@@ -156,9 +156,13 @@ En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
 
 **Propósito:** producir un plan de implementación detallado para aprobación.
 
-1. Delegar al agente **`plan-writer`** pasándole la URL del issue, su descripción (el **body** recolectado en la Fase 0 → "Datos del issue"), el nombre de rama y la ruta de salida completa (`workspace/<number>/PLAN.md`). En modo worktree, adjuntar la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales". Si la Fase 0 reanudó acá con un plan ya escrito, saltear la delegación y pasar directo al resumen.
-2. El plan-writer produce `workspace/<number>/PLAN.md`.
-3. Presentar un resumen breve al usuario (objetivo, enfoque, archivos afectados, decisiones clave).
+1. **Determinar si el issue amerita asesoría previa de dominio o de arquitectura** (mismo patrón que el paso 2 de la Fase 4 con el `security-auditor`, pero _antes_ de planificar). A partir del alcance del issue (el body de la Fase 0 + una exploración inicial):
+   - **`domain-model-advisor`** si el issue crea o modifica entidades de dominio o value objects (`@models/*`, `src/app/models/`), mappers del ACL (`src/api/_utils/`), queries GROQ (`src/api/_queries/`) o tipos de dominio compartidos.
+   - **`architecture-advisor`** solo ante un cambio **estructuralmente significativo**: módulo nuevo bajo `src/api/modules/<dominio>/`, feature/provider/interfaz `-api` nuevo en el frontend, bounded context nuevo, o cambio de límites de módulo / dirección de dependencias. Un ajuste localizado —UI, copy, estilos, un campo puntual— **no** lo amerita: el `plan-writer` ya carga las mismas referencias según el diff y su pasada basta.
+2. **Delegar en paralelo los advisors que matcheen** (ambas delegaciones en el mismo turno si aplican los dos; son independientes y devuelven su evaluación como **texto**, no como archivo — no tienen `Write`). En modo worktree, adjuntar la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales". Capturar su salida.
+3. Delegar al agente **`plan-writer`** pasándole la URL del issue, su descripción (el **body** recolectado en la Fase 0 → "Datos del issue"), el nombre de rama, la ruta de salida completa (`workspace/<number>/PLAN.md`) y **la evaluación de los advisors que corrieron en el paso 2**. Los advisors los corre el orquestador —no el `plan-writer`, que no puede delegar en subagentes— y su aporte entra en el prompt del plan. En modo worktree, adjuntar la nota de delegación. Si la Fase 0 reanudó acá con un plan ya escrito, saltear los pasos 1-3 (los advisors ya corrieron y su aporte vive en el plan) y pasar directo al resumen.
+4. El plan-writer produce `workspace/<number>/PLAN.md`.
+5. Presentar un resumen breve al usuario (objetivo, enfoque, archivos afectados, decisiones clave).
 
 **⏸ PAUSA — decisión vía `AskUserQuestion`.**
 
@@ -170,7 +174,7 @@ Ramificación tras la respuesta:
 
 - **Aprobar** → avanzar a la Fase 3.
 - **Dar feedback** → pedir el texto del feedback al usuario y tratarlo igual que Other.
-- **Other** (feedback) → reenviar el texto recibido **a la misma Task del `plan-writer`** delegada en el paso 1 — conserva toda la exploración en contexto — para que revise `workspace/<number>/PLAN.md` en función del feedback y reescriba el plan en el mismo archivo. Nunca editar `PLAN.md` a mano desde el orquestador ni relanzar un `plan-writer` de cero mientras la Task siga disponible. Repetir la pausa tras cada revisión, iterando hasta un "Aprobar". Si la Task original ya no está disponible (p. ej. reanudación vía Fase 0 en una sesión nueva), delegar en un `plan-writer` nuevo pasándole el `PLAN.md` existente más el feedback — revisa sobre lo escrito, no re-explora de cero.
+- **Other** (feedback) → reenviar el texto recibido **a la misma Task del `plan-writer`** delegada en el paso 3 — conserva toda la exploración en contexto — para que revise `workspace/<number>/PLAN.md` en función del feedback y reescriba el plan en el mismo archivo. Los advisors del paso 2 **no** se re-corren: su aporte ya está incorporado al plan. Nunca editar `PLAN.md` a mano desde el orquestador ni relanzar un `plan-writer` de cero mientras la Task siga disponible. Repetir la pausa tras cada revisión, iterando hasta un "Aprobar". Si la Task original ya no está disponible (p. ej. reanudación vía Fase 0 en una sesión nueva), delegar en un `plan-writer` nuevo pasándole el `PLAN.md` existente más el feedback — revisa sobre lo escrito, no re-explora de cero.
 
 No avanzar a la Fase 3 sin una respuesta "Aprobar".
 
@@ -244,6 +248,7 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 4. Si un hallazgo se **difiere**, proponer el issue al usuario y **esperar su confirmación** antes de crearlo (`gh issue create`); una vez creado, anotar su URL junto al valor **Diferido** en la columna **Estado**. Crear un issue es una acción hacia afuera: la misma política rige en la Fase 6.
 5. Tras abordar Críticos y Advertencias, re-correr los gates de CI. Arreglar regresiones.
 6. Las **Sugerencias** son opcionales: presentarlas y dejar que el usuario decida.
+7. Si un hallazgo es específicamente un **gap de cobertura de tests**, el orquestador **puede** delegar en **`test-generator`** el scaffolding de los specs faltantes (en modo worktree, adjuntar la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales"). Es un aid opcional, **no** un gate: los tests igual deben existir y pasar; el agente es solo una vía para producirlos.
 
 ---
 
