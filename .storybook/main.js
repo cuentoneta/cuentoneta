@@ -4,12 +4,10 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default {
 	stories: ['../src/app/**/*.stories.mdx', '../src/app/**/*.stories.@(js|jsx|ts|tsx)'],
-	styles: [],
 	addons: [getAbsolutePath('@storybook/addon-docs')],
 	framework: {
 		name: getAbsolutePath('@storybook/angular-vite'),
-		// Sin compodoc (igual que el `compodoc: false` del executor Webpack anterior): no lo usamos
-		// para autodocs y su binario no está instalado.
+		// No usamos compodoc para autodocs; su binario no está instalado.
 		options: { compodoc: false },
 	},
 	docs: {},
