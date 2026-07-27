@@ -186,12 +186,20 @@ export function sumReadingTimes(times: readonly ReadingTime[]): ReadingTime;
 // suma por sección → total del agregado; mínimo 1
 ```
 
-**Contrato para Slice 1** (no implementado — requiere `unified`/`remark-parse`/`mdast-util-to-string`, que no se instalan sin caller real):
+**Implementado** (`reading-time.model.ts`, sobre `unified`/`remark-parse`):
 
 ```typescript
 export function countWords(markdown: Markdown): WordCount;
-// mdast-util-to-string sobre el AST de remark-parse → split por whitespace → createWordCount
+// texto legible del AST de remark-parse → split por whitespace → createWordCount
+
+export function deriveSectionReadingTime(body: Markdown): ReadingTime;
+// deriveReadingTime(countWords(body)) — reading time de una sección desde su cuerpo
+
+export function deriveTotalReadingTime(bodies: readonly Markdown[]): ReadingTime;
+// sumReadingTimes(bodies.map(deriveSectionReadingTime)) — total = suma pura del texto
 ```
+
+`deriveSectionReadingTime`/`deriveTotalReadingTime` son la **fuente única** del algoritmo, para que el backfill batch y la materialización self-healing del backend produzcan el mismo número por sección.
 
 ### Persistencia write-once (decisión #1953 — Opción B)
 
