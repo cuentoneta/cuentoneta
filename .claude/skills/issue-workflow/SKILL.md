@@ -108,7 +108,7 @@ El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehac
 
 ## Fase 1 — Setup
 
-**Propósito:** crear una rama de feature limpia desde `develop` actualizado — en el entorno resuelto por la Fase 0 (worktree o raíz).
+**Propósito:** crear una rama de feature limpia desde `<rama-base>` actualizada (default `develop`, ver Fase 0 → "Base de la rama") — en el entorno resuelto por la Fase 0 (worktree o raíz).
 
 1. Usar el número y el título ya recolectados en la Fase 0 → "Datos del issue" (no re-fetchear).
 2. Derivar el nombre de rama (convención del repo):
@@ -116,10 +116,10 @@ El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehac
    - Transformación: minúsculas, espacios y no-alfanuméricos → guiones, colapsar guiones consecutivos, recortar guiones de borde, truncar a ~60 caracteres en un límite de palabra.
 3. **Modo raíz**:
    - **Precondición — working tree limpio:** `git status --short`. Si el árbol no está limpio, no hacer checkout: pausar con `AskUserQuestion` (`header`: `Working tree`; `question` que enumere los archivos sucios; opciones —recomendada primero— **Detener** —el usuario commitea/stashea/descarta y reinvoca— / **Stashear y seguir** —`git stash` y continuar—; "Other" cubre instrucciones libres). Solo aplica en modo raíz: en modo worktree, `git worktree add … origin/develop` crea un checkout nuevo sin tocar el árbol principal.
-   - `git checkout develop && git pull` para asegurar la base actualizada.
+   - `git checkout <rama-base> && git pull` para asegurar la base actualizada.
    - `git checkout -b feat/<number>-<kebab>`. Si la Fase 0 detectó la rama existente y el usuario eligió **rehacer**, confirmar la reutilización y usar `git checkout feat/<number>-<kebab>` (sin `-b`).
 4. **Modo worktree:** seguir [Modo worktree](#modo-worktree) → "Mecánica de creación" (`git fetch origin`, `git worktree add`, `EnterWorktree`, `pnpm install` + `pnpm run config`).
-5. Reportar al usuario: número, título, **milestone**, **parent epic** (o "sin epic"), nombre de rama y, en modo worktree, la ruta del worktree.
+5. Reportar al usuario: número, título, **milestone**, **parent epic** (o "sin epic"), nombre de rama, la **base** cuando `<rama-base> ≠ develop` (checkout apilado) y, en modo worktree, la ruta del worktree.
 
 ---
 
@@ -139,7 +139,7 @@ El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehac
 ### Mecánica de creación (Fase 1, modo worktree)
 
 1. `git fetch origin`.
-2. `git worktree add .claude/worktrees/<number> -b feat/<number>-<kebab> origin/develop`. Si la Fase 0 detectó una rama `feat/<number>-*` ya existente en la raíz sin worktree propio (creada por una sesión previa en modo raíz), adjuntar el worktree a esa rama en vez de crear una nueva: `git worktree add .claude/worktrees/<number> feat/<number>-<kebab>` (sin `-b`).
+2. `git worktree add .claude/worktrees/<number> -b feat/<number>-<kebab> <base>`, con `<base> = origin/<rama-base>` (default `origin/develop`, ver Fase 0 → "Base de la rama"). Si es un apilado (`<rama-base> ≠ develop`), tras el `git fetch origin` del paso 1 confirmar que la base existe con `git rev-parse --verify <base>`; si falla, avisar en vez de crear el worktree contra una ref inexistente (una base apilada está pusheada a origin porque tiene un PR abierto). Si la Fase 0 detectó una rama `feat/<number>-*` ya existente en la raíz sin worktree propio (creada por una sesión previa en modo raíz), adjuntar el worktree a esa rama en vez de crear una nueva: `git worktree add .claude/worktrees/<number> feat/<number>-<kebab>` (sin `-b`).
 3. Cambiar la sesión al worktree con la herramienta `EnterWorktree` del harness (`path: .claude/worktrees/<number>`). Desde acá el cwd de la sesión —y el de cualquier subagente delegado— ya es el worktree.
 4. Setup de dependencias: `pnpm install` seguido de `pnpm run config` (genera `src/app/environments/environment.ts` y `.env`; el hook `postinstall` ya invoca `pnpm run config`, pero se corre explícito para no depender de que dispare en todos los entornos).
 5. Reportar al usuario los mismos campos que la Fase 1 paso 5, más la **ruta del worktree**.
@@ -148,13 +148,13 @@ En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
 
 ### Ajustes transversales en modo worktree
 
-- **Diffs y rev-list contra `origin/develop`, no `develop` local.** La `develop` local del worktree no se actualiza sola durante la sesión y puede quedar stale frente a merges que ocurren en paralelo en otras sesiones. Toda comparación de rango — la señal de commits de la Fase 0, el diff que exploran los subagentes para decidir qué referencias cargar, el diff final que revisa `code-reviewer` — usa `origin/develop` como base.
+- **Diffs y rev-list contra `<base>` (`origin/<rama-base>`, default `origin/develop`), no la rama base local.** La rama base local del worktree no se actualiza sola durante la sesión y puede quedar stale frente a merges que ocurren en paralelo en otras sesiones. Toda comparación de rango — la señal de commits de la Fase 0, el diff que exploran los subagentes para decidir qué referencias cargar, el diff final que revisa `code-reviewer` — usa `<base>` como base.
 - **Gates de Nx con `NX_NO_CLOUD=true NX_DAEMON=false`.** En Windows, el daemon de Nx y el cliente de Nx Cloud crashean en el teardown de targets corridos desde un worktree — el target reporta "Successfully ran" y el proceso igual sale con código de error (falso rojo); el crash de Nx Cloud además puede pisar el cache compartido (`.nx/cache/cloud/`) del repo principal si hay corridas paralelas. Anteponer ambas variables a **todo** `pnpm <gate>` de Nx corrido desde el worktree: `NX_NO_CLOUD=true NX_DAEMON=false pnpm lint`, y así con `test`, `build`, `test:e2e`, `storybook`, `stylelint`.
 - **Typecheck vía `tsc` directo, no `pnpm typecheck`.** `pnpm typecheck` (`nx typecheck`) puede servir un resultado **stale** del daemon aun con `--skip-nx-cache` y aun con las variables de arriba. En modo worktree, correr `pnpm exec tsc -p tsconfig.typecheck.json --noEmit` directamente.
 - **Node v26 local (si aplica):** los wrappers de Nx de `pnpm test` y `pnpm storybook:build` pueden reportar "Failed tasks" por un crash de teardown de `libuv` **después** de terminar bien (el proyecto pide `engines: ^22.22.3`). Si un gate de test/storybook reporta rojo pero el log previo dice que el target corrió exitosamente, verificar el resultado real con `npx vitest run` directo antes de reportarlo como fallo.
 - **Delegación a subagentes — nota de Modo worktree.** Al delegar en `plan-writer`, `domain-model-advisor`, `architecture-advisor`, `documentation-writer`, `code-reviewer`, `security-auditor` o `test-generator` (Fases 2, 3, 4 y 5), agregar a la instrucción de la delegación:
 
-  > "Esta sesión corre en el worktree `.claude/worktrees/<number>` (cwd ya resuelto — no hace falta `cd`). Tu base de diff es `origin/develop`, no `develop` local. Los archivos generados/gitignoreados del setup (`src/app/environments/environment.ts`, `.env`) sí existen tras `pnpm install` + `pnpm run config` aunque no estén versionados — antes de reportar una ruta como faltante, verificá con `git check-ignore <ruta>`."
+  > "Esta sesión corre en el worktree `.claude/worktrees/<number>` (cwd ya resuelto — no hace falta `cd`). Tu base de diff es `<base>` (la ref resuelta en la Fase 0, default `origin/develop`), no la rama base local. Los archivos generados/gitignoreados del setup (`src/app/environments/environment.ts`, `.env`) sí existen tras `pnpm install` + `pnpm run config` aunque no estén versionados — antes de reportar una ruta como faltante, verificá con `git check-ignore <ruta>`."
 
   Sin esta nota, un subagente puede leer del checkout principal en vez del worktree, diffear contra un `develop` local stale, o marcar como bloqueante un archivo generado que sí existe.
 
