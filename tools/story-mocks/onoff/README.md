@@ -19,6 +19,22 @@ El corpus son **`Story` completos** (fuente de verdad), de los que se **derivan*
 
 Un archivo por obra mantiene cada mock bajo el límite de 500 líneas. Aplicá esta convención al sumar corpus de otros autores en el epic #1651.
 
+## Corpus LiteraryWork (#1653)
+
+El mismo elenco de 8 obras existe además como corpus **`LiteraryWork`** (migración #1653), que **coexiste** con el corpus `Story` de arriba (este último sigue alimentando `Storylist` y las stories de `cover-image`). Diferencias de origen del contenido:
+
+- **Cuerpo (`bodyHtml`):** vive como Markdown plano en `src/app/mocks/onoff/<slug>.md` (solo el cuerpo, sin metadata) y se importa con `?raw` de Vite. El mock corre `markdownToSanitizedHtml` (`@utils/markdown-pipeline.utils`) al cargar el módulo para obtener el `SanitizedHtml`; el `.md` es la fuente literal editable.
+- **`readingTime`:** se **deriva** del propio cuerpo (`deriveSectionReadingTime`); `totalReadingTime` lo suma la factory. No se hardcodea.
+- **Metadata** (título, slug, portada, autor, tags, publicación): literales TS en el mock, no en el `.md`.
+- **Secciones:** una por obra (`position: 0`, sin `title` ni `epigraphs`), ya que cada obra es prosa plana.
+
+Archivos:
+
+- **`LiteraryWork` completa:** `src/app/mocks/onoff/<slug>.mock.ts`, export `<slugCamelCase>LiteraryWorkMock: LiteraryWork` (vía `createLiteraryWork`).
+- **Agregador:** `src/app/mocks/onoff-literary-works.mock.ts` → `onoffLiteraryWorksMock: LiteraryWork[]`.
+- **Teasers derivados:** `src/app/mocks/onoff-literary-work-teasers.mock.ts` (`toTeaser`) → `<slugCamelCase>LiteraryWorkTeaserMock` + `onoffLiteraryWorkTeasersMock`.
+- **Fixture genérico:** `src/app/mocks/literary-work.mock.ts` (obra de prueba + teasers base para los specs/stories de las tarjetas `LiteraryWork*`).
+
 ## Convención de portadas (assets locales)
 
 - **Directorio:** `src/assets/img/mocks/stories/`
