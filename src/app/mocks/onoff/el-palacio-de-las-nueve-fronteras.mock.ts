@@ -1,4 +1,11 @@
 import type { Story } from '@models/story.model';
+import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
+import { createLiteraryWorkSection } from '@models/literary-work-section.model';
+import { createMarkdown } from '@models/markdown.model';
+import { countWords, deriveReadingTime } from '@models/reading-time.model';
+import { createIsoDateTime } from '@utils/date.utils';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import palacioNueveFronterasMdBody from './el-palacio-de-las-nueve-fronteras.md?raw';
 import { authorMock } from '../author.mock';
 import { dramaPsicologicoTagMock, metaficcionTagMock, novelaTagMock } from '../onoff-tags.mock';
 
@@ -250,3 +257,28 @@ export const palacioNueveFronterasStoryMock: Story = {
 		},
 	],
 };
+
+// Contraparte LiteraryWork de la obra (contenido en Markdown, el-palacio-de-las-nueve-fronteras.md), sumada al corpus
+// Story existente que sigue alimentando Storylist. Reusa la metadata del Story mock.
+const palacioNueveFronterasBody = createMarkdown(palacioNueveFronterasMdBody);
+
+export const palacioNueveFronterasLiteraryWorkMock: LiteraryWork = createLiteraryWork({
+	_id: 'onoff-literary-work-el-palacio-de-las-nueve-fronteras',
+	slug: palacioNueveFronterasStoryMock.slug,
+	title: palacioNueveFronterasStoryMock.title,
+	authors: [palacioNueveFronterasStoryMock.author],
+	coverImage: palacioNueveFronterasStoryMock.coverImage,
+	content: [
+		createLiteraryWorkSection({
+			position: 0,
+			bodyHtml: markdownToSanitizedHtml(palacioNueveFronterasBody),
+			readingTime: deriveReadingTime(countWords(palacioNueveFronterasBody)),
+		}),
+	],
+	mediaSources: [],
+	resources: palacioNueveFronterasStoryMock.resources,
+	badLanguage: palacioNueveFronterasStoryMock.badLanguage,
+	tags: palacioNueveFronterasStoryMock.tags,
+	originalPublication: palacioNueveFronterasStoryMock.originalPublication,
+	publishedAt: createIsoDateTime(palacioNueveFronterasStoryMock.publishedAt),
+});

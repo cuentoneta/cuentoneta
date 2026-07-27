@@ -1,0 +1,22 @@
+import type { LiteraryWork } from '@models/literary-work.model';
+import { elOdioLiteraryWorkMock } from './onoff/el-odio.mock';
+import { elTratadoDeLosPlaceresLiteraryWorkMock } from './onoff/el-tratado-de-los-placeres.mock';
+import { geometriaLiteraryWorkMock } from './onoff/geometria.mock';
+import { lasDosAntorchasLiteraryWorkMock } from './onoff/las-dos-antorchas.mock';
+import { lasEscalerasLiteraryWorkMock } from './onoff/las-escaleras.mock';
+import { losPeldanosLiteraryWorkMock } from './onoff/los-peldanos.mock';
+import { neronLiteraryWorkMock } from './onoff/neron.mock';
+import { palacioNueveFronterasLiteraryWorkMock } from './onoff/el-palacio-de-las-nueve-fronteras.mock';
+
+// Corpus LiteraryWork de las obras (ficticias) de François Onoff — contraparte del corpus Story, con
+// el cuerpo en Markdown (./onoff/<slug>.md) materializado a bodyHtml por el pipeline del dominio.
+export const onoffLiteraryWorksMock: LiteraryWork[] = [
+	palacioNueveFronterasLiteraryWorkMock,
+	geometriaLiteraryWorkMock,
+	losPeldanosLiteraryWorkMock,
+	lasEscalerasLiteraryWorkMock,
+	elOdioLiteraryWorkMock,
+	elTratadoDeLosPlaceresLiteraryWorkMock,
+	lasDosAntorchasLiteraryWorkMock,
+	neronLiteraryWorkMock,
+];

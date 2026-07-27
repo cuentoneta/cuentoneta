@@ -1,4 +1,11 @@
 import type { Story } from '@models/story.model';
+import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
+import { createLiteraryWorkSection } from '@models/literary-work-section.model';
+import { createMarkdown } from '@models/markdown.model';
+import { countWords, deriveReadingTime } from '@models/reading-time.model';
+import { createIsoDateTime } from '@utils/date.utils';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import lasDosAntorchasMdBody from './las-dos-antorchas.md?raw';
 import { authorMock } from '../author.mock';
 import { experimentalTagMock, metaficcionTagMock, novelaTagMock } from '../onoff-tags.mock';
 
@@ -281,3 +288,28 @@ export const lasDosAntorchasStoryMock: Story = {
 		},
 	],
 };
+
+// Contraparte LiteraryWork de la obra (contenido en Markdown, las-dos-antorchas.md), sumada al corpus
+// Story existente que sigue alimentando Storylist. Reusa la metadata del Story mock.
+const lasDosAntorchasBody = createMarkdown(lasDosAntorchasMdBody);
+
+export const lasDosAntorchasLiteraryWorkMock: LiteraryWork = createLiteraryWork({
+	_id: 'onoff-literary-work-las-dos-antorchas',
+	slug: lasDosAntorchasStoryMock.slug,
+	title: lasDosAntorchasStoryMock.title,
+	authors: [lasDosAntorchasStoryMock.author],
+	coverImage: lasDosAntorchasStoryMock.coverImage,
+	content: [
+		createLiteraryWorkSection({
+			position: 0,
+			bodyHtml: markdownToSanitizedHtml(lasDosAntorchasBody),
+			readingTime: deriveReadingTime(countWords(lasDosAntorchasBody)),
+		}),
+	],
+	mediaSources: [],
+	resources: lasDosAntorchasStoryMock.resources,
+	badLanguage: lasDosAntorchasStoryMock.badLanguage,
+	tags: lasDosAntorchasStoryMock.tags,
+	originalPublication: lasDosAntorchasStoryMock.originalPublication,
+	publishedAt: createIsoDateTime(lasDosAntorchasStoryMock.publishedAt),
+});

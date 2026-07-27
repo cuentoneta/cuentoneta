@@ -1,4 +1,11 @@
 import type { Story } from '@models/story.model';
+import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
+import { createLiteraryWorkSection } from '@models/literary-work-section.model';
+import { createMarkdown } from '@models/markdown.model';
+import { countWords, deriveReadingTime } from '@models/reading-time.model';
+import { createIsoDateTime } from '@utils/date.utils';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import losPeldanosMdBody from './los-peldanos.md?raw';
 import { authorMock } from '../author.mock';
 import { absurdoTagMock, cuentoTagMock, surrealismoTagMock } from '../onoff-tags.mock';
 
@@ -260,3 +267,28 @@ export const losPeldanosStoryMock: Story = {
 		},
 	],
 };
+
+// Contraparte LiteraryWork de la obra (contenido en Markdown, los-peldanos.md), sumada al corpus
+// Story existente que sigue alimentando Storylist. Reusa la metadata del Story mock.
+const losPeldanosBody = createMarkdown(losPeldanosMdBody);
+
+export const losPeldanosLiteraryWorkMock: LiteraryWork = createLiteraryWork({
+	_id: 'onoff-literary-work-los-peldanos',
+	slug: losPeldanosStoryMock.slug,
+	title: losPeldanosStoryMock.title,
+	authors: [losPeldanosStoryMock.author],
+	coverImage: losPeldanosStoryMock.coverImage,
+	content: [
+		createLiteraryWorkSection({
+			position: 0,
+			bodyHtml: markdownToSanitizedHtml(losPeldanosBody),
+			readingTime: deriveReadingTime(countWords(losPeldanosBody)),
+		}),
+	],
+	mediaSources: [],
+	resources: losPeldanosStoryMock.resources,
+	badLanguage: losPeldanosStoryMock.badLanguage,
+	tags: losPeldanosStoryMock.tags,
+	originalPublication: losPeldanosStoryMock.originalPublication,
+	publishedAt: createIsoDateTime(losPeldanosStoryMock.publishedAt),
+});
