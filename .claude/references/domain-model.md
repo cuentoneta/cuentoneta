@@ -67,7 +67,7 @@ interface LiteraryWorkBase {
 	readonly totalReadingTime: ReadingTime;
 	readonly sectionCount: number;
 	readonly tags: readonly Tag[];
-	readonly mediaSources: readonly MediaTypes[]; // en la base: también lo exponen los teasers de listado
+	readonly mediaSources: readonly Media[]; // en la base: también lo exponen los teasers de listado
 }
 
 export interface LiteraryWork extends LiteraryWorkBase {
