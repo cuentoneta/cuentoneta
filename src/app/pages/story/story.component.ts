@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 import { AppRoutes } from '../../app.routes';
 
 // Utils
-import { ssrBlockingRxResource } from '@utils/ssr-resource';
+import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 
 // Services
 import { StoryApi } from '../../providers/story-api.interface';

@@ -4,7 +4,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { ContributorApi } from '../../providers/contributor-api.interface';
-import { progressiveRxResource } from '@utils/ssr-resource';
+import { progressiveRxResource } from '@app-utils/ssr-resource';
 
 @Component({
 	selector: 'cuentoneta-about',

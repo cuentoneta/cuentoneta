@@ -139,7 +139,7 @@ Preferir un estado de error **por operación** a un único `string | null` compa
 
 ### 7. Recursos de página: bloquear el SSR con `ssrBlockingRxResource`
 
-En **componentes de página** (`src/app/pages/**`), los recursos que alimentan contenido indexable o meta tags por página se declaran con **`ssrBlockingRxResource`** (de [`@utils/ssr-resource`](../../src/utils/ssr-resource.ts)), no con `rxResource` crudo. El helper pipea el stream por `pendingUntilEvent`: registra una `PendingTask` que hace esperar la serialización del SSR (`ApplicationRef.whenStable()`) hasta que el fetch emite, completa o falla. Sin él, el server emite el skeleton con meta genérico y Google indexa una página vacía (#1704). En el browser no afecta el render, solo retrasa `isStable`, así que la carga progresiva in-app se conserva.
+En **componentes de página** (`src/app/pages/**`), los recursos que alimentan contenido indexable o meta tags por página se declaran con **`ssrBlockingRxResource`** (de [`@app-utils/ssr-resource`](../../src/app/utils/ssr-resource.ts)), no con `rxResource` crudo. El helper pipea el stream por `pendingUntilEvent`: registra una `PendingTask` que hace esperar la serialización del SSR (`ApplicationRef.whenStable()`) hasta que el fetch emite, completa o falla. Sin él, el server emite el skeleton con meta genérico y Google indexa una página vacía (#1704). En el browser no afecta el render, solo retrasa `isStable`, así que la carga progresiva in-app se conserva.
 
 Para **datos secundarios o no indexables** que deben seguir cargando progresivamente (p. ej. el listado de cuentos de un autor, o los frames de navegación), usar **`progressiveRxResource`** — un alias explícito de `rxResource` que documenta que el no-bloqueo es una decisión, no un olvido.
 

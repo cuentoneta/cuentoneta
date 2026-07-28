@@ -7,7 +7,7 @@ import { RouterLink } from '@angular/router';
 import { StoryApi } from '../../providers/story-api.interface';
 
 // Utils
-import { ssrBlockingRxResource } from '@utils/ssr-resource';
+import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 
 // Directives
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';

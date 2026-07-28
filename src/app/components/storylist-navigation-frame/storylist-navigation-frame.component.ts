@@ -12,7 +12,7 @@ import { NavigationFrameComponent } from '@components/navigation-frame/navigatio
 import { StorylistApi } from '../../providers/storylist-api.interface';
 
 // Componentes
-import { progressiveRxResource } from '@utils/ssr-resource';
+import { progressiveRxResource } from '@app-utils/ssr-resource';
 import { NavigableStorylistStoryTeaserComponent } from '@components/navigable-storylist-story-teaser/navigable-storylist-story-teaser.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 

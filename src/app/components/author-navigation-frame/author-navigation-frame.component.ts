@@ -10,7 +10,7 @@ import { StoryApi } from '../../providers/story-api.interface';
 // Componentes
 import { NavigationFrameComponent } from '@components/navigation-frame/navigation-frame.component';
 import { NavigableStoryTeaserComponent } from '../navigable-story-teaser/navigable-story-teaser.component';
-import { progressiveRxResource } from '@utils/ssr-resource';
+import { progressiveRxResource } from '@app-utils/ssr-resource';
 
 @Component({
 	selector: 'cuentoneta-author-navigation-frame',
