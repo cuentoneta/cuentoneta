@@ -7,7 +7,7 @@ import {
 	ContentCampaignViewport,
 	ContentCampaignViewportKeys,
 	viewportElementSizes,
-} from '../../src/models/content-campaign.model';
+} from '@models/content-campaign.model';
 
 const imageResourcePattern = /^image-([a-f\d]+)-(\d+x\d+)-(\w+)$/;
 

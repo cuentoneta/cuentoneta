@@ -1,4 +1,5 @@
 import { defineCliConfig } from 'sanity/cli';
+import path from 'node:path';
 
 export default defineCliConfig({
 	api: {
@@ -15,4 +16,18 @@ export default defineCliConfig({
 		schema: 'schema.json',
 		generates: '../src/sanity/types.ts',
 	},
+	// cms es un proyecto pnpm standalone: su build bundlea con Vite y no resuelve los `paths` del
+	// tsconfig raíz. Se registra el alias @models hacia el kernel compartido para importar el dominio
+	// por shortpath en vez de rutas relativas ../../src/models. __dirname es cms/ (Sanity carga este
+	// config con su loader CJS), así que resuelve a <repo>/src/models.
+	vite: (config) => ({
+		...config,
+		resolve: {
+			...config.resolve,
+			alias: {
+				...config.resolve?.alias,
+				'@models': path.resolve(__dirname, '../src/models'),
+			},
+		},
+	}),
 });
