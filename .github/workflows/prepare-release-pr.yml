@@ -51,10 +51,10 @@ jobs:
         with:
           ref: develop
 
-      - name: Use Node.js 22
+      - name: Use Node.js 24
         uses: actions/setup-node@v7.0.0
         with:
-          node-version: 22.22.3
+          node-version: 24.18.0
 
       - name: Resolver versión, issue de release y force
         id: resolve
