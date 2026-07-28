@@ -112,6 +112,17 @@ describe('buildReadingTimeMaterialization', () => {
 		expect(Object.keys(materialization.setIfMissing)).toContain('content[_key=="una-clave-arbitraria"].readingTime');
 	});
 
+	it('lanza ante un _key inseguro en vez de interpolar un path de patch envenenado (inyección GROQ)', () => {
+		// El `_key` se interpola en la expresión de selección `content[_key=="…"]` que ejecuta Sanity;
+		// solo se toca cuando la sección está sin materializar (readingTime null → arma el path).
+		const input: ReadingTimeMaterializationInput = {
+			sections: [{ _key: 'section-1"] || true', body: bodyOne, readingTime: null }],
+			totalReadingTime: null,
+		};
+
+		expect(() => buildReadingTimeMaterialization(input)).toThrow('_key de sección inseguro');
+	});
+
 	it('es idempotente: recomputar sobre una obra ya materializada no arma patch (write-once)', () => {
 		const first = buildReadingTimeMaterialization(allMissingInput());
 
