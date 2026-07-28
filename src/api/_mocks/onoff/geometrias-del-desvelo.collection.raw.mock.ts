@@ -1,4 +1,4 @@
-import type { StorylistQueryResult } from '../../sanity/types';
+import type { StorylistQueryResult } from '@sanity-types';
 import { onoffRawNavTeasersMock } from '../onoff-raw-stories.mock';
 
 // Collection cruda Onoff — "Geometrías del desvelo" (obsesión por el orden y el tiempo).

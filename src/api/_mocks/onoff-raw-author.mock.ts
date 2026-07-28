@@ -1,4 +1,4 @@
-import type { RotatingContentQueryResult, StoryBySlugQueryResult } from '../sanity/types';
+import type { RotatingContentQueryResult, StoryBySlugQueryResult } from '@sanity-types';
 
 export const rawOnoffAuthor: NonNullable<StoryBySlugQueryResult>['author'] = {
 	_id: 'author_1',

@@ -38,7 +38,7 @@ import {
 	StoryBySlugQueryResult,
 	StorylistQueryResult,
 	StorylistTeasersQueryResult,
-} from '../sanity/types';
+} from '@sanity-types';
 
 // Tipos de datos
 import { DateString, IsoDateTime } from '@utils/date.utils';

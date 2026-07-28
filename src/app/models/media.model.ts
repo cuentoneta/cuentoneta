@@ -1,5 +1,5 @@
 import { TextBlockContent } from '@models/block-content.model';
-import { BlockContent } from '../../api/sanity/types';
+import { BlockContent } from '@sanity-types';
 
 /**
  * Modelos relacionados a los distintos tipos de contenido multimedia que se

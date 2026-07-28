@@ -12,7 +12,7 @@ import {
 	LandingPageContentQueryResult,
 	LandingPageListQueryResult,
 	LatestLandingPageReferencesQueryResult,
-} from '../../sanity/types';
+} from '@sanity-types';
 import { mapLandingPageContent, mapStoryNavigationTeaserWithAuthor } from '../../_utils/functions';
 import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
 

@@ -1,4 +1,4 @@
-import type { StorylistStoriesNavigationTeasersQueryResult } from '../../sanity/types';
+import type { StorylistStoriesNavigationTeasersQueryResult } from '@sanity-types';
 import { onoffRawNavTeasersMock } from '../onoff-raw-stories.mock';
 
 // Collection cruda Onoff — "El inventario de las pasiones" (el deseo de ordenar lo inordenable).

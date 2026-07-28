@@ -1,5 +1,5 @@
 // Tipos de Sanity
-import { StoryBySlugQueryResult, StorylistQueryResult } from '../sanity/types';
+import { StoryBySlugQueryResult, StorylistQueryResult } from '@sanity-types';
 
 // Modelos
 import {
