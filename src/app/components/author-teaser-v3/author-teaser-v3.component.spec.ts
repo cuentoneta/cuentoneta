@@ -1,6 +1,6 @@
 import { AuthorTeaserV3Component } from './author-teaser-v3.component';
 import { render, screen } from '@testing-library/angular';
-import { authorTeaserMock } from '../../mocks/author.mock';
+import { authorTeaserMock } from '@mocks/author.mock';
 import { Tag } from '@models/tag.model';
 
 describe('AuthorTeaserV3Component', () => {

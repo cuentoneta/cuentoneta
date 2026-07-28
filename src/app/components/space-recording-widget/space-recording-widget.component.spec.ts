@@ -2,7 +2,7 @@ import { SpaceRecordingWidgetComponent } from './space-recording-widget.componen
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import { render, screen, within } from '@testing-library/angular';
 import { CommonModule, DatePipe, NgOptimizedImage } from '@angular/common';
-import { spaceRecordingMock } from '../../mocks/space-recording.mock';
+import { spaceRecordingMock } from '@mocks/space-recording.mock';
 import { SpaceRecording } from '@models/media.model';
 
 describe('SpaceRecordingWidgetComponent', () => {

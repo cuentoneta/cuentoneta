@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, signal } from '@angular/core';
-import { authorMock } from '../../mocks/author.mock';
-import { storyMock } from '../../mocks/story.mock';
+import { authorMock } from '@mocks/author.mock';
+import { storyMock } from '@mocks/story.mock';
 import { PortableTextDirective } from './portable-text-parser.directive';
 
 @Component({

@@ -6,12 +6,12 @@ import {
 	elOdioLiteraryWorkTeaserMock,
 	geometriaLiteraryWorkTeaserMock,
 	palacioNueveFronterasLiteraryWorkTeaserMock,
-} from '../../mocks/onoff-literary-work-teasers.mock';
+} from '@mocks/onoff-literary-work-teasers.mock';
 import {
 	corpusLiteraryWorkTeasers,
 	literaryWorkSelectArgType,
 	withRichMediaSources,
-} from '../../mocks/onoff-corpus.storybook';
+} from '@mocks/onoff-corpus.storybook';
 
 const meta: Meta<LiteraryWorkCardTeaserComponent> = {
 	component: LiteraryWorkCardTeaserComponent,

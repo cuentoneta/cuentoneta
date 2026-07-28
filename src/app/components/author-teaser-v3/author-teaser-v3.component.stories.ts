@@ -10,7 +10,7 @@ import { provideRouter } from '@angular/router';
 
 import { AuthorTeaserV3Component } from './author-teaser-v3.component';
 import { AuthorTeaserV3SkeletonComponent } from './author-teaser-v3-skeleton.component';
-import { authorTeaserMock } from '../../mocks/author.mock';
+import { authorTeaserMock } from '@mocks/author.mock';
 import { Tag } from '@models/tag.model';
 
 const tags: Tag[] = [

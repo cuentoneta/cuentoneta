@@ -2,7 +2,7 @@ import { argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angul
 
 import { CoverImageComponent } from './cover-image.component';
 import { CoverImageSkeletonComponent } from './cover-image-skeleton.component';
-import { corpusCovers, literaryWorkSelectArgType } from '../../mocks/onoff-corpus.storybook';
+import { corpusCovers, literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
 
 const coverImageUrl = 'assets/img/mocks/stories/geometria.png';
 

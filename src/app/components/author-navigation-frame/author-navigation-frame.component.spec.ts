@@ -9,7 +9,7 @@ import { AuthorNavigationFrameComponent } from './author-navigation-frame.compon
 import { StoryTeaser } from '@models/story.model';
 
 // Mocks
-import { storyMock, storyTeaserMock } from '../../mocks/story.mock';
+import { storyMock, storyTeaserMock } from '@mocks/story.mock';
 
 // Services
 import { StoryApi } from '../../providers/story-api.interface';
@@ -17,7 +17,7 @@ import { NavigationFrameService } from '../../providers/navigation-frame.service
 
 // 3rd party libs
 import { render, screen } from '@testing-library/angular';
-import { authorMock } from '../../mocks/author.mock';
+import { authorMock } from '@mocks/author.mock';
 
 // Test utils
 import { fn } from '@test-utils';
