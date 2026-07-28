@@ -7,7 +7,7 @@
 	},
 	"license": "CC BY-NC-SA 4.0",
 	"engines": {
-		"node": "^22.22.3"
+		"node": "^24.15.0"
 	},
 	"packageManager": "pnpm@10.12.1",
 	"scripts": {
@@ -99,7 +99,7 @@
 		"@testing-library/jest-dom": "^7.0.0",
 		"@testing-library/user-event": "^14.6.1",
 		"@types/jsonld": "^1.5.15",
-		"@types/node": "^22.12.0",
+		"@types/node": "^24.13.3",
 		"@types/react": "^19.2.17",
 		"@typescript-eslint/eslint-plugin": "8.65.0",
 		"@typescript-eslint/parser": "8.65.0",
