@@ -10,6 +10,16 @@ export default defineConfig({
 	test: {
 		globals: true,
 		environment: 'happy-dom',
+		// Por defecto happy-dom navega los frames hijos: cada <iframe> montado dispara un fetch real
+		// (p. ej. el embed de Spotify), que al desmontar el frame se aborta y emite un unhandled error
+		// que tumba la corrida. Los tests no deben depender de red externa.
+		environmentOptions: {
+			happyDOM: {
+				settings: {
+					navigation: { disableChildFrameNavigation: true },
+				},
+			},
+		},
 		setupFiles: ['src/test-setup.ts'],
 		include: ['src/**/*.{test,spec}.ts', 'scripts/**/*.{test,spec}.ts', 'e2e/_utils/**/*.{test,spec}.ts'],
 		// @sanity y los bundles fesm de Angular se inlinan para que Vite los transforme.
