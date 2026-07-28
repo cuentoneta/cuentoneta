@@ -1,9 +1,9 @@
 import { clearAllMocks, type Mock } from '@test-utils';
 import * as storyRepository from './story.repository';
 import * as storyService from './story.service';
-import type { StoriesByAuthorSlugQueryResult } from '../../sanity/types';
-import { elOdioRawStory } from '../../_mocks/onoff/el-odio.raw.mock';
-import { elOdioRawTeaser } from '../../_mocks/onoff-raw-stories.mock';
+import type { StoriesByAuthorSlugQueryResult } from '@sanity-types';
+import { elOdioRawStory } from '@mocks/onoff/el-odio.raw.mock';
+import { elOdioRawTeaser } from '@mocks/onoff-raw-stories.mock';
 
 /* eslint-disable no-restricted-syntax -- vi.mock/vi.fn: mock de módulo del repository y del builder de imágenes; se migra a inyección de dependencias en #1503 */
 vi.mock('./story.repository', () => ({

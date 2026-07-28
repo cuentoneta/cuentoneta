@@ -1,4 +1,4 @@
-import type { LiteraryWorkBySlugQueryResult, LiteraryWorkSectionBySlugQueryResult } from '../sanity/types';
+import type { LiteraryWorkBySlugQueryResult, LiteraryWorkSectionBySlugQueryResult } from '@sanity-types';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import {
 	createLiteraryWorkEpigraph,

@@ -1,4 +1,4 @@
-import type { StoryBySlugQueryResult } from '../../sanity/types';
+import type { StoryBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 
 export const lasEscalerasRawStory: NonNullable<StoryBySlugQueryResult> = {

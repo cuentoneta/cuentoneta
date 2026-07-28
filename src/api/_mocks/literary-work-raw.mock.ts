@@ -1,5 +1,5 @@
-import type { LiteraryWorkBySlugQueryResult } from '../sanity/types';
-import { rawOnoffAuthor } from './onoff-raw-author.mock';
+import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
+import { rawOnoffAuthor } from '@mocks/onoff-raw-author.mock';
 
 // Obra de dos secciones, con los reading time ya persistidos (materializados). Ejercita la lectura
 // de persistidos y la proyección ?section=N.

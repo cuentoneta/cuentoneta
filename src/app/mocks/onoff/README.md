@@ -2,23 +2,25 @@
 
 > **Datos ficticios.** Autor y obras pertenecen al personaje "Onoff" del film _Una pura formalità_ (G. Tornatore, 1994). Ninguna de estas obras existe. Las citas entrecomilladas provienen de los diálogos del film; el resto (fechas, editorial, sinopsis) es invención coherente con su universo.
 
-Este directorio (`src/app/mocks/onoff/`) contiene el corpus de mocks de las 8 obras de François Onoff. Conviven **dos corpus** del mismo elenco:
+Este directorio (`src/app/mocks/onoff/`) es la **única ubicación** del corpus de las 8 obras de François Onoff, accesible por frontend y backend vía el alias `@mocks/onoff`. Desde [#1981](https://github.com/cuentoneta/cuentoneta/issues/1981) conviven acá dos capas del mismo elenco:
 
-- **`Story`** (generado en [#1650](https://github.com/cuentoneta/cuentoneta/issues/1650)): fuente histórica; sigue alimentando `Storylist` y las stories de `cover-image`.
-- **`LiteraryWork`** (migración [#1653](https://github.com/cuentoneta/cuentoneta/issues/1653)): el modelo de dominio nuevo.
+- **Mocks de dominio** (los consume el frontend): `<slug>.mock.ts` con `<slugCamelCase>StoryMock: Story` y `<slugCamelCase>LiteraryWorkMock: LiteraryWork`.
+- **Fixtures raw** (shape crudo de Sanity, los consume el backend): `<slug>.raw.mock.ts` / `<slug>.literary-work.raw.mock.ts`, tipados contra los `*BySlugQueryResult` de `@sanity-types` (los tipos generados de Sanity, promovidos al kernel).
 
-Ambos mocks de una obra viven en el mismo `<slug>.mock.ts`.
+Antes de #1981 los fixtures raw vivían en `src/api/_mocks/onoff/`, separados por capa; se unificaron acá (el kernel vive bajo `src/app`, así que `src/api → @mocks` es la dirección de dependencia válida).
 
 > Las fichas Markdown por obra (metadata + reseña) que vivían en `tools/story-mocks/onoff/` se retiraron en #1653: los mocks TS de este directorio son ahora la fuente.
 
-## Corpus `Story`
+## Corpus de dominio: `Story`
+
+Generado en [#1650](https://github.com/cuentoneta/cuentoneta/issues/1650); fuente histórica, sigue alimentando `Storylist` y las stories de `cover-image`.
 
 - **Story completo:** `<slug>.mock.ts`, export `<slugCamelCase>StoryMock: Story` (cuerpo de 10–15 párrafos con itálicas/negritas).
 - **Agregador:** `../onoff-stories.mock.ts` → `onoffStoriesMock: Story[]`.
 - **Teasers derivados:** `../onoff-story-teasers.mock.ts` deriva con `toTeaser` (trunca el cuerpo a 3 párrafos, como el ACL con `body[0...3]`) → `<slugCamelCase>TeaserMock` + `onoffStoryTeasersMock`.
 - **`_id`:** `'onoff-story-<slug>'`.
 
-## Corpus `LiteraryWork` (#1653)
+## Corpus de dominio: `LiteraryWork` (#1653)
 
 Mismo elenco, coexistiendo con el corpus `Story`. Diferencias de origen del contenido:
 
@@ -33,7 +35,24 @@ Archivos:
 - **Agregador:** `../onoff-literary-works.mock.ts` → `onoffLiteraryWorksMock: LiteraryWork[]`.
 - **Teasers derivados:** `../onoff-literary-work-teasers.mock.ts` (`toTeaser`) → `<slugCamelCase>LiteraryWorkTeaserMock` + `onoffLiteraryWorkTeasersMock`.
 
-Un archivo por obra mantiene cada mock bajo el límite de 500 líneas. Aplicá esta convención al sumar corpus de otros autores en el epic #1651.
+## Corpus raw: `Story` (shape de Sanity)
+
+Contraparte cruda del corpus de dominio `Story` — lo que devuelven las queries GROQ antes del ACL/mapper. La consume el backend (`src/api`).
+
+- **Story raw:** `<slug>.raw.mock.ts`, export `<slugCamelCase>RawStory: NonNullable<StoryBySlugQueryResult>`.
+- **Colecciones raw:** `<slug>.collection.raw.mock.ts` (p. ej. `el-inventario-de-las-pasiones`, `geometrias-del-desvelo`).
+- **Agregadores:** `../onoff-raw-stories.mock.ts` (`onoffRawStoriesMock`, teasers `<slugCamelCase>RawTeaser`, `onoffRawTeasersMock`, `onoffRawNavTeasersMock`); `../onoff-raw-author.mock.ts` (`rawOnoffAuthor`, `rawOnoffAuthorTeaser`).
+
+## Corpus raw: `LiteraryWork` (#1981)
+
+Contraparte cruda del corpus de dominio `LiteraryWork`, tipada contra `NonNullable<LiteraryWorkBySlugQueryResult>`. Alimenta los tests de la capa de datos de `LiteraryWork` (mapper/repository/service).
+
+- **LiteraryWork raw:** `<slug>.literary-work.raw.mock.ts`, export `<slugCamelCase>RawLiteraryWork`. Mono-sección; el `content[0].body` se importa desde el mismo `<slug>.md?raw` que usa el mock de dominio (sin duplicar prosa); la metadata espeja el mock de dominio homónimo.
+- **Agregador:** `../onoff-raw-literary-works.mock.ts` → `onoffRawLiteraryWorksMock` (las 8, en el mismo orden que `onoffLiteraryWorksMock`).
+- **Escenarios de borde** (overrides `{ ...base, … }` sobre las obras canónicas), para ejercitar el mapper y la materialización sin depender del contenido base:
+  - `multiSectionRawLiteraryWork` — obra multi-sección (`sectionCount > 1`).
+  - `unmaterializedRawLiteraryWork` — `totalReadingTime` y `content[].readingTime` en `null` (ejercita el self-healing del mapper).
+- **Autor raw:** `rawOnoffAuthor` (reusado del corpus raw de Story, estructuralmente idéntico).
 
 ## Convención de portadas (assets locales)
 

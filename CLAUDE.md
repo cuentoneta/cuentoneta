@@ -32,7 +32,7 @@
 | **Estilos**            | Tailwind v4 + Stylelint                                           |
 | **Componentes**        | Storybook 10                                                      |
 
-**Aliases de paths** (ver `tsconfig.json`): `@components/*`, `@mocks/*`, `@models/*`, `@utils/*`, `@test-utils`.
+**Aliases de paths** (ver `tsconfig.json`): `@components/*`, `@mocks/*`, `@models/*`, `@utils/*`, `@test-utils`, `@sanity-types`.
 
 **Prefijo de selectores:** componentes `cuentoneta-` (kebab-case, elemento); directivas `cuentoneta` (camelCase, atributo).
 

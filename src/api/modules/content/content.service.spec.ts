@@ -9,7 +9,7 @@ import {
 } from '@test-utils';
 import * as contentRepository from './content.repository';
 import * as contentService from './content.service';
-import { LandingPageContentQueryResult } from '../../sanity/types.js';
+import { LandingPageContentQueryResult } from '@sanity-types';
 
 /* eslint-disable no-restricted-syntax -- vi.mock/vi.fn: mock de módulo del repository; se migra a inyección de dependencias en #1503 */
 vi.mock('./content.repository', () => ({

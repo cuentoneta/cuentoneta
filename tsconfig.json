@@ -12,6 +12,7 @@
 			"@queries/*": ["./src/api/_queries/*"],
 			"@schemas/*": ["./src/api/schemas/*"],
 			"@utils/*": ["./src/app/utils/*"],
+			"@sanity-types": ["./src/app/sanity/types.ts"],
 			"@test-utils": ["./src/test-utils.ts"]
 		},
 		"isolatedModules": true,
