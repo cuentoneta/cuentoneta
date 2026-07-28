@@ -1,7 +1,6 @@
 import { LiteraryWorkCardTeaserComponent } from './literary-work-card-teaser.component';
 import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
-import { literaryWorkNavigationTeaserWithAuthorsMock } from '../../mocks/literary-work.mock';
 import {
 	onoffLiteraryWorkTeasersMock,
 	palacioNueveFronterasLiteraryWorkTeaserMock,
@@ -11,7 +10,7 @@ import type { Media } from '@models/media.model';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 
 describe('LiteraryWorkCardTeaserComponent', () => {
-	const literaryWorkUrl = '/story/obra-de-prueba?navigation=author&navigationSlug=francois-onoff';
+	const literaryWorkUrl = '/story/el-palacio-de-las-nueve-fronteras?navigation=author&navigationSlug=francois-onoff';
 	const authorUrl = '/author/francois-onoff';
 
 	let navigationParams: { navigation: string; navigationSlug: string } = { navigation: '', navigationSlug: '' };
@@ -25,30 +24,30 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 
 	it('should render the component', async () => {
 		const { container } = await render(LiteraryWorkCardTeaserComponent, {
-			inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams },
+			inputs: { literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock, navigationParams },
 		});
 		expect(container).toBeTruthy();
 	});
 
 	it('should display the literary work title', async () => {
 		await render(LiteraryWorkCardTeaserComponent, {
-			inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams },
+			inputs: { literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock, navigationParams },
 		});
-		expect(screen.getByText(literaryWorkNavigationTeaserWithAuthorsMock.title)).toBeInTheDocument();
+		expect(screen.getByText(palacioNueveFronterasLiteraryWorkTeaserMock.title)).toBeInTheDocument();
 	});
 
 	it('should display the total reading time', async () => {
 		await render(LiteraryWorkCardTeaserComponent, {
-			inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams },
+			inputs: { literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock, navigationParams },
 		});
 		expect(
-			screen.getByText(`${literaryWorkNavigationTeaserWithAuthorsMock.totalReadingTime} minutos de lectura`),
+			screen.getByText(`${palacioNueveFronterasLiteraryWorkTeaserMock.totalReadingTime} minutos de lectura`),
 		).toBeInTheDocument();
 	});
 
 	it('should link to the literary work', async () => {
 		await render(LiteraryWorkCardTeaserComponent, {
-			inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams },
+			inputs: { literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock, navigationParams },
 		});
 		const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/story/'));
 		expect(link?.getAttribute('href')).toContain(literaryWorkUrl);
@@ -58,7 +57,7 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 		it('should display the order without leading zero in row variants', async () => {
 			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: {
-					literaryWork: literaryWorkNavigationTeaserWithAuthorsMock,
+					literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock,
 					navigationParams,
 					order: 3,
 					variant: 'on-white',
@@ -69,7 +68,7 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 
 		it('should not display the order when not provided', async () => {
 			await render(LiteraryWorkCardTeaserComponent, {
-				inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams },
+				inputs: { literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock, navigationParams },
 			});
 			expect(screen.queryByText('3.')).not.toBeInTheDocument();
 		});
@@ -77,7 +76,7 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 		it('should display an order of 0 (not treated as absent)', async () => {
 			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: {
-					literaryWork: literaryWorkNavigationTeaserWithAuthorsMock,
+					literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock,
 					navigationParams,
 					order: 0,
 					variant: 'on-white',
@@ -90,15 +89,15 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 	describe('Author', () => {
 		it('should display the author name and avatar when showAuthor is true', async () => {
 			await render(LiteraryWorkCardTeaserComponent, {
-				inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams, showAuthor: true },
+				inputs: { literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock, navigationParams, showAuthor: true },
 			});
-			expect(screen.getByText(literaryWorkNavigationTeaserWithAuthorsMock.authors[0].name)).toBeInTheDocument();
+			expect(screen.getByText(palacioNueveFronterasLiteraryWorkTeaserMock.authors[0].name)).toBeInTheDocument();
 			expect(screen.getByTestId('author')).toBeInTheDocument();
 		});
 
 		it('should link the author photo and name to the author profile', async () => {
 			await render(LiteraryWorkCardTeaserComponent, {
-				inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams, showAuthor: true },
+				inputs: { literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock, navigationParams, showAuthor: true },
 			});
 			// El bloque del autor (foto + nombre) es un enlace propio a /author/:slug, elevado por encima del
 			// enlace de la obra que se estira sobre toda la tarjeta.
@@ -108,17 +107,17 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 
 		it('should expose the author name as the accessible name of the author link', async () => {
 			await render(LiteraryWorkCardTeaserComponent, {
-				inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams, showAuthor: true },
+				inputs: { literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock, navigationParams, showAuthor: true },
 			});
 			// El avatar es decorativo (alt vacío): el nombre accesible del enlace es solo el nombre del autor.
 			expect(
-				screen.getByRole('link', { name: literaryWorkNavigationTeaserWithAuthorsMock.authors[0].name }),
+				screen.getByRole('link', { name: palacioNueveFronterasLiteraryWorkTeaserMock.authors[0].name }),
 			).toBeInTheDocument();
 		});
 
 		it('should not display the author when showAuthor is false', async () => {
 			await render(LiteraryWorkCardTeaserComponent, {
-				inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams, showAuthor: false },
+				inputs: { literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock, navigationParams, showAuthor: false },
 			});
 			expect(screen.queryByTestId('author')).not.toBeInTheDocument();
 		});
@@ -128,7 +127,7 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 		it('should render the cover image when the literary work has a cover', async () => {
 			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: {
-					literaryWork: { ...literaryWorkNavigationTeaserWithAuthorsMock, coverImage: 'https://example.com/cover.jpg' },
+					literaryWork: { ...palacioNueveFronterasLiteraryWorkTeaserMock, coverImage: 'https://example.com/cover.jpg' },
 					navigationParams,
 				},
 			});
@@ -138,7 +137,7 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 		it('should render a placeholder when the literary work has no cover', async () => {
 			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: {
-					literaryWork: { ...literaryWorkNavigationTeaserWithAuthorsMock, coverImage: '' },
+					literaryWork: { ...palacioNueveFronterasLiteraryWorkTeaserMock, coverImage: '' },
 					navigationParams,
 				},
 			});
@@ -148,7 +147,7 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 		it('should keep the cover decorative, leaving a single accessible literary work link when the author is hidden', async () => {
 			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: {
-					literaryWork: { ...literaryWorkNavigationTeaserWithAuthorsMock, coverImage: 'https://example.com/cover.jpg' },
+					literaryWork: { ...palacioNueveFronterasLiteraryWorkTeaserMock, coverImage: 'https://example.com/cover.jpg' },
 					navigationParams,
 					showAuthor: false,
 				},
@@ -241,14 +240,14 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 	describe('Tag label', () => {
 		it('should display the tag label when provided', async () => {
 			await render(LiteraryWorkCardTeaserComponent, {
-				inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams, tagLabel: 'Cuento' },
+				inputs: { literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock, navigationParams, tagLabel: 'Cuento' },
 			});
 			expect(screen.getByText('Cuento')).toBeInTheDocument();
 		});
 
 		it('should not display the tag label when not provided', async () => {
 			await render(LiteraryWorkCardTeaserComponent, {
-				inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams },
+				inputs: { literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock, navigationParams },
 			});
 			expect(screen.queryByText('Cuento')).not.toBeInTheDocument();
 		});
@@ -264,7 +263,7 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 
 		it('should not render the skeleton when a literary work is provided', async () => {
 			await render(LiteraryWorkCardTeaserComponent, {
-				inputs: { literaryWork: literaryWorkNavigationTeaserWithAuthorsMock, navigationParams },
+				inputs: { literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock, navigationParams },
 			});
 			expect(screen.queryByTestId('skeleton')).not.toBeInTheDocument();
 		});

@@ -32,7 +32,6 @@ Archivos:
 - **`LiteraryWork` completa:** `<slug>.mock.ts`, export `<slugCamelCase>LiteraryWorkMock: LiteraryWork` (vía `createLiteraryWork`).
 - **Agregador:** `../onoff-literary-works.mock.ts` → `onoffLiteraryWorksMock: LiteraryWork[]`.
 - **Teasers derivados:** `../onoff-literary-work-teasers.mock.ts` (`toTeaser`) → `<slugCamelCase>LiteraryWorkTeaserMock` + `onoffLiteraryWorkTeasersMock`.
-- **Fixture genérico:** `../literary-work.mock.ts` (obra de prueba + teasers base para los specs/stories de las tarjetas `LiteraryWork*`).
 
 Un archivo por obra mantiene cada mock bajo el límite de 500 líneas. Aplicá esta convención al sumar corpus de otros autores en el epic #1651.
 
