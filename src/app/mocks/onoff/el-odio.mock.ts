@@ -1,4 +1,11 @@
 import type { Story } from '@models/story.model';
+import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
+import { createLiteraryWorkSection } from '@models/literary-work-section.model';
+import { createMarkdown } from '@models/markdown.model';
+import { deriveSectionReadingTime } from '@models/reading-time.model';
+import { createIsoDateTime } from '@utils/date.utils';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import elOdioMdBody from './el-odio.md?raw';
 import { authorMock } from '../author.mock';
 import { dramaPsicologicoTagMock, novelaTagMock } from '../onoff-tags.mock';
 
@@ -267,3 +274,28 @@ export const elOdioStoryMock: Story = {
 		},
 	],
 };
+
+// Contraparte LiteraryWork de la obra (contenido en Markdown, el-odio.md), sumada al corpus
+// Story existente que sigue alimentando Storylist. Reusa la metadata del Story mock.
+const elOdioBody = createMarkdown(elOdioMdBody);
+
+export const elOdioLiteraryWorkMock: LiteraryWork = createLiteraryWork({
+	_id: 'onoff-literary-work-el-odio',
+	slug: elOdioStoryMock.slug,
+	title: elOdioStoryMock.title,
+	authors: [elOdioStoryMock.author],
+	coverImage: elOdioStoryMock.coverImage,
+	content: [
+		createLiteraryWorkSection({
+			position: 0,
+			bodyHtml: markdownToSanitizedHtml(elOdioBody),
+			readingTime: deriveSectionReadingTime(elOdioBody),
+		}),
+	],
+	mediaSources: [],
+	resources: elOdioStoryMock.resources,
+	badLanguage: elOdioStoryMock.badLanguage,
+	tags: elOdioStoryMock.tags,
+	originalPublication: elOdioStoryMock.originalPublication,
+	publishedAt: createIsoDateTime(elOdioStoryMock.publishedAt),
+});

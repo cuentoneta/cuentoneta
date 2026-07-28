@@ -3,8 +3,12 @@ import { provideRouter } from '@angular/router';
 
 import { LiteraryWorkHomeCardTeaserComponent } from './literary-work-home-card-teaser.component';
 import { LiteraryWorkHomeCardTeaserSkeletonComponent } from './literary-work-home-card-teaser-skeleton.component';
-import { palacioNueveFronterasTeaserMock } from '../../mocks/onoff-story-teasers.mock';
-import { corpusStories, literaryWorkSelectArgType, withRichMedia } from '../../mocks/onoff-corpus.storybook';
+import { palacioNueveFronterasLiteraryWorkTeaserMock } from '../../mocks/onoff-literary-work-teasers.mock';
+import {
+	corpusLiteraryWorkTeasers,
+	literaryWorkSelectArgType,
+	withRichMediaSources,
+} from '../../mocks/onoff-corpus.storybook';
 
 const meta: Meta<LiteraryWorkHomeCardTeaserComponent> = {
 	component: LiteraryWorkHomeCardTeaserComponent,
@@ -24,11 +28,11 @@ const meta: Meta<LiteraryWorkHomeCardTeaserComponent> = {
 		layout: 'padded',
 	},
 	argTypes: {
-		story: {
+		literaryWork: {
 			control: { type: 'object' },
 			description: 'Obra a previsualizar (con autor); si no se provee, la tarjeta renderiza su skeleton',
 			table: {
-				type: { summary: 'StoryTeaserWithAuthor | StoryNavigationTeaserWithAuthor' },
+				type: { summary: 'LiteraryWorkTeaser | LiteraryWorkNavigationTeaserWithAuthors' },
 				defaultValue: { summary: 'undefined' },
 			},
 		},
@@ -66,18 +70,18 @@ const meta: Meta<LiteraryWorkHomeCardTeaserComponent> = {
 export default meta;
 type Story = StoryObj<LiteraryWorkHomeCardTeaserComponent>;
 
-export const Interactiva: StoryObj<LiteraryWorkHomeCardTeaserComponent & { storyIndex: number }> = {
+export const Interactiva: StoryObj<LiteraryWorkHomeCardTeaserComponent & { literaryWorkIndex: number }> = {
 	argTypes: {
-		storyIndex: {
+		literaryWorkIndex: {
 			...literaryWorkSelectArgType,
 			description: 'Obra del corpus de François Onoff; su portada y título cambian de forma conjunta',
 		},
 	},
 	render: (args) => ({
-		props: { ...args, stories: corpusStories },
+		props: { ...args, literaryWorks: corpusLiteraryWorkTeasers },
 		template: `
 			<cuentoneta-literary-work-home-card-teaser
-				[story]="stories[storyIndex]"
+				[literaryWork]="literaryWorks[literaryWorkIndex]"
 				[order]="order"
 				[tagLabel]="tagLabel"
 				[showMultimedia]="showMultimedia"
@@ -86,7 +90,7 @@ export const Interactiva: StoryObj<LiteraryWorkHomeCardTeaserComponent & { story
 		`,
 	}),
 	args: {
-		storyIndex: 0,
+		literaryWorkIndex: 0,
 		order: 1,
 		tagLabel: 'Cuento',
 		showMultimedia: true,
@@ -107,7 +111,7 @@ export const Default: Story = {
 		template: `<cuentoneta-literary-work-home-card-teaser ${argsToTemplate(args)} />`,
 	}),
 	args: {
-		story: withRichMedia(palacioNueveFronterasTeaserMock),
+		literaryWork: withRichMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
 		order: 1,
 		tagLabel: 'Cuento',
 		showMultimedia: true,
@@ -137,7 +141,7 @@ export const Estados: StoryObj<LiteraryWorkHomeCardTeaserComponent & { loading: 
 		template: `
 			<div class="w-[331px]">
 				<cuentoneta-literary-work-home-card-teaser
-					[story]="loading ? undefined : story"
+					[literaryWork]="loading ? undefined : literaryWork"
 					[order]="order"
 					[tagLabel]="tagLabel"
 					[showMultimedia]="showMultimedia"
@@ -147,7 +151,7 @@ export const Estados: StoryObj<LiteraryWorkHomeCardTeaserComponent & { loading: 
 	}),
 	args: {
 		loading: true,
-		story: withRichMedia(palacioNueveFronterasTeaserMock),
+		literaryWork: withRichMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
 		order: 1,
 		tagLabel: 'Cuento',
 		showMultimedia: true,

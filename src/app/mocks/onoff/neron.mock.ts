@@ -1,4 +1,11 @@
 import type { Story } from '@models/story.model';
+import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
+import { createLiteraryWorkSection } from '@models/literary-work-section.model';
+import { createMarkdown } from '@models/markdown.model';
+import { deriveSectionReadingTime } from '@models/reading-time.model';
+import { createIsoDateTime } from '@utils/date.utils';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import neronMdBody from './neron.md?raw';
 import { authorMock } from '../author.mock';
 import { dramaHistoricoTagMock, teatroTagMock, tragediaTagMock } from '../onoff-tags.mock';
 
@@ -283,3 +290,28 @@ export const neronStoryMock: Story = {
 		},
 	],
 };
+
+// Contraparte LiteraryWork de la obra (contenido en Markdown, neron.md), sumada al corpus
+// Story existente que sigue alimentando Storylist. Reusa la metadata del Story mock.
+const neronBody = createMarkdown(neronMdBody);
+
+export const neronLiteraryWorkMock: LiteraryWork = createLiteraryWork({
+	_id: 'onoff-literary-work-neron',
+	slug: neronStoryMock.slug,
+	title: neronStoryMock.title,
+	authors: [neronStoryMock.author],
+	coverImage: neronStoryMock.coverImage,
+	content: [
+		createLiteraryWorkSection({
+			position: 0,
+			bodyHtml: markdownToSanitizedHtml(neronBody),
+			readingTime: deriveSectionReadingTime(neronBody),
+		}),
+	],
+	mediaSources: [],
+	resources: neronStoryMock.resources,
+	badLanguage: neronStoryMock.badLanguage,
+	tags: neronStoryMock.tags,
+	originalPublication: neronStoryMock.originalPublication,
+	publishedAt: createIsoDateTime(neronStoryMock.publishedAt),
+});

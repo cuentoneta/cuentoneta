@@ -1,4 +1,11 @@
 import type { Story } from '@models/story.model';
+import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
+import { createLiteraryWorkSection } from '@models/literary-work-section.model';
+import { createMarkdown } from '@models/markdown.model';
+import { deriveSectionReadingTime } from '@models/reading-time.model';
+import { createIsoDateTime } from '@utils/date.utils';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import elTratadoDeLosPlaceresMdBody from './el-tratado-de-los-placeres.md?raw';
 import { authorMock } from '../author.mock';
 import { ensayoTagMock, filosoficoTagMock, metaficcionTagMock } from '../onoff-tags.mock';
 
@@ -272,3 +279,28 @@ export const elTratadoDeLosPlaceresStoryMock: Story = {
 		},
 	],
 };
+
+// Contraparte LiteraryWork de la obra (contenido en Markdown, el-tratado-de-los-placeres.md), sumada al corpus
+// Story existente que sigue alimentando Storylist. Reusa la metadata del Story mock.
+const elTratadoDeLosPlaceresBody = createMarkdown(elTratadoDeLosPlaceresMdBody);
+
+export const elTratadoDeLosPlaceresLiteraryWorkMock: LiteraryWork = createLiteraryWork({
+	_id: 'onoff-literary-work-el-tratado-de-los-placeres',
+	slug: elTratadoDeLosPlaceresStoryMock.slug,
+	title: elTratadoDeLosPlaceresStoryMock.title,
+	authors: [elTratadoDeLosPlaceresStoryMock.author],
+	coverImage: elTratadoDeLosPlaceresStoryMock.coverImage,
+	content: [
+		createLiteraryWorkSection({
+			position: 0,
+			bodyHtml: markdownToSanitizedHtml(elTratadoDeLosPlaceresBody),
+			readingTime: deriveSectionReadingTime(elTratadoDeLosPlaceresBody),
+		}),
+	],
+	mediaSources: [],
+	resources: elTratadoDeLosPlaceresStoryMock.resources,
+	badLanguage: elTratadoDeLosPlaceresStoryMock.badLanguage,
+	tags: elTratadoDeLosPlaceresStoryMock.tags,
+	originalPublication: elTratadoDeLosPlaceresStoryMock.originalPublication,
+	publishedAt: createIsoDateTime(elTratadoDeLosPlaceresStoryMock.publishedAt),
+});

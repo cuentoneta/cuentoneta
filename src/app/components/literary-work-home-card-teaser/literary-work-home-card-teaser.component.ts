@@ -1,7 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import type { StoryNavigationTeaserWithAuthor, StoryTeaserWithAuthor } from '@models/story.model';
+import type { LiteraryWorkNavigationTeaserWithAuthors, LiteraryWorkTeaser } from '@models/literary-work.model';
 import { AppRoutes } from '../../app.routes';
 import { MediaSelectorsComponent } from '../media-selectors/media-selectors.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
@@ -34,7 +34,7 @@ import { LiteraryWorkHomeCardTeaserSkeletonComponent } from './literary-work-hom
 		CoverImageComponent,
 	],
 	template: `
-		@if (story(); as story) {
+		@if (literaryWork(); as literaryWork) {
 			<article class="relative flex w-full max-w-82.75 flex-col items-center gap-4">
 				<div
 					class="relative flex w-full items-center justify-center rounded-xl bg-neutral-100 py-5"
@@ -46,10 +46,10 @@ import { LiteraryWorkHomeCardTeaserSkeletonComponent } from './literary-work-hom
 							{{ order() }}
 						</span>
 					}
-					@if (showMultimedia() && story.media.length > 0) {
+					@if (showMultimedia() && literaryWork.mediaSources.length > 0) {
 						<div class="absolute top-5 right-4.5">
 							<cuentoneta-media-selectors
-								[media]="story.media"
+								[media]="literaryWork.mediaSources"
 								theme="solid"
 								orientation="vertical"
 								data-testid="media"
@@ -59,25 +59,26 @@ import { LiteraryWorkHomeCardTeaserSkeletonComponent } from './literary-work-hom
 				</div>
 				<div class="flex w-full flex-col gap-1">
 					<!-- Autor: enlace propio a /author/:slug, elevado (z-10) por encima del enlace estirado. -->
+					@let author = literaryWork.authors[0];
 					<a
-						[routerLink]="['/', appRoutes.Author, story.author.slug]"
+						[routerLink]="['/', appRoutes.Author, author.slug]"
 						class="group relative z-10 flex min-w-0 items-center gap-2"
 						data-testid="author"
 					>
-						<cuentoneta-image-profile [src]="story.author.imageUrl" size="small" class="shrink-0" />
+						<cuentoneta-image-profile [src]="author.imageUrl" size="small" class="shrink-0" />
 						<span class="truncate font-inter text-sm font-medium text-neutral-900 group-hover:underline">{{
-							story.author.name
+							author.name
 						}}</span>
 					</a>
 					<!-- Enlace de la obra estirado con ::after para cubrir toda la tarjeta (sin wrapper <a>).
 						 El truncate va en el span interno: el ::after se recortaría si el <a> tuviera overflow-hidden. -->
 					<a
-						[routerLink]="storyRouterLink()"
+						[routerLink]="literaryWorkRouterLink()"
 						[queryParams]="navigationParams()"
-						[attr.aria-label]="story.title"
+						[attr.aria-label]="literaryWork.title"
 						class="block w-full min-w-0 after:absolute after:inset-0 after:content-['']"
 					>
-						<span class="block truncate font-inter text-lg font-bold text-neutral-900">{{ story.title }}</span>
+						<span class="block truncate font-inter text-lg font-bold text-neutral-900">{{ literaryWork.title }}</span>
 					</a>
 					<div class="flex items-center gap-2" data-testid="reading-time">
 						@if (tagLabel()) {
@@ -85,7 +86,7 @@ import { LiteraryWorkHomeCardTeaserSkeletonComponent } from './literary-work-hom
 							<span class="font-inter text-xxs font-medium text-neutral-600" aria-hidden="true">•</span>
 						}
 						<span class="font-inter text-xs font-medium text-neutral-600">
-							{{ story.approximateReadingTime }} minutos de lectura
+							{{ literaryWork.totalReadingTime }} minutos de lectura
 						</span>
 					</div>
 				</div>
@@ -102,7 +103,7 @@ export class LiteraryWorkHomeCardTeaserComponent {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs
-	public readonly story = input<StoryTeaserWithAuthor | StoryNavigationTeaserWithAuthor>();
+	public readonly literaryWork = input<LiteraryWorkTeaser | LiteraryWorkNavigationTeaserWithAuthors>();
 	public readonly order = input<number>();
 	// Marca el cover como prioritario (above-the-fold) para la carga de imágenes.
 	public readonly priority = input<boolean>(false);
@@ -110,6 +111,6 @@ export class LiteraryWorkHomeCardTeaserComponent {
 	public readonly showMultimedia = input<boolean>(false);
 	public readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
 
-	protected readonly coverImageUrl = computed(() => this.story()?.coverImage);
-	protected readonly storyRouterLink = computed(() => ['/', this.appRoutes.Story, this.story()?.slug]);
+	protected readonly coverImageUrl = computed(() => this.literaryWork()?.coverImage);
+	protected readonly literaryWorkRouterLink = computed(() => ['/', this.appRoutes.Story, this.literaryWork()?.slug]);
 }
