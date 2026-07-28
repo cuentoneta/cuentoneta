@@ -96,7 +96,7 @@
 		"@tailwindcss/postcss": "^4.3.3",
 		"@testing-library/angular": "^19.4.1",
 		"@testing-library/dom": "^10.4.1",
-		"@testing-library/jest-dom": "^6.9.1",
+		"@testing-library/jest-dom": "^7.0.0",
 		"@testing-library/user-event": "^14.6.1",
 		"@types/jsonld": "^1.5.15",
 		"@types/node": "^22.12.0",
