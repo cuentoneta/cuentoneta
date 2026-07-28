@@ -14,8 +14,8 @@
 import { test, expect } from '@playwright/test';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
-import { assertValidJsonLd } from '../../src/app/testing/json-ld-validation';
-import type { SeoInvariantViolation } from '../../src/app/testing/seo-invariant-violation';
+import { assertValidJsonLd } from '../../src/testing/json-ld-validation';
+import type { SeoInvariantViolation } from '../../src/testing/seo-invariant-violation';
 import {
 	checkNgServerContext,
 	checkTitle,

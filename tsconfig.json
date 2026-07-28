@@ -15,7 +15,7 @@
 			"@utils/*": ["./src/utils/*"],
 			"@sanity-types": ["./src/sanity/types.ts"],
 			"@test-utils": ["./src/test-utils.ts"],
-			"@testing/*": ["./src/app/testing/*"]
+			"@testing/*": ["./src/testing/*"]
 		},
 		"isolatedModules": true,
 		"skipLibCheck": true,
