@@ -16,9 +16,28 @@ import {
 } from '../../_utils/literary-work.functions';
 import { LiteraryWorkSectionNotFoundError } from './literary-work.errors';
 
+// Coalescing de materialización concurrente por documento. El write-on-read se dispara desde el endpoint
+// de lectura público, así que una ráfaga anónima sobre la misma obra sin materializar podría lanzar N
+// escrituras en la ventana previa a que `setIfMissing` cierre el campo. Este registro vive a nivel de
+// módulo (el repository se instancia por request, así que un `Set` de instancia no coalescería entre
+// requests): mientras una materialización está en vuelo, las demás sirven lo derivado sin re-escribir.
+// La escritura ya es idempotente (`setIfMissing`); esto solo acota el consumo de cuota.
+const inFlightMaterializations = new Set<string>();
+
 export interface LiteraryWorkRepository {
 	fetchBySlug(slug: string): Promise<LiteraryWork | null>;
 	fetchSectionBySlug(slug: string, section: number): Promise<LiteraryWork | null>;
+}
+
+// Proyecta el agregado completo a una sola sección por `position` (respuesta parcial ?section=N servida
+// desde un full-fetch). Lanza si el índice no existe. Compartido por el adaptador Sanity (cold-start) y
+// el doble in-memory para que ambos proyecten idéntico — que no diverja el contrato (LSP).
+export function projectSingleSection(full: LiteraryWork, slug: string, section: number): LiteraryWork {
+	const found = full.content.find((candidate) => candidate.position === section);
+	if (!found) {
+		throw new LiteraryWorkSectionNotFoundError(slug, section);
+	}
+	return Object.freeze({ ...full, content: [found] });
 }
 
 export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
@@ -59,23 +78,17 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 
 	private async projectSectionFromFull(slug: string, section: number): Promise<LiteraryWork | null> {
 		const full = await this.fetchBySlug(slug);
-		if (!full) {
-			return null;
-		}
-		const found = full.content.find((candidate) => candidate.position === section);
-		if (!found) {
-			throw new LiteraryWorkSectionNotFoundError(slug, section);
-		}
-		return Object.freeze({ ...full, content: [found] });
+		return full ? projectSingleSection(full, slug, section) : null;
 	}
 
 	// Write-on-read: persiste (setIfMissing, idempotente) los reading time faltantes cuando hay token.
 	// Sin token cortocircuita antes de computar el plan (no re-parsea Markdown en el hot path de lectura).
 	// Con un _key inválido o un fallo de escritura degrada dentro del try: no escribe y sirve lo derivado.
 	private async materialize(raw: SanityLiteraryWork): Promise<void> {
-		if (!this.canPersist) {
+		if (!this.canPersist || inFlightMaterializations.has(raw._id)) {
 			return;
 		}
+		inFlightMaterializations.add(raw._id);
 		try {
 			const materialization = buildReadingTimeMaterialization(toReadingTimeMaterializationInput(raw));
 			await applyReadingTimeMaterialization(this.client, raw._id, materialization);
@@ -85,6 +98,8 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 				`No se pudo materializar el reading time de la obra "${raw._id}"`,
 				cause instanceof Error ? cause.message : String(cause),
 			);
+		} finally {
+			inFlightMaterializations.delete(raw._id);
 		}
 	}
 }

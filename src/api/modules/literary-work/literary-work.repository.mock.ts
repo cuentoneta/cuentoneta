@@ -1,7 +1,6 @@
 import type { LiteraryWork } from '@models/literary-work.model';
 import { mapLiteraryWork, type SanityLiteraryWork } from '../../_utils/literary-work.functions';
-import { LiteraryWorkSectionNotFoundError } from './literary-work.errors';
-import type { LiteraryWorkRepository } from './literary-work.repository';
+import { projectSingleSection, type LiteraryWorkRepository } from './literary-work.repository';
 
 // Gemelo del SanityLiteraryWorkRepository: sustituye el almacenamiento (Sanity) por una lista en
 // memoria, pero honra el mismo contrato — guarda el shape de Sanity y mapea al dominio al leer.
@@ -20,13 +19,6 @@ export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 
 	public async fetchSectionBySlug(slug: string, section: number): Promise<LiteraryWork | null> {
 		const full = await this.fetchBySlug(slug);
-		if (!full) {
-			return null;
-		}
-		const found = full.content.find((candidate) => candidate.position === section);
-		if (!found) {
-			throw new LiteraryWorkSectionNotFoundError(slug, section);
-		}
-		return Object.freeze({ ...full, content: [found] });
+		return full ? projectSingleSection(full, slug, section) : null;
 	}
 }

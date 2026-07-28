@@ -54,6 +54,22 @@ describe('SanityLiteraryWorkRepository', () => {
 			expect(work?.totalReadingTime).toBe(work?.content.reduce((sum: number, section) => sum + section.readingTime, 0));
 		});
 
+		it('coalesces concurrent materializations of the same work into a single write', async () => {
+			const spy = createSpyClient();
+			spy.fetch.mockResolvedValue(unmaterializedRawLiteraryWork);
+			const repository = new SanityLiteraryWorkRepository(spy.client, true);
+
+			// Ráfaga concurrente sobre la misma obra sin materializar: mientras la primera escritura está
+			// en vuelo, las demás sirven lo derivado sin re-escribir (guard a nivel de módulo).
+			await Promise.all([
+				repository.fetchBySlug('el-odio'),
+				repository.fetchBySlug('el-odio'),
+				repository.fetchBySlug('el-odio'),
+			]);
+
+			expect(spy.patch).toHaveBeenCalledTimes(1);
+		});
+
 		it('does not write when the reading times are already persisted', async () => {
 			const spy = createSpyClient();
 			spy.fetch.mockResolvedValue(multiSectionRawLiteraryWork);
