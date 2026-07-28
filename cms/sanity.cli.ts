@@ -20,14 +20,17 @@ export default defineCliConfig({
 	// tsconfig raíz. Se registra el alias @models hacia el kernel compartido para importar el dominio
 	// por shortpath en vez de rutas relativas ../../src/models. __dirname es cms/ (Sanity carga este
 	// config con su loader CJS), así que resuelve a <repo>/src/models.
-	vite: (config) => ({
-		...config,
-		resolve: {
-			...config.resolve,
-			alias: {
-				...config.resolve?.alias,
-				'@models': path.resolve(__dirname, '../src/models'),
-			},
-		},
-	}),
+	vite: (config) => {
+		const modelsPath = path.resolve(__dirname, '../src/models');
+		const existingAlias = config.resolve?.alias;
+		// resolve.alias admite forma objeto o array (readonly Alias[]): se mergea según la que Sanity
+		// provea para no corromperla — spread de un array dentro de un objeto generaría claves numéricas.
+		const alias = Array.isArray(existingAlias)
+			? [...existingAlias, { find: '@models', replacement: modelsPath }]
+			: { ...existingAlias, '@models': modelsPath };
+		return {
+			...config,
+			resolve: { ...config.resolve, alias },
+		};
+	},
 });
