@@ -14,8 +14,8 @@
  */
 import type { HTMLElement } from 'node-html-parser';
 
-import { validateJsonLd } from '../../src/app/testing/json-ld-validation';
-import type { SeoInvariantViolation } from '../../src/app/testing/seo-invariant-violation';
+import { validateJsonLd } from '../../src/testing/json-ld-validation';
+import type { SeoInvariantViolation } from '../../src/testing/seo-invariant-violation';
 import { parseHtml } from './seo';
 
 export interface IndexableHtmlExpectations {

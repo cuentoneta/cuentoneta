@@ -146,7 +146,7 @@ export interface LiteraryWorkSection {
 
 ## 4. Value objects
 
-Implementados en `src/app/models/*.model.ts` (#1852) — primera implementación real del patrón branded-type + factory del roadmap de [`domain-model.md`](../.claude/references/domain-model.md). `Story`/`Author` siguen sin brandear (roadmap #1503, sin cambios).
+Implementados en `src/models/*.model.ts` (#1852) — primera implementación real del patrón branded-type + factory del roadmap de [`domain-model.md`](../.claude/references/domain-model.md). `Story`/`Author` siguen sin brandear (roadmap #1503, sin cambios).
 
 | VO              | Tipo                          | Invariante (la factory lanza si no se cumple)                                                                          | Archivo                   |
 | --------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------- |
@@ -166,7 +166,7 @@ Casos límite documentados para Slice 2 (no resueltos acá):
 - **Títulos duplicados** producen anclas duplicadas — la deduplicación (p. ej. sufijo `-2`) es responsabilidad de la capa que renderiza la navegación.
 - **Secciones sin `chapterTitle`** no tienen ancla derivable del título — el fallback natural es el ancla posicional construida desde `position` (p. ej. `#seccion-3`); su formato exacto se decide al construir la navegación.
 
-**`IsoDateTime` — reutilizado, no duplicado.** `publishedAt` usa el tipo `IsoDateTime` ya existente en `src/app/utils/date.utils.ts`; #1852 le suma la factory validadora `createIsoDateTime(value: string): IsoDateTime`. No se crea un segundo símbolo ni se brandea el tipo existente (lo consumen `Author`/`AuthorProfile` sin factory; migrarlos excede este issue).
+**`IsoDateTime` — reutilizado, no duplicado.** `publishedAt` usa el tipo `IsoDateTime` ya existente en `src/utils/date.utils.ts`; #1852 le suma la factory validadora `createIsoDateTime(value: string): IsoDateTime`. No se crea un segundo símbolo ni se brandea el tipo existente (lo consumen `Author`/`AuthorProfile` sin factory; migrarlos excede este issue).
 
 > **Corte importante — qué hace `createSanitizedHtml` hoy:** brandea + valida no-vacío un string que el llamador **garantiza** que ya pasó por el pipeline compartido de sanitización. **No ejecuta sanitización.** El pipeline real (`unified`/`rehype-sanitize`, [§9](#9-allow-list-de-sanitización)) se implementa en Slice 1, donde vive su único caller (el mapper del ACL). Ídem el cómputo de reading time desde markdown ([§5](#5-helper-de-reading-time)): la conversión markdown→texto plano es de Slice 1; la aritmética es de #1852.
 
@@ -218,7 +218,7 @@ body (Markdown) → countWords → WordCount → deriveReadingTime → ReadingTi
 
 ### Unidad compartida de cómputo + persistencia
 
-`buildReadingTimeMaterialization` + `applyReadingTimeMaterialization` (`src/app/models/reading-time-materialization.model.ts`) son la **fuente única** del patch `setIfMissing` y de la semántica de campos descrita arriba. Las consumen — cuando aterricen — el mapper self-healing del read-path ([#1953](https://github.com/cuentoneta/cuentoneta/issues/1953) Parte 2) y el backfill batch ([#1959](https://github.com/cuentoneta/cuentoneta/issues/1959)):
+`buildReadingTimeMaterialization` + `applyReadingTimeMaterialization` (`src/models/reading-time-materialization.model.ts`) son la **fuente única** del patch `setIfMissing` y de la semántica de campos descrita arriba. Las consumen — cuando aterricen — el mapper self-healing del read-path ([#1953](https://github.com/cuentoneta/cuentoneta/issues/1953) Parte 2) y el backfill batch ([#1959](https://github.com/cuentoneta/cuentoneta/issues/1959)):
 
 ```typescript
 export function buildReadingTimeMaterialization(input: ReadingTimeMaterializationInput): ReadingTimeMaterialization;

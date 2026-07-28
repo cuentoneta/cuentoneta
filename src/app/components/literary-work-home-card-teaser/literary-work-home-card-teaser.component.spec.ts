@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/angular';
 import {
 	onoffLiteraryWorkTeasersMock,
 	palacioNueveFronterasLiteraryWorkTeaserMock,
-} from '../../mocks/onoff-literary-work-teasers.mock';
+} from '@mocks/onoff-literary-work-teasers.mock';
 import { clearAllMocks } from '@test-utils';
 import type { Media } from '@models/media.model';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';

@@ -2,7 +2,7 @@ import { spyOn } from '@test-utils';
 import { AuthorTeaserComponent } from './author-teaser.component';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { render, screen } from '@testing-library/angular';
-import { authorTeaserMock } from '../../mocks/author.mock';
+import { authorTeaserMock } from '@mocks/author.mock';
 import { provideRouter, Router, RouterModule } from '@angular/router';
 import { Component } from '@angular/core';
 import userEvent from '@testing-library/user-event';

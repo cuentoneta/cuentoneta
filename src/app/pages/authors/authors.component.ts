@@ -1,10 +1,10 @@
 import { Component, computed, inject } from '@angular/core';
 
 import { AuthorApi } from '../../providers/author-api.interface';
-import { ssrBlockingRxResource } from '@utils/ssr-resource';
+import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 import { RouterLink } from '@angular/router';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 
 @Component({
 	imports: [RouterLink],

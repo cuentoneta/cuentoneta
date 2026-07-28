@@ -2,12 +2,12 @@
 
 > **Datos ficticios.** Autor y obras pertenecen al personaje "Onoff" del film _Una pura formalità_ (G. Tornatore, 1994). Ninguna de estas obras existe. Las citas entrecomilladas provienen de los diálogos del film; el resto (fechas, editorial, sinopsis) es invención coherente con su universo.
 
-Este directorio (`src/app/mocks/onoff/`) es la **única ubicación** del corpus de las 8 obras de François Onoff, accesible por frontend y backend vía el alias `@mocks/onoff`. Desde [#1981](https://github.com/cuentoneta/cuentoneta/issues/1981) conviven acá dos capas del mismo elenco:
+Este directorio (`src/mocks/onoff/`) es la **única ubicación** del corpus de las 8 obras de François Onoff, accesible por frontend y backend vía el alias `@mocks/onoff`. Desde [#1981](https://github.com/cuentoneta/cuentoneta/issues/1981) conviven acá dos capas del mismo elenco:
 
 - **Mocks de dominio** (los consume el frontend): `<slug>.mock.ts` con `<slugCamelCase>StoryMock: Story` y `<slugCamelCase>LiteraryWorkMock: LiteraryWork`.
 - **Fixtures raw** (shape crudo de Sanity, los consume el backend): `<slug>.raw.mock.ts` / `<slug>.literary-work.raw.mock.ts`, tipados contra los `*BySlugQueryResult` de `@sanity-types` (los tipos generados de Sanity, promovidos al kernel).
 
-Antes de #1981 los fixtures raw vivían en `src/api/_mocks/onoff/`, separados por capa; se unificaron acá (el kernel vive bajo `src/app`, así que `src/api → @mocks` es la dirección de dependencia válida).
+Antes de #1981 los fixtures raw vivían en `src/api/_mocks/onoff/`, separados por capa; se unificaron acá (el kernel vive en top-level `src/`, a la par de `src/app` y `src/api`, así que ambas capas lo consumen sin acoplarse entre sí).
 
 > Las fichas Markdown por obra (metadata + reseña) que vivían en `tools/story-mocks/onoff/` se retiraron en #1653: los mocks TS de este directorio son ahora la fuente.
 

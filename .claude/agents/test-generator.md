@@ -82,7 +82,7 @@ afterEach(() => useRealTimers());
 
 ### IntersectionObserver
 
-`happy-dom` no lo implementa. `src/test-setup.ts` instala un stub global. Para componentes que lo usan (p. ej. `TagsListComponent` / `TagsOverflowDirective`), en `beforeEach` llamá `installIntersectionObserverStub()` y simulá overflow con `markOutsideViewport(...)` / `markInsideViewport(...)` (helpers de `src/app/testing/intersection-observer.stub.ts`).
+`happy-dom` no lo implementa. `src/test-setup.ts` instala un stub global. Para componentes que lo usan (p. ej. `TagsListComponent` / `TagsOverflowDirective`), en `beforeEach` llamá `installIntersectionObserverStub()` y simulá overflow con `markOutsideViewport(...)` / `markInsideViewport(...)` (helpers de `src/testing/intersection-observer.stub.ts`).
 
 ### Prioridad de queries
 

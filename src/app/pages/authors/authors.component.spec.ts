@@ -5,7 +5,7 @@ import { provideRouter } from '@angular/router';
 import AuthorsComponent from './authors.component';
 import { provideAuthorApiMock } from '../../providers/author.mock';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 
 describe('AuthorsComponent', () => {
 	afterEach(() => restoreAllMocks());

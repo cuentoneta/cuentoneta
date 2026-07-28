@@ -6,13 +6,13 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 
 // Routes
 import { AppRoutes } from '../../app.routes';
-import { NavigationFrameComponent } from '@models/navigation-frame.component';
+import { NavigationFrameComponent } from '@components/navigation-frame/navigation-frame.component';
 
 // Services
 import { StorylistApi } from '../../providers/storylist-api.interface';
 
 // Componentes
-import { progressiveRxResource } from '@utils/ssr-resource';
+import { progressiveRxResource } from '@app-utils/ssr-resource';
 import { NavigableStorylistStoryTeaserComponent } from '@components/navigable-storylist-story-teaser/navigable-storylist-story-teaser.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 

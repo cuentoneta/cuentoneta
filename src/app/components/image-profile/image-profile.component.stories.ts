@@ -2,7 +2,7 @@ import { argsToTemplate, moduleMetadata, Meta, StoryObj } from '@storybook/angul
 
 import { ImageProfileComponent, type ImageProfileSize } from './image-profile.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
-import { authorTeaserMock } from '../../mocks/author.mock';
+import { authorTeaserMock } from '@mocks/author.mock';
 
 // Foto de muestra: François Onoff, nuestro "autor de stock" para Storybook, mocks y tests
 // (misma foto que usa AuthorTeaser, tomada del mock para mantener una única fuente de verdad).

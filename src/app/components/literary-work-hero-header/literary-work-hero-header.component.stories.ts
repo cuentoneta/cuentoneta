@@ -2,9 +2,9 @@ import { applicationConfig, argsToTemplate, Meta, StoryObj } from '@storybook/an
 import { provideRouter } from '@angular/router';
 
 import { LiteraryWorkHeroHeaderComponent } from './literary-work-hero-header.component';
-import { onoffLiteraryWorksMock } from '../../mocks/onoff-literary-works.mock';
-import { palacioNueveFronterasLiteraryWorkMock } from '../../mocks/onoff/el-palacio-de-las-nueve-fronteras.mock';
-import { literaryWorkSelectArgType } from '../../mocks/onoff-corpus.storybook';
+import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
+import { palacioNueveFronterasLiteraryWorkMock } from '@mocks/onoff/el-palacio-de-las-nueve-fronteras.mock';
+import { literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
 
 const meta: Meta<LiteraryWorkHeroHeaderComponent> = {
 	component: LiteraryWorkHeroHeaderComponent,

@@ -213,7 +213,7 @@ interface Epigraph {
 
 **Raíz de Agregado:** `LiteraryWork`
 
-> Contratos completos y decisiones de diseño en [`LITERARY_WORK_DESIGN.md`](LITERARY_WORK_DESIGN.md). `LiteraryWork` es una **entidad paralela e independiente**: no extiende ni comparte tipos con `Story` (contrato limpio, sin supertipo — ver epic #1481). Es la primera raíz de agregado con **invariantes implementadas en código** (factory `createLiteraryWork` + value objects brandeados en `src/app/models/`).
+> Contratos completos y decisiones de diseño en [`LITERARY_WORK_DESIGN.md`](LITERARY_WORK_DESIGN.md). `LiteraryWork` es una **entidad paralela e independiente**: no extiende ni comparte tipos con `Story` (contrato limpio, sin supertipo — ver epic #1481). Es la primera raíz de agregado con **invariantes implementadas en código** (factory `createLiteraryWork` + value objects brandeados en `src/models/`).
 
 ```typescript
 interface LiteraryWork {

@@ -1,6 +1,6 @@
 import { MostReadStoriesCardDeckComponent } from './most-read-stories-card-deck.component';
 import { render, screen } from '@testing-library/angular';
-import { storyNavigationTeaserWithAuthorMock } from '../../mocks/story.mock';
+import { storyNavigationTeaserWithAuthorMock } from '@mocks/story.mock';
 import { DeferBlockState } from '@angular/core/testing';
 
 describe('MostReadStoriesCardDeckComponent', () => {

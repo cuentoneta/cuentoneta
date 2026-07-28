@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 
 import DmcaComponent from './dmca.component';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 
 describe('DmcaComponent', () => {
 	afterEach(() => restoreAllMocks());

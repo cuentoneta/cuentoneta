@@ -6,14 +6,16 @@
 		"module": "preserve",
 		"lib": ["dom", "es2022"],
 		"paths": {
+			"@app-utils/*": ["./src/app/utils/*"],
 			"@components/*": ["./src/app/components/*"],
-			"@mocks/*": ["./src/app/mocks/*"],
-			"@models/*": ["./src/app/models/*"],
+			"@mocks/*": ["./src/mocks/*"],
+			"@models/*": ["./src/models/*"],
 			"@queries/*": ["./src/api/_queries/*"],
 			"@schemas/*": ["./src/api/schemas/*"],
-			"@utils/*": ["./src/app/utils/*"],
-			"@sanity-types": ["./src/app/sanity/types.ts"],
-			"@test-utils": ["./src/test-utils.ts"]
+			"@utils/*": ["./src/utils/*"],
+			"@sanity-types": ["./src/sanity/types.ts"],
+			"@test-utils": ["./src/test-utils.ts"],
+			"@testing/*": ["./src/testing/*"]
 		},
 		"isolatedModules": true,
 		"skipLibCheck": true,

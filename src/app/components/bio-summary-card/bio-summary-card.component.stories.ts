@@ -1,6 +1,6 @@
 import { applicationConfig, Meta, moduleMetadata } from '@storybook/angular-vite';
 import { BioSummaryCardComponent } from './bio-summary-card.component';
-import { storyMock } from '../../mocks/story.mock';
+import { storyMock } from '@mocks/story.mock';
 import { CommonModule, NgIf, NgOptimizedImage } from '@angular/common';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import { ResourceComponent } from '../resource/resource.component';

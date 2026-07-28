@@ -6,7 +6,7 @@ import { Title } from '@angular/platform-browser';
 import { storylistMock } from '@mocks/storylist.mock';
 import { type Storylist } from '@models/storylist.model';
 import { AppRoutes } from '../../app.routes';
-import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { StorylistMetaTagsDirective } from './storylist-meta-tags.directive';
 import { STORYLIST_HOST } from './storylist-host';

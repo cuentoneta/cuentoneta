@@ -6,9 +6,9 @@ import { SpaceRecordingWidgetComponent } from '../space-recording-widget/space-r
 import { YoutubeVideoWidgetComponent } from '../youtube-video-widget/youtube-video-widget.component';
 
 // Mocks
-import { youtubeVideoMock } from '../../mocks/youtube-video.mock';
-import { audioRecordingMock } from '../../mocks/audio-recording.mock';
-import { spaceRecordingMock } from '../../mocks/space-recording.mock';
+import { youtubeVideoMock } from '@mocks/youtube-video.mock';
+import { audioRecordingMock } from '@mocks/audio-recording.mock';
+import { spaceRecordingMock } from '@mocks/space-recording.mock';
 
 const mockMediaResources: Media[] = [
 	audioRecordingMock as AudioRecording,

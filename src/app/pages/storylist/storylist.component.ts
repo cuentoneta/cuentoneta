@@ -5,7 +5,7 @@ import { Component, computed, forwardRef, inject, input } from '@angular/core';
 import { StorylistApi } from '../../providers/storylist-api.interface';
 
 // Utils
-import { ssrBlockingRxResource } from '@utils/ssr-resource';
+import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 
 // SEO
 import { StorylistMetaTagsDirective } from './storylist-meta-tags.directive';
