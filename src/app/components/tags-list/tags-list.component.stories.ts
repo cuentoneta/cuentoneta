@@ -1,4 +1,4 @@
-import { componentWrapperDecorator, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
+import { componentWrapperDecorator, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
 
 import { TagsListComponent } from './tags-list.component';
 import { TagComponent, TagVariant } from '../tag/tag.component';

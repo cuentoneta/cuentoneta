@@ -47,6 +47,21 @@ La Fase 0 corre en **toda** invocación (fresca o reanudación), así que es ac�
 
 Estos datos alimentan la Fase 1 (reporte + nombre de rama), la Fase 2 (body → `plan-writer`) y la Fase 6 (milestone → `gh pr create --milestone`; labels → `gh pr create --label`; parent → `Parte de #<epic>.`).
 
+### Base de la rama (apilado)
+
+Casi todo issue ramifica desde `develop`, pero un **PR apilado** —un issue que depende de una rama todavía sin mergear— ramifica desde esa rama. La base se resuelve **una vez** acá (necesita el body de "Datos del issue" y corre antes del `rev-list` de las señales) y la consumen la Fase 1 (checkout), las señales de reanudación, la delegación a subagentes (Fases 2/4/5) y la Fase 6 (`--base`). Dos nombres:
+
+- **`<rama-base>`** — el nombre de la rama base. Default `develop`; apilado ⇒ `feat/<X>-<kebab>`.
+- **`<base>`** — la ref resuelta para todo diff/rev-list: `<rama-base>` en modo raíz, `origin/<rama-base>` en modo worktree.
+
+Resolución por precedencia:
+
+1. **Declaración explícita** en la invocación o una directiva de sesión ("apilado sobre #<X>", "base <rama>") → usarla.
+2. **Señal en el body** del issue (menciona depender de / estar apilado sobre #<X>): resolver la rama del issue base con `gh pr list --search "#<X> in:title" --state open --json number,headRefName` (una base sin mergear tiene PR abierto) y **confirmar** con `AskUserQuestion` (`header`: `Base`; `question` que nombre la rama base y su PR abierto; `options` recomendada primero: **Apilar sobre `<rama-base>`** — pasa a ser base del checkout/diff/PR; **Base `develop`** — ignorar la señal; "Other" cubre instrucciones libres).
+3. **Sin declaración ni señal** → `develop`, sin pausa.
+
+Con `develop`, `<base>` resuelve a `develop`/`origin/develop` **igual que sin apilado**. La base se re-deriva en cada invocación (no se persiste): si la rama base mergeó entre corridas, la próxima resolución cae a `develop` sola.
+
 ### Señales de reanudación
 
 Con el entorno ya resuelto (y el cwd ya en el worktree si corresponde), relevar con el número de issue extraído de la URL:
@@ -54,7 +69,7 @@ Con el entorno ya resuelto (y el cwd ya en el worktree si corresponde), relevar 
 1. `git branch --list 'feat/<number>-*'` — ¿existe la rama?
 2. `workspace/<number>/PLAN.md` — ¿existe el plan? Si existe, contar sus marcadores de paso `[ ]` vs. `[x]`.
 3. `workspace/<number>/CODE_REVIEW.md` y/o `workspace/<number>/SECURITY_REVIEW.md` — ¿existe la review?
-4. Si la rama existe: `git rev-list --count <base>..<rama>` — ¿cuántos commits tiene sobre la base? `<base>` es `develop` en modo raíz y **`origin/develop`** en modo worktree (ver [Modo worktree](#modo-worktree) → "Ajustes transversales").
+4. Si la rama existe: `git rev-list --count <base>..<rama>` — ¿cuántos commits tiene sobre la base? `<base>` es `<rama-base>` en modo raíz y `origin/<rama-base>` en modo worktree, con `<rama-base>` resuelta en "Base de la rama" (default `develop`).
 5. Si la rama existe: `gh pr list --head feat/<number>-<kebab> --state open` — ¿hay un PR abierto de esa rama?
 
 | Rama | `PLAN.md`                  | Review | Commits | Interpretación → fase sugerida                                                                                                |
@@ -93,18 +108,18 @@ El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehac
 
 ## Fase 1 — Setup
 
-**Propósito:** crear una rama de feature limpia desde `develop` actualizado — en el entorno resuelto por la Fase 0 (worktree o raíz).
+**Propósito:** crear una rama de feature limpia desde `<rama-base>` actualizada (default `develop`, ver Fase 0 → "Base de la rama") — en el entorno resuelto por la Fase 0 (worktree o raíz).
 
 1. Usar el número y el título ya recolectados en la Fase 0 → "Datos del issue" (no re-fetchear).
 2. Derivar el nombre de rama (convención del repo):
    - Formato: **`feat/<number>-<titulo-en-kebab-case>`**.
    - Transformación: minúsculas, espacios y no-alfanuméricos → guiones, colapsar guiones consecutivos, recortar guiones de borde, truncar a ~60 caracteres en un límite de palabra.
 3. **Modo raíz**:
-   - **Precondición — working tree limpio:** `git status --short`. Si el árbol no está limpio, no hacer checkout: pausar con `AskUserQuestion` (`header`: `Working tree`; `question` que enumere los archivos sucios; opciones —recomendada primero— **Detener** —el usuario commitea/stashea/descarta y reinvoca— / **Stashear y seguir** —`git stash` y continuar—; "Other" cubre instrucciones libres). Solo aplica en modo raíz: en modo worktree, `git worktree add … origin/develop` crea un checkout nuevo sin tocar el árbol principal.
-   - `git checkout develop && git pull` para asegurar la base actualizada.
+   - **Precondición — working tree limpio:** `git status --short`. Si el árbol no está limpio, no hacer checkout: pausar con `AskUserQuestion` (`header`: `Working tree`; `question` que enumere los archivos sucios; opciones —recomendada primero— **Detener** —el usuario commitea/stashea/descarta y reinvoca— / **Stashear y seguir** —`git stash` y continuar—; "Other" cubre instrucciones libres). Solo aplica en modo raíz: en modo worktree, `git worktree add … <base>` crea un checkout nuevo sin tocar el árbol principal.
+   - `git checkout <rama-base> && git pull` para asegurar la base actualizada.
    - `git checkout -b feat/<number>-<kebab>`. Si la Fase 0 detectó la rama existente y el usuario eligió **rehacer**, confirmar la reutilización y usar `git checkout feat/<number>-<kebab>` (sin `-b`).
 4. **Modo worktree:** seguir [Modo worktree](#modo-worktree) → "Mecánica de creación" (`git fetch origin`, `git worktree add`, `EnterWorktree`, `pnpm install` + `pnpm run config`).
-5. Reportar al usuario: número, título, **milestone**, **parent epic** (o "sin epic"), nombre de rama y, en modo worktree, la ruta del worktree.
+5. Reportar al usuario: número, título, **milestone**, **parent epic** (o "sin epic"), nombre de rama, la **base** cuando `<rama-base> ≠ develop` (checkout apilado) y, en modo worktree, la ruta del worktree.
 
 ---
 
@@ -124,7 +139,7 @@ El caso **commits sin plan** usa una pregunta propia — ni "reanudar" ni "rehac
 ### Mecánica de creación (Fase 1, modo worktree)
 
 1. `git fetch origin`.
-2. `git worktree add .claude/worktrees/<number> -b feat/<number>-<kebab> origin/develop`. Si la Fase 0 detectó una rama `feat/<number>-*` ya existente en la raíz sin worktree propio (creada por una sesión previa en modo raíz), adjuntar el worktree a esa rama en vez de crear una nueva: `git worktree add .claude/worktrees/<number> feat/<number>-<kebab>` (sin `-b`).
+2. `git worktree add .claude/worktrees/<number> -b feat/<number>-<kebab> <base>`, con `<base> = origin/<rama-base>` (default `origin/develop`, ver Fase 0 → "Base de la rama"). Si es un apilado (`<rama-base> ≠ develop`), tras el `git fetch origin` del paso 1 confirmar que la base existe con `git rev-parse --verify <base>`; si falla, avisar en vez de crear el worktree contra una ref inexistente (una base apilada está pusheada a origin porque tiene un PR abierto). Si la Fase 0 detectó una rama `feat/<number>-*` ya existente en la raíz sin worktree propio (creada por una sesión previa en modo raíz), adjuntar el worktree a esa rama en vez de crear una nueva: `git worktree add .claude/worktrees/<number> feat/<number>-<kebab>` (sin `-b`).
 3. Cambiar la sesión al worktree con la herramienta `EnterWorktree` del harness (`path: .claude/worktrees/<number>`). Desde acá el cwd de la sesión —y el de cualquier subagente delegado— ya es el worktree.
 4. Setup de dependencias: `pnpm install` seguido de `pnpm run config` (genera `src/app/environments/environment.ts` y `.env`; el hook `postinstall` ya invoca `pnpm run config`, pero se corre explícito para no depender de que dispare en todos los entornos).
 5. Reportar al usuario los mismos campos que la Fase 1 paso 5, más la **ruta del worktree**.
@@ -133,15 +148,15 @@ En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
 
 ### Ajustes transversales en modo worktree
 
-- **Diffs y rev-list contra `origin/develop`, no `develop` local.** La `develop` local del worktree no se actualiza sola durante la sesión y puede quedar stale frente a merges que ocurren en paralelo en otras sesiones. Toda comparación de rango — la señal de commits de la Fase 0, el diff que exploran los subagentes para decidir qué referencias cargar, el diff final que revisa `code-reviewer` — usa `origin/develop` como base.
-- **Gates de Nx con `NX_NO_CLOUD=true NX_DAEMON=false`.** En Windows, el daemon de Nx y el cliente de Nx Cloud crashean en el teardown de targets corridos desde un worktree — el target reporta "Successfully ran" y el proceso igual sale con código de error (falso rojo); el crash de Nx Cloud además puede pisar el cache compartido (`.nx/cache/cloud/`) del repo principal si hay corridas paralelas. Anteponer ambas variables a **todo** `pnpm <gate>` de Nx corrido desde el worktree: `NX_NO_CLOUD=true NX_DAEMON=false pnpm lint`, y así con `test`, `build`, `test:e2e`, `storybook`, `stylelint`.
+- **Diffs y rev-list contra `<base>` (`origin/<rama-base>`, default `origin/develop`), no la rama base local.** La rama base local del worktree no se actualiza sola durante la sesión y puede quedar stale frente a merges que ocurren en paralelo en otras sesiones. Toda comparación de rango — la señal de commits de la Fase 0, el diff que exploran los subagentes para decidir qué referencias cargar, el diff final que revisa `code-reviewer` — usa `<base>` como base.
+- **Gates de Nx con `NX_DAEMON=false`.** En Windows, el daemon de Nx crashea en el teardown de targets corridos desde un worktree — el target reporta "Successfully ran" y el proceso igual sale con código de error (falso rojo). Anteponer la variable a **todo** `pnpm <gate>` de Nx corrido desde el worktree: `NX_DAEMON=false pnpm lint`, y así con `test`, `build`, `test:e2e`, `storybook`, `stylelint`.
 - **Typecheck vía `tsc` directo, no `pnpm typecheck`.** `pnpm typecheck` (`nx typecheck`) puede servir un resultado **stale** del daemon aun con `--skip-nx-cache` y aun con las variables de arriba. En modo worktree, correr `pnpm exec tsc -p tsconfig.typecheck.json --noEmit` directamente.
 - **Node v26 local (si aplica):** los wrappers de Nx de `pnpm test` y `pnpm storybook:build` pueden reportar "Failed tasks" por un crash de teardown de `libuv` **después** de terminar bien (el proyecto pide `engines: ^22.22.3`). Si un gate de test/storybook reporta rojo pero el log previo dice que el target corrió exitosamente, verificar el resultado real con `npx vitest run` directo antes de reportarlo como fallo.
-- **Delegación a subagentes — nota de Modo worktree.** Al delegar en `plan-writer`, `documentation-writer`, `code-reviewer` o `security-auditor` (Fases 2, 3 y 4), agregar a la instrucción de la delegación:
+- **Delegación a subagentes — nota de Modo worktree.** Al delegar en `plan-writer`, `domain-model-advisor`, `architecture-advisor`, `documentation-writer`, `code-reviewer`, `security-auditor` o `test-generator` (Fases 2, 3, 4 y 5), agregar a la instrucción de la delegación:
 
-  > "Esta sesión corre en el worktree `.claude/worktrees/<number>` (cwd ya resuelto — no hace falta `cd`). Tu base de diff es `origin/develop`, no `develop` local. Los archivos generados/gitignoreados del setup (`src/app/environments/environment.ts`, `.env`) sí existen tras `pnpm install` + `pnpm run config` aunque no estén versionados — antes de reportar una ruta como faltante, verificá con `git check-ignore <ruta>`."
+  > "Esta sesión corre en el worktree `.claude/worktrees/<number>` (cwd ya resuelto — no hace falta `cd`). Tu base de diff es `<base>` (la ref resuelta en la Fase 0, default `origin/develop`), no la rama base local. Los archivos generados/gitignoreados del setup (`src/app/environments/environment.ts`, `.env`) sí existen tras `pnpm install` + `pnpm run config` aunque no estén versionados — antes de reportar una ruta como faltante, verificá con `git check-ignore <ruta>`."
 
-  Sin esta nota, un subagente puede leer del checkout principal en vez del worktree, diffear contra un `develop` local stale, o marcar como bloqueante un archivo generado que sí existe.
+  Sin esta nota, un subagente puede leer del checkout principal en vez del worktree, diffear contra una rama base local stale, o marcar como bloqueante un archivo generado que sí existe.
 
 ### Ciclo de vida
 
@@ -156,9 +171,13 @@ En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
 
 **Propósito:** producir un plan de implementación detallado para aprobación.
 
-1. Delegar al agente **`plan-writer`** pasándole la URL del issue, su descripción (el **body** recolectado en la Fase 0 → "Datos del issue"), el nombre de rama y la ruta de salida completa (`workspace/<number>/PLAN.md`). En modo worktree, adjuntar la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales". Si la Fase 0 reanudó acá con un plan ya escrito, saltear la delegación y pasar directo al resumen.
-2. El plan-writer produce `workspace/<number>/PLAN.md`.
-3. Presentar un resumen breve al usuario (objetivo, enfoque, archivos afectados, decisiones clave).
+1. **Determinar si el issue amerita asesoría previa de dominio o de arquitectura** (mismo patrón que el paso 2 de la Fase 4 con el `security-auditor`, pero _antes_ de planificar). A partir del alcance del issue (el body de la Fase 0 + una exploración inicial):
+   - **`domain-model-advisor`** si el issue crea o modifica entidades de dominio o value objects (`@models/*`, `src/app/models/`), mappers del ACL (`src/api/_utils/`), queries GROQ (`src/api/_queries/`) o tipos de dominio compartidos.
+   - **`architecture-advisor`** solo ante un cambio **estructuralmente significativo**: módulo nuevo bajo `src/api/modules/<dominio>/`, feature/provider/interfaz `-api` nuevo en el frontend, bounded context nuevo, o cambio de límites de módulo / dirección de dependencias. Un ajuste localizado —UI, copy, estilos, un campo puntual— **no** lo amerita: el `plan-writer` ya carga las mismas referencias según el diff y su pasada basta.
+2. **Delegar en paralelo los advisors que matcheen** (ambas delegaciones en el mismo turno si aplican los dos; son independientes y devuelven su evaluación como **texto**, no como archivo — no tienen `Write`). En modo worktree, adjuntar la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales". Capturar su salida.
+3. Delegar al agente **`plan-writer`** pasándole la URL del issue, su descripción (el **body** recolectado en la Fase 0 → "Datos del issue"), el nombre de rama, la ruta de salida completa (`workspace/<number>/PLAN.md`) y **la evaluación de los advisors que corrieron en el paso 2**. Los advisors los corre el orquestador —no el `plan-writer`, que no puede delegar en subagentes— y su aporte entra en el prompt del plan. En modo worktree, adjuntar la nota de delegación. Si la Fase 0 reanudó acá con un plan ya escrito, saltear los pasos 1-3 (los advisors ya corrieron y su aporte vive en el plan) y pasar directo al resumen.
+4. El plan-writer produce `workspace/<number>/PLAN.md`.
+5. Presentar un resumen breve al usuario (objetivo, enfoque, archivos afectados, decisiones clave).
 
 **⏸ PAUSA — decisión vía `AskUserQuestion`.**
 
@@ -170,7 +189,7 @@ Ramificación tras la respuesta:
 
 - **Aprobar** → avanzar a la Fase 3.
 - **Dar feedback** → pedir el texto del feedback al usuario y tratarlo igual que Other.
-- **Other** (feedback) → reenviar el texto recibido **a la misma Task del `plan-writer`** delegada en el paso 1 — conserva toda la exploración en contexto — para que revise `workspace/<number>/PLAN.md` en función del feedback y reescriba el plan en el mismo archivo. Nunca editar `PLAN.md` a mano desde el orquestador ni relanzar un `plan-writer` de cero mientras la Task siga disponible. Repetir la pausa tras cada revisión, iterando hasta un "Aprobar". Si la Task original ya no está disponible (p. ej. reanudación vía Fase 0 en una sesión nueva), delegar en un `plan-writer` nuevo pasándole el `PLAN.md` existente más el feedback — revisa sobre lo escrito, no re-explora de cero.
+- **Other** (feedback) → reenviar el texto recibido **a la misma Task del `plan-writer`** delegada en el paso 3 — conserva toda la exploración en contexto — para que revise `workspace/<number>/PLAN.md` en función del feedback y reescriba el plan en el mismo archivo. Los advisors del paso 2 **no** se re-corren: su aporte ya está incorporado al plan. Nunca editar `PLAN.md` a mano desde el orquestador ni relanzar un `plan-writer` de cero mientras la Task siga disponible. Repetir la pausa tras cada revisión, iterando hasta un "Aprobar". Si la Task original ya no está disponible (p. ej. reanudación vía Fase 0 en una sesión nueva), delegar en un `plan-writer` nuevo pasándole el `PLAN.md` existente más el feedback — revisa sobre lo escrito, no re-explora de cero.
 
 No avanzar a la Fase 3 sin una respuesta "Aprobar".
 
@@ -189,9 +208,13 @@ No avanzar a la Fase 3 sin una respuesta "Aprobar".
 
 - Formato del mensaje: `[#<issue>] - <qué cambió y por qué>` (en español).
 - Un commit por cambio lógico distinto (p. ej. componente nuevo + spec = un commit; una story es otro commit si es otra preocupación).
-- Cada commit debe dejar el código **buildeable** (los gates de CI pasarían).
+- Cada commit debe dejar el código **buildeable** (los gates de CI pasarían). Para no descubrir un commit roto recién en la Fase 4 con todo acumulado, antes de cada commit que toque código TS/runtime correr una **verificación barata** (un subconjunto rápido, **no** la suite ni el resto de gates —eso sigue siendo la Fase 4—):
+  - **typecheck:** `pnpm typecheck` (en modo worktree, `pnpm exec tsc -p tsconfig.typecheck.json --noEmit` — ver [Modo worktree](#modo-worktree) → "Ajustes transversales").
+  - **specs afectados:** `pnpm exec vitest related --run $(git diff --name-only --cached)` — corre solo los `*.spec.ts` que importan los archivos staged; si `related` no rinde, los specs del módulo tocado.
+  - Los commits **solo-doc / solo-config de tooling** (sin efecto en runtime) saltean esta verificación.
 - Nunca mensajes no descriptivos ("WIP", "fix", "update").
 - Nunca `--amend`; crear commits nuevos tras fallos del hook de pre-commit.
+- **En modo raíz**, antes de cada commit confirmar la rama activa con `git branch --show-current` contra `feat/<number>-<kebab>`; si un subagente con Bash la cambió en el medio, re-checkoutear la rama correcta antes de commitear. En **modo worktree** se omite: `EnterWorktree` fija el cwd/rama del worktree y los subagentes lo heredan (ver [Modo worktree](#modo-worktree)).
 
 ### No hacer en esta fase
 
@@ -207,11 +230,11 @@ No avanzar a la Fase 3 sin una respuesta "Aprobar".
 **Propósito:** verificar que pasen los gates de CI y correr los agentes de review.
 
 1. Correr localmente (con `pnpm`, nunca `nx` directo) los **gates de CI** definidos en la sección [Comandos comunes](../../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**). `test:e2e` y `studio-build` son costosos de correr en cada iteración: corré `test:e2e` si el diff toca `e2e/**`, `src/app/pages/**`, rutas/navegación (`app.routes*.ts`) o superficie SSR/SEO (meta tags, JSON-LD, sitemap); `studio-build` si toca `cms/`; el resto, siempre.
-   - **En modo worktree**, anteponer `NX_NO_CLOUD=true NX_DAEMON=false` a todo gate de Nx y reemplazar `pnpm typecheck` por `pnpm exec tsc -p tsconfig.typecheck.json --noEmit` — ver [Modo worktree](#modo-worktree) → "Ajustes transversales" (evita falsos rojos de teardown y resultados stale del daemon).
+   - **En modo worktree**, anteponer `NX_DAEMON=false` a todo gate de Nx y reemplazar `pnpm typecheck` por `pnpm exec tsc -p tsconfig.typecheck.json --noEmit` — ver [Modo worktree](#modo-worktree) → "Ajustes transversales" (evita falsos rojos de teardown y resultados stale del daemon).
    - **Lanzalos concurrentemente**, no uno tras otro: son independientes entre sí y así los corre CI (todos los jobs cuelgan de `setup` y van en runners separados). En serie tardan la **suma**; en paralelo, lo que tarde el más lento (medido: 105s → 29s).
    - Si alguno falla: reportar cuál, diagnosticar, arreglar, commitear el fix (reglas de Fase 3) y re-correr **solo el que falló** mientras el resto sigue verde; re-correr todo solo si el fix toca superficie compartida.
 2. **Determinar si el diff toca superficie de seguridad.** La lista de disparadores es la sección **"Cuándo correr"** del agente `security-auditor`: `src/api/**` (endpoints, GROQ, mappers), manejo de contenido externo (PortableText/HTML del CMS, `bypassSecurityTrust*`, fetch a servicios externos, `localStorage`), variables de entorno / secrets / config de Sanity o Clarity, y dependencias (`package.json` / `pnpm-lock.yaml`). Un diff que no toca nada de eso —solo documentación, estilos o UI sin datos externos— **no** la amerita; el auditor también puede invocarse a demanda si surge una preocupación puntual.
-3. **Delegar las reviews — en paralelo si corren ambas.** Si el diff toca superficie de seguridad, lanzar al **`security-auditor`** y al **`code-reviewer`** en el **mismo turno** (ambas delegaciones en una única respuesta, igual que los gates del paso 1): sus reviews son independientes y no comparten archivo de salida. Si no la toca, delegar solo al `code-reviewer`. Cada delegación incluye la ruta de salida completa del agente (ver paso 4); en modo worktree, adjuntar además la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales" a cada Task delegada. En ambos casos el `code-reviewer` revisa todos los cambios de la rama vs. `develop` (u `origin/develop` en modo worktree) y recibe **el resultado observado de los gates del paso 1** (qué corriste, con qué resultado, y cuáles omitiste por no aplicar al diff) — sin ese dato los vuelve a correr, que es la parte más cara de la review.
+3. **Delegar las reviews — en paralelo si corren ambas.** Si el diff toca superficie de seguridad, lanzar al **`security-auditor`** y al **`code-reviewer`** en el **mismo turno** (ambas delegaciones en una única respuesta, igual que los gates del paso 1): sus reviews son independientes y no comparten archivo de salida. Si no la toca, delegar solo al `code-reviewer`. Cada delegación incluye la ruta de salida completa del agente (ver paso 4); en modo worktree, adjuntar además la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales" a cada Task delegada. En ambos casos el `code-reviewer` revisa todos los cambios de la rama vs. `<base>` (la ref resuelta en la Fase 0 → "Base de la rama"; default `develop`/`origin/develop`) y recibe **el resultado observado de los gates del paso 1** (qué corriste, con qué resultado, y cuáles omitiste por no aplicar al diff) — sin ese dato los vuelve a correr, que es la parte más cara de la review.
 4. Cada agente escribe su propio archivo: el `code-reviewer` en `workspace/<number>/CODE_REVIEW.md` y el `security-auditor` en `workspace/<number>/SECURITY_REVIEW.md`.
 5. Presentar la tabla de hallazgos al usuario (Críticos, Advertencias, Sugerencias), combinando ambos archivos cuando corrió el auditor, e indicando si corrió o por qué no correspondía. Al combinar, cada hallazgo se cita con el número tal como aparece en su documento de origen: los de seguridad llevan el prefijo `S` (p. ej. `S3`) y así no se confunden con los del `code-reviewer` (sin prefijo).
 
@@ -240,6 +263,7 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 4. Si un hallazgo se **difiere**, proponer el issue al usuario y **esperar su confirmación** antes de crearlo (`gh issue create`); una vez creado, anotar su URL junto al valor **Diferido** en la columna **Estado**. Crear un issue es una acción hacia afuera: la misma política rige en la Fase 6.
 5. Tras abordar Críticos y Advertencias, re-correr los gates de CI. Arreglar regresiones.
 6. Las **Sugerencias** son opcionales: presentarlas y dejar que el usuario decida.
+7. Si un hallazgo es específicamente un **gap de cobertura de tests**, el orquestador **puede** delegar en **`test-generator`** el scaffolding de los specs faltantes (en modo worktree, adjuntar la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales"). Es un aid opcional, **no** un gate: los tests igual deben existir y pasar; el agente es solo una vía para producirlos.
 
 ---
 
@@ -250,7 +274,8 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 **Modo worktree:** el worktree **no se limpia en esta fase** — se mantiene hasta que el PR mergee, para permitir reanudar la sesión (ver [Modo worktree](#modo-worktree) → "Ciclo de vida"). Push y creación del PR corren igual, con cwd ya resuelto al worktree.
 
 1. `git push -u origin feat/<number>-<kebab>`.
-2. Crear el PR con `gh pr create` (base `develop`, con `--milestone` = el milestone recolectado en la Fase 0 → "Datos del issue", y `--label` por cada label del issue recolectado ahí, para que el PR herede la categorización del issue):
+2. Crear el PR con `gh pr create` (base **`<rama-base>`**, default `develop`, resuelta en la Fase 0 → "Base de la rama"; con `--milestone` = el milestone recolectado en la Fase 0 → "Datos del issue", y `--label` por cada label del issue recolectado ahí, para que el PR herede la categorización del issue):
+   - **Apilado (`<rama-base> ≠ develop`):** agregar al cuerpo del PR la línea `> Apilado sobre #<X> — este PR no debe mergearse antes que el PR de su rama base.` (con `#<X>` = el issue base detectado en la Fase 0), y surfacear ese aviso de forma prominente al presentar la URL (paso 3) y en el resumen final (paso 5). Un PR apilado mergeado antes que su base ensucia el diff de la base.
    - **Precondición:** ningún Crítico de `workspace/<number>/CODE_REVIEW.md` ni `workspace/<number>/SECURITY_REVIEW.md` sin **disposición** (definida en la pausa de la Fase 4). Si lo hay, no crear el PR: volver a la Fase 5, o a la vía "Disponer y ship" de la Fase 4.
    - Título: `[#<issue>] - <título del issue>`.
    - Cuerpo (en **español**):
@@ -289,7 +314,7 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
    | CI local            | <Verde / Rojo — ver <motivo>>                                     |
    ```
 
-   - `Commits` cuenta solo los de la rama (`git rev-list --count <base>..HEAD`, con `<base>` = `develop` en modo raíz y `origin/develop` en modo worktree).
+   - `Commits` cuenta solo los de la rama (`git rev-list --count <base>..HEAD`, con `<base>` = `<rama-base>` en modo raíz y `origin/<rama-base>` en modo worktree; default `develop`). Cuando `<rama-base> ≠ develop`, sumar el dato de base apilada bajo la tabla con el aviso de orden de merge (sin alterar la tabla en el caso `develop`).
    - `CI local` reporta el resultado de la última corrida de los gates.
 
 ---
@@ -301,6 +326,7 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 - Nunca abrir el PR antes de que pasen los gates de CI y haya corrido el `code-reviewer`.
 - Nunca abrir el PR sin el keyword de cierre (`Closes #<issue>`) en el cuerpo enlazando el issue de origen.
 - Nunca abrir el PR con un Crítico sin disposición confirmada — definición en la pausa de la Fase 4; verificación en la Fase 6 paso 2.
-- En modo worktree (ver [Modo worktree](#modo-worktree)), el cwd de la sesión y de los subagentes delegados ya está resuelto al worktree tras `EnterWorktree`: la regla anti-`cd` sigue rigiendo igual, y toda comparación de rango git usa `origin/develop` como base, nunca `develop` local.
+- En modo worktree (ver [Modo worktree](#modo-worktree)), el cwd de la sesión y de los subagentes delegados ya está resuelto al worktree tras `EnterWorktree`: la regla anti-`cd` sigue rigiendo igual, y toda comparación de rango git usa `<base>` (`origin/<rama-base>`, default `origin/develop`) como base, nunca la rama base local.
+- Toda delegación a un subagente que compute un diff de rango (`plan-writer`, advisors, `code-reviewer`, `security-auditor`, `test-generator`, `documentation-writer`) recibe la base `<base>` resuelta en la Fase 0: en worktree via la nota de delegación (que ya la incluye); en modo raíz con base apilada (`<rama-base> ≠ develop`), como una línea explícita en la instrucción. Los cuerpos de los agentes usan `develop...HEAD` como default de invocación standalone; esta instrucción lo overridea.
 - Nunca saltear la fase Plan — aun cambios triviales se benefician de un plan breve.
 - Aplican siempre las reglas de [`.claude/references/coding-agent-policies.md`](../../references/coding-agent-policies.md): sin framings de mantenedor único, sin "salteá el test por ser chico" (salvo cambios solo-doc), sin diferir la review más allá de abrir el PR, y sin comentarios redundantes (Sección 3).

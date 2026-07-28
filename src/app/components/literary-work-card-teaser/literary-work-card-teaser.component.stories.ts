@@ -1,13 +1,17 @@
-import { applicationConfig, argsToTemplate, Meta, StoryObj } from '@storybook/angular';
+import { applicationConfig, argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 import { provideRouter } from '@angular/router';
 
 import { LiteraryWorkCardTeaserComponent } from './literary-work-card-teaser.component';
 import {
-	elOdioTeaserMock,
-	geometriaTeaserMock,
-	palacioNueveFronterasTeaserMock,
-} from '../../mocks/onoff-story-teasers.mock';
-import { corpusStories, literaryWorkSelectArgType, withRichMedia } from '../../mocks/onoff-corpus.storybook';
+	elOdioLiteraryWorkTeaserMock,
+	geometriaLiteraryWorkTeaserMock,
+	palacioNueveFronterasLiteraryWorkTeaserMock,
+} from '../../mocks/onoff-literary-work-teasers.mock';
+import {
+	corpusLiteraryWorkTeasers,
+	literaryWorkSelectArgType,
+	withRichMediaSources,
+} from '../../mocks/onoff-corpus.storybook';
 
 const meta: Meta<LiteraryWorkCardTeaserComponent> = {
 	component: LiteraryWorkCardTeaserComponent,
@@ -22,7 +26,7 @@ const meta: Meta<LiteraryWorkCardTeaserComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Utilizado para representar una vista previa de una obra dentro de listados o secciones de exploración. Resume la información principal del contenido, incluyendo autor, título, texto truncado, categoría, tiempo estimado de lectura, imagen asociada y accesos a archivos multimediales como video, X o Spotify.</p><p>Su objetivo es facilitar una lectura rápida del contenido disponible y ayudar al usuario a decidir si quiere profundizar en la obra. Puede adaptarse a distintas estructuras visuales según el contexto de uso, manteniendo consistencia en la jerarquía de información y en las acciones disponibles.</p><p>Se implementa en tres variantes seleccionables mediante el input <code>variant</code>:</p><ul><li><strong>OnWhite</strong> (<code>on-white</code>): layout horizontal con imagen a la izquierda, para fondos blancos.</li><li><strong>OnGray</strong> (<code>on-gray</code>): igual a OnWhite con selectores de multimedia en blanco, para fondos grises.</li><li><strong>Highlighted</strong> (<code>highlighted</code>): tarjeta destacada con borde, fondo e imagen a la derecha.</li></ul><p>Cada variante admite mostrar opcionalmente autor, descripción, numeración, etiqueta y selectores de multimedia.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada), <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor) y <a href="./?path=/docs/componentes-v3-mediaselectors--docs" target="_top"><strong>MediaSelectors</strong></a> (accesos multimedia); el extracto se renderiza con <strong>PortableTextParser</strong>.</p></div>`,
+				component: `<div><p>Utilizado para representar una vista previa de una obra dentro de listados o secciones de exploración. Resume la información principal del contenido, incluyendo autor, título, texto truncado, categoría, tiempo estimado de lectura, imagen asociada y accesos a archivos multimediales como video, X o Spotify.</p><p>Su objetivo es facilitar una lectura rápida del contenido disponible y ayudar al usuario a decidir si quiere profundizar en la obra. Puede adaptarse a distintas estructuras visuales según el contexto de uso, manteniendo consistencia en la jerarquía de información y en las acciones disponibles.</p><p>Se implementa en tres variantes seleccionables mediante el input <code>variant</code>:</p><ul><li><strong>OnWhite</strong> (<code>on-white</code>): layout horizontal con imagen a la izquierda, para fondos blancos.</li><li><strong>OnGray</strong> (<code>on-gray</code>): igual a OnWhite con selectores de multimedia en blanco, para fondos grises.</li><li><strong>Highlighted</strong> (<code>highlighted</code>): tarjeta destacada con borde, fondo e imagen a la derecha.</li></ul><p>Cada variante admite mostrar opcionalmente autor, descripción, numeración, etiqueta y selectores de multimedia.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada), <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor) y <a href="./?path=/docs/componentes-v3-mediaselectors--docs" target="_top"><strong>MediaSelectors</strong></a> (accesos multimedia); el extracto se renderiza desde el HTML saneado de la primera sección de la obra.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -81,18 +85,18 @@ const meta: Meta<LiteraryWorkCardTeaserComponent> = {
 export default meta;
 type Story = StoryObj<LiteraryWorkCardTeaserComponent>;
 
-export const Interactiva: StoryObj<LiteraryWorkCardTeaserComponent & { storyIndex: number }> = {
+export const Interactiva: StoryObj<LiteraryWorkCardTeaserComponent & { literaryWorkIndex: number }> = {
 	argTypes: {
-		storyIndex: {
+		literaryWorkIndex: {
 			...literaryWorkSelectArgType,
 			description: 'Obra del corpus de François Onoff; su portada, título y extracto cambian de forma conjunta',
 		},
 	},
 	render: (args) => ({
-		props: { ...args, stories: corpusStories },
+		props: { ...args, literaryWorks: corpusLiteraryWorkTeasers },
 		template: `
 			<cuentoneta-literary-work-card-teaser
-				[story]="stories[storyIndex]"
+				[literaryWork]="literaryWorks[literaryWorkIndex]"
 				[variant]="variant"
 				[order]="order"
 				[tagLabel]="tagLabel"
@@ -104,7 +108,7 @@ export const Interactiva: StoryObj<LiteraryWorkCardTeaserComponent & { storyInde
 		`,
 	}),
 	args: {
-		storyIndex: 0,
+		literaryWorkIndex: 0,
 		variant: 'on-white',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -129,7 +133,7 @@ export const OnWhite: Story = {
 		template: `<cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} />`,
 	}),
 	args: {
-		story: withRichMedia(palacioNueveFronterasTeaserMock),
+		literaryWork: withRichMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
 		variant: 'on-white',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -153,7 +157,7 @@ export const OnGray: Story = {
 		template: `<div class="rounded-lg bg-neutral-100 p-6"><cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} /></div>`,
 	}),
 	args: {
-		story: withRichMedia(geometriaTeaserMock),
+		literaryWork: withRichMediaSources(geometriaLiteraryWorkTeaserMock),
 		variant: 'on-gray',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -177,7 +181,7 @@ export const Highlighted: Story = {
 		template: `<cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} />`,
 	}),
 	args: {
-		story: withRichMedia(elOdioTeaserMock),
+		literaryWork: withRichMediaSources(elOdioLiteraryWorkTeaserMock),
 		variant: 'highlighted',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -201,10 +205,10 @@ export const AllVariants: Story = {
 	render: (args) => ({
 		props: {
 			...args,
-			stories: [
-				withRichMedia(palacioNueveFronterasTeaserMock),
-				withRichMedia(geometriaTeaserMock),
-				withRichMedia(elOdioTeaserMock),
+			literaryWorks: [
+				withRichMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
+				withRichMediaSources(geometriaLiteraryWorkTeaserMock),
+				withRichMediaSources(elOdioLiteraryWorkTeaserMock),
 			],
 		},
 		template: `
@@ -213,7 +217,7 @@ export const AllVariants: Story = {
 					<h3 class="text-sm font-semibold text-neutral-600">OnWhite</h3>
 					<cuentoneta-literary-work-card-teaser
 						variant="on-white"
-						[story]="stories[0]"
+						[literaryWork]="literaryWorks[0]"
 						[order]="order"
 						[tagLabel]="tagLabel"
 						[showAuthor]="showAuthor"
@@ -227,7 +231,7 @@ export const AllVariants: Story = {
 					<div class="rounded-lg bg-neutral-100 p-6">
 						<cuentoneta-literary-work-card-teaser
 							variant="on-gray"
-							[story]="stories[1]"
+							[literaryWork]="literaryWorks[1]"
 							[order]="order"
 							[tagLabel]="tagLabel"
 							[showAuthor]="showAuthor"
@@ -241,7 +245,7 @@ export const AllVariants: Story = {
 					<h3 class="text-sm font-semibold text-neutral-600">Highlighted</h3>
 					<cuentoneta-literary-work-card-teaser
 						variant="highlighted"
-						[story]="stories[2]"
+						[literaryWork]="literaryWorks[2]"
 						[order]="order"
 						[tagLabel]="tagLabel"
 						[showAuthor]="showAuthor"
@@ -270,7 +274,7 @@ export const AllVariants: Story = {
 	},
 };
 
-// La tarjeta renderiza su propio skeleton cuando no recibe story.
+// La tarjeta renderiza su propio skeleton cuando no recibe una obra.
 export const Estados: StoryObj<LiteraryWorkCardTeaserComponent & { loading: boolean }> = {
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
 	render: (args) => ({
@@ -288,7 +292,7 @@ export const Estados: StoryObj<LiteraryWorkCardTeaserComponent & { loading: bool
 					/>
 				} @else {
 					<cuentoneta-literary-work-card-teaser
-						[story]="story"
+						[literaryWork]="literaryWork"
 						[variant]="variant"
 						[order]="order"
 						[tagLabel]="tagLabel"
@@ -303,7 +307,7 @@ export const Estados: StoryObj<LiteraryWorkCardTeaserComponent & { loading: bool
 	}),
 	args: {
 		loading: true,
-		story: withRichMedia(palacioNueveFronterasTeaserMock),
+		literaryWork: withRichMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
 		variant: 'on-white',
 		order: 1,
 		tagLabel: 'Cuento',

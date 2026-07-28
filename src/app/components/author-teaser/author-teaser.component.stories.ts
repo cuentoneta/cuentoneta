@@ -1,5 +1,5 @@
 import { AuthorTeaserComponent } from './author-teaser.component';
-import { applicationConfig, Meta, moduleMetadata } from '@storybook/angular';
+import { applicationConfig, Meta, moduleMetadata } from '@storybook/angular-vite';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { authorTeaserMock } from '../../mocks/author.mock';
 import { provideRouter } from '@angular/router';

@@ -1,4 +1,4 @@
-import { applicationConfig, argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
+import { applicationConfig, argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
 import { provideRouter } from '@angular/router';
 
 import { CarouselComponent } from './carousel.component';

@@ -13,7 +13,7 @@ import { createSlug } from '@models/slug.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { mapAuthor, mapResources, mapTags, urlFor } from './functions';
 import { mapMediaSources } from './media-sources.functions';
-import { markdownToSanitizedHtml } from './markdown-pipeline.functions';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
 export type SanityLiteraryWork = NonNullable<LiteraryWorkBySlugQueryResult>;
 export type SanityLiteraryWorkSectionProjection = NonNullable<LiteraryWorkSectionBySlugQueryResult>;

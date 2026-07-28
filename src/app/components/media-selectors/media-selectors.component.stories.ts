@@ -1,4 +1,4 @@
-import { argsToTemplate, moduleMetadata, Meta, StoryObj } from '@storybook/angular';
+import { argsToTemplate, moduleMetadata, Meta, StoryObj } from '@storybook/angular-vite';
 
 import { MediaSelectorsComponent } from './media-selectors.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';

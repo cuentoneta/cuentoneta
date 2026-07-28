@@ -1,4 +1,4 @@
-import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
+import { Meta, StoryObj, moduleMetadata } from '@storybook/angular-vite';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { SpaceRecordingWidgetComponent } from './space-recording-widget.component';
 import { spaceRecordingMock } from '@mocks/space-recording.mock';

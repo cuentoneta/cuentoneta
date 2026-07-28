@@ -1,4 +1,11 @@
 import type { Story } from '@models/story.model';
+import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
+import { createLiteraryWorkSection } from '@models/literary-work-section.model';
+import { createMarkdown } from '@models/markdown.model';
+import { deriveSectionReadingTime } from '@models/reading-time.model';
+import { createIsoDateTime } from '@utils/date.utils';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import geometriaMdBody from './geometria.md?raw';
 import { authorMock } from '../author.mock';
 import { cuentoTagMock, dramaPsicologicoTagMock, filosoficoTagMock } from '../onoff-tags.mock';
 
@@ -270,3 +277,28 @@ export const geometriaStoryMock: Story = {
 		},
 	],
 };
+
+// Contraparte LiteraryWork de la obra (contenido en Markdown, geometria.md), sumada al corpus
+// Story existente que sigue alimentando Storylist. Reusa la metadata del Story mock.
+const geometriaBody = createMarkdown(geometriaMdBody);
+
+export const geometriaLiteraryWorkMock: LiteraryWork = createLiteraryWork({
+	_id: 'onoff-literary-work-geometria',
+	slug: geometriaStoryMock.slug,
+	title: geometriaStoryMock.title,
+	authors: [geometriaStoryMock.author],
+	coverImage: geometriaStoryMock.coverImage,
+	content: [
+		createLiteraryWorkSection({
+			position: 0,
+			bodyHtml: markdownToSanitizedHtml(geometriaBody),
+			readingTime: deriveSectionReadingTime(geometriaBody),
+		}),
+	],
+	mediaSources: [],
+	resources: geometriaStoryMock.resources,
+	badLanguage: geometriaStoryMock.badLanguage,
+	tags: geometriaStoryMock.tags,
+	originalPublication: geometriaStoryMock.originalPublication,
+	publishedAt: createIsoDateTime(geometriaStoryMock.publishedAt),
+});

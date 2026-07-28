@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/angular';
+import { Meta } from '@storybook/angular-vite';
 import { HeaderComponent } from './header.component';
 
 export default {

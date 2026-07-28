@@ -1,4 +1,4 @@
-import { applicationConfig, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
+import { applicationConfig, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
 import { CollectionTeaser } from './collection-teaser';
 import { provideRouter } from '@angular/router';
 import { CollectionTeaserSkeletonComponent } from './collection-teaser-skeleton';

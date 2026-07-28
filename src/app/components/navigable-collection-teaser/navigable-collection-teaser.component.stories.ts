@@ -5,7 +5,7 @@ import {
 	Meta,
 	moduleMetadata,
 	StoryObj,
-} from '@storybook/angular';
+} from '@storybook/angular-vite';
 import { provideRouter } from '@angular/router';
 
 import { NavigableCollectionTeaserComponent } from './navigable-collection-teaser.component';

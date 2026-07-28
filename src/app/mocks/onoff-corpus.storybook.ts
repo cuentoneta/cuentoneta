@@ -1,6 +1,6 @@
 import type { Media } from '@models/media.model';
-import type { StoryTeaserWithAuthor } from '@models/story.model';
-import { onoffStoryTeasersMock } from './onoff-story-teasers.mock';
+import type { LiteraryWorkTeaser } from '@models/literary-work.model';
+import { onoffLiteraryWorkTeasersMock } from './onoff-literary-work-teasers.mock';
 
 // Conjunto de medios variado para ilustrar los selectores de multimedia y el contador
 const richMedia: Media[] = [
@@ -16,21 +16,21 @@ const richMedia: Media[] = [
 	{ title: 'Podcast', type: 'spotifyPodcastEpisode', description: [], data: { url: 'https://spotify.com' } },
 ];
 
-export const withRichMedia = (teaser: StoryTeaserWithAuthor): StoryTeaserWithAuthor => ({
+export const withRichMediaSources = (teaser: LiteraryWorkTeaser): LiteraryWorkTeaser => ({
 	...teaser,
-	media: richMedia,
+	mediaSources: richMedia,
 });
 
 // Obras del corpus (con multimedia) y sus portadas; comparten el índice del corpus.
-export const corpusStories = onoffStoryTeasersMock.map(withRichMedia);
-export const corpusCovers = onoffStoryTeasersMock.map((teaser) => teaser.coverImage);
+export const corpusLiteraryWorkTeasers = onoffLiteraryWorkTeasersMock.map(withRichMediaSources);
+export const corpusCovers = onoffLiteraryWorkTeasersMock.map((teaser) => teaser.coverImage);
 
-const corpusLabels = Object.fromEntries(onoffStoryTeasersMock.map((teaser, index) => [index, teaser.title]));
+const corpusLabels = Object.fromEntries(onoffLiteraryWorkTeasersMock.map((teaser, index) => [index, teaser.title]));
 
-// argType reutilizable del selector "Obra". Key-agnóstico: el consumidor lo asigna a su propia key (`storyIndex`, `coverIndex`, …) y agrega su `description`.
+// argType reutilizable del selector "Obra". Key-agnóstico: el consumidor lo asigna a su propia key (`literaryWorkIndex`, `coverIndex`, …) y agrega su `description`.
 export const literaryWorkSelectArgType = {
 	name: 'Obra',
 	control: { type: 'select' as const, labels: corpusLabels },
-	options: corpusStories.map((_, index) => index),
+	options: corpusLiteraryWorkTeasers.map((_, index) => index),
 	table: { type: { summary: 'number' } },
 };

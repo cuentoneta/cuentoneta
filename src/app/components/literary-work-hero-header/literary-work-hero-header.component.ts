@@ -2,7 +2,7 @@ import { Component, computed, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
-import type { Story } from '@models/story.model';
+import type { LiteraryWork } from '@models/literary-work.model';
 import { withSanityImageParams } from '@utils/sanity-image.utils';
 import { AppRoutes } from '../../app.routes';
 import { CoverImageComponent } from '../cover-image/cover-image.component';
@@ -16,7 +16,8 @@ import { LiteraryWorkHeroHeaderSkeletonComponent } from './literary-work-hero-he
  * difuminada + capa de opacidad, y en primer plano la portada nítida (`CoverImage`), los tags (`TagsList`),
  * el autor (`ImageProfile` + nombre, enlace al perfil), el título y "Publicado en: <colección> (<año>)".
  *
- * Recibe el `Story` completo como único input; ausente ⇒ renderiza su propio skeleton.
+ * Recibe la `LiteraryWork` completa como único input; ausente ⇒ renderiza su propio skeleton.
+ * Muestra el autor principal (`authors[0]`; la factory garantiza al menos uno).
  */
 @Component({
 	selector: 'cuentoneta-literary-work-hero-header',
@@ -31,7 +32,7 @@ import { LiteraryWorkHeroHeaderSkeletonComponent } from './literary-work-hero-he
 	],
 	host: { class: 'relative block overflow-hidden bg-neutral-900' },
 	template: `
-		@if (story(); as story) {
+		@if (literaryWork(); as literaryWork) {
 			@if (backgroundImageUrl(); as backgroundImageUrl) {
 				<img
 					[ngSrc]="backgroundImageUrl"
@@ -47,26 +48,27 @@ import { LiteraryWorkHeroHeaderSkeletonComponent } from './literary-work-hero-he
 
 			<div class="relative z-10 px-6 pt-28 pb-10">
 				<div class="mx-auto flex w-full max-w-180 items-center gap-8">
-					<cuentoneta-cover-image [src]="story.coverImage" [priority]="true" />
+					<cuentoneta-cover-image [src]="literaryWork.coverImage" [priority]="true" />
 					<div class="flex min-w-0 flex-col items-start gap-2.5">
 						<cuentoneta-tags-list data-testid="tags">
-							@for (tag of story.tags; track tag.slug) {
+							@for (tag of literaryWork.tags; track tag.slug) {
 								<cuentoneta-tag [label]="tag.title" variant="gray" />
 							}
 						</cuentoneta-tags-list>
+						@let author = literaryWork.authors[0];
 						<a
-							[routerLink]="['/', appRoutes.Author, story.author.slug]"
+							[routerLink]="['/', appRoutes.Author, author.slug]"
 							class="group flex items-center gap-2"
 							data-testid="author"
 						>
-							<cuentoneta-image-profile [src]="story.author.imageUrl" size="small" class="shrink-0" />
+							<cuentoneta-image-profile [src]="author.imageUrl" size="small" class="shrink-0" />
 							<span class="font-inter text-sm font-medium text-neutral-50 group-hover:underline">{{
-								story.author.name
+								author.name
 							}}</span>
 						</a>
-						<h1 class="w-full font-inter text-2xl font-bold text-neutral-50">{{ story.title }}</h1>
+						<h1 class="w-full font-inter text-2xl font-bold text-neutral-50">{{ literaryWork.title }}</h1>
 						<p class="font-inter text-sm font-medium text-neutral-50" data-testid="publication">
-							Publicado en: {{ story.originalPublication }}
+							Publicado en: {{ literaryWork.originalPublication }}
 						</p>
 					</div>
 				</div>
@@ -79,9 +81,9 @@ import { LiteraryWorkHeroHeaderSkeletonComponent } from './literary-work-hero-he
 export class LiteraryWorkHeroHeaderComponent {
 	protected readonly appRoutes = AppRoutes;
 
-	public readonly story = input<Story>();
+	public readonly literaryWork = input<LiteraryWork>();
 
 	protected readonly backgroundImageUrl = computed(() =>
-		withSanityImageParams(this.story()?.coverImage ?? '', { w: 1920 }),
+		withSanityImageParams(this.literaryWork()?.coverImage ?? '', { w: 1920 }),
 	);
 }

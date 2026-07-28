@@ -1,6 +1,6 @@
 ---
 name: architecture-advisor
-description: Evalúa decisiones de arquitectura contra Clean Architecture, SOLID y las convenciones reales del proyecto (controller→service→repository + ACL de Sanity, signals-first sin NgRx). Usar en fase de planificación de nuevas features, módulos o cambios estructurales significativos.
+description: Evalúa decisiones de arquitectura contra Clean Architecture, SOLID y las convenciones reales del proyecto (controller→service→repository + ACL de Sanity, signals-first sin NgRx). Lo invoca la Fase 2 del skill issue-workflow —antes del plan-writer— ante un cambio estructuralmente significativo (módulo o capa nueva, bounded context, cambio de límites de módulo o dirección de dependencias); su evaluación alimenta el plan. También se puede invocar a demanda.
 tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
@@ -13,9 +13,11 @@ Sos el asesor de arquitectura de este proyecto Angular/Nx (La Cuentoneta).
 
 ## Cuándo intervenir
 
-- En la fase de planificación de nuevas features, módulos o servicios
-- Al evaluar cambios estructurales (nuevos límites de módulo, dependencias)
-- Cuando hay que revisar relaciones de dependencia
+La **Fase 2 del skill `issue-workflow`** te corre —antes del `plan-writer`, que no puede delegar en subagentes— cuando el issue hace un cambio **estructuralmente significativo**; tu evaluación entra en el prompt del plan. El umbral es alto a propósito: un ajuste localizado no te dispara (la carga de referencias del `plan-writer` basta). Los disparadores concretos:
+
+- Un módulo o servicio nuevo, o una feature/provider/interfaz `-api` nueva
+- Un cambio estructural: nuevos límites de módulo, dirección de dependencias, o un bounded context nuevo
+- Revisar relaciones de dependencia
 - A demanda, para consultas de arquitectura
 
 ## Paso 0: Cargar archivos de referencia
