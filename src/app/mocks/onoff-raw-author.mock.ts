@@ -1,5 +1,4 @@
-import type { LiteraryWorkBySlugQueryResult, RotatingContentQueryResult, StoryBySlugQueryResult } from '@sanity-types';
-import { ANONYMOUS_AUTHOR_SLUG } from '@models/literary-work.model';
+import type { RotatingContentQueryResult, StoryBySlugQueryResult } from '@sanity-types';
 
 export const rawOnoffAuthor: NonNullable<StoryBySlugQueryResult>['author'] = {
 	_id: 'author_1',
@@ -168,35 +167,4 @@ export const rawOnoffAuthorTeaser: NonNullable<RotatingContentQueryResult>['most
 	diedOn: '1994-12-31',
 	diedOnYear: 1994,
 	resources: [],
-};
-
-// Author raw del escenario "obra anónima" del corpus LiteraryWork (recitada, sin autoría real): el
-// slug coincide con `ANONYMOUS_AUTHOR_SLUG` (@models/literary-work.model), que decide `isAnonymous`.
-export const rawAnonimoLiteraryWorkAuthor: NonNullable<LiteraryWorkBySlugQueryResult>['authors'][0] = {
-	_id: 'author_anonimo',
-	slug: ANONYMOUS_AUTHOR_SLUG,
-	name: 'Anónimo',
-	image: {
-		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-f656d95d41369adb6f7d3a7d0b20b36861fd2028-350x350-jpg' },
-	},
-	nationality: {
-		_id: 'nationality-francia',
-		_type: 'nationality',
-		_createdAt: '2021-12-28T00:00:00Z',
-		_updatedAt: '2021-12-28T00:00:00Z',
-		_rev: 'rev-francia',
-		country: 'Francia',
-		flag: {
-			_type: 'image',
-			asset: { _type: 'reference', _ref: 'image-b80876a5f3a89e13acc14254b1f45dd6d29b79f4-30x20-png' },
-		},
-	},
-	biography: [],
-	bornOn: null,
-	bornOnYear: null,
-	diedOn: null,
-	diedOnYear: null,
-	resources: [],
-	tags: [],
 };

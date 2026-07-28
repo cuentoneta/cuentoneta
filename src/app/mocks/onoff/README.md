@@ -51,9 +51,8 @@ Contraparte cruda del corpus de dominio `LiteraryWork`, tipada contra `NonNullab
 - **Agregador:** `../onoff-raw-literary-works.mock.ts` → `onoffRawLiteraryWorksMock` (las 8, en el mismo orden que `onoffLiteraryWorksMock`).
 - **Escenarios de borde** (overrides `{ ...base, … }` sobre las obras canónicas), para ejercitar el mapper y la materialización sin depender del contenido base:
   - `multiSectionRawLiteraryWork` — obra multi-sección (`sectionCount > 1`).
-  - `anonymousRawLiteraryWork` — obra recitada, autor `Anónimo` (`slug: 'anonimo'`), `totalReadingTime` seteado a mano (distinto de la suma de secciones).
   - `unmaterializedRawLiteraryWork` — `totalReadingTime` y `content[].readingTime` en `null` (ejercita el self-healing del mapper).
-- **Autor raw:** `rawOnoffAuthor` (reusado del corpus raw de Story, estructuralmente idéntico) para las obras firmadas; `rawAnonimoLiteraryWorkAuthor` para el escenario anónimo.
+- **Autor raw:** `rawOnoffAuthor` (reusado del corpus raw de Story, estructuralmente idéntico).
 
 ## Convención de portadas (assets locales)
 

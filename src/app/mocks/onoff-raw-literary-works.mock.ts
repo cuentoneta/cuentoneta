@@ -1,5 +1,4 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { rawAnonimoLiteraryWorkAuthor } from './onoff-raw-author.mock';
 import { elOdioRawLiteraryWork } from './onoff/el-odio.literary-work.raw.mock';
 import { elTratadoDeLosPlaceresRawLiteraryWork } from './onoff/el-tratado-de-los-placeres.literary-work.raw.mock';
 import { geometriaRawLiteraryWork } from './onoff/geometria.literary-work.raw.mock';
@@ -42,28 +41,6 @@ export const multiSectionRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryRes
 			title: 'La novena frontera',
 			epigraphs: [],
 			body: 'Le faltaba todavía la voz. Para darle una voz tuve que perder la mía.',
-			readingTime: 1,
-		},
-	],
-};
-
-// Obra recitada (sin autoría real): `totalReadingTime` lo setea el editor a mano (duración del
-// medio), distinto de la suma de las secciones — referencia al author "Anónimo" del catálogo.
-export const anonymousRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
-	...elOdioRawLiteraryWork,
-	_id: 'onoff-literary-work-cantar-anonimo',
-	slug: 'cantar-anonimo',
-	title: 'Cantar anónimo',
-	coverImage: null,
-	totalReadingTime: 40,
-	sectionCount: 1,
-	authors: [rawAnonimoLiteraryWorkAuthor],
-	content: [
-		{
-			_key: 'section-1',
-			title: null,
-			epigraphs: [],
-			body: 'Nadie firma estas líneas: la voz que las recita vive en otra parte.',
 			readingTime: 1,
 		},
 	],

@@ -1,5 +1,4 @@
 import {
-	anonymousRawLiteraryWork,
 	multiSectionRawLiteraryWork,
 	onoffRawLiteraryWorksMock,
 	unmaterializedRawLiteraryWork,
@@ -31,17 +30,6 @@ describe('multiSectionRawLiteraryWork (escenario de borde: obra multi-sección)'
 	it('should carry more than one section, with sectionCount matching content length', () => {
 		expect(multiSectionRawLiteraryWork.sectionCount).toBeGreaterThan(1);
 		expect(multiSectionRawLiteraryWork.sectionCount).toBe(multiSectionRawLiteraryWork.content.length);
-	});
-});
-
-describe('anonymousRawLiteraryWork (escenario de borde: obra recitada sin autoría real)', () => {
-	it('should reference the "anonimo" author', () => {
-		expect(anonymousRawLiteraryWork.authors[0].slug).toBe('anonimo');
-	});
-
-	it('should carry a hand-set totalReadingTime, distinct from the sum of its sections', () => {
-		expect(anonymousRawLiteraryWork.totalReadingTime).not.toBeNull();
-		expect(typeof anonymousRawLiteraryWork.totalReadingTime).toBe('number');
 	});
 });
 
