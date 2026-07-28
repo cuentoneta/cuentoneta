@@ -265,12 +265,16 @@ Contrato para Slice 1 (patrón `fetch*`/`get*` de [`sanity-acl.md`](../.claude/r
 ```typescript
 // Puerto (nombre limpio)
 interface LiteraryWorkRepository {
-	fetchBySlug(slug: string): Promise<RawLiteraryWork | null>; // crudo de GROQ, tipado por typegen
+	// Desviación intencional del patrón fetch*()-crudo de sanity-acl.md: devuelve dominio mapeado
+	// (repositorio-como-puerto, dirección roadmap #1503). Materializa el shape crudo puertas adentro.
+	fetchBySlug(slug: string): Promise<LiteraryWork | null>;
+	fetchSectionBySlug(slug: string, section: number): Promise<LiteraryWork | null>; // proyección ?section=N
 }
 
 // Adaptador real: SanityLiteraryWorkRepository implements LiteraryWorkRepository (GROQ)
 // Doble de test:  InMemoryLiteraryWorkRepository implements LiteraryWorkRepository
-//                 (Fake* de almacenamiento — taxonomía Stub*/Fake*/Spy*, nunca Mock*)
+//                 (calificado InMemory* por sustituir almacenamiento; categoría Fake* de la
+//                  taxonomía Stub*/Fake*/Spy*, nunca Mock*)
 ```
 
 Firma del módulo backend (service, mapea vía ACL):
