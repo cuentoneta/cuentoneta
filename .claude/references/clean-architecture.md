@@ -108,7 +108,10 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 
 > Nota sobre el estado actual: hoy los módulos backend exponen funciones (`getStoryBySlug`, `fetchStories`) más que clases con interfaz explícita, así que **los nombres de esta tabla son ilustrativos de la convención, no símbolos existentes** — las clases llegan con #1503. La convención rige al introducir abstracciones de repository/service o sus dobles de test, y es la dirección a la que tienden los `*.service.spec.ts`.
 >
-> \* Contrato cerrado en `docs/LITERARY_WORK_DESIGN.md` §6; implementación pendiente (#1853, Slice 1, PRs #1929–#1932 en review).
+> \* Contrato cerrado en `docs/LITERARY_WORK_DESIGN.md` §6. El **mapper** del ACL (`mapLiteraryWork`,
+> `src/api/_utils/literary-work.functions.ts`, más los helpers de materialización de reading time en
+> `reading-time-materialization.functions.ts`) ya aterrizó en `develop` y son símbolos existentes; el
+> **repository** de esta fila y el **service** siguen en review (#1853, Slice 1, PRs #1929–#1932).
 
 ### Frontend
 
