@@ -32,7 +32,7 @@
 | **Estilos**            | Tailwind v4 + Stylelint                                           |
 | **Componentes**        | Storybook 10                                                      |
 
-**Aliases de paths** (ver `tsconfig.json`): `@components/*`, `@mocks/*`, `@models/*`, `@utils/*`, `@test-utils`, `@sanity-types` (tipos generados de Sanity, promovidos al kernel `src/app/sanity/types.ts` — importables por frontend y backend).
+**Aliases de paths** (ver `tsconfig.json`): `@components/*`, `@mocks/*`, `@models/*`, `@utils/*`, `@test-utils`, `@sanity-types`.
 
 **Prefijo de selectores:** componentes `cuentoneta-` (kebab-case, elemento); directivas `cuentoneta` (camelCase, atributo).
 
