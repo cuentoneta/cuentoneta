@@ -1,8 +1,4 @@
-import type {
-	RotatingContentQueryResult,
-	StoriesByAuthorSlugQueryResult,
-	StoryBySlugQueryResult,
-} from '../sanity/types';
+import type { RotatingContentQueryResult, StoriesByAuthorSlugQueryResult, StoryBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthorTeaser } from './onoff-raw-author.mock';
 import { elOdioRawStory } from './onoff/el-odio.raw.mock';
 import { elPalacioRawStory } from './onoff/el-palacio-de-las-nueve-fronteras.raw.mock';

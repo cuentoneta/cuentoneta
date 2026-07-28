@@ -259,8 +259,8 @@ src/api/modules/content/
 src/api/_queries/
 └── content.query.ts           # Consultas GROQ
 
-src/api/sanity/
-└── types.ts                   # Tipos generados por Sanity
+src/app/sanity/
+└── types.ts                   # Tipos generados por Sanity (kernel compartido, alias @sanity-types)
 ```
 
 ---

@@ -1,7 +1,7 @@
 import { clearAllMocks, type Mock } from '@test-utils';
 import { client } from '../../_helpers/sanity-connector';
-import { geometriasDelDesveloRawCollection } from '../../_mocks/onoff/geometrias-del-desvelo.collection.raw.mock';
-import { elInventarioDeLasPasionesRawNavCollection } from '../../_mocks/onoff/el-inventario-de-las-pasiones.collection.raw.mock';
+import { geometriasDelDesveloRawCollection } from '@mocks/onoff/geometrias-del-desvelo.collection.raw.mock';
+import { elInventarioDeLasPasionesRawNavCollection } from '@mocks/onoff/el-inventario-de-las-pasiones.collection.raw.mock';
 import { fetchStorylistBySlug, fetchStorylistStoriesNavigationTeaserByStorylistSlug } from './storylist.repository';
 
 /* eslint-disable no-restricted-syntax -- vi.mock/vi.fn: mock del cliente de Sanity y del builder de imágenes para aislar el mapeo del repository; se migra a inyección de dependencias en #1503 */

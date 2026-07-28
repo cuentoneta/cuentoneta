@@ -6,7 +6,7 @@ import {
 	mapTags,
 	urlFor,
 } from './functions';
-import { elOdioRawTeaser, onoffRawNavTeasersMock } from '../_mocks/onoff-raw-stories.mock';
+import { elOdioRawTeaser, onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
 
 describe('mapTags (ACL)', () => {
 	it('maps a raw Sanity tag to the domain Tag model', () => {
