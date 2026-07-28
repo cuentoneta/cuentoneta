@@ -13,7 +13,7 @@
 			"@queries/*": ["./src/api/_queries/*"],
 			"@schemas/*": ["./src/api/schemas/*"],
 			"@utils/*": ["./src/utils/*"],
-			"@sanity-types": ["./src/app/sanity/types.ts"],
+			"@sanity-types": ["./src/sanity/types.ts"],
 			"@test-utils": ["./src/test-utils.ts"],
 			"@testing/*": ["./src/app/testing/*"]
 		},
