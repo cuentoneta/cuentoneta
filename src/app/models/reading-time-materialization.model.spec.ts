@@ -75,7 +75,7 @@ describe('buildReadingTimeMaterialization', () => {
 		expect(materialization.totalReadingTime).toBe(9);
 	});
 
-	it('con el total faltante pero las secciones presentes solo agrega totalReadingTime', () => {
+	it('con el total faltante lo computa como la suma de los reading times de sección, no re-derivando los bodies', () => {
 		const materialization = buildReadingTimeMaterialization({
 			sections: [
 				{ _key: 'section-1', body: bodyOne, readingTime: 5 },
@@ -84,7 +84,9 @@ describe('buildReadingTimeMaterialization', () => {
 			totalReadingTime: null,
 		});
 
-		expect(materialization.setIfMissing).toEqual({ totalReadingTime: deriveTotalReadingTime([bodyOne, bodyTwo]) });
+		// 5 + 6 = 11 (suma de las secciones resueltas), no la suma re-derivada de los bodies (~2).
+		expect(materialization.setIfMissing).toEqual({ totalReadingTime: 11 });
+		expect(materialization.totalReadingTime).toBe(11);
 		expect(materialization.sectionReadingTimes).toEqual([5, 6]);
 	});
 

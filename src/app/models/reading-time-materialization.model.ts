@@ -1,10 +1,5 @@
 import type { Markdown } from './markdown.model';
-import {
-	createReadingTime,
-	deriveSectionReadingTime,
-	deriveTotalReadingTime,
-	type ReadingTime,
-} from './reading-time.model';
+import { createReadingTime, deriveSectionReadingTime, sumReadingTimes, type ReadingTime } from './reading-time.model';
 
 // Proyección estructural mínima de una sección para materializar su reading time: su `_key` (para
 // direccionar el patch), el cuerpo Markdown (para computar) y el valor persistido actual (o `null`).
@@ -39,20 +34,26 @@ export interface ReadingTimeMaterializationWriter {
 	};
 }
 
+// Asume `_key` generado por Sanity (alfanumérico): el llamador construye el input desde documentos
+// del CMS, no desde entrada de usuario, así que no hace falta escapar comillas en el path.
 function sectionReadingTimePath(key: string): string {
 	return `content[_key=="${key}"].readingTime`;
 }
 
 function resolveTotalReadingTime(
-	input: ReadingTimeMaterializationInput,
+	persistedTotal: number | null,
+	sectionReadingTimes: readonly ReadingTime[],
 	setIfMissing: Record<string, number>,
 ): ReadingTime {
-	if (input.totalReadingTime !== null) {
+	if (persistedTotal !== null) {
 		// Un total presente es el valor editorial (p. ej. duración de un recitado): se sirve tal cual y
 		// NUNCA se pisa ni se recalcula como suma del texto.
-		return createReadingTime(input.totalReadingTime);
+		return createReadingTime(persistedTotal);
 	}
-	const computed = deriveTotalReadingTime(input.sections.map((section) => section.body));
+	// Suma de los reading times ya resueltos por sección (mismo contrato que `createLiteraryWork` y el
+	// schema), no una re-derivación de los bodies: no re-parsea y el total queda consistente con los
+	// `sectionReadingTimes` que la unidad sirve.
+	const computed = sumReadingTimes(sectionReadingTimes);
 	setIfMissing['totalReadingTime'] = computed;
 	return computed;
 }
@@ -71,12 +72,12 @@ export function buildReadingTimeMaterialization(input: ReadingTimeMaterializatio
 		return computed;
 	});
 
-	const totalReadingTime = resolveTotalReadingTime(input, setIfMissing);
+	const totalReadingTime = resolveTotalReadingTime(input.totalReadingTime, sectionReadingTimes, setIfMissing);
 
 	return Object.freeze({
 		sectionReadingTimes,
 		totalReadingTime,
-		setIfMissing,
+		setIfMissing: Object.freeze(setIfMissing),
 		isEmpty: Object.keys(setIfMissing).length === 0,
 	});
 }

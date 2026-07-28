@@ -222,8 +222,9 @@ body (Markdown) → countWords → WordCount → deriveReadingTime → ReadingTi
 
 ```typescript
 export function buildReadingTimeMaterialization(input: ReadingTimeMaterializationInput): ReadingTimeMaterialization;
-// compute-if-missing puro: deriva con deriveSectionReadingTime/deriveTotalReadingTime solo los campos ausentes y arma
-// el patch `setIfMissing` (secciones direccionadas por `_key`: `content[_key=="…"].readingTime`; total como
+// compute-if-missing puro: por cada sección ausente deriva con `deriveSectionReadingTime`; el total ausente lo computa
+// como `sumReadingTimes` de las secciones resueltas (mismo contrato que `createLiteraryWork`, sin re-parsear bodies).
+// Arma el patch `setIfMissing` (secciones direccionadas por `_key`: `content[_key=="…"].readingTime`; total como
 // `totalReadingTime`); un `totalReadingTime` presente (duración editorial de un recitado) se sirve tal cual y nunca
 // se pisa ni se recalcula del texto. Devuelve también los reading times resueltos (presente ∪ computado) para que el
 // read-path sirva la respuesta sin recomputar.
