@@ -13,7 +13,7 @@ import { ssrBlockingRxResource } from '@utils/ssr-resource';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 
 // Utils
-import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 
 // Routing
 import { AppRoutes } from '../../app.routes';

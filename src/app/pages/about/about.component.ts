@@ -2,7 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { ContributorApi } from '../../providers/contributor-api.interface';
 import { progressiveRxResource } from '@utils/ssr-resource';
 
