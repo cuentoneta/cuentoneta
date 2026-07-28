@@ -1,6 +1,6 @@
 import { ShareButtonComponent } from './share-button.component';
 import { render, screen } from '@testing-library/angular';
-import { SharingPlatform } from '@models/sharing-platform';
+import { SharingPlatform } from '../share-content/sharing-platform';
 import { storyMock } from '../../mocks/story.mock';
 import { faBrandFacebook } from '@ng-icons/font-awesome/brands';
 

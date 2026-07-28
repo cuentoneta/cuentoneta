@@ -146,7 +146,7 @@ export interface LiteraryWorkSection {
 
 ## 4. Value objects
 
-Implementados en `src/app/models/*.model.ts` (#1852) — primera implementación real del patrón branded-type + factory del roadmap de [`domain-model.md`](../.claude/references/domain-model.md). `Story`/`Author` siguen sin brandear (roadmap #1503, sin cambios).
+Implementados en `src/models/*.model.ts` (#1852) — primera implementación real del patrón branded-type + factory del roadmap de [`domain-model.md`](../.claude/references/domain-model.md). `Story`/`Author` siguen sin brandear (roadmap #1503, sin cambios).
 
 | VO              | Tipo                          | Invariante (la factory lanza si no se cumple)                                                                          | Archivo                   |
 | --------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------- |
@@ -218,7 +218,7 @@ body (Markdown) → countWords → WordCount → deriveReadingTime → ReadingTi
 
 ### Unidad compartida de cómputo + persistencia
 
-`buildReadingTimeMaterialization` + `applyReadingTimeMaterialization` (`src/app/models/reading-time-materialization.model.ts`) son la **fuente única** del patch `setIfMissing` y de la semántica de campos descrita arriba. Las consumen — cuando aterricen — el mapper self-healing del read-path ([#1953](https://github.com/cuentoneta/cuentoneta/issues/1953) Parte 2) y el backfill batch ([#1959](https://github.com/cuentoneta/cuentoneta/issues/1959)):
+`buildReadingTimeMaterialization` + `applyReadingTimeMaterialization` (`src/models/reading-time-materialization.model.ts`) son la **fuente única** del patch `setIfMissing` y de la semántica de campos descrita arriba. Las consumen — cuando aterricen — el mapper self-healing del read-path ([#1953](https://github.com/cuentoneta/cuentoneta/issues/1953) Parte 2) y el backfill batch ([#1959](https://github.com/cuentoneta/cuentoneta/issues/1959)):
 
 ```typescript
 export function buildReadingTimeMaterialization(input: ReadingTimeMaterializationInput): ReadingTimeMaterialization;

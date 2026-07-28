@@ -2651,7 +2651,7 @@ export class ContestService {
 
 ### Modelos de dominio (TypeScript types)
 
-**Ubicación:** `src/app/models/`
+**Ubicación:** `src/models/`
 
 Crear archivos:
 
@@ -2663,7 +2663,7 @@ Crear archivos:
 **Ejemplo:**
 
 ```typescript
-// src/app/models/community.model.ts
+// src/models/community.model.ts
 
 export interface Community {
 	_id: string;

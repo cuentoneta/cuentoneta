@@ -1,7 +1,7 @@
 import { Component, effect, inject, input, signal } from '@angular/core';
-import { NavigationFrameService } from '../providers/navigation-frame.service';
+import { NavigationFrameService } from '../../providers/navigation-frame.service';
 import { Router } from '@angular/router';
-import { NavigationBarConfig } from '../components/storylist-navigation-frame/storylist-navigation-frame.component';
+import { NavigationBarConfig } from '@components/storylist-navigation-frame/storylist-navigation-frame.component';
 
 @Component({
 	selector: 'cuentoneta-navigation-frame',

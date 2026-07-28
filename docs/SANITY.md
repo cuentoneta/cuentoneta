@@ -28,7 +28,7 @@ Para aquellos casos en los que los campos sean de tipo array debe hacerse uso de
 
 ## Anti-Corruption Layer y Mapeo de Dominio
 
-Los tipos generados por Sanity representan la estructura del CMS externo. Sin embargo, la aplicación define su propio modelo de dominio en `src/app/models/` que es independiente del CMS.
+Los tipos generados por Sanity representan la estructura del CMS externo. Sin embargo, la aplicación define su propio modelo de dominio en `src/models/` que es independiente del CMS.
 
 Para comprender cómo se relacionan estos modelos y cómo se mapean los datos del CMS al modelo de dominio, consulta la sección sobre **Capa Anti-Corrupción** en el documento de [Modelo de Dominio - DDD](./DOMAIN_MODEL.md#patrón-capa-anti-corrupción-anti-corruption-layer).
 

@@ -6,7 +6,7 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 
 // Routes
 import { AppRoutes } from '../../app.routes';
-import { NavigationFrameComponent } from '@models/navigation-frame.component';
+import { NavigationFrameComponent } from '@components/navigation-frame/navigation-frame.component';
 
 // Services
 import { StorylistApi } from '../../providers/storylist-api.interface';

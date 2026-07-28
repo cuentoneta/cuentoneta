@@ -41,7 +41,7 @@
 
 Organizá el modelo de dominio por **contexto acotado**. Cuentoneta define cuatro (ver `docs/DOMAIN_MODEL.md`): **Catálogo de Contenido** (`Story`, `Author`, `Resource`, `Media`, `Epigraph`, `LiteraryWork`), **Curación y Colecciones** (`Storylist`), **Administración del Proyecto** (`Contributor`) y **Página de Inicio** (`LandingPageContent`, `ContentCampaign`).
 
-Hoy los tipos de dominio viven en `src/app/models/` (frontend) y la ACL/dominio del backend en `src/api/`. La estructura **objetivo** por contexto (roadmap #1503) agrupa, por agregado, el contrato + el modelo + el mapper + su spec:
+Hoy los tipos de dominio viven en `src/models/` (frontend) y la ACL/dominio del backend en `src/api/`. La estructura **objetivo** por contexto (roadmap #1503) agrupa, por agregado, el contrato + el modelo + el mapper + su spec:
 
 ```
 <contexto>/                 # p. ej. content-catalog/, curation/
@@ -50,7 +50,7 @@ Hoy los tipos de dominio viven en `src/app/models/` (frontend) y la ACL/dominio 
 └── <entidad>.mapper.spec.ts
 ```
 
-> **Roadmap:** la separación física por carpeta de contexto es objetivo. No inventar estos archivos al implementar features actuales; seguir la organización vigente (`src/app/models/`, `src/api/_utils/`) hasta que #1503 la migre.
+> **Roadmap:** la separación física por carpeta de contexto es objetivo. No inventar estos archivos al implementar features actuales; seguir la organización vigente (`src/models/`, `src/api/_utils/`) hasta que #1503 la migre.
 
 ---
 
@@ -179,7 +179,7 @@ El contenido enriquecido (`TextBlockContent` / Portable Text) **se trata como in
 
 ## Value Objects (Slug, ReadingTime, DateString)
 
-Un **Value Object** no tiene identidad propia: representa un concepto del dominio, es inmutable y se compara por su contenido. Hoy `Story`/`Author` siguen usando **tipos primitivos** para estos conceptos (`slug: string`, `approximateReadingTime: number`, `bornOn?: DateString`) — promoverlos a value objects es **roadmap (#1503)**, sin cambios. `LiteraryWork` ya implementa el patrón en producción (#1852): `Slug`, `WordCount`, `ReadingTime`, `Markdown`, `SanitizedHtml`, `ChapterTitle` en `src/app/models/*.model.ts` (branded types + factory `create*` que valida y lanza), con specs, más `createIsoDateTime` en `src/app/utils/date.utils.ts`; los contratos están en `docs/LITERARY_WORK_DESIGN.md` §4. Los ejemplos de `Slug`/`ReadingTime` de abajo muestran esa implementación real; `DateString` (`Author.bornOn`/`diedOn`) sigue siendo el ejemplo roadmap, sin factory validadora.
+Un **Value Object** no tiene identidad propia: representa un concepto del dominio, es inmutable y se compara por su contenido. Hoy `Story`/`Author` siguen usando **tipos primitivos** para estos conceptos (`slug: string`, `approximateReadingTime: number`, `bornOn?: DateString`) — promoverlos a value objects es **roadmap (#1503)**, sin cambios. `LiteraryWork` ya implementa el patrón en producción (#1852): `Slug`, `WordCount`, `ReadingTime`, `Markdown`, `SanitizedHtml`, `ChapterTitle` en `src/models/*.model.ts` (branded types + factory `create*` que valida y lanza), con specs, más `createIsoDateTime` en `src/app/utils/date.utils.ts`; los contratos están en `docs/LITERARY_WORK_DESIGN.md` §4. Los ejemplos de `Slug`/`ReadingTime` de abajo muestran esa implementación real; `DateString` (`Author.bornOn`/`diedOn`) sigue siendo el ejemplo roadmap, sin factory validadora.
 
 ### Slug — clave de negocio
 
@@ -288,7 +288,7 @@ Un **agregado** es un cluster de objetos de dominio tratado como una unidad para
 
 **Cómo identificar la raíz:** buscá la entidad que **posee más invariantes de negocio**; esa entidad es la raíz, porque las invariantes solo se garantizan si toda mutación pasa por ella.
 
-En cuentoneta, **`LiteraryWork`** es la raíz de agregado con invariantes **hechas cumplir en código** (implementado, #1852): posee `authors: Author[]` (1..N), `content: LiteraryWorkSection[]`, `resources`, `tags` y `mediaSources`. Sus invariantes, garantizadas por la factory `createLiteraryWork` (`src/app/models/literary-work.model.ts`):
+En cuentoneta, **`LiteraryWork`** es la raíz de agregado con invariantes **hechas cumplir en código** (implementado, #1852): posee `authors: Author[]` (1..N), `content: LiteraryWorkSection[]`, `resources`, `tags` y `mediaSources`. Sus invariantes, garantizadas por la factory `createLiteraryWork` (`src/models/literary-work.model.ts`):
 
 - El `slug` tiene formato válido (VO `Slug`) e inmutable una vez creado.
 - El `title` no puede estar vacío.

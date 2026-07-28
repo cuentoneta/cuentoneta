@@ -8,7 +8,7 @@
 		"paths": {
 			"@components/*": ["./src/app/components/*"],
 			"@mocks/*": ["./src/app/mocks/*"],
-			"@models/*": ["./src/app/models/*"],
+			"@models/*": ["./src/models/*"],
 			"@queries/*": ["./src/api/_queries/*"],
 			"@schemas/*": ["./src/api/schemas/*"],
 			"@utils/*": ["./src/app/utils/*"],
