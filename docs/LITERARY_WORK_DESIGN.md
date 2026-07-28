@@ -238,7 +238,7 @@ export function applyReadingTimeMaterialization(
 // campos faltantes (`isEmpty`) no hace round-trip de red.
 ```
 
-> **Estado de implementación:** el schema (campos opcionales, arrancan vacíos) y esta unidad de cómputo + persistencia ya existen. Lo que queda es el **cableado del mapper del read-path** que la invoca en la primera lectura de cada obra — y el `?section=N` eficiente que se apoya en él para traer solo el body de la sección pedida más el total ya persistido ([§7](#7-contrato-del-endpoint)) — en el increment de backend rebaseado sobre el PR [#1929](https://github.com/cuentoneta/cuentoneta/pull/1929).
+> **Estado de implementación:** el schema (campos opcionales, arrancan vacíos), esta unidad de cómputo + persistencia, y el **mapper puro** del read-path (`mapLiteraryWork` en `src/api/_utils/literary-work.functions.ts`) ya existen en `develop`. Lo que queda es el **repository** que **cablea** el mapper self-healing —invocando `buildReadingTimeMaterialization`/`applyReadingTimeMaterialization` en la primera lectura de cada obra— y el `?section=N` eficiente que se apoya en él ([§7](#7-contrato-del-endpoint)), en el increment de backend rebaseado sobre el PR [#1929](https://github.com/cuentoneta/cuentoneta/pull/1929).
 
 ### Duración de obras recitadas/audiovisuales
 
