@@ -7,7 +7,7 @@ import {
 	installIntersectionObserverStub,
 	markInsideViewport,
 	markOutsideViewport,
-} from '../../testing/intersection-observer.stub';
+} from '@testing/intersection-observer.stub';
 
 // Host de prueba que usa la directiva como hostDirective y proyecta tags, tal como TagsListComponent.
 @Component({

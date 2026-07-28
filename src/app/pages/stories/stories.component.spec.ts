@@ -6,7 +6,7 @@ import StoriesComponent from './stories.component';
 import { AppRoutes } from '../../app.routes';
 import { provideStoryApiMock } from '../../providers/story.mock';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 
 describe('StoriesComponent', () => {
 	afterEach(() => restoreAllMocks());

@@ -5,7 +5,7 @@ import { render, screen } from '@testing-library/angular';
 import { AudioRecordingWidgetComponent } from './audio-recording-widget.component';
 
 // Mocks
-import { audioRecordingMock } from '../../mocks/audio-recording.mock';
+import { audioRecordingMock } from '@mocks/audio-recording.mock';
 
 describe('AudioRecordingWidgetComponent', () => {
 	it('should render the component', async () => {

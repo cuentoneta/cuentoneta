@@ -24,6 +24,9 @@ const baseURL = process.env['BASE_URL'] || 'http://localhost:4000';
  */
 export default defineConfig({
 	...nxE2EPreset(__filename, { testDir: './e2e' }),
+	// El loader de Playwright transpila los specs por su cuenta y no aplica los `paths` del tsconfig
+	// sin esta opción explícita: la declara para resolver los aliases del repo (p. ej. @testing) en runtime.
+	tsconfig: './tsconfig.json',
 	// e2e/_utils aloja el core puro y su spec de Vitest (no de Playwright); se excluye del testMatch
 	// para que Playwright no intente correrlo (usa los globals de Vitest, no test/expect de Playwright).
 	testIgnore: '**/e2e/_utils/**',

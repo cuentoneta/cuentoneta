@@ -3,12 +3,12 @@ import { provideRouter } from '@angular/router';
 
 import { LiteraryWorkHomeCardTeaserComponent } from './literary-work-home-card-teaser.component';
 import { LiteraryWorkHomeCardTeaserSkeletonComponent } from './literary-work-home-card-teaser-skeleton.component';
-import { palacioNueveFronterasLiteraryWorkTeaserMock } from '../../mocks/onoff-literary-work-teasers.mock';
+import { palacioNueveFronterasLiteraryWorkTeaserMock } from '@mocks/onoff-literary-work-teasers.mock';
 import {
 	corpusLiteraryWorkTeasers,
 	literaryWorkSelectArgType,
 	withRichMediaSources,
-} from '../../mocks/onoff-corpus.storybook';
+} from '@mocks/onoff-corpus.storybook';
 
 const meta: Meta<LiteraryWorkHomeCardTeaserComponent> = {
 	component: LiteraryWorkHomeCardTeaserComponent,

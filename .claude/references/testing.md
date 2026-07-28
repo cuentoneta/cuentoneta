@@ -151,7 +151,7 @@ Variantes: `queryBy*` (cuando se espera ausencia, no lanza), `findBy*` (async, e
 
 ## `IntersectionObserver` en tests
 
-`happy-dom` no implementa `IntersectionObserver`. `src/test-setup.ts` instala un **stub global** (`src/app/testing/intersection-observer.stub.ts`) para que cualquier componente que use IO se pueda renderizar.
+`happy-dom` no implementa `IntersectionObserver`. `src/test-setup.ts` instala un **stub global** (`src/testing/intersection-observer.stub.ts`) para que cualquier componente que use IO se pueda renderizar.
 
 Los specs que necesitan **simular overflow** (p. ej. `TagsListComponent` / `TagsOverflowDirective`, que recorta tags por ancho con `IntersectionObserver`) reutilizan los helpers del mismo stub:
 

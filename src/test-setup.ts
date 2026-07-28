@@ -5,7 +5,7 @@ import { ErrorHandler, NgModule } from '@angular/core';
 import { getTestBed } from '@angular/core/testing';
 import { BrowserTestingModule, platformBrowserTesting } from '@angular/platform-browser/testing';
 
-import { installIntersectionObserverStub } from './app/testing/intersection-observer.stub';
+import { installIntersectionObserverStub } from '@testing/intersection-observer.stub';
 
 // Angular 22 corre el TestBed en modo zoneless por defecto cuando zone.js no está presente,
 // por eso no se provee `provideZonelessChangeDetection()` explícitamente. El ErrorHandler relanza

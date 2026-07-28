@@ -9,7 +9,7 @@ import { NavigationFrameService } from '../../providers/navigation-frame.service
 // Componentes
 import { StorylistNavigationFrameComponent } from '../storylist-navigation-frame/storylist-navigation-frame.component';
 import { AuthorNavigationFrameComponent } from '../author-navigation-frame/author-navigation-frame.component';
-import { NavigationFrameComponent } from '@models/navigation-frame.component';
+import { NavigationFrameComponent } from '@components/navigation-frame/navigation-frame.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
 @Component({

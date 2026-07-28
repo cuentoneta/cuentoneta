@@ -10,5 +10,14 @@
 		"rootDir": "."
 	},
 	"files": ["src/test-setup.ts"],
-	"include": ["vitest.config.ts", "src/**/*.test.ts", "src/**/*.spec.ts", "src/**/*.d.ts", "src/test-utils.ts"]
+	// e2e/_utils entra acá porque su spec corre bajo Vitest: vite-tsconfig-paths solo aplica los
+	// `paths` a los archivos que un proyecto incluye, y sin esto el alias @testing no resuelve ahí.
+	"include": [
+		"vitest.config.ts",
+		"src/**/*.test.ts",
+		"src/**/*.spec.ts",
+		"src/**/*.d.ts",
+		"src/test-utils.ts",
+		"e2e/_utils/**/*.ts"
+	]
 }

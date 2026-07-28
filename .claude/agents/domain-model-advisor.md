@@ -20,7 +20,7 @@ Sos el asesor de modelo de dominio de **La Cuentoneta** (Angular 22 zoneless, pn
 La **Fase 2 del skill `issue-workflow`** te corre —antes del `plan-writer`, que no puede delegar en subagentes— cuando el issue toca el dominio o el ACL; tu evaluación entra en el prompt del plan. Los disparadores concretos:
 
 - Se diseñan nuevas entidades de dominio o value objects (`Story`, `Author`, `Storylist`, `Resource`, `Tag`, `Media`, `Epigraph`, …).
-- Se modifican modelos de dominio existentes en `@models/*` (`src/app/models/`).
+- Se modifican modelos de dominio existentes en `@models/*` (`src/models/`).
 - Se implementa o cambia el mapeo entre capas (Sanity/GROQ crudo ↔ dominio) en el ACL de mappers (`src/api/_utils/`).
 - A demanda, para consultas de modelado de dominio.
 
@@ -108,7 +108,7 @@ Como toda sesión de agente sobre este repo: cargá también `.claude/references
 
 ## Organización de archivos
 
-Vigente hoy: tipos de dominio en `src/app/models/` (`@models/*`) y ACL/dominio del backend en `src/api/` (mappers en `_utils/`, queries en `_queries/`, módulos en `modules/<dominio>/`).
+Vigente hoy: tipos de dominio en `src/models/` (`@models/*`) y ACL/dominio del backend en `src/api/` (mappers en `_utils/`, queries en `_queries/`, módulos en `modules/<dominio>/`).
 
 Objetivo (roadmap #1503, **no inventar estos archivos hoy**): agrupar por bounded context, por agregado:
 

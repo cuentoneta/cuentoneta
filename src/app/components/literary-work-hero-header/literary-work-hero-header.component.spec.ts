@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/angular';
 import type { LiteraryWork } from '@models/literary-work.model';
 import type { Tag } from '@models/tag.model';
 import { LiteraryWorkHeroHeaderComponent } from './literary-work-hero-header.component';
-import { palacioNueveFronterasLiteraryWorkMock } from '../../mocks/onoff/el-palacio-de-las-nueve-fronteras.mock';
+import { palacioNueveFronterasLiteraryWorkMock } from '@mocks/onoff/el-palacio-de-las-nueve-fronteras.mock';
 
 describe('LiteraryWorkHeroHeaderComponent', () => {
 	const tags: Tag[] = [

@@ -22,7 +22,7 @@ import { StoryApi } from '../../providers/story-api.interface';
 // Componentes
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
 import { ResourceComponent } from '@components/resource/resource.component';
-import { ssrBlockingRxResource } from '@utils/ssr-resource';
+import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 import { StoryCardTeaserComponent } from '@components/story-card-teaser/story-card-teaser.component';
 import Tab from '@components/tabs/tab.component';
 import Tabs from '@components/tabs/tabs.component';

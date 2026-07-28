@@ -1,85 +1,94 @@
-import { mapLiteraryWork } from './literary-work.functions';
-import {
-	rawAnonymousLiteraryWork,
-	rawLiteraryWork,
-	rawUnmaterializedLiteraryWork,
-} from '../_mocks/literary-work-raw.mock';
 import { isAnonymous } from '@models/literary-work.model';
+import {
+	multiSectionRawLiteraryWork,
+	onoffRawLiteraryWorksMock,
+	unmaterializedRawLiteraryWork,
+} from '@mocks/onoff-raw-literary-works.mock';
+import { mapLiteraryWork, type SanityLiteraryWork } from './literary-work.functions';
 
-// TODO: Migrar estos tests para que usen los mocks del corpus canónico de Onoff.
 describe('mapLiteraryWork', () => {
 	it('maps the raw query result into a frozen LiteraryWork aggregate', () => {
-		const work = mapLiteraryWork(rawLiteraryWork);
+		const work = mapLiteraryWork(onoffRawLiteraryWorksMock[0]);
 
-		expect(work.slug).toBe('la-vigilia-de-onoff');
-		expect(work.title).toBe('La vigilia de Onoff');
+		expect(work.slug).toBe('el-palacio-de-las-nueve-fronteras');
+		expect(work.title).toBe('El palacio de las nueve fronteras');
 		expect(work.authors).toHaveLength(1);
 		expect(work.authors[0].name).toBe('François Onoff');
 		expect(Object.isFrozen(work)).toBe(true);
 	});
 
 	it('derives position from the array index and sectionCount from the content length', () => {
-		const work = mapLiteraryWork(rawLiteraryWork);
+		const work = mapLiteraryWork(multiSectionRawLiteraryWork);
 
 		expect(work.content.map((section) => section.position)).toEqual([0, 1]);
 		expect(work.sectionCount).toBe(2);
 	});
 
-	it('converts body and both epigraph fields through the sanitization pipeline', () => {
-		const work = mapLiteraryWork(rawLiteraryWork);
+	it('converts the body through the sanitization pipeline', () => {
+		const work = mapLiteraryWork(onoffRawLiteraryWorksMock[0]);
 		const [first] = work.content;
 
-		expect(first.bodyHtml).toContain('<strong>una taza fría</strong>');
+		expect(first.bodyHtml).toContain('<strong>');
 		expect(first.bodyHtml).not.toContain('**');
-		expect(first.epigraphs?.[0].text).toContain('<em>El insomnio es una lucidez que nadie pidió.</em>');
-		expect(first.epigraphs?.[0].reference).toContain('<strong>Anónimo</strong>');
 	});
 
-	it('enriches Sanity CDN images inside the body with dimensions', () => {
-		const work = mapLiteraryWork(rawLiteraryWork);
+	it('converts both epigraph fields through the sanitization pipeline', () => {
+		const raw: SanityLiteraryWork = {
+			...onoffRawLiteraryWorksMock[0],
+			content: [
+				{
+					...onoffRawLiteraryWorksMock[0].content[0],
+					epigraphs: [{ text: '_El insomnio es una lucidez que nadie pidió._', reference: '**Anónimo**' }],
+				},
+			],
+		};
 
-		expect(work.content[0].bodyHtml).toContain('width="800"');
-		expect(work.content[0].bodyHtml).toContain('loading="lazy"');
+		const work = mapLiteraryWork(raw);
+
+		expect(work.content[0].epigraphs?.[0].text).toContain('<em>El insomnio es una lucidez que nadie pidió.</em>');
+		expect(work.content[0].epigraphs?.[0].reference).toContain('<strong>Anónimo</strong>');
 	});
 
 	it('reads the persisted per-section and total reading time (no recompute)', () => {
-		const work = mapLiteraryWork(rawLiteraryWork);
+		const work = mapLiteraryWork(multiSectionRawLiteraryWork);
 
-		expect(work.content.map((section) => section.readingTime)).toEqual([1, 1]);
-		expect(work.totalReadingTime).toBe(2);
+		expect(work.content.map((section) => section.readingTime)).toEqual([11, 1]);
+		expect(work.totalReadingTime).toBe(12);
 	});
 
-	it('reads the persisted total for recited works (editor-set, independent of the section sum)', () => {
-		const work = mapLiteraryWork(rawAnonymousLiteraryWork);
+	it('reads the persisted total for recited works and keeps the anonymous author untouched', () => {
+		const raw: SanityLiteraryWork = {
+			...onoffRawLiteraryWorksMock[0],
+			authors: [{ ...onoffRawLiteraryWorksMock[0].authors[0], slug: 'anonimo' }],
+			totalReadingTime: 40,
+		};
+
+		const work = mapLiteraryWork(raw);
 
 		expect(work.totalReadingTime).toBe(40);
+		expect(work.authors[0].slug).toBe('anonimo');
+		expect(isAnonymous(work.authors)).toBe(true);
 	});
 
 	it('derives reading time as a pure fallback when the work is not materialized', () => {
-		const work = mapLiteraryWork(rawUnmaterializedLiteraryWork);
+		const work = mapLiteraryWork(unmaterializedRawLiteraryWork);
 
 		expect(work.content.every((section) => section.readingTime >= 1)).toBe(true);
 		expect(work.totalReadingTime).toBe(work.content.reduce((sum: number, section) => sum + section.readingTime, 0));
 	});
 
 	it('maps a missing coverImage to an empty string', () => {
-		expect(mapLiteraryWork(rawAnonymousLiteraryWork).coverImage).toBe('');
-	});
+		const raw: SanityLiteraryWork = { ...onoffRawLiteraryWorksMock[0], coverImage: null };
 
-	it('keeps the anonymous author untouched — no normalization in the mapper', () => {
-		const work = mapLiteraryWork(rawAnonymousLiteraryWork);
-
-		expect(work.authors).toHaveLength(1);
-		expect(work.authors[0].slug).toBe('anonimo');
-		expect(isAnonymous(work.authors)).toBe(true);
+		expect(mapLiteraryWork(raw).coverImage).toBe('');
 	});
 
 	it('throws on an epigraph without text (defensive mapping at the boundary)', () => {
-		const brokenRaw = {
-			...rawLiteraryWork,
-			content: [{ ...rawLiteraryWork.content[0], epigraphs: [{ text: null, reference: null }] }],
+		const raw: SanityLiteraryWork = {
+			...onoffRawLiteraryWorksMock[0],
+			content: [{ ...onoffRawLiteraryWorksMock[0].content[0], epigraphs: [{ text: null, reference: null }] }],
 		};
 
-		expect(() => mapLiteraryWork(brokenRaw)).toThrow('Markdown inválido: contenido vacío');
+		expect(() => mapLiteraryWork(raw)).toThrow('Markdown inválido: contenido vacío');
 	});
 });

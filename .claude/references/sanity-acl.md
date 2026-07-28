@@ -26,12 +26,13 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 
 > **Alcance de los ejemplos de este archivo.** El pipeline se ejemplifica con el módulo `story`
 > (`src/api/modules/story/`), hoy el único módulo de contenido narrativo con esta capa completa
-> (repository → mapper → service → controller) mergeada. `LiteraryWork` sigue el mismo patrón —
-> repository (`LiteraryWorkRepository`/`SanityLiteraryWorkRepository`/`InMemoryLiteraryWorkRepository`),
-> mapper y service (`getLiteraryWorkBySlug`) — con el contrato ya cerrado en
-> [`docs/LITERARY_WORK_DESIGN.md`](../../docs/LITERARY_WORK_DESIGN.md) §6, pero su implementación
-> (#1853, Slice 1) sigue en review (PRs #1929–#1932) y todavía no forma parte de `develop`. Los
-> ejemplos de código de abajo se conservan sobre `story` hasta que ese código aterrice.
+> (repository → mapper → service → controller) mergeada. `LiteraryWork` sigue el mismo patrón, pero
+> aterriza en `develop` **por partes**: el mapper puro del ACL (`mapLiteraryWork`, en
+> `src/api/_utils/literary-work.functions.ts`) ya está en `develop`. El repository
+> (`LiteraryWorkRepository`/`SanityLiteraryWorkRepository`/`InMemoryLiteraryWorkRepository`) y el
+> service (`getLiteraryWorkBySlug`) siguen en review (#1853, Slice 1, PRs #1929–#1932) — contrato ya
+> cerrado en [`docs/LITERARY_WORK_DESIGN.md`](../../docs/LITERARY_WORK_DESIGN.md) §6. Los ejemplos de
+> código de abajo se conservan sobre `story` hasta que ese código aterrice.
 
 ---
 

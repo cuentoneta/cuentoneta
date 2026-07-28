@@ -146,7 +146,7 @@ export interface LiteraryWorkSection {
 
 ## 4. Value objects
 
-Implementados en `src/app/models/*.model.ts` (#1852) — primera implementación real del patrón branded-type + factory del roadmap de [`domain-model.md`](../.claude/references/domain-model.md). `Story`/`Author` siguen sin brandear (roadmap #1503, sin cambios).
+Implementados en `src/models/*.model.ts` (#1852) — primera implementación real del patrón branded-type + factory del roadmap de [`domain-model.md`](../.claude/references/domain-model.md). `Story`/`Author` siguen sin brandear (roadmap #1503, sin cambios).
 
 | VO              | Tipo                          | Invariante (la factory lanza si no se cumple)                                                                          | Archivo                   |
 | --------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------- |
@@ -166,7 +166,7 @@ Casos límite documentados para Slice 2 (no resueltos acá):
 - **Títulos duplicados** producen anclas duplicadas — la deduplicación (p. ej. sufijo `-2`) es responsabilidad de la capa que renderiza la navegación.
 - **Secciones sin `chapterTitle`** no tienen ancla derivable del título — el fallback natural es el ancla posicional construida desde `position` (p. ej. `#seccion-3`); su formato exacto se decide al construir la navegación.
 
-**`IsoDateTime` — reutilizado, no duplicado.** `publishedAt` usa el tipo `IsoDateTime` ya existente en `src/app/utils/date.utils.ts`; #1852 le suma la factory validadora `createIsoDateTime(value: string): IsoDateTime`. No se crea un segundo símbolo ni se brandea el tipo existente (lo consumen `Author`/`AuthorProfile` sin factory; migrarlos excede este issue).
+**`IsoDateTime` — reutilizado, no duplicado.** `publishedAt` usa el tipo `IsoDateTime` ya existente en `src/utils/date.utils.ts`; #1852 le suma la factory validadora `createIsoDateTime(value: string): IsoDateTime`. No se crea un segundo símbolo ni se brandea el tipo existente (lo consumen `Author`/`AuthorProfile` sin factory; migrarlos excede este issue).
 
 > **Corte importante — qué hace `createSanitizedHtml` hoy:** brandea + valida no-vacío un string que el llamador **garantiza** que ya pasó por el pipeline compartido de sanitización. **No ejecuta sanitización.** El pipeline real (`unified`/`rehype-sanitize`, [§9](#9-allow-list-de-sanitización)) se implementa en Slice 1, donde vive su único caller (el mapper del ACL). Ídem el cómputo de reading time desde markdown ([§5](#5-helper-de-reading-time)): la conversión markdown→texto plano es de Slice 1; la aritmética es de #1852.
 
@@ -216,7 +216,29 @@ body (Markdown) → countWords → WordCount → deriveReadingTime → ReadingTi
 
 — y el total del agregado sigue siendo `sumReadingTimes(sections.map(s => s.readingTime))`. Lo que cambia frente al transform-on-read puro: cuando el mapper del backend lee una obra a la que le falta `readingTime`/`totalReadingTime`, además de computarlos (con el `countWords` real del dominio, "fuera del CMS") los **persiste de vuelta** en Sanity vía un patch (`@sanity/client` con token de escritura) antes de responder. Las lecturas siguientes de esa obra encuentran el valor ya persistido y lo sirven directo, sin recomputar. Como el texto es inmutable, la regla "falta → computar y persistir" alcanza — no hace falta invalidar por hash ni por `_rev`, y cubre obras nuevas automáticamente sin paso manual en el Studio ni webhook.
 
-> **Estado de implementación:** este increment agrega solo el schema (campos opcionales, arrancan vacíos) y esta doc. El mapper que lee/computa/persiste — y el `?section=N` eficiente que se apoya en él para traer solo el body de la sección pedida más el total ya persistido ([§7](#7-contrato-del-endpoint)) — se implementan en el increment de backend rebaseado sobre el PR [#1929](https://github.com/cuentoneta/cuentoneta/pull/1929) (read-side diferido, aún no en este PR).
+### Unidad compartida de cómputo + persistencia
+
+`buildReadingTimeMaterialization` + `applyReadingTimeMaterialization` (`src/models/reading-time-materialization.model.ts`) son la **fuente única** del patch `setIfMissing` y de la semántica de campos descrita arriba. Las consumen — cuando aterricen — el mapper self-healing del read-path ([#1953](https://github.com/cuentoneta/cuentoneta/issues/1953) Parte 2) y el backfill batch ([#1959](https://github.com/cuentoneta/cuentoneta/issues/1959)):
+
+```typescript
+export function buildReadingTimeMaterialization(input: ReadingTimeMaterializationInput): ReadingTimeMaterialization;
+// compute-if-missing puro: por cada sección ausente deriva con `deriveSectionReadingTime`; el total ausente lo computa
+// como `sumReadingTimes` de las secciones resueltas (mismo contrato que `createLiteraryWork`, sin re-parsear bodies).
+// Arma el patch `setIfMissing` (secciones direccionadas por `_key`: `content[_key=="…"].readingTime`; total como
+// `totalReadingTime`); un `totalReadingTime` presente (duración editorial de un recitado) se sirve tal cual y nunca
+// se pisa ni se recalcula del texto. Devuelve también los reading times resueltos (presente ∪ computado) para que el
+// read-path sirva la respuesta sin recomputar.
+
+export function applyReadingTimeMaterialization(
+	writer: ReadingTimeMaterializationWriter,
+	documentId: string,
+	materialization: ReadingTimeMaterialization,
+): Promise<void>;
+// persiste `setIfMissing` vía un puerto de escritura angosto (la capa de dominio no importa `@sanity/client`); sin
+// campos faltantes (`isEmpty`) no hace round-trip de red.
+```
+
+> **Estado de implementación:** el schema (campos opcionales, arrancan vacíos), esta unidad de cómputo + persistencia, y el **mapper puro** del read-path (`mapLiteraryWork` en `src/api/_utils/literary-work.functions.ts`) ya existen en `develop`. Lo que queda es el **repository** que **cablea** el mapper self-healing —invocando `buildReadingTimeMaterialization`/`applyReadingTimeMaterialization` en la primera lectura de cada obra— y el `?section=N` eficiente que se apoya en él ([§7](#7-contrato-del-endpoint)), en el increment de backend rebaseado sobre el PR [#1929](https://github.com/cuentoneta/cuentoneta/pull/1929).
 
 ### Duración de obras recitadas/audiovisuales
 

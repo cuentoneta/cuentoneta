@@ -1,4 +1,4 @@
-import { environment } from '../environments/environment';
+import { environment } from '../../environments/environment';
 import { faBrandFacebook, faBrandWhatsapp, faBrandXTwitter } from '@ng-icons/font-awesome/brands';
 
 export interface SharingPlatform {

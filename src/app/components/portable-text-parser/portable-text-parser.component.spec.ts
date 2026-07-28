@@ -1,7 +1,7 @@
 import { PortableTextParserComponent } from './portable-text-parser.component';
 import { render, RenderResult, screen, within } from '@testing-library/angular';
-import { storyMock } from '../../mocks/story.mock';
-import { portableTextWithListsMock, simpleOrderedListMock } from '../../mocks/portable-text-with-lists.mock';
+import { storyMock } from '@mocks/story.mock';
+import { portableTextWithListsMock, simpleOrderedListMock } from '@mocks/portable-text-with-lists.mock';
 
 describe('PortableTextParserComponent', () => {
 	let component: RenderResult<PortableTextParserComponent>;

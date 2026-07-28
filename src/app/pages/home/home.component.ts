@@ -5,7 +5,7 @@ import { Component, computed, inject } from '@angular/core';
 import { ContentApi } from '../../providers/content-api.interface';
 
 // Utils
-import { ssrBlockingRxResource } from '@utils/ssr-resource';
+import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 
 // SEO
 import { HomeMetaTagsDirective } from './home-meta-tags.directive';

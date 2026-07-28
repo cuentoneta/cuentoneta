@@ -1,8 +1,8 @@
 import { applicationConfig, argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 import { moduleMetadata } from '@storybook/angular-vite';
 import { StoryCardTeaserComponent } from './story-card-teaser.component';
-import { storyTeaserMock } from '../../mocks/story.mock';
-import { authorTeaserMock } from '../../mocks/author.mock';
+import { storyTeaserMock } from '@mocks/story.mock';
+import { authorTeaserMock } from '@mocks/author.mock';
 import { CommonModule } from '@angular/common';
 import { StoryTeaserWithAuthor } from '@models/story.model';
 import { provideRouter } from '@angular/router';

@@ -10,7 +10,7 @@
 
 Para generar los tipos de las consultas de Sanity debemos seguir [esta guía](https://www.sanity.io/learn/course/typescripted-content/generating-type-for-groq-query-results). Solo en caso de que agreguemos nuevas entidades o se agreguen modificaciones en los schemas de entidades existentes necesitaremos actualizar el archivo `schema.json`. En este proyecto este archivo se encuentra en el directorio `cms/schema.json`.
 
-De acuerdo a lo definido en `cms/sanity.cli.ts` los tipos generados mediante `sanity typegen generate` pueden encontrarse en `src/app/sanity/types.ts` (kernel compartido, importable por ambas capas vía el alias `@sanity-types`), con los tipos generados para campos en la parte superior, sucedidos luego por los tipos generados para las queries de GROQ. Este archivo oficia como interfaz entre las consultas de Sanity y el código que dispara consultas mediante el conector a Sanity. Nota: `typegen.path` sigue escaneando las queries de GROQ en `src/api`; solo cambia el `generates` (output) al kernel.
+De acuerdo a lo definido en `cms/sanity.cli.ts` los tipos generados mediante `sanity typegen generate` pueden encontrarse en `src/sanity/types.ts` (kernel compartido, importable por ambas capas vía el alias `@sanity-types`), con los tipos generados para campos en la parte superior, sucedidos luego por los tipos generados para las queries de GROQ. Este archivo oficia como interfaz entre las consultas de Sanity y el código que dispara consultas mediante el conector a Sanity. Nota: `typegen.path` sigue escaneando las queries de GROQ en `src/api`; solo cambia el `generates` (output) al kernel.
 
 Se pueden ver ejemplos de consultas definidas con tipos generados en `src/api/_queries`. En `src/api/author/author.service.ts` o `src/api/story/stoy.service.ts` se pueden ver ejemplos de cómo utilizar estos mismos tipos, para referencia del equipo de desarrollo.
 
@@ -28,7 +28,7 @@ Para aquellos casos en los que los campos sean de tipo array debe hacerse uso de
 
 ## Anti-Corruption Layer y Mapeo de Dominio
 
-Los tipos generados por Sanity representan la estructura del CMS externo. Sin embargo, la aplicación define su propio modelo de dominio en `src/app/models/` que es independiente del CMS.
+Los tipos generados por Sanity representan la estructura del CMS externo. Sin embargo, la aplicación define su propio modelo de dominio en `src/models/` que es independiente del CMS.
 
 Para comprender cómo se relacionan estos modelos y cómo se mapean los datos del CMS al modelo de dominio, consulta la sección sobre **Capa Anti-Corrupción** en el documento de [Modelo de Dominio - DDD](./DOMAIN_MODEL.md#patrón-capa-anti-corrupción-anti-corruption-layer).
 
