@@ -1,10 +1,25 @@
 import { isAnonymous } from '@models/literary-work.model';
+import { createReadingTime } from '@models/reading-time.model';
+import { createMarkdown } from '@models/markdown.model';
 import {
 	multiSectionRawLiteraryWork,
 	onoffRawLiteraryWorksMock,
 	unmaterializedRawLiteraryWork,
 } from '@mocks/onoff-raw-literary-works.mock';
-import { mapLiteraryWork, type SanityLiteraryWork } from './literary-work.functions';
+import {
+	mapLiteraryWork,
+	mapLiteraryWorkSectionProjection,
+	toReadingTimeMaterializationInput,
+	type SanityLiteraryWork,
+	type SanityLiteraryWorkSectionProjection,
+} from './literary-work.functions';
+
+// El corpus expone works full (query `…BySlug`); la proyección parcial (`…SectionBySlug`) reemplaza
+// `content[]` por `section` (slice de 0..1) + `sectionCount`. Este helper deriva ese shape del full.
+function toSectionProjection(work: SanityLiteraryWork, index: number): SanityLiteraryWorkSectionProjection {
+	const { content, ...metadata } = work;
+	return { ...metadata, section: [content[index]], sectionCount: work.sectionCount };
+}
 
 describe('mapLiteraryWork', () => {
 	it('maps the raw query result into a frozen LiteraryWork aggregate', () => {
@@ -90,5 +105,69 @@ describe('mapLiteraryWork', () => {
 		};
 
 		expect(() => mapLiteraryWork(raw)).toThrow('Markdown inválido: contenido vacío');
+	});
+});
+
+describe('mapLiteraryWorkSectionProjection', () => {
+	it('projects the requested section keeping whole-work metadata and the passed total', () => {
+		const projection = toSectionProjection(multiSectionRawLiteraryWork, 1);
+
+		const work = mapLiteraryWorkSectionProjection(projection, 1, createReadingTime(12));
+
+		expect(work).not.toBeNull();
+		expect(work?.content).toHaveLength(1);
+		expect(work?.content[0].position).toBe(1);
+		expect(work?.sectionCount).toBe(2);
+		// El total lo pasa el repository ya resuelto; la proyección no lo re-deriva del body.
+		expect(work?.totalReadingTime).toBe(12);
+		expect(Object.isFrozen(work)).toBe(true);
+	});
+
+	it('returns null when the GROQ section slice is empty (index out of range)', () => {
+		const projection: SanityLiteraryWorkSectionProjection = {
+			...toSectionProjection(multiSectionRawLiteraryWork, 0),
+			section: [],
+		};
+
+		expect(mapLiteraryWorkSectionProjection(projection, 99, createReadingTime(12))).toBeNull();
+	});
+});
+
+describe('mapLiteraryWorkMetadata invariants (run on both the full and the ?section=N path)', () => {
+	it('throws on an empty title through the partial projection path', () => {
+		const projection: SanityLiteraryWorkSectionProjection = {
+			...toSectionProjection(multiSectionRawLiteraryWork, 0),
+			title: '   ',
+		};
+
+		expect(() => mapLiteraryWorkSectionProjection(projection, 0, createReadingTime(12))).toThrow('título vacío');
+	});
+
+	it('throws on empty authors through the partial projection path', () => {
+		const projection: SanityLiteraryWorkSectionProjection = {
+			...toSectionProjection(multiSectionRawLiteraryWork, 0),
+			authors: [],
+		};
+
+		expect(() => mapLiteraryWorkSectionProjection(projection, 0, createReadingTime(12))).toThrow('sin autores');
+	});
+});
+
+describe('toReadingTimeMaterializationInput', () => {
+	it('translates raw sections to the materialization input, branding the body to Markdown', () => {
+		const input = toReadingTimeMaterializationInput(multiSectionRawLiteraryWork);
+
+		expect(input.totalReadingTime).toBe(multiSectionRawLiteraryWork.totalReadingTime);
+		expect(input.sections).toHaveLength(2);
+		expect(input.sections[0]._key).toBe('section-1');
+		expect(input.sections[0].readingTime).toBe(multiSectionRawLiteraryWork.content[0].readingTime);
+		expect(input.sections[0].body).toBe(createMarkdown(multiSectionRawLiteraryWork.content[0].body));
+	});
+
+	it('carries the null persisted values through for an unmaterialized work', () => {
+		const input = toReadingTimeMaterializationInput(unmaterializedRawLiteraryWork);
+
+		expect(input.totalReadingTime).toBeNull();
+		expect(input.sections.every((section) => section.readingTime === null)).toBe(true);
 	});
 });

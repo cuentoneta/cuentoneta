@@ -1,4 +1,4 @@
-import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
+import type { LiteraryWorkBySlugQueryResult, LiteraryWorkSectionBySlugQueryResult } from '@sanity-types';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import {
 	createLiteraryWorkEpigraph,
@@ -8,7 +8,8 @@ import {
 } from '@models/literary-work-section.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createMarkdown } from '@models/markdown.model';
-import { createReadingTime, deriveSectionReadingTime } from '@models/reading-time.model';
+import { createReadingTime, deriveSectionReadingTime, type ReadingTime } from '@models/reading-time.model';
+import type { ReadingTimeMaterializationInput } from '@models/reading-time-materialization.model';
 import { createSlug } from '@models/slug.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { mapAuthor, mapResources, mapTags, urlFor } from './functions';
@@ -16,6 +17,7 @@ import { mapMediaSources } from './media-sources.functions';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
 export type SanityLiteraryWork = NonNullable<LiteraryWorkBySlugQueryResult>;
+export type SanityLiteraryWorkSectionProjection = NonNullable<LiteraryWorkSectionBySlugQueryResult>;
 type SanityLiteraryWorkSection = SanityLiteraryWork['content'][number];
 type SanityLiteraryWorkEpigraph = NonNullable<SanityLiteraryWorkSection['epigraphs']>[number];
 
@@ -49,9 +51,55 @@ export function mapLiteraryWork(raw: SanityLiteraryWork): LiteraryWork {
 		: work;
 }
 
+// Proyección parcial (?section=N): construye el agregado con una única sección en `position === section`,
+// SIN re-correr la invariante de posiciones contiguas de createLiteraryWork (el recorte lo hizo GROQ —
+// ver LITERARY_WORK_DESIGN.md §2/§7). El `totalReadingTime` ya resuelto lo pasa el repository (persistido
+// o materializado por un full-fetch): la respuesta parcial no transporta todos los bodies para derivarlo.
+export function mapLiteraryWorkSectionProjection(
+	raw: SanityLiteraryWorkSectionProjection,
+	section: number,
+	totalReadingTime: ReadingTime,
+): LiteraryWork | null {
+	// `section` es un slice GROQ (`content[$section...$sectionEnd]`): array de 0 o 1 elementos — vacío
+	// cuando el índice está fuera de rango.
+	const [rawSection] = raw.section;
+	if (!rawSection) {
+		return null;
+	}
+	return Object.freeze({
+		...mapLiteraryWorkMetadata(raw),
+		content: [mapLiteraryWorkSection(rawSection, section)],
+		totalReadingTime,
+		sectionCount: raw.sectionCount,
+	});
+}
+
+// Adaptador ACL raw → input del modelo de materialización (#1986): el modelo computa sobre `body: Markdown`
+// y el raw de Sanity trae `string`. Traduce el shape en la frontera para que el repository solo orqueste
+// el I/O, no la conversión de tipos.
+export function toReadingTimeMaterializationInput(raw: SanityLiteraryWork): ReadingTimeMaterializationInput {
+	return {
+		sections: raw.content.map((rawSection) => ({
+			_key: rawSection._key,
+			body: createMarkdown(rawSection.body),
+			readingTime: rawSection.readingTime,
+		})),
+		totalReadingTime: raw.totalReadingTime,
+	};
+}
+
 // Mapeo de la metadata compartida por ambos caminos de construcción (full y proyección parcial), para no
 // duplicar la superficie. El slug se brandea acá: el path de la factory lo re-valida (idempotente).
 function mapLiteraryWorkMetadata(raw: SanityLiteraryWorkMetadata) {
+	// Invariantes de metadata en la frontera del ACL: la vía parcial (?section=N) NO llama a
+	// createLiteraryWork, así que sin esto un doc malformado (título/autores vacíos) se serviría en
+	// silencio por esa ruta. El full path las re-valida en la factory (idempotente, mismo error).
+	if (raw.title.trim() === '') {
+		throw new Error(`LiteraryWork inválida: título vacío (slug "${raw.slug}")`);
+	}
+	if (raw.authors.length === 0) {
+		throw new Error(`LiteraryWork inválida: sin autores (slug "${raw.slug}")`);
+	}
 	return {
 		_id: raw._id,
 		slug: createSlug(raw.slug),
