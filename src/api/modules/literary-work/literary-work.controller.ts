@@ -3,23 +3,31 @@ import { zValidator } from '@hono/zod-validator';
 
 import { slugSchema } from '@schemas/common.schemas';
 import { LiteraryWorkNotFoundError } from './literary-work.errors';
+import type { LiteraryWorkRepository } from './literary-work.repository';
 import { getLiteraryWorkBySlug } from './literary-work.service';
 
-const literaryWorkController = new Hono();
+// La factory (en vez del `new Hono()` suelto del resto de los módulos) inyecta el repository
+// doble en los tests de integración; el export default conserva el registro real de la ruta.
+export function createLiteraryWorkController(repository?: LiteraryWorkRepository) {
+	const controller = new Hono();
 
-literaryWorkController.get('/:slug', zValidator('param', slugSchema), async (c) => {
-	const { slug } = c.req.valid('param');
+	controller.get('/:slug', zValidator('param', slugSchema), async (c) => {
+		const { slug } = c.req.valid('param');
 
-	try {
-		const literaryWork = await getLiteraryWorkBySlug(slug);
-		return c.json(literaryWork);
-	} catch (error) {
-		// Un slug inexistente es 404, no el 500 al que el onError global degrada cualquier throw.
-		if (error instanceof LiteraryWorkNotFoundError) {
-			return c.json({ error: error.message }, 404);
+		try {
+			const literaryWork = await getLiteraryWorkBySlug(slug, repository);
+			return c.json(literaryWork);
+		} catch (error) {
+			// Un slug inexistente es 404, no el 500 al que el onError global degrada cualquier throw.
+			if (error instanceof LiteraryWorkNotFoundError) {
+				return c.json({ error: error.message }, 404);
+			}
+			throw error;
 		}
-		throw error;
-	}
-});
+	});
 
+	return controller;
+}
+
+const literaryWorkController = createLiteraryWorkController();
 export default literaryWorkController;
