@@ -3,8 +3,7 @@ import { LiteraryWorkNotFoundError } from './literary-work.errors';
 import type { LiteraryWorkRepository } from './literary-work.repository';
 import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity';
 
-// El default permite inyectar el doble en tests sin module mocking. El repository es stateless, así que
-// instanciarlo por llamada no tiene costo de estado compartido.
+// El repository es stateless, así que instanciarlo por llamada (default) no comparte estado.
 export async function getLiteraryWorkBySlug(
 	slug: string,
 	repository: LiteraryWorkRepository = new SanityLiteraryWorkRepository(),
