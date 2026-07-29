@@ -112,6 +112,74 @@ describe('buildReadingTimeMaterialization', () => {
 		expect(Object.keys(materialization.setIfMissing)).toContain('content[_key=="una-clave-arbitraria"].readingTime');
 	});
 
+	it('lanza ante un _key inseguro en vez de interpolar un path de patch envenenado (inyección GROQ)', () => {
+		// El `_key` se interpola en la expresión de selección `content[_key=="…"]` que ejecuta Sanity;
+		// solo se toca cuando la sección está sin materializar (readingTime null → arma el path).
+		const input: ReadingTimeMaterializationInput = {
+			sections: [{ _key: 'section-1"] || true', body: bodyOne, readingTime: null }],
+			totalReadingTime: null,
+		};
+
+		expect(() => buildReadingTimeMaterialization(input)).toThrow('_key de sección inseguro');
+	});
+
+	// El `_key` solo se interpola cuando la sección está sin materializar (readingTime null → arma el
+	// path del patch). Se cubren varios vectores de la sintaxis GROQ que el allowlist debe rechazar.
+	for (const unsafeKey of ['section"', 'section]', 'section 1', 'section.1', '*', '']) {
+		it(`lanza ante el _key inseguro ${JSON.stringify(unsafeKey)}`, () => {
+			const input: ReadingTimeMaterializationInput = {
+				sections: [{ _key: unsafeKey, body: bodyOne, readingTime: null }],
+				totalReadingTime: null,
+			};
+
+			expect(() => buildReadingTimeMaterialization(input)).toThrow('_key de sección inseguro');
+		});
+	}
+
+	for (const safeKey of ['section-1', 'A_b-9', 'abcDEF0123']) {
+		it(`acepta el _key alfanumérico válido ${JSON.stringify(safeKey)}`, () => {
+			const input: ReadingTimeMaterializationInput = {
+				sections: [{ _key: safeKey, body: bodyOne, readingTime: null }],
+				totalReadingTime: null,
+			};
+
+			expect(() => buildReadingTimeMaterialization(input)).not.toThrow();
+		});
+	}
+
+	it('no valida el _key cuando la sección ya está materializada (no se arma el path del patch)', () => {
+		const input: ReadingTimeMaterializationInput = {
+			sections: [{ _key: 'section"] || true', body: bodyOne, readingTime: 3 }],
+			totalReadingTime: 3,
+		};
+
+		expect(() => buildReadingTimeMaterialization(input)).not.toThrow();
+	});
+
+	// Fail-fast del reading time persistido: `createReadingTime` lanza ante no-entero < 1, no hay
+	// fallback silencioso (finding S3). Cubre el total y el valor por sección.
+	for (const invalidTotal of [0, -1, 2.5]) {
+		it(`lanza ante un totalReadingTime persistido inválido (${invalidTotal})`, () => {
+			const input: ReadingTimeMaterializationInput = {
+				sections: [{ _key: 'section-1', body: bodyOne, readingTime: 3 }],
+				totalReadingTime: invalidTotal,
+			};
+
+			expect(() => buildReadingTimeMaterialization(input)).toThrow();
+		});
+	}
+
+	for (const invalidSection of [0, -1, 2.5]) {
+		it(`lanza ante un readingTime de sección persistido inválido (${invalidSection})`, () => {
+			const input: ReadingTimeMaterializationInput = {
+				sections: [{ _key: 'section-1', body: bodyOne, readingTime: invalidSection }],
+				totalReadingTime: null,
+			};
+
+			expect(() => buildReadingTimeMaterialization(input)).toThrow();
+		});
+	}
+
 	it('es idempotente: recomputar sobre una obra ya materializada no arma patch (write-once)', () => {
 		const first = buildReadingTimeMaterialization(allMissingInput());
 

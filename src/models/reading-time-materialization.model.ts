@@ -34,9 +34,16 @@ export interface ReadingTimeMaterializationWriter {
 	};
 }
 
-// Asume `_key` generado por Sanity (alfanumérico): el llamador construye el input desde documentos
-// del CMS, no desde entrada de usuario, así que no hace falta escapar comillas en el path.
+// `_key` es identidad de sección generada por Sanity (alfanumérico). Se valida antes de interpolarlo:
+// la expresión de selección la ejecuta el cliente Sanity, así que un `_key` corrupto (bug de migración,
+// doc mal formado) sería inyección GROQ en la ruta de escritura. Ante un `_key` inseguro se lanza para
+// que el consumidor degrade (no escribe) en vez de mandar un patch con un path envenenado.
+const SANITY_KEY_PATTERN = /^[A-Za-z0-9_-]+$/;
+
 function sectionReadingTimePath(key: string): string {
+	if (!SANITY_KEY_PATTERN.test(key)) {
+		throw new Error(`_key de sección inseguro para interpolar en el path del patch: "${key}"`);
+	}
 	return `content[_key=="${key}"].readingTime`;
 }
 
