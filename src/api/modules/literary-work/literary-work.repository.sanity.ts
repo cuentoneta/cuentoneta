@@ -48,15 +48,15 @@ type SanityLiteraryWorkMetadata = Pick<
 	| 'publishedAt'
 >;
 
-// Coalescing de materialización concurrente por documento. El write-on-read se dispara desde el endpoint
-// de lectura público, así que una ráfaga anónima sobre la misma obra sin materializar podría lanzar N
-// escrituras en la ventana previa a que `setIfMissing` cierre el campo. Este registro vive a nivel de
-// módulo (el repository se instancia por request, así que un `Set` de instancia no coalescería entre
-// requests): mientras una materialización está en vuelo, las demás sirven lo derivado sin re-escribir.
-// La escritura ya es idempotente (`setIfMissing`); esto solo acota el consumo de cuota.
-const inFlightMaterializations = new Set<string>();
-
 export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
+	// Coalescing de materialización concurrente por documento: el write-on-read se dispara desde el
+	// endpoint de lectura público, así que una ráfaga anónima sobre la misma obra sin materializar podría
+	// lanzar N escrituras antes de que `setIfMissing` cierre el campo; mientras una está en vuelo, las
+	// demás sirven lo derivado sin re-escribir. Es estado de **instancia**: coalesce entre requests solo
+	// si el repository se compone como **singleton** — decisión del edge (service/controller), no del
+	// repository, que no asume su propio ciclo de vida. La escritura ya es idempotente; esto acota cuota.
+	private readonly inFlightMaterializations = new Set<string>();
+
 	// Seam de `client` para el spy en tests; `canPersist` distingue el deploy con token de escritura
 	// (materializa) del read-only (degrada: computa sin persistir) — ver LITERARY_WORK_DESIGN.md §5.
 	constructor(
@@ -98,13 +98,15 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 	}
 
 	// Write-on-read: persiste (setIfMissing, idempotente) los reading time faltantes cuando hay token.
-	// Sin token cortocircuita antes de computar el plan (no re-parsea Markdown en el hot path de lectura).
+	// Cortocircuita el hot path de lectura antes de computar el plan cuando no hay nada que hacer —
+	// sin token o con la obra ya materializada (el caso común tras la 1ra lectura / el backfill #1959) —,
+	// para no re-parsear el Markdown de cada sección solo para producir un patch vacío.
 	// Con un _key inválido o un fallo de escritura degrada dentro del try: no escribe y sirve lo derivado.
 	private async materialize(raw: SanityLiteraryWork): Promise<void> {
-		if (!this.canPersist || inFlightMaterializations.has(raw._id)) {
+		if (!this.canPersist || this.isFullyMaterialized(raw) || this.inFlightMaterializations.has(raw._id)) {
 			return;
 		}
-		inFlightMaterializations.add(raw._id);
+		this.inFlightMaterializations.add(raw._id);
 		try {
 			const materialization = buildReadingTimeMaterialization(this.toMaterializationInput(raw));
 			await applyReadingTimeMaterialization(this.client, raw._id, materialization);
@@ -115,8 +117,16 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 				cause instanceof Error ? cause.message : String(cause),
 			);
 		} finally {
-			inFlightMaterializations.delete(raw._id);
+			this.inFlightMaterializations.delete(raw._id);
 		}
+	}
+
+	// Una obra ya materializada (total + todos los readingTime de sección presentes) no tiene nada que
+	// persistir: se chequea barato acá —sin parsear Markdown— para cortocircuitar el write-on-read en el
+	// caso común. Equivale exactamente a que `buildReadingTimeMaterialization` diera `isEmpty`, pero antes
+	// del cómputo.
+	private isFullyMaterialized(raw: SanityLiteraryWork): boolean {
+		return raw.totalReadingTime !== null && raw.content.every((section) => section.readingTime !== null);
 	}
 
 	// ───────────────────────── Traducción raw → dominio (ACL del adaptador) ─────────────────────────
