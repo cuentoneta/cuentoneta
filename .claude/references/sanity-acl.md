@@ -26,13 +26,18 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 
 > **Alcance de los ejemplos de este archivo.** El pipeline se ejemplifica con el módulo `story`
 > (`src/api/modules/story/`), hoy el único módulo de contenido narrativo con esta capa completa
-> (repository → mapper → service → controller) mergeada. `LiteraryWork` sigue el mismo patrón, pero
-> aterriza en `develop` **por partes**: el mapper puro del ACL (`mapLiteraryWork`, en
-> `src/api/_utils/literary-work.functions.ts`) ya está en `develop`. El repository
-> (`LiteraryWorkRepository`/`SanityLiteraryWorkRepository`/`InMemoryLiteraryWorkRepository`) y el
-> service (`getLiteraryWorkBySlug`) siguen en review (#1853, Slice 1, PRs #1929–#1932) — contrato ya
-> cerrado en [`docs/LITERARY_WORK_DESIGN.md`](../../docs/LITERARY_WORK_DESIGN.md) §6. Los ejemplos de
-> código de abajo se conservan sobre `story` hasta que ese código aterrice.
+> (repository → mapper → service → controller) mergeada, con el ACL como **mappers puros en
+> `_utils/*.functions.ts`** (ver más abajo). `LiteraryWork` **diverge a propósito**: su ACL (la
+> traducción raw Sanity → dominio) vive **dentro del repository**
+> (`SanityLiteraryWorkRepository`, `src/api/modules/literary-work/literary-work.repository.ts`) como
+> métodos privados, no como funciones en `_utils/`. No es una variación accidental — es la
+> **dirección arquitectónica objetivo**: el repository es dueño de su propia ACL y entrega
+> `LiteraryWork` de dominio listo; el service recibe dominio, sin una capa de mappers intermedia.
+> `story` conserva por ahora el patrón mapper-en-`_utils` de los ejemplos de abajo, hasta que se
+> migre. El repository de `LiteraryWork` está en review en **PR #2002** (#1853, Slice 1a); el
+> service (`getLiteraryWorkBySlug`) sigue pendiente — contrato cerrado en
+> [`docs/LITERARY_WORK_DESIGN.md`](../../docs/LITERARY_WORK_DESIGN.md) §6. Los ejemplos de código de
+> abajo se conservan sobre `story`, que sigue vigente para ese patrón.
 
 ---
 
@@ -253,9 +258,13 @@ El service dependería del **puerto** (interfaz), no de la implementación concr
 resolvería vía un **contenedor de DI**. Esa dirección está registrada en **#1503**, sin estructura
 creada todavía en el repo. Mientras tanto, rige el patrón de funciones `fetch*()` /
 `get*()` descripto arriba; **no** introducir clases de repositorio ni DI salvo que el issue lo pida.
-Ese mismo patrón ya tiene contrato cerrado para `LiteraryWork`
-(`LiteraryWorkRepository`/`SanityLiteraryWorkRepository`/`InMemoryLiteraryWorkRepository`, ver
-`docs/LITERARY_WORK_DESIGN.md` §6), pendiente de aterrizar con #1853.
+
+`LiteraryWork` ya adoptó esta dirección — puerto (`LiteraryWorkRepository`) + adaptador
+(`SanityLiteraryWorkRepository`) + doble (`InMemoryLiteraryWorkRepository`), ver
+`docs/LITERARY_WORK_DESIGN.md` §6 —, pero con una divergencia adicional respecto de este patrón:
+la ACL (traducción raw → dominio) no queda en `_utils/functions.ts`, sino **dentro del repository**,
+como métodos privados de `SanityLiteraryWorkRepository`. El repository de `LiteraryWork` está en
+review en **PR #2002** (#1853, Slice 1a); el service sigue pendiente.
 
 ---
 

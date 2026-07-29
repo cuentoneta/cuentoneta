@@ -108,9 +108,13 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 
 > Nota sobre el estado actual: hoy los módulos backend exponen funciones (`getStoryBySlug`, `fetchStories`) más que clases con interfaz explícita, así que **los nombres de esta tabla son ilustrativos de la convención, no símbolos existentes** — las clases llegan con #1503. La convención rige al introducir abstracciones de repository/service o sus dobles de test, y es la dirección a la que tienden los `*.service.spec.ts`.
 >
-> \* Contrato cerrado en `docs/LITERARY_WORK_DESIGN.md` §6. El **mapper** del ACL (`mapLiteraryWork`,
-> `src/api/_utils/literary-work.functions.ts`) ya aterrizó en `develop` y es un símbolo existente; el
-> **repository** de esta fila y el **service** siguen en review (#1853, Slice 1, PRs #1929–#1932).
+> \* Contrato cerrado en `docs/LITERARY_WORK_DESIGN.md` §6. `LiteraryWork` es la primera fila con
+> clases reales: `SanityLiteraryWorkRepository`/`InMemoryLiteraryWorkRepository` implementan el puerto
+> `LiteraryWorkRepository` (`src/api/modules/literary-work/literary-work.repository.ts`). Divergencia
+> intencional respecto del resto de la tabla: acá la ACL (traducción raw Sanity → dominio) no es un
+> mapper separado en `_utils/`, sino **métodos privados del repository** — el repository es dueño de
+> su propia ACL, la dirección objetivo del patrón. El repository está en review en **PR #2002**
+> (#1853, Slice 1a); el **service** sigue pendiente.
 
 ### Frontend
 
@@ -124,7 +128,7 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 
 > Los dobles de API son **`Stub*`** (devuelven canned, ignoran la entrada); el de `LayoutService` es un **`Fake*` de entorno**, calificado `Controllable*` porque el viewport lo fija el test (`simulateViewport()`), no `window` como en el real (`WindowLayoutService`). No es `InMemory*`: no sustituye almacenamiento, sustituye el navegador. La diferencia no es de capa sino de qué sustituye el doble — ver la taxonomía de arriba.
 >
-> \* Contrato cerrado en `docs/LITERARY_WORK_DESIGN.md` §7 (`LiteraryWorkDto` + rehidratación en el provider); implementación pendiente (#1853, Slice 1, PRs #1929–#1932 en review) — a diferencia del resto de la tabla, todavía no son símbolos existentes.
+> \* Contrato cerrado en `docs/LITERARY_WORK_DESIGN.md` §7 (`LiteraryWorkDto` + rehidratación en el provider); implementación pendiente (#1853, Slice 1) — a diferencia del resto de la tabla, todavía no son símbolos existentes.
 
 - Prefijo **`Http*`** para implementaciones de servicios de API basadas en HTTP.
 - Un service **con doble de test** usa el par interfaz + `InjectionToken` homónimo, igual que los API providers: real y doble son dos implementaciones intercambiables del mismo contrato. `LayoutService` es el caso — interfaz + token `LayoutService`, real `WindowLayoutService` (prefijo de mecanismo), doble `ControllableLayoutService` (`layout.mock.ts`). Un service de **implementación única sin doble** (`NavigationFrameService`, `SchemaOrgService`) no necesita ni interfaz ni token: se inyecta la clase directamente.
