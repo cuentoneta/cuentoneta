@@ -3,6 +3,7 @@ export const Endpoints = Object.freeze({
 	Story: 'api/story',
 	StoryList: 'api/storylist',
 	Contributor: 'api/contributor',
+	LiteraryWork: 'api/literary-work',
 } as const);
 export type Endpoints = (typeof Endpoints)[keyof typeof Endpoints];
 

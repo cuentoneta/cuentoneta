@@ -16,6 +16,7 @@ import { provideContentApi } from './providers/content.provider';
 import { provideContributorApi } from './providers/contributor.provider';
 import { provideStoryApi } from './providers/story.provider';
 import { provideStorylistApi } from './providers/storylist.provider';
+import { provideLiteraryWorkApi } from './providers/literary-work.provider';
 import { providePushNotificationsApi } from './providers/push-notifications.provider';
 
 // Layout
@@ -48,6 +49,7 @@ export const appConfig: ApplicationConfig = {
 		provideContributorApi(),
 		provideStoryApi(),
 		provideStorylistApi(),
+		provideLiteraryWorkApi(),
 		providePushNotificationsApi(),
 		provideLayout(),
 
