@@ -11,10 +11,20 @@ get {
 }
 
 params:path {
-  slug: la-obra-de-prueba
+  slug: el-odio
 }
 
 docs {
   Obtener una obra literaria completa por su slug.
   Slug inexistente responde 404 con body { error } — ver docs/LITERARY_WORK_DESIGN.md §7.
+
+  Slugs del corpus de Onoff (fuente: src/mocks/onoff-literary-works.mock.ts):
+  - el-palacio-de-las-nueve-fronteras
+  - geometria
+  - los-peldanos
+  - las-escaleras
+  - el-odio
+  - el-tratado-de-los-placeres
+  - las-dos-antorchas
+  - neron
 }
