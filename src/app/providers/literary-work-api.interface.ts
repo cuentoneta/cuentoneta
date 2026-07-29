@@ -6,10 +6,6 @@ import type { Media } from '@models/media.model';
 import type { Resource } from '@models/resource.model';
 import type { Tag } from '@models/tag.model';
 
-// Shape de wire del agregado serializado (LITERARY_WORK_DESIGN.md §7): los brands compile-time y
-// los métodos no cruzan JSON — SectionTitle llega como { value } sin toAnchor(); SanitizedHtml y
-// ReadingTime, como string/number planos. Author/Tag/Resource/Media no están brandeados, se reusan
-// tal cual. El DTO no sale del provider: se rehidrata a dominio en la frontera.
 export interface LiteraryWorkEpigraphDto {
 	readonly text: string;
 	readonly reference?: string;
