@@ -318,6 +318,7 @@ La ACL del repository (ver arriba) es responsable de: validar invariantes contra
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Params          | `{ slug: string }` — validación zod con el `slugSchema` existente de `src/api/schemas/common.schemas.ts` (reutilizar, no duplicar)                                                                                 |
 | Respuesta 200   | `LiteraryWork` **completo** (JSON; forma idéntica a la interfaz de dominio de [§2](#2-modelo-de-dominio-y-vistas-polimórficas)) — `content` transporta **todas** las secciones (`sectionCount === content.length`) |
+| Respuesta 404   | `{ error: string }` JSON cuando el slug no existe — el controller atrapa `LiteraryWorkNotFoundError` y responde 404 propio, sin degradar al 500 del `onError` global (ver decisión abajo)                          |
 | Registro        | `apiRoutes.route('/literary-work', literaryWorkController)` en `src/api/routes.ts`                                                                                                                                 |
 | Colección Bruno | `docs/api/bruno/literary-work/get-literary-work-by-slug.bru` — se crea **en el mismo PR** que el endpoint (DoD de Slice 1); este contrato es su fuente                                                             |
 
@@ -327,7 +328,7 @@ El endpoint expone únicamente la **obra completa** por slug: no existe hoy ning
 
 El SSR de `/read/:slug` (Slice 1) consume la forma completa; la navegación multi-capítulo (Slice 2) también parte de la obra completa ya cargada (ver anclas intra-documento, [§4](#4-value-objects)).
 
-> **Nota abierta para Slice 1 — slug inexistente:** el comportamiento vigente del módulo `story` ante slug no encontrado es que el service lanza `Error` genérico sin handler `onError` global en `routes.ts` → HTTP **500 sin body estructurado**, no un 404 JSON. Slice 1 debe decidir si `literary-work` introduce un 404 propio (y sienta el precedente) o mantiene paridad con `story` y se difiere el manejo de errores a un issue transversal. Es una decisión **diferida a propósito**, no una omisión de este diseño.
+> **Decisión (Slice 1c) — slug inexistente → 404 propio.** El módulo `story` ante slug no encontrado lanza un `Error` genérico que el `onError` global degrada a HTTP **500 sin body estructurado**. `literary-work` **diverge a propósito** y sienta el precedente: el service lanza `LiteraryWorkNotFoundError` (error tipado por operación) y el controller lo traduce a **404 con envelope `{ error }`**. Devolver 404 para un recurso inexistente es el contrato correcto; alinear a `story` a este precedente queda para un issue transversal, no bloquea este slice.
 
 ### Consumo desde el frontend — DTO de wire y rehidratación en el provider
 
