@@ -1,6 +1,10 @@
 import type { SanityClient } from '@sanity/client';
 import { clearAllMocks, fn, type Mock } from '@test-utils';
-import { multiSectionRawLiteraryWork, unmaterializedRawLiteraryWork } from '@mocks/onoff-raw-literary-works.mock';
+import {
+	multiSectionRawLiteraryWork,
+	onoffRawLiteraryWorksMock,
+	unmaterializedRawLiteraryWork,
+} from '@mocks/onoff-raw-literary-works.mock';
 import { SanityLiteraryWorkRepository } from './literary-work.repository';
 import { LiteraryWorkSectionNotFoundError } from './literary-work.errors';
 
@@ -162,6 +166,72 @@ describe('SanityLiteraryWorkRepository', () => {
 			const repository = new SanityLiteraryWorkRepository(spy.client, true);
 
 			expect(await repository.fetchSectionBySlug('no-existe', 0)).toBeNull();
+		});
+	});
+
+	describe('traducción raw → dominio (ACL del repository)', () => {
+		// canPersist false: estos casos ejercen solo la traducción, no el write-on-read.
+		function repoReturning(raw: unknown): SanityLiteraryWorkRepository {
+			const spy = createSpyClient();
+			spy.fetch.mockResolvedValue(raw);
+			return new SanityLiteraryWorkRepository(spy.client, false);
+		}
+
+		it('mapea el crudo a un agregado congelado con posiciones y total persistido', async () => {
+			const work = await repoReturning(multiSectionRawLiteraryWork).fetchBySlug('x');
+
+			expect(Object.isFrozen(work)).toBe(true);
+			expect(work?.content.map((section) => section.position)).toEqual([0, 1]);
+			expect(work?.sectionCount).toBe(2);
+			expect(work?.totalReadingTime).toBe(12);
+		});
+
+		it('convierte el body por el pipeline de sanitización', async () => {
+			const work = await repoReturning(onoffRawLiteraryWorksMock[0]).fetchBySlug('x');
+
+			expect(work?.content[0].bodyHtml).toContain('<strong>');
+			expect(work?.content[0].bodyHtml).not.toContain('**');
+		});
+
+		it('sirve el total persistido de una obra recitada tal cual (no lo recalcula del texto)', async () => {
+			const work = await repoReturning({ ...onoffRawLiteraryWorksMock[0], totalReadingTime: 40 }).fetchBySlug('x');
+
+			expect(work?.totalReadingTime).toBe(40);
+		});
+
+		it('mapea un coverImage ausente a string vacío', async () => {
+			const work = await repoReturning({ ...onoffRawLiteraryWorksMock[0], coverImage: null }).fetchBySlug('x');
+
+			expect(work?.coverImage).toBe('');
+		});
+
+		it('lanza ante un epígrafe sin texto (mapeo defensivo en la frontera)', async () => {
+			const broken = {
+				...onoffRawLiteraryWorksMock[0],
+				content: [{ ...onoffRawLiteraryWorksMock[0].content[0], epigraphs: [{ text: null, reference: null }] }],
+			};
+
+			await expect(repoReturning(broken).fetchBySlug('x')).rejects.toThrow('Markdown inválido: contenido vacío');
+		});
+
+		it('corre las invariantes de metadata también por la vía parcial ?section=N (título vacío)', async () => {
+			const projection = {
+				...multiSectionRawLiteraryWork,
+				section: [multiSectionRawLiteraryWork.content[0]],
+				title: '   ',
+			};
+
+			await expect(repoReturning(projection).fetchSectionBySlug('x', 0)).rejects.toThrow('título vacío');
+		});
+
+		it('corre las invariantes de metadata también por la vía parcial ?section=N (sin autores)', async () => {
+			const projection = {
+				...multiSectionRawLiteraryWork,
+				section: [multiSectionRawLiteraryWork.content[0]],
+				authors: [],
+			};
+
+			await expect(repoReturning(projection).fetchSectionBySlug('x', 0)).rejects.toThrow('sin autores');
 		});
 	});
 });
