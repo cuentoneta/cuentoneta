@@ -2,38 +2,18 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import type { LiteraryWork } from '@models/literary-work.model';
-import { authorMock } from '@mocks/author.mock';
+import { elOdioLiteraryWorkMock } from '@mocks/onoff/el-odio.mock';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
 import { HttpLiteraryWorkApi } from './literary-work.provider';
 import type { LiteraryWorkDto } from './literary-work-api.interface';
 
-const baseDto: LiteraryWorkDto = {
-	_id: 'literaryWork_1',
-	slug: 'la-vigilia-de-onoff',
-	title: 'La vigilia de Onoff',
-	coverImage: '',
-	totalReadingTime: 5,
-	sectionCount: 1,
-	tags: [],
-	authors: [],
-	content: [
-		{
-			position: 0,
-			title: { value: 'La espera' },
-			epigraphs: [{ text: '<p><em>Epígrafe</em></p>', reference: '<p>Anónimo</p>' }],
-			bodyHtml: '<p>Cuerpo saneado.</p>',
-			readingTime: 2,
-		},
-	],
-	mediaSources: [],
-	resources: [],
-	badLanguage: false,
-	originalPublication: '',
-	publishedAt: '2026-07-01T12:00:00Z',
-};
-
-const validDto: LiteraryWorkDto = { ...baseDto, authors: [authorMock] };
+// El DTO de wire es la serialización JSON del agregado: los métodos (toAnchor) y los brands se
+// pierden, quedando el shape plano que el endpoint efectivamente emite. Se deriva del canon de Onoff
+// en vez de hand-authorear un objeto mock paralelo.
+function toWireDto(literaryWork: LiteraryWork): LiteraryWorkDto {
+	return JSON.parse(JSON.stringify(literaryWork)) as LiteraryWorkDto;
+}
 
 describe('HttpLiteraryWorkApi', () => {
 	let api: HttpLiteraryWorkApi;
@@ -59,26 +39,28 @@ describe('HttpLiteraryWorkApi', () => {
 		return result;
 	}
 
-	it('rehydrates the wire DTO into a frozen domain aggregate', async () => {
-		const literaryWork = await requestBySlug(validDto);
+	it('rehydrates the wire DTO back into the domain aggregate, frozen and with methods restored', async () => {
+		const dto = toWireDto(elOdioLiteraryWorkMock);
+		const rehydrated = await requestBySlug(dto);
 
-		expect(Object.isFrozen(literaryWork)).toBe(true);
-		expect(literaryWork.slug).toBe('la-vigilia-de-onoff');
-		expect(literaryWork.content[0].title?.toAnchor()).toBe('la-espera');
-		expect(literaryWork.content[0].epigraphs?.[0].reference).toContain('Anónimo');
+		// Round-trip: re-serializar el agregado rehidratado reproduce el DTO de origen.
+		expect(toWireDto(rehydrated)).toEqual(dto);
+		expect(Object.isFrozen(rehydrated)).toBe(true);
+		// toAnchor() no cruza el wire; la rehidratación lo reconstruye vía createSectionTitle.
+		expect(rehydrated.content[0].title?.toAnchor()).toBe(elOdioLiteraryWorkMock.content[0].title?.toAnchor());
+		expect(rehydrated.content[0].epigraphs?.[0].reference).toContain('Onoff');
 	});
 
 	it('derives totalReadingTime from the sections, ignoring the wire value', async () => {
-		// El wire trae 40, pero createLiteraryWork lo re-deriva como la suma de las secciones
-		// (una sola sección con readingTime 2) — el total autoritativo no cruza como option.
-		const literaryWork = await requestBySlug({ ...validDto, totalReadingTime: 40 });
+		const dto = toWireDto(elOdioLiteraryWorkMock);
+		const rehydrated = await requestBySlug({ ...dto, totalReadingTime: dto.totalReadingTime + 999 });
 
-		expect(literaryWork.totalReadingTime).toBe(2);
+		expect(rehydrated.totalReadingTime).toBe(elOdioLiteraryWorkMock.totalReadingTime);
 	});
 
 	it('errors the stream when the DTO violates a domain invariant', async () => {
-		await expect(requestBySlug({ ...baseDto, authors: [] })).rejects.toThrow(
-			'LiteraryWork inválida: sin autores (slug "la-vigilia-de-onoff") — la obra anónima referencia al author "Anónimo"',
-		);
+		const dto = toWireDto(elOdioLiteraryWorkMock);
+
+		await expect(requestBySlug({ ...dto, authors: [] })).rejects.toThrow(/sin autores/);
 	});
 });

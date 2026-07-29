@@ -26,7 +26,7 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 	private readonly http = inject(HttpClient);
 
 	public getBySlug(slug: string): Observable<LiteraryWork> {
-		return this.http.get<LiteraryWorkDto>(`${this.url}/${slug}`).pipe(map(this.toLiteraryWork));
+		return this.http.get<LiteraryWorkDto>(`${this.url}/${slug}`).pipe(map((dto) => this.toLiteraryWork(dto)));
 	}
 
 	private toSection(dto: LiteraryWorkSectionDto): LiteraryWorkSection {

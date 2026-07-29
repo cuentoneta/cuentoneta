@@ -1,6 +1,7 @@
 import type { Story } from '@models/story.model';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
-import { createLiteraryWorkSection } from '@models/literary-work-section.model';
+import { createLiteraryWorkEpigraph, createLiteraryWorkSection } from '@models/literary-work-section.model';
+import { createSectionTitle } from '@models/section-title.model';
 import { createMarkdown } from '@models/markdown.model';
 import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
@@ -288,6 +289,13 @@ export const elOdioLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	content: [
 		createLiteraryWorkSection({
 			position: 0,
+			title: createSectionTitle('El primer golpe'),
+			epigraphs: [
+				createLiteraryWorkEpigraph({
+					text: markdownToSanitizedHtml(createMarkdown('*El odio se hereda como un apellido.*')),
+					reference: markdownToSanitizedHtml(createMarkdown('François Onoff, cuaderno de 1969')),
+				}),
+			],
 			bodyHtml: markdownToSanitizedHtml(elOdioBody),
 			readingTime: deriveSectionReadingTime(elOdioBody),
 		}),
