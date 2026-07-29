@@ -4,15 +4,6 @@ import type { Media } from './media.model';
 import type { Resource } from './resource.model';
 import type { Tag } from './tag.model';
 
-// Contrato de wire del agregado LiteraryWork: el shape JSON que el endpoint emite (agregado
-// serializado — brands y métodos no cruzan; SectionTitle llega como { value } sin toAnchor()).
-// Fuente única del tipo (inferido) y de la validación en runtime: el provider hace `.parse()` en
-// la frontera antes de rehidratar, así el cast `HttpClient.get<T>` deja de ser una promesa sin
-// chequear. Vive en el kernel (neutral, sin Angular) para poder compartirse con el backend.
-//
-// Los tipos de dominio anémicos anidados (Author/Tag/Media/Resource) se validan como opacos: se
-// verifica que cada elemento sea un objeto, pero no su estructura interna — su contrato de wire
-// propio es responsabilidad de sus módulos, no del de LiteraryWork.
 const opaqueDomainObject = <T>() => z.custom<T>((value) => value !== null && typeof value === 'object');
 
 export const literaryWorkEpigraphDtoSchema = z.object({
