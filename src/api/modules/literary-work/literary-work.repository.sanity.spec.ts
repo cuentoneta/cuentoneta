@@ -5,7 +5,7 @@ import {
 	onoffRawLiteraryWorksMock,
 	unmaterializedRawLiteraryWork,
 } from '@mocks/onoff-raw-literary-works.mock';
-import { SanityLiteraryWorkRepository } from './literary-work.repository';
+import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity';
 import { LiteraryWorkSectionNotFoundError } from './literary-work.errors';
 
 interface SpyClient {
