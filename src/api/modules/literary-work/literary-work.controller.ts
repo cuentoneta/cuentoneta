@@ -6,8 +6,6 @@ import { LiteraryWorkNotFoundError } from './literary-work.errors';
 import type { LiteraryWorkRepository } from './literary-work.repository';
 import { getLiteraryWorkBySlug } from './literary-work.service';
 
-// La factory (en vez del `new Hono()` suelto del resto de los módulos) inyecta el repository
-// doble en los tests de integración; el export default conserva el registro real de la ruta.
 export function createLiteraryWorkController(repository?: LiteraryWorkRepository) {
 	const controller = new Hono();
 
