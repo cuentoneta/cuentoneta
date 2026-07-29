@@ -4,6 +4,9 @@ import type { Media } from './media.model';
 import type { Resource } from './resource.model';
 import type { Tag } from './tag.model';
 
+// Los tipos de dominio anémicos anidados (Author/Tag/Media/Resource) se validan como opacos: se
+// verifica que cada elemento sea un objeto, pero no su estructura interna — su contrato de wire
+// propio es responsabilidad de sus módulos, no del de LiteraryWork.
 const opaqueDomainObject = <T>() => z.custom<T>((value) => value !== null && typeof value === 'object');
 
 export const literaryWorkEpigraphDtoSchema = z.object({
