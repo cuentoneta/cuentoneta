@@ -71,14 +71,14 @@
 ```typescript
 // ✅ Correcto — transformación y efecto colateral separados
 return this.literaryWorkService.getBySlug(slug).pipe(
-	map((response) => mapLiteraryWork(response)),
+	map((response) => toDomain(response)),
 	tap((literaryWork) => this.literaryWork.set(literaryWork)), // efecto colateral en tap
 );
 
 // ❌ Incorrecto — efecto colateral escondido en un operador puro
 return this.literaryWorkService.getBySlug(slug).pipe(
 	map((response) => {
-		const literaryWork = mapLiteraryWork(response);
+		const literaryWork = toDomain(response);
 		this.literaryWork.set(literaryWork); // ¡efecto colateral dentro de map!
 		return literaryWork;
 	}),

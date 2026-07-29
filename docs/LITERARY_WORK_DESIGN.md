@@ -131,7 +131,7 @@ export interface LiteraryWorkSection {
 }
 ```
 
-### Mapeo campo a campo (CMS → dominio, responsabilidad del ACL de Slice 1)
+### Mapeo campo a campo (CMS → dominio, responsabilidad de la ACL del repository, ver [§6](#6-repository-puerto-adaptador-y-doble))
 
 | CMS                                        | Dominio                                 | Transformación                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | ------------------------------------------ | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -168,7 +168,7 @@ Casos límite documentados para Slice 2 (no resueltos acá):
 
 **`IsoDateTime` — reutilizado, no duplicado.** `publishedAt` usa el tipo `IsoDateTime` ya existente en `src/utils/date.utils.ts`; #1852 le suma la factory validadora `createIsoDateTime(value: string): IsoDateTime`. No se crea un segundo símbolo ni se brandea el tipo existente (lo consumen `Author`/`AuthorProfile` sin factory; migrarlos excede este issue).
 
-> **Corte importante — qué hace `createSanitizedHtml` hoy:** brandea + valida no-vacío un string que el llamador **garantiza** que ya pasó por el pipeline compartido de sanitización. **No ejecuta sanitización.** El pipeline real (`unified`/`rehype-sanitize`, [§9](#9-allow-list-de-sanitización)) se implementa en Slice 1, donde vive su único caller (el mapper del ACL). Ídem el cómputo de reading time desde markdown ([§5](#5-helper-de-reading-time)): la conversión markdown→texto plano es de Slice 1; la aritmética es de #1852.
+> **Corte importante — qué hace `createSanitizedHtml` hoy:** brandea + valida no-vacío un string que el llamador **garantiza** que ya pasó por el pipeline compartido de sanitización. **No ejecuta sanitización.** El pipeline real (`unified`/`rehype-sanitize`, [§9](#9-allow-list-de-sanitización)) se implementa en Slice 1, donde vive su único caller (la ACL del repository). Ídem el cómputo de reading time desde markdown ([§5](#5-helper-de-reading-time)): la conversión markdown→texto plano es de Slice 1; la aritmética es de #1852.
 
 ---
 
@@ -214,11 +214,11 @@ Ambos campos son **opcionales** en el schema y arrancan vacíos: el poblado no o
 body (Markdown) → countWords → WordCount → deriveReadingTime → ReadingTime
 ```
 
-— y el total del agregado sigue siendo `sumReadingTimes(sections.map(s => s.readingTime))`. Lo que cambia frente al transform-on-read puro: cuando el mapper del backend lee una obra a la que le falta `readingTime`/`totalReadingTime`, además de computarlos (con el `countWords` real del dominio, "fuera del CMS") los **persiste de vuelta** en Sanity vía un patch (`@sanity/client` con token de escritura) antes de responder. Las lecturas siguientes de esa obra encuentran el valor ya persistido y lo sirven directo, sin recomputar. Como el texto es inmutable, la regla "falta → computar y persistir" alcanza — no hace falta invalidar por hash ni por `_rev`, y cubre obras nuevas automáticamente sin paso manual en el Studio ni webhook. Como el endpoint de lectura es **público**, el adaptador Sanity ([§6](#6-repository-puerto-adaptador-y-doble)) **coalesce las materializaciones concurrentes por documento** (registro de en-vuelo a nivel de módulo): una ráfaga sobre la misma obra sin materializar comparte una sola escritura en lugar de disparar una por request. La escritura ya es idempotente (`setIfMissing`); el coalescing solo acota el consumo de cuota. El backfill batch ([#1959](https://github.com/cuentoneta/cuentoneta/issues/1959)) pre-materializa para que el caso común no escriba en lectura.
+— y el total del agregado sigue siendo `sumReadingTimes(sections.map(s => s.readingTime))`. Lo que cambia frente al transform-on-read puro: cuando el repository backend lee una obra a la que le falta `readingTime`/`totalReadingTime`, además de computarlos (con el `countWords` real del dominio, "fuera del CMS") los **persiste de vuelta** en Sanity vía un patch (`@sanity/client` con token de escritura) antes de responder. Las lecturas siguientes de esa obra encuentran el valor ya persistido y lo sirven directo, sin recomputar. Como el texto es inmutable, la regla "falta → computar y persistir" alcanza — no hace falta invalidar por hash ni por `_rev`, y cubre obras nuevas automáticamente sin paso manual en el Studio ni webhook. Como el endpoint de lectura es **público**, el adaptador Sanity ([§6](#6-repository-puerto-adaptador-y-doble)) **coalesce las materializaciones concurrentes por documento** (registro de en-vuelo a nivel de módulo): una ráfaga sobre la misma obra sin materializar comparte una sola escritura en lugar de disparar una por request. La escritura ya es idempotente (`setIfMissing`); el coalescing solo acota el consumo de cuota. El backfill batch ([#1959](https://github.com/cuentoneta/cuentoneta/issues/1959)) pre-materializa para que el caso común no escriba en lectura.
 
 ### Unidad compartida de cómputo + persistencia
 
-`buildReadingTimeMaterialization` + `applyReadingTimeMaterialization` (`src/models/reading-time-materialization.model.ts`) son la **fuente única** del patch `setIfMissing` y de la semántica de campos descrita arriba. Las consumen — cuando aterricen — el mapper self-healing del read-path ([#1953](https://github.com/cuentoneta/cuentoneta/issues/1953) Parte 2) y el backfill batch ([#1959](https://github.com/cuentoneta/cuentoneta/issues/1959)):
+`buildReadingTimeMaterialization` + `applyReadingTimeMaterialization` (`src/models/reading-time-materialization.model.ts`) son la **fuente única** del patch `setIfMissing` y de la semántica de campos descrita arriba. Las consume, ya cableada, `SanityLiteraryWorkRepository` ([§6](#6-repository-puerto-adaptador-y-doble)); las consumirá también el backfill batch ([#1959](https://github.com/cuentoneta/cuentoneta/issues/1959)):
 
 ```typescript
 export function buildReadingTimeMaterialization(input: ReadingTimeMaterializationInput): ReadingTimeMaterialization;
@@ -238,13 +238,13 @@ export function applyReadingTimeMaterialization(
 // campos faltantes (`isEmpty`) no hace round-trip de red.
 ```
 
-> **Estado de implementación:** el schema (campos opcionales, arrancan vacíos), esta unidad de cómputo + persistencia, y el **mapper puro** del read-path (`mapLiteraryWork` en `src/api/_utils/literary-work.functions.ts`) ya existen en `develop`. Lo que queda es el **repository** que **cablea** el mapper self-healing —invocando `buildReadingTimeMaterialization`/`applyReadingTimeMaterialization` en la primera lectura de cada obra— y el `?section=N` eficiente que se apoya en él ([§7](#7-contrato-del-endpoint)), en el increment de backend rebaseado sobre el PR [#1929](https://github.com/cuentoneta/cuentoneta/pull/1929).
+> **Estado de implementación:** el schema (campos opcionales, arrancan vacíos), esta unidad de cómputo + persistencia (#1986), y el **repository** que la cablea ya existen en `develop`/en review. `SanityLiteraryWorkRepository` (`src/api/modules/literary-work/literary-work.repository.ts`) es dueño de la traducción raw Sanity → dominio (la ACL vive **dentro del repository**, como métodos privados, no como un mapper separado en `_utils/`) y cablea la materialización self-healing invocando `buildReadingTimeMaterialization`/`applyReadingTimeMaterialization` en la primera lectura de cada obra. Es el **Slice 1a**, en review en **PR #2002**, desde `develop` (el PR #1929 fue solo el draft del modelo de #1852, no la base de este incremento). Lo que queda: el **service** (`getLiteraryWorkBySlug`) y el `?section=N` eficiente que se apoya en el repository ([§7](#7-contrato-del-endpoint)).
 
 ### Duración de obras recitadas/audiovisuales
 
 Para obras cuyo contenido principal es un **recitado o audiovisual** (p. ej. narraciones verbales sin texto fuente), la duración relevante es la del medio, no la del texto. No hay un campo aparte para esto: `literaryWork.totalReadingTime` es **editable** en el schema, así que el editor lo carga a mano con la duración del medio y la materialización del backend lo **respeta** (`setIfMissing` no pisa un valor ya cargado). En obras de texto ese mismo campo lo completa el backend con `sumReadingTimes` sobre las secciones.
 
-`createLiteraryWork` deriva `totalReadingTime` de las secciones en cada construcción del agregado; el valor persistido/editorial vive en el campo del schema y lo sirve el mapper del backend. El `readingTime` **por sección** siempre se deriva del texto y es lo que [#1953](https://github.com/cuentoneta/cuentoneta/issues/1953) persiste en `section.readingTime`.
+`createLiteraryWork` deriva `totalReadingTime` de las secciones en cada construcción del agregado; el valor persistido/editorial vive en el campo del schema y lo sirve el repository del backend. El `readingTime` **por sección** siempre se deriva del texto y es lo que [#1953](https://github.com/cuentoneta/cuentoneta/issues/1953) persiste en `section.readingTime`.
 
 ### Obras solo-recitado (sin texto fuente)
 
@@ -277,13 +277,15 @@ interface LiteraryWorkRepository {
 //                  taxonomía Stub*/Fake*/Spy*, nunca Mock*)
 ```
 
-Firma del módulo backend (service, mapea vía ACL):
+**La ACL vive dentro del repository, no en `_utils/`.** A diferencia del resto de los módulos backend (ver [`sanity-acl.md`](../.claude/references/sanity-acl.md)), `SanityLiteraryWorkRepository` no delega la traducción raw → dominio a funciones separadas en `src/api/_utils/*.functions.ts`: la implementa como **métodos privados propios** (`mapWork`, `mapMetadata`, `mapSection`, `mapEpigraph`, …), reutilizando como building blocks los sub-mappers transversales ya existentes (`mapAuthor`, `mapResources`, `mapTags`, `mapMediaSources`). Es una **divergencia intencional**: el repository es la única frontera que conoce el shape de Sanity y entrega `LiteraryWork` de dominio listo — la dirección arquitectónica objetivo del backend (repository dueño de su propia ACL), no todavía adoptada por `story` ni por el resto de los módulos. `InMemoryLiteraryWorkRepository` almacena y devuelve dominio (`LiteraryWork[]`), no crudo. Implementación en review en **PR #2002** (Slice 1a).
+
+Firma del módulo backend (service, consume el repository ya en dominio):
 
 ```typescript
 getLiteraryWorkBySlug(slug: string, section?: number): Promise<LiteraryWork>;
 ```
 
-El mapper del ACL (`src/api/_utils/`) es responsable de: validar invariantes contra el shape de typegen, correr el pipeline MD→HTML sobre body y epígrafes, y derivar reading times. La autoría **no requiere normalización**: la referencia al author "Anónimo" viaja al dominio como cualquier otra ([§10](#10-autoría-y-obra-anónima)).
+La ACL del repository (ver arriba) es responsable de: validar invariantes contra el shape de typegen, correr el pipeline MD→HTML sobre body y epígrafes, y derivar/materializar reading times. La autoría **no requiere normalización**: la referencia al author "Anónimo" viaja al dominio como cualquier otra ([§10](#10-autoría-y-obra-anónima)).
 
 ---
 
@@ -322,11 +324,11 @@ El SSR de `/read/:slug` (Slice 1) consume la forma completa; la obtención por s
 
 El contrato del frontend (Slice 1) es entonces:
 
-| Pieza             | Contrato                                                                                                                                                                                                                                                                                                    |
-| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Tipo de wire**  | `LiteraryWorkDto`: la misma forma del agregado con todo primitivo (`slug: string`, `chapterTitle?: string`, `bodyHtml: string`, …). Vive junto a `literary-work-api.interface.ts` (convención de API providers). Es **tipado, no una capa**: no hay transformación de shape                                 |
-| **Rehidratación** | `HttpLiteraryWorkApi` (el ACL del frontend, simétrico al mapper de Sanity del backend) mapea `dto → createLiteraryWork(...)` reutilizando **las mismas factories** del dominio — único punto de construcción. Si el backend enviara datos inválidos, la factory **lanza en la frontera**, no en un template |
-| **Superficie**    | El DTO **no sale del provider**: services, señales públicas y componentes consumen exclusivamente `LiteraryWork` y sus vistas (regla "Binding en componentes: solo dominio" de `domain-model.md`)                                                                                                           |
+| Pieza             | Contrato                                                                                                                                                                                                                                                                                                                  |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tipo de wire**  | `LiteraryWorkDto`: la misma forma del agregado con todo primitivo (`slug: string`, `chapterTitle?: string`, `bodyHtml: string`, …). Vive junto a `literary-work-api.interface.ts` (convención de API providers). Es **tipado, no una capa**: no hay transformación de shape                                               |
+| **Rehidratación** | `HttpLiteraryWorkApi` (el ACL del frontend, simétrico a la ACL del repository de Sanity del backend) mapea `dto → createLiteraryWork(...)` reutilizando **las mismas factories** del dominio — único punto de construcción. Si el backend enviara datos inválidos, la factory **lanza en la frontera**, no en un template |
+| **Superficie**    | El DTO **no sale del provider**: services, señales públicas y componentes consumen exclusivamente `LiteraryWork` y sus vistas (regla "Binding en componentes: solo dominio" de `domain-model.md`)                                                                                                                         |
 
 **Alternativa evaluada y descartada:** volver el modelo _serialization-transparent_ demoviendo `toAnchor()` a función pura standalone y compartiendo el tipo de dominio como contrato de wire (paridad con el flujo actual de `Story`, que funciona porque sus interfaces son anémicas). Se descarta porque renuncia al modelo rico recién construido y porque las factories ya existen y están testeadas — el costo de la rehidratación es marginal frente a recuperar métodos, brands re-validados e inmutabilidad en el cliente.
 
@@ -336,14 +338,14 @@ El contrato del frontend (Slice 1) es entonces:
 
 **Alcance acotado a partir de [#1953](https://github.com/cuentoneta/cuentoneta/issues/1953): esta estrategia (webhook → documento derivado) es exclusiva del HTML saneado** — issue [#1856](https://github.com/cuentoneta/cuentoneta/issues/1856), "Materialización del HTML saneado vía webhook". El reading time (por sección y total) **ya no depende de esta sección**: se persiste write-once en campos propios del documento fuente, poblados por la materialización self-healing del backend descrita en [§5](#5-helper-de-reading-time) — sin webhook, sin documento derivado.
 
-Materialización del HTML saneado vía **webhook → documento derivado**; implementación en **Slice 4**. Hasta entonces rige **transform-on-read** (el ACL transforma en cada lectura, Slice 1).
+Materialización del HTML saneado vía **webhook → documento derivado**; implementación en **Slice 4**. Hasta entonces rige **transform-on-read** (la ACL del repository transforma en cada lectura, Slice 1).
 
 | Elemento     | Diseño                                                                                                                                                                                                                 |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Trigger      | Webhook de Sanity → función serverless ante cambio de documento                                                                                                                                                        |
 | Persistencia | **Documento derivado separado** del source: `{ HTML por sección, stamp de revisión / hash de contenido de origen }`. Separado para esquivar el loop de `_rev` (patchear derivados no debe re-disparar la regeneración) |
-| Pipeline     | **El mismo código del ACL** (función pura compartida) — una sola implementación de MD→HTML                                                                                                                             |
-| Fallback     | Si el derivado falta o está stale respecto del hash/rev: el ACL transforma on-the-fly esa vez y dispara la regeneración                                                                                                |
+| Pipeline     | **El mismo código de la ACL** (función pura compartida) — una sola implementación de MD→HTML                                                                                                                           |
+| Fallback     | Si el derivado falta o está stale respecto del hash/rev: la ACL transforma on-the-fly esa vez y dispara la regeneración                                                                                                |
 | Regen masivo | Tarea/función para re-materializar todo ante cambio de allow-list o de estrategia de imágenes                                                                                                                          |
 | Source doc   | `literaryWork` **no persiste** HTML — solo markdown. El reading time sí se persiste, pero por la vía de [§5](#5-helper-de-reading-time) (#1953), no por esta                                                           |
 
@@ -353,7 +355,7 @@ Materialización del HTML saneado vía **webhook → documento derivado**; imple
 
 ## 9. Allow-list de sanitización
 
-Constante **compartida** (única fuente de verdad para el pipeline del ACL de Slice 1 y la materialización de Slice 4). Base: el schema por defecto de `rehype-sanitize` (`hast-util-sanitize`, basado en la sanitización de GitHub), con esta extensión explícita:
+Constante **compartida** (única fuente de verdad para el pipeline de la ACL de Slice 1 y la materialización de Slice 4). Base: el schema por defecto de `rehype-sanitize` (`hast-util-sanitize`, basado en la sanitización de GitHub), con esta extensión explícita:
 
 | Tag     | Atributos permitidos                                             | Motivo                                                                                                                                                      |
 | ------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -381,7 +383,7 @@ Reglas duras del pipeline:
 
 ### Dominio — "Anónimo" viaja como `Author`
 
-El ACL **no filtra ni normaliza** la referencia: el dominio recibe `authors: [Author('Anónimo')]` como cualquier otra autoría. La invariante del agregado pasa a ser `authors.length >= 1` (paridad conceptual con `Story`, que exige autor — acá generalizada a 1..N).
+La ACL **no filtra ni normaliza** la referencia: el dominio recibe `authors: [Author('Anónimo')]` como cualquier otra autoría. La invariante del agregado pasa a ser `authors.length >= 1` (paridad conceptual con `Story`, que exige autor — acá generalizada a 1..N).
 
 Policy pura (único punto de verdad de la regla, `literary-work.model.ts`):
 
@@ -392,7 +394,7 @@ export function isAnonymous(authors: ReadonlyArray<{ readonly slug: string }>): 
 // authors.length > 0 && authors.every(a => a.slug === ANONYMOUS_AUTHOR_SLUG)
 ```
 
-- Se compara por **slug** (clave de negocio), nunca por `_id` (infraestructura). El slug `anonimo` es un **valor bien conocido del dominio** — el costo aceptado de esta decisión es que el dominio conoce ese valor especial; a cambio, el mapeo es directo (sin caso especial en el ACL) y la atribución "Anónimo" es visible y navegable como cualquier autor.
+- Se compara por **slug** (clave de negocio), nunca por `_id` (infraestructura). El slug `anonimo` es un **valor bien conocido del dominio** — el costo aceptado de esta decisión es que el dominio conoce ese valor especial; a cambio, el mapeo es directo (sin caso especial en la ACL) y la atribución "Anónimo" es visible y navegable como cualquier autor.
 - `every` (y no `some`): si una obra referencia a Anónimo **y** a un autor real, tiene autoría real — no es anónima. Con `.unique()` en el schema, el caso esperado de anonimato es exactamente `[Anónimo]`.
 
 Consecuencias:
@@ -405,17 +407,17 @@ Consecuencias:
 
 ## 11. Corte de #1852 vs. Slice 1 (#1853)
 
-| Pieza                                                                                                           | #1852 (este issue)                                           | Slice 1 (#1853) |
-| --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ | --------------- |
-| Doc de diseño (este archivo)                                                                                    | ✅ Código de contratos cerrados                              | Consume         |
-| Schema `literaryWork` definitivo + registro + `markdownSchema()` + typegen                                      | ✅ Implementado                                              | Consume         |
-| VOs (`Slug`, `WordCount`, `ReadingTime`, `Markdown`, `SanitizedHtml`, `ChapterTitle`) + `createIsoDateTime`     | ✅ Implementados con specs                                   | Consume         |
-| Aritmética de reading time (`deriveReadingTime`, `sumReadingTimes`)                                             | ✅ Implementada con specs                                    | Consume         |
-| Agregado `LiteraryWork` + secciones + vistas + `createLiteraryWork` + `isAnonymous`                             | ✅ Implementados con specs                                   | Consume         |
-| `countWords` (markdown → texto plano, `mdast-util-to-string`)                                                   | Contrato ([§5](#5-helper-de-reading-time))                   | ⚙️ Implementa   |
-| Pipeline MD→HTML (`unified`/`rehype-sanitize`) + allow-list como constante + rewrite de imágenes                | Contrato ([§9](#9-allow-list-de-sanitización))               | ⚙️ Implementa   |
-| Repository (puerto + `Sanity*` + `InMemory*`) + módulo backend                                                  | Contrato ([§6](#6-repository-puerto-adaptador-y-doble))      | ⚙️ Implementa   |
-| Endpoint `GET /literary-work/:slug[?section=N]` + `.bru`                                                        | Contrato ([§7](#7-contrato-del-endpoint))                    | ⚙️ Implementa   |
-| Frontend (`LiteraryWorkApi` + `LiteraryWorkDto` + rehidratación en el provider, ruta `/read/:slug`, página SSR) | Contrato ([§7](#7-contrato-del-endpoint))                    | ⚙️ Implementa   |
-| Materialización de derivados                                                                                    | Contrato ([§8](#8-estrategia-de-materialización))            | Slice 4         |
-| JSON-LD                                                                                                         | Consecuencia documentada ([§10](#10-autoría-y-obra-anónima)) | Slice 3         |
+| Pieza                                                                                                           | #1852 (este issue)                                           | Slice 1 (#1853)                                                   |
+| --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------- |
+| Doc de diseño (este archivo)                                                                                    | ✅ Código de contratos cerrados                              | Consume                                                           |
+| Schema `literaryWork` definitivo + registro + `markdownSchema()` + typegen                                      | ✅ Implementado                                              | Consume                                                           |
+| VOs (`Slug`, `WordCount`, `ReadingTime`, `Markdown`, `SanitizedHtml`, `ChapterTitle`) + `createIsoDateTime`     | ✅ Implementados con specs                                   | Consume                                                           |
+| Aritmética de reading time (`deriveReadingTime`, `sumReadingTimes`)                                             | ✅ Implementada con specs                                    | Consume                                                           |
+| Agregado `LiteraryWork` + secciones + vistas + `createLiteraryWork` + `isAnonymous`                             | ✅ Implementados con specs                                   | Consume                                                           |
+| `countWords` (markdown → texto plano, `mdast-util-to-string`)                                                   | Contrato ([§5](#5-helper-de-reading-time))                   | ⚙️ Implementa                                                     |
+| Pipeline MD→HTML (`unified`/`rehype-sanitize`) + allow-list como constante + rewrite de imágenes                | Contrato ([§9](#9-allow-list-de-sanitización))               | ⚙️ Implementa                                                     |
+| Repository (puerto + `Sanity*` + `InMemory*`, ACL dentro del repository) + módulo backend                       | Contrato ([§6](#6-repository-puerto-adaptador-y-doble))      | ⚙️ Implementa (repository en review, PR #2002; service pendiente) |
+| Endpoint `GET /literary-work/:slug[?section=N]` + `.bru`                                                        | Contrato ([§7](#7-contrato-del-endpoint))                    | ⚙️ Implementa                                                     |
+| Frontend (`LiteraryWorkApi` + `LiteraryWorkDto` + rehidratación en el provider, ruta `/read/:slug`, página SSR) | Contrato ([§7](#7-contrato-del-endpoint))                    | ⚙️ Implementa                                                     |
+| Materialización de derivados                                                                                    | Contrato ([§8](#8-estrategia-de-materialización))            | Slice 4                                                           |
+| JSON-LD                                                                                                         | Consecuencia documentada ([§10](#10-autoría-y-obra-anónima)) | Slice 3                                                           |
