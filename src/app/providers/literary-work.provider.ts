@@ -17,8 +17,9 @@ import { createSectionTitle } from '@models/section-title.model';
 import { createReadingTime } from '@models/reading-time.model';
 import { createSanitizedHtml } from '@models/sanitized-html.model';
 import { createIsoDateTime } from '@utils/date.utils';
+import { literaryWorkDtoSchema, type LiteraryWorkDto, type LiteraryWorkSectionDto } from '@models/literary-work.dto';
 import { ApiUrl, Endpoints } from './endpoints';
-import { LiteraryWorkApi, type LiteraryWorkDto, type LiteraryWorkSectionDto } from './literary-work-api.interface';
+import { LiteraryWorkApi } from './literary-work-api.interface';
 
 @Injectable({ providedIn: 'root' })
 export class HttpLiteraryWorkApi implements LiteraryWorkApi {
@@ -26,7 +27,9 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 	private readonly http = inject(HttpClient);
 
 	public getBySlug(slug: string): Observable<LiteraryWork> {
-		return this.http.get<LiteraryWorkDto>(`${this.url}/${slug}`).pipe(map((dto) => this.toLiteraryWork(dto)));
+		return this.http
+			.get<unknown>(`${this.url}/${slug}`)
+			.pipe(map((response) => this.toLiteraryWork(literaryWorkDtoSchema.parse(response))));
 	}
 
 	private toSection(dto: LiteraryWorkSectionDto): LiteraryWorkSection {

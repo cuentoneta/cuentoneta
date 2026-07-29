@@ -6,7 +6,7 @@ import { elOdioLiteraryWorkMock } from '@mocks/onoff/el-odio.mock';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
 import { HttpLiteraryWorkApi } from './literary-work.provider';
-import type { LiteraryWorkDto } from './literary-work-api.interface';
+import type { LiteraryWorkDto } from '@models/literary-work.dto';
 
 // El DTO de wire es la serialización JSON del agregado: los métodos (toAnchor) y los brands se
 // pierden, quedando el shape plano que el endpoint efectivamente emite. Se deriva del canon de Onoff
@@ -61,6 +61,21 @@ describe('HttpLiteraryWorkApi', () => {
 	it('errors the stream when the DTO violates a domain invariant', async () => {
 		const dto = toWireDto(elOdioLiteraryWorkMock);
 
+		// authors: [] pasa el schema de zod (array vacío es shape válido) pero viola la invariante
+		// de dominio: la factory es la que lanza, no zod.
 		await expect(requestBySlug({ ...dto, authors: [] })).rejects.toThrow(/sin autores/);
+	});
+
+	it('errors the stream when the wire shape violates the DTO schema', async () => {
+		const dto = toWireDto(elOdioLiteraryWorkMock);
+		// readingTime como string en vez de number: zod lo rechaza en la frontera, antes de rehidratar.
+		const malformed = { ...dto, content: [{ ...dto.content[0], readingTime: 'dos' }] };
+
+		const result = new Promise<LiteraryWork>((resolve, reject) => {
+			api.getBySlug(dto.slug).subscribe({ next: resolve, error: reject });
+		});
+		http.expectOne(`${environment.apiUrl}${Endpoints.LiteraryWork}/${dto.slug}`).flush(malformed);
+
+		await expect(result).rejects.toThrow();
 	});
 });
