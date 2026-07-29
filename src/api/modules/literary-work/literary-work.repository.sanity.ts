@@ -29,17 +29,20 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 
 	public async fetchBySlug(slug: string): Promise<LiteraryWork | null> {
 		const raw = await this.client.fetch(literaryWorkBySlugQuery, { slug });
-		return raw ? this.mapWork(raw) : null;
+		if (!raw) {
+			return null;
+		}
+		return this.mapLiteraryWork(raw);
 	}
 
-	private mapWork(raw: SanityLiteraryWork): LiteraryWork {
-		const work = createLiteraryWork({
+	private mapLiteraryWork(raw: SanityLiteraryWork): LiteraryWork {
+		const literaryWork = createLiteraryWork({
 			...this.mapMetadata(raw),
 			content: raw.content.map((section, index) => this.mapSection(section, index)),
 		});
 		return raw.totalReadingTime !== null
-			? Object.freeze({ ...work, totalReadingTime: createReadingTime(raw.totalReadingTime) })
-			: work;
+			? Object.freeze({ ...literaryWork, totalReadingTime: createReadingTime(raw.totalReadingTime) })
+			: literaryWork;
 	}
 
 	private mapMetadata(raw: SanityLiteraryWorkMetadata) {

@@ -2,13 +2,13 @@ import type { LiteraryWork } from '@models/literary-work.model';
 import type { LiteraryWorkRepository } from './literary-work.repository';
 
 export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
-	private readonly works: ReadonlyArray<LiteraryWork>;
+	private readonly literaryWorks: ReadonlyArray<LiteraryWork>;
 
-	constructor(works: ReadonlyArray<LiteraryWork> = []) {
-		this.works = works;
+	constructor(literaryWorks: ReadonlyArray<LiteraryWork> = []) {
+		this.literaryWorks = literaryWorks;
 	}
 
 	public async fetchBySlug(slug: string): Promise<LiteraryWork | null> {
-		return this.works.find((work) => work.slug === slug) ?? null;
+		return this.literaryWorks.find((literaryWork) => literaryWork.slug === slug) ?? null;
 	}
 }
