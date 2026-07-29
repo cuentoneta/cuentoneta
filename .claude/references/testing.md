@@ -112,7 +112,7 @@ expect(heading).toBeInTheDocument();
 
 ### Servicios inyectados (mock con `fn()`)
 
-> Ejemplo con `StoryApi`/`StoryComponent` (reales, vigentes) — el mismo patrón aplicará a `LiteraryWorkApi` y a su futuro componente de página cuando aterrice #1853 (Slice 1, PRs #1929–#1932 en review).
+> Ejemplo con `StoryApi`/`StoryComponent` (reales, vigentes) — el mismo patrón aplicará a `LiteraryWorkApi` y a su futuro componente de página cuando aterrice el provider de LiteraryWork (#1853; el repository de datos está en PR #2002).
 
 ```typescript
 import { fn } from '@test-utils';
