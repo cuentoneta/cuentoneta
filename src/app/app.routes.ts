@@ -43,6 +43,10 @@ export const appRoutes: Routes = [
 		loadComponent: () => import('./pages/storylist/storylist.component'),
 	},
 	{
+		path: `${AppRoutes.Read}/:slug`,
+		loadComponent: () => import('./pages/read/read.component'),
+	},
+	{
 		path: AppRoutes.About,
 		loadComponent: () => import('./pages/about/about.component'),
 	},
