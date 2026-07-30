@@ -11,7 +11,7 @@ import type { LiteraryWork } from '@models/literary-work.model';
 import { elOdioLiteraryWorkMock } from '@mocks/onoff/el-odio.mock';
 import { provideLiteraryWorkApiMock } from '../../providers/literary-work.mock';
 import type { LiteraryWorkApi } from '../../providers/literary-work-api.interface';
-import ReadComponent from './read.component';
+import ReadPage from './read.page';
 
 class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 	constructor(private readonly status: number) {}
@@ -23,7 +23,7 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 
 describe('ReadComponent', () => {
 	const setup = async (api?: LiteraryWorkApi, responseInit?: ResponseInit) => {
-		return await render(ReadComponent, {
+		return await render(ReadPage, {
 			providers: [
 				provideLiteraryWorkApiMock(api),
 				...(responseInit ? [{ provide: RESPONSE_INIT, useValue: responseInit }] : []),

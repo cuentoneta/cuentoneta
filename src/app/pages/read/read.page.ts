@@ -29,11 +29,11 @@ interface RenderableSection {
 
 @Component({
 	selector: 'cuentoneta-read',
-	templateUrl: './read.component.html',
-	providers: [{ provide: READ_HOST, useExisting: forwardRef(() => ReadComponent) }],
+	templateUrl: './read.page.html',
+	providers: [{ provide: READ_HOST, useExisting: forwardRef(() => ReadPage) }],
 	hostDirectives: [ReadMetaTagsDirective, ReadStructuredDataDirective],
 })
-export default class ReadComponent implements ReadHost {
+export default class ReadPage implements ReadHost {
 	public readonly slug = input.required<string>();
 
 	private readonly literaryWorkApi = inject(LiteraryWorkApi);
