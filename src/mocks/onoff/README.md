@@ -28,6 +28,7 @@ Mismo elenco, coexistiendo con el corpus `Story`. Diferencias de origen del cont
 - **`readingTime`:** se **deriva** del propio cuerpo (`deriveSectionReadingTime`); `totalReadingTime` lo suma la factory. No se hardcodea.
 - **Metadata** (título, slug, portada, autor, tags, publicación): literales TS en el mock, no en el `.md`.
 - **Secciones:** una por obra (`position: 0`), ya que cada obra es prosa plana. `el-odio` es la excepción: su sección lleva `title` y un `epigraphs` de un elemento, exportado aparte como `elOdioEpigraphMock` — es el **epígrafe canónico del corpus**, la fuente de la que specs y stories toman `SanitizedHtml` sin hand-authorear prosa.
+- **`editorialNote`:** vive como Markdown plano en `<slug>.editorial-note.md`, importado con `?raw`, la misma convención que `<slug>.md` para el cuerpo. Su prosa está **derivada del `summary` del mock de `Story` homónimo** (no hand-authoreada). `neron` es la **excepción deliberada**: no tiene `.editorial-note.md`, su mock de dominio omite el campo y su fixture raw lo transporta en `null` (la clave es obligatoria en el tipo generado) — es el fixture del corpus que ejercita, extremo a extremo, la rama de una obra sin nota editorial.
 
 Archivos:
 
@@ -47,7 +48,7 @@ Contraparte cruda del corpus de dominio `Story` — lo que devuelven las queries
 
 Contraparte cruda del corpus de dominio `LiteraryWork`, tipada contra `NonNullable<LiteraryWorkBySlugQueryResult>`. Alimenta los tests de la capa de datos de `LiteraryWork` (mapper/repository/service).
 
-- **LiteraryWork raw:** `<slug>.literary-work.raw.mock.ts`, export `<slugCamelCase>RawLiteraryWork`. Mono-sección; el `content[0].body` se importa desde el mismo `<slug>.md?raw` que usa el mock de dominio (sin duplicar prosa); la metadata espeja el mock de dominio homónimo.
+- **LiteraryWork raw:** `<slug>.literary-work.raw.mock.ts`, export `<slugCamelCase>RawLiteraryWork`. Mono-sección; el `content[0].body` se importa desde el mismo `<slug>.md?raw` que usa el mock de dominio (sin duplicar prosa); la metadata espeja el mock de dominio homónimo. `editorialNote` sigue la misma regla: importa el mismo `<slug>.editorial-note.md?raw` que el mock de dominio (ausente en `neron`).
 - **Agregador:** `../onoff-raw-literary-works.mock.ts` → `onoffRawLiteraryWorksMock` (las 8, en el mismo orden que `onoffLiteraryWorksMock`).
 - **Escenarios de borde** (overrides `{ ...base, … }` sobre las obras canónicas), para ejercitar el mapper y la materialización sin depender del contenido base:
   - `multiSectionRawLiteraryWork` — obra multi-sección (`sectionCount > 1`).
