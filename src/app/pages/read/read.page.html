@@ -7,8 +7,8 @@
 	</header>
 	<section class="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-8">
 		<div class="flex justify-between pt-7">
-			<span class="font-xs font-inter font-semibold">{{literaryWork.totalReadingTime}} minutos de lectura</span>
-			<button [type]="'outline'" cuentoneta-button>Compartir</button>
+			<span class="font-inter text-xs font-semibold">{{ literaryWork.totalReadingTime }} minutos de lectura</span>
+			<button cuentoneta-button type="outline">Compartir</button>
 		</div>
 		@for (section of sections(); track section.position) {
 

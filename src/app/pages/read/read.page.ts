@@ -13,9 +13,9 @@ import { LiteraryWorkApi } from '../../providers/literary-work-api.interface';
 import { ReadMetaTagsDirective } from './read-meta-tags.directive';
 import { ReadStructuredDataDirective } from './read-structured-data.directive';
 import { READ_HOST, type ReadHost } from './read-host';
-import { LiteraryWorkHeroHeaderComponent } from '@components/literary-work-hero-header/literary-work-hero-header.component';
 
-//Components
+// Components
+import { LiteraryWorkHeroHeaderComponent } from '@components/literary-work-hero-header/literary-work-hero-header.component';
 import { ButtonComponent } from '@components/button/button.component';
 
 interface RenderableEpigraph {

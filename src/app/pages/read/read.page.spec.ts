@@ -21,7 +21,7 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 	}
 }
 
-describe('ReadComponent', () => {
+describe('ReadPage', () => {
 	const setup = async (api?: LiteraryWorkApi, responseInit?: ResponseInit) => {
 		return await render(ReadPage, {
 			providers: [
@@ -38,6 +38,15 @@ describe('ReadComponent', () => {
 		expect(await screen.findByRole('heading', { level: 1, name: elOdioLiteraryWorkMock.title })).toBeTruthy();
 		expect(screen.getByText(elOdioLiteraryWorkMock.authors[0].name)).toBeTruthy();
 		expect(screen.getByText(/No empezó por nada/i)).toBeTruthy();
+	});
+
+	it('renderiza la barra de lectura con el tiempo total y el botón Compartir', async () => {
+		await setup();
+
+		expect(
+			await screen.findByText(new RegExp(`${elOdioLiteraryWorkMock.totalReadingTime} minutos de lectura`)),
+		).toBeTruthy();
+		expect(screen.getByRole('button', { name: /compartir/i })).toBeTruthy();
 	});
 
 	it('renderiza el título de sección con su ancla', async () => {
