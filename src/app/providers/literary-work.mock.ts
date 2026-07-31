@@ -8,8 +8,12 @@ import { elOdioLiteraryWorkMock } from '@mocks/onoff/el-odio.mock';
 import { LiteraryWorkApi } from './literary-work-api.interface';
 
 export class StubLiteraryWorkApi implements LiteraryWorkApi {
+	// Seam de construcción: un test puede alimentar la obra del canon que quiere ejercitar,
+	// sin hand-authorear un objeto paralelo. Default el-odio → compatible con los consumidores previos.
+	constructor(private readonly literaryWork: LiteraryWork = elOdioLiteraryWorkMock) {}
+
 	public getBySlug(): Observable<LiteraryWork> {
-		return of(elOdioLiteraryWorkMock);
+		return of(this.literaryWork);
 	}
 }
 
