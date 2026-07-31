@@ -8,7 +8,6 @@ import { throwError, type Observable } from 'rxjs';
 
 // Models
 import type { LiteraryWork } from '@models/literary-work.model';
-import { elOdioLiteraryWorkMock } from '@mocks/onoff/el-odio.mock';
 import { onoffLiteraryWorksMock, onoffLiteraryWorksWithSectionTitles } from '@mocks/onoff-literary-works.mock';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
 import type { LiteraryWorkApi } from '../../providers/literary-work-api.interface';
@@ -22,9 +21,16 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 	}
 }
 
+// Obra representativa del canon para los casos que solo necesitan una obra cualquiera (su slug, o el
+// camino de error): se toma de la colección, no por import directo de un mock específico.
+const [representativeLiteraryWork] = onoffLiteraryWorksMock;
+
+// NOTA (#1471): `ReadPage` es hoy un walking skeleton (#1853); estos tests cubren su render y sus
+// estados mínimos. Al implementar la ReadPage V3 completa en #1471 se expanden y robustecen
+// (variantes de media, sección "Más cuentos", layout V3), reemplazando estos casos transitorios.
 describe('ReadPage', () => {
 	const setup = async (
-		literaryWork: LiteraryWork = elOdioLiteraryWorkMock,
+		literaryWork: LiteraryWork,
 		options: { api?: LiteraryWorkApi; responseInit?: ResponseInit } = {},
 	) => {
 		return await render(ReadPage, {
@@ -49,7 +55,11 @@ describe('ReadPage', () => {
 	);
 
 	it('renderiza el cuerpo saneado de la obra', async () => {
-		await setup(elOdioLiteraryWorkMock);
+		const elOdio = onoffLiteraryWorksMock.find((literaryWork) => literaryWork.slug === 'el-odio');
+		if (elOdio === undefined) {
+			throw new Error('El corpus de Onoff no contiene "el-odio"');
+		}
+		await setup(elOdio);
 
 		expect(await screen.findByText(/No empezó por nada/i)).toBeTruthy();
 	});
@@ -74,7 +84,7 @@ describe('ReadPage', () => {
 
 	it('renderiza el estado not-found y marca la respuesta SSR como 404', async () => {
 		const responseInit: ResponseInit = {};
-		await setup(elOdioLiteraryWorkMock, { api: new StubFailingLiteraryWorkApi(404), responseInit });
+		await setup(representativeLiteraryWork, { api: new StubFailingLiteraryWorkApi(404), responseInit });
 
 		expect(await screen.findByText(/no encontramos esta obra/i)).toBeTruthy();
 		expect(responseInit.status).toBe(404);
@@ -82,7 +92,7 @@ describe('ReadPage', () => {
 
 	it('no marca la respuesta SSR para errores que no son 404', async () => {
 		const responseInit: ResponseInit = {};
-		await setup(elOdioLiteraryWorkMock, { api: new StubFailingLiteraryWorkApi(500), responseInit });
+		await setup(representativeLiteraryWork, { api: new StubFailingLiteraryWorkApi(500), responseInit });
 
 		expect(await screen.findByText(/no encontramos esta obra/i)).toBeTruthy();
 		expect(responseInit.status).toBeUndefined();
