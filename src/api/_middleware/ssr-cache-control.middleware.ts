@@ -1,4 +1,5 @@
 import { createMiddleware } from 'hono/factory';
+import { SLUG_PATTERN } from '@schemas/common.schemas';
 import { applyReadCacheHeaders, literaryWorkCacheTag } from '../_helpers/cache-control';
 import { environment } from '../_helpers/environment';
 
@@ -43,8 +44,12 @@ export const ssrCacheControl = createMiddleware(async (c, next) => {
 		return;
 	}
 
+	// Validar el slug del path con la misma fuente que el controller (`SLUG_PATTERN`) antes de
+	// armar el `Vercel-Cache-Tag`: un segmento con una coma partiría el tag en dos (la coma es el
+	// delimitador del header). Paridad defensiva con el resto del ACL, aunque llegar acá exige que
+	// Angular haya servido un 200 SSR real para ese path.
 	const slug = readSlugFromPath(c.req.path);
-	if (!slug) {
+	if (!SLUG_PATTERN.test(slug)) {
 		return;
 	}
 

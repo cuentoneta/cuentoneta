@@ -17,6 +17,7 @@ describe('ssrCacheControl', () => {
 		app.get('/read/la-obra', (c) => c.html('<html ng-server-context="ssr"><body>obra</body></html>'));
 		app.get('/read/csr', (c) => c.html('<html ng-server-context="csr"><body></body></html>'));
 		app.get('/read/missing', (c) => c.text('no existe', 404));
+		app.get('/read/a,b', (c) => c.html('<html ng-server-context="ssr"><body>obra</body></html>'));
 		return app;
 	}
 
@@ -55,6 +56,15 @@ describe('ssrCacheControl', () => {
 		const response = await appUnderTest().request('/read/la-obra');
 
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
+	});
+
+	it('no cachea si el slug del path no valida (evita partir el Vercel-Cache-Tag)', async () => {
+		environment.production = true;
+
+		const response = await appUnderTest().request('/read/a,b');
+
+		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
+		expect(response.headers.get('Vercel-Cache-Tag')).toBeNull();
 	});
 
 	it('no cachea respuestas no-200 (404)', async () => {
