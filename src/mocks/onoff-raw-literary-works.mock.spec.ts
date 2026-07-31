@@ -26,9 +26,11 @@ describe('onoffRawLiteraryWorksMock (corpus raw de LiteraryWork)', () => {
 	});
 
 	it('should carry the editorial note as non-empty markdown, or null when the work has none', () => {
-		for (const rawLiteraryWork of onoffRawLiteraryWorksMock) {
-			const { editorialNote } = rawLiteraryWork;
-			expect(editorialNote === null || editorialNote.trim().length > 0).toBe(true);
+		for (const { slug, editorialNote } of onoffRawLiteraryWorksMock) {
+			expect({ slug, editorialNote: editorialNote?.trim() }).toEqual({
+				slug,
+				editorialNote: editorialNote === null ? undefined : expect.stringMatching(/\S/),
+			});
 		}
 	});
 

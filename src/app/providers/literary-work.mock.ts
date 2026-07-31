@@ -8,8 +8,10 @@ import { elOdioLiteraryWorkMock } from '@mocks/onoff/el-odio.mock';
 import { LiteraryWorkApi } from './literary-work-api.interface';
 
 export class StubLiteraryWorkApi implements LiteraryWorkApi {
+	constructor(private readonly literaryWork: LiteraryWork = elOdioLiteraryWorkMock) {}
+
 	public getBySlug(): Observable<LiteraryWork> {
-		return of(elOdioLiteraryWorkMock);
+		return of(this.literaryWork);
 	}
 }
 

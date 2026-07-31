@@ -82,6 +82,15 @@ describe('HttpLiteraryWorkApi', () => {
 		expect(toWireDto(rehydrated)).toEqual(dto);
 	});
 
+	// El schema acepta el string vacío (z.string() no lo excluye), así que la guarda por truthiness
+	// del provider es alcanzable: sin ella, createSanitizedHtml lanzaría por contenido vacío.
+	it('leaves the editorial note undefined when the wire DTO carries an empty string', async () => {
+		const dto = toWireDto(elOdioLiteraryWorkMock);
+		const rehydrated = await requestBySlug({ ...dto, editorialNote: '' });
+
+		expect(rehydrated.editorialNote).toBeUndefined();
+	});
+
 	// La frontera es la última defensa antes del [innerHTML] con bypass: un backend regresado que
 	// sirviera HTML sin procesar tiene que fallar acá, no llegar al DOM.
 	it('errors the stream when the editorial note carries html the pipeline never emits', async () => {
