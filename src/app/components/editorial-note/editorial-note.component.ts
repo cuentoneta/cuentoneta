@@ -41,9 +41,6 @@ export class EditorialNoteComponent {
 		highlight: { container: 'gap-4 rounded-lg bg-brand-50 p-2', text: 'text-neutral-700' },
 	};
 
-	// El bypass es la confianza en la frontera del backend, no una sanitización propia: el brand
-	// SanitizedHtml solo lo produce el pipeline de la ACL (LITERARY_WORK_DESIGN.md §9), y sin bypass
-	// el sanitizer de Angular recortaría atributos que esa allow-list sí permite.
 	protected readonly safeContent = computed(() => this.sanitizer.bypassSecurityTrustHtml(this.content()));
 
 	protected readonly safeReference = computed(() => {
