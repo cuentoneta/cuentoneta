@@ -1,4 +1,3 @@
-import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -8,25 +7,22 @@ export type EditorialNoteVariant = 'note' | 'highlight';
 
 @Component({
 	selector: 'cuentoneta-editorial-note',
-	imports: [NgTemplateOutlet],
 	template: `
 		@if (variant() === 'highlight') {
 			<div class="w-1 self-stretch rounded-full bg-brand-400" data-testid="accent-bar"></div>
-			<blockquote [class]="bodyClasses()" data-testid="body">
-				<ng-container [ngTemplateOutlet]="body" />
-			</blockquote>
-		} @else {
-			<aside [class]="bodyClasses()" data-testid="body">
-				<ng-container [ngTemplateOutlet]="body" />
-			</aside>
 		}
-
-		<ng-template #body>
-			<div [innerHTML]="safeContent()"></div>
-			@if (safeReference(); as reference) {
-				<footer [innerHTML]="reference" class="text-end italic" data-testid="reference"></footer>
+		<figure [class]="bodyClasses()" data-testid="body">
+			@if (variant() === 'highlight') {
+				<blockquote [innerHTML]="safeContent()" data-testid="content"></blockquote>
+			} @else {
+				<aside [innerHTML]="safeContent()" data-testid="content"></aside>
 			}
-		</ng-template>
+			@if (safeReference(); as reference) {
+				<figcaption class="text-end italic" data-testid="reference">
+					<cite [innerHTML]="reference" data-testid="reference-source"></cite>
+				</figcaption>
+			}
+		</figure>
 	`,
 	host: {
 		'[class]': 'hostClasses()',

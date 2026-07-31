@@ -19,11 +19,12 @@ describe('EditorialNoteComponent', () => {
 		expect(screen.getByText('El odio se hereda como un apellido.').tagName).toBe('EM');
 	});
 
-	it('should render the reference as a right-aligned italic footer when a reference is present', async () => {
+	it('should render the reference as a right-aligned italic caption citing its source', async () => {
 		await render(EditorialNoteComponent, { inputs: { content, reference } });
 
 		expect(screen.getByText('François Onoff, cuaderno de 1969')).toBeInTheDocument();
-		expect(screen.getByTestId('reference').tagName).toBe('FOOTER');
+		expect(screen.getByTestId('reference').tagName).toBe('FIGCAPTION');
+		expect(screen.getByTestId('reference-source').tagName).toBe('CITE');
 		expect(screen.getByTestId('reference')).toHaveClass('text-end', 'italic');
 	});
 
@@ -50,16 +51,18 @@ describe('EditorialNoteComponent', () => {
 	});
 
 	// La semántica es parte del contrato, no un detalle de estilo: highlight cita a un tercero y note
-	// comenta la obra desde afuera.
-	it('should render the highlight variant as a blockquote', async () => {
+	// comenta la obra desde afuera. La figura es la que empareja el contenido con su referencia.
+	it('should render the highlight variant as a blockquote inside the figure', async () => {
 		await render(EditorialNoteComponent, { inputs: { content, variant: 'highlight' } });
 
-		expect(screen.getByTestId('body').tagName).toBe('BLOCKQUOTE');
+		expect(screen.getByTestId('body').tagName).toBe('FIGURE');
+		expect(screen.getByTestId('content').tagName).toBe('BLOCKQUOTE');
 	});
 
-	it('should render the note variant as an aside', async () => {
+	it('should render the note variant as an aside inside the figure', async () => {
 		await render(EditorialNoteComponent, { inputs: { content } });
 
-		expect(screen.getByTestId('body').tagName).toBe('ASIDE');
+		expect(screen.getByTestId('body').tagName).toBe('FIGURE');
+		expect(screen.getByTestId('content').tagName).toBe('ASIDE');
 	});
 });
