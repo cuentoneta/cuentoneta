@@ -13,6 +13,7 @@ import { LiteraryWorkApi } from '../../providers/literary-work-api.interface';
 import { ReadMetaTagsDirective } from './read-meta-tags.directive';
 import { ReadStructuredDataDirective } from './read-structured-data.directive';
 import { READ_HOST, type ReadHost } from './read-host';
+import { LiteraryWorkHeroHeaderComponent } from '@components/literary-work-hero-header/literary-work-hero-header.component';
 
 interface RenderableEpigraph {
 	readonly text: SafeHtml;
@@ -32,6 +33,7 @@ interface RenderableSection {
 	templateUrl: './read.page.html',
 	providers: [{ provide: READ_HOST, useExisting: forwardRef(() => ReadPage) }],
 	hostDirectives: [ReadMetaTagsDirective, ReadStructuredDataDirective],
+	imports: [LiteraryWorkHeroHeaderComponent],
 })
 export default class ReadPage implements ReadHost {
 	public readonly slug = input.required<string>();
