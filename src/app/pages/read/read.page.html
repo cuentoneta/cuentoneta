@@ -24,11 +24,11 @@
 			<div [innerHTML]="section.bodyHtml"></div>
 		</section>
 
-		} @if (literaryWork.editorialNote; as editorialNote) {
+		} @if (editorialNote(); as editorialNote) {
 
 		<div class="flex flex-col gap-4">
 			<h2>Nota editorial</h2>
-			<cuentoneta-editorial-note [content]="editorialNote" />
+			<cuentoneta-editorial-note [note]="editorialNote" />
 		</div>
 
 		}

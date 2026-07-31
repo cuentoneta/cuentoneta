@@ -6,6 +6,9 @@ import { DomSanitizer } from '@angular/platform-browser';
 // Utils
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 
+// Models
+import { createAttributedText } from '@models/attributed-text.model';
+
 // Services
 import { LiteraryWorkApi } from '../../providers/literary-work-api.interface';
 
@@ -70,6 +73,13 @@ export default class ReadPage implements ReadHost {
 				bodyHtml: this.sanitizer.bypassSecurityTrustHtml(section.bodyHtml),
 			})) ?? [],
 	);
+
+	// La nota editorial viaja como SanitizedHtml plano (no lleva referencia), y EditorialNote recibe
+	// un AttributedText: la adaptación es de presentación, así que vive acá y no en el agregado.
+	protected readonly editorialNote = computed(() => {
+		const editorialNote = this.literaryWork()?.editorialNote;
+		return editorialNote ? createAttributedText({ text: editorialNote }) : undefined;
+	});
 
 	private readonly respondNotFoundEffect = effect(() => {
 		const error = this.literaryWorkResource.error();
