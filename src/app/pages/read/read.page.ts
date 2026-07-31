@@ -1,7 +1,7 @@
 // Core
 import { Component, computed, effect, forwardRef, inject, input, RESPONSE_INIT } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 
 // Utils
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
