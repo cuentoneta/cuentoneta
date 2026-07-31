@@ -120,7 +120,7 @@
 		"nx": "23.1.0",
 		"nx-stylelint": "^18.0.2",
 		"only-allow": "^1.2.2",
-		"postcss": "8.5.23",
+		"postcss": "8.5.24",
 		"prettier": "^3.9.6",
 		"prettier-plugin-organize-attributes": "^1.0.0",
 		"prettier-plugin-tailwindcss": "^0.8.1",
