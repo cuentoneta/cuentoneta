@@ -2,6 +2,7 @@ import type { Author, AuthorTeaser } from './author.model';
 import type { LiteraryWorkSection } from './literary-work-section.model';
 import type { Media } from './media.model';
 import type { Resource } from './resource.model';
+import type { SanitizedHtml } from './sanitized-html.model';
 import type { Tag } from './tag.model';
 import type { IsoDateTime } from '@utils/date.utils';
 import { createSlug, type Slug } from './slug.model';
@@ -30,6 +31,9 @@ export interface LiteraryWork extends LiteraryWorkBase {
 	readonly badLanguage?: boolean;
 	readonly originalPublication: string;
 	readonly publishedAt: IsoDateTime;
+	// Paratexto editorial sobre la obra. Vive solo acá, no en LiteraryWorkBase: las tarjetas de
+	// listado y las vistas de navegación no lo muestran ni deben transportarlo.
+	readonly editorialNote?: SanitizedHtml;
 }
 
 // El teaser expone la primera sección completa (no vacía el contenido como StoryTeaser):
@@ -70,6 +74,7 @@ interface CreateLiteraryWorkOptions {
 	tags: readonly Tag[];
 	originalPublication: string;
 	publishedAt: IsoDateTime;
+	editorialNote?: SanitizedHtml;
 }
 
 export function createLiteraryWork(options: CreateLiteraryWorkOptions): LiteraryWork {

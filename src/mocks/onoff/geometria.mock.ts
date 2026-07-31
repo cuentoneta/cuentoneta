@@ -6,6 +6,7 @@ import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import geometriaMdBody from './geometria.md?raw';
+import geometriaEditorialNoteMd from './geometria.editorial-note.md?raw';
 import { authorMock } from '../author.mock';
 import { cuentoTagMock, dramaPsicologicoTagMock, filosoficoTagMock } from '../onoff-tags.mock';
 
@@ -300,5 +301,6 @@ export const geometriaLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	badLanguage: geometriaStoryMock.badLanguage,
 	tags: geometriaStoryMock.tags,
 	originalPublication: geometriaStoryMock.originalPublication,
+	editorialNote: markdownToSanitizedHtml(createMarkdown(geometriaEditorialNoteMd)),
 	publishedAt: createIsoDateTime(geometriaStoryMock.publishedAt),
 });

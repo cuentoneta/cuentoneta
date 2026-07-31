@@ -6,6 +6,7 @@ import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import lasDosAntorchasMdBody from './las-dos-antorchas.md?raw';
+import lasDosAntorchasEditorialNoteMd from './las-dos-antorchas.editorial-note.md?raw';
 import { authorMock } from '../author.mock';
 import { experimentalTagMock, metaficcionTagMock, novelaTagMock } from '../onoff-tags.mock';
 
@@ -311,5 +312,6 @@ export const lasDosAntorchasLiteraryWorkMock: LiteraryWork = createLiteraryWork(
 	badLanguage: lasDosAntorchasStoryMock.badLanguage,
 	tags: lasDosAntorchasStoryMock.tags,
 	originalPublication: lasDosAntorchasStoryMock.originalPublication,
+	editorialNote: markdownToSanitizedHtml(createMarkdown(lasDosAntorchasEditorialNoteMd)),
 	publishedAt: createIsoDateTime(lasDosAntorchasStoryMock.publishedAt),
 });

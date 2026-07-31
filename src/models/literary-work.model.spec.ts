@@ -88,6 +88,20 @@ describe('createLiteraryWork', () => {
 		);
 	});
 
+	it('keeps the editorial note in the frozen aggregate when the work has one', () => {
+		const editorialNote = createSanitizedHtml('<p>Nota editorial de la obra.</p>');
+
+		const work = createLiteraryWork(buildOptions({ editorialNote }));
+
+		expect(work.editorialNote).toBe(editorialNote);
+	});
+
+	it('leaves the editorial note undefined when the work has none', () => {
+		const work = createLiteraryWork(buildOptions());
+
+		expect(work.editorialNote).toBeUndefined();
+	});
+
 	it('delegates slug format validation to the Slug value object', () => {
 		expect(() => createLiteraryWork(buildOptions({ slug: 'La Obra' }))).toThrow('Slug inválido: "La Obra"');
 	});
