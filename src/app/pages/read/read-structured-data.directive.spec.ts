@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { DOCUMENT } from '@angular/common';
 import { signal } from '@angular/core';
 
-import { elOdioLiteraryWorkMock } from '@mocks/onoff/el-odio.mock';
+import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { type LiteraryWork } from '@models/literary-work.model';
 import { ReadStructuredDataDirective } from './read-structured-data.directive';
 import { READ_HOST } from './read-host';
@@ -39,8 +39,8 @@ describe('ReadStructuredDataDirective', () => {
 		expect(TestBed.inject(DOCUMENT).head.querySelector('script[data-schema-id="article"]')).toBeNull();
 	});
 
-	it('emite el Article y el breadcrumb cuando la obra resuelve', () => {
-		literaryWorkSignal.set(elOdioLiteraryWorkMock);
+	it.each(onoffLiteraryWorksMock)('emite el Article y el breadcrumb cuando resuelve "$slug"', (literaryWork) => {
+		literaryWorkSignal.set(literaryWork);
 
 		instantiate();
 		TestBed.tick();
@@ -55,7 +55,7 @@ describe('ReadStructuredDataDirective', () => {
 	});
 
 	it('remueve ambos bloques JSON-LD al destruirse', () => {
-		literaryWorkSignal.set(elOdioLiteraryWorkMock);
+		literaryWorkSignal.set(onoffLiteraryWorksMock[0]);
 		instantiate();
 		TestBed.tick();
 		const head = TestBed.inject(DOCUMENT).head;

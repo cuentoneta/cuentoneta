@@ -1,6 +1,7 @@
 import type { Story } from '@models/story.model';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
-import { createLiteraryWorkSection } from '@models/literary-work-section.model';
+import { createLiteraryWorkEpigraph, createLiteraryWorkSection } from '@models/literary-work-section.model';
+import { createSectionTitle } from '@models/section-title.model';
 import { createMarkdown } from '@models/markdown.model';
 import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
@@ -271,6 +272,13 @@ export const palacioNueveFronterasLiteraryWorkMock: LiteraryWork = createLiterar
 	content: [
 		createLiteraryWorkSection({
 			position: 0,
+			title: createSectionTitle('La primera frontera'),
+			epigraphs: [
+				createLiteraryWorkEpigraph({
+					text: markdownToSanitizedHtml(createMarkdown('*Toda frontera es una puerta que finge ser un muro.*')),
+					reference: markdownToSanitizedHtml(createMarkdown('François Onoff, cuaderno de 1973')),
+				}),
+			],
 			bodyHtml: markdownToSanitizedHtml(palacioNueveFronterasBody),
 			readingTime: deriveSectionReadingTime(palacioNueveFronterasBody),
 		}),
