@@ -33,10 +33,12 @@ export interface EnvironmentConfig {
 
 // Default conservador (5 minutos) del `s-maxage` de `/read` mientras el purge-on-publish
 // no esté operativo. El valor de un año se activa seteando `READ_CACHE_S_MAXAGE` en prod.
-const CONSERVATIVE_READ_CACHE_S_MAXAGE = 300;
+export const CONSERVATIVE_READ_CACHE_S_MAXAGE = 300;
 
-function resolveReadCacheSMaxAge(): number {
-	const parsed = Number(process.env['READ_CACHE_S_MAXAGE']);
+// Exportada para test: parsea el valor crudo del interruptor, con fallback al default conservador
+// ante un valor ausente, no numérico o no positivo.
+export function parseReadCacheSMaxAge(raw: string | undefined): number {
+	const parsed = Number(raw);
 	return Number.isFinite(parsed) && parsed > 0 ? parsed : CONSERVATIVE_READ_CACHE_S_MAXAGE;
 }
 
@@ -44,7 +46,7 @@ export const environment: EnvironmentConfig = {
 	production: process.env['VERCEL_TARGET_ENV'] === 'production',
 	// TODO: Mover obtención de la URL base a las variables de entorno
 	basePath: 'https://www.cuentoneta.ar',
-	readCacheSMaxAge: resolveReadCacheSMaxAge(),
+	readCacheSMaxAge: parseReadCacheSMaxAge(process.env['READ_CACHE_S_MAXAGE']),
 	sanityWebhookSecret: process.env['SANITY_WEBHOOK_SECRET'] ?? '',
 	sanity: {
 		projectId: process.env['SANITY_STUDIO_PROJECT_ID'] as string,
