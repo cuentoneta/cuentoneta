@@ -16,6 +16,10 @@ export interface EnvironmentConfig {
 	// producción arranca con el default conservador y sube a un año recién cuando el
 	// purge-on-publish está operativo, para no arriesgar contenido stale de un año.
 	readCacheSMaxAge: number;
+	// Secreto compartido con el webhook de Sanity que dispara la purga de caché on-publish.
+	// Se valida la firma HMAC del request contra este valor (#1856). Vacío por defecto:
+	// sin secreto configurado, toda firma falla y el endpoint rechaza (fail-closed).
+	sanityWebhookSecret: string;
 	sanity: {
 		token: string;
 		projectId: string;
@@ -41,6 +45,7 @@ export const environment: EnvironmentConfig = {
 	// TODO: Mover obtención de la URL base a las variables de entorno
 	basePath: 'https://www.cuentoneta.ar',
 	readCacheSMaxAge: resolveReadCacheSMaxAge(),
+	sanityWebhookSecret: process.env['SANITY_WEBHOOK_SECRET'] ?? '',
 	sanity: {
 		projectId: process.env['SANITY_STUDIO_PROJECT_ID'] as string,
 		dataset: process.env['SANITY_STUDIO_DATASET'] as string,
