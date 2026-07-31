@@ -2,6 +2,7 @@ import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 
 import { EditorialNoteComponent } from './editorial-note.component';
 import { elOdioEpigraphMock } from '@mocks/onoff/el-odio.mock';
+import { attributedTextSelectArgType, corpusAttributedTexts } from '@mocks/onoff-corpus.storybook';
 import { createAttributedText } from '@models/attributed-text.model';
 
 // Del canon: el epígrafe de El odio trae texto y referencia; la variante sin atribución reusa su texto.
@@ -79,6 +80,28 @@ export const HighlightWithReference: Story = {
 		docs: {
 			description: {
 				story: `<p>Variante <strong>highlight</strong> con pie de referencia: cuando el <code>note</code> trae <code>reference</code>, se muestra en cursiva alineada a la derecha (en contraposición al diseño de Figma). Es la misma <code>highlight</code> con referencia, no una variante propia.</p><p><strong>Usos:</strong> sin consumidor todavía; el epígrafe de sección de una obra, que casi siempre atribuye la cita.</p>`,
+			},
+		},
+	},
+};
+
+export const Interactiva: StoryObj<EditorialNoteComponent & { attributedTextIndex: number }> = {
+	argTypes: {
+		attributedTextIndex: {
+			...attributedTextSelectArgType,
+			description:
+				'Texto del corpus de François Onoff: los epígrafes de sección traen atribución y las notas editoriales no, así que el pie de la figura aparece o desaparece al cambiar de opción',
+		},
+	},
+	render: (args) => ({
+		props: { ...args, attributedTexts: corpusAttributedTexts },
+		template: `<cuentoneta-editorial-note [note]="attributedTexts[attributedTextIndex]" [variant]="variant" />`,
+	}),
+	args: { attributedTextIndex: 0, variant: 'note' },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Recorre los textos con atribución del canon: cada epígrafe de sección y cada nota editorial de las obras de Onoff, combinables con las dos variantes.</p><p><strong>Usos:</strong> comparar cómo cae el mismo tratamiento visual sobre textos de largo distinto, y ver la figura con y sin pie según el texto traiga o no su fuente.</p>`,
 			},
 		},
 	},
