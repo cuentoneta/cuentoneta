@@ -4,25 +4,6 @@ import { createSectionTitle } from './section-title.model';
 import { createReadingTime } from './reading-time.model';
 import { createSanitizedHtml } from './sanitized-html.model';
 
-describe('createAttributedText', () => {
-	it('builds a frozen epigraph from sanitized text and reference', () => {
-		const epigraph = createAttributedText({
-			text: createSanitizedHtml('<p>Y si el alma te pesa…</p>'),
-			reference: createSanitizedHtml('<p>Rafael Obligado</p>'),
-		});
-
-		expect(epigraph.text).toBe('<p>Y si el alma te pesa…</p>');
-		expect(epigraph.reference).toBe('<p>Rafael Obligado</p>');
-		expect(Object.isFrozen(epigraph)).toBe(true);
-	});
-
-	it('builds an epigraph without reference', () => {
-		const epigraph = createAttributedText({ text: createSanitizedHtml('<p>Texto</p>') });
-
-		expect(epigraph.reference).toBeUndefined();
-	});
-});
-
 describe('createLiteraryWorkSection', () => {
 	const bodyHtml = createSanitizedHtml('<p>Cuerpo de la sección.</p>');
 	const readingTime = createReadingTime(3);

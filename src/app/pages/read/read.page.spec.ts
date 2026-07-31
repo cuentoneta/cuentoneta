@@ -105,6 +105,12 @@ describe('ReadPage', () => {
 			}
 
 			expect(screen.getAllByText(new RegExp(noteWord, 'i')).length).toBeGreaterThan(0);
+
+			// La nota se pinta dentro del bloque del Design System, no suelta en la página: sin esto el
+			// caso pasaría igual con el HTML volcado directamente en el template.
+			expect(screen.getByTestId('editorial-note')).toBeTruthy();
+			// La nota no transporta atribución, así que el pie de la figura no debe existir.
+			expect(screen.queryByTestId('reference')).toBeNull();
 		},
 	);
 
