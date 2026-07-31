@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
-import { elOdioLiteraryWorkMock } from '@mocks/onoff/el-odio.mock';
+import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { type LiteraryWork } from '@models/literary-work.model';
 import { AppRoutes } from '../../app.routes';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
@@ -39,30 +39,30 @@ describe('ReadMetaTagsDirective', () => {
 		expect(titleSpy).not.toHaveBeenCalled();
 	});
 
-	it('setea el título con el byline multi-autor cuando la obra resuelve', () => {
-		literaryWorkSignal.set(elOdioLiteraryWorkMock);
+	it.each(onoffLiteraryWorksMock)('setea el título con el byline para "$slug"', (literaryWork) => {
+		literaryWorkSignal.set(literaryWork);
 		const titleSpy = spyOn(TestBed.inject(Title), 'setTitle');
 
 		instantiate();
 		TestBed.tick();
 
 		expect(titleSpy).toHaveBeenCalledWith(
-			expect.stringContaining(`${elOdioLiteraryWorkMock.title} - ${elOdioLiteraryWorkMock.authors[0].name}`),
+			expect.stringContaining(`${literaryWork.title} - ${literaryWork.authors[0].name}`),
 		);
 	});
 
-	it('setea la URL canónica de /read desde el slug de la obra', () => {
-		literaryWorkSignal.set(elOdioLiteraryWorkMock);
+	it.each(onoffLiteraryWorksMock)('setea la URL canónica de /read desde el slug de "$slug"', (literaryWork) => {
+		literaryWorkSignal.set(literaryWork);
 		const canonicalSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setCanonicalUrl');
 
 		instantiate();
 		TestBed.tick();
 
-		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl(`${AppRoutes.Read}/${elOdioLiteraryWorkMock.slug}`));
+		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl(`${AppRoutes.Read}/${literaryWork.slug}`));
 	});
 
 	it('marca la página como indexable', () => {
-		literaryWorkSignal.set(elOdioLiteraryWorkMock);
+		literaryWorkSignal.set(onoffLiteraryWorksMock[0]);
 		const robotsSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setRobots');
 
 		instantiate();
