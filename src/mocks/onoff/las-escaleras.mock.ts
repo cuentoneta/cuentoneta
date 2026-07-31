@@ -6,6 +6,7 @@ import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import lasEscalerasMdBody from './las-escaleras.md?raw';
+import lasEscalerasEditorialNoteMd from './las-escaleras.editorial-note.md?raw';
 import { authorMock } from '../author.mock';
 import { absurdoTagMock, alegoriaTagMock, novelaTagMock } from '../onoff-tags.mock';
 
@@ -287,5 +288,6 @@ export const lasEscalerasLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	badLanguage: lasEscalerasStoryMock.badLanguage,
 	tags: lasEscalerasStoryMock.tags,
 	originalPublication: lasEscalerasStoryMock.originalPublication,
+	editorialNote: markdownToSanitizedHtml(createMarkdown(lasEscalerasEditorialNoteMd)),
 	publishedAt: createIsoDateTime(lasEscalerasStoryMock.publishedAt),
 });

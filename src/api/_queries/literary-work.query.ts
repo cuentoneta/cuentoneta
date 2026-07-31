@@ -2,6 +2,11 @@ import { defineQuery } from 'groq';
 
 // Proyección de metadata compartida por la query full y la de sección: todo salvo el array `content`.
 // Se repite en ambas (defineQuery necesita literales para el typegen), no se concatena.
+//
+// `editorialNote` va sin `coalesce` a diferencia del resto: su destino en el dominio es un
+// `SanitizedHtml`, cuya factory rechaza el contenido vacío, así que un default de string vacío haría
+// lanzar el mapeo de toda obra sin nota. La ausencia se representa como `null` y el repository la
+// traduce a campo ausente.
 
 export const literaryWorkBySlugQuery = defineQuery(`
 *[_type == 'literaryWork' && slug.current == $slug && !(_id in path('drafts.**'))]
@@ -10,6 +15,7 @@ export const literaryWorkBySlugQuery = defineQuery(`
     'slug': slug.current,
     title,
     coverImage,
+    editorialNote,
     'badLanguage': coalesce(badLanguage, false),
     'originalPublication': coalesce(originalPublication, ''),
     'publishedAt': coalesce(publishedAt, _createdAt),
@@ -83,6 +89,7 @@ export const literaryWorkSectionBySlugQuery = defineQuery(`
     'slug': slug.current,
     title,
     coverImage,
+    editorialNote,
     'badLanguage': coalesce(badLanguage, false),
     'originalPublication': coalesce(originalPublication, ''),
     'publishedAt': coalesce(publishedAt, _createdAt),

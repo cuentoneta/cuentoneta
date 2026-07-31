@@ -58,6 +58,7 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 			tags: mapTags(raw.tags),
 			originalPublication: raw.originalPublication,
 			publishedAt: createIsoDateTime(raw.publishedAt),
+			editorialNote: raw.editorialNote ? markdownToSanitizedHtml(createMarkdown(raw.editorialNote)) : undefined,
 		};
 	}
 

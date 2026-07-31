@@ -6,6 +6,7 @@ import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import elTratadoDeLosPlaceresMdBody from './el-tratado-de-los-placeres.md?raw';
+import elTratadoDeLosPlaceresEditorialNoteMd from './el-tratado-de-los-placeres.editorial-note.md?raw';
 import { authorMock } from '../author.mock';
 import { ensayoTagMock, filosoficoTagMock, metaficcionTagMock } from '../onoff-tags.mock';
 
@@ -302,5 +303,6 @@ export const elTratadoDeLosPlaceresLiteraryWorkMock: LiteraryWork = createLitera
 	badLanguage: elTratadoDeLosPlaceresStoryMock.badLanguage,
 	tags: elTratadoDeLosPlaceresStoryMock.tags,
 	originalPublication: elTratadoDeLosPlaceresStoryMock.originalPublication,
+	editorialNote: markdownToSanitizedHtml(createMarkdown(elTratadoDeLosPlaceresEditorialNoteMd)),
 	publishedAt: createIsoDateTime(elTratadoDeLosPlaceresStoryMock.publishedAt),
 });

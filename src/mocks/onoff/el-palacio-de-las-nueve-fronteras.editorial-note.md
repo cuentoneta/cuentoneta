@@ -1,0 +1,1 @@
+La novela se organiza en nueve fronteras —territorios donde ninguna ley vale del todo y ninguna lengua se habla por completo— y la cruza un narrador que escribe para devolverle algo a un hombre cuyo cuerpo cayó ante su vista: «ese cuerpo necesitaba un aliento… esos ojos vacíos, una mirada; esos labios, un último gemido… y ese sueño, algún durmiente».

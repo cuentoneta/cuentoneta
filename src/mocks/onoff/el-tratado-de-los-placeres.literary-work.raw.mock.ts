@@ -1,6 +1,7 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import elTratadoDeLosPlaceresMdBody from './el-tratado-de-los-placeres.md?raw';
+import elTratadoDeLosPlaceresEditorialNoteMd from './el-tratado-de-los-placeres.editorial-note.md?raw';
 
 // Contraparte raw (shape crudo de Sanity) del corpus LiteraryWork — mono-sección, prosa plana.
 // Espeja la metadata de `elTratadoDeLosPlaceresLiteraryWorkMock` (./el-tratado-de-los-placeres.mock.ts).
@@ -12,6 +13,7 @@ export const elTratadoDeLosPlaceresRawLiteraryWork: NonNullable<LiteraryWorkBySl
 		_type: 'image',
 		asset: { _type: 'reference', _ref: 'image-ff13dcee67b52bc4bbd78c2c7900f466f335badd-236x328-png' },
 	},
+	editorialNote: elTratadoDeLosPlaceresEditorialNoteMd,
 	badLanguage: false,
 	originalPublication: 'Éditions du Méridien (1981)',
 	publishedAt: '1981-01-01T00:00:00Z',

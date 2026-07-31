@@ -7,6 +7,7 @@ import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import elOdioMdBody from './el-odio.md?raw';
+import elOdioEditorialNoteMd from './el-odio.editorial-note.md?raw';
 import { authorMock } from '../author.mock';
 import { dramaPsicologicoTagMock, novelaTagMock } from '../onoff-tags.mock';
 
@@ -305,5 +306,6 @@ export const elOdioLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	badLanguage: elOdioStoryMock.badLanguage,
 	tags: elOdioStoryMock.tags,
 	originalPublication: elOdioStoryMock.originalPublication,
+	editorialNote: markdownToSanitizedHtml(createMarkdown(elOdioEditorialNoteMd)),
 	publishedAt: createIsoDateTime(elOdioStoryMock.publishedAt),
 });

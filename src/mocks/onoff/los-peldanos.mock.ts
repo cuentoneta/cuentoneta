@@ -6,6 +6,7 @@ import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import losPeldanosMdBody from './los-peldanos.md?raw';
+import losPeldanosEditorialNoteMd from './los-peldanos.editorial-note.md?raw';
 import { authorMock } from '../author.mock';
 import { absurdoTagMock, cuentoTagMock, surrealismoTagMock } from '../onoff-tags.mock';
 
@@ -290,5 +291,6 @@ export const losPeldanosLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	badLanguage: losPeldanosStoryMock.badLanguage,
 	tags: losPeldanosStoryMock.tags,
 	originalPublication: losPeldanosStoryMock.originalPublication,
+	editorialNote: markdownToSanitizedHtml(createMarkdown(losPeldanosEditorialNoteMd)),
 	publishedAt: createIsoDateTime(losPeldanosStoryMock.publishedAt),
 });

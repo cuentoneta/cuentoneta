@@ -18,6 +18,9 @@ docs {
   Obtener una obra literaria completa por su slug.
   Slug inexistente responde 404 con body { error } — ver docs/LITERARY_WORK_DESIGN.md §7.
 
+  `editorialNote` (HTML saneado) solo está presente en la respuesta cuando la obra tiene nota
+  editorial — ausente u obra sin nota ⇒ el campo no viaja (no un string vacío).
+
   Slugs del corpus de Onoff (fuente: src/mocks/onoff-literary-works.mock.ts):
   - el-palacio-de-las-nueve-fronteras
   - geometria
@@ -26,5 +29,5 @@ docs {
   - el-odio
   - el-tratado-de-los-placeres
   - las-dos-antorchas
-  - neron
+  - neron (sin editorialNote)
 }

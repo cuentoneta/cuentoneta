@@ -1,6 +1,7 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import losPeldanosMdBody from './los-peldanos.md?raw';
+import losPeldanosEditorialNoteMd from './los-peldanos.editorial-note.md?raw';
 
 // Contraparte raw (shape crudo de Sanity) del corpus LiteraryWork — mono-sección, prosa plana.
 // Espeja la metadata de `losPeldanosLiteraryWorkMock` (./los-peldanos.mock.ts).
@@ -12,6 +13,7 @@ export const losPeldanosRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResu
 		_type: 'image',
 		asset: { _type: 'reference', _ref: 'image-27fb05f42b38f0ba9ba21aeb566e25abe670b213-236x328-png' },
 	},
+	editorialNote: losPeldanosEditorialNoteMd,
 	badLanguage: false,
 	originalPublication: 'Éditions du Méridien (1977)',
 	publishedAt: '1977-01-01T00:00:00Z',

@@ -1,0 +1,1 @@
+Su tercer capítulo, «El regreso del druso», contiene el discurso del príncipe Cosme antes de colocar los mosaicos: un parque poblado de hombres arrodillados y bailarines abandonados, con frescos de figuras en cuclillas en la sombra.

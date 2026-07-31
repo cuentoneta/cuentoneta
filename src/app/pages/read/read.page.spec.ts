@@ -8,7 +8,12 @@ import { throwError, type Observable } from 'rxjs';
 
 // Models
 import type { LiteraryWork } from '@models/literary-work.model';
-import { onoffLiteraryWorksMock, onoffLiteraryWorksWithSectionTitles } from '@mocks/onoff-literary-works.mock';
+import {
+	onoffLiteraryWorksMock,
+	onoffLiteraryWorksWithEditorialNote,
+	onoffLiteraryWorksWithoutEditorialNote,
+	onoffLiteraryWorksWithSectionTitles,
+} from '@mocks/onoff-literary-works.mock';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
 import type { LiteraryWorkApi } from '../../providers/literary-work-api.interface';
 import ReadPage from './read.page';
@@ -83,6 +88,33 @@ describe('ReadPage', () => {
 
 			const heading = await screen.findByRole('heading', { level: 2, name: sectionTitle.value });
 			expect(heading.getAttribute('id')).toBe(sectionTitle.toAnchor());
+		},
+	);
+
+	it.each(onoffLiteraryWorksWithEditorialNote)(
+		'renderiza la nota editorial de "$slug" bajo su propio encabezado',
+		async (literaryWork) => {
+			await setup(literaryWork);
+
+			expect(await screen.findByRole('heading', { level: 2, name: 'Nota editorial' })).toBeTruthy();
+
+			const noteText = (literaryWork.editorialNote ?? '').replace(/<[^>]+>/g, ' ');
+			const [noteWord] = noteText.match(/\p{L}{6,}/gu) ?? [];
+			if (noteWord === undefined) {
+				throw new Error(`La nota editorial de "${literaryWork.slug}" no tiene texto`);
+			}
+
+			expect(screen.getAllByText(new RegExp(noteWord, 'i')).length).toBeGreaterThan(0);
+		},
+	);
+
+	it.each(onoffLiteraryWorksWithoutEditorialNote)(
+		'omite el bloque de nota editorial en "$slug", que no la tiene',
+		async (literaryWork) => {
+			await setup(literaryWork);
+
+			expect(await screen.findByRole('heading', { level: 1, name: literaryWork.title })).toBeTruthy();
+			expect(screen.queryByRole('heading', { level: 2, name: 'Nota editorial' })).toBeNull();
 		},
 	);
 

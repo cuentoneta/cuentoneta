@@ -64,6 +64,7 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 			tags: dto.tags,
 			originalPublication: dto.originalPublication,
 			publishedAt: createIsoDateTime(dto.publishedAt),
+			editorialNote: dto.editorialNote ? createSanitizedHtml(dto.editorialNote) : undefined,
 		});
 	}
 }

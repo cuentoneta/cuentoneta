@@ -7,6 +7,7 @@ import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import palacioNueveFronterasMdBody from './el-palacio-de-las-nueve-fronteras.md?raw';
+import elPalacioDeLasNueveFronterasEditorialNoteMd from './el-palacio-de-las-nueve-fronteras.editorial-note.md?raw';
 import { authorMock } from '../author.mock';
 import { dramaPsicologicoTagMock, metaficcionTagMock, novelaTagMock } from '../onoff-tags.mock';
 
@@ -288,5 +289,6 @@ export const palacioNueveFronterasLiteraryWorkMock: LiteraryWork = createLiterar
 	badLanguage: palacioNueveFronterasStoryMock.badLanguage,
 	tags: palacioNueveFronterasStoryMock.tags,
 	originalPublication: palacioNueveFronterasStoryMock.originalPublication,
+	editorialNote: markdownToSanitizedHtml(createMarkdown(elPalacioDeLasNueveFronterasEditorialNoteMd)),
 	publishedAt: createIsoDateTime(palacioNueveFronterasStoryMock.publishedAt),
 });

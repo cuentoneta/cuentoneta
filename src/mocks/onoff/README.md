@@ -29,6 +29,7 @@ Mismo elenco, coexistiendo con el corpus `Story`. Diferencias de origen del cont
 - **Metadata** (título, slug, portada, autor, tags, publicación): literales TS en el mock, no en el `.md`.
 - **Secciones:** una por obra (`position: 0`). La mayoría es prosa plana (sin `title` ni `epigraphs`), pero un subconjunto — `el-odio`, `el-palacio-de-las-nueve-fronteras`, `geometria` — lleva `title` (`SectionTitle`) + `epigraphs` para darle sustancia a los selectores por capacidad del canon (`onoffLiteraryWorksWithSectionTitles` / `onoffLiteraryWorksWithEpigraphs` en `onoff-literary-works.mock.ts`).
 - **`epigraphs`:** cada obra que lleva uno lo declara como export nombrado (`<slugCamelCase>EpigraphMock`) y lo consume desde su propia sección, para que specs y stories puedan tomar un epígrafe concreto sin hand-authorear prosa. El conjunto de todos vive en `../onoff-literary-works.mock.ts` → `onoffLiteraryWorkEpigraphsMock`, **derivado** del corpus (no una lista en paralelo): quien necesita el shape `{ text, reference? }` y no la obra que lo contiene lo toma de ahí.
+- **`editorialNote`:** vive como Markdown plano en `<slug>.editorial-note.md`, importado con `?raw`, la misma convención que `<slug>.md` para el cuerpo. Su prosa está **derivada del `summary` del mock de `Story` homónimo** (no hand-authoreada). `neron` es la **excepción deliberada**: no tiene `.editorial-note.md`, su mock de dominio omite el campo y su fixture raw lo transporta en `null` (la clave es obligatoria en el tipo generado) — es el fixture que sostiene el selector `onoffLiteraryWorksWithoutEditorialNote` y ejercita, extremo a extremo, la rama de una obra sin nota.
 
 Archivos:
 
@@ -48,7 +49,7 @@ Contraparte cruda del corpus de dominio `Story` — lo que devuelven las queries
 
 Contraparte cruda del corpus de dominio `LiteraryWork`, tipada contra `NonNullable<LiteraryWorkBySlugQueryResult>`. Alimenta los tests de la capa de datos de `LiteraryWork` (mapper/repository/service).
 
-- **LiteraryWork raw:** `<slug>.literary-work.raw.mock.ts`, export `<slugCamelCase>RawLiteraryWork`. Mono-sección; el `content[0].body` se importa desde el mismo `<slug>.md?raw` que usa el mock de dominio (sin duplicar prosa); la metadata espeja el mock de dominio homónimo.
+- **LiteraryWork raw:** `<slug>.literary-work.raw.mock.ts`, export `<slugCamelCase>RawLiteraryWork`. Mono-sección; el `content[0].body` se importa desde el mismo `<slug>.md?raw` que usa el mock de dominio (sin duplicar prosa); la metadata espeja el mock de dominio homónimo. `editorialNote` sigue la misma regla: importa el mismo `<slug>.editorial-note.md?raw` que el mock de dominio (ausente en `neron`).
 - **Agregador:** `../onoff-raw-literary-works.mock.ts` → `onoffRawLiteraryWorksMock` (las 8, en el mismo orden que `onoffLiteraryWorksMock`).
 - **Escenarios de borde** (overrides `{ ...base, … }` sobre las obras canónicas), para ejercitar el mapper y la materialización sin depender del contenido base:
   - `multiSectionRawLiteraryWork` — obra multi-sección (`sectionCount > 1`).
