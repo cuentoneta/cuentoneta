@@ -249,16 +249,18 @@ interface LiteraryWork {
 interface LiteraryWorkSection {
 	position: number; // Identidad numérica en la obra (0-based, igual al índice del array en el CMS)
 	chapterTitle?: ChapterTitle; // Opcional; expone toAnchor(): Slug para anclas
-	epigraphs?: LiteraryWorkEpigraph[]; // 0..N epígrafes por sección
+	epigraphs?: AttributedText[]; // 0..N epígrafes por sección
 	bodyHtml: SanitizedHtml; // HTML saneado server-side (nunca markdown crudo)
 	readingTime: ReadingTime; // Minutos de lectura de la sección
 }
 
-interface LiteraryWorkEpigraph {
+interface AttributedText {
 	text: SanitizedHtml; // Markdown saneado a HTML (mismo pipeline que el cuerpo)
 	reference?: SanitizedHtml; // Atribución, también markdown saneado (paridad con Story.Epigraph)
 }
 ```
+
+`AttributedText` nombra la **forma** —un bloque de texto con atribución opcional— y no un rol: la comparten el epígrafe de una sección (cita a un tercero) y `editorialNote` de `LiteraryWork` (comentario de la redacción, no cita a nadie; en el dominio es un `SanitizedHtml` plano, no un `AttributedText`, y el frontend lo adapta al construir el binding del componente que lo renderiza). No está brandeado: su factory `createAttributedText` es composición pura sin invariante propia, la sostienen los `SanitizedHtml` de sus campos.
 
 **Invariantes de Negocio:**
 
