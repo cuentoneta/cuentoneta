@@ -1,5 +1,5 @@
 import { createMiddleware } from 'hono/factory';
-import { readCacheControl } from '../_helpers/cache-control';
+import { applyReadCacheHeaders, literaryWorkCacheTag } from '../_helpers/cache-control';
 import { environment } from '../_helpers/environment';
 
 // Angular SSR embebe este marcador SOLO en HTML server-rendered real. El fallback CSR
@@ -8,8 +8,15 @@ import { environment } from '../_helpers/environment';
 // una página vacía durante todo el TTL (con `s-maxage=1año`, hasta un año). Ver #1856 / PR #1730.
 const SSR_MARKER = 'ng-server-context="ssr"';
 
+// El middleware se monta en `/read/*`, así que el path siempre arranca con este prefijo.
+const READ_PATH_PREFIX = '/read/';
+
+function readSlugFromPath(path: string): string {
+	return path.slice(READ_PATH_PREFIX.length).split('/')[0];
+}
+
 /**
- * Emite `Cache-Control` cacheable en el borde para las respuestas SSR válidas de `/read/*`.
+ * Emite los headers de caché de borde para las respuestas SSR válidas de `/read/*`.
  *
  * Guarda anti-CSR: bufferiza e inspecciona el body (`c.res.clone().text()`) para confirmar que
  * es SSR real antes de cachear. Esto sacrifica el streaming del primer byte —acotado a `/read/*`
@@ -17,8 +24,8 @@ const SSR_MARKER = 'ng-server-context="ssr"';
  * distinguir el SSR real del fallback CSR degradado. No cachea en no-producción (coherente con
  * `noindexNonProduction`), ni respuestas no-200 (404/500), ni el fallback CSR.
  *
- * La cache key del CDN de Vercel incluye el query string, así que `?section=N` cachea por variante
- * sin código extra.
+ * La cache key del CDN de Vercel incluye el query string, así que `?section=N` cachea por variante;
+ * el tag por slug (`applyReadCacheHeaders`) agrupa todas esas variantes para una purga única.
  */
 export const ssrCacheControl = createMiddleware(async (c, next) => {
 	await next();
@@ -36,5 +43,10 @@ export const ssrCacheControl = createMiddleware(async (c, next) => {
 		return;
 	}
 
-	c.header('Cache-Control', readCacheControl());
+	const slug = readSlugFromPath(c.req.path);
+	if (!slug) {
+		return;
+	}
+
+	applyReadCacheHeaders(c, literaryWorkCacheTag(slug));
 });

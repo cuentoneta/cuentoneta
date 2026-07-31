@@ -28,27 +28,29 @@ describe('literaryWorkController', () => {
 		expect(body.error).toContain('no-existe');
 	});
 
-	it('emite Cache-Control cacheable en el 200 en producción', async () => {
+	it('emite los headers de caché de borde y el tag por slug en el 200 en producción', async () => {
 		environment.production = true;
 
 		const response = await controller.request(`/${knownSlug}`);
 
-		expect(response.headers.get('Cache-Control')).toContain('public, s-maxage=');
+		expect(response.headers.get('Vercel-CDN-Cache-Control')).toContain('public, s-maxage=');
+		expect(response.headers.get('Vercel-Cache-Tag')).toBe(`literary-work:${knownSlug}`);
 	});
 
-	it('no emite Cache-Control fuera de producción', async () => {
+	it('no emite headers de caché fuera de producción', async () => {
 		environment.production = false;
 
 		const response = await controller.request(`/${knownSlug}`);
 
-		expect(response.headers.get('Cache-Control')).toBeNull();
+		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
+		expect(response.headers.get('Vercel-Cache-Tag')).toBeNull();
 	});
 
-	it('no emite Cache-Control en el 404', async () => {
+	it('no emite headers de caché en el 404', async () => {
 		environment.production = true;
 
 		const response = await controller.request('/no-existe');
 
-		expect(response.headers.get('Cache-Control')).toBeNull();
+		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
 	});
 });

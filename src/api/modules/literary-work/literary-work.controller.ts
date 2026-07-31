@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 
 import { slugSchema } from '@schemas/common.schemas';
-import { readCacheControl } from '../../_helpers/cache-control';
+import { applyReadCacheHeaders, literaryWorkCacheTag } from '../../_helpers/cache-control';
 import { environment } from '../../_helpers/environment';
 import { LiteraryWorkNotFoundError } from './literary-work.errors';
 import type { LiteraryWorkRepository } from './literary-work.repository';
@@ -17,9 +17,10 @@ export function createLiteraryWorkController(repository?: LiteraryWorkRepository
 		try {
 			const literaryWork = await getLiteraryWorkBySlug(slug, repository);
 			// Misma caché de borde que la página SSR de `/read` (el JSON es determinístico, sin
-			// riesgo de fallback CSR): header inline solo en el 200 y solo en producción.
+			// riesgo de fallback CSR): headers inline solo en el 200 y solo en producción, con el
+			// mismo tag por slug que la página para que la purga on-publish cubra ambas superficies.
 			if (environment.production) {
-				c.header('Cache-Control', readCacheControl());
+				applyReadCacheHeaders(c, literaryWorkCacheTag(slug));
 			}
 			return c.json(literaryWork);
 		} catch (error) {
