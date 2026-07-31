@@ -1,4 +1,3 @@
-import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -8,23 +7,22 @@ export type EditorialNoteVariant = 'note' | 'highlight';
 
 @Component({
 	selector: 'cuentoneta-editorial-note',
-	imports: [NgTemplateOutlet],
 	template: `
 		@if (variant() === 'highlight') {
 			<div class="w-1 self-stretch rounded-full bg-brand-400" data-testid="accent-bar"></div>
-			<blockquote [class]="bodyClasses()" data-testid="body">
-				<div [outerHtml]="safeContent()"></div>
-			</blockquote>
-		} @else {
-			<aside [class]="bodyClasses()" data-testid="body">
-				<div [outerHtml]="safeContent()"></div>
-			</aside>
 		}
-		@if (safeReference(); as reference) {
-			<figcaption>
-				<cite [innerHTML]="reference" class="text-end italic" data-testid="reference"></cite>
-			</figcaption>
-		}
+		<figure [class]="bodyClasses()" data-testid="body">
+			@if (variant() === 'highlight') {
+				<blockquote [innerHTML]="safeContent()" data-testid="content"></blockquote>
+			} @else {
+				<aside [innerHTML]="safeContent()" data-testid="content"></aside>
+			}
+			@if (safeReference(); as reference) {
+				<figcaption class="text-end italic" data-testid="reference">
+					<cite [innerHTML]="reference" data-testid="reference-source"></cite>
+				</figcaption>
+			}
+		</figure>
 	`,
 	host: {
 		'[class]': 'hostClasses()',
@@ -43,6 +41,9 @@ export class EditorialNoteComponent {
 		highlight: { container: 'gap-4 rounded-lg bg-brand-50 p-2', text: 'text-neutral-700' },
 	};
 
+	// El bypass es la confianza en la frontera del backend, no una sanitización propia: el brand
+	// SanitizedHtml solo lo produce el pipeline de la ACL (LITERARY_WORK_DESIGN.md §9), y sin bypass
+	// el sanitizer de Angular recortaría atributos que esa allow-list sí permite.
 	protected readonly safeContent = computed(() => this.sanitizer.bypassSecurityTrustHtml(this.content()));
 
 	protected readonly safeReference = computed(() => {
