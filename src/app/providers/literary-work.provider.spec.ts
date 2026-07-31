@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import type { LiteraryWork } from '@models/literary-work.model';
 import { elOdioLiteraryWorkMock } from '@mocks/onoff/el-odio.mock';
+import { neronLiteraryWorkMock } from '@mocks/onoff/neron.mock';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
 import { HttpLiteraryWorkApi } from './literary-work.provider';
@@ -64,6 +65,31 @@ describe('HttpLiteraryWorkApi', () => {
 		// authors: [] pasa el schema de zod (array vacío es shape válido) pero viola la invariante
 		// de dominio: la factory es la que lanza, no zod.
 		await expect(requestBySlug({ ...dto, authors: [] })).rejects.toThrow(/sin autores/);
+	});
+
+	it('rehydrates the editorial note as sanitized html', async () => {
+		const dto = toWireDto(elOdioLiteraryWorkMock);
+		const rehydrated = await requestBySlug(dto);
+
+		expect(rehydrated.editorialNote).toBe(elOdioLiteraryWorkMock.editorialNote);
+	});
+
+	it('leaves the editorial note undefined when the wire DTO carries none', async () => {
+		const dto = toWireDto(neronLiteraryWorkMock);
+		const rehydrated = await requestBySlug(dto);
+
+		expect(rehydrated.editorialNote).toBeUndefined();
+		expect(toWireDto(rehydrated)).toEqual(dto);
+	});
+
+	// La frontera es la última defensa antes del [innerHTML] con bypass: un backend regresado que
+	// sirviera HTML sin procesar tiene que fallar acá, no llegar al DOM.
+	it('errors the stream when the editorial note carries html the pipeline never emits', async () => {
+		const dto = toWireDto(elOdioLiteraryWorkMock);
+
+		await expect(requestBySlug({ ...dto, editorialNote: '<p>Hola</p><script>alert(1)</script>' })).rejects.toThrow(
+			/no pasó por el pipeline de sanitización/,
+		);
 	});
 
 	it('errors the stream when the wire shape violates the DTO schema', async () => {

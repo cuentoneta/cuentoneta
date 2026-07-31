@@ -37,6 +37,7 @@ export const literaryWorkDtoSchema = z.object({
 	badLanguage: z.boolean().optional(),
 	originalPublication: z.string(),
 	publishedAt: z.string(),
+	editorialNote: z.string().optional(),
 });
 
 export type LiteraryWorkEpigraphDto = z.infer<typeof literaryWorkEpigraphDtoSchema>;
