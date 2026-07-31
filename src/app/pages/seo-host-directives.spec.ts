@@ -24,7 +24,7 @@ function sourceFileForRoute(path: string): string {
 		throw new Error(`Ruta '${path}' está en app.routes.server.ts pero no tiene un loadComponent en app.routes.ts`);
 	}
 	const reference = appRoute.loadComponent.toString();
-	const match = reference.match(/["']([^"']*pages\/[^"']+\.component\.ts)["']/);
+	const match = reference.match(/["']([^"']*pages\/[^"']+\.(?:component|page)\.ts)["']/);
 	if (!match) {
 		throw new Error(`No se pudo extraer el archivo fuente del loadComponent de la ruta '${path}': ${reference}`);
 	}
