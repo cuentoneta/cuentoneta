@@ -5,6 +5,7 @@ import {
 	onoffRawLiteraryWorksMock,
 	unmaterializedRawLiteraryWork,
 } from '@mocks/onoff-raw-literary-works.mock';
+import { neronRawLiteraryWork } from '@mocks/onoff/neron.literary-work.raw.mock';
 import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity';
 
 // El repository solo hace `fetch` (sin escritura), así que el spy del client implementa solo eso; se
@@ -61,6 +62,27 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 		};
 
 		await expect(repoReturning(broken).fetchBySlug('x')).rejects.toThrow('Markdown inválido: contenido vacío');
+	});
+
+	it('convierte la nota editorial por el pipeline de sanitización', async () => {
+		const literaryWork = await repoReturning(onoffRawLiteraryWorksMock[0]).fetchBySlug('x');
+
+		expect(literaryWork?.editorialNote).toContain('<p>');
+		expect(literaryWork?.editorialNote).not.toContain('**');
+	});
+
+	it('mapea a undefined la nota editorial de una obra que no la tiene', async () => {
+		const literaryWork = await repoReturning(neronRawLiteraryWork).fetchBySlug('neron');
+
+		expect(literaryWork?.editorialNote).toBeUndefined();
+	});
+
+	// Un coalesce a string vacío en la query haría lanzar a createMarkdown para toda obra sin nota:
+	// la guarda por truthiness cubre el null y el vacío por igual.
+	it('mapea a undefined una nota editorial vacía, sin lanzar', async () => {
+		const literaryWork = await repoReturning({ ...onoffRawLiteraryWorksMock[0], editorialNote: '' }).fetchBySlug('x');
+
+		expect(literaryWork?.editorialNote).toBeUndefined();
 	});
 
 	it('devuelve null para un slug desconocido', async () => {
