@@ -55,13 +55,17 @@ describe('ReadPage', () => {
 	);
 
 	it('renderiza el cuerpo saneado de la obra', async () => {
-		const elOdio = onoffLiteraryWorksMock.find((literaryWork) => literaryWork.slug === 'el-odio');
-		if (elOdio === undefined) {
-			throw new Error('El corpus de Onoff no contiene "el-odio"');
-		}
-		await setup(elOdio);
+		await setup(representativeLiteraryWork);
 
-		expect(await screen.findByText(/No empezó por nada/i)).toBeTruthy();
+		// Una palabra del cuerpo saneado (sin tags) de la propia obra, para verificar que el bodyHtml
+		// se renderiza — derivada de la obra, no un texto clavado de una obra concreta.
+		const bodyText = representativeLiteraryWork.content[0].bodyHtml.replace(/<[^>]+>/g, ' ');
+		const [bodyWord] = bodyText.match(/\p{L}{6,}/gu) ?? [];
+		if (bodyWord === undefined) {
+			throw new Error(`La primera sección de "${representativeLiteraryWork.slug}" no tiene texto de cuerpo`);
+		}
+
+		expect((await screen.findAllByText(new RegExp(bodyWord, 'i'))).length).toBeGreaterThan(0);
 	});
 
 	it.each(onoffLiteraryWorksWithSectionTitles)(
