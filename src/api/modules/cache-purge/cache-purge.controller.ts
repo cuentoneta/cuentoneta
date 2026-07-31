@@ -26,6 +26,10 @@ export function createCachePurgeController(repository: CachePurgeRepository = ne
 
 	controller.post('/', async (c) => {
 		const signature = c.req.header(SIGNATURE_HEADER_NAME);
+		// El body se lee entero para validar la firma HMAC sobre el crudo. No se acota el tamaño en la
+		// app: el despliegue es Vercel, cuyo límite de payload de plataforma (~4.5 MB) rechaza el body
+		// antes de que la función lo vea, así que un cliente no autenticado no puede forzar buffering
+		// arbitrario. Sanity envía webhooks de unos pocos KB.
 		const rawBody = await c.req.text();
 
 		if (!signature || !(await isValidSignature(rawBody, signature, environment.sanityWebhookSecret))) {
