@@ -107,6 +107,13 @@ export default defineType({
 			of: [section],
 			validation: (Rule) => Rule.required().min(1),
 		}),
+		defineField({
+			name: 'editorialNote',
+			title: 'Nota editorial',
+			description:
+				'Opcional. Comentario editorial sobre la obra: contexto de la publicación original, datos vinculados, por qué la curamos. No es una reseña crítica ni parte del texto de la obra.',
+			type: 'markdown',
+		}),
 		// Total de la obra, en minutos. Editable y opcional a propósito: en obras de texto lo completa
 		// el backend con la suma de las secciones, sin pisar un valor ya cargado; en
 		// recitados/audiovisuales el editor setea a mano la duración del medio.

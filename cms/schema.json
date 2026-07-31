@@ -922,6 +922,14 @@
 				},
 				"optional": false
 			},
+			"editorialNote": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "inline",
+					"name": "markdown"
+				},
+				"optional": true
+			},
 			"totalReadingTime": {
 				"type": "objectAttribute",
 				"value": {

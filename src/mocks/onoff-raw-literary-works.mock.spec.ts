@@ -24,6 +24,22 @@ describe('onoffRawLiteraryWorksMock (corpus raw de LiteraryWork)', () => {
 			}
 		}
 	});
+
+	it('should carry the editorial note as non-empty markdown, or null when the work has none', () => {
+		for (const rawLiteraryWork of onoffRawLiteraryWorksMock) {
+			const { editorialNote } = rawLiteraryWork;
+			expect(editorialNote === null || editorialNote.trim().length > 0).toBe(true);
+		}
+	});
+
+	// Ambas ramas del campo opcional tienen que estar representadas: sin una obra sin nota, la rama
+	// `undefined` del mapper y del render dejaría de ejercitarse contra el corpus.
+	it('should cover both the works with an editorial note and the ones without it', () => {
+		const notes = onoffRawLiteraryWorksMock.map((rawLiteraryWork) => rawLiteraryWork.editorialNote);
+
+		expect(notes.some((editorialNote) => editorialNote !== null)).toBe(true);
+		expect(notes.some((editorialNote) => editorialNote === null)).toBe(true);
+	});
 });
 
 describe('multiSectionRawLiteraryWork (escenario de borde: obra multi-sección)', () => {

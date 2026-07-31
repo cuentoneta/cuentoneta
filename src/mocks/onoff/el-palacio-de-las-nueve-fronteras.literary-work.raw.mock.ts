@@ -1,6 +1,7 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import palacioNueveFronterasMdBody from './el-palacio-de-las-nueve-fronteras.md?raw';
+import elPalacioDeLasNueveFronterasEditorialNoteMd from './el-palacio-de-las-nueve-fronteras.editorial-note.md?raw';
 
 // Contraparte raw (shape crudo de Sanity) del corpus LiteraryWork — mono-sección, prosa plana.
 // Espeja la metadata de `palacioNueveFronterasLiteraryWorkMock` (./el-palacio-de-las-nueve-fronteras.mock.ts).
@@ -12,6 +13,7 @@ export const palacioNueveFronterasRawLiteraryWork: NonNullable<LiteraryWorkBySlu
 		_type: 'image',
 		asset: { _type: 'reference', _ref: 'image-3f8774ea01abc54483829d982035a810667240e1-236x328-png' },
 	},
+	editorialNote: elPalacioDeLasNueveFronterasEditorialNoteMd,
 	badLanguage: false,
 	originalPublication: 'Éditions du Méridien (1985)',
 	publishedAt: '1985-01-01T00:00:00Z',
