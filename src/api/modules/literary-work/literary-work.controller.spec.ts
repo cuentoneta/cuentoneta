@@ -3,10 +3,9 @@ import { createLiteraryWorkController } from './literary-work.controller';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
 
 describe('literaryWorkController', () => {
-	const [literaryWork] = onoffLiteraryWorksMock;
 	const controller = createLiteraryWorkController(new InMemoryLiteraryWorkRepository(onoffLiteraryWorksMock));
 
-	it('devuelve la obra completa con status 200 para un slug existente', async () => {
+	it.each(onoffLiteraryWorksMock)('devuelve la obra completa con status 200 para "$slug"', async (literaryWork) => {
 		const response = await controller.request(`/${literaryWork.slug}`);
 		const body = await response.json();
 

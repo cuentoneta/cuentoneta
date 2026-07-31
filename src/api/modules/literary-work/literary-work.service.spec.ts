@@ -4,10 +4,9 @@ import { LiteraryWorkNotFoundError } from './literary-work.errors';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
 
 describe('getLiteraryWorkBySlug', () => {
-	const [literaryWork] = onoffLiteraryWorksMock;
 	const repository = new InMemoryLiteraryWorkRepository(onoffLiteraryWorksMock);
 
-	it('devuelve el agregado de dominio para un slug existente', async () => {
+	it.each(onoffLiteraryWorksMock)('devuelve el agregado de dominio para "$slug"', async (literaryWork) => {
 		expect(await getLiteraryWorkBySlug(literaryWork.slug, repository)).toBe(literaryWork);
 	});
 

@@ -1,7 +1,7 @@
 // Core
 import { Component, computed, effect, forwardRef, inject, input, RESPONSE_INIT } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 
 // Utils
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
@@ -18,19 +18,6 @@ import { READ_HOST, type ReadHost } from './read-host';
 import { LiteraryWorkHeroHeaderComponent } from '@components/literary-work-hero-header/literary-work-hero-header.component';
 import { ButtonComponent } from '@components/button/button.component';
 import { EditorialNoteComponent } from '@components/editorial-note/editorial-note.component';
-
-interface RenderableEpigraph {
-	readonly text: SafeHtml;
-	readonly reference?: SafeHtml;
-}
-
-interface RenderableSection {
-	readonly position: number;
-	readonly anchor?: string;
-	readonly title?: string;
-	readonly epigraphs: readonly RenderableEpigraph[];
-	readonly bodyHtml: SafeHtml;
-}
 
 @Component({
 	selector: 'cuentoneta-read',
@@ -52,7 +39,6 @@ export default class ReadPage implements ReadHost {
 		defaultValue: undefined,
 	});
 
-	// value() lanza cuando el resource está en error: hasValue() lo desambigua sin try/catch.
 	public readonly literaryWork = computed(() =>
 		this.literaryWorkResource.hasValue() ? this.literaryWorkResource.value() : undefined,
 	);
@@ -67,7 +53,10 @@ export default class ReadPage implements ReadHost {
 
 	// El HTML ya viene saneado del backend (única fuente: el pipeline del ACL); bypass es la
 	// confianza en esa frontera, no una sanitización propia — LITERARY_WORK_DESIGN.md §9.
-	protected readonly sections = computed<readonly RenderableSection[]>(
+	// TODO: Mover esta lógica a un service como parte de la implementación de #1471.
+	// 1. Chequear de qué manera evitar el uso de bypassSecurityTrustHtml
+	// 2. Revisar si hace falta declarar tipos para rendering (RenderableEpigraph, RenderableSection, etc.)
+	protected readonly sections = computed(
 		() =>
 			this.literaryWork()?.content.map((section) => ({
 				position: section.position,
@@ -82,7 +71,6 @@ export default class ReadPage implements ReadHost {
 			})) ?? [],
 	);
 
-	// Una URL inexistente responde 404 real de HTTP en SSR, no 200 con contenido vacío
 	private readonly respondNotFoundEffect = effect(() => {
 		const error = this.literaryWorkResource.error();
 		if (error instanceof HttpErrorResponse && error.status === 404 && this.responseInit) {

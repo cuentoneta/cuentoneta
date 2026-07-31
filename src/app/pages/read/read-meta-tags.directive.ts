@@ -21,6 +21,7 @@ export class ReadMetaTagsDirective extends AbstractMetaTagsDirective {
 		untracked(() => {
 			const byline = literaryWork.authors.map((author) => author.name).join(', ');
 			this.head.setTitle(`${literaryWork.title} - ${byline}`);
+			// TODO: Revisar textos definitivos a la hora de implementar el issue #1471
 			this.head.setDescription(
 				'Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.',
 			);

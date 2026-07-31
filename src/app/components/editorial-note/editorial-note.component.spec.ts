@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/angular';
 
 import { EditorialNoteComponent } from './editorial-note.component';
 import { elOdioEpigraphMock } from '@mocks/onoff/el-odio.mock';
+import { onoffLiteraryWorkEpigraphsMock } from '@mocks/onoff-literary-works.mock';
 
 const content = elOdioEpigraphMock.text;
 const reference = elOdioEpigraphMock.reference;
@@ -26,6 +27,17 @@ describe('EditorialNoteComponent', () => {
 		expect(screen.getByTestId('reference').tagName).toBe('FIGCAPTION');
 		expect(screen.getByTestId('reference-source').tagName).toBe('CITE');
 		expect(screen.getByTestId('reference')).toHaveClass('text-end', 'italic');
+	});
+
+	// Recorre el canon en vez de una obra concreta: cualquier epígrafe del corpus tiene que caber en
+	// el componente, y el caso crece solo cuando se enriquece otra obra.
+	it.each(onoffLiteraryWorkEpigraphsMock)('should pair any canonical epigraph with its source', async (epigraph) => {
+		await render(EditorialNoteComponent, {
+			inputs: { content: epigraph.text, reference: epigraph.reference, variant: 'highlight' },
+		});
+
+		expect(screen.getByTestId('content').tagName).toBe('BLOCKQUOTE');
+		expect(screen.getByTestId('reference-source').tagName).toBe('CITE');
 	});
 
 	it('should not render the reference block when no reference is provided', async () => {

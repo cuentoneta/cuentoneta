@@ -1,6 +1,7 @@
 import type { Story } from '@models/story.model';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
-import { createLiteraryWorkSection } from '@models/literary-work-section.model';
+import { createLiteraryWorkEpigraph, createLiteraryWorkSection } from '@models/literary-work-section.model';
+import { createSectionTitle } from '@models/section-title.model';
 import { createMarkdown } from '@models/markdown.model';
 import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
@@ -283,6 +284,11 @@ export const geometriaStoryMock: Story = {
 // Story existente que sigue alimentando Storylist. Reusa la metadata del Story mock.
 const geometriaBody = createMarkdown(geometriaMdBody);
 
+export const geometriaEpigraphMock = createLiteraryWorkEpigraph({
+	text: markdownToSanitizedHtml(createMarkdown('*Entre dos puntos, la recta es la más breve de las mentiras.*')),
+	reference: markdownToSanitizedHtml(createMarkdown('François Onoff, cuaderno de 1971')),
+});
+
 export const geometriaLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	_id: 'onoff-literary-work-geometria',
 	slug: geometriaStoryMock.slug,
@@ -292,6 +298,8 @@ export const geometriaLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	content: [
 		createLiteraryWorkSection({
 			position: 0,
+			title: createSectionTitle('El primer teorema'),
+			epigraphs: [geometriaEpigraphMock],
 			bodyHtml: markdownToSanitizedHtml(geometriaBody),
 			readingTime: deriveSectionReadingTime(geometriaBody),
 		}),

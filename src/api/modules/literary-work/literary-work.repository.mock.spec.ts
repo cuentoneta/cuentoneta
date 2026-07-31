@@ -2,10 +2,10 @@ import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
 
 describe('InMemoryLiteraryWorkRepository.fetchBySlug', () => {
-	const [literaryWork] = onoffLiteraryWorksMock;
+	const [firstLiteraryWork] = onoffLiteraryWorksMock;
 	const repository = new InMemoryLiteraryWorkRepository(onoffLiteraryWorksMock);
 
-	it('devuelve el agregado de dominio almacenado para un slug existente', async () => {
+	it.each(onoffLiteraryWorksMock)('devuelve el agregado de dominio almacenado para "$slug"', async (literaryWork) => {
 		expect(await repository.fetchBySlug(literaryWork.slug)).toBe(literaryWork);
 	});
 
@@ -14,6 +14,6 @@ describe('InMemoryLiteraryWorkRepository.fetchBySlug', () => {
 	});
 
 	it('devuelve null cuando no hay obras cargadas', async () => {
-		expect(await new InMemoryLiteraryWorkRepository().fetchBySlug(literaryWork.slug)).toBeNull();
+		expect(await new InMemoryLiteraryWorkRepository().fetchBySlug(firstLiteraryWork.slug)).toBeNull();
 	});
 });
