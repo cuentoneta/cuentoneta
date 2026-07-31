@@ -26,6 +26,11 @@ export type EditorialTextBlockVariant = 'note' | 'highlight';
 		'data-testid': 'editorial-text-block',
 	},
 })
+/**
+ * @deprecated Usar `EditorialNoteComponent`, que recibe un `AttributedText` (HTML ya saneado por el
+ * backend) en vez de Portable Text. Este componente sobrevive solo mientras la página de Story lo
+ * consuma; se elimina al reemplazarla por `ReadPage`.
+ */
 export class EditorialTextBlockComponent {
 	public readonly content = input.required<Epigraph>();
 	public readonly variant = input<EditorialTextBlockVariant>('note');
