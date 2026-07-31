@@ -15,6 +15,9 @@ import { ReadStructuredDataDirective } from './read-structured-data.directive';
 import { READ_HOST, type ReadHost } from './read-host';
 import { LiteraryWorkHeroHeaderComponent } from '@components/literary-work-hero-header/literary-work-hero-header.component';
 
+//Components
+import { ButtonComponent } from '@components/button/button.component';
+
 interface RenderableEpigraph {
 	readonly text: SafeHtml;
 	readonly reference?: SafeHtml;
@@ -33,7 +36,7 @@ interface RenderableSection {
 	templateUrl: './read.page.html',
 	providers: [{ provide: READ_HOST, useExisting: forwardRef(() => ReadPage) }],
 	hostDirectives: [ReadMetaTagsDirective, ReadStructuredDataDirective],
-	imports: [LiteraryWorkHeroHeaderComponent],
+	imports: [LiteraryWorkHeroHeaderComponent, ButtonComponent],
 })
 export default class ReadPage implements ReadHost {
 	public readonly slug = input.required<string>();
@@ -52,6 +55,7 @@ export default class ReadPage implements ReadHost {
 	public readonly literaryWork = computed(() =>
 		this.literaryWorkResource.hasValue() ? this.literaryWorkResource.value() : undefined,
 	);
+
 	protected readonly notFound = computed(() => this.literaryWorkResource.status() === 'error');
 	protected readonly byline = computed(
 		() =>
@@ -78,7 +82,6 @@ export default class ReadPage implements ReadHost {
 	);
 
 	// Una URL inexistente responde 404 real de HTTP en SSR, no 200 con contenido vacío
-	// (el hueco de indexación documentado para páginas SSR) — LITERARY_WORK_DESIGN.md §7.
 	private readonly respondNotFoundEffect = effect(() => {
 		const error = this.literaryWorkResource.error();
 		if (error instanceof HttpErrorResponse && error.status === 404 && this.responseInit) {

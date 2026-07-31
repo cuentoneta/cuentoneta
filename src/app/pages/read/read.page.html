@@ -5,8 +5,13 @@
 	<header class="flex flex-col gap-2">
 		<cuentoneta-literary-work-hero-header [literaryWork]="literaryWork" />
 	</header>
-	@for (section of sections(); track section.position) {
 	<section class="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-8">
+		<div class="flex justify-between pt-7">
+			<span class="font-xs font-inter font-semibold">{{literaryWork.totalReadingTime}} minutos de lectura</span>
+			<button [type]="'outline'" cuentoneta-button>Compartir</button>
+		</div>
+		@for (section of sections(); track section.position) {
+
 		<section class="flex flex-col gap-4">
 			@if (section.title) {
 			<h2 [id]="section.title">{{ section.title }}</h2>
@@ -20,9 +25,9 @@
 			}
 			<div [innerHTML]="section.bodyHtml"></div>
 		</section>
-	</section>
 
-	}
+		}
+	</section>
 </article>
 } @else if (notFound()) {
 <section class="mx-auto flex w-full max-w-3xl flex-col gap-4 px-4 py-8">
