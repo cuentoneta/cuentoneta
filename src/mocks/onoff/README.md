@@ -27,7 +27,7 @@ Mismo elenco, coexistiendo con el corpus `Story`. Diferencias de origen del cont
 - **Cuerpo (`bodyHtml`):** vive como Markdown plano en `<slug>.md` (solo el cuerpo, sin metadata) y se importa con `?raw` de Vite. El mock corre `markdownToSanitizedHtml` (`@utils/markdown-pipeline.utils`) al cargar el módulo para obtener el `SanitizedHtml`; el `.md` es la fuente literal editable.
 - **`readingTime`:** se **deriva** del propio cuerpo (`deriveSectionReadingTime`); `totalReadingTime` lo suma la factory. No se hardcodea.
 - **Metadata** (título, slug, portada, autor, tags, publicación): literales TS en el mock, no en el `.md`.
-- **Secciones:** una por obra (`position: 0`, sin `title` ni `epigraphs`), ya que cada obra es prosa plana.
+- **Secciones:** una por obra (`position: 0`), ya que cada obra es prosa plana. `el-odio` es la excepción: su sección lleva `title` y un `epigraphs` de un elemento, exportado aparte como `elOdioEpigraphMock` — es el **epígrafe canónico del corpus**, la fuente de la que specs y stories toman `SanitizedHtml` sin hand-authorear prosa.
 
 Archivos:
 
