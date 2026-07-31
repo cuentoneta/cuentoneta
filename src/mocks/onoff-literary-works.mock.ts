@@ -20,3 +20,14 @@ export const onoffLiteraryWorksMock: LiteraryWork[] = [
 	lasDosAntorchasLiteraryWorkMock,
 	neronLiteraryWorkMock,
 ];
+
+// Selectores por capacidad, derivados por predicado: un spec declara el shape que necesita (obras con
+// título de sección / con epígrafes) en vez de conocer un slug concreto. Se auto-mantienen al crecer el
+// corpus o al enriquecer más obras, sin tocar los specs.
+export const onoffLiteraryWorksWithSectionTitles: LiteraryWork[] = onoffLiteraryWorksMock.filter((literaryWork) =>
+	literaryWork.content.some((section) => section.title !== undefined),
+);
+
+export const onoffLiteraryWorksWithEpigraphs: LiteraryWork[] = onoffLiteraryWorksMock.filter((literaryWork) =>
+	literaryWork.content.some((section) => (section.epigraphs?.length ?? 0) > 0),
+);
