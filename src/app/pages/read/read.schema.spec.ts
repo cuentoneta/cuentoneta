@@ -1,33 +1,40 @@
-import { elOdioLiteraryWorkMock } from '@mocks/onoff/el-odio.mock';
+import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { buildLiteraryWorkArticleSchema, buildLiteraryWorkBreadcrumb } from './read.schema';
 
 const WEBSITE = 'https://test.cuentoneta.ar';
 
 describe('read.schema', () => {
 	describe('buildLiteraryWorkArticleSchema', () => {
-		const article = buildLiteraryWorkArticleSchema(elOdioLiteraryWorkMock, WEBSITE);
+		it.each(onoffLiteraryWorksMock)('construye un Article con headline y mainEntity de "$slug"', (literaryWork) => {
+			const article = buildLiteraryWorkArticleSchema(literaryWork, WEBSITE);
 
-		it('construye un Article con el título de la obra como headline', () => {
 			expect(article['@type']).toBe('Article');
-			expect(article.headline).toBe(elOdioLiteraryWorkMock.title);
-			expect(article.mainEntityOfPage).toBe(`${WEBSITE}/read/${elOdioLiteraryWorkMock.slug}`);
+			expect(article.headline).toBe(literaryWork.title);
+			expect(article.mainEntityOfPage).toBe(`${WEBSITE}/read/${literaryWork.slug}`);
 		});
 
-		it('emite un Person por autor (multi-autor)', () => {
+		it.each(onoffLiteraryWorksMock)('emite un Person por autor de "$slug" (multi-autor)', (literaryWork) => {
+			const article = buildLiteraryWorkArticleSchema(literaryWork, WEBSITE);
+
 			const authors = Array.isArray(article.author) ? article.author : [article.author];
-			expect(authors).toHaveLength(elOdioLiteraryWorkMock.authors.length);
-			expect(authors[0]).toMatchObject({ '@type': 'Person', name: elOdioLiteraryWorkMock.authors[0].name });
+			expect(authors).toHaveLength(literaryWork.authors.length);
+			expect(authors[0]).toMatchObject({ '@type': 'Person', name: literaryWork.authors[0].name });
 		});
 
-		it('omite dateModified (LiteraryWork no tiene updatedAt)', () => {
-			expect('dateModified' in article).toBe(false);
-		});
+		it.each(onoffLiteraryWorksMock)(
+			'omite dateModified para "$slug" (LiteraryWork no tiene updatedAt)',
+			(literaryWork) => {
+				const article = buildLiteraryWorkArticleSchema(literaryWork, WEBSITE);
+
+				expect('dateModified' in article).toBe(false);
+			},
+		);
 	});
 
 	describe('buildLiteraryWorkBreadcrumb', () => {
-		const breadcrumb = buildLiteraryWorkBreadcrumb(elOdioLiteraryWorkMock, WEBSITE);
+		it.each(onoffLiteraryWorksMock)('construye un BreadcrumbList de 2 niveles para "$slug"', (literaryWork) => {
+			const breadcrumb = buildLiteraryWorkBreadcrumb(literaryWork, WEBSITE);
 
-		it('construye un BreadcrumbList de 2 niveles (Inicio → obra)', () => {
 			expect(breadcrumb['@type']).toBe('BreadcrumbList');
 			expect(breadcrumb.itemListElement).toHaveLength(2);
 		});
