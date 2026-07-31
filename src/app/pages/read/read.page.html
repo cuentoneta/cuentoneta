@@ -14,7 +14,7 @@
 
 		<section class="flex flex-col gap-4">
 			@if (section.title) {
-			<h2 [id]="section.title">{{ section.title }}</h2>
+			<h2 [id]="section.anchor">{{ section.title }}</h2>
 			} @for (epigraph of section.epigraphs; track $index) {
 			<blockquote>
 				<div [innerHTML]="epigraph.text"></div>
