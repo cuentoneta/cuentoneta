@@ -1,11 +1,12 @@
-import { createLiteraryWorkEpigraph, createLiteraryWorkSection } from './literary-work-section.model';
+import { createAttributedText } from './attributed-text.model';
+import { createLiteraryWorkSection } from './literary-work-section.model';
 import { createSectionTitle } from './section-title.model';
 import { createReadingTime } from './reading-time.model';
 import { createSanitizedHtml } from './sanitized-html.model';
 
-describe('createLiteraryWorkEpigraph', () => {
+describe('createAttributedText', () => {
 	it('builds a frozen epigraph from sanitized text and reference', () => {
-		const epigraph = createLiteraryWorkEpigraph({
+		const epigraph = createAttributedText({
 			text: createSanitizedHtml('<p>Y si el alma te pesa…</p>'),
 			reference: createSanitizedHtml('<p>Rafael Obligado</p>'),
 		});
@@ -16,7 +17,7 @@ describe('createLiteraryWorkEpigraph', () => {
 	});
 
 	it('builds an epigraph without reference', () => {
-		const epigraph = createLiteraryWorkEpigraph({ text: createSanitizedHtml('<p>Texto</p>') });
+		const epigraph = createAttributedText({ text: createSanitizedHtml('<p>Texto</p>') });
 
 		expect(epigraph.reference).toBeUndefined();
 	});
@@ -41,7 +42,7 @@ describe('createLiteraryWorkSection', () => {
 			position: 1,
 			title: createSectionTitle('Capítulo Uno'),
 			epigraphs: [
-				createLiteraryWorkEpigraph({
+				createAttributedText({
 					text: createSanitizedHtml('<p>Epígrafe</p>'),
 					reference: createSanitizedHtml('<p>Anónimo</p>'),
 				}),

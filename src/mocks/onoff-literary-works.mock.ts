@@ -1,5 +1,5 @@
 import type { LiteraryWork } from '@models/literary-work.model';
-import type { LiteraryWorkEpigraph } from '@models/literary-work-section.model';
+import type { AttributedText } from '@models/attributed-text.model';
 import { elOdioLiteraryWorkMock } from './onoff/el-odio.mock';
 import { elTratadoDeLosPlaceresLiteraryWorkMock } from './onoff/el-tratado-de-los-placeres.mock';
 import { geometriaLiteraryWorkMock } from './onoff/geometria.mock';
@@ -44,6 +44,6 @@ export const onoffLiteraryWorksWithoutEditorialNote: LiteraryWork[] = onoffLiter
 // Los epígrafes sueltos, para quien necesita el shape { text, reference? } y no la obra que lo
 // contiene — los componentes que pintan HTML saneado en sus specs y stories. Se deriva del corpus
 // para no mantener una lista en paralelo que se desactualice al enriquecer otra obra.
-export const onoffLiteraryWorkEpigraphsMock: LiteraryWorkEpigraph[] = onoffLiteraryWorksMock.flatMap((literaryWork) =>
+export const onoffLiteraryWorkEpigraphsMock: AttributedText[] = onoffLiteraryWorksMock.flatMap((literaryWork) =>
 	literaryWork.content.flatMap((section) => section.epigraphs ?? []),
 );
