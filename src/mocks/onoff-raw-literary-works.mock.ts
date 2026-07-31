@@ -21,6 +21,13 @@ export const onoffRawLiteraryWorksMock: NonNullable<LiteraryWorkBySlugQueryResul
 	neronRawLiteraryWork,
 ];
 
+// Selector por capacidad (contraparte raw de `onoffLiteraryWorksWithEpigraphs`): las obras crudas cuyo
+// content trae epígrafes, para ejercitar el mapeo raw→dominio del epígrafe sin conocer un slug concreto.
+export const onoffRawLiteraryWorksWithEpigraphs: NonNullable<LiteraryWorkBySlugQueryResult>[] =
+	onoffRawLiteraryWorksMock.filter((rawLiteraryWork) =>
+		rawLiteraryWork.content.some((section) => section.epigraphs.length > 0),
+	);
+
 // Obra de dos secciones, con los reading time ya persistidos (materializados). Ejercita la lectura
 // de content[] multi-sección y la futura proyección ?section=N.
 export const multiSectionRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {

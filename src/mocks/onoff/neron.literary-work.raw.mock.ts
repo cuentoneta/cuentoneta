@@ -2,8 +2,6 @@ import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import neronMdBody from './neron.md?raw';
 
-// Contraparte raw (shape crudo de Sanity) del corpus LiteraryWork — mono-sección, prosa plana.
-// Espeja la metadata de `neronLiteraryWorkMock` (./neron.mock.ts).
 export const neronRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'onoff-literary-work-neron',
 	slug: 'neron',

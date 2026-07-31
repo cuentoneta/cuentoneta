@@ -269,8 +269,6 @@ export const losPeldanosStoryMock: Story = {
 	],
 };
 
-// Contraparte LiteraryWork de la obra (contenido en Markdown, los-peldanos.md), sumada al corpus
-// Story existente que sigue alimentando Storylist. Reusa la metadata del Story mock.
 const losPeldanosBody = createMarkdown(losPeldanosMdBody);
 
 export const losPeldanosLiteraryWorkMock: LiteraryWork = createLiteraryWork({

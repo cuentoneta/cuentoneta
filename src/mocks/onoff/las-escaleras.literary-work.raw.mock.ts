@@ -3,8 +3,6 @@ import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import lasEscalerasMdBody from './las-escaleras.md?raw';
 import lasEscalerasEditorialNoteMd from './las-escaleras.editorial-note.md?raw';
 
-// Contraparte raw (shape crudo de Sanity) del corpus LiteraryWork — mono-sección, prosa plana.
-// Espeja la metadata de `lasEscalerasLiteraryWorkMock` (./las-escaleras.mock.ts).
 export const lasEscalerasRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'onoff-literary-work-las-escaleras',
 	slug: 'las-escaleras',

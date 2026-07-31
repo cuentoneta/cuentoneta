@@ -266,8 +266,6 @@ export const lasEscalerasStoryMock: Story = {
 	],
 };
 
-// Contraparte LiteraryWork de la obra (contenido en Markdown, las-escaleras.md), sumada al corpus
-// Story existente que sigue alimentando Storylist. Reusa la metadata del Story mock.
 const lasEscalerasBody = createMarkdown(lasEscalerasMdBody);
 
 export const lasEscalerasLiteraryWorkMock: LiteraryWork = createLiteraryWork({

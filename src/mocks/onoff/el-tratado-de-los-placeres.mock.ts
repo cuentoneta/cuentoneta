@@ -281,8 +281,6 @@ export const elTratadoDeLosPlaceresStoryMock: Story = {
 	],
 };
 
-// Contraparte LiteraryWork de la obra (contenido en Markdown, el-tratado-de-los-placeres.md), sumada al corpus
-// Story existente que sigue alimentando Storylist. Reusa la metadata del Story mock.
 const elTratadoDeLosPlaceresBody = createMarkdown(elTratadoDeLosPlaceresMdBody);
 
 export const elTratadoDeLosPlaceresLiteraryWorkMock: LiteraryWork = createLiteraryWork({

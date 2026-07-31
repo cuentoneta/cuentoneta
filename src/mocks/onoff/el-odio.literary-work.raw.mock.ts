@@ -2,9 +2,8 @@ import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import elOdioMdBody from './el-odio.md?raw';
 import elOdioEditorialNoteMd from './el-odio.editorial-note.md?raw';
+import { elOdioEpigraphReference, elOdioEpigraphText, elOdioSectionTitle } from './el-odio.epigraph';
 
-// Contraparte raw (shape crudo de Sanity) del corpus LiteraryWork — mono-sección, prosa plana.
-// Espeja la metadata de `elOdioLiteraryWorkMock` (./el-odio.mock.ts).
 export const elOdioRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'onoff-literary-work-el-odio',
 	slug: 'el-odio',
@@ -26,8 +25,8 @@ export const elOdioRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> =
 	content: [
 		{
 			_key: 'section-1',
-			title: null,
-			epigraphs: [],
+			title: elOdioSectionTitle,
+			epigraphs: [{ text: elOdioEpigraphText, reference: elOdioEpigraphReference }],
 			body: elOdioMdBody,
 			readingTime: 6,
 		},

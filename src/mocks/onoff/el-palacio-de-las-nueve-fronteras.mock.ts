@@ -8,6 +8,11 @@ import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import palacioNueveFronterasMdBody from './el-palacio-de-las-nueve-fronteras.md?raw';
 import elPalacioDeLasNueveFronterasEditorialNoteMd from './el-palacio-de-las-nueve-fronteras.editorial-note.md?raw';
+import {
+	palacioNueveFronterasEpigraphReference,
+	palacioNueveFronterasEpigraphText,
+	palacioNueveFronterasSectionTitle,
+} from './el-palacio-de-las-nueve-fronteras.epigraph';
 import { authorMock } from '../author.mock';
 import { dramaPsicologicoTagMock, metaficcionTagMock, novelaTagMock } from '../onoff-tags.mock';
 
@@ -260,13 +265,11 @@ export const palacioNueveFronterasStoryMock: Story = {
 	],
 };
 
-// Contraparte LiteraryWork de la obra (contenido en Markdown, el-palacio-de-las-nueve-fronteras.md), sumada al corpus
-// Story existente que sigue alimentando Storylist. Reusa la metadata del Story mock.
 const palacioNueveFronterasBody = createMarkdown(palacioNueveFronterasMdBody);
 
 export const palacioNueveFronterasEpigraphMock = createLiteraryWorkEpigraph({
-	text: markdownToSanitizedHtml(createMarkdown('*Toda frontera es una puerta que finge ser un muro.*')),
-	reference: markdownToSanitizedHtml(createMarkdown('François Onoff, cuaderno de 1973')),
+	text: markdownToSanitizedHtml(createMarkdown(palacioNueveFronterasEpigraphText)),
+	reference: markdownToSanitizedHtml(createMarkdown(palacioNueveFronterasEpigraphReference)),
 });
 
 export const palacioNueveFronterasLiteraryWorkMock: LiteraryWork = createLiteraryWork({
@@ -278,7 +281,7 @@ export const palacioNueveFronterasLiteraryWorkMock: LiteraryWork = createLiterar
 	content: [
 		createLiteraryWorkSection({
 			position: 0,
-			title: createSectionTitle('La primera frontera'),
+			title: createSectionTitle(palacioNueveFronterasSectionTitle),
 			epigraphs: [palacioNueveFronterasEpigraphMock],
 			bodyHtml: markdownToSanitizedHtml(palacioNueveFronterasBody),
 			readingTime: deriveSectionReadingTime(palacioNueveFronterasBody),

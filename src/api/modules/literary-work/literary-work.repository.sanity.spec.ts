@@ -3,6 +3,7 @@ import { fn } from '@test-utils';
 import {
 	multiSectionRawLiteraryWork,
 	onoffRawLiteraryWorksMock,
+	onoffRawLiteraryWorksWithEpigraphs,
 	unmaterializedRawLiteraryWork,
 } from '@mocks/onoff-raw-literary-works.mock';
 import { neronRawLiteraryWork } from '@mocks/onoff/neron.literary-work.raw.mock';
@@ -54,6 +55,23 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 
 		expect(literaryWork?.coverImage).toBe('');
 	});
+
+	it.each(onoffRawLiteraryWorksWithEpigraphs)(
+		'mapea el epígrafe crudo del corpus a HTML saneado (%#)',
+		async (rawLiteraryWork) => {
+			const literaryWork = await repoReturning(rawLiteraryWork).fetchBySlug(rawLiteraryWork.slug);
+
+			const rawReference = rawLiteraryWork.content.find((section) => section.epigraphs.length > 0)?.epigraphs[0]
+				?.reference;
+			const mappedEpigraph = literaryWork?.content.find((section) => (section.epigraphs?.length ?? 0) > 0)
+				?.epigraphs?.[0];
+
+			// El texto en Markdown (`*…*`) sale como énfasis saneado; la referencia en texto plano sobrevive.
+			expect(mappedEpigraph?.text).toContain('<em>');
+			expect(mappedEpigraph?.text).not.toContain('*');
+			expect(mappedEpigraph?.reference).toContain(rawReference ?? '');
+		},
+	);
 
 	it('lanza ante un epígrafe sin texto (mapeo defensivo en la frontera)', async () => {
 		const broken = {

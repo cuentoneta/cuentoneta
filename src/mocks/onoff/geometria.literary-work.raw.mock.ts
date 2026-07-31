@@ -2,9 +2,8 @@ import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import geometriaMdBody from './geometria.md?raw';
 import geometriaEditorialNoteMd from './geometria.editorial-note.md?raw';
+import { geometriaEpigraphReference, geometriaEpigraphText, geometriaSectionTitle } from './geometria.epigraph';
 
-// Contraparte raw (shape crudo de Sanity) del corpus LiteraryWork — mono-sección, prosa plana.
-// Espeja la metadata de `geometriaLiteraryWorkMock` (./geometria.mock.ts).
 export const geometriaRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'onoff-literary-work-geometria',
 	slug: 'geometria',
@@ -26,8 +25,8 @@ export const geometriaRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult
 	content: [
 		{
 			_key: 'section-1',
-			title: null,
-			epigraphs: [],
+			title: geometriaSectionTitle,
+			epigraphs: [{ text: geometriaEpigraphText, reference: geometriaEpigraphReference }],
 			body: geometriaMdBody,
 			readingTime: 7,
 		},

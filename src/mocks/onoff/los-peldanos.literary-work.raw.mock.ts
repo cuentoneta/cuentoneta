@@ -3,8 +3,6 @@ import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import losPeldanosMdBody from './los-peldanos.md?raw';
 import losPeldanosEditorialNoteMd from './los-peldanos.editorial-note.md?raw';
 
-// Contraparte raw (shape crudo de Sanity) del corpus LiteraryWork — mono-sección, prosa plana.
-// Espeja la metadata de `losPeldanosLiteraryWorkMock` (./los-peldanos.mock.ts).
 export const losPeldanosRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'onoff-literary-work-los-peldanos',
 	slug: 'los-peldanos',

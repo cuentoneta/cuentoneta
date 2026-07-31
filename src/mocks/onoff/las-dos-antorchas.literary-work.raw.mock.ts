@@ -3,8 +3,6 @@ import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import lasDosAntorchasMdBody from './las-dos-antorchas.md?raw';
 import lasDosAntorchasEditorialNoteMd from './las-dos-antorchas.editorial-note.md?raw';
 
-// Contraparte raw (shape crudo de Sanity) del corpus LiteraryWork — mono-sección, prosa plana.
-// Espeja la metadata de `lasDosAntorchasLiteraryWorkMock` (./las-dos-antorchas.mock.ts).
 export const lasDosAntorchasRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'onoff-literary-work-las-dos-antorchas',
 	slug: 'las-dos-antorchas',

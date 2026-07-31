@@ -8,6 +8,7 @@ import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import elOdioMdBody from './el-odio.md?raw';
 import elOdioEditorialNoteMd from './el-odio.editorial-note.md?raw';
+import { elOdioEpigraphReference, elOdioEpigraphText, elOdioSectionTitle } from './el-odio.epigraph';
 import { authorMock } from '../author.mock';
 import { dramaPsicologicoTagMock, novelaTagMock } from '../onoff-tags.mock';
 
@@ -277,13 +278,11 @@ export const elOdioStoryMock: Story = {
 	],
 };
 
-// Contraparte LiteraryWork de la obra (contenido en Markdown, el-odio.md), sumada al corpus
-// Story existente que sigue alimentando Storylist. Reusa la metadata del Story mock.
 const elOdioBody = createMarkdown(elOdioMdBody);
 
 export const elOdioEpigraphMock = createLiteraryWorkEpigraph({
-	text: markdownToSanitizedHtml(createMarkdown('*El odio se hereda como un apellido.*')),
-	reference: markdownToSanitizedHtml(createMarkdown('François Onoff, cuaderno de 1969')),
+	text: markdownToSanitizedHtml(createMarkdown(elOdioEpigraphText)),
+	reference: markdownToSanitizedHtml(createMarkdown(elOdioEpigraphReference)),
 });
 
 export const elOdioLiteraryWorkMock: LiteraryWork = createLiteraryWork({
@@ -295,7 +294,7 @@ export const elOdioLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	content: [
 		createLiteraryWorkSection({
 			position: 0,
-			title: createSectionTitle('El primer golpe'),
+			title: createSectionTitle(elOdioSectionTitle),
 			epigraphs: [elOdioEpigraphMock],
 			bodyHtml: markdownToSanitizedHtml(elOdioBody),
 			readingTime: deriveSectionReadingTime(elOdioBody),
