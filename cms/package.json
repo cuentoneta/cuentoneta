@@ -38,7 +38,7 @@
 		"styled-components": "^6.4.4"
 	},
 	"devDependencies": {
-		"@types/node": "^22.19.20",
+		"@types/node": "^22.20.1",
 		"tsx": "^4.23.1"
 	},
 	"pnpm": {
