@@ -263,6 +263,11 @@ export const palacioNueveFronterasStoryMock: Story = {
 // Story existente que sigue alimentando Storylist. Reusa la metadata del Story mock.
 const palacioNueveFronterasBody = createMarkdown(palacioNueveFronterasMdBody);
 
+export const palacioNueveFronterasEpigraphMock = createLiteraryWorkEpigraph({
+	text: markdownToSanitizedHtml(createMarkdown('*Toda frontera es una puerta que finge ser un muro.*')),
+	reference: markdownToSanitizedHtml(createMarkdown('François Onoff, cuaderno de 1973')),
+});
+
 export const palacioNueveFronterasLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	_id: 'onoff-literary-work-el-palacio-de-las-nueve-fronteras',
 	slug: palacioNueveFronterasStoryMock.slug,
@@ -273,12 +278,7 @@ export const palacioNueveFronterasLiteraryWorkMock: LiteraryWork = createLiterar
 		createLiteraryWorkSection({
 			position: 0,
 			title: createSectionTitle('La primera frontera'),
-			epigraphs: [
-				createLiteraryWorkEpigraph({
-					text: markdownToSanitizedHtml(createMarkdown('*Toda frontera es una puerta que finge ser un muro.*')),
-					reference: markdownToSanitizedHtml(createMarkdown('François Onoff, cuaderno de 1973')),
-				}),
-			],
+			epigraphs: [palacioNueveFronterasEpigraphMock],
 			bodyHtml: markdownToSanitizedHtml(palacioNueveFronterasBody),
 			readingTime: deriveSectionReadingTime(palacioNueveFronterasBody),
 		}),
