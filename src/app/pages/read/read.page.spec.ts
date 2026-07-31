@@ -4,11 +4,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 // 3rd party modules
 import { render, screen } from '@testing-library/angular';
-import { throwError, type Observable } from 'rxjs';
+import { of, throwError, type Observable } from 'rxjs';
 
 // Models
 import type { LiteraryWork } from '@models/literary-work.model';
 import { elOdioLiteraryWorkMock } from '@mocks/onoff/el-odio.mock';
+import { neronLiteraryWorkMock } from '@mocks/onoff/neron.mock';
 import { provideLiteraryWorkApiMock } from '../../providers/literary-work.mock';
 import type { LiteraryWorkApi } from '../../providers/literary-work-api.interface';
 import ReadPage from './read.page';
@@ -18,6 +19,15 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 
 	public getBySlug(): Observable<LiteraryWork> {
 		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
+	}
+}
+
+// El doble por defecto sirve El odio; los casos que dependen de otra obra del corpus la inyectan.
+class StubLiteraryWorkApiReturning implements LiteraryWorkApi {
+	constructor(private readonly literaryWork: LiteraryWork) {}
+
+	public getBySlug(): Observable<LiteraryWork> {
+		return of(this.literaryWork);
 	}
 }
 
@@ -54,6 +64,20 @@ describe('ReadPage', () => {
 
 		const heading = await screen.findByRole('heading', { level: 2, name: 'El primer golpe' });
 		expect(heading.getAttribute('id')).toBe('el-primer-golpe');
+	});
+
+	it('renderiza la nota editorial de la obra bajo su propio encabezado', async () => {
+		await setup();
+
+		expect(await screen.findByRole('heading', { level: 2, name: 'Nota editorial' })).toBeTruthy();
+		expect(screen.getByText(/una manera estable de habitar el mundo/i)).toBeTruthy();
+	});
+
+	it('omite el bloque de nota editorial en una obra que no la tiene', async () => {
+		await setup(new StubLiteraryWorkApiReturning(neronLiteraryWorkMock));
+
+		expect(await screen.findByRole('heading', { level: 1, name: neronLiteraryWorkMock.title })).toBeTruthy();
+		expect(screen.queryByRole('heading', { level: 2, name: 'Nota editorial' })).toBeNull();
 	});
 
 	it('renderiza el estado not-found y marca la respuesta SSR como 404', async () => {

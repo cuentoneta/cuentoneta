@@ -44,7 +44,7 @@ export const Note: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante <strong>note</strong> (default): tarjeta neutra con borde, texto left-aligned. Es la superficie del Design System para la nota editorial de una obra.</p><p><strong>Usos:</strong> sin consumidor todavía; la nota editorial de la obra en la página de lectura es el consumidor que aterriza a continuación.</p>`,
+				story: `<p>Variante <strong>note</strong> (default): tarjeta neutra con borde, texto left-aligned. Es la superficie del Design System para la nota editorial de una obra.</p><p><strong>Usos:</strong> la nota editorial (<code>editorialNote</code>) al pie de la obra en la página de lectura.</p>`,
 			},
 		},
 	},
@@ -56,7 +56,7 @@ export const NoteWithReference: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante <strong>note</strong> con pie de referencia: la tarjeta neutra con el pie en cursiva alineado a la derecha. El pie es agnóstico a la variante (se muestra cuando llega el input <code>reference</code>), no una variante propia del componente.</p><p><strong>Usos:</strong> sin consumidor todavía; una nota editorial que cite su fuente.</p>`,
+				story: `<p>Variante <strong>note</strong> con pie de referencia: la tarjeta neutra con el pie en cursiva alineado a la derecha. El pie es agnóstico a la variante (se muestra cuando llega el input <code>reference</code>), no una variante propia del componente.</p><p><strong>Usos:</strong> sin consumidor todavía; una nota editorial que cite su fuente (<code>editorialNote</code> no transporta referencia).</p>`,
 			},
 		},
 	},
@@ -101,7 +101,7 @@ export const Showcase: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Los cuatro casos: <strong>note</strong> y <strong>highlight</strong>, cada una sin y con pie de referencia (right-aligned). El pie es agnóstico a la variante. Cada variante lleva además su propia semántica: <code>note</code> rinde <code>&lt;aside&gt;</code> (comenta la obra desde afuera) y <code>highlight</code>, <code>&lt;blockquote&gt;</code> (cita a un tercero).</p><p><strong>Usos:</strong> comparación visual de las cuatro combinaciones; ninguna tiene consumidor todavía.</p>`,
+				story: `<p>Los cuatro casos: <strong>note</strong> y <strong>highlight</strong>, cada una sin y con pie de referencia (right-aligned). El pie es agnóstico a la variante. Cada variante lleva además su propia semántica: <code>note</code> rinde <code>&lt;aside&gt;</code> (comenta la obra desde afuera) y <code>highlight</code>, <code>&lt;blockquote&gt;</code> (cita a un tercero).</p><p><strong>Usos:</strong> comparación visual de las cuatro combinaciones; hoy solo <strong>note</strong> sin referencia tiene consumidor, en la página de lectura.</p>`,
 			},
 		},
 	},

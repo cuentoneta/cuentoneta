@@ -26,6 +26,13 @@
 			<div [innerHTML]="section.bodyHtml"></div>
 		</section>
 
+		} @if (literaryWork.editorialNote; as editorialNote) {
+
+		<div class="flex flex-col gap-4">
+			<h2>Nota editorial</h2>
+			<cuentoneta-editorial-note [content]="editorialNote" />
+		</div>
+
 		}
 	</section>
 </article>
