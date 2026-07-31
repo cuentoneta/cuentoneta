@@ -2,9 +2,12 @@ import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import palacioNueveFronterasMdBody from './el-palacio-de-las-nueve-fronteras.md?raw';
 import elPalacioDeLasNueveFronterasEditorialNoteMd from './el-palacio-de-las-nueve-fronteras.editorial-note.md?raw';
+import {
+	palacioNueveFronterasEpigraphReference,
+	palacioNueveFronterasEpigraphText,
+	palacioNueveFronterasSectionTitle,
+} from './el-palacio-de-las-nueve-fronteras.epigraph';
 
-// Contraparte raw (shape crudo de Sanity) del corpus LiteraryWork — mono-sección, prosa plana.
-// Espeja la metadata de `palacioNueveFronterasLiteraryWorkMock` (./el-palacio-de-las-nueve-fronteras.mock.ts).
 export const palacioNueveFronterasRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'onoff-literary-work-el-palacio-de-las-nueve-fronteras',
 	slug: 'el-palacio-de-las-nueve-fronteras',
@@ -26,8 +29,8 @@ export const palacioNueveFronterasRawLiteraryWork: NonNullable<LiteraryWorkBySlu
 	content: [
 		{
 			_key: 'section-1',
-			title: null,
-			epigraphs: [],
+			title: palacioNueveFronterasSectionTitle,
+			epigraphs: [{ text: palacioNueveFronterasEpigraphText, reference: palacioNueveFronterasEpigraphReference }],
 			body: palacioNueveFronterasMdBody,
 			readingTime: 11,
 		},

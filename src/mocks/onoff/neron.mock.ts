@@ -291,8 +291,6 @@ export const neronStoryMock: Story = {
 	],
 };
 
-// Contraparte LiteraryWork de la obra (contenido en Markdown, neron.md), sumada al corpus
-// Story existente que sigue alimentando Storylist. Reusa la metadata del Story mock.
 const neronBody = createMarkdown(neronMdBody);
 
 export const neronLiteraryWorkMock: LiteraryWork = createLiteraryWork({

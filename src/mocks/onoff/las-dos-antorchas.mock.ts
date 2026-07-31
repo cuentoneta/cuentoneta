@@ -290,8 +290,6 @@ export const lasDosAntorchasStoryMock: Story = {
 	],
 };
 
-// Contraparte LiteraryWork de la obra (contenido en Markdown, las-dos-antorchas.md), sumada al corpus
-// Story existente que sigue alimentando Storylist. Reusa la metadata del Story mock.
 const lasDosAntorchasBody = createMarkdown(lasDosAntorchasMdBody);
 
 export const lasDosAntorchasLiteraryWorkMock: LiteraryWork = createLiteraryWork({

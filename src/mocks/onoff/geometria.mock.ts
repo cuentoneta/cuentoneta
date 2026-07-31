@@ -8,6 +8,7 @@ import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import geometriaMdBody from './geometria.md?raw';
 import geometriaEditorialNoteMd from './geometria.editorial-note.md?raw';
+import { geometriaEpigraphReference, geometriaEpigraphText, geometriaSectionTitle } from './geometria.epigraph';
 import { authorMock } from '../author.mock';
 import { cuentoTagMock, dramaPsicologicoTagMock, filosoficoTagMock } from '../onoff-tags.mock';
 
@@ -280,13 +281,11 @@ export const geometriaStoryMock: Story = {
 	],
 };
 
-// Contraparte LiteraryWork de la obra (contenido en Markdown, geometria.md), sumada al corpus
-// Story existente que sigue alimentando Storylist. Reusa la metadata del Story mock.
 const geometriaBody = createMarkdown(geometriaMdBody);
 
 export const geometriaEpigraphMock = createLiteraryWorkEpigraph({
-	text: markdownToSanitizedHtml(createMarkdown('*Entre dos puntos, la recta es la más breve de las mentiras.*')),
-	reference: markdownToSanitizedHtml(createMarkdown('François Onoff, cuaderno de 1971')),
+	text: markdownToSanitizedHtml(createMarkdown(geometriaEpigraphText)),
+	reference: markdownToSanitizedHtml(createMarkdown(geometriaEpigraphReference)),
 });
 
 export const geometriaLiteraryWorkMock: LiteraryWork = createLiteraryWork({
@@ -298,7 +297,7 @@ export const geometriaLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	content: [
 		createLiteraryWorkSection({
 			position: 0,
-			title: createSectionTitle('El primer teorema'),
+			title: createSectionTitle(geometriaSectionTitle),
 			epigraphs: [geometriaEpigraphMock],
 			bodyHtml: markdownToSanitizedHtml(geometriaBody),
 			readingTime: deriveSectionReadingTime(geometriaBody),
