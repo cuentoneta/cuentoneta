@@ -280,8 +280,6 @@ export const elOdioStoryMock: Story = {
 // Story existente que sigue alimentando Storylist. Reusa la metadata del Story mock.
 const elOdioBody = createMarkdown(elOdioMdBody);
 
-// Único epígrafe del corpus: lo consumen los componentes que pintan HTML saneado, para no
-// hand-authorear prosa en sus specs y stories.
 export const elOdioEpigraphMock = createLiteraryWorkEpigraph({
 	text: markdownToSanitizedHtml(createMarkdown('*El odio se hereda como un apellido.*')),
 	reference: markdownToSanitizedHtml(createMarkdown('François Onoff, cuaderno de 1969')),

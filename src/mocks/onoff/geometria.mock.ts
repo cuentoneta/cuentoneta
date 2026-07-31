@@ -283,6 +283,11 @@ export const geometriaStoryMock: Story = {
 // Story existente que sigue alimentando Storylist. Reusa la metadata del Story mock.
 const geometriaBody = createMarkdown(geometriaMdBody);
 
+export const geometriaEpigraphMock = createLiteraryWorkEpigraph({
+	text: markdownToSanitizedHtml(createMarkdown('*Entre dos puntos, la recta es la más breve de las mentiras.*')),
+	reference: markdownToSanitizedHtml(createMarkdown('François Onoff, cuaderno de 1971')),
+});
+
 export const geometriaLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	_id: 'onoff-literary-work-geometria',
 	slug: geometriaStoryMock.slug,
@@ -293,14 +298,7 @@ export const geometriaLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 		createLiteraryWorkSection({
 			position: 0,
 			title: createSectionTitle('El primer teorema'),
-			epigraphs: [
-				createLiteraryWorkEpigraph({
-					text: markdownToSanitizedHtml(
-						createMarkdown('*Entre dos puntos, la recta es la más breve de las mentiras.*'),
-					),
-					reference: markdownToSanitizedHtml(createMarkdown('François Onoff, cuaderno de 1971')),
-				}),
-			],
+			epigraphs: [geometriaEpigraphMock],
 			bodyHtml: markdownToSanitizedHtml(geometriaBody),
 			readingTime: deriveSectionReadingTime(geometriaBody),
 		}),
