@@ -39,7 +39,7 @@ describe('ReadMetaTagsDirective', () => {
 		expect(titleSpy).not.toHaveBeenCalled();
 	});
 
-	it.each(onoffLiteraryWorksMock)('setea el título con el byline multi-autor para "$slug"', (literaryWork) => {
+	it.each(onoffLiteraryWorksMock)('setea el título con el byline para "$slug"', (literaryWork) => {
 		literaryWorkSignal.set(literaryWork);
 		const titleSpy = spyOn(TestBed.inject(Title), 'setTitle');
 

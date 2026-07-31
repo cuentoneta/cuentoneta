@@ -13,7 +13,7 @@ describe('read.schema', () => {
 			expect(article.mainEntityOfPage).toBe(`${WEBSITE}/read/${literaryWork.slug}`);
 		});
 
-		it.each(onoffLiteraryWorksMock)('emite un Person por autor de "$slug" (multi-autor)', (literaryWork) => {
+		it.each(onoffLiteraryWorksMock)('emite un Person por autor de "$slug"', (literaryWork) => {
 			const article = buildLiteraryWorkArticleSchema(literaryWork, WEBSITE);
 
 			const authors = Array.isArray(article.author) ? article.author : [article.author];

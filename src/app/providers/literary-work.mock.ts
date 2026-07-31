@@ -9,7 +9,7 @@ import { LiteraryWorkApi } from './literary-work-api.interface';
 
 export class StubLiteraryWorkApi implements LiteraryWorkApi {
 	// Seam de construcción: un test puede alimentar la obra del canon que quiere ejercitar,
-	// sin hand-authorear un objeto paralelo. Default el-odio → compatible con los consumidores previos.
+	// sin hand-authorear un objeto paralelo.
 	constructor(private readonly literaryWork: LiteraryWork = elOdioLiteraryWorkMock) {}
 
 	public getBySlug(): Observable<LiteraryWork> {
