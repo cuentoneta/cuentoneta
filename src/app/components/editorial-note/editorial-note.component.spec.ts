@@ -19,10 +19,11 @@ describe('EditorialNoteComponent', () => {
 		expect(screen.getByText('El odio se hereda como un apellido.').tagName).toBe('EM');
 	});
 
-	it('should render the reference right-aligned and italic when a reference is present', async () => {
+	it('should render the reference as a right-aligned italic footer when a reference is present', async () => {
 		await render(EditorialNoteComponent, { inputs: { content, reference } });
 
 		expect(screen.getByText('François Onoff, cuaderno de 1969')).toBeInTheDocument();
+		expect(screen.getByTestId('reference').tagName).toBe('FOOTER');
 		expect(screen.getByTestId('reference')).toHaveClass('text-end', 'italic');
 	});
 
@@ -36,6 +37,7 @@ describe('EditorialNoteComponent', () => {
 		await render(EditorialNoteComponent, { inputs: { content } });
 
 		expect(screen.getByTestId('editorial-note')).toHaveClass('bg-neutral-50', 'border-neutral-150', 'rounded-xl');
+		expect(screen.getByTestId('body')).toHaveClass('source-serif-lg', 'text-neutral-800');
 		expect(screen.queryByTestId('accent-bar')).not.toBeInTheDocument();
 	});
 
@@ -43,6 +45,21 @@ describe('EditorialNoteComponent', () => {
 		await render(EditorialNoteComponent, { inputs: { content, variant: 'highlight' } });
 
 		expect(screen.getByTestId('editorial-note')).toHaveClass('bg-brand-50', 'rounded-lg');
+		expect(screen.getByTestId('body')).toHaveClass('source-serif-lg', 'text-neutral-700');
 		expect(screen.getByTestId('accent-bar')).toHaveClass('bg-brand-400');
+	});
+
+	// La semántica es parte del contrato, no un detalle de estilo: highlight cita a un tercero y note
+	// comenta la obra desde afuera.
+	it('should render the highlight variant as a blockquote', async () => {
+		await render(EditorialNoteComponent, { inputs: { content, variant: 'highlight' } });
+
+		expect(screen.getByTestId('body').tagName).toBe('BLOCKQUOTE');
+	});
+
+	it('should render the note variant as an aside', async () => {
+		await render(EditorialNoteComponent, { inputs: { content } });
+
+		expect(screen.getByTestId('body').tagName).toBe('ASIDE');
 	});
 });

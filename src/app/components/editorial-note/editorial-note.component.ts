@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -7,16 +8,25 @@ export type EditorialNoteVariant = 'note' | 'highlight';
 
 @Component({
 	selector: 'cuentoneta-editorial-note',
+	imports: [NgTemplateOutlet],
 	template: `
 		@if (variant() === 'highlight') {
 			<div class="w-1 self-stretch rounded-full bg-brand-400" data-testid="accent-bar"></div>
+			<blockquote [class]="bodyClasses()" data-testid="body">
+				<ng-container [ngTemplateOutlet]="body" />
+			</blockquote>
+		} @else {
+			<aside [class]="bodyClasses()" data-testid="body">
+				<ng-container [ngTemplateOutlet]="body" />
+			</aside>
 		}
-		<div class="source-serif-lg flex flex-1 flex-col font-normal {{ textClasses() }}">
+
+		<ng-template #body>
 			<div [innerHTML]="safeContent()"></div>
 			@if (safeReference(); as reference) {
-				<div [innerHTML]="reference" class="text-end italic" data-testid="reference"></div>
+				<footer [innerHTML]="reference" class="text-end italic" data-testid="reference"></footer>
 			}
-		</div>
+		</ng-template>
 	`,
 	host: {
 		'[class]': 'hostClasses()',
@@ -45,7 +55,9 @@ export class EditorialNoteComponent {
 		return reference ? this.sanitizer.bypassSecurityTrustHtml(reference) : undefined;
 	});
 
-	protected readonly textClasses = computed(() => this.variantClasses[this.variant()].text);
+	protected readonly bodyClasses = computed(
+		() => `source-serif-lg flex flex-1 flex-col font-normal ${this.variantClasses[this.variant()].text}`,
+	);
 
 	protected readonly hostClasses = computed(() => `flex items-center ${this.variantClasses[this.variant()].container}`);
 }
