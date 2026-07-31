@@ -4,14 +4,14 @@ import { type Article, type BreadcrumbList, type WithContext } from 'schema-dts'
 import { type LiteraryWork } from '@models/literary-work.model';
 import { buildBreadcrumbSchema, buildPersonSchema } from '@utils/schema-org.builders';
 
-const PUBLISHER_NAME = 'La Cuentoneta';
-
 /**
  * Construye el JSON-LD `Article` (+ un `Person` por autor) de una obra en `/read`.
  *
  * Multi-autor: `LiteraryWork` modela 1..N autores, así que `author` es un arreglo de `Person`.
  * Omite `dateModified`: a diferencia de `Story`, `LiteraryWork` no expone `updatedAt`. Sin `image`
  * todavía (igual que la página de cuento): una imagen raster requiere que `/api/og` emita PNG.
+ *
+ * // TODO: Agregar campos faltantes en schema como parte de la implementación del issue #1471
  */
 export function buildLiteraryWorkArticleSchema(literaryWork: LiteraryWork, websiteUrl: string): WithContext<Article> {
 	const baseUrl = Location.stripTrailingSlash(websiteUrl);
@@ -24,7 +24,7 @@ export function buildLiteraryWorkArticleSchema(literaryWork: LiteraryWork, websi
 		author: literaryWork.authors.map((author) => buildPersonSchema(author, `${baseUrl}/author/${author.slug}`)),
 		publisher: {
 			'@type': 'Organization',
-			name: PUBLISHER_NAME,
+			name: 'La Cuentoneta',
 			url: baseUrl,
 			logo: `${baseUrl}/assets/svg/logo.svg`,
 		},
