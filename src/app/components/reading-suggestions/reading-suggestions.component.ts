@@ -7,6 +7,7 @@ import {
 } from '@components/literary-work-card-teaser/literary-work-card-teaser.component';
 import { ButtonComponent } from '@components/button/button.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
 
 /**
  * Bloque "qué leer después" que cierra la lectura de una obra: un encabezado, una tríada de obras
@@ -40,8 +41,8 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 							[literaryWork]="literaryWork"
 							[showAuthor]="showAuthor()"
 							[tagLabel]="tagLabel()"
+							[showMultimedia]="true"
 							variant="on-gray"
-							showMultimedia
 						/>
 					</li>
 				}
@@ -65,10 +66,9 @@ export class ReadingSuggestionsComponent {
 	public readonly showAuthor = input<boolean>(false);
 	public readonly tagLabel = input<string>();
 
-	// Cantidad de sugerencias del bloque: fija el alto del estado de carga para que no haya salto de
-	// layout cuando llegan las obras.
-	private readonly suggestionCount = 3;
-	private readonly loadingPlaceholders: undefined[] = Array(this.suggestionCount);
+	// El estado de carga reserva el alto de la misma cantidad de tarjetas que se van a renderizar,
+	// para que no haya salto de layout cuando llegan las obras.
+	private readonly loadingPlaceholders: undefined[] = Array(READING_SUGGESTIONS_COUNT);
 
 	// Sin obra, la tarjeta renderiza su propio esqueleto: el estado de carga es la misma lista con
 	// los slots vacíos.

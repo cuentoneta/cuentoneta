@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 import { ReadingSuggestionsComponent } from './reading-suggestions.component';
 import type { LiteraryWorkCardTeaserContent } from '@components/literary-work-card-teaser/literary-work-card-teaser.component';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
+import { corpusLiteraryWorkTeasers } from '@mocks/onoff-corpus.storybook';
 
 const teasers = onoffLiteraryWorkTeasersMock.slice(0, 3);
 
@@ -89,5 +90,17 @@ describe('ReadingSuggestionsComponent', () => {
 		await setup({ showAuthor: true });
 
 		expect(screen.getAllByTestId('author').length).toBe(teasers.length);
+	});
+
+	it('should hide the author of each suggestion by default', async () => {
+		await setup();
+
+		expect(screen.queryAllByTestId('author')).toHaveLength(0);
+	});
+
+	it('should expose the multimedia of each suggestion', async () => {
+		await setup({ teasers: corpusLiteraryWorkTeasers.slice(0, 3) });
+
+		expect(screen.getAllByTestId('media')).toHaveLength(3);
 	});
 });
