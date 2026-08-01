@@ -1,21 +1,7 @@
+import type { AttributedText } from './attributed-text.model';
 import type { SectionTitle } from './section-title.model';
 import type { ReadingTime } from './reading-time.model';
 import type { SanitizedHtml } from './sanitized-html.model';
-
-export interface LiteraryWorkEpigraph {
-	readonly text: SanitizedHtml;
-	readonly reference?: SanitizedHtml;
-}
-
-interface CreateLiteraryWorkEpigraphOptions {
-	text: SanitizedHtml;
-	reference?: SanitizedHtml;
-}
-
-// Composición pura: text y reference ya vienen validados por SanitizedHtml.
-export function createLiteraryWorkEpigraph(options: CreateLiteraryWorkEpigraphOptions): LiteraryWorkEpigraph {
-	return Object.freeze({ ...options });
-}
 
 export interface LiteraryWorkSection {
 	// Identidad numérica de la sección en la obra: 0-based, igual al índice del array en el CMS
@@ -23,7 +9,7 @@ export interface LiteraryWorkSection {
 	// ver LITERARY_WORK_DESIGN.md §3/§7.
 	readonly position: number;
 	readonly title?: SectionTitle;
-	readonly epigraphs?: readonly LiteraryWorkEpigraph[];
+	readonly epigraphs?: readonly AttributedText[];
 	readonly bodyHtml: SanitizedHtml;
 	readonly readingTime: ReadingTime;
 }
@@ -31,7 +17,7 @@ export interface LiteraryWorkSection {
 interface CreateLiteraryWorkSectionOptions {
 	position: number;
 	title?: SectionTitle;
-	epigraphs?: readonly LiteraryWorkEpigraph[];
+	epigraphs?: readonly AttributedText[];
 	bodyHtml: SanitizedHtml;
 	readingTime: ReadingTime;
 }

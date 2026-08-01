@@ -1,6 +1,7 @@
 import type { Story } from '@models/story.model';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
-import { createLiteraryWorkEpigraph, createLiteraryWorkSection } from '@models/literary-work-section.model';
+import { createAttributedText } from '@models/attributed-text.model';
+import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createMarkdown } from '@models/markdown.model';
 import { deriveSectionReadingTime } from '@models/reading-time.model';
@@ -267,7 +268,7 @@ export const palacioNueveFronterasStoryMock: Story = {
 
 const palacioNueveFronterasBody = createMarkdown(palacioNueveFronterasMdBody);
 
-export const palacioNueveFronterasEpigraphMock = createLiteraryWorkEpigraph({
+export const palacioNueveFronterasEpigraphMock = createAttributedText({
 	text: markdownToSanitizedHtml(createMarkdown(palacioNueveFronterasEpigraphText)),
 	reference: markdownToSanitizedHtml(createMarkdown(palacioNueveFronterasEpigraphReference)),
 });

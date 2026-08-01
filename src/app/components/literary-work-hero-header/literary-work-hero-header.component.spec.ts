@@ -3,14 +3,14 @@ import { render, screen } from '@testing-library/angular';
 import type { LiteraryWork } from '@models/literary-work.model';
 import type { Tag } from '@models/tag.model';
 import { LiteraryWorkHeroHeaderComponent } from './literary-work-hero-header.component';
-import { palacioNueveFronterasLiteraryWorkMock } from '@mocks/onoff/el-palacio-de-las-nueve-fronteras.mock';
+import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 
 describe('LiteraryWorkHeroHeaderComponent', () => {
 	const tags: Tag[] = [
 		{ title: 'Novela', slug: 'novela', shortDescription: '', description: [] },
 		{ title: 'Metaficción', slug: 'metaficcion', shortDescription: '', description: [] },
 	];
-	const literaryWork: LiteraryWork = { ...palacioNueveFronterasLiteraryWorkMock, tags };
+	const literaryWork: LiteraryWork = { ...onoffLiteraryWorksMock[0], tags };
 	const [author] = literaryWork.authors;
 
 	it('should render the literary work title as the heading', async () => {

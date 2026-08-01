@@ -8,11 +8,8 @@ import { environment } from '../environments/environment';
 
 // Models
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
-import {
-	createLiteraryWorkEpigraph,
-	createLiteraryWorkSection,
-	type LiteraryWorkSection,
-} from '@models/literary-work-section.model';
+import { createAttributedText } from '@models/attributed-text.model';
+import { createLiteraryWorkSection, type LiteraryWorkSection } from '@models/literary-work-section.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createReadingTime } from '@models/reading-time.model';
 import { createSanitizedHtml } from '@models/sanitized-html.model';
@@ -37,7 +34,7 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 			position: dto.position,
 			title: dto.title ? createSectionTitle(dto.title.value) : undefined,
 			epigraphs: dto.epigraphs?.map((epigraph) =>
-				createLiteraryWorkEpigraph({
+				createAttributedText({
 					text: createSanitizedHtml(epigraph.text),
 					reference: epigraph.reference ? createSanitizedHtml(epigraph.reference) : undefined,
 				}),

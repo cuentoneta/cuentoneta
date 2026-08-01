@@ -1,6 +1,7 @@
 import type { Story } from '@models/story.model';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
-import { createLiteraryWorkEpigraph, createLiteraryWorkSection } from '@models/literary-work-section.model';
+import { createAttributedText } from '@models/attributed-text.model';
+import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createMarkdown } from '@models/markdown.model';
 import { deriveSectionReadingTime } from '@models/reading-time.model';
@@ -280,7 +281,7 @@ export const elOdioStoryMock: Story = {
 
 const elOdioBody = createMarkdown(elOdioMdBody);
 
-export const elOdioEpigraphMock = createLiteraryWorkEpigraph({
+export const elOdioEpigraphMock = createAttributedText({
 	text: markdownToSanitizedHtml(createMarkdown(elOdioEpigraphText)),
 	reference: markdownToSanitizedHtml(createMarkdown(elOdioEpigraphReference)),
 });

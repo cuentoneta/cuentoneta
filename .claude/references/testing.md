@@ -57,6 +57,25 @@ beforeEach(() => {
 
 ---
 
+## Regla dura: el corpus se consume por colecciones, nunca por obra
+
+ESLint (`no-single-work-corpus-imports` en `eslint.config.mjs`) **prohíbe** importar una obra puntual del corpus (`@mocks/onoff/<slug>.mock`, `<slug>.raw.mock`, `<slug>.literary-work.raw.mock`, `<slug>.collection.raw.mock`) desde cualquier archivo fuera de `src/mocks/**` — los agregadores son justamente quienes las importan.
+
+Un spec o una story que importa una obra concreta queda atado a ella: sus aserciones citan la prosa de esa obra y enriquecer el canon no las alcanza. Las colecciones y los **selectores por capacidad** declaran el shape que el caso necesita y crecen solos.
+
+| Necesitás…                                | Importá                                                                                               |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Una obra cualquiera                       | `onoffLiteraryWorksMock` (o `onoffRawLiteraryWorksMock` en el backend), y desestructurá la primera    |
+| Una obra con título de sección            | `onoffLiteraryWorksWithSectionTitles`                                                                 |
+| Una obra con epígrafes                    | `onoffLiteraryWorksWithEpigraphs` / `onoffRawLiteraryWorksWithEpigraphs`                              |
+| Una obra con o sin nota editorial         | `onoffLiteraryWorksWith(out)EditorialNote` / `onoffRawLiteraryWorksWith(out)EditorialNote`            |
+| Un texto con atribución (epígrafe o nota) | `onoffLiteraryWorkEpigraphsMock`; en stories, `corpusAttributedTexts` + `attributedTextSelectArgType` |
+| Una story o colección crudas              | `onoffRawStoriesMock`, `onoffRawCollectionsMock`, `onoffRawNavCollectionsMock`                        |
+
+Corolario: **las aserciones se derivan del fixture**, no de prosa clavada. Si el caso necesita una palabra del texto, extraela del propio mock (`bodyHtml.replace(/<[^>]+>/g, ' ')` y tomá una palabra) en vez de escribirla a mano — así sigue pasando cuando el canon cambie. Si falta un selector para el shape que necesitás, **agregalo al agregador** (derivado por predicado, no una lista en paralelo) en vez de importar la obra.
+
+---
+
 ## Componentes: Angular Testing Library
 
 ### Reglas core

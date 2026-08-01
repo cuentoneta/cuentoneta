@@ -1,10 +1,13 @@
 import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 
 import { EditorialNoteComponent } from './editorial-note.component';
-import { elOdioEpigraphMock } from '@mocks/onoff/el-odio.mock';
+import { attributedTextSelectArgType, corpusAttributedTexts } from '@mocks/onoff-corpus.storybook';
+import { onoffLiteraryWorkEpigraphsMock } from '@mocks/onoff-literary-works.mock';
+import { createAttributedText } from '@models/attributed-text.model';
 
-const content = elOdioEpigraphMock.text;
-const reference = elOdioEpigraphMock.reference;
+// Del canon: un epígrafe cualquiera trae texto y referencia; la variante sin atribución reusa su texto.
+const [noteWithReference] = onoffLiteraryWorkEpigraphsMock;
+const note = createAttributedText({ text: noteWithReference.text });
 
 const meta: Meta<EditorialNoteComponent> = {
 	component: EditorialNoteComponent,
@@ -13,19 +16,15 @@ const meta: Meta<EditorialNoteComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Bloque de texto editorial del Design System v3 para el contenido de <strong>LiteraryWork</strong>, <strong>EditorialNote</strong>: recibe HTML ya saneado por el backend (<code>SanitizedHtml</code>) y lo pinta con <code>[innerHTML]</code>, con el estilo de la variante elegida (input <code>variant</code>).</p><ul><li><strong>note</strong> (default): tarjeta neutra con borde, pensada como nota editorial de la obra; rinde <code>&lt;aside&gt;</code>, porque comenta la obra desde afuera.</li><li><strong>highlight</strong>: callout con tinte de marca y barra de acento, para el epígrafe de una sección; rinde <code>&lt;blockquote&gt;</code>, porque cita a un tercero.</li></ul><p>El contenido y su referencia se emparejan dentro de una <code>&lt;figure&gt;</code>, con el pie como <code>&lt;figcaption&gt;</code> que cita la fuente en un <code>&lt;cite&gt;</code>. El pie (cuando existe) se conserva alineado a la derecha, en contraposición al diseño de Figma.</p><p>Es la contraparte de <a href="./?path=/docs/componentes-v3-editorialtextblock--docs" target="_top"><strong>EditorialTextBlock</strong></a>, que provee el mismo tratamiento visual para el contenido Portable Text de <strong>Story</strong>: mismo aspecto, contratos distintos.</p></div>`,
+				component: `<div><p>Bloque de texto editorial del Design System v3 para el contenido de <strong>LiteraryWork</strong>, <strong>EditorialNote</strong>: recibe un <code>AttributedText</code> —un texto ya saneado por el backend con su atribución opcional— en el input <code>note</code>, y lo pinta con <code>[innerHTML]</code> con el estilo de la variante elegida (input <code>variant</code>).</p><ul><li><strong>note</strong> (default): tarjeta neutra con borde, pensada como nota editorial de la obra; rinde <code>&lt;aside&gt;</code>, porque comenta la obra desde afuera.</li><li><strong>highlight</strong>: callout con tinte de marca y barra de acento, para el epígrafe de una sección; rinde <code>&lt;blockquote&gt;</code>, porque cita a un tercero.</li></ul><p>El contenido y su referencia se emparejan dentro de una <code>&lt;figure&gt;</code>, con el pie como <code>&lt;figcaption&gt;</code> que cita la fuente en un <code>&lt;cite&gt;</code>. El pie (cuando existe) se conserva alineado a la derecha, en contraposición al diseño de Figma.</p><p>Sustituye a <strong>EditorialTextBlock</strong>, que da el mismo tratamiento visual al contenido Portable Text de <strong>Story</strong> y quedó deprecado: sobrevive sin entrada en este catálogo mientras la página de Story lo consuma.</p></div>`,
 			},
 		},
 		layout: 'padded',
 	},
 	argTypes: {
-		content: {
-			control: { type: 'text' },
-			table: { type: { summary: 'SanitizedHtml' }, defaultValue: { summary: 'required' } },
-		},
-		reference: {
-			control: { type: 'text' },
-			table: { type: { summary: 'SanitizedHtml' }, defaultValue: { summary: 'undefined' } },
+		note: {
+			control: { type: 'object' },
+			table: { type: { summary: 'AttributedText' }, defaultValue: { summary: 'required' } },
 		},
 		variant: {
 			control: { type: 'inline-radio' },
@@ -40,7 +39,7 @@ type Story = StoryObj<EditorialNoteComponent>;
 
 export const Note: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-editorial-note ${argsToTemplate(args)} />` }),
-	args: { content, variant: 'note' },
+	args: { note, variant: 'note' },
 	parameters: {
 		docs: {
 			description: {
@@ -52,11 +51,11 @@ export const Note: Story = {
 
 export const NoteWithReference: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-editorial-note ${argsToTemplate(args)} />` }),
-	args: { content, reference, variant: 'note' },
+	args: { note: noteWithReference, variant: 'note' },
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante <strong>note</strong> con pie de referencia: la tarjeta neutra con el pie en cursiva alineado a la derecha. El pie es agnóstico a la variante (se muestra cuando llega el input <code>reference</code>), no una variante propia del componente.</p><p><strong>Usos:</strong> sin consumidor todavía; una nota editorial que cite su fuente (<code>editorialNote</code> no transporta referencia).</p>`,
+				story: `<p>Variante <strong>note</strong> con pie de referencia: la tarjeta neutra con el pie en cursiva alineado a la derecha. El pie es agnóstico a la variante (se muestra cuando el <code>note</code> trae <code>reference</code>), no una variante propia del componente.</p><p><strong>Usos:</strong> sin consumidor todavía; una nota editorial que cite su fuente (<code>editorialNote</code> no transporta referencia).</p>`,
 			},
 		},
 	},
@@ -64,7 +63,7 @@ export const NoteWithReference: Story = {
 
 export const Highlight: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-editorial-note ${argsToTemplate(args)} />` }),
-	args: { content, variant: 'highlight' },
+	args: { note, variant: 'highlight' },
 	parameters: {
 		docs: {
 			description: {
@@ -76,11 +75,33 @@ export const Highlight: Story = {
 
 export const HighlightWithReference: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-editorial-note ${argsToTemplate(args)} />` }),
-	args: { content, reference, variant: 'highlight' },
+	args: { note: noteWithReference, variant: 'highlight' },
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante <strong>highlight</strong> con pie de referencia: cuando llega <code>reference</code>, se muestra en cursiva alineada a la derecha (en contraposición al diseño de Figma). Es la misma <code>highlight</code> con referencia, no una variante propia.</p><p><strong>Usos:</strong> sin consumidor todavía; el epígrafe de sección de una obra, que casi siempre atribuye la cita.</p>`,
+				story: `<p>Variante <strong>highlight</strong> con pie de referencia: cuando el <code>note</code> trae <code>reference</code>, se muestra en cursiva alineada a la derecha (en contraposición al diseño de Figma). Es la misma <code>highlight</code> con referencia, no una variante propia.</p><p><strong>Usos:</strong> sin consumidor todavía; el epígrafe de sección de una obra, que casi siempre atribuye la cita.</p>`,
+			},
+		},
+	},
+};
+
+export const Interactiva: StoryObj<EditorialNoteComponent & { attributedTextIndex: number }> = {
+	argTypes: {
+		attributedTextIndex: {
+			...attributedTextSelectArgType,
+			description:
+				'Texto del corpus de François Onoff: los epígrafes de sección traen atribución y las notas editoriales no, así que el pie de la figura aparece o desaparece al cambiar de opción',
+		},
+	},
+	render: (args) => ({
+		props: { ...args, attributedTexts: corpusAttributedTexts },
+		template: `<cuentoneta-editorial-note [note]="attributedTexts[attributedTextIndex]" [variant]="variant" />`,
+	}),
+	args: { attributedTextIndex: 0, variant: 'note' },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Recorre los textos con atribución del canon: cada epígrafe de sección y cada nota editorial de las obras de Onoff, combinables con las dos variantes.</p><p><strong>Usos:</strong> comparar cómo cae el mismo tratamiento visual sobre textos de largo distinto, y ver la figura con y sin pie según el texto traiga o no su fuente.</p>`,
 			},
 		},
 	},
@@ -88,13 +109,13 @@ export const HighlightWithReference: Story = {
 
 export const Showcase: Story = {
 	render: () => ({
-		props: { content, reference },
+		props: { note, noteWithReference },
 		template: `
 			<div class="flex flex-col gap-6">
-				<cuentoneta-editorial-note [content]="content" variant="note" />
-				<cuentoneta-editorial-note [content]="content" [reference]="reference" variant="note" />
-				<cuentoneta-editorial-note [content]="content" variant="highlight" />
-				<cuentoneta-editorial-note [content]="content" [reference]="reference" variant="highlight" />
+				<cuentoneta-editorial-note [note]="note" variant="note" />
+				<cuentoneta-editorial-note [note]="noteWithReference" variant="note" />
+				<cuentoneta-editorial-note [note]="note" variant="highlight" />
+				<cuentoneta-editorial-note [note]="noteWithReference" variant="highlight" />
 			</div>
 		`,
 	}),

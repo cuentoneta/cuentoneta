@@ -1,6 +1,7 @@
 import type { Story } from '@models/story.model';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
-import { createLiteraryWorkEpigraph, createLiteraryWorkSection } from '@models/literary-work-section.model';
+import { createAttributedText } from '@models/attributed-text.model';
+import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createMarkdown } from '@models/markdown.model';
 import { deriveSectionReadingTime } from '@models/reading-time.model';
@@ -283,7 +284,7 @@ export const geometriaStoryMock: Story = {
 
 const geometriaBody = createMarkdown(geometriaMdBody);
 
-export const geometriaEpigraphMock = createLiteraryWorkEpigraph({
+export const geometriaEpigraphMock = createAttributedText({
 	text: markdownToSanitizedHtml(createMarkdown(geometriaEpigraphText)),
 	reference: markdownToSanitizedHtml(createMarkdown(geometriaEpigraphReference)),
 });

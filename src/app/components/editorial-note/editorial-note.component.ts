@@ -1,7 +1,7 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import type { SanitizedHtml } from '@models/sanitized-html.model';
+import type { AttributedText } from '@models/attributed-text.model';
 
 export type EditorialNoteVariant = 'note' | 'highlight';
 
@@ -30,8 +30,7 @@ export type EditorialNoteVariant = 'note' | 'highlight';
 	},
 })
 export class EditorialNoteComponent {
-	public readonly content = input.required<SanitizedHtml>();
-	public readonly reference = input<SanitizedHtml>();
+	public readonly note = input.required<AttributedText>();
 	public readonly variant = input<EditorialNoteVariant>('note');
 
 	private readonly sanitizer = inject(DomSanitizer);
@@ -41,10 +40,10 @@ export class EditorialNoteComponent {
 		highlight: { container: 'gap-4 rounded-lg bg-brand-50 p-2', text: 'text-neutral-700' },
 	};
 
-	protected readonly safeContent = computed(() => this.sanitizer.bypassSecurityTrustHtml(this.content()));
+	protected readonly safeContent = computed(() => this.sanitizer.bypassSecurityTrustHtml(this.note().text));
 
 	protected readonly safeReference = computed(() => {
-		const reference = this.reference();
+		const { reference } = this.note();
 		return reference ? this.sanitizer.bypassSecurityTrustHtml(reference) : undefined;
 	});
 
