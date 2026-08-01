@@ -35,6 +35,12 @@ describe('onoffStoryNavigationTeasersMock (derivación de vistas de navegación)
 		}
 	});
 
+	it('should not project the tags, which the navigation queries leave out', () => {
+		for (const teaser of [...onoffStoryNavigationTeasersWithAuthorMock, ...onoffStoryNavigationTeasersMock]) {
+			expect(teaser.tags).toHaveLength(0);
+		}
+	});
+
 	it('should keep the author only in the with-author projection', () => {
 		for (const teaser of onoffStoryNavigationTeasersWithAuthorMock) {
 			expect(teaser.author).toBeDefined();

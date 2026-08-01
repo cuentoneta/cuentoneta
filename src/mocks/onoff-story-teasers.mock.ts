@@ -52,8 +52,9 @@ export const elTratadoDeLosPlaceresTeaserMock = toTeaser(elTratadoDeLosPlaceresS
 export const lasDosAntorchasTeaserMock = toTeaser(lasDosAntorchasStoryMock);
 export const neronTeaserMock = toTeaser(neronStoryMock);
 
-// La vista de navegación no proyecta el cuerpo: el ACL la devuelve con `paragraphs` vacío. Tampoco
-// proyecta la autoría en el listado por autor, donde es el contexto de la consulta.
+// La vista de navegación no proyecta el cuerpo ni los tags: el ACL la devuelve con `paragraphs` y
+// `tags` vacíos. Tampoco proyecta la autoría en el listado por autor, donde es el contexto de la
+// consulta.
 function toNavigationTeaser(story: Story): StoryNavigationTeaser {
 	return {
 		_id: story._id,
@@ -63,7 +64,7 @@ function toNavigationTeaser(story: Story): StoryNavigationTeaser {
 		badLanguage: story.badLanguage,
 		coverImage: story.coverImage,
 		resources: story.resources,
-		tags: story.tags,
+		tags: [],
 		paragraphs: [],
 		media: toTeaserMedia(story.media),
 		originalPublication: story.originalPublication,
