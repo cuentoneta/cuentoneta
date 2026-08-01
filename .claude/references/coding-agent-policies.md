@@ -110,6 +110,28 @@ Prohibido. Si el componente tiene un **estado de carga (skeleton)**, su story de
 
 Prohibido. Nunca incluir `🤖 Generated with [Claude Code]…`, `Co-Authored-By: Claude …` ni `Claude-Session: …` en un mensaje de commit ni en el cuerpo de un PR (`gh pr create --body`/`--body-file`). El trailer **automático** de commits ya está suprimido por `attribution` en `.claude/settings.json`; el vector que queda es que el agente lo **tipee a mano** en el cuerpo del PR —ese setting no lo borra porque no es un trailer del harness—. La descripción de un PR o commit que lo contenga es bloqueante para la review.
 
+### "Le pongo `[Tooling]` al título para que se sepa de qué va"
+
+Prohibido. El título de un issue enuncia **el trabajo**, nada más. La categoría va en **labels** y la pertenencia a una iniciativa en la **jerarquía de sub-issues** del epic (ver la entrada siguiente). Un prefijo no se puede filtrar, no aparece en ninguna vista agregada y no tiene vocabulario cerrado — `[Test]`, `[QA]` y `[Test][E2E]` llegaron a convivir.
+
+Peor: **desplaza al label**. Los once issues de CollectionPage llevaban prefijo `[Frontend]`/`[Backend]` y ninguno tenía label; el prefijo hace sentir el issue clasificado y lo único filtrable nunca se pone.
+
+La prohibición es **por la función, no por la puntuación** — `[SEO] …`, `SEO — …` y `SEO: …` son el mismo mecanismo:
+
+| ❌                                                  | ✅                                                                 |
+| --------------------------------------------------- | ------------------------------------------------------------------ |
+| `[Backend] Controller Hono GET /collection/:slug`   | `Controller Hono GET /collection/:slug` + label `🔌 backend`       |
+| `SEO — opt-out temporal de indexación de /read`     | `Opt-out temporal de indexación de /read` + label `🧭 indexado`    |
+| `[Cloudflare] Crons: migrar a Cron Triggers`        | `Migrar los crons a Cloudflare Cron Triggers` + sub-issue del epic |
+| `[#2036] - Integrar ReadingSuggestions en ReadPage` | `Integrar ReadingSuggestions en ReadPage`                          |
+
+Dos precisiones:
+
+- **El `[#<id>]` es de commits y PRs, no de issues** (ver [`CLAUDE.md`](../../CLAUDE.md#git)). En el título de un issue repite un número que GitHub ya muestra al lado.
+- Cuando el prefijo carga contexto que el resto del título no tiene, **se pliega dentro de la oración**, no se borra: `[Cloudflare] Cutover: preview → e2e → DNS` → `Cutover a Cloudflare: preview → e2e → DNS`. Un título que pierde información no cumple la regla, la incumple de otra forma.
+
+**Si no existe un label adecuado, se propone al usuario y se espera su confirmación** — crear un label es una acción hacia afuera. Nunca inventar un prefijo para tapar el hueco, ni crear el label por cuenta propia.
+
 ### "Listo los hijos del epic en el cuerpo y queda linkeado igual"
 
 Prohibido. Los issues hijos de un epic se crean **como child issues reales** (relación de sub-issue de GitHub), nunca como una tasklist o una lista de menciones `#<id>` en el cuerpo del epic. Una mención crea una referencia cruzada, no una jerarquía: no aparece en el panel de sub-issues, no aporta progreso agregado y se pierde al reordenar el cuerpo.
