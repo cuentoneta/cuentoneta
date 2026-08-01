@@ -15,6 +15,7 @@
 ## Scripts en la raíz (vivos)
 
 - `set-environment.ts` — genera environments de Angular (`pnpm config`). Emite `environment.indexable` (postura de indexado SEO): `true` solo en producción, o forzado con `SEO_INDEXABLE=true` para una build no productiva con URLs locales (lo usa el job de e2e para validar el HTML indexable del crawler contra el server SSR local).
+- `backfill-reading-time.ts` — persiste el reading time faltante de las obras literarias (`pnpm backfill:reading-time`). **Corre en seco por defecto** y solo escribe con `--no-dry-run`; el patch va con `setIfMissing`, así que es idempotente y no pisa una duración cargada a mano. Su lógica vive en `backfill-reading-time.helpers.ts`, con spec propio.
 - `delete-unused-assets.ts` — borra assets huérfanos en Sanity (`pnpm delete-unused-assets`).
 - `remove-all-unpublished-drafts.ts` — limpia drafts no publicados (operacional, no en package.json).
 - `fix-index-file-name.mjs` — postbuild: renombra el index SSR.
