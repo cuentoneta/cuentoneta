@@ -13,7 +13,7 @@ import {
 } from '@queries/storylist.query';
 
 // Utilidades
-import { mapMediaSources, mapMediaSourcesTeasers } from '../../_utils/media-sources.functions';
+import { mapMediaSources } from '../../_utils/media-sources.functions';
 import {
 	mapAuthorTeaser,
 	mapBlockContentToTextParagraphs,
@@ -35,7 +35,7 @@ export async function fetchAllStorylistTeasers(): Promise<StorylistTeaser[]> {
 			tags: mapTags(item.tags),
 			stories: [],
 			tabs: [],
-			media: mapMediaSourcesTeasers(mediaSources),
+			media: mapMediaSources(mediaSources),
 			imagery: mapImagery({ featuredImage, storyCoverImages }),
 		};
 	});
@@ -56,7 +56,7 @@ export async function fetchStorylistBySlug(slug: string): Promise<Storylist> {
 				...story,
 				author: mapAuthorTeaser({ ...story.author }),
 				coverImage: urlFor(coverImage),
-				media: mapMediaSourcesTeasers(story.mediaSources),
+				media: mapMediaSources(story.mediaSources),
 				paragraphs: mapBlockContentToTextParagraphs(story.body),
 				resources: [],
 				tags: [],

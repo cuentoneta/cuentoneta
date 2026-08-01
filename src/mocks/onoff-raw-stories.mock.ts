@@ -29,7 +29,10 @@ function withoutAudioUrl(
 		if (mediaSource._type !== 'spaceRecording') {
 			return mediaSource;
 		}
-		const { audioUrl: _audioUrl, ...withoutResolvedUrl } = mediaSource;
+		const withoutResolvedUrl: Omit<typeof mediaSource, 'audioUrl'> & { audioUrl?: string | null } = {
+			...mediaSource,
+		};
+		delete withoutResolvedUrl.audioUrl;
 		return withoutResolvedUrl;
 	});
 }

@@ -1,4 +1,5 @@
-import { mapMediaSources, mapMediaSourcesTeasers } from './media-sources.functions';
+import { spyOn } from '@test-utils';
+import { mapMediaSources } from './media-sources.functions';
 import { onoffRawStoriesWithMediaSources, onoffRawTeasersWithMediaSources } from '@mocks/onoff-raw-stories.mock';
 import type { AudioRecording, SpaceRecording, SpotifyPodcastEpisode, YouTubeVideo } from '@models/media.model';
 
@@ -57,9 +58,9 @@ describe('mapMediaSources', () => {
 	});
 });
 
-describe('mapMediaSourcesTeasers', () => {
+describe('mapMediaSources sobre la proyección de teaser', () => {
 	it('mapea los mismos tipos que la proyección completa', () => {
-		const mapped = mapMediaSourcesTeasers(rawTeaser.mediaSources);
+		const mapped = mapMediaSources(rawTeaser.mediaSources);
 
 		expect(mapped.map((media) => media.type)).toEqual([
 			'audioRecording',
@@ -69,13 +70,27 @@ describe('mapMediaSourcesTeasers', () => {
 		]);
 	});
 
-	// Caracterización del comportamiento vigente: la proyección de teaser no resuelve audioUrl y hoy
-	// el mapeo responde vaciando `data`, en vez de transportar la metadata que sí proyecta.
-	it('produce un space recording sin data', () => {
-		const [spaceRecording] = mapMediaSourcesTeasers(rawTeaser.mediaSources).filter(
+	// La proyección de teaser no resuelve audioUrl, pero sí trae el resto de la metadata: el space
+	// recording del teaser es una SpaceRecording válida con la url en null, no un objeto vacío.
+	it('produce un space recording con su metadata y la url en null', () => {
+		const [spaceRecording] = mapMediaSources(rawTeaser.mediaSources).filter(
 			(media) => media.type === 'spaceRecording',
-		);
+		) as SpaceRecording[];
 
-		expect(spaceRecording.data).toEqual({});
+		expect(spaceRecording.data.url).toBeNull();
+		expect(spaceRecording.data.duration).toBe('48:12');
+		expect(spaceRecording.data.hostName).toBe('Biblioteca del Méridien');
+	});
+});
+
+describe('descarte de un tipo sin modelo de dominio', () => {
+	it('deja rastro en el log en vez de descartarlo en silencio', () => {
+		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
+
+		mapMediaSources(rawStory.mediaSources);
+
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining('pdfLink'), {
+			_key: rawSourceOfType('pdfLink')._key,
+		});
 	});
 });

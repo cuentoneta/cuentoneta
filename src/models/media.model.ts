@@ -1,5 +1,4 @@
 import { TextBlockContent } from '@models/block-content.model';
-import type { BlockContent } from '@sanity-types';
 
 /**
  * Modelos del contenido multimedia vinculado a una obra o a una colección.
@@ -74,27 +73,4 @@ export function narrowMedia(media: Media): MediaTypes {
 		return media;
 	}
 	throw new Error(`El tipo ${media.type} no está soportado.`);
-}
-
-/**
- * Interfaces utilizadas por backend para definir los tipos de contenido multimedia
- */
-export interface MediaSchemaObject {
-	_key: string;
-	_type: MediaTypeKey;
-	title: string;
-	icon: string;
-	description: BlockContent;
-}
-
-export interface AudioRecordingSchemaObject extends MediaSchemaObject {
-	url: string;
-}
-
-export interface SpotifyPodcasteEpisodeSchemaObject extends MediaSchemaObject {
-	url: string;
-}
-
-export interface YoutubeVideoSchemaObject extends MediaSchemaObject {
-	videoId: string;
 }
