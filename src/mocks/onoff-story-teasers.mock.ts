@@ -1,4 +1,5 @@
 import type { Story, StoryTeaserWithAuthor } from '@models/story.model';
+import { isSpaceRecording } from '@models/media.model';
 import { authorTeaserMock } from './author.mock';
 import { elOdioStoryMock } from './onoff/el-odio.mock';
 import { elTratadoDeLosPlaceresStoryMock } from './onoff/el-tratado-de-los-placeres.mock';
@@ -8,6 +9,14 @@ import { lasEscalerasStoryMock } from './onoff/las-escaleras.mock';
 import { losPeldanosStoryMock } from './onoff/los-peldanos.mock';
 import { neronStoryMock } from './onoff/neron.mock';
 import { palacioNueveFronterasStoryMock } from './onoff/el-palacio-de-las-nueve-fronteras.mock';
+
+// El ACL de teaser no resuelve la url del space recording (su proyección no trae audioUrl), así que el
+// teaser derivado tampoco puede traerla: con la url resuelta, el mock prometería más que el mapeo real.
+function toTeaserMedia(media: Story['media']): Story['media'] {
+	return media.map((mediaResource) =>
+		isSpaceRecording(mediaResource) ? { ...mediaResource, data: { ...mediaResource.data, url: null } } : mediaResource,
+	);
+}
 
 // Deriva el teaser desde la story completa: toma los campos de la vista de teaser, trunca el cuerpo a los
 // primeros 3 párrafos (igual que el ACL con body[0...3]) y reemplaza el autor por su variante AuthorTeaser.
@@ -22,7 +31,7 @@ function toTeaser(story: Story): StoryTeaserWithAuthor {
 		resources: story.resources,
 		tags: story.tags,
 		paragraphs: story.paragraphs.slice(0, 3),
-		media: story.media,
+		media: toTeaserMedia(story.media),
 		originalPublication: story.originalPublication,
 		author: authorTeaserMock,
 	};

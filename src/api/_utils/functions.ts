@@ -2,7 +2,7 @@
 import { client } from '../_helpers/sanity-connector';
 
 // Funciones
-import { mapMediaSources, mapMediaSourcesTeasers } from './media-sources.functions';
+import { mapMediaSources } from './media-sources.functions';
 import { mapImagery } from './storylist-imagery.functions';
 
 // Tipos de Sanity
@@ -193,7 +193,7 @@ function mapStorylistTeasers(result: StorylistTeasersQueryResult): StorylistTeas
 			tags: mapTags(item.tags),
 			stories: [],
 			tabs: [],
-			media: mapMediaSourcesTeasers(mediaSources),
+			media: mapMediaSources(mediaSources),
 			imagery: mapImagery({ featuredImage, storyCoverImages }),
 		};
 	});
@@ -241,7 +241,7 @@ export function mapStoryTeaser(result: StoryTeasersQueryResult): StoryTeaser[] {
 		stories.push({
 			...properties,
 			coverImage: urlFor(coverImage),
-			media: mapMediaSourcesTeasers(mediaSources),
+			media: mapMediaSources(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: mapBlockContentToTextParagraphs(body) as [TextBlockContent, TextBlockContent, TextBlockContent],
 			tags: [],
@@ -260,7 +260,7 @@ export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlug
 		stories.push({
 			...properties,
 			coverImage: urlFor(coverImage),
-			media: mapMediaSourcesTeasers(mediaSources),
+			media: mapMediaSources(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: [],
 			tags: [],
@@ -283,7 +283,7 @@ export function mapStoryNavigationTeaserWithAuthor(
 			...properties,
 			author: mapAuthorTeaser(item.author),
 			coverImage: urlFor(coverImage),
-			media: mapMediaSourcesTeasers(mediaSources),
+			media: mapMediaSources(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: [],
 			tags: [],
