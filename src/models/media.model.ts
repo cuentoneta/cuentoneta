@@ -58,19 +58,3 @@ export function isYouTubeVideo(media: Media): media is YouTubeVideo {
 export function isSpotifyPodcastEpisode(media: Media): media is SpotifyPodcastEpisode {
 	return media.type === 'spotifyPodcastEpisode';
 }
-
-export function narrowMedia(media: Media): MediaTypes {
-	if (isAudioRecording(media)) {
-		return media;
-	}
-	if (isSpaceRecording(media)) {
-		return media;
-	}
-	if (isYouTubeVideo(media)) {
-		return media;
-	}
-	if (isSpotifyPodcastEpisode(media)) {
-		return media;
-	}
-	throw new Error(`El tipo ${media.type} no está soportado.`);
-}
