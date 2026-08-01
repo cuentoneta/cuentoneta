@@ -61,8 +61,9 @@ export const multiSectionRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryRes
 	],
 };
 
-// Obra sin reading time persistido (campos ausentes): ejercita la materialización self-healing —
-// el futuro mapper computa `readingTime` por sección y `totalReadingTime`, y los persiste.
+// Obra sin reading time persistido (campos en null): ejercita las dos vías que atienden ese estado —
+// el fallback puro que deriva el repository en lectura, sin escribir, y el script de backfill, que es
+// el único que persiste.
 export const unmaterializedRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	...elOdioRawLiteraryWork,
 	_id: 'onoff-literary-work-el-odio-sin-materializar',

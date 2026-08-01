@@ -54,6 +54,7 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 | `pnpm test`                               | Tests unitarios (Vitest)                                                                                                             |
 | `pnpm test:watch`                         | Tests en watch                                                                                                                       |
 | `pnpm test:e2e`                           | E2E (Playwright)                                                                                                                     |
+| `pnpm backfill:reading-time`              | Persiste el reading time faltante de las obras (dry-run por defecto; `--no-dry-run` aplica)                                          |
 | `pnpm seo:smoke`                          | Smoke manual post-deploy de indexado (invariantes SSR sobre `BASE_URL`, muestreando el sitemap)                                      |
 | `pnpm storybook` / `pnpm storybook:build` | Storybook dev / build                                                                                                                |
 | `pnpm sanity:dev`                         | Studio de Sanity (`@cuentoneta/cms`)                                                                                                 |
