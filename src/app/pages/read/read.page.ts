@@ -74,8 +74,6 @@ export default class ReadPage implements ReadHost {
 			})) ?? [],
 	);
 
-	// La nota editorial viaja como SanitizedHtml plano (no lleva referencia), y EditorialNote recibe
-	// un AttributedText: la adaptación es de presentación, así que vive acá y no en el agregado.
 	protected readonly editorialNote = computed(() => {
 		const editorialNote = this.literaryWork()?.editorialNote;
 		return editorialNote ? createAttributedText({ text: editorialNote }) : undefined;

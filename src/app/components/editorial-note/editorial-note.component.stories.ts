@@ -1,13 +1,13 @@
 import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 
 import { EditorialNoteComponent } from './editorial-note.component';
-import { elOdioEpigraphMock } from '@mocks/onoff/el-odio.mock';
 import { attributedTextSelectArgType, corpusAttributedTexts } from '@mocks/onoff-corpus.storybook';
+import { onoffLiteraryWorkEpigraphsMock } from '@mocks/onoff-literary-works.mock';
 import { createAttributedText } from '@models/attributed-text.model';
 
-// Del canon: el epígrafe de El odio trae texto y referencia; la variante sin atribución reusa su texto.
-const noteWithReference = elOdioEpigraphMock;
-const note = createAttributedText({ text: elOdioEpigraphMock.text });
+// Del canon: un epígrafe cualquiera trae texto y referencia; la variante sin atribución reusa su texto.
+const [noteWithReference] = onoffLiteraryWorkEpigraphsMock;
+const note = createAttributedText({ text: noteWithReference.text });
 
 const meta: Meta<EditorialNoteComponent> = {
 	component: EditorialNoteComponent,

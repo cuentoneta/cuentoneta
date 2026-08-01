@@ -6,7 +6,7 @@ import {
 	onoffRawLiteraryWorksWithEpigraphs,
 	unmaterializedRawLiteraryWork,
 } from '@mocks/onoff-raw-literary-works.mock';
-import { neronRawLiteraryWork } from '@mocks/onoff/neron.literary-work.raw.mock';
+import { onoffRawLiteraryWorksWithoutEditorialNote } from '@mocks/onoff-raw-literary-works.mock';
 import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity';
 
 // El repository solo hace `fetch` (sin escritura), así que el spy del client implementa solo eso; se
@@ -90,7 +90,7 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 	});
 
 	it('mapea a undefined la nota editorial de una obra que no la tiene', async () => {
-		const literaryWork = await repoReturning(neronRawLiteraryWork).fetchBySlug('neron');
+		const literaryWork = await repoReturning(onoffRawLiteraryWorksWithoutEditorialNote[0]).fetchBySlug('x');
 
 		expect(literaryWork?.editorialNote).toBeUndefined();
 	});

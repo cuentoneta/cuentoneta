@@ -1,7 +1,6 @@
 import { clearAllMocks, type Mock } from '@test-utils';
 import { client } from '../../_helpers/sanity-connector';
-import { geometriasDelDesveloRawCollection } from '@mocks/onoff/geometrias-del-desvelo.collection.raw.mock';
-import { elInventarioDeLasPasionesRawNavCollection } from '@mocks/onoff/el-inventario-de-las-pasiones.collection.raw.mock';
+import { onoffRawCollectionsMock, onoffRawNavCollectionsMock } from '@mocks/onoff-raw-collections.mock';
 import { fetchStorylistBySlug, fetchStorylistStoriesNavigationTeaserByStorylistSlug } from './storylist.repository';
 
 /* eslint-disable no-restricted-syntax -- vi.mock/vi.fn: mock del cliente de Sanity y del builder de imágenes para aislar el mapeo del repository; se migra a inyección de dependencias en #1503 */
@@ -17,6 +16,9 @@ vi.mock('@sanity/image-url', () => ({
 
 // Fragmentos de los `_ref` reales del corpus: la collection (featuredImage) y las 3 primeras
 // stories de `onoffRawNavTeasersMock` (el-palacio, geometria, los-peldanos), que alimentan `storyCoverImages`.
+const [rawCollection] = onoffRawCollectionsMock;
+const [rawNavCollection] = onoffRawNavCollectionsMock;
+
 const geometriasFeaturedRef = '6efd3e53eec8dfab23e1c0109027be9f58a01f8c';
 const inventarioFeaturedRef = 'b02ff4ca997e7b8d5244cae72b704f59a4855fb1';
 const elPalacioCoverRef = '3f8774ea01abc54483829d982035a810667240e1';
@@ -30,7 +32,7 @@ describe('storylist.repository', () => {
 
 	describe('fetchStorylistBySlug', () => {
 		it('maps a present featuredImage to representative imagery', async () => {
-			(client.fetch as Mock).mockResolvedValue(geometriasDelDesveloRawCollection);
+			(client.fetch as Mock).mockResolvedValue(rawCollection);
 
 			const result = await fetchStorylistBySlug('geometrias-del-desvelo');
 
@@ -41,7 +43,7 @@ describe('storylist.repository', () => {
 		});
 
 		it('falls back to sample imagery (story covers) when featuredImage is null', async () => {
-			(client.fetch as Mock).mockResolvedValue({ ...geometriasDelDesveloRawCollection, featuredImage: null });
+			(client.fetch as Mock).mockResolvedValue({ ...rawCollection, featuredImage: null });
 
 			const result = await fetchStorylistBySlug('geometrias-del-desvelo');
 
@@ -58,7 +60,7 @@ describe('storylist.repository', () => {
 		const params = { slug: 'inventario-de-las-pasiones', start: 0, end: 10 };
 
 		it('maps a present featuredImage to representative imagery', async () => {
-			(client.fetch as Mock).mockResolvedValue(elInventarioDeLasPasionesRawNavCollection);
+			(client.fetch as Mock).mockResolvedValue(rawNavCollection);
 
 			const result = await fetchStorylistStoriesNavigationTeaserByStorylistSlug(params);
 
@@ -69,7 +71,7 @@ describe('storylist.repository', () => {
 		});
 
 		it('falls back to sample imagery (story covers) when featuredImage is null', async () => {
-			(client.fetch as Mock).mockResolvedValue({ ...elInventarioDeLasPasionesRawNavCollection, featuredImage: null });
+			(client.fetch as Mock).mockResolvedValue({ ...rawNavCollection, featuredImage: null });
 
 			const result = await fetchStorylistStoriesNavigationTeaserByStorylistSlug(params);
 

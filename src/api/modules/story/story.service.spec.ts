@@ -2,7 +2,7 @@ import { clearAllMocks, type Mock } from '@test-utils';
 import * as storyRepository from './story.repository';
 import * as storyService from './story.service';
 import type { StoriesByAuthorSlugQueryResult } from '@sanity-types';
-import { elOdioRawStory } from '@mocks/onoff/el-odio.raw.mock';
+import { onoffRawStoriesMock } from '@mocks/onoff-raw-stories.mock';
 import { elOdioRawTeaser } from '@mocks/onoff-raw-stories.mock';
 
 /* eslint-disable no-restricted-syntax -- vi.mock/vi.fn: mock de módulo del repository y del builder de imágenes; se migra a inyección de dependencias en #1503 */
@@ -43,7 +43,7 @@ describe('StoryService', () => {
 
 	describe('getStoryBySlug — mapeo de coverImage', () => {
 		it('should expose coverImage as a URL string built from the raw Sanity image', async () => {
-			(storyRepository.fetchStoryBySlug as Mock).mockResolvedValue(elOdioRawStory);
+			(storyRepository.fetchStoryBySlug as Mock).mockResolvedValue(onoffRawStoriesMock[0]);
 
 			const story = await storyService.getStoryBySlug('el-odio');
 

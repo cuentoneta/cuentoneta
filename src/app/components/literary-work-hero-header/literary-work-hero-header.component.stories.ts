@@ -3,8 +3,10 @@ import { provideRouter } from '@angular/router';
 
 import { LiteraryWorkHeroHeaderComponent } from './literary-work-hero-header.component';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
-import { palacioNueveFronterasLiteraryWorkMock } from '@mocks/onoff/el-palacio-de-las-nueve-fronteras.mock';
 import { literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
+
+// Obra representativa del canon para las stories que solo necesitan una cualquiera.
+const [literaryWorkMock] = onoffLiteraryWorksMock;
 
 const meta: Meta<LiteraryWorkHeroHeaderComponent> = {
 	component: LiteraryWorkHeroHeaderComponent,
@@ -64,7 +66,7 @@ export const Default: Story = {
 		props: args,
 		template: `<cuentoneta-literary-work-hero-header ${argsToTemplate(args)} />`,
 	}),
-	args: { literaryWork: palacioNueveFronterasLiteraryWorkMock },
+	args: { literaryWork: literaryWorkMock },
 	parameters: {
 		docs: {
 			description: {
@@ -81,7 +83,7 @@ export const Estados: StoryObj<LiteraryWorkHeroHeaderComponent & { loading: bool
 		props: args,
 		template: `<cuentoneta-literary-work-hero-header [literaryWork]="loading ? undefined : literaryWork" />`,
 	}),
-	args: { loading: true, literaryWork: palacioNueveFronterasLiteraryWorkMock },
+	args: { loading: true, literaryWork: literaryWorkMock },
 	parameters: {
 		docs: { description: { story: 'Activá/desactivá "Cargando" para alternar entre el estado real y el skeleton.' } },
 	},

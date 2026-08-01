@@ -28,6 +28,14 @@ export const onoffRawLiteraryWorksWithEpigraphs: NonNullable<LiteraryWorkBySlugQ
 		rawLiteraryWork.content.some((section) => section.epigraphs.length > 0),
 	);
 
+// Selectores por capacidad de la nota editorial (contraparte raw de `onoffLiteraryWorksWith/WithoutEditorialNote`),
+// para ejercitar sus dos ramas en el mapeo sin conocer un slug concreto.
+export const onoffRawLiteraryWorksWithEditorialNote: NonNullable<LiteraryWorkBySlugQueryResult>[] =
+	onoffRawLiteraryWorksMock.filter((rawLiteraryWork) => rawLiteraryWork.editorialNote !== null);
+
+export const onoffRawLiteraryWorksWithoutEditorialNote: NonNullable<LiteraryWorkBySlugQueryResult>[] =
+	onoffRawLiteraryWorksMock.filter((rawLiteraryWork) => rawLiteraryWork.editorialNote === null);
+
 // Obra de dos secciones, con los reading time ya persistidos (materializados). Ejercita la lectura
 // de content[] multi-sección y la futura proyección ?section=N.
 export const multiSectionRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
