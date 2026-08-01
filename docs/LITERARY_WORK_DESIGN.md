@@ -394,6 +394,7 @@ Reglas duras del pipeline:
 
 - Todo HTML servido al frontend pasó por `rehype-sanitize` con esta allow-list — **sin excepciones** (body, epígrafes y nota editorial por igual).
 - Scripts, estilos inline, iframes y handlers de eventos quedan **fuera** (no están en el schema por defecto y no se agregan).
+- `srcset` está permitido en `<img>` pero el schema **no filtra su protocolo** (a diferencia de `src`/`href`); hoy solo lo emite el rewrite anclado a `cdn.sanity.io`. Como defensa en profundidad, el guard de frontera `createSanitizedHtml` (`UNSAFE_HTML_PATTERNS`) rechaza un `srcset` con protocolo de script (`javascript:`/`vbscript:`), por si algún día se habilita `rehype-raw`.
 - Cambiar la allow-list exige regen masivo de derivados (ver [§8](#8-estrategia-de-materialización)) y actualizar los tests de XSS del pipeline.
 
 ---

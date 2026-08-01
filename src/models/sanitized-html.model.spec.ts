@@ -18,6 +18,8 @@ describe('createSanitizedHtml', () => {
 		['an iframe', '<iframe src="https://example.com"></iframe>'],
 		['an inline event handler', '<img src="x" onerror="alert(1)" />'],
 		['a javascript: link', '<a href="javascript:alert(1)">Leer</a>'],
+		['a script protocol inside srcset', '<img src="a.png" srcset="javascript:alert(1) 2x" />'],
+		['a script protocol after a comma in srcset', '<img src="a.png" srcset="a.png 1x, vbscript:msgbox(1) 2x" />'],
 	])('throws when the content carries %s', (_case, value) => {
 		expect(() => createSanitizedHtml(value)).toThrow(
 			'SanitizedHtml inválido: el contenido no pasó por el pipeline de sanitización',
