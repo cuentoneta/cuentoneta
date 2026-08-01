@@ -12,14 +12,14 @@ import geometriaEditorialNoteMd from './geometria.editorial-note.md?raw';
 import { geometriaEpigraphReference, geometriaEpigraphText, geometriaSectionTitle } from './geometria.epigraph';
 import type { TextBlockContent } from '@models/block-content.model';
 
-function mediaDescription(text: string): TextBlockContent[] {
+function mediaDescription(key: string, text: string): TextBlockContent[] {
 	return [
 		{
 			_type: 'block',
-			_key: `${text.length}-media-description`,
+			_key: `${key}-description`,
 			style: 'normal',
 			markDefs: [],
-			children: [{ _type: 'span', _key: `${text.length}-media-span`, text, marks: [] }],
+			children: [{ _type: 'span', _key: `${key}-span`, text, marks: [] }],
 		},
 	];
 }
@@ -41,13 +41,13 @@ export const geometriaStoryMock: Story = {
 		{
 			title: 'Lectura de "Geometría" por su autor',
 			type: 'audioRecording',
-			description: mediaDescription('Grabación casera, 1974.'),
+			description: mediaDescription('geometria-audio', 'Grabación casera, 1974.'),
 			data: { url: 'https://cdn.example.org/onoff/geometria.ogg' },
 		},
 		{
 			title: 'Conversación sobre el insomnio y la medida del tiempo',
 			type: 'spaceRecording',
-			description: mediaDescription('Espacio grabado con lectores de Onoff.'),
+			description: mediaDescription('geometria-space', 'Espacio grabado con lectores de Onoff.'),
 			data: {
 				url: 'https://cdn.example.org/onoff/geometria-space.ogg',
 				duration: '48:12',
@@ -58,13 +58,13 @@ export const geometriaStoryMock: Story = {
 		{
 			title: 'Episodio dedicado a "Geometría"',
 			type: 'spotifyPodcastEpisode',
-			description: mediaDescription('Análisis de la obra en formato podcast.'),
+			description: mediaDescription('geometria-spotify', 'Análisis de la obra en formato podcast.'),
 			data: { url: 'https://open.spotify.com/embed/episode/geometria' },
 		},
 		{
 			title: 'Video ensayo sobre las coordenadas del desvelo',
 			type: 'youTubeVideo',
-			description: mediaDescription('Ensayo audiovisual sobre la obra.'),
+			description: mediaDescription('geometria-youtube', 'Ensayo audiovisual sobre la obra.'),
 			data: { videoId: 'geometriaVideoId' },
 		},
 	],

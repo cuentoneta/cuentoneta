@@ -73,7 +73,9 @@ describe('MediaResourceComponent', () => {
 			imports: [SpotifyPodcastEpisodeWidget],
 		});
 
-		expect(screen.getByText(/Historias narradas para ser escuchadas/)).toBeTruthy();
+		// Por el embed y no por la descripción: esa la pinta el mismo parser en los cuatro widgets, así
+		// que la aserción pasaría igual si el registry resolviera el widget equivocado.
+		expect(screen.getByTestId('spotify-embed')).toBeTruthy();
 	});
 
 	test('should throw an error for unsupported media types', async () => {

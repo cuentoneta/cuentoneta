@@ -1,7 +1,7 @@
 import { spyOn } from '@test-utils';
 import { mapMediaSources } from './media-sources.functions';
 import { onoffRawStoriesWithMediaSources, onoffRawTeasersWithMediaSources } from '@mocks/onoff-raw-stories.mock';
-import type { AudioRecording, SpaceRecording, SpotifyPodcastEpisode, YouTubeVideo } from '@models/media.model';
+import { isAudioRecording, isSpaceRecording, isSpotifyPodcastEpisode, isYouTubeVideo } from '@models/media.model';
 
 const [rawStory] = onoffRawStoriesWithMediaSources;
 const [rawTeaser] = onoffRawTeasersWithMediaSources;
@@ -16,9 +16,7 @@ function rawSourceOfType<T extends (typeof rawStory.mediaSources)[number]['_type
 
 describe('mapMediaSources', () => {
 	it('mapea el audio recording con su url', () => {
-		const [audioRecording] = mapMediaSources(rawStory.mediaSources).filter(
-			(media) => media.type === 'audioRecording',
-		) as AudioRecording[];
+		const [audioRecording] = mapMediaSources(rawStory.mediaSources).filter(isAudioRecording);
 		const source = rawSourceOfType('audioRecording');
 
 		expect(audioRecording.title).toBe(source.title);
@@ -26,22 +24,21 @@ describe('mapMediaSources', () => {
 	});
 
 	it('mapea el space recording resolviendo audioUrl y su metadata', () => {
-		const [spaceRecording] = mapMediaSources(rawStory.mediaSources).filter(
-			(media) => media.type === 'spaceRecording',
-		) as SpaceRecording[];
+		const [spaceRecording] = mapMediaSources(rawStory.mediaSources).filter(isSpaceRecording);
+		const source = rawSourceOfType('spaceRecording');
 
-		expect(spaceRecording.data.url).toBe('https://cdn.example.org/onoff/geometria-space.ogg');
-		expect(spaceRecording.data.duration).toBe('48:12');
-		expect(spaceRecording.data.hostName).toBe('Biblioteca del Méridien');
+		expect(spaceRecording.data.url).toBe(source.audioUrl);
+		expect(spaceRecording.data.duration).toBe(source.duration);
+		expect(spaceRecording.data.hostName).toBe(source.hostName);
 	});
 
 	it('mapea el episodio de podcast y el video con su dato propio', () => {
 		const mapped = mapMediaSources(rawStory.mediaSources);
-		const [podcast] = mapped.filter((media) => media.type === 'spotifyPodcastEpisode') as SpotifyPodcastEpisode[];
-		const [video] = mapped.filter((media) => media.type === 'youTubeVideo') as YouTubeVideo[];
+		const [podcast] = mapped.filter(isSpotifyPodcastEpisode);
+		const [video] = mapped.filter(isYouTubeVideo);
 
-		expect(podcast.data.url).toContain('open.spotify.com');
-		expect(video.data.videoId).toBe('geometriaVideoId');
+		expect(podcast.data.url).toBe(rawSourceOfType('spotifyPodcastEpisode').url);
+		expect(video.data.videoId).toBe(rawSourceOfType('youTubeVideo').videoId);
 	});
 
 	// El fixture lleva un pdfLink: un `_type` que el schema admite y el dominio no modela.
@@ -73,13 +70,12 @@ describe('mapMediaSources sobre la proyección de teaser', () => {
 	// La proyección de teaser no resuelve audioUrl, pero sí trae el resto de la metadata: el space
 	// recording del teaser es una SpaceRecording válida con la url en null, no un objeto vacío.
 	it('produce un space recording con su metadata y la url en null', () => {
-		const [spaceRecording] = mapMediaSources(rawTeaser.mediaSources).filter(
-			(media) => media.type === 'spaceRecording',
-		) as SpaceRecording[];
+		const [spaceRecording] = mapMediaSources(rawTeaser.mediaSources).filter(isSpaceRecording);
+		const source = rawSourceOfType('spaceRecording');
 
 		expect(spaceRecording.data.url).toBeNull();
-		expect(spaceRecording.data.duration).toBe('48:12');
-		expect(spaceRecording.data.hostName).toBe('Biblioteca del Méridien');
+		expect(spaceRecording.data.duration).toBe(source.duration);
+		expect(spaceRecording.data.hostName).toBe(source.hostName);
 	});
 });
 

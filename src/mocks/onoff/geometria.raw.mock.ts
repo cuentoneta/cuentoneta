@@ -1,14 +1,14 @@
 import type { BlockContent, StoryBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 
-function rawMediaDescription(text: string): BlockContent {
+function rawMediaDescription(key: string, text: string): BlockContent {
 	return [
 		{
 			_type: 'block',
-			_key: `${text.length}-media-description`,
+			_key: `${key}-description`,
 			style: 'normal',
 			markDefs: [],
-			children: [{ _type: 'span', _key: `${text.length}-media-span`, text, marks: [] }],
+			children: [{ _type: 'span', _key: `${key}-span`, text, marks: [] }],
 		},
 	];
 }
@@ -272,14 +272,14 @@ export const geometriaRawStory: NonNullable<StoryBySlugQueryResult> = {
 			_key: 'geometria-audio',
 			_type: 'audioRecording',
 			title: 'Lectura de "Geometría" por su autor',
-			description: rawMediaDescription('Grabación casera, 1974.'),
+			description: rawMediaDescription('geometria-audio', 'Grabación casera, 1974.'),
 			url: 'https://cdn.example.org/onoff/geometria.ogg',
 		},
 		{
 			_key: 'geometria-space',
 			_type: 'spaceRecording',
 			title: 'Conversación sobre el insomnio y la medida del tiempo',
-			description: rawMediaDescription('Espacio grabado con lectores de Onoff.'),
+			description: rawMediaDescription('geometria-space', 'Espacio grabado con lectores de Onoff.'),
 			audioFile: { _type: 'file', asset: { _type: 'reference', _ref: 'file-geometria-space-ogg' } },
 			hostName: 'Biblioteca del Méridien',
 			date: '1974-06-12',
@@ -290,21 +290,21 @@ export const geometriaRawStory: NonNullable<StoryBySlugQueryResult> = {
 			_key: 'geometria-spotify',
 			_type: 'spotifyPodcastEpisode',
 			title: 'Episodio dedicado a "Geometría"',
-			description: rawMediaDescription('Análisis de la obra en formato podcast.'),
+			description: rawMediaDescription('geometria-spotify', 'Análisis de la obra en formato podcast.'),
 			url: 'https://open.spotify.com/embed/episode/geometria',
 		},
 		{
 			_key: 'geometria-youtube',
 			_type: 'youTubeVideo',
 			title: 'Video ensayo sobre las coordenadas del desvelo',
-			description: rawMediaDescription('Ensayo audiovisual sobre la obra.'),
+			description: rawMediaDescription('geometria-youtube', 'Ensayo audiovisual sobre la obra.'),
 			videoId: 'geometriaVideoId',
 		},
 		{
 			_key: 'geometria-pdf',
 			_type: 'pdfLink',
 			title: 'Facsímil de la primera edición',
-			description: rawMediaDescription('Escaneo de la edición de 1974.'),
+			description: rawMediaDescription('geometria-pdf', 'Escaneo de la edición de 1974.'),
 			url: 'https://cdn.example.org/onoff/geometria.pdf',
 		},
 	],
