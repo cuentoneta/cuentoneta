@@ -112,6 +112,7 @@ Reglas no negociables. Una violación requiere justificación explícita.
 - **Ramas:** `feat/<id_issue>-<descripcion-en-kebab-case>` desde `develop` actualizado (p. ej. `feat/1495-claude-md-and-references`).
 - **Commits:** `[#<id_issue>] - <mensaje>`.
 - **PRs:** título `[#<id_issue>] - <título>`; cuerpo en español con `Closes #<id_issue>`; base `develop`; milestone correspondiente. **Reviews en español.**
+- **Issues:** título **sin prefijo de categoría** — ni `[Tooling]`/`[SEO]`/`[Frontend]`, ni sus variantes con guion o dos puntos, ni el `[#<id_issue>]` (ese es de commits y PRs). El título enuncia el trabajo; la categoría va en **labels** y la pertenencia a una iniciativa en la **jerarquía de sub-issues** del epic. Si falta un label adecuado, se propone al usuario y se espera confirmación → [`coding-agent-policies.md`](.claude/references/coding-agent-policies.md) (Sección 2).
 
 ### Naming
 
