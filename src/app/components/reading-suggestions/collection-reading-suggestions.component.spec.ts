@@ -104,6 +104,17 @@ describe('CollectionReadingSuggestionsComponent', () => {
 		expect(screen.getByTestId('reading-suggestions')).toHaveAttribute('aria-busy', 'false');
 	});
 
+	it('should carry the collection context into each suggestion link', async () => {
+		await setup(() => of(collectionMock));
+
+		const [suggestion] = collectionMock.stories;
+
+		expect(screen.getByRole('link', { name: suggestion.title })).toHaveAttribute(
+			'href',
+			`/story/${suggestion.slug}?navigation=storylist&navigationSlug=${collectionMock.slug}`,
+		);
+	});
+
 	it('should show the author of each suggestion, since a collection can gather several', async () => {
 		await setup(() => of(collectionMock));
 

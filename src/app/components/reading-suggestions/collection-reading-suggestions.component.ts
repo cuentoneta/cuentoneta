@@ -27,6 +27,7 @@ import { adaptStoryTeaserToLiteraryWorkTeaser } from './story-teaser-to-literary
 			[loading]="loading()"
 			[moreLabel]="moreLabel()"
 			[moreRoute]="moreRoute()"
+			[navigationParams]="navigationParams()"
 			[showAuthor]="true"
 		/>
 	`,
@@ -66,4 +67,8 @@ export class CollectionReadingSuggestionsComponent {
 	protected readonly heading = computed(() => `Más obras de ${this.title()}`);
 	protected readonly moreLabel = computed(() => `Ver más de ${this.title()}`);
 	protected readonly moreRoute = computed(() => ['/', this.appRoutes.StoryList, this.collectionSlug()]);
+	protected readonly navigationParams = computed(() => ({
+		navigation: 'storylist',
+		navigationSlug: this.collectionSlug(),
+	}));
 }

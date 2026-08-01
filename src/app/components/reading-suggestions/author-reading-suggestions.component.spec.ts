@@ -126,6 +126,17 @@ describe('AuthorReadingSuggestionsComponent', () => {
 		expect(screen.getByTestId('reading-suggestions')).toHaveAttribute('aria-busy', 'false');
 	});
 
+	it('should carry the author context into each suggestion link', async () => {
+		await setup(() => of(onoffStoryNavigationTeasersMock));
+
+		const [suggestion] = onoffStoryNavigationTeasersMock;
+
+		expect(screen.getByRole('link', { name: suggestion.title })).toHaveAttribute(
+			'href',
+			`/story/${suggestion.slug}?navigation=author&navigationSlug=${authorTeaserMock.slug}`,
+		);
+	});
+
 	it('should hide the author of each suggestion, already named in the heading', async () => {
 		await setup(() => of(onoffStoryNavigationTeasersMock));
 

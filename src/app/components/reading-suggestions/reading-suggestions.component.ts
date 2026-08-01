@@ -39,6 +39,7 @@ import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
 					<li>
 						<cuentoneta-literary-work-card-teaser
 							[literaryWork]="literaryWork"
+							[navigationParams]="navigationParams()"
 							[showAuthor]="showAuthor()"
 							[tagLabel]="tagLabel()"
 							[showMultimedia]="true"
@@ -65,6 +66,9 @@ export class ReadingSuggestionsComponent {
 	public readonly moreRoute = input<string | readonly string[]>();
 	public readonly showAuthor = input<boolean>(false);
 	public readonly tagLabel = input<string>();
+	// Contexto de navegación que arrastra cada enlace, para que el bloque de la obra destino se
+	// resuelva en el mismo contexto (autor o colección) desde el que se llegó.
+	public readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
 
 	// El estado de carga reserva el alto de la misma cantidad de tarjetas que se van a renderizar,
 	// para que no haya salto de layout cuando llegan las obras.
