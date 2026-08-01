@@ -4,10 +4,11 @@ import { CommonModule, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 // 3rd party modules
-import { render } from '@testing-library/angular';
+import { render, screen } from '@testing-library/angular';
+import { DeferBlockState, type ComponentFixture } from '@angular/core/testing';
 
 // Models
-import { Storylist } from '@models/storylist.model';
+import { storylistMock } from '@mocks/storylist.mock';
 import { Story } from '@models/story.model';
 
 // Components
@@ -28,7 +29,8 @@ describe('StoryComponent', () => {
 				NgOptimizedImage,
 				MockBioSummaryCardComponent,
 				MockShareContentComponent,
-				MockStoryNavigationBarComponent,
+				MockAuthorReadingSuggestionsComponent,
+				MockCollectionReadingSuggestionsComponent,
 			],
 			providers: [provideStoryApiMock(), { provide: LayoutService, useValue: new ControllableLayoutService() }],
 			inputs: {
@@ -40,6 +42,55 @@ describe('StoryComponent', () => {
 	it('should create', async () => {
 		const view = setup();
 		expect(view).toBeTruthy();
+	});
+});
+
+describe('StoryComponent - sugerencias de lectura', () => {
+	const setup = async (navigation: 'author' | 'storylist' = 'author', navigationSlug?: string) =>
+		render(StoryComponent, {
+			componentImports: [
+				CommonModule,
+				HttpClientTestingModule,
+				NgForOf,
+				NgIf,
+				NgOptimizedImage,
+				MockBioSummaryCardComponent,
+				MockShareContentComponent,
+				MockAuthorReadingSuggestionsComponent,
+				MockCollectionReadingSuggestionsComponent,
+			],
+			providers: [provideStoryApiMock(), { provide: LayoutService, useValue: new ControllableLayoutService() }],
+			inputs: { slug: storyMock.slug, navigation, navigationSlug },
+		});
+
+	const renderDeferBlocks = async (fixture: ComponentFixture<StoryComponent>) => {
+		for (const deferBlock of await fixture.getDeferBlocks()) {
+			await deferBlock.render(DeferBlockState.Complete);
+		}
+	};
+
+	it('should keep the suggestions out of the initial render, deferred until the viewport reaches them', async () => {
+		await setup();
+
+		expect(screen.queryByTestId('author-reading-suggestions')).not.toBeInTheDocument();
+	});
+
+	it('should mount the author suggestions once the deferred block renders', async () => {
+		const { fixture } = await setup();
+
+		await renderDeferBlocks(fixture);
+
+		expect(screen.getByTestId('author-reading-suggestions')).toBeInTheDocument();
+		expect(screen.queryByTestId('collection-reading-suggestions')).not.toBeInTheDocument();
+	});
+
+	it('should mount the collection suggestions when navigating from a collection', async () => {
+		const { fixture } = await setup('storylist', storylistMock.slug);
+
+		await renderDeferBlocks(fixture);
+
+		expect(screen.getByTestId('collection-reading-suggestions')).toBeInTheDocument();
+		expect(screen.queryByTestId('author-reading-suggestions')).not.toBeInTheDocument();
 	});
 });
 
@@ -57,7 +108,8 @@ describe('StoryComponent - headerPosition', () => {
 				NgOptimizedImage,
 				MockBioSummaryCardComponent,
 				MockShareContentComponent,
-				MockStoryNavigationBarComponent,
+				MockAuthorReadingSuggestionsComponent,
+				MockCollectionReadingSuggestionsComponent,
 			],
 			componentProviders: [{ provide: LayoutService, useValue: mockLayoutService }],
 			providers: [provideStoryApiMock()],
@@ -125,10 +177,23 @@ class MockBioSummaryCardComponent {
 
 @Component({
 	standalone: true,
-	selector: 'cuentoneta-story-navigation-bar:not(p)',
+	selector: 'cuentoneta-author-reading-suggestions:not(p)',
 	template: '',
+	host: { 'data-testid': 'author-reading-suggestions' },
 })
-class MockStoryNavigationBarComponent {
-	public readonly selectedStorySlug = input('');
-	public readonly storylist = input<Storylist>();
+class MockAuthorReadingSuggestionsComponent {
+	public readonly authorSlug = input.required<string>();
+	public readonly authorName = input.required<string>();
+	public readonly currentWorkSlug = input<string>();
+}
+
+@Component({
+	standalone: true,
+	selector: 'cuentoneta-collection-reading-suggestions:not(p)',
+	template: '',
+	host: { 'data-testid': 'collection-reading-suggestions' },
+})
+class MockCollectionReadingSuggestionsComponent {
+	public readonly collectionSlug = input.required<string>();
+	public readonly currentWorkSlug = input<string>();
 }

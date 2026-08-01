@@ -19,7 +19,8 @@ import { StoryStructuredDataDirective } from './story-structured-data.directive'
 import { STORY_HOST, type StoryHost } from './story-host';
 
 // Components
-import { StoryNavigationBarComponent } from '@components/story-navigation-bar/story-navigation-bar.component';
+import { AuthorReadingSuggestionsComponent } from '@components/reading-suggestions/author-reading-suggestions.component';
+import { CollectionReadingSuggestionsComponent } from '@components/reading-suggestions/collection-reading-suggestions.component';
 import { BioSummaryCardComponent } from '@components/bio-summary-card/bio-summary-card.component';
 import { ShareContentComponent } from '@components/share-content/share-content.component';
 import { EditorialTextBlockComponent } from '@components/editorial-text-block/editorial-text-block.component';
@@ -37,11 +38,13 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 		@reference '#tailwind-theme';
 
 		.content {
-			@apply grid grid-cols-1 md:mx-auto md:grid-cols-[286px_1fr] md:gap-x-8;
+			@apply grid grid-cols-1 md:mx-auto;
 		}
 	`,
 	imports: [
+		AuthorReadingSuggestionsComponent,
 		BioSummaryCardComponent,
+		CollectionReadingSuggestionsComponent,
 		CommonModule,
 		EditorialTextBlockComponent,
 		MediaResourceComponent,
@@ -49,7 +52,6 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 		PortableTextParserComponent,
 		RouterLink,
 		ShareContentComponent,
-		StoryNavigationBarComponent,
 		ProgressBarComponent,
 		NgIcon,
 	],
