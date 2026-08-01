@@ -4,7 +4,9 @@
  */
 export type NavigationContext = 'author' | 'storylist';
 
-export interface NavigationParams {
+// Alias y no interfaz: los query params viajan como un diccionario de strings, y solo un alias
+// obtiene la firma de índice implícita que esa asignación exige.
+export type NavigationParams = {
 	readonly navigation: NavigationContext;
 	readonly navigationSlug: string;
-}
+};
