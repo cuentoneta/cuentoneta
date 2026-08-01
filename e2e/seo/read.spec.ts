@@ -13,7 +13,7 @@
 import { test, expect } from '@playwright/test';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
-import { STABLE_SLUGS, SCHEMA_IDS } from '../_utils/seo-fixtures';
+import { STABLE_SLUGS, SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
 
 const readPath = `/read/${STABLE_SLUGS.literaryWork}`;
 
@@ -43,9 +43,9 @@ test.describe('read — HTML server-rendered de una obra existente', () => {
 		expect(status).toBe(200);
 		expect(getTitleText(html)).toBeTruthy();
 		expect(getCanonicalHref(html)).toContain(readPath);
-		// Opt-out temporal: la página se sirve noindex. `noindex` contiene el substring `index`, así que
-		// se afirma el literal completo `noindex`, no `toContain('index')` (que pasaría con ambos valores).
-		expect(getMetaContent(html, 'robots')).toContain('noindex');
+		// Opt-out temporal: la página se sirve noindex. Se afirma el valor exacto y no `toContain('index')`,
+		// que pasaría con ambas políticas — `noindex` contiene el substring `index`.
+		expect(getMetaContent(html, 'robots')).toBe('noindex, nofollow');
 	});
 
 	test('B: H1 único con contenido real y cuerpo saneado', async () => {
@@ -58,6 +58,11 @@ test.describe('read — HTML server-rendered de una obra existente', () => {
 
 	test('C: sin JSON-LD de obra (página no indexable)', () => {
 		const blocks = parseJsonLdBlocks(html);
+		// Los bloques sitewide sí viajan: sin este control positivo, la ausencia de abajo también pasaría
+		// con el pipeline de JSON-LD roto por completo (o con `data-schema-id` renombrado).
+		for (const schemaId of SITEWIDE_SCHEMA_IDS) {
+			expect(blocks.has(schemaId), `falta el bloque JSON-LD sitewide "${schemaId}"`).toBe(true);
+		}
 		// Opt-out temporal: la ReadStructuredDataDirective queda aparcada, así que el HTML
 		// server-rendered no trae los bloques page-scoped Article/BreadcrumbList de la obra.
 		expect(blocks.has(SCHEMA_IDS.article)).toBe(false);
