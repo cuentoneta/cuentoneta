@@ -3,8 +3,12 @@ import { applyReadCacheHeaders, isReadCacheEnabled } from '../_helpers/cache-con
 
 // Angular SSR embebe este marcador SOLO en HTML server-rendered real. El fallback CSR
 // degradado (`index.csr.html`) responde con el MISMO `200 text/html` y sin ningún header
-// distintivo, así que la única señal fiable está en el body. Cachear ese fallback serviría
-// una página vacía durante todo el TTL. Ver #1856 / PR #1730.
+// distintivo, así que la única señal fiable está en el body. Ya pasó en producción que Angular
+// deopteara a CSR sin avisar; cachear ese fallback serviría una página vacía durante todo el TTL.
+//
+// El valor `ssr` depende de que la ruta siga declarada como `RenderMode.Server` en
+// `app.routes.server.ts`: con `Prerender` Angular emite `ssg` y el cacheo dejaría de aplicarse en
+// silencio. Lo ata un test del spec.
 const SSR_MARKER = 'ng-server-context="ssr"';
 
 /**
@@ -27,7 +31,15 @@ export const ssrCacheControl = createMiddleware(async (c, next) => {
 		return;
 	}
 
-	const html = await c.res.clone().text();
+	// La caché es secundaria: si leer la copia del body falla, se sirve sin cachear. Sin este catch
+	// el throw subiría al `onError` global y convertiría en 500 una página que renderizó bien.
+	let html: string;
+	try {
+		html = await c.res.clone().text();
+	} catch {
+		return;
+	}
+
 	if (!html.includes(SSR_MARKER)) {
 		return;
 	}

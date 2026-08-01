@@ -31,7 +31,9 @@ app.route('/api', apiRoutes);
 // Caché de borde para las páginas SSR de `/read/*`. Registrado antes de `serveStatic` y del
 // catch-all SSR para envolverlos (el orden de registro define el anidamiento onion de Hono):
 // corre tras `angularApp.handle()` y decide la cacheabilidad inspeccionando la respuesta.
-app.use('/read/*', ssrCacheControl);
+// Acotado a GET: solo esas respuestas son cacheables por el borde, y un POST que devolviera 200
+// con el marcador no debe recibir headers de caché.
+app.on('GET', '/read/*', ssrCacheControl);
 
 /**
  * Sirve los archivos estáticos desde el directorio /browser

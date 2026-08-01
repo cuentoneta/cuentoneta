@@ -43,4 +43,9 @@ export function applyReadCacheHeaders(c: Context): void {
 		`public, s-maxage=${environment.readCacheSMaxAge}, stale-while-revalidate=${READ_CACHE_STALE_WHILE_REVALIDATE}`,
 	);
 	c.header('Cache-Control', BROWSER_CACHE_CONTROL);
+
+	// El `x-request-id` de quien produjo el miss queda congelado en la copia cacheada y se devuelve
+	// idéntico a todos los hits durante el TTL, lo que rompe la correlación de logs en vez de
+	// ayudarla. Un id ausente es más honesto que uno que miente.
+	c.header('x-request-id', undefined);
 }
