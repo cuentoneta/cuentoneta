@@ -6,7 +6,7 @@ import { StorylistApi } from '../../providers/storylist-api.interface';
 import { progressiveRxResource } from '@app-utils/ssr-resource';
 import { ReadingSuggestionsComponent } from './reading-suggestions.component';
 import { pickReadingSuggestions } from './pick-reading-suggestions';
-import { adaptStoryTeaserToLiteraryWorkTeaser } from './story-teaser-to-literary-work.adapter';
+import { adaptStoryTeasersToLiteraryWorkTeasers } from './story-teaser-to-literary-work.adapter';
 
 /**
  * Sugerencias de otras obras de la misma colección. Resuelve los datos y delega la presentación en
@@ -52,7 +52,7 @@ export class CollectionReadingSuggestionsComponent {
 				map((collection) => ({
 					title: collection.title,
 					suggestions: pickReadingSuggestions(
-						collection.stories.map(adaptStoryTeaserToLiteraryWorkTeaser),
+						adaptStoryTeasersToLiteraryWorkTeasers(collection.stories),
 						params.currentWorkSlug,
 					),
 				})),

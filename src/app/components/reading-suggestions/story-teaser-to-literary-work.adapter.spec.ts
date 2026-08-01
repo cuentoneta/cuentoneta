@@ -2,7 +2,11 @@ import {
 	onoffStoryNavigationTeasersMock,
 	onoffStoryNavigationTeasersWithAuthorMock,
 } from '@mocks/onoff-story-teasers.mock';
-import { adaptStoryTeaserToLiteraryWorkTeaser } from './story-teaser-to-literary-work.adapter';
+import {
+	adaptStoryTeaserToLiteraryWorkTeaser,
+	adaptStoryTeasersToLiteraryWorkTeasers,
+} from './story-teaser-to-literary-work.adapter';
+import { spyOn, restoreAllMocks } from '@test-utils';
 
 describe('adaptStoryTeaserToLiteraryWorkTeaser', () => {
 	it('should carry over the fields the card renders', () => {
@@ -54,5 +58,36 @@ describe('adaptStoryTeaserToLiteraryWorkTeaser', () => {
 		const [story] = onoffStoryNavigationTeasersMock;
 
 		expect(() => adaptStoryTeaserToLiteraryWorkTeaser({ ...story, slug: 'Slug Inválido' })).toThrow(/Slug inválido/);
+	});
+});
+
+describe('adaptStoryTeasersToLiteraryWorkTeasers', () => {
+	afterEach(() => {
+		restoreAllMocks();
+	});
+
+	it('should adapt every story of the listing', () => {
+		expect(adaptStoryTeasersToLiteraryWorkTeasers(onoffStoryNavigationTeasersMock)).toHaveLength(
+			onoffStoryNavigationTeasersMock.length,
+		);
+	});
+
+	it('should drop only the stories it cannot adapt, keeping the rest', () => {
+		spyOn(console, 'warn').mockImplementation(() => undefined);
+		const [first, ...rest] = onoffStoryNavigationTeasersMock;
+
+		const adapted = adaptStoryTeasersToLiteraryWorkTeasers([{ ...first, slug: 'Slug Inválido' }, ...rest]);
+
+		expect(adapted).toHaveLength(rest.length);
+		expect(adapted.map((literaryWork) => literaryWork.slug)).toEqual(rest.map((story) => story.slug));
+	});
+
+	it('should report the discarded story preserving its cause', () => {
+		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
+		const [first] = onoffStoryNavigationTeasersMock;
+
+		adaptStoryTeasersToLiteraryWorkTeasers([{ ...first, slug: 'Slug Inválido' }]);
+
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining('Slug Inválido'), expect.any(Error));
 	});
 });

@@ -3,6 +3,8 @@ import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-w
 import { createReadingTime } from '@models/reading-time.model';
 import { createSlug } from '@models/slug.model';
 
+type StoryNavigationView = StoryNavigationTeaser | StoryNavigationTeaserWithAuthor;
+
 /**
  * TODO: adapter temporal — se elimina cuando existan los endpoints LiteraryWork nativos.
  *
@@ -13,7 +15,7 @@ import { createSlug } from '@models/slug.model';
  * `sectionCount` es 1 porque una `Story` es un cuerpo único, sin secciones.
  */
 export function adaptStoryTeaserToLiteraryWorkTeaser(
-	story: StoryNavigationTeaser | StoryNavigationTeaserWithAuthor,
+	story: StoryNavigationView,
 ): LiteraryWorkNavigationTeaserWithAuthors {
 	return {
 		_id: story._id,
@@ -27,4 +29,22 @@ export function adaptStoryTeaserToLiteraryWorkTeaser(
 		mediaSources: story.media,
 		authors: 'author' in story ? [story.author] : [],
 	};
+}
+
+/**
+ * Adapta un listado descartando las obras que no se pueden traducir. Los value objects del dominio
+ * fallan rápido ante un dato inválido, pero acá se trata de un bloque accesorio al pie de la
+ * lectura: una obra con un slug que el CMS dejó inconsistente no debe llevarse puestas a las demás.
+ */
+export function adaptStoryTeasersToLiteraryWorkTeasers(
+	stories: readonly StoryNavigationView[],
+): LiteraryWorkNavigationTeaserWithAuthors[] {
+	return stories.reduce<LiteraryWorkNavigationTeaserWithAuthors[]>((adapted, story) => {
+		try {
+			adapted.push(adaptStoryTeaserToLiteraryWorkTeaser(story));
+		} catch (cause) {
+			console.warn(`Obra descartada de las sugerencias de lectura: "${story.slug}"`, cause);
+		}
+		return adapted;
+	}, []);
 }

@@ -6,7 +6,7 @@ import { StoryApi } from '../../providers/story-api.interface';
 import { progressiveRxResource } from '@app-utils/ssr-resource';
 import { ReadingSuggestionsComponent } from './reading-suggestions.component';
 import { pickReadingSuggestions } from './pick-reading-suggestions';
-import { adaptStoryTeaserToLiteraryWorkTeaser } from './story-teaser-to-literary-work.adapter';
+import { adaptStoryTeasersToLiteraryWorkTeasers } from './story-teaser-to-literary-work.adapter';
 
 /**
  * Sugerencias de otras obras del mismo autor. Resuelve los datos y delega la presentación en
@@ -53,7 +53,7 @@ export class AuthorReadingSuggestionsComponent {
 				.getNavigationTeasersByAuthorSlug(params.slug)
 				.pipe(
 					map((stories) =>
-						pickReadingSuggestions(stories.map(adaptStoryTeaserToLiteraryWorkTeaser), params.currentWorkSlug),
+						pickReadingSuggestions(adaptStoryTeasersToLiteraryWorkTeasers(stories), params.currentWorkSlug),
 					),
 				),
 		defaultValue: [],
