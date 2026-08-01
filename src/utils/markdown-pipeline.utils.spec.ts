@@ -9,23 +9,121 @@ describe('markdownToSanitizedHtml', () => {
 		expect(html).toContain('<p>Un párrafo con <strong>negrita</strong>.</p>');
 	});
 
-	it('neutralizes embedded <script> tags', () => {
-		const html = markdownToSanitizedHtml(createMarkdown('Texto\n\n<script>alert(1)</script>\n\nMás texto'));
+	// Batería XSS: cada payload mezcla prosa benigna (así la salida no es vacía y no lanza por el
+	// invariante de SanitizedHtml) con un constructo peligroso que la allow-list debe neutralizar.
+	// `forbidden` reconoce el constructo peligroso *como tag o atributo*, no como texto: una obra
+	// puede mencionar "javascript:" en su prosa y ahí llega escapado e inerte (ver el vector autolink).
+	//
+	// Dos familias con la misma expectativa (el vector no atraviesa):
+	//  - HTML crudo: el pipeline no usa rehype-raw/allowDangerousHtml, así que remark-rehype descarta
+	//    el HTML embebido entero antes de llegar al sanitizador. Estos casos también son el guard de
+	//    regresión que se pondría rojo si alguien habilitara HTML crudo (p. ej. el `srcset` crudo, que
+	//    la allow-list de `img` no filtra por protocolo, quedaría vivo si el `<img>` sobreviviera).
+	//  - Markdown-nativo: los constructos que sí llegan al sanitizador (links e imágenes) — se les cae
+	//    el `href`/`src` con protocolo peligroso, dejando el elemento inerte.
+	const BENIGN = 'texto-benigno-visible';
+	const xssVectors: ReadonlyArray<{ name: string; markdown: string; forbidden: RegExp }> = [
+		// HTML crudo — descartado entero por remark-rehype.
+		{ name: '<script> embebido', markdown: `${BENIGN}\n\n<script>alert(1)</script>`, forbidden: /<\s*script/i },
+		{
+			name: '<iframe>',
+			markdown: `${BENIGN}\n\n<iframe src="https://evil.example"></iframe>`,
+			forbidden: /<\s*iframe/i,
+		},
+		{ name: '<object>', markdown: `${BENIGN}\n\n<object data="evil.swf"></object>`, forbidden: /<\s*object/i },
+		{ name: '<embed>', markdown: `${BENIGN}\n\n<embed src="evil.swf">`, forbidden: /<\s*embed/i },
+		{ name: '<form>', markdown: `${BENIGN}\n\n<form action="/x"><input></form>`, forbidden: /<\s*form/i },
+		{ name: '<base href>', markdown: `${BENIGN}\n\n<base href="https://evil.example/">`, forbidden: /<\s*base/i },
+		{ name: '<style> tag', markdown: `${BENIGN}\n\n<style>body{display:none}</style>`, forbidden: /<\s*style/i },
+		{
+			name: '<svg><use href=javascript>',
+			markdown: `${BENIGN}\n\n<svg><use href="javascript:alert(1)"></use></svg>`,
+			forbidden: /<\s*svg/i,
+		},
+		{ name: '<img onerror>', markdown: `${BENIGN}\n\n<img src=x onerror="alert(1)">`, forbidden: /\sonerror\s*=/i },
+		{
+			name: 'onmouseover en <span>',
+			markdown: `${BENIGN}\n\n<span onmouseover="alert(1)">hover</span>`,
+			forbidden: /\sonmouseover\s*=/i,
+		},
+		{
+			name: 'onclick en <div>',
+			markdown: `${BENIGN}\n\n<div onclick="alert(1)">click</div>`,
+			forbidden: /\sonclick\s*=/i,
+		},
+		{
+			name: 'style inline en <p>',
+			markdown: `${BENIGN}\n\n<p style="background:url(javascript:alert(1))">x</p>`,
+			forbidden: /\sstyle\s*=/i,
+		},
+		{
+			name: 'srcset crudo con javascript:',
+			markdown: `${BENIGN}\n\n<img src="https://cdn.sanity.io/a-1x1.jpg" srcset="javascript:alert(1) 2x">`,
+			forbidden: /srcset[^>]*javascript/i,
+		},
+		{
+			name: 'srcset crudo con data:text/html',
+			markdown: `${BENIGN}\n\n<img src="a.jpg" srcset="data:text/html,<b>x</b> 2x">`,
+			forbidden: /srcset[^>]*data:text\/html/i,
+		},
+		{
+			name: 'src crudo con data:text/html',
+			markdown: `${BENIGN}\n\n<img src="data:text/html,<script>alert(1)</script>">`,
+			forbidden: /src\s*=\s*["']?\s*data:text\/html/i,
+		},
+		// Markdown-nativo — el sanitizador descarta el protocolo peligroso del href/src.
+		{
+			name: 'link markdown javascript:',
+			markdown: `${BENIGN} [click](javascript:alert(1))`,
+			forbidden: /href\s*=\s*["']?\s*javascript/i,
+		},
+		{
+			name: 'link markdown JaVaScRiPt: (mixed case)',
+			markdown: `${BENIGN} [click](JaVaScRiPt:alert(1))`,
+			forbidden: /href\s*=\s*["']?\s*javascript/i,
+		},
+		{
+			name: 'link markdown vbscript:',
+			markdown: `${BENIGN} [click](vbscript:msgbox(1))`,
+			forbidden: /href\s*=\s*["']?\s*vbscript/i,
+		},
+		{
+			name: 'link markdown data:text/html',
+			markdown: `${BENIGN} [click](data:text/html,<script>alert(1)</script>)`,
+			forbidden: /href\s*=\s*["']?\s*data:text\/html/i,
+		},
+		{
+			name: 'autolink javascript: queda como texto inerte',
+			markdown: `${BENIGN} <javascript:alert(1)>`,
+			forbidden: /href\s*=\s*["']?\s*javascript/i,
+		},
+		{
+			name: 'imagen markdown javascript:',
+			markdown: `${BENIGN} ![x](javascript:alert(1))`,
+			forbidden: /src\s*=\s*["']?\s*javascript/i,
+		},
+		{
+			name: 'imagen markdown data:text/html',
+			markdown: `${BENIGN} ![x](data:text/html,<script>alert(1)</script>)`,
+			forbidden: /src\s*=\s*["']?\s*data:text\/html/i,
+		},
+	];
 
-		expect(html).not.toContain('<script>');
-		expect(html).not.toContain('alert(1)');
+	it.each(xssVectors)('neutraliza el vector: $name', ({ markdown, forbidden }) => {
+		const html = markdownToSanitizedHtml(createMarkdown(markdown));
+
+		// El constructo peligroso no atraviesa la allow-list...
+		expect(html).not.toMatch(forbidden);
+		// ...y el pipeline no colapsó la salida: el contenido benigno sobrevive y el valor branda
+		// como SanitizedHtml (markdownToSanitizedHtml habría lanzado si el guard de frontera lo rechazara).
+		expect(html).toContain(BENIGN);
 	});
 
-	it('strips event handlers from raw HTML images', () => {
-		const html = markdownToSanitizedHtml(createMarkdown('<img src=x onerror="alert(1)">\n\nTexto'));
+	it('preserves legitimate external and relative links', () => {
+		const html = markdownToSanitizedHtml(createMarkdown('[externo](https://example.com) y [interno](/story/algo)'));
 
-		expect(html).not.toContain('onerror');
-	});
-
-	it('drops javascript: protocol links', () => {
-		const html = markdownToSanitizedHtml(createMarkdown('[click](javascript:alert(1))'));
-
-		expect(html).not.toContain('javascript:');
+		expect(html).toContain('href="https://example.com"');
+		expect(html).toContain('href="/story/algo"');
 	});
 
 	it('enriches Sanity CDN images with dimensions, srcset and loading hints', () => {
