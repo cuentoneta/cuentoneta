@@ -98,7 +98,7 @@ pnpm outdated
 
 ### Verificación final (gates de CI)
 
-Todos los gates de CI definidos en la sección [Comandos comunes](../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**) deben quedar verdes antes de mergear — un upgrade de dependencias es el caso típico donde `studio-build` (bundler del Studio en `cms/`) rompe sin que lo capture `typecheck` ni `build` (motivo original del gate, #1799).
+Todos los gates de CI definidos en la sección [Comandos comunes](../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**) deben quedar verdes antes de mergear — un upgrade de dependencias es el caso típico donde `studio-build` (bundler del Studio en `cms/`) rompe sin que lo capture `typecheck` ni `build` — el motivo por el que existe el gate.
 
 ### Plan de rollback
 
