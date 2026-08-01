@@ -14,6 +14,7 @@ import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import {
 	onoffLiteraryWorksMock,
+	onoffLiteraryWorksSingleSection,
 	onoffLiteraryWorksWithEditorialNote,
 	onoffLiteraryWorksWithoutEditorialNote,
 	onoffLiteraryWorksWithSectionTitles,
@@ -33,6 +34,17 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 // Obra representativa del canon para los casos que solo necesitan una obra cualquiera (su slug, o el
 // camino de error): se toma de la colección, no por import directo de un mock específico.
 const [representativeLiteraryWork] = onoffLiteraryWorksMock;
+
+// Una palabra del cuerpo saneado (sin tags) de la primera sección, derivada de la propia obra en vez
+// de un texto clavado de una obra concreta.
+const firstBodyWord = (literaryWork: LiteraryWork): string => {
+	const bodyText = literaryWork.content[0].bodyHtml.replace(/<[^>]+>/g, ' ');
+	const [word] = bodyText.match(/\p{L}{6,}/gu) ?? [];
+	if (word === undefined) {
+		throw new Error(`La primera sección de "${literaryWork.slug}" no tiene texto de cuerpo`);
+	}
+	return word;
+};
 
 // Payload que combina varios vectores XSS con prosa benigna alrededor. Se procesa por el mismo
 // pipeline de dominio que el corpus, así el bodyHtml es realmente SanitizedHtml — no un string
@@ -91,8 +103,13 @@ describe('ReadPage', () => {
 		});
 	};
 
-	it.each(onoffLiteraryWorksMock)(
-		'renderiza el H1, el byline y la barra de lectura de "$slug"',
+	// Test de aceptación del AC principal (epic #1481): una obra de una sola sección ofrece al lector
+	// las mismas affordances que la página Story (story.component.html) — título como encabezado
+	// principal, byline de autoría, indicador de tiempo de lectura, control de compartir y el cuerpo
+	// saneado legible. Se corre sobre el selector mono-sección (hoy todo el corpus) para declarar
+	// explícitamente la intención de paridad, consolidando las aserciones antes dispersas.
+	it.each(onoffLiteraryWorksSingleSection)(
+		'ofrece las affordances de lectura de una Story para la obra mono-sección "$slug"',
 		async (literaryWork) => {
 			await setup(literaryWork);
 
@@ -100,22 +117,11 @@ describe('ReadPage', () => {
 			expect(screen.getByText(literaryWork.authors[0].name)).toBeTruthy();
 			expect(screen.getByText(new RegExp(`${literaryWork.totalReadingTime} minutos de lectura`))).toBeTruthy();
 			expect(screen.getByRole('button', { name: /compartir/i })).toBeTruthy();
+
+			// Cuerpo saneado legible: una palabra del cuerpo de la propia obra (sin tags) aparece en el DOM.
+			expect((await screen.findAllByText(new RegExp(firstBodyWord(literaryWork), 'i'))).length).toBeGreaterThan(0);
 		},
 	);
-
-	it('renderiza el cuerpo saneado de la obra', async () => {
-		await setup(representativeLiteraryWork);
-
-		// Una palabra del cuerpo saneado (sin tags) de la propia obra, para verificar que el bodyHtml
-		// se renderiza — derivada de la obra, no un texto clavado de una obra concreta.
-		const bodyText = representativeLiteraryWork.content[0].bodyHtml.replace(/<[^>]+>/g, ' ');
-		const [bodyWord] = bodyText.match(/\p{L}{6,}/gu) ?? [];
-		if (bodyWord === undefined) {
-			throw new Error(`La primera sección de "${representativeLiteraryWork.slug}" no tiene texto de cuerpo`);
-		}
-
-		expect((await screen.findAllByText(new RegExp(bodyWord, 'i'))).length).toBeGreaterThan(0);
-	});
 
 	it('renderiza el cuerpo malicioso saneado de forma inerte en el DOM', async () => {
 		const { container } = await setup(literaryWorkWithMaliciousBody(representativeLiteraryWork));

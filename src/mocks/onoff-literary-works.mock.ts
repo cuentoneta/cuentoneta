@@ -25,6 +25,12 @@ export const onoffLiteraryWorksMock: LiteraryWork[] = [
 // Selectores por capacidad, derivados por predicado: un spec declara el shape que necesita (obras con
 // título de sección / con epígrafes) en vez de conocer un slug concreto. Se auto-mantienen al crecer el
 // corpus o al enriquecer más obras, sin tocar los specs.
+// Obras de una sola sección: el shape mono-sección que el test de paridad con Story necesita. Hoy todo
+// el corpus es mono-sección; el predicado se auto-mantiene si más adelante se incorpora una obra multi-sección.
+export const onoffLiteraryWorksSingleSection: LiteraryWork[] = onoffLiteraryWorksMock.filter(
+	(literaryWork) => literaryWork.content.length === 1,
+);
+
 export const onoffLiteraryWorksWithSectionTitles: LiteraryWork[] = onoffLiteraryWorksMock.filter((literaryWork) =>
 	literaryWork.content.some((section) => section.title !== undefined),
 );
