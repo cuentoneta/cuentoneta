@@ -17,11 +17,10 @@ describe('ssrCacheControl', () => {
 		app.get('/read/la-obra', (c) => c.html('<html ng-server-context="ssr"><body>obra</body></html>'));
 		app.get('/read/csr', (c) => c.html('<html ng-server-context="csr"><body></body></html>'));
 		app.get('/read/missing', (c) => c.text('no existe', 404));
-		app.get('/read/a,b', (c) => c.html('<html ng-server-context="ssr"><body>obra</body></html>'));
 		return app;
 	}
 
-	it('cachea en el CDN un 200 SSR real en producción, con el s-maxage del interruptor', async () => {
+	it('should cache a real SSR 200 at the CDN using the configured s-maxage', async () => {
 		environment.production = true;
 		environment.readCacheSMaxAge = 31536000;
 
@@ -32,7 +31,7 @@ describe('ssrCacheControl', () => {
 		);
 	});
 
-	it('mantiene el browser fresco', async () => {
+	it('should keep the browser copy fresh', async () => {
 		environment.production = true;
 
 		const response = await appUnderTest().request('/read/la-obra');
@@ -40,7 +39,7 @@ describe('ssrCacheControl', () => {
 		expect(response.headers.get('Cache-Control')).toBe('public, max-age=0, must-revalidate');
 	});
 
-	it('no cachea el fallback CSR degradado (200 sin el marcador de SSR)', async () => {
+	it('should not cache the degraded CSR fallback (a 200 without the SSR marker)', async () => {
 		environment.production = true;
 
 		const response = await appUnderTest().request('/read/csr');
@@ -48,7 +47,7 @@ describe('ssrCacheControl', () => {
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
 	});
 
-	it('no cachea en entornos no productivos aunque el body sea SSR real', async () => {
+	it('should not cache outside production even when the body is real SSR', async () => {
 		environment.production = false;
 
 		const response = await appUnderTest().request('/read/la-obra');
@@ -56,7 +55,7 @@ describe('ssrCacheControl', () => {
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
 	});
 
-	it('no cachea respuestas no-200 (404)', async () => {
+	it('should not cache non-200 responses', async () => {
 		environment.production = true;
 
 		const response = await appUnderTest().request('/read/missing');
@@ -64,7 +63,7 @@ describe('ssrCacheControl', () => {
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
 	});
 
-	it('preserva el body de la respuesta downstream', async () => {
+	it('should preserve the downstream response body', async () => {
 		environment.production = true;
 
 		const response = await appUnderTest().request('/read/la-obra');

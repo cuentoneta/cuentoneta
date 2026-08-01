@@ -12,15 +12,18 @@ describe('literaryWorkController', () => {
 		environment.production = originalProduction;
 	});
 
-	it.each(onoffLiteraryWorksMock)('devuelve la obra completa con status 200 para "$slug"', async (literaryWork) => {
-		const response = await controller.request(`/${literaryWork.slug}`);
-		const body = await response.json();
+	it.each(onoffLiteraryWorksMock)(
+		'should return the full literary work with a 200 for "$slug"',
+		async (literaryWork) => {
+			const response = await controller.request(`/${literaryWork.slug}`);
+			const body = await response.json();
 
-		expect(response.status).toBe(200);
-		expect(body.slug).toBe(literaryWork.slug);
-	});
+			expect(response.status).toBe(200);
+			expect(body.slug).toBe(literaryWork.slug);
+		},
+	);
 
-	it('responde 404 con un envelope de error para un slug desconocido', async () => {
+	it('should respond 404 with an error envelope for an unknown slug', async () => {
 		const response = await controller.request('/no-existe');
 		const body = await response.json();
 
@@ -28,7 +31,7 @@ describe('literaryWorkController', () => {
 		expect(body.error).toContain('no-existe');
 	});
 
-	it('emite los headers de caché de borde en el 200 en producción', async () => {
+	it('should emit the edge cache headers on a 200 in production', async () => {
 		environment.production = true;
 
 		const response = await controller.request(`/${knownSlug}`);
@@ -36,7 +39,7 @@ describe('literaryWorkController', () => {
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toContain('public, s-maxage=');
 	});
 
-	it('no emite headers de caché fuera de producción', async () => {
+	it('should not emit cache headers outside production', async () => {
 		environment.production = false;
 
 		const response = await controller.request(`/${knownSlug}`);
@@ -44,7 +47,7 @@ describe('literaryWorkController', () => {
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
 	});
 
-	it('no emite headers de caché en el 404', async () => {
+	it('should not emit cache headers on a 404', async () => {
 		environment.production = true;
 
 		const response = await controller.request('/no-existe');
