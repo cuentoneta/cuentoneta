@@ -1,12 +1,15 @@
 import type { SanityClient } from '@sanity/client';
 import { fn } from '@test-utils';
 import {
+	mixedMaterializationRawLiteraryWork,
 	multiSectionRawLiteraryWork,
 	onoffRawLiteraryWorksMock,
 	onoffRawLiteraryWorksWithEpigraphs,
 	unmaterializedRawLiteraryWork,
 } from '@mocks/onoff-raw-literary-works.mock';
 import { onoffRawLiteraryWorksWithoutEditorialNote } from '@mocks/onoff-raw-literary-works.mock';
+import { createMarkdown } from '@models/markdown.model';
+import { createReadingTime, deriveSectionReadingTime, sumReadingTimes } from '@models/reading-time.model';
 import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity';
 
 // El repository solo hace `fetch` (sin escritura), así que el spy del client implementa solo eso; se
@@ -43,11 +46,38 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 		expect(literaryWork?.totalReadingTime).toBe(40);
 	});
 
-	it('deriva el reading time como fallback puro cuando la obra no está backfilleada (sin escribir)', async () => {
-		const literaryWork = await repoReturning(unmaterializedRawLiteraryWork).fetchBySlug('el-odio');
+	// Fallback de reading time del read-path: cuando el crudo no está backfilleado (campos en null), el
+	// repository deriva el valor por sección en lectura, sin escribir — el único que persiste el derivado
+	// es el script de backfill (#1959). El escenario *stale* (un derivado persistido inconsistente con el
+	// cuerpo actual) está fuera de alcance acá: el read-path sirve el total persistido tal cual (write-once
+	// confía en el publish); detectarlo/re-materializarlo es responsabilidad del script de backfill.
+	it('deriva el reading time por sección igual que deriveSectionReadingTime, sin escribir', async () => {
+		const client = { fetch: fn(() => Promise.resolve(unmaterializedRawLiteraryWork)) } as unknown as SanityClient;
+		const literaryWork = await new SanityLiteraryWorkRepository(client).fetchBySlug('el-odio');
 
-		expect(literaryWork?.content.every((section) => section.readingTime >= 1)).toBe(true);
-		expect(literaryWork?.totalReadingTime).toBeGreaterThanOrEqual(1);
+		unmaterializedRawLiteraryWork.content.forEach((rawSection, index) => {
+			expect(literaryWork?.content[index].readingTime).toBe(deriveSectionReadingTime(createMarkdown(rawSection.body)));
+		});
+		// El total sin persistir es la suma exacta de las secciones derivadas (mismo algoritmo del dominio).
+		const expectedTotal = sumReadingTimes(
+			unmaterializedRawLiteraryWork.content.map((rawSection) =>
+				deriveSectionReadingTime(createMarkdown(rawSection.body)),
+			),
+		);
+		expect(literaryWork?.totalReadingTime).toBe(expectedTotal);
+		// El read-path solo lee: el stub del client únicamente implementa `fetch` (cualquier intento de
+		// escritura lanzaría), y se lo invoca una sola vez.
+		expect(client.fetch).toHaveBeenCalledTimes(1);
+	});
+
+	it('sirve el reading time persistido de una sección y deriva el de la sección en null (materialización mixta)', async () => {
+		const literaryWork = await repoReturning(mixedMaterializationRawLiteraryWork).fetchBySlug('x');
+
+		expect(literaryWork?.content[0].readingTime).toBe(7);
+		const derivedSecond = deriveSectionReadingTime(createMarkdown(mixedMaterializationRawLiteraryWork.content[1].body));
+		expect(literaryWork?.content[1].readingTime).toBe(derivedSecond);
+		// El total sin persistir combina el valor materializado y el derivado, sin recalcular el primero.
+		expect(literaryWork?.totalReadingTime).toBe(sumReadingTimes([createReadingTime(7), derivedSecond]));
 	});
 
 	it('mapea un coverImage ausente a string vacío', async () => {
