@@ -1,6 +1,5 @@
 import { Hono } from 'hono';
 import authorController from './modules/author/author.controller';
-import cachePurgeController from './modules/cache-purge/cache-purge.controller';
 import contentController from './modules/content/content.controller';
 import contributorController from './modules/contributor/contributor.controller';
 import literaryWorkController from './modules/literary-work/literary-work.controller';
@@ -11,7 +10,6 @@ import storylistController from './modules/storylist/storylist.controller';
 const apiRoutes = new Hono();
 
 apiRoutes.route('/author', authorController);
-apiRoutes.route('/cache-purge', cachePurgeController);
 apiRoutes.route('/contributor', contributorController);
 apiRoutes.route('/content', contentController);
 apiRoutes.route('/literary-work', literaryWorkController);

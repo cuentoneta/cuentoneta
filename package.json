@@ -59,8 +59,6 @@
 		"@nx/angular": "23.1.0",
 		"@sanity/client": "^7.25.0",
 		"@sanity/image-url": "^2.1.1",
-		"@sanity/webhook": "^4.0.4",
-		"@vercel/functions": "^3.7.6",
 		"date-fns": "^4.4.0",
 		"esbuild": "0.28.1",
 		"groq": "^6.6.0",

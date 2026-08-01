@@ -32,13 +32,12 @@ describe('ssrCacheControl', () => {
 		);
 	});
 
-	it('mantiene el browser fresco y etiqueta la respuesta por slug', async () => {
+	it('mantiene el browser fresco', async () => {
 		environment.production = true;
 
 		const response = await appUnderTest().request('/read/la-obra');
 
 		expect(response.headers.get('Cache-Control')).toBe('public, max-age=0, must-revalidate');
-		expect(response.headers.get('Vercel-Cache-Tag')).toBe('literary-work:la-obra');
 	});
 
 	it('no cachea el fallback CSR degradado (200 sin el marcador de SSR)', async () => {
@@ -47,7 +46,6 @@ describe('ssrCacheControl', () => {
 		const response = await appUnderTest().request('/read/csr');
 
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
-		expect(response.headers.get('Vercel-Cache-Tag')).toBeNull();
 	});
 
 	it('no cachea en entornos no productivos aunque el body sea SSR real', async () => {
@@ -56,15 +54,6 @@ describe('ssrCacheControl', () => {
 		const response = await appUnderTest().request('/read/la-obra');
 
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
-	});
-
-	it('no cachea si el slug del path no valida (evita partir el Vercel-Cache-Tag)', async () => {
-		environment.production = true;
-
-		const response = await appUnderTest().request('/read/a,b');
-
-		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
-		expect(response.headers.get('Vercel-Cache-Tag')).toBeNull();
 	});
 
 	it('no cachea respuestas no-200 (404)', async () => {

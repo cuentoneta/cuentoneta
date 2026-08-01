@@ -28,13 +28,12 @@ describe('literaryWorkController', () => {
 		expect(body.error).toContain('no-existe');
 	});
 
-	it('emite los headers de caché de borde y el tag por slug en el 200 en producción', async () => {
+	it('emite los headers de caché de borde en el 200 en producción', async () => {
 		environment.production = true;
 
 		const response = await controller.request(`/${knownSlug}`);
 
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toContain('public, s-maxage=');
-		expect(response.headers.get('Vercel-Cache-Tag')).toBe(`literary-work:${knownSlug}`);
 	});
 
 	it('no emite headers de caché fuera de producción', async () => {
@@ -43,7 +42,6 @@ describe('literaryWorkController', () => {
 		const response = await controller.request(`/${knownSlug}`);
 
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
-		expect(response.headers.get('Vercel-Cache-Tag')).toBeNull();
 	});
 
 	it('no emite headers de caché en el 404', async () => {
