@@ -130,13 +130,16 @@ describe('ReadPage', () => {
 		expect(await screen.findByText(/Final legible de la obra maliciosa/i)).toBeTruthy();
 
 		// ...pero ningún vector sobrevive como elemento ejecutable ni como atributo de handler en el
-		// DOM renderizado por [innerHTML]+bypassSecurityTrustHtml. querySelector es la vía de verificar
-		// ausencia de tags/atributos que ATL no expone por rol.
-		// (No se afirma ausencia de <img> a secas: la página sí renderiza la portada legítima; el
-		// atributo de handler malicioso lo cubre el selector [onerror] de abajo.)
+		// DOM renderizado por [innerHTML]+bypassSecurityTrustHtml. Se consulta el `container` del render
+		// (no el document, que sí contiene el <script> JSON-LD legítimo de structured data): la ausencia
+		// de estos tags/atributos no se expresa por rol de ATL, de ahí el acceso directo al nodo. (No se
+		// afirma ausencia de <img> a secas: la página renderiza la portada legítima; el handler malicioso
+		// lo cubre el selector [onerror] de abajo.)
+		/* eslint-disable testing-library/no-container, testing-library/no-node-access */
 		expect(container.querySelector('script')).toBeNull();
 		expect(container.querySelector('a[href^="javascript:"]')).toBeNull();
 		expect(container.querySelector('[onerror], [onclick], [onload], [onmouseover]')).toBeNull();
+		/* eslint-enable testing-library/no-container, testing-library/no-node-access */
 	});
 
 	it.each(onoffLiteraryWorksWithSectionTitles)(
