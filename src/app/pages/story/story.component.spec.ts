@@ -84,6 +84,18 @@ describe('StoryComponent - sugerencias de lectura', () => {
 		expect(screen.queryByTestId('collection-reading-suggestions')).not.toBeInTheDocument();
 	});
 
+	it('should share the link with the very context the reader arrived with', async () => {
+		const view = await setup('storylist', storylistMock.slug);
+
+		const { shareContentParams, navigationParams } = view.fixture.componentInstance as unknown as {
+			shareContentParams: () => unknown;
+			navigationParams: () => unknown;
+		};
+
+		expect(shareContentParams()).toEqual(navigationParams());
+		expect(shareContentParams()).toEqual({ navigation: 'storylist', navigationSlug: storylistMock.slug });
+	});
+
 	it('should fall back to the author suggestions when the collection slug is missing', async () => {
 		const { fixture } = await setup('storylist');
 
