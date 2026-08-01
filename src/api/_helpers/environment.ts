@@ -32,10 +32,12 @@ export interface EnvironmentConfig {
 export const CONSERVATIVE_READ_CACHE_S_MAXAGE = 300;
 
 // Exportada para test: parsea el valor crudo del interruptor, con fallback al default conservador
-// ante un valor ausente, no numérico o no positivo.
+// ante un valor ausente, no numérico, no entero o no positivo. El entero no es cosmético: RFC 9111
+// define `s-maxage` como delta-seconds entero, así que un `300.7` invalida la directiva y el borde
+// deja de cachear en silencio.
 export function parseReadCacheSMaxAge(raw: string | undefined): number {
 	const parsed = Number(raw);
-	return Number.isFinite(parsed) && parsed > 0 ? parsed : CONSERVATIVE_READ_CACHE_S_MAXAGE;
+	return Number.isInteger(parsed) && parsed > 0 ? parsed : CONSERVATIVE_READ_CACHE_S_MAXAGE;
 }
 
 export const environment: EnvironmentConfig = {

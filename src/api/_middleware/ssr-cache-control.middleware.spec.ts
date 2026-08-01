@@ -22,12 +22,12 @@ describe('ssrCacheControl', () => {
 
 	it('should cache a real SSR 200 at the CDN using the configured s-maxage', async () => {
 		environment.production = true;
-		environment.readCacheSMaxAge = 31536000;
+		environment.readCacheSMaxAge = 600;
 
 		const response = await appUnderTest().request('/read/la-obra');
 
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBe(
-			'public, s-maxage=31536000, stale-while-revalidate=604800',
+			'public, s-maxage=600, stale-while-revalidate=604800',
 		);
 	});
 

@@ -16,20 +16,25 @@ const READ_CACHE_STALE_WHILE_REVALIDATE = 604800; // 7 días
 const BROWSER_CACHE_CONTROL = 'public, max-age=0, must-revalidate';
 
 /**
+ * Decide si `/read` es cacheable en el entorno actual. Fuera de producción no lo es (coherente con
+ * `noindexNonProduction`): un preview comparte el CDN y serviría contenido de un dataset que no es
+ * el público. Exportada para que el middleware corte antes de bufferizar el body, sin duplicar la
+ * condición: la política sigue teniendo un solo dueño.
+ */
+export function isReadCacheEnabled(): boolean {
+	return environment.production;
+}
+
+/**
  * Aplica a una respuesta cacheable de `/read` los headers de caché de borde: `s-maxage` corto
  * (interruptor `environment.readCacheSMaxAge`) con `stale-while-revalidate` largo, efectivos solo
  * en el CDN de Vercel, más un `Cache-Control` que mantiene fresco al browser.
  *
- * La frescura la da el vencimiento del `s-maxage`, no una invalidación explícita: no hay purga
- * dirigida, y por eso tampoco endpoint, secreto compartido ni etiquetado por obra.
+ * La frescura la da el vencimiento del `s-maxage`, no una invalidación explícita.
  * Ver LITERARY_WORK_DESIGN.md §8.
- *
- * Fuera de producción no emite nada (coherente con `noindexNonProduction`): un preview compartiría
- * el CDN y serviría contenido de un dataset que no es el público. La condición vive acá y no en cada
- * llamador para que la política de cacheabilidad tenga un solo dueño.
  */
 export function applyReadCacheHeaders(c: Context): void {
-	if (!environment.production) {
+	if (!isReadCacheEnabled()) {
 		return;
 	}
 

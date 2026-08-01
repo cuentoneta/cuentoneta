@@ -1,5 +1,5 @@
 import { createMiddleware } from 'hono/factory';
-import { applyReadCacheHeaders } from '../_helpers/cache-control';
+import { applyReadCacheHeaders, isReadCacheEnabled } from '../_helpers/cache-control';
 
 // Angular SSR embebe este marcador SOLO en HTML server-rendered real. El fallback CSR
 // degradado (`index.csr.html`) responde con el MISMO `200 text/html` y sin ningún header
@@ -14,14 +14,16 @@ const SSR_MARKER = 'ng-server-context="ssr"';
  * es SSR real antes de cachear. Esto sacrifica el streaming del primer byte —acotado a `/read/*`
  * y aceptable por la inmutabilidad del contenido de una obra—, pero es la única forma correcta de
  * distinguir el SSR real del fallback CSR degradado. No cachea respuestas no-200 (404/500) ni el
- * fallback CSR; el corte por entorno lo aplica `applyReadCacheHeaders`.
+ * fallback CSR.
  *
- * La cache key del CDN de Vercel incluye el query string, así que `?section=N` cachea por variante.
+ * La cache key del CDN de Vercel incluye el query string, así que una página con variantes por query
+ * cachea por variante.
  */
 export const ssrCacheControl = createMiddleware(async (c, next) => {
 	await next();
 
-	if (c.res.status !== 200) {
+	// Antes del `clone()`: sin caché habilitada, bufferizar el HTML entero es trabajo puro a pérdida.
+	if (!isReadCacheEnabled() || c.res.status !== 200) {
 		return;
 	}
 

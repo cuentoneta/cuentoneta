@@ -381,7 +381,7 @@ El contrato del frontend (Slice 1) es entonces:
 | `s-maxage`        | Interruptor de entorno `READ_CACHE_S_MAXAGE` (`EnvironmentConfig.readCacheSMaxAge`), con default conservador de **5 minutos** si la variable no está seteada o es inválida. Es la ventana de propagación de una edición, no un límite de disponibilidad: el `stale-while-revalidate` de 7 días cubre el servido mientras se revalida.                                                                                                                                                 |
 | Corte por entorno | `applyReadCacheHeaders` no emite nada fuera de producción (coherente con `noindexNonProduction`): un preview comparte el CDN y serviría contenido de un dataset que no es el público. La condición vive en el helper, no en cada llamador, para que la política de cacheabilidad tenga un solo dueño.                                                                                                                                                                                 |
 
-La cache key del CDN de Vercel incluye el query string, así que cada variante `?section=N` se cachea por separado.
+La cache key del CDN de Vercel incluye el query string, así que si la página llega a tener variantes por query, cada una se cachea por separado (hoy no las tiene: la navegación por sección está diferida, ver [§7](#7-contrato-del-endpoint)).
 
 ---
 
@@ -399,7 +399,7 @@ Reglas duras del pipeline:
 
 - Todo HTML servido al frontend pasó por `rehype-sanitize` con esta allow-list — **sin excepciones** (body, epígrafes y nota editorial por igual).
 - Scripts, estilos inline, iframes y handlers de eventos quedan **fuera** (no están en el schema por defecto y no se agregan).
-- Cambiar la allow-list exige purgar la caché de borde completa (ver [§8](#8-estrategia-de-caché-de-borde)) — sin esa purga, las respuestas ya cacheadas siguen sirviendo HTML sanitizado con la allow-list vieja hasta que expire el TTL — y actualizar los tests de XSS del pipeline.
+- Cambiar la allow-list deja stale a la caché de borde: no hay purga (ver [§8](#8-estrategia-de-caché-de-borde)), así que las respuestas ya cacheadas siguen sirviendo HTML sanitizado con la allow-list vieja hasta que venza el `s-maxage` y la revalidación las reemplace. Si el cambio es correctivo (cierra un vector), no alcanza con esperar: bajar el `s-maxage` acorta la ventana. Actualizar además los tests de XSS del pipeline.
 
 ---
 
