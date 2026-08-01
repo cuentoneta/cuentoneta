@@ -77,6 +77,32 @@ describe('AuthorReadingSuggestionsComponent', () => {
 		expect(screen.queryByRole('link', { name: current.title })).not.toBeInTheDocument();
 	});
 
+	it('should resolve the suggestions once per fetch, without reshuffling on every read', async () => {
+		spyOn(Math, 'random').mockRestore();
+		const randomSource = spyOn(Math, 'random').mockReturnValue(0);
+
+		const view = await setup(() => of(onoffStoryNavigationTeasersMock));
+		const callsAfterRender = randomSource.mock.calls.length;
+		view.detectChanges();
+
+		expect(randomSource.mock.calls.length).toBe(callsAfterRender);
+	});
+
+	it('should resolve them again when the work being read changes', async () => {
+		const [first, second] = onoffStoryNavigationTeasersMock;
+		const getNavigationTeasersByAuthorSlug = fn<(slug: string) => Observable<StoryNavigationTeaser[]>>();
+		getNavigationTeasersByAuthorSlug.mockReturnValue(of(onoffStoryNavigationTeasersMock));
+
+		const view = await setup(getNavigationTeasersByAuthorSlug, { currentWorkSlug: first.slug });
+		await view.rerender({
+			inputs: { authorSlug: authorTeaserMock.slug, authorName: authorTeaserMock.name, currentWorkSlug: second.slug },
+		});
+		await view.fixture.whenStable();
+
+		expect(getNavigationTeasersByAuthorSlug).toHaveBeenCalledTimes(2);
+		expect(screen.queryByRole('link', { name: second.title })).not.toBeInTheDocument();
+	});
+
 	it('should head the block with the author name and link to their listing', async () => {
 		await setup(() => of(onoffStoryNavigationTeasersMock));
 

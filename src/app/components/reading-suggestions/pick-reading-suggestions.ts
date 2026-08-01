@@ -7,8 +7,8 @@ export const READING_SUGGESTIONS_COUNT = 3;
 /**
  * Elige al azar las obras que se sugieren al pie de la lectura, descartando la que se está leyendo.
  *
- * El azar se resuelve donde se invoca —una vez, al montar el bloque— para que las sugerencias no se
- * rebarajen mientras la persona lee.
+ * El azar se resuelve donde se invoca —una vez por fetch, en el stream del recurso— para que las
+ * sugerencias no se rebarajen mientras la persona lee.
  */
 export function pickReadingSuggestions<T extends LiteraryWorkCardTeaserContent>(
 	candidates: readonly T[],

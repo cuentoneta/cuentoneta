@@ -1,4 +1,5 @@
 import { Component, computed, inject, input } from '@angular/core';
+import { map } from 'rxjs';
 
 import { AppRoutes } from '../../app.routes';
 import { StoryApi } from '../../providers/story-api.interface';
@@ -39,20 +40,27 @@ export class AuthorReadingSuggestionsComponent {
 	private readonly appRoutes = AppRoutes;
 	private readonly storyService = inject(StoryApi);
 
-	private readonly storiesResource = progressiveRxResource({
-		params: () => this.authorSlug() || undefined,
-		stream: ({ params: slug }) => this.storyService.getNavigationTeasersByAuthorSlug(slug),
+	// El sorteo ocurre acá, en el stream, y no en un computed: así se resuelve una sola vez por fetch
+	// y las sugerencias no se rebarajan ante cualquier reevaluación.
+	private readonly suggestionsResource = progressiveRxResource({
+		// La obra en lectura entra en los params: al pasar a otra obra del mismo autor, el bloque
+		// vuelve a resolverse en vez de seguir sugiriendo la que se está leyendo.
+		params: () =>
+			this.authorSlug() ? { slug: this.authorSlug(), currentWorkSlug: this.currentWorkSlug() } : undefined,
+		stream: ({ params }) =>
+			this.storyService
+				.getNavigationTeasersByAuthorSlug(params.slug)
+				.pipe(
+					map((stories) =>
+						pickReadingSuggestions(stories.map(adaptStoryTeaserToLiteraryWorkTeaser), params.currentWorkSlug),
+					),
+				),
 		defaultValue: [],
 	});
 
-	protected readonly loading = computed(() => this.storiesResource.isLoading());
+	protected readonly loading = computed(() => this.suggestionsResource.isLoading());
+	protected readonly suggestions = computed(() => this.suggestionsResource.value());
 	protected readonly heading = computed(() => `Más obras de ${this.authorName()}`);
 	protected readonly moreLabel = computed(() => `Ver más de ${this.authorName()}`);
 	protected readonly moreRoute = computed(() => ['/', this.appRoutes.Author, this.authorSlug()]);
-	protected readonly suggestions = computed(() =>
-		pickReadingSuggestions(
-			this.storiesResource.value().map(adaptStoryTeaserToLiteraryWorkTeaser),
-			this.currentWorkSlug(),
-		),
-	);
 }
