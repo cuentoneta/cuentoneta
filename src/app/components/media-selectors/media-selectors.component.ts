@@ -78,7 +78,9 @@ interface MediaSelectorItem {
 })
 export class MediaSelectorsComponent {
 	// Inputs
-	public readonly media = input<Media[]>([]);
+	// Solo lee la colección, así que la acepta de solo lectura: es como la exponen las proyecciones
+	// de LiteraryWork.
+	public readonly media = input<readonly Media[]>([]);
 	public readonly orientation = input<'horizontal' | 'vertical'>('horizontal');
 	public readonly theme = input<MediaSelectorsTheme>('subtle');
 	public readonly selectable = input<boolean>(false);
