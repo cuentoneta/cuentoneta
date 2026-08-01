@@ -20,6 +20,20 @@ export const onoffRawStoriesMock: NonNullable<StoryBySlugQueryResult>[] = [
 	neronRawStory,
 ];
 
+// La proyección de teaser no resuelve `audioUrl` (solo lo hace la de la obra completa): si el
+// derivador lo copiara, el fixture sería más rico que la query real y taparía esa diferencia.
+function withoutAudioUrl(
+	mediaSources: NonNullable<StoryBySlugQueryResult>['mediaSources'],
+): StoriesByAuthorSlugQueryResult[0]['mediaSources'] {
+	return mediaSources.map((mediaSource) => {
+		if (mediaSource._type !== 'spaceRecording') {
+			return mediaSource;
+		}
+		const { audioUrl: _audioUrl, ...withoutResolvedUrl } = mediaSource;
+		return withoutResolvedUrl;
+	});
+}
+
 function toRawTeaser(raw: NonNullable<StoryBySlugQueryResult>): StoriesByAuthorSlugQueryResult[0] {
 	return {
 		_id: raw._id,
@@ -30,7 +44,7 @@ function toRawTeaser(raw: NonNullable<StoryBySlugQueryResult>): StoriesByAuthorS
 		originalPublication: raw.originalPublication,
 		approximateReadingTime: raw.approximateReadingTime,
 		coverImage: raw.coverImage,
-		mediaSources: raw.mediaSources,
+		mediaSources: withoutAudioUrl(raw.mediaSources),
 		resources: raw.resources,
 	};
 }
@@ -48,7 +62,7 @@ function toRawNavTeaser(
 		approximateReadingTime: raw.approximateReadingTime,
 		coverImage: raw.coverImage,
 		resources: [],
-		mediaSources: raw.mediaSources,
+		mediaSources: withoutAudioUrl(raw.mediaSources),
 		author: rawOnoffAuthorTeaser,
 	};
 }
@@ -83,3 +97,13 @@ export const onoffRawNavTeasersMock: NonNullable<RotatingContentQueryResult>['mo
 	toRawNavTeaser(lasDosAntorchasRawStory),
 	toRawNavTeaser(neronRawStory),
 ];
+
+// Selectores por capacidad: un spec declara que necesita una story cruda con multimedia en vez de
+// conocer qué obra la tiene. Derivados por predicado, así que enriquecer otra obra los actualiza solo.
+export const onoffRawStoriesWithMediaSources: NonNullable<StoryBySlugQueryResult>[] = onoffRawStoriesMock.filter(
+	(rawStory) => rawStory.mediaSources.length > 0,
+);
+
+export const onoffRawTeasersWithMediaSources: StoriesByAuthorSlugQueryResult = onoffRawTeasersMock.filter(
+	(rawTeaser) => rawTeaser.mediaSources.length > 0,
+);
