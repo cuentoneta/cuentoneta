@@ -1,4 +1,9 @@
-import type { Story, StoryTeaserWithAuthor } from '@models/story.model';
+import type {
+	Story,
+	StoryNavigationTeaser,
+	StoryNavigationTeaserWithAuthor,
+	StoryTeaserWithAuthor,
+} from '@models/story.model';
 import { isSpaceRecording } from '@models/media.model';
 import { authorTeaserMock } from './author.mock';
 import { elOdioStoryMock } from './onoff/el-odio.mock';
@@ -46,6 +51,15 @@ export const elTratadoDeLosPlaceresTeaserMock = toTeaser(elTratadoDeLosPlaceresS
 export const lasDosAntorchasTeaserMock = toTeaser(lasDosAntorchasStoryMock);
 export const neronTeaserMock = toTeaser(neronStoryMock);
 
+// La vista de navegación no proyecta el cuerpo: el ACL la devuelve con `paragraphs` vacío.
+function toNavigationTeaser(teaser: StoryTeaserWithAuthor): StoryNavigationTeaserWithAuthor {
+	return { ...teaser, paragraphs: [] };
+}
+
+function withoutAuthor({ author: _author, ...teaser }: StoryNavigationTeaserWithAuthor): StoryNavigationTeaser {
+	return teaser;
+}
+
 export const onoffStoryTeasersMock: StoryTeaserWithAuthor[] = [
 	palacioNueveFronterasTeaserMock,
 	geometriaTeaserMock,
@@ -56,3 +70,11 @@ export const onoffStoryTeasersMock: StoryTeaserWithAuthor[] = [
 	lasDosAntorchasTeaserMock,
 	neronTeaserMock,
 ];
+
+// Proyecciones de navegación del corpus: con autor (las devuelve la colección) y sin autor (las
+// devuelve el listado por autor, donde la autoría es el contexto de la consulta).
+export const onoffStoryNavigationTeasersWithAuthorMock: StoryNavigationTeaserWithAuthor[] =
+	onoffStoryTeasersMock.map(toNavigationTeaser);
+
+export const onoffStoryNavigationTeasersMock: StoryNavigationTeaser[] =
+	onoffStoryNavigationTeasersWithAuthorMock.map(withoutAuthor);

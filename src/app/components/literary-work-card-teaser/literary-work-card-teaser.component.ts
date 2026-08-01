@@ -22,6 +22,13 @@ import { CoverImageComponent } from '../cover-image/cover-image.component';
  */
 export type LiteraryWorkCardTeaserVariant = 'on-white' | 'on-gray' | 'highlighted';
 
+/**
+ * Proyecciones de obra que la tarjeta sabe renderizar. El extracto solo existe en `LiteraryWorkTeaser`;
+ * las vistas de navegación aportan el resto de los campos y la tarjeta las degrada sola.
+ */
+export type LiteraryWorkCardTeaserContent =
+	LiteraryWorkTeaser | LiteraryWorkNavigationTeaserWithAuthors | LiteraryWorkNavigationTeaser;
+
 @Component({
 	selector: 'cuentoneta-literary-work-card-teaser',
 	imports: [
@@ -136,9 +143,7 @@ export class LiteraryWorkCardTeaserComponent {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs
-	public readonly literaryWork = input<
-		LiteraryWorkTeaser | LiteraryWorkNavigationTeaserWithAuthors | LiteraryWorkNavigationTeaser
-	>();
+	public readonly literaryWork = input<LiteraryWorkCardTeaserContent>();
 	public readonly variant = input<LiteraryWorkCardTeaserVariant>('on-white');
 	public readonly order = input<number>();
 	// Marca el cover como prioritario (above-the-fold, p. ej. en la variante highlighted como hero).
