@@ -13,8 +13,9 @@ import { createAttributedText } from '@models/attributed-text.model';
 import { LiteraryWorkApi } from '../../providers/literary-work-api.interface';
 
 // SEO
-import { ReadMetaTagsDirective } from './read-meta-tags.directive';
-import { ReadStructuredDataDirective } from './read-structured-data.directive';
+import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
+import { AppRoutes } from '../../app.routes';
 import { READ_HOST, type ReadHost } from './read-host';
 
 // Components
@@ -26,7 +27,7 @@ import { EditorialNoteComponent } from '@components/editorial-note/editorial-not
 	selector: 'cuentoneta-read',
 	templateUrl: './read.page.html',
 	providers: [{ provide: READ_HOST, useExisting: forwardRef(() => ReadPage) }],
-	hostDirectives: [ReadMetaTagsDirective, ReadStructuredDataDirective],
+	hostDirectives: [HeadMetadataDirective],
 	imports: [LiteraryWorkHeroHeaderComponent, ButtonComponent, EditorialNoteComponent],
 })
 export default class ReadPage implements ReadHost {
@@ -35,6 +36,7 @@ export default class ReadPage implements ReadHost {
 	private readonly literaryWorkApi = inject(LiteraryWorkApi);
 	private readonly sanitizer = inject(DomSanitizer);
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
+	private readonly head = inject(HeadMetadataDirective);
 
 	private readonly literaryWorkResource = ssrBlockingRxResource({
 		params: this.slug,
@@ -53,6 +55,23 @@ export default class ReadPage implements ReadHost {
 				?.authors.map((author) => author.name)
 				.join(', ') ?? '',
 	);
+
+	// SEO — opt-out temporal de indexación. `/read/:slug` es una ruta accesible nueva que todavía no
+	// queremos exponer a buscadores, así que se sirve `noindex, nofollow` y sin JSON-LD: por eso el host
+	// declara solo `HeadMetadataDirective` (la forma no indexable que valida `seo-host-directives.spec.ts`)
+	// y `ReadMetaTagsDirective`/`ReadStructuredDataDirective` quedan aparcadas (sus specs las mantienen vivas).
+	// TODO: al implementar la página de lectura V3, revertir este opt-out — volver a marcar la página
+	// indexable (`index, follow`) y re-conectar ambas directivas en `hostDirectives`.
+	private readonly metaTagsEffect = effect(() => {
+		this.head.setRobots('noindex, nofollow');
+		const literaryWork = this.literaryWork();
+		if (!literaryWork) {
+			return;
+		}
+		this.head.setTitle(`${literaryWork.title} - ${this.byline()}`);
+		this.head.setDefaultDescription();
+		this.head.setCanonicalUrl(buildCanonicalUrl(`${AppRoutes.Read}/${literaryWork.slug}`));
+	});
 
 	// El HTML ya viene saneado del backend (única fuente: el pipeline del ACL); bypass es la
 	// confianza en esa frontera, no una sanitización propia — LITERARY_WORK_DESIGN.md §9.

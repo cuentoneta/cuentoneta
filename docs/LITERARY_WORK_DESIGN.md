@@ -359,6 +359,8 @@ El contrato del frontend (Slice 1) es entonces:
 
 **Alternativa evaluada y descartada:** volver el modelo _serialization-transparent_ demoviendo `toAnchor()` a función pura standalone y compartiendo el tipo de dominio como contrato de wire (paridad con el flujo actual de `Story`, que funciona porque sus interfaces son anémicas). Se descarta porque renuncia al modelo rico recién construido y porque las factories ya existen y están testeadas — el costo de la rehidratación es marginal frente a recuperar métodos, brands re-validados e inmutabilidad en el cliente.
 
+> **Estado de indexación (temporal).** El diseño contempla `/read/:slug` como superficie SSR **indexable**, pero hoy la página se despliega con `noindex, nofollow` y **sin JSON-LD**: es una ruta accesible nueva que todavía no se quiere exponer a buscadores (opt-out de [#2040](https://github.com/cuentoneta/cuentoneta/issues/2040)). El opt-out se expresa en `read.page.ts` (`setRobots('noindex, nofollow')` + `hostDirectives: [HeadMetadataDirective]`, la forma no indexable que valida `seo-host-directives.spec.ts`), con `ReadMetaTagsDirective`/`ReadStructuredDataDirective` **aparcadas** (sus specs las mantienen vivas). Volver a `index, follow` y re-conectar ambas directivas es parte de [#1471](https://github.com/cuentoneta/cuentoneta/issues/1471).
+
 ---
 
 ## 8. Estrategia de caché de borde
