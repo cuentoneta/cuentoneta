@@ -61,12 +61,16 @@ describe('navigation teasers de LiteraryWork (proyección de la vista base)', ()
 		}
 	});
 
-	it('should summarize authors to AuthorTeaser in the with-authors variant', () => {
-		for (const teaser of onoffLiteraryWorkNavigationTeasersWithAuthorsMock) {
-			expect(teaser.authors.length).toBeGreaterThan(0);
-			// AuthorTeaser expone el nombre; no debe transportarse la vista completa del autor.
-			expect(teaser.authors[0].name).toBeTruthy();
-		}
+	it('should summarize the source work authors to AuthorTeaser in the with-authors variant', () => {
+		onoffLiteraryWorkNavigationTeasersWithAuthorsMock.forEach((teaser, index) => {
+			const source = onoffLiteraryWorksMock[index];
+			// Los autores derivan de la obra fuente (no de un mock fijo), preservando slug y nombre...
+			expect(teaser.authors.map((author) => author.slug)).toEqual(source.authors.map((author) => author.slug));
+			expect(teaser.authors[0].name).toBe(source.authors[0].name);
+			// ...pero la variante AuthorTeaser vacía biography y resources.
+			expect(teaser.authors[0].biography).toHaveLength(0);
+			expect(teaser.authors[0].resources).toHaveLength(0);
+		});
 	});
 
 	it('should not carry full-view, paratext nor teaser fields', () => {

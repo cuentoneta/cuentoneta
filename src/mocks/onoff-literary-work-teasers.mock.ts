@@ -1,3 +1,4 @@
+import type { Author, AuthorTeaser } from '@models/author.model';
 import type {
 	LiteraryWork,
 	LiteraryWorkNavigationTeaser,
@@ -6,6 +7,25 @@ import type {
 } from '@models/literary-work.model';
 import { authorTeaserMock } from './author.mock';
 import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
+
+// Proyecta el Author de dominio a su variante AuthorTeaser (misma base, biography/resources vaciadas),
+// para derivar los autores de una vista de listado desde los autores propios de cada obra del canon.
+function toAuthorTeaser(author: Author): AuthorTeaser {
+	return {
+		_id: author._id,
+		slug: author.slug,
+		name: author.name,
+		imageUrl: author.imageUrl,
+		nationality: author.nationality,
+		tags: author.tags,
+		bornOn: author.bornOn,
+		diedOn: author.diedOn,
+		bornOnYear: author.bornOnYear,
+		diedOnYear: author.diedOnYear,
+		biography: [],
+		resources: [],
+	};
+}
 import { elOdioLiteraryWorkMock } from './onoff/el-odio.mock';
 import { elTratadoDeLosPlaceresLiteraryWorkMock } from './onoff/el-tratado-de-los-placeres.mock';
 import { geometriaLiteraryWorkMock } from './onoff/geometria.mock';
@@ -72,7 +92,7 @@ function toNavigationTeaser(literaryWork: LiteraryWork): LiteraryWorkNavigationT
 }
 
 function toNavigationTeaserWithAuthors(literaryWork: LiteraryWork): LiteraryWorkNavigationTeaserWithAuthors {
-	return { ...toNavigationTeaser(literaryWork), authors: [authorTeaserMock] };
+	return { ...toNavigationTeaser(literaryWork), authors: literaryWork.authors.map(toAuthorTeaser) };
 }
 
 export const onoffLiteraryWorkNavigationTeasersMock: LiteraryWorkNavigationTeaser[] =
