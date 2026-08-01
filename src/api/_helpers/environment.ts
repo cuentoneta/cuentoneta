@@ -12,9 +12,9 @@ try {
 export interface EnvironmentConfig {
 	production: boolean;
 	basePath: string;
-	// Interruptor del `s-maxage` (en segundos) de la caché de borde de `/read`. Ver #1856:
-	// producción arranca con el default conservador y sube a un año recién cuando el
-	// purge-on-publish está operativo, para no arriesgar contenido stale de un año.
+	// Interruptor del `s-maxage` (en segundos) de la caché de borde de `/read`: es la ventana de
+	// propagación de una edición, no un límite de disponibilidad — el `stale-while-revalidate`
+	// cubre el servido mientras el borde revalida.
 	readCacheSMaxAge: number;
 	sanity: {
 		token: string;
@@ -27,8 +27,8 @@ export interface EnvironmentConfig {
 	};
 }
 
-// Default conservador (5 minutos) del `s-maxage` de `/read` mientras el purge-on-publish
-// no esté operativo. El valor de un año se activa seteando `READ_CACHE_S_MAXAGE` en prod.
+// Default conservador (5 minutos) del `s-maxage` de `/read`: acota la staleness sin depender de
+// que el interruptor esté seteado. Se sube por entorno con `READ_CACHE_S_MAXAGE`.
 export const CONSERVATIVE_READ_CACHE_S_MAXAGE = 300;
 
 // Exportada para test: parsea el valor crudo del interruptor, con fallback al default conservador
