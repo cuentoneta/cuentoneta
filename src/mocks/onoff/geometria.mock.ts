@@ -1,6 +1,7 @@
 import type { Story } from '@models/story.model';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
-import { createLiteraryWorkEpigraph, createLiteraryWorkSection } from '@models/literary-work-section.model';
+import { createAttributedText } from '@models/attributed-text.model';
+import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createMarkdown } from '@models/markdown.model';
 import { deriveSectionReadingTime } from '@models/reading-time.model';
@@ -9,6 +10,19 @@ import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import geometriaMdBody from './geometria.md?raw';
 import geometriaEditorialNoteMd from './geometria.editorial-note.md?raw';
 import { geometriaEpigraphReference, geometriaEpigraphText, geometriaSectionTitle } from './geometria.epigraph';
+import type { TextBlockContent } from '@models/block-content.model';
+
+function mediaDescription(key: string, text: string): TextBlockContent[] {
+	return [
+		{
+			_type: 'block',
+			_key: `${key}-description`,
+			style: 'normal',
+			markDefs: [],
+			children: [{ _type: 'span', _key: `${key}-span`, text, marks: [] }],
+		},
+	];
+}
 import { authorMock } from '../author.mock';
 import { cuentoTagMock, dramaPsicologicoTagMock, filosoficoTagMock } from '../onoff-tags.mock';
 
@@ -22,7 +36,38 @@ export const geometriaStoryMock: Story = {
 	coverImage: 'assets/img/mocks/stories/geometria.png',
 	tags: [cuentoTagMock, dramaPsicologicoTagMock, filosoficoTagMock],
 	resources: [],
-	media: [],
+	// Espeja los mediaSources del fixture raw homónimo, sin el pdfLink que el ACL descarta.
+	media: [
+		{
+			title: 'Lectura de "Geometría" por su autor',
+			type: 'audioRecording',
+			description: mediaDescription('geometria-audio', 'Grabación casera, 1974.'),
+			data: { url: 'https://cdn.example.org/onoff/geometria.ogg' },
+		},
+		{
+			title: 'Conversación sobre el insomnio y la medida del tiempo',
+			type: 'spaceRecording',
+			description: mediaDescription('geometria-space', 'Espacio grabado con lectores de Onoff.'),
+			data: {
+				url: 'https://cdn.example.org/onoff/geometria-space.ogg',
+				duration: '48:12',
+				hostName: 'Biblioteca del Méridien',
+				date: '1974-06-12',
+			},
+		},
+		{
+			title: 'Episodio dedicado a "Geometría"',
+			type: 'spotifyPodcastEpisode',
+			description: mediaDescription('geometria-spotify', 'Análisis de la obra en formato podcast.'),
+			data: { url: 'https://open.spotify.com/embed/episode/geometria' },
+		},
+		{
+			title: 'Video ensayo sobre las coordenadas del desvelo',
+			type: 'youTubeVideo',
+			description: mediaDescription('geometria-youtube', 'Ensayo audiovisual sobre la obra.'),
+			data: { videoId: 'geometriaVideoId' },
+		},
+	],
 	epigraphs: [],
 	author: authorMock,
 	publishedAt: '1974-01-01T00:00:00Z',
@@ -283,7 +328,7 @@ export const geometriaStoryMock: Story = {
 
 const geometriaBody = createMarkdown(geometriaMdBody);
 
-export const geometriaEpigraphMock = createLiteraryWorkEpigraph({
+export const geometriaEpigraphMock = createAttributedText({
 	text: markdownToSanitizedHtml(createMarkdown(geometriaEpigraphText)),
 	reference: markdownToSanitizedHtml(createMarkdown(geometriaEpigraphReference)),
 });

@@ -1,12 +1,8 @@
 import type { SanityClient } from '@sanity/client';
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
-import {
-	createLiteraryWorkEpigraph,
-	createLiteraryWorkSection,
-	type LiteraryWorkEpigraph,
-	type LiteraryWorkSection,
-} from '@models/literary-work-section.model';
+import { createAttributedText, type AttributedText } from '@models/attributed-text.model';
+import { createLiteraryWorkSection, type LiteraryWorkSection } from '@models/literary-work-section.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createMarkdown } from '@models/markdown.model';
 import { createReadingTime, deriveSectionReadingTime } from '@models/reading-time.model';
@@ -21,7 +17,7 @@ import type { LiteraryWorkRepository } from './literary-work.repository';
 
 type SanityLiteraryWork = NonNullable<LiteraryWorkBySlugQueryResult>;
 type SanityLiteraryWorkSection = SanityLiteraryWork['content'][number];
-type SanityLiteraryWorkEpigraph = NonNullable<SanityLiteraryWorkSection['epigraphs']>[number];
+type SanityEpigraph = NonNullable<SanityLiteraryWorkSection['epigraphs']>[number];
 type SanityLiteraryWorkMetadata = Omit<SanityLiteraryWork, 'content'>;
 
 export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
@@ -73,9 +69,9 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 		});
 	}
 
-	private mapEpigraph(raw: SanityLiteraryWorkEpigraph): LiteraryWorkEpigraph {
+	private mapEpigraph(raw: SanityEpigraph): AttributedText {
 		// `raw.text ?? ''` deja que createMarkdown lance ante un epígrafe sin texto, en vez de silenciarlo.
-		return createLiteraryWorkEpigraph({
+		return createAttributedText({
 			text: markdownToSanitizedHtml(createMarkdown(raw.text ?? '')),
 			reference: raw.reference ? markdownToSanitizedHtml(createMarkdown(raw.reference)) : undefined,
 		});

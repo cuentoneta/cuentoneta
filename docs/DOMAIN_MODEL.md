@@ -249,16 +249,18 @@ interface LiteraryWork {
 interface LiteraryWorkSection {
 	position: number; // Identidad numérica en la obra (0-based, igual al índice del array en el CMS)
 	chapterTitle?: ChapterTitle; // Opcional; expone toAnchor(): Slug para anclas
-	epigraphs?: LiteraryWorkEpigraph[]; // 0..N epígrafes por sección
+	epigraphs?: AttributedText[]; // 0..N epígrafes por sección
 	bodyHtml: SanitizedHtml; // HTML saneado server-side (nunca markdown crudo)
 	readingTime: ReadingTime; // Minutos de lectura de la sección
 }
 
-interface LiteraryWorkEpigraph {
+interface AttributedText {
 	text: SanitizedHtml; // Markdown saneado a HTML (mismo pipeline que el cuerpo)
 	reference?: SanitizedHtml; // Atribución, también markdown saneado (paridad con Story.Epigraph)
 }
 ```
+
+`AttributedText` nombra la **forma** —un bloque de texto con atribución opcional— y no un rol: la comparten el epígrafe de una sección (cita a un tercero) y `editorialNote` de `LiteraryWork` (comentario de la redacción, no cita a nadie; en el dominio es un `SanitizedHtml` plano, no un `AttributedText`, y el frontend lo adapta al construir el binding del componente que lo renderiza). No está brandeado: su factory `createAttributedText` es composición pura sin invariante propia, la sostienen los `SanitizedHtml` de sus campos.
 
 **Invariantes de Negocio:**
 
@@ -514,11 +516,13 @@ interface MarkDef {
 
 **Propósito:** Encapsular diferentes tipos de contenido multimedia.
 
+`Media` es el tipo **ancho**: el de las colecciones y el que devuelve el ACL, con `data?: unknown` porque el supertipo no correlaciona el tag con la forma de su carga. `MediaTypes` es el **angosto**, la unión discriminada que consumen los widgets, donde cada tag ya fija su `data`. Se pasa de uno al otro con los type guards de abajo, nunca con una aserción.
+
 ```typescript
 interface Media {
 	title: string;
 	description: TextBlockContent[];
-	type: MediaTypeKey; // 'audioRecording' | 'spaceRecording' | 'youTubeVideo'
+	type: MediaTypeKey; // 'audioRecording' | 'spaceRecording' | 'youTubeVideo' | 'spotifyPodcastEpisode'
 	data?: unknown;
 }
 
@@ -527,17 +531,29 @@ interface AudioRecording extends Media {
 }
 
 interface SpaceRecording extends Media {
-	data: Tweet & { duration: string };
+	data: {
+		url: string | null; // null en la proyección de teaser, que no resuelve audioUrl
+		duration: string;
+		hostName: string;
+		hostAvatar?: string;
+		date: string;
+	};
 }
 
 interface YouTubeVideo extends Media {
 	data: { videoId: string };
 }
+
+interface SpotifyPodcastEpisode extends Media {
+	data: { url: string };
+}
+
+type MediaTypes = AudioRecording | SpaceRecording | YouTubeVideo | SpotifyPodcastEpisode;
 ```
 
-**Patrón:** Polimorfismo mediante discriminador (`type`).
+**Patrón:** Polimorfismo mediante discriminador (`type`). Los type guards (`isAudioRecording`, `isSpaceRecording`, `isYouTubeVideo`, `isSpotifyPodcastEpisode`) discriminan **solo por el tag** y no por la forma de `data`: `AudioRecording` y `SpotifyPodcastEpisode` son estructuralmente idénticos (`{ url }`), así que inspeccionar `data` no alcanza para distinguirlos. `narrowMedia(media: Media): MediaTypes` los encadena y lanza si el `type` no corresponde a ningún tag que el dominio modele.
 
-**Uso:** Asociar audio, tweets de espacios de X, y videos a historias.
+**Uso:** Asociar audio, espacios de X, episodios de podcast de Spotify y videos de YouTube a una obra o colección.
 
 ---
 

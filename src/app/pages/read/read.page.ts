@@ -6,6 +6,9 @@ import { DomSanitizer } from '@angular/platform-browser';
 // Utils
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 
+// Models
+import { createAttributedText } from '@models/attributed-text.model';
+
 // Services
 import { LiteraryWorkApi } from '../../providers/literary-work-api.interface';
 
@@ -70,6 +73,11 @@ export default class ReadPage implements ReadHost {
 				bodyHtml: this.sanitizer.bypassSecurityTrustHtml(section.bodyHtml),
 			})) ?? [],
 	);
+  
+  protected readonly editorialNote = computed(() => {
+		const editorialNote = this.literaryWork()?.editorialNote;
+		return editorialNote ? createAttributedText({ text: editorialNote }) : undefined;
+	});
 
 	// El estado de error se renderiza siempre igual ("No encontramos esta obra"), pero un 404 real y
 	// un backend caído no son lo mismo para el borde ni para el crawler: si un fallo transitorio
