@@ -1,20 +1,18 @@
 import { render, screen } from '@testing-library/angular';
 import { MediaResourceComponent } from './media-resource.component';
-import { AudioRecording, Media, SpaceRecording, YouTubeVideo } from '@models/media.model';
+import type { Media } from '@models/media.model';
 import { AudioRecordingWidgetComponent } from '../audio-recording-widget/audio-recording-widget.component';
 import { SpaceRecordingWidgetComponent } from '../space-recording-widget/space-recording-widget.component';
 import { YoutubeVideoWidgetComponent } from '../youtube-video-widget/youtube-video-widget.component';
+import { SpotifyPodcastEpisodeWidget } from '@components/spotify-audio-widget/spotify-podcast-episode-widget';
 
 // Mocks
 import { youtubeVideoMock } from '@mocks/youtube-video.mock';
 import { audioRecordingMock } from '@mocks/audio-recording.mock';
 import { spaceRecordingMock } from '@mocks/space-recording.mock';
+import { spotifyPodcastEpisodeMock } from '@mocks/spotify-podcast-episode.mock';
 
-const mockMediaResources: Media[] = [
-	audioRecordingMock as AudioRecording,
-	spaceRecordingMock as SpaceRecording,
-	youtubeVideoMock as YouTubeVideo,
-];
+const mockMediaResources: Media[] = [audioRecordingMock, spaceRecordingMock, youtubeVideoMock];
 
 describe('MediaResourceComponent', () => {
 	test('should render MediaResourceComponent', async () => {
@@ -67,6 +65,15 @@ describe('MediaResourceComponent', () => {
 		});
 
 		expect(screen.getByText('Video alusivo a la narración de "El espejo del tiempo".')).toBeInTheDocument();
+	});
+
+	test('should render a SpotifyPodcastEpisodeWidget for podcast episodes', async () => {
+		await render(MediaResourceComponent, {
+			componentInputs: { mediaResources: [spotifyPodcastEpisodeMock] },
+			imports: [SpotifyPodcastEpisodeWidget],
+		});
+
+		expect(screen.getByText(/Historias narradas para ser escuchadas/)).toBeTruthy();
 	});
 
 	test('should throw an error for unsupported media types', async () => {

@@ -1,6 +1,6 @@
 import { Component, input, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Media, MediaTypeKey, MediaTypes } from '@models/media.model';
+import { narrowMedia, type Media, type MediaTypeKey, type MediaTypes } from '@models/media.model';
 import { SpaceRecordingWidgetComponent } from '../space-recording-widget/space-recording-widget.component';
 import { AudioRecordingWidgetComponent } from '../audio-recording-widget/audio-recording-widget.component';
 import { YoutubeVideoWidgetComponent } from '../youtube-video-widget/youtube-video-widget.component';
@@ -34,20 +34,11 @@ export class MediaResourceComponent {
 		transform: (media: Media[]) => media.map((m) => this.mediaTypesAdapter(m)),
 	});
 
-	/**
-	 * Adaptador utilizado para mappear los distintos tipos de media que
-	 * pueden existir en la plataforma a su tipo específico.
-	 * @param media
-	 * @private
-	 */
 	private mediaTypesAdapter(media: Media): {
 		component: Type<MediaTypeWidgetComponents>;
 		inputs: { media: MediaTypes };
 	} {
-		const component = MEDIA_WIDGET_MAP[media.type];
-		if (!component) {
-			throw new Error(`El tipo ${media.type} no está soportado.`);
-		}
-		return { component, inputs: { media: media as MediaTypes } };
+		const narrowed = narrowMedia(media);
+		return { component: MEDIA_WIDGET_MAP[narrowed.type], inputs: { media: narrowed } };
 	}
 }
