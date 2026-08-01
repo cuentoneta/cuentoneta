@@ -1,5 +1,31 @@
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { Author, AuthorTeaser } from '@models/author.model';
+import type {
+	LiteraryWork,
+	LiteraryWorkNavigationTeaser,
+	LiteraryWorkNavigationTeaserWithAuthors,
+	LiteraryWorkTeaser,
+} from '@models/literary-work.model';
 import { authorTeaserMock } from './author.mock';
+import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
+
+// Proyecta el Author de dominio a su variante AuthorTeaser (misma base, biography/resources vaciadas),
+// para derivar los autores de una vista de listado desde los autores propios de cada obra del canon.
+function toAuthorTeaser(author: Author): AuthorTeaser {
+	return {
+		_id: author._id,
+		slug: author.slug,
+		name: author.name,
+		imageUrl: author.imageUrl,
+		nationality: author.nationality,
+		tags: author.tags,
+		bornOn: author.bornOn,
+		diedOn: author.diedOn,
+		bornOnYear: author.bornOnYear,
+		diedOnYear: author.diedOnYear,
+		biography: [],
+		resources: [],
+	};
+}
 import { elOdioLiteraryWorkMock } from './onoff/el-odio.mock';
 import { elTratadoDeLosPlaceresLiteraryWorkMock } from './onoff/el-tratado-de-los-placeres.mock';
 import { geometriaLiteraryWorkMock } from './onoff/geometria.mock';
@@ -46,3 +72,31 @@ export const onoffLiteraryWorkTeasersMock: LiteraryWorkTeaser[] = [
 	lasDosAntorchasLiteraryWorkTeaserMock,
 	neronLiteraryWorkTeaserMock,
 ];
+
+// Los teasers de navegación proyectan solo la vista base (LiteraryWorkBase): las vistas de navegación
+// no muestran el paratexto editorial, el cuerpo ni la sección de apertura. La variante sin autores deja
+// `authors` vacío (Array<never>); la variante con autores lo resume a AuthorTeaser — ver
+// LITERARY_WORK_DESIGN.md §2 y las interfaces en literary-work.model.ts.
+function toNavigationTeaser(literaryWork: LiteraryWork): LiteraryWorkNavigationTeaser {
+	return {
+		_id: literaryWork._id,
+		slug: literaryWork.slug,
+		title: literaryWork.title,
+		coverImage: literaryWork.coverImage,
+		totalReadingTime: literaryWork.totalReadingTime,
+		sectionCount: literaryWork.sectionCount,
+		tags: literaryWork.tags,
+		mediaSources: literaryWork.mediaSources,
+		authors: [],
+	};
+}
+
+function toNavigationTeaserWithAuthors(literaryWork: LiteraryWork): LiteraryWorkNavigationTeaserWithAuthors {
+	return { ...toNavigationTeaser(literaryWork), authors: literaryWork.authors.map(toAuthorTeaser) };
+}
+
+export const onoffLiteraryWorkNavigationTeasersMock: LiteraryWorkNavigationTeaser[] =
+	onoffLiteraryWorksMock.map(toNavigationTeaser);
+
+export const onoffLiteraryWorkNavigationTeasersWithAuthorsMock: LiteraryWorkNavigationTeaserWithAuthors[] =
+	onoffLiteraryWorksMock.map(toNavigationTeaserWithAuthors);

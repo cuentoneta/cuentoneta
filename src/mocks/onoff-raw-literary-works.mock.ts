@@ -70,3 +70,16 @@ export const unmaterializedRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryR
 	totalReadingTime: null,
 	content: elOdioRawLiteraryWork.content.map((section) => ({ ...section, readingTime: null })),
 };
+
+// Obra de dos secciones con materialización mixta: la primera sección con reading time persistido y la
+// segunda en null, con el total sin persistir. Ejercita el fallback por sección coexistiendo con un
+// valor ya materializado dentro de la misma obra.
+export const mixedMaterializationRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
+	...multiSectionRawLiteraryWork,
+	_id: 'onoff-literary-work-el-palacio-de-las-nueve-fronteras-mixta',
+	totalReadingTime: null,
+	content: [
+		{ ...multiSectionRawLiteraryWork.content[0], readingTime: 7 },
+		{ ...multiSectionRawLiteraryWork.content[1], readingTime: null },
+	],
+};

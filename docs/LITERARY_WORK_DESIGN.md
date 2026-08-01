@@ -398,6 +398,7 @@ Reglas duras del pipeline:
 
 - Todo HTML servido al frontend pasó por `rehype-sanitize` con esta allow-list — **sin excepciones** (body, epígrafes y nota editorial por igual).
 - Scripts, estilos inline, iframes y handlers de eventos quedan **fuera** (no están en el schema por defecto y no se agregan).
+- `srcset` está permitido en `<img>` pero el schema **no filtra su protocolo** (a diferencia de `src`/`href`); hoy solo lo emite el rewrite anclado a `cdn.sanity.io`. Como defensa en profundidad, el guard de frontera `createSanitizedHtml` (`UNSAFE_HTML_PATTERNS`) rechaza un `srcset` con protocolo de script (`javascript:`/`vbscript:`), por si algún día se habilita `rehype-raw`.
 - Cambiar la allow-list deja stale a la caché de borde: no hay purga (ver [§8](#8-estrategia-de-caché-de-borde)), así que las respuestas ya cacheadas siguen sirviendo HTML sanitizado con la allow-list vieja hasta que venza el `s-maxage` y la revalidación las reemplace. Si el cambio es correctivo (cierra un vector), no alcanza con esperar: bajar el `s-maxage` acorta la ventana. Actualizar además los tests de XSS del pipeline.
 
 ---

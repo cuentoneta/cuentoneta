@@ -73,8 +73,8 @@ export default class ReadPage implements ReadHost {
 				bodyHtml: this.sanitizer.bypassSecurityTrustHtml(section.bodyHtml),
 			})) ?? [],
 	);
-  
-  protected readonly editorialNote = computed(() => {
+
+	protected readonly editorialNote = computed(() => {
 		const editorialNote = this.literaryWork()?.editorialNote;
 		return editorialNote ? createAttributedText({ text: editorialNote }) : undefined;
 	});

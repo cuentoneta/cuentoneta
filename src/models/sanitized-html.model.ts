@@ -9,6 +9,11 @@ const UNSAFE_HTML_PATTERNS = Object.freeze([
 	/<\s*(script|iframe|object|embed|form|base)\b/i,
 	/<[^>]+\son[a-z]+\s*=/i,
 	/\s(?:href|src|xlink:href)\s*=\s*["'\s]*javascript:/i,
+	// srcset no recibe filtro de protocolo del schema de rehype-sanitize (a diferencia de href/src) y el
+	// pipeline solo emite un srcset anclado a cdn.sanity.io: un protocolo de script dentro de un srcset es
+	// anómalo y se detiene acá — defensa en profundidad por si algún día se habilita rehype-raw. El srcset
+	// legítimo (URL http[s] + descriptor) no matchea.
+	/\ssrcset\s*=\s*["'][^"']*(?:javascript|vbscript):/i,
 ]);
 
 // No sanitiza: brandea un string que el llamador garantiza ya pasado por el pipeline
