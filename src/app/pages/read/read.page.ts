@@ -1,5 +1,5 @@
 // Core
-import { Component, computed, effect, forwardRef, inject, input, RESPONSE_INIT } from '@angular/core';
+import { Component, computed, effect, forwardRef, inject, input, RESPONSE_INIT, untracked } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -13,8 +13,9 @@ import { createAttributedText } from '@models/attributed-text.model';
 import { LiteraryWorkApi } from '../../providers/literary-work-api.interface';
 
 // SEO
-import { ReadMetaTagsDirective } from './read-meta-tags.directive';
-import { ReadStructuredDataDirective } from './read-structured-data.directive';
+import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
+import { AppRoutes } from '../../app.routes';
 import { READ_HOST, type ReadHost } from './read-host';
 
 // Components
@@ -26,7 +27,7 @@ import { EditorialNoteComponent } from '@components/editorial-note/editorial-not
 	selector: 'cuentoneta-read',
 	templateUrl: './read.page.html',
 	providers: [{ provide: READ_HOST, useExisting: forwardRef(() => ReadPage) }],
-	hostDirectives: [ReadMetaTagsDirective, ReadStructuredDataDirective],
+	hostDirectives: [HeadMetadataDirective],
 	imports: [LiteraryWorkHeroHeaderComponent, ButtonComponent, EditorialNoteComponent],
 })
 export default class ReadPage implements ReadHost {
@@ -35,6 +36,7 @@ export default class ReadPage implements ReadHost {
 	private readonly literaryWorkApi = inject(LiteraryWorkApi);
 	private readonly sanitizer = inject(DomSanitizer);
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
+	private readonly head = inject(HeadMetadataDirective);
 
 	private readonly literaryWorkResource = ssrBlockingRxResource({
 		params: this.slug,
@@ -53,6 +55,27 @@ export default class ReadPage implements ReadHost {
 				?.authors.map((author) => author.name)
 				.join(', ') ?? '',
 	);
+
+	// `/read/:slug` es una ruta accesible nueva que todavía no queremos exponer a buscadores: se sirve
+	// `noindex, nofollow` y sin JSON-LD. El robots se emite antes del guard a propósito, para que la
+	// señal salga también cuando la obra no carga.
+	// TODO: al implementar la página de lectura V3, revertir este opt-out — volver a marcar la página
+	// indexable y re-conectar ReadMetaTagsDirective/ReadStructuredDataDirective en `hostDirectives`.
+	private readonly applyHeadMetadataEffect = effect(() => {
+		this.head.setRobots('noindex, nofollow');
+		const literaryWork = this.literaryWork();
+		if (!literaryWork) {
+			return;
+		}
+		untracked(() => {
+			this.head.setTitle(`${literaryWork.title} - ${this.byline()}`);
+			// TODO: Revisar textos definitivos a la hora de implementar la página de lectura V3
+			this.head.setDescription(
+				'Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.',
+			);
+			this.head.setCanonicalUrl(buildCanonicalUrl(`${AppRoutes.Read}/${literaryWork.slug}`));
+		});
+	});
 
 	// El HTML ya viene saneado del backend (única fuente: el pipeline del ACL); bypass es la
 	// confianza en esa frontera, no una sanitización propia — LITERARY_WORK_DESIGN.md §9.
