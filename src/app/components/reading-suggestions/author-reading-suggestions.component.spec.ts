@@ -8,7 +8,7 @@ import { StoryApi } from '../../providers/story-api.interface';
 import type { StoryNavigationTeaser } from '@models/story.model';
 import { onoffStoryNavigationTeasersMock } from '@mocks/onoff-story-teasers.mock';
 import { authorTeaserMock } from '@mocks/author.mock';
-import { fn, restoreAllMocks, spyOn } from '@test-utils';
+import { clearAllMocks, fn, restoreAllMocks, spyOn } from '@test-utils';
 
 const setup = async (
 	getNavigationTeasersByAuthorSlug: (slug: string) => Observable<StoryNavigationTeaser[]>,
@@ -28,6 +28,7 @@ const setup = async (
 
 describe('AuthorReadingSuggestionsComponent', () => {
 	beforeEach(() => {
+		clearAllMocks();
 		// Azar determinista: el barajado toma siempre el primer candidato disponible, así las
 		// aserciones citan las primeras obras del corpus.
 		spyOn(Math, 'random').mockReturnValue(0);

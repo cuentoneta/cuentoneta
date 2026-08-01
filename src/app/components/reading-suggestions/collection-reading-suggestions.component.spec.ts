@@ -8,7 +8,7 @@ import { StorylistApi } from '../../providers/storylist-api.interface';
 import type { StorylistStoriesNavigationTeasers } from '@models/storylist.model';
 import { storylistNavigationTeaserMock } from '@mocks/storylist.mock';
 import { onoffStoryNavigationTeasersWithAuthorMock } from '@mocks/onoff-story-teasers.mock';
-import { fn, restoreAllMocks, spyOn } from '@test-utils';
+import { clearAllMocks, fn, restoreAllMocks, spyOn } from '@test-utils';
 
 const collectionMock: StorylistStoriesNavigationTeasers = {
 	...storylistNavigationTeaserMock,
@@ -32,6 +32,7 @@ const setup = async (
 
 describe('CollectionReadingSuggestionsComponent', () => {
 	beforeEach(() => {
+		clearAllMocks();
 		// Azar determinista: el barajado toma siempre el primer candidato disponible, así las
 		// aserciones citan las primeras obras del corpus.
 		spyOn(Math, 'random').mockReturnValue(0);

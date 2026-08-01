@@ -1,5 +1,3 @@
-import type { LiteraryWorkCardTeaserContent } from '@components/literary-work-card-teaser/literary-work-card-teaser.component';
-
 // Cantidad de sugerencias del bloque. La comparten quien las elige y el estado de carga, que reserva
 // el alto de esa misma cantidad de tarjetas.
 export const READING_SUGGESTIONS_COUNT = 3;
@@ -10,7 +8,7 @@ export const READING_SUGGESTIONS_COUNT = 3;
  * El azar se resuelve donde se invoca —una vez por fetch, en el stream del recurso— para que las
  * sugerencias no se rebarajen mientras la persona lee.
  */
-export function pickReadingSuggestions<T extends LiteraryWorkCardTeaserContent>(
+export function pickReadingSuggestions<T extends { readonly slug: string }>(
 	candidates: readonly T[],
 	currentWorkSlug?: string,
 	count: number = READING_SUGGESTIONS_COUNT,

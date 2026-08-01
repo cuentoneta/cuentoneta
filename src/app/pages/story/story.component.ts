@@ -34,13 +34,6 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 @Component({
 	selector: 'cuentoneta-story',
 	templateUrl: './story.component.html',
-	styles: `
-		@reference '#tailwind-theme';
-
-		.content {
-			@apply grid grid-cols-1 md:mx-auto;
-		}
-	`,
 	imports: [
 		AuthorReadingSuggestionsComponent,
 		BioSummaryCardComponent,

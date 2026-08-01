@@ -40,6 +40,8 @@ import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
 				<ul
 					class="flex flex-col divide-y divide-neutral-200 [&>li]:py-6 [&>li:first-child]:pt-0 [&>li:last-child]:pb-0"
 				>
+					<!-- Se trackea por índice a propósito: el estado de carga ocupa los mismos slots con obras
+						 vacías, y trackear por slug destruiría y recrearía cada tarjeta al llegar los datos. -->
 					@for (literaryWork of displayedTeasers(); track $index) {
 						<li>
 							<cuentoneta-literary-work-card-teaser
