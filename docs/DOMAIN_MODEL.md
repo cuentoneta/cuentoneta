@@ -516,11 +516,13 @@ interface MarkDef {
 
 **Propósito:** Encapsular diferentes tipos de contenido multimedia.
 
+`Media` es el tipo **ancho**: el de las colecciones y el que devuelve el ACL, con `data?: unknown` porque el supertipo no correlaciona el tag con la forma de su carga. `MediaTypes` es el **angosto**, la unión discriminada que consumen los widgets, donde cada tag ya fija su `data`. Se pasa de uno al otro con los type guards de abajo, nunca con una aserción.
+
 ```typescript
 interface Media {
 	title: string;
 	description: TextBlockContent[];
-	type: MediaTypeKey; // 'audioRecording' | 'spaceRecording' | 'youTubeVideo'
+	type: MediaTypeKey; // 'audioRecording' | 'spaceRecording' | 'youTubeVideo' | 'spotifyPodcastEpisode'
 	data?: unknown;
 }
 
@@ -529,17 +531,29 @@ interface AudioRecording extends Media {
 }
 
 interface SpaceRecording extends Media {
-	data: Tweet & { duration: string };
+	data: {
+		url: string | null; // null en la proyección de teaser, que no resuelve audioUrl
+		duration: string;
+		hostName: string;
+		hostAvatar?: string;
+		date: string;
+	};
 }
 
 interface YouTubeVideo extends Media {
 	data: { videoId: string };
 }
+
+interface SpotifyPodcastEpisode extends Media {
+	data: { url: string };
+}
+
+type MediaTypes = AudioRecording | SpaceRecording | YouTubeVideo | SpotifyPodcastEpisode;
 ```
 
-**Patrón:** Polimorfismo mediante discriminador (`type`).
+**Patrón:** Polimorfismo mediante discriminador (`type`). Los type guards (`isAudioRecording`, `isSpaceRecording`, `isYouTubeVideo`, `isSpotifyPodcastEpisode`) discriminan **solo por el tag** y no por la forma de `data`: `AudioRecording` y `SpotifyPodcastEpisode` son estructuralmente idénticos (`{ url }`), así que inspeccionar `data` no alcanza para distinguirlos. `narrowMedia(media: Media): MediaTypes` los encadena y lanza si el `type` no corresponde a ningún tag que el dominio modele.
 
-**Uso:** Asociar audio, tweets de espacios de X, y videos a historias.
+**Uso:** Asociar audio, espacios de X, episodios de podcast de Spotify y videos de YouTube a una obra o colección.
 
 ---
 
