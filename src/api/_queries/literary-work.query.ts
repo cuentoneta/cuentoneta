@@ -151,3 +151,19 @@ export const literaryWorkSectionBySlugQuery = defineQuery(`
         readingTime
     }
 }[0]`);
+
+// Candidatas del backfill de reading time: obras a las que les falta el total o el reading time de
+// alguna sección. La proyección trae **todas** las secciones, no solo las incompletas, porque el
+// total se resuelve sumando el conjunto completo. Pagina por `_id` (cursor estable) y no por offset,
+// que puede saltear documentos si el orden cambia entre páginas. Vive acá y no junto al script para
+// entrar en el scan de typegen (`cms/sanity.cli.ts` → `../src/api/**/*`): así el shape del resultado
+// lo declara Sanity y un rename de schema rompe el typecheck en vez de aparecer en runtime.
+export const readingTimeBackfillCandidatesQuery = defineQuery(`
+*[_type == 'literaryWork' && !(_id in path('drafts.**')) && _id > $cursor
+  && (!defined(totalReadingTime) || count(content[!defined(readingTime)]) > 0)]
+| order(_id asc) [0...$pageSize] {
+    _id,
+    'slug': slug.current,
+    totalReadingTime,
+    'content': coalesce(content[]{ _key, body, readingTime }, [])
+}`);

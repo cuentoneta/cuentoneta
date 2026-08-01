@@ -55,7 +55,7 @@ Contraparte cruda del corpus de dominio `LiteraryWork`, tipada contra `NonNullab
 - **Selector por capacidad:** `onoffRawLiteraryWorksWithEpigraphs` (contraparte cruda de `onoffLiteraryWorksWithEpigraphs`), derivado por predicado — las obras crudas con epígrafes, para ejercitar el mapeo raw→dominio del epígrafe sin conocer un slug concreto.
 - **Escenarios de borde** (overrides `{ ...base, … }` sobre las obras canónicas), para ejercitar el mapper y la materialización sin depender del contenido base:
   - `multiSectionRawLiteraryWork` — obra multi-sección (`sectionCount > 1`).
-  - `unmaterializedRawLiteraryWork` — `totalReadingTime` y `content[].readingTime` en `null` (ejercita el self-healing del mapper).
+  - `unmaterializedRawLiteraryWork` — `totalReadingTime` y `content[].readingTime` en `null` (ejercita el fallback puro de lectura del repository y el backfill, que es el único que persiste).
 - **Autor raw:** `rawOnoffAuthor` (reusado del corpus raw de Story, estructuralmente idéntico).
 
 ## Convención de portadas (assets locales)

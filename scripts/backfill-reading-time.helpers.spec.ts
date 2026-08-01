@@ -128,6 +128,44 @@ describe('runReadingTimeBackfill', () => {
 		expect(report.inspected).toBe(3);
 	});
 
+	// La invariante editorial que motiva el setIfMissing: en obras recitadas el total lo carga a mano
+	// quien edita, así que el backfill llena las secciones sin tocarlo.
+	it('llena las secciones sin tocar un total ya cargado', async () => {
+		const { writer, setIfMissing } = spyWriter();
+		const withEditorialTotal: ReadingTimeBackfillCandidate = { ...pending, totalReadingTime: 42 };
+
+		const report = await runReadingTimeBackfill({
+			fetcher: new StubCandidatePageFetcher([[withEditorialTotal]]),
+			writer,
+			apply: true,
+			pageSize: 2,
+		});
+
+		expect(report.materialized).toEqual([
+			{ slug: withEditorialTotal.slug, sections: withEditorialTotal.content.length, total: false },
+		]);
+		expect(Object.keys(setIfMissing.mock.calls[0][0])).not.toContain('totalReadingTime');
+	});
+
+	it('registra como fallida la obra con una sección sin cuerpo', async () => {
+		const { writer } = spyWriter();
+		const emptyBody: ReadingTimeBackfillCandidate = {
+			...pending,
+			slug: 'obra-sin-cuerpo',
+			content: [{ ...pending.content[0], body: '   ' }],
+		};
+
+		const report = await runReadingTimeBackfill({
+			fetcher: new StubCandidatePageFetcher([[emptyBody]]),
+			writer,
+			apply: false,
+			pageSize: 2,
+		});
+
+		expect(report.failed.map((entry) => entry.slug)).toEqual(['obra-sin-cuerpo']);
+		expect(report.materialized).toEqual([]);
+	});
+
 	// Un documento roto no puede abortar el backfill del catálogo: se registra y el recorrido sigue.
 	it('registra la obra que falla y continúa con el resto de la página', async () => {
 		const { writer } = spyWriter();
@@ -164,6 +202,26 @@ describe('formatReadingTimeBackfillReport', () => {
 
 		expect(lines.some((line) => line.includes('Se materializarían: 1'))).toBe(true);
 		expect(lines.at(-1)).toContain('--no-dry-run');
+	});
+
+	it('enumera las obras fallidas con su motivo', async () => {
+		const { writer } = spyWriter();
+		const corrupted: ReadingTimeBackfillCandidate = {
+			...pending,
+			slug: 'obra-con-key-corrupta',
+			content: [{ ...pending.content[0], _key: 'key con espacios' }],
+		};
+		const report = await runReadingTimeBackfill({
+			fetcher: new StubCandidatePageFetcher([[corrupted]]),
+			writer,
+			apply: false,
+			pageSize: 2,
+		});
+
+		const lines = formatReadingTimeBackfillReport(report, { apply: false });
+
+		expect(lines.some((line) => line.includes('Fallidas: 1'))).toBe(true);
+		expect(lines.some((line) => line.includes('obra-con-key-corrupta'))).toBe(true);
 	});
 
 	it('al aplicar no ofrece el comando y usa el tiempo pasado', async () => {

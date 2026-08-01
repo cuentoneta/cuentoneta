@@ -12,13 +12,12 @@
  */
 import { client } from '../src/api/_helpers/sanity-connector';
 import { environment } from '../src/api/_helpers/environment';
+import { readingTimeBackfillCandidatesQuery } from '@queries/literary-work.query';
 import {
 	formatReadingTimeBackfillReport,
-	readingTimeBackfillCandidatesQuery,
 	READING_TIME_BACKFILL_PAGE_SIZE,
 	runReadingTimeBackfill,
 	type LiteraryWorkCandidatePageFetcher,
-	type ReadingTimeBackfillCandidate,
 } from './backfill-reading-time.helpers';
 
 const APPLY = process.argv.includes('--no-dry-run');
@@ -27,8 +26,7 @@ const APPLY = process.argv.includes('--no-dry-run');
 const sanityClient = client.withConfig({ useCdn: false });
 
 const fetcher: LiteraryWorkCandidatePageFetcher = {
-	fetchPage: (cursor, pageSize) =>
-		sanityClient.fetch<ReadingTimeBackfillCandidate[]>(readingTimeBackfillCandidatesQuery, { cursor, pageSize }),
+	fetchPage: (cursor, pageSize) => sanityClient.fetch(readingTimeBackfillCandidatesQuery, { cursor, pageSize }),
 };
 
 async function run(): Promise<void> {

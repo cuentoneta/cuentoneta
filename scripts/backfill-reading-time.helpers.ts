@@ -1,5 +1,4 @@
-import { defineQuery } from 'groq';
-import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
+import type { ReadingTimeBackfillCandidatesQueryResult } from '@sanity-types';
 import { createMarkdown } from '@models/markdown.model';
 import {
 	applyReadingTimeMaterialization,
@@ -8,30 +7,10 @@ import {
 	type ReadingTimeMaterializationWriter,
 } from '@models/reading-time-materialization.model';
 
-type RawLiteraryWork = NonNullable<LiteraryWorkBySlugQueryResult>;
-
-// Candidatas: obras a las que les falta el total o el reading time de alguna sección. La proyección
-// trae **todas** las secciones, no solo las incompletas, porque el total se resuelve sumando el
-// conjunto completo. El recorrido pagina por `_id` (cursor estable) y no por offset, que puede
-// saltear documentos si el orden cambia entre páginas.
-export const readingTimeBackfillCandidatesQuery = defineQuery(`
-*[_type == 'literaryWork' && !(_id in path('drafts.**')) && _id > $cursor
-  && (!defined(totalReadingTime) || count(content[!defined(readingTime)]) > 0)]
-| order(_id asc) [0...$pageSize] {
-    _id,
-    'slug': slug.current,
-    totalReadingTime,
-    'content': coalesce(content[]{ _key, body, readingTime }, [])
-}`);
-
 export const READING_TIME_BACKFILL_PAGE_SIZE = 50;
 
-export interface ReadingTimeBackfillCandidate {
-	readonly _id: RawLiteraryWork['_id'];
-	readonly slug: RawLiteraryWork['slug'];
-	readonly totalReadingTime: RawLiteraryWork['totalReadingTime'];
-	readonly content: readonly Pick<RawLiteraryWork['content'][number], '_key' | 'body' | 'readingTime'>[];
-}
+// El shape lo declara el typegen a partir de la propia query: un rename de schema rompe el typecheck.
+export type ReadingTimeBackfillCandidate = ReadingTimeBackfillCandidatesQueryResult[number];
 
 export interface LiteraryWorkCandidatePageFetcher {
 	fetchPage(cursor: string, pageSize: number): Promise<readonly ReadingTimeBackfillCandidate[]>;

@@ -61,9 +61,9 @@ export function countWords(markdown: Markdown): WordCount {
 	return createWordCount(words.length);
 }
 
-// Composición canónica body → palabras → minutos. Fuente única del algoritmo de reading time,
-// pensada para compartirse entre el backfill batch (scripts/) y la materialización self-healing del
-// backend, que la consumirán en slices siguientes: ambos deben producir el mismo número por sección.
+// Composición canónica body → palabras → minutos. Fuente única del algoritmo de reading time: la
+// comparten el backfill batch, que persiste, y el fallback de lectura del repository, que no; ambos
+// tienen que producir el mismo número por sección.
 export function deriveSectionReadingTime(body: Markdown): ReadingTime {
 	return deriveReadingTime(countWords(body));
 }
