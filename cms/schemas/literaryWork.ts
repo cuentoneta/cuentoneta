@@ -37,14 +37,15 @@ const section = defineArrayMember({
 			type: 'markdown',
 			validation: (Rule) => Rule.required(),
 		}),
-		// Derivado del texto, poblado por el backend (fuera del CMS), no editable. Opcional a propósito:
-		// arranca vacío y lo materializa la primera lectura de la obra (self-healing) — ver
+		// Derivado del texto, poblado por el script de backfill (`pnpm backfill:reading-time`, fuera del
+		// CMS), no editable. Opcional a propósito: arranca vacío y sigue vacío hasta que corra el
+		// backfill — mientras tanto la lectura deriva un fallback puro, sin persistir. Ver
 		// docs/LITERARY_WORK_DESIGN.md §5. Podrá volverse required en un increment futuro, una vez
 		// pobladas todas las obras.
 		defineField({
 			name: 'readingTime',
 			title: 'Tiempo de lectura de la sección (minutos)',
-			description: 'Derivado del texto de la sección; lo computa y persiste el backend, no se edita a mano.',
+			description: 'Derivado del texto de la sección; lo computa y persiste el backfill, no se edita a mano.',
 			type: 'number',
 			readOnly: true,
 			validation: (Rule) => Rule.integer().min(1),
@@ -115,13 +116,13 @@ export default defineType({
 			type: 'markdown',
 		}),
 		// Total de la obra, en minutos. Editable y opcional a propósito: en obras de texto lo completa
-		// el backend con la suma de las secciones, sin pisar un valor ya cargado; en
+		// el backfill con la suma de las secciones, sin pisar un valor ya cargado; en
 		// recitados/audiovisuales el editor setea a mano la duración del medio.
 		defineField({
 			name: 'totalReadingTime',
 			title: 'Tiempo de lectura total (minutos)',
 			description:
-				'Total de la obra. En obras de texto lo completa el backend con la suma de las secciones; en recitados o audiovisuales, seteá a mano la duración del medio.',
+				'Total de la obra. En obras de texto lo completa el backfill con la suma de las secciones; en recitados o audiovisuales, seteá a mano la duración del medio.',
 			type: 'number',
 			validation: (Rule) => Rule.integer().min(1),
 		}),
