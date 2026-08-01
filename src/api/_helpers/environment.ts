@@ -12,6 +12,10 @@ try {
 export interface EnvironmentConfig {
 	production: boolean;
 	basePath: string;
+	// Interruptor del `s-maxage` (en segundos) de la caché de borde de `/read`: es la ventana de
+	// propagación de una edición, no un límite de disponibilidad — el `stale-while-revalidate`
+	// cubre el servido mientras el borde revalida.
+	readCacheSMaxAge: number;
 	sanity: {
 		token: string;
 		projectId: string;
@@ -23,10 +27,24 @@ export interface EnvironmentConfig {
 	};
 }
 
+// Default conservador (5 minutos) del `s-maxage` de `/read`: acota la staleness sin depender de
+// que el interruptor esté seteado. Se sube por entorno con `READ_CACHE_S_MAXAGE`.
+export const CONSERVATIVE_READ_CACHE_S_MAXAGE = 300;
+
+// Exportada para test: parsea el valor crudo del interruptor, con fallback al default conservador
+// ante un valor ausente, no numérico, no entero o no positivo. El entero no es cosmético: RFC 9111
+// define `s-maxage` como delta-seconds entero, así que un `300.7` invalida la directiva y el borde
+// deja de cachear en silencio.
+export function parseReadCacheSMaxAge(raw: string | undefined): number {
+	const parsed = Number(raw);
+	return Number.isInteger(parsed) && parsed > 0 ? parsed : CONSERVATIVE_READ_CACHE_S_MAXAGE;
+}
+
 export const environment: EnvironmentConfig = {
 	production: process.env['VERCEL_TARGET_ENV'] === 'production',
 	// TODO: Mover obtención de la URL base a las variables de entorno
 	basePath: 'https://www.cuentoneta.ar',
+	readCacheSMaxAge: parseReadCacheSMaxAge(process.env['READ_CACHE_S_MAXAGE']),
 	sanity: {
 		projectId: process.env['SANITY_STUDIO_PROJECT_ID'] as string,
 		dataset: process.env['SANITY_STUDIO_DATASET'] as string,
