@@ -132,7 +132,7 @@ expect(heading).toBeInTheDocument();
 
 ### Servicios inyectados (mock con `fn()`)
 
-> Ejemplo con `StoryApi`/`StoryComponent` (reales, vigentes) — el mismo patrón aplicará a `LiteraryWorkApi` y a su futuro componente de página cuando aterrice el provider de LiteraryWork (#1853; el repository de datos está en PR #2002).
+> Ejemplo con `StoryApi`/`StoryComponent`. Cuando el doble no necesita registrar llamadas, se provee la clase `Stub*` del propio provider en vez de `fn()` — es lo que hace `read.page.spec.ts` con `StubLiteraryWorkApi` + `provideLiteraryWorkApiMock()`.
 
 ```typescript
 import { fn } from '@test-utils';
@@ -201,7 +201,7 @@ describe('TagsOverflowDirective', () => {
 });
 ```
 
-> Nota (#1494): el stub es temporal. El browser mode de Vitest provee un `IntersectionObserver` real, lo que permitiría testear con layout real en vez de simular el callback a mano.
+> Nota: el stub es temporal. El browser mode de Vitest provee un `IntersectionObserver` real, lo que permitiría testear con layout real en vez de simular el callback a mano.
 
 ---
 
