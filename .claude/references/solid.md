@@ -89,7 +89,7 @@ interface ResourceRenderer {
 
 - No sobreescribas métodos de forma que viole las expectativas de la clase base.
 - Si una subclase no puede soportar plenamente un método de la base, la jerarquía está mal.
-- En cuentoneta esto aplica a las implementaciones intercambiables de un repositorio: un `SanityStoryRepository` y un `InMemoryStoryRepository` (usado en tests) deben honrar el mismo contrato — mismas garantías de retorno y de error — para ser sustituibles sin que el `service` lo note. Ese mismo patrón ya tiene contrato cerrado para `LiteraryWork` — ver `docs/LITERARY_WORK_DESIGN.md` §6 —, pendiente de #1853.
+- En cuentoneta esto aplica a las implementaciones intercambiables de un repositorio: un `SanityStoryRepository` y un `InMemoryStoryRepository` (usado en tests) deben honrar el mismo contrato — mismas garantías de retorno y de error — para ser sustituibles sin que el `service` lo note. Ese mismo patrón ya está implementado para `LiteraryWork`: `SanityLiteraryWorkRepository` e `InMemoryLiteraryWorkRepository` implementan el puerto `LiteraryWorkRepository`, y los specs de service y controller sustituyen uno por el otro sin que el service lo note — contrato en `docs/LITERARY_WORK_DESIGN.md` §6.
 
 ---
 
