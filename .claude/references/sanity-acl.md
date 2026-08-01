@@ -26,7 +26,7 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 
 > **Alcance de los ejemplos de este archivo.** El pipeline se ejemplifica con el módulo `story`
 > (`src/api/modules/story/`), hoy el único módulo de contenido narrativo con esta capa completa
-> (repository → mapper → service → controller) mergeada, con el ACL como **mappers puros en
+> (repository → mapper → service → controller), con el ACL como **mappers puros en
 > `_utils/*.functions.ts`** (ver más abajo). `LiteraryWork` **diverge a propósito**: su ACL (la
 > traducción raw Sanity → dominio) vive **dentro del repository**
 > (`SanityLiteraryWorkRepository`, `src/api/modules/literary-work/literary-work.repository.ts`) como
