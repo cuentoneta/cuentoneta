@@ -3,12 +3,8 @@ import { provideRouter } from '@angular/router';
 
 import { LiteraryWorkHomeCardTeaserComponent } from './literary-work-home-card-teaser.component';
 import { LiteraryWorkHomeCardTeaserSkeletonComponent } from './literary-work-home-card-teaser-skeleton.component';
-import { palacioNueveFronterasLiteraryWorkTeaserMock } from '@mocks/onoff-literary-work-teasers.mock';
-import {
-	corpusLiteraryWorkTeasers,
-	literaryWorkSelectArgType,
-	withRichMediaSources,
-} from '@mocks/onoff-corpus.storybook';
+import { palacioNueveFronterasLiteraryWorkTeaserMock, withMediaSources } from '@mocks/onoff-literary-work-teasers.mock';
+import { corpusLiteraryWorkTeasers, literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
 
 const meta: Meta<LiteraryWorkHomeCardTeaserComponent> = {
 	component: LiteraryWorkHomeCardTeaserComponent,
@@ -111,7 +107,7 @@ export const Default: Story = {
 		template: `<cuentoneta-literary-work-home-card-teaser ${argsToTemplate(args)} />`,
 	}),
 	args: {
-		literaryWork: withRichMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
+		literaryWork: withMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
 		order: 1,
 		tagLabel: 'Cuento',
 		showMultimedia: true,
@@ -151,7 +147,7 @@ export const Estados: StoryObj<LiteraryWorkHomeCardTeaserComponent & { loading: 
 	}),
 	args: {
 		loading: true,
-		literaryWork: withRichMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
+		literaryWork: withMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
 		order: 1,
 		tagLabel: 'Cuento',
 		showMultimedia: true,

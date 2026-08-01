@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 import { ReadingSuggestionsComponent } from './reading-suggestions.component';
 import type { LiteraryWorkCardTeaserContent } from '@components/literary-work-card-teaser/literary-work-card-teaser.component';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
-import { corpusLiteraryWorkTeasers } from '@mocks/onoff-corpus.storybook';
+import { onoffLiteraryWorkTeasersWithMediaSourcesMock } from '@mocks/onoff-literary-work-teasers.mock';
 
 const teasers = onoffLiteraryWorkTeasersMock.slice(0, 3);
 
@@ -100,7 +100,7 @@ describe('ReadingSuggestionsComponent', () => {
 	});
 
 	it('should expose the multimedia of each suggestion', async () => {
-		await setup({ teasers: corpusLiteraryWorkTeasers.slice(0, 3) });
+		await setup({ teasers: onoffLiteraryWorkTeasersWithMediaSourcesMock.slice(0, 3) });
 
 		expect(screen.getAllByTestId('media')).toHaveLength(3);
 	});

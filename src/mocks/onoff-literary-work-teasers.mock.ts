@@ -5,6 +5,7 @@ import type {
 	LiteraryWorkNavigationTeaserWithAuthors,
 	LiteraryWorkTeaser,
 } from '@models/literary-work.model';
+import type { Media } from '@models/media.model';
 import { authorTeaserMock } from './author.mock';
 import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
 
@@ -72,6 +73,27 @@ export const onoffLiteraryWorkTeasersMock: LiteraryWorkTeaser[] = [
 	lasDosAntorchasLiteraryWorkTeaserMock,
 	neronLiteraryWorkTeaserMock,
 ];
+
+// Ninguna obra del canon declara recursos multimedia, así que los casos que necesitan ese shape
+// —los selectores de multimedia de las tarjetas— lo obtienen de esta variante enriquecida, en vez
+// de armarlo cada uno por su cuenta.
+const mediaSources: Media[] = [
+	{ title: 'Video 1', type: 'youTubeVideo', description: [], data: { videoId: 'a' } },
+	{ title: 'Video 2', type: 'youTubeVideo', description: [], data: { videoId: 'b' } },
+	{ title: 'Video 3', type: 'youTubeVideo', description: [], data: { videoId: 'c' } },
+	{
+		title: 'Space',
+		type: 'spaceRecording',
+		description: [],
+		data: { url: null, duration: '', hostName: '', date: '' },
+	},
+	{ title: 'Podcast', type: 'spotifyPodcastEpisode', description: [], data: { url: 'https://spotify.com' } },
+];
+
+export const withMediaSources = (teaser: LiteraryWorkTeaser): LiteraryWorkTeaser => ({ ...teaser, mediaSources });
+
+export const onoffLiteraryWorkTeasersWithMediaSourcesMock: LiteraryWorkTeaser[] =
+	onoffLiteraryWorkTeasersMock.map(withMediaSources);
 
 // Los teasers de navegación proyectan solo la vista base (LiteraryWorkBase): las vistas de navegación
 // no muestran el paratexto editorial, el cuerpo ni la sección de apertura. La variante sin autores deja
