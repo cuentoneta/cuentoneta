@@ -1,10 +1,13 @@
 import { render, screen } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
+import { clearAllMocks } from '@test-utils';
 
 import { ReadingSuggestionsComponent } from './reading-suggestions.component';
 import type { LiteraryWorkCardTeaserContent } from '@components/literary-work-card-teaser/literary-work-card-teaser.component';
-import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
-import { onoffLiteraryWorkTeasersWithMediaSourcesMock } from '@mocks/onoff-literary-work-teasers.mock';
+import {
+	onoffLiteraryWorkTeasersMock,
+	onoffLiteraryWorkTeasersWithMediaSourcesMock,
+} from '@mocks/onoff-literary-work-teasers.mock';
 
 const teasers = onoffLiteraryWorkTeasersMock.slice(0, 3);
 
@@ -31,6 +34,10 @@ const setup = (inputs: ReadingSuggestionsInputs = {}) =>
 	});
 
 describe('ReadingSuggestionsComponent', () => {
+	beforeEach(() => {
+		clearAllMocks();
+	});
+
 	it('should render the heading', async () => {
 		await setup();
 

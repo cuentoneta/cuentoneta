@@ -48,6 +48,21 @@ const meta: Meta<ReadingSuggestionsComponent> = {
 			description: 'Etiqueta opcional que cada tarjeta muestra antes del tiempo de lectura',
 			table: { type: { summary: 'string' }, defaultValue: { summary: 'undefined' } },
 		},
+		teasers: {
+			control: { type: 'object' },
+			description: 'Obras ya resueltas que se sugieren; el bloque no se renderiza si llega vacío',
+			table: { type: { summary: 'readonly LiteraryWorkCardTeaserContent[]' }, defaultValue: { summary: '[]' } },
+		},
+		moreRoute: {
+			control: { type: 'object' },
+			description: 'Ruta del listado completo; sin ella el acceso no se muestra',
+			table: { type: { summary: 'string | readonly string[]' }, defaultValue: { summary: 'undefined' } },
+		},
+		navigationParams: {
+			control: { type: 'object' },
+			description: 'Contexto de navegación que arrastra el enlace de cada sugerencia a la obra destino',
+			table: { type: { summary: 'NavigationParams' }, defaultValue: { summary: 'undefined' } },
+		},
 	},
 };
 
@@ -62,6 +77,7 @@ export const PorAutor: Story = {
 		teasers: suggestions,
 		moreLabel: 'Ver más de François Onoff',
 		moreRoute: ['/', 'author', 'francois-onoff'],
+		navigationParams: { navigation: 'author', navigationSlug: 'francois-onoff' },
 		showAuthor: false,
 		tagLabel: 'Cuento',
 	},
@@ -81,6 +97,7 @@ export const PorColeccion: Story = {
 		teasers: suggestions,
 		moreLabel: 'Ver más de Geometrías del desvelo',
 		moreRoute: ['/', 'storylist', 'geometrias-del-desvelo'],
+		navigationParams: { navigation: 'storylist', navigationSlug: 'geometrias-del-desvelo' },
 		showAuthor: true,
 		tagLabel: 'Cuento',
 	},

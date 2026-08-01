@@ -78,15 +78,35 @@ describe('AuthorReadingSuggestionsComponent', () => {
 		expect(screen.queryByRole('link', { name: current.title })).not.toBeInTheDocument();
 	});
 
-	it('should resolve the suggestions once per fetch, without reshuffling on every read', async () => {
-		spyOn(Math, 'random').mockRestore();
+	it('should draw the suggestions exactly once per fetch', async () => {
 		const randomSource = spyOn(Math, 'random').mockReturnValue(0);
+		const stories = new Subject<StoryNavigationTeaser[]>();
 
-		const view = await setup(() => of(onoffStoryNavigationTeasersMock));
-		const callsAfterRender = randomSource.mock.calls.length;
+		const view = await setup(() => stories);
+		stories.next(onoffStoryNavigationTeasersMock);
+		await view.fixture.whenStable();
+
+		// Un sorteo por tarjeta a renderizar, y ninguno más: leer las sugerencias no vuelve a barajar.
+		expect(randomSource).toHaveBeenCalledTimes(READING_SUGGESTIONS_COUNT);
+
+		screen.getAllByRole('listitem');
 		view.detectChanges();
+		await view.fixture.whenStable();
 
-		expect(randomSource.mock.calls.length).toBe(callsAfterRender);
+		expect(randomSource).toHaveBeenCalledTimes(READING_SUGGESTIONS_COUNT);
+	});
+
+	it('should draw again when the source emits new works', async () => {
+		const randomSource = spyOn(Math, 'random').mockReturnValue(0);
+		const stories = new Subject<StoryNavigationTeaser[]>();
+
+		const view = await setup(() => stories);
+		stories.next(onoffStoryNavigationTeasersMock);
+		await view.fixture.whenStable();
+		stories.next(onoffStoryNavigationTeasersMock);
+		await view.fixture.whenStable();
+
+		expect(randomSource).toHaveBeenCalledTimes(READING_SUGGESTIONS_COUNT * 2);
 	});
 
 	it('should resolve them again when the work being read changes', async () => {

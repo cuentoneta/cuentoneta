@@ -8,6 +8,7 @@ import {
 import { ButtonComponent } from '@components/button/button.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
+import type { NavigationParams } from '@app-utils/navigation-params';
 
 /**
  * Bloque "qué leer después" que cierra la lectura de una obra: un encabezado, una tríada de obras
@@ -76,7 +77,7 @@ export class ReadingSuggestionsComponent {
 	public readonly tagLabel = input<string>();
 	// Contexto de navegación que arrastra cada enlace, para que el bloque de la obra destino se
 	// resuelva en el mismo contexto (autor o colección) desde el que se llegó.
-	public readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
+	public readonly navigationParams = input<NavigationParams>();
 
 	// El estado de carga reserva el alto de la misma cantidad de tarjetas que se van a renderizar,
 	// para que no haya salto de layout cuando llegan las obras.

@@ -6,6 +6,7 @@ import { StoryApi } from '../../providers/story-api.interface';
 import { progressiveRxResource } from '@app-utils/ssr-resource';
 import { ReadingSuggestionsComponent } from './reading-suggestions.component';
 import { pickReadingSuggestions } from './pick-reading-suggestions';
+import type { NavigationParams } from '@app-utils/navigation-params';
 import { adaptStoryTeasersToLiteraryWorkTeasers } from './story-teaser-to-literary-work.adapter';
 
 /**
@@ -69,7 +70,7 @@ export class AuthorReadingSuggestionsComponent {
 	protected readonly heading = computed(() => `Más obras de ${this.authorName()}`);
 	protected readonly moreLabel = computed(() => `Ver más de ${this.authorName()}`);
 	protected readonly moreRoute = computed(() => ['/', this.appRoutes.Author, this.authorSlug()]);
-	protected readonly navigationParams = computed(() => ({
+	protected readonly navigationParams = computed<NavigationParams>(() => ({
 		navigation: 'author',
 		navigationSlug: this.authorSlug(),
 	}));
