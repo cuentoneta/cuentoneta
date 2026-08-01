@@ -50,7 +50,8 @@ function rehypeSanityImages() {
 }
 
 // Única fuente de verdad del allow-list (docs/LITERARY_WORK_DESIGN.md §9): cambiarla exige
-// regen masivo de derivados + tests de XSS. Privada hasta que exista otro consumidor real.
+// actualizar los tests de XSS, y deja stale a la caché de borde hasta que revalide.
+// Privada hasta que exista otro consumidor real.
 const literaryWorkSanitizationSchema: Options = {
 	...defaultSchema,
 	attributes: {

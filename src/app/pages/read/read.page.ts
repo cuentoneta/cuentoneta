@@ -79,10 +79,16 @@ export default class ReadPage implements ReadHost {
 		return editorialNote ? createAttributedText({ text: editorialNote }) : undefined;
 	});
 
-	private readonly respondNotFoundEffect = effect(() => {
+	// El estado de error se renderiza siempre igual ("No encontramos esta obra"), pero un 404 real y
+	// un backend caído no son lo mismo para el borde ni para el crawler: si un fallo transitorio
+	// saliera 200, el CDN lo cachearía como si fuera contenido —sin purga que lo desaloje— y el
+	// crawler lo leería como soft-404.
+	private readonly respondErrorStatusEffect = effect(() => {
 		const error = this.literaryWorkResource.error();
-		if (error instanceof HttpErrorResponse && error.status === 404 && this.responseInit) {
-			this.responseInit.status = 404;
+		if (error === undefined || !this.responseInit) {
+			return;
 		}
+
+		this.responseInit.status = error instanceof HttpErrorResponse && error.status === 404 ? 404 : 503;
 	});
 }

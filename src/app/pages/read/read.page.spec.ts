@@ -193,7 +193,7 @@ describe('ReadPage', () => {
 		},
 	);
 
-	it('renderiza el estado not-found y marca la respuesta SSR como 404', async () => {
+	it('should render the not-found state and mark the SSR response as 404', async () => {
 		const responseInit: ResponseInit = {};
 		await setup(representativeLiteraryWork, { api: new StubFailingLiteraryWorkApi(404), responseInit });
 
@@ -201,11 +201,12 @@ describe('ReadPage', () => {
 		expect(responseInit.status).toBe(404);
 	});
 
-	it('no marca la respuesta SSR para errores que no son 404', async () => {
+	// Un 200 acá lo cachearía el borde como si fuera contenido, sin purga que lo desaloje.
+	it('should mark the SSR response as 503 when the failure is not a 404', async () => {
 		const responseInit: ResponseInit = {};
 		await setup(representativeLiteraryWork, { api: new StubFailingLiteraryWorkApi(500), responseInit });
 
 		expect(await screen.findByText(/no encontramos esta obra/i)).toBeTruthy();
-		expect(responseInit.status).toBeUndefined();
+		expect(responseInit.status).toBe(503);
 	});
 });
