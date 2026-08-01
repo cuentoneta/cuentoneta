@@ -59,11 +59,12 @@ describe('ReadingSuggestionsComponent', () => {
 		expect(screen.queryByRole('link', { name: 'Ver más de François Onoff' })).not.toBeInTheDocument();
 	});
 
-	it('should render an empty list when there are no suggestions', async () => {
+	it('should not render the block at all when there are no suggestions', async () => {
 		await setup({ teasers: [] });
 
-		expect(screen.queryAllByTestId('skeleton')).toHaveLength(0);
-		expect(screen.queryAllByRole('listitem')).toHaveLength(0);
+		expect(screen.queryByTestId('reading-suggestions')).not.toBeInTheDocument();
+		expect(screen.queryByRole('heading')).not.toBeInTheDocument();
+		expect(screen.queryByRole('link', { name: 'Ver más de François Onoff' })).not.toBeInTheDocument();
 	});
 
 	it('should swap the suggestions for card skeletons while loading', async () => {

@@ -84,6 +84,15 @@ describe('StoryComponent - sugerencias de lectura', () => {
 		expect(screen.queryByTestId('collection-reading-suggestions')).not.toBeInTheDocument();
 	});
 
+	it('should fall back to the author suggestions when the collection slug is missing', async () => {
+		const { fixture } = await setup('storylist');
+
+		await renderDeferBlocks(fixture);
+
+		expect(screen.getByTestId('author-reading-suggestions')).toBeInTheDocument();
+		expect(screen.queryByTestId('collection-reading-suggestions')).not.toBeInTheDocument();
+	});
+
 	it('should mount the collection suggestions when navigating from a collection', async () => {
 		const { fixture } = await setup('storylist', storylistMock.slug);
 

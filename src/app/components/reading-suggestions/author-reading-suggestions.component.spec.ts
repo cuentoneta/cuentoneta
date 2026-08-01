@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
-import { Observable, of, Subject } from 'rxjs';
+import { Observable, of, Subject, throwError } from 'rxjs';
 
 import { AuthorReadingSuggestionsComponent } from './author-reading-suggestions.component';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
@@ -124,6 +124,20 @@ describe('AuthorReadingSuggestionsComponent', () => {
 		await view.fixture.whenStable();
 
 		expect(screen.getByTestId('reading-suggestions')).toHaveAttribute('aria-busy', 'false');
+	});
+
+	it('should stay hidden when the author has no other work to suggest', async () => {
+		const [onlyWork] = onoffStoryNavigationTeasersMock;
+
+		await setup(() => of([onlyWork]), { currentWorkSlug: onlyWork.slug });
+
+		expect(screen.queryByTestId('reading-suggestions')).not.toBeInTheDocument();
+	});
+
+	it('should stay hidden when the fetch fails', async () => {
+		await setup(() => throwError(() => new Error('la API no responde')));
+
+		expect(screen.queryByTestId('reading-suggestions')).not.toBeInTheDocument();
 	});
 
 	it('should carry the author context into each suggestion link', async () => {

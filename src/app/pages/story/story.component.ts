@@ -94,14 +94,15 @@ export default class StoryComponent implements StoryHost {
 			`Leí "${this.story()?.title}" de ${this.story()?.author.name} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`,
 	);
 	protected readonly navigationParams = computed(() => {
-		const navigation = this.navigation() ?? 'author';
-		let navigationSlug = this.navigationSlug();
+		const navigationSlug = this.navigationSlug();
 
-		if (!navigationSlug) {
-			navigationSlug = this.story()?.author.slug ?? '';
+		if (navigationSlug) {
+			return { navigation: this.navigation() ?? 'author', navigationSlug };
 		}
 
-		return { navigation, navigationSlug };
+		// Sin slug en la ruta solo se puede recurrir al autor de la obra: usarlo como slug de colección
+		// pediría una colección inexistente.
+		return { navigation: 'author' as const, navigationSlug: this.story()?.author.slug ?? '' };
 	});
 	protected readonly headerPosition = computed(() =>
 		this.layoutService.biggerThan('xs')

@@ -21,40 +21,46 @@ import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
 	imports: [RouterLink, LiteraryWorkCardTeaserComponent, ButtonComponent, SkeletonComponent],
 	host: { class: 'block' },
 	template: `
-		<section
-			[attr.aria-busy]="loading()"
-			data-testid="reading-suggestions"
-			class="flex w-full flex-col gap-6 rounded-2xl bg-neutral-100 p-6 md:p-10"
-		>
-			@if (loading()) {
-				<cuentoneta-skeleton appearance="line" class="h-7 w-full max-w-72 bg-neutral-300" />
-			} @else {
-				<h2 class="h3 text-neutral-900">{{ heading() }}</h2>
-			}
-
-			<!-- Los divisores y el espaciado viven en el contenedor: valen igual para las tarjetas reales y
-				 para los esqueletos, sin duplicar la regla en cada rama. -->
-			<ul class="flex flex-col divide-y divide-neutral-200 [&>li]:py-6 [&>li:first-child]:pt-0 [&>li:last-child]:pb-0">
-				@for (literaryWork of displayedTeasers(); track $index) {
-					<li>
-						<cuentoneta-literary-work-card-teaser
-							[literaryWork]="literaryWork"
-							[navigationParams]="navigationParams()"
-							[showAuthor]="showAuthor()"
-							[tagLabel]="tagLabel()"
-							[showMultimedia]="true"
-							variant="on-gray"
-						/>
-					</li>
+		<!-- Sin sugerencias que ofrecer no hay bloque: un encabezado y un botón sobre una lista vacía
+			 prometen algo que no existe. Cubre además el fallo del fetch, que resuelve en lista vacía. -->
+		@if (loading() || teasers().length > 0) {
+			<section
+				[attr.aria-busy]="loading()"
+				data-testid="reading-suggestions"
+				class="flex w-full flex-col gap-6 rounded-2xl bg-neutral-100 p-6 md:p-10"
+			>
+				@if (loading()) {
+					<cuentoneta-skeleton appearance="line" class="h-7 w-full max-w-72 bg-neutral-300" />
+				} @else {
+					<h2 class="h3 text-neutral-900">{{ heading() }}</h2>
 				}
-			</ul>
 
-			@if (loading()) {
-				<cuentoneta-skeleton appearance="line" class="h-11 w-full max-w-56 rounded-full bg-neutral-300" />
-			} @else if (moreRoute()) {
-				<a [routerLink]="moreRoute()" cuentoneta-button type="outline" class="self-start">{{ moreLabel() }}</a>
-			}
-		</section>
+				<!-- Los divisores y el espaciado viven en el contenedor: valen igual para las tarjetas reales y
+				 para los esqueletos, sin duplicar la regla en cada rama. -->
+				<ul
+					class="flex flex-col divide-y divide-neutral-200 [&>li]:py-6 [&>li:first-child]:pt-0 [&>li:last-child]:pb-0"
+				>
+					@for (literaryWork of displayedTeasers(); track $index) {
+						<li>
+							<cuentoneta-literary-work-card-teaser
+								[literaryWork]="literaryWork"
+								[navigationParams]="navigationParams()"
+								[showAuthor]="showAuthor()"
+								[tagLabel]="tagLabel()"
+								[showMultimedia]="true"
+								variant="on-gray"
+							/>
+						</li>
+					}
+				</ul>
+
+				@if (loading()) {
+					<cuentoneta-skeleton appearance="line" class="h-11 w-full max-w-56 rounded-full bg-neutral-300" />
+				} @else if (moreRoute()) {
+					<a [routerLink]="moreRoute()" cuentoneta-button type="outline" class="self-start">{{ moreLabel() }}</a>
+				}
+			</section>
+		}
 	`,
 })
 export class ReadingSuggestionsComponent {

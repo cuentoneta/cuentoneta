@@ -60,10 +60,16 @@ export class CollectionReadingSuggestionsComponent {
 		defaultValue: undefined,
 	});
 
-	private readonly title = computed(() => this.collectionResource.value()?.title ?? '');
+	// Si el fetch falla, el bloque se queda sin sugerencias y desaparece: es contenido accesorio al
+	// pie de la lectura, no vale interrumpirla con un error. `hasValue()` evita que el recurso
+	// relance la falla al leer el valor.
+	private readonly collection = computed(() =>
+		this.collectionResource.hasValue() ? this.collectionResource.value() : undefined,
+	);
+	private readonly title = computed(() => this.collection()?.title ?? '');
 
 	protected readonly loading = computed(() => this.collectionResource.isLoading());
-	protected readonly suggestions = computed(() => this.collectionResource.value()?.suggestions ?? []);
+	protected readonly suggestions = computed(() => this.collection()?.suggestions ?? []);
 	protected readonly heading = computed(() => `Más obras de ${this.title()}`);
 	protected readonly moreLabel = computed(() => `Ver más de ${this.title()}`);
 	protected readonly moreRoute = computed(() => ['/', this.appRoutes.StoryList, this.collectionSlug()]);

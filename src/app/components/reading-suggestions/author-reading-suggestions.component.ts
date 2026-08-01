@@ -60,7 +60,12 @@ export class AuthorReadingSuggestionsComponent {
 	});
 
 	protected readonly loading = computed(() => this.suggestionsResource.isLoading());
-	protected readonly suggestions = computed(() => this.suggestionsResource.value());
+	// Si el fetch falla, el bloque se queda sin sugerencias y desaparece: es contenido accesorio al
+	// pie de la lectura, no vale interrumpirla con un error. `hasValue()` evita que el recurso
+	// relance la falla al leer el valor.
+	protected readonly suggestions = computed(() =>
+		this.suggestionsResource.hasValue() ? this.suggestionsResource.value() : [],
+	);
 	protected readonly heading = computed(() => `Más obras de ${this.authorName()}`);
 	protected readonly moreLabel = computed(() => `Ver más de ${this.authorName()}`);
 	protected readonly moreRoute = computed(() => ['/', this.appRoutes.Author, this.authorSlug()]);
