@@ -29,7 +29,7 @@ const meta: Meta<CollectionReadingSuggestionsComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Envoltorio conectado que sugiere otras obras de la misma colección al pie de la lectura. Resuelve la colección contra el proveedor de datos, descarta la obra que se está leyendo, elige tres al azar y delega toda la presentación en <a href="./?path=/docs/componentes-v3-readingsuggestions--docs" target="_top"><strong>ReadingSuggestions</strong></a>.</p><p>A diferencia de <a href="./?path=/docs/componentes-v3-authorreadingsuggestions--docs" target="_top"><strong>AuthorReadingSuggestions</strong></a>, cada tarjeta muestra su autor: una colección puede reunir obras de varios. El encabezado y el acceso al listado se arman con el título de la colección, que llega con los datos.</p><p>El fetch no bloquea el renderizado en el servidor: la página que lo consume monta el bloque dentro de un <code>&#64;defer (on viewport)</code>, así los datos se piden una sola vez y ya en el cliente, al acercarse el final de la lectura.</p></div>`,
+				component: `<div><p>Envoltorio conectado que sugiere otras obras de la misma colección al pie de la lectura. Resuelve la colección contra el proveedor de datos, descarta la obra que se está leyendo, elige tres al azar y delega toda la presentación en <a href="./?path=/docs/componentes-v3-readingsuggestionslist--docs" target="_top"><strong>ReadingSuggestionsList</strong></a>.</p><p>A diferencia de <a href="./?path=/docs/componentes-v3-authorreadingsuggestions--docs" target="_top"><strong>AuthorReadingSuggestions</strong></a>, cada tarjeta muestra su autor: una colección puede reunir obras de varios. El encabezado y el acceso al listado se arman con el título de la colección, que llega con los datos.</p><p>El fetch no bloquea el renderizado en el servidor: la página que lo consume monta el bloque dentro de un <code>&#64;defer (on viewport)</code>, así los datos se piden una sola vez y ya en el cliente, al acercarse el final de la lectura.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -88,7 +88,7 @@ export const Cargando: Story = {
 		docs: {
 			description: {
 				story:
-					'Estado de carga del envoltorio, mientras la colección viaja. El alternador real↔esqueleto vive en la story <strong>Estados</strong> de <a href="./?path=/docs/componentes-v3-readingsuggestions--docs" target="_top"><strong>ReadingSuggestions</strong></a>, que es quien renderiza ambos estados.',
+					'Estado de carga del envoltorio, mientras la colección viaja. El alternador real↔esqueleto vive en la story <strong>Estados</strong> de <a href="./?path=/docs/componentes-v3-readingsuggestionslist--docs" target="_top"><strong>ReadingSuggestionsList</strong></a>, que es quien renderiza ambos estados.',
 			},
 		},
 	},

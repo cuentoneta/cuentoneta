@@ -5,10 +5,11 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 // 3rd party modules
 import { render, screen } from '@testing-library/angular';
-import { DeferBlockState, type ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 
 // Models
 import { storylistMock } from '@mocks/storylist.mock';
+import type { NavigationParams } from '@app-utils/navigation-params';
 import { Story } from '@models/story.model';
 
 // Components
@@ -29,8 +30,7 @@ describe('StoryComponent', () => {
 				NgOptimizedImage,
 				MockBioSummaryCardComponent,
 				MockShareContentComponent,
-				MockAuthorReadingSuggestionsComponent,
-				MockCollectionReadingSuggestionsComponent,
+				MockReadingSuggestionsComponent,
 			],
 			providers: [provideStoryApiMock(), { provide: LayoutService, useValue: new ControllableLayoutService() }],
 			inputs: {
@@ -56,32 +56,42 @@ describe('StoryComponent - sugerencias de lectura', () => {
 				NgOptimizedImage,
 				MockBioSummaryCardComponent,
 				MockShareContentComponent,
-				MockAuthorReadingSuggestionsComponent,
-				MockCollectionReadingSuggestionsComponent,
+				MockReadingSuggestionsComponent,
 			],
 			providers: [provideStoryApiMock(), { provide: LayoutService, useValue: new ControllableLayoutService() }],
 			inputs: { slug: storyMock.slug, navigation, navigationSlug },
 		});
 
-	const renderDeferBlocks = async (fixture: ComponentFixture<StoryComponent>) => {
-		for (const deferBlock of await fixture.getDeferBlocks()) {
-			await deferBlock.render(DeferBlockState.Complete);
-		}
-	};
-
-	it('should keep the suggestions out of the initial render, deferred until the viewport reaches them', async () => {
+	// La página monta el bloque y le pasa el contexto; qué variante se elige y cuándo se difiere es
+	// asunto de ReadingSuggestions, que lo cubre en su propio spec.
+	it('should mount the suggestions block once the work is loaded', async () => {
 		await setup();
 
-		expect(screen.queryByTestId('author-reading-suggestions')).not.toBeInTheDocument();
+		expect(screen.getByTestId('reading-suggestions')).toBeInTheDocument();
 	});
 
-	it('should mount the author suggestions once the deferred block renders', async () => {
-		const { fixture } = await setup();
+	it('should hand the block the context the reader arrived with', async () => {
+		const view = await setup('storylist', storylistMock.slug);
 
-		await renderDeferBlocks(fixture);
+		const block = view.fixture.debugElement.query(By.directive(MockReadingSuggestionsComponent));
 
-		expect(screen.getByTestId('author-reading-suggestions')).toBeInTheDocument();
-		expect(screen.queryByTestId('collection-reading-suggestions')).not.toBeInTheDocument();
+		expect(block.componentInstance.navigationParams()).toEqual({
+			navigation: 'storylist',
+			navigationSlug: storylistMock.slug,
+		});
+		expect(block.componentInstance.currentWorkSlug()).toBe(storyMock.slug);
+		expect(block.componentInstance.authorName()).toBe(storyMock.author.name);
+	});
+
+	it('should fall back to the author context when the collection slug is missing', async () => {
+		const view = await setup('storylist');
+
+		const block = view.fixture.debugElement.query(By.directive(MockReadingSuggestionsComponent));
+
+		expect(block.componentInstance.navigationParams()).toEqual({
+			navigation: 'author',
+			navigationSlug: storyMock.author.slug,
+		});
 	});
 
 	it('should share the link with the very context the reader arrived with', async () => {
@@ -94,24 +104,6 @@ describe('StoryComponent - sugerencias de lectura', () => {
 
 		expect(shareContentParams()).toEqual(navigationParams());
 		expect(shareContentParams()).toEqual({ navigation: 'storylist', navigationSlug: storylistMock.slug });
-	});
-
-	it('should fall back to the author suggestions when the collection slug is missing', async () => {
-		const { fixture } = await setup('storylist');
-
-		await renderDeferBlocks(fixture);
-
-		expect(screen.getByTestId('author-reading-suggestions')).toBeInTheDocument();
-		expect(screen.queryByTestId('collection-reading-suggestions')).not.toBeInTheDocument();
-	});
-
-	it('should mount the collection suggestions when navigating from a collection', async () => {
-		const { fixture } = await setup('storylist', storylistMock.slug);
-
-		await renderDeferBlocks(fixture);
-
-		expect(screen.getByTestId('collection-reading-suggestions')).toBeInTheDocument();
-		expect(screen.queryByTestId('author-reading-suggestions')).not.toBeInTheDocument();
 	});
 });
 
@@ -129,8 +121,7 @@ describe('StoryComponent - headerPosition', () => {
 				NgOptimizedImage,
 				MockBioSummaryCardComponent,
 				MockShareContentComponent,
-				MockAuthorReadingSuggestionsComponent,
-				MockCollectionReadingSuggestionsComponent,
+				MockReadingSuggestionsComponent,
 			],
 			componentProviders: [{ provide: LayoutService, useValue: mockLayoutService }],
 			providers: [provideStoryApiMock()],
@@ -198,23 +189,12 @@ class MockBioSummaryCardComponent {
 
 @Component({
 	standalone: true,
-	selector: 'cuentoneta-author-reading-suggestions:not(p)',
+	selector: 'cuentoneta-reading-suggestions:not(p)',
 	template: '',
-	host: { 'data-testid': 'author-reading-suggestions' },
+	host: { 'data-testid': 'reading-suggestions' },
 })
-class MockAuthorReadingSuggestionsComponent {
-	public readonly authorSlug = input.required<string>();
-	public readonly authorName = input.required<string>();
-	public readonly currentWorkSlug = input<string>();
-}
-
-@Component({
-	standalone: true,
-	selector: 'cuentoneta-collection-reading-suggestions:not(p)',
-	template: '',
-	host: { 'data-testid': 'collection-reading-suggestions' },
-})
-class MockCollectionReadingSuggestionsComponent {
-	public readonly collectionSlug = input.required<string>();
+class MockReadingSuggestionsComponent {
+	public readonly navigationParams = input.required<NavigationParams>();
+	public readonly authorName = input<string>('');
 	public readonly currentWorkSlug = input<string>();
 }

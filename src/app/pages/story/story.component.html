@@ -86,28 +86,12 @@
 			</footer>
 		</article>
 
-		<!-- Bloque "qué leer después": diferido hasta que se acerca al viewport, así no se renderiza ni
-			 se pide en el servidor y resuelve con una sola request, ya en el cliente. -->
 		@if (story(); as story) {
-			@defer (on viewport) {
-				@switch (navigationParams().navigation) {
-					@case ('storylist') {
-						<cuentoneta-collection-reading-suggestions
-							[collectionSlug]="navigationParams().navigationSlug"
-							[currentWorkSlug]="story.slug"
-						/>
-					}
-					@default {
-						<cuentoneta-author-reading-suggestions
-							[authorSlug]="navigationParams().navigationSlug"
-							[authorName]="story.author.name"
-							[currentWorkSlug]="story.slug"
-						/>
-					}
-				}
-			} @placeholder {
-				<div class="h-96"></div>
-			}
+			<cuentoneta-reading-suggestions
+				[navigationParams]="navigationParams()"
+				[authorName]="story.author.name"
+				[currentWorkSlug]="story.slug"
+			/>
 		}
 	</main>
 </div>

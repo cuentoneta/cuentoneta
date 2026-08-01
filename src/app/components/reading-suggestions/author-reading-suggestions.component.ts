@@ -4,7 +4,7 @@ import { map } from 'rxjs';
 import { AppRoutes } from '../../app.routes';
 import { StoryApi } from '../../providers/story-api.interface';
 import { progressiveRxResource } from '@app-utils/ssr-resource';
-import { ReadingSuggestionsComponent } from './reading-suggestions.component';
+import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
 import { pickReadingSuggestions } from './pick-reading-suggestions';
 import type { NavigationParams } from '@app-utils/navigation-params';
 import { adaptStoryTeasersToLiteraryWorkTeasers } from './story-teaser-to-literary-work.adapter';
@@ -20,10 +20,10 @@ import { adaptStoryTeasersToLiteraryWorkTeasers } from './story-teaser-to-litera
  */
 @Component({
 	selector: 'cuentoneta-author-reading-suggestions',
-	imports: [ReadingSuggestionsComponent],
+	imports: [ReadingSuggestionsListComponent],
 	host: { class: 'block' },
 	template: `
-		<cuentoneta-reading-suggestions
+		<cuentoneta-reading-suggestions-list
 			[heading]="heading()"
 			[teasers]="suggestions()"
 			[loading]="loading()"

@@ -1,8 +1,18 @@
-import { applicationConfig, Meta, StoryObj } from '@storybook/angular-vite';
+import { applicationConfig, argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 
 import { ReadingSuggestionsComponent } from './reading-suggestions.component';
-import { corpusLiteraryWorkTeasers } from '@mocks/onoff-corpus.storybook';
+import { StoryApi } from '../../providers/story-api.interface';
+import { StorylistApi } from '../../providers/storylist-api.interface';
+import { storylistNavigationTeaserMock } from '@mocks/storylist.mock';
+import {
+	onoffStoryNavigationTeasersMock,
+	onoffStoryNavigationTeasersWithAuthorMock,
+} from '@mocks/onoff-story-teasers.mock';
+import { authorTeaserMock } from '@mocks/author.mock';
+
+const collectionMock = { ...storylistNavigationTeaserMock, stories: onoffStoryNavigationTeasersWithAuthorMock };
 
 const meta: Meta<ReadingSuggestionsComponent> = {
 	component: ReadingSuggestionsComponent,
@@ -10,58 +20,40 @@ const meta: Meta<ReadingSuggestionsComponent> = {
 	tags: ['autodocs'],
 	decorators: [
 		applicationConfig({
-			providers: [provideRouter([])],
+			providers: [
+				provideRouter([]),
+				{
+					provide: StoryApi,
+					useValue: { getNavigationTeasersByAuthorSlug: () => of(onoffStoryNavigationTeasersMock) },
+				},
+				{ provide: StorylistApi, useValue: { getStorylistNavigationTeasers: () => of(collectionMock) } },
+			],
 		}),
 	],
 	parameters: {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Bloque de sugerencias de lectura que cierra la lectura de una obra: un encabezado, una tríada de obras sugeridas y un acceso al listado completo. Reemplaza al rail lateral de navegación, cambiando la navegación in-situ por una invitación a seguir leyendo.</p><p>Es presentacional puro: recibe las obras ya resueltas mediante el input <code>teasers</code> y no conoce ningún provider. Quienes las consiguen son sus dos envoltorios conectados, <a href="./?path=/docs/componentes-v3-authorreadingsuggestions--docs" target="_top"><strong>AuthorReadingSuggestions</strong></a> (más obras del mismo autor) y <a href="./?path=/docs/componentes-v3-collectionreadingsuggestions--docs" target="_top"><strong>CollectionReadingSuggestions</strong></a> (más obras de la misma colección).</p><p>Cada sugerencia se renderiza con <a href="./?path=/docs/componentes-v3-literaryworkcardteaser--docs" target="_top"><strong>LiteraryWorkCardTeaser</strong></a> en su variante <code>OnGray</code>, separadas por divisores; el acceso al listado usa <a href="./?path=/docs/componentes-v3-button--docs" target="_top"><strong>Button</strong></a> en su variante <code>Outline</code>.</p></div>`,
+				component: `<div><p>Punto de entrada único del bloque de sugerencias que cierra la lectura de una obra. Quien lo consume no conoce las variantes: solo le pasa el contexto de navegación con el que se llegó a la obra, y el componente elige entre <a href="./?path=/docs/componentes-v3-authorreadingsuggestions--docs" target="_top"><strong>AuthorReadingSuggestions</strong></a> (más obras del mismo autor) y <a href="./?path=/docs/componentes-v3-collectionreadingsuggestions--docs" target="_top"><strong>CollectionReadingSuggestions</strong></a> (más obras de la misma colección). Ambas presentan sus obras con <a href="./?path=/docs/componentes-v3-readingsuggestionslist--docs" target="_top"><strong>ReadingSuggestionsList</strong></a>.</p><p>Cada variante vive en su propio bloque <code>&#64;defer (on viewport)</code>, así se descarga el bundle de la que se va a usar y no el de la otra. El diferido cumple además un segundo propósito: en el renderizado del servidor se sirve el marcador de posición, sin instanciar la variante ni pedir datos, de modo que el bloque resuelve con una sola consulta y ya en el cliente, al acercarse el final de la lectura.</p></div>`,
 			},
 		},
 		layout: 'padded',
 	},
 	argTypes: {
-		heading: {
-			control: { type: 'text' },
-			description: 'Encabezado del bloque',
-			table: { type: { summary: 'string' }, defaultValue: { summary: "''" } },
-		},
-		loading: {
-			control: { type: 'boolean' },
-			description: 'Estado de carga: reemplaza encabezado, tarjetas y acceso por sus esqueletos',
-			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
-		},
-		moreLabel: {
-			control: { type: 'text' },
-			description: 'Texto del acceso al listado completo',
-			table: { type: { summary: 'string' }, defaultValue: { summary: "''" } },
-		},
-		showAuthor: {
-			control: { type: 'boolean' },
-			description: 'Mostrar el autor de cada sugerencia (se oculta en la variante de autor, donde es redundante)',
-			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
-		},
-		tagLabel: {
-			control: { type: 'text' },
-			description: 'Etiqueta opcional que cada tarjeta muestra antes del tiempo de lectura',
-			table: { type: { summary: 'string' }, defaultValue: { summary: 'undefined' } },
-		},
-		teasers: {
-			control: { type: 'object' },
-			description: 'Obras ya resueltas que se sugieren; el bloque no se renderiza si llega vacío',
-			table: { type: { summary: 'readonly LiteraryWorkCardTeaserContent[]' }, defaultValue: { summary: '[]' } },
-		},
-		moreRoute: {
-			control: { type: 'object' },
-			description: 'Ruta del listado completo; sin ella el acceso no se muestra',
-			table: { type: { summary: 'string | readonly string[]' }, defaultValue: { summary: 'undefined' } },
-		},
 		navigationParams: {
 			control: { type: 'object' },
-			description: 'Contexto de navegación que arrastra el enlace de cada sugerencia a la obra destino',
-			table: { type: { summary: 'NavigationParams' }, defaultValue: { summary: 'undefined' } },
+			description: 'Contexto con el que se llegó a la obra; elige la variante y le da el slug por el que consultar',
+			table: { type: { summary: 'NavigationParams' } },
+		},
+		authorName: {
+			control: { type: 'text' },
+			description: 'Nombre del autor, que la variante de autor usa en su encabezado',
+			table: { type: { summary: 'string' }, defaultValue: { summary: "''" } },
+		},
+		currentWorkSlug: {
+			control: { type: 'text' },
+			description: 'Obra en lectura, que queda excluida de las sugerencias',
+			table: { type: { summary: 'string' }, defaultValue: { summary: 'undefined' } },
 		},
 	},
 };
@@ -69,64 +61,41 @@ const meta: Meta<ReadingSuggestionsComponent> = {
 export default meta;
 type Story = StoryObj<ReadingSuggestionsComponent>;
 
-const suggestions = corpusLiteraryWorkTeasers.slice(0, 3);
-
 export const PorAutor: Story = {
+	render: (args) => ({
+		props: args,
+		template: `<cuentoneta-reading-suggestions ${argsToTemplate(args)} />`,
+	}),
 	args: {
-		heading: 'Más obras de François Onoff',
-		teasers: suggestions,
-		moreLabel: 'Ver más de François Onoff',
-		moreRoute: ['/', 'author', 'francois-onoff'],
-		navigationParams: { navigation: 'author', navigationSlug: 'francois-onoff' },
-		showAuthor: false,
-		tagLabel: 'Cuento',
+		navigationParams: { navigation: 'author', navigationSlug: authorTeaserMock.slug },
+		authorName: authorTeaserMock.name,
+		currentWorkSlug: onoffStoryNavigationTeasersMock[0].slug,
 	},
 	parameters: {
 		docs: {
 			description: {
 				story:
-					'Variante de autor: el bloque ya está encabezado por el nombre del autor, así que las tarjetas ocultan avatar y nombre para no repetirlo.',
+					'Con el contexto de autor se monta la variante de autor, y el bundle de la de colección no se descarga. Cambiá <strong>navigationParams.navigation</strong> a <code>storylist</code> para ver la otra rama.',
 			},
 		},
 	},
 };
 
 export const PorColeccion: Story = {
+	render: (args) => ({
+		props: args,
+		template: `<cuentoneta-reading-suggestions ${argsToTemplate(args)} />`,
+	}),
 	args: {
-		heading: 'Más obras de Geometrías del desvelo',
-		teasers: suggestions,
-		moreLabel: 'Ver más de Geometrías del desvelo',
-		moreRoute: ['/', 'storylist', 'geometrias-del-desvelo'],
-		navigationParams: { navigation: 'storylist', navigationSlug: 'geometrias-del-desvelo' },
-		showAuthor: true,
-		tagLabel: 'Cuento',
+		navigationParams: { navigation: 'storylist', navigationSlug: collectionMock.slug },
+		authorName: authorTeaserMock.name,
+		currentWorkSlug: collectionMock.stories[0].slug,
 	},
 	parameters: {
 		docs: {
 			description: {
 				story:
-					'Variante de colección: una colección puede reunir obras de distintos autores, así que cada tarjeta muestra la suya.',
-			},
-		},
-	},
-};
-
-export const Estados: StoryObj<ReadingSuggestionsComponent & { loading: boolean }> = {
-	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
-	args: {
-		loading: true,
-		heading: 'Más obras de François Onoff',
-		teasers: suggestions,
-		moreLabel: 'Ver más de François Onoff',
-		moreRoute: ['/', 'author', 'francois-onoff'],
-		showAuthor: true,
-		tagLabel: 'Cuento',
-	},
-	parameters: {
-		docs: {
-			description: {
-				story:
-					'Activá/desactivá "Cargando" para alternar entre el estado real y el esqueleto en el mismo slot, y verificar la alineación entre ambos.',
+					'Con el contexto de colección se monta la variante de colección, que además muestra el autor de cada obra porque una colección puede reunir obras de varios.',
 			},
 		},
 	},

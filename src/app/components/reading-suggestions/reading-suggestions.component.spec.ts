@@ -1,114 +1,121 @@
 import { render, screen } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
-import { clearAllMocks } from '@test-utils';
+import { DeferBlockState, type ComponentFixture } from '@angular/core/testing';
+import { of } from 'rxjs';
 
 import { ReadingSuggestionsComponent } from './reading-suggestions.component';
-import type { LiteraryWorkCardTeaserContent } from '@components/literary-work-card-teaser/literary-work-card-teaser.component';
+import { StoryApi } from '../../providers/story-api.interface';
+import { StorylistApi } from '../../providers/storylist-api.interface';
+import type { NavigationParams } from '@app-utils/navigation-params';
+import type { StorylistStoriesNavigationTeasers } from '@models/storylist.model';
+import { storylistNavigationTeaserMock } from '@mocks/storylist.mock';
 import {
-	onoffLiteraryWorkTeasersMock,
-	onoffLiteraryWorkTeasersWithMediaSourcesMock,
-} from '@mocks/onoff-literary-work-teasers.mock';
+	onoffStoryNavigationTeasersMock,
+	onoffStoryNavigationTeasersWithAuthorMock,
+} from '@mocks/onoff-story-teasers.mock';
+import { authorTeaserMock } from '@mocks/author.mock';
+import { clearAllMocks, restoreAllMocks, spyOn } from '@test-utils';
 
-const teasers = onoffLiteraryWorkTeasersMock.slice(0, 3);
+const collectionMock: StorylistStoriesNavigationTeasers = {
+	...storylistNavigationTeaserMock,
+	stories: onoffStoryNavigationTeasersWithAuthorMock,
+};
 
-type ReadingSuggestionsInputs = Partial<{
-	heading: string;
-	teasers: readonly LiteraryWorkCardTeaserContent[];
-	loading: boolean;
-	moreLabel: string;
-	moreRoute: string | readonly string[] | undefined;
-	showAuthor: boolean;
-	tagLabel: string;
-}>;
-
-const setup = (inputs: ReadingSuggestionsInputs = {}) =>
+const setup = async (navigationParams: NavigationParams) =>
 	render(ReadingSuggestionsComponent, {
-		inputs: {
-			heading: 'Más obras de François Onoff',
-			teasers,
-			moreLabel: 'Ver más de François Onoff',
-			moreRoute: ['/', 'author', 'francois-onoff'],
-			...inputs,
-		},
-		providers: [provideRouter([])],
+		inputs: { navigationParams, authorName: authorTeaserMock.name, currentWorkSlug: 'una-obra-cualquiera' },
+		providers: [
+			provideRouter([]),
+			{ provide: StoryApi, useValue: { getNavigationTeasersByAuthorSlug: () => of(onoffStoryNavigationTeasersMock) } },
+			{ provide: StorylistApi, useValue: { getStorylistNavigationTeasers: () => of(collectionMock) } },
+		],
 	});
+
+const renderDeferBlocks = async (fixture: ComponentFixture<ReadingSuggestionsComponent>) => {
+	for (const deferBlock of await fixture.getDeferBlocks()) {
+		await deferBlock.render(DeferBlockState.Complete);
+	}
+};
 
 describe('ReadingSuggestionsComponent', () => {
 	beforeEach(() => {
 		clearAllMocks();
+		spyOn(Math, 'random').mockReturnValue(0);
 	});
 
-	it('should render the heading', async () => {
-		await setup();
-
-		expect(screen.getByRole('heading', { name: 'Más obras de François Onoff' })).toBeInTheDocument();
+	afterEach(() => {
+		restoreAllMocks();
 	});
 
-	it('should render one card per suggestion', async () => {
-		await setup();
-
-		for (const teaser of teasers) {
-			expect(screen.getByRole('link', { name: teaser.title })).toBeInTheDocument();
-		}
-	});
-
-	it('should render the link to the full listing', async () => {
-		await setup();
-
-		const link = screen.getByRole('link', { name: 'Ver más de François Onoff' });
-
-		expect(link).toHaveAttribute('href', '/author/francois-onoff');
-	});
-
-	it('should omit the listing link when there is no route', async () => {
-		await setup({ moreRoute: undefined });
-
-		expect(screen.queryByRole('link', { name: 'Ver más de François Onoff' })).not.toBeInTheDocument();
-	});
-
-	it('should not render the block at all when there are no suggestions', async () => {
-		await setup({ teasers: [] });
+	it('should keep the suggestions out of the initial render, deferred until the viewport reaches them', async () => {
+		await setup({ navigation: 'author', navigationSlug: authorTeaserMock.slug });
 
 		expect(screen.queryByTestId('reading-suggestions')).not.toBeInTheDocument();
-		expect(screen.queryByRole('heading')).not.toBeInTheDocument();
-		expect(screen.queryByRole('link', { name: 'Ver más de François Onoff' })).not.toBeInTheDocument();
 	});
 
-	it('should swap the suggestions for card skeletons while loading', async () => {
-		await setup({ loading: true });
+	// Cada variante vive en su propio bloque diferido: solo se instancia —y solo se descarga— la que
+	// corresponde al contexto de navegación.
+	it('should mount only one deferred variant, the author one', async () => {
+		const { fixture } = await setup({ navigation: 'author', navigationSlug: authorTeaserMock.slug });
 
-		expect(screen.getAllByTestId('skeleton')).toHaveLength(3);
-		expect(screen.queryByRole('link', { name: teasers[0].title })).not.toBeInTheDocument();
+		expect(await fixture.getDeferBlocks()).toHaveLength(1);
+
+		await renderDeferBlocks(fixture);
+
+		expect(screen.getByRole('heading', { name: `Más obras de ${authorTeaserMock.name}` })).toBeInTheDocument();
 	});
 
-	it('should hide the heading and the listing link while loading', async () => {
-		await setup({ loading: true });
+	it('should mount only one deferred variant, the collection one', async () => {
+		const { fixture } = await setup({ navigation: 'storylist', navigationSlug: collectionMock.slug });
 
-		expect(screen.queryByRole('heading')).not.toBeInTheDocument();
-		expect(screen.queryByRole('link')).not.toBeInTheDocument();
+		expect(await fixture.getDeferBlocks()).toHaveLength(1);
+
+		await renderDeferBlocks(fixture);
+
+		expect(screen.getByRole('heading', { name: `Más obras de ${collectionMock.title}` })).toBeInTheDocument();
 	});
 
-	it('should flag the block as busy while loading', async () => {
-		await setup({ loading: true });
+	it('should hand the author variant the slug it has to fetch by', async () => {
+		const { fixture } = await setup({ navigation: 'author', navigationSlug: authorTeaserMock.slug });
 
-		expect(screen.getByTestId('reading-suggestions')).toHaveAttribute('aria-busy', 'true');
+		await renderDeferBlocks(fixture);
+
+		expect(screen.getByRole('link', { name: `Ver más de ${authorTeaserMock.name}` })).toHaveAttribute(
+			'href',
+			`/author/${authorTeaserMock.slug}`,
+		);
 	});
 
-	it('should show the author of each suggestion only when asked to', async () => {
-		await setup({ showAuthor: true });
+	it('should hand the collection variant the slug it has to fetch by', async () => {
+		const { fixture } = await setup({ navigation: 'storylist', navigationSlug: collectionMock.slug });
 
-		expect(screen.getAllByTestId('author').length).toBe(teasers.length);
+		await renderDeferBlocks(fixture);
+
+		expect(screen.getByRole('link', { name: `Ver más de ${collectionMock.title}` })).toHaveAttribute(
+			'href',
+			`/storylist/${collectionMock.slug}`,
+		);
 	});
 
-	it('should hide the author of each suggestion by default', async () => {
-		await setup();
+	it('should exclude the work being read from whichever variant renders', async () => {
+		const [current] = onoffStoryNavigationTeasersMock;
+		const { fixture } = await render(ReadingSuggestionsComponent, {
+			inputs: {
+				navigationParams: { navigation: 'author', navigationSlug: authorTeaserMock.slug },
+				authorName: authorTeaserMock.name,
+				currentWorkSlug: current.slug,
+			},
+			providers: [
+				provideRouter([]),
+				{
+					provide: StoryApi,
+					useValue: { getNavigationTeasersByAuthorSlug: () => of(onoffStoryNavigationTeasersMock) },
+				},
+			],
+		});
 
-		expect(screen.queryAllByTestId('author')).toHaveLength(0);
-	});
+		await renderDeferBlocks(fixture);
 
-	it('should expose the multimedia of each suggestion', async () => {
-		await setup({ teasers: onoffLiteraryWorkTeasersWithMediaSourcesMock.slice(0, 3) });
-
-		expect(screen.getAllByTestId('media')).toHaveLength(3);
+		expect(screen.queryByRole('link', { name: current.title })).not.toBeInTheDocument();
 	});
 });
