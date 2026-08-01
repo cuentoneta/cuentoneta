@@ -123,7 +123,7 @@ La prohibición es **por la función, no por la puntuación** — `[SEO] …`, `
 | `[Backend] Controller Hono GET /collection/:slug`   | `Controller Hono GET /collection/:slug` + label `🔌 backend`       |
 | `SEO — opt-out temporal de indexación de /read`     | `Opt-out temporal de indexación de /read` + label `🧭 indexado`    |
 | `[Cloudflare] Crons: migrar a Cron Triggers`        | `Migrar los crons a Cloudflare Cron Triggers` + sub-issue del epic |
-| `[#2036] - Integrar ReadingSuggestions en ReadPage` | `Integrar ReadingSuggestions en ReadPage`                          |
+| `[#<id>] - Integrar ReadingSuggestions en ReadPage` | `Integrar ReadingSuggestions en ReadPage`                          |
 
 Dos precisiones:
 
@@ -262,4 +262,4 @@ Las definiciones de agentes (`.claude/agents/*.md`) enuncian la regla en una lí
 
 ---
 
-_Última actualización: 2026-07-25. Este documento evoluciona por enmiendas (ver Sección 7); su historial detallado —qué se agregó, cuándo y por qué— vive en el log de git y en los PRs. Cambios mayores: versión inicial (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) y sus ampliaciones sobre visibilidad de API y reemplazos canónicos; regla de story intercambiable para estados de carga; regla de child issues reales en epics; "Gates de CI" convertida a remisión a CLAUDE.md; prohibición de `git add -A`; Sección 8 (regla anti-`cd`) consolidada desde las copias de los agentes; y la política de menciones a issues en la documentación de agentes (Sección 3)._
+_Última actualización: 2026-08-01. Este documento evoluciona por enmiendas (ver Sección 7); su historial detallado —qué se agregó, cuándo y por qué— vive en el log de git y en los PRs. Cambios mayores: versión inicial (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) y sus ampliaciones sobre visibilidad de API y reemplazos canónicos; regla de story intercambiable para estados de carga; regla de child issues reales en epics; "Gates de CI" convertida a remisión a CLAUDE.md; prohibición de `git add -A`; Sección 8 (regla anti-`cd`) consolidada desde las copias de los agentes; la política de menciones a issues en la documentación de agentes (Sección 3); la regla de títulos de issue sin prefijo de categoría (Sección 2); y la genericización de los ejemplos que citaban issues reales._
