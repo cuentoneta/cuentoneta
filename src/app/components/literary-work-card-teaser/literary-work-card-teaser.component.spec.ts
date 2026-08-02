@@ -174,13 +174,18 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 			expect(screen.getByTestId('description')).toBeInTheDocument();
 		});
 
-		it('should render the sanitized section body inside the excerpt', async () => {
+		it('should render the sanitized section body as HTML and not as escaped text', async () => {
 			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { literaryWork: literaryWorkWithExcerpt, showExcerpt: true },
 			});
-			// El excerpt pinta teaserSection.bodyHtml (HTML saneado) vía [innerHTML]: el elemento debe quedar
-			// con el cuerpo renderizado en el DOM (no vacío), tras dejar de usar PortableTextParser.
-			expect(screen.getByTestId('description')).not.toBeEmptyDOMElement();
+
+			const description = screen.getByTestId('description');
+			const bodyHtml = literaryWorkWithExcerpt.teaserSection?.bodyHtml ?? '';
+
+			// El pipeline emite <p>…</p>. Si el HTML llegara escapado, el texto igual estaría —por eso no
+			// alcanza con verificar que el elemento no quedó vacío—, pero no habría un <p> en el DOM.
+			expect(description.querySelector('p')).not.toBeNull();
+			expect(description.textContent?.trim()).toBe(bodyHtml.replace(/<[^>]+>/g, '').trim());
 		});
 
 		it('should not display the description when showExcerpt is false', async () => {
