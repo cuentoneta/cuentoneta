@@ -1,3 +1,4 @@
+import type { Media } from '@models/media.model';
 import type { Story } from '@models/story.model';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createAttributedText } from '@models/attributed-text.model';
@@ -32,6 +33,40 @@ import {
 	geometriaYoutubeDescription,
 } from './geometria.media';
 
+// Espeja los mediaSources del fixture raw homónimo, sin el pdfLink que el ACL descarta. Lo comparten
+// la Story y la obra literaria del mismo slug, que en el crudo declaran exactamente los mismos medios.
+export const geometriaMediaMock: Media[] = [
+	{
+		title: 'Lectura de "Geometría" por su autor',
+		type: 'audioRecording',
+		description: mediaDescription('geometria-audio', geometriaAudioDescription),
+		data: { url: 'https://cdn.example.org/onoff/geometria.ogg' },
+	},
+	{
+		title: 'Conversación sobre el insomnio y la medida del tiempo',
+		type: 'spaceRecording',
+		description: mediaDescription('geometria-space', geometriaSpaceDescription),
+		data: {
+			url: 'https://cdn.example.org/onoff/geometria-space.ogg',
+			duration: '48:12',
+			hostName: 'Biblioteca del Méridien',
+			date: '1974-06-12',
+		},
+	},
+	{
+		title: 'Episodio dedicado a "Geometría"',
+		type: 'spotifyPodcastEpisode',
+		description: mediaDescription('geometria-spotify', geometriaSpotifyDescription),
+		data: { url: 'https://open.spotify.com/embed/episode/geometria' },
+	},
+	{
+		title: 'Video ensayo sobre las coordenadas del desvelo',
+		type: 'youTubeVideo',
+		description: mediaDescription('geometria-youtube', geometriaYoutubeDescription),
+		data: { videoId: 'geometriaVideoId' },
+	},
+];
+
 export const geometriaStoryMock: Story = {
 	_id: 'onoff-story-geometria',
 	title: 'Geometría',
@@ -42,38 +77,7 @@ export const geometriaStoryMock: Story = {
 	coverImage: 'assets/img/mocks/stories/geometria.png',
 	tags: [cuentoTagMock, dramaPsicologicoTagMock, filosoficoTagMock],
 	resources: [],
-	// Espeja los mediaSources del fixture raw homónimo, sin el pdfLink que el ACL descarta.
-	media: [
-		{
-			title: 'Lectura de "Geometría" por su autor',
-			type: 'audioRecording',
-			description: mediaDescription('geometria-audio', geometriaAudioDescription),
-			data: { url: 'https://cdn.example.org/onoff/geometria.ogg' },
-		},
-		{
-			title: 'Conversación sobre el insomnio y la medida del tiempo',
-			type: 'spaceRecording',
-			description: mediaDescription('geometria-space', geometriaSpaceDescription),
-			data: {
-				url: 'https://cdn.example.org/onoff/geometria-space.ogg',
-				duration: '48:12',
-				hostName: 'Biblioteca del Méridien',
-				date: '1974-06-12',
-			},
-		},
-		{
-			title: 'Episodio dedicado a "Geometría"',
-			type: 'spotifyPodcastEpisode',
-			description: mediaDescription('geometria-spotify', geometriaSpotifyDescription),
-			data: { url: 'https://open.spotify.com/embed/episode/geometria' },
-		},
-		{
-			title: 'Video ensayo sobre las coordenadas del desvelo',
-			type: 'youTubeVideo',
-			description: mediaDescription('geometria-youtube', geometriaYoutubeDescription),
-			data: { videoId: 'geometriaVideoId' },
-		},
-	],
+	media: geometriaMediaMock,
 	epigraphs: [],
 	author: authorMock,
 	publishedAt: '1974-01-01T00:00:00Z',
@@ -354,7 +358,7 @@ export const geometriaLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 			readingTime: deriveSectionReadingTime(geometriaBody),
 		}),
 	],
-	mediaSources: [],
+	mediaSources: geometriaMediaMock,
 	resources: geometriaStoryMock.resources,
 	badLanguage: geometriaStoryMock.badLanguage,
 	tags: geometriaStoryMock.tags,

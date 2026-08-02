@@ -20,6 +20,51 @@ function rawMediaDescription(key: string, text: string): BlockContent {
 	];
 }
 
+// Única obra del corpus con multimedia: cubre los cuatro tipos que el dominio modela más un
+// pdfLink, que el schema admite y el ACL descarta — el caso real de tipo no mapeado. Se exporta
+// para que la cara de obra literaria del mismo slug espeje exactamente estos medios.
+export const geometriaRawMediaSources: NonNullable<StoryBySlugQueryResult>['mediaSources'] = [
+	{
+		_key: 'geometria-audio',
+		_type: 'audioRecording',
+		title: 'Lectura de "Geometría" por su autor',
+		description: rawMediaDescription('geometria-audio', geometriaAudioDescription),
+		url: 'https://cdn.example.org/onoff/geometria.ogg',
+	},
+	{
+		_key: 'geometria-space',
+		_type: 'spaceRecording',
+		title: 'Conversación sobre el insomnio y la medida del tiempo',
+		description: rawMediaDescription('geometria-space', geometriaSpaceDescription),
+		audioFile: { _type: 'file', asset: { _type: 'reference', _ref: 'file-geometria-space-ogg' } },
+		hostName: 'Biblioteca del Méridien',
+		date: '1974-06-12',
+		duration: '48:12',
+		audioUrl: 'https://cdn.example.org/onoff/geometria-space.ogg',
+	},
+	{
+		_key: 'geometria-spotify',
+		_type: 'spotifyPodcastEpisode',
+		title: 'Episodio dedicado a "Geometría"',
+		description: rawMediaDescription('geometria-spotify', geometriaSpotifyDescription),
+		url: 'https://open.spotify.com/embed/episode/geometria',
+	},
+	{
+		_key: 'geometria-youtube',
+		_type: 'youTubeVideo',
+		title: 'Video ensayo sobre las coordenadas del desvelo',
+		description: rawMediaDescription('geometria-youtube', geometriaYoutubeDescription),
+		videoId: 'geometriaVideoId',
+	},
+	{
+		_key: 'geometria-pdf',
+		_type: 'pdfLink',
+		title: 'Facsímil de la primera edición',
+		description: rawMediaDescription('geometria-pdf', geometriaPdfDescription),
+		url: 'https://cdn.example.org/onoff/geometria.pdf',
+	},
+];
+
 export const geometriaRawStory: NonNullable<StoryBySlugQueryResult> = {
 	_id: 'onoff-story-geometria',
 	slug: 'geometria',
@@ -272,49 +317,7 @@ export const geometriaRawStory: NonNullable<StoryBySlugQueryResult> = {
 		_type: 'image',
 		asset: { _type: 'reference', _ref: 'image-9e1eab984fbe94e19101c7aa4fc2e99a88f71736-236x328-png' },
 	},
-	// Única obra del corpus con multimedia: cubre los cuatro tipos que el dominio modela más un
-	// pdfLink, que el schema admite y el ACL descarta — el caso real de tipo no mapeado.
-	mediaSources: [
-		{
-			_key: 'geometria-audio',
-			_type: 'audioRecording',
-			title: 'Lectura de "Geometría" por su autor',
-			description: rawMediaDescription('geometria-audio', geometriaAudioDescription),
-			url: 'https://cdn.example.org/onoff/geometria.ogg',
-		},
-		{
-			_key: 'geometria-space',
-			_type: 'spaceRecording',
-			title: 'Conversación sobre el insomnio y la medida del tiempo',
-			description: rawMediaDescription('geometria-space', geometriaSpaceDescription),
-			audioFile: { _type: 'file', asset: { _type: 'reference', _ref: 'file-geometria-space-ogg' } },
-			hostName: 'Biblioteca del Méridien',
-			date: '1974-06-12',
-			duration: '48:12',
-			audioUrl: 'https://cdn.example.org/onoff/geometria-space.ogg',
-		},
-		{
-			_key: 'geometria-spotify',
-			_type: 'spotifyPodcastEpisode',
-			title: 'Episodio dedicado a "Geometría"',
-			description: rawMediaDescription('geometria-spotify', geometriaSpotifyDescription),
-			url: 'https://open.spotify.com/embed/episode/geometria',
-		},
-		{
-			_key: 'geometria-youtube',
-			_type: 'youTubeVideo',
-			title: 'Video ensayo sobre las coordenadas del desvelo',
-			description: rawMediaDescription('geometria-youtube', geometriaYoutubeDescription),
-			videoId: 'geometriaVideoId',
-		},
-		{
-			_key: 'geometria-pdf',
-			_type: 'pdfLink',
-			title: 'Facsímil de la primera edición',
-			description: rawMediaDescription('geometria-pdf', geometriaPdfDescription),
-			url: 'https://cdn.example.org/onoff/geometria.pdf',
-		},
-	],
+	mediaSources: geometriaRawMediaSources,
 	resources: [],
 	tags: [],
 	author: rawOnoffAuthor,
