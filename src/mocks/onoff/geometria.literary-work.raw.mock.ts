@@ -1,4 +1,5 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
+import { rawCuentoTag, rawDramaPsicologicoTag, rawFilosoficoTag } from '../onoff-tags.mock';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import geometriaMdBody from './geometria.md?raw';
 import geometriaEditorialNoteMd from './geometria.editorial-note.md?raw';
@@ -18,7 +19,7 @@ export const geometriaRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult
 	publishedAt: '1974-01-01T00:00:00Z',
 	totalReadingTime: 7,
 	sectionCount: 1,
-	tags: [],
+	tags: [rawCuentoTag, rawDramaPsicologicoTag, rawFilosoficoTag],
 	mediaSources: [],
 	resources: [],
 	authors: [rawOnoffAuthor],

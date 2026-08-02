@@ -1,4 +1,5 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
+import { rawEnsayoTag, rawFilosoficoTag, rawMetaficcionTag } from '../onoff-tags.mock';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import elTratadoDeLosPlaceresMdBody from './el-tratado-de-los-placeres.md?raw';
 import elTratadoDeLosPlaceresEditorialNoteMd from './el-tratado-de-los-placeres.editorial-note.md?raw';
@@ -17,7 +18,7 @@ export const elTratadoDeLosPlaceresRawLiteraryWork: NonNullable<LiteraryWorkBySl
 	publishedAt: '1981-01-01T00:00:00Z',
 	totalReadingTime: 10,
 	sectionCount: 1,
-	tags: [],
+	tags: [rawEnsayoTag, rawFilosoficoTag, rawMetaficcionTag],
 	mediaSources: [],
 	resources: [],
 	authors: [rawOnoffAuthor],

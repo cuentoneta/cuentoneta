@@ -1,4 +1,5 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
+import { rawNovelaTag, rawDramaPsicologicoTag } from '../onoff-tags.mock';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import elOdioMdBody from './el-odio.md?raw';
 import elOdioEditorialNoteMd from './el-odio.editorial-note.md?raw';
@@ -18,7 +19,7 @@ export const elOdioRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> =
 	publishedAt: '1971-01-01T00:00:00Z',
 	totalReadingTime: 6,
 	sectionCount: 1,
-	tags: [],
+	tags: [rawNovelaTag, rawDramaPsicologicoTag],
 	mediaSources: [],
 	resources: [],
 	authors: [rawOnoffAuthor],

@@ -1,4 +1,5 @@
 import type { BlockContent, StoryBySlugQueryResult } from '@sanity-types';
+import { rawCuentoTag, rawDramaPsicologicoTag, rawFilosoficoTag } from '../onoff-tags.mock';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 
 function rawMediaDescription(key: string, text: string): BlockContent {
@@ -309,6 +310,6 @@ export const geometriaRawStory: NonNullable<StoryBySlugQueryResult> = {
 		},
 	],
 	resources: [],
-	tags: [],
+	tags: [rawCuentoTag, rawDramaPsicologicoTag, rawFilosoficoTag],
 	author: rawOnoffAuthor,
 };

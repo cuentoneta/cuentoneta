@@ -1,4 +1,5 @@
 import type { Story } from '@models/story.model';
+import { geometriaRawStory } from './geometria.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createAttributedText } from '@models/attributed-text.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
@@ -24,7 +25,7 @@ function mediaDescription(key: string, text: string): TextBlockContent[] {
 	];
 }
 import { authorMock } from '../author.mock';
-import { cuentoTagMock, dramaPsicologicoTagMock, filosoficoTagMock } from '../onoff-tags.mock';
+import { toDomainTags } from '../onoff-tags.mock';
 
 export const geometriaStoryMock: Story = {
 	_id: 'onoff-story-geometria',
@@ -34,7 +35,7 @@ export const geometriaStoryMock: Story = {
 	approximateReadingTime: 7,
 	badLanguage: false,
 	coverImage: 'assets/img/mocks/stories/geometria.png',
-	tags: [cuentoTagMock, dramaPsicologicoTagMock, filosoficoTagMock],
+	tags: toDomainTags(geometriaRawStory.tags),
 	resources: [],
 	// Espeja los mediaSources del fixture raw homónimo, sin el pdfLink que el ACL descarta.
 	media: [

@@ -1,4 +1,5 @@
 import type { Story } from '@models/story.model';
+import { neronRawStory } from './neron.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
@@ -7,7 +8,7 @@ import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import neronMdBody from './neron.md?raw';
 import { authorMock } from '../author.mock';
-import { dramaHistoricoTagMock, teatroTagMock, tragediaTagMock } from '../onoff-tags.mock';
+import { toDomainTags } from '../onoff-tags.mock';
 
 export const neronStoryMock: Story = {
 	_id: 'onoff-story-neron',
@@ -17,7 +18,7 @@ export const neronStoryMock: Story = {
 	approximateReadingTime: 7,
 	badLanguage: false,
 	coverImage: 'assets/img/mocks/stories/neron.png',
-	tags: [teatroTagMock, tragediaTagMock, dramaHistoricoTagMock],
+	tags: toDomainTags(neronRawStory.tags),
 	resources: [],
 	media: [],
 	epigraphs: [],

@@ -1,4 +1,5 @@
 import type { Story } from '@models/story.model';
+import { elTratadoRawStory } from './el-tratado-de-los-placeres.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
@@ -8,7 +9,7 @@ import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import elTratadoDeLosPlaceresMdBody from './el-tratado-de-los-placeres.md?raw';
 import elTratadoDeLosPlaceresEditorialNoteMd from './el-tratado-de-los-placeres.editorial-note.md?raw';
 import { authorMock } from '../author.mock';
-import { ensayoTagMock, filosoficoTagMock, metaficcionTagMock } from '../onoff-tags.mock';
+import { toDomainTags } from '../onoff-tags.mock';
 
 export const elTratadoDeLosPlaceresStoryMock: Story = {
 	_id: 'onoff-story-el-tratado-de-los-placeres',
@@ -18,7 +19,7 @@ export const elTratadoDeLosPlaceresStoryMock: Story = {
 	approximateReadingTime: 10,
 	badLanguage: false,
 	coverImage: 'assets/img/mocks/stories/el-tratado-de-los-placeres.png',
-	tags: [ensayoTagMock, filosoficoTagMock, metaficcionTagMock],
+	tags: toDomainTags(elTratadoRawStory.tags),
 	resources: [],
 	media: [],
 	epigraphs: [],

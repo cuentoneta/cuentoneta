@@ -1,4 +1,5 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
+import { rawNovelaTag, rawDramaPsicologicoTag, rawMetaficcionTag } from '../onoff-tags.mock';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import palacioNueveFronterasMdBody from './el-palacio-de-las-nueve-fronteras.md?raw';
 import elPalacioDeLasNueveFronterasEditorialNoteMd from './el-palacio-de-las-nueve-fronteras.editorial-note.md?raw';
@@ -22,7 +23,7 @@ export const palacioNueveFronterasRawLiteraryWork: NonNullable<LiteraryWorkBySlu
 	publishedAt: '1985-01-01T00:00:00Z',
 	totalReadingTime: 11,
 	sectionCount: 1,
-	tags: [],
+	tags: [rawNovelaTag, rawDramaPsicologicoTag, rawMetaficcionTag],
 	mediaSources: [],
 	resources: [],
 	authors: [rawOnoffAuthor],

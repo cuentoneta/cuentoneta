@@ -1,4 +1,5 @@
 import type { StoryBySlugQueryResult } from '@sanity-types';
+import { rawNovelaTag, rawAbsurdoTag, rawAlegoriaTag } from '../onoff-tags.mock';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 
 export const lasEscalerasRawStory: NonNullable<StoryBySlugQueryResult> = {
@@ -242,6 +243,6 @@ export const lasEscalerasRawStory: NonNullable<StoryBySlugQueryResult> = {
 	},
 	mediaSources: [],
 	resources: [],
-	tags: [],
+	tags: [rawNovelaTag, rawAbsurdoTag, rawAlegoriaTag],
 	author: rawOnoffAuthor,
 };

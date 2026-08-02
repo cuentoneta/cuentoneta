@@ -1,4 +1,5 @@
 import type { Story } from '@models/story.model';
+import { losPeldanosRawStory } from './los-peldanos.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
@@ -8,7 +9,7 @@ import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import losPeldanosMdBody from './los-peldanos.md?raw';
 import losPeldanosEditorialNoteMd from './los-peldanos.editorial-note.md?raw';
 import { authorMock } from '../author.mock';
-import { absurdoTagMock, cuentoTagMock, surrealismoTagMock } from '../onoff-tags.mock';
+import { toDomainTags } from '../onoff-tags.mock';
 
 export const losPeldanosStoryMock: Story = {
 	_id: 'onoff-story-los-peldanos',
@@ -18,7 +19,7 @@ export const losPeldanosStoryMock: Story = {
 	approximateReadingTime: 8,
 	badLanguage: false,
 	coverImage: 'assets/img/mocks/stories/los-peldanos.png',
-	tags: [cuentoTagMock, absurdoTagMock, surrealismoTagMock],
+	tags: toDomainTags(losPeldanosRawStory.tags),
 	resources: [],
 	media: [],
 	epigraphs: [],

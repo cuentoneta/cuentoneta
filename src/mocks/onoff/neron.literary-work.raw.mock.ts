@@ -1,4 +1,5 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
+import { rawTeatroTag, rawTragediaTag, rawDramaHistoricoTag } from '../onoff-tags.mock';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import neronMdBody from './neron.md?raw';
 
@@ -16,7 +17,7 @@ export const neronRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = 
 	publishedAt: '1988-01-01T00:00:00Z',
 	totalReadingTime: 7,
 	sectionCount: 1,
-	tags: [],
+	tags: [rawTeatroTag, rawTragediaTag, rawDramaHistoricoTag],
 	mediaSources: [],
 	resources: [],
 	authors: [rawOnoffAuthor],
