@@ -609,7 +609,7 @@ interface Tag {
 
 **Propósito:** Referenciar iconos desde diferentes proveedores.
 
-> Ninguna entidad del dominio lo declara ya: ni `Tag` ni `ResourceType` llevan ícono. Los íconos que la interfaz muestra los resuelve el frontend por `slug`, y viven en `@models/icon.model`.
+> Ninguna entidad del dominio lo declara ya: ni `Tag` ni `ResourceType` llevan ícono. Otras superficies sí muestran íconos, cada una por su cuenta —`StorylistTab.icon` viaja desde el CMS, y el pie de página y los botones de compartir los nombran literalmente en el código—, pero ninguna usa este tipo.
 
 ```typescript
 interface Icon {
