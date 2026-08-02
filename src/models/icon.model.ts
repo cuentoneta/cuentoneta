@@ -1,16 +1,4 @@
-import {
-	faSolidAddressBook,
-	faSolidBook,
-	faSolidBookBookmark,
-	faSolidEnvelope,
-	faSolidGlobe,
-	faSolidMedal,
-	faSolidMicrophoneLines,
-	faSolidPeopleGroup,
-	faSolidPlay,
-	faSolidStar,
-	faSolidTrophy,
-} from '@ng-icons/font-awesome/solid';
+import { faSolidAddressBook, faSolidEnvelope, faSolidGlobe, faSolidMedal } from '@ng-icons/font-awesome/solid';
 import {
 	simpleBlogger,
 	simpleDiscord,
@@ -22,47 +10,22 @@ import {
 } from '@ng-icons/simple-icons';
 import { faBrandAmazon, faBrandInstagram, faBrandWikipediaW } from '@ng-icons/font-awesome/brands';
 
-export interface Icon {
-	name: string;
-	provider: string;
-}
-
-// TODO: #535 - Reemplazar estas interfaces por uso directo de íconos cargados de manera dinámica
 export interface IconMapper {
 	name: string;
 	ngIconsName: Record<string, string>;
 }
 
-// TODO: #535 - Reemplazar estas interfaces por uso directo de íconos cargados de manera dinámica
+/**
+ * Traduce el slug de un `resourceType` al ícono de `@ng-icons` que lo representa. Lo consume
+ * `ResourceComponent`, el único lugar del sitio donde se pinta un ícono resuelto por slug.
+ *
+ * El mapa está hardcodeado porque los íconos de `@ng-icons` se importan como símbolos: servirlos desde
+ * el CMS exige resolverlos dinámicamente en tiempo de ejecución, que es la dirección a futuro pero no
+ * está implementada. Hasta entonces, cada entrada tiene que corresponder a un `resourceType` cargado —
+ * una entrada que ningún documento indexa es peso muerto que nadie detecta, porque el componente
+ * simplemente no pinta ícono cuando no encuentra el slug.
+ */
 export const iconMappers: IconMapper[] = [
-	{
-		name: 'curaduria',
-		ngIconsName: { faSolidStar },
-	},
-	{
-		name: 'x-spaces',
-		ngIconsName: { faSolidMicrophoneLines },
-	},
-	{
-		name: 'certamen',
-		ngIconsName: { faSolidTrophy },
-	},
-	{
-		name: 'colaborativa',
-		ngIconsName: { faSolidPeopleGroup },
-	},
-	{
-		name: 'antologia',
-		ngIconsName: { faSolidBookBookmark },
-	},
-	{
-		name: 'tertulia-literaria',
-		ngIconsName: { faSolidBook },
-	},
-	{
-		name: 'video',
-		ngIconsName: { faSolidPlay },
-	},
 	{
 		name: 'wattpad',
 		ngIconsName: { simpleWattpad },
@@ -74,10 +37,6 @@ export const iconMappers: IconMapper[] = [
 	{
 		name: 'recurso-original',
 		ngIconsName: { faSolidMedal },
-	},
-	{
-		name: 'sitio-web',
-		ngIconsName: { faSolidGlobe },
 	},
 	{
 		name: 'web-personal',
