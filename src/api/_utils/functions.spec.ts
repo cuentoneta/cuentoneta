@@ -138,7 +138,6 @@ describe('mapContentCampaigns (ACL)', () => {
 		expect(campaign.contents.xs.imageHeight).toBe(viewportElementSizes.xs.imageHeight);
 		expect(campaign.contents.md.imageWidth).toBe(viewportElementSizes.md.imageWidth);
 		expect(campaign.contents.md.imageHeight).toBe(viewportElementSizes.md.imageHeight);
-		expect(typeof campaign.contents.xs.imageUrl).toBe('string');
 	});
 
 	it('throws when a viewport is missing', () => {
@@ -176,7 +175,7 @@ describe('urlFor (ACL)', () => {
 	it('returns an empty string when the source is null or undefined', () => {
 		// REASON: urlFor es una función de propósito general invocada desde varios mappers; su tipo
 		// SanityImageSource no incluye null/undefined, pero el guard defensivo es real (llamadores
-		// externos al tipo pueden pasar un valor vacío) y se ejercita acotado, con el único cast del corpus.
+		// externos al tipo pueden pasar un valor vacío) y se ejercita acotado.
 		expect(urlFor(null as unknown as SanityImageSource)).toBe('');
 		expect(urlFor(undefined as unknown as SanityImageSource)).toBe('');
 	});

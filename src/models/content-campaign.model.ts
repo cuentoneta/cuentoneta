@@ -14,15 +14,7 @@ export const viewportElementSizes = Object.freeze({
 		imageWidth: 540,
 		imageHeight: 220,
 	},
-	sm: {
-		imageWidth: 1240,
-		imageHeight: 360,
-	},
 	md: {
-		imageWidth: 1240,
-		imageHeight: 360,
-	},
-	lg: {
 		imageWidth: 1240,
 		imageHeight: 360,
 	},

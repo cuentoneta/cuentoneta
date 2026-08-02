@@ -1,6 +1,8 @@
 import { ContentCampaign } from '@models/content-campaign.model';
 export const contentCampaignMock: ContentCampaign[] = [
 	{
+		title: 'Diez tapas, una sola obra',
+		slug: 'coleccion-completa-onoff',
 		url: '../author/francois-onoff',
 		contents: {
 			xs: {
@@ -14,8 +16,6 @@ export const contentCampaignMock: ContentCampaign[] = [
 				imageHeight: 360,
 			},
 		},
-		title: 'Diez tapas, una sola obra',
-		slug: 'coleccion-completa-onoff',
 	},
 	{
 		title: 'El palacio de las nueve fronteras',
