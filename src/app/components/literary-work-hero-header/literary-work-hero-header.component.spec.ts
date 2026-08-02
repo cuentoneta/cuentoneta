@@ -1,15 +1,12 @@
 import { render, screen } from '@testing-library/angular';
 
 import type { LiteraryWork } from '@models/literary-work.model';
-import type { Tag } from '@models/tag.model';
 import { LiteraryWorkHeroHeaderComponent } from './literary-work-hero-header.component';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
+import { onoffTagsMock } from '@mocks/onoff-tags.mock';
 
 describe('LiteraryWorkHeroHeaderComponent', () => {
-	const tags: Tag[] = [
-		{ title: 'Novela', slug: 'novela', shortDescription: '', description: [] },
-		{ title: 'Metaficción', slug: 'metaficcion', shortDescription: '', description: [] },
-	];
+	const tags = onoffTagsMock.slice(0, 2);
 	const literaryWork: LiteraryWork = { ...onoffLiteraryWorksMock[0], tags };
 	const [author] = literaryWork.authors;
 

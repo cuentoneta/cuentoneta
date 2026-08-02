@@ -64,3 +64,31 @@ export const dramaHistoricoTagMock = createTag(
 	'drama-historico',
 	'Ficción dramática ambientada en hechos o figuras del pasado.',
 );
+
+// Curaduría de la colección: no describe la obra sino cómo se armó la lista que la contiene.
+export const colaborativaTagMock = createTag(
+	'Colaborativa',
+	'colaborativa',
+	'Lista de textos generada colaborativamente por la comunidad.',
+);
+
+export const onoffTagsMock: Tag[] = [
+	cuentoTagMock,
+	novelaTagMock,
+	ensayoTagMock,
+	teatroTagMock,
+	dramaPsicologicoTagMock,
+	metaficcionTagMock,
+	absurdoTagMock,
+	surrealismoTagMock,
+	alegoriaTagMock,
+	filosoficoTagMock,
+	experimentalTagMock,
+	tragediaTagMock,
+	dramaHistoricoTagMock,
+	colaborativaTagMock,
+];
+
+// Un título de dos palabras fuerza el recorte por ancho antes de tiempo; las stories de TagsList que
+// demuestran cuántos tags entran sin contador necesitan títulos de una sola palabra.
+export const onoffTagsWithShortTitles: Tag[] = onoffTagsMock.filter((tag) => !tag.title.includes(' '));

@@ -11,20 +11,12 @@ import { provideRouter } from '@angular/router';
 import { AuthorTeaserV3Component } from './author-teaser-v3.component';
 import { AuthorTeaserV3SkeletonComponent } from './author-teaser-v3-skeleton.component';
 import { authorTeaserMock } from '@mocks/author.mock';
-import { Tag } from '@models/tag.model';
+import { onoffTagsMock } from '@mocks/onoff-tags.mock';
 
-const tags: Tag[] = [
-	{ title: 'Surrealismo', slug: 'surrealismo', shortDescription: '', description: [] },
-	{ title: 'Fantástico', slug: 'fantastico', shortDescription: '', description: [] },
-];
+const tags = onoffTagsMock.slice(0, 2);
 
 // Autor con más de 2 tags para ejercitar el recorte por ancho de la fila de tags.
-const manyTags: Tag[] = [
-	{ title: 'Crónica', slug: 'cronica', shortDescription: '', description: [] },
-	{ title: 'Ensayo', slug: 'ensayo', shortDescription: '', description: [] },
-	{ title: 'Memoria', slug: 'memoria', shortDescription: '', description: [] },
-	{ title: 'Histórico', slug: 'historico', shortDescription: '', description: [] },
-];
+const manyTags = onoffTagsMock.slice(0, 4);
 
 const meta: Meta<AuthorTeaserV3Component> = {
 	component: AuthorTeaserV3Component,
