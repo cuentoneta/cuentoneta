@@ -34,10 +34,10 @@ describe('mapTags (ACL)', () => {
 		expect(result[0].icon).toEqual({ provider: '', name: '' });
 	});
 
-	it('does not expose a description on any mapped domain Tag', () => {
-		// El mapper construye con spread: si la proyección volviera a traer `description`, el campo se
-		// filtraría al dominio sin que nada más lo señale.
-		mapTags(onoffRawTagsMock).forEach((tag) => expect(tag).not.toHaveProperty('description'));
+	it('exposes exactly the domain contract, dropping everything else from the raw result', () => {
+		mapTags(onoffRawTagsMock).forEach((tag) => {
+			expect(Object.keys(tag).sort()).toEqual(['icon', 'shortDescription', 'slug', 'title']);
+		});
 	});
 
 	it('returns an empty array when there are no tags', () => {
