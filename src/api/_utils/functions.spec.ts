@@ -129,12 +129,11 @@ describe('mapResources (ACL)', () => {
 		});
 	});
 
-	it('does not expose a description on the resource type', () => {
+	it('exposes exactly the domain contract, dropping everything else from the raw result', () => {
 		const [resource] = mapResources(rawOnoffAuthor.resources);
 
-		// El mapper construye con spread: si la proyección volviera a traer `description`, el campo
-		// se filtraría al dominio sin que nada más lo señale.
-		expect(resource.resourceType).not.toHaveProperty('description');
+		expect(Object.keys(resource).sort()).toEqual(['resourceType', 'title', 'url']);
+		expect(Object.keys(resource.resourceType).sort()).toEqual(['icon', 'shortDescription', 'slug', 'title']);
 	});
 
 	it('normalizes a missing icon provider/name to empty strings', () => {

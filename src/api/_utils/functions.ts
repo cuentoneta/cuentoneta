@@ -154,9 +154,12 @@ type ResourcesSubQuery = (
 export function mapResources(resources: ResourcesSubQuery): Resource[] {
 	return (
 		resources?.map((resource) => ({
-			...resource,
+			title: resource.title,
+			url: resource.url,
 			resourceType: {
-				...resource.resourceType,
+				slug: resource.resourceType.slug,
+				title: resource.resourceType.title,
+				shortDescription: resource.resourceType.shortDescription,
 				icon: {
 					provider: resource.resourceType.icon.provider ?? '',
 					name: resource.resourceType.icon.name ?? '',
