@@ -39,12 +39,29 @@ export function mapMediaSources(
 
 	const media: Media[] = [];
 	for (const mediaSource of mediaSources) {
-		const mapped = mapMediaSource(mediaSource);
+		const mapped = mapMediaSourceOrDiscard(mediaSource);
 		if (mapped) {
 			media.push(mapped);
 		}
 	}
 	return media;
+}
+
+// Un recurso cuya descripción no pase el pipeline se descarta con rastro, en vez de propagar y tirar la
+// respuesta entera. `Rule.required()` no se aplica retroactivamente a documentos ya publicados, así que
+// mientras el contenido cargado no migre puede llegar una descripción vacía o en el formato viejo: eso
+// debe costar un widget, no la página. Misma contención que ya aplica el tipo no modelado.
+function mapMediaSourceOrDiscard(mediaSource: MediaSource): Media | undefined {
+	try {
+		return mapMediaSource(mediaSource);
+	} catch (error) {
+		console.warn(`mediaSource descartado: su descripción no pudo mapearse`, {
+			_key: mediaSource._key,
+			_type: mediaSource._type,
+			cause: error,
+		});
+		return undefined;
+	}
 }
 
 function mapMediaSource(mediaSource: MediaSource): Media | undefined {

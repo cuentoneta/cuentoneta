@@ -29,9 +29,10 @@ describe('SpaceRecordingWidgetComponent', () => {
 		expect(screen.getByText(onoffSpaceRecordingsMock[0].data.hostName)).toBeInTheDocument();
 	});
 
+	// El rótulo es un literal del template, no sale del fixture.
 	it('should display the "Anfitrión" badge', async () => {
 		await setup();
-		expect(screen.getByText(onoffSpaceRecordingsMock[0].title)).toBeInTheDocument();
+		expect(screen.getByText('Anfitrión')).toBeInTheDocument();
 	});
 
 	it('should display the recording date', async () => {
