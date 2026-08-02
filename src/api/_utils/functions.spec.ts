@@ -12,54 +12,39 @@ import {
 import { elOdioRawTeaser, onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
 import { rawOnoffAuthor } from '@mocks/onoff-raw-author.mock';
 import { onoffRawContentCampaignsMock } from '@mocks/onoff-raw-content-campaigns.mock';
+import { onoffRawTagsMock, rawTagWithoutIconMetadata } from '@mocks/onoff-raw-tags.mock';
+import { onoffTagsMock } from '@mocks/onoff-tags.mock';
 import { viewportElementSizes } from '@models/content-campaign.model';
 
 describe('mapTags (ACL)', () => {
-	it('maps a raw Sanity tag to the domain Tag model', () => {
-		const result = mapTags([
-			{
-				title: 'Cumpleaños',
-				slug: 'cumpleanos',
-				shortDescription: 'Etiqueta de cumpleaños',
-				icon: { _type: 'iconPicker', provider: 'mdi', name: 'cake' },
-			},
-		]);
+	it('maps every raw Sanity tag of the corpus to its domain Tag', () => {
+		const result = mapTags(onoffRawTagsMock);
 
-		expect(result).toHaveLength(1);
-		expect(result[0]).toMatchObject({
-			title: 'Cumpleaños',
-			slug: 'cumpleanos',
-			shortDescription: 'Etiqueta de cumpleaños',
-			icon: { provider: 'mdi', name: 'cake' },
+		expect(result.map((tag) => tag.title)).toEqual(onoffRawTagsMock.map((raw) => raw.title));
+		expect(result.map((tag) => tag.slug)).toEqual(onoffRawTagsMock.map((raw) => raw.slug));
+		expect(result[0].icon).toEqual({
+			provider: onoffRawTagsMock[0].icon.provider,
+			name: onoffRawTagsMock[0].icon.name,
 		});
 	});
 
+	// Pinnea que el canon de dominio es exactamente lo que el ACL produce desde el canon crudo. El corpus
+	// duplica la normalización del ícono para no importar el ACL desde `src/mocks/**`; esta paridad es lo
+	// que impide que las dos copias diverjan en silencio.
+	it('produces exactly the domain tag corpus from the raw tag corpus', () => {
+		expect(mapTags(onoffRawTagsMock)).toEqual(onoffTagsMock);
+	});
+
 	it('normalizes missing icon provider/name to empty strings', () => {
-		const result = mapTags([
-			{
-				title: 'Sin ícono',
-				slug: 'sin-icono',
-				shortDescription: 'desc',
-				icon: { _type: 'iconPicker' },
-			},
-		]);
+		const result = mapTags([rawTagWithoutIconMetadata]);
 
 		expect(result[0].icon).toEqual({ provider: '', name: '' });
 	});
 
-	it('does not expose a description on the mapped domain Tag', () => {
-		const [tag] = mapTags([
-			{
-				title: 'Cuento',
-				slug: 'cuento',
-				shortDescription: 'desc',
-				icon: { _type: 'iconPicker', provider: 'mdi', name: 'book' },
-			},
-		]);
-
+	it('does not expose a description on any mapped domain Tag', () => {
 		// El mapper construye con spread: si la proyección volviera a traer `description`, el campo se
 		// filtraría al dominio sin que nada más lo señale.
-		expect(tag).not.toHaveProperty('description');
+		mapTags(onoffRawTagsMock).forEach((tag) => expect(tag).not.toHaveProperty('description'));
 	});
 
 	it('returns an empty array when there are no tags', () => {
