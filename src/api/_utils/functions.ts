@@ -297,9 +297,11 @@ export function mapLandingPageContent(
 	result: NonNullable<LandingPageContentQueryResult> & RotatingContent,
 ): LandingPageContent {
 	return {
-		...result,
+		_id: result._id,
+		config: result.config,
 		cards: mapStorylistTeasers(result.cards),
 		campaigns: mapContentCampaigns(result.campaigns),
+		mostRead: result.mostRead,
 		latestReads: mapStoryNavigationTeaserWithAuthor(result.latestReads),
 	};
 }

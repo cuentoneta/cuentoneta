@@ -1,6 +1,7 @@
 import type { SanityImageSource } from '@sanity/image-url';
 import {
 	mapContentCampaigns,
+	mapLandingPageContent,
 	mapStoryNavigationTeaser,
 	mapStoryNavigationTeaserWithAuthor,
 	mapStoryTeaser,
@@ -117,6 +118,17 @@ describe('mapContentCampaigns (ACL)', () => {
 		expect(Object.keys(campaign).sort()).toEqual(['contents', 'slug', 'title', 'url']);
 		expect(Object.keys(campaign.contents).sort()).toEqual(['md', 'xs']);
 		expect(Object.keys(campaign.contents.xs).sort()).toEqual(['imageHeight', 'imageUrl', 'imageWidth']);
+		expect(Object.keys(campaign.contents.md).sort()).toEqual(['imageHeight', 'imageUrl', 'imageWidth']);
+	});
+
+	it('falls back to an empty image URL when a viewport has no image', () => {
+		const [campaign] = onoffRawContentCampaignsMock;
+		const withoutImage = { ...campaign, contents: { xs: { image: null }, md: { image: null } } };
+
+		const [mapped] = mapContentCampaigns([withoutImage]);
+
+		expect(mapped.contents.xs.imageUrl).toBe('');
+		expect(mapped.contents.md.imageUrl).toBe('');
 	});
 
 	it('maps each viewport to its image URL and fixed dimensions', () => {
@@ -140,6 +152,23 @@ describe('mapContentCampaigns (ACL)', () => {
 		} as unknown as (typeof onoffRawContentCampaignsMock)[number];
 
 		expect(() => mapContentCampaigns([withoutXs])).toThrow('Campaign content not found');
+	});
+});
+
+describe('mapLandingPageContent (ACL)', () => {
+	it('exposes exactly the domain contract, dropping the raw slug and name', () => {
+		const result = mapLandingPageContent({
+			_id: 'onoff-landing-page',
+			slug: 'semana-de-onoff',
+			config: 'onoff',
+			name: 'Rotación de Onoff',
+			cards: [],
+			campaigns: onoffRawContentCampaignsMock,
+			latestReads: [],
+			mostRead: [],
+		});
+
+		expect(Object.keys(result).sort()).toEqual(['_id', 'campaigns', 'cards', 'config', 'latestReads', 'mostRead']);
 	});
 });
 
