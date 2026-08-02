@@ -100,3 +100,7 @@ export const onoffLiteraryWorkNavigationTeasersMock: LiteraryWorkNavigationTease
 
 export const onoffLiteraryWorkNavigationTeasersWithAuthorsMock: LiteraryWorkNavigationTeaserWithAuthors[] =
 	onoffLiteraryWorksMock.map(toNavigationTeaserWithAuthors);
+
+export const onoffLiteraryWorkTeasersWithMediaSources: LiteraryWorkTeaser[] = onoffLiteraryWorkTeasersMock.filter(
+	(teaser) => teaser.mediaSources.length > 0,
+);

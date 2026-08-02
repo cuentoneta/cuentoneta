@@ -521,7 +521,7 @@ interface MarkDef {
 ```typescript
 interface Media {
 	title: string;
-	description: TextBlockContent[];
+	description: SanitizedHtml; // Markdown en el CMS, saneado a HTML por el ACL
 	type: MediaTypeKey; // 'audioRecording' | 'spaceRecording' | 'youTubeVideo' | 'spotifyPodcastEpisode'
 	data?: unknown;
 }

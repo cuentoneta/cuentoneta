@@ -1,3 +1,4 @@
+import { onoffMediaMock } from './onoff-media.mock';
 import {
 	Story,
 	StoryNavigationTeaser,
@@ -27,61 +28,7 @@ export const storyMock: Story = {
 	coverImage: '',
 	slug: 'el-espejo-del-tiempo',
 	tags: [],
-	media: [
-		{
-			title: 'Narración del cuento a cargo de Gérard Depardieu',
-			type: 'youTubeVideo',
-			description: [
-				{
-					markDefs: [
-						{
-							href: 'https://www.youtube.com/@CanalMas',
-							_key: '213348c4e976',
-							_type: 'link',
-						},
-					],
-					children: [
-						{
-							_type: 'span',
-							marks: [],
-							text: 'Narración del cuento a cargo de Gérard Depardieu, transmitido como parte de un episodio de su programa radial ',
-							_key: '0ee084c6737c',
-						},
-						{
-							text: 'Le Ble Chateau',
-							_key: 'b53d65716513',
-							_type: 'span',
-							marks: ['em'],
-						},
-						{
-							marks: [],
-							text: ', tomado del canal de ',
-							_key: '462fa9bc3533',
-							_type: 'span',
-						},
-						{
-							_type: 'span',
-							marks: ['213348c4e976'],
-							text: 'Canal+',
-							_key: 'a2a6c6ca73bc',
-						},
-						{
-							text: '.',
-							_key: '44b2cc7f7eb3',
-							_type: 'span',
-							marks: [],
-						},
-					],
-					_type: 'block',
-					style: 'normal',
-					_key: '2baecc647476',
-				},
-			],
-			data: {
-				videoId: 'YmDQTmbc_CU',
-			},
-		},
-	],
+	media: onoffMediaMock,
 	publishedAt: '2024-03-15T09:00:00Z',
 	updatedAt: '2024-05-20T10:30:00Z',
 	author: authorMock,
@@ -346,31 +293,7 @@ export const storyTeaserWithAuthorMock: StoryTeaserWithAuthor = {
 	coverImage: '',
 	slug: 'el-espejo-del-tiempo',
 	tags: [],
-	media: [
-		{
-			title: 'Video',
-			type: 'youTubeVideo',
-			description: [
-				{
-					style: 'normal',
-					_key: '338be209b296',
-					markDefs: [],
-					children: [
-						{
-							text: 'Narración del cuento a cargo de Gérard Depardieu',
-							_key: '1adaad6a0f84',
-							_type: 'span',
-							marks: [],
-						},
-					],
-					_type: 'block',
-				},
-			],
-			data: {
-				videoId: 'pB4GTan0y64',
-			},
-		},
-	],
+	media: onoffMediaMock,
 	author: authorTeaserMock,
 	paragraphs: [
 		{
@@ -457,61 +380,7 @@ export const storyTeaserMock: StoryTeaser = {
 	coverImage: '',
 	slug: 'el-espejo-del-tiempo',
 	tags: [],
-	media: [
-		{
-			title: 'Narración del cuento a cargo de Gérard Depardieu',
-			type: 'youTubeVideo',
-			description: [
-				{
-					markDefs: [
-						{
-							href: 'https://www.youtube.com/@CanalMas',
-							_key: '213348c4e976',
-							_type: 'link',
-						},
-					],
-					children: [
-						{
-							_type: 'span',
-							marks: [],
-							text: 'Narración del cuento a cargo de Gérard Depardieu, transmitido como parte de un episodio de su programa radial ',
-							_key: '0ee084c6737c',
-						},
-						{
-							text: 'Le Ble Chateau',
-							_key: 'b53d65716513',
-							_type: 'span',
-							marks: ['em'],
-						},
-						{
-							marks: [],
-							text: ', tomado del canal de ',
-							_key: '462fa9bc3533',
-							_type: 'span',
-						},
-						{
-							_type: 'span',
-							marks: ['213348c4e976'],
-							text: 'Canal+',
-							_key: 'a2a6c6ca73bc',
-						},
-						{
-							text: '.',
-							_key: '44b2cc7f7eb3',
-							_type: 'span',
-							marks: [],
-						},
-					],
-					_type: 'block',
-					style: 'normal',
-					_key: '2baecc647476',
-				},
-			],
-			data: {
-				videoId: 'YmDQTmbc_CU',
-			},
-		},
-	],
+	media: onoffMediaMock,
 	paragraphs: [
 		{
 			markDefs: [],

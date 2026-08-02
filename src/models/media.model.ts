@@ -1,4 +1,4 @@
-import { TextBlockContent } from '@models/block-content.model';
+import type { SanitizedHtml } from '@models/sanitized-html.model';
 
 /**
  * Modelos del contenido multimedia vinculado a una obra o a una colección.
@@ -10,7 +10,7 @@ import { TextBlockContent } from '@models/block-content.model';
  */
 export interface Media {
 	title: string;
-	description: TextBlockContent[];
+	description: SanitizedHtml;
 	type: MediaTypeKey;
 	data?: unknown;
 }

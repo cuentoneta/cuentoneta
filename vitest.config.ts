@@ -21,7 +21,12 @@ export default defineConfig({
 			},
 		},
 		setupFiles: ['src/test-setup.ts'],
-		include: ['src/**/*.{test,spec}.ts', 'scripts/**/*.{test,spec}.ts', 'e2e/_utils/**/*.{test,spec}.ts'],
+		include: [
+			'src/**/*.{test,spec}.ts',
+			'scripts/**/*.{test,spec}.ts',
+			'resources/**/*.{test,spec}.ts',
+			'e2e/_utils/**/*.{test,spec}.ts',
+		],
 		// @sanity y los bundles fesm de Angular se inlinan para que Vite los transforme.
 		server: {
 			deps: {

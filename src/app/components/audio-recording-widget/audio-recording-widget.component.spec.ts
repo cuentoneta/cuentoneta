@@ -5,12 +5,12 @@ import { render, screen } from '@testing-library/angular';
 import { AudioRecordingWidgetComponent } from './audio-recording-widget.component';
 
 // Mocks
-import { audioRecordingMock } from '@mocks/audio-recording.mock';
+import { mediaDescriptionText, onoffAudioRecordingsMock } from '@mocks/onoff-media.mock';
 
 describe('AudioRecordingWidgetComponent', () => {
 	it('should render the component', async () => {
 		const { container } = await render(AudioRecordingWidgetComponent, {
-			inputs: { media: audioRecordingMock },
+			inputs: { media: onoffAudioRecordingsMock[0] },
 		});
 
 		expect(container).toBeInTheDocument();
@@ -18,26 +18,23 @@ describe('AudioRecordingWidgetComponent', () => {
 
 	it('should render the audio player', async () => {
 		await render(AudioRecordingWidgetComponent, {
-			inputs: { media: audioRecordingMock },
+			inputs: { media: onoffAudioRecordingsMock[0] },
 		});
 
 		const audioRecordingElement = screen.getByTestId('audio-recording') as HTMLElement & { currentSrc: string };
-		expect(audioRecordingElement.currentSrc === audioRecordingMock.data.url).toBeTruthy();
+		expect(audioRecordingElement.currentSrc === onoffAudioRecordingsMock[0].data.url).toBeTruthy();
 	});
 
-	it('should display the audio recording title', async () => {
+	// El contenedor no puede ser un p: el pipeline emite <p>…</p> y anidar un párrafo dentro de otro es
+	// HTML inválido que el navegador reacomoda, rompiendo el estilado sin que nada falle en el test.
+	it('should display the audio recording description in a figcaption', async () => {
 		await render(AudioRecordingWidgetComponent, {
-			inputs: { media: audioRecordingMock },
+			inputs: { media: onoffAudioRecordingsMock[0] },
 		});
 
-		expect(screen.getByText('Lectura del artículo sobre ajedrez en Wikipedia.')).toBeInTheDocument();
-	});
+		const description = screen.getByTestId('media-description');
 
-	it('should display the audio recording description', async () => {
-		await render(AudioRecordingWidgetComponent, {
-			inputs: { media: audioRecordingMock },
-		});
-
-		expect(screen.getByText('Lectura del artículo sobre ajedrez en Wikipedia.')).toBeInTheDocument();
+		expect(description.tagName.toLowerCase()).toBe('figcaption');
+		expect(description.textContent?.trim()).toBe(mediaDescriptionText(onoffAudioRecordingsMock[0]));
 	});
 });
