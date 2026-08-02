@@ -92,7 +92,7 @@ export const Cargando: Story = {
 		docs: {
 			description: {
 				story:
-					'Estado de carga del envoltorio, mientras las obras del autor viajan. El alternador real↔esqueleto vive en la story <strong>Estados</strong> de <a href="./?path=/docs/componentes-v3-readingsuggestionslist--docs" target="_top"><strong>ReadingSuggestionsList</strong></a>, que es quien renderiza ambos estados.',
+					'Estado de carga del envoltorio, mientras las obras del autor viajan. El alternador real↔esqueleto vive en las stories de <a href="./?path=/docs/componentes-v3-readingsuggestionslist--docs" target="_top"><strong>ReadingSuggestionsList</strong></a>, que es quien renderiza ambos estados.',
 			},
 		},
 	},

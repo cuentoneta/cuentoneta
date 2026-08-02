@@ -30,6 +30,7 @@ const meta: Meta<ReadingSuggestionsListComponent> = {
 		},
 		loading: {
 			control: { type: 'boolean' },
+			name: 'Cargando',
 			description: 'Estado de carga: reemplaza encabezado, tarjetas y acceso por sus esqueletos',
 			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
 		},
@@ -42,11 +43,6 @@ const meta: Meta<ReadingSuggestionsListComponent> = {
 			control: { type: 'boolean' },
 			description: 'Mostrar el autor de cada sugerencia (se oculta en la variante de autor, donde es redundante)',
 			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
-		},
-		tagLabel: {
-			control: { type: 'text' },
-			description: 'Etiqueta opcional que cada tarjeta muestra antes del tiempo de lectura',
-			table: { type: { summary: 'string' }, defaultValue: { summary: 'undefined' } },
 		},
 		teasers: {
 			control: { type: 'object' },
@@ -79,13 +75,13 @@ export const PorAutor: Story = {
 		moreRoute: ['/', 'author', 'francois-onoff'],
 		navigationParams: { navigation: 'author', navigationSlug: 'francois-onoff' },
 		showAuthor: false,
-		tagLabel: 'Cuento',
+		loading: false,
 	},
 	parameters: {
 		docs: {
 			description: {
 				story:
-					'Variante de autor: el bloque ya está encabezado por el nombre del autor, así que las tarjetas ocultan avatar y nombre para no repetirlo.',
+					'Variante de autor: el bloque ya está encabezado por el nombre del autor, así que las tarjetas ocultan avatar y nombre para no repetirlo. Activá <strong>Cargando</strong> para alternar entre el estado real y el esqueleto en el mismo slot.',
 			},
 		},
 	},
@@ -99,34 +95,13 @@ export const PorColeccion: Story = {
 		moreRoute: ['/', 'storylist', 'geometrias-del-desvelo'],
 		navigationParams: { navigation: 'storylist', navigationSlug: 'geometrias-del-desvelo' },
 		showAuthor: true,
-		tagLabel: 'Cuento',
+		loading: false,
 	},
 	parameters: {
 		docs: {
 			description: {
 				story:
-					'Variante de colección: una colección puede reunir obras de distintos autores, así que cada tarjeta muestra la suya.',
-			},
-		},
-	},
-};
-
-export const Estados: StoryObj<ReadingSuggestionsListComponent & { loading: boolean }> = {
-	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
-	args: {
-		loading: true,
-		heading: 'Más obras de François Onoff',
-		teasers: suggestions,
-		moreLabel: 'Ver más de François Onoff',
-		moreRoute: ['/', 'author', 'francois-onoff'],
-		showAuthor: true,
-		tagLabel: 'Cuento',
-	},
-	parameters: {
-		docs: {
-			description: {
-				story:
-					'Activá/desactivá "Cargando" para alternar entre el estado real y el esqueleto en el mismo slot, y verificar la alineación entre ambos.',
+					'Variante de colección: una colección puede reunir obras de distintos autores, así que cada tarjeta muestra la suya. Activá <strong>Cargando</strong> para alternar entre el estado real y el esqueleto en el mismo slot.',
 			},
 		},
 	},

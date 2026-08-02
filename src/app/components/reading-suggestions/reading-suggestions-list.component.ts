@@ -45,11 +45,13 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 						 vacías, y trackear por slug destruiría y recrearía cada tarjeta al llegar los datos. -->
 					@for (literaryWork of displayedTeasers(); track $index) {
 						<li>
+							<!-- La etiqueta es el tipo literario de la obra, que el corpus deja primero entre sus tags. -->
 							<cuentoneta-literary-work-card-teaser
 								[literaryWork]="literaryWork"
 								[navigationParams]="navigationParams()"
 								[showAuthor]="showAuthor()"
-								[tagLabel]="tagLabel()"
+								[tagLabel]="literaryWork?.tags?.[0]?.title"
+								[showExcerpt]="true"
 								[showMultimedia]="true"
 								variant="on-gray"
 							/>
@@ -74,7 +76,6 @@ export class ReadingSuggestionsListComponent {
 	public readonly moreLabel = input<string>('');
 	public readonly moreRoute = input<string | readonly string[]>();
 	public readonly showAuthor = input<boolean>(false);
-	public readonly tagLabel = input<string>();
 	// Contexto de navegación que arrastra cada enlace, para que el bloque de la obra destino se
 	// resuelva en el mismo contexto (autor o colección) desde el que se llegó.
 	public readonly navigationParams = input<NavigationParams>();
