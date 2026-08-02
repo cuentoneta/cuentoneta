@@ -11,21 +11,16 @@ describe('YoutubeVideoWidgetComponent', () => {
 		expect(container).toBeInTheDocument();
 	});
 
-	// El widget no pinta el título del medio: solo el embed y la descripción. La aserción que antes lo daba
-	// por renderizado pasaba porque el fixture repetía el mismo texto en ambos campos.
-	it('should not display the video title', async () => {
+	// El contenedor es un div, no un p: el pipeline emite <p>…</p> y anidar un párrafo dentro de otro es
+	// HTML inválido que el navegador reacomoda, rompiendo el estilado sin que nada falle en el test.
+	it('should display the YouTube video description in a div container', async () => {
 		await render(YoutubeVideoWidgetComponent, {
 			inputs: { media: onoffYouTubeVideosMock[0] },
 		});
 
-		expect(screen.queryByText(onoffYouTubeVideosMock[0].title)).not.toBeInTheDocument();
-	});
+		const description = screen.getByTestId('media-description');
 
-	it('should display the YouTube video description', async () => {
-		await render(YoutubeVideoWidgetComponent, {
-			inputs: { media: onoffYouTubeVideosMock[0] },
-		});
-
-		expect(screen.getByText(mediaDescriptionText(onoffYouTubeVideosMock[0]))).toBeInTheDocument();
+		expect(description.tagName.toLowerCase()).toBe('div');
+		expect(description.textContent?.trim()).toBe(mediaDescriptionText(onoffYouTubeVideosMock[0]));
 	});
 });

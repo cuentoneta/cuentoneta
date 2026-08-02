@@ -3,8 +3,6 @@ import { Component, input } from '@angular/core';
 // Models
 import { AudioRecording } from '@models/media.model';
 
-// Components
-
 @Component({
 	selector: 'cuentoneta-audio-recording-widget',
 	template: `

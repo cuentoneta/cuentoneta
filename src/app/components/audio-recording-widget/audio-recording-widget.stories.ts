@@ -10,11 +10,15 @@ const meta: Meta<AudioRecordingWidgetComponent> = {
 			canvas: {
 				sourceState: 'shown',
 			},
+			description: {
+				component: `<div><p>El componente <strong>AudioRecordingWidgetComponent</strong> muestra una grabación de audio de una obra: el reproductor nativo y la descripción del recurso.</p><p>La descripción llega desde el backend como HTML ya saneado (<code>SanitizedHtml</code>, derivado del Markdown que carga el CMS) y se pinta con <code>[innerHTML]</code> dentro de un <code>&lt;div&gt;</code>, porque el HTML que produce el pipeline ya trae su propio <code>&lt;p&gt;</code>.</p></div>`,
+			},
 		},
 	},
 	argTypes: {
 		media: {
-			description: 'Audio recording media object containing title, description, and audio URL',
+			description:
+				'Grabación de audio: título, URL del audio y la descripción como HTML saneado a partir del Markdown del CMS.',
 			control: { type: 'object' },
 		},
 	},

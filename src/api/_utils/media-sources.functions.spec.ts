@@ -2,7 +2,7 @@ import { spyOn } from '@test-utils';
 import { mapMediaSources } from './media-sources.functions';
 import { onoffRawStoriesWithMediaSources, onoffRawTeasersWithMediaSources } from '@mocks/onoff-raw-stories.mock';
 import { isAudioRecording, isSpaceRecording, isSpotifyPodcastEpisode, isYouTubeVideo } from '@models/media.model';
-import { geometriaAudioDescription } from '@mocks/onoff/geometria.media';
+import { onoffAudioRecordingsMock } from '@mocks/onoff-media.mock';
 
 const [rawStory] = onoffRawStoriesWithMediaSources;
 const [rawTeaser] = onoffRawTeasersWithMediaSources;
@@ -81,10 +81,14 @@ describe('mapMediaSources sobre la proyección de teaser', () => {
 });
 
 describe('la descripción cruza el pipeline de Markdown', () => {
+	// Que el resultado de mapear el raw coincida con lo que el canon declara para esa misma obra es lo
+	// que ata las dos puntas: si el mapper dejara de pasar por el pipeline, el ACL devolvería el Markdown
+	// crudo y esta igualdad se rompería. El shape de párrafo lo confirma desde el otro lado.
 	it('entrega HTML saneado y no el Markdown crudo', () => {
 		const [audioRecording] = mapMediaSources(rawStory.mediaSources).filter(isAudioRecording);
 
-		expect(audioRecording.description).toBe(`<p>${geometriaAudioDescription}</p>`);
+		expect(audioRecording.description).toBe(onoffAudioRecordingsMock[0].description);
+		expect(audioRecording.description).toMatch(/^<p>.*<\/p>$/s);
 	});
 
 	it('preserva el énfasis, la negrita y el enlace del fixture', () => {

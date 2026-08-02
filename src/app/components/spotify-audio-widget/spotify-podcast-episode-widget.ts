@@ -4,8 +4,6 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 // Models
 import { SpotifyPodcastEpisode } from '@models/media.model';
 
-// Components
-
 @Component({
 	selector: 'cuentoneta-spotify-audio-widget',
 	template: `

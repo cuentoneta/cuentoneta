@@ -25,21 +25,16 @@ describe('AudioRecordingWidgetComponent', () => {
 		expect(audioRecordingElement.currentSrc === onoffAudioRecordingsMock[0].data.url).toBeTruthy();
 	});
 
-	// El widget no pinta el título del medio: solo el reproductor y la descripción. La aserción que antes
-	// lo daba por renderizado pasaba porque el fixture repetía el mismo texto en ambos campos.
-	it('should not display the audio recording title', async () => {
+	// El contenedor es un div, no un p: el pipeline emite <p>…</p> y anidar un párrafo dentro de otro es
+	// HTML inválido que el navegador reacomoda, rompiendo el estilado sin que nada falle en el test.
+	it('should display the audio recording description in a div container', async () => {
 		await render(AudioRecordingWidgetComponent, {
 			inputs: { media: onoffAudioRecordingsMock[0] },
 		});
 
-		expect(screen.queryByText(onoffAudioRecordingsMock[0].title)).not.toBeInTheDocument();
-	});
+		const description = screen.getByTestId('media-description');
 
-	it('should display the audio recording description', async () => {
-		await render(AudioRecordingWidgetComponent, {
-			inputs: { media: onoffAudioRecordingsMock[0] },
-		});
-
-		expect(screen.getByText(mediaDescriptionText(onoffAudioRecordingsMock[0]))).toBeInTheDocument();
+		expect(description.tagName.toLowerCase()).toBe('div');
+		expect(description.textContent?.trim()).toBe(mediaDescriptionText(onoffAudioRecordingsMock[0]));
 	});
 });

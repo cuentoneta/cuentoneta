@@ -10,11 +10,15 @@ const meta: Meta<YoutubeVideoWidgetComponent> = {
 			canvas: {
 				sourceState: 'shown',
 			},
+			description: {
+				component: `<div><p>El componente <strong>YoutubeVideoWidgetComponent</strong> muestra un video de YouTube asociado a una obra: el embed y la descripción del recurso.</p><p>La descripción llega desde el backend como HTML ya saneado (<code>SanitizedHtml</code>, derivado del Markdown que carga el CMS) y se pinta con <code>[innerHTML]</code> dentro de un <code>&lt;div&gt;</code>, porque el HTML que produce el pipeline ya trae su propio <code>&lt;p&gt;</code>.</p></div>`,
+			},
 		},
 	},
 	argTypes: {
 		media: {
-			description: 'YouTube video media object containing title, description, and video ID',
+			description:
+				'Video de YouTube: título, ID del video y la descripción como HTML saneado a partir del Markdown del CMS.',
 			control: { type: 'object' },
 		},
 	},
