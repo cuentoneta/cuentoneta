@@ -7,6 +7,9 @@ export const READING_SUGGESTIONS_COUNT = 3;
  *
  * El azar se resuelve donde se invoca —una vez por fetch, en el stream del recurso— para que las
  * sugerencias no se rebarajen mientras la persona lee.
+ *
+ * TODO(#2081): la selección es transitoria y la resuelve el backend. Elegir en el cliente obliga a
+ * transferir la colección entera para mostrar tres, y deja el criterio en la capa de presentación.
  */
 export function pickReadingSuggestions<T extends { readonly slug: string }>(
 	candidates: readonly T[],
