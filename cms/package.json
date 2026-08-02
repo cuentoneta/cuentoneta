@@ -35,7 +35,6 @@
 		"sanity": "^5.31.1",
 		"sanity-plugin-bulk-actions-table": "^1.0.4",
 		"sanity-plugin-computed-field": "^2.0.2",
-		"sanity-plugin-icon-picker": "^4.0.0",
 		"sanity-plugin-markdown": "^9.0.9",
 		"sanity-plugin-singleton-management": "^1.0.7",
 		"styled-components": "^6.4.4"
@@ -52,11 +51,6 @@
 		},
 		"packageExtensions": {
 			"sanity-plugin-bulk-actions-table": {
-				"dependencies": {
-					"@sanity/icons": "^3.8.0"
-				}
-			},
-			"sanity-plugin-icon-picker": {
 				"dependencies": {
 					"@sanity/icons": "^3.8.0"
 				}
