@@ -7,22 +7,24 @@ import { SpotifyPodcastEpisode } from '@models/media.model';
 @Component({
 	selector: 'cuentoneta-spotify-audio-widget',
 	template: `
-		<iframe
-			[src]="mediaUrl()"
-			width="100%"
-			height="152"
-			frameborder="0"
-			allowfullscreen=""
-			allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-			loading="lazy"
-			data-testid="spotify-embed"
-			class="mb-2 block"
-		></iframe>
-		<div
-			[innerHTML]="media().description"
-			data-testid="media-description"
-			class="font-inter text-xs font-medium text-brand-500"
-		></div>
+		<figure>
+			<iframe
+				[src]="mediaUrl()"
+				width="100%"
+				height="152"
+				frameborder="0"
+				allowfullscreen=""
+				allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+				loading="lazy"
+				data-testid="spotify-embed"
+				class="mb-2 block"
+			></iframe>
+			<figcaption
+				[innerHTML]="media().description"
+				data-testid="media-description"
+				class="font-inter text-xs font-medium text-brand-500"
+			></figcaption>
+		</figure>
 	`,
 })
 export class SpotifyPodcastEpisodeWidget {

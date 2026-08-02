@@ -68,13 +68,13 @@ describe('SpaceRecordingWidgetComponent', () => {
 
 	// La descripción llega como HTML saneado y se pinta con [innerHTML]: se verifica el texto completo y
 	// que el enlace del fixture sobreviva, para distinguir "se pintó el HTML" de "se pintó el string
-	// escapado". El contenedor es un div, no un p: el pipeline emite <p>…</p> y anidarlo lo rompería.
+	// escapado". El contenedor no puede ser un p: el pipeline emite <p>…</p> y anidarlo lo rompería.
 	it('should display the space recording description as rendered HTML', async () => {
 		await setup();
 
 		const description = screen.getByTestId('media-description');
 
-		expect(description.tagName.toLowerCase()).toBe('div');
+		expect(description.tagName.toLowerCase()).toBe('figcaption');
 		expect(description.textContent?.trim()).toBe(mediaDescriptionText(onoffSpaceRecordingsMock[0]));
 		expect(within(description).getByRole('link')).toHaveAttribute(
 			'href',

@@ -7,16 +7,16 @@ import { YouTubePlayer } from '@angular/youtube-player';
 	selector: 'cuentoneta-youtube-video-widget',
 	imports: [YouTubePlayer],
 	encapsulation: ViewEncapsulation.None,
-	template: `<youtube-player
-			[videoId]="media().data.videoId"
-			data-testid="youtube-player"
-			placeholderImageQuality="low"
-		/>
-		<div
-			[innerHTML]="media().description"
-			data-testid="media-description"
-			class="font-inter text-xs font-medium text-brand-500"
-		></div>`,
+	template: `
+		<figure>
+			<youtube-player [videoId]="media().data.videoId" data-testid="youtube-player" placeholderImageQuality="low" />
+			<figcaption
+				[innerHTML]="media().description"
+				data-testid="media-description"
+				class="font-inter text-xs font-medium text-brand-500"
+			></figcaption>
+		</figure>
+	`,
 	styles: `
 		@reference '#tailwind-theme';
 

@@ -36,7 +36,7 @@ describe('SpotifyPodcastEpisodeWidget', () => {
 
 	// La descripción llega como HTML saneado y se pinta con [innerHTML]: se verifica el texto completo y
 	// que el marcado sobreviva, para distinguir "se pintó el HTML" de "se pintó el string escapado". El
-	// contenedor es un div, no un p: el pipeline emite <p>…</p> y anidarlo lo rompería.
+	// contenedor no puede ser un p: el pipeline emite <p>…</p> y anidarlo lo rompería.
 	it('should display the spotify audio description as rendered HTML', async () => {
 		await render(SpotifyPodcastEpisodeWidget, {
 			inputs: { media: onoffSpotifyPodcastEpisodesMock[0] },
@@ -44,7 +44,7 @@ describe('SpotifyPodcastEpisodeWidget', () => {
 
 		const description = screen.getByTestId('media-description');
 
-		expect(description.tagName.toLowerCase()).toBe('div');
+		expect(description.tagName.toLowerCase()).toBe('figcaption');
 		expect(description.textContent?.trim()).toBe(mediaDescriptionText(onoffSpotifyPodcastEpisodesMock[0]));
 		// El énfasis fuerte del Markdown del fixture: si el HTML se hubiera escapado, el texto seguiría
 		// estando pero no habría un elemento propio que lo contenga.
