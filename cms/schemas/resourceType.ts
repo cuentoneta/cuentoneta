@@ -86,12 +86,6 @@ export const resourceType = defineType({
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
-			name: 'description',
-			title: 'Descripción',
-			type: 'blockContent',
-			validation: (Rule) => Rule.required(),
-		}),
-		defineField({
 			name: 'icon',
 			title: 'Icono',
 			type: 'iconPicker',
