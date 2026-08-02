@@ -53,6 +53,7 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 								[showAuthor]="showAuthor()"
 								[tagLabel]="literaryWork?.tags?.[0]?.title"
 								[showExcerpt]="true"
+								[excerptLines]="excerptLines()"
 								[showMultimedia]="true"
 								variant="on-gray"
 							/>
@@ -80,6 +81,9 @@ export class ReadingSuggestionsListComponent {
 	// Contexto de navegación que arrastra cada enlace, para que el bloque de la obra destino se
 	// resuelva en el mismo contexto (autor o colección) desde el que se llegó.
 	public readonly navigationParams = input<NavigationParams>();
+
+	// Sin el autor, la tarjeta libera su franja vertical y el extracto puede ocuparla con una línea más.
+	protected readonly excerptLines = computed(() => (this.showAuthor() ? 2 : 3));
 
 	// El estado de carga reserva el alto de la misma cantidad de tarjetas que se van a renderizar,
 	// para que no haya salto de layout cuando llegan las obras.

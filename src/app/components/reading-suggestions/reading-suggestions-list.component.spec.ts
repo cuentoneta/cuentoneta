@@ -114,6 +114,40 @@ describe('ReadingSuggestionsListComponent', () => {
 		expect(screen.getAllByTestId('description')).toHaveLength(teasers.length);
 	});
 
+	// Sin el autor, la tarjeta libera esa franja vertical y el extracto gana una línea.
+	it('should give the excerpt an extra line when the author is not shown', async () => {
+		await setup({ showAuthor: false });
+
+		for (const excerpt of screen.getAllByTestId('description')) {
+			expect(excerpt).toHaveClass('line-clamp-3');
+		}
+	});
+
+	it('should keep the excerpt at two lines when the author takes its space', async () => {
+		await setup({ showAuthor: true });
+
+		for (const excerpt of screen.getAllByTestId('description')) {
+			expect(excerpt).toHaveClass('line-clamp-2');
+		}
+	});
+
+	// Sin el autor, la tarjeta libera esa franja vertical y el extracto gana una línea.
+	it('should give the excerpt an extra line when the author is not shown', async () => {
+		await setup({ showAuthor: false });
+
+		for (const excerpt of screen.getAllByTestId('description')) {
+			expect(excerpt).toHaveClass('line-clamp-3');
+		}
+	});
+
+	it('should keep the excerpt at two lines when the author takes its space', async () => {
+		await setup({ showAuthor: true });
+
+		for (const excerpt of screen.getAllByTestId('description')) {
+			expect(excerpt).toHaveClass('line-clamp-2');
+		}
+	});
+
 	it('should label each suggestion with the literary type its corpus entry carries', async () => {
 		await setup();
 
