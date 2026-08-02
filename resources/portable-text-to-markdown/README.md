@@ -54,13 +54,14 @@ Es deliberado. Una migración que descarta en silencio lo que no supo traducir *
 
 ## Cómo crecer
 
-El subconjunto soportado hoy no es una definición de "lo que Markdown puede expresar": es **lo que el dataset usa**. Se relevó antes de escribirlo, sobre las 746 descripciones de multimedia de `production`, y no había una sola construcción fuera de párrafo con énfasis, negrita y enlaces.
+El subconjunto soportado hoy no es una definición de "lo que Markdown puede expresar": es **lo que el dataset usa**. Se relevó antes de escribirlo, sobre las 142 descripciones de multimedia de `development` (una por documento), y no había una sola construcción fuera de párrafo con énfasis, negrita y enlaces.
 
 Las migraciones que siguen tocan campos de prosa más larga —la biografía de un autor, la descripción de una colección, y sobre todo el cuerpo de las obras— donde es esperable que sí aparezcan listas o encabezados. Cuando eso pase:
 
 1. **Relevá el campo antes de escribir código.** El censo se hace con GROQ contra el dataset, no se deduce del schema. Filtrá los documentos primero (`*[_type == 'x' && count(campo) > 0]`): aplanar arrays anidados sobre todos los documentos mete nulos que contaminan las cuentas.
 2. **Agregá el caso acá**, con su prueba, no en la migración que lo encontró. La migración lo consume; el conversor lo define.
 3. **Mantené la regla de fallar.** Cada construcción nueva que se soporte sale del conjunto que lanza; ninguna debe pasar a descartarse.
+4. **Verificá fidelidad, no cobertura.** Que el dry-run reporte N parches solo dice que alcanzó N documentos, no que no perdió nada. El contraste que sí lo dice es el **total de caracteres de texto plano**: `math::sum(...{"n": length(pt::text(campo))}.n)` en el origen contra la suma de los resultados del dry-run con el marcado quitado. Si el conversor descartó un span, una marca o un `href`, ese total no cierra. Conviene contrastar también las cuentas por construcción (documentos con enlace, con énfasis) — pero cuidado al detectar énfasis por regex sobre el Markdown: un span con `em` **y** `strong` rinde `***texto***`, que un patrón ingenuo de un solo asterisco no matchea.
 
 ## Tests
 
