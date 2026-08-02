@@ -1,5 +1,6 @@
 import type { SanityImageSource } from '@sanity/image-url';
 import {
+	mapBlockContentToTextParagraphs,
 	mapContentCampaigns,
 	mapLandingPageContent,
 	mapResources,
@@ -13,7 +14,6 @@ import { elOdioRawTeaser, onoffRawNavTeasersMock } from '@mocks/onoff-raw-storie
 import { rawOnoffAuthor } from '@mocks/onoff-raw-author.mock';
 import { onoffRawContentCampaignsMock } from '@mocks/onoff-raw-content-campaigns.mock';
 import { onoffRawTagsMock, rawTagWithoutIconMetadata } from '@mocks/onoff-raw-tags.mock';
-import { onoffTagsMock } from '@mocks/onoff-tags.mock';
 import { viewportElementSizes } from '@models/content-campaign.model';
 
 describe('mapTags (ACL)', () => {
@@ -26,13 +26,6 @@ describe('mapTags (ACL)', () => {
 			provider: onoffRawTagsMock[0].icon.provider,
 			name: onoffRawTagsMock[0].icon.name,
 		});
-	});
-
-	// Pinnea que el canon de dominio es exactamente lo que el ACL produce desde el canon crudo. El corpus
-	// duplica la normalización del ícono para no importar el ACL desde `src/mocks/**`; esta paridad es lo
-	// que impide que las dos copias diverjan en silencio.
-	it('produces exactly the domain tag corpus from the raw tag corpus', () => {
-		expect(mapTags(onoffRawTagsMock)).toEqual(onoffTagsMock);
 	});
 
 	it('normalizes missing icon provider/name to empty strings', () => {
@@ -49,6 +42,29 @@ describe('mapTags (ACL)', () => {
 
 	it('returns an empty array when there are no tags', () => {
 		expect(mapTags([])).toEqual([]);
+	});
+});
+
+// El helper sobrevive a la baja de la descripción de tag con más de una decena de llamadores (biografía,
+// recursos, colecciones, cuerpo y epígrafes de story). Su predicado de descarte se ejercita acá porque
+// ningún fixture del corpus mezcla elementos no-`block` dentro de un `BlockContent`.
+describe('mapBlockContentToTextParagraphs (ACL)', () => {
+	const paragraph = {
+		_type: 'block' as const,
+		_key: 'b1',
+		style: 'normal' as const,
+		markDefs: [],
+		children: [{ _type: 'span' as const, _key: 's1', text: 'texto', marks: [] }],
+	};
+
+	it('keeps text blocks and discards everything else', () => {
+		const result = mapBlockContentToTextParagraphs([paragraph, { _type: 'image', _key: 'img1' }]);
+
+		expect(result).toEqual([paragraph]);
+	});
+
+	it('returns an empty array when there is no text block', () => {
+		expect(mapBlockContentToTextParagraphs([{ _type: 'image', _key: 'img1' }])).toEqual([]);
 	});
 });
 

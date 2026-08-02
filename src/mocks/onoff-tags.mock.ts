@@ -21,7 +21,8 @@ type RawTag = (typeof onoffRawTagsMock)[number];
 
 // Replica la normalización que aplica `mapTags` en el ACL. Se duplica a propósito en vez de importar el
 // mapper: `src/mocks/**` lo consume el frontend y Storybook, e importar el ACL arrastraría `@sanity/client`
-// al bundle. El test de paridad de `onoff-tags.mock.spec.ts` es lo que vigila que las dos no diverjan.
+// al bundle. La igualdad `mapTags(onoffRawTagsMock) === onoffTagsMock` de `onoff-tags.mock.spec.ts` es lo
+// que vigila que las dos copias no diverjan.
 function toDomainTag(raw: RawTag): Tag {
 	return {
 		title: raw.title,

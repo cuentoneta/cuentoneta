@@ -1,3 +1,4 @@
+import { mapTags } from '../api/_utils/functions';
 import { onoffRawTagsMock, rawTagWithoutIconMetadata } from './onoff-raw-tags.mock';
 import { onoffTagsMock, onoffTagsWithShortTitles } from './onoff-tags.mock';
 
@@ -5,6 +6,13 @@ describe('corpus de etiquetas de Onoff', () => {
 	it('keeps the domain corpus aligned with the raw corpus', () => {
 		expect(onoffTagsMock).toHaveLength(onoffRawTagsMock.length);
 		expect(onoffTagsMock.map((tag) => tag.slug)).toEqual(onoffRawTagsMock.map((raw) => raw.slug));
+	});
+
+	// `toDomainTag` duplica la normalización del ícono que hace el ACL, porque importar el mapper desde el
+	// corpus arrastraría `@sanity/client` al bundle del frontend y a Storybook. Un spec sí puede importarlo:
+	// esta igualdad es la que impide que las dos copias diverjan.
+	it('derives the domain corpus exactly as the ACL would map the raw one', () => {
+		expect(mapTags(onoffRawTagsMock)).toEqual(onoffTagsMock);
 	});
 
 	// El schema declara el ícono requerido: el corpus crudo lo provee siempre, y el de dominio lo hereda.
