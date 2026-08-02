@@ -179,10 +179,6 @@ export function mapTags(tags: TagsSubQuery): Tag[] {
 		title: tag.title,
 		slug: tag.slug,
 		shortDescription: tag.shortDescription,
-		icon: {
-			provider: tag.icon.provider ?? '',
-			name: tag.icon.name ?? '',
-		},
 	}));
 }
 
