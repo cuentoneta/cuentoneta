@@ -96,7 +96,6 @@ describe('mapResources (ACL)', () => {
 			slug: rawResource.resourceType.slug,
 			title: rawResource.resourceType.title,
 			shortDescription: rawResource.resourceType.shortDescription,
-			icon: { provider: 'fa', name: 'fa-wikipedia-w' },
 		});
 	});
 
@@ -104,19 +103,7 @@ describe('mapResources (ACL)', () => {
 		const [resource] = mapResources(rawOnoffAuthor.resources);
 
 		expect(Object.keys(resource).sort()).toEqual(['resourceType', 'title', 'url']);
-		expect(Object.keys(resource.resourceType).sort()).toEqual(['icon', 'shortDescription', 'slug', 'title']);
-	});
-
-	it('normalizes a missing icon provider/name to empty strings', () => {
-		const [rawResource] = rawOnoffAuthor.resources;
-		const withoutIcon = {
-			...rawResource,
-			resourceType: { ...rawResource.resourceType, icon: { _type: 'iconPicker' as const } },
-		};
-
-		const [resource] = mapResources([withoutIcon]);
-
-		expect(resource.resourceType.icon).toEqual({ provider: '', name: '' });
+		expect(Object.keys(resource.resourceType).sort()).toEqual(['shortDescription', 'slug', 'title']);
 	});
 
 	it('returns an empty array for an empty, null or undefined input', () => {

@@ -7,9 +7,5 @@ export const resourceMock: Resource = {
 		slug: 'recurso-original',
 		title: 'Recurso Original',
 		shortDescription: 'Recurso original de este contenido',
-		icon: {
-			provider: 'fa',
-			name: 'fa-medal',
-		},
 	},
 };

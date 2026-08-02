@@ -118,7 +118,6 @@ export const rawOnoffAuthor: NonNullable<StoryBySlugQueryResult>['author'] = {
 				slug: 'wikipedia',
 				title: 'Wikipedia',
 				shortDescription: 'Enlace a artículo de Wikipedia',
-				icon: { _type: 'iconPicker', provider: 'fa', name: 'fa-wikipedia-w' },
 			},
 		},
 	],
