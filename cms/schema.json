@@ -3229,14 +3229,6 @@
 				},
 				"optional": false
 			},
-			"description": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "inline",
-					"name": "blockContent"
-				},
-				"optional": false
-			},
 			"icon": {
 				"type": "objectAttribute",
 				"value": {

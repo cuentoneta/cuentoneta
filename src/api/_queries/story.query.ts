@@ -19,7 +19,6 @@ export const storiesByAuthorSlugQuery = defineQuery(`
             'slug': slug.current,
             title,
             shortDescription,
-            description,
             icon
         }
     }, []),
@@ -71,7 +70,6 @@ export const storyBySlugQuery = defineQuery(`
             'slug': slug.current,
             title,
             shortDescription,
-            description,
             icon
         }
     }, []),
@@ -100,7 +98,6 @@ export const storyBySlugQuery = defineQuery(`
                 'slug': slug.current,
                 title,
                 shortDescription,
-                description,
                 icon
             }
         }, []),

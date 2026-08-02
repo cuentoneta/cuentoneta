@@ -41,7 +41,6 @@ export const literaryWorkBySlugQuery = defineQuery(`
             'slug': slug.current,
             title,
             shortDescription,
-            description,
             icon
         }
     }, []),
@@ -63,7 +62,6 @@ export const literaryWorkBySlugQuery = defineQuery(`
                 'slug': slug.current,
                 title,
                 shortDescription,
-                description,
                 icon
             }
         }, []),
@@ -115,7 +113,6 @@ export const literaryWorkSectionBySlugQuery = defineQuery(`
             'slug': slug.current,
             title,
             shortDescription,
-            description,
             icon
         }
     }, []),
@@ -137,7 +134,6 @@ export const literaryWorkSectionBySlugQuery = defineQuery(`
                 'slug': slug.current,
                 title,
                 shortDescription,
-                description,
                 icon
             }
         }, []),

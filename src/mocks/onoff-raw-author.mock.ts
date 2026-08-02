@@ -118,22 +118,6 @@ export const rawOnoffAuthor: NonNullable<StoryBySlugQueryResult>['author'] = {
 				slug: 'wikipedia',
 				title: 'Wikipedia',
 				shortDescription: 'Enlace a artículo de Wikipedia',
-				description: [
-					{
-						_key: '020ccde1fe7d',
-						markDefs: [],
-						children: [
-							{
-								text: 'Enlace a artículo de Wikipedia',
-								_key: '1dadfddec1750',
-								_type: 'span',
-								marks: [],
-							},
-						],
-						_type: 'block',
-						style: 'normal',
-					},
-				],
 				icon: { _type: 'iconPicker', provider: 'fa', name: 'fa-wikipedia-w' },
 			},
 		},

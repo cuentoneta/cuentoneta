@@ -22,7 +22,6 @@ export const authorBySlugQuery = defineQuery(`
         	'slug': slug.current,
         	title,
         	shortDescription,
-        	description,
             icon
         }
     }, []),
