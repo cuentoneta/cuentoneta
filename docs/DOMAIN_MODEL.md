@@ -572,7 +572,6 @@ interface ResourceType {
 	slug: string; // Identificador único del tipo
 	title: string; // Nombre del tipo (ej: "Wikipedia")
 	shortDescription: string; // Descripción corta
-	description: TextBlockContent[]; // Descripción detallada
 	icon: Icon; // Ícono de representación
 }
 ```
