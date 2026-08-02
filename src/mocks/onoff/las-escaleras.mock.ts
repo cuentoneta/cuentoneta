@@ -1,5 +1,6 @@
 import type { Story } from '@models/story.model';
 import { lasEscalerasRawStory } from './las-escaleras.raw.mock';
+import { lasEscalerasRawLiteraryWork } from './las-escaleras.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
@@ -285,7 +286,7 @@ export const lasEscalerasLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	mediaSources: [],
 	resources: lasEscalerasStoryMock.resources,
 	badLanguage: lasEscalerasStoryMock.badLanguage,
-	tags: lasEscalerasStoryMock.tags,
+	tags: toDomainTags(lasEscalerasRawLiteraryWork.tags),
 	originalPublication: lasEscalerasStoryMock.originalPublication,
 	editorialNote: markdownToSanitizedHtml(createMarkdown(lasEscalerasEditorialNoteMd)),
 	publishedAt: createIsoDateTime(lasEscalerasStoryMock.publishedAt),

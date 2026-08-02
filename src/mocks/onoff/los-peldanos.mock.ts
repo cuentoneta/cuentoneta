@@ -1,5 +1,6 @@
 import type { Story } from '@models/story.model';
 import { losPeldanosRawStory } from './los-peldanos.raw.mock';
+import { losPeldanosRawLiteraryWork } from './los-peldanos.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
@@ -288,7 +289,7 @@ export const losPeldanosLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	mediaSources: [],
 	resources: losPeldanosStoryMock.resources,
 	badLanguage: losPeldanosStoryMock.badLanguage,
-	tags: losPeldanosStoryMock.tags,
+	tags: toDomainTags(losPeldanosRawLiteraryWork.tags),
 	originalPublication: losPeldanosStoryMock.originalPublication,
 	editorialNote: markdownToSanitizedHtml(createMarkdown(losPeldanosEditorialNoteMd)),
 	publishedAt: createIsoDateTime(losPeldanosStoryMock.publishedAt),

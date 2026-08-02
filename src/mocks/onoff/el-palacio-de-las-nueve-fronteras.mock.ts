@@ -1,5 +1,6 @@
 import type { Story } from '@models/story.model';
 import { elPalacioRawStory } from './el-palacio-de-las-nueve-fronteras.raw.mock';
+import { palacioNueveFronterasRawLiteraryWork } from './el-palacio-de-las-nueve-fronteras.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createAttributedText } from '@models/attributed-text.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
@@ -292,7 +293,7 @@ export const palacioNueveFronterasLiteraryWorkMock: LiteraryWork = createLiterar
 	mediaSources: [],
 	resources: palacioNueveFronterasStoryMock.resources,
 	badLanguage: palacioNueveFronterasStoryMock.badLanguage,
-	tags: palacioNueveFronterasStoryMock.tags,
+	tags: toDomainTags(palacioNueveFronterasRawLiteraryWork.tags),
 	originalPublication: palacioNueveFronterasStoryMock.originalPublication,
 	editorialNote: markdownToSanitizedHtml(createMarkdown(elPalacioDeLasNueveFronterasEditorialNoteMd)),
 	publishedAt: createIsoDateTime(palacioNueveFronterasStoryMock.publishedAt),

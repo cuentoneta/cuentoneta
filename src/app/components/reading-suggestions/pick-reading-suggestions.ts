@@ -14,14 +14,13 @@ export const READING_SUGGESTIONS_COUNT = 3;
 export function pickReadingSuggestions<T extends { readonly slug: string }>(
 	candidates: readonly T[],
 	currentWorkSlug?: string,
-	count: number = READING_SUGGESTIONS_COUNT,
-	random: () => number = Math.random,
 ): T[] {
 	const pool = candidates.filter((candidate) => candidate.slug !== currentWorkSlug);
+	const count = Math.min(READING_SUGGESTIONS_COUNT, pool.length);
 
 	// Fisher-Yates parcial: alcanza con barajar las primeras `count` posiciones.
-	for (let index = 0; index < Math.min(count, pool.length); index++) {
-		const pick = index + Math.floor(random() * (pool.length - index));
+	for (let index = 0; index < count; index++) {
+		const pick = index + Math.floor(Math.random() * (pool.length - index));
 		[pool[index], pool[pick]] = [pool[pick], pool[index]];
 	}
 

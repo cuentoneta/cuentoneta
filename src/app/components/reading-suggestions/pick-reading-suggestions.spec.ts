@@ -1,11 +1,16 @@
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
+import { clearAllMocks, spyOn } from '@test-utils';
 import { pickReadingSuggestions, READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
 
 const candidates = onoffLiteraryWorkTeasersMock;
 
-// Azar determinista: siempre elige el primer candidato disponible, así el orden de salida es el de
-// entrada y las aserciones no dependen de Math.random.
-const firstAvailable = () => 0;
+// Fija el azar desde su fuente, como el resto de los specs de la carpeta, en vez de inyectarlo por
+// parámetro: la firma de producción no tiene por qué exponer un punto de extensión que solo usa el test.
+function stubRandom(value: number): void {
+	spyOn(Math, 'random').mockReturnValue(value);
+}
+
+afterEach(() => clearAllMocks());
 
 describe('pickReadingSuggestions', () => {
 	it('should pick as many suggestions as the block renders', () => {
@@ -39,15 +44,15 @@ describe('pickReadingSuggestions', () => {
 	});
 
 	it('should draw from the candidates in the order the random source dictates', () => {
-		const suggestions = pickReadingSuggestions(candidates, undefined, READING_SUGGESTIONS_COUNT, firstAvailable);
+		stubRandom(0);
 
-		expect(suggestions).toEqual(candidates.slice(0, READING_SUGGESTIONS_COUNT));
+		expect(pickReadingSuggestions(candidates)).toEqual(candidates.slice(0, READING_SUGGESTIONS_COUNT));
 	});
 
 	it('should reach the last candidate when the random source points at it', () => {
-		const almostOne = () => 0.999999;
+		stubRandom(0.999999);
 
-		const [first] = pickReadingSuggestions(candidates, undefined, READING_SUGGESTIONS_COUNT, almostOne);
+		const [first] = pickReadingSuggestions(candidates);
 
 		expect(first).toBe(candidates[candidates.length - 1]);
 	});

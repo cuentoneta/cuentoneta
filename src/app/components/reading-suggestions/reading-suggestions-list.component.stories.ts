@@ -8,7 +8,6 @@ import type { NavigationContext } from '@app-utils/navigation-params';
 const meta: Meta<ReadingSuggestionsListComponent> = {
 	component: ReadingSuggestionsListComponent,
 	title: 'Componentes V3/ReadingSuggestionsList',
-	tags: ['autodocs'],
 	decorators: [
 		applicationConfig({
 			providers: [provideRouter([])],

@@ -46,8 +46,17 @@ describe('onoffRawLiteraryWorksMock (corpus raw de LiteraryWork)', () => {
 		expect(notes.some((editorialNote) => editorialNote === null)).toBe(true);
 	});
 
-	// Ambas ramas del mapeo de etiquetas tienen que estar representadas: con todo el corpus en `tags: []`,
-	// la rama que sí mapea etiquetas dejaría de ejercitarse contra datos reales.
+	// Toda obra declara su tipo literario en `tags[0]`, que es lo que los componentes toman como etiqueta
+	// principal. Sin esta invariante, dejar una obra sin etiquetas pasa sin ruido y se lleva puesta la
+	// cobertura de las que solo ella carga.
+	it('should declare tags on every work of the canon', () => {
+		for (const { slug, tags } of onoffRawLiteraryWorksMock) {
+			expect({ slug, hasTags: tags.length > 0 }).toEqual({ slug, hasTags: true });
+		}
+	});
+
+	// Ambas ramas del mapeo de etiquetas tienen que estar representadas. La rama sin etiquetas no sale
+	// del canon —ninguna obra queda sin ellas— sino de una variante construida para eso.
 	it('should cover both the works with tags and the ones without them', () => {
 		expect(onoffRawLiteraryWorksWithTags.length).toBeGreaterThan(0);
 		expect(onoffRawLiteraryWorksWithoutTags.length).toBeGreaterThan(0);

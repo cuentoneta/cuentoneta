@@ -85,7 +85,7 @@ export default class StoryComponent implements StoryHost {
 		const navigationSlug = this.navigationSlug();
 
 		if (navigationSlug) {
-			return { navigation: this.navigation() ?? 'author', navigationSlug };
+			return { navigation: this.navigation(), navigationSlug };
 		}
 
 		// Sin slug en la ruta solo se puede recurrir al autor de la obra: usarlo como slug de colección

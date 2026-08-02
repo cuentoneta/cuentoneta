@@ -1,5 +1,6 @@
 import type { Story } from '@models/story.model';
 import { lasDosAntorchasRawStory } from './las-dos-antorchas.raw.mock';
+import { lasDosAntorchasRawLiteraryWork } from './las-dos-antorchas.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
@@ -309,7 +310,7 @@ export const lasDosAntorchasLiteraryWorkMock: LiteraryWork = createLiteraryWork(
 	mediaSources: [],
 	resources: lasDosAntorchasStoryMock.resources,
 	badLanguage: lasDosAntorchasStoryMock.badLanguage,
-	tags: lasDosAntorchasStoryMock.tags,
+	tags: toDomainTags(lasDosAntorchasRawLiteraryWork.tags),
 	originalPublication: lasDosAntorchasStoryMock.originalPublication,
 	editorialNote: markdownToSanitizedHtml(createMarkdown(lasDosAntorchasEditorialNoteMd)),
 	publishedAt: createIsoDateTime(lasDosAntorchasStoryMock.publishedAt),

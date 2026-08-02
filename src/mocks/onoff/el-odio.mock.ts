@@ -1,5 +1,6 @@
 import type { Story } from '@models/story.model';
 import { elOdioRawStory } from './el-odio.raw.mock';
+import { elOdioRawLiteraryWork } from './el-odio.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createAttributedText } from '@models/attributed-text.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
@@ -305,7 +306,7 @@ export const elOdioLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	mediaSources: [],
 	resources: elOdioStoryMock.resources,
 	badLanguage: elOdioStoryMock.badLanguage,
-	tags: elOdioStoryMock.tags,
+	tags: toDomainTags(elOdioRawLiteraryWork.tags),
 	originalPublication: elOdioStoryMock.originalPublication,
 	editorialNote: markdownToSanitizedHtml(createMarkdown(elOdioEditorialNoteMd)),
 	publishedAt: createIsoDateTime(elOdioStoryMock.publishedAt),

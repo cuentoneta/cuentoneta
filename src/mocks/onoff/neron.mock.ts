@@ -1,5 +1,6 @@
 import type { Story } from '@models/story.model';
 import { neronRawStory } from './neron.raw.mock';
+import { neronRawLiteraryWork } from './neron.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
@@ -310,7 +311,7 @@ export const neronLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	mediaSources: [],
 	resources: neronStoryMock.resources,
 	badLanguage: neronStoryMock.badLanguage,
-	tags: neronStoryMock.tags,
+	tags: toDomainTags(neronRawLiteraryWork.tags),
 	originalPublication: neronStoryMock.originalPublication,
 	publishedAt: createIsoDateTime(neronStoryMock.publishedAt),
 });

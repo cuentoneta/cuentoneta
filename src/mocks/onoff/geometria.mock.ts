@@ -15,6 +15,7 @@ import { geometriaEpigraphReference, geometriaEpigraphText, geometriaSectionTitl
 import { authorMock } from '../author.mock';
 import { toDomainTags } from '../onoff-tags.mock';
 import { geometriaRawStory } from './geometria.raw.mock';
+import { geometriaRawLiteraryWork } from './geometria.literary-work.raw.mock';
 import {
 	geometriaAudioDescription,
 	geometriaSpaceDescription,
@@ -351,7 +352,7 @@ export const geometriaLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	mediaSources: geometriaMediaMock,
 	resources: geometriaStoryMock.resources,
 	badLanguage: geometriaStoryMock.badLanguage,
-	tags: geometriaStoryMock.tags,
+	tags: toDomainTags(geometriaRawLiteraryWork.tags),
 	originalPublication: geometriaStoryMock.originalPublication,
 	editorialNote: markdownToSanitizedHtml(createMarkdown(geometriaEditorialNoteMd)),
 	publishedAt: createIsoDateTime(geometriaStoryMock.publishedAt),
