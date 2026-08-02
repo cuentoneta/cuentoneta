@@ -572,9 +572,10 @@ interface ResourceType {
 	slug: string; // Identificador único del tipo
 	title: string; // Nombre del tipo (ej: "Wikipedia")
 	shortDescription: string; // Descripción corta
-	icon: Icon; // Ícono de representación
 }
 ```
+
+> El ícono que acompaña a un recurso en la interfaz lo resuelve el frontend a partir del `slug` del tipo, contra el mapa local de `@models/icon.model`. No viaja desde el CMS.
 
 **Ejemplos de tipos:**
 
@@ -607,6 +608,8 @@ interface Tag {
 ### Icon (Ícono)
 
 **Propósito:** Referenciar iconos desde diferentes proveedores.
+
+> Ninguna entidad del dominio lo declara ya: ni `Tag` ni `ResourceType` llevan ícono. Los íconos que la interfaz muestra los resuelve el frontend por `slug`, y viven en `@models/icon.model`.
 
 ```typescript
 interface Icon {
