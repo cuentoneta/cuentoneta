@@ -77,7 +77,6 @@ export const storyBySlugQuery = defineQuery(`
         title,
         'slug': slug.current,
         shortDescription,
-        description,
         icon
     }, []),
     'author': author-> {

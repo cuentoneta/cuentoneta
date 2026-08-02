@@ -25,7 +25,6 @@ export const literaryWorkBySlugQuery = defineQuery(`
         title,
         'slug': slug.current,
         shortDescription,
-        description,
         icon
     }, []),
     'mediaSources': coalesce(mediaSources[]{
@@ -97,7 +96,6 @@ export const literaryWorkSectionBySlugQuery = defineQuery(`
         title,
         'slug': slug.current,
         shortDescription,
-        description,
         icon
     }, []),
     'mediaSources': coalesce(mediaSources[]{

@@ -1,22 +1,7 @@
 import type { Tag } from '@models/tag.model';
 
-// Arma el bloque de Portable Text de `description` a partir del texto corto, que es lo único que varía entre
-// los tags del corpus.
 function createTag(title: string, slug: string, shortDescription: string): Tag {
-	return {
-		title,
-		slug,
-		shortDescription,
-		description: [
-			{
-				_type: 'block',
-				style: 'normal',
-				_key: `${slug}-desc`,
-				markDefs: [],
-				children: [{ _type: 'span', _key: `${slug}-desc-s`, text: shortDescription, marks: [] }],
-			},
-		],
-	};
+	return { title, slug, shortDescription };
 }
 
 // Tipo literario de la obra. Va primero en `tags` de cada Story: los componentes que muestran un único tag

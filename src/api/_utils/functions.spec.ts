@@ -21,15 +21,6 @@ describe('mapTags (ACL)', () => {
 				title: 'Cumpleaños',
 				slug: 'cumpleanos',
 				shortDescription: 'Etiqueta de cumpleaños',
-				description: [
-					{
-						_type: 'block',
-						_key: 'b1',
-						style: 'normal',
-						markDefs: [],
-						children: [{ _type: 'span', _key: 's1', text: 'Etiqueta de cumpleaños', marks: [] }],
-					},
-				],
 				icon: { _type: 'iconPicker', provider: 'mdi', name: 'cake' },
 			},
 		]);
@@ -41,8 +32,6 @@ describe('mapTags (ACL)', () => {
 			shortDescription: 'Etiqueta de cumpleaños',
 			icon: { provider: 'mdi', name: 'cake' },
 		});
-		expect(result[0].description).toHaveLength(1);
-		expect(result[0].description[0]._type).toBe('block');
 	});
 
 	it('normalizes missing icon provider/name to empty strings', () => {
@@ -51,7 +40,6 @@ describe('mapTags (ACL)', () => {
 				title: 'Sin ícono',
 				slug: 'sin-icono',
 				shortDescription: 'desc',
-				description: [],
 				icon: { _type: 'iconPicker' },
 			},
 		]);
@@ -59,28 +47,19 @@ describe('mapTags (ACL)', () => {
 		expect(result[0].icon).toEqual({ provider: '', name: '' });
 	});
 
-	it('discards non-text-block elements from the description', () => {
-		const result = mapTags([
+	it('does not expose a description on the mapped domain Tag', () => {
+		const [tag] = mapTags([
 			{
-				title: 'Mixto',
-				slug: 'mixto',
+				title: 'Cuento',
+				slug: 'cuento',
 				shortDescription: 'desc',
-				description: [
-					{
-						_type: 'block',
-						_key: 'b1',
-						style: 'normal',
-						markDefs: [],
-						children: [{ _type: 'span', _key: 's1', text: 'texto', marks: [] }],
-					},
-					{ _type: 'image', _key: 'img1' },
-				],
-				icon: { _type: 'iconPicker', provider: 'mdi', name: 'tag' },
+				icon: { _type: 'iconPicker', provider: 'mdi', name: 'book' },
 			},
 		]);
 
-		expect(result[0].description).toHaveLength(1);
-		expect(result[0].description[0]._type).toBe('block');
+		// El mapper construye con spread: si la proyección volviera a traer `description`, el campo se
+		// filtraría al dominio sin que nada más lo señale.
+		expect(tag).not.toHaveProperty('description');
 	});
 
 	it('returns an empty array when there are no tags', () => {
