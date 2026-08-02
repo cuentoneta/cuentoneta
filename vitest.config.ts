@@ -1,12 +1,16 @@
 /// <reference types="vitest" />
 import angular from '@analogjs/vite-plugin-angular';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
 // Configuración de Vitest para Angular zoneless (Nx 23 + builder vite/esbuild).
 // El plugin de Analog compila componentes/plantillas Angular en modo JIT durante los tests.
 export default defineConfig({
-	plugins: [angular(), tsconfigPaths()],
+	// Resolución nativa de los `paths` del tsconfig, en lugar de `vite-tsconfig-paths`: el plugin
+	// descubre proyectos recorriendo el árbol, y bajo `.claude/worktrees/` hay copias enteras del
+	// repo. Basta con que el tsconfig de una de ellas no le parsee para que aborte y deje de resolver
+	// alias en toda la corrida.
+	plugins: [angular()],
+	resolve: { tsconfigPaths: true },
 	test: {
 		globals: true,
 		environment: 'happy-dom',
