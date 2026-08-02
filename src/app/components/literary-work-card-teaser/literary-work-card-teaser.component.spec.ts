@@ -1,6 +1,6 @@
 import { LiteraryWorkCardTeaserComponent } from './literary-work-card-teaser.component';
 import { DefaultUrlSerializer, UrlTree } from '@angular/router';
-import { render, screen } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 import {
 	onoffLiteraryWorkTeasersMock,
 	palacioNueveFronterasLiteraryWorkTeaserMock,
@@ -179,13 +179,12 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 				inputs: { literaryWork: literaryWorkWithExcerpt, showExcerpt: true },
 			});
 
-			const description = screen.getByTestId('description');
-			const bodyHtml = literaryWorkWithExcerpt.teaserSection?.bodyHtml ?? '';
+			const firstParagraph = literaryWorkWithExcerpt.teaserSection?.bodyHtml.match(/<p>([\s\S]*?)<\/p>/)?.[1] ?? '';
 
-			// El pipeline emite <p>…</p>. Si el HTML llegara escapado, el texto igual estaría —por eso no
-			// alcanza con verificar que el elemento no quedó vacío—, pero no habría un <p> en el DOM.
-			expect(description.querySelector('p')).not.toBeNull();
-			expect(description.textContent?.trim()).toBe(bodyHtml.replace(/<[^>]+>/g, '').trim());
+			// El pipeline emite un <p> por párrafo. Si el HTML llegara escapado, el texto igual estaría
+			// —por eso no alcanza con verificar que el elemento no quedó vacío—, pero lo contendría el div
+			// del binding como un único nodo de texto, no un párrafo propio.
+			expect(within(screen.getByTestId('description')).getByText(firstParagraph).tagName.toLowerCase()).toBe('p');
 		});
 
 		it('should not display the description when showExcerpt is false', async () => {
