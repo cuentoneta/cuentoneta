@@ -595,7 +595,6 @@ interface Tag {
 	slug: string; // Identificador único
 	title: string; // Nombre de la etiqueta
 	shortDescription: string; // Breve descripción
-	description: TextBlockContent[]; // Descripción completa
 	icon?: Icon; // Ícono opcional
 }
 ```
