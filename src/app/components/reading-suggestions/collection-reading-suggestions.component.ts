@@ -13,7 +13,7 @@ import { adaptStoryTeasersToLiteraryWorkTeasers } from './story-teaser-to-litera
  * Sugerencias de otras obras de la misma colección. Es una de las dos variantes que monta
  * ReadingSuggestions: resuelve los datos y delega la presentación en ReadingSuggestionsList.
  *
- * TODO: cambiar el provider de Storylist a Collection cuando la página de lectura integre la tríada.
+ * TODO(#2036): cambiar el provider de Storylist a Collection cuando la página de lectura integre la tríada.
  *
  * Muestra el autor de cada obra: una colección puede reunir obras de varios.
  */

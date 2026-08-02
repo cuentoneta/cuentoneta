@@ -6,7 +6,7 @@ import { createSlug } from '@models/slug.model';
 type StoryNavigationView = StoryNavigationTeaser | StoryNavigationTeaserWithAuthor;
 
 /**
- * TODO: adapter temporal — se elimina cuando existan los endpoints LiteraryWork nativos.
+ * TODO(#2037): adapter temporal — se elimina cuando existan los endpoints LiteraryWork nativos.
  *
  * Traduce las vistas de navegación de `Story` a la proyección de `LiteraryWork` que consume la
  * tarjeta. Story y LiteraryWork son entidades paralelas: la traducción vive acotada a los
