@@ -1,6 +1,5 @@
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default {
 	stories: ['../src/app/**/*.stories.mdx', '../src/app/**/*.stories.@(js|jsx|ts|tsx)'],
@@ -12,11 +11,14 @@ export default {
 	},
 	docs: {},
 	staticDirs: [{ from: '../src/assets', to: '/assets' }],
-	// Vite no resuelve los `paths` del tsconfig por sí solo: el plugin mapea @models, @utils,
-	// @components, @mocks, @test-utils (mismo patrón que vitest.config.ts). El plugin de Analog
-	// que compila Angular ya lo aporta el framework @storybook/angular-vite.
+	// Resolución nativa de los `paths` del tsconfig (@models, @mocks, @components, …), en lugar de
+	// `vite-tsconfig-paths`: el plugin descubre proyectos recorriendo el árbol, y bajo
+	// `.claude/worktrees/` hay copias enteras del repo. Basta con que el tsconfig de una de ellas no
+	// le parsee para que aborte y deje de resolver alias en TODO el catálogo — sin más síntoma que
+	// stories que no cargan. El plugin de Analog que compila Angular lo aporta el framework
+	// @storybook/angular-vite.
 	viteFinal: async (config) => {
-		config.plugins = [...(config.plugins ?? []), tsconfigPaths()];
+		config.resolve = { ...config.resolve, tsconfigPaths: true };
 		return config;
 	},
 };
