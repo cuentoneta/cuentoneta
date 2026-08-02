@@ -2,6 +2,7 @@ import { spyOn } from '@test-utils';
 import { mapMediaSources } from './media-sources.functions';
 import { onoffRawStoriesWithMediaSources, onoffRawTeasersWithMediaSources } from '@mocks/onoff-raw-stories.mock';
 import { isAudioRecording, isSpaceRecording, isSpotifyPodcastEpisode, isYouTubeVideo } from '@models/media.model';
+import { geometriaAudioDescription } from '@mocks/onoff/geometria.media';
 
 const [rawStory] = onoffRawStoriesWithMediaSources;
 const [rawTeaser] = onoffRawTeasersWithMediaSources;
@@ -76,6 +77,76 @@ describe('mapMediaSources sobre la proyección de teaser', () => {
 		expect(spaceRecording.data.url).toBeNull();
 		expect(spaceRecording.data.duration).toBe(source.duration);
 		expect(spaceRecording.data.hostName).toBe(source.hostName);
+	});
+});
+
+describe('la descripción cruza el pipeline de Markdown', () => {
+	it('entrega HTML saneado y no el Markdown crudo', () => {
+		const [audioRecording] = mapMediaSources(rawStory.mediaSources).filter(isAudioRecording);
+
+		expect(audioRecording.description).toBe(`<p>${geometriaAudioDescription}</p>`);
+	});
+
+	it('preserva el énfasis, la negrita y el enlace del fixture', () => {
+		const mapped = mapMediaSources(rawStory.mediaSources);
+		const [spaceRecording] = mapped.filter(isSpaceRecording);
+		const [podcast] = mapped.filter(isSpotifyPodcastEpisode);
+
+		expect(spaceRecording.description).toContain('<em>cuaderno de 1971</em>');
+		expect(spaceRecording.description).toContain('<a href="https://cdn.example.org/onoff/geometria.pdf"');
+		expect(podcast.description).toContain('<strong>podcast</strong>');
+	});
+
+	// `createMarkdown` rechaza el contenido vacío. Acá se verifica qué hace el ACL con ese rechazo: lo
+	// contiene descartando el recurso, porque una descripción vacía es un dato que el schema admitió
+	// antes de volverse requerido y no puede costar la respuesta entera.
+	it('descarta con rastro el recurso cuya descripción está vacía', () => {
+		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
+		const source = rawSourceOfType('audioRecording');
+
+		const mapped = mapMediaSources([{ ...source, description: '' }]);
+
+		expect(mapped).toEqual([]);
+		expect(warn).toHaveBeenCalledWith(
+			expect.stringContaining('no pudo mapearse'),
+			expect.objectContaining({ _key: source._key, _type: source._type }),
+		);
+	});
+
+	// La contención toma dos formas según qué quede después de sanear, y las dos son seguras: o el
+	// recurso sobrevive sin el fragmento peligroso, o se descarta entero porque no le quedó contenido.
+	// Lo que ninguna descripción puede hacer es llegar con el residuo puesto.
+	it.each([
+		['un manejador de evento inline', '<img src=x onerror="alert(1)">Texto.', 'onerror', '<p>Texto.</p>'],
+		['un enlace con protocolo javascript', '[Enlace](javascript:alert(1))', 'javascript:', '<p><a>Enlace</a></p>'],
+		[
+			'una etiqueta script tras texto válido',
+			'Texto seguro.\n\n<script>alert(1)</script>',
+			'script',
+			'<p>Texto seguro.</p>',
+		],
+	])('sanea %s sin perder el recurso', (_caso, description, residuo, esperado) => {
+		const source = rawSourceOfType('audioRecording');
+
+		const [audioRecording] = mapMediaSources([{ ...source, description }]).filter(isAudioRecording);
+
+		expect(audioRecording.description).toBe(esperado);
+		expect(audioRecording.description).not.toContain(residuo);
+	});
+
+	// Una descripción que es solo el vector queda vacía al sanearla, y una descripción vacía no
+	// construye el value object: el recurso se descarta con rastro, igual que el caso de arriba.
+	it('descarta el recurso cuya descripción entera es un vector de XSS', () => {
+		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
+		const source = rawSourceOfType('audioRecording');
+
+		const mapped = mapMediaSources([{ ...source, description: '<script>alert(1)</script>Texto.' }]);
+
+		expect(mapped).toEqual([]);
+		expect(warn).toHaveBeenCalledWith(
+			expect.stringContaining('no pudo mapearse'),
+			expect.objectContaining({ _key: source._key }),
+		);
 	});
 });
 
