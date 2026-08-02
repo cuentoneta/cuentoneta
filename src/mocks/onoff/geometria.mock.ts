@@ -25,6 +25,12 @@ function mediaDescription(key: string, text: string): TextBlockContent[] {
 }
 import { authorMock } from '../author.mock';
 import { cuentoTagMock, dramaPsicologicoTagMock, filosoficoTagMock } from '../onoff-tags.mock';
+import {
+	geometriaAudioDescription,
+	geometriaSpaceDescription,
+	geometriaSpotifyDescription,
+	geometriaYoutubeDescription,
+} from './geometria.media';
 
 export const geometriaStoryMock: Story = {
 	_id: 'onoff-story-geometria',
@@ -41,13 +47,13 @@ export const geometriaStoryMock: Story = {
 		{
 			title: 'Lectura de "Geometría" por su autor',
 			type: 'audioRecording',
-			description: mediaDescription('geometria-audio', 'Grabación casera, 1974.'),
+			description: mediaDescription('geometria-audio', geometriaAudioDescription),
 			data: { url: 'https://cdn.example.org/onoff/geometria.ogg' },
 		},
 		{
 			title: 'Conversación sobre el insomnio y la medida del tiempo',
 			type: 'spaceRecording',
-			description: mediaDescription('geometria-space', 'Espacio grabado con lectores de Onoff.'),
+			description: mediaDescription('geometria-space', geometriaSpaceDescription),
 			data: {
 				url: 'https://cdn.example.org/onoff/geometria-space.ogg',
 				duration: '48:12',
@@ -58,13 +64,13 @@ export const geometriaStoryMock: Story = {
 		{
 			title: 'Episodio dedicado a "Geometría"',
 			type: 'spotifyPodcastEpisode',
-			description: mediaDescription('geometria-spotify', 'Análisis de la obra en formato podcast.'),
+			description: mediaDescription('geometria-spotify', geometriaSpotifyDescription),
 			data: { url: 'https://open.spotify.com/embed/episode/geometria' },
 		},
 		{
 			title: 'Video ensayo sobre las coordenadas del desvelo',
 			type: 'youTubeVideo',
-			description: mediaDescription('geometria-youtube', 'Ensayo audiovisual sobre la obra.'),
+			description: mediaDescription('geometria-youtube', geometriaYoutubeDescription),
 			data: { videoId: 'geometriaVideoId' },
 		},
 	],

@@ -1,5 +1,12 @@
 import type { BlockContent, StoryBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import {
+	geometriaAudioDescription,
+	geometriaPdfDescription,
+	geometriaSpaceDescription,
+	geometriaSpotifyDescription,
+	geometriaYoutubeDescription,
+} from './geometria.media';
 
 function rawMediaDescription(key: string, text: string): BlockContent {
 	return [
@@ -272,14 +279,14 @@ export const geometriaRawStory: NonNullable<StoryBySlugQueryResult> = {
 			_key: 'geometria-audio',
 			_type: 'audioRecording',
 			title: 'Lectura de "Geometría" por su autor',
-			description: rawMediaDescription('geometria-audio', 'Grabación casera, 1974.'),
+			description: rawMediaDescription('geometria-audio', geometriaAudioDescription),
 			url: 'https://cdn.example.org/onoff/geometria.ogg',
 		},
 		{
 			_key: 'geometria-space',
 			_type: 'spaceRecording',
 			title: 'Conversación sobre el insomnio y la medida del tiempo',
-			description: rawMediaDescription('geometria-space', 'Espacio grabado con lectores de Onoff.'),
+			description: rawMediaDescription('geometria-space', geometriaSpaceDescription),
 			audioFile: { _type: 'file', asset: { _type: 'reference', _ref: 'file-geometria-space-ogg' } },
 			hostName: 'Biblioteca del Méridien',
 			date: '1974-06-12',
@@ -290,21 +297,21 @@ export const geometriaRawStory: NonNullable<StoryBySlugQueryResult> = {
 			_key: 'geometria-spotify',
 			_type: 'spotifyPodcastEpisode',
 			title: 'Episodio dedicado a "Geometría"',
-			description: rawMediaDescription('geometria-spotify', 'Análisis de la obra en formato podcast.'),
+			description: rawMediaDescription('geometria-spotify', geometriaSpotifyDescription),
 			url: 'https://open.spotify.com/embed/episode/geometria',
 		},
 		{
 			_key: 'geometria-youtube',
 			_type: 'youTubeVideo',
 			title: 'Video ensayo sobre las coordenadas del desvelo',
-			description: rawMediaDescription('geometria-youtube', 'Ensayo audiovisual sobre la obra.'),
+			description: rawMediaDescription('geometria-youtube', geometriaYoutubeDescription),
 			videoId: 'geometriaVideoId',
 		},
 		{
 			_key: 'geometria-pdf',
 			_type: 'pdfLink',
 			title: 'Facsímil de la primera edición',
-			description: rawMediaDescription('geometria-pdf', 'Escaneo de la edición de 1974.'),
+			description: rawMediaDescription('geometria-pdf', geometriaPdfDescription),
 			url: 'https://cdn.example.org/onoff/geometria.pdf',
 		},
 	],
