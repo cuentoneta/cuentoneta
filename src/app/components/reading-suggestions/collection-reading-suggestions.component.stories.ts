@@ -6,11 +6,11 @@ import { CollectionReadingSuggestionsComponent } from './collection-reading-sugg
 import { StorylistApi } from '../../providers/storylist-api.interface';
 import type { StorylistStoriesNavigationTeasers } from '@models/storylist.model';
 import { storylistNavigationTeaserMock } from '@mocks/storylist.mock';
-import { onoffStoryNavigationTeasersWithAuthorMock } from '@mocks/onoff-story-teasers.mock';
+import { corpusStoryNavigationTeasersWithAuthor } from '@mocks/onoff-corpus.storybook';
 
 const collectionMock: StorylistStoriesNavigationTeasers = {
 	...storylistNavigationTeaserMock,
-	stories: onoffStoryNavigationTeasersWithAuthorMock,
+	stories: corpusStoryNavigationTeasersWithAuthor,
 };
 
 const meta: Meta<CollectionReadingSuggestionsComponent> = {

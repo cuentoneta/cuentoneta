@@ -8,6 +8,7 @@ import { StoryApi } from '../../providers/story-api.interface';
 import type { StoryNavigationTeaser } from '@models/story.model';
 import { onoffStoryNavigationTeasersMock } from '@mocks/onoff-story-teasers.mock';
 import { authorTeaserMock } from '@mocks/author.mock';
+import { cuentoTagMock } from '@mocks/onoff-tags.mock';
 import { clearAllMocks, fn, restoreAllMocks, spyOn } from '@test-utils';
 
 const setup = async (
@@ -159,6 +160,17 @@ describe('AuthorReadingSuggestionsComponent', () => {
 		await setup(() => throwError(() => new Error('la API no responde')));
 
 		expect(screen.queryByTestId('reading-suggestions')).not.toBeInTheDocument();
+	});
+
+	// El tipo literario que el corpus deja primero entre los tags tiene que llegar hasta la etiqueta de
+	// la tarjeta: es todo el recorrido proveedor → adapter → bloque → tarjeta.
+	it('should label each suggestion with the literary type the work carries', async () => {
+		const [first, ...rest] = onoffStoryNavigationTeasersMock;
+		const tagged = [{ ...first, tags: [cuentoTagMock] }, ...rest];
+
+		await setup(() => of(tagged));
+
+		expect(screen.getByText(cuentoTagMock.title)).toBeInTheDocument();
 	});
 
 	it('should carry the author context into each suggestion link', async () => {

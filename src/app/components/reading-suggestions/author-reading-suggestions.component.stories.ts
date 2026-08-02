@@ -4,7 +4,7 @@ import { NEVER, of } from 'rxjs';
 
 import { AuthorReadingSuggestionsComponent } from './author-reading-suggestions.component';
 import { StoryApi } from '../../providers/story-api.interface';
-import { onoffStoryNavigationTeasersMock } from '@mocks/onoff-story-teasers.mock';
+import { corpusStoryNavigationTeasers } from '@mocks/onoff-corpus.storybook';
 import { authorTeaserMock } from '@mocks/author.mock';
 
 const meta: Meta<AuthorReadingSuggestionsComponent> = {
@@ -17,7 +17,7 @@ const meta: Meta<AuthorReadingSuggestionsComponent> = {
 				provideRouter([]),
 				{
 					provide: StoryApi,
-					useValue: { getNavigationTeasersByAuthorSlug: () => of(onoffStoryNavigationTeasersMock) },
+					useValue: { getNavigationTeasersByAuthorSlug: () => of(corpusStoryNavigationTeasers) },
 				},
 			],
 		}),
@@ -61,7 +61,7 @@ export const Interactiva: Story = {
 	args: {
 		authorSlug: authorTeaserMock.slug,
 		authorName: authorTeaserMock.name,
-		currentWorkSlug: onoffStoryNavigationTeasersMock[0].slug,
+		currentWorkSlug: corpusStoryNavigationTeasers[0].slug,
 	},
 	parameters: {
 		docs: {

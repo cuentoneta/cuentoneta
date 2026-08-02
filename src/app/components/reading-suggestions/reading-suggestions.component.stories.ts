@@ -6,13 +6,10 @@ import { ReadingSuggestionsComponent } from './reading-suggestions.component';
 import { StoryApi } from '../../providers/story-api.interface';
 import { StorylistApi } from '../../providers/storylist-api.interface';
 import { storylistNavigationTeaserMock } from '@mocks/storylist.mock';
-import {
-	onoffStoryNavigationTeasersMock,
-	onoffStoryNavigationTeasersWithAuthorMock,
-} from '@mocks/onoff-story-teasers.mock';
+import { corpusStoryNavigationTeasers, corpusStoryNavigationTeasersWithAuthor } from '@mocks/onoff-corpus.storybook';
 import { authorTeaserMock } from '@mocks/author.mock';
 
-const collectionMock = { ...storylistNavigationTeaserMock, stories: onoffStoryNavigationTeasersWithAuthorMock };
+const collectionMock = { ...storylistNavigationTeaserMock, stories: corpusStoryNavigationTeasersWithAuthor };
 
 const meta: Meta<ReadingSuggestionsComponent> = {
 	component: ReadingSuggestionsComponent,
@@ -24,7 +21,7 @@ const meta: Meta<ReadingSuggestionsComponent> = {
 				provideRouter([]),
 				{
 					provide: StoryApi,
-					useValue: { getNavigationTeasersByAuthorSlug: () => of(onoffStoryNavigationTeasersMock) },
+					useValue: { getNavigationTeasersByAuthorSlug: () => of(corpusStoryNavigationTeasers) },
 				},
 				{ provide: StorylistApi, useValue: { getStorylistNavigationTeasers: () => of(collectionMock) } },
 			],
@@ -69,7 +66,7 @@ export const PorAutor: Story = {
 	args: {
 		navigationParams: { navigation: 'author', navigationSlug: authorTeaserMock.slug },
 		authorName: authorTeaserMock.name,
-		currentWorkSlug: onoffStoryNavigationTeasersMock[0].slug,
+		currentWorkSlug: corpusStoryNavigationTeasers[0].slug,
 	},
 	parameters: {
 		docs: {
