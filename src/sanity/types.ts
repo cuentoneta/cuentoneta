@@ -569,13 +569,6 @@ export type Contributor = {
 	notes?: string;
 };
 
-export type IconPicker = {
-	_type: 'iconPicker';
-	provider?: string;
-	name?: string;
-	svg?: string;
-};
-
 export type ComputedText = string;
 
 export type ComputedString = string;
@@ -709,7 +702,6 @@ export type AllSanitySchemaTypes =
 	| Resource
 	| ResourceType
 	| Contributor
-	| IconPicker
 	| ComputedText
 	| ComputedString
 	| ComputedBoolean
