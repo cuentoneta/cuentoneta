@@ -2,6 +2,7 @@ import type { SanityImageSource } from '@sanity/image-url';
 import {
 	mapContentCampaigns,
 	mapLandingPageContent,
+	mapResources,
 	mapStoryNavigationTeaser,
 	mapStoryNavigationTeaserWithAuthor,
 	mapStoryTeaser,
@@ -9,6 +10,7 @@ import {
 	urlFor,
 } from './functions';
 import { elOdioRawTeaser, onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
+import { rawOnoffAuthor } from '@mocks/onoff-raw-author.mock';
 import { onoffRawContentCampaignsMock } from '@mocks/onoff-raw-content-campaigns.mock';
 import { viewportElementSizes } from '@models/content-campaign.model';
 
@@ -108,6 +110,45 @@ describe('mapStoryNavigationTeaserWithAuthor (ACL)', () => {
 		const result = mapStoryNavigationTeaserWithAuthor([onoffRawNavTeasersMock[0]]);
 
 		expect(result[0].tags).toEqual([]);
+	});
+});
+
+describe('mapResources (ACL)', () => {
+	it('maps a raw Sanity resource to the domain Resource model', () => {
+		const [rawResource] = rawOnoffAuthor.resources;
+
+		const [resource] = mapResources(rawOnoffAuthor.resources);
+
+		expect(resource.title).toBe(rawResource.title);
+		expect(resource.url).toBe(rawResource.url);
+		expect(resource.resourceType).toMatchObject({
+			slug: rawResource.resourceType.slug,
+			title: rawResource.resourceType.title,
+			shortDescription: rawResource.resourceType.shortDescription,
+			icon: { provider: 'fa', name: 'fa-wikipedia-w' },
+		});
+	});
+
+	it('normalizes a missing icon provider/name to empty strings', () => {
+		const [rawResource] = rawOnoffAuthor.resources;
+		const withoutIcon = {
+			...rawResource,
+			resourceType: { ...rawResource.resourceType, icon: { _type: 'iconPicker' as const } },
+		};
+
+		const [resource] = mapResources([withoutIcon]);
+
+		expect(resource.resourceType.icon).toEqual({ provider: '', name: '' });
+	});
+
+	it('returns an empty array for an empty, null or undefined input', () => {
+		expect(mapResources([])).toEqual([]);
+		// REASON: las proyecciones envuelven `resources` en un coalesce, así que el typegen lo declara
+		// no-nullable y el `?? []` del mapper queda inalcanzable según el compilador. El guard igual es
+		// real ante un cambio de proyección, y se ejercita acotado.
+		type RawResources = Parameters<typeof mapResources>[0];
+		expect(mapResources(null as unknown as RawResources)).toEqual([]);
+		expect(mapResources(undefined as unknown as RawResources)).toEqual([]);
 	});
 });
 
