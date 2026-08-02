@@ -184,7 +184,7 @@ Usá estos valores:
 
 Cuando un problema se marca como **Diferido**, hay que **proponer** un issue de GitHub y **esperar la confirmación del usuario** antes de crearlo: crear un issue es una acción hacia afuera (misma política que la Fase 5 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md)). La propuesta debe:
 
-1. Referenciar el número de la review original (p. ej. "Detectado como #7 durante la review del PR #107").
+1. Referenciar el número de la review original (p. ej. "Detectado como #7 durante la review del PR `#<pr>`").
 2. Incluir contexto suficiente para actuar de forma independiente (archivo, línea, descripción del problema y la corrección recomendada).
 3. Estar etiquetado apropiadamente (p. ej. `tech-debt`, `enhancement` o el label de dominio correspondiente).
 4. Estar vinculado al PR e issue actuales para trazabilidad.

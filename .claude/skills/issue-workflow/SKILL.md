@@ -258,8 +258,8 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 1. Abordar cada **Crítico** y **Advertencia** de `workspace/<number>/CODE_REVIEW.md` — y de `workspace/<number>/SECURITY_REVIEW.md` si corrió el auditor — por prioridad (Críticos primero).
 2. Tras cada fix, actualizar la columna **Estado** en el archivo al que pertenece el hallazgo (`CODE_REVIEW.md` o `SECURITY_REVIEW.md`), con los valores canónicos del `code-reviewer` (Detectado / En progreso / Corregido / Descartado / Diferido / No se corrige / Requiere test E2E).
 3. Un commit atómico por fix. El mensaje describe el **cambio real**, nunca referencia el número de hallazgo.
-   - ✅ `[#1234] - Acota la constante al cuerpo de la función — estaba a nivel de módulo`
-   - ❌ `[#1234] - Arregla el hallazgo #2`
+   - ✅ `[#<issue>] - Acota la constante al cuerpo de la función — estaba a nivel de módulo`
+   - ❌ `[#<issue>] - Arregla el hallazgo #2`
 4. Si un hallazgo se **difiere**, proponer el issue al usuario y **esperar su confirmación** antes de crearlo (`gh issue create`); una vez creado, anotar su URL junto al valor **Diferido** en la columna **Estado**. Crear un issue es una acción hacia afuera: la misma política rige en la Fase 6.
    - **Título sin prefijo de categoría** (`[Tooling]`, `[SEO]`, `[#<id>]`, ni variantes con guion o dos puntos): la categoría va en `--label` y la pertenencia a una iniciativa en la relación de sub-issue. Si ningún label existente encaja, proponer su creación al usuario en vez de codificar la categoría en el título. Ver [`coding-agent-policies.md`](../../references/coding-agent-policies.md) Sección 2.
 5. Tras abordar Críticos y Advertencias, re-correr los gates de CI. Arreglar regresiones.
