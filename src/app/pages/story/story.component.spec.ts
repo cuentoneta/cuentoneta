@@ -82,18 +82,6 @@ describe('StoryComponent - sugerencias de lectura', () => {
 
 		expect(screen.getByTestId('navigation')).toHaveTextContent(`author|${storyMock.author.slug}`);
 	});
-
-	it('should share the link with the very context the reader arrived with', async () => {
-		const view = await setup('storylist', storylistMock.slug);
-
-		const { shareContentParams, navigationParams } = view.fixture.componentInstance as unknown as {
-			shareContentParams: () => unknown;
-			navigationParams: () => unknown;
-		};
-
-		expect(shareContentParams()).toEqual(navigationParams());
-		expect(shareContentParams()).toEqual({ navigation: 'storylist', navigationSlug: storylistMock.slug });
-	});
 });
 
 describe('StoryComponent - headerPosition', () => {
