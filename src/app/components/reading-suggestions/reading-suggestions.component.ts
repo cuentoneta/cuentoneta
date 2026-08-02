@@ -45,9 +45,13 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 export class ReadingSuggestionsComponent {
 	// Inputs
 	public readonly navigationParams = input.required<NavigationParams>();
-	public readonly authorName = input<string>('');
+	// Requerido aunque la variante de colección no lo use: la de autor es la rama por defecto, así que
+	// cualquier consumidor puede terminar en ella y sin el nombre el encabezado quedaría a medias.
+	public readonly authorName = input.required<string>();
 	public readonly currentWorkSlug = input<string>();
 
-	// Reserva el alto del bloque para que la aparición de las sugerencias no empuje el pie de página.
-	protected readonly placeholderClasses = 'h-96';
+	// Reserva el alto del bloque para que su aparición no empuje el pie de página. El valor sale de su
+	// composición: tres portadas de `h-41` (164px) más la separación entre tarjetas, el encabezado, el
+	// acceso al listado y el relleno del contenedor.
+	protected readonly placeholderClasses = 'h-189';
 }

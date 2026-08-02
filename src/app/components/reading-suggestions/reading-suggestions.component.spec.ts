@@ -53,26 +53,26 @@ describe('ReadingSuggestionsComponent', () => {
 		expect(screen.queryByTestId('reading-suggestions')).not.toBeInTheDocument();
 	});
 
-	// Cada variante vive en su propio bloque diferido: solo se instancia —y solo se descarga— la que
-	// corresponde al contexto de navegación.
-	it('should mount only one deferred variant, the author one', async () => {
+	// Que cada variante viva en su propio bloque diferido —y no un bloque único envolviendo al
+	// selector— es lo que hace que se descargue solo el bundle de la que corresponde. Eso es una
+	// propiedad del bundle, no observable desde el runtime: acá se fija lo que sí lo es, que solo se
+	// instancia una variante; el reparto en chunks se verifica sobre la salida del build.
+	it('should mount the author variant, and only that one', async () => {
 		const { fixture } = await setup({ navigation: 'author', navigationSlug: authorTeaserMock.slug });
-
-		expect(await fixture.getDeferBlocks()).toHaveLength(1);
 
 		await renderDeferBlocks(fixture);
 
 		expect(screen.getByRole('heading', { name: `Más obras de ${authorTeaserMock.name}` })).toBeInTheDocument();
+		expect(screen.queryByRole('heading', { name: `Más obras de ${collectionMock.title}` })).not.toBeInTheDocument();
 	});
 
-	it('should mount only one deferred variant, the collection one', async () => {
+	it('should mount the collection variant, and only that one', async () => {
 		const { fixture } = await setup({ navigation: 'storylist', navigationSlug: collectionMock.slug });
-
-		expect(await fixture.getDeferBlocks()).toHaveLength(1);
 
 		await renderDeferBlocks(fixture);
 
 		expect(screen.getByRole('heading', { name: `Más obras de ${collectionMock.title}` })).toBeInTheDocument();
+		expect(screen.queryByRole('heading', { name: `Más obras de ${authorTeaserMock.name}` })).not.toBeInTheDocument();
 	});
 
 	it('should hand the author variant the slug it has to fetch by', async () => {

@@ -5,7 +5,6 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 // 3rd party modules
 import { render, screen } from '@testing-library/angular';
-import { By } from '@angular/platform-browser';
 
 // Models
 import { storylistMock } from '@mocks/storylist.mock';
@@ -30,7 +29,7 @@ describe('StoryComponent', () => {
 				NgOptimizedImage,
 				MockBioSummaryCardComponent,
 				MockShareContentComponent,
-				MockReadingSuggestionsComponent,
+				StubReadingSuggestionsComponent,
 			],
 			providers: [provideStoryApiMock(), { provide: LayoutService, useValue: new ControllableLayoutService() }],
 			inputs: {
@@ -56,7 +55,7 @@ describe('StoryComponent - sugerencias de lectura', () => {
 				NgOptimizedImage,
 				MockBioSummaryCardComponent,
 				MockShareContentComponent,
-				MockReadingSuggestionsComponent,
+				StubReadingSuggestionsComponent,
 			],
 			providers: [provideStoryApiMock(), { provide: LayoutService, useValue: new ControllableLayoutService() }],
 			inputs: { slug: storyMock.slug, navigation, navigationSlug },
@@ -71,27 +70,17 @@ describe('StoryComponent - sugerencias de lectura', () => {
 	});
 
 	it('should hand the block the context the reader arrived with', async () => {
-		const view = await setup('storylist', storylistMock.slug);
+		await setup('storylist', storylistMock.slug);
 
-		const block = view.fixture.debugElement.query(By.directive(MockReadingSuggestionsComponent));
-
-		expect(block.componentInstance.navigationParams()).toEqual({
-			navigation: 'storylist',
-			navigationSlug: storylistMock.slug,
-		});
-		expect(block.componentInstance.currentWorkSlug()).toBe(storyMock.slug);
-		expect(block.componentInstance.authorName()).toBe(storyMock.author.name);
+		expect(screen.getByTestId('navigation')).toHaveTextContent(`storylist|${storylistMock.slug}`);
+		expect(screen.getByTestId('current-work')).toHaveTextContent(storyMock.slug);
+		expect(screen.getByTestId('author-name')).toHaveTextContent(storyMock.author.name);
 	});
 
 	it('should fall back to the author context when the collection slug is missing', async () => {
-		const view = await setup('storylist');
+		await setup('storylist');
 
-		const block = view.fixture.debugElement.query(By.directive(MockReadingSuggestionsComponent));
-
-		expect(block.componentInstance.navigationParams()).toEqual({
-			navigation: 'author',
-			navigationSlug: storyMock.author.slug,
-		});
+		expect(screen.getByTestId('navigation')).toHaveTextContent(`author|${storyMock.author.slug}`);
 	});
 
 	it('should share the link with the very context the reader arrived with', async () => {
@@ -121,7 +110,7 @@ describe('StoryComponent - headerPosition', () => {
 				NgOptimizedImage,
 				MockBioSummaryCardComponent,
 				MockShareContentComponent,
-				MockReadingSuggestionsComponent,
+				StubReadingSuggestionsComponent,
 			],
 			componentProviders: [{ provide: LayoutService, useValue: mockLayoutService }],
 			providers: [provideStoryApiMock()],
@@ -187,14 +176,20 @@ class MockBioSummaryCardComponent {
 	public readonly story = input.required<Story>();
 }
 
+// Doble del bloque de sugerencias: no resuelve datos, solo vuelca en el DOM el contexto que recibe,
+// para que la página pueda verificarlo con las queries de Testing Library.
 @Component({
 	standalone: true,
 	selector: 'cuentoneta-reading-suggestions:not(p)',
-	template: '',
+	template: `
+		<span data-testid="navigation">{{ navigationParams().navigation }}|{{ navigationParams().navigationSlug }}</span>
+		<span data-testid="author-name">{{ authorName() }}</span>
+		<span data-testid="current-work">{{ currentWorkSlug() }}</span>
+	`,
 	host: { 'data-testid': 'reading-suggestions' },
 })
-class MockReadingSuggestionsComponent {
+class StubReadingSuggestionsComponent {
 	public readonly navigationParams = input.required<NavigationParams>();
-	public readonly authorName = input<string>('');
+	public readonly authorName = input.required<string>();
 	public readonly currentWorkSlug = input<string>();
 }

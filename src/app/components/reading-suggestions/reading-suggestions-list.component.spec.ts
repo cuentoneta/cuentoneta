@@ -4,6 +4,7 @@ import { clearAllMocks } from '@test-utils';
 
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
 import type { LiteraryWorkCardTeaserContent } from '@components/literary-work-card-teaser/literary-work-card-teaser.component';
+import type { NavigationParams } from '@app-utils/navigation-params';
 import {
 	onoffLiteraryWorkTeasersMock,
 	onoffLiteraryWorkTeasersWithMediaSourcesMock,
@@ -17,6 +18,7 @@ type ReadingSuggestionsInputs = Partial<{
 	loading: boolean;
 	moreLabel: string;
 	moreRoute: string | readonly string[] | undefined;
+	navigationParams: NavigationParams;
 	showAuthor: boolean;
 	tagLabel: string;
 }>;

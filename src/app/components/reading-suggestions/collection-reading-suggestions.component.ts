@@ -10,8 +10,8 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 import { adaptStoryTeasersToLiteraryWorkTeasers } from './story-teaser-to-literary-work.adapter';
 
 /**
- * Sugerencias de otras obras de la misma colección. Resuelve los datos y delega la presentación en
- * ReadingSuggestions.
+ * Sugerencias de otras obras de la misma colección. Es una de las dos variantes que monta
+ * ReadingSuggestions: resuelve los datos y delega la presentación en ReadingSuggestionsList.
  *
  * TODO: cambiar el provider de Storylist a Collection cuando la página de lectura integre la tríada.
  *
