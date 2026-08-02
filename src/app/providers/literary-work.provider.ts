@@ -55,7 +55,13 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 			authors: dto.authors,
 			coverImage: dto.coverImage,
 			content: dto.content.map(this.toSection),
-			mediaSources: dto.mediaSources,
+			// El DTO transporta los medios como objeto de dominio opaco, así que su descripción cruza el
+			// wire sin que el schema Zod la valide. Se rehidrata por la misma factory que el cuerpo y los
+			// epígrafes, para que la garantía de `SanitizedHtml` sea la misma en toda la superficie.
+			mediaSources: dto.mediaSources.map((media) => ({
+				...media,
+				description: createSanitizedHtml(media.description),
+			})),
 			resources: dto.resources,
 			badLanguage: dto.badLanguage,
 			tags: dto.tags,

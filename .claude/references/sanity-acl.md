@@ -26,7 +26,7 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 
 > **Alcance de los ejemplos de este archivo.** El pipeline se ejemplifica con el módulo `story`
 > (`src/api/modules/story/`), hoy el único módulo de contenido narrativo con esta capa completa
-> (repository → mapper → service → controller) mergeada, con el ACL como **mappers puros en
+> (repository → mapper → service → controller), con el ACL como **mappers puros en
 > `_utils/*.functions.ts`** (ver más abajo). `LiteraryWork` **diverge a propósito**: su ACL (la
 > traducción raw Sanity → dominio) vive **dentro del repository**
 > (`SanityLiteraryWorkRepository`, `src/api/modules/literary-work/literary-work.repository.ts`) como
@@ -34,8 +34,8 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 > **dirección arquitectónica objetivo**: el repository es dueño de su propia ACL y entrega
 > `LiteraryWork` de dominio listo; el service recibe dominio, sin una capa de mappers intermedia.
 > `story` conserva por ahora el patrón mapper-en-`_utils` de los ejemplos de abajo, hasta que se
-> migre. El repository de `LiteraryWork` está en review en **PR #2002** (#1853, Slice 1a); el
-> service (`getLiteraryWorkBySlug`) sigue pendiente — contrato cerrado en
+> migre. El módulo `literary-work` ya está completo de punta a punta (repository → service →
+> controller), con el contrato en
 > [`docs/LITERARY_WORK_DESIGN.md`](../../docs/LITERARY_WORK_DESIGN.md) §6. Los ejemplos de código de
 > abajo se conservan sobre `story`, que sigue vigente para ese patrón.
 
@@ -263,8 +263,9 @@ creada todavía en el repo. Mientras tanto, rige el patrón de funciones `fetch*
 (`SanityLiteraryWorkRepository`) + doble (`InMemoryLiteraryWorkRepository`), ver
 `docs/LITERARY_WORK_DESIGN.md` §6 —, pero con una divergencia adicional respecto de este patrón:
 la ACL (traducción raw → dominio) no queda en `_utils/functions.ts`, sino **dentro del repository**,
-como métodos privados de `SanityLiteraryWorkRepository`. El repository de `LiteraryWork` está en
-review en **PR #2002** (#1853, Slice 1a); el service sigue pendiente.
+como métodos privados de `SanityLiteraryWorkRepository`. El service (`getLiteraryWorkBySlug`) recibe
+el dominio ya mapeado y elige la implementación del repository por parámetro (default: la de
+Sanity) — eso es lo que permite testearlo con el doble en memoria sin contenedor de DI.
 
 ---
 

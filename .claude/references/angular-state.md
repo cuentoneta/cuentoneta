@@ -17,7 +17,7 @@ Dónde viven los servicios de estado:
 - **`@Injectable({ providedIn: 'root' })`** para estado/acceso a datos de aplicación (singleton). Es el default de todo servicio del frontend, salvo indicación explícita en contrario. Ej.: `LayoutService`, `SchemaOrgService` y las implementaciones de API (`HttpStoryApi`, `HttpAuthorApi`, …) en [`src/app/providers/`](../../src/app/providers/). Los consumidores inyectan el **token** `*Api` (`StoryApi`, `AuthorApi`, …), no la clase concreta — ver [`clean-architecture.md`](clean-architecture.md).
 - **`@Injectable()` provisto en un componente** cuando el estado es local a un subárbol y debe morir con él. Ej.: `CarouselStateService`, provisto en el `providers` del componente de carousel.
 
-> Los servicios de acceso a datos del frontend viven en `src/app/providers/` _(en migración al patrón `provideX()` / `*.provider.ts` — ver #1499)_.
+> Los servicios de acceso a datos del frontend viven en `src/app/providers/`, con el patrón `provideX()` / `*.provider.ts`.
 
 ---
 
@@ -139,7 +139,7 @@ Preferir un estado de error **por operación** a un único `string | null` compa
 
 ### 7. Recursos de página: bloquear el SSR con `ssrBlockingRxResource`
 
-En **componentes de página** (`src/app/pages/**`), los recursos que alimentan contenido indexable o meta tags por página se declaran con **`ssrBlockingRxResource`** (de [`@app-utils/ssr-resource`](../../src/app/utils/ssr-resource.ts)), no con `rxResource` crudo. El helper pipea el stream por `pendingUntilEvent`: registra una `PendingTask` que hace esperar la serialización del SSR (`ApplicationRef.whenStable()`) hasta que el fetch emite, completa o falla. Sin él, el server emite el skeleton con meta genérico y Google indexa una página vacía (#1704). En el browser no afecta el render, solo retrasa `isStable`, así que la carga progresiva in-app se conserva.
+En **componentes de página** (`src/app/pages/**`), los recursos que alimentan contenido indexable o meta tags por página se declaran con **`ssrBlockingRxResource`** (de [`@app-utils/ssr-resource`](../../src/app/utils/ssr-resource.ts)), no con `rxResource` crudo. El helper pipea el stream por `pendingUntilEvent`: registra una `PendingTask` que hace esperar la serialización del SSR (`ApplicationRef.whenStable()`) hasta que el fetch emite, completa o falla. Sin él, el server emite el skeleton con meta genérico y Google indexa una página vacía. En el browser no afecta el render, solo retrasa `isStable`, así que la carga progresiva in-app se conserva.
 
 Para **datos secundarios o no indexables** que deben seguir cargando progresivamente (p. ej. el listado de cuentos de un autor, o los frames de navegación), usar **`progressiveRxResource`** — un alias explícito de `rxResource` que documenta que el no-bloqueo es una decisión, no un olvido.
 
@@ -159,7 +159,7 @@ readonly storiesResource = progressiveRxResource({
 
 Cuándo **bloquear**: rutas cuyo HTML server-rendered debe traer contenido/meta reales — `RenderMode.Server` indexables y `Prerender` con contenido (el prerender de build gana contenido real en vez de skeleton). Cuándo **no**: rutas `noindex` servidas por request con meta estáticos (bloquear solo agrega latencia sin ganar indexación → `progressiveRxResource`), y datos secundarios.
 
-**Enforced por lint:** en `src/app/pages/**` está prohibido `rxResource`/`httpResource` crudo — el gate `lint` obliga a elegir `ssrBlockingRxResource` o `progressiveRxResource` (`no-restricted-syntax`, bloque `ssr-fetch-must-decide-blocking` de `eslint.config.mjs`; #1705).
+**Enforced por lint:** en `src/app/pages/**` está prohibido `rxResource`/`httpResource` crudo — el gate `lint` obliga a elegir `ssrBlockingRxResource` o `progressiveRxResource` (`no-restricted-syntax`, bloque `ssr-fetch-must-decide-blocking` de `eslint.config.mjs`).
 
 ### 8. Directivas de SEO de página: declarar el combo según la indexabilidad
 
@@ -170,7 +170,7 @@ Cada componente de página compone su SEO en el campo **`hostDirectives`** del d
 
 Una página indexable **nunca** debe usar la forma no indexable: quedaría sin structured data y sin `setRobots('index...')` de forma silenciosa.
 
-**Enforced por test:** el gate `test` corre `src/app/pages/seo-host-directives.spec.ts` (#1726), que descubre las páginas desde `app.routes.server.ts` (rutas `Server`/`Prerender`) resolviendo su fuente vía el `loadComponent` de `app.routes.ts`, y deriva la indexabilidad del propio código: una página que llama `setRobots('noindex...')` solo debe declarar `[HeadMetadataDirective]`; cualquier otra se considera indexable y debe declarar el combo MetaTags + StructuredData. No hay registro que mantener ni imports de componentes: una página nueva se chequea automáticamente y **rompe el test** si es indexable sin structured data (para saltearse el combo hay que emitir un `noindex` real, visible en el diff).
+**Enforced por test:** el gate `test` corre `src/app/pages/seo-host-directives.spec.ts`, que descubre las páginas desde `app.routes.server.ts` (rutas `Server`/`Prerender`) resolviendo su fuente vía el `loadComponent` de `app.routes.ts`, y deriva la indexabilidad del propio código: una página que llama `setRobots('noindex...')` solo debe declarar `[HeadMetadataDirective]`; cualquier otra se considera indexable y debe declarar el combo MetaTags + StructuredData. No hay registro que mantener ni imports de componentes: una página nueva se chequea automáticamente y **rompe el test** si es indexable sin structured data (para saltearse el combo hay que emitir un `noindex` real, visible en el diff).
 
 ---
 

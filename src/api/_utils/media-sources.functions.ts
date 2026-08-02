@@ -10,7 +10,9 @@ import {
 	SpotifyPodcastEpisode,
 	YouTubeVideo,
 } from '@models/media.model';
-import { mapBlockContentToTextParagraphs, urlFor } from './functions';
+import { urlFor } from './functions';
+import { createMarkdown } from '@models/markdown.model';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
 // El mapeo se invoca con la proyección de mediaSources de story, storylist, obra y teaser. Hoy son
 // estructuralmente idénticas salvo por `audioUrl`, que solo resuelven las tres primeras; aceptarlas
@@ -37,12 +39,29 @@ export function mapMediaSources(
 
 	const media: Media[] = [];
 	for (const mediaSource of mediaSources) {
-		const mapped = mapMediaSource(mediaSource);
+		const mapped = mapMediaSourceOrDiscard(mediaSource);
 		if (mapped) {
 			media.push(mapped);
 		}
 	}
 	return media;
+}
+
+// Un recurso cuya descripción no pase el pipeline se descarta con rastro, en vez de propagar y tirar la
+// respuesta entera. `Rule.required()` no se aplica retroactivamente a documentos ya publicados, así que
+// mientras el contenido cargado no migre puede llegar una descripción vacía o en el formato viejo: eso
+// debe costar un widget, no la página. Misma contención que ya aplica el tipo no modelado.
+function mapMediaSourceOrDiscard(mediaSource: MediaSource): Media | undefined {
+	try {
+		return mapMediaSource(mediaSource);
+	} catch (error) {
+		console.warn(`mediaSource descartado: su descripción no pudo mapearse`, {
+			_key: mediaSource._key,
+			_type: mediaSource._type,
+			cause: error,
+		});
+		return undefined;
+	}
 }
 
 function mapMediaSource(mediaSource: MediaSource): Media | undefined {
@@ -72,7 +91,7 @@ function getAudioRecordingData(mediaSource: AudioRecordingSource): AudioRecordin
 	return {
 		title: mediaSource.title,
 		type: mediaSource._type,
-		description: mapBlockContentToTextParagraphs(mediaSource.description),
+		description: markdownToSanitizedHtml(createMarkdown(mediaSource.description)),
 		data: {
 			url: mediaSource.url,
 		},
@@ -83,7 +102,7 @@ function getSpaceRecordingData(mediaSource: SpaceRecordingSource): SpaceRecordin
 	return {
 		title: mediaSource.title,
 		type: mediaSource._type,
-		description: mapBlockContentToTextParagraphs(mediaSource.description),
+		description: markdownToSanitizedHtml(createMarkdown(mediaSource.description)),
 		data: {
 			// La proyección de teaser no resuelve audioUrl; el resto sí. Se pasa null tal cual (en vez
 			// de '') para que el widget muestre un placeholder visible en vez de un reproductor roto.
@@ -100,7 +119,7 @@ function getYoutubeVideoData(mediaSource: YouTubeVideoSource): YouTubeVideo {
 	return {
 		title: mediaSource.title,
 		type: mediaSource._type,
-		description: mapBlockContentToTextParagraphs(mediaSource.description),
+		description: markdownToSanitizedHtml(createMarkdown(mediaSource.description)),
 		data: {
 			videoId: mediaSource.videoId,
 		},
@@ -111,7 +130,7 @@ function getSpotifyPodcastEpisodeData(mediaSource: SpotifyPodcastEpisodeSource):
 	return {
 		title: mediaSource.title,
 		type: mediaSource._type,
-		description: mapBlockContentToTextParagraphs(mediaSource.description),
+		description: markdownToSanitizedHtml(createMarkdown(mediaSource.description)),
 		data: {
 			url: mediaSource.url,
 		},

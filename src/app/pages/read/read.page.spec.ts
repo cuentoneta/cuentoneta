@@ -4,6 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 // 3rd party modules
 import { render, screen } from '@testing-library/angular';
+import { restoreAllMocks, spyOn } from '@test-utils';
 import { throwError, type Observable } from 'rxjs';
 
 // Models
@@ -21,6 +22,9 @@ import {
 } from '@mocks/onoff-literary-works.mock';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
 import type { LiteraryWorkApi } from '../../providers/literary-work-api.interface';
+import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
+import { AppRoutes } from '../../app.routes';
 import ReadPage from './read.page';
 
 class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
@@ -103,6 +107,8 @@ describe('ReadPage', () => {
 		});
 	};
 
+	afterEach(() => restoreAllMocks());
+
 	// Test de aceptación del AC principal (epic #1481): una obra de una sola sección ofrece al lector
 	// las mismas affordances que la página Story (story.component.html) — título como encabezado
 	// principal, byline de autoría, indicador de tiempo de lectura, control de compartir y el cuerpo
@@ -129,12 +135,11 @@ describe('ReadPage', () => {
 		// La prosa benigna del cuerpo sí llega al lector...
 		expect(await screen.findByText(/Final legible de la obra maliciosa/i)).toBeTruthy();
 
-		// ...pero ningún vector sobrevive como elemento ejecutable ni como atributo de handler en el
-		// DOM renderizado por [innerHTML]+bypassSecurityTrustHtml. Se consulta el `container` del render
-		// (no el document, que sí contiene el <script> JSON-LD legítimo de structured data): la ausencia
-		// de estos tags/atributos no se expresa por rol de ATL, de ahí el acceso directo al nodo. (No se
-		// afirma ausencia de <img> a secas: la página renderiza la portada legítima; el handler malicioso
-		// lo cubre el selector [onerror] de abajo.)
+		// ...pero ningún vector sobrevive como elemento ejecutable ni como atributo de handler en el DOM
+		// renderizado por [innerHTML]+bypassSecurityTrustHtml. Se consulta el `container` del render, que
+		// acota la aserción al árbol de la página: la ausencia de estos tags/atributos no se expresa por
+		// rol de ATL, de ahí el acceso directo al nodo. (No se afirma ausencia de <img> a secas: la página
+		// renderiza la portada legítima; el handler malicioso lo cubre el selector [onerror] de abajo.)
 		/* eslint-disable testing-library/no-container, testing-library/no-node-access */
 		expect(container.querySelector('script')).toBeNull();
 		expect(container.querySelector('a[href^="javascript:"]')).toBeNull();
@@ -192,6 +197,48 @@ describe('ReadPage', () => {
 			expect(screen.queryByRole('heading', { level: 2, name: 'Nota editorial' })).toBeNull();
 		},
 	);
+
+	// El guardrail `seo-host-directives.spec.ts` deriva la indexabilidad del propio código, así que
+	// sigue verde si alguien vuelve la página a indexable: estos casos son los que fijan el opt-out de
+	// indexación y la metadata que ReadMetaTagsDirective dejó de aportar al quedar aparcada.
+	describe('metadata de la cabecera', () => {
+		it('marca la página como no indexable', async () => {
+			const robotsSpy = spyOn(HeadMetadataDirective.prototype, 'setRobots');
+
+			await setup(representativeLiteraryWork);
+
+			expect(robotsSpy).toHaveBeenCalledWith('noindex, nofollow');
+		});
+
+		// El noindex no depende de que la obra cargue: si el meta solo se emitiera con datos, un fallo
+		// del backend serviría la página sin señal para el crawler.
+		it('marca la página como no indexable incluso cuando la obra no carga', async () => {
+			const robotsSpy = spyOn(HeadMetadataDirective.prototype, 'setRobots');
+
+			await setup(representativeLiteraryWork, { api: new StubFailingLiteraryWorkApi(404) });
+
+			expect(robotsSpy).toHaveBeenCalledWith('noindex, nofollow');
+		});
+
+		it('titula la página con el título de la obra y su byline', async () => {
+			const titleSpy = spyOn(HeadMetadataDirective.prototype, 'setTitle');
+
+			await setup(representativeLiteraryWork);
+
+			const byline = representativeLiteraryWork.authors.map((author) => author.name).join(', ');
+			expect(titleSpy).toHaveBeenCalledWith(`${representativeLiteraryWork.title} - ${byline}`);
+		});
+
+		it('emite un canonical self-referencial derivado del slug de la obra', async () => {
+			const canonicalSpy = spyOn(HeadMetadataDirective.prototype, 'setCanonicalUrl');
+
+			await setup(representativeLiteraryWork);
+
+			expect(canonicalSpy).toHaveBeenCalledWith(
+				buildCanonicalUrl(`${AppRoutes.Read}/${representativeLiteraryWork.slug}`),
+			);
+		});
+	});
 
 	it('should render the not-found state and mark the SSR response as 404', async () => {
 		const responseInit: ResponseInit = {};

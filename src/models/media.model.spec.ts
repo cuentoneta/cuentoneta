@@ -1,14 +1,16 @@
 import { isAudioRecording, isSpaceRecording, isSpotifyPodcastEpisode, isYouTubeVideo, type Media } from './media.model';
-import { audioRecordingMock } from '@mocks/audio-recording.mock';
-import { spaceRecordingMock } from '@mocks/space-recording.mock';
-import { spotifyPodcastEpisodeMock } from '@mocks/spotify-podcast-episode.mock';
-import { youtubeVideoMock } from '@mocks/youtube-video.mock';
+import {
+	onoffAudioRecordingsMock,
+	onoffSpaceRecordingsMock,
+	onoffSpotifyPodcastEpisodesMock,
+	onoffYouTubeVideosMock,
+} from '@mocks/onoff-media.mock';
 
 const guards = [
-	{ name: 'isAudioRecording', guard: isAudioRecording, own: audioRecordingMock },
-	{ name: 'isSpaceRecording', guard: isSpaceRecording, own: spaceRecordingMock },
-	{ name: 'isYouTubeVideo', guard: isYouTubeVideo, own: youtubeVideoMock },
-	{ name: 'isSpotifyPodcastEpisode', guard: isSpotifyPodcastEpisode, own: spotifyPodcastEpisodeMock },
+	{ name: 'isAudioRecording', guard: isAudioRecording, own: onoffAudioRecordingsMock[0] },
+	{ name: 'isSpaceRecording', guard: isSpaceRecording, own: onoffSpaceRecordingsMock[0] },
+	{ name: 'isYouTubeVideo', guard: isYouTubeVideo, own: onoffYouTubeVideosMock[0] },
+	{ name: 'isSpotifyPodcastEpisode', guard: isSpotifyPodcastEpisode, own: onoffSpotifyPodcastEpisodesMock[0] },
 ];
 
 const everyMedia: Media[] = guards.map((entry) => entry.own);

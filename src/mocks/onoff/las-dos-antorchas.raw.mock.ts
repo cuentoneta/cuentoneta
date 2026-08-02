@@ -1,5 +1,5 @@
 import type { StoryBySlugQueryResult } from '@sanity-types';
-import { rawNovelaTag, rawMetaficcionTag, rawExperimentalTag } from '../onoff-tags.mock';
+import { novelaRawTag, metaficcionRawTag, experimentalRawTag } from '../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 
 export const lasDosAntorchasRawStory: NonNullable<StoryBySlugQueryResult> = {
@@ -267,6 +267,6 @@ export const lasDosAntorchasRawStory: NonNullable<StoryBySlugQueryResult> = {
 	},
 	mediaSources: [],
 	resources: [],
-	tags: [rawNovelaTag, rawMetaficcionTag, rawExperimentalTag],
+	tags: [novelaRawTag, metaficcionRawTag, experimentalRawTag],
 	author: rawOnoffAuthor,
 };

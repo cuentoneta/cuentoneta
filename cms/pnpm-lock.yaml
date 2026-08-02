@@ -9,7 +9,7 @@ overrides:
   ws: '>=8.20.1'
   brace-expansion@5: '>=5.0.6'
 
-packageExtensionsChecksum: sha256-yjaeXrkw/GL9ZkPlL0is7IpiClzrRaTcxEkwpV5+8Vg=
+packageExtensionsChecksum: sha256-RMKf5hj7tASMngDdNM09OdogqpHLVM6SCtg7LfiIBjw=
 
 importers:
   .:
@@ -59,9 +59,6 @@ importers:
       sanity-plugin-computed-field:
         specifier: ^2.0.2
         version: 2.0.2(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)(sanity@5.31.1(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.0.1)(@oclif/core@4.13.2)(@sanity/cli-core@1.3.4(@noble/hashes@2.0.1)(@types/node@24.13.3)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.33.0)(yaml@2.9.0))(@types/node@24.13.3)(@types/react@19.1.8)(babel-plugin-react-compiler@1.0.0)(immer@10.1.1)(jiti@2.7.0)(lightningcss@1.33.0)(prismjs@1.27.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@5.8.3))(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
-      sanity-plugin-icon-picker:
-        specifier: ^4.0.0
-        version: 4.0.0(@emotion/is-prop-valid@1.4.0)(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)(sanity@5.31.1(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.0.1)(@oclif/core@4.13.2)(@sanity/cli-core@1.3.4(@noble/hashes@2.0.1)(@types/node@24.13.3)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.33.0)(yaml@2.9.0))(@types/node@24.13.3)(@types/react@19.1.8)(babel-plugin-react-compiler@1.0.0)(immer@10.1.1)(jiti@2.7.0)(lightningcss@1.33.0)(prismjs@1.27.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@5.8.3))
       sanity-plugin-markdown:
         specifier: ^9.0.9
         version: 9.0.9(@emotion/is-prop-valid@1.4.0)(easymde@2.21.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(sanity@5.31.1(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.0.1)(@oclif/core@4.13.2)(@sanity/cli-core@1.3.4(@noble/hashes@2.0.1)(@types/node@24.13.3)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.33.0)(yaml@2.9.0))(@types/node@24.13.3)(@types/react@19.1.8)(babel-plugin-react-compiler@1.0.0)(immer@10.1.1)(jiti@2.7.0)(lightningcss@1.33.0)(prismjs@1.27.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@5.8.3))(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
@@ -861,11 +858,6 @@ packages:
     engines: { node: '>=6.9.0' }
     peerDependencies:
       '@babel/core': ^7.0.0-0
-
-  '@babel/runtime-corejs3@7.27.6':
-    resolution:
-      { integrity: sha512-vDVrlmRAY8z9Ul/HxT+8ceAru95LQgkSKiXkSYZvqtbkPSfhZJgpRp45Cldbh1GJ1kxzQkI70AqyrTI58KpaWQ== }
-    engines: { node: '>=6.9.0' }
 
   '@babel/runtime@7.27.6':
     resolution:
@@ -3499,10 +3491,6 @@ packages:
     resolution:
       { integrity: sha512-VQXt1jr9cBz03b331DFDCCP90b3fanciLkgiOoy8SBHy06gNf+vQ1A3WFLqG7I8TipYIKeYK9wxd0tUrvHcOZA== }
 
-  core-js-pure@3.43.0:
-    resolution:
-      { integrity: sha512-i/AgxU2+A+BbJdMxh3v7/vxi2SbFqxiFmg6VsDwYB4jkucrd1BZNA9a9gphC0fYMG5IBSgQcbQnk865VCLe7xA== }
-
   core-util-is@1.0.3:
     resolution:
       { integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ== }
@@ -3592,11 +3580,6 @@ packages:
     peerDependenciesMeta:
       supports-color:
         optional: true
-
-  decamelize@3.2.0:
-    resolution:
-      { integrity: sha512-4TgkVUsmmu7oCSyGBm5FvfMoACuoh9EOidm7V5/J2X2djAwwt57qb3F2KMP2ITqODTCSwb+YRV+0Zqrv18k/hw== }
-    engines: { node: '>=6' }
 
   decimal.js@10.6.0:
     resolution:
@@ -3968,11 +3951,6 @@ packages:
         optional: true
       react-dom:
         optional: true
-
-  framework7-icons@5.0.5:
-    resolution:
-      { integrity: sha512-bvHMLyujV9TFuudehd3ORZ/EvNp19Ir3ckVzYAOf3MkLymHba/9oHLsgopCh0x5UsrYZUpkrE+fd7ggj5y4wRw== }
-    engines: { node: '>= 0.10.0' }
 
   fsevents@2.3.3:
     resolution:
@@ -4757,10 +4735,6 @@ packages:
     resolution:
       { integrity: sha512-l54rkKXlLBt3ob3zOLWHcnjvwUmX5bNEZ70igyapOZZC9imzqBmq1oz8p2roiV04KhjblFIi2hetLPF1oYVLRA== }
 
-  memoize-one@5.2.1:
-    resolution:
-      { integrity: sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q== }
-
   mendoza@3.0.8:
     resolution:
       { integrity: sha512-iwxgEpSOx9BDLJMD0JAzNicqo9xdrvzt6w/aVwBKMndlA6z/DH41+o60H2uHB0vCR1Xr37UOgu9xFWJHvYsuKw== }
@@ -5319,12 +5293,6 @@ packages:
       typescript:
         optional: true
 
-  react-icons@4.12.0:
-    resolution:
-      { integrity: sha512-IBaDuHiShdZqmfc/TwHu6+d6k2ltNCf3AszxNmjJc1KUfXdEeRJOKyNvLmAHaarhzGmTSVygNdyu8/opXv2gaw== }
-    peerDependencies:
-      react: '*'
-
   react-icons@5.7.0:
     resolution:
       { integrity: sha512-LBLy340Rzqy6+/yVhZKT3B/QpP1BZaesGqasf09HPOBzRarcDIFH0WwXlXQfE7q7ipxK4MSiC5DIBWURCny6fw== }
@@ -5371,21 +5339,6 @@ packages:
       easymde: '>= 2.0.0 < 3.0.0'
       react: '>=16.8.2'
       react-dom: '>=16.8.2'
-
-  react-virtualized-auto-sizer@1.0.26:
-    resolution:
-      { integrity: sha512-CblNyiNVw2o+hsa5/49NH2ogGxZ+t+3aweRvNSq7TVjDIlwk7ir4lencEg5HxHeSzwNarSkNkiu0qJSOXtxm5A== }
-    peerDependencies:
-      react: ^15.3.0 || ^16.0.0-alpha || ^17.0.0 || ^18.0.0 || ^19.0.0
-      react-dom: ^15.3.0 || ^16.0.0-alpha || ^17.0.0 || ^18.0.0 || ^19.0.0
-
-  react-window@1.8.11:
-    resolution:
-      { integrity: sha512-+SRbUVT2scadgFSWx+R1P754xHPEqvcfSfVX10QYg6POOz+WNgkN48pS+BtZNIMGiL1HYrSEiCkwsMS15QogEQ== }
-    engines: { node: '>8.0.0' }
-    peerDependencies:
-      react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   react@19.2.8:
     resolution:
@@ -5567,16 +5520,6 @@ packages:
     engines: { node: '>=18' }
     peerDependencies:
       react: ^18
-      sanity: ^3
-
-  sanity-plugin-icon-picker@4.0.0:
-    resolution:
-      { integrity: sha512-+iLTymIYqa6HqgjQvNgcT8QDmakohAm0M/dLg6azmGw3w1xnugY2+Pqqv53Rq+ujriGhy665jawvAbvJrpM9dA== }
-    engines: { node: '>=14' }
-    peerDependencies:
-      react: ^18.3 || ^19
-      react-dom: ^18.3 || ^19
-      react-is: ^18.3 || ^19
       sanity: ^3
 
   sanity-plugin-markdown@9.0.9:
@@ -6418,10 +6361,6 @@ packages:
   xmlchars@2.2.0:
     resolution:
       { integrity: sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw== }
-
-  xregexp@4.4.1:
-    resolution:
-      { integrity: sha512-2u9HwfadaJaY9zHtRRnH6BY6CQVNQKkYm3oLtC9gJXXzfsbACg5X5e4EZZGVAH+YIfa+QA9lsFQTTe3HURF3ag== }
 
   xstate@5.32.2:
     resolution:
@@ -7348,10 +7287,6 @@ snapshots:
       make-dir: 2.1.0
       pirates: 4.0.7
       source-map-support: 0.5.21
-
-  '@babel/runtime-corejs3@7.27.6':
-    dependencies:
-      core-js-pure: 3.43.0
 
   '@babel/runtime@7.27.6': {}
 
@@ -10087,8 +10022,6 @@ snapshots:
     dependencies:
       browserslist: 4.28.7
 
-  core-js-pure@3.43.0: {}
-
   core-util-is@1.0.3: {}
 
   crelt@1.0.6: {}
@@ -10165,10 +10098,6 @@ snapshots:
       ms: 2.1.3
     optionalDependencies:
       supports-color: 8.1.1
-
-  decamelize@3.2.0:
-    dependencies:
-      xregexp: 4.4.1
 
   decimal.js@10.6.0: {}
 
@@ -10470,8 +10399,6 @@ snapshots:
       '@emotion/is-prop-valid': 1.4.0
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
-
-  framework7-icons@5.0.5: {}
 
   fsevents@2.3.3:
     optional: true
@@ -11095,8 +11022,6 @@ snapshots:
 
   media-tracks@0.3.5: {}
 
-  memoize-one@5.2.1: {}
-
   mendoza@3.0.8: {}
 
   merge2@1.4.1: {}
@@ -11485,10 +11410,6 @@ snapshots:
       react-dom: 19.2.8(react@19.2.8)
       typescript: 5.8.3
 
-  react-icons@4.12.0(react@19.2.8):
-    dependencies:
-      react: 19.2.8
-
   react-icons@5.7.0(react@19.2.8):
     dependencies:
       react: 19.2.8
@@ -11525,18 +11446,6 @@ snapshots:
     dependencies:
       '@types/codemirror': 5.60.17
       easymde: 2.21.0
-      react: 19.2.8
-      react-dom: 19.2.8(react@19.2.8)
-
-  react-virtualized-auto-sizer@1.0.26(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
-    dependencies:
-      react: 19.2.8
-      react-dom: 19.2.8(react@19.2.8)
-
-  react-window@1.8.11(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
-    dependencies:
-      '@babel/runtime': 7.27.6
-      memoize-one: 5.2.1
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
@@ -11750,26 +11659,6 @@ snapshots:
       - react-dom
       - react-is
       - styled-components
-
-  sanity-plugin-icon-picker@4.0.0(@emotion/is-prop-valid@1.4.0)(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)(sanity@5.31.1(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.0.1)(@oclif/core@4.13.2)(@sanity/cli-core@1.3.4(@noble/hashes@2.0.1)(@types/node@24.13.3)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.33.0)(yaml@2.9.0))(@types/node@24.13.3)(@types/react@19.1.8)(babel-plugin-react-compiler@1.0.0)(immer@10.1.1)(jiti@2.7.0)(lightningcss@1.33.0)(prismjs@1.27.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@5.8.3)):
-    dependencies:
-      '@sanity/icons': 3.8.0(react@19.2.8)
-      '@sanity/incompatible-plugin': 1.0.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@sanity/ui': 2.16.26(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
-      decamelize: 3.2.0
-      framework7-icons: 5.0.5
-      react: 19.2.8
-      react-dom: 19.2.8(react@19.2.8)
-      react-icons: 4.12.0(react@19.2.8)
-      react-is: 19.2.8
-      react-virtualized-auto-sizer: 1.0.26(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      react-window: 1.8.11(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      sanity: 5.31.1(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.0.1)(@oclif/core@4.13.2)(@sanity/cli-core@1.3.4(@noble/hashes@2.0.1)(@types/node@24.13.3)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.33.0)(yaml@2.9.0))(@types/node@24.13.3)(@types/react@19.1.8)(babel-plugin-react-compiler@1.0.0)(immer@10.1.1)(jiti@2.7.0)(lightningcss@1.33.0)(prismjs@1.27.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@5.8.3)
-      styled-components: 6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-    transitivePeerDependencies:
-      - '@emotion/is-prop-valid'
-      - css-to-react-native
-      - react-native
 
   sanity-plugin-markdown@9.0.9(@emotion/is-prop-valid@1.4.0)(easymde@2.21.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(sanity@5.31.1(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.0.1)(@oclif/core@4.13.2)(@sanity/cli-core@1.3.4(@noble/hashes@2.0.1)(@types/node@24.13.3)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.33.0)(yaml@2.9.0))(@types/node@24.13.3)(@types/react@19.1.8)(babel-plugin-react-compiler@1.0.0)(immer@10.1.1)(jiti@2.7.0)(lightningcss@1.33.0)(prismjs@1.27.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@5.8.3))(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)):
     dependencies:
@@ -12533,10 +12422,6 @@ snapshots:
   xml-name-validator@5.0.0: {}
 
   xmlchars@2.2.0: {}
-
-  xregexp@4.4.1:
-    dependencies:
-      '@babel/runtime-corejs3': 7.27.6
 
   xstate@5.32.2: {}
 

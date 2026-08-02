@@ -9,7 +9,6 @@ import { RobotIcon } from '@sanity/icons/Robot';
 import { structureTool } from 'sanity/structure';
 import { visionTool } from '@sanity/vision';
 import { sanityComputedField } from 'sanity-plugin-computed-field';
-import { iconPicker } from 'sanity-plugin-icon-picker';
 import { markdownSchema } from 'sanity-plugin-markdown';
 import { singletonTools } from 'sanity-plugin-singleton-management';
 
@@ -31,7 +30,6 @@ export default defineConfig([
 			sanityComputedField(),
 			visionTool(),
 			markdownSchema(),
-			iconPicker(),
 			singletonTools(),
 		],
 		schema: {
@@ -55,7 +53,6 @@ export default defineConfig([
 			sanityComputedField(),
 			visionTool(),
 			markdownSchema(),
-			iconPicker(),
 			singletonTools(),
 		],
 		schema: {
@@ -78,7 +75,6 @@ export default defineConfig([
 			sanityComputedField(),
 			visionTool(),
 			markdownSchema(),
-			iconPicker(),
 		],
 		schema: {
 			types: schemas,

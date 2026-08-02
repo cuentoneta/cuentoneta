@@ -17,7 +17,7 @@ Aplican siempre las reglas de [`CLAUDE.md`](../../../CLAUDE.md) y [`coding-agent
 /release-workflow <issue-url>
 ```
 
-Ejemplo: `/release-workflow https://github.com/cuentoneta/cuentoneta/issues/1672`
+Ejemplo: `/release-workflow https://github.com/cuentoneta/cuentoneta/issues/<id>`
 
 ## Supuestos
 

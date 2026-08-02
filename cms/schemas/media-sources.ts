@@ -32,7 +32,7 @@ export const audioRecording = defineType({
 		defineField({
 			name: 'description',
 			title: 'Descripción de la grabación de audio',
-			type: 'blockContent',
+			type: 'markdown',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
@@ -72,7 +72,7 @@ export const spotifyPodcastEpisode = defineType({
 		defineField({
 			name: 'description',
 			title: 'Descripción del episodio del podcast',
-			type: 'blockContent',
+			type: 'markdown',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
@@ -114,7 +114,7 @@ export const spaceRecording = defineType({
 		defineField({
 			name: 'description',
 			title: 'Descripción del space',
-			type: 'blockContent',
+			type: 'markdown',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
@@ -179,7 +179,7 @@ export const youtubeVideo = defineType({
 		{
 			name: 'description',
 			title: 'Descripción del video',
-			type: 'blockContent',
+			type: 'markdown',
 			validation: (Rule) => Rule.required(),
 		},
 		{
@@ -219,7 +219,7 @@ export const pdfLink = defineType({
 		defineField({
 			name: 'description',
 			title: 'Descripción del documento PDF',
-			type: 'blockContent',
+			type: 'markdown',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({

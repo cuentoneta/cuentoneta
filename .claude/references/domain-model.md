@@ -87,7 +87,7 @@ A diferencia de esta interfaz ya implementada, `Story` (`story.model.ts`) sigue 
 La factory es el **único** punto de construcción de un objeto de dominio: ahí se validan las invariantes y se devuelve el contrato ya congelado. Es la evolución natural del rol que hoy cumplen los mappers del ACL (`mapAuthor`, `mapStoryContent`), que devuelven objetos planos tipados:
 
 ```typescript
-// literary-work.model.ts (implementado, #1852)
+// literary-work.model.ts — implementado
 interface CreateLiteraryWorkOptions {
 	slug: string;
 	title: string;
@@ -179,14 +179,14 @@ El contenido enriquecido (`TextBlockContent` / Portable Text) **se trata como in
 
 ## Value Objects (Slug, ReadingTime, DateString)
 
-Un **Value Object** no tiene identidad propia: representa un concepto del dominio, es inmutable y se compara por su contenido. Hoy `Story`/`Author` siguen usando **tipos primitivos** para estos conceptos (`slug: string`, `approximateReadingTime: number`, `bornOn?: DateString`) — promoverlos a value objects es **roadmap (#1503)**, sin cambios. `LiteraryWork` ya implementa el patrón en producción (#1852): `Slug`, `WordCount`, `ReadingTime`, `Markdown`, `SanitizedHtml`, `ChapterTitle` en `src/models/*.model.ts` (branded types + factory `create*` que valida y lanza), con specs, más `createIsoDateTime` en `src/utils/date.utils.ts`; los contratos están en `docs/LITERARY_WORK_DESIGN.md` §4. Los ejemplos de `Slug`/`ReadingTime` de abajo muestran esa implementación real; `DateString` (`Author.bornOn`/`diedOn`) sigue siendo el ejemplo roadmap, sin factory validadora.
+Un **Value Object** no tiene identidad propia: representa un concepto del dominio, es inmutable y se compara por su contenido. Hoy `Story`/`Author` siguen usando **tipos primitivos** para estos conceptos (`slug: string`, `approximateReadingTime: number`, `bornOn?: DateString`) — promoverlos a value objects es **roadmap (#1503)**, sin cambios. `LiteraryWork` ya implementa el patrón en producción: `Slug`, `WordCount`, `ReadingTime`, `Markdown`, `SanitizedHtml`, `ChapterTitle` en `src/models/*.model.ts` (branded types + factory `create*` que valida y lanza), con specs, más `createIsoDateTime` en `src/utils/date.utils.ts`; los contratos están en `docs/LITERARY_WORK_DESIGN.md` §4. Los ejemplos de `Slug`/`ReadingTime` de abajo muestran esa implementación real; `DateString` (`Author.bornOn`/`diedOn`) sigue siendo el ejemplo roadmap, sin factory validadora.
 
 ### Slug — clave de negocio
 
 `slug` es el patrón **Business Key** del proyecto: identificador amigable, único e **inmutable** que reemplaza al `_id` técnico de Sanity en URLs y rutas (`/story/el-aleph`, `/author/jorge-luis-borges`). El `_id` se reserva para GROQ y manipulación en la capa de datos.
 
 ```typescript
-// slug.model.ts — implementado (#1852)
+// slug.model.ts — implementado
 export type Slug = string & { readonly __brand: 'Slug' };
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -204,7 +204,7 @@ export function createSlug(value: string): Slug {
 Invariante: el tiempo de lectura es un **número positivo** (`>= 1`). Como value object encapsula esa invariante en un solo lugar:
 
 ```typescript
-// reading-time.model.ts — implementado (#1852)
+// reading-time.model.ts — implementado
 export type ReadingTime = number & { readonly __brand: 'ReadingTime' };
 
 export function createReadingTime(minutes: number): ReadingTime {
@@ -288,7 +288,7 @@ Un **agregado** es un cluster de objetos de dominio tratado como una unidad para
 
 **Cómo identificar la raíz:** buscá la entidad que **posee más invariantes de negocio**; esa entidad es la raíz, porque las invariantes solo se garantizan si toda mutación pasa por ella.
 
-En cuentoneta, **`LiteraryWork`** es la raíz de agregado con invariantes **hechas cumplir en código** (implementado, #1852): posee `authors: Author[]` (1..N), `content: LiteraryWorkSection[]`, `resources`, `tags` y `mediaSources`. Sus invariantes, garantizadas por la factory `createLiteraryWork` (`src/models/literary-work.model.ts`):
+En cuentoneta, **`LiteraryWork`** es la raíz de agregado con invariantes **hechas cumplir en código**: posee `authors: Author[]` (1..N), `content: LiteraryWorkSection[]`, `resources`, `tags` y `mediaSources`. Sus invariantes, garantizadas por la factory `createLiteraryWork` (`src/models/literary-work.model.ts`):
 
 - El `slug` tiene formato válido (VO `Slug`) e inmutable una vez creado.
 - El `title` no puede estar vacío.
@@ -298,7 +298,7 @@ En cuentoneta, **`LiteraryWork`** es la raíz de agregado con invariantes **hech
 - `totalReadingTime`/`sectionCount` se derivan en la factory (suma de los `readingTime` de las secciones y `content.length`).
 
 ```typescript
-// literary-work.model.ts — invariantes en tiempo de construcción (implementado, #1852)
+// literary-work.model.ts — invariantes en tiempo de construcción
 export function createLiteraryWork(options: CreateLiteraryWorkOptions): LiteraryWork {
 	if (options.title.trim() === '') {
 		throw new Error(`LiteraryWork inválida: título vacío (slug "${options.slug}")`);
@@ -364,7 +364,7 @@ El ciclo de vida de `Story` hoy es: `Borrador en Sanity → Publicación en cont
 
 Una **policy** es una regla de negocio extraída a una función pura — sin efectos secundarios, sin services inyectados — con la forma `(entity, context) → decision`. Al ser pura es testeable de forma aislada, componible y reutilizable.
 
-En cuentoneta, la policy **implementada** es `isAnonymous` (`literary-work.model.ts`, #1852) — determina si una obra es anónima comparando por slug, no por `_id`:
+En cuentoneta, la policy **implementada** es `isAnonymous` (`literary-work.model.ts`) — determina si una obra es anónima comparando por slug, no por `_id`:
 
 ```typescript
 // policy pura implementada — literary-work.model.ts

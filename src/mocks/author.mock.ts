@@ -1,10 +1,10 @@
 import { AuthorProfile, AuthorTeaser } from '@models/author.model';
-import { tagMock } from './tag.mocks';
+import { colaborativaTagMock } from './onoff-tags.mock';
 
 export const authorMock: AuthorProfile = {
 	_id: 'author_1',
 	slug: 'francois-onoff',
-	tags: [tagMock],
+	tags: [colaborativaTagMock],
 	createdAt: '2021-12-28T00:00:00Z',
 	updatedAt: '2024-05-20T10:30:00Z',
 	nationality: {
@@ -19,26 +19,6 @@ export const authorMock: AuthorProfile = {
 				slug: 'wikipedia',
 				title: 'Wikipedia',
 				shortDescription: 'Enlace a artículo de Wikipedia',
-				description: [
-					{
-						_key: '020ccde1fe7d',
-						markDefs: [],
-						children: [
-							{
-								text: 'Enlace a artículo de Wikipedia',
-								_key: '1dadfddec1750',
-								_type: 'span',
-								marks: [],
-							},
-						],
-						_type: 'block',
-						style: 'normal',
-					},
-				],
-				icon: {
-					provider: 'fa',
-					name: 'fa-wikipedia-w',
-				},
 			},
 		},
 	],
@@ -138,7 +118,7 @@ export const authorMock: AuthorProfile = {
 export const authorTeaserMock: AuthorTeaser = {
 	_id: 'author_1',
 	slug: 'francois-onoff',
-	tags: [tagMock],
+	tags: [colaborativaTagMock],
 	nationality: {
 		country: 'Francia',
 		flag: 'https://cdn.sanity.io/images/s4dbqkc5/production/b80876a5f3a89e13acc14254b1f45dd6d29b79f4-30x20.png',

@@ -521,7 +521,7 @@ interface MarkDef {
 ```typescript
 interface Media {
 	title: string;
-	description: TextBlockContent[];
+	description: SanitizedHtml; // Markdown en el CMS, saneado a HTML por el ACL
 	type: MediaTypeKey; // 'audioRecording' | 'spaceRecording' | 'youTubeVideo' | 'spotifyPodcastEpisode'
 	data?: unknown;
 }
@@ -572,10 +572,10 @@ interface ResourceType {
 	slug: string; // Identificador único del tipo
 	title: string; // Nombre del tipo (ej: "Wikipedia")
 	shortDescription: string; // Descripción corta
-	description: TextBlockContent[]; // Descripción detallada
-	icon: Icon; // Ícono de representación
 }
 ```
+
+> El ícono que acompaña a un recurso en la interfaz lo resuelve el frontend a partir del `slug` del tipo, contra el mapa local de `@models/icon.model`. No viaja desde el CMS.
 
 **Ejemplos de tipos:**
 
@@ -596,18 +596,20 @@ interface Tag {
 	slug: string; // Identificador único
 	title: string; // Nombre de la etiqueta
 	shortDescription: string; // Breve descripción
-	description: TextBlockContent[]; // Descripción completa
-	icon?: Icon; // Ícono opcional
 }
 ```
 
 **Uso:** Clasificar contenido por tema, género, etc.
+
+> Una etiqueta no lleva ícono: `TagComponent` renderiza solo su título. El CMS supo tener un campo de ícono, pero ninguna superficie lo mostraba.
 
 ---
 
 ### Icon (Ícono)
 
 **Propósito:** Referenciar iconos desde diferentes proveedores.
+
+> Ninguna entidad del dominio lo declara ya: ni `Tag` ni `ResourceType` llevan ícono. Otras superficies sí muestran íconos, cada una por su cuenta —`StorylistTab.icon` viaja desde el CMS, y el pie de página y los botones de compartir los nombran literalmente en el código—, pero ninguna usa este tipo.
 
 ```typescript
 interface Icon {
@@ -655,7 +657,6 @@ interface UrlLink {
 interface ContentCampaign {
 	slug: string; // Identificador único
 	title: string; // Título de la campaña
-	description: TextBlockContent[]; // Descripción
 	url: string; // URL de destino
 
 	contents: {

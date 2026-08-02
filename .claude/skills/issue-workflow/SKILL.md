@@ -15,7 +15,7 @@ Orquesta el ciclo de vida completo para resolver un issue de GitHub en **cuenton
 /issue-workflow <issue-url>
 ```
 
-Ejemplo: `/issue-workflow https://github.com/cuentoneta/cuentoneta/issues/1234`
+Ejemplo: `/issue-workflow https://github.com/cuentoneta/cuentoneta/issues/<id>`
 
 ---
 
@@ -258,9 +258,10 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 1. Abordar cada **Crítico** y **Advertencia** de `workspace/<number>/CODE_REVIEW.md` — y de `workspace/<number>/SECURITY_REVIEW.md` si corrió el auditor — por prioridad (Críticos primero).
 2. Tras cada fix, actualizar la columna **Estado** en el archivo al que pertenece el hallazgo (`CODE_REVIEW.md` o `SECURITY_REVIEW.md`), con los valores canónicos del `code-reviewer` (Detectado / En progreso / Corregido / Descartado / Diferido / No se corrige / Requiere test E2E).
 3. Un commit atómico por fix. El mensaje describe el **cambio real**, nunca referencia el número de hallazgo.
-   - ✅ `[#1234] - Acota la constante al cuerpo de la función — estaba a nivel de módulo`
-   - ❌ `[#1234] - Arregla el hallazgo #2`
+   - ✅ `[#<issue>] - Acota la constante al cuerpo de la función — estaba a nivel de módulo`
+   - ❌ `[#<issue>] - Arregla el hallazgo #2`
 4. Si un hallazgo se **difiere**, proponer el issue al usuario y **esperar su confirmación** antes de crearlo (`gh issue create`); una vez creado, anotar su URL junto al valor **Diferido** en la columna **Estado**. Crear un issue es una acción hacia afuera: la misma política rige en la Fase 6.
+   - **Título sin prefijo de categoría** (`[Tooling]`, `[SEO]`, `[#<id>]`, ni variantes con guion o dos puntos): la categoría va en `--label` y la pertenencia a una iniciativa en la relación de sub-issue. Si ningún label existente encaja, proponer su creación al usuario en vez de codificar la categoría en el título. Ver [`coding-agent-policies.md`](../../references/coding-agent-policies.md) Sección 2.
 5. Tras abordar Críticos y Advertencias, re-correr los gates de CI. Arreglar regresiones.
 6. Las **Sugerencias** son opcionales: presentarlas y dejar que el usuario decida.
 7. Si un hallazgo es específicamente un **gap de cobertura de tests**, el orquestador **puede** delegar en **`test-generator`** el scaffolding de los specs faltantes (en modo worktree, adjuntar la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales"). Es un aid opcional, **no** un gate: los tests igual deben existir y pasar; el agente es solo una vía para producirlos.
@@ -298,6 +299,7 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 4. Escanear la sesión por ítems **fuera de alcance** (fixes/hallazgos/mejoras más allá del issue). Si hay:
    - Actualizar la descripción del issue (`gh issue edit`) con una sección "Fuera de alcance (abordado en este PR)".
    - Preguntar al usuario si quiere crear issues separados para follow-ups. Esperar confirmación antes de crearlos. **Nunca crear issues en repos donde el usuario no es contribuidor.**
+   - Al crearlos, aplican las mismas reglas de la Fase 5 paso 4: **título sin prefijo de categoría**, categoría en `--label`, y sub-issue del epic cuando el follow-up pertenece a una iniciativa.
 5. Presentar el resumen final como **exactamente** esta tabla Item/Valor (renderizar solo después de que push + PR + edición del issue se completaron con artefactos reales):
 
    ```markdown

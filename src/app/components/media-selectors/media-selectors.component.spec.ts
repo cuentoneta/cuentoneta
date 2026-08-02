@@ -3,17 +3,14 @@ import { MediaSelectorsComponent } from './media-selectors.component';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { Media } from '@models/media.model';
+import { onoffSpotifyPodcastEpisodesMock, onoffYouTubeVideosMock } from '@mocks/onoff-media.mock';
 
 describe('MediaSelectorsComponent', () => {
-	const youTube1: Media = { title: 'Video 1', type: 'youTubeVideo', description: [], data: { videoId: 'a' } };
-	const youTube2: Media = { title: 'Video 2', type: 'youTubeVideo', description: [], data: { videoId: 'b' } };
-	const spotify: Media = {
-		title: 'Podcast',
-		type: 'spotifyPodcastEpisode',
-		description: [],
-		data: { url: 'https://s' },
-	};
-	const media: Media[] = [youTube1, youTube2, spotify];
+	// Dos medios de la misma plataforma más uno de otra: el caso que distingue "un selector por
+	// plataforma" de "un selector por medio". El repetido sale del canon, no de un literal nuevo.
+	const [youTube1] = onoffYouTubeVideosMock;
+	const [spotify1] = onoffSpotifyPodcastEpisodesMock;
+	const media: Media[] = [...onoffYouTubeVideosMock, ...onoffYouTubeVideosMock, ...onoffSpotifyPodcastEpisodesMock];
 
 	it('should render nothing when there is no media', async () => {
 		await render(MediaSelectorsComponent, { inputs: { media: [] } });
@@ -58,6 +55,9 @@ describe('MediaSelectorsComponent', () => {
 			expect(screen.queryByText('2')).not.toBeInTheDocument();
 		});
 
+		// Los dos primeros botones salen del mismo objeto repetido, así que por sí solos no distinguen
+		// "emite el recurso del botón" de "emite siempre el primero": la correspondencia la prueba el
+		// tercero, que es el único de otra plataforma.
 		it('should emit the corresponding resource when a selector is clicked', async () => {
 			const onSelected = fn();
 			await render(MediaSelectorsComponent, {
@@ -65,9 +65,14 @@ describe('MediaSelectorsComponent', () => {
 				on: { selected: onSelected },
 			});
 			const buttons = screen.getAllByRole('button');
+
 			await userEvent.click(buttons[0]);
 			expect(onSelected).toHaveBeenCalledTimes(1);
 			expect(onSelected).toHaveBeenCalledWith(youTube1);
+
+			await userEvent.click(buttons[2]);
+			expect(onSelected).toHaveBeenCalledTimes(2);
+			expect(onSelected).toHaveBeenLastCalledWith(spotify1);
 		});
 
 		it('should expose an accessible label per platform', async () => {

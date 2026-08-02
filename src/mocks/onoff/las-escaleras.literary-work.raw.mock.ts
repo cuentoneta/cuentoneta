@@ -1,5 +1,5 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { rawNovelaTag, rawAbsurdoTag, rawAlegoriaTag } from '../onoff-tags.mock';
+import { novelaRawTag, absurdoRawTag, alegoriaRawTag } from '../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import lasEscalerasMdBody from './las-escaleras.md?raw';
 import lasEscalerasEditorialNoteMd from './las-escaleras.editorial-note.md?raw';
@@ -18,7 +18,7 @@ export const lasEscalerasRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryRes
 	publishedAt: '1979-01-01T00:00:00Z',
 	totalReadingTime: 9,
 	sectionCount: 1,
-	tags: [rawNovelaTag, rawAbsurdoTag, rawAlegoriaTag],
+	tags: [novelaRawTag, absurdoRawTag, alegoriaRawTag],
 	mediaSources: [],
 	resources: [],
 	authors: [rawOnoffAuthor],

@@ -7,6 +7,7 @@ import {
 } from '@mocks/onoff-literary-work-teasers.mock';
 import { clearAllMocks } from '@test-utils';
 import type { Media } from '@models/media.model';
+import { onoffSpotifyPodcastEpisodesMock, onoffYouTubeVideosMock } from '@mocks/onoff-media.mock';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { NavigationParams } from '@app-utils/navigation-params';
 
@@ -207,10 +208,8 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 	// El detalle de agrupación, contador y emisión vive en media-selectors.component.spec.ts.
 	// Aquí solo se verifica la integración: que la tarjeta delegue en el componente cuando corresponde.
 	describe('Multimedia selectors', () => {
-		const richMedia: Media[] = [
-			{ title: 'Video 1', type: 'youTubeVideo', description: [], data: { videoId: 'a' } },
-			{ title: 'Podcast', type: 'spotifyPodcastEpisode', description: [], data: { url: 'https://spotify.com' } },
-		];
+		// Dos plataformas distintas del canon: es lo que la tarjeta delega al selector.
+		const richMedia: Media[] = [...onoffYouTubeVideosMock, ...onoffSpotifyPodcastEpisodesMock];
 		const literaryWorkWithMedia: LiteraryWorkTeaser = {
 			...palacioNueveFronterasLiteraryWorkTeaserMock,
 			mediaSources: richMedia,

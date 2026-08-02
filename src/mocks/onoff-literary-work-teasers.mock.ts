@@ -7,6 +7,7 @@ import type {
 } from '@models/literary-work.model';
 import type { Media } from '@models/media.model';
 import { authorTeaserMock } from './author.mock';
+import { onoffMediaMock, onoffYouTubeVideosMock } from './onoff-media.mock';
 import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
 
 // Proyecta el Author de dominio a su variante AuthorTeaser (misma base, biography/resources vaciadas),
@@ -77,18 +78,9 @@ export const onoffLiteraryWorkTeasersMock: LiteraryWorkTeaser[] = [
 // Ninguna obra del canon declara recursos multimedia, así que los casos que necesitan ese shape
 // —los selectores de multimedia de las tarjetas— lo obtienen de esta variante enriquecida, en vez
 // de armarlo cada uno por su cuenta.
-const mediaSources: Media[] = [
-	{ title: 'Video 1', type: 'youTubeVideo', description: [], data: { videoId: 'a' } },
-	{ title: 'Video 2', type: 'youTubeVideo', description: [], data: { videoId: 'b' } },
-	{ title: 'Video 3', type: 'youTubeVideo', description: [], data: { videoId: 'c' } },
-	{
-		title: 'Space',
-		type: 'spaceRecording',
-		description: [],
-		data: { url: null, duration: '', hostName: '', date: '' },
-	},
-	{ title: 'Podcast', type: 'spotifyPodcastEpisode', description: [], data: { url: 'https://spotify.com' } },
-];
+// Sale del canon; el YouTube repetido existe para que los consumidores que cuentan medios tengan más
+// elementos que tipos distintos.
+const mediaSources: Media[] = [...onoffMediaMock, ...onoffYouTubeVideosMock];
 
 export const withMediaSources = (teaser: LiteraryWorkTeaser): LiteraryWorkTeaser => ({ ...teaser, mediaSources });
 
@@ -122,3 +114,7 @@ export const onoffLiteraryWorkNavigationTeasersMock: LiteraryWorkNavigationTease
 
 export const onoffLiteraryWorkNavigationTeasersWithAuthorsMock: LiteraryWorkNavigationTeaserWithAuthors[] =
 	onoffLiteraryWorksMock.map(toNavigationTeaserWithAuthors);
+
+export const onoffLiteraryWorkTeasersWithMediaSources: LiteraryWorkTeaser[] = onoffLiteraryWorkTeasersMock.filter(
+	(teaser) => teaser.mediaSources.length > 0,
+);

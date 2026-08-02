@@ -1,13 +1,10 @@
 import { AuthorTeaserV3Component } from './author-teaser-v3.component';
 import { render, screen } from '@testing-library/angular';
 import { authorTeaserMock } from '@mocks/author.mock';
-import { Tag } from '@models/tag.model';
+import { onoffTagsMock } from '@mocks/onoff-tags.mock';
 
 describe('AuthorTeaserV3Component', () => {
-	const tags: Tag[] = [
-		{ title: 'Surrealismo', slug: 'surrealismo', shortDescription: '', description: [] },
-		{ title: 'Fantástico', slug: 'fantastico', shortDescription: '', description: [] },
-	];
+	const tags = onoffTagsMock.slice(0, 2);
 	const avatarName = `Retrato de ${authorTeaserMock.name}`;
 
 	it('should link to the author profile', async () => {
@@ -67,16 +64,11 @@ describe('AuthorTeaserV3Component', () => {
 	it('should render the tags', async () => {
 		await render(AuthorTeaserV3Component, { inputs: { author: authorTeaserMock, tags } });
 		expect(screen.getByTestId('tags')).toBeInTheDocument();
-		expect(screen.getByText('Surrealismo')).toBeInTheDocument();
-		expect(screen.getByText('Fantástico')).toBeInTheDocument();
+		tags.forEach((tag) => expect(screen.getByText(tag.title)).toBeInTheDocument());
 	});
 
 	it('should render more than two tags', async () => {
-		const manyTags: Tag[] = [
-			...tags,
-			{ title: 'Memoria', slug: 'memoria', shortDescription: '', description: [] },
-			{ title: 'Histórico', slug: 'historico', shortDescription: '', description: [] },
-		];
+		const manyTags = onoffTagsMock.slice(0, 4);
 		await render(AuthorTeaserV3Component, { inputs: { author: authorTeaserMock, tags: manyTags } });
 		manyTags.forEach((tag) => expect(screen.getByText(tag.title)).toBeInTheDocument());
 	});

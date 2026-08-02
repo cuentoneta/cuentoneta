@@ -36,6 +36,19 @@ export const onoffRawLiteraryWorksWithEditorialNote: NonNullable<LiteraryWorkByS
 export const onoffRawLiteraryWorksWithoutEditorialNote: NonNullable<LiteraryWorkBySlugQueryResult>[] =
 	onoffRawLiteraryWorksMock.filter((rawLiteraryWork) => rawLiteraryWork.editorialNote === null);
 
+// Selectores por capacidad de las etiquetas, para ejercitar el mapeo de tags del repository con datos
+// reales sin conocer un slug concreto.
+export const onoffRawLiteraryWorksWithTags: NonNullable<LiteraryWorkBySlugQueryResult>[] =
+	onoffRawLiteraryWorksMock.filter((rawLiteraryWork) => rawLiteraryWork.tags.length > 0);
+
+export const onoffRawLiteraryWorksWithoutTags: NonNullable<LiteraryWorkBySlugQueryResult>[] =
+	onoffRawLiteraryWorksMock.filter((rawLiteraryWork) => rawLiteraryWork.tags.length === 0);
+
+// Selector por capacidad de multimedia, para ejercitar el mapeo de medios del repository con datos
+// reales sin conocer un slug concreto.
+export const onoffRawLiteraryWorksWithMediaSources: NonNullable<LiteraryWorkBySlugQueryResult>[] =
+	onoffRawLiteraryWorksMock.filter((rawLiteraryWork) => rawLiteraryWork.mediaSources.length > 0);
+
 // Obra de dos secciones, con los reading time ya persistidos (materializados). Ejercita la lectura
 // de content[] multi-sección y la futura proyección ?section=N.
 export const multiSectionRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {

@@ -1,16 +1,16 @@
 // Testing library
-import { render, screen } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 
 // Component
 import { SpotifyPodcastEpisodeWidget } from './spotify-podcast-episode-widget';
 
 // Mocks
-import { spotifyPodcastEpisodeMock } from '@mocks/spotify-podcast-episode.mock';
+import { mediaDescriptionText, onoffSpotifyPodcastEpisodesMock } from '@mocks/onoff-media.mock';
 
 describe('SpotifyPodcastEpisodeWidget', () => {
 	it('should render the component', async () => {
 		const { container } = await render(SpotifyPodcastEpisodeWidget, {
-			inputs: { media: spotifyPodcastEpisodeMock },
+			inputs: { media: onoffSpotifyPodcastEpisodesMock[0] },
 		});
 
 		expect(container).toBeInTheDocument();
@@ -18,7 +18,7 @@ describe('SpotifyPodcastEpisodeWidget', () => {
 
 	it('should render the spotify embed iframe', async () => {
 		await render(SpotifyPodcastEpisodeWidget, {
-			inputs: { media: spotifyPodcastEpisodeMock },
+			inputs: { media: onoffSpotifyPodcastEpisodesMock[0] },
 		});
 
 		const spotifyEmbed = screen.getByTestId('spotify-embed') as HTMLIFrameElement;
@@ -27,34 +27,27 @@ describe('SpotifyPodcastEpisodeWidget', () => {
 
 	it('should convert spotify url to embed url', async () => {
 		await render(SpotifyPodcastEpisodeWidget, {
-			inputs: { media: spotifyPodcastEpisodeMock },
+			inputs: { media: onoffSpotifyPodcastEpisodesMock[0] },
 		});
 
 		const spotifyEmbed = screen.getByTestId('spotify-embed') as HTMLIFrameElement;
 		expect(spotifyEmbed.src).toContain('embed/episode');
 	});
 
-	it('should display the spotify audio title', async () => {
+	// La descripción llega como HTML saneado y se pinta con [innerHTML]: se verifica el texto completo y
+	// que el marcado sobreviva, para distinguir "se pintó el HTML" de "se pintó el string escapado". El
+	// contenedor no puede ser un p: el pipeline emite <p>…</p> y anidarlo lo rompería.
+	it('should display the spotify audio description as rendered HTML', async () => {
 		await render(SpotifyPodcastEpisodeWidget, {
-			inputs: { media: spotifyPodcastEpisodeMock },
+			inputs: { media: onoffSpotifyPodcastEpisodesMock[0] },
 		});
 
-		expect(
-			screen.getByText(
-				'Narración del cuento parte del primer episodio del podcast "Historias narradas para ser escuchadas", producido por la Biblioteca Pedagógica de la Ciudad de Santa Fe.',
-			),
-		).toBeInTheDocument();
-	});
+		const description = screen.getByTestId('media-description');
 
-	it('should display the spotify audio description', async () => {
-		await render(SpotifyPodcastEpisodeWidget, {
-			inputs: { media: spotifyPodcastEpisodeMock },
-		});
-
-		expect(
-			screen.getByText(
-				'Narración del cuento parte del primer episodio del podcast "Historias narradas para ser escuchadas", producido por la Biblioteca Pedagógica de la Ciudad de Santa Fe.',
-			),
-		).toBeInTheDocument();
+		expect(description.tagName.toLowerCase()).toBe('figcaption');
+		expect(description.textContent?.trim()).toBe(mediaDescriptionText(onoffSpotifyPodcastEpisodesMock[0]));
+		// El énfasis fuerte del Markdown del fixture: si el HTML se hubiera escapado, el texto seguiría
+		// estando pero no habría un elemento propio que lo contenga.
+		expect(within(description).getByText('podcast').tagName.toLowerCase()).toBe('strong');
 	});
 });

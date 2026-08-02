@@ -5,6 +5,9 @@ import {
 	multiSectionRawLiteraryWork,
 	onoffRawLiteraryWorksMock,
 	onoffRawLiteraryWorksWithEpigraphs,
+	onoffRawLiteraryWorksWithoutTags,
+	onoffRawLiteraryWorksWithMediaSources,
+	onoffRawLiteraryWorksWithTags,
 	unmaterializedRawLiteraryWork,
 } from '@mocks/onoff-raw-literary-works.mock';
 import { onoffRawLiteraryWorksWithoutEditorialNote } from '@mocks/onoff-raw-literary-works.mock';
@@ -131,6 +134,48 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 		const literaryWork = await repoReturning({ ...onoffRawLiteraryWorksMock[0], editorialNote: '' }).fetchBySlug('x');
 
 		expect(literaryWork?.editorialNote).toBeUndefined();
+	});
+
+	it('mapea las etiquetas de la obra a su modelo de dominio', async () => {
+		const [rawLiteraryWork] = onoffRawLiteraryWorksWithTags;
+
+		const literaryWork = await repoReturning(rawLiteraryWork).fetchBySlug(rawLiteraryWork.slug);
+
+		expect(literaryWork?.tags.map((tag) => tag.slug)).toEqual(rawLiteraryWork.tags.map((raw) => raw.slug));
+		expect(literaryWork?.tags.map((tag) => tag.title)).toEqual(rawLiteraryWork.tags.map((raw) => raw.title));
+	});
+
+	it('mapea a una lista vacía las etiquetas de una obra que no las tiene', async () => {
+		const literaryWork = await repoReturning(onoffRawLiteraryWorksWithoutTags[0]).fetchBySlug('x');
+
+		expect(literaryWork?.tags).toEqual([]);
+	});
+
+	// El ACL de multimedia lo comparten Story, Storylist y LiteraryWork, pero con todo el corpus crudo de
+	// obras en `mediaSources: []` esta rama nunca se ejercitaba con datos.
+	it('mapea los recursos multimedia de la obra, descartando los tipos que el dominio no modela', async () => {
+		const [rawLiteraryWork] = onoffRawLiteraryWorksWithMediaSources;
+
+		const literaryWork = await repoReturning(rawLiteraryWork).fetchBySlug(rawLiteraryWork.slug);
+
+		const rawTypes = rawLiteraryWork.mediaSources.map((media) => media._type);
+		expect(rawTypes).toContain('pdfLink');
+		expect(literaryWork?.mediaSources.map((media) => media.type)).toEqual(
+			rawTypes.filter((type) => type !== 'pdfLink'),
+		);
+	});
+
+	// La proyección de obra literaria resuelve `audioUrl` dereferenciando el asset del archivo, igual que
+	// la de Story: es lo que el dominio consume como `data.url` del space recording.
+	it('resuelve la URL del audio en un space recording', async () => {
+		const [rawLiteraryWork] = onoffRawLiteraryWorksWithMediaSources;
+		const rawSpaceRecording = rawLiteraryWork.mediaSources.find((media) => media._type === 'spaceRecording');
+		if (rawSpaceRecording?._type !== 'spaceRecording') throw new Error('el fixture no trae un space recording');
+
+		const literaryWork = await repoReturning(rawLiteraryWork).fetchBySlug(rawLiteraryWork.slug);
+		const spaceRecording = literaryWork?.mediaSources.find((media) => media.type === 'spaceRecording');
+
+		expect((spaceRecording?.data as { url: string | null }).url).toBe(rawSpaceRecording.audioUrl);
 	});
 
 	it('devuelve null para un slug desconocido', async () => {

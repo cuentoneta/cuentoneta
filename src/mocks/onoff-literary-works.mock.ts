@@ -47,6 +47,10 @@ export const onoffLiteraryWorksWithoutEditorialNote: LiteraryWork[] = onoffLiter
 	(literaryWork) => literaryWork.editorialNote === undefined,
 );
 
+export const onoffLiteraryWorksWithMediaSources: LiteraryWork[] = onoffLiteraryWorksMock.filter(
+	(literaryWork) => literaryWork.mediaSources.length > 0,
+);
+
 // Los epígrafes sueltos, para quien necesita el shape { text, reference? } y no la obra que lo
 // contiene — los componentes que pintan HTML saneado en sus specs y stories. Se deriva del corpus
 // para no mantener una lista en paralelo que se desactualice al enriquecer otra obra.

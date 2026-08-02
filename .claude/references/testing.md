@@ -72,6 +72,9 @@ Un spec o una story que importa una obra concreta queda atado a ella: sus aserci
 | Un texto con atribución (epígrafe o nota) | `onoffLiteraryWorkEpigraphsMock`; en stories, `corpusAttributedTexts` + `attributedTextSelectArgType` |
 | Una story o colección crudas              | `onoffRawStoriesMock`, `onoffRawCollectionsMock`, `onoffRawNavCollectionsMock`                        |
 | Una story o teaser crudos con multimedia  | `onoffRawStoriesWithMediaSources` / `onoffRawTeasersWithMediaSources`                                 |
+| Una obra con o sin etiquetas              | `onoffRawLiteraryWorksWith(out)Tags`                                                                  |
+| Una etiqueta cualquiera                   | `onoffTagsMock` (o `onoffRawTagsMock` en el backend), y tomá un slice                                 |
+| Etiquetas de título corto                 | `onoffTagsWithShortTitles` — para stories donde un título de dos palabras fuerza el recorte por ancho |
 
 Corolario: **las aserciones se derivan del fixture**, no de prosa clavada. Si el caso necesita una palabra del texto, extraela del propio mock (`bodyHtml.replace(/<[^>]+>/g, ' ')` y tomá una palabra) en vez de escribirla a mano — así sigue pasando cuando el canon cambie. Si falta un selector para el shape que necesitás, **agregalo al agregador** (derivado por predicado, no una lista en paralelo) en vez de importar la obra.
 
@@ -132,7 +135,7 @@ expect(heading).toBeInTheDocument();
 
 ### Servicios inyectados (mock con `fn()`)
 
-> Ejemplo con `StoryApi`/`StoryComponent` (reales, vigentes) — el mismo patrón aplicará a `LiteraryWorkApi` y a su futuro componente de página cuando aterrice el provider de LiteraryWork (#1853; el repository de datos está en PR #2002).
+> Ejemplo con `StoryApi`/`StoryComponent`. Cuando el doble no necesita registrar llamadas, se provee la clase `Stub*` del propio provider en vez de `fn()` — es lo que hace `read.page.spec.ts` con `StubLiteraryWorkApi` + `provideLiteraryWorkApiMock()`.
 
 ```typescript
 import { fn } from '@test-utils';
@@ -201,7 +204,7 @@ describe('TagsOverflowDirective', () => {
 });
 ```
 
-> Nota (#1494): el stub es temporal. El browser mode de Vitest provee un `IntersectionObserver` real, lo que permitiría testear con layout real en vez de simular el callback a mano.
+> Nota: el stub es temporal. El browser mode de Vitest provee un `IntersectionObserver` real, lo que permitiría testear con layout real en vez de simular el callback a mano.
 
 ---
 

@@ -1,9 +1,9 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { rawNovelaTag, rawDramaPsicologicoTag } from '../onoff-tags.mock';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import elOdioMdBody from './el-odio.md?raw';
 import elOdioEditorialNoteMd from './el-odio.editorial-note.md?raw';
 import { elOdioEpigraphReference, elOdioEpigraphText, elOdioSectionTitle } from './el-odio.epigraph';
+import { dramaPsicologicoRawTag, novelaRawTag } from '../onoff-raw-tags.mock';
 
 export const elOdioRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'onoff-literary-work-el-odio',
@@ -19,7 +19,9 @@ export const elOdioRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> =
 	publishedAt: '1971-01-01T00:00:00Z',
 	totalReadingTime: 6,
 	sectionCount: 1,
-	tags: [rawNovelaTag, rawDramaPsicologicoTag],
+	// Espeja las etiquetas que ya declara su gemelo de dominio, para que la rama de `mapTags` del repository
+	// se ejercite con datos y no siempre con la lista vacía.
+	tags: [novelaRawTag, dramaPsicologicoRawTag],
 	mediaSources: [],
 	resources: [],
 	authors: [rawOnoffAuthor],

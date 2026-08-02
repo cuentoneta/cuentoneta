@@ -154,14 +154,12 @@ type ResourcesSubQuery = (
 export function mapResources(resources: ResourcesSubQuery): Resource[] {
 	return (
 		resources?.map((resource) => ({
-			...resource,
+			title: resource.title,
+			url: resource.url,
 			resourceType: {
-				...resource.resourceType,
-				description: mapBlockContentToTextParagraphs(resource.resourceType.description),
-				icon: {
-					provider: resource.resourceType.icon.provider ?? '',
-					name: resource.resourceType.icon.name ?? '',
-				},
+				slug: resource.resourceType.slug,
+				title: resource.resourceType.title,
+				shortDescription: resource.resourceType.shortDescription,
 			},
 		})) ?? []
 	);
@@ -174,12 +172,9 @@ type TagsSubQuery =
 	| NonNullable<LiteraryWorkBySlugQueryResult>['tags'];
 export function mapTags(tags: TagsSubQuery): Tag[] {
 	return tags.map((tag) => ({
-		...tag,
-		description: mapBlockContentToTextParagraphs(tag.description),
-		icon: {
-			provider: tag.icon.provider ?? '',
-			name: tag.icon.name ?? '',
-		},
+		title: tag.title,
+		slug: tag.slug,
+		shortDescription: tag.shortDescription,
 	}));
 }
 
@@ -297,9 +292,11 @@ export function mapLandingPageContent(
 	result: NonNullable<LandingPageContentQueryResult> & RotatingContent,
 ): LandingPageContent {
 	return {
-		...result,
+		_id: result._id,
+		config: result.config,
 		cards: mapStorylistTeasers(result.cards),
 		campaigns: mapContentCampaigns(result.campaigns),
+		mostRead: result.mostRead,
 		latestReads: mapStoryNavigationTeaserWithAuthor(result.latestReads),
 	};
 }
@@ -314,9 +311,9 @@ export function mapContentCampaigns(campaigns: ContentCampaignsSubQuery): Conten
 		}
 
 		return {
-			...campaign,
 			title: campaign.title,
-			description: mapBlockContentToTextParagraphs(campaign.description),
+			slug: campaign.slug,
+			url: campaign.url,
 			contents: {
 				xs: {
 					imageUrl: xs.image ? urlForWithAutoFormat(xs.image) : '',
