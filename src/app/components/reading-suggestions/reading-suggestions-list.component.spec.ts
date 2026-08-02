@@ -108,6 +108,20 @@ describe('ReadingSuggestionsListComponent', () => {
 		expect(screen.queryAllByTestId('author')).toHaveLength(0);
 	});
 
+	it('should show the excerpt of each suggestion', async () => {
+		await setup();
+
+		expect(screen.getAllByTestId('description')).toHaveLength(teasers.length);
+	});
+
+	it('should label each suggestion with the literary type its corpus entry carries', async () => {
+		await setup();
+
+		for (const teaser of teasers) {
+			expect(screen.getAllByText(teaser.tags[0].title).length).toBeGreaterThan(0);
+		}
+	});
+
 	it('should expose the multimedia of each suggestion', async () => {
 		await setup({ teasers: onoffLiteraryWorkTeasersWithMediaSourcesMock.slice(0, 3) });
 

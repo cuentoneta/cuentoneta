@@ -4,11 +4,6 @@ import {
 	onoffLiteraryWorkTeasersWithMediaSourcesMock,
 } from './onoff-literary-work-teasers.mock';
 import { onoffLiteraryWorksWithEditorialNote, onoffLiteraryWorksWithEpigraphs } from './onoff-literary-works.mock';
-import {
-	onoffStoryNavigationTeasersMock,
-	onoffStoryNavigationTeasersWithAuthorMock,
-	onoffStoryTeasersMock,
-} from './onoff-story-teasers.mock';
 
 // Obras del corpus (con multimedia) y sus portadas; comparten el índice del corpus.
 export const corpusLiteraryWorkTeasers = onoffLiteraryWorkTeasersWithMediaSourcesMock;
@@ -58,14 +53,3 @@ export const attributedTextSelectArgType = {
 	options: corpusAttributedTexts.map((_, index) => index),
 	table: { type: { summary: 'number' } },
 };
-
-// Vistas de navegación con los tags de cada obra. Las queries de navegación todavía no los
-// proyectan, así que el fixture fiel al ACL los deja vacíos; Storybook, en cambio, muestra lo que el
-// corpus tiene, para poder evaluar la tarjeta con su etiqueta de tipo literario.
-const withCorpusTags = <T extends { readonly slug: string }>(teaser: T): T => ({
-	...teaser,
-	tags: onoffStoryTeasersMock.find((story) => story.slug === teaser.slug)?.tags ?? [],
-});
-
-export const corpusStoryNavigationTeasers = onoffStoryNavigationTeasersMock.map(withCorpusTags);
-export const corpusStoryNavigationTeasersWithAuthor = onoffStoryNavigationTeasersWithAuthorMock.map(withCorpusTags);

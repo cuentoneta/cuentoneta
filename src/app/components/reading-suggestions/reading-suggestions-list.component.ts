@@ -45,7 +45,8 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 						 vacías, y trackear por slug destruiría y recrearía cada tarjeta al llegar los datos. -->
 					@for (literaryWork of displayedTeasers(); track $index) {
 						<li>
-							<!-- La etiqueta es el tipo literario de la obra, que el corpus deja primero entre sus tags. -->
+							<!-- La etiqueta es el tipo literario de la obra. Que sea el primer tag es convención editorial del
+								 catálogo, no algo que el schema garantice: si el orden cambiara, cambiaría la etiqueta. -->
 							<cuentoneta-literary-work-card-teaser
 								[literaryWork]="literaryWork"
 								[navigationParams]="navigationParams()"

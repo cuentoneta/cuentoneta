@@ -29,7 +29,7 @@ describe('StoryComponent', () => {
 				NgOptimizedImage,
 				MockBioSummaryCardComponent,
 				MockShareContentComponent,
-				StubReadingSuggestionsComponent,
+				SpyReadingSuggestionsComponent,
 			],
 			providers: [provideStoryApiMock(), { provide: LayoutService, useValue: new ControllableLayoutService() }],
 			inputs: {
@@ -55,7 +55,7 @@ describe('StoryComponent - sugerencias de lectura', () => {
 				NgOptimizedImage,
 				MockBioSummaryCardComponent,
 				MockShareContentComponent,
-				StubReadingSuggestionsComponent,
+				SpyReadingSuggestionsComponent,
 			],
 			providers: [provideStoryApiMock(), { provide: LayoutService, useValue: new ControllableLayoutService() }],
 			inputs: { slug: storyMock.slug, navigation, navigationSlug },
@@ -110,7 +110,7 @@ describe('StoryComponent - headerPosition', () => {
 				NgOptimizedImage,
 				MockBioSummaryCardComponent,
 				MockShareContentComponent,
-				StubReadingSuggestionsComponent,
+				SpyReadingSuggestionsComponent,
 			],
 			componentProviders: [{ provide: LayoutService, useValue: mockLayoutService }],
 			providers: [provideStoryApiMock()],
@@ -188,7 +188,7 @@ class MockBioSummaryCardComponent {
 	`,
 	host: { 'data-testid': 'reading-suggestions' },
 })
-class StubReadingSuggestionsComponent {
+class SpyReadingSuggestionsComponent {
 	public readonly navigationParams = input.required<NavigationParams>();
 	public readonly authorName = input.required<string>();
 	public readonly currentWorkSlug = input<string>();

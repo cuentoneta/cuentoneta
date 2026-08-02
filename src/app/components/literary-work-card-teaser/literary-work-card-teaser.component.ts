@@ -8,6 +8,7 @@ import type {
 	LiteraryWorkTeaser,
 } from '@models/literary-work.model';
 import { AppRoutes } from '../../app.routes';
+import type { NavigationParams } from '@app-utils/navigation-params';
 import { MediaSelectorsComponent, type MediaSelectorsTheme } from '../media-selectors/media-selectors.component';
 import { LiteraryWorkCardTeaserSkeletonComponent } from './literary-work-card-teaser-skeleton.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
@@ -155,7 +156,7 @@ export class LiteraryWorkCardTeaserComponent {
 	// Acotado a [1, 10] para coincidir con el safelist `line-clamp-{1..10}` de styles.css,
 	// ya que la clase `line-clamp-N` se construye dinámicamente y no la detecta el escaneo de Tailwind.
 	public readonly excerptLines = input(2, { transform: (value: number) => Math.min(10, Math.max(1, value)) });
-	public readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
+	public readonly navigationParams = input<NavigationParams>();
 
 	protected readonly coverImageUrl = computed(() => this.literaryWork()?.coverImage);
 	protected readonly literaryWorkRouterLink = computed(() => ['/', this.appRoutes.Story, this.literaryWork()?.slug]);
