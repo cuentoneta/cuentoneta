@@ -595,11 +595,12 @@ interface Tag {
 	slug: string; // Identificador único
 	title: string; // Nombre de la etiqueta
 	shortDescription: string; // Breve descripción
-	icon?: Icon; // Ícono opcional
 }
 ```
 
 **Uso:** Clasificar contenido por tema, género, etc.
+
+> El ícono que acompaña a una etiqueta en la interfaz lo resuelve el frontend a partir del `slug`, contra el mapa local de `@models/icon.model`. No viaja desde el CMS.
 
 ---
 
