@@ -3,24 +3,10 @@ import { MediaResourceTagsComponent } from './media-resource-tags.component';
 import { MediaResourcePlatform, MediaResourceTagComponent } from '../media-resource-tag/media-resource-tag.component';
 import { CommonModule } from '@angular/common';
 import { Media, MediaTypeKey } from '@models/media.model';
+import { onoffAudioRecordingsMock, onoffSpaceRecordingsMock, onoffYouTubeVideosMock } from '@mocks/onoff-media.mock';
 
-const mockMedia: Media[] = [
-	{
-		title: 'Test Media 1',
-		description: [],
-		type: 'audioRecording',
-	},
-	{
-		title: 'Test Media 2',
-		description: [],
-		type: 'spaceRecording',
-	},
-	{
-		title: 'Test Media 3',
-		description: [],
-		type: 'youTubeVideo',
-	},
-];
+// Tres plataformas distintas del canon: es lo que el componente cuenta.
+const mockMedia: Media[] = [...onoffAudioRecordingsMock, ...onoffSpaceRecordingsMock, ...onoffYouTubeVideosMock];
 
 describe('MediaResourceTagsComponent', () => {
 	it('should render the correct number of resource tags', async () => {

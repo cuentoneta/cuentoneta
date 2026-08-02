@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular-vite';
 import { SpotifyPodcastEpisodeWidget } from './spotify-podcast-episode-widget';
-import { spotifyPodcastEpisodeMock } from '@mocks/spotify-podcast-episode.mock';
+import { onoffSpotifyPodcastEpisodesMock } from '@mocks/onoff-media.mock';
 
 const meta: Meta<SpotifyPodcastEpisodeWidget> = {
 	title: 'Widgets/SpotifyPodcastEpisode',
@@ -25,6 +25,6 @@ type Story = StoryObj<SpotifyPodcastEpisodeWidget>;
 
 export const Widget: Story = {
 	args: {
-		media: spotifyPodcastEpisodeMock,
+		media: onoffSpotifyPodcastEpisodesMock[0],
 	},
 };

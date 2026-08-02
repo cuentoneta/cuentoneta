@@ -7,12 +7,19 @@ import { YoutubeVideoWidgetComponent } from '../youtube-video-widget/youtube-vid
 import { SpotifyPodcastEpisodeWidget } from '@components/spotify-audio-widget/spotify-podcast-episode-widget';
 
 // Mocks
-import { youtubeVideoMock } from '@mocks/youtube-video.mock';
-import { audioRecordingMock } from '@mocks/audio-recording.mock';
-import { spaceRecordingMock } from '@mocks/space-recording.mock';
-import { spotifyPodcastEpisodeMock } from '@mocks/spotify-podcast-episode.mock';
+import {
+	mediaDescriptionText,
+	onoffAudioRecordingsMock,
+	onoffSpaceRecordingsMock,
+	onoffSpotifyPodcastEpisodesMock,
+	onoffYouTubeVideosMock,
+} from '@mocks/onoff-media.mock';
 
-const mockMediaResources: Media[] = [audioRecordingMock, spaceRecordingMock, youtubeVideoMock];
+const mockMediaResources: Media[] = [
+	onoffAudioRecordingsMock[0],
+	onoffSpaceRecordingsMock[0],
+	onoffYouTubeVideosMock[0],
+];
 
 describe('MediaResourceComponent', () => {
 	test('should render MediaResourceComponent', async () => {
@@ -31,13 +38,13 @@ describe('MediaResourceComponent', () => {
 		});
 
 		// Verificar que se renderiza el widget de audio
-		expect(screen.getByText('Lectura del artículo sobre ajedrez en Wikipedia.')).toBeInTheDocument();
+		expect(screen.getByText(mediaDescriptionText(onoffAudioRecordingsMock[0]))).toBeInTheDocument();
 
 		// Verificar que se renderiza el widget de space recording
-		expect(screen.getByText('El marajá de San Telmo: discusión y breve análisis')).toBeInTheDocument();
+		expect(screen.getByText(onoffSpaceRecordingsMock[0].title)).toBeInTheDocument();
 
 		// Verificar que se renderiza el widget de YouTube video
-		expect(screen.getByText('Video alusivo a la narración de "El espejo del tiempo".')).toBeInTheDocument();
+		expect(screen.getByText(mediaDescriptionText(onoffYouTubeVideosMock[0]))).toBeInTheDocument();
 	});
 
 	test('should render an AudioRecordingWidgetComponent for audio recordings', async () => {
@@ -46,7 +53,7 @@ describe('MediaResourceComponent', () => {
 			imports: [AudioRecordingWidgetComponent],
 		});
 
-		expect(screen.getByText('Lectura del artículo sobre ajedrez en Wikipedia.')).toBeInTheDocument();
+		expect(screen.getByText(mediaDescriptionText(onoffAudioRecordingsMock[0]))).toBeInTheDocument();
 	});
 
 	test('should render a SpaceRecordingWidgetComponent for space recordings', async () => {
@@ -55,7 +62,7 @@ describe('MediaResourceComponent', () => {
 			imports: [SpaceRecordingWidgetComponent],
 		});
 
-		expect(screen.getByText('El marajá de San Telmo: discusión y breve análisis')).toBeInTheDocument();
+		expect(screen.getByText(onoffSpaceRecordingsMock[0].title)).toBeInTheDocument();
 	});
 
 	test('should render a YoutubeVideoWidgetComponent for YouTube videos', async () => {
@@ -64,12 +71,12 @@ describe('MediaResourceComponent', () => {
 			imports: [YoutubeVideoWidgetComponent],
 		});
 
-		expect(screen.getByText('Video alusivo a la narración de "El espejo del tiempo".')).toBeInTheDocument();
+		expect(screen.getByText(mediaDescriptionText(onoffYouTubeVideosMock[0]))).toBeInTheDocument();
 	});
 
 	test('should render a SpotifyPodcastEpisodeWidget for podcast episodes', async () => {
 		await render(MediaResourceComponent, {
-			componentInputs: { mediaResources: [spotifyPodcastEpisodeMock] },
+			componentInputs: { mediaResources: [onoffSpotifyPodcastEpisodesMock[0]] },
 			imports: [SpotifyPodcastEpisodeWidget],
 		});
 

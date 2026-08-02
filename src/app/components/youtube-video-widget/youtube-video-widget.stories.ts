@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular-vite';
 import { YoutubeVideoWidgetComponent } from './youtube-video-widget.component';
-import { youtubeVideoMock } from '@mocks/youtube-video.mock';
+import { onoffYouTubeVideosMock } from '@mocks/onoff-media.mock';
 
 const meta: Meta<YoutubeVideoWidgetComponent> = {
 	title: 'Widgets/YoutubeVideo',
@@ -25,6 +25,6 @@ type Story = StoryObj<YoutubeVideoWidgetComponent>;
 
 export const Widget: Story = {
 	args: {
-		media: youtubeVideoMock,
+		media: onoffYouTubeVideosMock[0],
 	},
 };

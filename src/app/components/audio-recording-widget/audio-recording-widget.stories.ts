@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular-vite';
 import { AudioRecordingWidgetComponent } from './audio-recording-widget.component';
-import { audioRecordingMock } from '@mocks/audio-recording.mock';
+import { onoffAudioRecordingsMock } from '@mocks/onoff-media.mock';
 
 const meta: Meta<AudioRecordingWidgetComponent> = {
 	title: 'Widgets/AudioRecording',
@@ -25,6 +25,6 @@ type Story = StoryObj<AudioRecordingWidgetComponent>;
 
 export const Widget: Story = {
 	args: {
-		media: audioRecordingMock,
+		media: onoffAudioRecordingsMock[0],
 	},
 };

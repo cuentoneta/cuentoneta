@@ -3,6 +3,7 @@ import { Component, signal } from '@angular/core';
 import { authorMock } from '@mocks/author.mock';
 import { storyMock } from '@mocks/story.mock';
 import { PortableTextDirective } from './portable-text-parser.directive';
+import type { TextBlockContent } from '@models/block-content.model';
 
 @Component({
 	imports: [PortableTextDirective],
@@ -100,8 +101,25 @@ describe('PortableTextDirective', () => {
 	});
 
 	describe('media description formatting', () => {
+		// La entrada va declarada acá y no tomada de un mock del corpus: lo que se prueba es cómo el parser
+		// traduce marcas y `markDefs`, así que el Portable Text es el sujeto del test, no un accesorio.
+		const markedUpBlock: TextBlockContent[] = [
+			{
+				_type: 'block',
+				style: 'normal',
+				_key: 'marked-up',
+				markDefs: [{ _type: 'link', _key: 'link-1', href: 'https://www.youtube.com/@CanalMas' }],
+				children: [
+					{ _type: 'span', _key: 's1', marks: [], text: 'Transmitido por ' },
+					{ _type: 'span', _key: 's2', marks: ['link-1'], text: 'Canal+' },
+					{ _type: 'span', _key: 's3', marks: [], text: ' en su programa ' },
+					{ _type: 'span', _key: 's4', marks: ['em'], text: 'Le Ble Chateau' },
+				],
+			},
+		];
+
 		it('should format links correctly', () => {
-			component.content.set(storyMock.media[0].description);
+			component.content.set(markedUpBlock);
 			fixture.detectChanges();
 
 			const container = fixture.nativeElement.querySelector('article');
@@ -114,7 +132,7 @@ describe('PortableTextDirective', () => {
 		});
 
 		it('should format show title in italics', () => {
-			component.content.set(storyMock.media[0].description);
+			component.content.set(markedUpBlock);
 			fixture.detectChanges();
 
 			const container = fixture.nativeElement.querySelector('article') as HTMLElement;

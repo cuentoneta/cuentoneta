@@ -3,21 +3,11 @@ import { argsToTemplate, moduleMetadata, Meta, StoryObj } from '@storybook/angul
 import { MediaSelectorsComponent } from './media-selectors.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { Media } from '@models/media.model';
+import { onoffMediaMock, onoffYouTubeVideosMock } from '@mocks/onoff-media.mock';
 
-// Conjunto de medios variado: 3 videos de YouTube (muestra el contador en modo agrupado),
-// un Space de X y un episodio de Spotify.
-const media: Media[] = [
-	{ title: 'Video 1', type: 'youTubeVideo', description: [], data: { videoId: 'a' } },
-	{ title: 'Video 2', type: 'youTubeVideo', description: [], data: { videoId: 'b' } },
-	{ title: 'Video 3', type: 'youTubeVideo', description: [], data: { videoId: 'c' } },
-	{
-		title: 'Space',
-		type: 'spaceRecording',
-		description: [],
-		data: { url: null, duration: '', hostName: '', date: '' },
-	},
-	{ title: 'Podcast', type: 'spotifyPodcastEpisode', description: [], data: { url: 'https://spotify.com' } },
-];
+// Conjunto de medios variado: el canon completo más un video repetido, para que el modo agrupado
+// muestre el contador con más medios que plataformas.
+const media: Media[] = [...onoffMediaMock, ...onoffYouTubeVideosMock];
 
 const meta: Meta<MediaSelectorsComponent> = {
 	component: MediaSelectorsComponent,

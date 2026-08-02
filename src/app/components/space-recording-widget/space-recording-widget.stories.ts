@@ -1,7 +1,7 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular-vite';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { SpaceRecordingWidgetComponent } from './space-recording-widget.component';
-import { spaceRecordingMock } from '@mocks/space-recording.mock';
+import { onoffSpaceRecordingsMock } from '@mocks/onoff-media.mock';
 
 const meta: Meta<SpaceRecordingWidgetComponent> = {
 	title: 'Widgets/SpaceRecording',
@@ -31,6 +31,6 @@ type Story = StoryObj<SpaceRecordingWidgetComponent>;
 
 export const Widget: Story = {
 	args: {
-		media: spaceRecordingMock,
+		media: onoffSpaceRecordingsMock[0],
 	},
 };
