@@ -19,8 +19,8 @@ export const elOdioRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> =
 	publishedAt: '1971-01-01T00:00:00Z',
 	totalReadingTime: 6,
 	sectionCount: 1,
-	// Única obra cruda del corpus con etiquetas: espeja las que ya declara su gemelo de dominio, para que
-	// la rama de `mapTags` del repository se ejercite con datos y no siempre con la lista vacía.
+	// Espeja las etiquetas que ya declara su gemelo de dominio, para que la rama de `mapTags` del repository
+	// se ejercite con datos y no siempre con la lista vacía.
 	tags: [novelaRawTag, dramaPsicologicoRawTag],
 	mediaSources: [],
 	resources: [],

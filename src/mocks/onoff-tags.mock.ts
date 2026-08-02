@@ -1,4 +1,5 @@
 import type { Tag } from '@models/tag.model';
+import type { RawTag } from './onoff-raw-tags.mock';
 import {
 	absurdoRawTag,
 	alegoriaRawTag,
@@ -11,19 +12,16 @@ import {
 	filosoficoRawTag,
 	metaficcionRawTag,
 	novelaRawTag,
-	onoffRawTagsMock,
 	surrealismoRawTag,
 	teatroRawTag,
 	tragediaRawTag,
 } from './onoff-raw-tags.mock';
 
-type RawTag = (typeof onoffRawTagsMock)[number];
-
 // Replica la normalización que aplica `mapTags` en el ACL. Se duplica a propósito en vez de importar el
 // mapper: `src/mocks/**` lo consume el frontend y Storybook, e importar el ACL arrastraría `@sanity/client`
 // al bundle. La igualdad `mapTags(onoffRawTagsMock) === onoffTagsMock` de `onoff-tags.mock.spec.ts` es lo
 // que vigila que las dos copias no diverjan.
-function toDomainTag(raw: RawTag): Tag {
+export function toDomainTag(raw: RawTag): Tag {
 	return {
 		title: raw.title,
 		slug: raw.slug,
