@@ -297,9 +297,11 @@ export function mapLandingPageContent(
 	result: NonNullable<LandingPageContentQueryResult> & RotatingContent,
 ): LandingPageContent {
 	return {
-		...result,
+		_id: result._id,
+		config: result.config,
 		cards: mapStorylistTeasers(result.cards),
 		campaigns: mapContentCampaigns(result.campaigns),
+		mostRead: result.mostRead,
 		latestReads: mapStoryNavigationTeaserWithAuthor(result.latestReads),
 	};
 }
@@ -314,9 +316,9 @@ export function mapContentCampaigns(campaigns: ContentCampaignsSubQuery): Conten
 		}
 
 		return {
-			...campaign,
 			title: campaign.title,
-			description: mapBlockContentToTextParagraphs(campaign.description),
+			slug: campaign.slug,
+			url: campaign.url,
 			contents: {
 				xs: {
 					imageUrl: xs.image ? urlForWithAutoFormat(xs.image) : '',

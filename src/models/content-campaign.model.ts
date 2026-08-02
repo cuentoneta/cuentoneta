@@ -1,5 +1,3 @@
-import { TextBlockContent } from '@models/block-content.model';
-
 /**
  * Tipo que representa los diferentes viewports soportados por la aplicación para las campañas de contenido, a fin de
  * proveer una experiencia responsive y adaptable para su visualización.
@@ -8,23 +6,15 @@ export const ContentCampaignViewportKeys = ['xs', 'md'];
 export type ContentCampaignViewport = (typeof ContentCampaignViewportKeys)[number];
 
 /**
- * Constante que indica, para los viewports soportados, las longitudes máximas asignables a los títulos y subtítulos
- * de las campañas de contenido y las dimensiones de las imágenes asociadas a cada una de ellas.
+ * Constante que indica, para los viewports soportados, las dimensiones de las imágenes asociadas a las campañas de
+ * contenido.
  */
 export const viewportElementSizes = Object.freeze({
 	xs: {
 		imageWidth: 540,
 		imageHeight: 220,
 	},
-	sm: {
-		imageWidth: 1240,
-		imageHeight: 360,
-	},
 	md: {
-		imageWidth: 1240,
-		imageHeight: 360,
-	},
-	lg: {
 		imageWidth: 1240,
 		imageHeight: 360,
 	},
@@ -36,7 +26,6 @@ export const viewportElementSizes = Object.freeze({
 export interface ContentCampaign {
 	title: string;
 	slug: string;
-	description: TextBlockContent[];
 	url: string;
 	contents: {
 		[key in ContentCampaignViewport]: {

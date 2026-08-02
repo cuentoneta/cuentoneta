@@ -655,7 +655,6 @@ interface UrlLink {
 interface ContentCampaign {
 	slug: string; // Identificador único
 	title: string; // Título de la campaña
-	description: TextBlockContent[]; // Descripción
 	url: string; // URL de destino
 
 	contents: {

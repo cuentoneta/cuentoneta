@@ -73,12 +73,6 @@ export default defineType({
 			validation: (Rule) => Rule.custom(localizedRequire),
 		}),
 		defineField({
-			name: 'description',
-			title: 'Descripción',
-			type: 'blockContent',
-			validation: (Rule) => Rule.custom(localizedRequire),
-		}),
-		defineField({
 			name: 'url',
 			title: 'URL',
 			type: 'string',

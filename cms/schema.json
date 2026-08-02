@@ -2826,14 +2826,6 @@
 				},
 				"optional": true
 			},
-			"description": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "inline",
-					"name": "blockContent"
-				},
-				"optional": true
-			},
 			"url": {
 				"type": "objectAttribute",
 				"value": {
