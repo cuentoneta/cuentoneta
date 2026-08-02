@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 
 import type { LiteraryWorkNavigationTeaserWithAuthors, LiteraryWorkTeaser } from '@models/literary-work.model';
 import { AppRoutes } from '../../app.routes';
+import type { NavigationParams } from '@app-utils/navigation-params';
 import { MediaSelectorsComponent } from '../media-selectors/media-selectors.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
 import { CoverImageComponent } from '../cover-image/cover-image.component';
@@ -109,7 +110,7 @@ export class LiteraryWorkHomeCardTeaserComponent {
 	public readonly priority = input<boolean>(false);
 	public readonly tagLabel = input<string>();
 	public readonly showMultimedia = input<boolean>(false);
-	public readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
+	public readonly navigationParams = input<NavigationParams>();
 
 	protected readonly coverImageUrl = computed(() => this.literaryWork()?.coverImage);
 	protected readonly literaryWorkRouterLink = computed(() => ['/', this.appRoutes.Story, this.literaryWork()?.slug]);

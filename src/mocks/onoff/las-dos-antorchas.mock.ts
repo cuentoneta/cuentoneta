@@ -1,4 +1,6 @@
 import type { Story } from '@models/story.model';
+import { lasDosAntorchasRawStory } from './las-dos-antorchas.raw.mock';
+import { lasDosAntorchasRawLiteraryWork } from './las-dos-antorchas.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
@@ -8,7 +10,7 @@ import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import lasDosAntorchasMdBody from './las-dos-antorchas.md?raw';
 import lasDosAntorchasEditorialNoteMd from './las-dos-antorchas.editorial-note.md?raw';
 import { authorMock } from '../author.mock';
-import { experimentalTagMock, metaficcionTagMock, novelaTagMock } from '../onoff-tags.mock';
+import { toDomainTags } from '../onoff-tags.mock';
 
 export const lasDosAntorchasStoryMock: Story = {
 	_id: 'onoff-story-las-dos-antorchas',
@@ -18,7 +20,7 @@ export const lasDosAntorchasStoryMock: Story = {
 	approximateReadingTime: 8,
 	badLanguage: false,
 	coverImage: 'assets/img/mocks/stories/las-dos-antorchas.png',
-	tags: [novelaTagMock, metaficcionTagMock, experimentalTagMock],
+	tags: toDomainTags(lasDosAntorchasRawStory.tags),
 	resources: [],
 	media: [],
 	epigraphs: [],
@@ -308,7 +310,7 @@ export const lasDosAntorchasLiteraryWorkMock: LiteraryWork = createLiteraryWork(
 	mediaSources: [],
 	resources: lasDosAntorchasStoryMock.resources,
 	badLanguage: lasDosAntorchasStoryMock.badLanguage,
-	tags: lasDosAntorchasStoryMock.tags,
+	tags: toDomainTags(lasDosAntorchasRawLiteraryWork.tags),
 	originalPublication: lasDosAntorchasStoryMock.originalPublication,
 	editorialNote: markdownToSanitizedHtml(createMarkdown(lasDosAntorchasEditorialNoteMd)),
 	publishedAt: createIsoDateTime(lasDosAntorchasStoryMock.publishedAt),

@@ -1,4 +1,6 @@
 import type { Story } from '@models/story.model';
+import { elPalacioRawStory } from './el-palacio-de-las-nueve-fronteras.raw.mock';
+import { palacioNueveFronterasRawLiteraryWork } from './el-palacio-de-las-nueve-fronteras.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createAttributedText } from '@models/attributed-text.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
@@ -15,7 +17,7 @@ import {
 	palacioNueveFronterasSectionTitle,
 } from './el-palacio-de-las-nueve-fronteras.epigraph';
 import { authorMock } from '../author.mock';
-import { dramaPsicologicoTagMock, metaficcionTagMock, novelaTagMock } from '../onoff-tags.mock';
+import { toDomainTags } from '../onoff-tags.mock';
 
 export const palacioNueveFronterasStoryMock: Story = {
 	_id: 'onoff-story-el-palacio-de-las-nueve-fronteras',
@@ -25,7 +27,7 @@ export const palacioNueveFronterasStoryMock: Story = {
 	approximateReadingTime: 11,
 	badLanguage: false,
 	coverImage: 'assets/img/mocks/stories/el-palacio-de-las-nueve-fronteras.png',
-	tags: [novelaTagMock, dramaPsicologicoTagMock, metaficcionTagMock],
+	tags: toDomainTags(elPalacioRawStory.tags),
 	resources: [],
 	media: [],
 	epigraphs: [],
@@ -291,7 +293,7 @@ export const palacioNueveFronterasLiteraryWorkMock: LiteraryWork = createLiterar
 	mediaSources: [],
 	resources: palacioNueveFronterasStoryMock.resources,
 	badLanguage: palacioNueveFronterasStoryMock.badLanguage,
-	tags: palacioNueveFronterasStoryMock.tags,
+	tags: toDomainTags(palacioNueveFronterasRawLiteraryWork.tags),
 	originalPublication: palacioNueveFronterasStoryMock.originalPublication,
 	editorialNote: markdownToSanitizedHtml(createMarkdown(elPalacioDeLasNueveFronterasEditorialNoteMd)),
 	publishedAt: createIsoDateTime(palacioNueveFronterasStoryMock.publishedAt),

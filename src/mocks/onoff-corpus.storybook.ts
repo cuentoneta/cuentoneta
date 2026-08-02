@@ -1,21 +1,12 @@
-import type { Media } from '@models/media.model';
-import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createAttributedText, type AttributedText } from '@models/attributed-text.model';
-import { onoffLiteraryWorkTeasersMock } from './onoff-literary-work-teasers.mock';
-import { onoffMediaMock, onoffYouTubeVideosMock } from './onoff-media.mock';
+import {
+	onoffLiteraryWorkTeasersMock,
+	onoffLiteraryWorkTeasersWithMediaSourcesMock,
+} from './onoff-literary-work-teasers.mock';
 import { onoffLiteraryWorksWithEditorialNote, onoffLiteraryWorksWithEpigraphs } from './onoff-literary-works.mock';
 
-// Conjunto de medios variado para ilustrar los selectores de multimedia y el contador. Sale del canon;
-// los repetidos existen para que el contador tenga más elementos que tipos distintos.
-const richMedia: Media[] = [...onoffMediaMock, ...onoffYouTubeVideosMock];
-
-export const withRichMediaSources = (teaser: LiteraryWorkTeaser): LiteraryWorkTeaser => ({
-	...teaser,
-	mediaSources: richMedia,
-});
-
 // Obras del corpus (con multimedia) y sus portadas; comparten el índice del corpus.
-export const corpusLiteraryWorkTeasers = onoffLiteraryWorkTeasersMock.map(withRichMediaSources);
+export const corpusLiteraryWorkTeasers = onoffLiteraryWorkTeasersWithMediaSourcesMock;
 export const corpusCovers = onoffLiteraryWorkTeasersMock.map((teaser) => teaser.coverImage);
 
 const corpusLabels = Object.fromEntries(onoffLiteraryWorkTeasersMock.map((teaser, index) => [index, teaser.title]));

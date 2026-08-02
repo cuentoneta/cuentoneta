@@ -1,4 +1,9 @@
-import { onoffStoryTeasersMock, palacioNueveFronterasTeaserMock } from './onoff-story-teasers.mock';
+import {
+	onoffStoryNavigationTeasersMock,
+	onoffStoryNavigationTeasersWithAuthorMock,
+	onoffStoryTeasersMock,
+	palacioNueveFronterasTeaserMock,
+} from './onoff-story-teasers.mock';
 import { palacioNueveFronterasStoryMock } from './onoff/el-palacio-de-las-nueve-fronteras.mock';
 
 describe('onoffStoryTeasersMock (derivación de teasers desde Story)', () => {
@@ -20,5 +25,32 @@ describe('onoffStoryTeasersMock (derivación de teasers desde Story)', () => {
 			expect(teaser).not.toHaveProperty('publishedAt');
 			expect(teaser).not.toHaveProperty('updatedAt');
 		}
+	});
+});
+
+describe('onoffStoryNavigationTeasersMock (derivación de vistas de navegación)', () => {
+	it('should empty the body of every navigation teaser', () => {
+		for (const teaser of [...onoffStoryNavigationTeasersWithAuthorMock, ...onoffStoryNavigationTeasersMock]) {
+			expect(teaser.paragraphs).toHaveLength(0);
+		}
+	});
+
+	it('should not project the tags, which the navigation queries leave out', () => {
+		for (const teaser of [...onoffStoryNavigationTeasersWithAuthorMock, ...onoffStoryNavigationTeasersMock]) {
+			expect(teaser.tags).toHaveLength(0);
+		}
+	});
+
+	it('should keep the author only in the with-author projection', () => {
+		for (const teaser of onoffStoryNavigationTeasersWithAuthorMock) {
+			expect(teaser.author).toBeDefined();
+		}
+		for (const teaser of onoffStoryNavigationTeasersMock) {
+			expect(teaser).not.toHaveProperty('author');
+		}
+	});
+
+	it('should cover the whole corpus', () => {
+		expect(onoffStoryNavigationTeasersMock).toHaveLength(onoffStoryTeasersMock.length);
 	});
 });

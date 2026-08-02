@@ -1,4 +1,5 @@
 import type { StoryBySlugQueryResult } from '@sanity-types';
+import { novelaRawTag, dramaPsicologicoRawTag, metaficcionRawTag } from '../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 
 export const elPalacioRawStory: NonNullable<StoryBySlugQueryResult> = {
@@ -235,6 +236,6 @@ export const elPalacioRawStory: NonNullable<StoryBySlugQueryResult> = {
 	},
 	mediaSources: [],
 	resources: [],
-	tags: [],
+	tags: [novelaRawTag, dramaPsicologicoRawTag, metaficcionRawTag],
 	author: rawOnoffAuthor,
 };

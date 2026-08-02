@@ -1,5 +1,6 @@
 import type { StoryBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import { cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag } from '../onoff-raw-tags.mock';
 import {
 	geometriaAudioDescription,
 	geometriaPdfDescription,
@@ -313,6 +314,6 @@ export const geometriaRawStory: NonNullable<StoryBySlugQueryResult> = {
 	},
 	mediaSources: geometriaRawMediaSources,
 	resources: [],
-	tags: [],
+	tags: [cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag],
 	author: rawOnoffAuthor,
 };

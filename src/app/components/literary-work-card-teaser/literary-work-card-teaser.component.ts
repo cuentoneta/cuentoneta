@@ -8,6 +8,7 @@ import type {
 	LiteraryWorkTeaser,
 } from '@models/literary-work.model';
 import { AppRoutes } from '../../app.routes';
+import type { NavigationParams } from '@app-utils/navigation-params';
 import { MediaSelectorsComponent, type MediaSelectorsTheme } from '../media-selectors/media-selectors.component';
 import { LiteraryWorkCardTeaserSkeletonComponent } from './literary-work-card-teaser-skeleton.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
@@ -21,6 +22,13 @@ import { CoverImageComponent } from '../cover-image/cover-image.component';
  * - `highlighted`: tarjeta destacada con borde y fondo, con la imagen a la derecha.
  */
 export type LiteraryWorkCardTeaserVariant = 'on-white' | 'on-gray' | 'highlighted';
+
+/**
+ * Proyecciones de obra que la tarjeta sabe renderizar. El extracto solo existe en `LiteraryWorkTeaser`;
+ * las vistas de navegación aportan el resto de los campos y la tarjeta las degrada sola.
+ */
+export type LiteraryWorkCardTeaserContent =
+	LiteraryWorkTeaser | LiteraryWorkNavigationTeaserWithAuthors | LiteraryWorkNavigationTeaser;
 
 @Component({
 	selector: 'cuentoneta-literary-work-card-teaser',
@@ -136,9 +144,7 @@ export class LiteraryWorkCardTeaserComponent {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs
-	public readonly literaryWork = input<
-		LiteraryWorkTeaser | LiteraryWorkNavigationTeaserWithAuthors | LiteraryWorkNavigationTeaser
-	>();
+	public readonly literaryWork = input<LiteraryWorkCardTeaserContent>();
 	public readonly variant = input<LiteraryWorkCardTeaserVariant>('on-white');
 	public readonly order = input<number>();
 	// Marca el cover como prioritario (above-the-fold, p. ej. en la variante highlighted como hero).
@@ -150,7 +156,7 @@ export class LiteraryWorkCardTeaserComponent {
 	// Acotado a [1, 10] para coincidir con el safelist `line-clamp-{1..10}` de styles.css,
 	// ya que la clase `line-clamp-N` se construye dinámicamente y no la detecta el escaneo de Tailwind.
 	public readonly excerptLines = input(2, { transform: (value: number) => Math.min(10, Math.max(1, value)) });
-	public readonly navigationParams = input<{ navigation: string; navigationSlug: string }>();
+	public readonly navigationParams = input<NavigationParams>();
 
 	protected readonly coverImageUrl = computed(() => this.literaryWork()?.coverImage);
 	protected readonly literaryWorkRouterLink = computed(() => ['/', this.appRoutes.Story, this.literaryWork()?.slug]);

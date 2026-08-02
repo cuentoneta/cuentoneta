@@ -36,13 +36,22 @@ export const onoffRawLiteraryWorksWithEditorialNote: NonNullable<LiteraryWorkByS
 export const onoffRawLiteraryWorksWithoutEditorialNote: NonNullable<LiteraryWorkBySlugQueryResult>[] =
 	onoffRawLiteraryWorksMock.filter((rawLiteraryWork) => rawLiteraryWork.editorialNote === null);
 
-// Selectores por capacidad de las etiquetas, para ejercitar el mapeo de tags del repository con datos
+// Selector por capacidad de las etiquetas, para ejercitar el mapeo de tags del repository con datos
 // reales sin conocer un slug concreto.
 export const onoffRawLiteraryWorksWithTags: NonNullable<LiteraryWorkBySlugQueryResult>[] =
 	onoffRawLiteraryWorksMock.filter((rawLiteraryWork) => rawLiteraryWork.tags.length > 0);
 
-export const onoffRawLiteraryWorksWithoutTags: NonNullable<LiteraryWorkBySlugQueryResult>[] =
-	onoffRawLiteraryWorksMock.filter((rawLiteraryWork) => rawLiteraryWork.tags.length === 0);
+// Toda obra del canon declara su tipo literario, así que la rama del mapeo que devuelve una lista de
+// etiquetas vacía no tiene dónde ejercitarse contra el corpus. Se construye a propósito, como el resto
+// de los escenarios de borde: dejar una obra sin tags para cubrirla le quitaría al canon la cobertura
+// de las etiquetas que solo ella carga.
+export const untaggedRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
+	...palacioNueveFronterasRawLiteraryWork,
+	_id: 'onoff-literary-work-el-palacio-de-las-nueve-fronteras-untagged',
+	tags: [],
+};
+
+export const onoffRawLiteraryWorksWithoutTags: NonNullable<LiteraryWorkBySlugQueryResult>[] = [untaggedRawLiteraryWork];
 
 // Selector por capacidad de multimedia, para ejercitar el mapeo de medios del repository con datos
 // reales sin conocer un slug concreto.

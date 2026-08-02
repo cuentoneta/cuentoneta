@@ -1,6 +1,12 @@
-import type { Story, StoryTeaserWithAuthor } from '@models/story.model';
+import type {
+	Story,
+	StoryNavigationTeaser,
+	StoryNavigationTeaserWithAuthor,
+	StoryTeaserWithAuthor,
+} from '@models/story.model';
 import { isSpaceRecording } from '@models/media.model';
 import { authorTeaserMock } from './author.mock';
+import { onoffStoriesMock } from './onoff-stories.mock';
 import { elOdioStoryMock } from './onoff/el-odio.mock';
 import { elTratadoDeLosPlaceresStoryMock } from './onoff/el-tratado-de-los-placeres.mock';
 import { geometriaStoryMock } from './onoff/geometria.mock';
@@ -46,6 +52,25 @@ export const elTratadoDeLosPlaceresTeaserMock = toTeaser(elTratadoDeLosPlaceresS
 export const lasDosAntorchasTeaserMock = toTeaser(lasDosAntorchasStoryMock);
 export const neronTeaserMock = toTeaser(neronStoryMock);
 
+// La vista de navegación no proyecta el cuerpo ni los tags: el ACL la devuelve con `paragraphs` y
+// `tags` vacíos. Tampoco proyecta la autoría en el listado por autor, donde es el contexto de la
+// consulta.
+function toNavigationTeaser(story: Story): StoryNavigationTeaser {
+	return {
+		_id: story._id,
+		title: story.title,
+		slug: story.slug,
+		approximateReadingTime: story.approximateReadingTime,
+		badLanguage: story.badLanguage,
+		coverImage: story.coverImage,
+		resources: story.resources,
+		tags: [],
+		paragraphs: [],
+		media: toTeaserMedia(story.media),
+		originalPublication: story.originalPublication,
+	};
+}
+
 export const onoffStoryTeasersMock: StoryTeaserWithAuthor[] = [
 	palacioNueveFronterasTeaserMock,
 	geometriaTeaserMock,
@@ -56,3 +81,10 @@ export const onoffStoryTeasersMock: StoryTeaserWithAuthor[] = [
 	lasDosAntorchasTeaserMock,
 	neronTeaserMock,
 ];
+
+// Proyecciones de navegación del corpus: sin autor (las devuelve el listado por autor) y con autor
+// (las devuelve la colección, que puede reunir obras de varios).
+export const onoffStoryNavigationTeasersMock: StoryNavigationTeaser[] = onoffStoriesMock.map(toNavigationTeaser);
+
+export const onoffStoryNavigationTeasersWithAuthorMock: StoryNavigationTeaserWithAuthor[] =
+	onoffStoryNavigationTeasersMock.map((teaser) => ({ ...teaser, author: authorTeaserMock }));

@@ -1,5 +1,6 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import { cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag } from '../onoff-raw-tags.mock';
 import geometriaMdBody from './geometria.md?raw';
 import geometriaEditorialNoteMd from './geometria.editorial-note.md?raw';
 import { geometriaEpigraphReference, geometriaEpigraphText, geometriaSectionTitle } from './geometria.epigraph';
@@ -19,7 +20,7 @@ export const geometriaRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult
 	publishedAt: '1974-01-01T00:00:00Z',
 	totalReadingTime: 7,
 	sectionCount: 1,
-	tags: [],
+	tags: [cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag],
 	// Espeja los medios de la cara Story del mismo slug: la proyección de obra literaria resuelve
 	// `audioUrl` igual que la de Story, así que el fixture es el mismo y su mapeo se ejercita de
 	// punta a punta desde el repository.

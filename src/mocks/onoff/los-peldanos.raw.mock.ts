@@ -1,4 +1,5 @@
 import type { StoryBySlugQueryResult } from '@sanity-types';
+import { cuentoRawTag, absurdoRawTag, surrealismoRawTag } from '../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 
 export const losPeldanosRawStory: NonNullable<StoryBySlugQueryResult> = {
@@ -245,6 +246,6 @@ export const losPeldanosRawStory: NonNullable<StoryBySlugQueryResult> = {
 	},
 	mediaSources: [],
 	resources: [],
-	tags: [],
+	tags: [cuentoRawTag, absurdoRawTag, surrealismoRawTag],
 	author: rawOnoffAuthor,
 };

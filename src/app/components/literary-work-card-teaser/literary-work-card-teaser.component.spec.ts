@@ -1,6 +1,6 @@
 import { LiteraryWorkCardTeaserComponent } from './literary-work-card-teaser.component';
 import { DefaultUrlSerializer, UrlTree } from '@angular/router';
-import { render, screen } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 import {
 	onoffLiteraryWorkTeasersMock,
 	palacioNueveFronterasLiteraryWorkTeaserMock,
@@ -9,18 +9,19 @@ import { clearAllMocks } from '@test-utils';
 import type { Media } from '@models/media.model';
 import { onoffSpotifyPodcastEpisodesMock, onoffYouTubeVideosMock } from '@mocks/onoff-media.mock';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { NavigationParams } from '@app-utils/navigation-params';
 
 describe('LiteraryWorkCardTeaserComponent', () => {
 	const literaryWorkUrl = '/story/el-palacio-de-las-nueve-fronteras?navigation=author&navigationSlug=francois-onoff';
 	const authorUrl = '/author/francois-onoff';
 
-	let navigationParams: { navigation: string; navigationSlug: string } = { navigation: '', navigationSlug: '' };
+	let navigationParams: NavigationParams = { navigation: 'author', navigationSlug: '' };
 
 	beforeEach(() => {
 		clearAllMocks();
 		const urlSerializer = new DefaultUrlSerializer();
 		const urlTree: UrlTree = urlSerializer.parse(literaryWorkUrl);
-		navigationParams = urlTree.queryParams as { navigation: string; navigationSlug: string };
+		navigationParams = urlTree.queryParams as NavigationParams;
 	});
 
 	it('should render the component', async () => {
@@ -173,13 +174,17 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 			expect(screen.getByTestId('description')).toBeInTheDocument();
 		});
 
-		it('should render the sanitized section body inside the excerpt', async () => {
+		it('should render the sanitized section body as HTML and not as escaped text', async () => {
 			await render(LiteraryWorkCardTeaserComponent, {
 				inputs: { literaryWork: literaryWorkWithExcerpt, showExcerpt: true },
 			});
-			// El excerpt pinta teaserSection.bodyHtml (HTML saneado) vía [innerHTML]: el elemento debe quedar
-			// con el cuerpo renderizado en el DOM (no vacío), tras dejar de usar PortableTextParser.
-			expect(screen.getByTestId('description')).not.toBeEmptyDOMElement();
+
+			const firstParagraph = literaryWorkWithExcerpt.teaserSection?.bodyHtml.match(/<p>([\s\S]*?)<\/p>/)?.[1] ?? '';
+
+			// El pipeline emite un <p> por párrafo. Si el HTML llegara escapado, el texto igual estaría
+			// —por eso no alcanza con verificar que el elemento no quedó vacío—, pero lo contendría el div
+			// del binding como un único nodo de texto, no un párrafo propio.
+			expect(within(screen.getByTestId('description')).getByText(firstParagraph).tagName.toLowerCase()).toBe('p');
 		});
 
 		it('should not display the description when showExcerpt is false', async () => {

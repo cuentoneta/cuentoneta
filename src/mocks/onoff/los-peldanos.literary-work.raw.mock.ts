@@ -1,4 +1,5 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
+import { cuentoRawTag, absurdoRawTag, surrealismoRawTag } from '../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import losPeldanosMdBody from './los-peldanos.md?raw';
 import losPeldanosEditorialNoteMd from './los-peldanos.editorial-note.md?raw';
@@ -17,7 +18,7 @@ export const losPeldanosRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResu
 	publishedAt: '1977-01-01T00:00:00Z',
 	totalReadingTime: 8,
 	sectionCount: 1,
-	tags: [],
+	tags: [cuentoRawTag, absurdoRawTag, surrealismoRawTag],
 	mediaSources: [],
 	resources: [],
 	authors: [rawOnoffAuthor],

@@ -4,10 +4,11 @@ import { CommonModule, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 // 3rd party modules
-import { render } from '@testing-library/angular';
+import { render, screen } from '@testing-library/angular';
 
 // Models
-import { Storylist } from '@models/storylist.model';
+import { storylistMock } from '@mocks/storylist.mock';
+import type { NavigationParams } from '@app-utils/navigation-params';
 import { Story } from '@models/story.model';
 
 // Components
@@ -28,7 +29,7 @@ describe('StoryComponent', () => {
 				NgOptimizedImage,
 				MockBioSummaryCardComponent,
 				MockShareContentComponent,
-				MockStoryNavigationBarComponent,
+				SpyReadingSuggestionsComponent,
 			],
 			providers: [provideStoryApiMock(), { provide: LayoutService, useValue: new ControllableLayoutService() }],
 			inputs: {
@@ -40,6 +41,46 @@ describe('StoryComponent', () => {
 	it('should create', async () => {
 		const view = setup();
 		expect(view).toBeTruthy();
+	});
+});
+
+describe('StoryComponent - sugerencias de lectura', () => {
+	const setup = async (navigation: 'author' | 'storylist' = 'author', navigationSlug?: string) =>
+		render(StoryComponent, {
+			componentImports: [
+				CommonModule,
+				HttpClientTestingModule,
+				NgForOf,
+				NgIf,
+				NgOptimizedImage,
+				MockBioSummaryCardComponent,
+				MockShareContentComponent,
+				SpyReadingSuggestionsComponent,
+			],
+			providers: [provideStoryApiMock(), { provide: LayoutService, useValue: new ControllableLayoutService() }],
+			inputs: { slug: storyMock.slug, navigation, navigationSlug },
+		});
+
+	// La página monta el bloque y le pasa el contexto; qué variante se elige y cuándo se difiere es
+	// asunto de ReadingSuggestions, que lo cubre en su propio spec.
+	it('should mount the suggestions block once the work is loaded', async () => {
+		await setup();
+
+		expect(screen.getByTestId('reading-suggestions')).toBeInTheDocument();
+	});
+
+	it('should hand the block the context the reader arrived with', async () => {
+		await setup('storylist', storylistMock.slug);
+
+		expect(screen.getByTestId('navigation')).toHaveTextContent(`storylist|${storylistMock.slug}`);
+		expect(screen.getByTestId('current-work')).toHaveTextContent(storyMock.slug);
+		expect(screen.getByTestId('author-name')).toHaveTextContent(storyMock.author.name);
+	});
+
+	it('should fall back to the author context when the collection slug is missing', async () => {
+		await setup('storylist');
+
+		expect(screen.getByTestId('navigation')).toHaveTextContent(`author|${storyMock.author.slug}`);
 	});
 });
 
@@ -57,7 +98,7 @@ describe('StoryComponent - headerPosition', () => {
 				NgOptimizedImage,
 				MockBioSummaryCardComponent,
 				MockShareContentComponent,
-				MockStoryNavigationBarComponent,
+				SpyReadingSuggestionsComponent,
 			],
 			componentProviders: [{ provide: LayoutService, useValue: mockLayoutService }],
 			providers: [provideStoryApiMock()],
@@ -123,12 +164,20 @@ class MockBioSummaryCardComponent {
 	public readonly story = input.required<Story>();
 }
 
+// Doble del bloque de sugerencias: no resuelve datos, solo vuelca en el DOM el contexto que recibe,
+// para que la página pueda verificarlo con las queries de Testing Library.
 @Component({
 	standalone: true,
-	selector: 'cuentoneta-story-navigation-bar:not(p)',
-	template: '',
+	selector: 'cuentoneta-reading-suggestions:not(p)',
+	template: `
+		<span data-testid="navigation">{{ navigationParams().navigation }}|{{ navigationParams().navigationSlug }}</span>
+		<span data-testid="author-name">{{ authorName() }}</span>
+		<span data-testid="current-work">{{ currentWorkSlug() }}</span>
+	`,
+	host: { 'data-testid': 'reading-suggestions' },
 })
-class MockStoryNavigationBarComponent {
-	public readonly selectedStorySlug = input('');
-	public readonly storylist = input<Storylist>();
+class SpyReadingSuggestionsComponent {
+	public readonly navigationParams = input.required<NavigationParams>();
+	public readonly authorName = input.required<string>();
+	public readonly currentWorkSlug = input<string>();
 }

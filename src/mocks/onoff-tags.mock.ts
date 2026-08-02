@@ -29,6 +29,10 @@ export function toDomainTag(raw: RawTag): Tag {
 	};
 }
 
+export function toDomainTags(raw: readonly RawTag[]): Tag[] {
+	return raw.map(toDomainTag);
+}
+
 // Tipo literario de la obra. Va primero en `tags` de cada Story: los componentes que muestran un único tag
 // —el hero de la página de story, entre otros— toman `tags[0]` y lo presentan como etiqueta principal.
 export const cuentoTagMock = toDomainTag(cuentoRawTag);

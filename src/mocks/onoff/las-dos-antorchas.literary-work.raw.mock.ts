@@ -1,4 +1,5 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
+import { novelaRawTag, metaficcionRawTag, experimentalRawTag } from '../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import lasDosAntorchasMdBody from './las-dos-antorchas.md?raw';
 import lasDosAntorchasEditorialNoteMd from './las-dos-antorchas.editorial-note.md?raw';
@@ -17,7 +18,7 @@ export const lasDosAntorchasRawLiteraryWork: NonNullable<LiteraryWorkBySlugQuery
 	publishedAt: '1987-01-01T00:00:00Z',
 	totalReadingTime: 8,
 	sectionCount: 1,
-	tags: [],
+	tags: [novelaRawTag, metaficcionRawTag, experimentalRawTag],
 	mediaSources: [],
 	resources: [],
 	authors: [rawOnoffAuthor],

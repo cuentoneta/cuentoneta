@@ -1,4 +1,5 @@
 import type { StoryBySlugQueryResult } from '@sanity-types';
+import { novelaRawTag, dramaPsicologicoRawTag } from '../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 
 export const elOdioRawStory: NonNullable<StoryBySlugQueryResult> = {
@@ -252,6 +253,6 @@ export const elOdioRawStory: NonNullable<StoryBySlugQueryResult> = {
 	},
 	mediaSources: [],
 	resources: [],
-	tags: [],
+	tags: [novelaRawTag, dramaPsicologicoRawTag],
 	author: rawOnoffAuthor,
 };

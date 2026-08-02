@@ -77,15 +77,15 @@ interface MediaSelectorItem {
 	},
 })
 export class MediaSelectorsComponent {
-	// Inputs
-	public readonly media = input<Media[]>([]);
+	// Solo lee la colección, así que la acepta de solo lectura: es como la exponen las proyecciones
+	// de LiteraryWork.
+	public readonly media = input<readonly Media[]>([]);
 	public readonly orientation = input<'horizontal' | 'vertical'>('horizontal');
 	public readonly theme = input<MediaSelectorsTheme>('subtle');
 	public readonly selectable = input<boolean>(false);
 
 	public readonly selected = output<Media>();
 
-	// Mapeo de cada tipo de media del dominio a su ícono y etiqueta accesible.
 	private readonly mediaPlatforms: Record<MediaTypeKey, { iconName: string; label: string }> = {
 		youTubeVideo: { iconName: 'simpleYoutube', label: 'YouTube' },
 		spaceRecording: { iconName: 'simpleX', label: 'Spaces de X' },
@@ -109,10 +109,8 @@ export class MediaSelectorsComponent {
 		this.orientation() === 'vertical' ? 'flex flex-col items-center gap-2.5' : 'flex items-center gap-2.5',
 	);
 
-	// Clases base del recuadro, compartidas por ambas variantes (selectores y botones).
 	private readonly selectorBaseClasses = 'relative flex items-center justify-center rounded-lg px-2.5 py-2';
 
-	// Estilos del recuadro de cada selector: clases base + las propias del tema.
 	protected readonly selectorClasses = computed(() => {
 		const theme = (() => {
 			switch (this.theme()) {
@@ -133,7 +131,6 @@ export class MediaSelectorsComponent {
 		return selector.count > 1 ? `${selector.label} (${selector.count})` : selector.label;
 	}
 
-	// Estilos del contador (badge) que se superpone al selector según el tema.
 	protected readonly badgeClasses = computed(() => {
 		switch (this.theme()) {
 			case 'solid':

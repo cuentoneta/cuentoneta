@@ -6,12 +6,9 @@ import {
 	elOdioLiteraryWorkTeaserMock,
 	geometriaLiteraryWorkTeaserMock,
 	palacioNueveFronterasLiteraryWorkTeaserMock,
+	withMediaSources,
 } from '@mocks/onoff-literary-work-teasers.mock';
-import {
-	corpusLiteraryWorkTeasers,
-	literaryWorkSelectArgType,
-	withRichMediaSources,
-} from '@mocks/onoff-corpus.storybook';
+import { corpusLiteraryWorkTeasers, literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
 
 const meta: Meta<LiteraryWorkCardTeaserComponent> = {
 	component: LiteraryWorkCardTeaserComponent,
@@ -75,7 +72,7 @@ const meta: Meta<LiteraryWorkCardTeaserComponent> = {
 			control: { type: 'object' },
 			description: 'Parámetros de navegación para el contexto de enrutamiento',
 			table: {
-				type: { summary: '{ navigation: string; navigationSlug: string }' },
+				type: { summary: 'NavigationParams' },
 				defaultValue: { summary: 'undefined' },
 			},
 		},
@@ -133,7 +130,7 @@ export const OnWhite: Story = {
 		template: `<cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} />`,
 	}),
 	args: {
-		literaryWork: withRichMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
+		literaryWork: withMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
 		variant: 'on-white',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -157,7 +154,7 @@ export const OnGray: Story = {
 		template: `<div class="rounded-lg bg-neutral-100 p-6"><cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} /></div>`,
 	}),
 	args: {
-		literaryWork: withRichMediaSources(geometriaLiteraryWorkTeaserMock),
+		literaryWork: withMediaSources(geometriaLiteraryWorkTeaserMock),
 		variant: 'on-gray',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -181,7 +178,7 @@ export const Highlighted: Story = {
 		template: `<cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} />`,
 	}),
 	args: {
-		literaryWork: withRichMediaSources(elOdioLiteraryWorkTeaserMock),
+		literaryWork: withMediaSources(elOdioLiteraryWorkTeaserMock),
 		variant: 'highlighted',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -206,9 +203,9 @@ export const AllVariants: Story = {
 		props: {
 			...args,
 			literaryWorks: [
-				withRichMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
-				withRichMediaSources(geometriaLiteraryWorkTeaserMock),
-				withRichMediaSources(elOdioLiteraryWorkTeaserMock),
+				withMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
+				withMediaSources(geometriaLiteraryWorkTeaserMock),
+				withMediaSources(elOdioLiteraryWorkTeaserMock),
 			],
 		},
 		template: `
@@ -307,7 +304,7 @@ export const Estados: StoryObj<LiteraryWorkCardTeaserComponent & { loading: bool
 	}),
 	args: {
 		loading: true,
-		literaryWork: withRichMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
+		literaryWork: withMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
 		variant: 'on-white',
 		order: 1,
 		tagLabel: 'Cuento',

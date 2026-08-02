@@ -9,18 +9,19 @@ import { clearAllMocks } from '@test-utils';
 import type { Media } from '@models/media.model';
 import { onoffSpotifyPodcastEpisodesMock, onoffYouTubeVideosMock } from '@mocks/onoff-media.mock';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { NavigationParams } from '@app-utils/navigation-params';
 
 describe('LiteraryWorkHomeCardTeaserComponent', () => {
 	const literaryWorkUrl = '/story/el-palacio-de-las-nueve-fronteras?navigation=author&navigationSlug=francois-onoff';
 	const authorUrl = '/author/francois-onoff';
 
-	let navigationParams: { navigation: string; navigationSlug: string } = { navigation: '', navigationSlug: '' };
+	let navigationParams: NavigationParams = { navigation: 'author', navigationSlug: '' };
 
 	beforeEach(() => {
 		clearAllMocks();
 		const urlSerializer = new DefaultUrlSerializer();
 		const urlTree: UrlTree = urlSerializer.parse(literaryWorkUrl);
-		navigationParams = urlTree.queryParams as { navigation: string; navigationSlug: string };
+		navigationParams = urlTree.queryParams as NavigationParams;
 	});
 
 	it('should render the component', async () => {

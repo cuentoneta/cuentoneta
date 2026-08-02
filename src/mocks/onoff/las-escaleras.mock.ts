@@ -1,4 +1,6 @@
 import type { Story } from '@models/story.model';
+import { lasEscalerasRawStory } from './las-escaleras.raw.mock';
+import { lasEscalerasRawLiteraryWork } from './las-escaleras.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
@@ -8,7 +10,7 @@ import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import lasEscalerasMdBody from './las-escaleras.md?raw';
 import lasEscalerasEditorialNoteMd from './las-escaleras.editorial-note.md?raw';
 import { authorMock } from '../author.mock';
-import { absurdoTagMock, alegoriaTagMock, novelaTagMock } from '../onoff-tags.mock';
+import { toDomainTags } from '../onoff-tags.mock';
 
 export const lasEscalerasStoryMock: Story = {
 	_id: 'onoff-story-las-escaleras',
@@ -18,7 +20,7 @@ export const lasEscalerasStoryMock: Story = {
 	approximateReadingTime: 9,
 	badLanguage: false,
 	coverImage: 'assets/img/mocks/stories/las-escaleras.png',
-	tags: [novelaTagMock, absurdoTagMock, alegoriaTagMock],
+	tags: toDomainTags(lasEscalerasRawStory.tags),
 	resources: [],
 	media: [],
 	epigraphs: [],
@@ -284,7 +286,7 @@ export const lasEscalerasLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	mediaSources: [],
 	resources: lasEscalerasStoryMock.resources,
 	badLanguage: lasEscalerasStoryMock.badLanguage,
-	tags: lasEscalerasStoryMock.tags,
+	tags: toDomainTags(lasEscalerasRawLiteraryWork.tags),
 	originalPublication: lasEscalerasStoryMock.originalPublication,
 	editorialNote: markdownToSanitizedHtml(createMarkdown(lasEscalerasEditorialNoteMd)),
 	publishedAt: createIsoDateTime(lasEscalerasStoryMock.publishedAt),

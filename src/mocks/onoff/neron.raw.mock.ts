@@ -1,4 +1,5 @@
 import type { StoryBySlugQueryResult } from '@sanity-types';
+import { dramaHistoricoRawTag, teatroRawTag, tragediaRawTag } from '../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 
 export const neronRawStory: NonNullable<StoryBySlugQueryResult> = {
@@ -268,6 +269,6 @@ export const neronRawStory: NonNullable<StoryBySlugQueryResult> = {
 	},
 	mediaSources: [],
 	resources: [],
-	tags: [],
+	tags: [teatroRawTag, tragediaRawTag, dramaHistoricoRawTag],
 	author: rawOnoffAuthor,
 };

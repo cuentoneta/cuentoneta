@@ -5,7 +5,9 @@ import type {
 	LiteraryWorkNavigationTeaserWithAuthors,
 	LiteraryWorkTeaser,
 } from '@models/literary-work.model';
+import type { Media } from '@models/media.model';
 import { authorTeaserMock } from './author.mock';
+import { onoffMediaMock, onoffYouTubeVideosMock } from './onoff-media.mock';
 import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
 
 // Proyecta el Author de dominio a su variante AuthorTeaser (misma base, biography/resources vaciadas),
@@ -72,6 +74,18 @@ export const onoffLiteraryWorkTeasersMock: LiteraryWorkTeaser[] = [
 	lasDosAntorchasLiteraryWorkTeaserMock,
 	neronLiteraryWorkTeaserMock,
 ];
+
+// Ninguna obra del canon declara recursos multimedia, así que los casos que necesitan ese shape
+// —los selectores de multimedia de las tarjetas— lo obtienen de esta variante enriquecida, en vez
+// de armarlo cada uno por su cuenta.
+// Sale del canon; el YouTube repetido existe para que los consumidores que cuentan medios tengan más
+// elementos que tipos distintos.
+const mediaSources: Media[] = [...onoffMediaMock, ...onoffYouTubeVideosMock];
+
+export const withMediaSources = (teaser: LiteraryWorkTeaser): LiteraryWorkTeaser => ({ ...teaser, mediaSources });
+
+export const onoffLiteraryWorkTeasersWithMediaSourcesMock: LiteraryWorkTeaser[] =
+	onoffLiteraryWorkTeasersMock.map(withMediaSources);
 
 // Los teasers de navegación proyectan solo la vista base (LiteraryWorkBase): las vistas de navegación
 // no muestran el paratexto editorial, el cuerpo ni la sección de apertura. La variante sin autores deja
