@@ -600,7 +600,7 @@ interface Tag {
 
 **Uso:** Clasificar contenido por tema, género, etc.
 
-> El ícono que acompaña a una etiqueta en la interfaz lo resuelve el frontend a partir del `slug`, contra el mapa local de `@models/icon.model`. No viaja desde el CMS.
+> Una etiqueta no lleva ícono: `TagComponent` renderiza solo su título. El CMS supo tener un campo de ícono, pero ninguna superficie lo mostraba.
 
 ---
 

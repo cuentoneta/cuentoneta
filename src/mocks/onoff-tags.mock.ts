@@ -20,7 +20,7 @@ import {
 // Proyecta el crudo al dominio con los mismos campos que construye `mapTags` en el ACL. No importa el
 // mapper —`src/mocks/**` lo consume el frontend y Storybook, e importar el ACL arrastraría
 // `@sanity/client` al bundle—, así que la igualdad `mapTags(onoffRawTagsMock) === onoffTagsMock` de
-// `onoff-tags.mock.spec.ts` es lo que detecta si el corpus deriva del contrato que el ACL produce.
+// `onoff-tags.mock.spec.ts` es lo que detecta si el corpus se aparta del contrato que el ACL produce.
 export function toDomainTag(raw: RawTag): Tag {
 	return {
 		title: raw.title,
