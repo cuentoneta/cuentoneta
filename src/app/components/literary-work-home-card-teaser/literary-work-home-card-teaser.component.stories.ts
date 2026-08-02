@@ -56,7 +56,7 @@ const meta: Meta<LiteraryWorkHomeCardTeaserComponent> = {
 			control: { type: 'object' },
 			description: 'Parámetros de navegación para el contexto de enrutamiento',
 			table: {
-				type: { summary: '{ navigation: string; navigationSlug: string }' },
+				type: { summary: 'NavigationParams' },
 				defaultValue: { summary: 'undefined' },
 			},
 		},
