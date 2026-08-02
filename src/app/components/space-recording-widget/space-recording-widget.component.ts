@@ -1,11 +1,10 @@
 import { Component, input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { SpaceRecording } from '@models/media.model';
-import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 
 @Component({
 	selector: 'cuentoneta-space-recording-widget',
-	imports: [CommonModule, NgOptimizedImage, PortableTextParserComponent],
+	imports: [CommonModule, NgOptimizedImage],
 	host: { class: 'flex flex-col gap-2' },
 	template: `
 		<section class="spaces-card grid grid-rows-3-auto rounded-lg p-4 font-inter text-base text-white">
@@ -49,9 +48,11 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 				</div>
 			}
 		</section>
-		<p class="font-inter text-xs font-medium text-brand-500">
-			<cuentoneta-portable-text-parser [paragraphs]="media().description" />
-		</p>
+		<div
+			[innerHTML]="media().description"
+			data-testid="media-description"
+			class="font-inter text-xs font-medium text-brand-500"
+		></div>
 	`,
 	styles: `
 		:host {

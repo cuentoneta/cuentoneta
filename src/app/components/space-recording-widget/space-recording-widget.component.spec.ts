@@ -1,6 +1,5 @@
 import { SpaceRecordingWidgetComponent } from './space-recording-widget.component';
-import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
-import { render, screen } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 import { CommonModule, DatePipe, NgOptimizedImage } from '@angular/common';
 import { SpaceRecording } from '@models/media.model';
 import { mediaDescriptionText, onoffSpaceRecordingsMock } from '@mocks/onoff-media.mock';
@@ -8,7 +7,7 @@ import { mediaDescriptionText, onoffSpaceRecordingsMock } from '@mocks/onoff-med
 describe('SpaceRecordingWidgetComponent', () => {
 	const setup = async (media: SpaceRecording = onoffSpaceRecordingsMock[0]) => {
 		return await render(SpaceRecordingWidgetComponent, {
-			componentImports: [CommonModule, NgOptimizedImage, PortableTextParserComponent],
+			componentImports: [CommonModule, NgOptimizedImage],
 			componentProviders: [],
 			inputs: {
 				media,
@@ -66,9 +65,19 @@ describe('SpaceRecordingWidgetComponent', () => {
 		expect(img).toHaveAttribute('src', onoffSpaceRecordingsMock[0].data.hostAvatar);
 	});
 
-	it('should display the space recording description', async () => {
+	// La descripción llega como HTML saneado y se pinta con [innerHTML]: se verifica el texto completo y
+	// que el enlace del fixture sobreviva, para distinguir "se pintó el HTML" de "se pintó el string
+	// escapado". El contenedor es un div, no un p: el pipeline emite <p>…</p> y anidarlo lo rompería.
+	it('should display the space recording description as rendered HTML', async () => {
 		await setup();
 
-		expect(screen.getByText(mediaDescriptionText(onoffSpaceRecordingsMock[0]))).toBeInTheDocument();
+		const description = screen.getByTestId('media-description');
+
+		expect(description.tagName.toLowerCase()).toBe('div');
+		expect(description.textContent?.trim()).toBe(mediaDescriptionText(onoffSpaceRecordingsMock[0]));
+		expect(within(description).getByRole('link')).toHaveAttribute(
+			'href',
+			'https://cdn.example.org/onoff/geometria.pdf',
+		);
 	});
 });

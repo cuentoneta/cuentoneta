@@ -14,8 +14,8 @@ export const onoffYouTubeVideosMock: YouTubeVideo[] = onoffMediaMock.filter(isYo
 export const onoffSpotifyPodcastEpisodesMock: SpotifyPodcastEpisode[] = onoffMediaMock.filter(isSpotifyPodcastEpisode);
 
 // El texto plano de una descripción, para que las specs de los widgets afirmen sobre el fixture en vez
-// de clavar prosa. Vive acá y no en cada spec porque la forma de `description` cambia con el modelo de
+// de clavar prosa. Vive acá y no en cada spec porque la forma de `description` depende del modelo de
 // contenido: un solo sitio se adapta.
 export function mediaDescriptionText(media: Media): string {
-	return media.description.flatMap((block) => block.children.map((child) => child.text)).join('');
+	return media.description.replace(/<[^>]+>/g, '').trim();
 }

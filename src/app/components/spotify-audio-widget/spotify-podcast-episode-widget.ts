@@ -5,11 +5,9 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { SpotifyPodcastEpisode } from '@models/media.model';
 
 // Components
-import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 
 @Component({
 	selector: 'cuentoneta-spotify-audio-widget',
-	imports: [PortableTextParserComponent],
 	template: `
 		<iframe
 			[src]="mediaUrl()"
@@ -22,10 +20,11 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 			data-testid="spotify-embed"
 			class="mb-2 block"
 		></iframe>
-		<cuentoneta-portable-text-parser
-			[paragraphs]="media().description"
+		<div
+			[innerHTML]="media().description"
+			data-testid="media-description"
 			class="font-inter text-xs font-medium text-brand-500"
-		/>
+		></div>
 	`,
 })
 export class SpotifyPodcastEpisodeWidget {

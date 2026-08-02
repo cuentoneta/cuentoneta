@@ -1,5 +1,5 @@
 // Testing library
-import { render, screen } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 
 // Component
 import { SpotifyPodcastEpisodeWidget } from './spotify-podcast-episode-widget';
@@ -44,11 +44,18 @@ describe('SpotifyPodcastEpisodeWidget', () => {
 		expect(screen.queryByText(onoffSpotifyPodcastEpisodesMock[0].title)).not.toBeInTheDocument();
 	});
 
-	it('should display the spotify audio description', async () => {
+	// La descripción llega como HTML saneado y se pinta con [innerHTML]: se verifica el texto completo y
+	// que el marcado sobreviva, para distinguir "se pintó el HTML" de "se pintó el string escapado".
+	it('should display the spotify audio description as rendered HTML', async () => {
 		await render(SpotifyPodcastEpisodeWidget, {
 			inputs: { media: onoffSpotifyPodcastEpisodesMock[0] },
 		});
 
-		expect(screen.getByText(mediaDescriptionText(onoffSpotifyPodcastEpisodesMock[0]))).toBeInTheDocument();
+		const description = screen.getByTestId('media-description');
+
+		expect(description.textContent?.trim()).toBe(mediaDescriptionText(onoffSpotifyPodcastEpisodesMock[0]));
+		// El énfasis fuerte del Markdown del fixture: si el HTML se hubiera escapado, el texto seguiría
+		// estando pero no habría un elemento propio que lo contenga.
+		expect(within(description).getByText('podcast').tagName.toLowerCase()).toBe('strong');
 	});
 });

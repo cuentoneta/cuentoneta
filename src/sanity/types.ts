@@ -140,14 +140,14 @@ export type LiteraryWork = {
 	mediaSources?: Array<
 		| {
 				title: string;
-				description: BlockContent;
+				description: Markdown;
 				url: string;
 				_type: 'audioRecording';
 				_key: string;
 		  }
 		| {
 				title: string;
-				description: BlockContent;
+				description: Markdown;
 				audioFile: AudioFile;
 				hostName: string;
 				hostAvatar?: HostAvatar;
@@ -158,21 +158,21 @@ export type LiteraryWork = {
 		  }
 		| {
 				title: string;
-				description: BlockContent;
+				description: Markdown;
 				videoId: string;
 				_type: 'youTubeVideo';
 				_key: string;
 		  }
 		| {
 				title: string;
-				description: BlockContent;
+				description: Markdown;
 				url: string;
 				_type: 'spotifyPodcastEpisode';
 				_key: string;
 		  }
 		| {
 				title: string;
-				description: BlockContent;
+				description: Markdown;
 				url: string;
 				_type: 'pdfLink';
 				_key: string;
@@ -232,14 +232,14 @@ export type Story = {
 	mediaSources?: Array<
 		| {
 				title: string;
-				description: BlockContent;
+				description: Markdown;
 				url: string;
 				_type: 'audioRecording';
 				_key: string;
 		  }
 		| {
 				title: string;
-				description: BlockContent;
+				description: Markdown;
 				audioFile: AudioFile;
 				hostName: string;
 				hostAvatar?: HostAvatar;
@@ -250,21 +250,21 @@ export type Story = {
 		  }
 		| {
 				title: string;
-				description: BlockContent;
+				description: Markdown;
 				videoId: string;
 				_type: 'youTubeVideo';
 				_key: string;
 		  }
 		| {
 				title: string;
-				description: BlockContent;
+				description: Markdown;
 				url: string;
 				_type: 'spotifyPodcastEpisode';
 				_key: string;
 		  }
 		| {
 				title: string;
-				description: BlockContent;
+				description: Markdown;
 				url: string;
 				_type: 'pdfLink';
 				_key: string;
@@ -425,14 +425,14 @@ export type Storylist = {
 	mediaSources?: Array<
 		| {
 				title: string;
-				description: BlockContent;
+				description: Markdown;
 				url: string;
 				_type: 'audioRecording';
 				_key: string;
 		  }
 		| {
 				title: string;
-				description: BlockContent;
+				description: Markdown;
 				audioFile: AudioFile;
 				hostName: string;
 				hostAvatar?: HostAvatar;
@@ -443,21 +443,21 @@ export type Storylist = {
 		  }
 		| {
 				title: string;
-				description: BlockContent;
+				description: Markdown;
 				videoId: string;
 				_type: 'youTubeVideo';
 				_key: string;
 		  }
 		| {
 				title: string;
-				description: BlockContent;
+				description: Markdown;
 				url: string;
 				_type: 'spotifyPodcastEpisode';
 				_key: string;
 		  }
 		| {
 				title: string;
-				description: BlockContent;
+				description: Markdown;
 				url: string;
 				_type: 'pdfLink';
 				_key: string;
@@ -835,21 +835,21 @@ export type RotatingContentQueryResult = {
 					| Array<
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									url: string;
 									_type: 'audioRecording';
 									_key: string;
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									url: string;
 									_type: 'pdfLink';
 									_key: string;
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									audioFile: AudioFile;
 									hostName: string;
 									hostAvatar?: HostAvatar;
@@ -860,14 +860,14 @@ export type RotatingContentQueryResult = {
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									url: string;
 									_type: 'spotifyPodcastEpisode';
 									_key: string;
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									videoId: string;
 									_type: 'youTubeVideo';
 									_key: string;
@@ -996,21 +996,21 @@ export type LandingPageContentQueryResult = {
 					| Array<
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									url: string;
 									_type: 'audioRecording';
 									_key: string;
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									url: string;
 									_type: 'pdfLink';
 									_key: string;
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									audioFile: AudioFile;
 									hostName: string;
 									hostAvatar?: HostAvatar;
@@ -1021,14 +1021,14 @@ export type LandingPageContentQueryResult = {
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									url: string;
 									_type: 'spotifyPodcastEpisode';
 									_key: string;
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									videoId: string;
 									_type: 'youTubeVideo';
 									_key: string;
@@ -1086,21 +1086,21 @@ export type LandingPageContentQueryResult = {
 					| Array<
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									url: string;
 									_type: 'audioRecording';
 									_key: string;
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									url: string;
 									_type: 'pdfLink';
 									_key: string;
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									audioFile: AudioFile;
 									hostName: string;
 									hostAvatar?: HostAvatar;
@@ -1111,14 +1111,14 @@ export type LandingPageContentQueryResult = {
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									url: string;
 									_type: 'spotifyPodcastEpisode';
 									_key: string;
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									videoId: string;
 									_type: 'youTubeVideo';
 									_key: string;
@@ -1207,21 +1207,21 @@ export type LiteraryWorkBySlugQueryResult = {
 		| Array<
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'audioRecording';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'pdfLink';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						audioFile: AudioFile;
 						hostName: string;
 						hostAvatar?: HostAvatar;
@@ -1233,14 +1233,14 @@ export type LiteraryWorkBySlugQueryResult = {
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'spotifyPodcastEpisode';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						videoId: string;
 						_type: 'youTubeVideo';
 						_key: string;
@@ -1347,21 +1347,21 @@ export type LiteraryWorkSectionBySlugQueryResult = {
 		| Array<
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'audioRecording';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'pdfLink';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						audioFile: AudioFile;
 						hostName: string;
 						hostAvatar?: HostAvatar;
@@ -1373,14 +1373,14 @@ export type LiteraryWorkSectionBySlugQueryResult = {
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'spotifyPodcastEpisode';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						videoId: string;
 						_type: 'youTubeVideo';
 						_key: string;
@@ -1539,21 +1539,21 @@ export type StoriesByAuthorSlugQueryResult = Array<{
 		| Array<
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'audioRecording';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'pdfLink';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						audioFile: AudioFile;
 						hostName: string;
 						hostAvatar?: HostAvatar;
@@ -1564,14 +1564,14 @@ export type StoriesByAuthorSlugQueryResult = Array<{
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'spotifyPodcastEpisode';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						videoId: string;
 						_type: 'youTubeVideo';
 						_key: string;
@@ -1613,21 +1613,21 @@ export type StoryNavigationTeasersByAuthorSlugQueryResult = Array<{
 		| Array<
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'audioRecording';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'pdfLink';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						audioFile: AudioFile;
 						hostName: string;
 						hostAvatar?: HostAvatar;
@@ -1638,14 +1638,14 @@ export type StoryNavigationTeasersByAuthorSlugQueryResult = Array<{
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'spotifyPodcastEpisode';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						videoId: string;
 						_type: 'youTubeVideo';
 						_key: string;
@@ -1715,21 +1715,21 @@ export type StoryBySlugQueryResult = {
 		| Array<
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'audioRecording';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'pdfLink';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						audioFile: AudioFile;
 						hostName: string;
 						hostAvatar?: HostAvatar;
@@ -1741,14 +1741,14 @@ export type StoryBySlugQueryResult = {
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'spotifyPodcastEpisode';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						videoId: string;
 						_type: 'youTubeVideo';
 						_key: string;
@@ -1843,21 +1843,21 @@ export type StoriesBySlugsQueryResult = Array<{
 		| Array<
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'audioRecording';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'pdfLink';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						audioFile: AudioFile;
 						hostName: string;
 						hostAvatar?: HostAvatar;
@@ -1868,14 +1868,14 @@ export type StoriesBySlugsQueryResult = Array<{
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'spotifyPodcastEpisode';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						videoId: string;
 						_type: 'youTubeVideo';
 						_key: string;
@@ -1941,21 +1941,21 @@ export type AllStoriesQueryResult = Array<{
 		| Array<
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'audioRecording';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'pdfLink';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						audioFile: AudioFile;
 						hostName: string;
 						hostAvatar?: HostAvatar;
@@ -1966,14 +1966,14 @@ export type AllStoriesQueryResult = Array<{
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'spotifyPodcastEpisode';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						videoId: string;
 						_type: 'youTubeVideo';
 						_key: string;
@@ -2056,21 +2056,21 @@ export type StorylistTeasersQueryResult = Array<{
 		| Array<
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'audioRecording';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'pdfLink';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						audioFile: AudioFile;
 						hostName: string;
 						hostAvatar?: HostAvatar;
@@ -2081,14 +2081,14 @@ export type StorylistTeasersQueryResult = Array<{
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'spotifyPodcastEpisode';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						videoId: string;
 						_type: 'youTubeVideo';
 						_key: string;
@@ -2143,21 +2143,21 @@ export type StorylistStoriesNavigationTeasersQueryResult = {
 					| Array<
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									url: string;
 									_type: 'audioRecording';
 									_key: string;
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									url: string;
 									_type: 'pdfLink';
 									_key: string;
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									audioFile: AudioFile;
 									hostName: string;
 									hostAvatar?: HostAvatar;
@@ -2168,14 +2168,14 @@ export type StorylistStoriesNavigationTeasersQueryResult = {
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									url: string;
 									_type: 'spotifyPodcastEpisode';
 									_key: string;
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									videoId: string;
 									_type: 'youTubeVideo';
 									_key: string;
@@ -2306,21 +2306,21 @@ export type StorylistQueryResult = {
 					| Array<
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									url: string;
 									_type: 'audioRecording';
 									_key: string;
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									url: string;
 									_type: 'pdfLink';
 									_key: string;
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									audioFile: AudioFile;
 									hostName: string;
 									hostAvatar?: HostAvatar;
@@ -2331,14 +2331,14 @@ export type StorylistQueryResult = {
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									url: string;
 									_type: 'spotifyPodcastEpisode';
 									_key: string;
 							  }
 							| {
 									title: string;
-									description: BlockContent;
+									description: Markdown;
 									videoId: string;
 									_type: 'youTubeVideo';
 									_key: string;
@@ -2398,21 +2398,21 @@ export type StorylistQueryResult = {
 		| Array<
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'audioRecording';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'pdfLink';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						audioFile: AudioFile;
 						hostName: string;
 						hostAvatar?: HostAvatar;
@@ -2424,14 +2424,14 @@ export type StorylistQueryResult = {
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						url: string;
 						_type: 'spotifyPodcastEpisode';
 						_key: string;
 				  }
 				| {
 						title: string;
-						description: BlockContent;
+						description: Markdown;
 						videoId: string;
 						_type: 'youTubeVideo';
 						_key: string;

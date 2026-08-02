@@ -1,4 +1,4 @@
-import type { BlockContent, StoryBySlugQueryResult } from '@sanity-types';
+import type { StoryBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../onoff-raw-author.mock';
 import {
 	geometriaAudioDescription,
@@ -8,18 +8,6 @@ import {
 	geometriaYoutubeDescription,
 } from './geometria.media';
 
-function rawMediaDescription(key: string, text: string): BlockContent {
-	return [
-		{
-			_type: 'block',
-			_key: `${key}-description`,
-			style: 'normal',
-			markDefs: [],
-			children: [{ _type: 'span', _key: `${key}-span`, text, marks: [] }],
-		},
-	];
-}
-
 // Única obra del corpus con multimedia: cubre los cuatro tipos que el dominio modela más un
 // pdfLink, que el schema admite y el ACL descarta — el caso real de tipo no mapeado. Se exporta
 // para que la cara de obra literaria del mismo slug espeje exactamente estos medios.
@@ -28,14 +16,14 @@ export const geometriaRawMediaSources: NonNullable<StoryBySlugQueryResult>['medi
 		_key: 'geometria-audio',
 		_type: 'audioRecording',
 		title: 'Lectura de "Geometría" por su autor',
-		description: rawMediaDescription('geometria-audio', geometriaAudioDescription),
+		description: geometriaAudioDescription,
 		url: 'https://cdn.example.org/onoff/geometria.ogg',
 	},
 	{
 		_key: 'geometria-space',
 		_type: 'spaceRecording',
 		title: 'Conversación sobre el insomnio y la medida del tiempo',
-		description: rawMediaDescription('geometria-space', geometriaSpaceDescription),
+		description: geometriaSpaceDescription,
 		audioFile: { _type: 'file', asset: { _type: 'reference', _ref: 'file-geometria-space-ogg' } },
 		hostName: 'Biblioteca del Méridien',
 		// Opcional en el schema: presente acá para que la rama del widget que pinta el avatar del anfitrión
@@ -52,21 +40,21 @@ export const geometriaRawMediaSources: NonNullable<StoryBySlugQueryResult>['medi
 		_key: 'geometria-spotify',
 		_type: 'spotifyPodcastEpisode',
 		title: 'Episodio dedicado a "Geometría"',
-		description: rawMediaDescription('geometria-spotify', geometriaSpotifyDescription),
+		description: geometriaSpotifyDescription,
 		url: 'https://open.spotify.com/embed/episode/geometria',
 	},
 	{
 		_key: 'geometria-youtube',
 		_type: 'youTubeVideo',
 		title: 'Video ensayo sobre las coordenadas del desvelo',
-		description: rawMediaDescription('geometria-youtube', geometriaYoutubeDescription),
+		description: geometriaYoutubeDescription,
 		videoId: 'geometriaVideoId',
 	},
 	{
 		_key: 'geometria-pdf',
 		_type: 'pdfLink',
 		title: 'Facsímil de la primera edición',
-		description: rawMediaDescription('geometria-pdf', geometriaPdfDescription),
+		description: geometriaPdfDescription,
 		url: 'https://cdn.example.org/onoff/geometria.pdf',
 	},
 ];

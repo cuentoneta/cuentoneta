@@ -2,20 +2,21 @@ import { Component, input, ViewEncapsulation } from '@angular/core';
 
 import { YouTubeVideo } from '@models/media.model';
 import { YouTubePlayer } from '@angular/youtube-player';
-import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 
 @Component({
 	selector: 'cuentoneta-youtube-video-widget',
-	imports: [YouTubePlayer, PortableTextParserComponent],
+	imports: [YouTubePlayer],
 	encapsulation: ViewEncapsulation.None,
 	template: `<youtube-player
 			[videoId]="media().data.videoId"
 			data-testid="youtube-player"
 			placeholderImageQuality="low"
 		/>
-		<p class="font-inter text-xs font-medium text-brand-500">
-			<cuentoneta-portable-text-parser [paragraphs]="media().description" />
-		</p>`,
+		<div
+			[innerHTML]="media().description"
+			data-testid="media-description"
+			class="font-inter text-xs font-medium text-brand-500"
+		></div>`,
 	styles: `
 		@reference '#tailwind-theme';
 

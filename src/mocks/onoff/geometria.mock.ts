@@ -11,19 +11,7 @@ import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import geometriaMdBody from './geometria.md?raw';
 import geometriaEditorialNoteMd from './geometria.editorial-note.md?raw';
 import { geometriaEpigraphReference, geometriaEpigraphText, geometriaSectionTitle } from './geometria.epigraph';
-import type { TextBlockContent } from '@models/block-content.model';
 
-function mediaDescription(key: string, text: string): TextBlockContent[] {
-	return [
-		{
-			_type: 'block',
-			_key: `${key}-description`,
-			style: 'normal',
-			markDefs: [],
-			children: [{ _type: 'span', _key: `${key}-span`, text, marks: [] }],
-		},
-	];
-}
 import { authorMock } from '../author.mock';
 import { cuentoTagMock, dramaPsicologicoTagMock, filosoficoTagMock } from '../onoff-tags.mock';
 import {
@@ -39,13 +27,13 @@ export const geometriaMediaMock: Media[] = [
 	{
 		title: 'Lectura de "Geometría" por su autor',
 		type: 'audioRecording',
-		description: mediaDescription('geometria-audio', geometriaAudioDescription),
+		description: markdownToSanitizedHtml(createMarkdown(geometriaAudioDescription)),
 		data: { url: 'https://cdn.example.org/onoff/geometria.ogg' },
 	},
 	{
 		title: 'Conversación sobre el insomnio y la medida del tiempo',
 		type: 'spaceRecording',
-		description: mediaDescription('geometria-space', geometriaSpaceDescription),
+		description: markdownToSanitizedHtml(createMarkdown(geometriaSpaceDescription)),
 		data: {
 			url: 'https://cdn.example.org/onoff/geometria-space.ogg',
 			duration: '48:12',
@@ -57,13 +45,13 @@ export const geometriaMediaMock: Media[] = [
 	{
 		title: 'Episodio dedicado a "Geometría"',
 		type: 'spotifyPodcastEpisode',
-		description: mediaDescription('geometria-spotify', geometriaSpotifyDescription),
+		description: markdownToSanitizedHtml(createMarkdown(geometriaSpotifyDescription)),
 		data: { url: 'https://open.spotify.com/embed/episode/geometria' },
 	},
 	{
 		title: 'Video ensayo sobre las coordenadas del desvelo',
 		type: 'youTubeVideo',
-		description: mediaDescription('geometria-youtube', geometriaYoutubeDescription),
+		description: markdownToSanitizedHtml(createMarkdown(geometriaYoutubeDescription)),
 		data: { videoId: 'geometriaVideoId' },
 	},
 ];
