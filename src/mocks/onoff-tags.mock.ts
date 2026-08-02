@@ -1,66 +1,76 @@
 import type { Tag } from '@models/tag.model';
+import type { RawTag } from './onoff-raw-tags.mock';
+import {
+	absurdoRawTag,
+	alegoriaRawTag,
+	colaborativaRawTag,
+	cuentoRawTag,
+	dramaHistoricoRawTag,
+	dramaPsicologicoRawTag,
+	ensayoRawTag,
+	experimentalRawTag,
+	filosoficoRawTag,
+	metaficcionRawTag,
+	novelaRawTag,
+	surrealismoRawTag,
+	teatroRawTag,
+	tragediaRawTag,
+} from './onoff-raw-tags.mock';
 
-// Arma el bloque de Portable Text de `description` a partir del texto corto, que es lo único que varía entre
-// los tags del corpus.
-function createTag(title: string, slug: string, shortDescription: string): Tag {
+// Replica la normalización que aplica `mapTags` en el ACL. Se duplica a propósito en vez de importar el
+// mapper: `src/mocks/**` lo consume el frontend y Storybook, e importar el ACL arrastraría `@sanity/client`
+// al bundle. La igualdad `mapTags(onoffRawTagsMock) === onoffTagsMock` de `onoff-tags.mock.spec.ts` es lo
+// que vigila que las dos copias no diverjan.
+export function toDomainTag(raw: RawTag): Tag {
 	return {
-		title,
-		slug,
-		shortDescription,
-		description: [
-			{
-				_type: 'block',
-				style: 'normal',
-				_key: `${slug}-desc`,
-				markDefs: [],
-				children: [{ _type: 'span', _key: `${slug}-desc-s`, text: shortDescription, marks: [] }],
-			},
-		],
+		title: raw.title,
+		slug: raw.slug,
+		shortDescription: raw.shortDescription,
+		icon: { provider: raw.icon.provider ?? '', name: raw.icon.name ?? '' },
 	};
 }
 
 // Tipo literario de la obra. Va primero en `tags` de cada Story: los componentes que muestran un único tag
 // —el hero de la página de story, entre otros— toman `tags[0]` y lo presentan como etiqueta principal.
-export const cuentoTagMock = createTag('Cuento', 'cuento', 'Relato breve de ficción.');
-export const novelaTagMock = createTag('Novela', 'novela', 'Narrativa extensa de ficción.');
-export const ensayoTagMock = createTag('Ensayo', 'ensayo', 'Prosa reflexiva que argumenta en torno a un tema.');
-export const teatroTagMock = createTag('Teatro', 'teatro', 'Obra escrita para ser representada en escena.');
+export const cuentoTagMock = toDomainTag(cuentoRawTag);
+export const novelaTagMock = toDomainTag(novelaRawTag);
+export const ensayoTagMock = toDomainTag(ensayoRawTag);
+export const teatroTagMock = toDomainTag(teatroRawTag);
 
 // Género de la obra. Acompañan al tipo literario como tags adicionales.
-export const dramaPsicologicoTagMock = createTag(
-	'Drama psicológico',
-	'drama-psicologico',
-	'Conflicto centrado en la vida interior de los personajes.',
-);
-export const metaficcionTagMock = createTag(
-	'Metaficción',
-	'metaficcion',
-	'Obras que se vuelven sobre su propia escritura y la exhiben como tema.',
-);
-export const absurdoTagMock = createTag(
-	'Absurdo',
-	'absurdo',
-	'Rutinas y gestos cotidianos llevados hasta perder todo sentido.',
-);
-export const surrealismoTagMock = createTag(
-	'Surrealismo',
-	'surrealismo',
-	'Imágenes oníricas que desbordan la lógica cotidiana.',
-);
-export const alegoriaTagMock = createTag('Alegoría', 'alegoria', 'Relato cuyo sentido literal remite a otro figurado.');
-export const filosoficoTagMock = createTag(
-	'Filosófico',
-	'filosofico',
-	'Ficción organizada en torno a una pregunta o una idea abstracta.',
-);
-export const experimentalTagMock = createTag(
-	'Experimental',
-	'experimental',
-	'Obras que anteponen el procedimiento formal a la trama.',
-);
-export const tragediaTagMock = createTag('Tragedia', 'tragedia', 'Pieza dramática de desenlace adverso.');
-export const dramaHistoricoTagMock = createTag(
-	'Drama histórico',
-	'drama-historico',
-	'Ficción dramática ambientada en hechos o figuras del pasado.',
-);
+export const dramaPsicologicoTagMock = toDomainTag(dramaPsicologicoRawTag);
+export const metaficcionTagMock = toDomainTag(metaficcionRawTag);
+export const absurdoTagMock = toDomainTag(absurdoRawTag);
+export const surrealismoTagMock = toDomainTag(surrealismoRawTag);
+export const alegoriaTagMock = toDomainTag(alegoriaRawTag);
+export const filosoficoTagMock = toDomainTag(filosoficoRawTag);
+export const experimentalTagMock = toDomainTag(experimentalRawTag);
+export const tragediaTagMock = toDomainTag(tragediaRawTag);
+export const dramaHistoricoTagMock = toDomainTag(dramaHistoricoRawTag);
+
+// Curaduría de la colección: no describe la obra sino cómo se armó la lista que la contiene.
+export const colaborativaTagMock = toDomainTag(colaborativaRawTag);
+
+// Se lista desde los exports nombrados, no con `onoffRawTagsMock.map(...)`: así la colección y cada tag
+// suelto son el mismo objeto, y las igualdades por referencia del corpus siguen valiendo. El orden es el
+// del canon crudo, y el spec del corpus lo verifica.
+export const onoffTagsMock: Tag[] = [
+	cuentoTagMock,
+	novelaTagMock,
+	ensayoTagMock,
+	teatroTagMock,
+	dramaPsicologicoTagMock,
+	metaficcionTagMock,
+	absurdoTagMock,
+	surrealismoTagMock,
+	alegoriaTagMock,
+	filosoficoTagMock,
+	experimentalTagMock,
+	tragediaTagMock,
+	dramaHistoricoTagMock,
+	colaborativaTagMock,
+];
+
+// Un título de dos palabras fuerza el recorte por ancho antes de tiempo; las stories de TagsList que
+// demuestran cuántos tags entran sin contador necesitan títulos de una sola palabra.
+export const onoffTagsWithShortTitles: Tag[] = onoffTagsMock.filter((tag) => !tag.title.includes(' '));

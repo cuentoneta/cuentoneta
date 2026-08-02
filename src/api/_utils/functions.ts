@@ -177,7 +177,6 @@ type TagsSubQuery =
 export function mapTags(tags: TagsSubQuery): Tag[] {
 	return tags.map((tag) => ({
 		...tag,
-		description: mapBlockContentToTextParagraphs(tag.description),
 		icon: {
 			provider: tag.icon.provider ?? '',
 			name: tag.icon.name ?? '',

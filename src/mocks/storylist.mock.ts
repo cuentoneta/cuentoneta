@@ -1,5 +1,5 @@
 import { Storylist, StorylistStoriesNavigationTeasers, StorylistTeaser } from '@models/storylist.model';
-import { tagMock } from './tag.mocks';
+import { colaborativaTagMock } from './onoff-tags.mock';
 import { storyNavigationTeaserWithAuthor } from './story.mock';
 import { onoffStoryTeasersMock } from './onoff-story-teasers.mock';
 
@@ -31,7 +31,7 @@ export const storylistMock: Storylist = {
 		kind: 'representative',
 		image: 'assets/img/mocks/collections/geometrias-del-desvelo.png',
 	},
-	tags: [tagMock],
+	tags: [colaborativaTagMock],
 	config: {
 		showAuthors: true,
 	},
@@ -63,7 +63,7 @@ export const storylistTeaserRepresentativeMock: StorylistTeaser = {
 			],
 		},
 	],
-	tags: [tagMock],
+	tags: [colaborativaTagMock],
 	config: { showAuthors: true },
 	imagery: { kind: 'representative', image: 'assets/img/mocks/stories/geometria.png' },
 };
@@ -132,7 +132,7 @@ export const storylistNavigationTeaserMock: StorylistStoriesNavigationTeasers = 
 			'assets/img/mocks/stories/las-dos-antorchas.png',
 		],
 	},
-	tags: [tagMock],
+	tags: [colaborativaTagMock],
 	config: {
 		showAuthors: true,
 	},

@@ -1,5 +1,6 @@
 import type { SanityImageSource } from '@sanity/image-url';
 import {
+	mapBlockContentToTextParagraphs,
 	mapContentCampaigns,
 	mapLandingPageContent,
 	mapResources,
@@ -12,79 +13,58 @@ import {
 import { elOdioRawTeaser, onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
 import { rawOnoffAuthor } from '@mocks/onoff-raw-author.mock';
 import { onoffRawContentCampaignsMock } from '@mocks/onoff-raw-content-campaigns.mock';
+import { onoffRawTagsMock, rawTagWithoutIconMetadata } from '@mocks/onoff-raw-tags.mock';
 import { viewportElementSizes } from '@models/content-campaign.model';
 
 describe('mapTags (ACL)', () => {
-	it('maps a raw Sanity tag to the domain Tag model', () => {
-		const result = mapTags([
-			{
-				title: 'Cumpleaños',
-				slug: 'cumpleanos',
-				shortDescription: 'Etiqueta de cumpleaños',
-				description: [
-					{
-						_type: 'block',
-						_key: 'b1',
-						style: 'normal',
-						markDefs: [],
-						children: [{ _type: 'span', _key: 's1', text: 'Etiqueta de cumpleaños', marks: [] }],
-					},
-				],
-				icon: { _type: 'iconPicker', provider: 'mdi', name: 'cake' },
-			},
-		]);
+	it('maps every raw Sanity tag of the corpus to its domain Tag', () => {
+		const result = mapTags(onoffRawTagsMock);
 
-		expect(result).toHaveLength(1);
-		expect(result[0]).toMatchObject({
-			title: 'Cumpleaños',
-			slug: 'cumpleanos',
-			shortDescription: 'Etiqueta de cumpleaños',
-			icon: { provider: 'mdi', name: 'cake' },
+		expect(result.map((tag) => tag.title)).toEqual(onoffRawTagsMock.map((raw) => raw.title));
+		expect(result.map((tag) => tag.slug)).toEqual(onoffRawTagsMock.map((raw) => raw.slug));
+		expect(result[0].icon).toEqual({
+			provider: onoffRawTagsMock[0].icon.provider,
+			name: onoffRawTagsMock[0].icon.name,
 		});
-		expect(result[0].description).toHaveLength(1);
-		expect(result[0].description[0]._type).toBe('block');
 	});
 
 	it('normalizes missing icon provider/name to empty strings', () => {
-		const result = mapTags([
-			{
-				title: 'Sin ícono',
-				slug: 'sin-icono',
-				shortDescription: 'desc',
-				description: [],
-				icon: { _type: 'iconPicker' },
-			},
-		]);
+		const result = mapTags([rawTagWithoutIconMetadata]);
 
 		expect(result[0].icon).toEqual({ provider: '', name: '' });
 	});
 
-	it('discards non-text-block elements from the description', () => {
-		const result = mapTags([
-			{
-				title: 'Mixto',
-				slug: 'mixto',
-				shortDescription: 'desc',
-				description: [
-					{
-						_type: 'block',
-						_key: 'b1',
-						style: 'normal',
-						markDefs: [],
-						children: [{ _type: 'span', _key: 's1', text: 'texto', marks: [] }],
-					},
-					{ _type: 'image', _key: 'img1' },
-				],
-				icon: { _type: 'iconPicker', provider: 'mdi', name: 'tag' },
-			},
-		]);
-
-		expect(result[0].description).toHaveLength(1);
-		expect(result[0].description[0]._type).toBe('block');
+	it('does not expose a description on any mapped domain Tag', () => {
+		// El mapper construye con spread: si la proyección volviera a traer `description`, el campo se
+		// filtraría al dominio sin que nada más lo señale.
+		mapTags(onoffRawTagsMock).forEach((tag) => expect(tag).not.toHaveProperty('description'));
 	});
 
 	it('returns an empty array when there are no tags', () => {
 		expect(mapTags([])).toEqual([]);
+	});
+});
+
+// El helper sobrevive a la baja de la descripción de tag con más de una decena de llamadores (biografía,
+// recursos, colecciones, cuerpo y epígrafes de story). Su predicado de descarte se ejercita acá porque
+// ningún fixture del corpus mezcla elementos no-`block` dentro de un `BlockContent`.
+describe('mapBlockContentToTextParagraphs (ACL)', () => {
+	const paragraph = {
+		_type: 'block' as const,
+		_key: 'b1',
+		style: 'normal' as const,
+		markDefs: [],
+		children: [{ _type: 'span' as const, _key: 's1', text: 'texto', marks: [] }],
+	};
+
+	it('keeps text blocks and discards everything else', () => {
+		const result = mapBlockContentToTextParagraphs([paragraph, { _type: 'image', _key: 'img1' }]);
+
+		expect(result).toEqual([paragraph]);
+	});
+
+	it('returns an empty array when there is no text block', () => {
+		expect(mapBlockContentToTextParagraphs([{ _type: 'image', _key: 'img1' }])).toEqual([]);
 	});
 });
 

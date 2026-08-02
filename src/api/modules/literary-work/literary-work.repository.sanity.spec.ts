@@ -5,6 +5,8 @@ import {
 	multiSectionRawLiteraryWork,
 	onoffRawLiteraryWorksMock,
 	onoffRawLiteraryWorksWithEpigraphs,
+	onoffRawLiteraryWorksWithoutTags,
+	onoffRawLiteraryWorksWithTags,
 	unmaterializedRawLiteraryWork,
 } from '@mocks/onoff-raw-literary-works.mock';
 import { onoffRawLiteraryWorksWithoutEditorialNote } from '@mocks/onoff-raw-literary-works.mock';
@@ -131,6 +133,21 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 		const literaryWork = await repoReturning({ ...onoffRawLiteraryWorksMock[0], editorialNote: '' }).fetchBySlug('x');
 
 		expect(literaryWork?.editorialNote).toBeUndefined();
+	});
+
+	it('mapea las etiquetas de la obra a su modelo de dominio', async () => {
+		const [rawLiteraryWork] = onoffRawLiteraryWorksWithTags;
+
+		const literaryWork = await repoReturning(rawLiteraryWork).fetchBySlug(rawLiteraryWork.slug);
+
+		expect(literaryWork?.tags.map((tag) => tag.slug)).toEqual(rawLiteraryWork.tags.map((raw) => raw.slug));
+		expect(literaryWork?.tags.map((tag) => tag.title)).toEqual(rawLiteraryWork.tags.map((raw) => raw.title));
+	});
+
+	it('mapea a una lista vacía las etiquetas de una obra que no las tiene', async () => {
+		const literaryWork = await repoReturning(onoffRawLiteraryWorksWithoutTags[0]).fetchBySlug('x');
+
+		expect(literaryWork?.tags).toEqual([]);
 	});
 
 	it('devuelve null para un slug desconocido', async () => {

@@ -2,6 +2,8 @@ import {
 	multiSectionRawLiteraryWork,
 	onoffRawLiteraryWorksMock,
 	onoffRawLiteraryWorksWithEpigraphs,
+	onoffRawLiteraryWorksWithoutTags,
+	onoffRawLiteraryWorksWithTags,
 	unmaterializedRawLiteraryWork,
 } from './onoff-raw-literary-works.mock';
 
@@ -42,6 +44,13 @@ describe('onoffRawLiteraryWorksMock (corpus raw de LiteraryWork)', () => {
 
 		expect(notes.some((editorialNote) => editorialNote !== null)).toBe(true);
 		expect(notes.some((editorialNote) => editorialNote === null)).toBe(true);
+	});
+
+	// Ambas ramas del mapeo de etiquetas tienen que estar representadas: con todo el corpus en `tags: []`,
+	// la rama que sí mapea etiquetas dejaría de ejercitarse contra datos reales.
+	it('should cover both the works with tags and the ones without them', () => {
+		expect(onoffRawLiteraryWorksWithTags.length).toBeGreaterThan(0);
+		expect(onoffRawLiteraryWorksWithoutTags.length).toBeGreaterThan(0);
 	});
 
 	// #2016: la obra enriquecida trae título de sección y epígrafe juntos — un raw con epígrafes pero sin
