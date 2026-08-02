@@ -38,8 +38,7 @@ export const literaryWorkBySlugQuery = defineQuery(`
         resourceType->{
             'slug': slug.current,
             title,
-            shortDescription,
-            icon
+            shortDescription
         }
     }, []),
     'authors': coalesce(authors[]-> {
@@ -59,8 +58,7 @@ export const literaryWorkBySlugQuery = defineQuery(`
             resourceType->{
                 'slug': slug.current,
                 title,
-                shortDescription,
-                icon
+                shortDescription
             }
         }, []),
         'tags': []
@@ -108,8 +106,7 @@ export const literaryWorkSectionBySlugQuery = defineQuery(`
         resourceType->{
             'slug': slug.current,
             title,
-            shortDescription,
-            icon
+            shortDescription
         }
     }, []),
     'authors': coalesce(authors[]-> {
@@ -129,8 +126,7 @@ export const literaryWorkSectionBySlugQuery = defineQuery(`
             resourceType->{
                 'slug': slug.current,
                 title,
-                shortDescription,
-                icon
+                shortDescription
             }
         }, []),
         'tags': []

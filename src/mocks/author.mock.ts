@@ -19,10 +19,6 @@ export const authorMock: AuthorProfile = {
 				slug: 'wikipedia',
 				title: 'Wikipedia',
 				shortDescription: 'Enlace a artículo de Wikipedia',
-				icon: {
-					provider: 'fa',
-					name: 'fa-wikipedia-w',
-				},
 			},
 		},
 	],

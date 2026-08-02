@@ -8,5 +8,4 @@ export interface ResourceType {
 	slug: string;
 	title: string;
 	shortDescription: string;
-	icon: Record<string, string>;
 }

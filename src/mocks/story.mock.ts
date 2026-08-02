@@ -17,10 +17,6 @@ export const storyMock: Story = {
 				slug: 'recurso-original',
 				title: 'Recurso Original',
 				shortDescription: 'Recurso original de este contenido',
-				icon: {
-					provider: 'fa',
-					name: 'fa-medal',
-				},
 			},
 		},
 	],
@@ -340,10 +336,6 @@ export const storyTeaserWithAuthorMock: StoryTeaserWithAuthor = {
 				slug: 'recurso-original',
 				title: 'Recurso Original',
 				shortDescription: 'Recurso original de este contenido',
-				icon: {
-					provider: 'fa',
-					name: 'fa-medal',
-				},
 			},
 		},
 	],
@@ -455,10 +447,6 @@ export const storyTeaserMock: StoryTeaser = {
 				slug: 'recurso-original',
 				title: 'Recurso Original',
 				shortDescription: 'Recurso original de este contenido',
-				icon: {
-					provider: 'fa',
-					name: 'fa-medal',
-				},
 			},
 		},
 	],
@@ -580,10 +568,6 @@ export const storyNavigationTeaserMock: StoryNavigationTeaser = {
 				slug: 'recurso-original',
 				title: 'Recurso Original',
 				shortDescription: 'Recurso original de este contenido',
-				icon: {
-					provider: 'fa',
-					name: 'fa-medal',
-				},
 			},
 		},
 	],

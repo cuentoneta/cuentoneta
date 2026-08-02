@@ -160,10 +160,6 @@ export function mapResources(resources: ResourcesSubQuery): Resource[] {
 				slug: resource.resourceType.slug,
 				title: resource.resourceType.title,
 				shortDescription: resource.resourceType.shortDescription,
-				icon: {
-					provider: resource.resourceType.icon.provider ?? '',
-					name: resource.resourceType.icon.name ?? '',
-				},
 			},
 		})) ?? []
 	);
