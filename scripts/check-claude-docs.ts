@@ -7,8 +7,9 @@
  */
 import { checkAgentFrontmatter } from './check-agent-frontmatter';
 import { checkDocRefs } from './check-doc-refs';
+import { checkIssueRefs } from './check-issue-refs';
 
-const problems = [...checkAgentFrontmatter(), ...checkDocRefs()];
+const problems = [...checkAgentFrontmatter(), ...checkDocRefs(), ...checkIssueRefs()];
 
 if (problems.length > 0) {
 	for (const problem of problems) console.error(problem);
@@ -18,4 +19,6 @@ if (problems.length > 0) {
 	process.exit(1);
 }
 
-console.log('✓ Config de .claude/ válida: frontmatter de agentes, anclas a CLAUDE.md y rutas citadas.');
+console.log(
+	'✓ Config de .claude/ válida: frontmatter de agentes, anclas a CLAUDE.md, rutas citadas y menciones a issues.',
+);
