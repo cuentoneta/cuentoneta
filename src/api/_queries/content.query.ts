@@ -78,17 +78,12 @@ export const landingPageContentQuery = defineQuery(`
         _id,
         'title': coalesce(title, ''),
         'slug': coalesce(slug.current, ''),
-        'description': coalesce(description, []),
         'url': coalesce(url, ''),
         'contents': {
             'xs': {
-                'title': coalesce(contents.xs.title, []),
-                'subtitle': coalesce(contents.xs.subtitle, []),
                 'image': contents.xs.image
             },
             'md': {
-                'title': coalesce(contents.md.title, []),
-                'subtitle': coalesce(contents.md.subtitle, []),
                 'image': contents.md.image
             }
         }

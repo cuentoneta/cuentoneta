@@ -1,5 +1,6 @@
 import type { SanityImageSource } from '@sanity/image-url';
 import {
+	mapContentCampaigns,
 	mapStoryNavigationTeaser,
 	mapStoryNavigationTeaserWithAuthor,
 	mapStoryTeaser,
@@ -7,6 +8,8 @@ import {
 	urlFor,
 } from './functions';
 import { elOdioRawTeaser, onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
+import { onoffRawContentCampaignsMock } from '@mocks/onoff-raw-content-campaigns.mock';
+import { viewportElementSizes } from '@models/content-campaign.model';
 
 describe('mapTags (ACL)', () => {
 	it('maps a raw Sanity tag to the domain Tag model', () => {
@@ -104,6 +107,39 @@ describe('mapStoryNavigationTeaserWithAuthor (ACL)', () => {
 		const result = mapStoryNavigationTeaserWithAuthor([onoffRawNavTeasersMock[0]]);
 
 		expect(result[0].tags).toEqual([]);
+	});
+});
+
+describe('mapContentCampaigns (ACL)', () => {
+	it('exposes exactly the domain contract, dropping everything else from the raw result', () => {
+		const [campaign] = mapContentCampaigns(onoffRawContentCampaignsMock);
+
+		expect(Object.keys(campaign).sort()).toEqual(['contents', 'slug', 'title', 'url']);
+		expect(Object.keys(campaign.contents).sort()).toEqual(['md', 'xs']);
+		expect(Object.keys(campaign.contents.xs).sort()).toEqual(['imageHeight', 'imageUrl', 'imageWidth']);
+	});
+
+	it('maps each viewport to its image URL and fixed dimensions', () => {
+		const [campaign] = mapContentCampaigns(onoffRawContentCampaignsMock);
+
+		expect(campaign.contents.xs.imageWidth).toBe(viewportElementSizes.xs.imageWidth);
+		expect(campaign.contents.xs.imageHeight).toBe(viewportElementSizes.xs.imageHeight);
+		expect(campaign.contents.md.imageWidth).toBe(viewportElementSizes.md.imageWidth);
+		expect(campaign.contents.md.imageHeight).toBe(viewportElementSizes.md.imageHeight);
+		expect(typeof campaign.contents.xs.imageUrl).toBe('string');
+	});
+
+	it('throws when a viewport is missing', () => {
+		const [campaign] = onoffRawContentCampaignsMock;
+		// REASON: la proyección arma `contents.xs`/`md` siempre, así que el typegen los declara
+		// no-nullables y el guard queda inalcanzable según el compilador. El guard igual es real ante
+		// un cambio de proyección, y se ejercita acotado — mismo criterio que el cast de urlFor.
+		const withoutXs = {
+			...campaign,
+			contents: { ...campaign.contents, xs: undefined },
+		} as unknown as (typeof onoffRawContentCampaignsMock)[number];
+
+		expect(() => mapContentCampaigns([withoutXs])).toThrow('Campaign content not found');
 	});
 });
 

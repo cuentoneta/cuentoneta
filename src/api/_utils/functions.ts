@@ -314,9 +314,9 @@ export function mapContentCampaigns(campaigns: ContentCampaignsSubQuery): Conten
 		}
 
 		return {
-			...campaign,
 			title: campaign.title,
-			description: mapBlockContentToTextParagraphs(campaign.description),
+			slug: campaign.slug,
+			url: campaign.url,
 			contents: {
 				xs: {
 					imageUrl: xs.image ? urlForWithAutoFormat(xs.image) : '',
