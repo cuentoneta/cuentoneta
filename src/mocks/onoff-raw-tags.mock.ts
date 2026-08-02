@@ -3,109 +3,81 @@ import type { StoryBySlugQueryResult } from '@sanity-types';
 // El shape que devuelve la proyección `tags[] -> { … }`, idéntica en las siete queries que la usan.
 export type RawTag = NonNullable<StoryBySlugQueryResult>['tags'][number];
 
-function createRawTag({
-	title,
-	slug,
-	shortDescription,
-	iconName,
-}: {
-	title: string;
-	slug: string;
-	shortDescription: string;
-	iconName: string;
-}): RawTag {
-	return { title, slug, shortDescription, icon: { _type: 'iconPicker', provider: 'mdi', name: iconName } };
-}
-
 // Tipo literario de la obra.
-export const cuentoRawTag = createRawTag({
+export const cuentoRawTag: RawTag = {
 	title: 'Cuento',
 	slug: 'cuento',
 	shortDescription: 'Relato breve de ficción.',
-	iconName: 'book-open-variant',
-});
-export const novelaRawTag = createRawTag({
+};
+export const novelaRawTag: RawTag = {
 	title: 'Novela',
 	slug: 'novela',
 	shortDescription: 'Narrativa extensa de ficción.',
-	iconName: 'book',
-});
-export const ensayoRawTag = createRawTag({
+};
+export const ensayoRawTag: RawTag = {
 	title: 'Ensayo',
 	slug: 'ensayo',
 	shortDescription: 'Prosa reflexiva que argumenta en torno a un tema.',
-	iconName: 'fountain-pen-tip',
-});
-export const teatroRawTag = createRawTag({
+};
+export const teatroRawTag: RawTag = {
 	title: 'Teatro',
 	slug: 'teatro',
 	shortDescription: 'Obra escrita para ser representada en escena.',
-	iconName: 'drama-masks',
-});
+};
 
 // Género de la obra.
-export const dramaPsicologicoRawTag = createRawTag({
+export const dramaPsicologicoRawTag: RawTag = {
 	title: 'Drama psicológico',
 	slug: 'drama-psicologico',
 	shortDescription: 'Conflicto centrado en la vida interior de los personajes.',
-	iconName: 'head-cog',
-});
-export const metaficcionRawTag = createRawTag({
+};
+export const metaficcionRawTag: RawTag = {
 	title: 'Metaficción',
 	slug: 'metaficcion',
 	shortDescription: 'Obras que se vuelven sobre su propia escritura y la exhiben como tema.',
-	iconName: 'mirror',
-});
-export const absurdoRawTag = createRawTag({
+};
+export const absurdoRawTag: RawTag = {
 	title: 'Absurdo',
 	slug: 'absurdo',
 	shortDescription: 'Rutinas y gestos cotidianos llevados hasta perder todo sentido.',
-	iconName: 'emoticon-confused',
-});
-export const surrealismoRawTag = createRawTag({
+};
+export const surrealismoRawTag: RawTag = {
 	title: 'Surrealismo',
 	slug: 'surrealismo',
 	shortDescription: 'Imágenes oníricas que desbordan la lógica cotidiana.',
-	iconName: 'weather-night',
-});
-export const alegoriaRawTag = createRawTag({
+};
+export const alegoriaRawTag: RawTag = {
 	title: 'Alegoría',
 	slug: 'alegoria',
 	shortDescription: 'Relato cuyo sentido literal remite a otro figurado.',
-	iconName: 'shape-outline',
-});
-export const filosoficoRawTag = createRawTag({
+};
+export const filosoficoRawTag: RawTag = {
 	title: 'Filosófico',
 	slug: 'filosofico',
 	shortDescription: 'Ficción organizada en torno a una pregunta o una idea abstracta.',
-	iconName: 'thought-bubble',
-});
-export const experimentalRawTag = createRawTag({
+};
+export const experimentalRawTag: RawTag = {
 	title: 'Experimental',
 	slug: 'experimental',
 	shortDescription: 'Obras que anteponen el procedimiento formal a la trama.',
-	iconName: 'flask-outline',
-});
-export const tragediaRawTag = createRawTag({
+};
+export const tragediaRawTag: RawTag = {
 	title: 'Tragedia',
 	slug: 'tragedia',
 	shortDescription: 'Pieza dramática de desenlace adverso.',
-	iconName: 'theater',
-});
-export const dramaHistoricoRawTag = createRawTag({
+};
+export const dramaHistoricoRawTag: RawTag = {
 	title: 'Drama histórico',
 	slug: 'drama-historico',
 	shortDescription: 'Ficción dramática ambientada en hechos o figuras del pasado.',
-	iconName: 'castle',
-});
+};
 
 // Curaduría de la colección: no describe la obra sino cómo se armó la lista que la contiene.
-export const colaborativaRawTag = createRawTag({
+export const colaborativaRawTag: RawTag = {
 	title: 'Colaborativa',
 	slug: 'colaborativa',
 	shortDescription: 'Lista de textos generada colaborativamente por la comunidad.',
-	iconName: 'account-group',
-});
+};
 
 export const onoffRawTagsMock: RawTag[] = [
 	cuentoRawTag,
@@ -123,6 +95,3 @@ export const onoffRawTagsMock: RawTag[] = [
 	dramaHistoricoRawTag,
 	colaborativaRawTag,
 ];
-
-// El icon picker sin provider ni name: ejercita la normalización del ACL sin hand-authorear un literal.
-export const rawTagWithoutIconMetadata: RawTag = { ...cuentoRawTag, icon: { _type: 'iconPicker' } };

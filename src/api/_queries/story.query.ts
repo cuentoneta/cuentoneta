@@ -76,8 +76,7 @@ export const storyBySlugQuery = defineQuery(`
     'tags': coalesce(tags[] -> {
         title,
         'slug': slug.current,
-        shortDescription,
-        icon
+        shortDescription
     }, []),
     'author': author-> {
         _id,

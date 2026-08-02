@@ -13,7 +13,7 @@ import {
 import { elOdioRawTeaser, onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
 import { rawOnoffAuthor } from '@mocks/onoff-raw-author.mock';
 import { onoffRawContentCampaignsMock } from '@mocks/onoff-raw-content-campaigns.mock';
-import { onoffRawTagsMock, rawTagWithoutIconMetadata } from '@mocks/onoff-raw-tags.mock';
+import { onoffRawTagsMock } from '@mocks/onoff-raw-tags.mock';
 import { viewportElementSizes } from '@models/content-campaign.model';
 
 describe('mapTags (ACL)', () => {
@@ -22,22 +22,13 @@ describe('mapTags (ACL)', () => {
 
 		expect(result.map((tag) => tag.title)).toEqual(onoffRawTagsMock.map((raw) => raw.title));
 		expect(result.map((tag) => tag.slug)).toEqual(onoffRawTagsMock.map((raw) => raw.slug));
-		expect(result[0].icon).toEqual({
-			provider: onoffRawTagsMock[0].icon.provider,
-			name: onoffRawTagsMock[0].icon.name,
+		expect(result.map((tag) => tag.shortDescription)).toEqual(onoffRawTagsMock.map((raw) => raw.shortDescription));
+	});
+
+	it('exposes exactly the domain contract, dropping everything else from the raw result', () => {
+		mapTags(onoffRawTagsMock).forEach((tag) => {
+			expect(Object.keys(tag).sort()).toEqual(['shortDescription', 'slug', 'title']);
 		});
-	});
-
-	it('normalizes missing icon provider/name to empty strings', () => {
-		const result = mapTags([rawTagWithoutIconMetadata]);
-
-		expect(result[0].icon).toEqual({ provider: '', name: '' });
-	});
-
-	it('does not expose a description on any mapped domain Tag', () => {
-		// El mapper construye con spread: si la proyección volviera a traer `description`, el campo se
-		// filtraría al dominio sin que nada más lo señale.
-		mapTags(onoffRawTagsMock).forEach((tag) => expect(tag).not.toHaveProperty('description'));
 	});
 
 	it('returns an empty array when there are no tags', () => {

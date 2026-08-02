@@ -28,8 +28,7 @@ export const authorBySlugQuery = defineQuery(`
     'tags': coalesce(tags[] -> {
         title,
         'slug': slug.current,
-        shortDescription,
-        icon
+        shortDescription
     }, [])
 }`);
 

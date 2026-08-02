@@ -595,11 +595,12 @@ interface Tag {
 	slug: string; // Identificador único
 	title: string; // Nombre de la etiqueta
 	shortDescription: string; // Breve descripción
-	icon?: Icon; // Ícono opcional
 }
 ```
 
 **Uso:** Clasificar contenido por tema, género, etc.
+
+> Una etiqueta no lleva ícono: `TagComponent` renderiza solo su título. El CMS supo tener un campo de ícono, pero ninguna superficie lo mostraba.
 
 ---
 

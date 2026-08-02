@@ -24,8 +24,7 @@ export const literaryWorkBySlugQuery = defineQuery(`
     'tags': coalesce(tags[] -> {
         title,
         'slug': slug.current,
-        shortDescription,
-        icon
+        shortDescription
     }, []),
     'mediaSources': coalesce(mediaSources[]{
         ...,
@@ -95,8 +94,7 @@ export const literaryWorkSectionBySlugQuery = defineQuery(`
     'tags': coalesce(tags[] -> {
         title,
         'slug': slug.current,
-        shortDescription,
-        icon
+        shortDescription
     }, []),
     'mediaSources': coalesce(mediaSources[]{
         ...,
