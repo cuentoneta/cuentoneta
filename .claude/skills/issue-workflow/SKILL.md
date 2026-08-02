@@ -15,7 +15,7 @@ Orquesta el ciclo de vida completo para resolver un issue de GitHub en **cuenton
 /issue-workflow <issue-url>
 ```
 
-Ejemplo: `/issue-workflow https://github.com/cuentoneta/cuentoneta/issues/1234`
+Ejemplo: `/issue-workflow https://github.com/cuentoneta/cuentoneta/issues/<id>`
 
 ---
 
