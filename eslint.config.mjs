@@ -8,6 +8,7 @@ import noBarrelFiles from 'eslint-plugin-no-barrel-files';
 import requireEnvironmentProviders from './tools/eslint/require-environment-providers.js';
 import storybookSourceState from './tools/eslint/storybook-source-state.js';
 import noApplyInHostStyles from './tools/eslint/no-apply-in-host-styles.js';
+import componentConfigInClass from './tools/eslint/component-config-in-class.js';
 
 // Restricciones de sintaxis comunes: CommonJS, enums, lifecycle hooks y propiedades estáticas.
 const lifecycleHooks = [
@@ -298,6 +299,19 @@ export default [
 		},
 		rules: {
 			'custom-storybook/storybook-source-state': 'error',
+		},
+	},
+	{
+		name: 'component-config-in-class',
+		files: ['src/**/*.ts'],
+		// Los specs y las stories declaran componentes host de prueba, y sus fixtures de módulo
+		// (`const collectionMock: Storylist = {...}`) son datos del test, no configuración de una clase.
+		ignores: ['src/**/*.spec.ts', 'src/**/*.stories.ts'],
+		plugins: {
+			'custom-component-config': { rules: { 'component-config-in-class': componentConfigInClass } },
+		},
+		rules: {
+			'custom-component-config/component-config-in-class': 'error',
 		},
 	},
 	{
