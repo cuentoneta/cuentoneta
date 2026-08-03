@@ -1,6 +1,6 @@
-import { Storylist, StorylistStoriesNavigationTeasers, StorylistTeaser } from '@models/storylist.model';
+import { Storylist, StorylistTeaser } from '@models/storylist.model';
 import { colaborativaTagMock } from './onoff-tags.mock';
-import { storyNavigationTeaserWithAuthor } from './story.mock';
+
 import { onoffStoryTeasersMock } from './onoff-story-teasers.mock';
 
 // Colección — la obsesión de Onoff por el orden y el tiempo (Geometría, el desvelo). Proyección completa (Storylist).
@@ -98,43 +98,4 @@ export const storylistTeaserSampleMock: StorylistTeaser = {
 			'assets/img/mocks/stories/las-dos-antorchas.png',
 		],
 	},
-};
-
-// Colección — la desmesura del poder en Onoff (Nerón, la ambición y su ruina). Teaser de navegación.
-export const storylistNavigationTeaserMock: StorylistStoriesNavigationTeasers = {
-	_id: 'onoff-cronicas-de-la-desmesura',
-	title: 'Crónicas de la desmesura',
-	slug: 'cronicas-de-la-desmesura',
-	count: 1,
-	media: [],
-	tabs: [],
-	description: [
-		{
-			_type: 'block',
-			style: 'normal',
-			_key: 'cronicas-desmesura-desc',
-			markDefs: [],
-			children: [
-				{
-					_type: 'span',
-					marks: [],
-					text: 'Los textos donde Onoff interroga la desmesura del poder: emperadores que confunden el imperio con su propio cuerpo, voluntades que se agrandan hasta no caber en ninguna frontera. Retratos de la ambición y de su lenta, inevitable ruina.',
-					_key: 'cronicas-desmesura-span',
-				},
-			],
-		},
-	],
-	imagery: {
-		kind: 'sample',
-		images: [
-			'assets/img/mocks/stories/neron.png',
-			'assets/img/mocks/stories/el-odio.png',
-			'assets/img/mocks/stories/las-dos-antorchas.png',
-		],
-	},
-	tags: [colaborativaTagMock],
-	config: {
-		showAuthors: true,
-	},
-	stories: [storyNavigationTeaserWithAuthor],
 };

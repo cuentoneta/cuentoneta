@@ -6,7 +6,6 @@ import {
 	mapAuthorTeaser,
 	mapBlockContentToTextParagraphs,
 	mapStoryContent,
-	mapStoryNavigationTeaser,
 	mapStoryTeaser,
 	mapStoryTeaserWithAuthor,
 	urlFor,
@@ -30,32 +29,12 @@ import { updateRotatingContentMostRead } from '../content/content.repository';
 import { mapMediaSources } from '../../_utils/media-sources.functions';
 
 // Funciones de repository
-import {
-	fetchNavigationTeasersByAuthorSlug,
-	fetchStories,
-	fetchStoriesByAuthorSlug,
-	fetchStoriesBySlugs,
-	fetchStoryBySlug,
-} from './story.repository';
+import { fetchStories, fetchStoriesByAuthorSlug, fetchStoriesBySlugs, fetchStoryBySlug } from './story.repository';
 
 export async function getStoriesByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryTeaser[]> {
 	const result = await fetchStoriesByAuthorSlug(args.slug, args.offset * args.limit, (args.offset + 1) * args.limit);
 
 	return mapStoryTeaser(result);
-}
-
-export async function getStoryNavigationTeaserByAuthorSlug(args: {
-	slug: string;
-	limit: number;
-	offset: number;
-}): Promise<StoryNavigationTeaser[]> {
-	const result = await fetchNavigationTeasersByAuthorSlug(
-		args.slug,
-		args.offset * args.limit,
-		(args.offset + 1) * args.limit,
-	);
-
-	return mapStoryNavigationTeaser(result);
 }
 
 export async function getStoryBySlug(slug: string): Promise<Story> {

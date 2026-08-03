@@ -20,48 +20,6 @@ export const storylistTeasersQuery = defineQuery(`
     }
 `);
 
-export const storylistStoriesNavigationTeasersQuery = defineQuery(`
-*[_type == 'storylist' && slug.current == $slug && !(_id in path('drafts.**'))][0]
-{
-		_id,
-    'slug': slug.current,
-    title,
-    description,
-    featuredImage,
-    'storyCoverImages': coalesce(stories[0...3]->coverImage, []),
-    'tags': [],
-    'stories': coalesce(stories[$start...$end]->{
-    		_id,
-        'slug': slug.current,
-        title,
-        badLanguage,
-        'body': [],
-        originalPublication,
-        approximateReadingTime,
-        coverImage,
-        'resources': [],
-        'mediaSources': coalesce(mediaSources[], []),
-        'author': author->{
-            _id,
-            'slug': slug.current,
-            name,
-            image,
-            nationality->,
-            'biography': [],
-						bornOn,
-						bornOnYear,
-						diedOn,
-						diedOnYear,
-            'resources': [],
-        }
-    }, []),
-    'count': coalesce(count(stories), 0),
-    config,
-    'tabs': [],
-		'mediaSources': [],
-    }
-`);
-
 export const storylistQuery = defineQuery(`
 *[_type == 'storylist' && slug.current == $slug && !(_id in path('drafts.**'))][0]
 {

@@ -23,21 +23,6 @@ export const storiesByAuthorSlugQuery = defineQuery(`
     }, []),
 }|order(title asc)`);
 
-export const storyNavigationTeasersByAuthorSlugQuery = defineQuery(`
-*[_type == 'story' && author->slug.current == $slug && !(_id in path('drafts.**'))]
-{
-    _id,
-    'slug': slug.current,
-    title,
-    'badLanguage': coalesce(badLanguage, false),
-    'body': [],
-    'originalPublication': coalesce(originalPublication, ''),
-    approximateReadingTime,
-    coverImage,
-    'mediaSources': coalesce(mediaSources[], []),
-    'resources': [],
-}|order(title asc)[$start...$end]`);
-
 export const storyBySlugQuery = defineQuery(`
 *[_type == 'story' && slug.current == $slug && !(_id in path('drafts.**'))]
 {

@@ -374,7 +374,7 @@ interface Storylist {
 
 - El slug debe ser único
 - `count` debe coincidir con el número real de stories
-- `imagery` es un value object (`{ kind: 'representative', image }` cuando hay portada editorial propia; `{ kind: 'sample', images }` con las portadas de las historias cuando no la hay). Las tres vistas polimórficas de la colección (`Storylist`, `StorylistStoriesNavigationTeasers`, `StorylistTeaser`) lo comparten desde `StorylistBase`, en vez de exponer una `featuredImage` cruda.
+- `imagery` es un value object (`{ kind: 'representative', image }` cuando hay portada editorial propia; `{ kind: 'sample', images }` con las portadas de las historias cuando no la hay). Las dos vistas polimórficas de la colección (`Storylist`, `StorylistTeaser`) lo comparten desde `StorylistBase`, en vez de exponer una `featuredImage` cruda.
 
 **Ciclo de Vida:**
 
@@ -388,7 +388,6 @@ Las historias se referencian directamente en el array `stories`. Cada entrada es
 **Vistas Polimórficas:**
 
 - `Storylist` - Vista completa (incluye todas las historias con información de autor)
-- `StorylistStoriesNavigationTeasers` - Vista para navegación (historias mínimas con autor)
 - `StorylistTeaser` - Vista sin historias
 
 ---

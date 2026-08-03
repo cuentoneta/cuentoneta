@@ -1,11 +1,5 @@
 import { onoffMediaMock } from './onoff-media.mock';
-import {
-	Story,
-	StoryNavigationTeaser,
-	StoryNavigationTeaserWithAuthor,
-	StoryTeaser,
-	StoryTeaserWithAuthor,
-} from '@models/story.model';
+import { Story, StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
 import { authorMock, authorTeaserMock } from './author.mock';
 
 export const storyMock: Story = {
@@ -425,33 +419,4 @@ export const storyTeaserMock: StoryTeaser = {
 			markDefs: [],
 		},
 	],
-};
-
-export const storyNavigationTeaserMock: StoryNavigationTeaser = {
-	_id: 'story-1',
-	resources: [
-		{
-			title: 'Recurso original',
-			url: 'https://biblioteca.es/el-espejo-del-tiempo',
-			resourceType: {
-				slug: 'recurso-original',
-				title: 'Recurso Original',
-				shortDescription: 'Recurso original de este contenido',
-			},
-		},
-	],
-	media: [],
-	paragraphs: [],
-	title: 'El espejo del tiempo',
-	badLanguage: false,
-	originalPublication: 'Ecos del silencio (1983)',
-	approximateReadingTime: 2,
-	coverImage: '',
-	slug: 'el-espejo-del-tiempo',
-	tags: [],
-};
-
-export const storyNavigationTeaserWithAuthor: StoryNavigationTeaserWithAuthor = {
-	...storyNavigationTeaserMock,
-	author: authorTeaserMock,
 };

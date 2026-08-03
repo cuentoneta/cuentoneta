@@ -4,7 +4,6 @@ import {
 	mapContentCampaigns,
 	mapLandingPageContent,
 	mapResources,
-	mapStoryNavigationTeaser,
 	mapStoryNavigationTeaserWithAuthor,
 	mapStoryTeaser,
 	mapTags,
@@ -63,14 +62,6 @@ describe('mapBlockContentToTextParagraphs (ACL)', () => {
 describe('mapStoryTeaser (ACL)', () => {
 	it('sets tags to [] from the mapper, not from the raw spread', () => {
 		const result = mapStoryTeaser([elOdioRawTeaser]);
-
-		expect(result[0].tags).toEqual([]);
-	});
-});
-
-describe('mapStoryNavigationTeaser (ACL)', () => {
-	it('sets tags to [] from the mapper, not from the raw spread', () => {
-		const result = mapStoryNavigationTeaser([elOdioRawTeaser]);
 
 		expect(result[0].tags).toEqual([]);
 	});
