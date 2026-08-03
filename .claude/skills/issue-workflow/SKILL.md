@@ -88,6 +88,7 @@ echo "--- parent ---"; gh api graphql -f query='…' --jq '.data.repository.issu
 ls workspace/<number> 2>/dev/null; echo "--- commits ---"; git rev-list --count <base>..feat/<number>-<kebab>
 echo "--- pr ---"; gh pr list --head feat/<number>-<kebab> --state open --json number,isDraft,url
 echo "--- merged ---"; gh pr list --head feat/<number>-<kebab> --state merged --json number
+echo "--- worktrees ---"; pnpm worktrees:sweep
 ```
 
 Lo que cada sonda responde:
@@ -193,7 +194,13 @@ En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
 
 - El worktree se **mantiene** al menos hasta que el PR de la Fase 6 mergea — permite reanudar la sesión (Fase 0 lo detecta vía `git worktree list` y reingresa).
 - El **merge ocurre fuera de esta sesión** (evento humano posterior en GitHub); el skill no lo espera ni lo automatiza.
-- **Limpieza:** cuando la Fase 0 resuelve entorno worktree porque ya existía (reanudación), evalúa además `gh pr list --head feat/<number>-<kebab> --state merged`. Si hay un PR mergeado, pausa con `AskUserQuestion` (`header`: `Limpieza`; `question`: "El PR de este issue ya mergeó. ¿Removemos el worktree?"; opciones **Limpiar (recomendada)** — `git worktree remove .claude/worktrees/<number>` + `git branch -d feat/<number>-<kebab>`; **Mantener** — dejarlo como está y agregar la marca `<!-- worktree: mantener -->` al final de `workspace/<number>/PLAN.md` para no repreguntar en futuras reanudaciones (la señal de limpieza se saltea si esa marca existe); "Other" cubre cualquier instrucción distinta). Cualquiera sea la respuesta, la sesión termina ahí — no hay fase siguiente que ejecutar sobre un issue ya mergeado.
+- **Barrido, en cada sesión.** El batch 2 de la Fase 0 corre `pnpm worktrees:sweep`, que reporta los worktrees registrados cuya rama ya mergeó y los directorios huérfanos que quedaron sin registro. Es **O(1) por sesión** y limpia lo que dejó cualquiera, no solo la propia — a diferencia de la limpieza al reanudar, que solo cubre el caso en que alguien vuelve sobre un issue ya mergeado, el menos frecuente cuando todo sale bien. Monitorear el PR hasta el merge no sirve como alternativa: el monitor vive dentro de la sesión y muere con ella, y el merge es un evento humano posterior.
+
+  Si el reporte trae candidatos, **pausar con `AskUserQuestion`** (`header`: `Worktrees`; `question` con el conteo de mergeados y huérfanos, y cuáles conservan artefactos; `options`: **Limpiar** — archivar artefactos y remover; **Omitir** — seguir sin tocar nada, que es lo recomendable si el usuario está en medio de otra cosa; "Other" para instrucciones libres). Sin candidatos, el barrido no interrumpe: ocupa una línea.
+
+  **Ningún borrado ocurre sin esa confirmación.** El script remueve worktrees registrados, pero **nunca** borra un directorio huérfano: los enumera con el comando exacto, porque pueden conservar el `workspace/<number>/` de una sesión y el repo prohíbe borrar artefactos autorados aunque estén gitignoreados.
+
+- **Limpieza al reanudar:** cuando la Fase 0 resuelve entorno worktree porque ya existía (reanudación), evalúa además `gh pr list --head feat/<number>-<kebab> --state merged`. Si hay un PR mergeado, pausa con `AskUserQuestion` (`header`: `Limpieza`; `question`: "El PR de este issue ya mergeó. ¿Removemos el worktree?"; opciones **Limpiar (recomendada)** — `git worktree remove .claude/worktrees/<number>` + `git branch -d feat/<number>-<kebab>`; **Mantener** — dejarlo como está y agregar la marca `<!-- worktree: mantener -->` al final de `workspace/<number>/PLAN.md` para no repreguntar en futuras reanudaciones (la señal de limpieza se saltea si esa marca existe); "Other" cubre cualquier instrucción distinta). Cualquiera sea la respuesta, la sesión termina ahí — no hay fase siguiente que ejecutar sobre un issue ya mergeado.
 - Los artefactos `workspace/<number>/PLAN.md` / `CODE_REVIEW.md` / `SECURITY_REVIEW.md` **viven dentro del worktree** en modo worktree. Una sesión nueva que reingresa vía `EnterWorktree` los encuentra ahí sin buscarlos en la raíz.
 
 ---
