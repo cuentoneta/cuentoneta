@@ -34,7 +34,8 @@ Antes de revisar, leé **todas** las referencias del catálogo para tener el con
 4. **Verificar los gates de CI** — Los que deben quedar verdes en cada PR son los definidos en la sección [Comandos comunes](../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**).
 
 - **Corré solo los que aplican al diff.** `e2e` y `studio-build` son costosos: `e2e` solo si el cambio toca flujos E2E, `studio-build` solo si toca `cms/`. Es la misma condición que aplica la Fase 4 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md); correrlos sobre un diff que no los toca no verifica nada.
-- **Si quien te invoca ya los corrió y te pasa el resultado observado, no los repitas.** La Fase 4 los corre antes de delegar en vos: volver a ejecutarlos es la parte más cara de la review y no agrega información.
+- **Si quien te invoca ya te pasa el resultado observado, no los repitas.** La Fase 4 corre en la sesión solo el **tier local** (`typecheck`, `lint`, `stylelint`, `test`, `check-agents`); los otros —`build`, `storybook`, `studio-build`, `e2e`— los corre la integración continua sobre el PR en borrador, y su resultado te llega igual. Que un gate no se haya corrido en la sesión **no** es motivo para correrlo vos: volver a ejecutarlos es la parte más cara de la review y no agrega información.
+- **La columna "quién lo corrió" admite tres valores:** vos, quien te invoca, o **CI del borrador** (con el enlace a la corrida). La regla de abajo no se relaja por eso.
 - **Nunca reportes un estado que no observaste ni te fue reportado.** Cada fila de la tabla de resultados declara **quién** lo corrió. Si el resultado ajeno te resulta dudoso, o si tocaste archivos después de que se corriera, corré ese gate vos mismo — la duda se resuelve ejecutando, no asumiendo.
 
 ## Falsos positivos conocidos — NO marcar
