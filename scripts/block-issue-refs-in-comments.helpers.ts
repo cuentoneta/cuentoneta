@@ -3,6 +3,9 @@
  * `coding-agent-policies.md`). Vive aparte del runner para poder testearse: el runner solo lee stdin
  * y traduce el resultado a un código de salida.
  */
+// El criterio de qué es un identificador de hallazgo —y el porqué— viven en `finding-refs.ts`, que es
+// su definición única.
+import { hasFindingRef } from './finding-refs';
 
 /**
  * Solo código, y solo bajo `src/` o `cms/`. La regla rige para todo el repo; el hook cubre esa porción.
@@ -29,16 +32,6 @@ const TODO_MARKER = new RegExp(`${OPENER}TODO\\s*[:(]`);
 // de CLAUDE.md. No es un TODO ni necesita serlo.
 const SUPPRESSION_MARKER = new RegExp(`${OPENER}(?:@ts-ignore|@ts-expect-error|eslint-disable)`);
 
-// Un identificador de hallazgo es peor que un número de issue: no resuelve a nada. Vive en `workspace/`,
-// que está gitignoreado, y muere con la sesión de review que lo emitió.
-//
-// El conjunto de prefijos es cerrado —`R` para el code-reviewer, `S` para el security-auditor— y por eso
-// se puede enumerar. Se marca el token suelto, sin exigir una palabra que lo contextualice: la variante
-// laxa no atrapa un `// ver S3` pelado, que es justamente el comentario más huérfano de todos. El costo
-// asumido son los nombres de producto homónimos (`R2`, `S3` son almacenamiento); si aparece uno
-// legítimo, se lo nombra por su producto —"el bucket de Cloudflare"— en vez de por su sigla.
-const FINDING_ID = /\b[RS]\d+\b/;
-
 /**
  * Las líneas del texto agregado que citan un issue —o un identificador de hallazgo de review— dentro de
  * un comentario sin ampararse en ninguna de las dos excepciones. Devuelve vacío cuando el archivo queda
@@ -54,7 +47,7 @@ export function findIssueRefsInComments(filePath: string, added: string): string
 	}
 
 	return added.split(/\r?\n/).filter((line) => {
-		const citesFinding = FINDING_ID.test(line);
+		const citesFinding = hasFindingRef(line);
 		if (!ISSUE_REF.test(line) && !citesFinding) return false;
 
 		// Las excepciones amparan la cita de un issue, nunca la de un hallazgo: no hay `TODO` que un
