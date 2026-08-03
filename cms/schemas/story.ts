@@ -3,6 +3,16 @@ import { resource } from './resourceType';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { audioRecording, pdfLink, spaceRecording, spotifyPodcastEpisode, youtubeVideo } from './media-sources';
 
+// Shape mínimo de Portable Text que este schema recorre. Se declara acá en vez de importarlo de
+// @portabletext/*, que no es dependencia del Studio: lo único que se lee es el texto de los spans.
+type PortableTextBlock = { children: { text: string }[] };
+
+// Los campos del preview llegan ausentes mientras el editor no los cargó, así que el vacío es un caso
+// esperado y no una condición de borde a chequear en cada call site.
+function toPlainText(blocks: PortableTextBlock[] | undefined): string {
+	return (blocks ?? []).map((block) => block.children[0].text).join('');
+}
+
 // Placeholder por defecto del dataset `production`; las historias nuevas y las existentes (vía migración) lo usan
 // hasta que el equipo editorial cargue una imagen propia.
 const defaultStoryCoverImage = {
@@ -87,8 +97,8 @@ export default defineType({
                     "blockContentParagraphs": *[_type == 'story' && _id == ^._id][0]{ body }
                 `,
 				reduceQueryResult: (result: {
-					draft?: { blockContentParagraphs: { body } };
-					published: { blockContentParagraphs: { body } };
+					draft?: { blockContentParagraphs: { body: PortableTextBlock[] } };
+					published: { blockContentParagraphs: { body: PortableTextBlock[] } };
 				}) => {
 					const textBody = result.draft
 						? result.draft.blockContentParagraphs.body
@@ -117,26 +127,10 @@ export default defineType({
 							text: 'text',
 							reference: 'reference',
 						},
-						prepare({ text, reference }) {
-							const title =
-								text?.length > 0
-									? text
-											.map((span) => span.children)
-											.map((child) => child[0].text)
-											.join('')
-									: '';
-
-							const subtitle =
-								reference?.length > 0
-									? reference
-											.map((span) => span.children)
-											.map((child) => child[0].text)
-											.join('')
-									: '';
-
+						prepare({ text, reference }: { text?: PortableTextBlock[]; reference?: PortableTextBlock[] }) {
 							return {
-								title: title ?? '',
-								subtitle: subtitle ?? '',
+								title: toPlainText(text),
+								subtitle: toPlainText(reference),
 							};
 						},
 					},

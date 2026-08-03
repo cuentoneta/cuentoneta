@@ -2,7 +2,7 @@
  * Tipo que representa los diferentes viewports soportados por la aplicación para las campañas de contenido, a fin de
  * proveer una experiencia responsive y adaptable para su visualización.
  */
-export const ContentCampaignViewportKeys = ['xs', 'md'];
+export const ContentCampaignViewportKeys = ['xs', 'md'] as const;
 export type ContentCampaignViewport = (typeof ContentCampaignViewportKeys)[number];
 
 /**

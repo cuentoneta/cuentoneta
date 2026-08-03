@@ -1,6 +1,6 @@
 import { isValid, parseISO } from 'date-fns';
 
-export const localizedRequire = (value) => {
+export const localizedRequire = (value: unknown): true | string => {
 	if (!value) return 'Este campo es requerido';
 	return true;
 };
