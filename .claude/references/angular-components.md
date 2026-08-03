@@ -312,5 +312,5 @@ Notas:
 - [ ] Plantilla con `@if`/`@for` (con `track`)/`@switch`, self-closing tags y `ngSrc`.
 - [ ] Host (clases/bindings/eventos) en la propiedad `host` del decorador; sin `@HostBinding`/`@HostListener` ni `:host { @apply ... }`.
 - [ ] Sin `enum`, sin propiedades estáticas, sin `!`.
-- [ ] Acompañar con su `*.stories.ts` (Storybook) y tests con Angular Testing Library (ver [`testing.md`](./testing.md)).
+- [ ] Acompañar con tests de Angular Testing Library y con su `*.stories.ts` (Storybook), salvo que delegue toda su vista en otro componente ya catalogado (ver [`testing.md`](./testing.md)).
 - [ ] El estado vive en servicios + signals (ver [`angular-state.md`](./angular-state.md)).
