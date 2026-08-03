@@ -1,4 +1,4 @@
-import { applicationConfig, argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
+import { applicationConfig, argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
 import { provideRouter } from '@angular/router';
 
 import { CarouselComponent } from './carousel.component';
@@ -125,22 +125,6 @@ const extendedSlidesMock: ContentCampaign[] = [
 	{
 		title: 'Geometrías del desvelo',
 		slug: 'geometrias-del-desvelo',
-		description: [
-			{
-				style: 'normal',
-				_key: 'ab12cd34ef56',
-				markDefs: [],
-				children: [
-					{
-						text: 'Shannon despierta a las tres y media. Nunca duerme más de dos horas.',
-						_key: '78ab90cd12ef',
-						_type: 'span',
-						marks: [],
-					},
-				],
-				_type: 'block',
-			},
-		],
 		url: '../storylist/geometrias-del-desvelo',
 		contents: {
 			xs: {
@@ -158,22 +142,6 @@ const extendedSlidesMock: ContentCampaign[] = [
 	{
 		title: 'Onoff, la voz de las fronteras',
 		slug: 'onoff-autor-en-foco',
-		description: [
-			{
-				style: 'normal',
-				_key: '34ef56ab78cd',
-				markDefs: [],
-				children: [
-					{
-						text: 'Ocho obras donde ninguna ley vale del todo y ninguna lengua se habla por completo.',
-						_key: '90cd12ef34ab',
-						_type: 'span',
-						marks: [],
-					},
-				],
-				_type: 'block',
-			},
-		],
 		url: '../author/francois-onoff',
 		contents: {
 			xs: {

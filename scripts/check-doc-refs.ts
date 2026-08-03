@@ -7,14 +7,11 @@
  *
  * Lo consume el runner `check-claude-docs.ts` (gate de CI `check-agents`).
  */
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
+import { listClaudeMarkdownFiles } from './claude-docs-tree';
 
 const ROOT = process.cwd();
-
-// Generados y copias de trabajo: escanear un worktree reporta el estado de otra rama, no el de este
-// árbol. `withFileTypes` + saltear symlinks evita que un enlace colgado de pnpm aborte el recorrido.
-const SKIP = new Set(['node_modules', '.git', 'worktrees', 'dist', '.nx', 'coverage']);
 
 // Raíces del repo que valen como prefijo de una ruta citada verificable.
 const ROOTS = ['src', 'scripts', 'cms', 'tools', 'e2e', 'docs', '.claude', '.github', 'public'];
@@ -38,14 +35,6 @@ const slug = (text: string): string =>
 		.replace(/`/g, '')
 		.replace(/[^\p{L}\p{N}\s-]/gu, '')
 		.replace(/\s+/g, '-');
-
-function walk(dir: string): string[] {
-	return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-		if (SKIP.has(entry.name) || entry.isSymbolicLink()) return [];
-		const p = join(dir, entry.name);
-		return entry.isDirectory() ? walk(p) : entry.name.endsWith('.md') ? [p] : [];
-	});
-}
 
 function claudeHeadings(): Set<string> {
 	return new Set(
@@ -103,5 +92,5 @@ function checkCitedPaths(file: string): string[] {
 /** Devuelve una línea `✗ …` por cada ancla rota o ruta inexistente; vacío si está todo bien. */
 export function checkDocRefs(): string[] {
 	const headings = claudeHeadings();
-	return walk(join(ROOT, '.claude')).flatMap((file) => [...checkAnchors(file, headings), ...checkCitedPaths(file)]);
+	return listClaudeMarkdownFiles(ROOT).flatMap((file) => [...checkAnchors(file, headings), ...checkCitedPaths(file)]);
 }

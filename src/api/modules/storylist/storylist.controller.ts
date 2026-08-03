@@ -3,15 +3,11 @@ import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 
 // Esquemas de zod
-import { paginationSchema, storylistQuerySchema } from './storylist.schema';
-import { slugSchema } from '../../schemas/common.schemas';
+import { storylistQuerySchema } from './storylist.schema';
+import { slugSchema } from '@schemas/common.schemas';
 
 // Funciones de service
-import {
-	getStorylistBySlug,
-	getAllStorylistTeasers,
-	getStorylistNavigationTeasersByStorylistSlug,
-} from './storylist.service';
+import { getStorylistBySlug, getAllStorylistTeasers } from './storylist.service';
 
 const storylistController = new Hono();
 
@@ -20,22 +16,6 @@ storylistController.get('/teasers', async (c) => {
 	const result = await getAllStorylistTeasers();
 	return c.json(result);
 });
-
-/**
- * Obtiene los teasers de las publicaciones de una storylist para su uso en la navegación de la misma.
- */
-storylistController.get(
-	'/:slug/navigation',
-	zValidator('param', slugSchema),
-	zValidator('query', paginationSchema),
-	async (c) => {
-		const { slug } = c.req.valid('param');
-		const { limit, offset } = c.req.valid('query');
-
-		const result = await getStorylistNavigationTeasersByStorylistSlug({ slug, limit, offset });
-		return c.json(result);
-	},
-);
 
 storylistController.get(
 	'/:slug',

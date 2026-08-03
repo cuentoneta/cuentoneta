@@ -1,0 +1,347 @@
+import { applicationConfig, argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
+import { provideRouter } from '@angular/router';
+
+import { LiteraryWorkCardTeaserComponent } from './literary-work-card-teaser.component';
+import {
+	elOdioLiteraryWorkTeaserMock,
+	geometriaLiteraryWorkTeaserMock,
+	palacioNueveFronterasLiteraryWorkTeaserMock,
+	withMediaSources,
+} from '@mocks/onoff-literary-work-teasers.mock';
+import { corpusLiteraryWorkTeasers, literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
+import { onoffStoryTeasersMock } from '@mocks/onoff-story-teasers.mock';
+
+const meta: Meta<LiteraryWorkCardTeaserComponent> = {
+	component: LiteraryWorkCardTeaserComponent,
+	title: 'Componentes V3/LiteraryWorkCardTeaser',
+	tags: ['autodocs'],
+	decorators: [
+		applicationConfig({
+			providers: [provideRouter([])],
+		}),
+	],
+	parameters: {
+		docs: {
+			canvas: { sourceState: 'shown' },
+			description: {
+				component: `<div><p>Utilizado para representar una vista previa de una obra dentro de listados o secciones de exploración. Resume la información principal del contenido, incluyendo autor, título, texto truncado, categoría, tiempo estimado de lectura, imagen asociada y accesos a archivos multimediales como video, X o Spotify.</p><p>Su objetivo es facilitar una lectura rápida del contenido disponible y ayudar al usuario a decidir si quiere profundizar en la obra. Puede adaptarse a distintas estructuras visuales según el contexto de uso, manteniendo consistencia en la jerarquía de información y en las acciones disponibles.</p><p>Se implementa en tres variantes seleccionables mediante el input <code>variant</code>:</p><ul><li><strong>OnWhite</strong> (<code>on-white</code>): layout horizontal con imagen a la izquierda, para fondos blancos.</li><li><strong>OnGray</strong> (<code>on-gray</code>): igual a OnWhite con selectores de multimedia en blanco, para fondos grises.</li><li><strong>Highlighted</strong> (<code>highlighted</code>): tarjeta destacada con borde, fondo e imagen a la derecha.</li></ul><p>Cada variante admite mostrar opcionalmente autor, descripción, numeración, etiqueta y selectores de multimedia.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada), <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor) y <a href="./?path=/docs/componentes-v3-mediaselectors--docs" target="_top"><strong>MediaSelectors</strong></a> (accesos multimedia); el extracto se renderiza desde el HTML saneado de la primera sección de la obra, o desde el Portable Text que llegue por <code>excerptParagraphs</code>, que tiene precedencia.</p></div>`,
+			},
+		},
+		layout: 'padded',
+	},
+	argTypes: {
+		variant: {
+			control: { type: 'select' },
+			options: ['on-white', 'on-gray', 'highlighted'],
+			description: 'Variante visual del componente',
+			table: {
+				type: { summary: "'on-white' | 'on-gray' | 'highlighted'" },
+				defaultValue: { summary: 'on-white' },
+			},
+		},
+		order: {
+			control: { type: 'number', min: 1, max: 99 },
+			description: 'Numeración opcional de la obra',
+			table: { type: { summary: 'number' }, defaultValue: { summary: 'undefined' } },
+		},
+		tagLabel: {
+			control: { type: 'text' },
+			description: 'Etiqueta opcional que se muestra antes del tiempo de lectura',
+			table: { type: { summary: 'string' }, defaultValue: { summary: 'undefined' } },
+		},
+		showAuthor: {
+			control: { type: 'boolean' },
+			description: 'Mostrar información del autor con avatar y nombre',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+		},
+		showExcerpt: {
+			control: { type: 'boolean' },
+			description: 'Mostrar la descripción/extracto de la obra',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+		},
+		showMultimedia: {
+			control: { type: 'boolean' },
+			description: 'Mostrar los selectores de multimedia asociados a la obra',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+		},
+		excerptLines: {
+			control: { type: 'range', min: 1, max: 6, step: 1 },
+			description: 'Cantidad de líneas a mostrar en la descripción',
+			table: { type: { summary: 'number' }, defaultValue: { summary: '2' } },
+		},
+		excerptParagraphs: {
+			control: { type: 'object' },
+			description:
+				'Extracto en Portable Text. Tiene precedencia sobre el extracto de la propia obra, y existe para las sugerencias de lectura, que hoy se alimentan de Story',
+			table: { type: { summary: 'TextBlockContent[]' }, defaultValue: { summary: '[]' } },
+		},
+		navigationParams: {
+			control: { type: 'object' },
+			description: 'Parámetros de navegación para el contexto de enrutamiento',
+			table: {
+				type: { summary: 'NavigationParams' },
+				defaultValue: { summary: 'undefined' },
+			},
+		},
+	},
+};
+
+export default meta;
+type Story = StoryObj<LiteraryWorkCardTeaserComponent>;
+
+export const Interactiva: StoryObj<LiteraryWorkCardTeaserComponent & { literaryWorkIndex: number }> = {
+	argTypes: {
+		literaryWorkIndex: {
+			...literaryWorkSelectArgType,
+			description: 'Obra del corpus de François Onoff; su portada, título y extracto cambian de forma conjunta',
+		},
+	},
+	render: (args) => ({
+		props: { ...args, literaryWorks: corpusLiteraryWorkTeasers },
+		template: `
+			<cuentoneta-literary-work-card-teaser
+				[literaryWork]="literaryWorks[literaryWorkIndex]"
+				[variant]="variant"
+				[order]="order"
+				[tagLabel]="tagLabel"
+				[showAuthor]="showAuthor"
+				[showExcerpt]="showExcerpt"
+				[showMultimedia]="showMultimedia"
+				[excerptLines]="excerptLines"
+			/>
+		`,
+	}),
+	args: {
+		literaryWorkIndex: 0,
+		variant: 'on-white',
+		order: 1,
+		tagLabel: 'Cuento',
+		showAuthor: true,
+		showExcerpt: true,
+		showMultimedia: true,
+		excerptLines: 2,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Playground interactivo. Elegí la <strong>Obra</strong> del corpus: su portada, título y extracto cambian de forma conjunta. El resto de los controles ajusta variante, autor, extracto y multimedia.',
+			},
+		},
+	},
+};
+
+export const OnWhite: Story = {
+	render: (args) => ({
+		props: args,
+		template: `<cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} />`,
+	}),
+	args: {
+		literaryWork: withMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
+		variant: 'on-white',
+		order: 1,
+		tagLabel: 'Cuento',
+		showAuthor: true,
+		showExcerpt: true,
+		showMultimedia: true,
+		excerptLines: 2,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Variante OnWhite: layout horizontal con la imagen a la izquierda, pensada para fondos blancos. Cuando la obra contenga un archivo multimedial para ser reproducido se va a visualizar con un MediaTag, y este deberá utilizarse siempre en su variante <code>Gray</code>.</p><p><strong>Comportamiento:</strong></p><ul><li>El título se trunca a un máximo de 2 líneas.</li><li>El extracto se trunca a un máximo de 2 líneas.</li><li>El avatar y el nombre del autor son elementos clickeables. En estado hover, el nombre se subraya para reforzar la affordance de enlace y permitir el acceso directo al perfil del autor y debe aplicarse únicamente sobre los elementos vinculados al autor, sin afectar el resto del contenido de la card.</li></ul><p><strong>Usos:</strong> Story List, Author List.</p>`,
+			},
+		},
+	},
+};
+
+export const OnGray: Story = {
+	render: (args) => ({
+		props: args,
+		template: `<div class="rounded-lg bg-neutral-100 p-6"><cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} /></div>`,
+	}),
+	args: {
+		literaryWork: withMediaSources(geometriaLiteraryWorkTeaserMock),
+		variant: 'on-gray',
+		order: 1,
+		tagLabel: 'Cuento',
+		showAuthor: true,
+		showExcerpt: true,
+		showMultimedia: true,
+		excerptLines: 2,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Variante OnGray: idéntica a OnWhite pero con los selectores de multimedia en blanco, pensada para fondos grises. Cuando la obra contenga un archivo multimedial para ser reproducido se va a visualizar con un MediaTag, y este deberá utilizarse siempre en su variante <code>Filled</code>.</p><p><strong>Comportamiento:</strong></p><ul><li>El título se trunca a un máximo de 2 líneas.</li><li>El extracto se trunca a un máximo de 2 líneas.</li><li>El avatar y el nombre del autor son elementos clickeables. En estado hover, el nombre se subraya para reforzar la affordance de enlace y permitir el acceso directo al perfil del autor y debe aplicarse únicamente sobre los elementos vinculados al autor, sin afectar el resto del contenido de la card.</li></ul><p><strong>Usos:</strong> Story {Footer}.</p>`,
+			},
+		},
+	},
+};
+
+export const Highlighted: Story = {
+	render: (args) => ({
+		props: args,
+		template: `<cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} />`,
+	}),
+	args: {
+		literaryWork: withMediaSources(elOdioLiteraryWorkTeaserMock),
+		variant: 'highlighted',
+		order: 1,
+		tagLabel: 'Cuento',
+		showAuthor: true,
+		showExcerpt: true,
+		showMultimedia: true,
+		excerptLines: 3,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Variante destacada del componente, utilizada para dar mayor relevancia visual a una obra dentro de un listado o sección específica; tarjeta con borde y fondo, con la imagen a la derecha. Cuando la obra contenga un archivo multimedial para ser reproducido se va a visualizar con un MediaTag, y este deberá utilizarse siempre en su variante <code>Filled</code>.</p><p><strong>Comportamiento:</strong></p><ul><li>El título se trunca a un máximo de 2 líneas.</li><li>El extracto se trunca a un máximo de 2 líneas.</li><li>El avatar y el nombre del autor son elementos clickeables. En estado hover, el nombre se subraya para reforzar la affordance de enlace y permitir el acceso directo al perfil del autor y debe aplicarse únicamente sobre los elementos vinculados al autor, sin afectar el resto del contenido de la card.</li><li>En Story List, se muestra el avatar y el nombre del autor.</li><li>En Author List, se ocultan el avatar y el nombre del autor.</li></ul><p><strong>Usos:</strong> Story List, Author List.</p>`,
+			},
+		},
+	},
+};
+
+// Nota: se usan bindings explícitos (en lugar de argsToTemplate) porque la variante difiere por
+// instancia; argsToTemplate genera bindings `[variant]="variant"` que apuntan a un único `props.variant`.
+export const AllVariants: Story = {
+	render: (args) => ({
+		props: {
+			...args,
+			literaryWorks: [
+				withMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
+				withMediaSources(geometriaLiteraryWorkTeaserMock),
+				withMediaSources(elOdioLiteraryWorkTeaserMock),
+			],
+		},
+		template: `
+			<div class="flex flex-col gap-10">
+				<div class="space-y-2">
+					<h3 class="text-sm font-semibold text-neutral-600">OnWhite</h3>
+					<cuentoneta-literary-work-card-teaser
+						variant="on-white"
+						[literaryWork]="literaryWorks[0]"
+						[order]="order"
+						[tagLabel]="tagLabel"
+						[showAuthor]="showAuthor"
+						[showExcerpt]="showExcerpt"
+						[showMultimedia]="showMultimedia"
+						[excerptLines]="excerptLines"
+					/>
+				</div>
+				<div class="space-y-2">
+					<h3 class="text-sm font-semibold text-neutral-600">OnGray</h3>
+					<div class="rounded-lg bg-neutral-100 p-6">
+						<cuentoneta-literary-work-card-teaser
+							variant="on-gray"
+							[literaryWork]="literaryWorks[1]"
+							[order]="order"
+							[tagLabel]="tagLabel"
+							[showAuthor]="showAuthor"
+							[showExcerpt]="showExcerpt"
+							[showMultimedia]="showMultimedia"
+							[excerptLines]="excerptLines"
+						/>
+					</div>
+				</div>
+				<div class="space-y-2">
+					<h3 class="text-sm font-semibold text-neutral-600">Highlighted</h3>
+					<cuentoneta-literary-work-card-teaser
+						variant="highlighted"
+						[literaryWork]="literaryWorks[2]"
+						[order]="order"
+						[tagLabel]="tagLabel"
+						[showAuthor]="showAuthor"
+						[showExcerpt]="showExcerpt"
+						[showMultimedia]="showMultimedia"
+						[excerptLines]="3"
+					/>
+				</div>
+			</div>
+		`,
+	}),
+	args: {
+		order: 1,
+		tagLabel: 'Cuento',
+		showAuthor: true,
+		showExcerpt: true,
+		showMultimedia: true,
+		excerptLines: 2,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: 'Vista general de las tres variantes del componente con todas las características habilitadas.',
+			},
+		},
+	},
+};
+
+// La tarjeta renderiza su propio skeleton cuando no recibe una obra.
+export const Estados: StoryObj<LiteraryWorkCardTeaserComponent & { loading: boolean }> = {
+	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
+	render: (args) => ({
+		props: args,
+		template: `
+			<div class="w-[680px]">
+				@if (loading) {
+					<cuentoneta-literary-work-card-teaser
+						[variant]="variant"
+						[order]="order"
+						[showAuthor]="showAuthor"
+						[showExcerpt]="showExcerpt"
+						[showMultimedia]="showMultimedia"
+						[excerptLines]="excerptLines"
+					/>
+				} @else {
+					<cuentoneta-literary-work-card-teaser
+						[literaryWork]="literaryWork"
+						[variant]="variant"
+						[order]="order"
+						[tagLabel]="tagLabel"
+						[showAuthor]="showAuthor"
+						[showExcerpt]="showExcerpt"
+						[showMultimedia]="showMultimedia"
+						[excerptLines]="excerptLines"
+					/>
+				}
+			</div>
+		`,
+	}),
+	args: {
+		loading: true,
+		literaryWork: withMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
+		variant: 'on-white',
+		order: 1,
+		tagLabel: 'Cuento',
+		showAuthor: true,
+		showExcerpt: true,
+		showMultimedia: true,
+		excerptLines: 2,
+	},
+	parameters: {
+		docs: { description: { story: 'Activá/desactivá "Cargando" para alternar entre el estado real y el skeleton.' } },
+	},
+};
+
+export const ExtractoEnPortableText: Story = {
+	args: {
+		literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock,
+		excerptParagraphs: onoffStoryTeasersMock[0].paragraphs,
+		variant: 'on-white',
+		tagLabel: 'Cuento',
+		showAuthor: true,
+		showExcerpt: true,
+		showMultimedia: false,
+		excerptLines: 3,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Extracto proveniente de una <code>Story</code>, cuyo cuerpo nunca migró a Markdown y por lo tanto llega en Portable Text. Es la fuente que alimenta hoy a las sugerencias de lectura al pie de una obra. Cuando <code>excerptParagraphs</code> llega no vacío tiene precedencia sobre el extracto de la propia obra, que se sirve como HTML ya saneado.',
+			},
+		},
+	},
+};

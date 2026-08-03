@@ -84,7 +84,7 @@ Prohibido para artefactos intencionalmente autorados aunque estén gitignoreados
 
 Prohibido. **Stagear siempre rutas explícitas**: `git add <path> <path>`, nunca `git add -A`, `git add .` ni `git commit -a`.
 
-El working tree de este repo acumula artefactos no versionados que no son basura: `workspace/` (planes y notas de review), salidas bajo `tools/`, worktrees en `.claude/worktrees/`, archivos generados como `src/app/environments/environment.ts`. Un `-A` los barre sin que nadie los mire, y el commit se pushea antes de que se note. Ya pasó en el PR #1576.
+El working tree de este repo acumula artefactos no versionados que no son basura: `workspace/` (planes y notas de review), salidas bajo `tools/`, worktrees en `.claude/worktrees/`, archivos generados como `src/app/environments/environment.ts`. Un `-A` los barre sin que nadie los mire, y el commit se pushea antes de que se note.
 
 El argumento de que "el `.gitignore` los cubre" no alcanza: la lista de ignorados cambia, un artefacto nuevo puede no estar contemplado todavía, y el momento de descubrirlo no es después del push. Listar las rutas obliga a mirar qué entra, que es justamente el control que se busca.
 
@@ -110,6 +110,28 @@ Prohibido. Si el componente tiene un **estado de carga (skeleton)**, su story de
 
 Prohibido. Nunca incluir `🤖 Generated with [Claude Code]…`, `Co-Authored-By: Claude …` ni `Claude-Session: …` en un mensaje de commit ni en el cuerpo de un PR (`gh pr create --body`/`--body-file`). El trailer **automático** de commits ya está suprimido por `attribution` en `.claude/settings.json`; el vector que queda es que el agente lo **tipee a mano** en el cuerpo del PR —ese setting no lo borra porque no es un trailer del harness—. La descripción de un PR o commit que lo contenga es bloqueante para la review.
 
+### "Le pongo `[Tooling]` al título para que se sepa de qué va"
+
+Prohibido. El título de un issue enuncia **el trabajo**, nada más. La categoría va en **labels** y la pertenencia a una iniciativa en la **jerarquía de sub-issues** del epic (ver la entrada siguiente). Un prefijo no se puede filtrar, no aparece en ninguna vista agregada y no tiene vocabulario cerrado — `[Test]`, `[QA]` y `[Test][E2E]` llegaron a convivir.
+
+Peor: **desplaza al label**. Los once issues de CollectionPage llevaban prefijo `[Frontend]`/`[Backend]` y ninguno tenía label; el prefijo hace sentir el issue clasificado y lo único filtrable nunca se pone.
+
+La prohibición es **por la función, no por la puntuación** — `[SEO] …`, `SEO — …` y `SEO: …` son el mismo mecanismo:
+
+| ❌                                                  | ✅                                                                 |
+| --------------------------------------------------- | ------------------------------------------------------------------ |
+| `[Backend] Controller Hono GET /collection/:slug`   | `Controller Hono GET /collection/:slug` + label `🔌 backend`       |
+| `SEO — opt-out temporal de indexación de /read`     | `Opt-out temporal de indexación de /read` + label `🧭 indexado`    |
+| `[Cloudflare] Crons: migrar a Cron Triggers`        | `Migrar los crons a Cloudflare Cron Triggers` + sub-issue del epic |
+| `[#<id>] - Integrar ReadingSuggestions en ReadPage` | `Integrar ReadingSuggestions en ReadPage`                          |
+
+Dos precisiones:
+
+- **El `[#<id>]` es de commits y PRs, no de issues** (ver [`CLAUDE.md`](../../CLAUDE.md#git)). En el título de un issue repite un número que GitHub ya muestra al lado.
+- Cuando el prefijo carga contexto que el resto del título no tiene, **se pliega dentro de la oración**, no se borra: `[Cloudflare] Cutover: preview → e2e → DNS` → `Cutover a Cloudflare: preview → e2e → DNS`. Un título que pierde información no cumple la regla, la incumple de otra forma.
+
+**Si no existe un label adecuado, se propone al usuario y se espera su confirmación** — crear un label es una acción hacia afuera. Nunca inventar un prefijo para tapar el hueco, ni crear el label por cuenta propia.
+
 ### "Listo los hijos del epic en el cuerpo y queda linkeado igual"
 
 Prohibido. Los issues hijos de un epic se crean **como child issues reales** (relación de sub-issue de GitHub), nunca como una tasklist o una lista de menciones `#<id>` en el cuerpo del epic. Una mención crea una referencia cruzada, no una jerarquía: no aparece en el panel de sub-issues, no aporta progreso agregado y se pierde al reordenar el cuerpo.
@@ -133,7 +155,7 @@ Los comentarios explican el **porqué no obvio**, nunca el **qué**. Si el códi
 **No comentar** (es ruido y se desincroniza; review-blocking si solo agrega ruido):
 
 - **Restatear una convención ya documentada.** ❌ `// doble de test, nunca Mock*` · ❌ `// el token no lleva providedIn/factory`. La convención vive en `clean-architecture.md`; repetirla en cada archivo es ruido.
-- **Rationale histórico / de cambio inline.** ❌ `// Rediseñado en #1499: la versión previa usaba .toPromise()…` · ❌ `// sin consumidores al momento del cambio`. Eso va al commit/PR.
+- **Rationale histórico / de cambio inline.** ❌ `// Rediseñado: la versión previa usaba .toPromise()…` · ❌ `// sin consumidores al momento del cambio`. Eso va al commit/PR.
 - **Navegación / estructura obvia.** ❌ `// la implementación HTTP vive en x.provider.ts` · ❌ `// API providers (patrón provideX)`. Los imports y los nombres de archivo ya lo muestran.
 - **Parafrasear la línea siguiente.** ❌ `// inyecta el HttpClient` encima de `inject(HttpClient)`.
 - **Justificar una visibilidad que la convención ya fija.** ❌ `// public porque es la API imperativa` sobre un `input()`/`output()`/signal expuesta. Si el miembro **es** la API pública, su visibilidad ya la dicta `angular-components.md`; el modificador es autoexplicativo.
@@ -147,6 +169,22 @@ Los comentarios explican el **porqué no obvio**, nunca el **qué**. Si el códi
 **Antes de escribir un comentario, preguntarse:** ¿esto ya lo dice el código, un nombre, un tipo o una referencia? ¿es contexto de cambio que debería ir al PR? Si la respuesta a cualquiera es "sí", no se escribe.
 
 Los comentarios de sección de estilo `// Core` / `// Models` que ya existen en el repo se respetan donde están, pero **no se agregan nuevos** salvo que aporten navegación real en un archivo grande.
+
+### Menciones a issues en la documentación de agentes (`.claude/references/**`, `.claude/agents/**`, `.claude/skills/**`)
+
+El mismo principio rige la prosa de estos documentos: **describen la conducta vigente, no su historia**. La procedencia y la trazabilidad de cambio viven en el historial de git y en los PRs — nunca inline. En concreto, **no citar un issue** para:
+
+- Documentar trabajo **ya implementado** o un issue ya **cerrado** (❌ "el value object `Slug` (implementado, `#<issue>`)", ❌ "el gate se agregó en `#<issue>`"). La documentación de lo ya hecho no lleva número: se enuncia el estado, no el issue que lo produjo.
+- Sellar procedencia de una regla o convención (❌ "regla agregada en `#<issue>`", ❌ "el fallo costó dos agentes caídos (`#<issue>`)").
+
+**Excepción acotada — trabajo futuro a manera de TODO, con issue abierto.** Un doc de reference/agent/skill **sí** puede citar un issue cuando el número es _load-bearing_ para una instrucción vigente y el issue está **OPEN**:
+
+1. **Puntero de gobernanza:** una prohibición provisional cuyo número es la condición de expiración — "dirección no adoptada; **no generar** X **hasta que el issue cambie de estado**" (p. ej. NgRx Signal Store, OpenAPIHono, o DDD-en-código para clases de repositorio/DI). Sin el número, un "todavía no" se leería como "nunca".
+2. **Justificación de supresión de lint/TS enlazada:** el issue que `CLAUDE.md` (Restricciones duras) exige junto a un `eslint-disable`/`@ts-ignore`, incluso en los ejemplos que enseñan ese patrón.
+
+`CLAUDE.md` y `docs/` quedan fuera de esta regla (llevan su propia decisión).
+
+**Enforced por el gate `check-agents`.** `scripts/check-issue-refs.ts` marca toda mención a un issue en estos documentos —por numeral (`#<id>`), por URL de GitHub o como `GH-<id>`— que no figure en su allowlist `GOVERNANCE_ISSUE_REFS` — la lista de punteros de gobernanza vigentes, cada uno con su motivo. Al cerrarse uno de esos issues, se borra su entrada y se limpian sus menciones en el mismo PR. El check es **offline**: no consulta el estado real en GitHub, así que la allowlist es la fuente de verdad y sacar una entrada es un acto deliberado y visible en el diff.
 
 ---
 
@@ -211,6 +249,19 @@ Independientemente de lo anterior, todo PR debe dejar verdes los gates de CI def
 
 Proponé cambios vía issue en `cuentoneta/cuentoneta`. Las enmiendas requieren aprobación explícita del usuario antes de mergear al documento. Cada PR que modifique este archivo debe actualizar la fecha de "Última actualización" del pie de página.
 
+## Sección 8 — Disciplina de comandos Bash: nunca prefijar con `cd`
+
+Regla operativa para todo agente con acceso a Bash en este repo: **nunca prefijar un comando con `cd`**. El working directory ya está resuelto al invocar al agente — la raíz del repo, o la del worktree de la sesión. Prefijar con `cd <ruta> && ...` cambia la firma del comando frente al sistema de permisos del harness y obliga a aprobar manualmente cada ejecución.
+
+- ✅ `git diff origin/develop...HEAD`
+- ✅ `pnpm lint`
+- ❌ `cd /ruta/al/proyecto && git diff origin/develop...HEAD`
+- ❌ `cd /ruta/al/proyecto && pnpm lint`
+
+Aplica a TODOS los CLIs: git, pnpm, gh y cualquier otro. Usar **siempre `pnpm`** para scripts del repo — `npm`/`yarn` están bloqueados por `only-allow`.
+
+Las definiciones de agentes (`.claude/agents/*.md`) enuncian la regla en una línea y remiten acá — no duplican los ejemplos, para que esta sección sea la única fuente.
+
 ---
 
-_Última actualización: 2026-07-21. Versión inicial en #1495 (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) agregada en #1499 y ampliada en #1542 (visibilidad de API y reemplazos canónicos); regla de story intercambiable para estados de carga agregada en #1581; regla de child issues reales en epics agregada en #1843; "Gates de CI" convertida a remisión a CLAUDE.md en #1844; punteros a secciones de CLAUDE.md corregidos a headings reales en #1846; prohibición de `git add -A` agregada tras un incidente en el flujo de #1882._
+_Última actualización: 2026-08-01. Este documento evoluciona por enmiendas (ver Sección 7); su historial detallado —qué se agregó, cuándo y por qué— vive en el log de git y en los PRs. Cambios mayores: versión inicial (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) y sus ampliaciones sobre visibilidad de API y reemplazos canónicos; regla de story intercambiable para estados de carga; regla de child issues reales en epics; "Gates de CI" convertida a remisión a CLAUDE.md; prohibición de `git add -A`; Sección 8 (regla anti-`cd`) consolidada desde las copias de los agentes; la política de menciones a issues en la documentación de agentes (Sección 3); la regla de títulos de issue sin prefijo de categoría (Sección 2); la generalización de los ejemplos que citaban issues reales; y el enforcement de esas menciones en el gate `check-agents`._

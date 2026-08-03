@@ -1,18 +1,13 @@
-import { componentWrapperDecorator, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
+import { componentWrapperDecorator, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
 
 import { TagsListComponent } from './tags-list.component';
 import { TagComponent, TagVariant } from '../tag/tag.component';
 import { Tag } from '@models/tag.model';
+import { onoffTagsWithShortTitles } from '@mocks/onoff-tags.mock';
 
 type Args = TagsListComponent & { tags: Tag[]; variant: TagVariant; maxVisible?: number };
 
-const tags: Tag[] = [
-	{ title: 'Crónica', slug: 'cronica', shortDescription: '', description: [] },
-	{ title: 'Ensayo', slug: 'ensayo', shortDescription: '', description: [] },
-	{ title: 'Memoria', slug: 'memoria', shortDescription: '', description: [] },
-	{ title: 'Histórico', slug: 'historico', shortDescription: '', description: [] },
-	{ title: 'Política', slug: 'politica', shortDescription: '', description: [] },
-];
+const tags = onoffTagsWithShortTitles.slice(0, 5);
 
 /** Proyecta los tags dentro del componente (la API es por content projection). */
 const projected = `<cuentoneta-tags-list [maxVisible]="maxVisible">

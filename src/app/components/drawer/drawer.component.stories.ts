@@ -1,4 +1,4 @@
-import { applicationConfig, moduleMetadata, Meta, StoryObj } from '@storybook/angular';
+import { applicationConfig, moduleMetadata, Meta, StoryObj } from '@storybook/angular-vite';
 import { provideRouter } from '@angular/router';
 
 import { DrawerComponent, DrawerDirection } from './drawer.component';

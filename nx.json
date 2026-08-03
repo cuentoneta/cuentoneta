@@ -2,12 +2,6 @@
 	"$schema": "./node_modules/nx/schemas/nx-schema.json",
 	"npmScope": "cuentoneta",
 	"useInferencePlugins": true,
-	"tasksRunnerOptions": {
-		"default": {
-			"runner": "nx-cloud",
-			"options": {}
-		}
-	},
 	"targetDefaults": {
 		"build": {
 			"dependsOn": ["^build"],
@@ -139,6 +133,5 @@
 			}
 		}
 	],
-	"nxCloudId": "6a35fc453b16c443fa31f351",
-	"analytics": true
+	"analytics": false
 }

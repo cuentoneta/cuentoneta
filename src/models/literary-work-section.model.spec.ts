@@ -1,0 +1,55 @@
+import { createAttributedText } from './attributed-text.model';
+import { createLiteraryWorkSection } from './literary-work-section.model';
+import { createSectionTitle } from './section-title.model';
+import { createReadingTime } from './reading-time.model';
+import { createSanitizedHtml } from './sanitized-html.model';
+
+describe('createLiteraryWorkSection', () => {
+	const bodyHtml = createSanitizedHtml('<p>Cuerpo de la sección.</p>');
+	const readingTime = createReadingTime(3);
+
+	it('builds a minimal section without title nor epigraphs', () => {
+		const section = createLiteraryWorkSection({ position: 0, bodyHtml, readingTime });
+
+		expect(section.position).toBe(0);
+		expect(section.bodyHtml).toBe(bodyHtml);
+		expect(section.readingTime).toBe(3);
+		expect(section.title).toBeUndefined();
+		expect(section.epigraphs).toBeUndefined();
+	});
+
+	it('builds a full section with title and epigraphs', () => {
+		const section = createLiteraryWorkSection({
+			position: 1,
+			title: createSectionTitle('Capítulo Uno'),
+			epigraphs: [
+				createAttributedText({
+					text: createSanitizedHtml('<p>Epígrafe</p>'),
+					reference: createSanitizedHtml('<p>Anónimo</p>'),
+				}),
+			],
+			bodyHtml,
+			readingTime,
+		});
+
+		expect(section.position).toBe(1);
+		expect(section.title?.value).toBe('Capítulo Uno');
+		expect(section.epigraphs).toHaveLength(1);
+	});
+
+	it('throws on a negative position', () => {
+		expect(() => createLiteraryWorkSection({ position: -1, bodyHtml, readingTime })).toThrow(
+			'LiteraryWorkSection inválida: position -1 (debe ser un entero >= 0)',
+		);
+	});
+
+	it('throws on a non-integer position', () => {
+		expect(() => createLiteraryWorkSection({ position: 1.5, bodyHtml, readingTime })).toThrow(
+			'LiteraryWorkSection inválida: position 1.5 (debe ser un entero >= 0)',
+		);
+	});
+
+	it('returns a frozen object', () => {
+		expect(Object.isFrozen(createLiteraryWorkSection({ position: 0, bodyHtml, readingTime }))).toBe(true);
+	});
+});

@@ -6,7 +6,7 @@ import { Title } from '@angular/platform-browser';
 import { storyMock } from '@mocks/story.mock';
 import { type Story } from '@models/story.model';
 import { AppRoutes } from '../../app.routes';
-import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { StoryMetaTagsDirective } from './story-meta-tags.directive';
 import { STORY_HOST } from './story-host';

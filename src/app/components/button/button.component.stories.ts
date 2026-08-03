@@ -1,4 +1,4 @@
-import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
+import { Meta, StoryObj, applicationConfig } from '@storybook/angular-vite';
 import { provideRouter } from '@angular/router';
 import { ButtonComponent } from './button.component';
 import { NgIcon, provideIcons } from '@ng-icons/core';

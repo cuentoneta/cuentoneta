@@ -1,0 +1,1 @@
+Shannon, insomne crónico, se despierta cada madrugada exactamente a las tres y media y nunca duerme más de dos horas: una vida reducida a coordenadas, donde el desvelo funciona como una geometría del tiempo que no deja resquicios.

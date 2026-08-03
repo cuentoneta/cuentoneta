@@ -57,6 +57,29 @@ beforeEach(() => {
 
 ---
 
+## Regla dura: el corpus se consume por colecciones, nunca por obra
+
+ESLint (`no-single-work-corpus-imports` en `eslint.config.mjs`) **prohíbe** importar una obra puntual del corpus (`@mocks/onoff/<slug>.mock`, `<slug>.raw.mock`, `<slug>.literary-work.raw.mock`, `<slug>.collection.raw.mock`) desde cualquier archivo fuera de `src/mocks/**` — los agregadores son justamente quienes las importan.
+
+Un spec o una story que importa una obra concreta queda atado a ella: sus aserciones citan la prosa de esa obra y enriquecer el canon no las alcanza. Las colecciones y los **selectores por capacidad** declaran el shape que el caso necesita y crecen solos.
+
+| Necesitás…                                | Importá                                                                                               |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Una obra cualquiera                       | `onoffLiteraryWorksMock` (o `onoffRawLiteraryWorksMock` en el backend), y desestructurá la primera    |
+| Una obra con título de sección            | `onoffLiteraryWorksWithSectionTitles`                                                                 |
+| Una obra con epígrafes                    | `onoffLiteraryWorksWithEpigraphs` / `onoffRawLiteraryWorksWithEpigraphs`                              |
+| Una obra con o sin nota editorial         | `onoffLiteraryWorksWith(out)EditorialNote` / `onoffRawLiteraryWorksWith(out)EditorialNote`            |
+| Un texto con atribución (epígrafe o nota) | `onoffLiteraryWorkEpigraphsMock`; en stories, `corpusAttributedTexts` + `attributedTextSelectArgType` |
+| Una story o colección crudas              | `onoffRawStoriesMock`, `onoffRawCollectionsMock`, `onoffRawNavCollectionsMock`                        |
+| Una story o teaser crudos con multimedia  | `onoffRawStoriesWithMediaSources` / `onoffRawTeasersWithMediaSources`                                 |
+| Una obra con o sin etiquetas              | `onoffRawLiteraryWorksWith(out)Tags`                                                                  |
+| Una etiqueta cualquiera                   | `onoffTagsMock` (o `onoffRawTagsMock` en el backend), y tomá un slice                                 |
+| Etiquetas de título corto                 | `onoffTagsWithShortTitles` — para stories donde un título de dos palabras fuerza el recorte por ancho |
+
+Corolario: **las aserciones se derivan del fixture**, no de prosa clavada. Si el caso necesita una palabra del texto, extraela del propio mock (`bodyHtml.replace(/<[^>]+>/g, ' ')` y tomá una palabra) en vez de escribirla a mano — así sigue pasando cuando el canon cambie. Si falta un selector para el shape que necesitás, **agregalo al agregador** (derivado por predicado, no una lista en paralelo) en vez de importar la obra.
+
+---
+
 ## Componentes: Angular Testing Library
 
 ### Reglas core
@@ -112,6 +135,8 @@ expect(heading).toBeInTheDocument();
 
 ### Servicios inyectados (mock con `fn()`)
 
+> Ejemplo con `StoryApi`/`StoryComponent`. Cuando el doble no necesita registrar llamadas, se provee la clase `Stub*` del propio provider en vez de `fn()` — es lo que hace `read.page.spec.ts` con `StubLiteraryWorkApi` + `provideLiteraryWorkApiMock()`.
+
 ```typescript
 import { fn } from '@test-utils';
 import { of, type Observable } from 'rxjs';
@@ -149,7 +174,7 @@ Variantes: `queryBy*` (cuando se espera ausencia, no lanza), `findBy*` (async, e
 
 ## `IntersectionObserver` en tests
 
-`happy-dom` no implementa `IntersectionObserver`. `src/test-setup.ts` instala un **stub global** (`src/app/testing/intersection-observer.stub.ts`) para que cualquier componente que use IO se pueda renderizar.
+`happy-dom` no implementa `IntersectionObserver`. `src/test-setup.ts` instala un **stub global** (`src/testing/intersection-observer.stub.ts`) para que cualquier componente que use IO se pueda renderizar.
 
 Los specs que necesitan **simular overflow** (p. ej. `TagsListComponent` / `TagsOverflowDirective`, que recorta tags por ancho con `IntersectionObserver`) reutilizan los helpers del mismo stub:
 
@@ -179,7 +204,7 @@ describe('TagsOverflowDirective', () => {
 });
 ```
 
-> Nota (#1494): el stub es temporal. El browser mode de Vitest provee un `IntersectionObserver` real, lo que permitiría testear con layout real en vez de simular el callback a mano.
+> Nota: el stub es temporal. El browser mode de Vitest provee un `IntersectionObserver` real, lo que permitiría testear con layout real en vez de simular el callback a mano.
 
 ---
 
@@ -306,10 +331,10 @@ Para dependencias de DI usá los decoradores `moduleMetadata({ imports, provider
 - **Enlace navegable a otros componentes.** Cuando la descripción menciona otro componente documentado, su nombre debe ser un enlace que navegue a la story de ese componente. Como la doc se renderiza dentro de `iframe.html`, usá un enlace relativo a la raíz del Storybook (robusto ante subpaths de deploy) con `target="_top"`:
 
   ```html
-  <a href="./?path=/docs/<kind-id>--docs" target="_top"><strong>StoryCardTeaserV3</strong></a>
+  <a href="./?path=/docs/<kind-id>--docs" target="_top"><strong>LiteraryWorkCardTeaser</strong></a>
   ```
 
-  El `<kind-id>` se deriva del `title` (minúsculas; espacios y `/` → `-`): `Componentes V3/StoryCardTeaserV3` → `componentes-v3-storycardteaserv3`. El sufijo `--docs` apunta a la página de autodocs.
+  El `<kind-id>` se deriva del `title` (minúsculas; espacios y `/` → `-`): `Componentes V3/LiteraryWorkCardTeaser` → `componentes-v3-literaryworkcardteaser`. El sufijo `--docs` apunta a la página de autodocs.
 
 ### Estado de carga (skeleton) → story intercambiable (obligatoria)
 

@@ -24,10 +24,10 @@ jobs:
         with:
           version: 10.12.1
 
-      - name: Use Node.js 22
+      - name: Use Node.js 24
         uses: actions/setup-node@v7.0.0
         with:
-          node-version: 22.22.3
+          node-version: 24.18.0
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -66,10 +66,10 @@ jobs:
         with:
           version: 10.12.1
 
-      - name: Use Node.js 22
+      - name: Use Node.js 24
         uses: actions/setup-node@v7.0.0
         with:
-          node-version: 22.22.3
+          node-version: 24.18.0
 
       - name: Download workspace artifact
         uses: actions/download-artifact@v8
@@ -79,9 +79,9 @@ jobs:
       - name: Unpack workspace
         run: tar -xf workspace.tar
 
-      # Capa de cache gratuita (cache de Actions) sobre el cache local de Nx: da hits sin consumir
-      # créditos de Nx Cloud, y sigue funcionando si Nx Cloud se queda sin créditos o no responde.
-      - name: Cache de Nx local (fallback sin Nx Cloud)
+      # Cache de Actions sobre el cache local de Nx (.nx/cache): único mecanismo de cacheo del CI,
+      # da hits entre corridas hidratando el cache que Nx escribe en disco.
+      - name: Cache de Nx local
         uses: actions/cache@v6
         with:
           path: .nx/cache
@@ -90,9 +90,7 @@ jobs:
             nx-cache-test-
 
       - name: Run Tests
-        run: bash .github/scripts/nx-run.sh nx test
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+        run: npx nx test
 
       # A) Reporte navegable (html + lcov) como artefacto descargable del workflow.
       - name: Upload coverage artifact
@@ -128,10 +126,10 @@ jobs:
         with:
           version: 10.12.1
 
-      - name: Use Node.js 22
+      - name: Use Node.js 24
         uses: actions/setup-node@v7.0.0
         with:
-          node-version: 22.22.3
+          node-version: 24.18.0
 
       - name: Download workspace artifact
         uses: actions/download-artifact@v8
@@ -141,7 +139,7 @@ jobs:
       - name: Unpack workspace
         run: tar -xf workspace.tar
 
-      - name: Cache de Nx local (fallback sin Nx Cloud)
+      - name: Cache de Nx local
         uses: actions/cache@v6
         with:
           path: .nx/cache
@@ -150,9 +148,7 @@ jobs:
             nx-cache-lint-
 
       - name: Run Linter
-        run: bash .github/scripts/nx-run.sh nx eslint:lint
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+        run: npx nx eslint:lint
 
   check-agents:
     needs: setup
@@ -163,10 +159,10 @@ jobs:
         with:
           version: 10.12.1
 
-      - name: Use Node.js 22
+      - name: Use Node.js 24
         uses: actions/setup-node@v7.0.0
         with:
-          node-version: 22.22.3
+          node-version: 24.18.0
 
       - name: Download workspace artifact
         uses: actions/download-artifact@v8
@@ -188,10 +184,10 @@ jobs:
         with:
           version: 10.12.1
 
-      - name: Use Node.js 22
+      - name: Use Node.js 24
         uses: actions/setup-node@v7.0.0
         with:
-          node-version: 22.22.3
+          node-version: 24.18.0
 
       - name: Download workspace artifact
         uses: actions/download-artifact@v8
@@ -201,7 +197,7 @@ jobs:
       - name: Unpack workspace
         run: tar -xf workspace.tar
 
-      - name: Cache de Nx local (fallback sin Nx Cloud)
+      - name: Cache de Nx local
         uses: actions/cache@v6
         with:
           path: .nx/cache
@@ -210,9 +206,7 @@ jobs:
             nx-cache-stylelint-
 
       - name: Run stylelint
-        run: bash .github/scripts/nx-run.sh nx stylelint @cuentoneta/app
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+        run: npx nx stylelint @cuentoneta/app
 
   typecheck:
     needs: setup
@@ -223,10 +217,10 @@ jobs:
         with:
           version: 10.12.1
 
-      - name: Use Node.js 22
+      - name: Use Node.js 24
         uses: actions/setup-node@v7.0.0
         with:
-          node-version: 22.22.3
+          node-version: 24.18.0
 
       - name: Download workspace artifact
         uses: actions/download-artifact@v8
@@ -236,7 +230,7 @@ jobs:
       - name: Unpack workspace
         run: tar -xf workspace.tar
 
-      - name: Cache de Nx local (fallback sin Nx Cloud)
+      - name: Cache de Nx local
         uses: actions/cache@v6
         with:
           path: .nx/cache
@@ -245,9 +239,7 @@ jobs:
             nx-cache-typecheck-
 
       - name: Run typecheck
-        run: bash .github/scripts/nx-run.sh nx typecheck
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+        run: npx nx typecheck
 
   e2e:
     needs: setup
@@ -258,10 +250,10 @@ jobs:
         with:
           version: 10.12.1
 
-      - name: Use Node.js 22
+      - name: Use Node.js 24
         uses: actions/setup-node@v7.0.0
         with:
-          node-version: 22.22.3
+          node-version: 24.18.0
 
       - name: Download workspace artifact
         uses: actions/download-artifact@v8
@@ -271,7 +263,7 @@ jobs:
       - name: Unpack workspace
         run: tar -xf workspace.tar
 
-      - name: Cache de Nx local (fallback sin Nx Cloud)
+      - name: Cache de Nx local
         uses: actions/cache@v6
         with:
           path: .nx/cache
@@ -292,9 +284,8 @@ jobs:
       # `development` compartido que los devs mutan) para reducir la fragilidad por curación de contenido
       # (#1722); en local se usa `development` (default del .env). staging es público → no requiere token.
       - name: Build de producción para e2e (SSR real)
-        run: bash .github/scripts/nx-run.sh nx run @cuentoneta/app:build:production
+        run: npx nx run @cuentoneta/app:build:production
         env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
           SANITY_STUDIO_DATASET: staging
           SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
           SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_STUDIO_TOKEN }}
@@ -313,9 +304,8 @@ jobs:
       # se fija acá `staging` para que sea el dataset que ve el crawler. Gana sobre el `development` del
       # .env porque process.loadEnvFile() no pisa variables ya presentes en el entorno.
       - name: Run Tests
-        run: bash .github/scripts/nx-run.sh nx run @cuentoneta/app:e2e
+        run: npx nx run @cuentoneta/app:e2e
         env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
           SANITY_STUDIO_DATASET: staging
           SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
 
@@ -336,10 +326,10 @@ jobs:
         with:
           version: 10.12.1
 
-      - name: Use Node.js 22
+      - name: Use Node.js 24
         uses: actions/setup-node@v7.0.0
         with:
-          node-version: 22.22.3
+          node-version: 24.18.0
 
       - name: Download workspace artifact
         uses: actions/download-artifact@v8
@@ -349,7 +339,7 @@ jobs:
       - name: Unpack workspace
         run: tar -xf workspace.tar
 
-      - name: Cache de Nx local (fallback sin Nx Cloud)
+      - name: Cache de Nx local
         uses: actions/cache@v6
         with:
           path: .nx/cache
@@ -358,10 +348,8 @@ jobs:
             nx-cache-build-
 
       - name: Run build
-        run: bash .github/scripts/nx-run.sh nx run @cuentoneta/app:build:production
+        run: npx nx run @cuentoneta/app:build:production
         env:
-          # Nx Cloud (cache remota de tareas)
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
           # Sanity / terceros. En PRs de forks los secrets llegan vacíos: para projectId/dataset
           # (públicos, ya son los defaults de set-environment.ts) caemos a esos valores para que el
           # build compile contra el dataset público de desarrollo. El token y los de terceros quedan
@@ -381,10 +369,10 @@ jobs:
         with:
           version: 10.12.1
 
-      - name: Use Node.js 22
+      - name: Use Node.js 24
         uses: actions/setup-node@v7.0.0
         with:
-          node-version: 22.22.3
+          node-version: 24.18.0
 
       - name: Download workspace artifact
         uses: actions/download-artifact@v8
@@ -394,7 +382,7 @@ jobs:
       - name: Unpack workspace
         run: tar -xf workspace.tar
 
-      - name: Cache de Nx local (fallback sin Nx Cloud)
+      - name: Cache de Nx local
         uses: actions/cache@v6
         with:
           path: .nx/cache
@@ -403,9 +391,7 @@ jobs:
             nx-cache-storybook-
 
       - name: Run Storybook build
-        run: bash .github/scripts/nx-run.sh nx run @cuentoneta/app:build-storybook
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+        run: npx nx run @cuentoneta/app:build-storybook
 
   studio-build:
     runs-on: ubuntu-latest
@@ -422,10 +408,10 @@ jobs:
         with:
           version: 10.12.1
 
-      - name: Use Node.js 22
+      - name: Use Node.js 24
         uses: actions/setup-node@v7.0.0
         with:
-          node-version: 22.22.3
+          node-version: 24.18.0
           cache: 'pnpm'
           cache-dependency-path: cms/pnpm-lock.yaml
 

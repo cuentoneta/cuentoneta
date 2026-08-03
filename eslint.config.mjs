@@ -195,6 +195,54 @@ export default [
 		},
 	},
 	{
+		// La UI (components/pages) no debe importar el shape crudo de Sanity (`@sanity-types`): saltearía el
+		// ACL. Al promover los tipos generados al kernel (#1981) quedaron físicamente alcanzables desde
+		// `src/app`; este guard preserva la frontera — el mapeo raw→dominio vive en el backend y la UI
+		// consume el modelo de dominio (`@models`). Se usa la variante de typescript-eslint porque el shape
+		// se importa como `import type`, que la regla base de ESLint no atrapa.
+		name: 'no-sanity-types-in-ui',
+		files: ['src/app/components/**/*.ts', 'src/app/pages/**/*.ts'],
+		rules: {
+			'no-restricted-imports': 'off',
+			'@typescript-eslint/no-restricted-imports': [
+				'error',
+				{
+					paths: [
+						{
+							name: '@sanity-types',
+							message:
+								'La UI no debe importar el shape crudo de Sanity (@sanity-types): saltea el ACL. Consumí el modelo de dominio (@models), mapeado por el backend.',
+						},
+					],
+				},
+			],
+		},
+	},
+	{
+		// Un spec o una story que importa una obra puntual del corpus (`@mocks/onoff/<slug>.mock`) se ata a
+		// esa obra: sus aserciones citan su prosa, y enriquecer el canon no las alcanza. Las colecciones y
+		// los selectores por capacidad de `@mocks/onoff-*.mock` declaran el shape que el caso necesita y
+		// crecen solos. `src/mocks/**` queda afuera: los agregadores son justamente quienes las importan.
+		name: 'no-single-work-corpus-imports',
+		files: ['src/**/*.ts'],
+		ignores: ['src/mocks/**/*.ts'],
+		rules: {
+			'no-restricted-imports': 'off',
+			'@typescript-eslint/no-restricted-imports': [
+				'error',
+				{
+					patterns: [
+						{
+							group: ['@mocks/onoff/*', '**/mocks/onoff/*'],
+							message:
+								'No importes una obra puntual del corpus: usá las colecciones de @mocks/onoff-literary-works.mock (onoffLiteraryWorksMock, onoffLiteraryWorkEpigraphsMock) o sus selectores por capacidad (onoffLiteraryWorksWithEpigraphs, onoffLiteraryWorksWithEditorialNote, …), que declaran el shape que el caso necesita y crecen con el canon.',
+						},
+					],
+				},
+			],
+		},
+	},
+	{
 		// `src/test-utils.ts` es el único punto donde se permite usar `vi.*` directamente:
 		// es justamente el wrapper que el resto del repo debe consumir.
 		name: 'test-utils-vi-exception',

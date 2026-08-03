@@ -32,7 +32,7 @@
 | **Estilos**            | Tailwind v4 + Stylelint                                           |
 | **Componentes**        | Storybook 10                                                      |
 
-**Aliases de paths** (ver `tsconfig.json`): `@components/*`, `@mocks/*`, `@models/*`, `@utils/*`, `@test-utils`.
+**Aliases de paths** (ver `tsconfig.json`): kernel compartido a top-level `@models/*`, `@utils/*`, `@sanity-types`, `@mocks/*` (viven en `src/models`/`src/utils`/`src/sanity`/`src/mocks`, consumidos por app **y** api); frontend `@components/*`, `@app-utils/*` (utils de `src/app/utils` acoplados a `environment`, no kernel); backend `@queries/*`, `@schemas/*`; test `@test-utils`, `@testing/*`.
 
 **Prefijo de selectores:** componentes `cuentoneta-` (kebab-case, elemento); directivas `cuentoneta` (camelCase, atributo).
 
@@ -42,25 +42,26 @@
 
 Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven targets de Nx del proyecto `@cuentoneta/app`.
 
-| Comando                                   | Descripción                                                                                                                          |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `pnpm install`                            | Instala dependencias                                                                                                                 |
-| `pnpm dev`                                | Dev server (SSR) en desarrollo                                                                                                       |
-| `pnpm build`                              | Build de producción                                                                                                                  |
-| `pnpm lint`                               | ESLint sobre `src` y `e2e`                                                                                                           |
-| `pnpm check:agents`                       | Valida la integridad de `.claude/` (frontmatter de agentes + anclas y rutas de las referencias) — reproduce el gate `check-agents`   |
-| `pnpm stylelint`                          | Stylelint sobre CSS                                                                                                                  |
-| `pnpm typecheck`                          | Type-check estricto (`tsc --noEmit`)                                                                                                 |
-| `pnpm test`                               | Tests unitarios (Vitest)                                                                                                             |
-| `pnpm test:watch`                         | Tests en watch                                                                                                                       |
-| `pnpm test:e2e`                           | E2E (Playwright)                                                                                                                     |
-| `pnpm seo:smoke`                          | Smoke manual post-deploy de indexado (invariantes SSR sobre `BASE_URL`, muestreando el sitemap)                                      |
-| `pnpm storybook` / `pnpm storybook:build` | Storybook dev / build                                                                                                                |
-| `pnpm sanity:dev`                         | Studio de Sanity (`@cuentoneta/cms`)                                                                                                 |
-| `pnpm sanity:build`                       | Build del Studio (`sanity build`) — reproduce en local el gate de CI `studio-build`                                                  |
-| `pnpm sanity:extract-schema`              | Extrae el schema de Sanity                                                                                                           |
-| `pnpm sanity:run-typegen-generator`       | Genera tipos a partir del schema                                                                                                     |
-| `pnpm exec sanity migration run <slug>`   | Corre una migración de datos (desde `cms/`; dry-run por defecto) → [`sanity-migrations.md`](.claude/references/sanity-migrations.md) |
+| Comando                                   | Descripción                                                                                                                                            |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `pnpm install`                            | Instala dependencias                                                                                                                                   |
+| `pnpm dev`                                | Dev server (SSR) en desarrollo                                                                                                                         |
+| `pnpm build`                              | Build de producción                                                                                                                                    |
+| `pnpm lint`                               | ESLint sobre `src` y `e2e`                                                                                                                             |
+| `pnpm check:agents`                       | Valida la integridad de `.claude/` (frontmatter de agentes + anclas, rutas y menciones a issues de las referencias) — reproduce el gate `check-agents` |
+| `pnpm stylelint`                          | Stylelint sobre CSS                                                                                                                                    |
+| `pnpm typecheck`                          | Type-check estricto (`tsc --noEmit`)                                                                                                                   |
+| `pnpm test`                               | Tests unitarios (Vitest)                                                                                                                               |
+| `pnpm test:watch`                         | Tests en watch                                                                                                                                         |
+| `pnpm test:e2e`                           | E2E (Playwright)                                                                                                                                       |
+| `pnpm backfill:reading-time`              | Persiste el reading time faltante de las obras (dry-run por defecto; `--no-dry-run` aplica)                                                            |
+| `pnpm seo:smoke`                          | Smoke manual post-deploy de indexado (invariantes SSR sobre `BASE_URL`, muestreando el sitemap)                                                        |
+| `pnpm storybook` / `pnpm storybook:build` | Storybook dev / build                                                                                                                                  |
+| `pnpm sanity:dev`                         | Studio de Sanity (`@cuentoneta/cms`)                                                                                                                   |
+| `pnpm sanity:build`                       | Build del Studio (`sanity build`) — reproduce en local el gate de CI `studio-build`                                                                    |
+| `pnpm sanity:extract-schema`              | Extrae el schema de Sanity                                                                                                                             |
+| `pnpm sanity:run-typegen-generator`       | Genera tipos a partir del schema                                                                                                                       |
+| `pnpm exec sanity migration run <slug>`   | Corre una migración de datos (desde `cms/`; dry-run por defecto) → [`sanity-migrations.md`](.claude/references/sanity-migrations.md)                   |
 
 **Gates de CI** (deben quedar verdes en cada PR): `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`, `studio-build`, `guard-config`, `check-agents`.
 
@@ -93,6 +94,7 @@ Reglas no negociables. Una violación requiere justificación explícita.
 | Imports type-only                                         | Usar `type` cuando un import se use solo como anotación de tipo (`isolatedModules`)                                                                                                                                                                                                                                                                            |
 | Literales de tiempo crudos                                | Usar duration strings (`'15m'`, `'1h'`, `'7d'`), no `60000` → [`typescript.md`](.claude/references/typescript.md)                                                                                                                                                                                                                                              |
 | `vi.fn()` / `vi.mock()` / `vi.*`                          | **Prohibido** el uso directo — usar los wrappers de `@test-utils` (ESLint `viRestrictedSyntax`)                                                                                                                                                                                                                                                                |
+| Import de una obra puntual del corpus                     | **Prohibido** fuera de `src/mocks/**` — consumir el canon de Onoff por sus colecciones y selectores por capacidad (ESLint `no-single-work-corpus-imports`) → [`testing.md`](.claude/references/testing.md)                                                                                                                                                     |
 | `firstValueFrom`/`lastValueFrom`/`toPromise`              | **Prohibidos** en el frontend — usar `computed()`/`toSignal()`/operadores RxJS                                                                                                                                                                                                                                                                                 |
 | Lógica sobre un signal sin invocarlo                      | **Prohibida** en código TS — leer el valor con `signal()` (ESLint `@angular-eslint/no-uncalled-signals`, typed-linting). En plantillas es punto ciego → [`angular-components.md`](.claude/references/angular-components.md)                                                                                                                                    |
 | Non-null assertion (`!`)                                  | Prohibido (ESLint `no-non-null-assertion`)                                                                                                                                                                                                                                                                                                                     |
@@ -110,6 +112,7 @@ Reglas no negociables. Una violación requiere justificación explícita.
 - **Ramas:** `feat/<id_issue>-<descripcion-en-kebab-case>` desde `develop` actualizado (p. ej. `feat/1495-claude-md-and-references`).
 - **Commits:** `[#<id_issue>] - <mensaje>`.
 - **PRs:** título `[#<id_issue>] - <título>`; cuerpo en español con `Closes #<id_issue>`; base `develop`; milestone correspondiente. **Reviews en español.**
+- **Issues:** título **sin prefijo de categoría** — ni `[Tooling]`/`[SEO]`/`[Frontend]`, ni sus variantes con guion o dos puntos, ni el `[#<id_issue>]` (ese es de commits y PRs). El título enuncia el trabajo; la categoría va en **labels** y la pertenencia a una iniciativa en la **jerarquía de sub-issues** del epic. Si falta un label adecuado, se propone al usuario y se espera confirmación → [`coding-agent-policies.md`](.claude/references/coding-agent-policies.md) (Sección 2).
 
 ### Naming
 
@@ -138,7 +141,7 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 
 - **`.mcp.json`** (raíz, versionado): servidores MCP del equipo — **Sanity** (remoto `https://mcp.sanity.io`, OAuth; no requiere token en el archivo), **Figma** (remoto `https://mcp.figma.com/mcp`, OAuth; para desarrollo de componentes a partir del diseño) y **nx** (análisis del workspace). Sin secrets.
 - **`.claude/settings.json`** (versionado): permisos de equipo — `deny` de lectura/escritura/edición de `.env*` en la raíz y en cualquier subdirectorio (`**/.env*`, cubre `./.env` y `./cms/.env`), más bloqueo de su creación por shell (redirecciones `>`/`>>`, `tee`, `touch`, `cp`, `mv`); y una `allow` mínima (gates de CI con `pnpm` + inspección read-only de git/gh).
-- **`.claude/agents/*.md`** (versionado): un `description:` **no puede contener `: `** (dos puntos + espacio) sin comillas — YAML lo lee como un mapping anidado, el frontmatter queda inválido y el agente **no carga, sin emitir ningún error**. Usar un guion (`—`) en su lugar. Lo verifica el gate **`check-agents`** (`pnpm check:agents` → `scripts/check-claude-docs.ts`, que además valida las anclas a `CLAUDE.md` y las rutas citadas en las referencias); el fallo silencioso costó dos agentes caídos (#1874).
+- **`.claude/agents/*.md`** (versionado): un `description:` **no puede contener `: `** (dos puntos + espacio) sin comillas — YAML lo lee como un mapping anidado, el frontmatter queda inválido y el agente **no carga, sin emitir ningún error**. Usar un guion (`—`) en su lugar. Lo verifica el gate **`check-agents`** (`pnpm check:agents` → `scripts/check-claude-docs.ts`, que además valida las anclas a `CLAUDE.md`, las rutas citadas en las referencias y que ninguna nombre un issue —por numeral, URL o `GH-`— fuera de la allowlist de gobernanza); el fallo silencioso costó dos agentes caídos (#1874).
 - **`.claude/settings.local.json`** y **`.claude/worktrees/`**: **personales/locales**, gitignoreados. Las allowlists o MCP propios de cada quien van ahí — p. ej. el **Figma Dev Mode** local (`http://127.0.0.1:3845/sse`), que requiere la app de escritorio corriendo y es distinto del servidor remoto de Figma versionado en `.mcp.json`.
 
 ---

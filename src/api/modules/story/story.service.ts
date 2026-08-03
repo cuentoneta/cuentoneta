@@ -6,7 +6,6 @@ import {
 	mapAuthorTeaser,
 	mapBlockContentToTextParagraphs,
 	mapStoryContent,
-	mapStoryNavigationTeaser,
 	mapStoryTeaser,
 	mapStoryTeaserWithAuthor,
 	urlFor,
@@ -27,35 +26,15 @@ import { fetchClarityData } from '../../_helpers/clarity-connector';
 import { updateRotatingContentMostRead } from '../content/content.repository';
 
 // Funciones de mapeo
-import { mapMediaSourcesTeasers } from '../../_utils/media-sources.functions';
+import { mapMediaSources } from '../../_utils/media-sources.functions';
 
 // Funciones de repository
-import {
-	fetchNavigationTeasersByAuthorSlug,
-	fetchStories,
-	fetchStoriesByAuthorSlug,
-	fetchStoriesBySlugs,
-	fetchStoryBySlug,
-} from './story.repository';
+import { fetchStories, fetchStoriesByAuthorSlug, fetchStoriesBySlugs, fetchStoryBySlug } from './story.repository';
 
 export async function getStoriesByAuthorSlug(args: StoriesByAuthorSlugArgs): Promise<StoryTeaser[]> {
 	const result = await fetchStoriesByAuthorSlug(args.slug, args.offset * args.limit, (args.offset + 1) * args.limit);
 
 	return mapStoryTeaser(result);
-}
-
-export async function getStoryNavigationTeaserByAuthorSlug(args: {
-	slug: string;
-	limit: number;
-	offset: number;
-}): Promise<StoryNavigationTeaser[]> {
-	const result = await fetchNavigationTeasersByAuthorSlug(
-		args.slug,
-		args.offset * args.limit,
-		(args.offset + 1) * args.limit,
-	);
-
-	return mapStoryNavigationTeaser(result);
 }
 
 export async function getStoryBySlug(slug: string): Promise<Story> {
@@ -117,7 +96,7 @@ export async function getStories(limit: number = 100, offset: number = 0): Promi
 			...fields,
 			author: mapAuthorTeaser(author),
 			coverImage: urlFor(coverImage),
-			media: mapMediaSourcesTeasers(mediaSources),
+			media: mapMediaSources(mediaSources),
 			paragraphs: mapBlockContentToTextParagraphs(body),
 			resources: [],
 			tags: [],

@@ -4,7 +4,7 @@ import { zValidator } from '@hono/zod-validator';
 
 // Esquemas de zod
 import { mostReadStorySchema, storyControllerSchema } from './story.schema';
-import { slugSchema } from '../../schemas/common.schemas';
+import { slugSchema } from '@schemas/common.schemas';
 
 import { StoriesByAuthorSlugArgs } from '../../interfaces/queryArgs';
 import {
@@ -12,7 +12,6 @@ import {
 	getStories,
 	getStoriesByAuthorSlug,
 	getStoryBySlug,
-	getStoryNavigationTeaserByAuthorSlug,
 	updateMostReadStories,
 } from './story.service';
 
@@ -29,19 +28,6 @@ storyController.get('/update-most-read', async (c) => {
 	const result = await updateMostReadStories();
 	return c.json(result);
 });
-
-storyController.get(
-	'/author/:slug/navigation',
-	zValidator('param', slugSchema),
-	zValidator('query', storyControllerSchema),
-	async (c) => {
-		const { slug } = c.req.valid('param');
-		const { limit, offset } = c.req.valid('query');
-
-		const result = await getStoryNavigationTeaserByAuthorSlug({ slug, limit, offset });
-		return c.json(result);
-	},
-);
 
 storyController.get(
 	'/author/:slug',

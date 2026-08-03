@@ -1,5 +1,4 @@
 import { TagIcon } from '@sanity/icons/Tag';
-import { preview } from 'sanity-plugin-icon-picker';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
@@ -10,15 +9,7 @@ export default defineType({
 	preview: {
 		select: {
 			title: 'title',
-			shortDescription: 'shortDescription',
-			icon: 'icon',
-		},
-		prepare({ title, shortDescription, icon }) {
-			return {
-				title: title,
-				subtitle: shortDescription,
-				media: preview(icon),
-			};
+			subtitle: 'shortDescription',
 		},
 	},
 	fields: [
@@ -42,22 +33,6 @@ export default defineType({
 			name: 'shortDescription',
 			title: 'Descripción breve',
 			type: 'string',
-			validation: (Rule) => Rule.required(),
-		}),
-		defineField({
-			name: 'description',
-			title: 'Descripción',
-			type: 'blockContent',
-			validation: (Rule) => Rule.required(),
-		}),
-		defineField({
-			name: 'icon',
-			title: 'Icono',
-			type: 'iconPicker',
-			options: {
-				providers: ['fa', 'si'],
-				storeSvg: true,
-			},
 			validation: (Rule) => Rule.required(),
 		}),
 	],

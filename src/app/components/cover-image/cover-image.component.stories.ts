@@ -1,8 +1,8 @@
-import { argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
+import { argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
 
 import { CoverImageComponent } from './cover-image.component';
 import { CoverImageSkeletonComponent } from './cover-image-skeleton.component';
-import { corpusCovers, literaryWorkSelectArgType } from '../../mocks/onoff-corpus.storybook';
+import { corpusCovers, literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
 
 const coverImageUrl = 'assets/img/mocks/stories/geometria.png';
 
@@ -14,7 +14,7 @@ const meta: Meta<CoverImageComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Imagen de portada (cover) de una historia, usada por las tarjetas del Design System v3 (<a href="./?path=/docs/componentes-v3-storycardteaserv3--docs" target="_top"><strong>StoryCardTeaserV3</strong></a> y <a href="./?path=/docs/componentes-v3-homestorycard--docs" target="_top"><strong>HomeStoryCard</strong></a>). Tamaño fijo 118×164; si no se provee <code>src</code>, muestra el placeholder del Design System. Es decorativa: el click se delega al enlace de la tarjeta.</p></div>`,
+				component: `<div><p>Imagen de portada (cover) de una historia, usada por las tarjetas del Design System v3 (<a href="./?path=/docs/componentes-v3-literaryworkcardteaser--docs" target="_top"><strong>LiteraryWorkCardTeaser</strong></a> y <a href="./?path=/docs/componentes-v3-literaryworkhomecardteaser--docs" target="_top"><strong>LiteraryWorkHomeCardTeaser</strong></a>). Tamaño fijo 118×164; si no se provee <code>src</code>, muestra el placeholder del Design System. Es decorativa: el click se delega al enlace de la tarjeta.</p></div>`,
 			},
 		},
 		layout: 'padded',

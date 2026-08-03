@@ -1,0 +1,1 @@
+La Sra. Oneiras saca del bolsillo de la falda un trozo de pescado hervido y lo come mirando fijamente al frente, sin ver nada, y luego pasa a un centímetro del protagonista como si no existiese. Subir y bajar peldaños es menos un desplazamiento físico que un estado de ánimo.

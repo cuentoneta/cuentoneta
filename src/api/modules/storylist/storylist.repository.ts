@@ -2,18 +2,14 @@
 import { client } from '../../_helpers/sanity-connector';
 
 // Modelos
-import { Storylist, StorylistStoriesNavigationTeasers, StorylistTeaser } from '@models/storylist.model';
+import { Storylist, StorylistTeaser } from '@models/storylist.model';
 import { StoryTeaserWithAuthor } from '@models/story.model';
 
 // Queries
-import {
-	storylistStoriesNavigationTeasersQuery,
-	storylistQuery,
-	storylistTeasersQuery,
-} from '../../_queries/storylist.query';
+import { storylistQuery, storylistTeasersQuery } from '@queries/storylist.query';
 
 // Utilidades
-import { mapMediaSources, mapMediaSourcesTeasers } from '../../_utils/media-sources.functions';
+import { mapMediaSources } from '../../_utils/media-sources.functions';
 import {
 	mapAuthorTeaser,
 	mapBlockContentToTextParagraphs,
@@ -35,7 +31,7 @@ export async function fetchAllStorylistTeasers(): Promise<StorylistTeaser[]> {
 			tags: mapTags(item.tags),
 			stories: [],
 			tabs: [],
-			media: mapMediaSourcesTeasers(mediaSources),
+			media: mapMediaSources(mediaSources),
 			imagery: mapImagery({ featuredImage, storyCoverImages }),
 		};
 	});
@@ -56,7 +52,7 @@ export async function fetchStorylistBySlug(slug: string): Promise<Storylist> {
 				...story,
 				author: mapAuthorTeaser({ ...story.author }),
 				coverImage: urlFor(coverImage),
-				media: mapMediaSourcesTeasers(story.mediaSources),
+				media: mapMediaSources(story.mediaSources),
 				paragraphs: mapBlockContentToTextParagraphs(story.body),
 				resources: [],
 				tags: [],
@@ -82,42 +78,5 @@ export async function fetchStorylistBySlug(slug: string): Promise<Storylist> {
 			icon: tab.icon ?? undefined,
 		})),
 		media: mapMediaSources(result.mediaSources),
-	};
-}
-
-type FetchStorylistNavigationTeasersByStorylistSlugParams = {
-	slug: string;
-	start: number;
-	end: number;
-};
-export async function fetchStorylistStoriesNavigationTeaserByStorylistSlug(
-	params: FetchStorylistNavigationTeasersByStorylistSlugParams,
-): Promise<StorylistStoriesNavigationTeasers> {
-	const result = await client.fetch(storylistStoriesNavigationTeasersQuery, params);
-
-	if (!result) {
-		throw new Error(`Storylist with slug ${params.slug} not found`);
-	}
-
-	const { featuredImage, storyCoverImages, ...rest } = result;
-	return {
-		...rest,
-		config: {
-			...result.config,
-			showAuthors: result.config?.showAuthors ?? false,
-		},
-		description: mapBlockContentToTextParagraphs(result.description),
-		tags: mapTags(result.tags),
-		imagery: mapImagery({ featuredImage, storyCoverImages }),
-		stories: result.stories.map(({ coverImage, ...story }) => ({
-			...story,
-			author: mapAuthorTeaser(story.author),
-			coverImage: urlFor(coverImage),
-			paragraphs: [],
-			media: [],
-			tags: [],
-		})),
-		tabs: [],
-		media: [],
 	};
 }

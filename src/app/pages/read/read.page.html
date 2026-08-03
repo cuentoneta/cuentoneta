@@ -1,0 +1,44 @@
+@if (literaryWork(); as literaryWork) {
+<article class="w-full">
+	<header class="flex flex-col gap-2">
+		<cuentoneta-literary-work-hero-header [literaryWork]="literaryWork" />
+	</header>
+	<section class="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-8">
+		<div class="flex justify-between pt-7">
+			<span class="font-inter text-xs font-semibold">{{ literaryWork.totalReadingTime }} minutos de lectura</span>
+			<button cuentoneta-button type="outline">Compartir</button>
+		</div>
+		@for (section of sections(); track section.position) {
+
+		<section class="flex flex-col gap-4">
+			@if (section.title) {
+			<h2 [id]="section.anchor">{{ section.title }}</h2>
+			} @for (epigraph of section.epigraphs; track $index) {
+			<blockquote>
+				<div [innerHTML]="epigraph.text"></div>
+				@if (epigraph.reference) {
+				<footer [innerHTML]="epigraph.reference"></footer>
+				}
+			</blockquote>
+			}
+			<div [innerHTML]="section.bodyHtml"></div>
+		</section>
+
+		} @if (editorialNote(); as editorialNote) {
+
+		<div class="flex flex-col gap-4">
+			<h2>Nota editorial</h2>
+			<cuentoneta-editorial-note [note]="editorialNote" />
+		</div>
+
+		}
+	</section>
+</article>
+} @else if (notFound()) {
+<section class="mx-auto flex w-full max-w-3xl flex-col gap-4 px-4 py-8">
+	<h1>No encontramos esta obra</h1>
+	<p>La obra que buscás no existe o ya no está disponible.</p>
+</section>
+} @else {
+<p class="mx-auto w-full max-w-3xl px-4 py-8">Cargando…</p>
+}

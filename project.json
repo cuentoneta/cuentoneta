@@ -70,13 +70,10 @@
 			}
 		},
 		"storybook": {
-			"executor": "@storybook/angular:start-storybook",
+			"executor": "@nx/storybook:storybook",
 			"options": {
 				"port": 4400,
-				"configDir": "./.storybook",
-				"browserTarget": "@cuentoneta/app:build",
-				"compodoc": false,
-				"styles": ["./src/styles.css", "./src/assets/css/typography.css"]
+				"configDir": "./.storybook"
 			},
 			"configurations": {
 				"ci": {
@@ -85,14 +82,11 @@
 			}
 		},
 		"build-storybook": {
-			"executor": "@storybook/angular:build-storybook",
+			"executor": "@nx/storybook:build",
 			"outputs": ["{options.outputDir}"],
 			"options": {
 				"outputDir": "dist/storybook/cuentoneta",
-				"configDir": "./.storybook",
-				"browserTarget": "@cuentoneta/app:build",
-				"compodoc": false,
-				"styles": ["./src/styles.css", "./src/assets/css/typography.css"]
+				"configDir": "./.storybook"
 			},
 			"configurations": {
 				"ci": {
@@ -114,13 +108,13 @@
 			"continuous": true
 		},
 		"eslint:lint": {
-			"command": "eslint ./src ./e2e"
+			"command": "eslint ./src ./e2e ./resources"
 		},
 		"stylelint": {
 			"executor": "nx-stylelint:lint",
 			"outputs": ["{options.outputFile}"],
 			"options": {
-				"lintFilePatterns": ["**/*.css"]
+				"lintFilePatterns": ["src/**/*.css"]
 			}
 		},
 		"typecheck": {

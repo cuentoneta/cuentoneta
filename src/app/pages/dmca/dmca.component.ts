@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 
 @Component({
 	selector: 'cuentoneta-dmca',

@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/angular';
+import type { Meta } from '@storybook/angular-vite';
 import { PortableTextParserComponent } from './portable-text-parser.component';
 
 const meta: Meta<PortableTextParserComponent> = {

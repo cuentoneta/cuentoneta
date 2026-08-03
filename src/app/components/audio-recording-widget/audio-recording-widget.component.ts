@@ -3,18 +3,17 @@ import { Component, input } from '@angular/core';
 // Models
 import { AudioRecording } from '@models/media.model';
 
-// Components
-import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
-
 @Component({
 	selector: 'cuentoneta-audio-recording-widget',
-	imports: [PortableTextParserComponent],
 	template: `
-		<audio [src]="media().data.url" data-testid="audio-recording" controls class="mb-2 block w-full"></audio>
-		<cuentoneta-portable-text-parser
-			[paragraphs]="media().description"
-			class="font-inter text-xs font-medium text-brand-500"
-		/>
+		<figure>
+			<audio [src]="media().data.url" data-testid="audio-recording" controls class="mb-2 block w-full"></audio>
+			<figcaption
+				[innerHTML]="media().description"
+				data-testid="media-description"
+				class="font-inter text-xs font-medium text-brand-500"
+			></figcaption>
+		</figure>
 	`,
 })
 export class AudioRecordingWidgetComponent {

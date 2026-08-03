@@ -1,12 +1,29 @@
 import { PortableTextParserComponent } from './portable-text-parser.component';
 import { render, RenderResult, screen, within } from '@testing-library/angular';
-import { storyMock } from '../../mocks/story.mock';
-import { portableTextWithListsMock, simpleOrderedListMock } from '../../mocks/portable-text-with-lists.mock';
+import { portableTextWithListsMock, simpleOrderedListMock } from '@mocks/portable-text-with-lists.mock';
+import type { TextBlockContent } from '@models/block-content.model';
 
 describe('PortableTextParserComponent', () => {
 	let component: RenderResult<PortableTextParserComponent>;
 
-	const setupWithParagraphs = async (paragraphs = storyMock.media[0].description, options = {}) => {
+	// La entrada por defecto va declarada acá y no tomada de un mock del corpus: lo que se prueba es cómo
+	// el parser traduce marcas y `markDefs`, así que el Portable Text es el sujeto del test.
+	const markedUpParagraph: TextBlockContent[] = [
+		{
+			_type: 'block',
+			style: 'normal',
+			_key: 'marked-up',
+			markDefs: [{ _type: 'link', _key: 'link-1', href: 'https://www.youtube.com/@CanalMas' }],
+			children: [
+				{ _type: 'span', _key: 's1', marks: [], text: 'Transmitido por ' },
+				{ _type: 'span', _key: 's2', marks: ['link-1'], text: 'Canal+' },
+				{ _type: 'span', _key: 's3', marks: [], text: ' en su programa ' },
+				{ _type: 'span', _key: 's4', marks: ['em'], text: 'Le Ble Chateau' },
+			],
+		},
+	];
+
+	const setupWithParagraphs = async (paragraphs = markedUpParagraph, options = {}) => {
 		return await render(PortableTextParserComponent, {
 			inputs: {
 				paragraphs,

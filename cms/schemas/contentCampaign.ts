@@ -7,7 +7,7 @@ import {
 	ContentCampaignViewport,
 	ContentCampaignViewportKeys,
 	viewportElementSizes,
-} from '../../src/app/models/content-campaign.model';
+} from '@models/content-campaign.model';
 
 const imageResourcePattern = /^image-([a-f\d]+)-(\d+x\d+)-(\w+)$/;
 
@@ -70,12 +70,6 @@ export default defineType({
 				source: 'title',
 				maxLength: 96,
 			},
-			validation: (Rule) => Rule.custom(localizedRequire),
-		}),
-		defineField({
-			name: 'description',
-			title: 'Descripción',
-			type: 'blockContent',
 			validation: (Rule) => Rule.custom(localizedRequire),
 		}),
 		defineField({

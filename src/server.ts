@@ -10,6 +10,7 @@ import apiRoutes from './api/routes';
 import sitemapController from './api/modules/sitemap/sitemap.controller';
 import { getAllowedHosts } from './api/_helpers/environment';
 import { noindexNonProduction } from './api/_middleware/noindex.middleware';
+import { ssrCacheControl } from './api/_middleware/ssr-cache-control.middleware';
 
 /**
  * Inicializa Hono y exporta la instancia de la aplicación
@@ -26,6 +27,13 @@ app.route('/sitemap.xml', sitemapController);
 
 // Registra rutas de API
 app.route('/api', apiRoutes);
+
+// Caché de borde para las páginas SSR de `/read/*`. Registrado antes de `serveStatic` y del
+// catch-all SSR para envolverlos (el orden de registro define el anidamiento onion de Hono):
+// corre tras `angularApp.handle()` y decide la cacheabilidad inspeccionando la respuesta.
+// Acotado a GET: solo esas respuestas son cacheables por el borde, y un POST que devolviera 200
+// con el marcador no debe recibir headers de caché.
+app.on('GET', '/read/*', ssrCacheControl);
 
 /**
  * Sirve los archivos estáticos desde el directorio /browser

@@ -2,7 +2,7 @@
 import { client } from '../_helpers/sanity-connector';
 
 // Funciones
-import { mapMediaSources, mapMediaSourcesTeasers } from './media-sources.functions';
+import { mapMediaSources } from './media-sources.functions';
 import { mapImagery } from './storylist-imagery.functions';
 
 // Tipos de Sanity
@@ -16,13 +16,7 @@ import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.
 import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
 import { StorylistTeaser } from '@models/storylist.model';
 import { Resource } from '@models/resource.model';
-import {
-	Story,
-	StoryNavigationTeaser,
-	StoryNavigationTeaserWithAuthor,
-	StoryTeaser,
-	StoryTeaserWithAuthor,
-} from '@models/story.model';
+import { Story, StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
 import { Tag } from '@models/tag.model';
 import { TextBlockContent } from '@models/block-content.model';
 
@@ -32,13 +26,14 @@ import {
 	AuthorsQueryResult,
 	BlockContent,
 	LandingPageContentQueryResult,
+	LiteraryWorkBySlugQueryResult,
 	RotatingContentQueryResult,
 	StoriesByAuthorSlugQueryResult,
 	StoriesBySlugsQueryResult,
 	StoryBySlugQueryResult,
 	StorylistQueryResult,
 	StorylistTeasersQueryResult,
-} from '../sanity/types';
+} from '@sanity-types';
 
 // Tipos de datos
 import { DateString, IsoDateTime } from '@utils/date.utils';
@@ -147,19 +142,18 @@ type ResourcesSubQuery = (
 	| NonNullable<StoryBySlugQueryResult>
 	| NonNullable<StoryBySlugQueryResult>['author']
 	| NonNullable<StorylistQueryResult>['stories'][0]
+	| NonNullable<LiteraryWorkBySlugQueryResult>
 	| StoriesByAuthorSlugQueryResult[0]
 )['resources'];
 export function mapResources(resources: ResourcesSubQuery): Resource[] {
 	return (
 		resources?.map((resource) => ({
-			...resource,
+			title: resource.title,
+			url: resource.url,
 			resourceType: {
-				...resource.resourceType,
-				description: mapBlockContentToTextParagraphs(resource.resourceType.description),
-				icon: {
-					provider: resource.resourceType.icon.provider ?? '',
-					name: resource.resourceType.icon.name ?? '',
-				},
+				slug: resource.resourceType.slug,
+				title: resource.resourceType.title,
+				shortDescription: resource.resourceType.shortDescription,
 			},
 		})) ?? []
 	);
@@ -168,15 +162,13 @@ export function mapResources(resources: ResourcesSubQuery): Resource[] {
 type TagsSubQuery =
 	| NonNullable<StoryBySlugQueryResult>['tags']
 	| NonNullable<AuthorBySlugQueryResult>['tags']
-	| NonNullable<StorylistTeasersQueryResult>[0]['tags'];
+	| NonNullable<StorylistTeasersQueryResult>[0]['tags']
+	| NonNullable<LiteraryWorkBySlugQueryResult>['tags'];
 export function mapTags(tags: TagsSubQuery): Tag[] {
 	return tags.map((tag) => ({
-		...tag,
-		description: mapBlockContentToTextParagraphs(tag.description),
-		icon: {
-			provider: tag.icon.provider ?? '',
-			name: tag.icon.name ?? '',
-		},
+		title: tag.title,
+		slug: tag.slug,
+		shortDescription: tag.shortDescription,
 	}));
 }
 
@@ -190,7 +182,7 @@ function mapStorylistTeasers(result: StorylistTeasersQueryResult): StorylistTeas
 			tags: mapTags(item.tags),
 			stories: [],
 			tabs: [],
-			media: mapMediaSourcesTeasers(mediaSources),
+			media: mapMediaSources(mediaSources),
 			imagery: mapImagery({ featuredImage, storyCoverImages }),
 		};
 	});
@@ -238,28 +230,9 @@ export function mapStoryTeaser(result: StoryTeasersQueryResult): StoryTeaser[] {
 		stories.push({
 			...properties,
 			coverImage: urlFor(coverImage),
-			media: mapMediaSourcesTeasers(mediaSources),
+			media: mapMediaSources(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: mapBlockContentToTextParagraphs(body) as [TextBlockContent, TextBlockContent, TextBlockContent],
-			tags: [],
-		});
-	}
-
-	return stories;
-}
-
-export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlugQueryResult>): StoryNavigationTeaser[] {
-	const stories = [];
-
-	for (const item of result) {
-		const { mediaSources, resources, coverImage, ...properties } = item;
-
-		stories.push({
-			...properties,
-			coverImage: urlFor(coverImage),
-			media: mapMediaSourcesTeasers(mediaSources),
-			resources: mapResources(resources),
-			paragraphs: [],
 			tags: [],
 		});
 	}
@@ -280,7 +253,7 @@ export function mapStoryNavigationTeaserWithAuthor(
 			...properties,
 			author: mapAuthorTeaser(item.author),
 			coverImage: urlFor(coverImage),
-			media: mapMediaSourcesTeasers(mediaSources),
+			media: mapMediaSources(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: [],
 			tags: [],
@@ -294,9 +267,11 @@ export function mapLandingPageContent(
 	result: NonNullable<LandingPageContentQueryResult> & RotatingContent,
 ): LandingPageContent {
 	return {
-		...result,
+		_id: result._id,
+		config: result.config,
 		cards: mapStorylistTeasers(result.cards),
 		campaigns: mapContentCampaigns(result.campaigns),
+		mostRead: result.mostRead,
 		latestReads: mapStoryNavigationTeaserWithAuthor(result.latestReads),
 	};
 }
@@ -311,9 +286,9 @@ export function mapContentCampaigns(campaigns: ContentCampaignsSubQuery): Conten
 		}
 
 		return {
-			...campaign,
 			title: campaign.title,
-			description: mapBlockContentToTextParagraphs(campaign.description),
+			slug: campaign.slug,
+			url: campaign.url,
 			contents: {
 				xs: {
 					imageUrl: xs.image ? urlForWithAutoFormat(xs.image) : '',

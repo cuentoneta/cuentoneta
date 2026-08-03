@@ -6,7 +6,7 @@ import { Title } from '@angular/platform-browser';
 import { authorMock } from '@mocks/author.mock';
 import { type AuthorProfile } from '@models/author.model';
 import { AppRoutes } from '../../app.routes';
-import { buildCanonicalUrl } from '@utils/build-canonical-url.util';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { AuthorMetaTagsDirective } from './author-meta-tags.directive';
 import { AUTHOR_HOST } from './author-host';

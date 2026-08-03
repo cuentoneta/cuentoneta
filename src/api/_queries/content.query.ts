@@ -64,9 +64,7 @@ export const landingPageContentQuery = defineQuery(`
         'tags': coalesce(tags[] -> {
             title,
             'slug': slug.current,
-            shortDescription,
-            description,
-            icon
+            shortDescription
         }, []),
         'storyCoverImages': coalesce(stories[]->coverImage, []),
         'count': coalesce(count(stories), 0),
@@ -78,17 +76,12 @@ export const landingPageContentQuery = defineQuery(`
         _id,
         'title': coalesce(title, ''),
         'slug': coalesce(slug.current, ''),
-        'description': coalesce(description, []),
         'url': coalesce(url, ''),
         'contents': {
             'xs': {
-                'title': coalesce(contents.xs.title, []),
-                'subtitle': coalesce(contents.xs.subtitle, []),
                 'image': contents.xs.image
             },
             'md': {
-                'title': coalesce(contents.md.title, []),
-                'subtitle': coalesce(contents.md.subtitle, []),
                 'image': contents.md.image
             }
         }

@@ -4,28 +4,27 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 // Models
 import { SpotifyPodcastEpisode } from '@models/media.model';
 
-// Components
-import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
-
 @Component({
 	selector: 'cuentoneta-spotify-audio-widget',
-	imports: [PortableTextParserComponent],
 	template: `
-		<iframe
-			[src]="mediaUrl()"
-			width="100%"
-			height="152"
-			frameborder="0"
-			allowfullscreen=""
-			allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-			loading="lazy"
-			data-testid="spotify-embed"
-			class="mb-2 block"
-		></iframe>
-		<cuentoneta-portable-text-parser
-			[paragraphs]="media().description"
-			class="font-inter text-xs font-medium text-brand-500"
-		/>
+		<figure>
+			<iframe
+				[src]="mediaUrl()"
+				width="100%"
+				height="152"
+				frameborder="0"
+				allowfullscreen=""
+				allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+				loading="lazy"
+				data-testid="spotify-embed"
+				class="mb-2 block"
+			></iframe>
+			<figcaption
+				[innerHTML]="media().description"
+				data-testid="media-description"
+				class="font-inter text-xs font-medium text-brand-500"
+			></figcaption>
+		</figure>
 	`,
 })
 export class SpotifyPodcastEpisodeWidget {
