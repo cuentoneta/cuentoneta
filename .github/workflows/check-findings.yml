@@ -42,16 +42,21 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
 
+      # Traer los mensajes y verificarlos van en steps separados a propósito: el script que corre en el
+      # segundo es código del PR —de un fork, código no confiable—, y no debe compartir step con el
+      # token. El radio es chico (solo lectura, repo público), pero no hay razón para dárselo.
+      #
       # La API pagina de a 100 y corta en 250 commits: un PR más largo que eso queda parcialmente
       # verificado. El hook local `commit-msg` cubre el resto en origen.
-      - name: Mensajes de commit del PR
+      - name: Traer los mensajes de commit del PR
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
-        run: |
-          gh api --paginate "repos/$REPO/pulls/$PR/commits" --jq '.[] | .commit.message' \
-            | pnpm check:findings --surface=commit
+        run: gh api --paginate "repos/$REPO/pulls/$PR/commits" --jq '.[] | .commit.message' > commit-messages.txt
+
+      - name: Verificar los mensajes de commit
+        run: pnpm check:findings --surface=commit commit-messages.txt
 
       # El cuerpo viaja por `env` y nunca interpolado dentro del `run:`: un `${{ }}` con texto que
       # escribe cualquiera es inyección de shell. Un PR sin descripción llega como cadena vacía y pasa.
