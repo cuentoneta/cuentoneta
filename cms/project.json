@@ -30,6 +30,7 @@
 		},
 		"test": {
 			"executor": "nx:run-commands",
+			"inputs": ["default", "{workspaceRoot}/src/models/**/*", "{workspaceRoot}/src/utils/**/*"],
 			"options": {
 				"command": "pnpm test",
 				"cwd": "cms"
