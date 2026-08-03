@@ -1,8 +1,8 @@
-// El Studio no arranca sin projectId, así que una variable faltante tiene que fallar nombrándose: el
-// error nativo de Sanity ante un projectId vacío no dice cuál es la variable ni de dónde sale.
-export function requireEnv(name: string): string {
-	const value = process.env[name];
-
+// El valor entra por parámetro y no se lee acá con process.env[name]: el bundler del Studio inyecta las
+// variables con el `define` de Vite, que reemplaza la expresión `process.env.LO_QUE_SEA` de forma
+// literal. Un acceso por índice computado no se reemplaza, queda leyendo un objeto vacío en el browser
+// y el Studio no arranca — sin que ningún gate lo note, porque en Node process.env sí existe.
+export function requireEnv(name: string, value: string | undefined): string {
 	if (!value) {
 		throw new Error(`Falta la variable de entorno ${name}. Corré "pnpm run config" en cms/ o definila en cms/.env.`);
 	}

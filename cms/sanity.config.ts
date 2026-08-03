@@ -19,7 +19,7 @@ export default defineConfig([
 		title: 'PROD - La Cuentoneta',
 		basePath: '/production',
 		icon: LaunchIcon,
-		projectId: requireEnv('SANITY_STUDIO_PROJECT_ID'),
+		projectId: requireEnv('SANITY_STUDIO_PROJECT_ID', process.env.SANITY_STUDIO_PROJECT_ID),
 		token: process.env.SANITY_STUDIO_API_TOKEN,
 		dataset: 'production',
 		plugins: [
@@ -42,7 +42,7 @@ export default defineConfig([
 		title: 'STAG - La Cuentoneta',
 		basePath: '/staging',
 		icon: LaunchIcon,
-		projectId: requireEnv('SANITY_STUDIO_PROJECT_ID'),
+		projectId: requireEnv('SANITY_STUDIO_PROJECT_ID', process.env.SANITY_STUDIO_PROJECT_ID),
 		token: process.env.SANITY_STUDIO_API_TOKEN,
 		dataset: 'staging',
 		plugins: [
@@ -65,7 +65,7 @@ export default defineConfig([
 		title: 'DEV - La Cuentoneta',
 		basePath: '/development',
 		icon: RobotIcon,
-		projectId: requireEnv('SANITY_STUDIO_PROJECT_ID'),
+		projectId: requireEnv('SANITY_STUDIO_PROJECT_ID', process.env.SANITY_STUDIO_PROJECT_ID),
 		dataset: 'development',
 		plugins: [
 			structureTool({
