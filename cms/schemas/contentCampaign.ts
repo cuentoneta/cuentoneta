@@ -1,6 +1,7 @@
 import { defineField, defineType, type ImageValue, type ValidationContext } from 'sanity';
 import { CalendarIcon } from '@sanity/icons/Calendar';
 import { localizedRequire } from '../utils/validations';
+import { decodeAssetId } from '../utils/content-campaign-image';
 
 // Models
 import {
@@ -8,19 +9,6 @@ import {
 	ContentCampaignViewportKeys,
 	viewportElementSizes,
 } from '@models/content-campaign.model';
-
-const imageResourcePattern = /^image-([a-f\d]+)-(\d+x\d+)-(\w+)$/;
-
-const decodeAssetId = (id) => {
-	const [, assetId, dimensions, format] = imageResourcePattern.exec(id);
-	const [width, height] = dimensions.split('x').map((v: string) => parseInt(v, 10));
-
-	return {
-		assetId,
-		dimensions: { width, height },
-		format,
-	};
-};
 
 const isViewport = (segment: unknown): segment is ContentCampaignViewport =>
 	ContentCampaignViewportKeys.some((key) => key === segment);
@@ -31,7 +19,7 @@ const campaignImageSizeValidation = (image: ImageValue | undefined, context: Val
 	const viewport = context.path?.[context.path.length - 2];
 	const viewportSize = isViewport(viewport) ? viewportElementSizes[viewport] : undefined;
 
-	if (!image || !viewportSize) return true;
+	if (!image?.asset?._ref || !viewportSize) return true;
 	const { dimensions } = decodeAssetId(image.asset._ref);
 	return (
 		(dimensions.width === viewportSize.imageWidth && dimensions.height === viewportSize.imageHeight) ||
