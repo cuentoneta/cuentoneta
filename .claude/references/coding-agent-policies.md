@@ -170,6 +170,29 @@ Los comentarios explican el **porqué no obvio**, nunca el **qué**. Si el códi
 
 Los comentarios de sección de estilo `// Core` / `// Models` que ya existen en el repo se respetan donde están, pero **no se agregan nuevos** salvo que aporten navegación real en un archivo grande.
 
+### Menciones a issues en comentarios de código
+
+Un comentario de código **no cita un issue**. La procedencia y el rationale de un cambio viven en el commit, en el PR y en el historial de git. Un número inline envejece en silencio: nada lo revisa cuando el issue se cierra.
+
+**Excepción acotada — un `TODO` puede citar el issue que lo destraba.** El número es _load-bearing_ únicamente cuando marca **trabajo futuro**: sin él, "esto se saca después" no dice qué lo destraba. La excepción se concede bajo tres condiciones, las tres verificables:
+
+1. **La línea es un marcador `TODO`:** `TODO` en mayúsculas, seguido de `:` o de `(` — `// TODO: …` o `// TODO(#<id>): …`. `todo`, `Todo` o la palabra usada en prosa no cuentan.
+2. **El número está en esa misma línea.** La regla es por línea a propósito: admitir el número en cualquier parte de un bloque que en alguna línea diga `TODO` vuelve la excepción trivial de eludir.
+3. **El issue está abierto.** Un `TODO` cuyo issue se cerró pierde la excepción: se reescribe enunciando la condición que lo destraba, o se borra junto con el trabajo que ya se hizo.
+
+Ambos formatos en uso son válidos mientras cumplan lo anterior: `// TODO(#<id>): …` y `// TODO: … (ver #<id>)`.
+
+**Qué NO habilita esta excepción** (sigue prohibido y es bloqueante para la review):
+
+- **Rationale histórico o de cambio:** ❌ `// Rediseñado en #<id>: antes usaba …` · ❌ `// Regresión de #<id>: la base debía pedirse acotada`.
+- **Procedencia de una convención, una regla o un gate:** ❌ `// la regla se agregó en #<id>`.
+- **Un número suelto en un comentario que no es un `TODO`**, aunque describa trabajo pendiente: ❌ `// Bloqueado por #<id>: el deck usa @defer`. Si es trabajo futuro, se escribe como `TODO`; si no lo es, el número sobra.
+- **La cita en un comentario contiguo:** la línea siguiente al `TODO`, o el cuerpo de un bloque cuyo encabezado es un `TODO`.
+
+**Segunda excepción, ya vigente:** la **justificación de una supresión de lint/TS**, que `CLAUDE.md` ([Restricciones duras](../../CLAUDE.md#restricciones-duras-hard-constraints)) **exige** con issue enlazado junto a un `@ts-ignore`. No es un `TODO` y no necesita serlo: es la misma excepción que la sub-sección siguiente reconoce para la documentación.
+
+**Enforcement.** El criterio lo aplica el hook `scripts/block-issue-refs-in-comments.ts`, registrado en `.claude/settings.json` como `PreToolUse` de `Edit`/`Write`: bloquea la escritura de un comentario con un número de issue en `src/**` salvo que esa misma línea sea un `TODO` o una supresión de lint/TS enlazada. Es una **ayuda local de Claude Code, no un gate**: solo ve el texto que la herramienta agrega — no lo ya commiteado, ni lo escrito por Bash o por otro editor —, y la regla rige para **todo** el código aunque el hook mire únicamente `src/**`. Ningún gate de CI cubre hoy esta regla fuera de los `.md` de `.claude/`, y la condición "issue abierto" no la puede verificar un check offline: depende de quien cierra el issue.
+
 ### Menciones a issues en la documentación de agentes (`.claude/references/**`, `.claude/agents/**`, `.claude/skills/**`)
 
 El mismo principio rige la prosa de estos documentos: **describen la conducta vigente, no su historia**. La procedencia y la trazabilidad de cambio viven en el historial de git y en los PRs — nunca inline. En concreto, **no citar un issue** para:
