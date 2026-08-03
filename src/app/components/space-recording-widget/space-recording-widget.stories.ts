@@ -17,7 +17,7 @@ const meta: Meta<SpaceRecordingWidgetComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El componente <strong>SpaceRecordingWidgetComponent</strong> muestra la grabación de un Space de X asociado a una obra: título, anfitrión con su avatar, fecha, duración, reproductor y la descripción del recurso.</p><p>Cuando la grabación no trae URL —la proyección de teaser no la resuelve— el reproductor se reemplaza por un placeholder visible en vez de renderizar un control roto.</p><p>La descripción llega desde el backend como HTML ya saneado (<code>SanitizedHtml</code>, derivado del Markdown que carga el CMS) y se pinta con <code>[innerHTML]</code> dentro de un <code>&lt;div&gt;</code>, porque el HTML que produce el pipeline ya trae su propio <code>&lt;p&gt;</code>.</p></div>`,
+				component: `<div><p>El componente <strong>SpaceRecordingWidgetComponent</strong> muestra la grabación de un Space de X asociado a una obra: título, anfitrión con su avatar, fecha, duración, reproductor y la descripción del recurso.</p><p>Cuando la grabación no trae URL —la proyección de teaser no la resuelve— el reproductor se reemplaza por un placeholder visible en vez de renderizar un control roto.</p><p>La descripción llega desde el backend como HTML ya saneado (<code>SanitizedHtml</code>, derivado del Markdown que carga el CMS) y se pinta con <code>[innerHTML]</code> dentro de un <code>&lt;div&gt;</code>, porque el HTML que produce el pipeline ya trae su propio <code>&lt;p&gt;</code>.</p><p>El despachador <strong>MediaResourceComponent</strong> no tiene catálogo propio: elige el widget según el tipo de media y delega acá toda la vista.</p></div>`,
 			},
 		},
 	},

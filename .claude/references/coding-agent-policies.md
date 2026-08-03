@@ -104,10 +104,10 @@ Prohibido. Todo componente nuevo en `src/app/components/` lleva su `*.stories.ts
 
 **Excepción por delegación total.** Un componente queda exento del catálogo cuando su plantilla no tiene nada propio que mostrar porque la vista vive íntegra en otro componente ya catalogado. Se aplica solo si se cumplen **las cuatro** condiciones:
 
-1. No declara marcado propio más allá de delegar en otro componente del catálogo. Un contenedor de disposición vacío —el reservador de alto de un `@defer`, por caso— no cuenta como marcado propio; cualquier texto, encabezado, lista o enlace sí.
+1. No declara marcado propio más allá de delegar. Un contenedor de disposición vacío —el reservador de alto de un `@defer`, por caso— no cuenta como marcado propio; cualquier texto, encabezado, lista o enlace sí. Repetir la delegación tampoco la invalida por sí sola, pero **sí** declarar cómo se disponen las repeticiones —separadores, espaciado entre ellas, grilla—: esa es una decisión visual propia y necesita catálogo.
 2. No declara `styles` ni `host` más allá de la caja que lo posiciona.
-3. El componente destino está catalogado y su story cubre las variantes que el exento puede producir.
-4. La story del destino los nombra, para que el catálogo diga qué componentes cubre.
+3. La delegación termina en un componente **catalogado**, sea directa o a través de otros que se amparan en esta misma excepción. Un despachador que elige entre dos conectados exentos cumple la condición si la vista de esos conectados vive en un componente con story.
+4. La story de **cada** destino que puede renderizar lo nombra, para que el catálogo diga qué componentes cubre desde cualquier entrada por la que se llegue.
 
 El eje es un **hecho verificable de la plantilla**, no una apreciación de cuánto aporta el componente: "aporta poco" es la misma escapatoria que "es simple", con otro nombre. Las condiciones se verifican contra la plantilla, no contra la descripción del PR.
 
