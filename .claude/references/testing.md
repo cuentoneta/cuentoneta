@@ -338,6 +338,14 @@ El kernel compartido de paths (`@models/*`, `@utils/*` — ver [Aliases de paths
 
 Si falta declararlo en alguno de los tres, el síntoma es puntual a esa herramienta: el editor marca error pero el build pasa, o el build falla pero el editor no se queja, o los tests fallan al resolver el import mientras el resto compila bien.
 
+#### Las dependencias del kernel también hay que aliasarlas
+
+Si el archivo del kernel que consume el Studio importa un paquete (`date-fns`, por ejemplo), ese bare import se resuelve **desde el archivo que lo importa** — o sea desde `src/**`, fuera de `cms/`. En CI eso falla: el job del Studio hace checkout propio e instala **solo** `cms/`, así que `<repo>/node_modules` no existe y Rollup corta el build con `Failed to resolve import`.
+
+Por eso cada paquete que el kernel importe tiene que estar declarado como dependencia de `cms/package.json` **y** aliasado a `cms/node_modules/<paquete>` en `sanity.cli.ts` y `vitest.config.ts`.
+
+**Este es el modo de falla más traicionero de todo el cruce de límites, porque no se reproduce en local por ningún medio:** cualquier checkout del repo tiene un `node_modules` en la raíz, y la resolución sube hasta encontrarlo. Un worktree bajo `.claude/worktrees/` es todavía peor, porque sube hasta el `node_modules` del checkout principal aunque se esconda el propio. La única señal es el gate `studio-build` en CI.
+
 ---
 
 ## Storybook

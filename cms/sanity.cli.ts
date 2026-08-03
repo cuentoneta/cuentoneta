@@ -24,6 +24,11 @@ export default defineCliConfig({
 		const kernelAliases = {
 			'@models': path.resolve(__dirname, '../src/models'),
 			'@utils': path.resolve(__dirname, '../src/utils'),
+			// Todo bare import que haga el kernel se resuelve desde el archivo que lo importa, o sea desde
+			// <repo>/src/**, que está fuera de cms/. En CI ese directorio no tiene node_modules —el job del
+			// Studio instala solo cms/—, así que sin este alias Rollup no encuentra el paquete y el build
+			// falla. Localmente no se nota: la resolución sube hasta el node_modules de la raíz.
+			'date-fns': path.resolve(__dirname, 'node_modules/date-fns'),
 		};
 		const existingAlias = config.resolve?.alias;
 		// resolve.alias admite forma objeto o array (readonly Alias[]): se mergea según la que Sanity

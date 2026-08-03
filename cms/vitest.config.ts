@@ -7,10 +7,12 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
 	test: {
 		include: ['**/*.spec.ts'],
-		// El bundler del Studio lee los alias de sanity.cli.ts, que Vitest no carga: hay que repetirlos acá.
+		// El bundler del Studio lee los alias de sanity.cli.ts, que Vitest no carga: hay que repetirlos acá,
+		// incluido el de date-fns — los bare imports del kernel se resuelven desde <repo>/src/**, fuera de cms/.
 		alias: {
 			'@models': path.resolve(__dirname, '../src/models'),
 			'@utils': path.resolve(__dirname, '../src/utils'),
+			'date-fns': path.resolve(__dirname, 'node_modules/date-fns'),
 		},
 	},
 });
