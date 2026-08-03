@@ -38,6 +38,26 @@ describe('findIssueRefsInComments — lo que bloquea', () => {
 		expect(findIssueRefsInComments(file, linea)).toEqual([linea]);
 	});
 
+	it.each([
+		['con la palabra que lo contextualiza', '// no hay fallback silencioso (finding S3)'],
+		['en español', '// corregido según el hallazgo R6 de la review'],
+		['pelado, que es el más huérfano de todos', '// ver S3'],
+	])('marca un identificador de hallazgo %s', (_caso, linea) => {
+		expect(findIssueRefsInComments(file, linea)).toEqual([linea]);
+	});
+
+	it('asume el costo del nombre de producto homónimo — se lo nombra por su producto, no por su sigla', () => {
+		const linea = '// el bucket R2 sirve los assets estáticos';
+
+		expect(findIssueRefsInComments(file, linea)).toEqual([linea]);
+	});
+
+	it('marca el hallazgo aunque la línea sea un TODO: las excepciones amparan issues, no hallazgos', () => {
+		const linea = '// TODO: revisar el hallazgo S3 antes de shippear';
+
+		expect(findIssueRefsInComments(file, linea)).toEqual([linea]);
+	});
+
 	it('devuelve todas las líneas ofensivas, no solo la primera', () => {
 		const added = '// viene de #1234\nconst x = 1;\n// y también de #5678';
 

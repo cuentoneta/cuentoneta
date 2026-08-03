@@ -196,6 +196,8 @@ Una vez que el usuario confirma y el issue existe, anotar su URL en el reporte j
 
 La columna **R#** da un número secuencial con prefijo `R` (R1, R2, …) a través de las tres tablas dentro de la misma sesión de review. La numeración es continua: si los Críticos terminan en R3, las Advertencias empiezan en R4. Así cualquier problema se referencia por un único identificador (p. ej. "corregí el R6") sin importar su severidad.
 
+El prefijo es **obligatorio en todo hallazgo**, sin excepción: cada uno se emite con su identificador prefijado, tanto en la tabla como en cualquier lugar donde se lo cite. El conjunto es **cerrado** — `R` para este agente, `S` para el `security-auditor`, y ningún otro. Que sea cerrado es lo que permite que un check los enumere; agregar una letra nueva sin actualizar los checks los deja ciegos.
+
 El prefijo **no es decorativo**: `#` significa **issue de GitHub** y nada más. Un hallazgo citado como `#<n>` es indistinguible de un issue para quien lo lee y para los checks que validan las menciones, que tendrían que subir su umbral de dígitos y dejar ciegos a los issues de número bajo. Por eso ni los hallazgos de review ni los de seguridad usan `#`.
 
 Los del `security-auditor` (si corrió) llevan su propio prefijo `S` (S1, S2, …) en `SECURITY_REVIEW.md` y no comparten secuencia con los de este agente — ver "Numeración de hallazgos" en [`security-auditor.md`](security-auditor.md).
