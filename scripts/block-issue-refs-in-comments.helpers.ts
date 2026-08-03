@@ -26,9 +26,20 @@ const TODO_MARKER = new RegExp(`${OPENER}TODO\\s*[:(]`);
 // de CLAUDE.md. No es un TODO ni necesita serlo.
 const SUPPRESSION_MARKER = new RegExp(`${OPENER}(?:@ts-ignore|@ts-expect-error|eslint-disable)`);
 
+// Un identificador de hallazgo es peor que un número de issue: no resuelve a nada. Vive en `workspace/`,
+// que está gitignoreado, y muere con la sesión de review que lo emitió.
+//
+// El conjunto de prefijos es cerrado —`R` para el code-reviewer, `S` para el security-auditor— y por eso
+// se puede enumerar. Se marca el token suelto, sin exigir una palabra que lo contextualice: la variante
+// laxa no atrapa un `// ver S3` pelado, que es justamente el comentario más huérfano de todos. El costo
+// asumido son los nombres de producto homónimos (`R2`, `S3` son almacenamiento); si aparece uno
+// legítimo, se lo nombra por su producto —"el bucket de Cloudflare"— en vez de por su sigla.
+const FINDING_ID = /\b[RS]\d+\b/;
+
 /**
- * Las líneas del texto agregado que citan un issue dentro de un comentario sin ampararse en ninguna de
- * las dos excepciones. Devuelve vacío cuando el archivo queda fuera de alcance.
+ * Las líneas del texto agregado que citan un issue —o un identificador de hallazgo de review— dentro de
+ * un comentario sin ampararse en ninguna de las dos excepciones. Devuelve vacío cuando el archivo queda
+ * fuera de alcance.
  *
  * El criterio se evalúa **por línea** a propósito: admitir el número en cualquier parte de un bloque
  * que en alguna línea diga `TODO` volvería la excepción trivial de eludir.
@@ -40,8 +51,12 @@ export function findIssueRefsInComments(filePath: string, added: string): string
 	}
 
 	return added.split(/\r?\n/).filter((line) => {
-		if (!ISSUE_REF.test(line)) return false;
-		if (TODO_MARKER.test(line) || SUPPRESSION_MARKER.test(line)) return false;
+		const citesFinding = FINDING_ID.test(line);
+		if (!ISSUE_REF.test(line) && !citesFinding) return false;
+
+		// Las excepciones amparan la cita de un issue, nunca la de un hallazgo: no hay `TODO` que un
+		// identificador muerto pueda destrabar.
+		if (!citesFinding && (TODO_MARKER.test(line) || SUPPRESSION_MARKER.test(line))) return false;
 
 		// Quita el `://` para no leer el `//` de una URL como marcador de comentario.
 		return COMMENT_MARKER.test(line.replace(/:\/\//g, ':/'));
