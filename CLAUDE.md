@@ -47,7 +47,7 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 | `pnpm install`                            | Instala dependencias                                                                                                                                   |
 | `pnpm dev`                                | Dev server (SSR) en desarrollo                                                                                                                         |
 | `pnpm build`                              | Build de producción                                                                                                                                    |
-| `pnpm lint`                               | ESLint sobre `src` y `e2e`                                                                                                                             |
+| `pnpm lint`                               | ESLint sobre `src`, `e2e`, `resources` y `cms`                                                                                                         |
 | `pnpm check:agents`                       | Valida la integridad de `.claude/` (frontmatter de agentes + anclas, rutas y menciones a issues de las referencias) — reproduce el gate `check-agents` |
 | `pnpm stylelint`                          | Stylelint sobre CSS                                                                                                                                    |
 | `pnpm typecheck`                          | Type-check estricto (`tsc --noEmit`)                                                                                                                   |
@@ -59,6 +59,7 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 | `pnpm storybook` / `pnpm storybook:build` | Storybook dev / build                                                                                                                                  |
 | `pnpm sanity:dev`                         | Studio de Sanity (`@cuentoneta/cms`)                                                                                                                   |
 | `pnpm sanity:build`                       | Build del Studio (`sanity build`) — reproduce en local el build del gate de CI `studio-build`                                                          |
+| `pnpm sanity:typecheck`                   | Type-check del Studio — reproduce en local el step homónimo del gate `studio-build`                                                                    |
 | `pnpm sanity:test`                        | Tests del Studio (Vitest standalone en `cms/`) — reproduce en local el paso de test del gate `studio-build`                                            |
 | `pnpm sanity:extract-schema`              | Extrae el schema de Sanity                                                                                                                             |
 | `pnpm sanity:run-typegen-generator`       | Genera tipos a partir del schema                                                                                                                       |
@@ -68,9 +69,9 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 
 > Los diez son **required status checks** de `develop`: GitHub bloquea el merge si alguno queda en rojo. El nombre del gate es el **id del job** en `.github/workflows/` — los jobs no declaran `name:` justamente para que id y context no puedan desincronizarse. `guard-config` solo tiene efecto en PRs desde forks (en PRs del mismo repo pasa en verde sin verificar nada).
 
-> El gate `typecheck` (`pnpm typecheck` → `tsc --noEmit` estricto) cubre el **TS puro** de la app (`src/**`, incluidos `*.spec.ts` y `*.stories.ts`) y `scripts/`. **No** valida plantillas Angular (eso lo hacen `build`/`storybook` vía `ngtsc`) ni el proyecto `cms/`.
+> El gate `typecheck` (`pnpm typecheck` → `tsc --noEmit` estricto) cubre el **TS puro** de la app (`src/**`, incluidos `*.spec.ts` y `*.stories.ts`) y `scripts/`. **No** valida plantillas Angular (eso lo hacen `build`/`storybook` vía `ngtsc`). El proyecto `cms/` no lo cubre este gate: tiene su propio type-check, dentro del gate `studio-build` (ver abajo).
 >
-> El gate **`studio-build`** cubre `cms/` con un job aparte, con install propio (proyecto pnpm standalone), en dos pasos secuenciales: primero **tests** (`pnpm -C cms test`, Vitest standalone — ver [`testing.md`](.claude/references/testing.md)) y después el **build** real del Studio (`pnpm -C cms exec sanity build`, el bundler Vite/Rollup). No es `typecheck` ni `build` de la app. Cierra el punto ciego por el que un bump roto de una dependencia del Studio, o una regresión en su lógica Node, podía llegar a `develop` sin señal de CI.
+> El gate **`studio-build`** cubre `cms/` con un job aparte, con install propio (proyecto pnpm standalone), en tres pasos secuenciales: primero el **type-check** (`pnpm -C cms run typecheck` → `tsc -p tsconfig.typecheck.json`, que extiende el `tsconfig.json` de editor), después los **tests** (`pnpm -C cms test`, Vitest standalone — ver [`testing.md`](.claude/references/testing.md)) y por último el **build** real del Studio (`pnpm -C cms exec sanity build`, el bundler Vite/Rollup). No es `typecheck` ni `build` de la app. El **lint** de `cms/` no corre acá: va en el gate `lint` (el target `eslint:lint` de `project.json` incluye `cms`), porque solo lee fuentes TS y no necesita el `node_modules` propio del Studio. Cierra el punto ciego por el que un bump roto de una dependencia del Studio, o una regresión en su lógica Node o de tipos, podía llegar a `develop` sin señal de CI.
 
 ---
 
