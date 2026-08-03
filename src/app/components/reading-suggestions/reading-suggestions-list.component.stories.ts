@@ -47,8 +47,9 @@ const meta: Meta<ReadingSuggestionsListComponent> = {
 		},
 		teasers: {
 			control: { type: 'object' },
-			description: 'Obras ya resueltas que se sugieren; el bloque no se renderiza si llega vacío',
-			table: { type: { summary: 'readonly LiteraryWorkCardTeaserContent[]' }, defaultValue: { summary: '[]' } },
+			description:
+				'Sugerencias ya resueltas: cada una lleva la obra y su extracto por separado. El bloque no se renderiza si llega vacío',
+			table: { type: { summary: 'readonly ReadingSuggestion[]' }, defaultValue: { summary: '[]' } },
 		},
 		moreRoute: {
 			control: { type: 'object' },

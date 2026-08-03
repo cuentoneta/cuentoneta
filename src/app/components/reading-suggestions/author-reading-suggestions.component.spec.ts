@@ -170,9 +170,10 @@ describe('AuthorReadingSuggestionsComponent', () => {
 
 		await setup(() => of(tagged));
 
-		// `getAllByText`: el corpus tiene varias obras del mismo tipo literario, así que la etiqueta se
-		// repite legítimamente entre las tres sugerencias.
-		expect(screen.getAllByText(cuentoTagMock.title).length).toBeGreaterThan(0);
+		// Las tres sugerencias quedan etiquetadas con el mismo tipo: dos ya lo traen del corpus y la
+		// primera lo recibe del override. Se afirma la cantidad exacta y no que haya "al menos una",
+		// que se cumpliría igual sin que el override llegara a destino.
+		expect(screen.getAllByText(cuentoTagMock.title)).toHaveLength(READING_SUGGESTIONS_COUNT);
 	});
 
 	// El extracto se verifica sobre lo que produce el camino real —proveedor → picker → adapter → bloque

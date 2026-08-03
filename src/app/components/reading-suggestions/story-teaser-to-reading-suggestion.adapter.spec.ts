@@ -1,6 +1,7 @@
 import {
 	onoffStoryNavigationTeasersMock,
 	onoffStoryNavigationTeasersWithAuthorMock,
+	onoffStoryTeasersMock,
 } from '@mocks/onoff-story-teasers.mock';
 import {
 	adaptStoryTeaserToReadingSuggestion,
@@ -26,9 +27,14 @@ describe('adaptStoryTeaserToReadingSuggestion', () => {
 
 	// El extracto viaja aparte de la obra: la proyección de teaser lo trae recortado y el adapter lo
 	// transporta tal cual, sin convertirlo — la tarjeta lo renderiza como Portable Text.
+	//
+	// Se afirma contra la proyección de teaser y no contra la de navegación: esta última declara
+	// `paragraphs: []`, así que la igualdad se cumpliría por identidad de un array vacío sin probar que
+	// un cuerpo real llegue a destino.
 	it('should carry the story body as the excerpt', () => {
-		const [story] = onoffStoryNavigationTeasersWithAuthorMock;
+		const [story] = onoffStoryTeasersMock;
 
+		expect(story.paragraphs.length).toBeGreaterThan(0);
 		expect(adaptStoryTeaserToReadingSuggestion(story).excerptParagraphs).toBe(story.paragraphs);
 	});
 
