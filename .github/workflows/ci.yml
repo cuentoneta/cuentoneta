@@ -419,6 +419,12 @@ jobs:
         working-directory: cms
         run: pnpm install --frozen-lockfile --ignore-scripts
 
+      # Los tests del Studio corren en este job y no en `test`: cms tiene su propio árbol de
+      # node_modules y su propia config de Vitest, y este job es el único que lo instala.
+      - name: Test Sanity Studio
+        working-directory: cms
+        run: pnpm test
+
       # `sanity build` (bundler Vite/Rollup) es el gate autoritativo del Studio: un
       # `tsc --noEmit` sobre cms/ no sirve (ruido de moduleResolution sobre node_modules,
       # sin relación con errores reales de bundling). `--ignore-scripts` en el install
