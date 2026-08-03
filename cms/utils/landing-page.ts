@@ -1,16 +1,10 @@
-import { getISOWeek, getISOWeekYear } from 'date-fns';
+import { buildWeekSlug } from '@utils/week-slug.utils';
 
 export const API_VERSION = '2024-01-01';
 
 export interface LandingPageRow {
 	_id: string;
 	config: string;
-}
-
-// Espejo de buildWeekSlug (src/api/modules/content/content.service.ts): formato YYYY-WW con numeración
-// ISO-8601 (lunes = día 1; la semana 1 es la que contiene el primer jueves del año).
-export function activeWeekSlug(date: Date = new Date()): string {
-	return `${getISOWeekYear(date)}-${getISOWeek(date).toString().padStart(2, '0')}`;
 }
 
 // Espejo de latestLandingPageReferencesQuery (src/api/_queries/content.query.ts): la landing activa es la
@@ -27,6 +21,6 @@ type GroqClient = {
 };
 
 export async function resolveActiveLandingId(client: GroqClient, date: Date = new Date()): Promise<string | null> {
-	const id = await client.fetch<string | null>(ACTIVE_LANDING_ID_QUERY, { slug: activeWeekSlug(date) });
+	const id = await client.fetch<string | null>(ACTIVE_LANDING_ID_QUERY, { slug: buildWeekSlug(date) });
 	return id ?? null;
 }
