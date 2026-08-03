@@ -1,4 +1,4 @@
-import { defineField, defineType } from 'sanity';
+import { defineField, defineType, type ImageValue, type ValidationContext } from 'sanity';
 import { CalendarIcon } from '@sanity/icons/Calendar';
 import { localizedRequire } from '../utils/validations';
 
@@ -13,7 +13,7 @@ const imageResourcePattern = /^image-([a-f\d]+)-(\d+x\d+)-(\w+)$/;
 
 const decodeAssetId = (id) => {
 	const [, assetId, dimensions, format] = imageResourcePattern.exec(id);
-	const [width, height] = dimensions.split('x').map((v) => parseInt(v, 10));
+	const [width, height] = dimensions.split('x').map((v: string) => parseInt(v, 10));
 
 	return {
 		assetId,
@@ -22,9 +22,14 @@ const decodeAssetId = (id) => {
 	};
 };
 
-const campaignImageSizeValidation = (image, context) => {
-	const viewport = context.path[context.path.length - 2];
-	const viewportSize = viewportElementSizes[viewport];
+const isViewport = (segment: unknown): segment is ContentCampaignViewport =>
+	ContentCampaignViewportKeys.some((key) => key === segment);
+
+const campaignImageSizeValidation = (image: ImageValue | undefined, context: ValidationContext) => {
+	// El viewport es el penúltimo segmento del path del campo (`<viewport>.image`), y llega sin tipar:
+	// se valida contra las claves declaradas para no indexar el mapa de tamaños con una clave cualquiera.
+	const viewport = context.path?.[context.path.length - 2];
+	const viewportSize = isViewport(viewport) ? viewportElementSizes[viewport] : undefined;
 
 	if (!image || !viewportSize) return true;
 	const { dimensions } = decodeAssetId(image.asset._ref);
