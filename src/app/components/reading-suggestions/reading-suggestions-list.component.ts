@@ -1,13 +1,11 @@
 import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import {
-	LiteraryWorkCardTeaserComponent,
-	type LiteraryWorkCardTeaserContent,
-} from '@components/literary-work-card-teaser/literary-work-card-teaser.component';
+import { LiteraryWorkCardTeaserComponent } from '@components/literary-work-card-teaser/literary-work-card-teaser.component';
 import { ButtonComponent } from '@components/button/button.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
+import type { ReadingSuggestion } from './story-teaser-to-reading-suggestion.adapter';
 import type { NavigationParams } from '@app-utils/navigation-params';
 
 /**
@@ -43,15 +41,16 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 				>
 					<!-- Se trackea por índice a propósito: el estado de carga ocupa los mismos slots con obras
 						 vacías, y trackear por slug destruiría y recrearía cada tarjeta al llegar los datos. -->
-					@for (literaryWork of displayedTeasers(); track $index) {
+					@for (suggestion of displayedTeasers(); track $index) {
 						<li>
 							<!-- La etiqueta es el tipo literario de la obra. Que sea el primer tag es convención editorial del
 								 catálogo, no algo que el schema garantice: si el orden cambiara, cambiaría la etiqueta. -->
 							<cuentoneta-literary-work-card-teaser
-								[literaryWork]="literaryWork"
+								[literaryWork]="suggestion?.literaryWork"
 								[navigationParams]="navigationParams()"
 								[showAuthor]="showAuthor()"
-								[tagLabel]="literaryWork?.tags?.[0]?.title"
+								[tagLabel]="suggestion?.literaryWork?.tags?.[0]?.title"
+								[excerptParagraphs]="suggestion?.excerptParagraphs ?? []"
 								[showExcerpt]="true"
 								[excerptLines]="excerptLines()"
 								[showMultimedia]="true"
@@ -73,7 +72,9 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 export class ReadingSuggestionsListComponent {
 	// Inputs
 	public readonly heading = input<string>('');
-	public readonly teasers = input<readonly LiteraryWorkCardTeaserContent[]>([]);
+	// TODO(#2037): el bloque transporta la obra y su extracto por separado porque el extracto viene de
+	// `Story` en Portable Text. Cuando la tríada consuma obras nativas, vuelve a ser `LiteraryWorkTeaser[]`.
+	public readonly teasers = input<readonly ReadingSuggestion[]>([]);
 	public readonly loading = input<boolean>(false);
 	public readonly moreLabel = input<string>('');
 	public readonly moreRoute = input<string | readonly string[]>();
@@ -91,7 +92,7 @@ export class ReadingSuggestionsListComponent {
 
 	// Sin obra, la tarjeta renderiza su propio esqueleto: el estado de carga es la misma lista con
 	// los slots vacíos.
-	protected readonly displayedTeasers = computed<readonly (LiteraryWorkCardTeaserContent | undefined)[]>(() =>
+	protected readonly displayedTeasers = computed<readonly (ReadingSuggestion | undefined)[]>(() =>
 		this.loading() ? this.loadingPlaceholders : this.teasers(),
 	);
 }

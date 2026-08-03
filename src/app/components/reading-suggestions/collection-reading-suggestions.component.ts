@@ -7,7 +7,7 @@ import { progressiveRxResource } from '@app-utils/ssr-resource';
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
 import { pickReadingSuggestions } from './pick-reading-suggestions';
 import type { NavigationParams } from '@app-utils/navigation-params';
-import { adaptStoryTeasersToLiteraryWorkTeasers } from './story-teaser-to-literary-work.adapter';
+import { adaptStoryTeasersToReadingSuggestions } from './story-teaser-to-reading-suggestion.adapter';
 
 /**
  * Sugerencias de otras obras de la misma colección. Es una de las dos variantes que monta
@@ -52,9 +52,8 @@ export class CollectionReadingSuggestionsComponent {
 			this.storylistService.getStorylistNavigationTeasers(params.slug).pipe(
 				map((collection) => ({
 					title: collection.title,
-					suggestions: pickReadingSuggestions(
-						adaptStoryTeasersToLiteraryWorkTeasers(collection.stories),
-						params.currentWorkSlug,
+					suggestions: adaptStoryTeasersToReadingSuggestions(
+						pickReadingSuggestions(collection.stories, params.currentWorkSlug),
 					),
 				})),
 			),

@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
 import { corpusLiteraryWorkTeasers } from '@mocks/onoff-corpus.storybook';
 import type { NavigationContext } from '@app-utils/navigation-params';
+import type { ReadingSuggestion } from './story-teaser-to-reading-suggestion.adapter';
 
 const meta: Meta<ReadingSuggestionsListComponent> = {
 	component: ReadingSuggestionsListComponent,
@@ -80,7 +81,12 @@ const navigationArgTypes = {
 	},
 };
 
-const suggestions = corpusLiteraryWorkTeasers.slice(0, 3);
+// El bloque recibe la obra y su extracto por separado. Estas stories muestran obras del canon, cuyo
+// extracto ya viene en `teaserSection`, así que la lista de párrafos va vacía: la rama de Portable Text
+// es la que alimenta el puente temporal desde `Story`.
+const suggestions: ReadingSuggestion[] = corpusLiteraryWorkTeasers
+	.slice(0, 3)
+	.map((literaryWork) => ({ literaryWork, excerptParagraphs: [] }));
 
 const renderWithNavigation: Story['render'] = ({ navigation, navigationSlug, ...args }) => ({
 	props: { ...args, navigationParams: { navigation, navigationSlug } },
