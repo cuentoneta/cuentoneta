@@ -19,6 +19,19 @@ describe('findIssueRefsInComments — lo que bloquea', () => {
 		expect(findIssueRefsInComments(file, added)).toEqual(['// cuando cierre #1234']);
 	});
 
+	it.each([
+		['un TODO puesto después del número', '// Rediseñado en #1234: antes usaba otra proyección. TODO: revisar'],
+		['una supresión nombrada después del número', '// El eslint-disable de abajo viene de #1234'],
+	])('no se deja excusar por %s, que no lo ampara', (_caso, linea) => {
+		expect(findIssueRefsInComments(file, linea)).toEqual([linea]);
+	});
+
+	it('ignora `todo` en minúsculas, que es prosa y no un marcador', () => {
+		const linea = '// todo esto se reemplaza cuando cierre #1234';
+
+		expect(findIssueRefsInComments(file, linea)).toEqual([linea]);
+	});
+
 	it('devuelve todas las líneas ofensivas, no solo la primera', () => {
 		const added = '// viene de #1234\nconst x = 1;\n// y también de #5678';
 
@@ -40,12 +53,6 @@ describe('findIssueRefsInComments — lo que admite', () => {
 
 	it('no confunde el doble slash de una URL con un comentario', () => {
 		expect(findIssueRefsInComments(file, "const url = 'https://github.com/org/repo/issues/1234';")).toEqual([]);
-	});
-
-	it('ignora `todo` en minúsculas, que es prosa y no un marcador', () => {
-		const linea = '// todo esto se reemplaza cuando cierre #1234';
-
-		expect(findIssueRefsInComments(file, linea)).toEqual([linea]);
 	});
 
 	it('no marca un número de menos de dos dígitos', () => {

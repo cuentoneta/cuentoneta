@@ -11,7 +11,9 @@ import { findIssueRefsInComments } from './block-issue-refs-in-comments.helpers'
 const BLOCK_EXIT_CODE = 2;
 
 function main(raw: string): void {
-	let payload: { tool_input?: { file_path?: string; new_string?: string; content?: string } };
+	let payload: {
+		tool_input?: { file_path?: string; new_string?: string; content?: string; edits?: { new_string?: string }[] };
+	};
 	try {
 		payload = JSON.parse(raw);
 	} catch {
@@ -21,7 +23,11 @@ function main(raw: string): void {
 
 	const toolInput = payload.tool_input ?? {};
 	const filePath = String(toolInput.file_path ?? '');
-	const added = String(toolInput.new_string ?? toolInput.content ?? '');
+	// `edits[]` cubre las variantes que agrupan varios reemplazos en una sola llamada: sin leerlas, el
+	// hook las dejaría pasar en silencio, que es peor que no matchearlas.
+	const added = [toolInput.new_string, toolInput.content, ...(toolInput.edits ?? []).map((edit) => edit?.new_string)]
+		.filter((chunk): chunk is string => typeof chunk === 'string')
+		.join('\n');
 	const offending = findIssueRefsInComments(filePath, added);
 
 	if (offending.length === 0) {

@@ -13,12 +13,17 @@ const CODE_FILE = /\.(ts|html|css|js)$/;
 const ISSUE_REF = /#\d{2,}/;
 const COMMENT_MARKER = /\/\/|\/\*|<!--|^\s*\*/;
 
+// Ambas excepciones se anclan a la apertura del comentario: una directiva legítima abre el comentario,
+// no aparece en medio de la prosa. Sin el ancla, nombrar un marcador alcanzaba para excusar la línea, y
+// `// El eslint-disable de abajo viene de #123` colaba el rationale prohibido de contrabando.
+const OPENER = String.raw`(?:\/\/|\/\*|<!--|^\s*\*)\s*`;
+
 // `TODO` como marcador y no como palabra suelta en la prosa: en mayúsculas y seguido de `:` o de `(`.
-const TODO_MARKER = /\bTODO\s*[:(]/;
+const TODO_MARKER = new RegExp(`${OPENER}TODO\\s*[:(]`);
 
 // La justificación de una supresión de lint/TS lleva su issue por exigencia de las restricciones duras
 // de CLAUDE.md. No es un TODO ni necesita serlo.
-const SUPPRESSION_MARKER = /@ts-ignore|@ts-expect-error|eslint-disable/;
+const SUPPRESSION_MARKER = new RegExp(`${OPENER}(?:@ts-ignore|@ts-expect-error|eslint-disable)`);
 
 /**
  * Las líneas del texto agregado que citan un issue dentro de un comentario sin ampararse en ninguna de
