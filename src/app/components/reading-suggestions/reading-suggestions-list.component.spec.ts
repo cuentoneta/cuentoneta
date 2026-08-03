@@ -3,18 +3,25 @@ import { provideRouter } from '@angular/router';
 import { clearAllMocks } from '@test-utils';
 
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
-import type { LiteraryWorkCardTeaserContent } from '@components/literary-work-card-teaser/literary-work-card-teaser.component';
+import type { ReadingSuggestion } from './story-teaser-to-reading-suggestion.adapter';
 import type { NavigationParams } from '@app-utils/navigation-params';
 import {
 	onoffLiteraryWorkTeasersMock,
 	onoffLiteraryWorkTeasersWithMediaSourcesMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
 
-const teasers = onoffLiteraryWorkTeasersMock.slice(0, 3);
+// El bloque recibe la obra y su extracto por separado. Acá el extracto va vacío: la rama de Portable
+// Text la ejercitan los specs de los wrappers conectados, que son los que producen ese dato.
+const toSuggestion = (literaryWork: (typeof onoffLiteraryWorkTeasersMock)[number]): ReadingSuggestion => ({
+	literaryWork,
+	excerptParagraphs: [],
+});
+
+const teasers = onoffLiteraryWorkTeasersMock.slice(0, 3).map(toSuggestion);
 
 type ReadingSuggestionsInputs = Partial<{
 	heading: string;
-	teasers: readonly LiteraryWorkCardTeaserContent[];
+	teasers: readonly ReadingSuggestion[];
 	loading: boolean;
 	moreLabel: string;
 	moreRoute: string | readonly string[] | undefined;
@@ -48,8 +55,8 @@ describe('ReadingSuggestionsListComponent', () => {
 	it('should render one card per suggestion', async () => {
 		await setup();
 
-		for (const teaser of teasers) {
-			expect(screen.getByRole('link', { name: teaser.title })).toBeInTheDocument();
+		for (const { literaryWork } of teasers) {
+			expect(screen.getByRole('link', { name: literaryWork.title })).toBeInTheDocument();
 		}
 	});
 
@@ -79,7 +86,7 @@ describe('ReadingSuggestionsListComponent', () => {
 		await setup({ loading: true });
 
 		expect(screen.getAllByTestId('skeleton')).toHaveLength(3);
-		expect(screen.queryByRole('link', { name: teasers[0].title })).not.toBeInTheDocument();
+		expect(screen.queryByRole('link', { name: teasers[0].literaryWork.title })).not.toBeInTheDocument();
 	});
 
 	it('should hide the heading and the listing link while loading', async () => {
@@ -133,13 +140,13 @@ describe('ReadingSuggestionsListComponent', () => {
 	it('should label each suggestion with the literary type its corpus entry carries', async () => {
 		await setup();
 
-		for (const teaser of teasers) {
-			expect(screen.getAllByText(teaser.tags[0].title).length).toBeGreaterThan(0);
+		for (const { literaryWork } of teasers) {
+			expect(screen.getAllByText(literaryWork.tags[0].title).length).toBeGreaterThan(0);
 		}
 	});
 
 	it('should expose the multimedia of each suggestion', async () => {
-		await setup({ teasers: onoffLiteraryWorkTeasersWithMediaSourcesMock.slice(0, 3) });
+		await setup({ teasers: onoffLiteraryWorkTeasersWithMediaSourcesMock.slice(0, 3).map(toSuggestion) });
 
 		expect(screen.getAllByTestId('media')).toHaveLength(3);
 	});

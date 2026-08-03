@@ -7,13 +7,17 @@ import { progressiveRxResource } from '@app-utils/ssr-resource';
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
 import { pickReadingSuggestions } from './pick-reading-suggestions';
 import type { NavigationParams } from '@app-utils/navigation-params';
-import { adaptStoryTeasersToLiteraryWorkTeasers } from './story-teaser-to-literary-work.adapter';
+import { adaptStoryTeasersToReadingSuggestions } from './story-teaser-to-reading-suggestion.adapter';
 
 /**
  * Sugerencias de otras obras del mismo autor. Es una de las dos variantes que monta
  * ReadingSuggestions: resuelve los datos y delega la presentación en ReadingSuggestionsList.
  *
  * TODO(#2036): cambiar el provider de Story a LiteraryWork cuando la página de lectura integre la tríada.
+ *
+ * Consume la proyección de teaser y no la de navegación: es la que transporta el cuerpo recortado del
+ * que sale el extracto. La de navegación proyecta `body: []` a propósito, porque la comparten la
+ * landing y las navegaciones de autor y colección, que no lo necesitan.
  *
  * El recurso es deliberadamente progresivo (no bloquea el SSR): quien lo consume monta el bloque
  * dentro de un `@defer (on viewport)`, así el fetch ocurre una sola vez y ya en el cliente.
@@ -51,10 +55,10 @@ export class AuthorReadingSuggestionsComponent {
 			this.authorSlug() ? { slug: this.authorSlug(), currentWorkSlug: this.currentWorkSlug() } : undefined,
 		stream: ({ params }) =>
 			this.storyService
-				.getNavigationTeasersByAuthorSlug(params.slug)
+				.getByAuthorSlug(params.slug)
 				.pipe(
 					map((stories) =>
-						pickReadingSuggestions(adaptStoryTeasersToLiteraryWorkTeasers(stories), params.currentWorkSlug),
+						adaptStoryTeasersToReadingSuggestions(pickReadingSuggestions(stories, params.currentWorkSlug)),
 					),
 				),
 		defaultValue: [],

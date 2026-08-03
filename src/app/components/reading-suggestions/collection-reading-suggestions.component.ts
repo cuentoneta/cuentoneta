@@ -7,13 +7,17 @@ import { progressiveRxResource } from '@app-utils/ssr-resource';
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
 import { pickReadingSuggestions } from './pick-reading-suggestions';
 import type { NavigationParams } from '@app-utils/navigation-params';
-import { adaptStoryTeasersToLiteraryWorkTeasers } from './story-teaser-to-literary-work.adapter';
+import { adaptStoryTeasersToReadingSuggestions } from './story-teaser-to-reading-suggestion.adapter';
 
 /**
  * Sugerencias de otras obras de la misma colección. Es una de las dos variantes que monta
  * ReadingSuggestions: resuelve los datos y delega la presentación en ReadingSuggestionsList.
  *
  * TODO(#2036): cambiar el provider de Storylist a Collection cuando la página de lectura integre la tríada.
+ *
+ * Consume la colección completa y no la vista de navegación: es la que transporta el cuerpo recortado
+ * del que sale el extracto. La de navegación proyecta `body: []` a propósito, porque la comparten la
+ * landing y las navegaciones de autor y colección, que no lo necesitan.
  *
  * Muestra el autor de cada obra: una colección puede reunir obras de varios.
  */
@@ -49,12 +53,13 @@ export class CollectionReadingSuggestionsComponent {
 		params: () =>
 			this.collectionSlug() ? { slug: this.collectionSlug(), currentWorkSlug: this.currentWorkSlug() } : undefined,
 		stream: ({ params }) =>
-			this.storylistService.getStorylistNavigationTeasers(params.slug).pipe(
+			// Sin `amount`/`ordering`: el backend los descarta y devuelve la colección entera, así que
+			// pasarlos sugeriría un recorte que no ocurre. El recorte a tres lo hace el picker.
+			this.storylistService.get(params.slug).pipe(
 				map((collection) => ({
 					title: collection.title,
-					suggestions: pickReadingSuggestions(
-						adaptStoryTeasersToLiteraryWorkTeasers(collection.stories),
-						params.currentWorkSlug,
+					suggestions: adaptStoryTeasersToReadingSuggestions(
+						pickReadingSuggestions(collection.stories, params.currentWorkSlug),
 					),
 				})),
 			),

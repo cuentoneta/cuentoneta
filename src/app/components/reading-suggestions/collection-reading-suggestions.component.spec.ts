@@ -5,18 +5,20 @@ import { Observable, of, Subject, throwError } from 'rxjs';
 import { CollectionReadingSuggestionsComponent } from './collection-reading-suggestions.component';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
 import { StorylistApi } from '../../providers/storylist-api.interface';
-import type { StorylistStoriesNavigationTeasers } from '@models/storylist.model';
-import { storylistNavigationTeaserMock } from '@mocks/storylist.mock';
-import { onoffStoryNavigationTeasersWithAuthorMock } from '@mocks/onoff-story-teasers.mock';
+import type { Storylist } from '@models/storylist.model';
+import { storylistMock } from '@mocks/storylist.mock';
+import { onoffStoryTeasersMock } from '@mocks/onoff-story-teasers.mock';
 import { clearAllMocks, fn, restoreAllMocks, spyOn } from '@test-utils';
 
-const collectionMock: StorylistStoriesNavigationTeasers = {
-	...storylistNavigationTeaserMock,
-	stories: onoffStoryNavigationTeasersWithAuthorMock,
+// Las obras salen de la proyección de teaser, que es la que el componente consume: trae el cuerpo
+// recortado del que se deriva el extracto.
+const collectionMock: Storylist = {
+	...storylistMock,
+	stories: onoffStoryTeasersMock,
 };
 
 const setup = async (
-	getStorylistNavigationTeasers: (slug: string) => Observable<StorylistStoriesNavigationTeasers>,
+	get: (slug: string) => Observable<Storylist>,
 	inputs: { collectionSlug?: string; currentWorkSlug?: string } = {},
 ) => {
 	const view = await render(CollectionReadingSuggestionsComponent, {
@@ -24,7 +26,7 @@ const setup = async (
 			collectionSlug: collectionMock.slug,
 			...inputs,
 		},
-		providers: [provideRouter([]), { provide: StorylistApi, useValue: { getStorylistNavigationTeasers } }],
+		providers: [provideRouter([]), { provide: StorylistApi, useValue: { get } }],
 	});
 	view.detectChanges();
 	return view;
@@ -43,21 +45,21 @@ describe('CollectionReadingSuggestionsComponent', () => {
 	});
 
 	it('should fetch the navigation teasers of the collection', async () => {
-		const getStorylistNavigationTeasers = fn<(slug: string) => Observable<StorylistStoriesNavigationTeasers>>();
-		getStorylistNavigationTeasers.mockReturnValue(of(collectionMock));
+		const get = fn<(slug: string) => Observable<Storylist>>();
+		get.mockReturnValue(of(collectionMock));
 
-		await setup(getStorylistNavigationTeasers);
+		await setup(get);
 
-		expect(getStorylistNavigationTeasers).toHaveBeenCalledWith(collectionMock.slug);
+		expect(get).toHaveBeenCalledWith(collectionMock.slug);
 	});
 
 	it('should not fetch when there is no collection slug', async () => {
-		const getStorylistNavigationTeasers = fn<(slug: string) => Observable<StorylistStoriesNavigationTeasers>>();
-		getStorylistNavigationTeasers.mockReturnValue(of(collectionMock));
+		const get = fn<(slug: string) => Observable<Storylist>>();
+		get.mockReturnValue(of(collectionMock));
 
-		await setup(getStorylistNavigationTeasers, { collectionSlug: '' });
+		await setup(get, { collectionSlug: '' });
 
-		expect(getStorylistNavigationTeasers).not.toHaveBeenCalled();
+		expect(get).not.toHaveBeenCalled();
 	});
 
 	it('should render the works of the collection as suggestions', async () => {
@@ -93,7 +95,7 @@ describe('CollectionReadingSuggestionsComponent', () => {
 	});
 
 	it('should show the loading state until the collection arrives', async () => {
-		const collection = new Subject<StorylistStoriesNavigationTeasers>();
+		const collection = new Subject<Storylist>();
 
 		const view = await setup(() => collection);
 
@@ -134,5 +136,30 @@ describe('CollectionReadingSuggestionsComponent', () => {
 		await setup(() => of(collectionMock));
 
 		expect(screen.getAllByTestId('author')).toHaveLength(READING_SUGGESTIONS_COUNT);
+	});
+
+	// El extracto se verifica sobre lo que produce el camino real —proveedor → picker → adapter → bloque
+	// → tarjeta—, no sobre un teaser del corpus armado a mano.
+	it('should show the excerpt of each suggested work', async () => {
+		await setup(() => of(collectionMock));
+
+		const excerpts = screen.getAllByTestId('description');
+
+		expect(excerpts).toHaveLength(READING_SUGGESTIONS_COUNT);
+		for (const [index, excerpt] of excerpts.entries()) {
+			const [firstParagraph] = collectionMock.stories[index].paragraphs;
+			expect(excerpt.textContent).toContain(firstParagraph.children[0].text);
+		}
+	});
+
+	// La regresión que dejó la capacidad muerta sin que ningún test se enterara: con una proyección sin
+	// cuerpo hay tarjetas pero no hay extracto, y el bloque se ve igual de completo.
+	it('should render no excerpt when the projection carries no body', async () => {
+		const withoutBody = collectionMock.stories.map((story) => ({ ...story, paragraphs: [] }));
+
+		await setup(() => of({ ...collectionMock, stories: withoutBody }));
+
+		expect(screen.getAllByRole('link').length).toBeGreaterThan(0);
+		expect(screen.queryAllByTestId('description')).toHaveLength(0);
 	});
 });
