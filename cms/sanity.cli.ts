@@ -17,17 +17,20 @@ export default defineCliConfig({
 		generates: '../src/sanity/types.ts',
 	},
 	// cms es un proyecto pnpm standalone: su build bundlea con Vite y no resuelve los `paths` del
-	// tsconfig raíz. Se registra el alias @models hacia el kernel compartido para importar el dominio
-	// por shortpath en vez de rutas relativas ../../src/models. __dirname es cms/ (Sanity carga este
-	// config con su loader CJS), así que resuelve a <repo>/src/models.
+	// tsconfig raíz. Se registran los alias del kernel compartido para importarlo por shortpath en vez
+	// de rutas relativas ../../src/*. __dirname es cms/ (Sanity carga este config con su loader CJS),
+	// así que resuelven a <repo>/src/*.
 	vite: (config) => {
-		const modelsPath = path.resolve(__dirname, '../src/models');
+		const kernelAliases = {
+			'@models': path.resolve(__dirname, '../src/models'),
+			'@utils': path.resolve(__dirname, '../src/utils'),
+		};
 		const existingAlias = config.resolve?.alias;
 		// resolve.alias admite forma objeto o array (readonly Alias[]): se mergea según la que Sanity
 		// provea para no corromperla — spread de un array dentro de un objeto generaría claves numéricas.
 		const alias = Array.isArray(existingAlias)
-			? [...existingAlias, { find: '@models', replacement: modelsPath }]
-			: { ...existingAlias, '@models': modelsPath };
+			? [...existingAlias, ...Object.entries(kernelAliases).map(([find, replacement]) => ({ find, replacement }))]
+			: { ...existingAlias, ...kernelAliases };
 		return {
 			...config,
 			resolve: { ...config.resolve, alias },

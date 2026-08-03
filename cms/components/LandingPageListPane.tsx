@@ -5,13 +5,9 @@ import { Badge, Box, Button, Card, Flex, Spinner, Stack, Text } from '@sanity/ui
 import { AddIcon } from '@sanity/icons/Add';
 import { CodeBlockIcon } from '@sanity/icons/CodeBlock';
 
-import {
-	ACTIVE_LANDING_ID_QUERY,
-	API_VERSION,
-	LANDING_LIST_QUERY,
-	activeWeekSlug,
-	type LandingPageRow,
-} from '../utils/landing-page';
+import { buildWeekSlug } from '@utils/week-slug.utils';
+
+import { ACTIVE_LANDING_ID_QUERY, API_VERSION, LANDING_LIST_QUERY, type LandingPageRow } from '../utils/landing-page';
 
 function toMessage(cause: unknown): string {
 	return cause instanceof Error ? cause.message : 'Error desconocido';
@@ -28,7 +24,7 @@ export function LandingPageListPane() {
 		try {
 			const [list, active] = await Promise.all([
 				client.fetch<LandingPageRow[]>(LANDING_LIST_QUERY),
-				client.fetch<string | null>(ACTIVE_LANDING_ID_QUERY, { slug: activeWeekSlug() }),
+				client.fetch<string | null>(ACTIVE_LANDING_ID_QUERY, { slug: buildWeekSlug(new Date()) }),
 			]);
 			setRows(list);
 			setActiveId(active ?? null);
@@ -65,7 +61,7 @@ export function LandingPageListPane() {
 
 	// Referencia para clasificar filas: el config de la activa (máximo config <= semana actual). Toda fila con
 	// config mayor es una semana futura. Sin activa, se cae a la semana actual como referencia.
-	const activeConfig = rows.find((row) => row._id === activeId)?.config ?? activeWeekSlug();
+	const activeConfig = rows.find((row) => row._id === activeId)?.config ?? buildWeekSlug(new Date());
 
 	return (
 		<Stack space={0}>
