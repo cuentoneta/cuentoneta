@@ -9,6 +9,7 @@ import {
 	withMediaSources,
 } from '@mocks/onoff-literary-work-teasers.mock';
 import { corpusLiteraryWorkTeasers, literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
+import { onoffStoryTeasersMock } from '@mocks/onoff-story-teasers.mock';
 
 const meta: Meta<LiteraryWorkCardTeaserComponent> = {
 	component: LiteraryWorkCardTeaserComponent,
@@ -67,6 +68,12 @@ const meta: Meta<LiteraryWorkCardTeaserComponent> = {
 			control: { type: 'range', min: 1, max: 6, step: 1 },
 			description: 'Cantidad de líneas a mostrar en la descripción',
 			table: { type: { summary: 'number' }, defaultValue: { summary: '2' } },
+		},
+		excerptParagraphs: {
+			control: { type: 'object' },
+			description:
+				'Extracto en Portable Text. Tiene precedencia sobre el extracto de la propia obra, y existe para las sugerencias de lectura, que hoy se alimentan de Story',
+			table: { type: { summary: 'TextBlockContent[]' }, defaultValue: { summary: '[]' } },
 		},
 		navigationParams: {
 			control: { type: 'object' },
@@ -315,5 +322,26 @@ export const Estados: StoryObj<LiteraryWorkCardTeaserComponent & { loading: bool
 	},
 	parameters: {
 		docs: { description: { story: 'Activá/desactivá "Cargando" para alternar entre el estado real y el skeleton.' } },
+	},
+};
+
+export const ExtractoEnPortableText: Story = {
+	args: {
+		literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock,
+		excerptParagraphs: onoffStoryTeasersMock[0].paragraphs,
+		variant: 'on-white',
+		tagLabel: 'Cuento',
+		showAuthor: true,
+		showExcerpt: true,
+		showMultimedia: false,
+		excerptLines: 3,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Extracto proveniente de una <code>Story</code>, cuyo cuerpo nunca migró a Markdown y por lo tanto llega en Portable Text. Es la fuente que alimenta hoy a las sugerencias de lectura al pie de una obra. Cuando <code>excerptParagraphs</code> llega no vacío tiene precedencia sobre el extracto de la propia obra, que se sirve como HTML ya saneado.',
+			},
+		},
 	},
 };

@@ -175,6 +175,31 @@ describe('AuthorReadingSuggestionsComponent', () => {
 		expect(screen.getAllByText(cuentoTagMock.title).length).toBeGreaterThan(0);
 	});
 
+	// El extracto se verifica sobre lo que produce el camino real —proveedor → picker → adapter → bloque
+	// → tarjeta—, no sobre un teaser del corpus armado a mano.
+	it('should show the excerpt of each suggested work', async () => {
+		await setup(() => of(onoffStoryTeasersMock));
+
+		const excerpts = screen.getAllByTestId('description');
+
+		expect(excerpts).toHaveLength(READING_SUGGESTIONS_COUNT);
+		for (const [index, excerpt] of excerpts.entries()) {
+			const [firstParagraph] = onoffStoryTeasersMock[index].paragraphs;
+			expect(excerpt.textContent).toContain(firstParagraph.children[0].text);
+		}
+	});
+
+	// La regresión que dejó la capacidad muerta sin que ningún test se enterara: con una proyección sin
+	// cuerpo hay tarjetas pero no hay extracto, y el bloque se ve igual de completo.
+	it('should render no excerpt when the projection carries no body', async () => {
+		const withoutBody = onoffStoryTeasersMock.map((story) => ({ ...story, paragraphs: [] }));
+
+		await setup(() => of(withoutBody));
+
+		expect(screen.getAllByRole('link').length).toBeGreaterThan(0);
+		expect(screen.queryAllByTestId('description')).toHaveLength(0);
+	});
+
 	it('should carry the author context into each suggestion link', async () => {
 		await setup(() => of(onoffStoryTeasersMock));
 

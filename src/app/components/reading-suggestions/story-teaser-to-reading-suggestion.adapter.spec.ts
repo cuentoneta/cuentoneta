@@ -24,6 +24,14 @@ describe('adaptStoryTeaserToReadingSuggestion', () => {
 		});
 	});
 
+	// El extracto viaja aparte de la obra: la proyección de teaser lo trae recortado y el adapter lo
+	// transporta tal cual, sin convertirlo — la tarjeta lo renderiza como Portable Text.
+	it('should carry the story body as the excerpt', () => {
+		const [story] = onoffStoryNavigationTeasersWithAuthorMock;
+
+		expect(adaptStoryTeaserToReadingSuggestion(story).excerptParagraphs).toBe(story.paragraphs);
+	});
+
 	it('should map the story author to the single-element author list', () => {
 		const [story] = onoffStoryNavigationTeasersWithAuthorMock;
 

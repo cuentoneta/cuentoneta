@@ -7,12 +7,14 @@ import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
 import { StorylistApi } from '../../providers/storylist-api.interface';
 import type { Storylist } from '@models/storylist.model';
 import { storylistMock } from '@mocks/storylist.mock';
-import { onoffStoryNavigationTeasersWithAuthorMock } from '@mocks/onoff-story-teasers.mock';
+import { onoffStoryTeasersMock } from '@mocks/onoff-story-teasers.mock';
 import { clearAllMocks, fn, restoreAllMocks, spyOn } from '@test-utils';
 
+// Las obras salen de la proyección de teaser, que es la que el componente consume: trae el cuerpo
+// recortado del que se deriva el extracto.
 const collectionMock: Storylist = {
 	...storylistMock,
-	stories: onoffStoryNavigationTeasersWithAuthorMock,
+	stories: onoffStoryTeasersMock,
 };
 
 const setup = async (
@@ -134,5 +136,30 @@ describe('CollectionReadingSuggestionsComponent', () => {
 		await setup(() => of(collectionMock));
 
 		expect(screen.getAllByTestId('author')).toHaveLength(READING_SUGGESTIONS_COUNT);
+	});
+
+	// El extracto se verifica sobre lo que produce el camino real —proveedor → picker → adapter → bloque
+	// → tarjeta—, no sobre un teaser del corpus armado a mano.
+	it('should show the excerpt of each suggested work', async () => {
+		await setup(() => of(collectionMock));
+
+		const excerpts = screen.getAllByTestId('description');
+
+		expect(excerpts).toHaveLength(READING_SUGGESTIONS_COUNT);
+		for (const [index, excerpt] of excerpts.entries()) {
+			const [firstParagraph] = collectionMock.stories[index].paragraphs;
+			expect(excerpt.textContent).toContain(firstParagraph.children[0].text);
+		}
+	});
+
+	// La regresión que dejó la capacidad muerta sin que ningún test se enterara: con una proyección sin
+	// cuerpo hay tarjetas pero no hay extracto, y el bloque se ve igual de completo.
+	it('should render no excerpt when the projection carries no body', async () => {
+		const withoutBody = collectionMock.stories.map((story) => ({ ...story, paragraphs: [] }));
+
+		await setup(() => of({ ...collectionMock, stories: withoutBody }));
+
+		expect(screen.getAllByRole('link').length).toBeGreaterThan(0);
+		expect(screen.queryAllByTestId('description')).toHaveLength(0);
 	});
 });
