@@ -4,9 +4,12 @@
  * y traduce el resultado a un código de salida.
  */
 
-/** Solo código, y solo bajo `src/`. La regla rige para todo el repo; el hook cubre esta porción. */
-const SCOPED_PATH = /(^|\/)src\//;
-const CODE_FILE = /\.(ts|html|css|js|mjs|cjs)$/;
+/**
+ * Solo código, y solo bajo `src/` o `cms/`. La regla rige para todo el repo; el hook cubre esa porción.
+ * `cms/` es un proyecto pnpm aparte y no tiene `src/`: sus archivos cuelgan de la raíz del directorio.
+ */
+const SCOPED_PATH = /(^|\/)(src|cms)\//;
+const CODE_FILE = /\.(ts|tsx|html|css|js|jsx|mjs|cjs)$/;
 
 // Sin umbral de dígitos: `#` significa issue y nada más. Los hallazgos de review llevan prefijo (`R1`,
 // `S1`) justamente para no obligar a este check a ignorar los issues de número bajo, que en un proyecto

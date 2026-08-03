@@ -97,6 +97,9 @@ describe('findIssueRefsInComments — alcance', () => {
 	it.each([
 		['.mjs', 'src/tools/build.mjs'],
 		['.cjs', 'src/tools/build.cjs'],
+		['.tsx del Studio', 'cms/components/LandingPageListPane.tsx'],
+		['un schema del Studio, que no cuelga de un src/', 'cms/schemas/literaryWork.ts'],
+		['una migración del Studio', 'cms/migrations/purge-orphan-properties/index.ts'],
 	])('sí mira %s, que también es código', (_caso, ruta) => {
 		expect(findIssueRefsInComments(ruta, '// Rediseñado en #1234')).toEqual(['// Rediseñado en #1234']);
 	});
