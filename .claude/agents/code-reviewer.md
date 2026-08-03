@@ -125,12 +125,13 @@ Estos patrones son intencionales y correctos. NO los reportes como problemas:
 
 ### Storybook (bloqueante)
 
-- [ ] Los componentes nuevos en `src/app/components/` tienen su `*.stories.ts`
+- [ ] Los componentes nuevos en `src/app/components/` tienen su `*.stories.ts` — salvo delegación total (las cuatro condiciones de [`coding-agent-policies.md`](../references/coding-agent-policies.md) Sección 2), verificadas contra la plantilla y no contra la descripción del PR
+- [ ] Si algún componente se acoge a esa excepción, la story del componente destino lo nombra (condición 4) y cubre las variantes que el exento puede producir
 - [ ] Las stories incluyen `tags: ['autodocs']` y `parameters.docs.description.component`
 - [ ] Las descripciones (`description.component`/`description.story`) van en **una sola línea** (el HTML multilínea indentado se renderiza como bloque de código en autodocs)
 - [ ] En la doc, los nombres de componentes van en negrita (`<strong>`); las menciones a otros componentes documentados son enlaces navegables a su story (`<a href="./?path=/docs/<kind-id>--docs" target="_top">`)
 - [ ] Las stories cubren las variantes/estados clave (p. ej. default, loading, error, collapsed)
-- [ ] Si el componente tiene estado de carga (skeleton): existe una story con **estado intercambiable** (switch booleano real↔skeleton en el mismo slot)
+- [ ] Si el componente **renderiza** un skeleton en su propia plantilla: existe una story con **estado intercambiable** (switch booleano real↔skeleton en el mismo slot). No aplica al que solo pasa un `loading` hacia abajo
 - [ ] Las stories que necesitan providers usan los decorators `applicationConfig` o `moduleMetadata`
 - [ ] Los componentes cuyos `input()` signals, estados visuales o API pública cambian tienen sus stories actualizadas
 

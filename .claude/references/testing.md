@@ -351,7 +351,7 @@ Por eso cada paquete que el kernel importe tiene que estar declarado como depend
 
 ## Storybook
 
-Todo componente nuevo en **`src/app/components/`** lleva su `*.stories.ts` (documentación viva + catálogo visual). Los componentes de página (`src/app/pages/`) están exentos.
+Todo componente nuevo en **`src/app/components/`** lleva su `*.stories.ts` (documentación viva + catálogo visual). Los componentes de página (`src/app/pages/`) están exentos, y también el que **delega toda su vista** en otro componente ya catalogado — las cuatro condiciones de esa excepción, y su verificación, viven en [`coding-agent-policies.md`](coding-agent-policies.md) (Sección 2), que es su fuente. El `*.spec.ts` no se exime en ninguno de los dos casos.
 
 ### Convenciones (según las stories existentes)
 
@@ -411,7 +411,7 @@ Para dependencias de DI usá los decoradores `moduleMetadata({ imports, provider
 
 ### Estado de carga (skeleton) → story intercambiable (obligatoria)
 
-Si el componente tiene un **estado de carga** (renderiza un skeleton), su story debe exponer ese estado de forma **intercambiable**: un control booleano (`loading` / "Cargando") que alterna entre el estado real y el skeleton **en el mismo slot**, para poder evaluar la transición y la alineación 1:1 (sobre todo el **alto**, que es el que produce jitter de layout). Es obligatoria para todo componente con estado de carga; su omisión es bloqueante en review (ver [`coding-agent-policies.md`](coding-agent-policies.md)).
+Si el componente **renderiza un skeleton en su propia plantilla**, su story debe exponer ese estado de forma **intercambiable** — la obligación es de quien lo dibuja, no de quien solo pasa un `loading` hacia abajo: un control booleano (`loading` / "Cargando") que alterna entre el estado real y el skeleton **en el mismo slot**, para poder evaluar la transición y la alineación 1:1 (sobre todo el **alto**, que es el que produce jitter de layout). Es obligatoria para todo componente con estado de carga; su omisión es bloqueante en review (ver [`coding-agent-policies.md`](coding-agent-policies.md)).
 
 ```typescript
 // Un control booleano `loading` alterna real↔skeleton en el mismo slot.
@@ -438,8 +438,8 @@ Si el componente **renderiza su propio skeleton** según un input (p. ej. cuando
 
 ## Checklist por tipo de cambio
 
-- **Componente nuevo/modificado en `src/app/components/`** → spec con ATL (comportamiento) **y** `*.stories.ts`.
-- **Componente con estado de carga (skeleton)** → además, story con **estado intercambiable** (switch real↔skeleton en el mismo slot).
+- **Componente nuevo/modificado en `src/app/components/`** → spec con ATL (comportamiento) **siempre**; `*.stories.ts` salvo delegación total.
+- **Componente que renderiza un skeleton en su plantilla** → además, story con **estado intercambiable** (switch real↔skeleton en el mismo slot).
 - **Service/repository de backend** → spec funcional; si necesita aislar el repository, module mocking con el bloque `eslint-disable` + nota #1503.
 - **Mocks/timers** → siempre desde `@test-utils`; `clearAllMocks()` en `beforeEach`.
 - **Componente que usa `IntersectionObserver`** → `installIntersectionObserverStub()` en `beforeEach`; simular overflow con `markOutsideViewport` / `markInsideViewport`.
