@@ -153,7 +153,7 @@ Reglas del patrón:
 
 ## Storybook
 
-Todo componente nuevo en **`src/app/components/`** lleva su `*.stories.ts` además del spec (documentación viva + catálogo visual). Los componentes de página (`src/app/pages/`) están exentos.
+Todo componente nuevo en **`src/app/components/`** lleva su `*.stories.ts` además del spec (documentación viva + catálogo visual). Los componentes de página (`src/app/pages/`) están exentos, y también el que **delega toda su vista** en otro ya catalogado — no generes una story que repita la del destino; las condiciones están en [`coding-agent-policies.md`](../references/coding-agent-policies.md) (Sección 2). El spec no se exime en ningún caso.
 
 - `title` en español bajo `Componentes/...` (p. ej. `'Componentes/Tag'`).
 - `parameters.docs.description.component` con descripción en español.
