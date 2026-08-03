@@ -22,14 +22,36 @@ describe('findIssueRefProblems', () => {
 		expect(problem).toContain('scripts/check-issue-refs.ts');
 	});
 
-	it('ignora los números de hallazgo de review, que no son issues', () => {
-		expect(findIssueRefProblems('.claude/agents/code-reviewer.md', 'Detectado como #7 durante la review.')).toEqual([]);
-		expect(findIssueRefProblems('.claude/skills/issue-workflow/SKILL.md', 'Arregla el hallazgo #2')).toEqual([]);
+	it('ignora los identificadores de hallazgo, que llevan prefijo propio y no `#`', () => {
+		expect(findIssueRefProblems('.claude/agents/code-reviewer.md', 'Detectado como R7 durante la review.')).toEqual([]);
+		expect(findIssueRefProblems('.claude/agents/security-auditor.md', 'El hallazgo S3 sigue abierto')).toEqual([]);
 	});
 
-	it('pinea el umbral en tres dígitos', () => {
-		expect(findIssueRefProblems('.claude/references/testing.md', 'hallazgo #99')).toEqual([]);
-		expect(findIssueRefProblems('.claude/references/testing.md', 'issue #100')).toHaveLength(1);
+	it('no deja fuera a los issues de número bajo, que en un proyecto recién clonado son todos', () => {
+		expect(findIssueRefProblems('.claude/references/testing.md', 'issue #7')).toHaveLength(1);
+		expect(findIssueRefProblems('.claude/references/testing.md', 'issue #99')).toHaveLength(1);
+	});
+
+	it('ignora las anclas de Markdown, que no son menciones a un issue', () => {
+		expect(
+			findIssueRefProblems(
+				'.claude/references/angular-components.md',
+				'ver [§8](./angular-state.md#8-directivas-de-seo)',
+			),
+		).toEqual([]);
+		expect(findIssueRefProblems('.claude/references/angular-components.md', 'ver [§8](#8-directivas-de-seo)')).toEqual(
+			[],
+		);
+	});
+
+	it('marca un identificador de hallazgo fuera de los archivos que definen la convención', () => {
+		expect(findIssueRefProblems('.claude/references/testing.md', 'Ver el hallazgo R6 de la review.')).toHaveLength(1);
+		expect(findIssueRefProblems('.claude/references/sanity-acl.md', 'Corregido tras S3.')).toHaveLength(1);
+	});
+
+	it('no marca los archivos que definen la convención, que necesitan nombrar los prefijos', () => {
+		expect(findIssueRefProblems('.claude/agents/code-reviewer.md', 'con prefijo `R` (R1, R2, …)')).toEqual([]);
+		expect(findIssueRefProblems('.claude/agents/security-auditor.md', 'con prefijo `S` (S1, S2, …)')).toEqual([]);
 	});
 
 	it('ignora los placeholders textuales, que no llevan número', () => {

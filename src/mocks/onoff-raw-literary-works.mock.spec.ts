@@ -62,7 +62,7 @@ describe('onoffRawLiteraryWorksMock (corpus raw de LiteraryWork)', () => {
 		expect(onoffRawLiteraryWorksWithoutTags.length).toBeGreaterThan(0);
 	});
 
-	// #2016: la obra enriquecida trae título de sección y epígrafe juntos — un raw con epígrafes pero sin
+	// La obra enriquecida trae título de sección y epígrafe juntos: un raw con epígrafes pero sin
 	// título quedaría desalineado con su mock de dominio homónimo (que lleva ambos).
 	it('should keep every epigraph-bearing section titled (aligned with its domain mock)', () => {
 		expect(onoffRawLiteraryWorksWithEpigraphs.length).toBeGreaterThan(0);

@@ -90,9 +90,10 @@ const literaryWorkWithMaliciousBody = (base: LiteraryWork): LiteraryWork => {
 	});
 };
 
-// NOTA (#1471): `ReadPage` es hoy un walking skeleton (#1853); estos tests cubren su render y sus
-// estados mínimos. Al implementar la ReadPage V3 completa en #1471 se expanden y robustecen
-// (variantes de media, sección "Más cuentos", layout V3), reemplazando estos casos transitorios.
+// TODO(#1471): al implementar la ReadPage V3 completa, expandir estos tests con las variantes de media,
+// la sección "Más cuentos" y el layout V3, reemplazando los casos transitorios de abajo.
+//
+// `ReadPage` es hoy un walking skeleton: estos tests cubren su render y sus estados mínimos.
 describe('ReadPage', () => {
 	const setup = async (
 		literaryWork: LiteraryWork,
@@ -109,7 +110,7 @@ describe('ReadPage', () => {
 
 	afterEach(() => restoreAllMocks());
 
-	// Test de aceptación del AC principal (epic #1481): una obra de una sola sección ofrece al lector
+	// Test de aceptación del criterio principal de LiteraryWork: una obra de una sola sección ofrece al lector
 	// las mismas affordances que la página Story (story.component.html) — título como encabezado
 	// principal, byline de autoría, indicador de tiempo de lectura, control de compartir y el cuerpo
 	// saneado legible. Se corre sobre el selector mono-sección (hoy todo el corpus) para declarar

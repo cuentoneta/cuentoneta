@@ -12,7 +12,8 @@
  *  - D. Al navegar a un cuento de la colección, los bloques de la storylist (CollectionPage +
  *       breadcrumb) se remueven y aparece el Article; sin duplicar canonical ni <title>.
  *  - E. Al navegar a la home (que no emite structured data propia), los bloques de la storylist
- *       se remueven igual y persisten solo los sitewide — regresión de #1578.
+ *       se remueven igual y persisten solo los sitewide. Es una regresión cubierta: la home no emite
+ *       structured data propia, así que sin cleanup propio heredaba el JSON-LD de la colección.
  */
 import { test, expect } from '@playwright/test';
 
@@ -88,10 +89,10 @@ test('storylist — invariantes de indexado disponibles hoy (ssr, title, canonic
 	expect(violations).toEqual([]);
 });
 
-// Bloqueado por #1771: storylist-title.ts (el <h1>) y el tab "Textos" (las tarjetas de cuento) usan
-// @defer, así que el SSR no emite h1 real, ni enlaces /story/, y sirve skeletons dentro de <main>.
-// Al cerrar #1771, esta aserción completa reemplaza al subset real de arriba.
-test.fixme('storylist — h1 real + enlace a /story/ + sin skeleton (bloqueado por #1771)', async () => {
+// Bloqueado: storylist-title.ts (el <h1>) y el tab "Textos" (las tarjetas de cuento) usan @defer, así
+// que el SSR no emite h1 real, ni enlaces /story/, y sirve skeletons dentro de <main>. Cuando esas dos
+// superficies se server-rendericen sin diferir, esta aserción completa reemplaza al subset real de arriba.
+test.fixme('storylist — h1 real + enlace a /story/ + sin skeleton', async () => {
 	expect(
 		await collectIndexableHtmlViolations(html, {
 			path: storylistPath,

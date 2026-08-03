@@ -157,7 +157,7 @@ describe('buildReadingTimeMaterialization', () => {
 	});
 
 	// Fail-fast del reading time persistido: `createReadingTime` lanza ante no-entero < 1, no hay
-	// fallback silencioso (finding S3). Cubre el total y el valor por sección.
+	// fallback silencioso. Cubre el total y el valor por sección.
 	for (const invalidTotal of [0, -1, 2.5]) {
 		it(`lanza ante un totalReadingTime persistido inválido (${invalidTotal})`, () => {
 			const input: ReadingTimeMaterializationInput = {
