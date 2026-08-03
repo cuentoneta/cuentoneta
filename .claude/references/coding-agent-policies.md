@@ -102,9 +102,22 @@ Prohibido. Si un edge case se puede enumerar en un comentario, se puede enumerar
 
 Prohibido. Todo componente nuevo en `src/app/components/` lleva su `*.stories.ts` (los de página, `src/app/pages/`, están exentos — ver [`testing.md`](testing.md)). La respuesta siempre es escribir la story.
 
+**Excepción por delegación total.** Un componente queda exento del catálogo cuando su plantilla no tiene nada propio que mostrar porque la vista vive íntegra en otro componente ya catalogado. Se aplica solo si se cumplen **las cuatro** condiciones:
+
+1. No declara marcado propio más allá de delegar en otro componente del catálogo. Un contenedor de disposición vacío —el reservador de alto de un `@defer`, por caso— no cuenta como marcado propio; cualquier texto, encabezado, lista o enlace sí.
+2. No declara `styles` ni `host` más allá de la caja que lo posiciona.
+3. El componente destino está catalogado y su story cubre las variantes que el exento puede producir.
+4. La story del destino los nombra, para que el catálogo diga qué componentes cubre.
+
+El eje es un **hecho verificable de la plantilla**, no una apreciación de cuánto aporta el componente: "aporta poco" es la misma escapatoria que "es simple", con otro nombre. Las condiciones se verifican contra la plantilla, no contra la descripción del PR.
+
+La excepción es **solo del catálogo visual**: el `*.spec.ts` sigue siendo obligatorio. Un conectado que resuelve datos y un despachador que elige variante tienen lógica propia que testear, aunque no tengan nada que mostrar.
+
 ### "El estado de carga ya se ve, no hace falta una story intercambiable"
 
-Prohibido. Si el componente tiene un **estado de carga (skeleton)**, su story debe exponer ese estado de forma **intercambiable**: un control booleano (`loading` / "Cargando") que alterna real↔skeleton en el **mismo slot**, para poder evaluar la transición y la alineación 1:1 entre ambos. Aplica a componentes que se implementen de ahora en más (no es retroactivo sobre legacy que será rediseñado). El patrón vive en [`testing.md`](testing.md); su omisión es bloqueante para la review.
+Prohibido. Si el componente **renderiza un skeleton en su propia plantilla**, su story debe exponer ese estado de forma **intercambiable**: un control booleano (`loading` / "Cargando") que alterna real↔skeleton en el **mismo slot**, para poder evaluar la transición y la alineación 1:1 entre ambos. Aplica a componentes que se implementen de ahora en más (no es retroactivo sobre legacy que será rediseñado). El patrón vive en [`testing.md`](testing.md); su omisión es bloqueante para la review.
+
+La obligación es de **quien dibuja el esqueleto**, no de quien transporta el indicador: un componente que solo pasa un `loading` hacia abajo no tiene estado de carga que catalogar, porque no lo renderiza.
 
 ### "Agrego la leyenda de atribución de agente al PR/commit"
 
@@ -232,7 +245,7 @@ Los agentes pueden hacer preguntas aclaratorias cuando la instrucción del usuar
 - ❌ "¿Sos la única persona que va a revisar esto?" — prohibida, nunca preguntar.
 - ❌ "¿Qué tan importante es que los tests cubran este edge case?" — prohibida **como forma de pedir permiso para saltear el test**. La pregunta solo es aceptable si aclara _qué_ debe afirmar el test, no _si_ escribirlo. Si te encontrás queriendo preguntar esto para evitar escribir el test, escribí el test.
 - ❌ "¿Está bien si me salteo la code review para este PR chico?" — prohibida, nunca preguntar.
-- ❌ "¿Está bien saltear la story de Storybook porque el componente es simple?" — prohibida, nunca preguntar. La respuesta siempre es escribir la story.
+- ❌ "¿Está bien saltear la story de Storybook porque el componente es simple?" — prohibida, nunca preguntar. La respuesta siempre es escribir la story. La excepción por delegación total (Sección 2) **no se pregunta, se verifica**: si sus cuatro condiciones se cumplen, se aplica y se deja constancia en el PR; si alguna no se cumple, se escribe la story.
 
 ---
 
@@ -273,7 +286,7 @@ El principio: **el documento es canónico; la memoria es refuerzo**. Si los dos 
 - Una descripción de PR que contenga cualquiera de los framings prohibidos es bloqueante. Pedí cambios citando este documento por sección.
 - Un PR que omite tests sobre la base de "es chico" es bloqueante. Pedí los tests faltantes.
 - Un PR abierto sin la pasada de review local (cuando el flujo la especifica) es bloqueante. Pedí la pasada antes de mergear.
-- Un componente nuevo sin su `*.stories.ts` es bloqueante. Pedí la story.
+- Un componente nuevo sin su `*.stories.ts` es bloqueante, salvo que cumpla las cuatro condiciones de la excepción por delegación total (Sección 2). Verificalas contra la plantilla, no contra la descripción del PR; si alguna no se cumple, pedí la story.
 
 ### Gates de CI
 
@@ -298,4 +311,4 @@ Las definiciones de agentes (`.claude/agents/*.md`) enuncian la regla en una lí
 
 ---
 
-_Última actualización: 2026-08-03. Este documento evoluciona por enmiendas (ver Sección 7); su historial detallado —qué se agregó, cuándo y por qué— vive en el log de git y en los PRs. Cambios mayores: versión inicial (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) y sus ampliaciones sobre visibilidad de API y reemplazos canónicos; regla de story intercambiable para estados de carga; regla de child issues reales en epics; "Gates de CI" convertida a remisión a CLAUDE.md; prohibición de `git add -A`; Sección 8 (regla anti-`cd`) consolidada desde las copias de los agentes; la política de menciones a issues en la documentación de agentes (Sección 3); la regla de títulos de issue sin prefijo de categoría (Sección 2); la generalización de los ejemplos que citaban issues reales; el enforcement de esas menciones en el gate `check-agents`; la excepción de `TODO` con issue abierto en comentarios de código (Sección 3) junto con el versionado de su hook; y el enforcement de la prohibición de identificadores de hallazgo sobre mensajes de commit y cuerpo de PR (hook `commit-msg` + gate `check-findings`), que cierra el hueco que dejaba la cobertura previa solo sobre comentarios de código y documentación de agentes._
+_Última actualización: 2026-08-03. Este documento evoluciona por enmiendas (ver Sección 7); su historial detallado —qué se agregó, cuándo y por qué— vive en el log de git y en los PRs. Cambios mayores: versión inicial (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) y sus ampliaciones sobre visibilidad de API y reemplazos canónicos; regla de story intercambiable para estados de carga; regla de child issues reales en epics; "Gates de CI" convertida a remisión a CLAUDE.md; prohibición de `git add -A`; Sección 8 (regla anti-`cd`) consolidada desde las copias de los agentes; la política de menciones a issues en la documentación de agentes (Sección 3); la regla de títulos de issue sin prefijo de categoría (Sección 2); la generalización de los ejemplos que citaban issues reales; el enforcement de esas menciones en el gate `check-agents`; la excepción de `TODO` con issue abierto en comentarios de código (Sección 3) junto con el versionado de su hook; y el enforcement de la prohibición de identificadores de hallazgo sobre mensajes de commit y cuerpo de PR (hook `commit-msg` + gate `check-findings`), que cierra el hueco que dejaba la cobertura previa solo sobre comentarios de código y documentación de agentes; y la excepción por delegación total a la exigencia de story (Sección 2), junto con la precisión de que el estado de carga lo cataloga quien renderiza el esqueleto._
