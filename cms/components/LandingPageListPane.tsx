@@ -7,7 +7,7 @@ import { CodeBlockIcon } from '@sanity/icons/CodeBlock';
 
 import { buildWeekSlug } from '@utils/week-slug.utils';
 
-import { ACTIVE_LANDING_ID_QUERY, API_VERSION, LANDING_LIST_QUERY, type LandingPageRow } from '../utils/landing-page';
+import { API_VERSION, LANDING_LIST_QUERY, type LandingPageRow, resolveActiveLandingId } from '../utils/landing-page';
 
 function toMessage(cause: unknown): string {
 	return cause instanceof Error ? cause.message : 'Error desconocido';
@@ -24,10 +24,10 @@ export function LandingPageListPane() {
 		try {
 			const [list, active] = await Promise.all([
 				client.fetch<LandingPageRow[]>(LANDING_LIST_QUERY),
-				client.fetch<string | null>(ACTIVE_LANDING_ID_QUERY, { slug: buildWeekSlug(new Date()) }),
+				resolveActiveLandingId(client),
 			]);
 			setRows(list);
-			setActiveId(active ?? null);
+			setActiveId(active);
 			setError(null);
 		} catch (cause) {
 			setError(toMessage(cause));
