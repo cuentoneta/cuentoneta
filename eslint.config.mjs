@@ -104,10 +104,29 @@ const pageFetchRestrictedSyntax = [
 	},
 ];
 
+// Reglas de lenguaje (no de framework): valen igual en la app Angular y en el Studio React, así que se
+// declaran una vez y se esparcen en ambos bloques en vez de duplicarse.
+const commonTypescriptRules = {
+	'@typescript-eslint/explicit-member-accessibility': [
+		'error',
+		{ accessibility: 'explicit', overrides: { constructors: 'no-public' } },
+	],
+	'@typescript-eslint/no-inferrable-types': 0,
+	'@typescript-eslint/no-unused-vars': 'error',
+	'@typescript-eslint/no-non-null-assertion': 'error',
+	'@typescript-eslint/no-explicit-any': 'error',
+	'@typescript-eslint/no-require-imports': 'error',
+	'no-barrel-files/no-barrel-files': 'error',
+	'preserve-caught-error': 'error',
+};
+
 export default [
 	{
+		// Un bloque `ignores` global (sin `files`) REEMPLAZA los ignores implícitos de ESLint, incluido
+		// `**/node_modules/**`. Sin nombrar el árbol de cms, ESLint intenta cargar los eslint.config.js
+		// anidados de sus dependencias y aborta antes de lintear nada.
 		name: 'ignores',
-		ignores: ['!**/*', '.nx', 'dist', 'tools/**'],
+		ignores: ['!**/*', '.nx', 'dist', 'tools/**', 'cms/node_modules/**', 'cms/dist/**'],
 	},
 	...nx.configs['flat/base'],
 	...nx.configs['flat/typescript'],
@@ -168,19 +187,29 @@ export default [
 			],
 			'@angular-eslint/prefer-signals': 'error',
 			'@angular-eslint/prefer-host-metadata-property': 'error',
-			'@typescript-eslint/explicit-member-accessibility': [
-				'error',
-				{ accessibility: 'explicit', overrides: { constructors: 'no-public' } },
-			],
-			'@typescript-eslint/no-inferrable-types': 0,
-			'@typescript-eslint/no-unused-vars': 'error',
-			'@typescript-eslint/no-non-null-assertion': 'error',
-			'@typescript-eslint/no-explicit-any': 'error',
-			'@typescript-eslint/no-require-imports': 'error',
+			...commonTypescriptRules,
 			'no-restricted-syntax': ['error', ...commonRestrictedSyntax, ...viRestrictedSyntax],
 			'@stylistic/js/no-extra-semi': 'off',
-			'no-barrel-files/no-barrel-files': 'error',
-			'preserve-caught-error': 'error',
+		},
+	},
+	{
+		// El Studio es React: las reglas de Angular buscan decoradores que no existen ahí. Se apagan de
+		// forma explícita en vez de confiar en que nunca disparen. El bloque `nx` declara `**/*.ts`, que
+		// no matchea `.tsx`, así que sin este bloque los componentes del Studio quedan sin ninguna regla.
+		// Recompone commonRestrictedSyntax soltando viRestrictedSyntax: en cms/ no existe @test-utils al
+		// que redirigir, y sus dobles se escriben a mano.
+		name: 'cms',
+		files: ['cms/**/*.ts', 'cms/**/*.tsx'],
+		plugins: {
+			'no-barrel-files': noBarrelFiles,
+		},
+		rules: {
+			'@angular-eslint/directive-selector': 'off',
+			'@angular-eslint/component-selector': 'off',
+			'@angular-eslint/prefer-signals': 'off',
+			'@angular-eslint/prefer-host-metadata-property': 'off',
+			...commonTypescriptRules,
+			'no-restricted-syntax': ['error', ...commonRestrictedSyntax],
 		},
 	},
 	{
