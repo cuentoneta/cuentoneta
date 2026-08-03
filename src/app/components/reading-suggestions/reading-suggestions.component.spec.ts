@@ -7,17 +7,14 @@ import { ReadingSuggestionsComponent } from './reading-suggestions.component';
 import { StoryApi } from '../../providers/story-api.interface';
 import { StorylistApi } from '../../providers/storylist-api.interface';
 import type { NavigationParams } from '@app-utils/navigation-params';
-import type { StorylistStoriesNavigationTeasers } from '@models/storylist.model';
-import { storylistNavigationTeaserMock } from '@mocks/storylist.mock';
-import {
-	onoffStoryNavigationTeasersMock,
-	onoffStoryNavigationTeasersWithAuthorMock,
-} from '@mocks/onoff-story-teasers.mock';
+import type { Storylist } from '@models/storylist.model';
+import { storylistMock } from '@mocks/storylist.mock';
+import { onoffStoryTeasersMock, onoffStoryNavigationTeasersWithAuthorMock } from '@mocks/onoff-story-teasers.mock';
 import { authorTeaserMock } from '@mocks/author.mock';
 import { clearAllMocks, restoreAllMocks, spyOn } from '@test-utils';
 
-const collectionMock: StorylistStoriesNavigationTeasers = {
-	...storylistNavigationTeaserMock,
+const collectionMock: Storylist = {
+	...storylistMock,
 	stories: onoffStoryNavigationTeasersWithAuthorMock,
 };
 
@@ -26,8 +23,8 @@ const setup = async (navigationParams: NavigationParams) =>
 		inputs: { navigationParams, authorName: authorTeaserMock.name, currentWorkSlug: 'una-obra-cualquiera' },
 		providers: [
 			provideRouter([]),
-			{ provide: StoryApi, useValue: { getNavigationTeasersByAuthorSlug: () => of(onoffStoryNavigationTeasersMock) } },
-			{ provide: StorylistApi, useValue: { getStorylistNavigationTeasers: () => of(collectionMock) } },
+			{ provide: StoryApi, useValue: { getByAuthorSlug: () => of(onoffStoryTeasersMock) } },
+			{ provide: StorylistApi, useValue: { get: () => of(collectionMock) } },
 		],
 	});
 
@@ -98,7 +95,7 @@ describe('ReadingSuggestionsComponent', () => {
 	});
 
 	it('should exclude the work being read from whichever variant renders', async () => {
-		const [current] = onoffStoryNavigationTeasersMock;
+		const [current] = onoffStoryTeasersMock;
 		const { fixture } = await render(ReadingSuggestionsComponent, {
 			inputs: {
 				navigationParams: { navigation: 'author', navigationSlug: authorTeaserMock.slug },
@@ -109,7 +106,7 @@ describe('ReadingSuggestionsComponent', () => {
 				provideRouter([]),
 				{
 					provide: StoryApi,
-					useValue: { getNavigationTeasersByAuthorSlug: () => of(onoffStoryNavigationTeasersMock) },
+					useValue: { getByAuthorSlug: () => of(onoffStoryTeasersMock) },
 				},
 			],
 		});

@@ -15,6 +15,10 @@ import { adaptStoryTeasersToReadingSuggestions } from './story-teaser-to-reading
  *
  * TODO(#2036): cambiar el provider de Storylist a Collection cuando la página de lectura integre la tríada.
  *
+ * Consume la colección completa y no la vista de navegación: es la que transporta el cuerpo recortado
+ * del que sale el extracto. La de navegación proyecta `body: []` a propósito, porque la comparten la
+ * landing y las navegaciones de autor y colección, que no lo necesitan.
+ *
  * Muestra el autor de cada obra: una colección puede reunir obras de varios.
  */
 @Component({
@@ -49,7 +53,9 @@ export class CollectionReadingSuggestionsComponent {
 		params: () =>
 			this.collectionSlug() ? { slug: this.collectionSlug(), currentWorkSlug: this.currentWorkSlug() } : undefined,
 		stream: ({ params }) =>
-			this.storylistService.getStorylistNavigationTeasers(params.slug).pipe(
+			// Sin `amount`/`ordering`: el backend los descarta y devuelve la colección entera, así que
+			// pasarlos sugeriría un recorte que no ocurre. El recorte a tres lo hace el picker.
+			this.storylistService.get(params.slug).pipe(
 				map((collection) => ({
 					title: collection.title,
 					suggestions: adaptStoryTeasersToReadingSuggestions(
