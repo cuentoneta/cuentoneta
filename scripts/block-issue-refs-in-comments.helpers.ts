@@ -6,7 +6,7 @@
 
 /** Solo código, y solo bajo `src/`. La regla rige para todo el repo; el hook cubre esta porción. */
 const SCOPED_PATH = /(^|\/)src\//;
-const CODE_FILE = /\.(ts|html|css|js)$/;
+const CODE_FILE = /\.(ts|html|css|js|mjs|cjs)$/;
 
 // Dos dígitos y no tres, a diferencia del check de la documentación de agentes: ahí el umbral más alto
 // evita confundir un issue con un número de hallazgo de review, que en código no existen.

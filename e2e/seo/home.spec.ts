@@ -70,9 +70,10 @@ test('home — invariantes de indexado para crawlers (ssr, h1 real, contenido pr
 	expect(violations).toEqual([]);
 });
 
-// Bloqueado por #1771: los decks most-read/latest/collection-teasers usan @defer, así que el SSR
-// sirve <cuentoneta-*-skeleton data-testid="skeleton"> dentro de <main>. Activar al cerrar #1771.
-test.fixme('home — sin markers de skeleton en <main> (bloqueado por #1771)', () => {
+// Bloqueado: los decks most-read/latest/collection-teasers usan @defer, así que el SSR sirve
+// <cuentoneta-*-skeleton data-testid="skeleton"> dentro de <main>. Activar cuando esos decks se
+// server-rendericen sin diferir.
+test.fixme('home — sin markers de skeleton en <main>', () => {
 	expect(checkNoSkeletonMarkers(html)).toBeNull();
 });
 

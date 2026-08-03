@@ -72,6 +72,13 @@ describe('findIssueRefsInComments — alcance', () => {
 		expect(findIssueRefsInComments(ruta, '// Rediseñado en #1234')).toEqual([]);
 	});
 
+	it.each([
+		['.mjs', 'src/tools/build.mjs'],
+		['.cjs', 'src/tools/build.cjs'],
+	])('sí mira %s, que también es código', (_caso, ruta) => {
+		expect(findIssueRefsInComments(ruta, '// Rediseñado en #1234')).toEqual(['// Rediseñado en #1234']);
+	});
+
 	it('normaliza los separadores de Windows', () => {
 		const linea = '// Rediseñado en #1234';
 

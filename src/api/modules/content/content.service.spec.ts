@@ -71,8 +71,8 @@ describe('ContentService', () => {
 					expect.stringMatching(/^2025-\d{2}$/),
 				]),
 			);
-			// Regresión #1749: la base a clonar debe pedirse acotada a la semana actual (antes se
-			// invocaba sin argumentos y terminaba clonando el último stub futuro autogenerado).
+			// Regresión: la base a clonar debe pedirse acotada a la semana actual. Pedirla sin argumentos
+			// termina clonando el último stub futuro autogenerado en vez de la última semana válida.
 			expect(contentRepository.fetchLatestLandingPageReferences).toHaveBeenCalledWith(currentSlug);
 		});
 
