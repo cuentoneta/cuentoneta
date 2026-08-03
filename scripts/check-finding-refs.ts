@@ -47,11 +47,13 @@ function main(text: string, args: string[]): void {
 	const offending = findFindingRefLines(text);
 
 	if (offending.length === 0) {
-		process.exit(0);
+		return;
 	}
 
 	report(surface, offending);
-	process.exit(FAILURE_EXIT_CODE);
+	// `exitCode` y no `process.exit()`: salir de inmediato puede truncar lo recién escrito a stderr
+	// cuando es un pipe, que es justamente el caso en CI. Así Node termina cuando terminó de vaciarlo.
+	process.exitCode = FAILURE_EXIT_CODE;
 }
 
 const args = process.argv.slice(2);

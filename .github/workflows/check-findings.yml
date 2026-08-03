@@ -20,6 +20,13 @@ permissions:
   contents: read
   pull-requests: read
 
+# `edited` dispara con cada retoque de la descripción, y dos corridas simultáneas pueden reportar fuera
+# de orden — el resultado que queda es el de la que termina última, no el del último estado del PR. En un
+# check que bloquea el merge eso deja un veredicto que no corresponde a lo que se va a mergear.
+concurrency:
+  group: check-findings-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   # El id del job es el nombre del gate: no declara `name:` para que no puedan desincronizarse.
   check-findings:
@@ -53,10 +60,17 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
-        run: gh api --paginate "repos/$REPO/pulls/$PR/commits" --jq '.[] | .commit.message' > commit-messages.txt
+        run: |
+          set -euo pipefail
+          gh api --paginate "repos/$REPO/pulls/$PR/commits" --jq '.[] | .commit.message' > commit-messages.txt
+          # Un PR sin commits no existe: un archivo vacío significa que la consulta no trajo lo que
+          # debía verificarse, y un check que no verificó nada no puede reportarse verde.
+          test -s commit-messages.txt
 
       - name: Verificar los mensajes de commit
-        run: pnpm check:findings --surface=commit commit-messages.txt
+        run: |
+          set -euo pipefail
+          pnpm check:findings --surface=commit commit-messages.txt
 
       # El cuerpo viaja por `env` y nunca interpolado dentro del `run:`: un `${{ }}` con texto que
       # escribe cualquiera es inyección de shell. Un PR sin descripción llega como cadena vacía y pasa.
@@ -64,4 +78,6 @@ jobs:
         if: ${{ !cancelled() }}
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
-        run: printf '%s' "$PR_BODY" | pnpm check:findings --surface=pr
+        run: |
+          set -euo pipefail
+          printf '%s' "$PR_BODY" | pnpm check:findings --surface=pr
