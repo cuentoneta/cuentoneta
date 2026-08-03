@@ -161,7 +161,7 @@ Todo componente nuevo en **`src/app/components/`** lleva su `*.stories.ts` adem�
 - Una **story por estado/variante** (`Soft`, `Filled`, …) y opcionalmente un `Showcase`.
 - Render con `argsToTemplate(args)` y el selector real (`cuentoneta-...`).
 - Para DI usá `moduleMetadata({ imports, providers })` o `applicationConfig({ providers })`.
-- **Si el componente tiene estado de carga (skeleton): generá además una story `Estados` con estado intercambiable** —un control booleano (`loading`/"Cargando") que alterna real↔skeleton en el mismo slot. Es obligatoria; ver el patrón en `testing.md` (§ "Estado de carga → story intercambiable").
+- **Si el componente renderiza un skeleton en su propia plantilla: generá además una story `Estados` con estado intercambiable** —un control booleano (`loading`/"Cargando") que alterna real↔skeleton en el mismo slot. Es obligatoria; ver el patrón en `testing.md` (§ "Estado de carga → story intercambiable").
 
 Mantené las stories sincronizadas cuando cambien inputs, estados visuales o la API pública.
 
