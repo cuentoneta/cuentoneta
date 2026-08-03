@@ -185,7 +185,7 @@ Usá estos valores:
 
 Cuando un problema se marca como **Diferido**, hay que **proponer** un issue de GitHub y **esperar la confirmación del usuario** antes de crearlo: crear un issue es una acción hacia afuera (misma política que la Fase 5 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md)). La propuesta debe:
 
-1. Referenciar el identificador de la review original (p. ej. "Detectado como R7 durante la review del PR `#<pr>`").
+1. Referenciar la review original **por su PR**, que es lo que perdura (p. ej. "Detectado durante la review del PR `#<pr>`"). Sin el identificador del hallazgo: muere con la sesión que lo emitió, así que en el cuerpo de un issue —el artefacto más durable de todos— no resuelve a nada.
 2. Incluir contexto suficiente para actuar de forma independiente (archivo, línea, descripción del problema y la corrección recomendada).
 3. Estar etiquetado con labels que **existan** en el repo — `gh label list` los enumera, y pasar uno inexistente a `gh issue create --label` falla con un 422. Para un hallazgo diferido suelen aplicar `💳 deuda técnica` o `🏎️ mejora`, más el de dominio que corresponda (`🔌 backend`, `🅰️ angular`, `🧭 indexado`, …). Si ninguno encaja, proponer el label nuevo al usuario en vez de inventarlo — misma política que [`coding-agent-policies.md`](../references/coding-agent-policies.md) Sección 2.
 4. Estar vinculado al PR e issue actuales para trazabilidad.

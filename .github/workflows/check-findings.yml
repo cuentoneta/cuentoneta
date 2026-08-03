@@ -1,0 +1,83 @@
+# Verifica que la historia del PR y su descripción no citen identificadores de hallazgo de review, que
+# son efímeros: viven en workspace/ (gitignoreado) y mueren con la sesión que los emitió.
+#
+# Vive aparte de `ci.yml` por el tipo `edited`. Editar el cuerpo de un PR emite `pull_request.edited`,
+# que no está entre los tipos por defecto; sin declararlo, corregir el cuerpo no re-evalúa el check y el
+# gate queda rojo de forma permanente. Los tipos se declaran por workflow, así que sumarlo a `ci.yml`
+# haría re-correr los diez gates —build, e2e, storybook— cada vez que alguien edita una descripción.
+#
+# Usa `pull_request` y no `pull_request_target`: no necesita secrets ni el token privilegiado. El cuerpo
+# llega en el payload del evento y los commits salen de la API pública. La vía de evasión —que un fork
+# edite este archivo en su propio PR— ya la cubre `guard-config`, que bloquea PRs de fork que tocan
+# `.github/`.
+name: Check findings
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+# `edited` dispara con cada retoque de la descripción, y dos corridas simultáneas pueden reportar fuera
+# de orden — el resultado que queda es el de la que termina última, no el del último estado del PR. En un
+# check que bloquea el merge eso deja un veredicto que no corresponde a lo que se va a mergear.
+concurrency:
+  group: check-findings-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  # El id del job es el nombre del gate: no declara `name:` para que no puedan desincronizarse.
+  check-findings:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Select pnpm as package manager
+        uses: pnpm/action-setup@v6.0.9
+        with:
+          version: 10.12.1
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: 24.18.0
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      # Traer los mensajes y verificarlos van en steps separados a propósito: el script que corre en el
+      # segundo es código del PR —de un fork, código no confiable—, y no debe compartir step con el
+      # token. El radio es chico (solo lectura, repo público), pero no hay razón para dárselo.
+      #
+      # La API pagina de a 100 y corta en 250 commits: un PR más largo que eso queda parcialmente
+      # verificado. El hook local `commit-msg` cubre el resto en origen.
+      - name: Traer los mensajes de commit del PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          gh api --paginate "repos/$REPO/pulls/$PR/commits" --jq '.[] | .commit.message' > commit-messages.txt
+          # Un PR sin commits no existe: un archivo vacío significa que la consulta no trajo lo que
+          # debía verificarse, y un check que no verificó nada no puede reportarse verde.
+          test -s commit-messages.txt
+
+      - name: Verificar los mensajes de commit
+        run: |
+          set -euo pipefail
+          pnpm check:findings --surface=commit commit-messages.txt
+
+      # El cuerpo viaja por `env` y nunca interpolado dentro del `run:`: un `${{ }}` con texto que
+      # escribe cualquiera es inyección de shell. Un PR sin descripción llega como cadena vacía y pasa.
+      - name: Cuerpo del PR
+        if: ${{ !cancelled() }}
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$PR_BODY" | pnpm check:findings --surface=pr
