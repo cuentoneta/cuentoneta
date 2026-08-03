@@ -16,6 +16,106 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.9.0 (2026-08-03)
+
+La versión 2.9.0 es el release donde **`LiteraryWork` deja de ser un spike y pasa a ser una entidad viva**. Se levanta la arquitectura de referencia de contenido (#1852) y sobre ella un walking skeleton end-to-end de la vista de lectura `/read` (#1853), con el cuerpo de la obra en **Markdown servido como HTML saneado** por un pipeline compartido, caché de borde con `stale-while-revalidate` (#1856) y una pasada transversal de hardening de XSS, paridad y fallback (#1857). El corpus de mocks de Onoff se unifica bajo el kernel y pasa a ser el test-data único, retirando los stable slugs de prueba (#1981, #2006, #1653), con selectores por capacidad en vez de azar (#2008) y el mapper del ACL extraído como slice propio (#1985). Llegan la **nota editorial** a lo largo del stack (#2011, #2012, #2021) y el **reading time persistido** por sección, con su unidad compartida de cómputo y su script de backfill (#1953, #1982, #1959). `/read/:slug` queda en `noindex` temporal hasta que se decida su indexación (#2040).
+
+El epic **#2049 saca `blockContent` del modelo de contenido**: migran las descripciones de los recursos multimedia a Markdown (#2027) y se eliminan del wire y del schema las de `contentCampaign` (#2052), `tag` (#2050) y `resourceType` (#2046), más los íconos de `tag` (#2071) y `resourceType` (#2069). Con eso sale del Studio el plugin de íconos (#2072), se sanea el mapa local que traducía slugs a íconos (#2073) y se purgan del dataset las propiedades que quedaron huérfanas (#2068).
+
+En la **página de obra**, el rail lateral de navegación se reemplaza por una tríada de **sugerencias de lectura** al pie (#2038), que se resuelve en el cliente de forma diferida y muestra el extracto de cada obra sugerida (#2082). Al pasar el bloque a las proyecciones de teaser —que ya transportan el cuerpo recortado del que sale el extracto—, las vistas de navegación de `Story` y `Storylist` quedan sin ningún consumidor y se eliminan de punta a punta: sus dos endpoints, services, repositories, queries GROQ, el mapper exclusivo del ACL, los schemas de validación, los tipos generados y sus definiciones de Bruno.
+
+En **arquitectura y tooling**, el kernel compartido (`@models`, `@utils`, `@sanity-types`, `@mocks`) se promueve a top-level (#1992) y sus imports se unifican en los subproyectos (#1996, #1792); el runtime pasa a **Node 24** (#1993, #2033), Storybook migra de Webpack a **Vite** (#1972), se elimina Nx Cloud del workspace (#1940) y la resolución de los `paths` del tsconfig pasa a la opción nativa de Vite, retirando `vite-tsconfig-paths` (#2061). Los building blocks del Design System V3 se renombran de `Story` a `LiteraryWork` (#1903, #1904).
+
+Los **flujos de Claude Code** reciben una pasada larga: `issue-workflow` gana worktrees aislados (#1942), PRs apilados (#1913), artefactos por issue y reanudación (#1912), pausas con decisión explícita (#1916) y una decena de precisiones operativas (#1908–#1921); y se endurecen las reglas sobre menciones a issues en la documentación de agentes (#1948, #1955, #2057).
+
+### Cambios completos
+
+Ver el changelog completo en [2.9.0](https://github.com/cuentoneta/cuentoneta/releases/tag/2.9.0)
+
+### Cambios
+
+#### LiteraryWork y la vista de lectura
+
+- [#1852] - Levanta la arquitectura de referencia de contenido para `LiteraryWork`.
+- [#1853] - Suma el walking skeleton mono-sección end-to-end de `/read`.
+- [#1856] - Agrega caché de respuesta en el borde para `/read`, con invariante y `stale-while-revalidate`.
+- [#1857] - Cobertura transversal y hardening: XSS, paridad de contrato y fallback.
+- [#1981] - Unifica el corpus de mocks de Onoff (frontend + backend) bajo el kernel `@mocks`.
+- [#2006] - Adopta el corpus de Onoff como test-data único de los tests unitarios (el e2e conserva slugs reales, porque corre contra el dataset).
+- [#1653] - Migra el corpus de mocks a Markdown/LiteraryWork y retira las fichas transitorias.
+- [#2008] - Da ergonomía al test-data del canon: selectores por capacidad e `it.each` en vez de azar.
+- [#1985] - Extrae el mapper del ACL (raw→dominio) como slice propio.
+- [#2016] - Alinea el fixture raw de _El odio_ con su mock de dominio.
+- [#2011] - Agrega la nota editorial (Markdown) a lo largo del stack.
+- [#2012] - Suma el componente `EditorialNote`, que consume HTML saneado.
+- [#2021] - Unifica el input de `EditorialNote` y depreca `EditorialTextBlock`.
+- [#1953] - Persiste el `readingTime` derivado por sección para fetch parcial y teasers eficientes.
+- [#1982] - Comparte la unidad de cómputo y persistencia de reading time.
+- [#1959] - Suma el script batch de backfill de reading time.
+- [#1935] - Expone la multimedia en las tarjetas de teaser de `LiteraryWork`.
+- [#2040] - Deja `/read/:slug` en `noindex` temporal hasta resolver su indexación.
+
+#### blockContent → Markdown (epic #2049)
+
+- [#2027] - Migra la descripción de los recursos multimedia de blockContent a Markdown.
+- [#2052] - Elimina la descripción de `contentCampaign` del wire y del schema.
+- [#2050] - Elimina la descripción de `tag` del wire y del schema.
+- [#2046] - Elimina la descripción de `resourceType` del wire y del schema.
+- [#2071] - Elimina el ícono de `tag` del wire y del schema.
+- [#2069] - Elimina el ícono de `resourceType` del wire y del schema.
+- [#2072] - Retira `sanity-plugin-icon-picker` del Studio.
+- [#2073] - Sanea `iconMappers`: poda las entradas sin consumidor y su TODO huérfano.
+- [#2068] - Purga del dataset las propiedades huérfanas de `contentCampaign`, `resourceType` y `tag`.
+
+#### Sugerencias de lectura
+
+- [#2038] - Reemplaza el rail lateral de navegación por la tríada de sugerencias de lectura al pie.
+- [#2082] - Muestra el extracto de la obra en las tarjetas de sugerencias y elimina las vistas de navegación de `Story` y `Storylist`, con sus endpoints `/author/:slug/navigation` y `/:slug/navigation`, que quedaron sin consumidor.
+
+#### Arquitectura y kernel compartido
+
+- [#1992] - Promueve el kernel compartido (`@models`, `@utils`, `@sanity-types`, `@mocks`) a top-level.
+- [#1996] - Unifica los imports hacia el kernel a shortpaths en `e2e` y `cms`.
+- [#1792] - Crea los path aliases `@schemas` y `@queries` para el backend.
+- [#1903] - Renombra los building blocks del Design System V3 de `Story` a `LiteraryWork`.
+- [#1904] - Renombra los ejemplos de las referencias para usar `LiteraryWork`.
+- [#1963] - Endurece el manejo de tipos multimedia: type guards, dedup del ACL y asimetría de fallo.
+
+#### Runtime y tooling
+
+- [#1993] - Actualiza el runtime a Node 24.
+- [#2033] - Alinea `cms/` con Node 24 (types y engines).
+- [#1972] - Migra Storybook de Webpack a Vite.
+- [#2061] - Resuelve los `paths` del tsconfig con la opción nativa de Vite y retira `vite-tsconfig-paths`.
+- [#1940] - Elimina Nx Cloud del workspace.
+- [#1923] - Excluye el build local del Studio de `stylelint`.
+- [#1998] - Estabiliza el gate `test`: evita la carga real del iframe de Spotify en happy-dom.
+- [#2000] - Corrige la resolución del alias `@testing` desde `e2e/_utils`.
+
+#### Flujos de Claude Code
+
+- [#1942] - Ejecuta `issue-workflow` en un worktree aislado.
+- [#1913] - Soporta PRs apilados: base de rama, diff y PR configurables.
+- [#1912] - Namespacea los artefactos por issue y habilita la reanudación del flujo.
+- [#1916] - Suma pausas con decisión explícita e iteración del plan por continuación de agente.
+- [#1911] - Recolecta body, milestone, labels y epic padre del issue.
+- [#1914] - Agrega verificación barata por commit y recheck de la rama activa.
+- [#1917] - Cablea `architecture-advisor`, `domain-model-advisor` y `test-generator` al flujo.
+- [#1918] - Fija el criterio operativo para correr `test:e2e`.
+- [#1919] - Exige disposición confirmada de los Críticos antes de shipear.
+- [#1909] - Unifica el vocabulario de estados de hallazgos.
+- [#1910] - Evita la colisión de numeración entre `code-reviewer` y `security-auditor`.
+- [#1908] - Impide que el `code-reviewer` pise la sección del `security-auditor`.
+- [#1915] - Hereda el modelo de la sesión en los subagentes del flujo.
+- [#1921] - Aclara que el orquestador comitea la salida del `documentation-writer`.
+- [#1920] - Deduplica la regla anti-`cd` en `coding-agent-policies.md`.
+- [#1941] - Suma pausas con decisión explícita a `release-workflow`.
+- [#1948] - Elimina de los `.md` las referencias a issues conforme cierra su trabajo.
+- [#1955] - Prohíbe referenciar issues ya cerrados en la documentación de agentes.
+- [#2057] - Hace que `check-agents` falle ante una mención a un issue cerrado.
+- [#2056] - Corrige los ejemplos de labels del `code-reviewer` que nombraban labels inexistentes.
+- [#2042] - Fija la convención de títulos de issue: sin prefijos de categoría.
+
 ## Versión 2.8.8 (2026-07-26)
 
 La versión 2.8.8 es un **hotfix de SEO**: `staging.cuentoneta.ar` y las previews estaban siendo indexados por Google porque compartían el build de producción y no había ninguna señal de no-indexado gateada por entorno ([#1962](https://github.com/cuentoneta/cuentoneta/pull/1962)).
