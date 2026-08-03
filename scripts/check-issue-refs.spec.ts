@@ -44,6 +44,16 @@ describe('findIssueRefProblems', () => {
 		);
 	});
 
+	it('marca un identificador de hallazgo fuera de los archivos que definen la convención', () => {
+		expect(findIssueRefProblems('.claude/references/testing.md', 'Ver el hallazgo R6 de la review.')).toHaveLength(1);
+		expect(findIssueRefProblems('.claude/references/sanity-acl.md', 'Corregido tras S3.')).toHaveLength(1);
+	});
+
+	it('no marca los archivos que definen la convención, que necesitan nombrar los prefijos', () => {
+		expect(findIssueRefProblems('.claude/agents/code-reviewer.md', 'con prefijo `R` (R1, R2, …)')).toEqual([]);
+		expect(findIssueRefProblems('.claude/agents/security-auditor.md', 'con prefijo `S` (S1, S2, …)')).toEqual([]);
+	});
+
 	it('ignora los placeholders textuales, que no llevan número', () => {
 		expect(
 			findIssueRefProblems('.claude/references/coding-agent-policies.md', 'Formato: `[#<id>] - <mensaje>`'),
