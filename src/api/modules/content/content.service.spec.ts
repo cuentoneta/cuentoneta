@@ -34,7 +34,7 @@ describe('ContentService', () => {
 	});
 
 	describe('addNextWeeksLandingPageContent', () => {
-		const currentDate = new Date('2025-11-14');
+		const currentDate = new Date(2025, 10, 14);
 		const currentSlug = buildWeekSlug(currentDate);
 
 		const mockLandingPage = {
