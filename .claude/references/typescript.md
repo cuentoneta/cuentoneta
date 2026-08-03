@@ -91,6 +91,8 @@ const DEFAULT_INTERVAL = 24 * 60 * 60 * 1000;
 - **Módulo:** promover a nivel de módulo solo cuando se comparte entre varias funciones del mismo archivo.
 - **Global:** solo tras confirmar reuso entre varios archivos.
 
+**Excepción — archivos con `@Component`, `@Directive` o `@Injectable`:** ahí la configuración propia de la clase (mapas `size → clase`, tablas de widgets o de estilo) **no** se promueve a nivel de módulo aunque la usen varios métodos: va como `private readonly` de instancia. La regla y su rationale están en [`angular-components.md`](angular-components.md#configuraci%C3%B3n-de-la-clase); la aplica la regla de ESLint `component-config-in-class`.
+
 **Rationale:** una constante declarada 50 líneas lejos de su único uso obliga al lector a saltar entre dos lugares. Co-locarla con su uso (cuando es único) hace el código autocontenido.
 
 ## `eslint.config.mjs`: reglas por-scope reemplazan, no mergean
