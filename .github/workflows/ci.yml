@@ -18,8 +18,12 @@ on:
 #
 # En `push` a `develop` NO se cancela: ese run es el que guarda el cache de Nx en la rama default (ver
 # el comentario del trigger), y cancelarlo dejaría a todos los PRs sin cache base.
+# El `group` incluye el evento a propósito: sin eso, el `workflow_dispatch` que dispara
+# `prepare-release-pr.yml` sobre `develop` cae en el mismo grupo que el `push` a `develop`, queda
+# encolado detrás de él, y un merge posterior lo cancela en silencio — justo la corrida que le da
+# señal de CI al release.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:

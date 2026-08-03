@@ -45,7 +45,7 @@ La Fase 0 corre en **toda** invocación (fresca o reanudación), así que es ac�
 
    El `// empty` garantiza salida **vacía** (no el literal `null`) cuando el issue no tiene parent, para no generar un `Parte de #null.` en la Fase 6.
 
-Estos datos alimentan la Fase 1 (reporte + nombre de rama), la Fase 2 (body → `plan-writer`) y la Fase 6 (milestone → `gh pr create --milestone`; labels → `gh pr create --label`; parent → `Parte de #<epic>.`).
+Estos datos alimentan la Fase 1 (reporte + nombre de rama), la Fase 2 (body → `plan-writer`) y el cierre de la Fase 3, que abre el borrador con ellos (milestone → `--milestone`; labels → `--label`; parent → `Parte de #<epic>.`). La Fase 6 solo verifica que estén.
 
 ### Base de la rama (apilado)
 
@@ -228,6 +228,11 @@ Terminados los pasos del plan, la fase cierra abriendo el PR **en borrador**, pa
 1. `git push -u origin feat/<number>-<kebab>`.
 2. `gh pr create --draft` con los mismos datos que usaría la Fase 6: base `<rama-base>`, `--milestone` y `--label` recolectados en la Fase 0, título `[#<issue>] - <título del issue>`, y cuerpo con la descripción, `Closes #<issue>.`, `Parte de #<epic>.` cuando el issue tenga parent, y el aviso de apilado cuando `<rama-base> ≠ develop`. El **plan de pruebas queda como marcador**: lo completa la Fase 6, cuando ya se sabe qué se verificó.
 
+   Dos restricciones duras del cuerpo rigen desde acá, porque acá es donde se escribe por primera vez:
+
+   - **Termina en el plan de pruebas:** sin leyenda de atribución de agente (`🤖 Generated with …`, `Co-Authored-By: Claude …`, `Claude-Session: …`) y **sin citar un identificador de hallazgo de review** (`R<n>`, `S<n>`), que el gate `check-findings` verifica sobre el cuerpo.
+   - **Enlaza su issue de origen:** el cuerpo debe contener un keyword de cierre — `Closes #<issue>` (o `Fixes`/`Resolves`). El prefijo `[#<issue>]` del título **no** crea el enlace.
+
 Qué **no** habilita el borrador, para que no se lea como un atajo:
 
 - **No reemplaza la review local.** La Fase 4 corre igual y completa.
@@ -252,10 +257,10 @@ La licencia y sus tres condiciones viven en [`coding-agent-policies.md`](../../r
 
 1. Correr **el tier local** de los [gates de CI](../../../CLAUDE.md#comandos-comunes) (con `pnpm`, nunca `nx` directo). Los gates se reparten en dos tiers, porque el borrador que abrió la Fase 3 ya está corriendo los diez en GitHub Actions:
 
-   | Tier                      | Gates                                                    | Por qué                                                                                                                                                               |
-   | ------------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-   | **Local, siempre**        | `typecheck`, `lint`, `stylelint`, `test`, `check-agents` | Baratos (~45s en paralelo) y son el único feedback rápido sobre las reglas ESLint propias del repo, que es donde más reincide un agente.                              |
-   | **Delegados al borrador** | `build`, `storybook`, `studio-build`, `e2e`              | Lentos y de salida voluminosa. `e2e` además es el más frágil, porque depende del dataset. El borrador los corre igual, sobre el mismo commit, y sin ocupar la sesión. |
+   | Tier                      | Gates                                                       | Por qué                                                                                                                                                                                                                                                         |
+   | ------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+   | **Local, siempre**        | `typecheck`, `lint`, `stylelint`, `test`, `check-agents`    | Baratos (~45s en paralelo) y son el único feedback rápido sobre las reglas ESLint propias del repo, que es donde más reincide un agente.                                                                                                                        |
+   | **Delegados al borrador** | `build`, `storybook`, `studio-build`, `e2e`, `guard-config` | Lentos y de salida voluminosa. `e2e` además es el más frágil, porque depende del dataset, y `guard-config` solo tiene efecto en PRs desde forks, así que en local no verifica nada. El borrador los corre igual, sobre el mismo commit, y sin ocupar la sesión. |
    - **Silenciar la salida en verde.** Capturar y emitir solo ante fallo, para no volcar el log completo de un gate que pasó:
 
      ```bash
@@ -270,9 +275,9 @@ La licencia y sus tres condiciones viven en [`coding-agent-policies.md`](../../r
 
    **Correr un gate delegado en local es válido** cuando el diff lo toca de lleno y conviene el ciclo corto — p. ej. `storybook` ante un cambio de stories. Lo que la tabla evita es correrlos _por rutina_.
 
-1. **Leer la señal del borrador, sin esperarla.** `gh pr checks <pr>` sobre el PR que abrió la Fase 3 da el estado de los gates delegados. Para no bloquear la sesión, vigilarlos en segundo plano (`gh pr checks <pr> --watch --fail-fast`) y seguir con la review: si algo se pone rojo, la notificación llega sola. Si al momento de delegar la review el borrador sigue corriendo, se reporta **en curso** — la Fase 6 verifica el verde final antes de marcar listo.
+1. **Leer la señal del borrador, sin esperarla.** `gh pr checks <pr>` sobre el PR que abrió la Fase 3 da el estado de los gates delegados, junto con `setup` y las integraciones externas del repo (los despliegues de Vercel, que el borrador también dispara). Para no bloquear la sesión, vigilarlos en segundo plano (`gh pr checks <pr> --watch --fail-fast`) y seguir con la review: si algo se pone rojo, la notificación llega sola. Si al momento de delegar la review el borrador sigue corriendo, se reporta **en curso** — la Fase 6 verifica el verde final antes de marcar listo.
 1. **Determinar si el diff toca superficie de seguridad.** La lista de disparadores es la sección **"Cuándo correr"** del agente `security-auditor`: `src/api/**` (endpoints, GROQ, mappers), manejo de contenido externo (PortableText/HTML del CMS, `bypassSecurityTrust*`, fetch a servicios externos, `localStorage`), variables de entorno / secrets / config de Sanity o Clarity, y dependencias (`package.json` / `pnpm-lock.yaml`). Un diff que no toca nada de eso —solo documentación, estilos o UI sin datos externos— **no** la amerita; el auditor también puede invocarse a demanda si surge una preocupación puntual.
-1. **Delegar las reviews — en paralelo si corren ambas.** Si el diff toca superficie de seguridad, lanzar al **`security-auditor`** y al **`code-reviewer`** en el **mismo turno** (ambas delegaciones en una única respuesta, igual que los gates del paso 1): sus reviews son independientes y no comparten archivo de salida. Si no la toca, delegar solo al `code-reviewer`. Cada delegación incluye la ruta de salida completa del agente (ver paso 4); en modo worktree, adjuntar además la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales" a cada Task delegada. En ambos casos el `code-reviewer` revisa todos los cambios de la rama vs. `<base>` (la ref resuelta en la Fase 0 → "Base de la rama"; default `develop`/`origin/develop`) y recibe **el resultado observado de los gates del paso 1** (qué corriste, con qué resultado, y cuáles omitiste por no aplicar al diff) — sin ese dato los vuelve a correr, que es la parte más cara de la review.
+1. **Delegar las reviews — en paralelo si corren ambas.** Si el diff toca superficie de seguridad, lanzar al **`security-auditor`** y al **`code-reviewer`** en el **mismo turno** (ambas delegaciones en una única respuesta, igual que los gates del paso 1): sus reviews son independientes y no comparten archivo de salida. Si no la toca, delegar solo al `code-reviewer`. Cada delegación incluye la ruta de salida completa del agente (ver el paso siguiente); en modo worktree, adjuntar además la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales" a cada Task delegada. En ambos casos el `code-reviewer` revisa todos los cambios de la rama vs. `<base>` (la ref resuelta en la Fase 0 → "Base de la rama"; default `develop`/`origin/develop`) y recibe **el resultado observado de los gates del paso 1** (qué corriste, con qué resultado, y cuáles omitiste por no aplicar al diff) — sin ese dato los vuelve a correr, que es la parte más cara de la review.
 1. Cada agente escribe su propio archivo: el `code-reviewer` en `workspace/<number>/CODE_REVIEW.md` y el `security-auditor` en `workspace/<number>/SECURITY_REVIEW.md`.
 1. Presentar la tabla de hallazgos al usuario (Críticos, Advertencias, Sugerencias), combinando ambos archivos cuando corrió el auditor, e indicando si corrió o por qué no correspondía. Al combinar, cada hallazgo se cita con el identificador tal como aparece en su documento de origen: los del `code-reviewer` llevan el prefijo `R` (p. ej. `R6`) y los de seguridad el prefijo `S` (p. ej. `S3`). Ninguno usa `#`, que queda reservado para los issues de GitHub.
 
@@ -301,9 +306,9 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 4. Si un hallazgo se **difiere**, proponer el issue al usuario y **esperar su confirmación** antes de crearlo (`gh issue create`); una vez creado, anotar su URL junto al valor **Diferido** en la columna **Estado**. Crear un issue es una acción hacia afuera: la misma política rige en la Fase 6.
    - **Título sin prefijo de categoría** (`[Tooling]`, `[SEO]`, `[#<id>]`, ni variantes con guion o dos puntos): la categoría va en `--label` y la pertenencia a una iniciativa en la relación de sub-issue. Si ningún label existente encaja, proponer su creación al usuario en vez de codificar la categoría en el título. Ver [`coding-agent-policies.md`](../../references/coding-agent-policies.md) Sección 2.
 5. Tras abordar Críticos y Advertencias, re-correr **solo los gates del tier local que el diff de los fixes toca**, con el mismo patrón de silenciado en verde de la Fase 4. Arreglar regresiones. Re-correr el tier entero solo si los fixes tocaron superficie compartida.
-6. **Pushear los fixes** al borrador. Eso refresca la señal de los gates delegados sobre el commit final, que es la que la Fase 6 verifica antes de marcar listo.
-7. Las **Sugerencias** son opcionales: presentarlas y dejar que el usuario decida.
-8. Si un hallazgo es específicamente un **gap de cobertura de tests**, el orquestador **puede** delegar en **`test-generator`** el scaffolding de los specs faltantes (en modo worktree, adjuntar la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales"). Es un aid opcional, **no** un gate: los tests igual deben existir y pasar; el agente es solo una vía para producirlos.
+6. Las **Sugerencias** son opcionales: presentarlas y dejar que el usuario decida.
+7. Si un hallazgo es específicamente un **gap de cobertura de tests**, el orquestador **puede** delegar en **`test-generator`** el scaffolding de los specs faltantes (en modo worktree, adjuntar la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales"). Es un aid opcional, **no** un gate: los tests igual deben existir y pasar; el agente es solo una vía para producirlos.
+8. **Pushear al borrador**, como último paso de la fase. Va al final para que también viaje lo que produzcan los pasos 6 y 7: refresca la señal de los gates delegados sobre el commit final, que es la que la Fase 6 verifica antes de marcar listo.
 
 ---
 
@@ -311,14 +316,14 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 
 **Propósito:** verificar la señal del borrador, completar su cuerpo, marcarlo listo para review y actualizar el issue original. El PR ya existe: lo abrió la Fase 3 en borrador.
 
-**Modo worktree:** el worktree **no se limpia en esta fase** — se mantiene hasta que el PR mergee, para permitir reanudar la sesión (ver [Modo worktree](#modo-worktree) → "Ciclo de vida"). Push y creación del PR corren igual, con cwd ya resuelto al worktree.
+**Modo worktree:** el worktree **no se limpia en esta fase** — se mantiene hasta que el PR mergee, para permitir reanudar la sesión (ver [Modo worktree](#modo-worktree) → "Ciclo de vida"). La verificación de los checks y el `gh pr ready` corren igual, con cwd ya resuelto al worktree.
 
-1. **Verificar la señal del borrador.** `gh pr checks <pr>` sobre el PR que abrió la Fase 3. Los diez gates deben estar **verdes** sobre el commit final (el que dejaron los fixes de la Fase 5):
+1. **Verificar la señal del borrador.** `gh pr checks <pr>` sobre el PR que abrió la Fase 3. Todos los checks deben estar **verdes** sobre el commit final (el que dejaron los fixes de la Fase 5). Ojo con el conteo: la salida trae más filas que los diez gates requeridos —`setup`, y las integraciones externas como los despliegues de Vercel—, así que se verifica que **ninguna** esté en rojo o pendiente, en vez de contar contra un número fijo:
    - Alguno **rojo** → no se marca listo: volver a la Fase 5.
    - Alguno **en curso** → esperar acá. Es el único punto del flujo donde esperar tiene sentido, porque ya no queda trabajo en paralelo que hacer.
 2. **Completar el cuerpo del PR** con el plan de pruebas ya verificado, que en la Fase 3 quedó como marcador: `gh pr edit <pr> --body-file <archivo>`. Eso emite `pull_request.edited`, así que `check-findings` re-evalúa el cuerpo final sin un paso extra.
    - El resto de los datos —base, `--milestone`, `--label`, título, `Closes #<issue>.`, `Parte de #<epic>.` y el aviso de apilado— ya los fijó la Fase 3: acá solo se verifica que estén.
-   - **El cuerpo termina en el plan de pruebas (restricción dura):** sin leyenda de atribución de agente (`🤖 Generated with …`, `Co-Authored-By: Claude …`, `Claude-Session: …`). Ver [`coding-agent-policies.md`](../../references/coding-agent-policies.md) Sección 2.
+   - **El cuerpo termina en el plan de pruebas (restricción dura):** sin leyenda de atribución de agente (`🤖 Generated with …`, `Co-Authored-By: Claude …`, `Claude-Session: …`) y **sin citar un identificador de hallazgo de review** (`R<n>`, `S<n>`). Ver [`coding-agent-policies.md`](../../references/coding-agent-policies.md) Sección 2 y Sección 3.
    - **El PR DEBE enlazar su issue de origen (restricción dura):** el cuerpo debe contener un keyword de cierre — `Closes #<issue>` (o `Fixes`/`Resolves`). El prefijo `[#<issue>]` del título **no** crea el enlace.
 3. **Marcar listo para review:** `gh pr ready <pr>`. Es el evento que convoca a otra persona, así que sus precondiciones son duras:
    - Ningún Crítico de `workspace/<number>/CODE_REVIEW.md` ni `workspace/<number>/SECURITY_REVIEW.md` sin **disposición** (definida en la pausa de la Fase 4).
@@ -337,19 +342,19 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
    ```markdown
    **Workflow completo.**
 
-   | Item                | Valor                                                             |
-   | ------------------- | ----------------------------------------------------------------- |
-   | Issue               | [#<número>](issue-url) — <título>                                 |
-   | Rama                | `feat/<number>-<kebab>`                                           |
-   | PR                  | [#<pr>](pr-url)                                                   |
-   | Commits             | <N> commits atómicos                                              |
-   | Hallazgos abordados | <X> críticos · <Y> advertencias · <Z> sugerencias — <disposición> |
-   | Entorno             | `worktree` (`.claude/worktrees/<number>`) / `raíz`                |
-   | CI                  | <tier local: verde/rojo · borrador: N/10 verdes — <url>>          |
+   | Item                | Valor                                                                 |
+   | ------------------- | --------------------------------------------------------------------- |
+   | Issue               | [#<número>](issue-url) — <título>                                     |
+   | Rama                | `feat/<number>-<kebab>`                                               |
+   | PR                  | [#<pr>](pr-url)                                                       |
+   | Commits             | <N> commits atómicos                                                  |
+   | Hallazgos abordados | <X> críticos · <Y> advertencias · <Z> sugerencias — <disposición>     |
+   | Entorno             | `worktree` (`.claude/worktrees/<number>`) / `raíz`                    |
+   | CI                  | <tier local: verde/rojo · borrador: todos verdes / N en rojo — <url>> |
    ```
 
    - `Commits` cuenta solo los de la rama (`git rev-list --count <base>..HEAD`, con `<base>` = `<rama-base>` en modo raíz y `origin/<rama-base>` en modo worktree; default `develop`). Cuando `<rama-base> ≠ develop`, sumar el dato de base apilada bajo la tabla con el aviso de orden de merge (sin alterar la tabla en el caso `develop`).
-   - `CI` reporta las **dos puntas**: el tier local corrido en la sesión y el estado de los diez checks del borrador, con su URL.
+   - `CI` reporta las **dos puntas**: el tier local corrido en la sesión y el estado de los checks del borrador, con su URL.
 
 ---
 
@@ -363,4 +368,4 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 - En modo worktree (ver [Modo worktree](#modo-worktree)), el cwd de la sesión y de los subagentes delegados ya está resuelto al worktree tras `EnterWorktree`: la regla anti-`cd` sigue rigiendo igual, y toda comparación de rango git usa `<base>` (`origin/<rama-base>`, default `origin/develop`) como base, nunca la rama base local.
 - Toda delegación a un subagente que compute un diff de rango (`plan-writer`, advisors, `code-reviewer`, `security-auditor`, `test-generator`, `documentation-writer`) recibe la base `<base>` resuelta en la Fase 0: en worktree via la nota de delegación (que ya la incluye); en modo raíz con base apilada (`<rama-base> ≠ develop`), como una línea explícita en la instrucción. Los cuerpos de los agentes usan `develop...HEAD` como default de invocación standalone; esta instrucción lo overridea.
 - Nunca saltear la fase Plan — aun cambios triviales se benefician de un plan breve.
-- Aplican siempre las reglas de [`.claude/references/coding-agent-policies.md`](../../references/coding-agent-policies.md): sin framings de mantenedor único, sin "salteá el test por ser chico" (salvo cambios solo-doc), sin diferir la review más allá de abrir el PR, y sin comentarios redundantes (Sección 3).
+- Aplican siempre las reglas de [`.claude/references/coding-agent-policies.md`](../../references/coding-agent-policies.md): sin framings de mantenedor único, sin "salteá el test por ser chico" (salvo cambios solo-doc), sin diferir la review más allá de pedir la review humana (`gh pr ready`), y sin comentarios redundantes (Sección 3).
