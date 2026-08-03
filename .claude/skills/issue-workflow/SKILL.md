@@ -213,7 +213,7 @@ No avanzar a la Fase 3 sin una respuesta "Aprobar".
   - **specs afectados:** `pnpm exec vitest related --run $(git diff --name-only --cached)` — corre solo los `*.spec.ts` que importan los archivos staged; si `related` no rinde, los specs del módulo tocado.
   - Los commits **solo-doc / solo-config de tooling** (sin efecto en runtime) saltean esta verificación.
 - Nunca mensajes no descriptivos ("WIP", "fix", "update").
-- Nunca `--amend`; crear commits nuevos tras fallos del hook de pre-commit.
+- Nunca `--amend`; crear commits nuevos tras fallos de los hooks de git — hoy son dos: `pre-commit` (formato) y `commit-msg` (rechaza un mensaje que cite un identificador de hallazgo de review).
 - **En modo raíz**, antes de cada commit confirmar la rama activa con `git branch --show-current` contra `feat/<number>-<kebab>`; si un subagente con Bash la cambió en el medio, re-checkoutear la rama correcta antes de commitear. En **modo worktree** se omite: `EnterWorktree` fija el cwd/rama del worktree y los subagentes lo heredan (ver [Modo worktree](#modo-worktree)).
 
 ### No hacer en esta fase
@@ -257,7 +257,7 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 
 1. Abordar cada **Crítico** y **Advertencia** de `workspace/<number>/CODE_REVIEW.md` — y de `workspace/<number>/SECURITY_REVIEW.md` si corrió el auditor — por prioridad (Críticos primero).
 2. Tras cada fix, actualizar la columna **Estado** en el archivo al que pertenece el hallazgo (`CODE_REVIEW.md` o `SECURITY_REVIEW.md`), con los valores canónicos del `code-reviewer` (Detectado / En progreso / Corregido / Descartado / Diferido / No se corrige / Requiere test E2E).
-3. Un commit atómico por fix. El mensaje describe el **cambio real**, nunca referencia el número de hallazgo.
+3. Un commit atómico por fix. El mensaje describe el **cambio real**, nunca referencia el número de hallazgo — la regla ya no es solo convención: un hook local (`commit-msg`) y el gate `check-findings` la verifican y rechazan un mensaje que la incumpla.
    - ✅ `[#<issue>] - Acota la constante al cuerpo de la función — estaba a nivel de módulo`
    - ❌ `[#<issue>] - Arregla el hallazgo R2`
 4. Si un hallazgo se **difiere**, proponer el issue al usuario y **esperar su confirmación** antes de crearlo (`gh issue create`); una vez creado, anotar su URL junto al valor **Diferido** en la columna **Estado**. Crear un issue es una acción hacia afuera: la misma política rige en la Fase 6.
@@ -291,7 +291,7 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
      [checklist de lo verificado]
      ```
 
-   - **El cuerpo termina en el plan de pruebas (restricción dura):** sin leyenda de atribución de agente (`🤖 Generated with …`, `Co-Authored-By: Claude …`, `Claude-Session: …`). Ver [`coding-agent-policies.md`](../../references/coding-agent-policies.md) Sección 2.
+   - **El cuerpo termina en el plan de pruebas (restricción dura):** sin leyenda de atribución de agente (`🤖 Generated with …`, `Co-Authored-By: Claude …`, `Claude-Session: …`) y sin citar un identificador de hallazgo de review. Ver [`coding-agent-policies.md`](../../references/coding-agent-policies.md) Sección 2. El gate `check-findings` valida el cuerpo del PR y vuelve a evaluarlo en cada edición (el workflow escucha `pull_request.edited`): corregir el cuerpo después de abrirlo re-dispara el check, no hace falta ningún paso adicional.
    - **El PR DEBE enlazar su issue de origen (restricción dura):** el cuerpo debe contener un keyword de cierre — `Closes #<issue>` (o `Fixes`/`Resolves`). El prefijo `[#<issue>]` del título **no** crea el enlace; el keyword en el cuerpo es obligatorio.
    - Si el issue es **hijo de un epic** — el **parent detectado en la Fase 0** (vía el comando GraphQL de "Datos del issue") devolvió un número —, agregar además una línea `Parte de #<epic>.` (sin keyword de cierre) para cross-linkear el epic sin auto-cerrarlo.
 
