@@ -1,12 +1,17 @@
-import React, { type CSSProperties, type ReactNode } from 'react';
+import React from 'react';
+import type { BlockDecoratorProps } from 'sanity';
 
-// value lo provee el campo de Portable Text que declara esta anotación; se tipa con el propio tipo de
-// React para que un valor no válido de alineación falle acá y no en el render.
-type TextAlignProps = {
-	value?: CSSProperties['textAlign'];
-	children?: ReactNode;
-};
+// Los decoradores de alineación comparten este componente y se distinguen por su `value`, que Sanity
+// entrega como string suelto: se valida contra los cuatro declarados en blockContent para que un
+// decorador nuevo mal escrito caiga en el default en vez de emitir un CSS inválido.
+const TEXT_ALIGNMENTS = ['left', 'center', 'right', 'justify'] as const;
 
-export const TextAlign = ({ value, children }: TextAlignProps) => {
-	return <div style={{ textAlign: value ?? 'left', width: '100%' }}>{children}</div>;
+type TextAlignment = (typeof TEXT_ALIGNMENTS)[number];
+
+function isTextAlignment(value: string | undefined): value is TextAlignment {
+	return TEXT_ALIGNMENTS.some((alignment) => alignment === value);
+}
+
+export const TextAlign = ({ value, children }: BlockDecoratorProps) => {
+	return <div style={{ textAlign: isTextAlignment(value) ? value : 'left', width: '100%' }}>{children}</div>;
 };
