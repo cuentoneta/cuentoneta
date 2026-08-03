@@ -57,6 +57,7 @@ Estos patrones son intencionales y correctos. NO los reportes como problemas:
 - [ ] Sin barrels (`index.ts` re-export) en ningún lado
 - [ ] Sin `any` sin un comentario `// REASON:`
 - [ ] Sin `// @ts-ignore` sin issue enlazado
+- [ ] Sin números de issue en comentarios de código — salvo un `TODO` que cite en su misma línea el issue abierto que lo destraba, o la justificación enlazada de una supresión de lint/TS
 - [ ] Sin `console.log` (quitar antes de commitear)
 - [ ] Sin uso directo de `vi.fn()` / `vi.mock()` / `vi.*` ni de timers — usar los wrappers de `@test-utils`
 - [ ] Sin `enum` de TypeScript — usar `Object.freeze({...} as const)`
