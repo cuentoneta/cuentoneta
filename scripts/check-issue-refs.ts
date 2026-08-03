@@ -40,8 +40,28 @@ export const GOVERNANCE_ISSUE_REFS: Readonly<Record<number, string>> = Object.fr
 });
 
 /**
+ * Identificadores de hallazgo de review (`R1` del `code-reviewer`, `S1` del `security-auditor`). Son
+ * **efímeros**: viven en `workspace/`, que está gitignoreado, y mueren con la sesión que los emitió. En
+ * la documentación no dicen nada, igual que en un comentario de código.
+ */
+const FINDING_REF = /\b([RS]\d+)\b/g;
+
+/**
+ * Los archivos que **definen** la convención de prefijos y por eso necesitan nombrarlos. Cualquier otro
+ * `.md` de `.claude/` que cite un identificador lo está usando como referencia, que es lo que se busca
+ * evitar. Se declaran por ruta y no por patrón: sumar uno debe ser una decisión visible en el diff.
+ */
+const FINDING_CONVENTION_DOCS: ReadonlySet<string> = new Set([
+	'.claude/agents/code-reviewer.md',
+	'.claude/agents/security-auditor.md',
+	'.claude/references/coding-agent-policies.md',
+	'.claude/skills/issue-workflow/SKILL.md',
+]);
+
+/**
  * Núcleo puro: devuelve una línea `✗ …` por cada mención a un issue que no esté declarada en
- * `GOVERNANCE_ISSUE_REFS`. Exportada para test — `checkIssueRefs()` la aplica sobre el árbol real.
+ * `GOVERNANCE_ISSUE_REFS`, y por cada identificador de hallazgo fuera de los archivos que definen la
+ * convención. Exportada para test — `checkIssueRefs()` la aplica sobre el árbol real.
  */
 export function findIssueRefProblems(relPath: string, content: string): string[] {
 	// Tres formas de nombrar un issue: `#1234`, la URL de GitHub (o `issues/1234` suelto) y `GH-1234`.
@@ -61,6 +81,15 @@ export function findIssueRefProblems(relPath: string, content: string): string[]
 					`Si el trabajo ya cerró, borrá la mención y reescribí la oración para que se sostenga sola; si es ` +
 					`un issue abierto que la documentación necesita nombrar, sumalo a GOVERNANCE_ISSUE_REFS ` +
 					`(scripts/check-issue-refs.ts) con su motivo.`,
+			);
+		}
+		if (FINDING_CONVENTION_DOCS.has(relPath)) return;
+
+		for (const match of line.matchAll(FINDING_REF)) {
+			problems.push(
+				`✗ ${relPath}:${i + 1} — menciona ${match[1]}, un identificador de hallazgo de review. ` +
+					`Son efímeros: viven en workspace/ (gitignoreado) y mueren con la sesión que los emitió. ` +
+					`Escribí lo que el hallazgo enseñó —qué invariante se sostiene y por qué—, sin nombrarlo.`,
 			);
 		}
 	});

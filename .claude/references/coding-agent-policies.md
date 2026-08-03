@@ -211,6 +211,8 @@ El mismo principio rige la prosa de estos documentos: **describen la conducta vi
 
 **Enforced por el gate `check-agents`.** `scripts/check-issue-refs.ts` marca toda mención a un issue en estos documentos —por numeral (`#<id>`), por URL de GitHub o como `GH-<id>`— que no figure en su allowlist `GOVERNANCE_ISSUE_REFS` — la lista de punteros de gobernanza vigentes, cada uno con su motivo. Al cerrarse uno de esos issues, se borra su entrada y se limpian sus menciones en el mismo PR. El check es **offline**: no consulta el estado real en GitHub, así que la allowlist es la fuente de verdad y sacar una entrada es un acto deliberado y visible en el diff.
 
+El mismo check marca los **identificadores de hallazgo** (`R<n>`, `S<n>`) en estos documentos, con su propia allowlist por ruta: solo los archivos que **definen** la convención pueden nombrarlos. Cualquier otro que los cite los está usando como referencia a algo que ya no existe.
+
 ---
 
 ## Sección 4 — Preguntas aclaratorias
