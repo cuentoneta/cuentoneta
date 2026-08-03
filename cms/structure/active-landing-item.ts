@@ -1,11 +1,12 @@
 import { StarIcon } from '@sanity/icons/Star';
+import type { StructureBuilder, StructureResolverContext } from 'sanity/structure';
 
 import { LandingPageListPane } from '../components/LandingPageListPane';
 import { API_VERSION, resolveActiveLandingId } from '../utils/landing-page';
 
 // Abre directo la landing activa (misma resolución que sirve producción);
 // ante error o ausencia, cae al pane, que muestra su propio estado.
-export const activeLandingItem = (S, context) =>
+export const activeLandingItem = (S: StructureBuilder, context: StructureResolverContext) =>
 	S.listItem()
 		.title('Landing activa')
 		.id('active-landing')
