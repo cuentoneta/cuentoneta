@@ -25,9 +25,16 @@ describe('resolveActiveLandingId', () => {
 		await resolveActiveLandingId(client, new Date(2025, 10, 14));
 
 		expect(client.query).toBe(ACTIVE_LANDING_ID_QUERY);
-		// El esperado se deriva de la implementación única del kernel, no de un literal: si el alias
-		// @utils deja de resolver o la fórmula cambia, el fallo aparece acá y no recién en el Studio.
-		expect(client.params).toEqual({ slug: buildWeekSlug(new Date(2025, 10, 14)) });
+		expect(client.params).toEqual({ slug: '2025-46' });
+	});
+
+	it('falls back to the current date when none is given', async () => {
+		// El único call site de producción (el ítem de Desk Structure) invoca sin fecha.
+		const client = new SpyGroqClient('landing-page-current');
+
+		await resolveActiveLandingId(client);
+
+		expect(client.params).toEqual({ slug: buildWeekSlug(new Date()) });
 	});
 
 	it('returns the id resolved by the client', async () => {
