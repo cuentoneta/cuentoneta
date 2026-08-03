@@ -1,6 +1,25 @@
 import { describe, expect, it } from 'vitest';
 
-import { validateHistoricalDate } from './validations';
+import { localizedRequire, validateHistoricalDate } from './validations';
+
+describe('localizedRequire', () => {
+	it('accepts a value the editor loaded', () => {
+		expect(localizedRequire('Onoff')).toBe(true);
+		expect(localizedRequire({ _ref: 'image-abc' })).toBe(true);
+	});
+
+	it('rejects the values Sanity uses for an empty field', () => {
+		expect(localizedRequire(undefined)).toBe('Este campo es requerido');
+		expect(localizedRequire(null)).toBe('Este campo es requerido');
+		expect(localizedRequire('')).toBe('Este campo es requerido');
+	});
+
+	it('rejects 0 as well: the rule checks truthiness, not presence', () => {
+		// Se fija el comportamiento vigente, no se corrige: hoy solo la usan campos de imagen y de texto,
+		// donde el 0 no aparece. Si alguna vez valida un número, hay que revisar esta rama.
+		expect(localizedRequire(0)).toBe('Este campo es requerido');
+	});
+});
 
 describe('validateHistoricalDate', () => {
 	it('accepts an empty value: the field is optional', () => {

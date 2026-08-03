@@ -280,7 +280,7 @@ Reglas del patrón:
 
 ## Segunda config de Vitest: el Studio (`cms/`)
 
-`cms/` (el Studio de Sanity) tiene su **propia config de Vitest** (`cms/vitest.config.ts`), independiente de la de la app. Se corre con `pnpm sanity:test` desde la raíz (o `pnpm -C cms test`), y es el paso `Test Sanity Studio` del gate `studio-build` — ver [Comandos comunes](../../CLAUDE.md#comandos-comunes).
+`cms/` (el Studio de Sanity) tiene su **propia config de Vitest** (`cms/vitest.config.ts`), independiente de la de la app. Se corre con `pnpm sanity:test` desde la raíz (o `pnpm -C cms test`), y es el paso `Test Sanity Studio` del gate `studio-build` — junto con el paso previo `Typecheck Sanity Studio` (`pnpm sanity:typecheck` / `pnpm -C cms run typecheck`) — ver [Comandos comunes](../../CLAUDE.md#comandos-comunes).
 
 ### Qué cubre y qué no
 
@@ -295,7 +295,7 @@ Cubre **lógica Node pura del Studio**: resolvers de Desk Structure, utils que c
 - Los specs de `cms/` **importan `describe`/`it`/`expect` de `vitest` explícitamente** (`cms/vitest.config.ts` no declara `globals`), a diferencia de los specs de la app.
 - **No usan `@test-utils`.** Esos wrappers viven en el árbol de `node_modules` de la app; arrastrarlos a `cms/` acoplaría dos proyectos pnpm por casos que se resuelven con diez líneas.
 - Los dobles se escriben **a mano**, siguiendo la misma taxonomía por comportamiento del resto del repo — `Stub*`/`Fake*`/`Spy*`, **nunca** `Mock*` (ver [Naming](../../CLAUDE.md#naming)). El ejemplo vigente es `SpyGroqClient` en `cms/utils/landing-page.spec.ts`: registra la query y los params con los que se lo invocó, sin depender de `vi.fn()`.
-- `cms/` **no** está cubierto por ESLint (el script `lint` de la raíz corre sobre `./src ./e2e ./resources`) ni por `tsconfig.typecheck.json`. Sin esas dos redes, los specs de `cms/` se mantienen deliberadamente simples: sin abstracciones de test propias, dobles chicos y anotados a mano.
+- `cms/` **sí** está cubierto por ESLint (el target `eslint:lint` de `project.json` corre sobre `./src ./e2e ./resources ./cms`) y por su propio type-check (`cms/tsconfig.typecheck.json`, dentro del gate `studio-build`). Lo que sigue sin tener es `@test-utils`: los specs de `cms/` se mantienen deliberadamente simples, sin abstracciones de test propias y con dobles chicos anotados a mano.
 
 ```typescript
 import { describe, expect, it } from 'vitest';
@@ -328,21 +328,22 @@ describe('resolveActiveLandingId', () => {
 
 ### El kernel (`@models`/`@utils`) también es consumible desde `cms/`
 
-El kernel compartido de paths (`@models/*`, `@utils/*` — ver [Aliases de paths](../../CLAUDE.md#resumen-del-proyecto)) no es exclusivo de `src/`: el Studio también lo consume (p. ej. `cms/utils/landing-page.ts` importa `buildWeekSlug` de `@utils/week-slug.utils`). Como `cms/` es un proyecto pnpm standalone con su propio tooling, el alias hay que declararlo en **tres** lugares independientes, cada uno con su propio resolutor:
+El kernel compartido de paths (`@models/*`, `@utils/*` — ver [Aliases de paths](../../CLAUDE.md#resumen-del-proyecto)) no es exclusivo de `src/`: el Studio también lo consume (p. ej. `cms/utils/landing-page.ts` importa `buildWeekSlug` de `@utils/week-slug.utils`). Como `cms/` es un proyecto pnpm standalone con su propio tooling, el alias hay que declararlo en **cuatro** lugares independientes, cada uno con su propio resolutor:
 
-| Lugar                  | Quién lo lee                        | Por qué no alcanza con uno solo                                                      |
-| ---------------------- | ----------------------------------- | ------------------------------------------------------------------------------------ |
-| `cms/sanity.cli.ts`    | El bundler del Studio (Vite/Rollup) | Es lo que hace que `sanity dev`/`sanity build` resuelvan el alias                    |
-| `cms/vitest.config.ts` | Vitest                              | Vitest **no** lee `sanity.cli.ts`; hay que repetir el `alias` ahí                    |
-| `cms/tsconfig.json`    | El editor / IntelliSense            | Solo aporta autocompletado y chequeo en el editor, no afecta al build ni a los tests |
+| Lugar                         | Quién lo lee                        | Por qué no alcanza con uno solo                                                                              |
+| ----------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `cms/sanity.cli.ts`           | El bundler del Studio (Vite/Rollup) | Es lo que hace que `sanity dev`/`sanity build` resuelvan el alias                                            |
+| `cms/vitest.config.ts`        | Vitest                              | Vitest **no** lee `sanity.cli.ts`; hay que repetir el `alias` ahí                                            |
+| `cms/tsconfig.json`           | El editor / IntelliSense y `tsc`    | Ya no es solo decorativo: `cms/tsconfig.typecheck.json` lo **extiende**, así que también alimenta el gate    |
+| `cms/tsconfig.typecheck.json` | `tsc` en el gate `studio-build`     | Extiende `tsconfig.json` pero agrega lo propio de una corrida de `tsc` (`noEmit`, `include` de `.tsx`, etc.) |
 
-Si falta declararlo en alguno de los tres, el síntoma es puntual a esa herramienta: el editor marca error pero el build pasa, o el build falla pero el editor no se queja, o los tests fallan al resolver el import mientras el resto compila bien.
+Si falta declararlo en alguno de los cuatro, el síntoma es puntual a esa herramienta: el editor marca error pero el build pasa, el build falla pero el editor no se queja, los tests fallan al resolver el import mientras el resto compila bien, o el step de type-check del gate `studio-build` corta el CI sin que nada local lo haya anticipado.
 
 #### Las dependencias del kernel también hay que aliasarlas
 
-Si el archivo del kernel que consume el Studio importa un paquete (`date-fns`, por ejemplo), ese bare import se resuelve **desde el archivo que lo importa** — o sea desde `src/**`, fuera de `cms/`. En CI eso falla: el job del Studio hace checkout propio e instala **solo** `cms/`, así que `<repo>/node_modules` no existe y Rollup corta el build con `Failed to resolve import`.
+Si el archivo del kernel que consume el Studio importa un paquete (`date-fns`, por ejemplo), ese bare import se resuelve **desde el archivo que lo importa** — o sea desde `src/**`, fuera de `cms/`. En CI eso falla: el job del Studio hace checkout propio e instala **solo** `cms/`, así que `<repo>/node_modules` no existe y Rollup corta el build con `Failed to resolve import`. Lo mismo le pasa a `tsc`: resuelve el bare import subiendo hasta el `node_modules` de la raíz, que en el job del Studio tampoco existe.
 
-Por eso cada paquete que el kernel importe tiene que estar declarado como dependencia de `cms/package.json` **y** aliasado a `cms/node_modules/<paquete>` en `sanity.cli.ts` y `vitest.config.ts`.
+Por eso cada paquete que el kernel importe tiene que estar declarado como dependencia de `cms/package.json` **y** aliasado a `cms/node_modules/<paquete>` en `sanity.cli.ts`, `vitest.config.ts` **y** en los `paths` de `cms/tsconfig.json` (heredados por `tsconfig.typecheck.json`).
 
 **Este es el modo de falla más traicionero de todo el cruce de límites, porque no se reproduce en local por ningún medio:** cualquier checkout del repo tiene un `node_modules` en la raíz, y la resolución sube hasta encontrarlo. Un worktree bajo `.claude/worktrees/` es todavía peor, porque sube hasta el `node_modules` del checkout principal aunque se esconda el propio. La única señal es el gate `studio-build` en CI.
 

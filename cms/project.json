@@ -30,9 +30,27 @@
 		},
 		"test": {
 			"executor": "nx:run-commands",
-			"inputs": ["default", "{workspaceRoot}/src/models/**/*", "{workspaceRoot}/src/utils/**/*"],
+			"inputs": [
+				"default",
+				"{workspaceRoot}/src/models/**/*",
+				"{workspaceRoot}/src/utils/**/*",
+				"{workspaceRoot}/resources/**/*"
+			],
 			"options": {
 				"command": "pnpm test",
+				"cwd": "cms"
+			}
+		},
+		"typecheck": {
+			"executor": "nx:run-commands",
+			"inputs": [
+				"default",
+				"{workspaceRoot}/src/models/**/*",
+				"{workspaceRoot}/src/utils/**/*",
+				"{workspaceRoot}/resources/**/*"
+			],
+			"options": {
+				"command": "pnpm typecheck",
 				"cwd": "cms"
 			}
 		},

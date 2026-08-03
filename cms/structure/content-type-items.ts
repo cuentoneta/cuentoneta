@@ -1,11 +1,12 @@
 import { createBulkActionsTable } from 'sanity-plugin-bulk-actions-table';
+import type { StructureBuilder, StructureResolverContext } from 'sanity/structure';
 import { filteredDocumentListItems } from 'sanity-plugin-singleton-management';
 
 import { landingPageListItem } from './landing-page-list-item';
 
 // Los tipos de documento no-singleton, planos (sin carpeta intermedia), con overrides: story usa la tabla
 // de acciones masivas y landingPage el pane con badge de activa.
-export const contentTypeItems = (S, context) =>
+export const contentTypeItems = (S: StructureBuilder, context: StructureResolverContext) =>
 	filteredDocumentListItems({ S, context }).map((collection) => {
 		if (collection.getId() === 'story') {
 			return createBulkActionsTable({ type: 'story', S, context, title: 'Cuentos' });
