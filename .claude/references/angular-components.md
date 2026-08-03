@@ -109,13 +109,18 @@ export class ImageProfileComponent {
 }
 ```
 
-**Rationale.** Tres razones, en orden de peso:
+**Rationale.** Dos razones:
 
 1. **Encapsulación.** Un mapa que solo tiene sentido para una clase es parte de esa clase. A nivel de módulo queda al alcance de cualquier cosa que se agregue después al archivo, y deja de estar claro quién lo gobierna.
 2. **Co-locación.** El único consumidor está a unas líneas; la constante de módulo obliga a saltar al tope del archivo para leer lo que la clase usa acá.
-3. **Momento de evaluación.** Un `const` de módulo se evalúa al cargar el módulo. Ante un ciclo de imports, la referencia puede leerse antes de su inicialización y quedar en la zona muerta temporal; un campo de instancia se evalúa al construir, cuando el ciclo ya se resolvió.
 
-Lo aplica la regla de ESLint **`component-config-in-class`**, que dispara ante un `const` de módulo **no exportado** con literal de objeto o de arreglo —incluido el envuelto en `Object.freeze(...)`— en un archivo que declare `@Component`, `@Directive` o `@Injectable`. Un `const` **exportado** es API compartida y queda fuera: si el valor se consume desde otro archivo, ya no es configuración privada de la clase.
+Lo aplica la regla de ESLint **`component-config-in-class`**, que dispara ante un `const` de módulo **no exportado** con literal de objeto o de arreglo —incluido el envuelto en `Object.freeze(...)`, `as const`, `as Foo` o `satisfies Foo`— en un archivo que declare `@Component`, `@Directive` o `@Injectable`.
+
+Quedan fuera tres casos:
+
+- Un `const` **exportado**: es API compartida, y si se consume desde otro archivo ya no es configuración privada de la clase.
+- El **sustituto de `enum`** que exigen las [restricciones duras](../../CLAUDE.md#restricciones-duras-hard-constraints) — `Object.freeze({...} as const)` con su `type` homónimo derivado por `typeof`—, porque un alias de tipo no puede derivarse de un campo de instancia y el `const` necesita scope de módulo. La regla lo detecta por esa derivación.
+- Los `*.spec.ts` y `*.stories.ts`, cuyos componentes host y fixtures de módulo son datos del test, no configuración de una clase.
 
 ## Inputs / outputs / queries con signals
 
