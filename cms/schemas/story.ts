@@ -2,16 +2,7 @@ import { DocumentTextIcon } from '@sanity/icons/DocumentText';
 import { resource } from './resourceType';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { audioRecording, pdfLink, spaceRecording, spotifyPodcastEpisode, youtubeVideo } from './media-sources';
-
-// Shape mínimo de Portable Text que este schema recorre. Se declara acá en vez de importarlo de
-// @portabletext/*, que no es dependencia del Studio: lo único que se lee es el texto de los spans.
-type PortableTextBlock = { children: { text: string }[] };
-
-// Los campos del preview llegan ausentes mientras el editor no los cargó, así que el vacío es un caso
-// esperado y no una condición de borde a chequear en cada call site.
-function toPlainText(blocks: PortableTextBlock[] | undefined): string {
-	return (blocks ?? []).map((block) => block.children[0].text).join('');
-}
+import { type PreviewTextBlock, toPlainText } from '../utils/preview-text';
 
 // Placeholder por defecto del dataset `production`; las historias nuevas y las existentes (vía migración) lo usan
 // hasta que el equipo editorial cargue una imagen propia.
@@ -97,17 +88,19 @@ export default defineType({
                     "blockContentParagraphs": *[_type == 'story' && _id == ^._id][0]{ body }
                 `,
 				reduceQueryResult: (result: {
-					draft?: { blockContentParagraphs: { body: PortableTextBlock[] } };
-					published: { blockContentParagraphs: { body: PortableTextBlock[] } };
+					draft?: { blockContentParagraphs: { body: PreviewTextBlock[] } };
+					published: { blockContentParagraphs: { body: PreviewTextBlock[] } };
 				}) => {
 					const textBody = result.draft
 						? result.draft.blockContentParagraphs.body
 						: result.published.blockContentParagraphs.body;
 
-					const plainTextParagraphs = textBody.map((x) => x.children[0].text);
+					// Un párrafo con negritas o enlaces se parte en varios spans: contarlos todos, no solo el
+					// primero, que era lo que hacía antes y subestimaba el tiempo de lectura.
+					const plainTextParagraphs = textBody.map((paragraph) => toPlainText([paragraph]));
 					const wordCount = plainTextParagraphs
 						.map((paragraph) => paragraph.split(' ').length)
-						.reduce((previous, current) => previous + current);
+						.reduce((previous, current) => previous + current, 0);
 
 					return Math.ceil(wordCount / 200);
 				},
@@ -127,7 +120,7 @@ export default defineType({
 							text: 'text',
 							reference: 'reference',
 						},
-						prepare({ text, reference }: { text?: PortableTextBlock[]; reference?: PortableTextBlock[] }) {
+						prepare({ text, reference }: { text?: PreviewTextBlock[]; reference?: PreviewTextBlock[] }) {
 							return {
 								title: toPlainText(text),
 								subtitle: toPlainText(reference),
