@@ -99,7 +99,7 @@ Pushear la rama está bien. También lo está abrir un **PR en borrador** (`gh p
 La licencia se concede bajo tres condiciones, las tres verificables:
 
 1. El PR se crea con `--draft` y **permanece** en borrador hasta que la review local terminó y sus hallazgos Críticos tienen disposición.
-2. `gh pr ready` no se ejecuta con un Crítico sin disposición ni con un check de CI en rojo.
+2. `gh pr ready` no se ejecuta con un Crítico sin disposición, ni mientras algún check de CI no esté **verde** — rojo, pendiente, cancelado o ausente cuentan por igual.
 3. La review local corre igual y completa: el borrador no la reemplaza, no la acorta y no cambia qué se revisa.
 
 Marcar listo para review un PR sin la pasada de review local es bloqueante, exactamente como antes lo era abrirlo.
