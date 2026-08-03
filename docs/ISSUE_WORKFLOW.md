@@ -19,6 +19,7 @@ flowchart TD
         F0A["Entorno: worktree o raíz"] --> F0B["Datos del issue: número, título, body, milestone, labels, parent"]
         F0B --> F0C["Base de la rama: develop o apilada"]
         F0C --> F0D["Señales de reanudación: rama, PLAN, review, commits, PR"]
+        F0D --> F0E["Barrido de worktrees: reporta mergeados y huérfanos"]
     end
 
     F0 --> Q0{"¿Hay trabajo previo?"}
@@ -130,4 +131,6 @@ Los dos advisors de la Fase 2 corren **antes** de planificar y en paralelo entre
 
 El flujo puede correr en un worktree propio bajo `.claude/worktrees/<number>` o en el working tree principal. La Fase 0 lo resuelve —por declaración explícita, por detección de un worktree previo, o preguntando— y esa decisión rige para toda la sesión, incluidos los subagentes delegados.
 
-El worktree aísla la sesión de cualquier otra corriendo en paralelo, a cambio de un setup propio (`pnpm install` + `pnpm run config`). Se mantiene hasta que el PR mergee, para permitir reanudar; la limpieza se ofrece al reanudar un issue cuyo PR ya está mergeado.
+El worktree aísla la sesión de cualquier otra corriendo en paralelo, a cambio de un setup propio (`pnpm install` + `pnpm run config`). Se mantiene hasta que el PR mergee, para permitir reanudar.
+
+La limpieza tiene dos vías. La **principal** es el barrido de la Fase 0 (`pnpm worktrees:sweep`), que corre en cada sesión y ve lo que dejó cualquiera, no solo la propia — el pasivo se acumula porque el merge es un evento humano posterior a la sesión, así que nadie está mirando cuando ocurre. La **secundaria** es la que se ofrece al reanudar un issue cuyo PR ya mergeó, que solo cubre ese caso. Ninguna de las dos borra sin confirmación explícita, y el barrido nunca borra un directorio huérfano: lo enumera, porque puede conservar artefactos de sesión que no están en ningún otro lado.

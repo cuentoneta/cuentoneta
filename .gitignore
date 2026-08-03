@@ -75,6 +75,10 @@ Thumbs.db
 # Artefactos del skill issue-workflow (workspace/<numero>/{PLAN,CODE_REVIEW,SECURITY_REVIEW}.md por issue; ruta plana como fallback ad-hoc)
 /workspace
 
+# Donde el barrido de worktrees deposita los artefactos que rescata antes de una remoción, para que
+# no se pierdan con el directorio que los contenía.
+/workspace-archivado
+
 # Grabaciones sueltas de referencia en scripts/
 scripts/*.m4a
 scripts/*.mp4
