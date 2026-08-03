@@ -6,12 +6,12 @@ import { ACTIVE_LANDING_ID_QUERY, resolveActiveLandingId } from './landing-page'
 // Doble escrito a mano en vez de vi.fn(): los wrappers de @test-utils viven en el árbol de la app y
 // arrastrarlos acá sería acoplar dos proyectos pnpm por un caso que se resuelve con diez líneas.
 class SpyGroqClient {
-	query: string | null = null;
-	params: Record<string, unknown> | null = null;
+	public query: string | null = null;
+	public params: Record<string, unknown> | null = null;
 
 	constructor(private readonly result: unknown) {}
 
-	fetch<T>(query: string, params?: Record<string, unknown>): Promise<T> {
+	public fetch<T>(query: string, params?: Record<string, unknown>): Promise<T> {
 		this.query = query;
 		this.params = params ?? null;
 		return this.result instanceof Error ? Promise.reject(this.result) : Promise.resolve(this.result as T);
