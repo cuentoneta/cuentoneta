@@ -92,7 +92,17 @@ Si el cambio tocó muchos archivos, `git status --short` y armar la lista es bar
 
 ### "La code review puede esperar hasta después de abrir el PR"
 
-Prohibido. La review local del agente (p. ej. el agente `code-reviewer` / skill de code review) corre **antes de abrir el PR**, para que quienes revisen el PR vean código ya pulido. Pushear la rama está bien; abrir el PR antes de la review local, no.
+Prohibido. La review local del agente (p. ej. el agente `code-reviewer` / skill de code review) corre **antes de pedir la review humana**. El evento regulado es el que convoca a otra persona: `gh pr ready`, o abrir el PR directamente en estado listo.
+
+Pushear la rama está bien. También lo está abrir un **PR en borrador** (`gh pr create --draft`), que no convoca a nadie: GitHub no solicita reviewers, no notifica codeowners y bloquea el merge. El borrador existe para una sola cosa — que la integración continua empiece a correr mientras la review local sucede, en vez de después.
+
+La licencia se concede bajo tres condiciones, las tres verificables:
+
+1. El PR se crea con `--draft` y **permanece** en borrador hasta que la review local terminó y sus hallazgos Críticos tienen disposición.
+2. `gh pr ready` no se ejecuta con un Crítico sin disposición ni con un check de CI en rojo.
+3. La review local corre igual y completa: el borrador no la reemplaza, no la acorta y no cambia qué se revisa.
+
+Marcar listo para review un PR sin la pasada de review local es bloqueante, exactamente como antes lo era abrirlo.
 
 ### "Documentemos el edge case en un comentario y listo"
 
@@ -285,7 +295,7 @@ El principio: **el documento es canónico; la memoria es refuerzo**. Si los dos 
 
 - Una descripción de PR que contenga cualquiera de los framings prohibidos es bloqueante. Pedí cambios citando este documento por sección.
 - Un PR que omite tests sobre la base de "es chico" es bloqueante. Pedí los tests faltantes.
-- Un PR abierto sin la pasada de review local (cuando el flujo la especifica) es bloqueante. Pedí la pasada antes de mergear.
+- Un PR **marcado listo para review** sin la pasada de review local (cuando el flujo la especifica) es bloqueante. Pedí la pasada antes de mergear. Un PR **en borrador** no: ahí la review local puede estar corriendo todavía, que es para lo que existe el borrador.
 - Un componente nuevo sin su `*.stories.ts` es bloqueante, salvo que cumpla las cuatro condiciones de la excepción por delegación total (Sección 2). Verificalas contra la plantilla, no contra la descripción del PR; si alguna no se cumple, pedí la story.
 
 ### Gates de CI
@@ -311,4 +321,4 @@ Las definiciones de agentes (`.claude/agents/*.md`) enuncian la regla en una lí
 
 ---
 
-_Última actualización: 2026-08-03. Este documento evoluciona por enmiendas (ver Sección 7); su historial detallado —qué se agregó, cuándo y por qué— vive en el log de git y en los PRs. Cambios mayores: versión inicial (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) y sus ampliaciones sobre visibilidad de API y reemplazos canónicos; regla de story intercambiable para estados de carga; regla de child issues reales en epics; "Gates de CI" convertida a remisión a CLAUDE.md; prohibición de `git add -A`; Sección 8 (regla anti-`cd`) consolidada desde las copias de los agentes; la política de menciones a issues en la documentación de agentes (Sección 3); la regla de títulos de issue sin prefijo de categoría (Sección 2); la generalización de los ejemplos que citaban issues reales; el enforcement de esas menciones en el gate `check-agents`; la excepción de `TODO` con issue abierto en comentarios de código (Sección 3) junto con el versionado de su hook; y el enforcement de la prohibición de identificadores de hallazgo sobre mensajes de commit y cuerpo de PR (hook `commit-msg` + gate `check-findings`), que cierra el hueco que dejaba la cobertura previa solo sobre comentarios de código y documentación de agentes; y la excepción por delegación total a la exigencia de story (Sección 2), junto con la precisión de que el estado de carga lo cataloga quien renderiza el esqueleto._
+_Última actualización: 2026-08-03. Este documento evoluciona por enmiendas (ver Sección 7); su historial detallado —qué se agregó, cuándo y por qué— vive en el log de git y en los PRs. Cambios mayores: versión inicial (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) y sus ampliaciones sobre visibilidad de API y reemplazos canónicos; regla de story intercambiable para estados de carga; regla de child issues reales en epics; "Gates de CI" convertida a remisión a CLAUDE.md; prohibición de `git add -A`; Sección 8 (regla anti-`cd`) consolidada desde las copias de los agentes; la política de menciones a issues en la documentación de agentes (Sección 3); la regla de títulos de issue sin prefijo de categoría (Sección 2); la generalización de los ejemplos que citaban issues reales; el enforcement de esas menciones en el gate `check-agents`; la excepción de `TODO` con issue abierto en comentarios de código (Sección 3) junto con el versionado de su hook; y el enforcement de la prohibición de identificadores de hallazgo sobre mensajes de commit y cuerpo de PR (hook `commit-msg` + gate `check-findings`), que cierra el hueco que dejaba la cobertura previa solo sobre comentarios de código y documentación de agentes; y la excepción por delegación total a la exigencia de story (Sección 2), junto con la precisión de que el estado de carga lo cataloga quien renderiza el esqueleto; y el corrimiento del evento que regula la review local, de abrir el PR a pedir la review humana, que habilita el PR en borrador._
