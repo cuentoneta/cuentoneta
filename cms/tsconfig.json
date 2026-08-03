@@ -3,9 +3,20 @@
 	// quien escribe código del Studio vea los mismos errores que después va a ver el CI. La transpilación
 	// real la siguen haciendo Babel y el bundler; de acá no se emite nada.
 	"include": ["./**/*.ts", "./**/*.tsx"],
+	"exclude": ["node_modules", "dist"],
 	"compilerOptions": {
+		"target": "es2022",
+		"lib": ["dom", "es2022"],
+		"module": "esnext",
+		"moduleResolution": "bundler",
 		"jsx": "react",
 		"strict": true,
+		"skipLibCheck": true,
+		"noEmit": true,
+		"isolatedModules": true,
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"types": ["node"],
 		"paths": {
 			"@models/*": ["../src/models/*"],
 			"@utils/*": ["../src/utils/*"],
