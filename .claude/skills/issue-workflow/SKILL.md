@@ -64,7 +64,33 @@ Con `develop`, `<base>` resuelve a `develop`/`origin/develop` **igual que sin ap
 
 ### Señales de reanudación
 
-Con el entorno ya resuelto (y el cwd ya en el worktree si corresponde), relevar con el número de issue extraído de la URL:
+Las sondas van en **dos batches**, no en una llamada por sonda. La línea divisoria está donde está la dependencia real: `git worktree list`, `git branch` y `git rev-list` operan sobre el repo compartido y `gh` sobre el remoto —ninguna depende del cwd—, pero la existencia de los artefactos **sí** depende, porque en modo worktree viven adentro del worktree.
+
+Tres reglas que preservan el diagnóstico:
+
+- **Separar con `;`, nunca con `&&`.** Una sonda que falla —`gh` sin red, por caso— no debe ocultar el resultado de las demás. Cada tramo lleva un marcador de sección para que la salida siga siendo atribuible.
+- **El conteo de `[ ]` vs. `[x]` de `PLAN.md` no entra al comando:** se resuelve con la herramienta de búsqueda **en el mismo turno** que el batch 2.
+- **La sonda de apilado no se batchea:** depende del body que trae el batch 1, y solo corre ante señal en el body.
+
+Relevar con el número de issue extraído de la URL:
+
+**Batch 1 — antes de `EnterWorktree`.** Junto con los "Datos del issue" de arriba, en una sola llamada:
+
+```bash
+git worktree list; echo "--- rama ---"; git branch --list "feat/<number>-*"
+echo "--- issue ---"; gh issue view <issue-url> --json number,title,body,milestone,labels
+echo "--- parent ---"; gh api graphql -f query='…' --jq '.data.repository.issue.parent.number // empty'
+```
+
+**Batch 2 — después de `EnterWorktree`**, con la rama y `<base>` ya resueltas:
+
+```bash
+ls workspace/<number> 2>/dev/null; echo "--- commits ---"; git rev-list --count <base>..feat/<number>-<kebab>
+echo "--- pr ---"; gh pr list --head feat/<number>-<kebab> --state open --json number,isDraft,url
+echo "--- merged ---"; gh pr list --head feat/<number>-<kebab> --state merged --json number
+```
+
+Lo que cada sonda responde:
 
 1. `git branch --list 'feat/<number>-*'` — ¿existe la rama?
 2. `workspace/<number>/PLAN.md` — ¿existe el plan? Si existe, contar sus marcadores de paso `[ ]` vs. `[x]`.
@@ -181,6 +207,16 @@ En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
    - **`architecture-advisor`** solo ante un cambio **estructuralmente significativo**: módulo nuevo bajo `src/api/modules/<dominio>/`, feature/provider/interfaz `-api` nuevo en el frontend, bounded context nuevo, o cambio de límites de módulo / dirección de dependencias. Un ajuste localizado —UI, copy, estilos, un campo puntual— **no** lo amerita: el `plan-writer` ya carga las mismas referencias según el diff y su pasada basta.
 2. **Delegar en paralelo los advisors que matcheen** (ambas delegaciones en el mismo turno si aplican los dos; son independientes y devuelven su evaluación como **texto**, no como archivo — no tienen `Write`). En modo worktree, adjuntar la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales". Capturar su salida.
 3. Delegar al agente **`plan-writer`** pasándole la URL del issue, su descripción (el **body** recolectado en la Fase 0 → "Datos del issue"), el nombre de rama, la ruta de salida completa (`workspace/<number>/PLAN.md`) y **la evaluación de los advisors que corrieron en el paso 2**. Los advisors los corre el orquestador —no el `plan-writer`, que no puede delegar en subagentes— y su aporte entra en el prompt del plan. En modo worktree, adjuntar la nota de delegación. Si la Fase 0 reanudó acá con un plan ya escrito, saltear los pasos 1-3 (los advisors ya corrieron y su aporte vive en el plan) y pasar directo al resumen.
+
+   **Excepción — escribir el plan inline.** El orquestador puede redactar `PLAN.md` él mismo, sin delegar, cuando se cumplen **las cuatro** condiciones:
+
+   1. El alcance declarado del issue no toca `src/**` ni `cms/**` — solo `.claude/**`, `docs/**` o configuración de tooling sin efecto en runtime.
+   2. Ningún advisor del paso 1 matcheó.
+   3. El issue enumera sus archivos de alcance y el orquestador **ya los leyó en esta sesión**. Es la condición que hace real el ahorro: si hay que abrirlos ahora, el subagente los lee en su propia ventana y delegar sale más barato.
+   4. El orquestador ya cargó las mismas referencias que carga el `plan-writer` para ese tipo de cambio.
+
+   El artefacto y la pausa de aprobación **no cambian**: el plan se escribe igual en `workspace/<number>/PLAN.md` y se aprueba igual. Lo que se pierde es la exploración independiente —un segundo par de ojos que no arrastra los supuestos de la sesión—, así que el plan deja constancia de que se escribió inline. Ante la menor duda sobre si una condición se cumple, se delega: el costo de delegar de más es un spin-up, y el de delegar de menos es un plan escrito sobre supuestos no verificados.
+
 4. El plan-writer produce `workspace/<number>/PLAN.md`.
 5. Presentar un resumen breve al usuario (objetivo, enfoque, archivos afectados, decisiones clave).
 
@@ -214,9 +250,22 @@ No avanzar a la Fase 3 sin una respuesta "Aprobar".
 - Formato del mensaje: `[#<issue>] - <qué cambió y por qué>` (en español).
 - Un commit por cambio lógico distinto (p. ej. componente nuevo + spec = un commit; una story es otro commit si es otra preocupación).
 - Cada commit debe dejar el código **buildeable** (los gates de CI pasarían). Para no descubrir un commit roto recién en la Fase 4 con todo acumulado, antes de cada commit que toque código TS/runtime correr una **verificación barata** (un subconjunto rápido, **no** la suite ni el resto de gates —eso sigue siendo la Fase 4—):
-  - **typecheck:** `pnpm typecheck` (en modo worktree, `pnpm exec tsc -p tsconfig.typecheck.json --noEmit` — ver [Modo worktree](#modo-worktree) → "Ajustes transversales").
-  - **specs afectados:** `pnpm exec vitest related --run $(git diff --name-only --cached)` — corre solo los `*.spec.ts` que importan los archivos staged; si `related` no rinde, los specs del módulo tocado.
-  - Los commits **solo-doc / solo-config de tooling** (sin efecto en runtime) saltean esta verificación.
+  Verificación y commit van **encadenados en una sola invocación**, no en tres turnos:
+
+  ```bash
+  if out=$(pnpm exec tsc -p tsconfig.typecheck.json --noEmit 2>&1 && pnpm exec vitest related --run $(git diff --name-only --cached) 2>&1); then
+    git commit -F workspace/<number>/commit-msg.txt
+  else
+    echo "$out"
+  fi
+  ```
+
+  - **La garantía no se pierde:** el `git commit` está dentro de la rama exitosa, así que un commit roto sigue siendo imposible. Se usa `if`/`else` y no `a && b || c` porque en esa forma un fallo del propio `git commit` imprimiría el log de una verificación que estuvo verde.
+  - **Silenciado en verde**, igual que la Fase 4: la verificación no vuelca nada al contexto cuando pasa. La salida de `git commit` sí queda visible — es corta y confirma el resultado.
+  - **El mensaje va por archivo, nunca `-m`:** `workspace/<number>/commit-msg.txt`, dentro del namespace del issue. Los mensajes en español llevan acentuación normal y `-m` la corrompe en Windows.
+  - **Sin `NX_DAEMON=false`:** son `pnpm exec` directos sobre `tsc` y `vitest`, no targets de Nx.
+  - **Cuándo no aplica:** los commits **solo-doc / solo-config de tooling** (sin efecto en runtime) saltean la verificación entera y commitean directo. La cadena tampoco aplica si el staging no tiene archivos TS — `vitest related` sin entradas relevantes no debe leerse como un pase.
+
 - Nunca mensajes no descriptivos ("WIP", "fix", "update").
 - Nunca `--amend`; crear commits nuevos tras fallos de los hooks de git — hoy son dos: `pre-commit` (formato) y `commit-msg` (rechaza un mensaje que cite un identificador de hallazgo de review).
 - **En modo raíz**, antes de cada commit confirmar la rama activa con `git branch --show-current` contra `feat/<number>-<kebab>`; si un subagente con Bash la cambió en el medio, re-checkoutear la rama correcta antes de commitear. En **modo worktree** se omite: `EnterWorktree` fija el cwd/rama del worktree y los subagentes lo heredan (ver [Modo worktree](#modo-worktree)).
