@@ -32,6 +32,12 @@ describe('findIssueRefsInComments — lo que bloquea', () => {
 		expect(findIssueRefsInComments(file, linea)).toEqual([linea]);
 	});
 
+	it('marca un issue de número bajo, que en un proyecto recién clonado son todos los que hay', () => {
+		const linea = '// Rediseñado en #7: antes usaba otra proyección';
+
+		expect(findIssueRefsInComments(file, linea)).toEqual([linea]);
+	});
+
 	it('devuelve todas las líneas ofensivas, no solo la primera', () => {
 		const added = '// viene de #1234\nconst x = 1;\n// y también de #5678';
 
@@ -53,10 +59,6 @@ describe('findIssueRefsInComments — lo que admite', () => {
 
 	it('no confunde el doble slash de una URL con un comentario', () => {
 		expect(findIssueRefsInComments(file, "const url = 'https://github.com/org/repo/issues/1234';")).toEqual([]);
-	});
-
-	it('no marca un número de menos de dos dígitos', () => {
-		expect(findIssueRefsInComments(file, '// el paso #3 del algoritmo')).toEqual([]);
 	});
 
 	it('no marca código sin comentario', () => {

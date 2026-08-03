@@ -121,7 +121,7 @@ Observaciones de seguridad y sugerencias de hardening.
 
 ### Numeración de hallazgos
 
-La columna **S#** numera de forma continua a través de las tres tablas (misma mecánica que la "Numeración de problemas" de [`code-reviewer.md`](code-reviewer.md)), con el prefijo `S` (S1, S2, …) para que un hallazgo de seguridad pueda citarse sin ambigüedad junto a los del `code-reviewer` (que van sin prefijo). La numeración **no** continúa la de `CODE_REVIEW.md`: ambos agentes corren en paralelo en la Fase 4 del skill `issue-workflow`, así que este agente no puede conocer en qué número terminó el reviewer.
+La columna **S#** numera de forma continua a través de las tres tablas (misma mecánica que la "Numeración de problemas" de [`code-reviewer.md`](code-reviewer.md)), con el prefijo `S` (S1, S2, …) para que un hallazgo de seguridad pueda citarse sin ambigüedad junto a los del `code-reviewer` (que llevan prefijo `R`). Ninguno de los dos usa `#`, que queda reservado para los issues de GitHub. La numeración **no** continúa la de `CODE_REVIEW.md`: ambos agentes corren en paralelo en la Fase 4 del skill `issue-workflow`, así que este agente no puede conocer en qué número terminó el reviewer.
 
 ### Veredicto
 
