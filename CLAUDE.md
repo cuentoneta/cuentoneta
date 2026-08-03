@@ -122,7 +122,7 @@ Reglas no negociables. Una violación requiere justificación explícita.
 
 ### Comentarios
 
-Comentar el **porqué no obvio**, nunca el **qué**. No restatear convenciones ya documentadas en `.claude/references/`, ni el código/tipos/nombres. El rationale de un cambio (qué reemplaza, contexto histórico) va al **commit/PR**, no inline. Detalle y ejemplos en [`coding-agent-policies.md`](.claude/references/coding-agent-policies.md) (Sección 3).
+Comentar el **porqué no obvio**, nunca el **qué**. No restatear convenciones ya documentadas en `.claude/references/`, ni el código/tipos/nombres. El rationale de un cambio (qué reemplaza, contexto histórico) va al **commit/PR**, no inline. Un comentario **no cita un issue**: las únicas excepciones son un `TODO` que nombra, en su misma línea, el issue **abierto** que lo destraba, y la justificación de una supresión de lint/TS. Detalle y ejemplos en [`coding-agent-policies.md`](.claude/references/coding-agent-policies.md) (Sección 3).
 
 ### Arquitectura (resumen)
 
@@ -142,6 +142,7 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 - **`.mcp.json`** (raíz, versionado): servidores MCP del equipo — **Sanity** (remoto `https://mcp.sanity.io`, OAuth; no requiere token en el archivo), **Figma** (remoto `https://mcp.figma.com/mcp`, OAuth; para desarrollo de componentes a partir del diseño) y **nx** (análisis del workspace). Sin secrets.
 - **`.claude/settings.json`** (versionado): permisos de equipo — `deny` de lectura/escritura/edición de `.env*` en la raíz y en cualquier subdirectorio (`**/.env*`, cubre `./.env` y `./cms/.env`), más bloqueo de su creación por shell (redirecciones `>`/`>>`, `tee`, `touch`, `cp`, `mv`); y una `allow` mínima (gates de CI con `pnpm` + inspección read-only de git/gh).
 - **`.claude/agents/*.md`** (versionado): un `description:` **no puede contener `: `** (dos puntos + espacio) sin comillas — YAML lo lee como un mapping anidado, el frontmatter queda inválido y el agente **no carga, sin emitir ningún error**. Usar un guion (`—`) en su lugar. Lo verifica el gate **`check-agents`** (`pnpm check:agents` → `scripts/check-claude-docs.ts`, que además valida las anclas a `CLAUDE.md`, las rutas citadas en las referencias y que ninguna nombre un issue —por numeral, URL o `GH-`— fuera de la allowlist de gobernanza); el fallo silencioso costó dos agentes caídos (#1874).
+- **Hook `PreToolUse` de `Edit`/`Write`** (versionado en `.claude/settings.json`): [`scripts/block-issue-refs-in-comments.ts`](scripts/block-issue-refs-in-comments.ts) rechaza escribir un comentario de código bajo `src/` que cite un issue, salvo las dos excepciones de [Comentarios](#comentarios). Es una **ayuda local, no un gate**: solo ve el texto que la herramienta agrega, no lo ya commiteado ni lo escrito por fuera.
 - **`.claude/settings.local.json`** y **`.claude/worktrees/`**: **personales/locales**, gitignoreados. Las allowlists o MCP propios de cada quien van ahí — p. ej. el **Figma Dev Mode** local (`http://127.0.0.1:3845/sse`), que requiere la app de escritorio corriendo y es distinto del servidor remoto de Figma versionado en `.mcp.json`.
 
 ---

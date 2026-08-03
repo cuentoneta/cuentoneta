@@ -1,7 +1,7 @@
-// TODO(#1494): eliminar este stub al migrar a Vitest. Su browser mode provee un IntersectionObserver
-// real, lo que permitiría testear con layout real en vez de simular el callback a mano.
+// TODO: eliminar este stub al adoptar el browser mode de Vitest, que provee un IntersectionObserver
+// real y permitiría testear con layout real en vez de simular el callback a mano.
 //
-// Stub global de IntersectionObserver para tests (jsdom no lo implementa). Se instala en test-setup para
+// Stub global de IntersectionObserver para tests (el entorno de tests no lo implementa). Se instala en test-setup para
 // que cualquier componente que use IO se pueda renderizar. Captura el callback y las opciones del último
 // observer creado, y expone helpers para simular que ciertos elementos entran o no en el contenedor.
 let callback: IntersectionObserverCallback | undefined;

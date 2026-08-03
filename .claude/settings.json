@@ -5,6 +5,19 @@
 		"pr": "",
 		"sessionUrl": false
 	},
+	"hooks": {
+		"PreToolUse": [
+			{
+				"matcher": "Edit|Write",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "pnpm exec tsx \"$CLAUDE_PROJECT_DIR/scripts/block-issue-refs-in-comments.ts\""
+					}
+				]
+			}
+		]
+	},
 	"permissions": {
 		"deny": [
 			"Read(.env)",

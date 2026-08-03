@@ -2,11 +2,13 @@
  * Valida las **menciones a issues** en los `.md` bajo `.claude/`.
  *
  * Estos documentos describen la conducta vigente, no su historia: la procedencia vive en git y en los
- * PRs. Las únicas menciones legítimas son las dos excepciones acotadas de `coding-agent-policies.md`
- * Sección 3 — un **puntero de gobernanza** ("no generar X hasta que el issue cambie de estado") y la
- * **justificación de una supresión de lint/TS** enlazada —, ambas sobre issues abiertos. El resto
- * envejece en silencio: #1948 encontró quince menciones a trabajo ya cerrado, cuatro de ellas
- * afirmando un estado ("en review", "sigue pendiente") que el merge había vuelto falso semanas antes.
+ * PRs. Las únicas menciones legítimas acá son las que admite `coding-agent-policies.md` Sección 3 para
+ * la documentación de agentes — un **puntero de gobernanza** ("no generar X hasta que el issue cambie
+ * de estado") y la **justificación de una supresión de lint/TS** enlazada —, ambas sobre issues
+ * abiertos. (La misma sección admite además, en **comentarios de código**, un `TODO` que cite el issue
+ * que lo destraba; eso queda fuera del alcance de este check.) El resto envejece en silencio: un
+ * relevamiento encontró quince menciones a trabajo ya cerrado, cuatro de ellas afirmando un estado
+ * ("en review", "sigue pendiente") que el merge había vuelto falso semanas antes.
  *
  * El check es **offline y determinista**: en vez de preguntarle a la API de GitHub por el estado de
  * cada número —lo que ataría el gate a la red, al rate limit y a tener `gh` autenticado en local—,
