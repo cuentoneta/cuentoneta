@@ -275,6 +275,9 @@ export default [
 	{
 		name: 'component-config-in-class',
 		files: ['src/**/*.ts'],
+		// Los specs y las stories declaran componentes host de prueba, y sus fixtures de módulo
+		// (`const collectionMock: Storylist = {...}`) son datos del test, no configuración de una clase.
+		ignores: ['src/**/*.spec.ts', 'src/**/*.stories.ts'],
 		plugins: {
 			'custom-component-config': { rules: { 'component-config-in-class': componentConfigInClass } },
 		},
