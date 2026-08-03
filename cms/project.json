@@ -36,6 +36,14 @@
 				"cwd": "cms"
 			}
 		},
+		"typecheck": {
+			"executor": "nx:run-commands",
+			"inputs": ["default", "{workspaceRoot}/src/models/**/*", "{workspaceRoot}/src/utils/**/*"],
+			"options": {
+				"command": "pnpm typecheck",
+				"cwd": "cms"
+			}
+		},
 		"deploy": {
 			"executor": "nx:run-commands",
 			"dependsOn": ["build"],
