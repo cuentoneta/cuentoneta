@@ -419,18 +419,22 @@ jobs:
         working-directory: cms
         run: pnpm install --frozen-lockfile --ignore-scripts
 
-      # Los tests del Studio corren en este job y no en `test`: cms tiene su propio árbol de
-      # node_modules y su propia config de Vitest, y este job es el único que lo instala.
+      # El type-check y los tests del Studio corren en este job y no en `typecheck`/`test`: cms tiene su
+      # propio árbol de node_modules y sus propias configs, y este job es el único que lo instala.
+      # Van antes del build por costo: tardan segundos y el build, medio minuto.
+      - name: Typecheck Sanity Studio
+        working-directory: cms
+        run: pnpm run typecheck
+
       - name: Test Sanity Studio
         working-directory: cms
         run: pnpm test
 
-      # `sanity build` (bundler Vite/Rollup) es el gate autoritativo del Studio: un
-      # `tsc --noEmit` sobre cms/ no sirve (ruido de moduleResolution sobre node_modules,
-      # sin relación con errores reales de bundling). `--ignore-scripts` en el install
-      # saltea el postinstall que genera cms/.env (set-environment.ts), así que las vars
-      # que lee sanity.cli.ts se pasan acá explícitas, con fallback a los valores públicos
-      # por defecto (s4dbqkc5/development) para que corra igual en PRs de forks sin secrets.
+      # `sanity build` (bundler Vite/Rollup) es el gate autoritativo del *bundling* del Studio: Babel
+      # transpila sin chequear tipos, así que cubre una capa distinta de la del step de type-check.
+      # `--ignore-scripts` en el install saltea el postinstall que genera cms/.env (set-environment.ts),
+      # así que las vars que lee sanity.cli.ts se pasan acá explícitas, con fallback a los valores
+      # públicos por defecto (s4dbqkc5/development) para que corra igual en PRs de forks sin secrets.
       - name: Build Sanity Studio
         working-directory: cms
         run: pnpm exec sanity build

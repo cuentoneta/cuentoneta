@@ -1,4 +1,5 @@
 import { defineConfig } from 'sanity';
+import { requireEnv } from './utils/env';
 import deskStructure from './deskStructure';
 import schemas from './schemas/schema';
 
@@ -18,7 +19,7 @@ export default defineConfig([
 		title: 'PROD - La Cuentoneta',
 		basePath: '/production',
 		icon: LaunchIcon,
-		projectId: process.env.SANITY_STUDIO_PROJECT_ID,
+		projectId: requireEnv('SANITY_STUDIO_PROJECT_ID', process.env.SANITY_STUDIO_PROJECT_ID),
 		token: process.env.SANITY_STUDIO_API_TOKEN,
 		dataset: 'production',
 		plugins: [
@@ -41,7 +42,7 @@ export default defineConfig([
 		title: 'STAG - La Cuentoneta',
 		basePath: '/staging',
 		icon: LaunchIcon,
-		projectId: process.env.SANITY_STUDIO_PROJECT_ID,
+		projectId: requireEnv('SANITY_STUDIO_PROJECT_ID', process.env.SANITY_STUDIO_PROJECT_ID),
 		token: process.env.SANITY_STUDIO_API_TOKEN,
 		dataset: 'staging',
 		plugins: [
@@ -64,7 +65,7 @@ export default defineConfig([
 		title: 'DEV - La Cuentoneta',
 		basePath: '/development',
 		icon: RobotIcon,
-		projectId: process.env.SANITY_STUDIO_PROJECT_ID,
+		projectId: requireEnv('SANITY_STUDIO_PROJECT_ID', process.env.SANITY_STUDIO_PROJECT_ID),
 		dataset: 'development',
 		plugins: [
 			structureTool({
