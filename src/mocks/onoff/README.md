@@ -44,7 +44,7 @@ Archivos:
 Contraparte cruda del corpus de dominio `Story` — lo que devuelven las queries GROQ antes del ACL/mapper. La consume el backend (`src/api`).
 
 - **Story raw:** `<slug>.raw.mock.ts`, export `<slugCamelCase>RawStory: NonNullable<StoryBySlugQueryResult>`.
-- **Colecciones raw:** `<slug>.collection.raw.mock.ts` (p. ej. `el-inventario-de-las-pasiones`, `geometrias-del-desvelo`).
+- **Colecciones raw:** `<slug>.collection.raw.mock.ts` (p. ej. `geometrias-del-desvelo`).
 - **Agregadores:** `../onoff-raw-stories.mock.ts` (`onoffRawStoriesMock`, teasers `<slugCamelCase>RawTeaser`, `onoffRawTeasersMock`, `onoffRawNavTeasersMock`); `../onoff-raw-author.mock.ts` (`rawOnoffAuthor`, `rawOnoffAuthorTeaser`).
 
 ## Corpus raw: `LiteraryWork` (#1981)

@@ -1591,70 +1591,6 @@ export type StoriesByAuthorSlugQueryResult = Array<{
 }>;
 
 // Source: ../src/api/_queries/story.query.ts
-// Variable: storyNavigationTeasersByAuthorSlugQuery
-// Query: *[_type == 'story' && author->slug.current == $slug && !(_id in path('drafts.**'))]{    _id,    'slug': slug.current,    title,    'badLanguage': coalesce(badLanguage, false),    'body': [],    'originalPublication': coalesce(originalPublication, ''),    approximateReadingTime,    coverImage,    'mediaSources': coalesce(mediaSources[], []),    'resources': [],}|order(title asc)[$start...$end]
-export type StoryNavigationTeasersByAuthorSlugQueryResult = Array<{
-	_id: string;
-	slug: string;
-	title: string;
-	badLanguage: boolean;
-	body: Array<never>;
-	originalPublication: string;
-	approximateReadingTime: ComputedNumber;
-	coverImage: {
-		asset?: SanityImageAssetReference;
-		media?: unknown;
-		hotspot?: SanityImageHotspot;
-		crop?: SanityImageCrop;
-		_type: 'image';
-	};
-	mediaSources:
-		| Array<never>
-		| Array<
-				| {
-						title: string;
-						description: Markdown;
-						url: string;
-						_type: 'audioRecording';
-						_key: string;
-				  }
-				| {
-						title: string;
-						description: Markdown;
-						url: string;
-						_type: 'pdfLink';
-						_key: string;
-				  }
-				| {
-						title: string;
-						description: Markdown;
-						audioFile: AudioFile;
-						hostName: string;
-						hostAvatar?: HostAvatar;
-						date: string;
-						duration: string;
-						_type: 'spaceRecording';
-						_key: string;
-				  }
-				| {
-						title: string;
-						description: Markdown;
-						url: string;
-						_type: 'spotifyPodcastEpisode';
-						_key: string;
-				  }
-				| {
-						title: string;
-						description: Markdown;
-						videoId: string;
-						_type: 'youTubeVideo';
-						_key: string;
-				  }
-		  >;
-	resources: Array<never>;
-}>;
-
-// Source: ../src/api/_queries/story.query.ts
 // Variable: storyBySlugQuery
 // Query: *[_type == 'story' && slug.current == $slug && !(_id in path('drafts.**'))]{    _id,    'slug': slug.current,    title,     'badLanguage': coalesce(badLanguage, false),    'epigraphs': coalesce(epigraphs[]{        text,        'reference': coalesce(reference[], [])    }, []),    'body': coalesce(body, []),    'review': coalesce(review, []),    'originalPublication': coalesce(originalPublication, ''),    'publishedAt': coalesce(publishedAt, _createdAt),    'updatedAt': _updatedAt,    approximateReadingTime,    coverImage,    'mediaSources': coalesce(mediaSources[]{        ...,        _type == 'spaceRecording' => {            'audioUrl': audioFile.asset->url        }    }, []),    'resources': coalesce(resources[]{        title,        url,        resourceType->{            'slug': slug.current,            title,            shortDescription        }    }, []),    'tags': coalesce(tags[] -> {        title,        'slug': slug.current,        shortDescription    }, []),    'author': author-> {        _id,        'slug': slug.current,        name,        image,        nationality->,        biography,        bornOn,        bornOnYear,        diedOn,        diedOnYear,        'resources': coalesce(resources[]{            title,            url,            resourceType->{                'slug': slug.current,                title,                shortDescription            }        }, []),        'tags': []    }}[0]
 export type StoryBySlugQueryResult = {
@@ -2097,134 +2033,6 @@ export type StorylistTeasersQueryResult = Array<{
 }>;
 
 // Source: ../src/api/_queries/storylist.query.ts
-// Variable: storylistStoriesNavigationTeasersQuery
-// Query: *[_type == 'storylist' && slug.current == $slug && !(_id in path('drafts.**'))][0]{		_id,    'slug': slug.current,    title,    description,    featuredImage,    'storyCoverImages': coalesce(stories[0...3]->coverImage, []),    'tags': [],    'stories': coalesce(stories[$start...$end]->{    		_id,        'slug': slug.current,        title,        badLanguage,        'body': [],        originalPublication,        approximateReadingTime,        coverImage,        'resources': [],        'mediaSources': coalesce(mediaSources[], []),        'author': author->{            _id,            'slug': slug.current,            name,            image,            nationality->,            'biography': [],						bornOn,						bornOnYear,						diedOn,						diedOnYear,            'resources': [],        }    }, []),    'count': coalesce(count(stories), 0),    config,    'tabs': [],		'mediaSources': [],    }
-export type StorylistStoriesNavigationTeasersQueryResult = {
-	_id: string;
-	slug: string;
-	title: string;
-	description: BlockContent;
-	featuredImage: {
-		asset?: SanityImageAssetReference;
-		media?: unknown;
-		hotspot?: SanityImageHotspot;
-		crop?: SanityImageCrop;
-		_type: 'image';
-	} | null;
-	storyCoverImages:
-		| Array<{
-				asset?: SanityImageAssetReference;
-				media?: unknown;
-				hotspot?: SanityImageHotspot;
-				crop?: SanityImageCrop;
-				_type: 'image';
-		  }>
-		| Array<never>;
-	tags: Array<never>;
-	stories:
-		| Array<{
-				_id: string;
-				slug: string;
-				title: string;
-				badLanguage: boolean;
-				body: Array<never>;
-				originalPublication: string;
-				approximateReadingTime: ComputedNumber;
-				coverImage: {
-					asset?: SanityImageAssetReference;
-					media?: unknown;
-					hotspot?: SanityImageHotspot;
-					crop?: SanityImageCrop;
-					_type: 'image';
-				};
-				resources: Array<never>;
-				mediaSources:
-					| Array<never>
-					| Array<
-							| {
-									title: string;
-									description: Markdown;
-									url: string;
-									_type: 'audioRecording';
-									_key: string;
-							  }
-							| {
-									title: string;
-									description: Markdown;
-									url: string;
-									_type: 'pdfLink';
-									_key: string;
-							  }
-							| {
-									title: string;
-									description: Markdown;
-									audioFile: AudioFile;
-									hostName: string;
-									hostAvatar?: HostAvatar;
-									date: string;
-									duration: string;
-									_type: 'spaceRecording';
-									_key: string;
-							  }
-							| {
-									title: string;
-									description: Markdown;
-									url: string;
-									_type: 'spotifyPodcastEpisode';
-									_key: string;
-							  }
-							| {
-									title: string;
-									description: Markdown;
-									videoId: string;
-									_type: 'youTubeVideo';
-									_key: string;
-							  }
-					  >;
-				author: {
-					_id: string;
-					slug: string;
-					name: string;
-					image: {
-						asset?: SanityImageAssetReference;
-						media?: unknown;
-						hotspot?: SanityImageHotspot;
-						crop?: SanityImageCrop;
-						_type: 'image';
-					};
-					nationality: {
-						_id: string;
-						_type: 'nationality';
-						_createdAt: string;
-						_updatedAt: string;
-						_rev: string;
-						country: string;
-						flag: {
-							asset?: SanityImageAssetReference;
-							media?: unknown;
-							hotspot?: SanityImageHotspot;
-							crop?: SanityImageCrop;
-							_type: 'image';
-						};
-					};
-					biography: Array<never>;
-					bornOn: string | null;
-					bornOnYear: ComputedNumber | null;
-					diedOn: string | null;
-					diedOnYear: ComputedNumber | null;
-					resources: Array<never>;
-				};
-		  }>
-		| Array<never>;
-	count: number | 0;
-	config: {
-		showAuthors?: boolean;
-	} | null;
-	tabs: Array<never>;
-	mediaSources: Array<never>;
-} | null;
-
-// Source: ../src/api/_queries/storylist.query.ts
 // Variable: storylistQuery
 // Query: *[_type == 'storylist' && slug.current == $slug && !(_id in path('drafts.**'))][0]{    _id,    'slug': slug.current,    title,    description,    featuredImage,    'storyCoverImages': coalesce(stories[0...3]->coverImage, []),    'tags': coalesce(tags[] -> {        title,        'slug': slug.current,        shortDescription    }, []),    'stories': coalesce(stories[]->{        _id,        'slug': slug.current,        title,        badLanguage,        'body': coalesce(body[0...3], []),        originalPublication,        approximateReadingTime,        coverImage,        'resources': [],        'mediaSources': coalesce(mediaSources[], []),        'author': author->{            _id,            'slug': slug.current,            name,            image,            nationality->,            'biography': [],						bornOn,						bornOnYear,						diedOn,						diedOnYear,            'resources': [],        }    }, []),    'count': coalesce(count(stories), 0),    config,    'tabs': coalesce(tabs[], []),		'mediaSources': coalesce(mediaSources[]{			...,			_type == 'spaceRecording' => {				'audioUrl': audioFile.asset->url			}		}, []),    }
 export type StorylistQueryResult = {
@@ -2455,12 +2263,10 @@ declare module '@sanity/client' {
 		"\n*[_type == 'literaryWork' && !(_id in path('drafts.**')) && _id > $cursor\n  && (!defined(totalReadingTime) || count(content[!defined(readingTime)]) > 0)]\n| order(_id asc) [0...$pageSize] {\n    _id,\n    'slug': slug.current,\n    totalReadingTime,\n    'content': coalesce(content[]{ _key, body, readingTime }, [])\n}": ReadingTimeBackfillCandidatesQueryResult;
 		'{\n\t"stories": *[_type == "story" && !(_id in path(\'drafts.**\'))]{ "slug": slug.current, "lastmod": _updatedAt },\n\t"authors": *[_type == "author" && !(_id in path(\'drafts.**\'))]{ "slug": slug.current, "lastmod": _updatedAt },\n\t"storylists": *[_type == "storylist" && !(_id in path(\'drafts.**\'))]{ "slug": slug.current, "lastmod": _updatedAt }\n}': SitemapSlugsQueryResult;
 		"\n*[_type == 'story' && author->slug.current == $slug && !(_id in path('drafts.**'))][$start...$end]\n{\n    _id,\n    'slug': slug.current,\n    title,\n    'badLanguage': coalesce(badLanguage, false),\n    'body': coalesce(body[0...3], []),\n    'originalPublication': coalesce(originalPublication, ''),\n    approximateReadingTime,\n    coverImage,\n    'mediaSources': coalesce(mediaSources[], []),\n    'resources': coalesce(resources[]{\n        title,\n        url,\n        resourceType->{\n            'slug': slug.current,\n            title,\n            shortDescription\n        }\n    }, []),\n}|order(title asc)": StoriesByAuthorSlugQueryResult;
-		"\n*[_type == 'story' && author->slug.current == $slug && !(_id in path('drafts.**'))]\n{\n    _id,\n    'slug': slug.current,\n    title,\n    'badLanguage': coalesce(badLanguage, false),\n    'body': [],\n    'originalPublication': coalesce(originalPublication, ''),\n    approximateReadingTime,\n    coverImage,\n    'mediaSources': coalesce(mediaSources[], []),\n    'resources': [],\n}|order(title asc)[$start...$end]": StoryNavigationTeasersByAuthorSlugQueryResult;
 		"\n*[_type == 'story' && slug.current == $slug && !(_id in path('drafts.**'))]\n{\n    _id,\n    'slug': slug.current,\n    title, \n    'badLanguage': coalesce(badLanguage, false),\n    'epigraphs': coalesce(epigraphs[]{\n        text,\n        'reference': coalesce(reference[], [])\n    }, []),\n    'body': coalesce(body, []),\n    'review': coalesce(review, []),\n    'originalPublication': coalesce(originalPublication, ''),\n    'publishedAt': coalesce(publishedAt, _createdAt),\n    'updatedAt': _updatedAt,\n    approximateReadingTime,\n    coverImage,\n    'mediaSources': coalesce(mediaSources[]{\n        ...,\n        _type == 'spaceRecording' => {\n            'audioUrl': audioFile.asset->url\n        }\n    }, []),\n    'resources': coalesce(resources[]{\n        title,\n        url,\n        resourceType->{\n            'slug': slug.current,\n            title,\n            shortDescription\n        }\n    }, []),\n    'tags': coalesce(tags[] -> {\n        title,\n        'slug': slug.current,\n        shortDescription\n    }, []),\n    'author': author-> {\n        _id,\n        'slug': slug.current,\n        name,\n        image,\n        nationality->,\n        biography,\n        bornOn,\n        bornOnYear,\n        diedOn,\n        diedOnYear,\n        'resources': coalesce(resources[]{\n            title,\n            url,\n            resourceType->{\n                'slug': slug.current,\n                title,\n                shortDescription\n            }\n        }, []),\n        'tags': []\n    }\n}[0]": StoryBySlugQueryResult;
 		"\n*[_type == 'story' && slug.current in $slugs && !(_id in path('drafts.**'))]\n{\n    _id,\n    'slug': slug.current,\n    title,\n    'badLanguage': coalesce(badLanguage, false),\n    'epigraphs': [],\n    'body': [],\n    'review': [],\n    'originalPublication': coalesce(originalPublication, ''),\n    approximateReadingTime,\n    coverImage,\n    'mediaSources': coalesce(mediaSources[], []),\n    'resources': [],\n    'author': author-> {\n        _id,\n        'slug': slug.current,\n        name,\n        image,\n        nationality->,\n        'biography': [],\n        bornOn,\n        bornOnYear,\n        diedOn,\n        diedOnYear,\n        'resources': []\n    }\n}": StoriesBySlugsQueryResult;
 		"\n*[_type == 'story' && !(_id in path('drafts.**'))]\n[$start...$end]\n{\n    _id,\n    'slug': slug.current,\n    title,\n    'badLanguage': coalesce(badLanguage, false),\n    'body': [],\n    'review': [],\n    'originalPublication': coalesce(originalPublication, ''),\n    approximateReadingTime,\n    coverImage,\n    'mediaSources': coalesce(mediaSources[], []),\n    'resources': [],\n    'author': author-> {\n        _id,\n        'slug': slug.current,\n        name,\n        image,\n        nationality->,\n        'biography': [],\n        bornOn,\n        bornOnYear,\n        diedOn,\n        diedOnYear,\n        'resources': []\n    }\n}|order(title asc)": AllStoriesQueryResult;
 		"\n*[_type == 'storylist' && !(_id in path('drafts.**'))]{\n    _id,\n    'slug': slug.current,\n    title,\n    description,\n    featuredImage,\n    'tags': coalesce(tags[] -> {\n        title,\n        'slug': slug.current,\n        shortDescription\n    }, []),\n    'storyCoverImages': coalesce(stories[]->coverImage, []),\n    'count': coalesce(count(stories), 0),\n    config,\n    'tabs': [],\n\t\t'mediaSources': coalesce(mediaSources[], []),\n    }\n": StorylistTeasersQueryResult;
-		"\n*[_type == 'storylist' && slug.current == $slug && !(_id in path('drafts.**'))][0]\n{\n\t\t_id,\n    'slug': slug.current,\n    title,\n    description,\n    featuredImage,\n    'storyCoverImages': coalesce(stories[0...3]->coverImage, []),\n    'tags': [],\n    'stories': coalesce(stories[$start...$end]->{\n    \t\t_id,\n        'slug': slug.current,\n        title,\n        badLanguage,\n        'body': [],\n        originalPublication,\n        approximateReadingTime,\n        coverImage,\n        'resources': [],\n        'mediaSources': coalesce(mediaSources[], []),\n        'author': author->{\n            _id,\n            'slug': slug.current,\n            name,\n            image,\n            nationality->,\n            'biography': [],\n\t\t\t\t\t\tbornOn,\n\t\t\t\t\t\tbornOnYear,\n\t\t\t\t\t\tdiedOn,\n\t\t\t\t\t\tdiedOnYear,\n            'resources': [],\n        }\n    }, []),\n    'count': coalesce(count(stories), 0),\n    config,\n    'tabs': [],\n\t\t'mediaSources': [],\n    }\n": StorylistStoriesNavigationTeasersQueryResult;
 		"\n*[_type == 'storylist' && slug.current == $slug && !(_id in path('drafts.**'))][0]\n{\n    _id,\n    'slug': slug.current,\n    title,\n    description,\n    featuredImage,\n    'storyCoverImages': coalesce(stories[0...3]->coverImage, []),\n    'tags': coalesce(tags[] -> {\n        title,\n        'slug': slug.current,\n        shortDescription\n    }, []),\n    'stories': coalesce(stories[]->{\n        _id,\n        'slug': slug.current,\n        title,\n        badLanguage,\n        'body': coalesce(body[0...3], []),\n        originalPublication,\n        approximateReadingTime,\n        coverImage,\n        'resources': [],\n        'mediaSources': coalesce(mediaSources[], []),\n        'author': author->{\n            _id,\n            'slug': slug.current,\n            name,\n            image,\n            nationality->,\n            'biography': [],\n\t\t\t\t\t\tbornOn,\n\t\t\t\t\t\tbornOnYear,\n\t\t\t\t\t\tdiedOn,\n\t\t\t\t\t\tdiedOnYear,\n            'resources': [],\n        }\n    }, []),\n    'count': coalesce(count(stories), 0),\n    config,\n    'tabs': coalesce(tabs[], []),\n\t\t'mediaSources': coalesce(mediaSources[]{\n\t\t\t...,\n\t\t\t_type == 'spaceRecording' => {\n\t\t\t\t'audioUrl': audioFile.asset->url\n\t\t\t}\n\t\t}, []),\n    }\n": StorylistQueryResult;
 	}
 }

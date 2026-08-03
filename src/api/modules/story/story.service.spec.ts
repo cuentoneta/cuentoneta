@@ -8,7 +8,6 @@ import { elOdioRawTeaser } from '@mocks/onoff-raw-stories.mock';
 /* eslint-disable no-restricted-syntax -- vi.mock/vi.fn: mock de módulo del repository y del builder de imágenes; se migra a inyección de dependencias en #1503 */
 vi.mock('./story.repository', () => ({
 	fetchStoriesByAuthorSlug: vi.fn(),
-	fetchNavigationTeasersByAuthorSlug: vi.fn(),
 	fetchStories: vi.fn(),
 	fetchStoriesBySlugs: vi.fn(),
 	fetchStoryBySlug: vi.fn(),

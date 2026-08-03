@@ -450,8 +450,3 @@ export const storyNavigationTeaserMock: StoryNavigationTeaser = {
 	slug: 'el-espejo-del-tiempo',
 	tags: [],
 };
-
-export const storyNavigationTeaserWithAuthor: StoryNavigationTeaserWithAuthor = {
-	...storyNavigationTeaserMock,
-	author: authorTeaserMock,
-};
