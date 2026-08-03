@@ -8,9 +8,10 @@
 const SCOPED_PATH = /(^|\/)src\//;
 const CODE_FILE = /\.(ts|html|css|js|mjs|cjs)$/;
 
-// Dos dígitos y no tres, a diferencia del check de la documentación de agentes: ahí el umbral más alto
-// evita confundir un issue con un número de hallazgo de review, que en código no existen.
-const ISSUE_REF = /#\d{2,}/;
+// Sin umbral de dígitos: `#` significa issue y nada más. Los hallazgos de review llevan prefijo (`R1`,
+// `S1`) justamente para no obligar a este check a ignorar los issues de número bajo, que en un proyecto
+// recién clonado a partir de este son todos los que hay.
+const ISSUE_REF = /#\d+/;
 const COMMENT_MARKER = /\/\/|\/\*|<!--|^\s*\*/;
 
 // Ambas excepciones se anclan a la apertura del comentario: una directiva legítima abre el comentario,

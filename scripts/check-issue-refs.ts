@@ -45,9 +45,11 @@ export const GOVERNANCE_ISSUE_REFS: Readonly<Record<number, string>> = Object.fr
  */
 export function findIssueRefProblems(relPath: string, content: string): string[] {
 	// Tres formas de nombrar un issue: `#1234`, la URL de GitHub (o `issues/1234` suelto) y `GH-1234`.
-	// El umbral de tres dígitos deja pasar los números de hallazgo de review (`#7`, `#2`) que usan los
-	// propios ejemplos de los agentes.
-	const issueRef = /(?:#|\bGH-|issues\/)(\d{3,})/g;
+	// Sin umbral de dígitos: los hallazgos de review llevan prefijo (`R1`, `S1`), así que `#` no es
+	// ambiguo y los issues de número bajo no quedan fuera del check. Lo que sí hay que excluir son las
+	// anclas de Markdown (`angular-state.md#8-directivas-…`, `](#8-…)`): el umbral viejo las tapaba de
+	// casualidad. Se descartan por sus bordes — un ancla cuelga de una ruta y sigue con el slug.
+	const issueRef = /(?:(?<![\w./])#|\bGH-|issues\/)(\d+)(?![-\w])/g;
 	const problems: string[] = [];
 
 	content.split('\n').forEach((line, i) => {
