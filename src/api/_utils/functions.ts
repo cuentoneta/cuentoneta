@@ -16,13 +16,7 @@ import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.
 import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
 import { StorylistTeaser } from '@models/storylist.model';
 import { Resource } from '@models/resource.model';
-import {
-	Story,
-	StoryNavigationTeaser,
-	StoryNavigationTeaserWithAuthor,
-	StoryTeaser,
-	StoryTeaserWithAuthor,
-} from '@models/story.model';
+import { Story, StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
 import { Tag } from '@models/tag.model';
 import { TextBlockContent } from '@models/block-content.model';
 
@@ -239,25 +233,6 @@ export function mapStoryTeaser(result: StoryTeasersQueryResult): StoryTeaser[] {
 			media: mapMediaSources(mediaSources),
 			resources: mapResources(resources),
 			paragraphs: mapBlockContentToTextParagraphs(body) as [TextBlockContent, TextBlockContent, TextBlockContent],
-			tags: [],
-		});
-	}
-
-	return stories;
-}
-
-export function mapStoryNavigationTeaser(result: NonNullable<StoriesByAuthorSlugQueryResult>): StoryNavigationTeaser[] {
-	const stories = [];
-
-	for (const item of result) {
-		const { mediaSources, resources, coverImage, ...properties } = item;
-
-		stories.push({
-			...properties,
-			coverImage: urlFor(coverImage),
-			media: mapMediaSources(mediaSources),
-			resources: mapResources(resources),
-			paragraphs: [],
 			tags: [],
 		});
 	}
