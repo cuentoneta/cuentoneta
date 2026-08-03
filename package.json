@@ -33,6 +33,7 @@
 		"sanity:dev": "nx run @cuentoneta/cms:dev",
 		"sanity:build": "nx run @cuentoneta/cms:build --skip-nx-cache",
 		"sanity:test": "nx run @cuentoneta/cms:test --skip-nx-cache",
+		"sanity:typecheck": "nx run @cuentoneta/cms:typecheck --skip-nx-cache",
 		"sanity:extract-schema": "nx run @cuentoneta/cms:extract-schema",
 		"sanity:run-typegen-generator": "nx run @cuentoneta/cms:typegen",
 		"prepare": "husky"
