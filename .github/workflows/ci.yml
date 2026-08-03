@@ -12,6 +12,16 @@ on:
   # excepción (sí corre invocado por el token), así que da señal de CI sobre `develop` para el release.
   workflow_dispatch:
 
+# El flujo de trabajo abre un PR en borrador al terminar la implementación y le pushea los fixes de la
+# review, así que un mismo PR acumula varias corridas. Sin esto, cada push encola un run nuevo sin
+# cancelar el anterior y ambos compiten por runners para un resultado que ya no interesa.
+#
+# En `push` a `develop` NO se cancela: ese run es el que guarda el cache de Nx en la rama default (ver
+# el comentario del trigger), y cancelarlo dejaría a todos los PRs sin cache base.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   setup:
     runs-on: ubuntu-latest
