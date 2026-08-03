@@ -1,19 +1,6 @@
 {
-	// Config del gate de tipos del Studio (step `Typecheck Sanity Studio` del job studio-build). Hereda de
-	// tsconfig.json todo lo que también rige en el editor y agrega solo lo propio de una corrida de tsc.
-	"extends": "./tsconfig.json",
-	"compilerOptions": {
-		"target": "es2022",
-		"lib": ["es2023", "dom"],
-		"module": "esnext",
-		"moduleResolution": "bundler",
-		"skipLibCheck": true,
-		"noEmit": true,
-		"isolatedModules": true,
-		"esModuleInterop": true,
-		"resolveJsonModule": true,
-		"types": ["node"]
-	},
-	"include": ["**/*.ts", "**/*.tsx"],
-	"exclude": ["node_modules", "dist"]
+	// Config del gate de tipos del Studio (step `Typecheck Sanity Studio` del job studio-build). Toda la
+	// configuración vive en la base, que es la que además lee el editor: acá solo se declara el archivo
+	// como punto de entrada de `tsc -p`, para que gate y editor no puedan divergir.
+	"extends": "./tsconfig.json"
 }
