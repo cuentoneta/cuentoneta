@@ -32,7 +32,7 @@
 | **Estilos**            | Tailwind v4 + Stylelint                                           |
 | **Componentes**        | Storybook 10                                                      |
 
-**Aliases de paths** (ver `tsconfig.json`): kernel compartido a top-level `@models/*`, `@utils/*`, `@sanity-types`, `@mocks/*` (viven en `src/models`/`src/utils`/`src/sanity`/`src/mocks`, consumidos por app **y** api); frontend `@components/*`, `@app-utils/*` (utils de `src/app/utils` acoplados a `environment`, no kernel); backend `@queries/*`, `@schemas/*`; test `@test-utils`, `@testing/*`.
+**Aliases de paths** (ver `tsconfig.json`): kernel compartido a top-level `@models/*`, `@utils/*`, `@sanity-types`, `@mocks/*` (viven en `src/models`/`src/utils`/`src/sanity`/`src/mocks`, consumidos por app, api **y** el Studio de Sanity — `cms/` los resuelve con sus propios alias, declarados en `cms/sanity.cli.ts`, `cms/vitest.config.ts` y `cms/tsconfig.json`); frontend `@components/*`, `@app-utils/*` (utils de `src/app/utils` acoplados a `environment`, no kernel); backend `@queries/*`, `@schemas/*`; test `@test-utils`, `@testing/*`.
 
 **Prefijo de selectores:** componentes `cuentoneta-` (kebab-case, elemento); directivas `cuentoneta` (camelCase, atributo).
 
@@ -58,7 +58,8 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 | `pnpm seo:smoke`                          | Smoke manual post-deploy de indexado (invariantes SSR sobre `BASE_URL`, muestreando el sitemap)                                                        |
 | `pnpm storybook` / `pnpm storybook:build` | Storybook dev / build                                                                                                                                  |
 | `pnpm sanity:dev`                         | Studio de Sanity (`@cuentoneta/cms`)                                                                                                                   |
-| `pnpm sanity:build`                       | Build del Studio (`sanity build`) — reproduce en local el gate de CI `studio-build`                                                                    |
+| `pnpm sanity:build`                       | Build del Studio (`sanity build`) — reproduce en local el build del gate de CI `studio-build`                                                          |
+| `pnpm sanity:test`                        | Tests del Studio (Vitest standalone en `cms/`) — reproduce en local el paso de test del gate `studio-build`                                            |
 | `pnpm sanity:extract-schema`              | Extrae el schema de Sanity                                                                                                                             |
 | `pnpm sanity:run-typegen-generator`       | Genera tipos a partir del schema                                                                                                                       |
 | `pnpm exec sanity migration run <slug>`   | Corre una migración de datos (desde `cms/`; dry-run por defecto) → [`sanity-migrations.md`](.claude/references/sanity-migrations.md)                   |
@@ -69,7 +70,7 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 
 > El gate `typecheck` (`pnpm typecheck` → `tsc --noEmit` estricto) cubre el **TS puro** de la app (`src/**`, incluidos `*.spec.ts` y `*.stories.ts`) y `scripts/`. **No** valida plantillas Angular (eso lo hacen `build`/`storybook` vía `ngtsc`) ni el proyecto `cms/`.
 >
-> El build del Studio de Sanity (`cms/`) lo cubre el gate **`studio-build`** (`pnpm -C cms exec sanity build`, el bundler Vite/Rollup real del Studio), no `typecheck` ni `build`. Corre en un job aparte con install propio de `cms/` (proyecto pnpm standalone). Cierra el punto ciego por el que un bump roto de una dependencia del Studio podía llegar a `develop` sin señal de CI.
+> El gate **`studio-build`** cubre `cms/` con un job aparte, con install propio (proyecto pnpm standalone), en dos pasos secuenciales: primero **tests** (`pnpm -C cms test`, Vitest standalone — ver [`testing.md`](.claude/references/testing.md)) y después el **build** real del Studio (`pnpm -C cms exec sanity build`, el bundler Vite/Rollup). No es `typecheck` ni `build` de la app. Cierra el punto ciego por el que un bump roto de una dependencia del Studio, o una regresión en su lógica Node, podía llegar a `develop` sin señal de CI.
 
 ---
 
