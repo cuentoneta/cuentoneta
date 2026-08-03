@@ -170,6 +170,31 @@ Los comentarios explican el **porqué no obvio**, nunca el **qué**. Si el códi
 
 Los comentarios de sección de estilo `// Core` / `// Models` que ya existen en el repo se respetan donde están, pero **no se agregan nuevos** salvo que aporten navegación real en un archivo grande.
 
+### Menciones a issues en comentarios de código
+
+Un comentario de código **no cita un issue**. La procedencia y el rationale de un cambio viven en el commit, en el PR y en el historial de git. Un número inline envejece en silencio: nada lo revisa cuando el issue se cierra.
+
+**Excepción acotada — un `TODO` puede citar el issue que lo destraba.** El número es _load-bearing_ únicamente cuando marca **trabajo futuro**: sin él, "esto se saca después" no dice qué lo destraba. La excepción se concede bajo tres condiciones, las tres verificables:
+
+1. **La línea es un marcador `TODO`:** `TODO` en mayúsculas, seguido de `:` o de `(` — `// TODO: …` o `// TODO(#<id>): …`. `todo`, `Todo` o la palabra usada en prosa no cuentan.
+2. **El número está en esa misma línea.** La regla es por línea a propósito: admitir el número en cualquier parte de un bloque que en alguna línea diga `TODO` vuelve la excepción trivial de eludir.
+3. **El issue está abierto.** Un `TODO` cuyo issue se cerró pierde la excepción: se reescribe enunciando la condición que lo destraba, o se borra junto con el trabajo que ya se hizo.
+
+Ambos formatos en uso son válidos mientras cumplan lo anterior: `// TODO(#<id>): …` y `// TODO: … (ver #<id>)`.
+
+**Qué NO habilita esta excepción** (sigue prohibido y es bloqueante para la review):
+
+- **Rationale histórico o de cambio:** ❌ `// Rediseñado en #<id>: antes usaba …` · ❌ `// Regresión de #<id>: la base debía pedirse acotada`.
+- **Procedencia de una convención, una regla o un gate:** ❌ `// la regla se agregó en #<id>`.
+- **Un número suelto en un comentario que no es un `TODO`**, aunque describa trabajo pendiente: ❌ `// Bloqueado por #<id>: el deck usa @defer`. Si es trabajo futuro, se escribe como `TODO`; si no lo es, el número sobra.
+- **La cita en un comentario contiguo:** la línea siguiente al `TODO`, o el cuerpo de un bloque cuyo encabezado es un `TODO`.
+
+**Segunda excepción, ya vigente:** la **justificación de una supresión de lint/TS** — `@ts-ignore`, `@ts-expect-error` o `eslint-disable`. `CLAUDE.md` ([Restricciones duras](../../CLAUDE.md#restricciones-duras-hard-constraints)) **exige** el issue enlazado junto a un `@ts-ignore`; en las otras dos formas lo admite sin exigirlo, y la excepción las cubre igual porque documentan la misma clase de decisión. En los tres casos el marcador debe **abrir** el comentario, como toda directiva: nombrarlo en medio de la prosa (`// el eslint-disable de abajo viene de #<id>`) no ampara la cita. No es un `TODO` y no necesita serlo: es la misma excepción que la sub-sección siguiente reconoce para la documentación.
+
+**Tampoco se cita un hallazgo de review.** Los identificadores que emiten el `code-reviewer` (`R1`, `R2`, …) y el `security-auditor` (`S1`, `S2`, …) son **efímeros**: viven en `workspace/`, que está gitignoreado, y mueren con la sesión que los produjo. En un comentario son peor que un número de issue, que al menos resuelve a una URL permanente. Lo que el hallazgo enseñó se escribe como conducta —qué invariante se sostiene y por qué—, sin nombrarlo. El prefijo es obligatorio y su conjunto es **cerrado** (`R` y `S`, ningún otro), que es lo que permite enumerarlos; la severidad no entra en el identificador, porque cambia durante la review y renumeraría el hallazgo.
+
+**Enforcement.** El criterio lo aplica el hook `scripts/block-issue-refs-in-comments.ts`, registrado en `.claude/settings.json` como `PreToolUse` de `Edit`/`Write`: bloquea la escritura de un comentario con un número de issue en `src/**` y `cms/**` salvo que esa misma línea sea un `TODO` o una supresión de lint/TS enlazada, y bloquea sin excepción la de un identificador de hallazgo. Es una **ayuda local de Claude Code, no un gate**: solo ve el texto que la herramienta agrega — no lo ya commiteado, ni lo escrito por Bash o por otro editor —, y la regla rige para **todo** el código aunque el hook mire esas dos porciones. Ningún gate de CI cubre hoy esta regla fuera de los `.md` de `.claude/`, y la condición "issue abierto" no la puede verificar un check offline: depende de quien cierra el issue.
+
 ### Menciones a issues en la documentación de agentes (`.claude/references/**`, `.claude/agents/**`, `.claude/skills/**`)
 
 El mismo principio rige la prosa de estos documentos: **describen la conducta vigente, no su historia**. La procedencia y la trazabilidad de cambio viven en el historial de git y en los PRs — nunca inline. En concreto, **no citar un issue** para:
@@ -185,6 +210,8 @@ El mismo principio rige la prosa de estos documentos: **describen la conducta vi
 `CLAUDE.md` y `docs/` quedan fuera de esta regla (llevan su propia decisión).
 
 **Enforced por el gate `check-agents`.** `scripts/check-issue-refs.ts` marca toda mención a un issue en estos documentos —por numeral (`#<id>`), por URL de GitHub o como `GH-<id>`— que no figure en su allowlist `GOVERNANCE_ISSUE_REFS` — la lista de punteros de gobernanza vigentes, cada uno con su motivo. Al cerrarse uno de esos issues, se borra su entrada y se limpian sus menciones en el mismo PR. El check es **offline**: no consulta el estado real en GitHub, así que la allowlist es la fuente de verdad y sacar una entrada es un acto deliberado y visible en el diff.
+
+El mismo check marca los **identificadores de hallazgo** (`R<n>`, `S<n>`) en estos documentos, con su propia allowlist por ruta: solo los archivos que **definen** la convención pueden nombrarlos. Cualquier otro que los cite los está usando como referencia a algo que ya no existe.
 
 ---
 
@@ -264,4 +291,4 @@ Las definiciones de agentes (`.claude/agents/*.md`) enuncian la regla en una lí
 
 ---
 
-_Última actualización: 2026-08-01. Este documento evoluciona por enmiendas (ver Sección 7); su historial detallado —qué se agregó, cuándo y por qué— vive en el log de git y en los PRs. Cambios mayores: versión inicial (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) y sus ampliaciones sobre visibilidad de API y reemplazos canónicos; regla de story intercambiable para estados de carga; regla de child issues reales en epics; "Gates de CI" convertida a remisión a CLAUDE.md; prohibición de `git add -A`; Sección 8 (regla anti-`cd`) consolidada desde las copias de los agentes; la política de menciones a issues en la documentación de agentes (Sección 3); la regla de títulos de issue sin prefijo de categoría (Sección 2); la generalización de los ejemplos que citaban issues reales; y el enforcement de esas menciones en el gate `check-agents`._
+_Última actualización: 2026-08-03. Este documento evoluciona por enmiendas (ver Sección 7); su historial detallado —qué se agregó, cuándo y por qué— vive en el log de git y en los PRs. Cambios mayores: versión inicial (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) y sus ampliaciones sobre visibilidad de API y reemplazos canónicos; regla de story intercambiable para estados de carga; regla de child issues reales en epics; "Gates de CI" convertida a remisión a CLAUDE.md; prohibición de `git add -A`; Sección 8 (regla anti-`cd`) consolidada desde las copias de los agentes; la política de menciones a issues en la documentación de agentes (Sección 3); la regla de títulos de issue sin prefijo de categoría (Sección 2); la generalización de los ejemplos que citaban issues reales; el enforcement de esas menciones en el gate `check-agents`; y la excepción de `TODO` con issue abierto en comentarios de código (Sección 3) junto con el versionado de su hook._

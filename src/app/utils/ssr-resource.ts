@@ -9,8 +9,8 @@ import { pendingUntilEvent, rxResource, type RxResourceOptions } from '@angular/
  * en vez de colgar la serialización. En el browser no bloquea el render, solo retrasa `isStable`,
  * por lo que la carga progresiva in-app se conserva.
  *
- * Reemplazo zoneless de `FetchContentDirective` → `MacroTaskWrapperService` (macrotask de Zone.js),
- * perdido en la migración a signals/zoneless (#1144).
+ * Reemplazo zoneless del bloqueo por macrotask de Zone.js, que la migración a signals/zoneless dejó
+ * sin equivalente.
  *
  * El `Injector` se captura acá y se pasa explícito a `pendingUntilEvent`: el callback `stream()`
  * corre fuera del contexto de inyección (se invoca al disparar el fetch, no en el field initializer),

@@ -90,7 +90,7 @@ const viRestrictedSyntax = [
 
 // Prohíbe rxResource/httpResource crudos en páginas: todo fetch de página debe decidir explícitamente
 // su estrategia de SSR con ssrBlockingRxResource()/progressiveRxResource(), para no repetir la
-// regresión de SEO de #1697 (un fetch sin pendingUntilEvent sirve el skeleton al SSR sin bloquear).
+// regresión de SEO por la que un fetch sin pendingUntilEvent sirve el skeleton al SSR sin bloquear.
 const pageFetchRestrictedSyntax = [
 	{
 		selector: "CallExpression[callee.name='rxResource']",
@@ -196,7 +196,7 @@ export default [
 	},
 	{
 		// La UI (components/pages) no debe importar el shape crudo de Sanity (`@sanity-types`): saltearía el
-		// ACL. Al promover los tipos generados al kernel (#1981) quedaron físicamente alcanzables desde
+		// ACL. Al promover los tipos generados al kernel quedaron físicamente alcanzables desde
 		// `src/app`; este guard preserva la frontera — el mapeo raw→dominio vive en el backend y la UI
 		// consume el modelo de dominio (`@models`). Se usa la variante de typescript-eslint porque el shape
 		// se importa como `import type`, que la regla base de ESLint no atrapa.

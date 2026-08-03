@@ -57,6 +57,7 @@ Estos patrones son intencionales y correctos. NO los reportes como problemas:
 - [ ] Sin barrels (`index.ts` re-export) en ningún lado
 - [ ] Sin `any` sin un comentario `// REASON:`
 - [ ] Sin `// @ts-ignore` sin issue enlazado
+- [ ] Sin números de issue en comentarios de código — salvo un `TODO` que cite en su misma línea el issue abierto que lo destraba, o la justificación enlazada de una supresión de lint/TS
 - [ ] Sin `console.log` (quitar antes de commitear)
 - [ ] Sin uso directo de `vi.fn()` / `vi.mock()` / `vi.*` ni de timers — usar los wrappers de `@test-utils`
 - [ ] Sin `enum` de TypeScript — usar `Object.freeze({...} as const)`
@@ -184,7 +185,7 @@ Usá estos valores:
 
 Cuando un problema se marca como **Diferido**, hay que **proponer** un issue de GitHub y **esperar la confirmación del usuario** antes de crearlo: crear un issue es una acción hacia afuera (misma política que la Fase 5 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md)). La propuesta debe:
 
-1. Referenciar el número de la review original (p. ej. "Detectado como #7 durante la review del PR `#<pr>`").
+1. Referenciar el identificador de la review original (p. ej. "Detectado como R7 durante la review del PR `#<pr>`").
 2. Incluir contexto suficiente para actuar de forma independiente (archivo, línea, descripción del problema y la corrección recomendada).
 3. Estar etiquetado con labels que **existan** en el repo — `gh label list` los enumera, y pasar uno inexistente a `gh issue create --label` falla con un 422. Para un hallazgo diferido suelen aplicar `💳 deuda técnica` o `🏎️ mejora`, más el de dominio que corresponda (`🔌 backend`, `🅰️ angular`, `🧭 indexado`, …). Si ninguno encaja, proponer el label nuevo al usuario en vez de inventarlo — misma política que [`coding-agent-policies.md`](../references/coding-agent-policies.md) Sección 2.
 4. Estar vinculado al PR e issue actuales para trazabilidad.
@@ -193,9 +194,13 @@ Una vez que el usuario confirma y el issue existe, anotar su URL en el reporte j
 
 ### Numeración de problemas
 
-La columna **#** da un número secuencial a través de las tres tablas dentro de la misma sesión de review. La numeración es continua: si los Críticos terminan en #3, las Advertencias empiezan en #4. Así cualquier problema se referencia por un único número (p. ej. "corregí el #6") sin importar su severidad.
+La columna **R#** da un número secuencial con prefijo `R` (R1, R2, …) a través de las tres tablas dentro de la misma sesión de review. La numeración es continua: si los Críticos terminan en R3, las Advertencias empiezan en R4. Así cualquier problema se referencia por un único identificador (p. ej. "corregí el R6") sin importar su severidad.
 
-Los hallazgos del `security-auditor` (si corrió) llevan su propio prefijo `S` (S1, S2, …) en `SECURITY_REVIEW.md` y no comparten secuencia con los de este agente — ver "Numeración de hallazgos" en [`security-auditor.md`](security-auditor.md).
+El prefijo es **obligatorio en todo hallazgo**, sin excepción: cada uno se emite con su identificador prefijado, tanto en la tabla como en cualquier lugar donde se lo cite. El conjunto es **cerrado** — `R` para este agente, `S` para el `security-auditor`, y ningún otro. Que sea cerrado es lo que permite que un check los enumere; agregar una letra nueva sin actualizar los checks los deja ciegos.
+
+El prefijo **no es decorativo**: `#` significa **issue de GitHub** y nada más. Un hallazgo citado como `#<n>` es indistinguible de un issue para quien lo lee y para los checks que validan las menciones, que tendrían que subir su umbral de dígitos y dejar ciegos a los issues de número bajo. Por eso ni los hallazgos de review ni los de seguridad usan `#`.
+
+Los del `security-auditor` (si corrió) llevan su propio prefijo `S` (S1, S2, …) en `SECURITY_REVIEW.md` y no comparten secuencia con los de este agente — ver "Numeración de hallazgos" en [`security-auditor.md`](security-auditor.md).
 
 ### Resultados de verificación
 

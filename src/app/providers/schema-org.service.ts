@@ -29,7 +29,7 @@ export class SchemaOrgService {
 	/**
 	 * Quita el bloque JSON-LD identificado por `id`, si existe.
 	 *
-	 * Pensado para los schemas por página (Article/Person/Breadcrumb de #1521/#1522), que deben
+	 * Pensado para los schemas por página (Article/Person/Breadcrumb), que deben
 	 * limpiarse al navegar fuera de la ruta; los schemas sitewide (Organization/WebSite) persisten.
 	 */
 	public removeJsonLd(id: string): void {
