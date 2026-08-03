@@ -126,7 +126,7 @@ export default [
 		// `**/node_modules/**`. Sin nombrar el árbol de cms, ESLint intenta cargar los eslint.config.js
 		// anidados de sus dependencias y aborta antes de lintear nada.
 		name: 'ignores',
-		ignores: ['!**/*', '.nx', 'dist', 'tools/**', 'cms/node_modules/**', 'cms/dist/**'],
+		ignores: ['!**/*', '.nx', 'dist', 'tools/**', 'cms/node_modules/**', 'cms/dist/**', 'cms/.sanity/**'],
 	},
 	...nx.configs['flat/base'],
 	...nx.configs['flat/typescript'],

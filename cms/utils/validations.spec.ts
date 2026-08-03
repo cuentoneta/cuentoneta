@@ -14,7 +14,7 @@ describe('localizedRequire', () => {
 		expect(localizedRequire('')).toBe('Este campo es requerido');
 	});
 
-	it('rejects 0 too: la regla es de veracidad, no de presencia', () => {
+	it('rejects 0 as well: the rule checks truthiness, not presence', () => {
 		// Se fija el comportamiento vigente, no se corrige: hoy solo la usan campos de imagen y de texto,
 		// donde el 0 no aparece. Si alguna vez valida un número, hay que revisar esta rama.
 		expect(localizedRequire(0)).toBe('Este campo es requerido');
