@@ -25,6 +25,8 @@
 import { readFileSync } from 'node:fs';
 import { relative } from 'node:path';
 import { listClaudeMarkdownFiles } from './claude-docs-tree';
+// El criterio de qué es un identificador de hallazgo —y el porqué— viven en `finding-refs.ts`.
+import { matchFindingRefs } from './finding-refs';
 
 const ROOT = process.cwd();
 
@@ -38,13 +40,6 @@ export const GOVERNANCE_ISSUE_REFS: Readonly<Record<number, string>> = Object.fr
 	1530: 'NgRx Signal Store (3.1.0): prohibición de generar NgRx hasta que el issue cambie de estado',
 	1531: 'OpenAPIHono (3.1.0): la misma prohibición para el backend',
 });
-
-/**
- * Identificadores de hallazgo de review (`R1` del `code-reviewer`, `S1` del `security-auditor`). Son
- * **efímeros**: viven en `workspace/`, que está gitignoreado, y mueren con la sesión que los emitió. En
- * la documentación no dicen nada, igual que en un comentario de código.
- */
-const FINDING_REF = /\b([RS]\d+)\b/g;
 
 /**
  * Los archivos que **definen** la convención de prefijos y por eso necesitan nombrarlos. Cualquier otro
@@ -85,9 +80,9 @@ export function findIssueRefProblems(relPath: string, content: string): string[]
 		}
 		if (FINDING_CONVENTION_DOCS.has(relPath)) return;
 
-		for (const match of line.matchAll(FINDING_REF)) {
+		for (const id of matchFindingRefs(line)) {
 			problems.push(
-				`✗ ${relPath}:${i + 1} — menciona ${match[1]}, un identificador de hallazgo de review. ` +
+				`✗ ${relPath}:${i + 1} — menciona ${id}, un identificador de hallazgo de review. ` +
 					`Son efímeros: viven en workspace/ (gitignoreado) y mueren con la sesión que los emitió. ` +
 					`Escribí lo que el hallazgo enseñó —qué invariante se sostiene y por qué—, sin nombrarlo.`,
 			);
