@@ -28,9 +28,9 @@ import { AppRoutes } from '../../app.routes';
 		<main class="content vertical-layout-spacing horizontal-layout-spacing">
 			<article class="grid grid-cols-1 gap-8">
 				<section class="flex flex-col gap-4">
-					<h1 class="font-inter text-xl font-bold">Todas las Historias</h1>
+					<h1 class="font-inter text-xl font-bold">Todas las Obras</h1>
 					<p class="font-inter text-base text-neutral-600">
-						Explora nuestra colección completa de historias de La Cuentoneta
+						Explora nuestra colección completa de obras de La Cuentoneta
 					</p>
 				</section>
 
@@ -90,9 +90,9 @@ export default class StoriesComponent {
 	}
 
 	private updateMetaTags() {
-		this.metaTagsDirective.setTitle('Todas las Historias - La Cuentoneta');
+		this.metaTagsDirective.setTitle('Todas las Obras - La Cuentoneta');
 		this.metaTagsDirective.setDescription(
-			'Explora la colección completa de historias publicadas en La Cuentoneta y descubre nuevos autores y lecturas',
+			'Explora la colección completa de obras publicadas en La Cuentoneta y descubre nuevos autores y lecturas',
 		);
 		this.metaTagsDirective.setCanonicalUrl(buildCanonicalUrl(this.appRoutes.Story));
 		this.metaTagsDirective.setRobots('noindex, follow');
