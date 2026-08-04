@@ -44,8 +44,7 @@
 		"@nx/angular:application": {
 			"style": "css",
 			"linter": "eslint",
-			"unitTestRunner": "vitest-analog",
-			"e2eTestRunner": "cypress"
+			"unitTestRunner": "vitest-analog"
 		},
 		"@nx/angular:library": {
 			"linter": "eslint",
