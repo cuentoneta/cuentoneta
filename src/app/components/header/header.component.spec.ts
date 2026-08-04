@@ -34,21 +34,25 @@ describe('HeaderComponent', () => {
 		expect(screen.getByText(/Autores/)).toHaveProperty('href', expect.stringMatching(/\/authors$/));
 	});
 
-	it('should expose the catalog links to assistive tech and keyboard navigation', async () => {
+	// Toda la navegación queda expuesta: getByRole descarta lo marcado aria-hidden, así que
+	// encontrar las cuatro entradas prueba que ninguna quedó fuera del árbol de accesibilidad.
+	it('should expose every navbar link to assistive tech', async () => {
 		await renderHeader();
 
-		// getByRole descarta lo marcado aria-hidden: que los encuentre prueba que están expuestos.
-		expect(screen.getByRole('link', { name: 'Obras' })).toHaveAttribute('tabindex', '0');
-		expect(screen.getByRole('link', { name: 'Autores' })).toHaveAttribute('tabindex', '0');
+		for (const label of ['Inicio', 'Obras', 'Autores', 'Nosotros']) {
+			expect(screen.getByRole('link', { name: label })).toBeInTheDocument();
+		}
 	});
 
-	// Fija que la excepción del enlace que duplica al logo depende de una propiedad y no de la
-	// etiqueta: renombrar 'Inicio' no debe reexponerlo, ni ocultar una entrada nueva por accidente.
-	it('should keep the brand-duplicating link visible but out of the accessibility tree', async () => {
+	// El logo lleva a la home igual que la entrada 'Inicio', pero su contenido lee
+	// "Logo de 'La Cuentoneta' La Cuentoneta", que no dice a dónde va.
+	it('should give the brand link an accessible name that states its destination', async () => {
 		await renderHeader();
 
-		expect(screen.queryByRole('link', { name: 'Inicio' })).toBeNull();
-		expect(screen.getByText(/Inicio/)).toBeInTheDocument();
+		expect(screen.getByRole('link', { name: 'La Cuentoneta — Inicio' })).toHaveProperty(
+			'href',
+			expect.stringMatching(/home$/),
+		);
 	});
 
 	it('should show the catalog links in the mobile menu', async () => {
