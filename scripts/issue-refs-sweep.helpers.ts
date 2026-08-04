@@ -29,9 +29,10 @@ export interface TrackedIssueRef {
  * El estado de un issue citado. `missing` y `pull-request` no son adornos:
  *
  * - `missing` es una **cita rota** —un número que no existe—, peor que una caduca.
- * - `pull-request` es un número que resuelve a un PR. El endpoint de issues también los devuelve, y su
- *   `closed` no significa lo mismo: sin distinguirlo, todo PR mergeado citado sería un falso positivo
- *   permanente que nadie podría resolver.
+ * - `pull-request` es un número que resuelve a un PR. El endpoint de issues también los devuelve, así
+ *   que sin distinguirlo un PR se reportaría como issue cerrado y su corrección sería la equivocada.
+ *   Citar un PR en estas superficies es un error de cita en sí mismo —se cita el issue, no el PR que lo
+ *   resuelve—, así que se marca caduco cualquiera sea su estado, con su propio motivo.
  */
 export type IssueState = 'open' | 'closed' | 'missing' | 'pull-request';
 
@@ -50,6 +51,32 @@ const SURFACE_LABELS: Readonly<Record<RefSurface, string>> = Object.freeze({
 
 const FINGERPRINT_PREFIX = '<!-- huella:';
 
+/**
+ * El estado que corresponde a una respuesta de la API, o a su fallo.
+ *
+ * El 404 se reconoce por `(HTTP 404)` y no por la sola presencia de `404`: el mensaje de error embebe
+ * el comando, y el comando embebe el número del issue. Sin esa precisión, cualquier fallo —un límite de
+ * tasa, un token sin permisos— sobre `#404`, `#1404` o `#2404` se leería como cita rota, y el reporte
+ * invitaría a borrar una referencia válida.
+ */
+export function classifyIssueState(input: { state: string; isPullRequest: boolean } | { error: string }): IssueState {
+	if ('error' in input) {
+		if (input.error.includes('(HTTP 404)')) {
+			return 'missing';
+		}
+		throw new Error(input.error);
+	}
+	if (input.isPullRequest) {
+		return 'pull-request';
+	}
+	return input.state === 'open' ? 'open' : 'closed';
+}
+
+/** El issue de seguimiento entre los que devuelve la búsqueda, por igualdad exacta de título. */
+export function selectTrackingIssue<T extends { title: string }>(issues: T[], title: string): T | null {
+	return issues.find((issue) => issue.title === title) ?? null;
+}
+
 /** Junta las referencias vigentes de las tres superficies en una sola lista. */
 export function collectTrackedRefs(input: {
 	allowlist: Readonly<Record<number, string>>;
@@ -67,7 +94,10 @@ export function collectTrackedRefs(input: {
 		return {
 			issueNumber: Number(number),
 			surface: 'allowlist',
-			file: citada.length > 0 ? citada.map((mention) => mention.file).join(', ') : '(sin menciones)',
+			// Ordenados: el orden en que llegan los documentos depende del sistema de archivos, y sin
+			// esto la huella cambiaría entre corridas sin que cambie el conjunto.
+			file:
+				citada.length > 0 ? [...new Set(citada.map((mention) => mention.file))].sort().join(', ') : '(sin menciones)',
 			detail: motivo,
 		};
 	});
@@ -98,10 +128,9 @@ export function selectStaleRefs(refs: TrackedIssueRef[], states: ReadonlyMap<num
  * mismo conjunto de hallazgos ⇒ misma huella ⇒ no se escribe nada.
  */
 export function fingerprint(stale: TrackedIssueRef[]): string {
-	return stale
-		.map((ref) => `${ref.issueNumber}:${ref.surface}:${ref.file}:${ref.lineNumber ?? 0}`)
-		.sort()
-		.join('|');
+	// Sin el número de línea a propósito: que una mención se corra por una edición ajena no es un
+	// hallazgo nuevo, y volvería a escribir el seguimiento sin que nada haya cambiado.
+	return [...new Set(stale.map((ref) => `${ref.issueNumber}:${ref.surface}:${ref.file}`))].sort().join('|');
 }
 
 /** El cuerpo del issue de seguimiento, agrupado por superficie. */
@@ -144,9 +173,18 @@ export function decideAction(input: {
 	const { stale, states, existing } = input;
 
 	if (stale.length === 0) {
-		return existing === null
-			? { kind: 'noop' }
-			: { kind: 'resolved', comment: 'Ya no quedan menciones a issues cerrados. Se puede cerrar este seguimiento.' };
+		// El aviso se da **una sola vez**. La huella en el cuerpo es la marca de que el seguimiento
+		// todavía reporta hallazgos; al avisar se la quita, así que la corrida siguiente no encuentra
+		// nada que resolver. Sin esta guarda comentaría cada semana indefinidamente, porque el job no
+		// cierra el issue por diseño: cerrar es una decisión de una persona.
+		if (existing === null || !existing.body.includes(FINGERPRINT_PREFIX)) {
+			return { kind: 'noop' };
+		}
+		return {
+			kind: 'resolved',
+			body: existing.body.replace(new RegExp(`${FINGERPRINT_PREFIX}[^>]*-->`), '<!-- resuelto -->'),
+			comment: 'Ya no quedan menciones a issues cerrados. Se puede cerrar este seguimiento.',
+		};
 	}
 
 	const huella = fingerprint(stale);

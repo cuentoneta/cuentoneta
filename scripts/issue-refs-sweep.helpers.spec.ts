@@ -1,10 +1,12 @@
 import {
+	classifyIssueState,
 	collectTrackedRefs,
 	decideAction,
 	fingerprint,
 	formatConsoleReport,
 	formatReportBody,
 	selectStaleRefs,
+	selectTrackingIssue,
 	type IssueState,
 	type TrackedIssueRef,
 } from './issue-refs-sweep.helpers';
@@ -94,10 +96,15 @@ describe('decideAction', () => {
 	});
 
 	it('avisa que se puede cerrar el seguimiento, pero no lo cierra solo', () => {
-		const salida = decideAction({ stale: [], states, existing: { body: 'lo que sea' } });
+		const conHallazgos = decideAction({ stale: [ref()], states, existing: null });
+		const salida = decideAction({ stale: [], states, existing: { body: conHallazgos.body ?? '' } });
 
 		expect(salida.kind).toBe('resolved');
 		expect(salida.comment).toContain('cerrar');
+	});
+
+	it('no avisa sobre un seguimiento que ya no reporta hallazgos', () => {
+		expect(decideAction({ stale: [], states, existing: { body: 'un cuerpo sin huella' } })).toEqual({ kind: 'noop' });
 	});
 
 	it('crea el seguimiento cuando aparecen caducas y no existe', () => {
@@ -157,5 +164,76 @@ describe('formatConsoleReport', () => {
 
 		expect(salida).toContain('9 vigentes, 1 caducas');
 		expect(salida).toContain('#1503 [todo] src/x.ts:4');
+	});
+});
+
+describe('classifyIssueState', () => {
+	it.each([
+		['un issue abierto', { state: 'open', isPullRequest: false }, 'open'],
+		['un issue cerrado', { state: 'closed', isPullRequest: false }, 'closed'],
+		['un número que resuelve a un PR', { state: 'open', isPullRequest: true }, 'pull-request'],
+	])('clasifica %s', (_caso, entrada, esperado) => {
+		expect(classifyIssueState(entrada)).toBe(esperado);
+	});
+
+	it('reconoce el 404 por su código y no por el número del comando', () => {
+		const error = 'Command failed: gh api repos/x/y/issues/99999999 --jq {}\ngh: Not Found (HTTP 404)';
+
+		expect(classifyIssueState({ error })).toBe('missing');
+	});
+
+	it.each([
+		[
+			'un límite de tasa sobre un issue cuyo número contiene 404',
+			'Command failed: gh api repos/x/y/issues/2404\ngh: API rate limit exceeded',
+		],
+		['un token sin permisos sobre #404', 'Command failed: gh api repos/x/y/issues/404\ngh: Bad credentials (HTTP 401)'],
+		['un fallo de red sobre #1404', 'Command failed: gh api repos/x/y/issues/1404\nerror connecting'],
+	])('no confunde con una cita rota %s', (_caso, error) => {
+		expect(() => classifyIssueState({ error })).toThrow();
+	});
+});
+
+describe('selectTrackingIssue', () => {
+	it('exige igualdad exacta de título', () => {
+		const issues = [
+			{ title: 'Detectar periódicamente las menciones a issues que ya cerraron' },
+			{ title: 'Menciones a issues que ya cerraron' },
+		];
+
+		expect(selectTrackingIssue(issues, 'Menciones a issues que ya cerraron')).toBe(issues[1]);
+	});
+
+	it('devuelve null cuando ninguno coincide', () => {
+		expect(selectTrackingIssue([{ title: 'otro' }], 'Menciones a issues que ya cerraron')).toBeNull();
+	});
+});
+
+describe('decideAction — el aviso de resuelto se da una sola vez', () => {
+	const states = new Map<number, IssueState>([[1503, 'closed']]);
+
+	it('avisa y le quita la huella al cuerpo', () => {
+		const conHallazgos = decideAction({ stale: [ref()], states, existing: null });
+		const salida = decideAction({ stale: [], states, existing: { body: conHallazgos.body ?? '' } });
+
+		expect(salida.kind).toBe('resolved');
+		expect(salida.body).not.toContain('<!-- huella:');
+	});
+
+	it('no vuelve a avisar en la corrida siguiente', () => {
+		const conHallazgos = decideAction({ stale: [ref()], states, existing: null });
+		const primero = decideAction({ stale: [], states, existing: { body: conHallazgos.body ?? '' } });
+		const segundo = decideAction({ stale: [], states, existing: { body: primero.body ?? '' } });
+
+		expect(segundo).toEqual({ kind: 'noop' });
+	});
+});
+
+describe('fingerprint — estabilidad', () => {
+	it('no cambia porque una mención se corrió de línea', () => {
+		const antes = fingerprint([ref({ surface: 'todo', file: 'src/x.ts', lineNumber: 4 })]);
+		const despues = fingerprint([ref({ surface: 'todo', file: 'src/x.ts', lineNumber: 40 })]);
+
+		expect(antes).toBe(despues);
 	});
 });

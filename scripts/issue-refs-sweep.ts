@@ -17,10 +17,12 @@ import { findExemptIssueRefs } from './block-issue-refs-in-comments.helpers';
 import { GOVERNANCE_ISSUE_REFS, findIssueMentions } from './check-issue-refs';
 import { listClaudeMarkdownFiles } from './claude-docs-tree';
 import {
+	classifyIssueState,
 	collectTrackedRefs,
 	decideAction,
 	formatConsoleReport,
 	selectStaleRefs,
+	selectTrackingIssue,
 	type IssueState,
 } from './issue-refs-sweep.helpers';
 
@@ -62,14 +64,14 @@ function fetchStates(numbers: number[]): Map<number, IssueState> {
 		try {
 			const raw = gh('api', `repos/${REPO}/issues/${number}`, '--jq', '{state: .state, pr: (.pull_request != null)}');
 			const { state, pr } = JSON.parse(raw) as { state: string; pr: boolean };
-			states.set(number, pr ? 'pull-request' : state === 'open' ? 'open' : 'closed');
+			states.set(number, classifyIssueState({ state, isPullRequest: pr }));
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
-			if (message.includes('404')) {
-				states.set(number, 'missing');
-				continue;
+			try {
+				states.set(number, classifyIssueState({ error: message }));
+			} catch {
+				throw new Error(`no se pudo consultar el estado de #${number}`, { cause: error });
 			}
-			throw new Error(`no se pudo consultar el estado de #${number}`, { cause: error });
 		}
 	}
 	return states;
@@ -86,8 +88,9 @@ function findTrackingIssue(): { number: number; body: string } | null {
 		'--json',
 		'number,title,body',
 	);
-	const found = (JSON.parse(raw) as { number: number; title: string; body: string }[]).find(
-		(issue) => issue.title === TRACKING_TITLE,
+	const found = selectTrackingIssue(
+		JSON.parse(raw) as { number: number; title: string; body: string }[],
+		TRACKING_TITLE,
 	);
 	return found ? { number: found.number, body: found.body ?? '' } : null;
 }
@@ -126,6 +129,9 @@ switch (action.kind) {
 		process.stdout.write(`seguimiento #${existing?.number} actualizado.\n`);
 		break;
 	case 'resolved':
+		// El cuerpo se actualiza junto con el aviso: quitarle la huella es lo que impide que el aviso
+		// se repita cada corrida, porque el job no cierra el seguimiento por diseño.
+		gh('issue', 'edit', String(existing?.number), '--body', action.body ?? '');
 		gh('issue', 'comment', String(existing?.number), '--body', action.comment ?? '');
 		process.stdout.write(`comentado en #${existing?.number}; se cierra a mano.\n`);
 		break;
