@@ -223,7 +223,7 @@ Ambos formatos en uso son válidos mientras cumplan lo anterior: `// TODO(#<id>)
 - **Mensajes de commit:** el hook local `.husky/commit-msg` corre `pnpm check:findings --surface=commit` sobre el mensaje antes de crear el commit, y lo rechaza si cita un identificador. Es local: se saltea con `--no-verify` y no corre para un commit hecho desde la web o desde otra herramienta.
 - **Cuerpo de PR:** el gate de CI `check-findings` (`.github/workflows/check-findings.yml`) revalida los mensajes de commit del PR contra la API de GitHub —cierra el hueco que deja el hook local— y además el cuerpo del PR, que ningún hook local puede ver. Corre también en el evento `pull_request.edited`, así que editar el cuerpo vuelve a evaluar el check.
 
-La condición **"issue abierto"** (para la excepción de `TODO` en comentarios de código) sigue sin cobertura de ningún gate: un check offline no puede verificarla, depende de quien cierra el issue en GitHub.
+La condición **"issue abierto"** no la cubre ningún gate, y no puede cubrirla: se vuelve falsa sin que nadie toque el repositorio, así que ningún check que mire un diff puede detectarla, y comprobarla exige preguntarle a GitHub. La cubre en cambio un **job programado** (`pnpm issue-refs:sweep`), que revisa las tres superficies —la allowlist de gobernanza, los `TODO` y las supresiones enlazadas—, reporta las menciones cuyo issue ya cerró y mantiene un issue de seguimiento. **Reporta, no bloquea:** como gate haría fallar un PR por una mención que su diff no tocó.
 
 ### Menciones a issues en la documentación de agentes (`.claude/references/**`, `.claude/agents/**`, `.claude/skills/**`)
 

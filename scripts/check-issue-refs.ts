@@ -58,18 +58,43 @@ const FINDING_CONVENTION_DOCS: ReadonlySet<string> = new Set([
  * `GOVERNANCE_ISSUE_REFS`, y por cada identificador de hallazgo fuera de los archivos que definen la
  * convención. Exportada para test — `checkIssueRefs()` la aplica sobre el árbol real.
  */
-export function findIssueRefProblems(relPath: string, content: string): string[] {
+/** Una mención a un issue en la documentación de agentes, con la línea donde aparece. */
+export interface IssueMention {
+	readonly lineNumber: number;
+	readonly issueNumber: number;
+}
+
+/**
+ * Las menciones a issues de un documento, estén o no declaradas en la allowlist.
+ *
+ * Separada del check porque tiene un segundo consumidor: el sweep programado que verifica si los
+ * issues declarados siguen abiertos necesita saber **qué archivos** mencionan cada entrada, y esa es
+ * una consulta de red que el gate no puede hacer sin dejar de ser determinista.
+ */
+export function findIssueMentions(content: string): IssueMention[] {
 	// Tres formas de nombrar un issue: `#1234`, la URL de GitHub (o `issues/1234` suelto) y `GH-1234`.
 	// Sin umbral de dígitos: los hallazgos de review llevan prefijo (`R1`, `S1`), así que `#` no es
 	// ambiguo y los issues de número bajo no quedan fuera del check. Lo que sí hay que excluir son las
 	// anclas de Markdown (`angular-state.md#8-directivas-…`, `](#8-…)`): el umbral viejo las tapaba de
 	// casualidad. Se descartan por sus bordes — un ancla cuelga de una ruta y sigue con el slug.
 	const issueRef = /(?:(?<![\w./])#|\bGH-|issues\/)(\d+)(?![-\w])/g;
+
+	return content
+		.split('\n')
+		.flatMap((line, i) =>
+			[...line.matchAll(issueRef)].map((match) => ({ lineNumber: i + 1, issueNumber: Number(match[1]) })),
+		);
+}
+
+export function findIssueRefProblems(relPath: string, content: string): string[] {
 	const problems: string[] = [];
+	const mentionsByLine = new Map<number, number[]>();
+	for (const { lineNumber, issueNumber } of findIssueMentions(content)) {
+		mentionsByLine.set(lineNumber, [...(mentionsByLine.get(lineNumber) ?? []), issueNumber]);
+	}
 
 	content.split('\n').forEach((line, i) => {
-		for (const match of line.matchAll(issueRef)) {
-			const number = Number(match[1]);
+		for (const number of mentionsByLine.get(i + 1) ?? []) {
 			if (Object.hasOwn(GOVERNANCE_ISSUE_REFS, number)) continue;
 			problems.push(
 				`✗ ${relPath}:${i + 1} — menciona #${number}, que no es un puntero de gobernanza declarado. ` +
