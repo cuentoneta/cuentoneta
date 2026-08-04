@@ -1,4 +1,10 @@
-import { classifyWorktrees, formatSweepReport, parseWorktreeList } from './worktree-sweep.helpers';
+import {
+	classifyWorktrees,
+	formatSweepReport,
+	parseWorktreeList,
+	sweepMerged,
+	type SweepOperations,
+} from './worktree-sweep.helpers';
 
 const porcelain = [
 	'worktree C:/repo/cuentoneta',
@@ -111,5 +117,107 @@ describe('formatSweepReport', () => {
 		expect(salida).toContain('mergeado  /w/2102 (feat/2102-algo)');
 		expect(salida).toContain('huérfano  /w/1999 [conserva artefactos]');
 		expect(salida).not.toContain('/w/2102 (feat/2102-algo) [conserva artefactos]');
+	});
+});
+
+describe('sweepMerged', () => {
+	const base = (): SweepOperations => ({
+		hasUncommittedChanges: () => false,
+		hasArtifacts: () => false,
+		archive: () => null,
+		restore: () => undefined,
+		remove: () => null,
+	});
+	const candidato = [{ path: '/w/2102', branch: 'feat/x' }];
+
+	it('remueve el candidato limpio', () => {
+		expect(sweepMerged(candidato, base())).toEqual([{ path: '/w/2102', status: 'removed' }]);
+	});
+
+	it('no toca un worktree con cambios sin commitear', () => {
+		const salida = sweepMerged(candidato, { ...base(), hasUncommittedChanges: () => true });
+
+		expect(salida[0].status).toBe('skipped');
+		expect(salida[0].reason).toContain('sin commitear');
+	});
+
+	it('no remueve si el rescate de artefactos falla — si no, la única falla del rescate borraría igual', () => {
+		let removido = false;
+		const salida = sweepMerged(candidato, {
+			...base(),
+			hasArtifacts: () => true,
+			archive: () => 'ya existe el destino',
+			remove: () => {
+				removido = true;
+				return null;
+			},
+		});
+
+		expect(removido).toBe(false);
+		expect(salida[0].status).toBe('skipped');
+		expect(salida[0].reason).toContain('artefactos');
+	});
+
+	it('devuelve los artefactos a su lugar si la remoción falla después de archivarlos', () => {
+		let restaurado = false;
+		const salida = sweepMerged(candidato, {
+			...base(),
+			hasArtifacts: () => true,
+			remove: () => 'git rechazó la remoción',
+			restore: () => {
+				restaurado = true;
+			},
+		});
+
+		expect(restaurado).toBe(true);
+		expect(salida[0].status).toBe('skipped');
+	});
+
+	it('no intenta restaurar si nunca archivó', () => {
+		let restaurado = false;
+		const salida = sweepMerged(candidato, {
+			...base(),
+			remove: () => 'falló',
+			restore: () => {
+				restaurado = true;
+			},
+		});
+
+		expect(restaurado).toBe(false);
+		expect(salida[0].reason).toBe('falló');
+	});
+});
+
+describe('classifyWorktrees — bordes', () => {
+	it('nunca propone remover el worktree de la sesión en curso', () => {
+		const salida = classifyWorktrees({
+			registered: [{ path: '/w/2103', branch: 'feat/x' }],
+			directories: ['/w/2103'],
+			mergedBranches: ['feat/x'],
+			worktreesRoot: '/w',
+			currentPath: '/w/2103',
+		});
+
+		expect(salida.merged).toEqual([]);
+		expect(salida.active.map((w) => w.path)).toEqual(['/w/2103']);
+	});
+
+	it('nunca propone remover un detached HEAD: sin rama no hay PR que confirme que el trabajo está a salvo', () => {
+		const salida = classifyWorktrees({
+			registered: [{ path: '/w/2104', branch: '' }],
+			directories: ['/w/2104'],
+			mergedBranches: [''],
+			worktreesRoot: '/w',
+		});
+
+		expect(salida.merged).toEqual([]);
+	});
+});
+
+describe('formatSweepReport — tope de la consulta', () => {
+	it('avisa cuando la consulta de PRs llegó a su tope', () => {
+		const salida = formatSweepReport({ active: [], merged: [], orphans: [] }, new Set(), true);
+
+		expect(salida).toContain('tope');
 	});
 });
