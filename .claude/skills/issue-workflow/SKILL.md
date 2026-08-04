@@ -64,7 +64,34 @@ Con `develop`, `<base>` resuelve a `develop`/`origin/develop` **igual que sin ap
 
 ### Señales de reanudación
 
-Con el entorno ya resuelto (y el cwd ya en el worktree si corresponde), relevar con el número de issue extraído de la URL:
+Las sondas van en **dos batches**, no en una llamada por sonda. La línea divisoria está donde está la dependencia real: `git worktree list`, `git branch` y `git rev-list` operan sobre el repo compartido y `gh` sobre el remoto —ninguna depende del cwd—, pero la existencia de los artefactos **sí** depende, porque en modo worktree viven adentro del worktree.
+
+Tres reglas que preservan el diagnóstico:
+
+- **Separar con `;`, nunca con `&&`.** Una sonda que falla —`gh` sin red, por caso— no debe ocultar el resultado de las demás. Cada tramo lleva un marcador de sección para que la salida siga siendo atribuible.
+- **El conteo de `[ ]` vs. `[x]` de `PLAN.md` no entra al comando:** se resuelve con la herramienta de búsqueda **en el mismo turno** que el batch 2.
+- **La sonda de apilado no se batchea:** depende del body que trae el batch 1, y solo corre ante señal en el body.
+
+Relevar con el número de issue extraído de la URL:
+
+**Batch 1 — antes de `EnterWorktree`.** Junto con los "Datos del issue" de arriba, en una sola llamada:
+
+```bash
+git worktree list; echo "--- rama ---"; git branch --list "feat/<number>-*"
+echo "--- issue ---"; gh issue view <issue-url> --json number,title,body,milestone,labels
+echo "--- parent ---"; gh api graphql -f query='…' --jq '.data.repository.issue.parent.number // empty'
+```
+
+**Batch 2 — después de `EnterWorktree`**, con la rama y `<base>` ya resueltas:
+
+```bash
+ls workspace/<number> 2>/dev/null; echo "--- commits ---"; git rev-list --count <base>..feat/<number>-<kebab>
+echo "--- pr ---"; gh pr list --head feat/<number>-<kebab> --state open --json number,isDraft,url
+echo "--- merged ---"; gh pr list --head feat/<number>-<kebab> --state merged --json number
+echo "--- worktrees ---"; pnpm worktrees:sweep
+```
+
+Lo que cada sonda responde:
 
 1. `git branch --list 'feat/<number>-*'` — ¿existe la rama?
 2. `workspace/<number>/PLAN.md` — ¿existe el plan? Si existe, contar sus marcadores de paso `[ ]` vs. `[x]`.
@@ -167,7 +194,13 @@ En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
 
 - El worktree se **mantiene** al menos hasta que el PR de la Fase 6 mergea — permite reanudar la sesión (Fase 0 lo detecta vía `git worktree list` y reingresa).
 - El **merge ocurre fuera de esta sesión** (evento humano posterior en GitHub); el skill no lo espera ni lo automatiza.
-- **Limpieza:** cuando la Fase 0 resuelve entorno worktree porque ya existía (reanudación), evalúa además `gh pr list --head feat/<number>-<kebab> --state merged`. Si hay un PR mergeado, pausa con `AskUserQuestion` (`header`: `Limpieza`; `question`: "El PR de este issue ya mergeó. ¿Removemos el worktree?"; opciones **Limpiar (recomendada)** — `git worktree remove .claude/worktrees/<number>` + `git branch -d feat/<number>-<kebab>`; **Mantener** — dejarlo como está y agregar la marca `<!-- worktree: mantener -->` al final de `workspace/<number>/PLAN.md` para no repreguntar en futuras reanudaciones (la señal de limpieza se saltea si esa marca existe); "Other" cubre cualquier instrucción distinta). Cualquiera sea la respuesta, la sesión termina ahí — no hay fase siguiente que ejecutar sobre un issue ya mergeado.
+- **Barrido, en cada sesión.** El batch 2 de la Fase 0 corre `pnpm worktrees:sweep`, que reporta los worktrees registrados cuya rama ya mergeó y los directorios huérfanos que quedaron sin registro. Es **O(1) por sesión** y limpia lo que dejó cualquiera, no solo la propia — a diferencia de la limpieza al reanudar, que solo cubre el caso en que alguien vuelve sobre un issue ya mergeado, el menos frecuente cuando todo sale bien. Monitorear el PR hasta el merge no sirve como alternativa: el monitor vive dentro de la sesión y muere con ella, y el merge es un evento humano posterior.
+
+  Si el reporte trae candidatos, **pausar con `AskUserQuestion`** (`header`: `Worktrees`; `question` con el conteo de mergeados y huérfanos, y cuáles conservan artefactos; `options`: **Limpiar** — archivar artefactos y remover; **Omitir** — seguir sin tocar nada, que es lo recomendable si el usuario está en medio de otra cosa; "Other" para instrucciones libres). Sin candidatos, el barrido no interrumpe: ocupa una línea.
+
+  **Ningún borrado ocurre sin esa confirmación.** El script remueve worktrees registrados, pero **nunca** borra un directorio huérfano: los enumera con el comando exacto, porque pueden conservar el `workspace/<number>/` de una sesión y el repo prohíbe borrar artefactos autorados aunque estén gitignoreados.
+
+- **Limpieza al reanudar:** cuando la Fase 0 resuelve entorno worktree porque ya existía (reanudación), evalúa además `gh pr list --head feat/<number>-<kebab> --state merged`. Si hay un PR mergeado, pausa con `AskUserQuestion` (`header`: `Limpieza`; `question`: "El PR de este issue ya mergeó. ¿Removemos el worktree?"; opciones **Limpiar (recomendada)** — `git worktree remove .claude/worktrees/<number>` + `git branch -d feat/<number>-<kebab>`; **Mantener** — dejarlo como está y agregar la marca `<!-- worktree: mantener -->` al final de `workspace/<number>/PLAN.md` para no repreguntar en futuras reanudaciones (la señal de limpieza se saltea si esa marca existe); "Other" cubre cualquier instrucción distinta). Cualquiera sea la respuesta, la sesión termina ahí — no hay fase siguiente que ejecutar sobre un issue ya mergeado.
 - Los artefactos `workspace/<number>/PLAN.md` / `CODE_REVIEW.md` / `SECURITY_REVIEW.md` **viven dentro del worktree** en modo worktree. Una sesión nueva que reingresa vía `EnterWorktree` los encuentra ahí sin buscarlos en la raíz.
 
 ---
@@ -181,6 +214,16 @@ En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
    - **`architecture-advisor`** solo ante un cambio **estructuralmente significativo**: módulo nuevo bajo `src/api/modules/<dominio>/`, feature/provider/interfaz `-api` nuevo en el frontend, bounded context nuevo, o cambio de límites de módulo / dirección de dependencias. Un ajuste localizado —UI, copy, estilos, un campo puntual— **no** lo amerita: el `plan-writer` ya carga las mismas referencias según el diff y su pasada basta.
 2. **Delegar en paralelo los advisors que matcheen** (ambas delegaciones en el mismo turno si aplican los dos; son independientes y devuelven su evaluación como **texto**, no como archivo — no tienen `Write`). En modo worktree, adjuntar la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales". Capturar su salida.
 3. Delegar al agente **`plan-writer`** pasándole la URL del issue, su descripción (el **body** recolectado en la Fase 0 → "Datos del issue"), el nombre de rama, la ruta de salida completa (`workspace/<number>/PLAN.md`) y **la evaluación de los advisors que corrieron en el paso 2**. Los advisors los corre el orquestador —no el `plan-writer`, que no puede delegar en subagentes— y su aporte entra en el prompt del plan. En modo worktree, adjuntar la nota de delegación. Si la Fase 0 reanudó acá con un plan ya escrito, saltear los pasos 1-3 (los advisors ya corrieron y su aporte vive en el plan) y pasar directo al resumen.
+
+   **Excepción — escribir el plan inline.** El orquestador puede redactar `PLAN.md` él mismo, sin delegar, cuando se cumplen **las cuatro** condiciones:
+
+   1. El alcance declarado del issue no toca código ejecutable — ni `src/**`, ni `cms/**`, ni `scripts/**`, ni `tools/**`. Solo `.claude/**`, `docs/**` o configuración de tooling.
+   2. Ningún advisor del paso 1 matcheó.
+   3. El issue enumera sus archivos de alcance y el orquestador **ya los leyó en esta sesión**. Es la condición que hace real el ahorro: si hay que abrirlos ahora, el subagente los lee en su propia ventana y delegar sale más barato.
+   4. El orquestador ya leyó `coding-agent-policies.md` en esta sesión, que es la única referencia que el `plan-writer` carga siempre.
+
+   El artefacto y la pausa de aprobación **no cambian**: el plan se escribe igual en `workspace/<number>/PLAN.md` y se aprueba igual. Lo que se pierde es la exploración independiente —un segundo par de ojos que no arrastra los supuestos de la sesión—, así que el plan deja constancia de que se escribió inline. Ante la menor duda sobre si una condición se cumple, se delega: el costo de delegar de más es un spin-up, y el de delegar de menos es un plan escrito sobre supuestos no verificados.
+
 4. El plan-writer produce `workspace/<number>/PLAN.md`.
 5. Presentar un resumen breve al usuario (objetivo, enfoque, archivos afectados, decisiones clave).
 
@@ -214,9 +257,22 @@ No avanzar a la Fase 3 sin una respuesta "Aprobar".
 - Formato del mensaje: `[#<issue>] - <qué cambió y por qué>` (en español).
 - Un commit por cambio lógico distinto (p. ej. componente nuevo + spec = un commit; una story es otro commit si es otra preocupación).
 - Cada commit debe dejar el código **buildeable** (los gates de CI pasarían). Para no descubrir un commit roto recién en la Fase 4 con todo acumulado, antes de cada commit que toque código TS/runtime correr una **verificación barata** (un subconjunto rápido, **no** la suite ni el resto de gates —eso sigue siendo la Fase 4—):
-  - **typecheck:** `pnpm typecheck` (en modo worktree, `pnpm exec tsc -p tsconfig.typecheck.json --noEmit` — ver [Modo worktree](#modo-worktree) → "Ajustes transversales").
-  - **specs afectados:** `pnpm exec vitest related --run $(git diff --name-only --cached)` — corre solo los `*.spec.ts` que importan los archivos staged; si `related` no rinde, los specs del módulo tocado.
-  - Los commits **solo-doc / solo-config de tooling** (sin efecto en runtime) saltean esta verificación.
+  Verificación y commit van **encadenados en una sola invocación**, no en tres turnos:
+
+  ```bash
+  if out=$(pnpm exec tsc -p tsconfig.typecheck.json --noEmit 2>&1 && pnpm exec vitest related --run $(git diff --name-only --cached) 2>&1); then
+    git commit -F workspace/<number>/commit-msg.txt
+  else
+    echo "$out"
+  fi
+  ```
+
+  - **La garantía no se pierde:** el `git commit` está dentro de la rama exitosa, así que un commit roto sigue siendo imposible. Se usa `if`/`else` y no `a && b || c` porque en esa forma un fallo del propio `git commit` imprimiría el log de una verificación que estuvo verde.
+  - **Silenciado en verde**, igual que la Fase 4: la verificación no vuelca nada al contexto cuando pasa. La salida de `git commit` sí queda visible — es corta y confirma el resultado.
+  - **El mensaje va por archivo, nunca `-m`:** `workspace/<number>/commit-msg.txt`, dentro del namespace del issue. Los mensajes en español llevan acentuación normal y `-m` la corrompe en Windows.
+  - **Sin `NX_DAEMON=false`:** son `pnpm exec` directos sobre `tsc` y `vitest`, no targets de Nx.
+  - **Cuándo no aplica:** los commits **solo-doc / solo-config de tooling** (sin efecto en runtime) saltean la verificación entera y commitean directo. La cadena tampoco aplica si el staging no tiene archivos TS — `vitest related` sin entradas relevantes no debe leerse como un pase.
+
 - Nunca mensajes no descriptivos ("WIP", "fix", "update").
 - Nunca `--amend`; crear commits nuevos tras fallos de los hooks de git — hoy son dos: `pre-commit` (formato) y `commit-msg` (rechaza un mensaje que cite un identificador de hallazgo de review).
 - **En modo raíz**, antes de cada commit confirmar la rama activa con `git branch --show-current` contra `feat/<number>-<kebab>`; si un subagente con Bash la cambió en el medio, re-checkoutear la rama correcta antes de commitear. En **modo worktree** se omite: `EnterWorktree` fija el cwd/rama del worktree y los subagentes lo heredan (ver [Modo worktree](#modo-worktree)).
@@ -275,7 +331,10 @@ La licencia y sus tres condiciones viven en [`coding-agent-policies.md`](../../r
 
    **Correr un gate delegado en local es válido** cuando el diff lo toca de lleno y conviene el ciclo corto — p. ej. `storybook` ante un cambio de stories. Lo que la tabla evita es correrlos _por rutina_.
 
-1. **Leer la señal del borrador, sin esperarla.** `gh pr checks <pr>` sobre el PR que abrió la Fase 3 da el estado de los gates delegados, junto con `setup` y las integraciones externas del repo (los despliegues de Vercel, que el borrador también dispara). Para no bloquear la sesión, vigilarlos en segundo plano (`gh pr checks <pr> --watch --fail-fast`) y seguir con la review: si algo se pone rojo, la notificación llega sola. Si al momento de delegar la review el borrador sigue corriendo, se reporta **en curso** — la Fase 6 verifica el verde final antes de marcar listo.
+1. **Leer la señal del borrador, sin esperarla.** `gh pr checks <pr>` sobre el PR que abrió la Fase 3 da el estado de los gates delegados, junto con las integraciones externas del repo (los despliegues de Vercel, que el borrador también dispara). Para no bloquear la sesión, vigilarlos en segundo plano (`gh pr checks <pr> --watch --fail-fast`) y seguir con la review: si algo se pone rojo, la notificación llega sola. Si al momento de delegar la review el borrador sigue corriendo, se reporta **en curso** — la Fase 6 verifica el verde final antes de marcar listo.
+
+   > **"Sin esperarla" significa seguir trabajando, no cortar.** No bloquear la sesión es lo contrario de terminar el turno: mientras CI corre, la fase sigue —se delega la review, se abordan sus hallazgos—. Anunciar que se espera un resultado y devolver el control es la forma de convertir una optimización en una interrupción.
+
 1. **Determinar si el diff toca superficie de seguridad.** La lista de disparadores es la sección **"Cuándo correr"** del agente `security-auditor`: `src/api/**` (endpoints, GROQ, mappers), manejo de contenido externo (PortableText/HTML del CMS, `bypassSecurityTrust*`, fetch a servicios externos, `localStorage`), variables de entorno / secrets / config de Sanity o Clarity, y dependencias (`package.json` / `pnpm-lock.yaml`). Un diff que no toca nada de eso —solo documentación, estilos o UI sin datos externos— **no** la amerita; el auditor también puede invocarse a demanda si surge una preocupación puntual.
 1. **Delegar las reviews — en paralelo si corren ambas.** Si el diff toca superficie de seguridad, lanzar al **`security-auditor`** y al **`code-reviewer`** en el **mismo turno** (ambas delegaciones en una única respuesta, igual que los gates del paso 1): sus reviews son independientes y no comparten archivo de salida. Si no la toca, delegar solo al `code-reviewer`. Cada delegación incluye la ruta de salida completa del agente (ver el paso siguiente); en modo worktree, adjuntar además la nota de delegación de [Modo worktree](#modo-worktree) → "Ajustes transversales" a cada Task delegada. En ambos casos el `code-reviewer` revisa todos los cambios de la rama vs. `<base>` (la ref resuelta en la Fase 0 → "Base de la rama"; default `develop`/`origin/develop`) y recibe **el resultado observado de los gates del paso 1** (qué corriste, con qué resultado, y cuáles omitiste por no aplicar al diff) — sin ese dato los vuelve a correr, que es la parte más cara de la review.
 1. Cada agente escribe su propio archivo: el `code-reviewer` en `workspace/<number>/CODE_REVIEW.md` y el `security-auditor` en `workspace/<number>/SECURITY_REVIEW.md`.
@@ -318,9 +377,9 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
 
 **Modo worktree:** el worktree **no se limpia en esta fase** — se mantiene hasta que el PR mergee, para permitir reanudar la sesión (ver [Modo worktree](#modo-worktree) → "Ciclo de vida"). La verificación de los checks y el `gh pr ready` corren igual, con cwd ya resuelto al worktree.
 
-1. **Verificar la señal del borrador.** `gh pr checks <pr>` sobre el PR que abrió la Fase 3. Todos los checks deben estar **verdes** sobre el commit final (el que dejaron los fixes de la Fase 5). Ojo con el conteo: la salida trae más filas que los diez gates requeridos —`setup`, y las integraciones externas como los despliegues de Vercel—, así que se verifica que **ninguna** esté en rojo o pendiente, en vez de contar contra un número fijo:
+1. **Verificar la señal del borrador.** `gh pr checks <pr>` sobre el PR que abrió la Fase 3. Todos los checks deben estar **verdes** sobre el commit final (el que dejaron los fixes de la Fase 5). Ojo con el conteo: la salida trae más filas que los diez gates requeridos —las integraciones externas, como los despliegues de Vercel—, así que se verifica que **ninguna** esté en rojo o pendiente, en vez de contar contra un número fijo:
    - Alguno **rojo** → no se marca listo: volver a la Fase 5.
-   - Alguno **en curso** → esperar acá. Es el único punto del flujo donde esperar tiene sentido, porque ya no queda trabajo en paralelo que hacer.
+   - Alguno **en curso** → esperar acá. Es el único punto del flujo donde esperar tiene sentido, porque ya no queda trabajo en paralelo que hacer. Esperar es **volver a consultar** hasta tener el resultado, no devolver el control anunciando que se espera: el flujo llega hasta `gh pr ready` en la misma corrida.
 2. **Completar el cuerpo del PR** con el plan de pruebas ya verificado, que en la Fase 3 quedó como marcador: `gh pr edit <pr> --body-file <archivo>`. Eso emite `pull_request.edited`, así que `check-findings` re-evalúa el cuerpo final sin un paso extra.
    - El resto de los datos —base, `--milestone`, `--label`, título, `Closes #<issue>.`, `Parte de #<epic>.` y el aviso de apilado— ya los fijó la Fase 3: acá solo se verifica que estén.
    - **El cuerpo termina en el plan de pruebas (restricción dura):** sin leyenda de atribución de agente (`🤖 Generated with …`, `Co-Authored-By: Claude …`, `Claude-Session: …`) y **sin citar un identificador de hallazgo de review** (`R<n>`, `S<n>`). Ver [`coding-agent-policies.md`](../../references/coding-agent-policies.md) Sección 2 y Sección 3.

@@ -1,0 +1,40 @@
+name: Setup workspace
+description: Prepara pnpm, Node y el workspace instalado para un job de CI.
+
+# Reemplaza al job `setup`, que instalaba una vez y repartía el workspace por artifact. Ese reparto
+# costaba ~2 minutos de wall clock que TODOS los jobs esperaban, porque colgaban de él con `needs`.
+# Instalar en cada job contra el cache del store de pnpm cuesta segundos y corre en paralelo.
+#
+# La razón por la que el workspace se repartía por artifact y no por `actions/cache` sigue siendo
+# cierta —cachear el árbol entero con key por sha se evicta bajo el límite de 10 GB por repo y deja a
+# los jobs sin lockfile—, pero ya no hace falta repartirlo: con el store cacheado por
+# `actions/setup-node`, cada job se reconstruye solo.
+#
+# El `actions/checkout` queda en cada job: una composite action local necesita el repo ya
+# checkouteado para poder resolverse.
+
+runs:
+  using: composite
+  steps:
+    - name: Select pnpm as package manager
+      uses: pnpm/action-setup@v6.0.9
+      with:
+        version: 10.12.1
+
+    - name: Use Node.js 24
+      uses: actions/setup-node@v7.0.0
+      with:
+        node-version: 24.18.0
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --force --frozen-lockfile --ignore-scripts
+
+    - name: Generate testing environment file
+      shell: bash
+      run: pnpm run config
+
+    - name: Rebuild and prepare
+      shell: bash
+      run: pnpm rebuild && pnpm run prepare --if-present
