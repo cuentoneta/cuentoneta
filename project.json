@@ -61,14 +61,6 @@
 			},
 			"defaultConfiguration": "production"
 		},
-		"test": {
-			"executor": "@nx/vitest:test",
-			"outputs": ["{options.reportsDirectory}"],
-			"options": {
-				"configFile": "vitest.config.ts",
-				"reportsDirectory": "./coverage/cuentoneta"
-			}
-		},
 		"storybook": {
 			"executor": "@nx/storybook:storybook",
 			"options": {
