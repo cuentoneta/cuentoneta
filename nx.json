@@ -23,19 +23,6 @@
 		"typecheck": {
 			"inputs": ["default", "^default"],
 			"cache": true
-		},
-		"@nx/jest:jest": {
-			"inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
-			"cache": true,
-			"options": {
-				"passWithNoTests": true
-			},
-			"configurations": {
-				"ci": {
-					"ci": true,
-					"codeCoverage": true
-				}
-			}
 		}
 	},
 	"namedInputs": {
