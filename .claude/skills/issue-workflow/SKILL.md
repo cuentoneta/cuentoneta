@@ -217,10 +217,10 @@ En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
 
    **Excepción — escribir el plan inline.** El orquestador puede redactar `PLAN.md` él mismo, sin delegar, cuando se cumplen **las cuatro** condiciones:
 
-   1. El alcance declarado del issue no toca `src/**` ni `cms/**` — solo `.claude/**`, `docs/**` o configuración de tooling sin efecto en runtime.
+   1. El alcance declarado del issue no toca código ejecutable — ni `src/**`, ni `cms/**`, ni `scripts/**`, ni `tools/**`. Solo `.claude/**`, `docs/**` o configuración de tooling.
    2. Ningún advisor del paso 1 matcheó.
    3. El issue enumera sus archivos de alcance y el orquestador **ya los leyó en esta sesión**. Es la condición que hace real el ahorro: si hay que abrirlos ahora, el subagente los lee en su propia ventana y delegar sale más barato.
-   4. El orquestador ya cargó las mismas referencias que carga el `plan-writer` para ese tipo de cambio.
+   4. El orquestador ya leyó `coding-agent-policies.md` en esta sesión, que es la única referencia que el `plan-writer` carga siempre.
 
    El artefacto y la pausa de aprobación **no cambian**: el plan se escribe igual en `workspace/<number>/PLAN.md` y se aprueba igual. Lo que se pierde es la exploración independiente —un segundo par de ojos que no arrastra los supuestos de la sesión—, así que el plan deja constancia de que se escribió inline. Ante la menor duda sobre si una condición se cumple, se delega: el costo de delegar de más es un spin-up, y el de delegar de menos es un plan escrito sobre supuestos no verificados.
 
