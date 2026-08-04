@@ -8,6 +8,7 @@ import noBarrelFiles from 'eslint-plugin-no-barrel-files';
 import requireEnvironmentProviders from './tools/eslint/require-environment-providers.js';
 import storybookSourceState from './tools/eslint/storybook-source-state.js';
 import noApplyInHostStyles from './tools/eslint/no-apply-in-host-styles.js';
+import componentConfigInClass from './tools/eslint/component-config-in-class.js';
 
 // Restricciones de sintaxis comunes: CommonJS, enums, lifecycle hooks y propiedades estáticas.
 const lifecycleHooks = [
@@ -90,7 +91,7 @@ const viRestrictedSyntax = [
 
 // Prohíbe rxResource/httpResource crudos en páginas: todo fetch de página debe decidir explícitamente
 // su estrategia de SSR con ssrBlockingRxResource()/progressiveRxResource(), para no repetir la
-// regresión de SEO de #1697 (un fetch sin pendingUntilEvent sirve el skeleton al SSR sin bloquear).
+// regresión de SEO por la que un fetch sin pendingUntilEvent sirve el skeleton al SSR sin bloquear.
 const pageFetchRestrictedSyntax = [
 	{
 		selector: "CallExpression[callee.name='rxResource']",
@@ -104,10 +105,29 @@ const pageFetchRestrictedSyntax = [
 	},
 ];
 
+// Reglas de lenguaje (no de framework): valen igual en la app Angular y en el Studio React, así que se
+// declaran una vez y se esparcen en ambos bloques en vez de duplicarse.
+const commonTypescriptRules = {
+	'@typescript-eslint/explicit-member-accessibility': [
+		'error',
+		{ accessibility: 'explicit', overrides: { constructors: 'no-public' } },
+	],
+	'@typescript-eslint/no-inferrable-types': 0,
+	'@typescript-eslint/no-unused-vars': 'error',
+	'@typescript-eslint/no-non-null-assertion': 'error',
+	'@typescript-eslint/no-explicit-any': 'error',
+	'@typescript-eslint/no-require-imports': 'error',
+	'no-barrel-files/no-barrel-files': 'error',
+	'preserve-caught-error': 'error',
+};
+
 export default [
 	{
+		// Un bloque `ignores` global (sin `files`) REEMPLAZA los ignores implícitos de ESLint, incluido
+		// `**/node_modules/**`. Sin nombrar el árbol de cms, ESLint intenta cargar los eslint.config.js
+		// anidados de sus dependencias y aborta antes de lintear nada.
 		name: 'ignores',
-		ignores: ['!**/*', '.nx', 'dist', 'tools/**'],
+		ignores: ['!**/*', '.nx', 'dist', 'tools/**', 'cms/node_modules/**', 'cms/dist/**', 'cms/.sanity/**'],
 	},
 	...nx.configs['flat/base'],
 	...nx.configs['flat/typescript'],
@@ -168,19 +188,29 @@ export default [
 			],
 			'@angular-eslint/prefer-signals': 'error',
 			'@angular-eslint/prefer-host-metadata-property': 'error',
-			'@typescript-eslint/explicit-member-accessibility': [
-				'error',
-				{ accessibility: 'explicit', overrides: { constructors: 'no-public' } },
-			],
-			'@typescript-eslint/no-inferrable-types': 0,
-			'@typescript-eslint/no-unused-vars': 'error',
-			'@typescript-eslint/no-non-null-assertion': 'error',
-			'@typescript-eslint/no-explicit-any': 'error',
-			'@typescript-eslint/no-require-imports': 'error',
+			...commonTypescriptRules,
 			'no-restricted-syntax': ['error', ...commonRestrictedSyntax, ...viRestrictedSyntax],
 			'@stylistic/js/no-extra-semi': 'off',
-			'no-barrel-files/no-barrel-files': 'error',
-			'preserve-caught-error': 'error',
+		},
+	},
+	{
+		// El Studio es React: las reglas de Angular buscan decoradores que no existen ahí. Se apagan de
+		// forma explícita en vez de confiar en que nunca disparen. El bloque `nx` declara `**/*.ts`, que
+		// no matchea `.tsx`, así que sin este bloque los componentes del Studio quedan sin ninguna regla.
+		// Recompone commonRestrictedSyntax soltando viRestrictedSyntax: en cms/ no existe @test-utils al
+		// que redirigir, y sus dobles se escriben a mano.
+		name: 'cms',
+		files: ['cms/**/*.ts', 'cms/**/*.tsx'],
+		plugins: {
+			'no-barrel-files': noBarrelFiles,
+		},
+		rules: {
+			'@angular-eslint/directive-selector': 'off',
+			'@angular-eslint/component-selector': 'off',
+			'@angular-eslint/prefer-signals': 'off',
+			'@angular-eslint/prefer-host-metadata-property': 'off',
+			...commonTypescriptRules,
+			'no-restricted-syntax': ['error', ...commonRestrictedSyntax],
 		},
 	},
 	{
@@ -196,7 +226,7 @@ export default [
 	},
 	{
 		// La UI (components/pages) no debe importar el shape crudo de Sanity (`@sanity-types`): saltearía el
-		// ACL. Al promover los tipos generados al kernel (#1981) quedaron físicamente alcanzables desde
+		// ACL. Al promover los tipos generados al kernel quedaron físicamente alcanzables desde
 		// `src/app`; este guard preserva la frontera — el mapeo raw→dominio vive en el backend y la UI
 		// consume el modelo de dominio (`@models`). Se usa la variante de typescript-eslint porque el shape
 		// se importa como `import type`, que la regla base de ESLint no atrapa.
@@ -269,6 +299,19 @@ export default [
 		},
 		rules: {
 			'custom-storybook/storybook-source-state': 'error',
+		},
+	},
+	{
+		name: 'component-config-in-class',
+		files: ['src/**/*.ts'],
+		// Los specs y las stories declaran componentes host de prueba, y sus fixtures de módulo
+		// (`const collectionMock: Storylist = {...}`) son datos del test, no configuración de una clase.
+		ignores: ['src/**/*.spec.ts', 'src/**/*.stories.ts'],
+		plugins: {
+			'custom-component-config': { rules: { 'component-config-in-class': componentConfigInClass } },
+		},
+		rules: {
+			'custom-component-config/component-config-in-class': 'error',
 		},
 	},
 	{

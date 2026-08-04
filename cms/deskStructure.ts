@@ -1,9 +1,11 @@
+import type { StructureBuilder, StructureResolverContext } from 'sanity/structure';
+
 import { singletonDocumentListItems } from 'sanity-plugin-singleton-management';
 
 import { activeLandingItem } from './structure/active-landing-item';
 import { contentTypeItems } from './structure/content-type-items';
 
-export default (S, context) =>
+export default (S: StructureBuilder, context: StructureResolverContext) =>
 	S.list()
 		.title('Contenido')
 		.items([

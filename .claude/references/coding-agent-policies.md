@@ -92,7 +92,17 @@ Si el cambio tocó muchos archivos, `git status --short` y armar la lista es bar
 
 ### "La code review puede esperar hasta después de abrir el PR"
 
-Prohibido. La review local del agente (p. ej. el agente `code-reviewer` / skill de code review) corre **antes de abrir el PR**, para que quienes revisen el PR vean código ya pulido. Pushear la rama está bien; abrir el PR antes de la review local, no.
+Prohibido. La review local del agente (p. ej. el agente `code-reviewer` / skill de code review) corre **antes de pedir la review humana**. El evento regulado es el que convoca a otra persona: `gh pr ready`, o abrir el PR directamente en estado listo.
+
+Pushear la rama está bien. También lo está abrir un **PR en borrador** (`gh pr create --draft`), que no convoca a nadie: GitHub no solicita reviewers, no notifica codeowners y bloquea el merge. El borrador existe para una sola cosa — que la integración continua empiece a correr mientras la review local sucede, en vez de después.
+
+La licencia se concede bajo tres condiciones, las tres verificables:
+
+1. El PR se crea con `--draft` y **permanece** en borrador hasta que la review local terminó y sus hallazgos Críticos tienen disposición.
+2. `gh pr ready` no se ejecuta con un Crítico sin disposición, ni mientras algún check de CI no esté **verde** — rojo, pendiente, cancelado o ausente cuentan por igual.
+3. La review local corre igual y completa: el borrador no la reemplaza, no la acorta y no cambia qué se revisa.
+
+Marcar listo para review un PR sin la pasada de review local es bloqueante, exactamente como antes lo era abrirlo.
 
 ### "Documentemos el edge case en un comentario y listo"
 
@@ -102,9 +112,22 @@ Prohibido. Si un edge case se puede enumerar en un comentario, se puede enumerar
 
 Prohibido. Todo componente nuevo en `src/app/components/` lleva su `*.stories.ts` (los de página, `src/app/pages/`, están exentos — ver [`testing.md`](testing.md)). La respuesta siempre es escribir la story.
 
+**Excepción por delegación total.** Un componente queda exento del catálogo cuando su plantilla no tiene nada propio que mostrar porque la vista vive íntegra en otro componente ya catalogado. Se aplica solo si se cumplen **las cuatro** condiciones:
+
+1. No declara marcado propio más allá de delegar. Un contenedor de disposición vacío —el reservador de alto de un `@defer`, por caso— no cuenta como marcado propio; cualquier texto, encabezado, lista o enlace sí. Repetir la delegación tampoco la invalida por sí sola, pero **sí** declarar cómo se disponen las repeticiones —separadores, espaciado entre ellas, grilla—: esa es una decisión visual propia y necesita catálogo.
+2. No declara `styles` ni `host` más allá de la caja que lo posiciona.
+3. La delegación termina en un componente **catalogado**, sea directa o a través de otros que se amparan en esta misma excepción. Un despachador que elige entre dos conectados exentos cumple la condición si la vista de esos conectados vive en un componente con story.
+4. La story de **cada** destino que puede renderizar lo nombra, para que el catálogo diga qué componentes cubre desde cualquier entrada por la que se llegue.
+
+El eje es un **hecho verificable de la plantilla**, no una apreciación de cuánto aporta el componente: "aporta poco" es la misma escapatoria que "es simple", con otro nombre. Las condiciones se verifican contra la plantilla, no contra la descripción del PR.
+
+La excepción es **solo del catálogo visual**: el `*.spec.ts` sigue siendo obligatorio. Un conectado que resuelve datos y un despachador que elige variante tienen lógica propia que testear, aunque no tengan nada que mostrar.
+
 ### "El estado de carga ya se ve, no hace falta una story intercambiable"
 
-Prohibido. Si el componente tiene un **estado de carga (skeleton)**, su story debe exponer ese estado de forma **intercambiable**: un control booleano (`loading` / "Cargando") que alterna real↔skeleton en el **mismo slot**, para poder evaluar la transición y la alineación 1:1 entre ambos. Aplica a componentes que se implementen de ahora en más (no es retroactivo sobre legacy que será rediseñado). El patrón vive en [`testing.md`](testing.md); su omisión es bloqueante para la review.
+Prohibido. Si el componente **renderiza un skeleton en su propia plantilla**, su story debe exponer ese estado de forma **intercambiable**: un control booleano (`loading` / "Cargando") que alterna real↔skeleton en el **mismo slot**, para poder evaluar la transición y la alineación 1:1 entre ambos. Aplica a componentes que se implementen de ahora en más (no es retroactivo sobre legacy que será rediseñado). El patrón vive en [`testing.md`](testing.md); su omisión es bloqueante para la review.
+
+La obligación es de **quien dibuja el esqueleto**, no de quien transporta el indicador: un componente que solo pasa un `loading` hacia abajo no tiene estado de carga que catalogar, porque no lo renderiza.
 
 ### "Agrego la leyenda de atribución de agente al PR/commit"
 
@@ -170,6 +193,38 @@ Los comentarios explican el **porqué no obvio**, nunca el **qué**. Si el códi
 
 Los comentarios de sección de estilo `// Core` / `// Models` que ya existen en el repo se respetan donde están, pero **no se agregan nuevos** salvo que aporten navegación real en un archivo grande.
 
+### Menciones a issues en comentarios de código
+
+Un comentario de código **no cita un issue**. La procedencia y el rationale de un cambio viven en el commit, en el PR y en el historial de git. Un número inline envejece en silencio: nada lo revisa cuando el issue se cierra.
+
+**Excepción acotada — un `TODO` puede citar el issue que lo destraba.** El número es _load-bearing_ únicamente cuando marca **trabajo futuro**: sin él, "esto se saca después" no dice qué lo destraba. La excepción se concede bajo tres condiciones, las tres verificables:
+
+1. **La línea es un marcador `TODO`:** `TODO` en mayúsculas, seguido de `:` o de `(` — `// TODO: …` o `// TODO(#<id>): …`. `todo`, `Todo` o la palabra usada en prosa no cuentan.
+2. **El número está en esa misma línea.** La regla es por línea a propósito: admitir el número en cualquier parte de un bloque que en alguna línea diga `TODO` vuelve la excepción trivial de eludir.
+3. **El issue está abierto.** Un `TODO` cuyo issue se cerró pierde la excepción: se reescribe enunciando la condición que lo destraba, o se borra junto con el trabajo que ya se hizo.
+
+Ambos formatos en uso son válidos mientras cumplan lo anterior: `// TODO(#<id>): …` y `// TODO: … (ver #<id>)`.
+
+**Qué NO habilita esta excepción** (sigue prohibido y es bloqueante para la review):
+
+- **Rationale histórico o de cambio:** ❌ `// Rediseñado en #<id>: antes usaba …` · ❌ `// Regresión de #<id>: la base debía pedirse acotada`.
+- **Procedencia de una convención, una regla o un gate:** ❌ `// la regla se agregó en #<id>`.
+- **Un número suelto en un comentario que no es un `TODO`**, aunque describa trabajo pendiente: ❌ `// Bloqueado por #<id>: el deck usa @defer`. Si es trabajo futuro, se escribe como `TODO`; si no lo es, el número sobra.
+- **La cita en un comentario contiguo:** la línea siguiente al `TODO`, o el cuerpo de un bloque cuyo encabezado es un `TODO`.
+
+**Segunda excepción, ya vigente:** la **justificación de una supresión de lint/TS** — `@ts-ignore`, `@ts-expect-error` o `eslint-disable`. `CLAUDE.md` ([Restricciones duras](../../CLAUDE.md#restricciones-duras-hard-constraints)) **exige** el issue enlazado junto a un `@ts-ignore`; en las otras dos formas lo admite sin exigirlo, y la excepción las cubre igual porque documentan la misma clase de decisión. En los tres casos el marcador debe **abrir** el comentario, como toda directiva: nombrarlo en medio de la prosa (`// el eslint-disable de abajo viene de #<id>`) no ampara la cita. No es un `TODO` y no necesita serlo: es la misma excepción que la sub-sección siguiente reconoce para la documentación.
+
+**Tampoco se cita un hallazgo de review.** Los identificadores que emiten el `code-reviewer` (`R1`, `R2`, …) y el `security-auditor` (`S1`, `S2`, …) son **efímeros**: viven en `workspace/`, que está gitignoreado, y mueren con la sesión que los produjo. En un comentario son peor que un número de issue, que al menos resuelve a una URL permanente. Lo que el hallazgo enseñó se escribe como conducta —qué invariante se sostiene y por qué—, sin nombrarlo. El prefijo es obligatorio y su conjunto es **cerrado** (`R` y `S`, ningún otro), que es lo que permite enumerarlos; la severidad no entra en el identificador, porque cambia durante la review y renumeraría el hallazgo.
+
+**Enforcement.** El criterio de qué es un identificador de hallazgo tiene **una sola definición**, en `scripts/finding-refs.ts`; los cuatro mecanismos siguientes la consumen en vez de reimplementarla, y cubren cuatro superficies distintas:
+
+- **Código** (`src/**`, `cms/**`): el hook `scripts/block-issue-refs-in-comments.ts`, registrado en `.claude/settings.json` como `PreToolUse` de `Edit`/`Write`, bloquea la escritura de un comentario con un número de issue salvo que esa misma línea sea un `TODO` o una supresión de lint/TS enlazada, y bloquea sin excepción la de un identificador de hallazgo. Es una **ayuda local de Claude Code, no un gate**: solo ve el texto que la herramienta agrega — no lo ya commiteado, ni lo escrito por Bash o por otro editor.
+- **Documentación de agentes** (`.claude/references/**`, `.claude/agents/**`, `.claude/skills/**`): el gate `check-agents` (`scripts/check-issue-refs.ts`) marca todo identificador de hallazgo fuera de los archivos que definen la convención, con su propia allowlist por ruta — ver la sub-sección siguiente.
+- **Mensajes de commit:** el hook local `.husky/commit-msg` corre `pnpm check:findings --surface=commit` sobre el mensaje antes de crear el commit, y lo rechaza si cita un identificador. Es local: se saltea con `--no-verify` y no corre para un commit hecho desde la web o desde otra herramienta.
+- **Cuerpo de PR:** el gate de CI `check-findings` (`.github/workflows/check-findings.yml`) revalida los mensajes de commit del PR contra la API de GitHub —cierra el hueco que deja el hook local— y además el cuerpo del PR, que ningún hook local puede ver. Corre también en el evento `pull_request.edited`, así que editar el cuerpo vuelve a evaluar el check.
+
+La condición **"issue abierto"** no la cubre ningún gate, y no puede cubrirla: se vuelve falsa sin que nadie toque el repositorio, así que ningún check que mire un diff puede detectarla, y comprobarla exige preguntarle a GitHub. La cubre en cambio un **job programado** (`pnpm issue-refs:sweep`), que revisa las tres superficies —la allowlist de gobernanza, los `TODO` y las supresiones enlazadas—, reporta las menciones cuyo issue ya cerró y mantiene un issue de seguimiento. **Reporta, no bloquea:** como gate haría fallar un PR por una mención que su diff no tocó.
+
 ### Menciones a issues en la documentación de agentes (`.claude/references/**`, `.claude/agents/**`, `.claude/skills/**`)
 
 El mismo principio rige la prosa de estos documentos: **describen la conducta vigente, no su historia**. La procedencia y la trazabilidad de cambio viven en el historial de git y en los PRs — nunca inline. En concreto, **no citar un issue** para:
@@ -186,6 +241,8 @@ El mismo principio rige la prosa de estos documentos: **describen la conducta vi
 
 **Enforced por el gate `check-agents`.** `scripts/check-issue-refs.ts` marca toda mención a un issue en estos documentos —por numeral (`#<id>`), por URL de GitHub o como `GH-<id>`— que no figure en su allowlist `GOVERNANCE_ISSUE_REFS` — la lista de punteros de gobernanza vigentes, cada uno con su motivo. Al cerrarse uno de esos issues, se borra su entrada y se limpian sus menciones en el mismo PR. El check es **offline**: no consulta el estado real en GitHub, así que la allowlist es la fuente de verdad y sacar una entrada es un acto deliberado y visible en el diff.
 
+El mismo check marca los **identificadores de hallazgo** (`R<n>`, `S<n>`) en estos documentos, con su propia allowlist por ruta: solo los archivos que **definen** la convención pueden nombrarlos. Cualquier otro que los cite los está usando como referencia a algo que ya no existe.
+
 ---
 
 ## Sección 4 — Preguntas aclaratorias
@@ -198,7 +255,7 @@ Los agentes pueden hacer preguntas aclaratorias cuando la instrucción del usuar
 - ❌ "¿Sos la única persona que va a revisar esto?" — prohibida, nunca preguntar.
 - ❌ "¿Qué tan importante es que los tests cubran este edge case?" — prohibida **como forma de pedir permiso para saltear el test**. La pregunta solo es aceptable si aclara _qué_ debe afirmar el test, no _si_ escribirlo. Si te encontrás queriendo preguntar esto para evitar escribir el test, escribí el test.
 - ❌ "¿Está bien si me salteo la code review para este PR chico?" — prohibida, nunca preguntar.
-- ❌ "¿Está bien saltear la story de Storybook porque el componente es simple?" — prohibida, nunca preguntar. La respuesta siempre es escribir la story.
+- ❌ "¿Está bien saltear la story de Storybook porque el componente es simple?" — prohibida, nunca preguntar. La respuesta siempre es escribir la story. La excepción por delegación total (Sección 2) **no se pregunta, se verifica**: si sus cuatro condiciones se cumplen, se aplica y se deja constancia en el PR; si alguna no se cumple, se escribe la story.
 
 ---
 
@@ -238,8 +295,8 @@ El principio: **el documento es canónico; la memoria es refuerzo**. Si los dos 
 
 - Una descripción de PR que contenga cualquiera de los framings prohibidos es bloqueante. Pedí cambios citando este documento por sección.
 - Un PR que omite tests sobre la base de "es chico" es bloqueante. Pedí los tests faltantes.
-- Un PR abierto sin la pasada de review local (cuando el flujo la especifica) es bloqueante. Pedí la pasada antes de mergear.
-- Un componente nuevo sin su `*.stories.ts` es bloqueante. Pedí la story.
+- Un PR **marcado listo para review** sin la pasada de review local (cuando el flujo la especifica) es bloqueante. Pedí la pasada antes de mergear. Un PR **en borrador** no: ahí la review local puede estar corriendo todavía, que es para lo que existe el borrador.
+- Un componente nuevo sin su `*.stories.ts` es bloqueante, salvo que cumpla las cuatro condiciones de la excepción por delegación total (Sección 2). Verificalas contra la plantilla, no contra la descripción del PR; si alguna no se cumple, pedí la story.
 
 ### Gates de CI
 
@@ -264,4 +321,4 @@ Las definiciones de agentes (`.claude/agents/*.md`) enuncian la regla en una lí
 
 ---
 
-_Última actualización: 2026-08-01. Este documento evoluciona por enmiendas (ver Sección 7); su historial detallado —qué se agregó, cuándo y por qué— vive en el log de git y en los PRs. Cambios mayores: versión inicial (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) y sus ampliaciones sobre visibilidad de API y reemplazos canónicos; regla de story intercambiable para estados de carga; regla de child issues reales en epics; "Gates de CI" convertida a remisión a CLAUDE.md; prohibición de `git add -A`; Sección 8 (regla anti-`cd`) consolidada desde las copias de los agentes; la política de menciones a issues en la documentación de agentes (Sección 3); la regla de títulos de issue sin prefijo de categoría (Sección 2); la generalización de los ejemplos que citaban issues reales; y el enforcement de esas menciones en el gate `check-agents`._
+_Última actualización: 2026-08-03. Este documento evoluciona por enmiendas (ver Sección 7); su historial detallado —qué se agregó, cuándo y por qué— vive en el log de git y en los PRs. Cambios mayores: versión inicial (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) y sus ampliaciones sobre visibilidad de API y reemplazos canónicos; regla de story intercambiable para estados de carga; regla de child issues reales en epics; "Gates de CI" convertida a remisión a CLAUDE.md; prohibición de `git add -A`; Sección 8 (regla anti-`cd`) consolidada desde las copias de los agentes; la política de menciones a issues en la documentación de agentes (Sección 3); la regla de títulos de issue sin prefijo de categoría (Sección 2); la generalización de los ejemplos que citaban issues reales; el enforcement de esas menciones en el gate `check-agents`; la excepción de `TODO` con issue abierto en comentarios de código (Sección 3) junto con el versionado de su hook; y el enforcement de la prohibición de identificadores de hallazgo sobre mensajes de commit y cuerpo de PR (hook `commit-msg` + gate `check-findings`), que cierra el hueco que dejaba la cobertura previa solo sobre comentarios de código y documentación de agentes; y la excepción por delegación total a la exigencia de story (Sección 2), junto con la precisión de que el estado de carga lo cataloga quien renderiza el esqueleto; y el corrimiento del evento que regula la review local, de abrir el PR a pedir la review humana, que habilita el PR en borrador._

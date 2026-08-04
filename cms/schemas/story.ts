@@ -2,6 +2,7 @@ import { DocumentTextIcon } from '@sanity/icons/DocumentText';
 import { resource } from './resourceType';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { audioRecording, pdfLink, spaceRecording, spotifyPodcastEpisode, youtubeVideo } from './media-sources';
+import { type PreviewTextBlock, toPlainText } from '../utils/preview-text';
 
 // Placeholder por defecto del dataset `production`; las historias nuevas y las existentes (vía migración) lo usan
 // hasta que el equipo editorial cargue una imagen propia.
@@ -87,17 +88,19 @@ export default defineType({
                     "blockContentParagraphs": *[_type == 'story' && _id == ^._id][0]{ body }
                 `,
 				reduceQueryResult: (result: {
-					draft?: { blockContentParagraphs: { body } };
-					published: { blockContentParagraphs: { body } };
+					draft?: { blockContentParagraphs: { body: PreviewTextBlock[] } };
+					published: { blockContentParagraphs: { body: PreviewTextBlock[] } };
 				}) => {
 					const textBody = result.draft
 						? result.draft.blockContentParagraphs.body
 						: result.published.blockContentParagraphs.body;
 
-					const plainTextParagraphs = textBody.map((x) => x.children[0].text);
+					// Un párrafo con negritas o enlaces se parte en varios spans: contarlos todos, no solo el
+					// primero, que era lo que hacía antes y subestimaba el tiempo de lectura.
+					const plainTextParagraphs = textBody.map((paragraph) => toPlainText([paragraph]));
 					const wordCount = plainTextParagraphs
 						.map((paragraph) => paragraph.split(' ').length)
-						.reduce((previous, current) => previous + current);
+						.reduce((previous, current) => previous + current, 0);
 
 					return Math.ceil(wordCount / 200);
 				},
@@ -117,26 +120,10 @@ export default defineType({
 							text: 'text',
 							reference: 'reference',
 						},
-						prepare({ text, reference }) {
-							const title =
-								text?.length > 0
-									? text
-											.map((span) => span.children)
-											.map((child) => child[0].text)
-											.join('')
-									: '';
-
-							const subtitle =
-								reference?.length > 0
-									? reference
-											.map((span) => span.children)
-											.map((child) => child[0].text)
-											.join('')
-									: '';
-
+						prepare({ text, reference }: { text?: PreviewTextBlock[]; reference?: PreviewTextBlock[] }) {
 							return {
-								title: title ?? '',
-								subtitle: subtitle ?? '',
+								title: toPlainText(text),
+								subtitle: toPlainText(reference),
 							};
 						},
 					},

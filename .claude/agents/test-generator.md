@@ -153,7 +153,7 @@ Reglas del patrón:
 
 ## Storybook
 
-Todo componente nuevo en **`src/app/components/`** lleva su `*.stories.ts` además del spec (documentación viva + catálogo visual). Los componentes de página (`src/app/pages/`) están exentos.
+Todo componente nuevo en **`src/app/components/`** lleva su `*.stories.ts` además del spec (documentación viva + catálogo visual). Los componentes de página (`src/app/pages/`) están exentos, y también el que **delega toda su vista** en otro ya catalogado — no generes una story que repita la del destino; las condiciones están en [`coding-agent-policies.md`](../references/coding-agent-policies.md) (Sección 2). El spec no se exime en ningún caso.
 
 - `title` en español bajo `Componentes/...` (p. ej. `'Componentes/Tag'`).
 - `parameters.docs.description.component` con descripción en español.
@@ -161,7 +161,7 @@ Todo componente nuevo en **`src/app/components/`** lleva su `*.stories.ts` adem�
 - Una **story por estado/variante** (`Soft`, `Filled`, …) y opcionalmente un `Showcase`.
 - Render con `argsToTemplate(args)` y el selector real (`cuentoneta-...`).
 - Para DI usá `moduleMetadata({ imports, providers })` o `applicationConfig({ providers })`.
-- **Si el componente tiene estado de carga (skeleton): generá además una story `Estados` con estado intercambiable** —un control booleano (`loading`/"Cargando") que alterna real↔skeleton en el mismo slot. Es obligatoria; ver el patrón en `testing.md` (§ "Estado de carga → story intercambiable").
+- **Si el componente renderiza un skeleton en su propia plantilla: generá además una story `Estados` con estado intercambiable** —un control booleano (`loading`/"Cargando") que alterna real↔skeleton en el mismo slot. Es obligatoria; ver el patrón en `testing.md` (§ "Estado de carga → story intercambiable").
 
 Mantené las stories sincronizadas cuando cambien inputs, estados visuales o la API pública.
 

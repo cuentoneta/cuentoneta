@@ -1,4 +1,5 @@
-import { addWeeks, getISOWeek, getISOWeekYear } from 'date-fns';
+import { addWeeks } from 'date-fns';
+import { buildWeekSlug } from '@utils/week-slug.utils';
 import {
 	clearAllMocks,
 	runOnlyPendingTimers,
@@ -33,9 +34,8 @@ describe('ContentService', () => {
 	});
 
 	describe('addNextWeeksLandingPageContent', () => {
-		const currentDate = new Date('2025-11-14');
-		const buildSlug = (date: Date) => `${getISOWeekYear(date)}-${getISOWeek(date).toString().padStart(2, '0')}`;
-		const currentSlug = buildSlug(currentDate);
+		const currentDate = new Date(2025, 10, 14);
+		const currentSlug = buildWeekSlug(currentDate);
 
 		const mockLandingPage = {
 			_id: 'landing-page-current',
@@ -71,8 +71,8 @@ describe('ContentService', () => {
 					expect.stringMatching(/^2025-\d{2}$/),
 				]),
 			);
-			// Regresión #1749: la base a clonar debe pedirse acotada a la semana actual (antes se
-			// invocaba sin argumentos y terminaba clonando el último stub futuro autogenerado).
+			// Regresión: la base a clonar debe pedirse acotada a la semana actual. Pedirla sin argumentos
+			// termina clonando el último stub futuro autogenerado en vez de la última semana válida.
 			expect(contentRepository.fetchLatestLandingPageReferences).toHaveBeenCalledWith(currentSlug);
 		});
 
@@ -125,7 +125,7 @@ describe('ContentService', () => {
 			]);
 			// La semana que la home leerá de lunes a sábado (lunes 29/jun → 2026-27) está entre las generadas.
 			const generatedSlugs = (contentRepository.fetchLandingPagesList as Mock).mock.calls[0][0];
-			expect(generatedSlugs).toContain(buildSlug(new Date(2026, 5, 29)));
+			expect(generatedSlugs).toContain(buildWeekSlug(new Date(2026, 5, 29)));
 		});
 
 		it('should clone the base returned by the repository verbatim, without leaking its _id', async () => {
@@ -156,7 +156,7 @@ describe('ContentService', () => {
 			const weeksInTheFuture = 4;
 			const futureWeeks = Array.from({ length: weeksInTheFuture }, (_, index) => ({
 				_id: `landing-page-${index}`,
-				config: buildSlug(addWeeks(currentDate, index + 1)),
+				config: buildWeekSlug(addWeeks(currentDate, index + 1)),
 			}));
 
 			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue(futureWeeks);
@@ -192,7 +192,7 @@ describe('ContentService', () => {
 			const weeksInTheFuture = 4;
 			const existingWeek = Array.from({ length: 2 }, (_, index) => ({
 				_id: `landing-page-${index}`,
-				config: buildSlug(addWeeks(currentDate, index + 1)),
+				config: buildWeekSlug(addWeeks(currentDate, index + 1)),
 			}));
 
 			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue(existingWeek);

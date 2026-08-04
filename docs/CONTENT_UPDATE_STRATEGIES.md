@@ -130,6 +130,8 @@ El año va primero para que el **orden lexicográfico del slug coincida con el o
 
 ### Ubicación en el Código
 
+- **Utilidad de dominio compartida (kernel)**: `src/utils/week-slug.utils.ts` - `buildWeekSlug(date)`, implementación **única** del slug semanal `YYYY-WW` (ISO-8601, ver [Nomenclatura de Slugs](#nomenclatura-de-slugs)). La consumen tanto `content.service.ts` como, desde el Studio de Sanity, `cms/utils/landing-page.ts` (resolución de la landing activa en Desk Structure) — evita mantener dos implementaciones de la misma fórmula en dos proyectos pnpm distintos.
+
 - **Consultas GROQ**: `src/api/_queries/content.query.ts`
   - `landingPageContentQuery` - Obtiene contenido de una semana específica
   - `landingPageListQuery` - Lista landing pages existentes
@@ -144,7 +146,7 @@ El año va primero para que el **orden lexicográfico del slug coincida con el o
 - **Servicio de lógica de negocio**: `src/api/modules/content/content.service.ts`
   - `addNextWeeksLandingPageContent(weeksInTheFuture = 4)` - Función principal
 
-- **Tests unitarios**: `src/api/modules/content/content.service.spec.ts`
+- **Tests unitarios**: `src/utils/week-slug.utils.spec.ts` (casos borde del slug ISO-8601), `src/api/modules/content/content.service.spec.ts` y, del lado del Studio, `cms/utils/landing-page.spec.ts` (Vitest standalone de `cms/` — ver [`testing.md`](../.claude/references/testing.md))
 
 ### Proceso de Generación
 
@@ -259,8 +261,16 @@ src/api/modules/content/
 src/api/_queries/
 └── content.query.ts           # Consultas GROQ
 
+src/utils/
+├── week-slug.utils.ts         # buildWeekSlug(date) — implementación única del slug YYYY-WW (kernel compartido, alias @utils)
+└── week-slug.utils.spec.ts    # Tests unitarios (casos borde ISO-8601)
+
 src/sanity/
 └── types.ts                   # Tipos generados por Sanity (kernel compartido, alias @sanity-types)
+
+cms/utils/
+├── landing-page.ts            # Resolución de la landing activa para Desk Structure; consume buildWeekSlug()
+└── landing-page.spec.ts       # Tests unitarios (Vitest standalone de cms/)
 ```
 
 ---

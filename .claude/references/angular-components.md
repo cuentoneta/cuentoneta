@@ -85,6 +85,43 @@ private readonly isExpanded = signal(false); // estado interno, no llega a la pl
 
 ---
 
+## Configuración de la clase
+
+La configuración propia de un componente, directiva o servicio —un mapa `size → clase`, una tabla de widgets, una tabla de estilo— va como **`private readonly` de instancia** y se consume con `this.`. Nunca como `const` a nivel de módulo.
+
+```ts
+// ❌ El mapa es estado del componente, pero vive fuera de él.
+const SIZE_MAP = { sm: 'h-8 w-8', lg: 'h-16 w-16' };
+
+@Component({/* … */})
+export class ImageProfileComponent {
+	protected readonly classes = computed(() => SIZE_MAP[this.size()]);
+}
+```
+
+```ts
+// ✅ Co-locado con su único consumidor.
+@Component({/* … */})
+export class ImageProfileComponent {
+	private readonly sizeMap = { sm: 'h-8 w-8', lg: 'h-16 w-16' };
+
+	protected readonly classes = computed(() => this.sizeMap[this.size()]);
+}
+```
+
+**Rationale.** Dos razones:
+
+1. **Encapsulación.** Un mapa que solo tiene sentido para una clase es parte de esa clase. A nivel de módulo queda al alcance de cualquier cosa que se agregue después al archivo, y deja de estar claro quién lo gobierna.
+2. **Co-locación.** El único consumidor está a unas líneas; la constante de módulo obliga a saltar al tope del archivo para leer lo que la clase usa acá.
+
+Lo aplica la regla de ESLint **`component-config-in-class`**, que dispara ante un `const` de módulo **no exportado** con literal de objeto o de arreglo —incluido el envuelto en `Object.freeze(...)`, `as const`, `as Foo` o `satisfies Foo`— en un archivo que declare `@Component`, `@Directive` o `@Injectable`.
+
+Quedan fuera tres casos:
+
+- Un `const` **exportado**: es API compartida, y si se consume desde otro archivo ya no es configuración privada de la clase.
+- El **sustituto de `enum`** que exigen las [restricciones duras](../../CLAUDE.md#restricciones-duras-hard-constraints) — `Object.freeze({...} as const)` con su `type` homónimo derivado por `typeof`—, porque un alias de tipo no puede derivarse de un campo de instancia y el `const` necesita scope de módulo. La regla lo detecta por esa derivación.
+- Los `*.spec.ts` y `*.stories.ts`, cuyos componentes host y fixtures de módulo son datos del test, no configuración de una clase.
+
 ## Inputs / outputs / queries con signals
 
 Nunca usar decoradores `@Input()`/`@Output()`/`@ViewChild()`/`@ContentChild()`. Usar las APIs de signals:
@@ -312,5 +349,5 @@ Notas:
 - [ ] Plantilla con `@if`/`@for` (con `track`)/`@switch`, self-closing tags y `ngSrc`.
 - [ ] Host (clases/bindings/eventos) en la propiedad `host` del decorador; sin `@HostBinding`/`@HostListener` ni `:host { @apply ... }`.
 - [ ] Sin `enum`, sin propiedades estáticas, sin `!`.
-- [ ] Acompañar con su `*.stories.ts` (Storybook) y tests con Angular Testing Library (ver [`testing.md`](./testing.md)).
+- [ ] Acompañar con tests de Angular Testing Library y con su `*.stories.ts` (Storybook), salvo que delegue toda su vista en otro componente ya catalogado (ver [`testing.md`](./testing.md)).
 - [ ] El estado vive en servicios + signals (ver [`angular-state.md`](./angular-state.md)).

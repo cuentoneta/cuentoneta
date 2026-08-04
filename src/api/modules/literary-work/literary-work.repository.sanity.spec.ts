@@ -51,7 +51,7 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 
 	// Fallback de reading time del read-path: cuando el crudo no está backfilleado (campos en null), el
 	// repository deriva el valor por sección en lectura, sin escribir — el único que persiste el derivado
-	// es el script de backfill (#1959). El escenario *stale* (un derivado persistido inconsistente con el
+	// es el script de backfill. El escenario *stale* (un derivado persistido inconsistente con el
 	// cuerpo actual) está fuera de alcance acá: el read-path sirve el total persistido tal cual (write-once
 	// confía en el publish); detectarlo/re-materializarlo es responsabilidad del script de backfill.
 	it('deriva el reading time por sección igual que deriveSectionReadingTime, sin escribir', async () => {

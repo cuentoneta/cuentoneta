@@ -1,6 +1,7 @@
 import { defineField, defineType } from 'sanity';
 import { CalendarIcon } from '@sanity/icons/Calendar';
 import { localizedRequire } from '../utils/validations';
+import { campaignImageSizeValidation } from '../utils/content-campaign-image';
 
 // Models
 import {
@@ -8,31 +9,6 @@ import {
 	ContentCampaignViewportKeys,
 	viewportElementSizes,
 } from '@models/content-campaign.model';
-
-const imageResourcePattern = /^image-([a-f\d]+)-(\d+x\d+)-(\w+)$/;
-
-const decodeAssetId = (id) => {
-	const [, assetId, dimensions, format] = imageResourcePattern.exec(id);
-	const [width, height] = dimensions.split('x').map((v) => parseInt(v, 10));
-
-	return {
-		assetId,
-		dimensions: { width, height },
-		format,
-	};
-};
-
-const campaignImageSizeValidation = (image, context) => {
-	const viewport = context.path[context.path.length - 2];
-	const viewportSize = viewportElementSizes[viewport];
-
-	if (!image || !viewportSize) return true;
-	const { dimensions } = decodeAssetId(image.asset._ref);
-	return (
-		(dimensions.width === viewportSize.imageWidth && dimensions.height === viewportSize.imageHeight) ||
-		`La imagen debe tener un tamaño estricto de ${viewportSize.imageWidth} x ${viewportSize.imageHeight} px. El tamaño de la imagen actual es de ${dimensions.width} x ${dimensions.height} px`
-	);
-};
 
 const generateContent = (viewport: ContentCampaignViewport) => {
 	return defineField({

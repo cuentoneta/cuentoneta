@@ -39,6 +39,8 @@ function describe(type: MediaType): string {
 }
 ```
 
+> **`as const` también aplica a arrays de claves, no solo a objetos.** Un array de literales sin `as const` colapsa su tipo derivado a `string`, lo que vuelve inverificable cualquier indexación posterior (TypeScript deja de poder angostar qué claves son válidas). Es el mismo mecanismo que en el objeto de arriba: sin `as const`, se pierde el tipo literal.
+
 > **Enforcement activo:** ESLint prohíbe declarar `enum` (`selector: 'TSEnumDeclaration'` dentro de `commonRestrictedSyntax`, en `eslint.config.mjs`), y el repo ya no tiene ninguno: la deuda de migración está saldada. El patrón `Object.freeze` se usa en `src/models/content-campaign.model.ts`, `src/app/providers/layout.interface.ts` y `src/models/literary-work.model.ts` (`createLiteraryWork`).
 
 ---
@@ -91,6 +93,8 @@ const DEFAULT_INTERVAL = 24 * 60 * 60 * 1000;
 - **Módulo:** promover a nivel de módulo solo cuando se comparte entre varias funciones del mismo archivo.
 - **Global:** solo tras confirmar reuso entre varios archivos.
 
+**Excepción — archivos con `@Component`, `@Directive` o `@Injectable`:** ahí la configuración propia de la clase (mapas `size → clase`, tablas de widgets o de estilo) **no** se promueve a nivel de módulo aunque la usen varios métodos: va como `private readonly` de instancia. La regla y su rationale están en [`angular-components.md`](angular-components.md#configuraci%C3%B3n-de-la-clase); la aplica la regla de ESLint `component-config-in-class`.
+
 **Rationale:** una constante declarada 50 líneas lejos de su único uso obliga al lector a saltar entre dos lugares. Co-locarla con su uso (cuando es único) hace el código autocontenido.
 
 ## `eslint.config.mjs`: reglas por-scope reemplazan, no mergean
@@ -104,4 +108,4 @@ En ESLint flat config, cuando **dos config objects aplican al mismo archivo** y 
 'no-restricted-syntax': ['error', ...commonRestrictedSyntax, ...pageFetchRestrictedSyntax],
 ```
 
-Precedentes en el propio archivo: `test-utils-vi-exception` (recompone `commonRestrictedSyntax` al soltar `viRestrictedSyntax` para `src/test-utils.ts`) y `ssr-fetch-must-decide-blocking` (recompone `commonRestrictedSyntax` al sumar las restricciones de fetch de página). La única parte que **sí** se puede soltar sin recomponer es la que no aplica al scope (`viRestrictedSyntax` en un bloque que ya `ignores: ['**/*.spec.ts']`, porque `vi.*` solo aparece en specs).
+Precedentes en el propio archivo: `test-utils-vi-exception` (recompone `commonRestrictedSyntax` al soltar `viRestrictedSyntax` para `src/test-utils.ts`), `ssr-fetch-must-decide-blocking` (recompone `commonRestrictedSyntax` al sumar las restricciones de fetch de página) y el bloque `cms` (recompone `commonRestrictedSyntax` soltando `viRestrictedSyntax` para todo `cms/**/*.ts`/`.tsx`, con un motivo propio: no es que `vi.*` no aplique ahí como en `test-utils-vi-exception`, sino que en `cms/` no existe `@test-utils` al que redirigir — sus dobles se escriben a mano). La única parte que **sí** se puede soltar sin recomponer es la que no aplica al scope (`viRestrictedSyntax` en un bloque que ya `ignores: ['**/*.spec.ts']`, porque `vi.*` solo aparece en specs).

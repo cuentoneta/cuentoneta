@@ -1,17 +1,20 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+	type ComponentProps,
+	type ComponentType,
+	type CSSProperties,
+	useCallback,
+	useEffect,
+	useState,
+} from 'react';
 import { useClient } from 'sanity';
 import { usePaneRouter } from 'sanity/structure';
 import { Badge, Box, Button, Card, Flex, Spinner, Stack, Text } from '@sanity/ui';
 import { AddIcon } from '@sanity/icons/Add';
 import { CodeBlockIcon } from '@sanity/icons/CodeBlock';
 
-import {
-	ACTIVE_LANDING_ID_QUERY,
-	API_VERSION,
-	LANDING_LIST_QUERY,
-	activeWeekSlug,
-	type LandingPageRow,
-} from '../utils/landing-page';
+import { buildWeekSlug } from '@utils/week-slug.utils';
+
+import { API_VERSION, LANDING_LIST_QUERY, type LandingPageRow, resolveActiveLandingId } from '../utils/landing-page';
 
 function toMessage(cause: unknown): string {
 	return cause instanceof Error ? cause.message : 'Error desconocido';
@@ -20,6 +23,10 @@ function toMessage(cause: unknown): string {
 export function LandingPageListPane() {
 	const client = useClient({ apiVersion: API_VERSION });
 	const { ChildLink, navigateIntent } = usePaneRouter();
+	// ChildLink no declara `style` en sus props, pero reenvía el resto al ancla que termina renderizando.
+	// El reset tiene que ir sobre esa ancla: la decoración la dibuja ella, y ponerlo en un descendiente
+	// no la cancela.
+	const PlainChildLink = ChildLink as ComponentType<ComponentProps<typeof ChildLink> & { style?: CSSProperties }>;
 	const [rows, setRows] = useState<LandingPageRow[] | null>(null);
 	const [activeId, setActiveId] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -28,10 +35,10 @@ export function LandingPageListPane() {
 		try {
 			const [list, active] = await Promise.all([
 				client.fetch<LandingPageRow[]>(LANDING_LIST_QUERY),
-				client.fetch<string | null>(ACTIVE_LANDING_ID_QUERY, { slug: activeWeekSlug() }),
+				resolveActiveLandingId(client),
 			]);
 			setRows(list);
-			setActiveId(active ?? null);
+			setActiveId(active);
 			setError(null);
 		} catch (cause) {
 			setError(toMessage(cause));
@@ -50,7 +57,11 @@ export function LandingPageListPane() {
 	if (error !== null) {
 		return (
 			<Box padding={4}>
-				<Text tone="critical">No se pudieron cargar las páginas de inicio: {error}</Text>
+				{/* El tono va en el Card: Text de @sanity/ui v3 no acepta `tone`, así que el mensaje se venía
+				    renderizando sin color de error. */}
+				<Card padding={3} radius={2} tone="critical">
+					<Text>No se pudieron cargar las páginas de inicio: {error}</Text>
+				</Card>
 			</Box>
 		);
 	}
@@ -65,7 +76,7 @@ export function LandingPageListPane() {
 
 	// Referencia para clasificar filas: el config de la activa (máximo config <= semana actual). Toda fila con
 	// config mayor es una semana futura. Sin activa, se cae a la semana actual como referencia.
-	const activeConfig = rows.find((row) => row._id === activeId)?.config ?? activeWeekSlug();
+	const activeConfig = rows.find((row) => row._id === activeId)?.config ?? buildWeekSlug(new Date());
 
 	return (
 		<Stack space={0}>
@@ -88,7 +99,7 @@ export function LandingPageListPane() {
 					const isFuture = !isActive && row.config > activeConfig;
 					const tone = isActive ? 'positive' : isFuture ? 'primary' : 'default';
 					return (
-						<ChildLink key={row._id} childId={row._id} style={{ textDecoration: 'none', color: 'inherit' }}>
+						<PlainChildLink key={row._id} childId={row._id} style={{ textDecoration: 'none', color: 'inherit' }}>
 							<Card paddingX={3} paddingY={3} radius={0} borderBottom tone={tone}>
 								<Flex align="center" gap={3}>
 									<Text size={2} muted={tone === 'default'}>
@@ -111,7 +122,7 @@ export function LandingPageListPane() {
 									)}
 								</Flex>
 							</Card>
-						</ChildLink>
+						</PlainChildLink>
 					);
 				})
 			)}

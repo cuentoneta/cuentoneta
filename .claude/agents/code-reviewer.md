@@ -34,7 +34,8 @@ Antes de revisar, leé **todas** las referencias del catálogo para tener el con
 4. **Verificar los gates de CI** — Los que deben quedar verdes en cada PR son los definidos en la sección [Comandos comunes](../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**).
 
 - **Corré solo los que aplican al diff.** `e2e` y `studio-build` son costosos: `e2e` solo si el cambio toca flujos E2E, `studio-build` solo si toca `cms/`. Es la misma condición que aplica la Fase 4 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md); correrlos sobre un diff que no los toca no verifica nada.
-- **Si quien te invoca ya los corrió y te pasa el resultado observado, no los repitas.** La Fase 4 los corre antes de delegar en vos: volver a ejecutarlos es la parte más cara de la review y no agrega información.
+- **Si quien te invoca ya te pasa el resultado observado, no los repitas.** La Fase 4 corre en la sesión solo el **tier local** (`typecheck`, `lint`, `stylelint`, `test`, `check-agents`); los otros —`build`, `storybook`, `studio-build`, `e2e`— los corre la integración continua sobre el PR en borrador, y su resultado te llega igual. Que un gate no se haya corrido en la sesión **no** es motivo para correrlo vos: volver a ejecutarlos es la parte más cara de la review y no agrega información.
+- **La columna "quién lo corrió" admite tres valores:** vos, quien te invoca, o **CI del borrador** (con el enlace a la corrida). La regla de abajo no se relaja por eso.
 - **Nunca reportes un estado que no observaste ni te fue reportado.** Cada fila de la tabla de resultados declara **quién** lo corrió. Si el resultado ajeno te resulta dudoso, o si tocaste archivos después de que se corriera, corré ese gate vos mismo — la duda se resuelve ejecutando, no asumiendo.
 
 ## Falsos positivos conocidos — NO marcar
@@ -57,6 +58,7 @@ Estos patrones son intencionales y correctos. NO los reportes como problemas:
 - [ ] Sin barrels (`index.ts` re-export) en ningún lado
 - [ ] Sin `any` sin un comentario `// REASON:`
 - [ ] Sin `// @ts-ignore` sin issue enlazado
+- [ ] Sin números de issue en comentarios de código — salvo un `TODO` que cite en su misma línea el issue abierto que lo destraba, o la justificación enlazada de una supresión de lint/TS
 - [ ] Sin `console.log` (quitar antes de commitear)
 - [ ] Sin uso directo de `vi.fn()` / `vi.mock()` / `vi.*` ni de timers — usar los wrappers de `@test-utils`
 - [ ] Sin `enum` de TypeScript — usar `Object.freeze({...} as const)`
@@ -124,12 +126,13 @@ Estos patrones son intencionales y correctos. NO los reportes como problemas:
 
 ### Storybook (bloqueante)
 
-- [ ] Los componentes nuevos en `src/app/components/` tienen su `*.stories.ts`
+- [ ] Los componentes nuevos en `src/app/components/` tienen su `*.stories.ts` — salvo delegación total (las cuatro condiciones de [`coding-agent-policies.md`](../references/coding-agent-policies.md) Sección 2), verificadas contra la plantilla y no contra la descripción del PR
+- [ ] Si algún componente se acoge a esa excepción, la story del componente destino lo nombra (condición 4) y cubre las variantes que el exento puede producir
 - [ ] Las stories incluyen `tags: ['autodocs']` y `parameters.docs.description.component`
 - [ ] Las descripciones (`description.component`/`description.story`) van en **una sola línea** (el HTML multilínea indentado se renderiza como bloque de código en autodocs)
 - [ ] En la doc, los nombres de componentes van en negrita (`<strong>`); las menciones a otros componentes documentados son enlaces navegables a su story (`<a href="./?path=/docs/<kind-id>--docs" target="_top">`)
 - [ ] Las stories cubren las variantes/estados clave (p. ej. default, loading, error, collapsed)
-- [ ] Si el componente tiene estado de carga (skeleton): existe una story con **estado intercambiable** (switch booleano real↔skeleton en el mismo slot)
+- [ ] Si el componente **renderiza** un skeleton en su propia plantilla: existe una story con **estado intercambiable** (switch booleano real↔skeleton en el mismo slot). No aplica al que solo pasa un `loading` hacia abajo
 - [ ] Las stories que necesitan providers usan los decorators `applicationConfig` o `moduleMetadata`
 - [ ] Los componentes cuyos `input()` signals, estados visuales o API pública cambian tienen sus stories actualizadas
 
@@ -184,7 +187,7 @@ Usá estos valores:
 
 Cuando un problema se marca como **Diferido**, hay que **proponer** un issue de GitHub y **esperar la confirmación del usuario** antes de crearlo: crear un issue es una acción hacia afuera (misma política que la Fase 5 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md)). La propuesta debe:
 
-1. Referenciar el número de la review original (p. ej. "Detectado como #7 durante la review del PR `#<pr>`").
+1. Referenciar la review original **por su PR**, que es lo que perdura (p. ej. "Detectado durante la review del PR `#<pr>`"). Sin el identificador del hallazgo: muere con la sesión que lo emitió, así que en el cuerpo de un issue —el artefacto más durable de todos— no resuelve a nada.
 2. Incluir contexto suficiente para actuar de forma independiente (archivo, línea, descripción del problema y la corrección recomendada).
 3. Estar etiquetado con labels que **existan** en el repo — `gh label list` los enumera, y pasar uno inexistente a `gh issue create --label` falla con un 422. Para un hallazgo diferido suelen aplicar `💳 deuda técnica` o `🏎️ mejora`, más el de dominio que corresponda (`🔌 backend`, `🅰️ angular`, `🧭 indexado`, …). Si ninguno encaja, proponer el label nuevo al usuario en vez de inventarlo — misma política que [`coding-agent-policies.md`](../references/coding-agent-policies.md) Sección 2.
 4. Estar vinculado al PR e issue actuales para trazabilidad.
@@ -193,9 +196,13 @@ Una vez que el usuario confirma y el issue existe, anotar su URL en el reporte j
 
 ### Numeración de problemas
 
-La columna **#** da un número secuencial a través de las tres tablas dentro de la misma sesión de review. La numeración es continua: si los Críticos terminan en #3, las Advertencias empiezan en #4. Así cualquier problema se referencia por un único número (p. ej. "corregí el #6") sin importar su severidad.
+La columna **R#** da un número secuencial con prefijo `R` (R1, R2, …) a través de las tres tablas dentro de la misma sesión de review. La numeración es continua: si los Críticos terminan en R3, las Advertencias empiezan en R4. Así cualquier problema se referencia por un único identificador (p. ej. "corregí el R6") sin importar su severidad.
 
-Los hallazgos del `security-auditor` (si corrió) llevan su propio prefijo `S` (S1, S2, …) en `SECURITY_REVIEW.md` y no comparten secuencia con los de este agente — ver "Numeración de hallazgos" en [`security-auditor.md`](security-auditor.md).
+El prefijo es **obligatorio en todo hallazgo**, sin excepción: cada uno se emite con su identificador prefijado, tanto en la tabla como en cualquier lugar donde se lo cite. El conjunto es **cerrado** — `R` para este agente, `S` para el `security-auditor`, y ningún otro. Que sea cerrado es lo que permite que un check los enumere; agregar una letra nueva sin actualizar los checks los deja ciegos.
+
+El prefijo **no es decorativo**: `#` significa **issue de GitHub** y nada más. Un hallazgo citado como `#<n>` es indistinguible de un issue para quien lo lee y para los checks que validan las menciones, que tendrían que subir su umbral de dígitos y dejar ciegos a los issues de número bajo. Por eso ni los hallazgos de review ni los de seguridad usan `#`.
+
+Los del `security-auditor` (si corrió) llevan su propio prefijo `S` (S1, S2, …) en `SECURITY_REVIEW.md` y no comparten secuencia con los de este agente — ver "Numeración de hallazgos" en [`security-auditor.md`](security-auditor.md).
 
 ### Resultados de verificación
 

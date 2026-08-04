@@ -30,6 +30,7 @@ export default defineConfig({
 			'scripts/**/*.{test,spec}.ts',
 			'resources/**/*.{test,spec}.ts',
 			'e2e/_utils/**/*.{test,spec}.ts',
+			'tools/**/*.{test,spec}.ts',
 		],
 		// @sanity y los bundles fesm de Angular se inlinan para que Vite los transforme.
 		server: {

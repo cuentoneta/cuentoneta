@@ -12,72 +12,32 @@ on:
   # excepción (sí corre invocado por el token), así que da señal de CI sobre `develop` para el release.
   workflow_dispatch:
 
+# El flujo de trabajo abre un PR en borrador al terminar la implementación y le pushea los fixes de la
+# review, así que un mismo PR acumula varias corridas. Sin esto, cada push encola un run nuevo sin
+# cancelar el anterior y ambos compiten por runners para un resultado que ya no interesa.
+#
+# En `push` a `develop` NO se cancela: ese run es el que guarda el cache de Nx en la rama default (ver
+# el comentario del trigger), y cancelarlo dejaría a todos los PRs sin cache base.
+# El `group` incluye el evento a propósito: sin eso, el `workflow_dispatch` que dispara
+# `prepare-release-pr.yml` sobre `develop` cae en el mismo grupo que el `push` a `develop`, queda
+# encolado detrás de él, y un merge posterior lo cancela en silencio — justo la corrida que le da
+# señal de CI al release.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7.0.1
-
-      - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v6.0.9
-        with:
-          version: 10.12.1
-
-      - name: Use Node.js 24
-        uses: actions/setup-node@v7.0.0
-        with:
-          node-version: 24.18.0
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --force --frozen-lockfile --ignore-scripts
-
-      - name: Generate testing environment file
-        run: pnpm run config
-
-      - name: Rebuild and prepare
-        run: pnpm rebuild && pnpm run prepare --if-present
-
-      # El workspace se comparte entre jobs con upload/download-artifact (entrega garantizada
-      # dentro del run), no con actions/cache: cachear todo el workspace (key por sha) se
-      # evicta bajo el límite de 10 GB por repo y deja a los jobs downstream sin lockfile.
-      # --anchored + prefijo ./ : sin anclar, un --exclude sin slash matchea el basename en
-      # CUALQUIER nivel, así que 'dist' borraba todos los node_modules/**/dist (rompía los paquetes).
-      - name: Pack workspace
-        run: tar -cf workspace.tar --anchored --exclude='./workspace.tar' --exclude='./.git' --exclude='./dist' --exclude='./.nx/cache' .
-
-      - name: Upload workspace artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: workspace
-          path: workspace.tar
-          retention-days: 1
-
   test:
-    needs: setup
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: write
     steps:
-      - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v6.0.9
-        with:
-          version: 10.12.1
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
 
-      - name: Use Node.js 24
-        uses: actions/setup-node@v7.0.0
-        with:
-          node-version: 24.18.0
-
-      - name: Download workspace artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: workspace
-
-      - name: Unpack workspace
-        run: tar -xf workspace.tar
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
 
       # Cache de Actions sobre el cache local de Nx (.nx/cache): único mecanismo de cacheo del CI,
       # da hits entre corridas hidratando el cache que Nx escribe en disco.
@@ -118,26 +78,13 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   lint:
-    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v6.0.9
-        with:
-          version: 10.12.1
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
 
-      - name: Use Node.js 24
-        uses: actions/setup-node@v7.0.0
-        with:
-          node-version: 24.18.0
-
-      - name: Download workspace artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: workspace
-
-      - name: Unpack workspace
-        run: tar -xf workspace.tar
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
 
       - name: Cache de Nx local
         uses: actions/cache@v6
@@ -151,51 +98,25 @@ jobs:
         run: npx nx eslint:lint
 
   check-agents:
-    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v6.0.9
-        with:
-          version: 10.12.1
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
 
-      - name: Use Node.js 24
-        uses: actions/setup-node@v7.0.0
-        with:
-          node-version: 24.18.0
-
-      - name: Download workspace artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: workspace
-
-      - name: Unpack workspace
-        run: tar -xf workspace.tar
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
 
       - name: Validar el frontmatter de .claude/agents/
         run: pnpm check:agents
 
   stylelint:
-    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v6.0.9
-        with:
-          version: 10.12.1
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
 
-      - name: Use Node.js 24
-        uses: actions/setup-node@v7.0.0
-        with:
-          node-version: 24.18.0
-
-      - name: Download workspace artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: workspace
-
-      - name: Unpack workspace
-        run: tar -xf workspace.tar
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
 
       - name: Cache de Nx local
         uses: actions/cache@v6
@@ -209,26 +130,13 @@ jobs:
         run: npx nx stylelint @cuentoneta/app
 
   typecheck:
-    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v6.0.9
-        with:
-          version: 10.12.1
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
 
-      - name: Use Node.js 24
-        uses: actions/setup-node@v7.0.0
-        with:
-          node-version: 24.18.0
-
-      - name: Download workspace artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: workspace
-
-      - name: Unpack workspace
-        run: tar -xf workspace.tar
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
 
       - name: Cache de Nx local
         uses: actions/cache@v6
@@ -242,26 +150,13 @@ jobs:
         run: npx nx typecheck
 
   e2e:
-    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v6.0.9
-        with:
-          version: 10.12.1
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
 
-      - name: Use Node.js 24
-        uses: actions/setup-node@v7.0.0
-        with:
-          node-version: 24.18.0
-
-      - name: Download workspace artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: workspace
-
-      - name: Unpack workspace
-        run: tar -xf workspace.tar
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
 
       - name: Cache de Nx local
         uses: actions/cache@v6
@@ -297,8 +192,25 @@ jobs:
       - name: Fix index file reference (postbuild)
         run: node scripts/fix-index-file-name.mjs
 
+      # La versión de Playwright vive en el lockfile, así que la key deriva de ahí: un bump invalida
+      # el cache solo.
+      - name: Cache de los browsers de Playwright
+        id: playwright-cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+      # El cache guarda los binarios de los browsers, no los paquetes de sistema que instala
+      # `--with-deps`. Por eso ante hit igual corre `install-deps`: saltear el step entero dejaría al
+      # runner sin las bibliotecas nativas que los browsers necesitan para arrancar.
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+
+      - name: Install Playwright system deps
+        run: npx playwright install-deps
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
 
       # El webServer SSR resuelve el dataset en runtime (environment.ts lee process.env), no en build:
       # se fija acá `staging` para que sea el dataset que ve el crawler. Gana sobre el `development` del
@@ -318,26 +230,13 @@ jobs:
           retention-days: 7
 
   build:
-    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v6.0.9
-        with:
-          version: 10.12.1
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
 
-      - name: Use Node.js 24
-        uses: actions/setup-node@v7.0.0
-        with:
-          node-version: 24.18.0
-
-      - name: Download workspace artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: workspace
-
-      - name: Unpack workspace
-        run: tar -xf workspace.tar
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
 
       - name: Cache de Nx local
         uses: actions/cache@v6
@@ -361,26 +260,13 @@ jobs:
           CLARITY_PROJECT_ID: ${{ secrets.CLARITY_PROJECT_ID }}
 
   storybook:
-    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v6.0.9
-        with:
-          version: 10.12.1
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
 
-      - name: Use Node.js 24
-        uses: actions/setup-node@v7.0.0
-        with:
-          node-version: 24.18.0
-
-      - name: Download workspace artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: workspace
-
-      - name: Unpack workspace
-        run: tar -xf workspace.tar
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
 
       - name: Cache de Nx local
         uses: actions/cache@v6
@@ -395,10 +281,10 @@ jobs:
 
   studio-build:
     runs-on: ubuntu-latest
-    # Checkout propio, sin `needs: setup`: cms/ es un proyecto pnpm aparte (lockfile
-    # propio, fuera del workspace de la raíz) y además referencia el árbol `src/` de la
-    # raíz vía import relativo (schemas/contentCampaign.ts). El workspace.tar de `setup`
-    # no instala cms/node_modules, así que reusarlo no ahorra nada.
+    # Install propio, sin la composite `setup-workspace`: cms/ es un proyecto pnpm aparte
+    # (lockfile propio, fuera del workspace de la raíz) y además referencia el árbol `src/`
+    # de la raíz vía import relativo (schemas/contentCampaign.ts). La composite instala el
+    # workspace de la raíz, que no incluye cms/node_modules: usarla no ahorraría nada.
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.1
@@ -419,12 +305,22 @@ jobs:
         working-directory: cms
         run: pnpm install --frozen-lockfile --ignore-scripts
 
-      # `sanity build` (bundler Vite/Rollup) es el gate autoritativo del Studio: un
-      # `tsc --noEmit` sobre cms/ no sirve (ruido de moduleResolution sobre node_modules,
-      # sin relación con errores reales de bundling). `--ignore-scripts` en el install
-      # saltea el postinstall que genera cms/.env (set-environment.ts), así que las vars
-      # que lee sanity.cli.ts se pasan acá explícitas, con fallback a los valores públicos
-      # por defecto (s4dbqkc5/development) para que corra igual en PRs de forks sin secrets.
+      # El type-check y los tests del Studio corren en este job y no en `typecheck`/`test`: cms tiene su
+      # propio árbol de node_modules y sus propias configs, y este job es el único que lo instala.
+      # Van antes del build por costo: tardan segundos y el build, medio minuto.
+      - name: Typecheck Sanity Studio
+        working-directory: cms
+        run: pnpm run typecheck
+
+      - name: Test Sanity Studio
+        working-directory: cms
+        run: pnpm test
+
+      # `sanity build` (bundler Vite/Rollup) es el gate autoritativo del *bundling* del Studio: Babel
+      # transpila sin chequear tipos, así que cubre una capa distinta de la del step de type-check.
+      # `--ignore-scripts` en el install saltea el postinstall que genera cms/.env (set-environment.ts),
+      # así que las vars que lee sanity.cli.ts se pasan acá explícitas, con fallback a los valores
+      # públicos por defecto (s4dbqkc5/development) para que corra igual en PRs de forks sin secrets.
       - name: Build Sanity Studio
         working-directory: cms
         run: pnpm exec sanity build

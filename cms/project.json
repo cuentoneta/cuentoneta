@@ -28,6 +28,32 @@
 				"cwd": "cms"
 			}
 		},
+		"test": {
+			"executor": "nx:run-commands",
+			"inputs": [
+				"default",
+				"{workspaceRoot}/src/models/**/*",
+				"{workspaceRoot}/src/utils/**/*",
+				"{workspaceRoot}/resources/**/*"
+			],
+			"options": {
+				"command": "pnpm test",
+				"cwd": "cms"
+			}
+		},
+		"typecheck": {
+			"executor": "nx:run-commands",
+			"inputs": [
+				"default",
+				"{workspaceRoot}/src/models/**/*",
+				"{workspaceRoot}/src/utils/**/*",
+				"{workspaceRoot}/resources/**/*"
+			],
+			"options": {
+				"command": "pnpm typecheck",
+				"cwd": "cms"
+			}
+		},
 		"deploy": {
 			"executor": "nx:run-commands",
 			"dependsOn": ["build"],

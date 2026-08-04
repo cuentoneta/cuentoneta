@@ -16,6 +16,38 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.9.1 (2026-08-04)
+
+La versión 2.9.1 no cambia nada de lo que ve quien lee el sitio: es una versión de **tooling y flujos de trabajo**, y su tema es el tiempo que tarda el ciclo de desarrollo en dar señal. La corrida de integración continua deja de esperar a que termine la review y pasa a solaparse con ella mediante un **PR en borrador** (#2102), y el propio pipeline se reescribe para que los gates arranquen en paralelo desde el primer segundo, sin el job intermedio que empaquetaba y distribuía el workspace entre ellos (#2103).
+
+En el mismo movimiento se cierran los **puntos ciegos de la verificación**. El Studio de Sanity entra a los gates de lint y typecheck (#2092) y estrena infraestructura de tests propia con Vitest standalone (#1760), con lo que `cms/` deja de ser código que solo se comprobaba al buildear. Se suma un gate nuevo —los required status checks de `develop` pasan de diez a once— que rechaza los mensajes de commit y los cuerpos de PR que citan identificadores de hallazgo de review, con un hook local que lo ataja antes de llegar a la nube (#2091).
+
+Cierran la versión tres precisiones de convención: la configuración de componentes y servicios pasa a exigirse como campo de instancia y no como constante de módulo, ahora con una regla que la hace verificable (#2028); la exigencia de story por componente admite la cadena de delegación de los despachadores (#2062); y las menciones a issues en el repositorio ganan dos vías nuevas — un TODO puede citar el issue que lo destraba (#2064) y un job programado avisa cuando un issue citado en el código o en la documentación ya cerró (#2063).
+
+### Cambios completos
+
+Ver el changelog completo en [2.9.1](https://github.com/cuentoneta/cuentoneta/releases/tag/2.9.1)
+
+### Cambios
+
+#### Velocidad del ciclo de desarrollo
+
+- [#2102] - Solapa la corrida de CI con la review mediante un PR en borrador y acota los gates locales por tier.
+- [#2103] - Comprime el loop de la sesión, agrega el barrido de worktrees y elimina el job `setup` de CI.
+
+#### Cobertura de verificación
+
+- [#2092] - Cubre `cms/` con los gates de lint y typecheck.
+- [#1760] - Suma infraestructura de tests (Vitest standalone) para la lógica runtime del Studio.
+- [#2091] - Verifica que los mensajes de commit y los cuerpos de PR no citen identificadores de hallazgo de review.
+
+#### Convenciones de código y de agentes
+
+- [#2028] - Exige la config de componentes y servicios como campo de instancia, con regla que lo verifica.
+- [#2062] - Admite la cadena de delegación en la exigencia de story por componente.
+- [#2064] - Permite que un TODO cite el issue que lo destraba en comentarios de código.
+- [#2063] - Agrega el job programado que avisa cuando un issue citado en el repo ya cerró.
+
 ## Versión 2.9.0 (2026-08-03)
 
 La versión 2.9.0 es el release donde **`LiteraryWork` deja de ser un spike y pasa a ser una entidad viva**. Se levanta la arquitectura de referencia de contenido (#1852) y sobre ella un walking skeleton end-to-end de la vista de lectura `/read` (#1853), con el cuerpo de la obra en **Markdown servido como HTML saneado** por un pipeline compartido, caché de borde con `stale-while-revalidate` (#1856) y una pasada transversal de hardening de XSS, paridad y fallback (#1857). El corpus de mocks de Onoff se unifica bajo el kernel y pasa a ser el test-data único, retirando los stable slugs de prueba (#1981, #2006, #1653), con selectores por capacidad en vez de azar (#2008) y el mapper del ACL extraído como slice propio (#1985). Llegan la **nota editorial** a lo largo del stack (#2011, #2012, #2021) y el **reading time persistido** por sección, con su unidad compartida de cómputo y su script de backfill (#1953, #1982, #1959). `/read/:slug` queda en `noindex` temporal hasta que se decida su indexación (#2040).
