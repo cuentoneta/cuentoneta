@@ -1,0 +1,42 @@
+# Verifica que los issues citados en el repo sigan abiertos, y reporta los que no.
+#
+# Va programado y **no** como gate, a propósito. Los checks del repo son offline y deterministas:
+# verifican que una mención esté declarada, no el estado real del issue. Esa segunda propiedad es
+# temporal —se vuelve falsa sin que nadie toque el repositorio—, así que como gate haría fallar un PR
+# por una mención que su diff no tocó, porque alguien cerró un issue ajeno. Un rojo no accionable por
+# quien lo recibe, y el incentivo inmediato sería saltearlo.
+#
+# Por lo mismo, el id de este job **no debe sumarse a los required status checks** de `develop`:
+# hacerlo reintroduciría por la ventana la dependencia de red que el gate evita por la puerta.
+name: Issue refs sweep
+
+on:
+  schedule:
+    # Lunes a las 6 UTC. GitHub desactiva un `schedule` tras 60 días sin actividad en el repo; el
+    # `workflow_dispatch` de abajo permite re-dispararlo a mano cuando eso pasa.
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  # Para crear y actualizar el issue de seguimiento. Es lo único que este job escribe.
+  issues: write
+
+concurrency:
+  group: issue-refs-sweep
+  cancel-in-progress: false
+
+jobs:
+  issue-refs-sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
+
+      - name: Barrer las menciones a issues
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: pnpm issue-refs:sweep --apply
