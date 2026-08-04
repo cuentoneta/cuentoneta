@@ -1,4 +1,5 @@
-# Verifica que los issues citados en el repo sigan abiertos, y reporta los que no.
+# Verifica que los issues citados en los `.md` de `.claude/` y en los comentarios de código de `src/`
+# y `cms/` sigan abiertos, y reporta los que no.
 #
 # Va programado y **no** como gate, a propósito. Los checks del repo son offline y deterministas:
 # verifican que una mención esté declarada, no el estado real del issue. Esa segunda propiedad es
