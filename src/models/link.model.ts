@@ -10,3 +10,8 @@ export interface UrlLink {
 	icon: string;
 	alt: string;
 }
+
+export interface HeaderNavLink extends InternalLink {
+	// El logo ya enlaza la home: esta entrada la repite, así que se muestra pero no se expone.
+	readonly duplicatesBrandLink?: boolean;
+}
