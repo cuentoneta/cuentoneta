@@ -27,71 +27,17 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7.0.1
-
-      - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v6.0.9
-        with:
-          version: 10.12.1
-
-      - name: Use Node.js 24
-        uses: actions/setup-node@v7.0.0
-        with:
-          node-version: 24.18.0
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --force --frozen-lockfile --ignore-scripts
-
-      - name: Generate testing environment file
-        run: pnpm run config
-
-      - name: Rebuild and prepare
-        run: pnpm rebuild && pnpm run prepare --if-present
-
-      # El workspace se comparte entre jobs con upload/download-artifact (entrega garantizada
-      # dentro del run), no con actions/cache: cachear todo el workspace (key por sha) se
-      # evicta bajo el límite de 10 GB por repo y deja a los jobs downstream sin lockfile.
-      # --anchored + prefijo ./ : sin anclar, un --exclude sin slash matchea el basename en
-      # CUALQUIER nivel, así que 'dist' borraba todos los node_modules/**/dist (rompía los paquetes).
-      - name: Pack workspace
-        run: tar -cf workspace.tar --anchored --exclude='./workspace.tar' --exclude='./.git' --exclude='./dist' --exclude='./.nx/cache' .
-
-      - name: Upload workspace artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: workspace
-          path: workspace.tar
-          retention-days: 1
-
   test:
-    needs: setup
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: write
     steps:
-      - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v6.0.9
-        with:
-          version: 10.12.1
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
 
-      - name: Use Node.js 24
-        uses: actions/setup-node@v7.0.0
-        with:
-          node-version: 24.18.0
-
-      - name: Download workspace artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: workspace
-
-      - name: Unpack workspace
-        run: tar -xf workspace.tar
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
 
       # Cache de Actions sobre el cache local de Nx (.nx/cache): único mecanismo de cacheo del CI,
       # da hits entre corridas hidratando el cache que Nx escribe en disco.
@@ -132,26 +78,13 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   lint:
-    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v6.0.9
-        with:
-          version: 10.12.1
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
 
-      - name: Use Node.js 24
-        uses: actions/setup-node@v7.0.0
-        with:
-          node-version: 24.18.0
-
-      - name: Download workspace artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: workspace
-
-      - name: Unpack workspace
-        run: tar -xf workspace.tar
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
 
       - name: Cache de Nx local
         uses: actions/cache@v6
@@ -165,51 +98,25 @@ jobs:
         run: npx nx eslint:lint
 
   check-agents:
-    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v6.0.9
-        with:
-          version: 10.12.1
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
 
-      - name: Use Node.js 24
-        uses: actions/setup-node@v7.0.0
-        with:
-          node-version: 24.18.0
-
-      - name: Download workspace artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: workspace
-
-      - name: Unpack workspace
-        run: tar -xf workspace.tar
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
 
       - name: Validar el frontmatter de .claude/agents/
         run: pnpm check:agents
 
   stylelint:
-    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v6.0.9
-        with:
-          version: 10.12.1
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
 
-      - name: Use Node.js 24
-        uses: actions/setup-node@v7.0.0
-        with:
-          node-version: 24.18.0
-
-      - name: Download workspace artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: workspace
-
-      - name: Unpack workspace
-        run: tar -xf workspace.tar
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
 
       - name: Cache de Nx local
         uses: actions/cache@v6
@@ -223,26 +130,13 @@ jobs:
         run: npx nx stylelint @cuentoneta/app
 
   typecheck:
-    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v6.0.9
-        with:
-          version: 10.12.1
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
 
-      - name: Use Node.js 24
-        uses: actions/setup-node@v7.0.0
-        with:
-          node-version: 24.18.0
-
-      - name: Download workspace artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: workspace
-
-      - name: Unpack workspace
-        run: tar -xf workspace.tar
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
 
       - name: Cache de Nx local
         uses: actions/cache@v6
@@ -256,26 +150,13 @@ jobs:
         run: npx nx typecheck
 
   e2e:
-    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v6.0.9
-        with:
-          version: 10.12.1
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
 
-      - name: Use Node.js 24
-        uses: actions/setup-node@v7.0.0
-        with:
-          node-version: 24.18.0
-
-      - name: Download workspace artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: workspace
-
-      - name: Unpack workspace
-        run: tar -xf workspace.tar
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
 
       - name: Cache de Nx local
         uses: actions/cache@v6
@@ -311,8 +192,25 @@ jobs:
       - name: Fix index file reference (postbuild)
         run: node scripts/fix-index-file-name.mjs
 
+      # La versión de Playwright vive en el lockfile, así que la key deriva de ahí: un bump invalida
+      # el cache solo.
+      - name: Cache de los browsers de Playwright
+        id: playwright-cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+      # El cache guarda los binarios de los browsers, no los paquetes de sistema que instala
+      # `--with-deps`. Por eso ante hit igual corre `install-deps`: saltear el step entero dejaría al
+      # runner sin las bibliotecas nativas que los browsers necesitan para arrancar.
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+
+      - name: Install Playwright system deps
+        run: npx playwright install-deps
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
 
       # El webServer SSR resuelve el dataset en runtime (environment.ts lee process.env), no en build:
       # se fija acá `staging` para que sea el dataset que ve el crawler. Gana sobre el `development` del
@@ -332,26 +230,13 @@ jobs:
           retention-days: 7
 
   build:
-    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v6.0.9
-        with:
-          version: 10.12.1
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
 
-      - name: Use Node.js 24
-        uses: actions/setup-node@v7.0.0
-        with:
-          node-version: 24.18.0
-
-      - name: Download workspace artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: workspace
-
-      - name: Unpack workspace
-        run: tar -xf workspace.tar
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
 
       - name: Cache de Nx local
         uses: actions/cache@v6
@@ -375,26 +260,13 @@ jobs:
           CLARITY_PROJECT_ID: ${{ secrets.CLARITY_PROJECT_ID }}
 
   storybook:
-    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Select pnpm as package manager
-        uses: pnpm/action-setup@v6.0.9
-        with:
-          version: 10.12.1
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
 
-      - name: Use Node.js 24
-        uses: actions/setup-node@v7.0.0
-        with:
-          node-version: 24.18.0
-
-      - name: Download workspace artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: workspace
-
-      - name: Unpack workspace
-        run: tar -xf workspace.tar
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
 
       - name: Cache de Nx local
         uses: actions/cache@v6
@@ -409,10 +281,10 @@ jobs:
 
   studio-build:
     runs-on: ubuntu-latest
-    # Checkout propio, sin `needs: setup`: cms/ es un proyecto pnpm aparte (lockfile
-    # propio, fuera del workspace de la raíz) y además referencia el árbol `src/` de la
-    # raíz vía import relativo (schemas/contentCampaign.ts). El workspace.tar de `setup`
-    # no instala cms/node_modules, así que reusarlo no ahorra nada.
+    # Install propio, sin la composite `setup-workspace`: cms/ es un proyecto pnpm aparte
+    # (lockfile propio, fuera del workspace de la raíz) y además referencia el árbol `src/`
+    # de la raíz vía import relativo (schemas/contentCampaign.ts). La composite instala el
+    # workspace de la raíz, que no incluye cms/node_modules: usarla no ahorraría nada.
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.1
