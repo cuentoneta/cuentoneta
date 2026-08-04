@@ -58,3 +58,46 @@ export function findIssueRefsInComments(filePath: string, added: string): string
 		return COMMENT_MARKER.test(line.replace(/:\/\//g, ':/'));
 	});
 }
+
+/** Una mención a un issue que alguna de las dos excepciones ampara, con la excepción que la ampara. */
+export interface ExemptIssueRef {
+	readonly lineNumber: number;
+	readonly line: string;
+	readonly issueNumber: number;
+	readonly kind: 'todo' | 'suppression';
+}
+
+/**
+ * La operación **inversa** de `findIssueRefsInComments`: las menciones que las excepciones sí admiten.
+ *
+ * Existe porque esas excepciones se conceden bajo una condición que ningún check verifica — que el
+ * issue citado siga **abierto**—. Es una propiedad temporal: se vuelve falsa sin que nadie toque el
+ * repositorio, así que solo puede comprobarse preguntándole a GitHub, fuera del camino de un gate.
+ *
+ * Comparte los mismos marcadores que el predicado del hook, para que ampare exactamente lo mismo.
+ */
+export function findExemptIssueRefs(filePath: string, content: string): ExemptIssueRef[] {
+	const normalized = filePath.replace(/\\/g, '/');
+	if (!SCOPED_PATH.test(normalized) || !CODE_FILE.test(normalized)) {
+		return [];
+	}
+
+	return content.split(/\r?\n/).flatMap((line, index) => {
+		// Un hallazgo de review no se ampara nunca, así que su línea tampoco cuenta como excepción.
+		if (hasFindingRef(line)) return [];
+		if (!COMMENT_MARKER.test(line.replace(/:\/\//g, ':/'))) return [];
+
+		const kind = TODO_MARKER.test(line) ? 'todo' : SUPPRESSION_MARKER.test(line) ? 'suppression' : null;
+		if (kind === null) return [];
+
+		// Variante global construida por llamada: una con `g` a nivel de módulo arrastra `lastIndex`
+		// entre invocaciones y devuelve resultados alternados.
+		const matches = [...line.matchAll(new RegExp(ISSUE_REF.source, 'g'))];
+		return matches.map((match) => ({
+			lineNumber: index + 1,
+			line,
+			issueNumber: Number(match[0].slice(1)),
+			kind,
+		}));
+	});
+}
