@@ -6,6 +6,8 @@
  *       link canonical, robots indexable y keywords.
  *  - B+C. Datos estructurados sitewide: bloques JSON-LD Organization y WebSite (la home no
  *         tiene una entidad propia, solo los sitewide del app initializer).
+ *  - E. Enlaces a los hubs del catálogo (/story y /authors), que son la vía por la que el
+ *       crawler alcanza el corpus.
  *
  * Sobre el DOM hidratado, vía navegación in-app (router):
  *  - D. Al navegar de la home a una story, los bloques sitewide persisten y aparece el Article;
@@ -13,7 +15,7 @@
  */
 import { test, expect } from '@playwright/test';
 
-import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
+import { parseHtml, parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
 import { assertValidJsonLd } from '@testing/json-ld-validation';
 import type { SeoInvariantViolation } from '@testing/seo-invariant-violation';
 import {
@@ -55,6 +57,18 @@ test('home — B/C: bloques JSON-LD sitewide Organization y WebSite', async () =
 	const website = blocks.get(SCHEMA_IDS.website);
 	await assertValidJsonLd(website);
 	expect(website?.['name']).toBe('La Cuentoneta');
+});
+
+// Los hubs concentran los enlaces a todo el corpus, y hasta este cambio ninguna página los
+// enlazaba: el crawler solo los conocía por el sitemap. Se afirma sobre el HTML crudo porque lo
+// que importa es que estén sin ejecutar JS. Igualdad exacta del href: /story/<slug> no cuenta.
+test('home — E: enlaza los hubs del catálogo en el HTML server-rendered', async () => {
+	const hrefs = parseHtml(html)
+		.querySelectorAll('a')
+		.map((anchor) => anchor.getAttribute('href'));
+
+	expect(hrefs).toContain('/story');
+	expect(hrefs).toContain('/authors');
 });
 
 test('home — invariantes de indexado para crawlers (ssr, h1 real, contenido primario, jsonld sitewide)', async () => {
