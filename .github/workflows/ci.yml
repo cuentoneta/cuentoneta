@@ -50,7 +50,7 @@ jobs:
             nx-cache-test-
 
       - name: Run Tests
-        run: npx nx test
+        run: npx nx vitest:test
 
       # A) Reporte navegable (html + lcov) como artefacto descargable del workflow.
       - name: Upload coverage artifact
