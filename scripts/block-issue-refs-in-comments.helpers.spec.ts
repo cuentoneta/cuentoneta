@@ -1,4 +1,4 @@
-import { findIssueRefsInComments } from './block-issue-refs-in-comments.helpers';
+import { findExemptIssueRefs, findIssueRefsInComments } from './block-issue-refs-in-comments.helpers';
 
 const file = 'src/app/components/widget/widget.component.ts';
 
@@ -108,5 +108,50 @@ describe('findIssueRefsInComments — alcance', () => {
 		const linea = '// Rediseñado en #1234';
 
 		expect(findIssueRefsInComments('C:\\repo\\src\\app\\widget.ts', linea)).toEqual([linea]);
+	});
+});
+
+describe('findExemptIssueRefs — la operación inversa', () => {
+	const file = 'src/app/components/widget/widget.component.ts';
+
+	it.each([
+		['un TODO con paréntesis', '// TODO(#1471): eliminar el adapter', 1471, 'todo'],
+		['un TODO con el número al final', '// TODO: eliminar el adapter (ver #1471)', 1471, 'todo'],
+		['una supresión de ESLint', '/* eslint-disable no-restricted-syntax -- se migra en #1503 */', 1503, 'suppression'],
+		['una supresión de TS', '// @ts-expect-error -- se resuelve en #1503', 1503, 'suppression'],
+	])('devuelve %s con su número y su tipo', (_caso, linea, numero, kind) => {
+		expect(findExemptIssueRefs(file, linea)).toEqual([{ lineNumber: 1, line: linea, issueNumber: numero, kind }]);
+	});
+
+	it('devuelve una entrada por número cuando la línea cita varios', () => {
+		const salida = findExemptIssueRefs(file, '// TODO(#1471): depende también de #1503');
+
+		expect(salida.map((ref) => ref.issueNumber)).toEqual([1471, 1503]);
+	});
+
+	it('no devuelve una línea ofensora: esa la cubre el hook, no es una excepción vigente', () => {
+		expect(findExemptIssueRefs(file, '// Rediseñado en #1471: antes usaba otra proyección')).toEqual([]);
+	});
+
+	it('no ampara una línea que además cita un identificador de hallazgo', () => {
+		expect(findExemptIssueRefs(file, '// TODO(#1471): revisar el hallazgo S3')).toEqual([]);
+	});
+
+	it('reporta el número de línea real dentro de un archivo', () => {
+		const contenido = ['const x = 1;', '', '// TODO(#1471): sacar esto'].join('\n');
+
+		expect(findExemptIssueRefs(file, contenido)[0].lineNumber).toBe(3);
+	});
+
+	it.each([
+		['fuera de src/ y cms/', 'scripts/check-issue-refs.ts'],
+		['una extensión que no es de código', 'src/mocks/onoff/README.md'],
+	])('no mira %s', (_caso, ruta) => {
+		expect(findExemptIssueRefs(ruta, '// TODO(#1471): algo')).toEqual([]);
+	});
+
+	it('no arrastra estado entre llamadas, que es el modo de falla de una regex global compartida', () => {
+		expect(findExemptIssueRefs(file, '// TODO(#1471): x')).toHaveLength(1);
+		expect(findExemptIssueRefs(file, '// TODO(#1471): x')).toHaveLength(1);
 	});
 });
