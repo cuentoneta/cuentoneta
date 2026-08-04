@@ -10,11 +10,14 @@
 
 | Aspecto          | Valor                                                                                    |
 | ---------------- | ---------------------------------------------------------------------------------------- |
-| **Runner**       | **Vitest** (`pnpm test` / `pnpm test:watch`)                                             |
+| **Runner**       | **Vitest** (`pnpm test` / `pnpm test:watch` / `pnpm test:ui`)                            |
 | **Entorno**      | `happy-dom`, Angular **zoneless** (sin `zone.js`)                                        |
 | **Componentes**  | **Angular Testing Library** (`@testing-library/angular`) + `@testing-library/user-event` |
+| **Matchers DOM** | `@testing-library/jest-dom` — **no es Jest** (ver abajo)                                 |
 | **Mocks/timers** | Wrappers de **`@test-utils`** (`src/test-utils.ts`)                                      |
 | **Compilación**  | `@analogjs/vite-plugin-angular` (JIT en tests)                                           |
+
+> **`@testing-library/jest-dom` no tiene relación con Jest.** El nombre viene de su origen, pero es una librería de matchers de DOM —`toBeInTheDocument`, `toHaveClass`, `toHaveAttribute`…— que se registra para Vitest en `src/test-setup.ts` (`import '@testing-library/jest-dom/vitest'`) y es parte del stack recomendado de Testing Library. Al barrer residuos de Jest del workspace, **no** es uno de ellos.
 
 Archivos clave:
 
