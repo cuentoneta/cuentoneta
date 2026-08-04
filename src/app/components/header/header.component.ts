@@ -1,9 +1,10 @@
 import { Component, effect, input, signal } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { InternalLink } from '@models/link.model';
+import { HeaderNavLink } from '@models/link.model';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { HEADER_HEIGHT_STRING_PX } from '@utils/spacing.utils';
+import { AppRoutes } from '../../app.routes';
 
 const VisibilityState = Object.freeze({
 	Visible: 'visible',
@@ -31,11 +32,11 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 			<nav class="navigation flex items-center justify-end">
 				<ul class="flex hidden md:flex">
 					@for (navLink of navLinks; track $index) {
-						<li class="font-inter text-sm font-semibold text-neutral-900 hover:text-neutral-900/60 md:ml-12">
+						<li class="font-inter text-sm font-semibold text-neutral-900 hover:text-neutral-900/60 md:ml-8 lg:ml-12">
 							<a
 								[routerLink]="navLink.path"
-								[tabindex]="navLink.label === 'Inicio' ? -1 : 0"
-								[attr.aria-hidden]="navLink.label === 'Inicio'"
+								[tabindex]="navLink.duplicatesBrandLink ? -1 : 0"
+								[attr.aria-hidden]="navLink.duplicatesBrandLink ?? false"
 								>{{ navLink.label }}</a
 							>
 						</li>
@@ -62,8 +63,8 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 							<a
 								(click)="onMenuTogglerClicked()"
 								[routerLink]="navLink.path"
-								[tabindex]="navLink.label === 'Inicio' ? -1 : 0"
-								[attr.aria-hidden]="navLink.label === 'Inicio'"
+								[tabindex]="navLink.duplicatesBrandLink ? -1 : 0"
+								[attr.aria-hidden]="navLink.duplicatesBrandLink ?? false"
 								>{{ navLink.label }}</a
 							>
 						</li>
@@ -104,9 +105,11 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 	],
 })
 export class HeaderComponent {
-	protected readonly navLinks: InternalLink[] = [
-		{ label: 'Inicio', path: '/home' },
-		{ label: 'Nosotros', path: '/about' },
+	protected readonly navLinks: HeaderNavLink[] = [
+		{ label: 'Inicio', path: `/${AppRoutes.Home}`, duplicatesBrandLink: true },
+		{ label: 'Obras', path: `/${AppRoutes.Story}` },
+		{ label: 'Autores', path: `/${AppRoutes.Authors}` },
+		{ label: 'Nosotros', path: `/${AppRoutes.About}` },
 	];
 	protected readonly displayMenu = signal(false);
 
