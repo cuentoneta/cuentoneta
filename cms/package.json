@@ -22,11 +22,11 @@
 		"sanity"
 	],
 	"dependencies": {
-		"@sanity/cli": "^7.13.0",
+		"@sanity/cli": "^7.15.1",
 		"@sanity/export": "^6.2.0",
 		"@sanity/icons": "^5.2.1",
 		"@sanity/import": "^6.0.3",
-		"@sanity/ui": "^3.5.0",
+		"@sanity/ui": "^3.5.1",
 		"@sanity/vision": "^5.31.1",
 		"date-fns": "^4.4.0",
 		"prop-types": "^15.8.1",
