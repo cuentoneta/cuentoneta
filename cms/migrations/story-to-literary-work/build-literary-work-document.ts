@@ -67,12 +67,25 @@ export class UnmigratableStoryError extends Error {
  */
 export const MIGRATED_ID_PREFIX = 'lw-from-story-';
 
+/** Sanity marca el borrador de un documento con este prefijo de path en su `_id`. */
+export const DRAFTS_PATH_PREFIX = 'drafts.';
+
+/**
+ * El prefijo de path va **antes** que el de la migración, no concatenado detrás del origen: Sanity lo
+ * lee como borrador solo cuando encabeza el `_id`. Un `drafts.` en el medio deja un documento
+ * publicado con un nombre que aparenta lo contrario, así que derivar el id de un borrador sin
+ * separarlo publicaría contenido inédito sin que nada lo señale.
+ */
 export function literaryWorkIdFor(storyId: string): string {
+	if (storyId.startsWith(DRAFTS_PATH_PREFIX)) {
+		return `${DRAFTS_PATH_PREFIX}${MIGRATED_ID_PREFIX}${storyId.slice(DRAFTS_PATH_PREFIX.length)}`;
+	}
 	return `${MIGRATED_ID_PREFIX}${storyId}`;
 }
 
 export function isMigratedLiteraryWorkId(id: string): boolean {
-	return id.startsWith(MIGRATED_ID_PREFIX);
+	const withoutPath = id.startsWith(DRAFTS_PATH_PREFIX) ? id.slice(DRAFTS_PATH_PREFIX.length) : id;
+	return withoutPath.startsWith(MIGRATED_ID_PREFIX);
 }
 
 /**
