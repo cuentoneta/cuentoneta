@@ -570,11 +570,13 @@ interface Resource {
 interface ResourceType {
 	slug: string; // Identificador único del tipo
 	title: string; // Nombre del tipo (ej: "Wikipedia")
-	shortDescription: string; // Descripción corta
+	description: string; // Texto plano que explica qué es el tipo
 }
 ```
 
 > El ícono que acompaña a un recurso en la interfaz lo resuelve el frontend a partir del `slug` del tipo, contra el mapa local de `@models/icon.model`. No viaja desde el CMS.
+
+> El nombre `description` no implica un mismo tipo en todo el modelo: en `ResourceType` y en [`Tag`](#tag-etiqueta) es texto plano, mientras que `Storylist.description` es Portable Text (`TextBlockContent[]`) y `Media.description` es HTML saneado. Conviene mirar la interfaz antes de asumir el formato.
 
 **Ejemplos de tipos:**
 
@@ -594,11 +596,13 @@ interface ResourceType {
 interface Tag {
 	slug: string; // Identificador único
 	title: string; // Nombre de la etiqueta
-	shortDescription: string; // Breve descripción
+	description: string; // Texto plano que explica qué agrupa la etiqueta
 }
 ```
 
 **Uso:** Clasificar contenido por tema, género, etc.
+
+> El nombre `description` no implica un mismo tipo en todo el modelo: en `Tag` y en [`ResourceType`](#resource-recurso-externo) es texto plano, mientras que `Storylist.description` es Portable Text (`TextBlockContent[]`) y `Media.description` es HTML saneado. Conviene mirar la interfaz antes de asumir el formato.
 
 > Una etiqueta no lleva ícono: `TagComponent` renderiza solo su título. El CMS supo tener un campo de ícono, pero ninguna superficie lo mostraba.
 

@@ -21,7 +21,7 @@ export const authorMock: AuthorProfile = {
 			resourceType: {
 				slug: 'wikipedia',
 				title: 'Wikipedia',
-				shortDescription: 'Enlace a artículo de Wikipedia',
+				description: 'Enlace a artículo de Wikipedia',
 			},
 		},
 	],
