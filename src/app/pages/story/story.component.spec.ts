@@ -49,9 +49,9 @@ describe('StoryComponent', () => {
 		expect(view).toBeTruthy();
 	});
 
-	// El pie de la página mostraba un segundo enlace al mismo perfil, duplicando el nombre accesible.
-	// La aserción falla si alguien lo reintroduce.
-	it('should link to the author once, from the header', async () => {
+	// Alcance: los enlaces que declara el template de la página. Un hijo que no esté en
+	// `componentImports` se renderiza vacío, así que el conteo sobre el árbol completo vive en el e2e.
+	it('should declare a single author link in its own template', async () => {
 		await setup();
 
 		const authorLinks = screen.getAllByRole('link', { name: new RegExp(storyMock.author.name, 'iu') });

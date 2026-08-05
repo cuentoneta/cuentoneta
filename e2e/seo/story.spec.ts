@@ -74,6 +74,14 @@ test('story — invariantes de indexado para crawlers (ssr, h1, contenido primar
 	).toEqual([]);
 });
 
+// El nombre del autor es el texto de ese enlace: un segundo enlace al mismo perfil duplica el nombre
+// accesible, que es lo que la ficha de obra tuvo mientras cerró con una tarjeta de biografía.
+test('story — enlaza al perfil del autor una sola vez', async () => {
+	const authorLinks = html.match(new RegExp(`href="/author/${STABLE_SLUGS.author}"`, 'g')) ?? [];
+
+	expect(authorLinks).toHaveLength(1);
+});
+
 test('story — D: al navegar al autor se remueven los bloques del cuento', async ({ page }) => {
 	await page.goto(storyPath);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.article}"]`)).toHaveCount(1);
