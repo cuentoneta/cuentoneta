@@ -40,7 +40,9 @@ Quince de los cuentos admitidos referencian autores que solo existen como borrad
 
 Corolario: esta migración **no exige publicar nada** — ni cuentos ni fichas de autor.
 
-## Dos consecuencias operativas
+## Tres consecuencias operativas
+
+**Los 14 con contraparte publicada quedan con cambios pendientes que nadie hizo.** Al crear el borrador de una obra que ya estaba publicada, el Studio la muestra con modificaciones sin publicar. Publicarlas reemplaza el contenido de la versión publicada — incluida cualquier corrección editorial hecha después de la migración original, que es justamente lo que `createIfNotExists` protege al escribir. Antes de publicar una de esas 14, conviene comparar ambas versiones: si el borrador no aporta nada, corresponde descartarlo, no publicarlo.
 
 **Publicar el cuento no publica su obra.** Son documentos distintos. Al publicar un cuento más adelante hay que publicar también su obra, o aceptar que queda rezagada respecto del cuento. Automatizarlo —por webhook o por una migración de sincronización— es un trabajo aparte.
 
@@ -86,7 +88,7 @@ pnpm exec sanity migration run draft-story-to-literary-work --project <id> --dat
 
 ### 5. Verificar
 
-En el Studio, que las obras nuevas figuren como borrador. Repetir la corrida para probar la idempotencia: el contador de la CLI **no** sirve como criterio —cuenta mutaciones emitidas, no aplicadas— así que se comprueba en el contenido, que no se reescribe.
+En el Studio, que las obras nuevas figuren como borrador, y que las 14 que tienen contraparte publicada aparezcan con cambios pendientes —eso es esperado, no un error—. Repetir la corrida para probar la idempotencia: el contador de la CLI **no** sirve como criterio —cuenta mutaciones emitidas, no aplicadas— así que se comprueba en el contenido, que no se reescribe.
 
 ## Revertir
 

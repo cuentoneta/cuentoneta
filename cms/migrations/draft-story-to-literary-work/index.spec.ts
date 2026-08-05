@@ -47,7 +47,9 @@ describe('migración de cuentos en borrador a obras en borrador', () => {
 		expect(migrateDocument(draftStory())).toHaveLength(1);
 	});
 
-	// La mutación apunta a OTRO documento: itera cuentos y crea obras. El cuento queda intacto.
+	// La mutación apunta a OTRO documento: itera cuentos y crea obras. El cuento queda intacto. Y es
+	// `createIfNotExists` y no `createOrReplace`: repetir la corrida no debe pisar lo que alguien haya
+	// editado a mano en la obra después de migrarla.
 	it('crea la obra en borrador sin tocar el cuento de origen', () => {
 		const [mutation] = migrateDocument(draftStory()) as { type: string; document: { _id: string; _type: string } }[];
 
@@ -61,14 +63,6 @@ describe('migración de cuentos en borrador a obras en borrador', () => {
 		const [mutation] = migrateDocument(draftStory()) as { document: { _id: string } }[];
 
 		expect(mutation?.document._id.startsWith('drafts.')).toBe(true);
-	});
-
-	// `createIfNotExists` y no `createOrReplace`: repetir la corrida no debe pisar lo que alguien haya
-	// editado a mano en la obra después de migrarla.
-	it('usa una mutación que no pisa una obra ya existente', () => {
-		const [mutation] = migrateDocument(draftStory()) as { type: string }[];
-
-		expect(mutation?.type).not.toBe('createOrReplace');
 	});
 
 	it('lleva el contenido convertido a la obra creada', () => {

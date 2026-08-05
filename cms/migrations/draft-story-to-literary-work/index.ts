@@ -20,6 +20,11 @@ import { buildLiteraryWorkDocument, type StoryDocument } from '../story-to-liter
  * corrida entera ni saltearlo desde el mapeo: la exclusión declarativa queda a la vista en el diff y
  * el censo dice exactamente qué quedó afuera. El armado del documento sigue lanzando ante un dato que
  * no permite construir una obra válida, ahora como defensa en profundidad.
+ *
+ * Esas mismas condiciones están escritas en `scripts/audit/audit-story-portable-text.ts`, que reporta
+ * cuántos cuentos admiten y cuántos excluyen. Viven duplicadas porque el Studio es un proyecto pnpm
+ * aparte: **al tocar una hay que tocar la otra**, o el contraste del dry-run contra el censo valida en
+ * verde sin verificar nada.
  */
 export default defineMigration({
 	title: 'Crear una obra en borrador por cada cuento en borrador',

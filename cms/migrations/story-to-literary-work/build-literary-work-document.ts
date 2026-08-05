@@ -75,6 +75,11 @@ export const DRAFTS_PATH_PREFIX = 'drafts.';
  * lee como borrador solo cuando encabeza el `_id`. Un `drafts.` en el medio deja un documento
  * publicado con un nombre que aparenta lo contrario, así que derivar el id de un borrador sin
  * separarlo publicaría contenido inédito sin que nada lo señale.
+ *
+ * `drafts.` no es el único prefijo de path que usa Sanity: las Content Releases versionan con
+ * `versions.<release>.<id>`, que reintroduciría el mismo defecto. Hoy ninguna migración recorre esos
+ * documentos, así que el corte contempla un solo prefijo; sumar otro exige generalizarlo acá, no en
+ * cada llamador.
  */
 export function literaryWorkIdFor(storyId: string): string {
 	if (storyId.startsWith(DRAFTS_PATH_PREFIX)) {
