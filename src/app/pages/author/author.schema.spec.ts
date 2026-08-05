@@ -122,6 +122,16 @@ describe('buildAuthorProfilePageSchema', () => {
 		});
 	});
 
+	// El barrido de tags corta en el primer `>`, aunque venga dentro de un valor de atributo. El pipeline
+	// no emite un `>` sin escapar ahí, así que la limitación queda enunciada, no manejada.
+	it('should truncate a tag whose attribute carries an unescaped greater-than sign', () => {
+		const author = { ...authorMock, biography: createSanitizedHtml('<p><img alt="a > b"/>Texto</p>') };
+
+		const mainEntity = buildAuthorProfilePageSchema(author, websiteUrl)['mainEntity'] as Record<string, unknown>;
+
+		expect(mainEntity['description']).toBe('b"/>Texto');
+	});
+
 	it('should collapse an empty block when flattening the biography', () => {
 		const author = {
 			...authorMock,
