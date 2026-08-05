@@ -16,6 +16,28 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.9.2 (2026-08-04)
+
+La versión 2.9.2 es un patch de dos frentes independientes.
+
+El primero es de **indexado**: `/story` y `/authors` concentran 613 y 325 enlaces internos y ninguna página del sitio las enlazaba —solo se llegaba escribiendo la URL a mano, tanto una persona como un crawler—, así que pasan a formar parte de la navegación principal (#2114). En el mismo movimiento se expone toda la navegación al árbol de accesibilidad —la entrada `Inicio` estaba visible pero con `aria-hidden`, y el logo no anunciaba su destino—, se rediseña el índice de autores con el mismo formato que el listado de obras y se corrige su orden alfabético, que comparaba por punto de código y mandaba al final a todo nombre con acento.
+
+El segundo es de **tooling**: el target de tests usaba el ejecutor `@nx/vitest:test`, deprecado y removido en Nx v24, lo que bloqueaba esa actualización; migra al plugin inferido `@nx/vitest` (#2115). Se suma la instalación de `@vitest/ui` —el script `test:ui` estaba publicado pero roto— y la limpieza de los últimos rastros de Jest y Cypress de la configuración de Nx.
+
+### Cambios completos
+
+Ver el changelog completo en [2.9.2](https://github.com/cuentoneta/cuentoneta/releases/tag/2.9.2)
+
+### Cambios
+
+#### Indexado
+
+- [#2114] - Enlaza el catálogo de cuentos y autores desde la navegación principal.
+
+#### Tooling
+
+- [#2115] - Migra el target de tests al plugin inferido de Nx y elimina el ejecutor deprecado.
+
 ## Versión 2.9.1 (2026-08-04)
 
 La versión 2.9.1 no cambia nada de lo que ve quien lee el sitio: es una versión de **tooling y flujos de trabajo**, y su tema es el tiempo que tarda el ciclo de desarrollo en dar señal. La corrida de integración continua deja de esperar a que termine la review y pasa a solaparse con ella mediante un **PR en borrador** (#2102), y el propio pipeline se reescribe para que los gates arranquen en paralelo desde el primer segundo, sin el job intermedio que empaquetaba y distribuía el workspace entre ellos (#2103).
