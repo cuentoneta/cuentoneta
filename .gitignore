@@ -85,3 +85,8 @@ scripts/*.mp4
 
 # Info incremental de TypeScript (regenerable por tsc -b)
 *.tsbuildinfo
+
+# Claves de service accounts de Google (nunca versionar)
+*.iam.gserviceaccount.com.json
+gsc-key.json
+**/flash-medley-*.json
