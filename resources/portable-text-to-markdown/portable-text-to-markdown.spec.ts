@@ -26,6 +26,20 @@ describe('portableTextToMarkdown', () => {
 			expect(portableTextToMarkdown([block([span('podcast', ['strong'])])])).toBe('**podcast**');
 		});
 
+		it('deja el espacio de los bordes fuera de los delimitadores', () => {
+			// CommonMark no cierra un énfasis cuyo delimitador viene precedido de espacio: dentro, la marca
+			// se perdería en silencio.
+			expect(portableTextToMarkdown([block([span('Elsa Bornemann ', ['strong']), span('(1952)')])])).toBe(
+				'**Elsa Bornemann** (1952)',
+			);
+		});
+
+		it('no envuelve en delimitadores un span que solo tiene espacios', () => {
+			expect(portableTextToMarkdown([block([span('a', ['em']), span(' ', ['em']), span('b', ['em'])])])).toBe(
+				'*a* *b*',
+			);
+		});
+
 		it('convierte un enlace resolviendo su href desde markDefs', () => {
 			const withLink = block([span('edición facsimilar', ['link-1'])], {
 				markDefs: [{ _type: 'link', _key: 'link-1', href: 'https://example.org/a.pdf' }],
