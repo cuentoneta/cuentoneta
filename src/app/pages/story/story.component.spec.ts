@@ -45,7 +45,7 @@ describe('StoryComponent', () => {
 	};
 
 	it('should create', async () => {
-		const view = setup();
+		const view = await setup();
 		expect(view).toBeTruthy();
 	});
 
@@ -54,7 +54,11 @@ describe('StoryComponent', () => {
 	it('should declare a single author link in its own template', async () => {
 		await setup();
 
-		const authorLinks = screen.getAllByRole('link', { name: new RegExp(storyMock.author.name, 'iu') });
+		// El nombre accesible se compara por inclusión y no con una expresión regular armada desde el
+		// mock: el nombre de un autor del canon puede traer caracteres con significado en una regex.
+		const authorLinks = screen.getAllByRole('link', {
+			name: (accessibleName) => accessibleName.includes(storyMock.author.name),
+		});
 
 		expect(authorLinks).toHaveLength(1);
 		expect(authorLinks[0]).toHaveAttribute('href', `/author/${storyMock.author.slug}`);
