@@ -14,8 +14,10 @@ describe('reversión de la creación de obras', () => {
 		expect(migration.documentTypes).toEqual(['literaryWork']);
 	});
 
-	it('acota el recorrido con el prefijo de los ids derivados', () => {
-		expect(migration.filter).toBe('_id match "lw-from-story-*"');
+	// `startsWith` y no `match`: el operador `match` de GROQ compara por tokens, así que un `"prefijo-*"`
+	// es más ancho de lo que aparenta y deja pasar ids que no arrancan con el prefijo.
+	it('acota el recorrido a los ids que arrancan con el prefijo derivado', () => {
+		expect(migration.filter).toBe('string::startsWith(_id, "lw-from-story-")');
 	});
 
 	it('borra la obra que nació de un cuento', () => {

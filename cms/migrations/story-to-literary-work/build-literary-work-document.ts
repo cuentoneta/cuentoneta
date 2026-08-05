@@ -168,6 +168,7 @@ export function buildLiteraryWorkDocument(story: StoryDocument): LiteraryWorkDoc
 	assertKeyed(story.resources, 'resources', story._id);
 
 	const editorialNote = toOptionalMarkdown(story.review);
+	const publishedAt = story.publishedAt ?? story._createdAt;
 
 	return {
 		_id: literaryWorkIdFor(story._id),
@@ -179,7 +180,7 @@ export function buildLiteraryWorkDocument(story: StoryDocument): LiteraryWorkDoc
 		// La fecha se copia con fallback al `_createdAt` de la STORY. Omitirla haría que el
 		// `coalesce(publishedAt, _createdAt)` de la query resolviera al `_createdAt` del documento
 		// nuevo —la fecha de la migración— y el corpus entero perdería su cronología.
-		publishedAt: story.publishedAt ?? story._createdAt,
+		...(publishedAt !== undefined ? { publishedAt } : {}),
 		...(editorialNote !== undefined ? { editorialNote } : {}),
 		...(story.coverImage !== undefined ? { coverImage: story.coverImage } : {}),
 		...(story.tags?.length ? { tags: story.tags } : {}),

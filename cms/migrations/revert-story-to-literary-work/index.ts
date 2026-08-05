@@ -18,12 +18,15 @@ interface LiteraryWorkDocument {
  * es una optimización del runner, no la garantía. Una invocación con otro filtro —o un cambio futuro
  * en el runner— no debe alcanzar para borrar una obra que no creó esta migración.
  *
+ * El filtro usa `string::startsWith` y no `match`: el `match` de GROQ compara **por tokens**, así que
+ * un `"prefijo-*"` es más ancho de lo que aparenta y deja pasar ids que no arrancan con el prefijo.
+ *
  * No restaura nada en los cuentos porque la migración de ida no los tocó: solo creó documentos al lado.
  */
 export default defineMigration({
 	title: 'Revertir la creación de obras a partir de cuentos',
 	documentTypes: ['literaryWork'],
-	filter: `_id match "${MIGRATED_ID_PREFIX}*"`,
+	filter: `string::startsWith(_id, "${MIGRATED_ID_PREFIX}")`,
 	migrate: {
 		document(doc: LiteraryWorkDocument) {
 			if (!isMigratedLiteraryWorkId(doc._id)) {
