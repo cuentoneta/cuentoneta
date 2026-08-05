@@ -61,17 +61,22 @@ describe('mapBlockContentToTextParagraphs (ACL)', () => {
 });
 
 describe('mapAuthor (ACL)', () => {
+	// Los fragmentos esperados se derivan del Markdown que transporta el propio fixture: enriquecer la
+	// prosa del canon no debe romper la aserción.
+	const [, boldedSource] = /\*\*(.+?)\*\*/.exec(rawOnoffAuthor.biography) ?? [];
+	const [, italicizedSource] = /_(.+?)_/.exec(rawOnoffAuthor.biography) ?? [];
+
 	it('translates the raw Markdown biography of the corpus author into sanitized HTML', () => {
 		const result = mapAuthor(rawOnoffAuthor);
 
 		expect(result.biography).toContain('<p>');
-		expect(result.biography).toContain('<strong>François Onoff</strong>');
-		expect(result.biography).toContain('<em>El palacio de las nueve fronteras</em>');
+		expect(result.biography).toContain(`<strong>${boldedSource}</strong>`);
+		expect(result.biography).toContain(`<em>${italicizedSource}</em>`);
 		expect(result.biography).not.toContain('**');
 	});
 
 	it('throws instead of serving an author whose biography arrived empty', () => {
-		expect(() => mapAuthor({ ...rawOnoffAuthor, biography: '' })).toThrow();
+		expect(() => mapAuthor({ ...rawOnoffAuthor, biography: '' })).toThrow(/Markdown inválido/);
 	});
 });
 
