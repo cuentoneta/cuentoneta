@@ -7,5 +7,5 @@ export interface Resource {
 export interface ResourceType {
 	slug: string;
 	title: string;
-	shortDescription: string;
+	description: string;
 }

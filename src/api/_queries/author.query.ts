@@ -21,13 +21,13 @@ export const authorBySlugQuery = defineQuery(`
         resourceType->{
         	'slug': slug.current,
         	title,
-        	shortDescription
+        	description
         }
     }, []),
     'tags': coalesce(tags[] -> {
         title,
         'slug': slug.current,
-        shortDescription
+        description
     }, [])
 }`);
 

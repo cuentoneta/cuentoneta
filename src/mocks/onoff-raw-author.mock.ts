@@ -33,7 +33,7 @@ export const rawOnoffAuthor: NonNullable<StoryBySlugQueryResult>['author'] = {
 			resourceType: {
 				slug: 'wikipedia',
 				title: 'Wikipedia',
-				shortDescription: 'Enlace a artículo de Wikipedia',
+				description: 'Enlace a artículo de Wikipedia',
 			},
 		},
 	],
