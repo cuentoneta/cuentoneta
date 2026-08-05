@@ -1,0 +1,46 @@
+import { describe, expect, it } from 'vitest';
+
+import { literaryWorkIdFor } from '../story-to-literary-work/build-literary-work-document';
+import migration from './index';
+
+const migrateDocument = (doc: { _id: string }) => {
+	const document = migration.migrate?.document;
+	if (!document) throw new Error('La migración no define migrate.document');
+	return document(doc as never);
+};
+
+describe('reversión de la creación de obras', () => {
+	it('alcanza solo a las obras', () => {
+		expect(migration.documentTypes).toEqual(['literaryWork']);
+	});
+
+	it('acota el recorrido con el prefijo de los ids derivados', () => {
+		expect(migration.filter).toBe('_id match "lw-from-story-*"');
+	});
+
+	it('borra la obra que nació de un cuento', () => {
+		const mutations = migrateDocument({ _id: literaryWorkIdFor('story-1') }) as { type: string; id: string }[];
+
+		expect(mutations).toHaveLength(1);
+		expect(mutations[0]?.type).toBe('delete');
+		expect(mutations[0]?.id).toBe('lw-from-story-story-1');
+	});
+
+	// El guard es la garantía, no el filtro: una invocación con otro filtro —o un cambio futuro en el
+	// runner— no debe alcanzar para borrar una obra que esta migración no creó.
+	it('no toca una obra nacida en el Studio, aunque el filtro la deje pasar', () => {
+		expect(migrateDocument({ _id: 'una-obra-del-studio' })).toEqual([]);
+	});
+
+	it('no se deja engañar por un id que solo contiene el prefijo', () => {
+		expect(migrateDocument({ _id: 'obra-lw-from-story-suelta' })).toEqual([]);
+	});
+
+	// El predicado se comparte con la migración de ida: si cada una tuviera el suyo, una divergencia
+	// entre ambas definiciones podría dejar obras sin borrar o borrar de más.
+	it('reconoce exactamente lo que la migración de ida crea', () => {
+		const idCreado = literaryWorkIdFor('cualquier-story');
+
+		expect(migrateDocument({ _id: idCreado })).toHaveLength(1);
+	});
+});
