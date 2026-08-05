@@ -1,5 +1,7 @@
+import { createMarkdown } from '@models/markdown.model';
 import { createSanitizedHtml } from '@models/sanitized-html.model';
 import { onoffLiteraryWorksWithEditorialNote } from '@mocks/onoff-literary-works.mock';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import { htmlToPlainText } from './html-to-plain-text.utils';
 
 describe('htmlToPlainText', () => {
@@ -37,17 +39,51 @@ describe('htmlToPlainText', () => {
 		});
 	});
 
-	describe('entidades HTML', () => {
-		it('decodifica las entidades que emite el pipeline', () => {
-			const html = createSanitizedHtml('<p>Ida &amp; vuelta: &lt;pausa&gt;, &quot;dijo&quot; &#39;él&#39;.</p>');
+	// Estos casos parten del Markdown y no de HTML autorado a mano: la forma exacta de las referencias
+	// la decide el pipeline, y una aserción sobre HTML escrito acá no detectaría que dejó de coincidir.
+	describe('referencias de caracteres, desde el pipeline real', () => {
+		const fromMarkdown = (markdown: string) => htmlToPlainText(markdownToSanitizedHtml(createMarkdown(markdown)));
+
+		it('decodifica el ampersand', () => {
+			expect(fromMarkdown('Ida & vuelta')).toBe('Ida & vuelta');
+		});
+
+		it('decodifica los signos de menor y mayor', () => {
+			expect(fromMarkdown('Entre \\< y \\> hay una pausa')).toBe('Entre < y > hay una pausa');
+		});
+
+		it('no deja ninguna referencia sin resolver', () => {
+			expect(fromMarkdown('Ida & vuelta: \\<pausa\\>, "dijo" y punto.')).not.toMatch(/&#|&[a-z]+;/i);
+		});
+	});
+
+	describe('referencias de caracteres, por forma', () => {
+		it('decodifica las referencias con nombre', () => {
+			const html = createSanitizedHtml('<p>Ida &amp; vuelta: &lt;pausa&gt;, &quot;dijo&quot; &apos;él&apos;.</p>');
 
 			expect(htmlToPlainText(html)).toBe(`Ida & vuelta: <pausa>, "dijo" 'él'.`);
 		});
 
-		it('no decodifica dos veces una entidad escapada', () => {
-			const html = createSanitizedHtml('<p>Se escribe &amp;lt; para un menor.</p>');
+		it('decodifica las referencias numéricas, decimales y hexadecimales', () => {
+			const html = createSanitizedHtml('<p>Ida &#x26; vuelta &#38; regreso: &#x3C;pausa&#x3E;</p>');
 
-			expect(htmlToPlainText(html)).toBe('Se escribe &lt; para un menor.');
+			expect(htmlToPlainText(html)).toBe('Ida & vuelta & regreso: <pausa>');
+		});
+
+		it('no decodifica dos veces una referencia escapada', () => {
+			const html = createSanitizedHtml('<p>Se escribe &amp;lt; y &#x26;#x3C; para un menor.</p>');
+
+			expect(htmlToPlainText(html)).toBe('Se escribe &lt; y &#x3C; para un menor.');
+		});
+	});
+
+	describe('límites conocidos', () => {
+		// El barrido de tags corta en el primer `>`, aunque venga dentro de un valor de atributo. El
+		// pipeline no emite un `>` sin escapar ahí, así que la limitación queda enunciada, no manejada.
+		it('trunca un tag cuyo atributo contiene un signo mayor sin escapar', () => {
+			const html = createSanitizedHtml('<p><img alt="a > b"/>Texto</p>');
+
+			expect(htmlToPlainText(html)).toBe('b"/>Texto');
 		});
 	});
 
