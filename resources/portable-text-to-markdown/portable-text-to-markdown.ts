@@ -29,6 +29,8 @@ export interface PortableTextBlock {
 	_key?: string;
 	style?: string;
 	listItem?: string;
+	/** Nivel de anidamiento del ítem de lista, base 1. Es donde Sanity guarda la jerarquía. */
+	level?: number;
 	markDefs?: { _type: string; _key: string; href?: string }[];
 	children?: PortableTextSpan[];
 }
@@ -49,19 +51,17 @@ export class UnsupportedPortableTextError extends Error {
 // la va a leer y editar después de migrada.
 // `<` incluido porque el corpus lo usa como comilla angular (`<<componer>>`) y Markdown lo lee como
 // apertura de etiqueta HTML: el saneamiento después la descarta y se lleva el texto de adentro.
-const MARKDOWN_SPECIALS = /([\\*_[\]<])/g;
+// El backtick abre un span de código, que además se traga el marcado de adentro.
+const MARKDOWN_SPECIALS = /([\\*_[\]<`])/g;
+
+// Un `&` solo inicia una entidad cuando lo sigue un nombre o un numeral y un punto y coma. Escaparlo
+// siempre ensuciaría cada "Tom & Jerry" del corpus; escaparlo nunca decodifica el `&copy;` literal que
+// alguien escribió como texto.
+const HTML_ENTITY_START = /&(?=[a-zA-Z][a-zA-Z0-9]{1,31};|#\d{1,7};|#[xX][0-9a-fA-F]{1,6};)/g;
 
 function escapeMarkdown(text: string): string {
-	return text.replace(MARKDOWN_SPECIALS, '\\$1');
+	return text.replace(MARKDOWN_SPECIALS, '\\$1').replace(HTML_ENTITY_START, '\\&');
 }
-
-/**
- * Los decoradores de alineación del editor viejo (`blockContent.ts`). Markdown no tiene alineación, y
- * el pipeline de la app descarta el HTML crudo: un `<p align="center">` no pierde el centrado, pierde
- * el texto entero. Se traducen ignorando la marca y conservando el texto — la decisión y las obras
- * afectadas están registradas en el issue de revisión editorial.
- */
-const ALIGNMENT_MARKS = new Set(['left', 'center', 'right', 'justify']);
 
 /** Estilos de bloque de Sanity por defecto (el schema no los declara, así que valen los suyos). */
 const HEADING_LEVELS: Readonly<Record<string, number>> = { h1: 1, h2: 2, h3: 3, h4: 4, h5: 5, h6: 6 };
@@ -73,15 +73,21 @@ const LIST_MARKERS: Readonly<Record<string, string>> = { bullet: '-', number: '1
  * de escena**: el corpus los escribe así, centrados, porque el editor viejo no tenía un separador
  * propio. Markdown sí lo tiene, así que se traduce al que corresponde en vez de escapar los
  * caracteres y dejar la tirada como texto literal.
+ *
+ * Solo aplica al bloque sin marcador propio: una cita o un ítem de lista cuyo texto fuera `***`
+ * perdería su marcador al traducirse como separador.
  */
-const THEMATIC_BREAK = /^[*\-_]{3,}$/;
-
 function isThematicBreak(block: PortableTextBlock): boolean {
+	// La tirada no admite mezclas: CommonMark pide el mismo carácter repetido, y un `-_-` es prosa.
+	const thematicBreak = /^(\*{3,}|-{3,}|_{3,})$/;
+	if (block.listItem !== undefined || (block.style !== undefined && block.style !== 'normal')) {
+		return false;
+	}
 	const text = (block.children ?? [])
 		.map((span) => span.text ?? '')
 		.join('')
 		.trim();
-	return THEMATIC_BREAK.test(text);
+	return thematicBreak.test(text);
 }
 
 function assertSupported(block: PortableTextBlock): void {
@@ -106,6 +112,24 @@ function assertSupported(block: PortableTextBlock): void {
 	}
 }
 
+/**
+ * El destino de un enlace no se escapa —no es prosa—, así que lo que no sabemos emitir sin romperlo
+ * detiene la corrida. `<` y `>` desbaratan la forma delimitada de CommonMark, y un esquema fuera de la
+ * allowlist termina descartado por el saneamiento del pipeline: el enlace se perdería igual, pero en
+ * silencio y recién en la página. Sin esquema es un destino relativo, que es válido.
+ */
+function assertRenderableHref(href: string, blockKey: string | undefined): void {
+	const allowedSchemes = new Set(['http', 'https', 'mailto']);
+	const scheme = /^([a-zA-Z][a-zA-Z0-9+.-]*):/.exec(href)?.[1].toLowerCase();
+
+	if (scheme !== undefined && !allowedSchemes.has(scheme)) {
+		throw new UnsupportedPortableTextError(`Esquema de enlace no soportado: "${scheme}"`, blockKey);
+	}
+	if (/[<>]/.test(href)) {
+		throw new UnsupportedPortableTextError('El destino de un enlace no puede contener "<" ni ">"', blockKey);
+	}
+}
+
 function resolveLinkHref(block: PortableTextBlock, markKey: string): string | undefined {
 	return block.markDefs?.find((markDef) => markDef._key === markKey)?.href;
 }
@@ -115,13 +139,21 @@ function resolveLinkHref(block: PortableTextBlock, markKey: string): string | un
  * el destino antes de tiempo y el resto de la URL se derrama como texto visible en la prosa. Pasa en
  * 20 obras del corpus, con URLs que llevan fragmentos `#:~:text=…`. CommonMark resuelve esto con `<>`.
  */
-function renderLinkDestination(href: string): string {
+function renderLinkDestination(href: string, blockKey: string | undefined): string {
+	assertRenderableHref(href, blockKey);
 	return /[()\s]/.test(href) ? `<${href}>` : href;
 }
 
 // El orden de anidado importa: el enlace envuelve al énfasis, no al revés. `[**texto**](url)` es válido;
 // `**[texto](url)**` también, pero deja el marcado del enlace adentro del énfasis y se lee peor.
 function renderSpan(block: PortableTextBlock, span: PortableTextSpan): string {
+	/**
+	 * Los decoradores de alineación del editor viejo (`blockContent.ts`). Markdown no tiene alineación, y
+	 * el pipeline de la app descarta el HTML crudo: un `<p align="center">` no pierde el centrado, pierde
+	 * el texto entero. Se traducen ignorando la marca y conservando el texto — la decisión y las obras
+	 * afectadas están registradas en el issue de revisión editorial.
+	 */
+	const alignmentMarks = new Set(['left', 'center', 'right', 'justify']);
 	const marks = span.marks ?? [];
 	const escaped = escapeMarkdown(span.text ?? '');
 	if (escaped.trim() === '') return escaped;
@@ -136,13 +168,20 @@ function renderSpan(block: PortableTextBlock, span: PortableTextSpan): string {
 	if (marks.includes('strong')) rendered = `**${rendered}**`;
 
 	for (const mark of marks) {
-		if (mark === 'em' || mark === 'strong' || ALIGNMENT_MARKS.has(mark)) continue;
+		if (mark === 'em' || mark === 'strong' || alignmentMarks.has(mark)) continue;
+
+		// `code` está declarado en el schema pero no se traduce: un span de código no admite el texto ya
+		// escapado que llega hasta acá, y el corpus no lo usa. Se nombra aparte para que el día que
+		// aparezca el error diga qué pasó, en vez de acusar un markDef de enlace faltante.
+		if (mark === 'code') {
+			throw new UnsupportedPortableTextError('Decorador "code" no soportado', block._key);
+		}
 
 		const href = resolveLinkHref(block, mark);
 		if (href === undefined) {
 			throw new UnsupportedPortableTextError(`Marca sin markDef de enlace que la resuelva: "${mark}"`, block._key);
 		}
-		rendered = `[${rendered}](${renderLinkDestination(href)})`;
+		rendered = `[${rendered}](${renderLinkDestination(href, block._key)})`;
 	}
 
 	return `${leading}${rendered}${trailing}`;
@@ -151,7 +190,10 @@ function renderSpan(block: PortableTextBlock, span: PortableTextSpan): string {
 /** Antepone el marcado del bloque al texto ya renderizado: encabezado, cita o ítem de lista. */
 function prefixFor(block: PortableTextBlock): string {
 	if (block.listItem) {
-		return `${LIST_MARKERS[block.listItem]} `;
+		// Sanity guarda la jerarquía en `level` (base 1) y no en la sangría del texto. Sin trasladarla, una
+		// lista de dos niveles se aplana y la jerarquía se pierde sin dejar rastro.
+		const indent = '  '.repeat(Math.max(0, (block.level ?? 1) - 1));
+		return `${indent}${LIST_MARKERS[block.listItem]} `;
 	}
 	if (block.style === 'blockquote') {
 		return '> ';
@@ -172,7 +214,41 @@ function prefixFor(block: PortableTextBlock): string {
 function escapeLineStart(line: string): string {
 	// En la lista numerada se escapa el signo y no el dígito: CommonMark solo reconoce el escape sobre
 	// puntuación ASCII, así que `\1.` dejaría la barra a la vista mientras que `1\.` desarma el marcador.
-	return line.replace(/^(\s*)(\d+)([.)])(\s|$)/, '$1$2\\$3$4').replace(/^(\s*)([-+*>])(\s|$)/, '$1\\$2$3');
+	return line
+		.replace(/^(\s*)(\d+)([.)])(\s|$)/, '$1$2\\$3$4')
+		.replace(/^(\s*)([-+*>])(\s|$)/, '$1\\$2$3')
+		.replace(/^(\s*)(#{1,6})(\s|$)/, '$1\\$2$3')
+		.replace(/^(\s*)(~{3,})/, '$1\\$2');
+}
+
+/**
+ * Una tirada de `-` o `=` en línea propia, debajo de una línea con texto, es un **subrayado setext**:
+ * Markdown convierte la prosa de arriba en encabezado y se come la tirada entera. Solo pasa en ese
+ * caso; con una línea en blanco de por medio la misma tirada es un separador temático legítimo, que se
+ * traduce solo. Se escapa entonces únicamente el caso ambiguo, para no perder el separador real.
+ */
+function escapeSetextUnderline(line: string): string {
+	return /^\s*(-+|=+)\s*$/.test(line) ? line.replace(/[-=]/, '\\$&') : line;
+}
+
+/**
+ * Cuatro espacios —o un tabulador— al abrir un bloque abren un **bloque de código**: la prosa sale
+ * monoespaciada dentro de un `<pre>`. La sangría no se puede escapar, porque no es puntuación; se quita,
+ * que es presentación del editor viejo y Markdown no la conserva de ninguna manera.
+ */
+function stripCodeIndent(line: string): string {
+	return line.replace(/^(?: {4,}|\t+)/, '');
+}
+
+function renderLine(line: string, previous: string | undefined, hasPrefix: boolean): string {
+	const opensBlock = previous === undefined || previous.trim() === '';
+	const withoutIndent = opensBlock ? stripCodeIndent(line) : line;
+
+	if (!opensBlock) {
+		return escapeLineStart(escapeSetextUnderline(withoutIndent));
+	}
+	// La primera línea no necesita escape cuando el bloque ya lleva marcador propio: ese prefijo la abre.
+	return hasPrefix ? withoutIndent : escapeLineStart(withoutIndent);
 }
 
 function renderBlock(block: PortableTextBlock): string {
@@ -184,10 +260,14 @@ function renderBlock(block: PortableTextBlock): string {
 	if (text.trim() === '') {
 		return text;
 	}
-	// La primera línea no necesita escape cuando el bloque ya lleva marcador propio: ese prefijo la
-	// abre. Las siguientes sí, porque el prefijo no las alcanza.
+	// El escape es **por línea** y con contexto de la anterior: el corpus guarda saltos de línea dentro
+	// del texto de un mismo span, así que un marcador de bloque vuelve a quedar al inicio ahí adentro, y
+	// qué significa cada línea depende de si abre bloque o continúa el anterior.
 	const prefix = prefixFor(block);
-	const lines = text.split('\n').map((line, index) => (prefix && index === 0 ? line : escapeLineStart(line)));
+	const source = text.split('\n');
+	const lines = source.map((line, index) =>
+		renderLine(line, index === 0 ? undefined : source[index - 1], prefix !== '' && index === 0),
+	);
 	return `${prefix}${lines.join('\n')}`;
 }
 
