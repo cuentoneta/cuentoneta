@@ -39,6 +39,10 @@ Archivos:
 - **Agregador:** `../onoff-literary-works.mock.ts` → `onoffLiteraryWorksMock: LiteraryWork[]`.
 - **Teasers derivados:** `../onoff-literary-work-teasers.mock.ts` (`toTeaser`) → `<slugCamelCase>LiteraryWorkTeaserMock` + `onoffLiteraryWorkTeasersMock`.
 
+## Corpus de dominio: `Author`
+
+La biografía de François Onoff vive como Markdown plano en un único archivo, `francois-onoff.biography.md` (solo la prosa, sin metadata), importado con `?raw` — misma convención que `<slug>.editorial-note.md` para `LiteraryWork`. `../onoff-raw-author.mock.ts` (`rawOnoffAuthor.biography`) transporta ese Markdown crudo; `../author.mock.ts` deriva el `SanitizedHtml` corriendo `markdownToSanitizedHtml(createMarkdown(...))` sobre la misma fuente. Es el único archivo de biografía del corpus: el elenco modela un solo autor (Onoff), así que no hay un `<slug>.biography.md` por obra. `rawOnoffAuthorTeaser` no declara `biography`, en paridad con `AuthorTeaser` de dominio.
+
 ## Corpus raw: `Story` (shape de Sanity)
 
 Contraparte cruda del corpus de dominio `Story` — lo que devuelven las queries GROQ antes del ACL/mapper. La consume el backend (`src/api`).

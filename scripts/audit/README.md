@@ -21,6 +21,8 @@ pnpm exec tsx --env-file=.env scripts/audit/<script>.ts
 | `export-authors-bios.ts`   | **Read-only** de Sanity ✅ (escribe archivos locales) | Exporta la biografía de cada autor publicado a un `.md` en `tools/author-bios/` (carpeta _gitignored_), como material de referencia estilística.                                                                                                                                            |
 | `bold-author-pen-names.ts` | **⚠️ Escribe en Sanity (producción)**                 | Aplica negrita al nombre del autor dentro de su biografía, según una **lista curada** de operaciones (`in_place` / `prepend` / `skip`). Deja los cambios como **borradores (`drafts.*`), sin publicar**, para revisión en Studio. Es **idempotente** (saltea drafts que ya tienen negrita). |
 
+> Los tres operan sobre `author.biography` **como Portable Text**, que es la forma que el campo tenía cuando se corrieron. El campo hoy se declara `markdown` y se persiste como string, así que los tres quedaron obsoletos: describen una auditoría ya ejecutada, no una herramienta vigente.
+
 ### Comandos
 
 ```bash
