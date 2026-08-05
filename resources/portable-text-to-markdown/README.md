@@ -34,17 +34,40 @@ export default defineMigration({
 
 ## Qué traduce
 
-| Portable Text                          | Markdown             |
-| -------------------------------------- | -------------------- |
-| Bloque `block` con `style: 'normal'`   | Párrafo              |
-| Marca `em`                             | `*texto*`            |
-| Marca `strong`                         | `**texto**`          |
-| Marca resuelta por un `markDef` `link` | `[texto](href)`      |
-| Varios bloques                         | Separados por `\n\n` |
+| Portable Text                                     | Markdown                   |
+| ------------------------------------------------- | -------------------------- |
+| Bloque `block` con `style: 'normal'`              | Párrafo                    |
+| `style: 'h1'` … `'h6'`                            | `#` … `######`             |
+| `style: 'blockquote'`                             | `> texto`                  |
+| `listItem: 'bullet'` / `'number'`                 | `- texto` / `1. texto`     |
+| Bloque cuyo texto es una tirada de `*`, `-` o `_` | `---` (separador temático) |
+| Marca `em`                                        | `*texto*`                  |
+| Marca `strong`                                    | `**texto**`                |
+| Marcas `left`, `center`, `right`, `justify`       | Se ignoran, el texto queda |
+| Marca resuelta por un `markDef` `link`            | `[texto](href)`            |
+| Varios bloques                                    | Separados por `\n\n`       |
 
 Cuando un span lleva énfasis **y** enlace, el enlace queda por fuera (`[*texto*](url)`): deja el marcado del enlace afuera del énfasis, que se lee mejor en el editor del CMS — que es donde alguien va a mantener ese texto después de migrado.
 
-Los caracteres que Markdown interpretaría como marcado (`\`, `*`, `_`, `[`, `]`) se escapan. No se escapa el conjunto completo de CommonMark a propósito: sobre-escapar prosa la vuelve ilegible para quien la edite.
+**Alineación.** Markdown no la tiene, y el pipeline de la app descarta el HTML crudo: emitir `<p align="center">` no perdería el centrado, perdería el texto entero. Por eso los cuatro decoradores de alineación se traducen conservando el texto y descartando la marca.
+
+**Separadores de escena.** El corpus los escribe como una tirada de asteriscos centrada, porque el editor viejo no tenía un separador propio. Markdown sí, así que se traduce al que corresponde en vez de dejar los asteriscos como texto.
+
+## Escapes
+
+Se escapan los caracteres que Markdown interpretaría como marcado (`\`, `*`, `_`, `[`, `]`, `<`) y, **al inicio de cada línea**, los marcadores de bloque (`-`, `+`, `*`, `>`, `1.`, `1)`). No se escapa el conjunto completo de CommonMark a propósito: sobre-escapar prosa la vuelve ilegible para quien la edite.
+
+Tres de esos escapes salieron de encontrar pérdida real de contenido al correr el conversor contra el corpus:
+
+- **El diálogo en español abre con guion.** Sin escape, `- ¿Cómo te va?` se vuelve un ítem de lista: el guion desaparece y el texto queda dentro de un `<ul>`.
+- **El corpus usa `<<…>>` como comilla angular.** Markdown lo lee como apertura de etiqueta HTML y el saneamiento se lleva el texto de adentro.
+- **El escape va por línea, no por bloque.** El dataset guarda saltos de línea dentro del texto de un mismo span, así que un marcador puede quedar al inicio de una línea que no es la primera.
+
+En la lista numerada se escapa el signo y no el dígito (`1\.`, no `\1.`): CommonMark solo reconoce el escape sobre puntuación ASCII, así que la otra forma dejaría la barra invertida a la vista del lector.
+
+## Limitación conocida
+
+Cuando dos spans **adyacentes** comparten una marca de énfasis y difieren en otra —por ejemplo `strong+em`, luego `em`, luego `strong+em`—, el conversor emite tiradas de énfasis separadas y alguna puede quedar sin cerrar, dejando asteriscos a la vista. Medido sobre el corpus completo: **15 caracteres sobrantes en 7 campos de unos 1300**, sin pérdida de texto en ninguno. Es cosmético y está documentado en vez de resuelto; si alguna vez molesta, el arreglo es fusionar los spans contiguos por marca antes de renderizar.
 
 ## Qué NO traduce, y por qué falla en vez de descartar
 
