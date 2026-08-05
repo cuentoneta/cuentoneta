@@ -104,7 +104,7 @@ export default defineType({
 		defineField({
 			name: 'biography',
 			title: 'Biografía',
-			type: 'blockContent',
+			type: 'markdown',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({

@@ -308,7 +308,7 @@ interface Author {
 	diedOn?: DateString; // Fecha de muerte (formato YYYY-MM-DD)
 
 	// Contenido
-	biography: TextBlockContent[]; // Biografía del autor
+	biography: SanitizedHtml; // Biografía del autor; Markdown saneado a HTML, requerida (no opcional)
 	resources: Resource[]; // Enlaces a recursos sobre el autor
 
 	// Categorización
@@ -337,7 +337,7 @@ Borrador de perfil -> Publicación de perfil -> Perfil disponible para búsqueda
 **Vistas Polimórficas:**
 
 - `Author` - Vista completa (incluye biografía y recursos)
-- `AuthorTeaser` - Vista resumida (sin biografía ni recursos)
+- `AuthorTeaser` - Vista resumida: no declara `biography` (la ausencia se expresa en el tipo, no en un valor vacío) ni `resources` (`Array<never>`)
 
 ---
 
@@ -505,7 +505,7 @@ interface MarkDef {
 }
 ```
 
-**Uso:** Biografías, descripciones, contenido editorial, resúmenes.
+**Uso:** Descripciones, contenido editorial, resúmenes.
 
 **Inmutabilidad:** Una vez creado por Sanity, no debe ser modificado en la aplicación.
 

@@ -2058,7 +2058,7 @@
 				"type": "objectAttribute",
 				"value": {
 					"type": "inline",
-					"name": "blockContent"
+					"name": "markdown"
 				},
 				"optional": false
 			},

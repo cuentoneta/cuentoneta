@@ -10,8 +10,8 @@ import { authorTeaserMock } from './author.mock';
 import { onoffMediaMock, onoffYouTubeVideosMock } from './onoff-media.mock';
 import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
 
-// Proyecta el Author de dominio a su variante AuthorTeaser (misma base, biography/resources vaciadas),
-// para derivar los autores de una vista de listado desde los autores propios de cada obra del canon.
+// Proyecta el Author de dominio a su variante AuthorTeaser (misma base, sin biografía y con recursos
+// vaciados), para derivar los autores de una vista de listado desde los autores propios de cada obra del canon.
 function toAuthorTeaser(author: Author): AuthorTeaser {
 	return {
 		_id: author._id,
@@ -24,7 +24,6 @@ function toAuthorTeaser(author: Author): AuthorTeaser {
 		diedOn: author.diedOn,
 		bornOnYear: author.bornOnYear,
 		diedOnYear: author.diedOnYear,
-		biography: [],
 		resources: [],
 	};
 }

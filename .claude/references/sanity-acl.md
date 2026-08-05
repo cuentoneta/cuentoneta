@@ -151,9 +151,13 @@ secundarios ni I/O.
 
 ```typescript
 // _utils/functions.ts
-export function mapAuthor(rawAuthorData: NonNullable<AuthorBySlugQueryResult>): Author {
+export function mapAuthor(
+	rawAuthorData: Omit<NonNullable<AuthorBySlugQueryResult>, 'createdAt' | 'updatedAt'>,
+): Author {
 	const resources = mapResources(rawAuthorData.resources);
-	const biography = mapAuthorBiography(rawAuthorData.biography);
+	// El campo es requerido en el schema (markdown): sin fallback a cadena vacía. `createMarkdown`
+	// lanza si alguna vez llegara vacío, en lugar de dejar pasar un autor sin biografía.
+	const biography = markdownToSanitizedHtml(createMarkdown(rawAuthorData.biography));
 
 	return {
 		_id: rawAuthorData._id,
@@ -180,18 +184,24 @@ Patrones que se repiten:
   `NonNullable<StorylistQueryResult>['stories'][0]['author']`). **Salida = tipo de dominio**
   (`Author`, `AuthorTeaser`, `Resource`, `Tag`, …).
 - **Normalización de nullables:** `?? undefined`, `?? ''`, `?? []` para colapsar los opcionales de
-  Sanity a la forma que el dominio espera.
+  Sanity a la forma que el dominio espera. `biography` es la excepción deliberada: el schema la
+  exige (`Rule.required()`), así que el mapper la pasa **sin** `?? ''` — un valor faltante es un
+  bug de datos, no un estado válido a tolerar en silencio.
 - **Composición:** un mapper grande delega en otros (`mapStoryContent` usa `mapAuthor`,
   `mapResources`, `mapTags`, `mapBlockContentToTextParagraphs`, `mapMediaSources`). `mapStoryContent`
   y `mapAuthor` propagan los **tags** del cuento y del autor vía `mapTags`; los mappers de teasers
   devuelven `tags: []` (sus queries no proyectan los tags completos).
 - **`BlockContent` → texto de dominio:** `mapBlockContentToTextParagraphs(content)` filtra los
-  bloques `_type === 'block'` a `TextBlockContent[]`.
+  bloques `_type === 'block'` a `TextBlockContent[]`. Cubre el cuerpo y la reseña de `Story`, sus
+  epígrafes y la descripción de `Storylist` — no la biografía del autor, que es Markdown, no
+  Portable Text (ver bullet siguiente).
+- **Markdown → `SanitizedHtml`:** `markdownToSanitizedHtml(createMarkdown(raw))` (`@utils/markdown-pipeline.utils`)
+  es el pipeline que usa `mapAuthor` para `biography`. Es el mismo pipeline que consume el módulo
+  `literary-work` para su contenido en Markdown (ver la nota de divergencia arriba).
 
-Mappers principales (no exhaustivo): `mapAuthor`, `mapAuthorTeaser`, `mapAuthorBiography`,
-`mapResources`, `mapTags`, `mapStoryContent`, `mapStoryTeaser`, `mapStoryTeaserWithAuthor`,
-`mapStoryNavigationTeaser`, `mapStoryNavigationTeaserWithAuthor`, `mapLandingPageContent`,
-`mapContentCampaigns`.
+Mappers principales (no exhaustivo): `mapAuthor`, `mapAuthorTeaser`, `mapResources`, `mapTags`,
+`mapStoryContent`, `mapStoryTeaser`, `mapStoryTeaserWithAuthor`, `mapStoryNavigationTeaser`,
+`mapStoryNavigationTeaserWithAuthor`, `mapLandingPageContent`, `mapContentCampaigns`.
 
 ### Helpers de imagen (también parte de la capa de mappers)
 

@@ -26,6 +26,20 @@ describe('portableTextToMarkdown', () => {
 			expect(portableTextToMarkdown([block([span('podcast', ['strong'])])])).toBe('**podcast**');
 		});
 
+		it('deja el espacio de los bordes fuera de los delimitadores', () => {
+			// CommonMark no cierra un énfasis cuyo delimitador viene precedido de espacio: dentro, la marca
+			// se perdería en silencio.
+			expect(portableTextToMarkdown([block([span('Elsa Bornemann ', ['strong']), span('(1952)')])])).toBe(
+				'**Elsa Bornemann** (1952)',
+			);
+		});
+
+		it('no envuelve en delimitadores un span que solo tiene espacios', () => {
+			expect(portableTextToMarkdown([block([span('a', ['em']), span(' ', ['em']), span('b', ['em'])])])).toBe(
+				'*a* *b*',
+			);
+		});
+
 		it('convierte un enlace resolviendo su href desde markDefs', () => {
 			const withLink = block([span('edición facsimilar', ['link-1'])], {
 				markDefs: [{ _type: 'link', _key: 'link-1', href: 'https://example.org/a.pdf' }],
@@ -61,6 +75,18 @@ describe('portableTextToMarkdown', () => {
 			const withEmpty = [block([span('Único.')], { _key: 'b1' }), block([span('')], { _key: 'b2' })];
 
 			expect(portableTextToMarkdown(withEmpty)).toBe('Único.');
+		});
+
+		// Un bloque en blanco no es una cadena vacía: si se colara, el resultado tendría texto solo en
+		// apariencia y el guard de vacío de las migraciones lo dejaría pasar.
+		it('descarta también los párrafos que solo tienen espacios', () => {
+			const withBlank = [block([span('Único.')], { _key: 'b1' }), block([span('   ', ['em'])], { _key: 'b2' })];
+
+			expect(portableTextToMarkdown(withBlank)).toBe('Único.');
+		});
+
+		it('devuelve una cadena vacía cuando todos los párrafos están en blanco', () => {
+			expect(portableTextToMarkdown([block([span(' '), span('\t')])])).toBe('');
 		});
 
 		it('devuelve una cadena vacía para una entrada vacía', () => {

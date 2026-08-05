@@ -1,5 +1,5 @@
-import { TextBlockContent } from '@models/block-content.model';
 import { Resource } from '@models/resource.model';
+import { SanitizedHtml } from '@models/sanitized-html.model';
 import { Tag } from '@models/tag.model';
 import { DateString, IsoDateTime } from '@utils/date.utils';
 
@@ -18,13 +18,19 @@ interface AuthorBase {
 	diedOnYear?: number;
 }
 
+// Los datos con los que se presenta a un autor sin abrir su ficha: nombre, retrato, nacionalidad y
+// fechas. Lo satisfacen todas las vistas del autor, así que un consumidor que solo presenta pide esto
+// y acepta cualquiera de ellas.
+export type AuthorPresentation = AuthorBase;
+
+// La biografía no se declara: en una vista de teaser no viaja, y esa ausencia se expresa en el tipo
+// y no en un valor vacío, porque `SanitizedHtml` no admite uno.
 export interface AuthorTeaser extends AuthorBase {
-	biography: Array<never>;
 	resources: Array<never>;
 }
 
 export interface Author extends AuthorBase {
-	biography: TextBlockContent[];
+	biography: SanitizedHtml;
 	resources: Resource[];
 }
 

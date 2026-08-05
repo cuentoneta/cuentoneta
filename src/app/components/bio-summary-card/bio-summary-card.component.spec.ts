@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 import { BioSummaryCardComponent } from './bio-summary-card.component';
 import { storyMock } from '@mocks/story.mock';
 import type { Story } from '@models/story.model';
@@ -34,6 +34,17 @@ describe('BioSummaryCardComponent', () => {
 		});
 
 		expect(screen.getByText('(Chateauroux, 1948 - París, 1994) fue un escritor', { exact: false })).toBeInTheDocument();
+	});
+
+	// La biografía llega como HTML ya saneado y se pinta con [innerHTML]: se verifica que el marcado
+	// llegue vivo al DOM, no solo el texto, porque un binding interpolado también pasaría el test de arriba.
+	it('should render the biography as HTML, preserving its markup', async () => {
+		await render(BioSummaryCardComponent, { inputs: { story: storyMock } });
+
+		const biography = screen.getByTestId('author-biography');
+		const boldedName = within(biography).getByText(storyMock.author.name);
+
+		expect(boldedName.tagName).toBe('STRONG');
 	});
 
 	it('should display the country flag image', async () => {

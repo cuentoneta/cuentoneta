@@ -51,7 +51,6 @@ export const storylistQuery = defineQuery(`
             name,
             image,
             nationality->,
-            'biography': [],
 						bornOn,
 						bornOnYear,
 						diedOn,

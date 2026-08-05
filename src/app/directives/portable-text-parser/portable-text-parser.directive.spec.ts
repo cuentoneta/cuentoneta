@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, signal } from '@angular/core';
-import { authorMock } from '@mocks/author.mock';
 import { storyMock } from '@mocks/story.mock';
+import { storylistMock } from '@mocks/storylist.mock';
 import { PortableTextDirective } from './portable-text-parser.directive';
 import type { TextBlockContent } from '@models/block-content.model';
 
@@ -14,7 +14,7 @@ import type { TextBlockContent } from '@models/block-content.model';
 	</article>`,
 })
 class TestComponent {
-	public readonly content = signal(authorMock.biography);
+	public readonly content = signal(storyMock.summary);
 	public readonly classes = signal('test-class');
 }
 
@@ -34,49 +34,6 @@ describe('PortableTextDirective', () => {
 
 	it('should create', () => {
 		expect(component).toBeTruthy();
-	});
-
-	describe('author biography formatting', () => {
-		it('should format author name in bold', () => {
-			component.content.set(authorMock.biography);
-			fixture.detectChanges();
-
-			const container = fixture.nativeElement.querySelector('article');
-			const boldText = container.querySelector('b');
-			expect(boldText?.textContent.trim()).toBe('François Onoff');
-		});
-
-		it('should format book titles in italics', () => {
-			// Set the paragraph containing book titles
-			component.content.set(authorMock.biography);
-			fixture.detectChanges();
-
-			const container = fixture.nativeElement.querySelector('article');
-			const italicElements = container.querySelectorAll('i') as HTMLElement[];
-
-			const bookTitles = ['El palacio de las nueve fronteras', 'Ecos del silencio', 'Sinfonía de sombras'];
-
-			bookTitles.forEach((title) => {
-				const found = Array.from(italicElements).some((el) => el.textContent?.includes(title));
-				expect(found).toBeTruthy();
-			});
-		});
-
-		it('should render complete biography with correct formatting', () => {
-			component.content.set(authorMock.biography);
-			fixture.detectChanges();
-
-			const container = fixture.nativeElement.querySelector('article') as HTMLElement;
-			expect(container.textContent).toBeTruthy();
-
-			// Verify formatting is preserved
-			if (container.textContent?.includes('François Onoff')) {
-				expect(container.querySelector('b')).toBeTruthy();
-			}
-			if (container.textContent?.includes('El palacio de las nueve fronteras')) {
-				expect(container.querySelector('i')).toBeTruthy();
-			}
-		});
 	});
 
 	describe('story content formatting', () => {
@@ -202,20 +159,17 @@ describe('PortableTextDirective', () => {
 
 	describe('content updates', () => {
 		it('should update content when signal changes', () => {
-			const initialParagraphs = authorMock.biography;
-			const updatedParagraphs = storyMock.summary;
-
-			component.content.set(initialParagraphs);
+			component.content.set(storyMock.summary);
 			fixture.detectChanges();
 
 			let container = fixture.nativeElement.querySelector('article');
-			expect(container).toHaveTextContent('François Onoff');
+			expect(container).toHaveTextContent('El espejo del tiempo');
 
-			component.content.set(updatedParagraphs);
+			component.content.set(storylistMock.description);
 			fixture.detectChanges();
 
 			container = fixture.nativeElement.querySelector('article');
-			expect(container).toHaveTextContent('El espejo del tiempo');
+			expect(container).not.toHaveTextContent('El espejo del tiempo');
 		});
 	});
 });

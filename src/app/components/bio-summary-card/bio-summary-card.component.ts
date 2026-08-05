@@ -9,6 +9,11 @@ import { AuthorTeaserComponent } from '../author-teaser/author-teaser.component'
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import { ResourceComponent } from '../resource/resource.component';
 
+/**
+ * @deprecated Usar `EditorialNoteComponent`, que presenta el mismo paratexto al pie de la lectura
+ * recibiendo un `AttributedText`. Este componente sobrevive solo mientras la página de Story lo
+ * consuma; se elimina al reemplazarla por `ReadPage`.
+ */
 @Component({
 	selector: 'cuentoneta-bio-summary-card',
 	template: `
@@ -23,7 +28,7 @@ import { ResourceComponent } from '../resource/resource.component';
 			}
 		</section>
 		<section class="font-inter text-base font-normal text-neutral-700">
-			<cuentoneta-portable-text-parser [paragraphs]="story().author.biography" [classes]="'mb-4'" />
+			<div [innerHTML]="story().author.biography" class="mb-4 flex flex-col gap-4" data-testid="author-biography"></div>
 			<cuentoneta-portable-text-parser [paragraphs]="story().summary" [classes]="'mb-4 last:mb-0'" />
 		</section>
 	`,

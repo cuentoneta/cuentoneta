@@ -78,8 +78,14 @@ function resolveLinkHref(block: PortableTextBlock, markKey: string): string | un
 // `**[texto](url)**` también, pero deja el marcado del enlace adentro del énfasis y se lee peor.
 function renderSpan(block: PortableTextBlock, span: PortableTextSpan): string {
 	const marks = span.marks ?? [];
-	let rendered = escapeMarkdown(span.text ?? '');
-	if (rendered === '') return '';
+	const escaped = escapeMarkdown(span.text ?? '');
+	if (escaped.trim() === '') return escaped;
+
+	// El espacio de los bordes queda **fuera** de los delimitadores. Un span marcado cuyo texto termina
+	// en espacio es corriente en el dataset, y CommonMark no cierra un énfasis cuyo delimitador viene
+	// precedido de espacio: `**Nombre **` se leería literal, perdiendo la negrita en silencio.
+	const [, leading, core, trailing] = /^(\s*)([\s\S]*?)(\s*)$/.exec(escaped) ?? ['', '', escaped, ''];
+	let rendered = core;
 
 	if (marks.includes('em')) rendered = `*${rendered}*`;
 	if (marks.includes('strong')) rendered = `**${rendered}**`;
@@ -94,7 +100,7 @@ function renderSpan(block: PortableTextBlock, span: PortableTextSpan): string {
 		rendered = `[${rendered}](${href})`;
 	}
 
-	return rendered;
+	return `${leading}${rendered}${trailing}`;
 }
 
 function renderBlock(block: PortableTextBlock): string {
@@ -109,8 +115,10 @@ function renderBlock(block: PortableTextBlock): string {
  * Lanza `UnsupportedPortableTextError` ante cualquier construcción fuera del subconjunto soportado.
  */
 export function portableTextToMarkdown(blocks: PortableTextBlock[]): string {
+	// El descarte va por contenido y no por identidad con la cadena vacía: un bloque cuyos spans son
+	// todos espacios rinde whitespace, y colarlo produciría un valor que el dominio rechaza al leerlo.
 	return blocks
 		.map(renderBlock)
-		.filter((paragraph) => paragraph !== '')
+		.filter((paragraph) => paragraph.trim() !== '')
 		.join('\n\n');
 }
