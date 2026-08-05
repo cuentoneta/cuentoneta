@@ -90,11 +90,11 @@ En el Studio, que las obras nuevas figuren como borrador. Repetir la corrida par
 
 ## Revertir
 
-[`revert-story-to-literary-work`](../revert-story-to-literary-work/index.ts) cubre **ambas** formas del identificador: borra las obras en borrador que esta migración creó, y ninguna otra.
+Para deshacer **solo este lote**, sin tocar el corpus publicado:
 
 ```bash
-pnpm exec sanity migration run revert-story-to-literary-work --project <id> --dataset <ds>
-pnpm exec sanity migration run revert-story-to-literary-work --project <id> --dataset <ds> --no-dry-run
+pnpm exec sanity migration run revert-draft-story-to-literary-work --project <id> --dataset <ds>
+pnpm exec sanity migration run revert-draft-story-to-literary-work --project <id> --dataset <ds> --no-dry-run
 ```
 
-Ojo: alcanza también a las obras **publicadas** que creó la migración de publicados. No hay una reversión acotada solo a los borradores.
+Es la que corresponde al reintentar esta corrida. [`revert-story-to-literary-work`](../revert-story-to-literary-work/index.ts) también alcanza estas obras, pero **junto con las publicadas**: sirve para descartar el corpus migrado entero, no para volver atrás una sola tanda.
