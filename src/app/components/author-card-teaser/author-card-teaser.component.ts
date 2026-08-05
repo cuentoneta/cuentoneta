@@ -19,7 +19,7 @@ import { TagComponent } from '../tag/tag.component';
  * sin inflar el nombre accesible del link. El avatar lo resuelve `ImageProfile` y los tags `TagsList`.
  */
 @Component({
-	selector: 'cuentoneta-author-teaser-v3',
+	selector: 'cuentoneta-author-card-teaser',
 	imports: [NgOptimizedImage, RouterLink, ImageProfileComponent, TagsListComponent, TagComponent],
 	template: `
 		<article class="relative flex items-start gap-4" data-testid="author">
@@ -68,7 +68,7 @@ import { TagComponent } from '../tag/tag.component';
 		class: 'block',
 	},
 })
-export class AuthorTeaserV3Component {
+export class AuthorCardTeaserComponent {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs

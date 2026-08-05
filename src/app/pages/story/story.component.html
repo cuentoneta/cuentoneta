@@ -76,14 +76,6 @@
 					</div>
 				}
 			}
-
-			<footer>
-				@defer (when story()) {
-					@if (story(); as story) {
-						<cuentoneta-bio-summary-card [story]="story" />
-					}
-				}
-			</footer>
 		</article>
 
 		@if (story(); as story) {

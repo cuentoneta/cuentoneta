@@ -4,12 +4,12 @@ import { CommonModule, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 // 3rd party modules
+import { provideRouter, RouterLink } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 
 // Models
 import { storylistMock } from '@mocks/storylist.mock';
 import type { NavigationParams } from '@app-utils/navigation-params';
-import { Story } from '@models/story.model';
 
 // Components
 import StoryComponent from './story.component';
@@ -27,11 +27,17 @@ describe('StoryComponent', () => {
 				NgForOf,
 				NgIf,
 				NgOptimizedImage,
-				MockBioSummaryCardComponent,
+				RouterLink,
 				MockShareContentComponent,
 				SpyReadingSuggestionsComponent,
 			],
-			providers: [provideStoryApiMock(), { provide: LayoutService, useValue: new ControllableLayoutService() }],
+			// El enlace al autor se arma con routerLink: sin la directiva ni un router el ancla no emite
+			// href, y sin href no expone rol de enlace.
+			providers: [
+				provideRouter([]),
+				provideStoryApiMock(),
+				{ provide: LayoutService, useValue: new ControllableLayoutService() },
+			],
 			inputs: {
 				slug: storyMock.slug,
 			},
@@ -39,8 +45,23 @@ describe('StoryComponent', () => {
 	};
 
 	it('should create', async () => {
-		const view = setup();
+		const view = await setup();
 		expect(view).toBeTruthy();
+	});
+
+	// Alcance: los enlaces que declara el template de la página. Un hijo que no esté en
+	// `componentImports` se renderiza vacío, así que el conteo sobre el árbol completo vive en el e2e.
+	it('should declare a single author link in its own template', async () => {
+		await setup();
+
+		// El nombre accesible se compara por inclusión y no con una expresión regular armada desde el
+		// mock: el nombre de un autor del canon puede traer caracteres con significado en una regex.
+		const authorLinks = screen.getAllByRole('link', {
+			name: (accessibleName) => accessibleName.includes(storyMock.author.name),
+		});
+
+		expect(authorLinks).toHaveLength(1);
+		expect(authorLinks[0]).toHaveAttribute('href', `/author/${storyMock.author.slug}`);
 	});
 });
 
@@ -53,7 +74,6 @@ describe('StoryComponent - sugerencias de lectura', () => {
 				NgForOf,
 				NgIf,
 				NgOptimizedImage,
-				MockBioSummaryCardComponent,
 				MockShareContentComponent,
 				SpyReadingSuggestionsComponent,
 			],
@@ -96,7 +116,6 @@ describe('StoryComponent - headerPosition', () => {
 				NgForOf,
 				NgIf,
 				NgOptimizedImage,
-				MockBioSummaryCardComponent,
 				MockShareContentComponent,
 				SpyReadingSuggestionsComponent,
 			],
@@ -153,15 +172,6 @@ class MockShareContentComponent {
 	public readonly params = input<{ [key: string]: string }>({});
 	public readonly message = input('');
 	public readonly isLoading = input(false);
-}
-
-@Component({
-	standalone: true,
-	selector: 'cuentoneta-bio-summary-card:not(p)',
-	template: '',
-})
-class MockBioSummaryCardComponent {
-	public readonly story = input.required<Story>();
 }
 
 // Doble del bloque de sugerencias: no resuelve datos, solo vuelca en el DOM el contexto que recibe,

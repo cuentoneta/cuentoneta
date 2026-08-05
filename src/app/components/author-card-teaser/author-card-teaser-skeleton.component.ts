@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
 @Component({
-	selector: 'cuentoneta-author-teaser-v3-skeleton',
+	selector: 'cuentoneta-author-card-teaser-skeleton',
 	imports: [SkeletonComponent],
 	host: { class: 'block w-full' },
 	template: `
@@ -23,4 +23,4 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 		</article>
 	`,
 })
-export class AuthorTeaserV3SkeletonComponent {}
+export class AuthorCardTeaserSkeletonComponent {}
