@@ -570,7 +570,7 @@ interface Resource {
 interface ResourceType {
 	slug: string; // Identificador único del tipo
 	title: string; // Nombre del tipo (ej: "Wikipedia")
-	shortDescription: string; // Descripción corta
+	description: string; // Texto plano que explica qué es el tipo
 }
 ```
 
@@ -594,11 +594,15 @@ interface ResourceType {
 interface Tag {
 	slug: string; // Identificador único
 	title: string; // Nombre de la etiqueta
-	shortDescription: string; // Breve descripción
+	description: string; // Texto plano que explica qué agrupa la etiqueta
 }
 ```
 
 **Uso:** Clasificar contenido por tema, género, etc.
+
+> El nombre `description` no implica un mismo tipo en todo el modelo: en `Tag` y en `ResourceType` es
+> texto plano, mientras que `Storylist.description` es Portable Text (`TextBlockContent[]`) y
+> `Media.description` es HTML saneado. Conviene mirar la interfaz antes de asumir el formato.
 
 > Una etiqueta no lleva ícono: `TagComponent` renderiza solo su título. El CMS supo tener un campo de ícono, pero ninguna superficie lo mostraba.
 

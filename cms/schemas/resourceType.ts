@@ -41,7 +41,7 @@ export const resourceType = defineType({
 	preview: {
 		select: {
 			title: 'title',
-			subtitle: 'shortDescription',
+			subtitle: 'description',
 		},
 	},
 	fields: [
@@ -62,7 +62,7 @@ export const resourceType = defineType({
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
-			name: 'shortDescription',
+			name: 'description',
 			title: 'Descripción breve',
 			type: 'string',
 			validation: (Rule) => Rule.required(),

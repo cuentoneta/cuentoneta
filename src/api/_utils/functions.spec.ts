@@ -23,12 +23,12 @@ describe('mapTags (ACL)', () => {
 
 		expect(result.map((tag) => tag.title)).toEqual(onoffRawTagsMock.map((raw) => raw.title));
 		expect(result.map((tag) => tag.slug)).toEqual(onoffRawTagsMock.map((raw) => raw.slug));
-		expect(result.map((tag) => tag.shortDescription)).toEqual(onoffRawTagsMock.map((raw) => raw.shortDescription));
+		expect(result.map((tag) => tag.description)).toEqual(onoffRawTagsMock.map((raw) => raw.description));
 	});
 
 	it('exposes exactly the domain contract, dropping everything else from the raw result', () => {
 		mapTags(onoffRawTagsMock).forEach((tag) => {
-			expect(Object.keys(tag).sort()).toEqual(['shortDescription', 'slug', 'title']);
+			expect(Object.keys(tag).sort()).toEqual(['description', 'slug', 'title']);
 		});
 	});
 
@@ -114,7 +114,7 @@ describe('mapResources (ACL)', () => {
 		expect(resource.resourceType).toMatchObject({
 			slug: rawResource.resourceType.slug,
 			title: rawResource.resourceType.title,
-			shortDescription: rawResource.resourceType.shortDescription,
+			description: rawResource.resourceType.description,
 		});
 	});
 
@@ -122,7 +122,7 @@ describe('mapResources (ACL)', () => {
 		const [resource] = mapResources(rawOnoffAuthor.resources);
 
 		expect(Object.keys(resource).sort()).toEqual(['resourceType', 'title', 'url']);
-		expect(Object.keys(resource.resourceType).sort()).toEqual(['shortDescription', 'slug', 'title']);
+		expect(Object.keys(resource.resourceType).sort()).toEqual(['description', 'slug', 'title']);
 	});
 
 	it('returns an empty array for an empty, null or undefined input', () => {

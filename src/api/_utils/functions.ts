@@ -148,7 +148,7 @@ export function mapResources(resources: ResourcesSubQuery): Resource[] {
 			resourceType: {
 				slug: resource.resourceType.slug,
 				title: resource.resourceType.title,
-				shortDescription: resource.resourceType.shortDescription,
+				description: resource.resourceType.description,
 			},
 		})) ?? []
 	);
@@ -163,7 +163,7 @@ export function mapTags(tags: TagsSubQuery): Tag[] {
 	return tags.map((tag) => ({
 		title: tag.title,
 		slug: tag.slug,
-		shortDescription: tag.shortDescription,
+		description: tag.description,
 	}));
 }
 

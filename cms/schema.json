@@ -285,7 +285,7 @@
 				},
 				"optional": false
 			},
-			"shortDescription": {
+			"description": {
 				"type": "objectAttribute",
 				"value": {
 					"type": "string"
@@ -3169,7 +3169,7 @@
 				},
 				"optional": false
 			},
-			"shortDescription": {
+			"description": {
 				"type": "objectAttribute",
 				"value": {
 					"type": "string"

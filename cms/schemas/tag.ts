@@ -9,7 +9,7 @@ export default defineType({
 	preview: {
 		select: {
 			title: 'title',
-			subtitle: 'shortDescription',
+			subtitle: 'description',
 		},
 	},
 	fields: [
@@ -30,7 +30,7 @@ export default defineType({
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
-			name: 'shortDescription',
+			name: 'description',
 			title: 'Descripción breve',
 			type: 'string',
 			validation: (Rule) => Rule.required(),

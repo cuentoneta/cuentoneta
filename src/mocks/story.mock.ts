@@ -11,7 +11,7 @@ export const storyMock: Story = {
 			resourceType: {
 				slug: 'recurso-original',
 				title: 'Recurso Original',
-				shortDescription: 'Recurso original de este contenido',
+				description: 'Recurso original de este contenido',
 			},
 		},
 	],
@@ -276,7 +276,7 @@ export const storyTeaserWithAuthorMock: StoryTeaserWithAuthor = {
 			resourceType: {
 				slug: 'recurso-original',
 				title: 'Recurso Original',
-				shortDescription: 'Recurso original de este contenido',
+				description: 'Recurso original de este contenido',
 			},
 		},
 	],
@@ -363,7 +363,7 @@ export const storyTeaserMock: StoryTeaser = {
 			resourceType: {
 				slug: 'recurso-original',
 				title: 'Recurso Original',
-				shortDescription: 'Recurso original de este contenido',
+				description: 'Recurso original de este contenido',
 			},
 		},
 	],
