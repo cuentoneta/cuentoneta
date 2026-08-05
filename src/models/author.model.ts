@@ -5,7 +5,7 @@ import { DateString, IsoDateTime } from '@utils/date.utils';
 
 export type AuthorNationality = { country: string; flag: string };
 
-export interface AuthorBase {
+interface AuthorBase {
 	_id: string;
 	slug: string;
 	name: string;
@@ -17,6 +17,11 @@ export interface AuthorBase {
 	bornOnYear?: number;
 	diedOnYear?: number;
 }
+
+// Los datos con los que se presenta a un autor sin abrir su ficha: nombre, retrato, nacionalidad y
+// fechas. Lo satisfacen todas las vistas del autor, así que un consumidor que solo presenta pide esto
+// y acepta cualquiera de ellas.
+export type AuthorPresentation = AuthorBase;
 
 // La biografía no se declara: en una vista de teaser no viaja, y esa ausencia se expresa en el tipo
 // y no en un valor vacío, porque `SanitizedHtml` no admite uno.

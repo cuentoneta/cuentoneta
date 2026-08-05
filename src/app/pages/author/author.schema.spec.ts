@@ -67,6 +67,61 @@ describe('buildAuthorProfilePageSchema', () => {
 		);
 	});
 
+	it('should keep the text of inline marks without detaching punctuation', () => {
+		const biography = markdownToSanitizedHtml(createMarkdown('Su novela _Geometría_ y el **ensayo**.'));
+		const author = { ...authorMock, biography };
+
+		const mainEntity = buildAuthorProfilePageSchema(author, websiteUrl)['mainEntity'] as Record<string, unknown>;
+
+		expect(mainEntity['description']).toBe('Su novela Geometría y el ensayo.');
+	});
+
+	it('should separate text split by a line break inside the same block', () => {
+		const author = { ...authorMock, biography: createSanitizedHtml('<p>Chateauroux, 1948<br />París, 1994</p>') };
+
+		const mainEntity = buildAuthorProfilePageSchema(author, websiteUrl)['mainEntity'] as Record<string, unknown>;
+
+		expect(mainEntity['description']).toBe('Chateauroux, 1948 París, 1994');
+	});
+
+	// El HTML de estos casos parte del Markdown y no está autorado a mano: la forma exacta de las
+	// referencias de caracteres la decide el pipeline, y una aserción sobre HTML escrito acá no
+	// detectaría que dejó de coincidir.
+	describe('referencias de caracteres', () => {
+		const descriptionFrom = (markdown: string) => {
+			const author = { ...authorMock, biography: markdownToSanitizedHtml(createMarkdown(markdown)) };
+			return (buildAuthorProfilePageSchema(author, websiteUrl)['mainEntity'] as Record<string, unknown>)['description'];
+		};
+
+		it('should decode the references the pipeline emits', () => {
+			expect(descriptionFrom('Ida & vuelta')).toBe('Ida & vuelta');
+			expect(descriptionFrom('Entre \\< y \\> hay una pausa')).toBe('Entre < y > hay una pausa');
+		});
+
+		it('should leave no unresolved reference in the description', () => {
+			expect(descriptionFrom('Ida & vuelta: \\<pausa\\>, "dijo" y punto.')).not.toMatch(/&#|&[a-z]+;/i);
+		});
+
+		it('should decode named and numeric references alike', () => {
+			const author = {
+				...authorMock,
+				biography: createSanitizedHtml('<p>Ida &amp; vuelta &#38; regreso: &#x3C;pausa&gt;</p>'),
+			};
+
+			const mainEntity = buildAuthorProfilePageSchema(author, websiteUrl)['mainEntity'] as Record<string, unknown>;
+
+			expect(mainEntity['description']).toBe('Ida & vuelta & regreso: <pausa>');
+		});
+
+		it('should not decode an escaped reference twice', () => {
+			const author = { ...authorMock, biography: createSanitizedHtml('<p>Se escribe &amp;lt; para un menor.</p>') };
+
+			const mainEntity = buildAuthorProfilePageSchema(author, websiteUrl)['mainEntity'] as Record<string, unknown>;
+
+			expect(mainEntity['description']).toBe('Se escribe &lt; para un menor.');
+		});
+	});
+
 	it('should collapse an empty block when flattening the biography', () => {
 		const author = {
 			...authorMock,
