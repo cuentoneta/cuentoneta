@@ -354,7 +354,7 @@ export type Author = {
 	bornOnYear?: ComputedNumber;
 	diedOn?: string;
 	diedOnYear?: ComputedNumber;
-	biography: BlockContent;
+	biography: Markdown;
 	resources?: Array<{
 		title: string;
 		url: string;
@@ -745,7 +745,7 @@ export type AuthorBySlugQueryResult = {
 			_type: 'image';
 		};
 	};
-	biography: BlockContent;
+	biography: Markdown;
 	bornOn: string | null;
 	bornOnYear: ComputedNumber | null;
 	diedOn: string | null;
@@ -1280,7 +1280,7 @@ export type LiteraryWorkBySlugQueryResult = {
 				_type: 'image';
 			};
 		};
-		biography: BlockContent;
+		biography: Markdown;
 		bornOn: string | null;
 		bornOnYear: ComputedNumber | null;
 		diedOn: string | null;
@@ -1420,7 +1420,7 @@ export type LiteraryWorkSectionBySlugQueryResult = {
 				_type: 'image';
 			};
 		};
-		biography: BlockContent;
+		biography: Markdown;
 		bornOn: string | null;
 		bornOnYear: ComputedNumber | null;
 		diedOn: string | null;
@@ -1731,7 +1731,7 @@ export type StoryBySlugQueryResult = {
 				_type: 'image';
 			};
 		};
-		biography: BlockContent;
+		biography: Markdown;
 		bornOn: string | null;
 		bornOnYear: ComputedNumber | null;
 		diedOn: string | null;

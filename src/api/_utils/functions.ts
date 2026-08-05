@@ -19,6 +19,8 @@ import { Resource } from '@models/resource.model';
 import { Story, StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
 import { Tag } from '@models/tag.model';
 import { TextBlockContent } from '@models/block-content.model';
+import { createMarkdown } from '@models/markdown.model';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
 // Tipos de Sanity
 import {
@@ -47,7 +49,9 @@ export function mapAuthor(
 	rawAuthorData: Omit<NonNullable<AuthorBySlugQueryResult>, 'createdAt' | 'updatedAt'>,
 ): Author {
 	const resources = mapResources(rawAuthorData.resources);
-	const biography = mapAuthorBiography(rawAuthorData.biography);
+	// Sin fallback a cadena vacía: el campo es requerido en el schema, y `createMarkdown` lanza si
+	// alguna vez llegara vacío en lugar de dejar pasar un autor sin biografía.
+	const biography = markdownToSanitizedHtml(createMarkdown(rawAuthorData.biography));
 
 	return {
 		_id: rawAuthorData._id,
@@ -97,14 +101,6 @@ export function mapAuthorTeaser(
 		bornOnYear: rawAuthorData.bornOnYear ?? undefined,
 		diedOnYear: rawAuthorData.diedOnYear ?? undefined,
 	};
-}
-
-type BiographySubQuery = NonNullable<AuthorBySlugQueryResult>['biography'];
-export function mapAuthorBiography(biography: BiographySubQuery): TextBlockContent[] {
-	if (!biography || biography.length === 0) {
-		return [];
-	}
-	return mapBlockContentToTextParagraphs(biography);
 }
 
 export function urlFor(source: SanityImageSource): string {

@@ -1,5 +1,7 @@
 import type { SanityImageSource } from '@sanity/image-url';
 import {
+	mapAuthor,
+	mapAuthorTeaser,
 	mapBlockContentToTextParagraphs,
 	mapContentCampaigns,
 	mapLandingPageContent,
@@ -10,7 +12,7 @@ import {
 	urlFor,
 } from './functions';
 import { elOdioRawTeaser, onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
-import { rawOnoffAuthor } from '@mocks/onoff-raw-author.mock';
+import { rawOnoffAuthor, rawOnoffAuthorTeaser } from '@mocks/onoff-raw-author.mock';
 import { onoffRawContentCampaignsMock } from '@mocks/onoff-raw-content-campaigns.mock';
 import { onoffRawTagsMock } from '@mocks/onoff-raw-tags.mock';
 import { viewportElementSizes } from '@models/content-campaign.model';
@@ -55,6 +57,27 @@ describe('mapBlockContentToTextParagraphs (ACL)', () => {
 
 	it('returns an empty array when there is no text block', () => {
 		expect(mapBlockContentToTextParagraphs([{ _type: 'image', _key: 'img1' }])).toEqual([]);
+	});
+});
+
+describe('mapAuthor (ACL)', () => {
+	it('translates the raw Markdown biography of the corpus author into sanitized HTML', () => {
+		const result = mapAuthor(rawOnoffAuthor);
+
+		expect(result.biography).toContain('<p>');
+		expect(result.biography).toContain('<strong>François Onoff</strong>');
+		expect(result.biography).toContain('<em>El palacio de las nueve fronteras</em>');
+		expect(result.biography).not.toContain('**');
+	});
+
+	it('throws instead of serving an author whose biography arrived empty', () => {
+		expect(() => mapAuthor({ ...rawOnoffAuthor, biography: '' })).toThrow();
+	});
+});
+
+describe('mapAuthorTeaser (ACL)', () => {
+	it('does not emit a biography: the teaser contract does not declare it', () => {
+		expect(mapAuthorTeaser(rawOnoffAuthorTeaser)).not.toHaveProperty('biography');
 	});
 });
 

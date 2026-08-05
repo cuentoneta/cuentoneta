@@ -1,5 +1,5 @@
-import { TextBlockContent } from '@models/block-content.model';
 import { Resource } from '@models/resource.model';
+import { SanitizedHtml } from '@models/sanitized-html.model';
 import { Tag } from '@models/tag.model';
 import { DateString, IsoDateTime } from '@utils/date.utils';
 
@@ -25,7 +25,7 @@ export interface AuthorTeaser extends AuthorBase {
 }
 
 export interface Author extends AuthorBase {
-	biography: TextBlockContent[];
+	biography: SanitizedHtml;
 	resources: Resource[];
 }
 

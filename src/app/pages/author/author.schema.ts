@@ -2,22 +2,18 @@ import { Location } from '@angular/common';
 import { type BreadcrumbList, type PersonLeaf, type ProfilePage, type WithContext } from 'schema-dts';
 
 import { type Author, type AuthorProfile } from '@models/author.model';
-import { type TextBlockContent } from '@models/block-content.model';
+import { type SanitizedHtml } from '@models/sanitized-html.model';
+import { htmlToPlainText } from '@utils/html-to-plain-text.utils';
 import { buildBreadcrumbSchema, buildPersonSchema } from '@utils/schema-org.builders';
 
 /**
- * Aplana y recorta la biografía (PortableText) a texto plano para el `description` del Person, recortado
- * en el último espacio antes del tope. Da al `Person`/`ProfilePage` texto para resultados enriquecidos
- * para AEO/SEO en la información expuesta en JSON-LD, independiente de la biografía visible para el
- * crawler en HTML
+ * Aplana y recorta la biografía a texto plano para el `description` del Person, recortado en el último
+ * espacio antes del tope. Da al `Person`/`ProfilePage` texto para resultados enriquecidos para AEO/SEO
+ * en la información expuesta en JSON-LD, independiente de la biografía visible para el crawler en HTML
  */
-function buildBiographyDescription(biography: TextBlockContent[]): string | undefined {
+function buildBiographyDescription(biography: SanitizedHtml): string | undefined {
 	const maxLength = 300;
-	const plainText = biography
-		.map((block) => block.children.map((child) => child.text).join(''))
-		.join(' ')
-		.replace(/\s+/g, ' ')
-		.trim();
+	const plainText = htmlToPlainText(biography);
 	if (!plainText) {
 		return undefined;
 	}
