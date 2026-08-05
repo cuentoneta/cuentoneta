@@ -12,25 +12,9 @@
 			"inputs": ["default", "^production"],
 			"cache": false
 		},
-		"test": {
-			"cache": true
-		},
 		"build-storybook": {
 			"inputs": ["default", "^production", "{projectRoot}/.storybook/**/*", "{projectRoot}/tsconfig.storybook.json"],
 			"cache": true
-		},
-		"@nx/jest:jest": {
-			"inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
-			"cache": true,
-			"options": {
-				"passWithNoTests": true
-			},
-			"configurations": {
-				"ci": {
-					"ci": true,
-					"codeCoverage": true
-				}
-			}
 		},
 		"stylelint": {
 			"inputs": ["default", "{workspaceRoot}/.stylelintrc(.(json|yml|yaml|js))?"],
@@ -47,7 +31,6 @@
 			"default",
 			"!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
 			"!{projectRoot}/tsconfig.spec.json",
-			"!{projectRoot}/jest.config.[jt]s",
 			"!{projectRoot}/eslint.config.mjs",
 			"!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)",
 			"!{projectRoot}/.storybook/**/*",
@@ -61,12 +44,11 @@
 		"@nx/angular:application": {
 			"style": "css",
 			"linter": "eslint",
-			"unitTestRunner": "jest",
-			"e2eTestRunner": "cypress"
+			"unitTestRunner": "vitest-analog"
 		},
 		"@nx/angular:library": {
 			"linter": "eslint",
-			"unitTestRunner": "jest"
+			"unitTestRunner": "vitest-analog"
 		},
 		"@nx/angular:component": {
 			"style": "css",
@@ -131,6 +113,14 @@
 			"options": {
 				"targetName": "eslint:lint"
 			}
+		},
+		{
+			"plugin": "@nx/vitest",
+			"options": {
+				"testTargetName": "vitest:test",
+				"testMode": "run"
+			},
+			"exclude": ["cms/**"]
 		}
 	],
 	"analytics": false
