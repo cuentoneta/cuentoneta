@@ -9,6 +9,11 @@ import { AuthorTeaserComponent } from '../author-teaser/author-teaser.component'
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import { ResourceComponent } from '../resource/resource.component';
 
+/**
+ * @deprecated Usar `EditorialNoteComponent`, que presenta el mismo paratexto al pie de la lectura
+ * recibiendo un `AttributedText`. Este componente sobrevive solo mientras la página de Story lo
+ * consuma; se elimina al reemplazarla por `ReadPage`.
+ */
 @Component({
 	selector: 'cuentoneta-bio-summary-card',
 	template: `
