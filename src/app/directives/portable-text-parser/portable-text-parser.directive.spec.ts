@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, signal } from '@angular/core';
-import { authorMock } from '@mocks/author.mock';
+import { portableTextBiographyMock } from '@mocks/portable-text-biography.mock';
 import { storyMock } from '@mocks/story.mock';
 import { PortableTextDirective } from './portable-text-parser.directive';
 import type { TextBlockContent } from '@models/block-content.model';
@@ -14,7 +14,7 @@ import type { TextBlockContent } from '@models/block-content.model';
 	</article>`,
 })
 class TestComponent {
-	public readonly content = signal(authorMock.biography);
+	public readonly content = signal(portableTextBiographyMock);
 	public readonly classes = signal('test-class');
 }
 
@@ -38,7 +38,7 @@ describe('PortableTextDirective', () => {
 
 	describe('author biography formatting', () => {
 		it('should format author name in bold', () => {
-			component.content.set(authorMock.biography);
+			component.content.set(portableTextBiographyMock);
 			fixture.detectChanges();
 
 			const container = fixture.nativeElement.querySelector('article');
@@ -48,7 +48,7 @@ describe('PortableTextDirective', () => {
 
 		it('should format book titles in italics', () => {
 			// Set the paragraph containing book titles
-			component.content.set(authorMock.biography);
+			component.content.set(portableTextBiographyMock);
 			fixture.detectChanges();
 
 			const container = fixture.nativeElement.querySelector('article');
@@ -63,7 +63,7 @@ describe('PortableTextDirective', () => {
 		});
 
 		it('should render complete biography with correct formatting', () => {
-			component.content.set(authorMock.biography);
+			component.content.set(portableTextBiographyMock);
 			fixture.detectChanges();
 
 			const container = fixture.nativeElement.querySelector('article') as HTMLElement;
@@ -202,7 +202,7 @@ describe('PortableTextDirective', () => {
 
 	describe('content updates', () => {
 		it('should update content when signal changes', () => {
-			const initialParagraphs = authorMock.biography;
+			const initialParagraphs = portableTextBiographyMock;
 			const updatedParagraphs = storyMock.summary;
 
 			component.content.set(initialParagraphs);
