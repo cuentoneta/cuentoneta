@@ -258,6 +258,14 @@ const run = async () => {
 	for (const s of summary) console.log(` - ${s.slug}: ${s.status}${s.reason ? ` (${s.reason})` : ''}`);
 };
 
+// Corte duro: `author.biography` se persiste como Markdown y este script escribe Portable Text. Correrlo
+// contra el dataset dejaría un array en un campo de texto y toda lectura de ese autor fallaría. Se
+// conserva como registro de una auditoría ya ejecutada, no como herramienta ejecutable.
+console.error(
+	'bold-author-pen-names: obsoleto. Escribe Portable Text sobre un campo que hoy es Markdown; correrlo corrompe el documento.',
+);
+process.exit(1);
+
 run().catch((err) => {
 	console.error(err);
 	process.exit(1);
