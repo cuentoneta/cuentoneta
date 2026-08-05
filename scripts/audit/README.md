@@ -15,13 +15,12 @@ pnpm exec tsx --env-file=.env scripts/audit/<script>.ts
 
 ## Scripts disponibles
 
-| Script                     | Tipo                                                  | Qué hace                                                                                                                                                                                                                                                                                    |
-| -------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `audit-bold-names.ts`      | **Read-only** ✅                                      | Audita qué autores publicados no tienen su `name` en negrita dentro de su biografía. Reporta **Grupo A** (sin ninguna negrita) y **Grupo B** (hay negrita, pero el `name` no aparece como subcadena contigua).                                                                              |
-| `export-authors-bios.ts`   | **Read-only** de Sanity ✅ (escribe archivos locales) | Exporta la biografía de cada autor publicado a un `.md` en `tools/author-bios/` (carpeta _gitignored_), como material de referencia estilística.                                                                                                                                            |
-| `bold-author-pen-names.ts` | **⚠️ Escribe en Sanity (producción)**                 | Aplica negrita al nombre del autor dentro de su biografía, según una **lista curada** de operaciones (`in_place` / `prepend` / `skip`). Deja los cambios como **borradores (`drafts.*`), sin publicar**, para revisión en Studio. Es **idempotente** (saltea drafts que ya tienen negrita). |
+| Script                   | Tipo                                                  | Qué hace                                                                                                                                                                                                       |
+| ------------------------ | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `audit-bold-names.ts`    | **Read-only** ✅                                      | Audita qué autores publicados no tienen su `name` en negrita dentro de su biografía. Reporta **Grupo A** (sin ninguna negrita) y **Grupo B** (hay negrita, pero el `name` no aparece como subcadena contigua). |
+| `export-authors-bios.ts` | **Read-only** de Sanity ✅ (escribe archivos locales) | Exporta la biografía de cada autor publicado a un `.md` en `tools/author-bios/` (carpeta _gitignored_), como material de referencia estilística.                                                               |
 
-> Los tres operan sobre `author.biography` **como Portable Text**, que es la forma que el campo tenía cuando se corrieron. El campo hoy se declara `markdown` y se persiste como string, así que los tres quedaron obsoletos: describen una auditoría ya ejecutada, no una herramienta vigente.
+> Los dos operan sobre `author.biography` **como Portable Text**, que es la forma que el campo tenía cuando se corrieron. El campo hoy se declara `markdown` y se persiste como string, así que ambos quedaron obsoletos: describen una auditoría ya ejecutada, no una herramienta vigente. El tercero, que aplicaba negrita al nombre del autor escribiendo en Sanity, se dio de baja: correrlo hoy dejaría un array donde va texto y rompería toda lectura de ese autor.
 
 ### Comandos
 
@@ -31,9 +30,6 @@ pnpm exec tsx --env-file=.env scripts/audit/audit-bold-names.ts
 
 # Export de biografías a Markdown (solo lectura; salida en tools/author-bios/)
 pnpm exec tsx --env-file=.env scripts/audit/export-authors-bios.ts
-
-# Negrita de nombres — ⚠️ crea drafts en el dataset de .env (producción)
-pnpm exec tsx --env-file=.env scripts/audit/bold-author-pen-names.ts
 ```
 
 ## Detalle: `export-authors-bios.ts`
