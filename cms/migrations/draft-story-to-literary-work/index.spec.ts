@@ -1,3 +1,4 @@
+import { evaluate, parse } from 'groq-js';
 import { describe, expect, it } from 'vitest';
 
 import type { PortableTextBlock } from '../../../resources/portable-text-to-markdown/portable-text-to-markdown';
@@ -35,12 +36,47 @@ describe('migración de cuentos en borrador a obras en borrador', () => {
 		expect(migration.documentTypes).toEqual(['story']);
 	});
 
-	// El filtro se afirma entero y no condición por condición: es la unidad que decide qué entra, y
-	// partirlo daría la ilusión de cobertura sin agregar ninguna.
-	it('deja fuera los borradores que no permiten construir una obra', () => {
-		expect(migration.filter).toBe(
-			"_id in path('drafts.**') && defined(title) && defined(slug.current) && defined(author._ref) && count(body) > 0",
-		);
+	// El filtro se **ejecuta** con el mismo motor que GROQ, no se compara como texto: una aserción
+	// textual pasa igual con un filtro roto mientras el literal coincida, y no distingue `count(body) > 0`
+	// de `count(body) >= 0` ni dice qué hace ante un campo ausente, que es el caso frecuente en un
+	// borrador a medio cargar.
+	describe('el filtro decide qué entra', () => {
+		const admitido = {
+			_id: 'drafts.ok',
+			_type: 'story',
+			title: 'T',
+			slug: { current: 't' },
+			author: { _ref: 'a' },
+			body: [{}],
+		};
+
+		const matching = async (...docs: Record<string, unknown>[]) => {
+			const result = await evaluate(parse(`*[${migration.filter}]._id`), { dataset: docs });
+			return (await result.get()) as string[];
+		};
+
+		it('admite un borrador completo', async () => {
+			expect(await matching(admitido)).toEqual(['drafts.ok']);
+		});
+
+		it('deja fuera un cuento publicado', async () => {
+			expect(await matching({ ...admitido, _id: 'publicado' })).toEqual([]);
+		});
+
+		it('deja fuera un borrador sin cuerpo, esté ausente o vacío', async () => {
+			const sinCampo = { ...admitido, _id: 'drafts.sin-campo', body: undefined };
+			const vacio = { ...admitido, _id: 'drafts.vacio', body: [] };
+
+			expect(await matching(sinCampo, vacio)).toEqual([]);
+		});
+
+		it('deja fuera un borrador sin título, sin slug o sin autor', async () => {
+			const sinTitulo = { ...admitido, _id: 'drafts.sin-titulo', title: undefined };
+			const sinSlug = { ...admitido, _id: 'drafts.sin-slug', slug: undefined };
+			const sinAutor = { ...admitido, _id: 'drafts.sin-autor', author: undefined };
+
+			expect(await matching(sinTitulo, sinSlug, sinAutor)).toEqual([]);
+		});
 	});
 
 	it('emite una única mutación de creación por cuento', () => {
