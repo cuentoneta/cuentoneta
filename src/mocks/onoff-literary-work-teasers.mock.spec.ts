@@ -67,8 +67,8 @@ describe('navigation teasers de LiteraryWork (proyección de la vista base)', ()
 			// Los autores derivan de la obra fuente (no de un mock fijo), preservando slug y nombre...
 			expect(teaser.authors.map((author) => author.slug)).toEqual(source.authors.map((author) => author.slug));
 			expect(teaser.authors[0].name).toBe(source.authors[0].name);
-			// ...pero la variante AuthorTeaser vacía biography y resources.
-			expect(teaser.authors[0].biography).toHaveLength(0);
+			// ...pero la variante AuthorTeaser no declara la biografía y vacía los recursos.
+			expect(teaser.authors[0]).not.toHaveProperty('biography');
 			expect(teaser.authors[0].resources).toHaveLength(0);
 		});
 	});

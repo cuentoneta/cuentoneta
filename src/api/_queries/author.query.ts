@@ -39,7 +39,6 @@ export const authorsQuery = defineQuery(`
     name,
     image,
     nationality->,
-    'biography': [],
     bornOn,
  		bornOnYear,
     diedOn,

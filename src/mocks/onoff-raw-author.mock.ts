@@ -144,7 +144,6 @@ export const rawOnoffAuthorTeaser: NonNullable<RotatingContentQueryResult>['most
 			asset: { _type: 'reference', _ref: 'image-b80876a5f3a89e13acc14254b1f45dd6d29b79f4-30x20-png' },
 		},
 	},
-	biography: [],
 	bornOn: '1948-01-01',
 	bornOnYear: 1948,
 	diedOn: '1994-12-31',

@@ -126,7 +126,6 @@ export const authorTeaserMock: AuthorTeaser = {
 	resources: [],
 	imageUrl: 'assets/img/mocks/author/francois-onoff.png',
 	name: 'François Onoff',
-	biography: [],
 	bornOn: '1948-01-01',
 	bornOnYear: 1948,
 	diedOn: '1994-12-31',

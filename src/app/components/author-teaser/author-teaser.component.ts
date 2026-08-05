@@ -1,6 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Author } from '@models/author.model';
+import { AuthorBase } from '@models/author.model';
 import { RouterLink } from '@angular/router';
 import { AppRoutes } from '../../app.routes';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -63,7 +63,7 @@ import { withSanityImageParams } from '@utils/sanity-image.utils';
 	</a>`,
 })
 export class AuthorTeaserComponent {
-	public readonly author = input.required<Omit<Author, 'biography'>>();
+	public readonly author = input.required<AuthorBase>();
 	public readonly variant = input<'sm' | 'md'>('sm');
 
 	protected readonly imageSize = computed(() => (this.variant() === 'sm' ? 40 : 64));

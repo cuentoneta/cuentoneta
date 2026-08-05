@@ -92,7 +92,6 @@ export function mapAuthorTeaser(
 		tags: [],
 		imageUrl: urlFor(rawAuthorData.image),
 		name: rawAuthorData.name,
-		biography: [],
 		bornOn: rawAuthorData.bornOn ? (rawAuthorData.bornOn as DateString) : undefined,
 		diedOn: rawAuthorData.diedOn ? (rawAuthorData.diedOn as DateString) : undefined,
 		bornOnYear: rawAuthorData.bornOnYear ?? undefined,

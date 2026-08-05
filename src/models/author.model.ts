@@ -5,7 +5,7 @@ import { DateString, IsoDateTime } from '@utils/date.utils';
 
 export type AuthorNationality = { country: string; flag: string };
 
-interface AuthorBase {
+export interface AuthorBase {
 	_id: string;
 	slug: string;
 	name: string;
@@ -18,8 +18,9 @@ interface AuthorBase {
 	diedOnYear?: number;
 }
 
+// La biografía no se declara: en una vista de teaser no viaja, y esa ausencia se expresa en el tipo
+// y no en un valor vacío, porque `SanitizedHtml` no admite uno.
 export interface AuthorTeaser extends AuthorBase {
-	biography: Array<never>;
 	resources: Array<never>;
 }
 
