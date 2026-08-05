@@ -80,6 +80,8 @@ pnpm exec sanity migration run revert-story-to-literary-work --project <id> --da
 
 Borra **solo** las obras cuyo `_id` lleva el prefijo derivado. Las nacidas en el Studio no se tocan: el predicado se comparte con la migración de ida y se comprueba documento por documento, no solo en el filtro.
 
+Alcanza también a las obras **en borrador** que crea [`draft-story-to-literary-work`](../draft-story-to-literary-work/README.md), cuyo identificador lleva el mismo prefijo detrás del de path. No hay forma de revertir solo unas u otras.
+
 No restaura nada en los cuentos, porque la migración de ida no los tocó.
 
 ## Advertencia sobre `development`

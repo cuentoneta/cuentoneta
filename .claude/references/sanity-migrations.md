@@ -38,6 +38,8 @@ Cuando una migración crea documentos, tres decisiones se resuelven juntas con *
 
 Preferir `createIfNotExists` sobre `createOrReplace`: el segundo refresca el contenido a costa de pisar lo que alguien haya editado a mano después de migrar.
 
+**Si el origen puede ser un borrador, el prefijo de path se reaplica, no se concatena.** Sanity marca un borrador con `drafts.` **encabezando** el `_id`, así que derivar `drafts.<origen>` como `<prefijo>drafts.<origen>` produce un documento publicado con nombre de borrador — y publica contenido inédito sin que nada lo señale. Lo correcto es separar el path del identificador, derivar sobre lo que queda y volver a anteponerlo: `drafts.<prefijo><origen>`. El predicado de reconocimiento y el `filter` de la reversión tienen que contemplar ambas formas.
+
 El predicado que reconoce un documento migrado se declara **una sola vez** y lo importan ambas migraciones. Si cada una tuviera el suyo, una divergencia entre las dos definiciones podría dejar documentos sin borrar —o borrar de más—. Y el guard va **dentro** de `migrate.document`, no solo en el `filter`: el filtro es una optimización del recorrido, no la garantía.
 
 ### Migraciones que convierten contenido
