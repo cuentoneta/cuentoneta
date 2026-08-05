@@ -17,6 +17,7 @@
 9. [Allow-list de sanitización](#9-allow-list-de-sanitización)
 10. [Autoría y obra anónima](#10-autoría-y-obra-anónima)
 11. [Corte de #1852 vs. Slice 1 (#1853)](#11-corte-de-1852-vs-slice-1-1853)
+12. [Migración del corpus de `Story`](#12-migración-del-corpus-de-story)
 
 ---
 
@@ -461,3 +462,23 @@ Consecuencias:
 | Frontend (`LiteraryWorkApi` + `LiteraryWorkDto` + rehidratación en el provider, ruta `/read/:slug`, página SSR) | Contrato ([§7](#7-contrato-del-endpoint))                    | ⚙️ Implementa                                                      |
 | Caché de borde `/read` (middleware + endpoint), con SWR y sin purga (#1856)                                     | Contrato ([§8](#8-estrategia-de-caché-de-borde))             | ✅ Implementado                                                    |
 | JSON-LD                                                                                                         | Consecuencia documentada ([§10](#10-autoría-y-obra-anónima)) | Slice 3                                                            |
+
+---
+
+## 12. Migración del corpus de `Story`
+
+Decisiones vigentes sobre las obras que nacen de migrar un cuento. La migración vive en [`cms/migrations/story-to-literary-work/`](../cms/migrations/story-to-literary-work/README.md), con su procedimiento operativo y su reversión.
+
+**Se migra una sola vez, hacia `LiteraryWork`.** `Story` no traduce su contenido a Markdown en su propio schema: el cuento queda en Portable Text hasta que el schema entero se dé de baja. Por eso la migración crea documentos al lado en vez de transformar los existentes, y por eso revertirla es borrar lo creado.
+
+**Las obras migradas nacen mono-sección.** El cuerpo y los epígrafes del cuento van a `content[0]`. La sección queda **sin título**: no tiene origen en `Story`, el schema lo declara opcional ("una obra de una sola sección puede no llevar título") y la vista de lectura lo consume con optional chaining. Multi-sección es trabajo posterior y no reinterpreta lo migrado.
+
+**`Story.review` es el origen de `editorialNote`.** Mismo propósito —paratexto editorial sobre la obra— y misma posición en el producto. Se migra **verbatim**: la conversión no cura texto. Queda anotado que la descripción del campo nuevo declara "no es una reseña crítica" mientras el campo legado se titula "Reseña", así que parte de las notas migradas puede no calzar con esa intención; revisarlas es curaduría editorial, no trabajo de la migración.
+
+**`Story.author` se envuelve en un array de un elemento.** Es una referencia requerida en el schema legado, así que la invariante `authors.length >= 1` se cumple sin resolver anonimato.
+
+**El reading time no lo escribe la migración.** Ni `readingTime` ni `totalReadingTime`: los puebla el script de backfill, que [§5](#5-helper-de-reading-time) declara única vía de persistencia de esos campos. Copiar el `approximateReadingTime` del cuento queda descartado por dos razones: el algoritmo de extracción de texto difiere entre Portable Text y Markdown, así que el número no coincidiría; y al ser campos `setIfMissing`, un valor sembrado por la migración el backfill **nunca lo corregiría**. Mientras tanto el repository deriva su fallback puro en lectura, así que no hay ventana degradada.
+
+**`publishedAt` se copia con fallback al `_createdAt` del cuento.** Omitirlo haría que el `coalesce(publishedAt, _createdAt)` de la query resolviera al `_createdAt` del documento **nuevo** —la fecha de la migración—, y el corpus perdería su cronología: la enorme mayoría de los cuentos no tiene ese campo cargado.
+
+**La conversión falla antes que perder contenido.** Tanto el conversor de Portable Text como el armado del documento lanzan ante lo que no pueden traducir. Un documento degradado fallaría recién al leerse, cuando el repository construya el agregado con sus factories — lejos de donde se puede corregir.

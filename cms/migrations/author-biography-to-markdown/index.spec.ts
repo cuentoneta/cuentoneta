@@ -45,9 +45,11 @@ describe('author-biography-to-markdown', () => {
 	});
 
 	// El conversor se detiene ante lo que no sabe traducir, para no perder contenido en silencio.
+	// El estilo del caso es deliberadamente inventado: los encabezados y las citas dejaron de servir
+	// como ejemplo cuando el conversor incorporó su traducción.
 	it('aborta ante una construcción que el conversor no soporta', () => {
-		const heading = { ...paragraph('Título'), style: 'h1' };
+		const exotico = { ...paragraph('Texto'), style: 'inventado' };
 
-		expect(() => migrateDocument({ _id: 'author-1', biography: [heading] })).toThrow(/Estilo no soportado/);
+		expect(() => migrateDocument({ _id: 'author-1', biography: [exotico] })).toThrow(/Estilo no soportado/);
 	});
 });
