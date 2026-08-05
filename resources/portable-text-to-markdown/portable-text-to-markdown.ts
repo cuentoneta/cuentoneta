@@ -115,8 +115,10 @@ function renderBlock(block: PortableTextBlock): string {
  * Lanza `UnsupportedPortableTextError` ante cualquier construcción fuera del subconjunto soportado.
  */
 export function portableTextToMarkdown(blocks: PortableTextBlock[]): string {
+	// El descarte va por contenido y no por identidad con la cadena vacía: un bloque cuyos spans son
+	// todos espacios rinde whitespace, y colarlo produciría un valor que el dominio rechaza al leerlo.
 	return blocks
 		.map(renderBlock)
-		.filter((paragraph) => paragraph !== '')
+		.filter((paragraph) => paragraph.trim() !== '')
 		.join('\n\n');
 }

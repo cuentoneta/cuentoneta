@@ -77,6 +77,18 @@ describe('portableTextToMarkdown', () => {
 			expect(portableTextToMarkdown(withEmpty)).toBe('Único.');
 		});
 
+		// Un bloque en blanco no es una cadena vacía: si se colara, el resultado tendría texto solo en
+		// apariencia y el guard de vacío de las migraciones lo dejaría pasar.
+		it('descarta también los párrafos que solo tienen espacios', () => {
+			const withBlank = [block([span('Único.')], { _key: 'b1' }), block([span('   ', ['em'])], { _key: 'b2' })];
+
+			expect(portableTextToMarkdown(withBlank)).toBe('Único.');
+		});
+
+		it('devuelve una cadena vacía cuando todos los párrafos están en blanco', () => {
+			expect(portableTextToMarkdown([block([span(' '), span('\t')])])).toBe('');
+		});
+
 		it('devuelve una cadena vacía para una entrada vacía', () => {
 			expect(portableTextToMarkdown([])).toBe('');
 		});

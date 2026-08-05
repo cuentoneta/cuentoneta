@@ -39,10 +39,10 @@ export default defineMigration({
 			}
 
 			const markdown = portableTextToMarkdown(doc.biography);
-			if (markdown === '') {
+			if (markdown.trim() === '') {
 				throw new Error(
-					`La biografía de ${doc._id} quedaría vacía: el campo es requerido y una cadena vacía haría ` +
-						`fallar el mapeo del autor en cada lectura.`,
+					`La biografía de ${doc._id} quedaría sin texto: el campo es requerido y un valor en blanco haría ` +
+						`fallar el mapeo del autor en cada lectura de su ficha publicada.`,
 				);
 			}
 
