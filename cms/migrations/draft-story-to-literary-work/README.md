@@ -36,7 +36,11 @@ De ahí se sigue que **los 14 cuentos con versión publicada y borrador producen
 
 ## Referencias a autores inéditos
 
-Quince de los cuentos admitidos referencian autores que solo existen como borrador. Es válido: el content lake acepta una referencia fuerte a un documento inédito mientras el documento que la contiene sea un borrador. Lo que Sanity bloquea es **publicar** con referencias a inéditos.
+Quince de los cuentos admitidos referencian autores que solo existen como borrador. El content lake **rechaza una referencia fuerte a un documento que no existe**, y un autor inédito no existe como documento publicado — da igual que el documento que la contiene sea un borrador.
+
+Lo que sí acepta es una referencia **débil**. El Studio las crea así cuando el destino todavía no está publicado: `_weak: true` más un `_strengthenOnPublish` que dice que hay que fortalecerla cuando el autor se publique. Es la forma que tienen los quince cuentos, y por eso existen.
+
+Por eso el armado del documento **conserva esas marcas** en vez de reconstruir la referencia. No es fidelidad decorativa: sin ellas la escritura falla entera, con un error que nombra al autor inexistente. Y a la inversa, no se agregan cuando el origen no las trae — un autor publicado no debe perder la integridad referencial que el content lake garantiza.
 
 Corolario: esta migración **no exige publicar nada** — ni cuentos ni fichas de autor.
 

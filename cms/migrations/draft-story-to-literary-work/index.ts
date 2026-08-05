@@ -7,10 +7,12 @@ import { buildLiteraryWorkDocument, type StoryDocument } from '../story-to-liter
  * Portable Text.
  *
  * **Nada se publica.** El identificador derivado conserva el prefijo de path del origen, así que un
- * cuento inédito produce una obra inédita. Eso es lo que vuelve lícito que la obra referencie a un
- * autor que también está en borrador: el content lake acepta esa referencia mientras el documento que
- * la contiene no se publique, y las queries del sitio excluyen borradores, así que nada de esto llega
- * a una página.
+ * cuento inédito produce una obra inédita, y las queries del sitio excluyen borradores: nada de esto
+ * llega a una página.
+ *
+ * Que la obra pueda referenciar a un autor todavía inédito no viene de estar en borrador —el content
+ * lake rechaza una referencia fuerte a un documento inexistente sin importar eso— sino de que el
+ * armado conserva la marca de referencia **débil** que el Studio ya puso en el cuento de origen.
  *
  * **Un cuento con versión publicada y borrador produce el borrador de su misma obra**, porque ambos
  * identificadores derivan del mismo uuid. No nace una obra distinta ni se toca la publicada.

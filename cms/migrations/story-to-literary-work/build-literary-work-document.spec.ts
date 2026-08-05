@@ -108,6 +108,40 @@ describe('buildLiteraryWorkDocument', () => {
 		expect(doc['authors']).toEqual([{ _type: 'reference', _ref: 'author-borges', _key: 'author-borges' }]);
 	});
 
+	// Reconstruirla fuerte haría que el content lake rechazara la escritura entera: una referencia
+	// fuerte exige que el destino exista, y un autor inédito no existe como documento publicado.
+	it('conserva la debilidad de la referencia a un autor todavía inédito', () => {
+		const doc = buildLiteraryWorkDocument(
+			story({
+				author: {
+					_type: 'reference',
+					_ref: 'author-inedito',
+					_weak: true,
+					_strengthenOnPublish: { type: 'author' },
+				},
+			}),
+		);
+
+		expect(doc['authors']).toEqual([
+			{
+				_type: 'reference',
+				_ref: 'author-inedito',
+				_key: 'author-inedito',
+				_weak: true,
+				_strengthenOnPublish: { type: 'author' },
+			},
+		]);
+	});
+
+	// Una referencia a un autor publicado no debe volverse débil: perdería la integridad referencial
+	// que el content lake garantiza.
+	it('no agrega marcas de debilidad cuando el origen no las tiene', () => {
+		const [author] = buildLiteraryWorkDocument(story())['authors'] as Record<string, unknown>[];
+
+		expect(author).not.toHaveProperty('_weak');
+		expect(author).not.toHaveProperty('_strengthenOnPublish');
+	});
+
 	describe('sección única', () => {
 		it('lleva el cuerpo convertido a Markdown a la primera y única sección', () => {
 			const doc = buildLiteraryWorkDocument(story({ body: [paragraph('Texto con *asterisco*.')] }));

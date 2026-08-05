@@ -18,6 +18,9 @@ interface SanityReference {
 	_type: 'reference';
 	_ref: string;
 	_key?: string;
+	// El Studio marca así una referencia a un documento todavía inédito, y las fortalece al publicarlo.
+	_weak?: boolean;
+	_strengthenOnPublish?: unknown;
 }
 
 interface StoryEpigraph {
@@ -152,12 +155,27 @@ function buildSection(story: StoryDocument): Record<string, unknown> {
  * `Story.author` es una referencia única y requerida; `LiteraryWork.authors` es un array. Envolverla
  * en un array de un elemento satisface la invariante `authors.length >= 1` del agregado. El `_key` se
  * deriva del `_ref`: es determinístico y único dentro del array.
+ *
+ * **La debilidad de la referencia se conserva.** Cuando el autor todavía no está publicado, el Studio
+ * marca la referencia como débil y anota que hay que fortalecerla al publicar. Reconstruirla fuerte
+ * haría que el content lake rechazara la escritura entera —una referencia fuerte exige que el destino
+ * exista—, así que copiar esas marcas no es una fidelidad decorativa: es lo que permite migrar un
+ * cuento cuyo autor sigue inédito.
  */
 function buildAuthors(story: StoryDocument): SanityReference[] {
 	if (!story.author?._ref) {
 		throw new UnmigratableStoryError('La story no tiene autor', story._id);
 	}
-	return [{ _type: 'reference', _ref: story.author._ref, _key: story.author._ref }];
+	const { _ref, _weak, _strengthenOnPublish } = story.author;
+	return [
+		{
+			_type: 'reference',
+			_ref,
+			_key: _ref,
+			...(_weak !== undefined ? { _weak } : {}),
+			...(_strengthenOnPublish !== undefined ? { _strengthenOnPublish } : {}),
+		},
+	];
 }
 
 function assertKeyed(items: unknown[] | undefined, field: string, storyId: string): void {
