@@ -31,7 +31,7 @@ export default defineType({
 		}),
 		defineField({
 			name: 'description',
-			title: 'Descripción breve',
+			title: 'Descripción',
 			type: 'string',
 			validation: (Rule) => Rule.required(),
 		}),
