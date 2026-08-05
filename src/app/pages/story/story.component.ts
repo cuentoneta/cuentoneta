@@ -21,7 +21,6 @@ import { STORY_HOST, type StoryHost } from './story-host';
 
 // Components
 import { ReadingSuggestionsComponent } from '@components/reading-suggestions/reading-suggestions.component';
-import { BioSummaryCardComponent } from '@components/bio-summary-card/bio-summary-card.component';
 import { ShareContentComponent } from '@components/share-content/share-content.component';
 import { EditorialTextBlockComponent } from '@components/editorial-text-block/editorial-text-block.component';
 import { MediaResourceComponent } from '@components/media-resource/media-resource.component';
@@ -35,7 +34,6 @@ import { faSolidArrowRightLong } from '@ng-icons/font-awesome/solid';
 	selector: 'cuentoneta-story',
 	templateUrl: './story.component.html',
 	imports: [
-		BioSummaryCardComponent,
 		CommonModule,
 		EditorialTextBlockComponent,
 		MediaResourceComponent,
