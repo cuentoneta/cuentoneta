@@ -28,8 +28,17 @@ const STORY_SCOPES = Object.freeze({
 	borradores: '_id in path("drafts.**")',
 } as const);
 
-/** Las condiciones del filtro de la migración de borradores: lo que permite construir una obra válida. */
+/**
+ * Las condiciones del filtro de `cms/migrations/draft-story-to-literary-work/`: lo que permite
+ * construir una obra válida. Están escritas dos veces porque el Studio es un proyecto pnpm aparte y no
+ * comparte módulos con este script. El contraste del dry-run contra estos conteos es lo que detecta
+ * una divergencia, así que **al tocar una hay que tocar la otra**.
+ */
 const MIGRATABLE = 'defined(title) && defined(slug.current) && defined(author._ref) && count(body) > 0';
+
+/** El identificador que la migración deriva. Mismo caso que `MIGRATABLE`: vive duplicado a propósito. */
+const MIGRATED_ID_PREFIX = 'lw-from-story-';
+const DRAFTS_PATH_PREFIX = 'drafts.';
 
 interface CensusBlock {
 	_type: string;
@@ -205,23 +214,26 @@ async function censusOfEpigraphs(scope: string): Promise<void> {
 	}
 }
 
-/** Cada entrada es el predicado que se suma al ámbito para contar ese subconjunto. */
-const STORY_COUNTS: Readonly<Record<string, string>> = Object.freeze({
-	cuentos: '',
-	conBody: 'count(body) > 0',
-	conReview: 'count(review) > 0',
-	conEpigrafes: 'count(epigraphs) > 0',
-	sinPublishedAt: '!defined(publishedAt)',
-	sinTitle: '!defined(title)',
-	sinSlug: '!defined(slug.current)',
-	sinAuthor: '!defined(author._ref)',
-	sinBody: 'count(body) == 0',
-	migrables: MIGRATABLE,
-	excluidos: `!(${MIGRATABLE})`,
-});
-
 async function reportCounts(scope: string): Promise<void> {
-	const projections = Object.entries(STORY_COUNTS).map(
+	// Cada entrada es el predicado que se suma al ámbito para contar ese subconjunto.
+	// `sinBody` se escribe como complemento de la condición del filtro y no como `count(body) == 0`:
+	// `count()` de un campo ausente rinde `null`, y `null == 0` es falso, así que esa forma solo
+	// contaría los que tienen el array vacío. En borradores, el campo ausente es el caso frecuente.
+	const predicates: Readonly<Record<string, string>> = Object.freeze({
+		cuentos: '',
+		conBody: 'count(body) > 0',
+		conReview: 'count(review) > 0',
+		conEpigrafes: 'count(epigraphs) > 0',
+		sinPublishedAt: '!defined(publishedAt)',
+		sinTitle: '!defined(title)',
+		sinSlug: '!defined(slug.current)',
+		sinAuthor: '!defined(author._ref)',
+		sinBody: '!(count(body) > 0)',
+		migrables: MIGRATABLE,
+		excluidos: `!(${MIGRATABLE})`,
+	});
+
+	const projections = Object.entries(predicates).map(
 		([label, predicate]) => `"${label}": count(*[_type == "story" && ${scope}${predicate ? ` && ${predicate}` : ''}])`,
 	);
 	const counts = await client.fetch<Record<string, number>>(
@@ -250,18 +262,27 @@ async function reportFidelityBaseline(scope: string): Promise<void> {
 }
 
 async function reportSlugIssues(scope: string): Promise<void> {
+	// Las obras derivadas se excluyen de la comparación: cada cuento ya migrado comparte el slug con la
+	// obra que nació de él, así que incluirlas devolvería el corpus entero y taparía lo que el chequeo
+	// busca — una colisión con una obra nacida a mano.
 	const collisions = await client.fetch<string[]>(
-		`*[_type == "story" && ${scope} && slug.current in *[_type == "literaryWork"].slug.current].slug.current`,
+		`*[_type == "story" && ${scope} && slug.current in *[_type == "literaryWork"
+			&& !string::startsWith(_id, "${MIGRATED_ID_PREFIX}")
+			&& !string::startsWith(_id, "${DRAFTS_PATH_PREFIX}${MIGRATED_ID_PREFIX}")].slug.current].slug.current`,
 	);
 	// La validación del patrón se hace acá y no en GROQ: su operador `match` compara por tokens, no
 	// por expresión regular, así que un `match "^[a-z0-9-]+$"` no valida nada — devuelve el corpus
 	// entero como si no cumpliera.
-	const slugs = await client.fetch<string[]>(`*[_type == "story" && ${scope}].slug.current`);
-	const malformed = slugs.filter((slug) => !/^[a-z0-9-]+$/.test(slug ?? ''));
+	const slugs = await client.fetch<(string | null)[]>(`*[_type == "story" && ${scope}].slug.current`);
+	// El slug ausente y el malformado son problemas distintos: el primero es lo frecuente en un
+	// borrador a medio cargar, y mezclarlos imprimiría entradas vacías entre los nombres.
+	const missing = slugs.filter((slug) => !slug);
+	const malformed = slugs.filter((slug): slug is string => !!slug && !/^[a-z0-9-]+$/.test(slug));
 	console.log('\n=== Slugs ===');
 	console.log(
 		`  colisiones con literaryWork  ${collisions.length}${collisions.length ? `: ${collisions.join(', ')}` : ''}`,
 	);
+	console.log(`  ausentes                     ${missing.length}`);
 	console.log(
 		`  fuera del patrón esperado    ${malformed.length}${malformed.length ? `: ${malformed.join(', ')}` : ''}`,
 	);
