@@ -18,6 +18,9 @@ interface SanityReference {
 	_type: 'reference';
 	_ref: string;
 	_key?: string;
+	// El Studio marca así una referencia a un documento todavía inédito, y las fortalece al publicarlo.
+	_weak?: boolean;
+	_strengthenOnPublish?: unknown;
 }
 
 interface StoryEpigraph {
@@ -67,12 +70,30 @@ export class UnmigratableStoryError extends Error {
  */
 export const MIGRATED_ID_PREFIX = 'lw-from-story-';
 
+/** Sanity marca el borrador de un documento con este prefijo de path en su `_id`. */
+export const DRAFTS_PATH_PREFIX = 'drafts.';
+
+/**
+ * El prefijo de path va **antes** que el de la migración, no concatenado detrás del origen: Sanity lo
+ * lee como borrador solo cuando encabeza el `_id`. Un `drafts.` en el medio deja un documento
+ * publicado con un nombre que aparenta lo contrario, así que derivar el id de un borrador sin
+ * separarlo publicaría contenido inédito sin que nada lo señale.
+ *
+ * `drafts.` no es el único prefijo de path que usa Sanity: las Content Releases versionan con
+ * `versions.<release>.<id>`, que reintroduciría el mismo defecto. Hoy ninguna migración recorre esos
+ * documentos, así que el corte contempla un solo prefijo; sumar otro exige generalizarlo acá, no en
+ * cada llamador.
+ */
 export function literaryWorkIdFor(storyId: string): string {
+	if (storyId.startsWith(DRAFTS_PATH_PREFIX)) {
+		return `${DRAFTS_PATH_PREFIX}${MIGRATED_ID_PREFIX}${storyId.slice(DRAFTS_PATH_PREFIX.length)}`;
+	}
 	return `${MIGRATED_ID_PREFIX}${storyId}`;
 }
 
 export function isMigratedLiteraryWorkId(id: string): boolean {
-	return id.startsWith(MIGRATED_ID_PREFIX);
+	const withoutPath = id.startsWith(DRAFTS_PATH_PREFIX) ? id.slice(DRAFTS_PATH_PREFIX.length) : id;
+	return withoutPath.startsWith(MIGRATED_ID_PREFIX);
 }
 
 /**
@@ -134,12 +155,27 @@ function buildSection(story: StoryDocument): Record<string, unknown> {
  * `Story.author` es una referencia única y requerida; `LiteraryWork.authors` es un array. Envolverla
  * en un array de un elemento satisface la invariante `authors.length >= 1` del agregado. El `_key` se
  * deriva del `_ref`: es determinístico y único dentro del array.
+ *
+ * **La debilidad de la referencia se conserva.** Cuando el autor todavía no está publicado, el Studio
+ * marca la referencia como débil y anota que hay que fortalecerla al publicar. Reconstruirla fuerte
+ * haría que el content lake rechazara la escritura entera —una referencia fuerte exige que el destino
+ * exista—, así que copiar esas marcas no es una fidelidad decorativa: es lo que permite migrar un
+ * cuento cuyo autor sigue inédito.
  */
 function buildAuthors(story: StoryDocument): SanityReference[] {
 	if (!story.author?._ref) {
 		throw new UnmigratableStoryError('La story no tiene autor', story._id);
 	}
-	return [{ _type: 'reference', _ref: story.author._ref, _key: story.author._ref }];
+	const { _ref, _weak, _strengthenOnPublish } = story.author;
+	return [
+		{
+			_type: 'reference',
+			_ref,
+			_key: _ref,
+			...(_weak !== undefined ? { _weak } : {}),
+			...(_strengthenOnPublish !== undefined ? { _strengthenOnPublish } : {}),
+		},
+	];
 }
 
 function assertKeyed(items: unknown[] | undefined, field: string, storyId: string): void {

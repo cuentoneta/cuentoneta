@@ -1,6 +1,10 @@
 import { defineMigration, del } from 'sanity/migrate';
 
-import { isMigratedLiteraryWorkId, MIGRATED_ID_PREFIX } from '../story-to-literary-work/build-literary-work-document';
+import {
+	DRAFTS_PATH_PREFIX,
+	isMigratedLiteraryWorkId,
+	MIGRATED_ID_PREFIX,
+} from '../story-to-literary-work/build-literary-work-document';
 
 interface LiteraryWorkDocument {
 	_id: string;
@@ -21,12 +25,17 @@ interface LiteraryWorkDocument {
  * El filtro usa `string::startsWith` y no `match`: el `match` de GROQ compara **por tokens**, así que
  * un `"prefijo-*"` es más ancho de lo que aparenta y deja pasar ids que no arrancan con el prefijo.
  *
+ * Y lleva dos ramas porque el prefijo de path de un borrador antecede al de la migración: una obra en
+ * borrador arranca con `drafts.` y no con el prefijo propio. GROQ no ofrece recortar ese path dentro
+ * del filtro, así que la alternativa a enumerar ambas formas sería ensanchar la comparación, que es
+ * justamente lo que el párrafo anterior descarta.
+ *
  * No restaura nada en los cuentos porque la migración de ida no los tocó: solo creó documentos al lado.
  */
 export default defineMigration({
 	title: 'Revertir la creación de obras a partir de cuentos',
 	documentTypes: ['literaryWork'],
-	filter: `string::startsWith(_id, "${MIGRATED_ID_PREFIX}")`,
+	filter: `string::startsWith(_id, "${MIGRATED_ID_PREFIX}") || string::startsWith(_id, "${DRAFTS_PATH_PREFIX}${MIGRATED_ID_PREFIX}")`,
 	migrate: {
 		document(doc: LiteraryWorkDocument) {
 			if (!isMigratedLiteraryWorkId(doc._id)) {

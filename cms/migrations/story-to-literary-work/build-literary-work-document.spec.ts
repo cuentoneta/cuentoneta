@@ -29,15 +29,41 @@ const story = (overrides: Partial<StoryDocument> = {}): StoryDocument => ({
 });
 
 describe('literaryWorkIdFor', () => {
+	// Las obras ya creadas dependen de que esta rama no se mueva: con `createIfNotExists`, un id
+	// distinto las duplicaría en vez de reconocerlas.
 	it('deriva el id de la obra del id de su story', () => {
 		expect(literaryWorkIdFor('abc-123')).toBe('lw-from-story-abc-123');
+	});
+
+	it('antepone el prefijo de borrador al derivar el id de un borrador', () => {
+		expect(literaryWorkIdFor('drafts.abc-123')).toBe('drafts.lw-from-story-abc-123');
+	});
+
+	// Concatenar sin separar el path deja un documento publicado con nombre de borrador.
+	it('no deja el prefijo de borrador en medio del id', () => {
+		expect(literaryWorkIdFor('drafts.abc-123')).not.toBe('lw-from-story-drafts.abc-123');
+		expect(literaryWorkIdFor('drafts.abc-123').startsWith('drafts.')).toBe(true);
+	});
+
+	it('trata como publicado un id donde "drafts." no encabeza', () => {
+		expect(literaryWorkIdFor('story-drafts.1')).toBe('lw-from-story-story-drafts.1');
 	});
 
 	// La reversión filtra por este predicado: si tuviera su propia noción de "documento migrado",
 	// podría borrar una obra nacida en el Studio.
 	it('reconoce solo los ids derivados', () => {
 		expect(isMigratedLiteraryWorkId('lw-from-story-abc')).toBe(true);
+		expect(isMigratedLiteraryWorkId('drafts.lw-from-story-abc')).toBe(true);
 		expect(isMigratedLiteraryWorkId('una-obra-del-studio')).toBe(false);
+		expect(isMigratedLiteraryWorkId('drafts.una-obra-del-studio')).toBe(false);
+		expect(isMigratedLiteraryWorkId('obra-lw-from-story-suelta')).toBe(false);
+		expect(isMigratedLiteraryWorkId('drafts.obra-lw-from-story-suelta')).toBe(false);
+	});
+
+	// La invariante de la que depende la reversión para alcanzar todo lo que la migración crea.
+	it('reconoce lo que deriva, publicado o en borrador', () => {
+		expect(isMigratedLiteraryWorkId(literaryWorkIdFor('abc-123'))).toBe(true);
+		expect(isMigratedLiteraryWorkId(literaryWorkIdFor('drafts.abc-123'))).toBe(true);
 	});
 });
 
@@ -47,6 +73,24 @@ describe('buildLiteraryWorkDocument', () => {
 
 		expect(doc['_id']).toBe('lw-from-story-story-1');
 		expect(doc['_type']).toBe('literaryWork');
+	});
+
+	it('deriva un id bajo drafts. cuando el cuento es un borrador', () => {
+		const doc = buildLiteraryWorkDocument(story({ _id: 'drafts.story-1' }));
+
+		expect(doc['_id']).toBe('drafts.lw-from-story-story-1');
+	});
+
+	// El estado de publicación no cambia nada más del documento: el borrador de un cuento produce el
+	// borrador de la misma obra, no una obra distinta.
+	it('produce el mismo documento que su contraparte publicada salvo el id', () => {
+		const sinId = (doc: Record<string, unknown>) =>
+			Object.fromEntries(Object.entries(doc).filter(([k]) => k !== '_id'));
+
+		const publicada = buildLiteraryWorkDocument(story({ _id: 'story-1' }));
+		const borrador = buildLiteraryWorkDocument(story({ _id: 'drafts.story-1' }));
+
+		expect(sinId(borrador)).toEqual(sinId(publicada));
 	});
 
 	it('copia título y slug tal cual', () => {
@@ -62,6 +106,40 @@ describe('buildLiteraryWorkDocument', () => {
 		const doc = buildLiteraryWorkDocument(story());
 
 		expect(doc['authors']).toEqual([{ _type: 'reference', _ref: 'author-borges', _key: 'author-borges' }]);
+	});
+
+	// Reconstruirla fuerte haría que el content lake rechazara la escritura entera: una referencia
+	// fuerte exige que el destino exista, y un autor inédito no existe como documento publicado.
+	it('conserva la debilidad de la referencia a un autor todavía inédito', () => {
+		const doc = buildLiteraryWorkDocument(
+			story({
+				author: {
+					_type: 'reference',
+					_ref: 'author-inedito',
+					_weak: true,
+					_strengthenOnPublish: { type: 'author' },
+				},
+			}),
+		);
+
+		expect(doc['authors']).toEqual([
+			{
+				_type: 'reference',
+				_ref: 'author-inedito',
+				_key: 'author-inedito',
+				_weak: true,
+				_strengthenOnPublish: { type: 'author' },
+			},
+		]);
+	});
+
+	// Una referencia a un autor publicado no debe volverse débil: perdería la integridad referencial
+	// que el content lake garantiza.
+	it('no agrega marcas de debilidad cuando el origen no las tiene', () => {
+		const [author] = buildLiteraryWorkDocument(story())['authors'] as Record<string, unknown>[];
+
+		expect(author).not.toHaveProperty('_weak');
+		expect(author).not.toHaveProperty('_strengthenOnPublish');
 	});
 
 	describe('sección única', () => {
