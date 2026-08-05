@@ -287,7 +287,7 @@ Reglas del patrón:
 
 ### Qué cubre y qué no
 
-Cubre **lógica Node pura del Studio**: resolvers de Desk Structure, utils que corren dentro del proceso del Studio (p. ej. `cms/utils/landing-page.ts`). No hay nada de Angular, ni Angular Testing Library, ni `happy-dom` — el Studio no renderiza componentes Angular ni corre en un DOM simulado con esa configuración.
+Cubre **lógica Node pura del Studio**: resolvers de Desk Structure, utils que corren dentro del proceso del Studio (p. ej. `cms/utils/landing-page.ts`), y las migraciones de datos de `cms/migrations/` (ver [`sanity-migrations.md`](sanity-migrations.md)). No hay nada de Angular, ni Angular Testing Library, ni `happy-dom` — el Studio no renderiza componentes Angular ni corre en un DOM simulado con esa configuración.
 
 ### Por qué es una config aparte
 
@@ -447,3 +447,4 @@ Si el componente **renderiza su propio skeleton** según un input (p. ej. cuando
 - **Mocks/timers** → siempre desde `@test-utils`; `clearAllMocks()` en `beforeEach`.
 - **Componente que usa `IntersectionObserver`** → `installIntersectionObserverStub()` en `beforeEach`; simular overflow con `markOutsideViewport` / `markInsideViewport`.
 - **Lógica Node pura de `cms/`** → spec propio con Vitest standalone (`pnpm sanity:test`); dobles escritos a mano (`Spy*`/`Stub*`/`Fake*`), sin `@test-utils`.
+- **Migración de datos de Sanity (`cms/migrations/<slug>/`)** → `index.spec.ts` co-locado que ejercita `migrate.document`; corre con `pnpm sanity:test` dentro del gate `studio-build`; sin `@test-utils` (imports explícitos de `vitest`, igual que el resto de `cms/`) — ver [`sanity-migrations.md`](sanity-migrations.md).

@@ -18,8 +18,30 @@ A diferencia de los scripts one-off (que se borran del working tree tras correr)
 - Preferir las utilidades declarativas (`at`, `setIfMissing`, `set`, `unset`, …) sobre mutaciones crudas.
 - Comentar el **porqué** de la migración (qué la motiva, qué caso cubre que `initialValue` no cubre), no el qué.
 - Migraciones idempotentes cuando sea posible (p. ej. `setIfMissing` para backfills).
+- La migración lleva su **spec co-locado**: `index.spec.ts` al lado del `index.ts`, con un `describe` nombrado por el slug de la migración. Como `defineMigration` conserva el objeto tal cual, el spec ejercita `migrate.document` directamente —es la función pura que decide el patch de cada documento— con el mismo helper que usan los specs existentes (`migration.migrate?.document`, casteado al tipo de parámetro inferido). Corre como Vitest standalone de `cms/` dentro del gate `studio-build` (`pnpm sanity:test`) — ver [Segunda config de Vitest: el Studio](testing.md#segunda-config-de-vitest-el-studio-cms). Como mínimo cubre el camino feliz, la idempotencia (una segunda corrida no produce mutación) y el aborto de cada guard.
 
 Ejemplo vivo: [`cms/migrations/set-default-story-coverimage/index.ts`](../../cms/migrations/set-default-story-coverimage/index.ts) — backfill de `coverImage` (ahora requerido) en historias previas al campo.
+
+## Rename de un campo requerido: patrón expand/contract
+
+Cuando la migración renombra un campo **requerido** y el código lo lee sin fallback, una migración única de `set` + `unset` no tiene ningún orden de despliegue seguro: migrar antes de desplegar deja el código ya corriendo leyendo un campo que todavía no existe; desplegar antes de migrar deja la proyección nueva devolviendo `null` para los documentos no migrados. No hay ventana en la que ambas versiones —código y dato— coincidan.
+
+La falla, además, es **silenciosa**: GROQ devuelve `null` para un campo ausente, y el mapper lo propaga tal cual a un contrato declarado `string`. Nada lanza ni loguea; el síntoma aparece recién en la superficie que renderiza ese campo (o ni ahí, si nada lo renderiza todavía).
+
+La solución es partir el rename en dos migraciones —**expand** y **contract**— separadas por el despliegue del código:
+
+1. **Expand** (`set`, sin `unset`): copia el valor del campo viejo al nuevo, sin dar de baja el viejo. Corre **antes** de desplegar el código que proyecta el nombre nuevo. Deja un estado intermedio con **ambos** nombres poblados — el único que las dos versiones del código (la que todavía lee el nombre viejo y la que ya lee el nuevo) pueden servir por igual.
+   - **Semántica de backfill, no de sincronización:** puebla el campo nuevo solo si está vacío, nunca lo sobrescribe. Comparar por igualdad alcanzaría para reintentar una corrida que se cortó a mitad de camino, pero una corrida tardía —con el schema nuevo ya desplegado— leería una edición legítima como "todavía sin copiar" y la pisaría con el valor viejo.
+2. **Contract** (`unset`): da de baja el campo viejo. Corre **después** de verificar el código nuevo en producción, y después de que la fase expand ya corrió sobre ese dataset.
+   - **Interlock:** al ser destructiva y sin más recuperación que el historial de Sanity, no confía en el orden de las corridas — verifica **documento a documento** que el campo nuevo ya esté poblado, y **lanza** en lugar de borrar la única copia si no lo está.
+
+Ejemplo vivo: [`cms/migrations/copy-short-description-to-description/index.ts`](../../cms/migrations/copy-short-description-to-description/index.ts) (expand) y [`cms/migrations/unset-legacy-short-description/index.ts`](../../cms/migrations/unset-legacy-short-description/index.ts) (contract) — rename de `shortDescription` a `description` en `resourceType` y `tag`.
+
+### Cada fase corre por dataset
+
+Los datasets son `development`, `staging` y `production`, y son independientes entre sí: correr una fase en uno no la aplica a los otros. Correr expand y contract **en cada dataset**, en su propio momento respecto del despliegue de ese dataset — no alcanza con correrlas una sola vez contra `production` y asumir que los demás quedaron al día.
+
+Ningún gate de CI detecta un dataset que quedó sin migrar: el job `e2e` corre contra `staging` (`SANITY_STUDIO_DATASET` en `.github/workflows/ci.yml`), y pasaría en verde aunque `staging` no tuviera corrida la migración, porque el campo no se renderiza en ninguna superficie que el e2e recorra. Es responsabilidad de quien despliega, no de un chequeo automático.
 
 ## Cómo correrlas
 
