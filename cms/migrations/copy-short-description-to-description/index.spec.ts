@@ -4,10 +4,12 @@ import migration from './index';
 
 // La migración se define con `defineMigration`, que conserva el objeto tal cual: `migrate.document`
 // es la función pura que decide el patch de cada documento, y es lo único que hace falta ejercitar.
+type MigratedDocument = Parameters<NonNullable<NonNullable<typeof migration.migrate>['document']>>[0];
+
 const migrateDocument = (doc: { _id: string; shortDescription?: unknown; description?: unknown }) => {
 	const document = migration.migrate?.document;
 	if (!document) throw new Error('La migración no define migrate.document');
-	return document(doc as never);
+	return document(doc as MigratedDocument);
 };
 
 describe('copy-short-description-to-description', () => {
@@ -35,18 +37,26 @@ describe('copy-short-description-to-description', () => {
 		expect(migrateDocument(doc)).toEqual([]);
 	});
 
+	// El estado en que queda el documento tras la fase 2: sin campo viejo y con el nuevo poblado.
+	it('no toca un documento que ya perdió el campo viejo', () => {
+		expect(migrateDocument({ _id: 'tag-1', description: 'Ya migrada.' })).toEqual([]);
+	});
+
 	it('completa una descripción presente pero en blanco', () => {
 		const doc = { _id: 'tag-1', shortDescription: 'Relato breve.', description: '   ' };
 
 		expect(migrateDocument(doc)).toMatchObject([{ path: ['description'], op: { value: 'Relato breve.' } }]);
 	});
 
-	it('no toca un documento sin el campo viejo', () => {
-		expect(migrateDocument({ _id: 'tag-1', description: 'Ya migrada.' })).toEqual([]);
+	// El campo lo exige el editor del Studio, no la API: un documento creado por API puede llegar sin
+	// ninguna de las dos formas, y ese hueco no lo señala ninguna superficie aguas abajo.
+	it('aborta ante un documento sin descripción bajo ninguno de los dos nombres', () => {
+		expect(() => migrateDocument({ _id: 'tag-1' })).toThrow(/ninguno de los dos nombres/);
 	});
 
-	// El campo es requerido: copiar whitespace deja el documento inválido en cuanto el código nuevo lo lee.
-	it('aborta en vez de copiar una descripción en blanco', () => {
-		expect(() => migrateDocument({ _id: 'tag-1', shortDescription: '   ' })).toThrow(/en blanco/);
+	it('aborta cuando las dos formas del campo están en blanco', () => {
+		expect(() => migrateDocument({ _id: 'tag-1', shortDescription: '   ', description: '' })).toThrow(
+			/ninguno de los dos nombres/,
+		);
 	});
 });

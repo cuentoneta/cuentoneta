@@ -4,10 +4,12 @@ import migration from './index';
 
 // La migración se define con `defineMigration`, que conserva el objeto tal cual: `migrate.document`
 // es la función pura que decide el patch de cada documento, y es lo único que hace falta ejercitar.
+type MigratedDocument = Parameters<NonNullable<NonNullable<typeof migration.migrate>['document']>>[0];
+
 const migrateDocument = (doc: { _id: string; shortDescription?: unknown; description?: unknown }) => {
 	const document = migration.migrate?.document;
 	if (!document) throw new Error('La migración no define migrate.document');
-	return document(doc as never);
+	return document(doc as MigratedDocument);
 };
 
 describe('unset-legacy-short-description', () => {
@@ -35,5 +37,13 @@ describe('unset-legacy-short-description', () => {
 		const doc = { _id: 'tag-1', shortDescription: 'Relato breve.', description: '   ' };
 
 		expect(() => migrateDocument(doc)).toThrow(/nombre nuevo/);
+	});
+
+	// La presencia se comprueba con `in` y no con `typeof` a propósito: un campo puesto en null sigue
+	// estando en el documento, y darlo de baja es justamente lo que corresponde.
+	it('da de baja un campo viejo presente pero nulo', () => {
+		const doc = { _id: 'tag-1', shortDescription: null, description: 'Relato breve.' };
+
+		expect(migrateDocument(doc)).toMatchObject([{ path: ['shortDescription'], op: { type: 'unset' } }]);
 	});
 });
