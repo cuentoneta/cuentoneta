@@ -28,6 +28,19 @@ describe('copy-short-description-to-description', () => {
 		expect(migrateDocument(doc)).toEqual([]);
 	});
 
+	// Una corrida tardía, con el schema nuevo ya desplegado, no debe pisar lo que alguien editó.
+	it('respeta una descripción que divergió del valor viejo', () => {
+		const doc = { _id: 'tag-1', shortDescription: 'Relato breve.', description: 'Relato breve de ficción.' };
+
+		expect(migrateDocument(doc)).toEqual([]);
+	});
+
+	it('completa una descripción presente pero en blanco', () => {
+		const doc = { _id: 'tag-1', shortDescription: 'Relato breve.', description: '   ' };
+
+		expect(migrateDocument(doc)).toMatchObject([{ path: ['description'], op: { value: 'Relato breve.' } }]);
+	});
+
 	it('no toca un documento sin el campo viejo', () => {
 		expect(migrateDocument({ _id: 'tag-1', description: 'Ya migrada.' })).toEqual([]);
 	});

@@ -28,7 +28,11 @@ export default defineMigration({
 	migrate: {
 		document(doc: RenamableDocument) {
 			if (typeof doc.shortDescription !== 'string') return [];
-			if (doc.description === doc.shortDescription) return [];
+
+			// Backfill, no sincronización: el campo nuevo se puebla solo si está vacío. Comparar por igualdad
+			// bastaría para reintentar una corrida cortada, pero una corrida tardía —con el schema nuevo ya
+			// desplegado— leería una edición legítima como "todavía sin copiar" y la pisaría con el valor viejo.
+			if (typeof doc.description === 'string' && doc.description.trim() !== '') return [];
 
 			// El campo es requerido en ambos schemas: persistir un valor en blanco lo dejaría inválido sin
 			// que nada lo señale, y el mapper lo propaga a un contrato declarado `string`.
