@@ -120,7 +120,7 @@ export type LiteraryWorkCardTeaserContent =
 		</ng-template>
 
 		<!-- Autor: avatar pequeño + nombre. Implementación propia del card (Design System v3): no usa
-			 AuthorTeaserV3. Es un enlace propio al perfil del autor, elevado con z-10 para quedar por encima
+			 AuthorCardTeaser. Es un enlace propio al perfil del autor, elevado con z-10 para quedar por encima
 			 del enlace de la obra (que se estira sobre toda la tarjeta). -->
 		<ng-template #author let-author>
 			<a

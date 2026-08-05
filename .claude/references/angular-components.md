@@ -5,7 +5,7 @@
 >
 > **Idioma:** la documentación va en español; el **código y los identificadores siempre en inglés**. Los comentarios pueden ir en español.
 
-Esta referencia describe cómo se escriben los **componentes de presentación y de página** en cuentoneta. Los ejemplos buenos se anclan en componentes reales del repo (p. ej. `src/app/components/author-teaser-v3/`, alineado con el Design System v3). Los componentes previos al Design System v3 siguen pendientes de rediseño, pero la deuda contra **estas** reglas ya está saldada: `src/` no tiene lifecycle hooks, `@HostBinding`/`@HostListener`, `*ngIf`/`*ngFor` ni `firstValueFrom`.
+Esta referencia describe cómo se escriben los **componentes de presentación y de página** en cuentoneta. Los ejemplos buenos se anclan en componentes reales del repo (p. ej. `src/app/components/author-card-teaser/`, alineado con el Design System v3). Los componentes previos al Design System v3 siguen pendientes de rediseño, pero la deuda contra **estas** reglas ya está saldada: `src/` no tiene lifecycle hooks, `@HostBinding`/`@HostListener`, `*ngIf`/`*ngFor` ni `firstValueFrom`.
 
 ---
 
@@ -28,7 +28,7 @@ import { ImageProfileComponent } from '../image-profile/image-profile.component'
 import { TagsListComponent } from '../tags-list/tags-list.component';
 
 @Component({
-	selector: 'cuentoneta-author-teaser-v3',
+	selector: 'cuentoneta-author-card-teaser',
 	imports: [NgOptimizedImage, RouterLink, ImageProfileComponent, TagsListComponent],
 	template: `
 		<article class="relative flex items-start gap-4" data-testid="author">
@@ -39,7 +39,7 @@ import { TagsListComponent } from '../tags-list/tags-list.component';
 		class: 'block',
 	},
 })
-export class AuthorTeaserV3Component {
+export class AuthorCardTeaserComponent {
 	// Inputs
 	public readonly author = input.required<AuthorTeaser>();
 	public readonly tags = input<Tag[]>([]);
