@@ -1,10 +1,14 @@
 /**
- * Censo del Portable Text de las obras publicadas, previo a migrarlas a LiteraryWork.
+ * Censo del Portable Text de los cuentos, previo a migrarlos a LiteraryWork.
  *
  * El conversor de `resources/portable-text-to-markdown/` cubre un subconjunto acotado —párrafo
  * `normal` con `em`, `strong` y enlaces— y **lanza** ante todo lo demás, a propósito. Este censo
- * responde, antes de tocar 613 documentos, si el corpus entra en ese subconjunto: correr la migración
- * para descubrirlo la detendría en el primer documento raro, tras haber escrito los anteriores.
+ * responde, antes de tocar el corpus, si entra en ese subconjunto: correr la migración para
+ * descubrirlo la detendría en el primer documento raro, tras haber escrito los anteriores.
+ *
+ * Releva los dos ámbitos por separado, porque los migra una migración distinta cada uno y su corte es
+ * diferente: los publicados entran enteros, y de los borradores solo los que permiten construir una
+ * obra válida.
  *
  * Read-only. No escribe en Sanity ni en el repo.
  *
@@ -17,6 +21,15 @@ import { environment } from '../../src/api/_helpers/environment';
 // Los cuatro campos de la story que la migración convierte. `epigraphs` es un array, así que sus dos
 // campos se relevan por separado con una proyección propia.
 const PORTABLE_TEXT_FIELDS = ['body', 'review'] as const;
+
+/** El predicado GROQ que acota cada ámbito. Se compone con el resto de las condiciones de cada consulta. */
+const STORY_SCOPES = Object.freeze({
+	publicados: '!(_id in path("drafts.**"))',
+	borradores: '_id in path("drafts.**")',
+} as const);
+
+/** Las condiciones del filtro de la migración de borradores: lo que permite construir una obra válida. */
+const MIGRATABLE = 'defined(title) && defined(slug.current) && defined(author._ref) && count(body) > 0';
 
 interface CensusBlock {
 	_type: string;
@@ -153,9 +166,9 @@ function reportFindings(field: string, findings: readonly Finding[]): void {
 	}
 }
 
-async function censusOfField(field: string): Promise<void> {
+async function censusOfField(field: string, scope: string): Promise<void> {
 	const rows = await client.fetch<CensusRow[]>(
-		`*[_type == "story" && !(_id in path("drafts.**")) && count(${field}) > 0]{
+		`*[_type == "story" && ${scope} && count(${field}) > 0]{
 			"slug": slug.current, "blocks": ${field}
 		}`,
 	);
@@ -168,9 +181,9 @@ async function censusOfField(field: string): Promise<void> {
 	reportFindings(`${field} (${rows.length} docs)`, findings);
 }
 
-async function censusOfEpigraphs(): Promise<void> {
+async function censusOfEpigraphs(scope: string): Promise<void> {
 	const rows = await client.fetch<{ slug: string; texts: CensusBlock[][]; references: CensusBlock[][] }[]>(
-		`*[_type == "story" && !(_id in path("drafts.**")) && count(epigraphs) > 0]{
+		`*[_type == "story" && ${scope} && count(epigraphs) > 0]{
 			"slug": slug.current,
 			"texts": epigraphs[].text,
 			"references": epigraphs[].reference
@@ -192,19 +205,28 @@ async function censusOfEpigraphs(): Promise<void> {
 	}
 }
 
-async function reportCounts(): Promise<void> {
-	const counts = await client.fetch<Record<string, number>>(`{
-		"publicadas": count(*[_type == "story" && !(_id in path("drafts.**"))]),
-		"conBody": count(*[_type == "story" && !(_id in path("drafts.**")) && count(body) > 0]),
-		"conReview": count(*[_type == "story" && !(_id in path("drafts.**")) && count(review) > 0]),
-		"conEpigrafes": count(*[_type == "story" && !(_id in path("drafts.**")) && count(epigraphs) > 0]),
-		"sinPublishedAt": count(*[_type == "story" && !(_id in path("drafts.**")) && !defined(publishedAt)]),
-		"obrasExistentes": count(*[_type == "literaryWork" && !(_id in path("drafts.**"))]),
-		"sinTitle": count(*[_type == "story" && !(_id in path("drafts.**")) && !defined(title)]),
-		"sinSlug": count(*[_type == "story" && !(_id in path("drafts.**")) && !defined(slug.current)]),
-		"sinAuthor": count(*[_type == "story" && !(_id in path("drafts.**")) && !defined(author._ref)]),
-		"sinBody": count(*[_type == "story" && !(_id in path("drafts.**")) && count(body) == 0])
-	}`);
+/** Cada entrada es el predicado que se suma al ámbito para contar ese subconjunto. */
+const STORY_COUNTS: Readonly<Record<string, string>> = Object.freeze({
+	cuentos: '',
+	conBody: 'count(body) > 0',
+	conReview: 'count(review) > 0',
+	conEpigrafes: 'count(epigraphs) > 0',
+	sinPublishedAt: '!defined(publishedAt)',
+	sinTitle: '!defined(title)',
+	sinSlug: '!defined(slug.current)',
+	sinAuthor: '!defined(author._ref)',
+	sinBody: 'count(body) == 0',
+	migrables: MIGRATABLE,
+	excluidos: `!(${MIGRATABLE})`,
+});
+
+async function reportCounts(scope: string): Promise<void> {
+	const projections = Object.entries(STORY_COUNTS).map(
+		([label, predicate]) => `"${label}": count(*[_type == "story" && ${scope}${predicate ? ` && ${predicate}` : ''}])`,
+	);
+	const counts = await client.fetch<Record<string, number>>(
+		`{ ${projections.join(', ')}, "obrasExistentes": count(*[_type == "literaryWork" && ${scope}]) }`,
+	);
 	console.log('\n=== Conteos ===');
 	for (const [label, value] of Object.entries(counts)) {
 		console.log(`  ${label.padEnd(20)} ${value}`);
@@ -216,10 +238,10 @@ async function reportCounts(): Promise<void> {
  * contrasta el Markdown producido por el dry-run. Que la migración reporte 613 mutaciones dice que
  * alcanzó 613 documentos, no que no perdió contenido.
  */
-async function reportFidelityBaseline(): Promise<void> {
+async function reportFidelityBaseline(scope: string): Promise<void> {
 	const totals = await client.fetch<Record<string, number>>(`{
-		"body": math::sum(*[_type == "story" && !(_id in path("drafts.**")) && count(body) > 0]{"n": length(pt::text(body))}.n),
-		"review": math::sum(*[_type == "story" && !(_id in path("drafts.**")) && count(review) > 0]{"n": length(pt::text(review))}.n)
+		"body": math::sum(*[_type == "story" && ${scope} && count(body) > 0]{"n": length(pt::text(body))}.n),
+		"review": math::sum(*[_type == "story" && ${scope} && count(review) > 0]{"n": length(pt::text(review))}.n)
 	}`);
 	console.log('\n=== Baseline de fidelidad (caracteres de texto plano) ===');
 	for (const [field, total] of Object.entries(totals)) {
@@ -227,14 +249,14 @@ async function reportFidelityBaseline(): Promise<void> {
 	}
 }
 
-async function reportSlugIssues(): Promise<void> {
+async function reportSlugIssues(scope: string): Promise<void> {
 	const collisions = await client.fetch<string[]>(
-		`*[_type == "story" && !(_id in path("drafts.**")) && slug.current in *[_type == "literaryWork"].slug.current].slug.current`,
+		`*[_type == "story" && ${scope} && slug.current in *[_type == "literaryWork"].slug.current].slug.current`,
 	);
 	// La validación del patrón se hace acá y no en GROQ: su operador `match` compara por tokens, no
 	// por expresión regular, así que un `match "^[a-z0-9-]+$"` no valida nada — devuelve el corpus
 	// entero como si no cumpliera.
-	const slugs = await client.fetch<string[]>(`*[_type == "story" && !(_id in path("drafts.**"))].slug.current`);
+	const slugs = await client.fetch<string[]>(`*[_type == "story" && ${scope}].slug.current`);
 	const malformed = slugs.filter((slug) => !/^[a-z0-9-]+$/.test(slug ?? ''));
 	console.log('\n=== Slugs ===');
 	console.log(
@@ -246,12 +268,12 @@ async function reportSlugIssues(): Promise<void> {
 }
 
 /** Sanity rechaza un documento con miembros de array sin `_key`; los documentos viejos pueden no tenerlo. */
-async function reportMissingKeys(): Promise<void> {
+async function reportMissingKeys(scope: string): Promise<void> {
 	const fields = ['epigraphs', 'tags', 'mediaSources', 'resources'];
 	console.log('\n=== Miembros de array sin _key ===');
 	for (const field of fields) {
 		const affected = await client.fetch<string[]>(
-			`*[_type == "story" && !(_id in path("drafts.**")) && count(${field}[!defined(_key)]) > 0].slug.current`,
+			`*[_type == "story" && ${scope} && count(${field}[!defined(_key)]) > 0].slug.current`,
 		);
 		console.log(
 			`  ${field.padEnd(20)} ${affected.length}${affected.length ? `: ${affected.slice(0, 5).join(', ')}` : ''}`,
@@ -259,20 +281,27 @@ async function reportMissingKeys(): Promise<void> {
 	}
 }
 
+async function censusOfScope(name: string, scope: string): Promise<void> {
+	console.log(`\n\n########## ${name.toUpperCase()} ##########`);
+	console.log('\n=== Construcciones fuera del subconjunto que traduce el conversor ===');
+	for (const field of PORTABLE_TEXT_FIELDS) {
+		await censusOfField(field, scope);
+	}
+	await censusOfEpigraphs(scope);
+
+	await reportCounts(scope);
+	await reportFidelityBaseline(scope);
+	await reportSlugIssues(scope);
+	await reportMissingKeys(scope);
+}
+
 async function run(): Promise<void> {
 	console.log(
-		`Censo de Portable Text — proyecto ${environment.sanity.projectId}, dataset ${environment.sanity.dataset}\n`,
+		`Censo de Portable Text — proyecto ${environment.sanity.projectId}, dataset ${environment.sanity.dataset}`,
 	);
-	console.log('=== Construcciones fuera del subconjunto que traduce el conversor ===');
-	for (const field of PORTABLE_TEXT_FIELDS) {
-		await censusOfField(field);
+	for (const [name, scope] of Object.entries(STORY_SCOPES)) {
+		await censusOfScope(name, scope);
 	}
-	await censusOfEpigraphs();
-
-	await reportCounts();
-	await reportFidelityBaseline();
-	await reportSlugIssues();
-	await reportMissingKeys();
 }
 
 run().catch((error: unknown) => {
