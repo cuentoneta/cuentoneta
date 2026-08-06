@@ -8,7 +8,7 @@ import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import lasEscalerasMdBody from './las-escaleras.md?raw';
 import lasEscalerasEditorialNoteMd from './las-escaleras.editorial-note.md?raw';
 import { toDomainTags } from '../../onoff-tags.mock';
-import { lasEscalerasStoryMock } from '../las-escaleras.mock';
+import { lasEscalerasStoryMock } from '../story/las-escaleras.story.mock';
 
 const lasEscalerasBody = createMarkdown(lasEscalerasMdBody);
 

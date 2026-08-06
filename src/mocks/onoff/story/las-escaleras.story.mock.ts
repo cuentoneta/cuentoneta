@@ -1,7 +1,7 @@
 import type { Story } from '@models/story.model';
-import { lasEscalerasRawStory } from './story/las-escaleras.story.raw.mock';
-import { authorMock } from '../author.mock';
-import { toDomainTags } from '../onoff-tags.mock';
+import { lasEscalerasRawStory } from './las-escaleras.story.raw.mock';
+import { authorMock } from '../../author.mock';
+import { toDomainTags } from '../../onoff-tags.mock';
 
 export const lasEscalerasStoryMock: Story = {
 	_id: 'onoff-story-las-escaleras',

@@ -12,7 +12,7 @@ import { geometriaEpigraphReference, geometriaEpigraphText, geometriaSectionTitl
 import { toDomainTags } from '../../onoff-tags.mock';
 import { geometriaRawLiteraryWork } from './geometria.literary-work.raw.mock';
 import { geometriaMediaMock } from '../media/geometria.media.mock';
-import { geometriaStoryMock } from '../geometria.mock';
+import { geometriaStoryMock } from '../story/geometria.story.mock';
 
 const geometriaBody = createMarkdown(geometriaMdBody);
 

@@ -7,7 +7,7 @@ import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import neronMdBody from './neron.md?raw';
 import { toDomainTags } from '../../onoff-tags.mock';
-import { neronStoryMock } from '../neron.mock';
+import { neronStoryMock } from '../story/neron.story.mock';
 
 const neronBody = createMarkdown(neronMdBody);
 

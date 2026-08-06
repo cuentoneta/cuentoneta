@@ -1,7 +1,7 @@
 import type { Story } from '@models/story.model';
-import { elPalacioRawStory } from './story/el-palacio-de-las-nueve-fronteras.story.raw.mock';
-import { authorMock } from '../author.mock';
-import { toDomainTags } from '../onoff-tags.mock';
+import { elPalacioRawStory } from './el-palacio-de-las-nueve-fronteras.story.raw.mock';
+import { authorMock } from '../../author.mock';
+import { toDomainTags } from '../../onoff-tags.mock';
 
 export const palacioNueveFronterasStoryMock: Story = {
 	_id: 'onoff-story-el-palacio-de-las-nueve-fronteras',

@@ -1,7 +1,7 @@
 import type { Story } from '@models/story.model';
-import { elTratadoRawStory } from './story/el-tratado-de-los-placeres.story.raw.mock';
-import { authorMock } from '../author.mock';
-import { toDomainTags } from '../onoff-tags.mock';
+import { elTratadoRawStory } from './el-tratado-de-los-placeres.story.raw.mock';
+import { authorMock } from '../../author.mock';
+import { toDomainTags } from '../../onoff-tags.mock';
 
 export const elTratadoDeLosPlaceresStoryMock: Story = {
 	_id: 'onoff-story-el-tratado-de-los-placeres',

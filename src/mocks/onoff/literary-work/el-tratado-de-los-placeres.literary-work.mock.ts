@@ -8,7 +8,7 @@ import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import elTratadoDeLosPlaceresMdBody from './el-tratado-de-los-placeres.md?raw';
 import elTratadoDeLosPlaceresEditorialNoteMd from './el-tratado-de-los-placeres.editorial-note.md?raw';
 import { toDomainTags } from '../../onoff-tags.mock';
-import { elTratadoDeLosPlaceresStoryMock } from '../el-tratado-de-los-placeres.mock';
+import { elTratadoDeLosPlaceresStoryMock } from '../story/el-tratado-de-los-placeres.story.mock';
 
 const elTratadoDeLosPlaceresBody = createMarkdown(elTratadoDeLosPlaceresMdBody);
 

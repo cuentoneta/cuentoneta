@@ -1,7 +1,7 @@
 import type { Story } from '@models/story.model';
-import { neronRawStory } from './story/neron.story.raw.mock';
-import { authorMock } from '../author.mock';
-import { toDomainTags } from '../onoff-tags.mock';
+import { neronRawStory } from './neron.story.raw.mock';
+import { authorMock } from '../../author.mock';
+import { toDomainTags } from '../../onoff-tags.mock';
 
 export const neronStoryMock: Story = {
 	_id: 'onoff-story-neron',

@@ -8,7 +8,7 @@ import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import losPeldanosMdBody from './los-peldanos.md?raw';
 import losPeldanosEditorialNoteMd from './los-peldanos.editorial-note.md?raw';
 import { toDomainTags } from '../../onoff-tags.mock';
-import { losPeldanosStoryMock } from '../los-peldanos.mock';
+import { losPeldanosStoryMock } from '../story/los-peldanos.story.mock';
 
 const losPeldanosBody = createMarkdown(losPeldanosMdBody);
 

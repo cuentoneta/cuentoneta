@@ -1,7 +1,7 @@
 import type { Story } from '@models/story.model';
-import { losPeldanosRawStory } from './story/los-peldanos.story.raw.mock';
-import { authorMock } from '../author.mock';
-import { toDomainTags } from '../onoff-tags.mock';
+import { losPeldanosRawStory } from './los-peldanos.story.raw.mock';
+import { authorMock } from '../../author.mock';
+import { toDomainTags } from '../../onoff-tags.mock';
 
 export const losPeldanosStoryMock: Story = {
 	_id: 'onoff-story-los-peldanos',

@@ -8,7 +8,7 @@ import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import lasDosAntorchasMdBody from './las-dos-antorchas.md?raw';
 import lasDosAntorchasEditorialNoteMd from './las-dos-antorchas.editorial-note.md?raw';
 import { toDomainTags } from '../../onoff-tags.mock';
-import { lasDosAntorchasStoryMock } from '../las-dos-antorchas.mock';
+import { lasDosAntorchasStoryMock } from '../story/las-dos-antorchas.story.mock';
 
 const lasDosAntorchasBody = createMarkdown(lasDosAntorchasMdBody);
 

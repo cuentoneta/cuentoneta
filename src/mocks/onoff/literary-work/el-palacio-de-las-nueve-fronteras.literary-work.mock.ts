@@ -15,7 +15,7 @@ import {
 	palacioNueveFronterasSectionTitle,
 } from './el-palacio-de-las-nueve-fronteras.epigraph';
 import { toDomainTags } from '../../onoff-tags.mock';
-import { palacioNueveFronterasStoryMock } from '../el-palacio-de-las-nueve-fronteras.mock';
+import { palacioNueveFronterasStoryMock } from '../story/el-palacio-de-las-nueve-fronteras.story.mock';
 
 const palacioNueveFronterasBody = createMarkdown(palacioNueveFronterasMdBody);
 

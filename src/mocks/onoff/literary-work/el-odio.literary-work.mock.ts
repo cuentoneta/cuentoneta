@@ -11,7 +11,7 @@ import elOdioMdBody from './el-odio.md?raw';
 import elOdioEditorialNoteMd from './el-odio.editorial-note.md?raw';
 import { elOdioEpigraphReference, elOdioEpigraphText, elOdioSectionTitle } from './el-odio.epigraph';
 import { toDomainTags } from '../../onoff-tags.mock';
-import { elOdioStoryMock } from '../el-odio.mock';
+import { elOdioStoryMock } from '../story/el-odio.story.mock';
 
 const elOdioBody = createMarkdown(elOdioMdBody);
 

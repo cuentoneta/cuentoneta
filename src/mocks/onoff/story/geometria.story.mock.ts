@@ -1,8 +1,8 @@
 import type { Story } from '@models/story.model';
-import { authorMock } from '../author.mock';
-import { toDomainTags } from '../onoff-tags.mock';
-import { geometriaRawStory } from './story/geometria.story.raw.mock';
-import { geometriaMediaMock } from './media/geometria.media.mock';
+import { authorMock } from '../../author.mock';
+import { toDomainTags } from '../../onoff-tags.mock';
+import { geometriaRawStory } from './geometria.story.raw.mock';
+import { geometriaMediaMock } from '../media/geometria.media.mock';
 
 export const geometriaStoryMock: Story = {
 	_id: 'onoff-story-geometria',

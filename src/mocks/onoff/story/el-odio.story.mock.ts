@@ -1,7 +1,7 @@
 import type { Story } from '@models/story.model';
-import { elOdioRawStory } from './story/el-odio.story.raw.mock';
-import { authorMock } from '../author.mock';
-import { toDomainTags } from '../onoff-tags.mock';
+import { elOdioRawStory } from './el-odio.story.raw.mock';
+import { authorMock } from '../../author.mock';
+import { toDomainTags } from '../../onoff-tags.mock';
 
 export const elOdioStoryMock: Story = {
 	_id: 'onoff-story-el-odio',
