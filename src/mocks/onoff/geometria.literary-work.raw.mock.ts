@@ -4,7 +4,7 @@ import { cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag } from '../onoff
 import geometriaMdBody from './geometria.md?raw';
 import geometriaEditorialNoteMd from './geometria.editorial-note.md?raw';
 import { geometriaEpigraphReference, geometriaEpigraphText, geometriaSectionTitle } from './geometria.epigraph';
-import { geometriaRawMediaSources } from './geometria.raw.mock';
+import { geometriaRawMediaSources } from './media/geometria.media.raw.mock';
 
 export const geometriaRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'onoff-literary-work-geometria',
