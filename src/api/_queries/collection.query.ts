@@ -3,9 +3,10 @@ import { defineQuery } from 'groq';
 // `collectionBySlugQuery` y `collectionsQuery` proyectan exactamente lo mismo y el literal se repite
 // a propósito: `defineQuery` parsea el string de la llamada para generar el tipo, así que una
 // constante concatenada o un template interpolado dejarían de emitir tipos. Lo que impide que las dos
-// se desincronicen es el tipo, no la disciplina: el privado que las mapea se tipa contra la variante
-// por slug y recibe también los ítems del listado, así que un campo perdido en una de las dos rompe
-// el typecheck.
+// se desincronicen es el tipo: el privado que las mapea se tipa contra la variante por slug y recibe
+// también los ítems del listado, así que un campo **perdido** en el listado rompe el typecheck. Un
+// campo agregado de más no lo rompe —la asignación no es de literal fresco, así que las propiedades
+// excedentes pasan—, pero tampoco cambia lo que el mapeo produce.
 //
 // `description` va sin `coalesce` a string vacío: su destino es un `SanitizedHtml`, cuya factory
 // rechaza el contenido vacío. La ausencia se representa `null` y el repository decide qué hacer.
@@ -167,6 +168,6 @@ export const collectionTeasersQuery = defineQuery(`
             'audioUrl': audioFile.asset->url
         }
     }, []),
-    'count': count(literaryWorks),
+    'count': coalesce(count(literaryWorks), 0),
     'literaryWorkCoverImages': coalesce(literaryWorks[0...3]->coverImage, [])
 }`);

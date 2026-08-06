@@ -55,7 +55,9 @@ describe('createCollection', () => {
 	// factory normalizara, reordenara o colapsara la unión, comparar contra la misma referencia no lo
 	// detectaría.
 	it('preserves both branches of imagery untouched', () => {
-		const covers = canon.literaryWorks.map((work) => work.coverImage);
+		// Las tres primeras, no todas: con una cuarta obra en el canon el abanico no crecería y la
+		// comparación fallaría sin que nada estuviera mal.
+		const covers = canon.literaryWorks.slice(0, 3).map((work) => work.coverImage);
 		const sample: CollectionImagery = { kind: 'sample', images: [covers[0] ?? '', covers[1] ?? '', covers[2] ?? ''] };
 
 		const representative = createCollection(buildOptions()).imagery;
