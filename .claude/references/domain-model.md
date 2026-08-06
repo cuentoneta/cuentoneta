@@ -147,6 +147,9 @@ AuthorTeaser;
 
 Storylist;
 StorylistTeaser;
+
+Collection;
+CollectionTeaser;
 ```
 
 Cada vista es una proyección coherente del mismo agregado; el mapper correspondiente del ACL produce exactamente la vista que la query GROQ pidió.
