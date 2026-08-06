@@ -60,7 +60,8 @@ Corpus mínimo de dos colecciones de `LiteraryWork`, una por cada rama de `image
 Contraparte cruda del corpus de dominio `Story` — lo que devuelven las queries GROQ antes del ACL/mapper. La consume el backend (`src/api`).
 
 - **Story raw:** `<slug>.raw.mock.ts`, export `<slugCamelCase>RawStory: NonNullable<StoryBySlugQueryResult>`.
-- **Colecciones raw:** `<slug>.collection.raw.mock.ts` (p. ej. `geometrias-del-desvelo`).
+- **Storylists raw:** `<slug>.storylist.raw.mock.ts` (p. ej. `geometrias-del-desvelo`).
+- **Colecciones raw:** no tienen archivo por slug — se derivan del canon crudo de obras en `../onoff-raw-collections.mock.ts`, junto con sus teasers y sus escenarios de borde.
 - **Agregadores:** `../onoff-raw-stories.mock.ts` (`onoffRawStoriesMock`, teasers `<slugCamelCase>RawTeaser`, `onoffRawTeasersMock`, `onoffRawNavTeasersMock`); `../onoff-raw-author.mock.ts` (`rawOnoffAuthor`, `rawOnoffAuthorTeaser`).
 
 ## Corpus raw: `LiteraryWork` (#1981)

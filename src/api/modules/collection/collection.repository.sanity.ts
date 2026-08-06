@@ -1,5 +1,5 @@
 import type { SanityClient } from '@sanity/client';
-import type { CollectionBySlugQueryResult, CollectionTeasersQueryResult } from '@sanity-types';
+import type { CollectionBySlugQueryResult, CollectionsQueryResult } from '@sanity-types';
 import {
 	createCollection,
 	createCollectionTeaser,
@@ -18,7 +18,7 @@ import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import { mapAuthorTeaser, mapTags, urlFor } from '../../_utils/functions';
 import { mapMediaSources } from '../../_utils/media-sources.functions';
 import { client as sanityClient } from '../../_helpers/sanity-connector';
-import { collectionBySlugQuery, collectionsQuery, collectionTeasersQuery } from '../../_queries/collection.query';
+import { collectionBySlugQuery, collectionsQuery } from '../../_queries/collection.query';
 import { MalformedCollectionError } from './collection.errors';
 import type { CollectionRepository } from './collection.repository';
 
@@ -28,7 +28,7 @@ type SanityCollection = NonNullable<CollectionBySlugQueryResult>;
 type SanityCollectionWork = SanityCollection['literaryWorks'][number];
 type SanityTeaserSection = SanityCollectionWork['teaserSection'][number];
 type SanityEpigraph = SanityTeaserSection['epigraphs'][number];
-type SanityCollectionTeaser = CollectionTeasersQueryResult[number];
+type SanityCollectionTeaser = CollectionsQueryResult[number];
 type SanityFeaturedImage = SanityCollection['featuredImage'];
 
 // Las dos vistas resuelven el abanico sobre las portadas de las mismas tres obras: es lo que la query
@@ -46,13 +46,8 @@ export class SanityCollectionRepository implements CollectionRepository {
 		return this.guard(raw.slug, () => this.mapCollection(raw));
 	}
 
-	public async fetchAll(): Promise<Collection[]> {
+	public async fetchAll(): Promise<CollectionTeaser[]> {
 		const raw = await this.client.fetch(collectionsQuery);
-		return raw.map((collection) => this.guard(collection.slug, () => this.mapCollection(collection)));
-	}
-
-	public async fetchTeasers(): Promise<CollectionTeaser[]> {
-		const raw = await this.client.fetch(collectionTeasersQuery);
 		return raw.map((teaser) => this.guard(teaser.slug, () => this.mapCollectionTeaser(teaser)));
 	}
 
@@ -70,8 +65,6 @@ export class SanityCollectionRepository implements CollectionRepository {
 		}
 	}
 
-	// Recibe también los ítems del listado completo: las dos proyecciones son gemelas a propósito y es
-	// acá donde el typecheck lo hace cumplir.
 	private mapCollection(raw: SanityCollection): Collection {
 		const literaryWorks = raw.literaryWorks.map((work) => this.mapLiteraryWorkTeaser(work));
 		return createCollection({
