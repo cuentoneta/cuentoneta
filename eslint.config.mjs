@@ -263,7 +263,7 @@ export default [
 				{
 					patterns: [
 						{
-							group: ['@mocks/onoff/*', '**/mocks/onoff/*'],
+							group: ['@mocks/onoff/**', '**/mocks/onoff/**'],
 							message:
 								'No importes una obra puntual del corpus: usá las colecciones de @mocks/onoff-literary-works.mock (onoffLiteraryWorksMock, onoffLiteraryWorkEpigraphsMock) o sus selectores por capacidad (onoffLiteraryWorksWithEpigraphs, onoffLiteraryWorksWithEditorialNote, …), que declaran el shape que el caso necesita y crecen con el canon.',
 						},
