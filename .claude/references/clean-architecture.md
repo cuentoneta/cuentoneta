@@ -100,7 +100,7 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 | Repository de autores          | `AuthorRepository`         | `SanityAuthorRepository`         | `InMemoryAuthorRepository`         |
 | Repository de storylists       | `StorylistRepository`      | `SanityStorylistRepository`      | `InMemoryStorylistRepository`      |
 | Repository de obras literarias | `LiteraryWorkRepository`\* | `SanityLiteraryWorkRepository`\* | `InMemoryLiteraryWorkRepository`\* |
-| Repository de colecciones      | `CollectionRepository`\*   | `SanityCollectionRepository`\*   | `InMemoryCollectionRepository`\*   |
+| Repository de colecciones      | `CollectionRepository`†    | `SanityCollectionRepository`†    | `InMemoryCollectionRepository`†    |
 | Service (impl. única)          | `StoryService`             | `StoryService` (mismo nombre)    | `InMemoryStoryService`             |
 
 - Prefijo **`Sanity*`** para implementaciones de repository respaldadas por Sanity/GROQ.
@@ -118,6 +118,12 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 > `literary-work.service.ts`) recibe dominio ya mapeado: resuelve el caso "no encontrado"
 > (`LiteraryWorkNotFoundError`) y toma el repository por parámetro con default, sin capa de mappers
 > intermedia.
+>
+> † Mismo patrón que la fila anterior, aplicado a `Collection`: puerto, adaptador de Sanity con la ACL
+> en privados, y doble en memoria. Se distingue con otra marca porque su contrato no vive en el
+> documento de diseño de `LiteraryWork`. El adaptador expone dos lecturas —la colección por slug, que
+> transporta sus obras, y el catálogo, que devuelve teasers— y levanta un error propio ante datos que
+> no permiten construir el agregado, distinto del de "no encontrado".
 
 ### Frontend
 
