@@ -103,12 +103,9 @@ export class SanityCollectionRepository implements CollectionRepository {
 		};
 	}
 
-	// Duplica deliberadamente lo que `_utils/storylist-imagery.functions.ts` resuelve para Storylist:
-	// aquel devuelve un tipo nominal distinto, su abanico sale de portadas de Story, y acá un abanico
-	// incompleto lanza en vez de rellenarse con cadenas vacías, que es lo que colaba portadas rotas.
-	//
 	// Las dos vistas le pasan las portadas de las **mismas tres** obras, para que una colección no pueda
-	// construirse por un camino y fallar por el otro.
+	// construirse por un camino y fallar por el otro. Un abanico incompleto lanza en vez de rellenarse:
+	// una portada vacía llega a la interfaz como una imagen rota.
 	private resolveImagery(slug: string, featuredImage: SanityFeaturedImage, coverUrls: string[]): CollectionImagery {
 		const image = featuredImage ? urlFor(featuredImage) : '';
 		if (image !== '') {
