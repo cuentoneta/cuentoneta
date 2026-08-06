@@ -39,7 +39,7 @@
 
 ## Estructura por bounded context
 
-Organizá el modelo de dominio por **contexto acotado**. Cuentoneta define cuatro (ver `docs/DOMAIN_MODEL.md`): **Catálogo de Contenido** (`Story`, `Author`, `Resource`, `Media`, `Epigraph`, `LiteraryWork`), **Curación y Colecciones** (`Storylist`), **Administración del Proyecto** (`Contributor`) y **Página de Inicio** (`LandingPageContent`, `ContentCampaign`).
+Organizá el modelo de dominio por **contexto acotado**. Cuentoneta define cuatro (ver `docs/DOMAIN_MODEL.md`): **Catálogo de Contenido** (`Story`, `Author`, `Resource`, `Media`, `Epigraph`, `LiteraryWork`), **Curación y Colecciones** (`Storylist`, `Collection`), **Administración del Proyecto** (`Contributor`) y **Página de Inicio** (`LandingPageContent`, `ContentCampaign`).
 
 Hoy los tipos de dominio viven en `src/models/` (frontend) y la ACL/dominio del backend en `src/api/`. La estructura **objetivo** por contexto (roadmap #1503) agrupa, por agregado, el contrato + el modelo + el mapper + su spec:
 
@@ -291,7 +291,7 @@ Un **agregado** es un cluster de objetos de dominio tratado como una unidad para
 
 **Cómo identificar la raíz:** buscá la entidad que **posee más invariantes de negocio**; esa entidad es la raíz, porque las invariantes solo se garantizan si toda mutación pasa por ella.
 
-En cuentoneta, **`LiteraryWork`** es la raíz de agregado con invariantes **hechas cumplir en código**: posee `authors: Author[]` (1..N), `content: LiteraryWorkSection[]`, `resources`, `tags` y `mediaSources`. Sus invariantes, garantizadas por la factory `createLiteraryWork` (`src/models/literary-work.model.ts`):
+En cuentoneta hay dos raíces de agregado con invariantes **hechas cumplir en código**: `LiteraryWork` y `Collection` — las dos más nuevas del catálogo, que es la dirección hacia la que el resto se mueve. **`LiteraryWork`** posee `authors: Author[]` (1..N), `content: LiteraryWorkSection[]`, `resources`, `tags` y `mediaSources`. Sus invariantes, garantizadas por la factory `createLiteraryWork` (`src/models/literary-work.model.ts`):
 
 - El `slug` tiene formato válido (VO `Slug`) e inmutable una vez creado.
 - El `title` no puede estar vacío.
@@ -341,7 +341,9 @@ export function createStory(options: CreateStoryOptions): Story {
 }
 ```
 
-`Author` y `Storylist` son raíces de sus propios agregados. **`Storylist`** posee la invariante _`count` coincide con el número real de `stories`_; **`Author`** posee _`diedOn` (si existe) es posterior a `bornOn`_ y _`nationality` siempre presente_ — ambas, como las de `Story`, descritas pero no hechas cumplir en código (roadmap #1503).
+**`Collection`** es la otra raíz con enforcement real: la factory `createCollection` (`src/models/collection.model.ts`) exige título no vacío, al menos una obra y un `slug` válido, y **deriva** `count` de las obras que transporta en vez de recibirlo — válido mientras la query no acote el listado.
+
+`Author` y `Storylist` son raíces de sus propios agregados, con invariantes solo descritas. **`Storylist`** posee la invariante _`count` coincide con el número real de `stories`_; **`Author`** posee _`diedOn` (si existe) es posterior a `bornOn`_ y _`nationality` siempre presente_ — ambas, como las de `Story`, descritas pero no hechas cumplir en código (roadmap #1503).
 
 > **Nota:** la frontera del agregado es también la frontera de consistencia — ver [Decisiones de consistencia](#decisiones-de-consistencia).
 >
@@ -410,7 +412,7 @@ Un **bounded context** es un ámbito dentro del cual aplican consistentemente un
 | Contexto                   | Agregados raíz                          | Perspectiva                                        |
 | -------------------------- | --------------------------------------- | -------------------------------------------------- |
 | **Catálogo de Contenido**  | `Story`, `Author`, `LiteraryWork`       | Inventario completo de historias y autores         |
-| **Curación y Colecciones** | `Storylist`                             | Agrupar y ordenar historias en colecciones         |
+| **Curación y Colecciones** | `Storylist`, `Collection`               | Agrupar y ordenar obras en colecciones             |
 | **Administración**         | `Contributor`                           | Colaboradores del proyecto por área                |
 | **Página de Inicio**       | `LandingPageContent`, `ContentCampaign` | Agregar contenido de varios contextos para el home |
 
@@ -427,7 +429,7 @@ Cada contexto **posee las definiciones** de sus términos, co-localizadas con su
 | **Slug**           | Identificador amigable, único e inmutable basado en el título                        | Todos                 |
 | **Epígrafe**       | Cita literaria que precede al texto principal                                        | Catálogo de Contenido |
 | **Teaser**         | Vista reducida de una entidad para listados y navegación                             | Todos                 |
-| **Colección**      | Agrupación temática u editorial de historias (`Storylist`)                           | Curación              |
+| **Colección**      | Agrupación temática u editorial de obras (`Collection`; `Storylist`, en baja)        | Curación              |
 | **Recurso**        | Enlace externo a información complementaria (`Resource`)                             | Catálogo de Contenido |
 | **Etiqueta**       | Tag de taxonomía (`Tag`) referenciable desde `Story`, `Author` y `Storylist`         | Todos                 |
 | **Curaduría**      | Proceso de seleccionar, ordenar y presentar historias                                | Curación              |

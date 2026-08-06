@@ -420,7 +420,7 @@ interface Collection {
 	mediaSources: Media[]; // Contenido multimedia asociado; alineado con el schema y con LiteraryWork.mediaSources (no `media`, como en Storylist)
 
 	// Metadatos
-	count: number; // Derivado: total real de obras literarias
+	count: number; // Derivado: total de las obras que el agregado transporta
 
 	// Composición
 	literaryWorks: LiteraryWorkTeaser[]; // Obras literarias en la colección (ordenadas)
@@ -432,7 +432,7 @@ interface Collection {
 - El `title` no puede estar vacío.
 - Debe tener **al menos una** obra literaria (`literaryWorks.length >= 1`).
 - El `slug` tiene formato válido (value object `Slug`, delegado a `createSlug`).
-- `count` se deriva en la factory (`literaryWorks.length`); no se recibe como dato, así que no puede discrepar del número real de obras.
+- `count` se deriva en la factory (`literaryWorks.length`); no se recibe como dato, así que no puede discrepar del número real de obras **mientras la query no acote `literaryWorks`**. Si el listado se pagina, el total pasa a ser un dato de entrada y la derivación deja de valer.
 
 **Ciclo de Vida:**
 
