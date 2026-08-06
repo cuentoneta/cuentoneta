@@ -11,7 +11,7 @@ import { createAttributedText, type AttributedText } from '@models/attributed-te
 import { createLiteraryWorkSection, type LiteraryWorkSection } from '@models/literary-work-section.model';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createMarkdown } from '@models/markdown.model';
-import { createReadingTime, deriveSectionReadingTime } from '@models/reading-time.model';
+import { createReadingTime, deriveSectionReadingTime, type ReadingTime } from '@models/reading-time.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createSlug } from '@models/slug.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
@@ -29,6 +29,11 @@ type SanityCollectionWork = SanityCollection['literaryWorks'][number];
 type SanityTeaserSection = SanityCollectionWork['teaserSection'][number];
 type SanityEpigraph = SanityTeaserSection['epigraphs'][number];
 type SanityCollectionTeaser = CollectionTeasersQueryResult[number];
+type SanityFeaturedImage = SanityCollection['featuredImage'];
+
+// Las dos vistas resuelven el abanico sobre las portadas de las mismas tres obras: es lo que la query
+// del teaser dereferencia, y acotar igual del otro lado es lo que las mantiene consistentes.
+const SAMPLE_COVER_COUNT = 3;
 
 export class SanityCollectionRepository implements CollectionRepository {
 	constructor(private readonly client: SanityClient = sanityClient) {}
@@ -74,7 +79,10 @@ export class SanityCollectionRepository implements CollectionRepository {
 			imagery: this.resolveImagery(
 				raw.slug,
 				raw.featuredImage,
-				literaryWorks.map((work) => work.coverImage),
+				// Solo las tres primeras, que es exactamente lo que la query del teaser dereferencia. Tomar
+				// de todas haría que una obra sin portada en la cuarta posición se sirviera bien acá y
+				// tumbara el listado de teasers: la misma colección, dos comportamientos.
+				literaryWorks.slice(0, SAMPLE_COVER_COUNT).map((work) => work.coverImage),
 			),
 			literaryWorks,
 		});
@@ -88,9 +96,8 @@ export class SanityCollectionRepository implements CollectionRepository {
 				raw.featuredImage,
 				raw.literaryWorkCoverImages.map((cover) => (cover ? urlFor(cover) : '')),
 			),
-			// `count` es null cuando la colección no tiene el array: es el mismo caso que "sin obras", y
-			// la factory lo rechaza igual.
-			count: raw.count ?? 0,
+			// Cero cuando la colección no tiene obras, que es el caso que la factory rechaza.
+			count: raw.count,
 		});
 	}
 
@@ -111,7 +118,10 @@ export class SanityCollectionRepository implements CollectionRepository {
 	// Duplica deliberadamente lo que `_utils/storylist-imagery.functions.ts` resuelve para Storylist:
 	// aquel devuelve un tipo nominal distinto, su abanico sale de portadas de Story, y acá un abanico
 	// incompleto lanza en vez de rellenarse con cadenas vacías, que es lo que colaba portadas rotas.
-	private resolveImagery(slug: string, featuredImage: unknown, coverUrls: string[]): CollectionImagery {
+	//
+	// Las dos vistas le pasan las portadas de las **mismas tres** obras, para que una colección no pueda
+	// construirse por un camino y fallar por el otro.
+	private resolveImagery(slug: string, featuredImage: SanityFeaturedImage, coverUrls: string[]): CollectionImagery {
 		const image = featuredImage ? urlFor(featuredImage) : '';
 		if (image !== '') {
 			return { kind: 'representative', image };
@@ -135,12 +145,13 @@ export class SanityCollectionRepository implements CollectionRepository {
 			slug: createSlug(raw.slug),
 			title: raw.title,
 			coverImage: raw.coverImage ? urlFor(raw.coverImage) : '',
-			// En publicado el total siempre viene; la otra rama cubre el opcional del tipo, que solo se
-			// da en borradores, donde para una obra multi-sección da una cota inferior.
+			// En publicado el total siempre viene; la otra rama cubre el opcional del tipo, que solo se da
+			// en borradores, y ahí cae al tiempo de la sección de apertura —una cota inferior para una obra
+			// multi-sección—.
 			totalReadingTime:
 				raw.totalReadingTime !== null
 					? createReadingTime(raw.totalReadingTime)
-					: deriveSectionReadingTime(createMarkdown(teaserSection.body)),
+					: this.sectionReadingTime(teaserSection),
 			sectionCount: raw.sectionCount,
 			tags: mapTags(raw.tags),
 			mediaSources: mapMediaSources(raw.mediaSources),
@@ -150,14 +161,20 @@ export class SanityCollectionRepository implements CollectionRepository {
 	}
 
 	private mapTeaserSection(raw: SanityTeaserSection): LiteraryWorkSection {
-		const body = createMarkdown(raw.body);
 		return createLiteraryWorkSection({
 			position: 0,
 			title: raw.title ? createSectionTitle(raw.title) : undefined,
 			epigraphs: raw.epigraphs.map((epigraph) => this.mapEpigraph(epigraph)),
-			bodyHtml: markdownToSanitizedHtml(body),
-			readingTime: raw.readingTime !== null ? createReadingTime(raw.readingTime) : deriveSectionReadingTime(body),
+			bodyHtml: markdownToSanitizedHtml(createMarkdown(raw.body)),
+			readingTime: this.sectionReadingTime(raw),
 		});
+	}
+
+	// El persistido gana al derivado: el derivado es una estimación del cuerpo y el otro es el dato.
+	private sectionReadingTime(raw: SanityTeaserSection): ReadingTime {
+		return raw.readingTime !== null
+			? createReadingTime(raw.readingTime)
+			: deriveSectionReadingTime(createMarkdown(raw.body));
 	}
 
 	private mapEpigraph(raw: SanityEpigraph): AttributedText {

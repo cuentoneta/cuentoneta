@@ -161,7 +161,9 @@ type TagsSubQuery =
 	| NonNullable<StoryBySlugQueryResult>['tags']
 	| NonNullable<AuthorBySlugQueryResult>['tags']
 	| NonNullable<StorylistTeasersQueryResult>[0]['tags']
-	| NonNullable<LiteraryWorkBySlugQueryResult>['tags'];
+	| NonNullable<LiteraryWorkBySlugQueryResult>['tags']
+	| NonNullable<CollectionBySlugQueryResult>['tags']
+	| NonNullable<CollectionBySlugQueryResult>['literaryWorks'][number]['tags'];
 export function mapTags(tags: TagsSubQuery): Tag[] {
 	return tags.map((tag) => ({
 		title: tag.title,
