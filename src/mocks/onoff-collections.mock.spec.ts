@@ -4,6 +4,8 @@ import {
 	onoffCollectionsMock,
 	onoffCollectionTeasersMock,
 } from './onoff-collections.mock';
+import geometriasDescriptionMd from './onoff/geometrias-del-desvelo.collection.md?raw';
+import inventarioDescriptionMd from './onoff/inventario-de-las-pasiones.collection.md?raw';
 
 describe('onoff collections mock', () => {
 	// Que la factory los construya sin lanzar es la prueba de que el contrato es satisfacible con
@@ -29,11 +31,21 @@ describe('onoff collections mock', () => {
 		expect(imagery.kind === 'sample' && imagery.images).toEqual(literaryWorks.map((work) => work.coverImage));
 	});
 
-	// La prosa viene del canon en Markdown y atraviesa el mismo pipeline que el backend.
+	// La prosa viene del canon en Markdown y atraviesa el mismo pipeline que el backend: se afirma que
+	// el HTML conserva el texto del crudo, no solo que tiene forma de HTML.
 	it('renders the description as sanitized html', () => {
-		onoffCollectionsMock.forEach((collection) => {
+		const rawByCollection = new Map([
+			[geometriasDelDesveloCollectionMock, geometriasDescriptionMd],
+			[inventarioDeLasPasionesCollectionMock, inventarioDescriptionMd],
+		]);
+
+		rawByCollection.forEach((raw, collection) => {
 			expect(collection.description).toContain('<p>');
-			expect(collection.description).not.toContain('_key');
+			raw
+				.split(/\s+/)
+				.filter((word) => /^[a-záéíóúñ]{6,}$/i.test(word))
+				.slice(0, 3)
+				.forEach((word) => expect(collection.description).toContain(word));
 		});
 	});
 

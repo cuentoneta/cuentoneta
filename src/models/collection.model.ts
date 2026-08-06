@@ -21,6 +21,8 @@ interface CollectionBase {
 	readonly config: { readonly showAuthors: boolean };
 	readonly mediaSources: readonly Media[];
 	// Las dos vistas lo muestran, y el teaser lo necesita justamente porque no transporta las obras.
+	// Es el total real solo mientras la query traiga todas las obras: si el listado se pagina o se
+	// acota, el total pasa a ser un dato de entrada y la derivación de la factory deja de valer.
 	readonly count: number;
 }
 
@@ -49,9 +51,11 @@ interface CreateCollectionOptions {
  * respete. Una colección sin obras no es un estado válido: es un dato incompleto que fallaría recién
  * al renderizarse, lejos de donde se puede corregir.
  *
- * `count` se deriva y no se recibe, que es lo que vuelve imposible que discrepe del número real de
- * obras. La vista de teaser no pasa por acá —no transporta obras, así que no puede sostener la
- * invariante—: la construye el mapper como proyección, igual que `LiteraryWorkTeaser`.
+ * `count` se deriva y no se recibe, lo que descarta que discrepe del número real de obras **mientras
+ * la query no acote `literaryWorks`**. Si el listado se pagina, el total tiene que entrar como dato
+ * y esta derivación deja de ser válida. La vista de teaser no pasa por acá —no transporta obras, así
+ * que no puede sostener la invariante—: la construye el mapper como proyección, igual que
+ * `LiteraryWorkTeaser`.
  */
 export function createCollection(options: CreateCollectionOptions): Collection {
 	if (options.title.trim() === '') {
@@ -59,6 +63,11 @@ export function createCollection(options: CreateCollectionOptions): Collection {
 	}
 	if (options.literaryWorks.length === 0) {
 		throw new Error(`Collection inválida: sin obras literarias (slug "${options.slug}")`);
+	}
+	// La tupla de tres solo garantiza el largo en compilación, y el abanico se va a construir desde
+	// GROQ, donde un `sample` de dos portadas encaja igual.
+	if (options.imagery.kind === 'sample' && options.imagery.images.length !== 3) {
+		throw new Error(`Collection inválida: el abanico de portadas necesita tres (slug "${options.slug}")`);
 	}
 	return Object.freeze({
 		...options,

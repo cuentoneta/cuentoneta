@@ -25,14 +25,14 @@ describe('createCollection', () => {
 	it('builds a frozen aggregate with a branded slug', () => {
 		const collection = createCollection(buildOptions());
 
-		expect(collection.slug).toBe('geometrias-del-desvelo');
-		expect(collection.title).toBe('Geometrías del desvelo');
+		expect(collection.slug).toBe(buildOptions().slug);
+		expect(collection.title).toBe(buildOptions().title);
 		expect(Object.isFrozen(collection)).toBe(true);
 	});
 
-	// Derivarlo es lo que vuelve imposible que discrepe del número real de obras.
+	// Derivarlo descarta que discrepe del número real de obras que el agregado transporta.
 	it('derives count from the works it carries', () => {
-		expect(createCollection(buildOptions()).count).toBe(3);
+		expect(createCollection(buildOptions()).count).toBe(canon.literaryWorks.length);
 		expect(createCollection(buildOptions({ literaryWorks: onoffLiteraryWorkTeasersMock.slice(0, 1) })).count).toBe(1);
 	});
 
@@ -51,12 +51,29 @@ describe('createCollection', () => {
 		expect(() => createCollection(buildOptions({ slug: 'Geometrías Del Desvelo' }))).toThrow(/Slug inválido/);
 	});
 
+	// Se afirma el discriminante y su payload contra valores independientes del objeto pasado: si la
+	// factory normalizara, reordenara o colapsara la unión, comparar contra la misma referencia no lo
+	// detectaría.
 	it('preserves both branches of imagery untouched', () => {
-		const [first, second, third] = canon.literaryWorks.map((work) => work.coverImage);
-		const sample: CollectionImagery = { kind: 'sample', images: [first ?? '', second ?? '', third ?? ''] };
+		const covers = canon.literaryWorks.map((work) => work.coverImage);
+		const sample: CollectionImagery = { kind: 'sample', images: [covers[0] ?? '', covers[1] ?? '', covers[2] ?? ''] };
 
-		expect(createCollection(buildOptions()).imagery).toEqual(canon.imagery);
-		expect(createCollection(buildOptions({ imagery: sample })).imagery).toEqual(sample);
+		const representative = createCollection(buildOptions()).imagery;
+		expect(representative.kind).toBe('representative');
+		expect(representative.kind === 'representative' && representative.image).toBe(
+			'assets/img/mocks/collections/geometrias-del-desvelo.png',
+		);
+
+		const sampled = createCollection(buildOptions({ imagery: sample })).imagery;
+		expect(sampled.kind).toBe('sample');
+		expect(sampled.kind === 'sample' && sampled.images).toEqual(covers);
+	});
+
+	// El abanico llega desde GROQ, donde nada garantiza el largo que la tupla promete en compilación.
+	it('rejects a sample of imagery without three covers', () => {
+		const twoCovers = { kind: 'sample', images: ['a.png', 'b.png'] } as unknown as CollectionImagery;
+
+		expect(() => createCollection(buildOptions({ imagery: twoCovers }))).toThrow(/abanico de portadas/);
 	});
 
 	// Normalizar el opcional del schema es trabajo del mapper, no de la factory.
@@ -65,12 +82,14 @@ describe('createCollection', () => {
 		expect(createCollection(buildOptions({ config: { showAuthors: false } })).config.showAuthors).toBe(false);
 	});
 
-	it('passes through tags, media sources and description without copying', () => {
+	// Se afirma el contenido, no la identidad: que la factory copie o no los arrays es una decisión
+	// libre, y fijarla con `toBe` rompería el test ante un cambio deseable.
+	it('passes through tags, media sources and description', () => {
 		const options = buildOptions();
 		const collection = createCollection(options);
 
-		expect(collection.tags).toBe(options.tags);
-		expect(collection.mediaSources).toBe(options.mediaSources);
-		expect(collection.description).toBe(options.description);
+		expect(collection.tags).toEqual(options.tags);
+		expect(collection.mediaSources).toEqual(options.mediaSources);
+		expect(collection.description).toEqual(options.description);
 	});
 });
