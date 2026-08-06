@@ -27,6 +27,7 @@ import {
 	AuthorBySlugQueryResult,
 	AuthorsQueryResult,
 	BlockContent,
+	CollectionBySlugQueryResult,
 	LandingPageContentQueryResult,
 	LiteraryWorkBySlugQueryResult,
 	RotatingContentQueryResult,
@@ -82,8 +83,10 @@ export function mapAuthorProfile(rawAuthorData: NonNullable<AuthorBySlugQueryRes
 }
 type AuthorTeaserForStoriesSubQuery = NonNullable<StorylistQueryResult>['stories'][0]['author'];
 type AuthorTeaserForListSubQuery = UnwrapArray<AuthorsQueryResult>;
+type AuthorTeaserForCollectionSubQuery =
+	NonNullable<CollectionBySlugQueryResult>['literaryWorks'][number]['authors'][number];
 export function mapAuthorTeaser(
-	rawAuthorData: AuthorTeaserForStoriesSubQuery | AuthorTeaserForListSubQuery,
+	rawAuthorData: AuthorTeaserForStoriesSubQuery | AuthorTeaserForListSubQuery | AuthorTeaserForCollectionSubQuery,
 ): AuthorTeaser {
 	return {
 		_id: rawAuthorData._id,
@@ -158,7 +161,9 @@ type TagsSubQuery =
 	| NonNullable<StoryBySlugQueryResult>['tags']
 	| NonNullable<AuthorBySlugQueryResult>['tags']
 	| NonNullable<StorylistTeasersQueryResult>[0]['tags']
-	| NonNullable<LiteraryWorkBySlugQueryResult>['tags'];
+	| NonNullable<LiteraryWorkBySlugQueryResult>['tags']
+	| NonNullable<CollectionBySlugQueryResult>['tags']
+	| NonNullable<CollectionBySlugQueryResult>['literaryWorks'][number]['tags'];
 export function mapTags(tags: TagsSubQuery): Tag[] {
 	return tags.map((tag) => ({
 		title: tag.title,

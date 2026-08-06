@@ -27,17 +27,36 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 > **Alcance de los ejemplos de este archivo.** El pipeline se ejemplifica con el módulo `story`
 > (`src/api/modules/story/`), hoy el único módulo de contenido narrativo con esta capa completa
 > (repository → mapper → service → controller), con el ACL como **mappers puros en
-> `_utils/*.functions.ts`** (ver más abajo). `LiteraryWork` **diverge a propósito**: su ACL (la
-> traducción raw Sanity → dominio) vive **dentro del repository**
-> (`SanityLiteraryWorkRepository`, `src/api/modules/literary-work/literary-work.repository.ts`) como
-> métodos privados, no como funciones en `_utils/`. No es una variación accidental — es la
-> **dirección arquitectónica objetivo**: el repository es dueño de su propia ACL y entrega
-> `LiteraryWork` de dominio listo; el service recibe dominio, sin una capa de mappers intermedia.
-> `story` conserva por ahora el patrón mapper-en-`_utils` de los ejemplos de abajo, hasta que se
-> migre. El módulo `literary-work` ya está completo de punta a punta (repository → service →
-> controller), con el contrato en
-> [`docs/LITERARY_WORK_DESIGN.md`](../../docs/LITERARY_WORK_DESIGN.md) §6. Los ejemplos de código de
-> abajo se conservan sobre `story`, que sigue vigente para ese patrón.
+> `_utils/*.functions.ts`** (ver más abajo). `LiteraryWork` y `Collection` **divergen a propósito**: su
+> ACL (la traducción raw Sanity → dominio) vive **dentro del repository** como métodos privados, no
+> como funciones en `_utils/`. No es una variación accidental — es la **dirección arquitectónica
+> objetivo**: el repository es dueño de su propia ACL y entrega el agregado de dominio listo; el
+> service recibe dominio, sin una capa de mappers intermedia. `story` y `storylist` conservan por
+> ahora el patrón mapper-en-`_utils` de los ejemplos de abajo, hasta que se migren.
+>
+> **Split de archivos de los módulos que ya divergen** — tres archivos, no uno: `<dominio>.repository.ts`
+> (el puerto, la interfaz), `<dominio>.repository.sanity.ts` (el adaptador, con la ACL en privados) y
+> `<dominio>.repository.mock.ts` (el doble en memoria). Los errores tipados van en
+> `<dominio>.errors.ts`. El cliente de Sanity se inyecta por el constructor con un default, que es el
+> seam por el que los specs pasan un doble sin mockear el módulo.
+>
+> El módulo `literary-work` está completo de punta a punta (repository → service → controller), con
+> el contrato en [`docs/LITERARY_WORK_DESIGN.md`](../../docs/LITERARY_WORK_DESIGN.md) §6.
+> `collection` está a mitad de camino: tiene su repository, y el service y el controller son trabajo
+> posterior. Los ejemplos de código de abajo se conservan sobre `story`, que sigue vigente para ese
+> patrón.
+>
+> **Qué sí se comparte desde `_utils/`.** La divergencia no es aislarse: los repositories que la
+> adoptaron siguen usando las primitivas genéricas de traducción (`mapTags`, `mapAuthorTeaser`,
+> `mapResources`, `urlFor`, `mapMediaSources`), que no son de ningún agregado en particular. Lo que
+> no se delega es el **ensamblado del agregado**. Cada primitiva compartida recibe la variante nueva
+> en su tipo unión de entrada; si una proyección diverge, el mapeo deja de compilar en vez de fallar
+> en silencio.
+>
+> **`defineQuery` exige literales.** El typegen parsea el string de la llamada, así que una constante
+> concatenada o un template interpolado dejan de emitir tipos. Por eso dos queries con la misma
+> proyección **repiten el literal** en vez de compartirlo, y lo que impide que se desincronicen es el
+> tipo: el privado que las mapea se tipa contra una y recibe los resultados de la otra.
 
 ---
 

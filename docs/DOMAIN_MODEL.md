@@ -70,7 +70,7 @@ POST /api/story/most-read          # Obtener historias más leídas
 **Agregados Raíz:**
 
 - `Storylist` - Colecciones de historias
-- `Collection` - Colecciones de obras literarias (entidad paralela a `Storylist`, no la reemplaza todavía). El modelo de dominio ya existe (`createCollection`, con invariantes hechas cumplir en código, y su propio corpus de mocks); el backend (repository/service/controller) y el traspaso del contenido real desde el Studio siguen siendo trabajo posterior, y `Storylist` sigue vigente hasta que se complete
+- `Collection` - Colecciones de obras literarias (entidad paralela a `Storylist`, no la reemplaza todavía). El modelo de dominio ya existe (`createCollection` y `createCollectionTeaser`, con invariantes hechas cumplir en código, y su propio corpus de mocks), y el repository de Sanity también, con su ACL adentro: la colección por slug, que transporta sus obras, y el listado, que devuelve teasers. El service, el controller y el traspaso del contenido real desde el Studio siguen siendo trabajo posterior, y `Storylist` sigue vigente hasta que se complete
 
 **Responsabilidades:**
 
@@ -433,6 +433,13 @@ interface Collection {
 - Debe tener **al menos una** obra literaria (`literaryWorks.length >= 1`).
 - El `slug` tiene formato válido (value object `Slug`, delegado a `createSlug`).
 - `count` se deriva en la factory (`literaryWorks.length`); no se recibe como dato, así que no puede discrepar del número real de obras **mientras la query no acote `literaryWorks`**. Si el listado se pagina, el total pasa a ser un dato de entrada y la derivación deja de valer.
+- El abanico de portadas (`imagery.kind === 'sample'`) tiene **exactamente tres** imágenes. La tupla lo garantiza en compilación, pero el agregado se construye desde GROQ, donde un abanico corto encaja igual.
+
+**La vista de teaser tiene su propia factory (`createCollectionTeaser`):**
+
+Muestra la colección **sin transportar sus obras**, así que no puede derivar `count`: lo **recibe** como dato —la query lo trae contando referencias sin resolverlas— y exige que sea al menos uno. Es la invariante "al menos una obra" traducida a lo único que el teaser sí transporta. Las demás —título no vacío, slug válido, abanico de tres— le siguen aplicando igual.
+
+Existe como factory y no como proyección suelta porque el repository produce teasers desde la query: armarlos como objeto literal perdería esas reglas sin que nada avise.
 
 **Ciclo de Vida:**
 

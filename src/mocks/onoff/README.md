@@ -62,7 +62,8 @@ Sus piezas viven agrupadas en `collection/`, no sueltas en esta carpeta: es la o
 Contraparte cruda del corpus de dominio `Story` — lo que devuelven las queries GROQ antes del ACL/mapper. La consume el backend (`src/api`).
 
 - **Story raw:** `<slug>.raw.mock.ts`, export `<slugCamelCase>RawStory: NonNullable<StoryBySlugQueryResult>`.
-- **Colecciones raw:** `<slug>.collection.raw.mock.ts` (p. ej. `geometrias-del-desvelo`).
+- **Storylists raw:** `<slug>.storylist.raw.mock.ts` (p. ej. `geometrias-del-desvelo`).
+- **Colecciones raw:** `collection/<slug>.collection.raw.mock.ts`, una por archivo. Sus obras no se escriben: las proyecta del canon crudo `collection/raw-collection.projection.ts`, que las busca por slug y falla al importarse si alguna no existe. El agregador `../onoff-raw-collections.mock.ts` las consolida y deriva de ahí los teasers, los selectores por capacidad y los escenarios de borde.
 - **Agregadores:** `../onoff-raw-stories.mock.ts` (`onoffRawStoriesMock`, teasers `<slugCamelCase>RawTeaser`, `onoffRawTeasersMock`, `onoffRawNavTeasersMock`); `../onoff-raw-author.mock.ts` (`rawOnoffAuthor`, `rawOnoffAuthorTeaser`).
 
 ## Corpus raw: `LiteraryWork` (#1981)

@@ -120,6 +120,7 @@
 		"eslint-plugin-playwright": "^2.11.0",
 		"eslint-plugin-storybook": "10.5.5",
 		"eslint-plugin-testing-library": "^7.16.2",
+		"groq-js": "^2.0.0",
 		"happy-dom": "^20.11.1",
 		"husky": "^9.1.7",
 		"jsonld": "^9.0.0",
