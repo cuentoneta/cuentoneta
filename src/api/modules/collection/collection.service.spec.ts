@@ -1,7 +1,7 @@
 import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
 import { CollectionNotFoundError } from './collection.errors';
 import { InMemoryCollectionRepository } from './collection.repository.mock';
-import { getCollectionBySlug, getCollections, getCollectionTeasers } from './collection.service';
+import { getCollectionBySlug, getCollections } from './collection.service';
 
 const repository = new InMemoryCollectionRepository(onoffCollectionsMock);
 const [firstCollection] = onoffCollectionsMock;
@@ -25,27 +25,22 @@ describe('getCollectionBySlug', () => {
 });
 
 describe('getCollections', () => {
-	it('resolves every collection', async () => {
-		expect(await getCollections(repository)).toHaveLength(onoffCollectionsMock.length);
-	});
-
-	// Una colección vacía de colecciones es un resultado legítimo, no un 404.
-	it('resolves an empty listing without failing', async () => {
-		expect(await getCollections(new InMemoryCollectionRepository())).toEqual([]);
-	});
-});
-
-describe('getCollectionTeasers', () => {
+	// El listado sirve la vista de catálogo: muestra cada colección sin transportar sus obras.
 	it('resolves teasers that carry no works', async () => {
-		const teasers = await getCollectionTeasers(repository);
+		const teasers = await getCollections(repository);
 
 		expect(teasers).toHaveLength(onoffCollectionsMock.length);
 		teasers.forEach((teaser) => expect(teaser.literaryWorks).toEqual([]));
 	});
 
 	it('preserves the count of each collection', async () => {
-		const teasers = await getCollectionTeasers(repository);
+		const teasers = await getCollections(repository);
 
 		teasers.forEach((teaser, index) => expect(teaser.count).toBe(onoffCollectionsMock[index]?.count));
+	});
+
+	// Un catálogo sin colecciones es un resultado legítimo, no un 404.
+	it('resolves an empty listing without failing', async () => {
+		expect(await getCollections(new InMemoryCollectionRepository())).toEqual([]);
 	});
 });

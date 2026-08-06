@@ -23,38 +23,17 @@ describe('collectionController', () => {
 		await expect(response.json()).resolves.toMatchObject({ slug: firstCollection?.slug });
 	});
 
-	it('serves the full listing with every collection', async () => {
+	// El listado sirve la vista de catálogo: cada colección sin sus obras.
+	it('serves the listing as teasers', async () => {
 		const response = await app.request('/collection');
-		const body = (await response.json()) as unknown[];
-
-		expect(response.status).toBe(200);
-		expect(body).toHaveLength(onoffCollectionsMock.length);
-	});
-
-	// El listado completo existe justamente para llevar las obras: sin eso no se distingue del teaser.
-	it('carries the works in the full listing', async () => {
-		const response = await app.request('/collection');
-		const [collection] = (await response.json()) as { literaryWorks: unknown[] }[];
-
-		expect(collection?.literaryWorks.length).toBeGreaterThan(0);
-	});
-
-	it('serves teasers that carry no works', async () => {
-		const response = await app.request('/collection/teasers');
 		const body = (await response.json()) as { literaryWorks: unknown[]; count: number }[];
 
 		expect(response.status).toBe(200);
+		expect(body).toHaveLength(onoffCollectionsMock.length);
 		body.forEach((teaser) => {
 			expect(teaser.literaryWorks).toEqual([]);
 			expect(teaser.count).toBeGreaterThan(0);
 		});
-	});
-
-	// Si `/:slug` se resolviera primero, esta ruta se leería como una colección de slug "teasers".
-	it('resolves teasers as a listing and not as a slug', async () => {
-		const response = await app.request('/collection/teasers');
-
-		expect(Array.isArray(await response.json())).toBe(true);
 	});
 
 	it('answers 404 for a slug no collection carries', async () => {
@@ -79,15 +58,12 @@ describe('collectionController with malformed data', () => {
 		public async fetchAll(): Promise<never> {
 			throw new MalformedCollectionError('geometrias-del-desvelo');
 		}
-		public async fetchTeasers(): Promise<never> {
-			throw new MalformedCollectionError('geometrias-del-desvelo');
-		}
 	}
 
 	const failing = appWith(new FailingCollectionRepository());
 
 	// No es 404: la colección existe, lo que falla es su curaduría.
-	it.each(['/collection/geometrias-del-desvelo', '/collection', '/collection/teasers'])(
+	it.each(['/collection/geometrias-del-desvelo', '/collection'])(
 		'answers 500 with a stable code for %s',
 		async (path) => {
 			const response = await failing.request(path);

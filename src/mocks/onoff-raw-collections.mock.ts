@@ -1,4 +1,4 @@
-import type { CollectionBySlugQueryResult, CollectionTeasersQueryResult } from '@sanity-types';
+import type { CollectionBySlugQueryResult, CollectionsQueryResult } from '@sanity-types';
 
 import geometriasDescriptionMd from './onoff/geometrias-del-desvelo.collection.md?raw';
 import inventarioDescriptionMd from './onoff/inventario-de-las-pasiones.collection.md?raw';
@@ -6,7 +6,7 @@ import { onoffRawLiteraryWorksMock } from './onoff-raw-literary-works.mock';
 
 type RawCollection = NonNullable<CollectionBySlugQueryResult>;
 type RawCollectionWork = RawCollection['literaryWorks'][number];
-type RawCollectionTeaser = CollectionTeasersQueryResult[number];
+type RawCollectionTeaser = CollectionsQueryResult[number];
 type RawLiteraryWork = (typeof onoffRawLiteraryWorksMock)[number];
 
 // Las dos colecciones se definen acá y no en un archivo por slug —como sí hacen las obras— porque no

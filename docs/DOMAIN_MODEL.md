@@ -70,7 +70,7 @@ POST /api/story/most-read          # Obtener historias más leídas
 **Agregados Raíz:**
 
 - `Storylist` - Colecciones de historias
-- `Collection` - Colecciones de obras literarias (entidad paralela a `Storylist`, no la reemplaza todavía). El modelo de dominio ya existe (`createCollection` y `createCollectionTeaser`, con invariantes hechas cumplir en código, y su propio corpus de mocks), y el repository de Sanity también, con su ACL adentro y los tres caminos de lectura. El service, el controller y el traspaso del contenido real desde el Studio siguen siendo trabajo posterior, y `Storylist` sigue vigente hasta que se complete
+- `Collection` - Colecciones de obras literarias (entidad paralela a `Storylist`, no la reemplaza todavía). El modelo de dominio ya existe (`createCollection` y `createCollectionTeaser`, con invariantes hechas cumplir en código, y su propio corpus de mocks), y el repository de Sanity también, con su ACL adentro: la colección por slug, que transporta sus obras, y el listado, que devuelve teasers. El service, el controller y el traspaso del contenido real desde el Studio siguen siendo trabajo posterior, y `Storylist` sigue vigente hasta que se complete
 
 **Responsabilidades:**
 
