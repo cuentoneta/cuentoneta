@@ -1,14 +1,39 @@
-import type { StoryBySlugQueryResult } from '@sanity-types';
-import { novelaRawTag, dramaPsicologicoRawTag } from '../onoff-raw-tags.mock';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import type { Story } from '@models/story.model';
+import { elOdioRawStory } from './el-odio.story.raw.mock';
+import { authorMock } from '../../author.mock';
+import { toDomainTags } from '../../onoff-tags.mock';
 
-export const elOdioRawStory: NonNullable<StoryBySlugQueryResult> = {
+export const elOdioStoryMock: Story = {
 	_id: 'onoff-story-el-odio',
-	slug: 'el-odio',
 	title: 'El odio',
+	slug: 'el-odio',
+	originalPublication: 'Éditions du Méridien (1971)',
+	approximateReadingTime: 6,
 	badLanguage: false,
+	coverImage: 'assets/img/mocks/stories/el-odio.png',
+	tags: toDomainTags(elOdioRawStory.tags),
+	resources: [],
+	media: [],
 	epigraphs: [],
-	body: [
+	author: authorMock,
+	publishedAt: '1971-01-01T00:00:00Z',
+	updatedAt: '1971-01-01T00:00:00Z',
+	summary: [
+		{
+			_type: 'block',
+			style: 'normal',
+			_key: 'odio-sum',
+			markDefs: [],
+			children: [
+				{
+					_type: 'span',
+					_key: 'odio-sum-s',
+					text: 'El odio aparece allí no como reacción sino como una manera estable de habitar el mundo: un retrato sin concesiones de un sentimiento que la novela se niega a explicar o a redimir.',
+				},
+			],
+		},
+	],
+	paragraphs: [
 		{
 			_type: 'block',
 			style: 'normal',
@@ -242,17 +267,4 @@ export const elOdioRawStory: NonNullable<StoryBySlugQueryResult> = {
 			],
 		},
 	],
-	review: [],
-	originalPublication: 'Éditions du Méridien (1971)',
-	publishedAt: '1971-01-01T00:00:00Z',
-	updatedAt: '1971-01-01T00:00:00Z',
-	approximateReadingTime: 6,
-	coverImage: {
-		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-83588a6210ea3de0cee7f493f3d41140427958bf-236x328-png' },
-	},
-	mediaSources: [],
-	resources: [],
-	tags: [novelaRawTag, dramaPsicologicoRawTag],
-	author: rawOnoffAuthor,
 };

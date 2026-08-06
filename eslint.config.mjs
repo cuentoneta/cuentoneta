@@ -249,7 +249,7 @@ export default [
 		},
 	},
 	{
-		// Un spec o una story que importa una obra puntual del corpus (`@mocks/onoff/<slug>.mock`) se ata a
+		// Un spec o una story que importa una pieza puntual del corpus (`@mocks/onoff/<entidad>/<slug>.<entidad>.mock`) se ata a
 		// esa obra: sus aserciones citan su prosa, y enriquecer el canon no las alcanza. Las colecciones y
 		// los selectores por capacidad de `@mocks/onoff-*.mock` declaran el shape que el caso necesita y
 		// crecen solos. `src/mocks/**` queda afuera: los agregadores son justamente quienes las importan.

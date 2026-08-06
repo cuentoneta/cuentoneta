@@ -4,7 +4,7 @@ import {
 	onoffStoryTeasersMock,
 	palacioNueveFronterasTeaserMock,
 } from './onoff-story-teasers.mock';
-import { palacioNueveFronterasStoryMock } from './onoff/el-palacio-de-las-nueve-fronteras.mock';
+import { palacioNueveFronterasStoryMock } from './onoff/story/el-palacio-de-las-nueve-fronteras.story.mock';
 
 describe('onoffStoryTeasersMock (derivación de teasers desde Story)', () => {
 	it('should truncate every teaser body to the first 3 paragraphs', () => {

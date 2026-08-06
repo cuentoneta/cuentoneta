@@ -1,6 +1,6 @@
 import type { StoryBySlugQueryResult } from '@sanity-types';
-import { ensayoRawTag, filosoficoRawTag, metaficcionRawTag } from '../onoff-raw-tags.mock';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import { ensayoRawTag, filosoficoRawTag, metaficcionRawTag } from '../../onoff-raw-tags.mock';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 
 export const elTratadoRawStory: NonNullable<StoryBySlugQueryResult> = {
 	_id: 'onoff-story-el-tratado-de-los-placeres',
