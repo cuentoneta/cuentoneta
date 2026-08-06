@@ -2,8 +2,6 @@ import {
 	descriptionlessRawCollection,
 	draftLikeRawCollection,
 	emptyRawCollection,
-	geometriasDelDesveloRawCollection,
-	inventarioDeLasPasionesRawCollection,
 	onoffRawCollectionsMock,
 	onoffRawCollectionsWithFeaturedImage,
 	onoffRawCollectionsWithoutFeaturedImage,
@@ -11,6 +9,8 @@ import {
 	sectionlessWorkRawCollection,
 	shortSampleRawCollection,
 } from './onoff-raw-collections.mock';
+import { geometriasDelDesveloRawCollection } from './onoff/collection/geometrias-del-desvelo.collection.raw.mock';
+import { inventarioDeLasPasionesRawCollection } from './onoff/collection/inventario-de-las-pasiones.collection.raw.mock';
 import { onoffRawLiteraryWorksMock } from './onoff-raw-literary-works.mock';
 
 describe('onoff raw collections mock', () => {
