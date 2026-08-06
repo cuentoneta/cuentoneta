@@ -27,14 +27,14 @@ function toAuthorTeaser(author: Author): AuthorTeaser {
 		resources: [],
 	};
 }
-import { elOdioLiteraryWorkMock } from './onoff/el-odio.mock';
-import { elTratadoDeLosPlaceresLiteraryWorkMock } from './onoff/el-tratado-de-los-placeres.mock';
-import { geometriaLiteraryWorkMock } from './onoff/geometria.mock';
-import { lasDosAntorchasLiteraryWorkMock } from './onoff/las-dos-antorchas.mock';
-import { lasEscalerasLiteraryWorkMock } from './onoff/las-escaleras.mock';
-import { losPeldanosLiteraryWorkMock } from './onoff/los-peldanos.mock';
-import { neronLiteraryWorkMock } from './onoff/neron.mock';
-import { palacioNueveFronterasLiteraryWorkMock } from './onoff/el-palacio-de-las-nueve-fronteras.mock';
+import { elOdioLiteraryWorkMock } from './onoff/literary-work/el-odio.literary-work.mock';
+import { elTratadoDeLosPlaceresLiteraryWorkMock } from './onoff/literary-work/el-tratado-de-los-placeres.literary-work.mock';
+import { geometriaLiteraryWorkMock } from './onoff/literary-work/geometria.literary-work.mock';
+import { lasDosAntorchasLiteraryWorkMock } from './onoff/literary-work/las-dos-antorchas.literary-work.mock';
+import { lasEscalerasLiteraryWorkMock } from './onoff/literary-work/las-escaleras.literary-work.mock';
+import { losPeldanosLiteraryWorkMock } from './onoff/literary-work/los-peldanos.literary-work.mock';
+import { neronLiteraryWorkMock } from './onoff/literary-work/neron.literary-work.mock';
+import { palacioNueveFronterasLiteraryWorkMock } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.mock';
 
 // Deriva el teaser desde la obra completa: conserva los campos de la vista base, reemplaza los autores
 // por su variante AuthorTeaser y expone la primera sección como `teaserSection` (el teaser de

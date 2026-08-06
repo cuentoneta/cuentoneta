@@ -1,17 +1,5 @@
 import type { Story } from '@models/story.model';
 import { elOdioRawStory } from './story/el-odio.story.raw.mock';
-import { elOdioRawLiteraryWork } from './literary-work/el-odio.literary-work.raw.mock';
-import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
-import { createAttributedText } from '@models/attributed-text.model';
-import { createLiteraryWorkSection } from '@models/literary-work-section.model';
-import { createSectionTitle } from '@models/section-title.model';
-import { createMarkdown } from '@models/markdown.model';
-import { deriveSectionReadingTime } from '@models/reading-time.model';
-import { createIsoDateTime } from '@utils/date.utils';
-import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-import elOdioMdBody from './literary-work/el-odio.md?raw';
-import elOdioEditorialNoteMd from './literary-work/el-odio.editorial-note.md?raw';
-import { elOdioEpigraphReference, elOdioEpigraphText, elOdioSectionTitle } from './literary-work/el-odio.epigraph';
 import { authorMock } from '../author.mock';
 import { toDomainTags } from '../onoff-tags.mock';
 
@@ -280,34 +268,3 @@ export const elOdioStoryMock: Story = {
 		},
 	],
 };
-
-const elOdioBody = createMarkdown(elOdioMdBody);
-
-export const elOdioEpigraphMock = createAttributedText({
-	text: markdownToSanitizedHtml(createMarkdown(elOdioEpigraphText)),
-	reference: markdownToSanitizedHtml(createMarkdown(elOdioEpigraphReference)),
-});
-
-export const elOdioLiteraryWorkMock: LiteraryWork = createLiteraryWork({
-	_id: 'onoff-literary-work-el-odio',
-	slug: elOdioStoryMock.slug,
-	title: elOdioStoryMock.title,
-	authors: [elOdioStoryMock.author],
-	coverImage: elOdioStoryMock.coverImage,
-	content: [
-		createLiteraryWorkSection({
-			position: 0,
-			title: createSectionTitle(elOdioSectionTitle),
-			epigraphs: [elOdioEpigraphMock],
-			bodyHtml: markdownToSanitizedHtml(elOdioBody),
-			readingTime: deriveSectionReadingTime(elOdioBody),
-		}),
-	],
-	mediaSources: [],
-	resources: elOdioStoryMock.resources,
-	badLanguage: elOdioStoryMock.badLanguage,
-	tags: toDomainTags(elOdioRawLiteraryWork.tags),
-	originalPublication: elOdioStoryMock.originalPublication,
-	editorialNote: markdownToSanitizedHtml(createMarkdown(elOdioEditorialNoteMd)),
-	publishedAt: createIsoDateTime(elOdioStoryMock.publishedAt),
-});
