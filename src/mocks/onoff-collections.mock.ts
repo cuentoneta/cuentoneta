@@ -9,8 +9,8 @@ import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
-import geometriasDescriptionMd from './onoff/geometrias-del-desvelo.collection.md?raw';
-import inventarioDescriptionMd from './onoff/inventario-de-las-pasiones.collection.md?raw';
+import geometriasDescriptionMd from './onoff/collection/geometrias-del-desvelo.collection.md?raw';
+import inventarioDescriptionMd from './onoff/collection/inventario-de-las-pasiones.collection.md?raw';
 import { onoffMediaMock } from './onoff-media.mock';
 import {
 	elOdioLiteraryWorkTeaserMock,
