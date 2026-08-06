@@ -53,25 +53,53 @@ interface CreateCollectionOptions {
  *
  * `count` se deriva y no se recibe, lo que descarta que discrepe del número real de obras **mientras
  * la query no acote `literaryWorks`**. Si el listado se pagina, el total tiene que entrar como dato
- * y esta derivación deja de ser válida. La vista de teaser no pasa por acá —no transporta obras, así
- * que no puede sostener la invariante—: la construye el mapper como proyección, igual que
- * `LiteraryWorkTeaser`.
+ * y esta derivación deja de ser válida. La vista de teaser tiene su propia factory, porque no
+ * transporta obras y no puede sostener esa invariante de la misma forma.
  */
 export function createCollection(options: CreateCollectionOptions): Collection {
-	if (options.title.trim() === '') {
-		throw new Error(`Collection inválida: título vacío (slug "${options.slug}")`);
-	}
+	assertShared(options);
 	if (options.literaryWorks.length === 0) {
 		throw new Error(`Collection inválida: sin obras literarias (slug "${options.slug}")`);
-	}
-	// La tupla de tres solo garantiza el largo en compilación, y el abanico se va a construir desde
-	// GROQ, donde un `sample` de dos portadas encaja igual.
-	if (options.imagery.kind === 'sample' && options.imagery.images.length !== 3) {
-		throw new Error(`Collection inválida: el abanico de portadas necesita tres (slug "${options.slug}")`);
 	}
 	return Object.freeze({
 		...options,
 		slug: createSlug(options.slug),
 		count: options.literaryWorks.length,
 	});
+}
+
+interface CreateCollectionTeaserOptions extends Omit<CreateCollectionOptions, 'literaryWorks'> {
+	count: number;
+}
+
+/**
+ * Construye la vista de teaser, que muestra una colección sin transportar sus obras.
+ *
+ * Recibe `count` en vez de derivarlo porque no tiene de qué derivarlo, y exige que sea al menos uno:
+ * es la misma invariante que `createCollection` expresa como "al menos una obra", traducida a lo
+ * único que el teaser sí transporta. Sin la factory, cada productor de teasers tendría que recordar
+ * esa regla, y perderla sería silencioso.
+ */
+export function createCollectionTeaser(options: CreateCollectionTeaserOptions): CollectionTeaser {
+	assertShared(options);
+	if (options.count < 1) {
+		throw new Error(`CollectionTeaser inválido: sin obras literarias (slug "${options.slug}")`);
+	}
+	return Object.freeze({
+		...options,
+		slug: createSlug(options.slug),
+		literaryWorks: [],
+	});
+}
+
+// Lo que las dos vistas validan igual, porque no depende de las obras.
+function assertShared(options: { slug: string; title: string; imagery: CollectionImagery }): void {
+	if (options.title.trim() === '') {
+		throw new Error(`Collection inválida: título vacío (slug "${options.slug}")`);
+	}
+	// La tupla de tres solo garantiza el largo en compilación, y el abanico se va a construir desde
+	// GROQ, donde un `sample` de dos portadas encaja igual.
+	if (options.imagery.kind === 'sample' && options.imagery.images.length !== 3) {
+		throw new Error(`Collection inválida: el abanico de portadas necesita tres (slug "${options.slug}")`);
+	}
 }
