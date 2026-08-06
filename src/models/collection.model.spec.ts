@@ -1,4 +1,4 @@
-import { createCollection, type CollectionImagery } from './collection.model';
+import { createCollection, createCollectionTeaser, type CollectionImagery } from './collection.model';
 import { geometriasDelDesveloCollectionMock } from '@mocks/onoff-collections.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 
@@ -55,7 +55,9 @@ describe('createCollection', () => {
 	// factory normalizara, reordenara o colapsara la unión, comparar contra la misma referencia no lo
 	// detectaría.
 	it('preserves both branches of imagery untouched', () => {
-		const covers = canon.literaryWorks.map((work) => work.coverImage);
+		// Las tres primeras, no todas: con una cuarta obra en el canon el abanico no crecería y la
+		// comparación fallaría sin que nada estuviera mal.
+		const covers = canon.literaryWorks.slice(0, 3).map((work) => work.coverImage);
 		const sample: CollectionImagery = { kind: 'sample', images: [covers[0] ?? '', covers[1] ?? '', covers[2] ?? ''] };
 
 		const representative = createCollection(buildOptions()).imagery;
@@ -91,5 +93,46 @@ describe('createCollection', () => {
 		expect(collection.tags).toEqual(options.tags);
 		expect(collection.mediaSources).toEqual(options.mediaSources);
 		expect(collection.description).toEqual(options.description);
+	});
+});
+
+describe('createCollectionTeaser', () => {
+	function buildTeaserOptions(overrides: Partial<Parameters<typeof createCollectionTeaser>[0]> = {}) {
+		const { literaryWorks, ...shared } = buildOptions();
+		return { ...shared, count: literaryWorks.length, ...overrides };
+	}
+
+	it('builds a frozen teaser with a branded slug', () => {
+		const teaser = createCollectionTeaser(buildTeaserOptions());
+
+		expect(teaser.slug).toBe(canon.slug);
+		expect(teaser.count).toBe(canon.literaryWorks.length);
+		expect(Object.isFrozen(teaser)).toBe(true);
+	});
+
+	// Lo que distingue al teaser del agregado: muestra la colección sin transportar sus obras.
+	it('carries no literary works', () => {
+		expect(createCollectionTeaser(buildTeaserOptions()).literaryWorks).toEqual([]);
+	});
+
+	// Es la invariante "al menos una obra" expresada sobre lo único que el teaser sí transporta.
+	it('rejects a teaser without works', () => {
+		expect(() => createCollectionTeaser(buildTeaserOptions({ count: 0 }))).toThrow(/sin obras literarias/);
+	});
+
+	it('rejects a teaser without a title', () => {
+		expect(() => createCollectionTeaser(buildTeaserOptions({ title: '   ' }))).toThrow(/título vacío/);
+	});
+
+	it('rejects a sample of imagery without three covers', () => {
+		const twoCovers = { kind: 'sample', images: ['a.png', 'b.png'] } as unknown as CollectionImagery;
+
+		expect(() => createCollectionTeaser(buildTeaserOptions({ imagery: twoCovers }))).toThrow(/abanico de portadas/);
+	});
+
+	it('delegates slug validation to the value object', () => {
+		expect(() => createCollectionTeaser(buildTeaserOptions({ slug: 'Geometrías Del Desvelo' }))).toThrow(
+			/Slug inválido/,
+		);
 	});
 });
