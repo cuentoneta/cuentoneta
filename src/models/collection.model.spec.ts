@@ -1,21 +1,22 @@
 import { createCollection, type CollectionImagery } from './collection.model';
-import { createSanitizedHtml } from './sanitized-html.model';
+import { geometriasDelDesveloCollectionMock } from '@mocks/onoff-collections.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
-import { onoffTagsMock } from '@mocks/onoff-tags.mock';
 
-const representative: CollectionImagery = { kind: 'representative', image: 'https://cdn/portada.webp' };
+// "Geometrías del desvelo" del canon de Onoff: la colección con portada editorial propia. Se
+// descompone en las opciones que la construyeron, en vez de inventar una colección de prueba.
+const canon = geometriasDelDesveloCollectionMock;
 
 function buildOptions(overrides: Partial<Parameters<typeof createCollection>[0]> = {}) {
 	return {
-		_id: 'collection-1',
-		slug: 'la-coleccion',
-		title: 'La colección',
-		description: createSanitizedHtml('<p>Una colección.</p>'),
-		imagery: representative,
-		tags: onoffTagsMock.slice(0, 2),
-		config: { showAuthors: true },
-		mediaSources: [],
-		literaryWorks: onoffLiteraryWorkTeasersMock.slice(0, 3),
+		_id: canon._id,
+		slug: canon.slug,
+		title: canon.title,
+		description: canon.description,
+		imagery: canon.imagery,
+		tags: canon.tags,
+		config: canon.config,
+		mediaSources: canon.mediaSources,
+		literaryWorks: canon.literaryWorks,
 		...overrides,
 	};
 }
@@ -24,8 +25,8 @@ describe('createCollection', () => {
 	it('builds a frozen aggregate with a branded slug', () => {
 		const collection = createCollection(buildOptions());
 
-		expect(collection.slug).toBe('la-coleccion');
-		expect(collection.title).toBe('La colección');
+		expect(collection.slug).toBe('geometrias-del-desvelo');
+		expect(collection.title).toBe('Geometrías del desvelo');
 		expect(Object.isFrozen(collection)).toBe(true);
 	});
 
@@ -47,16 +48,14 @@ describe('createCollection', () => {
 
 	// El formato del slug lo valida el value object, no la factory.
 	it('delegates slug validation to the value object', () => {
-		expect(() => createCollection(buildOptions({ slug: 'La Colección' }))).toThrow(/Slug inválido/);
+		expect(() => createCollection(buildOptions({ slug: 'Geometrías Del Desvelo' }))).toThrow(/Slug inválido/);
 	});
 
 	it('preserves both branches of imagery untouched', () => {
-		const sample: CollectionImagery = {
-			kind: 'sample',
-			images: ['https://cdn/a.webp', 'https://cdn/b.webp', 'https://cdn/c.webp'],
-		};
+		const [first, second, third] = canon.literaryWorks.map((work) => work.coverImage);
+		const sample: CollectionImagery = { kind: 'sample', images: [first ?? '', second ?? '', third ?? ''] };
 
-		expect(createCollection(buildOptions()).imagery).toEqual(representative);
+		expect(createCollection(buildOptions()).imagery).toEqual(canon.imagery);
 		expect(createCollection(buildOptions({ imagery: sample })).imagery).toEqual(sample);
 	});
 
