@@ -1,6 +1,6 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { cuentoRawTag, absurdoRawTag, surrealismoRawTag } from '../onoff-raw-tags.mock';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import { cuentoRawTag, absurdoRawTag, surrealismoRawTag } from '../../onoff-raw-tags.mock';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 import losPeldanosMdBody from './los-peldanos.md?raw';
 import losPeldanosEditorialNoteMd from './los-peldanos.editorial-note.md?raw';
 

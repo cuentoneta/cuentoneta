@@ -1,14 +1,14 @@
 import type { Story } from '@models/story.model';
 import { lasEscalerasRawStory } from './story/las-escaleras.story.raw.mock';
-import { lasEscalerasRawLiteraryWork } from './las-escaleras.literary-work.raw.mock';
+import { lasEscalerasRawLiteraryWork } from './literary-work/las-escaleras.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
 import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-import lasEscalerasMdBody from './las-escaleras.md?raw';
-import lasEscalerasEditorialNoteMd from './las-escaleras.editorial-note.md?raw';
+import lasEscalerasMdBody from './literary-work/las-escaleras.md?raw';
+import lasEscalerasEditorialNoteMd from './literary-work/las-escaleras.editorial-note.md?raw';
 import { authorMock } from '../author.mock';
 import { toDomainTags } from '../onoff-tags.mock';
 

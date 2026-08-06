@@ -1,6 +1,6 @@
 import type { Story } from '@models/story.model';
 import { elOdioRawStory } from './story/el-odio.story.raw.mock';
-import { elOdioRawLiteraryWork } from './el-odio.literary-work.raw.mock';
+import { elOdioRawLiteraryWork } from './literary-work/el-odio.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createAttributedText } from '@models/attributed-text.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
@@ -9,9 +9,9 @@ import { createMarkdown } from '@models/markdown.model';
 import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-import elOdioMdBody from './el-odio.md?raw';
-import elOdioEditorialNoteMd from './el-odio.editorial-note.md?raw';
-import { elOdioEpigraphReference, elOdioEpigraphText, elOdioSectionTitle } from './el-odio.epigraph';
+import elOdioMdBody from './literary-work/el-odio.md?raw';
+import elOdioEditorialNoteMd from './literary-work/el-odio.editorial-note.md?raw';
+import { elOdioEpigraphReference, elOdioEpigraphText, elOdioSectionTitle } from './literary-work/el-odio.epigraph';
 import { authorMock } from '../author.mock';
 import { toDomainTags } from '../onoff-tags.mock';
 

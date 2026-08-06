@@ -1,13 +1,13 @@
 import type { Story } from '@models/story.model';
 import { neronRawStory } from './story/neron.story.raw.mock';
-import { neronRawLiteraryWork } from './neron.literary-work.raw.mock';
+import { neronRawLiteraryWork } from './literary-work/neron.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
 import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-import neronMdBody from './neron.md?raw';
+import neronMdBody from './literary-work/neron.md?raw';
 import { authorMock } from '../author.mock';
 import { toDomainTags } from '../onoff-tags.mock';
 

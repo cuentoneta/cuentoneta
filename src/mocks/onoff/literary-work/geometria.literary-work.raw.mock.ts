@@ -1,10 +1,10 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
-import { cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag } from '../onoff-raw-tags.mock';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
+import { cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag } from '../../onoff-raw-tags.mock';
 import geometriaMdBody from './geometria.md?raw';
 import geometriaEditorialNoteMd from './geometria.editorial-note.md?raw';
 import { geometriaEpigraphReference, geometriaEpigraphText, geometriaSectionTitle } from './geometria.epigraph';
-import { geometriaRawMediaSources } from './media/geometria.media.raw.mock';
+import { geometriaRawMediaSources } from '../media/geometria.media.raw.mock';
 
 export const geometriaRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'onoff-literary-work-geometria',

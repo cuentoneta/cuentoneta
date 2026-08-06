@@ -1,6 +1,6 @@
 import type { Story } from '@models/story.model';
 import { elPalacioRawStory } from './story/el-palacio-de-las-nueve-fronteras.story.raw.mock';
-import { palacioNueveFronterasRawLiteraryWork } from './el-palacio-de-las-nueve-fronteras.literary-work.raw.mock';
+import { palacioNueveFronterasRawLiteraryWork } from './literary-work/el-palacio-de-las-nueve-fronteras.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createAttributedText } from '@models/attributed-text.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
@@ -9,13 +9,13 @@ import { createMarkdown } from '@models/markdown.model';
 import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-import palacioNueveFronterasMdBody from './el-palacio-de-las-nueve-fronteras.md?raw';
-import elPalacioDeLasNueveFronterasEditorialNoteMd from './el-palacio-de-las-nueve-fronteras.editorial-note.md?raw';
+import palacioNueveFronterasMdBody from './literary-work/el-palacio-de-las-nueve-fronteras.md?raw';
+import elPalacioDeLasNueveFronterasEditorialNoteMd from './literary-work/el-palacio-de-las-nueve-fronteras.editorial-note.md?raw';
 import {
 	palacioNueveFronterasEpigraphReference,
 	palacioNueveFronterasEpigraphText,
 	palacioNueveFronterasSectionTitle,
-} from './el-palacio-de-las-nueve-fronteras.epigraph';
+} from './literary-work/el-palacio-de-las-nueve-fronteras.epigraph';
 import { authorMock } from '../author.mock';
 import { toDomainTags } from '../onoff-tags.mock';
 

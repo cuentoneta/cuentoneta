@@ -7,14 +7,18 @@ import { createMarkdown } from '@models/markdown.model';
 import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-import geometriaMdBody from './geometria.md?raw';
-import geometriaEditorialNoteMd from './geometria.editorial-note.md?raw';
-import { geometriaEpigraphReference, geometriaEpigraphText, geometriaSectionTitle } from './geometria.epigraph';
+import geometriaMdBody from './literary-work/geometria.md?raw';
+import geometriaEditorialNoteMd from './literary-work/geometria.editorial-note.md?raw';
+import {
+	geometriaEpigraphReference,
+	geometriaEpigraphText,
+	geometriaSectionTitle,
+} from './literary-work/geometria.epigraph';
 
 import { authorMock } from '../author.mock';
 import { toDomainTags } from '../onoff-tags.mock';
 import { geometriaRawStory } from './story/geometria.story.raw.mock';
-import { geometriaRawLiteraryWork } from './geometria.literary-work.raw.mock';
+import { geometriaRawLiteraryWork } from './literary-work/geometria.literary-work.raw.mock';
 import { geometriaMediaMock } from './media/geometria.media.mock';
 
 export const geometriaStoryMock: Story = {

@@ -1,14 +1,14 @@
 import type { Story } from '@models/story.model';
 import { lasDosAntorchasRawStory } from './story/las-dos-antorchas.story.raw.mock';
-import { lasDosAntorchasRawLiteraryWork } from './las-dos-antorchas.literary-work.raw.mock';
+import { lasDosAntorchasRawLiteraryWork } from './literary-work/las-dos-antorchas.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
 import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-import lasDosAntorchasMdBody from './las-dos-antorchas.md?raw';
-import lasDosAntorchasEditorialNoteMd from './las-dos-antorchas.editorial-note.md?raw';
+import lasDosAntorchasMdBody from './literary-work/las-dos-antorchas.md?raw';
+import lasDosAntorchasEditorialNoteMd from './literary-work/las-dos-antorchas.editorial-note.md?raw';
 import { authorMock } from '../author.mock';
 import { toDomainTags } from '../onoff-tags.mock';
 
