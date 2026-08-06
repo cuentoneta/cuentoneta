@@ -1,18 +1,14 @@
 import { defineQuery } from 'groq';
 
-// Dos queries para dos vistas: la colección por slug transporta sus obras, el listado no. Esa es la
-// diferencia entre el agregado y su teaser, y por eso el listado no es el mismo dato acotado sino
-// otra proyección.
+// La colección con todas sus obras, para la página de detalle.
 //
-// `description` va sin `coalesce` a string vacío: su destino es un `SanitizedHtml`, cuya factory
-// rechaza el contenido vacío. La ausencia se representa `null` y el repository decide qué hacer.
+// De cada obra se proyecta la sección de apertura, que es lo que el teaser transporta, pero sin sus
+// epígrafes: la tarjeta muestra el cuerpo y nada más los lee. Traerlos sería payload y saneado por
+// obra que nadie consume.
 //
-// En la query por slug `literaryWorks` no se acota. Es una precondición de la invariante `count` del
-// agregado, que la factory deriva de las obras que transporta: si se acotara, el total pasaría a ser
-// silenciosamente el tamaño de la página. Por lo mismo `count` no se proyecta ahí — sería un segundo
-// origen de verdad para un dato que el dominio ya deriva. En el listado sí se proyecta, porque el
-// teaser no lleva obras de las que derivarlo.
-
+// `literaryWorks` no se acota a propósito: el agregado deriva su total de las obras que transporta,
+// así que un slice lo volvería, en silencio, el tamaño de la página. Por lo mismo no se proyecta un
+// `count`, que sería un segundo origen de verdad.
 export const collectionBySlugQuery = defineQuery(`
 *[_type == 'collection' && slug.current == $slug && !(_id in path('drafts.**'))]
 {
@@ -65,20 +61,17 @@ export const collectionBySlugQuery = defineQuery(`
         'teaserSection': content[0...1]{
             _key,
             title,
-            'epigraphs': coalesce(epigraphs[]{ text, reference }, []),
             body,
             readingTime
         }
     }, [])
 }[0]`);
 
-// El listado no dereferencia `literaryWorks[]->`: sirve la vista de teaser, que muestra la colección
-// sin transportar sus obras. `count` sale de contar referencias sin resolverlas, que es lo que el
-// agregado no puede derivar cuando no las lleva.
+// El catálogo como teasers: cada colección sin sus obras.
 //
-// `literaryWorkCoverImages` sí dereferencia, pero solo la portada de las tres primeras obras: sin eso
-// la rama `sample` de `imagery` no se puede construir y las colecciones sin imagen destacada —la
-// mitad de los casos, porque el campo es opcional— quedarían sin portada.
+// `count` cuenta referencias sin resolverlas, porque el teaser no lleva obras de las que derivarlo.
+// Lo único que dereferencia es la portada de las tres primeras: sin ellas la rama `sample` de
+// `imagery` no se puede construir, y es la mitad de los casos porque la imagen destacada es opcional.
 export const collectionsQuery = defineQuery(`
 *[_type == 'collection' && !(_id in path('drafts.**'))]
 | order(title asc)

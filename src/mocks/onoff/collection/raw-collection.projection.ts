@@ -29,7 +29,14 @@ function toCollectionWork(work: RawLiteraryWork): RawCollectionWork {
 			diedOn,
 			diedOnYear,
 		})),
-		teaserSection: work.content.slice(0, 1),
+		// La sección se recorta campo por campo y no por spread: la query no proyecta los epígrafes, y
+		// copiarlos dejaría la fixture afirmando una forma que el content lake no devuelve.
+		teaserSection: work.content.slice(0, 1).map(({ _key, title, body, readingTime }) => ({
+			_key,
+			title,
+			body,
+			readingTime,
+		})),
 	};
 }
 
