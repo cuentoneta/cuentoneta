@@ -100,6 +100,7 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 | Repository de autores          | `AuthorRepository`         | `SanityAuthorRepository`         | `InMemoryAuthorRepository`         |
 | Repository de storylists       | `StorylistRepository`      | `SanityStorylistRepository`      | `InMemoryStorylistRepository`      |
 | Repository de obras literarias | `LiteraryWorkRepository`\* | `SanityLiteraryWorkRepository`\* | `InMemoryLiteraryWorkRepository`\* |
+| Repository de colecciones      | `CollectionRepository`\*   | `SanityCollectionRepository`\*   | `InMemoryCollectionRepository`\*   |
 | Service (impl. única)          | `StoryService`             | `StoryService` (mismo nombre)    | `InMemoryStoryService`             |
 
 - Prefijo **`Sanity*`** para implementaciones de repository respaldadas por Sanity/GROQ.
