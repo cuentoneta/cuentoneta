@@ -4,7 +4,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton.component';
 
 @Component({
-	selector: 'cuentoneta-collection-teaser-skeleton',
+	selector: 'cuentoneta-collection-teaser-card-skeleton',
 	imports: [SkeletonComponent, CoverImageSkeletonComponent],
 	template: `
 		<article class="flex items-start gap-5">
@@ -26,4 +26,4 @@ import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton
 		</article>
 	`,
 })
-export class CollectionTeaserSkeletonComponent {}
+export class CollectionTeaserCardSkeletonComponent {}

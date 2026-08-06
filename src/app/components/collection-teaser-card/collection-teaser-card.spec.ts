@@ -3,7 +3,7 @@ import { render, screen, within } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
 
 // Componentes
-import { CollectionTeaser } from './collection-teaser';
+import { CollectionTeaserCard } from './collection-teaser-card';
 
 // Mocks
 import { storylistTeaserRepresentativeMock, storylistTeaserSampleMock } from '@mocks/storylist.mock';
@@ -16,7 +16,7 @@ import { clearAllMocks } from '@test-utils';
 
 const collectionTeaserMock: StorylistTeaser = storylistTeaserRepresentativeMock;
 
-describe('CollectionTeaser', () => {
+describe('CollectionTeaserCard', () => {
 	const defaultProviders = [provideRouter([])];
 
 	beforeEach(() => {
@@ -26,7 +26,7 @@ describe('CollectionTeaser', () => {
 	// Pruebas de renderizado básico
 	describe('Renderizado del componente', () => {
 		it('should render the component', async () => {
-			const { container } = await render(CollectionTeaser, {
+			const { container } = await render(CollectionTeaserCard, {
 				inputs: { collection: collectionTeaserMock },
 				providers: defaultProviders,
 			});
@@ -34,7 +34,7 @@ describe('CollectionTeaser', () => {
 		});
 
 		it('should render an article element', async () => {
-			await render(CollectionTeaser, {
+			await render(CollectionTeaserCard, {
 				inputs: { collection: collectionTeaserMock },
 				providers: defaultProviders,
 			});
@@ -44,7 +44,7 @@ describe('CollectionTeaser', () => {
 		});
 
 		it('should not render link when collection is undefined', async () => {
-			await render(CollectionTeaser, {
+			await render(CollectionTeaserCard, {
 				providers: defaultProviders,
 			});
 
@@ -57,7 +57,7 @@ describe('CollectionTeaser', () => {
 	// Pruebas del enlace de navegación
 	describe('Enlace de navegación', () => {
 		it('should render a link to the storylist page', async () => {
-			await render(CollectionTeaser, {
+			await render(CollectionTeaserCard, {
 				inputs: { collection: collectionTeaserMock },
 				providers: defaultProviders,
 			});
@@ -67,7 +67,7 @@ describe('CollectionTeaser', () => {
 		});
 
 		it('should have correct routerLink with storylist slug', async () => {
-			await render(CollectionTeaser, {
+			await render(CollectionTeaserCard, {
 				inputs: { collection: collectionTeaserMock },
 				providers: defaultProviders,
 			});
@@ -80,7 +80,7 @@ describe('CollectionTeaser', () => {
 	// Pruebas del cover de la colección
 	describe('Imagen de la colección', () => {
 		it('should render the cover image', async () => {
-			await render(CollectionTeaser, {
+			await render(CollectionTeaserCard, {
 				inputs: { collection: collectionTeaserMock },
 				providers: defaultProviders,
 			});
@@ -89,7 +89,7 @@ describe('CollectionTeaser', () => {
 		});
 
 		it('should render a decorative cover with empty alt', async () => {
-			await render(CollectionTeaser, {
+			await render(CollectionTeaserCard, {
 				inputs: { collection: collectionTeaserMock },
 				providers: defaultProviders,
 			});
@@ -101,7 +101,7 @@ describe('CollectionTeaser', () => {
 	// Variantes del objeto de valor `imagery`
 	describe('Variante de imagery', () => {
 		it('should render a single cover for representative imagery', async () => {
-			await render(CollectionTeaser, {
+			await render(CollectionTeaserCard, {
 				inputs: { collection: storylistTeaserRepresentativeMock },
 				providers: defaultProviders,
 			});
@@ -110,7 +110,7 @@ describe('CollectionTeaser', () => {
 		});
 
 		it('should render 3 covers for sample imagery with three images', async () => {
-			await render(CollectionTeaser, {
+			await render(CollectionTeaserCard, {
 				inputs: { collection: storylistTeaserSampleMock },
 				providers: defaultProviders,
 			});
@@ -124,7 +124,7 @@ describe('CollectionTeaser', () => {
 				imagery: { kind: 'sample', images: ['assets/img/mocks/stories/el-odio.png', '', ''] },
 			};
 
-			await render(CollectionTeaser, {
+			await render(CollectionTeaserCard, {
 				inputs: { collection: teaser },
 				providers: defaultProviders,
 			});
@@ -137,7 +137,7 @@ describe('CollectionTeaser', () => {
 	// Pruebas del título
 	describe('Título de la colección', () => {
 		it('should display the collection title', async () => {
-			await render(CollectionTeaser, {
+			await render(CollectionTeaserCard, {
 				inputs: { collection: collectionTeaserMock },
 				providers: defaultProviders,
 			});
@@ -146,7 +146,7 @@ describe('CollectionTeaser', () => {
 		});
 
 		it('should render title inside the link', async () => {
-			await render(CollectionTeaser, {
+			await render(CollectionTeaserCard, {
 				inputs: { collection: collectionTeaserMock },
 				providers: defaultProviders,
 			});
@@ -159,7 +159,7 @@ describe('CollectionTeaser', () => {
 	// Pruebas del footer con tags y contador
 	describe('Footer con tags y contador de historias', () => {
 		it('should display the story count', async () => {
-			await render(CollectionTeaser, {
+			await render(CollectionTeaserCard, {
 				inputs: { collection: collectionTeaserMock },
 				providers: defaultProviders,
 			});
@@ -168,7 +168,7 @@ describe('CollectionTeaser', () => {
 		});
 
 		it('should display the tags', async () => {
-			await render(CollectionTeaser, {
+			await render(CollectionTeaserCard, {
 				inputs: { collection: collectionTeaserMock },
 				providers: defaultProviders,
 			});
@@ -184,7 +184,7 @@ describe('CollectionTeaser', () => {
 	// Pruebas de inputs
 	describe('Inputs del componente', () => {
 		it('should accept a collection input', async () => {
-			const { fixture } = await render(CollectionTeaser, {
+			const { fixture } = await render(CollectionTeaserCard, {
 				inputs: { collection: collectionTeaserMock },
 				providers: defaultProviders,
 			});
@@ -193,7 +193,7 @@ describe('CollectionTeaser', () => {
 		});
 
 		it('should have undefined collection by default', async () => {
-			const { fixture } = await render(CollectionTeaser, {
+			const { fixture } = await render(CollectionTeaserCard, {
 				providers: defaultProviders,
 			});
 
@@ -201,7 +201,7 @@ describe('CollectionTeaser', () => {
 		});
 
 		it('should update when collection input changes', async () => {
-			const { fixture } = await render(CollectionTeaser, {
+			const { fixture } = await render(CollectionTeaserCard, {
 				inputs: { collection: collectionTeaserMock },
 				providers: defaultProviders,
 			});
@@ -222,7 +222,7 @@ describe('CollectionTeaser', () => {
 	// Pruebas de accesibilidad
 	describe('Accesibilidad', () => {
 		it('should have accessible link', async () => {
-			await render(CollectionTeaser, {
+			await render(CollectionTeaserCard, {
 				inputs: { collection: collectionTeaserMock },
 				providers: defaultProviders,
 			});
@@ -232,7 +232,7 @@ describe('CollectionTeaser', () => {
 		});
 
 		it('should have a decorative cover and the link named by the collection title', async () => {
-			await render(CollectionTeaser, {
+			await render(CollectionTeaserCard, {
 				inputs: { collection: collectionTeaserMock },
 				providers: defaultProviders,
 			});
@@ -244,7 +244,7 @@ describe('CollectionTeaser', () => {
 		});
 
 		it('should use semantic article element', async () => {
-			await render(CollectionTeaser, {
+			await render(CollectionTeaserCard, {
 				inputs: { collection: collectionTeaserMock },
 				providers: defaultProviders,
 			});
