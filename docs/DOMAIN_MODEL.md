@@ -70,6 +70,7 @@ POST /api/story/most-read          # Obtener historias más leídas
 **Agregados Raíz:**
 
 - `Storylist` - Colecciones de historias
+- `Collection` - Colecciones de obras literarias (entidad paralela a `Storylist`, que la reemplaza). Hoy existe solo como document type del Studio: el modelo de dominio, el backend y el traspaso del contenido son trabajo posterior, y `Storylist` sigue vigente hasta que se complete
 
 **Responsabilidades:**
 
@@ -685,20 +686,20 @@ El **Lenguaje Ubicuo** es el lenguaje estructurado alrededor del modelo de domin
 
 ### Términos Clave
 
-| Término                  | Definición                                                                                                    | Contexto              |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------- | --------------------- |
-| **Historia**             | Obra literaria curada y publicada en la plataforma                                                            | Catálogo de Contenido |
-| **Obra literaria**       | Obra con secciones/capítulos (`LiteraryWork`), paralela a Historia                                            | Catálogo de Contenido |
-| **Sección / Capítulo**   | Unidad de contenido de una obra literaria: epígrafes + cuerpo Markdown saneado                                | Catálogo de Contenido |
-| **Anónimo**              | Author real del catálogo (slug `anonimo`) que representa la obra sin autoría atribuida (policy `isAnonymous`) | Catálogo de Contenido |
-| **Slug**                 | Identificador amigable, único e inmutable basado en el título                                                 | Todos                 |
-| **Epígrafe**             | Cita literaria que precede al texto principal                                                                 | Catálogo de Contenido |
-| **Teaser**               | Vista reducida de una entidad para listados y navegación                                                      | Todos                 |
-| **Colección**            | Agrupación temática u editorial de historias                                                                  | Curación              |
-| **Colaborador**          | Persona que contribuye al proyecto en algún rol                                                               | Administración        |
-| **Recurso**              | Enlace externo a información complementaria                                                                   | Catálogo de Contenido |
-| **Campaña de Contenido** | Promoción temporal de contenido con variantes responsivas                                                     | Página de Inicio      |
-| **Curaduría**            | Proceso de seleccionar, ordenar y presentar historias                                                         | Curación              |
+| Término                  | Definición                                                                                                        | Contexto              |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------- | --------------------- |
+| **Historia**             | Obra literaria curada y publicada en la plataforma                                                                | Catálogo de Contenido |
+| **Obra literaria**       | Obra con secciones/capítulos (`LiteraryWork`), paralela a Historia                                                | Catálogo de Contenido |
+| **Sección / Capítulo**   | Unidad de contenido de una obra literaria: epígrafes + cuerpo Markdown saneado                                    | Catálogo de Contenido |
+| **Anónimo**              | Author real del catálogo (slug `anonimo`) que representa la obra sin autoría atribuida (policy `isAnonymous`)     | Catálogo de Contenido |
+| **Slug**                 | Identificador amigable, único e inmutable basado en el título                                                     | Todos                 |
+| **Epígrafe**             | Cita literaria que precede al texto principal                                                                     | Catálogo de Contenido |
+| **Teaser**               | Vista reducida de una entidad para listados y navegación                                                          | Todos                 |
+| **Colección**            | Agrupación temática u editorial de historias (`Storylist`) o de obras literarias (`Collection`, que la reemplaza) | Curación              |
+| **Colaborador**          | Persona que contribuye al proyecto en algún rol                                                                   | Administración        |
+| **Recurso**              | Enlace externo a información complementaria                                                                       | Catálogo de Contenido |
+| **Campaña de Contenido** | Promoción temporal de contenido con variantes responsivas                                                         | Página de Inicio      |
+| **Curaduría**            | Proceso de seleccionar, ordenar y presentar historias                                                             | Curación              |
 
 ---
 
