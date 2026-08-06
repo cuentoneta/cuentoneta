@@ -90,7 +90,9 @@ describe('onoff raw collections mock', () => {
 	// El borrador se distingue del dato mal curado en que lo único ausente es el reading time: si le
 	// faltara algo más, el caso del repository dejaría de probar la rama que dice probar.
 	it('keeps the draft-like scenario otherwise complete', () => {
-		expect(draftLikeRawCollection.literaryWorks).toHaveLength(geometriasDelDesveloRawCollection.literaryWorks.length);
+		expect(draftLikeRawCollection.literaryWorks.map((work) => work._id)).toEqual(
+			geometriasDelDesveloRawCollection.literaryWorks.map((work) => work._id),
+		);
 		expect(draftLikeRawCollection.literaryWorks[0]?.teaserSection).not.toEqual([]);
 		expect(draftLikeRawCollection.literaryWorks[0]?.teaserSection[0]?.readingTime).not.toBeNull();
 		expect(draftLikeRawCollection.description).not.toBe('');

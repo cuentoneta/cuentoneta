@@ -35,8 +35,8 @@ beforeEach(() => {
 	clearAllMocks();
 });
 
-// Con tres métodos sobre la misma clase, un cruce de queries devolvería datos de la forma equivocada
-// sin que ninguna aserción sobre el resultado lo note.
+// Un cruce de queries devolvería datos de la forma equivocada sin que ninguna aserción sobre el
+// resultado lo note: las dos proyectan la misma entidad.
 describe('SanityCollectionRepository query selection', () => {
 	it('asks for the by-slug query, passing the slug as a parameter', async () => {
 		const { repository, fetch } = repoWith(withFeaturedImage);
@@ -112,9 +112,9 @@ describe('SanityCollectionRepository.fetchBySlug', () => {
 	it('copies the persisted reading time of each work', async () => {
 		const collection = await repoReturning(withFeaturedImage).fetchBySlug('geometrias-del-desvelo');
 
-		collection?.literaryWorks.forEach((work, index) => {
-			expect(work.totalReadingTime).toBe(withFeaturedImage.literaryWorks[index]?.totalReadingTime);
-		});
+		expect(collection?.literaryWorks.map((work) => work.totalReadingTime)).toEqual(
+			withFeaturedImage.literaryWorks.map((work) => work.totalReadingTime),
+		);
 	});
 
 	// El opcional del tipo solo se da en borradores, que el sitio público no sirve: no es un dato mal
@@ -186,10 +186,8 @@ describe('SanityCollectionRepository.fetchAll', () => {
 	it('carries the count but no works', async () => {
 		const teasers = await repoReturning(onoffRawCollectionTeasersMock).fetchAll();
 
-		teasers.forEach((teaser, index) => {
-			expect(teaser.literaryWorks).toEqual([]);
-			expect(teaser.count).toBe(onoffRawCollectionTeasersMock[index]?.count);
-		});
+		expect(teasers.map((teaser) => teaser.literaryWorks)).toEqual(onoffRawCollectionTeasersMock.map(() => []));
+		expect(teasers.map((teaser) => teaser.count)).toEqual(onoffRawCollectionTeasersMock.map((teaser) => teaser.count));
 	});
 
 	it('resolves both branches of imagery from the projected covers', async () => {
