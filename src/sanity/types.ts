@@ -385,6 +385,85 @@ export type Nationality = {
 	};
 };
 
+export type LiteraryWorkReference = {
+	_ref: string;
+	_type: 'reference';
+	_weak?: boolean;
+	[internalGroqTypeReferenceTo]?: 'literaryWork';
+};
+
+export type Collection = {
+	_id: string;
+	_type: 'collection';
+	_createdAt: string;
+	_updatedAt: string;
+	_rev: string;
+	title: string;
+	slug: Slug;
+	description: Markdown;
+	featuredImage?: {
+		asset?: SanityImageAssetReference;
+		media?: unknown;
+		hotspot?: SanityImageHotspot;
+		crop?: SanityImageCrop;
+		_type: 'image';
+	};
+	tags?: Array<
+		{
+			_key: string;
+		} & TagReference
+	>;
+	config?: {
+		showAuthors?: boolean;
+	};
+	literaryWorks?: Array<
+		{
+			_key: string;
+		} & LiteraryWorkReference
+	>;
+	mediaSources?: Array<
+		| {
+				title: string;
+				description: Markdown;
+				url: string;
+				_type: 'audioRecording';
+				_key: string;
+		  }
+		| {
+				title: string;
+				description: Markdown;
+				audioFile: AudioFile;
+				hostName: string;
+				hostAvatar?: HostAvatar;
+				date: string;
+				duration: string;
+				_type: 'spaceRecording';
+				_key: string;
+		  }
+		| {
+				title: string;
+				description: Markdown;
+				videoId: string;
+				_type: 'youTubeVideo';
+				_key: string;
+		  }
+		| {
+				title: string;
+				description: Markdown;
+				url: string;
+				_type: 'spotifyPodcastEpisode';
+				_key: string;
+		  }
+		| {
+				title: string;
+				description: Markdown;
+				url: string;
+				_type: 'pdfLink';
+				_key: string;
+		  }
+	>;
+};
+
 export type Storylist = {
 	_id: string;
 	_type: 'storylist';
@@ -694,6 +773,8 @@ export type AllSanitySchemaTypes =
 	| NationalityReference
 	| Author
 	| Nationality
+	| LiteraryWorkReference
+	| Collection
 	| Storylist
 	| ContentCampaign
 	| ContentCampaignReference
