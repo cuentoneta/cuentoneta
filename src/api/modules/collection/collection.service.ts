@@ -19,16 +19,10 @@ export async function getCollectionBySlug(
 	return collection;
 }
 
-// Los listados no tienen ausencia que traducir: una colección vacía de colecciones es un resultado
-// legítimo, no un 404.
+// El listado no tiene ausencia que traducir: un catálogo sin colecciones es un resultado legítimo, no
+// un 404. Devuelve teasers, que es la vista que la página de catálogo muestra.
 export async function getCollections(
 	repository: CollectionRepository = new SanityCollectionRepository(),
-): Promise<Collection[]> {
-	return repository.fetchAll();
-}
-
-export async function getCollectionTeasers(
-	repository: CollectionRepository = new SanityCollectionRepository(),
 ): Promise<CollectionTeaser[]> {
-	return repository.fetchTeasers();
+	return repository.fetchAll();
 }
