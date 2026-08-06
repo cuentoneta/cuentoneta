@@ -2,10 +2,14 @@ import { evaluate, parse } from 'groq-js';
 
 import { collectionBySlugQuery, collectionsQuery, collectionTeasersQuery } from './collection.query';
 
-// Los documentos son sintéticos y mínimos a propósito: el corpus de Onoff modela el **resultado** de
-// estas queries, no los documentos del content lake que las alimentan, así que no hay canon del que
-// derivar esta entrada. Cada uno trae solo los campos que el caso ejercita. Es el mismo criterio del
-// spec de la migración de borradores, que también evalúa su filtro contra documentos armados a mano.
+// Los documentos son sintéticos porque el corpus de Onoff modela el **resultado** de estas queries,
+// no los documentos del content lake que las alimentan: no hay canon del que derivar esta entrada.
+// Es el mismo criterio del spec de la migración de borradores.
+//
+// No están tipados contra los tipos de documento del typegen, así que su forma puede divergir de la
+// real sin que nada avise — `coverImage` acá es un string y en el documento es un objeto de imagen.
+// Alcanza para lo que estos casos verifican, que es el filtrado, el orden y los recortes, no el
+// contenido de los campos. La capa de documentos del corpus es trabajo aparte.
 function work(id: string, overrides: Record<string, unknown> = {}) {
 	return {
 		_id: id,
