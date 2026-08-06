@@ -7,11 +7,10 @@ import {
 	type CollectionImagery,
 	type CollectionTeaser,
 } from '@models/collection.model';
-import { createAttributedText, type AttributedText } from '@models/attributed-text.model';
 import { createLiteraryWorkSection, type LiteraryWorkSection } from '@models/literary-work-section.model';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createMarkdown } from '@models/markdown.model';
-import { createReadingTime, deriveSectionReadingTime, type ReadingTime } from '@models/reading-time.model';
+import { createReadingTime, deriveSectionReadingTime } from '@models/reading-time.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createSlug } from '@models/slug.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
@@ -27,13 +26,8 @@ import type { CollectionRepository } from './collection.repository';
 type SanityCollection = NonNullable<CollectionBySlugQueryResult>;
 type SanityCollectionWork = SanityCollection['literaryWorks'][number];
 type SanityTeaserSection = SanityCollectionWork['teaserSection'][number];
-type SanityEpigraph = SanityTeaserSection['epigraphs'][number];
 type SanityCollectionTeaser = CollectionsQueryResult[number];
 type SanityFeaturedImage = SanityCollection['featuredImage'];
-
-// Las dos vistas resuelven el abanico sobre las portadas de las mismas tres obras: es lo que la query
-// del teaser dereferencia, y acotar igual del otro lado es lo que las mantiene consistentes.
-const SAMPLE_COVER_COUNT = 3;
 
 export class SanityCollectionRepository implements CollectionRepository {
 	constructor(private readonly client: SanityClient = sanityClient) {}
@@ -66,16 +60,17 @@ export class SanityCollectionRepository implements CollectionRepository {
 	}
 
 	private mapCollection(raw: SanityCollection): Collection {
+		// Solo las tres primeras, que es exactamente lo que la query del catálogo dereferencia. Tomar de
+		// todas haría que una obra sin portada en la cuarta posición se sirviera bien acá y tumbara el
+		// catálogo entero: la misma colección, dos comportamientos.
+		const sampleCoverCount = 3;
 		const literaryWorks = raw.literaryWorks.map((work) => this.mapLiteraryWorkTeaser(work));
 		return createCollection({
 			...this.mapShared(raw),
 			imagery: this.resolveImagery(
 				raw.slug,
 				raw.featuredImage,
-				// Solo las tres primeras, que es exactamente lo que la query del teaser dereferencia. Tomar
-				// de todas haría que una obra sin portada en la cuarta posición se sirviera bien acá y
-				// tumbara el listado de teasers: la misma colección, dos comportamientos.
-				literaryWorks.slice(0, SAMPLE_COVER_COUNT).map((work) => work.coverImage),
+				literaryWorks.slice(0, sampleCoverCount).map((work) => work.coverImage),
 			),
 			literaryWorks,
 		});
@@ -108,12 +103,9 @@ export class SanityCollectionRepository implements CollectionRepository {
 		};
 	}
 
-	// Duplica deliberadamente lo que `_utils/storylist-imagery.functions.ts` resuelve para Storylist:
-	// aquel devuelve un tipo nominal distinto, su abanico sale de portadas de Story, y acá un abanico
-	// incompleto lanza en vez de rellenarse con cadenas vacías, que es lo que colaba portadas rotas.
-	//
 	// Las dos vistas le pasan las portadas de las **mismas tres** obras, para que una colección no pueda
-	// construirse por un camino y fallar por el otro.
+	// construirse por un camino y fallar por el otro. Un abanico incompleto lanza en vez de rellenarse:
+	// una portada vacía llega a la interfaz como una imagen rota.
 	private resolveImagery(slug: string, featuredImage: SanityFeaturedImage, coverUrls: string[]): CollectionImagery {
 		const image = featuredImage ? urlFor(featuredImage) : '';
 		if (image !== '') {
@@ -133,7 +125,11 @@ export class SanityCollectionRepository implements CollectionRepository {
 			// "al menos una sección" que la obra ya hace cumplir.
 			throw new MalformedCollectionError(raw.slug);
 		}
-		return {
+		const section = this.mapTeaserSection(teaserSection);
+		// Se congela como el agregado que lo contiene: el teaser no tiene factory propia —la vista de
+		// obra no la necesitó hasta ahora—, pero eso no es razón para que sea el único objeto mutable
+		// dentro de una colección congelada.
+		return Object.freeze({
 			_id: raw._id,
 			slug: createSlug(raw.slug),
 			title: raw.title,
@@ -141,39 +137,26 @@ export class SanityCollectionRepository implements CollectionRepository {
 			// En publicado el total siempre viene; la otra rama cubre el opcional del tipo, que solo se da
 			// en borradores, y ahí cae al tiempo de la sección de apertura —una cota inferior para una obra
 			// multi-sección—.
-			totalReadingTime:
-				raw.totalReadingTime !== null
-					? createReadingTime(raw.totalReadingTime)
-					: this.sectionReadingTime(teaserSection),
+			totalReadingTime: raw.totalReadingTime !== null ? createReadingTime(raw.totalReadingTime) : section.readingTime,
 			sectionCount: raw.sectionCount,
 			tags: mapTags(raw.tags),
 			mediaSources: mapMediaSources(raw.mediaSources),
 			authors: raw.authors.map(mapAuthorTeaser),
-			teaserSection: this.mapTeaserSection(teaserSection),
-		};
+			teaserSection: section,
+		});
 	}
 
+	// Sin epígrafes: la tarjeta que consume el teaser muestra el cuerpo y nadie más los lee, así que la
+	// query tampoco los trae. El campo es opcional en la sección, no un vacío que haya que rellenar.
 	private mapTeaserSection(raw: SanityTeaserSection): LiteraryWorkSection {
 		return createLiteraryWorkSection({
 			position: 0,
 			title: raw.title ? createSectionTitle(raw.title) : undefined,
-			epigraphs: raw.epigraphs.map((epigraph) => this.mapEpigraph(epigraph)),
 			bodyHtml: markdownToSanitizedHtml(createMarkdown(raw.body)),
-			readingTime: this.sectionReadingTime(raw),
-		});
-	}
-
-	// El persistido gana al derivado: el derivado es una estimación del cuerpo y el otro es el dato.
-	private sectionReadingTime(raw: SanityTeaserSection): ReadingTime {
-		return raw.readingTime !== null
-			? createReadingTime(raw.readingTime)
-			: deriveSectionReadingTime(createMarkdown(raw.body));
-	}
-
-	private mapEpigraph(raw: SanityEpigraph): AttributedText {
-		return createAttributedText({
-			text: markdownToSanitizedHtml(createMarkdown(raw.text ?? '')),
-			reference: raw.reference ? markdownToSanitizedHtml(createMarkdown(raw.reference)) : undefined,
+			readingTime:
+				raw.readingTime !== null
+					? createReadingTime(raw.readingTime)
+					: deriveSectionReadingTime(createMarkdown(raw.body)),
 		});
 	}
 }
