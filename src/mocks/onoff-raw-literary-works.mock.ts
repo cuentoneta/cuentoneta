@@ -1,12 +1,12 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { elOdioRawLiteraryWork } from './onoff/el-odio.literary-work.raw.mock';
-import { elTratadoDeLosPlaceresRawLiteraryWork } from './onoff/el-tratado-de-los-placeres.literary-work.raw.mock';
-import { geometriaRawLiteraryWork } from './onoff/geometria.literary-work.raw.mock';
-import { lasDosAntorchasRawLiteraryWork } from './onoff/las-dos-antorchas.literary-work.raw.mock';
-import { lasEscalerasRawLiteraryWork } from './onoff/las-escaleras.literary-work.raw.mock';
-import { losPeldanosRawLiteraryWork } from './onoff/los-peldanos.literary-work.raw.mock';
-import { neronRawLiteraryWork } from './onoff/neron.literary-work.raw.mock';
-import { palacioNueveFronterasRawLiteraryWork } from './onoff/el-palacio-de-las-nueve-fronteras.literary-work.raw.mock';
+import { elOdioRawLiteraryWork } from './onoff/literary-work/el-odio.literary-work.raw.mock';
+import { elTratadoDeLosPlaceresRawLiteraryWork } from './onoff/literary-work/el-tratado-de-los-placeres.literary-work.raw.mock';
+import { geometriaRawLiteraryWork } from './onoff/literary-work/geometria.literary-work.raw.mock';
+import { lasDosAntorchasRawLiteraryWork } from './onoff/literary-work/las-dos-antorchas.literary-work.raw.mock';
+import { lasEscalerasRawLiteraryWork } from './onoff/literary-work/las-escaleras.literary-work.raw.mock';
+import { losPeldanosRawLiteraryWork } from './onoff/literary-work/los-peldanos.literary-work.raw.mock';
+import { neronRawLiteraryWork } from './onoff/literary-work/neron.literary-work.raw.mock';
+import { palacioNueveFronterasRawLiteraryWork } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.raw.mock';
 
 // Corpus raw (shape crudo de Sanity, `NonNullable<LiteraryWorkBySlugQueryResult>`) de las obras
 // (ficticias) de François Onoff — contraparte cruda de `onoffLiteraryWorksMock`, en el mismo orden.

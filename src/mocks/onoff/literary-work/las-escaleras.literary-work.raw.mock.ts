@@ -1,6 +1,6 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { novelaRawTag, absurdoRawTag, alegoriaRawTag } from '../onoff-raw-tags.mock';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import { novelaRawTag, absurdoRawTag, alegoriaRawTag } from '../../onoff-raw-tags.mock';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 import lasEscalerasMdBody from './las-escaleras.md?raw';
 import lasEscalerasEditorialNoteMd from './las-escaleras.editorial-note.md?raw';
 

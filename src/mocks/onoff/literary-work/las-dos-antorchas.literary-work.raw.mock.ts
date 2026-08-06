@@ -1,6 +1,6 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { novelaRawTag, metaficcionRawTag, experimentalRawTag } from '../onoff-raw-tags.mock';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import { novelaRawTag, metaficcionRawTag, experimentalRawTag } from '../../onoff-raw-tags.mock';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 import lasDosAntorchasMdBody from './las-dos-antorchas.md?raw';
 import lasDosAntorchasEditorialNoteMd from './las-dos-antorchas.editorial-note.md?raw';
 

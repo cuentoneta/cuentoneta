@@ -1,55 +1,14 @@
-import type { Story } from '@models/story.model';
-import { elPalacioRawStory } from './el-palacio-de-las-nueve-fronteras.raw.mock';
-import { palacioNueveFronterasRawLiteraryWork } from './el-palacio-de-las-nueve-fronteras.literary-work.raw.mock';
-import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
-import { createAttributedText } from '@models/attributed-text.model';
-import { createLiteraryWorkSection } from '@models/literary-work-section.model';
-import { createSectionTitle } from '@models/section-title.model';
-import { createMarkdown } from '@models/markdown.model';
-import { deriveSectionReadingTime } from '@models/reading-time.model';
-import { createIsoDateTime } from '@utils/date.utils';
-import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-import palacioNueveFronterasMdBody from './el-palacio-de-las-nueve-fronteras.md?raw';
-import elPalacioDeLasNueveFronterasEditorialNoteMd from './el-palacio-de-las-nueve-fronteras.editorial-note.md?raw';
-import {
-	palacioNueveFronterasEpigraphReference,
-	palacioNueveFronterasEpigraphText,
-	palacioNueveFronterasSectionTitle,
-} from './el-palacio-de-las-nueve-fronteras.epigraph';
-import { authorMock } from '../author.mock';
-import { toDomainTags } from '../onoff-tags.mock';
+import type { StoryBySlugQueryResult } from '@sanity-types';
+import { novelaRawTag, dramaPsicologicoRawTag, metaficcionRawTag } from '../../onoff-raw-tags.mock';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 
-export const palacioNueveFronterasStoryMock: Story = {
+export const elPalacioRawStory: NonNullable<StoryBySlugQueryResult> = {
 	_id: 'onoff-story-el-palacio-de-las-nueve-fronteras',
-	title: 'El palacio de las nueve fronteras',
 	slug: 'el-palacio-de-las-nueve-fronteras',
-	originalPublication: 'Éditions du Méridien (1985)',
-	approximateReadingTime: 11,
+	title: 'El palacio de las nueve fronteras',
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/el-palacio-de-las-nueve-fronteras.png',
-	tags: toDomainTags(elPalacioRawStory.tags),
-	resources: [],
-	media: [],
 	epigraphs: [],
-	author: authorMock,
-	publishedAt: '1985-01-01T00:00:00Z',
-	updatedAt: '1985-01-01T00:00:00Z',
-	summary: [
-		{
-			_type: 'block',
-			style: 'normal',
-			_key: 'palacio-sum',
-			markDefs: [],
-			children: [
-				{
-					_type: 'span',
-					_key: 'palacio-sum-s',
-					text: 'La novela se organiza en nueve fronteras —territorios donde ninguna ley vale del todo y ninguna lengua se habla por completo— y la cruza un narrador que escribe para devolverle algo a un hombre cuyo cuerpo cayó ante su vista: «ese cuerpo necesitaba un aliento… esos ojos vacíos, una mirada; esos labios, un último gemido… y ese sueño, algún durmiente».',
-				},
-			],
-		},
-	],
-	paragraphs: [
+	body: [
 		{
 			_type: 'block',
 			style: 'normal',
@@ -266,35 +225,17 @@ export const palacioNueveFronterasStoryMock: Story = {
 			],
 		},
 	],
-};
-
-const palacioNueveFronterasBody = createMarkdown(palacioNueveFronterasMdBody);
-
-export const palacioNueveFronterasEpigraphMock = createAttributedText({
-	text: markdownToSanitizedHtml(createMarkdown(palacioNueveFronterasEpigraphText)),
-	reference: markdownToSanitizedHtml(createMarkdown(palacioNueveFronterasEpigraphReference)),
-});
-
-export const palacioNueveFronterasLiteraryWorkMock: LiteraryWork = createLiteraryWork({
-	_id: 'onoff-literary-work-el-palacio-de-las-nueve-fronteras',
-	slug: palacioNueveFronterasStoryMock.slug,
-	title: palacioNueveFronterasStoryMock.title,
-	authors: [palacioNueveFronterasStoryMock.author],
-	coverImage: palacioNueveFronterasStoryMock.coverImage,
-	content: [
-		createLiteraryWorkSection({
-			position: 0,
-			title: createSectionTitle(palacioNueveFronterasSectionTitle),
-			epigraphs: [palacioNueveFronterasEpigraphMock],
-			bodyHtml: markdownToSanitizedHtml(palacioNueveFronterasBody),
-			readingTime: deriveSectionReadingTime(palacioNueveFronterasBody),
-		}),
-	],
+	review: [],
+	originalPublication: 'Éditions du Méridien (1985)',
+	publishedAt: '1985-01-01T00:00:00Z',
+	updatedAt: '1985-01-01T00:00:00Z',
+	approximateReadingTime: 11,
+	coverImage: {
+		_type: 'image',
+		asset: { _type: 'reference', _ref: 'image-3f8774ea01abc54483829d982035a810667240e1-236x328-png' },
+	},
 	mediaSources: [],
-	resources: palacioNueveFronterasStoryMock.resources,
-	badLanguage: palacioNueveFronterasStoryMock.badLanguage,
-	tags: toDomainTags(palacioNueveFronterasRawLiteraryWork.tags),
-	originalPublication: palacioNueveFronterasStoryMock.originalPublication,
-	editorialNote: markdownToSanitizedHtml(createMarkdown(elPalacioDeLasNueveFronterasEditorialNoteMd)),
-	publishedAt: createIsoDateTime(palacioNueveFronterasStoryMock.publishedAt),
-});
+	resources: [],
+	tags: [novelaRawTag, dramaPsicologicoRawTag, metaficcionRawTag],
+	author: rawOnoffAuthor,
+};

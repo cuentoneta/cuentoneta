@@ -1,51 +1,14 @@
-import type { Story } from '@models/story.model';
-import { elOdioRawStory } from './el-odio.raw.mock';
-import { elOdioRawLiteraryWork } from './el-odio.literary-work.raw.mock';
-import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
-import { createAttributedText } from '@models/attributed-text.model';
-import { createLiteraryWorkSection } from '@models/literary-work-section.model';
-import { createSectionTitle } from '@models/section-title.model';
-import { createMarkdown } from '@models/markdown.model';
-import { deriveSectionReadingTime } from '@models/reading-time.model';
-import { createIsoDateTime } from '@utils/date.utils';
-import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-import elOdioMdBody from './el-odio.md?raw';
-import elOdioEditorialNoteMd from './el-odio.editorial-note.md?raw';
-import { elOdioEpigraphReference, elOdioEpigraphText, elOdioSectionTitle } from './el-odio.epigraph';
-import { authorMock } from '../author.mock';
-import { toDomainTags } from '../onoff-tags.mock';
+import type { StoryBySlugQueryResult } from '@sanity-types';
+import { novelaRawTag, dramaPsicologicoRawTag } from '../../onoff-raw-tags.mock';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 
-export const elOdioStoryMock: Story = {
+export const elOdioRawStory: NonNullable<StoryBySlugQueryResult> = {
 	_id: 'onoff-story-el-odio',
-	title: 'El odio',
 	slug: 'el-odio',
-	originalPublication: 'Éditions du Méridien (1971)',
-	approximateReadingTime: 6,
+	title: 'El odio',
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/el-odio.png',
-	tags: toDomainTags(elOdioRawStory.tags),
-	resources: [],
-	media: [],
 	epigraphs: [],
-	author: authorMock,
-	publishedAt: '1971-01-01T00:00:00Z',
-	updatedAt: '1971-01-01T00:00:00Z',
-	summary: [
-		{
-			_type: 'block',
-			style: 'normal',
-			_key: 'odio-sum',
-			markDefs: [],
-			children: [
-				{
-					_type: 'span',
-					_key: 'odio-sum-s',
-					text: 'El odio aparece allí no como reacción sino como una manera estable de habitar el mundo: un retrato sin concesiones de un sentimiento que la novela se niega a explicar o a redimir.',
-				},
-			],
-		},
-	],
-	paragraphs: [
+	body: [
 		{
 			_type: 'block',
 			style: 'normal',
@@ -279,35 +242,17 @@ export const elOdioStoryMock: Story = {
 			],
 		},
 	],
-};
-
-const elOdioBody = createMarkdown(elOdioMdBody);
-
-export const elOdioEpigraphMock = createAttributedText({
-	text: markdownToSanitizedHtml(createMarkdown(elOdioEpigraphText)),
-	reference: markdownToSanitizedHtml(createMarkdown(elOdioEpigraphReference)),
-});
-
-export const elOdioLiteraryWorkMock: LiteraryWork = createLiteraryWork({
-	_id: 'onoff-literary-work-el-odio',
-	slug: elOdioStoryMock.slug,
-	title: elOdioStoryMock.title,
-	authors: [elOdioStoryMock.author],
-	coverImage: elOdioStoryMock.coverImage,
-	content: [
-		createLiteraryWorkSection({
-			position: 0,
-			title: createSectionTitle(elOdioSectionTitle),
-			epigraphs: [elOdioEpigraphMock],
-			bodyHtml: markdownToSanitizedHtml(elOdioBody),
-			readingTime: deriveSectionReadingTime(elOdioBody),
-		}),
-	],
+	review: [],
+	originalPublication: 'Éditions du Méridien (1971)',
+	publishedAt: '1971-01-01T00:00:00Z',
+	updatedAt: '1971-01-01T00:00:00Z',
+	approximateReadingTime: 6,
+	coverImage: {
+		_type: 'image',
+		asset: { _type: 'reference', _ref: 'image-83588a6210ea3de0cee7f493f3d41140427958bf-236x328-png' },
+	},
 	mediaSources: [],
-	resources: elOdioStoryMock.resources,
-	badLanguage: elOdioStoryMock.badLanguage,
-	tags: toDomainTags(elOdioRawLiteraryWork.tags),
-	originalPublication: elOdioStoryMock.originalPublication,
-	editorialNote: markdownToSanitizedHtml(createMarkdown(elOdioEditorialNoteMd)),
-	publishedAt: createIsoDateTime(elOdioStoryMock.publishedAt),
-});
+	resources: [],
+	tags: [novelaRawTag, dramaPsicologicoRawTag],
+	author: rawOnoffAuthor,
+};

@@ -1,14 +1,39 @@
-import type { StoryBySlugQueryResult } from '@sanity-types';
-import { novelaRawTag, metaficcionRawTag, experimentalRawTag } from '../onoff-raw-tags.mock';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import type { Story } from '@models/story.model';
+import { lasDosAntorchasRawStory } from './las-dos-antorchas.story.raw.mock';
+import { authorMock } from '../../author.mock';
+import { toDomainTags } from '../../onoff-tags.mock';
 
-export const lasDosAntorchasRawStory: NonNullable<StoryBySlugQueryResult> = {
+export const lasDosAntorchasStoryMock: Story = {
 	_id: 'onoff-story-las-dos-antorchas',
-	slug: 'las-dos-antorchas',
 	title: 'Las dos antorchas',
+	slug: 'las-dos-antorchas',
+	originalPublication: 'Éditions du Méridien (1987)',
+	approximateReadingTime: 8,
 	badLanguage: false,
+	coverImage: 'assets/img/mocks/stories/las-dos-antorchas.png',
+	tags: toDomainTags(lasDosAntorchasRawStory.tags),
+	resources: [],
+	media: [],
 	epigraphs: [],
-	body: [
+	author: authorMock,
+	publishedAt: '1987-01-01T00:00:00Z',
+	updatedAt: '1987-01-01T00:00:00Z',
+	summary: [
+		{
+			_type: 'block',
+			style: 'normal',
+			_key: 'antorchas-sum',
+			markDefs: [],
+			children: [
+				{
+					_type: 'span',
+					_key: 'antorchas-sum-s',
+					text: 'Dos luces que avanzan en paralelo sin llegar nunca a alumbrar lo mismo: la novela lleva al extremo el procedimiento de las dualidades que atraviesa toda la obra de Onoff.',
+				},
+			],
+		},
+	],
+	paragraphs: [
 		{
 			_type: 'block',
 			style: 'normal',
@@ -256,17 +281,4 @@ export const lasDosAntorchasRawStory: NonNullable<StoryBySlugQueryResult> = {
 			],
 		},
 	],
-	review: [],
-	originalPublication: 'Éditions du Méridien (1987)',
-	publishedAt: '1987-01-01T00:00:00Z',
-	updatedAt: '1987-01-01T00:00:00Z',
-	approximateReadingTime: 8,
-	coverImage: {
-		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-83ad8511a47107773b70ff339edd8b43c29dcf3e-236x328-png' },
-	},
-	mediaSources: [],
-	resources: [],
-	tags: [novelaRawTag, metaficcionRawTag, experimentalRawTag],
-	author: rawOnoffAuthor,
 };

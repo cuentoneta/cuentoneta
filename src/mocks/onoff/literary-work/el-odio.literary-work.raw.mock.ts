@@ -1,9 +1,9 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 import elOdioMdBody from './el-odio.md?raw';
 import elOdioEditorialNoteMd from './el-odio.editorial-note.md?raw';
 import { elOdioEpigraphReference, elOdioEpigraphText, elOdioSectionTitle } from './el-odio.epigraph';
-import { dramaPsicologicoRawTag, novelaRawTag } from '../onoff-raw-tags.mock';
+import { dramaPsicologicoRawTag, novelaRawTag } from '../../onoff-raw-tags.mock';
 
 export const elOdioRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'onoff-literary-work-el-odio',
