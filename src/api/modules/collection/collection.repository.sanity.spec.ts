@@ -5,7 +5,6 @@ import {
 	descriptionlessRawCollection,
 	draftLikeRawCollection,
 	emptyRawCollection,
-	onoffRawCollectionsMock,
 	onoffRawCollectionsWithFeaturedImage,
 	onoffRawCollectionsWithoutFeaturedImage,
 	onoffRawCollectionTeasersMock,
