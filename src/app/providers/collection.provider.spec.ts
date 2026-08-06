@@ -67,20 +67,14 @@ describe('HttpCollectionApi', () => {
 		expect(collection.count).toBe(canon?.literaryWorks.length);
 	});
 
-	it('rebuilds every collection of the listing', async () => {
-		const dto = toWire<CollectionDto[]>(onoffCollectionsMock);
-
-		const collections = await request(api.getAll(), url, dto);
-
-		expect(collections.map(({ slug }) => slug)).toEqual(onoffCollectionsMock.map(({ slug }) => slug));
-	});
-
-	it('rebuilds teasers that carry no works', async () => {
+	// El listado sirve la vista de catálogo: cada colección con su total, sin sus obras.
+	it('rebuilds the listing as teasers', async () => {
 		const dto = toWire<CollectionTeaserDto[]>(onoffCollectionTeasersMock);
 
-		const teasers = await request(api.getTeasers(), `${url}/teasers`, dto);
+		const teasers = await request(api.getAll(), url, dto);
 
 		expect(teasers).toHaveLength(onoffCollectionTeasersMock.length);
+		expect(teasers.map(({ slug }) => slug)).toEqual(onoffCollectionTeasersMock.map(({ slug }) => slug));
 		teasers.forEach((teaser, index) => {
 			expect(teaser.literaryWorks).toEqual([]);
 			expect(teaser.count).toBe(onoffCollectionTeasersMock[index]?.count);

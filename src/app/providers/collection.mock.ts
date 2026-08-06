@@ -7,7 +7,7 @@ import type { Collection, CollectionTeaser } from '@models/collection.model';
 import { CollectionApi } from './collection-api.interface';
 
 // Devuelve canned: la búsqueda por slug resuelve contra las colecciones cargadas y los teasers salen
-// de esas mismas, para que las tres respuestas no puedan contradecirse entre sí.
+// del mismo conjunto, para que las dos respuestas no puedan contradecirse entre sí.
 export class StubCollectionApi implements CollectionApi {
 	constructor(private readonly collections: readonly Collection[]) {}
 
@@ -19,11 +19,7 @@ export class StubCollectionApi implements CollectionApi {
 		return of(collection);
 	}
 
-	public getAll(): Observable<Collection[]> {
-		return of([...this.collections]);
-	}
-
-	public getTeasers(): Observable<CollectionTeaser[]> {
+	public getAll(): Observable<CollectionTeaser[]> {
 		return of(this.collections.map((collection) => ({ ...collection, literaryWorks: [] })));
 	}
 }

@@ -36,19 +36,8 @@ export class HttpCollectionApi implements CollectionApi {
 			.pipe(map((response) => this.toCollection(collectionDtoSchema.parse(response))));
 	}
 
-	public getAll(): Observable<Collection[]> {
+	public getAll(): Observable<CollectionTeaser[]> {
 		return this.http.get<unknown>(this.url).pipe(
-			map((response) =>
-				collectionDtoSchema
-					.array()
-					.parse(response)
-					.map((dto) => this.toCollection(dto)),
-			),
-		);
-	}
-
-	public getTeasers(): Observable<CollectionTeaser[]> {
-		return this.http.get<unknown>(`${this.url}/teasers`).pipe(
 			map((response) =>
 				collectionTeaserDtoSchema
 					.array()
