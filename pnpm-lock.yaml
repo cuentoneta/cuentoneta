@@ -281,6 +281,9 @@ importers:
       eslint-plugin-testing-library:
         specifier: ^7.16.2
         version: 7.16.2(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3)
+      groq-js:
+        specifier: ^2.0.0
+        version: 2.0.0
       happy-dom:
         specifier: '>=20.8.9 <21'
         version: 20.11.1
@@ -6962,6 +6965,11 @@ packages:
   graceful-fs@4.2.11:
     resolution:
       { integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ== }
+
+  groq-js@2.0.0:
+    resolution:
+      { integrity: sha512-kj56ZjnOFbgDt91zYwQ10jsVUtVGJqAKfRbAir0EvTK84O5ZsSyc0rDEm2P3jmAJkxs4X1DOG8vtaYJQIA/XCA== }
+    engines: { node: '>=22.12' }
 
   groq@6.6.0:
     resolution:
@@ -17873,6 +17881,10 @@ snapshots:
   gopd@1.2.0: {}
 
   graceful-fs@4.2.11: {}
+
+  groq-js@2.0.0:
+    dependencies:
+      obug: 2.1.4
 
   groq@6.6.0: {}
 
