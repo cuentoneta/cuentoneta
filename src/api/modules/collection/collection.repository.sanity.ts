@@ -7,7 +7,6 @@ import {
 	type CollectionImagery,
 	type CollectionTeaser,
 } from '@models/collection.model';
-import { createAttributedText, type AttributedText } from '@models/attributed-text.model';
 import { createLiteraryWorkSection, type LiteraryWorkSection } from '@models/literary-work-section.model';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createMarkdown } from '@models/markdown.model';
@@ -27,7 +26,6 @@ import type { CollectionRepository } from './collection.repository';
 type SanityCollection = NonNullable<CollectionBySlugQueryResult>;
 type SanityCollectionWork = SanityCollection['literaryWorks'][number];
 type SanityTeaserSection = SanityCollectionWork['teaserSection'][number];
-type SanityEpigraph = SanityTeaserSection['epigraphs'][number];
 type SanityCollectionTeaser = CollectionsQueryResult[number];
 type SanityFeaturedImage = SanityCollection['featuredImage'];
 
@@ -151,23 +149,17 @@ export class SanityCollectionRepository implements CollectionRepository {
 		});
 	}
 
+	// Sin epígrafes: la tarjeta que consume el teaser muestra el cuerpo y nadie más los lee, así que la
+	// query tampoco los trae. El campo es opcional en la sección, no un vacío que haya que rellenar.
 	private mapTeaserSection(raw: SanityTeaserSection): LiteraryWorkSection {
 		return createLiteraryWorkSection({
 			position: 0,
 			title: raw.title ? createSectionTitle(raw.title) : undefined,
-			epigraphs: raw.epigraphs.map((epigraph) => this.mapEpigraph(epigraph)),
 			bodyHtml: markdownToSanitizedHtml(createMarkdown(raw.body)),
 			readingTime:
 				raw.readingTime !== null
 					? createReadingTime(raw.readingTime)
 					: deriveSectionReadingTime(createMarkdown(raw.body)),
-		});
-	}
-
-	private mapEpigraph(raw: SanityEpigraph): AttributedText {
-		return createAttributedText({
-			text: markdownToSanitizedHtml(createMarkdown(raw.text ?? '')),
-			reference: raw.reference ? markdownToSanitizedHtml(createMarkdown(raw.reference)) : undefined,
 		});
 	}
 }

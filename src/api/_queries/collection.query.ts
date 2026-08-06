@@ -2,6 +2,10 @@ import { defineQuery } from 'groq';
 
 // La colección con todas sus obras, para la página de detalle.
 //
+// De cada obra se proyecta la sección de apertura, que es lo que el teaser transporta, pero sin sus
+// epígrafes: la tarjeta muestra el cuerpo y nada más los lee. Traerlos sería payload y saneado por
+// obra que nadie consume.
+//
 // `literaryWorks` no se acota a propósito: el agregado deriva su total de las obras que transporta,
 // así que un slice lo volvería, en silencio, el tamaño de la página. Por lo mismo no se proyecta un
 // `count`, que sería un segundo origen de verdad.
@@ -57,7 +61,6 @@ export const collectionBySlugQuery = defineQuery(`
         'teaserSection': content[0...1]{
             _key,
             title,
-            'epigraphs': coalesce(epigraphs[]{ text, reference }, []),
             body,
             readingTime
         }
