@@ -64,7 +64,7 @@ beforeEach(() => {
 
 ## Regla dura: el corpus se consume por colecciones, nunca por obra
 
-ESLint (`no-single-work-corpus-imports` en `eslint.config.mjs`) **prohíbe** importar una pieza puntual del corpus desde cualquier archivo fuera de `src/mocks/**` — los agregadores son justamente quienes las importan. El glob es `@mocks/onoff/**`, así que cubre tanto las piezas sueltas de la carpeta como las de sus subcarpetas por entidad (`collection/<slug>.collection.raw.mock`, y las que sumen las entidades que falta agrupar).
+ESLint (`no-single-work-corpus-imports` en `eslint.config.mjs`) **prohíbe** importar una pieza puntual del corpus desde cualquier archivo fuera de `src/mocks/**` — los agregadores son justamente quienes las importan. El glob es `@mocks/onoff/**`, así que cubre las subcarpetas por entidad —`story/`, `literary-work/`, `collection/`, `storylist/`, `author/`, `media/`— a cualquier profundidad.
 
 Un spec o una story que importa una obra concreta queda atado a ella: sus aserciones citan la prosa de esa obra y enriquecer el canon no las alcanza. Las colecciones y los **selectores por capacidad** declaran el shape que el caso necesita y crecen solos.
 
