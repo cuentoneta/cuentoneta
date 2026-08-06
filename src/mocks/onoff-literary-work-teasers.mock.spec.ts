@@ -5,7 +5,7 @@ import {
 	palacioNueveFronterasLiteraryWorkTeaserMock,
 } from './onoff-literary-work-teasers.mock';
 import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
-import { palacioNueveFronterasLiteraryWorkMock } from './onoff/el-palacio-de-las-nueve-fronteras.mock';
+import { palacioNueveFronterasLiteraryWorkMock } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.mock';
 
 describe('onoffLiteraryWorkTeasersMock (derivación de teasers desde LiteraryWork)', () => {
 	it('should expose the first section of the source work as teaserSection', () => {

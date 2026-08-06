@@ -1,6 +1,6 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { dramaHistoricoRawTag, teatroRawTag, tragediaRawTag } from '../onoff-raw-tags.mock';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import { dramaHistoricoRawTag, teatroRawTag, tragediaRawTag } from '../../onoff-raw-tags.mock';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 import neronMdBody from './neron.md?raw';
 
 export const neronRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {

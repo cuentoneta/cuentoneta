@@ -1,5 +1,5 @@
 import type { StorylistQueryResult } from '@sanity-types';
-import { onoffRawNavTeasersMock } from '../onoff-raw-stories.mock';
+import { onoffRawNavTeasersMock } from '../../onoff-raw-stories.mock';
 
 // Storylist cruda Onoff — "Geometrías del desvelo" (obsesión por el orden y el tiempo).
 // Forma cruda de `storylistQuery` (StorylistQueryResult), para testear `fetchStorylistBySlug`.

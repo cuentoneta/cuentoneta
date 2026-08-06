@@ -1,14 +1,39 @@
-import type { StoryBySlugQueryResult } from '@sanity-types';
-import { cuentoRawTag, absurdoRawTag, surrealismoRawTag } from '../onoff-raw-tags.mock';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import type { Story } from '@models/story.model';
+import { losPeldanosRawStory } from './los-peldanos.story.raw.mock';
+import { authorMock } from '../../author.mock';
+import { toDomainTags } from '../../onoff-tags.mock';
 
-export const losPeldanosRawStory: NonNullable<StoryBySlugQueryResult> = {
+export const losPeldanosStoryMock: Story = {
 	_id: 'onoff-story-los-peldanos',
-	slug: 'los-peldanos',
 	title: 'Los peldaños',
+	slug: 'los-peldanos',
+	originalPublication: 'Éditions du Méridien (1977)',
+	approximateReadingTime: 8,
 	badLanguage: false,
+	coverImage: 'assets/img/mocks/stories/los-peldanos.png',
+	tags: toDomainTags(losPeldanosRawStory.tags),
+	resources: [],
+	media: [],
 	epigraphs: [],
-	body: [
+	author: authorMock,
+	publishedAt: '1977-01-01T00:00:00Z',
+	updatedAt: '1977-01-01T00:00:00Z',
+	summary: [
+		{
+			_type: 'block',
+			style: 'normal',
+			_key: 'peldanos-sum',
+			markDefs: [],
+			children: [
+				{
+					_type: 'span',
+					_key: 'peldanos-sum-s',
+					text: 'La Sra. Oneiras saca del bolsillo de la falda un trozo de pescado hervido y lo come mirando fijamente al frente, sin ver nada, y luego pasa a un centímetro del protagonista como si no existiese. Subir y bajar peldaños es menos un desplazamiento físico que un estado de ánimo.',
+				},
+			],
+		},
+	],
+	paragraphs: [
 		{
 			_type: 'block',
 			style: 'normal',
@@ -235,17 +260,4 @@ export const losPeldanosRawStory: NonNullable<StoryBySlugQueryResult> = {
 			],
 		},
 	],
-	review: [],
-	originalPublication: 'Éditions du Méridien (1977)',
-	publishedAt: '1977-01-01T00:00:00Z',
-	updatedAt: '1977-01-01T00:00:00Z',
-	approximateReadingTime: 8,
-	coverImage: {
-		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-27fb05f42b38f0ba9ba21aeb566e25abe670b213-236x328-png' },
-	},
-	mediaSources: [],
-	resources: [],
-	tags: [cuentoRawTag, absurdoRawTag, surrealismoRawTag],
-	author: rawOnoffAuthor,
 };
