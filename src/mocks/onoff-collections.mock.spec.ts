@@ -4,8 +4,8 @@ import {
 	onoffCollectionsMock,
 	onoffCollectionTeasersMock,
 } from './onoff-collections.mock';
-import geometriasDescriptionMd from './onoff/geometrias-del-desvelo.collection.md?raw';
-import inventarioDescriptionMd from './onoff/inventario-de-las-pasiones.collection.md?raw';
+import geometriasDescriptionMd from './onoff/collection/geometrias-del-desvelo.collection.md?raw';
+import inventarioDescriptionMd from './onoff/collection/inventario-de-las-pasiones.collection.md?raw';
 
 describe('onoff collections mock', () => {
 	// Que la factory los construya sin lanzar es la prueba de que el contrato es satisfacible con
