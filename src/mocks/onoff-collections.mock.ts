@@ -1,5 +1,6 @@
 import {
 	createCollection,
+	createCollectionTeaser,
 	type Collection,
 	type CollectionImagery,
 	type CollectionTeaser,
@@ -8,8 +9,8 @@ import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
-import geometriasDescriptionMd from './onoff/geometrias-del-desvelo.collection.md?raw';
-import inventarioDescriptionMd from './onoff/inventario-de-las-pasiones.collection.md?raw';
+import geometriasDescriptionMd from './onoff/collection/geometrias-del-desvelo.collection.md?raw';
+import inventarioDescriptionMd from './onoff/collection/inventario-de-las-pasiones.collection.md?raw';
 import { onoffMediaMock } from './onoff-media.mock';
 import {
 	elOdioLiteraryWorkTeaserMock,
@@ -89,10 +90,20 @@ export const onoffCollectionsWithMediaSourcesMock: Collection[] = onoffCollectio
 	(collection) => collection.mediaSources.length > 0,
 );
 
-// El teaser es una proyección: no pasa por la factory porque no transporta obras, igual que lo
-// construye el mapper a partir de la query.
+// Pasa por la factory del teaser, igual que el repository: si el corpus lo armara por spread, sería
+// el único productor que se saltea las invariantes que esa factory existe para hacer cumplir.
 function toTeaser(collection: Collection): CollectionTeaser {
-	return { ...collection, literaryWorks: [] };
+	return createCollectionTeaser({
+		_id: collection._id,
+		slug: collection.slug,
+		title: collection.title,
+		description: collection.description,
+		imagery: collection.imagery,
+		tags: collection.tags,
+		config: collection.config,
+		mediaSources: collection.mediaSources,
+		count: collection.count,
+	});
 }
 
 export const geometriasDelDesveloCollectionTeaserMock: CollectionTeaser = toTeaser(geometriasDelDesveloCollectionMock);
