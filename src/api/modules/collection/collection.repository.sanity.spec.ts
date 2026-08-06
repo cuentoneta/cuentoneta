@@ -1,0 +1,186 @@
+import type { SanityClient } from '@sanity/client';
+import { fn } from '@test-utils';
+import {
+	descriptionlessRawCollection,
+	draftLikeRawCollection,
+	emptyRawCollection,
+	geometriasDelDesveloRawCollection,
+	inventarioDeLasPasionesRawCollection,
+	onoffRawCollectionsMock,
+	onoffRawCollectionTeasersMock,
+	sectionlessWorkRawCollection,
+	shortSampleRawCollection,
+} from '@mocks/onoff-raw-collections.mock';
+import { MalformedCollectionError } from './collection.errors';
+import { SanityCollectionRepository } from './collection.repository.sanity';
+
+// El repository solo hace `fetch`, así que el doble del client implementa solo eso y se inyecta por el
+// seam del constructor. Cada test arma su repository con el crudo que quiere devolver.
+function repoReturning(raw: unknown): SanityCollectionRepository {
+	const client = { fetch: fn(() => Promise.resolve(raw)) } as unknown as SanityClient;
+	return new SanityCollectionRepository(client);
+}
+
+describe('SanityCollectionRepository.fetchBySlug', () => {
+	it('maps the raw result into a frozen aggregate', async () => {
+		const collection = await repoReturning(geometriasDelDesveloRawCollection).fetchBySlug('geometrias-del-desvelo');
+
+		expect(Object.isFrozen(collection)).toBe(true);
+		expect(collection?.slug).toBe(geometriasDelDesveloRawCollection.slug);
+		expect(collection?.title).toBe(geometriasDelDesveloRawCollection.title);
+	});
+
+	it('resolves null when the slug carries no collection', async () => {
+		expect(await repoReturning(null).fetchBySlug('inexistente')).toBeNull();
+	});
+
+	// Derivarlo en la factory es lo que lo ata a las obras que el agregado transporta.
+	it('derives the count from the works it carries', async () => {
+		const collection = await repoReturning(geometriasDelDesveloRawCollection).fetchBySlug('geometrias-del-desvelo');
+
+		expect(collection?.count).toBe(geometriasDelDesveloRawCollection.literaryWorks.length);
+		expect(collection?.literaryWorks).toHaveLength(geometriasDelDesveloRawCollection.literaryWorks.length);
+	});
+
+	it('runs the description through the sanitization pipeline', async () => {
+		const collection = await repoReturning(geometriasDelDesveloRawCollection).fetchBySlug('geometrias-del-desvelo');
+
+		expect(collection?.description).toContain('<p>');
+	});
+
+	it('takes the editorial cover when the collection has one', async () => {
+		const collection = await repoReturning(geometriasDelDesveloRawCollection).fetchBySlug('geometrias-del-desvelo');
+
+		expect(collection?.imagery.kind).toBe('representative');
+	});
+
+	// La mitad de las colecciones no tiene portada propia: el abanico sale de sus obras.
+	it('falls back to a sample of the works covers', async () => {
+		const collection = await repoReturning(inventarioDeLasPasionesRawCollection).fetchBySlug(
+			'inventario-de-las-pasiones',
+		);
+
+		expect(collection?.imagery.kind).toBe('sample');
+		expect(collection?.imagery.kind === 'sample' && collection.imagery.images).toHaveLength(3);
+	});
+
+	it('maps each work into a teaser with its opening section', async () => {
+		const collection = await repoReturning(geometriasDelDesveloRawCollection).fetchBySlug('geometrias-del-desvelo');
+		const [work] = collection?.literaryWorks ?? [];
+
+		expect(work?.teaserSection.position).toBe(0);
+		expect(work?.teaserSection.bodyHtml).toContain('<p>');
+		expect(work?.authors.length).toBeGreaterThan(0);
+	});
+
+	it('copies the persisted reading time of each work', async () => {
+		const collection = await repoReturning(geometriasDelDesveloRawCollection).fetchBySlug('geometrias-del-desvelo');
+
+		collection?.literaryWorks.forEach((work, index) => {
+			expect(work.totalReadingTime).toBe(geometriasDelDesveloRawCollection.literaryWorks[index]?.totalReadingTime);
+		});
+	});
+
+	// El opcional del tipo solo se da en borradores, que el sitio público no sirve: no es un dato mal
+	// curado, así que no lanza.
+	it('derives the reading time when the work carries none', async () => {
+		const collection = await repoReturning(draftLikeRawCollection).fetchBySlug('geometrias-del-desvelo');
+
+		expect(collection?.literaryWorks[0]?.totalReadingTime).toBeGreaterThan(0);
+	});
+});
+
+describe('SanityCollectionRepository malformed data', () => {
+	it('rejects a collection without works', async () => {
+		await expect(repoReturning(emptyRawCollection).fetchBySlug('geometrias-del-desvelo')).rejects.toThrow(
+			MalformedCollectionError,
+		);
+	});
+
+	// Sin portada propia y con menos de tres obras el abanico es inconstruible; rellenar con cadenas
+	// vacías era lo que colaba portadas rotas a la interfaz.
+	it('rejects a sample that cannot reach three covers', async () => {
+		await expect(repoReturning(shortSampleRawCollection).fetchBySlug('inventario-de-las-pasiones')).rejects.toThrow(
+			MalformedCollectionError,
+		);
+	});
+
+	it('rejects a collection without a description', async () => {
+		await expect(repoReturning(descriptionlessRawCollection).fetchBySlug('geometrias-del-desvelo')).rejects.toThrow(
+			MalformedCollectionError,
+		);
+	});
+
+	it('rejects a work without an opening section', async () => {
+		await expect(repoReturning(sectionlessWorkRawCollection).fetchBySlug('geometrias-del-desvelo')).rejects.toThrow(
+			MalformedCollectionError,
+		);
+	});
+
+	// Preservar la causa es lo que permite diagnosticar cuál de las invariantes se rompió.
+	it('preserves the original cause', async () => {
+		await expect(
+			repoReturning(descriptionlessRawCollection).fetchBySlug('geometrias-del-desvelo'),
+		).rejects.toMatchObject({ cause: expect.any(Error) });
+	});
+
+	// Un listado que esconde el elemento roto es un bug de datos que nadie ve.
+	it('brings down the whole listing instead of filtering the bad collection out', async () => {
+		const dataset = [geometriasDelDesveloRawCollection, emptyRawCollection];
+
+		await expect(repoReturning(dataset).fetchAll()).rejects.toThrow(MalformedCollectionError);
+	});
+});
+
+describe('SanityCollectionRepository.fetchAll', () => {
+	it('maps every collection of the listing', async () => {
+		const collections = await repoReturning(onoffRawCollectionsMock).fetchAll();
+
+		expect(collections).toHaveLength(onoffRawCollectionsMock.length);
+		expect(collections.map(({ slug }) => slug)).toEqual(onoffRawCollectionsMock.map(({ slug }) => slug));
+	});
+
+	// Es el punto del listado pesado: cada colección viaja con sus obras.
+	it('carries the works of every collection', async () => {
+		const collections = await repoReturning(onoffRawCollectionsMock).fetchAll();
+
+		collections.forEach((collection, index) => {
+			expect(collection.literaryWorks).toHaveLength(onoffRawCollectionsMock[index]?.literaryWorks.length ?? 0);
+		});
+	});
+
+	it('resolves an empty listing without failing', async () => {
+		expect(await repoReturning([]).fetchAll()).toEqual([]);
+	});
+});
+
+describe('SanityCollectionRepository.fetchTeasers', () => {
+	it('maps every teaser of the listing', async () => {
+		const teasers = await repoReturning(onoffRawCollectionTeasersMock).fetchTeasers();
+
+		expect(teasers).toHaveLength(onoffRawCollectionTeasersMock.length);
+		expect(teasers.map(({ slug }) => slug)).toEqual(onoffRawCollectionTeasersMock.map(({ slug }) => slug));
+	});
+
+	// Lo que distingue al teaser: muestra la colección sin transportar sus obras.
+	it('carries the count but no works', async () => {
+		const teasers = await repoReturning(onoffRawCollectionTeasersMock).fetchTeasers();
+
+		teasers.forEach((teaser, index) => {
+			expect(teaser.literaryWorks).toEqual([]);
+			expect(teaser.count).toBe(onoffRawCollectionTeasersMock[index]?.count);
+		});
+	});
+
+	it('resolves both branches of imagery from the projected covers', async () => {
+		const teasers = await repoReturning(onoffRawCollectionTeasersMock).fetchTeasers();
+
+		expect(teasers.map(({ imagery }) => imagery.kind)).toEqual(['representative', 'sample']);
+	});
+
+	it('rejects a teaser whose count is zero', async () => {
+		const [teaser] = onoffRawCollectionTeasersMock;
+
+		await expect(repoReturning([{ ...teaser, count: 0 }]).fetchTeasers()).rejects.toThrow(MalformedCollectionError);
+	});
+});
