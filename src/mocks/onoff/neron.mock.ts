@@ -1,5 +1,5 @@
 import type { Story } from '@models/story.model';
-import { neronRawStory } from './neron.raw.mock';
+import { neronRawStory } from './story/neron.story.raw.mock';
 import { neronRawLiteraryWork } from './neron.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';

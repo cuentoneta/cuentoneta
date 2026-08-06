@@ -1,5 +1,5 @@
 import type { Story } from '@models/story.model';
-import { elOdioRawStory } from './el-odio.raw.mock';
+import { elOdioRawStory } from './story/el-odio.story.raw.mock';
 import { elOdioRawLiteraryWork } from './el-odio.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createAttributedText } from '@models/attributed-text.model';

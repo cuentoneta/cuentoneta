@@ -1,5 +1,5 @@
 import type { Story } from '@models/story.model';
-import { lasDosAntorchasRawStory } from './las-dos-antorchas.raw.mock';
+import { lasDosAntorchasRawStory } from './story/las-dos-antorchas.story.raw.mock';
 import { lasDosAntorchasRawLiteraryWork } from './las-dos-antorchas.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';

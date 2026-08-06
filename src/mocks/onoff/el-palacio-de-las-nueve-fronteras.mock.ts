@@ -1,5 +1,5 @@
 import type { Story } from '@models/story.model';
-import { elPalacioRawStory } from './el-palacio-de-las-nueve-fronteras.raw.mock';
+import { elPalacioRawStory } from './story/el-palacio-de-las-nueve-fronteras.story.raw.mock';
 import { palacioNueveFronterasRawLiteraryWork } from './el-palacio-de-las-nueve-fronteras.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createAttributedText } from '@models/attributed-text.model';

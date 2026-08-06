@@ -1,6 +1,6 @@
 import type { StoryBySlugQueryResult } from '@sanity-types';
-import { cuentoRawTag, absurdoRawTag, surrealismoRawTag } from '../onoff-raw-tags.mock';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import { cuentoRawTag, absurdoRawTag, surrealismoRawTag } from '../../onoff-raw-tags.mock';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 
 export const losPeldanosRawStory: NonNullable<StoryBySlugQueryResult> = {
 	_id: 'onoff-story-los-peldanos',

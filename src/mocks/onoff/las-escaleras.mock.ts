@@ -1,5 +1,5 @@
 import type { Story } from '@models/story.model';
-import { lasEscalerasRawStory } from './las-escaleras.raw.mock';
+import { lasEscalerasRawStory } from './story/las-escaleras.story.raw.mock';
 import { lasEscalerasRawLiteraryWork } from './las-escaleras.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';

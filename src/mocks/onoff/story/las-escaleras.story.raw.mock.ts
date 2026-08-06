@@ -1,6 +1,6 @@
 import type { StoryBySlugQueryResult } from '@sanity-types';
-import { novelaRawTag, absurdoRawTag, alegoriaRawTag } from '../onoff-raw-tags.mock';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import { novelaRawTag, absurdoRawTag, alegoriaRawTag } from '../../onoff-raw-tags.mock';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 
 export const lasEscalerasRawStory: NonNullable<StoryBySlugQueryResult> = {
 	_id: 'onoff-story-las-escaleras',

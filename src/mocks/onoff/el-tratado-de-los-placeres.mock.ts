@@ -1,5 +1,5 @@
 import type { Story } from '@models/story.model';
-import { elTratadoRawStory } from './el-tratado-de-los-placeres.raw.mock';
+import { elTratadoRawStory } from './story/el-tratado-de-los-placeres.story.raw.mock';
 import { elTratadoDeLosPlaceresRawLiteraryWork } from './el-tratado-de-los-placeres.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';

@@ -1,7 +1,7 @@
 import type { StoryBySlugQueryResult } from '@sanity-types';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
-import { cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag } from '../onoff-raw-tags.mock';
-import { geometriaRawMediaSources } from './media/geometria.media.raw.mock';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
+import { cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag } from '../../onoff-raw-tags.mock';
+import { geometriaRawMediaSources } from '../media/geometria.media.raw.mock';
 
 export const geometriaRawStory: NonNullable<StoryBySlugQueryResult> = {
 	_id: 'onoff-story-geometria',

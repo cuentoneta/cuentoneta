@@ -1,6 +1,6 @@
 import type { StoryBySlugQueryResult } from '@sanity-types';
-import { novelaRawTag, metaficcionRawTag, experimentalRawTag } from '../onoff-raw-tags.mock';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import { novelaRawTag, metaficcionRawTag, experimentalRawTag } from '../../onoff-raw-tags.mock';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 
 export const lasDosAntorchasRawStory: NonNullable<StoryBySlugQueryResult> = {
 	_id: 'onoff-story-las-dos-antorchas',

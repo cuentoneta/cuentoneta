@@ -13,7 +13,7 @@ import { geometriaEpigraphReference, geometriaEpigraphText, geometriaSectionTitl
 
 import { authorMock } from '../author.mock';
 import { toDomainTags } from '../onoff-tags.mock';
-import { geometriaRawStory } from './geometria.raw.mock';
+import { geometriaRawStory } from './story/geometria.story.raw.mock';
 import { geometriaRawLiteraryWork } from './geometria.literary-work.raw.mock';
 import { geometriaMediaMock } from './media/geometria.media.mock';
 

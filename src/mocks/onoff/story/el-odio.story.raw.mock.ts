@@ -1,6 +1,6 @@
 import type { StoryBySlugQueryResult } from '@sanity-types';
-import { novelaRawTag, dramaPsicologicoRawTag } from '../onoff-raw-tags.mock';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import { novelaRawTag, dramaPsicologicoRawTag } from '../../onoff-raw-tags.mock';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 
 export const elOdioRawStory: NonNullable<StoryBySlugQueryResult> = {
 	_id: 'onoff-story-el-odio',

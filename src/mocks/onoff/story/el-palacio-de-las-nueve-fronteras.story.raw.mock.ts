@@ -1,6 +1,6 @@
 import type { StoryBySlugQueryResult } from '@sanity-types';
-import { novelaRawTag, dramaPsicologicoRawTag, metaficcionRawTag } from '../onoff-raw-tags.mock';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import { novelaRawTag, dramaPsicologicoRawTag, metaficcionRawTag } from '../../onoff-raw-tags.mock';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 
 export const elPalacioRawStory: NonNullable<StoryBySlugQueryResult> = {
 	_id: 'onoff-story-el-palacio-de-las-nueve-fronteras',

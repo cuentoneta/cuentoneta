@@ -1,5 +1,5 @@
 import type { Story } from '@models/story.model';
-import { losPeldanosRawStory } from './los-peldanos.raw.mock';
+import { losPeldanosRawStory } from './story/los-peldanos.story.raw.mock';
 import { losPeldanosRawLiteraryWork } from './los-peldanos.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
