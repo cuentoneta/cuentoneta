@@ -1,6 +1,6 @@
 import type { SanityClient } from '@sanity/client';
 import { clearAllMocks, fn } from '@test-utils';
-import { collectionBySlugQuery, collectionsQuery, collectionTeasersQuery } from '../../_queries/collection.query';
+import { collectionBySlugQuery, collectionsQuery } from '../../_queries/collection.query';
 import {
 	descriptionlessRawCollection,
 	draftLikeRawCollection,
@@ -48,19 +48,11 @@ describe('SanityCollectionRepository query selection', () => {
 	});
 
 	it('asks for the listing query', async () => {
-		const { repository, fetch } = repoWith(onoffRawCollectionsMock);
+		const { repository, fetch } = repoWith(onoffRawCollectionTeasersMock);
 
 		await repository.fetchAll();
 
 		expect(fetch).toHaveBeenCalledWith(collectionsQuery);
-	});
-
-	it('asks for the teasers query', async () => {
-		const { repository, fetch } = repoWith(onoffRawCollectionTeasersMock);
-
-		await repository.fetchTeasers();
-
-		expect(fetch).toHaveBeenCalledWith(collectionTeasersQuery);
 	});
 });
 
@@ -173,39 +165,19 @@ describe('SanityCollectionRepository malformed data', () => {
 		).rejects.toMatchObject({ cause: expect.any(Error) });
 	});
 
-	// Un listado que esconde el elemento roto es un bug de datos que nadie ve.
+	// Un listado que esconde el elemento roto es un bug de datos que nadie ve: se cae entero, con el
+	// primer elemento sano por delante para que no pase por casualidad.
 	it('brings down the whole listing instead of filtering the bad collection out', async () => {
-		const dataset = [withFeaturedImage, emptyRawCollection];
+		const [sane, ...rest] = onoffRawCollectionTeasersMock;
+		const dataset = [sane, { ...rest[0], count: 0 }];
 
 		await expect(repoReturning(dataset).fetchAll()).rejects.toThrow(MalformedCollectionError);
 	});
 });
 
 describe('SanityCollectionRepository.fetchAll', () => {
-	it('maps every collection of the listing', async () => {
-		const collections = await repoReturning(onoffRawCollectionsMock).fetchAll();
-
-		expect(collections).toHaveLength(onoffRawCollectionsMock.length);
-		expect(collections.map(({ slug }) => slug)).toEqual(onoffRawCollectionsMock.map(({ slug }) => slug));
-	});
-
-	// Es el punto del listado pesado: cada colección viaja con sus obras.
-	it('carries the works of every collection', async () => {
-		const collections = await repoReturning(onoffRawCollectionsMock).fetchAll();
-
-		collections.forEach((collection, index) => {
-			expect(collection.literaryWorks).toHaveLength(onoffRawCollectionsMock[index]?.literaryWorks.length ?? 0);
-		});
-	});
-
-	it('resolves an empty listing without failing', async () => {
-		expect(await repoReturning([]).fetchAll()).toEqual([]);
-	});
-});
-
-describe('SanityCollectionRepository.fetchTeasers', () => {
 	it('maps every teaser of the listing', async () => {
-		const teasers = await repoReturning(onoffRawCollectionTeasersMock).fetchTeasers();
+		const teasers = await repoReturning(onoffRawCollectionTeasersMock).fetchAll();
 
 		expect(teasers).toHaveLength(onoffRawCollectionTeasersMock.length);
 		expect(teasers.map(({ slug }) => slug)).toEqual(onoffRawCollectionTeasersMock.map(({ slug }) => slug));
@@ -213,7 +185,7 @@ describe('SanityCollectionRepository.fetchTeasers', () => {
 
 	// Lo que distingue al teaser: muestra la colección sin transportar sus obras.
 	it('carries the count but no works', async () => {
-		const teasers = await repoReturning(onoffRawCollectionTeasersMock).fetchTeasers();
+		const teasers = await repoReturning(onoffRawCollectionTeasersMock).fetchAll();
 
 		teasers.forEach((teaser, index) => {
 			expect(teaser.literaryWorks).toEqual([]);
@@ -222,14 +194,20 @@ describe('SanityCollectionRepository.fetchTeasers', () => {
 	});
 
 	it('resolves both branches of imagery from the projected covers', async () => {
-		const teasers = await repoReturning(onoffRawCollectionTeasersMock).fetchTeasers();
+		const teasers = await repoReturning(onoffRawCollectionTeasersMock).fetchAll();
 
 		expect(teasers.map(({ imagery }) => imagery.kind)).toEqual(['representative', 'sample']);
 	});
 
+	// Es la invariante "al menos una obra" sobre lo único que el teaser transporta.
 	it('rejects a teaser whose count is zero', async () => {
 		const [teaser] = onoffRawCollectionTeasersMock;
 
-		await expect(repoReturning([{ ...teaser, count: 0 }]).fetchTeasers()).rejects.toThrow(MalformedCollectionError);
+		await expect(repoReturning([{ ...teaser, count: 0 }]).fetchAll()).rejects.toThrow(MalformedCollectionError);
+	});
+
+	// Un catálogo sin colecciones es un resultado legítimo, no un fallo.
+	it('resolves an empty listing without failing', async () => {
+		expect(await repoReturning([]).fetchAll()).toEqual([]);
 	});
 });

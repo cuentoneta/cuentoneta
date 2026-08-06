@@ -1,6 +1,6 @@
 import { evaluate, parse } from 'groq-js';
 
-import { collectionBySlugQuery, collectionsQuery, collectionTeasersQuery } from './collection.query';
+import { collectionBySlugQuery, collectionsQuery } from './collection.query';
 
 // Los documentos son sintéticos porque el corpus de Onoff modela el **resultado** de estas queries,
 // no los documentos del content lake que las alimentan: no hay canon del que derivar esta entrada.
@@ -102,42 +102,10 @@ describe('collectionBySlugQuery', () => {
 });
 
 describe('collectionsQuery', () => {
-	it('orders collections by title ascending', async () => {
-		const dataset = [
-			...works,
-			collection('c', { title: 'Zorro' }),
-			collection('a', { title: 'Almanaque' }),
-			collection('b', { title: 'Manual' }),
-		];
-
-		const result = (await run(collectionsQuery, dataset)) as { title: string }[];
-
-		expect(result.map(({ title }) => title)).toEqual(['Almanaque', 'Manual', 'Zorro']);
-	});
-
-	it('leaves drafts out', async () => {
-		const dataset = [...works, collection('publicada'), collection('drafts.borrador')];
-
-		const result = (await run(collectionsQuery, dataset)) as { _id: string }[];
-
-		expect(result.map(({ _id }) => _id)).toEqual(['publicada']);
-	});
-
-	// Es el punto del listado pesado: cada colección viaja con todas sus obras.
-	it('carries every literary work of every collection', async () => {
-		const dataset = [...works, collection('geometrias', { literaryWorks: everyWork })];
-
-		const result = (await run(collectionsQuery, dataset)) as { literaryWorks: unknown[] }[];
-
-		expect(result[0]?.literaryWorks).toHaveLength(everyWork.length);
-	});
-});
-
-describe('collectionTeasersQuery', () => {
 	it('counts the works without dereferencing them', async () => {
 		const dataset = [...works, collection('geometrias', { literaryWorks: everyWork })];
 
-		const result = (await run(collectionTeasersQuery, dataset)) as Record<string, unknown>[];
+		const result = (await run(collectionsQuery, dataset)) as Record<string, unknown>[];
 
 		expect(result[0]?.['count']).toBe(everyWork.length);
 		expect(result[0]).not.toHaveProperty('literaryWorks');
@@ -147,7 +115,7 @@ describe('collectionTeasersQuery', () => {
 	it('resolves the cover of the first three works alone', async () => {
 		const dataset = [...works, collection('geometrias', { literaryWorks: everyWork })];
 
-		const result = (await run(collectionTeasersQuery, dataset)) as { literaryWorkCoverImages: string[] }[];
+		const result = (await run(collectionsQuery, dataset)) as { literaryWorkCoverImages: string[] }[];
 
 		expect(result[0]?.literaryWorkCoverImages).toEqual(['uno.png', 'dos.png', 'tres.png']);
 	});
@@ -155,7 +123,7 @@ describe('collectionTeasersQuery', () => {
 	it('yields an empty cover list for a collection without works', async () => {
 		const dataset = [collection('vacia', { literaryWorks: [] })];
 
-		const result = (await run(collectionTeasersQuery, dataset)) as {
+		const result = (await run(collectionsQuery, dataset)) as {
 			count: number;
 			literaryWorkCoverImages: string[];
 		}[];
@@ -164,7 +132,7 @@ describe('collectionTeasersQuery', () => {
 		expect(result[0]?.literaryWorkCoverImages).toEqual([]);
 	});
 
-	it('orders teasers by title ascending and leaves drafts out', async () => {
+	it('orders by title ascending and leaves drafts out', async () => {
 		const dataset = [
 			...works,
 			collection('c', { title: 'Zorro' }),
@@ -172,7 +140,7 @@ describe('collectionTeasersQuery', () => {
 			collection('drafts.b', { title: 'Borrador' }),
 		];
 
-		const result = (await run(collectionTeasersQuery, dataset)) as { title: string }[];
+		const result = (await run(collectionsQuery, dataset)) as { title: string }[];
 
 		expect(result.map(({ title }) => title)).toEqual(['Almanaque', 'Zorro']);
 	});
