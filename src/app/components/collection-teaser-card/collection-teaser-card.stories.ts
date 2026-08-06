@@ -1,18 +1,18 @@
 import { applicationConfig, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
-import { CollectionTeaser } from './collection-teaser';
+import { CollectionTeaserCard } from './collection-teaser-card';
 import { provideRouter } from '@angular/router';
-import { CollectionTeaserSkeletonComponent } from './collection-teaser-skeleton';
+import { CollectionTeaserCardSkeletonComponent } from './collection-teaser-card-skeleton';
 import { storylistTeaserRepresentativeMock, storylistTeaserSampleMock } from '@mocks/storylist.mock';
 
-const meta: Meta<CollectionTeaser> = {
-	component: CollectionTeaser,
-	title: 'Componentes V3/CollectionTeaser',
+const meta: Meta<CollectionTeaserCard> = {
+	component: CollectionTeaserCard,
+	title: 'Componentes V3/CollectionTeaserCard',
 	decorators: [
 		applicationConfig({
 			providers: [provideRouter([])],
 		}),
 		moduleMetadata({
-			imports: [CollectionTeaserSkeletonComponent],
+			imports: [CollectionTeaserCardSkeletonComponent],
 		}),
 	],
 	parameters: {
@@ -21,7 +21,7 @@ const meta: Meta<CollectionTeaser> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El <strong>CollectionTeaser</strong> es la tarjeta de una colección (storylist) para el Design System v3: portada, título, descripción y footer con tag y contador de historias. La portada se resuelve con el objeto de valor <strong>imagery</strong>: <strong>representative</strong> (una portada editorial propia de la colección) o <strong>sample</strong> (composición de 3 portadas de sus historias, con placeholder en los slots vacíos). Usa <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> para cada portada.</p></div>`,
+				component: `<div><p>El <strong>CollectionTeaserCard</strong> es la tarjeta de una colección (storylist) para el Design System v3: portada, título, descripción y footer con tag y contador de historias. La portada se resuelve con el objeto de valor <strong>imagery</strong>: <strong>representative</strong> (una portada editorial propia de la colección) o <strong>sample</strong> (composición de 3 portadas de sus historias, con placeholder en los slots vacíos). Usa <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> para cada portada.</p></div>`,
 			},
 		},
 	},
@@ -35,13 +35,13 @@ const meta: Meta<CollectionTeaser> = {
 };
 export default meta;
 
-export const Primary: StoryObj<CollectionTeaser> = {
+export const Primary: StoryObj<CollectionTeaserCard> = {
 	render: () => ({
 		props: { representative: storylistTeaserRepresentativeMock, sample: storylistTeaserSampleMock },
 		template: `
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-          <cuentoneta-collection-teaser class="card" [collection]="representative"/>
-          <cuentoneta-collection-teaser class="card" [collection]="sample"/>
+          <cuentoneta-collection-teaser-card class="card" [collection]="representative"/>
+          <cuentoneta-collection-teaser-card class="card" [collection]="sample"/>
     </div>
 `,
 	}),
@@ -54,7 +54,7 @@ export const Primary: StoryObj<CollectionTeaser> = {
 	},
 };
 
-export const Interactiva: StoryObj<CollectionTeaser & { kind: 'representative' | 'sample' }> = {
+export const Interactiva: StoryObj<CollectionTeaserCard & { kind: 'representative' | 'sample' }> = {
 	argTypes: {
 		kind: {
 			control: { type: 'inline-radio' },
@@ -68,7 +68,7 @@ export const Interactiva: StoryObj<CollectionTeaser & { kind: 'representative' |
 		},
 		template: `
 			<div class="card p-4">
-				<cuentoneta-collection-teaser [collection]="collection" />
+				<cuentoneta-collection-teaser-card [collection]="collection" />
 			</div>
 		`,
 	}),
@@ -82,16 +82,16 @@ export const Interactiva: StoryObj<CollectionTeaser & { kind: 'representative' |
 	},
 };
 
-export const Estados: StoryObj<CollectionTeaser & { loading: boolean }> = {
+export const Estados: StoryObj<CollectionTeaserCard & { loading: boolean }> = {
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
 	render: (args) => ({
 		props: args,
 		template: `
 			<div class="card p-4">
 				@if (loading) {
-					<cuentoneta-collection-teaser-skeleton class="w-full" />
+					<cuentoneta-collection-teaser-card-skeleton class="w-full" />
 				} @else {
-					<cuentoneta-collection-teaser [collection]="collection" />
+					<cuentoneta-collection-teaser-card [collection]="collection" />
 				}
 			</div>
 		`,

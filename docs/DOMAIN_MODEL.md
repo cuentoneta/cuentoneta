@@ -70,7 +70,7 @@ POST /api/story/most-read          # Obtener historias más leídas
 **Agregados Raíz:**
 
 - `Storylist` - Colecciones de historias
-- `Collection` - Colecciones de obras literarias (entidad paralela a `Storylist`, que la reemplaza). Hoy existe solo como document type del Studio: el modelo de dominio, el backend y el traspaso del contenido son trabajo posterior, y `Storylist` sigue vigente hasta que se complete
+- `Collection` - Colecciones de obras literarias (entidad paralela a `Storylist`, no la reemplaza todavía). El modelo de dominio ya existe (`createCollection`, con invariantes hechas cumplir en código, y su propio corpus de mocks); el backend (repository/service/controller) y el traspaso del contenido real desde el Studio siguen siendo trabajo posterior, y `Storylist` sigue vigente hasta que se complete
 
 **Responsabilidades:**
 
@@ -393,6 +393,69 @@ Las historias se referencian directamente en el array `stories`. Cada entrada es
 
 ---
 
+### Agregado: Collection (Colección de obras literarias)
+
+**Raíz de Agregado:** `Collection`
+
+> `Collection` es una **entidad paralela e independiente** a `Storylist`: agrupa `LiteraryWork` en vez de `Story`. Nace **en paralelo**, no la reemplaza — `Storylist` sigue vigente y sirviendo la página actual hasta su baja, que es un trabajo aparte. Es la **segunda** raíz de agregado con **invariantes hechas cumplir en código** (factory `createCollection` + el value object `Slug`, en `src/models/collection.model.ts`), después de `LiteraryWork`: `Storylist` y `Author` siguen teniendo las suyas descritas más abajo, pero no exigidas por un constructor. Esa es la dirección del proyecto, no una excepción puntual — cada entidad nueva del catálogo suma sus invariantes al código en vez de solo documentarlas.
+
+```typescript
+interface Collection {
+	// Identidad
+	_id: string; // Identificador único (Sanity)
+	slug: Slug; // Clave de negocio, invariante única (value object brandeado)
+	title: string; // Título de la colección
+
+	// Contenido
+	description: SanitizedHtml; // Markdown saneado a HTML — a diferencia de Storylist.description, no es Portable Text
+	imagery: CollectionImagery; // representative (portada editorial) o sample (portadas de las 3 primeras obras)
+	tags: Tag[]; // Etiquetas de categorización
+
+	// Configuración
+	config: {
+		showAuthors: boolean; // ¿Mostrar información de autores?
+	};
+
+	// Recursos Multimedia
+	mediaSources: Media[]; // Contenido multimedia asociado; alineado con el schema y con LiteraryWork.mediaSources (no `media`, como en Storylist)
+
+	// Metadatos
+	count: number; // Derivado: total de las obras que el agregado transporta
+
+	// Composición
+	literaryWorks: LiteraryWorkTeaser[]; // Obras literarias en la colección (ordenadas)
+}
+```
+
+**Invariantes de Negocio (hechas cumplir en código por la factory `createCollection`):**
+
+- El `title` no puede estar vacío.
+- Debe tener **al menos una** obra literaria (`literaryWorks.length >= 1`).
+- El `slug` tiene formato válido (value object `Slug`, delegado a `createSlug`).
+- `count` se deriva en la factory (`literaryWorks.length`); no se recibe como dato, así que no puede discrepar del número real de obras **mientras la query no acote `literaryWorks`**. Si el listado se pagina, el total pasa a ser un dato de entrada y la derivación deja de valer.
+
+**Ciclo de Vida:**
+
+```
+Creación de colección → Adición de obras literarias → Publicación de colección
+```
+
+**Relación con LiteraryWork:**
+Las obras se referencian directamente en el array `literaryWorks`. Cada entrada es una proyección de tipo `LiteraryWorkTeaser`, igual que `Storylist.stories` proyecta `Story` a `StoryTeaserWithAuthor`.
+
+**Tres diferencias con `Storylist`** (más allá de agrupar `LiteraryWork` en vez de `Story`):
+
+- **Sin pestañas.** El diseño de la página nueva no las contempla.
+- **`description` es `SanitizedHtml`**, no `TextBlockContent[]`: el schema declara el campo como Markdown, lo que la saca del pipeline de Portable Text.
+- **El campo de multimedia se llama `mediaSources`**, no `media` — alineado con el schema y con `LiteraryWork`.
+
+**Vistas Polimórficas:**
+
+- `Collection` - Vista completa (incluye todas las obras literarias)
+- `CollectionTeaser` - Vista sin obras (`literaryWorks: Array<never>`)
+
+---
+
 ### Agregado: Contributor (Colaborador)
 
 **Raíz de Agregado:** `Contributor`
@@ -577,7 +640,7 @@ interface ResourceType {
 
 > El ícono que acompaña a un recurso en la interfaz lo resuelve el frontend a partir del `slug` del tipo, contra el mapa local de `@models/icon.model`. No viaja desde el CMS.
 
-> El nombre `description` no implica un mismo tipo en todo el modelo: en `ResourceType` y en [`Tag`](#tag-etiqueta) es texto plano, mientras que `Storylist.description` es Portable Text (`TextBlockContent[]`) y `Media.description` es HTML saneado. Conviene mirar la interfaz antes de asumir el formato.
+> El nombre `description` no implica un mismo tipo en todo el modelo: en `ResourceType` y en [`Tag`](#tag-etiqueta) es texto plano, mientras que `Storylist.description` es Portable Text (`TextBlockContent[]`), `Media.description` es HTML saneado y `Collection.description` es Markdown saneado a HTML. Conviene mirar la interfaz antes de asumir el formato.
 
 **Ejemplos de tipos:**
 
@@ -603,7 +666,7 @@ interface Tag {
 
 **Uso:** Clasificar contenido por tema, género, etc.
 
-> El nombre `description` no implica un mismo tipo en todo el modelo: en `Tag` y en [`ResourceType`](#resource-recurso-externo) es texto plano, mientras que `Storylist.description` es Portable Text (`TextBlockContent[]`) y `Media.description` es HTML saneado. Conviene mirar la interfaz antes de asumir el formato.
+> El nombre `description` no implica un mismo tipo en todo el modelo: en `Tag` y en [`ResourceType`](#resource-recurso-externo) es texto plano, mientras que `Storylist.description` es Portable Text (`TextBlockContent[]`), `Media.description` es HTML saneado y `Collection.description` es Markdown saneado a HTML. Conviene mirar la interfaz antes de asumir el formato.
 
 > Una etiqueta no lleva ícono: `TagComponent` renderiza solo su título. El CMS supo tener un campo de ícono, pero ninguna superficie lo mostraba.
 
@@ -686,20 +749,20 @@ El **Lenguaje Ubicuo** es el lenguaje estructurado alrededor del modelo de domin
 
 ### Términos Clave
 
-| Término                  | Definición                                                                                                        | Contexto              |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------- | --------------------- |
-| **Historia**             | Obra literaria curada y publicada en la plataforma                                                                | Catálogo de Contenido |
-| **Obra literaria**       | Obra con secciones/capítulos (`LiteraryWork`), paralela a Historia                                                | Catálogo de Contenido |
-| **Sección / Capítulo**   | Unidad de contenido de una obra literaria: epígrafes + cuerpo Markdown saneado                                    | Catálogo de Contenido |
-| **Anónimo**              | Author real del catálogo (slug `anonimo`) que representa la obra sin autoría atribuida (policy `isAnonymous`)     | Catálogo de Contenido |
-| **Slug**                 | Identificador amigable, único e inmutable basado en el título                                                     | Todos                 |
-| **Epígrafe**             | Cita literaria que precede al texto principal                                                                     | Catálogo de Contenido |
-| **Teaser**               | Vista reducida de una entidad para listados y navegación                                                          | Todos                 |
-| **Colección**            | Agrupación temática u editorial de historias (`Storylist`) o de obras literarias (`Collection`, que la reemplaza) | Curación              |
-| **Colaborador**          | Persona que contribuye al proyecto en algún rol                                                                   | Administración        |
-| **Recurso**              | Enlace externo a información complementaria                                                                       | Catálogo de Contenido |
-| **Campaña de Contenido** | Promoción temporal de contenido con variantes responsivas                                                         | Página de Inicio      |
-| **Curaduría**            | Proceso de seleccionar, ordenar y presentar historias                                                             | Curación              |
+| Término                  | Definición                                                                                                                             | Contexto              |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| **Historia**             | Obra literaria curada y publicada en la plataforma                                                                                     | Catálogo de Contenido |
+| **Obra literaria**       | Obra con secciones/capítulos (`LiteraryWork`), paralela a Historia                                                                     | Catálogo de Contenido |
+| **Sección / Capítulo**   | Unidad de contenido de una obra literaria: epígrafes + cuerpo Markdown saneado                                                         | Catálogo de Contenido |
+| **Anónimo**              | Author real del catálogo (slug `anonimo`) que representa la obra sin autoría atribuida (policy `isAnonymous`)                          | Catálogo de Contenido |
+| **Slug**                 | Identificador amigable, único e inmutable basado en el título                                                                          | Todos                 |
+| **Epígrafe**             | Cita literaria que precede al texto principal                                                                                          | Catálogo de Contenido |
+| **Teaser**               | Vista reducida de una entidad para listados y navegación                                                                               | Todos                 |
+| **Colección**            | Agrupación temática u editorial de historias (`Storylist`) o de obras literarias (`Collection`, en paralelo — no la reemplaza todavía) | Curación              |
+| **Colaborador**          | Persona que contribuye al proyecto en algún rol                                                                                        | Administración        |
+| **Recurso**              | Enlace externo a información complementaria                                                                                            | Catálogo de Contenido |
+| **Campaña de Contenido** | Promoción temporal de contenido con variantes responsivas                                                                              | Página de Inicio      |
+| **Curaduría**            | Proceso de seleccionar, ordenar y presentar historias                                                                                  | Curación              |
 
 ---
 
