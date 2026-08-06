@@ -1,94 +1,15 @@
-import type { Media } from '@models/media.model';
-import type { Story } from '@models/story.model';
-import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
-import { createAttributedText } from '@models/attributed-text.model';
-import { createLiteraryWorkSection } from '@models/literary-work-section.model';
-import { createSectionTitle } from '@models/section-title.model';
-import { createMarkdown } from '@models/markdown.model';
-import { deriveSectionReadingTime } from '@models/reading-time.model';
-import { createIsoDateTime } from '@utils/date.utils';
-import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-import geometriaMdBody from './geometria.md?raw';
-import geometriaEditorialNoteMd from './geometria.editorial-note.md?raw';
-import { geometriaEpigraphReference, geometriaEpigraphText, geometriaSectionTitle } from './geometria.epigraph';
+import type { StoryBySlugQueryResult } from '@sanity-types';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
+import { cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag } from '../../onoff-raw-tags.mock';
+import { geometriaRawMediaSources } from '../media/geometria.media.raw.mock';
 
-import { authorMock } from '../author.mock';
-import { toDomainTags } from '../onoff-tags.mock';
-import { geometriaRawStory } from './geometria.raw.mock';
-import { geometriaRawLiteraryWork } from './geometria.literary-work.raw.mock';
-import {
-	geometriaAudioDescription,
-	geometriaSpaceDescription,
-	geometriaSpotifyDescription,
-	geometriaYoutubeDescription,
-} from './geometria.media';
-
-// Espeja los mediaSources del fixture raw homónimo, sin el pdfLink que el ACL descarta. Lo comparten
-// la Story y la obra literaria del mismo slug, que en el crudo declaran exactamente los mismos medios.
-export const geometriaMediaMock: Media[] = [
-	{
-		title: 'Lectura de "Geometría" por su autor',
-		type: 'audioRecording',
-		description: markdownToSanitizedHtml(createMarkdown(geometriaAudioDescription)),
-		data: { url: 'https://cdn.example.org/onoff/geometria.ogg' },
-	},
-	{
-		title: 'Conversación sobre el insomnio y la medida del tiempo',
-		type: 'spaceRecording',
-		description: markdownToSanitizedHtml(createMarkdown(geometriaSpaceDescription)),
-		data: {
-			url: 'https://cdn.example.org/onoff/geometria-space.ogg',
-			duration: '48:12',
-			hostName: 'Biblioteca del Méridien',
-			hostAvatar: 'https://cdn.example.org/onoff/biblioteca-meridien-avatar.png',
-			date: '1974-06-12',
-		},
-	},
-	{
-		title: 'Episodio dedicado a "Geometría"',
-		type: 'spotifyPodcastEpisode',
-		description: markdownToSanitizedHtml(createMarkdown(geometriaSpotifyDescription)),
-		data: { url: 'https://open.spotify.com/embed/episode/geometria' },
-	},
-	{
-		title: 'Video ensayo sobre las coordenadas del desvelo',
-		type: 'youTubeVideo',
-		description: markdownToSanitizedHtml(createMarkdown(geometriaYoutubeDescription)),
-		data: { videoId: 'geometriaVideoId' },
-	},
-];
-
-export const geometriaStoryMock: Story = {
+export const geometriaRawStory: NonNullable<StoryBySlugQueryResult> = {
 	_id: 'onoff-story-geometria',
-	title: 'Geometría',
 	slug: 'geometria',
-	originalPublication: 'Éditions du Méridien (1974)',
-	approximateReadingTime: 7,
+	title: 'Geometría',
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/geometria.png',
-	tags: toDomainTags(geometriaRawStory.tags),
-	resources: [],
-	media: geometriaMediaMock,
 	epigraphs: [],
-	author: authorMock,
-	publishedAt: '1974-01-01T00:00:00Z',
-	updatedAt: '1974-01-01T00:00:00Z',
-	summary: [
-		{
-			_type: 'block',
-			style: 'normal',
-			_key: 'geometria-sum',
-			markDefs: [],
-			children: [
-				{
-					_type: 'span',
-					_key: 'geometria-sum-s',
-					text: 'Shannon, insomne crónico, se despierta cada madrugada exactamente a las tres y media y nunca duerme más de dos horas: una vida reducida a coordenadas, donde el desvelo funciona como una geometría del tiempo que no deja resquicios.',
-				},
-			],
-		},
-	],
-	paragraphs: [
+	body: [
 		{
 			_type: 'block',
 			style: 'normal',
@@ -325,35 +246,17 @@ export const geometriaStoryMock: Story = {
 			],
 		},
 	],
+	review: [],
+	originalPublication: 'Éditions du Méridien (1974)',
+	publishedAt: '1974-01-01T00:00:00Z',
+	updatedAt: '1974-01-01T00:00:00Z',
+	approximateReadingTime: 7,
+	coverImage: {
+		_type: 'image',
+		asset: { _type: 'reference', _ref: 'image-9e1eab984fbe94e19101c7aa4fc2e99a88f71736-236x328-png' },
+	},
+	mediaSources: geometriaRawMediaSources,
+	resources: [],
+	tags: [cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag],
+	author: rawOnoffAuthor,
 };
-
-const geometriaBody = createMarkdown(geometriaMdBody);
-
-export const geometriaEpigraphMock = createAttributedText({
-	text: markdownToSanitizedHtml(createMarkdown(geometriaEpigraphText)),
-	reference: markdownToSanitizedHtml(createMarkdown(geometriaEpigraphReference)),
-});
-
-export const geometriaLiteraryWorkMock: LiteraryWork = createLiteraryWork({
-	_id: 'onoff-literary-work-geometria',
-	slug: geometriaStoryMock.slug,
-	title: geometriaStoryMock.title,
-	authors: [geometriaStoryMock.author],
-	coverImage: geometriaStoryMock.coverImage,
-	content: [
-		createLiteraryWorkSection({
-			position: 0,
-			title: createSectionTitle(geometriaSectionTitle),
-			epigraphs: [geometriaEpigraphMock],
-			bodyHtml: markdownToSanitizedHtml(geometriaBody),
-			readingTime: deriveSectionReadingTime(geometriaBody),
-		}),
-	],
-	mediaSources: geometriaMediaMock,
-	resources: geometriaStoryMock.resources,
-	badLanguage: geometriaStoryMock.badLanguage,
-	tags: toDomainTags(geometriaRawLiteraryWork.tags),
-	originalPublication: geometriaStoryMock.originalPublication,
-	editorialNote: markdownToSanitizedHtml(createMarkdown(geometriaEditorialNoteMd)),
-	publishedAt: createIsoDateTime(geometriaStoryMock.publishedAt),
-});

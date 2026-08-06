@@ -1,7 +1,7 @@
 import { AuthorProfile, AuthorTeaser } from '@models/author.model';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-import onoffBiographyMdBody from './onoff/francois-onoff.biography.md?raw';
+import onoffBiographyMdBody from './onoff/author/francois-onoff.biography.md?raw';
 import { colaborativaTagMock } from './onoff-tags.mock';
 
 export const authorMock: AuthorProfile = {

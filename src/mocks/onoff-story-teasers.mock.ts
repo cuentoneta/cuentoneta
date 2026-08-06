@@ -7,14 +7,14 @@ import type {
 import { isSpaceRecording } from '@models/media.model';
 import { authorTeaserMock } from './author.mock';
 import { onoffStoriesMock } from './onoff-stories.mock';
-import { elOdioStoryMock } from './onoff/el-odio.mock';
-import { elTratadoDeLosPlaceresStoryMock } from './onoff/el-tratado-de-los-placeres.mock';
-import { geometriaStoryMock } from './onoff/geometria.mock';
-import { lasDosAntorchasStoryMock } from './onoff/las-dos-antorchas.mock';
-import { lasEscalerasStoryMock } from './onoff/las-escaleras.mock';
-import { losPeldanosStoryMock } from './onoff/los-peldanos.mock';
-import { neronStoryMock } from './onoff/neron.mock';
-import { palacioNueveFronterasStoryMock } from './onoff/el-palacio-de-las-nueve-fronteras.mock';
+import { elOdioStoryMock } from './onoff/story/el-odio.story.mock';
+import { elTratadoDeLosPlaceresStoryMock } from './onoff/story/el-tratado-de-los-placeres.story.mock';
+import { geometriaStoryMock } from './onoff/story/geometria.story.mock';
+import { lasDosAntorchasStoryMock } from './onoff/story/las-dos-antorchas.story.mock';
+import { lasEscalerasStoryMock } from './onoff/story/las-escaleras.story.mock';
+import { losPeldanosStoryMock } from './onoff/story/los-peldanos.story.mock';
+import { neronStoryMock } from './onoff/story/neron.story.mock';
+import { palacioNueveFronterasStoryMock } from './onoff/story/el-palacio-de-las-nueve-fronteras.story.mock';
 
 // El ACL de teaser no resuelve la url del space recording (su proyección no trae audioUrl), así que el
 // teaser derivado tampoco puede traerla: con la url resuelta, el mock prometería más que el mapeo real.

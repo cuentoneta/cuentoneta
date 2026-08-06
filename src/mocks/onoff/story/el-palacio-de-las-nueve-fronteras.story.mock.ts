@@ -1,14 +1,39 @@
-import type { StoryBySlugQueryResult } from '@sanity-types';
-import { novelaRawTag, dramaPsicologicoRawTag, metaficcionRawTag } from '../onoff-raw-tags.mock';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import type { Story } from '@models/story.model';
+import { elPalacioRawStory } from './el-palacio-de-las-nueve-fronteras.story.raw.mock';
+import { authorMock } from '../../author.mock';
+import { toDomainTags } from '../../onoff-tags.mock';
 
-export const elPalacioRawStory: NonNullable<StoryBySlugQueryResult> = {
+export const palacioNueveFronterasStoryMock: Story = {
 	_id: 'onoff-story-el-palacio-de-las-nueve-fronteras',
-	slug: 'el-palacio-de-las-nueve-fronteras',
 	title: 'El palacio de las nueve fronteras',
+	slug: 'el-palacio-de-las-nueve-fronteras',
+	originalPublication: 'Éditions du Méridien (1985)',
+	approximateReadingTime: 11,
 	badLanguage: false,
+	coverImage: 'assets/img/mocks/stories/el-palacio-de-las-nueve-fronteras.png',
+	tags: toDomainTags(elPalacioRawStory.tags),
+	resources: [],
+	media: [],
 	epigraphs: [],
-	body: [
+	author: authorMock,
+	publishedAt: '1985-01-01T00:00:00Z',
+	updatedAt: '1985-01-01T00:00:00Z',
+	summary: [
+		{
+			_type: 'block',
+			style: 'normal',
+			_key: 'palacio-sum',
+			markDefs: [],
+			children: [
+				{
+					_type: 'span',
+					_key: 'palacio-sum-s',
+					text: 'La novela se organiza en nueve fronteras —territorios donde ninguna ley vale del todo y ninguna lengua se habla por completo— y la cruza un narrador que escribe para devolverle algo a un hombre cuyo cuerpo cayó ante su vista: «ese cuerpo necesitaba un aliento… esos ojos vacíos, una mirada; esos labios, un último gemido… y ese sueño, algún durmiente».',
+				},
+			],
+		},
+	],
+	paragraphs: [
 		{
 			_type: 'block',
 			style: 'normal',
@@ -225,17 +250,4 @@ export const elPalacioRawStory: NonNullable<StoryBySlugQueryResult> = {
 			],
 		},
 	],
-	review: [],
-	originalPublication: 'Éditions du Méridien (1985)',
-	publishedAt: '1985-01-01T00:00:00Z',
-	updatedAt: '1985-01-01T00:00:00Z',
-	approximateReadingTime: 11,
-	coverImage: {
-		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-3f8774ea01abc54483829d982035a810667240e1-236x328-png' },
-	},
-	mediaSources: [],
-	resources: [],
-	tags: [novelaRawTag, dramaPsicologicoRawTag, metaficcionRawTag],
-	author: rawOnoffAuthor,
 };

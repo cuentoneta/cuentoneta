@@ -1,48 +1,14 @@
-import type { Story } from '@models/story.model';
-import { lasDosAntorchasRawStory } from './las-dos-antorchas.raw.mock';
-import { lasDosAntorchasRawLiteraryWork } from './las-dos-antorchas.literary-work.raw.mock';
-import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
-import { createLiteraryWorkSection } from '@models/literary-work-section.model';
-import { createMarkdown } from '@models/markdown.model';
-import { deriveSectionReadingTime } from '@models/reading-time.model';
-import { createIsoDateTime } from '@utils/date.utils';
-import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-import lasDosAntorchasMdBody from './las-dos-antorchas.md?raw';
-import lasDosAntorchasEditorialNoteMd from './las-dos-antorchas.editorial-note.md?raw';
-import { authorMock } from '../author.mock';
-import { toDomainTags } from '../onoff-tags.mock';
+import type { StoryBySlugQueryResult } from '@sanity-types';
+import { novelaRawTag, metaficcionRawTag, experimentalRawTag } from '../../onoff-raw-tags.mock';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 
-export const lasDosAntorchasStoryMock: Story = {
+export const lasDosAntorchasRawStory: NonNullable<StoryBySlugQueryResult> = {
 	_id: 'onoff-story-las-dos-antorchas',
-	title: 'Las dos antorchas',
 	slug: 'las-dos-antorchas',
-	originalPublication: 'Éditions du Méridien (1987)',
-	approximateReadingTime: 8,
+	title: 'Las dos antorchas',
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/las-dos-antorchas.png',
-	tags: toDomainTags(lasDosAntorchasRawStory.tags),
-	resources: [],
-	media: [],
 	epigraphs: [],
-	author: authorMock,
-	publishedAt: '1987-01-01T00:00:00Z',
-	updatedAt: '1987-01-01T00:00:00Z',
-	summary: [
-		{
-			_type: 'block',
-			style: 'normal',
-			_key: 'antorchas-sum',
-			markDefs: [],
-			children: [
-				{
-					_type: 'span',
-					_key: 'antorchas-sum-s',
-					text: 'Dos luces que avanzan en paralelo sin llegar nunca a alumbrar lo mismo: la novela lleva al extremo el procedimiento de las dualidades que atraviesa toda la obra de Onoff.',
-				},
-			],
-		},
-	],
-	paragraphs: [
+	body: [
 		{
 			_type: 'block',
 			style: 'normal',
@@ -290,28 +256,17 @@ export const lasDosAntorchasStoryMock: Story = {
 			],
 		},
 	],
-};
-
-const lasDosAntorchasBody = createMarkdown(lasDosAntorchasMdBody);
-
-export const lasDosAntorchasLiteraryWorkMock: LiteraryWork = createLiteraryWork({
-	_id: 'onoff-literary-work-las-dos-antorchas',
-	slug: lasDosAntorchasStoryMock.slug,
-	title: lasDosAntorchasStoryMock.title,
-	authors: [lasDosAntorchasStoryMock.author],
-	coverImage: lasDosAntorchasStoryMock.coverImage,
-	content: [
-		createLiteraryWorkSection({
-			position: 0,
-			bodyHtml: markdownToSanitizedHtml(lasDosAntorchasBody),
-			readingTime: deriveSectionReadingTime(lasDosAntorchasBody),
-		}),
-	],
+	review: [],
+	originalPublication: 'Éditions du Méridien (1987)',
+	publishedAt: '1987-01-01T00:00:00Z',
+	updatedAt: '1987-01-01T00:00:00Z',
+	approximateReadingTime: 8,
+	coverImage: {
+		_type: 'image',
+		asset: { _type: 'reference', _ref: 'image-83ad8511a47107773b70ff339edd8b43c29dcf3e-236x328-png' },
+	},
 	mediaSources: [],
-	resources: lasDosAntorchasStoryMock.resources,
-	badLanguage: lasDosAntorchasStoryMock.badLanguage,
-	tags: toDomainTags(lasDosAntorchasRawLiteraryWork.tags),
-	originalPublication: lasDosAntorchasStoryMock.originalPublication,
-	editorialNote: markdownToSanitizedHtml(createMarkdown(lasDosAntorchasEditorialNoteMd)),
-	publishedAt: createIsoDateTime(lasDosAntorchasStoryMock.publishedAt),
-});
+	resources: [],
+	tags: [novelaRawTag, metaficcionRawTag, experimentalRawTag],
+	author: rawOnoffAuthor,
+};

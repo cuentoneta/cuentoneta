@@ -1,48 +1,14 @@
-import type { Story } from '@models/story.model';
-import { losPeldanosRawStory } from './los-peldanos.raw.mock';
-import { losPeldanosRawLiteraryWork } from './los-peldanos.literary-work.raw.mock';
-import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
-import { createLiteraryWorkSection } from '@models/literary-work-section.model';
-import { createMarkdown } from '@models/markdown.model';
-import { deriveSectionReadingTime } from '@models/reading-time.model';
-import { createIsoDateTime } from '@utils/date.utils';
-import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-import losPeldanosMdBody from './los-peldanos.md?raw';
-import losPeldanosEditorialNoteMd from './los-peldanos.editorial-note.md?raw';
-import { authorMock } from '../author.mock';
-import { toDomainTags } from '../onoff-tags.mock';
+import type { StoryBySlugQueryResult } from '@sanity-types';
+import { cuentoRawTag, absurdoRawTag, surrealismoRawTag } from '../../onoff-raw-tags.mock';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 
-export const losPeldanosStoryMock: Story = {
+export const losPeldanosRawStory: NonNullable<StoryBySlugQueryResult> = {
 	_id: 'onoff-story-los-peldanos',
-	title: 'Los peldaños',
 	slug: 'los-peldanos',
-	originalPublication: 'Éditions du Méridien (1977)',
-	approximateReadingTime: 8,
+	title: 'Los peldaños',
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/los-peldanos.png',
-	tags: toDomainTags(losPeldanosRawStory.tags),
-	resources: [],
-	media: [],
 	epigraphs: [],
-	author: authorMock,
-	publishedAt: '1977-01-01T00:00:00Z',
-	updatedAt: '1977-01-01T00:00:00Z',
-	summary: [
-		{
-			_type: 'block',
-			style: 'normal',
-			_key: 'peldanos-sum',
-			markDefs: [],
-			children: [
-				{
-					_type: 'span',
-					_key: 'peldanos-sum-s',
-					text: 'La Sra. Oneiras saca del bolsillo de la falda un trozo de pescado hervido y lo come mirando fijamente al frente, sin ver nada, y luego pasa a un centímetro del protagonista como si no existiese. Subir y bajar peldaños es menos un desplazamiento físico que un estado de ánimo.',
-				},
-			],
-		},
-	],
-	paragraphs: [
+	body: [
 		{
 			_type: 'block',
 			style: 'normal',
@@ -269,28 +235,17 @@ export const losPeldanosStoryMock: Story = {
 			],
 		},
 	],
-};
-
-const losPeldanosBody = createMarkdown(losPeldanosMdBody);
-
-export const losPeldanosLiteraryWorkMock: LiteraryWork = createLiteraryWork({
-	_id: 'onoff-literary-work-los-peldanos',
-	slug: losPeldanosStoryMock.slug,
-	title: losPeldanosStoryMock.title,
-	authors: [losPeldanosStoryMock.author],
-	coverImage: losPeldanosStoryMock.coverImage,
-	content: [
-		createLiteraryWorkSection({
-			position: 0,
-			bodyHtml: markdownToSanitizedHtml(losPeldanosBody),
-			readingTime: deriveSectionReadingTime(losPeldanosBody),
-		}),
-	],
+	review: [],
+	originalPublication: 'Éditions du Méridien (1977)',
+	publishedAt: '1977-01-01T00:00:00Z',
+	updatedAt: '1977-01-01T00:00:00Z',
+	approximateReadingTime: 8,
+	coverImage: {
+		_type: 'image',
+		asset: { _type: 'reference', _ref: 'image-27fb05f42b38f0ba9ba21aeb566e25abe670b213-236x328-png' },
+	},
 	mediaSources: [],
-	resources: losPeldanosStoryMock.resources,
-	badLanguage: losPeldanosStoryMock.badLanguage,
-	tags: toDomainTags(losPeldanosRawLiteraryWork.tags),
-	originalPublication: losPeldanosStoryMock.originalPublication,
-	editorialNote: markdownToSanitizedHtml(createMarkdown(losPeldanosEditorialNoteMd)),
-	publishedAt: createIsoDateTime(losPeldanosStoryMock.publishedAt),
-});
+	resources: [],
+	tags: [cuentoRawTag, absurdoRawTag, surrealismoRawTag],
+	author: rawOnoffAuthor,
+};

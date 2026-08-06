@@ -1,72 +1,40 @@
-import type { StoryBySlugQueryResult } from '@sanity-types';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
-import { cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag } from '../onoff-raw-tags.mock';
-import {
-	geometriaAudioDescription,
-	geometriaPdfDescription,
-	geometriaSpaceDescription,
-	geometriaSpotifyDescription,
-	geometriaYoutubeDescription,
-} from './geometria.media';
+import type { Story } from '@models/story.model';
+import { authorMock } from '../../author.mock';
+import { toDomainTags } from '../../onoff-tags.mock';
+import { geometriaRawStory } from './geometria.story.raw.mock';
+import { geometriaMediaMock } from '../media/geometria.media.mock';
 
-// Única obra del corpus con multimedia: cubre los cuatro tipos que el dominio modela más un
-// pdfLink, que el schema admite y el ACL descarta — el caso real de tipo no mapeado. Se exporta
-// para que la cara de obra literaria del mismo slug espeje exactamente estos medios.
-export const geometriaRawMediaSources: NonNullable<StoryBySlugQueryResult>['mediaSources'] = [
-	{
-		_key: 'geometria-audio',
-		_type: 'audioRecording',
-		title: 'Lectura de "Geometría" por su autor',
-		description: geometriaAudioDescription,
-		url: 'https://cdn.example.org/onoff/geometria.ogg',
-	},
-	{
-		_key: 'geometria-space',
-		_type: 'spaceRecording',
-		title: 'Conversación sobre el insomnio y la medida del tiempo',
-		description: geometriaSpaceDescription,
-		audioFile: { _type: 'file', asset: { _type: 'reference', _ref: 'file-geometria-space-ogg' } },
-		hostName: 'Biblioteca del Méridien',
-		// Opcional en el schema: presente acá para que la rama del widget que pinta el avatar del anfitrión
-		// se ejercite contra el canon.
-		hostAvatar: {
-			_type: 'image',
-			asset: { _type: 'reference', _ref: 'image-2c4d6e8a0b2d4f6a8c0e2d4f6a8b0c2d4e6f8a0b-96x96-png' },
-		},
-		date: '1974-06-12',
-		duration: '48:12',
-		audioUrl: 'https://cdn.example.org/onoff/geometria-space.ogg',
-	},
-	{
-		_key: 'geometria-spotify',
-		_type: 'spotifyPodcastEpisode',
-		title: 'Episodio dedicado a "Geometría"',
-		description: geometriaSpotifyDescription,
-		url: 'https://open.spotify.com/embed/episode/geometria',
-	},
-	{
-		_key: 'geometria-youtube',
-		_type: 'youTubeVideo',
-		title: 'Video ensayo sobre las coordenadas del desvelo',
-		description: geometriaYoutubeDescription,
-		videoId: 'geometriaVideoId',
-	},
-	{
-		_key: 'geometria-pdf',
-		_type: 'pdfLink',
-		title: 'Facsímil de la primera edición',
-		description: geometriaPdfDescription,
-		url: 'https://cdn.example.org/onoff/geometria.pdf',
-	},
-];
-
-export const geometriaRawStory: NonNullable<StoryBySlugQueryResult> = {
+export const geometriaStoryMock: Story = {
 	_id: 'onoff-story-geometria',
-	slug: 'geometria',
 	title: 'Geometría',
+	slug: 'geometria',
+	originalPublication: 'Éditions du Méridien (1974)',
+	approximateReadingTime: 7,
 	badLanguage: false,
+	coverImage: 'assets/img/mocks/stories/geometria.png',
+	tags: toDomainTags(geometriaRawStory.tags),
+	resources: [],
+	media: geometriaMediaMock,
 	epigraphs: [],
-	body: [
+	author: authorMock,
+	publishedAt: '1974-01-01T00:00:00Z',
+	updatedAt: '1974-01-01T00:00:00Z',
+	summary: [
+		{
+			_type: 'block',
+			style: 'normal',
+			_key: 'geometria-sum',
+			markDefs: [],
+			children: [
+				{
+					_type: 'span',
+					_key: 'geometria-sum-s',
+					text: 'Shannon, insomne crónico, se despierta cada madrugada exactamente a las tres y media y nunca duerme más de dos horas: una vida reducida a coordenadas, donde el desvelo funciona como una geometría del tiempo que no deja resquicios.',
+				},
+			],
+		},
+	],
+	paragraphs: [
 		{
 			_type: 'block',
 			style: 'normal',
@@ -303,17 +271,4 @@ export const geometriaRawStory: NonNullable<StoryBySlugQueryResult> = {
 			],
 		},
 	],
-	review: [],
-	originalPublication: 'Éditions du Méridien (1974)',
-	publishedAt: '1974-01-01T00:00:00Z',
-	updatedAt: '1974-01-01T00:00:00Z',
-	approximateReadingTime: 7,
-	coverImage: {
-		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-9e1eab984fbe94e19101c7aa4fc2e99a88f71736-236x328-png' },
-	},
-	mediaSources: geometriaRawMediaSources,
-	resources: [],
-	tags: [cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag],
-	author: rawOnoffAuthor,
 };

@@ -1,6 +1,6 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { ensayoRawTag, filosoficoRawTag, metaficcionRawTag } from '../onoff-raw-tags.mock';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import { ensayoRawTag, filosoficoRawTag, metaficcionRawTag } from '../../onoff-raw-tags.mock';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 import elTratadoDeLosPlaceresMdBody from './el-tratado-de-los-placeres.md?raw';
 import elTratadoDeLosPlaceresEditorialNoteMd from './el-tratado-de-los-placeres.editorial-note.md?raw';
 

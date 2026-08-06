@@ -1,14 +1,39 @@
-import type { StoryBySlugQueryResult } from '@sanity-types';
-import { novelaRawTag, absurdoRawTag, alegoriaRawTag } from '../onoff-raw-tags.mock';
-import { rawOnoffAuthor } from '../onoff-raw-author.mock';
+import type { Story } from '@models/story.model';
+import { lasEscalerasRawStory } from './las-escaleras.story.raw.mock';
+import { authorMock } from '../../author.mock';
+import { toDomainTags } from '../../onoff-tags.mock';
 
-export const lasEscalerasRawStory: NonNullable<StoryBySlugQueryResult> = {
+export const lasEscalerasStoryMock: Story = {
 	_id: 'onoff-story-las-escaleras',
-	slug: 'las-escaleras',
 	title: 'Las escaleras',
+	slug: 'las-escaleras',
+	originalPublication: 'Éditions du Méridien (1979)',
+	approximateReadingTime: 9,
 	badLanguage: false,
+	coverImage: 'assets/img/mocks/stories/las-escaleras.png',
+	tags: toDomainTags(lasEscalerasRawStory.tags),
+	resources: [],
+	media: [],
 	epigraphs: [],
-	body: [
+	author: authorMock,
+	publishedAt: '1979-01-01T00:00:00Z',
+	updatedAt: '1979-01-01T00:00:00Z',
+	summary: [
+		{
+			_type: 'block',
+			style: 'normal',
+			_key: 'escaleras-sum',
+			markDefs: [],
+			children: [
+				{
+					_type: 'span',
+					_key: 'escaleras-sum-s',
+					text: 'Su tercer capítulo, «El regreso del druso», contiene el discurso del príncipe Cosme antes de colocar los mosaicos: un parque poblado de hombres arrodillados y bailarines abandonados, con frescos de figuras en cuclillas en la sombra.',
+				},
+			],
+		},
+	],
+	paragraphs: [
 		{
 			_type: 'block',
 			style: 'normal',
@@ -232,17 +257,4 @@ export const lasEscalerasRawStory: NonNullable<StoryBySlugQueryResult> = {
 			],
 		},
 	],
-	review: [],
-	originalPublication: 'Éditions du Méridien (1979)',
-	publishedAt: '1979-01-01T00:00:00Z',
-	updatedAt: '1979-01-01T00:00:00Z',
-	approximateReadingTime: 9,
-	coverImage: {
-		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-ad5639283bf3d3e927b5b0eb79ef2ba098b707e8-236x328-png' },
-	},
-	mediaSources: [],
-	resources: [],
-	tags: [novelaRawTag, absurdoRawTag, alegoriaRawTag],
-	author: rawOnoffAuthor,
 };

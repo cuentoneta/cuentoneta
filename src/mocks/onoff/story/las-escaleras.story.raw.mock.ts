@@ -1,48 +1,14 @@
-import type { Story } from '@models/story.model';
-import { lasEscalerasRawStory } from './las-escaleras.raw.mock';
-import { lasEscalerasRawLiteraryWork } from './las-escaleras.literary-work.raw.mock';
-import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
-import { createLiteraryWorkSection } from '@models/literary-work-section.model';
-import { createMarkdown } from '@models/markdown.model';
-import { deriveSectionReadingTime } from '@models/reading-time.model';
-import { createIsoDateTime } from '@utils/date.utils';
-import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-import lasEscalerasMdBody from './las-escaleras.md?raw';
-import lasEscalerasEditorialNoteMd from './las-escaleras.editorial-note.md?raw';
-import { authorMock } from '../author.mock';
-import { toDomainTags } from '../onoff-tags.mock';
+import type { StoryBySlugQueryResult } from '@sanity-types';
+import { novelaRawTag, absurdoRawTag, alegoriaRawTag } from '../../onoff-raw-tags.mock';
+import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 
-export const lasEscalerasStoryMock: Story = {
+export const lasEscalerasRawStory: NonNullable<StoryBySlugQueryResult> = {
 	_id: 'onoff-story-las-escaleras',
-	title: 'Las escaleras',
 	slug: 'las-escaleras',
-	originalPublication: 'Éditions du Méridien (1979)',
-	approximateReadingTime: 9,
+	title: 'Las escaleras',
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/las-escaleras.png',
-	tags: toDomainTags(lasEscalerasRawStory.tags),
-	resources: [],
-	media: [],
 	epigraphs: [],
-	author: authorMock,
-	publishedAt: '1979-01-01T00:00:00Z',
-	updatedAt: '1979-01-01T00:00:00Z',
-	summary: [
-		{
-			_type: 'block',
-			style: 'normal',
-			_key: 'escaleras-sum',
-			markDefs: [],
-			children: [
-				{
-					_type: 'span',
-					_key: 'escaleras-sum-s',
-					text: 'Su tercer capítulo, «El regreso del druso», contiene el discurso del príncipe Cosme antes de colocar los mosaicos: un parque poblado de hombres arrodillados y bailarines abandonados, con frescos de figuras en cuclillas en la sombra.',
-				},
-			],
-		},
-	],
-	paragraphs: [
+	body: [
 		{
 			_type: 'block',
 			style: 'normal',
@@ -266,28 +232,17 @@ export const lasEscalerasStoryMock: Story = {
 			],
 		},
 	],
-};
-
-const lasEscalerasBody = createMarkdown(lasEscalerasMdBody);
-
-export const lasEscalerasLiteraryWorkMock: LiteraryWork = createLiteraryWork({
-	_id: 'onoff-literary-work-las-escaleras',
-	slug: lasEscalerasStoryMock.slug,
-	title: lasEscalerasStoryMock.title,
-	authors: [lasEscalerasStoryMock.author],
-	coverImage: lasEscalerasStoryMock.coverImage,
-	content: [
-		createLiteraryWorkSection({
-			position: 0,
-			bodyHtml: markdownToSanitizedHtml(lasEscalerasBody),
-			readingTime: deriveSectionReadingTime(lasEscalerasBody),
-		}),
-	],
+	review: [],
+	originalPublication: 'Éditions du Méridien (1979)',
+	publishedAt: '1979-01-01T00:00:00Z',
+	updatedAt: '1979-01-01T00:00:00Z',
+	approximateReadingTime: 9,
+	coverImage: {
+		_type: 'image',
+		asset: { _type: 'reference', _ref: 'image-ad5639283bf3d3e927b5b0eb79ef2ba098b707e8-236x328-png' },
+	},
 	mediaSources: [],
-	resources: lasEscalerasStoryMock.resources,
-	badLanguage: lasEscalerasStoryMock.badLanguage,
-	tags: toDomainTags(lasEscalerasRawLiteraryWork.tags),
-	originalPublication: lasEscalerasStoryMock.originalPublication,
-	editorialNote: markdownToSanitizedHtml(createMarkdown(lasEscalerasEditorialNoteMd)),
-	publishedAt: createIsoDateTime(lasEscalerasStoryMock.publishedAt),
-});
+	resources: [],
+	tags: [novelaRawTag, absurdoRawTag, alegoriaRawTag],
+	author: rawOnoffAuthor,
+};

@@ -1,5 +1,5 @@
 import type { RotatingContentQueryResult, StoryBySlugQueryResult } from '@sanity-types';
-import onoffBiographyMdBody from './onoff/francois-onoff.biography.md?raw';
+import onoffBiographyMdBody from './onoff/author/francois-onoff.biography.md?raw';
 
 export const rawOnoffAuthor: NonNullable<StoryBySlugQueryResult>['author'] = {
 	_id: 'author_1',
