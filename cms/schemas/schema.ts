@@ -4,6 +4,7 @@
 // We import object and document schemas
 import author from './author';
 import blockContent from './blockContent';
+import collection from './collection';
 import literaryWork from './literaryWork';
 import nationality from './nationality';
 import landingPage from './landingPage';
@@ -24,6 +25,7 @@ export default [
 	landingPage,
 	contentCampaign,
 	storylist,
+	collection,
 	story,
 	literaryWork,
 	author,
