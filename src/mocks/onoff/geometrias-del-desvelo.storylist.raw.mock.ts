@@ -1,9 +1,9 @@
 import type { StorylistQueryResult } from '@sanity-types';
 import { onoffRawNavTeasersMock } from '../onoff-raw-stories.mock';
 
-// Collection cruda Onoff — "Geometrías del desvelo" (obsesión por el orden y el tiempo).
+// Storylist cruda Onoff — "Geometrías del desvelo" (obsesión por el orden y el tiempo).
 // Forma cruda de `storylistQuery` (StorylistQueryResult), para testear `fetchStorylistBySlug`.
-export const geometriasDelDesveloRawCollection: NonNullable<StorylistQueryResult> = {
+export const geometriasDelDesveloRawStorylist: NonNullable<StorylistQueryResult> = {
 	_id: 'onoff-geometrias-del-desvelo',
 	slug: 'geometrias-del-desvelo',
 	title: 'Geometrías del desvelo',
