@@ -9,7 +9,7 @@ Este directorio (`src/mocks/onoff/`) es la **única ubicación** del corpus de l
 
 ## Cómo está organizado
 
-Las piezas se agrupan **por entidad**, una carpeta cada una. El nombre de archivo conserva igualmente el infijo de entidad, así que sigue siendo unívoco fuera de contexto:
+Las piezas se agrupan **por entidad**, una carpeta cada una. Los mocks y fixtures conservan igualmente el infijo de entidad en el nombre, así que siguen siendo unívocos fuera de contexto; la prosa no lo lleva, porque su extensión ya la distingue:
 
 ```
 onoff/
@@ -23,6 +23,8 @@ onoff/
 ```
 
 **Los agregadores no viven acá:** están un nivel arriba, en `src/mocks/`, y son lo que el resto del repo importa. Una regla de ESLint prohíbe importar una pieza puntual desde fuera de `src/mocks/**`.
+
+**Las carpetas no son independientes entre sí.** `literary-work/<slug>.literary-work.mock.ts` importa a su hermano de `story/`: la obra deriva de la story siete campos —slug, título, autor, portada, recursos, publicación original y fecha—. Esa relación existía antes, escondida por vivir las dos caras en el mismo archivo; separarlas la volvió visible en vez de crearla.
 
 **`media/` no es una entidad**, es la excepción: la story y la obra literaria del mismo slug consumen _el mismo_ objeto de medios, y duplicarlo rompería la invariante de que ambas caras declaren exactamente los mismos. Ninguna de las dos puede reclamarlo, así que vive aparte. Es el criterio para la próxima pieza que se sume: si más de una entidad la consume y duplicarla rompería una invariante, va a carpeta propia; si solo la usa una, va con esa entidad.
 

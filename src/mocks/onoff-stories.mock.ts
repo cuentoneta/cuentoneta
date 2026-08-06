@@ -9,7 +9,8 @@ import { neronStoryMock } from './onoff/story/neron.story.mock';
 import { palacioNueveFronterasStoryMock } from './onoff/story/el-palacio-de-las-nueve-fronteras.story.mock';
 
 // Corpus de las obras (ficticias) de François Onoff, personaje del film "Una pura formalità". Cada obra es un
-// `Story` completo en ./onoff/<slug>.mock.ts: `summary` reproduce la reseña de la ficha y `paragraphs` el cuerpo.
+// `Story` completo en ./onoff/story/<slug>.story.mock.ts: `summary` reproduce la reseña de la ficha y
+// `paragraphs` el cuerpo.
 export const onoffStoriesMock: Story[] = [
 	palacioNueveFronterasStoryMock,
 	geometriaStoryMock,

@@ -10,7 +10,7 @@ import { neronLiteraryWorkMock } from './onoff/literary-work/neron.literary-work
 import { palacioNueveFronterasLiteraryWorkMock } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.mock';
 
 // Corpus LiteraryWork de las obras (ficticias) de François Onoff — contraparte del corpus Story, con
-// el cuerpo en Markdown (./onoff/<slug>.md) materializado a bodyHtml por el pipeline del dominio.
+// el cuerpo en Markdown (./onoff/literary-work/<slug>.md) materializado a bodyHtml por el pipeline del dominio.
 export const onoffLiteraryWorksMock: LiteraryWork[] = [
 	palacioNueveFronterasLiteraryWorkMock,
 	geometriaLiteraryWorkMock,
