@@ -16,13 +16,32 @@ onoff/
 ├── story/          <slug>.story.mock.ts · <slug>.story.raw.mock.ts
 ├── literary-work/  <slug>.literary-work.mock.ts · <slug>.literary-work.raw.mock.ts
 │                   + su prosa: <slug>.md · <slug>.editorial-note.md · <slug>.epigraph.ts
-├── collection/     <slug>.collection.raw.mock.ts · <slug>.collection.md · la proyección compartida
+├── collection/     <slug>.collection.raw.mock.ts · <slug>.collection.md · las proyecciones
 ├── storylist/      <slug>.storylist.raw.mock.ts
-├── author/         francois-onoff.biography.md
-└── media/          <slug>.media.ts · <slug>.media.mock.ts · <slug>.media.raw.mock.ts
+├── author/         francois-onoff.biography.md · author.document.projection.ts
+├── media/          <slug>.media.ts · <slug>.media.mock.ts · <slug>.media.raw.mock.ts
+└── document/       la factory de campos de sistema y los documentos de soporte
 ```
 
 **Los agregadores no viven acá:** están un nivel arriba, en `src/mocks/`, y son lo que el resto del repo importa. Una regla de ESLint prohíbe importar una pieza puntual desde fuera de `src/mocks/**`.
+
+## Las tres capas
+
+```
+documentos  →  (query GROQ)  →  raw  →  (ACL del repository)  →  dominio
+```
+
+- **Documentos** (`<entidad>.document.projection.ts`): lo que vive en el content lake. Los consume un test que evalúa una query con `groq-js` sobre `onoffDatasetMock`.
+- **Raw** (`<slug>.<entidad>.raw.mock.ts`): el resultado de la query, tipado contra los `*QueryResult`. Lo consumen los specs de repository y mapper.
+- **Dominio** (`<slug>.<entidad>.mock.ts`): el agregado construido por su factory. Lo consume el frontend.
+
+**Los documentos se derivan del raw, no al revés**, aunque el flujo real vaya en la dirección opuesta. El raw es lo que ya existía escrito, así que invertir la proyección de la query evita duplicar contenido: es el mismo criterio con el que el dominio se deriva del raw. Invertir es desanidar lo que la query aplana —el slug vuelve a ser objeto, las etiquetas vuelven a ser referencias— y descartar lo que la query agrega, como el conteo de secciones.
+
+**Qué impide que la inversión mienta:** `onoff-documents.mock.spec.ts` vuelve a aplicar las queries reales sobre los documentos derivados y compara contra el canon crudo. Si el resultado no lo reprodujera, los documentos estarían afirmando un content lake que no existe.
+
+**Un documento faltante no falla.** Si una referencia apunta a un `_id` que no está en el dataset, `groq-js` la resuelve a `null` en silencio — no lanza. Por eso el dataset se pide entero (`onoffDatasetMock`) en vez de armar subconjuntos por caso, y por eso cada proyección emite también los documentos de soporte que sus referencias necesitan, incluido el asset de audio.
+
+**`document/` no es una entidad**, como `media/`: aloja la factory de campos de sistema y los documentos que varias entidades referencian (etiquetas, nacionalidades, tipos de recurso).
 
 **Las carpetas no son independientes entre sí.** `literary-work/<slug>.literary-work.mock.ts` importa a su hermano de `story/`: la obra deriva de la story siete campos —slug, título, autor, portada, recursos, publicación original y fecha—. Esa relación existía antes, escondida por vivir las dos caras en el mismo archivo; separarlas la volvió visible en vez de crearla.
 
