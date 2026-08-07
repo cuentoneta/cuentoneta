@@ -23,7 +23,6 @@ describe('collectionController', () => {
 		await expect(response.json()).resolves.toMatchObject({ slug: firstCollection?.slug });
 	});
 
-	// El listado sirve la vista de catálogo: cada colección sin sus obras.
 	it('serves the listing as teasers', async () => {
 		const response = await app.request('/collection');
 		const body = (await response.json()) as { literaryWorks: unknown[]; count: number }[];
@@ -50,7 +49,6 @@ describe('collectionController', () => {
 });
 
 describe('collectionController with malformed data', () => {
-	// El repository levanta este error cuando la colección existe pero no se puede construir.
 	class FailingCollectionRepository implements CollectionRepository {
 		public async fetchBySlug(): Promise<never> {
 			throw new MalformedCollectionError('geometrias-del-desvelo');
@@ -62,7 +60,7 @@ describe('collectionController with malformed data', () => {
 
 	const failing = appWith(new FailingCollectionRepository());
 
-	// No es 404: la colección existe, lo que falla es su curaduría.
+	// La colección existe: lo que falla es su curaduría, no el pedido.
 	it.each(['/collection/geometrias-del-desvelo', '/collection'])(
 		'answers 500 with a stable code for %s',
 		async (path) => {
@@ -73,7 +71,6 @@ describe('collectionController with malformed data', () => {
 		},
 	);
 
-	// El mensaje nombra la colección culpable, que en un listado ni siquiera es la que se pidió.
 	it('keeps the offending slug out of the response', async () => {
 		const response = await failing.request('/collection');
 

@@ -6,13 +6,8 @@ import { CollectionNotFoundError, MalformedCollectionError } from './collection.
 import type { CollectionRepository } from './collection.repository';
 import { getCollectionBySlug, getCollections } from './collection.service';
 
-// Traduce los dos errores tipados del módulo a respuestas distintas, porque son problemas distintos:
-// el slug inexistente es del pedido y la colección mal curada es del catálogo. Cualquier otro error
-// se relanza al `onError` global, que lo degrada a 500.
-//
-// El mensaje del error de curaduría nombra la colección culpable, que es un dato de diagnóstico del
-// servidor —en los listados ni siquiera es la que el cliente pidió—, así que la respuesta lleva un
-// código estable en vez del mensaje.
+// El error de curaduría responde con un código y no con su mensaje, a diferencia del de arriba: ese
+// mensaje nombra la colección culpable, que en un listado ni siquiera es la que el cliente pidió.
 async function respond<T>(c: Context, produce: () => Promise<T>) {
 	try {
 		return c.json(await produce());
@@ -30,8 +25,6 @@ async function respond<T>(c: Context, produce: () => Promise<T>) {
 export function createCollectionController(repository?: CollectionRepository) {
 	const controller = new Hono();
 
-	// El listado va en la raíz, como en author, story y contributor. Que devuelva la vista reducida es
-	// lo normal en un listado, y evita un segmento que competiría con el espacio de slugs.
 	controller.get('/', async (c) => respond(c, () => getCollections(repository)));
 
 	controller.get('/:slug', zValidator('param', slugSchema), async (c) => {
