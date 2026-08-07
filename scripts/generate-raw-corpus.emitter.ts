@@ -15,8 +15,27 @@ export function substitutionKey(value: unknown): string {
 	return JSON.stringify(value);
 }
 
+/**
+ * Corta ante dos piezas a mano que declaran el mismo valor. Sin esto, la última gana en silencio y cuál
+ * es "la última" lo decide el orden en que el sistema de archivos devuelve los módulos: el archivo
+ * generado importaría un binding en una máquina y otro en CI, con un diff que ningún gate explica.
+ */
 export function buildSubstitutionTable(entries: { value: unknown; substitution: Substitution }[]): SubstitutionTable {
-	return new Map(entries.map(({ value, substitution }) => [substitutionKey(value), substitution]));
+	const table: SubstitutionTable = new Map();
+
+	for (const { value, substitution } of entries) {
+		const key = substitutionKey(value);
+		const previous = table.get(key);
+		if (previous && previous.binding !== substitution.binding) {
+			throw new Error(
+				`Dos piezas del corpus declaran el mismo valor: "${previous.binding}" (${previous.specifier}) y ` +
+					`"${substitution.binding}" (${substitution.specifier}). Dejá una sola y que la otra la importe.`,
+			);
+		}
+		table.set(key, substitution);
+	}
+
+	return table;
 }
 
 // El escapado lo hace `JSON.stringify` y no un reemplazo propio: la prosa del corpus trae CRLF, y un

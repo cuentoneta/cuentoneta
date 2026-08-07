@@ -1,5 +1,3 @@
-// Documento tal como Sanity lo guarda. Es fuente escrita a mano: la fixture cruda de esta obra se
-// deriva de acá evaluando la query real con `pnpm corpus:generate`.
 import type { LiteraryWork } from '@sanity-types';
 import lasDosAntorchasEditorialNoteMd from './las-dos-antorchas.editorial-note.md?raw';
 import lasDosAntorchasMdBody from './las-dos-antorchas.md?raw';

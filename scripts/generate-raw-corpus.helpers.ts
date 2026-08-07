@@ -14,8 +14,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
  * renderizar, fuera de GROQ. El único `->` sobre un asset es `audioFile.asset->url`. Sumar documentos de
  * imagen al corpus sería entonces inventar contenido que nada lee.
  *
- * Si alguna query llegara a dereferenciar una imagen, esta exclusión deja de valer — y el modo de falla
- * queda cubierto igual, porque la fixture generada diferiría de la commiteada y el gate de frescura corta.
+ * Si alguna query llegara a dereferenciar una imagen, hay que sumar el documento del asset y quitar esta
+ * exclusión: el gate de frescura no lo detectaría, porque al regenerar el null espurio queda de los dos
+ * lados de la comparación.
  */
 function isImageAsset(ref: string): boolean {
 	return ref.startsWith('image-');

@@ -1,7 +1,10 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
+import { palacioNueveFronterasSectionTitle } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.epigraph';
 import {
-	palacioFirstSectionTitle,
+	palacioFirstSectionReadingTime,
+	palacioMultiSectionTotalReadingTime,
 	palacioSecondSectionBody,
+	palacioSecondSectionReadingTime,
 	palacioSecondSectionTitle,
 } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.multi-section';
 import { elOdioRawLiteraryWork } from './onoff/literary-work/el-odio.literary-work.raw.mock';
@@ -68,22 +71,22 @@ export const onoffRawLiteraryWorksWithMediaSources: NonNullable<LiteraryWorkBySl
 export const multiSectionRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	...palacioNueveFronterasRawLiteraryWork,
 	_id: 'onoff-literary-work-el-palacio-de-las-nueve-fronteras-multi',
-	totalReadingTime: 12,
+	totalReadingTime: palacioMultiSectionTotalReadingTime,
 	sectionCount: 2,
 	content: [
 		{
 			_key: 'section-1',
-			title: palacioFirstSectionTitle,
+			title: palacioNueveFronterasSectionTitle,
 			epigraphs: [],
 			body: palacioNueveFronterasRawLiteraryWork.content[0].body,
-			readingTime: 11,
+			readingTime: palacioFirstSectionReadingTime,
 		},
 		{
 			_key: 'section-2',
 			title: palacioSecondSectionTitle,
 			epigraphs: [],
 			body: palacioSecondSectionBody,
-			readingTime: 1,
+			readingTime: palacioSecondSectionReadingTime,
 		},
 	],
 };

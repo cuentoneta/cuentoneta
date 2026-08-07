@@ -13,13 +13,13 @@ import { elOdioSectionTitle } from '../literary-work/el-odio.epigraph';
 import elOdioMdBody from '../literary-work/el-odio.md?raw';
 import elTratadoDeLosPlaceresMdBody from '../literary-work/el-tratado-de-los-placeres.md?raw';
 import lasDosAntorchasMdBody from '../literary-work/las-dos-antorchas.md?raw';
+import inventarioDeLasPasionesCollectionMd from './inventario-de-las-pasiones.collection.md?raw';
 
 export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQueryResult> = {
 	_id: 'onoff-collection-inventario-de-las-pasiones',
 	slug: 'inventario-de-las-pasiones',
 	title: 'El inventario de las pasiones',
-	description:
-		'Una colección sobre el deseo de ordenar lo inordenable. Onoff cataloga el placer, retrata el odio sin causa y enfrenta dos antorchas que nunca alumbran lo mismo: tratados que terminan por descubrir que toda taxonomía de lo humano es una forma elegante de perderlo.\r\n',
+	description: inventarioDeLasPasionesCollectionMd,
 	featuredImage: null,
 	config: { showAuthors: false },
 	tags: [],

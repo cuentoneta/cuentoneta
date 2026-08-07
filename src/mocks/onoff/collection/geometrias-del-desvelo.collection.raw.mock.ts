@@ -21,13 +21,13 @@ import {
 	geometriaSpotifyDescription,
 	geometriaYoutubeDescription,
 } from '../media/geometria.media';
+import geometriasDelDesveloCollectionMd from './geometrias-del-desvelo.collection.md?raw';
 
 export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQueryResult> = {
 	_id: 'onoff-collection-geometrias-del-desvelo',
 	slug: 'geometrias-del-desvelo',
 	title: 'Geometrías del desvelo',
-	description:
-		'Onoff lleva la precisión del compás al territorio de lo humano: insomnios que se vuelven una geometría del tiempo, vidas reducidas a coordenadas, figuras que prometen un orden perfecto y terminan revelando, en algún vértice, su grieta.\r\n',
+	description: geometriasDelDesveloCollectionMd,
 	featuredImage: {
 		_type: 'image',
 		asset: { _ref: 'image-6efd3e53eec8dfab23e1c0109027be9f58a01f8c-1200x630-png', _type: 'reference' },

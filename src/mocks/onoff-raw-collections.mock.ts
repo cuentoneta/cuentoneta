@@ -11,8 +11,8 @@ export const onoffRawCollectionsMock: RawCollection[] = [
 	inventarioDeLasPasionesRawCollection,
 ];
 
-// El listado ya no se deriva acá: lo escribe el generador evaluando `collectionsQuery`, así que llega
-// ordenado por título como en producción y no en el orden de `onoffRawCollectionsMock`.
+// Llega ordenado por título, que es el criterio de `collectionsQuery` y no el orden en que este módulo
+// declara las colecciones.
 export const onoffRawCollectionTeasersMock: CollectionsQueryResult = generatedTeasers;
 
 // Selectores por capacidad, derivados por predicado y no como listas paralelas: un spec pide la rama

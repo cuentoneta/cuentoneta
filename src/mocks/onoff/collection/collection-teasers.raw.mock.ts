@@ -1,14 +1,15 @@
 // Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del
 // corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
 import type { CollectionsQueryResult } from '@sanity-types';
+import geometriasDelDesveloCollectionMd from './geometrias-del-desvelo.collection.md?raw';
+import inventarioDeLasPasionesCollectionMd from './inventario-de-las-pasiones.collection.md?raw';
 
 export const onoffRawCollectionTeasersMock: CollectionsQueryResult = [
 	{
 		_id: 'onoff-collection-inventario-de-las-pasiones',
 		slug: 'inventario-de-las-pasiones',
 		title: 'El inventario de las pasiones',
-		description:
-			'Una colección sobre el deseo de ordenar lo inordenable. Onoff cataloga el placer, retrata el odio sin causa y enfrenta dos antorchas que nunca alumbran lo mismo: tratados que terminan por descubrir que toda taxonomía de lo humano es una forma elegante de perderlo.\r\n',
+		description: inventarioDeLasPasionesCollectionMd,
 		featuredImage: null,
 		config: { showAuthors: false },
 		tags: [],
@@ -33,8 +34,7 @@ export const onoffRawCollectionTeasersMock: CollectionsQueryResult = [
 		_id: 'onoff-collection-geometrias-del-desvelo',
 		slug: 'geometrias-del-desvelo',
 		title: 'Geometrías del desvelo',
-		description:
-			'Onoff lleva la precisión del compás al territorio de lo humano: insomnios que se vuelven una geometría del tiempo, vidas reducidas a coordenadas, figuras que prometen un orden perfecto y terminan revelando, en algún vértice, su grieta.\r\n',
+		description: geometriasDelDesveloCollectionMd,
 		featuredImage: {
 			_type: 'image',
 			asset: { _ref: 'image-6efd3e53eec8dfab23e1c0109027be9f58a01f8c-1200x630-png', _type: 'reference' },

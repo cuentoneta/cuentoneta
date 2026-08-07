@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { evaluate, parse } from 'groq-js';
 import { format, resolveConfig } from 'prettier';
@@ -21,82 +21,76 @@ const BANNER = [
 	'// corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.',
 ].join('\n');
 
-const LITERARY_WORK_SLUGS = [
-	'geometria',
-	'los-peldanos',
-	'las-escaleras',
-	'el-odio',
-	'el-tratado-de-los-placeres',
-	'las-dos-antorchas',
-	'neron',
-	'el-palacio-de-las-nueve-fronteras',
-];
-
-const COLLECTION_SLUGS = ['geometrias-del-desvelo', 'inventario-de-las-pasiones'];
-
-function camelCase(slug: string): string {
-	return slug.replace(/-([a-z0-9])/g, (_, char: string) => char.toUpperCase());
-}
-
 /**
- * El nombre de export se toma del archivo que ya existe, no se deriva del slug: el corpus tiene al menos
- * un caso donde no coinciden (`el-palacio-de-las-nueve-fronteras` exporta `palacioNueveFronteras…`), y
- * regenerar con otro nombre rompería en silencio a los agregadores que lo importan.
+ * El nombre de export se declara acá y no se lee del archivo generado —que sería tomar el nombre del
+ * artefacto que se está por sobrescribir— ni se deriva del slug: `el-palacio-de-las-nueve-fronteras`
+ * exporta `palacioNueveFronterasRawLiteraryWork`, y renombrarlo en silencio rompería a los agregadores.
  */
-async function exportNameOf(file: string, fallback: string): Promise<string> {
-	const source = await readFile(file, 'utf8').catch(() => '');
-	return /export const (\w+)\s*:/.exec(source)?.[1] ?? fallback;
+const LITERARY_WORK_EXPORTS: Record<string, string> = {
+	geometria: 'geometriaRawLiteraryWork',
+	'los-peldanos': 'losPeldanosRawLiteraryWork',
+	'las-escaleras': 'lasEscalerasRawLiteraryWork',
+	'el-odio': 'elOdioRawLiteraryWork',
+	'el-tratado-de-los-placeres': 'elTratadoDeLosPlaceresRawLiteraryWork',
+	'las-dos-antorchas': 'lasDosAntorchasRawLiteraryWork',
+	neron: 'neronRawLiteraryWork',
+	'el-palacio-de-las-nueve-fronteras': 'palacioNueveFronterasRawLiteraryWork',
+};
+
+const COLLECTION_EXPORTS: Record<string, string> = {
+	'geometrias-del-desvelo': 'geometriasDelDesveloRawCollection',
+	'inventario-de-las-pasiones': 'inventarioDeLasPasionesRawCollection',
+};
+
+function queryNamed(queries: Record<string, string>, name: string): string {
+	const query = queries[name];
+	if (typeof query !== 'string' || query.length === 0) {
+		throw new Error(
+			`El módulo de queries no exporta "${name}". Si se renombró, actualizá el generador: sin esto el ` +
+				'error aparecería recién al parsear un string vacío, tres capas más abajo.',
+		);
+	}
+	return query;
 }
 
-async function bySlugTarget(
-	slug: string,
-	directory: string,
-	suffix: string,
-	typeImport: string,
-	query: string,
-): Promise<Target> {
-	const file = join(directory, `${slug}.${suffix}.raw.mock.ts`);
-	const fallback = `${camelCase(slug)}Raw${suffix === 'literary-work' ? 'LiteraryWork' : 'Collection'}`;
+function targetsFor(queries: Record<string, string>): Target[] {
+	const bySlug = (
+		exports: Record<string, string>,
+		directory: string,
+		suffix: string,
+		typeImport: string,
+		queryName: string,
+	) =>
+		Object.entries(exports).map(([slug, exportName]) => ({
+			file: join(directory, `${slug}.${suffix}.raw.mock.ts`),
+			exportName,
+			typeImport,
+			typeAnnotation: `NonNullable<${typeImport}>`,
+			query: queryNamed(queries, queryName),
+			params: { slug },
+		}));
 
-	return {
-		file,
-		exportName: await exportNameOf(file, fallback),
-		typeImport,
-		typeAnnotation: `NonNullable<${typeImport}>`,
-		query,
-		params: { slug },
-	};
-}
-
-async function targetsFor(queries: Record<string, string>): Promise<Target[]> {
-	const works = LITERARY_WORK_SLUGS.map((slug) =>
-		bySlugTarget(
-			slug,
+	return [
+		...bySlug(
+			LITERARY_WORK_EXPORTS,
 			'src/mocks/onoff/literary-work',
 			'literary-work',
 			'LiteraryWorkBySlugQueryResult',
-			queries['literaryWorkBySlugQuery'] ?? '',
+			'literaryWorkBySlugQuery',
 		),
-	);
-
-	const collections = COLLECTION_SLUGS.map((slug) =>
-		bySlugTarget(
-			slug,
+		...bySlug(
+			COLLECTION_EXPORTS,
 			'src/mocks/onoff/collection',
 			'collection',
 			'CollectionBySlugQueryResult',
-			queries['collectionBySlugQuery'] ?? '',
+			'collectionBySlugQuery',
 		),
-	);
-
-	return [
-		...(await Promise.all([...works, ...collections])),
 		{
 			file: join('src/mocks/onoff/collection', 'collection-teasers.raw.mock.ts'),
 			exportName: 'onoffRawCollectionTeasersMock',
 			typeImport: 'CollectionsQueryResult',
 			typeAnnotation: 'CollectionsQueryResult',
-			query: queries['collectionsQuery'] ?? '',
+			query: queryNamed(queries, 'collectionsQuery'),
 		},
 	];
 }
@@ -132,14 +126,14 @@ async function writeTarget(target: Target, value: unknown, load: LoadModule): Pr
 }
 
 await withCorpus(async (load) => {
-	const { onoffDatasetMock } = await load<{ onoffDatasetMock: Record<string, unknown>[] }>(
-		'/src/mocks/onoff-documents.mock.ts',
-	);
+	const { onoffDatasetMock } = (await load('/src/mocks/onoff-documents.mock.ts')) as {
+		onoffDatasetMock: Record<string, unknown>[];
+	};
 	assertEveryReferenceResolves(onoffDatasetMock);
 
-	const collectionQueries = await load<Record<string, string>>('/src/api/_queries/collection.query.ts');
-	const literaryWorkQueries = await load<Record<string, string>>('/src/api/_queries/literary-work.query.ts');
-	const targets = await targetsFor({ ...collectionQueries, ...literaryWorkQueries });
+	const collectionQueries = (await load('/src/api/_queries/collection.query.ts')) as Record<string, string>;
+	const literaryWorkQueries = (await load('/src/api/_queries/literary-work.query.ts')) as Record<string, string>;
+	const targets = targetsFor({ ...collectionQueries, ...literaryWorkQueries });
 
 	for (const target of targets) {
 		const value = await evaluateTarget(target, onoffDatasetMock);

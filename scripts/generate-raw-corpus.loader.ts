@@ -9,7 +9,7 @@ import { createServer, type ViteDevServer } from 'vite';
  * `vitest.config.ts`: el plugin recorre las copias del repo bajo `.claude/worktrees/` y aborta si el
  * tsconfig de cualquiera de ellas no le parsea.
  */
-export async function withCorpus<T>(use: (load: <M>(path: string) => Promise<M>) => Promise<T>): Promise<T> {
+export async function withCorpus<T>(use: (load: (path: string) => Promise<unknown>) => Promise<T>): Promise<T> {
 	const server: ViteDevServer = await createServer({
 		configFile: false,
 		resolve: { tsconfigPaths: true },
@@ -19,7 +19,7 @@ export async function withCorpus<T>(use: (load: <M>(path: string) => Promise<M>)
 	});
 
 	try {
-		return await use((path) => server.ssrLoadModule(path) as Promise<never>);
+		return await use((path) => server.ssrLoadModule(path));
 	} finally {
 		await server.close();
 	}

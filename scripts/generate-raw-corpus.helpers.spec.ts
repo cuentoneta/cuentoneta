@@ -41,8 +41,13 @@ describe('findDanglingReferences', () => {
 		expect(findDanglingReferences(dataset)).toEqual([{ ref: 'file-ausente', declaredBy: 'obra' }]);
 	});
 
-	it('finds nothing in an empty dataset', () => {
+	// Una implementación que devolviera siempre `[]` pasaría el caso del dataset vacío; se lo empareja con
+	// uno que sí discrimina para que el par no pueda quedar verde por esa vía.
+	it('separates an empty dataset from one that carries a dangling reference', () => {
+		const dangling = [{ _id: 'obra', _type: 'literaryWork', author: { _type: 'reference', _ref: 'ausente' } }];
+
 		expect(findDanglingReferences([])).toEqual([]);
+		expect(findDanglingReferences(dangling)).toHaveLength(1);
 	});
 
 	// La contracara del caso del audio: la portada se proyecta como objeto entero, así que su asset no

@@ -2,7 +2,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import type { Substitution } from './generate-raw-corpus.emitter';
 
-export type LoadModule = <M>(path: string) => Promise<M>;
+export type LoadModule = (path: string) => Promise<unknown>;
 
 type Entry = { value: unknown; substitution: Substitution };
 
@@ -44,7 +44,7 @@ async function namedExportEntries(
 	fromDirectory: string,
 	keep: (binding: string) => boolean,
 ): Promise<Entry[]> {
-	const loaded = await load<Record<string, unknown>>(`/${modulePath}`);
+	const loaded = (await load(`/${modulePath}`)) as Record<string, unknown>;
 	const specifier = specifierFor(fromDirectory, modulePath.replace(/\.ts$/, ''));
 
 	return Object.entries(loaded)
@@ -77,6 +77,7 @@ export async function collectSubstitutions(load: LoadModule, fromDirectory: stri
 
 	return [
 		...(await proseEntries(literaryWorkDirectory, fromDirectory)),
+		...(await proseEntries(join(CORPUS_ROOT, 'onoff/collection'), fromDirectory)),
 		...strings.flat(),
 		...(await namedExportEntries(load, join(CORPUS_ROOT, 'onoff-raw-tags.mock.ts'), fromDirectory, (binding) =>
 			binding.endsWith('RawTag'),

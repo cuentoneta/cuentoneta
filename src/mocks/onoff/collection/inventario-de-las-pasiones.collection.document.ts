@@ -1,6 +1,5 @@
-// Documento tal como Sanity lo guarda. Es fuente escrita a mano: la fixture cruda de esta obra se
-// deriva de acá evaluando la query real con `pnpm corpus:generate`.
 import type { Collection } from '@sanity-types';
+import inventarioDeLasPasionesCollectionMd from './inventario-de-las-pasiones.collection.md?raw';
 
 export const inventarioDeLasPasionesCollectionDocument: Collection = {
 	_id: 'onoff-collection-inventario-de-las-pasiones',
@@ -10,8 +9,7 @@ export const inventarioDeLasPasionesCollectionDocument: Collection = {
 	_type: 'collection',
 	title: 'El inventario de las pasiones',
 	slug: { _type: 'slug', current: 'inventario-de-las-pasiones' },
-	description:
-		'Una colección sobre el deseo de ordenar lo inordenable. Onoff cataloga el placer, retrata el odio sin causa y enfrenta dos antorchas que nunca alumbran lo mismo: tratados que terminan por descubrir que toda taxonomía de lo humano es una forma elegante de perderlo.\r\n',
+	description: inventarioDeLasPasionesCollectionMd,
 	config: { showAuthors: false },
 	literaryWorks: [
 		{

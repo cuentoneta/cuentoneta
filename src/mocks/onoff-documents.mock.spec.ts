@@ -47,7 +47,7 @@ describe('las fixtures crudas son lo que la query devuelve sobre los documentos'
 	// dereferencia resuelve a null y el fixture derivado queda mudo sobre la diferencia.
 	it('resolves the audio url of the work that carries a space recording', async () => {
 		const withRecording = onoffRawLiteraryWorksMock.find((work) =>
-			(work.mediaSources ?? []).some((source) => source._type === 'spaceRecording'),
+			work.mediaSources.some((source) => source._type === 'spaceRecording'),
 		);
 		const result = (await run(literaryWorkBySlugQuery, { slug: withRecording?.slug })) as {
 			mediaSources: { _type: string; audioUrl?: string | null }[];

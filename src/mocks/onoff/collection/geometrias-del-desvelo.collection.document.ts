@@ -1,6 +1,5 @@
-// Documento tal como Sanity lo guarda. Es fuente escrita a mano: la fixture cruda de esta obra se
-// deriva de acá evaluando la query real con `pnpm corpus:generate`.
 import type { Collection } from '@sanity-types';
+import geometriasDelDesveloCollectionMd from './geometrias-del-desvelo.collection.md?raw';
 
 export const geometriasDelDesveloCollectionDocument: Collection = {
 	_id: 'onoff-collection-geometrias-del-desvelo',
@@ -10,8 +9,7 @@ export const geometriasDelDesveloCollectionDocument: Collection = {
 	_type: 'collection',
 	title: 'Geometrías del desvelo',
 	slug: { _type: 'slug', current: 'geometrias-del-desvelo' },
-	description:
-		'Onoff lleva la precisión del compás al territorio de lo humano: insomnios que se vuelven una geometría del tiempo, vidas reducidas a coordenadas, figuras que prometen un orden perfecto y terminan revelando, en algún vértice, su grieta.\r\n',
+	description: geometriasDelDesveloCollectionMd,
 	featuredImage: {
 		_type: 'image',
 		asset: { _ref: 'image-6efd3e53eec8dfab23e1c0109027be9f58a01f8c-1200x630-png', _type: 'reference' },

@@ -56,13 +56,11 @@ describe('onoff raw collections mock', () => {
 
 			expect(collection).toBeDefined();
 
-			expect(teaser._id).toBe(collection?._id);
 			expect(teaser.count).toBe(collection?.literaryWorks.length);
 			// Se afirma la propiedad que importa —a lo sumo tres portadas, y cada una la de su obra en la
 			// misma posición— en vez de recalcular el corte, que sería reescribir la derivación.
 			expect(teaser.literaryWorkCoverImages.length).toBeLessThanOrEqual(3);
-			// Igualdad por valor y no por identidad: desde que las dos caras se generan, cada una declara su
-			// propio literal y ya no comparten la referencia que antes venía de derivar una de la otra.
+			// Igualdad por valor: cada cara se genera en su propio archivo, así que declaran literales distintos.
 			teaser.literaryWorkCoverImages.forEach((cover, position) => {
 				expect(cover).toStrictEqual(collection?.literaryWorks[position]?.coverImage);
 			});

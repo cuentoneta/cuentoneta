@@ -1,5 +1,3 @@
-// Documento tal como Sanity lo guarda. Es fuente escrita a mano: la fixture cruda de esta obra se
-// deriva de acá evaluando la query real con `pnpm corpus:generate`.
 import type { LiteraryWork } from '@sanity-types';
 import geometriaEditorialNoteMd from './geometria.editorial-note.md?raw';
 import { geometriaEpigraphReference, geometriaEpigraphText, geometriaSectionTitle } from './geometria.epigraph';

@@ -7,9 +7,9 @@ import elPalacioDeLasNueveFronterasEditorialNoteMd from './el-palacio-de-las-nue
 import {
 	palacioNueveFronterasEpigraphReference,
 	palacioNueveFronterasEpigraphText,
+	palacioNueveFronterasSectionTitle,
 } from './el-palacio-de-las-nueve-fronteras.epigraph';
 import elPalacioDeLasNueveFronterasMdBody from './el-palacio-de-las-nueve-fronteras.md?raw';
-import { palacioFirstSectionTitle } from './el-palacio-de-las-nueve-fronteras.multi-section';
 
 export const palacioNueveFronterasRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'onoff-literary-work-el-palacio-de-las-nueve-fronteras',
@@ -32,7 +32,7 @@ export const palacioNueveFronterasRawLiteraryWork: NonNullable<LiteraryWorkBySlu
 	content: [
 		{
 			_key: 'section-1',
-			title: palacioFirstSectionTitle,
+			title: palacioNueveFronterasSectionTitle,
 			epigraphs: [{ text: palacioNueveFronterasEpigraphText, reference: palacioNueveFronterasEpigraphReference }],
 			body: elPalacioDeLasNueveFronterasMdBody,
 			readingTime: 11,

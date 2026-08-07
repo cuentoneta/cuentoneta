@@ -17,9 +17,12 @@ import { lasDosAntorchasLiteraryWorkDocument } from './onoff/literary-work/las-d
 import { lasEscalerasLiteraryWorkDocument } from './onoff/literary-work/las-escaleras.literary-work.document';
 import { losPeldanosLiteraryWorkDocument } from './onoff/literary-work/los-peldanos.literary-work.document';
 import { neronLiteraryWorkDocument } from './onoff/literary-work/neron.literary-work.document';
+import { palacioNueveFronterasSectionTitle } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.epigraph';
 import {
-	palacioFirstSectionTitle,
+	palacioFirstSectionReadingTime,
+	palacioMultiSectionTotalReadingTime,
 	palacioSecondSectionBody,
+	palacioSecondSectionReadingTime,
 	palacioSecondSectionTitle,
 } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.multi-section';
 
@@ -77,15 +80,15 @@ export const emptyCollectionDocument = {
 export const multiSectionLiteraryWorkDocument: LiteraryWork = {
 	...canonLiteraryWork,
 	_id: 'onoff-literary-work-el-palacio-de-las-nueve-fronteras-multi',
-	totalReadingTime: 12,
+	totalReadingTime: palacioMultiSectionTotalReadingTime,
 	content: [
 		{
 			...canonLiteraryWork.content[0],
 			_type: 'section',
 			_key: 'section-1',
-			title: palacioFirstSectionTitle,
+			title: palacioNueveFronterasSectionTitle,
 			epigraphs: [],
-			readingTime: 11,
+			readingTime: palacioFirstSectionReadingTime,
 		},
 		{
 			_type: 'section',
@@ -93,7 +96,7 @@ export const multiSectionLiteraryWorkDocument: LiteraryWork = {
 			title: palacioSecondSectionTitle,
 			epigraphs: [],
 			body: palacioSecondSectionBody,
-			readingTime: 1,
+			readingTime: palacioSecondSectionReadingTime,
 		},
 	],
 };
