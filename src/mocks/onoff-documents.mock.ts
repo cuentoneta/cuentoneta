@@ -5,11 +5,13 @@ import {
 	onoffResourceTypeDocumentsMock,
 	onoffTagDocumentsMock,
 } from './onoff/document/support-documents.projection';
-import { asDraft } from './onoff/document/sanity-document.factory';
+import { asDraft, slugField } from './onoff/document/sanity-document.factory';
 import {
 	onoffLiteraryWorkAssetDocumentsMock,
 	onoffLiteraryWorkDocumentsMock,
+	toLiteraryWorkDocument,
 } from './onoff/literary-work/literary-work.document.projection';
+import { multiSectionRawLiteraryWork } from './onoff-raw-literary-works.mock';
 
 export {
 	onoffCollectionDocumentsMock,
@@ -37,6 +39,23 @@ export const onoffDatasetMock: Record<string, unknown>[] = [
 // Escenarios de borde por spread sobre el canon, para que sigan al corpus.
 
 export const emptyCollectionDocument = { ...onoffCollectionDocumentsMock[0], literaryWorks: [] };
+
+// El canon ya declara la obra de dos secciones como escenario del raw; acá se deriva su documento,
+// más una colección que la referencia, para poder evaluar el recorte de la sección de apertura.
+export const multiSectionLiteraryWorkDocument = toLiteraryWorkDocument(multiSectionRawLiteraryWork);
+
+export const multiSectionCollectionDocument = {
+	...onoffCollectionDocumentsMock[0],
+	_id: 'onoff-collection-multi-seccion',
+	slug: slugField('multi-seccion'),
+	literaryWorks: [
+		{
+			_key: multiSectionLiteraryWorkDocument._id,
+			_type: 'reference' as const,
+			_ref: multiSectionLiteraryWorkDocument._id,
+		},
+	],
+};
 
 // El tipo de documento declara `coverImage` opcional; el raw nunca ejercitó esa rama porque las ocho
 // obras del canon la traen.
