@@ -3,7 +3,8 @@ import { collectionBySlugQuery, collectionsQuery } from '../api/_queries/collect
 import { literaryWorkBySlugQuery } from '../api/_queries/literary-work.query';
 import { onoffRawCollectionsMock } from './onoff-raw-collections.mock';
 import { onoffRawLiteraryWorksMock } from './onoff-raw-literary-works.mock';
-import { onoffDatasetMock } from './onoff-documents.mock';
+import type { LiteraryWork } from '@sanity-types';
+import { onoffDatasetMock, onoffLiteraryWorkDocumentsMock } from './onoff-documents.mock';
 
 async function run(query: string, params: Record<string, unknown> = {}) {
 	const result = await evaluate(parse(query), { dataset: onoffDatasetMock, params });
@@ -36,6 +37,20 @@ describe('el dataset de documentos reproduce el corpus crudo', () => {
 		const result = (await run(collectionsQuery)) as { slug: string }[];
 
 		expect(result.map(({ slug }) => slug).sort()).toEqual(onoffRawCollectionsMock.map(({ slug }) => slug).sort());
+	});
+
+	// La razón de ser de la capa: los documentos sintéticos que esta reemplaza declaraban la portada
+	// como string, y nada lo detectaba. Tipar contra el documento lo vuelve un error de compilación.
+	// Si el campo alguna vez se aflojara, el `@ts-expect-error` quedaría sin usar y `tsc` cortaría —
+	// el gate de typecheck cubre los spec.
+	it('rejects a cover image declared as a string', () => {
+		const document: LiteraryWork = {
+			...(onoffLiteraryWorkDocumentsMock[0] as LiteraryWork),
+			// @ts-expect-error la portada es un objeto de imagen en el documento, no una ruta
+			coverImage: 'uno.png',
+		};
+
+		expect(document.coverImage).toBe('uno.png');
 	});
 
 	// El modo de falla que `groq-js` no reporta: si el documento de asset no está en el dataset, la
