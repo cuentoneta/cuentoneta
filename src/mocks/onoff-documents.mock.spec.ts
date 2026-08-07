@@ -36,7 +36,7 @@ describe('el dataset de documentos reproduce el corpus crudo', () => {
 	// verifica —el total, el abanico de portadas y la imagen destacada—, y su canon ya existe.
 	it('evaluates the listing query into the raw teaser fixtures', async () => {
 		const result = (await run(collectionsQuery)) as { slug: string }[];
-		const expected = [...onoffRawCollectionTeasersMock].sort((a, b) => a.title.localeCompare(b.title, 'es'));
+		const expected = [...onoffRawCollectionTeasersMock].sort((a, b) => (a.title < b.title ? -1 : 1));
 
 		expect(result).toStrictEqual(expected);
 	});

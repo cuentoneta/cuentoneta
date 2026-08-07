@@ -21,6 +21,10 @@ const dataset = onoffDatasetMock;
 
 const [firstCollection] = onoffCollectionDocumentsMock;
 
+function canonCollectionFor(slug: string) {
+	return { ...firstCollection, _id: slug, slug: { _type: 'slug' as const, current: slug } };
+}
+
 describe('collectionBySlugQuery', () => {
 	it('resolves the collection whose slug matches the parameter', async () => {
 		const result = await run(collectionBySlugQuery, dataset, { slug: firstCollection?.slug.current });
@@ -121,16 +125,30 @@ describe('collectionsQuery', () => {
 		expect(target?.literaryWorkCoverImages).toEqual([null]);
 	});
 
-	// El orden esperado se aproxima con `localeCompare('es')`: GROQ ordena por collation, no por unidades
-	// UTF-16, así que un `sort()` pelado divergiría ante el primer título acentuado.
+	// `sort()` pelado y no `localeCompare`: verificado contra el dataset de producción, `order(title asc)`
+	// ordena por codepoint —`A Palmira` antes que `A la deriva`, `Antieros` antes que `Antártida`—, que es
+	// justamente lo que compara `sort()`. Una collation local invertiría los dos pares.
 	it('orders by title ascending and leaves drafts out', async () => {
 		const withDraft = [...dataset, draftCollectionDocument];
 
 		const result = (await run(collectionsQuery, withDraft)) as { title: string }[];
-		const expected = onoffCollectionDocumentsMock
-			.map((collection) => collection.title)
-			.sort((a, b) => a.localeCompare(b, 'es'));
+		const expected = onoffCollectionDocumentsMock.map((collection) => collection.title).sort();
 
 		expect(result.map(({ title }) => title)).toEqual(expected);
+	});
+
+	// El corpus actual no tiene títulos acentuados ni mayúsculas intercaladas, así que el caso de arriba
+	// pasaría con cualquiera de los dos criterios. Éste los separa: el orden esperado es el que devolvió
+	// el dataset de producción para estos mismos títulos.
+	it('orders accented titles by codepoint, as the content lake does', async () => {
+		const titles = ['Antieros', 'Antártida', 'A Palmira', 'A la deriva'];
+		const collections = titles.map((title, index) => ({
+			...canonCollectionFor(`orden-${index}`),
+			title,
+		}));
+
+		const result = (await run(collectionsQuery, collections)) as { title: string }[];
+
+		expect(result.map(({ title }) => title)).toEqual(['A Palmira', 'A la deriva', 'Antieros', 'Antártida']);
 	});
 });
