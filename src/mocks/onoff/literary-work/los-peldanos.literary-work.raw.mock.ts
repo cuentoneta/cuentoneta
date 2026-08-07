@@ -1,8 +1,10 @@
+// Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del
+// corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { cuentoRawTag, absurdoRawTag, surrealismoRawTag } from '../../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
-import losPeldanosMdBody from './los-peldanos.md?raw';
+import { absurdoRawTag, cuentoRawTag, surrealismoRawTag } from '../../onoff-raw-tags.mock';
 import losPeldanosEditorialNoteMd from './los-peldanos.editorial-note.md?raw';
+import losPeldanosMdBody from './los-peldanos.md?raw';
 
 export const losPeldanosRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'onoff-literary-work-los-peldanos',
@@ -22,13 +24,5 @@ export const losPeldanosRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResu
 	mediaSources: [],
 	resources: [],
 	authors: [rawOnoffAuthor],
-	content: [
-		{
-			_key: 'section-1',
-			title: null,
-			epigraphs: [],
-			body: losPeldanosMdBody,
-			readingTime: 8,
-		},
-	],
+	content: [{ _key: 'section-1', title: null, epigraphs: [], body: losPeldanosMdBody, readingTime: 8 }],
 };

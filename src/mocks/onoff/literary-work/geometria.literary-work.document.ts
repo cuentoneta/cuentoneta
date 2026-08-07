@@ -1,27 +1,37 @@
-// Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del
-// corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
-import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
-import { cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag } from '../../onoff-raw-tags.mock';
+// Documento tal como Sanity lo guarda. Es fuente escrita a mano: la fixture cruda de esta obra se
+// deriva de acá evaluando la query real con `pnpm corpus:generate`.
+import type { LiteraryWork } from '@sanity-types';
 import geometriaEditorialNoteMd from './geometria.editorial-note.md?raw';
 import { geometriaEpigraphReference, geometriaEpigraphText, geometriaSectionTitle } from './geometria.epigraph';
 import geometriaMdBody from './geometria.md?raw';
 
-export const geometriaRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
+export const geometriaLiteraryWorkDocument: LiteraryWork = {
 	_id: 'onoff-literary-work-geometria',
-	slug: 'geometria',
+	_createdAt: '1974-06-12T00:00:00Z',
+	_updatedAt: '1974-06-12T00:00:00Z',
+	_rev: 'rev-onoff-literary-work-geometria',
+	_type: 'literaryWork',
 	title: 'Geometría',
+	slug: { _type: 'slug', current: 'geometria' },
+	authors: [{ _key: 'author_1', _type: 'reference', _ref: 'author_1' }],
 	coverImage: {
 		_type: 'image',
 		asset: { _type: 'reference', _ref: 'image-9e1eab984fbe94e19101c7aa4fc2e99a88f71736-236x328-png' },
 	},
+	content: [
+		{
+			_type: 'section',
+			_key: 'section-1',
+			title: geometriaSectionTitle,
+			epigraphs: [
+				{ _type: 'epigraph', _key: 'epigraph-0', text: geometriaEpigraphText, reference: geometriaEpigraphReference },
+			],
+			body: geometriaMdBody,
+			readingTime: 7,
+		},
+	],
 	editorialNote: geometriaEditorialNoteMd,
-	badLanguage: false,
-	originalPublication: 'Éditions du Méridien (1974)',
-	publishedAt: '1974-01-01T00:00:00Z',
 	totalReadingTime: 7,
-	sectionCount: 1,
-	tags: [cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag],
 	mediaSources: [
 		{
 			_key: 'geometria-audio',
@@ -44,7 +54,6 @@ export const geometriaRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult
 			},
 			date: '1974-06-12',
 			duration: '48:12',
-			audioUrl: 'https://cdn.example.org/onoff/geometria-space.ogg',
 		},
 		{
 			_key: 'geometria-spotify',
@@ -69,14 +78,12 @@ export const geometriaRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult
 		},
 	],
 	resources: [],
-	authors: [rawOnoffAuthor],
-	content: [
-		{
-			_key: 'section-1',
-			title: geometriaSectionTitle,
-			epigraphs: [{ text: geometriaEpigraphText, reference: geometriaEpigraphReference }],
-			body: geometriaMdBody,
-			readingTime: 7,
-		},
+	tags: [
+		{ _key: 'cuento', _type: 'reference', _ref: 'tag-cuento' },
+		{ _key: 'drama-psicologico', _type: 'reference', _ref: 'tag-drama-psicologico' },
+		{ _key: 'filosofico', _type: 'reference', _ref: 'tag-filosofico' },
 	],
+	badLanguage: false,
+	originalPublication: 'Éditions du Méridien (1974)',
+	publishedAt: '1974-01-01T00:00:00Z',
 };
