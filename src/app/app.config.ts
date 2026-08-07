@@ -16,6 +16,7 @@ import { provideContentApi } from './providers/content.provider';
 import { provideContributorApi } from './providers/contributor.provider';
 import { provideStoryApi } from './providers/story.provider';
 import { provideStorylistApi } from './providers/storylist.provider';
+import { provideCollectionApi } from './providers/collection.provider';
 import { provideLiteraryWorkApi } from './providers/literary-work.provider';
 import { providePushNotificationsApi } from './providers/push-notifications.provider';
 
@@ -45,6 +46,7 @@ export const appConfig: ApplicationConfig = {
 
 		// API providers
 		provideAuthorApi(),
+		provideCollectionApi(),
 		provideContentApi(),
 		provideContributorApi(),
 		provideStoryApi(),
