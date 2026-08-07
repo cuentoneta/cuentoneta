@@ -58,15 +58,26 @@ async function namedExportEntries(
  */
 export async function collectSubstitutions(load: LoadModule, fromDirectory: string): Promise<Entry[]> {
 	const literaryWorkDirectory = join(CORPUS_ROOT, 'onoff/literary-work');
-	const epigraphFiles = (await readdir(literaryWorkDirectory)).filter((file) => file.endsWith('.epigraph.ts'));
+	const mediaDirectory = join(CORPUS_ROOT, 'onoff/media');
 
-	const epigraphs = await Promise.all(
-		epigraphFiles.map((file) => namedExportEntries(load, join(literaryWorkDirectory, file), fromDirectory, () => true)),
+	// Los módulos neutrales de strings del corpus: títulos de sección y epígrafes junto a la obra,
+	// descripciones de medios en su carpeta. Son piezas a mano que el generado tiene que seguir importando.
+	const stringModules = [
+		...(await readdir(literaryWorkDirectory))
+			.filter((file) => file.endsWith('.epigraph.ts') || file.endsWith('.multi-section.ts'))
+			.map((file) => join(literaryWorkDirectory, file)),
+		...(await readdir(mediaDirectory))
+			.filter((file) => file.endsWith('.media.ts'))
+			.map((file) => join(mediaDirectory, file)),
+	];
+
+	const strings = await Promise.all(
+		stringModules.map((file) => namedExportEntries(load, file, fromDirectory, () => true)),
 	);
 
 	return [
 		...(await proseEntries(literaryWorkDirectory, fromDirectory)),
-		...epigraphs.flat(),
+		...strings.flat(),
 		...(await namedExportEntries(load, join(CORPUS_ROOT, 'onoff-raw-tags.mock.ts'), fromDirectory, (binding) =>
 			binding.endsWith('RawTag'),
 		)),

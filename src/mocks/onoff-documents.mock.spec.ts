@@ -10,10 +10,13 @@ async function run(query: string, params: Record<string, unknown> = {}) {
 	return result.get();
 }
 
-// Los documentos se derivan invirtiendo la proyección de la query. La única forma de saber que esa
-// inversión no miente es volver a aplicar la query: si el resultado no reproduce el canon crudo, los
-// documentos afirman un content lake que no existe.
-describe('el dataset de documentos reproduce el corpus crudo', () => {
+// El gate de frescura del corpus generado. Las fixtures crudas commiteadas las escribió
+// `pnpm corpus:generate` evaluando estas mismas queries sobre estos mismos documentos: si alguien toca un
+// documento y no regenera, lo commiteado deja de ser lo que la query devuelve y estos casos cortan.
+//
+// Compara valores y no bytes a propósito — el formato lo fija Prettier dentro del generador, así que un
+// desvío de formato no es una desincronización; una diferencia de valor sí.
+describe('las fixtures crudas son lo que la query devuelve sobre los documentos', () => {
 	it.each(onoffRawCollectionsMock.map((collection) => collection.slug))(
 		'evaluates the collection query for "%s" into its raw fixture',
 		async (slug) => {
@@ -32,13 +35,12 @@ describe('el dataset de documentos reproduce el corpus crudo', () => {
 		},
 	);
 
-	// Se compara el objeto entero y no solo los slugs: el listado proyecta cosas que ninguna otra query
-	// verifica —el total, el abanico de portadas y la imagen destacada—, y su canon ya existe.
+	// Sin reordenar el esperado: el archivo generado se commitea en el orden que devuelve la query, así que
+	// el caso afirma también el orden —por título y por codepoint— y no solo los valores.
 	it('evaluates the listing query into the raw teaser fixtures', async () => {
-		const result = (await run(collectionsQuery)) as { slug: string }[];
-		const expected = [...onoffRawCollectionTeasersMock].sort((a, b) => (a.title < b.title ? -1 : 1));
+		const result = await run(collectionsQuery);
 
-		expect(result).toStrictEqual(expected);
+		expect(result).toStrictEqual(onoffRawCollectionTeasersMock);
 	});
 
 	// El modo de falla que `groq-js` no reporta: si el documento de asset no está en el dataset, la
