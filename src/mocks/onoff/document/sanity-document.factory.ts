@@ -18,18 +18,24 @@ export function slugField(current: string): Slug {
 	return { _type: 'slug', current };
 }
 
+export function withoutKey<T extends object, K extends keyof T>(source: T, key: K): Omit<T, K> {
+	const clone: Partial<T> = { ...source };
+	delete clone[key];
+	return clone as Omit<T, K>;
+}
+
 export function documentReference(id: string, key?: string) {
 	return { _type: 'reference' as const, _ref: id, ...(key !== undefined ? { _key: key } : {}) };
 }
 
-// Sanity marca el borrador de un documento con este prefijo de path en su `_id`.
 export function asDraft<T extends { _id: string }>(document: T): T {
 	return { ...document, _id: `drafts.${document._id}` };
 }
 
 // El `url` es un campo propio del documento de asset, no algo que resuelva el CDN al leer: por eso
-// `asset->url` se puede derivar sin red, siempre que el documento esté en el dataset.
-export function createFileAssetDocument({ ref, url }: { ref: string; url: string }): SanityFileAsset {
+// `asset->url` se puede derivar sin red, siempre que el documento esté en el dataset. Es el único campo
+// load-bearing: hash, tamaño y path son relleno consistente que ninguna query lee.
+export function createAudioAssetDocument({ ref, url }: { ref: string; url: string }): SanityFileAsset {
 	const extension = url.split('.').pop() ?? 'bin';
 	return {
 		...documentSystemFields(ref),

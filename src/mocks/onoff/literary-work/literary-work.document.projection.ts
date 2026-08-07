@@ -1,25 +1,20 @@
 import type { LiteraryWork, SanityFileAsset } from '@sanity-types';
 import { onoffRawLiteraryWorksMock } from '../../onoff-raw-literary-works.mock';
 import {
-	createFileAssetDocument,
+	createAudioAssetDocument,
 	documentReference,
 	documentSystemFields,
 	slugField,
+	withoutKey,
 } from '../document/sanity-document.factory';
-import { tagDocumentId } from '../document/support-documents.projection';
+import { resourceTypeDocumentId, tagReference } from '../document/support-documents.projection';
 
 type RawLiteraryWork = (typeof onoffRawLiteraryWorksMock)[number];
 type RawMediaSource = NonNullable<RawLiteraryWork['mediaSources']>[number];
 type DocumentMediaSource = NonNullable<LiteraryWork['mediaSources']>[number];
 
-// `sectionCount` y `audioUrl` no existen en el documento: los calcula la query. Invertir la proyección
-// es también descartar lo que ella agrega, no solo desanidar lo que aplana.
 function toDocumentMediaSource(raw: RawMediaSource): DocumentMediaSource {
-	const { ...source } = raw;
-	if ('audioUrl' in source) {
-		delete (source as { audioUrl?: unknown }).audioUrl;
-	}
-	return source as DocumentMediaSource;
+	return 'audioUrl' in raw ? withoutKey(raw, 'audioUrl') : raw;
 }
 
 // El raw transporta la url del audio ya resuelta, así que el documento de asset se puede reconstruir:
@@ -30,7 +25,7 @@ function assetDocumentsOf(raw: RawLiteraryWork): SanityFileAsset[] {
 			return [];
 		}
 		const ref = source.audioFile?.asset?._ref;
-		return ref && source.audioUrl ? [createFileAssetDocument({ ref, url: source.audioUrl })] : [];
+		return ref && source.audioUrl ? [createAudioAssetDocument({ ref, url: source.audioUrl })] : [];
 	});
 }
 
@@ -62,8 +57,15 @@ export function toLiteraryWorkDocument(raw: RawLiteraryWork): LiteraryWork {
 		...(raw.editorialNote ? { editorialNote: raw.editorialNote } : {}),
 		...(raw.totalReadingTime !== null ? { totalReadingTime: raw.totalReadingTime } : {}),
 		mediaSources: (raw.mediaSources ?? []).map(toDocumentMediaSource),
-		tags: raw.tags.map((tag) => ({ _key: tag.slug, ...documentReference(tagDocumentId(tag.slug)) })),
-		badLanguage: raw.badLanguage ?? undefined,
+		resources: raw.resources.map((resource, index) => ({
+			_type: 'resource' as const,
+			_key: `resource-${index}`,
+			title: resource.title,
+			url: resource.url,
+			resourceType: documentReference(resourceTypeDocumentId(resource.resourceType.slug)),
+		})),
+		tags: raw.tags.map((tag) => tagReference(tag.slug)),
+		badLanguage: raw.badLanguage,
 		originalPublication: raw.originalPublication,
 		publishedAt: raw.publishedAt,
 	};

@@ -1,9 +1,11 @@
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
+import { onoffAuthorDocument } from './author.document.projection';
+// El subgrafo se afirma contra lo que realmente entra al dataset, no contra una copia local: comparar
+// contra otra derivación del mismo raw pasaría igual con el dataset incompleto.
 import {
-	onoffAuthorDocument,
-	onoffAuthorNationalityDocuments,
-	onoffAuthorResourceTypeDocuments,
-} from './author.document.projection';
+	onoffNationalityDocumentsMock,
+	onoffResourceTypeDocumentsMock,
+} from '../document/support-documents.projection';
 
 describe('documento de author', () => {
 	it('preserves what the raw carries', () => {
@@ -18,11 +20,12 @@ describe('documento de author', () => {
 	// Esta guarda es lo que evita que el dataset quede incompleto sin que ningún test lo note.
 	it('emits a document for every reference it points to', () => {
 		const emitted = new Set([
-			...onoffAuthorNationalityDocuments.map((document) => document._id),
-			...onoffAuthorResourceTypeDocuments.map((document) => document._id),
+			...onoffNationalityDocumentsMock.map((document) => document._id),
+			...onoffResourceTypeDocumentsMock.map((document) => document._id),
 		]);
 
 		expect(emitted).toContain(onoffAuthorDocument.nationality._ref);
+		expect(onoffAuthorDocument.resources?.length).toBeGreaterThan(0);
 		(onoffAuthorDocument.resources ?? []).forEach((resource) => {
 			expect(emitted).toContain(resource.resourceType._ref);
 		});
@@ -34,12 +37,13 @@ describe('documento de author', () => {
 
 		expect(resource?.title).toBe(rawResource?.title);
 		expect(resource?.url).toBe(rawResource?.url);
-		expect(resource?.resourceType._ref).toBe(onoffAuthorResourceTypeDocuments[0]?._id);
+		expect(resource?.resourceType._ref).toBe(onoffResourceTypeDocumentsMock[0]?._id);
 	});
 
 	// Cada elemento de un array de Sanity necesita su `_key`, y su ausencia solo se nota al editar en
 	// el Studio, no al leer.
 	it('keys every array element', () => {
+		expect(onoffAuthorDocument.resources?.length).toBeGreaterThan(0);
 		(onoffAuthorDocument.resources ?? []).forEach((resource) => expect(resource._key).toBeTruthy());
 	});
 });

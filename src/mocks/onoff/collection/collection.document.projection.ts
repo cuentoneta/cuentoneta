@@ -1,7 +1,7 @@
 import type { Collection } from '@sanity-types';
 import { onoffRawCollectionsMock } from '../../onoff-raw-collections.mock';
 import { documentReference, documentSystemFields, slugField } from '../document/sanity-document.factory';
-import { tagDocumentId } from '../document/support-documents.projection';
+import { tagReference } from '../document/support-documents.projection';
 
 type RawCollection = (typeof onoffRawCollectionsMock)[number];
 
@@ -17,9 +17,7 @@ export function toCollectionDocument(raw: RawCollection): Collection {
 		...(raw.featuredImage ? { featuredImage: raw.featuredImage } : {}),
 		config: { showAuthors: raw.config.showAuthors },
 		literaryWorks: raw.literaryWorks.map((work) => ({ _key: work._id, ...documentReference(work._id) })),
-		tags: raw.tags.map((tag) => ({ _key: tag.slug, ...documentReference(tagDocumentId(tag.slug)) })),
+		tags: raw.tags.map((tag) => tagReference(tag.slug)),
 		mediaSources: raw.mediaSources,
 	};
 }
-
-export const onoffCollectionDocumentsMock: Collection[] = onoffRawCollectionsMock.map(toCollectionDocument);

@@ -1,6 +1,6 @@
 import { onoffRawCollectionsMock } from '../../onoff-raw-collections.mock';
 import { onoffLiteraryWorkDocumentsMock } from '../literary-work/literary-work.document.projection';
-import { onoffCollectionDocumentsMock } from './collection.document.projection';
+import { onoffCollectionDocumentsMock } from '../../onoff-documents.mock';
 
 describe('documento de collection', () => {
 	// Si una referencia apuntara a un `_id` que no está en el dataset, la query la resolvería a null
@@ -22,8 +22,6 @@ describe('documento de collection', () => {
 		});
 	});
 
-	// El raw usa null para la portada ausente; el documento simplemente no trae la clave, y el
-	// `coalesce` de la query solo se comporta igual ante la clave ausente.
 	it('omits the featured image when the raw carries none', () => {
 		const withoutCover = onoffCollectionDocumentsMock.find(
 			(_, index) => onoffRawCollectionsMock[index]?.featuredImage === null,
@@ -34,7 +32,9 @@ describe('documento de collection', () => {
 	});
 
 	it('keys every reference, which Sanity needs to edit the array', () => {
+		expect(onoffCollectionDocumentsMock.length).toBeGreaterThan(0);
 		onoffCollectionDocumentsMock.forEach((collection) => {
+			expect(collection.literaryWorks?.length).toBeGreaterThan(0);
 			collection.literaryWorks?.forEach((reference) => expect(reference._key).toBeTruthy());
 		});
 	});

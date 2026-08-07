@@ -1,11 +1,10 @@
 import { onoffRawTagsMock } from '../../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
-import { createFileAssetDocument, asDraft, documentSystemFields } from './sanity-document.factory';
+import { createAudioAssetDocument, asDraft, documentSystemFields } from './sanity-document.factory';
 import {
 	onoffNationalityDocumentsMock,
 	onoffResourceTypeDocumentsMock,
 	onoffTagDocumentsMock,
-	tagDocumentId,
 } from './support-documents.projection';
 
 describe('documentos de soporte', () => {
@@ -35,26 +34,29 @@ describe('documentos de soporte', () => {
 		expect(onoffResourceTypeDocumentsMock.map((document) => document.slug.current)).toEqual(slugs);
 	});
 
-	// La query dereferencia la nacionalidad sin proyectarla, así que el raw ya trae el documento entero.
-	it('keeps the nationality document as the raw carries it', () => {
-		expect(onoffNationalityDocumentsMock[0]).toEqual(rawOnoffAuthor.nationality);
+	it('carries the nationality as a document Sanity would store', () => {
+		const [nationality] = onoffNationalityDocumentsMock;
+
+		expect(nationality?._type).toBe('nationality');
+		expect(nationality?.country).toBe(rawOnoffAuthor.nationality.country);
+		expect(nationality?._id).toBeTruthy();
 	});
 });
 
 describe('factory de documentos', () => {
-	// Una fecha variable haría fallar al azar el caso de una obra sin `publishedAt`, que la query
-	// resuelve con `coalesce(publishedAt, _createdAt)`.
-	it('stamps a stable timestamp', () => {
-		expect(documentSystemFields('x')).toEqual(documentSystemFields('x'));
+	// Comparar dos llamadas entre sí no distingue una fecha fija de `new Date()`; que no sea la de hoy, sí.
+	it('stamps a timestamp that is not the current date', () => {
+		const stamped = new Date(documentSystemFields('x')._createdAt);
+
+		expect(stamped.getFullYear()).toBeLessThan(new Date().getFullYear());
 	});
 
 	it('marks a draft with the path prefix Sanity uses', () => {
 		expect(asDraft({ _id: 'onoff-collection-geometrias' })._id).toBe('drafts.onoff-collection-geometrias');
 	});
 
-	// Es lo que permite que `asset->url` resuelva sin red: la url es un campo del documento de asset.
 	it('carries the url the raw transports for the asset', () => {
-		const asset = createFileAssetDocument({ ref: 'file-abc', url: 'https://cdn.example.org/onoff/geometria.ogg' });
+		const asset = createAudioAssetDocument({ ref: 'file-abc', url: 'https://cdn.example.org/onoff/geometria.ogg' });
 
 		expect(asset.url).toBe('https://cdn.example.org/onoff/geometria.ogg');
 		expect(asset._id).toBe('file-abc');

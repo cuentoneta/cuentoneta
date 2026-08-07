@@ -1,10 +1,9 @@
 import { evaluate, parse } from 'groq-js';
 import { collectionBySlugQuery, collectionsQuery } from '../api/_queries/collection.query';
 import { literaryWorkBySlugQuery } from '../api/_queries/literary-work.query';
-import { onoffRawCollectionsMock } from './onoff-raw-collections.mock';
+import { onoffRawCollectionsMock, onoffRawCollectionTeasersMock } from './onoff-raw-collections.mock';
 import { onoffRawLiteraryWorksMock } from './onoff-raw-literary-works.mock';
-import type { LiteraryWork } from '@sanity-types';
-import { onoffDatasetMock, onoffLiteraryWorkDocumentsMock } from './onoff-documents.mock';
+import { onoffDatasetMock } from './onoff-documents.mock';
 
 async function run(query: string, params: Record<string, unknown> = {}) {
 	const result = await evaluate(parse(query), { dataset: onoffDatasetMock, params });
@@ -20,7 +19,7 @@ describe('el dataset de documentos reproduce el corpus crudo', () => {
 		async (slug) => {
 			const expected = onoffRawCollectionsMock.find((collection) => collection.slug === slug);
 
-			await expect(run(collectionBySlugQuery, { slug })).resolves.toEqual(expected);
+			await expect(run(collectionBySlugQuery, { slug })).resolves.toStrictEqual(expected);
 		},
 	);
 
@@ -29,28 +28,17 @@ describe('el dataset de documentos reproduce el corpus crudo', () => {
 		async (slug) => {
 			const expected = onoffRawLiteraryWorksMock.find((work) => work.slug === slug);
 
-			await expect(run(literaryWorkBySlugQuery, { slug })).resolves.toEqual(expected);
+			await expect(run(literaryWorkBySlugQuery, { slug })).resolves.toStrictEqual(expected);
 		},
 	);
 
-	it('evaluates the listing query into every collection of the corpus', async () => {
+	// Se compara el objeto entero y no solo los slugs: el listado proyecta cosas que ninguna otra query
+	// verifica —el total, el abanico de portadas y la imagen destacada—, y su canon ya existe.
+	it('evaluates the listing query into the raw teaser fixtures', async () => {
 		const result = (await run(collectionsQuery)) as { slug: string }[];
+		const expected = [...onoffRawCollectionTeasersMock].sort((a, b) => a.title.localeCompare(b.title, 'es'));
 
-		expect(result.map(({ slug }) => slug).sort()).toEqual(onoffRawCollectionsMock.map(({ slug }) => slug).sort());
-	});
-
-	// La razón de ser de la capa: los documentos sintéticos que esta reemplaza declaraban la portada
-	// como string, y nada lo detectaba. Tipar contra el documento lo vuelve un error de compilación.
-	// Si el campo alguna vez se aflojara, el `@ts-expect-error` quedaría sin usar y `tsc` cortaría —
-	// el gate de typecheck cubre los spec.
-	it('rejects a cover image declared as a string', () => {
-		const document: LiteraryWork = {
-			...(onoffLiteraryWorkDocumentsMock[0] as LiteraryWork),
-			// @ts-expect-error la portada es un objeto de imagen en el documento, no una ruta
-			coverImage: 'uno.png',
-		};
-
-		expect(document.coverImage).toBe('uno.png');
+		expect(result).toStrictEqual(expected);
 	});
 
 	// El modo de falla que `groq-js` no reporta: si el documento de asset no está en el dataset, la

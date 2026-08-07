@@ -1,11 +1,7 @@
-import type { Author, Nationality, ResourceType } from '@sanity-types';
+import type { Author } from '@sanity-types';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 import { documentReference, documentSystemFields, slugField } from '../document/sanity-document.factory';
-import {
-	resourceTypeDocumentId,
-	toNationalityDocument,
-	toResourceTypeDocument,
-} from '../document/support-documents.projection';
+import { resourceTypeDocumentId } from '../document/support-documents.projection';
 
 type RawAuthor = typeof rawOnoffAuthor;
 
@@ -39,10 +35,3 @@ export function toAuthorDocument(raw: RawAuthor): Author {
 }
 
 export const onoffAuthorDocument: Author = toAuthorDocument(rawOnoffAuthor);
-
-// El subgrafo que el documento de autor necesita para que sus referencias resuelvan.
-export const onoffAuthorNationalityDocuments: Nationality[] = [toNationalityDocument(rawOnoffAuthor.nationality)];
-
-export const onoffAuthorResourceTypeDocuments: ResourceType[] = (rawOnoffAuthor.resources ?? []).map((resource) =>
-	toResourceTypeDocument(resource.resourceType),
-);

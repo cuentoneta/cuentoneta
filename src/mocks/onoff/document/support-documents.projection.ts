@@ -23,8 +23,8 @@ export function toTagDocument(raw: RawTag): Tag {
 	};
 }
 
-export function tagReference(raw: RawTag, key?: string) {
-	return documentReference(tagDocumentId(raw.slug), key);
+export function tagReference(slug: string) {
+	return { _key: slug, ...documentReference(tagDocumentId(slug)) };
 }
 
 export function resourceTypeDocumentId(slug: string): string {

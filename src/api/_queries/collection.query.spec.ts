@@ -1,5 +1,6 @@
 import { evaluate, parse } from 'groq-js';
 import {
+	configlessCollectionDocument,
 	coverlessLiteraryWorkDocument,
 	draftCollectionDocument,
 	emptyCollectionDocument,
@@ -16,13 +17,7 @@ async function run(query: string, dataset: unknown[], params: Record<string, unk
 	return result.get();
 }
 
-// El dataset se resuelve una vez por archivo y fuera del tiempo de carga del módulo: si el corpus se
-// rompiera, falla como hook con nombre propio en vez de como un crash al importar.
-let dataset: unknown[];
-
-beforeAll(() => {
-	dataset = [...onoffDatasetMock];
-});
+const dataset = onoffDatasetMock;
 
 const [firstCollection] = onoffCollectionDocumentsMock;
 
@@ -69,13 +64,9 @@ describe('collectionBySlugQuery', () => {
 	});
 
 	it('defaults showAuthors to false when the config is absent', async () => {
-		const { config: _config, ...withoutConfig } = {
-			...firstCollection,
-			_id: 'sin-config',
-			slug: { _type: 'slug' as const, current: 'sin-config' },
-		};
-
-		const result = await run(collectionBySlugQuery, [...dataset, withoutConfig], { slug: 'sin-config' });
+		const result = await run(collectionBySlugQuery, [...dataset, configlessCollectionDocument], {
+			slug: configlessCollectionDocument.slug.current,
+		});
 
 		expect((result as { config: { showAuthors: boolean } }).config.showAuthors).toBe(false);
 	});
@@ -101,13 +92,15 @@ describe('collectionsQuery', () => {
 	});
 
 	it('yields an empty cover list for a collection without works', async () => {
-		const result = (await run(collectionsQuery, [emptyCollectionDocument])) as {
+		const result = (await run(collectionsQuery, [...dataset, emptyCollectionDocument])) as {
+			_id: string;
 			count: number;
 			literaryWorkCoverImages: unknown[];
 		}[];
+		const target = result.find((collection) => collection._id === emptyCollectionDocument._id);
 
-		expect(result[0]?.count).toBe(0);
-		expect(result[0]?.literaryWorkCoverImages).toEqual([]);
+		expect(target?.count).toBe(0);
+		expect(target?.literaryWorkCoverImages).toEqual([]);
 	});
 
 	// La obra sin portada es una rama que el tipo declara opcional y que el canon nunca ejercitó.
@@ -119,18 +112,24 @@ describe('collectionsQuery', () => {
 			literaryWorks: [{ _key: 'k', _type: 'reference' as const, _ref: coverlessLiteraryWorkDocument._id }],
 		};
 
-		const result = (await run(collectionsQuery, [collection, coverlessLiteraryWorkDocument])) as {
+		const result = (await run(collectionsQuery, [...dataset, collection, coverlessLiteraryWorkDocument])) as {
+			_id: string;
 			literaryWorkCoverImages: unknown[];
 		}[];
+		const target = result.find((entry) => entry._id === collection._id);
 
-		expect(result[0]?.literaryWorkCoverImages).toEqual([null]);
+		expect(target?.literaryWorkCoverImages).toEqual([null]);
 	});
 
+	// El orden esperado se aproxima con `localeCompare('es')`: GROQ ordena por collation, no por unidades
+	// UTF-16, así que un `sort()` pelado divergiría ante el primer título acentuado.
 	it('orders by title ascending and leaves drafts out', async () => {
 		const withDraft = [...dataset, draftCollectionDocument];
 
 		const result = (await run(collectionsQuery, withDraft)) as { title: string }[];
-		const expected = onoffCollectionDocumentsMock.map((collection) => collection.title).sort();
+		const expected = onoffCollectionDocumentsMock
+			.map((collection) => collection.title)
+			.sort((a, b) => a.localeCompare(b, 'es'));
 
 		expect(result.map(({ title }) => title)).toEqual(expected);
 	});
