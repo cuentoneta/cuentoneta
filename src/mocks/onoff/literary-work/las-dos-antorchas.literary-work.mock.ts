@@ -3,7 +3,7 @@ import { lasDosAntorchasRawLiteraryWork } from './las-dos-antorchas.literary-wor
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
-import { createReadingTime, deriveSectionReadingTime } from '@models/reading-time.model';
+import { createReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import lasDosAntorchasMdBody from './las-dos-antorchas.md?raw';
@@ -22,6 +22,7 @@ export const lasDosAntorchasLiteraryWorkMock: LiteraryWork = createLiteraryWork(
 	content: [
 		createLiteraryWorkSection({
 			position: 0,
+			epigraphs: [],
 			bodyHtml: markdownToSanitizedHtml(lasDosAntorchasBody),
 			readingTime: createReadingTime(lasDosAntorchasRawLiteraryWork.content[0].readingTime ?? 0),
 		}),

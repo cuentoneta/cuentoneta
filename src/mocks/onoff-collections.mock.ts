@@ -11,7 +11,6 @@ import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
 import geometriasDescriptionMd from './onoff/collection/geometrias-del-desvelo.collection.md?raw';
 import inventarioDescriptionMd from './onoff/collection/inventario-de-las-pasiones.collection.md?raw';
-import { onoffMediaMock } from './onoff-media.mock';
 import {
 	elOdioLiteraryWorkTeaserMock,
 	elTratadoDeLosPlaceresLiteraryWorkTeaserMock,
@@ -20,7 +19,6 @@ import {
 	lasEscalerasLiteraryWorkTeaserMock,
 	losPeldanosLiteraryWorkTeaserMock,
 } from './onoff-literary-work-teasers.mock';
-import { colaborativaTagMock, cuentoTagMock } from './onoff-tags.mock';
 
 // Cada colección se cura con las obras que su propia prosa nombra, no con un corte arbitrario del
 // agregador: así las dos son distinguibles por contenido y no solo por la rama de `imagery`.
@@ -46,25 +44,25 @@ function sampleFrom(works: readonly [LiteraryWorkTeaser, LiteraryWorkTeaser, Lit
 
 /** Colección con portada editorial propia — la rama `representative` de `imagery`. */
 export const geometriasDelDesveloCollectionMock: Collection = createCollection({
-	_id: 'collection-geometrias-del-desvelo',
+	_id: 'onoff-collection-geometrias-del-desvelo',
 	slug: 'geometrias-del-desvelo',
 	title: 'Geometrías del desvelo',
 	description: markdownToSanitizedHtml(createMarkdown(geometriasDescriptionMd)),
 	imagery: { kind: 'representative', image: 'assets/img/mocks/collections/geometrias-del-desvelo.png' },
-	tags: [colaborativaTagMock],
+	tags: [],
 	config: { showAuthors: true },
-	mediaSources: onoffMediaMock,
+	mediaSources: [],
 	literaryWorks: geometriasWorks,
 });
 
 /** Colección sin portada propia — la rama `sample`, derivada de las portadas de sus obras. */
 export const inventarioDeLasPasionesCollectionMock: Collection = createCollection({
-	_id: 'collection-inventario-de-las-pasiones',
+	_id: 'onoff-collection-inventario-de-las-pasiones',
 	slug: 'inventario-de-las-pasiones',
 	title: 'El inventario de las pasiones',
 	description: markdownToSanitizedHtml(createMarkdown(inventarioDescriptionMd)),
 	imagery: sampleFrom(inventarioWorks),
-	tags: [cuentoTagMock],
+	tags: [],
 	config: { showAuthors: false },
 	mediaSources: [],
 	literaryWorks: inventarioWorks,

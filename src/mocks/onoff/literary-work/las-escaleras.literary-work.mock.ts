@@ -3,7 +3,7 @@ import { lasEscalerasRawLiteraryWork } from './las-escaleras.literary-work.raw.m
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
-import { createReadingTime, deriveSectionReadingTime } from '@models/reading-time.model';
+import { createReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import lasEscalerasMdBody from './las-escaleras.md?raw';
@@ -22,6 +22,7 @@ export const lasEscalerasLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	content: [
 		createLiteraryWorkSection({
 			position: 0,
+			epigraphs: [],
 			bodyHtml: markdownToSanitizedHtml(lasEscalerasBody),
 			readingTime: createReadingTime(lasEscalerasRawLiteraryWork.content[0].readingTime ?? 0),
 		}),

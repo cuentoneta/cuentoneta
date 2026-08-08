@@ -36,6 +36,10 @@ function repoReturning(raw: unknown): SanityLiteraryWorkRepository {
 // El corpus de dominio es el fixture con el que specs y stories hacen de cuenta que son la respuesta de la
 // API. Si deja de coincidir con lo que el ACL produce a partir del raw, todo lo que lo consume pasa en
 // verde afirmando una forma que la API no devuelve.
+//
+// El autor embebido queda cubierto acá y en el cruce de `Collection`. El de la página de perfil no: su
+// módulo resuelve el cliente de Sanity a nivel de módulo, sin punto de inyección, y el corpus no declara
+// una fixture cruda tipada contra el resultado de su query.
 describe('el corpus de dominio de LiteraryWork coincide con el mapeo del ACL', () => {
 	it.each(onoffRawLiteraryWorksMock.map((raw) => raw.slug))(
 		'maps the raw of "%s" into its domain mock',
