@@ -94,6 +94,8 @@ documentos (a mano)  →  (groq-js, query real)  →  raw (generado)  →  (ACL 
 
 El spec `src/mocks/onoff-documents.mock.spec.ts` es el **gate de frescura**: vuelve a evaluar esas mismas queries y compara, por valor, contra las fixtures raw commiteadas. Corre dentro de `pnpm test` (gate `test`) — no es un gate de CI aparte. `story/` y `storylist/` quedan fuera de esta generación (siguen escribiéndose a mano); el detalle completo —comando, qué se genera, las dos clases de exclusión y la guarda contra referencias colgadas— vive en [`src/mocks/onoff/README.md`](../../src/mocks/onoff/README.md).
 
+Las **imágenes** del corpus atraviesan las tres capas por una única tabla, `src/mocks/onoff-image-assets.mock.ts`: cada entrada asocia la referencia que declara el documento con la ruta del asset local que declara el dominio. Los dos specs de cruce contra el ACL (`onoff-*.acl-alignment.spec.ts`) sustituyen el builder de imágenes de Sanity por un resolutor sobre esa tabla, y por eso comparan portadas, retrato, bandera y avatar **sin excluir ningún campo**. Un cruce que necesitara volver a excluir una imagen sería la señal de que la tabla quedó incompleta, no de que la comparación pide una excepción.
+
 ---
 
 ## Componentes: Angular Testing Library
