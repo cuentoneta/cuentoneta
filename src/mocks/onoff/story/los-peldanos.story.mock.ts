@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { Story } from '@models/story.model';
 import { losPeldanosRawStory } from './los-peldanos.story.raw.mock';
 import { authorMock } from '../../author.mock';
@@ -10,7 +11,7 @@ export const losPeldanosStoryMock: Story = {
 	originalPublication: 'Éditions du Méridien (1977)',
 	approximateReadingTime: 8,
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/los-peldanos.png',
+	coverImage: onoffImageAssets.losPeldanosCover.path,
 	tags: toDomainTags(losPeldanosRawStory.tags),
 	resources: [],
 	media: [],

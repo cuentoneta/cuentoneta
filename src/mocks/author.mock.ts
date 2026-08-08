@@ -4,6 +4,7 @@ import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import onoffBiographyMdBody from './onoff/author/francois-onoff.biography.md?raw';
 import { colaborativaTagMock } from './onoff-tags.mock';
+import { onoffImageAssets } from './onoff-image-assets.mock';
 
 export const authorMock: AuthorProfile = {
 	_id: 'author_1',
@@ -13,7 +14,7 @@ export const authorMock: AuthorProfile = {
 	updatedAt: '2024-05-20T10:30:00Z',
 	nationality: {
 		country: 'Francia',
-		flag: 'https://cdn.sanity.io/images/s4dbqkc5/production/b80876a5f3a89e13acc14254b1f45dd6d29b79f4-30x20.png',
+		flag: onoffImageAssets.franceFlag.path,
 	},
 	resources: [
 		{
@@ -26,7 +27,7 @@ export const authorMock: AuthorProfile = {
 			},
 		},
 	],
-	imageUrl: 'assets/img/mocks/author/francois-onoff.png',
+	imageUrl: onoffImageAssets.francoisOnoffPortrait.path,
 	name: 'François Onoff',
 	biography: markdownToSanitizedHtml(createMarkdown(onoffBiographyMdBody)),
 	bornOn: '1948-01-01',
@@ -44,10 +45,10 @@ export const authorTeaserMock: AuthorTeaser = {
 	tags: [colaborativaTagMock],
 	nationality: {
 		country: 'Francia',
-		flag: 'https://cdn.sanity.io/images/s4dbqkc5/production/b80876a5f3a89e13acc14254b1f45dd6d29b79f4-30x20.png',
+		flag: onoffImageAssets.franceFlag.path,
 	},
 	resources: [],
-	imageUrl: 'assets/img/mocks/author/francois-onoff.png',
+	imageUrl: onoffImageAssets.francoisOnoffPortrait.path,
 	name: 'François Onoff',
 	bornOn: '1948-01-01',
 	bornOnYear: 1948,

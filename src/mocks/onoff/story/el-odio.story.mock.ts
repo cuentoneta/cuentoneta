@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { Story } from '@models/story.model';
 import { elOdioRawStory } from './el-odio.story.raw.mock';
 import { authorMock } from '../../author.mock';
@@ -10,7 +11,7 @@ export const elOdioStoryMock: Story = {
 	originalPublication: 'Éditions du Méridien (1971)',
 	approximateReadingTime: 6,
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/el-odio.png',
+	coverImage: onoffImageAssets.elOdioCover.path,
 	tags: toDomainTags(elOdioRawStory.tags),
 	resources: [],
 	media: [],
