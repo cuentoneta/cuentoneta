@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { LiteraryWork } from '@sanity-types';
 import elTratadoDeLosPlaceresEditorialNoteMd from './el-tratado-de-los-placeres.editorial-note.md?raw';
 import elTratadoDeLosPlaceresMdBody from './el-tratado-de-los-placeres.md?raw';
@@ -13,7 +14,7 @@ export const elTratadoDeLosPlaceresLiteraryWorkDocument: LiteraryWork = {
 	authors: [{ _key: 'author_1', _type: 'reference', _ref: 'author_1' }],
 	coverImage: {
 		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-ff13dcee67b52bc4bbd78c2c7900f466f335badd-236x328-png' },
+		asset: { _type: 'reference', _ref: onoffImageAssets.elTratadoDeLosPlaceresCover.ref },
 	},
 	content: [{ _type: 'section', _key: 'section-1', body: elTratadoDeLosPlaceresMdBody, readingTime: 10 }],
 	editorialNote: elTratadoDeLosPlaceresEditorialNoteMd,

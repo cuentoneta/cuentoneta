@@ -1,7 +1,18 @@
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { createImageUrlBuilder } from '@sanity/image-url';
-import { onoffImageAssets, type OnoffImageAsset } from './image-assets';
+import {
+	imageReferencesIn,
+	localImagePathForImageSource,
+	onoffImageAssets,
+	type OnoffImageAsset,
+} from './onoff-image-assets.mock';
+import { onoffDatasetMock } from './onoff-documents.mock';
+import { rawOnoffAuthor, rawOnoffAuthorTeaser } from './onoff-raw-author.mock';
+import { onoffRawCollectionsMock, onoffRawCollectionTeasersMock } from './onoff-raw-collections.mock';
+import { onoffRawLiteraryWorksMock } from './onoff-raw-literary-works.mock';
+import { onoffRawStoriesMock } from './onoff-raw-stories.mock';
+import { onoffRawStorylistsMock } from './onoff-raw-storylists.mock';
 
 const assets: [string, OnoffImageAsset][] = Object.entries(onoffImageAssets);
 
@@ -64,5 +75,20 @@ describe('la tabla de assets de imagen del corpus', () => {
 
 		expect(dimensions).toBe(dimensionsOf(asset));
 		expect(asset.path.endsWith(`.${extension}`)).toBe(true);
+	});
+
+	// Sin esta cobertura la tabla sería un mapa parcial: una referencia nueva que nadie sumara resolvería
+	// a cadena vacía en los cruces contra el ACL, que la compararían contra la ruta que el dominio declara.
+	it.each([
+		['el dataset de documentos', onoffDatasetMock],
+		['el corpus crudo de obras', onoffRawLiteraryWorksMock],
+		['el corpus crudo de colecciones', [onoffRawCollectionsMock, onoffRawCollectionTeasersMock]],
+		['el corpus crudo de historias', [onoffRawStoriesMock, onoffRawStorylistsMock]],
+		['el autor crudo', [rawOnoffAuthor, rawOnoffAuthorTeaser]],
+	])('covers every image reference declared by %s', (_source, corpus) => {
+		const references = [...new Set(imageReferencesIn(corpus))];
+
+		expect(references.length).toBeGreaterThan(0);
+		expect(references.filter((reference) => localImagePathForImageSource(reference) === '')).toEqual([]);
 	});
 });

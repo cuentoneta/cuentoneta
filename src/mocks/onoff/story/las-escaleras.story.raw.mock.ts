@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { StoryBySlugQueryResult } from '@sanity-types';
 import { novelaRawTag, absurdoRawTag, alegoriaRawTag } from '../../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
@@ -239,7 +240,7 @@ export const lasEscalerasRawStory: NonNullable<StoryBySlugQueryResult> = {
 	approximateReadingTime: 9,
 	coverImage: {
 		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-ad5639283bf3d3e927b5b0eb79ef2ba098b707e8-236x328-png' },
+		asset: { _type: 'reference', _ref: onoffImageAssets.lasEscalerasCover.ref },
 	},
 	mediaSources: [],
 	resources: [],

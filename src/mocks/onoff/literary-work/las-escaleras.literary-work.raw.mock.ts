@@ -3,6 +3,7 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 import { absurdoRawTag, alegoriaRawTag, novelaRawTag } from '../../onoff-raw-tags.mock';
+import { palacioSecondSectionReadingTime } from './el-palacio-de-las-nueve-fronteras.multi-section';
 import lasEscalerasEditorialNoteMd from './las-escaleras.editorial-note.md?raw';
 import lasEscalerasMdBody from './las-escaleras.md?raw';
 
@@ -10,16 +11,13 @@ export const lasEscalerasRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryRes
 	_id: 'onoff-literary-work-las-escaleras',
 	slug: 'las-escaleras',
 	title: 'Las escaleras',
-	coverImage: {
-		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-ad5639283bf3d3e927b5b0eb79ef2ba098b707e8-236x328-png' },
-	},
+	coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-lasEscalerasCover-236x328-png' } },
 	editorialNote: lasEscalerasEditorialNoteMd,
 	badLanguage: false,
 	originalPublication: 'Éditions du Méridien (1979)',
 	publishedAt: '1979-01-01T00:00:00Z',
 	totalReadingTime: 9,
-	sectionCount: 1,
+	sectionCount: palacioSecondSectionReadingTime,
 	tags: [novelaRawTag, absurdoRawTag, alegoriaRawTag],
 	mediaSources: [],
 	resources: [],

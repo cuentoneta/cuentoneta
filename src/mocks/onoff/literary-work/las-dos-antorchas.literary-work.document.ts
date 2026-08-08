@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { LiteraryWork } from '@sanity-types';
 import lasDosAntorchasEditorialNoteMd from './las-dos-antorchas.editorial-note.md?raw';
 import lasDosAntorchasMdBody from './las-dos-antorchas.md?raw';
@@ -13,7 +14,7 @@ export const lasDosAntorchasLiteraryWorkDocument: LiteraryWork = {
 	authors: [{ _key: 'author_1', _type: 'reference', _ref: 'author_1' }],
 	coverImage: {
 		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-83ad8511a47107773b70ff339edd8b43c29dcf3e-236x328-png' },
+		asset: { _type: 'reference', _ref: onoffImageAssets.lasDosAntorchasCover.ref },
 	},
 	content: [{ _type: 'section', _key: 'section-1', body: lasDosAntorchasMdBody, readingTime: 8 }],
 	editorialNote: lasDosAntorchasEditorialNoteMd,

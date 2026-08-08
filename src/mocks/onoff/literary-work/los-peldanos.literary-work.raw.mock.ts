@@ -3,6 +3,7 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 import { absurdoRawTag, cuentoRawTag, surrealismoRawTag } from '../../onoff-raw-tags.mock';
+import { palacioSecondSectionReadingTime } from './el-palacio-de-las-nueve-fronteras.multi-section';
 import losPeldanosEditorialNoteMd from './los-peldanos.editorial-note.md?raw';
 import losPeldanosMdBody from './los-peldanos.md?raw';
 
@@ -10,16 +11,13 @@ export const losPeldanosRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResu
 	_id: 'onoff-literary-work-los-peldanos',
 	slug: 'los-peldanos',
 	title: 'Los peldaños',
-	coverImage: {
-		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-27fb05f42b38f0ba9ba21aeb566e25abe670b213-236x328-png' },
-	},
+	coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-losPeldanosCover-236x328-png' } },
 	editorialNote: losPeldanosEditorialNoteMd,
 	badLanguage: false,
 	originalPublication: 'Éditions du Méridien (1977)',
 	publishedAt: '1977-01-01T00:00:00Z',
 	totalReadingTime: 8,
-	sectionCount: 1,
+	sectionCount: palacioSecondSectionReadingTime,
 	tags: [cuentoRawTag, absurdoRawTag, surrealismoRawTag],
 	mediaSources: [],
 	resources: [],

@@ -3,6 +3,7 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 import { ensayoRawTag, filosoficoRawTag, metaficcionRawTag } from '../../onoff-raw-tags.mock';
+import { palacioSecondSectionReadingTime } from './el-palacio-de-las-nueve-fronteras.multi-section';
 import elTratadoDeLosPlaceresEditorialNoteMd from './el-tratado-de-los-placeres.editorial-note.md?raw';
 import elTratadoDeLosPlaceresMdBody from './el-tratado-de-los-placeres.md?raw';
 
@@ -10,16 +11,13 @@ export const elTratadoDeLosPlaceresRawLiteraryWork: NonNullable<LiteraryWorkBySl
 	_id: 'onoff-literary-work-el-tratado-de-los-placeres',
 	slug: 'el-tratado-de-los-placeres',
 	title: 'El tratado de los placeres',
-	coverImage: {
-		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-ff13dcee67b52bc4bbd78c2c7900f466f335badd-236x328-png' },
-	},
+	coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-elTratadoDeLosPlaceresCover-236x328-png' } },
 	editorialNote: elTratadoDeLosPlaceresEditorialNoteMd,
 	badLanguage: false,
 	originalPublication: 'Éditions du Méridien (1981)',
 	publishedAt: '1981-01-01T00:00:00Z',
 	totalReadingTime: 10,
-	sectionCount: 1,
+	sectionCount: palacioSecondSectionReadingTime,
 	tags: [ensayoRawTag, filosoficoRawTag, metaficcionRawTag],
 	mediaSources: [],
 	resources: [],

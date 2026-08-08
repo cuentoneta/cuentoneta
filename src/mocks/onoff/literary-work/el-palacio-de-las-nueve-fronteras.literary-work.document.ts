@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { LiteraryWork } from '@sanity-types';
 import elPalacioDeLasNueveFronterasEditorialNoteMd from './el-palacio-de-las-nueve-fronteras.editorial-note.md?raw';
 import {
@@ -18,7 +19,7 @@ export const elPalacioDeLasNueveFronterasLiteraryWorkDocument: LiteraryWork = {
 	authors: [{ _key: 'author_1', _type: 'reference', _ref: 'author_1' }],
 	coverImage: {
 		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-3f8774ea01abc54483829d982035a810667240e1-236x328-png' },
+		asset: { _type: 'reference', _ref: onoffImageAssets.elPalacioDeLasNueveFronterasCover.ref },
 	},
 	content: [
 		{

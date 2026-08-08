@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { StoryBySlugQueryResult } from '@sanity-types';
 import { novelaRawTag, metaficcionRawTag, experimentalRawTag } from '../../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
@@ -263,7 +264,7 @@ export const lasDosAntorchasRawStory: NonNullable<StoryBySlugQueryResult> = {
 	approximateReadingTime: 8,
 	coverImage: {
 		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-83ad8511a47107773b70ff339edd8b43c29dcf3e-236x328-png' },
+		asset: { _type: 'reference', _ref: onoffImageAssets.lasDosAntorchasCover.ref },
 	},
 	mediaSources: [],
 	resources: [],

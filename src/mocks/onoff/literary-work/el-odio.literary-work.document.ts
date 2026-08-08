@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { LiteraryWork } from '@sanity-types';
 import elOdioEditorialNoteMd from './el-odio.editorial-note.md?raw';
 import { elOdioEpigraphReference, elOdioEpigraphText, elOdioSectionTitle } from './el-odio.epigraph';
@@ -14,7 +15,7 @@ export const elOdioLiteraryWorkDocument: LiteraryWork = {
 	authors: [{ _key: 'author_1', _type: 'reference', _ref: 'author_1' }],
 	coverImage: {
 		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-83588a6210ea3de0cee7f493f3d41140427958bf-236x328-png' },
+		asset: { _type: 'reference', _ref: onoffImageAssets.elOdioCover.ref },
 	},
 	content: [
 		{

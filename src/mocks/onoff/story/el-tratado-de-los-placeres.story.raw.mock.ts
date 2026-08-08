@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { StoryBySlugQueryResult } from '@sanity-types';
 import { ensayoRawTag, filosoficoRawTag, metaficcionRawTag } from '../../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
@@ -254,7 +255,7 @@ export const elTratadoRawStory: NonNullable<StoryBySlugQueryResult> = {
 	approximateReadingTime: 10,
 	coverImage: {
 		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-ff13dcee67b52bc4bbd78c2c7900f466f335badd-236x328-png' },
+		asset: { _type: 'reference', _ref: onoffImageAssets.elTratadoDeLosPlaceresCover.ref },
 	},
 	mediaSources: [],
 	resources: [],

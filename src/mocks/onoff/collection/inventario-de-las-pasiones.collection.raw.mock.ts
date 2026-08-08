@@ -11,6 +11,7 @@ import {
 } from '../../onoff-raw-tags.mock';
 import { elOdioSectionTitle } from '../literary-work/el-odio.epigraph';
 import elOdioMdBody from '../literary-work/el-odio.md?raw';
+import { palacioSecondSectionReadingTime } from '../literary-work/el-palacio-de-las-nueve-fronteras.multi-section';
 import elTratadoDeLosPlaceresMdBody from '../literary-work/el-tratado-de-los-placeres.md?raw';
 import lasDosAntorchasMdBody from '../literary-work/las-dos-antorchas.md?raw';
 import inventarioDeLasPasionesCollectionMd from './inventario-de-las-pasiones.collection.md?raw';
@@ -31,10 +32,10 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 			title: 'El tratado de los placeres',
 			coverImage: {
 				_type: 'image',
-				asset: { _type: 'reference', _ref: 'image-ff13dcee67b52bc4bbd78c2c7900f466f335badd-236x328-png' },
+				asset: { _type: 'reference', _ref: 'image-elTratadoDeLosPlaceresCover-236x328-png' },
 			},
 			totalReadingTime: 10,
-			sectionCount: 1,
+			sectionCount: palacioSecondSectionReadingTime,
 			tags: [ensayoRawTag, filosoficoRawTag, metaficcionRawTag],
 			mediaSources: [],
 			authors: [
@@ -42,10 +43,7 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 					_id: 'author_1',
 					slug: 'francois-onoff',
 					name: 'François Onoff',
-					image: {
-						_type: 'image',
-						asset: { _type: 'reference', _ref: 'image-f656d95d41369adb6f7d3a7d0b20b36861fd2028-350x350-jpg' },
-					},
+					image: { _type: 'image', asset: { _type: 'reference', _ref: 'image-francoisOnoffPortrait-1254x1254-png' } },
 					nationality: {
 						_id: 'nationality-francia',
 						_type: 'nationality',
@@ -53,10 +51,7 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 						_updatedAt: '2021-12-28T00:00:00Z',
 						_rev: 'rev-francia',
 						country: 'Francia',
-						flag: {
-							_type: 'image',
-							asset: { _type: 'reference', _ref: 'image-b80876a5f3a89e13acc14254b1f45dd6d29b79f4-30x20-png' },
-						},
+						flag: { _type: 'image', asset: { _type: 'reference', _ref: 'image-franceFlag-30x20-png' } },
 					},
 					bornOn: '1948-01-01',
 					bornOnYear: 1948,
@@ -70,12 +65,9 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 			_id: 'onoff-literary-work-el-odio',
 			slug: 'el-odio',
 			title: 'El odio',
-			coverImage: {
-				_type: 'image',
-				asset: { _type: 'reference', _ref: 'image-83588a6210ea3de0cee7f493f3d41140427958bf-236x328-png' },
-			},
+			coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-elOdioCover-236x328-png' } },
 			totalReadingTime: 6,
-			sectionCount: 1,
+			sectionCount: palacioSecondSectionReadingTime,
 			tags: [novelaRawTag, dramaPsicologicoRawTag],
 			mediaSources: [],
 			authors: [
@@ -83,10 +75,7 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 					_id: 'author_1',
 					slug: 'francois-onoff',
 					name: 'François Onoff',
-					image: {
-						_type: 'image',
-						asset: { _type: 'reference', _ref: 'image-f656d95d41369adb6f7d3a7d0b20b36861fd2028-350x350-jpg' },
-					},
+					image: { _type: 'image', asset: { _type: 'reference', _ref: 'image-francoisOnoffPortrait-1254x1254-png' } },
 					nationality: {
 						_id: 'nationality-francia',
 						_type: 'nationality',
@@ -94,10 +83,7 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 						_updatedAt: '2021-12-28T00:00:00Z',
 						_rev: 'rev-francia',
 						country: 'Francia',
-						flag: {
-							_type: 'image',
-							asset: { _type: 'reference', _ref: 'image-b80876a5f3a89e13acc14254b1f45dd6d29b79f4-30x20-png' },
-						},
+						flag: { _type: 'image', asset: { _type: 'reference', _ref: 'image-franceFlag-30x20-png' } },
 					},
 					bornOn: '1948-01-01',
 					bornOnYear: 1948,
@@ -111,12 +97,9 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 			_id: 'onoff-literary-work-las-dos-antorchas',
 			slug: 'las-dos-antorchas',
 			title: 'Las dos antorchas',
-			coverImage: {
-				_type: 'image',
-				asset: { _type: 'reference', _ref: 'image-83ad8511a47107773b70ff339edd8b43c29dcf3e-236x328-png' },
-			},
+			coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-lasDosAntorchasCover-236x328-png' } },
 			totalReadingTime: 8,
-			sectionCount: 1,
+			sectionCount: palacioSecondSectionReadingTime,
 			tags: [novelaRawTag, metaficcionRawTag, experimentalRawTag],
 			mediaSources: [],
 			authors: [
@@ -124,10 +107,7 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 					_id: 'author_1',
 					slug: 'francois-onoff',
 					name: 'François Onoff',
-					image: {
-						_type: 'image',
-						asset: { _type: 'reference', _ref: 'image-f656d95d41369adb6f7d3a7d0b20b36861fd2028-350x350-jpg' },
-					},
+					image: { _type: 'image', asset: { _type: 'reference', _ref: 'image-francoisOnoffPortrait-1254x1254-png' } },
 					nationality: {
 						_id: 'nationality-francia',
 						_type: 'nationality',
@@ -135,10 +115,7 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 						_updatedAt: '2021-12-28T00:00:00Z',
 						_rev: 'rev-francia',
 						country: 'Francia',
-						flag: {
-							_type: 'image',
-							asset: { _type: 'reference', _ref: 'image-b80876a5f3a89e13acc14254b1f45dd6d29b79f4-30x20-png' },
-						},
+						flag: { _type: 'image', asset: { _type: 'reference', _ref: 'image-franceFlag-30x20-png' } },
 					},
 					bornOn: '1948-01-01',
 					bornOnYear: 1948,

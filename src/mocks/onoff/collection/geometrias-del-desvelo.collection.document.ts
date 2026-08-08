@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { Collection } from '@sanity-types';
 import geometriasDelDesveloCollectionMd from './geometrias-del-desvelo.collection.md?raw';
 
@@ -12,7 +13,7 @@ export const geometriasDelDesveloCollectionDocument: Collection = {
 	description: geometriasDelDesveloCollectionMd,
 	featuredImage: {
 		_type: 'image',
-		asset: { _ref: 'image-6efd3e53eec8dfab23e1c0109027be9f58a01f8c-1200x630-png', _type: 'reference' },
+		asset: { _ref: onoffImageAssets.geometriasDelDesveloCover.ref, _type: 'reference' },
 	},
 	config: { showAuthors: true },
 	literaryWorks: [

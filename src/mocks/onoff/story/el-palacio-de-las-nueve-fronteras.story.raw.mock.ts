@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { StoryBySlugQueryResult } from '@sanity-types';
 import { novelaRawTag, dramaPsicologicoRawTag, metaficcionRawTag } from '../../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
@@ -232,7 +233,7 @@ export const elPalacioRawStory: NonNullable<StoryBySlugQueryResult> = {
 	approximateReadingTime: 11,
 	coverImage: {
 		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-3f8774ea01abc54483829d982035a810667240e1-236x328-png' },
+		asset: { _type: 'reference', _ref: onoffImageAssets.elPalacioDeLasNueveFronterasCover.ref },
 	},
 	mediaSources: [],
 	resources: [],

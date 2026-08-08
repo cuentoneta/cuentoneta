@@ -3,22 +3,20 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 import { dramaHistoricoRawTag, teatroRawTag, tragediaRawTag } from '../../onoff-raw-tags.mock';
+import { palacioSecondSectionReadingTime } from './el-palacio-de-las-nueve-fronteras.multi-section';
 import neronMdBody from './neron.md?raw';
 
 export const neronRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'onoff-literary-work-neron',
 	slug: 'neron',
 	title: 'Nerón',
-	coverImage: {
-		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-9642ca580d43168d6965f428e65df5ca6ec34cdc-236x328-png' },
-	},
+	coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-neronCover-236x328-png' } },
 	editorialNote: null,
 	badLanguage: false,
 	originalPublication: 'Estreno teatral (1988)',
 	publishedAt: '1988-01-01T00:00:00Z',
 	totalReadingTime: 7,
-	sectionCount: 1,
+	sectionCount: palacioSecondSectionReadingTime,
 	tags: [teatroRawTag, tragediaRawTag, dramaHistoricoRawTag],
 	mediaSources: [],
 	resources: [],

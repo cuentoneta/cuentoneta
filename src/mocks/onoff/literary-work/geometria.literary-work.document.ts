@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { LiteraryWork } from '@sanity-types';
 import geometriaEditorialNoteMd from './geometria.editorial-note.md?raw';
 import { geometriaEpigraphReference, geometriaEpigraphText, geometriaSectionTitle } from './geometria.epigraph';
@@ -14,7 +15,7 @@ export const geometriaLiteraryWorkDocument: LiteraryWork = {
 	authors: [{ _key: 'author_1', _type: 'reference', _ref: 'author_1' }],
 	coverImage: {
 		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-9e1eab984fbe94e19101c7aa4fc2e99a88f71736-236x328-png' },
+		asset: { _type: 'reference', _ref: onoffImageAssets.geometriaCover.ref },
 	},
 	content: [
 		{
@@ -48,7 +49,7 @@ export const geometriaLiteraryWorkDocument: LiteraryWork = {
 			hostName: 'Biblioteca del Méridien',
 			hostAvatar: {
 				_type: 'image',
-				asset: { _type: 'reference', _ref: 'image-2c4d6e8a0b2d4f6a8c0e2d4f6a8b0c2d4e6f8a0b-96x96-png' },
+				asset: { _type: 'reference', _ref: onoffImageAssets.defaultAvatar.ref },
 			},
 			date: '1974-06-12',
 			duration: '48:12',
