@@ -13,7 +13,12 @@ vi.mock('@sanity/image-url', async () => {
 	const { localImagePathForImageSource } = await import('./onoff-image-assets.mock');
 	return {
 		createImageUrlBuilder: () => ({
-			image: (source: unknown) => ({ url: () => localImagePathForImageSource(source) }),
+			image: (source: unknown) => {
+				// `auto()` encadena y devuelve el mismo constructor: sin él, un mapeo que pasara a
+				// `urlForWithAutoFormat` rompería con un `TypeError` en vez de con una diferencia de valor.
+				const built = { url: () => localImagePathForImageSource(source), auto: () => built };
+				return built;
+			},
 		}),
 	};
 });

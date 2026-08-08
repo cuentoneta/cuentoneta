@@ -11,7 +11,10 @@ vi.mock('@sanity/image-url', async () => {
 	const { localImagePathForImageSource } = await import('./onoff-image-assets.mock');
 	return {
 		createImageUrlBuilder: () => ({
-			image: (source: unknown) => ({ url: () => localImagePathForImageSource(source) }),
+			image: (source: unknown) => {
+				const built = { url: () => localImagePathForImageSource(source), auto: () => built };
+				return built;
+			},
 		}),
 	};
 });

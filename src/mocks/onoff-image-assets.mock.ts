@@ -11,13 +11,21 @@ function toCamelCase(slug: string): string {
 	return slug.replace(/-(.)/g, (_, letter: string) => letter.toUpperCase());
 }
 
-function imageAsset(assetId: string, dimensions: string, extension: string, path: string): OnoffImageAsset {
-	return Object.freeze({ ref: `image-${assetId}-${dimensions}-${extension}`, path });
+function imageAsset(params: { assetId: string; dimensions: string; extension: string; path: string }): OnoffImageAsset {
+	return Object.freeze({
+		ref: `image-${params.assetId}-${params.dimensions}-${params.extension}`,
+		path: params.path,
+	});
 }
 
 // Las ocho portadas comparten directorio, medida y formato, así que el slug aparece una sola vez.
 function coverAsset(slug: string): OnoffImageAsset {
-	return imageAsset(`${toCamelCase(slug)}Cover`, '236x328', 'png', `assets/img/mocks/stories/${slug}.png`);
+	return imageAsset({
+		assetId: `${toCamelCase(slug)}Cover`,
+		dimensions: '236x328',
+		extension: 'png',
+		path: `assets/img/mocks/stories/${slug}.png`,
+	});
 }
 
 // Las dos caras de cada imagen del corpus salen de la misma entrada: la capa de documentos toma `ref` y
@@ -33,23 +41,64 @@ export const onoffImageAssets = Object.freeze({
 	elTratadoDeLosPlaceresCover: coverAsset('el-tratado-de-los-placeres'),
 	lasDosAntorchasCover: coverAsset('las-dos-antorchas'),
 	neronCover: coverAsset('neron'),
-	francoisOnoffPortrait: imageAsset(
-		'francoisOnoffPortrait',
-		'1254x1254',
-		'png',
-		'assets/img/mocks/author/francois-onoff.png',
-	),
-	franceFlag: imageAsset('franceFlag', '30x20', 'png', 'assets/img/mocks/flags/fr.png'),
+	francoisOnoffPortrait: imageAsset({
+		assetId: 'francoisOnoffPortrait',
+		dimensions: '1254x1254',
+		extension: 'png',
+		path: 'assets/img/mocks/author/francois-onoff.png',
+	}),
+	franceFlag: imageAsset({
+		assetId: 'franceFlag',
+		dimensions: '30x20',
+		extension: 'png',
+		path: 'assets/img/mocks/flags/fr.png',
+	}),
 	// La portada editorial de la colección y el `featuredImage` de la storylist homónima son el mismo
 	// archivo, así que comparten entrada: sostener dos volvería a meter una mentira en la tabla.
-	geometriasDelDesveloCover: imageAsset(
-		'geometriasDelDesveloCover',
-		'236x328',
-		'png',
-		'assets/img/mocks/collections/geometrias-del-desvelo.png',
-	),
-	// El host de la grabación no tiene retrato; el corpus muestra el avatar por defecto que la app ya sirve.
-	defaultAvatar: imageAsset('defaultAvatar', '360x360', 'jpg', 'assets/img/default-avatar.jpg'),
+	geometriasDelDesveloCover: imageAsset({
+		assetId: 'geometriasDelDesveloCover',
+		dimensions: '236x328',
+		extension: 'png',
+		path: 'assets/img/mocks/collections/geometrias-del-desvelo.png',
+	}),
+	// El corpus tiene su propio avatar de host y no reusa el de la app: si apuntara al avatar por defecto,
+	// la grabación quedaría indistinguible de una sin retrato y este archivo pasaría a depender de un asset
+	// de producción, que cambia por razones ajenas al corpus.
+	bibliotecaMeridienAvatar: imageAsset({
+		assetId: 'bibliotecaMeridienAvatar',
+		dimensions: '96x96',
+		extension: 'png',
+		path: 'assets/img/mocks/media/biblioteca-meridien-avatar.png',
+	}),
+	// Los banners de campaña son la excepción al identificador legible: el Studio valida ese campo con un
+	// patrón que solo admite hexadecimal (`decodeAssetId` en `cms/utils/content-campaign-image.ts`, que
+	// lanza ante cualquier otra forma), así que un identificador en camelCase modelaría algo que el CMS
+	// rechazaría. La legibilidad vive en la clave de la tabla. Cada viewport es un archivo distinto y por
+	// eso lleva su propia entrada: la campaña ocupa un tamaño fijo y el Studio lo valida contra estas medidas.
+	coleccionCompletaBannerMobile: imageAsset({
+		assetId: '0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b',
+		dimensions: '540x220',
+		extension: 'png',
+		path: 'assets/img/mocks/banners/banner-coleccion-completa-mobile.png',
+	}),
+	coleccionCompletaBannerDesktop: imageAsset({
+		assetId: '2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d',
+		dimensions: '1240x360',
+		extension: 'png',
+		path: 'assets/img/mocks/banners/banner-coleccion-completa-desktop.png',
+	}),
+	elPalacioBannerMobile: imageAsset({
+		assetId: '1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c',
+		dimensions: '540x220',
+		extension: 'png',
+		path: 'assets/img/mocks/banners/banner-el-palacio-mobile.png',
+	}),
+	elPalacioBannerDesktop: imageAsset({
+		assetId: '3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e',
+		dimensions: '1240x360',
+		extension: 'png',
+		path: 'assets/img/mocks/banners/banner-el-palacio-desktop.png',
+	}),
 } as const);
 
 const pathByRef = new Map(Object.values(onoffImageAssets).map((asset) => [asset.ref, asset.path]));

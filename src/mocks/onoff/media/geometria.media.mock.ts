@@ -26,7 +26,7 @@ export const geometriaMediaMock: Media[] = [
 			url: 'https://cdn.example.org/onoff/geometria-space.ogg',
 			duration: '48:12',
 			hostName: 'Biblioteca del Méridien',
-			hostAvatar: onoffImageAssets.defaultAvatar.path,
+			hostAvatar: onoffImageAssets.bibliotecaMeridienAvatar.path,
 			date: '1974-06-12',
 		},
 	},

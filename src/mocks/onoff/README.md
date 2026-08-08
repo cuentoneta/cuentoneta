@@ -160,10 +160,12 @@ Nadie escribe una referencia ni una ruta a mano: las dos caras salen de la misma
 **Formato de la referencia:** `image-<camelCase>-<ancho>x<alto>-<ext>`.
 
 - **camelCase, no el slug.** El parser de `_ref` de `@sanity/image-url` corta por guiones y exige exactamente cuatro segmentos: un identificador como `francois-onoff` no produce una URL, lanza `Malformed asset _ref`.
+- **El identificador repite la clave de la tabla**, para que la entrada no pueda quedar nombrada por un asset y apuntar a otro.
 - **Las dimensiones y la extensión describen el archivo real**, medidas de su cabecera. No son relleno: son parte de la URL que arma el builder, así que una que miente se vuelve una URL rota apenas algo dereferencie la referencia.
-- **Una entrada por archivo.** La portada editorial de `geometrias-del-desvelo` y el `featuredImage` de la storylist homónima comparten entrada porque son el mismo archivo.
+- **Una entrada por archivo.** La portada editorial de `geometrias-del-desvelo` y el `featuredImage` de la storylist homónima comparten entrada porque son el mismo archivo; los dos viewports de un banner de campaña, en cambio, son archivos distintos y llevan entrada cada uno.
+- **Excepción: los banners de campaña llevan identificador hexadecimal.** El Studio valida ese campo con un patrón que solo admite hexadecimal (`decodeAssetId` en `cms/utils/content-campaign-image.ts`, que lanza ante cualquier otra forma), así que un identificador legible modelaría algo que el CMS rechazaría. Ahí la legibilidad vive en la clave de la tabla.
 
-`../onoff-image-assets.mock.spec.ts` lo hace cumplir en cuatro frentes: que el archivo exista, que la referencia parsee con el builder real, que no mienta sobre las dimensiones ni la extensión, y que **ninguna referencia de imagen del corpus quede fuera de la tabla**.
+`../onoff-image-assets.mock.spec.ts` lo hace cumplir en cinco frentes: que el archivo exista, que la referencia parsee con el builder real, que el identificador corresponda a su clave, que no mienta sobre las dimensiones ni la extensión, y que **ninguna referencia de imagen del corpus quede fuera de la tabla** — con las fuentes enumeradas una por una, obras y colecciones y historias y autor y campañas.
 
 **Qué habilita.** Que las dos capas resuelvan la misma imagen es lo que permite que el cruce del corpus de dominio contra el ACL (`../onoff-literary-works.acl-alignment.spec.ts` y `../onoff-collections.acl-alignment.spec.ts`) sea **total**: esos specs sustituyen el builder de imágenes por un resolutor sobre esta tabla y no excluyen ningún campo.
 
@@ -176,7 +178,7 @@ Nadie escribe una referencia ni una ruta a mano: las dos caras salen de la misma
 - **Path en el mock:** `assets/img/mocks/stories/<slug>.png` (sin `./` ni `/` inicial), declarado por la tabla
 - **Aspecto:** portrait 3:4 (referencia 118×164 del `CoverImageComponent`)
 
-El resto de los assets del corpus vive junto a estas portadas: `../../assets/img/mocks/author/` (retrato), `collections/` (portadas editoriales), `flags/` (el set completo de banderas por código ISO) y `banners/`. El avatar del host de una grabación no tiene retrato propio y resuelve al avatar por defecto de la app, `assets/img/default-avatar.jpg`.
+El resto de los assets del corpus vive junto a estas portadas, todos bajo `src/assets/img/mocks/`: `author/` (retrato), `collections/` (portadas editoriales), `media/` (el avatar del host de una grabación), `banners/` (campañas, un archivo por viewport) y `flags/` (el set completo de banderas por código ISO). El corpus usa hoy una sola bandera; el set entra completo para que incorporar una nacionalidad no exija mover archivos, al precio de sumar el resto al output del build.
 
 ## Obras
 

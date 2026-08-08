@@ -11,7 +11,6 @@ import {
 } from '../../onoff-raw-tags.mock';
 import { elOdioSectionTitle } from '../literary-work/el-odio.epigraph';
 import elOdioMdBody from '../literary-work/el-odio.md?raw';
-import { palacioSecondSectionReadingTime } from '../literary-work/el-palacio-de-las-nueve-fronteras.multi-section';
 import elTratadoDeLosPlaceresMdBody from '../literary-work/el-tratado-de-los-placeres.md?raw';
 import lasDosAntorchasMdBody from '../literary-work/las-dos-antorchas.md?raw';
 import inventarioDeLasPasionesCollectionMd from './inventario-de-las-pasiones.collection.md?raw';
@@ -35,7 +34,7 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 				asset: { _type: 'reference', _ref: 'image-elTratadoDeLosPlaceresCover-236x328-png' },
 			},
 			totalReadingTime: 10,
-			sectionCount: palacioSecondSectionReadingTime,
+			sectionCount: 1,
 			tags: [ensayoRawTag, filosoficoRawTag, metaficcionRawTag],
 			mediaSources: [],
 			authors: [
@@ -67,7 +66,7 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 			title: 'El odio',
 			coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-elOdioCover-236x328-png' } },
 			totalReadingTime: 6,
-			sectionCount: palacioSecondSectionReadingTime,
+			sectionCount: 1,
 			tags: [novelaRawTag, dramaPsicologicoRawTag],
 			mediaSources: [],
 			authors: [
@@ -99,7 +98,7 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 			title: 'Las dos antorchas',
 			coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-lasDosAntorchasCover-236x328-png' } },
 			totalReadingTime: 8,
-			sectionCount: palacioSecondSectionReadingTime,
+			sectionCount: 1,
 			tags: [novelaRawTag, metaficcionRawTag, experimentalRawTag],
 			mediaSources: [],
 			authors: [

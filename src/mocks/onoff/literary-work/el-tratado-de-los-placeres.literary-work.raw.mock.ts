@@ -3,7 +3,6 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 import { ensayoRawTag, filosoficoRawTag, metaficcionRawTag } from '../../onoff-raw-tags.mock';
-import { palacioSecondSectionReadingTime } from './el-palacio-de-las-nueve-fronteras.multi-section';
 import elTratadoDeLosPlaceresEditorialNoteMd from './el-tratado-de-los-placeres.editorial-note.md?raw';
 import elTratadoDeLosPlaceresMdBody from './el-tratado-de-los-placeres.md?raw';
 
@@ -17,7 +16,7 @@ export const elTratadoDeLosPlaceresRawLiteraryWork: NonNullable<LiteraryWorkBySl
 	originalPublication: 'Éditions du Méridien (1981)',
 	publishedAt: '1981-01-01T00:00:00Z',
 	totalReadingTime: 10,
-	sectionCount: palacioSecondSectionReadingTime,
+	sectionCount: 1,
 	tags: [ensayoRawTag, filosoficoRawTag, metaficcionRawTag],
 	mediaSources: [],
 	resources: [],

@@ -10,10 +10,6 @@ import {
 	palacioNueveFronterasSectionTitle,
 } from './el-palacio-de-las-nueve-fronteras.epigraph';
 import elPalacioDeLasNueveFronterasMdBody from './el-palacio-de-las-nueve-fronteras.md?raw';
-import {
-	palacioFirstSectionReadingTime,
-	palacioSecondSectionReadingTime,
-} from './el-palacio-de-las-nueve-fronteras.multi-section';
 
 export const palacioNueveFronterasRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'onoff-literary-work-el-palacio-de-las-nueve-fronteras',
@@ -27,8 +23,8 @@ export const palacioNueveFronterasRawLiteraryWork: NonNullable<LiteraryWorkBySlu
 	badLanguage: false,
 	originalPublication: 'Éditions du Méridien (1985)',
 	publishedAt: '1985-01-01T00:00:00Z',
-	totalReadingTime: palacioFirstSectionReadingTime,
-	sectionCount: palacioSecondSectionReadingTime,
+	totalReadingTime: 11,
+	sectionCount: 1,
 	tags: [novelaRawTag, dramaPsicologicoRawTag, metaficcionRawTag],
 	mediaSources: [],
 	resources: [],
@@ -39,7 +35,7 @@ export const palacioNueveFronterasRawLiteraryWork: NonNullable<LiteraryWorkBySlu
 			title: palacioNueveFronterasSectionTitle,
 			epigraphs: [{ text: palacioNueveFronterasEpigraphText, reference: palacioNueveFronterasEpigraphReference }],
 			body: elPalacioDeLasNueveFronterasMdBody,
-			readingTime: palacioFirstSectionReadingTime,
+			readingTime: 11,
 		},
 	],
 };

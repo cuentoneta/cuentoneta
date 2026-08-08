@@ -10,7 +10,6 @@ import {
 	novelaRawTag,
 	surrealismoRawTag,
 } from '../../onoff-raw-tags.mock';
-import { palacioSecondSectionReadingTime } from '../literary-work/el-palacio-de-las-nueve-fronteras.multi-section';
 import { geometriaSectionTitle } from '../literary-work/geometria.epigraph';
 import geometriaMdBody from '../literary-work/geometria.md?raw';
 import lasEscalerasMdBody from '../literary-work/las-escaleras.md?raw';
@@ -40,7 +39,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 			title: 'Geometría',
 			coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-geometriaCover-236x328-png' } },
 			totalReadingTime: 7,
-			sectionCount: palacioSecondSectionReadingTime,
+			sectionCount: 1,
 			tags: [cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag],
 			mediaSources: [
 				{
@@ -57,7 +56,10 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 					description: geometriaSpaceDescription,
 					audioFile: { _type: 'file', asset: { _type: 'reference', _ref: 'file-geometria-space-ogg' } },
 					hostName: 'Biblioteca del Méridien',
-					hostAvatar: { _type: 'image', asset: { _type: 'reference', _ref: 'image-defaultAvatar-360x360-jpg' } },
+					hostAvatar: {
+						_type: 'image',
+						asset: { _type: 'reference', _ref: 'image-bibliotecaMeridienAvatar-96x96-png' },
+					},
 					date: '1974-06-12',
 					duration: '48:12',
 					audioUrl: 'https://cdn.example.org/onoff/geometria-space.ogg',
@@ -113,7 +115,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 			title: 'Los peldaños',
 			coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-losPeldanosCover-236x328-png' } },
 			totalReadingTime: 8,
-			sectionCount: palacioSecondSectionReadingTime,
+			sectionCount: 1,
 			tags: [cuentoRawTag, absurdoRawTag, surrealismoRawTag],
 			mediaSources: [],
 			authors: [
@@ -145,7 +147,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 			title: 'Las escaleras',
 			coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-lasEscalerasCover-236x328-png' } },
 			totalReadingTime: 9,
-			sectionCount: palacioSecondSectionReadingTime,
+			sectionCount: 1,
 			tags: [novelaRawTag, absurdoRawTag, alegoriaRawTag],
 			mediaSources: [],
 			authors: [

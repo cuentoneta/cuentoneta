@@ -3,7 +3,6 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 import { experimentalRawTag, metaficcionRawTag, novelaRawTag } from '../../onoff-raw-tags.mock';
-import { palacioSecondSectionReadingTime } from './el-palacio-de-las-nueve-fronteras.multi-section';
 import lasDosAntorchasEditorialNoteMd from './las-dos-antorchas.editorial-note.md?raw';
 import lasDosAntorchasMdBody from './las-dos-antorchas.md?raw';
 
@@ -17,7 +16,7 @@ export const lasDosAntorchasRawLiteraryWork: NonNullable<LiteraryWorkBySlugQuery
 	originalPublication: 'Éditions du Méridien (1987)',
 	publishedAt: '1987-01-01T00:00:00Z',
 	totalReadingTime: 8,
-	sectionCount: palacioSecondSectionReadingTime,
+	sectionCount: 1,
 	tags: [novelaRawTag, metaficcionRawTag, experimentalRawTag],
 	mediaSources: [],
 	resources: [],

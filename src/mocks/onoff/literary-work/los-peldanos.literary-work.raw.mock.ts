@@ -3,7 +3,6 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 import { absurdoRawTag, cuentoRawTag, surrealismoRawTag } from '../../onoff-raw-tags.mock';
-import { palacioSecondSectionReadingTime } from './el-palacio-de-las-nueve-fronteras.multi-section';
 import losPeldanosEditorialNoteMd from './los-peldanos.editorial-note.md?raw';
 import losPeldanosMdBody from './los-peldanos.md?raw';
 
@@ -17,7 +16,7 @@ export const losPeldanosRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResu
 	originalPublication: 'Éditions du Méridien (1977)',
 	publishedAt: '1977-01-01T00:00:00Z',
 	totalReadingTime: 8,
-	sectionCount: palacioSecondSectionReadingTime,
+	sectionCount: 1,
 	tags: [cuentoRawTag, absurdoRawTag, surrealismoRawTag],
 	mediaSources: [],
 	resources: [],

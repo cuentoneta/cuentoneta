@@ -6,7 +6,6 @@ import { dramaPsicologicoRawTag, novelaRawTag } from '../../onoff-raw-tags.mock'
 import elOdioEditorialNoteMd from './el-odio.editorial-note.md?raw';
 import { elOdioEpigraphReference, elOdioEpigraphText, elOdioSectionTitle } from './el-odio.epigraph';
 import elOdioMdBody from './el-odio.md?raw';
-import { palacioSecondSectionReadingTime } from './el-palacio-de-las-nueve-fronteras.multi-section';
 
 export const elOdioRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'onoff-literary-work-el-odio',
@@ -18,7 +17,7 @@ export const elOdioRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> =
 	originalPublication: 'Éditions du Méridien (1971)',
 	publishedAt: '1971-01-01T00:00:00Z',
 	totalReadingTime: 6,
-	sectionCount: palacioSecondSectionReadingTime,
+	sectionCount: 1,
 	tags: [novelaRawTag, dramaPsicologicoRawTag],
 	mediaSources: [],
 	resources: [],

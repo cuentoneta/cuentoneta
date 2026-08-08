@@ -13,6 +13,7 @@ import { onoffRawCollectionsMock, onoffRawCollectionTeasersMock } from './onoff-
 import { onoffRawLiteraryWorksMock } from './onoff-raw-literary-works.mock';
 import { onoffRawStoriesMock } from './onoff-raw-stories.mock';
 import { onoffRawStorylistsMock } from './onoff-raw-storylists.mock';
+import { onoffRawContentCampaignsMock } from './onoff-raw-content-campaigns.mock';
 
 const assets: [string, OnoffImageAsset][] = Object.entries(onoffImageAssets);
 
@@ -21,32 +22,10 @@ function absolutePathOf(asset: OnoffImageAsset): string {
 	return join(process.cwd(), 'src', asset.path);
 }
 
-function pngDimensions(bytes: Buffer): string {
-	return `${bytes.readUInt32BE(16)}x${bytes.readUInt32BE(20)}`;
-}
-
-// El tamaño de un JPEG vive en el marcador SOFn, que puede estar detrás de una cantidad arbitraria de
-// segmentos de metadata: hay que recorrer la cadena en vez de leer un offset fijo como en PNG.
-function jpegDimensions(bytes: Buffer): string {
-	let offset = 2;
-	while (offset < bytes.length - 8) {
-		if (bytes[offset] !== 0xff) {
-			offset++;
-			continue;
-		}
-		const marker = bytes[offset + 1];
-		const isStartOfFrame = marker >= 0xc0 && marker <= 0xcf && marker !== 0xc4 && marker !== 0xc8 && marker !== 0xcc;
-		if (isStartOfFrame) {
-			return `${bytes.readUInt16BE(offset + 7)}x${bytes.readUInt16BE(offset + 5)}`;
-		}
-		offset += 2 + bytes.readUInt16BE(offset + 2);
-	}
-	throw new Error('El JPEG no declara un marcador SOF');
-}
-
+// El ancho y el alto de un PNG viven en offsets fijos de la cabecera IHDR, que abre siempre el archivo.
 function dimensionsOf(asset: OnoffImageAsset): string {
 	const bytes = readFileSync(absolutePathOf(asset));
-	return asset.path.endsWith('.png') ? pngDimensions(bytes) : jpegDimensions(bytes);
+	return `${bytes.readUInt32BE(16)}x${bytes.readUInt32BE(20)}`;
 }
 
 function refSegmentsOf(asset: OnoffImageAsset): { assetId: string; dimensions: string; extension: string } {
@@ -70,6 +49,15 @@ describe('la tabla de assets de imagen del corpus', () => {
 		expect(url).toContain(refSegmentsOf(asset).assetId);
 	});
 
+	// La clave y el identificador dicen lo mismo, y sin esto podrían dejar de decirlo sin que nada se
+	// entere. Los banners de campaña son la excepción declarada: llevan hexadecimal porque el Studio
+	// valida ese campo con un patrón que no admite otra cosa.
+	it.each(assets)('names the entry "%s" after its own asset identifier', (key, asset) => {
+		const { assetId } = refSegmentsOf(asset);
+
+		expect(assetId === key || /^[a-f\d]+$/.test(assetId)).toBe(true);
+	});
+
 	it.each(assets)('declares the real dimensions and extension of "%s"', (_key, asset) => {
 		const { dimensions, extension } = refSegmentsOf(asset);
 
@@ -85,6 +73,7 @@ describe('la tabla de assets de imagen del corpus', () => {
 		['el corpus crudo de colecciones', [onoffRawCollectionsMock, onoffRawCollectionTeasersMock]],
 		['el corpus crudo de historias', [onoffRawStoriesMock, onoffRawStorylistsMock]],
 		['el autor crudo', [rawOnoffAuthor, rawOnoffAuthorTeaser]],
+		['las campañas de contenido crudas', onoffRawContentCampaignsMock],
 	])('covers every image reference declared by %s', (_source, corpus) => {
 		const references = [...new Set(imageReferencesIn(corpus))];
 

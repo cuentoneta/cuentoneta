@@ -10,7 +10,6 @@ import {
 	geometriaSpotifyDescription,
 	geometriaYoutubeDescription,
 } from '../media/geometria.media';
-import { palacioSecondSectionReadingTime } from './el-palacio-de-las-nueve-fronteras.multi-section';
 import geometriaEditorialNoteMd from './geometria.editorial-note.md?raw';
 import { geometriaEpigraphReference, geometriaEpigraphText, geometriaSectionTitle } from './geometria.epigraph';
 import geometriaMdBody from './geometria.md?raw';
@@ -25,7 +24,7 @@ export const geometriaRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult
 	originalPublication: 'Éditions du Méridien (1974)',
 	publishedAt: '1974-01-01T00:00:00Z',
 	totalReadingTime: 7,
-	sectionCount: palacioSecondSectionReadingTime,
+	sectionCount: 1,
 	tags: [cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag],
 	mediaSources: [
 		{
@@ -42,7 +41,7 @@ export const geometriaRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult
 			description: geometriaSpaceDescription,
 			audioFile: { _type: 'file', asset: { _type: 'reference', _ref: 'file-geometria-space-ogg' } },
 			hostName: 'Biblioteca del Méridien',
-			hostAvatar: { _type: 'image', asset: { _type: 'reference', _ref: 'image-defaultAvatar-360x360-jpg' } },
+			hostAvatar: { _type: 'image', asset: { _type: 'reference', _ref: 'image-bibliotecaMeridienAvatar-96x96-png' } },
 			date: '1974-06-12',
 			duration: '48:12',
 			audioUrl: 'https://cdn.example.org/onoff/geometria-space.ogg',

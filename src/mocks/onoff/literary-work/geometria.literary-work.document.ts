@@ -49,7 +49,7 @@ export const geometriaLiteraryWorkDocument: LiteraryWork = {
 			hostName: 'Biblioteca del Méridien',
 			hostAvatar: {
 				_type: 'image',
-				asset: { _type: 'reference', _ref: onoffImageAssets.defaultAvatar.ref },
+				asset: { _type: 'reference', _ref: onoffImageAssets.bibliotecaMeridienAvatar.ref },
 			},
 			date: '1974-06-12',
 			duration: '48:12',

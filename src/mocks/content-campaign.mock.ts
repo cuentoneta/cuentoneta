@@ -1,4 +1,5 @@
 import { ContentCampaign } from '@models/content-campaign.model';
+import { onoffImageAssets } from './onoff-image-assets.mock';
 export const contentCampaignMock: ContentCampaign[] = [
 	{
 		title: 'Diez tapas, una sola obra',
@@ -6,12 +7,12 @@ export const contentCampaignMock: ContentCampaign[] = [
 		url: '../author/francois-onoff',
 		contents: {
 			xs: {
-				imageUrl: 'assets/img/mocks/banners/banner-coleccion-completa-mobile.png',
+				imageUrl: onoffImageAssets.coleccionCompletaBannerMobile.path,
 				imageWidth: 540,
 				imageHeight: 220,
 			},
 			md: {
-				imageUrl: 'assets/img/mocks/banners/banner-coleccion-completa-desktop.png',
+				imageUrl: onoffImageAssets.coleccionCompletaBannerDesktop.path,
 				imageWidth: 1240,
 				imageHeight: 360,
 			},
@@ -23,12 +24,12 @@ export const contentCampaignMock: ContentCampaign[] = [
 		url: '../story/el-palacio-de-las-nueve-fronteras',
 		contents: {
 			xs: {
-				imageUrl: 'assets/img/mocks/banners/banner-el-palacio-mobile.png',
+				imageUrl: onoffImageAssets.elPalacioBannerMobile.path,
 				imageWidth: 540,
 				imageHeight: 220,
 			},
 			md: {
-				imageUrl: 'assets/img/mocks/banners/banner-el-palacio-desktop.png',
+				imageUrl: onoffImageAssets.elPalacioBannerDesktop.path,
 				imageWidth: 1240,
 				imageHeight: 360,
 			},

@@ -1,5 +1,6 @@
 import type { LandingPageContentQueryResult } from '@sanity-types';
 import { contentCampaignMock } from './content-campaign.mock';
+import { onoffImageAssets } from './onoff-image-assets.mock';
 
 type RawContentCampaigns = NonNullable<LandingPageContentQueryResult>['campaigns'];
 
@@ -7,10 +8,10 @@ function rawImage(assetRef: string): NonNullable<RawContentCampaigns[number]['co
 	return { _type: 'image', asset: { _type: 'reference', _ref: assetRef } };
 }
 
-// Los asset ref siguen el formato que valida el propio Studio (`imageResourcePattern` en
-// cms/schemas/contentCampaign.ts): el id es hexadecimal, y las dimensiones son las que la validación
-// de tamaño exige por viewport.
-const assetIds = ['0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b', '1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c'];
+const campaignBanners = [
+	{ xs: onoffImageAssets.coleccionCompletaBannerMobile, md: onoffImageAssets.coleccionCompletaBannerDesktop },
+	{ xs: onoffImageAssets.elPalacioBannerMobile, md: onoffImageAssets.elPalacioBannerDesktop },
+];
 
 // Serializa el canon de dominio a la forma de wire que devuelve la proyección `campaigns`. El `_id`
 // no existe en el dominio a propósito (lo corta el ACL): se agrega acá porque es lo que Sanity
@@ -21,7 +22,7 @@ export const onoffRawContentCampaignsMock: RawContentCampaigns = contentCampaign
 	slug: campaign.slug,
 	url: campaign.url,
 	contents: {
-		xs: { image: rawImage(`image-${assetIds[index]}-540x220-png`) },
-		md: { image: rawImage(`image-${assetIds[index]}-1240x360-png`) },
+		xs: { image: rawImage(campaignBanners[index].xs.ref) },
+		md: { image: rawImage(campaignBanners[index].md.ref) },
 	},
 }));

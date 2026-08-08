@@ -3,7 +3,6 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 import { dramaHistoricoRawTag, teatroRawTag, tragediaRawTag } from '../../onoff-raw-tags.mock';
-import { palacioSecondSectionReadingTime } from './el-palacio-de-las-nueve-fronteras.multi-section';
 import neronMdBody from './neron.md?raw';
 
 export const neronRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
@@ -16,7 +15,7 @@ export const neronRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = 
 	originalPublication: 'Estreno teatral (1988)',
 	publishedAt: '1988-01-01T00:00:00Z',
 	totalReadingTime: 7,
-	sectionCount: palacioSecondSectionReadingTime,
+	sectionCount: 1,
 	tags: [teatroRawTag, tragediaRawTag, dramaHistoricoRawTag],
 	mediaSources: [],
 	resources: [],
