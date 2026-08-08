@@ -18,6 +18,8 @@ onoff/
 ├── literary-work/  <slug>.literary-work.document.ts · <slug>.literary-work.raw.mock.ts (generado)
 │                   <slug>.literary-work.mock.ts + su prosa: <slug>.md · <slug>.editorial-note.md · <slug>.epigraph.ts
 ├── collection/     <slug>.collection.document.ts · <slug>.collection.raw.mock.ts (generado) · <slug>.collection.md
+├── landing-page/   onoff.landing-page.document.ts · <slug>.content-campaign.document.ts
+│                   landing-page.raw.mock.ts (generado)
 ├── storylist/      <slug>.storylist.raw.mock.ts
 ├── author/         francois-onoff.biography.md · author.document.projection.ts
 ├── media/          <slug>.media.ts · <slug>.media.mock.ts · <slug>.media.raw.mock.ts
@@ -32,21 +34,22 @@ onoff/
 documentos (a mano)  →  (groq-js, query real)  →  raw (generado)  →  (ACL del repository)  →  dominio
 ```
 
-- **Documentos** (`<slug>.<entidad>.document.ts`): lo que vive en el content lake. Es la única capa escrita a mano **de `literary-work/` y `collection/`**, que son las que entran a la generación; el raw de `story/` y `storylist/` sigue siendo a mano, por lo que explica [Qué queda fuera de la generación](#qué-queda-fuera-de-la-generación).
-- **Raw** (`<slug>.<entidad>.raw.mock.ts`): el resultado de evaluar la query GROQ real sobre los documentos, tipado contra los `*QueryResult`. Para `literary-work/` y `collection/` se **genera** con `pnpm corpus:generate`; no se edita a mano. Lo consumen los specs de repository y mapper.
+- **Documentos** (`<slug>.<entidad>.document.ts`): lo que vive en el content lake. Es la única capa escrita a mano **de `literary-work/`, `collection/` y `landing-page/`**, que son las que entran a la generación; el raw de `story/` y `storylist/` sigue siendo a mano, por lo que explica [Qué queda fuera de la generación](#qué-queda-fuera-de-la-generación).
+- **Raw** (`<slug>.<entidad>.raw.mock.ts`): el resultado de evaluar la query GROQ real sobre los documentos, tipado contra los `*QueryResult`. Para `literary-work/`, `collection/` y `landing-page/` se **genera** con `pnpm corpus:generate`; no se edita a mano. Lo consumen los specs de repository y mapper.
 - **Dominio** (`<slug>.<entidad>.mock.ts`): el agregado construido por su factory. Lo consume el frontend.
 
 Antes de esta capa de documentos el flujo corría al revés: el raw se escribía a mano y los documentos se derivaban invirtiendo a mano la proyección de la query. El sentido actual evita esa inversión manual: la query real, evaluada con `groq-js`, es la única fuente de verdad de qué shape produce.
 
 ### El generador (`pnpm corpus:generate`)
 
-`pnpm corpus:generate` → `node --import tsx ./scripts/generate-raw-corpus.ts`. Por cada obra y cada colección, evalúa la query GROQ real (`literaryWorkBySlugQuery`, `collectionBySlugQuery`, y `collectionsQuery` para el listado) con `groq-js` sobre `onoffDatasetMock` — el dataset plano de todos los documentos del corpus — y escribe el resultado en su fixture `*.raw.mock.ts`.
+`pnpm corpus:generate` → `node --import tsx ./scripts/generate-raw-corpus.ts`. Por cada obra, cada colección y la página de inicio, evalúa la query GROQ real (`literaryWorkBySlugQuery`, `collectionBySlugQuery`, `collectionsQuery` para el listado y `landingPageContentQuery` para la landing, que va con su semana como parámetro) con `groq-js` sobre `onoffDatasetMock` — el dataset plano de todos los documentos del corpus — y escribe el resultado en su fixture `*.raw.mock.ts`.
 
-**Archivos generados (11):**
+**Archivos generados (12):**
 
 - Las 8 `literary-work/<slug>.literary-work.raw.mock.ts`.
 - Las 2 `collection/<slug>.collection.raw.mock.ts`.
 - `collection/collection-teasers.raw.mock.ts` (resultado de `collectionsQuery`, el listado).
+- `landing-page/landing-page.raw.mock.ts` (resultado de `landingPageContentQuery`).
 
 Cada uno abre con un banner de dos líneas ("Este archivo lo escribe `pnpm corpus:generate`... No se edita a mano: cualquier cambio se pierde en la próxima corrida.") y está marcado `linguist-generated=true` en `.gitattributes` — enumerados uno por uno, no por glob `*.raw.mock.ts`, porque las fixtures de `story/` y `storylist/` se siguen escribiendo a mano.
 
@@ -62,19 +65,18 @@ Cada uno abre con un banner de dos líneas ("Este archivo lo escribe `pnpm corpu
 
 Hay dos clases de exclusión, y no son lo mismo:
 
-| Qué                                           | Por qué queda afuera                                                                                                           | Clase                          |
-| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------ |
-| `story` (8 obras + teasers + nav teasers)     | Derivable — hay query top-level que las devuelve — pero el agregado está en baja                                               | Fuera por **scope**            |
-| `storylist`                                   | Ídem: derivable, pero el agregado está en baja                                                                                 | Fuera por **scope**            |
-| `onoff-raw-tags.mock.ts` (`RawTag`)           | Sub-proyección repetida en 7 queries; ninguna la devuelve top-level                                                            | Fuera por **construcción**     |
-| `onoff-raw-author.mock.ts` (`rawOnoffAuthor`) | `NonNullable<StoryBySlugQueryResult>['author']`; ninguna query lo devuelve top-level                                           | Fuera por **construcción**     |
-| `ContentCampaign`                             | Sub-proyección de `landingPageContentQuery` (campo `campaigns`); exigiría montar una capa de documentos de landing page entera | Caso aparte, sin epic asignado |
+| Qué                                           | Por qué queda afuera                                                                 | Clase                      |
+| --------------------------------------------- | ------------------------------------------------------------------------------------ | -------------------------- |
+| `story` (8 obras + teasers + nav teasers)     | Derivable — hay query top-level que las devuelve — pero el agregado está en baja     | Fuera por **scope**        |
+| `storylist`                                   | Ídem: derivable, pero el agregado está en baja                                       | Fuera por **scope**        |
+| `onoff-raw-tags.mock.ts` (`RawTag`)           | Sub-proyección repetida en 7 queries; ninguna la devuelve top-level                  | Fuera por **construcción** |
+| `onoff-raw-author.mock.ts` (`rawOnoffAuthor`) | `NonNullable<StoryBySlugQueryResult>['author']`; ninguna query lo devuelve top-level | Fuera por **construcción** |
 
 **Fuera por scope:** existe una query top-level que las devuelve, así que serían derivables con el mismo generador — pero construirles una capa de documentos sería trabajo sobre agregados que están en baja, y no vale la pena.
 
 **Fuera por construcción:** son sub-proyecciones que ninguna query devuelve como resultado top-level, así que ningún generador —presente o futuro— podría apuntarlas como target apuntando una query real. Por eso `document/support-documents.projection.ts` sigue yendo en la dirección **inversa** (documento ← raw) para tags, nacionalidad y tipo de recurso: son de esta segunda clase, y esa inversión manual es la única forma de tenerlos.
 
-**`ContentCampaign`** no está en baja, pero tampoco es de ninguna de las dos clases anteriores: es sub-proyección de una query que hoy no tiene capa de documentos propia (`landingPageContentQuery`). Generarla exige primero esa capa, que queda para un issue propio.
+Una sub-proyección **sí** puede generarse cuando su query tiene capa de documentos: es lo que pasa con `ContentCampaign`, que se deriva del resultado generado de la landing page (ver [Corpus raw: página de inicio](#corpus-raw-página-de-inicio-y-contentcampaign-generado)). Lo que la vuelve inderivable no es ser sub-proyección, sino que ninguna query la devuelva.
 
 > Las fichas Markdown por obra (metadata + reseña) que vivían en `tools/story-mocks/onoff/` se retiraron en #1653: los mocks TS de este directorio son ahora la fuente.
 
@@ -147,6 +149,18 @@ Contraparte cruda del corpus de dominio `LiteraryWork`, tipada contra `NonNullab
   - `unmaterializedRawLiteraryWork` — `totalReadingTime` y `content[].readingTime` en `null` (ejercita el fallback puro de lectura del repository y el backfill, que es el único que persiste).
 - **Autor raw:** `rawOnoffAuthor` (reusado del corpus raw de Story, estructuralmente idéntico).
 
+## Corpus raw: página de inicio y `ContentCampaign` (generado)
+
+`landing-page/landing-page.raw.mock.ts` (`onoffRawLandingPageMock`) es el resultado de `landingPageContentQuery` sobre la capa de documentos de `landing-page/`: un documento de landing y los dos de campaña que referencia. La semana de la landing —su `config` y su `slug`— es la del timestamp de sistema del corpus, para que el elenco siga hablando de un solo momento; el target del generador la pasa como parámetro de la query.
+
+**La landing no declara `cards` ni `latestReads`.** Esos campos referencian `storylist` y `story`, que el corpus no modela como documentos (ver [Qué queda fuera de la generación](#qué-queda-fuera-de-la-generación)): declararlos dejaría referencias colgadas y la guarda del generador abortaría. La query los resuelve a `[]`, y la fixture lo afirma.
+
+**Se genera el resultado entero de la query, no solo `campaigns`.** Un archivo generado afirma "esto es lo que la query devuelve", y recortar obligaría al gate de frescura a replicar el mismo recorte para poder comparar: la transformación quedaría afirmada por sí misma.
+
+- **Agregador:** `../onoff-raw-content-campaigns.mock.ts` → `onoffRawContentCampaignsMock`, derivado de `onoffRawLandingPageMock.campaigns` (mismo patrón que `geometriaRawMediaSources` derivando de la cara de obra). Conserva su ruta porque lo importa un spec de `src/api/`, desde donde la regla de ESLint prohíbe alcanzar `@mocks/onoff/**`.
+- **Cruce contra el ACL:** `../onoff-content-campaigns.acl-alignment.spec.ts`. El corpus de dominio (`../content-campaign.mock.ts`) se sigue escribiendo a mano en vez de derivarse del mapper: derivarlo lo volvería una tautología del ACL y ninguna regresión del mapeo se notaría en sus consumidores.
+- **Los literales de `title`, `slug` y `url` se duplican a propósito** entre el documento y el mock de dominio. Compartirlos por un módulo neutral dejaría al cruce sin filo: una fuente única mueve las dos capas a la vez y la comparación no podría fallar nunca. La prosa larga sí se comparte; las imágenes también, pero por sus dos caras (`ref` y `path`), que no son el mismo valor.
+
 ## Imágenes: el puente a los assets locales
 
 Las referencias de imagen del corpus no apuntan a ningún asset de Sanity: son inventadas, y ninguna query las dereferencia. Lo que sí existe es el archivo local, servido por la app y por Storybook. **La tabla `../onoff-image-assets.mock.ts` (`onoffImageAssets`) es lo que une las dos puntas**: una entrada por asset, con la referencia que declara la capa de documentos y la ruta que declara el corpus de dominio.
@@ -167,7 +181,7 @@ Nadie escribe una referencia ni una ruta a mano: las dos caras salen de la misma
 
 `../onoff-image-assets.mock.spec.ts` lo hace cumplir en cinco frentes: que el archivo exista, que la referencia parsee con el builder real, que el identificador corresponda a su clave, que no mienta sobre las dimensiones ni la extensión, y que **ninguna referencia de imagen del corpus quede fuera de la tabla** — con las fuentes enumeradas una por una, obras y colecciones y historias y autor y campañas.
 
-**Qué habilita.** Que las dos capas resuelvan la misma imagen es lo que permite que el cruce del corpus de dominio contra el ACL (`../onoff-literary-works.acl-alignment.spec.ts` y `../onoff-collections.acl-alignment.spec.ts`) sea **total**: esos specs sustituyen el builder de imágenes por un resolutor sobre esta tabla y no excluyen ningún campo.
+**Qué habilita.** Que las dos capas resuelvan la misma imagen es lo que permite que los tres cruces del corpus de dominio contra el ACL (`../onoff-literary-works.acl-alignment.spec.ts`, `../onoff-collections.acl-alignment.spec.ts` y `../onoff-content-campaigns.acl-alignment.spec.ts`) sean **totales**: esos specs sustituyen el builder de imágenes por un resolutor sobre esta tabla y no excluyen ningún campo. El de campañas encadena además `auto()` en el doble, porque su mapeo resuelve las imágenes con formato automático.
 
 **Qué no habilita.** La guarda de referencias colgadas del generador sigue excluyendo los assets de imagen (ver [Las tres capas](#las-tres-capas)). Esa guarda exige que todo `_ref` resuelva a un documento del dataset, y la tabla no crea documentos `sanity.imageAsset` — son problemas distintos, y el de la guarda no vale la pena resolver mientras ninguna query dereferencie imágenes.
 
