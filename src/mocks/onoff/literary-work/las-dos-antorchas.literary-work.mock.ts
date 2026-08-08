@@ -1,8 +1,9 @@
+import { embeddedAuthorMock } from '../../author.mock';
 import { lasDosAntorchasRawLiteraryWork } from './las-dos-antorchas.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
-import { deriveSectionReadingTime } from '@models/reading-time.model';
+import { createReadingTime, deriveSectionReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import lasDosAntorchasMdBody from './las-dos-antorchas.md?raw';
@@ -16,13 +17,13 @@ export const lasDosAntorchasLiteraryWorkMock: LiteraryWork = createLiteraryWork(
 	_id: 'onoff-literary-work-las-dos-antorchas',
 	slug: lasDosAntorchasStoryMock.slug,
 	title: lasDosAntorchasStoryMock.title,
-	authors: [lasDosAntorchasStoryMock.author],
+	authors: [embeddedAuthorMock],
 	coverImage: lasDosAntorchasStoryMock.coverImage,
 	content: [
 		createLiteraryWorkSection({
 			position: 0,
 			bodyHtml: markdownToSanitizedHtml(lasDosAntorchasBody),
-			readingTime: deriveSectionReadingTime(lasDosAntorchasBody),
+			readingTime: createReadingTime(lasDosAntorchasRawLiteraryWork.content[0].readingTime ?? 0),
 		}),
 	],
 	mediaSources: [],

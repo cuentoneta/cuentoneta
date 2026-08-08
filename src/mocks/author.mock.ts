@@ -1,4 +1,4 @@
-import { AuthorProfile, AuthorTeaser } from '@models/author.model';
+import { Author, AuthorProfile, AuthorTeaser } from '@models/author.model';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import onoffBiographyMdBody from './onoff/author/francois-onoff.biography.md?raw';
@@ -33,6 +33,13 @@ export const authorMock: AuthorProfile = {
 	diedOn: '1994-12-31',
 	diedOnYear: 1994,
 };
+// El autor tal como lo embebe una obra. Sin las fechas de ficha —que `Author` no declara porque solo las
+// usa la página de perfil— y con las etiquetas vacías, que es lo que la proyección de obra devuelve.
+export const embeddedAuthorMock: Author = (() => {
+	const { createdAt: _createdAt, updatedAt: _updatedAt, ...author } = authorMock;
+	return { ...author, tags: [] };
+})();
+
 export const authorTeaserMock: AuthorTeaser = {
 	_id: 'author_1',
 	slug: 'francois-onoff',
