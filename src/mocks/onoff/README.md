@@ -5,7 +5,7 @@
 Este directorio (`src/mocks/onoff/`) es la **única ubicación** del corpus de las 8 obras de François Onoff, accesible por frontend y backend vía el alias `@mocks/onoff`. Desde [#1981](https://github.com/cuentoneta/cuentoneta/issues/1981) conviven acá tres capas del mismo elenco:
 
 - **Documentos** (los consume `groq-js`): `<slug>.<entidad>.document.ts` — lo que Sanity guarda tal cual. Para las entidades que entran a la generación, es la **única capa escrita a mano**.
-- **Fixtures raw** (las consume el backend): `<slug>.<entidad>.raw.mock.ts`, tipadas contra los `*QueryResult` de `@sanity-types` (los tipos generados de Sanity, promovidos al kernel). Para `literary-work/` y `collection/` se **generan**, no se editan (ver [Las tres capas](#las-tres-capas)).
+- **Fixtures raw** (las consume el backend): `<slug>.<entidad>.raw.mock.ts`, tipadas contra los `*QueryResult` de `@sanity-types` (los tipos generados de Sanity, promovidos al kernel). Para `literary-work/`, `collection/` y `landing-page/` se **generan**, no se editan (ver [Las tres capas](#las-tres-capas)).
 - **Mocks de dominio** (los consume el frontend): `<slug>.<entidad>.mock.ts`.
 
 ## Cómo está organizado
