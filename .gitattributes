@@ -16,3 +16,4 @@ src/mocks/onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.ra
 src/mocks/onoff/collection/geometrias-del-desvelo.collection.raw.mock.ts linguist-generated=true
 src/mocks/onoff/collection/inventario-de-las-pasiones.collection.raw.mock.ts linguist-generated=true
 src/mocks/onoff/collection/collection-teasers.raw.mock.ts linguist-generated=true
+src/mocks/onoff/landing-page/landing-page.raw.mock.ts linguist-generated=true

@@ -42,6 +42,10 @@ const COLLECTION_EXPORTS: Record<string, string> = {
 	'inventario-de-las-pasiones': 'inventarioDeLasPasionesRawCollection',
 };
 
+// El slug de la landing es su semana ISO, y tiene que seguir al `slug.current` del documento: si dejan de
+// coincidir, `evaluateTarget` corta con el mensaje de query sin resultado en vez de generar algo vacío.
+const LANDING_PAGE_SLUG = '1974-24';
+
 function queryNamed(queries: Record<string, string>, name: string): string {
 	const query = queries[name];
 	if (typeof query !== 'string' || query.length === 0) {
@@ -92,6 +96,19 @@ function targetsFor(queries: Record<string, string>): Target[] {
 			typeAnnotation: 'CollectionsQueryResult',
 			query: queryNamed(queries, 'collectionsQuery'),
 		},
+		// Se emite el resultado entero de la query y no solo su sub-proyección `campaigns`, que es lo único
+		// que el corpus consume hoy: un archivo generado afirma "esto es lo que la query devuelve", y recortar
+		// obligaría al gate de frescura a replicar el mismo recorte para poder comparar, con lo que la
+		// transformación quedaría afirmada por sí misma. De paso, `cards` y `latestReads` quedan afirmados
+		// como vacíos por la query real.
+		{
+			file: join('src/mocks/onoff/landing-page', 'landing-page.raw.mock.ts'),
+			exportName: 'onoffRawLandingPageMock',
+			typeImport: 'LandingPageContentQueryResult',
+			typeAnnotation: 'NonNullable<LandingPageContentQueryResult>',
+			query: queryNamed(queries, 'landingPageContentQuery'),
+			params: { slug: LANDING_PAGE_SLUG },
+		},
 	];
 }
 
@@ -133,7 +150,8 @@ await withCorpus(async (load) => {
 
 	const collectionQueries = (await load('/src/api/_queries/collection.query.ts')) as Record<string, string>;
 	const literaryWorkQueries = (await load('/src/api/_queries/literary-work.query.ts')) as Record<string, string>;
-	const targets = targetsFor({ ...collectionQueries, ...literaryWorkQueries });
+	const contentQueries = (await load('/src/api/_queries/content.query.ts')) as Record<string, string>;
+	const targets = targetsFor({ ...collectionQueries, ...literaryWorkQueries, ...contentQueries });
 
 	for (const target of targets) {
 		const value = await evaluateTarget(target, onoffDatasetMock);
