@@ -190,10 +190,12 @@ describe('SanityCollectionRepository.fetchAll', () => {
 		expect(teasers.map((teaser) => teaser.count)).toEqual(onoffRawCollectionTeasersMock.map((teaser) => teaser.count));
 	});
 
+	// Se afirma que las dos ramas quedan cubiertas, sin atarse al orden: el listado llega ordenado por
+	// título, que es un criterio de la query y no de este mapeo.
 	it('resolves both branches of imagery from the projected covers', async () => {
 		const teasers = await repoReturning(onoffRawCollectionTeasersMock).fetchAll();
 
-		expect(teasers.map(({ imagery }) => imagery.kind)).toEqual(['representative', 'sample']);
+		expect([...teasers.map(({ imagery }) => imagery.kind)].sort()).toEqual(['representative', 'sample']);
 	});
 
 	// Es la invariante "al menos una obra" sobre lo único que el teaser transporta.

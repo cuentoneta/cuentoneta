@@ -1,28 +1,19 @@
-import type { CollectionsQueryResult } from '@sanity-types';
+import type { CollectionBySlugQueryResult, CollectionsQueryResult } from '@sanity-types';
 
+import { onoffRawCollectionTeasersMock as generatedTeasers } from './onoff/collection/collection-teasers.raw.mock';
 import { geometriasDelDesveloRawCollection } from './onoff/collection/geometrias-del-desvelo.collection.raw.mock';
 import { inventarioDeLasPasionesRawCollection } from './onoff/collection/inventario-de-las-pasiones.collection.raw.mock';
-import type { RawCollection } from './onoff/collection/raw-collection.projection';
 
-type RawCollectionTeaser = CollectionsQueryResult[number];
+type RawCollection = NonNullable<CollectionBySlugQueryResult>;
 
 export const onoffRawCollectionsMock: RawCollection[] = [
 	geometriasDelDesveloRawCollection,
 	inventarioDeLasPasionesRawCollection,
 ];
 
-// El teaser se deriva de la colección completa en vez de escribirse aparte: así las dos no se pueden
-// desincronizar, que es el mismo criterio con el que el corpus de dominio proyecta sus teasers.
-function toRawTeaser(collection: RawCollection): RawCollectionTeaser {
-	const { literaryWorks, ...rest } = collection;
-	return {
-		...rest,
-		count: literaryWorks.length,
-		literaryWorkCoverImages: literaryWorks.slice(0, 3).map((work) => work.coverImage),
-	};
-}
-
-export const onoffRawCollectionTeasersMock: RawCollectionTeaser[] = onoffRawCollectionsMock.map(toRawTeaser);
+// Llega ordenado por título, que es el criterio de `collectionsQuery` y no el orden en que este módulo
+// declara las colecciones.
+export const onoffRawCollectionTeasersMock: CollectionsQueryResult = generatedTeasers;
 
 // Selectores por capacidad, derivados por predicado y no como listas paralelas: un spec pide la rama
 // que necesita sin atarse a la colección que exista hoy.

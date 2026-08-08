@@ -1,6 +1,8 @@
+// Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del
+// corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { dramaHistoricoRawTag, teatroRawTag, tragediaRawTag } from '../../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
+import { dramaHistoricoRawTag, teatroRawTag, tragediaRawTag } from '../../onoff-raw-tags.mock';
 import neronMdBody from './neron.md?raw';
 
 export const neronRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
@@ -21,13 +23,5 @@ export const neronRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = 
 	mediaSources: [],
 	resources: [],
 	authors: [rawOnoffAuthor],
-	content: [
-		{
-			_key: 'section-1',
-			title: null,
-			epigraphs: [],
-			body: neronMdBody,
-			readingTime: 7,
-		},
-	],
+	content: [{ _key: 'section-1', title: null, epigraphs: [], body: neronMdBody, readingTime: 7 }],
 };
