@@ -1,5 +1,7 @@
 import { evaluate, parse } from 'groq-js';
+import { landingPageContentQuery } from '../api/_queries/content.query';
 import { collectionBySlugQuery, collectionsQuery } from '../api/_queries/collection.query';
+import { onoffRawLandingPageMock } from './onoff/landing-page/landing-page.raw.mock';
 import { literaryWorkBySlugQuery } from '../api/_queries/literary-work.query';
 import { onoffRawCollectionsMock, onoffRawCollectionTeasersMock } from './onoff-raw-collections.mock';
 import { onoffRawLiteraryWorksMock } from './onoff-raw-literary-works.mock';
@@ -41,6 +43,16 @@ describe('las fixtures crudas son lo que la query devuelve sobre los documentos'
 		const result = await run(collectionsQuery);
 
 		expect(result).toStrictEqual(onoffRawCollectionTeasersMock);
+	});
+
+	// El slug sale del propio fixture y no va clavado: es el mismo que el target del generador le pasa como
+	// parámetro, así que si alguien mueve la semana de la landing el caso la sigue en vez de romperse por un
+	// literal desactualizado. Afirma de paso que `cards` y `latestReads` quedan vacíos y el orden de las
+	// campañas es el que declara el documento.
+	it('evaluates the landing page query into its raw fixture', async () => {
+		const result = await run(landingPageContentQuery, { slug: onoffRawLandingPageMock.slug });
+
+		expect(result).toStrictEqual(onoffRawLandingPageMock);
 	});
 
 	// El modo de falla que `groq-js` no reporta: si el documento de asset no está en el dataset, la
