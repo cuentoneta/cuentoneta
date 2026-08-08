@@ -1,11 +1,11 @@
 import { evaluate, parse } from 'groq-js';
-import { landingPageContentQuery } from '../api/_queries/content.query';
 import { collectionBySlugQuery, collectionsQuery } from '../api/_queries/collection.query';
-import { onoffRawLandingPageMock } from './onoff/landing-page/landing-page.raw.mock';
+import { landingPageContentQuery } from '../api/_queries/content.query';
 import { literaryWorkBySlugQuery } from '../api/_queries/literary-work.query';
 import { onoffRawCollectionsMock, onoffRawCollectionTeasersMock } from './onoff-raw-collections.mock';
 import { onoffRawLiteraryWorksMock } from './onoff-raw-literary-works.mock';
 import { onoffDatasetMock } from './onoff-documents.mock';
+import { onoffRawLandingPageMock } from './onoff/landing-page/landing-page.raw.mock';
 
 async function run(query: string, params: Record<string, unknown> = {}) {
 	const result = await evaluate(parse(query), { dataset: onoffDatasetMock, params });

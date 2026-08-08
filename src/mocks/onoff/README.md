@@ -10,7 +10,7 @@ Este directorio (`src/mocks/onoff/`) es la **única ubicación** del corpus de l
 
 ## Cómo está organizado
 
-Las piezas se agrupan **por entidad**, una carpeta cada una. Los mocks y fixtures conservan igualmente el infijo de entidad en el nombre, así que siguen siendo unívocos fuera de contexto; la prosa no lo lleva, porque su extensión ya la distingue:
+Las piezas se agrupan **por entidad**, una carpeta cada una, salvo cuando dos entidades no se pueden montar por separado: `landing-page/` lleva la landing y sus campañas juntas porque la campaña no tiene query propia —es sub-proyección de la de landing—, y una carpeta aparte quedaría con documentos y sin fixture generada. `document/` y `media/` agrupan por concern por el mismo motivo. Los mocks y fixtures conservan igualmente el infijo de entidad en el nombre, así que siguen siendo unívocos fuera de contexto; la prosa no lo lleva, porque su extensión ya la distingue:
 
 ```
 onoff/
@@ -55,7 +55,7 @@ Cada uno abre con un banner de dos líneas ("Este archivo lo escribe `pnpm corpu
 
 **Qué impide que la generación mienta:** `src/mocks/onoff-documents.mock.spec.ts` vuelve a evaluar las mismas queries sobre los mismos documentos y compara **valores** (no bytes: el formato lo fija Prettier dentro del generador, así que un desvío de formato no es una desincronización, pero una diferencia de valor sí) contra las fixtures crudas commiteadas. Este spec corre dentro de `pnpm test` (gate `test`, ya required) — **no se agregó ningún gate de CI nuevo**.
 
-**Un documento faltante no falla en silencio.** Si una referencia apunta a un `_id` que no está en el dataset, `groq-js` la resuelve a `null` sin lanzar — la fixture generada afirmaría ese `null`. El generador lo evita evaluando por adelantado (`scripts/generate-raw-corpus.helpers.ts`): recorre el dataset entero y exige que todo `_ref` resuelva a un documento, y **corta antes de generar nada** si encuentra una referencia colgada. Excluye los assets de imagen a propósito: ninguna query los dereferencia (proyectan el objeto entero y la URL la arma `urlFor` al renderizar, fuera de GROQ); el único `->` sobre un asset en las siete queries es `audioFile.asset->url`. Exigirles documento a las doce imágenes del corpus obligaría a inventar contenido que nada lee.
+**Un documento faltante no falla en silencio.** Si una referencia apunta a un `_id` que no está en el dataset, `groq-js` la resuelve a `null` sin lanzar — la fixture generada afirmaría ese `null`. El generador lo evita evaluando por adelantado (`scripts/generate-raw-corpus.helpers.ts`): recorre el dataset entero y exige que todo `_ref` resuelva a un documento, y **corta antes de generar nada** si encuentra una referencia colgada. Excluye los assets de imagen a propósito: ninguna query los dereferencia (proyectan el objeto entero y la URL la arma `urlFor` al renderizar, fuera de GROQ); el único `->` sobre un asset en las siete queries es `audioFile.asset->url`. Exigirles documento a todas las imágenes del corpus obligaría a inventar contenido que nada lee.
 
 **El generador carga el corpus con Vite programático, no con `tsx`** (`scripts/generate-raw-corpus.loader.ts`): los documentos importan prosa con el sufijo `?raw`, que solo resuelve un bundler. Usa `resolve.tsconfigPaths` nativo de Vite y no el plugin `vite-tsconfig-paths` — el mismo motivo que documenta `vitest.config.ts`: el plugin recorre las copias del repo bajo `.claude/worktrees/` y aborta si el tsconfig de alguna no le parsea.
 
@@ -151,7 +151,9 @@ Contraparte cruda del corpus de dominio `LiteraryWork`, tipada contra `NonNullab
 
 ## Corpus raw: página de inicio y `ContentCampaign` (generado)
 
-`landing-page/landing-page.raw.mock.ts` (`onoffRawLandingPageMock`) es el resultado de `landingPageContentQuery` sobre la capa de documentos de `landing-page/`: un documento de landing y los dos de campaña que referencia. La semana de la landing —su `config` y su `slug`— es la del timestamp de sistema del corpus, para que el elenco siga hablando de un solo momento; el target del generador la pasa como parámetro de la query.
+`landing-page/landing-page.raw.mock.ts` (`onoffRawLandingPageMock`) es el resultado de `landingPageContentQuery` sobre la capa de documentos de `landing-page/`: un documento de landing y los dos de campaña que referencia. La semana de la landing —su `config` y su `slug`— es la del timestamp de sistema del corpus, para que el elenco siga hablando de un solo momento; el target del generador **la lee del documento** en vez de declararla por su cuenta, porque es el parámetro de entrada de la query y no una de las capas que los cruces comparan.
+
+El documento de landing es el único que no lleva su slug en el nombre del archivo (`onoff.landing-page.document.ts`): su slug es una semana, y nombrarlo así obligaría a renombrar el archivo cada vez que el corpus se moviera de fecha.
 
 **La landing no declara `cards` ni `latestReads`.** Esos campos referencian `storylist` y `story`, que el corpus no modela como documentos (ver [Qué queda fuera de la generación](#qué-queda-fuera-de-la-generación)): declararlos dejaría referencias colgadas y la guarda del generador abortaría. La query los resuelve a `[]`, y la fixture lo afirma.
 

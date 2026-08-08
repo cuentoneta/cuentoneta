@@ -8,9 +8,8 @@ import { palacioNueveFronterasContentCampaignDocument } from './el-palacio-de-la
 // dependencia de cálculo de fechas en una capa que solo transcribe lo que Sanity tiene guardado.
 const week = '1974-24';
 
-// No declara `cards` ni `latestReads`: referencian `storylist` y `story`, que el corpus no modela como
-// documentos. Declararlos dejaría referencias colgadas y la guarda del generador abortaría —que es lo
-// correcto—; la query los resuelve a `[]` y así queda afirmado en la fixture generada.
+// Sin `cards` ni `latestReads` a propósito: referencian agregados que el corpus no modela como documentos,
+// y la guarda del generador aborta ante una referencia colgada. El porqué, en el README del corpus.
 export const onoffLandingPageDocument: LandingPage = {
 	...documentSystemFields(`onoff-landing-page-${week}`),
 	_type: 'landingPage',

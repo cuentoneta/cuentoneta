@@ -42,10 +42,6 @@ const COLLECTION_EXPORTS: Record<string, string> = {
 	'inventario-de-las-pasiones': 'inventarioDeLasPasionesRawCollection',
 };
 
-// El slug de la landing es su semana ISO, y tiene que seguir al `slug.current` del documento: si dejan de
-// coincidir, `evaluateTarget` corta con el mensaje de query sin resultado en vez de generar algo vacío.
-const LANDING_PAGE_SLUG = '1974-24';
-
 function queryNamed(queries: Record<string, string>, name: string): string {
 	const query = queries[name];
 	if (typeof query !== 'string' || query.length === 0) {
@@ -57,7 +53,24 @@ function queryNamed(queries: Record<string, string>, name: string): string {
 	return query;
 }
 
-function targetsFor(queries: Record<string, string>): Target[] {
+// El slug sale del documento y no de un literal propio: es el parámetro de entrada de la query, no una de
+// las capas que los cruces comparan, así que atarlo al documento no debilita ninguna aserción y elimina la
+// deriva de que la semana se mueva en un lado y no en el otro.
+//
+// Emite el resultado entero de la query y no solo su sub-proyección `campaigns`; el porqué, en el README
+// del corpus.
+function landingPageTarget(queries: Record<string, string>, slug: string): Target {
+	return {
+		file: join('src/mocks/onoff/landing-page', 'landing-page.raw.mock.ts'),
+		exportName: 'onoffRawLandingPageMock',
+		typeImport: 'LandingPageContentQueryResult',
+		typeAnnotation: 'NonNullable<LandingPageContentQueryResult>',
+		query: queryNamed(queries, 'landingPageContentQuery'),
+		params: { slug },
+	};
+}
+
+function targetsFor(queries: Record<string, string>, landingPageSlug: string): Target[] {
 	const bySlug = (
 		exports: Record<string, string>,
 		directory: string,
@@ -96,19 +109,7 @@ function targetsFor(queries: Record<string, string>): Target[] {
 			typeAnnotation: 'CollectionsQueryResult',
 			query: queryNamed(queries, 'collectionsQuery'),
 		},
-		// Se emite el resultado entero de la query y no solo su sub-proyección `campaigns`, que es lo único
-		// que el corpus consume hoy: un archivo generado afirma "esto es lo que la query devuelve", y recortar
-		// obligaría al gate de frescura a replicar el mismo recorte para poder comparar, con lo que la
-		// transformación quedaría afirmada por sí misma. De paso, `cards` y `latestReads` quedan afirmados
-		// como vacíos por la query real.
-		{
-			file: join('src/mocks/onoff/landing-page', 'landing-page.raw.mock.ts'),
-			exportName: 'onoffRawLandingPageMock',
-			typeImport: 'LandingPageContentQueryResult',
-			typeAnnotation: 'NonNullable<LandingPageContentQueryResult>',
-			query: queryNamed(queries, 'landingPageContentQuery'),
-			params: { slug: LANDING_PAGE_SLUG },
-		},
+		landingPageTarget(queries, landingPageSlug),
 	];
 }
 
@@ -151,7 +152,13 @@ await withCorpus(async (load) => {
 	const collectionQueries = (await load('/src/api/_queries/collection.query.ts')) as Record<string, string>;
 	const literaryWorkQueries = (await load('/src/api/_queries/literary-work.query.ts')) as Record<string, string>;
 	const contentQueries = (await load('/src/api/_queries/content.query.ts')) as Record<string, string>;
-	const targets = targetsFor({ ...collectionQueries, ...literaryWorkQueries, ...contentQueries });
+	const { onoffLandingPageDocument } = (await load('/src/mocks/onoff/landing-page/onoff.landing-page.document.ts')) as {
+		onoffLandingPageDocument: { slug: { current: string } };
+	};
+	const targets = targetsFor(
+		{ ...collectionQueries, ...literaryWorkQueries, ...contentQueries },
+		onoffLandingPageDocument.slug.current,
+	);
 
 	for (const target of targets) {
 		const value = await evaluateTarget(target, onoffDatasetMock);
