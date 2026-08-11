@@ -16,7 +16,7 @@ for (const order of orders) {
 count++;
 ```
 
-Por qué: los comentarios al mismo nivel aportan cero información y se pudren al instante.
+Por qué: los comentarios al mismo nivel aportan cero información y quedan obsoletos al primer cambio.
 
 ## C2 — Eco de la firma (veredicto: DELETE, o REWRITE si hay un contrato real descubrible)
 
@@ -102,6 +102,18 @@ Acotación de este repo: los comentarios de sección de estilo `// Core` / `// M
 ## C14 — Ritmo comentario-por-línea (veredicto: DELETE la narración, y re-chequear C8)
 
 El cuerpo alterna un comentario / una sentencia. Eliminá la narración en bloque, y después evaluá si el bloque merece UN comentario de nivel más alto que enuncie qué logra como un todo.
+
+## C15 — Censo en el comentario (veredicto: REWRITE, o UPDATE si el número ya es falso)
+
+El comentario declara **cuántas cosas hay**: `// las doce imágenes del corpus`, `// las siete queries que la usan`, `// las ocho portadas`. El conteo es el dato que cambia sin que nadie vuelva a mirar el comentario, y ningún gate lo verifica.
+
+Distinguí **contar el contenido** de **enunciar una regla**. `// el parser exige exactamente cuatro segmentos` es correcto: cuatro es la especificación del parser, no un inventario. `// las ocho portadas` es un censo, aunque hoy sean ocho.
+
+Las **enumeraciones** entran acá igual, y se desactualizan de dos formas a la vez —el número y la composición—, cada una por su lado.
+
+Veredicto: `REWRITE` si el conteo todavía es correcto (se saca igual, porque va a dejar de serlo), y `UPDATE` si ya es falso — ahí además engaña. En los dos casos **no se reemplaza un número por otro**: eso deja el mismo comentario esperando la próxima incorporación.
+
+La doctrina completa vive en [`aposd-comments-style`](../../aposd-comments-style/SKILL.md) → "Cantidades: la regla sí, el censo no".
 
 ## Qué explícitamente NO es un hallazgo
 
