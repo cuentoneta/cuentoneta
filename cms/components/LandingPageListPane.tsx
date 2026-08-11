@@ -12,16 +12,19 @@ import { Badge, Box, Button, Card, Flex, Spinner, Stack, Text } from '@sanity/ui
 import { AddIcon } from '@sanity/icons/Add';
 import { CodeBlockIcon } from '@sanity/icons/CodeBlock';
 
-import { buildWeekSlug } from '@utils/week-slug.utils';
-
-import { API_VERSION, LANDING_LIST_QUERY, type LandingPageRow, resolveActiveLandingId } from '../utils/landing-page';
+import {
+	API_VERSION,
+	LANDING_LIST_QUERY,
+	type LandingPageRow,
+	type LandingPageRowPresentation,
+	activeConfigOf,
+	presentationOf,
+	resolveActiveLandingId,
+} from '../utils/landing-page';
 
 function toMessage(cause: unknown): string {
 	return cause instanceof Error ? cause.message : 'Error desconocido';
 }
-
-/** El tono clasifica la fila: la activa, una semana futura, o cualquier otra. */
-type RowTone = 'positive' | 'primary' | 'default';
 
 function ErrorNotice({ message }: { message: string }) {
 	return (
@@ -69,15 +72,10 @@ function LandingPageRows({
 	// no la cancela.
 	const PlainChildLink = ChildLink as ComponentType<ComponentProps<typeof ChildLink> & { style?: CSSProperties }>;
 
-	// Referencia para clasificar filas: el config de la activa (máximo config <= semana actual). Toda fila con
-	// config mayor es una semana futura. Sin activa, se cae a la semana actual como referencia.
-	const activeConfig = rows.find((row) => row._id === activeId)?.config ?? buildWeekSlug(new Date());
+	const activeConfig = activeConfigOf(rows, activeId);
 
 	return rows.map((row) => {
-		const isActive = row._id === activeId;
-		const isFuture = !isActive && row.config > activeConfig;
-		const tone: RowTone = isActive ? 'positive' : isFuture ? 'primary' : 'default';
-		const badge = isActive ? 'Activa' : isFuture ? 'Futura' : null;
+		const { tone, badge } = presentationOf(row, activeId, activeConfig);
 		return (
 			<PlainChildLink key={row._id} childId={row._id} style={{ textDecoration: 'none', color: 'inherit' }}>
 				<LandingPageCard config={row.config} tone={tone} badge={badge} />
@@ -87,7 +85,7 @@ function LandingPageRows({
 }
 
 /** La ficha de una landing page. `badge` es el rótulo de su clasificación, o nada si no la tiene. */
-function LandingPageCard({ config, tone, badge }: { config: string; tone: RowTone; badge: string | null }) {
+function LandingPageCard({ config, tone, badge }: { config: string } & LandingPageRowPresentation) {
 	return (
 		<Card paddingX={3} paddingY={3} radius={0} borderBottom tone={tone}>
 			<Flex align="center" gap={3}>

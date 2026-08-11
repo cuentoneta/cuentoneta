@@ -185,22 +185,13 @@ function assertKeyed(items: unknown[] | undefined, field: string, storyId: strin
 	}
 }
 
-/**
- * Arma el documento `literaryWork` equivalente a una `story`.
- *
- * Lanza `UnmigratableStoryError` ante un dato que no permite construir una obra válida, en vez de
- * escribir un documento degradado: el repository construye el agregado con factories que validan, así
- * que un documento inválido fallaría recién al leerse, lejos de acá.
- */
 /** Una story que ya pasó las validaciones: title y slug dejan de ser opcionales para el llamador. */
 type MigratableStory = StoryDocument & { title: string; slug: { current: string } };
 
 /**
  * Lo que la obra no puede construirse sin ello: sin esto el documento nacería inválido.
  *
- * Se declara como aserción de tipo y no como un `void`: al mover las guardas fuera del ensamblado,
- * TypeScript dejaba de estrechar `title` y `slug` en el llamador y el documento se armaba sobre
- * valores que el compilador seguía viendo opcionales.
+ * Declarada como aserción de tipo para que el llamador vea `title` y `slug` ya estrechados.
  */
 function assertMigratable(story: StoryDocument): asserts story is MigratableStory {
 	if (!story.title) {
@@ -246,6 +237,13 @@ function optionalArrays(story: StoryDocument): Partial<LiteraryWorkDocument> {
 	};
 }
 
+/**
+ * Arma el documento `literaryWork` equivalente a una `story`.
+ *
+ * Lanza `UnmigratableStoryError` ante un dato que no permite construir una obra válida, en vez de
+ * escribir un documento degradado: el repository construye el agregado con factories que validan, así
+ * que un documento inválido fallaría recién al leerse, lejos de acá.
+ */
 export function buildLiteraryWorkDocument(story: StoryDocument): LiteraryWorkDocument {
 	assertMigratable(story);
 

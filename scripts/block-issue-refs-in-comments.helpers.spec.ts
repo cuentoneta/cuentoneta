@@ -1,4 +1,8 @@
-import { findExemptIssueRefs, findIssueRefsInComments } from './block-issue-refs-in-comments.helpers';
+import {
+	findExemptIssueRefs,
+	findIssueRefsInComments,
+	isConventionSource,
+} from './block-issue-refs-in-comments.helpers';
 
 const file = 'src/app/components/widget/widget.component.ts';
 
@@ -166,5 +170,25 @@ describe('findExemptIssueRefs — la operación inversa', () => {
 	it('no arrastra estado entre llamadas, que es el modo de falla de una regex global compartida', () => {
 		expect(findExemptIssueRefs(file, '// TODO(#1471): x')).toHaveLength(1);
 		expect(findExemptIssueRefs(file, '// TODO(#1471): x')).toHaveLength(1);
+	});
+});
+
+describe('isConventionSource', () => {
+	const raiz = 'C:/repo';
+
+	it('exime al archivo que define la convención cuando llega por ruta absoluta', () => {
+		// Es la forma en que el hook recibe la ruta al correr; los casos de alcance usan relativas.
+		expect(isConventionSource('C:\\repo\\scripts\\finding-refs.ts', raiz)).toBe(true);
+		expect(isConventionSource('C:/repo/scripts/finding-refs.ts', raiz)).toBe(true);
+	});
+
+	it('no exime a un homónimo colgado de otra carpeta', () => {
+		// Comparando por sufijo este archivo quedaba exento sin que nada lo señalara, y la allowlist
+		// dejaba de decir lo que dice.
+		expect(isConventionSource('C:/repo/src/scripts/finding-refs.ts', raiz)).toBe(false);
+	});
+
+	it('no exime a un archivo de scripts/ que no define la convención', () => {
+		expect(isConventionSource('C:/repo/scripts/backfill-reading-time.ts', raiz)).toBe(false);
 	});
 });

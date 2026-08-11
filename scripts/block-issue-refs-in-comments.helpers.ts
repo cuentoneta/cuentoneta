@@ -40,14 +40,25 @@ const CONVENTION_SOURCES: ReadonlySet<string> = new Set([
 ]);
 
 /**
- * Si el archivo queda fuera del alcance del hook, sea por ubicación, por extensión o por definir la
- * convención. La ruta puede llegar absoluta o relativa, así que la allowlist se compara por sufijo.
+ * Si la ruta es uno de los archivos que definen la convención.
+ *
+ * El hook recibe rutas absolutas, así que la comparación se ancla a la raíz del repo y **no** por
+ * sufijo: por sufijo, un homónimo en otra carpeta —`src/scripts/finding-refs.ts`— quedaría exento sin
+ * que nada lo señalara, y la allowlist dejaría de decir lo que dice.
  */
-function isOutOfScope(normalizedPath: string): boolean {
-	if (!SCOPED_PATH.test(normalizedPath) || !CODE_FILE.test(normalizedPath)) {
+export function isConventionSource(filePath: string, root: string): boolean {
+	const normalized = filePath.replace(/\\/g, '/');
+	const prefix = `${root.replace(/\\/g, '/')}/`;
+	return CONVENTION_SOURCES.has(normalized.startsWith(prefix) ? normalized.slice(prefix.length) : normalized);
+}
+
+/** Si el archivo queda fuera del alcance del hook, por ubicación, por extensión o por definir la convención. */
+function isOutOfScope(filePath: string): boolean {
+	const normalized = filePath.replace(/\\/g, '/');
+	if (!SCOPED_PATH.test(normalized) || !CODE_FILE.test(normalized)) {
 		return true;
 	}
-	return [...CONVENTION_SOURCES].some((source) => normalizedPath === source || normalizedPath.endsWith(`/${source}`));
+	return isConventionSource(filePath, process.cwd());
 }
 
 // Sin umbral de dígitos: `#` significa issue y nada más. Los hallazgos de review llevan prefijo (`R1`,
@@ -77,7 +88,7 @@ const SUPPRESSION_MARKER = new RegExp(`${OPENER}(?:@ts-ignore|@ts-expect-error|e
  * que en alguna línea diga `TODO` volvería la excepción trivial de eludir.
  */
 export function findIssueRefsInComments(filePath: string, added: string): string[] {
-	if (isOutOfScope(filePath.replace(/\\/g, '/'))) {
+	if (isOutOfScope(filePath)) {
 		return [];
 	}
 
@@ -112,7 +123,7 @@ export interface ExemptIssueRef {
  * Comparte los mismos marcadores que el predicado del hook, para que ampare exactamente lo mismo.
  */
 export function findExemptIssueRefs(filePath: string, content: string): ExemptIssueRef[] {
-	if (isOutOfScope(filePath.replace(/\\/g, '/'))) {
+	if (isOutOfScope(filePath)) {
 		return [];
 	}
 
