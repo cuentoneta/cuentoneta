@@ -115,9 +115,6 @@ function assertSupportedMarkDefs(block: PortableTextBlock): void {
 	}
 }
 
-// Un eje de validación por función: el conversor falla ante lo que no sabe traducir, a propósito,
-// así que cada `throw` conserva su mensaje y su `_key` — son la señal que detiene una migración
-// antes de escribir documentos a medias.
 function assertSupported(block: PortableTextBlock): void {
 	if (block._type !== 'block') {
 		throw new UnsupportedPortableTextError(`Tipo de bloque no soportado: "${block._type}"`, block._key);
@@ -160,8 +157,11 @@ function renderLinkDestination(href: string, blockKey: string | undefined): stri
 }
 
 /**
- * Las marcas que **no** producen un envoltorio de enlace. El énfasis ya se aplicó antes del recorrido;
- * las cuatro de alineación son decoradores del editor viejo (`blockContent.ts`) que se traducen
+ * Las marcas que **no** producen un envoltorio de enlace. Vive a nivel de módulo pese a tener un solo
+ * consumidor: adentro de la función se re-alocaría por cada span del corpus.
+ *
+ * El énfasis ya se aplicó antes del recorrido; las cuatro de alineación son decoradores del editor
+ * viejo (`blockContent.ts`) que se traducen
  * ignorando la marca y conservando el texto. Markdown no tiene alineación, y el pipeline de la app
  * descarta el HTML crudo: un `<p align="center">` no pierde el centrado, pierde el texto entero. La
  * decisión y las obras afectadas están registradas en el issue de revisión editorial.

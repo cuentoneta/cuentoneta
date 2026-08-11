@@ -68,8 +68,7 @@ interface Finding {
 }
 
 // La forma del bloque —estilo, viñeta, anidamiento— se censa aparte del contenido: son tres
-// preguntas sobre la misma estructura, y juntarlas con el recorrido de marcas y texto hacía de
-// `inspectBlock` un cuerpo que ramificaba por encima del presupuesto de complejidad.
+// preguntas sobre la misma estructura.
 function inspectStructure(block: CensusBlock, report: (construction: string) => void): void {
 	if (block.style && block.style !== SUPPORTED_STYLE) {
 		report(`style="${block.style}"`);
@@ -213,8 +212,7 @@ async function censusOfEpigraphs(scope: string): Promise<void> {
 		['epigraphs[].text', 'texts'],
 		['epigraphs[].reference', 'references'],
 	] as const) {
-		// El campo es un array de arrays —un epígrafe por elemento, cada uno con sus bloques—, así que
-		// se aplana antes de recorrer en vez de anidar tres bucles para llegar al bloque.
+		// El campo es un array de arrays: un epígrafe por elemento, cada uno con sus bloques.
 		const findings: Finding[] = [];
 		for (const { slug, block } of rows.flatMap((row) =>
 			(row[key] ?? []).flatMap((blocks) => (blocks ?? []).map((block) => ({ slug: row.slug, block }))),

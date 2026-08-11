@@ -51,10 +51,13 @@ Estos patrones son intencionales y correctos. NO los reportes como problemas:
 
 ### Restricciones duras (bloqueantes)
 
-- [ ] Largo de función ≤ 50 líneas
-- [ ] Largo de archivo ≤ 500 líneas (los `*.spec.ts` quedan exentos)
-- [ ] Complejidad ciclomática ≤ 10
-- [ ] Profundidad de anidamiento ≤ 3 niveles
+- [ ] Largo de función ≤ 50 líneas (exentos `*.spec.ts` y `*.stories.ts`)
+- [ ] Largo de archivo ≤ 500 líneas (mismas exenciones, más el generado de typegen)
+- [ ] Complejidad ciclomática ≤ 10 — **sin exención**, rige también en specs y stories
+- [ ] Profundidad de anidamiento ≤ 3 niveles — **sin exención**
+
+> Las cuatro las verifica ESLint desde el gate `lint`, así que una violación llega marcada y no hace falta contarla a mano. Lo que sí corresponde revisar es lo que la regla no ve: una función corta que igual hace tres cosas.
+
 - [ ] Sin barrels (`index.ts` re-export) en ningún lado
 - [ ] Sin `any` sin un comentario `// REASON:`
 - [ ] Sin `// @ts-ignore` sin issue enlazado

@@ -327,8 +327,8 @@ export function extractComments(file: string, text: string, syntax: CommentSynta
 	const comments: CommentRecord[] = [];
 	let cursor: Cursor = { index: 0, line: 1 };
 
-	// Leer un comentario, o avanzar sobre lo que no lo es. El orden importa: un `//` en posición de
-	// operando es un comentario, no la apertura de una expresión regular.
+	// El orden importa: un `//` en posición de operando es un comentario, no la apertura de una
+	// expresión regular.
 	while (cursor.index < text.length) {
 		const read = readCommentAt(file, text, cursor, syntax);
 		if (read) {

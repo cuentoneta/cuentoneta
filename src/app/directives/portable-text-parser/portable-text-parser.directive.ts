@@ -18,8 +18,7 @@ export class PortableTextDirective {
 		});
 	}
 
-	// La alineación llega como marca y sale como clase de utilidad. Un mapa en lugar de una cadena de
-	// condiciones: cada marca nueva es una entrada, no una rama.
+	// La alineación llega como marca y sale como clase de utilidad.
 	private readonly alignmentClasses: Readonly<Record<string, string>> = Object.freeze({
 		center: 'text-center',
 		left: 'text-left',
@@ -66,12 +65,11 @@ export class PortableTextDirective {
 	}
 
 	// TODO: Agregar procesamiento de otros tipos de marks (h1, h2, highlight, tachado, subrayado, etc.)
+	private readonly markTags: Readonly<Record<string, string>> = Object.freeze({ em: 'i', strong: 'b' });
+
 	private wrapWithMarks(element: HTMLElement | Text, marks: string[]): HTMLElement | Text {
 		let wrapped = element;
-		for (const [mark, tag] of [
-			['em', 'i'],
-			['strong', 'b'],
-		] as const) {
+		for (const [mark, tag] of Object.entries(this.markTags)) {
 			if (marks.includes(mark)) {
 				const parent = this.renderer.createElement(tag);
 				this.renderer.appendChild(parent, wrapped);

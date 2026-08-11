@@ -208,13 +208,13 @@ export default [
 		},
 	},
 	{
-		// Las dos reglas de largo sueltan specs y stories, y solo ellas: el callback de un `describe` y
-		// el `meta` de una story son funciones por sintaxis, no por lógica — medirlas mide el largo de
-		// la suite y del catálogo. `complexity` y `max-depth` NO se sueltan ahí; medido sobre todo el
-		// árbol, specs y stories no aportan ni un error de esas dos, así que eximirlas regalaría
-		// cobertura gratis. `src/sanity/types.ts` lo emite el typegen de Sanity: su largo no lo decide
-		// nadie. Nota de alcance: `tools/**` está en el ignore global de más arriba, así que las reglas
-		// custom de ESLint y sus specs quedan fuera de todo esto.
+		// La exención de specs y stories es de **largo, no de forma**: el callback de un `describe` y el
+		// `meta` de una story son funciones por sintaxis y no por lógica, así que medir su largo mide
+		// el tamaño de la suite y del catálogo. `complexity` y `max-depth` siguen rigiendo ahí, porque
+		// un test enrevesado es tan difícil de leer como cualquier otro código. `src/sanity/types.ts`
+		// lo emite el typegen de Sanity: su largo no lo decide nadie. Nota de alcance: `tools/**` está
+		// en el ignore global de más arriba, así que las reglas custom de ESLint y sus specs quedan
+		// fuera de todo esto.
 		name: 'size-limits',
 		files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.mjs'],
 		ignores: ['**/*.spec.ts', '**/*.stories.ts', 'src/sanity/types.ts'],
