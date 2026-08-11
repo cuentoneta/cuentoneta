@@ -1,3 +1,12 @@
+/**
+ * La guarda previa del generador: inspecciona el **dataset de entrada**, no el resultado de ninguna
+ * query, y por eso vive aparte del resto de las etapas.
+ *
+ * El orden importa y es el motivo de su existencia: corre **antes** de evaluar, así que una referencia
+ * rota aborta la corrida entera en vez de dejar una fixture escrita con un `null` que nadie pidió. Si
+ * corriera después no serviría de nada — sobre el resultado ya no se distingue un `null` legítimo de uno
+ * que salió de un documento faltante.
+ */
 type SanityDocument = Record<string, unknown>;
 
 export type DanglingReference = {
