@@ -179,7 +179,7 @@ protected readonly icon = computed(() => {
 | `ngAfterContentInit`                             | `contentChild()` / `contentChildren()`                                                                           |
 | `ngOnDestroy` para limpieza                      | **`effect((onCleanup) => onCleanup(...))`** (por defecto); `takeUntilDestroyed()` para cortar suscripciones RxJS |
 
-El reemplazo de `ngOnDestroy` por un `effect()` nombrado con `onCleanup` es el patrón **por defecto** para cualquier limpieza al destruirse: sirve en componentes, directivas y servicios creados en contexto de inyección (un `effect()` sin lecturas de signals solo corre su `onCleanup` en la destrucción). Es un mapeo canónico — **no se comenta** que el `effect` reemplaza al hook (ver [`coding-agent-policies.md`](./coding-agent-policies.md) Sección 3).
+El reemplazo de `ngOnDestroy` por un `effect()` nombrado con `onCleanup` es el patrón **por defecto** para cualquier limpieza al destruirse: sirve en componentes, directivas y servicios creados en contexto de inyección (un `effect()` sin lecturas de signals solo corre su `onCleanup` en la destrucción). Es un mapeo canónico — **no se comenta** que el `effect` reemplaza al hook (ver la skill [`aposd-comments-style`](../skills/aposd-comments-style/SKILL.md), "Cuatro formas de ruido que este repo produce seguido").
 
 ```typescript
 // ❌ Antes
