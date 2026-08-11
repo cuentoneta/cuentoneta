@@ -3,9 +3,18 @@
  * posición, tipo y contenido. Lo consume `extract-comments.ts`, que aporta el recorrido del disco.
  *
  * Es un **escáner pragmático, no un parser**: reconoce las sintaxis de comentario por extensión y
- * saltea literales de string con una máquina de estados mínima. Alcanza para inventariar y medir,
- * que es lo que necesita la skill `aposd-comment-audit`; no alcanza para reescribir código. Un
- * lenguaje que no figure acá se inventaría aparte con ripgrep — la skill ya prevé ese camino.
+ * saltea con una máquina de estados mínima lo que puede disfrazar un marcador de comentario —
+ * literales de string y de expresión regular. Alcanza para inventariar y medir, que es lo que
+ * necesita la skill `aposd-comment-audit`; no alcanza para reescribir código. Un lenguaje que no
+ * figure acá se inventaría aparte con ripgrep — la skill ya prevé ese camino.
+ *
+ * Dos límites conocidos, que valen para leer sus números como aproximados y no como exactos:
+ *
+ * - La apertura de una regex se decide por **posición de operando** (qué token la precede), no por
+ *   gramática. Un `/` que abra una regex en una posición inusual se leería como división; el daño
+ *   se acota a esa línea, porque un literal sin cerrar termina en el salto de línea.
+ * - En Markdown, un `<!-- … -->` que viva dentro de un bloque de código cercado se cuenta igual.
+ *   Infla la línea de base en un repo denso en documentación que muestra marcado como ejemplo.
  *
  * Vive en `scripts/` y no junto a la skill porque `.claude/**` queda fuera de `typecheck`, de `test`
  * y del target de lint: un escáner sin verificación no es una herramienta, es una promesa.
@@ -26,51 +35,69 @@ export interface CommentRecord {
  * `hasStringLiterals` decide si el escáner saltea comillas: en un lenguaje de programación es
  * indispensable —un `//` dentro de un string no es un comentario—, pero en marcado sería
  * destructivo, porque cada apóstrofo de la prosa abriría un literal que nunca cierra.
+ *
+ * `hasRegexLiterals` hace lo propio con las expresiones regulares, y solo lo habilitan los
+ * lenguajes que las tienen. En SCSS o CSS la barra es división o separador de valores, así que
+ * tratarla como apertura de literal inventaría regiones que no existen.
  */
 export interface CommentSyntax {
 	readonly linePrefixes: readonly string[];
 	readonly blockPairs: readonly (readonly [open: string, close: string])[];
 	readonly hasStringLiterals: boolean;
+	readonly hasRegexLiterals: boolean;
 }
+
+const JS_FAMILY: CommentSyntax = Object.freeze({
+	linePrefixes: Object.freeze(['//']),
+	blockPairs: Object.freeze([Object.freeze(['/*', '*/'] as const)]),
+	hasStringLiterals: true,
+	hasRegexLiterals: true,
+});
 
 const C_FAMILY: CommentSyntax = Object.freeze({
 	linePrefixes: Object.freeze(['//']),
 	blockPairs: Object.freeze([Object.freeze(['/*', '*/'] as const)]),
 	hasStringLiterals: true,
+	hasRegexLiterals: false,
 });
 
 const BLOCK_ONLY: CommentSyntax = Object.freeze({
 	linePrefixes: Object.freeze([]),
 	blockPairs: Object.freeze([Object.freeze(['/*', '*/'] as const)]),
 	hasStringLiterals: true,
+	hasRegexLiterals: false,
 });
 
 const HASH: CommentSyntax = Object.freeze({
 	linePrefixes: Object.freeze(['#']),
 	blockPairs: Object.freeze([]),
 	hasStringLiterals: true,
+	hasRegexLiterals: false,
 });
 
 const MARKUP: CommentSyntax = Object.freeze({
 	linePrefixes: Object.freeze([]),
 	blockPairs: Object.freeze([Object.freeze(['<!--', '-->'] as const)]),
 	hasStringLiterals: false,
+	hasRegexLiterals: false,
 });
 
 /**
- * Extensiones que este repo contiene, no todas las que existen. La lista larga que suele venir con
- * estos escáneres (Rust, Swift, Lua, SQL…) sería alcance especulativo: acá nunca matchearía, y cada
- * entrada de más es una sintaxis que nadie ejercita y que igual hay que sostener.
+ * Las familias de extensión de los lenguajes que este repo usa — completas, incluidas las variantes
+ * que hoy no tienen ningún archivo: quien agregue el primer `.jsx` no debería tener que acordarse de
+ * tocar este mapa. Lo que queda afuera son los lenguajes que el repo **no** usa (Rust, Swift, Lua,
+ * SQL…), que la lista larga habitual de estos escáneres arrastra: cada entrada de esas es una
+ * sintaxis que nadie ejercita y que igual hay que sostener.
  */
 export const SYNTAX_BY_EXTENSION: Readonly<Record<string, CommentSyntax>> = Object.freeze({
-	'.ts': C_FAMILY,
-	'.tsx': C_FAMILY,
-	'.mts': C_FAMILY,
-	'.cts': C_FAMILY,
-	'.js': C_FAMILY,
-	'.jsx': C_FAMILY,
-	'.mjs': C_FAMILY,
-	'.cjs': C_FAMILY,
+	'.ts': JS_FAMILY,
+	'.tsx': JS_FAMILY,
+	'.mts': JS_FAMILY,
+	'.cts': JS_FAMILY,
+	'.js': JS_FAMILY,
+	'.jsx': JS_FAMILY,
+	'.mjs': JS_FAMILY,
+	'.cjs': JS_FAMILY,
 	'.scss': C_FAMILY,
 	'.css': BLOCK_ONLY,
 	'.sh': HASH,
@@ -130,6 +157,72 @@ function skipStringLiteral(text: string, cursor: Cursor): Cursor {
 		index++;
 	}
 	return { index, line };
+}
+
+/**
+ * Los tokens tras los cuales una barra abre una expresión regular en vez de dividir. El criterio es
+ * de **posición**: después de uno de estos falta un operando, y una división ahí sería inválida.
+ */
+const OPERAND_PRECEDING: ReadonlySet<string> = new Set(['=', '(', ',', '[', ':', '!', '&', '|', '?', ';', '{']);
+
+/** Palabras clave que también dejan la posición esperando un operando. */
+const OPERAND_KEYWORDS: readonly string[] = ['return', 'typeof', 'case', 'in', 'of', 'yield', 'await'];
+
+/**
+ * Si la barra en `index` abre una expresión regular. Sin esto, la barra escapada de `/…\/…/` se
+ * confunde con un `//` y emite un comentario fantasma; peor, una regex que contenga `/*` abre un
+ * bloque que se traga los comentarios reales que vienen después, hasta el próximo `*​/`.
+ *
+ * Los marcadores de comentario se evalúan **antes** que esta función, así que un `//` o un `/*` en
+ * posición de operando —`const a = // …`— sigue leyéndose como comentario, que es lo correcto.
+ */
+function startsRegexLiteral(text: string, index: number): boolean {
+	let position = index - 1;
+	while (position >= 0 && /\s/.test(text[position])) {
+		position--;
+	}
+	if (position < 0) {
+		return true;
+	}
+	if (OPERAND_PRECEDING.has(text[position])) {
+		return true;
+	}
+
+	const wordEnd = position + 1;
+	while (position >= 0 && /[a-zA-Z]/.test(text[position])) {
+		position--;
+	}
+	return OPERAND_KEYWORDS.includes(text.slice(position + 1, wordEnd));
+}
+
+/**
+ * Avanza más allá del literal de expresión regular que abre en `cursor`. Una barra dentro de una
+ * clase de caracteres (`/[/]/`) no cierra. Como en los strings, un literal que llega al fin de línea
+ * se da por terminado: acota el daño de una barra mal clasificada a su propio renglón.
+ */
+function skipRegexLiteral(text: string, cursor: Cursor): Cursor {
+	let index = cursor.index + 1;
+	let insideClass = false;
+
+	while (index < text.length) {
+		const char = text[index];
+		if (char === '\\') {
+			index += 2;
+			continue;
+		}
+		if (char === '\n') {
+			return { index: index + 1, line: cursor.line + 1 };
+		}
+		if (char === '[') {
+			insideClass = true;
+		} else if (char === ']') {
+			insideClass = false;
+		} else if (char === '/' && !insideClass) {
+			return { index: index + 1, line: cursor.line };
+		}
+		index++;
+	}
+	return { index, line: cursor.line };
 }
 
 /** El par de delimitadores de bloque que abre en `cursor`, si alguno lo hace. */
@@ -221,6 +314,11 @@ export function extractComments(file: string, text: string, syntax: CommentSynta
 			const { comment, next } = readLineComment(file, text, cursor);
 			comments.push(comment);
 			cursor = next;
+			continue;
+		}
+
+		if (syntax.hasRegexLiterals && char === '/' && startsRegexLiteral(text, cursor.index)) {
+			cursor = skipRegexLiteral(text, cursor);
 			continue;
 		}
 

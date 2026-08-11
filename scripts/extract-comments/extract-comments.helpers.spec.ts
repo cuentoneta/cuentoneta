@@ -80,6 +80,55 @@ describe('extractComments', () => {
 		]);
 	});
 
+	it('no emite un comentario fantasma por las barras escapadas de una expresión regular', () => {
+		const source = ['const SCOPED = /(^|\\/)(src|cms)\\//;'].join('\n');
+
+		expect(extractComments('a.ts', source, TYPESCRIPT)).toEqual([]);
+	});
+
+	it('no deja que una regex con `/*` adentro se trague los comentarios que vienen después', () => {
+		// Es el modo de falla grave: un bloque abierto por error oculta comentarios reales hasta el
+		// próximo cierre. Un inventario que esconde es peor que uno que inventa.
+		const source = ['const patron = /a\\/*b/;', '// primero', '// segundo'].join('\n');
+
+		expect(extractComments('a.ts', source, TYPESCRIPT).map(({ text }) => text)).toEqual(['// primero', '// segundo']);
+	});
+
+	it('lee como división la barra que sigue a un operando, no como apertura de regex', () => {
+		const source = ['const ratio = ancho / alto;', '// real'].join('\n');
+
+		expect(extractComments('a.ts', source, TYPESCRIPT).map(({ text }) => text)).toEqual(['// real']);
+	});
+
+	it('no cierra la regex con una barra que vive dentro de una clase de caracteres', () => {
+		const source = ['const barras = /[/]/;', '// real'].join('\n');
+
+		expect(extractComments('a.ts', source, TYPESCRIPT).map(({ text }) => text)).toEqual(['// real']);
+	});
+
+	it('sigue leyendo como comentario un marcador en posición de operando', () => {
+		// `const a = // …` deja la posición esperando un operando, pero ahí manda el comentario.
+		const source = ['const a =', '\t// explicación', '\t42;'].join('\n');
+
+		expect(extractComments('a.ts', source, TYPESCRIPT).map(({ text }) => text)).toEqual(['// explicación']);
+	});
+
+	it('no trata la barra como regex en un lenguaje que no las tiene', () => {
+		const source = ['.grilla { grid-area: 1 / 2; }', '// real'].join('\n');
+
+		expect(extractComments('a.scss', source, SYNTAX_BY_EXTENSION['.scss']).map(({ text }) => text)).toEqual([
+			'// real',
+		]);
+	});
+
+	it('cuenta las líneas de la misma forma con CRLF que con LF', () => {
+		const source = ['const a = 1;', '// segunda'].join('\r\n');
+
+		expect(extractComments('a.ts', source, TYPESCRIPT)).toEqual([
+			{ file: 'a.ts', line: 2, endLine: 2, kind: 'line', text: '// segunda' },
+		]);
+	});
+
 	it('devuelve vacío para un archivo sin comentarios', () => {
 		expect(extractComments('a.ts', 'export const answer = 42;\n', TYPESCRIPT)).toEqual([]);
 	});
