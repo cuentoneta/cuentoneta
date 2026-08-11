@@ -10,9 +10,7 @@ const moduleWithMixedExports = {
 };
 
 describe('collectSubstitutions', () => {
-	// El emisor sustituye por valor serializado, así que enrolar un escalar numérico haría que cualquier
-	// número homónimo del corpus —el número de secciones de otra obra, por caso— se emitiera como esa
-	// constante. El gate de frescura no lo atraparía: compara valores, y el binding vale lo mismo.
+	// La regresión que ningún gate atrapa: el porqué está en `collectSubstitutions`, junto al filtro.
 	it('leaves numeric exports out of the substitution table', async () => {
 		const entries = await collectSubstitutions(async () => moduleWithMixedExports, 'src/mocks/onoff/literary-work');
 
