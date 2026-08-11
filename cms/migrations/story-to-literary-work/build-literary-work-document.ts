@@ -192,8 +192,17 @@ function assertKeyed(items: unknown[] | undefined, field: string, storyId: strin
  * escribir un documento degradado: el repository construye el agregado con factories que validan, así
  * que un documento inválido fallaría recién al leerse, lejos de acá.
  */
-/** Lo que la obra no puede construirse sin ello: sin esto el documento nacería inválido. */
-function assertMigratable(story: StoryDocument): void {
+/** Una story que ya pasó las validaciones: title y slug dejan de ser opcionales para el llamador. */
+type MigratableStory = StoryDocument & { title: string; slug: { current: string } };
+
+/**
+ * Lo que la obra no puede construirse sin ello: sin esto el documento nacería inválido.
+ *
+ * Se declara como aserción de tipo y no como un `void`: al mover las guardas fuera del ensamblado,
+ * TypeScript dejaba de estrechar `title` y `slug` en el llamador y el documento se armaba sobre
+ * valores que el compilador seguía viendo opcionales.
+ */
+function assertMigratable(story: StoryDocument): asserts story is MigratableStory {
 	if (!story.title) {
 		throw new UnmigratableStoryError('La story no tiene título', story._id);
 	}

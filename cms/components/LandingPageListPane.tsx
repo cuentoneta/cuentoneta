@@ -58,12 +58,17 @@ function EmptyNotice() {
 function LandingPageRows({
 	rows,
 	activeId,
-	Link,
+	ChildLink,
 }: {
 	rows: LandingPageRow[];
 	activeId: string | null;
-	Link: ComponentType<{ childId: string; style?: CSSProperties; children: React.ReactNode }>;
+	ChildLink: ReturnType<typeof usePaneRouter>['ChildLink'];
 }) {
+	// ChildLink no declara `style` en sus props, pero reenvía el resto al ancla que termina renderizando.
+	// El reset tiene que ir sobre esa ancla: la decoración la dibuja ella, y ponerlo en un descendiente
+	// no la cancela.
+	const PlainChildLink = ChildLink as ComponentType<ComponentProps<typeof ChildLink> & { style?: CSSProperties }>;
+
 	// Referencia para clasificar filas: el config de la activa (máximo config <= semana actual). Toda fila con
 	// config mayor es una semana futura. Sin activa, se cae a la semana actual como referencia.
 	const activeConfig = rows.find((row) => row._id === activeId)?.config ?? buildWeekSlug(new Date());
@@ -74,9 +79,9 @@ function LandingPageRows({
 		const tone: RowTone = isActive ? 'positive' : isFuture ? 'primary' : 'default';
 		const badge = isActive ? 'Activa' : isFuture ? 'Futura' : null;
 		return (
-			<Link key={row._id} childId={row._id} style={{ textDecoration: 'none', color: 'inherit' }}>
+			<PlainChildLink key={row._id} childId={row._id} style={{ textDecoration: 'none', color: 'inherit' }}>
 				<LandingPageCard config={row.config} tone={tone} badge={badge} />
-			</Link>
+			</PlainChildLink>
 		);
 	});
 }
@@ -107,10 +112,6 @@ function LandingPageCard({ config, tone, badge }: { config: string; tone: RowTon
 export function LandingPageListPane() {
 	const client = useClient({ apiVersion: API_VERSION });
 	const { ChildLink, navigateIntent } = usePaneRouter();
-	// ChildLink no declara `style` en sus props, pero reenvía el resto al ancla que termina renderizando.
-	// El reset tiene que ir sobre esa ancla: la decoración la dibuja ella, y ponerlo en un descendiente
-	// no la cancela.
-	const PlainChildLink = ChildLink as ComponentType<ComponentProps<typeof ChildLink> & { style?: CSSProperties }>;
 	const [rows, setRows] = useState<LandingPageRow[] | null>(null);
 	const [activeId, setActiveId] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -157,7 +158,7 @@ export function LandingPageListPane() {
 					onClick={() => navigateIntent('create', { type: 'landingPage' })}
 				/>
 			</Box>
-			{rows.length === 0 ? <EmptyNotice /> : <LandingPageRows rows={rows} activeId={activeId} Link={PlainChildLink} />}
+			{rows.length === 0 ? <EmptyNotice /> : <LandingPageRows rows={rows} activeId={activeId} ChildLink={ChildLink} />}
 		</Stack>
 	);
 }
