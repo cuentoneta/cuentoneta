@@ -94,8 +94,20 @@ Donde la doctrina de arriba y las convenciones de La Cuentoneta no coincidan, ma
 - **El rationale del cambio va al commit, no al comentario.** Qué reemplaza, por qué se migró, qué contexto histórico lo explica: eso vive en el mensaje de commit y en la descripción del PR. Lo que sí va al comentario es el porqué que **sigue rigiendo hoy** — la restricción externa, el orden que importa, la sutileza de timing. La distinción es entre una razón vigente y la crónica de cómo se llegó a ella.
 - **Un comentario no cita un issue.** Las dos únicas excepciones —un `TODO` que nombra en su misma línea el issue abierto que lo destraba, y la justificación de una supresión de lint/TS— y la prohibición de citar un identificador de hallazgo de review están definidas en [`coding-agent-policies.md`](../../references/coding-agent-policies.md) (Sección 3), con hooks y gates que las verifican. Esta skill no reenuncia esa política: remite a ella.
 - **`// REASON:` junto a un `any` es obligatorio.** Lo exige [`CLAUDE.md`](../../../CLAUDE.md#restricciones-duras-hard-constraints). Ahí el comentario no es ruido: es la condición que habilita el tipo.
-- **No restatees una convención ya documentada.** Si el dato ya vive en `CLAUDE.md` o en una referencia de `.claude/references/`, referencialo en vez de repetirlo. Es el principio de los comentarios inter-módulo aplicado a la documentación del proyecto.
 - **Idioma:** el código y los identificadores van en inglés; los comentarios pueden ir en español.
+
+### Cuatro formas de ruido que este repo produce seguido
+
+Son casos del test del lector, pero con un giro propio: acá el comentario no reformula el código de al lado, reformula una **convención ya escrita en otro archivo**. El efecto es el mismo —cero información— y además se desincroniza cuando la convención cambia. Si el dato ya vive en `CLAUDE.md` o en una referencia de `.claude/references/`, referencialo en vez de repetirlo: es el principio de los comentarios inter-módulo aplicado a la documentación del proyecto.
+
+- **Restatear una convención ya documentada.** ❌ `// doble de test, nunca Mock*` · ❌ `// el token no lleva providedIn/factory`. La convención vive en `clean-architecture.md`.
+- **Navegación / estructura obvia.** ❌ `// la implementación HTTP vive en x.provider.ts` · ❌ `// API providers (patrón provideX)`. Los imports y los nombres de archivo ya lo muestran.
+- **Justificar una visibilidad que la convención ya fija.** ❌ `// public porque es la API imperativa` sobre un `input()`/`output()`/signal expuesta. Si el miembro **es** la API pública, su visibilidad ya la dicta `angular-components.md`; el modificador es autoexplicativo.
+- **Anotar un reemplazo canónico.** ❌ `// reemplaza ngOnDestroy` sobre un `effect((onCleanup) => …)`. El mapeo lifecycle hook → primitiva reactiva es la regla por defecto (`angular-components.md`).
+
+### Comentarios de sección
+
+Los de estilo `// Core` / `// Models` que **ya existen** en el repo se respetan donde están. No se agregan nuevos salvo que aporten navegación real en un archivo grande. Es la acotación local del anti-patrón de banners: la convención es no sumar, no barrer los viejos.
 
 ## Ejemplo trabajado
 

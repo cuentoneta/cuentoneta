@@ -132,7 +132,7 @@ Reglas no negociables. Una violación requiere justificación explícita.
 
 ### Comentarios
 
-Comentar el **porqué no obvio**, nunca el **qué**. No restatear convenciones ya documentadas en `.claude/references/`, ni el código/tipos/nombres. El rationale de un cambio (qué reemplaza, contexto histórico) va al **commit/PR**, no inline. Un comentario **no cita un issue**: las únicas excepciones son un `TODO` que nombra, en su misma línea, el issue **abierto** que lo destraba, y la justificación de una supresión de lint/TS. Detalle y ejemplos en [`coding-agent-policies.md`](.claude/references/coding-agent-policies.md) (Sección 3).
+Comentar el **porqué no obvio**, nunca el **qué**. No restatear convenciones ya documentadas en `.claude/references/`, ni el código/tipos/nombres. El rationale de un cambio (qué reemplaza, contexto histórico) va al **commit/PR**, no inline. Un comentario **no cita un issue**: las únicas excepciones son un `TODO` que nombra, en su misma línea, el issue **abierto** que lo destraba, y la justificación de una supresión de lint/TS. La **doctrina** —cuándo comentar, a qué nivel de detalle y las formas de ruido a dejar de producir— vive en la skill [`aposd-comments-style`](.claude/skills/aposd-comments-style/SKILL.md), que se activa en toda escritura de código; la **política de menciones** y su enforcement, en [`coding-agent-policies.md`](.claude/references/coding-agent-policies.md) (Sección 3). Para auditar los comentarios ya escritos, la skill [`aposd-comment-audit`](.claude/skills/aposd-comment-audit/SKILL.md).
 
 ### Arquitectura (resumen)
 
