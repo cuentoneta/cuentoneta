@@ -110,6 +110,11 @@ export type ModuleToEmit = {
 	table: SubstitutionTable;
 };
 
+/**
+ * La fuente del módulo generado, **sin formatear**: pasarla por Prettier con la config del repo es
+ * responsabilidad del llamador. Si no lo hace, `pretty-quick` la reescribe en el `pre-commit` y el
+ * archivo commiteado deja de ser byte a byte el que produjo la última corrida del generador.
+ */
 export function emitModule({
 	banner,
 	exportName,
