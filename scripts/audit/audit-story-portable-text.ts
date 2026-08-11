@@ -67,14 +67,10 @@ interface Finding {
 	blockKey: string;
 }
 
-function inspectBlock(block: CensusBlock, slug: string, findings: Finding[]): void {
-	const blockKey = block._key ?? '(sin _key)';
-	const report = (construction: string) => findings.push({ construction, slug, blockKey });
-
-	if (block._type !== 'block') {
-		report(`bloque _type="${block._type}"`);
-		return;
-	}
+// La forma del bloque —estilo, viñeta, anidamiento— se censa aparte del contenido: son tres
+// preguntas sobre la misma estructura, y juntarlas con el recorrido de marcas y texto hacía de
+// `inspectBlock` un cuerpo que ramificaba por encima del presupuesto de complejidad.
+function inspectStructure(block: CensusBlock, report: (construction: string) => void): void {
 	if (block.style && block.style !== SUPPORTED_STYLE) {
 		report(`style="${block.style}"`);
 	}
@@ -84,12 +80,27 @@ function inspectBlock(block: CensusBlock, slug: string, findings: Finding[]): vo
 	if (block.level !== undefined && block.level > 1) {
 		report(`lista anidada (level=${block.level})`);
 	}
+}
+
+function inspectMarkDefs(block: CensusBlock, report: (construction: string) => void): void {
 	for (const markDef of block.markDefs ?? []) {
 		if (markDef._type !== SUPPORTED_MARK_DEF) {
 			report(`markDef _type="${markDef._type}"`);
 		}
 		inspectHref(markDef.href, report);
 	}
+}
+
+function inspectBlock(block: CensusBlock, slug: string, findings: Finding[]): void {
+	const blockKey = block._key ?? '(sin _key)';
+	const report = (construction: string) => findings.push({ construction, slug, blockKey });
+
+	if (block._type !== 'block') {
+		report(`bloque _type="${block._type}"`);
+		return;
+	}
+	inspectStructure(block, report);
+	inspectMarkDefs(block, report);
 	inspectMarks(block, slug, findings);
 	inspectText(block, report);
 }
@@ -202,13 +213,13 @@ async function censusOfEpigraphs(scope: string): Promise<void> {
 		['epigraphs[].text', 'texts'],
 		['epigraphs[].reference', 'references'],
 	] as const) {
+		// El campo es un array de arrays —un epígrafe por elemento, cada uno con sus bloques—, así que
+		// se aplana antes de recorrer en vez de anidar tres bucles para llegar al bloque.
 		const findings: Finding[] = [];
-		for (const row of rows) {
-			for (const blocks of row[key] ?? []) {
-				for (const block of blocks ?? []) {
-					inspectBlock(block, row.slug, findings);
-				}
-			}
+		for (const { slug, block } of rows.flatMap((row) =>
+			(row[key] ?? []).flatMap((blocks) => (blocks ?? []).map((block) => ({ slug: row.slug, block }))),
+		)) {
+			inspectBlock(block, slug, findings);
 		}
 		reportFindings(`${label} (${rows.length} docs)`, findings);
 	}
