@@ -79,6 +79,7 @@ Cuando una decisión de diseño atraviesa varios archivos, documentala **una sol
 6. **Filtración de implementación** en comentarios de interfaz.
 7. **Ritmo comentario-por-línea**: alternar un comentario / una sentencia a lo largo de un cuerpo.
 8. **Comentarios de disculpa/incertidumbre** en código entregado: `// esto es medio hacky pero funciona`. O lo arreglás, o documentás la restricción que fuerza el tradeoff.
+9. **Censos**: `// las doce imágenes del corpus`, `// las siete queries que la usan`. Contar el contenido se pudre — ver [Cantidades](#cantidades-la-regla-sí-el-censo-no).
 
 ## Mantener los comentarios al modificar código
 
@@ -105,6 +106,24 @@ Son casos del test del lector, pero con un giro propio: acá el comentario no re
 - **Navegación / estructura obvia.** ❌ `// la implementación HTTP vive en x.provider.ts` · ❌ `// API providers (patrón provideX)`. Los imports y los nombres de archivo ya lo muestran.
 - **Justificar una visibilidad que la convención ya fija.** ❌ `// public porque es la API imperativa` sobre un `input()`/`output()`/signal expuesta. Si el miembro **es** la API pública, su visibilidad ya la dicta `angular-components.md`; el modificador es autoexplicativo.
 - **Anotar un reemplazo canónico.** ❌ `// reemplaza ngOnDestroy` sobre un `effect((onCleanup) => …)`. El mapeo lifecycle hook → primitiva reactiva es la regla por defecto (`angular-components.md`).
+
+### Cantidades: la regla sí, el censo no
+
+Un comentario **no declara cuántas cosas hay**. El conteo es justo el dato que cambia sin que nadie vuelva a mirar el comentario, y no hay gate que lo verifique: comparar prosa contra la realidad del código es lo que ningún check estático hace.
+
+No es "nunca un número". La distinción es entre **contar el contenido** y **enunciar una regla**:
+
+| ❌ Censo — se pudre                            | ✅ Regla — no se pudre                            |
+| ---------------------------------------------- | ------------------------------------------------- |
+| `// las doce imágenes del corpus`              | `// el parser exige exactamente cuatro segmentos` |
+| `// las ocho portadas comparten formato`       | `// la campaña ocupa un tamaño fijo por viewport` |
+| `// idéntica en las siete queries que la usan` | `// idéntica en todas las queries que la usan`    |
+
+"Cuatro" en la columna derecha es la especificación del parser de `_ref` de `@sanity/image-url`: no cambia porque el corpus crezca. "Doce" cambia, y cambia sin aviso.
+
+**Las enumeraciones tienen el mismo problema con un disfraz mejor.** Parecen auto-verificables —el número va seguido de la lista—, pero rotan de dos formas a la vez: el conteo y la composición, cada uno por su lado.
+
+Al corregir uno de estos, **no se reemplaza un número por otro**: eso deja el mismo comentario esperando la próxima incorporación. Lo que se saca es el conteo.
 
 ### Comentarios de sección
 
