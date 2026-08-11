@@ -6,7 +6,8 @@ export type OnoffImageAsset = {
 };
 
 // El parser de `_ref` de `@sanity/image-url` corta por guiones y exige exactamente cuatro segmentos
-// (`image-<assetId>-<ancho>x<alto>-<ext>`), así que el identificador no puede ser el slug: se camelCasea.
+// (`image-<assetId>-<ancho>x<alto>-<ext>`), así que ningún identificador puede llevar el slug crudo. Qué
+// alfabeto usa en su lugar lo decide cada entrada, y las que no son camelCase dicen por qué.
 function toCamelCase(slug: string): string {
 	return slug.replace(/-(.)/g, (_, letter: string) => letter.toUpperCase());
 }
@@ -18,7 +19,6 @@ function imageAsset(params: { assetId: string; dimensions: string; extension: st
 	});
 }
 
-// Las ocho portadas comparten directorio, medida y formato, así que el slug aparece una sola vez.
 function coverAsset(slug: string): OnoffImageAsset {
 	return imageAsset({
 		assetId: `${toCamelCase(slug)}Cover`,
@@ -124,7 +124,10 @@ export function localImagePathForImageSource(source: unknown): string {
 	return (reference !== undefined ? pathByRef.get(reference) : undefined) ?? '';
 }
 
-/** Toda referencia de imagen que aparezca en una estructura, sin importar a qué profundidad. */
+/**
+ * Toda referencia de imagen que aparezca en una estructura, a cualquier profundidad, reconocida por el
+ * prefijo `image-` de su `_ref`. No deduplica: una misma imagen usada por dos documentos sale dos veces.
+ */
 export function imageReferencesIn(value: unknown): string[] {
 	if (Array.isArray(value)) {
 		return value.flatMap(imageReferencesIn);

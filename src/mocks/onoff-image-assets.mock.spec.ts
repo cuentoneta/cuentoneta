@@ -38,9 +38,8 @@ describe('la tabla de assets de imagen del corpus', () => {
 		expect(existsSync(absolutePathOf(asset))).toBe(true);
 	});
 
-	// El parser de `_ref` corta por guiones y exige cuatro segmentos, así que un identificador con el slug
-	// crudo (`francois-onoff`) lanza en vez de producir una URL. Acá el builder va sin sustituir: es el
-	// único spec que ejercita el de verdad.
+	// El único spec que ejercita el builder real, sin sustituir: es lo que hace cumplir la restricción del
+	// parser que la tabla documenta.
 	it.each(assets)('builds a URL from the reference of "%s"', (_key, asset) => {
 		const builder = createImageUrlBuilder({ clientConfig: { projectId: 'p', dataset: 'd' } });
 
@@ -50,8 +49,7 @@ describe('la tabla de assets de imagen del corpus', () => {
 	});
 
 	// La clave y el identificador dicen lo mismo, y sin esto podrían dejar de decirlo sin que nada se
-	// entere. Los banners de campaña son la excepción declarada: llevan hexadecimal porque el Studio
-	// valida ese campo con un patrón que no admite otra cosa.
+	// entere. La rama hexadecimal cubre las entradas que la tabla exceptúa, con su porqué.
 	it.each(assets)('names the entry "%s" after its own asset identifier', (key, asset) => {
 		const { assetId } = refSegmentsOf(asset);
 
