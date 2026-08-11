@@ -57,9 +57,7 @@ Antes de escribir, leé las referencias relevantes para tener el contexto del pr
 
 ### Disciplina de comentarios
 
-- En los snippets, comentar solo el **porqué no obvio**, nunca el **qué**.
-- No restatear convenciones ya documentadas en `.claude/references/`, ni el código/tipos/nombres.
-- El rationale de un cambio (qué reemplaza, contexto histórico) va al commit/PR, no inline.
+Los comentarios de los snippets siguen la misma doctrina que el código: la canónica es la skill [`aposd-comments-style`](../skills/aposd-comments-style/SKILL.md), y la política de menciones a issues vive en [`coding-agent-policies.md`](../references/coding-agent-policies.md) (Sección 3). No se reenuncian acá para que no diverjan en la próxima enmienda.
 
 ### Cross-referencing
 

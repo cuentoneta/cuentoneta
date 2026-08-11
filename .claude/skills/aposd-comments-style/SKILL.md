@@ -67,7 +67,7 @@ Los métodos cortos y claros no necesitan ninguno de estos.
 
 ### Comentarios inter-módulo
 
-Cuando una decisión de diseño atraviesa varios archivos, documentala **una sola vez** en un lugar central y descubrible (p. ej., un `design-notes.md` o el encabezado del módulo principal) y referencíala desde los demás sitios ("Ver design-notes.md § Refresh de tokens"). Nunca pegues la misma explicación en varios archivos.
+Cuando una decisión de diseño atraviesa varios archivos, documentala **una sola vez** en un lugar central y descubrible —en este repo, `docs/` o una referencia de `.claude/references/`— y referencíala desde los demás sitios. Nunca pegues la misma explicación en varios archivos.
 
 ## Anti-patrones — nunca produzcas esto
 
@@ -94,6 +94,7 @@ Donde la doctrina de arriba y las convenciones de La Cuentoneta no coincidan, ma
 - **El rationale del cambio va al commit, no al comentario.** Qué reemplaza, por qué se migró, qué contexto histórico lo explica: eso vive en el mensaje de commit y en la descripción del PR. Lo que sí va al comentario es el porqué que **sigue rigiendo hoy** — la restricción externa, el orden que importa, la sutileza de timing. La distinción es entre una razón vigente y la crónica de cómo se llegó a ella.
 - **Un comentario no cita un issue.** Las dos únicas excepciones —un `TODO` que nombra en su misma línea el issue abierto que lo destraba, y la justificación de una supresión de lint/TS— y la prohibición de citar un identificador de hallazgo de review están definidas en [`coding-agent-policies.md`](../../references/coding-agent-policies.md) (Sección 3), con hooks y gates que las verifican. Esta skill no reenuncia esa política: remite a ella.
 - **`// REASON:` junto a un `any` es obligatorio.** Lo exige [`CLAUDE.md`](../../../CLAUDE.md#restricciones-duras-hard-constraints). Ahí el comentario no es ruido: es la condición que habilita el tipo.
+- **En TypeScript estricto, la firma suele agotar el contrato.** La regla general dice que en una interfaz pública la ausencia de comentario es el defecto; acá esa ausencia **no** es un defecto cuando el nombre y los tipos ya dicen todo. El comentario de interfaz se exige para lo que el tipo **no puede** decir: unidades, límites inclusivos/exclusivos, qué significa una colección vacía, efectos, precondiciones, invariantes, errores lanzados. Un docblock que repita la firma no salda esa deuda — la convierte en eco.
 - **Idioma:** el código y los identificadores van en inglés; los comentarios pueden ir en español.
 
 ### Cuatro formas de ruido que este repo produce seguido
