@@ -284,45 +284,59 @@ function isShebang(text: string, cursor: Cursor, prefix: string): boolean {
 	return prefix === '#' && cursor.line === 1 && text.startsWith('#!', cursor.index);
 }
 
+/** El comentario que abre en `cursor`, sea de bloque o de línea, o `null` si no abre ninguno. */
+function readCommentAt(
+	file: string,
+	text: string,
+	cursor: Cursor,
+	syntax: CommentSyntax,
+): { readonly comment: CommentRecord; readonly next: Cursor } | null {
+	const pair = openingBlockPair(text, cursor, syntax.blockPairs);
+	if (pair) {
+		return readBlockComment(file, text, cursor, pair);
+	}
+
+	const prefix = syntax.linePrefixes.find((candidate) => text.startsWith(candidate, cursor.index));
+	if (prefix && !isShebang(text, cursor, prefix)) {
+		return readLineComment(file, text, cursor);
+	}
+	return null;
+}
+
+/**
+ * Avanza sobre lo que no es comentario: el salto de línea que cuenta un renglón, y los literales que
+ * pueden esconder un marcador adentro. Cuando nada de eso aplica, avanza un carácter.
+ */
+function skipNonComment(text: string, cursor: Cursor, syntax: CommentSyntax): Cursor {
+	const char = text[cursor.index];
+
+	if (char === '\n') {
+		return { index: cursor.index + 1, line: cursor.line + 1 };
+	}
+	if (syntax.hasStringLiterals && STRING_DELIMITERS.has(char)) {
+		return skipStringLiteral(text, cursor);
+	}
+	if (syntax.hasRegexLiterals && char === '/' && startsRegexLiteral(text, cursor.index)) {
+		return skipRegexLiteral(text, cursor);
+	}
+	return { index: cursor.index + 1, line: cursor.line };
+}
+
 /** Los comentarios de un archivo, en orden de aparición. */
 export function extractComments(file: string, text: string, syntax: CommentSyntax): CommentRecord[] {
 	const comments: CommentRecord[] = [];
 	let cursor: Cursor = { index: 0, line: 1 };
 
+	// Leer un comentario, o avanzar sobre lo que no lo es. El orden importa: un `//` en posición de
+	// operando es un comentario, no la apertura de una expresión regular.
 	while (cursor.index < text.length) {
-		const char = text[cursor.index];
-
-		if (char === '\n') {
-			cursor = { index: cursor.index + 1, line: cursor.line + 1 };
+		const read = readCommentAt(file, text, cursor, syntax);
+		if (read) {
+			comments.push(read.comment);
+			cursor = read.next;
 			continue;
 		}
-		if (syntax.hasStringLiterals && STRING_DELIMITERS.has(char)) {
-			cursor = skipStringLiteral(text, cursor);
-			continue;
-		}
-
-		const pair = openingBlockPair(text, cursor, syntax.blockPairs);
-		if (pair) {
-			const { comment, next } = readBlockComment(file, text, cursor, pair);
-			comments.push(comment);
-			cursor = next;
-			continue;
-		}
-
-		const prefix = syntax.linePrefixes.find((candidate) => text.startsWith(candidate, cursor.index));
-		if (prefix && !isShebang(text, cursor, prefix)) {
-			const { comment, next } = readLineComment(file, text, cursor);
-			comments.push(comment);
-			cursor = next;
-			continue;
-		}
-
-		if (syntax.hasRegexLiterals && char === '/' && startsRegexLiteral(text, cursor.index)) {
-			cursor = skipRegexLiteral(text, cursor);
-			continue;
-		}
-
-		cursor = { index: cursor.index + 1, line: cursor.line };
+		cursor = skipNonComment(text, cursor, syntax);
 	}
 
 	return comments;
