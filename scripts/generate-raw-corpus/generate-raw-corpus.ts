@@ -1,3 +1,21 @@
+/**
+ * Regenera las fixtures raw del corpus de Onoff (`pnpm corpus:generate`) evaluando la query GROQ real
+ * sobre los documentos escritos a mano, para que el raw commiteado sea lo que la query devuelve y no lo
+ * que alguien creyó que devolvía.
+ *
+ * El trabajo está partido en módulos porque cada etapa falla distinto y se prueba distinto:
+ *
+ * - **loader** — levanta el bundler que hace legible el corpus. Falla por entorno, no por contenido.
+ * - **helpers** — la guarda previa sobre el dataset. Corta antes de escribir nada.
+ * - **table** — qué piezas escritas a mano tiene que seguir importando lo generado. Conoce el corpus.
+ * - **emitter** — cómo se escribe el módulo. No conoce el corpus: recibe un valor y una tabla.
+ *
+ * El corte entre `table` y `emitter` es el que más importa: la primera decide **qué** se sustituye y la
+ * segunda **cómo** se emite. Juntas, cualquier cambio de política de sustitución obligaría a tocar el
+ * emisor, que es la pieza que no debería saber que existe un corpus.
+ *
+ * Este archivo es el único que orquesta: declara los targets, evalúa y escribe.
+ */
 import { writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { evaluate, parse } from 'groq-js';
