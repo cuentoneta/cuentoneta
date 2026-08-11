@@ -79,7 +79,7 @@ Cuando una decisión de diseño atraviesa varios archivos, documentala **una sol
 6. **Filtración de implementación** en comentarios de interfaz.
 7. **Ritmo comentario-por-línea**: alternar un comentario / una sentencia a lo largo de un cuerpo.
 8. **Comentarios de disculpa/incertidumbre** en código entregado: `// esto es medio hacky pero funciona`. O lo arreglás, o documentás la restricción que fuerza el tradeoff.
-9. **Censos**: `// las doce imágenes del corpus`, `// las siete queries que la usan`. Contar el contenido se pudre — ver [Cantidades](#cantidades-la-regla-sí-el-censo-no).
+9. **Censos**: `// las doce imágenes del corpus`, `// las siete queries que la usan`. Contar el contenido queda obsoleto sin aviso — ver [Cantidades](#cantidades-la-regla-sí-el-censo-no).
 
 ## Mantener los comentarios al modificar código
 
@@ -113,7 +113,7 @@ Un comentario **no declara cuántas cosas hay**. El conteo es justo el dato que 
 
 No es "nunca un número". La distinción es entre **contar el contenido** y **enunciar una regla**:
 
-| ❌ Censo — se pudre                            | ✅ Regla — no se pudre                            |
+| ❌ Censo — caduca                              | ✅ Regla — no caduca                              |
 | ---------------------------------------------- | ------------------------------------------------- |
 | `// las doce imágenes del corpus`              | `// el parser exige exactamente cuatro segmentos` |
 | `// las ocho portadas comparten formato`       | `// la campaña ocupa un tamaño fijo por viewport` |
@@ -121,7 +121,7 @@ No es "nunca un número". La distinción es entre **contar el contenido** y **en
 
 "Cuatro" en la columna derecha es la especificación del parser de `_ref` de `@sanity/image-url`: no cambia porque el corpus crezca. "Doce" cambia, y cambia sin aviso.
 
-**Las enumeraciones tienen el mismo problema con un disfraz mejor.** Parecen auto-verificables —el número va seguido de la lista—, pero rotan de dos formas a la vez: el conteo y la composición, cada uno por su lado.
+**Las enumeraciones tienen el mismo problema con un disfraz mejor.** Parecen auto-verificables —el número va seguido de la lista—, pero se desactualizan de dos formas a la vez: el conteo y la composición, cada uno por su lado.
 
 Al corregir uno de estos, **no se reemplaza un número por otro**: eso deja el mismo comentario esperando la próxima incorporación. Lo que se saca es el conteo.
 
