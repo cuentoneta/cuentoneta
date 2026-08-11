@@ -1,8 +1,10 @@
+// Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del
+// corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { novelaRawTag, metaficcionRawTag, experimentalRawTag } from '../../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
-import lasDosAntorchasMdBody from './las-dos-antorchas.md?raw';
+import { experimentalRawTag, metaficcionRawTag, novelaRawTag } from '../../onoff-raw-tags.mock';
 import lasDosAntorchasEditorialNoteMd from './las-dos-antorchas.editorial-note.md?raw';
+import lasDosAntorchasMdBody from './las-dos-antorchas.md?raw';
 
 export const lasDosAntorchasRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'onoff-literary-work-las-dos-antorchas',
@@ -22,13 +24,5 @@ export const lasDosAntorchasRawLiteraryWork: NonNullable<LiteraryWorkBySlugQuery
 	mediaSources: [],
 	resources: [],
 	authors: [rawOnoffAuthor],
-	content: [
-		{
-			_key: 'section-1',
-			title: null,
-			epigraphs: [],
-			body: lasDosAntorchasMdBody,
-			readingTime: 8,
-		},
-	],
+	content: [{ _key: 'section-1', title: null, epigraphs: [], body: lasDosAntorchasMdBody, readingTime: 8 }],
 };

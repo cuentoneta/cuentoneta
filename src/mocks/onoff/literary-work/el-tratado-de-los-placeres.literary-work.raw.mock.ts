@@ -1,8 +1,10 @@
+// Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del
+// corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { ensayoRawTag, filosoficoRawTag, metaficcionRawTag } from '../../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
-import elTratadoDeLosPlaceresMdBody from './el-tratado-de-los-placeres.md?raw';
+import { ensayoRawTag, filosoficoRawTag, metaficcionRawTag } from '../../onoff-raw-tags.mock';
 import elTratadoDeLosPlaceresEditorialNoteMd from './el-tratado-de-los-placeres.editorial-note.md?raw';
+import elTratadoDeLosPlaceresMdBody from './el-tratado-de-los-placeres.md?raw';
 
 export const elTratadoDeLosPlaceresRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'onoff-literary-work-el-tratado-de-los-placeres',
@@ -22,13 +24,5 @@ export const elTratadoDeLosPlaceresRawLiteraryWork: NonNullable<LiteraryWorkBySl
 	mediaSources: [],
 	resources: [],
 	authors: [rawOnoffAuthor],
-	content: [
-		{
-			_key: 'section-1',
-			title: null,
-			epigraphs: [],
-			body: elTratadoDeLosPlaceresMdBody,
-			readingTime: 10,
-		},
-	],
+	content: [{ _key: 'section-1', title: null, epigraphs: [], body: elTratadoDeLosPlaceresMdBody, readingTime: 10 }],
 };

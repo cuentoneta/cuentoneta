@@ -2,10 +2,11 @@
 
 > **Datos ficticios.** Autor y obras pertenecen al personaje "Onoff" del film _Una pura formalità_ (G. Tornatore, 1994). Ninguna de estas obras existe. Las citas entrecomilladas provienen de los diálogos del film; el resto (fechas, editorial, sinopsis) es invención coherente con su universo.
 
-Este directorio (`src/mocks/onoff/`) es la **única ubicación** del corpus de las 8 obras de François Onoff, accesible por frontend y backend vía el alias `@mocks/onoff`. Desde [#1981](https://github.com/cuentoneta/cuentoneta/issues/1981) conviven acá dos capas del mismo elenco:
+Este directorio (`src/mocks/onoff/`) es la **única ubicación** del corpus de las 8 obras de François Onoff, accesible por frontend y backend vía el alias `@mocks/onoff`. Desde [#1981](https://github.com/cuentoneta/cuentoneta/issues/1981) conviven acá tres capas del mismo elenco:
 
+- **Documentos** (los consume `groq-js`): `<slug>.<entidad>.document.ts` — lo que Sanity guarda tal cual. Para las entidades que entran a la generación, es la **única capa escrita a mano**.
+- **Fixtures raw** (las consume el backend): `<slug>.<entidad>.raw.mock.ts`, tipadas contra los `*QueryResult` de `@sanity-types` (los tipos generados de Sanity, promovidos al kernel). Para `literary-work/` y `collection/` se **generan**, no se editan (ver [Las tres capas](#las-tres-capas)).
 - **Mocks de dominio** (los consume el frontend): `<slug>.<entidad>.mock.ts`.
-- **Fixtures raw** (shape crudo de Sanity, los consume el backend): `<slug>.<entidad>.raw.mock.ts`, tipados contra los `*QueryResult` de `@sanity-types` (los tipos generados de Sanity, promovidos al kernel).
 
 ## Cómo está organizado
 
@@ -14,9 +15,9 @@ Las piezas se agrupan **por entidad**, una carpeta cada una. Los mocks y fixture
 ```
 onoff/
 ├── story/          <slug>.story.mock.ts · <slug>.story.raw.mock.ts
-├── literary-work/  <slug>.literary-work.mock.ts · <slug>.literary-work.raw.mock.ts
-│                   + su prosa: <slug>.md · <slug>.editorial-note.md · <slug>.epigraph.ts
-├── collection/     <slug>.collection.raw.mock.ts · <slug>.collection.md · las proyecciones
+├── literary-work/  <slug>.literary-work.document.ts · <slug>.literary-work.raw.mock.ts (generado)
+│                   <slug>.literary-work.mock.ts + su prosa: <slug>.md · <slug>.editorial-note.md · <slug>.epigraph.ts
+├── collection/     <slug>.collection.document.ts · <slug>.collection.raw.mock.ts (generado) · <slug>.collection.md
 ├── storylist/      <slug>.storylist.raw.mock.ts
 ├── author/         francois-onoff.biography.md · author.document.projection.ts
 ├── media/          <slug>.media.ts · <slug>.media.mock.ts · <slug>.media.raw.mock.ts
@@ -28,26 +29,52 @@ onoff/
 ## Las tres capas
 
 ```
-documentos  →  (query GROQ)  →  raw  →  (ACL del repository)  →  dominio
+documentos (a mano)  →  (groq-js, query real)  →  raw (generado)  →  (ACL del repository)  →  dominio
 ```
 
-- **Documentos** (`<entidad>.document.projection.ts`): lo que vive en el content lake. Los consume un test que evalúa una query con `groq-js` sobre `onoffDatasetMock`.
-- **Raw** (`<slug>.<entidad>.raw.mock.ts`): el resultado de la query, tipado contra los `*QueryResult`. Lo consumen los specs de repository y mapper.
+- **Documentos** (`<slug>.<entidad>.document.ts`): lo que vive en el content lake. Es la única capa escrita a mano **de `literary-work/` y `collection/`**, que son las que entran a la generación; el raw de `story/` y `storylist/` sigue siendo a mano, por lo que explica [Qué queda fuera de la generación](#qué-queda-fuera-de-la-generación).
+- **Raw** (`<slug>.<entidad>.raw.mock.ts`): el resultado de evaluar la query GROQ real sobre los documentos, tipado contra los `*QueryResult`. Para `literary-work/` y `collection/` se **genera** con `pnpm corpus:generate`; no se edita a mano. Lo consumen los specs de repository y mapper.
 - **Dominio** (`<slug>.<entidad>.mock.ts`): el agregado construido por su factory. Lo consume el frontend.
 
-**Los documentos se derivan del raw, no al revés**, aunque el flujo real vaya en la dirección opuesta. El raw es lo que ya existía escrito, así que invertir la proyección de la query evita duplicar contenido: es el mismo criterio con el que el dominio se deriva del raw. Invertir es desanidar lo que la query aplana —el slug vuelve a ser objeto, las etiquetas vuelven a ser referencias— y descartar lo que la query agrega, como el conteo de secciones.
+Antes de esta capa de documentos el flujo corría al revés: el raw se escribía a mano y los documentos se derivaban invirtiendo a mano la proyección de la query. El sentido actual evita esa inversión manual: la query real, evaluada con `groq-js`, es la única fuente de verdad de qué shape produce.
 
-**Qué impide que la inversión mienta:** `onoff-documents.mock.spec.ts` vuelve a aplicar las queries reales sobre los documentos derivados y compara contra el canon crudo. Si el resultado no lo reprodujera, los documentos estarían afirmando un content lake que no existe.
+### El generador (`pnpm corpus:generate`)
 
-**Un documento faltante no falla.** Si una referencia apunta a un `_id` que no está en el dataset, `groq-js` la resuelve a `null` en silencio — no lanza. Por eso el dataset se pide entero (`onoffDatasetMock`) en vez de armar subconjuntos por caso, y por eso cada proyección emite también los documentos de soporte que sus referencias necesitan, incluido el asset de audio.
+`pnpm corpus:generate` → `node --import tsx ./scripts/generate-raw-corpus.ts`. Por cada obra y cada colección, evalúa la query GROQ real (`literaryWorkBySlugQuery`, `collectionBySlugQuery`, y `collectionsQuery` para el listado) con `groq-js` sobre `onoffDatasetMock` — el dataset plano de todos los documentos del corpus — y escribe el resultado en su fixture `*.raw.mock.ts`.
 
-**`document/` no es una entidad**, como `media/`: aloja la factory de campos de sistema y los documentos que varias entidades referencian (etiquetas, nacionalidades, tipos de recurso).
+**Archivos generados (11):**
 
-**Las carpetas no son independientes entre sí.** `literary-work/<slug>.literary-work.mock.ts` importa a su hermano de `story/`: la obra deriva de la story todo lo que las dos caras comparten —metadata, autor, portada, recursos y datos de publicación—, y declara por su cuenta solo lo que es propio de `LiteraryWork`. Esa relación existía antes, escondida por vivir las dos caras en el mismo archivo; separarlas la volvió visible en vez de crearla.
+- Las 8 `literary-work/<slug>.literary-work.raw.mock.ts`.
+- Las 2 `collection/<slug>.collection.raw.mock.ts`.
+- `collection/collection-teasers.raw.mock.ts` (resultado de `collectionsQuery`, el listado).
 
-**`media/` no es una entidad**, es la excepción: la story y la obra literaria del mismo slug consumen _el mismo_ objeto de medios, y duplicarlo rompería la invariante de que ambas caras declaren exactamente los mismos. Ninguna de las dos puede reclamarlo, así que vive aparte. Es el criterio para la próxima pieza que se sume: si más de una entidad la consume y duplicarla rompería una invariante, va a carpeta propia; si solo la usa una, va con esa entidad.
+Cada uno abre con un banner de dos líneas ("Este archivo lo escribe `pnpm corpus:generate`... No se edita a mano: cualquier cambio se pierde en la próxima corrida.") y está marcado `linguist-generated=true` en `.gitattributes` — enumerados uno por uno, no por glob `*.raw.mock.ts`, porque las fixtures de `story/` y `storylist/` se siguen escribiendo a mano.
 
-Antes de #1981 los fixtures raw vivían en `src/api/_mocks/onoff/`, separados por capa; se unificaron acá (el kernel vive en top-level `src/`, a la par de `src/app` y `src/api`, así que ambas capas lo consumen sin acoplarse entre sí).
+**Qué impide que la generación mienta:** `src/mocks/onoff-documents.mock.spec.ts` vuelve a evaluar las mismas queries sobre los mismos documentos y compara **valores** (no bytes: el formato lo fija Prettier dentro del generador, así que un desvío de formato no es una desincronización, pero una diferencia de valor sí) contra las fixtures crudas commiteadas. Este spec corre dentro de `pnpm test` (gate `test`, ya required) — **no se agregó ningún gate de CI nuevo**.
+
+**Un documento faltante no falla en silencio.** Si una referencia apunta a un `_id` que no está en el dataset, `groq-js` la resuelve a `null` sin lanzar — la fixture generada afirmaría ese `null`. El generador lo evita evaluando por adelantado (`scripts/generate-raw-corpus.helpers.ts`): recorre el dataset entero y exige que todo `_ref` resuelva a un documento, y **corta antes de generar nada** si encuentra una referencia colgada. Excluye los assets de imagen a propósito: ninguna query los dereferencia (proyectan el objeto entero y la URL la arma `urlFor` al renderizar, fuera de GROQ); el único `->` sobre un asset en las siete queries es `audioFile.asset->url`. Exigirles documento a las doce imágenes del corpus obligaría a inventar contenido que nada lee.
+
+**El generador carga el corpus con Vite programático, no con `tsx`** (`scripts/generate-raw-corpus.loader.ts`): los documentos importan prosa con el sufijo `?raw`, que solo resuelve un bundler. Usa `resolve.tsconfigPaths` nativo de Vite y no el plugin `vite-tsconfig-paths` — el mismo motivo que documenta `vitest.config.ts`: el plugin recorre las copias del repo bajo `.claude/worktrees/` y aborta si el tsconfig de alguna no le parsea.
+
+**El emisor preserva los imports de prosa** (`scripts/generate-raw-corpus.emitter.ts`): su tabla de sustitución se indexa por el **valor serializado**, no por el tipo, así que una misma pasada reconoce tanto la prosa de un `.md` como el objeto entero de una etiqueta o del autor y los reemplaza por su import en vez de inlinearlos. Sin eso, cada obra generada duplicaría ~3 KB de prosa en git.
+
+### Qué queda fuera de la generación
+
+Hay dos clases de exclusión, y no son lo mismo:
+
+| Qué                                           | Por qué queda afuera                                                                                                           | Clase                          |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------ |
+| `story` (8 obras + teasers + nav teasers)     | Derivable — hay query top-level que las devuelve — pero el agregado está en baja                                               | Fuera por **scope**            |
+| `storylist`                                   | Ídem: derivable, pero el agregado está en baja                                                                                 | Fuera por **scope**            |
+| `onoff-raw-tags.mock.ts` (`RawTag`)           | Sub-proyección repetida en 7 queries; ninguna la devuelve top-level                                                            | Fuera por **construcción**     |
+| `onoff-raw-author.mock.ts` (`rawOnoffAuthor`) | `NonNullable<StoryBySlugQueryResult>['author']`; ninguna query lo devuelve top-level                                           | Fuera por **construcción**     |
+| `ContentCampaign`                             | Sub-proyección de `landingPageContentQuery` (campo `campaigns`); exigiría montar una capa de documentos de landing page entera | Caso aparte, sin epic asignado |
+
+**Fuera por scope:** existe una query top-level que las devuelve, así que serían derivables con el mismo generador — pero construirles una capa de documentos sería trabajo sobre agregados que están en baja, y no vale la pena.
+
+**Fuera por construcción:** son sub-proyecciones que ninguna query devuelve como resultado top-level, así que ningún generador —presente o futuro— podría apuntarlas como target apuntando una query real. Por eso `document/support-documents.projection.ts` sigue yendo en la dirección **inversa** (documento ← raw) para tags, nacionalidad y tipo de recurso: son de esta segunda clase, y esa inversión manual es la única forma de tenerlos.
+
+**`ContentCampaign`** no está en baja, pero tampoco es de ninguna de las dos clases anteriores: es sub-proyección de una query que hoy no tiene capa de documentos propia (`landingPageContentQuery`). Generarla exige primero esa capa, que queda para un issue propio.
 
 > Las fichas Markdown por obra (metadata + reseña) que vivían en `tools/story-mocks/onoff/` se retiraron en #1653: los mocks TS de este directorio son ahora la fuente.
 
@@ -64,14 +91,14 @@ Generado en [#1650](https://github.com/cuentoneta/cuentoneta/issues/1650); fuent
 
 Mismo elenco, coexistiendo con el corpus `Story`. Diferencias de origen del contenido:
 
-- **Cuerpo (`bodyHtml`):** vive como Markdown plano en `literary-work/<slug>.md` (solo el cuerpo, sin metadata) y se importa con `?raw` de Vite. El mock corre `markdownToSanitizedHtml` (`@utils/markdown-pipeline.utils`) al cargar el módulo para obtener el `SanitizedHtml`; el `.md` es la fuente literal editable.
+- **Cuerpo (`bodyHtml`):** vive como Markdown plano en `literary-work/<slug>.md` (solo el cuerpo, sin metadata) y se importa con `?raw` de Vite. El mock corre `markdownToSanitizedHtml` (`@utils/markdown-pipeline.utils`) al cargar el módulo para obtener el `SanitizedHtml`; el `.md` es la fuente literal editable, y el documento (`<slug>.literary-work.document.ts`) importa el mismo archivo.
 - **`readingTime`:** se **deriva** del propio cuerpo (`deriveSectionReadingTime`); `totalReadingTime` lo suma la factory. No se hardcodea.
 - **Metadata** (título, slug, portada, autor, tags, publicación): literales TS en el mock, no en el `.md`.
 - **Secciones:** una por obra (`position: 0`). La mayoría es prosa plana (sin `title` ni `epigraphs`), pero un subconjunto — `el-odio`, `el-palacio-de-las-nueve-fronteras`, `geometria` — lleva `title` (`SectionTitle`) + `epigraphs` para darle sustancia a los selectores por capacidad del canon (`onoffLiteraryWorksWithSectionTitles` / `onoffLiteraryWorksWithEpigraphs` en `onoff-literary-works.mock.ts`).
 - **`epigraphs`:** cada obra que lleva uno lo declara como export nombrado (`<slugCamelCase>EpigraphMock`) y lo consume desde su propia sección, para que specs y stories puedan tomar un epígrafe concreto sin hand-authorear prosa. El conjunto de todos vive en `../onoff-literary-works.mock.ts` → `onoffLiteraryWorkEpigraphsMock`, **derivado** del corpus (no una lista en paralelo): quien necesita el shape `{ text, reference? }` (`AttributedText`) y no la obra que lo contiene lo toma de ahí.
-- **Fuente compartida del título + epígrafe:** el título de sección y los textos crudos del epígrafe (el Markdown de `text` y `reference`) viven en un módulo neutral `literary-work/<slug>.epigraph.ts` (solo strings, sin dependencias). Del mismo módulo tiran **tanto** el mock de dominio (envolviendo los strings con `createSectionTitle` / `createAttributedText` + `markdownToSanitizedHtml`) **como** su fixture raw homónimo (que los transporta crudos). Así ambas capas comparten una única fuente literal y no pueden divergir ([#2016](https://github.com/cuentoneta/cuentoneta/issues/2016)).
-- **`mediaSources`:** `geometria` es la única obra con multimedia, y cubre los cuatro tipos que el dominio modela más un `pdfLink`, que el schema admite y el ACL descarta — el caso real de tipo no mapeado. Sus textos de descripción viven en el módulo neutral `media/<slug>.media.ts` (solo strings, misma convención que `<slug>.epigraph.ts`), y el array crudo se declara una vez en `media/<slug>.media.raw.mock.ts` (`geometriaRawMediaSources`) del que tiran las dos caras: las dos proyecciones resuelven `audioUrl` igual, así que comparten fixture en vez de duplicarlo. Sostiene los selectores `onoffRawLiteraryWorksWithMediaSources`, `onoffLiteraryWorksWithMediaSources` y `onoffLiteraryWorkTeasersWithMediaSources`.
-- **`editorialNote`:** vive como Markdown plano en `literary-work/<slug>.editorial-note.md`, importado con `?raw`, la misma convención que `<slug>.md` para el cuerpo. Su prosa está **derivada del `summary` del mock de `Story` homónimo** (no hand-authoreada). `neron` es la **excepción deliberada**: no tiene `literary-work/<slug>.editorial-note.md`, su mock de dominio omite el campo y su fixture raw lo transporta en `null` (la clave es obligatoria en el tipo generado) — es el fixture que sostiene el selector `onoffLiteraryWorksWithoutEditorialNote` y ejercita, extremo a extremo, la rama de una obra sin nota.
+- **Fuente compartida del título + epígrafe:** el título de sección y los textos crudos del epígrafe (el Markdown de `text` y `reference`) viven en un módulo neutral `literary-work/<slug>.epigraph.ts` (solo strings, sin dependencias). Del mismo módulo tiran el mock de dominio (envolviendo los strings con `createSectionTitle` / `createAttributedText` + `markdownToSanitizedHtml`), el documento (que los transporta crudos) y, por consiguiente, la fixture raw generada, que hereda el mismo import gracias al emisor del generador (ver [Las tres capas](#las-tres-capas)). Así las tres capas comparten una única fuente literal y no pueden divergir ([#2016](https://github.com/cuentoneta/cuentoneta/issues/2016)).
+- **`mediaSources`:** `geometria` es la única obra con multimedia, y cubre los cuatro tipos que el dominio modela más un `pdfLink`, que el schema admite y el ACL descarta — el caso real de tipo no mapeado. Sus textos de descripción viven en el módulo neutral `media/<slug>.media.ts` (solo strings, misma convención que `<slug>.epigraph.ts`). El array crudo (`media/<slug>.media.raw.mock.ts`, export `geometriaRawMediaSources`) ya no se declara aparte: se **deriva** de la fixture generada de la cara de obra literaria (`geometriaRawLiteraryWork.mediaSources`), porque las dos proyecciones resuelven `audioUrl` igual y declararlas por separado las dejaría desincronizar sin aviso. Sostiene los selectores `onoffRawLiteraryWorksWithMediaSources`, `onoffLiteraryWorksWithMediaSources` y `onoffLiteraryWorkTeasersWithMediaSources`.
+- **`editorialNote`:** vive como Markdown plano en `literary-work/<slug>.editorial-note.md`, importado con `?raw`, la misma convención que `<slug>.md` para el cuerpo. Su prosa está **derivada del `summary` del mock de `Story` homónimo** (no hand-authoreada). `neron` es la **excepción deliberada**: no tiene `literary-work/<slug>.editorial-note.md`, su documento y su mock de dominio omiten el campo (`null`) — es el fixture que sostiene el selector `onoffLiteraryWorksWithoutEditorialNote` y ejercita, extremo a extremo, la rama de una obra sin nota.
 
 Archivos:
 
@@ -82,6 +109,8 @@ Archivos:
 ## Corpus de dominio: `Author`
 
 La biografía de François Onoff vive como Markdown plano en un único archivo, `author/francois-onoff.biography.md` (solo la prosa, sin metadata), importado con `?raw` — misma convención que `<slug>.editorial-note.md` para `LiteraryWork`. `../onoff-raw-author.mock.ts` (`rawOnoffAuthor.biography`) transporta ese Markdown crudo; `../author.mock.ts` deriva el `SanitizedHtml` corriendo `markdownToSanitizedHtml(createMarkdown(...))` sobre la misma fuente. Es el único archivo de biografía del corpus: el elenco modela un solo autor (Onoff), así que no hay un `<slug>.biography.md` por obra. `rawOnoffAuthorTeaser` no declara `biography`, en paridad con `AuthorTeaser` de dominio.
+
+`rawOnoffAuthor` se sigue escribiendo a mano (ver [Qué queda fuera de la generación](#qué-queda-fuera-de-la-generación)): ninguna query lo devuelve top-level, así que no hay target posible para el generador. `author/author.document.projection.ts` deriva el **documento** del autor a partir de ese raw — la dirección inversa a la de `literary-work/` y `collection/`.
 
 ## Corpus de dominio: `Collection`
 
@@ -95,24 +124,26 @@ Corpus mínimo de dos colecciones de `LiteraryWork`, una por cada rama de `image
 - **Teasers derivados:** `toTeaser` (vacía `literaryWorks`) → `onoffCollectionTeasersMock: CollectionTeaser[]`.
 - **Nada se escribe a mano:** las obras (`literaryWorks`), los tags y las tres portadas de la rama `sample` se **derivan** del canon existente — `onoffLiteraryWorkTeasersMock` y `onoff-tags.mock.ts` — en vez de hardcodearse.
 
-## Corpus raw: `Story` (shape de Sanity)
+## Corpus raw: `Story` / `Storylist` (shape de Sanity, escrito a mano)
 
-Contraparte cruda del corpus de dominio `Story` — lo que devuelven las queries GROQ antes del ACL/mapper. La consume el backend (`src/api`).
+Contraparte cruda del corpus de dominio `Story` — lo que devuelven las queries GROQ antes del ACL/mapper. La consume el backend (`src/api`). A diferencia de `literary-work/` y `collection/`, **no** hay capa de documentos para `Story`/`Storylist` (ver [Qué queda fuera de la generación](#qué-queda-fuera-de-la-generación)): estas fixtures se siguen escribiendo a mano.
 
 - **Story raw:** `story/<slug>.story.raw.mock.ts`, export `<slugCamelCase>RawStory: NonNullable<StoryBySlugQueryResult>`.
 - **Storylists raw:** `storylist/<slug>.storylist.raw.mock.ts` (p. ej. `geometrias-del-desvelo`).
-- **Colecciones raw:** `collection/<slug>.collection.raw.mock.ts`, una por archivo. Sus obras no se escriben: las proyecta del canon crudo `collection/raw-collection.projection.ts`, que las busca por slug y falla al importarse si alguna no existe. El agregador `../onoff-raw-collections.mock.ts` las consolida y deriva de ahí los teasers, los selectores por capacidad y los escenarios de borde.
-- **Agregadores:** `../onoff-raw-stories.mock.ts` (`onoffRawStoriesMock`, teasers `<slugCamelCase>RawTeaser`, `onoffRawTeasersMock`, `onoffRawNavTeasersMock`); `../onoff-raw-author.mock.ts` (`rawOnoffAuthor`, `rawOnoffAuthorTeaser`).
+- **Agregadores:** `../onoff-raw-stories.mock.ts` (`onoffRawStoriesMock`, teasers `<slugCamelCase>RawTeaser`, `onoffRawTeasersMock`, `onoffRawNavTeasersMock`); `../onoff-raw-author.mock.ts` (`rawOnoffAuthor`, `rawOnoffAuthorTeaser`); `../onoff-raw-tags.mock.ts` (`onoffRawTagsMock`).
 
-## Corpus raw: `LiteraryWork` (#1981)
+## Corpus raw: `Collection` (generado)
 
-Contraparte cruda del corpus de dominio `LiteraryWork`, tipada contra `NonNullable<LiteraryWorkBySlugQueryResult>`. Alimenta los tests de la capa de datos de `LiteraryWork` (mapper/repository/service).
+`../onoff-raw-collections.mock.ts` consolida las fixtures generadas de `collection/<slug>.collection.raw.mock.ts` (`onoffRawCollectionsMock`) y el listado generado `collection/collection-teasers.raw.mock.ts` (`onoffRawCollectionTeasersMock`, resultado real de `collectionsQuery`, ya ordenado como en producción) y deriva de ahí los selectores por capacidad y los escenarios de borde por `spread` sobre el canon generado.
 
-- **LiteraryWork raw:** `literary-work/<slug>.literary-work.raw.mock.ts`, export `<slugCamelCase>RawLiteraryWork`. Mono-sección; el `content[0].body` se importa desde el mismo `<slug>.md?raw` que usa el mock de dominio (sin duplicar prosa); la metadata espeja el mock de dominio homónimo. `editorialNote` sigue la misma regla: importa el mismo `<slug>.editorial-note.md?raw` que el mock de dominio (ausente en `neron`). El subconjunto enriquecido (`el-odio`, `el-palacio-de-las-nueve-fronteras`, `geometria`) trae además, en su `content[0]`, el `title` de sección y los `epigraphs` crudos tirados del mismo módulo neutral `<slug>.epigraph.ts` que consume el mock de dominio (ver §_Corpus de dominio: `LiteraryWork`_); el resto va con `title: null` / `epigraphs: []`.
+## Corpus raw: `LiteraryWork` (generado, #1981)
+
+Contraparte cruda del corpus de dominio `LiteraryWork`, tipada contra `NonNullable<LiteraryWorkBySlugQueryResult>`. Alimenta los tests de la capa de datos de `LiteraryWork` (mapper/repository/service). Cada `literary-work/<slug>.literary-work.raw.mock.ts` lo escribe `pnpm corpus:generate` evaluando `literaryWorkBySlugQuery` sobre `literary-work/<slug>.literary-work.document.ts` (ver [Las tres capas](#las-tres-capas)) — no se edita a mano.
+
 - **Agregador:** `../onoff-raw-literary-works.mock.ts` → `onoffRawLiteraryWorksMock` (las 8, en el mismo orden que `onoffLiteraryWorksMock`).
 - **Selector por capacidad:** `onoffRawLiteraryWorksWithEpigraphs` (contraparte cruda de `onoffLiteraryWorksWithEpigraphs`), derivado por predicado — las obras crudas con epígrafes, para ejercitar el mapeo raw→dominio del epígrafe sin conocer un slug concreto.
-- **Escenarios de borde** (overrides `{ ...base, … }` sobre las obras canónicas), para ejercitar el mapper y la materialización sin depender del contenido base:
-  - `multiSectionRawLiteraryWork` — obra multi-sección (`sectionCount > 1`).
+- **Escenarios de borde** (overrides `{ ...base, … }` sobre las obras canónicas generadas), para ejercitar el mapper y la materialización sin depender del contenido base:
+  - `multiSectionRawLiteraryWork` — obra multi-sección (`sectionCount > 1`). Los strings de su segunda sección viven en `literary-work/el-palacio-de-las-nueve-fronteras.multi-section.ts`, compartidos con el escenario homónimo de la capa de documentos (`onoff-documents.mock.ts`), para que las dos no puedan divergir.
   - `unmaterializedRawLiteraryWork` — `totalReadingTime` y `content[].readingTime` en `null` (ejercita el fallback puro de lectura del repository y el backfill, que es el único que persiste).
 - **Autor raw:** `rawOnoffAuthor` (reusado del corpus raw de Story, estructuralmente idéntico).
 

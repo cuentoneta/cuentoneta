@@ -1,47 +1,49 @@
-// Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del
-// corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
-import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
-import { cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag } from '../../onoff-raw-tags.mock';
-import {
-	geometriaAudioDescription,
-	geometriaPdfDescription,
-	geometriaSpaceDescription,
-	geometriaSpotifyDescription,
-	geometriaYoutubeDescription,
-} from '../media/geometria.media';
+import type { LiteraryWork } from '@sanity-types';
 import geometriaEditorialNoteMd from './geometria.editorial-note.md?raw';
 import { geometriaEpigraphReference, geometriaEpigraphText, geometriaSectionTitle } from './geometria.epigraph';
 import geometriaMdBody from './geometria.md?raw';
 
-export const geometriaRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
+export const geometriaLiteraryWorkDocument: LiteraryWork = {
 	_id: 'onoff-literary-work-geometria',
-	slug: 'geometria',
+	_createdAt: '1974-06-12T00:00:00Z',
+	_updatedAt: '1974-06-12T00:00:00Z',
+	_rev: 'rev-onoff-literary-work-geometria',
+	_type: 'literaryWork',
 	title: 'Geometría',
+	slug: { _type: 'slug', current: 'geometria' },
+	authors: [{ _key: 'author_1', _type: 'reference', _ref: 'author_1' }],
 	coverImage: {
 		_type: 'image',
 		asset: { _type: 'reference', _ref: 'image-9e1eab984fbe94e19101c7aa4fc2e99a88f71736-236x328-png' },
 	},
+	content: [
+		{
+			_type: 'section',
+			_key: 'section-1',
+			title: geometriaSectionTitle,
+			epigraphs: [
+				{ _type: 'epigraph', _key: 'epigraph-0', text: geometriaEpigraphText, reference: geometriaEpigraphReference },
+			],
+			body: geometriaMdBody,
+			readingTime: 7,
+		},
+	],
 	editorialNote: geometriaEditorialNoteMd,
-	badLanguage: false,
-	originalPublication: 'Éditions du Méridien (1974)',
-	publishedAt: '1974-01-01T00:00:00Z',
 	totalReadingTime: 7,
-	sectionCount: 1,
-	tags: [cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag],
 	mediaSources: [
 		{
 			_key: 'geometria-audio',
 			_type: 'audioRecording',
 			title: 'Lectura de "Geometría" por su autor',
-			description: geometriaAudioDescription,
+			description: 'Grabación casera, 1974.',
 			url: 'https://cdn.example.org/onoff/geometria.ogg',
 		},
 		{
 			_key: 'geometria-space',
 			_type: 'spaceRecording',
 			title: 'Conversación sobre el insomnio y la medida del tiempo',
-			description: geometriaSpaceDescription,
+			description:
+				'Espacio grabado con lectores de Onoff, a partir del *cuaderno de 1971* y de la [edición facsimilar](https://cdn.example.org/onoff/geometria.pdf).',
 			audioFile: { _type: 'file', asset: { _type: 'reference', _ref: 'file-geometria-space-ogg' } },
 			hostName: 'Biblioteca del Méridien',
 			hostAvatar: {
@@ -50,39 +52,36 @@ export const geometriaRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult
 			},
 			date: '1974-06-12',
 			duration: '48:12',
-			audioUrl: 'https://cdn.example.org/onoff/geometria-space.ogg',
 		},
 		{
 			_key: 'geometria-spotify',
 			_type: 'spotifyPodcastEpisode',
 			title: 'Episodio dedicado a "Geometría"',
-			description: geometriaSpotifyDescription,
+			description: 'Análisis de la obra en formato **podcast**.',
 			url: 'https://open.spotify.com/embed/episode/geometria',
 		},
 		{
 			_key: 'geometria-youtube',
 			_type: 'youTubeVideo',
 			title: 'Video ensayo sobre las coordenadas del desvelo',
-			description: geometriaYoutubeDescription,
+			description: 'Ensayo audiovisual sobre la obra.',
 			videoId: 'geometriaVideoId',
 		},
 		{
 			_key: 'geometria-pdf',
 			_type: 'pdfLink',
 			title: 'Facsímil de la primera edición',
-			description: geometriaPdfDescription,
+			description: 'Escaneo de la edición de 1974.',
 			url: 'https://cdn.example.org/onoff/geometria.pdf',
 		},
 	],
 	resources: [],
-	authors: [rawOnoffAuthor],
-	content: [
-		{
-			_key: 'section-1',
-			title: geometriaSectionTitle,
-			epigraphs: [{ text: geometriaEpigraphText, reference: geometriaEpigraphReference }],
-			body: geometriaMdBody,
-			readingTime: 7,
-		},
+	tags: [
+		{ _key: 'cuento', _type: 'reference', _ref: 'tag-cuento' },
+		{ _key: 'drama-psicologico', _type: 'reference', _ref: 'tag-drama-psicologico' },
+		{ _key: 'filosofico', _type: 'reference', _ref: 'tag-filosofico' },
 	],
+	badLanguage: false,
+	originalPublication: 'Éditions du Méridien (1974)',
+	publishedAt: '1974-01-01T00:00:00Z',
 };

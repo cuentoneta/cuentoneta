@@ -40,7 +40,8 @@
 		"sanity:typecheck": "nx run @cuentoneta/cms:typecheck --skip-nx-cache",
 		"sanity:extract-schema": "nx run @cuentoneta/cms:extract-schema",
 		"sanity:run-typegen-generator": "nx run @cuentoneta/cms:typegen",
-		"prepare": "husky"
+		"prepare": "husky",
+		"corpus:generate": "node --import tsx ./scripts/generate-raw-corpus.ts"
 	},
 	"private": true,
 	"dependencies": {

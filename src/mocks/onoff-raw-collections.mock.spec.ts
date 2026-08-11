@@ -49,16 +49,20 @@ describe('onoff raw collections mock', () => {
 	it('derives teasers that carry the count and the first three covers', () => {
 		expect(onoffRawCollectionTeasersMock).toHaveLength(onoffRawCollectionsMock.length);
 
-		onoffRawCollectionTeasersMock.forEach((teaser, index) => {
-			const collection = onoffRawCollectionsMock[index];
+		// El cruce va por `_id` y no por posición: el listado lo devuelve `collectionsQuery` ordenado por
+		// título, que no es el orden en que el agregador declara las colecciones.
+		onoffRawCollectionTeasersMock.forEach((teaser) => {
+			const collection = onoffRawCollectionsMock.find((candidate) => candidate._id === teaser._id);
 
-			expect(teaser._id).toBe(collection?._id);
+			expect(collection).toBeDefined();
+
 			expect(teaser.count).toBe(collection?.literaryWorks.length);
 			// Se afirma la propiedad que importa —a lo sumo tres portadas, y cada una la de su obra en la
 			// misma posición— en vez de recalcular el corte, que sería reescribir la derivación.
 			expect(teaser.literaryWorkCoverImages.length).toBeLessThanOrEqual(3);
+			// Igualdad por valor: cada cara se genera en su propio archivo, así que declaran literales distintos.
 			teaser.literaryWorkCoverImages.forEach((cover, position) => {
-				expect(cover).toBe(collection?.literaryWorks[position]?.coverImage);
+				expect(cover).toStrictEqual(collection?.literaryWorks[position]?.coverImage);
 			});
 			expect(teaser).not.toHaveProperty('literaryWorks');
 		});

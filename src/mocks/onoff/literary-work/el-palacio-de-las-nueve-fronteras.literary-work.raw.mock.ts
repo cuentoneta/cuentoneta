@@ -1,13 +1,15 @@
+// Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del
+// corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { novelaRawTag, dramaPsicologicoRawTag, metaficcionRawTag } from '../../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
-import palacioNueveFronterasMdBody from './el-palacio-de-las-nueve-fronteras.md?raw';
+import { dramaPsicologicoRawTag, metaficcionRawTag, novelaRawTag } from '../../onoff-raw-tags.mock';
 import elPalacioDeLasNueveFronterasEditorialNoteMd from './el-palacio-de-las-nueve-fronteras.editorial-note.md?raw';
 import {
 	palacioNueveFronterasEpigraphReference,
 	palacioNueveFronterasEpigraphText,
 	palacioNueveFronterasSectionTitle,
 } from './el-palacio-de-las-nueve-fronteras.epigraph';
+import elPalacioDeLasNueveFronterasMdBody from './el-palacio-de-las-nueve-fronteras.md?raw';
 
 export const palacioNueveFronterasRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	_id: 'onoff-literary-work-el-palacio-de-las-nueve-fronteras',
@@ -32,7 +34,7 @@ export const palacioNueveFronterasRawLiteraryWork: NonNullable<LiteraryWorkBySlu
 			_key: 'section-1',
 			title: palacioNueveFronterasSectionTitle,
 			epigraphs: [{ text: palacioNueveFronterasEpigraphText, reference: palacioNueveFronterasEpigraphReference }],
-			body: palacioNueveFronterasMdBody,
+			body: elPalacioDeLasNueveFronterasMdBody,
 			readingTime: 11,
 		},
 	],
