@@ -43,7 +43,7 @@ documentos  →  (query GROQ)  →  raw  →  (ACL del repository)  →  dominio
 
 **`document/` no es una entidad**, como `media/`: aloja la factory de campos de sistema y los documentos que varias entidades referencian (etiquetas, nacionalidades, tipos de recurso).
 
-**Las carpetas no son independientes entre sí.** `literary-work/<slug>.literary-work.mock.ts` importa a su hermano de `story/`: la obra deriva de la story siete campos —slug, título, autor, portada, recursos, publicación original y fecha—. Esa relación existía antes, escondida por vivir las dos caras en el mismo archivo; separarlas la volvió visible en vez de crearla.
+**Las carpetas no son independientes entre sí.** `literary-work/<slug>.literary-work.mock.ts` importa a su hermano de `story/`: la obra deriva de la story todo lo que las dos caras comparten —metadata, autor, portada, recursos y datos de publicación—, y declara por su cuenta solo lo que es propio de `LiteraryWork`. Esa relación existía antes, escondida por vivir las dos caras en el mismo archivo; separarlas la volvió visible en vez de crearla.
 
 **`media/` no es una entidad**, es la excepción: la story y la obra literaria del mismo slug consumen _el mismo_ objeto de medios, y duplicarlo rompería la invariante de que ambas caras declaren exactamente los mismos. Ninguna de las dos puede reclamarlo, así que vive aparte. Es el criterio para la próxima pieza que se sume: si más de una entidad la consume y duplicarla rompería una invariante, va a carpeta propia; si solo la usa una, va con esa entidad.
 
