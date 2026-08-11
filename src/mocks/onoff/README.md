@@ -42,7 +42,7 @@ Antes de esta capa de documentos el flujo corría al revés: el raw se escribía
 
 ### El generador (`pnpm corpus:generate`)
 
-`pnpm corpus:generate` → `node --import tsx ./scripts/generate-raw-corpus.ts`. Por cada obra, cada colección y la página de inicio, evalúa la query GROQ real (`literaryWorkBySlugQuery`, `collectionBySlugQuery`, `collectionsQuery` para el listado y `landingPageContentQuery` para la landing, que va con su semana como parámetro) con `groq-js` sobre `onoffDatasetMock` — el dataset plano de todos los documentos del corpus — y escribe el resultado en su fixture `*.raw.mock.ts`.
+`pnpm corpus:generate` → `node --import tsx ./scripts/generate-raw-corpus/generate-raw-corpus.ts`. Por cada obra, cada colección y la página de inicio, evalúa la query GROQ real (`literaryWorkBySlugQuery`, `collectionBySlugQuery`, `collectionsQuery` para el listado y `landingPageContentQuery` para la landing, que va con su semana como parámetro) con `groq-js` sobre `onoffDatasetMock` — el dataset plano de todos los documentos del corpus — y escribe el resultado en su fixture `*.raw.mock.ts`.
 
 **Archivos generados (12):**
 
@@ -55,11 +55,11 @@ Cada uno abre con un banner de dos líneas ("Este archivo lo escribe `pnpm corpu
 
 **Qué impide que la generación mienta:** `src/mocks/onoff-documents.mock.spec.ts` vuelve a evaluar las mismas queries sobre los mismos documentos y compara **valores** (no bytes: el formato lo fija Prettier dentro del generador, así que un desvío de formato no es una desincronización, pero una diferencia de valor sí) contra las fixtures crudas commiteadas. Este spec corre dentro de `pnpm test` (gate `test`, ya required) — **no se agregó ningún gate de CI nuevo**.
 
-**Un documento faltante no falla en silencio.** Si una referencia apunta a un `_id` que no está en el dataset, `groq-js` la resuelve a `null` sin lanzar — la fixture generada afirmaría ese `null`. El generador lo evita evaluando por adelantado (`scripts/generate-raw-corpus.helpers.ts`): recorre el dataset entero y exige que todo `_ref` resuelva a un documento, y **corta antes de generar nada** si encuentra una referencia colgada. Excluye los assets de imagen a propósito: ninguna query los dereferencia (proyectan el objeto entero y la URL la arma `urlFor` al renderizar, fuera de GROQ); el único `->` sobre un asset en las siete queries es `audioFile.asset->url`. Exigirles documento a todas las imágenes del corpus obligaría a inventar contenido que nada lee.
+**Un documento faltante no falla en silencio.** Si una referencia apunta a un `_id` que no está en el dataset, `groq-js` la resuelve a `null` sin lanzar — la fixture generada afirmaría ese `null`. El generador lo evita evaluando por adelantado (`scripts/generate-raw-corpus/generate-raw-corpus.helpers.ts`): recorre el dataset entero y exige que todo `_ref` resuelva a un documento, y **corta antes de generar nada** si encuentra una referencia colgada. Excluye los assets de imagen a propósito: ninguna query los dereferencia (proyectan el objeto entero y la URL la arma `urlFor` al renderizar, fuera de GROQ); el único `->` sobre un asset en todo el conjunto de queries es `audioFile.asset->url`. Exigirle documento a cada imagen del corpus obligaría a inventar contenido que nada lee.
 
-**El generador carga el corpus con Vite programático, no con `tsx`** (`scripts/generate-raw-corpus.loader.ts`): los documentos importan prosa con el sufijo `?raw`, que solo resuelve un bundler. Usa `resolve.tsconfigPaths` nativo de Vite y no el plugin `vite-tsconfig-paths` — el mismo motivo que documenta `vitest.config.ts`: el plugin recorre las copias del repo bajo `.claude/worktrees/` y aborta si el tsconfig de alguna no le parsea.
+**El generador carga el corpus con Vite programático, no con `tsx`** (`scripts/generate-raw-corpus/generate-raw-corpus.loader.ts`): los documentos importan prosa con el sufijo `?raw`, que solo resuelve un bundler. Usa `resolve.tsconfigPaths` nativo de Vite y no el plugin `vite-tsconfig-paths` — el mismo motivo que documenta `vitest.config.ts`: el plugin recorre las copias del repo bajo `.claude/worktrees/` y aborta si el tsconfig de alguna no le parsea.
 
-**El emisor preserva los imports de prosa** (`scripts/generate-raw-corpus.emitter.ts`): su tabla de sustitución se indexa por el **valor serializado**, no por el tipo, así que una misma pasada reconoce tanto la prosa de un `.md` como el objeto entero de una etiqueta o del autor y los reemplaza por su import en vez de inlinearlos. Sin eso, cada obra generada duplicaría ~3 KB de prosa en git.
+**El emisor preserva los imports de prosa** (`scripts/generate-raw-corpus/generate-raw-corpus.emitter.ts`): su tabla de sustitución se indexa por el **valor serializado**, no por el tipo, así que una misma pasada reconoce tanto la prosa de un `.md` como el objeto entero de una etiqueta o del autor y los reemplaza por su import en vez de inlinearlos. Sin eso, cada obra generada duplicaría ~3 KB de prosa en git.
 
 ### Qué queda fuera de la generación
 
@@ -69,7 +69,7 @@ Hay dos clases de exclusión, y no son lo mismo:
 | --------------------------------------------- | ------------------------------------------------------------------------------------ | -------------------------- |
 | `story` (8 obras + teasers + nav teasers)     | Derivable — hay query top-level que las devuelve — pero el agregado está en baja     | Fuera por **scope**        |
 | `storylist`                                   | Ídem: derivable, pero el agregado está en baja                                       | Fuera por **scope**        |
-| `onoff-raw-tags.mock.ts` (`RawTag`)           | Sub-proyección repetida en 7 queries; ninguna la devuelve top-level                  | Fuera por **construcción** |
+| `onoff-raw-tags.mock.ts` (`RawTag`)           | Sub-proyección repetida en varias queries; ninguna la devuelve top-level             | Fuera por **construcción** |
 | `onoff-raw-author.mock.ts` (`rawOnoffAuthor`) | `NonNullable<StoryBySlugQueryResult>['author']`; ninguna query lo devuelve top-level | Fuera por **construcción** |
 
 **Fuera por scope:** existe una query top-level que las devuelve, así que serían derivables con el mismo generador — pero construirles una capa de documentos sería trabajo sobre agregados que están en baja, y no vale la pena.
@@ -91,7 +91,11 @@ Generado en [#1650](https://github.com/cuentoneta/cuentoneta/issues/1650); fuent
 
 ## Corpus de dominio: `LiteraryWork` (#1653)
 
-Mismo elenco, coexistiendo con el corpus `Story`. Diferencias de origen del contenido:
+Mismo elenco, coexistiendo con el corpus `Story`.
+
+**Las dos carpetas no son independientes:** `literary-work/<slug>.literary-work.mock.ts` importa a su hermano de `story/` y deriva de él todo lo que las dos caras comparten —metadata, autor, portada, recursos y datos de publicación—, declarando por su cuenta solo lo propio de `LiteraryWork`. Es lo que evita que el mismo elenco cuente dos historias distintas sobre la misma obra. La relación existía desde antes, escondida por vivir las dos caras en un solo archivo; separarlas la volvió visible en vez de crearla.
+
+Diferencias de origen del contenido:
 
 - **Cuerpo (`bodyHtml`):** vive como Markdown plano en `literary-work/<slug>.md` (solo el cuerpo, sin metadata) y se importa con `?raw` de Vite. El mock corre `markdownToSanitizedHtml` (`@utils/markdown-pipeline.utils`) al cargar el módulo para obtener el `SanitizedHtml`; el `.md` es la fuente literal editable, y el documento (`<slug>.literary-work.document.ts`) importa el mismo archivo.
 - **`readingTime`:** se **deriva** del propio cuerpo (`deriveSectionReadingTime`); `totalReadingTime` lo suma la factory. No se hardcodea.

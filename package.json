@@ -41,7 +41,7 @@
 		"sanity:extract-schema": "nx run @cuentoneta/cms:extract-schema",
 		"sanity:run-typegen-generator": "nx run @cuentoneta/cms:typegen",
 		"prepare": "husky",
-		"corpus:generate": "node --import tsx ./scripts/generate-raw-corpus.ts"
+		"corpus:generate": "node --import tsx ./scripts/generate-raw-corpus/generate-raw-corpus.ts"
 	},
 	"private": true,
 	"dependencies": {
