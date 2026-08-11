@@ -178,7 +178,9 @@ Nadie escribe una referencia ni una ruta a mano: las dos caras salen de la misma
 - **Path en el mock:** `assets/img/mocks/stories/<slug>.png` (sin `./` ni `/` inicial), declarado por la tabla
 - **Aspecto:** portrait 3:4 (referencia 118×164 del `CoverImageComponent`)
 
-El resto de los assets del corpus vive junto a estas portadas, todos bajo `src/assets/img/mocks/`: `author/` (retrato), `collections/` (portadas editoriales), `media/` (el avatar del host de una grabación), `banners/` (campañas, un archivo por viewport) y `flags/` (el set completo de banderas por código ISO). El corpus usa hoy una sola bandera; el set entra completo para que incorporar una nacionalidad no exija mover archivos, al precio de sumar el resto al output del build.
+El resto de los assets del corpus vive junto a estas portadas, todos bajo `src/assets/img/mocks/`: `author/` (retrato), `collections/` (portadas editoriales), `media/` (el avatar del host de una grabación) y `banners/` (campañas, un archivo por viewport).
+
+**Las banderas son la excepción, y no son del corpus.** El set completo por código ISO vive en `public/flags/`, que la app publica en la raíz: es un recurso general, no una fixture, y ponerlo bajo `mocks/` lo habría etiquetado como lo que no es. Por eso su entrada en la tabla es la única cuya ruta no empieza con `assets/` — el prefijo es lo que distingue las dos raíces publicadas, y de eso depende que el spec sepa dónde buscar el archivo en disco.
 
 ## Obras
 

@@ -47,11 +47,13 @@ export const onoffImageAssets = Object.freeze({
 		extension: 'png',
 		path: 'assets/img/mocks/author/francois-onoff.png',
 	}),
+	// El set de banderas no es del corpus: es un recurso general que se sirve desde `public/`, así que su
+	// ruta cuelga de la raíz y no de `assets/`. Es la única entrada con esa forma.
 	franceFlag: imageAsset({
 		assetId: 'franceFlag',
 		dimensions: '30x20',
 		extension: 'png',
-		path: 'assets/img/mocks/flags/fr.png',
+		path: 'flags/fr.png',
 	}),
 	// La portada editorial de la colección y el `featuredImage` de la storylist homónima son el mismo
 	// archivo, así que comparten entrada: sostener dos volvería a meter una mentira en la tabla.
