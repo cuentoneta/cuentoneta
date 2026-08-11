@@ -299,7 +299,7 @@ Cubre **lógica Node pura del Studio**: resolvers de Desk Structure, utils que c
 - Los specs de `cms/` **importan `describe`/`it`/`expect` de `vitest` explícitamente** (`cms/vitest.config.ts` no declara `globals`), a diferencia de los specs de la app.
 - **No usan `@test-utils`.** Esos wrappers viven en el árbol de `node_modules` de la app; arrastrarlos a `cms/` acoplaría dos proyectos pnpm por casos que se resuelven con diez líneas.
 - Los dobles se escriben **a mano**, siguiendo la misma taxonomía por comportamiento del resto del repo — `Stub*`/`Fake*`/`Spy*`, **nunca** `Mock*` (ver [Naming](../../CLAUDE.md#naming)). El ejemplo vigente es `SpyGroqClient` en `cms/utils/landing-page.spec.ts`: registra la query y los params con los que se lo invocó, sin depender de `vi.fn()`.
-- `cms/` **sí** está cubierto por ESLint (el target `eslint:lint` de `project.json` corre sobre `./src ./e2e ./resources ./cms`) y por su propio type-check (`cms/tsconfig.typecheck.json`, dentro del gate `studio-build`). Lo que sigue sin tener es `@test-utils`: los specs de `cms/` se mantienen deliberadamente simples, sin abstracciones de test propias y con dobles chicos anotados a mano.
+- `cms/` **sí** está cubierto por ESLint (el target `eslint:lint` de `project.json` corre sobre `./src ./e2e ./resources ./cms ./scripts`) y por su propio type-check (`cms/tsconfig.typecheck.json`, dentro del gate `studio-build`). Lo que sigue sin tener es `@test-utils`: los specs de `cms/` se mantienen deliberadamente simples, sin abstracciones de test propias y con dobles chicos anotados a mano.
 
 ```typescript
 import { describe, expect, it } from 'vitest';
