@@ -26,6 +26,7 @@
 		"issue-refs:sweep": "node --import tsx ./scripts/issue-refs-sweep.ts",
 		"worktrees:sweep": "node --import tsx ./scripts/worktree-sweep.ts",
 		"check:findings": "node --import tsx ./scripts/check-finding-refs.ts",
+		"comments:inventory": "node --import tsx ./scripts/extract-comments/extract-comments.ts",
 		"stylelint": "nx stylelint @cuentoneta/app",
 		"test": "nx vitest:test --skip-nx-cache",
 		"typecheck": "nx typecheck --skip-nx-cache",
