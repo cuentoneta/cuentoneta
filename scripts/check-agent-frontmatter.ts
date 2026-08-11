@@ -70,14 +70,33 @@ export function checkFrontmatter(label: string, source: string): string[] {
 	return problems;
 }
 
+/** Los `.md` de `.claude/agents/`, dados los nombres de archivo que hay en el directorio. */
+export function agentSourcesIn(directory: string, files: readonly string[]): FrontmatterSource[] {
+	return files
+		.filter((file) => file.endsWith('.md'))
+		.map((file) => ({ label: `.claude/agents/${file}`, path: join(directory, file) }));
+}
+
+/**
+ * Los `SKILL.md` de `.claude/skills/`, dados los nombres de los **subdirectorios** que hay.
+ *
+ * Asume una skill por directorio, a un solo nivel — que es como el harness las carga. Los archivos
+ * sueltos del directorio (un `.skill` exportado del cliente de escritorio, por caso) no son skills y
+ * quedan afuera por no ser directorios; el llamador descarta después los que no tengan `SKILL.md`.
+ */
+export function skillSourcesIn(directory: string, subdirectories: readonly string[]): FrontmatterSource[] {
+	return subdirectories.map((name) => ({
+		label: `.claude/skills/${name}/SKILL.md`,
+		path: join(directory, name, 'SKILL.md'),
+	}));
+}
+
 function agentSources(): FrontmatterSource[] {
 	const directory = join(CLAUDE_DIR, 'agents');
 	if (!existsSync(directory)) {
 		return [];
 	}
-	return readdirSync(directory)
-		.filter((file) => file.endsWith('.md'))
-		.map((file) => ({ label: `.claude/agents/${file}`, path: join(directory, file) }));
+	return agentSourcesIn(directory, readdirSync(directory));
 }
 
 function skillSources(): FrontmatterSource[] {
@@ -85,13 +104,11 @@ function skillSources(): FrontmatterSource[] {
 	if (!existsSync(directory)) {
 		return [];
 	}
-	return readdirSync(directory, { withFileTypes: true })
+	const subdirectories = readdirSync(directory, { withFileTypes: true })
 		.filter((entry) => entry.isDirectory())
-		.map((entry) => ({
-			label: `.claude/skills/${entry.name}/SKILL.md`,
-			path: join(directory, entry.name, 'SKILL.md'),
-		}))
-		.filter((source) => existsSync(source.path));
+		.map((entry) => entry.name);
+
+	return skillSourcesIn(directory, subdirectories).filter((source) => existsSync(source.path));
 }
 
 /** Devuelve una línea `✗ …` por cada problema de frontmatter; vacío si están todos bien. */

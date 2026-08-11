@@ -1,6 +1,8 @@
+import { join } from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
-import { checkFrontmatter } from './check-agent-frontmatter';
+import { agentSourcesIn, checkFrontmatter, skillSourcesIn } from './check-agent-frontmatter';
 
 /** Arma un frontmatter con las líneas dadas, seguido de un cuerpo cualquiera. */
 function withFrontmatter(...lines: string[]): string {
@@ -56,5 +58,27 @@ describe('checkFrontmatter', () => {
 		const source = withFrontmatter('name: ejemplo', 'description: Primera línea', '  y su continuación.');
 
 		expect(checkFrontmatter('a.md', source)).toEqual([]);
+	});
+});
+
+describe('agentSourcesIn', () => {
+	it('toma los `.md` y descarta cualquier otro archivo del directorio', () => {
+		expect(agentSourcesIn('raiz', ['code-reviewer.md', 'notas.txt', 'plan-writer.md']).map((s) => s.label)).toEqual([
+			'.claude/agents/code-reviewer.md',
+			'.claude/agents/plan-writer.md',
+		]);
+	});
+});
+
+describe('skillSourcesIn', () => {
+	it('apunta al SKILL.md de cada subdirectorio', () => {
+		expect(skillSourcesIn('raiz', ['issue-workflow'])).toEqual([
+			{ label: '.claude/skills/issue-workflow/SKILL.md', path: join('raiz', 'issue-workflow', 'SKILL.md') },
+		]);
+	});
+
+	it('no produce nada cuando no hay subdirectorios', () => {
+		// El caso del `.skill` exportado del cliente de escritorio: es un archivo, no una skill.
+		expect(skillSourcesIn('raiz', [])).toEqual([]);
 	});
 });
