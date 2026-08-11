@@ -173,25 +173,9 @@ Un epic cuyos hijos figuren solo como menciones es bloqueante para la review. Si
 
 ## Sección 3 — Disciplina de comentarios
 
-Los comentarios explican el **porqué no obvio**, nunca el **qué**. Si el código, los tipos, los nombres o una referencia de `.claude/references/` ya lo dicen, **no se comenta**. El **rationale de un cambio** (por qué se hizo, qué reemplaza, contexto histórico) va al **mensaje de commit / descripción del PR**, no inline.
+La **doctrina** de qué comentar y qué no —cuándo el comentario aporta, a qué nivel de detalle, y las formas de ruido que hay que dejar de producir— es canónica en la skill [`aposd-comments-style`](../skills/aposd-comments-style/SKILL.md). Acá queda lo que tiene **hooks y gates detrás**: qué puede citar un comentario, y qué no.
 
-**No comentar** (es ruido y se desincroniza; review-blocking si solo agrega ruido):
-
-- **Restatear una convención ya documentada.** ❌ `// doble de test, nunca Mock*` · ❌ `// el token no lleva providedIn/factory`. La convención vive en `clean-architecture.md`; repetirla en cada archivo es ruido.
-- **Rationale histórico / de cambio inline.** ❌ `// Rediseñado: la versión previa usaba .toPromise()…` · ❌ `// sin consumidores al momento del cambio`. Eso va al commit/PR.
-- **Navegación / estructura obvia.** ❌ `// la implementación HTTP vive en x.provider.ts` · ❌ `// API providers (patrón provideX)`. Los imports y los nombres de archivo ya lo muestran.
-- **Parafrasear la línea siguiente.** ❌ `// inyecta el HttpClient` encima de `inject(HttpClient)`.
-- **Justificar una visibilidad que la convención ya fija.** ❌ `// public porque es la API imperativa` sobre un `input()`/`output()`/signal expuesta. Si el miembro **es** la API pública, su visibilidad ya la dicta `angular-components.md`; el modificador es autoexplicativo.
-- **Anotar un reemplazo canónico.** ❌ `// reemplaza ngOnDestroy` sobre un `effect((onCleanup) => …)`. El mapeo lifecycle hook → primitiva reactiva es la regla por defecto (`angular-components.md`); nombrarlo inline es restatear la convención.
-
-**Sí comentar:**
-
-- Un **porqué** que no se deduce del código: una decisión no obvia, un workaround con su causa, una restricción externa, una sutileza de orden/timing (idealmente con enlace al issue/PR).
-- Una **invariante** o precondición que el tipo no captura.
-
-**Antes de escribir un comentario, preguntarse:** ¿esto ya lo dice el código, un nombre, un tipo o una referencia? ¿es contexto de cambio que debería ir al PR? Si la respuesta a cualquiera es "sí", no se escribe.
-
-Los comentarios de sección de estilo `// Core` / `// Models` que ya existen en el repo se respetan donde están, pero **no se agregan nuevos** salvo que aporten navegación real en un archivo grande.
+La regla que gobierna a las dos: los comentarios explican el **porqué no obvio**, nunca el **qué**, y el **rationale de un cambio** (por qué se hizo, qué reemplaza, contexto histórico) va al **mensaje de commit / descripción del PR**, no inline. Un comentario que solo agrega ruido es bloqueante para la review.
 
 ### Menciones a issues en comentarios de código
 
@@ -321,4 +305,4 @@ Las definiciones de agentes (`.claude/agents/*.md`) enuncian la regla en una lí
 
 ---
 
-_Última actualización: 2026-08-03. Este documento evoluciona por enmiendas (ver Sección 7); su historial detallado —qué se agregó, cuándo y por qué— vive en el log de git y en los PRs. Cambios mayores: versión inicial (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) y sus ampliaciones sobre visibilidad de API y reemplazos canónicos; regla de story intercambiable para estados de carga; regla de child issues reales en epics; "Gates de CI" convertida a remisión a CLAUDE.md; prohibición de `git add -A`; Sección 8 (regla anti-`cd`) consolidada desde las copias de los agentes; la política de menciones a issues en la documentación de agentes (Sección 3); la regla de títulos de issue sin prefijo de categoría (Sección 2); la generalización de los ejemplos que citaban issues reales; el enforcement de esas menciones en el gate `check-agents`; la excepción de `TODO` con issue abierto en comentarios de código (Sección 3) junto con el versionado de su hook; y el enforcement de la prohibición de identificadores de hallazgo sobre mensajes de commit y cuerpo de PR (hook `commit-msg` + gate `check-findings`), que cierra el hueco que dejaba la cobertura previa solo sobre comentarios de código y documentación de agentes; y la excepción por delegación total a la exigencia de story (Sección 2), junto con la precisión de que el estado de carga lo cataloga quien renderiza el esqueleto; y el corrimiento del evento que regula la review local, de abrir el PR a pedir la review humana, que habilita el PR en borrador._
+_Última actualización: 2026-08-11. Este documento evoluciona por enmiendas (ver Sección 7); su historial detallado —qué se agregó, cuándo y por qué— vive en el log de git y en los PRs. Cambios mayores: versión inicial (CLAUDE.md + archivos de referencia); Sección 3 (Disciplina de comentarios) y sus ampliaciones sobre visibilidad de API y reemplazos canónicos; regla de story intercambiable para estados de carga; regla de child issues reales en epics; "Gates de CI" convertida a remisión a CLAUDE.md; prohibición de `git add -A`; Sección 8 (regla anti-`cd`) consolidada desde las copias de los agentes; la política de menciones a issues en la documentación de agentes (Sección 3); la regla de títulos de issue sin prefijo de categoría (Sección 2); la generalización de los ejemplos que citaban issues reales; el enforcement de esas menciones en el gate `check-agents`; la excepción de `TODO` con issue abierto en comentarios de código (Sección 3) junto con el versionado de su hook; y el enforcement de la prohibición de identificadores de hallazgo sobre mensajes de commit y cuerpo de PR (hook `commit-msg` + gate `check-findings`), que cierra el hueco que dejaba la cobertura previa solo sobre comentarios de código y documentación de agentes; y la excepción por delegación total a la exigencia de story (Sección 2), junto con la precisión de que el estado de carga lo cataloga quien renderiza el esqueleto; y el corrimiento del evento que regula la review local, de abrir el PR a pedir la review humana, que habilita el PR en borrador; y el traslado de la doctrina de comentarios de la Sección 3 a la skill `aposd-comments-style`, que la deja con lo que hooks y gates verifican._
