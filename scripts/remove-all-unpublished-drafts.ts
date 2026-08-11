@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { client } from '../src/api/_helpers/sanity-connector';
 
 async function deleteDrafts() {

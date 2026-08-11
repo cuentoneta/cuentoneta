@@ -41,8 +41,8 @@ class StubCandidatePageFetcher implements LiteraryWorkCandidatePageFetcher {
 
 function spyWriter() {
 	const commit = fn(() => Promise.resolve({}));
-	const setIfMissing = fn((_attributes: Record<string, number>) => ({ commit }));
-	const patch = fn((_documentId: string) => ({ setIfMissing }));
+	const setIfMissing = fn(() => ({ commit }));
+	const patch = fn(() => ({ setIfMissing }));
 	return { writer: { patch } as unknown as ReadingTimeMaterializationWriter, patch, setIfMissing, commit };
 }
 

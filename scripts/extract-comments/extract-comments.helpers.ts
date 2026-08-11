@@ -171,7 +171,7 @@ const OPERAND_KEYWORDS: readonly string[] = ['return', 'typeof', 'case', 'in', '
 /**
  * Si la barra en `index` abre una expresión regular. Sin esto, la barra escapada de `/…\/…/` se
  * confunde con un `//` y emite un comentario fantasma; peor, una regex que contenga `/*` abre un
- * bloque que se traga los comentarios reales que vienen después, hasta el próximo `*​/`.
+ * bloque que se traga los comentarios reales que vienen después, hasta el próximo cierre de bloque.
  *
  * Los marcadores de comentario se evalúan **antes** que esta función, así que un `//` o un `/*` en
  * posición de operando —`const a = // …`— sigue leyéndose como comentario, que es lo correcto.
