@@ -90,10 +90,7 @@ function isThematicBreak(block: PortableTextBlock): boolean {
 	return thematicBreak.test(text);
 }
 
-function assertSupported(block: PortableTextBlock): void {
-	if (block._type !== 'block') {
-		throw new UnsupportedPortableTextError(`Tipo de bloque no soportado: "${block._type}"`, block._key);
-	}
+function assertSupportedStyle(block: PortableTextBlock): void {
 	if (
 		block.style !== undefined &&
 		block.style !== 'normal' &&
@@ -102,14 +99,32 @@ function assertSupported(block: PortableTextBlock): void {
 	) {
 		throw new UnsupportedPortableTextError(`Estilo no soportado: "${block.style}"`, block._key);
 	}
+}
+
+function assertSupportedList(block: PortableTextBlock): void {
 	if (block.listItem !== undefined && !(block.listItem in LIST_MARKERS)) {
 		throw new UnsupportedPortableTextError(`Lista no soportada: "${block.listItem}"`, block._key);
 	}
+}
+
+function assertSupportedMarkDefs(block: PortableTextBlock): void {
 	for (const markDef of block.markDefs ?? []) {
 		if (markDef._type !== 'link') {
 			throw new UnsupportedPortableTextError(`markDef no soportado: "${markDef._type}"`, block._key);
 		}
 	}
+}
+
+// Un eje de validación por función: el conversor falla ante lo que no sabe traducir, a propósito,
+// así que cada `throw` conserva su mensaje y su `_key` — son la señal que detiene una migración
+// antes de escribir documentos a medias.
+function assertSupported(block: PortableTextBlock): void {
+	if (block._type !== 'block') {
+		throw new UnsupportedPortableTextError(`Tipo de bloque no soportado: "${block._type}"`, block._key);
+	}
+	assertSupportedStyle(block);
+	assertSupportedList(block);
+	assertSupportedMarkDefs(block);
 }
 
 /**
@@ -144,16 +159,18 @@ function renderLinkDestination(href: string, blockKey: string | undefined): stri
 	return /[()\s]/.test(href) ? `<${href}>` : href;
 }
 
+/**
+ * Las marcas que **no** producen un envoltorio de enlace. El énfasis ya se aplicó antes del recorrido;
+ * las cuatro de alineación son decoradores del editor viejo (`blockContent.ts`) que se traducen
+ * ignorando la marca y conservando el texto. Markdown no tiene alineación, y el pipeline de la app
+ * descarta el HTML crudo: un `<p align="center">` no pierde el centrado, pierde el texto entero. La
+ * decisión y las obras afectadas están registradas en el issue de revisión editorial.
+ */
+const NON_LINK_MARKS: ReadonlySet<string> = new Set(['em', 'strong', 'left', 'center', 'right', 'justify']);
+
 // El orden de anidado importa: el enlace envuelve al énfasis, no al revés. `[**texto**](url)` es válido;
 // `**[texto](url)**` también, pero deja el marcado del enlace adentro del énfasis y se lee peor.
 function renderSpan(block: PortableTextBlock, span: PortableTextSpan): string {
-	/**
-	 * Los decoradores de alineación del editor viejo (`blockContent.ts`). Markdown no tiene alineación, y
-	 * el pipeline de la app descarta el HTML crudo: un `<p align="center">` no pierde el centrado, pierde
-	 * el texto entero. Se traducen ignorando la marca y conservando el texto — la decisión y las obras
-	 * afectadas están registradas en el issue de revisión editorial.
-	 */
-	const alignmentMarks = new Set(['left', 'center', 'right', 'justify']);
 	const marks = span.marks ?? [];
 	const escaped = escapeMarkdown(span.text ?? '');
 	if (escaped.trim() === '') return escaped;
@@ -168,23 +185,30 @@ function renderSpan(block: PortableTextBlock, span: PortableTextSpan): string {
 	if (marks.includes('strong')) rendered = `**${rendered}**`;
 
 	for (const mark of marks) {
-		if (mark === 'em' || mark === 'strong' || alignmentMarks.has(mark)) continue;
-
-		// `code` está declarado en el schema pero no se traduce: un span de código no admite el texto ya
-		// escapado que llega hasta acá, y el corpus no lo usa. Se nombra aparte para que el día que
-		// aparezca el error diga qué pasó, en vez de acusar un markDef de enlace faltante.
-		if (mark === 'code') {
-			throw new UnsupportedPortableTextError('Decorador "code" no soportado', block._key);
-		}
-
-		const href = resolveLinkHref(block, mark);
-		if (href === undefined) {
-			throw new UnsupportedPortableTextError(`Marca sin markDef de enlace que la resuelva: "${mark}"`, block._key);
-		}
-		rendered = `[${rendered}](${renderLinkDestination(href, block._key)})`;
+		if (NON_LINK_MARKS.has(mark)) continue;
+		rendered = wrapWithLink(block, mark, rendered);
 	}
 
 	return `${leading}${rendered}${trailing}`;
+}
+
+/**
+ * Envuelve el texto ya renderizado en el enlace que resuelve `mark`. Toda marca que llega acá debería
+ * ser un enlace: las de énfasis y las de alineación ya se filtraron.
+ */
+function wrapWithLink(block: PortableTextBlock, mark: string, rendered: string): string {
+	// `code` está declarado en el schema pero no se traduce: un span de código no admite el texto ya
+	// escapado que llega hasta acá, y el corpus no lo usa. Se nombra aparte para que el día que
+	// aparezca el error diga qué pasó, en vez de acusar un markDef de enlace faltante.
+	if (mark === 'code') {
+		throw new UnsupportedPortableTextError('Decorador "code" no soportado', block._key);
+	}
+
+	const href = resolveLinkHref(block, mark);
+	if (href === undefined) {
+		throw new UnsupportedPortableTextError(`Marca sin markDef de enlace que la resuelva: "${mark}"`, block._key);
+	}
+	return `[${rendered}](${renderLinkDestination(href, block._key)})`;
 }
 
 /** Antepone el marcado del bloque al texto ya renderizado: encabezado, cita o ítem de lista. */
