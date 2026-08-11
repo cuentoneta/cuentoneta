@@ -20,6 +20,90 @@ function toMessage(cause: unknown): string {
 	return cause instanceof Error ? cause.message : 'Error desconocido';
 }
 
+/** El tono clasifica la fila: la activa, una semana futura, o cualquier otra. */
+type RowTone = 'positive' | 'primary' | 'default';
+
+function ErrorNotice({ message }: { message: string }) {
+	return (
+		<Box padding={4}>
+			{/* El tono va en el Card: Text de @sanity/ui v3 no acepta `tone`, así que el mensaje se venía
+			    renderizando sin color de error. */}
+			<Card padding={3} radius={2} tone="critical">
+				<Text>No se pudieron cargar las páginas de inicio: {message}</Text>
+			</Card>
+		</Box>
+	);
+}
+
+function LoadingIndicator() {
+	return (
+		<Flex align="center" justify="center" padding={5}>
+			<Spinner muted />
+		</Flex>
+	);
+}
+
+function EmptyNotice() {
+	return (
+		<Box padding={3}>
+			<Text muted>No hay páginas de inicio cargadas.</Text>
+		</Box>
+	);
+}
+
+/**
+ * La lista de fichas, clasificadas contra la activa. El enlace llega por prop porque lo produce el
+ * router del panel, que solo el componente de arriba puede consultar.
+ */
+function LandingPageRows({
+	rows,
+	activeId,
+	Link,
+}: {
+	rows: LandingPageRow[];
+	activeId: string | null;
+	Link: ComponentType<{ childId: string; style?: CSSProperties; children: React.ReactNode }>;
+}) {
+	// Referencia para clasificar filas: el config de la activa (máximo config <= semana actual). Toda fila con
+	// config mayor es una semana futura. Sin activa, se cae a la semana actual como referencia.
+	const activeConfig = rows.find((row) => row._id === activeId)?.config ?? buildWeekSlug(new Date());
+
+	return rows.map((row) => {
+		const isActive = row._id === activeId;
+		const isFuture = !isActive && row.config > activeConfig;
+		const tone: RowTone = isActive ? 'positive' : isFuture ? 'primary' : 'default';
+		const badge = isActive ? 'Activa' : isFuture ? 'Futura' : null;
+		return (
+			<Link key={row._id} childId={row._id} style={{ textDecoration: 'none', color: 'inherit' }}>
+				<LandingPageCard config={row.config} tone={tone} badge={badge} />
+			</Link>
+		);
+	});
+}
+
+/** La ficha de una landing page. `badge` es el rótulo de su clasificación, o nada si no la tiene. */
+function LandingPageCard({ config, tone, badge }: { config: string; tone: RowTone; badge: string | null }) {
+	return (
+		<Card paddingX={3} paddingY={3} radius={0} borderBottom tone={tone}>
+			<Flex align="center" gap={3}>
+				<Text size={2} muted={tone === 'default'}>
+					<CodeBlockIcon />
+				</Text>
+				<Box flex={1}>
+					<Text size={2} weight="medium" textOverflow="ellipsis">
+						{config}
+					</Text>
+				</Box>
+				{badge !== null && (
+					<Badge tone={tone} mode="outline">
+						{badge}
+					</Badge>
+				)}
+			</Flex>
+		</Card>
+	);
+}
+
 export function LandingPageListPane() {
 	const client = useClient({ apiVersion: API_VERSION });
 	const { ChildLink, navigateIntent } = usePaneRouter();
@@ -55,28 +139,12 @@ export function LandingPageListPane() {
 	}, [client, load]);
 
 	if (error !== null) {
-		return (
-			<Box padding={4}>
-				{/* El tono va en el Card: Text de @sanity/ui v3 no acepta `tone`, así que el mensaje se venía
-				    renderizando sin color de error. */}
-				<Card padding={3} radius={2} tone="critical">
-					<Text>No se pudieron cargar las páginas de inicio: {error}</Text>
-				</Card>
-			</Box>
-		);
+		return <ErrorNotice message={error} />;
 	}
 
 	if (rows === null) {
-		return (
-			<Flex align="center" justify="center" padding={5}>
-				<Spinner muted />
-			</Flex>
-		);
+		return <LoadingIndicator />;
 	}
-
-	// Referencia para clasificar filas: el config de la activa (máximo config <= semana actual). Toda fila con
-	// config mayor es una semana futura. Sin activa, se cae a la semana actual como referencia.
-	const activeConfig = rows.find((row) => row._id === activeId)?.config ?? buildWeekSlug(new Date());
 
 	return (
 		<Stack space={0}>
@@ -89,43 +157,7 @@ export function LandingPageListPane() {
 					onClick={() => navigateIntent('create', { type: 'landingPage' })}
 				/>
 			</Box>
-			{rows.length === 0 ? (
-				<Box padding={3}>
-					<Text muted>No hay páginas de inicio cargadas.</Text>
-				</Box>
-			) : (
-				rows.map((row) => {
-					const isActive = row._id === activeId;
-					const isFuture = !isActive && row.config > activeConfig;
-					const tone = isActive ? 'positive' : isFuture ? 'primary' : 'default';
-					return (
-						<PlainChildLink key={row._id} childId={row._id} style={{ textDecoration: 'none', color: 'inherit' }}>
-							<Card paddingX={3} paddingY={3} radius={0} borderBottom tone={tone}>
-								<Flex align="center" gap={3}>
-									<Text size={2} muted={tone === 'default'}>
-										<CodeBlockIcon />
-									</Text>
-									<Box flex={1}>
-										<Text size={2} weight="medium" textOverflow="ellipsis">
-											{row.config}
-										</Text>
-									</Box>
-									{isActive && (
-										<Badge tone="positive" mode="outline">
-											Activa
-										</Badge>
-									)}
-									{isFuture && (
-										<Badge tone="primary" mode="outline">
-											Futura
-										</Badge>
-									)}
-								</Flex>
-							</Card>
-						</PlainChildLink>
-					);
-				})
-			)}
+			{rows.length === 0 ? <EmptyNotice /> : <LandingPageRows rows={rows} activeId={activeId} Link={PlainChildLink} />}
 		</Stack>
 	);
 }
