@@ -8,7 +8,7 @@
  * El criterio de escaneo vive en `extract-comments.helpers.ts`; acá están el recorrido del disco,
  * los argumentos y la escritura.
  */
-import { mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, extname, join } from 'node:path';
 import { parseArgs } from 'node:util';
 
@@ -51,8 +51,17 @@ const { values, positionals } = parseArgs({
 	options: { out: { type: 'string', default: DEFAULT_OUTPUT } },
 });
 
+const USAGE = 'uso: pnpm comments:inventory <ruta> [<ruta>...] [--out <archivo.json>]\n';
+
 if (positionals.length === 0) {
-	process.stderr.write('uso: pnpm comments:inventory <ruta> [<ruta>...] [--out <archivo.json>]\n');
+	process.stderr.write(USAGE);
+	process.exit(1);
+}
+
+// Una ruta inexistente se reporta acá y no como el stack trace de ENOENT que tiraría el recorrido.
+const missing = positionals.filter((path) => !existsSync(path));
+if (missing.length > 0) {
+	process.stderr.write(`no existe: ${missing.join(', ')}\n${USAGE}`);
 	process.exit(1);
 }
 
@@ -74,6 +83,10 @@ for (const file of walk(positionals)) {
 		);
 	}
 }
+
+// El recorrido es en profundidad y su orden depende del filesystem. La skill compara inventarios
+// antes y después de remediar, así que la salida se ordena para que dos corridas sean diffeables.
+comments.sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line);
 
 mkdirSync(dirname(values.out), { recursive: true });
 writeFileSync(values.out, `${JSON.stringify(comments, null, 2)}\n`, 'utf8');
