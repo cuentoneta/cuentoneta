@@ -88,10 +88,17 @@ describe('findIssueRefsInComments — lo que admite', () => {
 
 describe('findIssueRefsInComments — alcance', () => {
 	it.each([
-		['fuera de src/', 'scripts/check-issue-refs.ts'],
+		['fuera de src/, cms/ y scripts/', 'e2e/_utils/seo-invariants.ts'],
 		['una extensión que no es de código', 'src/mocks/onoff/README.md'],
+		['un archivo que define esta convención', 'scripts/check-issue-refs.ts'],
 	])('no mira %s', (_caso, ruta) => {
 		expect(findIssueRefsInComments(ruta, '// Rediseñado en #1234')).toEqual([]);
+	});
+
+	it('mira los archivos de scripts/ que no definen la convención', () => {
+		expect(findIssueRefsInComments('scripts/backfill-reading-time.ts', '// Rediseñado en #1234')).toEqual([
+			'// Rediseñado en #1234',
+		]);
 	});
 
 	it.each([
@@ -144,10 +151,16 @@ describe('findExemptIssueRefs — la operación inversa', () => {
 	});
 
 	it.each([
-		['fuera de src/ y cms/', 'scripts/check-issue-refs.ts'],
+		['fuera de src/, cms/ y scripts/', 'e2e/_utils/seo-invariants.ts'],
 		['una extensión que no es de código', 'src/mocks/onoff/README.md'],
+		['un archivo que define esta convención', 'scripts/check-issue-refs.ts'],
 	])('no mira %s', (_caso, ruta) => {
 		expect(findExemptIssueRefs(ruta, '// TODO(#1471): algo')).toEqual([]);
+	});
+
+	it('mira los archivos de scripts/ que no definen la convención', () => {
+		// Sin esto, el sweep le preguntaría a GitHub por los números de los fixtures del propio checker.
+		expect(findExemptIssueRefs('scripts/backfill-reading-time.ts', '// TODO(#1471): algo')).toHaveLength(1);
 	});
 
 	it('no arrastra estado entre llamadas, que es el modo de falla de una regex global compartida', () => {
