@@ -18,89 +18,88 @@ export class PortableTextDirective {
 		});
 	}
 
+	// La alineación llega como marca y sale como clase de utilidad. Un mapa en lugar de una cadena de
+	// condiciones: cada marca nueva es una entrada, no una rama.
+	private readonly alignmentClasses: Readonly<Record<string, string>> = Object.freeze({
+		center: 'text-center',
+		left: 'text-left',
+		right: 'text-right',
+		justify: 'text-justify',
+	});
+
 	private render(content: TextBlockContent, classes: string) {
+		this.clearHost();
+		this.applyClasses(this.appendClasses(content, classes));
+		content.children.forEach((block) => this.renderBlock(content, block));
+	}
+
+	private clearHost(): void {
 		while (this.el.nativeElement.firstChild) {
 			this.el.nativeElement.removeChild(this.el.nativeElement.firstChild);
 		}
-
 		this.el.nativeElement.className = '';
+	}
 
-		const updatedClasses = this.appendClasses(content, classes);
-		if (updatedClasses) {
-			updatedClasses.split(' ').forEach((className) => {
-				if (className) {
-					this.renderer.addClass(this.el.nativeElement, className.trim());
-				}
-			});
+	private applyClasses(classes: string): void {
+		classes
+			.split(' ')
+			.filter(Boolean)
+			.forEach((className) => this.renderer.addClass(this.el.nativeElement, className.trim()));
+	}
+
+	private renderBlock(content: TextBlockContent, block: TextBlockContent['children'][number]): void {
+		const marks = (block.marks ?? []).slice(0);
+
+		this.applyClasses(marks.map((mark) => this.alignmentClasses[mark] ?? '').join(' '));
+
+		// Un salto de línea parte el texto en nodos con `br` en el medio, así que se emite directo al
+		// host: las marcas envuelven un nodo único y no sobrevivirían a esa partición.
+		if (block.text.includes('\n')) {
+			this.appendWithLineBreaks(block.text);
+			return;
 		}
 
-		content.children.forEach((block) => {
-			let element: HTMLElement | Text = this.renderer.createText(block.text);
-			const marks = (block.marks ?? []).slice(0);
+		let element: HTMLElement | Text = this.renderer.createText(block.text);
+		element = this.wrapWithMarks(element, marks);
+		element = this.wrapWithLink(element, content, marks);
+		this.renderer.appendChild(this.el.nativeElement, element);
+	}
 
-			// Procesar clases de alineación de texto
-			const alignmentClasses = [];
-			if (marks.includes('center')) {
-				alignmentClasses.push('text-center');
+	// TODO: Agregar procesamiento de otros tipos de marks (h1, h2, highlight, tachado, subrayado, etc.)
+	private wrapWithMarks(element: HTMLElement | Text, marks: string[]): HTMLElement | Text {
+		let wrapped = element;
+		for (const [mark, tag] of [
+			['em', 'i'],
+			['strong', 'b'],
+		] as const) {
+			if (marks.includes(mark)) {
+				const parent = this.renderer.createElement(tag);
+				this.renderer.appendChild(parent, wrapped);
+				wrapped = parent;
 			}
+		}
+		return wrapped;
+	}
 
-			if (marks.includes('left')) {
-				alignmentClasses.push('text-left');
+	private wrapWithLink(element: HTMLElement | Text, content: TextBlockContent, marks: string[]): HTMLElement | Text {
+		const linkDef = content.markDefs?.find((def) => def._type === 'link' && marks.includes(def._key));
+		if (!linkDef) {
+			return element;
+		}
+
+		const linkElement = this.renderer.createElement('a');
+		this.renderer.setAttribute(linkElement, 'href', linkDef.href || '#');
+		this.renderer.addClass(linkElement, 'underline');
+		this.renderer.appendChild(linkElement, element);
+		return linkElement;
+	}
+
+	private appendWithLineBreaks(text: string): void {
+		text.split('\n').forEach((part, index) => {
+			if (index > 0) {
+				this.renderer.appendChild(this.el.nativeElement, this.renderer.createElement('br'));
 			}
-
-			if (marks.includes('right')) {
-				alignmentClasses.push('text-right');
-			}
-
-			if (marks.includes('justify')) {
-				alignmentClasses.push('text-justify');
-			}
-
-			alignmentClasses.forEach((className) => {
-				this.renderer.addClass(this.el.nativeElement, className.trim());
-			});
-
-			// Procesar marks en bloques (em, string, etc.)
-			// TODO: Agregar procesamiento de otros tipos de marks (h1, h2, highlight, tachado, subrayado, etc.)
-			if (marks.includes('em')) {
-				const emElement = this.renderer.createElement('i');
-				this.renderer.appendChild(emElement, element);
-				element = emElement;
-			}
-
-			if (marks.includes('strong')) {
-				const strongElement = this.renderer.createElement('b');
-				this.renderer.appendChild(strongElement, element);
-				element = strongElement;
-			}
-
-			// Procesar texto con URLs
-			if (content.markDefs?.length && marks.length) {
-				const linkDef = content.markDefs.find((def) => def._type === 'link' && marks.includes(def._key));
-
-				if (linkDef) {
-					const linkElement = this.renderer.createElement('a');
-					this.renderer.setAttribute(linkElement, 'href', linkDef.href || '#');
-					this.renderer.addClass(linkElement, 'underline');
-					this.renderer.appendChild(linkElement, element);
-					element = linkElement;
-				}
-			}
-
-			// Manejo de saltos de línea
-			if (block.text.includes('\n')) {
-				const parts = block.text.split('\n');
-				parts.forEach((part, index) => {
-					if (index > 0) {
-						const br = this.renderer.createElement('br');
-						this.renderer.appendChild(this.el.nativeElement, br);
-					}
-					const textNode = this.renderer.createText(part);
-					this.renderer.appendChild(this.el.nativeElement, textNode);
-				});
-			} else {
-				this.renderer.appendChild(this.el.nativeElement, element);
-			}
+			this.renderer.appendChild(this.el.nativeElement, this.renderer.createText(part));
 		});
 	}
 
