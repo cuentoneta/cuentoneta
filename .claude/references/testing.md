@@ -84,6 +84,16 @@ Un spec o una story que importa una obra concreta queda atado a ella: sus aserci
 
 Corolario: **las aserciones se derivan del fixture**, no de prosa clavada. Si el caso necesita una palabra del texto, extraela del propio mock (`bodyHtml.replace(/<[^>]+>/g, ' ')` y tomá una palabra) en vez de escribirla a mano — así sigue pasando cuando el canon cambie. Si falta un selector para el shape que necesitás, **agregalo al agregador** (derivado por predicado, no una lista en paralelo) en vez de importar la obra.
 
+### Las tres capas del corpus de Onoff
+
+`onoffDatasetMock` (`src/mocks/onoff-documents.mock.ts`) no es un fixture más: es el dataset de **documentos** — lo que Sanity guarda tal cual — y la única capa del corpus que se escribe a mano. Para `literary-work/` y `collection/`, la fixture **raw** que la tabla de arriba nombra (`onoffRawLiteraryWorksMock`, `onoffRawCollectionsMock`) no se edita: la genera `pnpm corpus:generate` evaluando la query GROQ real con `groq-js` sobre `onoffDatasetMock`.
+
+```
+documentos (a mano)  →  (groq-js, query real)  →  raw (generado)  →  (ACL del repository)  →  dominio
+```
+
+El spec `src/mocks/onoff-documents.mock.spec.ts` es el **gate de frescura**: vuelve a evaluar esas mismas queries y compara, por valor, contra las fixtures raw commiteadas. Corre dentro de `pnpm test` (gate `test`) — no es un gate de CI aparte. `story/` y `storylist/` quedan fuera de esta generación (siguen escribiéndose a mano); el detalle completo —comando, qué se genera, las dos clases de exclusión y la guarda contra referencias colgadas— vive en [`src/mocks/onoff/README.md`](../../src/mocks/onoff/README.md).
+
 ---
 
 ## Componentes: Angular Testing Library
