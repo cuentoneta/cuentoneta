@@ -17,9 +17,11 @@ import { onoffRawContentCampaignsMock } from './onoff-raw-content-campaigns.mock
 
 const assets: [string, OnoffImageAsset][] = Object.entries(onoffImageAssets);
 
-// Las rutas del corpus son relativas a `src/`, que es lo que la app y Storybook publican en `/assets`.
+// La app publica dos raíces distintas: `src/assets` bajo `/assets` y `public/` bajo la raíz. La ruta
+// servida dice de cuál sale, así que el prefijo alcanza para volver a ubicar el archivo en disco.
 function absolutePathOf(asset: OnoffImageAsset): string {
-	return join(process.cwd(), 'src', asset.path);
+	const root = asset.path.startsWith('assets/') ? 'src' : 'public';
+	return join(process.cwd(), root, asset.path);
 }
 
 // El ancho y el alto de un PNG viven en offsets fijos de la cabecera IHDR, que abre siempre el archivo.
