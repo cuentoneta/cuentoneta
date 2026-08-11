@@ -63,18 +63,22 @@ Cada uno abre con un banner de dos líneas ("Este archivo lo escribe `pnpm corpu
 
 ### Qué queda fuera de la generación
 
-Hay dos clases de exclusión, y no son lo mismo:
+Las exclusiones no son todas de la misma naturaleza, y la diferencia importa: algunas son permanentes y otras solo describen hasta dónde llegó la generación.
 
-| Qué                                           | Por qué queda afuera                                                                 | Clase                      |
-| --------------------------------------------- | ------------------------------------------------------------------------------------ | -------------------------- |
-| `story` (8 obras + teasers + nav teasers)     | Derivable — hay query top-level que las devuelve — pero el agregado está en baja     | Fuera por **scope**        |
-| `storylist`                                   | Ídem: derivable, pero el agregado está en baja                                       | Fuera por **scope**        |
-| `onoff-raw-tags.mock.ts` (`RawTag`)           | Sub-proyección repetida en varias queries; ninguna la devuelve top-level             | Fuera por **construcción** |
-| `onoff-raw-author.mock.ts` (`rawOnoffAuthor`) | `NonNullable<StoryBySlugQueryResult>['author']`; ninguna query lo devuelve top-level | Fuera por **construcción** |
+<<<<<<< HEAD
+
+| Qué                                           | Por qué queda afuera                                                                        | Clase                      |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------- | -------------------------- |
+| `story` (8 obras + teasers + nav teasers)     | Derivable — hay query top-level que las devuelve — pero el agregado está en baja            | Fuera por **scope**        |
+| `storylist`                                   | Ídem: derivable, pero el agregado está en baja                                              | Fuera por **scope**        |
+| `onoff-raw-tags.mock.ts` (`RawTag`)           | Sub-proyección repetida en varias queries; ninguna la devuelve top-level                    | Fuera por **construcción** |
+| `onoff-raw-author.mock.ts` (`rawOnoffAuthor`) | Tipado contra el autor **embebido** en la obra; ese shape no lo devuelve ninguna query sola | **Todavía no**             |
 
 **Fuera por scope:** existe una query top-level que las devuelve, así que serían derivables con el mismo generador — pero construirles una capa de documentos sería trabajo sobre agregados que están en baja, y no vale la pena.
 
 **Fuera por construcción:** son sub-proyecciones que ninguna query devuelve como resultado top-level, así que ningún generador —presente o futuro— podría apuntarlas como target apuntando una query real. Por eso `document/support-documents.projection.ts` sigue yendo en la dirección **inversa** (documento ← raw) para tags, nacionalidad y tipo de recurso: son de esta segunda clase, y esa inversión manual es la única forma de tenerlos.
+
+**Todavía no:** el autor **sí** es derivable —tiene queries top-level (`authorBySlugQuery`, `authorsQuery`) y su documento ya está en el dataset—, pero el shape que hoy declara `rawOnoffAuthor` es el del autor embebido en la obra, que ninguna query devuelve sola. Generarlo exige apuntar a la query de autor y aceptar el shape que esa devuelve. Es trabajo pendiente, no un imposible: la única exclusión de esta tabla que puede desaparecer sin cambiar nada del diseño.
 
 Una sub-proyección **sí** puede generarse cuando su query tiene capa de documentos: es lo que pasa con `ContentCampaign`, que se deriva del resultado generado de la landing page (ver [Corpus raw: página de inicio](#corpus-raw-página-de-inicio-y-contentcampaign-generado)). Lo que la vuelve inderivable no es ser sub-proyección, sino que ninguna query la devuelva.
 
@@ -116,7 +120,9 @@ Archivos:
 
 La biografía de François Onoff vive como Markdown plano en un único archivo, `author/francois-onoff.biography.md` (solo la prosa, sin metadata), importado con `?raw` — misma convención que `<slug>.editorial-note.md` para `LiteraryWork`. `../onoff-raw-author.mock.ts` (`rawOnoffAuthor.biography`) transporta ese Markdown crudo; `../author.mock.ts` deriva el `SanitizedHtml` corriendo `markdownToSanitizedHtml(createMarkdown(...))` sobre la misma fuente. Es el único archivo de biografía del corpus: el elenco modela un solo autor (Onoff), así que no hay un `<slug>.biography.md` por obra. `rawOnoffAuthorTeaser` no declara `biography`, en paridad con `AuthorTeaser` de dominio.
 
-`rawOnoffAuthor` se sigue escribiendo a mano (ver [Qué queda fuera de la generación](#qué-queda-fuera-de-la-generación)): ninguna query lo devuelve top-level, así que no hay target posible para el generador. `author/author.document.projection.ts` deriva el **documento** del autor a partir de ese raw — la dirección inversa a la de `literary-work/` y `collection/`.
+`rawOnoffAuthor` se sigue escribiendo a mano, pero **no porque sea inderivable**: el autor tiene queries top-level (`authorBySlugQuery` y `authorsQuery`) y su documento ya está en el dataset, así que podría tener su raw generado como cualquier otra entidad. Lo que no devuelve ninguna query sola es el shape que este archivo declara —el autor tal como lo **embebe** la obra—, y por eso quedó fuera de la primera pasada de generación. `author/author.document.projection.ts` deriva mientras tanto el **documento** a partir del raw, la dirección inversa a la de `literary-work/` y `collection/`.
+
+El autor embebido sí está anclado, aunque su raw sea a mano: las fixtures generadas de obra lo importan en vez de inlinearlo, así que el gate de frescura lo compara contra lo que la query devuelve, y el cruce contra el ACL lo compara entero. Lo que queda sin anclar es el autor de la **ficha** y el del **listado**, que no tienen cruce.
 
 ## Corpus de dominio: `Collection`
 

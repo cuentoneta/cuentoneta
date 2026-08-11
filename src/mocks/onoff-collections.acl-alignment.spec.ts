@@ -1,3 +1,20 @@
+/**
+ * El cruce del corpus de dominio de `Collection` contra su ACL. El porqué general —qué protege que las dos
+ * capas coincidan— está en el spec homónimo de `LiteraryWork`; acá interesa por qué no alcanza con aquel.
+ *
+ * Una colección no embebe obras: embebe **teasers**, que salen de una proyección más angosta y de un mapper
+ * distinto. Una obra puede mapear bien entera y estar mal como teaser —le sobra una clave que la proyección
+ * no trae, o le falta una que sí—, y el cruce de `LiteraryWork` no lo vería.
+ *
+ * Y `imagery` solo existe acá: es el único campo del corpus que el ACL **deriva** en vez de transportar.
+ * Cuando la colección no trae portada editorial, el mapper la arma con las portadas de sus obras, así que
+ * es la única pieza cuyo valor esperado depende de otras entidades del corpus. Las dos colecciones del
+ * elenco están curadas para cubrir una rama cada una.
+ *
+ * **Qué no cubre:** el repository resuelve una colección por dos caminos —`fetchBySlug` para la vista de
+ * detalle y `fetchAll` para el listado— y este cruce ejercita el primero. El listado comparte `mapShared`
+ * pero arma su `imagery` desde otra proyección, así que una regresión que viva solo ahí pasa en verde.
+ */
 import type { Collection } from '@models/collection.model';
 import type { SanityClient } from '@sanity/client';
 import { fn } from '@test-utils';
