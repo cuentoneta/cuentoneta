@@ -41,8 +41,10 @@ class StubCandidatePageFetcher implements LiteraryWorkCandidatePageFetcher {
 
 function spyWriter() {
 	const commit = fn(() => Promise.resolve({}));
-	const setIfMissing = fn(() => ({ commit }));
-	const patch = fn(() => ({ setIfMissing }));
+	// Los tipos van por parámetro genérico y no por un parámetro sin usar: el spec asierta sobre los
+	// argumentos con que se llamó a cada doble, así que su firma tiene que sobrevivir la inferencia.
+	const setIfMissing = fn<(attributes: Record<string, number>) => { commit: typeof commit }>(() => ({ commit }));
+	const patch = fn<(documentId: string) => { setIfMissing: typeof setIfMissing }>(() => ({ setIfMissing }));
 	return { writer: { patch } as unknown as ReadingTimeMaterializationWriter, patch, setIfMissing, commit };
 }
 

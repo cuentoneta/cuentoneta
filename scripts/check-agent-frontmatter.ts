@@ -3,8 +3,8 @@
  *
  * Un `description:` sin comillas que contenga `: ` (dos puntos + espacio) es YAML inválido: el parser
  * lo lee como un mapping anidado y descarta la definición **sin emitir ningún error**. El agente o la
- * skill simplemente no aparece en el registro de la sesión. Pasó con `documentation-writer` (#1874) y
- * se repitió al editar `security-auditor` (#1849), en ambos casos sin señal alguna.
+ * skill simplemente no aparece en el registro de la sesión. Es un modo de falla ya observado dos
+ * veces sobre agentes distintos, ambas sin que nada lo delatara: el archivo se ve bien al leerlo.
  *
  * Las skills entran al recorrido porque tienen el mismo frontmatter y el mismo modo de falla, y
  * porque nada más lo verifica: que una skill cargue no se nota hasta que hace falta y no está.

@@ -38,7 +38,7 @@ function main(raw: string): void {
 		`BLOQUEADO: estás citando un issue en un comentario de código en '${filePath}'.\n` +
 			`La procedencia y el rationale de un cambio van al commit, al PR y al historial de git, no al código.\n` +
 			`Regla: Sección 3 de coding-agent-policies.md.\n` +
-			`Excepciones: un TODO puede citar el issue que lo destraba en su MISMA línea (// TODO(#123): ...),\n` +
+			`Excepciones: un TODO puede citar el issue que lo destraba en su MISMA línea (// TODO(#<id>): ...),\n` +
 			`y la justificación de un @ts-ignore / @ts-expect-error / eslint-disable.\n` +
 			`Líneas ofensivas:\n  ${offending.map((line) => line.trim()).join('\n  ')}\n`,
 	);

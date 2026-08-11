@@ -2,8 +2,11 @@
  * Valida las **referencias cruzadas** de los `.md` bajo `.claude/`:
  *
  * 1. Toda ancla `](../../CLAUDE.md#seccion)` apunta a un heading real de `CLAUDE.md`, y la profundidad
- *    de `../` corresponde a la ubicación del archivo. (Rompía en #1846.)
- * 2. Toda ruta del repo citada entre backticks (`src/...`, `scripts/...`) existe. (Rompía en #1847.)
+ *    de `../` corresponde a la ubicación del archivo.
+ * 2. Toda ruta del repo citada entre backticks (`src/...`, `scripts/...`) existe.
+ *
+ * Las dos existen porque las dos se rompieron: un ancla a un heading renombrado y una ruta a un
+ * archivo movido envejecen en silencio, y nadie relee un enlace que ya funcionó una vez.
  *
  * Lo consume el runner `check-claude-docs.ts` (gate de CI `check-agents`).
  */

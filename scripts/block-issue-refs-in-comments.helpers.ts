@@ -22,7 +22,7 @@ const COMMENT_MARKER = /\/\/|\/\*|<!--|^\s*\*/;
 
 // Ambas excepciones se anclan a la apertura del comentario: una directiva legítima abre el comentario,
 // no aparece en medio de la prosa. Sin el ancla, nombrar un marcador alcanzaba para excusar la línea, y
-// `// El eslint-disable de abajo viene de #123` colaba el rationale prohibido de contrabando.
+// `// El eslint-disable de abajo viene de #<id>` colaba el rationale prohibido de contrabando.
 const OPENER = String.raw`(?:\/\/|\/\*|<!--|^\s*\*)\s*`;
 
 // `TODO` como marcador y no como palabra suelta en la prosa: en mayúsculas y seguido de `:` o de `(`.
