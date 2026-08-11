@@ -65,8 +65,6 @@ Cada uno abre con un banner de dos líneas ("Este archivo lo escribe `pnpm corpu
 
 Las exclusiones no son todas de la misma naturaleza, y la diferencia importa: algunas son permanentes y otras solo describen hasta dónde llegó la generación.
 
-<<<<<<< HEAD
-
 | Qué                                           | Por qué queda afuera                                                                        | Clase                      |
 | --------------------------------------------- | ------------------------------------------------------------------------------------------- | -------------------------- |
 | `story` (8 obras + teasers + nav teasers)     | Derivable — hay query top-level que las devuelve — pero el agregado está en baja            | Fuera por **scope**        |
