@@ -10,10 +10,7 @@ export const lasDosAntorchasRawLiteraryWork: NonNullable<LiteraryWorkBySlugQuery
 	_id: 'onoff-literary-work-las-dos-antorchas',
 	slug: 'las-dos-antorchas',
 	title: 'Las dos antorchas',
-	coverImage: {
-		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-83ad8511a47107773b70ff339edd8b43c29dcf3e-236x328-png' },
-	},
+	coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-lasDosAntorchasCover-236x328-png' } },
 	editorialNote: lasDosAntorchasEditorialNoteMd,
 	badLanguage: false,
 	originalPublication: 'Éditions du Méridien (1987)',

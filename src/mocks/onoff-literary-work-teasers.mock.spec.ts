@@ -9,9 +9,10 @@ import { palacioNueveFronterasLiteraryWorkMock } from './onoff/literary-work/el-
 
 describe('onoffLiteraryWorkTeasersMock (derivación de teasers desde LiteraryWork)', () => {
 	it('should expose the first section of the source work as teaserSection', () => {
-		expect(palacioNueveFronterasLiteraryWorkTeaserMock.teaserSection).toBe(
-			palacioNueveFronterasLiteraryWorkMock.content[0],
-		);
+		expect(palacioNueveFronterasLiteraryWorkTeaserMock.teaserSection).toEqual({
+			...palacioNueveFronterasLiteraryWorkMock.content[0],
+			epigraphs: [],
+		});
 		for (const teaser of onoffLiteraryWorkTeasersMock) {
 			expect(teaser.teaserSection.position).toBe(0);
 		}

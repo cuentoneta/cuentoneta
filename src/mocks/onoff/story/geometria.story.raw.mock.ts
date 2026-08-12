@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { StoryBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 import { cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag } from '../../onoff-raw-tags.mock';
@@ -253,7 +254,7 @@ export const geometriaRawStory: NonNullable<StoryBySlugQueryResult> = {
 	approximateReadingTime: 7,
 	coverImage: {
 		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-9e1eab984fbe94e19101c7aa4fc2e99a88f71736-236x328-png' },
+		asset: { _type: 'reference', _ref: onoffImageAssets.geometriaCover.ref },
 	},
 	mediaSources: geometriaRawMediaSources,
 	resources: [],

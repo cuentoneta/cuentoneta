@@ -6,7 +6,7 @@ import type {
 	LiteraryWorkTeaser,
 } from '@models/literary-work.model';
 import type { Media } from '@models/media.model';
-import { authorTeaserMock } from './author.mock';
+import { embeddedAuthorTeaserMock } from './author.mock';
 import { onoffMediaMock, onoffYouTubeVideosMock } from './onoff-media.mock';
 import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
 
@@ -49,8 +49,10 @@ function toTeaser(literaryWork: LiteraryWork): LiteraryWorkTeaser {
 		sectionCount: literaryWork.sectionCount,
 		tags: literaryWork.tags,
 		mediaSources: literaryWork.mediaSources,
-		authors: [authorTeaserMock],
-		teaserSection: literaryWork.content[0],
+		authors: [embeddedAuthorTeaserMock],
+		// La sección de apertura del teaser va sin epígrafes: la proyección de teaser no los trae, porque
+		// ninguna vista de tarjeta los muestra.
+		teaserSection: { ...literaryWork.content[0], epigraphs: [] },
 	};
 }
 

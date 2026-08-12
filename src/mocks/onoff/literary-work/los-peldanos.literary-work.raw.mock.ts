@@ -10,10 +10,7 @@ export const losPeldanosRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResu
 	_id: 'onoff-literary-work-los-peldanos',
 	slug: 'los-peldanos',
 	title: 'Los peldaños',
-	coverImage: {
-		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-27fb05f42b38f0ba9ba21aeb566e25abe670b213-236x328-png' },
-	},
+	coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-losPeldanosCover-236x328-png' } },
 	editorialNote: losPeldanosEditorialNoteMd,
 	badLanguage: false,
 	originalPublication: 'Éditions du Méridien (1977)',

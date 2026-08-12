@@ -10,10 +10,7 @@ export const lasEscalerasRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryRes
 	_id: 'onoff-literary-work-las-escaleras',
 	slug: 'las-escaleras',
 	title: 'Las escaleras',
-	coverImage: {
-		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-ad5639283bf3d3e927b5b0eb79ef2ba098b707e8-236x328-png' },
-	},
+	coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-lasEscalerasCover-236x328-png' } },
 	editorialNote: lasEscalerasEditorialNoteMd,
 	badLanguage: false,
 	originalPublication: 'Éditions du Méridien (1979)',

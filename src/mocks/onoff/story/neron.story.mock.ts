@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { Story } from '@models/story.model';
 import { neronRawStory } from './neron.story.raw.mock';
 import { authorMock } from '../../author.mock';
@@ -10,7 +11,7 @@ export const neronStoryMock: Story = {
 	originalPublication: 'Estreno teatral (1988)',
 	approximateReadingTime: 7,
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/neron.png',
+	coverImage: onoffImageAssets.neronCover.path,
 	tags: toDomainTags(neronRawStory.tags),
 	resources: [],
 	media: [],

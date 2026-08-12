@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { Story } from '@models/story.model';
 import { lasEscalerasRawStory } from './las-escaleras.story.raw.mock';
 import { authorMock } from '../../author.mock';
@@ -10,7 +11,7 @@ export const lasEscalerasStoryMock: Story = {
 	originalPublication: 'Éditions du Méridien (1979)',
 	approximateReadingTime: 9,
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/las-escaleras.png',
+	coverImage: onoffImageAssets.lasEscalerasCover.path,
 	tags: toDomainTags(lasEscalerasRawStory.tags),
 	resources: [],
 	media: [],

@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { Story } from '@models/story.model';
 import { authorMock } from '../../author.mock';
 import { toDomainTags } from '../../onoff-tags.mock';
@@ -11,7 +12,7 @@ export const geometriaStoryMock: Story = {
 	originalPublication: 'Éditions du Méridien (1974)',
 	approximateReadingTime: 7,
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/geometria.png',
+	coverImage: onoffImageAssets.geometriaCover.path,
 	tags: toDomainTags(geometriaRawStory.tags),
 	resources: [],
 	media: geometriaMediaMock,

@@ -1,3 +1,10 @@
+/**
+ * La etapa que vuelve legible el corpus. Existe como módulo aparte porque es la única que necesita un
+ * bundler: el resto del generador trabaja con valores ya cargados y no debería saber que Vite existe.
+ *
+ * Aísla además el ciclo de vida del servidor detrás de un callback: el `finally` lo cierra pase lo que
+ * pase, y sin eso cualquier `throw` de las etapas siguientes dejaría el proceso colgado.
+ */
 import { createServer, type ViteDevServer } from 'vite';
 
 /**

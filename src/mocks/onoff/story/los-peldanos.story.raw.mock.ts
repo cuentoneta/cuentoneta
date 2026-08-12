@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { StoryBySlugQueryResult } from '@sanity-types';
 import { cuentoRawTag, absurdoRawTag, surrealismoRawTag } from '../../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
@@ -242,7 +243,7 @@ export const losPeldanosRawStory: NonNullable<StoryBySlugQueryResult> = {
 	approximateReadingTime: 8,
 	coverImage: {
 		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-27fb05f42b38f0ba9ba21aeb566e25abe670b213-236x328-png' },
+		asset: { _type: 'reference', _ref: onoffImageAssets.losPeldanosCover.ref },
 	},
 	mediaSources: [],
 	resources: [],

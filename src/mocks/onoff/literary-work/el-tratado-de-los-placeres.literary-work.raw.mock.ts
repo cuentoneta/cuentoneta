@@ -10,10 +10,7 @@ export const elTratadoDeLosPlaceresRawLiteraryWork: NonNullable<LiteraryWorkBySl
 	_id: 'onoff-literary-work-el-tratado-de-los-placeres',
 	slug: 'el-tratado-de-los-placeres',
 	title: 'El tratado de los placeres',
-	coverImage: {
-		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-ff13dcee67b52bc4bbd78c2c7900f466f335badd-236x328-png' },
-	},
+	coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-elTratadoDeLosPlaceresCover-236x328-png' } },
 	editorialNote: elTratadoDeLosPlaceresEditorialNoteMd,
 	badLanguage: false,
 	originalPublication: 'Éditions du Méridien (1981)',

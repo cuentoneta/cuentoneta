@@ -11,10 +11,7 @@ export const elOdioRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> =
 	_id: 'onoff-literary-work-el-odio',
 	slug: 'el-odio',
 	title: 'El odio',
-	coverImage: {
-		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-83588a6210ea3de0cee7f493f3d41140427958bf-236x328-png' },
-	},
+	coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-elOdioCover-236x328-png' } },
 	editorialNote: elOdioEditorialNoteMd,
 	badLanguage: false,
 	originalPublication: 'Éditions du Méridien (1971)',

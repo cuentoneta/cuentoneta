@@ -9,10 +9,7 @@ export const neronRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = 
 	_id: 'onoff-literary-work-neron',
 	slug: 'neron',
 	title: 'Nerón',
-	coverImage: {
-		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-9642ca580d43168d6965f428e65df5ca6ec34cdc-236x328-png' },
-	},
+	coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-neronCover-236x328-png' } },
 	editorialNote: null,
 	badLanguage: false,
 	originalPublication: 'Estreno teatral (1988)',

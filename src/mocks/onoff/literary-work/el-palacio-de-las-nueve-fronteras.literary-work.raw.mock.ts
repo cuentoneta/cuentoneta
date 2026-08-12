@@ -17,7 +17,7 @@ export const palacioNueveFronterasRawLiteraryWork: NonNullable<LiteraryWorkBySlu
 	title: 'El palacio de las nueve fronteras',
 	coverImage: {
 		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-3f8774ea01abc54483829d982035a810667240e1-236x328-png' },
+		asset: { _type: 'reference', _ref: 'image-elPalacioDeLasNueveFronterasCover-236x328-png' },
 	},
 	editorialNote: elPalacioDeLasNueveFronterasEditorialNoteMd,
 	badLanguage: false,
