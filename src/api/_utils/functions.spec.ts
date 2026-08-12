@@ -13,7 +13,7 @@ import {
 } from './functions';
 import { elOdioRawTeaser, onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
 import { rawOnoffAuthor, rawOnoffAuthorTeaser } from '@mocks/onoff-raw-author.mock';
-import { onoffRawContentCampaignsMock } from '@mocks/onoff-raw-content-campaigns.mock';
+import { onoffRawContentCampaignsMock } from '@mocks/onoff-raw-landing-page.mock';
 import { onoffRawTagsMock } from '@mocks/onoff-raw-tags.mock';
 import { viewportElementSizes } from '@models/content-campaign.model';
 
