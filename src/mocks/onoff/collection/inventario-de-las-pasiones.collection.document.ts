@@ -24,6 +24,6 @@ export const inventarioDeLasPasionesCollectionDocument: Collection = {
 			_ref: 'onoff-literary-work-las-dos-antorchas',
 		},
 	],
-	tags: [],
+	tags: [{ _key: 'colaborativa', _type: 'reference', _ref: 'tag-colaborativa' }],
 	mediaSources: [],
 };

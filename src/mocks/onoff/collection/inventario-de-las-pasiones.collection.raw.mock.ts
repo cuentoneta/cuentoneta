@@ -2,6 +2,7 @@
 // corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
 import type { CollectionBySlugQueryResult } from '@sanity-types';
 import {
+	colaborativaRawTag,
 	dramaPsicologicoRawTag,
 	ensayoRawTag,
 	experimentalRawTag,
@@ -22,7 +23,7 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 	description: inventarioDeLasPasionesCollectionMd,
 	featuredImage: null,
 	config: { showAuthors: false },
-	tags: [],
+	tags: [colaborativaRawTag],
 	mediaSources: [],
 	literaryWorks: [
 		{

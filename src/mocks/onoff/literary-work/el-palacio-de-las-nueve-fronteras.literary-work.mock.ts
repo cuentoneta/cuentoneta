@@ -1,10 +1,11 @@
+import { embeddedAuthorMock } from '../../author.mock';
 import { palacioNueveFronterasRawLiteraryWork } from './el-palacio-de-las-nueve-fronteras.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createAttributedText } from '@models/attributed-text.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createMarkdown } from '@models/markdown.model';
-import { deriveSectionReadingTime } from '@models/reading-time.model';
+import { createReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import palacioNueveFronterasMdBody from './el-palacio-de-las-nueve-fronteras.md?raw';
@@ -28,7 +29,7 @@ export const palacioNueveFronterasLiteraryWorkMock: LiteraryWork = createLiterar
 	_id: 'onoff-literary-work-el-palacio-de-las-nueve-fronteras',
 	slug: palacioNueveFronterasStoryMock.slug,
 	title: palacioNueveFronterasStoryMock.title,
-	authors: [palacioNueveFronterasStoryMock.author],
+	authors: [embeddedAuthorMock],
 	coverImage: palacioNueveFronterasStoryMock.coverImage,
 	content: [
 		createLiteraryWorkSection({
@@ -36,7 +37,7 @@ export const palacioNueveFronterasLiteraryWorkMock: LiteraryWork = createLiterar
 			title: createSectionTitle(palacioNueveFronterasSectionTitle),
 			epigraphs: [palacioNueveFronterasEpigraphMock],
 			bodyHtml: markdownToSanitizedHtml(palacioNueveFronterasBody),
-			readingTime: deriveSectionReadingTime(palacioNueveFronterasBody),
+			readingTime: createReadingTime(palacioNueveFronterasRawLiteraryWork.content[0].readingTime ?? 0),
 		}),
 	],
 	mediaSources: [],

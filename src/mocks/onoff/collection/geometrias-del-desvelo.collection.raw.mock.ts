@@ -4,6 +4,7 @@ import type { CollectionBySlugQueryResult } from '@sanity-types';
 import {
 	absurdoRawTag,
 	alegoriaRawTag,
+	colaborativaRawTag,
 	cuentoRawTag,
 	dramaPsicologicoRawTag,
 	filosoficoRawTag,
@@ -21,6 +22,10 @@ import {
 	geometriaSpotifyDescription,
 	geometriaYoutubeDescription,
 } from '../media/geometria.media';
+import {
+	geometriasDelDesveloSpotifyDescription,
+	geometriasDelDesveloYoutubeDescription,
+} from '../media/geometrias-del-desvelo.media';
 import geometriasDelDesveloCollectionMd from './geometrias-del-desvelo.collection.md?raw';
 
 export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQueryResult> = {
@@ -33,8 +38,23 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 		asset: { _ref: 'image-6efd3e53eec8dfab23e1c0109027be9f58a01f8c-1200x630-png', _type: 'reference' },
 	},
 	config: { showAuthors: true },
-	tags: [],
-	mediaSources: [],
+	tags: [colaborativaRawTag],
+	mediaSources: [
+		{
+			_key: 'geometrias-spotify',
+			_type: 'spotifyPodcastEpisode',
+			title: 'La colección leída de corrido',
+			description: geometriasDelDesveloSpotifyDescription,
+			url: 'https://open.spotify.com/embed/episode/geometrias-del-desvelo',
+		},
+		{
+			_key: 'geometrias-youtube',
+			_type: 'youTubeVideo',
+			title: 'Las tres geometrías',
+			description: geometriasDelDesveloYoutubeDescription,
+			videoId: 'geometriasDelDesveloVideoId',
+		},
+	],
 	literaryWorks: [
 		{
 			_id: 'onoff-literary-work-geometria',

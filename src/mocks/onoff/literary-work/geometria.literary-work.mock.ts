@@ -1,9 +1,10 @@
+import { embeddedAuthorMock } from '../../author.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createAttributedText } from '@models/attributed-text.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createMarkdown } from '@models/markdown.model';
-import { deriveSectionReadingTime } from '@models/reading-time.model';
+import { createReadingTime } from '@models/reading-time.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import geometriaMdBody from './geometria.md?raw';
@@ -25,7 +26,7 @@ export const geometriaLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	_id: 'onoff-literary-work-geometria',
 	slug: geometriaStoryMock.slug,
 	title: geometriaStoryMock.title,
-	authors: [geometriaStoryMock.author],
+	authors: [embeddedAuthorMock],
 	coverImage: geometriaStoryMock.coverImage,
 	content: [
 		createLiteraryWorkSection({
@@ -33,7 +34,7 @@ export const geometriaLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 			title: createSectionTitle(geometriaSectionTitle),
 			epigraphs: [geometriaEpigraphMock],
 			bodyHtml: markdownToSanitizedHtml(geometriaBody),
-			readingTime: deriveSectionReadingTime(geometriaBody),
+			readingTime: createReadingTime(geometriaRawLiteraryWork.content[0].readingTime ?? 0),
 		}),
 	],
 	mediaSources: geometriaMediaMock,

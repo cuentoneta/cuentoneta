@@ -42,13 +42,13 @@ async function namedExportEntries(
 	load: LoadModule,
 	modulePath: string,
 	fromDirectory: string,
-	keep: (binding: string) => boolean,
+	keep: (binding: string, value: unknown) => boolean,
 ): Promise<Entry[]> {
 	const loaded = (await load(`/${modulePath}`)) as Record<string, unknown>;
 	const specifier = specifierFor(fromDirectory, modulePath.replace(/\.ts$/, ''));
 
 	return Object.entries(loaded)
-		.filter(([binding]) => keep(binding))
+		.filter(([binding, value]) => keep(binding, value))
 		.map(([binding, value]) => ({ value, substitution: { binding, specifier, kind: 'named' as const } }));
 }
 
@@ -71,8 +71,12 @@ export async function collectSubstitutions(load: LoadModule, fromDirectory: stri
 			.map((file) => join(mediaDirectory, file)),
 	];
 
+	// Solo los exports de texto entran a la sustitución. Un escalar numérico no identifica nada: el emisor
+	// indexa por valor serializado, así que enrolar un `11` haría que cualquier `11` del corpus —el número
+	// de secciones, un tiempo de lectura ajeno— se emitiera como esa constante, afirmando una relación que
+	// no existe. El gate de frescura no lo vería: compara valores, y el binding vale lo mismo que el literal.
 	const strings = await Promise.all(
-		stringModules.map((file) => namedExportEntries(load, file, fromDirectory, () => true)),
+		stringModules.map((file) => namedExportEntries(load, file, fromDirectory, (_, value) => typeof value === 'string')),
 	);
 
 	return [
