@@ -1,3 +1,22 @@
+/**
+ * El cruce del corpus de dominio de `LiteraryWork` contra su ACL, y el lugar donde vive el porqué que
+ * comparten todos los cruces del corpus.
+ *
+ * **Qué protege.** El corpus de dominio es el fixture con el que specs y stories hacen de cuenta que son la
+ * respuesta de la API. Nada lo ataba a esa respuesta: se escribió a mano mirando el modelo, no evaluando el
+ * mapeo. Si deja de coincidir con lo que el ACL produce a partir del raw, todo lo que lo consume sigue
+ * pasando en verde mientras afirma una forma que la API no devuelve — y el desvío recién aparece en
+ * producción, donde ningún test mira.
+ *
+ * **Por qué acá y no en un spec del repository.** Un spec del repository afirma que el mapeo hace lo que su
+ * autor quiso; este afirma que el corpus **y** el mapeo dicen lo mismo. Son cosas distintas: el primero
+ * puede estar verde con un corpus que miente.
+ *
+ * **Qué no cubre.** El autor de la página de perfil: su repository resuelve el cliente de Sanity a nivel de
+ * módulo, sin punto de inyección, y el corpus no declara una fixture cruda tipada contra el resultado de su
+ * query. El autor **embebido** sí queda cubierto, acá y en el cruce de `Collection`. Y el teaser de obra
+ * solo llega al dominio dentro de una colección, así que lo cubre aquel cruce y no este.
+ */
 import type { LiteraryWork } from '@models/literary-work.model';
 import type { SanityClient } from '@sanity/client';
 import { fn } from '@test-utils';
@@ -33,13 +52,6 @@ function repoReturning(raw: unknown): SanityLiteraryWorkRepository {
 	return new SanityLiteraryWorkRepository(client);
 }
 
-// El corpus de dominio es el fixture con el que specs y stories hacen de cuenta que son la respuesta de la
-// API. Si deja de coincidir con lo que el ACL produce a partir del raw, todo lo que lo consume pasa en
-// verde afirmando una forma que la API no devuelve.
-//
-// El autor embebido queda cubierto acá y en el cruce de `Collection`. El de la página de perfil no: su
-// módulo resuelve el cliente de Sanity a nivel de módulo, sin punto de inyección, y el corpus no declara
-// una fixture cruda tipada contra el resultado de su query.
 describe('el corpus de dominio de LiteraryWork coincide con el mapeo del ACL', () => {
 	it.each(onoffRawLiteraryWorksMock.map((raw) => raw.slug))(
 		'maps the raw of "%s" into its domain mock',
