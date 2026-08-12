@@ -181,10 +181,10 @@ describe('mapContentCampaigns (ACL)', () => {
 });
 
 describe('mapLandingPageContent (ACL)', () => {
-	// La proyección de landing no trae `name` ni `mostRead`: en producción los aporta el spread de
-	// `RotatingContent` sobre el resultado de la query, así que acá los aporta el caso. El resto entra
-	// tal como la query lo devuelve, sin literales que puedan afirmar una forma que ya no produce.
-	const rotatingContent: Omit<RotatingContent, '_id'> = { name: 'Rotación de Onoff', mostRead: [] };
+	// El repository invoca al mapper con el spread de dos queries, y la rotación va segunda: aporta lo
+	// que la landing no proyecta y, al hacerlo, también pisa su `_id`. El caso reproduce ese orden con
+	// una identidad propia para que la aserción distinga cuál de las dos sobrevive.
+	const rotatingContent: RotatingContent = { _id: 'rotating-content-onoff', name: 'Rotación de Onoff', mostRead: [] };
 	const raw = { ...onoffRawLandingPageMock, ...rotatingContent };
 
 	it('exposes exactly the domain contract, dropping the raw slug and name', () => {
@@ -193,14 +193,22 @@ describe('mapLandingPageContent (ACL)', () => {
 		expect(Object.keys(result).sort()).toEqual(['_id', 'campaigns', 'cards', 'config', 'latestReads', 'mostRead']);
 	});
 
-	it('preserves the identity the query returned', () => {
-		expect(mapLandingPageContent(raw)._id).toBe(onoffRawLandingPageMock._id);
+	it('takes its identity from the rotating content that overrides the landing page', () => {
+		const result = mapLandingPageContent(raw);
+
+		expect(result._id).toBe(rotatingContent._id);
+		expect(result._id).not.toBe(onoffRawLandingPageMock._id);
+	});
+
+	it('preserves the config the query returned', () => {
+		expect(mapLandingPageContent(raw).config).toEqual(onoffRawLandingPageMock.config);
 	});
 
 	it('maps every campaign the query returned, in order', () => {
-		expect(mapLandingPageContent(raw).campaigns.map(({ slug }) => slug)).toEqual(
-			onoffRawLandingPageMock.campaigns.map(({ slug }) => slug),
-		);
+		const expectedSlugs = onoffRawLandingPageMock.campaigns.map(({ slug }) => slug);
+
+		expect(expectedSlugs.length).toBeGreaterThan(0);
+		expect(mapLandingPageContent(raw).campaigns.map(({ slug }) => slug)).toEqual(expectedSlugs);
 	});
 });
 
