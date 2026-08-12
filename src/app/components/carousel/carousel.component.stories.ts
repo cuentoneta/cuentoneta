@@ -239,7 +239,6 @@ export const Movil: Story = {
 };
 
 export const Escritorio: Story = {
-	name: 'Escritorio',
 	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
 	globals: { viewport: { value: 'escritorio' } },
 	args: {
