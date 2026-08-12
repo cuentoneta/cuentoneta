@@ -6,15 +6,36 @@ import { provideRouter } from '@angular/router';
 import { CollectionTeaserCard } from './collection-teaser-card';
 
 // Mocks
-import { storylistTeaserRepresentativeMock, storylistTeaserSampleMock } from '@mocks/storylist.mock';
+import {
+	geometriasDelDesveloCollectionTeaserMock,
+	inventarioDeLasPasionesCollectionTeaserMock,
+} from '@mocks/onoff-collections.mock';
 
 // Modelos
-import { StorylistTeaser } from '@models/storylist.model';
+import { createCollectionTeaser, type CollectionTeaser } from '@models/collection.model';
 
 // Utilidades de test
 import { clearAllMocks } from '@test-utils';
 
-const collectionTeaserMock: StorylistTeaser = storylistTeaserRepresentativeMock;
+const representativeMock = geometriasDelDesveloCollectionTeaserMock;
+const sampleMock = inventarioDeLasPasionesCollectionTeaserMock;
+
+// Deriva una variante del canon pasando por la factory, no por spread: el agregado está congelado y
+// armarlo a mano saltearía las invariantes que la factory existe para hacer cumplir.
+function teaserFrom(base: CollectionTeaser, overrides: Partial<Parameters<typeof createCollectionTeaser>[0]>) {
+	return createCollectionTeaser({
+		_id: base._id,
+		slug: base.slug,
+		title: base.title,
+		description: base.description,
+		imagery: base.imagery,
+		tags: base.tags,
+		config: base.config,
+		mediaSources: base.mediaSources,
+		count: base.count,
+		...overrides,
+	});
+}
 
 describe('CollectionTeaserCard', () => {
 	const defaultProviders = [provideRouter([])];
@@ -23,86 +44,54 @@ describe('CollectionTeaserCard', () => {
 		clearAllMocks();
 	});
 
-	// Pruebas de renderizado básico
 	describe('Renderizado del componente', () => {
-		it('should render the component', async () => {
-			const { container } = await render(CollectionTeaserCard, {
-				inputs: { collection: collectionTeaserMock },
-				providers: defaultProviders,
-			});
-			expect(container).toBeTruthy();
-		});
-
 		it('should render an article element', async () => {
 			await render(CollectionTeaserCard, {
-				inputs: { collection: collectionTeaserMock },
+				inputs: { collection: representativeMock },
 				providers: defaultProviders,
 			});
 
-			const article = screen.getByRole('article');
-			expect(article).toBeInTheDocument();
+			expect(screen.getByRole('article')).toBeInTheDocument();
 		});
 
 		it('should not render link when collection is undefined', async () => {
-			await render(CollectionTeaserCard, {
-				providers: defaultProviders,
-			});
+			await render(CollectionTeaserCard, { providers: defaultProviders });
 
-			const article = screen.getByRole('article');
-			expect(article).toBeInTheDocument();
+			expect(screen.getByRole('article')).toBeInTheDocument();
 			expect(screen.queryByRole('link')).not.toBeInTheDocument();
 		});
 	});
 
-	// Pruebas del enlace de navegación
 	describe('Enlace de navegación', () => {
-		it('should render a link to the storylist page', async () => {
+		it('should link to the collection page, not to the storylist one', async () => {
 			await render(CollectionTeaserCard, {
-				inputs: { collection: collectionTeaserMock },
+				inputs: { collection: representativeMock },
 				providers: defaultProviders,
 			});
 
-			const link = screen.getByRole('link');
-			expect(link).toBeInTheDocument();
-		});
-
-		it('should have correct routerLink with storylist slug', async () => {
-			await render(CollectionTeaserCard, {
-				inputs: { collection: collectionTeaserMock },
-				providers: defaultProviders,
-			});
-
-			const link = screen.getByRole('link');
-			expect(link).toHaveAttribute('href', `/storylist/${collectionTeaserMock.slug}`);
+			expect(screen.getByRole('link')).toHaveAttribute('href', `/collection/${representativeMock.slug}`);
 		});
 	});
 
-	// Pruebas del cover de la colección
-	describe('Imagen de la colección', () => {
-		it('should render the cover image', async () => {
+	// La descripción llega como `SanitizedHtml` del pipeline del backend: se pinta como marcación, no
+	// como texto. Sin el bypass del sanitizer, el navegador recibiría los tags escapados.
+	describe('Descripción', () => {
+		it('renders the description as markup, not as escaped text', async () => {
 			await render(CollectionTeaserCard, {
-				inputs: { collection: collectionTeaserMock },
+				inputs: { collection: representativeMock },
 				providers: defaultProviders,
 			});
 
-			expect(screen.getByTestId('cover-image')).toBeInTheDocument();
-		});
-
-		it('should render a decorative cover with empty alt', async () => {
-			await render(CollectionTeaserCard, {
-				inputs: { collection: collectionTeaserMock },
-				providers: defaultProviders,
-			});
-
-			expect(screen.getByTestId('cover-image')).toHaveAttribute('alt', '');
+			const description = screen.getByTestId('description');
+			expect(description.innerHTML).toContain('<p>');
+			expect(description.textContent).not.toContain('<p>');
 		});
 	});
 
-	// Variantes del objeto de valor `imagery`
 	describe('Variante de imagery', () => {
 		it('should render a single cover for representative imagery', async () => {
 			await render(CollectionTeaserCard, {
-				inputs: { collection: storylistTeaserRepresentativeMock },
+				inputs: { collection: representativeMock },
 				providers: defaultProviders,
 			});
 
@@ -111,7 +100,7 @@ describe('CollectionTeaserCard', () => {
 
 		it('should render 3 covers for sample imagery with three images', async () => {
 			await render(CollectionTeaserCard, {
-				inputs: { collection: storylistTeaserSampleMock },
+				inputs: { collection: sampleMock },
 				providers: defaultProviders,
 			});
 
@@ -119,13 +108,12 @@ describe('CollectionTeaserCard', () => {
 		});
 
 		it('should render placeholders for the empty slots of a sample imagery', async () => {
-			const teaser: StorylistTeaser = {
-				...storylistTeaserSampleMock,
-				imagery: { kind: 'sample', images: ['assets/img/mocks/stories/el-odio.png', '', ''] },
-			};
+			const [firstImage] = sampleMock.imagery.kind === 'sample' ? sampleMock.imagery.images : [''];
 
 			await render(CollectionTeaserCard, {
-				inputs: { collection: teaser },
+				inputs: {
+					collection: teaserFrom(sampleMock, { imagery: { kind: 'sample', images: [firstImage, '', ''] } }),
+				},
 				providers: defaultProviders,
 			});
 
@@ -134,123 +122,79 @@ describe('CollectionTeaserCard', () => {
 		});
 	});
 
-	// Pruebas del título
 	describe('Título de la colección', () => {
-		it('should display the collection title', async () => {
-			await render(CollectionTeaserCard, {
-				inputs: { collection: collectionTeaserMock },
-				providers: defaultProviders,
-			});
-
-			expect(screen.getByText(collectionTeaserMock.title)).toBeInTheDocument();
-		});
-
 		it('should render title inside the link', async () => {
 			await render(CollectionTeaserCard, {
-				inputs: { collection: collectionTeaserMock },
+				inputs: { collection: representativeMock },
 				providers: defaultProviders,
 			});
 
 			const link = screen.getByRole('link');
-			expect(within(link).getByText(collectionTeaserMock.title)).toBeInTheDocument();
+			expect(within(link).getByText(representativeMock.title)).toBeInTheDocument();
 		});
 	});
 
-	// Pruebas del footer con tags y contador
-	describe('Footer con tags y contador de historias', () => {
-		it('should display the story count', async () => {
+	// El contador cuenta obras literarias, que es lo que la colección agrupa.
+	describe('Footer con tag y contador de obras', () => {
+		it('should display the literary work count', async () => {
 			await render(CollectionTeaserCard, {
-				inputs: { collection: collectionTeaserMock },
+				inputs: { collection: representativeMock },
 				providers: defaultProviders,
 			});
 
-			expect(screen.getByText(`${collectionTeaserMock.count} historias`)).toBeInTheDocument();
+			expect(screen.getByText(`${representativeMock.count} obras`)).toBeInTheDocument();
 		});
 
-		it('should display the tags', async () => {
+		it('should say "obra" for a collection of a single work', async () => {
 			await render(CollectionTeaserCard, {
-				inputs: { collection: collectionTeaserMock },
+				inputs: { collection: teaserFrom(representativeMock, { count: 1 }) },
 				providers: defaultProviders,
 			});
 
-			// Verificar que al menos un tag se muestra
-			const tagTitle = collectionTeaserMock.tags[0]?.title;
-			if (tagTitle) {
-				expect(screen.getByText(tagTitle, { exact: false })).toBeInTheDocument();
-			}
+			expect(screen.getByText('1 obra')).toBeInTheDocument();
+		});
+
+		it('should display the tag', async () => {
+			await render(CollectionTeaserCard, {
+				inputs: { collection: representativeMock },
+				providers: defaultProviders,
+			});
+
+			const [tag] = representativeMock.tags;
+			expect(screen.getByText(tag.title, { exact: false })).toBeInTheDocument();
 		});
 	});
 
-	// Pruebas de inputs
 	describe('Inputs del componente', () => {
-		it('should accept a collection input', async () => {
-			const { fixture } = await render(CollectionTeaserCard, {
-				inputs: { collection: collectionTeaserMock },
-				providers: defaultProviders,
-			});
-
-			expect(fixture.componentInstance.collection()).toEqual(collectionTeaserMock);
-		});
-
 		it('should have undefined collection by default', async () => {
-			const { fixture } = await render(CollectionTeaserCard, {
-				providers: defaultProviders,
-			});
+			const { fixture } = await render(CollectionTeaserCard, { providers: defaultProviders });
 
 			expect(fixture.componentInstance.collection()).toBeUndefined();
 		});
 
 		it('should update when collection input changes', async () => {
 			const { fixture } = await render(CollectionTeaserCard, {
-				inputs: { collection: collectionTeaserMock },
+				inputs: { collection: representativeMock },
 				providers: defaultProviders,
 			});
 
-			const updatedCollection: StorylistTeaser = {
-				...collectionTeaserMock,
-				title: 'Nueva Colección',
-				slug: 'nueva-coleccion',
-			};
-
-			fixture.componentRef.setInput('collection', updatedCollection);
+			fixture.componentRef.setInput('collection', sampleMock);
 			fixture.detectChanges();
 
-			expect(screen.getByText('Nueva Colección')).toBeInTheDocument();
+			expect(screen.getByText(sampleMock.title)).toBeInTheDocument();
 		});
 	});
 
-	// Pruebas de accesibilidad
 	describe('Accesibilidad', () => {
-		it('should have accessible link', async () => {
-			await render(CollectionTeaserCard, {
-				inputs: { collection: collectionTeaserMock },
-				providers: defaultProviders,
-			});
-
-			const link = screen.getByRole('link');
-			expect(link).toBeInTheDocument();
-		});
-
 		it('should have a decorative cover and the link named by the collection title', async () => {
 			await render(CollectionTeaserCard, {
-				inputs: { collection: collectionTeaserMock },
+				inputs: { collection: representativeMock },
 				providers: defaultProviders,
 			});
 
-			// El cover es decorativo (alt vacío); el nombre accesible del enlace lo aporta el título.
 			expect(screen.getByTestId('cover-image')).toHaveAttribute('alt', '');
 			const link = screen.getByRole('link');
-			expect(within(link).getByText(collectionTeaserMock.title)).toBeInTheDocument();
-		});
-
-		it('should use semantic article element', async () => {
-			await render(CollectionTeaserCard, {
-				inputs: { collection: collectionTeaserMock },
-				providers: defaultProviders,
-			});
-
-			const article = screen.getByRole('article');
-			expect(article).toBeInTheDocument();
+			expect(within(link).getByText(representativeMock.title)).toBeInTheDocument();
 		});
 	});
 });

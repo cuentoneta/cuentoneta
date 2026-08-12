@@ -1,32 +1,32 @@
 // Core
-import { Component, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 
 // Router
 import { RouterLink } from '@angular/router';
 import { AppRoutes } from '../../app.routes';
 
 // Models
-import { StorylistTeaser } from '@models/storylist.model';
+import type { CollectionTeaser } from '@models/collection.model';
 
 // Components
-import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 import { CoverImageComponent } from '../cover-image/cover-image.component';
 
 @Component({
 	selector: 'cuentoneta-collection-teaser-card',
-	imports: [RouterLink, PortableTextParserComponent, CoverImageComponent],
+	imports: [RouterLink, CoverImageComponent],
 
 	template: `
 		<article>
-			@if (collection(); as storylist) {
-				<a [routerLink]="['/' + appRoutes.StoryList, storylist.slug]" class="flex items-start gap-5">
+			@if (collection(); as collection) {
+				<a [routerLink]="['/' + appRoutes.Collection, collection.slug]" class="flex items-start gap-5">
 					<section
 						class="relative flex h-48 items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3 sm:flex-1"
 					>
-						@if (storylist.imagery.kind === 'representative') {
-							<cuentoneta-cover-image [src]="storylist.imagery.image" class="-mb-2" />
+						@if (collection.imagery.kind === 'representative') {
+							<cuentoneta-cover-image [src]="collection.imagery.image" class="-mb-2" />
 						} @else {
-							@for (image of storylist.imagery.images; track $index) {
+							@for (image of collection.imagery.images; track $index) {
 								<cuentoneta-cover-image [src]="image" [class]="sampleImageClasses[$index]" />
 							}
 						}
@@ -35,19 +35,19 @@ import { CoverImageComponent } from '../cover-image/cover-image.component';
 						<header
 							class="hover:text-interactive-500 line-clamp-2 cursor-pointer font-inter text-lg leading-6 font-bold"
 						>
-							{{ storylist.title }}
+							{{ collection.title }}
 						</header>
-						<cuentoneta-portable-text-parser
-							[classes]="'line-clamp-4'"
-							[paragraphs]="[storylist.description[0]]"
-							class="font-inter text-sm text-ellipsis text-neutral-700"
-						/>
+						<div
+							[innerHTML]="safeDescription()"
+							class="line-clamp-4 font-inter text-sm text-ellipsis text-neutral-700"
+							data-testid="description"
+						></div>
 						<footer class="flex flex-col gap-1 font-inter text-xs text-neutral-600 sm:flex-row">
-							@if (storylist.tags[0]) {
-								<span class="font-inter text-xs font-bold text-brand-500"> {{ storylist.tags[0].title }} </span>
+							@if (collection.tags[0]) {
+								<span class="font-inter text-xs font-bold text-brand-500"> {{ collection.tags[0].title }} </span>
 								<span class="hidden sm:inline">•</span>
 							}
-							<span>{{ storylist.count }} historias</span>
+							<span>{{ collection.count }} {{ collection.count === 1 ? 'obra' : 'obras' }}</span>
 						</footer>
 					</section>
 				</a>
@@ -56,10 +56,20 @@ import { CoverImageComponent } from '../cover-image/cover-image.component';
 	`,
 })
 export class CollectionTeaserCard {
-	public readonly collection = input<StorylistTeaser>();
+	public readonly collection = input<CollectionTeaser>();
 	protected readonly appRoutes = AppRoutes;
 
-	// Posiciones de las portadas en visualización múltiple a partir de las imágenes alusivas de stories
+	private readonly sanitizer = inject(DomSanitizer);
+
+	// El backend entrega la descripción ya saneada por el pipeline compartido, y el brand del tipo es la
+	// prueba de que pasó por ahí. Sin el bypass, el sanitizer de Angular vuelve a recortar una marcación
+	// que ya está acotada a la allow-list, y el énfasis de la prosa se pierde.
+	protected readonly safeDescription = computed(() => {
+		const collection = this.collection();
+		return collection ? this.sanitizer.bypassSecurityTrustHtml(collection.description) : undefined;
+	});
+
+	// Posiciones de las portadas en visualización múltiple a partir de las imágenes alusivas de las obras
 	// [0] central al frente con bottom-bleed, [1] lateral izquierda y [2] derecha desplazadas, con borde neutral-100.
 	// Se expresan las clases CSS en sampleImageClasses para hacer más sencilla la notación al iterar con @for
 	protected readonly sampleImageClasses = [
