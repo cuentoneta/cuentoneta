@@ -2,6 +2,7 @@
 // corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
 import type { CollectionBySlugQueryResult } from '@sanity-types';
 import {
+	colaborativaRawTag,
 	dramaPsicologicoRawTag,
 	ensayoRawTag,
 	experimentalRawTag,
@@ -11,6 +12,7 @@ import {
 } from '../../onoff-raw-tags.mock';
 import { elOdioSectionTitle } from '../literary-work/el-odio.epigraph';
 import elOdioMdBody from '../literary-work/el-odio.md?raw';
+import { palacioSecondSectionReadingTime } from '../literary-work/el-palacio-de-las-nueve-fronteras.multi-section';
 import elTratadoDeLosPlaceresMdBody from '../literary-work/el-tratado-de-los-placeres.md?raw';
 import lasDosAntorchasMdBody from '../literary-work/las-dos-antorchas.md?raw';
 import inventarioDeLasPasionesCollectionMd from './inventario-de-las-pasiones.collection.md?raw';
@@ -22,7 +24,7 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 	description: inventarioDeLasPasionesCollectionMd,
 	featuredImage: null,
 	config: { showAuthors: false },
-	tags: [],
+	tags: [colaborativaRawTag],
 	mediaSources: [],
 	literaryWorks: [
 		{
@@ -34,7 +36,7 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 				asset: { _type: 'reference', _ref: 'image-ff13dcee67b52bc4bbd78c2c7900f466f335badd-236x328-png' },
 			},
 			totalReadingTime: 10,
-			sectionCount: 1,
+			sectionCount: palacioSecondSectionReadingTime,
 			tags: [ensayoRawTag, filosoficoRawTag, metaficcionRawTag],
 			mediaSources: [],
 			authors: [
@@ -75,7 +77,7 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 				asset: { _type: 'reference', _ref: 'image-83588a6210ea3de0cee7f493f3d41140427958bf-236x328-png' },
 			},
 			totalReadingTime: 6,
-			sectionCount: 1,
+			sectionCount: palacioSecondSectionReadingTime,
 			tags: [novelaRawTag, dramaPsicologicoRawTag],
 			mediaSources: [],
 			authors: [
@@ -116,7 +118,7 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 				asset: { _type: 'reference', _ref: 'image-83ad8511a47107773b70ff339edd8b43c29dcf3e-236x328-png' },
 			},
 			totalReadingTime: 8,
-			sectionCount: 1,
+			sectionCount: palacioSecondSectionReadingTime,
 			tags: [novelaRawTag, metaficcionRawTag, experimentalRawTag],
 			mediaSources: [],
 			authors: [
