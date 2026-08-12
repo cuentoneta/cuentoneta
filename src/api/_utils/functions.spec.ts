@@ -13,7 +13,8 @@ import {
 } from './functions';
 import { elOdioRawTeaser, onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
 import { rawOnoffAuthor, rawOnoffAuthorTeaser } from '@mocks/onoff-raw-author.mock';
-import { onoffRawContentCampaignsMock } from '@mocks/onoff-raw-landing-page.mock';
+import { onoffRawContentCampaignsMock, onoffRawLandingPageMock } from '@mocks/onoff-raw-landing-page.mock';
+import type { RotatingContent } from '@models/landing-page-content.model';
 import { onoffRawTagsMock } from '@mocks/onoff-raw-tags.mock';
 import { viewportElementSizes } from '@models/content-campaign.model';
 
@@ -180,19 +181,26 @@ describe('mapContentCampaigns (ACL)', () => {
 });
 
 describe('mapLandingPageContent (ACL)', () => {
+	// La proyección de landing no trae `name` ni `mostRead`: en producción los aporta el spread de
+	// `RotatingContent` sobre el resultado de la query, así que acá los aporta el caso. El resto entra
+	// tal como la query lo devuelve, sin literales que puedan afirmar una forma que ya no produce.
+	const rotatingContent: Omit<RotatingContent, '_id'> = { name: 'Rotación de Onoff', mostRead: [] };
+	const raw = { ...onoffRawLandingPageMock, ...rotatingContent };
+
 	it('exposes exactly the domain contract, dropping the raw slug and name', () => {
-		const result = mapLandingPageContent({
-			_id: 'onoff-landing-page',
-			slug: 'semana-de-onoff',
-			config: 'onoff',
-			name: 'Rotación de Onoff',
-			cards: [],
-			campaigns: onoffRawContentCampaignsMock,
-			latestReads: [],
-			mostRead: [],
-		});
+		const result = mapLandingPageContent(raw);
 
 		expect(Object.keys(result).sort()).toEqual(['_id', 'campaigns', 'cards', 'config', 'latestReads', 'mostRead']);
+	});
+
+	it('preserves the identity the query returned', () => {
+		expect(mapLandingPageContent(raw)._id).toBe(onoffRawLandingPageMock._id);
+	});
+
+	it('maps every campaign the query returned, in order', () => {
+		expect(mapLandingPageContent(raw).campaigns.map(({ slug }) => slug)).toEqual(
+			onoffRawLandingPageMock.campaigns.map(({ slug }) => slug),
+		);
 	});
 });
 
