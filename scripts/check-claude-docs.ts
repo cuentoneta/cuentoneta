@@ -3,7 +3,7 @@
  *
  * Corre los tres checks y **agrega todos los fallos** en una sola pasada, en vez de encadenarlos con
  * `&&` (que cortaría en el primero y daría feedback parcial). Cada check es un fallo silencioso o una
- * desincronización que el epic #1843 encontró de a uno; acá quedan enforceados juntos.
+ * desincronización que se descubrió de a uno, por separado; acá quedan enforceados juntos.
  */
 import { checkAgentFrontmatter } from './check-agent-frontmatter';
 import { checkDocRefs } from './check-doc-refs';

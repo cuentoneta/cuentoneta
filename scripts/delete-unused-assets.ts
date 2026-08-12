@@ -5,7 +5,6 @@
 // Place this script somewhere and run it through
 // `sanity exec <script-filename.js> --with-user-token`
 
-/* eslint-disable no-console */
 // Importar cliente de Sanity
 import { client } from '../src/api/_helpers/sanity-connector';
 import { Transaction } from '@sanity/client';

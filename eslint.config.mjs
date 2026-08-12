@@ -194,6 +194,36 @@ export default [
 		},
 	},
 	{
+		// Las restricciones numéricas de CLAUDE.md, verificables por primera vez: hasta acá se sostenían
+		// solo por lectura humana, en todo el repo. Van en un bloque propio y global porque miden tamaño
+		// y forma, no framework: valen igual en la app Angular, en el Studio React, en los scripts, en
+		// los e2e y en resources. Sumarlas al bloque `nx` no serviría — declara `**/*.ts`, que no
+		// matchea el `.tsx` del Studio. Son reglas core, no `no-restricted-syntax`, así que no las
+		// alcanza la trampa de que un bloque posterior reemplace el array en vez de mergearlo.
+		name: 'size-and-complexity',
+		files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.mjs'],
+		rules: {
+			complexity: ['error', 10],
+			'max-depth': ['error', 3],
+		},
+	},
+	{
+		// La exención de specs y stories es de **largo, no de forma**: el callback de un `describe` y el
+		// `meta` de una story son funciones por sintaxis y no por lógica, así que medir su largo mide
+		// el tamaño de la suite y del catálogo. `complexity` y `max-depth` siguen rigiendo ahí, porque
+		// un test enrevesado es tan difícil de leer como cualquier otro código. `src/sanity/types.ts`
+		// lo emite el typegen de Sanity: su largo no lo decide nadie. Nota de alcance: `tools/**` está
+		// en el ignore global de más arriba, así que las reglas custom de ESLint y sus specs quedan
+		// fuera de todo esto.
+		name: 'size-limits',
+		files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.mjs'],
+		ignores: ['**/*.spec.ts', '**/*.stories.ts', 'src/sanity/types.ts'],
+		rules: {
+			'max-lines': ['error', { max: 500, skipBlankLines: true, skipComments: true }],
+			'max-lines-per-function': ['error', { max: 50, skipBlankLines: true, skipComments: true }],
+		},
+	},
+	{
 		// El Studio es React: las reglas de Angular buscan decoradores que no existen ahí. Se apagan de
 		// forma explícita en vez de confiar en que nunca disparen. El bloque `nx` declara `**/*.ts`, que
 		// no matchea `.tsx`, así que sin este bloque los componentes del Studio quedan sin ninguna regla.

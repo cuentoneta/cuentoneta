@@ -185,14 +185,15 @@ function assertKeyed(items: unknown[] | undefined, field: string, storyId: strin
 	}
 }
 
+/** Una story que ya pasó las validaciones: title y slug dejan de ser opcionales para el llamador. */
+type MigratableStory = StoryDocument & { title: string; slug: { current: string } };
+
 /**
- * Arma el documento `literaryWork` equivalente a una `story`.
+ * Lo que la obra no puede construirse sin ello: sin esto el documento nacería inválido.
  *
- * Lanza `UnmigratableStoryError` ante un dato que no permite construir una obra válida, en vez de
- * escribir un documento degradado: el repository construye el agregado con factories que validan, así
- * que un documento inválido fallaría recién al leerse, lejos de acá.
+ * Declarada como aserción de tipo para que el llamador vea `title` y `slug` ya estrechados.
  */
-export function buildLiteraryWorkDocument(story: StoryDocument): LiteraryWorkDocument {
+function assertMigratable(story: StoryDocument): asserts story is MigratableStory {
 	if (!story.title) {
 		throw new UnmigratableStoryError('La story no tiene título', story._id);
 	}
@@ -202,9 +203,49 @@ export function buildLiteraryWorkDocument(story: StoryDocument): LiteraryWorkDoc
 	assertKeyed(story.tags, 'tags', story._id);
 	assertKeyed(story.mediaSources, 'mediaSources', story._id);
 	assertKeyed(story.resources, 'resources', story._id);
+}
 
+/**
+ * Los valores sueltos que solo se copian si la story los trae. Se omiten en vez de escribirse como
+ * `undefined`, que no es un valor válido en un documento de Sanity.
+ */
+function optionalValues(story: StoryDocument): Partial<LiteraryWorkDocument> {
 	const editorialNote = toOptionalMarkdown(story.review);
+	// La fecha se copia con fallback al `_createdAt` de la STORY. Omitirla haría que el
+	// `coalesce(publishedAt, _createdAt)` de la query resolviera al `_createdAt` del documento
+	// nuevo —la fecha de la migración— y el corpus entero perdería su cronología.
 	const publishedAt = story.publishedAt ?? story._createdAt;
+
+	return {
+		...(publishedAt !== undefined ? { publishedAt } : {}),
+		...(editorialNote !== undefined ? { editorialNote } : {}),
+		...(story.coverImage !== undefined ? { coverImage: story.coverImage } : {}),
+		...(story.badLanguage !== undefined ? { badLanguage: story.badLanguage } : {}),
+		...(story.originalPublication !== undefined ? { originalPublication: story.originalPublication } : {}),
+	};
+}
+
+/**
+ * Los arrays, que además de ausentes pueden venir vacíos. Un array vacío y un campo ausente no se
+ * leen igual en las queries, así que el vacío se omite en vez de escribirse.
+ */
+function optionalArrays(story: StoryDocument): Partial<LiteraryWorkDocument> {
+	return {
+		...(story.tags?.length ? { tags: story.tags } : {}),
+		...(story.mediaSources?.length ? { mediaSources: story.mediaSources } : {}),
+		...(story.resources?.length ? { resources: story.resources } : {}),
+	};
+}
+
+/**
+ * Arma el documento `literaryWork` equivalente a una `story`.
+ *
+ * Lanza `UnmigratableStoryError` ante un dato que no permite construir una obra válida, en vez de
+ * escribir un documento degradado: el repository construye el agregado con factories que validan, así
+ * que un documento inválido fallaría recién al leerse, lejos de acá.
+ */
+export function buildLiteraryWorkDocument(story: StoryDocument): LiteraryWorkDocument {
+	assertMigratable(story);
 
 	return {
 		_id: literaryWorkIdFor(story._id),
@@ -213,16 +254,7 @@ export function buildLiteraryWorkDocument(story: StoryDocument): LiteraryWorkDoc
 		slug: { _type: 'slug', current: story.slug.current },
 		authors: buildAuthors(story),
 		content: [buildSection(story)],
-		// La fecha se copia con fallback al `_createdAt` de la STORY. Omitirla haría que el
-		// `coalesce(publishedAt, _createdAt)` de la query resolviera al `_createdAt` del documento
-		// nuevo —la fecha de la migración— y el corpus entero perdería su cronología.
-		...(publishedAt !== undefined ? { publishedAt } : {}),
-		...(editorialNote !== undefined ? { editorialNote } : {}),
-		...(story.coverImage !== undefined ? { coverImage: story.coverImage } : {}),
-		...(story.tags?.length ? { tags: story.tags } : {}),
-		...(story.mediaSources?.length ? { mediaSources: story.mediaSources } : {}),
-		...(story.resources?.length ? { resources: story.resources } : {}),
-		...(story.badLanguage !== undefined ? { badLanguage: story.badLanguage } : {}),
-		...(story.originalPublication !== undefined ? { originalPublication: story.originalPublication } : {}),
+		...optionalValues(story),
+		...optionalArrays(story),
 	};
 }

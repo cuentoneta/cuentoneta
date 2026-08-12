@@ -122,6 +122,47 @@ describe('PortableTextDirective', () => {
 		});
 	});
 
+	describe('alignment marks', () => {
+		// Las cuatro alineaciones se resuelven por un mapa de marca a clase de utilidad. Sin estos
+		// casos, perder una entrada del mapa no rompería nada visible en la suite.
+		it.each([
+			['center', 'text-center'],
+			['left', 'text-left'],
+			['right', 'text-right'],
+			['justify', 'text-justify'],
+		])('traduce la marca %s a la clase %s en el host', (mark, expectedClass) => {
+			const paragraph: TextBlockContent = {
+				_type: 'block',
+				_key: 'p1',
+				style: 'normal',
+				children: [{ _type: 'span', _key: 'a', text: 'Texto alineado', marks: [mark] }],
+				markDefs: [],
+			};
+			component.content.set([paragraph]);
+			component.classes.set('');
+			fixture.detectChanges();
+
+			const target = fixture.nativeElement.querySelector('p') as HTMLElement;
+			expect(target).toHaveClass(expectedClass);
+		});
+
+		it('no agrega ninguna clase de alineación cuando la marca no es una de ellas', () => {
+			const paragraph: TextBlockContent = {
+				_type: 'block',
+				_key: 'p1',
+				style: 'normal',
+				children: [{ _type: 'span', _key: 'a', text: 'Texto', marks: ['strong'] }],
+				markDefs: [],
+			};
+			component.content.set([paragraph]);
+			component.classes.set('');
+			fixture.detectChanges();
+
+			const target = fixture.nativeElement.querySelector('p') as HTMLElement;
+			expect(target.className).toBe('');
+		});
+	});
+
 	describe('class handling', () => {
 		it('should apply custom classes', () => {
 			component.classes.set('custom-class test-class');

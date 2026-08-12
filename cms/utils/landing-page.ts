@@ -24,3 +24,37 @@ export async function resolveActiveLandingId(client: GroqClient, date: Date = ne
 	const id = await client.fetch<string | null>(ACTIVE_LANDING_ID_QUERY, { slug: buildWeekSlug(date) });
 	return id ?? null;
 }
+
+/** Cómo se presenta una fila: el tono de su ficha y el rótulo de su clasificación, si lleva alguno. */
+export interface LandingPageRowPresentation {
+	readonly tone: 'positive' | 'primary' | 'default';
+	readonly badge: string | null;
+}
+
+/**
+ * La referencia contra la que se clasifican las filas: el `config` de la activa, que es el máximo
+ * menor o igual a la semana actual. Sin activa se cae a la semana actual, para que toda fila
+ * posterior siga leyéndose como futura en vez de confundirse con el pasado.
+ */
+export function activeConfigOf(
+	rows: readonly LandingPageRow[],
+	activeId: string | null,
+	date: Date = new Date(),
+): string {
+	return rows.find((row) => row._id === activeId)?.config ?? buildWeekSlug(date);
+}
+
+/** Clasifica una fila contra la referencia: activa, semana futura, o cualquier otra. */
+export function presentationOf(
+	row: LandingPageRow,
+	activeId: string | null,
+	activeConfig: string,
+): LandingPageRowPresentation {
+	if (row._id === activeId) {
+		return { tone: 'positive', badge: 'Activa' };
+	}
+	if (row.config > activeConfig) {
+		return { tone: 'primary', badge: 'Futura' };
+	}
+	return { tone: 'default', badge: null };
+}
