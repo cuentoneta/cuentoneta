@@ -409,6 +409,8 @@ export const Soft: Story = {
 
 Para dependencias de DI usá los decoradores `moduleMetadata({ imports, providers })` (imports/iconos por story) o `applicationConfig({ providers })` (servicios globales: Router, etc.).
 
+`LayoutService` es la excepción: se provee **globalmente** en `.storybook/preview.js`, con el servicio real (`provideLayout()`), y ninguna story lo declara. Es un token sin factory, así que sin ese provider un componente que lo inyecte no renderiza — el canvas queda en `NG0201`. Storybook **acumula** los decoradores `applicationConfig`: los providers que declare una story se suman a los del preview, no los reemplazan.
+
 **Siempre** actualizá las stories cuando cambien inputs, estados visuales o la API pública del componente.
 
 ### Documentación de la descripción (`description`)
