@@ -5,7 +5,7 @@ import { provideRouter } from '@angular/router';
 
 // Componentes
 import { CollectionTeasersDeck } from './collection-teasers-deck';
-import { CollectionTeaserCard } from '@components/collection-teaser-card/collection-teaser-card';
+import { StorylistTeaserCard } from '@components/storylist-teaser-card/storylist-teaser-card';
 import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
 
 // Mocks
@@ -29,7 +29,7 @@ describe('CollectionTeasersDeck', () => {
 	const defaultProviders = [provideRouter([])];
 
 	// Imports por defecto incluyendo los componentes reales
-	const defaultImports = [CollectionTeasersDeck, CollectionTeaserCard, CollectionTeaserCardSkeletonComponent];
+	const defaultImports = [CollectionTeasersDeck, StorylistTeaserCard, CollectionTeaserCardSkeletonComponent];
 
 	// Pruebas de renderizado básico
 	describe('Renderizado del componente', () => {

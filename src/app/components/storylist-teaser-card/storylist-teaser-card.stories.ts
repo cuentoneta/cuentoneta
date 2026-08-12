@@ -1,12 +1,12 @@
 import { applicationConfig, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
-import { CollectionTeaserCard } from './collection-teaser-card';
+import { StorylistTeaserCard } from './storylist-teaser-card';
 import { provideRouter } from '@angular/router';
-import { CollectionTeaserCardSkeletonComponent } from './collection-teaser-card-skeleton';
+import { CollectionTeaserCardSkeletonComponent } from '../collection-teaser-card/collection-teaser-card-skeleton';
 import { storylistTeaserRepresentativeMock, storylistTeaserSampleMock } from '@mocks/storylist.mock';
 
-const meta: Meta<CollectionTeaserCard> = {
-	component: CollectionTeaserCard,
-	title: 'Componentes V3/CollectionTeaserCard',
+const meta: Meta<StorylistTeaserCard> = {
+	component: StorylistTeaserCard,
+	title: 'Componentes V3/StorylistTeaserCard',
 	decorators: [
 		applicationConfig({
 			providers: [provideRouter([])],
@@ -21,7 +21,7 @@ const meta: Meta<CollectionTeaserCard> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El <strong>CollectionTeaserCard</strong> es la tarjeta de una colección (storylist) para el Design System v3: portada, título, descripción y footer con tag y contador de historias. La portada se resuelve con el objeto de valor <strong>imagery</strong>: <strong>representative</strong> (una portada editorial propia de la colección) o <strong>sample</strong> (composición de 3 portadas de sus historias, con placeholder en los slots vacíos). Usa <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> para cada portada.</p></div>`,
+				component: `<div><p>El <strong>StorylistTeaserCard</strong> es la tarjeta de una colección para el Design System v3, tipada contra el agregado en baja <strong>Storylist</strong>: portada, título, descripción y footer con tag y contador de historias. La portada se resuelve con el objeto de valor <strong>imagery</strong>: <strong>representative</strong> (una portada editorial propia de la colección) o <strong>sample</strong> (composición de 3 portadas de sus historias, con placeholder en los slots vacíos). Usa <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> para cada portada.</p><p>La sustituye <a href="./?path=/docs/componentes-v3-collectionteasercard--docs" target="_top"><strong>CollectionTeaserCard</strong></a>, que muestra lo mismo desde el modelo de dominio <strong>Collection</strong>. Sobrevive mientras la home siga sirviéndose de <strong>Storylist</strong>; las dos comparten el skeleton, que no depende del modelo.</p></div>`,
 			},
 		},
 	},
@@ -35,13 +35,13 @@ const meta: Meta<CollectionTeaserCard> = {
 };
 export default meta;
 
-export const Primary: StoryObj<CollectionTeaserCard> = {
+export const Primary: StoryObj<StorylistTeaserCard> = {
 	render: () => ({
 		props: { representative: storylistTeaserRepresentativeMock, sample: storylistTeaserSampleMock },
 		template: `
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-          <cuentoneta-collection-teaser-card class="card" [collection]="representative"/>
-          <cuentoneta-collection-teaser-card class="card" [collection]="sample"/>
+          <cuentoneta-storylist-teaser-card class="card" [collection]="representative"/>
+          <cuentoneta-storylist-teaser-card class="card" [collection]="sample"/>
     </div>
 `,
 	}),
@@ -54,7 +54,7 @@ export const Primary: StoryObj<CollectionTeaserCard> = {
 	},
 };
 
-export const Interactiva: StoryObj<CollectionTeaserCard & { kind: 'representative' | 'sample' }> = {
+export const Interactiva: StoryObj<StorylistTeaserCard & { kind: 'representative' | 'sample' }> = {
 	argTypes: {
 		kind: {
 			control: { type: 'inline-radio' },
@@ -68,7 +68,7 @@ export const Interactiva: StoryObj<CollectionTeaserCard & { kind: 'representativ
 		},
 		template: `
 			<div class="card p-4">
-				<cuentoneta-collection-teaser-card [collection]="collection" />
+				<cuentoneta-storylist-teaser-card [collection]="collection" />
 			</div>
 		`,
 	}),
@@ -82,7 +82,7 @@ export const Interactiva: StoryObj<CollectionTeaserCard & { kind: 'representativ
 	},
 };
 
-export const Estados: StoryObj<CollectionTeaserCard & { loading: boolean }> = {
+export const Estados: StoryObj<StorylistTeaserCard & { loading: boolean }> = {
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
 	render: (args) => ({
 		props: args,
@@ -91,7 +91,7 @@ export const Estados: StoryObj<CollectionTeaserCard & { loading: boolean }> = {
 				@if (loading) {
 					<cuentoneta-collection-teaser-card-skeleton class="w-full" />
 				} @else {
-					<cuentoneta-collection-teaser-card [collection]="collection" />
+					<cuentoneta-storylist-teaser-card [collection]="collection" />
 				}
 			</div>
 		`,

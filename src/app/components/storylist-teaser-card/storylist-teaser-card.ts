@@ -13,7 +13,7 @@ import { PortableTextParserComponent } from '../portable-text-parser/portable-te
 import { CoverImageComponent } from '../cover-image/cover-image.component';
 
 @Component({
-	selector: 'cuentoneta-collection-teaser-card',
+	selector: 'cuentoneta-storylist-teaser-card',
 	imports: [RouterLink, PortableTextParserComponent, CoverImageComponent],
 
 	template: `
@@ -55,7 +55,7 @@ import { CoverImageComponent } from '../cover-image/cover-image.component';
 		</article>
 	`,
 })
-export class CollectionTeaserCard {
+export class StorylistTeaserCard {
 	public readonly collection = input<StorylistTeaser>();
 	protected readonly appRoutes = AppRoutes;
 
