@@ -1,5 +1,5 @@
 import { applicationConfig, argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withDisabledInitialNavigation } from '@angular/router';
 
 import { CarouselComponent } from './carousel.component';
 import { CarouselSkeletonComponent } from './carousel-skeleton.component';
@@ -11,10 +11,23 @@ const meta: Meta<CarouselComponent> = {
 	title: 'Componentes V3/Carousel',
 	decorators: [
 		applicationConfig({
-			providers: [provideRouter([])],
+			// Sin desactivar la navegación inicial, el router arranca contra `iframe.html` y un set de
+			// rutas vacío, y el canvas emite un NG04002 que no dice nada del componente. Los routerLink
+			// de las diapositivas resuelven su href igual.
+			providers: [provideRouter([], withDisabledInitialNavigation())],
 		}),
 	],
 	parameters: {
+		// El carousel elige imagen y controles a partir del ancho de la ventana, no del contenedor: la
+		// única forma de catalogar sus dos formas es cambiar el viewport del canvas. El de 1600px es el
+		// que muestra el comportamiento por encima del ancho intrínseco de la imagen.
+		viewport: {
+			options: {
+				movil: { name: 'Móvil', styles: { width: '375px', height: '812px' }, type: 'mobile' },
+				escritorio: { name: 'Escritorio', styles: { width: '1240px', height: '800px' }, type: 'desktop' },
+				panoramico: { name: 'Panorámico', styles: { width: '1600px', height: '900px' }, type: 'desktop' },
+			},
+		},
 		docs: {
 			canvas: {
 				sourceState: 'shown',
@@ -208,39 +221,52 @@ export const Interactive: Story = {
 	},
 };
 
-export const DesktopAndMobile: Story = {
-	name: 'Escritorio y móvil',
-	render: (args) => ({
-		props: args,
-		template: `
-			<div class="flex flex-col gap-8 p-4">
-				<div>
-					<h3 class="text-lg font-semibold text-neutral-700 mb-3">Desktop (960px)</h3>
-					<div style="width: 1240px; max-width: 100%; justify-self: center;">
-						<cuentoneta-carousel [slides]="slides" [transitionDuration]="transitionDuration" />
-					</div>
-				</div>
-
-				<div>
-					<h3 class="text-lg font-semibold text-neutral-700 mb-3">Mobile (375px)</h3>
-					<div style="width: 375px; justify-self: center;">
-						<cuentoneta-carousel [slides]="slides" [transitionDuration]="transitionDuration" />
-					</div>
-				</div>
-			</div>
-		`,
-	}),
+export const Movil: Story = {
+	name: 'Móvil',
+	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
+	globals: { viewport: { value: 'movil' } },
 	args: {
 		slides: contentCampaignMock,
 		transitionDuration: 600,
 	},
 	parameters: {
-		layout: 'fullscreen',
 		docs: {
-			// El render envuelve al carousel en un andamiaje comparativo desktop/mobile; ocultamos el código para no exponerlo como uso copiable.
-			canvas: { sourceState: 'none' },
 			description: {
-				story: `<p>Comparativa del carousel en vista desktop (960px) y mobile (375px) para visualizar las diferencias de diseño responsivo.</p><p><strong>Usos:</strong> referencia de comportamiento responsive entre breakpoints.</p>`,
+				story: `<p>Carousel en un viewport de 375px: sirve la imagen <code>xs</code> y oculta los controles de navegación, que solo aparecen de <code>sm</code> para arriba.</p><p><strong>Usos:</strong> referencia del comportamiento en móvil.</p>`,
+			},
+		},
+	},
+};
+
+export const Escritorio: Story = {
+	name: 'Escritorio',
+	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
+	globals: { viewport: { value: 'escritorio' } },
+	args: {
+		slides: contentCampaignMock,
+		transitionDuration: 600,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Carousel en un viewport de 1240px, el ancho intrínseco de la imagen <code>md</code>, con controles de navegación.</p><p><strong>Usos:</strong> referencia del comportamiento en escritorio, que es como se ve hoy en Home.</p>`,
+			},
+		},
+	},
+};
+
+export const Panoramico: Story = {
+	name: 'Panorámico',
+	render: (args) => ({ props: args, template: `<cuentoneta-carousel ${argsToTemplate(args)} />` }),
+	globals: { viewport: { value: 'panoramico' } },
+	args: {
+		slides: contentCampaignMock,
+		transitionDuration: 600,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Carousel en un viewport de 1600px, por encima del ancho intrínseco de la imagen: la diapositiva ocupa el área del contenedor y los controles e indicadores quedan alineados con lo que se ve.</p><p><strong>Usos:</strong> verificación de que el componente se sostiene en contenedores más anchos que su imagen.</p>`,
 			},
 		},
 	},
