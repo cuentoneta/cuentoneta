@@ -4,12 +4,14 @@ import type { CollectionBySlugQueryResult } from '@sanity-types';
 import {
 	absurdoRawTag,
 	alegoriaRawTag,
+	colaborativaRawTag,
 	cuentoRawTag,
 	dramaPsicologicoRawTag,
 	filosoficoRawTag,
 	novelaRawTag,
 	surrealismoRawTag,
 } from '../../onoff-raw-tags.mock';
+import { palacioSecondSectionReadingTime } from '../literary-work/el-palacio-de-las-nueve-fronteras.multi-section';
 import { geometriaSectionTitle } from '../literary-work/geometria.epigraph';
 import geometriaMdBody from '../literary-work/geometria.md?raw';
 import lasEscalerasMdBody from '../literary-work/las-escaleras.md?raw';
@@ -21,6 +23,10 @@ import {
 	geometriaSpotifyDescription,
 	geometriaYoutubeDescription,
 } from '../media/geometria.media';
+import {
+	geometriasDelDesveloSpotifyDescription,
+	geometriasDelDesveloYoutubeDescription,
+} from '../media/geometrias-del-desvelo.media';
 import geometriasDelDesveloCollectionMd from './geometrias-del-desvelo.collection.md?raw';
 
 export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQueryResult> = {
@@ -33,8 +39,23 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 		asset: { _ref: 'image-6efd3e53eec8dfab23e1c0109027be9f58a01f8c-1200x630-png', _type: 'reference' },
 	},
 	config: { showAuthors: true },
-	tags: [],
-	mediaSources: [],
+	tags: [colaborativaRawTag],
+	mediaSources: [
+		{
+			_key: 'geometrias-spotify',
+			_type: 'spotifyPodcastEpisode',
+			title: 'La colección leída de corrido',
+			description: geometriasDelDesveloSpotifyDescription,
+			url: 'https://open.spotify.com/embed/episode/geometrias-del-desvelo',
+		},
+		{
+			_key: 'geometrias-youtube',
+			_type: 'youTubeVideo',
+			title: 'Las tres geometrías',
+			description: geometriasDelDesveloYoutubeDescription,
+			videoId: 'geometriasDelDesveloVideoId',
+		},
+	],
 	literaryWorks: [
 		{
 			_id: 'onoff-literary-work-geometria',
@@ -45,7 +66,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 				asset: { _type: 'reference', _ref: 'image-9e1eab984fbe94e19101c7aa4fc2e99a88f71736-236x328-png' },
 			},
 			totalReadingTime: 7,
-			sectionCount: 1,
+			sectionCount: palacioSecondSectionReadingTime,
 			tags: [cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag],
 			mediaSources: [
 				{
@@ -130,7 +151,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 				asset: { _type: 'reference', _ref: 'image-27fb05f42b38f0ba9ba21aeb566e25abe670b213-236x328-png' },
 			},
 			totalReadingTime: 8,
-			sectionCount: 1,
+			sectionCount: palacioSecondSectionReadingTime,
 			tags: [cuentoRawTag, absurdoRawTag, surrealismoRawTag],
 			mediaSources: [],
 			authors: [
@@ -171,7 +192,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 				asset: { _type: 'reference', _ref: 'image-ad5639283bf3d3e927b5b0eb79ef2ba098b707e8-236x328-png' },
 			},
 			totalReadingTime: 9,
-			sectionCount: 1,
+			sectionCount: palacioSecondSectionReadingTime,
 			tags: [novelaRawTag, absurdoRawTag, alegoriaRawTag],
 			mediaSources: [],
 			authors: [
