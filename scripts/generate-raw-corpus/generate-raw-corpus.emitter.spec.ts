@@ -24,8 +24,8 @@ describe('emitModule', () => {
 		expect(output).toContain(`export const fixture: Fixture = {slug:"geometria"};`);
 	});
 
-	// Sin esto, cada obra generada duplicaría su prosa en git y el diff de la migración —la evidencia de
-	// que lo generado es idéntico a lo que había— sería ilegible.
+	// Sin esto, cada obra generada duplicaría en git los ~3 KB de su prosa, y cualquier diff sobre el
+	// corpus quedaría ahogado en texto que no cambió.
 	it('replaces a prose string with its default import', () => {
 		const output = emit({ body: 'Un cuerpo largo' }, [{ value: 'Un cuerpo largo', substitution: prose }]);
 
@@ -91,7 +91,7 @@ describe('emitModule', () => {
 	});
 
 	// La prosa del corpus viene con CRLF. Un `\r` sin escapar termina el literal igual que un `\n`, y el
-	// archivo generado deja de parsear — el modo de falla que apareció al generar la primera colección.
+	// archivo generado deja de parsear.
 	it('escapes the line terminators the corpus prose carries, CR included', () => {
 		const output = emit({ title: 'El odio\r\ncontinúa' });
 

@@ -51,7 +51,8 @@ describe('findDanglingReferences', () => {
 	});
 
 	// La contracara del caso del audio: la portada se proyecta como objeto entero, así que su asset no
-	// necesita documento. Exigirlo obligaría a inventar doce documentos de imagen que ninguna query lee.
+	// necesita documento. Exigirlo obligaría a inventar un documento por cada imagen del corpus, y
+	// ninguna query los leería.
 	it('ignores an image asset with no document, which no query dereferences', () => {
 		const dataset = [
 			{
