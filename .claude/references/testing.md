@@ -81,6 +81,7 @@ Un spec o una story que importa una obra concreta queda atado a ella: sus aserci
 | Una obra con o sin etiquetas                    | `onoffRawLiteraryWorksWith(out)Tags`                                                                                 |
 | Una etiqueta cualquiera                         | `onoffTagsMock` (o `onoffRawTagsMock` en el backend), y tomá un slice                                                |
 | Etiquetas de título corto                       | `onoffTagsWithShortTitles` — para stories donde un título de dos palabras fuerza el recorte por ancho                |
+| La página de inicio cruda, o sus campañas       | `onoffRawLandingPageMock` / `onoffRawContentCampaignsMock`, ambos de `@mocks/onoff-raw-landing-page.mock`            |
 
 Corolario: **las aserciones se derivan del fixture**, no de prosa clavada. Si el caso necesita una palabra del texto, extraela del propio mock (`bodyHtml.replace(/<[^>]+>/g, ' ')` y tomá una palabra) en vez de escribirla a mano — así sigue pasando cuando el canon cambie. Si falta un selector para el shape que necesitás, **agregalo al agregador** (derivado por predicado, no una lista en paralelo) en vez de importar la obra.
 

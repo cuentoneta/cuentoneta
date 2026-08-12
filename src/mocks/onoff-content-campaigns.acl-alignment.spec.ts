@@ -1,6 +1,6 @@
 import { mapContentCampaigns } from '../api/_utils/functions';
 import { contentCampaignMock } from './content-campaign.mock';
-import { onoffRawContentCampaignsMock } from './onoff-raw-content-campaigns.mock';
+import { onoffRawContentCampaignsMock } from './onoff-raw-landing-page.mock';
 
 /* eslint-disable no-restricted-syntax -- vi.mock: el builder de imágenes de Sanity no tiene punto de inyección */
 vi.mock('@sanity/image-url', async () => {

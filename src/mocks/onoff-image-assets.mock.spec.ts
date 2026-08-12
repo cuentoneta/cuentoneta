@@ -13,7 +13,7 @@ import { onoffRawCollectionsMock, onoffRawCollectionTeasersMock } from './onoff-
 import { onoffRawLiteraryWorksMock } from './onoff-raw-literary-works.mock';
 import { onoffRawStoriesMock } from './onoff-raw-stories.mock';
 import { onoffRawStorylistsMock } from './onoff-raw-storylists.mock';
-import { onoffRawContentCampaignsMock } from './onoff-raw-content-campaigns.mock';
+import { onoffRawContentCampaignsMock } from './onoff-raw-landing-page.mock';
 
 const assets: [string, OnoffImageAsset][] = Object.entries(onoffImageAssets);
 

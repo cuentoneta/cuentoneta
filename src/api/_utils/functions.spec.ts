@@ -13,7 +13,8 @@ import {
 } from './functions';
 import { elOdioRawTeaser, onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
 import { rawOnoffAuthor, rawOnoffAuthorTeaser } from '@mocks/onoff-raw-author.mock';
-import { onoffRawContentCampaignsMock } from '@mocks/onoff-raw-content-campaigns.mock';
+import { onoffRawContentCampaignsMock, onoffRawLandingPageMock } from '@mocks/onoff-raw-landing-page.mock';
+import type { RotatingContent } from '@models/landing-page-content.model';
 import { onoffRawTagsMock } from '@mocks/onoff-raw-tags.mock';
 import { viewportElementSizes } from '@models/content-campaign.model';
 
@@ -180,19 +181,34 @@ describe('mapContentCampaigns (ACL)', () => {
 });
 
 describe('mapLandingPageContent (ACL)', () => {
+	// El repository invoca al mapper con el spread de dos queries, y la rotación va segunda: aporta lo
+	// que la landing no proyecta y, al hacerlo, también pisa su `_id`. El caso reproduce ese orden con
+	// una identidad propia para que la aserción distinga cuál de las dos sobrevive.
+	const rotatingContent: RotatingContent = { _id: 'rotating-content-onoff', name: 'Rotación de Onoff', mostRead: [] };
+	const raw = { ...onoffRawLandingPageMock, ...rotatingContent };
+
 	it('exposes exactly the domain contract, dropping the raw slug and name', () => {
-		const result = mapLandingPageContent({
-			_id: 'onoff-landing-page',
-			slug: 'semana-de-onoff',
-			config: 'onoff',
-			name: 'Rotación de Onoff',
-			cards: [],
-			campaigns: onoffRawContentCampaignsMock,
-			latestReads: [],
-			mostRead: [],
-		});
+		const result = mapLandingPageContent(raw);
 
 		expect(Object.keys(result).sort()).toEqual(['_id', 'campaigns', 'cards', 'config', 'latestReads', 'mostRead']);
+	});
+
+	it('takes its identity from the rotating content that overrides the landing page', () => {
+		const result = mapLandingPageContent(raw);
+
+		expect(result._id).toBe(rotatingContent._id);
+		expect(result._id).not.toBe(onoffRawLandingPageMock._id);
+	});
+
+	it('preserves the config the query returned', () => {
+		expect(mapLandingPageContent(raw).config).toEqual(onoffRawLandingPageMock.config);
+	});
+
+	it('maps every campaign the query returned, in order', () => {
+		const expectedSlugs = onoffRawLandingPageMock.campaigns.map(({ slug }) => slug);
+
+		expect(expectedSlugs.length).toBeGreaterThan(0);
+		expect(mapLandingPageContent(raw).campaigns.map(({ slug }) => slug)).toEqual(expectedSlugs);
 	});
 });
 
