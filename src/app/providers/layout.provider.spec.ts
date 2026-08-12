@@ -48,6 +48,36 @@ describe('WindowLayoutService', () => {
 		expect(service).toBeTruthy();
 	});
 
+	// Redimensionar o rotar cambia qué contenido corresponde servir, y quien lo consulta —el carousel,
+	// por caso— no tiene otra fuente. Antes esto solo se recalculaba de rebote dentro de
+	// `isHeaderVisible$`, que además exige que el usuario haya scrolleado.
+	//
+	// Los eventos viajan estrangulados, así que hay que dejar pasar la ventana del throttle para leer
+	// el tamaño final: es la misma espera que impone una ráfaga real de redimensionado.
+	describe('recálculo del viewport ante un cambio de tamaño', () => {
+		// El throttle corre sobre el scheduler real, montado al construirse el servicio: adelantar
+		// timers falsos desde acá no lo alcanza, así que la espera es real.
+		const afterThrottleWindow = () => new Promise((resolve) => setTimeout(resolve, 150));
+
+		it('recalculates the viewport on resize, with no scrolling involved', async () => {
+			expect(service.isActual('xl')).toBe(true);
+
+			mockWindow.innerWidth = 500;
+			mockWindow.dispatchEvent(new Event('resize'));
+			await afterThrottleWindow();
+
+			expect(service.isActual('xs')).toBe(true);
+		});
+
+		it('recalculates the viewport on orientation change', async () => {
+			mockWindow.innerWidth = 500;
+			mockWindow.dispatchEvent(new Event('orientationchange'));
+			await afterThrottleWindow();
+
+			expect(service.isActual('xs')).toBe(true);
+		});
+	});
+
 	describe('userHasScrolled$', () => {
 		it('should emit Direction.Up when scrolling up', () =>
 			new Promise<void>((resolve) => {

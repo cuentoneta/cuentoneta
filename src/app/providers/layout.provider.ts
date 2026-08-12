@@ -48,10 +48,13 @@ export class WindowLayoutService implements LayoutService {
 	 * o se recalcula el tamaño de pantalla asignado al navegador en el dispositivo.
 	 * @private
 	 */
+	// `trailing` es lo que hace que el último tamaño de una ráfaga llegue: arrastrar el borde de la
+	// ventana emite decenas de eventos, y solo con `leading` el viewport quedaría fijado en el ancho
+	// del primer instante del arrastre.
 	private readonly _viewportHasChanged$ = merge(
 		fromEvent(this.window, 'resize').pipe(startWith(null)),
 		fromEvent(this.window, 'orientationchange').pipe(startWith(null)),
-	).pipe(takeUntilDestroyed(), throttleTime(100));
+	).pipe(takeUntilDestroyed(), throttleTime(100, undefined, { leading: true, trailing: true }));
 
 	public readonly isHeaderVisible = toSignal(this.isHeaderVisible$, { initialValue: true });
 
@@ -77,6 +80,12 @@ export class WindowLayoutService implements LayoutService {
 
 	constructor() {
 		this.setViewport();
+
+		// El otro consumidor de `viewportHasChanged$` es `isHeaderVisible$`, que lo combina con
+		// `userHasScrolled$` — y ese exige dos eventos de scroll por encima de 400px. Sin esta
+		// suscripción propia, redimensionar la ventana o rotar el dispositivo no recalcula el viewport
+		// hasta que además se scrollea, y el componente sigue sirviendo el contenido del ancho anterior.
+		this.viewportHasChanged$.pipe(takeUntilDestroyed()).subscribe(() => this.setViewport());
 	}
 
 	/**
