@@ -46,6 +46,7 @@
 	"private": true,
 	"dependencies": {
 		"@angular-devkit/build-angular": "22.1.1",
+		"@angular/build": "22.1.1",
 		"@angular/animations": "22.1.1",
 		"@angular/common": "22.1.1",
 		"@angular/compiler": "22.1.1",

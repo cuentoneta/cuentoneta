@@ -61,6 +61,9 @@ importers:
       '@angular/animations':
         specifier: 22.1.1
         version: 22.1.1(@angular/core@22.1.1(@angular/compiler@22.1.1)(rxjs@7.8.2))
+      '@angular/build':
+        specifier: 22.1.1
+        version: 22.1.1(1a944e93d0b28e2d63e0decf7e80af74)
       '@angular/common':
         specifier: 22.1.1
         version: 22.1.1(@angular/core@22.1.1(@angular/compiler@22.1.1)(rxjs@7.8.2))(rxjs@7.8.2)
