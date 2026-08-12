@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { LiteraryWork } from '@sanity-types';
 import losPeldanosEditorialNoteMd from './los-peldanos.editorial-note.md?raw';
 import losPeldanosMdBody from './los-peldanos.md?raw';
@@ -13,7 +14,7 @@ export const losPeldanosLiteraryWorkDocument: LiteraryWork = {
 	authors: [{ _key: 'author_1', _type: 'reference', _ref: 'author_1' }],
 	coverImage: {
 		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-27fb05f42b38f0ba9ba21aeb566e25abe670b213-236x328-png' },
+		asset: { _type: 'reference', _ref: onoffImageAssets.losPeldanosCover.ref },
 	},
 	content: [{ _type: 'section', _key: 'section-1', body: losPeldanosMdBody, readingTime: 8 }],
 	editorialNote: losPeldanosEditorialNoteMd,

@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { StoryBySlugQueryResult } from '@sanity-types';
 import { novelaRawTag, dramaPsicologicoRawTag } from '../../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
@@ -249,7 +250,7 @@ export const elOdioRawStory: NonNullable<StoryBySlugQueryResult> = {
 	approximateReadingTime: 6,
 	coverImage: {
 		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-83588a6210ea3de0cee7f493f3d41140427958bf-236x328-png' },
+		asset: { _type: 'reference', _ref: onoffImageAssets.elOdioCover.ref },
 	},
 	mediaSources: [],
 	resources: [],

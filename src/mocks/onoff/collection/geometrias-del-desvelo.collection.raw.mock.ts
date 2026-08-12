@@ -33,10 +33,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 	slug: 'geometrias-del-desvelo',
 	title: 'Geometrías del desvelo',
 	description: geometriasDelDesveloCollectionMd,
-	featuredImage: {
-		_type: 'image',
-		asset: { _ref: 'image-6efd3e53eec8dfab23e1c0109027be9f58a01f8c-1200x630-png', _type: 'reference' },
-	},
+	featuredImage: { _type: 'image', asset: { _ref: 'image-geometriasDelDesveloCover-236x328-png', _type: 'reference' } },
 	config: { showAuthors: true },
 	tags: [colaborativaRawTag],
 	mediaSources: [
@@ -60,10 +57,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 			_id: 'onoff-literary-work-geometria',
 			slug: 'geometria',
 			title: 'Geometría',
-			coverImage: {
-				_type: 'image',
-				asset: { _type: 'reference', _ref: 'image-9e1eab984fbe94e19101c7aa4fc2e99a88f71736-236x328-png' },
-			},
+			coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-geometriaCover-236x328-png' } },
 			totalReadingTime: 7,
 			sectionCount: 1,
 			tags: [cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag],
@@ -84,7 +78,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 					hostName: 'Biblioteca del Méridien',
 					hostAvatar: {
 						_type: 'image',
-						asset: { _type: 'reference', _ref: 'image-2c4d6e8a0b2d4f6a8c0e2d4f6a8b0c2d4e6f8a0b-96x96-png' },
+						asset: { _type: 'reference', _ref: 'image-bibliotecaMeridienAvatar-96x96-png' },
 					},
 					date: '1974-06-12',
 					duration: '48:12',
@@ -117,10 +111,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 					_id: 'author_1',
 					slug: 'francois-onoff',
 					name: 'François Onoff',
-					image: {
-						_type: 'image',
-						asset: { _type: 'reference', _ref: 'image-f656d95d41369adb6f7d3a7d0b20b36861fd2028-350x350-jpg' },
-					},
+					image: { _type: 'image', asset: { _type: 'reference', _ref: 'image-francoisOnoffPortrait-1254x1254-png' } },
 					nationality: {
 						_id: 'nationality-francia',
 						_type: 'nationality',
@@ -128,10 +119,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 						_updatedAt: '2021-12-28T00:00:00Z',
 						_rev: 'rev-francia',
 						country: 'Francia',
-						flag: {
-							_type: 'image',
-							asset: { _type: 'reference', _ref: 'image-b80876a5f3a89e13acc14254b1f45dd6d29b79f4-30x20-png' },
-						},
+						flag: { _type: 'image', asset: { _type: 'reference', _ref: 'image-franceFlag-30x20-png' } },
 					},
 					bornOn: '1948-01-01',
 					bornOnYear: 1948,
@@ -145,10 +133,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 			_id: 'onoff-literary-work-los-peldanos',
 			slug: 'los-peldanos',
 			title: 'Los peldaños',
-			coverImage: {
-				_type: 'image',
-				asset: { _type: 'reference', _ref: 'image-27fb05f42b38f0ba9ba21aeb566e25abe670b213-236x328-png' },
-			},
+			coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-losPeldanosCover-236x328-png' } },
 			totalReadingTime: 8,
 			sectionCount: 1,
 			tags: [cuentoRawTag, absurdoRawTag, surrealismoRawTag],
@@ -158,10 +143,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 					_id: 'author_1',
 					slug: 'francois-onoff',
 					name: 'François Onoff',
-					image: {
-						_type: 'image',
-						asset: { _type: 'reference', _ref: 'image-f656d95d41369adb6f7d3a7d0b20b36861fd2028-350x350-jpg' },
-					},
+					image: { _type: 'image', asset: { _type: 'reference', _ref: 'image-francoisOnoffPortrait-1254x1254-png' } },
 					nationality: {
 						_id: 'nationality-francia',
 						_type: 'nationality',
@@ -169,10 +151,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 						_updatedAt: '2021-12-28T00:00:00Z',
 						_rev: 'rev-francia',
 						country: 'Francia',
-						flag: {
-							_type: 'image',
-							asset: { _type: 'reference', _ref: 'image-b80876a5f3a89e13acc14254b1f45dd6d29b79f4-30x20-png' },
-						},
+						flag: { _type: 'image', asset: { _type: 'reference', _ref: 'image-franceFlag-30x20-png' } },
 					},
 					bornOn: '1948-01-01',
 					bornOnYear: 1948,
@@ -186,10 +165,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 			_id: 'onoff-literary-work-las-escaleras',
 			slug: 'las-escaleras',
 			title: 'Las escaleras',
-			coverImage: {
-				_type: 'image',
-				asset: { _type: 'reference', _ref: 'image-ad5639283bf3d3e927b5b0eb79ef2ba098b707e8-236x328-png' },
-			},
+			coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-lasEscalerasCover-236x328-png' } },
 			totalReadingTime: 9,
 			sectionCount: 1,
 			tags: [novelaRawTag, absurdoRawTag, alegoriaRawTag],
@@ -199,10 +175,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 					_id: 'author_1',
 					slug: 'francois-onoff',
 					name: 'François Onoff',
-					image: {
-						_type: 'image',
-						asset: { _type: 'reference', _ref: 'image-f656d95d41369adb6f7d3a7d0b20b36861fd2028-350x350-jpg' },
-					},
+					image: { _type: 'image', asset: { _type: 'reference', _ref: 'image-francoisOnoffPortrait-1254x1254-png' } },
 					nationality: {
 						_id: 'nationality-francia',
 						_type: 'nationality',
@@ -210,10 +183,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 						_updatedAt: '2021-12-28T00:00:00Z',
 						_rev: 'rev-francia',
 						country: 'Francia',
-						flag: {
-							_type: 'image',
-							asset: { _type: 'reference', _ref: 'image-b80876a5f3a89e13acc14254b1f45dd6d29b79f4-30x20-png' },
-						},
+						flag: { _type: 'image', asset: { _type: 'reference', _ref: 'image-franceFlag-30x20-png' } },
 					},
 					bornOn: '1948-01-01',
 					bornOnYear: 1948,

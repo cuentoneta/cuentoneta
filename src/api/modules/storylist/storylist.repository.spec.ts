@@ -1,5 +1,6 @@
 import { clearAllMocks, type Mock } from '@test-utils';
 import { client } from '../../_helpers/sanity-connector';
+import { onoffImageAssets } from '@mocks/onoff-image-assets.mock';
 import { onoffRawStorylistsMock } from '@mocks/onoff-raw-storylists.mock';
 import { fetchStorylistBySlug } from './storylist.repository';
 
@@ -14,14 +15,14 @@ vi.mock('@sanity/image-url', () => ({
 }));
 /* eslint-enable no-restricted-syntax */
 
-// Fragmentos de los `_ref` reales del corpus: la storylist (featuredImage) y las 3 primeras
-// stories de `onoffRawNavTeasersMock` (el-palacio, geometria, los-peldanos), que alimentan `storyCoverImages`.
+// Los `_ref` del corpus: la storylist (featuredImage) y las 3 primeras stories de
+// `onoffRawNavTeasersMock` (el-palacio, geometria, los-peldanos), que alimentan `storyCoverImages`.
 const [rawStorylist] = onoffRawStorylistsMock;
 
-const geometriasFeaturedRef = '6efd3e53eec8dfab23e1c0109027be9f58a01f8c';
-const elPalacioCoverRef = '3f8774ea01abc54483829d982035a810667240e1';
-const geometriaCoverRef = '9e1eab984fbe94e19101c7aa4fc2e99a88f71736';
-const losPeldanosCoverRef = '27fb05f42b38f0ba9ba21aeb566e25abe670b213';
+const geometriasFeaturedRef = onoffImageAssets.geometriasDelDesveloCover.ref;
+const elPalacioCoverRef = onoffImageAssets.elPalacioDeLasNueveFronterasCover.ref;
+const geometriaCoverRef = onoffImageAssets.geometriaCover.ref;
+const losPeldanosCoverRef = onoffImageAssets.losPeldanosCover.ref;
 
 describe('storylist.repository', () => {
 	beforeEach(() => {

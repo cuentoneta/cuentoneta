@@ -24,26 +24,31 @@ import { SanityLiteraryWorkRepository } from '../api/modules/literary-work/liter
 import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
 import { onoffRawLiteraryWorksMock } from './onoff-raw-literary-works.mock';
 
-// Los campos que el ACL resuelve con `urlFor` son los únicos donde las dos capas no pueden coincidir: el
-// mapeo produce una URL de `cdn.sanity.io` del dataset del entorno y el corpus de dominio declara la ruta
-// del asset local. Quedan fuera del cruce hasta que el puente de referencias a assets locales los
-// reconcilie; todo lo demás se compara entero.
+// El builder de imágenes resuelve la referencia al asset local que la tabla del corpus le asocia, en vez
+// de a una URL de `cdn.sanity.io` que dependería del dataset del entorno. Así las dos capas dicen lo
+// mismo sobre cada imagen y la comparación no necesita dejar ningún campo afuera.
+/* eslint-disable no-restricted-syntax -- vi.mock: el builder de imágenes de Sanity no tiene punto de inyección */
+vi.mock('@sanity/image-url', async () => {
+	const { localImagePathForImageSource } = await import('./onoff-image-assets.mock');
+	return {
+		createImageUrlBuilder: () => ({
+			image: (source: unknown) => {
+				// `auto()` encadena y devuelve el mismo constructor: sin él, un mapeo que pasara a
+				// `urlForWithAutoFormat` rompería con un `TypeError` en vez de con una diferencia de valor.
+				const built = { url: () => localImagePathForImageSource(source), auto: () => built };
+				return built;
+			},
+		}),
+	};
+});
+/* eslint-enable no-restricted-syntax */
+
 function comparable(work: LiteraryWork): unknown {
 	return {
 		...work,
-		coverImage: undefined,
-		authors: work.authors.map((author) => ({
-			...author,
-			imageUrl: undefined,
-			nationality: { ...author.nationality, flag: undefined },
-		})),
 		// `SectionTitle` lleva `toAnchor`, y las funciones se comparan por referencia: dos instancias con el
 		// mismo texto nunca son iguales. Se compara su valor, que es lo que el título afirma.
 		content: work.content.map((section) => ({ ...section, title: section.title?.value })),
-		mediaSources: work.mediaSources.map((media) => {
-			const data = media.data as Record<string, unknown>;
-			return 'hostAvatar' in data ? { ...media, data: { ...data, hostAvatar: undefined } } : media;
-		}),
 	};
 }
 

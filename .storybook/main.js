@@ -10,7 +10,12 @@ export default {
 		options: { compodoc: false },
 	},
 	docs: {},
-	staticDirs: [{ from: '../src/assets', to: '/assets' }],
+	// Las dos raíces que publica la app, montadas igual acá para que una ruta del corpus resuelva al mismo
+	// archivo en el catálogo y en el sitio.
+	staticDirs: [
+		{ from: '../src/assets', to: '/assets' },
+		{ from: '../public', to: '/' },
+	],
 	// Resolución nativa de los `paths` del tsconfig (@models, @mocks, @components, …), en lugar de
 	// `vite-tsconfig-paths`: el plugin descubre proyectos recorriendo el árbol, y bajo
 	// `.claude/worktrees/` hay copias enteras del repo. Basta con que el tsconfig de una de ellas no

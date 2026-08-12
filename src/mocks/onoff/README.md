@@ -24,7 +24,7 @@ onoff/
 └── document/       la factory de campos de sistema y los documentos de soporte
 ```
 
-**Los agregadores no viven acá:** están un nivel arriba, en `src/mocks/`, y son lo que el resto del repo importa. Una regla de ESLint prohíbe importar una pieza puntual desde fuera de `src/mocks/**`.
+**Los agregadores no viven acá:** están un nivel arriba, en `src/mocks/`, y son lo que el resto del repo importa. Una regla de ESLint prohíbe importar una pieza puntual desde fuera de `src/mocks/**`. Por eso la tabla de assets de imagen (`../onoff-image-assets.mock.ts`, ver [Imágenes](#imágenes-el-puente-a-los-assets-locales)) también vive arriba: la consume un spec de `src/api/`.
 
 ## Las tres capas
 
@@ -155,12 +155,40 @@ Contraparte cruda del corpus de dominio `LiteraryWork`, tipada contra `NonNullab
   - `unmaterializedRawLiteraryWork` — `totalReadingTime` y `content[].readingTime` en `null` (ejercita el fallback puro de lectura del repository y el backfill, que es el único que persiste).
 - **Autor raw:** `rawOnoffAuthor` (reusado del corpus raw de Story, estructuralmente idéntico).
 
-## Convención de portadas (assets locales)
+## Imágenes: el puente a los assets locales
+
+Las referencias de imagen del corpus no apuntan a ningún asset de Sanity: son inventadas, y ninguna query las dereferencia. Lo que sí existe es el archivo local, servido por la app y por Storybook. **La tabla `../onoff-image-assets.mock.ts` (`onoffImageAssets`) es lo que une las dos puntas**: una entrada por asset, con la referencia que declara la capa de documentos y la ruta que declara el corpus de dominio.
+
+```
+documento  →  onoffImageAssets.<clave>.ref        dominio  →  onoffImageAssets.<clave>.path
+```
+
+Nadie escribe una referencia ni una ruta a mano: las dos caras salen de la misma entrada, así que no pueden divergir por edición. La tabla vive **un nivel arriba**, junto a los agregadores, porque también la consume `src/api/` (ver [Cómo está organizado](#cómo-está-organizado)).
+
+**Formato de la referencia:** `image-<camelCase>-<ancho>x<alto>-<ext>`.
+
+- **camelCase, no el slug.** El parser de `_ref` de `@sanity/image-url` corta por guiones y exige exactamente cuatro segmentos: un identificador como `francois-onoff` no produce una URL, lanza `Malformed asset _ref`.
+- **El identificador repite la clave de la tabla**, para que la entrada no pueda quedar nombrada por un asset y apuntar a otro.
+- **Las dimensiones y la extensión describen el archivo real**, medidas de su cabecera. No son relleno: son parte de la URL que arma el builder, así que una que miente se vuelve una URL rota apenas algo dereferencie la referencia.
+- **Una entrada por archivo.** La portada editorial de `geometrias-del-desvelo` y el `featuredImage` de la storylist homónima comparten entrada porque son el mismo archivo; los dos viewports de un banner de campaña, en cambio, son archivos distintos y llevan entrada cada uno.
+- **Excepción: los banners de campaña llevan identificador hexadecimal.** El Studio valida ese campo con un patrón que solo admite hexadecimal (`decodeAssetId` en `cms/utils/content-campaign-image.ts`, que lanza ante cualquier otra forma), así que un identificador legible modelaría algo que el CMS rechazaría. Ahí la legibilidad vive en la clave de la tabla.
+
+`../onoff-image-assets.mock.spec.ts` lo hace cumplir en cinco frentes: que el archivo exista, que la referencia parsee con el builder real, que el identificador corresponda a su clave, que no mienta sobre las dimensiones ni la extensión, y que **ninguna referencia de imagen del corpus quede fuera de la tabla** — con las fuentes enumeradas una por una, obras y colecciones y historias y autor y campañas.
+
+**Qué habilita.** Que las dos capas resuelvan la misma imagen es lo que permite que el cruce del corpus de dominio contra el ACL (`../onoff-literary-works.acl-alignment.spec.ts` y `../onoff-collections.acl-alignment.spec.ts`) sea **total**: esos specs sustituyen el builder de imágenes por un resolutor sobre esta tabla y no excluyen ningún campo.
+
+**Qué no habilita.** La guarda de referencias colgadas del generador sigue excluyendo los assets de imagen (ver [Las tres capas](#las-tres-capas)). Esa guarda exige que todo `_ref` resuelva a un documento del dataset, y la tabla no crea documentos `sanity.imageAsset` — son problemas distintos, y el de la guarda no vale la pena resolver mientras ninguna query dereferencie imágenes.
+
+### Convención de portadas
 
 - **Directorio:** `src/assets/img/mocks/stories/`
 - **Nombre:** `<slug>.png` (la misma cadena que el campo `slug` del mock)
-- **Path en el mock:** `assets/img/mocks/stories/<slug>.png` (sin `./` ni `/` inicial)
+- **Path en el mock:** `assets/img/mocks/stories/<slug>.png` (sin `./` ni `/` inicial), declarado por la tabla
 - **Aspecto:** portrait 3:4 (referencia 118×164 del `CoverImageComponent`)
+
+El resto de los assets del corpus vive junto a estas portadas, todos bajo `src/assets/img/mocks/`: `author/` (retrato), `collections/` (portadas editoriales), `media/` (el avatar del host de una grabación) y `banners/` (campañas, un archivo por viewport).
+
+**Las banderas son la excepción, y no son del corpus.** El set completo por código ISO vive en `public/flags/`, que la app publica en la raíz: es un recurso general, no una fixture, y ponerlo bajo `mocks/` lo habría etiquetado como lo que no es. Por eso su entrada en la tabla es la única cuya ruta no empieza con `assets/` — el prefijo es lo que distingue las dos raíces publicadas, y de eso depende que el spec sepa dónde buscar el archivo en disco.
 
 ## Obras
 

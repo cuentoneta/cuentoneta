@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { Story } from '@models/story.model';
 import { lasDosAntorchasRawStory } from './las-dos-antorchas.story.raw.mock';
 import { authorMock } from '../../author.mock';
@@ -10,7 +11,7 @@ export const lasDosAntorchasStoryMock: Story = {
 	originalPublication: 'Éditions du Méridien (1987)',
 	approximateReadingTime: 8,
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/las-dos-antorchas.png',
+	coverImage: onoffImageAssets.lasDosAntorchasCover.path,
 	tags: toDomainTags(lasDosAntorchasRawStory.tags),
 	resources: [],
 	media: [],

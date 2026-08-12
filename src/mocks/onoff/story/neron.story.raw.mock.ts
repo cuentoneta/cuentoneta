@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { StoryBySlugQueryResult } from '@sanity-types';
 import { dramaHistoricoRawTag, teatroRawTag, tragediaRawTag } from '../../onoff-raw-tags.mock';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
@@ -265,7 +266,7 @@ export const neronRawStory: NonNullable<StoryBySlugQueryResult> = {
 	approximateReadingTime: 7,
 	coverImage: {
 		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-9642ca580d43168d6965f428e65df5ca6ec34cdc-236x328-png' },
+		asset: { _type: 'reference', _ref: onoffImageAssets.neronCover.ref },
 	},
 	mediaSources: [],
 	resources: [],

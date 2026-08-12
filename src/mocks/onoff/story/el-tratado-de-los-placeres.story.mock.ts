@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { Story } from '@models/story.model';
 import { elTratadoRawStory } from './el-tratado-de-los-placeres.story.raw.mock';
 import { authorMock } from '../../author.mock';
@@ -10,7 +11,7 @@ export const elTratadoDeLosPlaceresStoryMock: Story = {
 	originalPublication: 'Éditions du Méridien (1981)',
 	approximateReadingTime: 10,
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/el-tratado-de-los-placeres.png',
+	coverImage: onoffImageAssets.elTratadoDeLosPlaceresCover.path,
 	tags: toDomainTags(elTratadoRawStory.tags),
 	resources: [],
 	media: [],

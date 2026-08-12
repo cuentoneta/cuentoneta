@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { Story } from '@models/story.model';
 import { elPalacioRawStory } from './el-palacio-de-las-nueve-fronteras.story.raw.mock';
 import { authorMock } from '../../author.mock';
@@ -10,7 +11,7 @@ export const palacioNueveFronterasStoryMock: Story = {
 	originalPublication: 'Éditions du Méridien (1985)',
 	approximateReadingTime: 11,
 	badLanguage: false,
-	coverImage: 'assets/img/mocks/stories/el-palacio-de-las-nueve-fronteras.png',
+	coverImage: onoffImageAssets.elPalacioDeLasNueveFronterasCover.path,
 	tags: toDomainTags(elPalacioRawStory.tags),
 	resources: [],
 	media: [],

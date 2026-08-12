@@ -9,6 +9,7 @@ import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
+import { onoffImageAssets } from './onoff-image-assets.mock';
 import { colaborativaTagMock } from './onoff-tags.mock';
 import { geometriasDelDesveloMediaMock } from './onoff/media/geometrias-del-desvelo.media.mock';
 import geometriasDescriptionMd from './onoff/collection/geometrias-del-desvelo.collection.md?raw';
@@ -50,7 +51,7 @@ export const geometriasDelDesveloCollectionMock: Collection = createCollection({
 	slug: 'geometrias-del-desvelo',
 	title: 'Geometrías del desvelo',
 	description: markdownToSanitizedHtml(createMarkdown(geometriasDescriptionMd)),
-	imagery: { kind: 'representative', image: 'assets/img/mocks/collections/geometrias-del-desvelo.png' },
+	imagery: { kind: 'representative', image: onoffImageAssets.geometriasDelDesveloCover.path },
 	tags: [colaborativaTagMock],
 	config: { showAuthors: true },
 	mediaSources: geometriasDelDesveloMediaMock,

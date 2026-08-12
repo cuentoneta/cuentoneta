@@ -22,15 +22,26 @@ import { SanityCollectionRepository } from '../api/modules/collection/collection
 import { onoffCollectionsMock } from './onoff-collections.mock';
 import { onoffRawCollectionsMock } from './onoff-raw-collections.mock';
 
-// Ver el spec homónimo de `LiteraryWork` para el porqué de cada normalización: los campos que el ACL
-// resuelve con `urlFor` y los títulos de sección, que llevan una función y se comparan por referencia.
+// Ver el spec homónimo de `LiteraryWork` para el porqué de sustituir el builder de imágenes.
+/* eslint-disable no-restricted-syntax -- vi.mock: el builder de imágenes de Sanity no tiene punto de inyección */
+vi.mock('@sanity/image-url', async () => {
+	const { localImagePathForImageSource } = await import('./onoff-image-assets.mock');
+	return {
+		createImageUrlBuilder: () => ({
+			image: (source: unknown) => {
+				const built = { url: () => localImagePathForImageSource(source), auto: () => built };
+				return built;
+			},
+		}),
+	};
+});
+/* eslint-enable no-restricted-syntax */
+
 function comparable(collection: Collection): unknown {
 	return {
 		...collection,
-		imagery: undefined,
 		literaryWorks: collection.literaryWorks.map((work) => ({
 			...work,
-			coverImage: undefined,
 			// `epigraphs` queda fuera porque la proyección de teaser no los trae: el ACL ni siquiera declara la
 			// clave y el corpus la declara vacía, que significan lo mismo pero no comparan igual.
 			teaserSection: {
@@ -38,15 +49,6 @@ function comparable(collection: Collection): unknown {
 				title: work.teaserSection.title?.value,
 				epigraphs: undefined,
 			},
-			authors: work.authors.map((author) => ({
-				...author,
-				imageUrl: undefined,
-				nationality: { ...author.nationality, flag: undefined },
-			})),
-			mediaSources: work.mediaSources.map((media) => {
-				const data = media.data as Record<string, unknown>;
-				return 'hostAvatar' in data ? { ...media, data: { ...data, hostAvatar: undefined } } : media;
-			}),
 		})),
 	};
 }

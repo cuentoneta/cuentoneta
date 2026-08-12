@@ -1,3 +1,4 @@
+import { onoffImageAssets } from './onoff-image-assets.mock';
 import type { RotatingContentQueryResult, StoryBySlugQueryResult } from '@sanity-types';
 import onoffBiographyMdBody from './onoff/author/francois-onoff.biography.md?raw';
 
@@ -7,7 +8,7 @@ export const rawOnoffAuthor: NonNullable<StoryBySlugQueryResult>['author'] = {
 	name: 'François Onoff',
 	image: {
 		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-f656d95d41369adb6f7d3a7d0b20b36861fd2028-350x350-jpg' },
+		asset: { _type: 'reference', _ref: onoffImageAssets.francoisOnoffPortrait.ref },
 	},
 	nationality: {
 		_id: 'nationality-francia',
@@ -18,7 +19,7 @@ export const rawOnoffAuthor: NonNullable<StoryBySlugQueryResult>['author'] = {
 		country: 'Francia',
 		flag: {
 			_type: 'image',
-			asset: { _type: 'reference', _ref: 'image-b80876a5f3a89e13acc14254b1f45dd6d29b79f4-30x20-png' },
+			asset: { _type: 'reference', _ref: onoffImageAssets.franceFlag.ref },
 		},
 	},
 	biography: onoffBiographyMdBody,
@@ -46,7 +47,7 @@ export const rawOnoffAuthorTeaser: NonNullable<RotatingContentQueryResult>['most
 	name: 'François Onoff',
 	image: {
 		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-f656d95d41369adb6f7d3a7d0b20b36861fd2028-350x350-jpg' },
+		asset: { _type: 'reference', _ref: onoffImageAssets.francoisOnoffPortrait.ref },
 	},
 	nationality: {
 		_id: 'nationality-francia',
@@ -57,7 +58,7 @@ export const rawOnoffAuthorTeaser: NonNullable<RotatingContentQueryResult>['most
 		country: 'Francia',
 		flag: {
 			_type: 'image',
-			asset: { _type: 'reference', _ref: 'image-b80876a5f3a89e13acc14254b1f45dd6d29b79f4-30x20-png' },
+			asset: { _type: 'reference', _ref: onoffImageAssets.franceFlag.ref },
 		},
 	},
 	bornOn: '1948-01-01',
