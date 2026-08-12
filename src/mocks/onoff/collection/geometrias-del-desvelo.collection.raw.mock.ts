@@ -11,7 +11,6 @@ import {
 	novelaRawTag,
 	surrealismoRawTag,
 } from '../../onoff-raw-tags.mock';
-import { palacioSecondSectionReadingTime } from '../literary-work/el-palacio-de-las-nueve-fronteras.multi-section';
 import { geometriaSectionTitle } from '../literary-work/geometria.epigraph';
 import geometriaMdBody from '../literary-work/geometria.md?raw';
 import lasEscalerasMdBody from '../literary-work/las-escaleras.md?raw';
@@ -66,7 +65,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 				asset: { _type: 'reference', _ref: 'image-9e1eab984fbe94e19101c7aa4fc2e99a88f71736-236x328-png' },
 			},
 			totalReadingTime: 7,
-			sectionCount: palacioSecondSectionReadingTime,
+			sectionCount: 1,
 			tags: [cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag],
 			mediaSources: [
 				{
@@ -151,7 +150,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 				asset: { _type: 'reference', _ref: 'image-27fb05f42b38f0ba9ba21aeb566e25abe670b213-236x328-png' },
 			},
 			totalReadingTime: 8,
-			sectionCount: palacioSecondSectionReadingTime,
+			sectionCount: 1,
 			tags: [cuentoRawTag, absurdoRawTag, surrealismoRawTag],
 			mediaSources: [],
 			authors: [
@@ -192,7 +191,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 				asset: { _type: 'reference', _ref: 'image-ad5639283bf3d3e927b5b0eb79ef2ba098b707e8-236x328-png' },
 			},
 			totalReadingTime: 9,
-			sectionCount: palacioSecondSectionReadingTime,
+			sectionCount: 1,
 			tags: [novelaRawTag, absurdoRawTag, alegoriaRawTag],
 			mediaSources: [],
 			authors: [
