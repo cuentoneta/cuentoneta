@@ -50,6 +50,34 @@ describe('CarouselComponent', () => {
 		});
 	});
 
+	// El contenedor de la diapositiva se estira al ancho disponible; sin que el enlace y la imagen
+	// ocupen esa área, la imagen queda anclada arriba a la izquierda y los controles e indicadores
+	// —posicionados contra los bordes del contenedor— dejan de alinearse con lo que se ve. happy-dom
+	// no computa layout, así que lo verificable es el contrato de clases.
+	it('should stretch the slide link over the container area', async () => {
+		await setup();
+		screen.getAllByRole('link').forEach((link) => {
+			expect(link).toHaveClass('block', 'h-full', 'w-full');
+		});
+	});
+
+	it('should stretch the slide image over the container area', async () => {
+		await setup();
+		screen.getAllByRole('img').forEach((image) => {
+			expect(image).toHaveClass('h-full', 'w-full', 'object-cover');
+		});
+	});
+
+	// Estirar la imagen no puede costar sus dimensiones intrínsecas: son las que reservan el espacio
+	// antes de que cargue y las que NgOptimizedImage exige para no advertir.
+	it('should keep the intrinsic dimensions of the slide image', async () => {
+		await setup('md');
+		const [image] = screen.getAllByRole('img');
+		const { md } = contentCampaignMock[0].contents;
+		expect(image).toHaveAttribute('width', String(md.imageWidth));
+		expect(image).toHaveAttribute('height', String(md.imageHeight));
+	});
+
 	// Pruebas de navegación
 	it('should navigate to next slide', async () => {
 		const { fixture } = await setup();
