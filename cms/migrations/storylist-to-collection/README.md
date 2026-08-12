@@ -55,6 +55,23 @@ count(*[_type == "storylist" && count(tabs) > 0])
 
 Resultado: **cero** en `production`, `staging` y `development`. Por eso no se exporta nada antes de descartar el campo.
 
+### Qué construcciones trae la prosa
+
+Medido sobre el corpus, para que el contraste de fidelidad sepa qué buscar:
+
+```groq
+{
+  "estilos": array::unique(*[_type == "storylist"].description[].style),
+  "listItems": array::unique(*[_type == "storylist"].description[].listItem),
+  "marcas": array::unique(*[_type == "storylist"].description[].children[].marks[]),
+  "tiposMarkDef": array::unique(*[_type == "storylist"].description[].markDefs[]._type)
+}
+```
+
+Un único estilo de bloque (`normal`), un único tipo de ítem de lista (`bullet`), decoradores `strong` y `em`, y `link` como único tipo de markDef. Sin encabezados, sin `code`, sin listas numeradas: todo cae dentro de lo que el conversor traduce, así que la corrida no se detiene por `UnsupportedPortableTextError`.
+
+**Las listas de viñetas no son un caso de borde:** las traen 8 de las 36 descripciones. `florilegio-50-2025` es la muestra útil para el contraste —un párrafo introductorio y seis ítems, con negritas, enlaces y una cursiva—, porque ejercita todo el inventario de una sola vez.
+
 ## Aborta en vez de degradar
 
 Ante un dato del que no se puede derivar una colección válida —sin título, sin slug, sin descripción, con miembros sin `_key`, o con una referencia que apunta a un borrador— el núcleo lanza `UnmigratableStorylistError` y la corrida se detiene identificando el documento.
