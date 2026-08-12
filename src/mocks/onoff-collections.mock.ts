@@ -10,6 +10,8 @@ import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
 import { onoffImageAssets } from './onoff-image-assets.mock';
+import { colaborativaTagMock } from './onoff-tags.mock';
+import { geometriasDelDesveloMediaMock } from './onoff/media/geometrias-del-desvelo.media.mock';
 import geometriasDescriptionMd from './onoff/collection/geometrias-del-desvelo.collection.md?raw';
 import inventarioDescriptionMd from './onoff/collection/inventario-de-las-pasiones.collection.md?raw';
 import {
@@ -50,9 +52,9 @@ export const geometriasDelDesveloCollectionMock: Collection = createCollection({
 	title: 'Geometrías del desvelo',
 	description: markdownToSanitizedHtml(createMarkdown(geometriasDescriptionMd)),
 	imagery: { kind: 'representative', image: onoffImageAssets.geometriasDelDesveloCover.path },
-	tags: [],
+	tags: [colaborativaTagMock],
 	config: { showAuthors: true },
-	mediaSources: [],
+	mediaSources: geometriasDelDesveloMediaMock,
 	literaryWorks: geometriasWorks,
 });
 
@@ -63,7 +65,7 @@ export const inventarioDeLasPasionesCollectionMock: Collection = createCollectio
 	title: 'El inventario de las pasiones',
 	description: markdownToSanitizedHtml(createMarkdown(inventarioDescriptionMd)),
 	imagery: sampleFrom(inventarioWorks),
-	tags: [],
+	tags: [colaborativaTagMock],
 	config: { showAuthors: false },
 	mediaSources: [],
 	literaryWorks: inventarioWorks,
