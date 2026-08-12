@@ -50,6 +50,14 @@ describe('CarouselComponent', () => {
 		});
 	});
 
+	// El esqueleto reserva el lugar de este contenedor mientras carga, así que ambos tienen que cambiar
+	// de relación de aspecto en el mismo breakpoint. La aserción espejo vive en el spec del esqueleto:
+	// con una sola de las dos, una deriva de este lado dejaría el desalineamiento sin señal.
+	it('should declare the aspect ratios its skeleton mirrors', async () => {
+		await setup();
+		expect(screen.getByRole('region')).toHaveClass('aspect-[540/220]', 'sm:aspect-[1240/360]');
+	});
+
 	// El contenedor de la diapositiva se estira al ancho disponible; sin que el enlace y la imagen
 	// ocupen esa área, la imagen queda anclada arriba a la izquierda y los controles e indicadores
 	// —posicionados contra los bordes del contenedor— dejan de alinearse con lo que se ve. happy-dom
