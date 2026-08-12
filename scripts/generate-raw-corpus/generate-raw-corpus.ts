@@ -71,7 +71,24 @@ function queryNamed(queries: Record<string, string>, name: string): string {
 	return query;
 }
 
-function targetsFor(queries: Record<string, string>): Target[] {
+// El slug sale del documento y no de un literal propio: es el parámetro de entrada de la query, no una de
+// las capas que los cruces comparan, así que atarlo al documento no debilita ninguna aserción y elimina la
+// deriva de que la semana se mueva en un lado y no en el otro.
+//
+// Emite el resultado entero de la query y no solo su sub-proyección `campaigns`; el porqué, en el README
+// del corpus.
+function landingPageTarget(queries: Record<string, string>, slug: string): Target {
+	return {
+		file: join('src/mocks/onoff/landing-page', 'landing-page.raw.mock.ts'),
+		exportName: 'onoffRawLandingPageMock',
+		typeImport: 'LandingPageContentQueryResult',
+		typeAnnotation: 'NonNullable<LandingPageContentQueryResult>',
+		query: queryNamed(queries, 'landingPageContentQuery'),
+		params: { slug },
+	};
+}
+
+function targetsFor(queries: Record<string, string>, landingPageSlug: string): Target[] {
 	const bySlug = (
 		exports: Record<string, string>,
 		directory: string,
@@ -110,6 +127,7 @@ function targetsFor(queries: Record<string, string>): Target[] {
 			typeAnnotation: 'CollectionsQueryResult',
 			query: queryNamed(queries, 'collectionsQuery'),
 		},
+		landingPageTarget(queries, landingPageSlug),
 	];
 }
 
@@ -151,7 +169,14 @@ await withCorpus(async (load) => {
 
 	const collectionQueries = (await load('/src/api/_queries/collection.query.ts')) as Record<string, string>;
 	const literaryWorkQueries = (await load('/src/api/_queries/literary-work.query.ts')) as Record<string, string>;
-	const targets = targetsFor({ ...collectionQueries, ...literaryWorkQueries });
+	const contentQueries = (await load('/src/api/_queries/content.query.ts')) as Record<string, string>;
+	const { onoffLandingPageDocument } = (await load('/src/mocks/onoff/landing-page/onoff.landing-page.document.ts')) as {
+		onoffLandingPageDocument: { slug: { current: string } };
+	};
+	const targets = targetsFor(
+		{ ...collectionQueries, ...literaryWorkQueries, ...contentQueries },
+		onoffLandingPageDocument.slug.current,
+	);
 
 	for (const target of targets) {
 		const value = await evaluateTarget(target, onoffDatasetMock);

@@ -25,15 +25,8 @@ import { onoffRawCollectionsMock } from './onoff-raw-collections.mock';
 // Ver el spec homónimo de `LiteraryWork` para el porqué de sustituir el builder de imágenes.
 /* eslint-disable no-restricted-syntax -- vi.mock: el builder de imágenes de Sanity no tiene punto de inyección */
 vi.mock('@sanity/image-url', async () => {
-	const { localImagePathForImageSource } = await import('./onoff-image-assets.mock');
-	return {
-		createImageUrlBuilder: () => ({
-			image: (source: unknown) => {
-				const built = { url: () => localImagePathForImageSource(source), auto: () => built };
-				return built;
-			},
-		}),
-	};
+	const { stubImageUrlBuilderModule } = await import('@testing/sanity-image-url.stub');
+	return stubImageUrlBuilderModule();
 });
 /* eslint-enable no-restricted-syntax */
 

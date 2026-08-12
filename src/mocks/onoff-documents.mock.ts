@@ -1,4 +1,4 @@
-import type { Collection, LiteraryWork, SanityFileAsset } from '@sanity-types';
+import type { Collection, ContentCampaign, LandingPage, LiteraryWork, SanityFileAsset } from '@sanity-types';
 import { onoffAuthorDocument } from './onoff/author/author.document.projection';
 import { geometriasDelDesveloCollectionDocument } from './onoff/collection/geometrias-del-desvelo.collection.document';
 import { inventarioDeLasPasionesCollectionDocument } from './onoff/collection/inventario-de-las-pasiones.collection.document';
@@ -8,6 +8,9 @@ import {
 	onoffTagDocumentsMock,
 } from './onoff/document/support-documents.projection';
 import { asDraft, slugField, withoutKey } from './onoff/document/sanity-document.factory';
+import { coleccionCompletaContentCampaignDocument } from './onoff/landing-page/coleccion-completa-onoff.content-campaign.document';
+import { palacioNueveFronterasContentCampaignDocument } from './onoff/landing-page/el-palacio-de-las-nueve-fronteras.content-campaign.document';
+import { onoffLandingPageDocument } from './onoff/landing-page/onoff.landing-page.document';
 import { elOdioLiteraryWorkDocument } from './onoff/literary-work/el-odio.literary-work.document';
 import { elPalacioDeLasNueveFronterasLiteraryWorkDocument } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.document';
 import { elTratadoDeLosPlaceresLiteraryWorkDocument } from './onoff/literary-work/el-tratado-de-los-placeres.literary-work.document';
@@ -49,6 +52,14 @@ export const onoffCollectionDocumentsMock: Collection[] = [
 // él en el dataset, `audioFile.asset->url` resolvería a null sin que nada falle.
 export const onoffLiteraryWorkAssetDocumentsMock: SanityFileAsset[] = [geometriaAudioAssetDocument];
 
+// El orden es el que la landing declara en su array de referencias, que es el que la query preserva.
+export const onoffContentCampaignDocumentsMock: ContentCampaign[] = [
+	coleccionCompletaContentCampaignDocument,
+	palacioNueveFronterasContentCampaignDocument,
+];
+
+export const onoffLandingPageDocumentsMock: LandingPage[] = [onoffLandingPageDocument];
+
 // El dataset plano que consume `groq-js`: lleva todos los documentos, incluidos los de soporte y los
 // de asset. Un documento que falte no hace fallar la evaluación — la dereferencia queda en null sin
 // avisar—, así que conviene pedir el dataset entero y no armar subconjuntos por caso.
@@ -60,6 +71,8 @@ export const onoffDatasetMock: Record<string, unknown>[] = [
 	...onoffNationalityDocumentsMock,
 	...onoffResourceTypeDocumentsMock,
 	...onoffLiteraryWorkAssetDocumentsMock,
+	...onoffContentCampaignDocumentsMock,
+	...onoffLandingPageDocumentsMock,
 ];
 
 // Escenarios de borde por spread sobre el canon, para que sigan al corpus. Cada uno estrena `_id` y
