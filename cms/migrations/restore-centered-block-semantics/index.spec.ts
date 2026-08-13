@@ -2,6 +2,7 @@ import { evaluate, parse } from 'groq-js';
 import { describe, expect, it } from 'vitest';
 
 import { UncorrectableLiteraryWorkError } from './apply-corrections';
+import { CORRECTIONS_BY_DOCUMENT_ID } from './corrections';
 import migration from './index';
 
 interface LiteraryWorkDocument {
@@ -85,16 +86,11 @@ describe('migración de los pasajes centrados a Markdown semántico', () => {
 		};
 
 		it('admite las tres obras a corregir y sus borradores', async () => {
-			const ids = await matching(
-				{ _id: LIGA_ID },
-				{ _id: CARTA_ID },
-				{ _id: AMOR_ID },
-				{ _id: `drafts.${LIGA_ID}` },
-				{ _id: `drafts.${CARTA_ID}` },
-				{ _id: `drafts.${AMOR_ID}` },
-			);
+			const expected = [LIGA_ID, CARTA_ID, AMOR_ID].flatMap((id) => [id, `drafts.${id}`]);
 
-			expect(ids).toHaveLength(6);
+			const ids = await matching(...expected.map((_id) => ({ _id })), { _id: 'lw-ajena' });
+
+			expect([...ids].sort()).toEqual([...expected].sort());
 		});
 
 		it('deja fuera la obra que se decidió no tocar y cualquier otra', async () => {
@@ -153,6 +149,30 @@ describe('migración de los pasajes centrados a Markdown semántico', () => {
 		expect(migrateDocument(work(LIGA_ID, corrected))).toEqual([]);
 	});
 
+	// La corrección vive en una sola sección, y por eso el motor no puede concluir que falta: ausente
+	// en la primera puede ser presente en la segunda. Sin este caso, evaluar la comprobación por
+	// sección en vez de por documento dejaría el resto del spec en verde.
+	it('encuentra la corrección en cualquiera de las secciones y parcha solo la que cambió', () => {
+		const patches = migrateDocument({
+			_id: CARTA_ID,
+			content: [
+				{ _key: 'section-0', body: 'Un prólogo sin firma.' },
+				{ _key: 'section-1', body: cartaBody },
+			],
+		});
+
+		expect(patches).toHaveLength(1);
+		expect(patches[0].path).toEqual(['content', { _key: 'section-1' }, 'body']);
+	});
+
+	// Resolución parcial: una corrección aplicada no habilita a la otra. Sin este caso, el filtro sobre
+	// varias correcciones nunca se ejercita, porque las demás obras tienen una sola.
+	it('aborta cuando solo uno de los dos avisos está presente, sin emitir el patch del otro', () => {
+		const soloApertura = ligaBody.split('En ella se leía esto:')[0];
+
+		expect(() => migrateDocument(work(LIGA_ID, soloApertura))).toThrow(/cartel-disolucion/);
+	});
+
 	it('aborta cuando el pasaje ya no está en el documento', () => {
 		expect(() => migrateDocument(work(CARTA_ID, 'Una carta que alguien reescribió.'))).toThrow(
 			UncorrectableLiteraryWorkError,
@@ -163,5 +183,34 @@ describe('migración de los pasajes centrados a Markdown semántico', () => {
 		expect(() => migrateDocument({ _id: CARTA_ID, content: [{ body: cartaBody }] })).toThrow(
 			UncorrectableLiteraryWorkError,
 		);
+	});
+
+	// Saltear un cuerpo con otra forma haría que el síntoma llegara como "el documento no contiene el
+	// pasaje", que apunta al lugar equivocado.
+	it('aborta cuando el cuerpo de una sección no es texto', () => {
+		expect(() =>
+			migrateDocument({ _id: CARTA_ID, content: [{ _key: 'section-0', body: [{ _type: 'block' }] }] }),
+		).toThrow(/no es texto/);
+	});
+});
+
+// La tabla es dato transcripto de documentos reales: un identificador con un typo no lo delata ningún
+// guard —el filtro no matchea, la migración no corre, y la corrida reporta cero mutaciones, que es
+// indistinguible de una segunda corrida idempotente—.
+describe('la tabla de correcciones', () => {
+	it('apunta a las tres obras relevadas, con la cantidad de correcciones de cada una', () => {
+		expect(
+			Object.fromEntries(
+				Object.entries(CORRECTIONS_BY_DOCUMENT_ID).map(([id, corrections]) => [id, corrections.length]),
+			),
+		).toEqual({ [LIGA_ID]: 2, [CARTA_ID]: 1, [AMOR_ID]: 1 });
+	});
+
+	// El identificador es la clave con la que la migración lleva la cuenta de qué encontró: dos iguales
+	// colapsan y una corrección no aplicada pasaría por aplicada.
+	it('no repite identificadores dentro de un mismo documento', () => {
+		Object.values(CORRECTIONS_BY_DOCUMENT_ID).forEach((corrections) => {
+			expect(new Set(corrections.map(({ id }) => id)).size).toBe(corrections.length);
+		});
 	});
 });

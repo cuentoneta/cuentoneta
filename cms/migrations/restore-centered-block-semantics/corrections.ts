@@ -23,6 +23,11 @@ export const CORRECTION_KINDS = Object.freeze({
 export type CorrectionKind = (typeof CORRECTION_KINDS)[keyof typeof CORRECTION_KINDS];
 
 interface QuoteRuledBlockCorrection {
+	/**
+	 * Clave de resolución, no solo texto para el mensaje de error: es con lo que la migración lleva la
+	 * cuenta de qué correcciones encontró. Dos iguales en un mismo documento colapsan, y una que no se
+	 * aplicó pasaría por aplicada. Un caso del spec fija la unicidad.
+	 */
 	id: string;
 	kind: typeof CORRECTION_KINDS.quoteRuledBlock;
 	/**
@@ -34,9 +39,16 @@ interface QuoteRuledBlockCorrection {
 }
 
 interface ReplaceLiteralCorrection {
+	/** Misma condición que arriba: es clave de resolución. */
 	id: string;
 	kind: typeof CORRECTION_KINDS.replaceLiteral;
+	/**
+	 * Se busca por subcadena, sin noción de palabra: un texto que sea prefijo de otro más largo
+	 * coincide dentro de él. Toda entrada nueva tiene que terminar en un límite de línea o de fin de
+	 * cuerpo, o incluir suficiente contexto como para no ser ambigua.
+	 */
 	search: string;
+	/** No puede contener a `search`: volvería a coincidir en la segunda corrida y no sería idempotente. */
 	replacement: string;
 }
 

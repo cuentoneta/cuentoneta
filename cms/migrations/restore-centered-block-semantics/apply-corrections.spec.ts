@@ -70,6 +70,19 @@ describe('applyCorrection — replace-literal', () => {
 
 		expect(() => applyCorrection(body, literalCorrection)).toThrow(UncorrectableLiteraryWorkError);
 	});
+
+	// Una entrada así vuelve a coincidir consigo misma en la segunda corrida: se aplicaría de nuevo y
+	// el contador dejaría de ser señal de idempotencia.
+	it('throws when the replacement contains the searched text', () => {
+		const notIdempotent: Correction = {
+			id: 'no-idempotente',
+			kind: CORRECTION_KINDS.replaceLiteral,
+			search: 'José',
+			replacement: '*José*',
+		};
+
+		expect(() => applyCorrection('Un beso de tu\n\nJosé', notIdempotent)).toThrow(UncorrectableLiteraryWorkError);
+	});
 });
 
 describe('applyCorrection — quote-ruled-block', () => {
@@ -94,6 +107,30 @@ describe('applyCorrection — quote-ruled-block', () => {
 		expect(result.body.startsWith('Primera escena.\n\n---\n\n')).toBe(true);
 		expect(result.body.endsWith('\n\n---\n\nÚltima escena.')).toBe(true);
 		expect(result.body).toContain(`> ${ANCHOR}`);
+	});
+
+	// El mismo texto del ancla puede aparecer citado dentro de un párrafo. Localizarlo como subcadena
+	// citaría ese párrafo y borraría los cortes de escena que lo rodean, dejando el aviso sin corregir
+	// y sin ninguna señal, porque el estado sería el de una corrección aplicada.
+	it('ignores the anchor text mentioned inside a paragraph', () => {
+		const body = [
+			'Escena uno.',
+			'',
+			'---',
+			'',
+			`Se acordó de ${ANCHOR} que había leído.`,
+			'',
+			'---',
+			'',
+			framedBody,
+		].join('\n');
+
+		const result = applyCorrection(body, quoteCorrection);
+
+		expect(result.body).toContain(`Se acordó de ${ANCHOR} que había leído.`);
+		expect(result.body).toContain(`> ${ANCHOR}`);
+		expect(result.body).toContain('> El cuerpo del aviso.');
+		expect(result.body.startsWith('Escena uno.\n\n---\n\n')).toBe(true);
 	});
 
 	it('preserves the quoted text verbatim, escapes included', () => {
@@ -140,13 +177,21 @@ describe('applyCorrection — quote-ruled-block', () => {
 
 		expect(() => applyCorrection(body, quoteCorrection)).toThrow(UncorrectableLiteraryWorkError);
 	});
+
+	// Dos líneas ancla consecutivas comparten el salto que las separa. Contar por partición las lee
+	// como una sola y el guard de ambigüedad no llega a activarse.
+	it('throws when two anchor lines are adjacent', () => {
+		const body = ['Leyó:', '', '---', '', ANCHOR, ANCHOR, '', '---', '', 'Fin.'].join('\n');
+
+		expect(() => applyCorrection(body, quoteCorrection)).toThrow(UncorrectableLiteraryWorkError);
+	});
 });
 
 describe('UncorrectableLiteraryWorkError', () => {
 	it('names the correction that could not be applied', () => {
 		const body = ['Leyó:', '', ANCHOR, '', 'El cuerpo.'].join('\n');
 
-		expect(() => applyCorrection(body, quoteCorrection)).toThrow(/aviso/);
+		expect(() => applyCorrection(body, quoteCorrection)).toThrow(/corrección "aviso"/);
 	});
 });
 

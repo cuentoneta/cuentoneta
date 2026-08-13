@@ -59,6 +59,8 @@ pnpm exec sanity documents query --api-version v2021-06-07 --dataset production 
 
 `--api-version v2021-06-07` **no es opcional**: la versión que la CLI elige sola consulta con perspectiva de publicados y los borradores no aparecen, sin advertencia. El censo tiene que poder afirmar que no hay ninguno.
 
+**Si aparece un borrador, publicalo o descartalo antes de correr.** El filtro los incluye, y uno cuyo texto haya divergido aborta la corrida entera — posiblemente con documentos anteriores ya escritos, porque la migración no es transaccional entre documentos.
+
 ### 2. Ensayo
 
 ```bash

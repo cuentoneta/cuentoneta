@@ -33,19 +33,24 @@ export interface SectionCorrectionsResult {
 	statuses: Readonly<Record<string, CorrectionStatus>>;
 }
 
-const RULE_BLOCK = '\n\n---\n\n';
 const QUOTE_PREFIX = '> ';
 
 /** Se lanza ante un cuerpo del que no se puede derivar la corrección. Detiene la corrida. */
 export class UncorrectableLiteraryWorkError extends Error {
-	constructor(message: string, correctionId: string) {
-		super(`${message} (corrección "${correctionId}")`);
+	constructor(message: string, correctionId?: string) {
+		super(correctionId ? `${message} (corrección "${correctionId}")` : message);
 		this.name = 'UncorrectableLiteraryWorkError';
 	}
 }
 
+// Avanza de a un carácter y no por `split`, que cuenta 1 ante dos ocurrencias solapadas: dos líneas
+// ancla consecutivas comparten el salto que las separa, y ésa es justamente la ambigüedad a detectar.
 function countOccurrences(haystack: string, needle: string): number {
-	return haystack.split(needle).length - 1;
+	let count = 0;
+	for (let at = haystack.indexOf(needle); at !== -1; at = haystack.indexOf(needle, at + 1)) {
+		count += 1;
+	}
+	return count;
 }
 
 /** Cita un tramo preservándolo verbatim: sin reflow ni reescapes, que reescribirían la obra. */
@@ -57,6 +62,16 @@ function quote(text: string): string {
 }
 
 function applyReplaceLiteral(body: string, search: string, replacement: string, id: string): CorrectionResult {
+	// Un reemplazo que contiene al buscado vuelve a coincidir en la segunda corrida, así que se
+	// aplicaría de nuevo y la idempotencia dejaría de valer. Es un error de la tabla, no del documento,
+	// y conviene que salte en el ensayo y no cuando alguien lea el contador.
+	if (replacement.includes(search)) {
+		throw new UncorrectableLiteraryWorkError(
+			'El texto de reemplazo contiene al buscado, así que no sería idempotente',
+			id,
+		);
+	}
+
 	const found = countOccurrences(body, search);
 	if (found > 1) {
 		throw new UncorrectableLiteraryWorkError(`El texto buscado aparece ${found} veces`, id);
@@ -80,7 +95,13 @@ function applyReplaceLiteral(body: string, search: string, replacement: string, 
  * son la misma construcción y no deben tocarse.
  */
 function applyQuoteRuledBlock(body: string, anchor: string, id: string): CorrectionResult {
-	const bare = countOccurrences(body, `\n${anchor}\n`);
+	const RULE_BLOCK = '\n\n---\n\n';
+	// El ancla se busca como **línea completa**, no como subcadena: si el mismo texto aparece embebido
+	// en un párrafo, tomarlo por posición citaría ese párrafo y borraría los cortes de escena que lo
+	// rodean, dejando intacto el pasaje que había que corregir. Por eso se cuenta y se localiza con el
+	// mismo patrón.
+	const anchorLine = `\n${anchor}\n`;
+	const bare = countOccurrences(body, anchorLine);
 	const quoted = countOccurrences(body, `\n${QUOTE_PREFIX}${anchor}\n`);
 	if (bare + quoted > 1) {
 		throw new UncorrectableLiteraryWorkError(`El ancla aparece ${bare + quoted} veces`, id);
@@ -94,7 +115,7 @@ function applyQuoteRuledBlock(body: string, anchor: string, id: string): Correct
 
 	// El ancla está pero el marco no: es una inconsistencia del documento, no una ausencia. Lanza acá
 	// porque ninguna otra sección puede desmentirla.
-	const anchorAt = body.indexOf(anchor);
+	const anchorAt = body.indexOf(anchorLine) + 1;
 	const openingAt = body.lastIndexOf(RULE_BLOCK, anchorAt);
 	const closingAt = body.indexOf(RULE_BLOCK, anchorAt);
 	if (openingAt === -1 || closingAt === -1) {

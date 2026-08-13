@@ -9,6 +9,8 @@ const DRAFTS_PATH_PREFIX = 'drafts.';
 // lo que la migración recibe es el documento crudo tal como Sanity lo devuelve.
 interface LiteraryWorkDocument {
 	_id: string;
+	// `body` va como `unknown` a propósito: el documento llega crudo del content lake, no tipado por el
+	// typegen, y que su forma sea la esperada es justamente lo que la migración comprueba.
 	content?: { _key?: string; body?: unknown }[];
 }
 
@@ -25,14 +27,13 @@ function assertEveryCorrectionResolved(
 	resolved: ReadonlySet<string>,
 	documentId: string,
 ): void {
-	corrections
-		.filter((correction) => !resolved.has(correction.id))
-		.forEach((correction) => {
-			throw new UncorrectableLiteraryWorkError(
-				`El documento "${documentId}" no contiene el pasaje a corregir en ninguna de sus secciones`,
-				correction.id,
-			);
-		});
+	const missing = corrections.find((correction) => !resolved.has(correction.id));
+	if (missing) {
+		throw new UncorrectableLiteraryWorkError(
+			`El documento "${documentId}" no contiene el pasaje a corregir en ninguna de sus secciones`,
+			missing.id,
+		);
+	}
 }
 
 /**
@@ -72,10 +73,16 @@ export default defineMigration({
 				if (!section._key) {
 					throw new UncorrectableLiteraryWorkError(
 						`Una sección de "${doc._id}" no tiene _key, así que el patch no puede anclarse`,
-						'—',
 					);
 				}
-				const body = typeof section.body === 'string' ? section.body : '';
+				// Un cuerpo con otra forma no se saltea: el síntoma llegaría como "el documento no
+				// contiene el pasaje", que apunta al lugar equivocado. Ausente sí es legítimo.
+				if (section.body !== undefined && typeof section.body !== 'string') {
+					throw new UncorrectableLiteraryWorkError(
+						`La sección "${section._key}" de "${doc._id}" tiene un cuerpo que no es texto`,
+					);
+				}
+				const body = section.body ?? '';
 				const { body: corrected, statuses } = applySectionCorrections(body, corrections);
 
 				Object.entries(statuses)
