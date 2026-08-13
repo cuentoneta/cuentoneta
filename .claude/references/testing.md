@@ -64,24 +64,38 @@ beforeEach(() => {
 
 ## Regla dura: el corpus se consume por colecciones, nunca por obra
 
-ESLint (`no-single-work-corpus-imports` en `eslint.config.mjs`) **prohíbe** importar una obra puntual del corpus (`@mocks/onoff/<slug>.mock`, `<slug>.raw.mock`, `<slug>.literary-work.raw.mock`, `<slug>.collection.raw.mock`) desde cualquier archivo fuera de `src/mocks/**` — los agregadores son justamente quienes las importan.
+ESLint (`no-single-work-corpus-imports` en `eslint.config.mjs`) **prohíbe** importar una pieza puntual del corpus desde cualquier archivo fuera de `src/mocks/**` — los agregadores son justamente quienes las importan. El glob es `@mocks/onoff/**`, así que cubre las subcarpetas por entidad —`story/`, `literary-work/`, `collection/`, `storylist/`, `author/`, `media/`, `document/`— a cualquier profundidad.
 
 Un spec o una story que importa una obra concreta queda atado a ella: sus aserciones citan la prosa de esa obra y enriquecer el canon no las alcanza. Las colecciones y los **selectores por capacidad** declaran el shape que el caso necesita y crecen solos.
 
-| Necesitás…                                | Importá                                                                                               |
-| ----------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Una obra cualquiera                       | `onoffLiteraryWorksMock` (o `onoffRawLiteraryWorksMock` en el backend), y desestructurá la primera    |
-| Una obra con título de sección            | `onoffLiteraryWorksWithSectionTitles`                                                                 |
-| Una obra con epígrafes                    | `onoffLiteraryWorksWithEpigraphs` / `onoffRawLiteraryWorksWithEpigraphs`                              |
-| Una obra con o sin nota editorial         | `onoffLiteraryWorksWith(out)EditorialNote` / `onoffRawLiteraryWorksWith(out)EditorialNote`            |
-| Un texto con atribución (epígrafe o nota) | `onoffLiteraryWorkEpigraphsMock`; en stories, `corpusAttributedTexts` + `attributedTextSelectArgType` |
-| Una story o colección crudas              | `onoffRawStoriesMock`, `onoffRawCollectionsMock`, `onoffRawNavCollectionsMock`                        |
-| Una story o teaser crudos con multimedia  | `onoffRawStoriesWithMediaSources` / `onoffRawTeasersWithMediaSources`                                 |
-| Una obra con o sin etiquetas              | `onoffRawLiteraryWorksWith(out)Tags`                                                                  |
-| Una etiqueta cualquiera                   | `onoffTagsMock` (o `onoffRawTagsMock` en el backend), y tomá un slice                                 |
-| Etiquetas de título corto                 | `onoffTagsWithShortTitles` — para stories donde un título de dos palabras fuerza el recorte por ancho |
+| Necesitás…                                      | Importá                                                                                                              |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Una obra cualquiera                             | `onoffLiteraryWorksMock` (o `onoffRawLiteraryWorksMock` en el backend), y desestructurá la primera                   |
+| Una obra con título de sección                  | `onoffLiteraryWorksWithSectionTitles`                                                                                |
+| Una obra con epígrafes                          | `onoffLiteraryWorksWithEpigraphs` / `onoffRawLiteraryWorksWithEpigraphs`                                             |
+| Una obra con o sin nota editorial               | `onoffLiteraryWorksWith(out)EditorialNote` / `onoffRawLiteraryWorksWith(out)EditorialNote`                           |
+| Un texto con atribución (epígrafe o nota)       | `onoffLiteraryWorkEpigraphsMock`; en stories, `corpusAttributedTexts` + `attributedTextSelectArgType`                |
+| Una story o storylist crudas                    | `onoffRawStoriesMock`, `onoffRawStorylistsMock`, `onoffRawNavTeasersMock`                                            |
+| Un dataset para evaluar una query con `groq-js` | `onoffDatasetMock` — el dataset entero, no un subconjunto: una referencia sin documento resuelve a `null` sin fallar |
+| Una story o teaser crudos con multimedia        | `onoffRawStoriesWithMediaSources` / `onoffRawTeasersWithMediaSources`                                                |
+| Una obra con o sin etiquetas                    | `onoffRawLiteraryWorksWith(out)Tags`                                                                                 |
+| Una etiqueta cualquiera                         | `onoffTagsMock` (o `onoffRawTagsMock` en el backend), y tomá un slice                                                |
+| Etiquetas de título corto                       | `onoffTagsWithShortTitles` — para stories donde un título de dos palabras fuerza el recorte por ancho                |
+| La página de inicio cruda, o sus campañas       | `onoffRawLandingPageMock` / `onoffRawContentCampaignsMock`, ambos de `@mocks/onoff-raw-landing-page.mock`            |
 
 Corolario: **las aserciones se derivan del fixture**, no de prosa clavada. Si el caso necesita una palabra del texto, extraela del propio mock (`bodyHtml.replace(/<[^>]+>/g, ' ')` y tomá una palabra) en vez de escribirla a mano — así sigue pasando cuando el canon cambie. Si falta un selector para el shape que necesitás, **agregalo al agregador** (derivado por predicado, no una lista en paralelo) en vez de importar la obra.
+
+### Las tres capas del corpus de Onoff
+
+`onoffDatasetMock` (`src/mocks/onoff-documents.mock.ts`) no es un fixture más: es el dataset de **documentos** — lo que Sanity guarda tal cual — y la única capa del corpus que se escribe a mano. Para `literary-work/`, `collection/` y `landing-page/`, la fixture **raw** que la tabla de arriba nombra (`onoffRawLiteraryWorksMock`, `onoffRawCollectionsMock`, `onoffRawLandingPageMock`) no se edita: la genera `pnpm corpus:generate` evaluando la query GROQ real con `groq-js` sobre `onoffDatasetMock`. `onoffRawContentCampaignsMock` deriva de la fixture de la landing, que es la única query que devuelve las campañas.
+
+```
+documentos (a mano)  →  (groq-js, query real)  →  raw (generado)  →  (ACL del repository)  →  dominio
+```
+
+El spec `src/mocks/onoff-documents.mock.spec.ts` es el **gate de frescura**: vuelve a evaluar esas mismas queries y compara, por valor, contra las fixtures raw commiteadas. Corre dentro de `pnpm test` (gate `test`) — no es un gate de CI aparte. `story/` y `storylist/` quedan fuera de esta generación (siguen escribiéndose a mano); el detalle completo —comando, qué se genera, las dos clases de exclusión y la guarda contra referencias colgadas— vive en [`src/mocks/onoff/README.md`](../../src/mocks/onoff/README.md).
+
+Las **imágenes** del corpus atraviesan las tres capas por una única tabla, `src/mocks/onoff-image-assets.mock.ts`: cada entrada asocia la referencia que declara el documento con la ruta del asset local que declara el dominio. Los specs de cruce contra el ACL (`onoff-*.acl-alignment.spec.ts`, uno por agregado) sustituyen el builder de imágenes de Sanity por un resolutor sobre esa tabla, y por eso comparan portadas, retrato, bandera, avatar y banners de campaña **sin excluir ningún campo**. Un cruce que necesitara volver a excluir una imagen sería la señal de que la tabla quedó incompleta, no de que la comparación pide una excepción.
 
 ---
 
@@ -287,7 +301,7 @@ Reglas del patrón:
 
 ### Qué cubre y qué no
 
-Cubre **lógica Node pura del Studio**: resolvers de Desk Structure, utils que corren dentro del proceso del Studio (p. ej. `cms/utils/landing-page.ts`). No hay nada de Angular, ni Angular Testing Library, ni `happy-dom` — el Studio no renderiza componentes Angular ni corre en un DOM simulado con esa configuración.
+Cubre **lógica Node pura del Studio**: resolvers de Desk Structure, utils que corren dentro del proceso del Studio (p. ej. `cms/utils/landing-page.ts`), y las migraciones de datos de `cms/migrations/` (ver [`sanity-migrations.md`](sanity-migrations.md)). No cubre la declaración de un document type: ver el checklist al pie. No hay nada de Angular, ni Angular Testing Library, ni `happy-dom` — el Studio no renderiza componentes Angular ni corre en un DOM simulado con esa configuración.
 
 ### Por qué es una config aparte
 
@@ -298,7 +312,7 @@ Cubre **lógica Node pura del Studio**: resolvers de Desk Structure, utils que c
 - Los specs de `cms/` **importan `describe`/`it`/`expect` de `vitest` explícitamente** (`cms/vitest.config.ts` no declara `globals`), a diferencia de los specs de la app.
 - **No usan `@test-utils`.** Esos wrappers viven en el árbol de `node_modules` de la app; arrastrarlos a `cms/` acoplaría dos proyectos pnpm por casos que se resuelven con diez líneas.
 - Los dobles se escriben **a mano**, siguiendo la misma taxonomía por comportamiento del resto del repo — `Stub*`/`Fake*`/`Spy*`, **nunca** `Mock*` (ver [Naming](../../CLAUDE.md#naming)). El ejemplo vigente es `SpyGroqClient` en `cms/utils/landing-page.spec.ts`: registra la query y los params con los que se lo invocó, sin depender de `vi.fn()`.
-- `cms/` **sí** está cubierto por ESLint (el target `eslint:lint` de `project.json` corre sobre `./src ./e2e ./resources ./cms`) y por su propio type-check (`cms/tsconfig.typecheck.json`, dentro del gate `studio-build`). Lo que sigue sin tener es `@test-utils`: los specs de `cms/` se mantienen deliberadamente simples, sin abstracciones de test propias y con dobles chicos anotados a mano.
+- `cms/` **sí** está cubierto por ESLint (el target `eslint:lint` de `project.json` corre sobre `./src ./e2e ./resources ./cms ./scripts`) y por su propio type-check (`cms/tsconfig.typecheck.json`, dentro del gate `studio-build`). Lo que sigue sin tener es `@test-utils`: los specs de `cms/` se mantienen deliberadamente simples, sin abstracciones de test propias y con dobles chicos anotados a mano.
 
 ```typescript
 import { describe, expect, it } from 'vitest';
@@ -396,6 +410,10 @@ export const Soft: Story = {
 
 Para dependencias de DI usá los decoradores `moduleMetadata({ imports, providers })` (imports/iconos por story) o `applicationConfig({ providers })` (servicios globales: Router, etc.).
 
+`LayoutService` es la excepción: se provee **globalmente** en `.storybook/preview.js`, con el servicio real (`provideLayout()`), y ninguna story lo declara. Es un token sin factory, así que sin ese provider un componente que lo inyecte no renderiza — el canvas queda en `NG0201`. Storybook **acumula** los decoradores `applicationConfig`: los providers que declare una story se suman a los del preview, no los reemplazan.
+
+Todo archivo de la app que el preview importe debe estar en el `include` de `.storybook/tsconfig.json`. Si tiene decoradores de Angular y queda fuera del programa, el compilador no lo procesa y el bundle del preview revienta con un `SyntaxError: Unexpected token 'export'` que **tumba el catálogo entero**, no una story.
+
 **Siempre** actualizá las stories cuando cambien inputs, estados visuales o la API pública del componente.
 
 ### Documentación de la descripción (`description`)
@@ -447,3 +465,5 @@ Si el componente **renderiza su propio skeleton** según un input (p. ej. cuando
 - **Mocks/timers** → siempre desde `@test-utils`; `clearAllMocks()` en `beforeEach`.
 - **Componente que usa `IntersectionObserver`** → `installIntersectionObserverStub()` en `beforeEach`; simular overflow con `markOutsideViewport` / `markInsideViewport`.
 - **Lógica Node pura de `cms/`** → spec propio con Vitest standalone (`pnpm sanity:test`); dobles escritos a mano (`Spy*`/`Stub*`/`Fake*`), sin `@test-utils`.
+- **Migración de datos de Sanity (`cms/migrations/<slug>/`)** → `index.spec.ts` co-locado que ejercita `migrate.document`; corre con `pnpm sanity:test` dentro del gate `studio-build`; sin `@test-utils` (imports explícitos de `vitest`, igual que el resto de `cms/`) — ver [`sanity-migrations.md`](sanity-migrations.md).
+- **Document type de Sanity (`cms/schemas/<tipo>.ts`)** → **sin spec**. Un test que afirma que un campo se declara con cierto tipo, o que otro no está, repite lo que el archivo de al lado dice literalmente. Lo que sí protege contra una regresión ya existe: `cms/schema.json` y `src/sanity/types.ts` están versionados, así que un cambio de forma aparece en el diff de los generados, y el gate `studio-build` compila el Studio.

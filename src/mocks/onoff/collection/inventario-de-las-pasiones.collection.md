@@ -1,0 +1,1 @@
+Una colección sobre el deseo de ordenar lo inordenable. Onoff cataloga el placer, retrata el odio sin causa y enfrenta dos antorchas que nunca alumbran lo mismo: tratados que terminan por descubrir que toda taxonomía de lo humano es una forma elegante de perderlo.

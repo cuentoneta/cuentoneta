@@ -15,7 +15,8 @@ export function mapImagery(params: {
 	if (featuredImageUrl) {
 		return { kind: 'representative', image: featuredImageUrl };
 	}
-	// Muestra las 3 primeras portadas en el orden de las historias de la colección, rellenando con '' si faltan.
+	// El abanico es de largo fijo: una portada faltante entra como cadena vacía en vez de correr las
+	// demás, para que el slot vacío se renderice como placeholder y no desalinee la composición.
 	const covers = params.storyCoverImages.map((image) => urlFor(image));
 	return { kind: 'sample', images: [covers[0] ?? '', covers[1] ?? '', covers[2] ?? ''] };
 }

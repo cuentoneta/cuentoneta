@@ -104,34 +104,49 @@ async function sampledPaths(baseline: readonly string[]): Promise<string[]> {
 		.filter((path) => !excluded.has(path));
 }
 
-async function run(): Promise<void> {
-	console.log(
-		`Smoke de indexado contra ${BASE_URL}${proxyHeaders['x-forwarded-for'] ? ' (con x-forwarded-for)' : ''}\n`,
-	);
-
-	// El baseline no depende del sitemap: se ejerce siempre.
-	const baseline =
-		SLUGS_OVERRIDE.length > 0
-			? SLUGS_OVERRIDE
-			: [`/story/${STABLE_SLUGS.story}`, `/author/${STABLE_SLUGS.author}`, `/storylist/${STABLE_SLUGS.storylist}`];
+/** El baseline no depende del sitemap: se ejerce siempre. Devuelve si alguna ruta falló. */
+async function reportBaseline(baseline: readonly string[]): Promise<boolean> {
 	console.log(`Baseline: /home\n  ${baseline.join('\n  ')}\n`);
 	let failed = await reportExpectations(HOME_EXPECTATIONS);
 	for (const path of baseline) {
 		failed = (await reportPath(path)) || failed;
 	}
+	return failed;
+}
 
-	// La muestra sí depende del sitemap: su falla se reporta pero NO tumba el baseline.
-	if (SLUGS_OVERRIDE.length === 0) {
-		try {
-			const sample = await sampledPaths(baseline);
-			console.log(`\nMuestra del sitemap (${FULL ? 'full' : `${SAMPLE_SIZE}/tipo`}):\n  ${sample.join('\n  ')}\n`);
-			for (const path of sample) {
-				failed = (await reportPath(path)) || failed;
-			}
-		} catch (error) {
-			console.log(`⚠️ sitemap no disponible, se omite la muestra aleatoria: ${messageOf(error)}`);
-			failed = true;
+/**
+ * La muestra sí depende del sitemap, así que su falla se reporta pero **no** tumba el baseline: que
+ * el sitemap no esté disponible no dice nada sobre las rutas que ya se ejercieron.
+ */
+async function reportSample(baseline: readonly string[]): Promise<boolean> {
+	try {
+		const sample = await sampledPaths(baseline);
+		console.log(`\nMuestra del sitemap (${FULL ? 'full' : `${SAMPLE_SIZE}/tipo`}):\n  ${sample.join('\n  ')}\n`);
+		let failed = false;
+		for (const path of sample) {
+			failed = (await reportPath(path)) || failed;
 		}
+		return failed;
+	} catch (error) {
+		console.log(`⚠️ sitemap no disponible, se omite la muestra aleatoria: ${messageOf(error)}`);
+		return true;
+	}
+}
+
+async function run(): Promise<void> {
+	console.log(
+		`Smoke de indexado contra ${BASE_URL}${proxyHeaders['x-forwarded-for'] ? ' (con x-forwarded-for)' : ''}\n`,
+	);
+
+	const baseline =
+		SLUGS_OVERRIDE.length > 0
+			? SLUGS_OVERRIDE
+			: [`/story/${STABLE_SLUGS.story}`, `/author/${STABLE_SLUGS.author}`, `/storylist/${STABLE_SLUGS.storylist}`];
+
+	let failed = await reportBaseline(baseline);
+	// Con slugs explícitos no hay muestra que tomar: el llamador ya dijo qué quiere ejercer.
+	if (SLUGS_OVERRIDE.length === 0) {
+		failed = (await reportSample(baseline)) || failed;
 	}
 
 	if (failed) {

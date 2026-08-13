@@ -1,6 +1,6 @@
 import type { AudioRecording, Media, SpaceRecording, SpotifyPodcastEpisode, YouTubeVideo } from '@models/media.model';
 import { isAudioRecording, isSpaceRecording, isSpotifyPodcastEpisode, isYouTubeVideo } from '@models/media.model';
-import { geometriaMediaMock } from './onoff/geometria.mock';
+import { geometriaMediaMock } from './onoff/media/geometria.media.mock';
 
 // Canon de multimedia del corpus. Sale de la única obra que declara medios, así que no hay una lista
 // en paralelo que mantener: enriquecer esa obra alcanza a todos los consumidores.

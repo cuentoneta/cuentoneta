@@ -1,5 +1,7 @@
 import type { SanityImageSource } from '@sanity/image-url';
 import {
+	mapAuthor,
+	mapAuthorTeaser,
 	mapBlockContentToTextParagraphs,
 	mapContentCampaigns,
 	mapLandingPageContent,
@@ -10,8 +12,9 @@ import {
 	urlFor,
 } from './functions';
 import { elOdioRawTeaser, onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
-import { rawOnoffAuthor } from '@mocks/onoff-raw-author.mock';
-import { onoffRawContentCampaignsMock } from '@mocks/onoff-raw-content-campaigns.mock';
+import { rawOnoffAuthor, rawOnoffAuthorTeaser } from '@mocks/onoff-raw-author.mock';
+import { onoffRawContentCampaignsMock, onoffRawLandingPageMock } from '@mocks/onoff-raw-landing-page.mock';
+import type { RotatingContent } from '@models/landing-page-content.model';
 import { onoffRawTagsMock } from '@mocks/onoff-raw-tags.mock';
 import { viewportElementSizes } from '@models/content-campaign.model';
 
@@ -21,12 +24,12 @@ describe('mapTags (ACL)', () => {
 
 		expect(result.map((tag) => tag.title)).toEqual(onoffRawTagsMock.map((raw) => raw.title));
 		expect(result.map((tag) => tag.slug)).toEqual(onoffRawTagsMock.map((raw) => raw.slug));
-		expect(result.map((tag) => tag.shortDescription)).toEqual(onoffRawTagsMock.map((raw) => raw.shortDescription));
+		expect(result.map((tag) => tag.description)).toEqual(onoffRawTagsMock.map((raw) => raw.description));
 	});
 
 	it('exposes exactly the domain contract, dropping everything else from the raw result', () => {
 		mapTags(onoffRawTagsMock).forEach((tag) => {
-			expect(Object.keys(tag).sort()).toEqual(['shortDescription', 'slug', 'title']);
+			expect(Object.keys(tag).sort()).toEqual(['description', 'slug', 'title']);
 		});
 	});
 
@@ -58,6 +61,32 @@ describe('mapBlockContentToTextParagraphs (ACL)', () => {
 	});
 });
 
+describe('mapAuthor (ACL)', () => {
+	// Los fragmentos esperados se derivan del Markdown que transporta el propio fixture: enriquecer la
+	// prosa del canon no debe romper la aserción.
+	const [, boldedSource] = /\*\*(.+?)\*\*/.exec(rawOnoffAuthor.biography) ?? [];
+	const [, italicizedSource] = /_(.+?)_/.exec(rawOnoffAuthor.biography) ?? [];
+
+	it('translates the raw Markdown biography of the corpus author into sanitized HTML', () => {
+		const result = mapAuthor(rawOnoffAuthor);
+
+		expect(result.biography).toContain('<p>');
+		expect(result.biography).toContain(`<strong>${boldedSource}</strong>`);
+		expect(result.biography).toContain(`<em>${italicizedSource}</em>`);
+		expect(result.biography).not.toContain('**');
+	});
+
+	it('throws instead of serving an author whose biography arrived empty', () => {
+		expect(() => mapAuthor({ ...rawOnoffAuthor, biography: '' })).toThrow(/Markdown inválido/);
+	});
+});
+
+describe('mapAuthorTeaser (ACL)', () => {
+	it('does not emit a biography: the teaser contract does not declare it', () => {
+		expect(mapAuthorTeaser(rawOnoffAuthorTeaser)).not.toHaveProperty('biography');
+	});
+});
+
 // El input crudo no incluye `tags`: el mapper es la única fuente del campo vacío (consistente con `mapAuthorTeaser`).
 describe('mapStoryTeaser (ACL)', () => {
 	it('sets tags to [] from the mapper, not from the raw spread', () => {
@@ -86,7 +115,7 @@ describe('mapResources (ACL)', () => {
 		expect(resource.resourceType).toMatchObject({
 			slug: rawResource.resourceType.slug,
 			title: rawResource.resourceType.title,
-			shortDescription: rawResource.resourceType.shortDescription,
+			description: rawResource.resourceType.description,
 		});
 	});
 
@@ -94,7 +123,7 @@ describe('mapResources (ACL)', () => {
 		const [resource] = mapResources(rawOnoffAuthor.resources);
 
 		expect(Object.keys(resource).sort()).toEqual(['resourceType', 'title', 'url']);
-		expect(Object.keys(resource.resourceType).sort()).toEqual(['shortDescription', 'slug', 'title']);
+		expect(Object.keys(resource.resourceType).sort()).toEqual(['description', 'slug', 'title']);
 	});
 
 	it('returns an empty array for an empty, null or undefined input', () => {
@@ -152,19 +181,34 @@ describe('mapContentCampaigns (ACL)', () => {
 });
 
 describe('mapLandingPageContent (ACL)', () => {
+	// El repository invoca al mapper con el spread de dos queries, y la rotación va segunda: aporta lo
+	// que la landing no proyecta y, al hacerlo, también pisa su `_id`. El caso reproduce ese orden con
+	// una identidad propia para que la aserción distinga cuál de las dos sobrevive.
+	const rotatingContent: RotatingContent = { _id: 'rotating-content-onoff', name: 'Rotación de Onoff', mostRead: [] };
+	const raw = { ...onoffRawLandingPageMock, ...rotatingContent };
+
 	it('exposes exactly the domain contract, dropping the raw slug and name', () => {
-		const result = mapLandingPageContent({
-			_id: 'onoff-landing-page',
-			slug: 'semana-de-onoff',
-			config: 'onoff',
-			name: 'Rotación de Onoff',
-			cards: [],
-			campaigns: onoffRawContentCampaignsMock,
-			latestReads: [],
-			mostRead: [],
-		});
+		const result = mapLandingPageContent(raw);
 
 		expect(Object.keys(result).sort()).toEqual(['_id', 'campaigns', 'cards', 'config', 'latestReads', 'mostRead']);
+	});
+
+	it('takes its identity from the rotating content that overrides the landing page', () => {
+		const result = mapLandingPageContent(raw);
+
+		expect(result._id).toBe(rotatingContent._id);
+		expect(result._id).not.toBe(onoffRawLandingPageMock._id);
+	});
+
+	it('preserves the config the query returned', () => {
+		expect(mapLandingPageContent(raw).config).toEqual(onoffRawLandingPageMock.config);
+	});
+
+	it('maps every campaign the query returned, in order', () => {
+		const expectedSlugs = onoffRawLandingPageMock.campaigns.map(({ slug }) => slug);
+
+		expect(expectedSlugs.length).toBeGreaterThan(0);
+		expect(mapLandingPageContent(raw).campaigns.map(({ slug }) => slug)).toEqual(expectedSlugs);
 	});
 });
 

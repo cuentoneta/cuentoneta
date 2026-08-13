@@ -16,7 +16,7 @@ import { CarouselComponent } from '@components/carousel/carousel.component';
 import { MostReadStoriesCardDeckComponent } from '@components/most-read-stories-card-deck/most-read-stories-card-deck.component';
 import { LatestStoriesCardDeck } from '@components/latest-stories-card-deck/latest-stories-card-deck';
 import { CarouselSkeletonComponent } from '@components/carousel/carousel-skeleton.component';
-import { CollectionTeasersDeck } from '@components/collection-teasers-deck/collection-teasers-deck';
+import { StorylistTeasersDeck } from '@components/storylist-teasers-deck/storylist-teasers-deck';
 
 @Component({
 	selector: 'cuentoneta-home',
@@ -26,7 +26,7 @@ import { CollectionTeasersDeck } from '@components/collection-teasers-deck/colle
 		MostReadStoriesCardDeckComponent,
 		LatestStoriesCardDeck,
 		CarouselSkeletonComponent,
-		CollectionTeasersDeck,
+		StorylistTeasersDeck,
 	],
 	hostDirectives: [HomeMetaTagsDirective, HomeStructuredDataDirective],
 })

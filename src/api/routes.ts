@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { readCacheHeaders } from './_middleware/read-cache-headers.middleware';
 import authorController from './modules/author/author.controller';
+import collectionController from './modules/collection/collection.controller';
 import contentController from './modules/content/content.controller';
 import contributorController from './modules/contributor/contributor.controller';
 import literaryWorkController from './modules/literary-work/literary-work.controller';
@@ -11,6 +12,7 @@ import storylistController from './modules/storylist/storylist.controller';
 const apiRoutes = new Hono();
 
 apiRoutes.route('/author', authorController);
+apiRoutes.route('/collection', collectionController);
 apiRoutes.route('/contributor', contributorController);
 apiRoutes.route('/content', contentController);
 apiRoutes.on('GET', '/literary-work/*', readCacheHeaders);

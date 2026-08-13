@@ -40,7 +40,7 @@ export default defineMigration({
 				.filter((mediaSource) => needsMigration(mediaSource.description))
 				.map((mediaSource) => {
 					const markdown = portableTextToMarkdown(mediaSource.description as PortableTextBlock[]);
-					if (markdown === '') {
+					if (markdown.trim() === '') {
 						throw new Error(
 							`La descripción de "${mediaSource._key}" (${mediaSource._type}) en ${doc._id} quedaría vacía: ` +
 								`el campo es requerido y una cadena vacía haría fallar el mapeo de la obra entera.`,

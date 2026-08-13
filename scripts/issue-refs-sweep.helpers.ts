@@ -56,7 +56,7 @@ const FINGERPRINT_PREFIX = '<!-- huella:';
  *
  * El 404 se reconoce por `(HTTP 404)` y no por la sola presencia de `404`: el mensaje de error embebe
  * el comando, y el comando embebe el número del issue. Sin esa precisión, cualquier fallo —un límite de
- * tasa, un token sin permisos— sobre `#404`, `#1404` o `#2404` se leería como cita rota, y el reporte
+ * tasa, un token sin permisos— sobre un issue cuyo número contenga `404` se leería como cita rota, y el reporte
  * invitaría a borrar una referencia válida.
  */
 export function classifyIssueState(input: { state: string; isPullRequest: boolean } | { error: string }): IssueState {

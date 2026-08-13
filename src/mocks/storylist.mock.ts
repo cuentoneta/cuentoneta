@@ -1,5 +1,6 @@
 import { Storylist, StorylistTeaser } from '@models/storylist.model';
 import { colaborativaTagMock } from './onoff-tags.mock';
+import { onoffImageAssets } from './onoff-image-assets.mock';
 
 import { onoffStoryTeasersMock } from './onoff-story-teasers.mock';
 
@@ -29,7 +30,7 @@ export const storylistMock: Storylist = {
 	],
 	imagery: {
 		kind: 'representative',
-		image: 'assets/img/mocks/collections/geometrias-del-desvelo.png',
+		image: onoffImageAssets.geometriasDelDesveloCover.path,
 	},
 	tags: [colaborativaTagMock],
 	config: {
@@ -65,7 +66,7 @@ export const storylistTeaserRepresentativeMock: StorylistTeaser = {
 	],
 	tags: [colaborativaTagMock],
 	config: { showAuthors: true },
-	imagery: { kind: 'representative', image: 'assets/img/mocks/stories/geometria.png' },
+	imagery: { kind: 'representative', image: onoffImageAssets.geometriaCover.path },
 };
 
 // Colección — las pasiones que Onoff intenta catalogar (el placer, el odio, la dualidad). Teaser sin portada propia → imagery sample (3 portadas de historias).
@@ -93,9 +94,9 @@ export const storylistTeaserSampleMock: StorylistTeaser = {
 	imagery: {
 		kind: 'sample',
 		images: [
-			'assets/img/mocks/stories/neron.png',
-			'assets/img/mocks/stories/el-odio.png',
-			'assets/img/mocks/stories/las-dos-antorchas.png',
+			onoffImageAssets.neronCover.path,
+			onoffImageAssets.elOdioCover.path,
+			onoffImageAssets.lasDosAntorchasCover.path,
 		],
 	},
 };

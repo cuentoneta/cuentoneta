@@ -18,7 +18,7 @@ export const storiesByAuthorSlugQuery = defineQuery(`
         resourceType->{
             'slug': slug.current,
             title,
-            shortDescription
+            description
         }
     }, []),
 }|order(title asc)`);
@@ -53,13 +53,13 @@ export const storyBySlugQuery = defineQuery(`
         resourceType->{
             'slug': slug.current,
             title,
-            shortDescription
+            description
         }
     }, []),
     'tags': coalesce(tags[] -> {
         title,
         'slug': slug.current,
-        shortDescription
+        description
     }, []),
     'author': author-> {
         _id,
@@ -78,7 +78,7 @@ export const storyBySlugQuery = defineQuery(`
             resourceType->{
                 'slug': slug.current,
                 title,
-                shortDescription
+                description
             }
         }, []),
         'tags': []
@@ -106,7 +106,6 @@ export const storiesBySlugsQuery = defineQuery(`
         name,
         image,
         nationality->,
-        'biography': [],
         bornOn,
         bornOnYear,
         diedOn,
@@ -136,7 +135,6 @@ export const allStoriesQuery = defineQuery(`
         name,
         image,
         nationality->,
-        'biography': [],
         bornOn,
         bornOnYear,
         diedOn,

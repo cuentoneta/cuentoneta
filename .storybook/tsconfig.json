@@ -8,6 +8,7 @@
 
 	"exclude": ["../**/*.spec.ts"],
 	"include": [
+		"../src/app/providers/**/*.ts",
 		"../src/**/*.stories.ts",
 		"../src/**/*.stories.js",
 		"../src/**/*.stories.jsx",

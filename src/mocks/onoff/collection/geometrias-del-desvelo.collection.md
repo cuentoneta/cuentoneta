@@ -1,0 +1,1 @@
+Onoff lleva la precisión del compás al territorio de lo humano: insomnios que se vuelven una geometría del tiempo, vidas reducidas a coordenadas, figuras que prometen un orden perfecto y terminan revelando, en algún vértice, su grieta.

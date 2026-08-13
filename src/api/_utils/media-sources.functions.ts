@@ -1,5 +1,10 @@
 // Tipos de Sanity
-import { LiteraryWorkBySlugQueryResult, StoryBySlugQueryResult, StorylistQueryResult } from '@sanity-types';
+import {
+	CollectionBySlugQueryResult,
+	LiteraryWorkBySlugQueryResult,
+	StoryBySlugQueryResult,
+	StorylistQueryResult,
+} from '@sanity-types';
 
 // Modelos
 import {
@@ -14,17 +19,24 @@ import { urlFor } from './functions';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
-// El mapeo se invoca con la proyección de mediaSources de story, storylist, obra y teaser. Hoy son
-// estructuralmente idénticas salvo por `audioUrl`, que solo resuelven las tres primeras; aceptarlas
+// El mapeo se invoca con la proyección de mediaSources de story, storylist, obra, teaser, colección y
+// las obras de una colección. Hoy son estructuralmente idénticas salvo por `audioUrl`; aceptarlas
 // todas explícitamente documenta el acoplamiento. Los shapes por tipo se derivan del generado por
 // typegen: si una futura corrida diverge, el mapeo deja de compilar en vez de fallar en silencio.
 type StoryMediaSources = NonNullable<StoryBySlugQueryResult>['mediaSources'];
 type StorylistMediaSources = NonNullable<StorylistQueryResult>['mediaSources'];
 type LiteraryWorkMediaSources = NonNullable<LiteraryWorkBySlugQueryResult>['mediaSources'];
 type MediaResourcesTeasersSubquery = NonNullable<StorylistQueryResult>['stories'][0]['mediaSources'];
+type CollectionMediaSources = NonNullable<CollectionBySlugQueryResult>['mediaSources'];
+type CollectionWorkMediaSources = NonNullable<CollectionBySlugQueryResult>['literaryWorks'][number]['mediaSources'];
 
 type MediaSource = (
-	StoryMediaSources | StorylistMediaSources | LiteraryWorkMediaSources | MediaResourcesTeasersSubquery
+	| StoryMediaSources
+	| StorylistMediaSources
+	| LiteraryWorkMediaSources
+	| MediaResourcesTeasersSubquery
+	| CollectionMediaSources
+	| CollectionWorkMediaSources
 )[number];
 
 type AudioRecordingSource = Extract<StoryMediaSources[number], { _type: 'audioRecording' }>;
@@ -33,7 +45,13 @@ type SpotifyPodcastEpisodeSource = Extract<StoryMediaSources[number], { _type: '
 type YouTubeVideoSource = Extract<StoryMediaSources[number], { _type: 'youTubeVideo' }>;
 
 export function mapMediaSources(
-	mediaSources: StoryMediaSources | StorylistMediaSources | LiteraryWorkMediaSources | MediaResourcesTeasersSubquery,
+	mediaSources:
+		| StoryMediaSources
+		| StorylistMediaSources
+		| LiteraryWorkMediaSources
+		| MediaResourcesTeasersSubquery
+		| CollectionMediaSources
+		| CollectionWorkMediaSources,
 ): Media[] {
 	if (!mediaSources) return [];
 

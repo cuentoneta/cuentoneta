@@ -17,6 +17,7 @@
 9. [Allow-list de sanitización](#9-allow-list-de-sanitización)
 10. [Autoría y obra anónima](#10-autoría-y-obra-anónima)
 11. [Corte de #1852 vs. Slice 1 (#1853)](#11-corte-de-1852-vs-slice-1-1853)
+12. [Migración del corpus de `Story`](#12-migración-del-corpus-de-story)
 
 ---
 
@@ -400,9 +401,10 @@ El **rewrite de imágenes** (`cdn.sanity.io` → `<img srcset width height loadi
 
 Reglas duras del pipeline:
 
-- Todo HTML servido al frontend pasó por `rehype-sanitize` con esta allow-list — **sin excepciones** (body, epígrafes, nota editorial y descripción de cada recurso multimedia por igual).
-- **La descripción de un media source** entra por el mismo pipeline (`mapMediaSources` en el ACL) y llega al dominio como `SanitizedHtml`. Los widgets la pintan con `[innerHTML]` **sin** `bypassSecurityTrustHtml`, a diferencia del cuerpo y la nota editorial: el bypass solo se justifica donde el sanitizador nativo de Angular recortaría salida legítima del pipeline —las `<img srcset loading decoding>` que inyecta el rewrite—, y una descripción es prosa corta sin imágenes reescritas. Sin bypass, la sanitización de Angular queda como segunda capa gratuita sobre un contenido cuyo brand `SanitizedHtml` no se revalida en la frontera de wire (el DTO transporta `mediaSources` como objeto de dominio opaco).
-- El contenedor de esa descripción es un `<div>`, nunca un `<p>`: el pipeline emite `<p>…</p>` y anidarlo dentro de otro párrafo hace que el navegador cierre el externo, con lo que el contenido se escapa del elemento y pierde su estilado sin que nada falle.
+- Todo HTML servido al frontend pasó por `rehype-sanitize` con esta allow-list — **sin excepciones** (body, epígrafes, nota editorial, biografía de autor y descripción de cada recurso multimedia por igual).
+- **La biografía de un autor y la descripción de un media source** entran por el mismo pipeline (`mapAuthor` y `mapMediaSources` en el ACL, respectivamente) y llegan al dominio como `SanitizedHtml`. Ambas se pintan con `[innerHTML]` **sin** `bypassSecurityTrustHtml`, a diferencia del cuerpo y la nota editorial de una obra: el bypass solo se justifica donde el sanitizador nativo de Angular recortaría salida legítima del pipeline —las `<img srcset loading decoding>` que inyecta el rewrite—, y ni una biografía ni una descripción de media source reescriben imágenes. Sin bypass, la sanitización de Angular queda como segunda capa gratuita sobre un contenido cuyo brand `SanitizedHtml` no se revalida en la frontera de wire (el DTO transporta `author`/`mediaSources` como objeto de dominio opaco).
+- El contenedor de ese binding es siempre un `<div>`, nunca un `<p>`: el pipeline emite `<p>…</p>` y anidarlo dentro de otro párrafo hace que el navegador cierre el externo, con lo que el contenido se escapa del elemento y pierde su estilado sin que nada falle. Regla pareja para la biografía del autor y la descripción del media source.
+- **Esos dos campos no se rehidratan en el provider**, a diferencia de lo que [§7](#7-contrato-del-endpoint) fija para `HttpLiteraryWorkApi`: su brand cruza el wire sin revalidarse. Se sostiene mientras el binding vaya sin bypass, porque ahí la sanitización de Angular cubre el mismo terreno y `createSanitizedHtml` no sanea —reconoce formas anómalas—, así que agregarlo daría defensa en profundidad y no una garantía nueva. **El disparador para cerrarlo es el bypass:** si alguno de esos dos bindings pasa a `bypassSecurityTrustHtml`, el sanitizador de Angular deja de correr y la rehidratación en el provider pasa a ser obligatoria.
 - Scripts, estilos inline, iframes y handlers de eventos quedan **fuera** (no están en el schema por defecto y no se agregan).
 - `srcset` está permitido en `<img>` pero el schema **no filtra su protocolo** (a diferencia de `src`/`href`); hoy solo lo emite el rewrite anclado a `cdn.sanity.io`. Como defensa en profundidad, el guard de frontera `createSanitizedHtml` (`UNSAFE_HTML_PATTERNS`) rechaza un `srcset` con protocolo de script (`javascript:`/`vbscript:`), por si algún día se habilita `rehype-raw`.
 - Cambiar la allow-list deja stale a la caché de borde: no hay purga (ver [§8](#8-estrategia-de-caché-de-borde)), así que las respuestas ya cacheadas siguen sirviendo HTML sanitizado con la allow-list vieja hasta que venza el `s-maxage` y la revalidación las reemplace. Si el cambio es correctivo (cierra un vector), no alcanza con esperar: bajar el `s-maxage` acorta la ventana. Actualizar además los tests de XSS del pipeline.
@@ -460,3 +462,27 @@ Consecuencias:
 | Frontend (`LiteraryWorkApi` + `LiteraryWorkDto` + rehidratación en el provider, ruta `/read/:slug`, página SSR) | Contrato ([§7](#7-contrato-del-endpoint))                    | ⚙️ Implementa                                                      |
 | Caché de borde `/read` (middleware + endpoint), con SWR y sin purga (#1856)                                     | Contrato ([§8](#8-estrategia-de-caché-de-borde))             | ✅ Implementado                                                    |
 | JSON-LD                                                                                                         | Consecuencia documentada ([§10](#10-autoría-y-obra-anónima)) | Slice 3                                                            |
+
+---
+
+## 12. Migración del corpus de `Story`
+
+Decisiones vigentes sobre las obras que nacen de migrar un cuento. La migración vive en [`cms/migrations/story-to-literary-work/`](../cms/migrations/story-to-literary-work/README.md), con su procedimiento operativo y su reversión; los cuentos en borrador los cubre [`cms/migrations/draft-story-to-literary-work/`](../cms/migrations/draft-story-to-literary-work/README.md).
+
+**Un cuento en borrador produce una obra en borrador.** El estado de publicación se conserva: el prefijo de path `drafts.` **encabeza** el identificador derivado, en vez de concatenarse detrás del origen —Sanity lo lee como borrador solo cuando abre el `_id`, así que la otra forma publicaría contenido inédito en silencio—. De ahí se sigue que un cuento con versión publicada y borrador produce el borrador de su **misma** obra, no una obra distinta. **La referencia al autor conserva su debilidad.** Cuando el autor todavía no está publicado, el Studio marca la referencia como débil y anota que hay que fortalecerla al publicarlo; reconstruirla fuerte haría que el content lake rechazara la escritura, porque una referencia fuerte exige que el destino exista y estar en un borrador no exime de eso. Los borradores que no permiten construir una obra válida se excluyen **en el filtro** de la migración, no en el mapeo: estar a medio escribir es un estado legítimo de un borrador, no un error del dataset.
+
+**Publicar el cuento no publica su obra.** Son documentos distintos, y ninguna de las dos migraciones los sincroniza.
+
+**Se migra una sola vez, hacia `LiteraryWork`.** `Story` no traduce su contenido a Markdown en su propio schema: el cuento queda en Portable Text hasta que el schema entero se dé de baja. Por eso la migración crea documentos al lado en vez de transformar los existentes, y por eso revertirla es borrar lo creado.
+
+**Las obras migradas nacen mono-sección.** El cuerpo y los epígrafes del cuento van a `content[0]`. La sección queda **sin título**: no tiene origen en `Story`, el schema lo declara opcional ("una obra de una sola sección puede no llevar título") y la vista de lectura lo consume con optional chaining. Multi-sección es trabajo posterior y no reinterpreta lo migrado.
+
+**`Story.review` es el origen de `editorialNote`.** Mismo propósito —paratexto editorial sobre la obra— y misma posición en el producto. Se migra **verbatim**: la conversión no cura texto. Queda anotado que la descripción del campo nuevo declara "no es una reseña crítica" mientras el campo legado se titula "Reseña", así que parte de las notas migradas puede no calzar con esa intención; revisarlas es curaduría editorial, no trabajo de la migración.
+
+**`Story.author` se envuelve en un array de un elemento.** Es una referencia requerida en el schema legado, así que la invariante `authors.length >= 1` se cumple sin resolver anonimato.
+
+**El reading time no lo escribe la migración.** Ni `readingTime` ni `totalReadingTime`: los puebla el script de backfill, que [§5](#5-helper-de-reading-time) declara única vía de persistencia de esos campos. Copiar el `approximateReadingTime` del cuento queda descartado por dos razones: el algoritmo de extracción de texto difiere entre Portable Text y Markdown, así que el número no coincidiría; y al ser campos `setIfMissing`, un valor sembrado por la migración el backfill **nunca lo corregiría**. Mientras tanto el repository deriva su fallback puro en lectura, así que no hay ventana degradada.
+
+**`publishedAt` se copia con fallback al `_createdAt` del cuento.** Omitirlo haría que el `coalesce(publishedAt, _createdAt)` de la query resolviera al `_createdAt` del documento **nuevo** —la fecha de la migración—, y el corpus perdería su cronología: la enorme mayoría de los cuentos no tiene ese campo cargado.
+
+**La conversión falla antes que perder contenido.** Tanto el conversor de Portable Text como el armado del documento lanzan ante lo que no pueden traducir. Un documento degradado fallaría recién al leerse, cuando el repository construya el agregado con sus factories — lejos de donde se puede corregir.

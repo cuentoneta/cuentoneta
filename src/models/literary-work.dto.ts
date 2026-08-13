@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { Author } from './author.model';
+import type { Author, AuthorTeaser } from './author.model';
 import type { Media } from './media.model';
 import type { Resource } from './resource.model';
 import type { Tag } from './tag.model';
@@ -40,6 +40,22 @@ export const literaryWorkDtoSchema = z.object({
 	editorialNote: z.string().optional(),
 });
 
+// La vista de teaser: la metadata de tarjeta más una sola sección de apertura. Vive acá y no en el
+// módulo que la consume porque su forma la fija el contrato de la obra, no quien la muestre.
+export const literaryWorkTeaserDtoSchema = z.object({
+	_id: z.string(),
+	slug: z.string(),
+	title: z.string(),
+	coverImage: z.string(),
+	totalReadingTime: z.number(),
+	sectionCount: z.number(),
+	tags: z.array(opaqueDomainObject<Tag>()),
+	mediaSources: z.array(opaqueDomainObject<Media>()),
+	authors: z.array(opaqueDomainObject<AuthorTeaser>()),
+	teaserSection: literaryWorkSectionDtoSchema,
+});
+
 export type LiteraryWorkEpigraphDto = z.infer<typeof literaryWorkEpigraphDtoSchema>;
+export type LiteraryWorkTeaserDto = z.infer<typeof literaryWorkTeaserDtoSchema>;
 export type LiteraryWorkSectionDto = z.infer<typeof literaryWorkSectionDtoSchema>;
 export type LiteraryWorkDto = z.infer<typeof literaryWorkDtoSchema>;

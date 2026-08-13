@@ -19,12 +19,15 @@ import { Resource } from '@models/resource.model';
 import { Story, StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
 import { Tag } from '@models/tag.model';
 import { TextBlockContent } from '@models/block-content.model';
+import { createMarkdown } from '@models/markdown.model';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
 // Tipos de Sanity
 import {
 	AuthorBySlugQueryResult,
 	AuthorsQueryResult,
 	BlockContent,
+	CollectionBySlugQueryResult,
 	LandingPageContentQueryResult,
 	LiteraryWorkBySlugQueryResult,
 	RotatingContentQueryResult,
@@ -47,7 +50,9 @@ export function mapAuthor(
 	rawAuthorData: Omit<NonNullable<AuthorBySlugQueryResult>, 'createdAt' | 'updatedAt'>,
 ): Author {
 	const resources = mapResources(rawAuthorData.resources);
-	const biography = mapAuthorBiography(rawAuthorData.biography);
+	// Sin fallback a cadena vacía: el campo es requerido en el schema, y `createMarkdown` lanza si
+	// alguna vez llegara vacío en lugar de dejar pasar un autor sin biografía.
+	const biography = markdownToSanitizedHtml(createMarkdown(rawAuthorData.biography));
 
 	return {
 		_id: rawAuthorData._id,
@@ -78,8 +83,10 @@ export function mapAuthorProfile(rawAuthorData: NonNullable<AuthorBySlugQueryRes
 }
 type AuthorTeaserForStoriesSubQuery = NonNullable<StorylistQueryResult>['stories'][0]['author'];
 type AuthorTeaserForListSubQuery = UnwrapArray<AuthorsQueryResult>;
+type AuthorTeaserForCollectionSubQuery =
+	NonNullable<CollectionBySlugQueryResult>['literaryWorks'][number]['authors'][number];
 export function mapAuthorTeaser(
-	rawAuthorData: AuthorTeaserForStoriesSubQuery | AuthorTeaserForListSubQuery,
+	rawAuthorData: AuthorTeaserForStoriesSubQuery | AuthorTeaserForListSubQuery | AuthorTeaserForCollectionSubQuery,
 ): AuthorTeaser {
 	return {
 		_id: rawAuthorData._id,
@@ -92,20 +99,11 @@ export function mapAuthorTeaser(
 		tags: [],
 		imageUrl: urlFor(rawAuthorData.image),
 		name: rawAuthorData.name,
-		biography: [],
 		bornOn: rawAuthorData.bornOn ? (rawAuthorData.bornOn as DateString) : undefined,
 		diedOn: rawAuthorData.diedOn ? (rawAuthorData.diedOn as DateString) : undefined,
 		bornOnYear: rawAuthorData.bornOnYear ?? undefined,
 		diedOnYear: rawAuthorData.diedOnYear ?? undefined,
 	};
-}
-
-type BiographySubQuery = NonNullable<AuthorBySlugQueryResult>['biography'];
-export function mapAuthorBiography(biography: BiographySubQuery): TextBlockContent[] {
-	if (!biography || biography.length === 0) {
-		return [];
-	}
-	return mapBlockContentToTextParagraphs(biography);
 }
 
 export function urlFor(source: SanityImageSource): string {
@@ -153,7 +151,7 @@ export function mapResources(resources: ResourcesSubQuery): Resource[] {
 			resourceType: {
 				slug: resource.resourceType.slug,
 				title: resource.resourceType.title,
-				shortDescription: resource.resourceType.shortDescription,
+				description: resource.resourceType.description,
 			},
 		})) ?? []
 	);
@@ -163,12 +161,14 @@ type TagsSubQuery =
 	| NonNullable<StoryBySlugQueryResult>['tags']
 	| NonNullable<AuthorBySlugQueryResult>['tags']
 	| NonNullable<StorylistTeasersQueryResult>[0]['tags']
-	| NonNullable<LiteraryWorkBySlugQueryResult>['tags'];
+	| NonNullable<LiteraryWorkBySlugQueryResult>['tags']
+	| NonNullable<CollectionBySlugQueryResult>['tags']
+	| NonNullable<CollectionBySlugQueryResult>['literaryWorks'][number]['tags'];
 export function mapTags(tags: TagsSubQuery): Tag[] {
 	return tags.map((tag) => ({
 		title: tag.title,
 		slug: tag.slug,
-		shortDescription: tag.shortDescription,
+		description: tag.description,
 	}));
 }
 
