@@ -1,7 +1,7 @@
 <main class="mx-auto w-full max-w-[1240px] px-6 pt-8 pb-16 font-inter">
 	<p class="bg-amber-50 text-amber-700 mb-8 rounded-md px-3 py-2 text-xs">
-		Blueprint de la CollectionPage V3 · ruta <code>/collection/{{ slug() ?? ':slug' }}</code> · alimentada con la
-		storylist real de Sanity por slug.
+		Blueprint de la CollectionPage V3 · ruta <code>/collection/{{ slug() }}</code> · alimentada con la colección real de
+		Sanity por slug.
 	</p>
 
 	@if (isLoading()) {
@@ -11,7 +11,7 @@
 				<cuentoneta-skeleton appearance="line" class="h-10 w-64 bg-neutral-300" />
 				<div class="flex flex-col gap-9">
 					@for (i of [1, 2, 3]; track i) {
-						<cuentoneta-story-card-teaser-v3
+						<cuentoneta-literary-work-card-teaser
 							[showAuthor]="true"
 							[showExcerpt]="true"
 							[showMultimedia]="true"
@@ -45,25 +45,26 @@
 		</div>
 	} @else if (collection(); as collection) {
 		<div class="flex items-start gap-16">
-			<!-- Columna izquierda: título + listado de historias -->
+			<!-- Columna izquierda: título + listado de obras -->
 			<section class="flex flex-1 flex-col gap-12 pt-8">
 				<h1 class="font-inter text-4xl leading-10 font-bold text-neutral-900">{{ collection.title }}</h1>
 
 				<div class="flex flex-col gap-9">
-					@for (story of collection.stories; track story._id; let i = $index) {
+					@for (literaryWork of collection.literaryWorks; track literaryWork._id; let i = $index) {
 						@if (i >= 2) {
 							<div class="h-px w-full bg-neutral-200" role="separator"></div>
 						}
-						<cuentoneta-story-card-teaser-v3
-							[story]="story"
+						<cuentoneta-literary-work-card-teaser
+							[literaryWork]="literaryWork"
 							[variant]="i === 0 ? 'highlighted' : 'on-white'"
 							[order]="i + 1"
+							[priority]="i === 0"
 							[showAuthor]="collection.config.showAuthors"
 							[showExcerpt]="true"
 							[showMultimedia]="true"
 							[excerptLines]="collection.config.showAuthors ? 3 : 4"
-							[tagLabel]="story.tags[0]?.title"
-							data-testid="story-card"
+							[tagLabel]="collection.tags[0]?.title"
+							data-testid="work-card"
 						/>
 					}
 				</div>
@@ -85,9 +86,13 @@
 						}
 					</div>
 					<div class="flex flex-col items-start gap-3">
-						<div #description class="line-clamp-[8] font-inter text-sm font-medium text-neutral-700">
-							<cuentoneta-portable-text-parser [paragraphs]="collection.description" />
-						</div>
+						<!-- La descripción llega como HTML ya saneado por el ACL del backend. -->
+						<div
+							[innerHTML]="collection.description"
+							#description
+							class="line-clamp-[8] font-inter text-sm font-medium text-neutral-700"
+							data-testid="collection-description"
+						></div>
 						@if (isDescriptionOverflowing()) {
 							<button (click)="descriptionDrawer.open()" cuentoneta-button type="outline" data-testid="read-more">
 								Leer más
@@ -99,7 +104,7 @@
 				<div class="flex flex-col gap-4">
 					<h2 class="font-inter text-base leading-6 font-bold text-neutral-900">Otras colecciones sugeridas</h2>
 
-					@for (suggested of suggestedCollections; track suggested.slug) {
+					@for (suggested of suggestedCollections(); track suggested.slug) {
 						<cuentoneta-navigable-collection-teaser [collection]="suggested" data-testid="suggested-collection" />
 					}
 				</div>
@@ -119,16 +124,15 @@
 					}
 				</div>
 			</div>
-			<cuentoneta-portable-text-parser
-				[paragraphs]="collection.description"
-				classes="font-inter text-sm font-medium text-neutral-700"
-				class="flex flex-col gap-2"
+			<div
+				[innerHTML]="collection.description"
+				class="flex flex-col gap-2 font-inter text-sm font-medium text-neutral-700"
 				data-testid="drawer-description"
-			/>
+			></div>
 			<div class="h-px w-full bg-neutral-200" role="separator"></div>
 			<div class="flex w-full flex-col gap-4">
 				<h2 class="font-inter text-base leading-6 font-bold text-neutral-900">Otras colecciones sugeridas</h2>
-				@for (suggested of suggestedCollections; track suggested.slug) {
+				@for (suggested of suggestedCollections(); track suggested.slug) {
 					<cuentoneta-navigable-collection-teaser [collection]="suggested" data-testid="drawer-suggested-collection" />
 				}
 			</div>
