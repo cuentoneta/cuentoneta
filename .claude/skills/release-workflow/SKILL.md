@@ -46,11 +46,12 @@ Ejemplo: `/release-workflow https://github.com/cuentoneta/cuentoneta/issues/<id>
 
 5. **Chequear versiones en documentación:** contrastar `docs/` (p. ej. `DEVELOPMENT_GUIDE.md`) contra `package.json` (`engines.node`, `packageManager`) y los saltos de versión mayor de la ventana. Solo requiere edición si hay un salto documentable (no por bumps minor/patch de Dependabot).
 6. **Reunir el contenido del CHANGELOG:** los issues cerrados del milestone + `git log --oneline <tag-anterior>..develop` para confirmar qué PRs mergearon desde el último tag. Incluir issues sin milestone que hayan shippeado en la ventana (hijos de epics); excluir los que pertenecen a un milestone futuro.
-7. **Redactar el borrador de la descripción del milestone.** La descripción es el único resumen de la versión que se lee desde la lista de hitos de GitHub; la entrada de CHANGELOG cuenta la misma historia pero vive en el repositorio. La que trae el milestone se escribió al abrirlo —antes de saber qué iba a entrar—, así que se reemplaza.
+7. **Redactar el borrador de la entrada de CHANGELOG** con lo reunido en el paso anterior: prosa + cambios agrupados por tema, replicando el formato de la sección anterior en `CHANGELOG.md`.
+8. **Redactar el borrador de la descripción del milestone.** La descripción es el único resumen de la versión que se lee desde la lista de hitos de GitHub; la entrada de CHANGELOG cuenta la misma historia pero vive en el repositorio. La que trae el milestone se escribió al abrirlo —antes de saber qué iba a entrar—, así que se reemplaza.
 
-   Se **deriva** de la prosa de la entrada de CHANGELOG del paso 6, condensada a un párrafo: los mismos temas, en el mismo orden, sin los cambios enumerados. Redactarla por separado es trabajo duplicado y la fuente de divergencia que la regla de la última sección prohíbe.
+   Se **deriva** de la prosa redactada en el paso anterior, condensada a un párrafo: los mismos temas, en el mismo orden, sin los cambios enumerados. Redactarla por separado es trabajo duplicado y la fuente de divergencia que prohíbe **Restricciones (todas las fases)**.
 
-8. Escribir `workspace/RELEASE.md` con: versión target, número del milestone, estado del milestone, migraciones de Sanity (pendientes / ya corridas), delta de documentación, el **borrador de la entrada de CHANGELOG** (prosa + cambios agrupados por tema, replicando el formato de la sección anterior en `CHANGELOG.md`) y el **borrador de la descripción del milestone**.
+9. Escribir `workspace/RELEASE.md` con: versión target, número del milestone, estado del milestone, migraciones de Sanity (pendientes / ya corridas), delta de documentación y los dos borradores de los pasos 7 y 8.
 
 **⏸ PAUSA — decisión vía `AskUserQuestion`.**
 
@@ -104,7 +105,9 @@ Anotar los resultados en `workspace/RELEASE.md`. Si algo falla: diagnosticar, ar
 
 - `question`: "Verificación completa en `workspace/RELEASE.md`. ¿Cómo seguimos?"
 - `header`: `Verificación`
-- `options` (la recomendada primero): **Proceder** — abrir el PR de release (Fase 4); **Dar feedback** — el orquestador pide el texto del feedback a continuación. La opción **"Other"** (automática) transporta directamente el ajuste pedido.
+- `options` (la recomendada primero): **Proceder** — abrir el PR de release y aplicar al milestone la descripción aprobada en la Fase 1 (Fase 4); **Dar feedback** — el orquestador pide el texto del feedback a continuación. La opción **"Other"** (automática) transporta directamente el ajuste pedido.
+
+La opción nombra las dos escrituras hacia afuera de la Fase 4 porque es la única pausa que las autoriza: quien responde tiene que poder leer qué está aprobando.
 
 Ramificación tras la respuesta:
 
@@ -131,8 +134,9 @@ Ramificación tras la respuesta:
 
    - **El texto es el aprobado, no uno nuevo.** Redactarlo acá otra vez reintroduce la divergencia con el CHANGELOG que la derivación de la Fase 1 existe para evitar.
    - **Sobrescribe la descripción previa a propósito.** La que trae un milestone se escribió al abrirlo, cuando todavía no se sabía qué iba a entrar.
-   - **No lleva confirmación propia:** el texto ya pasó por la pausa de la Fase 1 y la de la Fase 3, que autoriza las acciones de ship igual que para el `gh pr create` del paso anterior. A cambio, la escritura no puede ser silenciosa: registrar en `workspace/RELEASE.md` el texto aplicado.
-   - Ocurre acá, y no en la Fase 2, porque no es un artefacto versionado: no viaja en el diff del PR. Aplicarla antes la expondría a quedar divergente si la pausa de la Fase 3 cambia la prosa, y dejaría descrito un release que todavía puede abortarse.
+   - **No lleva confirmación propia:** el texto ya pasó por la pausa de la Fase 1, y la de la Fase 3 autoriza esta escritura por su nombre. A cambio, no puede ser silenciosa: registrar en `workspace/RELEASE.md` la constancia de aplicación —el texto y el resultado del comando—, que es distinto del borrador que la Fase 1 ya asentó ahí.
+   - **Verificar el resultado, y no darlo por hecho.** Si el `PATCH` falla —token sin permiso sobre el repositorio, milestone inexistente o cerrado, 404—, reportarlo explícitamente y dejar la descripción **pendiente** en `workspace/RELEASE.md` y en el resumen final. Nunca reportarla como aplicada sin haber visto la respuesta.
+   - Ocurre acá, y no en la Fase 2, porque no es un artefacto versionado: no viaja en el diff del PR, y aplicarla antes la expondría a quedar divergente si la pausa de la Fase 3 cambia la prosa. La escritura precede igual al merge que dispara el release: si el release se aborta después, la descripción queda por revertir a mano.
 
 4. Presentar la URL del PR y el **bloque de handoff manual** al usuario:
 
@@ -163,7 +167,7 @@ Ramificación tras la respuesta:
 
    Omitir el paso 3 del bloque si no hay migraciones pendientes o el usuario ya las corrió.
 
-5. Presentar el resumen final (versión, rama, PR, commits, resultado de la verificación, descripción del milestone aplicada).
+5. Presentar el resumen final (versión, rama, PR, commits, resultado de la verificación, y el estado real de la descripción del milestone — aplicada o pendiente con su motivo).
 
 ---
 
