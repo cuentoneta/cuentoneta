@@ -1,5 +1,6 @@
 import {
 	checkSitewideAbsoluteUrls,
+	collectSitemapViolations,
 	expectationsFor,
 	parseSitemap,
 	sample,
@@ -144,5 +145,64 @@ describe('expectationsFor', () => {
 describe('slugOf', () => {
 	it('toma el último segmento del path', () => {
 		expect(slugOf('/story/el-aleph')).toBe('el-aleph');
+	});
+});
+
+describe('collectSitemapViolations', () => {
+	const urlEntry = (path: string, lastmod?: string) =>
+		`<url><loc>https://www.cuentoneta.ar${path}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ''}</url>`;
+
+	const sitemapOf = (entries: string[]) => `<?xml version="1.0" encoding="UTF-8"?><urlset>${entries.join('')}</urlset>`;
+
+	// Fechas dispersas: una por entrada, ninguna concentrada.
+	const spread = (count: number) =>
+		Array.from({ length: count }, (_, index) =>
+			urlEntry(`/story/obra-${index}`, `2025-01-${`${index + 1}`.padStart(2, '0')}`),
+		);
+
+	it('no reporta nada para un sitemap con fechas dispersas y en secuencia', () => {
+		const report = collectSitemapViolations(sitemapOf([urlEntry('/'), ...spread(9)]));
+
+		expect(report.violations).toEqual([]);
+		expect(report.urls).toBe(10);
+		expect(report.dated).toBe(9);
+		expect(report.distinctDates).toBe(9);
+	});
+
+	// La proporción del caso es la que servía producción cuando el `lastmod` derivaba de la fecha de
+	// escritura: el chequeo no sirve de nada si no marca ese estado.
+	it('reporta una fecha concentrada en casi la mitad del corpus', () => {
+		const clustered = Array.from({ length: 48 }, (_, index) => urlEntry(`/story/lote-${index}`, '2026-06-29'));
+
+		const report = collectSitemapViolations(sitemapOf([...clustered, ...spread(52)]));
+
+		expect(report.largestCluster).toEqual({ date: '2026-06-29', share: 0.48 });
+		expect(report.violations).toHaveLength(1);
+		expect(report.violations[0]).toContain('escritura en lote');
+	});
+
+	it('reporta la fecha emitida antes de la ubicación', () => {
+		const inverted = '<url><lastmod>2025-01-01</lastmod><loc>https://www.cuentoneta.ar/story/a</loc></url>';
+
+		const report = collectSitemapViolations(sitemapOf([inverted, ...spread(9)]));
+
+		expect(report.violations).toHaveLength(1);
+		expect(report.violations[0]).toContain('secuencia');
+	});
+
+	it('reporta los elementos que los buscadores ignoran', () => {
+		const withIgnored =
+			'<url><loc>https://www.cuentoneta.ar/story/a</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>';
+
+		const report = collectSitemapViolations(sitemapOf([withIgnored, ...spread(9)]));
+
+		expect(report.violations.filter((violation) => violation.includes('ignoran'))).toHaveLength(2);
+	});
+
+	it('reporta un sitemap sin entradas', () => {
+		const report = collectSitemapViolations(sitemapOf([]));
+
+		expect(report.violations).toEqual(['El sitemap no expone ninguna entrada <url>.']);
+		expect(report.largestCluster).toBeNull();
 	});
 });
