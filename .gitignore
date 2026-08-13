@@ -89,4 +89,3 @@ scripts/*.mp4
 # Claves de service accounts de Google (nunca versionar)
 *.iam.gserviceaccount.com.json
 gsc-key.json
-**/flash-medley-*.json

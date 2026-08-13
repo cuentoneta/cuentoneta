@@ -6,8 +6,15 @@
  * No existe API para iniciar ni consultar una validación, ni para "Solicitar indexación": inspeccionar
  * URL por URL es la única vía programática de medir el avance.
  *
- * Persiste una foto por corrida en `tmp/seo-index-status/` (gitignoreado) y DIFFEA contra la anterior,
- * porque el dato útil es la serie ("cuántas pasaron a indexada"), no una foto suelta.
+ * Persiste en `tmp/seo-index-status/` (gitignoreado) un historial POR URL, no una foto por corrida:
+ * cada corrida actualiza las URLs que miró y deja intacto el resto, así inspeccionar un subconjunto
+ * distinto no pisa lo medido antes. El dato útil es la serie ("cuántas pasaron a indexada"), y el
+ * reporte la expone diffeando contra la observación anterior de cada URL.
+ *
+ * Una inspección que erra —la API devuelve errores transitorios de forma esporádica— se reporta como
+ * fallida y la corrida sale con código distinto de cero: no reintenta. Es deliberado, porque una
+ * inspección que no ocurrió no debe reportarse como si hubiera ocurrido; el costo es que una pasada
+ * grande arrastra fallas espurias.
  *
  * Requisitos (una service account con acceso de lectura a la propiedad):
  *   1. Crear la service account en Google Cloud y habilitarle la Search Console API.
