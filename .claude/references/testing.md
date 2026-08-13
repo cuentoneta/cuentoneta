@@ -408,9 +408,15 @@ export const Soft: Story = {
 };
 ```
 
-Para dependencias de DI usá los decoradores `moduleMetadata({ imports, providers })` (imports/iconos por story) o `applicationConfig({ providers })` (servicios globales: Router, etc.).
+Para dependencias de DI usá los decoradores `moduleMetadata({ imports, providers })` (imports/iconos por story) o `applicationConfig({ providers })` (providers de entorno).
 
-`LayoutService` es la excepción: se provee **globalmente** en `.storybook/preview.js`, con el servicio real (`provideLayout()`), y ninguna story lo declara. Es un token sin factory, así que sin ese provider un componente que lo inyecte no renderiza — el canvas queda en `NG0201`. Storybook **acumula** los decoradores `applicationConfig`: los providers que declare una story se suman a los del preview, no los reemplazan.
+**Dónde va cada provider.** Al preview va lo que _cualquier_ componente puede necesitar sin configurarlo y cuya ausencia deja el canvas en la pantalla de error, no en un componente a medio pintar: hoy `LayoutService` —un token sin factory— y el router. A la story va lo propio del componente: sus iconos, sus imports de composición, y las animaciones del único componente que las declara. El set global vive en `src/testing/storybook-preview.provider.ts` y no en `.storybook/`, para que quede dentro del alcance de `lint` y de los aliases del proyecto.
+
+El router se provee con `withDisabledInitialNavigation()`: sin eso arranca contra `iframe.html`, que no matchea ninguna ruta, y cada canvas con `routerLink` emite un `NG04002` ajeno al componente. Los `routerLink` resuelven su `href` igual.
+
+Storybook **acumula** los decoradores `applicationConfig`: los providers que declare una story se suman a los del preview, no los reemplazan. Aun así, una story no repite lo que el preview ya da — dos fuentes para la misma dependencia se desincronizan.
+
+**El catálogo no tiene gate que lo verifique.** `storybook:build` compila sin ejecutar las stories, así que un provider faltante deja el canvas en la pantalla de error y CI pasa en verde. Un spec tampoco lo cubre: Angular Testing Library aporta `ActivatedRoute` por su cuenta, con lo que un caso que monte el componente pasa con y sin el provider en el preview. La única comprobación real es montar cada story en el navegador y mirar el canvas y la consola.
 
 Todo archivo de la app que el preview importe debe estar en el `include` de `.storybook/tsconfig.json`. Si tiene decoradores de Angular y queda fuera del programa, el compilador no lo procesa y el bundle del preview revienta con un `SyntaxError: Unexpected token 'export'` que **tumba el catálogo entero**, no una story.
 
