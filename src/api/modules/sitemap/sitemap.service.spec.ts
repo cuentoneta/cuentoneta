@@ -1,4 +1,5 @@
 import { clearAllMocks, type Mock } from '@test-utils';
+import { childElementSequences } from '@testing/sitemap-xml';
 import * as sitemapRepository from './sitemap.repository';
 import { generateSitemap, generateSitemapXml, getSitemapUrls } from './sitemap.service';
 
@@ -76,17 +77,9 @@ describe('SitemapService', () => {
 
 			const urls = await getSitemapUrls();
 
-			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar', priority: '1.0', changefreq: 'daily' });
-			expect(urls).toContainEqual({
-				loc: 'https://test.cuentoneta.ar/about',
-				priority: '0.5',
-				changefreq: 'monthly',
-			});
-			expect(urls).toContainEqual({
-				loc: 'https://test.cuentoneta.ar/dmca',
-				priority: '0.3',
-				changefreq: 'yearly',
-			});
+			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar' });
+			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar/about' });
+			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar/dmca' });
 		});
 
 		it('should include story URLs', async () => {
@@ -98,12 +91,7 @@ describe('SitemapService', () => {
 
 			const urls = await getSitemapUrls();
 
-			expect(urls).toContainEqual({
-				loc: 'https://test.cuentoneta.ar/story/el-aleph',
-				priority: '0.8',
-				changefreq: 'weekly',
-				lastmod: '2025-01-01',
-			});
+			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar/story/el-aleph', lastmod: '2025-01-01' });
 		});
 
 		it('should include author URLs', async () => {
@@ -117,8 +105,6 @@ describe('SitemapService', () => {
 
 			expect(urls).toContainEqual({
 				loc: 'https://test.cuentoneta.ar/author/jorge-luis-borges',
-				priority: '0.7',
-				changefreq: 'weekly',
 				lastmod: '2025-01-02',
 			});
 		});
@@ -134,8 +120,6 @@ describe('SitemapService', () => {
 
 			expect(urls).toContainEqual({
 				loc: 'https://test.cuentoneta.ar/storylist/cuentos-de-terror',
-				priority: '0.8',
-				changefreq: 'weekly',
 				lastmod: '2025-01-03',
 			});
 		});
@@ -166,11 +150,29 @@ describe('SitemapService', () => {
 
 			expect(urls[0].loc).toBe('https://www.cuentoneta.ar');
 		});
+
+		// Los casos de arriba afirman que la URL de cada tipo está; ninguno, que estén todas. Sin eso, un
+		// tipo entero puede caerse del sitemap sin que nada falle.
+		it('should emit every slug of every type, with no duplicate locations', async () => {
+			const entries = (prefix: string) =>
+				['uno', 'dos', 'tres'].map((suffix) => ({ slug: `${prefix}-${suffix}`, lastmod: '2025-01-01' }));
+
+			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
+				stories: entries('cuento'),
+				authors: entries('autor'),
+				storylists: entries('coleccion'),
+			});
+
+			const urls = await getSitemapUrls();
+
+			expect(urls).toHaveLength(3 + 3 * 3);
+			expect(new Set(urls.map(({ loc }) => loc)).size).toBe(urls.length);
+		});
 	});
 
 	describe('generateSitemapXml', () => {
 		it('should generate valid XML structure', async () => {
-			const urls = [{ loc: 'https://example.com', priority: '1.0', changefreq: 'daily' }];
+			const urls = [{ loc: 'https://example.com' }];
 
 			const xml = await generateSitemapXml(urls);
 
@@ -180,19 +182,17 @@ describe('SitemapService', () => {
 		});
 
 		it('should include URL entries with correct structure', async () => {
-			const urls = [{ loc: 'https://example.com/page', priority: '0.8', changefreq: 'weekly' }];
+			const urls = [{ loc: 'https://example.com/page' }];
 
 			const xml = await generateSitemapXml(urls);
 
 			expect(xml).toContain('<url>');
 			expect(xml).toContain('<loc>https://example.com/page</loc>');
-			expect(xml).toContain('<changefreq>weekly</changefreq>');
-			expect(xml).toContain('<priority>0.8</priority>');
 			expect(xml).toContain('</url>');
 		});
 
 		it('should include lastmod when provided', async () => {
-			const urls = [{ loc: 'https://example.com', priority: '1.0', changefreq: 'daily', lastmod: '2025-01-01' }];
+			const urls = [{ loc: 'https://example.com', lastmod: '2025-01-01' }];
 
 			const xml = await generateSitemapXml(urls);
 
@@ -200,15 +200,47 @@ describe('SitemapService', () => {
 		});
 
 		it('should not include lastmod when not provided', async () => {
-			const urls = [{ loc: 'https://example.com', priority: '1.0', changefreq: 'daily' }];
+			const urls = [{ loc: 'https://example.com' }];
 
 			const xml = await generateSitemapXml(urls);
 
 			expect(xml).not.toContain('<lastmod>');
 		});
 
+		// El esquema define `tUrl` como `xsd:sequence`: un documento con los elementos correctos y el
+		// orden cambiado es inválido, así que afirmar presencia no alcanza.
+		it('should emit lastmod right after loc, as the schema sequence requires', async () => {
+			const urls = [
+				{ loc: 'https://example.com/con-fecha', lastmod: '2025-01-01' },
+				{ loc: 'https://example.com/sin-fecha' },
+			];
+
+			const xml = await generateSitemapXml(urls);
+
+			expect(childElementSequences(xml)).toEqual([['loc', 'lastmod'], ['loc']]);
+		});
+
+		it('should not emit the elements search engines ignore', async () => {
+			const urls = [{ loc: 'https://example.com', lastmod: '2025-01-01' }];
+
+			const xml = await generateSitemapXml(urls);
+
+			expect(xml).not.toContain('<changefreq>');
+			expect(xml).not.toContain('<priority>');
+		});
+
+		it('should produce well-formed XML', async () => {
+			const urls = [{ loc: 'https://example.com/page?foo=1&bar=2', lastmod: '2025-01-01' }];
+
+			const xml = await generateSitemapXml(urls);
+			const parsed = new DOMParser().parseFromString(xml, 'text/xml');
+
+			expect(parsed.querySelector('parsererror')).toBeNull();
+			expect(parsed.querySelectorAll('url')).toHaveLength(1);
+		});
+
 		it('should escape special XML characters in URLs', async () => {
-			const urls = [{ loc: 'https://example.com/page?foo=1&bar=2', priority: '1.0', changefreq: 'daily' }];
+			const urls = [{ loc: 'https://example.com/page?foo=1&bar=2' }];
 
 			const xml = await generateSitemapXml(urls);
 
@@ -216,11 +248,18 @@ describe('SitemapService', () => {
 			expect(xml).not.toContain('&bar=');
 		});
 
+		// El valor lo constriñe el schema del CMS, no el backend: escaparlo es lo que hace que la
+		// bien-formación del documento no dependa de una garantía externa.
+		it('should escape special XML characters in lastmod', async () => {
+			const urls = [{ loc: 'https://example.com', lastmod: '2025-01-01<script>' }];
+
+			const xml = await generateSitemapXml(urls);
+
+			expect(xml).toContain('<lastmod>2025-01-01&lt;script&gt;</lastmod>');
+		});
+
 		it('should handle multiple URLs', async () => {
-			const urls = [
-				{ loc: 'https://example.com/page1', priority: '1.0', changefreq: 'daily' },
-				{ loc: 'https://example.com/page2', priority: '0.8', changefreq: 'weekly' },
-			];
+			const urls = [{ loc: 'https://example.com/page1' }, { loc: 'https://example.com/page2' }];
 
 			const xml = await generateSitemapXml(urls);
 
@@ -229,7 +268,7 @@ describe('SitemapService', () => {
 		});
 
 		it('should handle empty URL array', async () => {
-			const urls: { loc: string; priority: string; changefreq: string }[] = [];
+			const urls: { loc: string }[] = [];
 
 			const xml = await generateSitemapXml(urls);
 
