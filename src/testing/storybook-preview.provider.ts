@@ -8,8 +8,9 @@ import { provideLayout } from '../app/providers/layout.provider';
  * componente puede necesitar y cuya ausencia deja el canvas en la pantalla de error, no en un
  * componente a medio pintar.
  *
- * Vive acá y no en `.storybook/` para que un spec pueda montarlo: sin eso, "el preview alcanza"
- * no lo verifica ningún gate — `storybook:build` compila sin ejecutar y la suite no mira el preview.
+ * Vive acá y no en `.storybook/` para que su spec pueda afirmar sobre él: sin eso, "el preview
+ * alcanza" no lo verifica ningún gate — `storybook:build` compila sin ejecutar las stories, así que
+ * un provider faltante deja el canvas en la pantalla de error y la corrida pasa en verde igual.
  */
 export function provideStorybookPreview(): EnvironmentProviders {
 	return makeEnvironmentProviders([

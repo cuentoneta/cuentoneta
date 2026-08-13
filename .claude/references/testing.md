@@ -410,7 +410,11 @@ export const Soft: Story = {
 
 Para dependencias de DI usá los decoradores `moduleMetadata({ imports, providers })` (imports/iconos por story) o `applicationConfig({ providers })` (providers de entorno).
 
-**Dónde va cada provider.** Al preview va lo que _cualquier_ componente puede necesitar sin configurarlo y cuya ausencia deja el canvas en la pantalla de error, no en un componente a medio pintar: hoy `LayoutService` —un token sin factory— y el router. A la story va lo propio del componente: sus iconos, sus imports de composición, y las animaciones del único componente que las declara. El set global vive en `src/testing/storybook-preview.provider.ts` y no en `.storybook/`, para que quede dentro del alcance de `lint` y de los aliases del proyecto.
+**Dónde va cada provider: el discriminante es la universalidad, no la gravedad.** Al preview va lo que _cualquier_ componente del catálogo podría necesitar sin declararlo — hoy `LayoutService`, un token sin factory, y el router. A la story va lo que depende de **ese** componente, por grave que sea su ausencia: los iconos que usa, sus imports de composición, y `provideAnimations()`, que hace falta solo en el único componente con `animations:` en el decorador.
+
+Que sin el provider el canvas quede en la pantalla de error **no decide dónde va**: es el umbral que separa un provider necesario de uno cosmético. Las animaciones lo cruzan —sin ellas el renderer aborta ante la propiedad sintética— y aun así son de la story, porque un provider global que solo un componente necesita le miente al lector sobre qué depende de qué.
+
+El set global vive en `src/testing/storybook-preview.provider.ts` y no en `.storybook/`, para que quede dentro del alcance de `lint`.
 
 El router se provee con `withDisabledInitialNavigation()`: sin eso arranca contra `iframe.html`, que no matchea ninguna ruta, y cada canvas con `routerLink` emite un `NG04002` ajeno al componente. Los `routerLink` resuelven su `href` igual.
 
