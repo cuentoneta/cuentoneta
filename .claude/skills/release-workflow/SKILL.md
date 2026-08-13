@@ -119,7 +119,7 @@ Ramificación tras la respuesta:
 
 ## Fase 4 — Ship + handoff manual
 
-**Propósito:** abrir el PR de release y entregar los pasos manuales que gatillan el release.
+**Propósito:** abrir el PR de release, aplicar la descripción del milestone y entregar los pasos manuales que gatillan el release.
 
 1. `git push -u origin feat/<number>-<kebab>`.
 2. Crear el PR con `gh pr create` (base **`develop`**, milestone de la versión):
@@ -129,8 +129,10 @@ Ramificación tras la respuesta:
 3. **Actualizar la descripción del milestone** con el texto aprobado en la Fase 1, usando el `milestone.number` recolectado en su paso 1:
 
    ```bash
-   gh api -X PATCH repos/cuentoneta/cuentoneta/milestones/<número> -f description="<texto aprobado>"
+   gh api -X PATCH repos/cuentoneta/cuentoneta/milestones/<número> -F description=@workspace/milestone-description.txt
    ```
+
+   El texto va **por archivo** (`-F …=@<ruta>`), no interpolado en la línea de comando: es prosa en español redactada por el agente, y una comilla, un `$` o un backtick mutilarían el valor sin que nada lo advierta.
 
    - **El texto es el aprobado, no uno nuevo.** Redactarlo acá otra vez reintroduce la divergencia con el CHANGELOG que la derivación de la Fase 1 existe para evitar.
    - **Sobrescribe la descripción previa a propósito.** La que trae un milestone se escribió al abrirlo, cuando todavía no se sabía qué iba a entrar.
