@@ -1,4 +1,5 @@
 import { clearAllMocks, type Mock } from '@test-utils';
+import { childElementSequences } from '@testing/sitemap-xml';
 import * as sitemapRepository from './sitemap.repository';
 import { generateSitemap, generateSitemapXml, getSitemapUrls } from './sitemap.service';
 
@@ -25,15 +26,6 @@ vi.mock('./sitemap.repository', () => ({
 	fetchSitemapSlugs: vi.fn(),
 }));
 /* eslint-enable no-restricted-syntax */
-
-// Los nombres de elemento hijo de cada `<url>`, en el orden en que aparecen. Afirmar sobre la secuencia
-// y no sobre la presencia es lo que distingue este spec del anterior: `toContain` pasaba con los
-// elementos en cualquier orden, que es exactamente el defecto que había.
-function childElementSequences(xml: string): string[][] {
-	return [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map(([, block]) =>
-		[...block.matchAll(/<(\w+)>/g)].map(([, name]) => name),
-	);
-}
 
 describe('SitemapService', () => {
 	beforeEach(() => {
@@ -159,8 +151,8 @@ describe('SitemapService', () => {
 			expect(urls[0].loc).toBe('https://www.cuentoneta.ar');
 		});
 
-		// Sin conteo no hay forma de detectar que un tipo se cayó del sitemap: cada caso de arriba afirma
-		// que su URL está, ninguno que estén todas.
+		// Los casos de arriba afirman que la URL de cada tipo está; ninguno, que estén todas. Sin eso, un
+		// tipo entero puede caerse del sitemap sin que nada falle.
 		it('should emit every slug of every type, with no duplicate locations', async () => {
 			const entries = (prefix: string) =>
 				['uno', 'dos', 'tres'].map((suffix) => ({ slug: `${prefix}-${suffix}`, lastmod: '2025-01-01' }));
@@ -215,8 +207,8 @@ describe('SitemapService', () => {
 			expect(xml).not.toContain('<lastmod>');
 		});
 
-		// El esquema de sitemaps.org define `tUrl` como `xsd:sequence`: `lastmod` va después de `loc`, no
-		// en cualquier posición. Un documento con los elementos correctos y el orden cambiado es inválido.
+		// El esquema define `tUrl` como `xsd:sequence`: un documento con los elementos correctos y el
+		// orden cambiado es inválido, así que afirmar presencia no alcanza.
 		it('should emit lastmod right after loc, as the schema sequence requires', async () => {
 			const urls = [
 				{ loc: 'https://example.com/con-fecha', lastmod: '2025-01-01' },
@@ -254,6 +246,16 @@ describe('SitemapService', () => {
 
 			expect(xml).toContain('<loc>https://example.com/page?foo=1&amp;bar=2</loc>');
 			expect(xml).not.toContain('&bar=');
+		});
+
+		// El valor lo constriñe el schema del CMS, no el backend: escaparlo es lo que hace que la
+		// bien-formación del documento no dependa de una garantía externa.
+		it('should escape special XML characters in lastmod', async () => {
+			const urls = [{ loc: 'https://example.com', lastmod: '2025-01-01<script>' }];
+
+			const xml = await generateSitemapXml(urls);
+
+			expect(xml).toContain('<lastmod>2025-01-01&lt;script&gt;</lastmod>');
 		});
 
 		it('should handle multiple URLs', async () => {

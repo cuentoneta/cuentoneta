@@ -1,8 +1,7 @@
 // Repository
 import { escapeXml, fetchSitemapSlugs } from './sitemap.repository';
 
-// Sin `changefreq` ni `priority`: Google los ignora de forma declarada y acá además valían una
-// constante por tipo, así que no discriminaban nada entre las URLs del sitio.
+// Sin `changefreq` ni `priority`: los buscadores los ignoran de forma declarada.
 interface SitemapUrl {
 	loc: string;
 	lastmod?: string;
@@ -44,7 +43,7 @@ export async function generateSitemapXml(urls: SitemapUrl[]): Promise<string> {
 ${urls
 	.map(
 		(url) => `  <url>
-    <loc>${escapeXml(url.loc)}</loc>${url.lastmod ? `\n    <lastmod>${url.lastmod}</lastmod>` : ''}
+    <loc>${escapeXml(url.loc)}</loc>${url.lastmod ? `\n    <lastmod>${escapeXml(url.lastmod)}</lastmod>` : ''}
   </url>`,
 	)
 	.join('\n')}

@@ -1,8 +1,9 @@
 import { evaluate, parse } from 'groq-js';
 import {
+	legacyStoryDocument,
+	legacyStorylistDocument,
 	onoffAuthorDocumentsMock,
-	onoffDatasetMock,
-	onoffLiteraryWorkDocumentsMock,
+	undatedLegacyStoryDocument,
 } from '@mocks/onoff-documents.mock';
 
 import { sitemapSlugsQuery } from './sitemap.query';
@@ -19,63 +20,47 @@ async function run(dataset: unknown[]): Promise<SitemapSlugs> {
 }
 
 const [canonAuthor] = onoffAuthorDocumentsMock;
-const [canonWork] = onoffLiteraryWorkDocumentsMock;
 
-// El corpus modela la era `LiteraryWork` y no tiene documentos `story`. Los dos de acá abajo se derivan
-// de una obra del canon cambiándole el `_type`: para esta query los dos tipos son intercambiables
-// —proyecta `slug.current`, `publishedAt` y `_createdAt`, que ambos schemas declaran igual—, así que la
-// derivación ejercita la rama real sin inventar un documento. Lo que no prueba es el resto del schema
-// de `story`, que esta query no toca.
-const publishedStoryDocument = {
-	...canonWork,
-	_id: 'sitemap-story-publicada',
-	_type: 'story',
-	slug: { _type: 'slug' as const, current: 'sitemap-story-publicada' },
-};
-
-const unpublishedStoryDocument = (() => {
-	const document = {
-		...publishedStoryDocument,
-		_id: 'sitemap-story-sin-fecha',
-		slug: { _type: 'slug' as const, current: 'sitemap-story-sin-fecha' },
-	};
-	delete (document as { publishedAt?: string }).publishedAt;
-	return document;
-})();
+// Los tres tipos que el sitemap publica, con su fecha de escritura distinta de la de creación.
+const touchedAuthorDocument = { ...canonAuthor, _updatedAt: legacyStoryDocument._updatedAt };
 
 describe('sitemapSlugsQuery', () => {
-	// La regresión que motivó el cambio: una escritura operativa —un backfill, una migración, una copia
-	// de dataset— mueve `_updatedAt` de todo el corpus a la misma fecha. Si `lastmod` derivara de ahí,
-	// este caso fallaría.
-	it('keeps lastmod still when _updatedAt moves', async () => {
-		const touchedAuthor = { ...canonAuthor, _updatedAt: '2026-08-13T06:07:43Z' };
+	// Una escritura operativa —un backfill, una migración, una copia de dataset— mueve la fecha de
+	// escritura de todo el corpus a la vez. El sitemap no debe reflejarla.
+	it.each([
+		['stories' as const, undatedLegacyStoryDocument],
+		['authors' as const, touchedAuthorDocument],
+		['storylists' as const, legacyStorylistDocument],
+	])('derives the %s lastmod from the creation date, not the write date', async (type, document) => {
+		const [entry] = (await run([document]))[type];
 
-		const [entry] = (await run([touchedAuthor])).authors;
-
-		expect(entry?.lastmod).toBe(canonAuthor?._createdAt);
+		expect(entry?.lastmod).toBe(document._createdAt);
+		expect(entry?.lastmod).not.toBe(document._updatedAt);
 	});
 
 	it('prefers the publication date over the creation date for a story', async () => {
-		const [entry] = (await run([publishedStoryDocument])).stories;
+		const [entry] = (await run([legacyStoryDocument])).stories;
 
-		expect(entry?.lastmod).toBe(publishedStoryDocument.publishedAt);
+		expect(entry?.lastmod).toBe(legacyStoryDocument.publishedAt);
 	});
 
-	it('falls back to the creation date for a story with no publication date', async () => {
-		const [entry] = (await run([unpublishedStoryDocument])).stories;
+	it.each([
+		['stories' as const, legacyStoryDocument],
+		['authors' as const, canonAuthor],
+		['storylists' as const, legacyStorylistDocument],
+	])('leaves %s drafts out', async (type, document) => {
+		const draft = { ...document, _id: `drafts.${document?._id}` };
 
-		expect(entry?.lastmod).toBe(unpublishedStoryDocument._createdAt);
+		expect((await run([draft]))[type]).toEqual([]);
 	});
 
-	it('leaves drafts out of every content type', async () => {
-		const draft = { ...canonAuthor, _id: `drafts.${canonAuthor?._id}` };
+	it.each([
+		['stories' as const, legacyStoryDocument],
+		['authors' as const, canonAuthor],
+		['storylists' as const, legacyStorylistDocument],
+	])('projects the %s slug flat', async (type, document) => {
+		const [entry] = (await run([document]))[type];
 
-		expect((await run([draft])).authors).toEqual([]);
-	});
-
-	it('carries every published author of the corpus', async () => {
-		const { authors } = await run(onoffDatasetMock);
-
-		expect(authors.map(({ slug }) => slug)).toEqual(onoffAuthorDocumentsMock.map((author) => author.slug?.current));
+		expect(entry?.slug).toBe(document?.slug?.current);
 	});
 });
