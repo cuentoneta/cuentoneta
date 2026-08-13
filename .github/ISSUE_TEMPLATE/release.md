@@ -9,8 +9,11 @@ assignees: ''
 ## Tareas
 
 - [ ] Ajustar changelog.
+- [ ] Actualizar la descripción del milestone, condensando a un párrafo la prosa del changelog: es el único resumen de la versión que se lee desde la lista de hitos.
 - [ ] Actualizar versión en package.json.
-- [ ] Sanity: Determinar si hay scripts de actualización de datos a ejecutar.
+- [ ] Sanity: Determinar si hay migraciones de datos a ejecutar y **clasificarlas**, porque de eso depende cuándo corren:
+  - **Independientes del código** (pueblan un campo que nadie lee, purgan huérfanos): el orden respecto del deploy es indiferente.
+  - **Acopladas al código** (cambian el nombre de un campo o la forma de su valor): ninguna secuencia simple es segura. Anotar para cada una en qué momento corre y, si no hay un lector tolerante a ambas formas, qué ventana se asume.
 - [ ] Chequear si deben actualizarse en la documentación del proyecto las versiones de herramientas o dependencias
 
 `(Agregar otras tareas particulares de la versión, en caso de que sea necesario)`

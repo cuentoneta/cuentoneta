@@ -55,6 +55,9 @@ Thumbs.db
 # Quedan fuera los datos personales/locales y el almacenamiento interno de git worktrees.
 .claude/settings.local.json
 .claude/worktrees/
+# Formato de exportación del cliente de escritorio: un ZIP que Claude Code no sabe cargar. La
+# skill se versiona extraída a su directorio; el ZIP es un intermediario que envejece aparte.
+.claude/skills/**/*.skill
 
 # Artefactos de Playwright MCP (snapshots/logs de inspección). No versionar: además, al
 # vivir dentro del repo, el escaneo de contenido de Tailwind v4 los vigila y su escritura

@@ -102,7 +102,7 @@ Al evaluar nuevos módulos o endpoints, verificá que el plan incluya:
 
 ## Restricciones duras a vigilar (de CLAUDE.md)
 
-Marcá como concern cualquier plan que las viole sin justificación: función ≤ 50 líneas, archivo ≤ 500 líneas (specs exentos), complejidad ciclomática ≤ 10, anidamiento ≤ 3 niveles, **barrels prohibidos** (`no-barrel-files`), `any` solo con `// REASON:`, sin `enum` (usar `Object.freeze({...} as const)`), sin propiedades estáticas, sin non-null assertion `!`, imports type-only cuando corresponda, duration strings en vez de literales de tiempo crudos.
+Marcá como concern cualquier plan que las viole sin justificación: función ≤ 50 líneas y archivo ≤ 500 líneas (exentos specs y stories), complejidad ciclomática ≤ 10 y anidamiento ≤ 3 niveles (sin exención, rigen también en specs), **barrels prohibidos** (`no-barrel-files`), `any` solo con `// REASON:`, sin `enum` (usar `Object.freeze({...} as const)`), sin propiedades estáticas, sin non-null assertion `!`, imports type-only cuando corresponda, duration strings en vez de literales de tiempo crudos.
 
 ## Formato de salida
 

@@ -7,7 +7,7 @@
 	"tags": [],
 	"targets": {
 		"build": {
-			"executor": "@angular-devkit/build-angular:application",
+			"executor": "@angular/build:application",
 			"outputs": ["{options.outputPath}"],
 			"options": {
 				"clearScreen": true,
@@ -87,7 +87,7 @@
 			}
 		},
 		"serve": {
-			"executor": "@nx/angular:dev-server",
+			"executor": "@angular/build:dev-server",
 			"configurations": {
 				"production": {
 					"buildTarget": "@cuentoneta/app:build:production"
@@ -100,7 +100,7 @@
 			"continuous": true
 		},
 		"eslint:lint": {
-			"command": "eslint ./src ./e2e ./resources ./cms"
+			"command": "eslint ./src ./e2e ./resources ./cms ./scripts"
 		},
 		"stylelint": {
 			"executor": "nx-stylelint:lint",

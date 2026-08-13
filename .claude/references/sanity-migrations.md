@@ -18,8 +18,88 @@ A diferencia de los scripts one-off (que se borran del working tree tras correr)
 - Preferir las utilidades declarativas (`at`, `setIfMissing`, `set`, `unset`, …) sobre mutaciones crudas.
 - Comentar el **porqué** de la migración (qué la motiva, qué caso cubre que `initialValue` no cubre), no el qué.
 - Migraciones idempotentes cuando sea posible (p. ej. `setIfMissing` para backfills).
+- La migración lleva su **spec co-locado**: `index.spec.ts` al lado del `index.ts`, con un `describe` nombrado por el slug de la migración. Como `defineMigration` conserva el objeto tal cual, el spec ejercita `migrate.document` directamente —es la función pura que decide el patch de cada documento— con el mismo helper que usan los specs existentes (`migration.migrate?.document`, casteado al tipo de parámetro inferido). Corre como Vitest standalone de `cms/` dentro del gate `studio-build` (`pnpm sanity:test`) — ver [Segunda config de Vitest: el Studio](testing.md#segunda-config-de-vitest-el-studio-cms). Como mínimo cubre el camino feliz, la idempotencia (una segunda corrida no produce mutación) y el aborto de cada guard.
 
 Ejemplo vivo: [`cms/migrations/set-default-story-coverimage/index.ts`](../../cms/migrations/set-default-story-coverimage/index.ts) — backfill de `coverImage` (ahora requerido) en historias previas al campo.
+
+### Una migración puede crear documentos de otro tipo
+
+`migrate.document` no está limitado a parchear el documento que recibe: puede devolver mutaciones dirigidas a **otro** documento, incluso de otro tipo. Eso habilita migrar iterando un tipo y escribiendo otro — `documentTypes` acota qué se **recorre**, no qué se **escribe**.
+
+Ejemplo vivo: [`cms/migrations/story-to-literary-work/`](../../cms/migrations/story-to-literary-work/) recorre `story` y emite `createIfNotExists` sobre `literaryWork`, sin tocar el cuento de origen.
+
+Cuando una migración crea documentos, tres decisiones se resuelven juntas con **un `_id` derivado** del documento de origen:
+
+| Necesidad                        | Cómo la resuelve el `_id` derivado                                                 |
+| -------------------------------- | ---------------------------------------------------------------------------------- |
+| Correspondencia origen ↔ destino | El id dice de qué documento salió, sin sumar un campo al schema                    |
+| Idempotencia                     | Con `createIfNotExists`, repetir la corrida es un no-op **del lado del servidor**  |
+| Reversión                        | Una migración hermana filtra por el prefijo y borra **solo** lo que la de ida creó |
+
+Preferir `createIfNotExists` sobre `createOrReplace`: el segundo refresca el contenido a costa de pisar lo que alguien haya editado a mano después de migrar.
+
+**Si el origen puede ser un borrador, el prefijo de path se reaplica, no se concatena.** Sanity marca un borrador con `drafts.` **encabezando** el `_id`, así que derivar `drafts.<origen>` como `<prefijo>drafts.<origen>` produce un documento publicado con nombre de borrador — y publica contenido inédito sin que nada lo señale. Lo correcto es separar el path del identificador, derivar sobre lo que queda y volver a anteponerlo: `drafts.<prefijo><origen>`. El predicado de reconocimiento y el `filter` de la reversión tienen que contemplar ambas formas.
+
+Ejemplo vivo: [`cms/migrations/draft-story-to-literary-work/`](../../cms/migrations/draft-story-to-literary-work/README.md) — crea una obra en borrador por cada cuento en borrador, con su reversión acotada a ese lote.
+
+El predicado que reconoce un documento migrado se declara **una sola vez** y lo importan ambas migraciones. Si cada una tuviera el suyo, una divergencia entre las dos definiciones podría dejar documentos sin borrar —o borrar de más—. Y el guard va **dentro** de `migrate.document`, no solo en el `filter`: el filtro es una optimización del recorrido, no la garantía.
+
+### Migraciones que convierten contenido
+
+Las que llevan rich text a Markdown consumen [`resources/portable-text-to-markdown/`](../../resources/portable-text-to-markdown/README.md), que **falla ante lo que no sabe traducir** en vez de descartarlo en silencio. Antes de correr una conversión sobre el corpus, censar qué construcciones usa realmente el dataset (ver `scripts/audit/`): descubrirlo con la migración la detendría en el primer documento raro, con los anteriores ya escritos.
+
+Que una corrida reporte N mutaciones dice que **alcanzó** N documentos, no que no perdió contenido —ni, al aplicar, que haya escrito algo: el contador cuenta lo que la migración emite, no lo que el servidor termina aplicando—. La verificación de fidelidad se hace comparando el texto de origen contra el que produce el pipeline real, y la de idempotencia mirando si el contenido cambió, no contando mutaciones.
+
+## Orden de despliegue: clasificar antes de correr
+
+Antes de correr una migración contra un dataset hay que saber a qué clase pertenece, porque de eso depende cuándo puede correr:
+
+- **Independiente del código.** Puebla un campo que todavía nadie lee, purga propiedades huérfanas, corrige valores sin cambiar su forma. El orden respecto del despliegue es indiferente.
+- **Acoplada al código.** Cambia **lo que el código lee**: el nombre de un campo o la **forma de su valor**. Ningún orden simple es seguro, y el patrón para las dos es el mismo — **ampliar** lo que el lector acepta, migrar, y recién entonces **contraer**.
+
+El error a evitar es tratar una acoplada como si fuera independiente y elegir el orden por conveniencia: las dos secuencias simples rompen, solo que en momentos distintos.
+
+### Cambio de forma del valor
+
+Cuando la migración cambia la **forma** de un valor que el código ya lee —de un array de bloques a un string, por ejemplo— y el mapper no tolera más que una, los dos órdenes dejan un intervalo roto:
+
+| Orden                      | Estado intermedio         | Qué falla                                                                        |
+| -------------------------- | ------------------------- | -------------------------------------------------------------------------------- |
+| Migrar y después desplegar | código viejo + dato nuevo | El mapper viejo aplica sobre el valor una operación que su forma nueva no admite |
+| Desplegar y después migrar | código nuevo + dato viejo | El mapper nuevo aplica sobre el valor una operación que su forma vieja no admite |
+
+A diferencia del rename, acá la falla es **ruidosa**: el mapper lanza y el endpoint responde 500, así que el síntoma aparece de inmediato en toda superficie que lea ese campo — no solo en la que lo renderiza.
+
+El patrón que sí deja una ventana segura:
+
+1. **Ampliar:** desplegar un lector que acepte **ambas** formas (`Array.isArray(valor) ? convertir(valor) : valor`). Es el único estado en el que las dos versiones del dato se sirven por igual.
+2. **Migrar** el dataset.
+3. **Contraer:** quitar la tolerancia una vez verificado que no queda ningún documento con la forma vieja.
+
+**Saltearse el paso 1 no elimina la ventana: elige cuál de las dos caídas tener.** Si se decide asumirla —porque el campo es de baja exposición o la ventana es corta—, la decisión se toma explícitamente y se verifica el resultado apenas termina, en vez de descubrirla por un reporte.
+
+Un agravante propio de este repo: mientras `production` conserve la forma vieja, el sync nocturno de datasets la reintroduce en `staging` y `development`, así que el intervalo roto **se reabre cada noche** en los datasets de trabajo aunque el código nuevo ya esté desplegado ahí.
+
+### Rename de un campo requerido
+
+Cuando la migración renombra un campo **requerido** y el código lo lee sin fallback, una migración única de `set` + `unset` no tiene ningún orden de despliegue seguro: migrar antes de desplegar deja el código ya corriendo leyendo un campo que todavía no existe; desplegar antes de migrar deja la proyección nueva devolviendo `null` para los documentos no migrados. No hay ventana en la que ambas versiones —código y dato— coincidan.
+
+La falla, además, es **silenciosa**: GROQ devuelve `null` para un campo ausente, y el mapper lo propaga tal cual a un contrato declarado `string`. Nada lanza ni loguea; el síntoma aparece recién en la superficie que renderiza ese campo (o ni ahí, si nada lo renderiza todavía).
+
+La solución es partir el rename en dos migraciones —**expand** y **contract**— separadas por el despliegue del código:
+
+1. **Expand** (`set`, sin `unset`): copia el valor del campo viejo al nuevo, sin dar de baja el viejo. Corre **antes** de desplegar el código que proyecta el nombre nuevo. Deja un estado intermedio con **ambos** nombres poblados — el único que las dos versiones del código (la que todavía lee el nombre viejo y la que ya lee el nuevo) pueden servir por igual.
+   - **Semántica de backfill, no de sincronización:** puebla el campo nuevo solo si está vacío, nunca lo sobrescribe. Comparar por igualdad alcanzaría para reintentar una corrida que se cortó a mitad de camino, pero una corrida tardía —con el schema nuevo ya desplegado— leería una edición legítima como "todavía sin copiar" y la pisaría con el valor viejo.
+2. **Contract** (`unset`): da de baja el campo viejo. Corre **después** de verificar el código nuevo en producción, y después de que la fase expand ya corrió sobre ese dataset.
+   - **Interlock:** al ser destructiva y sin más recuperación que el historial de Sanity, no confía en el orden de las corridas — verifica **documento a documento** que el campo nuevo ya esté poblado, y **lanza** en lugar de borrar la única copia si no lo está.
+
+Ejemplo vivo: [`cms/migrations/copy-short-description-to-description/index.ts`](../../cms/migrations/copy-short-description-to-description/index.ts) (expand) y [`cms/migrations/unset-legacy-short-description/index.ts`](../../cms/migrations/unset-legacy-short-description/index.ts) (contract) — rename de `shortDescription` a `description` en `resourceType` y `tag`.
+
+### Cada fase corre por dataset
+
+Los datasets son `development`, `staging` y `production`, y son independientes entre sí: correr una fase en uno no la aplica a los otros. Correr expand y contract **en cada dataset**, en su propio momento respecto del despliegue de ese dataset — no alcanza con correrlas una sola vez contra `production` y asumir que los demás quedaron al día.
+
+Ningún gate de CI detecta un dataset que quedó sin migrar: el job `e2e` corre contra `staging` (`SANITY_STUDIO_DATASET` en `.github/workflows/ci.yml`), y pasaría en verde aunque `staging` no tuviera corrida la migración, porque el campo no se renderiza en ninguna superficie que el e2e recorra. Es responsabilidad de quien despliega, no de un chequeo automático.
 
 ## Cómo correrlas
 

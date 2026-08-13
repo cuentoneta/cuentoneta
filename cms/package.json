@@ -1,7 +1,7 @@
 {
 	"name": "@cuentoneta/cms",
 	"private": true,
-	"version": "2.9.2",
+	"version": "2.10.0",
 	"description": "",
 	"main": "package.json",
 	"author": "Ramiro Olivencia <ramiro@olivencia.com.ar>",
@@ -22,11 +22,11 @@
 		"sanity"
 	],
 	"dependencies": {
-		"@sanity/cli": "^7.13.0",
+		"@sanity/cli": "^7.18.0",
 		"@sanity/export": "^6.2.0",
 		"@sanity/icons": "^5.2.1",
 		"@sanity/import": "^6.0.3",
-		"@sanity/ui": "^3.5.0",
+		"@sanity/ui": "^3.5.2",
 		"@sanity/vision": "^5.31.1",
 		"date-fns": "^4.4.0",
 		"prop-types": "^15.8.1",
@@ -39,13 +39,14 @@
 		"sanity-plugin-computed-field": "^2.0.2",
 		"sanity-plugin-markdown": "^9.0.9",
 		"sanity-plugin-singleton-management": "^1.0.7",
-		"styled-components": "^6.4.4"
+		"styled-components": "^6.5.1"
 	},
 	"devDependencies": {
 		"@types/node": "^24.13.3",
 		"@types/react": "^19.2.18",
 		"@types/react-dom": "^19.2.4",
-		"tsx": "^4.23.1",
+		"groq-js": "^2.0.0",
+		"tsx": "^4.23.11",
 		"typescript": "6.0.3",
 		"vitest": "^4.1.10"
 	},

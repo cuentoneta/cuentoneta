@@ -42,10 +42,10 @@ Antes de refactorizar, leé estas referencias del proyecto. Cargalas en **un ún
 
 | Restricción                  | Límite / regla                                                         |
 | ---------------------------- | ---------------------------------------------------------------------- |
-| Largo de función             | ≤ 50 líneas                                                            |
-| Largo de archivo             | ≤ 500 líneas (los `*.spec.ts` quedan exentos)                          |
-| Complejidad ciclomática      | ≤ 10                                                                   |
-| Profundidad de anidamiento   | ≤ 3 niveles                                                            |
+| Largo de función             | ≤ 50 líneas (`max-lines-per-function`; exentos specs y stories)        |
+| Largo de archivo             | ≤ 500 líneas (`max-lines`; ídem, más el generado de typegen)           |
+| Complejidad ciclomática      | ≤ 10 (`complexity`, **sin** exención)                                  |
+| Profundidad de anidamiento   | ≤ 3 niveles (`max-depth`, **sin** exención)                            |
 | Barrels (`index.ts`)         | Prohibidos en todo el proyecto (`no-barrel-files`)                     |
 | `any`                        | Prohibido sin comentario `// REASON:`                                  |
 | `enum` de TypeScript         | Prohibidos — usar `Object.freeze({...} as const)`                      |

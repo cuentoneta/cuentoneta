@@ -1,4 +1,4 @@
-import { fn, spyOn, type Mock } from '@test-utils';
+import { advanceTimersByTime, fn, spyOn, useFakeTimers, useRealTimers, type Mock } from '@test-utils';
 import { TestBed } from '@angular/core/testing';
 import { WindowLayoutService } from './layout.provider';
 import { Direction, type LayoutService } from './layout.interface';
@@ -22,7 +22,11 @@ describe('WindowLayoutService', () => {
 		dispatchEvent: Mock;
 	};
 
+	// Los timers falsos se instalan antes de construir el servicio para que el estrangulado de sus
+	// observables quede bajo control del test y no del reloj real.
 	beforeEach(() => {
+		useFakeTimers();
+
 		mockWindow = {
 			scrollY: 0,
 			innerWidth: 1920,
@@ -44,8 +48,49 @@ describe('WindowLayoutService', () => {
 		service = TestBed.inject(WindowLayoutService);
 	});
 
+	afterEach(() => {
+		useRealTimers();
+	});
+
 	it('should be created', () => {
 		expect(service).toBeTruthy();
+	});
+
+	// El viewport es la única fuente que tiene quien decide qué contenido servir —el carousel, por
+	// caso—, así que un cambio de tamaño que no lo actualice deja servido el contenido del ancho
+	// anterior. Los eventos viajan estrangulados: hay que agotar la ventana para leer el tamaño final.
+	describe('recálculo del viewport ante un cambio de tamaño', () => {
+		const throttleWindow = 150;
+
+		it('recalculates the viewport on resize, with no scrolling involved', () => {
+			expect(service.isActual('xl')).toBe(true);
+
+			mockWindow.innerWidth = 500;
+			mockWindow.dispatchEvent(new Event('resize'));
+			advanceTimersByTime(throttleWindow);
+
+			expect(service.isActual('xs')).toBe(true);
+		});
+
+		it('recalculates the viewport on orientation change', () => {
+			mockWindow.innerWidth = 500;
+			mockWindow.dispatchEvent(new Event('orientationchange'));
+			advanceTimersByTime(throttleWindow);
+
+			expect(service.isActual('xs')).toBe(true);
+		});
+
+		// Arrastrar el borde de la ventana emite una ráfaga entera: lo que vale es dónde terminó, no
+		// dónde empezó.
+		it('keeps the last width of a burst of resize events', () => {
+			mockWindow.innerWidth = 500;
+			mockWindow.dispatchEvent(new Event('resize'));
+			mockWindow.innerWidth = 1024;
+			mockWindow.dispatchEvent(new Event('resize'));
+			advanceTimersByTime(throttleWindow);
+
+			expect(service.isActual('md')).toBe(true);
+		});
 	});
 
 	describe('userHasScrolled$', () => {

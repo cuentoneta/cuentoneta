@@ -1,12 +1,20 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { elOdioRawLiteraryWork } from './onoff/el-odio.literary-work.raw.mock';
-import { elTratadoDeLosPlaceresRawLiteraryWork } from './onoff/el-tratado-de-los-placeres.literary-work.raw.mock';
-import { geometriaRawLiteraryWork } from './onoff/geometria.literary-work.raw.mock';
-import { lasDosAntorchasRawLiteraryWork } from './onoff/las-dos-antorchas.literary-work.raw.mock';
-import { lasEscalerasRawLiteraryWork } from './onoff/las-escaleras.literary-work.raw.mock';
-import { losPeldanosRawLiteraryWork } from './onoff/los-peldanos.literary-work.raw.mock';
-import { neronRawLiteraryWork } from './onoff/neron.literary-work.raw.mock';
-import { palacioNueveFronterasRawLiteraryWork } from './onoff/el-palacio-de-las-nueve-fronteras.literary-work.raw.mock';
+import { palacioNueveFronterasSectionTitle } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.epigraph';
+import {
+	palacioFirstSectionReadingTime,
+	palacioMultiSectionTotalReadingTime,
+	palacioSecondSectionBody,
+	palacioSecondSectionReadingTime,
+	palacioSecondSectionTitle,
+} from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.multi-section';
+import { elOdioRawLiteraryWork } from './onoff/literary-work/el-odio.literary-work.raw.mock';
+import { elTratadoDeLosPlaceresRawLiteraryWork } from './onoff/literary-work/el-tratado-de-los-placeres.literary-work.raw.mock';
+import { geometriaRawLiteraryWork } from './onoff/literary-work/geometria.literary-work.raw.mock';
+import { lasDosAntorchasRawLiteraryWork } from './onoff/literary-work/las-dos-antorchas.literary-work.raw.mock';
+import { lasEscalerasRawLiteraryWork } from './onoff/literary-work/las-escaleras.literary-work.raw.mock';
+import { losPeldanosRawLiteraryWork } from './onoff/literary-work/los-peldanos.literary-work.raw.mock';
+import { neronRawLiteraryWork } from './onoff/literary-work/neron.literary-work.raw.mock';
+import { palacioNueveFronterasRawLiteraryWork } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.raw.mock';
 
 // Corpus raw (shape crudo de Sanity, `NonNullable<LiteraryWorkBySlugQueryResult>`) de las obras
 // (ficticias) de François Onoff — contraparte cruda de `onoffLiteraryWorksMock`, en el mismo orden.
@@ -63,22 +71,22 @@ export const onoffRawLiteraryWorksWithMediaSources: NonNullable<LiteraryWorkBySl
 export const multiSectionRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult> = {
 	...palacioNueveFronterasRawLiteraryWork,
 	_id: 'onoff-literary-work-el-palacio-de-las-nueve-fronteras-multi',
-	totalReadingTime: 12,
+	totalReadingTime: palacioMultiSectionTotalReadingTime,
 	sectionCount: 2,
 	content: [
 		{
 			_key: 'section-1',
-			title: 'La primera frontera',
+			title: palacioNueveFronterasSectionTitle,
 			epigraphs: [],
 			body: palacioNueveFronterasRawLiteraryWork.content[0].body,
-			readingTime: 11,
+			readingTime: palacioFirstSectionReadingTime,
 		},
 		{
 			_key: 'section-2',
-			title: 'La novena frontera',
+			title: palacioSecondSectionTitle,
 			epigraphs: [],
-			body: 'Le faltaba todavía la voz. Para darle una voz tuve que perder la mía.',
-			readingTime: 1,
+			body: palacioSecondSectionBody,
+			readingTime: palacioSecondSectionReadingTime,
 		},
 	],
 };

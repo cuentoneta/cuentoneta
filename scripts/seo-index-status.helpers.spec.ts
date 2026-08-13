@@ -9,6 +9,7 @@ import {
 	parseSitemapLocs,
 	storedRows,
 	summarize,
+	toSnapshot,
 	type ClassifiedRow,
 	type InspectionSnapshot,
 } from './seo-index-status.helpers';
@@ -353,5 +354,32 @@ describe('formatReport', () => {
 
 		expect(report).toContain('Cambios contra el historial');
 		expect(report).toContain('Nunca rastreada → Indexada');
+	});
+});
+
+describe('toSnapshot', () => {
+	it('retiene los campos informados', () => {
+		expect(toSnapshot('https://x/a', { verdict: 'PASS', coverageState: 'Submitted and indexed' })).toEqual({
+			url: 'https://x/a',
+			verdict: 'PASS',
+			coverageState: 'Submitted and indexed',
+		});
+	});
+
+	it('descarta un campo que la API devuelve nulo, en vez de retenerlo', () => {
+		const snapshot = toSnapshot('https://x/a', { verdict: 'NEUTRAL', lastCrawlTime: null });
+
+		expect(snapshot.lastCrawlTime).toBeUndefined();
+		expect('lastCrawlTime' in snapshot).toBe(false);
+	});
+
+	it('deja "nunca rastreada" una URL cuyo lastCrawlTime vino nulo', () => {
+		expect(classify(toSnapshot('https://x/a', { verdict: 'NEUTRAL', lastCrawlTime: null })).state).toBe(
+			CRAWL_STATE.neverCrawled,
+		);
+	});
+
+	it('tolera un resultado ausente', () => {
+		expect(toSnapshot('https://x/a', undefined)).toEqual({ url: 'https://x/a' });
 	});
 });

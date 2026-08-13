@@ -62,7 +62,7 @@ export const Default: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Con espacio de sobra, los 5 tags se muestran sin contador.</p><p><strong>Usos:</strong> <a href="./?path=/docs/componentes-v3-authorteaserv3--docs" target="_top"><strong>AuthorTeaserV3</strong></a>, en columnas anchas donde la fila de tags entra completa.</p>`,
+				story: `<p>Con espacio de sobra, los 5 tags se muestran sin contador.</p><p><strong>Usos:</strong> <a href="./?path=/docs/componentes-v3-authorcardteaser--docs" target="_top"><strong>AuthorCardTeaser</strong></a>, en columnas anchas donde la fila de tags entra completa.</p>`,
 			},
 		},
 	},
@@ -75,7 +75,7 @@ export const WidthOverflow: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>En 240px no entran los 5 tags: los que sobran se colapsan tras un "+N" después del último visible.</p><p><strong>Usos:</strong> <a href="./?path=/docs/componentes-v3-authorteaserv3--docs" target="_top"><strong>AuthorTeaserV3</strong></a> en anchos intermedios.</p>`,
+				story: `<p>En 240px no entran los 5 tags: los que sobran se colapsan tras un "+N" después del último visible.</p><p><strong>Usos:</strong> <a href="./?path=/docs/componentes-v3-authorcardteaser--docs" target="_top"><strong>AuthorCardTeaser</strong></a> en anchos intermedios.</p>`,
 			},
 		},
 	},

@@ -25,7 +25,7 @@ export function toDomainTag(raw: RawTag): Tag {
 	return {
 		title: raw.title,
 		slug: raw.slug,
-		shortDescription: raw.shortDescription,
+		description: raw.description,
 	};
 }
 

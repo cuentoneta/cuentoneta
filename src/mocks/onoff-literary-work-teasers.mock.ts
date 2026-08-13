@@ -6,12 +6,12 @@ import type {
 	LiteraryWorkTeaser,
 } from '@models/literary-work.model';
 import type { Media } from '@models/media.model';
-import { authorTeaserMock } from './author.mock';
+import { embeddedAuthorTeaserMock } from './author.mock';
 import { onoffMediaMock, onoffYouTubeVideosMock } from './onoff-media.mock';
 import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
 
-// Proyecta el Author de dominio a su variante AuthorTeaser (misma base, biography/resources vaciadas),
-// para derivar los autores de una vista de listado desde los autores propios de cada obra del canon.
+// Proyecta el Author de dominio a su variante AuthorTeaser (misma base, sin biografía y con recursos
+// vaciados), para derivar los autores de una vista de listado desde los autores propios de cada obra del canon.
 function toAuthorTeaser(author: Author): AuthorTeaser {
 	return {
 		_id: author._id,
@@ -24,18 +24,17 @@ function toAuthorTeaser(author: Author): AuthorTeaser {
 		diedOn: author.diedOn,
 		bornOnYear: author.bornOnYear,
 		diedOnYear: author.diedOnYear,
-		biography: [],
 		resources: [],
 	};
 }
-import { elOdioLiteraryWorkMock } from './onoff/el-odio.mock';
-import { elTratadoDeLosPlaceresLiteraryWorkMock } from './onoff/el-tratado-de-los-placeres.mock';
-import { geometriaLiteraryWorkMock } from './onoff/geometria.mock';
-import { lasDosAntorchasLiteraryWorkMock } from './onoff/las-dos-antorchas.mock';
-import { lasEscalerasLiteraryWorkMock } from './onoff/las-escaleras.mock';
-import { losPeldanosLiteraryWorkMock } from './onoff/los-peldanos.mock';
-import { neronLiteraryWorkMock } from './onoff/neron.mock';
-import { palacioNueveFronterasLiteraryWorkMock } from './onoff/el-palacio-de-las-nueve-fronteras.mock';
+import { elOdioLiteraryWorkMock } from './onoff/literary-work/el-odio.literary-work.mock';
+import { elTratadoDeLosPlaceresLiteraryWorkMock } from './onoff/literary-work/el-tratado-de-los-placeres.literary-work.mock';
+import { geometriaLiteraryWorkMock } from './onoff/literary-work/geometria.literary-work.mock';
+import { lasDosAntorchasLiteraryWorkMock } from './onoff/literary-work/las-dos-antorchas.literary-work.mock';
+import { lasEscalerasLiteraryWorkMock } from './onoff/literary-work/las-escaleras.literary-work.mock';
+import { losPeldanosLiteraryWorkMock } from './onoff/literary-work/los-peldanos.literary-work.mock';
+import { neronLiteraryWorkMock } from './onoff/literary-work/neron.literary-work.mock';
+import { palacioNueveFronterasLiteraryWorkMock } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.mock';
 
 // Deriva el teaser desde la obra completa: conserva los campos de la vista base, reemplaza los autores
 // por su variante AuthorTeaser y expone la primera sección como `teaserSection` (el teaser de
@@ -50,8 +49,10 @@ function toTeaser(literaryWork: LiteraryWork): LiteraryWorkTeaser {
 		sectionCount: literaryWork.sectionCount,
 		tags: literaryWork.tags,
 		mediaSources: literaryWork.mediaSources,
-		authors: [authorTeaserMock],
-		teaserSection: literaryWork.content[0],
+		authors: [embeddedAuthorTeaserMock],
+		// La sección de apertura del teaser va sin epígrafes: la proyección de teaser no los trae, porque
+		// ninguna vista de tarjeta los muestra.
+		teaserSection: { ...literaryWork.content[0], epigraphs: [] },
 	};
 }
 

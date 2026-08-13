@@ -21,7 +21,6 @@ export const rotatingContentQuery = defineQuery(`
             name,
             image,
             nationality->,
-            'biography': [],
 						bornOn,
 						bornOnYear,
 						diedOn,
@@ -64,7 +63,7 @@ export const landingPageContentQuery = defineQuery(`
         'tags': coalesce(tags[] -> {
             title,
             'slug': slug.current,
-            shortDescription
+            description
         }, []),
         'storyCoverImages': coalesce(stories[]->coverImage, []),
         'count': coalesce(count(stories), 0),
@@ -103,7 +102,6 @@ export const landingPageContentQuery = defineQuery(`
             name,
             image,
             nationality->,
-            'biography': [],
 						bornOn,
 						bornOnYear,
 						diedOn,

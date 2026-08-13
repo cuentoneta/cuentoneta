@@ -15,57 +15,27 @@ pnpm exec tsx --env-file=.env scripts/audit/<script>.ts
 
 ## Scripts disponibles
 
-| Script                     | Tipo                                                  | Qué hace                                                                                                                                                                                                                                                                                    |
-| -------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `audit-bold-names.ts`      | **Read-only** ✅                                      | Audita qué autores publicados no tienen su `name` en negrita dentro de su biografía. Reporta **Grupo A** (sin ninguna negrita) y **Grupo B** (hay negrita, pero el `name` no aparece como subcadena contigua).                                                                              |
-| `export-authors-bios.ts`   | **Read-only** de Sanity ✅ (escribe archivos locales) | Exporta la biografía de cada autor publicado a un `.md` en `tools/author-bios/` (carpeta _gitignored_), como material de referencia estilística.                                                                                                                                            |
-| `bold-author-pen-names.ts` | **⚠️ Escribe en Sanity (producción)**                 | Aplica negrita al nombre del autor dentro de su biografía, según una **lista curada** de operaciones (`in_place` / `prepend` / `skip`). Deja los cambios como **borradores (`drafts.*`), sin publicar**, para revisión en Studio. Es **idempotente** (saltea drafts que ya tienen negrita). |
+| Script                         | Tipo             | Qué hace                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------------ | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `audit-story-portable-text.ts` | **Read-only** ✅ | Censa el Portable Text de los cuentos antes de migrarlo a Markdown, **publicados y borradores por separado**: construcciones que el conversor no traduce (agrupadas por campo, con el slug y el `_key` del bloque), **construcciones de riesgo escritas en el texto** (numeral que abre línea, sangría de bloque de código, cercas, backticks, entidades, tiradas que quedarían como subrayado de encabezado) y esquemas de enlace fuera de la allowlist, más conteos —incluidos los campos cuya ausencia aborta el mapeo, y cuántos cuentos admite o excluye el filtro de la migración de borradores—, colisiones de slug, miembros de array sin `_key` y el baseline de fidelidad en caracteres. |
+
+> **Sobre `audit-story-portable-text.ts`:** correrlo **antes** de una migración de conversión, no durante. El conversor de `resources/portable-text-to-markdown/` falla ante lo que no sabe traducir —a propósito, para no perder contenido en silencio—, así que descubrir una construcción no cubierta con la migración ya en curso la detendría con documentos ya escritos. Si el censo encuentra algo nuevo, se agrega **en el conversor** con su caso de prueba.
 
 ### Comandos
 
 ```bash
-# Auditoría (solo lectura)
-pnpm exec tsx --env-file=.env scripts/audit/audit-bold-names.ts
-
-# Export de biografías a Markdown (solo lectura; salida en tools/author-bios/)
-pnpm exec tsx --env-file=.env scripts/audit/export-authors-bios.ts
-
-# Negrita de nombres — ⚠️ crea drafts en el dataset de .env (producción)
-pnpm exec tsx --env-file=.env scripts/audit/bold-author-pen-names.ts
+# Censo del Portable Text de los cuentos, previo a convertirlo (solo lectura)
+pnpm exec tsx --env-file=.env scripts/audit/audit-story-portable-text.ts
 ```
 
-## Detalle: `export-authors-bios.ts`
+## Scripts dados de baja
 
-Consulta los autores publicados con biografía definida y convierte el campo `biography` (Portable Text / `blockContent`) a Markdown, sin dependencias extra.
+Tres exportadores y auditores de biografías de autor vivieron acá y ya no: operaban sobre `author.biography` **como Portable Text**, que es la forma que el campo tenía cuando se corrieron. Hoy se declara `markdown` y se persiste como string, así que ninguno era ejecutable — describían auditorías ya hechas, no herramientas vigentes. Uno de ellos, además, escribía en Sanity: correrlo dejaría un array donde va texto y rompería toda lectura de ese autor.
 
-Consulta GROQ:
-
-```groq
-*[_type == 'author' && !(_id in path('drafts.**')) && defined(biography)]{
-    name,
-    'slug': slug.current,
-    biography
-} | order(name asc)
-```
-
-Mapeo `blockContent` → Markdown:
-
-| Entrada                   | Markdown                                   |
-| ------------------------- | ------------------------------------------ |
-| `style: 'normal'`         | párrafo plano                              |
-| `style: 'h1'`–`'h6'`      | `#`–`######`                               |
-| `style: 'blockquote'`     | `> ...`                                    |
-| `listItem: 'bullet'`      | `- ...` (sangría según `level`)            |
-| `listItem: 'number'`      | `1. ...`                                   |
-| Marca `strong`            | `**...**`                                  |
-| Marca `em`                | `_..._`                                    |
-| Marca `code`              | `` `...` ``                                |
-| Anotación de link         | `[texto](href)`                            |
-| Decoradores de alineación | ignorados (presentación, no prosa)         |
-| Bloque `image`            | `![](image-ref)` (referencia, no descarga) |
-
-Salida: un archivo `tools/author-bios/<slug>.md` por autor, encabezado `# {name}` + cuerpo. Idempotente (sobrescribe). La carpeta está _gitignored_.
+Su salida en `tools/author-bios/` sigue en disco y **ya no es reproducible**. La política de [`coding-agent-policies.md`](../../.claude/references/coding-agent-policies.md) cubre ese caso: sin un comando que lo regenere, el artefacto se trata como no re-generable y no se toca.
 
 ## Convención
 
 Cualquier script futuro de diagnóstico/auditoría/migración sobre datos de Sanity vive en `scripts/audit/`, se documenta en esta tabla con su comando y su etiqueta **read-only / escribe-en-prod**, y **no** se agrega a `package.json`.
+
+**La carpeta se lintea como el resto de `scripts/`, sin exención.** Que un script sea one-off describe una intención sobre su uso, no una propiedad de su código: se lee igual, se copia igual y sirve igual de plantilla para el próximo. Exceptuarla sería exceptuar todo lo que venga.

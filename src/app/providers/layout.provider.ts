@@ -46,12 +46,20 @@ export class WindowLayoutService implements LayoutService {
 	/**
 	 * Observable que se dispara cuando ocurre un cambio de orientación de pantalla
 	 * o se recalcula el tamaño de pantalla asignado al navegador en el dispositivo.
+	 *
+	 * `trailing` es lo que hace llegar el último tamaño de una ráfaga: arrastrar el borde de la ventana
+	 * emite decenas de eventos, y solo con `leading` el viewport quedaría fijado en el ancho del primer
+	 * instante del arrastre.
 	 * @private
 	 */
 	private readonly _viewportHasChanged$ = merge(
 		fromEvent(this.window, 'resize').pipe(startWith(null)),
 		fromEvent(this.window, 'orientationchange').pipe(startWith(null)),
-	).pipe(takeUntilDestroyed(), throttleTime(100));
+	).pipe(takeUntilDestroyed(), throttleTime(100, undefined, { leading: true, trailing: true }));
+
+	// Única fuente de recálculo del viewport. Va antes de `isHeaderVisible` a propósito: los inicializadores
+	// de campo corren en orden, y quien decide la visibilidad del header lee el viewport ya sincronizado.
+	private readonly viewportResync = this._viewportHasChanged$.subscribe(() => this.setViewport());
 
 	public readonly isHeaderVisible = toSignal(this.isHeaderVisible$, { initialValue: true });
 
@@ -65,13 +73,7 @@ export class WindowLayoutService implements LayoutService {
 
 	private get isHeaderVisible$() {
 		return combineLatest([this.viewportHasChanged$, this.userHasScrolled$]).pipe(
-			map(([hasChanged, direction]) => {
-				if (hasChanged) {
-					this.setViewport();
-				}
-
-				return this.biggerThan('xs') || direction === Direction.Up;
-			}),
+			map(([, direction]) => this.biggerThan('xs') || direction === Direction.Up),
 		);
 	}
 

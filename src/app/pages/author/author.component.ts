@@ -20,7 +20,6 @@ import { AuthorApi } from '../../providers/author-api.interface';
 import { StoryApi } from '../../providers/story-api.interface';
 
 // Componentes
-import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
 import { ResourceComponent } from '@components/resource/resource.component';
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 import { StoryCardTeaserComponent } from '@components/story-card-teaser/story-card-teaser.component';
@@ -36,7 +35,6 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 	selector: 'cuentoneta-author',
 	imports: [
 		NgOptimizedImage,
-		PortableTextParserComponent,
 		StoryCardTeaserComponent,
 		Tab,
 		Tabs,
@@ -122,11 +120,11 @@ import { InitialsPipe } from '../../pipes/initials.pipe';
 						<cuentoneta-tab title="Biografía" name="about">
 							<div>
 								<div class="flex flex-col gap-4">
-									<cuentoneta-portable-text-parser
-										[paragraphs]="author.biography"
-										[classes]="'source-serif-xl font-normal leading-8'"
-										class="flex flex-col gap-4"
-									/>
+									<div
+										[innerHTML]="author.biography"
+										class="source-serif-xl flex flex-col gap-4 leading-8 font-normal"
+										data-testid="author-biography"
+									></div>
 									@if (author.resources && author.resources.length > 0) {
 										<hr class="text-neutral-500" />
 										<div class="font-inter font-semibold text-neutral-600">Recursos web sobre el autor:</div>

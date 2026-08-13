@@ -49,6 +49,41 @@ export interface ClassifiedRow extends InspectionSnapshot {
 	canonicalMismatch: boolean;
 }
 
+/** Campos de `indexStatusResult` que se retienen, en el orden en que se leen. */
+const INSPECTED_FIELDS = [
+	'verdict',
+	'coverageState',
+	'lastCrawlTime',
+	'pageFetchState',
+	'robotsTxtState',
+	'indexingState',
+	'googleCanonical',
+	'userCanonical',
+] as const satisfies readonly (keyof InspectionSnapshot)[];
+
+/**
+ * Lo mínimo que se le pide al resultado de la API: los campos retenidos, cada uno opcional y de tipo
+ * libre. Se declara acá en vez de importar el tipo generado del cliente para que el núcleo puro no
+ * dependa del paquete de Google — es lo que permite testearlo sin credenciales ni red.
+ */
+type InspectedFields = Partial<Record<(typeof INSPECTED_FIELDS)[number], unknown>>;
+
+/**
+ * La API omite un campo devolviéndolo `null`, y el resto del módulo distingue "ausente"
+ * (`undefined`) de "presente y vacío": `resolveState` clasifica por la **presencia** de
+ * `lastCrawlTime`, así que un `null` que llegara sin normalizar se leería como rastreada.
+ */
+export function toSnapshot(url: string, status: InspectedFields | undefined): InspectionSnapshot {
+	const snapshot: InspectionSnapshot = { url };
+	for (const field of INSPECTED_FIELDS) {
+		const value = status?.[field];
+		if (typeof value === 'string') {
+			snapshot[field] = value;
+		}
+	}
+	return snapshot;
+}
+
 const BLOCKING_INDEXING_STATES: readonly string[] = ['BLOCKED_BY_META_TAG', 'BLOCKED_BY_HTTP_HEADER'];
 
 export function parseSitemapLocs(xml: string): string[] {

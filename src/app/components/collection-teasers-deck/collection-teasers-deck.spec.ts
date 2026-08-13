@@ -5,159 +5,122 @@ import { provideRouter } from '@angular/router';
 
 // Componentes
 import { CollectionTeasersDeck } from './collection-teasers-deck';
-import { CollectionTeaser } from '@components/collection-teaser/collection-teaser';
-import { CollectionTeaserSkeletonComponent } from '@components/collection-teaser/collection-teaser-skeleton';
+import { CollectionTeaserCard } from '@components/collection-teaser-card/collection-teaser-card';
+import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
 
 // Mocks
-import { storylistTeaserRepresentativeMock } from '@mocks/storylist.mock';
+import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
 
 // Modelos
-import { StorylistTeaser } from '@models/storylist.model';
+import { createCollectionTeaser, type CollectionTeaser } from '@models/collection.model';
 
-// Función auxiliar para generar múltiples teasers a partir del mock existente
-function generateTeaserMocks(count: number): StorylistTeaser[] {
-	return Array.from({ length: count }, (_, index) => ({
-		...storylistTeaserRepresentativeMock,
-		_id: `storylist-mock-${index + 1}`,
-		title: `Colección ${index + 1}`,
-		slug: `coleccion-${index + 1}`,
-	}));
+// El canon trae dos colecciones y el deck necesita más para ejercitar la grilla y los skeletons. Las
+// adicionales pasan por la factory, no por spread: el agregado está congelado y armarlo a mano
+// saltearía las invariantes que la factory existe para hacer cumplir.
+function teasersOfLength(count: number): CollectionTeaser[] {
+	const [base] = onoffCollectionTeasersMock;
+	return Array.from({ length: count }, (_, index) =>
+		createCollectionTeaser({
+			_id: `${base._id}-${index + 1}`,
+			slug: `${base.slug}-${index + 1}`,
+			title: `Colección ${index + 1}`,
+			description: base.description,
+			imagery: base.imagery,
+			tags: base.tags,
+			config: base.config,
+			mediaSources: base.mediaSources,
+			count: base.count,
+		}),
+	);
 }
 
 describe('CollectionTeasersDeck', () => {
-	// Providers necesarios para las pruebas
 	const defaultProviders = [provideRouter([])];
+	const defaultImports = [CollectionTeasersDeck, CollectionTeaserCard, CollectionTeaserCardSkeletonComponent];
 
-	// Imports por defecto incluyendo los componentes reales
-	const defaultImports = [CollectionTeasersDeck, CollectionTeaser, CollectionTeaserSkeletonComponent];
-
-	// Pruebas de renderizado básico
 	describe('Renderizado del componente', () => {
-		it('should render the component', async () => {
-			const { container } = await render(CollectionTeasersDeck, {
-				inputs: { teasers: [] },
-				providers: defaultProviders,
-				componentImports: defaultImports,
-			});
-			expect(container).toBeTruthy();
-		});
-
 		it('should display the section title', async () => {
 			await render(CollectionTeasersDeck, {
 				inputs: { teasers: [] },
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});
-			const title = screen.getByRole('heading', { name: 'Colecciones' });
-			expect(title).toBeInTheDocument();
+
+			expect(screen.getByRole('heading', { name: 'Colecciones', level: 2 })).toBeInTheDocument();
 		});
 
-		it('should display the section description', async () => {
+		it('should describe the section in terms of literary works', async () => {
 			await render(CollectionTeasersDeck, {
 				inputs: { teasers: [] },
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});
-			const description = screen.getByText('Historias agrupadas por temas, estilos y universos en común');
-			expect(description).toBeInTheDocument();
+
+			expect(screen.getByText('Obras agrupadas por temas, estilos y universos en común')).toBeInTheDocument();
 		});
 	});
 
-	// Pruebas del bloque defer
 	describe('Comportamiento del bloque defer', () => {
-		it('should render skeletons in loading state', async () => {
+		it('should render one skeleton per grid slot while loading', async () => {
 			const { fixture } = await render(CollectionTeasersDeck, {
-				inputs: { teasers: generateTeaserMocks(4) },
+				inputs: { teasers: teasersOfLength(4) },
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});
 
-			const deferBlockFixture = (await fixture.getDeferBlocks())[0];
+			const [deferBlockFixture] = await fixture.getDeferBlocks();
 			await deferBlockFixture.render(DeferBlockState.Loading);
 
-			// Verificar que se renderizan 6 skeletons buscando por los artículos internos
-			const skeletonArticles = screen.getAllByRole('article');
-			expect(skeletonArticles.length).toBe(4);
+			expect(screen.getAllByRole('article')).toHaveLength(4);
 		});
 
-		it('should render collection teasers when data is available', async () => {
-			const teasers = generateTeaserMocks(3);
+		it('should render one card per teaser when data is available', async () => {
 			const { fixture } = await render(CollectionTeasersDeck, {
-				inputs: { teasers },
+				inputs: { teasers: teasersOfLength(3) },
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});
 
-			const deferBlockFixture = (await fixture.getDeferBlocks())[0];
+			const [deferBlockFixture] = await fixture.getDeferBlocks();
 			await deferBlockFixture.render(DeferBlockState.Complete);
 
-			// Verificar que se renderizan las tarjetas por sus links
-			const links = screen.getAllByRole('link');
-			expect(links.length).toBe(3);
+			expect(screen.getAllByRole('link')).toHaveLength(3);
+			expect(screen.getByText('Colección 1')).toBeInTheDocument();
+			expect(screen.getByText('Colección 3')).toBeInTheDocument();
+		});
+
+		it('should link each card to the collection page', async () => {
+			const [teaser] = teasersOfLength(1);
+			const { fixture } = await render(CollectionTeasersDeck, {
+				inputs: { teasers: [teaser] },
+				providers: defaultProviders,
+				componentImports: defaultImports,
+			});
+
+			const [deferBlockFixture] = await fixture.getDeferBlocks();
+			await deferBlockFixture.render(DeferBlockState.Complete);
+
+			expect(screen.getByRole('link')).toHaveAttribute('href', `/collection/${teaser.slug}`);
 		});
 
 		it('should transition from loading to complete state', async () => {
-			const teasers = generateTeaserMocks(4);
 			const { fixture } = await render(CollectionTeasersDeck, {
-				inputs: { teasers },
+				inputs: { teasers: teasersOfLength(4) },
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});
 
-			const deferBlockFixture = (await fixture.getDeferBlocks())[0];
+			const [deferBlockFixture] = await fixture.getDeferBlocks();
 
-			// Primero verificar el estado de carga
 			await deferBlockFixture.render(DeferBlockState.Loading);
-			const articles = screen.getAllByRole('article');
-			expect(articles.length).toBe(4);
+			expect(screen.getAllByRole('article')).toHaveLength(4);
 
-			// Luego verificar el estado completo
 			await deferBlockFixture.render(DeferBlockState.Complete);
-			const links = screen.getAllByRole('link');
-			expect(links.length).toBe(4);
-		});
-
-		it('should display the correct titles in collection teasers', async () => {
-			const teasers = generateTeaserMocks(3);
-			const { fixture } = await render(CollectionTeasersDeck, {
-				inputs: { teasers },
-				providers: defaultProviders,
-				componentImports: defaultImports,
-			});
-
-			const deferBlockFixture = (await fixture.getDeferBlocks())[0];
-			await deferBlockFixture.render(DeferBlockState.Complete);
-
-			// Verificar que los títulos se muestran correctamente
-			expect(screen.getByText('Colección 1')).toBeInTheDocument();
-			expect(screen.getByText('Colección 2')).toBeInTheDocument();
-			expect(screen.getByText('Colección 3')).toBeInTheDocument();
+			expect(screen.getAllByRole('link')).toHaveLength(4);
 		});
 	});
 
-	// Pruebas de inputs
 	describe('Inputs del componente', () => {
-		it('should accept an empty array of teasers', async () => {
-			const { fixture } = await render(CollectionTeasersDeck, {
-				inputs: { teasers: [] },
-				providers: defaultProviders,
-				componentImports: defaultImports,
-			});
-
-			expect(fixture.componentInstance.teasers()).toEqual([]);
-		});
-
-		it('should receive the correct number of teasers', async () => {
-			const teasers = generateTeaserMocks(5);
-			const { fixture } = await render(CollectionTeasersDeck, {
-				inputs: { teasers },
-				providers: defaultProviders,
-				componentImports: defaultImports,
-			});
-
-			expect(fixture.componentInstance.teasers()).toHaveLength(5);
-		});
-
 		it('should have default empty array when no teasers provided', async () => {
 			const { fixture } = await render(CollectionTeasersDeck, {
 				providers: defaultProviders,
@@ -166,47 +129,15 @@ describe('CollectionTeasersDeck', () => {
 
 			expect(fixture.componentInstance.teasers()).toEqual([]);
 		});
-	});
 
-	// Pruebas de accesibilidad
-	describe('Accesibilidad', () => {
-		it('should have a heading element for the section title', async () => {
-			await render(CollectionTeasersDeck, {
-				inputs: { teasers: [] },
-				providers: defaultProviders,
-				componentImports: defaultImports,
-			});
-
-			const heading = screen.getByRole('heading', { level: 2 });
-			expect(heading).toBeInTheDocument();
-			expect(heading).toHaveTextContent('Colecciones');
-		});
-
-		it('should display description text', async () => {
-			await render(CollectionTeasersDeck, {
-				inputs: { teasers: [] },
-				providers: defaultProviders,
-				componentImports: defaultImports,
-			});
-
-			const description = screen.getByText('Historias agrupadas por temas, estilos y universos en común');
-			expect(description).toBeInTheDocument();
-		});
-
-		it('should render links for each teaser in complete state', async () => {
-			const teasers = generateTeaserMocks(2);
+		it('should accept the collections of the corpus', async () => {
 			const { fixture } = await render(CollectionTeasersDeck, {
-				inputs: { teasers },
+				inputs: { teasers: onoffCollectionTeasersMock },
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});
 
-			const deferBlockFixture = (await fixture.getDeferBlocks())[0];
-			await deferBlockFixture.render(DeferBlockState.Complete);
-
-			// Verificar que existen los links de navegación
-			const links = screen.getAllByRole('link');
-			expect(links.length).toBe(2);
+			expect(fixture.componentInstance.teasers()).toHaveLength(onoffCollectionTeasersMock.length);
 		});
 	});
 });

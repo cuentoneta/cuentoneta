@@ -6,6 +6,6 @@ export const resourceMock: Resource = {
 	resourceType: {
 		slug: 'recurso-original',
 		title: 'Recurso Original',
-		shortDescription: 'Recurso original de este contenido',
+		description: 'Recurso original de este contenido',
 	},
 };

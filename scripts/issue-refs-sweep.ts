@@ -40,7 +40,9 @@ function tracked(): ReturnType<typeof collectTrackedRefs> {
 		mentions: findIssueMentions(readFileSync(file, 'utf8')),
 	}));
 
-	const codeFiles = execFileSync('git', ['ls-files', 'src', 'cms'], { encoding: 'utf8' }).split('\n').filter(Boolean);
+	const codeFiles = execFileSync('git', ['ls-files', 'src', 'cms', 'scripts'], { encoding: 'utf8' })
+		.split('\n')
+		.filter(Boolean);
 	const code = codeFiles.map((path) => ({
 		path,
 		refs: findExemptIssueRefs(path, readFileSync(path, 'utf8')).map((ref) => ({

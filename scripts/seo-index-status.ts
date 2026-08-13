@@ -40,6 +40,7 @@ import {
 	mergeSnapshot,
 	parseSitemapLocs,
 	storedRows,
+	toSnapshot,
 	type ClassifiedRow,
 	type InspectionSnapshot,
 	type SnapshotStore,
@@ -121,18 +122,7 @@ function buildInspector(): Inspector {
 				// LOCALIZADO: sin fijarlo, el texto cambia y los diffs entre corridas se ensucian.
 				requestBody: { siteUrl: SITE_URL, inspectionUrl: url, languageCode: 'en' },
 			});
-			const status = data.inspectionResult?.indexStatusResult;
-			return {
-				url,
-				verdict: status?.verdict ?? undefined,
-				coverageState: status?.coverageState ?? undefined,
-				lastCrawlTime: status?.lastCrawlTime ?? undefined,
-				pageFetchState: status?.pageFetchState ?? undefined,
-				robotsTxtState: status?.robotsTxtState ?? undefined,
-				indexingState: status?.indexingState ?? undefined,
-				googleCanonical: status?.googleCanonical ?? undefined,
-				userCanonical: status?.userCanonical ?? undefined,
-			};
+			return toSnapshot(url, data.inspectionResult?.indexStatusResult ?? undefined);
 		} catch (error) {
 			return { url, error: messageOf(error) };
 		}
