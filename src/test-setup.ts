@@ -6,6 +6,7 @@ import { getTestBed } from '@angular/core/testing';
 import { BrowserTestingModule, platformBrowserTesting } from '@angular/platform-browser/testing';
 
 import { installIntersectionObserverStub } from '@testing/intersection-observer.stub';
+import { installResizeObserverStub } from '@testing/resize-observer.stub';
 
 // Angular 22 corre el TestBed en modo zoneless por defecto cuando zone.js no está presente,
 // por eso no se provee `provideZonelessChangeDetection()` explícitamente. El ErrorHandler relanza
@@ -32,3 +33,6 @@ getTestBed().initTestEnvironment([BrowserTestingModule, ZonelessTestModule], pla
 // jsdom/happy-dom no implementan IntersectionObserver: se instala un stub global para todos los tests.
 // Los specs que necesitan controlar el observer (simular overflow) reutilizan los helpers del mismo stub.
 installIntersectionObserverStub();
+
+// Ídem ResizeObserver: lo usan las directivas que reaccionan al alto o al ancho real de su host.
+installResizeObserverStub();
