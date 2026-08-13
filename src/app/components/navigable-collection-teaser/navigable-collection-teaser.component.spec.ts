@@ -2,10 +2,16 @@ import { render, screen } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
 
 import { NavigableCollectionTeaserComponent } from './navigable-collection-teaser.component';
-import { storylistTeaserRepresentativeMock } from '@mocks/storylist.mock';
+import { geometriasDelDesveloCollectionTeaserMock } from '@mocks/onoff-collections.mock';
+import { createCollectionTeaser } from '@models/collection.model';
 
 describe('NavigableCollectionTeaserComponent', () => {
-	const collection = storylistTeaserRepresentativeMock;
+	const collection = geometriasDelDesveloCollectionTeaserMock;
+	// Las variantes pasan por la factory y no por spread: el teaser tiene invariantes propias (título no
+	// vacío, al menos una obra) y un doble armado a mano se las saltearía.
+	const variantOf = (overrides: Partial<Parameters<typeof createCollectionTeaser>[0]>) =>
+		createCollectionTeaser({ ...collection, slug: collection.slug, ...overrides });
+
 	const setup = (teaser = collection) =>
 		render(NavigableCollectionTeaserComponent, { inputs: { collection: teaser }, providers: [provideRouter([])] });
 
@@ -20,17 +26,17 @@ describe('NavigableCollectionTeaserComponent', () => {
 	});
 
 	it('should not render a category tag when the collection has no tags', async () => {
-		await setup({ ...collection, tags: [] });
+		await setup(variantOf({ tags: [] }));
 		expect(screen.queryByText(collection.tags[0].title)).not.toBeInTheDocument();
 	});
 
 	it('should render the pluralized story count', async () => {
-		await setup({ ...collection, count: 5 });
+		await setup(variantOf({ count: 5 }));
 		expect(screen.getByText('5 historias')).toBeInTheDocument();
 	});
 
 	it('should render the singular story count', async () => {
-		await setup({ ...collection, count: 1 });
+		await setup(variantOf({ count: 1 }));
 		expect(screen.getByText('1 historia')).toBeInTheDocument();
 	});
 

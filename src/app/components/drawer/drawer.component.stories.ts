@@ -5,9 +5,8 @@ import { DrawerHeaderDirective } from './drawer-header.directive';
 import { DrawerFooterDirective } from './drawer-footer.directive';
 import { CoverImageComponent } from '@components/cover-image/cover-image.component';
 import { TagComponent } from '@components/tag/tag.component';
-import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
 import { NavigableCollectionTeaserComponent } from '@components/navigable-collection-teaser/navigable-collection-teaser.component';
-import { storylistMock, storylistTeaserRepresentativeMock, storylistTeaserSampleMock } from '@mocks/storylist.mock';
+import { geometriasDelDesveloCollectionMock, onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
 
 type DrawerArgs = DrawerComponent & { direction: DrawerDirection };
 
@@ -120,35 +119,28 @@ export const ComposicionCollectionPage: Story = {
 	name: 'Composición CollectionPage',
 	decorators: [
 		moduleMetadata({
-			imports: [CoverImageComponent, TagComponent, PortableTextParserComponent, NavigableCollectionTeaserComponent],
+			imports: [CoverImageComponent, TagComponent, NavigableCollectionTeaserComponent],
 		}),
 	],
 	render: (args) => ({
 		props: {
 			...args,
-			collection: storylistMock,
-			suggested: [storylistTeaserRepresentativeMock, storylistTeaserSampleMock],
+			collection: geometriasDelDesveloCollectionMock,
+			suggested: onoffCollectionTeasersMock,
 		},
 		template: `
 			${openButton}
-			<cuentoneta-drawer #drawer>
+			<cuentoneta-drawer [title]="collection.title" #drawer>
 				<div class="flex flex-col gap-4">
 					@if (collection.imagery.kind === 'representative') {
 						<cuentoneta-cover-image [src]="collection.imagery.image" />
 					}
-					<div class="flex flex-col items-start gap-2">
-						<p class="font-inter text-xl font-bold text-neutral-900">{{ collection.title }}</p>
-						@if (collection.tags[0]; as tag) {
-							<cuentoneta-tag [label]="tag.title" variant="filled" />
-						}
-					</div>
+					@if (collection.tags[0]; as tag) {
+						<cuentoneta-tag [label]="tag.title" variant="filled" class="self-start" />
+					}
 				</div>
-				<cuentoneta-portable-text-parser
-					[paragraphs]="collection.description"
-					classes="font-inter text-sm font-medium text-neutral-700"
-					class="flex flex-col gap-2"
-				/>
-				<div class="h-px w-full bg-neutral-200" role="separator"></div>
+				<div [innerHTML]="collection.description" class="flex flex-col gap-2 font-inter text-sm font-medium text-neutral-700"></div>
+				<div class="h-px w-full bg-neutral-200" aria-hidden="true"></div>
 				<div class="flex flex-col gap-4">
 					<h2 class="font-inter text-base font-bold text-neutral-900">Otras colecciones sugeridas</h2>
 					@for (item of suggested; track item.slug) {
