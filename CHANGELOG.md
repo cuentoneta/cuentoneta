@@ -16,6 +16,68 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.10.0 (2026-08-13)
+
+La versión 2.10.0 es la más grande de la serie 2.x, y tiene un solo hilo conductor: **el modelo de dominio nuevo deja de ser un plan y pasa a existir de punta a punta**, con el contenido real traspasado en los tres datasets.
+
+`Collection` nace completa —modelo, GROQ, repository con su ACL, services con errores tipados, controller con validación y provider— y estrena document type propio en el Studio (#1828, #1829, #1830, #1831, #1832, #2137). No es `Storylist` renombrada: nace en paralelo, con la forma correcta desde el principio —sin pestañas, la descripción en Markdown y agregando obras literarias en vez de historias— porque Sanity no admite patchear el tipo de un documento y, si de todos modos hay que crear documentos nuevos, conviene crearlos ya bien. El contenido cargado se traspasa con migraciones idempotentes y reversibles, que preservan la integridad referencial del origen en vez de sintetizarla (#2053).
+
+En paralelo avanza la **salida de Portable Text**. El corpus de cuentos migra a obras literarias en Markdown, publicadas y en borrador (#2128, #2133), la biografía de autor deja el formato viejo (#2051) y dos campos renombran su nombre de wire (#2066). El corte que faltaba —eliminar la infraestructura de Portable Text— queda para cuando `story` y `storylist` se den de baja como document types, que es su precondición real.
+
+El tercer frente es de **verificación**. El corpus de mocks de Onoff deja de escribirse a mano y pasa a **generarse evaluando las queries GROQ reales con `groq-js`** sobre documentos curados (#2155), con un gate de frescura que corta si el generado y su fuente divergen. Alrededor de eso se ordena el corpus entero: capa de documentos (#2143), carpetas por entidad (#2149, #2150), referencias de imagen puenteadas a assets locales (#2159), campañas derivadas de su propia capa (#2160) y el cruce del dominio contra el ACL sobre el raw (#2158, #2171). El resultado es que un cambio de mapeo ya no puede pasar desapercibido porque el mock y el código se movieron juntos.
+
+Del lado de **herramientas**, Angular sube a 22.1.1 y Nx a 23.1.1 (#2142). Rolldown pasa a ser el optimizador por defecto y recorta el bundle inicial un 23,6 % en crudo y un 29,9 % en transferencia; en el mismo movimiento el build y el dev server salen del envoltorio deprecado de la era webpack. Se incorporan las skills de estilo y auditoría de comentarios (#2164), se corre la primera auditoría sobre el código existente (#2170) y `scripts/` entra bajo los mismos controles de lint y de citas de issues que `src/` (#2169).
+
+### Cambios completos
+
+Ver el changelog completo en [2.10.0](https://github.com/cuentoneta/cuentoneta/releases/tag/2.10.0)
+
+### Cambios
+
+#### Dominio Collection
+
+- [#1828] - Crea el modelo de dominio Collection, rename-friendly hacia LiteraryWork.
+- [#1829] - Suma la query GROQ y el repository de Collection con su ACL.
+- [#1830] - Suma los services de lectura de Collection con errores tipados.
+- [#1831] - Suma el controller Hono de GET /collection/:slug con validación zod.
+- [#1832] - Suma el provider CollectionApi con su interfaz, implementación HTTP y doble.
+- [#2137] - Crea el document type Collection en el Studio.
+- [#2053] - Traspasa el contenido de Storylist a Collection en los tres datasets.
+- [#2141] - Migra el input de CollectionTeaserCard al tipo de dominio Collection.
+
+#### Salida de Portable Text
+
+- [#2128] - Migra el contenido de Story a LiteraryWork en Markdown.
+- [#2133] - Migra los cuentos en borrador a obras en borrador.
+- [#2051] - Migra la biografía de autor de blockContent a Markdown.
+- [#2066] - Renombra shortDescription a description en resourceType y tag.
+
+#### Corpus y verificación
+
+- [#2155] - Genera las fixtures raw del corpus evaluando las queries reales con groq-js.
+- [#2143] - Suma la capa de documentos al corpus de Onoff.
+- [#2149] - Agrupa el corpus de mocks de Onoff en carpetas por entidad.
+- [#2150] - Renombra la fixture cruda de storylist, que ocupaba el nombre de Collection.
+- [#2158] - Cruza el corpus de dominio contra el mapeo del ACL sobre el raw.
+- [#2159] - Puentea las referencias de imagen del corpus a los assets locales.
+- [#2160] - Genera el raw de las campañas de contenido desde su capa de documentos.
+- [#2171] - Consume la fixture generada de landing page en el spec del mapper.
+- [#2175] - Agrupa el generador del corpus en su carpeta y documenta por qué está partido.
+
+#### Tooling
+
+- [#2142] - Actualiza Angular a 22.1.1 y Nx a 23.1.1, con Rolldown por defecto.
+- [#2164] - Incorpora las skills aposd-comments-style y aposd-comment-audit al proyecto.
+- [#2170] - Audita los comentarios existentes de src/ y cms/.
+- [#2169] - Trae scripts/ bajo los mismos controles de lint y de citas de issues que src/.
+- [#2172] - Codifica el criterio de no declarar cantidades en los comentarios.
+
+#### Interfaz
+
+- [#2084] - Da de baja BioSummaryCard y el pie de la página de obra.
+- [#2180] - Restaura el renderizado del carousel en Storybook y su fidelidad responsive.
+- [#2148] - Corrige el rojo de e2e que dejaba el sync nocturno de datasets al revertir la biografía de autor.
+
 ## Versión 2.9.2 (2026-08-04)
 
 La versión 2.9.2 es un patch de dos frentes independientes.
