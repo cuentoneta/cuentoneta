@@ -1,4 +1,3 @@
-// Crea un tipo basado en las claves del objeto
 export type Viewport = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 export const VIEWPORT_WIDTHS_NUMERIC: Record<Viewport, number> = {
