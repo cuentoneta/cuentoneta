@@ -1,16 +1,20 @@
 import {
 	classify,
+	createPacer,
 	CRAWL_STATE,
+	DEFAULT_SAMPLE_SIZE,
 	diffCoverageStates,
 	diffStates,
 	formatReport,
 	groupByCoverageState,
 	mergeSnapshot,
+	parseSampleSize,
 	parseSitemapLocs,
 	storedRows,
 	summarize,
 	toSnapshot,
 	type ClassifiedRow,
+	type PacerClock,
 	type InspectionSnapshot,
 } from './seo-index-status.helpers';
 
@@ -381,5 +385,90 @@ describe('toSnapshot', () => {
 
 	it('tolera un resultado ausente', () => {
 		expect(toSnapshot('https://x/a', undefined)).toEqual({ url: 'https://x/a' });
+	});
+});
+
+describe('parseSampleSize', () => {
+	it('usa el valor por defecto cuando no se pasó la bandera', () => {
+		expect(parseSampleSize(undefined)).toBe(DEFAULT_SAMPLE_SIZE);
+	});
+
+	it('acepta un entero positivo', () => {
+		expect(parseSampleSize('50')).toBe(50);
+	});
+
+	// Sin esto, `slice(0, NaN)` devuelve cero URLs y la corrida sale en verde reportando "0 URL(s)",
+	// indistinguible de un sitio sin nada que inspeccionar.
+	it('rechaza un valor no numérico en vez de degradarse a cero URLs', () => {
+		expect(() => parseSampleSize('abc')).toThrow('--sample espera un entero positivo');
+	});
+
+	it.each(['0', '-5', '2.5'])('rechaza "%s"', (raw) => {
+		expect(() => parseSampleSize(raw)).toThrow('--sample espera un entero positivo');
+	});
+});
+
+describe('createPacer', () => {
+	function fakeClock(): { clock: PacerClock; slept: number[] } {
+		const slept: number[] = [];
+		let current = 1000;
+		return {
+			slept,
+			clock: {
+				now: () => current,
+				sleep: async (ms) => {
+					slept.push(ms);
+					current += ms;
+				},
+			},
+		};
+	}
+
+	it('no espera en el primer despacho', async () => {
+		const { clock, slept } = fakeClock();
+
+		await createPacer(500, clock)();
+
+		expect(slept).toEqual([0]);
+	});
+
+	it('espacia los despachos sucesivos por el intervalo pedido', async () => {
+		const { clock, slept } = fakeClock();
+		const pace = createPacer(500, clock);
+
+		await pace();
+		await pace();
+		await pace();
+
+		expect(slept).toEqual([0, 500, 500]);
+	});
+
+	// La invariante que sostiene el respeto de la cuota: dos workers que piden ranura antes de que
+	// el primero termine de esperar deben recibir ranuras distintas, no la misma.
+	it('reserva la ranura de forma síncrona, así dos llamadas concurrentes no comparten una', async () => {
+		const { clock, slept } = fakeClock();
+		const pace = createPacer(500, clock);
+
+		await Promise.all([pace(), pace()]);
+
+		expect(slept).toEqual([0, 500]);
+	});
+
+	it('no acumula deuda cuando entre despachos ya pasó más que el intervalo', async () => {
+		const slept: number[] = [];
+		let current = 1000;
+		const clock: PacerClock = {
+			now: () => current,
+			sleep: async (ms) => {
+				slept.push(ms);
+			},
+		};
+		const pace = createPacer(500, clock);
+
+		await pace();
+		current += 5000;
+		await pace();
+
+		expect(slept).toEqual([0, 0]);
 	});
 });

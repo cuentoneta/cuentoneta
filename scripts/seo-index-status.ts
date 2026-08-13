@@ -35,12 +35,16 @@
  */
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { GoogleAuth } from 'google-auth-library';
-import { searchconsole } from '@googleapis/searchconsole';
+// La auth se toma del propio cliente, no de `google-auth-library` como dependencia aparte: el objeto
+// que construye cruza la frontera entre ambos paquetes, y dos instancias distintas —lo que pasa
+// apenas los rangos dejan de coincidir— el compilador las trata como tipos ajenos.
+import { auth, searchconsole } from '@googleapis/searchconsole';
 import {
 	classify,
+	createPacer,
 	formatReport,
 	mergeSnapshot,
+	parseSampleSize,
 	parseSitemapLocs,
 	storedRows,
 	toSnapshot,
@@ -55,7 +59,7 @@ const KEY_PATH = process.env['GSC_SERVICE_ACCOUNT_KEY_PATH'];
 const INLINE_KEY = process.env['GSC_SERVICE_ACCOUNT_KEY'];
 
 const URLS_FILE = argValue('--urls');
-const SAMPLE_SIZE = Number(argValue('--sample') ?? '25');
+const SAMPLE_SIZE = parseSampleSize(argValue('--sample'));
 const ALL = process.argv.includes('--all');
 const LIST_SITES = process.argv.includes('--list-sites');
 
@@ -83,17 +87,17 @@ function delay(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function buildAuth(): GoogleAuth {
+function buildAuth(): InstanceType<typeof auth.GoogleAuth> {
 	const scopes = ['https://www.googleapis.com/auth/webmasters.readonly'];
 	if (INLINE_KEY) {
 		try {
-			return new GoogleAuth({ credentials: JSON.parse(INLINE_KEY), scopes });
+			return new auth.GoogleAuth({ credentials: JSON.parse(INLINE_KEY), scopes });
 		} catch (error) {
 			throw new Error('GSC_SERVICE_ACCOUNT_KEY no contiene un JSON válido.', { cause: error });
 		}
 	}
 	// Sin keyFile, GoogleAuth cae a GOOGLE_APPLICATION_CREDENTIALS / credenciales del entorno.
-	return new GoogleAuth({ keyFile: KEY_PATH, scopes });
+	return new auth.GoogleAuth({ keyFile: KEY_PATH, scopes });
 }
 
 async function resolveUrls(): Promise<string[]> {
@@ -132,25 +136,9 @@ function buildInspector(): Inspector {
 	};
 }
 
-/**
- * Espaciado GLOBAL entre despachos, compartido por todos los workers. Un `delay` dentro de cada
- * worker no sirve: espaciaría por worker, así que N workers multiplicarían la tasa por N y se
- * excedería la cuota por minuto. El cursor `nextAt` se reserva de forma síncrona antes de esperar,
- * y por eso dos workers nunca se adjudican la misma ranura.
- */
-function createPacer(spacingMs: number): () => Promise<void> {
-	let nextAt = 0;
-	return async () => {
-		const now = Date.now();
-		const scheduled = Math.max(now, nextAt);
-		nextAt = scheduled + spacingMs;
-		await delay(scheduled - now);
-	};
-}
-
 async function inspectAll(urls: readonly string[], inspect: Inspector): Promise<ClassifiedRow[]> {
 	const rows: ClassifiedRow[] = [];
-	const pace = createPacer(DISPATCH_SPACING_MS);
+	const pace = createPacer(DISPATCH_SPACING_MS, { now: () => Date.now(), sleep: delay });
 	let next = 0;
 
 	async function worker(): Promise<void> {
@@ -171,11 +159,30 @@ async function inspectAll(urls: readonly string[], inspect: Inspector): Promise<
 	return rows;
 }
 
+/**
+ * Solo la ausencia del archivo significa "primera corrida". Un archivo ilegible se propaga en vez de
+ * degradarse a historial vacío: la corrida seguiría bien y `writeStore` sobrescribiría con lo que
+ * midió, borrando en silencio la serie acumulada, que es todo el valor de la herramienta.
+ */
 async function readStore(): Promise<SnapshotStore> {
+	let contents: string;
 	try {
-		return JSON.parse(await readFile(SNAPSHOT_FILE, 'utf8')) as SnapshotStore;
-	} catch {
-		return {}; // primera corrida: no hay historial contra el cual diffear
+		contents = await readFile(SNAPSHOT_FILE, 'utf8');
+	} catch (error) {
+		if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+			return {};
+		}
+		throw error;
+	}
+
+	try {
+		return JSON.parse(contents) as SnapshotStore;
+	} catch (error) {
+		throw new Error(
+			`${SNAPSHOT_FILE} existe pero no es JSON válido. Movelo o borralo para empezar una serie nueva; ` +
+				'sobrescribirlo perdería el historial acumulado.',
+			{ cause: error },
+		);
 	}
 }
 

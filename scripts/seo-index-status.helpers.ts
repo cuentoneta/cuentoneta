@@ -3,7 +3,7 @@
  * URL Inspection API, clasificación, resumen y diff contra una corrida anterior. Separados de
  * `seo-index-status.ts` (auth/red/paginado) para poder testearlos sin credenciales ni tocar la red.
  */
-import { parseHtml } from '../e2e/_utils/seo';
+import { locations } from '../src/testing/sitemap-xml';
 
 /**
  * Estado derivado por nosotros. NO es `coverageState`: ese campo la API lo devuelve como string
@@ -87,9 +87,8 @@ export function toSnapshot(url: string, status: InspectedFields | undefined): In
 const BLOCKING_INDEXING_STATES: readonly string[] = ['BLOCKED_BY_META_TAG', 'BLOCKED_BY_HTTP_HEADER'];
 
 export function parseSitemapLocs(xml: string): string[] {
-	return parseHtml(xml)
-		.querySelectorAll('loc')
-		.map((element) => element.text.trim())
+	return locations(xml)
+		.map((loc) => loc.trim())
 		.filter((loc) => loc.length > 0);
 }
 
@@ -144,11 +143,58 @@ export function summarize(rows: readonly ClassifiedRow[]): StateCounts {
 	return counts;
 }
 
+/**
+ * Etiqueta para una URL sobre la que Google no informó `coverageState`. La comparten el resumen y el
+ * diff: si cada uno tuviera la suya, una fila del resumen y su movimiento dejarían de nombrar lo mismo.
+ */
+const UNREPORTED_COVERAGE = '(sin coverageState)';
+
+export const DEFAULT_SAMPLE_SIZE = 25;
+
+/**
+ * Un `--sample` inválido corta la corrida en vez de degradarla. `Number('abc')` da `NaN`, y
+ * `slice(0, NaN)` devuelve cero elementos: la herramienta reportaría "0 URL(s)" y saldría en verde,
+ * indistinguible de un sitio sin nada que inspeccionar.
+ */
+export function parseSampleSize(raw: string | undefined): number {
+	if (raw === undefined) {
+		return DEFAULT_SAMPLE_SIZE;
+	}
+
+	const size = Number(raw);
+	if (!Number.isInteger(size) || size < 1) {
+		throw new Error(`--sample espera un entero positivo, y recibió "${raw}".`);
+	}
+	return size;
+}
+
+/** El reloj que usa el pacer, inyectado para poder afirmar su espaciado sin esperarlo de verdad. */
+export interface PacerClock {
+	now: () => number;
+	sleep: (ms: number) => Promise<void>;
+}
+
+/**
+ * Espaciado GLOBAL entre despachos, compartido por todos los workers. Un `delay` dentro de cada
+ * worker no sirve: espaciaría por worker, así que N workers multiplicarían la tasa por N y se
+ * excedería la cuota por minuto. El cursor `nextAt` se reserva de forma **síncrona** antes de
+ * esperar, y por eso dos workers nunca se adjudican la misma ranura.
+ */
+export function createPacer(spacingMs: number, clock: PacerClock): () => Promise<void> {
+	let nextAt = 0;
+	return async () => {
+		const now = clock.now();
+		const scheduled = Math.max(now, nextAt);
+		nextAt = scheduled + spacingMs;
+		await clock.sleep(scheduled - now);
+	};
+}
+
 /** Agrupa por el texto crudo de `coverageState`, que es lo que muestra el informe de la UI. */
 export function groupByCoverageState(rows: readonly ClassifiedRow[]): Map<string, number> {
 	const groups = new Map<string, number>();
 	for (const row of rows) {
-		const key = row.coverageState ?? '(sin coverageState)';
+		const key = row.coverageState ?? UNREPORTED_COVERAGE;
 		groups.set(key, (groups.get(key) ?? 0) + 1);
 	}
 	return groups;
@@ -227,8 +273,6 @@ export interface CoverageTransition {
 	from: string;
 	to: string;
 }
-
-const UNREPORTED_COVERAGE = '(sin coverageState)';
 
 /**
  * Movimientos de `coverageState` que NO cambian el estado derivado. Existe porque la clasificación es
