@@ -5,7 +5,6 @@
 	</p>
 
 	@if (isLoading()) {
-		<!-- Estado de carga: skeletons que reflejan el layout de dos columnas -->
 		<div class="flex items-start gap-16" aria-busy="true" data-testid="loading">
 			<section class="flex flex-1 flex-col gap-12 pt-8">
 				<cuentoneta-skeleton appearance="line" class="h-10 w-64 bg-neutral-300" />
@@ -21,7 +20,7 @@
 				</div>
 			</section>
 
-			<div class="w-px self-stretch bg-neutral-200"></div>
+			<div class="w-px self-stretch bg-neutral-200" aria-hidden="true"></div>
 
 			<aside class="flex w-[364px] shrink-0 flex-col gap-6 pt-8">
 				<div class="flex flex-col gap-4">
@@ -45,14 +44,13 @@
 		</div>
 	} @else if (collection(); as collection) {
 		<div class="flex items-start gap-16">
-			<!-- Columna izquierda: título + listado de obras -->
 			<section class="flex flex-1 flex-col gap-12 pt-8">
 				<h1 class="font-inter text-4xl leading-10 font-bold text-neutral-900">{{ collection.title }}</h1>
 
 				<div class="flex flex-col gap-9">
 					@for (literaryWork of collection.literaryWorks; track literaryWork._id; let i = $index) {
 						@if (i >= 2) {
-							<div class="h-px w-full bg-neutral-200" role="separator"></div>
+							<div class="h-px w-full bg-neutral-200" aria-hidden="true"></div>
 						}
 						<cuentoneta-literary-work-card-teaser
 							[literaryWork]="literaryWork"
@@ -70,15 +68,14 @@
 				</div>
 			</section>
 
-			<!-- Divisor vertical -->
-			<div class="w-px self-stretch bg-neutral-200" role="separator"></div>
+			<div class="w-px self-stretch bg-neutral-200" aria-hidden="true"></div>
 
-			<!-- Columna derecha: info de la colección + colecciones sugeridas -->
 			<aside class="flex w-[364px] shrink-0 flex-col gap-6 pt-8">
 				<div class="flex flex-col gap-4">
-					@if (collection.imagery.kind === 'representative') {
-						<cuentoneta-cover-image [src]="collection.imagery.image" [priority]="true" />
-					}
+					<ng-container
+						[ngTemplateOutlet]="cover"
+						[ngTemplateOutletContext]="{ $implicit: collection, priority: true }"
+					/>
 					<div class="flex flex-col items-start gap-2">
 						<p class="font-inter text-xl leading-7 font-bold text-neutral-900">{{ collection.title }}</p>
 						@if (collection.tags[0]; as tag) {
@@ -86,14 +83,14 @@
 						}
 					</div>
 					<div class="flex flex-col items-start gap-3">
-						<!-- La descripción llega como HTML ya saneado por el ACL del backend. -->
 						<div
-							[innerHTML]="collection.description"
-							#description
+							[innerHTML]="safeDescription()"
+							#descriptionClamp="cuentonetaClampOverflow"
+							cuentonetaClampOverflow
 							class="line-clamp-[8] font-inter text-sm font-medium text-neutral-700"
 							data-testid="collection-description"
 						></div>
-						@if (isDescriptionOverflowing()) {
+						@if (descriptionClamp.isOverflowing()) {
 							<button (click)="descriptionDrawer.open()" cuentoneta-button type="outline" data-testid="read-more">
 								Leer más
 							</button>
@@ -101,47 +98,61 @@
 					</div>
 				</div>
 
-				<div class="flex flex-col gap-4">
-					<h2 class="font-inter text-base leading-6 font-bold text-neutral-900">Otras colecciones sugeridas</h2>
-
-					@for (suggested of suggestedCollections(); track suggested.slug) {
-						<cuentoneta-navigable-collection-teaser [collection]="suggested" data-testid="suggested-collection" />
-					}
-				</div>
+				<ng-container [ngTemplateOutlet]="suggestions" [ngTemplateOutletContext]="{ testid: 'suggested-collection' }" />
 			</aside>
 		</div>
 
-		<!-- Drawer con la descripción completa (se abre desde "Leer más") -->
-		<cuentoneta-drawer #descriptionDrawer>
+		<cuentoneta-drawer [title]="collection.title" #descriptionDrawer>
 			<div class="flex flex-col gap-4">
-				@if (collection.imagery.kind === 'representative') {
-					<cuentoneta-cover-image [src]="collection.imagery.image" />
+				<ng-container
+					[ngTemplateOutlet]="cover"
+					[ngTemplateOutletContext]="{ $implicit: collection, priority: false }"
+				/>
+				@if (collection.tags[0]; as tag) {
+					<cuentoneta-tag [label]="tag.title" variant="filled" class="self-start" />
 				}
-				<div class="flex flex-col items-start gap-2">
-					<p class="font-inter text-xl leading-7 font-bold text-neutral-900">{{ collection.title }}</p>
-					@if (collection.tags[0]; as tag) {
-						<cuentoneta-tag [label]="tag.title" variant="filled" />
-					}
-				</div>
 			</div>
 			<div
-				[innerHTML]="collection.description"
+				[innerHTML]="safeDescription()"
 				class="flex flex-col gap-2 font-inter text-sm font-medium text-neutral-700"
 				data-testid="drawer-description"
 			></div>
-			<div class="h-px w-full bg-neutral-200" role="separator"></div>
-			<div class="flex w-full flex-col gap-4">
-				<h2 class="font-inter text-base leading-6 font-bold text-neutral-900">Otras colecciones sugeridas</h2>
-				@for (suggested of suggestedCollections(); track suggested.slug) {
-					<cuentoneta-navigable-collection-teaser [collection]="suggested" data-testid="drawer-suggested-collection" />
-				}
-			</div>
+			<div class="h-px w-full bg-neutral-200" aria-hidden="true"></div>
+			<ng-container
+				[ngTemplateOutlet]="suggestions"
+				[ngTemplateOutletContext]="{ testid: 'drawer-suggested-collection' }"
+			/>
 		</cuentoneta-drawer>
 	} @else {
-		<!-- Estado sin resultados: el slug no matcheó ninguna colección (o el fetch falló) -->
+		<!-- El slug no matcheó ninguna colección, o el fetch falló -->
 		<div class="py-16 text-center" data-testid="not-found">
 			<p class="font-inter text-lg font-bold text-neutral-900">No encontramos esta colección</p>
 			<p class="mt-2 font-inter text-sm text-neutral-600">Revisá el enlace o volvé al inicio.</p>
 		</div>
 	}
 </main>
+
+<!-- Portada de la colección: la editorial propia, o el abanico con las de sus obras cuando no tiene una. -->
+<ng-template #cover let-collection let-priority="priority">
+	@if (collection.imagery.kind === 'representative') {
+		<cuentoneta-cover-image [src]="collection.imagery.image" [priority]="priority" />
+	} @else {
+		<div
+			class="relative flex h-48 items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3"
+			data-testid="cover-fan"
+		>
+			@for (image of collection.imagery.images; track $index) {
+				<cuentoneta-cover-image [src]="image" [class]="sampleImageClasses[$index]" />
+			}
+		</div>
+	}
+</ng-template>
+
+<ng-template #suggestions let-testid="testid">
+	<div class="flex w-full flex-col gap-4">
+		<h2 class="font-inter text-base leading-6 font-bold text-neutral-900">Otras colecciones sugeridas</h2>
+		@for (suggested of suggestedCollections(); track suggested.slug) {
+			<cuentoneta-navigable-collection-teaser [collection]="suggested" [attr.data-testid]="testid" />
+		}
+	</div>
+</ng-template>
