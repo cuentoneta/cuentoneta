@@ -51,6 +51,13 @@ export const onoffLiteraryWorksWithMediaSources: LiteraryWork[] = onoffLiteraryW
 	(literaryWork) => literaryWork.mediaSources.length > 0,
 );
 
+// Obras cuyo cuerpo cita un texto ajeno al relato: es la construcción que el original marcaba con
+// alineación y que Markdown resuelve como cita, así que su tratamiento tipográfico necesita un caso
+// del canon donde afirmarse.
+export const onoffLiteraryWorksWithBlockquotes: LiteraryWork[] = onoffLiteraryWorksMock.filter((literaryWork) =>
+	literaryWork.content.some((section) => section.bodyHtml.includes('<blockquote>')),
+);
+
 // Los epígrafes sueltos, para quien necesita el shape { text, reference? } y no la obra que lo
 // contiene — los componentes que pintan HTML saneado en sus specs y stories. Se deriva del corpus
 // para no mantener una lista en paralelo que se desactualice al enriquecer otra obra.

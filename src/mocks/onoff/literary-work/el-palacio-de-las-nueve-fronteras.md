@@ -1,5 +1,13 @@
 La primera frontera no tiene nombre porque el nombre se quedó del otro lado, con los que no cruzaron. Avancé al amanecer, cuando la nieve aún no decidía si caer, y el funcionario que revisó mis papeles no levantó la vista. Escribí entonces la primera línea, que no era mía: era de un hombre que había visto caer una hora antes, en una plaza sin testigos, con un orden tan limpio que parecía ensayado.
 
+Sobre la garita, clavado con cuatro chinches y ya sin tinta en los dobleces, había un bando que nadie leía:
+
+> **POR DISPOSICIÓN DE LA NOVENA ADUANA**
+>
+> Todo viajero declarará su nombre al ingresar. El nombre declarado no acompañará al viajero: quedará archivado en esta frontera hasta su regreso. Quien no regrese, no lo reclama.
+
+Lo leí dos veces, por costumbre y por miedo, y firmé donde el funcionario señaló sin mirar.
+
 No lo conocía. Eso es lo que conviene aclarar antes de seguir: _no lo conocía, y sin embargo le debía un cuerpo_. Lo había visto desplomarse y, en el segundo exacto en que su mirada se vaciaba, supe que esa mirada quedaba a mi cargo, como un equipaje que alguien deja en un andén y nadie reclama.
 
 En la segunda frontera se hablaba una lengua que se deshacía al pronunciarla. Las palabras servían una sola vez; después se enfriaban y caían al suelo como insectos. Aprendí a economizar. Aprendí, sobre todo, que escribir allí no era nombrar las cosas sino devolverles el calor que perdían apenas dichas.

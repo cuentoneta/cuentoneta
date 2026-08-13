@@ -73,6 +73,7 @@ Un spec o una story que importa una obra concreta queda atado a ella: sus aserci
 | Una obra cualquiera                             | `onoffLiteraryWorksMock` (o `onoffRawLiteraryWorksMock` en el backend), y desestructurá la primera                   |
 | Una obra con título de sección                  | `onoffLiteraryWorksWithSectionTitles`                                                                                |
 | Una obra con epígrafes                          | `onoffLiteraryWorksWithEpigraphs` / `onoffRawLiteraryWorksWithEpigraphs`                                             |
+| Una obra que cita un texto en su cuerpo         | `onoffLiteraryWorksWithBlockquotes`                                                                                  |
 | Una obra con o sin nota editorial               | `onoffLiteraryWorksWith(out)EditorialNote` / `onoffRawLiteraryWorksWith(out)EditorialNote`                           |
 | Un texto con atribución (epígrafe o nota)       | `onoffLiteraryWorkEpigraphsMock`; en stories, `corpusAttributedTexts` + `attributedTextSelectArgType`                |
 | Una story o storylist crudas                    | `onoffRawStoriesMock`, `onoffRawStorylistsMock`, `onoffRawNavTeasersMock`                                            |
