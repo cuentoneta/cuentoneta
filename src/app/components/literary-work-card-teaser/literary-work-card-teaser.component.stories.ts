@@ -1,5 +1,4 @@
-import { applicationConfig, argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
-import { provideRouter } from '@angular/router';
+import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 
 import { LiteraryWorkCardTeaserComponent } from './literary-work-card-teaser.component';
 import {
@@ -15,11 +14,6 @@ const meta: Meta<LiteraryWorkCardTeaserComponent> = {
 	component: LiteraryWorkCardTeaserComponent,
 	title: 'Componentes V3/LiteraryWorkCardTeaser',
 	tags: ['autodocs'],
-	decorators: [
-		applicationConfig({
-			providers: [provideRouter([])],
-		}),
-	],
 	parameters: {
 		docs: {
 			canvas: { sourceState: 'shown' },

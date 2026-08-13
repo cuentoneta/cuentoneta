@@ -3,11 +3,11 @@ import '../src/styles.css';
 import '../src/assets/css/typography.css';
 
 import { applicationConfig } from '@storybook/angular-vite';
-import { provideLayout } from '../src/app/providers/layout.provider';
+import { provideStorybookPreview } from '../src/testing/storybook-preview.provider';
 
-// `LayoutService` es un token sin factory: sin este provider, todo componente que lo inyecte cae en
-// NG0201. La convención completa está en `.claude/references/testing.md`.
-export const decorators = [applicationConfig({ providers: [provideLayout()] })];
+// El set y su porqué viven en el módulo importado, que además un spec puede montar.
+// La convención de qué va acá y qué en cada story está en `.claude/references/testing.md`.
+export const decorators = [applicationConfig({ providers: [provideStorybookPreview()] })];
 
 export const tags = ['autodocs'];
 

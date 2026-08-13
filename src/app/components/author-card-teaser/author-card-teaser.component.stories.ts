@@ -1,12 +1,4 @@
-import {
-	applicationConfig,
-	argsToTemplate,
-	componentWrapperDecorator,
-	Meta,
-	moduleMetadata,
-	StoryObj,
-} from '@storybook/angular-vite';
-import { provideRouter } from '@angular/router';
+import { argsToTemplate, componentWrapperDecorator, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
 
 import { AuthorCardTeaserComponent } from './author-card-teaser.component';
 import { AuthorCardTeaserSkeletonComponent } from './author-card-teaser-skeleton.component';
@@ -21,11 +13,6 @@ const manyTags = onoffTagsMock.slice(0, 4);
 const meta: Meta<AuthorCardTeaserComponent> = {
 	component: AuthorCardTeaserComponent,
 	title: 'Componentes V3/AuthorCardTeaser',
-	decorators: [
-		applicationConfig({
-			providers: [provideRouter([])],
-		}),
-	],
 	parameters: {
 		docs: {
 			canvas: {
