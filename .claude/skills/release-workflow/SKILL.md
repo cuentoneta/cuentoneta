@@ -33,7 +33,17 @@ Ejemplo: `/release-workflow https://github.com/cuentoneta/cuentoneta/issues/<id>
 1. `gh issue view <issue-url> --json number,title,milestone` → número, título y **versión target** (del `milestone.title`).
 2. **Verificar el milestone (criterio de aceptación):** `gh issue list --milestone "<versión>" --state open`. No debe quedar ningún issue abierto **salvo el de release**. Si quedan otros, reportarlos y pausar — el release no está listo.
 3. **Rama:** `git checkout develop && git pull --ff-only`, luego `git checkout -b feat/<number>-<kebab>` (convención de `CLAUDE.md`).
-4. **Detectar migraciones de Sanity pendientes:** listar `cms/migrations/*/`. Para cada una, evaluar (por el issue que la introdujo y su commit) si ya se corrió contra producción. Las migraciones **mutan datos de producción**, así que **nunca** se corren automáticamente: se listan como **paso manual del usuario** (ver Fase 4). Si el usuario ya confirmó que una se ejecutó, anotarlo.
+4. **Detectar y clasificar las migraciones de Sanity pendientes:** listar `cms/migrations/*/`. Para cada una, evaluar (por el issue que la introdujo y su commit) si ya se corrió contra producción. Las migraciones **mutan datos de producción**, así que **nunca** se corren automáticamente: se listan como **paso manual del usuario** (ver Fase 4). Si el usuario ya confirmó que una se ejecutó, anotarlo.
+
+   **La clasificación no es opcional, porque de ella depende cuándo puede correr** (criterio completo en [`sanity-migrations.md`](../../references/sanity-migrations.md) → "Orden de despliegue"):
+
+   - **Independiente del código** — puebla un campo que nadie lee todavía, purga huérfanos, corrige valores sin cambiar su forma. El orden respecto del deploy es indiferente.
+   - **Acoplada al código** — cambia el nombre de un campo o la **forma de su valor**. Ninguna de las dos secuencias simples es segura: migrar antes deja el código viejo con el dato nuevo, y desplegar antes deja el código nuevo con el dato viejo.
+
+   El docblock de la propia migración suele declarar su acoplamiento y su orden de despliegue. **Si contradice a este skill, gana el docblock:** conoce el acoplamiento concreto, y este documento solo puede generalizar.
+
+   Registrar la clase de cada una en `workspace/RELEASE.md`, junto a su estado por dataset.
+
 5. **Chequear versiones en documentación:** contrastar `docs/` (p. ej. `DEVELOPMENT_GUIDE.md`) contra `package.json` (`engines.node`, `packageManager`) y los saltos de versión mayor de la ventana. Solo requiere edición si hay un salto documentable (no por bumps minor/patch de Dependabot).
 6. **Reunir el contenido del CHANGELOG:** los issues cerrados del milestone + `git log --oneline <tag-anterior>..develop` para confirmar qué PRs mergearon desde el último tag. Incluir issues sin milestone que hayan shippeado en la ventana (hijos de epics); excluir los que pertenecen a un milestone futuro.
 7. Escribir `workspace/RELEASE.md` con: versión target, estado del milestone, migraciones de Sanity (pendientes / ya corridas), delta de documentación, y el **borrador de la entrada de CHANGELOG** (prosa + cambios agrupados por tema, replicando el formato de la sección anterior en `CHANGELOG.md`).
@@ -111,12 +121,8 @@ Ramificación tras la respuesta:
 
    ```
    Pasos manuales para completar la release:
-   1. Correr las migraciones de Sanity pendientes contra producción (si aplica):
-        cd cms
-        pnpm exec sanity migration run <nombre> --project <id> --dataset production          # dry-run
-        pnpm exec sanity migration run <nombre> --project <id> --dataset production --no-dry-run
-   2. Mergear este PR a `develop` (el issue de release debe tener label `release`).
-   3. Tras el merge, el workflow `prepare-release-pr` crea/actualiza el PR `develop → master`
+   1. Mergear este PR a `develop` (el issue de release debe tener label `release`).
+   2. Tras el merge, el workflow `prepare-release-pr` crea/actualiza el PR `develop → master`
       con los pasos manuales y dispara `ci.yml` sobre `develop` (el PR no gatilla checks por sí
       mismo por la anti-recursión del `GITHUB_TOKEN`; la señal de CI está en la corrida sobre
       `develop`). Revisarlo y mergearlo a `master`
@@ -124,11 +130,21 @@ Ramificación tras la respuesta:
       El deploy de la app lo cubre Vercel por integración Git nativa.
       Si el milestone no estaba completo, el Action hace skip con warning; re-disparar
       con workflow_dispatch + force si corresponde.
+   3. Correr las migraciones de Sanity pendientes contra producción, en el momento que
+      corresponda a su clase (ver Fase 1):
+        pnpm -C cms exec sanity migration run <nombre> --project <id> --dataset production
+        pnpm -C cms exec sanity migration run <nombre> --project <id> --dataset production --no-dry-run --no-confirm
+      - Independiente del código: en cualquier momento de esta secuencia.
+      - Acoplada al código: NO hay orden simple seguro. Con un lector tolerante ya
+        desplegado, corre acá. Sin él, la ventana rota existe igual y hay que elegir
+        cuál asumir — decidirlo explícitamente y verificar apenas termina, en vez de
+        descubrirla por un reporte.
    4. Verificar post-release: workflow Release verde (jobs `release` y `deploy-studio`),
-      Release <x> publicado, Studio con el schema nuevo, app en producción sin regresiones.
+      Release <x> publicado, Studio con el schema nuevo, app en producción sin regresiones,
+      y las superficies que leen lo migrado sirviendo con la forma nueva.
    ```
 
-   Omitir el paso 1 si no hay migraciones pendientes o el usuario ya las corrió.
+   Omitir el paso 3 si no hay migraciones pendientes o el usuario ya las corrió.
 
 4. Presentar el resumen final (versión, rama, PR, commits, resultado de la verificación).
 
