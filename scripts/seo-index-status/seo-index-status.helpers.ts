@@ -3,7 +3,7 @@
  * URL Inspection API, clasificación, resumen y diff contra una corrida anterior. Separados de
  * `seo-index-status.ts` (auth/red/paginado) para poder testearlos sin credenciales ni tocar la red.
  */
-import { locations } from '../src/testing/sitemap-xml';
+import { locations } from '../../src/testing/sitemap-xml';
 
 /**
  * Estado derivado por nosotros. NO es `coverageState`: ese campo la API lo devuelve como string
