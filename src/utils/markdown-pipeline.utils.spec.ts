@@ -9,6 +9,20 @@ describe('markdownToSanitizedHtml', () => {
 		expect(html).toContain('<p>Un párrafo con <strong>negrita</strong>.</p>');
 	});
 
+	// La cita es lo que reexpresa un pasaje que el original marcaba con alineación, que Markdown no
+	// tiene. Si alguien acotara la allow-list y `blockquote` cayera, ese pasaje se descartaría al
+	// renderizar y la obra quedaría peor que sin la marca.
+	it('preserves blockquotes and emphasis', () => {
+		const html = markdownToSanitizedHtml(
+			createMarkdown('> **UN AVISO**\n>\n> El cuerpo del aviso.\n\nUn beso de tu\n\n*José*'),
+		);
+
+		expect(html).toContain('<blockquote>');
+		expect(html).toContain('<p><strong>UN AVISO</strong></p>');
+		expect(html).toContain('<p>El cuerpo del aviso.</p>');
+		expect(html).toContain('<p><em>José</em></p>');
+	});
+
 	// Batería XSS: cada payload mezcla prosa benigna (así la salida no es vacía y no lanza por el
 	// invariante de SanitizedHtml) con un constructo peligroso que la allow-list debe neutralizar.
 	// `forbidden` reconoce el constructo peligroso *como tag o atributo*, no como texto: una obra
