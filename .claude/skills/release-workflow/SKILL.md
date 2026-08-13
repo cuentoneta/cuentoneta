@@ -30,7 +30,7 @@ Ejemplo: `/release-workflow https://github.com/cuentoneta/cuentoneta/issues/<id>
 
 **Propósito:** reunir todo lo necesario para el release y detectar pasos manuales, sin commitear todavía.
 
-1. `gh issue view <issue-url> --json number,title,milestone` → número, título y **versión target** (del `milestone.title`).
+1. `gh issue view <issue-url> --json number,title,milestone` → número, título y **versión target** (del `milestone.title`). Retener también `milestone.number`: es el identificador con el que la Fase 4 actualiza la descripción del milestone, y no coincide con el número del issue ni con la versión.
 2. **Verificar el milestone (criterio de aceptación):** `gh issue list --milestone "<versión>" --state open`. No debe quedar ningún issue abierto **salvo el de release**. Si quedan otros, reportarlos y pausar — el release no está listo.
 3. **Rama:** `git checkout develop && git pull --ff-only`, luego `git checkout -b feat/<number>-<kebab>` (convención de `CLAUDE.md`).
 4. **Detectar y clasificar las migraciones de Sanity pendientes:** listar `cms/migrations/*/`. Para cada una, evaluar (por el issue que la introdujo y su commit) si ya se corrió contra producción. Las migraciones **mutan datos de producción**, así que **nunca** se corren automáticamente: se listan como **paso manual del usuario** (ver Fase 4). Si el usuario ya confirmó que una se ejecutó, anotarlo.
@@ -46,19 +46,25 @@ Ejemplo: `/release-workflow https://github.com/cuentoneta/cuentoneta/issues/<id>
 
 5. **Chequear versiones en documentación:** contrastar `docs/` (p. ej. `DEVELOPMENT_GUIDE.md`) contra `package.json` (`engines.node`, `packageManager`) y los saltos de versión mayor de la ventana. Solo requiere edición si hay un salto documentable (no por bumps minor/patch de Dependabot).
 6. **Reunir el contenido del CHANGELOG:** los issues cerrados del milestone + `git log --oneline <tag-anterior>..develop` para confirmar qué PRs mergearon desde el último tag. Incluir issues sin milestone que hayan shippeado en la ventana (hijos de epics); excluir los que pertenecen a un milestone futuro.
-7. Escribir `workspace/RELEASE.md` con: versión target, estado del milestone, migraciones de Sanity (pendientes / ya corridas), delta de documentación, y el **borrador de la entrada de CHANGELOG** (prosa + cambios agrupados por tema, replicando el formato de la sección anterior en `CHANGELOG.md`).
+7. **Redactar el borrador de la descripción del milestone.** La descripción es el único resumen de la versión que se lee desde la lista de hitos de GitHub; la entrada de CHANGELOG cuenta la misma historia pero vive en el repositorio. La que trae el milestone se escribió al abrirlo —antes de saber qué iba a entrar—, así que se reemplaza.
+
+   Se **deriva** de la prosa de la entrada de CHANGELOG del paso 6, condensada a un párrafo: los mismos temas, en el mismo orden, sin los cambios enumerados. Redactarla por separado es trabajo duplicado y la fuente de divergencia que la regla de la última sección prohíbe.
+
+8. Escribir `workspace/RELEASE.md` con: versión target, número del milestone, estado del milestone, migraciones de Sanity (pendientes / ya corridas), delta de documentación, el **borrador de la entrada de CHANGELOG** (prosa + cambios agrupados por tema, replicando el formato de la sección anterior en `CHANGELOG.md`) y el **borrador de la descripción del milestone**.
 
 **⏸ PAUSA — decisión vía `AskUserQuestion`.**
 
-- `question`: "El alcance del release y el borrador del CHANGELOG están en `workspace/RELEASE.md`. ¿Cómo seguimos?"
+- `question`: "El alcance del release, el borrador del CHANGELOG y el de la descripción del milestone están en `workspace/RELEASE.md`. ¿Cómo seguimos?"
 - `header`: `Release`
-- `options` (la recomendada primero): **Aprobar** — el alcance y el borrador quedan tal cual y se avanza a la Fase 2; **Dar feedback** — el orquestador pide el texto del feedback a continuación. La opción **"Other"** (automática) transporta el feedback directamente en un solo paso — la vía preferida cuando el usuario ya sabe qué cambiar (alcance, agrupación o prosa).
+- `options` (la recomendada primero): **Aprobar** — el alcance y ambos borradores quedan tal cual y se avanza a la Fase 2; **Dar feedback** — el orquestador pide el texto del feedback a continuación. La opción **"Other"** (automática) transporta el feedback directamente en un solo paso — la vía preferida cuando el usuario ya sabe qué cambiar (alcance, agrupación, prosa o descripción).
+
+Esta pausa es donde se aprueba el texto de la descripción; la Fase 4 lo aplica sin volver a preguntar.
 
 Ramificación tras la respuesta:
 
 - **Aprobar** → avanzar a la Fase 2.
 - **Dar feedback** → pedir el texto del feedback al usuario y tratarlo igual que Other.
-- **Other** (feedback) → ajustar `workspace/RELEASE.md` según lo indicado (alcance del release, o agrupación/prosa del CHANGELOG) y repetir la pausa, iterando hasta un "Aprobar".
+- **Other** (feedback) → ajustar `workspace/RELEASE.md` según lo indicado (alcance del release, agrupación/prosa del CHANGELOG, o descripción del milestone) y repetir la pausa, iterando hasta un "Aprobar". Un ajuste de la prosa del CHANGELOG arrastra la descripción, que se deriva de ella.
 
 ---
 
@@ -104,7 +110,7 @@ Ramificación tras la respuesta:
 
 - **Proceder** → avanzar a la Fase 4 (Ship + handoff manual).
 - **Dar feedback** → pedir el texto del feedback al usuario y tratarlo igual que Other.
-- **Other** (feedback) → aplicar el ajuste indicado sobre la verificación o el contenido preparado (con commit atómico si toca archivos versionados), re-verificar lo afectado y repetir la pausa.
+- **Other** (feedback) → aplicar el ajuste indicado sobre la verificación o el contenido preparado (con commit atómico si toca archivos versionados), re-verificar lo afectado y repetir la pausa. Si el ajuste toca la prosa del CHANGELOG, re-derivar la descripción del milestone en `workspace/RELEASE.md`: todavía no se aplicó, y es la última oportunidad de corregirla antes de que la Fase 4 la escriba.
 
 ---
 
@@ -117,7 +123,18 @@ Ramificación tras la respuesta:
    - Título: `[#<issue>] - <título del issue>`.
    - Cuerpo en español con **`Closes #<issue>`** (restricción dura: el keyword de cierre debe estar en el cuerpo, no basta el prefijo del título).
    - Incluir el bloque de pasos manuales (abajo) para que quede registrado en el PR.
-3. Presentar la URL del PR y el **bloque de handoff manual** al usuario:
+3. **Actualizar la descripción del milestone** con el texto aprobado en la Fase 1, usando el `milestone.number` recolectado en su paso 1:
+
+   ```bash
+   gh api -X PATCH repos/cuentoneta/cuentoneta/milestones/<número> -f description="<texto aprobado>"
+   ```
+
+   - **El texto es el aprobado, no uno nuevo.** Redactarlo acá otra vez reintroduce la divergencia con el CHANGELOG que la derivación de la Fase 1 existe para evitar.
+   - **Sobrescribe la descripción previa a propósito.** La que trae un milestone se escribió al abrirlo, cuando todavía no se sabía qué iba a entrar.
+   - **No lleva confirmación propia:** el texto ya pasó por la pausa de la Fase 1 y la de la Fase 3, que autoriza las acciones de ship igual que para el `gh pr create` del paso anterior. A cambio, la escritura no puede ser silenciosa: registrar en `workspace/RELEASE.md` el texto aplicado.
+   - Ocurre acá, y no en la Fase 2, porque no es un artefacto versionado: no viaja en el diff del PR. Aplicarla antes la expondría a quedar divergente si la pausa de la Fase 3 cambia la prosa, y dejaría descrito un release que todavía puede abortarse.
+
+4. Presentar la URL del PR y el **bloque de handoff manual** al usuario:
 
    ```
    Pasos manuales para completar la release:
@@ -144,9 +161,9 @@ Ramificación tras la respuesta:
       y las superficies que leen lo migrado sirviendo con la forma nueva.
    ```
 
-   Omitir el paso 3 si no hay migraciones pendientes o el usuario ya las corrió.
+   Omitir el paso 3 del bloque si no hay migraciones pendientes o el usuario ya las corrió.
 
-4. Presentar el resumen final (versión, rama, PR, commits, resultado de la verificación).
+5. Presentar el resumen final (versión, rama, PR, commits, resultado de la verificación, descripción del milestone aplicada).
 
 ---
 
@@ -158,3 +175,4 @@ Ramificación tras la respuesta:
 - Nunca mergear `develop → master` desde el skill: ese es el gatillo del release y lo hace el usuario.
 - Nunca abrir el PR sin `Closes #<issue>` en el cuerpo, ni antes de que pasen los gates de CI y la verificación.
 - El bump de versión va en **lockstep** (`package.json` + `cms/package.json`).
+- Nunca redactar la descripción del milestone por separado de la prosa del CHANGELOG: se deriva de ella, condensada. Dos textos escritos de cero para la misma versión divergen.
