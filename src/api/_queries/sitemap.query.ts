@@ -1,11 +1,15 @@
 /**
  * Consulta GROQ para la generación del sitemap
- * Obtiene los slugs y fechas de actualización de todos los tipos de contenido
+ *
+ * El `lastmod` deriva de una fecha de origen y no de `_updatedAt`, porque ese campo de sistema se
+ * mueve con cualquier escritura —backfills, migraciones, copias de dataset— y aplana el historial
+ * de todo el corpus a la vez. Un `lastmod` que no se actualiza cuando debería cuesta mucho menos
+ * que uno que se actualiza cuando no debería: el segundo destruye la confianza en la señal.
  */
 import { defineQuery } from 'groq';
 
 export const sitemapSlugsQuery = defineQuery(`{
-	"stories": *[_type == "story" && !(_id in path('drafts.**'))]{ "slug": slug.current, "lastmod": _updatedAt },
-	"authors": *[_type == "author" && !(_id in path('drafts.**'))]{ "slug": slug.current, "lastmod": _updatedAt },
-	"storylists": *[_type == "storylist" && !(_id in path('drafts.**'))]{ "slug": slug.current, "lastmod": _updatedAt }
+	"stories": *[_type == "story" && !(_id in path('drafts.**'))]{ "slug": slug.current, "lastmod": coalesce(publishedAt, _createdAt) },
+	"authors": *[_type == "author" && !(_id in path('drafts.**'))]{ "slug": slug.current, "lastmod": _createdAt },
+	"storylists": *[_type == "storylist" && !(_id in path('drafts.**'))]{ "slug": slug.current, "lastmod": _createdAt }
 }`);
