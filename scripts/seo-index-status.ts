@@ -22,6 +22,9 @@
  *      permiso "Full" (alcanza lectura; "Propietario" solo hace falta para escribir).
  *   3. Exportar la key y apuntarle con GSC_SERVICE_ACCOUNT_KEY_PATH (o pegar el JSON en
  *      GSC_SERVICE_ACCOUNT_KEY, preferible en CI para que la key no toque disco).
+ *      Guardarla FUERA del árbol del repo: el nombre con que se exporta depende del proyecto, así
+ *      que los patrones del .gitignore son una red de contención y no una garantía. Si conviene
+ *      tenerla cerca, `.secrets/` está ignorado.
  *
  * Uso:
  *   GSC_SITE_URL=sc-domain:cuentoneta.ar pnpm seo:index-status              # muestrea el sitemap

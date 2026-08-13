@@ -89,6 +89,12 @@ scripts/*.mp4
 # Info incremental de TypeScript (regenerable por tsc -b)
 *.tsbuildinfo
 
-# Claves de service accounts de Google (nunca versionar)
+# Claves de service accounts de Google (nunca versionar). Ningún glob las cubre todas: la consola
+# de Cloud IAM exporta con el nombre `<project-id>-<hash>.json`, que depende del proyecto, y `gcloud`
+# acepta cualquier nombre. Por eso la defensa primaria es guardar la key FUERA del árbol del repo y
+# apuntarle con GSC_SERVICE_ACCOUNT_KEY_PATH; lo de abajo es la red de contención para los nombres
+# previsibles, más un directorio por si se prefiere tenerla cerca.
 *.iam.gserviceaccount.com.json
+*service-account*.json
 gsc-key.json
+/.secrets/
