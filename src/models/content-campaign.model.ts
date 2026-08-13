@@ -1,14 +1,6 @@
-/**
- * Tipo que representa los diferentes viewports soportados por la aplicación para las campañas de contenido, a fin de
- * proveer una experiencia responsive y adaptable para su visualización.
- */
 export const ContentCampaignViewportKeys = ['xs', 'md'] as const;
 export type ContentCampaignViewport = (typeof ContentCampaignViewportKeys)[number];
 
-/**
- * Constante que indica, para los viewports soportados, las dimensiones de las imágenes asociadas a las campañas de
- * contenido.
- */
 export const viewportElementSizes = Object.freeze({
 	xs: {
 		imageWidth: 540,
@@ -20,9 +12,6 @@ export const viewportElementSizes = Object.freeze({
 	},
 });
 
-/**
- * Interface que define al objeto de dominio que representa una campaña de contenido en la plataforma.
- */
 export interface ContentCampaign {
 	title: string;
 	slug: string;

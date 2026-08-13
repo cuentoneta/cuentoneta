@@ -97,8 +97,8 @@ function assertShared(options: { slug: string; title: string; imagery: Collectio
 	if (options.title.trim() === '') {
 		throw new Error(`Collection inválida: título vacío (slug "${options.slug}")`);
 	}
-	// La tupla de tres solo garantiza el largo en compilación, y el abanico se va a construir desde
-	// GROQ, donde un `sample` de dos portadas encaja igual.
+	// La tupla de tres solo garantiza el largo en compilación, y el abanico se construye desde GROQ,
+	// donde un `sample` de dos portadas encaja igual.
 	if (options.imagery.kind === 'sample' && options.imagery.images.length !== 3) {
 		throw new Error(`Collection inválida: el abanico de portadas necesita tres (slug "${options.slug}")`);
 	}
