@@ -9,6 +9,7 @@ assignees: ''
 ## Tareas
 
 - [ ] Ajustar changelog.
+- [ ] Actualizar la descripción del milestone, condensando a un párrafo la prosa del changelog: es el único resumen de la versión que se lee desde la lista de hitos.
 - [ ] Actualizar versión en package.json.
 - [ ] Sanity: Determinar si hay migraciones de datos a ejecutar y **clasificarlas**, porque de eso depende cuándo corren:
   - **Independientes del código** (pueblan un campo que nadie lee, purgan huérfanos): el orden respecto del deploy es indiferente.
