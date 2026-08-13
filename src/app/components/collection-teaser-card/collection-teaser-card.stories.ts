@@ -1,5 +1,4 @@
-import { applicationConfig, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
-import { provideRouter } from '@angular/router';
+import { Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
 
 import { CollectionTeaserCard } from './collection-teaser-card';
 import { CollectionTeaserCardSkeletonComponent } from './collection-teaser-card-skeleton';
@@ -12,9 +11,6 @@ const meta: Meta<CollectionTeaserCard> = {
 	component: CollectionTeaserCard,
 	title: 'Componentes V3/CollectionTeaserCard',
 	decorators: [
-		applicationConfig({
-			providers: [provideRouter([])],
-		}),
 		moduleMetadata({
 			imports: [CollectionTeaserCardSkeletonComponent],
 		}),

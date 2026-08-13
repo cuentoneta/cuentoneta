@@ -1,5 +1,4 @@
-import { applicationConfig, Meta, StoryObj } from '@storybook/angular-vite';
-import { provideRouter } from '@angular/router';
+import { Meta, StoryObj } from '@storybook/angular-vite';
 
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
 import { corpusLiteraryWorkTeasers } from '@mocks/onoff-corpus.storybook';
@@ -9,11 +8,6 @@ import type { ReadingSuggestion } from './story-teaser-to-reading-suggestion.ada
 const meta: Meta<ReadingSuggestionsListComponent> = {
 	component: ReadingSuggestionsListComponent,
 	title: 'Componentes V3/ReadingSuggestionsList',
-	decorators: [
-		applicationConfig({
-			providers: [provideRouter([])],
-		}),
-	],
 	parameters: {
 		docs: {
 			canvas: { sourceState: 'shown' },
