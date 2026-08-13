@@ -1,6 +1,7 @@
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import type { CollectionTeaser } from '@models/collection.model';
 import type { StorylistTeaser } from '@models/storylist.model';
 import { AppRoutes } from '../../app.routes';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
@@ -48,5 +49,7 @@ import { TagComponent } from '../tag/tag.component';
 export class NavigableCollectionTeaserComponent {
 	protected readonly appRoutes = AppRoutes;
 
-	public readonly collection = input.required<StorylistTeaser>();
+	// Acepta las dos vistas de teaser mientras conviven Storylist y Collection: el item solo lee nombre,
+	// slug, categoría y cantidad, que ambas transportan igual.
+	public readonly collection = input.required<CollectionTeaser | StorylistTeaser>();
 }
