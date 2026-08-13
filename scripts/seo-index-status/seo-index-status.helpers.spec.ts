@@ -472,3 +472,35 @@ describe('createPacer', () => {
 		expect(slept).toEqual([0, 0]);
 	});
 });
+
+describe('formatReport — reintentos', () => {
+	it('informa los reintentos consumidos cuando hubo alguno', () => {
+		const report = formatReport({ rows: [row({ url: 'a' })], retries: 3 }).join('\n');
+
+		expect(report).toContain('Reintentos consumidos: 3');
+	});
+
+	it.each([[0], [undefined]])('omite la línea cuando no hubo reintentos (%s)', (retries) => {
+		const report = formatReport({ rows: [row({ url: 'a' })], retries }).join('\n');
+
+		expect(report).not.toContain('Reintentos consumidos');
+	});
+
+	it('distingue una URL que agotó sus intentos de otra que falló de entrada', () => {
+		const report = formatReport({
+			rows: [row({ url: 'a', error: 'Internal error encountered.', attempts: 3 }), row({ url: 'b', error: '403' })],
+		}).join('\n');
+
+		expect(report).toContain('a — Internal error encountered. (tras 3 intentos)');
+		expect(report).toContain('b — 403');
+		expect(report).not.toContain('b — 403 (tras');
+	});
+});
+
+describe('mergeSnapshot — intentos', () => {
+	it('persiste el conteo de intentos en la fila', () => {
+		const store = mergeSnapshot({}, [row({ url: 'a', attempts: 2 })], '2026-08-13T00:00:00Z');
+
+		expect(store['a']?.attempts).toBe(2);
+	});
+});
