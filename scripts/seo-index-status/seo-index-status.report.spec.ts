@@ -80,6 +80,17 @@ describe('formatReport', () => {
 		expect(formatReport({ rows: [row({ url: 'a' })] }).join('\n')).not.toContain('Cambios contra el historial');
 	});
 
+	it('no reporta como movimiento una inspección que falló', () => {
+		const report = formatReport({
+			rows: [row({ url: 'a', error: '500', errorStatus: 500 })],
+			previous: [row({ url: 'a', verdict: 'PASS' })],
+		}).join('\n');
+
+		expect(report).not.toContain('Indexada → La inspección falló');
+		expect(report).toContain('(sin cambios de estado)');
+		expect(report).toContain('1 URL(s) del historial NO se inspeccionaron');
+	});
+
 	it('incluye la sección de cambios cuando hay corrida previa', () => {
 		const report = formatReport({
 			rows: [row({ url: 'a', verdict: 'PASS' })],
@@ -202,6 +213,27 @@ describe('formatSummaryMarkdown', () => {
 		const summary = formatSummaryMarkdown({ rows, checkedAt: CHECKED_AT }).join('\n');
 
 		expect(summary).toContain('### Canónica distinta de la declarada (1)');
+	});
+
+	// La falla ya se cuenta en su propio bloque; contarla otra vez como movimiento la disfrazaría de
+	// un cambio del indexado que no ocurrió.
+	it('no convierte una inspección fallida en un movimiento de estado', () => {
+		const previous = [row({ url: 'a', verdict: 'PASS' })];
+		const rows = [row({ url: 'a', error: '500', errorStatus: 500 })];
+
+		const summary = formatSummaryMarkdown({ rows, previous, checkedAt: CHECKED_AT }).join('\n');
+
+		expect(summary).not.toContain('Indexada → La inspección falló');
+		expect(summary).toContain('_Sin cambios de estado._');
+	});
+
+	it('cuenta como no inspeccionada la URL cuya inspección falló', () => {
+		const previous = [row({ url: 'a', verdict: 'PASS' })];
+		const rows = [row({ url: 'a', error: '500', errorStatus: 500 })];
+
+		const summary = formatSummaryMarkdown({ rows, previous, checkedAt: CHECKED_AT }).join('\n');
+
+		expect(summary).toContain('- 1 URL(s) del historial NO se inspeccionaron en esta corrida');
 	});
 
 	it('informa los reintentos solo cuando hubo alguno', () => {
