@@ -9,6 +9,8 @@
 # compiled output
 dist
 tmp
+# checkout de la rama de métricas, que el job de indexado crea acá y reproducir en local también deja
+.metrics/
 /out-tsc
 
 # dependencies

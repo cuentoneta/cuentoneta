@@ -97,7 +97,9 @@ jobs:
             git switch --force-create "$METRICS_BRANCH" FETCH_HEAD
           else
             git switch --orphan "$METRICS_BRANCH"
-            git rm -rf . >/dev/null 2>&1 || true
+            # `--ignore-unmatch` tolera exactamente lo esperable —un índice ya vacío— y deja que
+            # cualquier otro fallo corte el step, en vez de arrastrarlo al commit siguiente.
+            git rm -rq --ignore-unmatch -- .
           fi
 
       - name: Setup workspace
@@ -124,7 +126,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: seo-index-status
-          path: .metrics/seo-index-status/latest.json
+          path: ${{ env.HISTORY_FILE }}
           retention-days: 30
           if-no-files-found: ignore
 
