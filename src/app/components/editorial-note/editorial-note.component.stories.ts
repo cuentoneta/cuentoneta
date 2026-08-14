@@ -96,7 +96,7 @@ export const Interactiva: StoryObj<EditorialNoteComponent & { attributedTextInde
 		attributedTextIndex: {
 			...attributedTextSelectArgType,
 			description:
-				'Texto del corpus de François Onoff: los epígrafes de sección traen atribución y las notas editoriales no, así que el pie de la figura aparece o desaparece al cambiar de opción',
+				'Texto del corpus de François Onoff: los epígrafes de sección traen atribución y las notas editoriales no, así que el pie de la figura aparece o desaparece al cambiar de opción. Alguno ocupa más de una línea porque su fuente lo declara, que es donde se ve cómo respira la figura con un texto en verso',
 		},
 	},
 	render: (args) => ({
