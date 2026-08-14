@@ -4,7 +4,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import type { SanitizedHtml } from '@models/sanitized-html.model';
 
 /**
- * Pinta el cuerpo de una obra, que llega como HTML ya saneado por el pipeline del ACL.
+ * Pinta el cuerpo de una sección de obra —el campo `body` del CMS, ya saneado por el pipeline del ACL—
+ * con la tipografía de lectura. Sirve a cualquier género: el schema no distingue verso de prosa.
  *
  * Existe para que ese HTML tenga un dueño: el `bypassSecurityTrustHtml` vive acá y no repartido por
  * las páginas que lo consumen, y las reglas tipográficas de los nodos que el pipeline emite —que no
@@ -12,14 +13,14 @@ import type { SanitizedHtml } from '@models/sanitized-html.model';
  * viajan con el componente en vez de con una ruta.
  */
 @Component({
-	selector: 'cuentoneta-literary-work-prose',
+	selector: 'cuentoneta-literary-work-section-body',
 	template: `<div [innerHTML]="safeBody()"></div>`,
 	host: {
 		class: 'block source-serif-xl text-neutral-800',
-		'data-testid': 'literary-work-prose',
+		'data-testid': 'literary-work-section-body',
 	},
 })
-export class LiteraryWorkProseComponent {
+export class LiteraryWorkSectionBodyComponent {
 	public readonly body = input.required<SanitizedHtml>();
 
 	private readonly sanitizer = inject(DomSanitizer);

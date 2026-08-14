@@ -1,6 +1,6 @@
 import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 
-import { LiteraryWorkProseComponent } from './literary-work-prose.component';
+import { LiteraryWorkSectionBodyComponent } from './literary-work-section-body.component';
 import { onoffLiteraryWorksMock, onoffLiteraryWorksWithBlockquotes } from '@mocks/onoff-literary-works.mock';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
@@ -34,14 +34,14 @@ const PIPELINE_COVERAGE_MARKDOWN = [
 	'El párrafo que cierra la cobertura.',
 ].join('\n');
 
-const meta: Meta<LiteraryWorkProseComponent> = {
-	component: LiteraryWorkProseComponent,
-	title: 'Componentes V3/LiteraryWorkProse',
+const meta: Meta<LiteraryWorkSectionBodyComponent> = {
+	component: LiteraryWorkSectionBodyComponent,
+	title: 'Componentes V3/LiteraryWorkSectionBody',
 	parameters: {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Cuerpo de una obra (<strong>LiteraryWork</strong>) del Design System v3, <strong>LiteraryWorkProse</strong>: recibe en el input <code>body</code> el HTML que el pipeline de Markdown ya saneó en el backend y lo pinta con <code>[innerHTML]</code>, aportando la tipografía del contenedor (Source Serif Pro 20/34 sobre <code>neutral-800</code>).</p><p>Es el dueño de ese HTML: el <code>bypassSecurityTrustHtml</code> vive acá —sin él Angular recorta los atributos de carga que el propio pipeline inyecta en las imágenes— y las reglas tipográficas de los nodos que el pipeline emite, que no llevan clases y por eso ninguna utilidad alcanza, se anclan a su selector de elemento desde una hoja global. Por eso viajan con el componente y no con la página que lo consume.</p><p>No cubre la nota editorial ni el epígrafe de una sección, que resuelve <a href="./?path=/docs/componentes-v3-editorialnote--docs" target="_top"><strong>EditorialNote</strong></a> con su propio tratamiento. El componente no renderiza estado de carga: la página no lo monta hasta tener la obra.</p></div>`,
+				component: `<div><p>Cuerpo de una sección de obra (<strong>LiteraryWork</strong>) del Design System v3, <strong>LiteraryWorkSectionBody</strong>: pinta el campo <code>body</code> que el CMS declara dentro de cada sección, sea la obra en verso, en prosa, un ensayo o teatro. Recibe en el input <code>body</code> el HTML que el pipeline de Markdown ya saneó en el backend, y lo pinta con <code>[innerHTML]</code>, aportando la tipografía del contenedor (Source Serif Pro 20/34 sobre <code>neutral-800</code>).</p><p>Es el dueño de ese HTML: el <code>bypassSecurityTrustHtml</code> vive acá —sin él Angular recorta los atributos de carga que el propio pipeline inyecta en las imágenes— y las reglas tipográficas de los nodos que el pipeline emite, que no llevan clases y por eso ninguna utilidad alcanza, se anclan a su selector de elemento desde una hoja global. Por eso viajan con el componente y no con la página que lo consume.</p><p>No cubre la nota editorial ni el epígrafe de una sección, que resuelve <a href="./?path=/docs/componentes-v3-editorialnote--docs" target="_top"><strong>EditorialNote</strong></a> con su propio tratamiento. El componente no renderiza estado de carga: la página no lo monta hasta tener la obra.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -55,10 +55,10 @@ const meta: Meta<LiteraryWorkProseComponent> = {
 };
 
 export default meta;
-type Story = StoryObj<LiteraryWorkProseComponent>;
+type Story = StoryObj<LiteraryWorkSectionBodyComponent>;
 
-export const Prosa: Story = {
-	render: (args) => ({ props: args, template: `<cuentoneta-literary-work-prose ${argsToTemplate(args)} />` }),
+export const Parrafos: Story = {
+	render: (args) => ({ props: args, template: `<cuentoneta-literary-work-section-body ${argsToTemplate(args)} />` }),
 	args: { body: plainContent[0].bodyHtml },
 	parameters: {
 		docs: {
@@ -70,7 +70,7 @@ export const Prosa: Story = {
 };
 
 export const ConCita: Story = {
-	render: (args) => ({ props: args, template: `<cuentoneta-literary-work-prose ${argsToTemplate(args)} />` }),
+	render: (args) => ({ props: args, template: `<cuentoneta-literary-work-section-body ${argsToTemplate(args)} />` }),
 	args: { body: contentWithQuote[0].bodyHtml },
 	parameters: {
 		docs: {
@@ -82,12 +82,12 @@ export const ConCita: Story = {
 };
 
 export const CoberturaDelPipeline: Story = {
-	render: (args) => ({ props: args, template: `<cuentoneta-literary-work-prose ${argsToTemplate(args)} />` }),
+	render: (args) => ({ props: args, template: `<cuentoneta-literary-work-section-body ${argsToTemplate(args)} />` }),
 	args: { body: markdownToSanitizedHtml(createMarkdown(PIPELINE_COVERAGE_MARKDOWN)) },
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Todos los elementos que la lista blanca del saneamiento permite y hoy pueden aparecer en una obra: encabezados, cita de varios bloques, listas ordenadas y no ordenadas, regla horizontal, enlace e imagen. El canon no los ejercita —la prosa de Onoff son párrafos y una cita—, así que esta story es la única evidencia visual de que ninguno se renderiza roto.</p><p><strong>Usos:</strong> validar con diseño el tratamiento de los elementos que el diseño todavía no cubre.</p>`,
+				story: `<p>Todos los elementos que la lista blanca del saneamiento permite y hoy pueden aparecer en una obra: encabezados, cita de varios bloques, listas ordenadas y no ordenadas, regla horizontal, enlace e imagen. El canon no los ejercita —el de Onoff son párrafos y una cita—, así que esta story es la única evidencia visual de que ninguno se renderiza roto.</p><p><strong>Usos:</strong> validar con diseño el tratamiento de los elementos que el diseño todavía no cubre.</p>`,
 			},
 		},
 	},

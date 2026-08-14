@@ -1,10 +1,10 @@
 /*
-  Tipografía de la prosa de una obra.
+  Tipografía del cuerpo de una sección de obra.
 
   Los nodos que estas reglas alcanzan los emite el pipeline de Markdown y no llevan clases, así que
   ninguna utilidad de Tailwind puede alcanzarlos: es el caso de aplicación de regla global que declara
-  styles.css. Van ancladas al selector del componente que posee ese HTML, y no a una página, porque la
-  prosa del CMS no se pinta en un solo lugar.
+  styles.css. Van ancladas al selector del componente que posee ese HTML, y no a una página, porque el
+  texto que sirve el CMS no se pinta en un solo lugar.
 
   El componente pinta la salida del pipeline dentro de un único contenedor, de ahí el nivel extra del
   selector: los hermanos a separar son los hijos de ese contenedor, no los del elemento del componente.
@@ -13,14 +13,14 @@
 /*
   El ritmo lo da un separador entre hermanos y no un margen por elemento: resuelve párrafo, cita,
   encabezado, lista, regla e imagen de una sola vez, y no deja margen colgando al final del cuerpo.
-  `1lh` es la línea en blanco que pide el diseño, expresada contra la propia interlínea de la prosa.
+  `1lh` es la línea en blanco que pide el diseño, expresada contra la propia interlínea del cuerpo.
 
   El valor en `rem` va primero como reserva: donde `lh` no existe (Safari anterior a 16.4) el navegador
   descarta esa declaración entera, y con el `margin: 0` del reset la obra se serviría como un bloque
   continuo. Es el mismo 34 px, escrito contra la interlínea de `.source-serif-xl`.
 */
-cuentoneta-literary-work-prose > * > * + *,
-cuentoneta-literary-work-prose blockquote > * + * {
+cuentoneta-literary-work-section-body > * > * + *,
+cuentoneta-literary-work-section-body blockquote > * + * {
 	margin-block-start: 2.125rem;
 	margin-block-start: 1lh;
 }
@@ -30,19 +30,19 @@ cuentoneta-literary-work-prose blockquote > * + * {
   en el original impreso. La misma regla alcanza a los dos anfitriones: el `blockquote` que emite el
   pipeline dentro del cuerpo y el del epígrafe, que declara la plantilla de la página.
 */
-cuentoneta-literary-work-prose blockquote,
+cuentoneta-literary-work-section-body blockquote,
 .literary-work-epigraph {
 	@apply border-l-2 border-neutral-300 pl-4;
 }
 
 /*
   El resto de lo que la lista blanca del saneamiento permite. Cada regla repone lo que el reset o el
-  preflight quitan; ninguna reinterpreta la cara del elemento. Se estila lo que la prosa publicada usa
+  preflight quitan; ninguna reinterpreta la cara del elemento. Se estila lo que el cuerpo publicado usa
   hoy: lo que falta espera un caso real que lo pida.
 */
 
 /* Un encabezado abre una parte nueva: necesita más aire arriba que el que separa dos párrafos. */
-cuentoneta-literary-work-prose > * > * + :is(h2, h3, h4, h5, h6) {
+cuentoneta-literary-work-section-body > * > * + :is(h2, h3, h4, h5, h6) {
 	margin-block-start: 4.25rem;
 	margin-block-start: 2lh;
 }
@@ -51,42 +51,42 @@ cuentoneta-literary-work-prose > * > * + :is(h2, h3, h4, h5, h6) {
   El tema le da tamaño y peso a h1–h3, pero no más abajo: sin esto un `####` sale del mismo cuerpo que
   el párrafo —el preflight aplana `font-size` y `font-weight`— y deja de leerse como encabezado.
 */
-cuentoneta-literary-work-prose :is(h4, h5, h6) {
+cuentoneta-literary-work-section-body :is(h4, h5, h6) {
 	@apply text-lg font-semibold;
 }
 
 /* El preflight de Tailwind quita marcador y sangría de las listas; acá el marcador es contenido. */
-cuentoneta-literary-work-prose :is(ul, ol) {
+cuentoneta-literary-work-section-body :is(ul, ol) {
 	@apply list-outside pl-8;
 }
 
-cuentoneta-literary-work-prose ul {
+cuentoneta-literary-work-section-body ul {
 	@apply list-disc;
 }
 
-cuentoneta-literary-work-prose ol {
+cuentoneta-literary-work-section-body ol {
 	@apply list-decimal;
 }
 
 /* Los ítems se separan menos que los bloques: son partes de una misma enumeración. */
-cuentoneta-literary-work-prose li + li {
+cuentoneta-literary-work-section-body li + li {
 	margin-block-start: 1.0625rem;
 	margin-block-start: 0.5lh;
 }
 
-cuentoneta-literary-work-prose hr {
+cuentoneta-literary-work-section-body hr {
 	@apply border-t border-neutral-200;
 
 	margin-block: 4.25rem;
 	margin-block: 2lh;
 }
 
-cuentoneta-literary-work-prose a {
+cuentoneta-literary-work-section-body a {
 	@apply text-brand-500 underline;
 }
 
 /* Una imagen suele venir envuelta en un párrafo, donde el separador entre hermanos no la alcanza. */
-cuentoneta-literary-work-prose img {
+cuentoneta-literary-work-section-body img {
 	margin-block: 1.0625rem;
 	margin-block: 0.5lh;
 }

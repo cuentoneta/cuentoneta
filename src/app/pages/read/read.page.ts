@@ -22,14 +22,14 @@ import { READ_HOST, type ReadHost } from './read-host';
 import { LiteraryWorkHeroHeaderComponent } from '@components/literary-work-hero-header/literary-work-hero-header.component';
 import { ButtonComponent } from '@components/button/button.component';
 import { EditorialNoteComponent } from '@components/editorial-note/editorial-note.component';
-import { LiteraryWorkProseComponent } from '@components/literary-work-prose/literary-work-prose.component';
+import { LiteraryWorkSectionBodyComponent } from '@components/literary-work-section-body/literary-work-section-body.component';
 
 @Component({
 	selector: 'cuentoneta-read',
 	templateUrl: './read.page.html',
 	providers: [{ provide: READ_HOST, useExisting: forwardRef(() => ReadPage) }],
 	hostDirectives: [HeadMetadataDirective],
-	imports: [LiteraryWorkHeroHeaderComponent, ButtonComponent, EditorialNoteComponent, LiteraryWorkProseComponent],
+	imports: [LiteraryWorkHeroHeaderComponent, ButtonComponent, EditorialNoteComponent, LiteraryWorkSectionBodyComponent],
 })
 export default class ReadPage implements ReadHost {
 	public readonly slug = input.required<string>();

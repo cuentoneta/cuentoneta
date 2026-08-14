@@ -50,7 +50,7 @@ const firstBodyWord = (literaryWork: LiteraryWork): string => {
 	return word;
 };
 
-// Payload que combina varios vectores XSS con prosa benigna alrededor. Se procesa por el mismo
+// Payload que combina varios vectores XSS con texto benigno alrededor. Se procesa por el mismo
 // pipeline de dominio que el corpus, así el bodyHtml es realmente SanitizedHtml — no un string
 // clavado — y el test ejercita la cadena real pipeline → SanitizedHtml → [innerHTML]+bypass.
 const MALICIOUS_MARKDOWN = [
@@ -131,19 +131,22 @@ describe('ReadPage', () => {
 	);
 
 	// El cuerpo se pinta dentro del componente que lo posee —igual que la nota editorial—, no volcado
-	// suelto en la plantilla: de ahí cuelgan el bypass y las reglas tipográficas de la prosa.
-	it.each(onoffLiteraryWorksMock)('pinta el cuerpo de "$slug" dentro del componente de prosa', async (literaryWork) => {
-		await setup(literaryWork);
+	// suelto en la plantilla: de ahí cuelgan el bypass y las reglas tipográficas del cuerpo.
+	it.each(onoffLiteraryWorksMock)(
+		'pinta el cuerpo de "$slug" dentro del componente del cuerpo de sección',
+		async (literaryWork) => {
+			await setup(literaryWork);
 
-		const proseBlocks = await screen.findAllByTestId('literary-work-prose');
-		expect(proseBlocks.length).toBe(literaryWork.content.length);
-		expect(proseBlocks[0].textContent).toMatch(new RegExp(firstBodyWord(literaryWork), 'i'));
-	});
+			const sectionBodies = await screen.findAllByTestId('literary-work-section-body');
+			expect(sectionBodies.length).toBe(literaryWork.content.length);
+			expect(sectionBodies[0].textContent).toMatch(new RegExp(firstBodyWord(literaryWork), 'i'));
+		},
+	);
 
 	it('renderiza el cuerpo malicioso saneado de forma inerte en el DOM', async () => {
 		const { container } = await setup(literaryWorkWithMaliciousBody(representativeLiteraryWork));
 
-		// La prosa benigna del cuerpo sí llega al lector...
+		// El texto benigno del cuerpo sí llega al lector...
 		expect(await screen.findByText(/Final legible de la obra maliciosa/i)).toBeTruthy();
 
 		// ...pero ningún vector sobrevive como elemento ejecutable ni como atributo de handler en el DOM

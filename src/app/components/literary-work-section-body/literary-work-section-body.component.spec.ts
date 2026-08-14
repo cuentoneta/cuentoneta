@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/angular';
 
-import { LiteraryWorkProseComponent } from './literary-work-prose.component';
+import { LiteraryWorkSectionBodyComponent } from './literary-work-section-body.component';
 import { onoffLiteraryWorksMock, onoffLiteraryWorksWithBlockquotes } from '@mocks/onoff-literary-works.mock';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
@@ -9,10 +9,10 @@ const [anyWork] = onoffLiteraryWorksMock;
 const [workWithQuote] = onoffLiteraryWorksWithBlockquotes;
 
 async function setup(body = anyWork.content[0].bodyHtml) {
-	return render(LiteraryWorkProseComponent, { inputs: { body } });
+	return render(LiteraryWorkSectionBodyComponent, { inputs: { body } });
 }
 
-describe('LiteraryWorkProseComponent', () => {
+describe('LiteraryWorkSectionBodyComponent', () => {
 	it('pinta el cuerpo como marcado y no como texto', async () => {
 		const { container } = await setup();
 
@@ -21,7 +21,7 @@ describe('LiteraryWorkProseComponent', () => {
 		/* eslint-disable testing-library/no-container, testing-library/no-node-access -- la ausencia de un tag no se expresa por rol ni por texto */
 		expect(container.querySelectorAll('p').length).toBeGreaterThan(0);
 		/* eslint-enable testing-library/no-container, testing-library/no-node-access */
-		expect(screen.getByTestId('literary-work-prose').textContent).not.toContain('<p>');
+		expect(screen.getByTestId('literary-work-section-body').textContent).not.toContain('<p>');
 	});
 
 	// La cita es el motivo de este componente: es lo que el original marcaba con alineación y lo que
