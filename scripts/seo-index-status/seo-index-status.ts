@@ -210,7 +210,8 @@ async function writeStore(store: SnapshotStore, rows: readonly ClassifiedRow[], 
 }
 
 /**
- * Appendea, no sobrescribe: varios steps del job escriben al mismo archivo de resumen.
+ * Appendea, no sobrescribe: el destino es de quien lo pasó por flag, no de la herramienta, y truncar
+ * un archivo ajeno se lleva puesto lo que ya hubiera escrito.
  *
  * Un resumen que no se puede escribir no aborta la corrida. Es superficie de lectura, y perder la
  * medición ya hecha por no poder contarla sería el peor de los dos desenlaces.

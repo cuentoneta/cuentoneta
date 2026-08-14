@@ -149,19 +149,19 @@ export const EXIT_CODE = Object.freeze({
 	partialFailure: 2,
 } as const);
 
-/**
- * Statuses que no cambian si se vuelve a intentar y que señalan a la herramienta, no a la API: los
- * parámetros del pedido, las credenciales, el permiso sobre la propiedad y la cuota ya agotada. Una
- * sola fila con cualquiera de estos condena la corrida entera, porque la causa es común a todas.
- */
-const TOOL_FAILURE_STATUSES: readonly number[] = [400, 401, 403, 429];
+export type ExitCode = (typeof EXIT_CODE)[keyof typeof EXIT_CODE];
 
 /**
  * Traduce el desenlace de la corrida al código de salida. Una corrida sin una sola observación no
  * midió nada —el caso de la API caída—, y reportarla en verde sería exactamente el rojo que dejó de
  * significar algo, al revés.
  */
-export function classifyRunOutcome(rows: readonly ClassifiedRow[]): number {
+export function classifyRunOutcome(rows: readonly ClassifiedRow[]): ExitCode {
+	// Statuses que no cambian si se vuelve a intentar y que señalan a la herramienta, no a la API:
+	// los parámetros del pedido, las credenciales, el permiso sobre la propiedad y la cuota ya
+	// agotada. Una sola fila con cualquiera condena la corrida entera, porque la causa es común.
+	const TOOL_FAILURE_STATUSES: readonly number[] = [400, 401, 403, 429];
+
 	if (rows.length === 0) {
 		return EXIT_CODE.toolFailure;
 	}
@@ -277,9 +277,6 @@ export interface StoredRow extends ClassifiedRow {
  */
 export type SnapshotStore = Record<string, StoredRow>;
 
-/** Dónde vive la serie cuando nadie lo dice: gitignoreado, junto al resto de lo efímero. */
-const DEFAULT_HISTORY_FILE = join('tmp', 'seo-index-status', 'latest.json');
-
 export interface HistoryPaths {
 	file: string;
 	dir: string;
@@ -290,6 +287,9 @@ export interface HistoryPaths {
  * discrepen habilita una corrida que crea un directorio y escribe en otro.
  */
 export function resolveHistoryPaths(raw: string | undefined): HistoryPaths {
+	// Dónde vive la serie cuando nadie lo dice: gitignoreado, junto al resto de lo efímero.
+	const DEFAULT_HISTORY_FILE = join('tmp', 'seo-index-status', 'latest.json');
+
 	const file = raw === undefined || raw.length === 0 ? DEFAULT_HISTORY_FILE : raw;
 	return { file, dir: dirname(file) };
 }

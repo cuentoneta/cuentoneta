@@ -147,9 +147,6 @@ export interface SummaryInput extends ReportInput {
 	checkedAt: string;
 }
 
-/** Cuántos detalles largos entran antes de que el resumen deje de leerse de un vistazo. */
-const SUMMARY_DETAIL_LIMIT = 10;
-
 function markdownTable(headers: readonly [string, string], rows: readonly [string, number][]): string[] {
 	return [
 		'',
@@ -220,6 +217,9 @@ function failureLabel(row: ClassifiedRow): string {
 }
 
 function summaryDetails(title: string, items: readonly string[]): string[] {
+	// Cuántos detalles largos entran antes de que el resumen deje de leerse de un vistazo.
+	const SUMMARY_DETAIL_LIMIT = 10;
+
 	if (items.length === 0) {
 		return [];
 	}
