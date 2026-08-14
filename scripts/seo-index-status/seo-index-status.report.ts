@@ -201,6 +201,24 @@ function summaryTransitions(previous: readonly ClassifiedRow[], rows: readonly C
 	return lines;
 }
 
+/**
+ * Describe una falla por su status y no por su prosa. El resumen de una corrida programada es
+ * público, y el mensaje que devuelve el cliente de Google ante un 401/403 puede arrastrar el
+ * `client_email` de la service account: información de reconocimiento que nadie decidió publicar.
+ * El status ya dice lo accionable, y el texto completo sigue estando en el log para diagnosticar.
+ *
+ * Cuando no hay status no queda otra que el mensaje —una falla de red no trae ninguno—, acotado a
+ * lo que alcanza para reconocerla.
+ */
+function failureLabel(row: ClassifiedRow): string {
+	const UNTYPED_MESSAGE_LIMIT = 60;
+	if (row.errorStatus !== undefined) {
+		return `HTTP ${row.errorStatus}`;
+	}
+	const message = row.error ?? '';
+	return message.length > UNTYPED_MESSAGE_LIMIT ? `${message.slice(0, UNTYPED_MESSAGE_LIMIT)}…` : message;
+}
+
 function summaryDetails(title: string, items: readonly string[]): string[] {
 	if (items.length === 0) {
 		return [];
@@ -233,7 +251,7 @@ export function formatSummaryMarkdown({ rows, previous, retries, checkedAt }: Su
 		),
 		...summaryDetails(
 			'Inspecciones fallidas',
-			failures.map((row) => `\`${row.url}\` — ${row.error}${formatAttempts(row.attempts)}`),
+			failures.map((row) => `\`${row.url}\` — ${failureLabel(row)}${formatAttempts(row.attempts)}`),
 		),
 	];
 

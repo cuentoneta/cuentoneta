@@ -189,6 +189,28 @@ describe('formatSummaryMarkdown', () => {
 		expect(summary).toContain('| Discovered - currently not indexed → URL is unknown to Google | 1 |');
 	});
 
+	// El resumen de una corrida programada es público, y el mensaje de un 403 puede arrastrar el
+	// client_email de la service account.
+	it('describe la falla por su status en vez de por el mensaje de la API', () => {
+		const rows = [
+			row({ url: 'a', error: 'Request had insufficient authentication scopes for robot@x.iam', errorStatus: 403 }),
+		];
+
+		const summary = formatSummaryMarkdown({ rows, checkedAt: CHECKED_AT }).join('\n');
+
+		expect(summary).toContain('`a` — HTTP 403');
+		expect(summary).not.toContain('robot@x.iam');
+	});
+
+	it('acota el mensaje de una falla sin status legible', () => {
+		const rows = [row({ url: 'a', error: 'x'.repeat(200) })];
+
+		const summary = formatSummaryMarkdown({ rows, checkedAt: CHECKED_AT }).join('\n');
+
+		expect(summary).toContain(`\`a\` — ${'x'.repeat(60)}…`);
+		expect(summary).not.toContain('x'.repeat(61));
+	});
+
 	// El resumen se lee de un vistazo o no se lee: 968 URLs fallidas no pueden entrar enteras.
 	it('acota los detalles largos y dice cuántos quedaron afuera', () => {
 		const rows = Array.from({ length: 12 }, (_, index) => row({ url: `u${index}`, error: 'boom' }));
