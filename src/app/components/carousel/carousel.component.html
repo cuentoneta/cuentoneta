@@ -54,17 +54,17 @@
 
 		<!-- Controles de navegación (solo escritorio) -->
 		@if (showControls()) {
-			<div class="carousel-control-left absolute top-1/2 left-0 z-10 -translate-y-1/2">
+			<div class="carousel-control-left absolute top-1/2 left-0 z-content -translate-y-1/2">
 				<cuentoneta-carousel-controls (controlClick)="prev()" [disabled]="isTransitioning()" type="left" />
 			</div>
 
-			<div class="carousel-control-right absolute top-1/2 right-0 z-10 -translate-y-1/2">
+			<div class="carousel-control-right absolute top-1/2 right-0 z-content -translate-y-1/2">
 				<cuentoneta-carousel-controls (controlClick)="next()" [disabled]="isTransitioning()" type="right" />
 			</div>
 		}
 
 		<!-- Indicadores de progreso -->
-		<div class="carousel-indicators-wrapper absolute bottom-2 left-1/2 z-10 -translate-x-1/2 sm:bottom-4">
+		<div class="carousel-indicators-wrapper absolute bottom-2 left-1/2 z-content -translate-x-1/2 sm:bottom-4">
 			<cuentoneta-carousel-indicator
 				(indicatorClick)="onIndicatorClick($event)"
 				[count]="slideCount()"

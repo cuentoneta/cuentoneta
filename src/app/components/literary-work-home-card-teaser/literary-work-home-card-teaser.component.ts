@@ -22,7 +22,7 @@ import { LiteraryWorkHomeCardTeaserSkeletonComponent } from './literary-work-hom
  *
  * Patrón de tarjeta clickeable (sin wrapper `<a>`): el enlace de la obra se estira con un
  * pseudo-elemento (`after:absolute after:inset-0`) para cubrir toda la tarjeta, de modo que cualquier
- * sección navega a `/story/:slug`. El bloque del autor es un enlace propio elevado con `z-10`, por
+ * sección navega a `/story/:slug`. El bloque del autor es un enlace propio elevado a `z-content`, por
  * encima del pseudo-elemento, para que la foto y el nombre naveguen a `/author/:slug`.
  */
 @Component({
@@ -59,11 +59,11 @@ import { LiteraryWorkHomeCardTeaserSkeletonComponent } from './literary-work-hom
 					}
 				</div>
 				<div class="flex w-full flex-col gap-1">
-					<!-- Autor: enlace propio a /author/:slug, elevado (z-10) por encima del enlace estirado. -->
+					<!-- Autor: enlace propio a /author/:slug, elevado a z-content por encima del enlace estirado. -->
 					@let author = literaryWork.authors[0];
 					<a
 						[routerLink]="['/', appRoutes.Author, author.slug]"
-						class="group relative z-10 flex min-w-0 items-center gap-2"
+						class="group relative z-content flex min-w-0 items-center gap-2"
 						data-testid="author"
 					>
 						<cuentoneta-image-profile [src]="author.imageUrl" size="small" class="shrink-0" />

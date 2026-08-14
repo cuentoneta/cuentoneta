@@ -15,9 +15,10 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 @Component({
 	selector: 'cuentoneta-header',
 	host: {
-		// La barra se dibuja sobre el contenido de cualquier ruta: su z-index queda por encima del rango
-		// que usan los componentes de página, para que ninguno tenga que conocerla para no taparla.
-		class: 'fixed top-0 z-50 w-full items-center justify-center border-b-1 border-neutral-200 md:m-auto',
+		// `z-nav` es la capa global de la barra fija: se usa sin aislar, porque confinar su apilamiento la
+		// haría perder contra el contenido de página. Ningún componente necesita conocerla para no taparla —
+		// los que elevan algo dentro de sí lo confinan con `isolate`.
+		class: 'fixed top-0 z-nav w-full items-center justify-center border-b-1 border-neutral-200 md:m-auto',
 	},
 	template: `
 		<header
