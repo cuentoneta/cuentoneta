@@ -21,7 +21,7 @@ import { CoverImageComponent } from '../cover-image/cover-image.component';
 			@if (collection(); as collection) {
 				<a [routerLink]="['/' + appRoutes.Collection, collection.slug]" class="flex items-start gap-5">
 					<section
-						class="relative flex h-48 items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3 sm:flex-1"
+						class="relative isolate flex h-48 items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3 sm:flex-1"
 					>
 						@if (collection.imagery.kind === 'representative') {
 							<cuentoneta-cover-image [src]="collection.imagery.image" class="-mb-2" />

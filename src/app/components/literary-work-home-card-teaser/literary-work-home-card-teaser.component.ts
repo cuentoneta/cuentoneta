@@ -97,7 +97,9 @@ import { LiteraryWorkHomeCardTeaserSkeletonComponent } from './literary-work-hom
 		}
 	`,
 	host: {
-		class: 'block',
+		// `isolate` confina la elevación del enlace del autor sobre el enlace estirado de la obra: es un
+		// orden entre hermanos de esta tarjeta y no tiene por qué existir en el contexto raíz.
+		class: 'isolate block',
 	},
 })
 export class LiteraryWorkHomeCardTeaserComponent {
