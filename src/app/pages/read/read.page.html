@@ -14,10 +14,10 @@
 			@if (section.title) {
 			<h2 [id]="section.anchor">{{ section.title }}</h2>
 			} @for (epigraph of section.epigraphs; track $index) {
-			<blockquote>
+			<blockquote class="literary-work-epigraph source-serif-xl text-neutral-800">
 				<div [innerHTML]="epigraph.text"></div>
 				@if (epigraph.reference) {
-				<footer [innerHTML]="epigraph.reference"></footer>
+				<footer [innerHTML]="epigraph.reference" class="source-serif-lg text-end text-neutral-500 italic"></footer>
 				}
 			</blockquote>
 			}

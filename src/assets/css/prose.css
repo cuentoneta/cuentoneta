@@ -1,0 +1,31 @@
+/*
+  Tipografía de la prosa de una obra.
+
+  Los nodos que estas reglas alcanzan los emite el pipeline de Markdown y no llevan clases, así que
+  ninguna utilidad de Tailwind puede alcanzarlos: es el caso de aplicación de regla global que declara
+  styles.css. Van ancladas al selector del componente que posee ese HTML, y no a una página, porque la
+  prosa del CMS no se pinta en un solo lugar.
+
+  El componente pinta la salida del pipeline dentro de un único contenedor, de ahí el nivel extra del
+  selector: los hermanos a separar son los hijos de ese contenedor, no los del elemento del componente.
+*/
+
+/*
+  El ritmo lo da un separador entre hermanos y no un margen por elemento: resuelve párrafo, cita,
+  encabezado, lista, regla e imagen de una sola vez, y no deja margen colgando al final del cuerpo.
+  `1lh` es la línea en blanco que pide el diseño, expresada contra la propia interlínea de la prosa.
+*/
+cuentoneta-literary-work-prose > * > * + *,
+cuentoneta-literary-work-prose blockquote > * + * {
+	margin-block-start: 1lh;
+}
+
+/*
+  La cita tiene que distinguirse por sí sola, sin depender de las reglas horizontales que la rodeaban
+  en el original impreso. La misma regla alcanza a los dos anfitriones: el `blockquote` que emite el
+  pipeline dentro del cuerpo y el del epígrafe, que declara la plantilla de la página.
+*/
+cuentoneta-literary-work-prose blockquote,
+.literary-work-epigraph {
+	@apply border-l-2 border-neutral-300 pl-4;
+}
