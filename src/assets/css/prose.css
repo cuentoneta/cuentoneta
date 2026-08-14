@@ -29,3 +29,49 @@ cuentoneta-literary-work-prose blockquote,
 .literary-work-epigraph {
 	@apply border-l-2 border-neutral-300 pl-4;
 }
+
+/*
+  El resto de lo que la lista blanca del saneamiento permite. Cada regla repone lo que el reset o el
+  preflight quitan; ninguna reinterpreta la cara del elemento.
+
+  Quedan deliberadamente sin regla `code`/`pre`, las tablas y `del`/`sup`/`sub`: no aparecen todavía en
+  la prosa publicada y estilarlos ahora sería decidir sin un caso que lo pida.
+*/
+
+/* Un encabezado abre una parte nueva: necesita más aire arriba que el que separa dos párrafos. */
+cuentoneta-literary-work-prose > * > * + :is(h2, h3, h4, h5, h6) {
+	margin-block-start: 2lh;
+}
+
+/* El preflight de Tailwind quita marcador y sangría de las listas; acá el marcador es contenido. */
+cuentoneta-literary-work-prose :is(ul, ol) {
+	@apply list-outside pl-8;
+}
+
+cuentoneta-literary-work-prose ul {
+	@apply list-disc;
+}
+
+cuentoneta-literary-work-prose ol {
+	@apply list-decimal;
+}
+
+/* Los ítems se separan menos que los bloques: son partes de una misma enumeración. */
+cuentoneta-literary-work-prose li + li {
+	margin-block-start: 0.5lh;
+}
+
+cuentoneta-literary-work-prose hr {
+	@apply border-t border-neutral-200;
+
+	margin-block: 2lh;
+}
+
+cuentoneta-literary-work-prose a {
+	@apply text-brand-500 underline;
+}
+
+/* Una imagen suele venir envuelta en un párrafo, donde el separador entre hermanos no la alcanza. */
+cuentoneta-literary-work-prose img {
+	margin-block: 0.5lh;
+}
