@@ -13,9 +13,9 @@ export type EditorialNoteVariant = 'note' | 'highlight';
 		}
 		<figure [class]="bodyClasses()" data-testid="body">
 			@if (variant() === 'highlight') {
-				<blockquote [innerHTML]="safeContent()" data-testid="content"></blockquote>
+				<blockquote [innerHTML]="safeContent()" [attr.aria-label]="label()" data-testid="content"></blockquote>
 			} @else {
-				<aside [innerHTML]="safeContent()" data-testid="content"></aside>
+				<aside [innerHTML]="safeContent()" [attr.aria-label]="label()" data-testid="content"></aside>
 			}
 			@if (safeReference(); as reference) {
 				<figcaption class="text-end italic" data-testid="reference">
@@ -32,6 +32,11 @@ export type EditorialNoteVariant = 'note' | 'highlight';
 export class EditorialNoteComponent {
 	public readonly note = input.required<AttributedText>();
 	public readonly variant = input<EditorialNoteVariant>('note');
+
+	// Nombre accesible del bloque. En la variante `note` además lo vuelve un landmark: un `<aside>`
+	// anidado en contenido seccionador solo cuenta como región navegable si tiene nombre, y sin él la
+	// voz del editor se lee como una continuación de la obra.
+	public readonly label = input<string>();
 
 	private readonly sanitizer = inject(DomSanitizer);
 
