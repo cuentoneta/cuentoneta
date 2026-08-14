@@ -23,6 +23,31 @@ describe('markdownToSanitizedHtml', () => {
 		expect(html).toContain('<p><em>José</em></p>');
 	});
 
+	// El verso y el epígrafe cortan la línea sin cerrar el párrafo, y CommonMark serializaría ese
+	// salto como un espacio. Los tres casos siguientes fijan las tres aristas de tratarlo como salto
+	// duro: que el salto simple sobreviva, que no se coma la separación de párrafos, y que el salto
+	// duro clásico siga rindiendo uno solo.
+	it('preserves single line breaks within a paragraph', () => {
+		const html = markdownToSanitizedHtml(createMarkdown("I'm looking for the face I had\nBefore the world was made."));
+
+		expect(html).toContain('<br>');
+		expect(html).not.toContain('I had Before');
+	});
+
+	it('keeps paragraphs separate rather than joining them with a line break', () => {
+		const html = markdownToSanitizedHtml(createMarkdown('Primer párrafo.\n\nSegundo párrafo.'));
+
+		expect(html).toContain('<p>Primer párrafo.</p>');
+		expect(html).toContain('<p>Segundo párrafo.</p>');
+		expect(html).not.toContain('<br>');
+	});
+
+	it('renders a single break for the classic two-space hard break', () => {
+		const html = markdownToSanitizedHtml(createMarkdown('Primera línea.  \nSegunda línea.'));
+
+		expect(html.match(/<br>/g)).toHaveLength(1);
+	});
+
 	// Batería XSS: cada payload mezcla prosa benigna (así la salida no es vacía y no lanza por el
 	// invariante de SanitizedHtml) con un constructo peligroso que la allow-list debe neutralizar.
 	// `forbidden` reconoce el constructo peligroso *como tag o atributo*, no como texto: una obra

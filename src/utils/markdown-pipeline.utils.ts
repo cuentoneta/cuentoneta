@@ -1,5 +1,6 @@
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
+import remarkBreaks from 'remark-breaks';
 import remarkRehype from 'remark-rehype';
 import rehypeSanitize, { defaultSchema, type Options } from 'rehype-sanitize';
 import rehypeStringify from 'rehype-stringify';
@@ -64,6 +65,10 @@ const literaryWorkSanitizationSchema: Options = {
 // Singleton de módulo: construir el procesador unified es costoso y el pipeline es inmutable.
 const pipeline = unified()
 	.use(remarkParse)
+	// El contenido lo escriben editores en un campo Markdown del Studio, donde un salto tipeado
+	// significa un salto: el marcador de CommonMark (dos espacios finales) es invisible y cualquier
+	// editor lo recorta. Va antes de remarkRehype porque opera sobre mdast.
+	.use(remarkBreaks)
 	.use(remarkRehype)
 	.use(rehypeSanityImages)
 	.use(rehypeSanitize, literaryWorkSanitizationSchema)
