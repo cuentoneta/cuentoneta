@@ -90,8 +90,11 @@ jobs:
         run: |
           set -euo pipefail
           if [ "$BRANCH_EXISTS" = 'true' ]; then
+            # Se posiciona sobre FETCH_HEAD y no sobre `origin/<rama>`: ese remote-tracking ref solo
+            # existe si el checkout dejó configurado un refspec comodín, y este camino recién se
+            # ejercita en la segunda corrida — no es donde conviene descubrir que no estaba.
             git fetch --depth 1 origin "$METRICS_BRANCH"
-            git switch --force-create "$METRICS_BRANCH" "origin/$METRICS_BRANCH"
+            git switch --force-create "$METRICS_BRANCH" FETCH_HEAD
           else
             git switch --orphan "$METRICS_BRANCH"
             git rm -rf . >/dev/null 2>&1 || true
@@ -128,10 +131,19 @@ jobs:
       # Se commitea con ruta explícita y solo si algo cambió. Un push a esta rama no dispara ningún
       # workflow del repo —todos escuchan `pull_request` o un push a `develop`/`master`—, así que no
       # hace falta ningún `[skip ci]`.
+      # Corre aunque la medición haya salido fatal: un solo 403 entre cientos de observaciones reales
+      # corta el job, y descartar por eso todo lo que sí se midió perdería la única copia durable de
+      # la serie. Si la corrida ni llegó a escribir el archivo, no hay nada que persistir y se sale
+      # sin ruido.
       - name: Persistir la serie
+        if: always()
         working-directory: .metrics
         run: |
           set -euo pipefail
+          if [ ! -f seo-index-status/latest.json ]; then
+            echo 'La corrida no llegó a escribir el historial; no hay serie que persistir.'
+            exit 0
+          fi
           if [ ! -f README.md ]; then
             cat > README.md <<'DOC'
           # Serie de estado de indexado
@@ -159,12 +171,16 @@ jobs:
         continue-on-error: true
         run: pnpm seo:smoke
 
+      # Los tres desenlaces se distinguen: cuando la medición corta el job el smoke no corre, su
+      # `outcome` llega vacío, y anotar "encontró violaciones" afirmaría un hallazgo inexistente.
       - name: Anotar el desenlace del smoke
         if: always()
+        env:
+          SMOKE_OUTCOME: ${{ steps.smoke.outcome }}
         run: |
           set -euo pipefail
-          if [ '${{ steps.smoke.outcome }}' = 'success' ]; then
-            echo '## Smoke SSR: sin violaciones.' >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo '## Smoke SSR: encontró violaciones (ver el log del step).' >> "$GITHUB_STEP_SUMMARY"
-          fi
+          case "$SMOKE_OUTCOME" in
+            success) echo '## Smoke SSR: sin violaciones.' >> "$GITHUB_STEP_SUMMARY" ;;
+            failure) echo '## Smoke SSR: encontró violaciones (ver el log del step).' >> "$GITHUB_STEP_SUMMARY" ;;
+            *) echo '## Smoke SSR: no llegó a correr.' >> "$GITHUB_STEP_SUMMARY" ;;
+          esac
