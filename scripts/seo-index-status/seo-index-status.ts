@@ -11,10 +11,10 @@
  * distinto no pisa lo medido antes. El dato útil es la serie ("cuántas pasaron a indexada"), y el
  * reporte la expone diffeando contra la observación anterior de cada URL.
  *
- * Una inspección que erra —la API devuelve errores transitorios de forma esporádica— se reporta como
- * fallida y la corrida sale con código distinto de cero: no reintenta. Es deliberado, porque una
- * inspección que no ocurrió no debe reportarse como si hubiera ocurrido; el costo es que una pasada
- * grande arrastra fallas espurias.
+ * La API devuelve errores transitorios de forma esporádica, así que una inspección que erra se
+ * reintenta con backoff —solo si el error puede no ser determinista, y sin saltear el espaciado de
+ * despacho—. La que agota sus intentos se reporta como fallida y hace salir a la corrida con código
+ * distinto de cero: una inspección que no ocurrió no debe reportarse como si hubiera ocurrido.
  *
  * Requisitos (una service account con acceso de lectura a la propiedad):
  *   1. Crear la service account en Google Cloud y habilitarle la Search Console API.
@@ -44,14 +44,17 @@ import {
 	createPacer,
 	formatReport,
 	mergeSnapshot,
+	messageOf,
 	parseSampleSize,
 	parseSitemapLocs,
+	snapshotOf,
 	storedRows,
 	toSnapshot,
 	type ClassifiedRow,
 	type InspectionSnapshot,
 	type SnapshotStore,
 } from './seo-index-status.helpers';
+import { createRetryBudget, runWithRetries } from './seo-index-status.retry';
 
 const SITE_URL = process.env['GSC_SITE_URL'] ?? '';
 const BASE_URL = process.env['BASE_URL'] ?? 'https://www.cuentoneta.ar';
@@ -67,7 +70,9 @@ const LIST_SITES = process.argv.includes('--list-sites');
 const QUOTA_PER_DAY = 2000;
 const QUOTA_PER_MINUTE = 600;
 const MS_PER_MINUTE = 60_000;
-// Se despacha al 80% del techo por minuto para dejar margen ante reintentos internos del cliente.
+// Se despacha al 80% del techo por minuto: el margen es lo que absorbe los reintentos, que compiten
+// por ranura como cualquier otro despacho. El cliente HTTP no aporta ninguno — su reintento propio
+// cubre métodos idempotentes, y esta inspección es un POST.
 const DISPATCH_SPACING_MS = Math.ceil(MS_PER_MINUTE / (QUOTA_PER_MINUTE * 0.8));
 const CONCURRENCY = 8;
 
@@ -77,10 +82,6 @@ const SNAPSHOT_FILE = join(SNAPSHOT_DIR, 'latest.json');
 function argValue(flag: string): string | undefined {
 	const found = process.argv.find((arg) => arg.startsWith(`${flag}=`));
 	return found?.slice(flag.length + 1);
-}
-
-function messageOf(error: unknown): string {
-	return error instanceof Error ? error.message : String(error);
 }
 
 function delay(ms: number): Promise<void> {
@@ -122,23 +123,27 @@ type Inspector = (url: string) => Promise<InspectionSnapshot>;
 function buildInspector(): Inspector {
 	const api = searchconsole({ version: 'v1', auth: buildAuth() });
 
+	// Propaga el error en vez de traducirlo acá: quien decide si se reintenta necesita el error tal
+	// como vino, y la fila fallida se arma una sola vez, donde ya se sabe cuántos intentos costó.
 	return async (url: string): Promise<InspectionSnapshot> => {
-		try {
-			const { data } = await api.urlInspection.index.inspect({
-				// `languageCode: 'en'` fija el idioma de `coverageState`, que la API devuelve
-				// LOCALIZADO: sin fijarlo, el texto cambia y los diffs entre corridas se ensucian.
-				requestBody: { siteUrl: SITE_URL, inspectionUrl: url, languageCode: 'en' },
-			});
-			return toSnapshot(url, data.inspectionResult?.indexStatusResult ?? undefined);
-		} catch (error) {
-			return { url, error: messageOf(error) };
-		}
+		const { data } = await api.urlInspection.index.inspect({
+			// `languageCode: 'en'` fija el idioma de `coverageState`, que la API devuelve
+			// LOCALIZADO: sin fijarlo, el texto cambia y los diffs entre corridas se ensucian.
+			requestBody: { siteUrl: SITE_URL, inspectionUrl: url, languageCode: 'en' },
+		});
+		return toSnapshot(url, data.inspectionResult?.indexStatusResult ?? undefined);
 	};
 }
 
-async function inspectAll(urls: readonly string[], inspect: Inspector): Promise<ClassifiedRow[]> {
+interface InspectionRun {
+	rows: ClassifiedRow[];
+	retries: number;
+}
+
+async function inspectAll(urls: readonly string[], inspect: Inspector): Promise<InspectionRun> {
 	const rows: ClassifiedRow[] = [];
 	const pace = createPacer(DISPATCH_SPACING_MS, { now: () => Date.now(), sleep: delay });
+	const budget = createRetryBudget(QUOTA_PER_DAY - urls.length);
 	let next = 0;
 
 	async function worker(): Promise<void> {
@@ -147,8 +152,8 @@ async function inspectAll(urls: readonly string[], inspect: Inspector): Promise<
 			if (url === undefined) {
 				return;
 			}
-			await pace();
-			rows.push(classify(await inspect(url)));
+			const result = await runWithRetries(() => inspect(url), { pace, sleep: delay, budget });
+			rows.push(classify(snapshotOf(url, result)));
 			if (rows.length % 25 === 0 || rows.length === urls.length) {
 				console.log(`  ... ${rows.length}/${urls.length}`);
 			}
@@ -156,7 +161,7 @@ async function inspectAll(urls: readonly string[], inspect: Inspector): Promise<
 	}
 
 	await Promise.all(Array.from({ length: Math.min(CONCURRENCY, urls.length) }, worker));
-	return rows;
+	return { rows, retries: budget.consumed() };
 }
 
 /**
@@ -257,9 +262,9 @@ async function run(): Promise<void> {
 	console.log(`Inspeccionando ${urls.length} URL(s) de ${SITE_URL} (~${DISPATCH_SPACING_MS}ms entre llamadas)\n`);
 	const store = await readStore();
 	const known = storedRows(store);
-	const rows = await inspectAll(urls, buildInspector());
+	const { rows, retries } = await inspectAll(urls, buildInspector());
 
-	console.log(formatReport({ rows, previous: known.length > 0 ? known : undefined }).join('\n'));
+	console.log(formatReport({ rows, previous: known.length > 0 ? known : undefined, retries }).join('\n'));
 	await writeStore(store, rows);
 
 	if (rows.some((row) => row.error)) {

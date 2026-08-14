@@ -10,6 +10,7 @@ import {
 	mergeSnapshot,
 	parseSampleSize,
 	parseSitemapLocs,
+	snapshotOf,
 	storedRows,
 	summarize,
 	toSnapshot,
@@ -470,5 +471,71 @@ describe('createPacer', () => {
 		await pace();
 
 		expect(slept).toEqual([0, 0]);
+	});
+});
+
+describe('formatReport — reintentos', () => {
+	it('informa los reintentos consumidos cuando hubo alguno', () => {
+		const report = formatReport({ rows: [row({ url: 'a' })], retries: 3 }).join('\n');
+
+		expect(report).toContain('Reintentos consumidos: 3');
+	});
+
+	it.each([[0], [undefined]])('omite la línea cuando no hubo reintentos (%s)', (retries) => {
+		const report = formatReport({ rows: [row({ url: 'a' })], retries }).join('\n');
+
+		expect(report).not.toContain('Reintentos consumidos');
+	});
+
+	it('distingue una URL que agotó sus intentos de otra que falló de entrada', () => {
+		const report = formatReport({
+			rows: [row({ url: 'a', error: 'Internal error encountered.', attempts: 3 }), row({ url: 'b', error: '403' })],
+		}).join('\n');
+
+		expect(report).toContain('a — Internal error encountered. (tras 3 intentos)');
+		expect(report).toContain('b — 403');
+		expect(report).not.toContain('b — 403 (tras');
+	});
+});
+
+describe('mergeSnapshot — intentos', () => {
+	it('persiste el conteo de intentos en la fila', () => {
+		const store = mergeSnapshot({}, [row({ url: 'a', attempts: 2 })], '2026-08-13T00:00:00Z');
+
+		expect(store['a']?.attempts).toBe(2);
+	});
+});
+
+describe('snapshotOf', () => {
+	const snapshotA: InspectionSnapshot = { url: 'a', verdict: 'PASS' };
+
+	it('devuelve la snapshot intacta cuando bastó un intento', () => {
+		const result = snapshotOf('a', { ok: true, value: snapshotA, attempts: 1 });
+
+		expect(result).toEqual(snapshotA);
+		expect('attempts' in result).toBe(false);
+	});
+
+	it('suma el conteo cuando el dato llegó tras un reintento', () => {
+		expect(snapshotOf('a', { ok: true, value: snapshotA, attempts: 2 })).toEqual({ ...snapshotA, attempts: 2 });
+	});
+
+	it('describe el error cuando la inspección falló tras agotar los intentos', () => {
+		const result = snapshotOf('a', { ok: false, error: new Error('Internal error encountered.'), attempts: 3 });
+
+		expect(result).toEqual({ url: 'a', error: 'Internal error encountered.', attempts: 3 });
+	});
+
+	// El contrato del campo: `attempts` significa "hubo reintento". Una falla de un solo intento no
+	// lo lleva, o cada fila fallida del historial afirmaría un reintento que nunca ocurrió.
+	it('omite el conteo cuando la falla fue determinista y no se reintentó', () => {
+		const result = snapshotOf('a', { ok: false, error: new Error('403'), attempts: 1 });
+
+		expect(result).toEqual({ url: 'a', error: '403' });
+		expect('attempts' in result).toBe(false);
+	});
+
+	it('describe un error que no es Error', () => {
+		expect(snapshotOf('a', { ok: false, error: 'boom', attempts: 1 })).toEqual({ url: 'a', error: 'boom' });
 	});
 });

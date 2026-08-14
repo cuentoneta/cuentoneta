@@ -4,6 +4,7 @@
  * `seo-index-status.ts` (auth/red/paginado) para poder testearlos sin credenciales ni tocar la red.
  */
 import { locations } from '../../src/testing/sitemap-xml';
+import type { RetryResult } from './seo-index-status.retry';
 
 /**
  * Estado derivado por nosotros. NO es `coverageState`: ese campo la API lo devuelve como string
@@ -42,6 +43,8 @@ export interface InspectionSnapshot {
 	userCanonical?: string;
 	/** Presente solo si la llamada a la API falló para esta URL. */
 	error?: string;
+	/** Presente solo si la inspección consumió más de un intento. */
+	attempts?: number;
 }
 
 export interface ClassifiedRow extends InspectionSnapshot {
@@ -355,12 +358,33 @@ function formatCoverageTransitions(transitions: readonly CoverageTransition[]): 
 	return [...grouped].sort(([, a], [, b]) => b - a).map(([label, count]) => `  ${String(count).padStart(5)}  ${label}`);
 }
 
+export function messageOf(error: unknown): string {
+	return error instanceof Error ? error.message : String(error);
+}
+
+/**
+ * Traduce el desenlace de los intentos a la fila que se persiste. `attempts` viaja **solo cuando hubo
+ * reintento**, gane o pierda: en el caso normal —que es la abrumadora mayoría de las filas— sería
+ * ruido repetido en cada entrada del historial.
+ */
+export function snapshotOf(url: string, result: RetryResult<InspectionSnapshot>): InspectionSnapshot {
+	const attempts = result.attempts > 1 ? { attempts: result.attempts } : {};
+	return result.ok ? { ...result.value, ...attempts } : { url, error: messageOf(result.error), ...attempts };
+}
+
+/** Distingue una URL que agotó sus reintentos de otra que falló de entrada y no se reintentó. */
+function formatAttempts(attempts: number | undefined): string {
+	return attempts !== undefined && attempts > 1 ? ` (tras ${attempts} intentos)` : '';
+}
+
 export interface ReportInput {
 	rows: readonly ClassifiedRow[];
 	previous?: readonly ClassifiedRow[];
+	/** Reintentos que consumió la corrida. Se informa solo si hubo alguno. */
+	retries?: number;
 }
 
-export function formatReport({ rows, previous }: ReportInput): string[] {
+export function formatReport({ rows, previous, retries }: ReportInput): string[] {
 	const lines = [
 		'',
 		`Resultado sobre ${rows.length} URL(s):`,
@@ -369,6 +393,10 @@ export function formatReport({ rows, previous }: ReportInput): string[] {
 		'coverageState informado por Google:',
 		...formatCoverageStates(rows),
 	];
+
+	if (retries !== undefined && retries > 0) {
+		lines.push('', `Reintentos consumidos: ${retries}`);
+	}
 
 	const mismatches = rows.filter((row) => row.canonicalMismatch);
 	if (mismatches.length > 0) {
@@ -385,7 +413,7 @@ export function formatReport({ rows, previous }: ReportInput): string[] {
 	const failures = rows.filter((row) => row.state === CRAWL_STATE.failed);
 	if (failures.length > 0) {
 		lines.push('', `Inspecciones fallidas (${failures.length}):`);
-		lines.push(...failures.map((row) => `  ${row.url} — ${row.error}`));
+		lines.push(...failures.map((row) => `  ${row.url} — ${row.error}${formatAttempts(row.attempts)}`));
 	}
 
 	if (previous) {
