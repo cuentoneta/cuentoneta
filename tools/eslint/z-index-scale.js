@@ -105,11 +105,11 @@ export default {
 		],
 		messages: {
 			utility:
-				'`{{utility}}` no pertenece a la escala de apilamiento. Usá una de sus capas ({{scale}}) o `z-auto` — ver angular-components.md.',
+				'`{{utility}}` is not part of the stacking scale. Use one of its layers ({{scale}}) or `z-auto` — see angular-components.md#escala-de-apilamiento-z-index.',
 			globalLayer:
-				'`{{utility}}` es una capa global, reservada a la barra fija y a la capa flotante. Elevá con una capa interna y confiná el apilamiento del componente con `isolate` — ver angular-components.md.',
+				"`{{utility}}` is a global layer, reserved for the fixed navigation bar and the floating layer. Raise with an internal layer and confine the component's stacking with `isolate` — see angular-components.md#escala-de-apilamiento-z-index.",
 			declaration:
-				'`z-index: {{value}}` no sale de la escala de apilamiento. Referenciá una capa con `var(--z-index-<capa>)` ({{scale}}) — ver angular-components.md.',
+				'`z-index: {{value}}` is outside the stacking scale. Reference a layer with `var(--z-index-<layer>)` ({{scale}}) — see angular-components.md#escala-de-apilamiento-z-index.',
 		},
 	},
 	create(context) {
