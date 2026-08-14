@@ -3,7 +3,7 @@ import { RESPONSE_INIT } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 
 // 3rd party modules
-import { render, screen } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 import { restoreAllMocks, spyOn } from '@test-utils';
 import { throwError, type Observable } from 'rxjs';
 
@@ -17,6 +17,7 @@ import {
 	onoffLiteraryWorksMock,
 	onoffLiteraryWorksSingleSection,
 	onoffLiteraryWorksWithEditorialNote,
+	onoffLiteraryWorksWithEpigraphs,
 	onoffLiteraryWorksWithoutEditorialNote,
 	onoffLiteraryWorksWithSectionTitles,
 } from '@mocks/onoff-literary-works.mock';
@@ -48,6 +49,16 @@ const firstBodyWord = (literaryWork: LiteraryWork): string => {
 		throw new Error(`La primera sección de "${literaryWork.slug}" no tiene texto de cuerpo`);
 	}
 	return word;
+};
+
+// La página pinta con el mismo bloque del Design System la nota editorial y cada epígrafe, así que el
+// testid no alcanza para elegir uno: se lo identifica por una palabra de su propio texto.
+const editorialNoteBlockContaining = (blocks: readonly HTMLElement[], word: string): HTMLElement => {
+	const block = blocks.find((candidate) => new RegExp(word, 'i').test(candidate.textContent ?? ''));
+	if (block === undefined) {
+		throw new Error(`Ningún bloque de nota editorial contiene "${word}"`);
+	}
+	return block;
 };
 
 // Payload que combina varios vectores XSS con texto benigno alrededor. Se procesa por el mismo
@@ -180,11 +191,9 @@ describe('ReadPage', () => {
 	);
 
 	it.each(onoffLiteraryWorksWithEditorialNote)(
-		'renderiza la nota editorial de "$slug" bajo su propio encabezado',
+		'renderiza la nota editorial de "$slug" en el bloque del Design System',
 		async (literaryWork) => {
 			await setup(literaryWork);
-
-			expect(await screen.findByRole('heading', { level: 2, name: 'Nota editorial' })).toBeTruthy();
 
 			const noteText = (literaryWork.editorialNote ?? '').replace(/<[^>]+>/g, ' ');
 			const [noteWord] = noteText.match(/\p{L}{6,}/gu) ?? [];
@@ -195,10 +204,44 @@ describe('ReadPage', () => {
 			expect(screen.getAllByText(new RegExp(noteWord, 'i')).length).toBeGreaterThan(0);
 
 			// La nota se pinta dentro del bloque del Design System, no suelta en la página: sin esto el
-			// caso pasaría igual con el HTML volcado directamente en el template.
-			expect(screen.getByTestId('editorial-note')).toBeTruthy();
+			// caso pasaría igual con el HTML volcado directamente en el template. Se lo identifica por su
+			// texto y no por su posición, porque los epígrafes usan el mismo bloque en otra variante.
+			const noteBlock = editorialNoteBlockContaining(await screen.findAllByTestId('editorial-note'), noteWord);
+
+			// La nota se anuncia como región propia: sin el rótulo, quien navega por landmarks no tiene
+			// forma de saber que dejó de leer la obra y pasó a leer a la redacción.
+			expect(await screen.findByRole('complementary', { name: 'Nota editorial' })).toBeTruthy();
 			// La nota no transporta atribución, así que el pie de la figura no debe existir.
-			expect(screen.queryByTestId('reference')).toBeNull();
+			expect(within(noteBlock).queryByTestId('reference')).toBeNull();
+		},
+	);
+
+	// El epígrafe es una cita de un tercero dentro de la obra: lo pinta el mismo bloque del Design
+	// System en su variante `highlight`, que es la que existe para este caso.
+	it.each(onoffLiteraryWorksWithEpigraphs)(
+		'pinta los epígrafes de "$slug" como cita del Design System',
+		async (literaryWork) => {
+			await setup(literaryWork);
+
+			const [epigraph] = literaryWork.content.flatMap((section) => [...(section.epigraphs ?? [])]);
+			const epigraphText = epigraph.text.replace(/<[^>]+>/g, ' ');
+			const [epigraphWord] = epigraphText.match(/\p{L}{6,}/gu) ?? [];
+			if (epigraphWord === undefined) {
+				throw new Error(`El epígrafe de "${literaryWork.slug}" no tiene texto`);
+			}
+
+			const epigraphBlock = editorialNoteBlockContaining(await screen.findAllByTestId('editorial-note'), epigraphWord);
+
+			// La variante `highlight` cita a un tercero, y por eso rinde <blockquote> y no <aside>: es la
+			// distinción semántica que la página perdería si volviera a volcar el epígrafe a mano.
+			expect(within(epigraphBlock).getByRole('blockquote')).toBeTruthy();
+			// La atribución acompaña al epígrafe que la trae; el canon podría sumar mañana uno sin fuente, y
+			// la variante `highlight` cubre los dos casos.
+			if (epigraph.reference === undefined) {
+				expect(within(epigraphBlock).queryByTestId('reference')).toBeNull();
+			} else {
+				expect(within(epigraphBlock).getByTestId('reference')).toBeTruthy();
+			}
 		},
 	);
 
@@ -208,7 +251,14 @@ describe('ReadPage', () => {
 			await setup(literaryWork);
 
 			expect(await screen.findByRole('heading', { level: 1, name: literaryWork.title })).toBeTruthy();
-			expect(screen.queryByRole('heading', { level: 2, name: 'Nota editorial' })).toBeNull();
+
+			// Sin nota editorial, los únicos bloques del Design System que quedan son los epígrafes: si la
+			// página pintara una nota vacía, este conteo la delataría.
+			const epigraphCount = literaryWork.content.reduce(
+				(total, section) => total + (section.epigraphs?.length ?? 0),
+				0,
+			);
+			expect(screen.queryAllByTestId('editorial-note').length).toBe(epigraphCount);
 		},
 	);
 

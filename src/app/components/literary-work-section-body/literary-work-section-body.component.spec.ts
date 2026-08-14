@@ -5,33 +5,29 @@ import { onoffLiteraryWorksMock, onoffLiteraryWorksWithBlockquotes } from '@mock
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
-const [anyWork] = onoffLiteraryWorksMock;
-const [workWithQuote] = onoffLiteraryWorksWithBlockquotes;
+const [anyLiteraryWork] = onoffLiteraryWorksMock;
+const [literaryWorkWithQuote] = onoffLiteraryWorksWithBlockquotes;
 
-async function setup(body = anyWork.content[0].bodyHtml) {
+async function setup(body = anyLiteraryWork.content[0].bodyHtml) {
 	return render(LiteraryWorkSectionBodyComponent, { inputs: { body } });
 }
 
 describe('LiteraryWorkSectionBodyComponent', () => {
 	it('pinta el cuerpo como marcado y no como texto', async () => {
-		const { container } = await setup();
+		await setup();
 
 		// El cuerpo del canon es HTML: si se interpolara en vez de bindearse, el marcado llegaría como
-		// texto y no habría un solo elemento de párrafo. No se expresa por rol: un <p> no tiene rol.
-		/* eslint-disable testing-library/no-container, testing-library/no-node-access -- la ausencia de un tag no se expresa por rol ni por texto */
-		expect(container.querySelectorAll('p').length).toBeGreaterThan(0);
-		/* eslint-enable testing-library/no-container, testing-library/no-node-access */
+		// texto y no habría un solo párrafo en el árbol de accesibilidad.
+		expect(screen.getAllByRole('paragraph').length).toBeGreaterThan(0);
 		expect(screen.getByTestId('literary-work-section-body').textContent).not.toContain('<p>');
 	});
 
 	// La cita es el motivo de este componente: es lo que el original marcaba con alineación y lo que
 	// las reglas tipográficas tienen que distinguir del párrafo.
 	it('conserva la cita que el cuerpo del canon transcribe', async () => {
-		const { container } = await setup(workWithQuote.content[0].bodyHtml);
+		await setup(literaryWorkWithQuote.content[0].bodyHtml);
 
-		/* eslint-disable testing-library/no-container, testing-library/no-node-access -- la presencia de un tag no se expresa por rol ni por texto */
-		expect(container.querySelector('blockquote')).not.toBeNull();
-		/* eslint-enable testing-library/no-container, testing-library/no-node-access */
+		expect(screen.getByRole('blockquote')).toBeTruthy();
 	});
 
 	// Es la razón por la que el bypass existe. Se afirma sobre los hints de carga y no sobre `srcset`:
