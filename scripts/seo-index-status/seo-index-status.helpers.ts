@@ -137,6 +137,47 @@ function resolveState(snapshot: InspectionSnapshot): CrawlState {
 	return snapshot.lastCrawlTime ? CRAWL_STATE.crawledNotIndexed : CRAWL_STATE.neverCrawled;
 }
 
+/**
+ * Códigos de salida de la corrida. Existen tres y no dos porque un job programado tiene que poder
+ * distinguir "la herramienta no pudo medir" de "midió, y algunas inspecciones sueltas erraron": lo
+ * primero es un fallo suyo y merece rojo; lo segundo es ruido residual de la API, y pintarlo de rojo
+ * cada semana vacía de significado al rojo.
+ */
+export const EXIT_CODE = Object.freeze({
+	ok: 0,
+	toolFailure: 1,
+	partialFailure: 2,
+} as const);
+
+/**
+ * Statuses que no cambian si se vuelve a intentar y que señalan a la herramienta, no a la API: los
+ * parámetros del pedido, las credenciales, el permiso sobre la propiedad y la cuota ya agotada. Una
+ * sola fila con cualquiera de estos condena la corrida entera, porque la causa es común a todas.
+ */
+const TOOL_FAILURE_STATUSES: readonly number[] = [400, 401, 403, 429];
+
+/**
+ * Traduce el desenlace de la corrida al código de salida. Una corrida sin una sola observación no
+ * midió nada —el caso de la API caída—, y reportarla en verde sería exactamente el rojo que dejó de
+ * significar algo, al revés.
+ */
+export function classifyRunOutcome(rows: readonly ClassifiedRow[]): number {
+	if (rows.length === 0) {
+		return EXIT_CODE.toolFailure;
+	}
+
+	const failed = rows.filter((row) => row.state === CRAWL_STATE.failed);
+	if (failed.length === 0) {
+		return EXIT_CODE.ok;
+	}
+	if (failed.length === rows.length) {
+		return EXIT_CODE.toolFailure;
+	}
+	return failed.some((row) => row.errorStatus !== undefined && TOOL_FAILURE_STATUSES.includes(row.errorStatus))
+		? EXIT_CODE.toolFailure
+		: EXIT_CODE.partialFailure;
+}
+
 export type StateCounts = Readonly<Record<CrawlState, number>>;
 
 export function summarize(rows: readonly ClassifiedRow[]): StateCounts {

@@ -1,9 +1,11 @@
 import { join } from 'node:path';
 import {
 	classify,
+	classifyRunOutcome,
 	createPacer,
 	CRAWL_STATE,
 	DEFAULT_SAMPLE_SIZE,
+	EXIT_CODE,
 	diffCoverageStates,
 	diffStates,
 	formatReport,
@@ -557,6 +559,51 @@ describe('snapshotOf', () => {
 		const result = snapshotOf('a', { ok: true, value: snapshotA, attempts: 1 });
 
 		expect('errorStatus' in result).toBe(false);
+	});
+});
+
+describe('classifyRunOutcome', () => {
+	const good = row({ url: 'ok', verdict: 'PASS', lastCrawlTime: '2026-08-13T00:00:00Z' });
+
+	it('sale en cero cuando ninguna inspección falló', () => {
+		expect(classifyRunOutcome([good])).toBe(EXIT_CODE.ok);
+	});
+
+	// Una corrida vacía no midió nada; reportarla en verde la vuelve indistinguible de un sitio sano.
+	it('trata una corrida sin filas como fallo de la herramienta', () => {
+		expect(classifyRunOutcome([])).toBe(EXIT_CODE.toolFailure);
+	});
+
+	it('trata como fallo de la herramienta que TODAS las filas hayan fallado', () => {
+		const rows = [row({ url: 'a', error: '500', errorStatus: 500 }), row({ url: 'b', error: '500', errorStatus: 500 })];
+
+		expect(classifyRunOutcome(rows)).toBe(EXIT_CODE.toolFailure);
+	});
+
+	it('condena la corrida entera ante una sola falla por permisos', () => {
+		const rows = [good, row({ url: 'a', error: 'Permission denied.', errorStatus: 403 })];
+
+		expect(classifyRunOutcome(rows)).toBe(EXIT_CODE.toolFailure);
+	});
+
+	it('condena la corrida entera cuando la cuota se agotó', () => {
+		const rows = [good, row({ url: 'a', error: 'Quota exceeded.', errorStatus: 429 })];
+
+		expect(classifyRunOutcome(rows)).toBe(EXIT_CODE.toolFailure);
+	});
+
+	it('reporta como parcial una falla de servidor suelta', () => {
+		const rows = [good, row({ url: 'a', error: 'Internal error encountered.', errorStatus: 500 })];
+
+		expect(classifyRunOutcome(rows)).toBe(EXIT_CODE.partialFailure);
+	});
+
+	// Sin status no hay evidencia de que la causa sea común a todas las URLs, y presumirla condenaría
+	// la corrida por un error de red suelto.
+	it('reporta como parcial una falla sin status legible', () => {
+		const rows = [good, row({ url: 'a', error: 'socket hang up' })];
+
+		expect(classifyRunOutcome(rows)).toBe(EXIT_CODE.partialFailure);
 	});
 });
 

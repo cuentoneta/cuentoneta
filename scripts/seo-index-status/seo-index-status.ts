@@ -14,8 +14,14 @@
  *
  * La API devuelve errores transitorios de forma esporádica, así que una inspección que erra se
  * reintenta con backoff —solo si el error puede no ser determinista, y sin saltear el espaciado de
- * despacho—. La que agota sus intentos se reporta como fallida y hace salir a la corrida con código
- * distinto de cero: una inspección que no ocurrió no debe reportarse como si hubiera ocurrido.
+ * despacho—. La que agota sus intentos se reporta como fallida: una inspección que no ocurrió no
+ * debe reportarse como si hubiera ocurrido.
+ *
+ * El código de salida transporta la CAUSA, no solo la existencia de un fallo, porque quien corre
+ * esto sin mirar el log es un job programado y necesita decidir si pintarse de rojo:
+ *   0  la corrida midió todo lo que se propuso;
+ *   1  la herramienta no pudo medir (credenciales, permisos, cuota, o ni una sola observación);
+ *   2  midió, y algunas inspecciones sueltas erraron por causas transitorias.
  *
  * Requisitos (una service account con acceso de lectura a la propiedad):
  *   1. Crear la service account en Google Cloud y habilitarle la Search Console API.
@@ -42,7 +48,9 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { auth, searchconsole } from '@googleapis/searchconsole';
 import {
 	classify,
+	classifyRunOutcome,
 	createPacer,
+	EXIT_CODE,
 	formatReport,
 	mergeSnapshot,
 	messageOf,
@@ -268,12 +276,10 @@ async function run(): Promise<void> {
 	console.log(formatReport({ rows, previous: known.length > 0 ? known : undefined, retries }).join('\n'));
 	await writeStore(store, rows);
 
-	if (rows.some((row) => row.error)) {
-		process.exitCode = 1;
-	}
+	process.exitCode = classifyRunOutcome(rows);
 }
 
 run().catch((error: unknown) => {
 	console.error(messageOf(error));
-	process.exitCode = 1;
+	process.exitCode = EXIT_CODE.toolFailure;
 });
