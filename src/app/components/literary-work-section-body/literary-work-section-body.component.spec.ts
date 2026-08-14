@@ -5,10 +5,10 @@ import { onoffLiteraryWorksMock, onoffLiteraryWorksWithBlockquotes } from '@mock
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
-const [anyWork] = onoffLiteraryWorksMock;
-const [workWithQuote] = onoffLiteraryWorksWithBlockquotes;
+const [anyLiteraryWork] = onoffLiteraryWorksMock;
+const [literaryWorkWithQuote] = onoffLiteraryWorksWithBlockquotes;
 
-async function setup(body = anyWork.content[0].bodyHtml) {
+async function setup(body = anyLiteraryWork.content[0].bodyHtml) {
 	return render(LiteraryWorkSectionBodyComponent, { inputs: { body } });
 }
 
@@ -25,7 +25,7 @@ describe('LiteraryWorkSectionBodyComponent', () => {
 	// La cita es el motivo de este componente: es lo que el original marcaba con alineación y lo que
 	// las reglas tipográficas tienen que distinguir del párrafo.
 	it('conserva la cita que el cuerpo del canon transcribe', async () => {
-		await setup(workWithQuote.content[0].bodyHtml);
+		await setup(literaryWorkWithQuote.content[0].bodyHtml);
 
 		expect(screen.getByRole('blockquote')).toBeTruthy();
 	});
