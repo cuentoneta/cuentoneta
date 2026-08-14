@@ -45,7 +45,7 @@ describe('markdownToSanitizedHtml', () => {
 	it('renders a single break for the classic two-space hard break', () => {
 		const html = markdownToSanitizedHtml(createMarkdown('Primera línea.  \nSegunda línea.'));
 
-		expect(html.match(/<br>/g)).toHaveLength(1);
+		expect([...html.matchAll(/<br>/g)]).toHaveLength(1);
 	});
 
 	// Batería XSS: cada payload mezcla prosa benigna (así la salida no es vacía y no lanza por el

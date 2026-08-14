@@ -118,21 +118,25 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 		async (rawLiteraryWork) => {
 			const literaryWork = await repoReturning(rawLiteraryWork).fetchBySlug(rawLiteraryWork.slug);
 
-			const multilineEpigraph = literaryWork?.content
-				.flatMap((section) => section.epigraphs ?? [])
-				.find((epigraph) => epigraph.text.includes('<br'));
+			// Crudo y dominio se aparean por posición dentro de la misma obra, así que el índice del
+			// epígrafe cortado en el origen es el que hay que leer en el resultado del mapeo.
+			const rawEpigraphs = rawLiteraryWork.content.flatMap((section) => section.epigraphs);
+			const multilineIndex = rawEpigraphs.findIndex((epigraph) => epigraph.text?.includes('\n'));
+			expect(multilineIndex).toBeGreaterThanOrEqual(0);
 
-			expect(multilineEpigraph).toBeDefined();
+			const rawText = rawEpigraphs[multilineIndex].text ?? '';
+			const mappedText = literaryWork?.content.flatMap((section) => section.epigraphs ?? [])[multilineIndex]?.text;
 
-			// Las palabras que el salto separa en el origen no quedan pegadas por un espacio, que es
-			// exactamente lo que CommonMark haría con el salto simple si nadie lo tratara como duro.
-			const rawMultilineText = rawLiteraryWork.content
-				.flatMap((section) => section.epigraphs)
-				.find((epigraph) => epigraph.text?.includes('\n'))?.text;
-			const [beforeBreak, afterBreak] = (rawMultilineText ?? '').split('\n');
-			const flattened = `${beforeBreak.slice(-8)} ${afterBreak.slice(0, 8)}`;
+			// La aserción va en positivo y sobre palabras completas: solo puede pasar si el <br> quedó
+			// exactamente donde el origen cortaba. Una negativa ("no quedaron pegadas") aprobaría igual
+			// si el término construido para buscar nunca hubiera podido aparecer en el HTML.
+			const [beforeBreak, afterBreak] = rawText.split('\n');
+			const lastWord = /([\p{L}\p{N}]+)[^\p{L}\p{N}]*$/u.exec(beforeBreak)?.[1];
+			const firstWord = /^[^\p{L}\p{N}]*([\p{L}\p{N}]+)/u.exec(afterBreak)?.[1];
+			expect(lastWord).toBeDefined();
+			expect(firstWord).toBeDefined();
 
-			expect(multilineEpigraph?.text).not.toContain(flattened);
+			expect(mappedText).toMatch(new RegExp(`${lastWord}[^\\p{L}\\p{N}]*<br\\s*/?>[^\\p{L}\\p{N}]*${firstWord}`, 'u'));
 		},
 	);
 
