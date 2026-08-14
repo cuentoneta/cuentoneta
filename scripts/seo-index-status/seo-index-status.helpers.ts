@@ -301,6 +301,25 @@ function movedSinceLastRun(previous: StoredRow | undefined, row: ClassifiedRow):
 	return previous.state !== row.state || previous.coverageState !== row.coverageState;
 }
 
+/**
+ * La entrada archivada es la observación ANTERIOR, no la nueva: los campos de primer nivel siempre
+ * son el presente, y `history` el camino que llevó hasta él.
+ */
+function historyAfter(previous: StoredRow | undefined, row: ClassifiedRow): HistoryEntry[] {
+	const history = previous?.history ?? [];
+	if (!movedSinceLastRun(previous, row)) {
+		return history;
+	}
+	return [
+		...history,
+		{
+			checkedAt: previous?.checkedAt ?? '',
+			state: previous?.state ?? row.state,
+			coverageState: previous?.coverageState,
+		},
+	];
+}
+
 export function mergeSnapshot(store: SnapshotStore, rows: readonly ClassifiedRow[], checkedAt: string): SnapshotStore {
 	const merged: SnapshotStore = { ...store };
 	for (const row of rows) {
@@ -310,23 +329,10 @@ export function mergeSnapshot(store: SnapshotStore, rows: readonly ClassifiedRow
 		if (row.state === CRAWL_STATE.failed) {
 			continue;
 		}
-		const previous = store[row.url];
-		const history = previous?.history ?? [];
 		merged[row.url] = {
 			...row,
 			checkedAt,
-			// La entrada archivada es la observación ANTERIOR, no la nueva: los campos de primer nivel
-			// siempre son el presente, y `history` el camino que llevó hasta él.
-			history: movedSinceLastRun(previous, row)
-				? [
-						...history,
-						{
-							checkedAt: previous?.checkedAt ?? '',
-							state: previous?.state ?? row.state,
-							coverageState: previous?.coverageState,
-						},
-					]
-				: history,
+			history: historyAfter(store[row.url], row),
 		};
 	}
 	return merged;
