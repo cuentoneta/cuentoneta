@@ -130,6 +130,16 @@ describe('ReadPage', () => {
 		},
 	);
 
+	// El cuerpo se pinta dentro del componente que lo posee —igual que la nota editorial—, no volcado
+	// suelto en la plantilla: de ahí cuelgan el bypass y las reglas tipográficas de la prosa.
+	it.each(onoffLiteraryWorksMock)('pinta el cuerpo de "$slug" dentro del componente de prosa', async (literaryWork) => {
+		await setup(literaryWork);
+
+		const proseBlocks = await screen.findAllByTestId('literary-work-prose');
+		expect(proseBlocks.length).toBe(literaryWork.content.length);
+		expect(proseBlocks[0].textContent).toMatch(new RegExp(firstBodyWord(literaryWork), 'i'));
+	});
+
 	it('renderiza el cuerpo malicioso saneado de forma inerte en el DOM', async () => {
 		const { container } = await setup(literaryWorkWithMaliciousBody(representativeLiteraryWork));
 

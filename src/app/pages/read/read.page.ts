@@ -22,13 +22,14 @@ import { READ_HOST, type ReadHost } from './read-host';
 import { LiteraryWorkHeroHeaderComponent } from '@components/literary-work-hero-header/literary-work-hero-header.component';
 import { ButtonComponent } from '@components/button/button.component';
 import { EditorialNoteComponent } from '@components/editorial-note/editorial-note.component';
+import { LiteraryWorkProseComponent } from '@components/literary-work-prose/literary-work-prose.component';
 
 @Component({
 	selector: 'cuentoneta-read',
 	templateUrl: './read.page.html',
 	providers: [{ provide: READ_HOST, useExisting: forwardRef(() => ReadPage) }],
 	hostDirectives: [HeadMetadataDirective],
-	imports: [LiteraryWorkHeroHeaderComponent, ButtonComponent, EditorialNoteComponent],
+	imports: [LiteraryWorkHeroHeaderComponent, ButtonComponent, EditorialNoteComponent, LiteraryWorkProseComponent],
 })
 export default class ReadPage implements ReadHost {
 	public readonly slug = input.required<string>();
@@ -77,8 +78,9 @@ export default class ReadPage implements ReadHost {
 		});
 	});
 
-	// El HTML ya viene saneado del backend (única fuente: el pipeline del ACL); bypass es la
-	// confianza en esa frontera, no una sanitización propia — LITERARY_WORK_DESIGN.md §9.
+	// Los epígrafes los pinta esta plantilla, así que su bypass vive acá: el HTML ya viene saneado del
+	// backend (única fuente: el pipeline del ACL) y el bypass es la confianza en esa frontera, no una
+	// sanitización propia — LITERARY_WORK_DESIGN.md §9. El del cuerpo lo hace el componente de prosa.
 	// TODO: Mover esta lógica a un service como parte de la implementación de #1471.
 	// 1. Chequear de qué manera evitar el uso de bypassSecurityTrustHtml
 	// 2. Revisar si hace falta declarar tipos para rendering (RenderableEpigraph, RenderableSection, etc.)
@@ -93,7 +95,7 @@ export default class ReadPage implements ReadHost {
 						text: this.sanitizer.bypassSecurityTrustHtml(epigraph.text),
 						reference: epigraph.reference ? this.sanitizer.bypassSecurityTrustHtml(epigraph.reference) : undefined,
 					})) ?? [],
-				bodyHtml: this.sanitizer.bypassSecurityTrustHtml(section.bodyHtml),
+				bodyHtml: section.bodyHtml,
 			})) ?? [],
 	);
 

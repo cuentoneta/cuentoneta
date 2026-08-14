@@ -16,6 +16,7 @@ import type { SanitizedHtml } from '@models/sanitized-html.model';
 	template: `<div [innerHTML]="safeBody()" data-testid="body"></div>`,
 	host: {
 		class: 'block source-serif-xl text-neutral-800',
+		'data-testid': 'literary-work-prose',
 	},
 })
 export class LiteraryWorkProseComponent {
