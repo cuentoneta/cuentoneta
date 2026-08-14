@@ -1,3 +1,4 @@
+import { join } from 'node:path';
 import {
 	classify,
 	createPacer,
@@ -10,6 +11,7 @@ import {
 	mergeSnapshot,
 	parseSampleSize,
 	parseSitemapLocs,
+	resolveHistoryPaths,
 	snapshotOf,
 	storedRows,
 	summarize,
@@ -537,5 +539,31 @@ describe('snapshotOf', () => {
 
 	it('describe un error que no es Error', () => {
 		expect(snapshotOf('a', { ok: false, error: 'boom', attempts: 1 })).toEqual({ url: 'a', error: 'boom' });
+	});
+});
+
+describe('resolveHistoryPaths', () => {
+	it('cae al historial gitignoreado cuando no se pide otro', () => {
+		expect(resolveHistoryPaths(undefined)).toEqual({
+			file: join('tmp', 'seo-index-status', 'latest.json'),
+			dir: join('tmp', 'seo-index-status'),
+		});
+	});
+
+	it('deriva el directorio de la ruta pedida', () => {
+		expect(resolveHistoryPaths('.metrics/seo-index-status/latest.json')).toEqual({
+			file: '.metrics/seo-index-status/latest.json',
+			dir: '.metrics/seo-index-status',
+		});
+	});
+
+	it('resuelve al directorio actual una ruta sin directorio', () => {
+		expect(resolveHistoryPaths('latest.json')).toEqual({ file: 'latest.json', dir: '.' });
+	});
+
+	// Un flag escrito sin valor (`--history=`) llega como cadena vacía, y `dirname('')` da '.': la
+	// corrida escribiría un archivo sin nombre en el directorio de trabajo en vez de usar el default.
+	it('trata un valor vacío como ausencia del flag', () => {
+		expect(resolveHistoryPaths('')).toEqual(resolveHistoryPaths(undefined));
 	});
 });

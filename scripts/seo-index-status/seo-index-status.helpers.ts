@@ -3,6 +3,7 @@
  * URL Inspection API, clasificación, resumen y diff contra una corrida anterior. Separados de
  * `seo-index-status.ts` (auth/red/paginado) para poder testearlos sin credenciales ni tocar la red.
  */
+import { dirname, join } from 'node:path';
 import { locations } from '../../src/testing/sitemap-xml';
 import type { RetryResult } from './seo-index-status.retry';
 
@@ -228,6 +229,23 @@ export interface StoredRow extends ClassifiedRow {
  * intacto el resto, y da igual qué subconjunto elijas cada vez.
  */
 export type SnapshotStore = Record<string, StoredRow>;
+
+/** Dónde vive la serie cuando nadie lo dice: gitignoreado, junto al resto de lo efímero. */
+const DEFAULT_HISTORY_FILE = join('tmp', 'seo-index-status', 'latest.json');
+
+export interface HistoryPaths {
+	file: string;
+	dir: string;
+}
+
+/**
+ * El directorio se deriva del archivo en vez de pedirse aparte: son un solo dato, y admitir que
+ * discrepen habilita una corrida que crea un directorio y escribe en otro.
+ */
+export function resolveHistoryPaths(raw: string | undefined): HistoryPaths {
+	const file = raw === undefined || raw.length === 0 ? DEFAULT_HISTORY_FILE : raw;
+	return { file, dir: dirname(file) };
+}
 
 function movedSinceLastRun(previous: StoredRow | undefined, row: ClassifiedRow): boolean {
 	if (!previous) {
