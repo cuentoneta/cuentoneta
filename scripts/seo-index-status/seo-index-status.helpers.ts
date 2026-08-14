@@ -4,6 +4,7 @@
  * `seo-index-status.ts` (auth/red/paginado) para poder testearlos sin credenciales ni tocar la red.
  */
 import { locations } from '../../src/testing/sitemap-xml';
+import type { RetryResult } from './seo-index-status.retry';
 
 /**
  * Estado derivado por nosotros. NO es `coverageState`: ese campo la API lo devuelve como string
@@ -355,6 +356,20 @@ function formatCoverageTransitions(transitions: readonly CoverageTransition[]): 
 		grouped.set(key, (grouped.get(key) ?? 0) + 1);
 	}
 	return [...grouped].sort(([, a], [, b]) => b - a).map(([label, count]) => `  ${String(count).padStart(5)}  ${label}`);
+}
+
+export function messageOf(error: unknown): string {
+	return error instanceof Error ? error.message : String(error);
+}
+
+/**
+ * Traduce el desenlace de los intentos a la fila que se persiste. `attempts` viaja **solo cuando hubo
+ * reintento**, gane o pierda: en el caso normal —que es la abrumadora mayoría de las filas— sería
+ * ruido repetido en cada entrada del historial.
+ */
+export function snapshotOf(url: string, result: RetryResult<InspectionSnapshot>): InspectionSnapshot {
+	const attempts = result.attempts > 1 ? { attempts: result.attempts } : {};
+	return result.ok ? { ...result.value, ...attempts } : { url, error: messageOf(result.error), ...attempts };
 }
 
 /** Distingue una URL que agotó sus reintentos de otra que falló de entrada y no se reintentó. */

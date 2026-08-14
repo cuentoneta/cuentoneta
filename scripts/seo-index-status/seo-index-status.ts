@@ -44,15 +44,17 @@ import {
 	createPacer,
 	formatReport,
 	mergeSnapshot,
+	messageOf,
 	parseSampleSize,
 	parseSitemapLocs,
+	snapshotOf,
 	storedRows,
 	toSnapshot,
 	type ClassifiedRow,
 	type InspectionSnapshot,
 	type SnapshotStore,
 } from './seo-index-status.helpers';
-import { createRetryBudget, runWithRetries, type RetryResult } from './seo-index-status.retry';
+import { createRetryBudget, runWithRetries } from './seo-index-status.retry';
 
 const SITE_URL = process.env['GSC_SITE_URL'] ?? '';
 const BASE_URL = process.env['BASE_URL'] ?? 'https://www.cuentoneta.ar';
@@ -80,10 +82,6 @@ const SNAPSHOT_FILE = join(SNAPSHOT_DIR, 'latest.json');
 function argValue(flag: string): string | undefined {
 	const found = process.argv.find((arg) => arg.startsWith(`${flag}=`));
 	return found?.slice(flag.length + 1);
-}
-
-function messageOf(error: unknown): string {
-	return error instanceof Error ? error.message : String(error);
 }
 
 function delay(ms: number): Promise<void> {
@@ -135,14 +133,6 @@ function buildInspector(): Inspector {
 		});
 		return toSnapshot(url, data.inspectionResult?.indexStatusResult ?? undefined);
 	};
-}
-
-/** `attempts` solo viaja cuando hubo reintento: en el caso normal sería ruido en cada fila del historial. */
-function snapshotOf(url: string, result: RetryResult<InspectionSnapshot>): InspectionSnapshot {
-	if (!result.ok) {
-		return { url, error: messageOf(result.error), attempts: result.attempts };
-	}
-	return result.attempts > 1 ? { ...result.value, attempts: result.attempts } : result.value;
 }
 
 interface InspectionRun {

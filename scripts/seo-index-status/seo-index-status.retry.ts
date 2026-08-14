@@ -14,23 +14,6 @@ interface ApiFailure {
 	response?: { status?: unknown };
 }
 
-/**
- * Fallas donde la respuesta NO llegó, así que la llamada no es determinista por construcción. El set
- * es cerrado a propósito: `ENOTFOUND` queda afuera —un DNS que no resuelve es configuración, y
- * repetirlo solo demora el diagnóstico—, el mismo criterio que deja afuera al 403.
- */
-const RETRYABLE_NETWORK_CODES: readonly string[] = [
-	'ECONNRESET',
-	'ETIMEDOUT',
-	'ECONNABORTED',
-	'EAI_AGAIN',
-	'TimeoutError',
-];
-
-const TOO_MANY_REQUESTS = 429;
-const REQUEST_TIMEOUT = 408;
-const SERVER_ERROR_RANGE = { from: 500, to: 599 } as const;
-
 function asFailure(error: unknown): ApiFailure | undefined {
 	return typeof error === 'object' && error !== null ? (error as ApiFailure) : undefined;
 }
@@ -62,6 +45,19 @@ export function readHttpStatus(error: unknown): number | undefined {
  * determinista, y reintentarlo gasta cuota para llegar al mismo lugar más tarde.
  */
 export function isTransientApiFailure(error: unknown): boolean {
+	const TOO_MANY_REQUESTS = 429;
+	const REQUEST_TIMEOUT = 408;
+	// Fallas donde la respuesta NO llegó, así que la llamada no es determinista por construcción. El
+	// set es cerrado a propósito: `ENOTFOUND` queda afuera —un DNS que no resuelve es configuración, y
+	// repetirlo solo demora el diagnóstico—, el mismo criterio que deja afuera al 403.
+	const RETRYABLE_NETWORK_CODES: readonly string[] = [
+		'ECONNRESET',
+		'ETIMEDOUT',
+		'ECONNABORTED',
+		'EAI_AGAIN',
+		'TimeoutError',
+	];
+
 	const status = readHttpStatus(error);
 	if (status !== undefined) {
 		return status === TOO_MANY_REQUESTS || status === REQUEST_TIMEOUT || isServerError(status);
@@ -72,6 +68,7 @@ export function isTransientApiFailure(error: unknown): boolean {
 }
 
 function isServerError(status: number): boolean {
+	const SERVER_ERROR_RANGE = { from: 500, to: 599 } as const;
 	return status >= SERVER_ERROR_RANGE.from && status <= SERVER_ERROR_RANGE.to;
 }
 
@@ -109,20 +106,21 @@ export interface RetryDeps {
 
 export type RetryResult<T> = { ok: true; value: T; attempts: number } | { ok: false; error: unknown; attempts: number };
 
+/** Intentos totales por URL, no reintentos: 3 significa el original más dos repeticiones. */
 const MAX_ATTEMPTS = 3;
-const MS_PER_SECOND = 1000;
-const BACKOFF_BASE_SECONDS = 1;
-const BACKOFF_FACTOR = 4;
 
 /**
- * Espera antes del intento número `attempt` (base 1): 1 s antes del segundo, 4 s antes del tercero.
+ * Espera antes del reintento número `retry` (base 1): 1 s antes del primero, 4 s antes del segundo.
  *
  * Sin jitter a propósito. El jitter des-sincroniza clientes que reintentan a la vez, y acá cada
  * intento pasa por el pacer, que serializa los despachos: dos reintentos no pueden salir en el mismo
  * instante. Agregarlo obligaría a inyectar una fuente de azar sin resolver nada.
  */
-function backoffFor(attempt: number): number {
-	return BACKOFF_BASE_SECONDS * BACKOFF_FACTOR ** (attempt - 2) * MS_PER_SECOND;
+function backoffFor(retry: number): number {
+	const MS_PER_SECOND = 1000;
+	const BASE_SECONDS = 1;
+	const FACTOR = 4;
+	return BASE_SECONDS * FACTOR ** (retry - 1) * MS_PER_SECOND;
 }
 
 /**
@@ -148,7 +146,9 @@ export async function runWithRetries<T>(operation: () => Promise<T>, deps: Retry
 			if (exhausted || !isTransientApiFailure(error) || !deps.budget.tryConsume()) {
 				return { ok: false, error, attempts };
 			}
-			await deps.sleep(backoffFor(attempts + 1));
+			// Los intentos consumidos son el original más los reintentos ya hechos, así que `attempts`
+			// es también el número del reintento que viene.
+			await deps.sleep(backoffFor(attempts));
 		}
 	}
 }

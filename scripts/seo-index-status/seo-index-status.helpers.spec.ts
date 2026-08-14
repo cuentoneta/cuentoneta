@@ -10,6 +10,7 @@ import {
 	mergeSnapshot,
 	parseSampleSize,
 	parseSitemapLocs,
+	snapshotOf,
 	storedRows,
 	summarize,
 	toSnapshot,
@@ -502,5 +503,39 @@ describe('mergeSnapshot — intentos', () => {
 		const store = mergeSnapshot({}, [row({ url: 'a', attempts: 2 })], '2026-08-13T00:00:00Z');
 
 		expect(store['a']?.attempts).toBe(2);
+	});
+});
+
+describe('snapshotOf', () => {
+	const snapshotA: InspectionSnapshot = { url: 'a', verdict: 'PASS' };
+
+	it('devuelve la snapshot intacta cuando bastó un intento', () => {
+		const result = snapshotOf('a', { ok: true, value: snapshotA, attempts: 1 });
+
+		expect(result).toEqual(snapshotA);
+		expect('attempts' in result).toBe(false);
+	});
+
+	it('suma el conteo cuando el dato llegó tras un reintento', () => {
+		expect(snapshotOf('a', { ok: true, value: snapshotA, attempts: 2 })).toEqual({ ...snapshotA, attempts: 2 });
+	});
+
+	it('describe el error cuando la inspección falló tras agotar los intentos', () => {
+		const result = snapshotOf('a', { ok: false, error: new Error('Internal error encountered.'), attempts: 3 });
+
+		expect(result).toEqual({ url: 'a', error: 'Internal error encountered.', attempts: 3 });
+	});
+
+	// El contrato del campo: `attempts` significa "hubo reintento". Una falla de un solo intento no
+	// lo lleva, o cada fila fallida del historial afirmaría un reintento que nunca ocurrió.
+	it('omite el conteo cuando la falla fue determinista y no se reintentó', () => {
+		const result = snapshotOf('a', { ok: false, error: new Error('403'), attempts: 1 });
+
+		expect(result).toEqual({ url: 'a', error: '403' });
+		expect('attempts' in result).toBe(false);
+	});
+
+	it('describe un error que no es Error', () => {
+		expect(snapshotOf('a', { ok: false, error: 'boom', attempts: 1 })).toEqual({ url: 'a', error: 'boom' });
 	});
 });
