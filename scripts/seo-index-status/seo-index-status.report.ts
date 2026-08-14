@@ -40,14 +40,26 @@ function formatTransitions(transitions: readonly StateTransition[]): string[] {
 	);
 }
 
+/** Agrupa por etiqueta y ordena por frecuencia, que es la lectura útil de un conjunto de movimientos. */
+function countByLabel<T>(items: readonly T[], labelOf: (item: T) => string): [string, number][] {
+	const grouped = new Map<string, number>();
+	for (const item of items) {
+		const label = labelOf(item);
+		grouped.set(label, (grouped.get(label) ?? 0) + 1);
+	}
+	return [...grouped].sort(([, a], [, b]) => b - a);
+}
+
+const coverageMoveLabel = (change: CoverageTransition): string => `${change.from} → ${change.to}`;
+
+const stateMoveLabel = (change: StateTransition): string =>
+	`${CRAWL_STATE_LABELS[change.from]} → ${CRAWL_STATE_LABELS[change.to]}`;
+
 /** Agrupa por el par (desde → hasta): el conteo es la lectura útil, no la lista de URLs. */
 function formatCoverageTransitions(transitions: readonly CoverageTransition[]): string[] {
-	const grouped = new Map<string, number>();
-	for (const change of transitions) {
-		const key = `${change.from} → ${change.to}`;
-		grouped.set(key, (grouped.get(key) ?? 0) + 1);
-	}
-	return [...grouped].sort(([, a], [, b]) => b - a).map(([label, count]) => `  ${String(count).padStart(5)}  ${label}`);
+	return countByLabel(transitions, coverageMoveLabel).map(
+		([label, count]) => `  ${String(count).padStart(5)}  ${label}`,
+	);
 }
 
 /** Distingue una URL que agotó sus reintentos de otra que falló de entrada y no se reintentó. */
@@ -116,5 +128,105 @@ export function formatReport({ rows, previous, retries }: ReportInput): string[]
 		}
 	}
 
+	return lines;
+}
+
+export interface SummaryInput extends ReportInput {
+	/** ISO de la corrida. El mismo que se persiste en el historial, para que no puedan discrepar. */
+	checkedAt: string;
+}
+
+/** Cuántos detalles largos entran antes de que el resumen deje de leerse de un vistazo. */
+const SUMMARY_DETAIL_LIMIT = 10;
+
+function markdownTable(headers: readonly [string, string], rows: readonly [string, number][]): string[] {
+	return [
+		'',
+		`| ${headers[0]} | ${headers[1]} |`,
+		'| --- | ---: |',
+		...rows.map(([label, count]) => `| ${label} | ${count} |`),
+	];
+}
+
+function summaryStates(rows: readonly ClassifiedRow[]): string[] {
+	const counts = summarize(rows);
+	const present = Object.values(CRAWL_STATE)
+		.filter((state) => counts[state] > 0)
+		.map((state): [string, number] => [CRAWL_STATE_LABELS[state], counts[state]]);
+	return markdownTable(['Estado', 'URLs'], present);
+}
+
+/**
+ * El movimiento se expresa por TRANSICIONES y nunca restando los conteos de dos corridas: el
+ * historial contiene URLs que esta corrida pudo no inspeccionar, así que esa resta compararía
+ * universos distintos. La transición es por URL, y por eso sí significa algo.
+ */
+function summaryTransitions(previous: readonly ClassifiedRow[], rows: readonly ClassifiedRow[]): string[] {
+	const { transitions, added } = diffStates(previous, rows);
+	const lines = ['', `### Movimiento contra las ${previous.length} URL(s) conocidas`];
+
+	lines.push(
+		...(transitions.length === 0
+			? ['', '_Sin cambios de estado._']
+			: markdownTable(['Movimiento', 'URLs'], countByLabel(transitions, stateMoveLabel))),
+	);
+
+	const coverageMoves = diffCoverageStates(previous, rows);
+	if (coverageMoves.length > 0) {
+		lines.push('', '#### Movimientos de coverageState');
+		lines.push(...markdownTable(['Movimiento', 'URLs'], countByLabel(coverageMoves, coverageMoveLabel)));
+	}
+
+	const inspected = new Set(rows.map((row) => row.url));
+	const skipped = previous.filter((row) => !inspected.has(row.url)).length;
+	lines.push('');
+	if (added.length > 0) {
+		lines.push(`- ${added.length} URL(s) inspeccionadas por primera vez`);
+	}
+	if (skipped > 0) {
+		lines.push(`- ${skipped} URL(s) del historial NO se inspeccionaron en esta corrida`);
+	}
+	return lines;
+}
+
+function summaryDetails(title: string, items: readonly string[]): string[] {
+	if (items.length === 0) {
+		return [];
+	}
+	const shown = items.slice(0, SUMMARY_DETAIL_LIMIT);
+	const rest = items.length - shown.length;
+	const lines = ['', `### ${title} (${items.length})`, '', ...shown.map((item) => `- ${item}`)];
+	return rest > 0 ? [...lines, `- …y ${rest} más`] : lines;
+}
+
+/**
+ * Variante Markdown del reporte, para el resumen de la página de la corrida. Convive con
+ * `formatReport` en vez de reemplazarlo porque responden a lecturas distintas: el log se lee entero
+ * cuando algo anda mal, y el resumen tiene que caber en una pantalla o nadie lo mira. De ahí que los
+ * detalles largos se acoten acá y no allá.
+ */
+export function formatSummaryMarkdown({ rows, previous, retries, checkedAt }: SummaryInput): string[] {
+	const mismatches = rows.filter((row) => row.canonicalMismatch);
+	const failures = rows.filter((row) => row.state === CRAWL_STATE.failed);
+
+	const lines = [
+		'## Estado de indexado',
+		'',
+		`${rows.length} URL(s) inspeccionadas el ${checkedAt}.`,
+		...summaryStates(rows),
+		...(previous ? summaryTransitions(previous, rows) : []),
+		...summaryDetails(
+			'Canónica distinta de la declarada',
+			mismatches.map((row) => `\`${row.url}\` — Google eligió \`${row.googleCanonical}\``),
+		),
+		...summaryDetails(
+			'Inspecciones fallidas',
+			failures.map((row) => `\`${row.url}\` — ${row.error}${formatAttempts(row.attempts)}`),
+		),
+	];
+
+	if (retries !== undefined && retries > 0) {
+		lines.push('', `Reintentos consumidos: ${retries}`);
+	}
 	return lines;
 }

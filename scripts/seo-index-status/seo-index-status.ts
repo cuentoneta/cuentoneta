@@ -39,9 +39,10 @@
  *   ... pnpm seo:index-status --all                                         # todo el sitemap (ojo cuota)
  *   ... pnpm seo:index-status --sample=50
  *   ... pnpm seo:index-status --history=ruta/a/latest.json               # dónde vive la serie
+ *   ... pnpm seo:index-status --summary="$GITHUB_STEP_SUMMARY"           # resumen en Markdown
  *   GSC_SERVICE_ACCOUNT_KEY_PATH=... pnpm seo:index-status --list-sites   # ver el siteUrl exacto
  */
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { appendFile, readFile, writeFile, mkdir } from 'node:fs/promises';
 // La auth se toma del propio cliente, no de `google-auth-library` como dependencia aparte: el objeto
 // que construye cruza la frontera entre ambos paquetes, y dos instancias distintas —lo que pasa
 // apenas los rangos dejan de coincidir— el compilador las trata como tipos ajenos.
@@ -63,7 +64,7 @@ import {
 	type InspectionSnapshot,
 	type SnapshotStore,
 } from './seo-index-status.helpers';
-import { formatReport } from './seo-index-status.report';
+import { formatReport, formatSummaryMarkdown, type SummaryInput } from './seo-index-status.report';
 import { createRetryBudget, runWithRetries } from './seo-index-status.retry';
 
 const SITE_URL = process.env['GSC_SITE_URL'] ?? '';
@@ -92,6 +93,7 @@ function argValue(flag: string): string | undefined {
 }
 
 const HISTORY = resolveHistoryPaths(argValue('--history'));
+const SUMMARY_FILE = argValue('--summary');
 
 function delay(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -200,11 +202,28 @@ async function readStore(): Promise<SnapshotStore> {
 	}
 }
 
-async function writeStore(store: SnapshotStore, rows: readonly ClassifiedRow[]): Promise<void> {
-	const merged = mergeSnapshot(store, rows, new Date().toISOString());
+async function writeStore(store: SnapshotStore, rows: readonly ClassifiedRow[], checkedAt: string): Promise<void> {
+	const merged = mergeSnapshot(store, rows, checkedAt);
 	await mkdir(HISTORY.dir, { recursive: true });
 	await writeFile(HISTORY.file, JSON.stringify(merged, null, 2), 'utf8');
 	console.log(`\nHistorial actualizado en ${HISTORY.file} (${Object.keys(merged).length} URL(s) conocidas)`);
+}
+
+/**
+ * Appendea, no sobrescribe: varios steps del job escriben al mismo archivo de resumen.
+ *
+ * Un resumen que no se puede escribir no aborta la corrida. Es superficie de lectura, y perder la
+ * medición ya hecha por no poder contarla sería el peor de los dos desenlaces.
+ */
+async function writeSummary(input: SummaryInput): Promise<void> {
+	if (!SUMMARY_FILE) {
+		return;
+	}
+	try {
+		await appendFile(SUMMARY_FILE, `${formatSummaryMarkdown(input).join('\n')}\n`, 'utf8');
+	} catch (error) {
+		console.error(`No se pudo escribir el resumen en ${SUMMARY_FILE}: ${messageOf(error)}`);
+	}
 }
 
 // La key la exigen las dos rutas; el siteUrl NO lo exige `--list-sites`, que existe justamente para
@@ -273,8 +292,12 @@ async function run(): Promise<void> {
 	const known = storedRows(store);
 	const { rows, retries } = await inspectAll(urls, buildInspector());
 
-	console.log(formatReport({ rows, previous: known.length > 0 ? known : undefined, retries }).join('\n'));
-	await writeStore(store, rows);
+	const report = { rows, previous: known.length > 0 ? known : undefined, retries };
+	const checkedAt = new Date().toISOString();
+
+	console.log(formatReport(report).join('\n'));
+	await writeSummary({ ...report, checkedAt });
+	await writeStore(store, rows, checkedAt);
 
 	process.exitCode = classifyRunOutcome(rows);
 }
