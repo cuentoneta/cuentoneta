@@ -65,9 +65,8 @@ const literaryWorkSanitizationSchema: Options = {
 // Singleton de módulo: construir el procesador unified es costoso y el pipeline es inmutable.
 const pipeline = unified()
 	.use(remarkParse)
-	// El contenido lo escriben editores en un campo Markdown del Studio, donde un salto tipeado
-	// significa un salto: el marcador de CommonMark (dos espacios finales) es invisible y cualquier
-	// editor lo recorta. Va antes de remarkRehype porque opera sobre mdast.
+	// Va antes de remarkRehype: opera sobre mdast. El porqué del salto duro, en
+	// docs/LITERARY_WORK_DESIGN.md §9.
 	.use(remarkBreaks)
 	.use(remarkRehype)
 	.use(rehypeSanityImages)

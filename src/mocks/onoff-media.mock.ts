@@ -17,5 +17,12 @@ export const onoffSpotifyPodcastEpisodesMock: SpotifyPodcastEpisode[] = onoffMed
 // de clavar prosa. Vive acá y no en cada spec porque la forma de `description` depende del modelo de
 // contenido: un solo sitio se adapta.
 export function mediaDescriptionText(media: Media): string {
-	return media.description.replace(/<[^>]+>/g, '').trim();
+	// Los tags que separan texto dejan un espacio al desaparecer —si no, un salto de línea pegaría la
+	// última palabra con la primera de la línea siguiente—; los inline se quitan sin espacio, porque
+	// abren y cierran dentro de la oración. Mismo criterio que el aplanado del JSON-LD de autor.
+	return media.description
+		.replace(/<\/?(?:p|div|br|hr|blockquote|li|ul|ol)\b[^>]*>/gi, ' ')
+		.replace(/<[^>]+>/g, '')
+		.replace(/\s+/g, ' ')
+		.trim();
 }
