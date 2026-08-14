@@ -5,6 +5,7 @@ import {
 	multiSectionRawLiteraryWork,
 	onoffRawLiteraryWorksMock,
 	onoffRawLiteraryWorksWithEpigraphs,
+	onoffRawLiteraryWorksWithMultilineEpigraphs,
 	onoffRawLiteraryWorksWithoutTags,
 	onoffRawLiteraryWorksWithMediaSources,
 	onoffRawLiteraryWorksWithTags,
@@ -103,6 +104,35 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 			expect(mappedEpigraph?.text).toContain('<em>');
 			expect(mappedEpigraph?.text).not.toContain('*');
 			expect(mappedEpigraph?.reference).toContain(rawReference ?? '');
+		},
+	);
+
+	// Sin esta guarda, un canon que perdiera el epígrafe multilínea dejaría el it.each de abajo sin
+	// casos y la suite pasaría en verde sin haber ejercitado nada.
+	it('el corpus declara al menos un epígrafe cortado en varias líneas', () => {
+		expect(onoffRawLiteraryWorksWithMultilineEpigraphs.length).toBeGreaterThan(0);
+	});
+
+	it.each(onoffRawLiteraryWorksWithMultilineEpigraphs)(
+		'conserva el corte de línea del epígrafe al materializar el HTML (%#)',
+		async (rawLiteraryWork) => {
+			const literaryWork = await repoReturning(rawLiteraryWork).fetchBySlug(rawLiteraryWork.slug);
+
+			const multilineEpigraph = literaryWork?.content
+				.flatMap((section) => section.epigraphs ?? [])
+				.find((epigraph) => epigraph.text.includes('<br'));
+
+			expect(multilineEpigraph).toBeDefined();
+
+			// Las palabras que el salto separa en el origen no quedan pegadas por un espacio, que es
+			// exactamente lo que CommonMark haría con el salto simple si nadie lo tratara como duro.
+			const rawMultilineText = rawLiteraryWork.content
+				.flatMap((section) => section.epigraphs)
+				.find((epigraph) => epigraph.text?.includes('\n'))?.text;
+			const [beforeBreak, afterBreak] = (rawMultilineText ?? '').split('\n');
+			const flattened = `${beforeBreak.slice(-8)} ${afterBreak.slice(0, 8)}`;
+
+			expect(multilineEpigraph?.text).not.toContain(flattened);
 		},
 	);
 

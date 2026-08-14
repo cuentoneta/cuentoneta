@@ -66,3 +66,10 @@ export const onoffLiteraryWorksWithBlockquotes: LiteraryWork[] = onoffLiteraryWo
 export const onoffLiteraryWorkEpigraphsMock: AttributedText[] = onoffLiteraryWorksMock.flatMap((literaryWork) =>
 	literaryWork.content.flatMap((section) => section.epigraphs ?? []),
 );
+
+// Los epígrafes que ocupan más de una línea porque su fuente lo declara: el verso corta la línea sin
+// cerrar el párrafo, y ese salto es la parte del texto que más fácil se pierde al materializar HTML.
+// Sin el `>` de cierre, por lo mismo que el selector de citas.
+export const onoffLiteraryWorkEpigraphsWithLineBreaks: AttributedText[] = onoffLiteraryWorkEpigraphsMock.filter(
+	(epigraph) => epigraph.text.includes('<br'),
+);
