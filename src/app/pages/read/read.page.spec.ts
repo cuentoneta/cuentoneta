@@ -234,9 +234,7 @@ describe('ReadPage', () => {
 
 			// La variante `highlight` cita a un tercero, y por eso rinde <blockquote> y no <aside>: es la
 			// distinción semántica que la página perdería si volviera a volcar el epígrafe a mano.
-			/* eslint-disable testing-library/no-node-access */
-			expect(epigraphBlock.querySelector('blockquote')).not.toBeNull();
-			/* eslint-enable testing-library/no-node-access */
+			expect(within(epigraphBlock).getByRole('blockquote')).toBeTruthy();
 			// La atribución acompaña al epígrafe que la trae; el canon podría sumar mañana uno sin fuente, y
 			// la variante `highlight` cubre los dos casos.
 			if (epigraph.reference === undefined) {

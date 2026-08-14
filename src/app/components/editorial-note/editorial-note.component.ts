@@ -13,7 +13,7 @@ export type EditorialNoteVariant = 'note' | 'highlight';
 		}
 		<figure [class]="bodyClasses()" data-testid="body">
 			@if (variant() === 'highlight') {
-				<blockquote [innerHTML]="safeContent()" [attr.aria-label]="label()" data-testid="content"></blockquote>
+				<blockquote [innerHTML]="safeContent()" data-testid="content"></blockquote>
 			} @else {
 				<aside [innerHTML]="safeContent()" [attr.aria-label]="label()" data-testid="content"></aside>
 			}
@@ -33,9 +33,10 @@ export class EditorialNoteComponent {
 	public readonly note = input.required<AttributedText>();
 	public readonly variant = input<EditorialNoteVariant>('note');
 
-	// Nombre accesible del bloque. En la variante `note` además lo vuelve un landmark: un `<aside>`
-	// anidado en contenido seccionador solo cuenta como región navegable si tiene nombre, y sin él la
-	// voz del editor se lee como una continuación de la obra.
+	// Nombre accesible de la nota, sin texto a la vista: un `<aside>` anidado en contenido seccionador
+	// solo cuenta como región navegable si tiene nombre, y sin él la voz del editor se lee como una
+	// continuación de la obra. No alcanza a `highlight`: un `blockquote` no es región, y nombrarlo hace
+	// que algunas ayudas técnicas anuncien el rótulo en lugar de la cita.
 	public readonly label = input<string>();
 
 	private readonly sanitizer = inject(DomSanitizer);

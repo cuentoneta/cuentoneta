@@ -35,7 +35,7 @@ const meta: Meta<EditorialNoteComponent> = {
 			control: { type: 'text' },
 			table: { type: { summary: 'string' }, defaultValue: { summary: 'sin rótulo' } },
 			description:
-				'Nombre accesible del bloque; en la variante note además lo vuelve una región navegable, que es como se distingue la voz del editor sin ver la tarjeta',
+				'Nombre accesible de la nota, sin texto a la vista: vuelve al bloque una región navegable, que es como se distingue la voz del editor sin ver la tarjeta. Solo aplica a la variante note; la cita de highlight no se nombra',
 		},
 	},
 };
@@ -49,7 +49,7 @@ export const Note: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante <strong>note</strong> (default): tarjeta neutra con borde, texto left-aligned. Es la superficie del Design System para la nota editorial de una obra. Con <code>label</code>, el bloque se anuncia como región propia: la tarjeta ya dice "esto lo escribió la redacción" a la vista, y el rótulo dice lo mismo para quien no la ve.</p><p><strong>Usos:</strong> la nota editorial (<code>editorialNote</code>) al pie de la obra en la página de lectura.</p>`,
+				story: `<p>Variante <strong>note</strong> (default): tarjeta neutra con borde, texto left-aligned. Es la superficie del Design System para la nota editorial de una obra. Con <code>label</code>, el bloque se anuncia como región propia sin que aparezca texto alguno en pantalla: es la distinción que la tarjeta hace por su forma, dicha para quien no la ve.</p><p><strong>Usos:</strong> la nota editorial (<code>editorialNote</code>) al pie de la obra en la página de lectura.</p>`,
 			},
 		},
 	},

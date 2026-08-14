@@ -96,6 +96,14 @@ describe('EditorialNoteComponent', () => {
 		expect(screen.getByRole('complementary', { name: 'Nota editorial' })).toBeInTheDocument();
 	});
 
+	// La cita no es una región y su valor es su propio texto: nombrarla hace que algunas ayudas técnicas
+	// anuncien el rótulo en lugar de lo citado.
+	it('should not name the quote in the highlight variant', async () => {
+		await render(EditorialNoteComponent, { inputs: { note, variant: 'highlight', label: 'Nota editorial' } });
+
+		expect(screen.getByTestId('content')).not.toHaveAttribute('aria-label');
+	});
+
 	it('should not name the block when no label is provided', async () => {
 		await render(EditorialNoteComponent, { inputs: { note } });
 
