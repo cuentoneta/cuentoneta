@@ -30,7 +30,10 @@ import { LiteraryWorkHeroHeaderSkeletonComponent } from './literary-work-hero-he
 		TagsListComponent,
 		LiteraryWorkHeroHeaderSkeletonComponent,
 	],
-	host: { class: 'relative block overflow-hidden bg-neutral-900' },
+	// `isolate` confina el apilamiento interno: el contenido se eleva con z-10 para quedar sobre el fondo
+	// difuminado y su velo, y sin aislar ese z-10 sube al contexto raíz, donde compite con la barra de
+	// navegación fija y le gana por orden de documento.
+	host: { class: 'relative isolate block overflow-hidden bg-neutral-900' },
 	template: `
 		@if (literaryWork(); as literaryWork) {
 			@if (backgroundImageUrl(); as backgroundImageUrl) {
