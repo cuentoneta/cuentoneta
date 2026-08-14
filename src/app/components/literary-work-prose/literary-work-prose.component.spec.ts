@@ -13,15 +13,15 @@ async function setup(body = anyWork.content[0].bodyHtml) {
 }
 
 describe('LiteraryWorkProseComponent', () => {
-	it('pinta el cuerpo como marcado y no como texto escapado', async () => {
+	it('pinta el cuerpo como marcado y no como texto', async () => {
 		const { container } = await setup();
 
-		// El cuerpo del canon es HTML: si el bypass no estuviera, el marcado llegaría escapado y no
-		// habría un solo elemento de párrafo. No se expresa por rol: un <p> no tiene rol accesible.
-		/* eslint-disable testing-library/no-container, testing-library/no-node-access */
+		// El cuerpo del canon es HTML: si se interpolara en vez de bindearse, el marcado llegaría como
+		// texto y no habría un solo elemento de párrafo. No se expresa por rol: un <p> no tiene rol.
+		/* eslint-disable testing-library/no-container, testing-library/no-node-access -- la ausencia de un tag no se expresa por rol ni por texto */
 		expect(container.querySelectorAll('p').length).toBeGreaterThan(0);
 		/* eslint-enable testing-library/no-container, testing-library/no-node-access */
-		expect(screen.getByTestId('body').textContent).not.toContain('<p>');
+		expect(screen.getByTestId('literary-work-prose').textContent).not.toContain('<p>');
 	});
 
 	// La cita es el motivo de este componente: es lo que el original marcaba con alineación y lo que
@@ -29,7 +29,7 @@ describe('LiteraryWorkProseComponent', () => {
 	it('conserva la cita que el cuerpo del canon transcribe', async () => {
 		const { container } = await setup(workWithQuote.content[0].bodyHtml);
 
-		/* eslint-disable testing-library/no-container, testing-library/no-node-access */
+		/* eslint-disable testing-library/no-container, testing-library/no-node-access -- la presencia de un tag no se expresa por rol ni por texto */
 		expect(container.querySelector('blockquote')).not.toBeNull();
 		/* eslint-enable testing-library/no-container, testing-library/no-node-access */
 	});
@@ -42,12 +42,10 @@ describe('LiteraryWorkProseComponent', () => {
 			createMarkdown('![Retrato](https://cdn.sanity.io/images/x/y/abc-800x600.jpg)'),
 		);
 
-		const { container } = await setup(body);
+		await setup(body);
 
-		/* eslint-disable testing-library/no-container, testing-library/no-node-access */
-		const image = container.querySelector('img');
-		expect(image?.getAttribute('loading')).toBe('lazy');
-		expect(image?.getAttribute('decoding')).toBe('async');
-		/* eslint-enable testing-library/no-container, testing-library/no-node-access */
+		const image = screen.getByAltText('Retrato');
+		expect(image.getAttribute('loading')).toBe('lazy');
+		expect(image.getAttribute('decoding')).toBe('async');
 	});
 });

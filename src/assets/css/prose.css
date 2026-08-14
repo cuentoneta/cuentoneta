@@ -14,9 +14,14 @@
   El ritmo lo da un separador entre hermanos y no un margen por elemento: resuelve párrafo, cita,
   encabezado, lista, regla e imagen de una sola vez, y no deja margen colgando al final del cuerpo.
   `1lh` es la línea en blanco que pide el diseño, expresada contra la propia interlínea de la prosa.
+
+  El valor en `rem` va primero como reserva: donde `lh` no existe (Safari anterior a 16.4) el navegador
+  descarta esa declaración entera, y con el `margin: 0` del reset la obra se serviría como un bloque
+  continuo. Es el mismo 34 px, escrito contra la interlínea de `.source-serif-xl`.
 */
 cuentoneta-literary-work-prose > * > * + *,
 cuentoneta-literary-work-prose blockquote > * + * {
+	margin-block-start: 2.125rem;
 	margin-block-start: 1lh;
 }
 
@@ -32,15 +37,22 @@ cuentoneta-literary-work-prose blockquote,
 
 /*
   El resto de lo que la lista blanca del saneamiento permite. Cada regla repone lo que el reset o el
-  preflight quitan; ninguna reinterpreta la cara del elemento.
-
-  Quedan deliberadamente sin regla `code`/`pre`, las tablas y `del`/`sup`/`sub`: no aparecen todavía en
-  la prosa publicada y estilarlos ahora sería decidir sin un caso que lo pida.
+  preflight quitan; ninguna reinterpreta la cara del elemento. Se estila lo que la prosa publicada usa
+  hoy: lo que falta espera un caso real que lo pida.
 */
 
 /* Un encabezado abre una parte nueva: necesita más aire arriba que el que separa dos párrafos. */
 cuentoneta-literary-work-prose > * > * + :is(h2, h3, h4, h5, h6) {
+	margin-block-start: 4.25rem;
 	margin-block-start: 2lh;
+}
+
+/*
+  El tema le da tamaño y peso a h1–h3, pero no más abajo: sin esto un `####` sale del mismo cuerpo que
+  el párrafo —el preflight aplana `font-size` y `font-weight`— y deja de leerse como encabezado.
+*/
+cuentoneta-literary-work-prose :is(h4, h5, h6) {
+	@apply text-lg font-semibold;
 }
 
 /* El preflight de Tailwind quita marcador y sangría de las listas; acá el marcador es contenido. */
@@ -58,12 +70,14 @@ cuentoneta-literary-work-prose ol {
 
 /* Los ítems se separan menos que los bloques: son partes de una misma enumeración. */
 cuentoneta-literary-work-prose li + li {
+	margin-block-start: 1.0625rem;
 	margin-block-start: 0.5lh;
 }
 
 cuentoneta-literary-work-prose hr {
 	@apply border-t border-neutral-200;
 
+	margin-block: 4.25rem;
 	margin-block: 2lh;
 }
 
@@ -73,5 +87,6 @@ cuentoneta-literary-work-prose a {
 
 /* Una imagen suele venir envuelta en un párrafo, donde el separador entre hermanos no la alcanza. */
 cuentoneta-literary-work-prose img {
+	margin-block: 1.0625rem;
 	margin-block: 0.5lh;
 }

@@ -21,7 +21,9 @@ test('read — los bloques de la prosa quedan separados entre sí', async ({ pag
 
 	await page.goto(readPath);
 
-	const blocks = page.locator('cuentoneta-literary-work-prose > * > *');
+	// Acotado a la primera sección: el segundo bloque de una sección lleva margen, pero el primero de la
+	// siguiente no, y un locator que cruce secciones mediría ese cero cuando la primera tenga un bloque.
+	const blocks = page.locator('cuentoneta-literary-work-prose').first().locator('> * > *');
 	await expect(blocks.nth(1)).toBeVisible();
 
 	// El reset global declara `* { margin: 0 }`: sin la hoja de prosa, el separador entre hermanos no

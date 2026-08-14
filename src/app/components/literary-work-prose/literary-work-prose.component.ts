@@ -13,7 +13,7 @@ import type { SanitizedHtml } from '@models/sanitized-html.model';
  */
 @Component({
 	selector: 'cuentoneta-literary-work-prose',
-	template: `<div [innerHTML]="safeBody()" data-testid="body"></div>`,
+	template: `<div [innerHTML]="safeBody()"></div>`,
 	host: {
 		class: 'block source-serif-xl text-neutral-800',
 		'data-testid': 'literary-work-prose',
@@ -24,8 +24,5 @@ export class LiteraryWorkProseComponent {
 
 	private readonly sanitizer = inject(DomSanitizer);
 
-	// El HTML ya viene saneado del backend (única fuente: el pipeline del ACL); el bypass es la
-	// confianza en esa frontera, no una sanitización propia. Sin él Angular recorta los atributos que
-	// el propio pipeline inyecta en las imágenes.
 	protected readonly safeBody = computed(() => this.sanitizer.bypassSecurityTrustHtml(this.body()));
 }

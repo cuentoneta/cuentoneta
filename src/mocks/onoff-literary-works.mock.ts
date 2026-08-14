@@ -55,7 +55,9 @@ export const onoffLiteraryWorksWithMediaSources: LiteraryWork[] = onoffLiteraryW
 // alineación y que Markdown resuelve como cita, así que su tratamiento tipográfico necesita un caso
 // del canon donde afirmarse.
 export const onoffLiteraryWorksWithBlockquotes: LiteraryWork[] = onoffLiteraryWorksMock.filter((literaryWork) =>
-	literaryWork.content.some((section) => section.bodyHtml.includes('<blockquote>')),
+	// Sin el `>` de cierre: el día que el pipeline emita el tag con un atributo, el selector no se vacía
+	// en silencio (y un selector vacío revienta al importar, no falla suave).
+	literaryWork.content.some((section) => section.bodyHtml.includes('<blockquote')),
 );
 
 // Los epígrafes sueltos, para quien necesita el shape { text, reference? } y no la obra que lo

@@ -80,10 +80,8 @@ export default class ReadPage implements ReadHost {
 
 	// Los epígrafes los pinta esta plantilla, así que su bypass vive acá: el HTML ya viene saneado del
 	// backend (única fuente: el pipeline del ACL) y el bypass es la confianza en esa frontera, no una
-	// sanitización propia — LITERARY_WORK_DESIGN.md §9. El del cuerpo lo hace el componente de prosa.
-	// TODO: Mover esta lógica a un service como parte de la implementación de #1471.
-	// 1. Chequear de qué manera evitar el uso de bypassSecurityTrustHtml
-	// 2. Revisar si hace falta declarar tipos para rendering (RenderableEpigraph, RenderableSection, etc.)
+	// sanitización propia — LITERARY_WORK_DESIGN.md §9. El del cuerpo lo hace su propio componente.
+	// TODO(#1471): mover esta lógica a un service y revisar si hace falta declarar tipos de rendering.
 	protected readonly sections = computed(
 		() =>
 			this.literaryWork()?.content.map((section) => ({
