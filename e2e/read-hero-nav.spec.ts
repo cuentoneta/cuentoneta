@@ -7,16 +7,21 @@
  */
 import { test, expect } from '@playwright/test';
 
+import { VIEWPORT_WIDTHS_NUMERIC } from '@utils/screen.utils';
+
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
 
 const readPath = `/read/${STABLE_SLUGS.literaryWork}`;
 
-// El defecto se manifestó en los tres anchos del Design System, con distinto elemento del hero pisando
-// la barra en cada uno: se cubren los tres y no solo el más angosto.
+const VIEWPORT_HEIGHT = 900;
+
+// El apilamiento no depende del ancho —ni el hero ni la barra declaran prefijos responsive—, pero la
+// geometría sí: al angostarse, el hero pisa la franja de la barra con otro de sus hijos. Se toma el punto
+// más ancho de cada banda del Design System, el mismo criterio con que `WindowLayoutService` las clasifica.
 const VIEWPORTS = Object.freeze([
-	{ name: 'desktop', width: 1440, height: 900 },
-	{ name: 'tablet', width: 768, height: 1024 },
-	{ name: 'mobile', width: 390, height: 844 },
+	{ name: 'xs', width: VIEWPORT_WIDTHS_NUMERIC.sm - 1 },
+	{ name: 'sm', width: VIEWPORT_WIDTHS_NUMERIC.md - 1 },
+	{ name: 'lg', width: VIEWPORT_WIDTHS_NUMERIC.xl - 1 },
 ] as const);
 
 let status: number;
@@ -37,11 +42,11 @@ test('read — el slug estable de la obra existe en el dataset', () => {
 });
 
 for (const viewport of VIEWPORTS) {
-	test(`read — el hero no se dibuja sobre la barra de navegación en ${viewport.name}`, async ({ page }) => {
+	test(`read — el hero no se dibuja sobre la barra de navegación en el viewport ${viewport.name}`, async ({ page }) => {
 		// eslint-disable-next-line playwright/no-skipped-test -- la ausencia de la obra ya la reporta el caso de arriba; repetirla acá sería el mismo fallo cuatro veces
 		test.skip(status !== 200, `No existe literaryWork con slug "${STABLE_SLUGS.literaryWork}" en el dataset`);
 
-		await page.setViewportSize({ width: viewport.width, height: viewport.height });
+		await page.setViewportSize({ width: viewport.width, height: VIEWPORT_HEIGHT });
 		await page.goto(readPath);
 		await expect(page.locator('cuentoneta-literary-work-hero-header')).toBeVisible();
 
