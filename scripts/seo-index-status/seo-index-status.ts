@@ -51,7 +51,6 @@ import {
 	classifyRunOutcome,
 	createPacer,
 	EXIT_CODE,
-	formatReport,
 	mergeSnapshot,
 	messageOf,
 	parseSampleSize,
@@ -64,6 +63,7 @@ import {
 	type InspectionSnapshot,
 	type SnapshotStore,
 } from './seo-index-status.helpers';
+import { formatReport } from './seo-index-status.report';
 import { createRetryBudget, runWithRetries } from './seo-index-status.retry';
 
 const SITE_URL = process.env['GSC_SITE_URL'] ?? '';
