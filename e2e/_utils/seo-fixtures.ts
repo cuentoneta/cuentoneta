@@ -2,7 +2,9 @@ export const STABLE_SLUGS = Object.freeze({
 	story: 'el-aleph',
 	author: 'jorge-luis-borges',
 	storylist: 'verano-2022',
-	literaryWork: 'el-odio',
+	// Verificado contra los dos datasets que sirven a los e2e (development y staging): sin una obra que
+	// exista en ambos, todo caso de `/read` se saltea por su guarda de contenido y el verde no dice nada.
+	literaryWork: 'el-fin',
 } as const);
 
 export const SITEWIDE_SCHEMA_IDS = Object.freeze(['organization', 'website'] as const);
