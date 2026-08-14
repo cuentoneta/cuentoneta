@@ -267,6 +267,32 @@ describe('mergeSnapshot — historial por URL', () => {
 	});
 });
 
+describe('mergeSnapshot — una inspección fallida no es una observación', () => {
+	it('deja intacta la observación previa de la URL que falló', () => {
+		const store = mergeSnapshot({}, [row({ url: 'a', verdict: 'PASS' })], '2026-08-04T00:00:00Z');
+
+		const merged = mergeSnapshot(store, [row({ url: 'a', error: '500', errorStatus: 500 })], '2026-08-11T00:00:00Z');
+
+		expect(merged['a']?.state).toBe(CRAWL_STATE.indexed);
+		expect(merged['a']?.checkedAt).toBe('2026-08-04T00:00:00Z');
+		expect(merged['a']?.history).toEqual([]);
+	});
+
+	it('no da de alta una URL que nunca se pudo inspeccionar', () => {
+		const merged = mergeSnapshot({}, [row({ url: 'a', error: '500', errorStatus: 500 })], '2026-08-11T00:00:00Z');
+
+		expect(Object.keys(merged)).toEqual([]);
+	});
+
+	it('mergea igual las filas buenas de la misma corrida', () => {
+		const rows = [row({ url: 'a', error: '500', errorStatus: 500 }), row({ url: 'b', verdict: 'PASS' })];
+
+		const merged = mergeSnapshot({}, rows, '2026-08-11T00:00:00Z');
+
+		expect(Object.keys(merged)).toEqual(['b']);
+	});
+});
+
 describe('parseSitemapLocs', () => {
 	it('extrae las URLs absolutas del sitemap', () => {
 		const xml = `<?xml version="1.0" encoding="UTF-8"?>

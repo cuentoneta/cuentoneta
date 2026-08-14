@@ -304,6 +304,12 @@ function movedSinceLastRun(previous: StoredRow | undefined, row: ClassifiedRow):
 export function mergeSnapshot(store: SnapshotStore, rows: readonly ClassifiedRow[], checkedAt: string): SnapshotStore {
 	const merged: SnapshotStore = { ...store };
 	for (const row of rows) {
+		// Una inspección que no ocurrió no desplaza a una que sí. Sin esto, una corrida con la
+		// credencial vencida reescribiría el archivo entero como fallido, y el diff de la corrida
+		// siguiente sería un muro de transiciones inventadas.
+		if (row.state === CRAWL_STATE.failed) {
+			continue;
+		}
 		const previous = store[row.url];
 		const history = previous?.history ?? [];
 		merged[row.url] = {
