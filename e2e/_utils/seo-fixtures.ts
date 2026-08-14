@@ -2,8 +2,8 @@ export const STABLE_SLUGS = Object.freeze({
 	story: 'el-aleph',
 	author: 'jorge-luis-borges',
 	storylist: 'verano-2022',
-	// Verificado contra los dos datasets que sirven a los e2e (development y staging): sin una obra que
-	// exista en ambos, todo caso de `/read` se saltea por su guarda de contenido y el verde no dice nada.
+	// Cada slug de acá tiene que existir en los dos datasets que sirven a los e2e (development en local,
+	// staging en CI): el que exista solo en uno deja sus casos salteados justo donde tenían que correr.
 	literaryWork: 'el-fin',
 } as const);
 
