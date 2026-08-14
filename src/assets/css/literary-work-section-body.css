@@ -27,11 +27,10 @@ cuentoneta-literary-work-section-body blockquote > * + * {
 
 /*
   La cita tiene que distinguirse por sí sola, sin depender de las reglas horizontales que la rodeaban
-  en el original impreso. La misma regla alcanza a los dos anfitriones: el `blockquote` que emite el
-  pipeline dentro del cuerpo y el del epígrafe, que declara la plantilla de la página.
+  en el original impreso. Es la que el relato transcribe: el epígrafe de una sección lo pinta
+  EditorialNote con su propio tratamiento, y esta regla no lo alcanza.
 */
-cuentoneta-literary-work-section-body blockquote,
-.literary-work-epigraph {
+cuentoneta-literary-work-section-body blockquote {
 	@apply border-l-2 border-neutral-300 pl-4;
 }
 

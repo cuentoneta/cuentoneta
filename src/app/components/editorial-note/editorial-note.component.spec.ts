@@ -87,4 +87,18 @@ describe('EditorialNoteComponent', () => {
 		expect(screen.getByTestId('body').tagName).toBe('FIGURE');
 		expect(screen.getByTestId('content').tagName).toBe('ASIDE');
 	});
+
+	// Un `<aside>` anidado en contenido seccionador solo es región navegable si tiene nombre: el rótulo
+	// es lo que separa la voz del editor de la del texto que comenta, para quien no ve la tarjeta.
+	it('should expose the note as a named landmark when a label is provided', async () => {
+		await render(EditorialNoteComponent, { inputs: { note, label: 'Nota editorial' } });
+
+		expect(screen.getByRole('complementary', { name: 'Nota editorial' })).toBeInTheDocument();
+	});
+
+	it('should not name the block when no label is provided', async () => {
+		await render(EditorialNoteComponent, { inputs: { note } });
+
+		expect(screen.getByTestId('content')).not.toHaveAttribute('aria-label');
+	});
 });

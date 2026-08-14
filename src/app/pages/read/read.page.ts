@@ -1,7 +1,6 @@
 // Core
 import { Component, computed, effect, forwardRef, inject, input, RESPONSE_INIT, untracked } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { DomSanitizer } from '@angular/platform-browser';
 
 // Utils
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
@@ -35,7 +34,6 @@ export default class ReadPage implements ReadHost {
 	public readonly slug = input.required<string>();
 
 	private readonly literaryWorkApi = inject(LiteraryWorkApi);
-	private readonly sanitizer = inject(DomSanitizer);
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
 	private readonly head = inject(HeadMetadataDirective);
 
@@ -78,9 +76,6 @@ export default class ReadPage implements ReadHost {
 		});
 	});
 
-	// Los epígrafes los pinta esta plantilla, así que su bypass vive acá: el HTML ya viene saneado del
-	// backend (única fuente: el pipeline del ACL) y el bypass es la confianza en esa frontera, no una
-	// sanitización propia — LITERARY_WORK_DESIGN.md §9. El del cuerpo lo hace su propio componente.
 	// TODO(#1471): mover esta lógica a un service y revisar si hace falta declarar tipos de rendering.
 	protected readonly sections = computed(
 		() =>
@@ -88,11 +83,7 @@ export default class ReadPage implements ReadHost {
 				position: section.position,
 				anchor: section.title?.toAnchor(),
 				title: section.title?.value,
-				epigraphs:
-					section.epigraphs?.map((epigraph) => ({
-						text: this.sanitizer.bypassSecurityTrustHtml(epigraph.text),
-						reference: epigraph.reference ? this.sanitizer.bypassSecurityTrustHtml(epigraph.reference) : undefined,
-					})) ?? [],
+				epigraphs: section.epigraphs ?? [],
 				bodyHtml: section.bodyHtml,
 			})) ?? [],
 	);
