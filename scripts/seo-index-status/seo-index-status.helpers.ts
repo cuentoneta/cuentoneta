@@ -5,7 +5,7 @@
  */
 import { dirname, join } from 'node:path';
 import { locations } from '../../src/testing/sitemap-xml';
-import type { RetryResult } from './seo-index-status.retry';
+import { readHttpStatus, type RetryResult } from './seo-index-status.retry';
 
 /**
  * Estado derivado por nosotros. NO es `coverageState`: ese campo la API lo devuelve como string
@@ -44,6 +44,12 @@ export interface InspectionSnapshot {
 	userCanonical?: string;
 	/** Presente solo si la llamada a la API falló para esta URL. */
 	error?: string;
+	/**
+	 * Status HTTP de esa falla, cuando se lo pudo leer. Es lo que permite separar un fallo de la
+	 * herramienta de uno transitorio sin ramificar sobre el texto del mensaje, que cambia con la
+	 * versión y con el idioma.
+	 */
+	errorStatus?: number;
 	/** Presente solo si la inspección consumió más de un intento. */
 	attempts?: number;
 }
@@ -387,7 +393,13 @@ export function messageOf(error: unknown): string {
  */
 export function snapshotOf(url: string, result: RetryResult<InspectionSnapshot>): InspectionSnapshot {
 	const attempts = result.attempts > 1 ? { attempts: result.attempts } : {};
-	return result.ok ? { ...result.value, ...attempts } : { url, error: messageOf(result.error), ...attempts };
+	if (result.ok) {
+		return { ...result.value, ...attempts };
+	}
+
+	const status = readHttpStatus(result.error);
+	const errorStatus = status !== undefined ? { errorStatus: status } : {};
+	return { url, error: messageOf(result.error), ...errorStatus, ...attempts };
 }
 
 /** Distingue una URL que agotó sus reintentos de otra que falló de entrada y no se reintentó. */

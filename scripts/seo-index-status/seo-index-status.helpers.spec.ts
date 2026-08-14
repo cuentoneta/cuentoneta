@@ -540,6 +540,24 @@ describe('snapshotOf', () => {
 	it('describe un error que no es Error', () => {
 		expect(snapshotOf('a', { ok: false, error: 'boom', attempts: 1 })).toEqual({ url: 'a', error: 'boom' });
 	});
+
+	it('retiene el status HTTP de la falla', () => {
+		const error = Object.assign(new Error('Permission denied.'), { response: { status: 403 } });
+
+		expect(snapshotOf('a', { ok: false, error, attempts: 1 }).errorStatus).toBe(403);
+	});
+
+	it('omite el status cuando el error no trae ninguno legible', () => {
+		const result = snapshotOf('a', { ok: false, error: new Error('boom'), attempts: 1 });
+
+		expect('errorStatus' in result).toBe(false);
+	});
+
+	it('no le cuelga un status a una inspección exitosa', () => {
+		const result = snapshotOf('a', { ok: true, value: snapshotA, attempts: 1 });
+
+		expect('errorStatus' in result).toBe(false);
+	});
 });
 
 describe('resolveHistoryPaths', () => {
