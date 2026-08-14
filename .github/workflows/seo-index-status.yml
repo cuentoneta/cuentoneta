@@ -1,0 +1,170 @@
+# Mide el estado de indexado real de las URLs del sitio contra la URL Inspection API de Search
+# Console, y persiste la serie por URL en una rama dedicada del repo.
+#
+# El valor de la medición no es la foto: es el diff contra la corrida anterior. Cuántas URLs pasaron
+# de "nunca rastreada" a tener `lastCrawlTime` es la pregunta que la pantalla de validación de Search
+# Console no contesta, y solo se responde comparando dos puntos en el tiempo. El runner es efímero,
+# así que sin persistencia explícita cada corrida arrancaría sin historial y el diff no existiría.
+# La rama dedicada sobrevive a la retención de artefactos y a la evicción del cache, y regala los
+# diffs en git, que es exactamente la forma de la pregunta.
+#
+# Va programado y **no** como gate, a propósito. Depende de red y de un servicio externo, y los
+# checks del repo son offline y deterministas: sumar el id de este job a los required status checks
+# de `develop` reintroduciría por la ventana la dependencia que los gates evitan por la puerta. Es el
+# mismo razonamiento que deja escrito `issue-refs-sweep.yml`.
+#
+# Por lo mismo, el job se pinta de rojo solo si la herramienta se rompió —credenciales inválidas,
+# cuota agotada, la API caída—, nunca porque el indexado esté mal: un indexado malo es el hallazgo
+# que este job existe para reportar, no un fallo suyo. Sin esa distinción el rojo semanal deja de
+# significar algo y el incentivo pasa a ser ignorarlo.
+#
+# Prerequisito (secret del repo — se configura una sola vez):
+#   - GSC_SERVICE_ACCOUNT_KEY: el JSON de una service account con acceso de lectura a la propiedad
+#     (su `client_email` dado de alta en Search Console → Configuración → Usuarios y permisos). Va
+#     inline y no por ruta a un archivo justamente para que la key nunca toque el disco del runner.
+name: SEO index status
+
+on:
+  schedule:
+    # Lunes 07:23 UTC: después del `issue-refs-sweep` de las 06:00 y lejos del `sync-datasets` de las
+    # 03:17, para no competir por runners. GitHub desactiva un `schedule` tras 60 días sin actividad
+    # en el repo; el `workflow_dispatch` de abajo permite re-dispararlo a mano cuando eso pasa.
+    - cron: '23 7 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: seo-index-status
+  # No cancelar una corrida en progreso: cortarla a mitad de escribir la serie perdería la medición.
+  cancel-in-progress: false
+
+permissions:
+  # `permissions:` no tiene granularidad por rama, así que este token puede escribir cualquier rama
+  # no protegida. Lo que lo acota en la práctica es qué hace el job —solo commitea dentro de
+  # `.metrics`, el checkout de la rama de métricas— y que `develop` y `master` están protegidas
+  # contra push directo.
+  contents: write
+
+jobs:
+  seo-index-status:
+    runs-on: ubuntu-latest
+    # La corrida son ~2 minutos de despacho más el install; el margen absorbe los reintentos con
+    # backoff sin dejar que un cuelgue consuma minutos de runner.
+    timeout-minutes: 20
+
+    env:
+      GSC_SITE_URL: sc-domain:cuentoneta.ar
+      BASE_URL: https://www.cuentoneta.ar
+      METRICS_BRANCH: seo-metrics
+      HISTORY_FILE: .metrics/seo-index-status/latest.json
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      # La rama nace en la primera corrida, sin paso manual previo: un prerequisito que nadie hizo
+      # dejaría la primera corrida programada en rojo por algo que no es un fallo de la herramienta.
+      - name: ¿Existe la rama de métricas?
+        id: metrics-branch
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --heads origin "$METRICS_BRANCH" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Se checkoutea la rama default y recién después se posiciona en la de métricas, en vez de
+      # pasarle `ref` condicional: así el nombre de la rama vive en un solo lugar, el `env` del job.
+      - name: Checkout para la rama de métricas
+        uses: actions/checkout@v7.0.1
+        with:
+          path: .metrics
+          fetch-depth: 1
+
+      # Cuando la rama no existe queda huérfana y vacía, con las credenciales que el checkout ya
+      # configuró.
+      - name: Posicionarse en la rama de métricas
+        working-directory: .metrics
+        env:
+          BRANCH_EXISTS: ${{ steps.metrics-branch.outputs.exists }}
+        run: |
+          set -euo pipefail
+          if [ "$BRANCH_EXISTS" = 'true' ]; then
+            git fetch --depth 1 origin "$METRICS_BRANCH"
+            git switch --force-create "$METRICS_BRANCH" "origin/$METRICS_BRANCH"
+          else
+            git switch --orphan "$METRICS_BRANCH"
+            git rm -rf . >/dev/null 2>&1 || true
+          fi
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
+
+      # El script produce hechos; el YAML solo aplica política sobre su código de salida. Nada acá
+      # parsea su salida ni deriva una conclusión: todo lo que decide algo vive en el núcleo puro,
+      # donde tiene spec.
+      - name: Medir el estado de indexado
+        env:
+          GSC_SERVICE_ACCOUNT_KEY: ${{ secrets.GSC_SERVICE_ACCOUNT_KEY }}
+        run: |
+          set -uo pipefail
+          pnpm seo:index-status --all --history="$HISTORY_FILE" --summary="$GITHUB_STEP_SUMMARY"
+          status=$?
+          case "$status" in
+            0) echo "La corrida midió todas las URLs." ;;
+            2) echo "::warning::Algunas inspecciones erraron por causas transitorias; la serie se persiste igual." ;;
+            *) echo "::error::La herramienta no pudo medir (código $status)." >&2; exit "$status" ;;
+          esac
+
+      - name: Subir el historial crudo
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: seo-index-status
+          path: .metrics/seo-index-status/latest.json
+          retention-days: 30
+          if-no-files-found: ignore
+
+      # Se commitea con ruta explícita y solo si algo cambió. Un push a esta rama no dispara ningún
+      # workflow del repo —todos escuchan `pull_request` o un push a `develop`/`master`—, así que no
+      # hace falta ningún `[skip ci]`.
+      - name: Persistir la serie
+        working-directory: .metrics
+        run: |
+          set -euo pipefail
+          if [ ! -f README.md ]; then
+            cat > README.md <<'DOC'
+          # Serie de estado de indexado
+
+          Rama de datos, no de trabajo: la escribe el workflow `seo-index-status` en cada corrida
+          semanal y nadie la mergea a ninguna parte. Su historia ES el dato — cada commit es una
+          medición, y el diff entre dos commits es lo que la herramienta existe para responder.
+          DOC
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add README.md seo-index-status/latest.json
+          if git diff --cached --quiet; then
+            echo 'La serie no se movió; no hay nada que commitear.'
+          else
+            git commit -m "Mide el estado de indexado ($(date -u '+%Y-%m-%d'))"
+            git push origin "HEAD:$METRICS_BRANCH"
+          fi
+
+      # Después de persistir la serie, que es lo irrecuperable de la corrida: un smoke caído no debe
+      # impedir que se escriba. Y sin pintar rojo, porque afirma invariantes de SSR contra producción:
+      # si falla, el hallazgo es que producción está mal, no que la herramienta se rompió.
+      - name: Smoke de invariantes SSR
+        id: smoke
+        continue-on-error: true
+        run: pnpm seo:smoke
+
+      - name: Anotar el desenlace del smoke
+        if: always()
+        run: |
+          set -euo pipefail
+          if [ '${{ steps.smoke.outcome }}' = 'success' ]; then
+            echo '## Smoke SSR: sin violaciones.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '## Smoke SSR: encontró violaciones (ver el log del step).' >> "$GITHUB_STEP_SUMMARY"
+          fi
