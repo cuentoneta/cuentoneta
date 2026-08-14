@@ -105,4 +105,22 @@
 
 	/* Design System V3 - Grid templates personalizados */
 	--grid-template-rows-3-auto: repeat(3, auto);
+
+	/*
+		Design System V3 - Escala de apilamiento.
+
+		`content` y `raised` son capas INTERNAS: ordenan hermanos dentro de un componente, que confina su
+		apilamiento con `isolate`. Confinado el contexto, el número deja de significar nada afuera. `nav` y
+		`floating` son GLOBALES: se usan sin aislar (aislar la barra la haría perder contra el contenido) y
+		su franja está reservada a las capas que existen a nivel de aplicación.
+
+		A diferencia de `--color-*`, `--breakpoint-*` y `--radius-*`, esta namespace NO se limpia con
+		`initial`: Tailwind no trae defaults de z-index que reemplazar, y borrarla tampoco desactivaría los
+		números crudos — la utilidad `z` resuelve cualquier valor sin consultar el tema. De ahí que lo que
+		impide un valor fuera de la escala sea una regla de lint y no este archivo.
+	*/
+	--z-index-content: 10;
+	--z-index-raised: 20;
+	--z-index-nav: 50;
+	--z-index-floating: 60;
 }
