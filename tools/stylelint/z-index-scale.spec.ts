@@ -11,7 +11,6 @@ const config = {
 	// El config no extiende los presets del repo a propósito: con esta regla como única activa, todo
 	// warning que llegue es suyo, y contarlos alcanza para afirmar.
 	// REASON: la forma de un config de Stylelint no vale tiparla acá; el spec solo lo pasa como dato.
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 async function warningsFor(code: string, codeFilename = 'src/app/components/probe/probe.component.css') {
@@ -38,6 +37,15 @@ describe('cuentoneta/z-index-scale', () => {
 		it('rejects a reference to a token outside the scale', async () => {
 			expect(await warningsFor('.a { z-index: var(--z-index-nope); }')).toHaveLength(1);
 		});
+
+		// La reserva rige en las dos formas: lo que `z-floating` prohíbe no lo puede conceder la declaración.
+		it('rejects a reference to a global layer outside the files that declare one', async () => {
+			expect(await warningsFor('.a { z-index: var(--z-index-nav); }')).toHaveLength(1);
+		});
+
+		it('accepts a reference to a global layer in the file that declares it', async () => {
+			expect(await warningsFor('.a { z-index: var(--z-index-floating); }', TOOLTIP_FILE)).toHaveLength(0);
+		});
 	});
 
 	describe('utilidades en @apply', () => {
@@ -55,6 +63,23 @@ describe('cuentoneta/z-index-scale', () => {
 
 		it('rejects a layer name that does not exist', async () => {
 			expect(await warningsFor('.a { @apply z-nvv; }')).toHaveLength(1);
+		});
+
+		// Con variante: el prefijo no exime, ni sirve para eludir la reserva de la franja alta.
+		it('accepts a layer of the scale with a variant', async () => {
+			expect(await warningsFor('.a { @apply md:z-content sm:hover:z-raised; }')).toHaveLength(0);
+		});
+
+		it('rejects a raw number behind a variant', async () => {
+			expect(await warningsFor('.a { @apply md:z-50; }')).toHaveLength(1);
+		});
+
+		it('rejects a negative behind a variant', async () => {
+			expect(await warningsFor('.a { @apply md:-z-content; }')).toHaveLength(1);
+		});
+
+		it('rejects a global layer behind a variant', async () => {
+			expect(await warningsFor('.a { @apply md:z-nav; }')).toHaveLength(1);
 		});
 
 		// La franja alta está reservada: la capa global se admite solo en el archivo que la declara.
