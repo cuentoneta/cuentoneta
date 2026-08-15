@@ -65,14 +65,19 @@ El tech stack actualmente utilizado para el desarrollo de La Cuentoneta es:
 - **<a href="https://pnpm.io/es/">pnpm</a>** como gestor de paquetes
 - **<a href="https://nx.dev/angular">Nx</a>** como gestor de monorepo y task runner
 
-Junto con Nx, el proyecto cuenta con ESLint y Prettier ya configuradas como dependencias.
+Junto con Nx, el proyecto cuenta con ESLint, Prettier y Stylelint ya configuradas como dependencias.
 
 ### Para el desarrollo de la plataforma web
 
 - **<a href="https://angular.dev">Angular 22</a>** con **<a href="https://angular.dev/guide/ssr">Server-Side rendering</a>** como framework de frontend
 - **<a href="https://www.typescriptlang.org/">TypeScript</a>**
-- **<a href="https://tailwindcss.com/docs/installation">Tailwind CSS</a>**
-- **<a href="https://storybook.js.org/docs/react/get-started/introduction">Storybook</a>** como herramienta de desarrollo de componentes.
+- **<a href="https://tailwindcss.com/docs/installation">Tailwind CSS v4</a>**
+- **<a href="https://storybook.js.org/docs/get-started/frameworks/angular">Storybook</a>** como herramienta de desarrollo de componentes.
+
+### Para el desarrollo de la API
+
+- **<a href="https://hono.dev/">Hono</a>** como framework del backend, cuyos endpoints viven en `src/api/`.
+- **<a href="https://zod.dev/">Zod</a>**, a través de <a href="https://hono.dev/docs/guides/validation">`@hono/zod-validator`</a>, para la validación de los parámetros de entrada.
 
 ### Para la gestión del contenido
 
@@ -215,7 +220,7 @@ Los tests de e2e corren contra el build SSR de producción (el `webServer` de Pl
 pnpm build && pnpm run test:e2e
 ```
 
-Esto iniciará una corrida de tests de integración y end-to-end utilizando Playwright, mostrando los resultados en consola y generando un reporte, el cual se encontrará en la carpeta `dist/.playwright/playwright-reports` al final de la corrida.
+Esto iniciará una corrida de tests de integración y end-to-end utilizando Playwright, mostrando los resultados en consola y generando un reporte, el cual se encontrará en la carpeta `dist/.playwright/playwright-report` al final de la corrida.
 
 ---
 
