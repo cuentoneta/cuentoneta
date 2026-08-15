@@ -1,0 +1,49 @@
+
+> @cuentoneta/app@2.10.1 seo:smoke C:\Users\ramir\WebstormProjects\cuentoneta\.claude\worktrees\2198
+> node --import tsx ./scripts/seo-smoke.ts
+
+Smoke de indexado contra https://www.cuentoneta.ar
+
+Baseline: /home
+  /story/el-aleph
+  /author/jorge-luis-borges
+  /storylist/verano-2022
+
+✅ /home (200)
+✅ /story/el-aleph (200)
+✅ /author/jorge-luis-borges (200)
+❌ /storylist/verano-2022 (200)
+     - [primary-heading] No hay <h1> con texto real dentro de <main>.
+     - [internal-link] No hay ningún enlace <a> con href que empiece en "/story/" dentro de <main>.
+
+Sitemap: 969 URLs, 966 con fecha, 279 fechas distintas, mayor concentración 3% en 2025-02-04
+✅ /sitemap.xml
+
+Muestra del sitemap (3/tipo):
+  /story/las-inscripciones-de-los-carros
+  /story/reflejo-sobre-el-agua
+  /story/el-diablo-en-capibara-cue
+  /author/ray-bradbury
+  /author/t-s-eliot
+  /author/selma-lagerlof
+  /storylist/santa-fe-mi-pais
+  /storylist/cuentos-de-terror-de-alberto-laiseca
+
+✅ /story/las-inscripciones-de-los-carros (200)
+✅ /story/reflejo-sobre-el-agua (200)
+✅ /story/el-diablo-en-capibara-cue (200)
+✅ /author/ray-bradbury (200)
+✅ /author/t-s-eliot (200)
+❌ /author/selma-lagerlof (200)
+     - [primary-heading] No hay <h1> con texto real dentro de <main>.
+     - [primary-content] El texto dentro de <main> tiene 0 caracteres; se esperaban ≥ 120.
+     - [internal-link] No hay ningún enlace <a> con href que empiece en "/story/" dentro de <main>.
+     - [json-ld] Falta el bloque JSON-LD con data-schema-id="profile-page".
+     - [json-ld] Falta el bloque JSON-LD con data-schema-id="breadcrumb-author".
+❌ /storylist/santa-fe-mi-pais (200)
+     - [primary-heading] No hay <h1> con texto real dentro de <main>.
+     - [internal-link] No hay ningún enlace <a> con href que empiece en "/story/" dentro de <main>.
+❌ /storylist/cuentos-de-terror-de-alberto-laiseca (200)
+     - [primary-heading] No hay <h1> con texto real dentro de <main>.
+     - [internal-link] No hay ningún enlace <a> con href que empiece en "/story/" dentro de <main>.
+ ELIFECYCLE  Command failed with exit code 1.
