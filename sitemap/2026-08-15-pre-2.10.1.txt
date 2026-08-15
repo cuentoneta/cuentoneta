@@ -1,0 +1,52 @@
+
+> @cuentoneta/app@2.10.1 seo:smoke C:\Users\ramir\WebstormProjects\cuentoneta\.claude\worktrees\2198
+> node --import tsx ./scripts/seo-smoke.ts
+
+Smoke de indexado contra https://www.cuentoneta.ar
+
+Baseline: /home
+  /story/el-aleph
+  /author/jorge-luis-borges
+  /storylist/verano-2022
+
+✅ /home (200)
+✅ /story/el-aleph (200)
+✅ /author/jorge-luis-borges (200)
+❌ /storylist/verano-2022 (200)
+     - [primary-heading] No hay <h1> con texto real dentro de <main>.
+     - [internal-link] No hay ningún enlace <a> con href que empiece en "/story/" dentro de <main>.
+
+Sitemap: 969 URLs, 966 con fecha, 14 fechas distintas, mayor concentración 48% en 2026-06-29
+❌ /sitemap.xml
+     - Hay entradas que no respetan la secuencia del esquema (loc → lastmod). Primera encontrada: loc → changefreq → priority.
+     - El sitemap emite <changefreq>, que los buscadores ignoran.
+     - El sitemap emite <priority>, que los buscadores ignoran.
+     - El 48% de las fechas es 2026-06-29: el lastmod está reflejando una escritura en lote, no cambios de contenido.
+
+Muestra del sitemap (3/tipo):
+  /story/la-soga
+  /story/chanchito-con-manzana
+  /story/el-campo-de-los-alfonso
+  /author/pilar-quintana
+  /author/virginia-woolf
+  /author/norma-lazo
+  /storylist/verano-2025
+  /storylist/textos-de-primavera
+  /storylist/florilegio-semana-02-2026
+
+✅ /story/la-soga (200)
+✅ /story/chanchito-con-manzana (200)
+✅ /story/el-campo-de-los-alfonso (200)
+✅ /author/pilar-quintana (200)
+✅ /author/virginia-woolf (200)
+✅ /author/norma-lazo (200)
+❌ /storylist/verano-2025 (200)
+     - [primary-heading] No hay <h1> con texto real dentro de <main>.
+     - [internal-link] No hay ningún enlace <a> con href que empiece en "/story/" dentro de <main>.
+❌ /storylist/textos-de-primavera (200)
+     - [primary-heading] No hay <h1> con texto real dentro de <main>.
+     - [internal-link] No hay ningún enlace <a> con href que empiece en "/story/" dentro de <main>.
+❌ /storylist/florilegio-semana-02-2026 (200)
+     - [primary-heading] No hay <h1> con texto real dentro de <main>.
+     - [internal-link] No hay ningún enlace <a> con href que empiece en "/story/" dentro de <main>.
+ ELIFECYCLE  Command failed with exit code 1.
