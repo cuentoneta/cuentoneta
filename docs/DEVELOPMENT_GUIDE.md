@@ -369,9 +369,10 @@ El proyecto utiliza [git](https://git-scm.com) como herramienta de control de ve
 - En caso de que seas un colaborador externo, debes de dejar un mensaje en el issue que quieras tomar para que te lo puedan asignar, después es necesario que realices un _fork_ del repositorio y envíes tus
   cambios mediante un _pull request_ desde tu _fork_ al repositorio principal, generando el fork tal como se detalla
   en la sección previa [Clonar el repositorio](#clonar-el-repositorio).
-- Las ramas de trabajo se nomenclan de la siguiente manera: `<numero-de-incidencia>-<nombre-de-la-funcionalidad>`.
-  Por ejemplo: `469-implementar-nuevo-componente-story-card-component`. Para facilidad de la generación de las ramas
-  de trabajo, se recomienda hacer uso de la generación de ramas a partir de las incidencias de Github.
+- Las ramas de trabajo se nomenclan de la siguiente manera: `feat/<numero-de-incidencia>-<nombre-de-la-funcionalidad>`,
+  con el nombre en _kebab-case_. Por ejemplo: `feat/469-implementar-nuevo-componente-story-card-component`. Para
+  facilidad de la generación de las ramas de trabajo, se recomienda hacer uso de la generación de ramas a partir de
+  las incidencias de Github.
 - Todos los commits deben ser nomenclados de la siguiente manera, referenciando el commit de manera navegable desde
   la interfaz de Github: `[#numero-de-incidencia] - 
 <mensaje-del-commit>`. Por ejemplo: `[#469] - Crear componente PublicationCardComponent`.
