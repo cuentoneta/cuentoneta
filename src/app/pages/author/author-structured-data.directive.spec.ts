@@ -4,6 +4,7 @@ import { DOCUMENT } from '@angular/common';
 import { signal } from '@angular/core';
 
 import { authorMock } from '@mocks/author.mock';
+import { withoutUrl } from '@testing/resource-without-url';
 import { type AuthorProfile } from '@models/author.model';
 import { AuthorStructuredDataDirective } from './author-structured-data.directive';
 import { AUTHOR_HOST } from './author-host';
@@ -52,6 +53,21 @@ describe('AuthorStructuredDataDirective', () => {
 		expect(
 			JSON.parse(head.querySelector('script[data-schema-id="breadcrumb-author"]')?.textContent ?? '{}'),
 		).toMatchObject({ '@type': 'BreadcrumbList' });
+	});
+
+	it('should still emit both JSON-LD blocks when a resource has no url', () => {
+		const [resource] = authorMock.resources;
+		authorSignal.set({ ...authorMock, resources: [withoutUrl(resource)] });
+
+		instantiate();
+		TestBed.tick();
+
+		const head = TestBed.inject(DOCUMENT).head;
+		expect(JSON.parse(head.querySelector('script[data-schema-id="profile-page"]')?.textContent ?? '{}')).toMatchObject({
+			'@type': 'ProfilePage',
+			mainEntity: { '@type': 'Person', name: authorMock.name },
+		});
+		expect(head.querySelector('script[data-schema-id="breadcrumb-author"]')).not.toBeNull();
 	});
 
 	it('should remove both JSON-LD blocks when destroyed', () => {

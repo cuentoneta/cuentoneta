@@ -8,12 +8,16 @@ import { authorMock, authorTeaserMock } from '@mocks/author.mock';
 import { AuthorApi } from './author-api.interface';
 
 export class StubAuthorApi implements AuthorApi {
+	// El autor entra por constructor para que un spec pueda servir una variante degradada del canon
+	// sin escribir su propia implementación de la interfaz.
+	constructor(private readonly author: AuthorProfile = authorMock) {}
+
 	public getAll(): Observable<AuthorTeaser[]> {
 		return of([authorTeaserMock]);
 	}
 
 	public getBySlug(): Observable<AuthorProfile> {
-		return of(authorMock);
+		return of(this.author);
 	}
 }
 
