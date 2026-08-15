@@ -6,15 +6,22 @@
  * No existe API para iniciar ni consultar una validación, ni para "Solicitar indexación": inspeccionar
  * URL por URL es la única vía programática de medir el avance.
  *
- * Persiste en `tmp/seo-index-status/` (gitignoreado) un historial POR URL, no una foto por corrida:
+ * Persiste en `tmp/seo-index-status/` (gitignoreado, salvo que `--history` diga otra cosa) un
+ * historial POR URL, no una foto por corrida:
  * cada corrida actualiza las URLs que miró y deja intacto el resto, así inspeccionar un subconjunto
  * distinto no pisa lo medido antes. El dato útil es la serie ("cuántas pasaron a indexada"), y el
  * reporte la expone diffeando contra la observación anterior de cada URL.
  *
  * La API devuelve errores transitorios de forma esporádica, así que una inspección que erra se
  * reintenta con backoff —solo si el error puede no ser determinista, y sin saltear el espaciado de
- * despacho—. La que agota sus intentos se reporta como fallida y hace salir a la corrida con código
- * distinto de cero: una inspección que no ocurrió no debe reportarse como si hubiera ocurrido.
+ * despacho—. La que agota sus intentos se reporta como fallida: una inspección que no ocurrió no
+ * debe reportarse como si hubiera ocurrido.
+ *
+ * El código de salida transporta la CAUSA, no solo la existencia de un fallo, porque quien corre
+ * esto sin mirar el log es un job programado y necesita decidir si pintarse de rojo:
+ *   0  la corrida midió todo lo que se propuso;
+ *   1  la herramienta no pudo medir (credenciales, permisos, cuota, o ni una sola observación);
+ *   2  midió, y algunas inspecciones sueltas erraron por causas transitorias.
  *
  * Requisitos (una service account con acceso de lectura a la propiedad):
  *   1. Crear la service account en Google Cloud y habilitarle la Search Console API.
@@ -31,22 +38,25 @@
  *   ... pnpm seo:index-status --urls=ruta/a/urls.txt                        # una URL por línea
  *   ... pnpm seo:index-status --all                                         # todo el sitemap (ojo cuota)
  *   ... pnpm seo:index-status --sample=50
+ *   ... pnpm seo:index-status --history=ruta/a/latest.json               # dónde vive la serie
+ *   ... pnpm seo:index-status --summary="$GITHUB_STEP_SUMMARY"           # resumen en Markdown
  *   GSC_SERVICE_ACCOUNT_KEY_PATH=... pnpm seo:index-status --list-sites   # ver el siteUrl exacto
  */
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
-import { join } from 'node:path';
+import { appendFile, readFile, writeFile, mkdir } from 'node:fs/promises';
 // La auth se toma del propio cliente, no de `google-auth-library` como dependencia aparte: el objeto
 // que construye cruza la frontera entre ambos paquetes, y dos instancias distintas —lo que pasa
 // apenas los rangos dejan de coincidir— el compilador las trata como tipos ajenos.
 import { auth, searchconsole } from '@googleapis/searchconsole';
 import {
 	classify,
+	classifyRunOutcome,
 	createPacer,
-	formatReport,
+	EXIT_CODE,
 	mergeSnapshot,
 	messageOf,
 	parseSampleSize,
 	parseSitemapLocs,
+	resolveHistoryPaths,
 	snapshotOf,
 	storedRows,
 	toSnapshot,
@@ -54,6 +64,7 @@ import {
 	type InspectionSnapshot,
 	type SnapshotStore,
 } from './seo-index-status.helpers';
+import { formatReport, formatSummaryMarkdown, type SummaryInput } from './seo-index-status.report';
 import { createRetryBudget, runWithRetries } from './seo-index-status.retry';
 
 const SITE_URL = process.env['GSC_SITE_URL'] ?? '';
@@ -76,13 +87,13 @@ const MS_PER_MINUTE = 60_000;
 const DISPATCH_SPACING_MS = Math.ceil(MS_PER_MINUTE / (QUOTA_PER_MINUTE * 0.8));
 const CONCURRENCY = 8;
 
-const SNAPSHOT_DIR = join('tmp', 'seo-index-status');
-const SNAPSHOT_FILE = join(SNAPSHOT_DIR, 'latest.json');
-
 function argValue(flag: string): string | undefined {
 	const found = process.argv.find((arg) => arg.startsWith(`${flag}=`));
 	return found?.slice(flag.length + 1);
 }
+
+const HISTORY = resolveHistoryPaths(argValue('--history'));
+const SUMMARY_FILE = argValue('--summary');
 
 function delay(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -172,7 +183,7 @@ async function inspectAll(urls: readonly string[], inspect: Inspector): Promise<
 async function readStore(): Promise<SnapshotStore> {
 	let contents: string;
 	try {
-		contents = await readFile(SNAPSHOT_FILE, 'utf8');
+		contents = await readFile(HISTORY.file, 'utf8');
 	} catch (error) {
 		if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
 			return {};
@@ -184,18 +195,36 @@ async function readStore(): Promise<SnapshotStore> {
 		return JSON.parse(contents) as SnapshotStore;
 	} catch (error) {
 		throw new Error(
-			`${SNAPSHOT_FILE} existe pero no es JSON válido. Movelo o borralo para empezar una serie nueva; ` +
+			`${HISTORY.file} existe pero no es JSON válido. Movelo o borralo para empezar una serie nueva; ` +
 				'sobrescribirlo perdería el historial acumulado.',
 			{ cause: error },
 		);
 	}
 }
 
-async function writeStore(store: SnapshotStore, rows: readonly ClassifiedRow[]): Promise<void> {
-	const merged = mergeSnapshot(store, rows, new Date().toISOString());
-	await mkdir(SNAPSHOT_DIR, { recursive: true });
-	await writeFile(SNAPSHOT_FILE, JSON.stringify(merged, null, 2), 'utf8');
-	console.log(`\nHistorial actualizado en ${SNAPSHOT_FILE} (${Object.keys(merged).length} URL(s) conocidas)`);
+async function writeStore(store: SnapshotStore, rows: readonly ClassifiedRow[], checkedAt: string): Promise<void> {
+	const merged = mergeSnapshot(store, rows, checkedAt);
+	await mkdir(HISTORY.dir, { recursive: true });
+	await writeFile(HISTORY.file, JSON.stringify(merged, null, 2), 'utf8');
+	console.log(`\nHistorial actualizado en ${HISTORY.file} (${Object.keys(merged).length} URL(s) conocidas)`);
+}
+
+/**
+ * Appendea, no sobrescribe: el destino es de quien lo pasó por flag, no de la herramienta, y truncar
+ * un archivo ajeno se lleva puesto lo que ya hubiera escrito.
+ *
+ * Un resumen que no se puede escribir no aborta la corrida. Es superficie de lectura, y perder la
+ * medición ya hecha por no poder contarla sería el peor de los dos desenlaces.
+ */
+async function writeSummary(input: SummaryInput): Promise<void> {
+	if (!SUMMARY_FILE) {
+		return;
+	}
+	try {
+		await appendFile(SUMMARY_FILE, `${formatSummaryMarkdown(input).join('\n')}\n`, 'utf8');
+	} catch (error) {
+		console.error(`No se pudo escribir el resumen en ${SUMMARY_FILE}: ${messageOf(error)}`);
+	}
 }
 
 // La key la exigen las dos rutas; el siteUrl NO lo exige `--list-sites`, que existe justamente para
@@ -264,15 +293,17 @@ async function run(): Promise<void> {
 	const known = storedRows(store);
 	const { rows, retries } = await inspectAll(urls, buildInspector());
 
-	console.log(formatReport({ rows, previous: known.length > 0 ? known : undefined, retries }).join('\n'));
-	await writeStore(store, rows);
+	const report = { rows, previous: known.length > 0 ? known : undefined, retries };
+	const checkedAt = new Date().toISOString();
 
-	if (rows.some((row) => row.error)) {
-		process.exitCode = 1;
-	}
+	console.log(formatReport(report).join('\n'));
+	await writeSummary({ ...report, checkedAt });
+	await writeStore(store, rows, checkedAt);
+
+	process.exitCode = classifyRunOutcome(rows);
 }
 
 run().catch((error: unknown) => {
 	console.error(messageOf(error));
-	process.exitCode = 1;
+	process.exitCode = EXIT_CODE.toolFailure;
 });

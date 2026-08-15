@@ -3,8 +3,9 @@
  * URL Inspection API, clasificación, resumen y diff contra una corrida anterior. Separados de
  * `seo-index-status.ts` (auth/red/paginado) para poder testearlos sin credenciales ni tocar la red.
  */
+import { dirname, join } from 'node:path';
 import { locations } from '../../src/testing/sitemap-xml';
-import type { RetryResult } from './seo-index-status.retry';
+import { readHttpStatus, type RetryResult } from './seo-index-status.retry';
 
 /**
  * Estado derivado por nosotros. NO es `coverageState`: ese campo la API lo devuelve como string
@@ -43,6 +44,12 @@ export interface InspectionSnapshot {
 	userCanonical?: string;
 	/** Presente solo si la llamada a la API falló para esta URL. */
 	error?: string;
+	/**
+	 * Status HTTP de esa falla, cuando se lo pudo leer. Es lo que permite separar un fallo de la
+	 * herramienta de uno transitorio sin ramificar sobre el texto del mensaje, que cambia con la
+	 * versión y con el idioma.
+	 */
+	errorStatus?: number;
 	/** Presente solo si la inspección consumió más de un intento. */
 	attempts?: number;
 }
@@ -128,6 +135,47 @@ function resolveState(snapshot: InspectionSnapshot): CrawlState {
 	// La ausencia de `lastCrawlTime` es el discriminador: la API lo OMITE cuando Google nunca fetcheó
 	// la URL ("Descubierta, actualmente no indexada" / "URL desconocida"), y solo ahí.
 	return snapshot.lastCrawlTime ? CRAWL_STATE.crawledNotIndexed : CRAWL_STATE.neverCrawled;
+}
+
+/**
+ * Códigos de salida de la corrida. Existen tres y no dos porque un job programado tiene que poder
+ * distinguir "la herramienta no pudo medir" de "midió, y algunas inspecciones sueltas erraron": lo
+ * primero es un fallo suyo y merece rojo; lo segundo es ruido residual de la API, y pintarlo de rojo
+ * cada semana vacía de significado al rojo.
+ */
+export const EXIT_CODE = Object.freeze({
+	ok: 0,
+	toolFailure: 1,
+	partialFailure: 2,
+} as const);
+
+export type ExitCode = (typeof EXIT_CODE)[keyof typeof EXIT_CODE];
+
+/**
+ * Traduce el desenlace de la corrida al código de salida. Una corrida sin una sola observación no
+ * midió nada —el caso de la API caída—, y reportarla en verde sería exactamente el rojo que dejó de
+ * significar algo, al revés.
+ */
+export function classifyRunOutcome(rows: readonly ClassifiedRow[]): ExitCode {
+	// Statuses que no cambian si se vuelve a intentar y que señalan a la herramienta, no a la API:
+	// los parámetros del pedido, las credenciales, el permiso sobre la propiedad y la cuota ya
+	// agotada. Una sola fila con cualquiera condena la corrida entera, porque la causa es común.
+	const TOOL_FAILURE_STATUSES: readonly number[] = [400, 401, 403, 429];
+
+	if (rows.length === 0) {
+		return EXIT_CODE.toolFailure;
+	}
+
+	const failed = rows.filter((row) => row.state === CRAWL_STATE.failed);
+	if (failed.length === 0) {
+		return EXIT_CODE.ok;
+	}
+	if (failed.length === rows.length) {
+		return EXIT_CODE.toolFailure;
+	}
+	return failed.some((row) => row.errorStatus !== undefined && TOOL_FAILURE_STATUSES.includes(row.errorStatus))
+		? EXIT_CODE.toolFailure
+		: EXIT_CODE.partialFailure;
 }
 
 export type StateCounts = Readonly<Record<CrawlState, number>>;
@@ -229,6 +277,23 @@ export interface StoredRow extends ClassifiedRow {
  */
 export type SnapshotStore = Record<string, StoredRow>;
 
+export interface HistoryPaths {
+	file: string;
+	dir: string;
+}
+
+/**
+ * El directorio se deriva del archivo en vez de pedirse aparte: son un solo dato, y admitir que
+ * discrepen habilita una corrida que crea un directorio y escribe en otro.
+ */
+export function resolveHistoryPaths(raw: string | undefined): HistoryPaths {
+	// Dónde vive la serie cuando nadie lo dice: gitignoreado, junto al resto de lo efímero.
+	const DEFAULT_HISTORY_FILE = join('tmp', 'seo-index-status', 'latest.json');
+
+	const file = raw === undefined || raw.length === 0 ? DEFAULT_HISTORY_FILE : raw;
+	return { file, dir: dirname(file) };
+}
+
 function movedSinceLastRun(previous: StoredRow | undefined, row: ClassifiedRow): boolean {
 	if (!previous) {
 		return false;
@@ -236,26 +301,38 @@ function movedSinceLastRun(previous: StoredRow | undefined, row: ClassifiedRow):
 	return previous.state !== row.state || previous.coverageState !== row.coverageState;
 }
 
+/**
+ * La entrada archivada es la observación ANTERIOR, no la nueva: los campos de primer nivel siempre
+ * son el presente, y `history` el camino que llevó hasta él.
+ */
+function historyAfter(previous: StoredRow | undefined, row: ClassifiedRow): HistoryEntry[] {
+	const history = previous?.history ?? [];
+	if (!movedSinceLastRun(previous, row)) {
+		return history;
+	}
+	return [
+		...history,
+		{
+			checkedAt: previous?.checkedAt ?? '',
+			state: previous?.state ?? row.state,
+			coverageState: previous?.coverageState,
+		},
+	];
+}
+
 export function mergeSnapshot(store: SnapshotStore, rows: readonly ClassifiedRow[], checkedAt: string): SnapshotStore {
 	const merged: SnapshotStore = { ...store };
 	for (const row of rows) {
-		const previous = store[row.url];
-		const history = previous?.history ?? [];
+		// Una inspección que no ocurrió no desplaza a una que sí. Sin esto, una corrida con la
+		// credencial vencida reescribiría el archivo entero como fallido, y el diff de la corrida
+		// siguiente sería un muro de transiciones inventadas.
+		if (row.state === CRAWL_STATE.failed) {
+			continue;
+		}
 		merged[row.url] = {
 			...row,
 			checkedAt,
-			// La entrada archivada es la observación ANTERIOR, no la nueva: los campos de primer nivel
-			// siempre son el presente, y `history` el camino que llevó hasta él.
-			history: movedSinceLastRun(previous, row)
-				? [
-						...history,
-						{
-							checkedAt: previous?.checkedAt ?? '',
-							state: previous?.state ?? row.state,
-							coverageState: previous?.coverageState,
-						},
-					]
-				: history,
+			history: historyAfter(store[row.url], row),
 		};
 	}
 	return merged;
@@ -327,37 +404,6 @@ export function diffStates(
 	return { transitions, added };
 }
 
-function formatCounts(counts: StateCounts): string[] {
-	return Object.values(CRAWL_STATE)
-		.filter((state) => counts[state] > 0)
-		.map((state) => `  ${CRAWL_STATE_LABELS[state].padEnd(24)} ${String(counts[state]).padStart(5)}`);
-}
-
-function formatCoverageStates(rows: readonly ClassifiedRow[]): string[] {
-	return [...groupByCoverageState(rows)]
-		.sort(([, a], [, b]) => b - a)
-		.map(([label, count]) => `  ${String(count).padStart(5)}  ${label}`);
-}
-
-function formatTransitions(transitions: readonly StateTransition[]): string[] {
-	if (transitions.length === 0) {
-		return ['  (sin cambios de estado)'];
-	}
-	return transitions.map(
-		(change) => `  ${CRAWL_STATE_LABELS[change.from]} → ${CRAWL_STATE_LABELS[change.to]}: ${change.url}`,
-	);
-}
-
-/** Agrupa por el par (desde → hasta): el conteo es la lectura útil, no la lista de URLs. */
-function formatCoverageTransitions(transitions: readonly CoverageTransition[]): string[] {
-	const grouped = new Map<string, number>();
-	for (const change of transitions) {
-		const key = `${change.from} → ${change.to}`;
-		grouped.set(key, (grouped.get(key) ?? 0) + 1);
-	}
-	return [...grouped].sort(([, a], [, b]) => b - a).map(([label, count]) => `  ${String(count).padStart(5)}  ${label}`);
-}
-
 export function messageOf(error: unknown): string {
 	return error instanceof Error ? error.message : String(error);
 }
@@ -369,74 +415,11 @@ export function messageOf(error: unknown): string {
  */
 export function snapshotOf(url: string, result: RetryResult<InspectionSnapshot>): InspectionSnapshot {
 	const attempts = result.attempts > 1 ? { attempts: result.attempts } : {};
-	return result.ok ? { ...result.value, ...attempts } : { url, error: messageOf(result.error), ...attempts };
-}
-
-/** Distingue una URL que agotó sus reintentos de otra que falló de entrada y no se reintentó. */
-function formatAttempts(attempts: number | undefined): string {
-	return attempts !== undefined && attempts > 1 ? ` (tras ${attempts} intentos)` : '';
-}
-
-export interface ReportInput {
-	rows: readonly ClassifiedRow[];
-	previous?: readonly ClassifiedRow[];
-	/** Reintentos que consumió la corrida. Se informa solo si hubo alguno. */
-	retries?: number;
-}
-
-export function formatReport({ rows, previous, retries }: ReportInput): string[] {
-	const lines = [
-		'',
-		`Resultado sobre ${rows.length} URL(s):`,
-		...formatCounts(summarize(rows)),
-		'',
-		'coverageState informado por Google:',
-		...formatCoverageStates(rows),
-	];
-
-	if (retries !== undefined && retries > 0) {
-		lines.push('', `Reintentos consumidos: ${retries}`);
+	if (result.ok) {
+		return { ...result.value, ...attempts };
 	}
 
-	const mismatches = rows.filter((row) => row.canonicalMismatch);
-	if (mismatches.length > 0) {
-		lines.push('', `Canónica distinta de la declarada (${mismatches.length}):`);
-		// Se imprimen LAS DOS, alineadas: el caso real difiere en un solo carácter (una doble barra
-		// `.ar//story/…`), y mostrando solo la de Google el hallazgo se lee como dos URLs idénticas.
-		lines.push(
-			...mismatches.map(
-				(row) => `  ${row.url}\n      declarada:     ${row.userCanonical}\n      Google eligió: ${row.googleCanonical}`,
-			),
-		);
-	}
-
-	const failures = rows.filter((row) => row.state === CRAWL_STATE.failed);
-	if (failures.length > 0) {
-		lines.push('', `Inspecciones fallidas (${failures.length}):`);
-		lines.push(...failures.map((row) => `  ${row.url} — ${row.error}${formatAttempts(row.attempts)}`));
-	}
-
-	if (previous) {
-		const { transitions, added } = diffStates(previous, rows);
-		lines.push('', `Cambios contra el historial (${previous.length} URL(s) conocidas):`);
-		lines.push(...formatTransitions(transitions));
-
-		const coverageMoves = diffCoverageStates(previous, rows);
-		if (coverageMoves.length > 0) {
-			lines.push('', `Movimientos de coverageState (${coverageMoves.length}):`);
-			lines.push(...formatCoverageTransitions(coverageMoves));
-		}
-
-		if (added.length > 0) {
-			lines.push(`  ${added.length} URL(s) inspeccionadas por primera vez`);
-		}
-		// Una corrida parcial no debe leerse como cobertura total: se explicita qué quedó sin mirar.
-		const inspected = new Set(rows.map((row) => row.url));
-		const skipped = previous.filter((row) => !inspected.has(row.url)).length;
-		if (skipped > 0) {
-			lines.push(`  ${skipped} URL(s) del historial NO se inspeccionaron en esta corrida`);
-		}
-	}
-
-	return lines;
+	const status = readHttpStatus(result.error);
+	const errorStatus = status !== undefined ? { errorStatus: status } : {};
+	return { url, error: messageOf(result.error), ...errorStatus, ...attempts };
 }

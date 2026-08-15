@@ -1,15 +1,18 @@
+import { join } from 'node:path';
 import {
 	classify,
+	classifyRunOutcome,
 	createPacer,
 	CRAWL_STATE,
 	DEFAULT_SAMPLE_SIZE,
+	EXIT_CODE,
 	diffCoverageStates,
 	diffStates,
-	formatReport,
 	groupByCoverageState,
 	mergeSnapshot,
 	parseSampleSize,
 	parseSitemapLocs,
+	resolveHistoryPaths,
 	snapshotOf,
 	storedRows,
 	summarize,
@@ -263,6 +266,32 @@ describe('mergeSnapshot — historial por URL', () => {
 	});
 });
 
+describe('mergeSnapshot — una inspección fallida no es una observación', () => {
+	it('deja intacta la observación previa de la URL que falló', () => {
+		const store = mergeSnapshot({}, [row({ url: 'a', verdict: 'PASS' })], '2026-08-04T00:00:00Z');
+
+		const merged = mergeSnapshot(store, [row({ url: 'a', error: '500', errorStatus: 500 })], '2026-08-11T00:00:00Z');
+
+		expect(merged['a']?.state).toBe(CRAWL_STATE.indexed);
+		expect(merged['a']?.checkedAt).toBe('2026-08-04T00:00:00Z');
+		expect(merged['a']?.history).toEqual([]);
+	});
+
+	it('no da de alta una URL que nunca se pudo inspeccionar', () => {
+		const merged = mergeSnapshot({}, [row({ url: 'a', error: '500', errorStatus: 500 })], '2026-08-11T00:00:00Z');
+
+		expect(Object.keys(merged)).toEqual([]);
+	});
+
+	it('mergea igual las filas buenas de la misma corrida', () => {
+		const rows = [row({ url: 'a', error: '500', errorStatus: 500 }), row({ url: 'b', verdict: 'PASS' })];
+
+		const merged = mergeSnapshot({}, rows, '2026-08-11T00:00:00Z');
+
+		expect(Object.keys(merged)).toEqual(['b']);
+	});
+});
+
 describe('parseSitemapLocs', () => {
 	it('extrae las URLs absolutas del sitemap', () => {
 		const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -279,86 +308,6 @@ describe('parseSitemapLocs', () => {
 
 	it('devuelve vacío ante un sitemap sin entradas', () => {
 		expect(parseSitemapLocs('<urlset></urlset>')).toEqual([]);
-	});
-});
-
-describe('formatReport', () => {
-	it('informa el conteo por estado y el coverageState crudo', () => {
-		const report = formatReport({
-			rows: [row({ url: 'a', verdict: 'NEUTRAL', coverageState: 'Discovered - currently not indexed' })],
-		}).join('\n');
-
-		expect(report).toContain('Nunca rastreada');
-		expect(report).toContain('Discovered - currently not indexed');
-	});
-
-	it('destaca las canónicas que Google reasignó, imprimiendo AMBAS', () => {
-		// Caso real: difieren en un solo carácter (doble barra). Imprimir solo la de Google hacía
-		// que el hallazgo se leyera como dos URLs idénticas.
-		const report = formatReport({
-			rows: [
-				row({
-					url: 'https://www.cuentoneta.ar/story/amor',
-					userCanonical: 'https://www.cuentoneta.ar//story/amor',
-					googleCanonical: 'https://www.cuentoneta.ar/story/amor',
-				}),
-			],
-		}).join('\n');
-
-		expect(report).toContain('Canónica distinta de la declarada');
-		expect(report).toContain('declarada:     https://www.cuentoneta.ar//story/amor');
-		expect(report).toContain('Google eligió: https://www.cuentoneta.ar/story/amor');
-	});
-
-	it('muestra los movimientos de coverageState agrupados por par', () => {
-		const previous = [
-			row({ url: 'a', coverageState: 'Discovered - currently not indexed' }),
-			row({ url: 'b', coverageState: 'Discovered - currently not indexed' }),
-		];
-		const current = [
-			row({ url: 'a', coverageState: 'URL is unknown to Google' }),
-			row({ url: 'b', coverageState: 'URL is unknown to Google' }),
-		];
-
-		const report = formatReport({ rows: current, previous }).join('\n');
-
-		expect(report).toContain('Movimientos de coverageState (2)');
-		expect(report).toContain('2  Discovered - currently not indexed → URL is unknown to Google');
-	});
-
-	it('omite la sección de coverageState cuando nada se movió', () => {
-		const rows = [row({ url: 'a', coverageState: 'Submitted and indexed', verdict: 'PASS' })];
-
-		expect(formatReport({ rows, previous: rows }).join('\n')).not.toContain('Movimientos de coverageState');
-	});
-
-	it('avisa cuántas URLs del historial quedaron sin inspeccionar', () => {
-		const report = formatReport({
-			rows: [row({ url: 'a' })],
-			previous: [row({ url: 'a' }), row({ url: 'b' }), row({ url: 'c' })],
-		}).join('\n');
-
-		expect(report).toContain('2 URL(s) del historial NO se inspeccionaron');
-	});
-
-	it('lista las inspecciones fallidas con su causa', () => {
-		const report = formatReport({ rows: [row({ url: 'a', error: 'quota exceeded' })] }).join('\n');
-
-		expect(report).toContain('quota exceeded');
-	});
-
-	it('omite la sección de cambios cuando no hay corrida previa', () => {
-		expect(formatReport({ rows: [row({ url: 'a' })] }).join('\n')).not.toContain('Cambios contra el historial');
-	});
-
-	it('incluye la sección de cambios cuando hay corrida previa', () => {
-		const report = formatReport({
-			rows: [row({ url: 'a', verdict: 'PASS' })],
-			previous: [row({ url: 'a', verdict: 'NEUTRAL' })],
-		}).join('\n');
-
-		expect(report).toContain('Cambios contra el historial');
-		expect(report).toContain('Nunca rastreada → Indexada');
 	});
 });
 
@@ -474,30 +423,6 @@ describe('createPacer', () => {
 	});
 });
 
-describe('formatReport — reintentos', () => {
-	it('informa los reintentos consumidos cuando hubo alguno', () => {
-		const report = formatReport({ rows: [row({ url: 'a' })], retries: 3 }).join('\n');
-
-		expect(report).toContain('Reintentos consumidos: 3');
-	});
-
-	it.each([[0], [undefined]])('omite la línea cuando no hubo reintentos (%s)', (retries) => {
-		const report = formatReport({ rows: [row({ url: 'a' })], retries }).join('\n');
-
-		expect(report).not.toContain('Reintentos consumidos');
-	});
-
-	it('distingue una URL que agotó sus intentos de otra que falló de entrada', () => {
-		const report = formatReport({
-			rows: [row({ url: 'a', error: 'Internal error encountered.', attempts: 3 }), row({ url: 'b', error: '403' })],
-		}).join('\n');
-
-		expect(report).toContain('a — Internal error encountered. (tras 3 intentos)');
-		expect(report).toContain('b — 403');
-		expect(report).not.toContain('b — 403 (tras');
-	});
-});
-
 describe('mergeSnapshot — intentos', () => {
 	it('persiste el conteo de intentos en la fila', () => {
 		const store = mergeSnapshot({}, [row({ url: 'a', attempts: 2 })], '2026-08-13T00:00:00Z');
@@ -537,5 +462,94 @@ describe('snapshotOf', () => {
 
 	it('describe un error que no es Error', () => {
 		expect(snapshotOf('a', { ok: false, error: 'boom', attempts: 1 })).toEqual({ url: 'a', error: 'boom' });
+	});
+
+	it('retiene el status HTTP de la falla', () => {
+		const error = Object.assign(new Error('Permission denied.'), { response: { status: 403 } });
+
+		expect(snapshotOf('a', { ok: false, error, attempts: 1 }).errorStatus).toBe(403);
+	});
+
+	it('omite el status cuando el error no trae ninguno legible', () => {
+		const result = snapshotOf('a', { ok: false, error: new Error('boom'), attempts: 1 });
+
+		expect('errorStatus' in result).toBe(false);
+	});
+
+	it('no le cuelga un status a una inspección exitosa', () => {
+		const result = snapshotOf('a', { ok: true, value: snapshotA, attempts: 1 });
+
+		expect('errorStatus' in result).toBe(false);
+	});
+});
+
+describe('classifyRunOutcome', () => {
+	const good = row({ url: 'ok', verdict: 'PASS', lastCrawlTime: '2026-08-13T00:00:00Z' });
+
+	it('sale en cero cuando ninguna inspección falló', () => {
+		expect(classifyRunOutcome([good])).toBe(EXIT_CODE.ok);
+	});
+
+	// Una corrida vacía no midió nada; reportarla en verde la vuelve indistinguible de un sitio sano.
+	it('trata una corrida sin filas como fallo de la herramienta', () => {
+		expect(classifyRunOutcome([])).toBe(EXIT_CODE.toolFailure);
+	});
+
+	it('trata como fallo de la herramienta que TODAS las filas hayan fallado', () => {
+		const rows = [row({ url: 'a', error: '500', errorStatus: 500 }), row({ url: 'b', error: '500', errorStatus: 500 })];
+
+		expect(classifyRunOutcome(rows)).toBe(EXIT_CODE.toolFailure);
+	});
+
+	it('condena la corrida entera ante una sola falla por permisos', () => {
+		const rows = [good, row({ url: 'a', error: 'Permission denied.', errorStatus: 403 })];
+
+		expect(classifyRunOutcome(rows)).toBe(EXIT_CODE.toolFailure);
+	});
+
+	it('condena la corrida entera cuando la cuota se agotó', () => {
+		const rows = [good, row({ url: 'a', error: 'Quota exceeded.', errorStatus: 429 })];
+
+		expect(classifyRunOutcome(rows)).toBe(EXIT_CODE.toolFailure);
+	});
+
+	it('reporta como parcial una falla de servidor suelta', () => {
+		const rows = [good, row({ url: 'a', error: 'Internal error encountered.', errorStatus: 500 })];
+
+		expect(classifyRunOutcome(rows)).toBe(EXIT_CODE.partialFailure);
+	});
+
+	// Sin status no hay evidencia de que la causa sea común a todas las URLs, y presumirla condenaría
+	// la corrida por un error de red suelto.
+	it('reporta como parcial una falla sin status legible', () => {
+		const rows = [good, row({ url: 'a', error: 'socket hang up' })];
+
+		expect(classifyRunOutcome(rows)).toBe(EXIT_CODE.partialFailure);
+	});
+});
+
+describe('resolveHistoryPaths', () => {
+	it('cae al historial gitignoreado cuando no se pide otro', () => {
+		expect(resolveHistoryPaths(undefined)).toEqual({
+			file: join('tmp', 'seo-index-status', 'latest.json'),
+			dir: join('tmp', 'seo-index-status'),
+		});
+	});
+
+	it('deriva el directorio de la ruta pedida', () => {
+		expect(resolveHistoryPaths('.metrics/seo-index-status/latest.json')).toEqual({
+			file: '.metrics/seo-index-status/latest.json',
+			dir: '.metrics/seo-index-status',
+		});
+	});
+
+	it('resuelve al directorio actual una ruta sin directorio', () => {
+		expect(resolveHistoryPaths('latest.json')).toEqual({ file: 'latest.json', dir: '.' });
+	});
+
+	// Un flag escrito sin valor (`--history=`) llega como cadena vacía, y `dirname('')` da '.': la
+	// corrida escribiría un archivo sin nombre en el directorio de trabajo en vez de usar el default.
+	it('trata un valor vacío como ausencia del flag', () => {
+		expect(resolveHistoryPaths('')).toEqual(resolveHistoryPaths(undefined));
 	});
 });
