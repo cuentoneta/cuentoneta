@@ -1,15 +1,17 @@
-import { render, screen } from '@testing-library/angular';
+import { render, screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterModule, provideRouter } from '@angular/router';
 import { HeaderComponent } from './header.component';
 
 describe('HeaderComponent', () => {
-	const renderHeader = async (isVisible = true) =>
+	// El input queda sin fijar cuando el caso no lo necesita, para que el valor por defecto siga siendo
+	// el que se ejercita en la mayoría de los casos.
+	const renderHeader = async (isVisible?: boolean) =>
 		await render(HeaderComponent, {
 			componentImports: [CommonModule, NgOptimizedImage, RouterModule],
 			providers: [provideRouter([])],
-			inputs: { isVisible },
+			...(isVisible === undefined ? {} : { inputs: { isVisible } }),
 		});
 
 	it('should render Header component', async () => {
@@ -68,12 +70,12 @@ describe('HeaderComponent', () => {
 
 	// El colapso de la barra se expresa en clases y no en estilos computados: happy-dom no aplica CSS,
 	// así que el seam disponible en unitario es la clase que el binding emite. Que la transición corra
-	// de verdad lo verifican la story y el e2e de apilamiento, que sí montan un navegador.
+	// de verdad no lo cubre ninguna suite: se comprueba en un navegador, hoy a mano sobre la story.
 	describe('collapse', () => {
-		// La curva parece cruzada y no lo está: la que gobierna una transición es la del estado destino,
-		// así que la de mostrarse (`ease-in`) vive en el estado visible y la de ocultarse en el oculto.
+		// Sin fijar el input: el default del componente es el estado expandido, que es como se sirve en
+		// toda página antes del primer scroll.
 		it('should keep the header expanded while visible', async () => {
-			await renderHeader(true);
+			await renderHeader();
 
 			expect(screen.getByRole('banner')).toHaveClass('h-header-height', 'translate-y-0', 'opacity-100', 'ease-in');
 		});
@@ -101,19 +103,30 @@ describe('HeaderComponent', () => {
 			);
 		});
 
+		// La barra vuelve por el mismo camino, y es la dirección que gobierna `ease-in`: sin este caso, una
+		// inversión del mapa solo se notaría mirando la animación.
+		it('should expand the header again when it turns visible', async () => {
+			const { rerender } = await renderHeader(false);
+
+			await rerender({ inputs: { isVisible: true } });
+
+			const banner = screen.getByRole('banner');
+			expect(banner).toHaveClass('h-header-height', 'translate-y-0', 'opacity-100', 'ease-in');
+			expect(banner).not.toHaveClass('h-0');
+		});
+
 		it('should close the mobile menu when the header hides', async () => {
 			const user = userEvent.setup();
-			const { rerender, fixture } = await renderHeader(true);
+			const { rerender } = await renderHeader(true);
 			await user.click(screen.getByRole('button'));
 			expect(screen.getAllByRole('link', { name: 'Obras' })).toHaveLength(2);
 
 			await rerender({ inputs: { isVisible: false } });
-			// El effect cierra el menú recién dentro del ciclo que dispara el cambio de input, así que el
-			// template lo refleja en la pasada siguiente: sin esperar la estabilidad se lee el DOM anterior.
-			await fixture.whenStable();
 
-			// Vuelve a quedar solo el de escritorio: el del menú desplegable se fue con él.
-			expect(screen.getAllByRole('link', { name: 'Obras' })).toHaveLength(1);
+			// Vuelve a quedar solo el de escritorio: el del menú desplegable se fue con él. Se espera con
+			// `waitFor` porque el effect cierra el menú dentro del ciclo del cambio de input y el template
+			// lo refleja en la pasada siguiente.
+			await waitFor(() => expect(screen.getAllByRole('link', { name: 'Obras' })).toHaveLength(1));
 		});
 	});
 });
