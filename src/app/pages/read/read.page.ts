@@ -1,7 +1,6 @@
 // Core
 import { Component, computed, effect, forwardRef, inject, input, RESPONSE_INIT, untracked } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { DomSanitizer } from '@angular/platform-browser';
 
 // Utils
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
@@ -22,19 +21,19 @@ import { READ_HOST, type ReadHost } from './read-host';
 import { LiteraryWorkHeroHeaderComponent } from '@components/literary-work-hero-header/literary-work-hero-header.component';
 import { ButtonComponent } from '@components/button/button.component';
 import { EditorialNoteComponent } from '@components/editorial-note/editorial-note.component';
+import { LiteraryWorkSectionBodyComponent } from '@components/literary-work-section-body/literary-work-section-body.component';
 
 @Component({
 	selector: 'cuentoneta-read',
 	templateUrl: './read.page.html',
 	providers: [{ provide: READ_HOST, useExisting: forwardRef(() => ReadPage) }],
 	hostDirectives: [HeadMetadataDirective],
-	imports: [LiteraryWorkHeroHeaderComponent, ButtonComponent, EditorialNoteComponent],
+	imports: [LiteraryWorkHeroHeaderComponent, ButtonComponent, EditorialNoteComponent, LiteraryWorkSectionBodyComponent],
 })
 export default class ReadPage implements ReadHost {
 	public readonly slug = input.required<string>();
 
 	private readonly literaryWorkApi = inject(LiteraryWorkApi);
-	private readonly sanitizer = inject(DomSanitizer);
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
 	private readonly head = inject(HeadMetadataDirective);
 
@@ -77,23 +76,15 @@ export default class ReadPage implements ReadHost {
 		});
 	});
 
-	// El HTML ya viene saneado del backend (única fuente: el pipeline del ACL); bypass es la
-	// confianza en esa frontera, no una sanitización propia — LITERARY_WORK_DESIGN.md §9.
-	// TODO: Mover esta lógica a un service como parte de la implementación de #1471.
-	// 1. Chequear de qué manera evitar el uso de bypassSecurityTrustHtml
-	// 2. Revisar si hace falta declarar tipos para rendering (RenderableEpigraph, RenderableSection, etc.)
+	// TODO(#1471): mover esta lógica a un service y revisar si hace falta declarar tipos de rendering.
 	protected readonly sections = computed(
 		() =>
 			this.literaryWork()?.content.map((section) => ({
 				position: section.position,
 				anchor: section.title?.toAnchor(),
 				title: section.title?.value,
-				epigraphs:
-					section.epigraphs?.map((epigraph) => ({
-						text: this.sanitizer.bypassSecurityTrustHtml(epigraph.text),
-						reference: epigraph.reference ? this.sanitizer.bypassSecurityTrustHtml(epigraph.reference) : undefined,
-					})) ?? [],
-				bodyHtml: this.sanitizer.bypassSecurityTrustHtml(section.bodyHtml),
+				epigraphs: section.epigraphs ?? [],
+				bodyHtml: section.bodyHtml,
 			})) ?? [],
 	);
 

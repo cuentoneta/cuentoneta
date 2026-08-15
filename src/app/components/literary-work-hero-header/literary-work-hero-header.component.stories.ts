@@ -1,5 +1,4 @@
-import { applicationConfig, argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
-import { provideRouter } from '@angular/router';
+import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 
 import { LiteraryWorkHeroHeaderComponent } from './literary-work-hero-header.component';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
@@ -12,11 +11,6 @@ const meta: Meta<LiteraryWorkHeroHeaderComponent> = {
 	component: LiteraryWorkHeroHeaderComponent,
 	title: 'Componentes V3/LiteraryWorkHeroHeader',
 	tags: ['autodocs'],
-	decorators: [
-		applicationConfig({
-			providers: [provideRouter([])],
-		}),
-	],
 	parameters: {
 		docs: {
 			canvas: { sourceState: 'shown' },

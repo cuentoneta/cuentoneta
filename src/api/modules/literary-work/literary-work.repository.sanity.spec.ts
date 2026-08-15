@@ -5,6 +5,7 @@ import {
 	multiSectionRawLiteraryWork,
 	onoffRawLiteraryWorksMock,
 	onoffRawLiteraryWorksWithEpigraphs,
+	onoffRawLiteraryWorksWithMultilineEpigraphs,
 	onoffRawLiteraryWorksWithoutTags,
 	onoffRawLiteraryWorksWithMediaSources,
 	onoffRawLiteraryWorksWithTags,
@@ -103,6 +104,39 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 			expect(mappedEpigraph?.text).toContain('<em>');
 			expect(mappedEpigraph?.text).not.toContain('*');
 			expect(mappedEpigraph?.reference).toContain(rawReference ?? '');
+		},
+	);
+
+	// Sin esta guarda, un canon que perdiera el epígrafe multilínea dejaría el it.each de abajo sin
+	// casos y la suite pasaría en verde sin haber ejercitado nada.
+	it('el corpus declara al menos un epígrafe cortado en varias líneas', () => {
+		expect(onoffRawLiteraryWorksWithMultilineEpigraphs.length).toBeGreaterThan(0);
+	});
+
+	it.each(onoffRawLiteraryWorksWithMultilineEpigraphs)(
+		'conserva el corte de línea del epígrafe al materializar el HTML (%#)',
+		async (rawLiteraryWork) => {
+			const literaryWork = await repoReturning(rawLiteraryWork).fetchBySlug(rawLiteraryWork.slug);
+
+			// Crudo y dominio se aparean por posición dentro de la misma obra, así que el índice del
+			// epígrafe cortado en el origen es el que hay que leer en el resultado del mapeo.
+			const rawEpigraphs = rawLiteraryWork.content.flatMap((section) => section.epigraphs);
+			const multilineIndex = rawEpigraphs.findIndex((epigraph) => epigraph.text?.includes('\n'));
+			expect(multilineIndex).toBeGreaterThanOrEqual(0);
+
+			const rawText = rawEpigraphs[multilineIndex].text ?? '';
+			const mappedText = literaryWork?.content.flatMap((section) => section.epigraphs ?? [])[multilineIndex]?.text;
+
+			// La aserción va en positivo y sobre palabras completas: solo puede pasar si el <br> quedó
+			// exactamente donde el origen cortaba. Una negativa ("no quedaron pegadas") aprobaría igual
+			// si el término construido para buscar nunca hubiera podido aparecer en el HTML.
+			const [beforeBreak, afterBreak] = rawText.split('\n');
+			const lastWord = /([\p{L}\p{N}]+)[^\p{L}\p{N}]*$/u.exec(beforeBreak)?.[1];
+			const firstWord = /^[^\p{L}\p{N}]*([\p{L}\p{N}]+)/u.exec(afterBreak)?.[1];
+			expect(lastWord).toBeDefined();
+			expect(firstWord).toBeDefined();
+
+			expect(mappedText).toMatch(new RegExp(`${lastWord}[^\\p{L}\\p{N}]*<br\\s*/?>[^\\p{L}\\p{N}]*${firstWord}`, 'u'));
 		},
 	);
 

@@ -6,6 +6,7 @@
 import type { IndexableHtmlExpectations } from '../e2e/_utils/seo-invariants';
 import { parseHtml, parseJsonLdBlocks } from '../e2e/_utils/seo';
 import { SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../e2e/_utils/seo-fixtures';
+import { childElementSequences } from '../src/testing/sitemap-xml';
 
 export function slugOf(path: string): string {
 	return path.split('/').filter(Boolean).pop() ?? '';
@@ -96,6 +97,78 @@ export function expectationsFor(path: string): IndexableHtmlExpectations | null 
 		};
 	}
 	return null;
+}
+
+// Cuando una fecha se repite en más de esta proporción del sitemap, ya no está describiendo cuándo
+// cambió cada página: está describiendo cuándo se corrió una operación en lote. El valor separa los
+// dos estados medidos —un corpus contaminado por una escritura masiva llegó a concentrar la mitad de
+// las fechas en una sola, y uno derivado de fechas de origen no pasó de unas pocas centésimas—, con
+// margen para un día de alta editorial legítimo.
+const LASTMOD_CLUSTER_LIMIT = 0.25;
+
+const IGNORED_ELEMENTS = ['changefreq', 'priority'];
+
+export interface SitemapReport {
+	urls: number;
+	dated: number;
+	distinctDates: number;
+	largestCluster: { date: string; share: number } | null;
+	violations: string[];
+}
+
+function largestCluster(dates: readonly string[]): { date: string; share: number } | null {
+	const counts = new Map<string, number>();
+	dates.forEach((date) => counts.set(date, (counts.get(date) ?? 0) + 1));
+	const ranked = [...counts.entries()].sort(([, a], [, b]) => b - a);
+	const [top] = ranked;
+	return top ? { date: top[0], share: top[1] / dates.length } : null;
+}
+
+/**
+ * Invariantes del documento del sitemap: la secuencia de elementos que exige su esquema y que la
+ * fecha de modificación siga siendo una señal y no el rastro de la última escritura masiva.
+ *
+ * Lo segundo no se puede verificar en un test: necesita el corpus real de un despliegue, que es
+ * justamente lo que este smoke tiene a mano.
+ */
+export function collectSitemapViolations(xml: string): SitemapReport {
+	const sequences = childElementSequences(xml);
+	const dates = parseHtml(xml)
+		.querySelectorAll('lastmod')
+		.map((element) => element.text.trim());
+	const cluster = largestCluster(dates);
+	const violations: string[] = [];
+
+	if (sequences.length === 0) {
+		violations.push('El sitemap no expone ninguna entrada <url>.');
+	}
+
+	const outOfOrder = sequences.filter(
+		(sequence) => sequence.join(',') !== 'loc,lastmod' && sequence.join(',') !== 'loc',
+	);
+	if (outOfOrder.length > 0) {
+		violations.push(
+			`Hay entradas que no respetan la secuencia del esquema (loc → lastmod). Primera encontrada: ${outOfOrder[0]?.join(' → ')}.`,
+		);
+	}
+
+	IGNORED_ELEMENTS.filter((element) => xml.includes(`<${element}>`)).forEach((element) =>
+		violations.push(`El sitemap emite <${element}>, que los buscadores ignoran.`),
+	);
+
+	if (cluster && cluster.share > LASTMOD_CLUSTER_LIMIT) {
+		violations.push(
+			`El ${Math.round(cluster.share * 100)}% de las fechas es ${cluster.date}: el lastmod está reflejando una escritura en lote, no cambios de contenido.`,
+		);
+	}
+
+	return {
+		urls: parseHtml(xml).querySelectorAll('loc').length,
+		dated: dates.length,
+		distinctDates: new Set(dates).size,
+		largestCluster: cluster,
+		violations,
+	};
 }
 
 /**

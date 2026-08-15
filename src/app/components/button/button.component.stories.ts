@@ -1,5 +1,4 @@
 import { Meta, StoryObj, applicationConfig } from '@storybook/angular-vite';
-import { provideRouter } from '@angular/router';
 import { ButtonComponent } from './button.component';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { faBrandFacebook, faBrandTwitter, faBrandWhatsapp } from '@ng-icons/font-awesome/brands';
@@ -31,7 +30,7 @@ const meta: Meta<ButtonComponent> = {
 	},
 	decorators: [
 		applicationConfig({
-			providers: [provideRouter([]), provideIcons({ faBrandFacebook, faBrandTwitter, faBrandWhatsapp })],
+			providers: [provideIcons({ faBrandFacebook, faBrandTwitter, faBrandWhatsapp })],
 		}),
 	],
 };

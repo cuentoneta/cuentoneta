@@ -1,5 +1,4 @@
-import { applicationConfig, argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
-import { provideRouter, withDisabledInitialNavigation } from '@angular/router';
+import { argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
 
 import { CarouselComponent } from './carousel.component';
 import { CarouselSkeletonComponent } from './carousel-skeleton.component';
@@ -9,14 +8,6 @@ import { ContentCampaign } from '@models/content-campaign.model';
 const meta: Meta<CarouselComponent> = {
 	component: CarouselComponent,
 	title: 'Componentes V3/Carousel',
-	decorators: [
-		applicationConfig({
-			// Sin desactivar la navegación inicial, el router arranca contra `iframe.html` y un set de
-			// rutas vacío, y el canvas emite un NG04002 que no dice nada del componente. Los routerLink
-			// de las diapositivas resuelven su href igual.
-			providers: [provideRouter([], withDisabledInitialNavigation())],
-		}),
-	],
 	parameters: {
 		// El carousel elige imagen y controles a partir del ancho de la ventana, no del contenedor: la
 		// única forma de catalogar sus dos formas es cambiar el viewport del canvas. El de 1600px es el

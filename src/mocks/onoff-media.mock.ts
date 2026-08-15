@@ -13,9 +13,15 @@ export const onoffSpaceRecordingsMock: SpaceRecording[] = onoffMediaMock.filter(
 export const onoffYouTubeVideosMock: YouTubeVideo[] = onoffMediaMock.filter(isYouTubeVideo);
 export const onoffSpotifyPodcastEpisodesMock: SpotifyPodcastEpisode[] = onoffMediaMock.filter(isSpotifyPodcastEpisode);
 
-// El texto plano de una descripción, para que las specs de los widgets afirmen sobre el fixture en vez
-// de clavar prosa. Vive acá y no en cada spec porque la forma de `description` depende del modelo de
-// contenido: un solo sitio se adapta.
+// El texto plano de una descripción, para que las specs de los widgets afirmen contra el fixture en vez
+// de repetir su texto literal. Vive acá, y no en cada spec, para que todas compartan un mismo criterio
+// de aplanado: los tags que separan dejan un espacio y los inline se quitan sin él —igual que el
+// aplanado del JSON-LD de autor—, porque si no un salto de línea pega la última palabra de un renglón
+// con la primera del siguiente.
 export function mediaDescriptionText(media: Media): string {
-	return media.description.replace(/<[^>]+>/g, '').trim();
+	return media.description
+		.replace(/<\/?(?:p|div|br|hr|blockquote|li|ul|ol)\b[^>]*>/gi, ' ')
+		.replace(/<[^>]+>/g, '')
+		.replace(/\s+/g, ' ')
+		.trim();
 }

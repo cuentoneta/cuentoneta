@@ -3,12 +3,12 @@
 }
 
 .slide.active {
-	z-index: 2; /* Diapositiva activa en la parte superior */
+	z-index: var(--z-index-raised); /* Diapositiva activa en la parte superior */
 	box-shadow: 0 4px 20px rgb(0 0 0 / 15%); /* Sombra para separación visual */
 }
 
 .slide.previous {
-	z-index: 1; /* Diapositiva anterior detrás */
+	z-index: var(--z-index-content); /* Diapositiva anterior detrás */
 }
 
 .slide.slide-in-left {

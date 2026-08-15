@@ -1,12 +1,4 @@
-import {
-	applicationConfig,
-	argsToTemplate,
-	componentWrapperDecorator,
-	Meta,
-	moduleMetadata,
-	StoryObj,
-} from '@storybook/angular-vite';
-import { provideRouter } from '@angular/router';
+import { argsToTemplate, componentWrapperDecorator, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
 
 import { NavigableCollectionTeaserComponent } from './navigable-collection-teaser.component';
 import { NavigableCollectionTeaserSkeletonComponent } from './navigable-collection-teaser-skeleton.component';
@@ -15,11 +7,6 @@ import { storylistTeaserRepresentativeMock } from '@mocks/storylist.mock';
 const meta: Meta<NavigableCollectionTeaserComponent> = {
 	component: NavigableCollectionTeaserComponent,
 	title: 'Componentes V3/NavigableCollectionTeaser',
-	decorators: [
-		applicationConfig({
-			providers: [provideRouter([])],
-		}),
-	],
 	parameters: {
 		docs: {
 			canvas: { sourceState: 'shown' },

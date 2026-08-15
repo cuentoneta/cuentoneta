@@ -2,7 +2,9 @@ export const STABLE_SLUGS = Object.freeze({
 	story: 'el-aleph',
 	author: 'jorge-luis-borges',
 	storylist: 'verano-2022',
-	literaryWork: 'el-odio',
+	// Cada slug de acá tiene que existir en los dos datasets que sirven a los e2e (development en local,
+	// staging en CI): el que exista solo en uno deja sus casos salteados justo donde tenían que correr.
+	literaryWork: 'el-fin',
 } as const);
 
 export const SITEWIDE_SCHEMA_IDS = Object.freeze(['organization', 'website'] as const);

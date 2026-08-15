@@ -28,7 +28,9 @@ import { CarouselGestureService } from './carousel-gesture.service';
 	templateUrl: './carousel.component.html',
 	styleUrl: './carousel.component.css',
 	host: {
-		class: 'mx-auto block',
+		// `isolate` confina las capas internas del carousel —controles, indicadores y el orden entre
+		// diapositivas—, que sin aislar suben al contexto raíz y compiten con las capas globales.
+		class: 'isolate mx-auto block',
 		'[style.--transition-duration]': 'transitionDuration() + "ms"',
 	},
 })

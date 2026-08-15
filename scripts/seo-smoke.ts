@@ -7,6 +7,10 @@
  * corrida (cobertura rotativa). Los patrones de `<title>`/`<h1>` se derivan del slug de cada URL.
  * Si el sitemap no está disponible, el baseline igual se ejerce (la muestra se omite con un aviso).
  *
+ * Del propio `/sitemap.xml` chequea además la secuencia de elementos que exige su esquema y la
+ * dispersión del `lastmod`: una fecha repetida en medio corpus delata una escritura en lote, y eso
+ * solo se ve contra el corpus real de un despliegue.
+ *
  * Uso:
  *   BASE_URL=https://www.cuentoneta.ar pnpm seo:smoke
  *   SEO_SMOKE_SAMPLE=5 pnpm seo:smoke                            # N aleatorios por tipo (default 3)
@@ -19,7 +23,13 @@
  */
 import { collectIndexableHtmlViolations, type IndexableHtmlExpectations } from '../e2e/_utils/seo-invariants';
 import { STABLE_SLUGS, SITEWIDE_SCHEMA_IDS } from '../e2e/_utils/seo-fixtures';
-import { checkSitewideAbsoluteUrls, expectationsFor, parseSitemap, selectByType } from './seo-smoke.helpers';
+import {
+	checkSitewideAbsoluteUrls,
+	collectSitemapViolations,
+	expectationsFor,
+	parseSitemap,
+	selectByType,
+} from './seo-smoke.helpers';
 
 const BASE_URL = process.env['BASE_URL'] ?? 'http://localhost:4000';
 const FULL = process.argv.includes('--full') || process.env['SEO_SMOKE_FULL'] === 'true';
@@ -92,12 +102,27 @@ async function reportPath(path: string): Promise<boolean> {
 	return expectations ? reportExpectations(expectations) : false;
 }
 
-async function sampledPaths(baseline: readonly string[]): Promise<string[]> {
-	const response = await fetch(`${BASE_URL}/sitemap.xml`, { headers: proxyHeaders });
-	if (!response.ok) {
-		throw new Error(`GET /sitemap.xml devolvió HTTP ${response.status}`);
+// El documento del sitemap se reporta con la misma descarga que alimenta la muestra: pedirlo dos
+// veces daría dos versiones distintas si el caché de borde expira en el medio.
+function reportSitemapDocument(xml: string): boolean {
+	const report = collectSitemapViolations(xml);
+	const cluster = report.largestCluster;
+	const clusterLabel = cluster ? `, mayor concentración ${Math.round(cluster.share * 100)}% en ${cluster.date}` : '';
+
+	console.log(
+		`\nSitemap: ${report.urls} URLs, ${report.dated} con fecha, ${report.distinctDates} fechas distintas${clusterLabel}`,
+	);
+	if (report.violations.length === 0) {
+		console.log('✅ /sitemap.xml');
+		return false;
 	}
-	const paths = parseSitemap(await response.text());
+	console.log('❌ /sitemap.xml');
+	report.violations.forEach((violation) => console.log(`     - ${violation}`));
+	return true;
+}
+
+function sampledPaths(baseline: readonly string[], xml: string): string[] {
+	const paths = parseSitemap(xml);
 	const excluded = new Set(baseline);
 	return ['/story/', '/author/', '/storylist/']
 		.flatMap((prefix) => selectByType(paths, prefix, SAMPLE_SIZE, FULL))
@@ -115,20 +140,27 @@ async function reportBaseline(baseline: readonly string[]): Promise<boolean> {
 }
 
 /**
- * La muestra sí depende del sitemap, así que su falla se reporta pero **no** tumba el baseline: que
- * el sitemap no esté disponible no dice nada sobre las rutas que ya se ejercieron.
+ * Reporta el documento del sitemap y las páginas que muestrea de él. Todo esto depende del sitemap,
+ * así que su falla se reporta pero **no** tumba el baseline: que el sitemap no esté disponible no
+ * dice nada sobre las rutas que ya se ejercieron.
  */
-async function reportSample(baseline: readonly string[]): Promise<boolean> {
+async function reportSitemap(baseline: readonly string[]): Promise<boolean> {
 	try {
-		const sample = await sampledPaths(baseline);
+		const response = await fetch(`${BASE_URL}/sitemap.xml`, { headers: proxyHeaders });
+		if (!response.ok) {
+			throw new Error(`GET /sitemap.xml devolvió HTTP ${response.status}`);
+		}
+		const xml = await response.text();
+
+		let failed = reportSitemapDocument(xml);
+		const sample = sampledPaths(baseline, xml);
 		console.log(`\nMuestra del sitemap (${FULL ? 'full' : `${SAMPLE_SIZE}/tipo`}):\n  ${sample.join('\n  ')}\n`);
-		let failed = false;
 		for (const path of sample) {
 			failed = (await reportPath(path)) || failed;
 		}
 		return failed;
 	} catch (error) {
-		console.log(`⚠️ sitemap no disponible, se omite la muestra aleatoria: ${messageOf(error)}`);
+		console.log(`⚠️ sitemap no disponible, se omiten sus chequeos y la muestra aleatoria: ${messageOf(error)}`);
 		return true;
 	}
 }
@@ -146,7 +178,7 @@ async function run(): Promise<void> {
 	let failed = await reportBaseline(baseline);
 	// Con slugs explícitos no hay muestra que tomar: el llamador ya dijo qué quiere ejercer.
 	if (SLUGS_OVERRIDE.length === 0) {
-		failed = (await reportSample(baseline)) || failed;
+		failed = (await reportSitemap(baseline)) || failed;
 	}
 
 	if (failed) {

@@ -1,8 +1,9 @@
 .tooltip-container {
 	--tooltip-arrow-size: 0.45rem;
 
-	/* Layout */
-	@apply absolute left-0 top-0 z-50 box-border;
+	/* Layout — la directiva inyecta el tooltip en el body, así que su capa es global: `z-floating` la deja
+	   sobre la barra por declaración y no por orden del documento, que es lo que la resolvía hasta ahora. */
+	@apply absolute top-0 left-0 z-floating box-border;
 
 	/* Texto - font-inter text-xs font-semibold */
 	@apply bg-black text-center font-inter text-xs font-semibold tracking-normal text-white opacity-0;

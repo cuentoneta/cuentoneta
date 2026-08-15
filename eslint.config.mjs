@@ -9,6 +9,7 @@ import requireEnvironmentProviders from './tools/eslint/require-environment-prov
 import storybookSourceState from './tools/eslint/storybook-source-state.js';
 import noApplyInHostStyles from './tools/eslint/no-apply-in-host-styles.js';
 import componentConfigInClass from './tools/eslint/component-config-in-class.js';
+import zIndexScale from './tools/eslint/z-index-scale.js';
 
 // Restricciones de sintaxis comunes: CommonJS, enums, lifecycle hooks y propiedades estáticas.
 const lifecycleHooks = [
@@ -352,6 +353,27 @@ export default [
 		},
 		rules: {
 			'custom-host/no-apply-in-host-styles': 'error',
+		},
+	},
+	{
+		name: 'z-index-scale',
+		// Las dos extensiones en un solo bloque: la regla elige su rama por el archivo, y el procesador de
+		// plantillas inline del preset de Angular hace que `**/*.html` alcance también las plantillas de un
+		// `.ts`. Los `.css` los cubre la regla homónima de Stylelint, que ESLint no lintea.
+		files: ['src/**/*.ts', 'src/**/*.html'],
+		plugins: {
+			'custom-z-index': { rules: { 'z-index-scale': zIndexScale } },
+		},
+		rules: {
+			'custom-z-index/z-index-scale': [
+				'error',
+				{
+					// La franja alta queda reservada a los archivos que declaran una capa global de la
+					// aplicación. Cualquier otro tiene que elevar con una capa interna y confinar su
+					// apilamiento, que es lo que evita volver a competir con la barra.
+					allowGlobalLayersIn: ['src/app/components/header/header.component.ts'],
+				},
+			],
 		},
 	},
 	{

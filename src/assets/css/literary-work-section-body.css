@@ -1,0 +1,98 @@
+/*
+  Tipografía del cuerpo de una sección de obra.
+
+  Los nodos que estas reglas alcanzan los emite el pipeline de Markdown y no llevan clases, así que
+  ninguna utilidad de Tailwind puede alcanzarlos: es el caso de aplicación de regla global que declara
+  styles.css. Van ancladas al selector del componente que posee ese HTML, y no a una página, porque el
+  texto que sirve el CMS no se pinta en un solo lugar.
+
+  El componente pinta la salida del pipeline dentro de un único contenedor, de ahí el nivel extra en los
+  selectores: los hermanos a separar son los hijos de ese contenedor, no los del elemento del componente.
+*/
+cuentoneta-literary-work-section-body {
+	/*
+	  El ritmo lo da un separador entre hermanos y no un margen por elemento: resuelve párrafo, cita,
+	  encabezado, lista, regla e imagen de una sola vez, y no deja margen colgando al final del cuerpo.
+	  `1lh` es la línea en blanco que pide el diseño, expresada contra la propia interlínea del cuerpo.
+
+	  El valor en `rem` va primero como reserva: donde `lh` no existe (Safari anterior a 16.4) el navegador
+	  descarta esa declaración entera, y con el `margin: 0` del reset la obra se serviría como un bloque
+	  continuo. Es el mismo 34 px, escrito contra la interlínea de `.source-serif-xl`.
+	*/
+	& > * > * + * {
+		margin-block-start: 2.125rem;
+		margin-block-start: 1lh;
+	}
+
+	/*
+	  La cita tiene que distinguirse por sí sola, sin depender de las reglas horizontales que la rodeaban
+	  en el original impreso. Es la que el relato transcribe: el epígrafe de una sección lo pinta
+	  EditorialNote con su propio tratamiento, y esta regla no lo alcanza.
+	*/
+	& blockquote {
+		@apply border-l-2 border-neutral-300 pl-4;
+
+		/* Una cita de varios bloques lleva el mismo separador que el cuerpo que la rodea. */
+		& > * + * {
+			margin-block-start: 2.125rem;
+			margin-block-start: 1lh;
+		}
+	}
+
+	/*
+	  Lo que sigue cubre el resto de lo que la lista blanca del saneamiento permite. Cada regla repone lo
+	  que el reset o el preflight quitan; ninguna reinterpreta la cara del elemento. Se estila lo que el
+	  cuerpo publicado usa hoy: lo que falta espera un caso real que lo pida.
+	*/
+
+	/* Un encabezado abre una parte nueva: necesita más aire arriba que el que separa dos párrafos. */
+	& > * > * + :is(h2, h3, h4, h5, h6) {
+		margin-block-start: 4.25rem;
+		margin-block-start: 2lh;
+	}
+
+	/*
+	  El tema le da tamaño y peso a h1–h3, pero no más abajo: sin esto un `####` sale del mismo cuerpo que
+	  el párrafo —el preflight aplana `font-size` y `font-weight`— y deja de leerse como encabezado.
+	*/
+	& :is(h4, h5, h6) {
+		@apply text-lg font-semibold;
+	}
+
+	/* El preflight de Tailwind quita marcador y sangría de las listas; acá el marcador es contenido. */
+	& :is(ul, ol) {
+		@apply list-outside pl-8;
+	}
+
+	& ul {
+		@apply list-disc;
+	}
+
+	& ol {
+		@apply list-decimal;
+	}
+
+	/* Los ítems se separan menos que los bloques: son partes de una misma enumeración. */
+	& li + li {
+		margin-block-start: 1.0625rem;
+		margin-block-start: 0.5lh;
+	}
+
+	& hr {
+		@apply border-t border-neutral-200;
+
+		margin-block: 4.25rem;
+		margin-block: 2lh;
+	}
+
+	& a {
+		@apply text-brand-500 underline;
+	}
+
+	/* Una imagen suele venir envuelta en un párrafo, donde el separador entre hermanos no la alcanza. */
+	& img {
+		margin-block: 1.0625rem;
+		margin-block: 0.5lh;
+	}
+}
+

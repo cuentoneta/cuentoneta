@@ -14,22 +14,14 @@
 			@if (section.title) {
 			<h2 [id]="section.anchor">{{ section.title }}</h2>
 			} @for (epigraph of section.epigraphs; track $index) {
-			<blockquote>
-				<div [innerHTML]="epigraph.text"></div>
-				@if (epigraph.reference) {
-				<footer [innerHTML]="epigraph.reference"></footer>
-				}
-			</blockquote>
+			<cuentoneta-editorial-note [note]="epigraph" variant="highlight" />
 			}
-			<div [innerHTML]="section.bodyHtml"></div>
+			<cuentoneta-literary-work-section-body [body]="section.bodyHtml" />
 		</section>
 
 		} @if (editorialNote(); as editorialNote) {
 
-		<div class="flex flex-col gap-4">
-			<h2>Nota editorial</h2>
-			<cuentoneta-editorial-note [note]="editorialNote" />
-		</div>
+		<cuentoneta-editorial-note [note]="editorialNote" label="Nota editorial" />
 
 		}
 	</section>

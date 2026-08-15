@@ -1,5 +1,4 @@
-import { applicationConfig, argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
-import { provideRouter } from '@angular/router';
+import { argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
 
 import { LiteraryWorkHomeCardTeaserComponent } from './literary-work-home-card-teaser.component';
 import { LiteraryWorkHomeCardTeaserSkeletonComponent } from './literary-work-home-card-teaser-skeleton.component';
@@ -9,11 +8,6 @@ import { corpusLiteraryWorkTeasers, literaryWorkSelectArgType } from '@mocks/ono
 const meta: Meta<LiteraryWorkHomeCardTeaserComponent> = {
 	component: LiteraryWorkHomeCardTeaserComponent,
 	title: 'Componentes V3/LiteraryWorkHomeCardTeaser',
-	decorators: [
-		applicationConfig({
-			providers: [provideRouter([])],
-		}),
-	],
 	parameters: {
 		docs: {
 			canvas: { sourceState: 'shown' },

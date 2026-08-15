@@ -30,7 +30,10 @@ import { LiteraryWorkHeroHeaderSkeletonComponent } from './literary-work-hero-he
 		TagsListComponent,
 		LiteraryWorkHeroHeaderSkeletonComponent,
 	],
-	host: { class: 'relative block overflow-hidden bg-neutral-900' },
+	// `isolate` confina el apilamiento interno: el contenido se eleva con `z-content` para quedar sobre el
+	// fondo difuminado y su velo, y sin aislar esa capa sube al contexto raíz, donde compite con la barra de
+	// navegación fija y le gana por orden de documento.
+	host: { class: 'relative isolate block overflow-hidden bg-neutral-900' },
 	template: `
 		@if (literaryWork(); as literaryWork) {
 			@if (backgroundImageUrl(); as backgroundImageUrl) {
@@ -46,7 +49,7 @@ import { LiteraryWorkHeroHeaderSkeletonComponent } from './literary-work-hero-he
 			}
 			<div class="absolute inset-0 bg-neutral-950-70" data-testid="hero-overlay"></div>
 
-			<div class="relative z-10 px-6 pt-28 pb-10">
+			<div class="relative z-content px-6 pt-28 pb-10">
 				<div class="mx-auto flex w-full max-w-180 items-center gap-8">
 					<cuentoneta-cover-image [src]="literaryWork.coverImage" [priority]="true" />
 					<div class="flex min-w-0 flex-col items-start gap-2.5">

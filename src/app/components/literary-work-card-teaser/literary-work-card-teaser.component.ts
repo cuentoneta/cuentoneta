@@ -120,12 +120,12 @@ export type LiteraryWorkCardTeaserContent =
 		</ng-template>
 
 		<!-- Autor: avatar pequeño + nombre. Implementación propia del card (Design System v3): no usa
-			 AuthorCardTeaser. Es un enlace propio al perfil del autor, elevado con z-10 para quedar por encima
-			 del enlace de la obra (que se estira sobre toda la tarjeta). -->
+			 AuthorCardTeaser. Es un enlace propio al perfil del autor, elevado a z-content para quedar por
+			 encima del enlace de la obra (que se estira sobre toda la tarjeta). -->
 		<ng-template #author let-author>
 			<a
 				[routerLink]="['/', appRoutes.Author, author.slug]"
-				class="group relative z-10 flex min-w-0 items-center gap-2"
+				class="group relative z-content flex min-w-0 items-center gap-2"
 				data-testid="author"
 			>
 				<cuentoneta-image-profile [src]="author.imageUrl" size="small" class="shrink-0" />
@@ -149,7 +149,9 @@ export type LiteraryWorkCardTeaserContent =
 		</ng-template>
 	`,
 	host: {
-		class: 'block',
+		// `isolate` confina la elevación del enlace del autor sobre el enlace estirado de la obra: es un
+		// orden entre hermanos de esta tarjeta y no tiene por qué existir en el contexto raíz.
+		class: 'isolate block',
 	},
 })
 export class LiteraryWorkCardTeaserComponent {

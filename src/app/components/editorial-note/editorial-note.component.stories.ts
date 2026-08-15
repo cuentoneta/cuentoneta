@@ -31,6 +31,12 @@ const meta: Meta<EditorialNoteComponent> = {
 			options: ['note', 'highlight'],
 			table: { type: { summary: "'note' | 'highlight'" }, defaultValue: { summary: 'note' } },
 		},
+		label: {
+			control: { type: 'text' },
+			table: { type: { summary: 'string' }, defaultValue: { summary: 'sin rótulo' } },
+			description:
+				'Nombre accesible de la nota, sin texto a la vista: vuelve al bloque una región navegable, que es como se distingue la voz del editor sin ver la tarjeta. Solo aplica a la variante note; la cita de highlight no se nombra',
+		},
 	},
 };
 
@@ -39,11 +45,11 @@ type Story = StoryObj<EditorialNoteComponent>;
 
 export const Note: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-editorial-note ${argsToTemplate(args)} />` }),
-	args: { note, variant: 'note' },
+	args: { note, variant: 'note', label: 'Nota editorial' },
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante <strong>note</strong> (default): tarjeta neutra con borde, texto left-aligned. Es la superficie del Design System para la nota editorial de una obra.</p><p><strong>Usos:</strong> la nota editorial (<code>editorialNote</code>) al pie de la obra en la página de lectura.</p>`,
+				story: `<p>Variante <strong>note</strong> (default): tarjeta neutra con borde, texto left-aligned. Es la superficie del Design System para la nota editorial de una obra. Con <code>label</code>, el bloque se anuncia como región propia sin que aparezca texto alguno en pantalla: es la distinción que la tarjeta hace por su forma, dicha para quien no la ve.</p><p><strong>Usos:</strong> la nota editorial (<code>editorialNote</code>) al pie de la obra en la página de lectura.</p>`,
 			},
 		},
 	},
@@ -67,7 +73,7 @@ export const Highlight: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante <strong>highlight</strong> sin pie de referencia: callout con tinte de marca y barra de acento vertical, texto left-aligned.</p><p><strong>Usos:</strong> sin consumidor todavía; el epígrafe de sección de una obra es su destino natural.</p>`,
+				story: `<p>Variante <strong>highlight</strong> sin pie de referencia: callout con tinte de marca y barra de acento vertical, texto left-aligned.</p><p><strong>Usos:</strong> el epígrafe de una sección en la página de lectura, cuando la cita no declara su fuente.</p>`,
 			},
 		},
 	},
@@ -79,7 +85,7 @@ export const HighlightWithReference: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante <strong>highlight</strong> con pie de referencia: cuando el <code>note</code> trae <code>reference</code>, se muestra en cursiva alineada a la derecha (en contraposición al diseño de Figma). Es la misma <code>highlight</code> con referencia, no una variante propia.</p><p><strong>Usos:</strong> sin consumidor todavía; el epígrafe de sección de una obra, que casi siempre atribuye la cita.</p>`,
+				story: `<p>Variante <strong>highlight</strong> con pie de referencia: cuando el <code>note</code> trae <code>reference</code>, se muestra en cursiva alineada a la derecha (en contraposición al diseño de Figma). Es la misma <code>highlight</code> con referencia, no una variante propia.</p><p><strong>Usos:</strong> el epígrafe de una sección en la página de lectura, que casi siempre atribuye la cita.</p>`,
 			},
 		},
 	},
@@ -90,7 +96,7 @@ export const Interactiva: StoryObj<EditorialNoteComponent & { attributedTextInde
 		attributedTextIndex: {
 			...attributedTextSelectArgType,
 			description:
-				'Texto del corpus de François Onoff: los epígrafes de sección traen atribución y las notas editoriales no, así que el pie de la figura aparece o desaparece al cambiar de opción',
+				'Texto del corpus de François Onoff: los epígrafes de sección traen atribución y las notas editoriales no, así que el pie de la figura aparece o desaparece al cambiar de opción. Alguno ocupa más de una línea porque su fuente lo declara, que es donde se ve cómo respira la figura con un texto en verso',
 		},
 	},
 	render: (args) => ({
@@ -122,7 +128,7 @@ export const Showcase: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Los cuatro casos: <strong>note</strong> y <strong>highlight</strong>, cada una sin y con pie de referencia (right-aligned). El pie es agnóstico a la variante. Cada variante lleva además su propia semántica dentro de la <code>&lt;figure&gt;</code>: <code>note</code> rinde <code>&lt;aside&gt;</code> (comenta la obra desde afuera) y <code>highlight</code>, <code>&lt;blockquote&gt;</code> (cita a un tercero).</p><p><strong>Usos:</strong> comparación visual de las cuatro combinaciones; hoy solo <strong>note</strong> sin referencia tiene consumidor, en la página de lectura.</p>`,
+				story: `<p>Los cuatro casos: <strong>note</strong> y <strong>highlight</strong>, cada una sin y con pie de referencia (right-aligned). El pie es agnóstico a la variante. Cada variante lleva además su propia semántica dentro de la <code>&lt;figure&gt;</code>: <code>note</code> rinde <code>&lt;aside&gt;</code> (comenta la obra desde afuera) y <code>highlight</code>, <code>&lt;blockquote&gt;</code> (cita a un tercero).</p><p><strong>Usos:</strong> comparación visual de las cuatro combinaciones; la página de lectura consume <strong>note</strong> sin referencia para la nota editorial de la obra, y <strong>highlight</strong> para el epígrafe de cada sección.</p>`,
 			},
 		},
 	},

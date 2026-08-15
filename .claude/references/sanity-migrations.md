@@ -50,7 +50,37 @@ Las que llevan rich text a Markdown consumen [`resources/portable-text-to-markdo
 
 Que una corrida reporte N mutaciones dice que **alcanzó** N documentos, no que no perdió contenido —ni, al aplicar, que haya escrito algo: el contador cuenta lo que la migración emite, no lo que el servidor termina aplicando—. La verificación de fidelidad se hace comparando el texto de origen contra el que produce el pipeline real, y la de idempotencia mirando si el contenido cambió, no contando mutaciones.
 
-## Rename de un campo requerido: patrón expand/contract
+## Orden de despliegue: clasificar antes de correr
+
+Antes de correr una migración contra un dataset hay que saber a qué clase pertenece, porque de eso depende cuándo puede correr:
+
+- **Independiente del código.** Puebla un campo que todavía nadie lee, purga propiedades huérfanas, corrige valores sin cambiar su forma. El orden respecto del despliegue es indiferente.
+- **Acoplada al código.** Cambia **lo que el código lee**: el nombre de un campo o la **forma de su valor**. Ningún orden simple es seguro, y el patrón para las dos es el mismo — **ampliar** lo que el lector acepta, migrar, y recién entonces **contraer**.
+
+El error a evitar es tratar una acoplada como si fuera independiente y elegir el orden por conveniencia: las dos secuencias simples rompen, solo que en momentos distintos.
+
+### Cambio de forma del valor
+
+Cuando la migración cambia la **forma** de un valor que el código ya lee —de un array de bloques a un string, por ejemplo— y el mapper no tolera más que una, los dos órdenes dejan un intervalo roto:
+
+| Orden                      | Estado intermedio         | Qué falla                                                                        |
+| -------------------------- | ------------------------- | -------------------------------------------------------------------------------- |
+| Migrar y después desplegar | código viejo + dato nuevo | El mapper viejo aplica sobre el valor una operación que su forma nueva no admite |
+| Desplegar y después migrar | código nuevo + dato viejo | El mapper nuevo aplica sobre el valor una operación que su forma vieja no admite |
+
+A diferencia del rename, acá la falla es **ruidosa**: el mapper lanza y el endpoint responde 500, así que el síntoma aparece de inmediato en toda superficie que lea ese campo — no solo en la que lo renderiza.
+
+El patrón que sí deja una ventana segura:
+
+1. **Ampliar:** desplegar un lector que acepte **ambas** formas (`Array.isArray(valor) ? convertir(valor) : valor`). Es el único estado en el que las dos versiones del dato se sirven por igual.
+2. **Migrar** el dataset.
+3. **Contraer:** quitar la tolerancia una vez verificado que no queda ningún documento con la forma vieja.
+
+**Saltearse el paso 1 no elimina la ventana: elige cuál de las dos caídas tener.** Si se decide asumirla —porque el campo es de baja exposición o la ventana es corta—, la decisión se toma explícitamente y se verifica el resultado apenas termina, en vez de descubrirla por un reporte.
+
+Un agravante propio de este repo: mientras `production` conserve la forma vieja, el sync nocturno de datasets la reintroduce en `staging` y `development`, así que el intervalo roto **se reabre cada noche** en los datasets de trabajo aunque el código nuevo ya esté desplegado ahí.
+
+### Rename de un campo requerido
 
 Cuando la migración renombra un campo **requerido** y el código lo lee sin fallback, una migración única de `set` + `unset` no tiene ningún orden de despliegue seguro: migrar antes de desplegar deja el código ya corriendo leyendo un campo que todavía no existe; desplegar antes de migrar deja la proyección nueva devolviendo `null` para los documentos no migrados. No hay ventana en la que ambas versiones —código y dato— coincidan.
 

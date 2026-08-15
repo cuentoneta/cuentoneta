@@ -105,4 +105,22 @@
 
 	/* Design System V3 - Grid templates personalizados */
 	--grid-template-rows-3-auto: repeat(3, auto);
+
+	/*
+		Design System V3 - Escala de apilamiento.
+
+		`content` y `raised` son capas INTERNAS: ordenan hermanos dentro de un componente, que confina su
+		apilamiento con `isolate`. Confinado el contexto, el número deja de significar nada afuera. `nav` y
+		`floating` son GLOBALES: se usan sin aislar (aislar la barra la haría perder contra el contenido) y
+		su franja está reservada a las capas que existen a nivel de aplicación.
+
+		A diferencia de `--color-*`, `--breakpoint-*` y `--radius-*`, esta namespace NO se limpia con
+		`initial`: no hay defaults de z-index que reemplazar, y limpiarla tampoco impediría un valor fuera de
+		la escala. Eso lo hacen las reglas de lint homónimas — ver angular-components.md, sección "Escala de
+		apilamiento".
+	*/
+	--z-index-content: 10;
+	--z-index-raised: 20;
+	--z-index-nav: 50;
+	--z-index-floating: 60;
 }

@@ -1,5 +1,4 @@
-import { applicationConfig, moduleMetadata, Meta, StoryObj } from '@storybook/angular-vite';
-import { provideRouter } from '@angular/router';
+import { moduleMetadata, Meta, StoryObj } from '@storybook/angular-vite';
 
 import { DrawerComponent, DrawerDirection } from './drawer.component';
 import { DrawerHeaderDirective } from './drawer-header.directive';
@@ -123,7 +122,6 @@ export const ComposicionCollectionPage: Story = {
 		moduleMetadata({
 			imports: [CoverImageComponent, TagComponent, PortableTextParserComponent, NavigableCollectionTeaserComponent],
 		}),
-		applicationConfig({ providers: [provideRouter([])] }),
 	],
 	render: (args) => ({
 		props: {
