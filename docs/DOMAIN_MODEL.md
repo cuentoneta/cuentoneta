@@ -328,6 +328,7 @@ interface AuthorNationality {
 - El nombre no puede estar vacío
 - Si `diedOn` está definido, debe ser posterior a `bornOn`
 - `AuthorNationality` siempre debe estar presente
+- `resources` nunca contiene un ítem con `url` ausente o vacía: el ACL descarta ese recurso en la frontera al mapear desde Sanity (ver [Resource](#resource-recurso-externo) más abajo), así que la garantía es del mapeo, no del schema
 
 **Ciclo de Vida:**
 
@@ -645,6 +646,8 @@ interface ResourceType {
 }
 ```
 
+> `url` es la razón de ser del recurso: sin un enlace válido, no hay nada que enlazar. El schema de Sanity la exige y valida su forma de URL, pero esa regla rige la **edición** en el Studio, no el dato ya persistido — un documento anterior a la regla, o escrito por script o migración, puede tenerla ausente o vacía sin que el Studio lo señale. El ACL cierra esa brecha en la frontera: `mapResources` descarta, con un `console.warn` para hacerlo visible en logs, todo recurso cuyo `url` no sea un string no vacío. Por eso `Author.resources`, `Story.resources` y `LiteraryWork.resources` nunca transportan un ítem incompleto — la garantía es del mapeo, no del schema.
+
 > El ícono que acompaña a un recurso en la interfaz lo resuelve el frontend a partir del `slug` del tipo, contra el mapa local de `@models/icon.model`. No viaja desde el CMS.
 
 > El nombre `description` no implica un mismo tipo en todo el modelo: en `ResourceType` y en [`Tag`](#tag-etiqueta) es texto plano, mientras que `Storylist.description` es Portable Text (`TextBlockContent[]`), `Media.description` es HTML saneado y `Collection.description` es Markdown saneado a HTML. Conviene mirar la interfaz antes de asumir el formato.
@@ -869,7 +872,7 @@ Frontend / API Client
 - `mapAuthorTeaser()` - Author reducido
 - etc.
 
-**Beneficio:** El cambio en Sanity no afecta el dominio si se mantienen los contratos.
+**Beneficio:** El cambio en Sanity no afecta el dominio si se mantienen los contratos. Esto incluye descartar en la frontera lo que el schema no puede garantizar sobre el dato ya persistido (ver [Resource](#resource-recurso-externo)), no solo traducir shapes.
 
 ---
 
