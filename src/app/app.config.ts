@@ -7,9 +7,6 @@ import { provideClientHydration } from '@angular/platform-browser';
 import localeEs from '@angular/common/locales/es-419';
 import { DatePipe, registerLocaleData } from '@angular/common';
 
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-
 // API providers
 import { provideAuthorApi } from './providers/author.provider';
 import { provideContentApi } from './providers/content.provider';
@@ -33,8 +30,6 @@ export const appConfig: ApplicationConfig = {
 		{ provide: APP_ID, useValue: 'serverApp' },
 		{ provide: LOCALE_ID, useValue: 'es-419' },
 		provideClientHydration(),
-		provideAnimations(),
-		provideAnimationsAsync(),
 		provideRouter(
 			appRoutes,
 			withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
