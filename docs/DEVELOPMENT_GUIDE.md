@@ -61,7 +61,7 @@ El tech stack actualmente utilizado para el desarrollo de La Cuentoneta es:
 ### Para la gestión de la base de código del proyecto
 
 - **<a href="https://git-scm.com/">Git</a>** como herramienta de control de versiones
-- **<a href="https://https://github.com">GitHub</a>** como host de la base de código
+- **<a href="https://github.com">GitHub</a>** como host de la base de código
 - **<a href="https://pnpm.io/es/">pnpm</a>** como gestor de paquetes
 - **<a href="https://nx.dev/angular">Nx</a>** como gestor de monorepo y task runner
 
@@ -81,7 +81,7 @@ Junto con Nx, el proyecto cuenta con ESLint, Prettier y Stylelint ya configurada
 
 ### Para la gestión del contenido
 
-- **<a href="https://www.sanity.io/docs">Sanity</a>** para persistencia de información de cuentos, autores y storylists.
+- **<a href="https://www.sanity.io/docs">Sanity</a>** para persistencia de la información de obras literarias, colecciones, autores, etiquetas y el contenido de la página de inicio.
 
 ### Para pruebas unitarias y de integración
 
@@ -201,7 +201,7 @@ Para ejecutar una corrida de tests unitarios, ejecutá el siguiente comando.
 pnpm run test
 ```
 
-Esto iniciará una corrida de tests unitarios utilizando Vitest, el cual se encargará de correr los tests unitarios de los componentes de Angular, mostrando los resultados en la consola. El script envuelve el target Nx `vitest:test`, inferido por el plugin `@nx/vitest`.
+Esto iniciará una corrida de tests unitarios utilizando Vitest, el cual se encargará de correr los tests unitarios de toda la aplicación —componentes de Angular, endpoints y servicios del backend, modelos de dominio y utilidades—, mostrando los resultados en la consola. El script envuelve el target Nx `vitest:test`, inferido por el plugin `@nx/vitest`.
 
 Para trabajar con los tests en modo _watch_ están disponibles estas dos variantes, que invocan Vitest directamente:
 
@@ -364,18 +364,16 @@ El proyecto utiliza [git](https://git-scm.com) como herramienta de control de ve
 
 ### Consideraciones al contribuir al repositorio
 
-- En caso de que seas un colaborador externo debes escribir un mensaje en la issue en el que desees trabajar, a fin de que te pueda ser asignado.
-- Aplica también para colaboradores externos la necesidad de realizar un _fork_ del repositorio para así posteriormente envar tus cambios mediante un _pull request_ desde tu _fork_ al repositorio principal. Para generar un _fork_, sigue los pasos detallados en la sección [Clonar el repositorio](#clonar-el-repositorio).
-- En caso de que seas un colaborador externo, debes de dejar un mensaje en el issue que quieras tomar para que te lo puedan asignar, después es necesario que realices un _fork_ del repositorio y envíes tus
-  cambios mediante un _pull request_ desde tu _fork_ al repositorio principal, generando el fork tal como se detalla
-  en la sección previa [Clonar el repositorio](#clonar-el-repositorio).
+- En caso de que seas un colaborador externo, debes dejar un mensaje en el issue que quieras tomar para que te lo
+  puedan asignar. Después es necesario que realices un _fork_ del repositorio y envíes tus cambios mediante un
+  _pull request_ desde tu _fork_ al repositorio principal, generando el fork tal como se detalla en la sección
+  [Clonar el repositorio](#clonar-el-repositorio).
 - Las ramas de trabajo se nomenclan de la siguiente manera: `feat/<numero-de-incidencia>-<nombre-de-la-funcionalidad>`,
-  con el nombre en _kebab-case_. Por ejemplo: `feat/469-implementar-nuevo-componente-story-card-component`. Para
-  facilidad de la generación de las ramas de trabajo, se recomienda hacer uso de la generación de ramas a partir de
-  las incidencias de Github.
+  con el nombre en _kebab-case_. Por ejemplo: `feat/469-implementar-nuevo-componente-story-card-component`. Si generás
+  la rama desde la incidencia en la interfaz de Github, tené en cuenta que el nombre que propone viene sin el prefijo
+  `feat/`: hay que agregárselo antes de empezar a trabajar.
 - Todos los commits deben ser nomenclados de la siguiente manera, referenciando el commit de manera navegable desde
-  la interfaz de Github: `[#numero-de-incidencia] - 
-<mensaje-del-commit>`. Por ejemplo: `[#469] - Crear componente PublicationCardComponent`.
+  la interfaz de Github: `[#numero-de-incidencia] - <mensaje-del-commit>`. Por ejemplo: `[#469] - Crear componente PublicationCardComponent`.
 - Las ramas de trabajo se crean a partir de la rama `develop` y se eliminan una vez integrados los cambios en la rama `develop`.
 - Las ramas de trabajo deben ser actualizadas con la rama `develop` antes de solicitar la integración de los cambios en la rama `develop`.
 - El código escrito en en el proyecto sigue las convenciones de [Angular](https://runebook.dev/es/docs/angular/guide/styleguide), [TypeScript](https://ts.dev/style/) y [RxJS](https://v10.angular.io/guide/rx-library#naming-conventions-for-observables) correspondientes para la escritura de código.
