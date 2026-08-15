@@ -70,10 +70,12 @@ describe('HeaderComponent', () => {
 	// así que el seam disponible en unitario es la clase que el binding emite. Que la transición corra
 	// de verdad lo verifican la story y el e2e de apilamiento, que sí montan un navegador.
 	describe('collapse', () => {
+		// La curva parece cruzada y no lo está: la que gobierna una transición es la del estado destino,
+		// así que la de mostrarse (`ease-in`) vive en el estado visible y la de ocultarse en el oculto.
 		it('should keep the header expanded while visible', async () => {
 			await renderHeader(true);
 
-			expect(screen.getByRole('banner')).toHaveClass('h-header-height', 'translate-y-0', 'opacity-100');
+			expect(screen.getByRole('banner')).toHaveClass('h-header-height', 'translate-y-0', 'opacity-100', 'ease-in');
 		});
 
 		it('should collapse the header when it turns hidden', async () => {
@@ -82,17 +84,18 @@ describe('HeaderComponent', () => {
 			await rerender({ inputs: { isVisible: false } });
 
 			const banner = screen.getByRole('banner');
-			expect(banner).toHaveClass('h-0', '-translate-y-full', 'opacity-0');
+			expect(banner).toHaveClass('h-0', '-translate-y-full', 'opacity-0', 'ease-out');
 			expect(banner).not.toHaveClass('h-header-height');
 		});
 
 		// Sin esto, un colapso que salta de golpe pasaría igual: los dos casos de arriba solo miran el
-		// estado final.
+		// estado final. La propiedad que se transiciona es `translate` y no `transform` porque es la que
+		// Tailwind v4 usa para `-translate-y-full`; nombrar `transform` deja el desplazamiento sin animar.
 		it('should animate the collapse instead of snapping', async () => {
 			await renderHeader(true);
 
 			expect(screen.getByRole('banner')).toHaveClass(
-				'transition-[height,opacity,transform]',
+				'transition-[height,opacity,translate]',
 				'duration-200',
 				'motion-reduce:transition-none',
 			);

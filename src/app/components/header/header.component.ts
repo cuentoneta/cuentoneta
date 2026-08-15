@@ -21,7 +21,7 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 	template: `
 		<header
 			[class]="toggleClasses()"
-			class="nav-container grid w-full grid-cols-[1fr_theme(spacing.6)] grid-rows-[theme(spacing.16)_1fr] bg-neutral-50 px-5 transition-[height,opacity,transform] duration-200 motion-reduce:transition-none md:grid-cols-2 md:grid-rows-1"
+			class="nav-container grid w-full grid-cols-[1fr_theme(spacing.6)] grid-rows-[theme(spacing.16)_1fr] bg-neutral-50 px-5 transition-[height,opacity,translate] duration-200 motion-reduce:transition-none md:grid-cols-2 md:grid-rows-1"
 		>
 			<section class="flex items-center">
 				<!-- El nombre accesible sale del aria-label y no del contenido: el alt del logo más el
@@ -87,10 +87,11 @@ export class HeaderComponent {
 	protected readonly displayMenu = signal(false);
 
 	// El easing viaja dentro del mapa, no en la clase estática, porque la barra usa una curva por
-	// dirección: la que aplica es siempre la del estado destino.
+	// dirección. La que gobierna la transición es la del estado **destino**: por eso `ease-out` —la de
+	// ocultarse— vive en el estado oculto, y no en el visible del que se sale.
 	private readonly visibilityClasses = {
-		[VisibilityState.Visible]: 'h-header-height translate-y-0 opacity-100 ease-out',
-		[VisibilityState.Hidden]: 'h-0 -translate-y-full opacity-0 ease-in',
+		[VisibilityState.Visible]: 'h-header-height translate-y-0 opacity-100 ease-in',
+		[VisibilityState.Hidden]: 'h-0 -translate-y-full opacity-0 ease-out',
 	};
 
 	public readonly isVisible = input(VisibilityState.Visible, {
