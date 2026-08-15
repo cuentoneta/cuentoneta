@@ -1,9 +1,7 @@
-import { Component, effect, input, signal } from '@angular/core';
+import { Component, computed, effect, input, signal } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { InternalLink } from '@models/link.model';
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { HEADER_HEIGHT_STRING_PX } from '@utils/spacing.utils';
 import { AppRoutes } from '../../app.routes';
 
 const VisibilityState = Object.freeze({
@@ -22,8 +20,8 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 	},
 	template: `
 		<header
-			[@toggle]="isVisible()"
-			class="nav-container grid w-full grid-cols-[1fr_theme(spacing.6)] grid-rows-[theme(spacing.16)_1fr] bg-neutral-50 px-5 md:grid-cols-2 md:grid-rows-1"
+			[class]="toggleClasses()"
+			class="nav-container grid w-full grid-cols-[1fr_theme(spacing.6)] grid-rows-[theme(spacing.16)_1fr] bg-neutral-50 px-5 transition-[height,opacity,transform] duration-200 motion-reduce:transition-none md:grid-cols-2 md:grid-rows-1"
 		>
 			<section class="flex items-center">
 				<!-- El nombre accesible sale del aria-label y no del contenido: el alt del logo más el
@@ -77,28 +75,6 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 		}
 	`,
 	imports: [RouterModule, NgOptimizedImage],
-	animations: [
-		trigger('toggle', [
-			state(
-				VisibilityState.Visible,
-				style({
-					opacity: 1,
-					transform: 'translateY(0)',
-					height: HEADER_HEIGHT_STRING_PX,
-				}),
-			),
-			state(
-				VisibilityState.Hidden,
-				style({
-					opacity: 0,
-					transform: 'translateY(-100%)',
-					height: '0px',
-				}),
-			),
-			transition(`${VisibilityState.Visible} => ${VisibilityState.Hidden}`, [animate('200ms ease-out')]),
-			transition(`${VisibilityState.Hidden} => ${VisibilityState.Visible}`, [animate('200ms ease-in')]),
-		]),
-	],
 })
 export class HeaderComponent {
 	protected readonly appRoutes = AppRoutes;
@@ -110,9 +86,18 @@ export class HeaderComponent {
 	];
 	protected readonly displayMenu = signal(false);
 
+	// El easing viaja dentro del mapa, no en la clase estática, porque la barra usa una curva por
+	// dirección: la que aplica es siempre la del estado destino.
+	private readonly visibilityClasses = {
+		[VisibilityState.Visible]: 'h-header-height translate-y-0 opacity-100 ease-out',
+		[VisibilityState.Hidden]: 'h-0 -translate-y-full opacity-0 ease-in',
+	};
+
 	public readonly isVisible = input(VisibilityState.Visible, {
 		transform: (value) => (value ? VisibilityState.Visible : VisibilityState.Hidden),
 	});
+
+	protected readonly toggleClasses = computed(() => this.visibilityClasses[this.isVisible()]);
 
 	constructor() {
 		effect(() => {

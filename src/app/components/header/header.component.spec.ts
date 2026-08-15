@@ -3,13 +3,13 @@ import userEvent from '@testing-library/user-event';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterModule, provideRouter } from '@angular/router';
 import { HeaderComponent } from './header.component';
-import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 describe('HeaderComponent', () => {
-	const renderHeader = async () =>
+	const renderHeader = async (isVisible = true) =>
 		await render(HeaderComponent, {
 			componentImports: [CommonModule, NgOptimizedImage, RouterModule],
-			providers: [provideRouter([]), provideNoopAnimations()],
+			providers: [provideRouter([])],
+			inputs: { isVisible },
 		});
 
 	it('should render Header component', async () => {
@@ -64,5 +64,53 @@ describe('HeaderComponent', () => {
 		// Dos por enlace: el de escritorio (presente en el DOM, oculto solo por CSS) y el del menú.
 		expect(screen.getAllByRole('link', { name: 'Obras' })).toHaveLength(2);
 		expect(screen.getAllByRole('link', { name: 'Autores' })).toHaveLength(2);
+	});
+
+	// El colapso de la barra se expresa en clases y no en estilos computados: happy-dom no aplica CSS,
+	// así que el seam disponible en unitario es la clase que el binding emite. Que la transición corra
+	// de verdad lo verifican la story y el e2e de apilamiento, que sí montan un navegador.
+	describe('collapse', () => {
+		it('should keep the header expanded while visible', async () => {
+			await renderHeader(true);
+
+			expect(screen.getByRole('banner')).toHaveClass('h-header-height', 'translate-y-0', 'opacity-100');
+		});
+
+		it('should collapse the header when it turns hidden', async () => {
+			const { rerender } = await renderHeader(true);
+
+			await rerender({ inputs: { isVisible: false } });
+
+			const banner = screen.getByRole('banner');
+			expect(banner).toHaveClass('h-0', '-translate-y-full', 'opacity-0');
+			expect(banner).not.toHaveClass('h-header-height');
+		});
+
+		// Sin esto, un colapso que salta de golpe pasaría igual: los dos casos de arriba solo miran el
+		// estado final.
+		it('should animate the collapse instead of snapping', async () => {
+			await renderHeader(true);
+
+			expect(screen.getByRole('banner')).toHaveClass(
+				'transition-[height,opacity,transform]',
+				'duration-200',
+				'motion-reduce:transition-none',
+			);
+		});
+
+		it('should close the mobile menu when the header hides', async () => {
+			const user = userEvent.setup();
+			const { rerender, fixture } = await renderHeader(true);
+			await user.click(screen.getByRole('button'));
+			expect(screen.getAllByRole('link', { name: 'Obras' })).toHaveLength(2);
+
+			await rerender({ inputs: { isVisible: false } });
+			// El effect cierra el menú recién dentro del ciclo que dispara el cambio de input, así que el
+			// template lo refleja en la pasada siguiente: sin esperar la estabilidad se lee el DOM anterior.
+			await fixture.whenStable();
+
+			// Vuelve a quedar solo el de escritorio: el del menú desplegable se fue con él.
+			expect(screen.getAllByRole('link', { name: 'Obras' })).toHaveLength(1);
+		});
 	});
 });

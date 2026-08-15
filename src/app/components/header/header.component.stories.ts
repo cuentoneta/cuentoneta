@@ -1,13 +1,9 @@
-import { applicationConfig, Meta, StoryObj } from '@storybook/angular-vite';
-import { provideAnimations } from '@angular/platform-browser/animations';
+import { Meta, StoryObj } from '@storybook/angular-vite';
 import { HeaderComponent } from './header.component';
 
 export default {
 	title: 'HeaderComponent',
 	component: HeaderComponent,
-	// El decorador de este componente declara animaciones: sin este provider, el renderer trata la
-	// propiedad sintética `[@toggle]` como desconocida y aborta el montaje.
-	decorators: [applicationConfig({ providers: [provideAnimations()] })],
 	parameters: {
 		docs: {
 			description: {
