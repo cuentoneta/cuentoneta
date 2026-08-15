@@ -29,6 +29,9 @@ const PIPELINE_COVERAGE_MARKDOWN = [
 	'',
 	'### Un encabezado menor',
 	'',
+	'Dos versos que cortan la línea sin cerrar el párrafo,',
+	'para ver el interlineado del verso con la tipografía del contenedor.',
+	'',
 	'![Retrato del autor](https://cdn.sanity.io/images/x/y/abc-800x600.jpg)',
 	'',
 	'El párrafo que cierra la cobertura.',
@@ -87,7 +90,7 @@ export const CoberturaDelPipeline: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Todos los elementos que la lista blanca del saneamiento permite y hoy pueden aparecer en una obra: encabezados, cita de varios bloques, listas ordenadas y no ordenadas, regla horizontal, enlace e imagen. El canon no los ejercita —el de Onoff son párrafos y una cita—, así que esta story es la única evidencia visual de que ninguno se renderiza roto.</p><p><strong>Usos:</strong> validar con diseño el tratamiento de los elementos que el diseño todavía no cubre.</p>`,
+				story: `<p>Todos los elementos que la lista blanca del saneamiento permite y hoy pueden aparecer en una obra: encabezados, cita de varios bloques, listas ordenadas y no ordenadas, regla horizontal, enlace, imagen y el salto de línea del verso. El canon no los ejercita —el de Onoff son párrafos y una cita—, así que esta story es la única evidencia visual de que ninguno se renderiza roto.</p><p><strong>Usos:</strong> validar con diseño el tratamiento de los elementos que el diseño todavía no cubre.</p>`,
 			},
 		},
 	},

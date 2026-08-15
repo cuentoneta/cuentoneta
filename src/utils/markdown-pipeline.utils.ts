@@ -1,5 +1,6 @@
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
+import remarkBreaks from 'remark-breaks';
 import remarkRehype from 'remark-rehype';
 import rehypeSanitize, { defaultSchema, type Options } from 'rehype-sanitize';
 import rehypeStringify from 'rehype-stringify';
@@ -64,6 +65,9 @@ const literaryWorkSanitizationSchema: Options = {
 // Singleton de módulo: construir el procesador unified es costoso y el pipeline es inmutable.
 const pipeline = unified()
 	.use(remarkParse)
+	// Va antes de remarkRehype: opera sobre mdast. El porqué del salto duro, en
+	// docs/LITERARY_WORK_DESIGN.md §9.
+	.use(remarkBreaks)
 	.use(remarkRehype)
 	.use(rehypeSanityImages)
 	.use(rehypeSanitize, literaryWorkSanitizationSchema)

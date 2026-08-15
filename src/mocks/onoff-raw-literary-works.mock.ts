@@ -36,6 +36,15 @@ export const onoffRawLiteraryWorksWithEpigraphs: NonNullable<LiteraryWorkBySlugQ
 		rawLiteraryWork.content.some((section) => section.epigraphs.length > 0),
 	);
 
+// Las obras crudas con algún epígrafe cortado en varias líneas: es el seam donde el salto viaja del
+// Markdown del origen al HTML del dominio, así que el mapeo necesita un caso del canon que lo declare.
+export const onoffRawLiteraryWorksWithMultilineEpigraphs: NonNullable<LiteraryWorkBySlugQueryResult>[] =
+	onoffRawLiteraryWorksMock.filter((rawLiteraryWork) =>
+		rawLiteraryWork.content.some((section) =>
+			section.epigraphs.some((epigraph) => epigraph.text?.includes('\n') ?? false),
+		),
+	);
+
 // Selectores por capacidad de la nota editorial (contraparte raw de `onoffLiteraryWorksWith/WithoutEditorialNote`),
 // para ejercitar sus dos ramas en el mapeo sin conocer un slug concreto.
 export const onoffRawLiteraryWorksWithEditorialNote: NonNullable<LiteraryWorkBySlugQueryResult>[] =

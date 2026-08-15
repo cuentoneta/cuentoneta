@@ -76,6 +76,7 @@ Un spec o una story que importa una obra concreta queda atado a ella: sus aserci
 | Una obra que cita un texto en su cuerpo         | `onoffLiteraryWorksWithBlockquotes`                                                                                  |
 | Una obra con o sin nota editorial               | `onoffLiteraryWorksWith(out)EditorialNote` / `onoffRawLiteraryWorksWith(out)EditorialNote`                           |
 | Un texto con atribución (epígrafe o nota)       | `onoffLiteraryWorkEpigraphsMock`; en stories, `corpusAttributedTexts` + `attributedTextSelectArgType`                |
+| Un epígrafe cortado en varias líneas            | `onoffRawLiteraryWorksWithMultilineEpigraphs`                                                                        |
 | Una story o storylist crudas                    | `onoffRawStoriesMock`, `onoffRawStorylistsMock`, `onoffRawNavTeasersMock`                                            |
 | Un dataset para evaluar una query con `groq-js` | `onoffDatasetMock` — el dataset entero, no un subconjunto: una referencia sin documento resuelve a `null` sin fallar |
 | Una story o teaser crudos con multimedia        | `onoffRawStoriesWithMediaSources` / `onoffRawTeasersWithMediaSources`                                                |
