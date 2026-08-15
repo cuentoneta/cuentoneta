@@ -216,9 +216,7 @@ Patrones que se repiten:
   Portable Text (ver bullet siguiente).
 - **Markdown → `SanitizedHtml`:** `markdownToSanitizedHtml(createMarkdown(raw))` (`@utils/markdown-pipeline.utils`)
   es el pipeline que usa `mapAuthor` para `biography`. Es el mismo pipeline que consume el módulo
-  `literary-work` para su contenido en Markdown (ver la nota de divergencia arriba). Preserva el salto
-  de línea simple del origen como `<br>`, para todo lo que pasa por él y no solo para el contenido de
-  una obra; el rationale, en `docs/LITERARY_WORK_DESIGN.md` §9.
+  `literary-work` para su contenido en Markdown (ver la nota de divergencia arriba).
 
 Mappers principales (no exhaustivo): `mapAuthor`, `mapAuthorTeaser`, `mapResources`, `mapTags`,
 `mapStoryContent`, `mapStoryTeaser`, `mapStoryTeaserWithAuthor`, `mapStoryNavigationTeaser`,
