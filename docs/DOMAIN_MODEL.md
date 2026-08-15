@@ -183,6 +183,7 @@ interface Story {
 - La historia debe tener al menos un párrafo de contenido
 - El tiempo de lectura debe ser un número positivo
 - El idioma debe ser un código ISO válido
+- `resources` nunca contiene un ítem con `url` ausente o vacía (ver [Resource](#resource-recurso-externo))
 
 **Ciclo de Vida:**
 
@@ -271,6 +272,7 @@ interface AttributedText {
 - `sectionCount` es el número real de secciones (derivado en la factory; en proyecciones parciales lo provee el mapper)
 - Las posiciones de sección son contiguas desde 0 en el agregado completo (`content[i].position === i`); las proyecciones parciales conservan el `position` de origen
 - `authors` exige al menos un autor (1..N) — la **obra anónima** referencia explícitamente al author "Anónimo" (slug `anonimo`, valor bien conocido del dominio; policy `isAnonymous` compara por slug, nunca por `_id`)
+- `resources` nunca contiene un ítem con `url` ausente o vacía (ver [Resource](#resource-recurso-externo))
 
 **Ciclo de Vida:**
 
@@ -328,7 +330,7 @@ interface AuthorNationality {
 - El nombre no puede estar vacío
 - Si `diedOn` está definido, debe ser posterior a `bornOn`
 - `AuthorNationality` siempre debe estar presente
-- `resources` nunca contiene un ítem con `url` ausente o vacía: el ACL descarta ese recurso en la frontera al mapear desde Sanity (ver [Resource](#resource-recurso-externo) más abajo), así que la garantía es del mapeo, no del schema
+- `resources` nunca contiene un ítem con `url` ausente o vacía (ver [Resource](#resource-recurso-externo))
 
 **Ciclo de Vida:**
 

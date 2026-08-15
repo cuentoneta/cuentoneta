@@ -34,6 +34,13 @@ describe('buildPersonSchema', () => {
 		expect(schema.sameAs).toEqual([resource.url]);
 	});
 
+	it('should skip a resource whose url is an empty string', () => {
+		const [resource] = authorMock.resources;
+		const author = { ...authorMock, resources: [{ ...resource, url: '' }] };
+
+		expect(buildPersonSchema(author, 'https://x/author/a')).not.toHaveProperty('sameAs');
+	});
+
 	it('should omit sameAs when the only resource has no url', () => {
 		const author = { ...authorMock, resources: [withoutUrl(authorMock.resources[0])] };
 

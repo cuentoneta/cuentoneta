@@ -151,6 +151,12 @@ describe('mapResources (ACL)', () => {
 
 		expect(mapResources([{ ...rawResource, url: null as unknown as string }])).toEqual([]);
 	});
+
+	it('drops a resource whose url is an empty string', () => {
+		const [rawResource] = rawOnoffAuthor.resources;
+
+		expect(mapResources([{ ...rawResource, url: '' }])).toEqual([]);
+	});
 });
 
 describe('mapContentCampaigns (ACL)', () => {

@@ -153,27 +153,23 @@ function hasUrl(resource: RawResource): boolean {
 }
 
 export function mapResources(resources: ResourcesSubQuery): Resource[] {
+	const discarded = resources?.filter((resource) => !hasUrl(resource)) ?? [];
+	if (discarded.length > 0) {
+		// Solo el título: el resto de los campos del recurso descartado son tan poco confiables como la
+		// URL que falta, y esta rama existe justamente para no lanzar.
+		console.warn('mapResources: se descartan recursos sin URL', { titles: discarded.map((r) => r.title) });
+	}
+
 	return (
-		resources
-			?.filter((resource) => {
-				if (hasUrl(resource)) {
-					return true;
-				}
-				console.warn('mapResources: se descarta un recurso sin URL', {
-					title: resource.title,
-					resourceType: resource.resourceType.slug,
-				});
-				return false;
-			})
-			.map((resource) => ({
-				title: resource.title,
-				url: resource.url,
-				resourceType: {
-					slug: resource.resourceType.slug,
-					title: resource.resourceType.title,
-					description: resource.resourceType.description,
-				},
-			})) ?? []
+		resources?.filter(hasUrl).map((resource) => ({
+			title: resource.title,
+			url: resource.url,
+			resourceType: {
+				slug: resource.resourceType.slug,
+				title: resource.resourceType.title,
+				description: resource.resourceType.description,
+			},
+		})) ?? []
 	);
 }
 
