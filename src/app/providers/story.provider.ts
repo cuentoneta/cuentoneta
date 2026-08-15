@@ -1,5 +1,5 @@
 // Core
-import { EnvironmentProviders, inject, Injectable, makeEnvironmentProviders } from '@angular/core';
+import { EnvironmentProviders, inject, makeEnvironmentProviders, Service } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -11,7 +11,7 @@ import { Story, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
 import { ApiUrl, Endpoints } from './endpoints';
 import { StoryApi } from './story-api.interface';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class HttpStoryApi implements StoryApi {
 	private readonly url: ApiUrl = `${environment.apiUrl}${Endpoints.Story}`;
 	private readonly http = inject(HttpClient);

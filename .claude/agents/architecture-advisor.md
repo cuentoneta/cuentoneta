@@ -80,7 +80,7 @@ Primero determiná el change set: corré `git diff --name-only develop...HEAD` (
 ### Estado signals-first (sin NgRx)
 
 - **Sin promesas sobre observables en el frontend** — `firstValueFrom`, `lastValueFrom`, `toPromise` y `async/await` sobre observables están prohibidos en `src/app/`
-- **Derivar reactivamente** — `computed()` / `toSignal()` y `effect` para reacciones; servicios `providedIn: 'root'` + signals como modelo de estado
+- **Derivar reactivamente** — `computed()` / `toSignal()` y `effect` para reacciones; servicios `@Service()` + signals como modelo de estado
 - **Sin propiedades estáticas ni lifecycle hooks** — usar signals / `computed` / `effect` / `viewChild` / `contentChild`
 - **NgRx Signal Store es dirección futura no adoptada** (#1530) — no generar código NgRx salvo que el issue lo pida
 

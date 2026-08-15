@@ -1,10 +1,10 @@
-import { EnvironmentProviders, inject, Injectable, makeEnvironmentProviders } from '@angular/core';
+import { EnvironmentProviders, inject, makeEnvironmentProviders, Service } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { PushNotificationsApi } from './push-notifications-api.interface';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class HttpPushNotificationsApi implements PushNotificationsApi {
 	private readonly http = inject(HttpClient);
 

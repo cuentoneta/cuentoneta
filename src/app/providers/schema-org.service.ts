@@ -1,4 +1,4 @@
-import { DOCUMENT, Injectable, inject } from '@angular/core';
+import { DOCUMENT, inject, Service } from '@angular/core';
 import { type Thing, type WithContext } from 'schema-dts';
 
 /**
@@ -8,7 +8,7 @@ import { type Thing, type WithContext } from 'schema-dts';
  * el app-shell renderiza `AppComponent` dos veces, así que reutilizar el mismo `<script>` por
  * `data-schema-id` evita duplicados tanto en SSR como tras la hidratación.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class SchemaOrgService {
 	private readonly document = inject(DOCUMENT);
 
