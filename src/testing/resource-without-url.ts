@@ -8,6 +8,7 @@
  * en vez de repetido en cada spec que la necesita.
  */
 export function withoutUrl<T extends { url: string }>(resource: T): T {
-	const { url, ...rest } = resource;
-	return rest as unknown as T;
+	const incomplete = { ...resource };
+	delete (incomplete as Partial<T>).url;
+	return incomplete;
 }
