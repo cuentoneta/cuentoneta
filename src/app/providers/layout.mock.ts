@@ -1,4 +1,4 @@
-import { Injectable, signal, type WritableSignal } from '@angular/core';
+import { Service, signal, type WritableSignal } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { Viewport, compareViewports } from '@utils/screen.utils';
 import { Direction, LayoutService } from './layout.interface';
@@ -11,9 +11,7 @@ import { Direction, LayoutService } from './layout.interface';
  * `smallerThan`/`isActual` delegan en la misma `compareViewports()` que el real, así que su
  * comportamiento —incluido el error ante un viewport inválido— es idéntico por construcción.
  */
-@Injectable({
-	providedIn: 'root',
-})
+@Service()
 export class ControllableLayoutService implements LayoutService {
 	private readonly viewport: WritableSignal<Viewport> = signal('lg');
 

@@ -1,5 +1,5 @@
 // Core
-import { EnvironmentProviders, inject, Injectable, makeEnvironmentProviders } from '@angular/core';
+import { EnvironmentProviders, inject, makeEnvironmentProviders, Service } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, type Observable } from 'rxjs';
 
@@ -18,7 +18,7 @@ import { literaryWorkDtoSchema, type LiteraryWorkDto, type LiteraryWorkSectionDt
 import { ApiUrl, Endpoints } from './endpoints';
 import { LiteraryWorkApi } from './literary-work-api.interface';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 	private readonly url: ApiUrl = `${environment.apiUrl}${Endpoints.LiteraryWork}`;
 	private readonly http = inject(HttpClient);

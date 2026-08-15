@@ -1,9 +1,9 @@
 import {
 	EnvironmentProviders,
 	inject,
-	Injectable,
 	makeEnvironmentProviders,
 	PLATFORM_ID,
+	Service,
 	signal,
 	type WritableSignal,
 } from '@angular/core';
@@ -24,9 +24,7 @@ import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { Viewport, VIEWPORT_WIDTHS_NUMERIC, compareViewports } from '@utils/screen.utils';
 import { Direction, LayoutService } from './layout.interface';
 
-@Injectable({
-	providedIn: 'root',
-})
+@Service()
 export class WindowLayoutService implements LayoutService {
 	private readonly window = inject(WINDOW);
 	private readonly platformId = inject(PLATFORM_ID);

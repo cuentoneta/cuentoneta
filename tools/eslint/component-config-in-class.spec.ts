@@ -75,5 +75,11 @@ ruleTester.run('component-config-in-class', rule, {
 			filename: 'a.ts',
 			errors: [{ messageId: 'moduleConfig' }],
 		},
+		// `@Service` (v22.1) es el decorador de services singleton: el archivo es un servicio igual.
+		{
+			code: `import { Service } from '@angular/core';\nconst sizeMap = { sm: 'h-4' };\n@Service()\nexport class Probe {}`,
+			filename: 'a.ts',
+			errors: [{ messageId: 'moduleConfig' }],
+		},
 	],
 });

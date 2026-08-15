@@ -1,5 +1,5 @@
 // Core
-import { EnvironmentProviders, inject, Injectable, makeEnvironmentProviders } from '@angular/core';
+import { EnvironmentProviders, inject, makeEnvironmentProviders, Service } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -11,7 +11,7 @@ import { Storylist } from '@models/storylist.model';
 import { ApiUrl, Endpoints } from './endpoints';
 import { StorylistApi } from './storylist-api.interface';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class HttpStorylistApi implements StorylistApi {
 	private readonly url: ApiUrl = `${environment.apiUrl}${Endpoints.StoryList}`;
 	private readonly http = inject(HttpClient);

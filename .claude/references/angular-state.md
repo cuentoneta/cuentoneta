@@ -14,8 +14,8 @@ Cuentoneta **no usa NgRx**. El estado vive en **servicios**, se expone como **si
 
 Dónde viven los servicios de estado:
 
-- **`@Injectable({ providedIn: 'root' })`** para estado/acceso a datos de aplicación (singleton). Es el default de todo servicio del frontend, salvo indicación explícita en contrario. Ej.: `LayoutService`, `SchemaOrgService` y las implementaciones de API (`HttpStoryApi`, `HttpAuthorApi`, …) en [`src/app/providers/`](../../src/app/providers/). Los consumidores inyectan el **token** `*Api` (`StoryApi`, `AuthorApi`, …), no la clase concreta — ver [`clean-architecture.md`](clean-architecture.md).
-- **`@Injectable()` provisto en un componente** cuando el estado es local a un subárbol y debe morir con él. Ej.: `CarouselStateService`, provisto en el `providers` del componente de carousel.
+- **`@Service()`** para estado/acceso a datos de aplicación (singleton). Es el default de todo servicio del frontend, salvo indicación explícita en contrario. Ej.: `LayoutService`, `SchemaOrgService` y las implementaciones de API (`HttpStoryApi`, `HttpAuthorApi`, …) en [`src/app/providers/`](../../src/app/providers/). Los consumidores inyectan el **token** `*Api` (`StoryApi`, `AuthorApi`, …), no la clase concreta — ver [`clean-architecture.md`](clean-architecture.md).
+- **`@Service({ autoProvided: false })` provisto en un componente** cuando el estado es local a un subárbol y debe morir con él. Ej.: `CarouselStateService`, provisto en el `providers` del componente de carousel.
 
 > Los servicios de acceso a datos del frontend viven en `src/app/providers/`, con el patrón `provideX()` / `*.provider.ts`.
 
@@ -74,7 +74,7 @@ El estado mutable vive como `signal(...)` **privado** dentro del servicio; se mu
 
 ```typescript
 // ✅ Correcto — patrón writable-privado / readonly-público (carousel-state.service.ts)
-@Injectable()
+@Service({ autoProvided: false })
 export class CarouselStateService {
 	private readonly _activeIndex = signal(0);
 	private readonly _isTransitioning = signal(false);
@@ -176,7 +176,7 @@ Una página indexable **nunca** debe usar la forma no indexable: quedaría sin s
 
 ## Checklist rápido
 
-- [ ] ¿El estado vive en un **servicio** (`providedIn: 'root'` o provisto en el componente), no en propiedades estáticas?
+- [ ] ¿El estado vive en un **servicio** (`@Service()` o provisto en el componente), no en propiedades estáticas?
 - [ ] ¿Lo derivado es `computed()` / `toSignal()` y **no** un signal duplicado sincronizado a mano?
 - [ ] ¿El estado mutable es un signal **privado** expuesto con `asReadonly()` y mutado solo con `set()`/`update()`?
 - [ ] ¿Cero `firstValueFrom` / `lastValueFrom` / `toPromise` / `async-await` sobre observables?

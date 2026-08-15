@@ -1,5 +1,5 @@
 // Core
-import { EnvironmentProviders, inject, Injectable, makeEnvironmentProviders } from '@angular/core';
+import { EnvironmentProviders, inject, makeEnvironmentProviders, Service } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -10,7 +10,7 @@ import { environment } from '../environments/environment';
 import { LandingPageContent } from '@models/landing-page-content.model';
 import { ContentApi } from './content-api.interface';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class HttpContentApi implements ContentApi {
 	private readonly prefix = `${environment.apiUrl}api/content`;
 	private readonly http = inject(HttpClient);

@@ -114,7 +114,7 @@ export class ImageProfileComponent {
 1. **Encapsulación.** Un mapa que solo tiene sentido para una clase es parte de esa clase. A nivel de módulo queda al alcance de cualquier cosa que se agregue después al archivo, y deja de estar claro quién lo gobierna.
 2. **Co-locación.** El único consumidor está a unas líneas; la constante de módulo obliga a saltar al tope del archivo para leer lo que la clase usa acá.
 
-Lo aplica la regla de ESLint **`component-config-in-class`**, que dispara ante un `const` de módulo **no exportado** con literal de objeto o de arreglo —incluido el envuelto en `Object.freeze(...)`, `as const`, `as Foo` o `satisfies Foo`— en un archivo que declare `@Component`, `@Directive` o `@Injectable`.
+Lo aplica la regla de ESLint **`component-config-in-class`**, que dispara ante un `const` de módulo **no exportado** con literal de objeto o de arreglo —incluido el envuelto en `Object.freeze(...)`, `as const`, `as Foo` o `satisfies Foo`— en un archivo que declare `@Component`, `@Directive`, `@Injectable` o `@Service`.
 
 Quedan fuera tres casos:
 
@@ -377,7 +377,7 @@ La utilidad `z` de Tailwind resuelve cualquier número sin consultar el tema, as
 
 ## Prohibiciones adicionales
 
-- **Propiedades estáticas** en componentes/servicios → usar un servicio singleton (`providedIn: 'root'`).
+- **Propiedades estáticas** en componentes/servicios → usar un servicio singleton (`@Service()`).
 - **`enum` de TypeScript** → usar `Object.freeze({...} as const)` con su `type` derivado (ver `CLAUDE.md`).
 - **Non-null assertion (`!`)** → estrechar con `@if`/guards o tipar correctamente.
 - En el frontend: **`firstValueFrom`/`lastValueFrom`/`toPromise`** prohibidos → componer con `computed()`/`toSignal()`/operadores RxJS (ver [`angular-state.md`](./angular-state.md)).
