@@ -412,9 +412,9 @@ export const Soft: Story = {
 
 Para dependencias de DI usá los decoradores `moduleMetadata({ imports, providers })` (imports/iconos por story) o `applicationConfig({ providers })` (providers de entorno).
 
-**Dónde va cada provider: el discriminante es la universalidad, no la gravedad.** Al preview va lo que _cualquier_ componente del catálogo podría necesitar sin declararlo — hoy `LayoutService`, un token sin factory, y el router. A la story va lo que depende de **ese** componente, por grave que sea su ausencia: los iconos que usa, sus imports de composición, y `provideAnimations()`, que hace falta solo en el único componente con `animations:` en el decorador.
+**Dónde va cada provider: el discriminante es la universalidad, no la gravedad.** Al preview va lo que _cualquier_ componente del catálogo podría necesitar sin declararlo — hoy `LayoutService`, un token sin factory, y el router. A la story va lo que depende de **ese** componente, por grave que sea su ausencia: los iconos que usa y sus imports de composición, como las directivas que el drawer proyecta o el esqueleto que el carrusel alterna.
 
-Que sin el provider el canvas quede en la pantalla de error **no decide dónde va**: es el umbral que separa un provider necesario de uno cosmético. Las animaciones lo cruzan —sin ellas el renderer aborta ante la propiedad sintética— y aun así son de la story, porque un provider global que solo un componente necesita le miente al lector sobre qué depende de qué.
+Que sin el provider el canvas quede en la pantalla de error **no decide dónde va**: es el umbral que separa un provider necesario de uno cosmético. Los imports de composición lo cruzan —sin ellos el template de la story referencia un elemento que Angular no conoce— y aun así son de la story, porque un provider global que solo un componente necesita le miente al lector sobre qué depende de qué.
 
 El set global vive en `src/testing/storybook-preview.provider.ts` y no en `.storybook/`, para que quede dentro del alcance de `lint`.
 
