@@ -13,7 +13,12 @@ export interface BreadcrumbItem {
  * nombre, URL de su perfil, imagen y `sameAs` con sus recursos web.
  */
 export function buildPersonSchema(author: Author, authorUrl: string): PersonLeaf {
-	const sameAs = author.resources.map((resource) => resource.url).filter((url) => url.length > 0);
+	// El ACL ya garantiza que todo recurso trae URL. Esto es defensa en profundidad para un `Author`
+	// que llegue por otra vía —rehidratado de un DTO, armado por un doble de test—, donde un valor
+	// ausente reventaría el render entero de la página en lugar de degradar este bloque.
+	const sameAs = author.resources
+		.map((resource) => resource.url)
+		.filter((url) => typeof url === 'string' && url.length > 0);
 	return {
 		'@type': 'Person',
 		name: author.name,

@@ -16,6 +16,7 @@ import { rawOnoffAuthor, rawOnoffAuthorTeaser } from '@mocks/onoff-raw-author.mo
 import { onoffRawContentCampaignsMock, onoffRawLandingPageMock } from '@mocks/onoff-raw-landing-page.mock';
 import type { RotatingContent } from '@models/landing-page-content.model';
 import { onoffRawTagsMock } from '@mocks/onoff-raw-tags.mock';
+import { withoutUrl } from '@testing/resource-without-url';
 import { viewportElementSizes } from '@models/content-campaign.model';
 
 describe('mapTags (ACL)', () => {
@@ -103,15 +104,6 @@ describe('mapStoryNavigationTeaserWithAuthor (ACL)', () => {
 		expect(result[0].tags).toEqual([]);
 	});
 });
-
-type RawResource = (typeof rawOnoffAuthor)['resources'][number];
-
-// REASON: el typegen declara `url: string` porque lo deriva del `Rule.required()` del schema, así
-// que la forma que el dataset sí contiene —el recurso sin URL— no se puede expresar sin el cast.
-function withoutUrl(resource: RawResource): RawResource {
-	const { url, ...rest } = resource;
-	return rest as unknown as RawResource;
-}
 
 describe('mapResources (ACL)', () => {
 	it('maps a raw Sanity resource to the domain Resource model', () => {
