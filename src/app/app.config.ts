@@ -18,7 +18,6 @@ import { provideStoryApi } from './providers/story.provider';
 import { provideStorylistApi } from './providers/storylist.provider';
 import { provideCollectionApi } from './providers/collection.provider';
 import { provideLiteraryWorkApi } from './providers/literary-work.provider';
-import { providePushNotificationsApi } from './providers/push-notifications.provider';
 
 // Layout
 import { provideLayout } from './providers/layout.provider';
@@ -52,7 +51,6 @@ export const appConfig: ApplicationConfig = {
 		provideStoryApi(),
 		provideStorylistApi(),
 		provideLiteraryWorkApi(),
-		providePushNotificationsApi(),
 		provideLayout(),
 
 		// SEO providers
