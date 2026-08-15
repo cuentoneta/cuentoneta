@@ -47,5 +47,4 @@ Los casos sin test asociado son la **cobertura faltante**: la lista de trabajo p
 ## Relacionados
 
 - Tablero de estado de QA — issue #1353.
-- Migración de Jest a Vitest — issue #1494.
 - Tests de integración pendientes — issues #948, #951, #1426.
