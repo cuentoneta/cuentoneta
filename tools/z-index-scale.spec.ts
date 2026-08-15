@@ -1,5 +1,9 @@
-// REASON: el helper es un `.js` sin tipos propios; el spec solo necesita sus exports.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// @vitest-environment node
+// Bajo `happy-dom`, la condición de exportación de Tailwind resuelve a su build de navegador, que no
+// expone el compilador.
+import { readFileSync } from 'node:fs';
+import { compile } from 'tailwindcss';
+
 import {
 	globalTokens,
 	isAllowedDeclarationValue,
@@ -51,6 +55,41 @@ describe('escala de apilamiento del Design System', () => {
 			expect(isAllowedUtility('10')).toBe(false);
 			expect(isAllowedUtility('50')).toBe(false);
 			expect(isAllowedUtility('nvv')).toBe(false);
+		});
+	});
+
+	// Que la escala genere utilidades es un detalle de implementación de Tailwind, no un contrato: la
+	// namespace `--z-index-*` la reconoce la versión instalada, y un bump que la renombrara dejaría a cada
+	// capa sin emitir CSS **sin romper el build**. Además, Tailwind descarta del CSS emitido los tokens del
+	// tema que ninguna utilidad usa, así que una capa consumida solo por `var()` desde una hoja de
+	// componente desaparecería sola. Compilar el tema real es lo único que ve las dos cosas.
+	describe('compilación del tema', () => {
+		async function compiledCss() {
+			const compiler = await compile(readFileSync('src/tailwind.css', 'utf-8'), {
+				base: process.cwd(),
+				loadStylesheet: async (id: string) => {
+					const path = id === 'tailwindcss' ? 'node_modules/tailwindcss/index.css' : id;
+					return { path, base: 'node_modules/tailwindcss', content: readFileSync(path, 'utf-8') };
+				},
+			});
+			return compiler.build(scaleTokens().map((token: string) => `z-${token}`));
+		}
+
+		it('emits a utility and its variable for every layer of the scale', async () => {
+			const css = await compiledCss();
+			for (const token of scaleTokens()) {
+				expect(css, `la capa "${token}" no emite su utilidad`).toContain(`.z-${token}`);
+				expect(css, `la capa "${token}" no emite su variable`).toContain(`--z-index-${token}:`);
+			}
+		});
+
+		// El valor emitido es el que ordena de verdad: si el token cambiara de número sin que nadie lo note,
+		// la escala seguiría compilando y el orden entre capas dejaría de ser el declarado.
+		it('emits each variable with the value the scale declares', async () => {
+			const css = await compiledCss();
+			for (const [token, value] of zIndexScale()) {
+				expect(css).toContain(`--z-index-${token}: ${value};`);
+			}
 		});
 	});
 

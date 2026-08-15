@@ -67,6 +67,14 @@ export function globalTokens() {
 	return scaleTokens().filter((token) => GLOBAL_LAYERS.has(token));
 }
 
+/**
+ * Las capas que un archivo puede usar. Es lo que va en el mensaje de error: ofrecer una capa global a un
+ * archivo que no puede declararla sugeriría una salida que la regla misma rechaza en el paso siguiente.
+ */
+export function allowedTokensFor(allowGlobals) {
+	return allowGlobals ? scaleTokens() : scaleTokens().filter((token) => !GLOBAL_LAYERS.has(token));
+}
+
 /** ¿`z-<suffix>` es una utilidad admitida — un token de la escala o la nativa `z-auto`? */
 export function isAllowedUtility(suffix) {
 	return NATIVE_UTILITIES.has(suffix) || zIndexScale().has(suffix);
@@ -78,14 +86,23 @@ export function isGlobalUtility(suffix) {
 }
 
 /**
+ * La capa que nombra el valor de una declaración `z-index`, o `null` si no referencia ninguna. Permite
+ * que la reserva de la franja alta rija también en esta forma: sin ella, lo que `z-nav` prohíbe lo
+ * concedería `z-index: var(--z-index-nav)`.
+ */
+export function declaredLayer(value) {
+	const reference = value.trim().match(/^var\(\s*--z-index-([a-z][a-z0-9-]*)\s*\)$/);
+	return reference === null ? null : reference[1];
+}
+
+/**
  * ¿El valor de una declaración `z-index` es admitido? Solo lo son una palabra clave de CSS y un
  * `var(--z-index-<token>)` cuyo token exista en la escala. Un número crudo nunca lo es.
  */
 export function isAllowedDeclarationValue(value) {
-	const normalized = value.trim();
-	if (CSS_WIDE_KEYWORDS.has(normalized.toLowerCase())) {
+	if (CSS_WIDE_KEYWORDS.has(value.trim().toLowerCase())) {
 		return true;
 	}
-	const reference = normalized.match(/^var\(\s*--z-index-([a-z][a-z0-9-]*)\s*\)$/);
-	return reference !== null && zIndexScale().has(reference[1]);
+	const layer = declaredLayer(value);
+	return layer !== null && zIndexScale().has(layer);
 }

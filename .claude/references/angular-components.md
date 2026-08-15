@@ -345,7 +345,11 @@ Todo apilamiento sale de la escala del Design System, declarada como tokens `--z
 
 Un componente que eleva algo **dentro de sí** aísla su apilamiento con `isolate` en el elemento que contiene la elevación (`z-content`/`z-raised`). Confinado el contexto, el valor numérico deja de significar nada afuera de ese subárbol: dos componentes no relacionados pueden usar `z-raised` cada uno sin competir entre sí.
 
-Las capas globales son lo contrario: se usan **sin** aislar. Aislar la barra o la capa flotante las haría perder contra el contenido de página en vez de quedar por encima de todo. Por eso su franja (50-60) está **reservada** — ningún otro archivo puede declarar `z-nav`/`z-floating` salvo los que ya las declaran a nivel de aplicación.
+Las capas globales son lo contrario: se usan **sin** aislar. Aislar la barra o la capa flotante las haría perder contra el contenido de página en vez de quedar por encima de todo. Por eso su franja (50-60) está **reservada** — ningún otro archivo puede usarlas, ni como utilidad (`z-nav`) ni como declaración (`z-index: var(--z-index-nav)`), salvo los que ya las declaran a nivel de aplicación.
+
+**Sumar una capa nueva toca dos archivos si es global:** el token en el `@theme` y el conjunto de capas globales de `tools/z-index-scale.js`. Que una capa sea global es una decisión de diseño y no una consecuencia de su número, así que el helper la distingue por nombre; un token global agregado solo al tema pasaría por interno.
+
+**No hay capa "por debajo".** Las utilidades negativas (`-z-content`) se rechazan: mandar algo detrás se resuelve con el orden del documento dentro de un contexto confinado. Si aparece un caso real que no se pueda expresar así, se suma una capa a la escala en vez de un valor suelto.
 
 ### Cobertura por gate
 
@@ -362,7 +366,7 @@ Las dos reglas de lint reservan la franja global con la opción `allowGlobalLaye
 
 - Un nombre de clase computado en runtime (`'z-' + n`) es invisible a un escaneo estático.
 - Una asignación directa a `style.zIndex` también lo es.
-- Que el `isolate` esté en el ancestro correcto no lo decide ninguna regla de lint: lo mide el e2e de apilamiento, que discrimina el defecto por hit-test en un navegador real.
+- Que el `isolate` esté en el ancestro correcto no lo decide ninguna regla de lint: lo mide el e2e de apilamiento, que discrimina el defecto por hit-test en un navegador real. Ese e2e mira la barra de navegación; el orden **dentro** de un componente no lo cubre ningún gate, así que un cambio de capas internas se verifica en el navegador.
 - El **drawer** no participa de la escala: se apoya en `<dialog>.showModal()`, que promueve el elemento al top layer nativo del navegador — un mecanismo inmune al `z-index` de la página.
 
 ### Por qué el enforcement vive en lint

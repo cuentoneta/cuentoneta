@@ -9,7 +9,9 @@
 		tabindex="0"
 	>
 		<!-- Diapositivas -->
-		<div class="slide-wrapper relative h-full w-full" #slideWrapper aria-live="polite" aria-atomic="false">
+		<!-- `isolate` confina el orden entre diapositivas: sin aislar competiría con los controles y los
+			 indicadores, que son sus hermanos y tienen que quedar por encima de la diapositiva activa. -->
+		<div class="slide-wrapper relative isolate h-full w-full" #slideWrapper aria-live="polite" aria-atomic="false">
 			@for (slide of slides(); track slide.slug; let i = $index) {
 				<!-- Diapositiva activa (entrando) -->
 				@if (i === activeIndex()) {
