@@ -18,7 +18,7 @@ el proyecto La Cuentoneta y cómo puedes contribuir al desarrollo del mismo.
 
 Las prácticas de nuestro proceso de desarrollo, más las herramientas utilizadas para el desarrollo y la gestión del
 mismo, están
-abiertas a propuestas para mejoras, cambios y reemplazos. En caso de que desees aportar sugerencias o propuestas de mejorar el proceso de desarrollo, puedes hacerla el canal **[**#🚐 | la-cuentoneta**][dc-channel]** en Discord o en sumar un issue de tipo **[💼 Proponer mejoras en la Gestión o el Proceso de Desarrollo del Proyecto](https://github.com/cuentoneta/cuentoneta/issues/new/choose)**.
+abiertas a propuestas para mejoras, cambios y reemplazos. En caso de que desees aportar sugerencias o propuestas de mejorar el proceso de desarrollo, puedes hacerla el canal **[**#🚐 | la-cuentoneta**][dc-channel]** en Discord o en sumar un issue de tipo **[💼 Proponer mejoras en la Gestión o el Proceso de Desarrollo del Proyecto][crear-issue-cuentoneta]**.
 
 ---
 
@@ -437,10 +437,7 @@ proyecto. La guía vive en [`docs/qa/TESTPLAN_GUIDE.md`](./qa/TESTPLAN_GUIDE.md)
 ---
 
 [dc-channel]: https://discord.com/channels/594363964499165194/1109220285841944586
-[github-issues-tutorial]: https://docs.github.com/es/issues/tracking-your-work-with-issues/creating-an-issue
 [crear-issue-cuentoneta]: https://github.com/cuentoneta/cuentoneta/issues/new/choose
-[feature-request-template]: https://github.com/cuentoneta/cuentoneta/issues/new?assignees=&labels=%F0%9F%8F%8E%EF%B8%8F+mejora&projects=&template=feature.yml
-[bug-report-template]: https://github.com/cuentoneta/cuentoneta/issues/new?assignees=&labels=%F0%9F%A6%9F+bug&projects=&template=bug_report.yml
 
 <!-- Enlaces a otros documentos -->
 
