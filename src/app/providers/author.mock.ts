@@ -8,12 +8,14 @@ import { authorMock, authorTeaserMock } from '@mocks/author.mock';
 import { AuthorApi } from './author-api.interface';
 
 export class StubAuthorApi implements AuthorApi {
+	constructor(private readonly author: AuthorProfile = authorMock) {}
+
 	public getAll(): Observable<AuthorTeaser[]> {
 		return of([authorTeaserMock]);
 	}
 
 	public getBySlug(): Observable<AuthorProfile> {
-		return of(authorMock);
+		return of(this.author);
 	}
 }
 

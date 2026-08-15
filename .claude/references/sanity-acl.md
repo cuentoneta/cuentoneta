@@ -206,6 +206,16 @@ Patrones que se repiten:
   Sanity a la forma que el dominio espera. `biography` es la excepción deliberada: el schema la
   exige (`Rule.required()`), así que el mapper la pasa **sin** `?? ''` — un valor faltante es un
   bug de datos, no un estado válido a tolerar en silencio.
+- **Un `Rule.required()` del schema no es una garantía sobre el dato persistido.** Esa validación
+  rige la **edición** en el Studio, no el almacenamiento: un documento anterior a la regla, o
+  escrito por script o migración, la esquiva sin dejar ninguna señal. El typegen, en cambio, deriva
+  la nulabilidad del **schema declarado**, así que emite un tipo no-nullable en el que el mapper
+  confía por default. Cuando esa confianza puede fallar, el mapper decide explícitamente entre
+  **descartar** el dato (accesorio para el agregado) o **lanzar** (central para el agregado) — nunca
+  dejar pasar el hueco en silencio. `mapResources` es el caso descartar: filtra, con
+  `console.warn`, todo recurso cuyo `url` no sea un string no vacío, porque un recurso es
+  información accesoria de `Author`/`Story`/`LiteraryWork` y perder uno no invalida el agregado.
+  `biography` (arriba) es el caso lanzar: sin ella, `Author` pierde su contenido central.
 - **Composición:** un mapper grande delega en otros (`mapStoryContent` usa `mapAuthor`,
   `mapResources`, `mapTags`, `mapBlockContentToTextParagraphs`, `mapMediaSources`). `mapStoryContent`
   y `mapAuthor` propagan los **tags** del cuento y del autor vía `mapTags`; los mappers de teasers

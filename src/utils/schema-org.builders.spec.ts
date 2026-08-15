@@ -1,6 +1,7 @@
 import { authorMock } from '@mocks/author.mock';
 
 import { assertValidJsonLd } from '@testing/json-ld-validation';
+import { withoutUrl } from '@testing/resource-without-url';
 import { buildBreadcrumbSchema, buildPersonSchema } from './schema-org.builders';
 
 describe('buildPersonSchema', () => {
@@ -22,6 +23,28 @@ describe('buildPersonSchema', () => {
 			name: 'François Onoff',
 			url: 'https://x/author/a',
 		});
+	});
+
+	it('should skip a resource without url instead of throwing', () => {
+		const [resource] = authorMock.resources;
+		const author = { ...authorMock, resources: [resource, withoutUrl(resource)] };
+
+		const schema = buildPersonSchema(author, 'https://x/author/a');
+
+		expect(schema.sameAs).toEqual([resource.url]);
+	});
+
+	it('should skip a resource whose url is an empty string', () => {
+		const [resource] = authorMock.resources;
+		const author = { ...authorMock, resources: [{ ...resource, url: '' }] };
+
+		expect(buildPersonSchema(author, 'https://x/author/a')).not.toHaveProperty('sameAs');
+	});
+
+	it('should omit sameAs when the only resource has no url', () => {
+		const author = { ...authorMock, resources: [withoutUrl(authorMock.resources[0])] };
+
+		expect(buildPersonSchema(author, 'https://x/author/a')).not.toHaveProperty('sameAs');
 	});
 });
 
