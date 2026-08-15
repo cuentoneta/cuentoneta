@@ -16,6 +16,46 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.10.1 (2026-08-15)
+
+La versión 2.10.1 es un patch de dos frentes: el trabajo derivado del diagnóstico de indexado hecho con la URL Inspection API, y la primera pasada de acabado sobre la página de lectura.
+
+El frente de **indexado** arranca por la señal que el sitio le da al crawler. El `lastmod` del sitemap derivaba de `_updatedAt`, así que cualquier escritura operativa —un sync de datasets, una migración— aplanaba la señal y anunciaba que todo el corpus había cambiado el mismo día; ahora deriva de una fecha de origen, y cada entrada respeta además la secuencia de elementos que exige el esquema de sitemaps.org (#2122). El smoke post-deploy pasa a chequear el documento del sitemap y no solo las páginas (#2196). Y la herramienta con la que se midió todo esto deja de ser un script local: se versiona (#2123), reintenta con backoff los errores transitorios de la API y reporta lo que costaron (#2125), y queda agendada semanalmente con su serie versionada en una rama de datos, para que el estado de indexado se lea como una serie y no como una foto (#2126).
+
+El segundo frente es la **página de lectura**. El cuerpo de las obras deja de renderizar como un bloque plano y estrena hoja de prosa propia, con ritmo y cita distinguible (#2200), y el epígrafe y la nota editorial pasan a delegarse en el bloque del Design System (#2209). En el mismo movimiento se corrigen dos defectos que había dejado la migración a Markdown: el pipeline descartaba los saltos de línea simples y servía aplanada toda la poesía del sitio (#2211), y los pasajes que el original cargaba de sentido centrándolos —dos avisos impresos, una firma, un encabezado de parte— recuperan semántica como cita, énfasis y párrafos separados (#2130). Aparte, el hero dejaba de respetar la barra de navegación al hacer scroll (#2202); el arreglo puntual se generalizó en una escala de apilamiento del Design System, verificable por lint en TypeScript, plantillas y hojas de estilo (#2207).
+
+Del lado del **Studio y del flujo de trabajo**, la búsqueda de Obra literaria se acota a los campos de primer nivel, para que el título pese más que una coincidencia en el cuerpo (#2205). El checklist de release incorpora la actualización de la descripción del milestone (#2112) y la clasificación de cada migración según su acoplamiento al código, que es lo que determina si corre antes o después del deploy (#2191). Y la story de `HeaderComponent` vuelve a renderizar, con el router en el preview de Storybook (#2182).
+
+### Cambios completos
+
+Ver el changelog completo en [2.10.1](https://github.com/cuentoneta/cuentoneta/releases/tag/2.10.1)
+
+### Cambios
+
+#### Indexado
+
+- [#2122] - Corrige la señal de lastmod del sitemap y el orden de sus elementos.
+- [#2196] - Chequea el documento del sitemap en el smoke de indexado.
+- [#2123] - Versiona la herramienta de medición de indexado contra la URL Inspection API.
+- [#2125] - Reintenta con backoff los errores transitorios de la URL Inspection API.
+- [#2126] - Agenda un diagnóstico semanal de indexado con historial versionado.
+
+#### Página de lectura
+
+- [#2200] - Estila el cuerpo de las obras en la página de lectura.
+- [#2209] - Delega el epígrafe y la nota editorial en EditorialNote.
+- [#2211] - Preserva los saltos de línea simples en el pipeline de Markdown.
+- [#2130] - Reexpresa en Markdown semántico los pasajes que el original centraba.
+- [#2202] - Confina el apilamiento del hero para que no se dibuje sobre la barra de navegación.
+- [#2207] - Fija una escala de z-index verificable para el Design System.
+
+#### Studio y flujo de trabajo
+
+- [#2205] - Acota la búsqueda de Obra literaria a los campos de primer nivel.
+- [#2112] - Suma la descripción del milestone al checklist de release.
+- [#2191] - Fija cuándo corre una migración según su acoplamiento al código.
+- [#2182] - Restaura el renderizado de la story de HeaderComponent.
+
 ## Versión 2.10.0 (2026-08-13)
 
 La versión 2.10.0 es la más grande de la serie 2.x, y tiene un solo hilo conductor: **el modelo de dominio nuevo deja de ser un plan y pasa a existir de punta a punta**, con el contenido real traspasado en los tres datasets.
