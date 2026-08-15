@@ -82,6 +82,26 @@ describe('HttpLiteraryWorkApi', () => {
 		);
 	});
 
+	// Ningún round-trip del corpus ejercita la ausencia de las claves opcionales: las 43 obras declaran
+	// badLanguage, y las secciones que se usan traen título y epígrafes. Sin este caso, una opcionalidad
+	// perdida en el schema volvería la clave obligatoria y el wire real —donde sí faltan— rompería.
+	it('rehydrates a payload with every optional key absent', async () => {
+		const dto = toWireDto(onoffLiteraryWorksMock[0]);
+		const [firstSection, ...restOfSections] = dto.content;
+		const { badLanguage, editorialNote, ...withoutOptionals } = dto;
+		const { title, epigraphs, ...sectionWithoutOptionals } = firstSection;
+
+		const rehydrated = await requestBySlug({
+			...withoutOptionals,
+			content: [sectionWithoutOptionals, ...restOfSections],
+		});
+
+		expect(rehydrated.badLanguage).toBeUndefined();
+		expect(rehydrated.editorialNote).toBeUndefined();
+		expect(rehydrated.content[0].title).toBeUndefined();
+		expect(rehydrated.content[0].epigraphs).toBeUndefined();
+	});
+
 	it('errors the stream when the DTO violates a domain invariant', async () => {
 		const dto = toWireDto(onoffLiteraryWorksMock[0]);
 

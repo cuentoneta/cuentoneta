@@ -89,6 +89,18 @@ describe('HttpCollectionApi', () => {
 		await expect(request(api.getBySlug(dto.slug), `${url}/${dto.slug}`, dto)).rejects.toThrow();
 	});
 
+	// El largo del abanico es una garantía de dos lados y solo se cubría el corto. Quien rechaza acá es
+	// la invariante de dominio, no el schema: degradar la tupla del wire a un array sin cota no hace
+	// fallar este caso ni el de arriba.
+	it('rejects a sample of imagery with a fourth cover', async () => {
+		const dto = {
+			...toWire<CollectionDto>(sampleCanon),
+			imagery: { kind: 'sample', images: ['a.png', 'b.png', 'c.png', 'd.png'] },
+		};
+
+		await expect(request(api.getBySlug(dto.slug), `${url}/${dto.slug}`, dto)).rejects.toThrow();
+	});
+
 	it('rejects a payload whose imagery kind is unknown', async () => {
 		const dto = { ...toWire<CollectionDto>(canon), imagery: { kind: 'mosaic', image: 'a.png' } };
 
