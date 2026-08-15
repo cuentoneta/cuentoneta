@@ -20,7 +20,7 @@ import { createReadingTime } from '@models/reading-time.model';
 import { createSanitizedHtml } from '@models/sanitized-html.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createSlug } from '@models/slug.model';
-import { collectionDtoSchema, collectionTeaserDtoSchema, type CollectionDto } from '@models/collection.dto';
+import { collectionDtoSchema, collectionTeaserListDtoSchema, type CollectionDto } from '@models/collection.dto';
 import type { LiteraryWorkTeaserDto } from '@models/literary-work.dto';
 import { ApiUrl, Endpoints } from './endpoints';
 import { CollectionApi } from './collection-api.interface';
@@ -37,14 +37,15 @@ export class HttpCollectionApi implements CollectionApi {
 	}
 
 	public getAll(): Observable<CollectionTeaser[]> {
-		return this.http.get<unknown>(this.url).pipe(
-			map((response) =>
-				collectionTeaserDtoSchema
-					.array()
-					.parse(response)
-					.map((dto) => createCollectionTeaser({ ...dto, description: createSanitizedHtml(dto.description) })),
-			),
-		);
+		return this.http
+			.get<unknown>(this.url)
+			.pipe(
+				map((response) =>
+					collectionTeaserListDtoSchema
+						.parse(response)
+						.map((dto) => createCollectionTeaser({ ...dto, description: createSanitizedHtml(dto.description) })),
+				),
+			);
 	}
 
 	// ACL del frontend, simétrico al del backend: dto → dominio por las mismas factories, así un dato
