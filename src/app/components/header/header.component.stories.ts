@@ -1,17 +1,13 @@
-import { applicationConfig, Meta, StoryObj } from '@storybook/angular-vite';
-import { provideAnimations } from '@angular/platform-browser/animations';
+import { Meta, StoryObj } from '@storybook/angular-vite';
 import { HeaderComponent } from './header.component';
 
 export default {
 	title: 'HeaderComponent',
 	component: HeaderComponent,
-	// El decorador de este componente declara animaciones: sin este provider, el renderer trata la
-	// propiedad sintética `[@toggle]` como desconocida y aborta el montaje.
-	decorators: [applicationConfig({ providers: [provideAnimations()] })],
 	parameters: {
 		docs: {
 			description: {
-				component: `<div><p>El <strong>HeaderComponent</strong> es el encabezado del sitio: logo, navegación principal y menú desplegable en viewports angostos. El input <code>isVisible</code> lo oculta al hacer scroll hacia abajo, con una transición de opacidad y desplazamiento.</p></div>`,
+				component: `<div><p>El <strong>HeaderComponent</strong> es el encabezado del sitio: logo, navegación principal y menú desplegable en viewports angostos. El input <code>isVisible</code> lo oculta al hacer scroll hacia abajo, colapsando alto, opacidad y desplazamiento en una transición que respeta <code>prefers-reduced-motion</code>.</p></div>`,
 			},
 		},
 	},
