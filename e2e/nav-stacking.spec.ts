@@ -12,16 +12,20 @@ import { test, expect } from '@playwright/test';
 import { NAV_OWNS_EVERY_SAMPLE, STACKING_VIEWPORTS, VIEWPORT_HEIGHT, navStackingReport } from './_utils/stacking';
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
 
-// Las rutas con fixture estable, cada una con el elemento cuya presencia indica que la página pintó su
-// contenido. Sin esa espera, el hit-test podría correr sobre un esqueleto y no ejercer nada.
+// Las rutas con fixture estable, cada una con un elemento que **la propia página** aporta. El selector no
+// puede ser del shell —`cuentoneta-header` está presente aun con la ruta en esqueleto o en error—, porque
+// entonces el hit-test correría antes de que haya contenido con el que disputar la franja.
 //
 // `/read` no está acá: tiene su propio spec de regresión, que es el del defecto que originó todo esto y
 // nombra al hero como sospechoso. Sumarla también acá duplicaría su costo en el gate más frágil del repo.
 const ROUTES = Object.freeze([
-	{ name: 'home', path: '/home', ready: 'cuentoneta-header' },
-	{ name: 'story', path: `/story/${STABLE_SLUGS.story}`, ready: 'cuentoneta-header' },
-	{ name: 'author', path: `/author/${STABLE_SLUGS.author}`, ready: 'h1' },
-	{ name: 'storylist', path: `/storylist/${STABLE_SLUGS.storylist}`, ready: 'cuentoneta-header' },
+	{ name: 'home', path: '/home', ready: 'h1' },
+	{ name: 'story', path: `/story/${STABLE_SLUGS.story}`, ready: 'h1' },
+	// La ficha de autor sirve su `h1` vacío y lo completa en el cliente, así que no discrimina: se espera a
+	// las pestañas, que solo existen con el contenido de la página.
+	{ name: 'author', path: `/author/${STABLE_SLUGS.author}`, ready: 'cuentoneta-tabs' },
+	// La colección no declara `h1`; su título es un componente propio.
+	{ name: 'storylist', path: `/storylist/${STABLE_SLUGS.storylist}`, ready: 'cuentoneta-storylist-title' },
 ] as const);
 
 const statuses = new Map<string, number>();
@@ -50,7 +54,7 @@ for (const route of ROUTES) {
 		test(`${route.name} — nada se dibuja sobre la barra de navegación en el viewport ${viewport.name}`, async ({
 			page,
 		}) => {
-			// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta la guarda de la ruta; repetirla acá sería el mismo fallo tres veces
+			// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta la guarda de la ruta; repetirla acá sería el mismo fallo una vez por ancho
 			test.skip(statuses.get(route.name) !== 200, `"${route.path}" no responde 200 en el dataset`);
 
 			await page.setViewportSize({ width: viewport.width, height: VIEWPORT_HEIGHT });

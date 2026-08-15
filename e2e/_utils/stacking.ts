@@ -81,8 +81,12 @@ export async function navStackingReport(page: Page): Promise<StackingReport> {
 						return 'nav';
 					}
 					// Nombra a quien tapa la barra: el mensaje de fallo señala al componente culpable en vez
-					// de decir solamente que alguien está encima.
-					const intruder = element.closest('[class*="cuentoneta-"], cuentoneta-header, [data-testid]');
+					// de decir solamente que alguien está encima. Los componentes se declaran por elemento,
+					// así que se sube hasta el ancestro cuyo tag lleva el prefijo del proyecto.
+					let intruder: Element | null = element;
+					while (intruder && !intruder.tagName.toLowerCase().startsWith('cuentoneta-')) {
+						intruder = intruder.parentElement;
+					}
 					return (intruder ?? element).tagName.toLowerCase();
 				}),
 			};
