@@ -80,7 +80,7 @@ Junto con Nx, el proyecto cuenta con ESLint y Prettier ya configuradas como depe
 
 ### Para pruebas unitarias y de integración
 
-- **<a href="https://jestjs.io/docs/getting-started">Jest</a>** como framework de testing unitario, utilizando <a href="https://testing-library.com/docs/angular-testing-library/intro">Angular Testing Library</a> para la escritura de tests de componentes.
+- **<a href="https://vitest.dev/">Vitest</a>** como framework de testing unitario, utilizando <a href="https://testing-library.com/docs/angular-testing-library/intro">Angular Testing Library</a> para la escritura de tests de componentes.
 - **<a href="https://playwright.dev/">Playwright</a>** como framework de testing de integración y end-to-end
 
 ### Para generación y visualización de diagramas
@@ -196,7 +196,16 @@ Para ejecutar una corrida de tests unitarios, ejecutá el siguiente comando.
 pnpm run test
 ```
 
-Esto iniciará una corrida de tests unitarios utilizando Jest, el cual se encargará de correr los tests unitarios de los componentes de Angular, mostrando los resultados en la consola.
+Esto iniciará una corrida de tests unitarios utilizando Vitest, el cual se encargará de correr los tests unitarios de los componentes de Angular, mostrando los resultados en la consola. El script envuelve el target Nx `vitest:test`, inferido por el plugin `@nx/vitest`.
+
+Para trabajar con los tests en modo _watch_ están disponibles estas dos variantes, que invocan Vitest directamente:
+
+```bash
+pnpm run test:watch
+pnpm run test:ui
+```
+
+La segunda levanta además la interfaz web de Vitest.
 
 ##### Tests de integración y e2e
 
